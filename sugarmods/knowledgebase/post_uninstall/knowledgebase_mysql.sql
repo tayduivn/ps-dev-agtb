@@ -1,0 +1,2 @@
+-- //FILE SUGARCRM flav=pro ONLY 
+-- knowledge base

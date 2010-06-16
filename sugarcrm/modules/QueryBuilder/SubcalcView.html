@@ -1,0 +1,190 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+/*********************************************************************************
+ * $Id: SubcalcView.html 42215 2008-11-26 20:35:04Z jmertic $
+ * Description:
+ ********************************************************************************/
+-->
+<!-- BEGIN: main -->
+
+<!-- BEGIN: SearchHeaderEnd -->
+
+
+<!-- END: SearchHeaderEnd -->
+
+
+<!-- BEGIN: list_nav_row -->
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="list view">
+{PAGINATION}
+	<!-- END: list_nav_row -->
+	<tr height="20">
+	<td scope="col"  width="10%"  nowrap>{MOD.LBL_LIST_ORDER}</td>
+	<td scope="col"  width="10%"  nowrap>{MOD.LBL_LEFT_TYPE}</td>
+	<td scope="col"  width="10%"  noWrap>{MOD.LBL_OPERATOR}</td>
+	<td scope="col"  width="10%"  noWrap>{MOD.LBL_RIGHT_TYPE}</td>
+	<td scope="col"  width="10%"  noWrap>{MOD.LBL_CALC_ENCLOSED}</td> 
+	<td scope="col"  width="10%"  noWrap>&nbsp</td> 
+	</tr>
+<!-- BEGIN: row -->
+<tr height="20" class="{ROW_COLOR}S1">
+		<td nowrap="nowrap" valign="top"><a  href="{URL_PREFIX}index.php?action=ColumnPopup&module=QueryBuilder&return_module=QueryBuilder&return_action=ColumnPopup&filter_id={SUB_CALC.ID}&calc_id={SUB_CALC.PARENT_ID}&column_record={COLUMN_ID}&record={QUERY_ID}&to_pdf=true&component=Column">{SUB_CALC.LIST_ORDER}</a></td>  		
+		<td scope="row" valign=TOP>{SUB_CALC.LEFT_TYPE}</td>
+  		<td nowrap="nowrap" valign="top"><slot>{SUB_CALC.OPERATOR}</slot></td>
+		<td nowrap="nowrap" valign="top"><slot>{SUB_CALC.RIGHT_TYPE}</slot></td>
+    	<td nowrap="nowrap" valign="top"><slot>{SUB_CALC.CALC_ENCLOSED}</slot></td>
+	    	<td nowrap align="center" valign=TOP >
+	    	<slot><a class="listViewTdToolsS1" onclick="return confirm('{MOD.NTC_DELETE_CONFIRMATION}')" href="{URL_PREFIX}index.php?action=SubCalcDelete&module=QueryBuilder&filter_id={SUB_CALC.ID}&return_module=QueryBuilder&return_action=ColumnPopup&query_id={QUERY_ID}&column_record={COLUMN_ID}">{DELETE_INLINE_PNG} {APP.LNK_DELETE}</a></slot>
+		</td>
+    	</tr>
+
+<!-- END: row -->
+	</table>
+<!-- END: main -->
+<!-- BEGIN: edit -->
+<script>
+
+function updatedroplist(name, field_name, field_value){
+	document.getElementById(name).src = 'index.php?module=QueryBuilder&action=DisplayColumnValues&to_pdf=true&column_name=' + field_value + '&column_module=' + document.getElementById(field_name).options[document.getElementById(field_name).selectedIndex].value;
+}
+</script>
+<script>
+function set_sub_calc_save(){
+	this.document.SubCalcView.left_field.value = document.getElementById('leftiframe').contentDocument.dropdownview.column_name.value;
+	this.document.SubCalcView.right_field.value = document.getElementById('rightiframe').contentDocument.dropdownview.column_name.value;
+	this.document.SubCalcView.submit();
+}
+function set_new_calc(){
+	this.document.SubCalcView.action.value = 'ColumnPopup';
+	this.document.SubCalcView.filter_id.value = '';
+	this.document.SubCalcView.submit();
+}
+function check_type(type_field, module_field, frame_field, value_field){
+	//alert(frame_field);
+	if(this.document.getElementById(type_field).value == 'Group'){
+		//this.document.getElementById(frame_field).contentDocument.dropdownview.column_name.disabled=true;
+		this.document.getElementById(frame_field).style.display='none';
+		this.document.getElementById(module_field).style.display='none';
+		this.document.getElementById(value_field).style.display='none';
+	}
+	if(this.document.getElementById(type_field).value == 'Field') {
+		//this.document.getElementById(frame_field).contentDocument.dropdownview.column_name.disabled=false;
+		this.document.getElementById(frame_field).style.display='inline';
+		this.document.getElementById(module_field).style.display='inline';
+		this.document.getElementById(value_field).style.display='none';
+	}
+	if(this.document.getElementById(type_field).value == 'Value') {
+		this.document.getElementById(frame_field).style.display='none';
+		this.document.getElementById(module_field).style.display='none';
+		this.document.getElementById(value_field).style.display='inline';
+	
+		
+	}	
+
+	
+}	
+</script>
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="edit view">
+<tr><td>
+
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<form  name="SubCalcView"  method="POST" action="index.php">
+{SUBCALC_FORM}
+<input type="hidden" name="filter_id" value="{FILTER_ID}">
+		<tr>
+			<td scope="row" colspan="4"><slot>{MOD.LBL_PARENT_GROUP}  
+			<select id='parent_filter_id' name='parent_filter_id' tabindex='2' >{PARENT_FILTER_OPTIONS}</select>
+			</slot></td>
+
+		</tr>
+		<tr>
+			<td ><slot>&nbsp;</slot></td>
+			<td scope="row"><slot>&nbsp;</slot></td>
+			<td ><slot>&nbsp;</slot></td>
+			<td scope="row"><slot>&nbsp;</slot></td>
+		</tr>		
+<tr>
+			<td scope="row" colspan="4"><slot>{MOD.LBL_LEFT_TYPE}</slot></td>	
+			</tr>
+			<tr>
+			<td  colspan = "4">
+			<slot>
+			<select id='left_type' name='left_type' tabindex='2' onchange="check_type('left_type', 'left_module', 'leftiframe', 'left_value');">{LEFT_TYPE}</select>
+			<input id='left_value' name='left_value' tabindex='1' size='20' maxlength='20' type="text" value="{LEFT_VALUE}">
+			<select id='left_module' name='left_module' onchange="updatedroplist('leftiframe', 'left_module', '');" tabindex='2' >{LEFT_MODULE}</select>
+			<iframe id='leftiframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe>
+			</slot></td>
+			
+		</tr>
+		<tr>
+			<td ><slot>&nbsp;</slot></td>
+			<td scope="row"><slot>&nbsp;</slot></td>
+			<td ><slot>&nbsp;</slot></td>
+			<td scope="row"><slot>&nbsp;</slot></td>
+		</tr>
+		<tr>
+			<td scope="row" colspan="4"><slot>{MOD.LBL_OPERATOR}  <select id='operator' name='operator' tabindex='2'>{OPERATOR}</select></slot></td>	
+
+			</tr>
+		<tr>
+			<td ><slot>&nbsp;</slot></td>
+			<td scope="row"><slot>&nbsp;</slot></td>
+			<td ><slot>&nbsp;</slot></td>
+			<td scope="row"><slot>&nbsp;</slot></td>
+		</tr>
+		<tr>
+			<td scope="row" colspan="4"><slot>{MOD.LBL_RIGHT_TYPE}</slot></td>	
+			</tr><tr>
+			<td  colspan = "4">
+			<slot>
+			<select id='right_type' name='right_type' tabindex='2' onchange="check_type('right_type', 'right_module', 'rightiframe', 'right_value');">{RIGHT_TYPE}</select>
+			<input id='right_value' name='right_value' tabindex='1' size='20' maxlength='20' type="text" value="{RIGHT_VALUE}">
+			<select id='right_module' name='right_module' onchange="updatedroplist('rightiframe', 'right_module', '');" tabindex='2' >{RIGHT_MODULE}</select>
+						<iframe id='rightiframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe>
+			</slot></td>			
+		</tr>
+		<tr>
+		<td scope="row"><slot>{MOD.LBL_CALC_ENCLOSED}</slot></td>
+		<td  colspan="3"><slot><input name='calc_enclosed' class="checkbox" type="checkbox" tabindex='1' {CALC_ENCLOSED}></slot></td>
+		</tr><tr>
+		<td scope="row" ><slot>{MOD.LBL_LIST_ORDER}</slot></td>
+		<td ><slot><input name='list_order' tabindex='1' size='5' maxlength='4' type="text" value="{LIST_ORDER}"></slot></td>
+		<td scope="row" colspan="2" align="right"><slot><input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" type="submit" name="button" value="{APP.LBL_SAVE_BUTTON_LABEL}" LANGUAGE=javascript onclick='return set_sub_calc_save()'>
+		</slot></td>
+		</tr>
+</form>
+	</table>
+</td></tr>
+</table>
+<script>
+updatedroplist('leftiframe', 'left_module', '{LEFT_FIELD}');
+updatedroplist('rightiframe', 'right_module', '{RIGHT_FIELD}');
+check_type('left_type', 'left_module', 'leftiframe', 'left_value');
+check_type('right_type', 'right_module', 'rightiframe', 'right_value');
+
+</script>
+<!-- END: edit -->

@@ -1,0 +1,389 @@
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
+ *not use this file except in compliance with the License. Under the terms of the license, You 
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the 
+ *right to remove SugarCRM copyrights from the source code or user interface. 
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and 
+ * (ii) the SugarCRM copyright notice 
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ ********************************************************************************/
+
+body
+{
+	font-size:12px;
+}
+
+.body
+{
+	font-size:12px;
+}
+
+table,td
+{
+	font-size:11px;
+}
+
+h3,.monthHeaderH3,.schedulerTopDateCell,h5.listViewSubHeadS1,.h3Row
+{
+	font-size:12px;
+}
+
+.h3Row td,table.h3Row td h3,.h3Row h3
+{
+	font-size:12px;
+}
+
+h4,h5,h3
+{
+	font-size:12px;
+}
+
+.edit td[scope=row] h4,h4.edit td[scope=row]
+{
+	font-size:12px;
+}
+
+h2,h1
+{
+	font-size:16px;
+}
+
+button, input[type=submit], input[type=reset], input[type=button]
+{
+	font-size:11px;
+}
+
+button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected],button, input[type=submit], input[type=reset], input[type=button]:hover,button, input[type=submit], input[type=reset], input[type=button]:focus,button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]:focus
+{
+	font-size:11px;
+}
+
+input,select
+{
+	font-size:11px;
+}
+
+textarea
+{
+	font-size:12px;
+}
+
+.teamNoticeBox
+{
+	font-size:12px;
+}
+
+#tabRow
+{
+	font-size:12px;
+}
+
+.currentTab
+{
+	font-size:12px;
+}
+
+#subModuleList
+{
+	font-size:11px;
+}
+
+.leftColumnModuleName
+{
+	font-size:11px;
+}
+
+.headerBg
+{
+	font-size:12px;
+}
+
+#welcome,#globalLinks
+{
+	font-size:12px;
+}
+
+#welcome a
+{
+	font-size:11px;
+}
+
+#search
+{
+	font-size:12px;
+}
+
+ul.subTabs
+{
+	font:12px Arial, Verdana, Helvetica, sans-serif;
+}
+
+.subTabMore
+{
+	font-size:12px;
+}
+
+.date
+{
+	font-size:12px;
+}
+
+#lastView
+{
+	font-size:11px;
+}
+
+#newRecord form
+{
+	font-size:11px;
+}
+
+td#newRecord form .edit td[scope=row]
+{
+	font-size:11px;
+}
+
+#newRecord form a:link,#newRecord form a:visited
+{
+	font-size:11px;
+}
+
+table.reportlistView td,table.reportlistView th,.reportGroupViewTable .reportevenListRowS1,.reportGroupViewTable .reportoddListRowS1,.reportoddListRowS1
+{
+	font-size:11px;
+}
+
+.reportGroupNByTableEvenListRowS1
+{
+	font-size:12px;
+}
+
+.reportGroup1ByTable .reportGroup1ByTableEvenListRowS1,.reportGroup1ByTable .reportGroupNByTableEvenListRowS1
+{
+	font-size:13px;
+}
+
+table.list .view th,.list th, .list td[scope=col]
+{
+	font-size:11px;
+}
+
+.list td a:link,.list td a:visited
+{
+	font-size:12px;
+}
+
+a.listViewTdToolsS1:link,a.listViewTdToolsS1:visited
+{
+	font-size:12px;
+}
+
+.list tr.oddListRowS1 td, .list tr.evenListRowS1 td,.schedulerEvenListRow,.schedulerOddListRow
+{
+	font-size:12px;
+}
+
+.list table tr.pagination td
+{
+	font-size:12px;
+}
+
+a.listViewCheckLink:link,a.listViewCheckLink:visited
+{
+	font-size:11px;
+}
+
+a.utilsLink:link,a.utilsLink:visited
+{
+	font-size:11px;
+}
+
+a.tabFormAdvLink:link,a.tabFormAdvLink:visited
+{
+	font-size:11px;
+}
+
+.edit
+{
+	font-size:12px;
+}
+
+h5.edit td[scope=row]
+{
+	font-size:12px;
+}
+
+.edit td[scope=row]
+{
+	font-size:12px;
+}
+
+.edit td
+{
+	font-size:12px;
+}
+
+a.tabFormAdvLink:link,a.tabFormAdvLink:visited
+{
+	font-size:11px;
+}
+
+table.monthHeader td
+{
+	font-size:11px;
+}
+
+.detail td[scope=row]
+{
+	font-size:12px;
+}
+
+h4.detail td[scope=row]
+{
+	font-size:12px;
+}
+
+.detail td
+{
+	font-size:12px;
+}
+
+.other td[scope=row]
+{
+	font-size:12px;
+}
+
+.other td
+{
+	font-size:12px;
+}
+
+.monthBox
+{
+	font-size:12px;
+}
+
+a.monthFooter a, .monthHeader a:link,a.monthFooter a, .monthHeader a:visited,a.monthFooter a, .monthHeader a:hover
+{
+	font-size:12px;
+}
+
+.monthCalBodyTH th[scope=row],.monthCalBodyTH th
+{
+	font-size:11px;
+}
+
+a.monthViewDayHeight td[scope=row] a:link,a.monthViewDayHeight td[scope=row] a:visited
+{
+	font-size:12px;
+}
+
+.monthCalBodyTodayWeekDay,.monthCalBodyTodayWeekEnd
+{
+	font-size:12px;
+}
+
+a.monthViewDayHeight td a:link,a.monthViewDayHeight td a:visited
+{
+	font-size:12px;
+}
+
+a.monthCalBodyDayItemLink:link,a.monthCalBodyDayItemLink:visited,a.monthCalBodyDayItemLink:hover
+{
+	font-size:11px;
+}
+
+.monthCalBody th
+{
+	font-size:12px;
+}
+
+.monthCalBody td
+{
+	font-size:12px;
+}
+
+a.yearCalBodyMonth > a:link,a.yearCalBodyMonth > a:visited
+{
+	font-size:12px;
+}
+
+.calSharedUser
+{
+	font-size:12px;
+}
+
+.rssItemDate
+{
+	font-size:11px;
+}
+
+.dateFormat
+{
+	font-size:11px;
+}
+
+.chartFootnote
+{
+	font-size:10px;
+}
+
+.tm
+{
+	font-size:8px;
+}
+
+.schedulerDiv
+{
+	font-size:12px;
+}
+
+#globalLinks
+{
+	font:12px Arial, Verdana, Helvetica, sans-serif;
+}
+
+ul#globalLinks
+{
+	font:12px Arial, Verdana, Helvetica, sans-serif;
+}
+
+ul.tablist,ul.subpanelTablist
+{
+	font:12px Arial, Verdana, Helvetica, sans-serif;
+}
+
+.subpanelTabForm
+{
+	font-size:12px;
+}
+
+.sqsMatchedSmartInputItem
+{
+	font-size:11px;
+}
+
+.olCapFontClass A
+{
+	font-size:9px;
+}
+
+#sitemap a
+{
+	font-size:11px;
+}
+
+#sitemap h4 a
+{
+	font-size:12px;
+}

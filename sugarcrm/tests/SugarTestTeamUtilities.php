@@ -1,0 +1,40 @@
+<?php
+//FILE SUGARCRM flav=pro ONLY
+require_once 'modules/Teams/Team.php';
+
+class SugarTestTeamUtilities
+{
+    public static  $_createdTeams = array();
+
+    private function __construct() {}
+
+    public function __destruct()
+    {
+        self::removeAllCreatedAnonymousTeams();
+    }
+
+    public static function createAnonymousTeam() 
+    {
+        $team = new Team();
+        $team->name = 'Test Team - ' . mt_rand();
+        $team->save();
+        self::$_createdTeams[] = $team;
+        return $team;
+    }
+
+    public static function removeAllCreatedAnonymousTeams() 
+    {
+        $team_ids = self::getCreatedTeamIds();
+        $GLOBALS['db']->query('DELETE FROM teams WHERE id IN (\'' . implode("', '", $team_ids) . '\')');
+    }
+    
+    public static function getCreatedTeamIds() 
+    {
+        $team_ids = array();
+        foreach (self::$_createdTeams as $team)
+            $team_ids[] = $team->id;
+        
+        return $team_ids;
+    }
+}
+

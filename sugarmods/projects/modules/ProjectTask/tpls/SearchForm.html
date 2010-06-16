@@ -1,0 +1,60 @@
+<!--
+/*
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
+ */
+-->
+<!-- $Id: SearchForm.html 14767 2006-07-18 22:21:41 +0000 (Tue, 18 Jul 2006) majed $ -->
+<!-- BEGIN:main -->
+{header}
+{JAVASCRIPT}
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="tabForm">
+<tr>
+<td><form method="get" name="module_selection_form">
+<input type="hidden" name="module" value="ProjectTask" />
+<input type="hidden" name="action" value="index" />
+<input type="hidden" name="query" value="true" />
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+<tr>
+<td class="dataLabel"><span sugar='slot1'>{mod.LBL_NAME}&nbsp;&nbsp;<input type="text" name="name"
+	value="{name}" /></span sugar='slot'></td>
+<td class="dataLabel"><span sugar='slot1b'>{mod.LBL_PARENT_ID}&nbsp;&nbsp;<input type="text" name="parent_name"
+	value="{parent_name}" /></span sugar='slot'></td>
+<td class="dataLabel">{app.LBL_CURRENT_USER_FILTER}&nbsp;&nbsp;<input
+	type="checkbox" name="current_user_only" class="checkbox"
+	onchange="this.form.submit();" {CURRENT_USER_ONLY} /></td>
+<td align="right"><input type="submit" class="button" title="Select [Alt+Q]"
+	accesskey="{app.LBL_SEARCH_BUTTON_KEY}" value="Search" />&nbsp;<input type="button"
+	name="clear" class="button"
+	title="{app.LBL_CLEAR_BUTTON_TITLE}" accesskey="{app.LBL_CLEAR_BUTTON_KEY}"
+	value=" {app.LBL_CLEAR_BUTTON_LABEL} " onclick="clear_form(this.form);" /></td>
+</tr>
+
+</table></form></td>
+</tr>
+</table>
+<br />
+<!-- END:main -->

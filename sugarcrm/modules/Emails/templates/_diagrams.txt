@@ -1,0 +1,25 @@
+//FILE SUGARCRM flav=int ONLY
+
+User Preference Diagram
+		$userPreferences['sort'] = $sortArray;
+		$userPreferences['folderStates'] = $folderStates;
+		$userPreferences['showFolders'] = $showFolders;
+		$userPreferences['focusFolder'] = $focusFolder;
+		$userPreferences['showUnreadOnly'] = $showUnreadOnly;
+		$userPreferences['listViewSort'] = $listViewSort;
+		$userPreferences['signatures'] = $signatures;
+		$userPreferences['defaultOutboundCharset'] = $defaultCharset;
+		$userPreferences['emailLists'] = $lists;
+
+
+email_settings:
+Array
+(
+    [emailCheckInterval] => -1
+    [layoutStyle] => 2cols
+    [autoImport] => 0
+    [alwaysSaveOutbound] => 1
+    [assign_to_team] => 8aa1d9db-bace-d30e-273d-46366fd4716f
+    [sendPlainText] => 1
+)
+

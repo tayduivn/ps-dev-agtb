@@ -1,0 +1,74 @@
+<!--
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
+ *not use this file except in compliance with the License. Under the terms of the license, You 
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the 
+ *right to remove SugarCRM copyrights from the source code or user interface. 
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and 
+ * (ii) the SugarCRM copyright notice 
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ ********************************************************************************/
+/*********************************************************************************
+ * $Id: DetailView.html 49842 2009-07-31 12:57:58Z jmertic $
+ ********************************************************************************/
+-->
+<!-- BEGIN: main -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td>
+		<form name="EditView" method="POST" action="index.php">
+			<input type="hidden" name="module" value="DocumentRevisions">
+			<input type="hidden" name="record" value="{ID}">
+			<input type="hidden" name="action">
+			<input type="hidden" name="isDuplicate">
+			<input type="hidden" name="old_id" value="{DOCUMENT_REVISION_ID}">
+			<input type="hidden" name="return_module" value="{RETURN_MODULE}">
+			<input type="hidden" name="return_id" value="{RETURN_ID}">
+			<input type="hidden" name="return_action" value="{RETURN_ACTION}">
+			
+		</form>
+	</td>
+	<td align="right">{ADMIN_EDIT}</td>
+</tr>
+</table>
+
+
+<div class="detail view">
+<table width="100%" border="0" cellspacing="{GRIDLINE}" cellpadding="0">
+{PAGINATION}
+	<tr>
+		<td width="15%" valign="top" scope="row"><slot>{MOD.LBL_DOC_NAME}</slot></td>
+		<td width="35%" valign="top"><slot>{DOCUMENT_NAME}&nbsp;</slot></td>		
+        <td width="15%" valign="top" scope="row"><slot>{MOD.LBL_CURRENT_DOC_VERSION}</slot></td>
+		<td width="35%" valign="top"><slot>{CURRENT_REVISION}&nbsp;</slot></td>		        
+	</tr>
+
+	<tr>
+        <td width="15%" valign="top" scope="row"><slot>{MOD.LBL_FILENAME}</slot></td>
+        <td width="35%" valign="top"><slot><a href='index.php?entryPoint=download&id={SAVE_FILE}&type=Documents'>{FILE_NAME}</a>&nbsp;</slot></td>	
+        <td width="15%" valign="top" scope="row"><slot>{MOD.LBL_DOC_VERSION}</slot></td>
+		<td width="35%" valign="top"><slot>{REVISION}&nbsp;</slot></td>		        
+	</tr>
+	<tr>
+		<td width="15%" valign="top" scope="row"><slot>{MOD.LBL_DET_CREATED_BY}</slot></td>
+		<td width="35%" valign="top"><slot>{CREATED_BY}&nbsp;</slot></td>		
+        <td width="15%" valign="top" scope="row"><slot>{MOD.LBL_DET_DATE_CREATED}</slot></td>
+		<td width="35%" valign="top"><slot>{DATE_CREATED}&nbsp;</slot></td>		        
+	</tr>
+	<tr>
+		<td width="15%" scope="row"><slot>{MOD.LBL_CHANGE_LOG}</slot></td>
+		<td width="85%" colspan="3"><slot>{CHANGE_LOG}&nbsp;</slot></td>		
+	</tr>
+</table>
+</div>
+<!-- END: main -->
