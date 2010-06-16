@@ -4,7 +4,7 @@ $config['license']['search'] = 'contents of this file are subject to';
 $config['excludeFileTypes'] = array('.png'=>1, '.gif'=> 1, '.jpg'=>1, '.swf'=>1, 'README'=>1);
 $config['excludeFiles'] = array('sugarportal/jscalendar/lang/calendar-hr.js'=>1);
 $config['skipBuilds'] = array('spotactions'=>1, 'richtext'=>1, 'sugarmdle'=>1, 'following'=>1,'inlineedit'=>1, 'notifications'=>1,'sugarsurvey'=>1, 'int'=>1,'internal'=>1 );
-$config['skipDirs'] = array('Bitrock'=>1,'webpi'=>1, 'rome'=>1, 'scripts'=>1 );
+$config['skipDirs'] = array('Bitrock'=>1,'webpi'=>1, 'rome'=>1, 'scripts'=>1, 'aps'=>1 );
 $config['registry'] = array('reg'=>array(), 'lic'=>array(), 'flav'=>array(), 'dep'=>array());
 $config['registry']['dep'] = array('os'=>1, 'od'=>1, 'een' => 1);
 $config['registry']['reg'] = array('zh_cn'=>1);
