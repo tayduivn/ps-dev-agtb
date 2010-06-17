@@ -85,7 +85,7 @@ $viewdefs['Schedulers']['EditView'] = array(
 				'))
                            ),
             'lbl_adv_options'=>array(
-                            array(array('name' => 'catch_up', 'prepend' => '{sugar_help text=$MOD.LBL_CATCH_UP_WARNING}')),
+                            array(array('name' => 'catch_up', 'prefix' => '{sugar_help text=$MOD.LBL_CATCH_UP_WARNING}')),
                            	array('date_time_start','time_from'),
                            	array('date_time_end','time_to'),
                            	),

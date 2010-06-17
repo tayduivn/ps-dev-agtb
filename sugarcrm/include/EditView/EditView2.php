@@ -247,9 +247,6 @@ class EditView
 			            foreach($rowDef as $col => $colDef) {
 			                $panel[$row][$col] = is_array($p[$row][$col]) ? array('field' => $p[$row][$col]) : array('field' => array('name'=>$p[$row][$col]));
                             $panel[$row][$col]['field']['tabindex'] = (isset($p[$row][$col]['tabindex']) && is_numeric($p[$row][$col]['tabindex'])) ? $p[$row][$col]['tabindex'] : $itemCount;
-			            	if(isset($p[$row][$col]['prepend'])) {
-			            		$panel[$row][$col]['displayParams'] = $p[$row][$col]['prepend'];
-			            	}
 			                if($columnsInRows < $maxColumns) {
 			                    if($col == $columnsInRows - 1) {
 			                        $panel[$row][$col]['colspan'] = 2 * $maxColumns - ($columnsUsed + 1);

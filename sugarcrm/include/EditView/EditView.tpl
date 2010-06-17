@@ -170,6 +170,7 @@ class="yui-navset"
 				{{/if}}
 			{{/if}}
 
+		{{$colData.field.prefix}}
 		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{if $fields.{{$colData.field.name}}.acl > 1}
@@ -209,6 +210,7 @@ class="yui-navset"
 			    {counter name="panelFieldCount"}
 				{{sugar_field parentFieldArray='fields' tabindex=$tabindex vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
 			{{/if}}
+	    {{$colData.field.suffix}}
 		</td>
 		{{/if}}
 
