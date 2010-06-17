@@ -134,7 +134,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         //Test a fake module
         $result = $this->_getVardefsMD5('BadModule');
         $this->assertTrue($result['faultstring'] == 'Module Does Not Exist');
-        unset($GLOBALS['reload_vardefs');
+        unset($GLOBALS['reload_vardefs']);
     }     
 
     public function testGetUpcomingActivities()
