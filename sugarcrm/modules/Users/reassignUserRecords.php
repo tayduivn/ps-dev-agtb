@@ -36,6 +36,14 @@ if(!is_admin($current_user)&& !is_admin_for_module($GLOBALS['current_user'],'Use
 
 global $locale;
 
+$return_module = isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '';
+$return_action = isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '';
+$return_id = isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '';
+if(!empty($return_module))
+    $cancel_location = "index.php?module=".$return_module."&action=".$return_action."&record=".$return_id;
+else 
+    $cancel_location = "index.php?module=Users&action=index";
+		
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
 echo "{$mod_strings_users['LBL_REASS_DESC_PART1']}<BR><br>";
 
@@ -70,6 +78,7 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 <td>
 <input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
 &nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='document.location="index.php?module=Users&action=reassignUserRecords&clear=true"'>
+<input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
 </tr>
 </table>
