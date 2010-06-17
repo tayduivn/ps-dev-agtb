@@ -357,14 +357,16 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($mobileResultExpected, $mobileResult, "Unable to get all visible mobile modules");
         
         $defaultResult = $this->_makeRESTCall('get_available_modules', array('session' => $session, 'filter' => 'default' ));
-        $defaultResult = md5(serialize($defaultResult));
+        $defaultResult = md5(serialize($defaultResult['modules']));
         $defaultResultExpected = $sh->get_visible_modules($fullResult['modules']);
-        $defaultResultExpected = md5(serialize(array('modules' => $defaultResultExpected)));
+        $defaultResultExpected = md5(serialize($defaultResultExpected));        
         $this->assertEquals($defaultResultExpected, $defaultResult, "Unable to get all visible default modules");
+      
     }
     
     public function testGetVardefsMD5()
     {
+        $GLOBALS['reload_vardefs'] = TRUE;
         $result = $this->_login();
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
         $session = $result['id'];
@@ -375,13 +377,12 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $soapHelper = new SugarWebServiceUtilv3();
         $actualVardef = $soapHelper->get_return_module_fields($a,'Accounts','');
         $actualMD5 = md5(serialize($actualVardef));
-
         $this->assertEquals($actualMD5, $result, "Unable to retrieve vardef md5.");
         
         //Test a fake module
         $result = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'BadModule' )); 
         $this->assertTrue($result['name'] == 'Module Does Not Exist');
-        
+        unset($GLOBALS['reload_vardefs']);
     }
     
     public function testAddNewAccountAndThenDeleteIt()
