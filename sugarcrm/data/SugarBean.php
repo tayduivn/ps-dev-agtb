@@ -5656,8 +5656,8 @@ function save_relationship_changes($is_update, $exclude=array())
         $result = sugar_cache_retrieve($cache_key);
         if(!empty($result))
         {
-        	// Use EXTERNAL_CACHE_NULL_VALUE to store null values in the cache.
-        	if($result == EXTERNAL_CACHE_NULL_VALUE)
+        	// Use SugarCache::EXTERNAL_CACHE_NULL_VALUE to store null values in the cache.
+        	if($result == SugarCache::EXTERNAL_CACHE_NULL_VALUE)
         	{
         		return null;
         	}
@@ -5677,7 +5677,7 @@ function save_relationship_changes($is_update, $exclude=array())
             if(empty($moduleDefs[$module]) || empty($moduleDefs[$module][$module][$key]))
             {
                 // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation
-				sugar_cache_put($cache_key, EXTERNAL_CACHE_NULL_VALUE);
+				sugar_cache_put($cache_key, SugarCache::EXTERNAL_CACHE_NULL_VALUE);
                 return  null;
             }
 
@@ -5687,7 +5687,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
 
         // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation
-        sugar_cache_put($cache_key, EXTERNAL_CACHE_NULL_VALUE);
+        sugar_cache_put($cache_key, SugarCache::EXTERNAL_CACHE_NULL_VALUE);
 		return null;
 	}
 }
