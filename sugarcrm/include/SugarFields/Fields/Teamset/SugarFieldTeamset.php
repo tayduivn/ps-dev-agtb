@@ -511,5 +511,85 @@ class SugarFieldTeamset extends SugarFieldBase {
 	        $bean->teams->$method($team_ids, array(), false);
 		}
 	}
+    
+    /**
+     * @see SugarFieldBase::importSanitize()
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        static $teamBean;
+        if ( !isset($teamBean) ) {
+            $teamBean = loadBean('Teams');
+        }
+        
+    	if(!is_array($value)){
+	        // We will need to break it apart to put test it.
+       		$value = explode(",",$value);
+       		if(!is_array($value))
+       			$value = array($value);
+		}
+		$team_ids = array();
+		foreach($value as $val){
+			//1) check if this is a team id
+			$val = trim($val);
+            if ( empty($val) ) {
+                continue;
+            }
+			if(!$this->_isTeamId($val, 'Teams')){
+				//2) check if it is a team name
+				$fieldname = $vardef['rname'];
+                $teamid = $teamBean->retrieve_team_id($val);
+                if($teamid !== false){
+                    $team_ids[] = $teamid;
+                    continue;
+                } else {
+                    continue;
+                }
+                //3) ok we did not find the id, so we need to create a team.
+                $newbean = loadBean('Teams');
+                 if ( $newbean->ACLAccess('save') ) {
+                 	$newbean->$vardef['rname'] = $val;
+                 	
+                    if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' ){
+                    	$newbean->assigned_user_id = $GLOBALS['current_user']->id;
+                    }else{
+                    	$newbean->assigned_user_id = $focus->assigned_user_id;
+                    }
+                    
+                    if ( !isset($focus->modified_user_id) || $focus->modified_user_id == '' ){
+                    	$newbean->modified_user_id = $GLOBALS['current_user']->id;
+                    }else{
+                    	$newbean->modified_user_id = $focus->modified_user_id;
+                    }
+                    
+                    $newbean->save(false);
+                    $team_ids[] = $newbean->id;
+                 }
+			}else{
+				$team_ids[] = $val;
+			}
+		}
+
+		if(!empty($team_ids)){
+			$focus->load_relationship('teams');
+			$focus->teams->replace($team_ids, array(), true);
+			$focus->team_id = $team_ids[0];
+		} else {
+            $focus->setDefaultTeam();
+        }
+    }
+    
+    private function _isTeamId($value, $module){
+    	$checkfocus = loadBean($module);
+        if ( $checkfocus && is_null($checkfocus->retrieve($value)) ){
+        	return false;
+        }
+        return true;
+    }
 }
 ?>

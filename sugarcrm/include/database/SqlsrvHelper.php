@@ -145,6 +145,7 @@ class SqlsrvHelper extends MssqlHelper
     }
     
     /**
+<<<<<<< HEAD
      * @see DBHelper::get_columns()
      */
     public function get_columns(
@@ -203,10 +204,17 @@ class SqlsrvHelper extends MssqlHelper
      */
     public function get_indices(
         $tableName
+=======
+     * @see DBHelper::get_indices()
+     */
+    public function get_indices(
+        $tablename
+>>>>>>> Bugs 38892/38894/38896/38897 - Change fix; add function SqlsrvHelper::get_indices() with the updated query and revert MssqlHelper::get_indices() back to using the deprecated queries, in case there is someone still using SQL Server 2000 out there.
         ) 
     {
         //find all unique indexes and primary keys.
         $query = <<<EOSQL
+<<<<<<< HEAD
 SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name, 
         sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
     FROM sys.tables, sys.indexes, sys.index_columns, sys.columns 
@@ -216,12 +224,29 @@ SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as 
             AND sys.indexes.index_id = sys.index_columns.index_id 
             AND sys.index_columns.column_id = sys.columns.column_id) 
         AND sys.tables.name = '$tableName'
+=======
+SELECT LEFT(so.name, 30) TableName, 
+        LEFT(si.name, 50) 'Key_name',
+        LEFT(sik.key_ordinal, 30) Sequence, 
+        LEFT(sc.name, 30) Column_name,
+		si.is_unique isunique
+    FROM sys.indexes si
+        INNER JOIN sys.index_columns sik 
+            ON (si.object_id = sik.object_id AND si.index_id = sik.index_id)
+        INNER JOIN sys.objects so 
+            ON si.object_id = so.object_id
+        INNER JOIN sys.columns sc 
+            ON (so.object_id = sc.object_id AND sik.column_id = sc.column_id)
+    WHERE so.name = '$tablename'
+    ORDER BY Key_name, Sequence, Column_name
+>>>>>>> Bugs 38892/38894/38896/38897 - Change fix; add function SqlsrvHelper::get_indices() with the updated query and revert MssqlHelper::get_indices() back to using the deprecated queries, in case there is someone still using SQL Server 2000 out there.
 EOSQL;
         $result = $this->db->query($query);
         
         $indices = array();
         while (($row=$this->db->fetchByAssoc($result)) != null) {
             $index_type = 'index';
+<<<<<<< HEAD
             if ($row['is_primary_key'] == '1')
                 $index_type = 'primary';
             elseif ($row['is_unique'] == 1 )
@@ -303,5 +328,18 @@ EOSQL;
         
         return $sql;
     }
+=======
+            if ($row['Key_name'] == 'PRIMARY')
+                $index_type = 'primary';
+            elseif ($row['isunique'] == 1 )
+                $index_type = 'unique';
+            $name = strtolower($row['Key_name']);
+            $indices[$name]['name']     = $name;
+            $indices[$name]['type']     = $index_type;
+            $indices[$name]['fields'][] = strtolower($row['Column_name']);
+        }
+        return $indices;
+    }
+>>>>>>> Bugs 38892/38894/38896/38897 - Change fix; add function SqlsrvHelper::get_indices() with the updated query and revert MssqlHelper::get_indices() back to using the deprecated queries, in case there is someone still using SQL Server 2000 out there.
 }
 ?>
