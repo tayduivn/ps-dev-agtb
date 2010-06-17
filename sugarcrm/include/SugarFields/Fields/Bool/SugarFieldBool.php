@@ -38,6 +38,31 @@ class SugarFieldBool extends SugarFieldBase {
 			return $this->fetch('include/SugarFields/Fields/Bool/SearchView.tpl');
 		
 	}
+    
+    /**
+     * @see SugarFieldBase::importSanitize()
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        $bool_values = array(0=>'0',1=>'no',2=>'off',3=>'n',4=>'yes',5=>'y',6=>'on',7=>'1');
+        $bool_search = array_search($value,$bool_values);
+        if ( $bool_search === false ) {
+            return false;
+        } 
+        else {
+            //Convert all the values to a real bool.
+            $value = (int) ( $bool_search > 3 );
+        }
+        if ( isset($vardef['dbType']) && $vardef['dbType'] == 'varchar' )
+            $value = ( $value ? 'on' : 'off' );
+        
+        return $value;
+    }
     	
     public function getEmailTemplateValue($inputField, $vardef, $displayParams = array(), $tabindex = 0){
         global $app_list_strings;

@@ -2,10 +2,10 @@
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
+require_once('include/SugarFields/Fields/Enum/SugarFieldEnum.php');
 
-class SugarFieldMultienum extends SugarFieldBase {
-
+class SugarFieldMultienum extends SugarFieldEnum 
+{   
     function setup($parentFieldArray, $vardef, $displayParams, $tabindex, $twopass=true) {
         if ( !isset($vardef['options_list']) && isset($vardef['options']) && !is_array($vardef['options'])) {
             $vardef['options_list'] = $GLOBALS['app_list_strings'][$vardef['options']];
@@ -40,5 +40,36 @@ class SugarFieldMultienum extends SugarFieldBase {
 
 			$bean->$field = encodeMultienumValue($params[$prefix.$field]);
 		}
+    }
+    
+    /**
+     * @see SugarFieldBase::importSanitize()
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        if(!empty($value) && is_array($value)) {
+            $enum_list = $value;
+        }
+        else {
+            // If someone was using the old style multienum import technique
+            $value = str_replace("^","",$value);
+            
+            // We will need to break it apart to put test it.
+            $enum_list = explode(",",$value);
+        }
+        // parse to see if all the values given are valid
+        foreach ( $enum_list as $enum_value ) {
+        	if ( parent::importSanitize($enum_value,$vardef,$focus,$settings) === false ) {
+                return false;
+            }
+        }
+        $value = encodeMultienumValue($enum_list);
+        
+        return $value;
     }
 }
