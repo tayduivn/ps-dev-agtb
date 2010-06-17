@@ -62,8 +62,9 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		
 		$record = $layout_def['fields'][$key];
 		$layout_def['name'] = $name;
-		if ($module == 'Users')
-                    $module = 'Employees';
+		global $current_user;
+		if ($module == 'Users' && !is_admin($current_user))
+        	$module = 'Employees';
 		$str = "<a target='_blank' href=\"index.php?action=DetailView&module=$module&record=$record\">";
 		$str .= $this->displayListPlain($layout_def);
 		$str .= "</a>";	
