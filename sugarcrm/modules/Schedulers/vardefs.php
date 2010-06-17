@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['schedulers'] = array('table' => 'schedulers',
+$dictionary['Scheduler'] = array('table' => 'schedulers',
 	'fields' => array (
 		'id' => array (
 			'name' => 'id',
@@ -113,15 +113,15 @@ $dictionary['schedulers'] = array('table' => 'schedulers',
 		),
 		'date_time_start' => array (
 			'name' => 'date_time_start',
-			'vname' => 'LBL_SCHEDULER_DATE_TIME_START',
-			'type' => 'datetime',
+			'vname' => 'LBL_DATE_TIME_START',
+			'type' => 'datetimecombo',
 			'required' => true,
 			'reportable' => false,
 		),
 		'date_time_end' => array (
 			'name' => 'date_time_end',
-			'vname' => 'LBL_SCHEDULER_DATE_TIME_END',
-			'type' => 'datetime',
+			'vname' => 'LBL_DATE_TIME_END',
+			'type' => 'datetimecombo',
 			'reportable' => false,
 		),
 		'job_interval' => array (

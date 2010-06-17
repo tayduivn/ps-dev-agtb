@@ -57,7 +57,7 @@ class Scheduler extends SugarBean {
 	var $timeOutMins = 60;
 	// standard SugarBean attrs
 	var $table_name				= "schedulers";
-	var $object_name			= "schedulers";
+	var $object_name			= "Scheduler";
 	var $module_dir				= "Schedulers";
 	var $new_schema				= true;
 	var $process_save_dates 	= true;
