@@ -21,3 +21,4 @@
  ********************************************************************************/
 $action_view_map['themesettings'] = 'themesettings';
 $action_view_map['repair'] = 'repair';
+$action_view_map['configuretabs'] = 'configuretabs';
