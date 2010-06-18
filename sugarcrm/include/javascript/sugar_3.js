@@ -2938,30 +2938,41 @@ SUGAR.searchForm = function() {
 					break;
 			}
 		},
-
 		clear_form: function(form) {
-			var newLoc = 'index.php?action=' + form.action.value + '&module=' + form.module.value + '&query=true&clear_query=true';
-			if(typeof(form.searchFormTab) != 'undefined'){
-				newLoc += '&searchFormTab=' + form.searchFormTab.value;
-			}
+            var elemList = form.elements;
+            var elem;
+            var elemType;
 
-			//check to see if alternate tpl has been specified, if so then pass location through url string
-			var tpl ='';
-			if(document.getElementById('search_tpl') !=null && typeof(document.getElementById('search_tpl')) != 'undefined'){
-				tpl = document.getElementById('search_tpl').value;
-				if(tpl != ''){newLoc += '&search_tpl='+tpl;}
-			}
-            
-            if(document.getElementById('saved_search_select') && document.getElementById('saved_search_select').value !='_none'){
-                newLoc = 'index.php?module=SavedSearch&search_module=' + form.module.value + '&action=index&saved_search_select=_none';
-                if(typeof(document.getElementById('searchFormTab'))!='undefined'){
-                    newLoc = newLoc + '&searchFormTab=' + document.search_form.searchFormTab.value;
+            for( var i = 0; i < elemList.length ; i++ ) {
+                elem = elemList[i];
+                if ( typeof(elem.type) == 'undefined' ) {
+                    continue;
                 }
-                if(document.getElementById('showSSDIV') && typeof(document.getElementById('showSSDIV') !='undefined')){
-                    newLoc = newLoc + '&showSSDIV='+document.getElementById('showSSDIV').value;
+                
+                elemType = elem.type.toLowerCase();
+                
+                if ( elemType == 'text' || elemType == 'textarea' || elemType == 'password' ) {
+                    elem.value = '';
+                }
+                else if ( elemType == 'select' || elemType == 'select-one' || elemType == 'select-multiple' ) {
+                    // We have, what I hope, is a select box, time to unselect all options
+                    var optionList = elem.options;
+                    for ( var ii = 0 ; ii < optionList.length ; ii++ ) {
+                        optionList[ii].selected = false;
+                    }
+                }
+                else if ( elemType == 'radio' || elemType == 'checkbox' ) {
+                    elem.selected = off;
+                }
+                else if ( elemType == 'hidden' ) {
+                    // We only want to reset the hidden values that link to the select boxes.
+                    if ( ( elem.name.length > 3 && elem.name.substring(elem.name.length-3) == '_id' )
+                         || ( elem.name.length > 11 && elem.name.substring(elem.name.length-11) == '_id_advanced' ) ) {
+                        elem.value = '';
+                    }
                 }
             }
-			document.location.href = newLoc;
+
 		}
 	};
 }();
