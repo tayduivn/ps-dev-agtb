@@ -228,6 +228,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 <td>
 <input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
 &nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='document.location="index.php?module=Users&action=reassignUserRecords&clear=true"'>
+<input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
 </tr>
 </table>
