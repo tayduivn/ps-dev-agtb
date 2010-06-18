@@ -47,12 +47,11 @@ if (!is_admin($current_user)) sugar_die("Unauthorized access to administration."
 		$panels_to_hide = '';
 
 	if(isset($_REQUEST['Save_or_Cancel']) && $_REQUEST['Save_or_Cancel']=='save'){
-		if(isset($_REQUEST['disabled_panels'])) 
+	    if(isset($_REQUEST['disabled_panels'])) 
 			$panels_to_hide = $_REQUEST['disabled_panels'];
 		//turn list  into array
 		$hidpanels_arr = explode(',',$panels_to_hide);
 		$hidpanels_arr = TabController::get_key_array($hidpanels_arr);
-		
 		//save list of subpanels to hide
 		SubPanelDefinitions::set_hidden_subpanels($hidpanels_arr);
 		echo "true";

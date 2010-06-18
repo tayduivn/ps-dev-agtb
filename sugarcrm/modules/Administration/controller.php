@@ -28,25 +28,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SubPanel/SubPanelDefinitions.php');
-require_once('modules/MySettings/TabController.php');
-
-global $current_user;
-
-if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
-
-// handle the tabs listing
-$toDecode = html_entity_decode  ($_REQUEST['enabled_tabs'], ENT_QUOTES);
-$enabled_tabs = json_decode($toDecode);
-$tabs = new TabController();
-$tabs->set_system_tabs($enabled_tabs);
-$tabs->set_users_can_edit(isset($_REQUEST['user_edit_tabs']) && $_REQUEST['user_edit_tabs'] == 1);
-
-// handle the subpanels
-if(isset($_REQUEST['disabled_tabs'])) {
-    $disabledTabs = json_decode(html_entity_decode($_REQUEST['disabled_tabs'], ENT_QUOTES));
-    $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
-    SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
+class AdministrationController extends SugarController
+{
+    public function action_savetabs()
+    {
+        require_once('include/SubPanel/SubPanelDefinitions.php');
+        require_once('modules/MySettings/TabController.php');
+        
+        global $current_user;
+        
+        if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
+        
+        // handle the tabs listing
+        $toDecode = html_entity_decode  ($_REQUEST['enabled_tabs'], ENT_QUOTES);
+        $enabled_tabs = json_decode($toDecode);
+        $tabs = new TabController();
+        $tabs->set_system_tabs($enabled_tabs);
+        $tabs->set_users_can_edit(isset($_REQUEST['user_edit_tabs']) && $_REQUEST['user_edit_tabs'] == 1);
+        
+        // handle the subpanels
+        if(isset($_REQUEST['disabled_tabs'])) {
+            $disabledTabs = json_decode(html_entity_decode($_REQUEST['disabled_tabs'], ENT_QUOTES));
+            $disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
+            SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
+        }
+        
+        header("Location: index.php?module=Administration&action=ConfigureTabs");
+    }
 }
-
-header("Location: index.php?module=Administration&action=ConfigureTabs");
