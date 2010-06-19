@@ -270,7 +270,7 @@ if((!empty($_POST['addtofavorites']) || !empty($_POST['delete'])) && !empty($_PO
        	$couldNotDelete = 0;
         foreach($_POST['mass'] as $id) {
             $report->retrieve($id);
-            if($report->ACLAccess('Delete') && ($report->assigned_user_id == $current_user->id || $current_user->is_admin)){
+            if($report->ACLAccess('Delete')){
                 $report->mark_deleted($id);
             }
             else {

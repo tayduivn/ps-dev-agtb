@@ -122,6 +122,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetVardefsMD5()
     {   
+        $GLOBALS['reload_vardefs'] = TRUE;
         //Test a regular module
         $result = $this->_getVardefsMD5('Accounts');
         $a = new Account();
@@ -133,6 +134,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         //Test a fake module
         $result = $this->_getVardefsMD5('BadModule');
         $this->assertTrue($result['faultstring'] == 'Module Does Not Exist');
+        unset($GLOBALS['reload_vardefs']);
     }     
 
     public function testGetUpcomingActivities()

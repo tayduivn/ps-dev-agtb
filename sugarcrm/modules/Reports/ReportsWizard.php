@@ -277,7 +277,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 else if (isset($_REQUEST['is_delete']) && ($_REQUEST['is_delete'] == '1')) {
     $report = new SavedReport();
     $report->retrieve($_REQUEST['id']);
-    if($report->ACLAccess('Delete') && ($report->assigned_user_id == $current_user->id || $current_user->is_admin)){
+    if($report->ACLAccess('Delete')){
         $report->mark_deleted($_REQUEST['id']);
 		header('location:index.php?action=index&module=Reports');		
     }
