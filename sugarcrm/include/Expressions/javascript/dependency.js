@@ -156,6 +156,10 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
 		}
 	}
 	
+	if(field.tagName.toLowerCase() == "input" && field.type.toLowerCase() == "checkbox") {
+			return field.checked?"true":"false";
+	}
+	
 	if (field.value !== null && typeof(field.value) != "undefined")
 		return field.value;
 	
