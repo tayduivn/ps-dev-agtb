@@ -77,7 +77,7 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 <tr>
 <td>
 <input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
-&nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='document.location="index.php?module=Users&action=reassignUserRecords&clear=true"'>
+&nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='clearCurrentRecords();'>
 <input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
 </tr>
@@ -88,7 +88,7 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 <BR>
 <?php echo $mod_strings_users['LBL_REASS_USER_FROM']; ?>
 <BR>
-<select name=fromuser>
+<select name="fromuser" id='fromuser'>
 <?php
 $active_users = get_user_array(FALSE);
 $inactive_users = get_user_array(FALSE, "Inactive");
@@ -101,7 +101,7 @@ echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['
 <BR>
 <?php echo $mod_strings_users['LBL_REASS_USER_TO']; ?>
 <BR>
-<select name=touser>
+<select name="touser" id="touser">
 <?php
 echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['touser']) ? $_SESSION['reassignRecords']['touser'] : '');
 ?>
@@ -227,7 +227,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 <tr>
 <td>
 <input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
-&nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='document.location="index.php?module=Users&action=reassignUserRecords&clear=true"'>
+&nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='clearCurrentRecords();'>
 <input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
 </tr>
@@ -509,6 +509,21 @@ if(!empty($quicksearch_js)){
 ?>
 
 <script type="text/javascript">
+
+function clearCurrentRecords()
+{
+    var callback = {
+                success: function(){
+                    document.getElementById('fromuser').selectedIndex = 0;
+                    document.getElementById('touser').selectedIndex = 0;
+                    document.getElementById('modulemultiselect').selectedIndex = -1;
+                    updateDivDisplay(document.getElementById('modulemultiselect'));
+                }
+            };
+            
+    YAHOO.util.Connect.asyncRequest('POST', 'index.php?module=Users&action=clearreassignrecords', callback, null);
+}
+
 var allselected = [];
 function updateDivDisplay(multiSelectObj){
     for(var i = 0; i < multiSelectObj.options.length; i++){
