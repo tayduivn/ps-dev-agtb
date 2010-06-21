@@ -24,53 +24,9 @@ require_once('include/formbase.php');
 $focus = new Scheduler();
 $focus = populateFromPost('', $focus);
 
-// deal with empty values
-//if(!empty($_REQUEST['date_time_end'])) {
-//	$date_time_end = $_REQUEST['date_time_end'];
-//} else if(!empty($_REQUEST['date_end']) && !empty($_REQUEST['time_hour_end']) && !empty($_REQUEST['time_minute_end']) ) {
-//	$date_time_end = $_REQUEST['date_end']." ".str_pad($_REQUEST['time_hour_end'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_end'],2,'0',STR_PAD_LEFT).$_REQUEST['time_end_meridiem'];
-//} else {
-//	$date_time_end = '';
-//}
-//if(!empty($_REQUEST['time_from'])) {
-//	$time_from = $_REQUEST['time_from'];
-//} else if( (!empty($_REQUEST['time_hour_from']) || $_REQUEST['time_hour_from'] == '0' ) && (!empty($_REQUEST['time_minute_from']) || $_REQUEST['time_minute_from'] == '0' ) ) {
-//	$time_from = str_pad($_REQUEST['time_hour_from'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_from'],2,'0',STR_PAD_LEFT);
-//	if(!empty($_REQUEST['time_from_meridiem'])) {
-//		$time_from .= $_REQUEST['time_from_meridiem'];
-//	}
-//} else {
-//	$time_from = '';
-//}
-//if(!empty($_REQUEST['time_to'])) {
-//	$time_to = $_REQUEST['time_to'];
-//} else if( (!empty($_REQUEST['time_hour_to']) || $_REQUEST['time_hour_to'] == '0') && (!empty($_REQUEST['time_minute_to']) || $_REQUEST['time_minute_to'] == '0') ) {
-//	$time_to = str_pad($_REQUEST['time_hour_to'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_to'],2,'0',STR_PAD_LEFT);
-//	if(!empty($_REQUEST['time_to_meridiem'])) {
-//		$time_to .= $_REQUEST['time_to_meridiem'];
-//	}
-//} else {
-//	$time_to = '';
-//}
-//if(!empty($_REQUEST['date_time_start'])) {
-//	$date_time_start = $_REQUEST['date_time_start'];
-//} else {
-//	$date_time_start = $_REQUEST['date_start']." ".str_pad($_REQUEST['time_hour_start'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_start'],2,'0',STR_PAD_LEFT);
-//	if(!empty($_REQUEST['time_start_meridiem'])) {
-//		$date_time_start .= $_REQUEST['time_start_meridiem'];
-//	}
-//}
-//$focus->catch_up  = !empty($_REQUEST['catch_up']);
-//$focus->date_time_start = $date_time_start;
-//$focus->date_time_end = $date_time_end;
-//$focus->time_from = $time_from;
-//$focus->time_to = $time_to;
-//$focus->status = $_REQUEST['status'];
-//$focus->name = $_REQUEST['name'];
-
 ///////////////////////////////////////////////////////////////////////////////
 ////	USE_ADV override
-if($_REQUEST['use_adv'] == 'false') {
+if(!isset($_REQUEST['adv_interval']) || $_REQUEST['adv_interval'] == 'false' || $_REQUEST['adv_interval'] == '0') {
 	// days of week
 	$xtDays = array(0 => 'mon',
 					1 => 'tue',
@@ -118,7 +74,6 @@ if($_REQUEST['use_adv'] == 'false') {
 
 ////	END USE_ADV override
 ///////////////////////////////////////////////////////////////////////////////
-//_ppd($_REQUEST);
 $focus->job_interval = $_REQUEST['mins']."::".$_REQUEST['hours']."::".$_REQUEST['day_of_month']."::".$_REQUEST['months']."::".$_REQUEST['day_of_week'];
 // deal with job types
 // neither

@@ -14,9 +14,7 @@ $viewdefs['Schedulers']['EditView'] = array(
     'panels' => array(
     		'default'=>array(
                            array('name', 'status'),
-                           array(array('name'=>'job',
-                           'customCode'=>'<select id="job_function" name="job_function">{html_options options=$job_functions selected=$fields.job.value}</select>'),
-                           array("name" => "job_url")),
+                           array('job_function', "job_url"),
                            array('adv_interval'),
                            array(array('name'=>'job_interval', 'label' => 'LBL_INTERVAL', 'customCode'=>'
 				<div id="job_interval_advanced">

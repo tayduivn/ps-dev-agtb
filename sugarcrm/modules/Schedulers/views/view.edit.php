@@ -19,14 +19,9 @@ class SchedulersViewEdit extends ViewEdit {
 	function display(){
 		global $mod_strings;
 		global $app_list_strings;
-		include_once('modules/Schedulers/_AddJobsHere.php');
 
 		// job functions
-		$job_functions = array('url::' => 'URL');
-		foreach($job_strings as $k=>$v){
-			$job_functions['function::' . $v] = $mod_strings['LBL_'.strtoupper($v)];
-		}
-		$this->ss->assign('job_functions', $job_functions);
+		$this->bean->job_function = $this->bean->job;
 		$this->ss->assign('JOB', $this->bean->job);
 		if(substr($this->bean->job, 0, 5) == "url::") {
 			$this->bean->job_url = substr($this->bean->job, 5);
@@ -91,14 +86,14 @@ class SchedulersViewEdit extends ViewEdit {
 			// we have a "BASIC" type of min setting
 			$exMins = explode('/', $exInterval[0]);
 			$this->ss->assign('basic_interval', $exMins[1]);
-			$$this->ss->assign('basic_period', 'min');
+			$this->ss->assign('basic_period', 'min');
 		// we've got an advanced time setting
 		} else {
 			$this->ss->assign('basic_interval', 12);
 			$this->ss->assign('basic_period', 'hour');
 			$this->bean->adv_interval = true;
 		}
-		if($this->bean->time_from || $this->bean_time_to) {
+		if($this->bean->time_from || $this->bean->time_to) {
 			$this->bean->adv_interval = true;
 		}
 
