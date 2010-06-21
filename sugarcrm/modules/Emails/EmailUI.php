@@ -2027,7 +2027,7 @@ function distDirect($user, $mailIds) {
 function getAssignedEmailsCountForUsers($userIds) {
 	$counts = array();
 	foreach($userIds as $id) {
-		$r = $this->db->query("SELECT count(*) AS c FROM emails WHERE assigned_user_id = '.$id.' AND status = 'unread'");
+		$r = $this->db->query("SELECT count(*) AS c FROM emails WHERE assigned_user_id = '$id' AND status = 'unread'");
 		$a = $this->db->fetchByAssoc($r);
 		$counts[$id] = $a['c'];
 	} // foreach
