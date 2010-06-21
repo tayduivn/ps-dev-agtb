@@ -809,7 +809,7 @@ print "<BR>";
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
-        if ($field_def == null) {
+        if ($field_def == null && $layout_def['name'] != 'count') {
             global $mod_strings;
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['label'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
