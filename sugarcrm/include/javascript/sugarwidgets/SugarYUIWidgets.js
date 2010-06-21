@@ -27,10 +27,9 @@ YAHOO.namespace("SUGAR");
 	    
 sw.closeActivityPanel = {
 
-    show:function(module,id,new_status,dashlet_id){
+    show:function(module,id,new_status,isDashlet,parentContainerId){
         if (sw.closeActivityPanel.panel) 
 			sw.closeActivityPanel.panel.destroy();
-        
 	    var singleModule = SUGAR.language.get("app_list_strings", "moduleListSingular")[module];
 	    singleModule = typeof(singleModule != 'undefined') ? singleModule.toLowerCase() : '';
 	    var closeText =  SUGAR.language.get("app_strings", "LBL_CLOSE_ACTIVITY_CONFIRM").replace("#module#",singleModule);
@@ -52,10 +51,15 @@ sw.closeActivityPanel = {
                         var callback = {
                             success:function(o)
                             {
-                                SUGAR.mySugar.retrieveDashlet(o.argument['dashlet_id']);
-                                ajaxStatus.hideStatus();
+                                if(isDashlet)
+                                {
+                                    SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
+                                    ajaxStatus.hideStatus();
+                                }
+                                else //From subpanel
+                                    showSubPanel(o.argument['parentContainerId'],null,true);
                             },
-                            argument:{'dashlet_id':dashlet_id}
+                            argument:{'parentContainerId':parentContainerId}
                         };
                 
                         YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, args);
