@@ -452,7 +452,7 @@ require_once('include/EditView/EditView2.php');
             	
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;           /*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-                    if(isset($array[$long_name]) && ( !empty($array[$long_name]) || (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool' && ($array[$long_name]=='0' || $array[$long_name]=='1'))) ) { //advanced*/
+                    if(isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool' && ($array[$long_name]=='0' || $array[$long_name]=='1'))) ) { //advanced*/
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) $this->fieldDefs[$long_name]['value'] = $array[$long_name];
                     }else if(!empty($array[$name]) && !$fromMergeRecords) { //basic
