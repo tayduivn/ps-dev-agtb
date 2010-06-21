@@ -14,9 +14,12 @@ $viewdefs['Schedulers']['EditView'] = array(
     'panels' => array(
     		'default'=>array(
                            array('name', 'status'),
-                           array(array('name'=>'job', 'customCode'=>'<select name=\'job_function\'>{html_options options=$job_functions selected=$fields.job.value}</select><input name="job_url" size="30" maxlength="255" type="text" value="{$job_url}"></td>')),
-                           array(array('name'=>'job_interval', 'customCode'=>'
-				<div id="crontab">
+                           array(array('name'=>'job',
+                           'customCode'=>'<select id="job_function" name="job_function">{html_options options=$job_functions selected=$fields.job.value}</select>'),
+                           array("name" => "job_url")),
+                           array('adv_interval'),
+                           array(array('name'=>'job_interval', 'label' => 'LBL_INTERVAL', 'customCode'=>'
+				<div id="job_interval_advanced">
 				<table cellpadding="0" cellspacing="0">
 					<tr>
 						<td>{$MOD.LBL_MINS}</td>
@@ -37,8 +40,9 @@ $viewdefs['Schedulers']['EditView'] = array(
 					</tr>
 				</table>
 				</div>
-
-				<div id="simple">
+				')),
+				array(array('name'=>'job_interval', 'label' => 'LBL_INTERVAL','customCode'=>'
+				<div id="job_interval_basic">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
 						<td valign="top" width="25%">

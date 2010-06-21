@@ -1,6 +1,10 @@
 <?php
 
 require_once('include/MVC/View/views/view.edit.php');
+require_once("include/Expressions/Dependency.php");
+require_once("include/Expressions/Trigger.php");
+require_once("include/Expressions/Expression/Parser/Parser.php");
+require_once("include/Expressions/Actions/ActionFactory.php");
 
 class SchedulersViewEdit extends ViewEdit {
 	protected static $xtDays = array(
@@ -23,8 +27,10 @@ class SchedulersViewEdit extends ViewEdit {
 			$job_functions['function::' . $v] = $mod_strings['LBL_'.strtoupper($v)];
 		}
 		$this->ss->assign('job_functions', $job_functions);
+		$this->ss->assign('JOB', $this->bean->job);
 		if(substr($this->bean->job, 0, 5) == "url::") {
-			$this->ss->assign('job_url', substr($this->bean->job, 5));
+			$this->bean->job_url = substr($this->bean->job, 5);
+			$this->ss->assign('JOB', 'url::');
 		}
 		// interval
 		if(!empty($this->bean->job_interval)) {
@@ -70,7 +76,7 @@ class SchedulersViewEdit extends ViewEdit {
 		for($i=1; $i<=30; $i++) {
 			$ints[$i] = $i;
 		}
-		$use_adv = false;
+		$this->bean->adv_interval = false;
 		$this->ss->assign('basic_intervals', $ints);
 		$this->ss->assign('basic_periods', $app_list_strings['scheduler_period_dom']);
 		if($exInterval[0] == '*' && $exInterval[1] == '*') {
@@ -90,9 +96,43 @@ class SchedulersViewEdit extends ViewEdit {
 		} else {
 			$this->ss->assign('basic_interval', 12);
 			$this->ss->assign('basic_period', 'hour');
-			$use_adv = true;
+			$this->bean->adv_interval = true;
 		}
-		$this->ss->assign('use_adv', $use_adv);
+		if($this->bean->time_from || $this->bean_time_to) {
+			$this->bean->adv_interval = true;
+		}
+
+		$this->ss->assign("adv_visibility", $this->bean->adv_interval?"":"display: none");
+		$this->ss->assign("basic_visibility", $this->bean->adv_interval?"display: none":"");
+
 		parent::display();
+
+		$dep = new Dependency("adv_interval");
+		$triggerExp = 'true';
+		$triggerFields = Parser::getFieldsFromExpression('$adv_interval');
+		$dep->setTrigger(new Trigger($triggerExp, $triggerFields));
+		//Set the tax rate based on the web service
+		$dep->addAction(ActionFactory::getNewAction('SetPanelVisibility', array(
+		    'target' => 'LBL_ADV_OPTIONS',
+		    'value' => '$adv_interval',
+		)));
+		$dep->addAction(ActionFactory::getNewAction('SetVisibility', array(
+		    'target' => 'job_interval_advanced',
+		    'value' => '$adv_interval',
+		)));
+		$dep->addAction(ActionFactory::getNewAction('SetVisibility', array(
+		    'target' => 'job_interval_basic',
+		    'value' => 'not($adv_interval)',
+		)));
+		//Evaluate the trigger immediatly when the page loads
+		$dep->setFireOnLoad(true);
+		$javascript = $dep->getJavascript();
+		echo  <<<EOQ
+	   <script type=text/javascript>
+	   		SUGAR.forms.AssignmentHandler.register('job_interval_basic');
+	   		SUGAR.forms.AssignmentHandler.register('job_interval_advanced');
+		   {$javascript}
+	   </script>
+EOQ;
 	}
 }

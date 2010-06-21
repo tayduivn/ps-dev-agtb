@@ -1,43 +1,42 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Save.php 45763 2009-04-01 19:16:18Z majed $
- * Description:  
+ * Description:
  ********************************************************************************/
-
-
-
-
 $focus = new Scheduler();
 $focus->retrieve($_REQUEST['record']);
 
-
 // deal with empty values
-if(!empty($_REQUEST['date_end']) && !empty($_REQUEST['time_hour_end']) && !empty($_REQUEST['time_minute_end']) ) {
+if(!empty($_REQUEST['date_time_end'])) {
+	$date_time_end = $_REQUEST['date_time_end'];
+} else if(!empty($_REQUEST['date_end']) && !empty($_REQUEST['time_hour_end']) && !empty($_REQUEST['time_minute_end']) ) {
 	$date_time_end = $_REQUEST['date_end']." ".str_pad($_REQUEST['time_hour_end'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_end'],2,'0',STR_PAD_LEFT).$_REQUEST['time_end_meridiem'];
 } else {
 	$date_time_end = '';
 }
-if( (!empty($_REQUEST['time_hour_from']) || $_REQUEST['time_hour_from'] == '0' ) && (!empty($_REQUEST['time_minute_from']) || $_REQUEST['time_minute_from'] == '0' ) ) {
+if(!empty($_REQUEST['time_from'])) {
+	$time_from = $_REQUEST['time_from'];
+} else if( (!empty($_REQUEST['time_hour_from']) || $_REQUEST['time_hour_from'] == '0' ) && (!empty($_REQUEST['time_minute_from']) || $_REQUEST['time_minute_from'] == '0' ) ) {
 	$time_from = str_pad($_REQUEST['time_hour_from'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_from'],2,'0',STR_PAD_LEFT);
 	if(!empty($_REQUEST['time_from_meridiem'])) {
 		$time_from .= $_REQUEST['time_from_meridiem'];
@@ -45,24 +44,26 @@ if( (!empty($_REQUEST['time_hour_from']) || $_REQUEST['time_hour_from'] == '0' )
 } else {
 	$time_from = '';
 }
-if( (!empty($_REQUEST['time_hour_to']) || $_REQUEST['time_hour_to'] == '0') && (!empty($_REQUEST['time_minute_to']) || $_REQUEST['time_minute_to'] == '0') ) {
+if(!empty($_REQUEST['time_to'])) {
+	$time_to = $_REQUEST['time_to'];
+} else if( (!empty($_REQUEST['time_hour_to']) || $_REQUEST['time_hour_to'] == '0') && (!empty($_REQUEST['time_minute_to']) || $_REQUEST['time_minute_to'] == '0') ) {
 	$time_to = str_pad($_REQUEST['time_hour_to'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_to'],2,'0',STR_PAD_LEFT);
 	if(!empty($_REQUEST['time_to_meridiem'])) {
-		$time_to .= $_REQUEST['time_to_meridiem'];	
+		$time_to .= $_REQUEST['time_to_meridiem'];
 	}
 } else {
 	$time_to = '';
 }
-$date_time_start = $_REQUEST['date_start']." ".str_pad($_REQUEST['time_hour_start'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_start'],2,'0',STR_PAD_LEFT);
-if(!empty($_REQUEST['time_start_meridiem'])) {
-	$date_time_start .= $_REQUEST['time_start_meridiem'];
-}
-if(empty($_REQUEST['catch_up'])) {
-	$focus->catch_up = 0;
+if(!empty($_REQUEST['date_time_start'])) {
+	$date_time_start = $_REQUEST['date_time_start'];
 } else {
-	$focus->catch_up = 1;
+	$date_time_start = $_REQUEST['date_start']." ".str_pad($_REQUEST['time_hour_start'],2,'0',STR_PAD_LEFT).":".str_pad($_REQUEST['time_minute_start'],2,'0',STR_PAD_LEFT);
+	if(!empty($_REQUEST['time_start_meridiem'])) {
+		$date_time_start .= $_REQUEST['time_start_meridiem'];
+	}
 }
 
+$focus->catch_up  = !empty($_REQUEST['catch_up']);
 $focus->date_time_start = $date_time_start;
 $focus->date_time_end = $date_time_end;
 $focus->time_from = $time_from;
@@ -81,8 +82,8 @@ if($_REQUEST['use_adv'] == 'false') {
 					4 => 'fri',
 					5 => 'sat',
 					6 => 'sun');
-					
-	if(	(isset($_REQUEST['mon']) && $_REQUEST['mon'] == 'true') && 
+
+	if(	(isset($_REQUEST['mon']) && $_REQUEST['mon'] == 'true') &&
 		(isset($_REQUEST['tue']) && $_REQUEST['tue'] == 'true') &&
 		(isset($_REQUEST['wed']) && $_REQUEST['wed'] == 'true') &&
 		(isset($_REQUEST['thu']) && $_REQUEST['thu'] == 'true') &&
@@ -102,11 +103,11 @@ if($_REQUEST['use_adv'] == 'false') {
 		}
 		$_REQUEST['day_of_week'] = $day_string;
 	}
-		
-	
+
+
 	if($_REQUEST['basic_period'] == 'min') {
 		$_REQUEST['mins'] = '*/'.$_REQUEST['basic_interval'];
-		$_REQUEST['hours'] = '*';	
+		$_REQUEST['hours'] = '*';
 	} else {
         // Bug # 44933 - hours cannot be greater than 23
         if ($_REQUEST['basic_interval'] < 24) {
@@ -122,18 +123,14 @@ if($_REQUEST['use_adv'] == 'false') {
 ///////////////////////////////////////////////////////////////////////////////
 //_ppd($_REQUEST);
 $focus->job_interval = $_REQUEST['mins']."::".$_REQUEST['hours']."::".$_REQUEST['day_of_month']."::".$_REQUEST['months']."::".$_REQUEST['day_of_week'];
-
-
-
-
 // deal with job types
-// neither 
+// neither
 if ( ($_REQUEST['job_function'] == '') && ($_REQUEST['job_url'] == '' || $_REQUEST['job_url'] == 'http://') ) {
 	$GLOBALS['log']->fatal('Scheduler save did not get a job_url or job_function');
 } elseif ( ($_REQUEST['job_function'] != '') && ($_REQUEST['job_url'] != '' && $_REQUEST['job_url'] != 'http://') ) {
 	$GLOBALS['log']->fatal('Scheduler got both a job_url and job_function');
 }
-//function 
+//function
 if ( ($_REQUEST['job_function'] != '') && ($_REQUEST['job_url'] == '' || $_REQUEST['job_url'] == 'http://') ) {
 	$focus->job = $_REQUEST['job_function'];
 } elseif ( ($_REQUEST['job_function'] == '') && ($_REQUEST['job_url'] != '' && $_REQUEST['job_url'] != 'http://') ) { // url

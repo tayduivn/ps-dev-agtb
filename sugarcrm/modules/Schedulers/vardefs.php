@@ -94,7 +94,33 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'bean_name' => 'User',
 			'source' => 'non-db',
 		),
-		'name' => array (
+		'modified_by_name' =>  array (
+		    'name' => 'modified_by_name',
+		    'vname' => 'LBL_MODIFIED_NAME',
+		    'type' => 'relate',
+		    'reportable'=>false,
+		    'source'=>'non-db',
+		    'rname'=>'user_name',
+		    'table' => 'users',
+		    'id_name' => 'modified_user_id',
+		    'module'=>'Users',
+		    'link'=>'schedulers_modified_user_id_rel',
+		    'duplicate_merge'=>'disabled'
+		  ),
+		'created_by_name' =>  array (
+		    'name' => 'created_by_name',
+		    'vname' => 'LBL_MODIFIED_NAME',
+		    'type' => 'relate',
+		    'reportable'=>false,
+		    'source'=>'non-db',
+		    'rname'=>'user_name',
+		    'table' => 'users',
+		    'id_name' => 'created_by',
+		    'module'=>'Users',
+		    'link'=>'schedulers_created_by_rel',
+		    'duplicate_merge'=>'disabled'
+		  ),
+		  'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_NAME',
 			'type' => 'varchar',
@@ -110,6 +136,25 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'len' => '255',
 			'required' => true,
 			'reportable' => false,
+		),
+		'job_url' => array (
+			'name' => 'job_url',
+			'vname' => 'LBL_JOB_URL',
+			'type' => 'varchar',
+			'len' => '255',
+			'required' => false,
+			'reportable' => false,
+			'source' => 'non-db',
+			'dependency' => 'equal($job_function, "url::")'
+		),
+		'job_function' => array (
+			'name' => 'job_function',
+			'vname' => 'LBL_JOB',
+			'type' => 'enum',
+			'len' => '255',
+			'required' => false,
+			'reportable' => false,
+			'source' => 'non-db',
 		),
 		'date_time_start' => array (
 			'name' => 'date_time_start',
@@ -132,6 +177,15 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 			'required' => true,
 			'reportable' => false,
 		),
+		'adv_interval' => array (
+			'name' => 'adv_interval',
+			'vname' => 'LBL_ADV_OPTIONS',
+			'type' => 'bool',
+			'required' => false,
+			'reportable' => false,
+			'source' => 'non-db',
+		),
+
 		'time_from' => array (
 			'name' => 'time_from',
 			'vname' => 'LBL_TIME_FROM',
@@ -231,4 +285,4 @@ $dictionary['Scheduler'] = array('table' => 'schedulers',
 	)
 );
 
-?>
+//VardefManager::createVardef('Schedulers','Scheduler', array('default'));
