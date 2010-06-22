@@ -40,6 +40,9 @@ $module_name = '<module_name>';
 	  					'basic_search' => array(
 	 							array('name'=>'search_name','label' =>'LBL_NAME', 'type' => 'name'),
 	 							array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),
+	 							//BEGIN SUGARCRM flav=pro ONLY
+	 							array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+	 							//END SUGARCRM flav=pro ONLY
 							),
 						'advanced_search' => array(
 								'first_name', 
@@ -47,7 +50,9 @@ $module_name = '<module_name>';
 								'address_city',
 								'created_by_name',
 								'do_not_call',
-								
+								//BEGIN SUGARCRM flav=pro ONLY
+								array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+								//END SUGARCRM flav=pro ONLY
 						),
 					),
  			   );

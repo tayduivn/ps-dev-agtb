@@ -576,12 +576,15 @@ class SugarBean
     		$def = $this->getFieldDefinition(0);
     	return $def;
     }
-    function isFavoritesEnabled()
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function isFavoritesEnabled()
     {
     	return !empty($GLOBALS['dictionary'][$this->getObjectName()]['favorites']);
     }
+    //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=following ONLY
-	function canFollow(){
+	public function canFollow()
+	{
     	return !empty($GLOBALS['dictionary'][$this->getObjectName()]['followable']);
     }
     //END SUGARCRM flav=following ONLY
@@ -2962,7 +2965,9 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
     {
+        //BEGIN SUGARCRM flav=pro ONLY
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
+        //END SUGARCRM flav=pro ONLY
         global $beanFiles, $beanList;
     	$selectedFields = array();
     	$secondarySelectedFields = array();
@@ -3376,6 +3381,7 @@ function save_relationship_changes($is_update, $exclude=array())
     		//END SUGARCRM flav=pro ONLY
 
     	}
+    	//BEGIN SUGARCRM flav=pro ONLY
         if(!empty($favorites)){
 			$ret_array['select'] .= " , sfav.id is_favorite ";
 			if($favorites == 2){
@@ -3386,6 +3392,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
 		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
 		}
+		//END SUGARCRM flav=pro ONLY
         $where_auto = '1=1';
     	if($show_deleted == 0)
     	{

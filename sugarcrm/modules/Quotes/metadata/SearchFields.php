@@ -29,6 +29,16 @@ $searchFields['Quotes'] =
         'current_user_only'=> array('query_type'=>'default','db_field'=>array('assigned_user_id'),'my_items'=>true, 'vname' => 'LBL_CURRENT_USER_FILTER', 'type' => 'bool'),
         'assigned_user_id'=> array('query_type'=>'default'),
         'quote_type'=> array('query_type'=>'default', 'options' => 'quote_type_dom', 'template_var' => 'TYPE_OPTIONS', 'options_add_blank' => true),
-        'quote_num'=> array('query_type'=>'default','operator'=>'in')
+        'quote_num'=> array('query_type'=>'default','operator'=>'in'),
+		//BEGIN SUGARCRM flav=pro ONLY
+		'favorites_only' => array(
+            'query_type'=>'format',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
+			                    WHERE sugarfavorites.deleted=0 
+			                        and sugarfavorites.module = "Quotes" 
+			                        and sugarfavorites.assigned_user_id = "{0}"',
+			'db_field'=>array('id')),
+		//END SUGARCRM flav=pro ONLY
 	);
 ?>

@@ -106,7 +106,12 @@ class VardefManager{
 			$GLOBALS['dictionary'][$object]['fields'] = array_merge($templates[$template]['fields'], $GLOBALS['dictionary'][$object]['fields']);
 			if(!empty($templates[$template]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array_merge($templates[$template]['relationships'], $GLOBALS['dictionary'][$object]['relationships']);
 			if(!empty($templates[$template]['indices']))$GLOBALS['dictionary'][$object]['indices'] = array_merge($templates[$template]['indices'], $GLOBALS['dictionary'][$object]['indices']);
+			//BEGIN SUGARCRM flav=pro ONLY
 			if(!empty($templates[$template]['favorites']))$GLOBALS['dictionary'][$object]['favorites'] = $templates[$template]['favorites'];
+			//END SUGARCRM flav=pro ONLY
+			//BEGIN SUGARCRM flav=following ONLY
+			if(!empty($templates[$template]['followable']))$GLOBALS['dictionary'][$object]['followable'] = $templates[$template]['favorites'];
+			//END SUGARCRM flav=following ONLY
 			// maintain a record of this objects inheritance from the SugarObject templates...
             $GLOBALS['dictionary'][$object]['templates'][ $template ] = $template ;
 		}

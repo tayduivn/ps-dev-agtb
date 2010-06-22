@@ -34,6 +34,10 @@
                     'layout' => array(  					
 						'basic_search' => array(
 						 	'name',
+						 	
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
 							),
 						'advanced_search' => array(
 							'name', 
@@ -45,7 +49,11 @@
 							'mft_part_num',
 							'type_id',
 							'support_term',
-							'website',						
+							'website',	
+							
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
 						),
 					),
  			   );

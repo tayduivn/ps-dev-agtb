@@ -102,7 +102,9 @@ class ListViewSmarty extends ListViewDisplay{
         $this->ss->assign('noneLinkString',$app_strings['LBL_LINK_NONE']);
         $this->ss->assign('recordsLinkString',$app_strings['LBL_LINK_RECORDS']);
         $this->ss->assign('selectLinkString',$app_strings['LBL_LINK_SELECT']);
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
+        //END SUGARCRM flav=pro ONLY
         if($this->overlib) $this->ss->assign('overlib', true);
 		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current']));
 		$this->ss->assign('actionsLink', $this->buildActionsLink());

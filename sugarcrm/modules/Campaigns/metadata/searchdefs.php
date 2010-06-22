@@ -34,7 +34,11 @@ $searchdefs['Campaigns'] = array(
             'layout' => array(  					
 				'basic_search' => array(
 				 	'name',
-				 	array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'), 							
+				 	array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),
+				 	
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
 				),
 				'advanced_search' => array(
 				 	'name',
@@ -42,7 +46,11 @@ $searchdefs['Campaigns'] = array(
 					array('name'=>'end_date', 'type'=>'date', 'displayParams'=>array('showFormats'=>true)),
 					'status',
 					'campaign_type',
-					array('name' => 'assigned_user_id', 'label'=>'LBL_ASSIGNED_TO', 'type' => 'enum', 'function' => array('name' => 'get_user_array', 'params' => array(false))),							
+					array('name' => 'assigned_user_id', 'label'=>'LBL_ASSIGNED_TO', 'type' => 'enum', 'function' => array('name' => 'get_user_array', 'params' => array(false))),
+					
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
 				),												
 			),
 );

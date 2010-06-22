@@ -136,6 +136,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.iFrame = function(url, width, height){
 		setBody("<iframe style='border:0px;height:" + height + ";width:" + width + "'src='" + url + "'></iframe>");
 	}
+	//BEGIN SUGARCRM flav=pro ONLY
     DCMenu.addToFavorites = function(item, module, record){
 		Y.one(item).replaceClass('off', 'on');
 		item.onclick = function(){
@@ -154,7 +155,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.tagFavorites = function(item,module, record, tag){
 		quickRequest('favorites', 'index.php?to_pdf=1&module=SugarFavorites&action=tag&fav_id=' + record + '&fav_module=' + module + '&tag=' + tag);
 	}
-	
+	//END SUGARCRM flav=pro ONLY
+	//BEGIN SUGARCRM flav=following ONLY
 	DCMenu.addToFollowing = function(item, module, record){
 		Y.one(item).replaceClass('off', 'on');
 		item.onclick = function(){
@@ -170,7 +172,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		}
 		quickRequest('following', 'index.php?module=SugarFollowing&action=delete&following_id=' + record + '&following_module=' + module);
 	}
-		
+	//END SUGARCRM flav=following ONLY
 	function quickRequest(type,url, success){
      	if(!success)success=function(id, data) {}
         var id = Y.io(url, {

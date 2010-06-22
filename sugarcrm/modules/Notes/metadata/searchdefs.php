@@ -37,6 +37,10 @@ array (
         'default' => true,
         'width' => '10%',
       ),
+      
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
     ),
     'advanced_search' => 
     array (
@@ -77,6 +81,10 @@ array (
         'default' => true,
         'name' => 'date_entered',
       ),
+      
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
     ),
   ),
   'templateMeta' => 

@@ -2421,6 +2421,7 @@ $app_strings = array (
     'LBL_ENTER_DATE' => 'Enter Date',
     'LBL_EXPORT_ALL' => 'Export All',
     'LBL_EXPORT' => 'Export',
+    'LBL_FAVORITES_FILTER' => 'My Favorites:',
     'LBL_GO_BUTTON_LABEL' => 'Go',
     'LBL_HIDE'=>'Hide',
     'LBL_ID'=>'ID',
