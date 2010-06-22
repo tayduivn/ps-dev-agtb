@@ -39,7 +39,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 						'basic_search' => array(
 						 	'name',
 							array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),
-							),
+                          //BEGIN SUGARCRM flav=pro ONLY
+                          array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+                          //END SUGARCRM flav=pro ONLY
+                          ),
 						'advanced_search' => array(
 							'name',
 							'amount',
@@ -49,7 +52,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 							'lead_source',
 							'sales_stage',
 							array('name' => 'assigned_user_id', 'type' => 'enum', 'label' => 'LBL_ASSIGNED_TO', 'function' => array('name' => 'get_user_array', 'params' => array(false))),
-							/*'account_name',*/
+                          //BEGIN SUGARCRM flav=pro ONLY
+                          array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+                          //END SUGARCRM flav=pro ONLY
 						),
 					),
  			   );

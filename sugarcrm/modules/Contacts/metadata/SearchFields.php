@@ -48,5 +48,15 @@ $searchFields['Contacts'] =
         //BEGIN SUGARCRM flav!=sales ONLY
         'campaign_name'=> array('query_type'=>'default'),
 		//END SUGARCRM flav!=sales ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
+		'favorites_only' => array(
+            'query_type'=>'format',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
+			                    WHERE sugarfavorites.deleted=0 
+			                        and sugarfavorites.module = "Contacts" 
+			                        and sugarfavorites.assigned_user_id = "{0}"',
+			'db_field'=>array('id')),
+		//END SUGARCRM flav=pro ONLY
 	);
 ?>

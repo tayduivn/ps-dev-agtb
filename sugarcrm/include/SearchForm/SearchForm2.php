@@ -564,7 +564,7 @@ require_once('include/EditView/EditView2.php');
             elseif($type == 'html' && $customField) {
                 continue;
             }
-
+            
             if(isset($parms['value']) && $parms['value'] != "") {
 
                 $operator = 'like';
@@ -632,7 +632,7 @@ require_once('include/EditView/EditView2.php');
 
                 $where = '';
                 $itr = 0;
-
+                
                 if($field_value != '') {
 
                     $this->searchColumns [ strtoupper($field) ] = $field ;
@@ -744,6 +744,17 @@ require_once('include/EditView/EditView2.php');
                             $operator = 'between';
                         }
 
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        if ( preg_match("/favorites_only.*/", $field) ) {
+                            if ( $field_value == '1' ) {
+                                $field_value = $GLOBALS['current_user']->id;
+                            }
+                            else {
+                                continue 2;
+                            }
+                        }
+                        //END SUGARCRM flav=pro ONLY
+                        
 		                //BEGIN SUGARCRM flav=ent ONLY
                         if($GLOBALS['db']->dbType == 'oci8' && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
                               $db_field = 'upper(' . $db_field . ")";
@@ -861,6 +872,7 @@ require_once('include/EditView/EditView2.php');
                 }
             }
         }
+        
         return $where_clauses;
     }
  }
