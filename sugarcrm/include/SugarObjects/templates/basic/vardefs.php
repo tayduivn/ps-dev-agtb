@@ -26,7 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $vardefs = array(  
+//BEGIN SUGARCRM flav=pro ONLY
 'favorites'=>true, 
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=following ONLY
 'followable' => true, 
 //END SUGARCRM flav=following ONLY

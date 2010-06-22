@@ -276,9 +276,11 @@ class ListViewData {
 
         if(empty($params['skipOrderSave'])) // don't save preferences if told so
             $current_user->setPreference('listviewOrder', $order, 0, $this->var_name); // save preference
+        //BEGIN SUGARCRM flav=pro ONLY
         if($seed->isFavoritesEnabled()){
             $params['favorites'] = !empty($_REQUEST['my_favorites'])?2:1;
 		}
+		//END SUGARCRM flav=pro ONLY
 		$ret_array = $seed->create_new_list_query($orderBy, $where, $filter_fields, $params, 0, '', true, $seed, true);
         $ret_array['inner_join'] = '';
         if(!empty($this->seed->listview_inner_join)) {
@@ -396,11 +398,10 @@ class ListViewData {
 				    $pageData['tag'][$dataIndex] = $pageData['tag'][$idIndex[$row[$id_field]][0]];
 				}
 				$data[$dataIndex] = $temp->get_list_view_data($filter_fields);
-
+				//BEGIN SUGARCRM flav=pro ONLY
                 if($temp->isFavoritesEnabled()){ 
 					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['is_favorite']), $temp->module_dir, $temp->id);
 				}
-				//BEGIN SUGARCRM flav=pro ONLY
 				if($temp->bean_implements('ACL')){
 			    	ACLField::listFilter($data[$dataIndex],$temp->module_dir,$GLOBALS['current_user']->id, $temp->isOwner($GLOBALS['current_user']->id));
 				}

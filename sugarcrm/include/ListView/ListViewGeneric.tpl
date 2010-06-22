@@ -51,11 +51,13 @@
 				</div>
 			</th>
 		{/if}
+		{* //BEGIN SUGARCRM flav=pro ONLY *}
 		{if $favorites}
 		<th scope='col'>
 				&nbsp;
 		</th>
 		{/if}
+		{* //END SUGARCRM flav=pro ONLY *}
 		{if !empty($quickViewLinks)}
 		<th scope='col' width='1%' style="padding: 0px;">&nbsp;</th>
 		{/if}
@@ -116,9 +118,11 @@
 			 {/if}
 			</td>
 			{/if}
+			{* //BEGIN SUGARCRM flav=pro ONLY *}
 			{if $favorites}
 				<td>{$rowData.star}</td>
 			{/if}
+			{* //END SUGARCRM flav=pro ONLY *}
 			{if !empty($quickViewLinks)}
 			<td width='2%' nowrap>{if $pageData.access.edit}<a title='{$editLinkString}' href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)" onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)"><img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>{/if}</td>
 			{/if}
