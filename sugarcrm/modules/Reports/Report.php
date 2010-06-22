@@ -809,7 +809,7 @@ print "<BR>";
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
-        if ($field_def == null && $layout_def['name'] != 'count') {
+        if ($field_def == null && (isset($layout_def['group_function']) && $layout_def['group_function'] != 'count')) {
             global $mod_strings;
             sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['label'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
         }
@@ -1767,13 +1767,13 @@ print "<BR>";
 
     function get_header_row_generic($column_field_name = 'display_columns', $skip_non_group=false, $exporting = false)
     {
-        if ( $this->plain_text_output == true) {
+    	if ( $this->plain_text_output == true) {
             $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
         }
         else {
             $this->layout_manager->setAttribute('context', 'HeaderCell');
         }
-
+        
         $header_row = array();
         $summary_count = 0;
 
@@ -1790,7 +1790,6 @@ print "<BR>";
             if(!empty($this->report_def['group_defs'][0])) {
                 $group_by_key = $this->report_def['group_defs'][0]['table_key'].":".$this->report_def['group_defs'][0]['name'];
             }
-
             if(!empty($this->report_def['order_by'][0])) {
                 $order_by_key = $this->report_def['order_by'][0]['table_key'].":".$this->report_def['order_by'][0]['name'];
                 $column_key = $this->_get_full_key($display_column);
@@ -1853,7 +1852,6 @@ print "<BR>";
                     }
                 }
             }
-
             $display = $this->layout_manager->widgetDisplay($display_column);
 
             if($column_field_name == 'summary_columns' && ! empty($display_column['is_group_by'])) {
@@ -1874,14 +1872,14 @@ print "<BR>";
 
             //if summary, but not the total summary, and doing the chart
             if($skip_non_group == false && $column_field_name == 'summary_columns' && $this->do_chart == true) {
-                $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
+//            	$this->layout_manager->setAttribute('context', 'HeaderCellPlain');
                 $chart_header = array();
                 $chart_header['label'] = $this->layout_manager->widgetDisplay($display_column);
                 $chart_header['column_key'] = $column_key;
                 array_push($this->chart_header_row,$chart_header);
             }
             elseif($skip_non_group == true && $column_field_name == 'summary_columns' && $this->do_chart == true) {
-                $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
+            	$this->layout_manager->setAttribute('context', 'HeaderCellPlain');
                 $chart_header = array();
                 $chart_header['label'] = $this->layout_manager->widgetDisplay($display_column);
                 $chart_header['column_key'] = $column_key;
