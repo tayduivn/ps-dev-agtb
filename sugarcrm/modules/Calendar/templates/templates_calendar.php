@@ -181,9 +181,7 @@ function template_cal_tabs(& $args) {
 			<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">";
 			
 			if($act->sugar_bean->object_name == 'Call') { 
-				echo "<tr><td>";
-				SugarThemeRegistry::current()->getImage('Calls','alt=\"'.$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'\"'); 
-				echo "</td>";
+				echo "<tr><td>" . SugarThemeRegistry::current()->getImage('Calls','alt=\"'.$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'\"') . "</td>";
 	
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">";
