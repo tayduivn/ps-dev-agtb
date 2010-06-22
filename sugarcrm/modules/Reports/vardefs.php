@@ -27,7 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
+    //BEGIN SUGARCRM flav=pro ONLY
     ,'favorites'=>true
+    //END SUGARCRM flav=pro ONLY
     , 'fields' => array (
   'id' => 
   array (

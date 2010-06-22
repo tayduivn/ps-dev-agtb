@@ -57,6 +57,10 @@ foreach($linked_fields as $linked_field)
 	{
 		continue;
 	}
+	// Bug 37311 - Don't allow reporting on relationships to the currencies module
+	if($relationship->lhs_module == 'Currencies' || $relationship->rhs_module == 'Currencies') {
+	    continue;
+	}
 	
 	$bean_is_lhs = $module->$field->_get_bean_position();
 	if($bean_is_lhs == true && isset($beanList[$relationship->rhs_module])) {
