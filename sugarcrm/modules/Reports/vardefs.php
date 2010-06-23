@@ -47,7 +47,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'len'=>'255',
     'required'=>true,
   ),
-  'report_module' =>
+  'module' =>
   array (
     'name' => 'module',
     'vname' => 'LBL_MODULE',

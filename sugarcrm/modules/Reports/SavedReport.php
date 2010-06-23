@@ -43,7 +43,7 @@ class SavedReport extends SugarBean
 	// Stored fields
 	var $id;
 	var $name;
-	var $report_module;
+	var $module;
 	var $report_type;
 	var $content;
 	var $deleted;
@@ -79,7 +79,7 @@ class SavedReport extends SugarBean
 
 	var $column_fields = Array("id"
 		,"name"
-		,"report_module"
+		,"module"
 		,"report_type"
 		,"content"
                 ,"deleted"
@@ -95,7 +95,7 @@ class SavedReport extends SugarBean
 		,"is_chart_dashlet"
 		);
 
-		var $list_fields = array('id', 'name', 'report_module', 'report_type', 'schedule_id', 'active', 'next_run', 'last_run_date');
+		var $list_fields = array('id', 'name', 'module', 'report_type', 'schedule_id', 'active', 'next_run', 'last_run_date');
   //var $disable_row_level_security = true;
 
 
@@ -146,7 +146,7 @@ class SavedReport extends SugarBean
 		$this->team_id = $team_id;
 		//END SUGARCRM flav=pro ONLY
 		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
-		$this->report_module = $module;
+		$this->module = $module;
 		//END SUGARCRM flav=pro || flav=sales ONLY
 		$this->is_published = $is_published;
 		$this->chart_type = $chart_type;
@@ -385,7 +385,7 @@ class SavedReport extends SugarBean
 		$delete_my_reports = $delete_line;
 
 
-        $temp_array['MODULE'] = (!empty($this->report_module) ? $app_list_strings['moduleList'][$this->module] : '');
+        $temp_array['MODULE'] = (!empty($this->module) ? $app_list_strings['moduleList'][$this->module] : '');
         $temp_array['REPORT_TYPE_TRANS'] = (!empty($this->report_type) ? $app_list_strings['dom_report_types'][$this->report_type] : '');
         $temp_array['IS_SCHEDULED'] = $is_scheduled;
 		$temp_array['IS_SCHEDULED_IMG'] = "";
