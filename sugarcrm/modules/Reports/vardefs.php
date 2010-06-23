@@ -31,7 +31,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     ,'favorites'=>true
     //END SUGARCRM flav=pro ONLY
     , 'fields' => array (
-  'id' =>
+  'id' => 
   array (
     'name' => 'id',
     'vname' => 'LBL_ID',
@@ -47,9 +47,9 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'len'=>'255',
     'required'=>true,
   ),
-  'report_module' =>
+  'module' =>
   array (
-    'name' => 'module',
+  	'name' => 'module',
     'vname' => 'LBL_MODULE',
     'type' => 'varchar',
     'len'=>'36',
@@ -69,7 +69,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'vname' => 'LBL_CONTENT',
     'type' => 'longtext',
   ),
-   'deleted' =>
+   'deleted' => 
   array (
     'name' => 'deleted',
     'vname' => 'LBL_DELETED',
@@ -77,21 +77,21 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'required'=>false,
     'reportable'=>false,
   ),
-   'date_entered' =>
+   'date_entered' => 
   array (
     'name' => 'date_entered',
     'vname' => 'LBL_DATE_ENTERED',
     'type' => 'datetime',
     'required'=>true,
   ),
-  'date_modified' =>
+  'date_modified' => 
   array (
     'name' => 'date_modified',
     'vname' => 'LBL_DATE_MODIFIED',
     'type' => 'datetime',
     'required'=>true,
   ),
-  'assigned_user_id' =>
+  'assigned_user_id' => 
   array (
     'name' => 'assigned_user_id',
     'rname' => 'user_name',
@@ -104,7 +104,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'massupdate' => false,
     'reportable'=>false,
   ),
-  'modified_user_id' =>
+  'modified_user_id' => 
   array (
     'name' => 'modified_user_id',
     'rname' => 'user_name',
@@ -116,7 +116,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'dbType' => 'id',
     'reportable'=>false,
   ),
- 'assigned_user_name' =>
+ 'assigned_user_name' => 
   array (
     'name' => 'assigned_user_name',
     'vname' => 'LBL_ASSIGNED_TO_NAME',
@@ -143,7 +143,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
 	 'id_name' => 'assigned_user_id',
 	 'table' => 'users',
   ),
-  'created_by' =>
+  'created_by' => 
   array (
     'name' => 'created_by',
     'rname' => 'user_name',
@@ -162,9 +162,9 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'default'=>0,
     'required'=>true,
   ),
- 'last_run_date' =>
+ 'last_run_date' => 
  array (
- 	'name' => 'last_run_date',
+ 	'name' => 'last_run_date', 
 	'rname' => 'date_modified',
 	'id_name' => 'date_modified',
 	'vname' => 'LBL_REPORT_LAST_RUN_DATE',
@@ -177,8 +177,8 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
 	'massupdate' => false,
     'duplicate_merge'=> 'disabled',
     'hideacl'=>true,
-    'width' => '15',
- ),
+    'width' => '15', 
+ ),        
   'chart_type' =>
   array (
   	'name' => 'chart_type',
@@ -187,7 +187,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'required'=>true,
     'default'=>'none',
     'len' => 36
-  ),
+  ),    
     'schedule_type' =>
   array (
   	'name' => 'schedule_type',
@@ -196,7 +196,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'len'=>'3',
     'default'=>'pro',
   ),
- 'favorite' =>
+ 'favorite' => 
   array (
     'name' => 'favorite',
     'vname' => 'LBL_FAVORITE',
@@ -204,7 +204,7 @@ $dictionary['SavedReport'] = array ( 'table' => 'saved_reports'
     'required' => false,
     'reportable' => false,
   ),
-),
+), 
 'indices' => array (
        array('name' =>'save_reportspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_rep_owner_module_name', 'type'=>'index', 'fields'=>array('assigned_user_id','name','deleted')),
