@@ -43,7 +43,7 @@ $mod_strings = array (
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
 
 //END SUGARCRM flav=pro ONLY
-	
+	'LBL_DELETE_USER_CONFIRM'           => 'Deleting the User record will also delete the Employee record. Do you want to proceed with deleting this record?',
 	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',
