@@ -1659,13 +1659,18 @@ SUGAR.reports = function() {
 			} else {
 				var summary_sort_by_elem = new Object();
 				var key_arr = document.ReportsWizardForm.summary_sort_by.value.split(':');
-				summary_sort_by_elem.name = key_arr[key_arr.length-1];
 				if ( typeof(SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).group_function) != 'undefined') {
+					summary_sort_by_elem.name = key_arr[key_arr.length-1];
 					summary_sort_by_elem.group_function = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).group_function;
+					summary_sort_by_elem.column_function = key_arr[2];
 				} else if (typeof(SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).column_function) != 'undefined') {
+					summary_sort_by_elem.name = key_arr[key_arr.length-1];
 					summary_sort_by_elem.group_function = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).column_function;
+					summary_sort_by_elem.column_function = key_arr[2];
 				} // else if
-				summary_sort_by_elem.column_function = key_arr[2];
+				else {
+					summary_sort_by_elem = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value);
+				}
 				summary_sort_by_elem.table_key = SUGAR.reports.getLinkedFieldName(document.ReportsWizardForm.summary_sort_by.value);
 				summary_sort_by_elem.sort_dir = document.ReportsWizardForm.summary_sort_dir.value;
 				summary_sort_by.push(summary_sort_by_elem);
