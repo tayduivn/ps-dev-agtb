@@ -106,7 +106,7 @@ class SavedReport extends SugarBean
 //		$this->disable_row_level_security =true;
 
 	}
-	
+
 
 	function save_report($id, $owner_id, $name, $module,$report_type,$content,$is_published = 0,$team_id, $chart_type='none') {
 		global $json;
@@ -115,7 +115,7 @@ class SavedReport extends SugarBean
 		if ( $id != -1) {
 			$query_arr = array( 'id'=>$id);
 			$this->retrieve_by_string_fields($query_arr, false);
-			
+
 			if (! isset($this->id) ) {
 				//.. don't do it!
 				return -1;
@@ -129,13 +129,13 @@ class SavedReport extends SugarBean
 
 			$json = getJSONobj();
 			$tmpContent = $json->decode($content, false);
-			
+
 			// clean stored report_name too
 			$tmpContent['report_name'] = str_replace($match, "", $tmpContent['report_name']);
 			$content = $json->encode($tmpContent, false);
 		}
 		// end SECURITY
-		
+
 		$result = 1;
 		$this->assigned_user_id = $owner_id;
 		$this->name = $name;
@@ -166,7 +166,7 @@ class SavedReport extends SugarBean
 						return -1;
 			}
 
-			if ( $flag == 'no' 
+			if ( $flag == 'no'
 			//BEGIN SUGARCRM flav=pro ONLY
 			&& $this->team_id == '1'
 			//END SUGARCRM flav=pro ONLY
@@ -226,7 +226,7 @@ class SavedReport extends SugarBean
 		return $obj_arr;
 
 	}
-   
+
 	function fill_in_additional_list_fields()
 	{
     // Fill in the assigned_user_name
@@ -247,18 +247,18 @@ class SavedReport extends SugarBean
     $this->team_name = get_assigned_team_name($this->team_id);
 	//END SUGARCRM flav=pro ONLY
 		$this->get_scheduled_query();
-	}   
-   
-	function get_scheduled_query(){	
+	}
+
+	function get_scheduled_query(){
 		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;	
-		$query = "	SELECT  
+		global $current_user;
+		$query = "	SELECT
 					$this->schedules_table.id as schedule_id,
                     $this->schedules_table.active as active,
                     $this->schedules_table.next_run as next_run
                     from ".$this->schedules_table."
 					where ".$this->schedules_table.".report_id = '".$this->id."'
-					and ".$this->schedules_table.".user_id = '".$current_user->id."'					
+					and ".$this->schedules_table.".user_id = '".$current_user->id."'
 					and ".$this->schedules_table.".deleted=0
 					";
 		$result = $this->db->query($query,true," Error filling in additional schedule query detail fields: ");
@@ -280,10 +280,10 @@ class SavedReport extends SugarBean
 		}
 	//end get_scheduled_query
 	//END SUGARCRM flav=pro ONLY
-	}	   
-   
-   
-   
+	}
+
+
+
    	function create_list_query($order_by, $where, $show_deleted = 0)
 	{
 
@@ -329,7 +329,7 @@ class SavedReport extends SugarBean
 	}
 
 /*The following function has been modified in order to better integrate the Report Lists with the core Sugar functions
-* Normally you would see this type of code in a editview.php or detailview.php file.  However, the nature of of the 
+* Normally you would see this type of code in a editview.php or detailview.php file.  However, the nature of of the
 * report lists is different than most listview scenarios.
 *
 */
@@ -340,10 +340,10 @@ class SavedReport extends SugarBean
 		global $app_strings;
 		global $mod_strings;
 		global $app_list_strings;
-		
+
 		global $current_user;
         global $current_language;
-            
+
         $mod_strings = return_module_language($current_language, 'Reports');
 		//set the following four buttons.
 
@@ -354,14 +354,14 @@ class SavedReport extends SugarBean
 			//$is_scheduled_img = SugarThemeRegistry::current()->getImage('unscheduled_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_SCHEDULE_EMAIL'].'"');
 			$is_scheduled = $mod_strings['LBL_NONE'];
 		}
-		
+
 		$view = sprintf("%s %s", SugarThemeRegistry::current()->getImage('view_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_VIEW'].'"'), $mod_strings['LBL_VIEW']);
-		
+
 	//logic for showing delete, publish, and unpublish buttons
 //		if (isset($_REQUEST['view'])) {
 			$delete_img = SugarThemeRegistry::current()->getImage('delete_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_DELETE'].'"');
 			$delete_line = "<a href=\"index.php?module=Reports&action=index&delete_report_id=".$this->id."\" class=\"listViewTdToolsS1\"> $delete_img ". $mod_strings['LBL_DELETE']."</a>";
-	
+
 			$unpublish_img = SugarThemeRegistry::current()->getImage('unpublish_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_UN_PUBLISH'].'"');
 			$publish_img = SugarThemeRegistry::current()->getImage('publish_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'"');
 			$unpublish_line = "<a title='{$mod_strings['LBL_UN_PUBLISH']}' href=\"index.php?module=Reports&action=index&publish=no&publish_report_id=$this->id\" class=\"listViewTdToolsS1\">$unpublish_img</a>";
@@ -371,7 +371,7 @@ class SavedReport extends SugarBean
 //			$unpublish_line = "<SPAN></SPAN>";
 //			$publish_line = "<SPAN></SPAN>";
 //		}
-		
+
 		if ( is_admin($current_user) ){
 			$delete = $delete_line;
 			$unpublish = $unpublish_line;
@@ -381,7 +381,7 @@ class SavedReport extends SugarBean
 			$unpublish = "<img src=\"include/images/blank.gif\" width=\"1\" height=\"1\" alt=\"\">";
 			$publish_my_reports = "<img src=\"include/images/blank.gif\" width=\"1\" height=\"1\" alt=\"\">";
 		}
-		
+
 		$delete_my_reports = $delete_line;
 
 
@@ -398,40 +398,43 @@ class SavedReport extends SugarBean
 
         return $temp_array;
 	}
-	
+
 	function bean_implements($interface){
 		switch($interface){
 			case 'ACL': return true;
 		}
 		return false;
 	}
-  
+
 	function retrieveReportIdByName($name){
 		$query = "SELECT id FROM saved_reports WHERE name = '" . $name . "' AND deleted=0";
-		
+
 		$result = $this->db->query($query);
 		$row = $this->db->fetchByAssoc($result);
-		
+
 		if ($row != null)
 			return $row['id'];
-		else 
+		else
 			return;
 	}
 
 	function get_summary_text(){
 		return $this->name;
 	}
+
+	function create_export_query($order_by, $where)
+ 	{
+		return $this->create_new_list_query($order_by, $where);
+  	}
 }
-
-
 
   // returns the available modules for the specific user
   function getACLAllowedModules() {
-    
+
 	if (isset($_SESSION['reports_getACLAllowedModules'])) {
         return $_SESSION['reports_getACLAllowedModules'];
     }
-     
+
      require_once('modules/Reports/config.php');
 
      global $beanFiles, $modListHeader;
@@ -442,7 +445,7 @@ class SavedReport extends SugarBean
         if(isset($beanFiles[$class_name])) {
             require_once($beanFiles[$class_name]);
             $seed = new $class_name;
-    
+
             if(!$seed->ACLAccess('DetailView')) {
                 unset($report_modules[$module]);
             }
@@ -451,14 +454,14 @@ class SavedReport extends SugarBean
      $_SESSION['reports_getACLAllowedModules'] = $report_modules;
      return $report_modules;
   }
-  
+
   /**
    * Return a list of modules that are not allowed to be shown in Reports listview due to ACL
-   * 
+   *
    * @return array of modules to be removed from Reports listview.
    */
   function getACLDisAllowedModules(){
-  	 
+
      require_once('modules/Reports/config.php');
 
      global $beanFiles, $modListHeader;
@@ -470,15 +473,14 @@ class SavedReport extends SugarBean
         if(isset($beanFiles[$class_name])) {
             require_once($beanFiles[$class_name]);
             $seed = new $class_name;
-    
+
             if(!$seed->ACLAccess('DetailView')) {
                 $unallowed_modules[$module] = $class_name;
             }
         }
      }
-     
+
      return $unallowed_modules;
   }
-
 
 ?>
