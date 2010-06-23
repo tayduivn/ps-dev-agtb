@@ -95,18 +95,7 @@ class SavedReport extends SugarBean
 		,"is_chart_dashlet"
 		);
 
-		var $list_fields = array('id', 'name', 'module', 'report_type', 'schedule_id', 'active', 'next_run', 'last_run_date');
-  //var $disable_row_level_security = true;
-
-
-	function SavedReport()
-	{
-		parent::SugarBean();
-
-//		$this->disable_row_level_security =true;
-
-	}
-
+	var $list_fields = array('id', 'name', 'module', 'report_type', 'schedule_id', 'active', 'next_run', 'last_run_date');
 
 	function save_report($id, $owner_id, $name, $module,$report_type,$content,$is_published = 0,$team_id, $chart_type='none') {
 		global $json;
