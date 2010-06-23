@@ -52,6 +52,35 @@ class UsersController extends SugarController
 		}
 	}
 	
+	protected function action_delete()
+	{
+	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')))
+        {
+            $u = new User();
+            $u->retrieve($_REQUEST['record']);
+            $u->status = 'Inactive';
+            $u->deleted = 1;
+            $u->employee_status = 'Terminated';
+            $u->save();
+            $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
+            SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
+        }
+        else 
+            sugar_die("Unauthorized access to administration.");
+	}
+	
+	/**
+	 * Clear the reassign user records session variables. 
+	 *
+	 */
+	protected function action_clearreassignrecords()
+	{
+        if( is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Users'))
+            unset($_SESSION['reassignRecords']);
+        else
+	       sugar_die("You cannot access this page.");
+	}
+	
 	protected function action_wirelessmain() 
 	{
 		$this->view = 'wirelessmain';

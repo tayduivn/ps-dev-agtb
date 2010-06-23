@@ -43,9 +43,8 @@ class SugarWidgetSubPanelCloseButton extends SugarWidgetField
 				$new_status = 'Completed';
 				break;
 		}
-
-		$html = "<a href='index.php?module=$module_name&action=EditView&record=$record_id&return_module=$return_module&return_action=DetailView&return_id=$return_id&status=$new_status'>".SugarThemeRegistry::current()->getImage("close_inline","alt=".translate('LBL_LIST_CLOSE',$module_name)." border='0'")."</a>";
-		
+        
+		$html = "<a onclick='YAHOO.SUGAR.closeActivityPanel.show(\"$module_name\",\"$record_id\",\"$new_status\",false,\"{$layout_def['subpanel_id']}\");' >".SugarThemeRegistry::current()->getImage("close_inline","alt=".translate('LBL_LIST_CLOSE',$module_name)." border='0'")."</a>";
 		return $html;
 
 	}

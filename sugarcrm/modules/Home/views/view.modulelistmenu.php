@@ -8,17 +8,7 @@ class HomeViewModulelistmenu extends ViewModulelistmenu
 {
  	public function display()
  	{
- 	    //favorites
-        $favorites = array();
-        foreach ( SugarFavorites::getUserFavoritesByModule() as $recordFocus )
-            $favorites[] = array(
-                "record_id" => $recordFocus->record_id,
-                "record_name" => $recordFocus->record_name,
-                "module" => $recordFocus->module,
-                );
-        $this->ss->assign('FAVORITES',$favorites);
-        //last viewed
-        $tracker = new Tracker();
+ 	    $tracker = new Tracker();
         $history = $tracker->get_recently_viewed($GLOBALS['current_user']->id);
 
         foreach ( $history as $key => $row ) {

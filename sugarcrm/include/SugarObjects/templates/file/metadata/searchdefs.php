@@ -35,6 +35,9 @@ $searchdefs[$module_name] = array(
                     'layout' => array(
                         'basic_search' => array(
                                 'document_name',
+                                //BEGIN SUGARCRM flav=pro ONLY
+                                array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+                                //END SUGARCRM flav=pro ONLY
                             ),
                         'advanced_search' => array(
                                 'document_name',
@@ -42,6 +45,9 @@ $searchdefs[$module_name] = array(
                                 'subcategory_id',
                                 'active_date',
                                 'exp_date',
+                                //BEGIN SUGARCRM flav=pro ONLY
+                                array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+                                //END SUGARCRM flav=pro ONLY
                         ),
                     ),
                );

@@ -22,6 +22,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $searchFields['Notes'] = 
 	array (
 		'name' => array( 'query_type'=>'default'),
-        'contact_name' => array( 'query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name')),        
+        'contact_name' => array( 'query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name')),  
+        
+		//BEGIN SUGARCRM flav=pro ONLY
+		'favorites_only' => array(
+            'query_type'=>'format',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
+			                    WHERE sugarfavorites.deleted=0 
+			                        and sugarfavorites.module = "Notes" 
+			                        and sugarfavorites.assigned_user_id = "{0}"',
+			'db_field'=>array('id')),
+		//END SUGARCRM flav=pro ONLY
 	);
 ?>

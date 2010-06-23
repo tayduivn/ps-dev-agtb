@@ -1058,8 +1058,10 @@ EOHTML;
                 break;
             case 'DetailView':
                 $beanName = $this->bean->get_summary_text();
+                //BEGIN SUGARCRM flav=pro ONLY
                 if($this->bean->isFavoritesEnabled())
                     $beanName .= '&nbsp;' . SugarFavorites::generateStar(SugarFavorites::isUserFavorite($this->module, $this->bean->id), $this->module, $this->bean->id);
+                //END SUGARCRM flav=pro ONLY
                 //BEGIN SUGARCRM flav=following ONLY
                 if($this->bean->canFollow()){
                     //get the following icon

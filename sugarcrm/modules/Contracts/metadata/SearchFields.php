@@ -28,5 +28,15 @@ $searchFields['Contracts'] =
         'start_date' => array( 'query_type'=>'default'),      
         'end_date' => array( 'query_type'=>'default'),      
         'assigned_user_id'=> array('query_type'=>'default'),
+		//BEGIN SUGARCRM flav=pro ONLY
+		'favorites_only' => array(
+            'query_type'=>'format',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
+			                    WHERE sugarfavorites.deleted=0 
+			                        and sugarfavorites.module = "Contracts" 
+			                        and sugarfavorites.assigned_user_id = "{0}"',
+			'db_field'=>array('id')),
+		//END SUGARCRM flav=pro ONLY
     );
 ?>

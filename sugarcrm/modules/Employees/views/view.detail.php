@@ -46,6 +46,19 @@ class EmployeesViewDetail extends ViewDetail {
  			$this->ss->assign('DISPLAY_DUPLICATE', true);
  		}
  		//END SUGARCRM flav!=sales ONLY
+ 		
+ 		$showDeleteButton = FALSE;
+ 		if(  $_REQUEST['record'] != $GLOBALS['current_user']->id && ( is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Users')) )
+        {
+            $showDeleteButton = TRUE;
+ 		     if( empty($this->bean->user_name) ) //Indicates just employee
+ 		         $deleteWarning = $GLOBALS['mod_strings']['LBL_DELETE_EMPLOYEE_CONFIRM'];
+ 		     else 
+ 		         $deleteWarning = $GLOBALS['mod_strings']['LBL_DELETE_USER_CONFIRM'];
+ 		     $this->ss->assign('DELETE_WARNING', $deleteWarning);
+        }
+        $this->ss->assign('DISPLAY_DELETE', $showDeleteButton);
+        
  		parent::display();
  	}
 }

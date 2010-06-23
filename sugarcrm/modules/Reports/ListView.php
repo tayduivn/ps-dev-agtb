@@ -199,17 +199,17 @@ if(!empty($_REQUEST['view'])) { // backwards compatibility support for menu link
     array_push($where_clauses, 'saved_reports.module = \'' . ucwords(clean_string($_REQUEST['view'])) . '\'');
 }
 if(!empty($_REQUEST['favorite'])) { // handle favorite requests
-    $current_favorites = $current_user->getPreference('favorites', 'Reports');
     foreach($where_clauses as $p_where => $single_where) {
         if(strpos($single_where, "saved_reports.favorite ") !==false) {
             unset($where_clauses[$p_where]);
         }
     }
-    if(is_array($current_favorites) && !empty($current_favorites))
-        array_push($where_clauses, 'saved_reports.id IN (\'' . implode("','", array_keys($current_favorites)) . '\')');
-    else {
-        array_push($where_clauses, 'saved_reports.id IN (\'-1\')');
-    }
+    array_push($where_clauses, 
+        'saved_reports.id IN ( 
+            SELECT sugarfavorites.record_id FROM sugarfavorites 
+                WHERE sugarfavorites.deleted=0 
+                    and sugarfavorites.module = "Reports" 
+                    and sugarfavorites.assigned_user_id = "'.$GLOBALS['current_user']->id.'")');
 }
 $displayColumns = array();
 if(!empty($_REQUEST['displayColumns'])) {
@@ -280,30 +280,6 @@ if((!empty($_POST['addtofavorites']) || !empty($_POST['delete'])) && !empty($_PO
     	if ($couldNotDelete > 0)
     		echo '<font color="red">'.$mod_strings['LBL_DELETE_ERROR'].'</font>';
 
-    }
-    elseif(!empty($_POST['addtofavorites']) && $_POST['addtofavorites'] == 'true') {
-        $current_favorites = $current_user->getPreference('favorites', 'Reports');
-        if(empty($current_favorites)) $current_favorites = array();
-        foreach($_POST['mass'] as $id) {
-            $current_favorites[$id] = true;
-        }
-        $current_user->setPreference('favorites', $current_favorites, 0, 'Reports');
-        $favoritesText = '<span style="color: red">' . count($_POST['mass']) . $mod_strings['LBL_ADDED_FAVORITES'] . '</span>';
-    }
-    elseif(!empty($_POST['removefromfavorites']) && $_POST['removefromfavorites'] == 'true') {
-        $current_favorites = $current_user->getPreference('favorites', 'Reports');
-        if(empty($current_favorites)) $current_favorites = array();
-        foreach($_POST['mass'] as $id) {
-            if(isset($current_favorites[$id]))
-                unset($current_favorites[$id]);
-        }
-        $current_user->setPreference('favorites', $current_favorites, 0, 'Reports');
-	    if(is_array($current_favorites) && !empty($current_favorites))
-	        array_push($where_clauses, 'saved_reports.id IN (\'' . implode("','", array_keys($current_favorites)) . '\')');
-	    else {
-	        array_push($where_clauses, 'saved_reports.id IN (\'-1\')');
-	    }        
-        $favoritesText = '<span style="color: red">' . count($_POST['mass']) . $mod_strings['LBL_REMOVED_FAVORITES'] . '</span>';
     }
     
 }

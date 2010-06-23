@@ -40,7 +40,11 @@
 						'basic_search' => array(
 						 	'name', 
 							array('name'=>'current_user_only', 'label'=>'LBL_CURRENT_USER_FILTER', 'type'=>'bool'),
-							),
+							
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
+		      ),
 						'advanced_search' => array(
 							'bug_number', 
 							'name', 
@@ -51,6 +55,10 @@
 							'status',
 							array('name' => 'assigned_user_id', 'type' => 'enum', 'label' => 'LBL_ASSIGNED_TO', 'function' => array('name' => 'get_user_array', 'params' => array(false))),
 							'priority',
+							
+		      //BEGIN SUGARCRM flav=pro ONLY
+		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
+		      //END SUGARCRM flav=pro ONLY
 						),
 					),
  			   );

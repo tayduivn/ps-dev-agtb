@@ -67,9 +67,9 @@ require_once('include/EditView/EditView2.php');
     var $nbTabs = 0;
     // hide saved searches drop and down near the search button
     var $showSavedSearchesOptions = true;
-    
+
     var $displayType = 'searchView';
-    
+
  	function SearchForm($seed, $module, $action = 'index'){
  		$this->th = new TemplateHandler();
  		$this->th->loadSmarty();
@@ -156,7 +156,7 @@ require_once('include/EditView/EditView2.php');
 		if($this->nbTabs>1){
 		    $this->th->ss->assign('TABS', $this->_displayTabs($this->module . '|' . $this->displayView));
 		}
-		$this->th->ss->assign('searchTableColumnCount', 
+		$this->th->ss->assign('searchTableColumnCount',
 		    ((isset($this->searchdefs['templateMeta']['maxColumns']) ? $this->searchdefs['templateMeta']['maxColumns'] : 2) * 2 ) - 1);
 		$this->th->ss->assign('fields', $this->fieldDefs);
 		$this->th->ss->assign('customFields', $this->customFieldDefs);
@@ -266,7 +266,7 @@ require_once('include/EditView/EditView2.php');
      *
      * @return string html
      */
-    function _displayTabs($currentKey) 
+    function _displayTabs($currentKey)
     {
         if(isset($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
             $saved_search=loadBean('SavedSearch');
@@ -321,7 +321,7 @@ require_once('include/EditView/EditView2.php');
                 $this->seed->field_defs['employee_status']['options'] = 'employee_status_dom';
                 unset($this->seed->field_defs['employee_status']['function']);
             }
-		
+
 	        foreach($this->seed->toArray() as $name => $value) {
 	            if(!empty($this->fieldDefs[$name.'_'.$this->parsedView]))
 	            	$this->fieldDefs[$name.'_'.$this->parsedView] = array_merge($this->seed->field_defs[$name], $this->fieldDefs[$name.'_'.$this->parsedView]);
@@ -341,7 +341,7 @@ require_once('include/EditView/EditView2.php');
 	            }
 
 	            if(isset($this->fieldDefs[$name.'_'.$this->parsedView]['function'])) {
-	            	
+
 	            	$this->fieldDefs[$name.'_'.$this->parsedView]['type']='multienum';
 
 	       	 		if(is_array($this->fieldDefs[$name.'_'.$this->parsedView]['function'])) {
@@ -349,13 +349,13 @@ require_once('include/EditView/EditView2.php');
 	       	 		}
 
 	       	 		$function = $this->fieldDefs[$name.'_'.$this->parsedView]['function'];
-	       	 		       	 		
+
 	       			if(is_array($function) && isset($function['name'])){
 	       				$function_name = $this->fieldDefs[$name.'_'.$this->parsedView]['function']['name'];
 	       			}else{
 	       				$function_name = $this->fieldDefs[$name.'_'.$this->parsedView]['function'];
 	       			}
-                    
+
 					if(!empty($this->fieldDefs[$name.'_'.$this->parsedView]['function']['returns']) && $this->fieldDefs[$name.'_'.$this->parsedView]['function']['returns'] == 'html'){
 						if(!empty($this->fieldDefs[$name.'_'.$this->parsedView]['function']['include'])){
 								require_once($this->fieldDefs[$name.'_'.$this->parsedView]['function']['include']);
@@ -404,7 +404,7 @@ require_once('include/EditView/EditView2.php');
      * @param string $switchVar variable to use in switch statement
      * @param bool $addAllBeanFields true to process at all bean fields
      */
-    function populateFromArray(&$array, $switchVar = null, $addAllBeanFields = true) { 	
+    function populateFromArray(&$array, $switchVar = null, $addAllBeanFields = true) {
 
        if((!empty($array['searchFormTab']) || !empty($switchVar)) && !empty($this->searchFields)) {
 			$arrayKeys = array_keys($array);
@@ -447,9 +447,9 @@ require_once('include/EditView/EditView2.php');
                     //END SUGARCRM flav=pro ONLY
                 }
             }else{
-            	
+
             	$fromMergeRecords = isset($array['merge_module']);
-            	
+
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;           /*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
                     if(isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool' && ($array[$long_name]=='0' || $array[$long_name]=='1'))) ) { //advanced*/
@@ -564,7 +564,7 @@ require_once('include/EditView/EditView2.php');
             elseif($type == 'html' && $customField) {
                 continue;
             }
-
+            
             if(isset($parms['value']) && $parms['value'] != "") {
 
                 $operator = 'like';
@@ -632,7 +632,7 @@ require_once('include/EditView/EditView2.php');
 
                 $where = '';
                 $itr = 0;
-
+                
                 if($field_value != '') {
 
                     $this->searchColumns [ strtoupper($field) ] = $field ;
@@ -711,12 +711,9 @@ require_once('include/EditView/EditView2.php');
                            }
                         }
 
-                        if($type == 'datetime' || $type == 'datetimecombo') {//bug 22564, date type field may also have this problem. we may add a date type here.
-                            $field_value = $timedate->to_db_date($field_value, false);//This think of the timezone problem
-                            $temp_offset = strtotime($timedate->swap_formats($timedate->to_display_date_time($field_value." 00:00:00"),$timedate->get_date_time_format(),$timedate->get_db_date_time_format())) - strtotime($field_value." 00:00:00");
-                            $start_datetime = date("Y-m-d H:i:s", strtotime($field_value." 00:00:00") - $temp_offset);
-                            $end_datetime = date("Y-m-d H:i:s", strtotime($field_value." 23:59:59") - $temp_offset);
-                            $field_value = $start_datetime . "<>" . $end_datetime;
+                        if($type == 'datetime' || $type == 'datetimecombo') {
+                            $dates = $timedate->getDayStartEndGMT($field_value);
+                            $field_value = $dates["start"] . "<>" . $dates["end"];
                             $operator = 'between';
                         }
                         if($type == 'decimal' || $type == 'float' || $type == 'currency') {
@@ -733,7 +730,7 @@ require_once('include/EditView/EditView2.php');
                                     $currency = new Currency();
                                     $currency->retrieve($currency_id);
                                     $field_value = $currency->convertToDollar($field_value);
-                                }                    
+                                }
                             }
 
                             // Databases can't really search for floating point numbers, because they can't be accurately described in binary,
@@ -744,6 +741,17 @@ require_once('include/EditView/EditView2.php');
                             $operator = 'between';
                         }
 
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        if ( preg_match("/favorites_only.*/", $field) ) {
+                            if ( $field_value == '1' ) {
+                                $field_value = $GLOBALS['current_user']->id;
+                            }
+                            else {
+                                continue 2;
+                            }
+                        }
+                        //END SUGARCRM flav=pro ONLY
+                        
 		                //BEGIN SUGARCRM flav=ent ONLY
                         if($GLOBALS['db']->dbType == 'oci8' && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
                               $db_field = 'upper(' . $db_field . ")";
@@ -789,13 +797,13 @@ require_once('include/EditView/EditView2.php');
                                 	//check to see if this is coming from unified search or not
                                 	$UnifiedSearch = !empty($parms['force_unifiedsearch']);
                                 	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'UnifiedSearch'){
-                                		$UnifiedSearch = true;	
+                                		$UnifiedSearch = true;
                                 	}
-                                	//check to see if this is a universal search, AND the field name is "last_name" 
+                                	//check to see if this is a universal search, AND the field name is "last_name"
 									if($UnifiedSearch && strpos($db_field, 'last_name') !== false){
-										//split the string value, and the db field name 
+										//split the string value, and the db field name
 										$string = explode(' ', $field_value);
-										$column_name =  explode('.', $db_field); 
+										$column_name =  explode('.', $db_field);
 
 										//when a search is done with a space, we concatenate and search against the full name.
 										if(count($string)>1){
@@ -804,9 +812,9 @@ require_once('include/EditView/EditView2.php');
 										    $where .= ' OR ' . $GLOBALS['db']->concat($column_name[0],array('last_name','first_name')) . " LIKE '{$field_value}%'";
 										}else{
 											//no space was found, add normal where clause
-											$where .=  $db_field . " like '".$field_value.$like_char."'";	
+											$where .=  $db_field . " like '".$field_value.$like_char."'";
 										}
-										
+
 									}else{
 										//field is not last name or this is not from global unified search, so do normal where clause
 										$where .=  $db_field . " like '".$field_value.$like_char."'";
@@ -842,10 +850,10 @@ require_once('include/EditView/EditView2.php');
                             	break;
                             case 'between':
                                 $field_value = explode('<>', $field_value);
-                                $where .= $db_field . " >= '".$field_value[0] . "' AND " .$db_field . " < '".$field_value[1]."'";
+                                $where .= $db_field . " >= '".$field_value[0] . "' AND " .$db_field . " <= '".$field_value[1]."'";
                                 break;
                             case 'innerjoin':
-                                $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')"; 
+                                $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";
                                 break;
                         }
                     }
@@ -861,6 +869,7 @@ require_once('include/EditView/EditView2.php');
                 }
             }
         }
+        
         return $where_clauses;
     }
  }

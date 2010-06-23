@@ -67,7 +67,7 @@
 	{{* //END SUGARCRM flav=pro ONLY*}}
    	</td>
 {{/foreach}}
-    {if $formData|@count >= $templateMeta.maxColumns}
+    {if $formData|@count >= $templateMeta.maxColumns+1}
     </tr>
     <tr>
 	<td colspan="{$searchTableColumnCount}">
