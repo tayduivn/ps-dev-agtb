@@ -163,6 +163,8 @@ class LoggerManager
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".." 
                             || $file == "."
+                            || $file == "LoggerTemplate.php"
+                            || $file == "LoggerManager.php"
                             || !is_file("$location/$file")
                             )
                         continue;
@@ -188,18 +190,4 @@ class LoggerManager
  	    
  	    return $loggerLevels;
  	}
-}
-
-interface LoggerTemplate
-{
-    /**
-     * Main method for handling logging a message to the logger
-     *
-     * @param string $level logging level for the message
-     * @param string $message
-     */
-    public function log(
-        $method,
-        $message
-        );
 }
