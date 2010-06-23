@@ -207,7 +207,7 @@ class PopupSmarty extends ListViewSmarty{
         $this->th->ss->assign('should_process', $this->should_process);
 		
 		if($this->_create){
-			$this->th->ss->assign('ADDFORM', $this->_getAddForm());
+			$this->th->ss->assign('ADDFORM', $this->getQuickCreate());//$this->_getAddForm());
 			$this->th->ss->assign('ADDFORMHEADER', $this->_getAddFormHeader());
 			$this->th->ss->assign('object_name', $this->seed->object_name);
 		}
@@ -495,18 +495,22 @@ $formSave = <<<EOQ
 			<input type="hidden" name="to_pdf" value="true">
 			<input type="hidden" name="return_module" value="$module_dir">
 			<input type="hidden" name="return_action" value="Popup">
-			<input type="submit" name="button" class="button" title="$lbl_save_button_title" accesskey="$lbl_save_button_key" value="  $lbl_save_button_label  " />
-			<input type="button" name="button" class="button" title="{$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_TITLE']}" accesskey="{$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_KEY']}" value="{$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL']}" onclick="toggleDisplay('addform');" />
 EOQ;
-			// if metadata contains custom inputs for the quickcreate 
-			if(!empty($this->_popupMeta['customInput']) && is_array($this->_popupMeta['customInput'])) {
-				foreach($this->_popupMeta['customInput'] as $key => $value)
-					$formSave .= '<input type="hidden" name="' . $key . '" value="'. $value .'">\n';				
-			}
+		// if metadata contains custom inputs for the quickcreate 
+		if(!empty($this->_popupMeta['customInput']) && is_array($this->_popupMeta['customInput'])) {
+			foreach($this->_popupMeta['customInput'] as $key => $value)
+				$formSave .= '<input type="hidden" name="' . $key . '" value="'. $value .'">\n';				
+		}
 
 
-			$addformheader = get_form_header($this->_popupMeta['create']['createButton'], $formSave, false);
-			return $addformheader;
+		$addformheader = get_form_header($this->_popupMeta['create']['createButton'], $formSave, false);
+		return $addformheader;
+	}
+	
+	function getQuickCreate(){
+		require_once("include/EditView/PopupQuickCreate.php");
+		$qc = new PopupQuickCreate($this->module);
+		return $qc->process($this->module);
 	}
 }
 ?>
