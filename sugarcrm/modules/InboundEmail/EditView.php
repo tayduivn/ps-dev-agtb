@@ -249,8 +249,8 @@ if(isset($focus->id))
 else 
 {
 	$groupId = create_guid();
-	//When creating a new record, set auto import to on by default.
-	$is_auto_import = $allow_outbound ='checked';
+	$is_auto_import = 'checked';
+	$allow_outbound = '';
 }
 
 $xtpl->assign('GROUP_ID', $groupId);
