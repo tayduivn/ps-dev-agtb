@@ -34,7 +34,7 @@ $subpanel_layout = array(
 	//Removed button because this layout def is a component of
 	//the activities sub-panel.
 
-	'where' => "(tasks.status='Not Started' OR tasks.status='In Progress' OR tasks.status='Pending Input')",
+	'where' => "(tasks.status != 'Completed' AND tasks.status != 'Deferred')",
 	
 	
 				

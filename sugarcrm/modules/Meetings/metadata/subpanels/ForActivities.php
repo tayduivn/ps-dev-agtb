@@ -34,7 +34,7 @@ $subpanel_layout = array(
 	//Removed button because this layout def is a component of
 	//the activities sub-panel.
 
-	'where' => "(meetings.status='Planned')",
+	'where' => "(meetings.status !='Held' AND meetings.status !='Not Held')",
 	
 	
 				
