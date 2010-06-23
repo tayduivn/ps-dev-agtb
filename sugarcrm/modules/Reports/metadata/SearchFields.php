@@ -19,10 +19,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$searchFields['Reports'] = 
+$searchFields['Reports'] =
 	array (
 		'name' => array( 'query_type' => 'default'),
-        'report_module' => array('query_type' => 'default'),   
+        'report_module' => array('query_type' => 'default', 'db_field' => array('module')),
         'assigned_user_id'=> array('query_type' => 'default'),
         'report_type' => array('query_type' => 'default'),
 		//BEGIN SUGARCRM flav=!sales ONLY
@@ -40,9 +40,9 @@ $searchFields['Reports'] =
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',
-			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
-			                    WHERE sugarfavorites.deleted=0 
-			                        and sugarfavorites.module = "Reports" 
+			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+			                    WHERE sugarfavorites.deleted=0
+			                        and sugarfavorites.module = "Reports"
 			                        and sugarfavorites.assigned_user_id = "{0}"',
 			'db_field'=>array('id')),
 		//END SUGARCRM flav=pro ONLY
