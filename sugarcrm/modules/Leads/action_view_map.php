@@ -26,7 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
  //format '<action_name>' => '<view_name>',
- $action_view_map['convertlead'] = 'convertlead';
  $action_view_map['editconvert'] = 'editConvert';
  $action_view_map['editconvertlayout'] = 'editConvertLayout';
  $action_view_map['saveandpublishlayout'] = 'editConvert';
