@@ -92,15 +92,13 @@ function clearAll() {
 </div>
 {{/if}}
 <div id='addform' style='display:none;position:relative;z-index:2;left:0px;top:0px;'>
-<form name="{$object_name}Save" onsubmit="return check_form('{$object_name}Save');" method="post" action="index.php">
+<form name="form_QuickCreate_{$module}" id="form_QuickCreate_{$module}" {*onsubmit="return check_form('form_popupQuickCreate{$module}');"*} method="post" action="index.php">
 {$ADDFORMHEADER}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="edit view">
 <tr>
 <td>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr><td>
-<input type="hidden" name="module" value="{$module}" />
-<input type="hidden" name="action" value="Popup" />
 <input type="hidden" name="doAction" value="save" />
 <input type="hidden" name="query" value="true" />
 {$ADDFORM}

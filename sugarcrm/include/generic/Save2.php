@@ -211,7 +211,7 @@ else {
 	
  	// If the user selected "All records" from the selection menu, we pull up the list
  	// based on the query they used on that popup to relate them to the parent record
- 	if($_REQUEST['select_entire_list']){
+ 	if(!empty($_REQUEST['select_entire_list']) &&  $_REQUEST['select_entire_list'] != 'undefined' && isset($_REQUEST['current_query_by_page'])){
 		$order_by = '';
 		$current_query_by_page = $_REQUEST['current_query_by_page'];
  		$current_query_by_page_array = unserialize(base64_decode($current_query_by_page));
