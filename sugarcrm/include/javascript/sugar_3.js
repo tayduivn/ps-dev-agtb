@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: sugar_3.js 56650 2010-05-24 18:53:17Z jenny $
+// $Id: sugar_3.js 57033 2010-06-18 21:05:47Z kjing $
 
 /**
  * Namespace for Sugar Objects
@@ -894,7 +894,7 @@ function validate_form(formname, startsWith){
 								}
 							break;
                             case 'less':
-                                value=parseFloat(trim(form[validate[formname][i][nameIndex]].value));
+                                value=unformatNumber(trim(form[validate[formname][i][nameIndex]].value), num_grp_sep, dec_sep);
 								maximum = parseFloat(validate[formname][i][maxIndex]);
 								if(	typeof maximum != 'undefined'){
 									if(value>maximum) {
@@ -904,7 +904,7 @@ function validate_form(formname, startsWith){
 								}
 							break;
 							case 'more':
-                                value=parseFloat(trim(form[validate[formname][i][nameIndex]].value));
+                                value=unformatNumber(trim(form[validate[formname][i][nameIndex]].value), num_grp_sep, dec_sep);
 								minimum = parseFloat(validate[formname][i][minIndex]);
 								if(	typeof minimum != 'undefined'){
 									if(value<minimum) {
