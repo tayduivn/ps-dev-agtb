@@ -45,7 +45,9 @@ function prepSystemForUpgradeSilent() {
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-	    mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
+	    	mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		}
 	}
 }
 
@@ -548,57 +550,22 @@ if($upgradeType == constant('DCE_INSTANCE')){
    	//$instanceUpgradePath = "{$argv[1]}/DCEUpgrade/{$zip_from_dir}";
    	//$instanceUpgradePath = "{$argv[1]}";
 	include ("ini_setup.php");
-
+	
 	//get new template path for use in later processing
     $dceupgrade_pos = strpos($argv[1], '/DCEUpgrade');
     $newtemplate_path = substr($argv[1], 0, $dceupgrade_pos);
 	
 	require("{$argv[4]}/sugar_version.php");
 	global $sugar_version;
-	$pre_550 = false;
-	if($sugar_version < '5.5.0'){
-		//set variable to use later in script
-		$pre_550 = true;
-		//require classes if they do not exist, as these were not in pre 550 entrypoint.php and need to be loaded first
-        if(!class_exists('VardefManager')){
-                require_once("{$argv[4]}/include/SugarObjects/VardefManager.php");
-        }
-        if (!class_exists('Sugar_Smarty')){
-                require_once("{$argv[4]}/include/Sugar_Smarty.php");
-        }
-        if (!class_exists('LanguageManager')){
-			require_once("{$argv[4]}/include/SugarObjects/LanguageManager.php");
-		}
-        
-	}
 
 	//load up entrypoint from original template
-   	require_once("{$argv[4]}/include/entryPoint.php");
-
-   	//load up missing values from pre 550 entrypoint.
-	if($sugar_version < '5.5.0'){
-		//require classes if they do not exist, as these were not in pre-550 entrypoint.php and need to be loaded after
-	    if (! class_exists('UserPreference')){
-	            require_once("{$newtemplate_path}/modules/UserPreferences/UserPreference.php");
-	    }
-	    if (! function_exists('unformat_number')){
-	            require_once("{$newtemplate_path}/modules/Currencies/Currency.php");
-	    }
-	}   	
-//	require_once("{$argv[4]}/include/dir_inc.php");
+   	require_once("{$argv[4]}/include/entryPoint.php");	
 	require_once("{$argv[4]}/include/utils/zip_utils.php");
 	require_once("{$argv[4]}/modules/Administration/UpgradeHistory.php");
-//	require_once("{$argv[4]}/include/utils.php");
-//	require_once("{$argv[5]}/modules/Users/User.php");
-	//require_once("{$argv[5]}/modules/UpgradeWizard/uw_utils.php");
-	//require user preferences since it is not part of entrypoint in 520
-
-    
 	// We need to run the silent upgrade as the admin user, 
 	global $current_user;
 	$current_user = new User();
 	$current_user->retrieve('1');
-	
 	
 	//This is DCE instance
       global $sugar_config;
@@ -606,9 +573,8 @@ if($upgradeType == constant('DCE_INSTANCE')){
 //    require_once("{$cwd}/sugar_version.php"); //provides instance version, flavor etc..
      //provides instance version, flavor etc..
     $isDCEInstance = true;
-	if(!is_dir(clean_path("{$sugar_config['upload_dir']}/upgrades"))) {
-		prepSystemForUpgradeSilent();
-	}
+	prepSystemForUpgradeSilent();
+
 	/////retrieve admin user
 	$configOptions = $sugar_config['dbconfig'];
 
