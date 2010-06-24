@@ -38,6 +38,16 @@ $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
 
+//BEGIN SUGARCRM flav=pro ONLY
+//bug: 38017 - SugarView is not yet pulled out of memory and to avoid putting a check-in there for every call, will just
+//put in here for one call
+$timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$monitor3 = $trackerManager->getMonitor('tracker_sessions');
+if(!empty($monitor3)) {
+   $monitor3->setValue('date_start', $timeStamp);
+}
+//END SUGARCRM flav=pro ONLY
+
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
 
@@ -637,6 +647,11 @@ $stepRecheck = $_REQUEST['step'];
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] =($stop) ? 'failed' : 'success';
 
 // clear out the theme cache
+// clear out the theme cache
+if(!class_exists('SugarThemeRegistry')){
+    require_once('include/SugarTheme/SugarTheme.php');
+}
+SugarThemeRegistry::buildRegistry();
 SugarThemeRegistry::clearAllCaches();
 
 // re-minify the JS source files
