@@ -514,10 +514,11 @@ SugarWidgetScheduleRow.prototype.display = function() {
 
 SugarWidgetScheduleRow.deleteRow = function(bean_id) {
 	// can't delete organizer
+	/*
 	if(GLOBAL_REGISTRY.focus.users_arr.length == 1 || GLOBAL_REGISTRY.focus.fields.assigned_user_id == bean_id) {
 		return;
 	}
-
+    */
 	for(var i=0;i<GLOBAL_REGISTRY.focus.users_arr.length;i++) {
 		if(GLOBAL_REGISTRY.focus.users_arr[i]['fields']['id']==bean_id) {
 			delete GLOBAL_REGISTRY.focus.users_arr_hash[GLOBAL_REGISTRY.focus.users_arr[i]['fields']['id']];
