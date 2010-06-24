@@ -39,6 +39,16 @@ color: #C60C30;
 	float: none;
 }
 
+/* //BEGIN SUGARCRM flav=com ONLY */
+.dashletPanelMenu
+{
+	border-left: 1px solid #4E8CCF;
+	border-right: 1px solid #4E8CCF;
+	border-bottom: 1px solid #4E8CCF;
+}
+/* //END SUGARCRM flav=com ONLY */
+
+
 .dashletPanelMenu .bd .bd-center .screen {
 
 	border: 0px none;
@@ -71,11 +81,12 @@ div.screen div.edit.view
     width: auto;
     margin-top: 0;
     margin-bottom: 0;
+    padding: 20px !important;
 }
 
 div.screen div.edit.view > table
 {
-    padding: 20px !important;
+    padding: 0 !important;
 }
 
 div.screen div.edit.view td
