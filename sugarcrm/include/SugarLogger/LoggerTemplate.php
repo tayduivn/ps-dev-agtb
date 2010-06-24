@@ -1,12 +1,12 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
  *not use this file except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
@@ -21,55 +21,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Calls module.
+ * $Id$
+ * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/json_config.php');
-require_once('include/MVC/View/views/view.edit.php');
 
-class MeetingsViewEdit extends ViewEdit
+interface LoggerTemplate
 {
- 	/**
- 	 * @see SugarView::preDisplay()
- 	 *
- 	 * Override preDisplay to check for presence of 'status' in $_REQUEST
- 	 * This is to support the "Close And Create New" operation.
- 	 */
- 	public function preDisplay()
- 	{
- 		if(!empty($_REQUEST['status']) && ($_REQUEST['status'] == 'Held')) {
-	       $this->bean->status = 'Held';
- 		}
-
- 		parent::preDisplay();
- 	}
-
- 	/**
- 	 * @see SugarView::display()
- 	 */
- 	public function display()
- 	{
- 		global $json;
-        $json = getJSONobj();
-        $json_config = new json_config();
-		if (isset($this->bean->json_id) && !empty ($this->bean->json_id)) {
-			$javascript = $json_config->get_static_json_server(false, true, 'Meetings', $this->bean->json_id);
-
-		} else {
-			$this->bean->json_id = $this->bean->id;
-			$javascript = $json_config->get_static_json_server(false, true, 'Meetings', $this->bean->id);
-
-		}
- 		$this->ss->assign('JSON_CONFIG_JAVASCRIPT', $javascript);
- 		if($this->ev->isDuplicate){
-	       $this->bean->status = $GLOBALS['mod_strings']['LBL_DEFAULT_STATUS'];
- 		} //if
-
- 		parent::display();
- 	}
+    /**
+     * Main method for handling logging a message to the logger
+     *
+     * @param string $level logging level for the message
+     * @param string $message
+     */
+    public function log(
+        $method,
+        $message
+        );
 }

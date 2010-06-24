@@ -43,7 +43,6 @@ YAHOO.util.Event.onDOMReady(function(){
 var reportLoader = new YAHOO.util.YUILoader({
 	require : ["layout", "element"],
 	loadOptional: true,
-	filter : "DEBUG",
 	skin: { base: 'blank', defaultSkin: '' },
 	onSuccess : onLoadDoInit,
 	base : "include/javascript/yui/build/"

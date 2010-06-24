@@ -1,6 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -19,57 +18,43 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Calls module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
+ *$Id: quickcreatedefs.php 30112 2007-11-29 20:58:37Z roger $
  ********************************************************************************/
 
-require_once('include/json_config.php');
-require_once('include/MVC/View/views/view.edit.php');
+$viewdefs['Project']['QuickCreate'] = array(
+					'templateMeta' => array('maxColumns' => '2', 
+                        'widths' => array(
+                                        array('label' => '10', 'field' => '30'), 
+                                        array('label' => '10', 'field' => '30')
+                                        ),
+                       ),
+'panels' =>
 
-class MeetingsViewEdit extends ViewEdit
-{
- 	/**
- 	 * @see SugarView::preDisplay()
- 	 *
- 	 * Override preDisplay to check for presence of 'status' in $_REQUEST
- 	 * This is to support the "Close And Create New" operation.
- 	 */
- 	public function preDisplay()
- 	{
- 		if(!empty($_REQUEST['status']) && ($_REQUEST['status'] == 'Held')) {
-	       $this->bean->status = 'Held';
- 		}
+array (
+  
+  array (
+    'name',
+    'status'
+  ),
+  
+  array (
+    'estimated_start_date',
+    'estimated_end_date'
+  ),
+  
+  array('priority',),
+  array('assigned_user_name',
+	  //BEGIN SUGARCRM flav=pro ONLY
+	  'team_name',
+	  //END SUGARCRM flav=pro ONLY,
+  ),
+  array (
+    array (
+      'name' => 'description',
+    ),
+  ),
 
- 		parent::preDisplay();
- 	}
+),
 
- 	/**
- 	 * @see SugarView::display()
- 	 */
- 	public function display()
- 	{
- 		global $json;
-        $json = getJSONobj();
-        $json_config = new json_config();
-		if (isset($this->bean->json_id) && !empty ($this->bean->json_id)) {
-			$javascript = $json_config->get_static_json_server(false, true, 'Meetings', $this->bean->json_id);
-
-		} else {
-			$this->bean->json_id = $this->bean->id;
-			$javascript = $json_config->get_static_json_server(false, true, 'Meetings', $this->bean->id);
-
-		}
- 		$this->ss->assign('JSON_CONFIG_JAVASCRIPT', $javascript);
- 		if($this->ev->isDuplicate){
-	       $this->bean->status = $GLOBALS['mod_strings']['LBL_DEFAULT_STATUS'];
- 		} //if
-
- 		parent::display();
- 	}
-}
+);
+?>
