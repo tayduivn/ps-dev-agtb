@@ -54,6 +54,14 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     	$this->qual_module = 'Accounts';
     	$this->company_id = '168338536';
     	$this->listArgs = array('name' => 'SugarCRM');
+    	
+    	//Pre-Test to make sure we can access service
+        $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
+		$account = new Account();
+    	$account = @$source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);    	
+    	if(empty($account->name)) {
+           $this->markTestSkipped("Hoovers service may be unavailable at this time.");	
+        }    	
     }
     
     function tearDown() {
