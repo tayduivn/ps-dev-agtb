@@ -59,7 +59,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 }
 	//BEGIN SUGARCRM lic=sub ONLY
 	global $sugar_flavor;
-	if((isset($sugar_flavor) && $sugar_flavor != null) && 
+	if((isset($sugar_flavor) && $sugar_flavor != null) &&
 		($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
 		if ($focus->id == "") {
 		    $admin = new Administration();
@@ -72,7 +72,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 
 	        $license_seats_needed = count( get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'", false) ) - $license_users;
 		//END SUGARCRM dep=od ONLY
-				
+
 
 		//BEGIN SUGARCRM flav=pro  && dep=os ONLY
 
@@ -138,11 +138,11 @@ if(isset($_REQUEST['error_string'])) $sugar_smarty->assign('ERROR_STRING', '<spa
 if(isset($_REQUEST['error_password'])) $sugar_smarty->assign('ERROR_PASSWORD', '<span id="error_pwd" class="error">Error: '.$_REQUEST['error_password'].'</span>');
 
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
-	
+
 	$sugar_smarty->assign('RETURN_MODULE', $_REQUEST['return_module']);
 	$sugar_smarty->assign('RETURN_ACTION', $_REQUEST['return_action']);
 	$sugar_smarty->assign('RETURN_ID', $_REQUEST['record']);
-	
+
 } else {
 	if(isset($_REQUEST['return_module'])) $sugar_smarty->assign('RETURN_MODULE', $_REQUEST['return_module']);
 	else { $sugar_smarty->assign('RETURN_MODULE', $focus->module_dir);}
@@ -193,7 +193,7 @@ $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordset
 //BEGIN SUGARCRM flav=pro ONLY
 
 $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-$sugar_smarty->assign("REGEX",$pwd_regex);        
+$sugar_smarty->assign("REGEX",$pwd_regex);
 //END SUGARCRM flav=pro ONLY
 
 if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
@@ -215,15 +215,15 @@ if ($is_super_admin)
     $sugar_smarty->assign('IS_SUPER_ADMIN','1');
 else
     $sugar_smarty->assign('IS_SUPER_ADMIN', '0');
-	
+
 
 //jc:12293 - modifying to use the accessor method which will translate the
 //available character sets using the translation files
 $sugar_smarty->assign('EXPORT_CHARSET', get_select_options_with_id($locale->getCharsetSelect(), $locale->getExportCharset('', $focus)));
 //end:12293
 
-if( $focus->getPreference('use_real_names') == 'on' || ( empty($focus->id) && isset($GLOBALS['sugar_config']['use_real_names']) 
-       && $GLOBALS['sugar_config']['use_real_names'] && $focus->getPreference('use_real_names') != 'off') ) 
+if( $focus->getPreference('use_real_names') == 'on' || ( empty($focus->id) && isset($GLOBALS['sugar_config']['use_real_names'])
+       && $GLOBALS['sugar_config']['use_real_names'] && $focus->getPreference('use_real_names') != 'off') )
 {
 
 	$sugar_smarty->assign('USE_REAL_NAMES', 'CHECKED');
@@ -239,27 +239,27 @@ $confirmReassignJs = "
 		var status = document.getElementsByName('status');
 		if(verify_data(document.EditView)) {
 			if(status[0] && status[0].value == 'Inactive'){
-				var handleYes = function() { 
+				var handleYes = function() {
 		    		document.EditView.return_action.value = 'reassignUserRecords';
 		    		document.EditView.return_module.value = 'Users';
-		    		document.EditView.submit(); 
-					}; 
-		 
-				var handleNo = function() { 
-		   			 document.EditView.submit(); 
-					}; 
+		    		document.EditView.submit();
+					};
+
+				var handleNo = function() {
+		   			 document.EditView.submit();
+					};
 						YAHOO.namespace(\"example.container\");
-						YAHOO.example.container.simpledialog1 =  
-		    			new YAHOO.widget.SimpleDialog(\"simpledialog1\",  
-		             { width: \"300px\", 
-		               fixedcenter: true, 
-		               visible: true, 
-		               draggable: false, 
-		               close: true, 
-		               text: \"{$mod_strings['LBL_REASS_CONFIRM_REASSIGN']}\",  
-		               constraintoviewport: true, 
-		               buttons: [ { text:\"Yes\", handler:handleYes, isDefault:true }, 
-		                          { text:\"No\",  handler:handleNo } ] 
+						YAHOO.example.container.simpledialog1 =
+		    			new YAHOO.widget.SimpleDialog(\"simpledialog1\",
+		             { width: \"300px\",
+		               fixedcenter: true,
+		               visible: true,
+		               draggable: false,
+		               close: true,
+		               text: \"{$mod_strings['LBL_REASS_CONFIRM_REASSIGN']}\",
+		               constraintoviewport: true,
+		               buttons: [ { text:\"Yes\", handler:handleYes, isDefault:true },
+		                          { text:\"No\",  handler:handleNo } ]
 		             } );
 		             YAHOO.example.container.simpledialog1.setHeader(\"Re-Assign\");
 		             YAHOO.example.container.simpledialog1.render(\"popup_window\");
@@ -293,7 +293,7 @@ if(empty($focus->id)) {
 	$sugar_smarty->assign('REASSIGN_JS', "return confirmReassignRecords();");
 	//END SUGARCRM flav=pro || flav=sales ONLY
 }
-	
+
 ////	END NEW USER CREATION ONLY
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -309,8 +309,8 @@ if(isset($_REQUEST['type']) && (isset($_REQUEST['return_module']) && $_REQUEST['
 ///////////////////////////////////////////////////////////////////////////////
 ////	LOCALE SETTINGS
 ////	Date/time format
-$dformat = $locale->getPrecedentPreference('datef', $focus);
-$tformat = $locale->getPrecedentPreference('timef', $focus);
+$dformat = $locale->getPrecedentPreference($focus->id?'datef':'default_date_format', $focus);
+$tformat = $locale->getPrecedentPreference($focus->id?'timef':'default_time_format', $focus);
 $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $tformat);
 $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $dformat);
 $sugar_smarty->assign('TIMEOPTIONS', $timeOptions);
@@ -540,12 +540,12 @@ if(!empty($focus->id)) {
 	//If you're an administrator editing the user or if you're a module level admin, then allow the widget to display all Teams
 	if($usertype == 'ADMIN' || is_admin_for_module($GLOBALS['current_user'], 'Users')) {
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
-		$teamsWidget = new EmailSugarFieldTeamsetCollection($focus, $focus->field_defs, '', 'EditView');	
-		$sugar_smarty->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());	
+		$teamsWidget = new EmailSugarFieldTeamsetCollection($focus, $focus->field_defs, '', 'EditView');
+		$sugar_smarty->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());
 	} else {
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 		$teamsWidget = new EmailSugarFieldTeamsetCollection($focus, $focus->field_defs, 'get_non_private_teams_array', 'EditView');
-		$teamsWidget->user_id = $focus->id;		
+		$teamsWidget->user_id = $focus->id;
 		$sugar_smarty->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());
 	}
 }
@@ -574,7 +574,7 @@ if((!empty($focus->is_group) && $focus->is_group)  || (isset($_REQUEST['usertype
 } else
 //END SUGARCRM flav!=sales ONLY
 	$sugar_smarty->assign('IS_GROUP', '0');
-	
+
 $sugar_smarty->assign("USER_TYPE_DESC", $mod_strings['LBL_'.$usertype.'_DESC']);
 $sugar_smarty->assign("USER_TYPE_LABEL", $mod_strings['LBL_'.$usertype.'_USER']);
 $sugar_smarty->assign('USER_TYPE',$usertype);
@@ -588,8 +588,8 @@ if(isset($sugar_config['passwordsetting']) && isset($sugar_config['passwordsetti
 if(((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $usertype!='GROUP') || $usertype =='PORTAL_ONLY') && empty($focus->id))
 	$sugar_smarty->assign('REQUIRED_PASSWORD','1');
 else
-    $sugar_smarty->assign('REQUIRED_PASSWORD','0');	
-    
+    $sugar_smarty->assign('REQUIRED_PASSWORD','0');
+
 // If my account page or portal only user or regular user without system generated password or a duplicate user
 if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
    $sugar_smarty->assign('CHANGE_PWD', '1');
@@ -603,7 +603,7 @@ if ( $usertype == 'GROUP' ) {
 
 $configurator = new Configurator();
 if ( ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
-        && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' ) 
+        && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' )
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','1');
 else
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','0');
@@ -617,7 +617,7 @@ else{
 	else
 		$sugar_smarty->assign('HIDE_STATIC_USERTYPE','none');
 	}
-	
+
 $sugar_smarty->assign('IS_FOCUS_ADMIN', is_admin($focus));
 if($edit_self) {
 	$sugar_smarty->assign('EDIT_SELF','1');
@@ -651,7 +651,7 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
             $mail_smtpuser = $userOverrideOE->mail_smtpuser;
             $mail_smtppass = $userOverrideOE->mail_smtppass;
         }
-        
+
         $hide_if_can_use_default = empty($systemOutboundEmail->mail_smtpserver) ? true : false;
     }
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
@@ -659,7 +659,7 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
     $sugar_smarty->assign("mail_smtpuser", $mail_smtpuser);
     $sugar_smarty->assign("mail_smtppass", $mail_smtppass);
     $sugar_smarty->assign('MAIL_SMTPPORT',$mail_smtpport);
-    $sugar_smarty->assign('MAIL_SMTPSSL',$mail_smtpssl);  
+    $sugar_smarty->assign('MAIL_SMTPSSL',$mail_smtpssl);
 }
 $sugar_smarty->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default);
 
