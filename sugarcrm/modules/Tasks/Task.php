@@ -271,8 +271,10 @@ class Task extends SugarBean {
 			$task_fields['PRIORITY'] = $app_list_strings['task_priority_dom'][$this->priority];
 		if (isset($this->parent_type))
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
-		if ($this->status != "Completed" && $this->status != "Deferred" ) {
-			$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&action=EditView&module=Tasks&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'")."</a>";
+		if ($this->status != "Completed" && $this->status != "Deferred" ) 
+		{
+			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$currentModule\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
+		    $task_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'")."</a>";
 		}
 
         $dd = $timedate->to_db_date($date_due, false);
