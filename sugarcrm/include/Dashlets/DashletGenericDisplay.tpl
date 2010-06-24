@@ -175,7 +175,7 @@
 					   {else}
 					       {assign var='closeStatus' value='Held'}
 					   {/if}
-					<a onclick='YAHOO.SUGAR.closeActivityPanel.show("{$tmpModule}","{$rowData.ID}","{$closeStatus}",true,"{$dashletId}");'><img border="0" src="{sugar_getimagepath file="close_inline.png"}"></a>
+					<a onclick='SUGAR.util.closeActivityPanel.show("{$tmpModule}","{$rowData.ID}","{$closeStatus}","dashlet","{$dashletId}");'><img border="0" src="{sugar_getimagepath file="close_inline.png"}"></a>
 					{elseif $params.type == 'image'}
 						{if !empty($rowData.$col)}
 							<a href="javascript:SUGAR.image.lightbox('index.php?entryPoint=download&id={$rowData.$col}&type=SugarFieldImage&isTempFile=1')">
