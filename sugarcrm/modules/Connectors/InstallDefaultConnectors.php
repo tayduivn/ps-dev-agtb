@@ -45,26 +45,6 @@ $default_connectors = array (
   ),
 //END SUGARCRM flav!=com ONLY  
 //BEGIN SUGARCRM flav=pro ONLY
-  'ext_rest_zoominfocompany' => 
-  array (
-    'id' => 'ext_rest_zoominfocompany',
-    'name' => 'Zoominfo&#169; - Company',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/rest/zoominfocompany',
-    'modules' => 
-    array (
-    ),
-  ),
-  'ext_rest_zoominfoperson' => 
-  array (
-    'id' => 'ext_rest_zoominfoperson',
-    'name' => 'Zoominfo&#169; - Person',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/rest/zoominfoperson',
-    'modules' => 
-    array (
-    ),
-  ),
   'ext_rest_twiter' => 
   array (
     'id' => 'ext_rest_twitter',

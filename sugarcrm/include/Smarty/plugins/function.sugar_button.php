@@ -124,6 +124,19 @@ function smarty_function_sugar_button($params, &$smarty)
 				$html = '<input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" accessKey="{$APP.LBL_FULL_FORM_BUTTON_KEY}" class="button" onclick="this.form.return_action.value=\'DetailView\'; this.form.action.value=\'EditView\'; if(typeof(this.form.to_pdf)!=\'undefined\') this.form.to_pdf.value=\'0\';" type="submit" name="' . $params['module'] . '_subpanel_full_form_button" id="' . $params['module'] . '_subpanel_full_form_button" value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}"> ';
 				$html .= '<input type="hidden" name="full_form" value="full_form">';
 		        return $html;	
+			case "POPUPSAVE":
+				$view = $view == 'QuickCreate' ? "form_QuickCreate_{$module}" : $view;
+				return '{if $bean->aclAccess("save")}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" '
+					 . 'class="button primary" onclick="this.form.action.value=\'Popup\';' 
+					 . 'return check_form(\''.$view.'\')" type="submit" name="' . $params['module'] 
+					 . '_popupcreate_save_button" id="' . $params['module'] 
+					 . '_popupcreate_save_button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">{/if} ';
+			case "POPUPCANCEL":
+				return '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" ' 
+					 . 'class="button" onclick="toggleDisplay(\'addform\');return false;" ' 
+					 . 'name="' . $params['module'] . '_popup_cancel_button" type="submit"' 
+					 . 'id="' . $params['module'] . '_popup_cancel_button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
+		    
 			case "AUDIT":
 	            $popup_request_data = array(
 			        'call_back_function' => 'set_return',

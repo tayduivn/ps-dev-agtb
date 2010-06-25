@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 56965 2010-06-15 17:57:35Z jenny $
+ * $Id: en_us.lang.php 57067 2010-06-23 16:52:55Z kjing $
  * Description:	Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -43,7 +43,7 @@ $mod_strings = array (
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
 
 //END SUGARCRM flav=pro ONLY
-	
+	'LBL_DELETE_USER_CONFIRM'           => 'Deleting the User record will also delete the Employee record. Do you want to proceed with deleting this record?',
 	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',
@@ -232,9 +232,7 @@ $mod_strings = array (
     'LBL_LOGIN_LOGIN_TIME_MINUTES'      => 'min.',
    	'LBL_LOGIN_LOGIN_TIME_SECONDS'      => 'sec.',
     'LBL_LOGIN_ADMIN_CALL'              => 'Please contact the system administrator.',
-	'LBL_IE6COMPAT_CHECK'              => 'Sugar detects that you are using Internet Explorer 6, which is not supported by all Sugar Themes. The "Sugar IE6" theme, which will work with Internet Explorer 6, has been selected for you.',
-	'LBL_THEME_PICKER_IE6COMPAT_CHECK' => 'Warning: Internet Explorer 6 is not supported for the selected theme. The "Sugar IE6" theme, which will work with Internet Explorer 6, has been selected for you.',
-    // END LOGIN PAGE STRINGS
+	// END LOGIN PAGE STRINGS
 	'LBL_MAIL_FROMADDRESS'				=> 'Reply-to address',
 	'LBL_MAIL_FROMNAME'					=> 'Reply-to name',
 	'LBL_MAIL_OPTIONS_TITLE'			=> 'Email Settings',
@@ -575,7 +573,7 @@ $mod_strings = array (
     'LBL_WIZARD_FINISH_BUTTON' => 'Finish',
     'LBL_WIZARD_FINISH_TAB' => 'Finish',
     'LBL_WIZARD_FINISH_TITLE' => 'You are ready to use Sugar!',
-    'LBL_WIZARD_FINISH' => 'Click <b>Finish</b> below to save your settings and to begin using Sugar. For more information on using Sugar:<br />
+    'LBL_WIZARD_FINISH' => 'Click <b>Finish</b> below to save your settings and to begin using Sugar. For more information on using Sugar:<br /><br />
 <table cellpadding=0 cellspacing=0>
 <tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b>Sugar University</b></a><br>Get a head start with training and resources for end-users, power-users and system administrators at Sugar University.</td></tr>
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>

@@ -1,3 +1,5 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
@@ -16,24 +18,22 @@
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
- ********************************************************************************/
-function isoUpdate( formElem ) {
-    if ( typeof(js_iso4217[formElem.value]) == 'undefined' ) {
-        return false;
-    }
-
-    var thisForm = formElem.form;
-    var thisCurr = js_iso4217[formElem.value];
-    
-    if ( thisForm.name.value == '' ) {
-        thisForm.name.value = thisCurr.name;
-    }
-    if ( thisForm.symbol.value == '' ) {
-        thisForm.symbol.value = '';
-        for ( var i = 0 ; i < thisCurr.unicode.length ; i++ ) {
-            thisForm.symbol.value = thisForm.symbol.value + String.fromCharCode(thisCurr.unicode[i]);
-        }
-    }
-    
-    return true;
+ * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
+ *********************************************************************************/
+require_once('include/EditView/SubpanelQuickCreate.php');
+class PopupQuickCreate extends SubpanelQuickCreate{
+	
+	function PopupQuickCreate($module, $view='QuickCreate'){
+		$this->defaultProcess = false;
+		parent::SubpanelQuickCreate($module, $view, true);
+		$this->ev->defs['templateMeta']['form']['buttons'] = array('POPUPSAVE', 'POPUPCANCEL');
+	}
+	
+	function process($module){
+        $form_name = 'form_QuickCreate_' . $module;
+        $this->ev->formName = $form_name;
+        $this->ev->process(true, $form_name);
+		return $this->ev->display(false, true);
+	}
 }
+?>

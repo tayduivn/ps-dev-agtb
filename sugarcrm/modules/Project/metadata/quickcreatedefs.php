@@ -18,36 +18,43 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *$Id: quickcreatedefs.php 30112 2007-11-29 20:58:37Z roger $
  ********************************************************************************/
 
-// $Id: SugarWidgetSubPanelCloseButton.php 40493 2008-10-13 21:10:05Z jmertic $
+$viewdefs['Project']['QuickCreate'] = array(
+					'templateMeta' => array('maxColumns' => '2', 
+                        'widths' => array(
+                                        array('label' => '10', 'field' => '30'), 
+                                        array('label' => '10', 'field' => '30')
+                                        ),
+                       ),
+'panels' =>
 
-require_once('include/generic/SugarWidgets/SugarWidgetField.php');
-//TODO Rename this to close button field
-class SugarWidgetSubPanelCloseButton extends SugarWidgetField
-{
-	function displayList(&$layout_def)
-	{
-		global $app_strings;
-		$return_module = $_REQUEST['module'];
-		$return_id = $_REQUEST['record'];
-		$module_name = $layout_def['module'];
-		$record_id = $layout_def['fields']['ID'];
+array (
+  
+  array (
+    'name',
+    'status'
+  ),
+  
+  array (
+    'estimated_start_date',
+    'estimated_end_date'
+  ),
+  
+  array('priority',),
+  array('assigned_user_name',
+	  //BEGIN SUGARCRM flav=pro ONLY
+	  'team_name',
+	  //END SUGARCRM flav=pro ONLY,
+  ),
+  array (
+    array (
+      'name' => 'description',
+    ),
+  ),
 
-		// calls and meetings are held.
-		$new_status = 'Held';
-		
-		switch($module_name)
-		{
-			case 'Tasks':
-				$new_status = 'Completed';
-				break;
-		}
-        
-		$html = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$module_name\",\"$record_id\",\"$new_status\",\"subpanel\",\"{$layout_def['subpanel_id']}\");' >".SugarThemeRegistry::current()->getImage("close_inline","alt=".translate('LBL_LIST_CLOSE',$module_name)." border='0'")."</a>";
-		return $html;
+),
 
-	}
-}
-
+);
 ?>

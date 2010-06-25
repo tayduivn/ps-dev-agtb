@@ -59,13 +59,8 @@ class UsersController extends SugarController
             $u = new User();
             $u->retrieve($_REQUEST['record']);
             $u->status = 'Inactive';
-            if($deleteEmployeeRecord)
-            {
-                $u->deleted = 1;
-                $u->employee_status = 'Terminated';
-            }
-            else 
-                $u->user_name = ""; //Clear out the username to leave the employee record
+            $u->deleted = 1;
+            $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
             SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
