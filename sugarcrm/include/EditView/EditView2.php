@@ -408,7 +408,7 @@ class EditView
 	       	 	{
 	               $this->fieldDefs[$name]['value'] = $value;
 	       	 	}
-
+	       	 	
 				//BEGIN SUGARCRM flav=pro ONLY
 	            if($this->focus->bean_implements('ACL')){
 	       			$this->fieldDefs[$name]['acl'] = ACLField::hasAccess($name, $this->focus->module_dir,$GLOBALS['current_user']->id, $is_owner);
@@ -418,7 +418,7 @@ class EditView
 	            //END SUGARCRM flav=pro ONLY
 
 	            //This code is used for QuickCreates that go to Full Form view
-	        	if($this->populateBean && empty($this->focus->id) && !isset($this->fieldDefs[$name]['function']) && isset($_REQUEST[$name])) {
+	        	if($this->populateBean && empty($this->focus->id) && (isset($this->fieldDefs[$name]['function']['returns']) ? $this->fieldDefs[$name]['function']['returns'] != 'html' : true) && isset($_REQUEST[$name])) {
 	               $this->fieldDefs[$name]['value'] = $this->getValueFromRequest($_REQUEST, $name);
 	            } //if
 

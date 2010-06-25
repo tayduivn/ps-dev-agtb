@@ -198,6 +198,7 @@ function checkMissingField($reporter, $focus, $dis_col,$stream) {
  * @return stream or string
  */
 function template_handle_pdf(&$reporter, $stream = true) {
+    ini_set('zlib.output_compression', 'Off');
 	$reporter->enable_paging = false;
 	$reporter->plain_text_output = true;
 

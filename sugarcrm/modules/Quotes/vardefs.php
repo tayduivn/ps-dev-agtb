@@ -428,6 +428,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 		'module'=>'Accounts',
 		'source'=>'non-db',
 		'massupdate' => false,
+		'studio' => 'false',
 	),
  'account_id' =>
  	array(
@@ -437,6 +438,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 		'vname'=>'LBL_ACCOUNT_ID',
 		'source'=>'non-db',
 		'massupdate' => false,
+		'studio' => 'false',
 		),
   'billing_account_name'=>
 	array(

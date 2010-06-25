@@ -35,7 +35,7 @@ if(isset($globalteam->name)){
 
 //$seed_user = new User();
 //$list = $seed_user->get_full_list();
-$results = $GLOBALS['db']->query("SELECT id, user_name FROM users");
+$results = $GLOBALS['db']->query("SELECT id, user_name FROM users WHERE default_team != '' AND default_team IS NOT NULL");
 
 $team = new Team();
 $user = new User();

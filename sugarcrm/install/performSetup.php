@@ -545,7 +545,20 @@ if(isset($trackerRoleId['id']) && !empty($trackerRoleId['id'])) {
 // Adding MLA Roles
 require_once('modules/ACLRoles/SeedRoles.php');
 create_default_roles();
- 
+
+// Hide certain subpanels by default
+require_once('include/SubPanel/SubPanelDefinitions.php');
+require_once('modules/MySettings/TabController.php');
+
+$disabledTabs = array(
+    "project",
+    "bugs",
+    "products",
+    "contracts",
+    );
+
+$disabledTabsKeyArray = TabController::get_key_array($disabledTabs);
+SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
 
 //END SUGARCRM flav=pro ONLY
 
