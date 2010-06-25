@@ -280,7 +280,7 @@ Calendar.setup ({
           //$Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input type='checkbox' id=$field_name name=$field_name></span sugar='slot'></td>";
          } // if
          if( $field_type=='text' ||  $field_type=='varchar' ||  $field_type=='name'
-          ||  $field_type=='phone' || $field_type=='currency'){
+          ||  $field_type=='phone' || $field_type=='currency' || $field_type=='url'){
            if($field_name=='last_name' ||   $field_required){
                 $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field_label</span sugar='slot'><span class='required' style='color: rgb(255, 0, 0);'>$web_required_symbol</span></td>";
               }
@@ -376,7 +376,7 @@ Calendar.setup ({
           //$Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input type='checkbox' id=$field_name name=$field_name></span sugar='slot'></td>";
          } // if
          if( $field1_type=='text' ||  $field1_type=='varchar' ||  $field1_type=='name'
-          ||  $field1_type=='phone' || $field1_type=='currency'){
+          ||  $field1_type=='phone' || $field1_type=='currency'  || $field1_type=='url'){
             if($field1_name=='last_name' ||  $field1_required){
                 $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field1_label</span sugar='slot'><span class='required' style='color: rgb(255, 0, 0);'>$web_required_symbol</span></td>";
               }
