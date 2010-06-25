@@ -81,10 +81,6 @@
 	onclick="schedulePOPUP()">
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
-{* //BEGIN SUGARCRM flav=pro ONLY*}
-<input type="button" class="button" name="favButton" id="favButton" value="{$favoriteButtonName}" 
-	onclick="{$favoriteButtonOnClickJS}">
-{* //END SUGARCRM flav=pro ONLY*}
 {if ($report_export_access)}	
 <input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}" 
 	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
