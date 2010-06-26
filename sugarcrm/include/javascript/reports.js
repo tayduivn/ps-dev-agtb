@@ -69,6 +69,7 @@ SUGAR.reports = function() {
 	var display_cols = new Array();
 	var group_defs = new Array();
 	var summary_columns = new Array();
+	var summary_order_by = new Array();
 	var order_by = new Array();
 	var grid;
 	
@@ -124,6 +125,8 @@ SUGAR.reports = function() {
 	var lbl_optional_help = SUGAR.language.get("Reports", 'LBL_OPTIONAL_HELP');
 	
 	var displayColOrderBySelectedRow = -1;
+	var displaySummaryOrderBySelectedRow = -1;
+
 
 	return {
 		checkEnterKey: function() {
@@ -177,7 +180,7 @@ SUGAR.reports = function() {
 				if (report_def_str.group_defs) {
 					group_defs = report_def_str.group_defs;
 					for (i = 0; i < report_def_str.group_defs.length; i++) 
-						SUGAR.reports.addFieldToGroupByOnLoad(report_def_str.group_defs[i]);
+						SUGAR.reports.addFieldToGroupByOnLoad(report_def_str.group_defs[i], report_def_str.summary_order_by);
 				}
 				//Only add summary columns that weren't auto added by group by.
 				if (report_def_str.summary_columns) {
@@ -193,7 +196,8 @@ SUGAR.reports = function() {
 							}
 						}
 						if (!alreadyAdded)
-							SUGAR.reports.addFieldToDisplaySummariesOnLoad(report_def_str.summary_columns[i]);
+							SUGAR.reports.addFieldToDisplaySummariesOnLoad(report_def_str.summary_columns[i], null, report_def_str.summary_order_by);
+
 					}
 					if (document.ReportsWizardForm.numerical_chart_column.options.length == 0) {
 						document.ReportsWizardForm.chart_type.disabled = true;
@@ -488,6 +492,8 @@ SUGAR.reports = function() {
 
 			var selected_chart_index = 0;
 			document.ReportsWizardForm.numerical_chart_column.options.length = 0;
+			var sortedOn = false;
+			
 			for (var i = 1; i < table.rows.length; i++) {
 				var field_def = new Object();
 				var row = table.rows[i];
@@ -520,6 +526,17 @@ SUGAR.reports = function() {
 					document.ReportsWizardForm.numerical_chart_column.options[document.ReportsWizardForm.numerical_chart_column.options.length] =
 						new Option(field_def['label'],key);
 				}
+				else {                                        
+					var key = field_def.table_key + ":" + field_def.name;                                
+				}
+
+				if (cells[3].getElementsByTagName('input')[0].checked) {
+					sortedOn = true;
+					summary_order_by[0] = field_def;
+					document.ReportsWizardForm.summary_sort_by.value = key;
+					document.ReportsWizardForm.summary_sort_dir.value = cells[3]
+							.getElementsByTagName('select')[0].value;
+				}				
 			}
 			for(var i=0;i < document.ReportsWizardForm.numerical_chart_column.options.length; i++) {
 				if (document.ReportsWizardForm.numerical_chart_column.options[i].value == selectedVal) {
@@ -528,6 +545,11 @@ SUGAR.reports = function() {
 				}
 			}
 			document.ReportsWizardForm.numerical_chart_column.selectedIndex = selected_chart_index;
+			if (!sortedOn) {
+				document.ReportsWizardForm.summary_sort_by.value = '';
+				document.ReportsWizardForm.summary_sort_dir.value = '';
+				summary_order_by = new Array();
+			}
 			
 			if (summary_columns.length == 0) {
 				alert(lbl_at_least_one_summary_column);
@@ -1606,6 +1628,8 @@ SUGAR.reports = function() {
 				report_def.summary_columns = summary_columns;
 			if (order_by.length > 0)
 				report_def.order_by = order_by;
+			if (summary_order_by.length > 0)
+				report_def.summary_order_by = summary_order_by;
 
 			report_def.report_name = document.ReportsWizardForm.save_report_as.value;
 			report_def.chart_type = chart_type;
@@ -1781,6 +1805,30 @@ SUGAR.reports = function() {
 			displayColOrderBySelectedRow = rowNum;
 		
 		},
+		summaryOrderBySelected : function(rowNum, sortDir) {
+			if (displaySummaryOrderBySelectedRow != -1 && (document.getElementById("summaryOrderByDirectionDiv_" + displaySummaryOrderBySelectedRow))) {
+				document.getElementById("summaryOrderByDirectionDiv_" + displaySummaryOrderBySelectedRow).style.display = 'none';
+			}
+			var directionSpan = document.getElementById("summaryOrderByDirectionDiv_" + rowNum);
+			directionSpan.innerHTML = '<select id="summaryOrderByDirection"><option value="a">'
+					+ SUGAR.language.get('Reports', 'LBL_ASCENDING')
+					+ '</option>'
+					+ '<option value="d">'
+					+ SUGAR.language.get('Reports', 'LBL_DESCENDING')
+					+ '</option></select>';
+			if (typeof (sortDir) != 'undefined') {
+				if (sortDir == 'a')
+					document.getElementById("summaryOrderByDirection").selectedIndex = 0;
+				else
+					document.getElementById("summaryOrderByDirection").selectedIndex = 1;
+
+			} else {
+				document.getElementById("summaryOrderByDirection").selectedIndex = 0;
+			}
+			directionSpan.style.display = "";
+			displaySummaryOrderBySelectedRow = rowNum;
+		},
+		
 		addFieldToGroupBy: function(e) {
 			totalGroupByRows++;
 			var table = document.getElementById('groupByTable');
@@ -1869,6 +1917,10 @@ SUGAR.reports = function() {
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='text' size='50' id= '"+id+"_input' value='"+colLabel+"' onclick='this.focus();'>";
 			cell = row.insertCell(3);
+			cell.setAttribute('scope', 'row');
+			cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\"" + id + "\")'></input>";
+			cell.innerHTML += "<span id='summaryOrderByDirectionDiv_" + id + "'></span>";
+			cell = row.insertCell(4);			
 			cell.setAttribute('scope', 'row');
 			if (typeof(linkedGroupById) == 'undefined')
 				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
@@ -3257,7 +3309,7 @@ SUGAR.reports = function() {
 			var dd11 = YAHOO.util.Dom.get('display_cols_row_' + totalDisplayColRows);
             dd11.dd = new SUGAR.reports.reportDDProxy('display_cols_row_' + totalDisplayColRows, 'group');
 		},
-		addFieldToGroupByOnLoad: function(groupByColumn) {
+		addFieldToGroupByOnLoad: function(groupByColumn, summaryOrderBy) {
 			totalGroupByRows++;
 			var module = full_table_list[groupByColumn.table_key].module;
 			if (groupByColumn.qualifier)
@@ -3318,9 +3370,9 @@ SUGAR.reports = function() {
 			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteGroupBy(\"group_by_row_" +totalGroupByRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
 			var dd11 = YAHOO.util.Dom.get(id);
             dd11.dd = new SUGAR.reports.reportDDProxy(id, 'groupBy');
-			SUGAR.reports.addFieldToDisplaySummariesOnLoad(groupByColumn, 'group_by_row_' + totalGroupByRows);
+			SUGAR.reports.addFieldToDisplaySummariesOnLoad(groupByColumn, 'group_by_row_' + totalGroupByRows, summaryOrderBy);
 		},	
-		addFieldToDisplaySummariesOnLoad: function(summaryColumn, linkedGroupById) {
+		addFieldToDisplaySummariesOnLoad: function(summaryColumn, linkedGroupById, summaryOrderBy) {
 			totalDisplayColRows++;
 			var module = full_table_list[summaryColumn.table_key].module;
 			if (summaryColumn.qualifier)
@@ -3369,7 +3421,7 @@ SUGAR.reports = function() {
 			}
 
 			var row = table.insertRow(table.rows.length);
-			if (typeof(linkedGroupById) != 'undefined')
+			if (linkedGroupById != null)
 				id = 'display_summaries_row_' + linkedGroupById;
 			else 
 				id = 'display_summaries_row_' + totalDisplayColRows;
@@ -3393,17 +3445,25 @@ SUGAR.reports = function() {
 				var colLabel = parentsUIStrSoFar + " > " + field.name;
 			
 			cell.innerHTML = colLabel;
-			if (typeof(linkedGroupById) == 'undefined') {
+			if (linkedGroupById == null) {
 				cell.setAttribute("onmouseover", "this.style.cursor = 'move'");
 			}				
-			
-			
 			cell = row.insertCell(2);
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='text' size='50' id= '"+id+"_input' value='"+summaryColumn.label+"' onclick='this.focus();'>";
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
-			if (typeof(linkedGroupById) == 'undefined')
+			cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\""	+ id + "\")' >";
+			cell.innerHTML += "<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
+			if (typeof (summaryOrderBy) != "undefined" && summaryOrderBy.length > 0) {
+				if (summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
+					document.getElementById("summary_order_by_radio_" + id).setAttribute('checked', true);
+					SUGAR.reports.summaryOrderBySelected(id, summaryOrderBy[0].sort_dir);
+				}
+			}
+			cell = row.insertCell(4);
+			cell.setAttribute('scope', 'row');
+			if (linkedGroupById == null)
 				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
 			SUGAR.reports.addToFullTableList(id,
 				parentsUIStrSoFar, link);		

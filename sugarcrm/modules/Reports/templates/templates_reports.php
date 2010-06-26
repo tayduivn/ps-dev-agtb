@@ -142,7 +142,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		$star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
 	}
 	//END SUGARCRM flav=pro
-    $form_header = get_form_header( $mod_strings['LBL_TITLE'].": ".$args['reporter']->saved_report->name . $star, "", false);
+    $form_header = get_form_header( $star . $mod_strings['LBL_TITLE'].": ".$args['reporter']->saved_report->name, "", false);
 	$smarty->assign('form_header', $form_header);
 	$smarty->assign('report_offset', $reporter->report_offset);
 	$smarty->assign('sort_by', $sort_by);
@@ -190,14 +190,6 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	if (!is_array($report_ids_array)) {
 		$report_ids_array = array();
 	} // if
-	$favoriteButtonName = $app_strings['LBL_MARK_AS_FAVORITES'];
-	$favoriteButtonOnClickJS = "javascript:performFavAction('addtofavorites');";
-	if (array_search($report_id, $report_ids_array) !== false) {
-		$favoriteButtonName = $app_strings['LBL_REMOVE_FROM_FAVORITES'];
-		$favoriteButtonOnClickJS = "javascript:performFavAction('removefromfavorites');";
-	} // if
-	$smarty->assign('favoriteButtonName', $favoriteButtonName);
-	$smarty->assign('favoriteButtonOnClickJS', $favoriteButtonOnClickJS);
 	
 	if (isset($args['warnningMessage'])) {
 		$smarty->assign('warnningMessage', $args['warnningMessage']);		

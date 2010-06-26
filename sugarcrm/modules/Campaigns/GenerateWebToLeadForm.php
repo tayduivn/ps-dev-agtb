@@ -279,8 +279,8 @@ Calendar.setup ({
 </script></span sugar='slot'></td>";
           //$Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input type='checkbox' id=$field_name name=$field_name></span sugar='slot'></td>";
          } // if
-         if( $field_type=='text' ||  $field_type=='varchar' ||  $field_type=='name'
-          ||  $field_type=='phone' || $field_type=='currency'){
+         if( $field_type=='varchar' ||  $field_type=='name'
+          ||  $field_type=='phone' || $field_type=='currency' || $field_type=='url' || $field_type=='int'){
            if($field_name=='last_name' ||   $field_required){
                 $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field_label</span sugar='slot'><span class='required' style='color: rgb(255, 0, 0);'>$web_required_symbol</span></td>";
               }
@@ -289,7 +289,11 @@ Calendar.setup ({
              }
            $Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input id=$field_name name=$field_name type='text'></span sugar='slot'></td>";
             }
-          if($field_type=='relate' &&  $field_name=='account_name'){
+          if ( $field_type == 'text' ) {
+               $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field_label</span sugar='slot'></td>";
+               $Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><textarea id=$field_name name=$field_name></textarea></span sugar='slot'></td>";
+           }
+           if($field_type=='relate' &&  $field_name=='account_name'){
 	            $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field_label</span sugar='slot'></td>";
 	            $Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input id=$field_name name=$field_name type='text'></span sugar='slot'></td>";
            }
@@ -375,8 +379,8 @@ Calendar.setup ({
 </script></span sugar='slot'></td>";
           //$Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input type='checkbox' id=$field_name name=$field_name></span sugar='slot'></td>";
          } // if
-         if( $field1_type=='text' ||  $field1_type=='varchar' ||  $field1_type=='name'
-          ||  $field1_type=='phone' || $field1_type=='currency'){
+         if( $field1_type=='varchar' ||  $field1_type=='name'
+          ||  $field1_type=='phone' || $field1_type=='currency' || $field1_type=='url' || $field1_type=='int'){
             if($field1_name=='last_name' ||  $field1_required){
                 $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field1_label</span sugar='slot'><span class='required' style='color: rgb(255, 0, 0);'>$web_required_symbol</span></td>";
               }
@@ -384,6 +388,10 @@ Calendar.setup ({
                 $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field1_label</span sugar='slot'></td>";
              }
             $Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input id=$field1_name name=$field1_name type='text'></span sugar='slot'></td>";
+           }
+           if ( $field1_type == 'text' ) {
+               $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field1_label</span sugar='slot'></td>";
+               $Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><textarea id=$field1_name name=$field1_name></textarea></span sugar='slot'></td>";
            }
            if($field1_type=='relate' &&  $field1_name=='account_name'){
 	            $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field1_label</span sugar='slot'></td>";
