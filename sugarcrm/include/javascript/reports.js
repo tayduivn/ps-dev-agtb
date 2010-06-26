@@ -527,15 +527,15 @@ SUGAR.reports = function() {
 						new Option(field_def['label'],key);
 				}
 				else {                                        
-					var key = field_def.table_key + ":" + field_def.name;                                
+					var key = field_def.table_key + ":" + field_def.name;
 				}
 
 				if (cells[3].getElementsByTagName('input')[0].checked) {
-					sortedOn = true;
-					summary_order_by[0] = field_def;
-					document.ReportsWizardForm.summary_sort_by.value = key;
-					document.ReportsWizardForm.summary_sort_dir.value = cells[3]
-							.getElementsByTagName('select')[0].value;
+                    sortedOn = true;
+                    summary_order_by[0] = field_def;
+                    summary_order_by[0].sort_dir = cells[3].getElementsByTagName('select')[0].value;
+                    document.ReportsWizardForm.summary_sort_by.value = key;
+                    document.ReportsWizardForm.summary_sort_dir.value = cells[3].getElementsByTagName('select')[0].value;
 				}				
 			}
 			for(var i=0;i < document.ReportsWizardForm.numerical_chart_column.options.length; i++) {
@@ -1681,15 +1681,20 @@ SUGAR.reports = function() {
 				document.ReportsWizardForm.summary_sort_by.value = '';
 				document.ReportsWizardForm.summary_sort_dir.value = '';
 			} else {
+				//todo; handle summary sort when row is deleted
 				var summary_sort_by_elem = new Object();
 				var key_arr = document.ReportsWizardForm.summary_sort_by.value.split(':');
-				if ( typeof(SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).group_function) != 'undefined') {
-					summary_sort_by_elem.name = key_arr[key_arr.length-1];
-					summary_sort_by_elem.group_function = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).group_function;
+				var summaryFieldObj = SUGAR.reports.getLinkedFieldSummaryName(document.ReportsWizardForm.summary_sort_by.value);
+				var summaryFieldModule = full_table_list[summaryFieldObj.table_key].module;
+				var summaryFieldLink = summaryFieldObj.table_key;
+				var summaryFieldName = summaryFieldObj.field_name;
+				if ( typeof(SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function) != 'undefined') {
+					summary_sort_by_elem.name = key_arr[key_arr.length-2];
+					summary_sort_by_elem.group_function = SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function;
 					summary_sort_by_elem.column_function = key_arr[2];
-				} else if (typeof(SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).column_function) != 'undefined') {
-					summary_sort_by_elem.name = key_arr[key_arr.length-1];
-					summary_sort_by_elem.group_function = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value).column_function;
+				} else if (typeof(SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).column_function) != 'undefined') {
+					summary_sort_by_elem.name = key_arr[key_arr.length-2];
+					summary_sort_by_elem.group_function = SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).column_function;
 					summary_sort_by_elem.column_function = key_arr[2];
 				} // else if
 				else {
@@ -1730,6 +1735,40 @@ SUGAR.reports = function() {
 			} // for
 			return linkedFieldName;
 		},
+		
+		getLinkedFieldSummaryName : function(sortByValue) {
+			var moduleArray = sortByValue.split(":");
+			if (moduleArray.length <= 1) {
+				sortByValue = "self:" + sortByValue;
+				moduleArray = sortByValue.split(":");
+			} // if
+			var linkFieldObj = new Object();
+			var linkedFieldName = "";
+			for (i = 0 ; i < (moduleArray.length - 1) ; i++) {
+				/*
+				if (moduleArray[i] == 'self') {
+					linkedFieldName = moduleArray[i];
+					break;
+				} else {
+					*/
+					if (linkedFieldName.length > 0) {
+						linkedFieldName = linkedFieldName + ":";
+					} // if
+					linkedFieldName = linkedFieldName + moduleArray[i];
+			//	} // else
+			} // for
+			if (full_table_list[linkedFieldName]) {
+				linkFieldObj.table_key = linkedFieldName;
+				linkFieldObj.field_name = moduleArray[moduleArray.length - 1];
+				return linkFieldObj;
+			}
+			else {
+				linkFieldObj.field_name = moduleArray[moduleArray.length - 2] + ":" + moduleArray[moduleArray.length - 1];
+				moduleArray.splice(moduleArray.length - 2,2);
+				linkFieldObj.table_key = moduleArray.join(':');
+				return linkFieldObj;
+			}
+		},		
 		
 		checkReportDetails: function() {
 			if (trim(document.ReportsWizardForm.save_report_as.value) == "") {
