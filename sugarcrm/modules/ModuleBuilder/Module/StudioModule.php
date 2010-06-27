@@ -363,7 +363,7 @@ class StudioModule
                 	'label' => $subname , 
                 	'action' => "module=ModuleBuilder&action=editLayout&view=ListView&view_module={$this->module}&subpanel={$name}&subpanelLabel={$subname}" , 
                 	'imageTitle' => $subname , 
-                	'imageName' => ucfirst($name), 
+                	'imageName' => 'icon_' . ucfirst($name) . '_32', 
                 	'altImageName' => 'Subpanels', 
                 	'size' => '48' 
                 ) ;
