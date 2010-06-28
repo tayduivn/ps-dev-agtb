@@ -35,8 +35,8 @@ class TemplateDatetimecombo extends TemplateText{
         'yesterday'=> '-1 day',
         'tomorrow'=>'+1 day',
         'next week'=> '+1 week',
-        'next monday'=>'next monday + 1 day',
-        'next friday'=>'next friday + 1 day',
+        'next monday'=>'next monday',
+        'next friday'=>'next friday',
         'two weeks'=> '+2 weeks',
         'next month'=> '+1 month',
         'first day of next month'=> 'first of next month', // must handle this non-GNU date string in SugarBean->populateDefaultValues; if we don't this will evaluate to 1969...
