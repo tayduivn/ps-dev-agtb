@@ -170,7 +170,7 @@ $mod_strings = array (
     'LBL_CLEAR_PDF_FONT_CACHE_DESC'=>'Removes cached file used to store PDF fonts data',
     'LBL_CONFIG_CHECK' =>'Config Check',
     'LBL_CONFIG_TABS'=>'Select Module Tabs and Subpanels',
-	'LBL_CONFIG_TABS_DESC'=>'Drag and Drop the names of the modules below to set tabs or subpanels to be displayed or to be hidden. If you want to prevent non-admin users from displaying or hiding tabs uncheck the "Allow users to hide tabs" checkbox',
+	'LBL_CONFIG_TABS_DESC'=>'Drag and Drop the names of the modules below to set tabs or subpanels to be displayed or to be hidden. If you want to prevent users from configuring which modules they can view within their User Settings, uncheck the "Allow users to hide tabs" checkbox.',
 	'LBL_CONFIGURATOR_DESC'=>'Set up Config.php',
     'LBL_CONFIGURATOR_TITLE'=>'Configurator',
     'LBL_CONFIGURE_GROUP_TABS_DESC' => 'Create and edit the grouping of navigation tabs',
@@ -1040,7 +1040,7 @@ $mod_strings = array (
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 
 //BEGIN SUGARCRM flav=pro ONLY
-	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Shortcut Bar',
+	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Shortcut Bar',
 	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the Shortcut Bar',
 	'LBL_ERROR_PROD_BAR_NUM_MODULES' => 'Error: There can be at most 10 modules on the Sugar Shortcut Bar at a time.',
 //END SUGARCRM flav=pro ONLY

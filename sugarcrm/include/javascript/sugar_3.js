@@ -2104,7 +2104,7 @@ function check_used_email_templates() {
 
 sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 	formValid = check_form('MassUpdate');
-	if(!formValid) return false;
+	if(!formValid && !del) return false;
 
 
 	if (document.MassUpdate.select_entire_list &&

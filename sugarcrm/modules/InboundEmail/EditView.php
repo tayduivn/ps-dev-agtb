@@ -244,13 +244,13 @@ if(!empty($focus->port)) {
 // groups
 $groupId = "";
 $is_auto_import = "";
+$allow_outbound = '';
 if(isset($focus->id)) 
 	$groupId = $focus->group_id;
 else 
 {
 	$groupId = create_guid();
 	$is_auto_import = 'checked';
-	$allow_outbound = '';
 }
 
 $xtpl->assign('GROUP_ID', $groupId);
