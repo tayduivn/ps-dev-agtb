@@ -526,6 +526,10 @@ SUGAR.reports = function() {
 					document.ReportsWizardForm.numerical_chart_column.options[document.ReportsWizardForm.numerical_chart_column.options.length] =
 						new Option(field_def['label'],key);
 				}
+				else if ( typeof (field_def.column_function) != 'undefined') {
+					var key = field_def.table_key + ":" + field_def.name;
+					key+= ":" + field_def.column_function;
+				}				
 				else {                                        
 					var key = field_def.table_key + ":" + field_def.name;
 				}
