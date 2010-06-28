@@ -2070,7 +2070,7 @@ SUGAR.reports = function() {
 			document.getElementById('display_summaries_div').innerHTML='';
 			module = current_module;
 			var panelHtml="<table id='displaySummariesTable' width='100%'><tr><td width='4%' class='dataLabel'>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width='30%' class='dataLabel'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
-				"</td><td class='dataLabel'>&nbsp;</td></tr>" +
+				"</td><td class='dataLabel'>&nbsp;</td><td width='30%'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</b></td></tr>" +
 				"<tr id='display_summary_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
 			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES') + "</span>" + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
