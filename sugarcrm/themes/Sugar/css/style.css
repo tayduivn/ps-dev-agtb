@@ -5257,6 +5257,12 @@ visibility:visible
 font-size:75%;
 }
 .star {float:left}
+.moduleTitle .star 
+{
+    margin-top:-3px;
+    padding-right:5px;
+}
+
 li div.star {float:none;}
 .star div {background-image:url('../../../../index.php?entryPoint=getImage&imageName=star-sheet.png');width:22px;height:22px;float:left;}
 .star div.on {background-position:0px 0px}
