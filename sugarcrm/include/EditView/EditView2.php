@@ -91,7 +91,7 @@ class EditView
         $this->metadataFile = $metadataFile;
 
         if(isset($GLOBALS['sugar_config']['disable_vcr'])) {
-           $this->showVCRControl = !$sugar_config['disable_vcr'];
+           $this->showVCRControl = !$GLOBALS['sugar_config']['disable_vcr'];
         }
         if(!empty($this->metadataFile) && file_exists($this->metadataFile)){
         	include($this->metadataFile);
