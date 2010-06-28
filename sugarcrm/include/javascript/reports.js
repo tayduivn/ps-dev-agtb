@@ -1692,7 +1692,7 @@ SUGAR.reports = function() {
 				var summaryFieldModule = full_table_list[summaryFieldObj.table_key].module;
 				var summaryFieldLink = summaryFieldObj.table_key;
 				var summaryFieldName = summaryFieldObj.field_name;
-				if ( typeof(SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function) != 'undefined') {
+				if ( typeof(SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function) != 'undefined' && summaryFieldName != 'count') {
 					summary_sort_by_elem.name = key_arr[key_arr.length-2];
 					summary_sort_by_elem.group_function = SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function;
 					summary_sort_by_elem.column_function = key_arr[2];
