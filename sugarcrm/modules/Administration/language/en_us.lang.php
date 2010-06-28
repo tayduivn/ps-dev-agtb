@@ -1040,7 +1040,7 @@ $mod_strings = array (
 'ML_MANIFEST_ISSUE'=>'Issue with the manifest',
 
 //BEGIN SUGARCRM flav=pro ONLY
-	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Shortcut Bar',
+	'LBL_CONFIGURE_SHORTCUT_BAR' => 'Configure Shortcut Bar',
 	'LBL_CONFIGURE_SHORTCUT_BAR_DESC' => 'Select which modules are available in the Shortcut Bar',
 	'LBL_ERROR_PROD_BAR_NUM_MODULES' => 'Error: There can be at most 10 modules on the Sugar Shortcut Bar at a time.',
 //END SUGARCRM flav=pro ONLY
