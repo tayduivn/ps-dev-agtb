@@ -1576,7 +1576,7 @@ function initEditView(theForm) {
 }
 
 function onUnloadEditView(theForm) {
-    if ( typeof editViewSnapshots[theForm.id] == 'undefined' ) {
+    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' ) {
         return null;
     }
 
@@ -1586,6 +1586,10 @@ function onUnloadEditView(theForm) {
     } else {
         return null;
     }
+}
+
+function disableOnUnloadEditView() {
+    window.onbeforeunload = null;
 }
 
 /*
