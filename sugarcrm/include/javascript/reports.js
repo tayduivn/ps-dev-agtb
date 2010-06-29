@@ -526,6 +526,10 @@ SUGAR.reports = function() {
 					document.ReportsWizardForm.numerical_chart_column.options[document.ReportsWizardForm.numerical_chart_column.options.length] =
 						new Option(field_def['label'],key);
 				}
+				else if ( typeof (field_def.column_function) != 'undefined') {
+					var key = field_def.table_key + ":" + field_def.name;
+					key+= ":" + field_def.column_function;
+				}				
 				else {                                        
 					var key = field_def.table_key + ":" + field_def.name;
 				}
@@ -1688,7 +1692,7 @@ SUGAR.reports = function() {
 				var summaryFieldModule = full_table_list[summaryFieldObj.table_key].module;
 				var summaryFieldLink = summaryFieldObj.table_key;
 				var summaryFieldName = summaryFieldObj.field_name;
-				if ( typeof(SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function) != 'undefined') {
+				if ( typeof(SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function) != 'undefined' && summaryFieldName != 'count') {
 					summary_sort_by_elem.name = key_arr[key_arr.length-2];
 					summary_sort_by_elem.group_function = SUGAR.reports.getListFieldDef(summaryFieldName,summaryFieldLink,summaryFieldModule).group_function;
 					summary_sort_by_elem.column_function = key_arr[2];
@@ -1958,7 +1962,7 @@ SUGAR.reports = function() {
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\"" + id + "\")'></input>";
-			cell.innerHTML += "<span id='summaryOrderByDirectionDiv_" + id + "'></span>";
+			cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id + "'></span>";
 			cell = row.insertCell(4);			
 			cell.setAttribute('scope', 'row');
 			if (typeof(linkedGroupById) == 'undefined')
@@ -2003,7 +2007,7 @@ SUGAR.reports = function() {
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='radio' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")'></input>";
-			cell.innerHTML +="<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
+			cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
 			cell = row.insertCell(4);
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplayCol(\"display_cols_row_" +totalDisplayColRows + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
@@ -2066,7 +2070,7 @@ SUGAR.reports = function() {
 			document.getElementById('display_summaries_div').innerHTML='';
 			module = current_module;
 			var panelHtml="<table id='displaySummariesTable' width='100%'><tr><td width='4%' class='dataLabel'>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width='30%' class='dataLabel'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
-				"</td><td class='dataLabel'>&nbsp;</td></tr>" +
+				"</td><td class='dataLabel'>&nbsp;</td><td width='30%'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</b></td></tr>" +
 				"<tr id='display_summary_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
 			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES') + "</span>" + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
@@ -3330,7 +3334,7 @@ SUGAR.reports = function() {
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='radio' name='order_by_radio' id='order_by_radio_"+totalDisplayColRows +"' onClick='SUGAR.reports.orderBySelected(" +totalDisplayColRows+")' >";
-			cell.innerHTML +="<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
+			cell.innerHTML +="&nbsp;&nbsp;<span id='orderByDirectionDiv_" +totalDisplayColRows + "'></span>";
 			if (typeof (orderBy) != "undefined" && orderBy.length > 0) {
 				if (orderBy[0].name == displayCol.name && orderBy[0].table_key == displayCol.table_key) {
 					document.getElementById("order_by_radio_"+totalDisplayColRows).setAttribute('checked', true);
@@ -3493,7 +3497,7 @@ SUGAR.reports = function() {
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
 			cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\""	+ id + "\")' >";
-			cell.innerHTML += "<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
+			cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
 			if (typeof (summaryOrderBy) != "undefined" && summaryOrderBy.length > 0) {
 				if (summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
 					document.getElementById("summary_order_by_radio_" + id).setAttribute('checked', true);
