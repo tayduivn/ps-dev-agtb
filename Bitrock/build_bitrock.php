@@ -132,7 +132,7 @@ function build_installer($FLAVOR, $PLATFORM, $OUTPUT){
 
     $BASE_BITROCK_DIR = "$BITROCK_BASE/base";
     $BASE_LICENSE_DIR = "$BITROCK_BASE/license";
-    $BASE_PROJECT_DIR= "/home/build/sugarsvn/build-bitrock_mango/project";
+    $BASE_PROJECT_DIR= "/home/build/sugarsvn/build-bitrock_mango/Bitrock/project";
     $BASE_MYSQL_DIR = "$BITROCK_BASE/mysql";
 
     $INSTALL_BUILDER_EXE = "/opt/installbuilder-6.0.3/bin/builder";
