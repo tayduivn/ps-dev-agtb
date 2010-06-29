@@ -1526,6 +1526,72 @@ function saveForm(theForm, theDiv, loadingStr) {
 		return false;
 }
 
+// Builds a "snapshot" of the form, so we can use it to see if someone has changed it.
+function snapshotForm(theForm) {
+    var snapshotTxt = '';
+    var elemList = theForm.elements;
+    var elem;
+    var elemType;
+    
+    for( var i = 0; i < elemList.length ; i++ ) {
+        elem = elemList[i];
+        if ( typeof(elem.type) == 'undefined' ) {
+            continue;
+        }
+        
+        elemType = elem.type.toLowerCase();
+        
+        snapshotTxt = snapshotTxt + elem.name;
+
+        if ( elemType == 'text' || elemType == 'textarea' || elemType == 'password' ) {
+            snapshotTxt = snapshotTxt + elem.value;
+        }
+        else if ( elemType == 'select' || elemType == 'select-one' || elemType == 'select-multiple' ) {
+            var optionList = elem.options;
+            for ( var ii = 0 ; ii < optionList.length ; ii++ ) {
+                if ( optionList[ii].selected ) {
+                    snapshotTxt = snapshotTxt + optionList[ii].value;
+                }
+            }
+        }
+        else if ( elemType == 'radio' || elemType == 'checkbox' ) {
+            if ( elem.selected ) {
+                snapshotTxt = snapshotTxt + 'checked';
+            }
+        }
+        else if ( elemType == 'hidden' ) {
+            snapshotTxt = snapshotTxt + elem.value;
+        }
+    }
+    
+    return snapshotTxt;
+}
+
+function initEditView(theForm) {
+    if ( typeof editViewSnapshots == 'undefined' ) {
+        editViewSnapshots = new Object();
+    }
+
+    editViewSnapshots[theForm.id] = snapshotForm(theForm);
+}
+
+function onUnloadEditView(theForm) {
+    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' ) {
+        return null;
+    }
+
+    if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+        // Data has changed.
+        return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
+    } else {
+        return null;
+    }
+}
+
+function disableOnUnloadEditView() {
+    window.onbeforeunload = null;
+}
+
 /*
 * save some forms using an ajax call
 * theForms - the ids of all of theh forms to save
@@ -2104,7 +2170,7 @@ function check_used_email_templates() {
 
 sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 	formValid = check_form('MassUpdate');
-	if(!formValid) return false;
+	if(!formValid && !del) return false;
 
 
 	if (document.MassUpdate.select_entire_list &&
@@ -2938,6 +3004,7 @@ SUGAR.searchForm = function() {
 					break;
 			}
 		},
+        // This function is here to clear the form, instead of "resubmitting it
 		clear_form: function(form) {
             var elemList = form.elements;
             var elem;
@@ -2962,7 +3029,8 @@ SUGAR.searchForm = function() {
                     }
                 }
                 else if ( elemType == 'radio' || elemType == 'checkbox' ) {
-                    elem.selected = off;
+                    elem.checked = false;
+                    elem.selected = false;
                 }
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.

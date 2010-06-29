@@ -39,6 +39,7 @@ if(isset($this->field_defs['assigned_user_name'])){
 	    'source'=>'non-db',
 	    'link'=>'assigned_user_link',
 		'id_name' => 'assigned_user_id',
+		'massupdate' => FALSE
 	  );
 }
 if(isset($this->field_defs['created_by'])){

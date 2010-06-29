@@ -33,7 +33,6 @@ if(!defined('sugarEntry') || !sugarEntry)
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
-
 $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
@@ -239,13 +238,13 @@ $uwMain = $upgrade_directories_not_found;
 		if(is_file($file)) {
 			$out .= "{$mod_strings['LBL_UW_INCLUDING']}: {$file} <br>\n";
 			include($file);
-			logThis('Running pre_install()...');
 			if(!didThisStepRunBefore('commit','pre_install')){
+				logThis('Running pre_install()...');
 				set_upgrade_progress('commit','in_progress','pre_install','in_progress');
 				pre_install();
 				set_upgrade_progress('commit','in_progress','pre_install','done');
+				logThis('pre_install() done.');
 			}
-			logThis('pre_install() done.');
 		}
 	}
 
@@ -284,14 +283,16 @@ $uwMain = $upgrade_directories_not_found;
 		 		$copiedFiles = $split['copiedFiles'];
 		 		$skippedFiles = $split['skippedFiles'];
 				set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
+
 				/// RELOAD to have new files loaded
+				LanguageManager::clearLanguageCache();
 				logThis('Reloading....');
 				$query=http_build_query($_REQUEST);
 				header("Location: index.php?$query");
 				exit();
          }
 		 //END COPY NEW FILES INTO TARGET INSTANCE
-	///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
 	////	HANDLE POSTINSTALL SCRIPTS
 	logThis('Starting post_install()...');
     if (!function_exists("inDeveloperMode")) {
@@ -555,6 +556,17 @@ commitHandleReminders($skippedFiles);
 ////	HANDLE REMINDERS
 ///////////////////////////////////////////////////////////////////////////////
 
+
+if(!didThisStepRunBefore('commit','cleanAll')){
+			set_upgrade_progress('commit','in_progress','cleanAll','done');
+			SugarThemeRegistry::buildRegistry();
+			SugarThemeRegistry::clearAllCaches();
+			/// RELOAD to have new files loaded
+			logThis('Reloading....');
+			$query=http_build_query($_REQUEST);
+			header("Location: index.php?$query");
+			exit();
+         }
 
 logThis("Resetting error_reporting() to system level.");
 error_reporting($standardErrorLevel);
