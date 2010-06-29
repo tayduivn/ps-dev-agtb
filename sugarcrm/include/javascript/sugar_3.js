@@ -3004,6 +3004,7 @@ SUGAR.searchForm = function() {
 					break;
 			}
 		},
+        // This function is here to clear the form, instead of "resubmitting it
 		clear_form: function(form) {
             var elemList = form.elements;
             var elem;
@@ -3028,7 +3029,8 @@ SUGAR.searchForm = function() {
                     }
                 }
                 else if ( elemType == 'radio' || elemType == 'checkbox' ) {
-                    elem.selected = off;
+                    elem.checked = false;
+                    elem.selected = false;
                 }
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
