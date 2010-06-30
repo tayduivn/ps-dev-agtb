@@ -809,9 +809,11 @@ print "<BR>";
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
-        if ($field_def == null && (isset($layout_def['group_function']) && $layout_def['group_function'] != 'count')) {
-            global $mod_strings;
-            sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['label'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
+        if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count')))) {        	
+        		global $mod_strings;
+	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
+			
+        	
         }
         if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
                 && !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table']))

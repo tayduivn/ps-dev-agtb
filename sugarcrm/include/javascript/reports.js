@@ -3199,12 +3199,6 @@ SUGAR.reports = function() {
 			return parentsUIStrSoFar;		
 		},
 		addFilterOnLoad: function(filter, current_filters_table) {
-			totalFilterRows++;
-			var numFilterRows = document.getElementById(current_filters_table).rows.length;
-			
-			var filterRow = document.getElementById(current_filters_table).insertRow(numFilterRows);
-			filterRow.setAttribute('id', current_filters_table +'_filter_row_' + totalFilterRows);
-			var filterCell = filterRow.insertCell(0);
 			var module = full_table_list[filter.table_key].module;
 			var fieldName = filter.name;
 			//BEGIN SUGARCRM flav!=sales ONLY
@@ -3216,10 +3210,20 @@ SUGAR.reports = function() {
 			   var link = filter.table_key.replace(/:/g,'>');
 			   link = (link == 'self') ? module : link;
 			   filter.table_key = (filter.table_key == 'self') ? module : link;
-			} else {
+			} 
+			else if (module_defs[module].field_defs[fieldName]){
 			   var field = module_defs[module].field_defs[fieldName];
 			   var link = filter.table_key.replace(/:/g,'>');
 			}
+            else
+	            return;
+
+			totalFilterRows++;
+			var numFilterRows = document.getElementById(current_filters_table).rows.length;
+			
+			var filterRow = document.getElementById(current_filters_table).insertRow(numFilterRows);
+			filterRow.setAttribute('id', current_filters_table +'_filter_row_' + totalFilterRows);
+			var filterCell = filterRow.insertCell(0);
 			//END SUGARCRM flav!=sales ONLY
 			if (link == "self") {
 				link = module;
@@ -3281,10 +3285,14 @@ SUGAR.reports = function() {
 			
 		},
 		addFieldToDisplayColumnsOnLoad: function(displayCol, orderBy) {
-			totalDisplayColRows++;
 			var module = full_table_list[displayCol.table_key].module;
-			var fieldName = displayCol.name;		
-			var field = module_defs[module].field_defs[fieldName];
+			var fieldName = displayCol.name;	
+			if (module_defs[module].field_defs[fieldName])
+				var field = module_defs[module].field_defs[fieldName];
+			else
+				return;
+
+			totalDisplayColRows++;
 			var link = displayCol.table_key.replace(/:/g,'>');
 			if (link == "self") {
 				link = module;
@@ -3353,7 +3361,6 @@ SUGAR.reports = function() {
             dd11.dd = new SUGAR.reports.reportDDProxy('display_cols_row_' + totalDisplayColRows, 'group');
 		},
 		addFieldToGroupByOnLoad: function(groupByColumn, summaryOrderBy) {
-			totalGroupByRows++;
 			var module = full_table_list[groupByColumn.table_key].module;
 			if (groupByColumn.qualifier)
 				var fieldName = groupByColumn.name+":"+groupByColumn.qualifier;		
@@ -3363,7 +3370,10 @@ SUGAR.reports = function() {
 			var field = module_defs[module].field_defs[fieldName];
 			if (typeof(field) == 'undefined')
 				var field = module_defs[module].group_by_field_defs[fieldName];
-			
+			if (typeof(field) == 'undefined')
+				return;
+
+			totalGroupByRows++;
 			var link = groupByColumn.table_key.replace(/:/g,'>');
 			if (link == "self") {
 				link = module;
@@ -3416,7 +3426,6 @@ SUGAR.reports = function() {
 			SUGAR.reports.addFieldToDisplaySummariesOnLoad(groupByColumn, 'group_by_row_' + totalGroupByRows, summaryOrderBy);
 		},	
 		addFieldToDisplaySummariesOnLoad: function(summaryColumn, linkedGroupById, summaryOrderBy) {
-			totalDisplayColRows++;
 			var module = full_table_list[summaryColumn.table_key].module;
 			if (summaryColumn.qualifier)
 				var fieldName = summaryColumn.name+":"+summaryColumn.qualifier;		
@@ -3433,7 +3442,10 @@ SUGAR.reports = function() {
 				var field = module_defs[module].summary_field_defs[fieldName];
 			if (typeof(field) == 'undefined')
 				var field = module_defs[module].group_by_field_defs[fieldName];
-				
+			if (typeof(field) == 'undefined')
+				return;
+
+			totalDisplayColRows++;
 			var link = summaryColumn.table_key.replace(/:/g,'>');
 			if (link == "self") {
 				link = module;
