@@ -320,7 +320,13 @@ function clean_save_data(& $target_module, $action_array){
 					$target_module->$field = 0;
 					$data_cleaned = true;
 				}
-
+                
+				if( isset($target_module->field_defs[$field]['auto_increment'] ) 
+				    && $target_module->field_defs[$field]['auto_increment']  ){
+					$target_module->$field = null;
+					$data_cleaned = true;
+				}
+				
 				if($target_module->field_defs[$field]['type']=='enum'){
 
 					$options_array_name = $target_module->field_defs[$field]['options'];
