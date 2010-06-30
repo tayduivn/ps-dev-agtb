@@ -86,6 +86,10 @@ class ListViewData {
 				$orderBy = $_SESSION[$this->var_order_by]['orderBy'];
 				$direction = $_SESSION[$this->var_order_by]['direction'];
 			}
+			else{
+				$orderBy = 'date_entered';
+				$direction = 'DESC';
+			}
 		}
 		return array('orderBy' => $orderBy, 'sortOrder' => $direction);
 	}
@@ -259,7 +263,7 @@ class ListViewData {
         $orderby = $order['orderBy'];
         if (strpos($order['orderBy'],'.') && ($order['orderBy'] != "report_cache.date_modified"))
             $orderby = substr($order['orderBy'],strpos($order['orderBy'],'.')+1);
-        if(!in_array($orderby, array_keys($filter_fields))){
+        if($orderby != 'date_entered' && !in_array($orderby, array_keys($filter_fields))){
         	$order['orderBy'] = '';
         	$order['sortOrder'] = '';
         }
