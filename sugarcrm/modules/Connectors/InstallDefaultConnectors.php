@@ -45,14 +45,18 @@ $default_connectors = array (
   ),
 //END SUGARCRM flav!=com ONLY  
 //BEGIN SUGARCRM flav=pro ONLY
-  'ext_rest_twiter' => 
+  'ext_rest_twitter' => 
   array (
     'id' => 'ext_rest_twitter',
     'name' => 'Twitter&#169;',
     'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/rest/twiter',
+    'directory' => 'modules/Connectors/connectors/sources/ext/rest/twitter',
     'modules' => 
     array (
+      0 => 'Accounts',
+      1 => 'Contacts',
+      2 => 'Leads',
+      3 => 'Prospects',
     ),
   ),       
 //END SUGARCRM flav=pro ONLY  
@@ -67,19 +71,23 @@ $default_modules_sources = array (
     'ext_soap_hoovers' => 'ext_soap_hoovers',
     //END SUGARCRM flav!=com ONLY
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+    'ext_rest_twitter' => 'ext_rest_twitter'
   ),
   'Contacts' => 
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+    'ext_rest_twitter' => 'ext_rest_twitter'
   ),
   //BEGIN SUGARCRM flav!=sales ONLY  
   'Leads' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+    'ext_rest_twitter' => 'ext_rest_twitter'
   ),
   'Prospects' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+    'ext_rest_twitter' => 'ext_rest_twitter'
   ),
   //END SUGARCRM flav!=sales ONLY    
 );
