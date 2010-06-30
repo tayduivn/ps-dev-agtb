@@ -272,8 +272,9 @@ $layout_defs['Accounts'] = array(
 			'title_key' => 'LBL_PROJECTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-			),		
-		),		
+				array('widget_class' => 'SubPanelTopSelectButton'),
+			),
+		),
         //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 70,
