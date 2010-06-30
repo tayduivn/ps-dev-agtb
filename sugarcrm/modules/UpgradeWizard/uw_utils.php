@@ -4577,35 +4577,31 @@ function upgradeUserPreferences() {
 	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt')) {
 		//Set tracker settings. Disable tracker session, performance and queries
 		$category = 'tracker';
-		$value =1;
+		$value = 1;
 		$key = array('Tracker', 'tracker_sessions','tracker_perf','tracker_queries');
 		$admin = new Administration();
 		foreach($key as $k){
 			$admin->saveSetting($category, $k, $value);
 		}
 	} else {
-		//If only Tracker for breadcrumbs is enabled then this should be 3
-		if($GLOBALS['sugar_flavor'] == 'PRO' || $GLOBALS['sugar_flavor'] == 'ENT') {
-		   $query = "select count(name) as total from config where category = 'tracker' and name in ('tracker_sessions', 'tracker_perf', 'tracker_queries')";
-		   $results = $db->query($query);
-		   if(!empty($results)) {
-		       $row = $db->fetchByAssoc($results);
-		       //We are assuming if the 3 settings were already disabled, then also disable the 'Tracker' setting
-		       if($row['total'] == 3) {
-		       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-		       }
-		   }
-		} else {
-		   $query = "select count(name) as total from config where category = 'tracker' and name = 'Tracker'";
-		   $results = $db->query($query);
-		   if(!empty($results)) {
-		       $row = $db->fetchByAssoc($results);
+	   $query = "select count(name) as total from config where category = 'tracker' and name = 'Tracker'";
+	   $results = $db->query($query);
+	   if(!empty($results)) {
+	       $row = $db->fetchByAssoc($results);
+	       $total = $row['total'];
+	       if($GLOBALS['sugar_flavor'] == 'PRO' || $GLOBALS['sugar_flavor'] == 'ENT')  {
+	       	   //Fix problem with having multiple tracker entries in config table
+	       	   if($total > 1) {
+	       	   	  $db->query("DELETE FROM config where category = 'tracker' and name = 'Tracker'");
+	       	   	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
+	       	   }
+	       } else {
 		       //We are assuming if the 'Tracker' setting is not disabled then we will just disable it
-		       if($row['total'] == 0) {
+		       if($total == 0) {
 		       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
 		       }
-		   }
-		}
+	       }
+	   }
 	}
 
 	//Write the entries to cache/dashlets/dashlets.php
@@ -4618,29 +4614,6 @@ function upgradeUserPreferences() {
 	   }
 	   write_array_to_file("dashletsFiles", $dashletsFiles, $GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 	} //if
-
-	//If only Tracker for breadcrumbs is enabled then this should be 3
-	if($GLOBALS['sugar_flavor'] == 'PRO' || $GLOBALS['sugar_flavor'] == 'ENT') {
-	   $query = "select count(name) as total from config where category = 'tracker' and name in ('tracker_sessions', 'tracker_perf', 'tracker_queries')";
-	   $results = $db->query($query);
-	   if(!empty($results)) {
-	       $row = $db->fetchByAssoc($results);
-	       //We are assuming if the 3 settings were already disabled, then also disable the 'Tracker' setting
-	       if($row['total'] == 3) {
-	       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-	       }
-	   }
-	} else {
-	   $query = "select count(name) as total from config where category = 'tracker' and name = 'Tracker'";
-	   $results = $db->query($query);
-	   if(!empty($results)) {
-	       $row = $db->fetchByAssoc($results);
-	       //We are assuming if the 'Tracker' setting is not disabled then we will just disable it
-	       if($row['total'] == 0) {
-	       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-	       }
-	   }
-	}
 	//END SUGARCRM flav=pro ONLY
 }
 
