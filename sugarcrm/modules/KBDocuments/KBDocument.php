@@ -36,14 +36,14 @@ class KBDocument extends SugarBean {
 
 	var $id;
 	var $kbdocument_name;
-	var $description;	
+	var $description;
 	var $status_id;
 	var $created_by;
 	var $date_entered;
 	var $date_modified;
 	var $modified_user_id;
 	var $kbdoc_approver_name;
-    var $kbdoc_approver_id;    
+    var $kbdoc_approver_id;
 	var $assigned_user_id;
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
@@ -63,7 +63,7 @@ class KBDocument extends SugarBean {
 	var $template_type;
 	var $parent_id;
 	var $parent_type;
-	
+
 	//additional fields.
 	var $revision;
 	var $kbdocument_revision_number;
@@ -83,20 +83,20 @@ class KBDocument extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array ('revision');
 
-	
+
 
 	var $new_schema = true;
 	var $module_dir = 'KBDocuments';
-	
+
 //todo remove leads relationship.
 	var $relationship_fields = Array('contract_id'=>'contracts',
-	 
+
 		'lead_id' => 'leads'
 	 );
-	  
+
 	function KBDocument() {
 		parent :: SugarBean();
-		$this->setupCustomFields('KBDocuments'); //parameter is module name		
+		$this->setupCustomFields('KBDocuments'); //parameter is module name
 	}
 
 	function get_notification_recipients() {
@@ -117,37 +117,37 @@ class KBDocument extends SugarBean {
 
 	  function set_notification_body($xtpl, $kbdoc)
 	{
-		global $app_list_strings,$current_user,$mod_strings;		
+		global $app_list_strings,$current_user,$mod_strings;
 		$user = new User();
 		$user->retrieve($kbdoc->created_by);
 		$user_name = '';
-		
+
 		if($user->first_name != null){
-		 $user_name = $user->first_name.' '; 	
+		 $user_name = $user->first_name.' ';
 		}
 		if($user->last_name != null){
-		 $user_name .= $user->last_name; 	
-		}	
-			
-		$xtpl->assign("KBDOCUMENT_NAME", $kbdoc->kbdocument_name);		
+		 $user_name .= $user->last_name;
+		}
+
+		$xtpl->assign("KBDOCUMENT_NAME", $kbdoc->kbdocument_name);
 		$xtpl->assign("KBDOCUMENT_STATUS", (isset($kbdoc->status_id) ? $app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]:""));
 		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$kbdoc->active_date);
 		$xtpl->assign("KBDOCUMENT_CREATED_BY",$user_name);
-		$xtpl->assign("KBDOCUMENT_DESCRIPTION", $kbdoc->description);		
+		$xtpl->assign("KBDOCUMENT_DESCRIPTION", $kbdoc->description);
         if(isset($kbdoc->status_id) && $kbdoc->status_id != null){
 	         if($app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]=='Published'){
-	          $xtpl->assign("NOTIFICATION_MESSAGE",$mod_strings['LBL_KB_NOTIFICATION']);   	
+	          $xtpl->assign("NOTIFICATION_MESSAGE",$mod_strings['LBL_KB_NOTIFICATION']);
 	         }
 	         else if($app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]=='In Review'){
-	               $xtpl->assign("NOTIFICATION_MESSAGE","$current_user->name {$mod_strings['LBL_KB_PUBLISHED_REQUEST']}");	
-	          }	
+	               $xtpl->assign("NOTIFICATION_MESSAGE","$current_user->name {$mod_strings['LBL_KB_PUBLISHED_REQUEST']}");
+	          }
 	         else if($app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]=='Draft'){
-	               $xtpl->assign("NOTIFICATION_MESSAGE",$mod_strings['LBL_KB_STATUS_BACK_TO_DRAFT']);	
-            } 
+	               $xtpl->assign("NOTIFICATION_MESSAGE",$mod_strings['LBL_KB_STATUS_BACK_TO_DRAFT']);
+            }
         }
 		return $xtpl;
 	}
-	
+
 	function get_summary_text() {
 		return "$this->kbdocument_name";
 	}
@@ -172,7 +172,7 @@ class KBDocument extends SugarBean {
 		global $theme;
 		global $current_language;
 		global $timedate;
-		
+
 		parent::fill_in_additional_detail_fields();
 
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -189,7 +189,7 @@ class KBDocument extends SugarBean {
 		$this->filename = $row['filename'];
 		$this->latest_revision = $row['revision'];
 
-		//populate the file url. 
+		//populate the file url.
 		//image is selected based on the extension name <ext>_icon_inline, extension is stored in document_revisions.
 		//if file is not found then default image file will be used.
 		global $img_name;
@@ -203,9 +203,9 @@ class KBDocument extends SugarBean {
 		if (!empty ($img_name) && file_exists($img_name)) {
 			$img_name = $img_name_bare;
 		} else {
-			$img_name = "def_image_inline"; //todo change the default image.						
+			$img_name = "def_image_inline"; //todo change the default image.
 		}
-		
+
 		$this->file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
 		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
 
@@ -256,20 +256,20 @@ class KBDocument extends SugarBean {
     function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean){
         global $current_user;
         $ret_array=array();
-        $ret_array['select'] = "SELECT jt0.id assigned_user_id, jt0.user_name assigned_user_name, jt1.id kbdoc_approver_id, jt1.user_name kbdoc_approver_name, kvr.views_number views_number"; 
+        $ret_array['select'] = "SELECT jt0.id assigned_user_id, jt0.user_name assigned_user_name, jt1.id kbdoc_approver_id, jt1.user_name kbdoc_approver_name, kvr.views_number views_number";
         $ret_array['select'] .= ", kbdocuments.id, kbdocuments.kbdocument_name, kbdocuments.active_date, kbdocuments.exp_date, kbdocuments.status_id, kbdocuments.date_entered date_entered, kbdocuments.date_modified, kbdocuments.deleted, kbdocuments.is_external_article, kbdocuments.modified_user_id";
         //BEGIN SUGARCRM flav=ent ONLY
          $ret_array['select'] .= ", kbdocuments.created_by";
          //END SUGARCRM flav=ent ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!is_admin($current_user) && !$this->disable_row_level_security){ 
+        if (!is_admin($current_user) && !$this->disable_row_level_security){
             $ret_array['select'] .= ", jt3.team_id ";
-        } 
+        }
         //END SUGARCRM flav=pro ONLY
         $ret_array['from'] = " FROM kbdocuments left join kbdocuments_views_ratings kvr ON kbdocuments.id = kvr.kbdocument_id  LEFT JOIN  users jt0 ON jt0.id= kbdocuments.assigned_user_id AND jt0.deleted=0  LEFT JOIN  users jt1 ON jt1.id= kbdocuments.kbdoc_approver_id AND jt1.deleted=0";
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!is_admin($current_user) && !$this->disable_row_level_security){ 
+        if (!is_admin($current_user) && !$this->disable_row_level_security){
         	$ret_array['from'] .=  " INNER JOIN team_sets_teams ON team_sets_teams.team_set_id = kbdocuments.team_set_id";
         	$ret_array['from'] .=  " INNER JOIN team_memberships jt3 ON team_sets_teams.team_id = jt3.team_id";
         	$ret_array['from'] .=  " AND jt3.user_id = '$current_user->id' AND jt3.deleted=0 ";
@@ -281,12 +281,12 @@ class KBDocument extends SugarBean {
         $temp_order = strtolower($temp_order);
         if($temp_order == 'asc'  ||  $temp_order == 'desc'){$order_by = '';}
 
-        $ret_array['order_by'] = !empty($order_by) ? ' ORDER BY '. $order_by : '  ORDER BY kbdocuments.date_entered';
-        
+        $ret_array['order_by'] = " GROUP BY kbdocuments.id ".(!empty($order_by) ? ' ORDER BY '. $order_by : '  ORDER BY kbdocuments.date_entered');
+
         $ret_array['from_min'] = $ret_array['from'];
         return $ret_array;
     }
-    
+
 
 	function get_list_view_data() {
 		global $current_language;
@@ -302,7 +302,7 @@ class KBDocument extends SugarBean {
 		return $document_fields;
 	}
 	function mark_relationships_deleted($id) {
-		//do nothing, this call is here to avoid default delete processing since  
+		//do nothing, this call is here to avoid default delete processing since
 		//delete.php handles deletion of document revisions.
 	}
 
@@ -313,12 +313,12 @@ class KBDocument extends SugarBean {
 		}
 		return false;
 	}
-	
+
 	//static function.
 	function get_document_name($doc_id){
 		if (empty($doc_id)) return null;
-		
-		$db = DBManagerFactory::getInstance();				
+
+		$db = DBManagerFactory::getInstance();
 		$query="select kbdocument_name from kbdocuments where id='$doc_id'";
 		$result=$db->query($query);
 		if (!empty($result)) {
@@ -331,24 +331,24 @@ class KBDocument extends SugarBean {
 	}
 	//static function.
 	function get_kbdoc_body($kbdoc_id,$is_revision = false){
-		if (empty($kbdoc_id)) return null;		
-		$db = DBManagerFactory::getInstance();		
-		if($is_revision){		
+		if (empty($kbdoc_id)) return null;
+		$db = DBManagerFactory::getInstance();
+		if($is_revision){
 			//if content is under a revision. old query
-			//$query="select kbdocument_body from kbcontents where document_revision_id in 
+			//$query="select kbdocument_body from kbcontents where document_revision_id in
 			//		( select id from document_revisions where kbdocument_revision_id in(select id from kbdocument_revisions where kbdocument_id  = '$kbdoc_id'))";
 			//new query
-			$query="select kbdocument_body from kbcontents where document_revision_id in 
-					(select document_revision_id from kbdocument_revisions where kbdocument_id  = '$kbdoc_id' and deleted=0) and deleted=0";					
-		}		
+			$query="select kbdocument_body from kbcontents where document_revision_id in
+					(select document_revision_id from kbdocument_revisions where kbdocument_id  = '$kbdoc_id' and deleted=0) and deleted=0";
+		}
 		else{
-			//if content is under the main document. old query 
-			//$query="select kbdocument_body from kbcontents where id in 
+			//if content is under the main document. old query
+			//$query="select kbdocument_body from kbcontents where id in
 			//	( select kbcontent_id from kbdocument_revisions where kbdocument_id = '$kbdoc_id')";
 			//new query
-			$query="select kbdocument_body from kbcontents where id in 
-				(select kbcontent_id from kbdocument_revisions where kbdocument_id = '$kbdoc_id' and deleted=0 and latest=1) and deleted=0";		 	
-		}		
+			$query="select kbdocument_body from kbcontents where id in
+				(select kbcontent_id from kbdocument_revisions where kbdocument_id = '$kbdoc_id' and deleted=0 and latest=1) and deleted=0";
+		}
 		$result=$db->query($query);
 		if (!empty($result)) {
             //increment count
@@ -357,40 +357,40 @@ class KBDocument extends SugarBean {
 
 			$row=$db->fetchByAssoc($result);
 			if (!empty($row)) {
-				$body = $row['kbdocument_body']; 
+				$body = $row['kbdocument_body'];
 				$body .="<onmouseover=\"alert('aa');\"";
 				return $body;
 			}
 		}
 		return null;
 	}
-    
+
 
     //static function.
     function get_kbdoc_body_without_incrementing_count($kbdoc_id,$is_revision = false, $increment=true){
-        if (empty($kbdoc_id)) return null;      
-        $db = DBManagerFactory::getInstance();        
-        if($is_revision){       
+        if (empty($kbdoc_id)) return null;
+        $db = DBManagerFactory::getInstance();
+        if($is_revision){
             //if content is under a revision. old query
-            //$query="select kbdocument_body from kbcontents where document_revision_id in 
+            //$query="select kbdocument_body from kbcontents where document_revision_id in
             //      ( select id from document_revisions where kbdocument_revision_id in(select id from kbdocument_revisions where kbdocument_id  = '$kbdoc_id'))";
             //new query
-            $query="select kbdocument_body from kbcontents where document_revision_id in 
-                    (select document_revision_id from kbdocument_revisions where kbdocument_id  = '$kbdoc_id' and deleted=0) and deleted=0";                    
-        }       
+            $query="select kbdocument_body from kbcontents where document_revision_id in
+                    (select document_revision_id from kbdocument_revisions where kbdocument_id  = '$kbdoc_id' and deleted=0) and deleted=0";
+        }
         else{
-            //if content is under the main document. old query 
-            //$query="select kbdocument_body from kbcontents where id in 
+            //if content is under the main document. old query
+            //$query="select kbdocument_body from kbcontents where id in
             //  ( select kbcontent_id from kbdocument_revisions where kbdocument_id = '$kbdoc_id')";
             //new query
-            $query="select kbdocument_body from kbcontents where id in 
-                (select kbcontent_id from kbdocument_revisions where kbdocument_id = '$kbdoc_id' and deleted=0 and latest=1) and deleted=0";            
-        }       
+            $query="select kbdocument_body from kbcontents where id in
+                (select kbcontent_id from kbdocument_revisions where kbdocument_id = '$kbdoc_id' and deleted=0 and latest=1) and deleted=0";
+        }
         $result=$db->query($query);
         if (!empty($result)) {
             $row=$db->fetchByAssoc($result);
             if (!empty($row)) {
-                $body = $row['kbdocument_body']; 
+                $body = $row['kbdocument_body'];
                 $body .="<onmouseover=\"alert('aa');\"";
                 return $body;
             }
@@ -398,21 +398,21 @@ class KBDocument extends SugarBean {
         return null;
     }
 
-     //function is called statically. 
-    function get_kbdoc_attachments_for_email($kbdoc_id){	    
-		
-		if (empty($kbdoc_id)) return null;	
+     //function is called statically.
+    function get_kbdoc_attachments_for_email($kbdoc_id){
+
+		if (empty($kbdoc_id)) return null;
 
 		global $sugar_config,$app_strings;
 
-		$docrevs = array();						
-		$query="select id,filename from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";	    
+		$docrevs = array();
+		$query="select id,filename from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";
 		$result=$GLOBALS['db']->query($query);
-        $i=0;	
+        $i=0;
         $atts=null;
 		if (!empty($result)) {
 			 while(true){
-			 	
+
 			 	$row = $GLOBALS['db']->fetchByAssoc($result, -1, false);
 			 	if (empty($row)) {
 			 		break;
@@ -428,19 +428,19 @@ class KBDocument extends SugarBean {
 					    <input name='temp_remove_kb_attachment[]' value=$doc_rev_id type='checkbox'> rem&nbsp;&nbsp;
 					    <a href=$full_file_path>$filename</a>";
               	$i++;
-              }              
-		} 
-		return $atts;						
+              }
+		}
+		return $atts;
 	}
 
-     //function is called statically. 
-    function get_kbdoc_attachments_for_newemail($kbdoc_id){	    
-		if (empty($kbdoc_id)) return null;	
-		
+     //function is called statically.
+    function get_kbdoc_attachments_for_newemail($kbdoc_id){
+		if (empty($kbdoc_id)) return null;
+
 		global $sugar_config,$app_strings;
 
-		$docrevs = array();						
-		$query="select id,filename,file_mime_type from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";	    
+		$docrevs = array();
+		$query="select id,filename,file_mime_type from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";
 		$result=$GLOBALS['db']->query($query);
         $i=0;
         $ret = array()	;
@@ -459,93 +459,93 @@ class KBDocument extends SugarBean {
 			$note->file_mime_type = $a['file_mime_type'];
 			if(!copy($fileLocation, $noteFile)) {
 				$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to {$sugar_config['upload_dir']} [ {$fileLocation} ]");
-			}			
+			}
 			$note->save();
-			
+
 			$ret['attachments'][$note->id] = array(
 				'id'		=> $note->id,
 				'filename'	=> $a['filename'],
 			);
 		}
-        
-		return $ret;						
+
+		return $ret;
 	}
-	
-    
+
+
 	//get all attachments
-	function get_kbdoc_attachments($kbdoc_id,$screen){	    
-		if (empty($kbdoc_id)) return null;	
+	function get_kbdoc_attachments($kbdoc_id,$screen){
+		if (empty($kbdoc_id)) return null;
 		global $app_strings;
 		$db = DBManagerFactory::getInstance();
-		$docrevs = array();				
-		//$kbdoc_rev_id = $kbdoc->kbdocument_revision_id;		
+		$docrevs = array();
+		//$kbdoc_rev_id = $kbdoc->kbdocument_revision_id;
 		//old query
 		//$query="select id,filename,document_id from document_revisions where kbdocument_revision_id ='$kbdoc_rev_id' and file_mime_type is not null";
 		//new query
-		$query="select id,filename from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";	    
+		$query="select id,filename from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";
 		$result=$db->query($query);
-        	
+
 		if (!empty($result)) {
 			//$row=$db->fetchByAssoc($result);
 			 while($row = $db->fetchByAssoc($result, -1, false)){
                $docrevs[]=$row;
-              }              
-		}				
-		$kbdoc_atts = '';	
-		if($screen =='Detail'){
-			for($i=0;$i<count($docrevs);$i++){      	 	     	      	
-			     $doc_rev_id = $docrevs[$i]['id'];
-			     $filename = $docrevs[$i]['filename'];			     		  			
-			     $file_url_noimage = basename(UploadFile :: get_url($filename, $doc_rev_id));
-				 $kbdoc_atts .="<div id=tag$i> <a href='index.php?entryPoint=download&id=$file_url_noimage&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;</div>";									
-			}		
+              }
 		}
-		if($screen =='Edit'){			
-			
-		 $doc='Doc';
-			for($i=0;$i<count($docrevs);$i++){      	 	     	      	
+		$kbdoc_atts = '';
+		if($screen =='Detail'){
+			for($i=0;$i<count($docrevs);$i++){
 			     $doc_rev_id = $docrevs[$i]['id'];
 			     $filename = $docrevs[$i]['filename'];
-			     //$doc_id = $docrevs[$i]['document_id'];			     		  			
-			     $file_url_noimage = basename(UploadFile :: get_url($filename, $doc_rev_id));			     			     
+			     $file_url_noimage = basename(UploadFile :: get_url($filename, $doc_rev_id));
+				 $kbdoc_atts .="<div id=tag$i> <a href='index.php?entryPoint=download&id=$file_url_noimage&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;</div>";
+			}
+		}
+		if($screen =='Edit'){
+
+		 $doc='Doc';
+			for($i=0;$i<count($docrevs);$i++){
+			     $doc_rev_id = $docrevs[$i]['id'];
+			     $filename = $docrevs[$i]['filename'];
+			     //$doc_id = $docrevs[$i]['document_id'];
+			     $file_url_noimage = basename(UploadFile :: get_url($filename, $doc_rev_id));
 			     //$kbdoc_atts .="<input title='Create Revision' accessKey='Create Revision' class='button' onclick='this.form.return_module.value=KBDocuments'; this.form.return_action.value='EditView'; this.form.return_id.value=$doc_rev_id; this.form.action.value='EditView' type='submit' name='Edit' value'Create Revision'>&nbsp;&nbsp;";
-			     $cDoc = "'" . "Doc".$i . "'";	
+			     $cDoc = "'" . "Doc".$i . "'";
 			     $att = true;
-			     $doc_rev ="'$doc_rev_id'";		     
+			     $doc_rev ="'$doc_rev_id'";
 			     $kbdoc_atts .="<div id=$cDoc>";
-			     //$kbdoc_atts .="<input id=$doc$i name=$doc$i value='$doc_rev_id' type='hidden'>";			     
-                 //$kbdoc_atts .="<div id=tag$i";   			     
+			     //$kbdoc_atts .="<input id=$doc$i name=$doc$i value='$doc_rev_id' type='hidden'>";
+                 //$kbdoc_atts .="<div id=tag$i";
 			     //$kbdoc_atts .="<div id='aa'<input class=button onclick=\"this.form.module.value='DocumentRevisions';this.form.id.value='$doc_rev_id';this.form.action.value='EditView';\" type='submit' value='Create Rev'>&nbsp;&nbsp;";
 			     $kbdoc_atts .='<img src="'.SugarThemeRegistry::current()->getImageURL('delete.gif').'" alt="Remove" onclick="SUGAR.kb.strikeOutFromImage('.$cDoc.','.$doc_rev.','.$att.');SUGAR.kb.setCheckBox('.$doc_rev.')">';//.'&nbsp;&nbsp;';
                  //$kbdoc_atts .= '<input type="checkbox" name="remove_attachment[]" value="'.$doc_rev_id.'"> '.$app_strings['LNK_REMOVE'].'&nbsp;</div>';
 				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$file_url_noimage&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
 				 $kbdoc_atts .= '<input id="'.$doc_rev_id.'" type="checkbox"  style="visibility:hidden" onclick="SUGAR.kb.strikeOutFromBox('.$cDoc.','.$doc_rev.')" name="'.$doc_rev_id.'" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
 				 //$kbdoc_atts .= '<input type="checkbox"  style="visibility:hidden" name="remove_atts[]" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
-				 $kbdoc_atts .="</div>";									
-			}		
+				 $kbdoc_atts .="</div>";
+			}
 		}
-		
-		 return $kbdoc_atts;						
+
+		 return $kbdoc_atts;
 	}
-	function parentTags($kbtag_id){ 	         
-      $db = DBManagerFactory::getInstance();				
-  	  $query="select parent_tag_id,tag_name from kbtags where id ='$kbtag_id'";   
+	function parentTags($kbtag_id){
+      $db = DBManagerFactory::getInstance();
+  	  $query="select parent_tag_id,tag_name from kbtags where id ='$kbtag_id'";
 	  $result=$db->query($query);
 	  $kbtags=$db->fetchByAssoc($result);
-      $tag_heirachy = $kbtags['tag_name']; 
-	  $parent_tag_id = $kbtags['parent_tag_id'];     
+      $tag_heirachy = $kbtags['tag_name'];
+	  $parent_tag_id = $kbtags['parent_tag_id'];
     while ($parent_tag_id != null) {
-      $db = DBManagerFactory::getInstance();				
-  	  $query="select parent_tag_id,tag_name from kbtags where id ='$parent_tag_id'";   
+      $db = DBManagerFactory::getInstance();
+  	  $query="select parent_tag_id,tag_name from kbtags where id ='$parent_tag_id'";
 	  $result=$db->query($query);
 	  $kbtags=$db->fetchByAssoc($result);
-      $tag_heirachy='/'.$tag_heirachy;    
+      $tag_heirachy='/'.$tag_heirachy;
       }
-    return $tag_heirachy;     
+    return $tag_heirachy;
  }
 	function get_kbdoc_tags($kbdoc_id){
-		if (empty($kbdoc_id)) return null;		
-		$db = DBManagerFactory::getInstance();				
+		if (empty($kbdoc_id)) return null;
+		$db = DBManagerFactory::getInstance();
 		$query="select kbtag_id from kbdocuments_kbtags where kbdocument_id = '$kbdoc_id'";
 		$result=$db->query($query);
 		if (!empty($result)) {
@@ -559,24 +559,24 @@ class KBDocument extends SugarBean {
 
 function get_tags($kbdoc_id){
 	    $kbtags_heirarchy=array();
-	    $kbtags = array();		
-	    if (empty($kbdoc_id)) return null;		
-		$db = DBManagerFactory::getInstance();				
+	    $kbtags = array();
+	    if (empty($kbdoc_id)) return null;
+		$db = DBManagerFactory::getInstance();
 		$query="select kbtag_id,kbdocument_id from kbdocuments_kbtags where kbdocument_id = '$kbdoc_id'";
 		$result=$db->query($query);
 		if (!empty($result)) {
-			$kbtags = $db->fetchByAssoc($result); 
+			$kbtags = $db->fetchByAssoc($result);
 		}
-	    return $kbtags;	
+	    return $kbtags;
 }
-	
+
 function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
         global $app_strings;
 		$focus = new KBDocument();
 		$kbtags_heirarchy=array();
 	    $kbtags = array();
-	    $kbdoctags = array();	    		
-	    if (empty($kbdoc_id)) return null;								
+	    $kbdoctags = array();
+	    if (empty($kbdoc_id)) return null;
 		$query="select kbtag_id from kbdocuments_kbtags where kbdocument_id = '$kbdoc_id' and deleted=0";
 		$result=$focus->db->query($query);
 		if (!empty($result)) {
@@ -585,30 +585,30 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		$tags='';
        while($row = $focus->db->fetchByAssoc($result, -1, false)){
          $kbdoctags[]=$row;
-        }            
+        }
       for($i=0;$i<count($kbdoctags);$i++){
-      	 $tag_heirachy = '';	     	      	
-	     $kbtag_id = $kbdoctags[$i]['kbtag_id'];	     		  			
-	  	  $query="select parent_tag_id,tag_name from kbtags where id ='$kbtag_id' and deleted=0";   
+      	 $tag_heirachy = '';
+	     $kbtag_id = $kbdoctags[$i]['kbtag_id'];
+	  	  $query="select parent_tag_id,tag_name from kbtags where id ='$kbtag_id' and deleted=0";
 		  $result=$focus->db->query($query);
 		  $kbtags=$focus->db->fetchByAssoc($result);
 		  $att = 0;
 		  if($kbtags != null){
-		      $tag_heirachy = $kbtags['tag_name']; 
-			  $parent_tag_id = $kbtags['parent_tag_id'];     
-			    while ($parent_tag_id != null) {		      		
+		      $tag_heirachy = $kbtags['tag_name'];
+			  $parent_tag_id = $kbtags['parent_tag_id'];
+			    while ($parent_tag_id != null) {
 			      $kbt = '';
-			  	  $query="select parent_tag_id,tag_name from kbtags where id ='$parent_tag_id' and deleted=0";		  	     
+			  	  $query="select parent_tag_id,tag_name from kbtags where id ='$parent_tag_id' and deleted=0";
 				  $result=$focus->db->query($query);
 				  $kbt=$focus->db->fetchByAssoc($result);
 				  $parent_tag_id = $kbt['parent_tag_id'];
-			      $tag_heirachy=$kbt['tag_name'].'/'.$tag_heirachy;    
-			     }      		    
-			      
+			      $tag_heirachy=$kbt['tag_name'].'/'.$tag_heirachy;
+			     }
+
 			     $kbtags_heirarchy[$i]=$tag_heirachy;
-		         $cTag = "'" . "tag".$i . "'";   	     	     
+		         $cTag = "'" . "tag".$i . "'";
 		         $cBox = "'$kbtag_id'";
-		         $tags .= "<div id=$cTag onmouseover = '' onmouseout=''>";	              
+		         $tags .= "<div id=$cTag onmouseover = '' onmouseout=''>";
 		         if($screen == 'Edit'){
 			       $tags .='<img src="'.SugarThemeRegistry::current()->getImageURL('delete.gif').'" alt="Remove" onclick="SUGAR.kb.strikeOutFromImage('.$cTag.','.$cBox.','.$att.')">';//.'&nbsp;&nbsp;';
 			       //store already saved tags
@@ -617,28 +617,28 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 			       //$tags .='<img src="'.SugarThemeRegistry::current()->getImageURL('delete.gif').'" alt="Remove" onclick="strikeOutFromImage('.$cTag.','.$cBox.')">'.'&nbsp;&nbsp;';;
 			       $tags .= "<strong>$tag_heirachy&nbsp;&nbsp";
 			     }
-			     			     
-			     if($screen=='Detail'){			     
+
+			     if($screen=='Detail'){
 			       $tags .= "$tag_heirachy&nbsp;&nbsp";
 			     }
 			     if($screen == 'Edit'){
 			     	$tags .= '<input id="'.$kbtag_id.'" type="checkbox"  style="visibility:hidden" onclick="SUGAR.kb.strikeOutFromBox('.$cTag.','.$cBox.')" name="'.$kbtag_id.'" value="'.$kbtag_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
 			     }
 			     //$tags .= "<input type='checkbox' name='remove_tags[]' value='.$kbtag_id.'> '.$app_strings['LNK_REMOVE'].'";
-			     
+
 			     $tags .= "</div>";
-			    
+
 			     //$tags .= "<onmouseover= 'return A customizable view into Accounts'></br>";
 			     //$tags .= "<tr><td colspan='3' valign='top' valign='top'><input type='text' onmouseover=\"alert('aa');\" id='tags[]' name='tags[]' value='$tag_heirachy'></td></tr>";
-			  }     
+			  }
        }
 		return $tags; //btags_heirarchy;
-	}	
+	}
 	function get_kbdocument_revisions($kbdoc_id){
 		$return_array= Array();
 		if (empty($kbdoc_id)) return $return_array;
-		
-		$db = DBManagerFactory::getInstance();				
+
+		$db = DBManagerFactory::getInstance();
 		$query="select id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0";
 		$result=$db->query($query);
 		if (!empty($result)) {
@@ -648,12 +648,12 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 		}
 		return $return_array;
 	}
-	
+
 	/**
-	* This function is used to execute the query and create an array template objects 
+	* This function is used to execute the query and create an array template objects
 	* from the resulting ids from the query.
 	* It is currently used for building sub-panel arrays.
-    * 
+    *
 	* @param string $query - the query that should be executed to build the list
 	* @param object $template - The object that should be used to copy the records.
     * @param int $row_offset Optional, default 0
@@ -673,7 +673,7 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
                         FROM document_revisions dr INNER JOIN
                         kbdocument_revisions kr ON kr.document_revision_id = dr.id AND kr.kbdocument_id = '". $matches[1] ."' AND dr.file_mime_type IS NOT NULL AND dr.deleted = 0) AS a
                         WHERE row_number > $row_offset AND row_number < " . ($row_offset + $limit + 1);
-              $result = $this->db->query($query, true);    	
+              $result = $this->db->query($query, true);
 			} else {
 			  $result = $this->db->limitQuery($query, $row_offset, $limit, true, "Error retrieving $template->object_name list: ");
 			}
@@ -701,26 +701,26 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 			}
 			$isFirstTime = false;
 			$record = $template->retrieve($row['id']);
-						
+
 			if($record != null)
 			{
 				// Check if we already have the author name queried
-				if(!isset($authors[$record->created_by])) { 
+				if(!isset($authors[$record->created_by])) {
 			       $query2 = "SELECT first_name, last_name FROM users WHERE id = '$record->created_by'";
 	               $results2 = $template->db->query($query2);
 			       $row2 = $template->db->fetchByAssoc($results2);
 			       if (!empty ($row2)) {
 					    $authors[$record->created_by] = $row2['first_name'].' '.$row2['last_name'];
 				   }
-				}	
+				}
                 $record->created_by = $authors[$record->created_by];
 
 				// this copies the object into the array
 				$list[] = $record;
 			}
 		}
-		return $list;	
-	}	
+		return $list;
+	}
 
 
 
@@ -728,10 +728,10 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
      * Changes the select expression of the given query to be 'count(*)' so you
      * can get the number of items the query will return.  This is used to
      * populate the upper limit on ListViews.
-     * 
+     *
      * @param string $query Select query string
      * @return string count query
-     * 
+     *
      * Internal function, do not override.
      */
     function create_list_count_query($query)
@@ -749,7 +749,7 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
         //was producing inconsistent results, so we are exploding into array instead
         $pattern = 'order by';
         $query_array = explode($pattern, $modified_select_query);
-        //remove the last order by in the array, which would otherwise blow up the count query 
+        //remove the last order by in the array, which would otherwise blow up the count query
         $throwaway = array_pop($query_array);
 
         //now that the last order by is removed, lets recreate string

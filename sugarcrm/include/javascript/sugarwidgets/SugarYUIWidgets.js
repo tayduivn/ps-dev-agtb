@@ -25,54 +25,6 @@ YAHOO.namespace("SUGAR");
 		Connect = YAHOO.util.Connect,
 	    Dom = YAHOO.util.Dom;
 	    
-sw.closeActivityPanel = {
-
-    show:function(module,id,new_status,isDashlet,parentContainerId){
-        if (sw.closeActivityPanel.panel) 
-			sw.closeActivityPanel.panel.destroy();
-	    var singleModule = SUGAR.language.get("app_list_strings", "moduleListSingular")[module];
-	    singleModule = typeof(singleModule != 'undefined') ? singleModule.toLowerCase() : '';
-	    var closeText =  SUGAR.language.get("app_strings", "LBL_CLOSE_ACTIVITY_CONFIRM").replace("#module#",singleModule);
-        sw.closeActivityPanel.panel =  
-	    new YAHOO.widget.SimpleDialog("closeActivityDialog",  
-	             { width: "300px", 
-	               fixedcenter: true, 
-	               visible: false, 
-	               draggable: false, 
-	               close: true, 
-	               text: closeText, 
-	               constraintoviewport: true, 
-	               buttons: [ { text:SUGAR.language.get("app_strings", "LBL_EMAIL_OK"), handler:function(){ 
-	                   if (sw.closeActivityPanel.panel)
-                            sw.closeActivityPanel.panel.hide();
-                                    
-                        ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-                        var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
-                        var callback = {
-                            success:function(o)
-                            {
-                                if(isDashlet)
-                                {
-                                    SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
-                                    ajaxStatus.hideStatus();
-                                }
-                                else //From subpanel
-                                    showSubPanel(o.argument['parentContainerId'],null,true);
-                            },
-                            argument:{'parentContainerId':parentContainerId}
-                        };
-                
-                        YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, args);
-	               
-	               }, isDefault:true }, 
-	                          { text:SUGAR.language.get("app_strings", "LBL_EMAIL_CANCEL"),  handler:function(){sw.closeActivityPanel.panel.hide(); }} ] 
-	             } ); 
-	  
-	    sw.closeActivityPanel.panel.setHeader(SUGAR.language.get("app_strings", "LBL_CLOSE_ACTIVITY_HEADER")); 
-        sw.closeActivityPanel.panel.render(document.body);
-        sw.closeActivityPanel.panel.show();
-    }
-},
 /**
  * Message Box is a singleton widget designed to replace the browsers 'alert'
  * function, as well as provide capabilities for pop-over loading bars and

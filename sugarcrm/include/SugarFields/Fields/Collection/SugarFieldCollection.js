@@ -217,6 +217,8 @@ if(typeof(SUGAR.collection) == "undefined") {
                 this.js_more();
                 this.js_more();
             }
+            // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
+            initEditView(document.forms[this.form]);
         },
         /*
          * Create the new row from a cloned row. 

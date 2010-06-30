@@ -513,14 +513,12 @@ $GLOBALS['moduleTabMap'] = array(
 //END SUGARCRM flav=pro ONLY
 );
 //BEGIN SUGARCRM flav=pro ONLY
-$moduleList[] = 'SugarFavorites';
 $beanList['SugarFavorites'] = 'SugarFavorites';
 $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';
 $modules_exempt_from_availability_check['SugarFavorites'] = 'SugarFavorites';
 $modInvisList[] = 'SugarFavorites';
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=following ONLY
-$moduleList[] = 'SugarFollowing';
 $beanList['SugarFollowing'] = 'SugarFollowing';
 $beanFiles['SugarFollowing'] = 'modules/SugarFollowing/SugarFollowing.php';
 $modules_exempt_from_availability_check['SugarFollowing'] = 'SugarFollowing';

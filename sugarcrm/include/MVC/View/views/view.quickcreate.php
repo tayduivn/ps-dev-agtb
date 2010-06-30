@@ -26,6 +26,7 @@ require_once('include/EditView/EditView2.php');
 
 class ViewQuickcreate extends ViewAjax
 {
+	private $_isDCForm = false;
     /**
      * @see SugarView::preDisplay()
      */
@@ -55,6 +56,7 @@ class ViewQuickcreate extends ViewAjax
 	                }
                 }               
             }
+            $this->_isDCForm = false;
     	}
     }    
     
@@ -87,6 +89,8 @@ class ViewQuickcreate extends ViewAjax
 		$ev = new EditView();
 		$ev->view = $view;
 		$ev->ss = new Sugar_Smarty();
+		
+		$ev->ss->assign('isDCForm', $this->_isDCForm);
 		//$_REQUEST['return_action'] = 'SubPanelViewer';
 		$ev->setup($module, null, $source);
 		$ev->showSectionPanelsTitles = false;

@@ -38,7 +38,9 @@ function prepSystemForUpgradeSilent() {
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-	    mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
+	    	mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		}
 	}
 }
 ////	END UTILITIES THAT MUST BE LOCAL :(
@@ -184,9 +186,7 @@ if(isset($current_user) && $current_user->user_name == null){
 }
 ///////////////////////////////////////////////////////////////////////////////
 ////	UPGRADE PREP
-if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}/upgrades"))) {
-	prepSystemForUpgradeSilent();
-}
+prepSystemForUpgradeSilent();
 
 $unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp");
 $install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));

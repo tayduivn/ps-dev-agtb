@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: sugar_3.js 56650 2010-05-24 18:53:17Z jenny $
+// $Id: sugar_3.js 57033 2010-06-18 21:05:47Z kjing $
 
 /**
  * Namespace for Sugar Objects
@@ -894,7 +894,7 @@ function validate_form(formname, startsWith){
 								}
 							break;
                             case 'less':
-                                value=parseFloat(trim(form[validate[formname][i][nameIndex]].value));
+                                value=unformatNumber(trim(form[validate[formname][i][nameIndex]].value), num_grp_sep, dec_sep);
 								maximum = parseFloat(validate[formname][i][maxIndex]);
 								if(	typeof maximum != 'undefined'){
 									if(value>maximum) {
@@ -904,7 +904,7 @@ function validate_form(formname, startsWith){
 								}
 							break;
 							case 'more':
-                                value=parseFloat(trim(form[validate[formname][i][nameIndex]].value));
+                                value=unformatNumber(trim(form[validate[formname][i][nameIndex]].value), num_grp_sep, dec_sep);
 								minimum = parseFloat(validate[formname][i][minIndex]);
 								if(	typeof minimum != 'undefined'){
 									if(value<minimum) {
@@ -1526,6 +1526,72 @@ function saveForm(theForm, theDiv, loadingStr) {
 		return false;
 }
 
+// Builds a "snapshot" of the form, so we can use it to see if someone has changed it.
+function snapshotForm(theForm) {
+    var snapshotTxt = '';
+    var elemList = theForm.elements;
+    var elem;
+    var elemType;
+    
+    for( var i = 0; i < elemList.length ; i++ ) {
+        elem = elemList[i];
+        if ( typeof(elem.type) == 'undefined' ) {
+            continue;
+        }
+        
+        elemType = elem.type.toLowerCase();
+        
+        snapshotTxt = snapshotTxt + elem.name;
+
+        if ( elemType == 'text' || elemType == 'textarea' || elemType == 'password' ) {
+            snapshotTxt = snapshotTxt + elem.value;
+        }
+        else if ( elemType == 'select' || elemType == 'select-one' || elemType == 'select-multiple' ) {
+            var optionList = elem.options;
+            for ( var ii = 0 ; ii < optionList.length ; ii++ ) {
+                if ( optionList[ii].selected ) {
+                    snapshotTxt = snapshotTxt + optionList[ii].value;
+                }
+            }
+        }
+        else if ( elemType == 'radio' || elemType == 'checkbox' ) {
+            if ( elem.selected ) {
+                snapshotTxt = snapshotTxt + 'checked';
+            }
+        }
+        else if ( elemType == 'hidden' ) {
+            snapshotTxt = snapshotTxt + elem.value;
+        }
+    }
+    
+    return snapshotTxt;
+}
+
+function initEditView(theForm) {
+    if ( typeof editViewSnapshots == 'undefined' ) {
+        editViewSnapshots = new Object();
+    }
+
+    editViewSnapshots[theForm.id] = snapshotForm(theForm);
+}
+
+function onUnloadEditView(theForm) {
+    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' ) {
+        return null;
+    }
+
+    if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+        // Data has changed.
+        return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
+    } else {
+        return null;
+    }
+}
+
+function disableOnUnloadEditView() {
+    window.onbeforeunload = null;
+}
+
 /*
 * save some forms using an ajax call
 * theForms - the ids of all of theh forms to save
@@ -2104,7 +2170,7 @@ function check_used_email_templates() {
 
 sugarListView.prototype.send_mass_update = function(mode, no_record_txt, del) {
 	formValid = check_form('MassUpdate');
-	if(!formValid) return false;
+	if(!formValid && !del) return false;
 
 
 	if (document.MassUpdate.select_entire_list &&
@@ -2938,6 +3004,7 @@ SUGAR.searchForm = function() {
 					break;
 			}
 		},
+        // This function is here to clear the form, instead of "resubmitting it
 		clear_form: function(form) {
             var elemList = form.elements;
             var elem;
@@ -2962,7 +3029,8 @@ SUGAR.searchForm = function() {
                     }
                 }
                 else if ( elemType == 'radio' || elemType == 'checkbox' ) {
-                    elem.selected = off;
+                    elem.checked = false;
+                    elem.selected = false;
                 }
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
@@ -3807,4 +3875,54 @@ SUGAR.util.isTouchScreen = function()
     }
     
     return false;
+}
+
+SUGAR.util.closeActivityPanel = {
+    show:function(module,id,new_status,viewType,parentContainerId){
+        if (SUGAR.util.closeActivityPanel.panel) 
+			SUGAR.util.closeActivityPanel.panel.destroy();
+	    var singleModule = SUGAR.language.get("app_list_strings", "moduleListSingular")[module];
+	    singleModule = typeof(singleModule != 'undefined') ? singleModule.toLowerCase() : '';
+	    var closeText =  SUGAR.language.get("app_strings", "LBL_CLOSE_ACTIVITY_CONFIRM").replace("#module#",singleModule);
+        SUGAR.util.closeActivityPanel.panel =  
+	    new YAHOO.widget.SimpleDialog("closeActivityDialog",  
+	             { width: "300px", 
+	               fixedcenter: true, 
+	               visible: false, 
+	               draggable: false, 
+	               close: true, 
+	               text: closeText, 
+	               constraintoviewport: true, 
+	               buttons: [ { text:SUGAR.language.get("app_strings", "LBL_EMAIL_OK"), handler:function(){ 
+	                   if (SUGAR.util.closeActivityPanel.panel)
+                            SUGAR.util.closeActivityPanel.panel.hide();
+                                    
+                        ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
+                        var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
+                        var callback = {
+                            success:function(o)
+                            {
+                                if(viewType == 'dashlet')
+                                {
+                                    SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
+                                    ajaxStatus.hideStatus();
+                                }
+                                else if(viewType == 'subpanel')
+                                    showSubPanel(o.argument['parentContainerId'],null,true);
+                                else if(viewType == 'listview')
+                                    document.location = 'index.php?module=' + module +'&action=index';
+                            },
+                            argument:{'parentContainerId':parentContainerId}
+                        };
+                
+                        YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, args);
+	               
+	               }, isDefault:true }, 
+	                          { text:SUGAR.language.get("app_strings", "LBL_EMAIL_CANCEL"),  handler:function(){SUGAR.util.closeActivityPanel.panel.hide(); }} ] 
+	             } ); 
+	  
+	    SUGAR.util.closeActivityPanel.panel.setHeader(SUGAR.language.get("app_strings", "LBL_CLOSE_ACTIVITY_HEADER")); 
+        SUGAR.util.closeActivityPanel.panel.render(document.body);
+        SUGAR.util.closeActivityPanel.panel.show();
+    }
 }

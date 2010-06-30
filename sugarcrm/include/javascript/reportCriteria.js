@@ -1498,17 +1498,21 @@ function fill_form(type) {
 		var summary_sort_by_elem = new Object();
 		var key_arr = form_obj.summary_sort_by.value.split(':');
 
-		summary_sort_by_elem.name = key_arr[1];
-
 		if ( typeof(all_fields[ form_obj.summary_sort_by.value ].field_def.group_function) != 'undefined') {
+			summary_sort_by_elem.name = key_arr[1];
 			summary_sort_by_elem.group_function = all_fields[ form_obj.summary_sort_by.value ].field_def.group_function;
+			summary_sort_by_elem.column_function = key_arr[2];
+			summary_sort_by_elem.table_key = all_fields[ form_obj.summary_sort_by.value ].linked_field_name;
 		} 
 		else if ( typeof(all_fields[ form_obj.summary_sort_by.value ].field_def.column_function) != 'undefined') {
+			summary_sort_by_elem.name = key_arr[1];
 			summary_sort_by_elem.group_function = all_fields[ form_obj.summary_sort_by.value ].field_def.column_function;
+			summary_sort_by_elem.column_function = key_arr[2];
+			summary_sort_by_elem.table_key = all_fields[ form_obj.summary_sort_by.value ].linked_field_name;
 		}
-
-		summary_sort_by_elem.column_function = key_arr[2];
-		summary_sort_by_elem.table_key = all_fields[ form_obj.summary_sort_by.value ].linked_field_name;
+		else {
+			summary_sort_by_elem = getListFieldDef(form_obj.summary_sort_by.value);
+		}
 		summary_sort_by_elem.sort_dir = form_obj.summary_sort_dir.value;
 		summary_sort_by.push(summary_sort_by_elem);
 		report_def_1.summary_order_by = summary_sort_by;

@@ -434,7 +434,7 @@ function recursive_empty_or_remove_directory($directory, $exclude_dirs=null,$exc
 
 
 function getAllCustomizedModules() {
-		
+
 		require_once('files.md5');
 
 	    $return_array = array();
@@ -487,7 +487,7 @@ function getAllCustomizedModules() {
 //Remove files with the smae md5
 
 function removeMd5MatchingFiles($deleteNot=array()){
-    
+
 	$md5_string = array();
 	if(file_exists(clean_path(getcwd().'/files.md5'))){
 		require(clean_path(getcwd().'/files.md5'));
@@ -544,7 +544,7 @@ function commitHandleReminders($skippedFiles, $path='') {
 
 		if($_REQUEST['addTaskReminder'] == 'remind') {
 			logThis('Adding Task for admin for manual merge.', $path);
-			
+
 			$task = new Task();
 			$task->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
 			$task->description = $desc;
@@ -564,7 +564,7 @@ function commitHandleReminders($skippedFiles, $path='') {
 
 		if($_REQUEST['addEmailReminder'] == 'remind') {
 			logThis('Sending Reminder for admin for manual merge.', $path);
-			
+
 			$email = new Email();
 			$email->assigned_user_id = $current_user->id;
 			$email->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
@@ -2758,7 +2758,7 @@ $uwMain = $upgrade_directories_not_found;
 
 
 	if(file_exists('include/utils/file_utils.php')){
-		
+
 	}
 	$upgradeFiles = findAllFiles(clean_path("$unzip_dir/$zip_from_dir"), array());
 	$cache_html_files= array();
@@ -3176,7 +3176,7 @@ function unlinkTempFiles() {
 			@unlink($cacheFile);
 		}
 	}
-	logThis("finished!");	
+	logThis("finished!");
 }
 }
 
@@ -3282,9 +3282,12 @@ function UWrebuild() {
 	global $path;
 
 	logThis('Rebuilding everything...', $path);
-	require_once('ModuleInstall/ModuleInstaller.php');
-	$mi = new ModuleInstaller();
-	$mi->rebuild_all(true);
+//	require_once('ModuleInstall/ModuleInstaller.php');
+//	$mi = new ModuleInstaller();
+//	$mi->rebuild_all(true);
+	require_once('modules/Administration/QuickRepairAndRebuild.php');
+	$randc = new RepairAndClear();
+    $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
 
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
@@ -3670,19 +3673,19 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 					  v_buffer  PLS_INTEGER := 32767;
 					BEGIN
 					  DBMS_LOB.CREATETEMPORARY(v_clob, TRUE);
-					  
+
 					  FOR i IN 1..CEIL(DBMS_LOB.GETLENGTH(blob_in) / v_buffer)
 					  LOOP
-					    
+
 					     v_varchar := UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(blob_in, v_buffer, v_start));
-					 
+
 					           DBMS_LOB.WRITEAPPEND(v_clob, LENGTH(v_varchar), v_varchar);
-					 
+
 					        v_start := v_start + v_buffer;
 					    END LOOP;
-					    
+
 					   RETURN v_clob;
-					  
+
 					END blob_to_clob;");
     }
     if(strpos($resumeFromQuery,",") != false){
@@ -3736,7 +3739,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 	                        if($query != null && $resumeAfterFound && $count >1){
 	                        	$tableName = '';
 	                        	if($is_mysql)
-	                        	{	                        		
+	                        	{
 	                        		$tableName = getAlterTable($query);
 	                        		if(!empty($tableName))
 	                        		{
@@ -3759,7 +3762,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 						elseif($query != null){
 						        $tableName = '';
                                 if($is_mysql)
-                                {                                   
+                                {
                                     $tableName = getAlterTable($query);
                                     if(!empty($tableName))
                                     {
@@ -3790,7 +3793,7 @@ function getAlterTable($query){
 	$query = strtolower($query);
 	if (preg_match("/^\s*alter\s+table\s+/", $query)) {
 		$sqlArray = explode(" ", $query);
-		$key = array_search('table', $sqlArray);		
+		$key = array_search('table', $sqlArray);
 		return $sqlArray[($key+1)];
 	}else {
 		return '';
@@ -4200,11 +4203,11 @@ function createTable(){
 
 
 function repairDBForUpgrade($execute=false,$path=''){
-	
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
-	
+
 	$db = &DBManagerFactory::getInstance();
 	$sql = '';
 	VardefManager::clearVardef();
@@ -4254,21 +4257,21 @@ function repairDBForUpgrade($execute=false,$path=''){
 //BEGIN SUGARCRM flav=pro ONLY
 /**
  * upgradeDashletsForSalesAndMarketing
- * 
+ *
  */
 function upgradeDashletsForSalesAndMarketing() {
 	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
    	   require($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
    	}
-   	
+
    	if(file_exists('modules/Home/dashlets.php')) {
    	   require('modules/Home/dashlets.php');
    	}
 
-   	
-	
+
+
     require_once('include/MySugar/MySugar.php');
-    
+
     $prefstomove = array(
         'mypbss_date_start' => 'MyPipelineBySalesStageDashlet',
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
@@ -4284,19 +4287,19 @@ function upgradeDashletsForSalesAndMarketing() {
         'pbss_chart_type' => 'PipelineBySalesStageDashlet',
         'obm_date_start' => 'OutcomeByMonthDashlet',
         'obm_date_end' => 'OutcomeByMonthDashlet',
-        'obm_ids' => 'OutcomeByMonthDashlet');	
-	
+        'obm_ids' => 'OutcomeByMonthDashlet');
+
 	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
    	$db = &DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
-    
+
    	while($row = $db->fetchByAssoc($result)) {
 	      $current_user = new User();
 	      $current_user->retrieve($row['id']);
-	      
+
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $current_user->setPreference('user_theme', 'Sugar', 0, 'global');
-	      
+
 		  $pages = $current_user->getPreference('pages', 'Home');
 
 		  if(empty($pages)) {
@@ -4315,7 +4318,7 @@ function upgradeDashletsForSalesAndMarketing() {
 
 
 		    // BEGIN 'Sales Page'
-		    $salesDashlets = array();       
+		    $salesDashlets = array();
 		    foreach($defaultSalesDashlets as $salesDashletName=>$module){
 				// clint - fixes bug #20398
 				// only display dashlets that are from visibile modules and that the user has permission to list
@@ -4327,14 +4330,14 @@ function upgradeDashletsForSalesAndMarketing() {
 		            foreach ( $prefsforthisdashlet as $pref ) {
 		               $options[$pref] = $current_user->getPreference($pref);
 		            }
-		
-		            $salesDashlets[create_guid()] = array('className' => $salesDashletName, 
-												 'module'=>$module, 
+
+		            $salesDashlets[create_guid()] = array('className' => $salesDashletName,
+												 'module'=>$module,
 			                                         'fileLocation' => $dashletsFiles[$salesDashletName]['file'],
 		                                             'options' => $options);
 		    	}
 		    }
-	
+
 		    foreach ($defaultSalesChartDashlets as $salesChartDashlet=>$module) {
 				$savedReport = new SavedReport();
 				$reportId = $savedReport->retrieveReportIdByName($salesChartDashlet);
@@ -4342,15 +4345,15 @@ function upgradeDashletsForSalesAndMarketing() {
 				// only display dashlets that are from visibile modules and that the user has permission to list
 				$myDashlet = new MySugar($module);
 				$displayDashlet = $myDashlet->checkDashletDisplay();
-							
+
 				if(isset($reportId) && $displayDashlet) {
 		    		$salesDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-													 	  'module'=>$module, 								
+													 	  'module'=>$module,
 		    											  'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
 		    											  'reportId' => $reportId);
-		    	}    
-		    }    
-		    
+		    	}
+		    }
+
 		    $count = 0;
 		    $salesColumns = array();
 		    $salesColumns[0] = array();
@@ -4359,15 +4362,15 @@ function upgradeDashletsForSalesAndMarketing() {
 		    $salesColumns[1] = array();
 		    $salesColumns[1]['width'] = '40%';
 		    $salesColumns[1]['dashlets'] = array();
-	
+
 		    foreach($salesDashlets as $guid=>$dashlet){
-		        if($count % 2 == 0) array_push($salesColumns[0]['dashlets'], $guid); 
-		        else array_push($salesColumns[1]['dashlets'], $guid);        
+		        if($count % 2 == 0) array_push($salesColumns[0]['dashlets'], $guid);
+		        else array_push($salesColumns[1]['dashlets'], $guid);
 		        $count++;
 		    }
 		    // END 'Sales Page'
-	    
-			// BEGIN 'Marketing & Support Page'       
+
+			// BEGIN 'Marketing & Support Page'
 			$marketingDashlets = array();
 		    foreach ($defaultMarketingChartDashlets as $marketingChartDashlet=>$module){
 				$savedReport = new SavedReport();
@@ -4376,34 +4379,34 @@ function upgradeDashletsForSalesAndMarketing() {
 				// only display dashlets that are from visibile modules and that the user has permission to list
 				$myDashlet = new MySugar($module);
 				$displayDashlet = $myDashlet->checkDashletDisplay();
-		    	
+
 				if(isset($reportId) && $displayDashlet) {
 		    		$marketingDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-													 		'module'=>$module, 								
+													 		'module'=>$module,
 		    												'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
 		    												'reportId' => $reportId, );
-			    } 
-		    } 
-		
+			    }
+		    }
+
 		    foreach($defaultMarketingDashlets as $marketingDashletName=>$module){
 				// clint - fixes bug #20398
 				// only display dashlets that are from visibile modules and that the user has permission to list
 				$myDashlet = new MySugar($module);
 				$displayDashlet = $myDashlet->checkDashletDisplay();
-		
+
 		    	if (isset($dashletsFiles[$marketingDashletName]) && $displayDashlet){
 			        $options = array();
 	            $prefsforthisdashlet = array_keys($prefstomove,$marketingDashletName);
 	            foreach ( $prefsforthisdashlet as $pref ) {
 	               $options[$pref] = $current_user->getPreference($pref);
 	            } //foreach
-	            $marketingDashlets[create_guid()] = array('className' => $marketingDashletName, 
-										 		 'module'=>$module, 								
+	            $marketingDashlets[create_guid()] = array('className' => $marketingDashletName,
+										 		 'module'=>$module,
 		                                         'fileLocation' => $dashletsFiles[$marketingDashletName]['file'],
 	                                             'options' => $options);
 	    		}
 		    }
-    	
+
 		    $count = 0;
 		    $marketingColumns = array();
 		    $marketingColumns[0] = array();
@@ -4415,31 +4418,31 @@ function upgradeDashletsForSalesAndMarketing() {
 		    $marketingColumns[2] = array();
 		    $marketingColumns[2]['width'] = '40%';
 		    $marketingColumns[2]['dashlets'] = array();
-	    
+
 		    foreach($marketingDashlets as $guid=>$dashlet){
-		        if($count % 3 == 0) array_push($marketingColumns[0]['dashlets'], $guid); 
-		        else if($count % 3 == 1) array_push($marketingColumns[1]['dashlets'], $guid);         
-		        else array_push($marketingColumns[2]['dashlets'], $guid);        
+		        if($count % 3 == 0) array_push($marketingColumns[0]['dashlets'], $guid);
+		        else if($count % 3 == 1) array_push($marketingColumns[1]['dashlets'], $guid);
+		        else array_push($marketingColumns[2]['dashlets'], $guid);
 		        $count++;
 		    }
 			// END 'Marketing & Support Page'
-		  
+
 		   	//Set the dashlets pages to user preferences table
-		   	$pageIndex = count($pages);	
+		   	$pageIndex = count($pages);
 			$pages[$pageIndex]['columns'] = $salesColumns;
 			$pages[$pageIndex]['numColumns'] = '2';
 			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_2_NAME'];	// "Sales Page"
 			$pageIndex++;
-		
+
 			$pages[$pageIndex]['columns'] = $marketingColumns;
 			$pages[$pageIndex]['numColumns'] = '3';
-			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_3_NAME'];	// "Marketing & Support Page"	
-			
-		    $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets);   
+			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_3_NAME'];	// "Marketing & Support Page"
+
+		    $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets);
 		    $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
 		    $current_user->setPreference('pages', $pages, 0, 'Home');
-		} //while 	
-   	
+		} //while
+
 } //upgradeDashletsForSalesAndMarketing
 //END SUGARCRM flav=pro ONLY
 
@@ -4451,7 +4454,7 @@ function upgradeDashletsForSalesAndMarketing() {
  *
  */
 function upgradeUserPreferences() {
-	
+
 //BEGIN SUGARCRM flav=pro ONLY
 	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
    	   require($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
@@ -4480,19 +4483,19 @@ function upgradeUserPreferences() {
 							   );
 
 	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
-	
+
    	$db = &DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
    	while($row = $db->fetchByAssoc($result)){
 	      $current_user = new User();
 	      $current_user->retrieve($row['id']);
-	      
+
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $current_user->setPreference('user_theme', 'Sugar', 0, 'global');
-	      
+
 	      //Set the number of tabs by default to 7
 	      $current_user->setPreference('max_tabs', '7', 0, 'global');
-	      
+
 		  $pages = $current_user->getPreference('pages', 'Home');
 
 		  if(empty($pages)) {
@@ -4543,68 +4546,64 @@ function upgradeUserPreferences() {
 				$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_4_NAME'];
 				$current_user->setPreference('pages', $pages, 0, 'Home');
 		  } //if
-		  
+
 		  // move the favorite reports over to the SugarFavorites table
 		  $current_favorites = array_keys($current_user->getPreference('favorites', 'Reports'));
 		  foreach ($current_favorites as $report_id) {
 		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
 		          continue;
 		      }
-		      
+
 		      $favFocus = new SugarFavorites;
 		      $favFocus->module = 'Reports';
 		      $favFocus->record_id = $report_id;
 		      $favFocus->assigned_user_id = $current_user->id;
 		      $favFocus->save();
 		  }
-		  
+
 		  // we need to force save the changes to disk, otherwise we lose them.
 		  $current_user->savePreferencesToDB();
 	} //while
-	
-    /*	
-	 * This section checks to see if the Tracker settings for the corresponding versions have been 
+
+    /*
+	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable
 	 * the tracking for the regular tracker.  Disabling the tracker (for breadcrumbs) will no longer prevent
 	 * breadcrumb tracking.  It will instead only track visible entries (see trackView() method in SugarView.php).
 	 * This has the benefit of reducing the tracking overhead and limiting it to only visible items.
-	 * For the CE version, we are checking to see that there are no entries enabled for PRO/ENT versions 
-	 * we are checking for Tracker sessions, performance and queries.	
-	 */		
+	 * For the CE version, we are checking to see that there are no entries enabled for PRO/ENT versions
+	 * we are checking for Tracker sessions, performance and queries.
+	 */
 	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt')) {
 		//Set tracker settings. Disable tracker session, performance and queries
 		$category = 'tracker';
-		$value =1;
+		$value = 1;
 		$key = array('Tracker', 'tracker_sessions','tracker_perf','tracker_queries');
 		$admin = new Administration();
 		foreach($key as $k){
 			$admin->saveSetting($category, $k, $value);
-		}	
-	} else {
-		//If only Tracker for breadcrumbs is enabled then this should be 3	
-		if($GLOBALS['sugar_flavor'] == 'PRO' || $GLOBALS['sugar_flavor'] == 'ENT') {
-		   $query = "select count(name) as total from config where category = 'tracker' and name in ('tracker_sessions', 'tracker_perf', 'tracker_queries')";
-		   $results = $db->query($query);
-		   if(!empty($results)) {
-		       $row = $db->fetchByAssoc($results);
-		       //We are assuming if the 3 settings were already disabled, then also disable the 'Tracker' setting
-		       if($row['total'] == 3) {
-		       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-		       }
-		   }
-		} else {
-		   $query = "select count(name) as total from config where category = 'tracker' and name = 'Tracker'";
-		   $results = $db->query($query);
-		   if(!empty($results)) {
-		       $row = $db->fetchByAssoc($results);
-		       //We are assuming if the 'Tracker' setting is not disabled then we will just disable it
-		       if($row['total'] == 0) {
-		       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-		       }
-		   }
 		}
+	} else {
+	   $query = "select count(name) as total from config where category = 'tracker' and name = 'Tracker'";
+	   $results = $db->query($query);
+	   if(!empty($results)) {
+	       $row = $db->fetchByAssoc($results);
+	       $total = $row['total'];
+	       if($GLOBALS['sugar_flavor'] == 'PRO' || $GLOBALS['sugar_flavor'] == 'ENT')  {
+	       	   //Fix problem with having multiple tracker entries in config table
+	       	   if($total > 1) {
+	       	   	  $db->query("DELETE FROM config where category = 'tracker' and name = 'Tracker'");
+	       	   	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
+	       	   }
+	       } else {
+		       //We are assuming if the 'Tracker' setting is not disabled then we will just disable it
+		       if($total == 0) {
+		       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
+		       }
+	       }
+	   }
 	}
-	
+
 	//Write the entries to cache/dashlets/dashlets.php
 	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
 	   require($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
@@ -4612,43 +4611,20 @@ function upgradeUserPreferences() {
 	   	   if(!isset($dashletsFiles[$id])) {
 	   	   	  $dashletsFiles[$id] = $entry;
 	   	   }
-	   } 
+	   }
 	   write_array_to_file("dashletsFiles", $dashletsFiles, $GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 	} //if
-	
-	//If only Tracker for breadcrumbs is enabled then this should be 3	
-	if($GLOBALS['sugar_flavor'] == 'PRO' || $GLOBALS['sugar_flavor'] == 'ENT') {
-	   $query = "select count(name) as total from config where category = 'tracker' and name in ('tracker_sessions', 'tracker_perf', 'tracker_queries')";
-	   $results = $db->query($query);
-	   if(!empty($results)) {
-	       $row = $db->fetchByAssoc($results);
-	       //We are assuming if the 3 settings were already disabled, then also disable the 'Tracker' setting
-	       if($row['total'] == 3) {
-	       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-	       }
-	   }
-	} else {
-	   $query = "select count(name) as total from config where category = 'tracker' and name = 'Tracker'";
-	   $results = $db->query($query);
-	   if(!empty($results)) {
-	       $row = $db->fetchByAssoc($results);
-	       //We are assuming if the 'Tracker' setting is not disabled then we will just disable it
-	       if($row['total'] == 0) {
-	       	  $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
-	       }
-	   }
-	}
 	//END SUGARCRM flav=pro ONLY
 }
 
 
 /**
  * upgradeModulesForTeamsets
- * 
+ *
  * This method adds the team_set_id values to the module tables that have the new team_set_id column
  * added through the SugarCRM 5.5.x upgrade process.  It also adds the values into the team_sets and
  * team_sets_teams tables.
- * 
+ *
  * @param filter Array of modules to process; empty by default
  */
 function upgradeModulesForTeamsets($filter=array()) {
@@ -4661,28 +4637,28 @@ function upgradeModulesForTeamsets($filter=array()) {
                 continue;
             }
 			$bean = loadBean($moduleName);
-			if(empty($bean) || 
+			if(empty($bean) ||
 			   empty($bean->table_name)) {
 			   continue;
 			}
-			
+
 			$FieldArray = $GLOBALS['db']->helper->get_columns($bean->table_name);
 			if(!isset($FieldArray['team_id'])) {
 			   continue;
-			} 
-			
+			}
+
 			upgradeTeamColumn($bean, 'team_id');
-			
+
 	} //foreach
-	
+
     //Upgrade users table
-	$bean = loadBean('Users');	
+	$bean = loadBean('Users');
    	upgradeTeamColumn($bean, 'default_team');
 	$result = $GLOBALS['db']->query("SELECT id FROM teams where deleted=0");
 	while($row = $GLOBALS['db']->fetchByAssoc($result)) {
 	      $teamset = new TeamSet();
 	      $teamset->addTeams($row['id']);
-	}	
+	}
 }
 
 
@@ -4690,7 +4666,7 @@ function upgradeModulesForTeamsets($filter=array()) {
  * upgradeTeamColumn
  * Helper function to create a team_set_id column and also set team_set_id column
  * to have the value of the $column_name parameter
- * 
+ *
  * @param $bean SugarBean which we are adding team_set_id column to
  * @param $column_name The name of the column containing the default team_set_id value
  */
@@ -4698,26 +4674,26 @@ function upgradeTeamColumn($bean, $column_name) {
 	//first let's check to ensure that the team_set_id field is defined, if not it could be the case that this is an older
 	//module that does not use the SugarObjects
 	if(empty($bean->field_defs['team_set_id']) && $bean->module_dir != 'Trackers'){
-		
+
 		//at this point we could assume that since we have a team_id defined and not a team_set_id that we need to
 		//add that field and the corresponding relationships
 		$object = $bean->object_name;
 		$module = $bean->module_dir;
 		$object_name = $object;
 		$_object_name = strtolower($object_name);
-		
+
 		if(!empty($GLOBALS['dictionary'][$object]['table'])){
 			$table_name = $GLOBALS['dictionary'][$object]['table'];
 		}else{
 			$table_name = strtolower($module);
 		}
-		
+
 		$path = 'include/SugarObjects/implements/team_security/vardefs.php';
 		require($path);
 		//go through each entry in the vardefs from team_security and unset anything that is already set in the core module
 		//this will ensure we have the proper ordering.
 		$fieldDiff = array_diff_assoc($vardefs['fields'], $GLOBALS['dictionary'][$bean->object_name]['fields']);
-		
+
 		$file = 'custom/Extension/modules/' . $bean->module_dir. '/Ext/Vardefs/teams.php';
 		$contents = "<?php\n";
 		if(!empty($fieldDiff)){
@@ -4742,8 +4718,8 @@ function upgradeTeamColumn($bean, $column_name) {
 	        fputs( $fh, $contents);
 	        fclose( $fh );
 	    }
-		
-		
+
+
 		//we have written out the teams.php into custom/Extension/modules/{$module_dir}/Ext/Vardefs/teams.php'
 		//now let's merge back into vardefs.ext.php
 		require_once('ModuleInstall/ModuleInstaller.php');
@@ -4752,7 +4728,7 @@ function upgradeTeamColumn($bean, $column_name) {
 		VardefManager::loadVardef($bean->module_dir, $bean->object_name, true);
 		$bean->field_defs = $GLOBALS['dictionary'][$bean->object_name]['fields'];
 	}
-	
+
 	if(isset($bean->field_defs['team_set_id'])) {
 		//Create the team_set_id column
 		$FieldArray = $GLOBALS['db']->helper->get_columns($bean->table_name);
@@ -4762,15 +4738,15 @@ function upgradeTeamColumn($bean, $column_name) {
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
 		$indexDef = array(
 					 array(
-						'name' => 'idx_'.strtolower($bean->table_name).'_tmst_id', 
-						'type' => 'index', 
+						'name' => 'idx_'.strtolower($bean->table_name).'_tmst_id',
+						'type' => 'index',
 						'fields' => array('team_set_id')
 					 )
 				   );
 		if(!isset($indexArray['idx_'.strtolower($bean->table_name).'_tmst_id'])) {
 			$GLOBALS['db']->addIndexes($bean->table_name, $indexDef);
 		}
-		
+
 		//Update the table's team_set_id column to have the same values as team_id
 	    $GLOBALS['db']->query("UPDATE {$bean->table_name} SET team_set_id = {$column_name}");
 	}
@@ -4791,15 +4767,15 @@ function upgradeFolderSubscriptionsTeamSetId()
 
 /**
  * upgradeModulesForTeam
- * 
+ *
  * This method update the associated_user_id, name, name_2 to the private team records on teams table
- * This function is used for upgrade process from 5.1.x and 5.2.x.   
- *  
+ * This function is used for upgrade process from 5.1.x and 5.2.x.
+ *
  */
 function upgradeModulesForTeam() {
     logThis("In upgradeModulesForTeam()");
     $result = $GLOBALS['db']->query("SELECT id, user_name, first_name, last_name FROM users where deleted=0");
-	
+
     while($row = $GLOBALS['db']->fetchByAssoc($result)) {
     	$results2 = $GLOBALS['db']->query("SELECT id FROM teams WHERE name = '({$row['user_name']})'");
     	$assoc = '';
@@ -4813,43 +4789,43 @@ function upgradeModulesForTeam() {
   		}else{
   			$team_id =$assoc['id'];
   		}
-  			
+
   			//upgrade the team
   			$name = is_null($row['first_name'])?'':$row['first_name'];
-			$name_2 = is_null($row['last_name'])?'':$row['last_name'];	
+			$name_2 = is_null($row['last_name'])?'':$row['last_name'];
 			$associated_user_id = $row['id'];
-			
+
 			//Bug 32914
 			//Ensure team->name is not empty by using team->name_2 if available
 			if(empty($name) && !empty($name_2)) {
 			   $name = $name_2;
 			   $name_2 = '';
 			}
-			
+
 			$query = "UPDATE teams SET name = '{$name}', name_2 = '{$name_2}', associated_user_id = '{$associated_user_id}' WHERE id = '{$team_id}'";
 			$GLOBALS['db']->query($query);
     } //while
 
     //Update the team_set_id and default_team columns
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
-    
-    //Update team_set_id 
+
+    //Update team_set_id
 	if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_or_ent) {
 	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
-	
+
 	//Update default_team
 	if($ce_to_pro_or_ent) {
 	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
-	
+
 }
 
 
     function addNewSystemTabsFromUpgrade($from_dir){
         global $path;
-        if(isset($_SESSION['upgrade_from_flavor'])){ 
-    
+        if(isset($_SESSION['upgrade_from_flavor'])){
+
             //check to see if there are any new files that need to be added to systems tab
             //retrieve old modules list
             logThis('check to see if new modules exist',$path);
@@ -4859,36 +4835,36 @@ function upgradeModulesForTeam() {
             $oldModuleList = $moduleList;
             include('include/modules.php');
             $newModuleList = $moduleList;
-    
-            //include tab controller 
+
+            //include tab controller
             require_once('modules/MySettings/TabController.php');
             $newTB = new TabController();
-            
+
             //make sure new modules list has a key we can reference directly
             $newModuleList = $newTB->get_key_array($newModuleList);
             $oldModuleList = $newTB->get_key_array($oldModuleList);
-            
+
             //iterate through list and remove commonalities to get new modules
             foreach ($newModuleList as $remove_mod){
                 if(in_array($remove_mod, $oldModuleList)){
                     unset($newModuleList[$remove_mod]);
-                }   
+                }
             }
             //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
             logThis('new modules to add are '.var_export($newModuleList,true),$path);
-            
+
             //grab the existing system tabs
             $tabs = $newTB->get_system_tabs();
-    
+
             //add the new tabs to the array
             foreach($newModuleList as $nm ){
               $tabs[$nm] = $nm;
             }
-    
+
             if(!file_exists('modules/iFrames/iFrame.php') && isset($tabs['iFrames'])){
-                unset($tabs['iFrames']); 
+                unset($tabs['iFrames']);
             }
-            
+
 	        //Set the default order
 	        $default_order = array(
 	        	'Home'=>'Home',
@@ -4901,24 +4877,24 @@ function upgradeModulesForTeam() {
 	            //END SUGARCRM flav=pro || flav=sales ONLY
 	        	'Documents'=>'Documents'
 	        );
-	        $tabs = array_merge($default_order, $tabs);               
-            
+	        $tabs = array_merge($default_order, $tabs);
+
             //now assign the modules to system tabs
             $newTB->set_system_tabs($tabs);
             logThis('module tabs updated',$path);
-            
+
         }
     }
-    
+
     /**
      * fix_dropdown_list
      * This method attempts to fix dropdown lists that were incorrectly named.
      * There were versions of SugarCRM that did not enforce naming convention rules
      * for the dropdown list field name.  This method attempts to resolve that by
      * fixing the language files that may have been affected and then updating the
-     * fields_meta_data table accordingly.  It also refreshes any vardefs that may 
+     * fields_meta_data table accordingly.  It also refreshes any vardefs that may
      * have been affected.
-     * 
+     *
      */
 	function fix_dropdown_list() {
         if(file_exists('custom/include/language')) {
@@ -4932,25 +4908,25 @@ function upgradeModulesForTeam() {
               if(file_exists($file . '.bak')) {
               	 $bak_mod_time = filemtime($file . '.bak');
               	 $php_mod_time = filemtime($file);
-              	 //We're saying if the .php file was modified 30 seconds no more than php.bak file then we 
+              	 //We're saying if the .php file was modified 30 seconds no more than php.bak file then we
               	 //run these additional cleanup checks
               	 if($php_mod_time - $bak_mod_time < 30) {
-              	 	
+
               	 	$app_list_strings = array();
               	 	$GLOBALS['app_list_strings'] = array();
               	 	require($file . '.bak');
               	 	$bak_app_list_strings = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
-              	 	
+
               	 	$app_list_strings = array();
               	 	$GLOBALS['app_list_strings'] = array();
               	 	require($file);
-              	 	$php_app_list_strings = array_merge($app_list_strings, $GLOBALS['app_list_strings']);              	 	
-              	 	
+              	 	$php_app_list_strings = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+
               	 	//Get the file contents
               	 	$contents = file_get_contents($file);
-              	 	
+
               	 	//Now simulate a fix for the file before we compare w/ the .php file
-              	 	//we also append to the $contents 
+              	 	//we also append to the $contents
               	 	foreach($bak_app_list_strings as $key=>$entry) {
 						   if(preg_match('/([^A-Za-z_])/', $key, $matches) && is_array($entry)) {
 						   	  $new_key = preg_replace('/[^A-Za-z_]/', '_', $key);
@@ -4958,22 +4934,22 @@ function upgradeModulesForTeam() {
 						   	  unset($bak_app_list_strings[$key]);
 						   	  //Now if the entry doesn't exists in the .php file, then add to contents
 						   	  if(!isset($php_app_list_strings[$new_key])) {
-						   	  	 $contents .= "\n\$GLOBALS['app_list_strings']['{$new_key}'] = " . var_export_helper($bak_app_list_strings[$new_key]) . ";";  
+						   	  	 $contents .= "\n\$GLOBALS['app_list_strings']['{$new_key}'] = " . var_export_helper($bak_app_list_strings[$new_key]) . ";";
 						   	  }
-						   } //if          	 		
+						   } //if
               	 	} //foreach
-              	 	
+
               	 	//Now load the .php file to do the comparison
               	 	foreach($php_app_list_strings as $key=>$entry) {
               	 		if(isset($bak_app_list_strings[$key])) {
               	 			$diff = array_diff($bak_app_list_strings[$key], $entry);
               	 			if(!empty($diff)) {
               	 			   //There is a difference, so copy the $bak_app_list_strings version into the .php file
-              	 			   $contents .= "\n\$GLOBALS['app_list_strings']['{$key}'] = " . var_export_helper($bak_app_list_strings[$key]) . ";";  
+              	 			   $contents .= "\n\$GLOBALS['app_list_strings']['{$key}'] = " . var_export_helper($bak_app_list_strings[$key]) . ";";
               	 			} //if
               	 		} //if
               	 	} //foreach
-              	 	
+
               	 	//Now write out the file contents
               	 	//Create backup just in case
               	 	copy($file, $file . '.php_bak');
@@ -4983,10 +4959,10 @@ function upgradeModulesForTeam() {
 		               fclose($fp);
 	                } else {
 	                   $GLOBALS['log']->error("Unable to update file contents in fix_dropdown_list for {$file}");
-	                } //if-else     	  	 	 	
+	                } //if-else
               	 }
               }
-              
+
               unset($GLOBALS['app_strings']);
               unset($GLOBALS['app_list_strings']);
               $app_list_strings = array();
@@ -4994,7 +4970,7 @@ function upgradeModulesForTeam() {
            	  $touched = false;
            	  $contents = file_get_contents($file);
            	  $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
-           	  
+
            	  if(isset($GLOBALS['app_list_strings']) && is_array($GLOBALS['app_list_strings'])) {
            	  	 foreach($GLOBALS['app_list_strings'] as $key=>$entry) {
            	  	 	if(preg_match('/([^A-Za-z_])/', $key, $matches) && is_array($entry)) {
@@ -5007,22 +4983,22 @@ function upgradeModulesForTeam() {
            	  	 	   	  	    }
            	  	 	   	  } //while
            	  	 	   }
-           	  	 	   
+
            	  	 	   //Replace all invalid characters with '_' character
 	           	  	   $new_key = preg_replace('/[^A-Za-z_]/', '_', $key);
 	           	  	   $affected_keys[$key] = $new_key;
 
            	  	 	   $GLOBALS['app_list_strings'][$new_key] = $GLOBALS['app_list_strings'][$key];
            	  	 	   unset($GLOBALS['app_list_strings'][$key]);
-           	  	 	   
+
            	  	 	   $pattern_match = "/(\[\s*\'{$key}\'\s*\])/";
            	  	 	   $new_key = "['{$new_key}']";
            	  	 	   $out = preg_replace($pattern_match, $new_key, $contents);
            	  	 	   $contents = $out;
-           	  	 	   $touched = true;	           	     
+           	  	 	   $touched = true;
            	  	 	} //if
            	  	 } //foreach
-           	  	 
+
                  //This is a check for g => h instances where the file contents were incorrectly written
                  //and also fixes the scenario where via a UI upgrade, the app_list_strings were incorrectly
                  //merged with app_list_strings variables declared elsewhere
@@ -5031,25 +5007,25 @@ function upgradeModulesForTeam() {
            	  	 	   	  //Now also remove all the non-custom labels that were added
            	  	 	   	  if(preg_match('/language\/([^\.]+)\.lang\.php$/', $file, $matches)) {
            	  	 	   	        $language = $matches[1];
-           	  	 	   	        
+
            	  	 	   	        $app_list_strings = array();
-           	  	 	   	        
+
            	  	                if(file_exists("include/language/$language.lang.php")) {
 								   include("include/language/$language.lang.php");
 								}
 								if(file_exists("include/language/$language.lang.override.php")) {
-								   $app_list_strings =  _mergeCustomAppListStrings("include/language/$language.lang.override.php" , $app_list_strings) ;	
+								   $app_list_strings =  _mergeCustomAppListStrings("include/language/$language.lang.override.php" , $app_list_strings) ;
 								}
 								if(file_exists("custom/application/Ext/Language/$language.ext.lang.php")) {
-								   $app_list_strings =  _mergeCustomAppListStrings("custom/application/Ext/Language/$language.ext.lang.php" , $app_list_strings) ;	
+								   $app_list_strings =  _mergeCustomAppListStrings("custom/application/Ext/Language/$language.ext.lang.php" , $app_list_strings) ;
 								}
 								if(file_exists("custom/application/Ext/Language/$language.lang.ext.php")) {
-								   $app_list_strings =  _mergeCustomAppListStrings("custom/application/Ext/Language/$language.lang.ext.php" , $app_list_strings) ;	
+								   $app_list_strings =  _mergeCustomAppListStrings("custom/application/Ext/Language/$language.lang.ext.php" , $app_list_strings) ;
 								}
-								
+
 								$all_non_custom_include_language_strings = $app_strings;
 								$all_non_custom_include_language_list_strings = $app_list_strings;
-								
+
 								$unset_keys = array();
 								if(!empty($GLOBALS['app_list_strings'])) {
 									foreach($GLOBALS['app_list_strings'] as $key=>$value) {
@@ -5057,42 +5033,42 @@ function upgradeModulesForTeam() {
 										if(isset($all_non_custom_include_language_list_strings[$key])) {
 											$diff = array_diff($all_non_custom_include_language_list_strings[$key], $GLOBALS['app_list_strings'][$key]);
 										}
-										
+
 										if(!empty($all_non_custom_include_language_list_strings[$key]) && empty($diff)) {
 											$unset_keys[] = $key;
 										}
 									}
 								}
-								
+
 								foreach($unset_keys as $key) {
 									unset($GLOBALS['app_list_strings'][$key]);
 								}
-								
+
 								if(!empty($GLOBALS['app_strings'])) {
 	           	  	 	   	  		foreach($GLOBALS['app_strings'] as $key=>$value) {
 										if(!empty($all_non_custom_include_language_strings[$key])) {
 										   unset($GLOBALS['app_strings'][$key]);
 										}
 	           	  	 	   	  		}
-								}						
+								}
            	  	 	   	  } //if(preg_match...)
-		           	  	 	
-			              $out = "<?php \n";  
+
+			              $out = "<?php \n";
 			              if(!empty($GLOBALS['app_strings'])) {
 				             foreach($GLOBALS['app_strings'] as $key=>$entry) {
-				                     $out .= "\n\$GLOBALS['app_strings']['$key']=" . var_export_helper($entry) . ";";               	
+				                     $out .= "\n\$GLOBALS['app_strings']['$key']=" . var_export_helper($entry) . ";";
 				             }
 			              }
-			                
+
 						  foreach($GLOBALS['app_list_strings'] as $key=>$entry) {
 								  $out .= "\n\$GLOBALS['app_list_strings']['$key']=" . var_export_helper($entry) . ";";
-						  } //foreach    
+						  } //foreach
 
 						  $touched = true;
            	  	 	   } //if(preg_match...)
            	  	 } //if(!$touched)
 
-           	  	 if($touched) { 	
+           	  	 if($touched) {
 	           	  	 //Create a backup just in case
 			         copy($file, $file . '.bak');
 	             	 $fp = @sugar_fopen($file, 'w');
@@ -5103,32 +5079,32 @@ function upgradeModulesForTeam() {
 	                   //If we can't update the file, just return
 	                   $GLOBALS['log']->error("Unable to update file contents in fix_dropdown_list.");
 	                   return;
-	                 }         	  	 
+	                 }
            	  	 } //if($touched)
            	  } //if
-           	  
+
            } //foreach($files)
 
            //Update db entries (the order matters here... need to process database changes first)
            if(!empty($affected_keys)) {
            	  foreach($affected_keys as $old_key=>$new_key) {
            	  	 	  $GLOBALS['db']->query("UPDATE fields_meta_data SET ext1 = '{$new_key}' WHERE ext1 = '{$old_key}'");
-           	  }	  	 	              	
+           	  }
            }
-           
+
            //Update vardef files for affected modules
            if(!empty($affected_modules)) {
            	  foreach($affected_modules as $module=>$object) {
-           	  	  VardefManager::refreshVardefs($module, $object);    
+           	  	  VardefManager::refreshVardefs($module, $object);
            	  }
-           }           
+           }
         }
 	}
 
-	
+
 	function update_iframe_dashlets(){
 		require_once('cache/dashlets/dashlets.php');
-		 
+
 		$db = DBManagerFactory::getInstance();
 		$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";
 		$result = $db->query($query, true, "Unable to update new default dashlets! ");
@@ -5136,17 +5112,17 @@ function upgradeModulesForTeam() {
 			$content = unserialize(base64_decode($row['contents']));
 			$assigned_user_id = $row['assigned_user_id'];
 			$record_id = $row['id'];
-			
+
 			$current_user = new User();
 			$current_user->retrieve($row['assigned_user_id']);
-			
+
 			if(!empty($content['dashlets']) && !empty($content['pages'])){
 				$originalDashlets = $content['dashlets'];
 				foreach($originalDashlets as $key => $ds){
 				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://apps.sugarcrm.com/dashlet/5.2.0/go-pro.html')){
 						unset($originalDashlets[$key]);
 					}
-				}	
+				}
 				$current_user->setPreference('dashlets', $originalDashlets, 0, 'Home');
 			}
 		}
@@ -5154,20 +5130,20 @@ function upgradeModulesForTeam() {
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	function check_FTS(){
-		//check to see if FTS is installed in mssql       
-		global $sugar_config;        
-		if($sugar_config['dbconfig']['db_type'] == 'mssql'){        	
-			$result = $GLOBALS['db']->query("SELECT FULLTEXTSERVICEPROPERTY('IsFulltextInstalled') is_FTS ");		    
-			while($row = $GLOBALS['db']->fetchByAssoc($result)) {		          
-				if(isset($row['is_FTS']) && ($row['is_FTS'] == 1 || $row['is_FTS'] == '1')){		              
-					return true;		         
-				}		    
-			}		            
-		}        
-		return false;    
-	}    
+		//check to see if FTS is installed in mssql
+		global $sugar_config;
+		if($sugar_config['dbconfig']['db_type'] == 'mssql'){
+			$result = $GLOBALS['db']->query("SELECT FULLTEXTSERVICEPROPERTY('IsFulltextInstalled') is_FTS ");
+			while($row = $GLOBALS['db']->fetchByAssoc($result)) {
+				if(isset($row['is_FTS']) && ($row['is_FTS'] == 1 || $row['is_FTS'] == '1')){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	//END SUGARCRM flav=pro ONLY
-	
+
     /**
      * convertImageToText
      * This method attempts to convert date type image to text on Microsoft SQL Server.
@@ -5251,48 +5227,48 @@ function upgradeModulesForTeam() {
      */
     function clearHelpFiles(){
 		$modulePath = clean_path(getcwd() . '/modules');
-		$allHelpFiles = array(); 	
+		$allHelpFiles = array();
 		getFiles($allHelpFiles, $modulePath, "/en_us.help.*/");
-	
+
 		foreach( $allHelpFiles as $the_file ){
 	        if( is_file( $the_file ) ){
 	            unlink( $the_file );
 	            _logThis("Deleted file: $the_file", $path);
 	        }
-	    }   
+	    }
 	}
-	
-	
+
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	/**
-	 * fix_assigned_user_link_reports 
-	 * 
+	 * fix_assigned_user_link_reports
+	 *
 	 * This method goes through the existing reports and fixes errors with the reports definition
 	 * where the assigned_user_link may have been pointing to the wrong relationship name
 	 * ("teams" instead of "team_memberships").  Also, fix errors where the team_memberships relationship
 	 * may have been incorrectly pointing to the wrong name definition ("teams" instead of "team_memberships").
-	 * This will fix existing reports created before 5.2.0d that used the Assigned User Name's 
+	 * This will fix existing reports created before 5.2.0d that used the Assigned User Name's
 	 * teams as a filter.  The fix will allow the Teams folder for the Assigned To User field to
 	 * be displayed.  Also, the fix to the team memberships relationship name will correctly fix the
 	 * query to join against the team_memberships table rather than the teams table.
-	 * 
+	 *
 	 * @param $path String variable for the log path
-	 * 
+	 *
 	 */
 	function fix_report_relationships($path='') {
 		if(!empty($path)) {
 		   logThis('Begin fix_report_relationships', $path);
 		}
-		
+
 		$query = "SELECT id, content FROM saved_reports WHERE deleted = 0";
         $result = $GLOBALS['db']->query($query);
-        
+
         while($row = $GLOBALS['db']->fetchByAssoc($result)) {
         	  $content = $row['content'];
         	  $content = str_replace('&quot;', '"', $content);
 			  $content2 = str_replace(':assigned_user_link:teams', ':assigned_user_link:team_memberships', $content);
-              $content3 = str_replace('{"name":"teams","relationship_name":"team_memberships"', '{"name":"team_memberships","relationship_name":"team_memberships"', $content2); 
-              
+              $content3 = str_replace('{"name":"teams","relationship_name":"team_memberships"', '{"name":"team_memberships","relationship_name":"team_memberships"', $content2);
+
               //If the contents have been altered, update the saved_report definition
               if($content != $content3) {
               	 $update_query = 'UPDATE saved_reports SET content = \'' . $GLOBALS['db']->quote($content3) . '\' WHERE id = \'' . $row['id'] . '\'';
@@ -5300,12 +5276,12 @@ function upgradeModulesForTeam() {
               	 	logThis('Running SQL:' . $update_query, $path);
               	 }
               	 $GLOBALS['db']->query($update_query);
-              }       	  
+              }
         }
-        
+
         if(!empty($path)) {
-           logThis('End fix_report_relationships', $path);	
-        }	
+           logThis('End fix_report_relationships', $path);
+        }
 	}
-	//END SUGARCRM flav=pro ONLY	
+	//END SUGARCRM flav=pro ONLY
 ?>

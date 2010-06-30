@@ -56,7 +56,7 @@ $subpanel_layout = array(
 	  array (
 	    'type' => 'varchar',
 	    'vname' => 'LBL_BILLING_ADDRESS_COUNTRY',
-	    'width' => '10%',
+	    'width' => '7%',
 	    'default' => true,
 	  ),
 	  'phone_office' => 

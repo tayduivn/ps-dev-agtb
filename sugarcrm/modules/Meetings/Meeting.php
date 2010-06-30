@@ -387,8 +387,10 @@ class Meeting extends SugarBean {
 			$meeting_fields['PARENT_MODULE'] = $this->parent_type;
 		if($this->status == "Planned") {
 			//cn: added this if() to deal with sequential Closes in Meetings.	this is a hack to a hack(formbase.php->handleRedirect)
-			if(empty($action)) { $action = "index"; }
-			$meeting_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=$this->id&action=EditView&status=Held&module=Meetings&record=$this->id&status=Held'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Meetings')." border='0'")."</a>";
+			if(empty($action))  
+			     $action = "index"; 
+			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$currentModule\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Meetings')." border='0'")."</a>";
 		}
 		global $timedate;
 		$today = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());

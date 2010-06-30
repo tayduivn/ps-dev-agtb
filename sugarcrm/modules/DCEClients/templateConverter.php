@@ -36,7 +36,7 @@ static $requireFunctions = array(
 static  $functionList = array(
 	'chgrp',
 	'chmod', 
-	'chwown',
+	'chown',
 	'file_exists',
 	'file_get_contents',
 	'file_put_contents',

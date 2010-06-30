@@ -869,35 +869,34 @@ function getUserVariable($localVarName, $varName) {
 			    $sort_order = $subpanel_def->_instance_properties['sort_order'];
 			}
 			
-			if(isset($_SESSION['last_sub' .$this->subpanel_module. '_url']) 
-				&& $_SESSION['last_sub' .$this->subpanel_module. '_url'] == $this->getBaseURL($html_var)) 
-			{
-				if(isset($_SESSION['last_sub' .$this->subpanel_module. '_order'])) {
-					// We swap the order when the request contains an offset (indicating a column sort issued);
-					// otherwise we do not sort.  If we don't make this check, then the subpanel listview will
-					// swap ordering each time a new record is entered via quick create forms
-					
-					if(isset($_REQUEST[$module. '_' . $html_var . '_offset'])) {
-					  $this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'] == 'asc' ? 'desc' : 'asc';
-					} else {
-					  $this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'];
-					}
+			if(isset($_SESSION['last_sub' .$this->subpanel_module. '_order'])) {
+				// We swap the order when the request contains an offset (indicating a column sort issued);
+				// otherwise we do not sort.  If we don't make this check, then the subpanel listview will
+				// swap ordering each time a new record is entered via quick create forms
+				
+				if(isset($_REQUEST[$module. '_' . $html_var . '_offset'])) {
+				  	$this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'] == 'asc' ? 'desc' : 'asc';
+				} else {
+				  $this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'];
 				}
-
-			} elseif(isset($sort_order)) {
+			}
+			elseif(isset($sort_order)) {
 				$this->sort_order = $sort_order;
 			}
 		}
 
 
-		if(isset($subpanel_def->_instance_properties['sort_by'])) $this->query_orderby = $subpanel_def->_instance_properties['sort_by'];
-        else $this->query_orderby = 'id';
-
-		$this->getOrderBy($html_var,$this->query_orderby, $this->sort_order);
+		if(isset($subpanel_def->_instance_properties['sort_by'])) 
+			$this->query_orderby = $subpanel_def->_instance_properties['sort_by'];
+        else 
+        	$this->query_orderby = 'id';
+        	
+        $this->getOrderBy($html_var,$this->query_orderby, $this->sort_order);
 
 		$_SESSION['last_sub' .$this->subpanel_module. '_order'] = $this->sort_order;
 		$_SESSION['last_sub' .$this->subpanel_module. '_url'] = $this->getBaseURL($html_var);
 
+		
 		if(!empty($this->response)){
 			$response =& $this->response;
 			echo 'cached';

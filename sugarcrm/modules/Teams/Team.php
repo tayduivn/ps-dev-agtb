@@ -185,6 +185,7 @@ class Team extends SugarBean
 		
 		$su = new User();
 		$su->retrieve($user->id);
+		$team->retrieve($this->global_team);
 		$su->default_team = $team->id;
 		$su->team_id = $team->id;
 		$su->team_set_id = $team->id;

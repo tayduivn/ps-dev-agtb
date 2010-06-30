@@ -853,8 +853,8 @@ YAHOO.util.Event.onContentReady('user_theme_picker',function()
             "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
     }
 });
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {/literal}
+<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
 {literal}
 document.getElementById('email_link_type').onchange = function()
@@ -868,6 +868,7 @@ document.getElementById('email_link_type').onchange();
 {/literal}
 {/if}
 {literal}
+<!--//END SUGARCRM flav!=sales ONLY -->
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {/literal}
 -->
@@ -912,3 +913,4 @@ setSigDigits();
 		</form>
 	</div>
 </div>
+<!--//END SUGARCRM flav!=sales ONLY -->

@@ -33,10 +33,19 @@ if(!defined('sugarEntry') || !sugarEntry)
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
-	
-$trackerManager = TrackerManager::getInstance();	
+$trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
+
+//BEGIN SUGARCRM flav=pro ONLY
+//bug: 38017 - SugarView is not yet pulled out of memory and to avoid putting a check-in there for every call, will just
+//put in here for one call
+$timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$monitor3 = $trackerManager->getMonitor('tracker_sessions');
+if(!empty($monitor3)) {
+   $monitor3->setValue('date_start', $timeStamp);
+}
+//END SUGARCRM flav=pro ONLY
 
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
@@ -229,13 +238,13 @@ $uwMain = $upgrade_directories_not_found;
 		if(is_file($file)) {
 			$out .= "{$mod_strings['LBL_UW_INCLUDING']}: {$file} <br>\n";
 			include($file);
-			logThis('Running pre_install()...');
 			if(!didThisStepRunBefore('commit','pre_install')){
+				logThis('Running pre_install()...');
 				set_upgrade_progress('commit','in_progress','pre_install','in_progress');
 				pre_install();
 				set_upgrade_progress('commit','in_progress','pre_install','done');
+				logThis('pre_install() done.');
 			}
-			logThis('pre_install() done.');
 		}
 	}
 
@@ -252,12 +261,12 @@ $uwMain = $upgrade_directories_not_found;
 	           	}
            }
         }
-        
-        
+
+
 		//Also add the three-way merge here. The idea is after the 451 html files have
 		//been converted run the 3-way merge. If 500 then just run the 3-way merge
         $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
-        
+
 		if(file_exists('modules/UpgradeWizard/SugarMerge/SugarMerge.php')){
 		    require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
 		    if(isset($_SESSION['unzip_dir']) && isset($_SESSION['zip_from_dir'])){
@@ -265,7 +274,7 @@ $uwMain = $upgrade_directories_not_found;
 		        $merger->mergeAll();
 		    }
 		}
-		        
+
          //COPY ALL FILES FROM UPLOADED UPGRADE PACKAGE
 
          if(!didThisStepRunBefore('commit','commitCopyNewFiles')){
@@ -274,14 +283,20 @@ $uwMain = $upgrade_directories_not_found;
 		 		$copiedFiles = $split['copiedFiles'];
 		 		$skippedFiles = $split['skippedFiles'];
 				set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
-		 }
-		 //END COPY NEW FILES INTO TARGET INSTANCE
 
-	///////////////////////////////////////////////////////////////////////////////
+				/// RELOAD to have new files loaded
+				LanguageManager::clearLanguageCache();
+				logThis('Reloading....');
+				$query=http_build_query($_REQUEST);
+				header("Location: index.php?$query");
+				exit();
+         }
+		 //END COPY NEW FILES INTO TARGET INSTANCE
+    ///////////////////////////////////////////////////////////////////////////////
 	////	HANDLE POSTINSTALL SCRIPTS
 	logThis('Starting post_install()...');
-    if (!function_exists("inDeveloperMode")) { 
-    	//this function was introduced from tokyo in the file include/utils.php, so when upgrading from 5.1x and 5.2x we should declare the this function 
+    if (!function_exists("inDeveloperMode")) {
+    	//this function was introduced from tokyo in the file include/utils.php, so when upgrading from 5.1x and 5.2x we should declare the this function
         function inDeveloperMode()
         {
             return isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'];
@@ -295,7 +310,7 @@ $uwMain = $upgrade_directories_not_found;
 				$progArray['post_install']='in_progress';
 				post_install_progress($progArray,'set');
 				include($file);
-				post_install();				
+				post_install();
 				//set process to done
 				$progArray['post_install']='done';
 				//set_upgrade_progress('commit','in_progress','post_install','done');
@@ -304,21 +319,21 @@ $uwMain = $upgrade_directories_not_found;
 		}
 
 	   require("sugar_version.php");
-				
+
        if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
 			logThis('Performing UWrebuild()...');
 			UWrebuild();
-			
+
 		    global $sugar_version;
 		    $origVersion = substr(preg_replace("/[^0-9]/", "", $_SESSION['current_db_version']),0,3);
-			
+
 		    if($origVersion < '600') {
 				_logThis('Check to hide iFrames and Feeds modules', $path);
 				hide_iframes_and_feeds_modules();
-			}			
+			}
 			logThis('UWrebuild() done.');
        }
-       
+
 		//set the logger before rebuilding config
 		if(!isset($sugar_config['logger'])){
 			$sugar_config['logger'] =array (
@@ -334,7 +349,7 @@ $uwMain = $upgrade_directories_not_found;
 			  	  ),
 			);
 		}
-		
+
         // Set the default max tabs to 7
         $sugar_config['default_max_tabs'] = '7';
 
@@ -542,6 +557,17 @@ commitHandleReminders($skippedFiles);
 ///////////////////////////////////////////////////////////////////////////////
 
 
+if(!didThisStepRunBefore('commit','cleanAll')){
+			set_upgrade_progress('commit','in_progress','cleanAll','done');
+			SugarThemeRegistry::buildRegistry();
+			SugarThemeRegistry::clearAllCaches();
+			/// RELOAD to have new files loaded
+			logThis('Reloading....');
+			$query=http_build_query($_REQUEST);
+			header("Location: index.php?$query");
+			exit();
+         }
+
 logThis("Resetting error_reporting() to system level.");
 error_reporting($standardErrorLevel);
 
@@ -637,6 +663,11 @@ $stepRecheck = $_REQUEST['step'];
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] =($stop) ? 'failed' : 'success';
 
 // clear out the theme cache
+// clear out the theme cache
+if(!class_exists('SugarThemeRegistry')){
+    require_once('include/SugarTheme/SugarTheme.php');
+}
+SugarThemeRegistry::buildRegistry();
 SugarThemeRegistry::clearAllCaches();
 
 // re-minify the JS source files
