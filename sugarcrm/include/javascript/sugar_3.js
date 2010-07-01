@@ -3877,6 +3877,15 @@ SUGAR.util.isTouchScreen = function()
     return false;
 }
 
+SUGAR.util.isLoginPage = function(content) 
+{
+	var loginPageStart = "<!DOCTYPE";
+	if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html>") != -1) {
+		window.location.href = window.location.protocol + window.location.pathname;
+		return true;
+	}
+}
+
 SUGAR.util.closeActivityPanel = {
     show:function(module,id,new_status,viewType,parentContainerId){
         if (SUGAR.util.closeActivityPanel.panel) 
