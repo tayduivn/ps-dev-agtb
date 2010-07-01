@@ -94,6 +94,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     function setBody(data, depth, parentid,type,title){
 			if(typeof(data.html) == 'undefined')data = {html:data};
+			//Check for the login page, meaning we have been logged out.
+			if (SUGAR.util.isLoginPage(data.html))
+				return false;
     		DCMenu.closeOverlay(depth);
     		var overlay = getOverlay(depth);
     		
