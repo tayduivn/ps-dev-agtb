@@ -4521,7 +4521,13 @@ function clearAllJsAndJsLangFilesWithoutOutput(){
  */
 function should_hide_iframes() {
    //Remove the MySites module
-   return !file_exists('modules/iFrames/iFrame.php');
+   if(file_exists('modules/iFrames/iFrame.php')) {
+        if(!class_exists("iFrame")) {
+                require_once('modules/iFrames/iFrame.php');
+        }
+        return false;
+   }
+   return true;
 }
 
 /**
