@@ -136,13 +136,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$smarty->assign('reportDetailView', getReportDetailViewString($reporter,$args));
 	$smarty->assign('reporter', $reporter);
 	$smarty->assign('reporterArgs', $args);
-	$star = '';
-    //BEGIN SUGARCRM flav=pro
-    if(!empty($args['reporter']->saved_report->id)){ 
-		$star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
-	}
-	//END SUGARCRM flav=pro
-    $form_header = get_form_header( $star . $mod_strings['LBL_TITLE'].": ".$args['reporter']->saved_report->name, "", false);
+	$form_header = get_form_header( $mod_strings['LBL_TITLE'].": ".$args['reporter']->saved_report->name, "", false);
 	$smarty->assign('form_header', $form_header);
 	$smarty->assign('report_offset', $reporter->report_offset);
 	$smarty->assign('sort_by', $sort_by);

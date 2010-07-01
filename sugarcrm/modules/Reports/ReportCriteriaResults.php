@@ -215,7 +215,14 @@ if(empty($_REQUEST['favorite']))
 	$params[] = "<a href='index.php?module=Reports&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 else 
     $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
-$params[] = "{$args['reporter']->name}";
+$star = '';
+//BEGIN SUGARCRM flav=pro ONLY
+if(!empty($args['reporter']->saved_report->id)){ 
+    $star = SugarFavorites::generateStar(SugarFavorites::isUserFavorite('Reports', $args['reporter']->saved_report->id), 'Reports', $args['reporter']->saved_report->id);
+}
+//END SUGARCRM flav=pro ONLY
+$params[] = "{$args['reporter']->name}&nbsp;{$star}";
+    
 echo getClassicModuleTitle("Reports", $params, true);
 
 // show report interface
