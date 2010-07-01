@@ -41,12 +41,12 @@ $mapping = array (
     ),
     'Leads' => 
     array (
-      'name' => 'full_name',
+      'name' => 'account_name',
       'id' => 'id',
     ),
-    'Targets' => 
+    'Prospects' => 
     array (
-      'name' => 'full_name',
+      'name' => 'account_name',
       'id' => 'id',
     ),
   ),
