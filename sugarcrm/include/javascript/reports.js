@@ -2373,6 +2373,7 @@ SUGAR.reports = function() {
 			var field = filter_row.field;
 			var field_name = filter_row.field.name;
 			var field_id_name= module_name+":"+field.name+":id";
+			var field_name_name= module_name+":"+field.name+":name";
 		
 			var cell = document.createElement('td');
 			var id_input = document.createElement("input");
@@ -2388,9 +2389,12 @@ SUGAR.reports = function() {
 		
 			var name_input = document.createElement("input");
 			name_input.setAttribute("type","text"); 
-			name_input.setAttribute("readOnly","true"); 
-			name_input.setAttribute("name", field_name);
-			name_input.setAttribute("id", field_name);
+			//name_input.setAttribute("readOnly","true"); 
+			name_input.setAttribute("name", field_name_name);
+			name_input.setAttribute("id", field_name_name);
+			name_input.setAttribute("class", "sqsEnabled");
+			name_input.setAttribute("autocomplete", "off");
+					
 			if ( typeof (filter.input_name1) == 'undefined') {
 				filter.input_name1= '';
 			}
@@ -2417,6 +2421,23 @@ SUGAR.reports = function() {
 			cell.appendChild(new_input);
 		
 			row.appendChild(cell);
+			
+			
+			var sqs_field_name = 'ReportsWizardForm_' + field_name_name;
+
+			var callback = {
+				success:function(o){
+					eval(o.responseText);
+					var populate_list = new Array();
+					populate_list.push(field_name_name);
+					populate_list.push(field_id_name);
+					sqs_objects[sqs_field_name]['populate_list']=populate_list;
+				    enableQS(false);
+				},
+				failure: function(o){}
+			}
+			var postData = '&module=Reports&action=get_quicksearch_defaults&to_pdf=true&sugar_body_only=true&parent_module='+ module_name+'&parent_field='+sqs_field_name;
+			YAHOO.util.Connect.asyncRequest("POST", "index.php", callback, postData);
 		},
 		addFilterInputRelateType: function(row,field,filter) {
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];

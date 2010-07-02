@@ -736,6 +736,7 @@ function validate_form(formname, startsWith){
 	}
 	if ( typeof (validate[formname]) == 'undefined')
 	{
+        disableOnUnloadEditView(document.forms[formname]);
 		return true;
 	}
 
@@ -1083,6 +1084,7 @@ function validate_form(formname, startsWith){
 		return false;
 	}
 
+    disableOnUnloadEditView(form);
 	return true;
 
 }
@@ -1576,20 +1578,26 @@ function initEditView(theForm) {
 }
 
 function onUnloadEditView(theForm) {
-    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' ) {
-        return null;
+    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+        return;
     }
 
     if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
         // Data has changed.
         return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
     } else {
-        return null;
+        return;
     }
 }
 
-function disableOnUnloadEditView() {
-    window.onbeforeunload = null;
+function disableOnUnloadEditView(theForm) {
+    // If you don't pass anything in, it disables all checking
+    if ( typeof theForm == 'undefined' ) {
+        window.onbeforeunload = null;
+    } else {
+        // Otherwise, it just disables it for this form
+        editViewSnapshots[theForm.id] = null;
+    }
 }
 
 /*
