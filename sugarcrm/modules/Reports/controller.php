@@ -73,5 +73,23 @@ class ReportsController extends SugarController{
 		echo $view->display();
 	}
 	//END SUGARCRM flav=pro ONLY
+	
+	public function action_get_quicksearch_defaults() {
+		global $global_json;
+		$global_json = getJSONobj();
+		require_once('include/QuickSearchDefaults.php');
+		$qsd = new QuickSearchDefaults();
+		$qsd->form_name = "ReportsWizardForm";
+		$quicksearch_js = '';
+		if (isset($_REQUEST['parent_module']) && isset($_REQUEST['parent_field'])) {
+			$sqsfield = "ReportsWizardForm_".$_REQUEST['parent_field'];
+			$sqs_objects = array($_REQUEST['parent_field'] => $qsd->getQSParent($_REQUEST['parent_module'])); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());
+	
+    		foreach($sqs_objects as $sqsfield=>$sqsfieldArray){
+        	    $quicksearch_js .= "sqs_objects['$sqsfield']={$global_json->encode($sqsfieldArray)};";
+    		}
+		}
+		echo $quicksearch_js;
+	}
 }
 ?>
