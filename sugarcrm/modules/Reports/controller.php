@@ -79,7 +79,8 @@ class ReportsController extends SugarController{
 		$global_json = getJSONobj();
 		require_once('include/QuickSearchDefaults.php');
 		$qsd = new QuickSearchDefaults();
-		$qsd->form_name = "ReportsWizardForm";
+		if (!empty($_REQUEST['parent_form']))
+			$qsd->form_name = $_REQUEST['parent_form'];
 		$quicksearch_js = '';
 		if (isset($_REQUEST['parent_module']) && isset($_REQUEST['parent_field'])) {
 			$sqsfield = "ReportsWizardForm_".$_REQUEST['parent_field'];
