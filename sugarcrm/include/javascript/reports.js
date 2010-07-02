@@ -2390,8 +2390,8 @@ SUGAR.reports = function() {
 			var name_input = document.createElement("input");
 			name_input.setAttribute("type","text"); 
 			//name_input.setAttribute("readOnly","true"); 
-			name_input.setAttribute("name", field_name);
-			name_input.setAttribute("id", field_name);
+			name_input.setAttribute("name", field_name_name);
+			name_input.setAttribute("id", field_name_name);
 			name_input.setAttribute("class", "sqsEnabled");
 			name_input.setAttribute("autocomplete", "off");
 					
@@ -2423,13 +2423,13 @@ SUGAR.reports = function() {
 			row.appendChild(cell);
 			
 			
-			var sqs_field_name = 'ReportsWizardForm_' + field_name;
+			var sqs_field_name = 'ReportsWizardForm_' + field_name_name;
 
 			var callback = {
 				success:function(o){
 					eval(o.responseText);
 					var populate_list = new Array();
-					populate_list.push(field_name);
+					populate_list.push(field_name_name);
 					populate_list.push(field_id_name);
 					sqs_objects[sqs_field_name]['populate_list']=populate_list;
 				    enableQS(false);
