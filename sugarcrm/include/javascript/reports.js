@@ -2367,9 +2367,12 @@ SUGAR.reports = function() {
 			else
 			 	current_parent.value = name_to_value_array['name'];
 		},		
-		addFilterInputRelate: function(row,field,filter) {
+		addFilterInputRelate: function(row,field,filter,isCustom) {
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
-			var module_name = filter_row.module;
+			if (!isCustom)
+				var module_name = filter_row.module;
+			else
+				var module_name = field.ext2;
 			var field = filter_row.field;
 			var field_name = filter_row.field.name;
 			var field_id_name= module_name+":"+field.name+":id";
@@ -2436,15 +2439,17 @@ SUGAR.reports = function() {
 				},
 				failure: function(o){}
 			}
-			var postData = '&module=Reports&action=get_quicksearch_defaults&to_pdf=true&sugar_body_only=true&parent_module='+ module_name+'&parent_field='+sqs_field_name;
+			var postData = '&module=Reports&action=get_quicksearch_defaults&to_pdf=true&sugar_body_only=true&parent_form=ReportsWizardForm&parent_module='+ module_name+'&parent_field='+sqs_field_name;
 			YAHOO.util.Connect.asyncRequest("POST", "index.php", callback, postData);
 		},
+		/*
 		addFilterInputRelateType: function(row,field,filter) {
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
 			var field = filter_row.field;
 			var module_name = field.ext2;
 			var field_name = filter_row.field.name;
 			var field_id_name= module_name+":"+field.name+":id";
+			var field_name_name= module_name+":"+field.name+":name";
 		
 			var cell = document.createElement('td');
 			var id_input = document.createElement("input");
@@ -2490,6 +2495,7 @@ SUGAR.reports = function() {
 		
 			row.appendChild(cell);
 		},		
+		*/
 		addFilterNoInput: function(row,filter) {
 			var cell = document.createElement("td");
 			cell.setAttribute('valign','middle');
@@ -2926,7 +2932,7 @@ SUGAR.reports = function() {
 			} 
 			else if (field_type == 'id' || field_type == 'name' || field_type == 'fullname') {
 				if ( qualifier_name == 'is') {
-					SUGAR.reports.addFilterInputRelate(row,field,filter);
+					SUGAR.reports.addFilterInputRelate(row,field,filter,false);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				} 
 				else {
@@ -2936,7 +2942,7 @@ SUGAR.reports = function() {
 			} 
 			else if (field_type == 'relate') {
 				if ( qualifier_name == 'is') {
-					SUGAR.reports.addFilterInputRelateType(row,field,filter);
+					SUGAR.reports.addFilterInputRelate(row,field,filter,true);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				} 
 				else {
