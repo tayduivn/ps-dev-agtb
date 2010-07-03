@@ -1175,7 +1175,6 @@ class ModuleInstaller{
 			'uninstall_languages',
 			'uninstall_logichooks',
 			'post_uninstall',
-			'reset_opcodes',
 		);
 		$total_steps += count($tasks); //now the real number of steps
 		if(file_exists($this->base_dir . '/manifest.php')){
@@ -1255,7 +1254,7 @@ class ModuleInstaller{
 
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
-				update_progress_bar('install', $total_steps, $total_steps);
+					update_progress_bar('install', $total_steps, $total_steps);
 				}
 		}else{
 			die("No manifest.php Defined In $this->base_dir/manifest.php");
