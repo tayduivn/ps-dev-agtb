@@ -49,7 +49,13 @@ $subpanel = new SubPanelTiles($focus, $_REQUEST['loadModule']);
 
 if(!function_exists('get_form_header')) {
     global $theme;
-    
+
 }
+
+// set up data for subpanels
+global $currentModule;
+$currentModule = $_REQUEST['loadModule'];
+$_REQUEST['action'] = 'DetailView';
+
 echo $subpanel->display(false);
 ?>
