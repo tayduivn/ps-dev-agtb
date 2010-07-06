@@ -5690,7 +5690,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
 .yui-navset {
-    position: relative;
+	position: relative;
     overflow-y: auto;
     height:100%;
     zoom: 1;
