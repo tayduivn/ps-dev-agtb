@@ -98,6 +98,9 @@ class SetOptionsAction extends AbstractAction{
 					
 					}
 					
+					if(field.value != selected)
+						SUGAR.forms.AssignmentHandler.assign(this.target, field.value);
+					
 					//Hide fields with empty lists
 					var empty =  field.options.length == 1 && field.value == '';
 					var visAction = new SUGAR.forms.VisibilityAction(this.target, empty ? 'false' : 'true', '');
