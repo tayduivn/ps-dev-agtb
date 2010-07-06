@@ -37,11 +37,15 @@ if(!empty($_REQUEST['schedule_id'])){
 }else{
 	$id = '';	
 }
-if(!empty($_REQUEST['schedule_date_start'])){
-	$date_start = $timedate->to_db_date($_REQUEST['schedule_date_start'], false);
+
+
+if(!empty($_REQUEST['date_start'])){
+	$date_start = $timedate->to_db($_REQUEST['date_start'], true);
 }else{
 	$date_start = '';	
 }
+
+
 if(!empty($_REQUEST['schedule_active']) ){
 	$active = 1;
 }else{
@@ -62,7 +66,6 @@ if (!$active) {
 	if(empty($date_start)){
   		$date_start = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
 	} else {
-  		$date_start .= ' 00:00:00';
   		$date_start = $timedate->handle_offset($date_start, $timedate->get_db_date_time_format(), false);
 	}	
 	$date_start = $timedate->to_display_date_time($date_start);

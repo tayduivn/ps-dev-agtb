@@ -372,7 +372,7 @@ function showFilterString() {
 
 function schedulePOPUP(){
 	var id = document.getElementById('record').value;
-	window.open("index.php?module=Reports&action=add_schedule&to_pdf=true&refreshPage=false&id=" + id ,"test","width=400,height=250,resizable=1,scrollbars=1")
+	window.open("index.php?module=Reports&action=add_schedule&to_pdf=true&refreshPage=false&id=" + id ,"test","width=600,height=250,resizable=1,scrollbars=1")
 }
 
 function performFavAction(actionToPerfrom) {
