@@ -83,9 +83,7 @@ class ReportsController extends SugarController{
 			$qsd->form_name = $_REQUEST['parent_form'];
 		$quicksearch_js = '';
 		if (isset($_REQUEST['parent_module']) && isset($_REQUEST['parent_field'])) {
-			$sqsfield = "ReportsWizardForm_".$_REQUEST['parent_field'];
-			$sqs_objects = array($_REQUEST['parent_field'] => $qsd->getQSParent($_REQUEST['parent_module'])); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());
-	
+			$sqs_objects = array($_REQUEST['parent_field'] => $qsd->getQSParent($_REQUEST['parent_module'])); 
     		foreach($sqs_objects as $sqsfield=>$sqsfieldArray){
         	    $quicksearch_js .= "sqs_objects['$sqsfield']={$global_json->encode($sqsfieldArray)};";
     		}
