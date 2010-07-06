@@ -506,7 +506,7 @@ SugarWidgetScheduleRow.prototype.display = function() {
 	td.noWrap = true;
 	//CCL - Remove check to disallow removal of assigned user or current user
 	//if ( GLOBAL_REGISTRY.focus.fields.assigned_user_id != self.focus_bean.fields.id && GLOBAL_REGISTRY.current_user.fields.id != self.focus_bean.fields.id) {
-       td.innerHTML = '<a title="'+ GLOBAL_REGISTRY['meeting_strings']['LBL_REMOVE'] +'" class="listViewTdToolsS1" href="javascript:SugarWidgetScheduleRow.deleteRow(\''+self.focus_bean.fields.id+'\');">&nbsp;<img src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=delete_inline.gif" align="absmiddle" alt="'+ GLOBAL_REGISTRY['meeting_strings']['LBL_REMOVE'] +'" border="0"> '+ GLOBAL_REGISTRY['meeting_strings']['LBL_REMOVE'] +'</a>';
+       td.innerHTML = '<a title="'+ GLOBAL_REGISTRY['meeting_strings']['LBL_REMOVE'] +'" class="listViewTdToolsS1" style="text-decoration:none;" href="javascript:SugarWidgetScheduleRow.deleteRow(\''+self.focus_bean.fields.id+'\');">&nbsp;<img src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=delete_inline.gif" align="absmiddle" alt="'+ GLOBAL_REGISTRY['meeting_strings']['LBL_REMOVE'] +'" border="0"> '+ GLOBAL_REGISTRY['meeting_strings']['LBL_REMOVE'] +'</a>';
 	//}
 	this.element = tr;
 	this.element_index = this.thetable.rows.length - 1;

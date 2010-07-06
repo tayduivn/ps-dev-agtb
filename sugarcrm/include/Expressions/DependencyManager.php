@@ -114,11 +114,16 @@ class DependencyManager {
     			$result_keys = array();
     			foreach($trigger_values as $label_key => $label) {
     				if (!empty($grid['values'][$label_key])) {
-    					$result_keys[] = 'enum("' . implode('","', $grid['values'][$label_key]) . '")';
+    					$key_list = array();
     					$trans_labels = array();
     					foreach($grid['values'][$label_key] as $label_key) {
-    						$trans_labels[$label_key] = $options[$label_key];
+    						if (isset($options[$label_key]))
+    						{
+    							$key_list[$label_key] = $label_key;
+    							$trans_labels[$label_key] = $options[$label_key];
+    						}
     					}
+    					$result_keys[] = 'enum("' . implode('","', $key_list) . '")';
     					$result_labels[] = 'enum("' . implode('","', $trans_labels) . '")';
     				} else {
     					$result_keys[] = 'enum("")';
@@ -128,10 +133,15 @@ class DependencyManager {
     			
     			$keys = 'enum(' . implode(',', $result_keys) . ')';
     			$labels = 'enum(' . implode(',', $result_labels) . ')';
-    			$keys_expression = 'valueAt(indexOf($' . $grid [ 'trigger' ] 
-    						. ',getDD("' . $trigger_list_id . '")),' . $keys . ')';
-    			$labels_expression = 'valueAt(indexOf($' . $grid [ 'trigger' ] 
-    						. ',getDD("' . $trigger_list_id . '")),' . $labels . ')';
+    			//If the trigger key doesn't appear in the child list, hide the child field.
+    			$keys_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ] 
+    					    . ', getDD("' . $trigger_list_id . '")), -1), enum(""), ' 
+    						. 'valueAt(indexOf($' . $grid [ 'trigger' ] 
+    						. ',getDD("' . $trigger_list_id . '")),' . $keys . '))';
+    			$labels_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ] 
+    						. ', getDD("' . $trigger_list_id . '")), -1), enum(""), '  
+    			 			. 'valueAt(indexOf($' . $grid [ 'trigger' ] 
+    						. ',getDD("' . $trigger_list_id . '")),' . $labels . '))';
     			$dep = new Dependency ( $field . "DDD");
     			$dep -> setTrigger( new Trigger ('true', $grid['trigger']));
     			$dep -> addAction (

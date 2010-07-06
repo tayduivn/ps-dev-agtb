@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -29,16 +29,16 @@ function build_argument_string($arguments=array()) {
    if(!is_array($arguments)) {
    	  return '';
    }
-   
+
    $argument_string = '';
    $count = 0;
    foreach($arguments as $arg) {
    	   if($count != 0) {
-          $argument_string .= ' ' . escapeshellarg($arg);	 
-   	   } 
+          $argument_string .= ' ' . escapeshellarg($arg);
+   	   }
    	   $count++;
    }
-   
+
    return $argument_string;
 }
 
@@ -75,7 +75,7 @@ foreach($output as $line) {
 
 foreach($output as $line) {
 	echo $line . "\n";
-}	
+}
 
 if(!$has_error) {
 	if($run_dce_upgrade) {
@@ -83,8 +83,8 @@ if(!$has_error) {
 		$step2 = $php_path."php -f {$php_dir}silentUpgrade_dce_step1.php " . build_argument_string($argv);
 		exec($step2, $output);
 	} else {
-		$step2 = "php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
-		system($step2);	
+		$step2 =  $php_path."php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
+		system($step2);
 	}
 }
 
@@ -96,10 +96,10 @@ if($run_dce_upgrade) {
 	      $has_error = true;
 	   }
 	}
-	
+
 	if(!$has_error) {
 	   $step3 = $php_path."php -f {$php_dir}silentUpgrade_dce_step2.php " . build_argument_string($argv);
-	   system($step3);	
+	   system($step3);
 	}
 }
 ?>

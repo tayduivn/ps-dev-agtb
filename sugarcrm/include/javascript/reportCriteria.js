@@ -602,7 +602,7 @@ function addFilterInput(cell,filter) {
 	} 
 	else if (field_type == 'id' || field_type == 'name' ) {
 		if ( qualifier_name == 'is') {
-			addFilterInputRelate(row,field,filter);
+			addFilterInputRelate(row,field,filter,false);
 		} 
 		else {
 			addFilterInputText(row,filter);
@@ -610,7 +610,7 @@ function addFilterInput(cell,filter) {
 	} 
 	else if (field_type == 'relate'){
 		if ( qualifier_name == 'is') {
-			addFilterInputRelateType(row,field,filter);
+			addFilterInputRelate(row,field,filter,true);
 		} 
 		else {
 			addFilterInputText(row,filter);
@@ -1141,11 +1141,18 @@ function addFilterInputDatetimesBetween(row,filter) {
 		
 	}
 		
-function addFilterInputRelate(row,field,filter) {
+function addFilterInputRelate(row,field,filter,isCustom) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
-	var module_name=getModuleInFilter(filter_row);
-	var field_name= module_name+":"+field.name;
+	if (!isCustom) {
+		var module_name=getModuleInFilter(filter_row);
+		var field_name= module_name+":"+field.name;
+	}
+	else {
+		var module_name = field.ext2;
+		var field_name = field.name;
+	}
 	var field_id_name= module_name+":"+field.name+":id";
+	var field_name_name= module_name+":"+field.name+":name";	
 
 	var cell = document.createElement('td');
 	var id_input = document.createElement("input");
@@ -1161,9 +1168,12 @@ function addFilterInputRelate(row,field,filter) {
 
 	var name_input = document.createElement("input");
 	name_input.setAttribute("type","text"); 
-	name_input.setAttribute("readonly","true"); 
-	name_input.setAttribute("name", field_name);
-	name_input.setAttribute("id", field_name);
+	//name_input.setAttribute("readonly","true"); 
+	name_input.setAttribute("name", field_name_name);
+	name_input.setAttribute("id", field_name_name);
+	name_input.setAttribute("class", "sqsEnabled");
+	name_input.setAttribute("autocomplete", "off");	
+	
 	if ( typeof (filter.input_name1) == 'undefined') {
 		filter.input_name1= '';
 	}
@@ -1190,8 +1200,26 @@ function addFilterInputRelate(row,field,filter) {
 	cell.appendChild(new_input);
 
 	row.appendChild(cell);
-}
+	
+	var sqs_field_name = 'EditView_' + field_name_name;
 
+	var callback = {
+		success:function(o){
+			if(typeof sqs_objects == 'undefined')
+				sqs_objects = new Array();
+			eval(o.responseText);
+			var populate_list = new Array();
+			populate_list.push(field_name_name);
+			populate_list.push(field_id_name);
+			sqs_objects[sqs_field_name]['populate_list']=populate_list;
+			enableQS(false);
+		},
+		failure: function(o){}
+	}
+	var postData = '&module=Reports&action=get_quicksearch_defaults&to_pdf=true&sugar_body_only=true&parent_form=EditView&parent_module='+ module_name+'&parent_field='+sqs_field_name;
+	YAHOO.util.Connect.asyncRequest("POST", "index.php", callback, postData);	
+}
+/*
 function addFilterInputRelateType(row,field,filter) {
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
 	var module_name = field.ext2;
@@ -1242,6 +1270,7 @@ function addFilterInputRelateType(row,field,filter) {
 
 	row.appendChild(cell);
 }		
+*/
 function set_form_return_reports(popup_reply_data) {
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;

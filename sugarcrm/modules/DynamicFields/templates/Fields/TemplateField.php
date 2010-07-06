@@ -356,12 +356,12 @@ class TemplateField{
 			'reportable'=>$this->convertBooleanValue($this->reportable),
 			);
 			//BEGIN SUGARCRM flav=een ONLY
-			if (!empty($this->calculated) && !empty($this->formula)) {
+			if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
                 $array['calculated'] = $this->calculated;
                 $array['formula'] = html_entity_decode($this->formula);
                 $array['enforced'] = (!empty($this->enforced) && $this->enforced == true);
             }
-            if (!empty($this->dependency)) {
+            if (!empty($this->dependency) && is_string($this->dependency)) {
                 $array['dependency'] = html_entity_decode($this->dependency);
             }
 			//END SUGARCRM flav=een ONLY

@@ -185,6 +185,7 @@ $layout_defs['Contacts'] = array(
 			'subpanel_name' => 'default',
 			'get_subpanel_data' => 'function:get_products_query',
 			'add_subpanel_data' => 'product_id',
+			'set_subpanel_data' => 'products',
 			'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateButton'),

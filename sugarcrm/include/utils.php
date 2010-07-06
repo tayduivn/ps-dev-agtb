@@ -445,6 +445,37 @@ function load_menu($path){
 	return $module_menu;
 }
 
+/**
+ * get_notify_template_file
+ * This function will return the location of the email notifications template to use
+ *
+ * @return string relative file path to email notifications template file
+ */
+function get_notify_template_file($language){
+	/*
+	 * Order of operation:
+	 * 1) custom version of specified language
+	 * 2) stock version of specified language
+	 * 3) custom version of en_us template
+	 * 4) stock en_us template
+	 */
+	
+	// set $file to the base code template so it's set if none of the conditions pass
+	$file = "include/language/en_us.notify_template.html";
+	
+	if(file_exists("custom/include/language/{$language}.notify_template.html")){
+		$file = "custom/include/language/{$language}.notify_template.html";
+	}
+	else if(file_exists("include/language/{$language}.notify_template.html")){
+		$file = "include/language/{$language}.notify_template.html";
+	}
+	else if(file_exists("custom/include/language/en_us.notify_template.html")){
+		$file = "custom/include/language/en_us.notify_template.html";
+	}
+	
+	return $file;
+}
+
 function sugar_config_union( $default, $override ){
 	// a little different then array_merge and array_merge_recursive.  we want
 	// the second array to override the first array if the same value exists,
@@ -3765,9 +3796,6 @@ function getTrackerSubstring($name) {
 	static $max_tracker_item_length;
 
 	//Trim the name
-	$name = str_replace('&#039;', '\'', $name);
-	$name = trim(html_entity_decode($name));
-
 	$strlen = function_exists('mb_strlen') ? mb_strlen($name) : strlen($name);
 
 	global $sugar_config;
@@ -4521,7 +4549,13 @@ function clearAllJsAndJsLangFilesWithoutOutput(){
  */
 function should_hide_iframes() {
    //Remove the MySites module
-   return !file_exists('modules/iFrames/iFrame.php');
+   if(file_exists('modules/iFrames/iFrame.php')) {
+        if(!class_exists("iFrame")) {
+                require_once('modules/iFrames/iFrame.php');
+        }
+        return false;
+   }
+   return true;
 }
 
 /**

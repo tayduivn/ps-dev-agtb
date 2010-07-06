@@ -219,5 +219,4 @@ var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 <script type="text/javascript">
 window.setTimeout(function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim}, 100);
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(document.forms.{{$form_name}}); {rdelim};
-YAHOO.util.Event.on('{$form_name}','submit',disableOnUnloadEditView);
 </script>
