@@ -1760,11 +1760,7 @@ class SugarBean
 		} else {
 			$current_language = $_SESSION['authenticated_user_language'];
 		}
-		if(file_exists('include/language/'.$current_language.'.notify_template.html')) {
-            $xtpl = new XTemplate("include/language/{$current_language}.notify_template.html");
-        } else {
-            $xtpl = new XTemplate("include/language/en_us.notify_template.html");
-        }
+        $xtpl = new XTemplate(get_notify_template_file($current_language));
         if($this->module_dir == "Cases") {
             $template_name = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
         }

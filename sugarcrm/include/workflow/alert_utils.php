@@ -335,7 +335,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 		}
 
 		
-		$xtpl = new XTemplate("include/language/{$current_language}.notify_template.html");
+		$xtpl = new XTemplate(get_notify_template_file($current_language));
 
 		$template_name = $focus->object_name;
 
