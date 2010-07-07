@@ -52,12 +52,17 @@ $layout_defs['Contacts'] = array(
 //END SUGARCRM flav!=dce ONLY
 				array('widget_class' => 'SubPanelTopComposeEmailButton'),
 			),
-			'collection_list' => array(	
+			'collection_list' => array(
 				'tasks' => array(
 					'module' => 'Tasks',
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'tasks',
 				),
+                'tasks_parent' => array(
+                    'module' => 'Tasks',
+                    'subpanel_name' => 'ForActivities',
+                    'get_subpanel_data' => 'tasks_parent',
+                ),
 //BEGIN SUGARCRM flav!=dce ONLY
                 'meetings' => array(
                     'module' => 'Meetings',
@@ -68,9 +73,9 @@ $layout_defs['Contacts'] = array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'calls',
-				),	
+				),
 //END SUGARCRM flav!=dce ONLY
-			)			
+			)
 		),
 
 		'history' => array(
@@ -88,11 +93,16 @@ $layout_defs['Contacts'] = array(
             array('widget_class' => 'SubPanelTopSummaryButton'),
 			),
 
-			'collection_list' => array(	
+			'collection_list' => array(
                 'tasks' => array(
                     'module' => 'Tasks',
                     'subpanel_name' => 'ForHistory',
                     'get_subpanel_data' => 'tasks',
+                ),
+                'tasks_parent' => array(
+                    'module' => 'Tasks',
+                    'subpanel_name' => 'ForHistory',
+                    'get_subpanel_data' => 'tasks_parent',
                 ),
 //BEGIN SUGARCRM flav!=dce ONLY
 				'meetings' => array(
@@ -104,26 +114,26 @@ $layout_defs['Contacts'] = array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'calls',
-				),	
+				),
 //END SUGARCRM flav!=dce ONLY
 				'notes' => array(
 					'module' => 'Notes',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'notes',
-				),	
+				),
 				'emails' => array(
 					'module' => 'Emails',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'emails',
-				),	
+				),
 				'linkedemails' => array(
 	                'module' => 'Emails',
 	                'subpanel_name' => 'ForUnlinkedEmailHistory',
 	                'get_subpanel_data' => 'function:get_unlinked_email_query',
 	                'generate_select'=>true,
 	                'function_parameters' => array('return_as_array'=>'true'),
-	    		),          
-			)			
+	    		),
+			)
 		),
 //BEGIN SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
@@ -140,7 +150,7 @@ $layout_defs['Contacts'] = array(
 				array('widget_class' => 'SubPanelTopCreateLeadNameButton'),
 				array('widget_class' => 'SubPanelTopSelectButton',
 					'popup_module' => 'Opportunities',
-					'mode' => 'MultiSelect', 
+					'mode' => 'MultiSelect',
 				),
 			),
 		),
@@ -252,7 +262,7 @@ $layout_defs['Contacts'] = array(
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 				array('widget_class' => 'SubPanelTopSelectButton'),
-			),			
+			),
 		),
         'campaigns' => array(
 			'order' => 70,
