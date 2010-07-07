@@ -3411,7 +3411,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 	foreach($focus->relationship_fields as $rel_key => $rel_value){
 		if($rel_value == $relationship_name){
 			$temp_bean = get_module_info($tar_rel_module);
-			echo $focus->$rel_key;
+	//		echo $focus->$rel_key;
 			$temp_bean->retrieve($focus->$rel_key);
 			if($temp_bean->id!=""){
 
@@ -3429,7 +3429,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 		&& $focus->field_defs[$field_def['id_name']]['relationship'] == $relationship_name)
 		{
 			$temp_bean = get_module_info($tar_rel_module);
-			echo $focus->$field_def['id_name'];
+		//	echo $focus->$field_def['id_name'];
 			$temp_bean->retrieve($focus->$field_def['id_name']);
 			if($temp_bean->id!=""){
 
@@ -3439,7 +3439,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 		//Check if the relationship_name matches a "link" in a relate field
 		} else if(!empty($rel_value['link']) && !empty($rel_value['id_name']) && $rel_value['link'] == $relationship_name){
 			$temp_bean = get_module_info($tar_rel_module);
-			echo $focus->$rel_value['id_name'];
+		//	echo $focus->$rel_value['id_name'];
 			$temp_bean->retrieve($focus->$rel_value['id_name']);
 			if($temp_bean->id!=""){
 
