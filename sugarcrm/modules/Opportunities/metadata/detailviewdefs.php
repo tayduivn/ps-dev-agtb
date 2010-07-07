@@ -47,30 +47,28 @@ $viewdefs['Opportunities']['DetailView'] = array(
 	        ),
 	        
 	        array(
-	            'opportunity_type'
+	        	array('name'=>'amount','label' => '{$MOD.LBL_AMOUNT} ({$CURRENCY})'),
+	        	'date_closed',
 	        ),
 	         
 	        array (
-	        	array('name'=>'amount','label' => '{$MOD.LBL_AMOUNT} ({$CURRENCY})'),
-	        	'date_closed'
+	        	'sales_stage',
+	        	'opportunity_type'
 	        ),
 	        
 	        array(
-	            'next_step',
-	            'sales_stage'
+	        	'probability',
+	        	'lead_source',
+	            
+	            
 	        ),  
 	        
 	        array (
-	            'lead_source',
-	            'probability'
-	        ),
-	        
-	        //BEGIN SUGARCRM flav!=sales ONLY
-	        array(
+	        	'next_step',
+	            //BEGIN SUGARCRM flav!=sales ONLY
 	            'campaign_name'
+	        	//END SUGARCRM flav!=sales ONLY
 	        ),
-	        //END SUGARCRM flav!=sales ONLY
-	        
 	        array(
 	            array(
 	               'name'=>'description',
