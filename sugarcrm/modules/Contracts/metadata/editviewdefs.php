@@ -97,21 +97,21 @@ $viewdefs['Contracts']['EditView'] = array(
     
     array (
       'opportunity_name',
-      array('name'=>'currency_id','label'=>'LBL_CURRENCY'),
     ),
     
     array (
-      array('name'=>'total_contract_value', 'displayParams'=>array('size'=>15, 'maxlength'=>25)),
-      array('name'=>'customer_signed_date', 'displayParams'=>array('showFormats'=>true)),
+    	'type',
+    	array('name'=>'customer_signed_date', 'displayParams'=>array('showFormats'=>true)),
     ),
     
     array (
-      array('name'=>'expiration_notice', 'type'=>'datetimecombo', 'displayParams'=>array('showFormats'=>true)),      
-      array('name'=>'company_signed_date', 'displayParams'=>array('showFormats'=>true)),
+    	array('name'=>'currency_id','label'=>'LBL_CURRENCY'),
+    	array('name'=>'company_signed_date', 'displayParams'=>array('showFormats'=>true)),
     ),
     
     array (
-      'type'                     
+    	array('name'=>'total_contract_value', 'displayParams'=>array('size'=>15, 'maxlength'=>25)),
+    	array('name'=>'expiration_notice', 'type'=>'datetimecombo', 'displayParams'=>array('showFormats'=>true)),      
     ),
     
     array (
