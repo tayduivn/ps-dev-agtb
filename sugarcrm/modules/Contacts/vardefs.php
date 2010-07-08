@@ -710,18 +710,20 @@ array (
 
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav!=sales ONLY
-        'contact_campaign_log' => array('lhs_module' => 'Contacts',
-            'lhs_table' => 'contacts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'CampaignLog',
-            'rhs_table' => 'campaign_log',
-            'rhs_key' => 'target_id',
-            'relationship_type' => 'one-to-many'))
-        //END SUGARCRM flav!=sales ONLY
-
+		'contact_campaign_log' => array(
+			'lhs_module'		=>	'Contacts',
+			'lhs_table'			=>	'contacts',
+			'lhs_key' 			=> 	'id',
+  			'rhs_module'		=>	'CampaignLog',
+			'rhs_table'			=>	'campaign_log',
+			'rhs_key' 			=> 	'target_id',
+  			'relationship_type'	=>'one-to-many'
+  		),
+//END SUGARCRM flav!=sales ONLY
+),
 
 //This enables optimistic locking for Saves From EditView
-	,'optimistic_locking'=>true,
+'optimistic_locking'=>true,
 );
 
 VardefManager::createVardef('Contacts','Contact', array('default', 'assignable',
