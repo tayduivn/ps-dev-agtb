@@ -69,27 +69,38 @@ $default_modules_sources = array (
   array (
     //BEGIN SUGARCRM flav!=com ONLY
     'ext_soap_hoovers' => 'ext_soap_hoovers',
+    'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav!=com ONLY
-    'ext_rest_linkedin' => 'ext_rest_linkedin',
-    'ext_rest_twitter' => 'ext_rest_twitter'
+    'ext_rest_linkedin' => 'ext_rest_linkedin'
   ),
   'Contacts' => 
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+    //BEGIN SUGARCRM flav!=com ONLY
     'ext_rest_twitter' => 'ext_rest_twitter'
+    //END SUGARCRM flav!=com ONLY
   ),
-  //BEGIN SUGARCRM flav!=sales ONLY  
+   
   'Leads' =>
   array (
+     //BEGIN SUGARCRM flav!=sales ONLY 
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+     //END SUGARCRM flav!=sales ONLY 
+    //BEGIN SUGARCRM flav!=com ONLY
     'ext_rest_twitter' => 'ext_rest_twitter'
+    //END SUGARCRM flav!=com ONLY
   ),
   'Prospects' =>
   array (
+    //BEGIN SUGARCRM flav!=sales ONLY 
     'ext_rest_linkedin' => 'ext_rest_linkedin',
+     //END SUGARCRM flav!=sales ONLY 
+     
+    //BEGIN SUGARCRM flav!=com ONLY
     'ext_rest_twitter' => 'ext_rest_twitter'
+    //END SUGARCRM flav!=com ONLY
   ),
-  //END SUGARCRM flav!=sales ONLY    
+    
 );
 
 if(!file_exists('custom/modules/Connectors/metadata')) {

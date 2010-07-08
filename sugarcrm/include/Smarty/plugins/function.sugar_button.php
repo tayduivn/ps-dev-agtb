@@ -78,6 +78,8 @@ function smarty_function_sugar_button($params, &$smarty)
 			$cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=DetailView&module={$smarty.request.return_module}&record={$smarty.request.return_id}\'; return false;" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" type="button"> ';
 			$cancelButton .= '{elseif !empty($smarty.request.return_action) && ($smarty.request.return_action == "DetailView" && !empty($fields.id.value))}';
 			$cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=DetailView&module={$smarty.request.return_module}&record={$fields.id.value}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
+			$cancelButton .= '{elseif empty($smarty.request.return_action) || empty($smarty.request.return_id)}';
+			$cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=DetailView&module='.$module.'&record={$fields.id.value}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
 			$cancelButton .= '{else}';
 			$cancelButton .= '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=index&module={$smarty.request.return_module}&record={$smarty.request.return_id}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
 			$cancelButton .= '{/if}';

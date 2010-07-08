@@ -33,82 +33,6 @@ $viewdefs['Documents']['DetailView'] = array(
                                         array('label' => '10', 'field' => '30')
                                         ),
                         ),
-/*
-'panels' =>array (
-  
-  array (
-    
-    array (
-      'name' => 'document_name',
-      'label' => 'LBL_DOC_NAME',
-    ),
-    
-    array (
-      'name' => 'revision',
-      'label' => 'LBL_DOC_VERSION',
-    ),
-  ),
-  
-  array (
-    
-    array (
-      'name' => 'is_template',
-      'label' => 'LBL_DET_IS_TEMPLATE',
-    ),
-    
-    array (
-      'name' => 'template_type',
-      'label' => 'LBL_DET_TEMPLATE_TYPE',
-    ),
-  ),
-  
-  array (
-      'category_id',
-      'subcategory_id',
-  ),
-  
-  array (
-	  'status',
-	  //BEGIN SUGARCRM flav=pro ONLY
-	  'team_name',
-	  //END SUGARCRM flav=pro ONLY
-  ),
-  
-  array (
-      'last_rev_created_name',
-      'last_rev_create_date',
-  ),
-  
-  array (
-      'active_date',
-      'exp_date',
-  ),
-  
-  //BEGIN SUGARCRM flav!=sales ONLY
-  array (
-    'related_doc_name',
-    'related_doc_rev_number',
-  ),
-  //END SUGARCRM flav!=sales ONLY
-  
-  array (
-    
-    array (
-      'name' => 'description',
-      'label' => 'LBL_DOC_DESCRIPTION',
-    ),
-  ),
-  
-  array (
-    
-    array (
-      'name' => 'filename',
-      'displayParams' => array('link'=>'filename', 'id'=>'document_revision_id'), 
-    ),
-
-  ),
-)
-*/
 'panels' => 
     array (
       'lbl_document_information' => 
@@ -157,27 +81,26 @@ $viewdefs['Documents']['DetailView'] = array(
           'subcategory_id',
         ),
 
-        //BEGIN SUGARCRM flav=pro ONLY
-	    array (
-	      'team_name'
-	    ),
-	    //END SUGARCRM flav=pro ONLY
-        
-	    //BEGIN SUGARCRM flav!=sales ONLY
+        array (
+          array (
+            'name' => 'description',
+            'label' => 'LBL_DOC_DESCRIPTION',
+          ),
+        ),
+	    
+        //BEGIN SUGARCRM flav!=sales ONLY
 	    array (
 	       'related_doc_name',
 	       'related_doc_rev_number',
 	    ),
 	    //END SUGARCRM flav!=sales ONLY
 
-
-        array (
-          0 => 
-          array (
-            'name' => 'description',
-            'label' => 'LBL_DOC_DESCRIPTION',
-          ),
-        ),
+		//BEGIN SUGARCRM flav=pro ONLY
+	    array (
+	      'team_name'
+	    ),
+	    //END SUGARCRM flav=pro ONLY
+        
       ),
       'LBL_REVISIONS_PANEL' => 
       array (

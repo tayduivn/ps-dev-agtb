@@ -79,10 +79,10 @@ class aSubPanel
 				_pstack_trace();
 			}
 			$def_path = 'modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'subpanel_name' ] . '.php' ;
-			
+
 			$orig_exists = is_file($def_path);
 			$loaded = false;
-			if (is_file($def_path))
+			if ($orig_exists)
 			{
 				require ($def_path);
 				$loaded = true;
@@ -91,15 +91,15 @@ class aSubPanel
 			{
 				require ("custom/$def_path");
 				$loaded = true;
-			}	
-			
+			}
+
 			if (! $original_only && isset ( $this->_instance_properties [ 'override_subpanel_name' ] ) && file_exists ( 'custom/modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'override_subpanel_name' ] . '.php' ))
 			{
 				$cust_def_path = 'custom/modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'override_subpanel_name' ] . '.php' ;
 				require ($cust_def_path) ;
 				$loaded = true;
 			}
-			
+
 			if (!$loaded)
 			{
 				$GLOBALS['log']->fatal("Failed to load original or custom subpanel data for $name in $def_path");
@@ -181,7 +181,7 @@ class aSubPanel
 
 		return $buttons ;
 	}
-	
+
 
 	//call this function for sub-panels that have unions.
 	function load_sub_subpanels ()
@@ -200,7 +200,7 @@ class aSubPanel
 		}
 
 		global $modules_exempt_from_availability_check ;
-		
+
 		$listFieldMap = array();
 
 		if (empty ( $this->sub_subpanels ))
@@ -237,14 +237,14 @@ class aSubPanel
 								$start = array_slice($display_fields, 0, $index);
 								$end = array_slice($display_fields, $index);
 								$display_fields = array_merge(
-									$start, 
-									array($def['vname'] => array('name' => $field, 'vname' => $def['vname'], 'width' => $def['width'] )), 
+									$start,
+									array($def['vname'] => array('name' => $field, 'vname' => $def['vname'], 'width' => $def['width'] )),
 									$end
 								);
-							} else 
+							} else
 							{
 								$display_fields[$def['vname']] = array(
-									'name' => $field,	
+									'name' => $field,
 									'vname' => $def['vname'],
 									'width' => $def['width'],
 								);
@@ -272,7 +272,7 @@ class aSubPanel
 			}
 		}
 	}
-	
+
 	protected function getDisplayFieldsFromCollection($sub_subpanels)
 	{
 		$display_fields = array();
@@ -293,14 +293,14 @@ class aSubPanel
 							$start = array_slice($display_fields, 0, $index);
 							$end = array_slice($display_fields, $index);
 							$display_fields = array_merge(
-								$start, 
-								array($def['vname'] => array('name' => $field, 'vname' => $def['vname'], 'width' => $def['width'] )), 
+								$start,
+								array($def['vname'] => array('name' => $field, 'vname' => $def['vname'], 'width' => $def['width'] )),
 								$end
 							);
-						} else 
+						} else
 						{
 							$display_fields[$def['vname']] = array(
-								'name' => $field,	
+								'name' => $field,
 								'vname' => $def['vname'],
 								'width' => $def['width'],
 							);
@@ -453,10 +453,10 @@ class aSubPanel
 					$list_fields = $subpanel->get_list_fields();
 					foreach($list_fields as $field => $def)
 					{
-						
+
 					}
 				}
-				
+
 				reset ( $this->sub_subpanels ) ;
 				return current ( $this->sub_subpanels ) ;
 			}
@@ -532,8 +532,8 @@ class SubPanelDefinitions
 		{
 			//retrieve list of hidden subpanels
 			$hidden_panels = $this->get_hidden_subpanels();
-			
-			//activities is a special use case in that if it is hidden, 
+
+			//activities is a special use case in that if it is hidden,
 			//then the history tab should be hidden too.
 			if(!empty($hidden_panels) && is_array($hidden_panels) && in_array('activities',$hidden_panels)){
 				//add history to list hidden_panels
@@ -546,11 +546,11 @@ class SubPanelDefinitions
                 $module = $key;
                 if ( isset($values_array['module']) )
                     $module = strtolower($values_array['module']);
-				 if ($hidden_panels && is_array($hidden_panels) && (in_array($module, $hidden_panels) || array_key_exists($module, $hidden_panels)) ){				 	
-				 	//this panel is hidden, skip it	
+				 if ($hidden_panels && is_array($hidden_panels) && (in_array($module, $hidden_panels) || array_key_exists($module, $hidden_panels)) ){
+				 	//this panel is hidden, skip it
 				 	continue;
 				 }
-				
+
 				// make sure the module attribute is set, else none of this works...
 				if ( !isset($values_array [ 'module' ])) {
 					$GLOBALS['log']->debug("SubPanelDefinitions->get_available_tabs(): no module defined in subpaneldefs for '$key' =>" . var_export($values_array,true) . " - ingoring subpanel defintion") ;
@@ -640,16 +640,16 @@ class SubPanelDefinitions
 		}
 		return $result ;
 	}
-	
+
 
 	/**
 	 * return all available subpanels that belong to the list of tab modules.  You can optionally return all
-	 * available subpanels, and also optionally group by module (prepends the key with the bean class name). 
+	 * available subpanels, and also optionally group by module (prepends the key with the bean class name).
 	 */
 	function get_all_subpanels( $return_tab_modules_only = true, $group_by_module = false )
 	{
 		global $moduleList, $beanFiles, $beanList, $module;
-	
+
 		//use tab controller function to get module list with named keys
 		require_once("modules/MySettings/TabController.php");
 		$modules_to_check = TabController::get_key_array($moduleList);
@@ -659,19 +659,19 @@ class SubPanelDefinitions
         // Append on the CampaignLog module, because that is where the subpanels point, not directly to Campaigns
         $modules_to_check['campaignlog'] = "CampaignLog";
 
-	
+
 		$spd = '';
 		$spd_arr = array();
-		//iterate through modules and build subpanel array	
+		//iterate through modules and build subpanel array
 		foreach($modules_to_check as $mod_name){
-			
+
 			//skip if module name is not in bean list, otherwise get the bean class name
 			if(!isset($beanList[$mod_name])) continue;
 			$class = $beanList[$mod_name];
 
 			//skip if class name is not in file list, otherwise require the bean file and create new class
 			if(!isset($beanFiles[$class]) || !file_exists($beanFiles[$class])) continue;
-			
+
 			//retrieve subpanels for this bean
 			require_once($beanFiles[$class]);
 			$bean_class = new $class();
@@ -679,8 +679,8 @@ class SubPanelDefinitions
 			//create new subpanel definition instance and get list of tabs
 			$spd = new SubPanelDefinitions($bean_class) ;
 			$sub_tabs = $spd->get_available_tabs();
-	
-			//add each subpanel to array of total subpanles 
+
+			//add each subpanel to array of total subpanles
 			foreach( $sub_tabs as $panel_key){
 				$panel_key = strtolower($panel_key);
                 $panel_module = $panel_key;
@@ -699,9 +699,9 @@ class SubPanelDefinitions
 		}
 		return 	$spd_arr;
 	}
-	
+
 	/*
-	 * save array of hidden panels to mysettings category in config table 
+	 * save array of hidden panels to mysettings category in config table
 	 */
 	function set_hidden_subpanels($panels){
 		$administration = new Administration();
@@ -717,11 +717,11 @@ class SubPanelDefinitions
 
 		//create variable as static to minimize queries
 		static $hidden_subpanels = null;
-		
+
 		// if the static value is not already cached, then retrieve it.
 		if(empty($hidden_subpanels))
 		{
-			
+
 			//create Administration object and retrieve any settings for panels
 			$administration = new Administration();
 			$administration->retrieveSettings('MySettings');
@@ -738,13 +738,13 @@ class SubPanelDefinitions
 
 					//Ensure modules saved in the preferences exist.
 					//get user preference
-					//unserialize and add to array if not empty 
+					//unserialize and add to array if not empty
 					$pref_hidden = array();
 					foreach($pref_hidden as $id => $pref_hidden_panel) {
 						$hidden_subpanels[] = $pref_hidden_panel;
 					}
 
-					
+
 				}else{
 					//no settings found, return empty
 					return $hidden_subpanels;
@@ -758,7 +758,7 @@ class SubPanelDefinitions
 
 		return $hidden_subpanels;
 	}
-	
-	
+
+
 }
 ?>

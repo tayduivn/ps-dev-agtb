@@ -26,7 +26,7 @@ $dictionary['report_schedules'] = array ( 'table' => 'report_schedules'
        array('name' =>'id', 'type' =>'varchar', 'dbType' => 'id', 'len'=>'36', )
       , array('name' =>'user_id', 'type' =>'varchar',  'dbType' => 'id', 'len'=>'36', 'required'=>true)
       , array('name' =>'report_id', 'type' =>'varchar',  'dbType' => 'id', 'len'=>'36', 'required'=>true)
-      , array ('name' => 'date_start','type' => 'date')
+      , array ('name' => 'date_start','type' => 'datetime')
       , array('name' =>'next_run', 'type' =>'datetime', 'len'=>'', 'required'=>true)
       , array('name' =>'active', 'type' =>'bool', 'len'=>'1', 'default'=>'0', 'required'=>true)
       , array('name' =>'time_interval', 'type' =>'int', 'len'=>'11')

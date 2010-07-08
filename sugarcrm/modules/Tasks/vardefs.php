@@ -246,6 +246,13 @@ $dictionary['Task'] = array('table' => 'tasks',
     'source'=>'non-db',
   ),
 //END SUGARCRM flav=pro ONLY
+	'contact_parent'=>
+		array (
+			'name' => 'contact_parent',
+			'type' => 'link',
+			'relationship' => 'contact_tasks_parent',
+			'source' => 'non-db',
+	),
 )
 ,
  'relationships' => array (

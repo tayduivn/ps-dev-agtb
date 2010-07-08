@@ -89,12 +89,9 @@ $viewdefs['Documents']['EditView'] = array(
       'subcategory_id',
     ),
     
-    //BEGIN SUGARCRM flav=pro ONLY
     array (
-      array('name'=>'team_name','displayParams'=>array('required'=>true)),
+      array('name'=>'description'),
     ),
-    //END SUGARCRM flav=pro ONLY
-
     
     //BEGIN SUGARCRM flav!=sales ONLY
     array (
@@ -108,9 +105,12 @@ $viewdefs['Documents']['EditView'] = array(
     ),
     //END SUGARCRM flav!=sales ONLY
     
+    
+     //BEGIN SUGARCRM flav=pro ONLY
     array (
-      array('name'=>'description'),
+      array('name'=>'team_name','displayParams'=>array('required'=>true)),
     ),
+    //END SUGARCRM flav=pro ONLY
   ),
 )
 

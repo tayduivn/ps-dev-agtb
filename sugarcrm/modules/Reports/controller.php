@@ -35,11 +35,8 @@ class ReportsController extends SugarController{
 	}
 	
 	public function loadBean(){
-		if($_REQUEST['action'] == 'add_schedule') {
-			$_REQUEST['page'] = 'report';
-			$this->view_object_map['action'] =  'add_schedule';
-		}		
-		else if(!empty($_REQUEST['record']) && $_REQUEST['action'] == 'ReportsWizard'){
+				
+		if(!empty($_REQUEST['record']) && $_REQUEST['action'] == 'ReportsWizard'){
 			$_REQUEST['id'] = $this->record;
 			$_REQUEST['page'] = 'report';
 			$this->view_object_map['action'] =  'ReportsWizard';
@@ -60,6 +57,10 @@ class ReportsController extends SugarController{
 		parent::loadBean();
 	}
 	
+	public function action_add_schedule() {
+	    $this->view = 'schedule';
+	}
+	
 	public function action_detailview(){
 		$this->view = 'classic';
 	}
@@ -73,7 +74,7 @@ class ReportsController extends SugarController{
 		echo $view->display();
 	}
 	//END SUGARCRM flav=pro ONLY
-	
+
 	public function action_get_quicksearch_defaults() {
 		global $global_json;
 		$global_json = getJSONobj();
@@ -83,9 +84,7 @@ class ReportsController extends SugarController{
 			$qsd->form_name = $_REQUEST['parent_form'];
 		$quicksearch_js = '';
 		if (isset($_REQUEST['parent_module']) && isset($_REQUEST['parent_field'])) {
-			$sqsfield = "ReportsWizardForm_".$_REQUEST['parent_field'];
-			$sqs_objects = array($_REQUEST['parent_field'] => $qsd->getQSParent($_REQUEST['parent_module'])); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());
-	
+			$sqs_objects = array($_REQUEST['parent_field'] => $qsd->getQSParent($_REQUEST['parent_module'])); 
     		foreach($sqs_objects as $sqsfield=>$sqsfieldArray){
         	    $quicksearch_js .= "sqs_objects['$sqsfield']={$global_json->encode($sqsfieldArray)};";
     		}

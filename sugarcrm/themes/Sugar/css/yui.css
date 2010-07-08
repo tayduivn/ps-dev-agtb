@@ -5690,7 +5690,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
 .yui-navset {
-    position: relative;
+	position: relative;
     overflow-y: auto;
     height:100%;
     zoom: 1;
@@ -6195,8 +6195,15 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     background-color: transparent !important;
 }
 
+/*Custom SugarCRM theme */
+
+.yui-navset.detailview_tabs
+{
+	position: inherit;
+}
+
+
 /*
-    //Custom SugarCRM theme
 
 .yui-layout-wrap .yui-navset .yui-content {
     background:#FFF none repeat scroll 0 0;

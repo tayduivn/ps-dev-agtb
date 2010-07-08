@@ -173,7 +173,7 @@ array (
 			'group'=>'portal',
 			'comment' => 'Indicator whether this contact is a portal user'
 		),
-	
+
      'portal_password' =>
         array (
             'name' => 'portal_password',
@@ -326,7 +326,7 @@ array (
 		'relationship' => 'contracts_quotes',
 		'link_type' => 'one',
 		'source' => 'non-db',
-	),            
+	),
 //END SUGARCRM flav=pro ONLY
 	'meetings'=>
 		array (
@@ -343,7 +343,7 @@ array (
 			'relationship' => 'contact_notes',
 			'source' => 'non-db',
 			'vname' => 'LBL_NOTES',
-		),	
+		),
 	'project'=>
 		array (
 			'name' => 'project',
@@ -374,7 +374,15 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_TASKS',
 		),
-	'user_sync'=>
+	'tasks_parent'=>
+		array (
+			'name' => 'tasks_parent',
+			'type' => 'link',
+			'relationship' => 'contact_tasks_parent',
+			'source' => 'non-db',
+			'vname' => 'LBL_TASKS',
+	),
+		'user_sync'=>
 		array (
 			'name' => 'users',
 			'type' => 'link',
@@ -629,49 +637,88 @@ array (
 //		'type' => 'index',
 //		'fields' => array('email2')
 //	),
-)
-, 'relationships' => array (
-'contact_direct_reports' => array('lhs_module' => 'Contacts', 'lhs_table' => 'contacts', 'lhs_key' => 'id',
-			  'rhs_module' => 'Contacts', 'rhs_table' => 'contacts', 'rhs_key' => 'reports_to_id',
-	  'relationship_type' => 'one-to-many'),
-'contact_leads' => array('lhs_module' => 'Contacts', 'lhs_table' => 'contacts', 'lhs_key' => 'id',
-			  'rhs_module' => 'Leads', 'rhs_table' => 'leads', 'rhs_key' => 'contact_id',
-	  'relationship_type' => 'one-to-many')
-,'contact_notes' => array('lhs_module' => 'Contacts', 'lhs_table' => 'contacts', 'lhs_key' => 'id',
-			  'rhs_module' => 'Notes', 'rhs_table' => 'notes', 'rhs_key' => 'contact_id',
-	  'relationship_type' => 'one-to-many')
-,'contact_tasks' => array('lhs_module' => 'Contacts', 'lhs_table' => 'contacts', 'lhs_key' => 'id',
-			  'rhs_module' => 'Tasks', 'rhs_table' => 'tasks', 'rhs_key' => 'contact_id',
-	  'relationship_type' => 'one-to-many')
-,'contacts_assigned_user' =>
-array('lhs_module' => 'Users', 'lhs_table' => 'users', 'lhs_key' => 'id',
-'rhs_module' => 'Contacts', 'rhs_table' => 'contacts', 'rhs_key' => 'assigned_user_id',
-'relationship_type' => 'one-to-many')
-,'contacts_modified_user' =>
-array('lhs_module' => 'Users', 'lhs_table' => 'users', 'lhs_key' => 'id',
-'rhs_module' => 'Contacts', 'rhs_table' => 'contacts', 'rhs_key' => 'modified_user_id',
-'relationship_type' => 'one-to-many')
-,'contacts_created_by' =>
-array('lhs_module' => 'Users', 'lhs_table' => 'users', 'lhs_key' => 'id',
-'rhs_module' => 'Contacts', 'rhs_table' => 'contacts', 'rhs_key' => 'created_by',
-'relationship_type' => 'one-to-many'),
-//BEGIN SUGARCRM flav=pro ONLY
-'contact_products' => array('lhs_module' => 'Contacts', 'lhs_table' => 'contacts', 'lhs_key' => 'id',
-              'rhs_module' => 'Products', 'rhs_table' => 'products', 'rhs_key' => 'contact_id',
-      'relationship_type' => 'one-to-many') ,
+),
+    'relationships' => array(
+        'contact_direct_reports' => array('lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Contacts',
+            'rhs_table' => 'contacts',
+            'rhs_key' => 'reports_to_id',
+            'relationship_type' => 'one-to-many'),
+        'contact_leads' => array('lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Leads',
+            'rhs_table' => 'leads',
+            'rhs_key' => 'contact_id',
+            'relationship_type' => 'one-to-many'),
+        'contact_notes' => array('lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Notes',
+            'rhs_table' => 'notes',
+            'rhs_key' => 'contact_id',
+            'relationship_type' => 'one-to-many'),
+        'contact_tasks' => array('lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'contact_id',
+            'relationship_type' => 'one-to-many'),
+        'contact_tasks_parent' => array('lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+			'relationship_role_column'=>'parent_type',
+            'relationship_role_column_value'=>'Contacts'
+		),
+        'contacts_assigned_user' => array('lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Contacts',
+            'rhs_table' => 'contacts',
+            'rhs_key' => 'assigned_user_id',
+            'relationship_type' => 'one-to-many'),
+        'contacts_modified_user' => array('lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Contacts',
+            'rhs_table' => 'contacts',
+            'rhs_key' => 'modified_user_id',
+            'relationship_type' => 'one-to-many'),
+        'contacts_created_by' => array('lhs_module' => 'Users',
+            'lhs_table' => 'users',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Contacts',
+            'rhs_table' => 'contacts',
+            'rhs_key' => 'created_by',
+            'relationship_type' => 'one-to-many'),
+        //BEGIN SUGARCRM flav=pro ONLY
+        'contact_products' => array(
+            'lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'contact_id',
+            'relationship_type' => 'one-to-many'),
 
-//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=sales ONLY
-
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
 		'contact_campaign_log' => array(
-									'lhs_module'		=>	'Contacts',
-									'lhs_table'			=>	'contacts',
-									'lhs_key' 			=> 	'id',
-						  			'rhs_module'		=>	'CampaignLog',
-									'rhs_table'			=>	'campaign_log',
-									'rhs_key' 			=> 	'target_id',
-						  			'relationship_type'	=>'one-to-many'
-						  		),
+			'lhs_module'		=>	'Contacts',
+			'lhs_table'			=>	'contacts',
+			'lhs_key' 			=> 	'id',
+  			'rhs_module'		=>	'CampaignLog',
+			'rhs_table'			=>	'campaign_log',
+			'rhs_key' 			=> 	'target_id',
+  			'relationship_type'	=>'one-to-many'
+  		),
 //END SUGARCRM flav!=sales ONLY
 ),
 

@@ -36,8 +36,7 @@
 {/if}
 {$form_header}
 <script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
-
-<form action="index.php#main" method="post" name="EditView" onSubmit="return fill_form();">
+<form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
 <input type="hidden" name='sort_dir' value ="{$sort_dir}">
@@ -373,7 +372,7 @@ function showFilterString() {
 
 function schedulePOPUP(){
 	var id = document.getElementById('record').value;
-	window.open("index.php?module=Reports&action=add_schedule&to_pdf=true&refreshPage=false&id=" + id ,"test","width=400,height=250,resizable=1,scrollbars=1")
+	window.open("index.php?module=Reports&action=add_schedule&to_pdf=true&refreshPage=false&id=" + id ,"test","width=600,height=250,resizable=1,scrollbars=1")
 }
 
 function performFavAction(actionToPerfrom) {
