@@ -100,7 +100,7 @@ $viewdefs['ProductTemplates']['EditView'] = array(
 	    ),
      array (
 	      'name' =>'type_id',
-	      'label' =>'LBL_LIST_TYPE_ID',
+	      'label' =>'LBL_TYPE',
 	    ),
     ),
     
