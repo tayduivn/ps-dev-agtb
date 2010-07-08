@@ -67,18 +67,20 @@ $default_connectors = array (
 $default_modules_sources = array (
   'Accounts' => 
   array (
+    'ext_rest_linkedin' => 'ext_rest_linkedin',
     //BEGIN SUGARCRM flav!=com ONLY
     'ext_soap_hoovers' => 'ext_soap_hoovers',
-    'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav!=com ONLY
-    'ext_rest_linkedin' => 'ext_rest_linkedin'
+    //BEGIN SUGARCRM flav=pro ONLY
+     'ext_rest_twitter' => 'ext_rest_twitter',   
+    //END SUGARCRM flav=pro ONLY
   ),
   'Contacts' => 
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-    //BEGIN SUGARCRM flav!=com ONLY
-    'ext_rest_twitter' => 'ext_rest_twitter'
-    //END SUGARCRM flav!=com ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+     'ext_rest_twitter' => 'ext_rest_twitter',   
+    //END SUGARCRM flav=pro ONLY
   ),
    
   'Leads' =>
@@ -86,9 +88,9 @@ $default_modules_sources = array (
      //BEGIN SUGARCRM flav!=sales ONLY 
     'ext_rest_linkedin' => 'ext_rest_linkedin',
      //END SUGARCRM flav!=sales ONLY 
-    //BEGIN SUGARCRM flav!=com ONLY
-    'ext_rest_twitter' => 'ext_rest_twitter'
-    //END SUGARCRM flav!=com ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+     'ext_rest_twitter' => 'ext_rest_twitter',   
+    //END SUGARCRM flav=pro ONLY
   ),
   'Prospects' =>
   array (
@@ -96,9 +98,9 @@ $default_modules_sources = array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
      //END SUGARCRM flav!=sales ONLY 
      
-    //BEGIN SUGARCRM flav!=com ONLY
-    'ext_rest_twitter' => 'ext_rest_twitter'
-    //END SUGARCRM flav!=com ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+     'ext_rest_twitter' => 'ext_rest_twitter',   
+    //END SUGARCRM flav=pro ONLY
   ),
     
 );
