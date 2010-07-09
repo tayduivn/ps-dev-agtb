@@ -22,7 +22,9 @@ global $current_user,$admin_group_header;
 //users and security.
 $admin_option_defs=array();
 $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_TITLE','LBL_MANAGE_USERS','./index.php?module=Users&action=index');
+//BEGIN SUGARCRM flav!=sales ONLY
 $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES_TITLE','LBL_MANAGE_ROLES','./index.php?module=ACLRoles&action=index');
+//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
 //END SUGARCRM flav=pro ONLY
