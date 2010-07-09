@@ -164,8 +164,8 @@ class Configurator {
 		//BEGIN SUGARCRM flav=pro ONLY
 		if (!empty ($_POST['quotes_logo'])) {
 			$this->saveCompanyQuoteLogo($_POST['quotes_logo']);
+			rmdir_recursive($GLOBALS['sugar_config']['cache_dir'].'smarty/templates_c');
 		}
-		rmdir_recursive($GLOBALS['sugar_config']['cache_dir'].'smarty/templates_c');
 		//END SUGARCRM flav=pro ONLY
 	}
     
