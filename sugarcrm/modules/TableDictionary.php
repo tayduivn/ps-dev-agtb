@@ -122,7 +122,9 @@ include("metadata/email_marketing_prospect_listsMetaData.php");
 //END SUGARCRM flav!=sales ONLY
 include("metadata/users_signaturesMetaData.php");
 //linked documents.
+//BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/linked_documentsMetaData.php");
+//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 include("metadata/sessionHistoryMetaData.php");
 //END SUGARCRM flav=pro ONLY
