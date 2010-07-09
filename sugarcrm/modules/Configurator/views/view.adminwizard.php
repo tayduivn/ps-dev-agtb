@@ -62,7 +62,7 @@ class ViewAdminwizard extends SugarView
         
         $ut = $GLOBALS['current_user']->getPreference('ut');
         if(empty($ut))
-            $this->ss->assign('SKIP_URL','index.php?module=Users&action=Wizard');
+            $this->ss->assign('SKIP_URL','index.php?module=Users&action=Wizard&skipwelcome=1');
         else
             $this->ss->assign('SKIP_URL','index.php?module=Home&action=index');
         
