@@ -254,10 +254,12 @@ class SugarBean
      * 3. Setup row-level security preference
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
-     * @param array $arr row of data fetched from the database.
+     * @param bool $populateDefaults true if we should populate the default values into the bean
      * @return  nothing
      */
-    function SugarBean()
+    function SugarBean(
+        $populateDefaults = true
+        )
     {
     	global  $dictionary, $current_user;
     	static $loaded_defs = array();
@@ -355,8 +357,10 @@ class SugarBean
     		ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
     		//END SUGARCRM flav=pro ONLY
     	}
-    	$this->populateDefaultValues();
 
+    	if ( $populateDefaults ) {
+    	    $this->populateDefaultValues();  	
+    	}
     	//BEGIN SUGARCRM flav=pro ONLY
     	if(isset($this->disable_team_security)){
     		$this->disable_row_level_security = $this->disable_team_security;
