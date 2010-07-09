@@ -522,6 +522,7 @@ EOJS;
 	function addPage(){
 		global $current_user, $sugar_version, $sugar_config, $sugar_flavor;
 		global $app_strings;
+		global $current_language;
 		
 		$pages = $current_user->getPreference('pages', $this->type);
 		
@@ -578,7 +579,7 @@ EOJS;
 		foreach($newPage['columns'] as $colNum => $column)
 		    $display[$colNum]['width'] = $column['width'];
 		
-		$home_mod_strings = return_module_language($sugar_config['default_language'], 'Home');
+		$home_mod_strings = return_module_language($current_language, 'Home');
 
 		$sugar_smarty = new Sugar_Smarty();
 		$sugar_smarty->assign('columns', $display);
@@ -776,7 +777,7 @@ EOJS;
 		$sugar_smarty->assign('serverUniqueKey', $GLOBALS['server_unique_key']);
 		$sugar_smarty->assign('imagePath', $GLOBALS['image_path']);
 		$sugar_smarty->assign('lblLnkHelp', $GLOBALS['app_strings']['LNK_HELP']);
-		$sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));
+		$sugar_smarty->assign('mod', return_module_language($current_language, 'Home'));
         $sugar_smarty->assign('app', $GLOBALS['app_strings']);
 		
 		$sugar_smarty->assign('maxCount', empty($sugar_config['max_dashboards']) ? 15 : $sugar_config['max_dashboards']);
