@@ -141,7 +141,9 @@ class StudioModule
     {
     	$sources = array (	translate('LBL_LABELS') => array ( 'action' => "module=ModuleBuilder&action=editLabels&view_module={$this->module}" , 'imageTitle' => 'Labels' , 'help' => 'labelsBtn' ) ,
         					translate('LBL_FIELDS') => array ( 'action' => "module=ModuleBuilder&action=modulefields&view_package=studio&view_module={$this->module}" , 'imageTitle' => 'Fields' , 'help' => 'fieldsBtn'  ) ,
+        					//BEGIN SUGARCRM flav!=sales ONLY
         					translate('LBL_RELATIONSHIPS') => array ( 'action' => "get_tpl=true&module=ModuleBuilder&action=relationships&view_module={$this->module}" , 'imageTitle' => 'Relationships' , 'help' => 'relationshipsBtn' ) ,
+        					//END SUGARCRM flav!=sales ONLY
         					translate('LBL_LAYOUTS') => array ( 'children' => 'getLayouts' , 'action' => "module=ModuleBuilder&action=wizard&view=layouts&view_module={$this->module}" , 'imageTitle' => 'Layouts' , 'help' => 'layoutsBtn' ) ,
         					translate('LBL_SUBPANELS') => array ( 'children' => 'getSubpanels' , 'action' => "module=ModuleBuilder&action=wizard&view=subpanels&view_module={$this->module}" , 'imageTitle' => 'Subpanels' , 'help' => 'subpanelsBtn' ) ) ;
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY

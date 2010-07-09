@@ -558,7 +558,9 @@ class MBModule
         $children = array (
         	array ( 'name' => translate('LBL_FIELDS') , 'action' => 'module=ModuleBuilder&action=modulefields&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	array ( 'name' => translate('LBL_LABELS') , 'action' => 'module=ModuleBuilder&action=modulelabels&view_module=' . $this->name . '&view_package=' . $this->package ) ,
+        	//BEGIN SUGARCRM flav!=sales ONLY
         	array ( 'name' => translate('LBL_RELATIONSHIPS') , 'action' => 'module=ModuleBuilder&action=relationships&view_module=' . $this->name . '&view_package=' . $this->package ) ,
+        	//END SUGARCRM flav!=sales ONLY
         	array ( 'name' => translate('LBL_LAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $layouts ) ,
         	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
         	array ( 'name' => translate('LBL_WIRELESSLAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $this->getWirelessLayouts() )
