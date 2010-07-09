@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
 /*********************************************************************************
-* $Id: en_us.lang.php 55931 2010-04-09 18:25:11Z jmertic $
+* $Id: en_us.lang.php 57081 2010-06-23 22:50:43Z kjing $
 * Description:  Defines the English language pack for the base application.
 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
 * All Rights Reserved.
@@ -74,8 +74,8 @@ $mod_strings = array (
     'LBL_CONVERTLEAD_BUTTON_KEY' => 'V',
     'LBL_CONVERTLEAD_TITLE' => 'Convert Lead [Alt+V]',
     'LBL_CONVERTLEAD' => 'Convert Lead',
-    'LBL_CONVERTLEAD_WARNING' => 'Warning: This Lead may have already been converted',
-    'LBL_CONVERTLEAD_WARNING_INTO_RECORD' => ' into Contact ',
+    'LBL_CONVERTLEAD_WARNING' => 'Warning: This status of the Lead you are about to convert is "Converted". Contact and/or Account records may already have been created from the Lead. If you wish to continue with converting the Lead, click Save. To go back to the Lead without converting it, click Cancel.',
+    'LBL_CONVERTLEAD_WARNING_INTO_RECORD' => ' Possible Contact: ',
     'LBL_COUNTRY' => 'Country:',
     'LBL_CREATED_NEW' => 'Created a new ',
 	'LBL_CREATED_ACCOUNT' => 'Created a new account',
@@ -182,6 +182,7 @@ $mod_strings = array (
     'LNK_NEW_MEETING' => 'Schedule Meeting',
     'LNK_NEW_OPPORTUNITY' => 'Create Opportunity',
     'LNK_SELECT_ACCOUNT' => ' <b>OR</b> Select Account',
+	'LNK_SELECT_ACCOUNTS' => ' <b>OR</b> Select Account',
     'MSG_DUPLICATE' => 'Similar leads have been found. Please check the box of any leads you would like to associate with the Records that will be created from this conversion. Once you are done, please press next.',
     'NTC_COPY_ALTERNATE_ADDRESS' => 'Copy alternate address to primary address',
     'NTC_COPY_PRIMARY_ADDRESS' => 'Copy primary address to alternate address',
@@ -229,7 +230,7 @@ $mod_strings = array (
     'LBL_SELECT' => ' <b>OR</b> Select',
 	'LBL_WEBSITE' => 'Website',
 	'LNK_IMPORT_LEADS' => 'Import Leads',
-	
+	'LBL_NOTICE_OLD_LEAD_CONVERT_OVERRIDE' => 'Notice: The current Convert Lead screen contains custom fields. When you customize the Convert Lead screen in Studio for the first time, you will need to add custom fields to the layout, as necessary. The custom fields will not automatically appear in the layout, as they did previously.',
 //Convert lead tooltips
 	'LBL_MODULE_TIP' 	=> 'The module to create a new record in.',
 	'LBL_REQUIRED_TIP' 	=> 'Required modules must be created or selected before the lead can be converted.',
