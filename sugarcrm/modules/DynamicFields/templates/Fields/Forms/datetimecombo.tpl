@@ -41,11 +41,15 @@
 		h = window.document.getElementById(id).value;
 		id = fieldname + '_minutes';
 		m = window.document.getElementById(id).value;
+		
 		id = fieldname + '_meridiem';
-		ampm = document.getElementById(id).value;
+		ampm = '';
+		if(document.getElementById(id)) {
+		   ampm = document.getElementById(id).value;
+		}
 		newtime = h + timeseparator + m + ampm;
-	   
 		document.getElementById(fieldname).value = newtime;
+		
 	}
 </script>
 {/literal}
@@ -67,7 +71,9 @@
 			{html_options name='defaultHours'  size='1' id='defaultTime_hours' options=$default_hours_values onchange="timeValueUpdate();"  selected=$default_hours}
 		   :
 		 {html_options  name='defaultMinutes'  size='1'  id='defaultTime_minutes' options=$default_minutes_values onchange="timeValueUpdate();"  selected=$default_minutes}
+		 {if $show_meridiem === true}
 		 {html_options  name='defaultMeridiem'  size='1'  id='defaultTime_meridiem' options=$default_meridiem_values onchange="timeValueUpdate();"  selected=$default_meridiem}
+		 {/if}
 		</div>
 		<input type='hidden' name='defaultTime' id='defaultTime' value="{$defaultTime}">
 	{else}
