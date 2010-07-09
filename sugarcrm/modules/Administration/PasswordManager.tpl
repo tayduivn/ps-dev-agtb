@@ -708,23 +708,9 @@ function addcheck(form){{/literal}
 		number_of_requirements++;
 	if (document.getElementById('passwordsetting_oneupper').checked)
 		number_of_requirements++;
+	if(document.getElementById('passwordsetting_maxpwdlength').value != '')
+		addToValidateMoreThan('ConfigurePasswordSettings', 'passwordsetting_maxpwdlength', 'int', false,"{$MOD.LBL_PASSWORD_MAXIMUM_LENGTH}",number_of_requirements);
 	
-	{literal}
-	
-	var minPasswordLength = 0;
-	if (document.forms['ConfigurePasswordSettings'].passwordsetting_minpwdlength){
-		if(document.forms['ConfigurePasswordSettings'].passwordsetting_minpwdlength.value){
-			minPasswordLength = document.forms['ConfigurePasswordSettings'].passwordsetting_minpwdlength.value;
-		}
-	}
-	
-	if(minPasswordLength > number_of_requirements){
-		number_of_requirements = minPasswordLength;
-		number_of_requirements++;
-	}
-	{/literal}
-	
-	addToValidateMoreThan('ConfigurePasswordSettings', 'passwordsetting_maxpwdlength', 'int', false,"{$MOD.LBL_PASSWORD_MAXIMUM_LENGTH}",number_of_requirements);
 	if (document.getElementById('customregex').value!='')
 		addToValidate('ConfigurePasswordSettings', 'passwordsetting_regexcomment','alpha','true',"{$MOD.ERR_EMPTY_REGEX_DESCRIPTION}");
 	//END SUGARCRM flav=pro ONLY
