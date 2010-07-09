@@ -39,7 +39,9 @@
 		{if !empty($module->name)}
 			<input type='button' name='duplicatebtn' value='{$mod_strings.LBL_BTN_DUPLICATE}' class='button' onclick="document.CreateModule.duplicate.value=1;ModuleBuilder.handleSave('CreateModule');">
 			<input type='button' name='viewfieldsbtn' value='{$mod_strings.LBL_BTN_VIEW_FIELDS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewFields);">
+			{* //BEGIN SUGARCRM flav!=sales ONLY*}
 			<input type='button' name='viewrelsbtn' value='{$mod_strings.LBL_BTN_VIEW_RELATIONSHIPS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewRelationships);">
+			{* //END SUGARCRM flav!=sales ONLY*}
 			<input type='button' name='viewlayoutsbtn' value='{$mod_strings.LBL_BTN_VIEW_LAYOUTS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewLayouts);">
 			&nbsp;<input type='button' name='deletebtn' value='{$mod_strings.LBL_BTN_DELETE}' class='button' onclick="ModuleBuilder.moduleDelete('{$package->name}', '{$module->name}');">{/if}</td></tr>
 	<tr>

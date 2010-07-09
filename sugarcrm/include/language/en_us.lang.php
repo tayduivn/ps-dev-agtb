@@ -86,8 +86,8 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
-    //END SUGARCRM flav!=sales ONLY
     'Documents'=>'Documents',
+    //END SUGARCRM flav!=sales ONLY
     'Connectors'=>'Connectors',
     'Roles'=>'Roles',
     //BEGIN SUGARCRM flav=following ONLY
@@ -175,8 +175,8 @@ $app_list_strings = array (
     'Project'=>'Projects',
     'ProjectTask'=>'Project Task',
     'Campaigns'=>'Campaign',
-    //END SUGARCRM flav!=sales ONLY
     'Documents'=>'Document',
+    //END SUGARCRM flav!=sales ONLY
     'SugarFollowing'=>'SugarFollowing',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=ent ONLY
@@ -1045,7 +1045,6 @@ $app_list_strings = array (
     'Direct' => 'Direct',
     'Rollup' => 'Rollup',
   ),
-    //END SUGARCRM flav!=sales ONLY
     'document_category_dom' =>
     array (
     '' => '',
@@ -1079,6 +1078,7 @@ $app_list_strings = array (
     'nda'=>'NDA',
     'license'=>'License Agreement',
   ),
+    //END SUGARCRM flav!=sales ONLY
     'dom_meeting_accept_options' =>
     array (
     'accept' => 'Accept',

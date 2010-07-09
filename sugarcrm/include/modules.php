@@ -49,8 +49,8 @@ $moduleList[] = 'Quotes';
 $moduleList[] = 'Products';
 //END SUGARCRM flav=pro ONLY
 
-$moduleList[] = 'Documents';
 //BEGIN SUGARCRM flav!=sales ONLY
+$moduleList[] = 'Documents';
 $moduleList[] = 'Cases';
 $moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
@@ -137,8 +137,10 @@ $beanList['CustomFields']       = 'CustomFields';
 
 
 
+//BEGIN SUGARCRM flav!=sales ONLY
 $beanList['Documents']  = 'Document';
 $beanList['DocumentRevisions']  = 'DocumentRevision';
+//END SUGARCRM flav!=sales ONLY
 $beanList['Roles']  = 'Role';
 
 $beanList['Audit']  = 'Audit';
@@ -149,7 +151,6 @@ $beanList['Audit']  = 'Audit';
 $beanList['InboundEmail'] = 'InboundEmail';
 
 
-$beanList['DocumentRevisions'] = 'DocumentRevision';
 $beanList['SavedSearch']            = 'SavedSearch';
 $beanList['UserPreferences']        = 'UserPreference';
 $beanList['MergeRecords'] = 'MergeRecord';
@@ -296,8 +297,10 @@ $beanFiles['Version']           = 'modules/Versions/Version.php';
 
 $beanFiles['Role']          = 'modules/Roles/Role.php';
 
+//BEGIN SUGARCRM flav!=sales ONLY
 $beanFiles['Document']  = 'modules/Documents/Document.php';
 $beanFiles['DocumentRevision']  = 'modules/DocumentRevisions/DocumentRevision.php';
+//END SUGARCRM flav!=sales ONLY
 $beanFiles['FieldsMetaData']    = 'modules/DynamicFields/FieldsMetaData.php';
 //$beanFiles['Audit']           = 'modules/Audit/Audit.php';
 
@@ -406,7 +409,10 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'CampaignTrackers', 'CampaignLog', 'EmailMan', 'Prospects', 'ProspectLists',
     //END SUGARCRM flav!=sales ONLY
     'Groups','InboundEmail',
-    'ACLActions', 'ACLRoles', 'DocumentRevisions',
+    'ACLActions', 'ACLRoles',
+    //BEGIN SUGARCRM flav!=sales ONLY
+    'DocumentRevisions',
+    //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays',
     //END SUGARCRM flav=pro ONLY
@@ -491,7 +497,9 @@ $GLOBALS['moduleTabMap'] = array(
     'Studio' => 'Administration',
     'Currencies' => 'Administration',
     'SugarFeed' => 'Administration',
+    //BEGIN SUGARCRM flav!=sales ONLY
     'DocumentRevisions' => 'Documents',
+    //END SUGARCRM flav!=sales ONLY
     'EmailTemplates' => 'Emails',
     'Tasks' => 'Activities',
     'Calls' => 'Activities',
