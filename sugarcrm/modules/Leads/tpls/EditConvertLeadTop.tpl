@@ -47,6 +47,9 @@
 <input type="hidden" name="convertCopy" id="convertCopy" value="{$copyData}">
 <input type="hidden" name="convertSelection" id="convertSelection" value="{$select}">
 </div> *}
+{if !empty($warningMessage)}
+<p class="error">{$warningMessage}</p>
+{/if}
 <script type="text/javascript">
 //This script will be invoked by ModuleBuilder after the HTML is already on the page
 //YAHOO.util.Dom.insertAfter("convertLayoutExtraData", "layoutEditorButtons");
