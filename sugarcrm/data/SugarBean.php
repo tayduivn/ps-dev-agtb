@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: SugarBean.php 56945 2010-06-14 19:51:27Z jmertic $
+ * $Id: SugarBean.php 57276 2010-07-06 09:50:08Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -2132,7 +2132,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'date':
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
-                        $this->$field = $timedate->to_db_date($this->$field);
+                        $this->$field = $timedate->to_db_date($this->$field, false);
                         $reformatted = true;
                     }
                     break;
@@ -2147,6 +2147,9 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'decimal':
                 case 'currency':
                 case 'float':
+                    if ( $this->$field === '' ) {
+                        continue;
+                    }
                     if ( is_string($this->$field) ) {
                         $this->$field = (float)unformat_number($this->$field);
                         $reformatted = true;
@@ -2158,6 +2161,9 @@ function save_relationship_changes($is_update, $exclude=array())
                case 'short':
                case 'tinyint':
                case 'int':
+                    if ( $this->$field === '' ) {
+                        continue;
+                    }
                     if ( is_string($this->$field) ) {
                         $this->$field = (int)unformat_number($this->$field);
                         $reformatted = true;
