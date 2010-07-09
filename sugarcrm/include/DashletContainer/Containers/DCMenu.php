@@ -112,6 +112,11 @@ EOQ;
 		$sugarsurvey = "http://survey-js.sugarcrm.com/SugarSurvey/index.php?do=jssurvey&version={$version}&build={$build}&flavor={$flavor}";
 		//END SUGARCRM flav=sugarsurvey ONLY
 		$html = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+		// TODO: Come back and make a SugarFields grouping file for all of these
+		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Collection/SugarFieldCollection.js')."'></script>";
+		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Teamset/Teamset.js')."'></script>";
+		$html .= "<script src='".getJSPath('include/JSON.js')."'></script>";
+		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js')."'></script>";
 		$html .= <<<EOQ
 		<script>
 			
