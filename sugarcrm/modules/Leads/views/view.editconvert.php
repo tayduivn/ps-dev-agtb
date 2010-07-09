@@ -120,6 +120,12 @@ class ViewEditConvert extends SugarView {
         $smarty->assign ( 'availibleModulesJSON', $json->encode ($relatableModules) ) ;
         $smarty->assign ( 'relationships', $json->encode ($this->getRelationshipsForModules($modules))) ;
 
+        // Bug 38245 - Warn users if they were using the old lead convert screen and are looking to modify the new one
+        if ( ( file_exists('modules/Leads/ConvertLead.php') || file_exists('custom/modules/Leads/ConvertLead.php') )
+                && !file_exists('custom/modules/Leads/metadata/convertdefs.php') ) {
+            $smarty->assign ( 'warningMessage', translate ('LBL_NOTICE_OLD_LEAD_CONVERT_OVERRIDE','Leads') ) ;
+        }
+        
         return $smarty ;
     }
     
