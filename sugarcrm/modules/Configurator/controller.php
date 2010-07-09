@@ -125,15 +125,7 @@ class ConfiguratorController extends SugarController
 	    $configurator->parseLoggerSettings();
         $configurator->saveConfig();
         
-        if ( isset($_REQUEST['continue']) )
-            SugarApplication::redirect('index.php?module=Users&action=Wizard&skipwelcome=1');
-        else {
-            $ut = $GLOBALS['current_user']->getPreference('ut');
-            if(empty($ut))
-                SugarApplication::redirect('index.php?module=Users&action=SetTimezone');
-            else
-                SugarApplication::redirect('index.php?module=Home&action=index');
-        }
+        SugarApplication::redirect('index.php?module=Users&action=Wizard&skipwelcome=1');
     }
     
     function action_saveconfig()
