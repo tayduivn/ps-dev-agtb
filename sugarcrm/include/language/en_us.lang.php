@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 56966 2010-06-15 18:20:24Z dwheeler $
+ * $Id: en_us.lang.php 57232 2010-07-01 16:14:36Z kjing $
  * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -2873,6 +2873,7 @@ $app_strings = array (
     'LBL_ITEM_SUMMARY' => 'Item Summary',
     'LBL_ACTION' => 'Action',
     'LBL_SESSION_ID' => 'Session Id',
+    'LBL_BREADCRUMBSTACK_CREATED' => 'BreadCrumbStack created for user id {0}',
     'LBL_VISIBLE' => 'Record Visible',
     'LBL_DATE_LAST_ACTION' => 'Date of Last Action',
 
