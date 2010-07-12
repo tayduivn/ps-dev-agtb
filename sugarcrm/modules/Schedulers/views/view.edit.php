@@ -106,7 +106,6 @@ class SchedulersViewEdit extends ViewEdit {
 		$triggerExp = 'true';
 		$triggerFields = Parser::getFieldsFromExpression('$adv_interval');
 		$dep->setTrigger(new Trigger($triggerExp, $triggerFields));
-		//Set the tax rate based on the web service
 		$dep->addAction(ActionFactory::getNewAction('SetPanelVisibility', array(
 		    'target' => 'LBL_ADV_OPTIONS',
 		    'value' => '$adv_interval',
