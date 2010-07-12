@@ -2931,7 +2931,7 @@ SUGAR.reports = function() {
 				}
 			} 
 			else if (field_type == 'id' || field_type == 'name' || field_type == 'fullname') {
-				if ( qualifier_name == 'is') {
+				if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 					SUGAR.reports.addFilterInputRelate(row,field,filter,false);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				} 
@@ -2941,7 +2941,7 @@ SUGAR.reports = function() {
 				}
 			} 
 			else if (field_type == 'relate') {
-				if ( qualifier_name == 'is') {
+				if ( qualifier_name == 'is' || qualifier_name == 'is_not') {
 					SUGAR.reports.addFilterInputRelate(row,field,filter,true);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				} 
