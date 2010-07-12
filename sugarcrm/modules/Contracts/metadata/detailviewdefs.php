@@ -58,11 +58,6 @@ $viewdefs['Contracts']['DetailView'] = array(
 		  'name' => 'opportunity_name',
 		  'label' => 'LBL_OPPORTUNITY',
 		),
-		array (
-		  'name' => 'time_to_expiry',
-		  'customCode' => '{$fields.time_to_expiry.value}&nbsp;{if !empty($fields.time_to_expiry.value) }{$MOD.LBL_DAYS}{/if}',
-		  'label' => 'LBL_TIME_TO_EXPIRY',
-		),
 	  ),
 
 	  array (
