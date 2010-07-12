@@ -144,6 +144,7 @@ class ImportViewStep1 extends SugarView
             return;
         }
         
+        //BEGIN SUGARCRM flav!=sales ONLY
         // trigger showing other software packages
         $this->ss->assign("show_salesforce",false);
         $this->ss->assign("show_outlook",false);
@@ -164,6 +165,7 @@ class ImportViewStep1 extends SugarView
                 $this->ss->assign("show_salesforce",true);
                 break;
         }
+        //END SUGARCRM flav!=sales ONLY
         
         // get user defined import maps
         $this->ss->assign('is_admin',is_admin($current_user));
