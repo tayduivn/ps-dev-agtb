@@ -823,7 +823,6 @@ $mod_strings = array (
 
     //END SUGARCRM flav=pro ONLY
     
-	//BEGIN SUGARCRM flav!=sales ONLY
 
     'LBL_UW_BTN_BACK_TO_MOD_LOADER'         => 'Back to Module Loader',
     'LBL_UW_BTN_BACK_TO_UW'                     => 'Back to Upgrade Wizard',
@@ -873,7 +872,6 @@ $mod_strings = array (
 	'LBL_UW_MODE_DISABLE'                       => 'Disabled',
     'LBL_UW_MODE_ENABLE'                        => 'Enabled',
     'LBL_UW_UPLOAD_SUCCESS'                     => " has been uploaded.<br>",
-    //END SUGARCRM flav!=sales ONLY
     'LBL_VALIDATION_FAIL_DATE'=>'Last failed validation : ',
     'LBL_VALIDATION_FILE'=>'Validation Key File',
     'LBL_VALIDATION_SUCCESS_DATE'=>'Last successful validation : ',
