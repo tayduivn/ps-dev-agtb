@@ -59,6 +59,7 @@ class TemplateField{
 	var $reportable = true;
 	var $label_value = '';
 	var $help = '';
+	var $formula = '';
 
 	var $vardef_map = array(
 		'name'=>'name',
@@ -356,7 +357,7 @@ class TemplateField{
 			'audited'=>$this->convertBooleanValue($this->audited),
 			'reportable'=>$this->convertBooleanValue($this->reportable),
 			);
-			//BEGIN SUGARCRM flav=een ONLY
+			//BEGIN SUGARCRM flav=pro ONLY
 			if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
                 $array['calculated'] = $this->calculated;
                 $array['formula'] = html_entity_decode($this->formula);
@@ -365,7 +366,7 @@ class TemplateField{
             if (!empty($this->dependency) && is_string($this->dependency)) {
                 $array['dependency'] = html_entity_decode($this->dependency);
             }
-			//END SUGARCRM flav=een ONLY
+			//END SUGARCRM flav=pro ONLY
 			if(!empty($this->len)){
 				$array['len'] = $this->len;
 			}

@@ -389,10 +389,11 @@ YAHOO.extend(sw.AsyncPanel, YAHOO.widget.Panel, {
 	loadingText : "Loading...",
 	failureText : "Error loading content.",
 	
-	load : function(url, method) {
+	load : function(url, method, callback) {
 		method = method ? method : "GET";
 		this.setBody(this.loadingText);
 		if (Connect.url) url = Connect.url + "&" +  url;
+		this.callback = callback;
 		Connect.asyncRequest(method, url, {success:this._updateContent, failure:this._loadFailed, scope:this});
 	},
 	
@@ -402,6 +403,8 @@ YAHOO.extend(sw.AsyncPanel, YAHOO.widget.Panel, {
 		this.setBody(o.responseText);
 		if (!SUGAR.isIE)
 			this.body.style.width = w
+		if (this.callback != null)
+			this.callback(o);
 	},
 	
 	_loadFailed : function(o) {

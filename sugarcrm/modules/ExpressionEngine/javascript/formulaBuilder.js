@@ -1,4 +1,4 @@
-//FILE SUGARCRM flav=een ONLY
+//FILE SUGARCRM flav=pro ONLY
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -137,15 +137,38 @@ SUGAR.expressions.GridToolTip = {
 	}
 };
 
-var grid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
+	var typeFormatter = function(el, rec, col, data)
+	{
+		var out = "";
+		switch(data)
+		{
+			case "string":
+				out = "string"; break;
+			case "number":
+				out = "num"; break;
+			case "time":
+				out = "T"; break;
+			case "enum":
+				out = "[]"; break;
+			case "boolean":
+				out = "bool"; break;
+			case "date":
+				out = "D"; break;
+			default:
+				out = "?";
+		}
+		el.innerHTML = '<img src="themes/default/images/SugarLogic/icon_' + out + '_16.png"></img>';
+	}
+	var grid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
 		[
-		    {key:'name', label: "Fields", width: 200, sortable: true}
+		    {key:'name', label: "Fields", width: 200, sortable: true},
+		    {key:'type', label: "", width: 20, sortable: true, formatter:typeFormatter}
 		],
 		new YAHOO.util.LocalDataSource(fieldsArray, {
 			responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 			responseSchema: {
 			   resultsList : "relationships",
-			   fields : ['name']
+			   fields : ['name', 'type']
 		    }
 		}),
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
@@ -154,28 +177,31 @@ var grid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
 	
 	var functionsArray = SUGAR.expressions.getFunctionList(); 
 	grid = new YAHOO.widget.ScrollingDataTable('functionsGrid',
-			[
-			    {key:'name', label: "Functions", width: 200, sortable: true}
-			],
-			new YAHOO.util.LocalDataSource(functionsArray, {
-				responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
-				responseSchema: {
-				   resultsList : "relationships",
-				   fields : ['name']
-			    }
-			}),
-		    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
-		);
-		grid.subscribe("rowMouseoverEvent", function(e){
-			var ggt = SUGAR.expressions.GridToolTip;
-			if (ggt.timer)
-				ggt.timer.cancel();
+		[
+		    {key:'name', label: "Functions", width: 200, sortable: true},
+		    {key:'type', label: "", width: 20, sortable: true, formatter:typeFormatter}
+		],
+		new YAHOO.util.LocalDataSource(functionsArray, {
+			responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
+			responseSchema: {
+			   resultsList : "relationships",
+			   fields : ['name', 'type']
+		    }
+		}),
+	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
+	);
+	
+	grid.subscribe("rowMouseoverEvent", function(e){
+		var ggt = SUGAR.expressions.GridToolTip;
+		if (ggt.timer)
+			ggt.timer.cancel();
 			ggt.timer = YAHOO.lang.later(250, this, function(e){
-				ggt.showFunctionDescription("functionDesc", e.target.textContent);
-			}, e);
-			
-		});
-		grid.render();
+				console.log(e);
+				ggt.showFunctionDescription("functionDesc", e.target.firstChild.textContent);
+		}, e);
+		
+	});
+	grid.render();
 
 	Dom.setStyle(Dom.get("formulaBuilder").parentNode, "padding", "0");
 };

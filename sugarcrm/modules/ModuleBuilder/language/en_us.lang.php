@@ -405,14 +405,14 @@ $mod_strings = array(
 'LBL_WIRELESSSEARCH'=>'Mobile Search',
 //END SUGARCRM flav=pro || flav=sales ONLY
 
-//BEGIN SUGARCRM flav=een ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
 'LBL_BTN_EDIT_FORMULA'=>'Edit Formula',
 'LBL_DEPENDENCY' => 'Dependency',
 'LBL_CALCULATED' => 'Calculated',
 'LBL_READ_ONLY' => 'Read Only',
 'LBL_FORMULA' => 'Formula',
-//END SUGARCRM flav=een ONLY
+//END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS
 'LBL_MODULE' => 'Module',
