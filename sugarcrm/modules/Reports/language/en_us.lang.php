@@ -217,6 +217,7 @@ $mod_strings = array (
   'LBL_PDF_TIMESTAMP'=> 'Y_m_d_H_i',
   'LBL_CSV_TIMESTAMP'=> 'Y_m_d_H_i_s',
   'LBL_IS' => 'Is',
+  'LBL_IS_NOT' => 'Is Not',
   'LBL_ONE_OF' => 'One Of',
   'LBL_ANY' => 'Any',
   'LBL_ALL' => 'At Least',
