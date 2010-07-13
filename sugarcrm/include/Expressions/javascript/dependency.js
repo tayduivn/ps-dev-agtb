@@ -149,7 +149,15 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
 
 	// special select case for IE6
 	if ( field.tagName.toLowerCase() == "select" ) {
-		return field.options[field.selectedIndex].value;
+		if(field.selectedIndex == -1) {
+			return null;
+		} else {
+			return field.options[field.selectedIndex].value;
+		}
+	}
+	
+	if(field.tagName.toLowerCase() == "input" && field.type.toLowerCase() == "checkbox") {
+			return field.checked?SUGAR.expressions.Expression.TRUE:SUGAR.expressions.Expression.FALSE;
 	}
 	
 	if (field.value !== null && typeof(field.value) != "undefined")

@@ -1151,8 +1151,8 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 		var module_name = field.ext2;
 		var field_name = field.name;
 	}
-	var field_id_name= module_name+":"+field.name+":id";
-	var field_name_name= module_name+":"+field.name+":name";	
+	var field_id_name= module_name+":"+field.name+":id:"+current_filter_id;
+	var field_name_name= module_name+":"+field.name+":name:"+current_filter_id;	
 
 	var cell = document.createElement('td');
 	var id_input = document.createElement("input");

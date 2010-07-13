@@ -45,30 +45,30 @@
 <form action='index.php' name='add_schedule' method='POST'>
 <table  width='100%'  id='schedule_table' border='0'>
 <tr>
-<td scope="row" id="date_start_label" ><slot>{$MOD.LBL_START_DATE}: </slot></td>
-<td ><slot>
-    <table  cellpadding="0" cellspacing="0">
-        <tr>
-            <td nowrap><input name='schedule_date_start' id='date_start_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" tabindex='1' size='11' maxlength='10' type="text" disabled="" > 
-                        <img src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=jscalendar.gif" alt="{$CALENDAR_DATEFORMAT}"  id="jscal_trigger" align="absmiddle" >&nbsp;
-                        <input type="hidden" id="date_start" name="date_start" value="{$DATE_START}">
-                        <span id="schedule_time_section"></span>
-            </td>
-       </tr>
-       <tr>
-            <td nowrap><span class="dateFormat">{$USER_DATEFORMAT}</span>
-            </td>
-      </tr>
-    </table></slot>
-</td>
-<td scope="row"><slot>{$MOD.LBL_TIME_INTERVAL}: </slot></td>
-<td ><slot><select name='schedule_time_interval' id='schedule_time_interval'>{$TIME_INTERVAL_SELECT}</select></slot></td>
+    <td scope="row" id="date_start_label" ><slot>{$MOD.LBL_START_DATE}: </slot></td>
+    <td ><slot>
+        <table  cellpadding="0" cellspacing="0">
+            <tr>
+                <td nowrap><input name='schedule_date_start' id='date_start_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" tabindex='1' size='11' maxlength='10' type="text" disabled="" > 
+                            <img src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=jscalendar.gif" alt="{$CALENDAR_DATEFORMAT}"  id="jscal_trigger" align="absmiddle" >&nbsp;
+                            <input type="hidden" id="date_start" name="date_start" value="{$DATE_START}">
+                            <span id="schedule_time_section"></span>
+                </td>
+           </tr>
+           <tr>
+                <td nowrap><span class="dateFormat">{$USER_DATEFORMAT}</span>
+                </td>
+          </tr>
+        </table></slot>
+    </td>
+    <td scope="row" ><slot>{$MOD.LBL_SCHEDULE_ACTIVE}: </td>
+    <td ><slot><input type='checkbox' class="checkbox" name='schedule_active' id='schedule_active' {$SCHEDULE_ACTIVE_CHECKED}></slot></td>
 </tr>
 <tr>
-<td scope="row" ><slot>{$MOD.LBL_SCHEDULE_ACTIVE}: </td>
-<td ><slot><input type='checkbox' class="checkbox" name='schedule_active' id='schedule_active' {$SCHEDULE_ACTIVE_CHECKED}></slot></td>
-<td scope="row"><slot>{$MOD.LBL_NEXT_RUN}:</slot></td>
-<td ><slot>{$NEXT_RUN}</slot></td>
+    <td scope="row"><slot>{$MOD.LBL_TIME_INTERVAL}: </slot></td>
+    <td ><slot><select name='schedule_time_interval' id='schedule_time_interval'>{$TIME_INTERVAL_SELECT}</select></slot></td>
+    <td scope="row"><slot>{$MOD.LBL_NEXT_RUN}:</slot></td>
+    <td ><slot>{$NEXT_RUN}</slot></td>
 </tr>
 <tr>
 <td scope="row">&nbsp; </td>
