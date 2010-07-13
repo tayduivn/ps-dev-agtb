@@ -30,6 +30,7 @@
 var groups_arr=new Array();
 var chartTypesHolder = []; // storage for removed chart items
 var groups_count=-1;
+var totalSqsEnabledFields = 0;
 var filters_arr=new Array();
 var filters_count_map=new Object();
 var filters_count = -1;
@@ -601,7 +602,7 @@ function addFilterInput(cell,filter) {
 		}
 	} 
 	else if (field_type == 'id' || field_type == 'name' ) {
-		if ( qualifier_name == 'is') {
+		if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 			addFilterInputRelate(row,field,filter,false);
 		} 
 		else {
@@ -609,7 +610,7 @@ function addFilterInput(cell,filter) {
 		}
 	} 
 	else if (field_type == 'relate'){
-		if ( qualifier_name == 'is') {
+		if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 			addFilterInputRelate(row,field,filter,true);
 		} 
 		else {
@@ -1142,6 +1143,7 @@ function addFilterInputDatetimesBetween(row,filter) {
 	}
 		
 function addFilterInputRelate(row,field,filter,isCustom) {
+	totalSqsEnabledFields++;
 	var filter_row = filters_arr[filters_count_map[current_filter_id]];
 	if (!isCustom) {
 		var module_name=getModuleInFilter(filter_row);
@@ -1151,8 +1153,8 @@ function addFilterInputRelate(row,field,filter,isCustom) {
 		var module_name = field.ext2;
 		var field_name = field.name;
 	}
-	var field_id_name= module_name+":"+field.name+":id:"+current_filter_id;
-	var field_name_name= module_name+":"+field.name+":name:"+current_filter_id;	
+	var field_id_name= module_name+":"+field.name+":id:"+ totalSqsEnabledFields;
+	var field_name_name= module_name+":"+field.name+":name:"+totalSqsEnabledFields;	
 
 	var cell = document.createElement('td');
 	var id_input = document.createElement("input");
