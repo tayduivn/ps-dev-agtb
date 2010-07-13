@@ -104,6 +104,7 @@ SUGAR.reports = function() {
 	var totalFilterRows = 0;
 	var totalDisplayColRows = 0;
 	var totalGroupByRows = 0;
+	var totalSqsEnabledFields = 0;
 	var fieldGridCell;
 	var chartTypesHolder = new Array();	
 	
@@ -2368,6 +2369,8 @@ SUGAR.reports = function() {
 			 	current_parent.value = name_to_value_array['name'];
 		},		
 		addFilterInputRelate: function(row,field,filter,isCustom) {
+			totalSqsEnabledFields++;
+
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
 			if (!isCustom)
 				var module_name = filter_row.module;
@@ -2375,8 +2378,8 @@ SUGAR.reports = function() {
 				var module_name = field.ext2;
 			var field = filter_row.field;
 			var field_name = filter_row.field.name;
-			var field_id_name= module_name+":"+field.name+":id:"+current_filter_id;
-			var field_name_name= module_name+":"+field.name+":name:"+current_filter_id;
+			var field_id_name= module_name+":"+field.name+":id:"+totalSqsEnabledFields;
+			var field_name_name= module_name+":"+field.name+":name:"+totalSqsEnabledFields;
 		
 			var cell = document.createElement('td');
 			var id_input = document.createElement("input");
@@ -2397,7 +2400,7 @@ SUGAR.reports = function() {
 			name_input.setAttribute("id", field_name_name);
 			name_input.setAttribute("class", "sqsEnabled");
 			name_input.setAttribute("autocomplete", "off");
-					
+			
 			if ( typeof (filter.input_name1) == 'undefined') {
 				filter.input_name1= '';
 			}
