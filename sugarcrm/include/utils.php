@@ -776,7 +776,7 @@ function getUserArrayFromFullName($args) {
 		if(empty($arg))
 		continue;
 
-		$inClause .= "first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%'";
+		$inClause .= "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
