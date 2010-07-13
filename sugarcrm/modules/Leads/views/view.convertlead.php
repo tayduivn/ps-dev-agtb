@@ -617,7 +617,7 @@ class ViewConvertLead extends SugarView
     				break;
     			}
     		}
-    		echo ".</span>";
+    		echo "</span>";
     	}
     	return false;
     } 
