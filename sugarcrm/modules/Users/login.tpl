@@ -100,7 +100,7 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 									</tr>
 									{if !empty($SELECT_LANGUAGE)}
 									<tr>
-										<td colspan="2" class="login_more"><div  style="cursor: hand; cursor: pointer; display:{$LOGIN_DISPLAY}" onclick='toggleDisplay("more");'><IMG src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" border="0" alt="Hide Options" id="more_options">&nbsp;<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_OPTIONS}</a></div>
+										<td colspan="2" class="login_more"><div  style="cursor: hand; cursor: pointer; display:{$LOGIN_DISPLAY}" onclick='toggleDisplay("more");'><IMG src="{sugar_getimagepath file='advanced_search.gif'}" border="0" alt="Hide Options" id="more_options">&nbsp;<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_OPTIONS}</a></div>
 											<div id='more' style='display: none'>
 												<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 												    <tr>
@@ -123,7 +123,7 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 									<tr>
 										<td colspan="2" class="login_more">
 										<div  style="cursor: hand; cursor: pointer; display:{$DISPLAY_FORGOT_PASSWORD_FEATURE};" onclick='toggleDisplay("forgot_password_dialog");'>
-											<IMG src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" border="0" alt="Hide Options" id="forgot_password_dialog_options">
+											<IMG src="{sugar_getimagepath file='advanced_search.gif'}" border="0" alt="Hide Options" id="forgot_password_dialog_options">
 											<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_FORGOT_PASSWORD}</a>
 										</div>
 											<div id="forgot_password_dialog" style="display:none" >
