@@ -549,6 +549,7 @@ filter_defs['parent_type'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
