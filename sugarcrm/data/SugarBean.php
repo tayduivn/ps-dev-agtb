@@ -2151,7 +2151,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'decimal':
                 case 'currency':
                 case 'float':
-                    if ( $this->$field === '' ) {
+                	if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
                     }
                     if ( is_string($this->$field) ) {
