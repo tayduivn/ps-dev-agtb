@@ -3240,6 +3240,8 @@ SUGAR.reports = function() {
 			   var link = filter.table_key.replace(/:/g,'>');
 			   link = (link == 'self') ? module : link;
 			   filter.table_key = (filter.table_key == 'self') ? module : link;
+			   //C.L. 36987 - Add the "> Teams" indicator once more
+			   filter.table_key += '> ' +  SUGAR.language.get('app_strings', 'LBL_TEAMS');
 			} 
 			else if (module_defs[module].field_defs[fieldName]){
 			   var field = module_defs[module].field_defs[fieldName];
