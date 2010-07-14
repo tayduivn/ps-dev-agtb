@@ -24,6 +24,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SugarWidgetFieldteam_set_id extends SugarWidgetReportField{
 	
 /**
+ * Format the display to be similiar to what we do in a listview
+ * Difference is since we already have the team_set_id we will grab all of the teams and not do an ajax request like
+ * we do in a list view.
+ * @param string $cell
+ */
+function & displayListPlain($layout_def){
+		$value = $this->_get_list_value($layout_def);
+		if(!empty($value)){
+			$teams = TeamSetManager::getTeamsFromSet($value);
+			if(!empty($teams)){
+				if(!empty($teams[0]['display_name'])){
+					$result = $teams[0]['display_name'];
+					if(count($teams) > 1){
+						$body = '';
+						foreach($teams as $row){
+							$body .= $row['display_name'].'<br/>';
+						}
+						$result .= "<a href=\"#\" style='text-decoration:none;' id='more_feather' onmouseout=\"return nd();\" onmouseover=\"return overlib('".$body."', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );\">+</a>";
+					}
+					return $result;
+				}else{
+					return '';
+				}
+			}else{
+				return '';
+			}
+		}else{
+			return '';
+		}
+}
+
+/**
  * Perform the Any type query
  *
  * @param array $layout_def
