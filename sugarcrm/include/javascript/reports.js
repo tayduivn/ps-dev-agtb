@@ -778,6 +778,8 @@ SUGAR.reports = function() {
 							} else if(input_arr[l].type == 'text' && /id_collection_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name1.push(input_arr[l].value);
 							} else if(input_arr[l].type == 'radio' && input_arr[l].checked) {
+								//We use input_name2 to indicate that a primary team has been selected.  
+								//See SugarWidgetFieldteam_set_id.php file to see how this creates the primary team query portion.
 								filter_def.input_name2 = input_arr[l].value;
 							}
 						}

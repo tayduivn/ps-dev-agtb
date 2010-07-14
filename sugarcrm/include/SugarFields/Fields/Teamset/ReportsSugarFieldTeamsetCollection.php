@@ -41,13 +41,20 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
         $this->ss->assign('quickSearchCode',$this->createQuickSearchCode());
         $this->createPopupCode();// this code populate $this->displayParams with popupdata.
 		$this->displayParams['formName'] = $this->form_name;        
-        $this->tpl_path = 'include/SugarFields/Fields/Teamset/TeamsetCollectionEditView.tpl';            
+        $this->tpl_path = 'include/SugarFields/Fields/Teamset/TeamsetCollectionEditView.tpl'; 
+
+        if(!empty($this->bean)) {      	
+      	   $this->ss->assign('values',$this->bean->{$this->value_name});
+           //Check if we have a primary team checked
+	       if(!empty($this->bean->{$this->value_name}['primary'])) {
+	          $this->displayParams['primaryChecked'] = true;
+	       }        	   
+        }
+        
         $this->ss->assign('displayParams',$this->displayParams);
         $this->ss->assign('vardef',$this->vardef);
         $this->ss->assign('module',$this->related_module);
-        if(!empty($this->bean)){
-      	   $this->ss->assign('values',$this->bean->{$this->value_name});
-        }
+                
         //do not show the hide/show toggle button
         $this->ss->assign('hideShowHideButton', true);
         $this->ss->assign('showSelectButton',$this->showSelectButton);
