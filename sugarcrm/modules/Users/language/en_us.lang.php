@@ -386,7 +386,7 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_USER_NAME_FOR_ROLE'            =>'Users/Teams/Roles',
     //END SUGARCRM flav!=sales ONLY
-    'LBL_SESSION_EXPIRED'               => 'Your session expired. Please login again.',
+    'LBL_SESSION_EXPIRED'               => 'You have been logged out because your session has expired.',
 //BEGIN SUGARCRM flav=pro||flav=sales ONLY
 
     'LBL_TOO_MANY_CONCURRENT'           => 'This session has ended because another session has been started under the same username.',
