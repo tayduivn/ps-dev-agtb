@@ -459,10 +459,10 @@ function get_notify_template_file($language){
 	 * 3) custom version of en_us template
 	 * 4) stock en_us template
 	 */
-	
+
 	// set $file to the base code template so it's set if none of the conditions pass
 	$file = "include/language/en_us.notify_template.html";
-	
+
 	if(file_exists("custom/include/language/{$language}.notify_template.html")){
 		$file = "custom/include/language/{$language}.notify_template.html";
 	}
@@ -472,7 +472,7 @@ function get_notify_template_file($language){
 	else if(file_exists("custom/include/language/en_us.notify_template.html")){
 		$file = "custom/include/language/en_us.notify_template.html";
 	}
-	
+
 	return $file;
 }
 
@@ -776,7 +776,7 @@ function getUserArrayFromFullName($args) {
 		if(empty($arg))
 		continue;
 
-		$inClause .= "first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%'";
+		$inClause .= "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
@@ -3448,6 +3448,17 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 			}
 		}
 	}
+
+	// special case for unlisted parent-type relationships
+	if($focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
+		$temp_bean = get_module_info($tar_rel_module);
+		$temp_bean->retrieve($focus->parent_id);
+		if($temp_bean->id!=""){
+			$rel_list[] = $temp_bean;
+			return $rel_list;
+		}
+	}
+
 	return $rel_list;
 
 	//end function search_filter_rel_info
