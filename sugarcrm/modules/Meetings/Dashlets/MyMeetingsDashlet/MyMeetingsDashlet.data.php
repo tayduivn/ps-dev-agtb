@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
- // $Id: MyMeetingsDashlet.data.php 56115 2010-04-26 17:08:09Z kjing $
+ // $Id: MyMeetingsDashlet.data.php 57148 2010-06-25 16:23:33Z kjing $
 
 global $current_user;
 
@@ -39,7 +39,7 @@ $dashletData['MyMeetingsDashlet']['searchFields'] = array('name'             => 
                                                           //END SUGARCRM flav=pro ONLY
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name,
-																					  'label'   => 'LBL_ASSIGNED_TO'));
+																					  'label'   => 'LBL_ASSIGNED_TO'),);
 $dashletData['MyMeetingsDashlet']['columns'] = array('set_complete' => array('width'    => '1', 
                                                                              'label'    => 'LBL_LIST_CLOSE',
                                                                              'default'  => true,

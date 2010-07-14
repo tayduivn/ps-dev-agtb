@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: EditView.php 56786 2010-06-02 18:29:56Z jenny $
+ * $Id: EditView.php 57102 2010-06-24 00:43:39Z kjing $
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -619,7 +619,10 @@ else{
 	}
 
 $sugar_smarty->assign('IS_FOCUS_ADMIN', is_admin($focus));
-if($edit_self) {
+
+$disable_download_tab = (!isset($sugar_config['disable_download_tab']) || $admin_edit_self) ? false : $sugar_config['disable_download_tab'];
+
+if($edit_self && !$disable_download_tab) {
 	$sugar_smarty->assign('EDIT_SELF','1');
 }
 if($admin_edit_self) {

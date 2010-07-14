@@ -770,7 +770,8 @@ class EmailMan extends SugarBean{
 			$mail->Sender	= $this->mailbox_from_addr;
 			$mail->From     = $this->mailbox_from_addr;
 			$mail->FromName = $this->current_emailmarketing->from_name;
-
+			$mail->ClearCustomHeaders();
+            $mail->AddCustomHeader('X-CampTrackID:'.$this->target_tracker_key);
             //added support for using the reply to address from reply to name from configured mailbox.
             //we removed code that was using the from name of the marketing template as the reply to name
             //and current mailbox's reply to address.

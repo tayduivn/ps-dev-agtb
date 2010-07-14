@@ -81,6 +81,7 @@
                 <input type="text" name="custom_delimiter" value="" style="width: 5em;" maxlength="1" />
             </td>
           </tr>
+          {* //BEGIN SUGARCRM flav!=sales ONLY *}
           {if $show_salesforce}
           <tr>
             <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="salesforce" />
@@ -99,6 +100,7 @@
               &nbsp;{$MOD.LBL_ACT}</td>
           </tr>
           {/if}
+          {* //END SUGARCRM flav!=sales ONLY *}
           {foreach from=$custom_imports key=key item=item name=saved}
           {if $smarty.foreach.saved.first}
           <tr>

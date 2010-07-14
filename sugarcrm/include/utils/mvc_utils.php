@@ -99,7 +99,8 @@ if(!class_exists('Tracker')){
     	require_once($path);
         if(empty($_SESSION['breadCrumbs'])) {
             $breadCrumb = new BreadCrumbStack($user_id, $modules);
-
+            $_SESSION['breadCrumbs'] = $breadCrumb;
+            $GLOBALS['log']->info(string_format($GLOBALS['app_strings']['LBL_BREADCRUMBSTACK_CREATED'], array($user_id)));
         } else {
         	$breadCrumb = $_SESSION['breadCrumbs'];
 	        $module_query = '';

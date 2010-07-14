@@ -219,9 +219,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 require_once('include/utils/zip_utils.php');
 require_once('include/utils/sugar_file_utils.php');
 require_once('include/SugarObjects/SugarConfig.php');
-require_once('include/SugarLogger/LoggerManager.php');
-require_once('include/SugarLogger/LoggerTemplate.php');
-require_once('include/SugarLogger/SugarLogger.php');
 
 global $sugar_config;
 $isDCEInstance = false;

@@ -32,7 +32,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             			bodyContent: "",
            			    zIndex:10,
             			shim:false,
-            			visibility:false
+            			visibility:false,
+            			plugins: [ Y.Plugin.Drag ]
         		});
         		overlays[depth].show = function(){
         			this.visible = true;

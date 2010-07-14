@@ -536,7 +536,7 @@ function _check_user_permissions()
 				&& !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table'])) {
                     $field_def['real_table'] .= '_cstm';
                 }
-                if (!empty($field_def['ext2'])) {
+                if ($field_def['type'] == 'relate' && !empty($field_def['ext2'])) {
 				    global $beanFiles,$beanList;
 				    require_once($beanFiles[$beanList[$field_def['ext2']]]);
 				    $joinFocus = new $beanList[$field_def['ext2']]();

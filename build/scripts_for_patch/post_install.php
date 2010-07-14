@@ -143,50 +143,34 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 	if(!isset($_SESSION['schema_change']) || /* pre-4.5.0 upgrade wizard */
 		$_SESSION['schema_change'] == 'sugar') {
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
+		$origVersion = substr($origVersion, 0, 2) . 'x';
+		$destVersion = substr($destVersion, 0, 2) . 'x';
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
-		if($sugar_config['dbconfig']['db_type'] == 'oci8') {
-			//BEGIN SUGARCRM flav=ent ONLY 
-			//$schemaFile = "$unzip_dir/scripts/$schemaFileName"."_oracle.sql";
-			$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$origVersion.'_to_'.$destVersion.'_oracle.sql';
-			_logThis("Running SQL file $schemaFile", $path);
-			if(is_file($schemaFile)) {
-				//parse the sql file and run one statement at a time. keep logging into
-				//the upgrade_progress
-				ob_start();
-				@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
-				ob_end_clean();
-				//$sql_run_result = run_sql_file_for_oracle($schemaFile);
-			} else {
-				logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-			}
-			//END SUGARCRM flav=ent ONLY 
-		} elseif($sugar_config['dbconfig']['db_type'] == 'mssql') {
-			//$schemaFile = "$unzip_dir/scripts/$schemaFileName"."_mssql.sql";
-			$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$origVersion.'_to_'.$destVersion.'_mssql.sql';
-			_logThis("Running SQL file $schemaFile", $path);
-			if(is_file($schemaFile)) {
-				//$sql_run_result = _run_sql_file($schemaFile);
-				ob_start();
-				@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
-				ob_end_clean();
-			} else {
-				logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-			}
+		switch($sugar_config['dbconfig']['db_type']) {
+			case 'mysql':
+				$schemaFileName = $schemaFileName . '_mysql.sql';
+				break;
+			case 'mssql':
+			    $schemaFileName = $schemaFileName . '_mssql.sql';
+				break;
+			case 'oci8':
+				$schemaFileName = $schemaFileName . '_oracle.sql';
+				break;
 		}
-		else {
-			//$schemaFile = "$unzip_dir/scripts/$schemaFileName"."_mysql.sql";
-			$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$origVersion.'_to_'.$destVersion.'_mysql.sql';
-			_logThis("Running SQL file $schemaFile", $path);
-			if(is_file($schemaFile)) {
-				//$sql_run_result = _run_sql_file($schemaFile);
-				ob_start();
-				@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
-				ob_end_clean();
-			} else {
-				logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-			}
+		
+
+		$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$schemaFileName;
+		_logThis("Running SQL file $schemaFile", $path);
+		if(is_file($schemaFile)) {
+			//$sql_run_result = _run_sql_file($schemaFile);
+			ob_start();
+			@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
+			ob_end_clean();
+		} else {
+			logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
 		}
+
 	} else {
 		_logThis('*** Skipping Schema Change Scripts - Admin opted to run queries manually and should have done so by now.', $path);
 	}

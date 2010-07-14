@@ -161,7 +161,7 @@ function disableReturnSubmission(e) {
     <div class="nav-buttons">
         {if $SKIP_WELCOME}
         <input title="{$MOD.LBL_BACK}"  
-            onclick="document.location.href='index.php?module=Configurator&action=AdminWizard&page=finish';" class="button"  
+            onclick="document.location.href='index.php?module=Configurator&action=AdminWizard&page=smtp';" class="button"  
             type="button" name="cancel" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  " />&nbsp;
         {else}
         <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
@@ -222,7 +222,6 @@ function disableReturnSubmission(e) {
                             <i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i>
                         </slot></td>
                         <td ><slot>
-                            <input type='hidden' name='num_grp_sep' id='default_number_grouping_seperator' value='{$NUM_GRP_SEP}'>
                             <input type="text" disabled id="sigDigitsExample" name="sigDigitsExample">
                         </slot></td>
                     </tr>
@@ -233,8 +232,10 @@ function disableReturnSubmission(e) {
                                 type='text' maxlength='1' size='1' value='{$DEC_SEP}'
                                 onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                         </slot></td>
-                        <td width="17%" scope="row" nowrap="nowrap"></td>
-                        <td></td>
+                        <td width="17%" scope="row" nowrap="nowrap"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
+                        <td><input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
+                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
+                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'></td>
                     </tr>
                     <!--//END SUGARCRM flav!=dce ONLY -->
                     <tr>

@@ -685,7 +685,10 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPUSER}{literal}';
         break;
     case "exchange":
-        document.getElementById("mail_smtpserver").value = '';
+        if ( document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com' 
+                || document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' ) {
+            document.getElementById("mail_smtpserver").value = '';
+        }
         document.getElementById("mail_smtpport").value = '25';
         document.getElementById("mail_smtpauth_req").checked = true;
         document.getElementById("mailsettings1").style.display = '';
@@ -706,9 +709,9 @@ oButtonGroup.subscribe('checkedButtonChange', function(e)
     document.getElementById('EditView').mail_smtptype.value = e.newValue.get('value');
 });
 YAHOO.widget.Button.addHiddenFieldsToForm(document.ConfigureSettings);
-if(!{/literal}{$mail_smtptype}{literal}){
-	changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}", false);
-}
+{/literal}{if !empty($mail_smtptype)}{literal}
+changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}", false);
+{/literal}{/if}{literal}
 -->
 </script>
 {/literal}

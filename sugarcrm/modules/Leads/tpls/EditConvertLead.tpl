@@ -31,6 +31,9 @@
 }
 </style>
 {/literal}
+{if !empty($warningMessage)}
+<p class="error">{$warningMessage}</p>
+{/if}
 <input type='button' name='saveLayout' value='{sugar_translate label="LBL_BTN_SAVE" module="ModuleBuilder"}'
     class='button' onclick='ModuleBuilder.saveConvertLeadLayout();' style="margin-bottom:5px;">
 <img class="spacer" src="include/images/blank.gif" style="width:50px;height:5px"/>

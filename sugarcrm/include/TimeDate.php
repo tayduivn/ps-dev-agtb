@@ -29,8 +29,21 @@ require_once('include/timezone/timezones.php');
  *
  */
 class TimeDate {
+	/**
+	 * DB date format
+	 * @var string
+	 */
 	var $dbDayFormat = 'Y-m-d';
+	/**
+	 * DB time format
+	 * @var string
+	 */
 	var $dbTimeFormat = 'H:i:s';
+	/**
+	 * DB date & time formats
+	 * For convenience
+	 * @var string
+	 */
 	var $dbDateTimeFormat = 'Y-m-d H:i:s';
 
 	protected $supported_strings = array(
@@ -67,15 +80,18 @@ class TimeDate {
 
     /**
      * The current timezone information for the current user
+     * @var array
      */
     private $current_user_timezone = null;
 
     /**
      * The current user timezone adjustment
+     * @var int
      */
     private $current_user_adjustment = null;
     /**
      * The target TZ for current user timezone adjustment
+     * @var array
      */
     private $current_user_adjustment_tz = null;
 
@@ -87,9 +103,10 @@ class TimeDate {
 
     /**
      * For testability - disallow using cache
-     * @var unknown_type
+     * @var bool
      */
     public $allow_cache = true;
+
     /**
      * Constructor
      */
@@ -131,6 +148,7 @@ class TimeDate {
 	}
 
 	/**
+	 * @deprecated for public use
 	 * function adjustmentForUserTimeZone()
 	 * this returns the adjustment for a user against the server time
 	 *
@@ -172,29 +190,32 @@ class TimeDate {
 	}
 
 	/**
+     * @deprecated for public use
 	 * function getWeekDayName($indexOfDay)
 	 * Returns a days name
 	 *
 	 * @param INT(WEEKDAY INDEX) $indexOfDay
 	 * @return STRING representing the given weekday
 	 */
-	protected function getWeekDayName($indexOfDay){
+	function getWeekDayName($indexOfDay){
 		static $dow = array ( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
 		return $dow[$indexOfDay];
 	}
 	/**
+     * @deprecated for public use
 	 * function getMonthName($indexMonth)
 	 * Returns a Months Name
 	 *
 	 * @param INT(MONTH INDEX) $indexMonth
 	 * @return STRING representation of the month
 	 */
-	protected function getMonthName($indexMonth){
+	function getMonthName($indexMonth){
 		static $months = array ( 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' );
 		return $months[$indexMonth];
 	}
 
 	/**
+     * @deprecated for public use
 	 * function getDateFromRules($year, $startMonth, $startDate, $weekday, $startTime )
 	 * Converts the rules for a timezones dst into a string representation of a date for the given year
 	 *
@@ -217,6 +238,7 @@ class TimeDate {
 	}
 
 	/**
+	 * @deprecated for public use
 	 * 	function getDSTRange($year, $zone)
 	 *
 	 * returns the start and end date for dst for a given timezone and year or false if that zone doesn't support dst
@@ -236,8 +258,15 @@ class TimeDate {
 		return $range;
 	}
 
-	protected function inDST($date, $zone){
-		$datetime = $this->split_date_time($date);
+     /**
+      * @deprecated for public use
+      *
+      * Is the date in DST or not
+      * @param $date
+      * @param $zone
+      */
+	function inDST($date, $zone){
+		$datetime = explode(' ', $date);
 		$dateSplit = explode('-', $datetime[0]);
 		if(empty($dateSplit[2]))return false;
 		$dstRange = $this->getDSTRange($dateSplit[0], $zone);
@@ -255,9 +284,6 @@ class TimeDate {
 		return false;
 	}
 
-	/*
-	 * TODO: move to protected
-	 */
 	/**
 	 * Create regexp from datetime format
 	 * @param string $format
@@ -316,6 +342,7 @@ class TimeDate {
 	}
 
 	/**
+	 * @deprecated for public use
 	 * Build a true PHP format string from a user supplied format string
 	 *
 	 * @param string $format
@@ -323,7 +350,7 @@ class TimeDate {
 	 * @access private
 	 * @see $time_token_map
 	 */
-	private function build_format($format)
+	function build_format($format)
 	{
 		$format = str_split($format, 1);
 		$return = '';
@@ -335,9 +362,14 @@ class TimeDate {
 		return $return;
 	}
 
-	/*
-	 * TODO: move to protected
-	 */
+    /**
+     * Convert date from one format to another
+     *
+     * @param string $date
+     * @param string $from
+     * @param string $to
+     * @return string
+     */
 	function swap_formats($date, $startFormat, $endFormat) {
 		$startreg = $this->get_regular_expression($startFormat);
 		preg_match('@'.$startreg['format'].'@', $date, $regs);
@@ -562,11 +594,6 @@ class TimeDate {
 			$date = $this->merge_date_time($date, $this->get_default_midnight());
 		}
 
-		// FIXME: format may be right, but TZ may be still wrong!
-//        if ( preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$date) ) {
-//            // Already in system format, no need to go nuts.
-//            return $date;
-//        }
 		$date = $this->swap_formats($date, $this->get_date_time_format(), $this->get_db_date_time_format());
 		return $this->handle_offset($date, $this->get_db_date_time_format(), false, $GLOBALS['current_user']);
 	}
@@ -577,11 +604,9 @@ class TimeDate {
 	 *	   Having this display it's own <script> keeps it from being able to be embedded
 	 *	   in another Javascript file to allow for better caching
 	 */
-	/*
-	 * TODO: Move to separate utility class
-	 */
 	/**
 	 * Get Javascript variables setup for user date format validation
+	 * @todo: move to separate utility class?
 	 *
 	 * @return string JS code
 	 */
@@ -709,7 +734,13 @@ class TimeDate {
 		return $this->split_date_time($newDate);
 	}
 
-	protected function getUserEventOffset($user_in_dst, $event_in_dst){
+	/**
+     * @deprecated for public use
+	 * Get DST offset between user & event
+	 * @param $user_in_dst
+	 * @param $event_in_dst
+	 */
+	function getUserEventOffset($user_in_dst, $event_in_dst){
 		if($user_in_dst && !$event_in_dst ){
 			return -3600;
 		}
@@ -741,19 +772,13 @@ S	S	S	12	20	-8	0	0
 
 ***************************************************************/
 
-	/*
-	 * TODO: move to protected
-	 */
 	/**
 	 * handles offset values for Timezones and DST
-	 * @param	$date	     string		date/time formatted in user's selected
-	 * format
-	 * @param	$format	     string		destination format value as passed to PHP's
-	 * date() funtion
+	 * @param	$date	     string		date/time formatted in user's selected format
+	 * @param	$format	     string		destination format value as passed to PHP's date() funtion
 	 * @param	$to		     boolean
 	 * @param	$user	     object		user object from which Timezone and DST
-     * @param	$usetimezone string		timezone name as it appears in timezones.php
-	 * values will be derived
+     * @param	$usetimezone string		timezone name as it appears in timezones.php values will be derived
 	 * @return 	 string		date formatted and adjusted for TZ and DST
 	 */
 	function handle_offset($date, $format, $to = true, $user = null, $usetimezone = null) {
@@ -808,9 +833,10 @@ S	S	S	12	20	-8	0	0
 	}
 
 	/**
-	 * @deprecated
+     * @deprecated for public use
 	 */
-	private function use_old_gmt(){
+	function use_old_gmt()
+	{
 		if(isset($_SESSION['GMTO'])){
 			return $_SESSION['GMTO'];
 		}
@@ -827,6 +853,7 @@ S	S	S	12	20	-8	0	0
 	}
 
 	/**
+     * @deprecated for public use
 	 *This function is depricated don't use it. It is only for backwards compatibility until the admin runs the upgrade script
 	 *
 	 * @param unknown_type $date
@@ -834,8 +861,8 @@ S	S	S	12	20	-8	0	0
 	 * @param unknown_type $to
 	 * @return unknown
 	 */
-	protected function handle_offset_depricated($date, $format, $to = true) {
-
+	private function handle_offset_depricated($date, $format, $to = true)
+	{
 		$date = trim($date);
 		if (empty($date)) {
 			return $date;
@@ -850,13 +877,15 @@ S	S	S	12	20	-8	0	0
 		return date($format, strtotime($date) + $this->get_hour_offset($to) * 60 * 60 + $zone);
 	}
 
-	/*	this method will take an input $date variable (expecting Y-m-d format)
+	/**
+	 * 	this method will take an input $date variable (expecting Y-m-d format)
 	 *	and get the GMT equivalent - with an hour-level granularity :
 	 *	return the max value of a given locale's
 	 *	date+time in GMT metrics (i.e., if in PDT, "2005-01-01 23:59:59" would be
 	 *	"2005-01-02 06:59:59" in GMT metrics)
 	 */
-	function handleOffsetMax($date, $format = '', $to = true) {
+	function handleOffsetMax($date, $format = '', $to = true)
+	{
 		global $current_user;
 		$gmtDateTime = array($date); // for errors
 		/* check for bad date formatting */
@@ -879,7 +908,6 @@ S	S	S	12	20	-8	0	0
 		/* handle timezone and daylight savings */
 		$dateWithTimeMin = $dateNoTime.' 00:00:00';
 		$dateWithTimeMax = $dateNoTime.' 23:59:59';
-
 
 		$offsetDateMin = $this->handle_offset($dateWithTimeMin, $this->dbDateTimeFormat, false);
 		$offsetDateMax = $this->handle_offset($dateWithTimeMax, $this->dbDateTimeFormat, false);
@@ -912,8 +940,8 @@ S	S	S	12	20	-8	0	0
 	}
 
 	/*
-	 * assumes that olddatetime is in Y-m-d H:i:s format
-	 * @deprecated
+	 * @deprecated for public use
+	 * Convert time in strtotime format into Y-m-d H:i:s format
 	 */
 	function convert_to_gmt_datetime($olddatetime) {
 		if (!empty($olddatetime)) {
@@ -951,10 +979,8 @@ S	S	S	12	20	-8	0	0
 		return str_replace('!@!', $mer, $newDate);
 	}
 
-	/*
-	 * TODO: Move to separate utility class
-	 */
 	/**
+	 * @deprecated for public use
 	 * AMPMMenu
 	 * This method renders a <select> HTML form element based on the
 	 * user's time format preferences, with give date's value highlighted.
@@ -964,6 +990,7 @@ S	S	S	12	20	-8	0	0
 	 * @todo: There is hardcoded HTML in here that does not allow for localization
 	 * of the AM/PM am/pm Strings in this drop down menu.  Also, perhaps
 	 * change to the substr_count function calls to strpos
+	 * @todo: move to separate utility class?
 	 *
 	 * @param string $prefix Prefix for SELECT
 	 * @param string $date Date in display format
@@ -1005,14 +1032,14 @@ S	S	S	12	20	-8	0	0
 	}
 
 	/**
+     * @deprecated for public use
 	 * Get timezone offset in hours between server and timezone
 	 *
 	 * @param bool $to To this timezone or from this timezone?
 	 * @param
 	 * @return float
 	 */
-	protected function get_hour_offset($to = true, $timezone = null) {
-
+	function get_hour_offset($to = true, $timezone = null) {
 		$timeDelta = $this->adjustmentForUserTimeZone($timezone) /60.0;
 		if ($to) {
 			return -1.0 * $timeDelta;
@@ -1091,6 +1118,9 @@ S	S	S	12	20	-8	0	0
 		return $this->dbTimeFormat;
 	}
 
+	/**
+	 * Get user date format it strftime terms
+	 */
 	function get_cal_date_format() {
 		return str_replace(
 			array('Y',  'm',  'd'),
@@ -1098,6 +1128,9 @@ S	S	S	12	20	-8	0	0
 			$this->get_date_format());
 	}
 
+	/**
+	 * Get user time format it strftime terms
+	 */
 	function get_cal_time_format() {
 		return str_replace(
 			array('a',  'A',  'h',  'H',  'i',  's'),
@@ -1105,12 +1138,17 @@ S	S	S	12	20	-8	0	0
 			$this->get_time_format());
 	}
 
+	/**
+	 * Get user date & time format it strftime terms
+	 */
 	function get_cal_date_time_format() {
 		return $this->merge_date_time($this->get_cal_date_format(), $this->get_cal_time_format());
 	}
 
 	/**
-	 * TODO: REMOVE?
+	 * Return current date format for user display
+	 *
+	 * Displays format as an example for the user (i.e. something like dd/mm/yyyy)
 	 */
 	function get_user_date_format() {
 		return str_replace(
@@ -1120,7 +1158,8 @@ S	S	S	12	20	-8	0	0
 	}
 
 	/**
-	 * TODO: REMOVE?
+	 * Return current time format for user display (e.g. as example under select box)
+	 * FIXME: should we be using current format as get_user_date_format() or config?
 	 */
 	function get_user_time_format() {
 		global $sugar_config;
@@ -1138,15 +1177,11 @@ S	S	S	12	20	-8	0	0
 	}
 
 	/**
-	 * TODO: Move to separate utility class
+	 * @deprecated for public use
+	 * @todo: move to separate utility class?
 	 */
 	function get_microtime_string() {
-		$now = (string) microtime();
-		$now = explode(' ', $now);
-		$unique_id = $now[1].str_replace('.', '', $now[0]);
-		unset($now);
-
-		return $unique_id;
+		return sugar_microtime();
 	}
 
 	/**
@@ -1204,5 +1239,3 @@ S	S	S	12	20	-8	0	0
     }
 
 }
-
-?>

@@ -92,7 +92,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
-            $bean->$field = '';
+            //$bean->$field = '';
             return;
         }
         

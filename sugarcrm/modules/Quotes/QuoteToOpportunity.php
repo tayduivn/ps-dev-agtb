@@ -138,9 +138,10 @@ else
 	$opp->team_id = $_REQUEST["team_id"];
 	//END SUGARCRM flav=pro ONLY
 	if(empty($_REQUEST["amount"])) {
-		$amount = "0.00";
+		$amount = (float)0;
 	} else {
-        $amount=$_REQUEST["amount"];
+        // We need to unformat the amount before we try and stick it in a bean
+        $amount=(float)$_REQUEST["amount"];
 	}
 	$account_id = $_REQUEST["opportunity_id"];
 	$opp->amount = $amount;

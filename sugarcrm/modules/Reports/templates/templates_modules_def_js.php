@@ -461,8 +461,10 @@ filter_defs['url'] = qualifiers;
 
 var qualifiers_name = new Array();
 var is_def = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
+var is_not_def = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
 var one_of_def = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 qualifiers_name = qualifiers_name.concat(qualifiers);
+qualifiers_name.unshift(is_not_def);
 qualifiers_name.unshift(is_def);
 filter_defs['name'] = qualifiers_name;
 filter_defs['fullname'] = qualifiers_name;
@@ -536,6 +538,7 @@ filter_defs['num'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
@@ -546,6 +549,7 @@ filter_defs['parent_type'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};

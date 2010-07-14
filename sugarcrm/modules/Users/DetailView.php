@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: DetailView.php 56348 2010-05-10 21:23:18Z jenny $
+ * $Id: DetailView.php 57067 2010-06-23 16:52:55Z kjing $
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -507,6 +507,7 @@ if(!empty($GLOBALS['sugar_config']['lock_subpanels'])){
 }
 $GLOBALS['sugar_config']['lock_subpanels'] = true;
 
+//BEGIN SUGARCRM flav=pro ONLY
 // User Holidays subpanels should not be displayed for group and portal users
 if(!($focus->is_group=='1' || $focus->portal_only=='1')){
     require_once('include/SubPanel/SubPanelTiles.php');
@@ -514,6 +515,7 @@ if(!($focus->is_group=='1' || $focus->portal_only=='1')){
 
     $sugar_smarty->assign('USER_HOLIDAYS_SUBPANEL',$subpanel->display(true,true));
 }
+//END SUGARCRM flav=pro ONLY
 $GLOBALS['sugar_config']['lock_subpanels'] = $locked;
 
 $sugar_smarty->display('modules/Users/DetailView.tpl');

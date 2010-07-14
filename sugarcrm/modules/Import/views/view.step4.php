@@ -471,6 +471,9 @@ class ImportViewStep4 extends SugarView
             }
         
             if ($do_save) {
+                // Populate in any default values to the bean
+                $focus->populateDefaultValues();
+                
                 if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord ) {
                     $focus->assigned_user_id = $current_user->id;
                 }

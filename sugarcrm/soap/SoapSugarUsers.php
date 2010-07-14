@@ -1242,21 +1242,16 @@ function handle_set_relationship($set_relationship_value)
 	}
 	else{
     	$key = array_search(strtolower($module2),$mod->relationship_fields);
-        if(!$key)
-        {
-            $linked_fields = $mod->get_linked_fields();
-            if(!empty($linked_fields)) {
-                foreach($linked_fields as $linked_field => $relationship) {
-                    if(strtolower($relationship['module']) == strtolower($module2)) {
-                        $mod->load_relationship($linked_field);
-                        $mod->$linked_field->add($module2_id);
-                        return $error->get_soap_array();
-                    }
-                }
-            }
+    	if(!$key) {
+    	    $key = Relationship::retrieve_by_modules($module1, $module2, $GLOBALS['db']);
+    		if (!empty($key)) {
+    			$mod->load_relationship($key);
+    			$mod->$key->add($module2_id);
+    			return $error->get_soap_array();
+    		} // if
         }
     }
-
+    
     if(!$key)
     {
         $error->set_error('no_module');

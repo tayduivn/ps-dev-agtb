@@ -165,6 +165,7 @@ class ImportViewStep2 extends SugarView
             $instructions = array();
             $lang_key = '';
             switch($_REQUEST['source']) {
+            	//BEGIN SUGARCRM flav!=sales ONLY
                 case "act":
                     $lang_key = "ACT";
                     break;
@@ -174,6 +175,7 @@ class ImportViewStep2 extends SugarView
                 case "salesforce":
                     $lang_key = "SF";
                     break;
+                //END SUGARCRM flav!=sales ONLY
                 case "tab":
                     $lang_key = "TAB";
                     break;

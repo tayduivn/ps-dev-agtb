@@ -19,19 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{literal}
-<!-- <style>
-.x-grid3-header {display:none;}
-.ticon {
-	background-image: url('themes/default/images/icon_expression_types.gif');
-	width: 12px;
-	height: 12px;
-	float: right;
-}
-.icon_boolean {background-position: 0px 12px;}
-.icon_number {background-position: 0px 24px;}
-</style> -->
-{/literal}
 <link rel="stylesheet" type="text/css" href="modules/ExpressionEngine/tpls/formulaBuilder.css" />
 <table width="100%" id="formulaBuilder">
 	<tr><td colspan=3><input name="formulaInput" id="formulaInput" size="120" value='{$formula}'/></td></tr>

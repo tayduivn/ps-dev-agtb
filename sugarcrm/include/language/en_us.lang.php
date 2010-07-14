@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 56966 2010-06-15 18:20:24Z dwheeler $
+ * $Id: en_us.lang.php 57232 2010-07-01 16:14:36Z kjing $
  * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -86,8 +86,8 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
-    //END SUGARCRM flav!=sales ONLY
     'Documents'=>'Documents',
+    //END SUGARCRM flav!=sales ONLY
     'Connectors'=>'Connectors',
     'Roles'=>'Roles',
     //BEGIN SUGARCRM flav=following ONLY
@@ -175,8 +175,8 @@ $app_list_strings = array (
     'Project'=>'Projects',
     'ProjectTask'=>'Project Task',
     'Campaigns'=>'Campaign',
-    //END SUGARCRM flav!=sales ONLY
     'Documents'=>'Document',
+    //END SUGARCRM flav!=sales ONLY
     'SugarFollowing'=>'SugarFollowing',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=ent ONLY
@@ -1045,7 +1045,6 @@ $app_list_strings = array (
     'Direct' => 'Direct',
     'Rollup' => 'Rollup',
   ),
-    //END SUGARCRM flav!=sales ONLY
     'document_category_dom' =>
     array (
     '' => '',
@@ -1079,6 +1078,7 @@ $app_list_strings = array (
     'nda'=>'NDA',
     'license'=>'License Agreement',
   ),
+    //END SUGARCRM flav!=sales ONLY
     'dom_meeting_accept_options' =>
     array (
     'accept' => 'Accept',
@@ -2874,6 +2874,7 @@ $app_strings = array (
     'LBL_ITEM_SUMMARY' => 'Item Summary',
     'LBL_ACTION' => 'Action',
     'LBL_SESSION_ID' => 'Session Id',
+    'LBL_BREADCRUMBSTACK_CREATED' => 'BreadCrumbStack created for user id {0}',
     'LBL_VISIBLE' => 'Record Visible',
     'LBL_DATE_LAST_ACTION' => 'Date of Last Action',
 

@@ -147,6 +147,8 @@
                     {else}
 		                {if !empty($current_mod_strings[$label])}
 		                    {$current_mod_strings[$label]}
+		                {elseif !empty($mod[$label])}
+		                    {$mod[$label]}
 		                {else}
 		                	{$label}
 		                {/if}

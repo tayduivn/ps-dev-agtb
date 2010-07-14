@@ -93,25 +93,58 @@ function getExistingCampaignLogEntry($identifier)
     return $row;
 }
 
+/**
+ * Scan the bounced email searching for a valid target identifier.
+ * 
+ * @param string Email Description
+ * @return array Results including matches and identifier
+ */
+function checkBouncedEmailForIdentifier($email_description)
+{
+    $matches = array();
+    $identifiers = array();
+    $found = FALSE;
+    //Check if the identifier is present in the header.
+    if(preg_match('/X-CampTrackID: [a-z0-9\-]*/',$email_description,$matches)) 
+    {
+        $identifiers = preg_split('/X-CampTrackID: /',$matches[0],-1,PREG_SPLIT_NO_EMPTY);
+        $found = TRUE;
+        $GLOBALS['log']->debug("Found campaign identifier in header of email");  
+    }
+    else if( preg_match('/index.php\?entryPoint=removeme&identifier=[a-z0-9\-]*/',$email_description, $matches) )
+    {
+        $identifiers = preg_split('/index.php\?entryPoint=removeme&identifier=/',$matches[0],-1,PREG_SPLIT_NO_EMPTY);
+        $found = TRUE;
+        $GLOBALS['log']->debug("Found campaign identifier in body of email");
+    }
+    
+    return array('found' => $found, 'matches' => $matches, 'identifiers' => $identifiers);
+}
 
-function campaign_process_bounced_emails(&$email, &$email_header) {
+function campaign_process_bounced_emails(&$email, &$email_header) 
+{
 	global $sugar_config;
 	$emailFromAddress = $email_header->fromaddress;
 	$email_description = $email->description;
     $email_description .= retrieveErrorReportAttachment($email);
-    
-	if (preg_match('/MAILER-DAEMON|POSTMASTER/i',$emailFromAddress)) {
-		//do we have the identifier tag in the email?
-		
+
+	if (preg_match('/MAILER-DAEMON|POSTMASTER/i',$emailFromAddress)) 
+	{
 	    $email_description=quoted_printable_decode($email_description);
 		$matches=array();
-		if (preg_match('/index.php\?entryPoint=removeme&identifier=[a-z0-9\-]*/',$email_description,$matches)) 
+		
+		//do we have the identifier tag in the email?
+		$identifierScanResults = checkBouncedEmailForIdentifier($email_description);
+		
+		if ( $identifierScanResults['found'] ) 
 		{
-			$identifiers=preg_split('/index.php\?entryPoint=removeme&identifier=/',$matches[0],-1,PREG_SPLIT_NO_EMPTY);
+			$matches = $identifierScanResults['matches'];
+			$identifiers = $identifierScanResults['identifiers'];
+
 			if (!empty($identifiers)) 
 			{
 				//array should have only one element in it.
-				$identifier=trim($identifiers[0]);
+				$identifier = trim($identifiers[0]);
 				$row = getExistingCampaignLogEntry($identifier);
 				
 				//Found entry
@@ -138,7 +171,7 @@ function campaign_process_bounced_emails(&$email, &$email_header) {
 				} 
 				else 
 				{
-					$GLOBALS['log']->info("Warning: skipping bounced email with this tracker_key(identifier) in the message body ".$identifier);
+				    $GLOBALS['log']->info("Warning: skipping bounced email with this tracker_key(identifier) in the message body: ".$identifier);
 					return FALSE;
 				}			
     		} 
@@ -149,12 +182,12 @@ function campaign_process_bounced_emails(&$email, &$email_header) {
     			$GLOBALS['log']->info("Warning: Invalid identifier for campaign log $identifier");
     			return FALSE;
     		}
-	}  
-	else 
-	{
-	    $GLOBALS['log']->info("Warning: skipping bounced email because it does not have the removeme link.");	 
-		return FALSE;	
-  	}
+    	}  
+    	else 
+    	{
+    	    $GLOBALS['log']->info("Warning: skipping bounced email because it does not have the removeme link.");	
+    		return FALSE;	
+      	}
   } 
   else 
   {

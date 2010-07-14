@@ -1022,7 +1022,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				count++;
 			}
 		}
-		//BEGIN SUGARCRM flav=een ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		,moduleLoadFormula: function(formula, targetId){
             if (!targetId)
                 targetId = "formula";
@@ -1070,39 +1070,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 	  		}},
 	  		{text:"Close", handler: onCloseFunction}],*/
         },
-        moduleLoadVisibility: function(fieldname, options, trigger , targetId){
-            var EditorWindow = new Ext.Window({
-                id: 'visibilityEditorWindow',
-                title: SUGAR.language.get('ModuleBuilder','LBL_SECTION_VISIBILITY_EDITOR' ),
-                autoLoad: {
-                    url:"index.php",
-                    params: {
-                        embed: true,
-                        module:"ModuleBuilder",
-                        action:"visibilityeditor",
-                        onSave:"function(){Ext.getDom('"+ targetId + "').value = Ext.getCmp('visibilityEditor').commit();Ext.getCmp('visibilityEditorWindow').close();}",
-                        //onLoad:"function(){Ext.getCmp('visibilityEditorWindow').center();}",
-                        onClose:"function(){Ext.getCmp('visibilityEditorWindow').close();}",
-                        view_module:ModuleBuilder.module,
-                        view_package:ModuleBuilder.MBpackage,
-                        field:fieldname,
-                        options:options,
-                        trigger:trigger
-                    },
-                    scripts: true
-                },
-                modal:true,
-                plain:true,
-                resizable:true,
-                nodyBorder:false,
-                width:800,
-                autoHeight:true,
-                onload: function() {
-                    console.log("Here6");
-                }
-            });
-            EditorWindow.show();
-        },
+        
 		toggleCF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('calculated').checked;
@@ -1134,7 +1102,42 @@ if (typeof(ModuleBuilder) == 'undefined') {
             Dom.get('dependency').disabled = !enable;
             Dom.get('dependent').value = enable;
         }
-		//END SUGARCRM flav=een ONLY
+		//END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=een ONLY
+        ,moduleLoadVisibility: function(fieldname, options, trigger , targetId){
+            var EditorWindow = new Ext.Window({
+                id: 'visibilityEditorWindow',
+                title: SUGAR.language.get('ModuleBuilder','LBL_SECTION_VISIBILITY_EDITOR' ),
+                autoLoad: {
+                    url:"index.php",
+                    params: {
+                        embed: true,
+                        module:"ModuleBuilder",
+                        action:"visibilityeditor",
+                        onSave:"function(){Ext.getDom('"+ targetId + "').value = Ext.getCmp('visibilityEditor').commit();Ext.getCmp('visibilityEditorWindow').close();}",
+                        //onLoad:"function(){Ext.getCmp('visibilityEditorWindow').center();}",
+                        onClose:"function(){Ext.getCmp('visibilityEditorWindow').close();}",
+                        view_module:ModuleBuilder.module,
+                        view_package:ModuleBuilder.MBpackage,
+                        field:fieldname,
+                        options:options,
+                        trigger:trigger
+                    },
+                    scripts: true
+                },
+                modal:true,
+                plain:true,
+                resizable:true,
+                nodyBorder:false,
+                width:800,
+                autoHeight:true,
+                onload: function() {
+                    console.log("Here6");
+                }
+            });
+            EditorWindow.show();
+        }
+        //END SUGARCRM flav=een ONLY
 	};
 	ModuleBuilder.buttons = {};
 	ModuleBuilder.selected = {};

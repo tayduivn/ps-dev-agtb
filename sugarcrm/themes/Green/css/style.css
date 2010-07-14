@@ -40,7 +40,7 @@ body
 }
 
 a:link, a:visited {
-color:#0F921F;
+color:#689800;
 }
 
 .dcmenu {
@@ -68,7 +68,7 @@ height:50px;
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=currentTab.png");
 padding-bottom: 4px;
 padding-top: 6px\9;
-text-shadow:-1px -1px #07460F;
+text-shadow:-1px -1px #48591a;
 }
 
 #moduleList.yuimenubar li.currentTabRight .yuimenuitemlabel {
@@ -123,6 +123,10 @@ height: 36px;
 .dashletPanel.dc .hd .hd-center {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-hd-dc.png");
 height: 36px;
+}
+
+.dashletPanel.dc .hd .hd-center span {
+text-shadow: 0 -1px #48591a;
 }
 
 .dashletPanel.dc .hd .tr {
@@ -273,7 +277,7 @@ border-color: #fff;
 }
 
 .oddListRowS1 td a, .evenListRowS1 td a {
-color:#0f921f;
+color:#689800;
 }
 
 .oddListRowS1:hover td a, .evenListRowS1:hover td a {
@@ -281,15 +285,15 @@ color: #00ad15;
 }
 
 a.utilsLink:link, a.utilsLink:visited {
-color:#0f921f;
+color:#689800;
 }
 
 #globalLinks a {
-color:#0f921f;
+color:#689800;
 }
 
 #globalLinksModule a  {
-color:#0f921f;
+color:#689800;
 }
 
 .search_form .view {
@@ -304,20 +308,20 @@ background-color: transparent;
 }
 
 .search_form .view a {
-color:#0f921f;
+color:#689800;
 }
 button, input[type="submit"], input[type="reset"], input[type="button"], .button, .buttons .button, .yui-button button {
-background-color:#F4FF8D;
+background-color:#f8ffb4;
 color:#888888;
 border:1px solid #cbdc2b;
 }
 
 
 .button.primary, .yui-dialog .ft span.default button {
-background-color:#11AA24;
+background-color:#689800;
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=form-button-primary-bg.png");
-border:1px solid #11AA24;
-text-shadow:-1px -1px #11AA24;
+border:1px solid #689800;
+text-shadow:-1px -1px #689800;
 color: #fff;
 }
 
@@ -325,13 +329,13 @@ button:hover, input[type=submit]:hover, input[type=reset]:hover, input[type=butt
 button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=button]:focus,
 button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
 {
-	background-color: #efff5e;
+	background-color: #f8ffb4;
 	border-color: #cbdc2b;
 }
 
 .button.primary:hover,.button.primary:focus ,button.primary[selected],.yui-dialog .ft span.default button:hover{
 	border: 1px solid #095E14;
-	background-color: #0f9a21;
+	background-color: #689800;
 	text-shadow: -1px -1px #095E14;
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=form-button-primary-bg.png);
 }
@@ -354,7 +358,7 @@ border-color: #17E531;
 }
 
 #moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover,#moduleList #More.dashletPanelMenu a.yuimenuitemlabel:hover {
-background-color: #109f22;
+background-color: #6ea100;
 }
 
 
@@ -380,7 +384,7 @@ border:1px solid #17E531;
 }
 
 .monthHeader a, .monthFooter a ,.monthHeader a:hover, .monthFooter a:hover {
-color:#0F921F;
+color:#689800;
 }
 
 .yui-module .hd, .yui-panel .hd {
