@@ -219,6 +219,7 @@ $mod_strings = array (
   'LBL_IS' => 'Is',
   'LBL_IS_NOT' => 'Is Not',
   'LBL_ONE_OF' => 'One Of',
+  'LBL_IS_NOT_ONE_OF' => 'Is Not One Of',
   'LBL_ANY' => 'Any',
   'LBL_ALL' => 'At Least',
   'LBL_EXACT' => 'Exact',
