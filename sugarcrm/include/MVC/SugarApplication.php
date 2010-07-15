@@ -80,15 +80,19 @@ class SugarApplication
 				$post_login_nav .= '&login_module='.$this->controller->module;
 			}
 			if(!empty($this->controller->action)){
-				$post_login_nav .= '&login_action='.$this->controller->action;
+			    if(in_array(strtolower($this->controller->action), array('delete')))
+			        $post_login_nav .= '&login_action=DetailView';
+			    elseif(in_array(strtolower($this->controller->action), array('save')))
+			        $post_login_nav .= '&login_action=EditView';
+			    elseif(isset($_REQUEST['massupdate'])|| isset($_GET['massupdate']) || isset($_POST['massupdate']))
+			        $post_login_nav .= '&login_action=index';
+			    else
+				    $post_login_nav .= '&login_action='.$this->controller->action;
 			}
 			if(!empty($this->controller->record)){
 				$post_login_nav .= '&login_record='.$this->controller->record;
 			}
-			if(in_array(strtolower($this->controller->action), array('save', 'delete')) || isset($_REQUEST['massupdate'])
-					|| isset($_GET['massupdate']) || isset($_POST['massupdate']))
-				$post_login_nav = '';
-		
+			
 			header('Location: index.php?action=Login&module=Users'.$post_login_nav);
 			exit ();
 		}
