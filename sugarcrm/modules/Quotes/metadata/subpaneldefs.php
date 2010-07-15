@@ -121,7 +121,7 @@ $layout_defs['Quotes'] = array(
 			'get_subpanel_data' => 'project',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-				array('widget_class' => 'SubPanelTopSelectButton'),
+				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
         //BEGIN SUGARCRM flav=pro ONLY

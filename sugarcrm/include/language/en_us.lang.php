@@ -450,6 +450,14 @@ $app_list_strings = array (
     'P3' => 'Low',
   ),
   //END SUGARCRM flav!=sales ONLY
+  //BEGIN SUGARCRM flav=sales ONLY
+  'user_type_dom' =>
+  array (
+    'RegularUser' => 'Regular User',
+    'UserAdministrator' => 'User Administrator',
+    'Administrator' => 'Administrator',
+  ),
+  //END SUGARCRM flav=sales ONLY
   'user_status_dom' =>
   array (
     'Active' => 'Active',
@@ -2316,6 +2324,9 @@ $app_strings = array (
     'LBL_ADDITIONAL_DETAILS_CLOSE' => 'Close',
     'LBL_ADDITIONAL_DETAILS' => 'Additional Details',
     'LBL_ADMIN' => 'Admin',
+//BEGIN SUGARCRM flav=sales ONLY
+    'LBL_USER_ADMIN' => 'User Admin',
+//BEGIN SUGARCRM flav=sales ONLY
     'LBL_ALT_HOT_KEY' => 'Alt+',
     'LBL_ARCHIVE' => 'Archive',
     'LBL_ASSIGNED_TO_USER'=>'Assigned to User',

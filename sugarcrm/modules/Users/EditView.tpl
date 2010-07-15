@@ -145,9 +145,19 @@ EditView_tabs.on('contentReady', function(e){
                                         <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' disabled>
                                             <option value="Administrator">{$MOD.LBL_ADMIN_USER}</option>
                                         </select></td>
+                                    {* //BEGIN SUGARCRM flav=sales ONLY *}
+                                    {elseif $NON_ADMIN_USER_ADMIN_RIGHTS}
+                                        <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' disabled>
+                                            <option value="RegularUser">{$MOD.LBL_REGULAR_USER}</option>
+                                            <option value="UserAdministrator" {if $IS_USER_ADMIN} SELECTED {/if}>{$MOD.LBL_USER_ADMINISTRATOR}</option>
+                                        </select></td>
+                                    {* //END SUGARCRM flav=sales ONLY *}
                                     {else}
                                         <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' tabindex='1' >
                                             <option value="RegularUser">{$MOD.LBL_REGULAR_USER}</option>
+                                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                                            <option value="UserAdministrator" {if $IS_USER_ADMIN} SELECTED {/if}>{$MOD.LBL_USER_ADMINISTRATOR}</option>
+                                            {* //END SUGARCRM flav=sales ONLY *}
                                             <option value="Administrator" {if $IS_FOCUS_ADMIN} SELECTED {/if}>{$MOD.LBL_ADMIN_USER}</option>
                                         </select></td>
                                     {/if}
@@ -731,6 +741,10 @@ function user_status_display(field){
 			document.getElementById('is_admin').value='0';
 			document.getElementById('UserTypeDesc').innerHTML="{/literal}{$MOD.LBL_REGULAR_DESC}{literal}";
 		break;
+		case 'UserAdministrator':
+			document.getElementById('is_admin').value='0';
+			document.getElementById('UserTypeDesc').innerHTML="{/literal}{$MOD.LBL_USER_ADMIN_DESC}{literal}";
+		break;
 	}
 }
 
@@ -878,11 +892,11 @@ document.getElementById('email_link_type').onchange();
 {/if}
 {literal}
 <!--//END SUGARCRM flav!=sales ONLY -->
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
-{/literal}
 -->
 </script>
 {$JAVASCRIPT}
+<!--//BEGIN SUGARCRM flav!=sales ONLY -->
+{/literal}
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}

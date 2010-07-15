@@ -1244,6 +1244,13 @@ EOQ;
         else{
             $this->use_old_search = false;
             require_once('include/SearchForm/SearchForm2.php');
+            
+            if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
+                require('custom/modules/'.$module.'/metadata/metafiles.php');	
+            }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
+                require('modules/'.$module.'/metadata/metafiles.php');
+            }
+            
             if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
             {
                 require_once('custom/modules/'.$module.'/metadata/searchdefs.php');
