@@ -184,6 +184,9 @@ eoq;
 		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
 			if(empty($order_by))$order_by = '';
 			$ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $this->searchFields, $this->where_clauses);
+			if(!isset($ret_array['join'])) {
+				$ret_array['join'] = '';
+			}
 			$query = $this->sugarbean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
 			$result = $db->query($query,true);
 			$new_arr = array();
