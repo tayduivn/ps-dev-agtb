@@ -272,11 +272,11 @@ class Scheduler extends SugarBean {
 		global $sugar_config;
 		$error = '';
 		if(is_windows()) {
-			if(!strpos($_ENV['Path'], 'php')) {
+			if(!strpos($_SERVER['Path'], 'php')) {
 				$error = '<em>'.$mod_strings['LBL_NO_PHP_CLI'].'</em>';
 			}
 		} else {
-			if(!strpos($_ENV['PATH'], 'php')) {
+			if(!strpos($_SERVER['PATH'], 'php')) {
 				$error = '<em>'.$mod_strings['LBL_NO_PHP_CLI'].'</em>';
 			}
 		}
