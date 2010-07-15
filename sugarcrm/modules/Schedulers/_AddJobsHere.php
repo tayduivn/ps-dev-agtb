@@ -446,7 +446,7 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 		$ieX = new InboundEmail();
 		$ieX->retrieve($a['id']);
 		$ieX->connectMailserver();
-
+        $GLOBALS['log']->info("Bounced campaign scheduler connected to mail server id: {$a['id']} ");
 		$newMsgs = array();
 		if ($ieX->isPop3Protocol()) {
 			$newMsgs = $ieX->getPop3NewMessagesToDownload();
@@ -463,7 +463,7 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 				} else {
 					$uid = imap_uid($ieX->conn, $msgNo);
 				} // else
-
+                 $GLOBALS['log']->info("Bounced campaign scheduler will import message no: $msgNo");
 				$ieX->importOneEmail($msgNo, $uid, false,false);
 			}
 		}
