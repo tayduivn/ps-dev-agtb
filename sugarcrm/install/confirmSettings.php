@@ -560,7 +560,7 @@ EOQ;
 $mod_strings_scheduler = return_module_language($GLOBALS['current_language'], 'Schedulers');
 $error = '';
 
-if (!isset($_SERVER['Path']) {
+if (!isset($_SERVER['Path'])) {
     $_SERVER['Path'] = getenv('Path');
 }
 if(is_windows()) {

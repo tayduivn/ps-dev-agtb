@@ -271,7 +271,7 @@ class Scheduler extends SugarBean {
 		global $mod_strings;
 		global $sugar_config;
 		$error = '';
-		if (!isset($_SERVER['Path']) {
+		if (!isset($_SERVER['Path'])) {
             $_SERVER['Path'] = getenv('Path');
 		}
 		if(is_windows()) {
