@@ -560,6 +560,9 @@ EOQ;
 $mod_strings_scheduler = return_module_language($GLOBALS['current_language'], 'Schedulers');
 $error = '';
 
+if (!isset($_SERVER['Path']) {
+    $_SERVER['Path'] = getenv('Path');
+}
 if(is_windows()) {
 if(isset($_SERVER['Path']) && !empty($_SERVER['Path'])) { // IIS IUSR_xxx may not have access to Path or it is not set
     if(!strpos($_SERVER['Path'], 'php')) {
