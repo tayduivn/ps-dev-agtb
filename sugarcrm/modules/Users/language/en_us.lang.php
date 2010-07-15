@@ -381,7 +381,10 @@ $mod_strings = array (
     'LBL_AFFECTED'                      => 'affected',
 
     //BEGIN SUGARCRM flav=sales ONLY
-    'LBL_USER_NAME_FOR_ROLE'            =>'Users/Roles',
+    'LBL_USER_NAME_FOR_ROLE'            => 'Users/Roles',
+    'LBL_USER_TYPE'                     => 'User Type',
+    'LBL_USER_ADMINISTRATOR'            => 'User Administrator',
+    'LBL_USER_ADMIN_DESC'               => 'User can manage users in the system.',
     //END SUGARCRM flav=sales ONLY
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_USER_NAME_FOR_ROLE'            =>'Users/Teams/Roles',

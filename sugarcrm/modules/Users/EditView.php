@@ -41,7 +41,11 @@ $admin = new Administration();
 $admin->retrieveSettings();
 
 $focus = new User();
-$is_current_admin=is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users');
+$is_current_admin=is_admin($current_user)
+//BEGIN SUGARCRM flav=sales ONLY
+                ||$current_user->user_type = 'UserAdministrator'
+//END SUGARCRM flav=sales ONLY
+                ||is_admin_for_module($GLOBALS['current_user'],'Users');
 $is_super_admin = is_admin($current_user);
 if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
 
@@ -279,6 +283,16 @@ $confirmReassignJs = "
 
 // check if the user has access to the User Management
 $sugar_smarty->assign('USER_ADMIN',is_admin_for_module($current_user,'Users')&& !is_admin($current_user));
+
+//BEGIN SUGARCRM flav=sales ONLY
+if($current_user->user_type == "UserAdministrator" && !is_admin($current_user)){
+    $sugar_smarty->assign('USER_ADMIN', false);
+    $sugar_smarty->assign('NON_ADMIN_USER_ADMIN_RIGHTS', true);
+}
+if(!empty($focus->id) && $focus->user_type == "UserAdministrator" && !is_admin($focus)){
+    $sugar_smarty->assign('IS_USER_ADMIN', true); // although wording is similar as above, these are different
+}
+//END SUGARCRM flav=sales ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	NEW USER CREATION ONLY

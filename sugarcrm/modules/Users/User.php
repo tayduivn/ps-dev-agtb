@@ -41,6 +41,9 @@ class User extends Person {
 	var $id;
 	var $user_name;
 	var $user_hash;
+	//BEGIN SUGARCRM flav=sales ONLY
+	var $user_type;
+	//END SUGARCRM flav=sales ONLY
 	var $salutation;
 	var $first_name;
 	var $last_name;
@@ -659,7 +662,12 @@ EOQ;
 
    function bean_implements($interface) {
         switch($interface){
+//BEGIN SUGARCRM flav!=sales ONLY
             case 'ACL':return true;
+//END SUGARCRM flav!=sales ONLY
+//BEGIN SUGARCRM flav=sales ONLY
+            case 'ACL':return false;
+//END SUGARCRM flav=sales ONLY
         }
         return false;
     }
