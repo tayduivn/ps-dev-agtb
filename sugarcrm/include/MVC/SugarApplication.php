@@ -702,9 +702,12 @@ EOQ;
 			}
 		}
 		
-		if ( !is_null($sessionIdCookie) && empty($_SESSION) ) {
-		    self::setCookie('loginErrorMessage', 'LBL_SESSION_EXPIRED', time()+30, '/');
-		}
+		if ( isset($_REQUEST['login_module']) && isset($_REQUEST['login_action']) 
+		        && !($_REQUEST['login_module'] == 'Home' && $_REQUEST['login_action'] == 'index') ) {
+            if ( !is_null($sessionIdCookie) && empty($_SESSION) ) {
+                self::setCookie('loginErrorMessage', 'LBL_SESSION_EXPIRED', time()+30, '/');
+            }
+        }
 		
 		//BEGIN SUGARCRM flav=pro ONLY
 		
