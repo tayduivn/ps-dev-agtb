@@ -244,7 +244,7 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 			$input_name0 = $current_user->id;
 		}
 
-		return SugarWidgetFieldid::_get_column_select($layout_def)."!='"
+		return SugarWidgetFieldid::_get_column_select($layout_def)."<>'"
 			.$GLOBALS['db']->quote($input_name0)."'\n";
 	}
     // $rename_columns, if true then you're coming from reports
