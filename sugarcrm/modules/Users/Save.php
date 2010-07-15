@@ -120,7 +120,13 @@ if(!$current_user->is_admin  && !is_admin_for_module($GLOBALS['current_user'],'U
 	}
 
 	//BEGIN SUGARCRM flav=sales ONLY
+	// The user type is Regular User if it's not set
 	$_POST['user_type'] = !empty($_POST['UserType']) ? $_POST['UserType'] : 'RegularUser';
+	// The exception is below. If we have a user that isn't new and the post value for UserType
+	//   isn't set, we need to keep it as it was.
+	if(!$newUser && empty($_POST['UserType'])){
+		unset($_POST['user_type']);
+	}
 	//END SUGARCRM flav=sales ONLY
 	
 	// copy the group or portal user name over.  We renamed the field in order to ensure auto-complete would not change the value
