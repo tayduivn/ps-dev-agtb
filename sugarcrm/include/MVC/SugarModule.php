@@ -285,12 +285,9 @@ class SugarModule
     /**
      * Returns the bean object of the given module
      *
-     * @param  bool $populateDefaults true if we should populate the default values into the bean
      * @return object
      */
-    public function loadBean(
-        $populateDefaults = true
-        )
+    public function loadBean()
     {
         global $beanList, $beanFiles;
         
@@ -301,7 +298,7 @@ class SugarModule
             $bean = $beanList[$this->_moduleName];
             if (isset($beanFiles[$bean])) {
                 require_once($beanFiles[$bean]);
-                $focus = new $bean($populateDefaults);
+                $focus = new $bean;
             }
             else
                 return false;
