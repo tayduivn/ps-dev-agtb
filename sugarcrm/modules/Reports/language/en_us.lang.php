@@ -211,6 +211,7 @@ $mod_strings = array (
   'LBL_IS_BETWEEN' => 'Is Between',
   'LBL_NOT_ON' => 'Not On',
   'LBL_CONTAINS' => 'Contains',
+  'LBL_DOES_NOT_CONTAIN' => 'Does Not Contain',
   'LBL_STARTS_WITH' => 'Starts With',
   'LBL_ENDS_WITH' => 'Ends With',
   'LBL_TO_PDF' => 'Save as PDF',

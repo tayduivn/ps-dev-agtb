@@ -86,6 +86,17 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 		return $this->_get_column_select($layout_def)." IN (".$str.")\n";
 	}
 
+	function queryFilternot_one_of(& $layout_def) {
+		$arr = array ();
+		foreach ($layout_def['input_name0'] as $value) {
+			$arr[] = "'".$GLOBALS['db']->quote($value)."'";
+		}
+	    $reporter = $this->layout_manager->getAttribute("reporter");
+		$str = implode(",", $arr);
+		return $this->_get_column_select($layout_def)." NOT IN (".$str.")\n";
+	}
+
+
 	function & displayListPlain($layout_def) {
 		if(!empty($layout_def['column_key'])){
 			$field_def = $this->reporter->all_fields[$layout_def['column_key']];	

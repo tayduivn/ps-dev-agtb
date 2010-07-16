@@ -54,7 +54,7 @@ $global_control_links['admin'] = array(
 'linkinfo' => array($app_strings['LBL_USER_ADMIN'] => 'index.php?module=Users&action=index'),
 'submenu' => ''
 );
-//BEGIN SUGARCRM flav=sales ONLY
+//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 $global_control_links['training'] = array(
 'linkinfo' => array($app_strings['LBL_TRAINING'] => ' javascript:void window.open(\'http://support.sugarcrm.com\')'),

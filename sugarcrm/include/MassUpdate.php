@@ -89,12 +89,12 @@ class MassUpdate
 		global $sugar_version;
 		global $sugar_config;
 		global $current_user;
-		
-		unset($_REQUEST['current_query_by_page']);	
+
+		unset($_REQUEST['current_query_by_page']);
 		$query = base64_encode(serialize($_REQUEST));
 
         $bean = loadBean($_REQUEST['module']);
-       $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ; 
+       $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ;
        $lvso = isset($_REQUEST['lvso'])?$_REQUEST['lvso']:"";
        $request_order_by_name = isset($_REQUEST[$order_by_name])?$_REQUEST[$order_by_name]:"";
        $action = isset($_REQUEST['action'])?$_REQUEST['action']:"";
@@ -179,11 +179,14 @@ eoq;
 				$_POST[$post] = '';
 			}
 		}
-        
+
 		if(!empty($_REQUEST['uid'])) $_POST['mass'] = explode(',', $_REQUEST['uid']); // coming from listview
 		elseif(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
 			if(empty($order_by))$order_by = '';
 			$ret_array = create_export_query_relate_link_patch($_REQUEST['module'], $this->searchFields, $this->where_clauses);
+			if(!isset($ret_array['join'])) {
+				$ret_array['join'] = '';
+			}
 			$query = $this->sugarbean->create_export_query($order_by, $ret_array['where'], $ret_array['join']);
 			$result = $db->query($query,true);
 			$new_arr = array();
@@ -202,7 +205,7 @@ eoq;
 			   unset($_SESSION['REASSIGN_TEAMS']);
 			}
 			//END SUGARCRM flav=pro ONLY
-			
+
 			foreach($_POST['mass'] as $id){
                 if(empty($id)) {
                     continue;
@@ -215,7 +218,7 @@ eoq;
 							$query = "DELETE FROM emailman WHERE id = '" . $this->sugarbean->id . "'";
 							$db->query($query);
 						} else {
-							
+
 							//BEGIN SUGARCRM flav=pro ONLY
 						    if ($this->sugarbean->object_name == 'Team' && $this->sugarbean->has_records_in_modules()) {
                                 if(!isset($_SESSION['REASSIGN_TEAMS'])) {
@@ -282,7 +285,7 @@ eoq;
                             }
                         }
                     }
-                    
+
 					//BEGIN SUGARCRM flav=pro ONLY
 					////////////////////////
 					//IS USER OFFLINE CLIENT ENABLED
@@ -298,16 +301,16 @@ eoq;
 						$_GET['record'] = $id;
 						$_REQUEST['record'] = $id;
 						$newbean=$this->sugarbean;
-						
+
 						$old_reports_to_id = null;
 						if(!empty($_POST['reports_to_id']) && $newbean->reports_to_id != $_POST['reports_to_id']) {
 						   $old_reports_to_id = empty($newbean->reports_to_id) ? 'null' : $newbean->reports_to_id;
 						}
-						
+
 						//Call include/formbase.php, but do not call retrieve again
 						populateFromPost('', $newbean, true);
 						$newbean->save_from_post = false;
-						
+
 						if (!isset($_POST['parent_id']))
 							$newbean->parent_type = null;
 
@@ -336,18 +339,18 @@ eoq;
 										} // if
 									} // foreach
 								} // if
-	                    		
+
 							} // if
 	                    } // if
-	                   
-	                    
+
+
 						$newbean->save($check_notify);
 						if (!empty($email_address_id)) {
 	    					$query = "UPDATE email_addresses SET opt_out = {$optout_flag_value} where id = '{$emailAddressRow['email_address_id']}'";
 	    					$GLOBALS['db']->query($query);
-							
+
 						} // if
-						
+
 						if(!empty($old_reports_to_id)) {
 						   $old_id = $old_reports_to_id == 'null' ? '' : $old_reports_to_id;
 						   $newbean->update_team_memberships($old_id);
@@ -355,7 +358,7 @@ eoq;
 					}
 				}
 			}
-			
+
 			//BEGIN SUGARCRM flav=pro ONLY
 			if(isset($_SESSION['REASSIGN_TEAMS'])) {
 			   header("Location: index.php?module=Teams&action=ReassignTeams");
@@ -363,7 +366,7 @@ eoq;
 			}
 			//END SUGARCRM flav=pro ONLY
 		}
-			
+
 	}
 	/**
   	  * Displays the massupdate form
@@ -385,8 +388,8 @@ eoq;
 		$lang_oc_status = translate('LBL_OC_STATUS');
 		$lang_unsync = translate('LBL_UNSYNC');
 		$lang_archive = translate('LBL_ARCHIVE');
-		$lang_optout_primaryemail = $app_strings['LBL_OPT_OUT_FLAG_PRIMARY'];	
-		
+		$lang_optout_primaryemail = $app_strings['LBL_OPT_OUT_FLAG_PRIMARY'];
+
 
 
 //		if(!isset($this->sugarbean->field_defs) || count($this->sugarbean->field_defs) == 0) {
@@ -422,7 +425,7 @@ eoq;
 
 		static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
 		foreach($this->sugarbean->field_defs as $field){
-		
+
 			//BEGIN SUGARCRM flav=pro ONLY
 			   if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)continue;
 			//END SUGARCRM flav=pro ONLY
@@ -494,7 +497,7 @@ eoq;
 				}
 			}
 		}
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($teamhtml)) {
 			if(!$even){
@@ -508,13 +511,13 @@ eoq;
 		}
 		//END SUGARCRM flav=pro ONLY
 
-		if ($this->sugarbean->object_name == 'Contact' || 
-			$this->sugarbean->object_name == 'Account' || 
+		if ($this->sugarbean->object_name == 'Contact' ||
+			$this->sugarbean->object_name == 'Account' ||
 			$this->sugarbean->object_name == 'Lead' ||
 			$this->sugarbean->object_name == 'Prospect') {
-				
+
 			$html .= "<tr><td width='15%'  scope='row' class='dataLabel'>$lang_optout_primaryemail</td><td width='35%' class='dataField'><select name='optout_primary'><option value=''>{$GLOBALS['app_strings']['LBL_NONE']}</option><option value='false'>{$GLOBALS['app_list_strings']['checkbox_dom']['2']}</option><option value='true'>{$GLOBALS['app_list_strings']['checkbox_dom']['1']}</option></select></td></tr>";
-				
+
 			}
 		$html .="</table>";
 
@@ -537,7 +540,7 @@ eoq;
 		}
 
 		$html .= "</td></tr></table></div></div>";
-		
+
 		$html .= <<<EOJS
 <script>
 function toggleMassUpdateForm(){
@@ -587,12 +590,12 @@ EOJS;
 	  */
 	function handleRelationship($displayname, $field)
 	{
-		$ret_val = '';  
+		$ret_val = '';
 		if(isset($field['module']))
 		{
-			if ($field['name'] == 'reports_to_name' && ($field['module'] == 'Users' || $field['module'] == 'Employee') ) 
+			if ($field['name'] == 'reports_to_name' && ($field['module'] == 'Users' || $field['module'] == 'Employee') )
 			    return $this->addUserName($displayname, $field['name'], $field['id_name'], $field['module']);
-		    
+
 		    switch($field['module'])
 			{
 				case 'Accounts':
@@ -612,7 +615,7 @@ EOJS;
 					break;
 				default:
 					if(!empty($field['massupdate'])){
-						$ret_val = $this->addGenericModuleID($displayname, $field['name'], $field['id_name'], $field['module']); 
+						$ret_val = $this->addGenericModuleID($displayname, $field['name'], $field['id_name'], $field['module']);
 					}
 					break;
 			}
@@ -643,8 +646,8 @@ EOJS;
 
 			$json = getJSONobj();
 			$encoded_popup_request_data = $json->encode($popup_request_data);
-            
-            $qsName = array(  
+
+            $qsName = array(
 			            'form' => 'MassUpdate',
 						'method' => 'query',
                         'modules' => array("Accounts"),
@@ -671,10 +674,10 @@ EOJS;
 			$pattern = "/\n<OPTION.*".$app_strings['LBL_NONE']."<\/OPTION>/";
 			$types = preg_replace($pattern, "", $types);
 			// End Fix
-            
+
             $json = getJSONobj();
             $disabled_parent_types = $json->encode($disabled_parent_types);
-            
+
 			return <<<EOHTML
 <td width="15%" scope="row">{$displayname} </td>
 <td>
@@ -687,7 +690,7 @@ EOJS;
         </td>
         <td valign='top'>
 			<input name='{$field['id_name']}' id='mass_{$field['id_name']}' type='hidden' value=''>
-			<input name='parent_name' id='mass_parent_name' class='sqsEnabled' autocomplete='off' 
+			<input name='parent_name' id='mass_parent_name' class='sqsEnabled' autocomplete='off'
                 type='text' value=''>
             $change_parent_button
         </td>
@@ -700,7 +703,7 @@ var disabledModules='{$disabled_parent_types}';
 if(typeof sqs_objects == 'undefined'){
     var sqs_objects = new Array;
 }
-sqs_objects['MassUpdate_parent_name'] = $qsName; 
+sqs_objects['MassUpdate_parent_name'] = $qsName;
 registerSingleSmartInputListener(document.getElementById('mass_parent_name'));
 addToValidateBinaryDependency('MassUpdate', 'parent_name', 'alpha', false, '{$app_strings['ERR_SQS_NO_MATCH_FIELD']} {$app_strings['LBL_ASSIGNED_TO']}','parent_id');
 
@@ -708,7 +711,7 @@ document.getElementById('mass_{$field['type_name']}').onchange = function()
 {
     document.MassUpdate.parent_name.value="";
     document.MassUpdate.parent_id.value="";
-    
+
 	new_module = document.forms["MassUpdate"].elements["parent_type"].value;
 
 	if(typeof(disabledModules[new_module]) != 'undefined') {
@@ -720,14 +723,14 @@ document.getElementById('mass_{$field['type_name']}').onchange = function()
 	}
 	sqs_objects["MassUpdate_parent_name"]["modules"] = new Array(new_module);
     enableQS(false);
-    
+
     checkParentType(document.MassUpdate.parent_type.value, document.MassUpdate.button_parent_name);
 }
 -->
 </script>
 EOHTML;
 	}
-	
+
 	/**
 	  * Add a generic input type='text' field
 	  * @param displayname Name to display in the popup window
@@ -742,7 +745,7 @@ EOQ;
 		return $html;
 
 	}
-	
+
     /**
 	  * Add a generic widget to lookup Users.
 	  * @param displayname Name to display in the popup window
@@ -772,7 +775,7 @@ EOQ;
 				$json = getJSONobj();
 				$encoded_popup_request_data = $json->encode($popup_request_data);
 
-                $qsName = array(  
+                $qsName = array(
 			            'form' => 'MassUpdate',
 						'method' => 'get_user_array',
                         'modules' => array("{$mod_type}"),
@@ -792,8 +795,8 @@ EOQ;
     <input name='{$id_name}' id='mass_{$id_name}' type='hidden' value=''>&nbsp;
     <input title='{$app_strings['LBL_SELECT_BUTTON_TITLE']}'
         accessKey='{$app_strings['LBL_SELECT_BUTTON_KEY']}'
-        type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name='button' 
-        onclick='open_popup("$mod_type", 600, 400, "", true, false, {$encoded_popup_request_data});' 
+        type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name='button'
+        onclick='open_popup("$mod_type", 600, 400, "", true, false, {$encoded_popup_request_data});'
         />
 </td>
 <script type="text/javascript">
@@ -801,15 +804,15 @@ EOQ;
 if(typeof sqs_objects == 'undefined'){
     var sqs_objects = new Array;
 }
-sqs_objects['MassUpdate_{$varname}'] = $qsName; 
+sqs_objects['MassUpdate_{$varname}'] = $qsName;
 registerSingleSmartInputListener(document.getElementById('mass_{$varname}'));
 addToValidateBinaryDependency('MassUpdate', '{$varname}', 'alpha', false, '{$app_strings['ERR_SQS_NO_MATCH_FIELD']} {$app_strings['LBL_ASSIGNED_TO']}','{$id_name}');
 -->
 </script>
 EOHTML;
 	}
-	
-	
+
+
 	/**
 	  * Add a generic module popup selection popup window HTML code.
 	  * Currently supports Contact and Releases
@@ -840,7 +843,7 @@ EOHTML;
 				$json = getJSONobj();
 				$encoded_popup_request_data = $json->encode($popup_request_data);
 
-                $qsName = array(  
+                $qsName = array(
 			            'form' => 'MassUpdate',
 						'method' => 'query',
                         'modules' => array("{$mod_type}"),
@@ -862,8 +865,8 @@ EOHTML;
 	<span class="id-ff multiple">
     <button title='{$app_strings['LBL_SELECT_BUTTON_TITLE']}'
         accessKey='{$app_strings['LBL_SELECT_BUTTON_KEY']}'
-        type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name='button' 
-        onclick='open_popup("$mod_type", 600, 400, "", true, false, {$encoded_popup_request_data});' 
+        type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name='button'
+        onclick='open_popup("$mod_type", 600, 400, "", true, false, {$encoded_popup_request_data});'
         /><img src="$img"></button></span>
 </td>
 <script type="text/javascript">
@@ -871,7 +874,7 @@ EOHTML;
 if(typeof sqs_objects == 'undefined'){
     var sqs_objects = new Array;
 }
-sqs_objects['MassUpdate_{$varname}'] = $qsName; 
+sqs_objects['MassUpdate_{$varname}'] = $qsName;
 registerSingleSmartInputListener(document.getElementById('mass_{$varname}'));
 addToValidateBinaryDependency('MassUpdate', '{$varname}', 'alpha', false, '{$app_strings['ERR_SQS_NO_MATCH_FIELD']} {$app_strings['LBL_ASSIGNED_TO']}','{$id_name}');
 -->
@@ -910,7 +913,7 @@ EOHTML;
 				//
 				///////////////////////////////////////
 
-				$qsParent = array(  
+				$qsParent = array(
 							'form' => 'MassUpdate',
 							'method' => 'query',
 							'modules' => array('Accounts'),
@@ -973,7 +976,7 @@ EOHTML;
 			),
 			);
 			$encoded_popup_request_data = $json->encode($popup_request_data);
-			$qsUser = array(  
+			$qsUser = array(
 			            'form' => 'MassUpdate',
 						'method' => 'get_user_array', // special method
 						'field_list' => array('user_name', 'id'),
@@ -1090,9 +1093,9 @@ EOQ;
 		$_output .= '<input type="radio" name="'
 	        . $name . '" value="'
 	        . $value. '"';
-	     
+
 	    $_output .= ' />' . ($output == '' ? $GLOBALS['app_strings']['LBL_LINK_NONE'] : $output);
-	    $_output .= '</label><br />';	
+	    $_output .= '</label><br />';
 	    return $_output;
 	}
 
@@ -1116,17 +1119,17 @@ EOQ;
 		$cal_dateformat = $timedate->get_cal_date_format();
 		global $app_strings, $app_list_strings, $theme;
 		$jscalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');
-		
+
 		$javascriptend = <<<EOQ
 		 <script type="text/javascript">
 		Calendar.setup ({
-			inputField : "{$varname}_date", 
+			inputField : "{$varname}_date",
 			daFormat : "$cal_dateformat",
-			ifFormat : "$cal_dateformat", 
-			showsTime : false, 
-			button : "{$varname}_trigger", 
-			singleClick : true, 
-			step : 1, 
+			ifFormat : "$cal_dateformat",
+			showsTime : false,
+			button : "{$varname}_trigger",
+			singleClick : true,
+			step : 1,
 			weekNumbers:false
 		});
 		</script>
@@ -1136,49 +1139,49 @@ EOQ;
 		<td scope="row" width="20%">$displayname</td>
 		<td class='dataField' width="30%"><input onblur="parseDate(this, '$cal_dateformat')" type="text" name='$varname' size="12" id='{$varname}_date' maxlength='10' value="">
 		<img border="0" src="$jscalendarImage" alt='{$app_strings['LBL_MASSUPDATE_DATE']}' id="{$varname}_trigger" title="{$app_strings['LBL_MASSUPDATE_DATE']}"  align="absmiddle">&nbsp;$javascriptend
-		
+
 		<span id="{$varname}_time_section"></span>
 		</td>
 		<input type="hidden" id="{$varname}" name="{$varname}">
 		<script type="text/javascript" src="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"></script>
 		<script type="text/javascript">
-		var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1); 
+		var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1);
 		//Render the remaining widget fields
 		text = combo_{$varname}.html('');
 		document.getElementById('{$varname}_time_section').innerHTML = text;
-		
+
 		//Call eval on the update function to handle updates to calendar picker object
 		eval(combo_{$varname}.jsscript(''));
-		
+
 		function update_{$varname}_available() {
-		      YAHOO.util.Event.onAvailable("{$varname}_date", this.handleOnAvailable, this); 
+		      YAHOO.util.Event.onAvailable("{$varname}_date", this.handleOnAvailable, this);
 		}
-		
+
 		update_{$varname}_available.prototype.handleOnAvailable = function(me) {
 			Calendar.setup ({
 			onClose : update_{$varname},
 			inputField : "{$varname}_date",
 			daFormat : "$cal_dateformat",
-			ifFormat : "$cal_dateformat", 
+			ifFormat : "$cal_dateformat",
 			button : "{$varname}_trigger",
 			singleClick : true,
 			step : 1,
 			weekNumbers:false
 			});
-			
+
 			//Call update for first time to round hours and minute values
 			combo_{$varname}.update();
 		}
-		
-		var obj_{$varname} = new update_{$varname}_available(); 
+
+		var obj_{$varname} = new update_{$varname}_available();
 		</script>
-		
+
 		<script> addToValidate('MassUpdate','{$varname}_date','date',false,'$displayname');
 		addToValidateBinaryDependency('MassUpdate', '{$varname}_hours', 'alpha', false, "{$app_strings['ERR_MISSING_REQUIRED_FIELDS']}", '{$varname}_date');
 		addToValidateBinaryDependency('MassUpdate', '{$varname}_minutes', 'alpha', false, "{$app_strings['ERR_MISSING_REQUIRED_FIELDS']}", '{$varname}_date');
 		addToValidateBinaryDependency('MassUpdate', '{$varname}_meridiem', 'alpha', false, "{$app_strings['ERR_MISSING_REQUIRED_FIELDS']}", '{$varname}_date');
 		</script>
-		
+
 EOQ;
 		return $html;
 	}
@@ -1226,7 +1229,7 @@ EOQ;
                 require_once('include/SearchForm/SearchForm.php');
                 $searchForm = new SearchForm($module, $seed);
             }
-            elseif(!empty($_SESSION['export_where'])) { //bug 26026, sometimes some module doesn't have a metadata/SearchFields.php, the searchfrom is generated in the ListView.php. 
+            elseif(!empty($_SESSION['export_where'])) { //bug 26026, sometimes some module doesn't have a metadata/SearchFields.php, the searchfrom is generated in the ListView.php.
             //So currently massupdate will not gernerate the where sql. It will use the sql stored in the SESSION. But this will cause bug 24722, and it cannot be avoided now.
                 $where = $_SESSION['export_where'];
                 $whereArr = explode (" ", trim($where));
@@ -1263,8 +1266,8 @@ EOQ;
             {
                 require_once('modules/'.$module.'/metadata/searchdefs.php');
             }
-                
-                
+
+
             if(!empty($metafiles[$module]['searchfields']))
                 require_once($metafiles[$module]['searchfields']);
             elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
@@ -1276,7 +1279,7 @@ EOQ;
             $searchForm = new SearchForm($seed, $module);
             $searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl');
         }
-        $searchForm->populateFromArray(unserialize(base64_decode($query)));
+        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false);
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
         if (count($where_clauses) > 0 ) {
@@ -1284,7 +1287,7 @@ EOQ;
             $GLOBALS['log']->info("MassUpdate Where Clause: {$this->where_clauses}");
         }
     }
-    
+
     /**
      * This is kinda a hack how it is implimented, but will tell us whether or not a focus has
      * fields for Mass Update
@@ -1328,7 +1331,7 @@ EOQ;
                 }
             }
         }
-        
+
         return false;
     }
 }

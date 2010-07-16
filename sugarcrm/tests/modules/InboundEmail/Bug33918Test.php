@@ -137,180 +137,35 @@ class Bug333918Test extends Sugar_PHPUnit_Framework_TestCase
         );
     }
     
-    function testProcessBouncedGmailEmailWithIdentifierInHeader()
-    {
-        $trackerKey = '166da286-eb7a-207a-1987-4c3b8975aac9';
-        $message = <<<CIA
-Delivered-To: yellowandy@a17g.com
-Received: by 10.231.191.75 with SMTP id dl11cs94110ibb;
-        Mon, 12 Jul 2010 14:30:44 -0700 (PDT)
-Received: by 10.142.140.18 with SMTP id n18mr17317756wfd.47.1278970243731;
-        Mon, 12 Jul 2010 14:30:43 -0700 (PDT)
-MIME-Version: 1.0
-Return-Path: <>
-Received: by 10.142.140.18 with SMTP id n18mr23095505wfd.47; Mon, 12 Jul 2010 
-	14:30:43 -0700 (PDT)
-From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
-To: yellowandy@a17g.com
-X-Failed-Recipients: =?UTF-8?B?77+9OGE3CgAAAElTTy04ODU5LTEANDhiMzc=?=
-Subject: Delivery Status Notification (Failure)
-Message-ID: <000e0cd185720e4c5b048b3777a4@google.com>
-Date: Mon, 12 Jul 2010 21:30:43 +0000
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-Delivery to the following recipient failed permanently:
-
-     bademail444@sugarcrm.com
-
-Technical details of permanent failure:=20
-Google tried to deliver your message, but it was rejected by the recipient =
-domain. We recommend contacting the other email provider for further inform=
-ation about the cause of this error. The error that the other server return=
-ed was: 550 550 5.1.1 <bademail444@sugarcrm.com>: Recipient address rejecte=
-d: User unknown in relay recipient table (state 14).
-
------ Original message -----
-
-Received: by 10.142.140.18 with SMTP id n18mr17317736wfd.47.1278970242744;
-        Mon, 12 Jul 2010 14:30:42 -0700 (PDT)
-Return-Path: <yellowandy@a17g.com>
-Received: from localhost ([74.85.23.222])
-        by mx.google.com with ESMTPS id 33sm5294224wfd.18.2010.07.12.14.30.=
-41
-        (version=3DTLSv1/SSLv3 cipher=3DRC4-MD5);
-        Mon, 12 Jul 2010 14:30:42 -0700 (PDT)
-Date: Mon, 12 Jul 2010 14:30:41 -0700
-Return-Path: do_not_reply@example.com
-To: Bad Email <bademail444@sugarcrm.com>
-From: SugarCRM <yellowandy@a17g.com>
-Reply-to:=20
-Subject: Here is a campaign
-Message-ID: <5c9983f10ef31604d73e89f7f62aca40@localhost>
-X-Priority: 3
-X-Mailer: PHPMailer (phpmailer.codeworxtech.com) [version 2.3]
-X-CampTrackID: 166da286-eb7a-207a-1987-4c3b8975aac9
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/html; charset=3D"ISO-8859-1"
-
------ End of message -----
-
-CIA;
-    $noteID = uniqid();
-    $parentID = uniqid();
-    $note = new Note();
-    $note->description = $message;
-    $note->file_mime_type = 'messsage/rfc822';
-    $note->subject = "Unit Test";
-    $note->new_with_id = TRUE;
-    $note->id = $noteID;
-    $note->parent_id = $parentID;
-    $note->parent_type = 'Emails';
-    $note->save();
-
-    $email = new stdClass();
-    $email->id = $parentID;
-    $email->description = $message;
-    $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
-    $email_header = new stdClass();
-    $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
-    $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
-
-    $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
-    $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
-        
-    }
     
-    
-    function testProcessBouncedGmailEmailWithIdentifierInBody()
+
+    /**
+     * @dataProvider _gmailEmailData
+     */
+    function testProcessBouncedGmailEmailWithIdentifierInHeader($trackerKey, $message)
     {
-        $trackerKey = '3d3e550e-0c61-ed2f-65fb-4c35855ef127';
-        $message = <<<CIA
-Delivered-To: oliver.sugar@gmail.com
-Received: by 10.220.71.146 with SMTP id h18cs151678vcj;
-        Thu, 8 Jul 2010 00:59:17 -0700 (PDT)
-Received: by 10.142.144.2 with SMTP id r2mr3911830wfd.139.1278575956581;
-        Thu, 08 Jul 2010 00:59:16 -0700 (PDT)
-MIME-Version: 1.0
-Return-Path: <>
-Received: by 10.142.144.2 with SMTP id r2mr5262596wfd.139; Thu, 08 Jul 2010 
-	00:59:16 -0700 (PDT)
-From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
-To: Oliver.Sugar@gmail.com
-X-Failed-Recipients: =?UTF-8?B?aO+/ve+/vSkKAAAAdGV4dC9wbGFpbgA0OGFk?=
-Subject: Delivery Status Notification (Failure)
-Message-ID: <000e0cd3291cb5d999048adba9cc@google.com>
-Date: Thu, 08 Jul 2010 07:59:16 +0000
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-Delivery to the following recipient failed permanently:
-
-     oliver5.sugar@gmail.com
-
-Technical details of permanent failure:=20
-Google tried to deliver your message, but it was rejected by the recipient =
-domain. We recommend contacting the other email provider for further inform=
-ation about the cause of this error. The error that the other server return=
-ed was: 550 550-5.1.1 The email account that you tried to reach does not ex=
-ist. Please try
-550-5.1.1 double-checking the recipient's email address for typos or
-550-5.1.1 unnecessary spaces. Learn more at                            =20
-550 5.1.1 http://mail.google.com/support/bin/answer.py?answer=3D6596 c35si1=
-5717477rvf.42 (state 14).
-
------ Original message -----
-
-Received: by 10.142.144.2 with SMTP id r2mr3911827wfd.139.1278575956331;
-        Thu, 08 Jul 2010 00:59:16 -0700 (PDT)
-Return-Path: <oliver.sugar@gmail.com>
-Received: from localhost ([58.246.70.178])
-        by mx.google.com with ESMTPS id t11sm8244457wfc.4.2010.07.08.00.59.=
-14
-        (version=3DTLSv1/SSLv3 cipher=3DRC4-MD5);
-        Thu, 08 Jul 2010 00:59:15 -0700 (PDT)
-Date: Thu, 8 Jul 2010 15:59:06 +0800
-Return-Path: oliver.sugar@gmail.com
-To: testTarget02 <oliver5.sugar@gmail.com>
-From: Oliver Sugar <oliver.sugar@gmail.com>
-Reply-to:=20
-Subject: test marketing001
-Message-ID: <ca0d83bc421be94263211e98f8075575@localhost>
-X-Priority: 3
-X-Mailer: PHPMailer (phpmailer.codeworxtech.com) [version 2.3]
-MIME-Version: 1.0
-Content-Type: multipart/alternative;
-	boundary=3D"b1_ca0d83bc421be94263211e98f8075575"
-
-To remove yourself from this email list go to http://localhost/SugarEnt-Ful=
-l-6.1.0beta/index.php?entryPoint=3Dremoveme&identifier=3D3d3e550e-0c61-ed2f=
--65fb-4c35855ef127
-
------ End Of message -----
-CIA;
-    $noteID = uniqid();
-    $parentID = uniqid();
-    $note = new Note();
-    $note->description = $message;
-    $note->file_mime_type = 'messsage/rfc822';
-    $note->subject = "Unit Test";
-    $note->new_with_id = TRUE;
-    $note->id = $noteID;
-    $note->parent_id = $parentID;
-    $note->parent_type = 'Emails';
-    $note->save();
-
-    $email = new stdClass();
-    $email->id = $parentID;
-    $email->description = $message;
-    $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
-    $email_header = new stdClass();
-    $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
-    $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
-
-    $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
-    $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
+        $noteID = uniqid();
+        $parentID = uniqid();
+        $note = new Note();
+        $note->description = $message;
+        $note->file_mime_type = 'messsage/rfc822';
+        $note->subject = "Unit Test";
+        $note->new_with_id = TRUE;
+        $note->id = $noteID;
+        $note->parent_id = $parentID;
+        $note->parent_type = 'Emails';
+        $note->save();
+    
+        $email = new stdClass();
+        $email->id = $parentID;
+        $email->description = $message;
+        $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
+        $email_header = new stdClass();
+        $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
+        $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
+    
+        $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
+        $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
         
     }
     
@@ -386,6 +241,201 @@ CIA;
         $l->new_with_id = TRUE;
         $l->save();
         return $l->id;
+    }
+    
+    
+    function _gmailEmailData()
+    {
+        $trackerKey1 = '166da286-eb7a-207a-1987-4c3b8975aac9';
+        $message1 = <<<CIA
+Delivered-To: yellowandy@a17g.com
+Received: by 10.231.191.75 with SMTP id dl11cs94110ibb;
+        Mon, 12 Jul 2010 14:30:44 -0700 (PDT)
+Received: by 10.142.140.18 with SMTP id n18mr17317756wfd.47.1278970243731;
+        Mon, 12 Jul 2010 14:30:43 -0700 (PDT)
+MIME-Version: 1.0
+Return-Path: <>
+Received: by 10.142.140.18 with SMTP id n18mr23095505wfd.47; Mon, 12 Jul 2010 
+	14:30:43 -0700 (PDT)
+From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
+To: yellowandy@a17g.com
+X-Failed-Recipients: =?UTF-8?B?77+9OGE3CgAAAElTTy04ODU5LTEANDhiMzc=?=
+Subject: Delivery Status Notification (Failure)
+Message-ID: <000e0cd185720e4c5b048b3777a4@google.com>
+Date: Mon, 12 Jul 2010 21:30:43 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Delivery to the following recipient failed permanently:
+
+     bademail444@sugarcrm.com
+
+Technical details of permanent failure:=20
+Google tried to deliver your message, but it was rejected by the recipient =
+domain. We recommend contacting the other email provider for further inform=
+ation about the cause of this error. The error that the other server return=
+ed was: 550 550 5.1.1 <bademail444@sugarcrm.com>: Recipient address rejecte=
+d: User unknown in relay recipient table (state 14).
+
+----- Original message -----
+
+Received: by 10.142.140.18 with SMTP id n18mr17317736wfd.47.1278970242744;
+        Mon, 12 Jul 2010 14:30:42 -0700 (PDT)
+Return-Path: <yellowandy@a17g.com>
+Received: from localhost ([74.85.23.222])
+        by mx.google.com with ESMTPS id 33sm5294224wfd.18.2010.07.12.14.30.=
+41
+        (version=3DTLSv1/SSLv3 cipher=3DRC4-MD5);
+        Mon, 12 Jul 2010 14:30:42 -0700 (PDT)
+Date: Mon, 12 Jul 2010 14:30:41 -0700
+Return-Path: do_not_reply@example.com
+To: Bad Email <bademail444@sugarcrm.com>
+From: SugarCRM <yellowandy@a17g.com>
+Reply-to:=20
+Subject: Here is a campaign
+Message-ID: <5c9983f10ef31604d73e89f7f62aca40@localhost>
+X-Priority: 3
+X-Mailer: PHPMailer (phpmailer.codeworxtech.com) [version 2.3]
+X-CampTrackID: 166da286-eb7a-207a-1987-4c3b8975aac9
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset=3D"ISO-8859-1"
+
+----- End of message -----
+
+CIA;
+
+        $trackerKey2 = '3d3e550e-0c61-ed2f-65fb-4c35855ef127';
+        $message2 = <<<CIA
+Delivered-To: oliver.sugar@gmail.com
+Received: by 10.220.71.146 with SMTP id h18cs151678vcj;
+        Thu, 8 Jul 2010 00:59:17 -0700 (PDT)
+Received: by 10.142.144.2 with SMTP id r2mr3911830wfd.139.1278575956581;
+        Thu, 08 Jul 2010 00:59:16 -0700 (PDT)
+MIME-Version: 1.0
+Return-Path: <>
+Received: by 10.142.144.2 with SMTP id r2mr5262596wfd.139; Thu, 08 Jul 2010 
+	00:59:16 -0700 (PDT)
+From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
+To: Oliver.Sugar@gmail.com
+X-Failed-Recipients: =?UTF-8?B?aO+/ve+/vSkKAAAAdGV4dC9wbGFpbgA0OGFk?=
+Subject: Delivery Status Notification (Failure)
+Message-ID: <000e0cd3291cb5d999048adba9cc@google.com>
+Date: Thu, 08 Jul 2010 07:59:16 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Delivery to the following recipient failed permanently:
+
+     oliver5.sugar@gmail.com
+
+Technical details of permanent failure:=20
+Google tried to deliver your message, but it was rejected by the recipient =
+domain. We recommend contacting the other email provider for further inform=
+ation about the cause of this error. The error that the other server return=
+ed was: 550 550-5.1.1 The email account that you tried to reach does not ex=
+ist. Please try
+550-5.1.1 double-checking the recipient's email address for typos or
+550-5.1.1 unnecessary spaces. Learn more at                            =20
+550 5.1.1 http://mail.google.com/support/bin/answer.py?answer=3D6596 c35si1=
+5717477rvf.42 (state 14).
+
+----- Original message -----
+
+Received: by 10.142.144.2 with SMTP id r2mr3911827wfd.139.1278575956331;
+        Thu, 08 Jul 2010 00:59:16 -0700 (PDT)
+Return-Path: <oliver.sugar@gmail.com>
+Received: from localhost ([58.246.70.178])
+        by mx.google.com with ESMTPS id t11sm8244457wfc.4.2010.07.08.00.59.=
+14
+        (version=3DTLSv1/SSLv3 cipher=3DRC4-MD5);
+        Thu, 08 Jul 2010 00:59:15 -0700 (PDT)
+Date: Thu, 8 Jul 2010 15:59:06 +0800
+Return-Path: oliver.sugar@gmail.com
+To: testTarget02 <oliver5.sugar@gmail.com>
+From: Oliver Sugar <oliver.sugar@gmail.com>
+Reply-to:=20
+Subject: test marketing001
+Message-ID: <ca0d83bc421be94263211e98f8075575@localhost>
+X-Priority: 3
+X-Mailer: PHPMailer (phpmailer.codeworxtech.com) [version 2.3]
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary=3D"b1_ca0d83bc421be94263211e98f8075575"
+
+To remove yourself from this email list go to http://localhost/SugarEnt-Ful=
+l-6.1.0beta/index.php?entryPoint=3Dremoveme&identifier=3D3d3e550e-0c61-ed2f=
+-65fb-4c35855ef127
+
+----- End Of message -----
+CIA;
+        $trackerKey3 = '2b8923e2-3d0c-baaa-354e-4c3eb5625533';
+        $message3 = <<<CIA
+Delivered-To: oliver.sugar@gmail.com
+Received: by 10.220.98.79 with SMTP id p15cs154855vcn;
+        Thu, 15 Jul 2010 00:15:46 -0700 (PDT)
+Received: by 10.142.136.1 with SMTP id j1mr10395362wfd.325.1279178146208;
+        Thu, 15 Jul 2010 00:15:46 -0700 (PDT)
+MIME-Version: 1.0
+Return-Path: <>
+Received: by 10.142.136.1 with SMTP id j1mr14128331wfd.325; Thu, 15 Jul 2010 
+	00:15:46 -0700 (PDT)
+From: Mail Delivery Subsystem <mailer-daemon@googlemail.com>
+To: Oliver.Sugar@gmail.com
+X-Failed-Recipients: =?UTF-8?B?77+977+9JSQKAAAAdGV4dC9wbGFpbgA0OGI2?=
+Subject: Delivery Status Notification (Failure)
+Message-ID: <000e0cd32cc602596a048b67dfef@google.com>
+Date: Thu, 15 Jul 2010 07:15:46 +0000
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Delivery to the following recipient failed permanently:
+
+     oliver5.sugar@gmail.com
+
+Technical details of permanent failure:=20
+Google tried to deliver your message, but it was rejected by the recipient =
+domain. We recommend contacting the other email provider for further inform=
+ation about the cause of this error. The error that the other server return=
+ed was: 550 550-5.1.1 The email account that you tried to reach does not ex=
+ist. Please try
+550-5.1.1 double-checking the recipient's email address for typos or
+550-5.1.1 unnecessary spaces. Learn more at                            =20
+550 5.1.1 http://mail.google.com/support/bin/answer.py?answer=3D6596 l5si18=
+50473ybj.58 (state 14).
+
+----- Original message -----
+
+Received: by 10.142.136.1 with SMTP id j1mr10395353wfd.325.1279178145706;
+        Thu, 15 Jul 2010 00:15:45 -0700 (PDT)
+Return-Path: <oliver.sugar@gmail.com>
+Received: from localhost ([58.246.70.178])
+        by mx.google.com with ESMTPS id 33sm883411wfd.6.2010.07.15.00.15.43
+        (version=3DTLSv1/SSLv3 cipher=3DRC4-MD5);
+        Thu, 15 Jul 2010 00:15:44 -0700 (PDT)
+Date: Thu, 15 Jul 2010 15:15:39 +0800
+Return-Path: oliver.sugar@gmail.com
+To: testTarget002 <oliver5.sugar@gmail.com>
+From: oliver sugar <oliver.sugar@gmail.com>
+Reply-to:=20
+Subject: test marketing mail 001
+Message-ID: <ca7bb1c154dbaf5e8c09cb38dbae2387@localhost>
+X-Priority: 3
+X-Mailer: PHPMailer (phpmailer.codeworxtech.com) [version 2.3]
+X-CampTrackID: 2b8923e2-3d0c-baaa-354e-4c3eb5625533
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary=3D"b1_ca7bb1c154dbaf5e8c09cb38dbae2387"
+
+To remove yourself from this email list go to http://localhost/SugarEnt-Ful=
+l-6.1.0beta/index.php?entryPoint=3Dremoveme&identifier=3D2b8923e2-3d0c-baaa=
+-354e-4c3eb5625533
+CIA;
+        return array(
+            array('trackerKey' => $trackerKey1, 'message' => $message1),
+            array('trackerKey' => $trackerKey2, 'message' => $message2),
+            array('trackerKey' => $trackerKey3, 'message' => $message3)
+        );
     }
 }
 ?>
