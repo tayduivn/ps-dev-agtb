@@ -546,7 +546,9 @@ function hide_iframes_and_feeds_modules() {
 	$remove_feeds = false;
 	
 	//Check if we should remove iframes.  Use the count of entries in iframes table
-	if($GLOBALS['db']->tableExists('iframes')) {
+	if(!$GLOBALS['db']->tableExists('iframes')) {
+		$remove_iframes = true;
+	} else {
 		$result = $GLOBALS['db']->query('SELECT count(id) as total from iframes');
 		if(!empty($result)) {
 			$row = $GLOBALS['db']->fetchByAssoc($result);
@@ -562,7 +564,7 @@ function hide_iframes_and_feeds_modules() {
 	$tabs = $controller->get_tabs_system();
 	
 	//If the Feeds tab is hidden then remove it
-	if(isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds'])) {
+	if(!$GLOBALS['db']->tableExists('feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
 	   $remove_feeds = true;
 	}
 	

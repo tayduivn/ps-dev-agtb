@@ -271,7 +271,7 @@ class EditView
 			    	} //foreach
 
 			    	// Panel alignment will be off if the panel doesn't have a row with the max columns
-			    	// It will not be aligned to the other panels so we add a filler row
+			    	// It will not be aligned to the other panels so we fill out the columns in the last row
 			        $addFiller = true;
 			        foreach($panel as $row) {
 			        	if(count($row) == $this->defs['templateMeta']['maxColumns']) {
@@ -281,20 +281,20 @@ class EditView
 			        }
 
 			        if($addFiller) {
-			           $filler = 0;
 			    	   $rowCount = count($panel);
+			    	   $filler = count($panel[$rowCount-1]);
 			    	   while($filler < $this->defs['templateMeta']['maxColumns']) {
-			              $panel[$rowCount][$filler++] = array('field'=>array('name'=>''));
+			              $panel[$rowCount - 1][$filler++] = array('field'=>array('name'=>''));
 			    	   } //while
 			        }
-
+						
 
 			    	$this->sectionPanels[strtoupper($key)] = $panel;
 		        }
+		        
 
 		$panelCount++;
 		} //foreach
-
     }
 
     function process(
