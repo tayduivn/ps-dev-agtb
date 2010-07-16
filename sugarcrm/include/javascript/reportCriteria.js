@@ -621,7 +621,7 @@ function addFilterInput(cell,filter) {
 		if(users_array=="") {
 			loadXML();
 		}
-		if (qualifier_name == 'one_of') {
+		if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 			addFilterInputSelectMultiple(row,users_array,filter);
 		}
 		else {
@@ -629,7 +629,7 @@ function addFilterInput(cell,filter) {
 		}
 	} 
 	else if (field_type == 'enum' || field_type == 'multienum' || field_type == 'parent_type') {
-		if (qualifier_name == 'one_of') {
+		if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 			addFilterInputSelectMultiple(row,field.options,filter);
 		}
 		else {

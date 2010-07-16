@@ -890,24 +890,24 @@ document.getElementById('email_link_type').onchange = function()
 document.getElementById('email_link_type').onchange();
 {/literal}
 {/if}
-{literal}
 <!--//END SUGARCRM flav!=sales ONLY -->
 -->
 </script>
 {$JAVASCRIPT}
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
-{/literal}
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
+{$confirmReassignJs}
+<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {$getNameJs}
 {$getNumberJs}
 {$currencySymbolJs}
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();
 
-{$confirmReassignJs}
+<!--//END SUGARCRM flav!=sales ONLY -->
 </script>
+<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 
 </form>
 
