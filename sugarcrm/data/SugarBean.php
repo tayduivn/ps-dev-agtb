@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: SugarBean.php 57276 2010-07-06 09:50:08Z kjing $
+ * $Id: SugarBean.php 57513 2010-07-16 21:07:48Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -254,12 +254,8 @@ class SugarBean
      * 3. Setup row-level security preference
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
-     * @param bool $populateDefaults true if we should populate the default values into the bean
-     * @return  nothing
      */
-    function SugarBean(
-        $populateDefaults = true
-        )
+    function SugarBean()
     {
     	global  $dictionary, $current_user;
     	static $loaded_defs = array();
@@ -357,10 +353,7 @@ class SugarBean
     		ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
     		//END SUGARCRM flav=pro ONLY
     	}
-
-    	if ( $populateDefaults ) {
-    	    $this->populateDefaultValues();  	
-    	}
+    	$this->populateDefaultValues();  	
     	//BEGIN SUGARCRM flav=pro ONLY
     	if(isset($this->disable_team_security)){
     		$this->disable_row_level_security = $this->disable_team_security;
@@ -617,10 +610,30 @@ class SugarBean
     	return $this->$name;
     }
 
+    /**
+     * Basically undoes the effects of SugarBean::populateDefaultValues(); this method is best called right after object
+     * initialization.
+     */
+    public function unPopulateDefaultValues() 
+    {
+        if ( !is_array($this->field_defs) )
+            return;
+        
+        foreach ($this->field_defs as $field => $value) {
+            if( (isset($value['default']) || !empty($value['display_default'])) 
+                    && !empty($this->$field)
+                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default'])) 
+                    ) {
+                $this->$field = null;
+            }
+        }
+    }
+    
+    
     function populateDefaultValues($force=false){
         if ( !is_array($this->field_defs) )
             return;
-    	foreach($this->field_defs as $field=>$value){
+        foreach($this->field_defs as $field=>$value){
     		if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
     		    $type = $value['type'];
 
@@ -2165,7 +2178,7 @@ function save_relationship_changes($is_update, $exclude=array())
                case 'short':
                case 'tinyint':
                case 'int':
-                    if ( $this->$field === '' ) {
+                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
                     }
                     if ( is_string($this->$field) ) {
