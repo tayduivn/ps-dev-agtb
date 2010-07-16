@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: sugar_3.js 57033 2010-06-18 21:05:47Z kjing $
+// $Id: sugar_3.js 57264 2010-07-02 18:45:27Z kjing $
 
 /**
  * Namespace for Sugar Objects
@@ -512,7 +512,7 @@ function isValidEmail(emailStr) {
 	for (var i = 0; i < emailArr.length; i++) {
 		emailAddress = emailArr[i];
 		if (trim(emailAddress) != '') {
-			if(!/^\s*[\w.%+\-&'\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
+			if(!/^\s*[\w.%+\-&'\/]+\w+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
 			   !/^.*<[A-Z0-9._%+\-&']+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
 	
 			   return false;
