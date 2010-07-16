@@ -147,22 +147,22 @@ SUGAR.expressions.GridToolTip = {
 			case "number":
 				out = "num"; break;
 			case "time":
-				out = "T"; break;
+				out = "date"; break;
 			case "enum":
-				out = "[]"; break;
+				out = "enum"; break;
 			case "boolean":
 				out = "bool"; break;
 			case "date":
-				out = "D"; break;
+				out = "date"; break;
 			default:
-				out = "?";
+				out = "generic";
 		}
 		el.innerHTML = '<img src="themes/default/images/SugarLogic/icon_' + out + '_16.png"></img>';
 	}
 	var grid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
 		[
 		    {key:'name', label: "Fields", width: 200, sortable: true},
-		    {key:'type', label: "", width: 20, sortable: true, formatter:typeFormatter}
+		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
 		new YAHOO.util.LocalDataSource(fieldsArray, {
 			responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
@@ -179,7 +179,7 @@ SUGAR.expressions.GridToolTip = {
 	grid = new YAHOO.widget.ScrollingDataTable('functionsGrid',
 		[
 		    {key:'name', label: "Functions", width: 200, sortable: true},
-		    {key:'type', label: "", width: 20, sortable: true, formatter:typeFormatter}
+		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
 		new YAHOO.util.LocalDataSource(functionsArray, {
 			responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
