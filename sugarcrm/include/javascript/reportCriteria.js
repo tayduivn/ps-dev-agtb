@@ -783,7 +783,6 @@ function newSelectSpanElement(name, inputTime){
 }
 
 function addFilterInputDatetimecombo(row, filter) {
-console.trace();
 		var cellInput = document.createElement("td");
 		var new_input = document.createElement("input");
 		new_input.type="text";
