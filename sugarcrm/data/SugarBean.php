@@ -3541,6 +3541,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function process_list_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '')
     {
     	global $sugar_config;
+    	$db = &DBManagerFactory::getInstance('listviews');
     	/**
 		 * if the row_offset is set to 'end' go to the end of the list
 		 */
@@ -3557,8 +3558,8 @@ function save_relationship_changes($is_update, $exclude=array())
     		if(!empty($count_query) && (empty($limit) || $limit == -1))
     		{
     			// We have a count query.  Run it and get the results.
-    			$result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
-    			$assoc = $this->db->fetchByAssoc($result);
+    			$result = $db->query($count_query, true, "Error running count query for $this->object_name List: ");
+    			$assoc = $db->fetchByAssoc($result);
     			if(!empty($assoc['c']))
     			{
     				$rows_found = $assoc['c'];
@@ -3586,18 +3587,18 @@ function save_relationship_changes($is_update, $exclude=array())
     	}
     	if(!empty($limit) && $limit != -1 && $limit != -99)
     	{
-    		$result = $this->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
+    		$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
     	}
     	else
     	{
-    		$result = $this->db->query($query,true,"Error retrieving $this->object_name list: ");
+    		$result = $db->query($query,true,"Error retrieving $this->object_name list: ");
     	}
 
     	$list = Array();
 
     	if(empty($rows_found))
     	{
-    		$rows_found =  $this->db->getRowCount($result);
+    		$rows_found =  $db->getRowCount($result);
     	}
 
     	$GLOBALS['log']->debug("Found $rows_found ".$this->object_name."s");
@@ -3606,7 +3607,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	$next_offset = $row_offset + $max_per_page;
 
     	$class = get_class($this);
-    	if($rows_found != 0 or $this->db->dbType != 'mysql')
+    	if($rows_found != 0 or $db->dbType != 'mysql')
     	{
     		//todo Bug? we should remove the magic number -99
     		//use -99 to return all
@@ -3616,11 +3617,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
     			if(!empty($sugar_config['disable_count_query']))
     			{
-    				$row = $this->db->fetchByAssoc($result);
+    				$row = $db->fetchByAssoc($result);
     			}
     			else
     			{
-    				$row = $this->db->fetchByAssoc($result, $index);
+    				$row = $db->fetchByAssoc($result, $index);
     			}
     			if (empty($row))
     			{
@@ -3735,6 +3736,7 @@ function save_relationship_changes($is_update, $exclude=array())
     $row_offset, $limit= -1, $max_per_page = -1, $where = '', $subpanel_def, $query_row_count='', $secondary_queries = array())
 
     {
+		$db = &DBManagerFactory::getInstance('listviews');
 		/**
 		 * if the row_offset is set to 'end' go to the end of the list
 		 */
@@ -3797,19 +3799,19 @@ function save_relationship_changes($is_update, $exclude=array())
 		{
 			if(!empty($limit) && $limit != -1 && $limit != -99)
 			{
-				$result = $parent_bean->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $parent_bean->object_name list: ");
+				$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $parent_bean->object_name list: ");
 			}
 			else
 			{
-				$result = $parent_bean->db->query($query,true,"Error retrieving $this->object_name list: ");
+				$result = $db->query($query,true,"Error retrieving $this->object_name list: ");
 			}
 			if(empty($rows_found))
 			{
-				$rows_found =  $parent_bean->db->getRowCount($result);
+				$rows_found =  $db->getRowCount($result);
 			}
 
 			$GLOBALS['log']->debug("Found $rows_found ".$parent_bean->object_name."s");
-			if($rows_found != 0 or $parent_bean->db->dbType != 'mysql')
+			if($rows_found != 0 or $db->dbType != 'mysql')
 			{
 				//use -99 to return all
 
@@ -3817,11 +3819,11 @@ function save_relationship_changes($is_update, $exclude=array())
 				$index = $row_offset;
 				if(!empty($sugar_config['disable_count_query']))
 				{
-					$row = $parent_bean->db->fetchByAssoc($result);
+					$row = $db->fetchByAssoc($result);
 				}
 				else
 				{
-					$row = $parent_bean->db->fetchByAssoc($result, $index);
+					$row = $db->fetchByAssoc($result, $index);
 				}
 
 				$post_retrieve = array();
@@ -3829,7 +3831,7 @@ function save_relationship_changes($is_update, $exclude=array())
 				while($row)
 				{
 					$function_fields = array();
-					if(($index < $row_offset + $max_per_page || $max_per_page == -99) or ($parent_bean->db->dbType != 'mysql'))
+					if(($index < $row_offset + $max_per_page || $max_per_page == -99) or ($db->dbType != 'mysql'))
 					{
 						if ($processing_collection)
 						{
@@ -3948,7 +3950,7 @@ function save_relationship_changes($is_update, $exclude=array())
 					}
 					// go to the next row
 					$index++;
-					$row = $parent_bean->db->fetchByAssoc($result, $index);
+					$row = $db->fetchByAssoc($result, $index);
 				}
 			}
 			//now handle retrieving many-to-many relationships
@@ -3956,9 +3958,9 @@ function save_relationship_changes($is_update, $exclude=array())
 			{
 				foreach($secondary_queries as $query2)
 				{
-					$result2 = $this->db->query($query2);
+					$result2 = $db->query($query2);
 
-					$row2 = $this->db->fetchByAssoc($result2);
+					$row2 = $db->fetchByAssoc($result2);
 					while($row2)
 					{
 						$id_ref = $row2['ref_id'];
@@ -3973,7 +3975,7 @@ function save_relationship_changes($is_update, $exclude=array())
 								}
 							}
 						}
-						$row2 = $this->db->fetchByAssoc($result2);
+						$row2 = $db->fetchByAssoc($result2);
 					}
 				}
 
@@ -4413,14 +4415,15 @@ function save_relationship_changes($is_update, $exclude=array())
 	function build_related_list($query, &$template, $row_offset = 0, $limit = -1)
 	{
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
-
+		$db = &DBManagerFactory::getInstance('listviews');
+			
 		if(!empty($row_offset) && $row_offset != 0 && !empty($limit) && $limit != -1)
 		{
-			$result = $this->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $template->object_name list: ");
+			$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $template->object_name list: ");
 		}
 		else
 		{
-			$result = $this->db->query($query, true);
+			$result = $db->query($query, true);
 		}
 
 		$list = Array();
@@ -4461,6 +4464,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	*/
   function build_related_list_where($query, &$template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
   {
+  	$db = &DBManagerFactory::getInstance('listviews');
   	// No need to do an additional query
   	$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
   	if(empty($in) && !empty($query))
@@ -4498,11 +4502,11 @@ function save_relationship_changes($is_update, $exclude=array())
   	}
   	if (!empty($limit))
   	{
-  		$result = $this->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
+  		$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
   	}
   	else
   	{
-  		$result = $this->db->query($query, true);
+  		$result = $db->query($query, true);
   	}
 
   	$list = Array();
@@ -4510,7 +4514,7 @@ function save_relationship_changes($is_update, $exclude=array())
   	$class = get_class($template);
 
   	$disable_security_flag = ($template->disable_row_level_security) ? true : false;
-  	while($row = $this->db->fetchByAssoc($result))
+  	while($row = $db->fetchByAssoc($result))
   	{
   		if(!$isFirstTime)
   		{
