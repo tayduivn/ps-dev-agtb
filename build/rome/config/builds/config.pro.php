@@ -72,11 +72,13 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/QueryBuilder'=>1,
 'sugarcrm/modules/Queues'=>1,
 
+'sugarcrm/include/images/sugarsales_lg.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_dce.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_ent.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_express.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_open.png'=>1,
 'sugarcrm/include/images/sugar_md_dce.png'=>1,
+'sugarcrm/include/images/sugar_md_dev.png'=>1,
 'sugarcrm/include/images/sugar_md_ent.png'=>1,
 'sugarcrm/include/images/sugar_md_express.png'=>1,
 'sugarcrm/include/images/sugar_md_open.png'=>1,

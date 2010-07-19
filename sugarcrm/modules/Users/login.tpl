@@ -44,18 +44,21 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 					    {* //BEGIN SUGARCRM flav=sales ONLY
 						<IMG src="include/images/sugar_md_sales.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
 					    {* //END SUGARCRM flav=sales ONLY
-					    {* //BEGIN SUGARCRM flav=com && lic=sub ONLY
+					    {* //BEGIN SUGARCRM flav=dev ONLY
+						<IMG src="include/images/sugar_md_dev.png" alt="Sugar" width="340" height="25">
+					    {* //END SUGARCRM flav=dev ONLY
+					    {* //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 						<IMG src="include/images/sugar_md_express.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=com && lic=sub ONLY
+					    {* //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 					    {* //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 						<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
 					    {* //END SUGARCRM flav=com && lic!=sub ONLY
 					    {* //BEGIN SUGARCRM flav=dce ONLY
 						<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">
 					    {* //END SUGARCRM flav=dce ONLY
-					    {* //BEGIN SUGARCRM flav=ent ONLY
+					    {* //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 						<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=ent ONLY *}
+					    {* //END SUGARCRM flav=ent && flav!=dev ONLY *}
 					</td>
 				</tr>
 				<tr>

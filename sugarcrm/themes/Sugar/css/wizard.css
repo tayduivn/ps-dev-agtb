@@ -17,33 +17,12 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-#welcome 
-{
-    border-right: none !important;
-}
  
-div.screen div.edit.view
+button,button[selected],button:focus 
 {
-    border-bottom: none !important;
-}
-
-div.screen div.edit.view td,
-div.screen div.edit.view th
-{
-    background: transparent;
-}
-
-div.nav-buttons 
-{
-    background-color: #F6F6F6;
-    padding: 1em;
-    margin-top: 0;
-}
-
-.dashletPanelMenu
-{
-	border-left: 1px solid #4E8CCF;
-	border-right: 1px solid #4E8CCF;
-	border-bottom: 1px solid #4E8CCF;
+	background-image: none;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6px;
+	text-shadow: none;
 }
