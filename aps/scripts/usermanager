@@ -1,95 +1,37 @@
 <?php
+
 ini_set('include_path', '.');
+require('SugarInstanceManager.php');
 
-require_once('env-parser.php');
-require_once('file-util.php');
-require_once('db-util.php');
-require_once('app-util.php');
-require_once('upgrade-app.php');
-
-function user_password_crypt($value)
-{
-    return md5($value);
+if(count($argv) != 2 && count($argv) != 3){
+    print "Usage: usermanager (install | enable | disable | remove | configure)\n";
+    exit(1);
 }
 
-$config_files = array();
-$reconf_config_files = array();
-$schema_files = array( 'user_install.mysql' => 'main' );
-$reconf_schema_files = array( 'user_modify.mysql' => 'main' );
-$remove_schema_files = array( 'user_remove.mysql' => 'main' );
-
-$psa_params = array (  );
-$db_ids = array ( 'main' );
-$web_ids = array ( '/' );
-$settings_params = array ('user_login', 'user_email', 'first_name', 'last_name', 'description', 'title','department', 'phone_home', 'phone_mobile', 'phone_work', 'phone_fax', 'address_street','address_city', 'address_state', 'address_country', 'address_postalcode');
-$settings_old_params = array ('user_login', 'user_email');
-$crypt_settings_params = array ('user_password');
-
-$psa_modify_hash = get_psa_modify_hash($psa_params);
-$db_modify_hash = get_db_modify_hash($db_ids);
-$web_modify_hash = get_web_modify_hash($web_ids);
-$settings_modify_hash = get_settings_modify_hash($settings_params);
-$settings_old_modify_hash = get_settings_old_modify_hash($settings_old_params);
-$crypt_settings_modify_hash = get_crypt_settings_modify_hash($crypt_settings_params);
-
-$additional_modify_hash = get_additional_modify_hash();
-
-if(count($argv) < 2)
-{
-    print "Usage: configure (install | upgrade <version> | configure | remove)\n";
-    exit(1);
+$SIM = new SugarInstanceManager();
+//$SIM->set_logging(true); //TODO: REMOVE THIS BEFORE GO LIVE
+// secret optional third parameter to turn on debug mode
+if(!empty($argv[2]) && $argv[2] == 'debug'){
+	$SIM->set_debug(true);
 }
 
 $command = $argv[1];
 
-if($command == "upgrade")
-{
-    if($argv[2] && $argv[3])
-    {
-        upgrade_app($argv[2], $argv[3], $config_files, $db_ids, $psa_modify_hash, $db_modify_hash, $settings_modify_hash, $crypt_settings_modify_hash, $settings_old_modify_hash, $additional_modify_hash);
-        exit(0);
-    }
-    else
-    {
-        print "Error: upgrade version or release not specified.\n";
-        exit(1);
-    }
+$fail = 0;
+
+switch($command){
+	case 'install':
+	case 'enable':
+	case 'disable':
+	case 'remove':
+	case 'configure':
+		$fail = $SIM->user_modify($command);
+		break;
+	default:
+		print "Error: unknown command $command for usermanager script.\n";
+		break;
 }
 
-if($command == "install")
-{
-    configure($config_files, $schema_files, $db_ids, $psa_modify_hash, $db_modify_hash, $settings_modify_hash, $crypt_settings_modify_hash, $settings_old_modify_hash, $additional_modify_hash);
-    exit(0);
-}
-
-if($command == "remove")
-{
-    remove_app($remove_schema_files, $db_ids, $psa_modify_hash, $db_modify_hash, $settings_modify_hash, $crypt_settings_modify_hash, $settings_old_modify_hash, $additional_modify_hash);
-    exit(0);
-}
-
-if($command == "configure")
-{
-    configure($reconf_config_files, $reconf_schema_files, $db_ids, $psa_modify_hash, $db_modify_hash, $settings_modify_hash, $crypt_settings_modify_hash, $settings_old_modify_hash, $additional_modify_hash);
-    exit(0);
-}
-
-if($command == "enable")
-{
-    $settings_old_modify_hash["@@OLDSETTINGS_USER_LOGIN@@"] = $settings_modify_hash["@@USER_LOGIN@@"];
-    configure($reconf_config_files, $reconf_schema_files, $db_ids, $psa_modify_hash, $db_modify_hash, $settings_modify_hash, $crypt_settings_modify_hash, $settings_old_modify_hash, $additional_modify_hash);
-    exit(0);
-}
-		
-if($command == "disable")
-{
-    $settings_old_modify_hash["@@OLDSETTINGS_USER_LOGIN@@"] = $settings_modify_hash["@@USER_LOGIN@@"];
-    $additional_modify_hash["@@USER_STATUS@@"] = "Inactive";
-    configure($reconf_config_files, $reconf_schema_files, $db_ids, $psa_modify_hash, $db_modify_hash, $settings_modify_hash, $crypt_settings_modify_hash, $settings_old_modify_hash, $additional_modify_hash);
-    exit(0);
-}
-
-print "Error: unknown command $command.\n";
-exit(1);
+exit($fail);
 
 ?>

@@ -1,9 +1,9 @@
 <!-- $Rev: 446921 $ -->
-<application xmlns="http://apstandard.com/ns/1" version="1.2" packaged="2010-06-10T11:26:43">
-	<id>http://www.sugarcrm.com/</id>
-	<name>SugarCRM</name>
+<application xmlns="http://apstandard.com/ns/1" version="1.2" packaged="2010-07-19T13:21:25">
+	<id>http://www.sugarcrm.com/crm/sugarshop/professional</id>
+	<name>SugarCRM Professional</name>
 	<version>6.0.0</version>
-	<release>63</release>
+	<release>76</release>
 	<homepage>http://www.sugarcrm.com/crm/</homepage>
 	<vendor>
 		<name>SugarCRM Inc.</name>
@@ -22,13 +22,48 @@
 		<icon path="images/icon.png"/>
 		<screenshot path="images/screen_home.png"><description>Home Screen</description></screenshot>
 		<screenshot path="images/screen_admin.png"><description>Admin Screen</description></screenshot>
-		<screenshot path="images/screen_dashboard.png"><description>Dashboard View</description></screenshot>
 		<screenshot path="images/screen_accounts.png"><description>Account Details</description></screenshot>
 		<screenshot path="images/screen_campaigns.png"><description>Marketing Campaigns</description></screenshot>
 		<screenshot path="images/screen_bug_tracker.png"><description>Bug Tracker</description></screenshot>
 		<screenshot path="images/screen_calendar.png"><description>Calendar</description></screenshot>
 		<screenshot path="images/screen_documents.png"><description>Documents</description></screenshot>
 		<changelog>
+			<version release="76" version="6.0.0">
+				<entry>Remove demo data</entry>
+			</version>
+			<version release="75" version="6.0.0">
+				<entry>More usermanager</entry>
+			</version>
+			<version release="74" version="6.0.0">
+				<entry>More usermanager</entry>
+			</version>
+			<version release="73" version="6.0.0">
+				<entry>Usermanager</entry>
+			</version>
+			<version release="72" version="6.0.0">
+				<entry>Fixed more user manager code.</entry>
+			</version>
+			<version release="71" version="6.0.0">
+				<entry>Added acceptable http referer, upped required memory limit, fixed user manager code.</entry>
+			</version>
+			<version release="70" version="6.0.0">
+				<entry>Updated sugar files to latest 6.0.0 build, and fixed user management.</entry>
+			</version>
+			<version release="69" version="6.0.0">
+				<entry>Allowing email addresses for user logins and fixed auto authentication</entry>
+			</version>
+			<version release="68" version="6.0.0">
+				<entry>Added to http_referer whitelist in config_override</entry>
+			</version>
+			<version release="67" version="6.0.0">
+				<entry>Changed sugar installer to run post install</entry>
+			</version>
+			<version release="66" version="6.0.0">
+				<entry>Updated some basics for certification, as well as screenshots</entry>
+			</version>
+			<version release="65" version="6.0.0">
+				<entry>Updated installer to use files and sql instead of silent installer</entry>
+			</version>
 			<version release="59" version="6.0.0">
 				<entry>First 6.0 release. Licensing included in installer.</entry>
 			</version>
@@ -42,14 +77,14 @@
 		</languages>
 	</presentation>
 
-	<patch match="/application/version = '5.5.2'"/>
+	<patch match="/application/version = '6.0.0'"/>
 	<upgrade match="/application/version = '5.5.0' or /application/version = '5.5.1'"/>
 
 	<service id="instance">
 		<license must-accept="true">
-			<free/>
+			<commercial/>
 			<text>
-				<name>GPLv3</name>
+				<name>SPL</name>
 				<file>htdocs/LICENSE.txt</file>
 			</text>
 		</license>
@@ -79,7 +114,7 @@
 		<settings>
 			<group class="authn">
 				<name>Administrator's Account</name>
-				<setting id="admin_name" type="string" default-value="admin" min-length="1" max-length="32" regex="^[a-zA-Z][0-9a-zA-Z_\-]*"
+				<setting id="admin_name" type="string" default-value="admin" min-length="1" max-length="32" regex="^[a-zA-Z][0-9a-zA-Z_@\-\.]*"
 					class="login">
 					<name>Administrator's Login</name>
 					<error-message>Please make sure the text you entered starts with a letter and continues with either numbers, letters, underscores or hyphens.</error-message>
@@ -90,7 +125,7 @@
 			</group>
 			<group class="licensing">
 				<name>Licensing</name>
-				<setting id="setup_license_key" type="string" installation-only="true">
+				<setting id="setup_license_key" type="string" optional="true" installation-only="true">
 					<name>License Key</name>
 					<description>If you do not have a Sugar Professional License Key, please purchase one at http://www.sugarcrm.com/crm/sugarshop/professional</description>
 				</setting>
@@ -113,7 +148,7 @@
 			<php:version min="5.1.0"/>
 			<php:extension>mysql</php:extension>
 			<php:extension>mbstring</php:extension>
-			<php:memory-limit>41943040</php:memory-limit>
+			<php:memory-limit>67108864</php:memory-limit>
 
 			<db:db>
 				<db:id>main</db:id>
@@ -127,7 +162,7 @@
 		<provision xmlns:l="http://apstandard.com/ns/1/licensing">
 			<url-mapping>
 				<default-prefix>sugarcrm</default-prefix>
-				<installed-size>50654051</installed-size>
+				<installed-size>50906784</installed-size>
 
 				<mapping url="/" path="htdocs" xmlns:php="http://apstandard.com/ns/1/php">
 					<php:permissions writable="true"/>
@@ -175,8 +210,8 @@
 			<settings>
 				<group class="authn">
 					<name>Account Preferences</name>
-					<setting id="user_login" class="login" track-old-value="true" type="string" min-length="3" max-length="60"
-						regex="^[a-zA-Z][0-9a-zA-Z_\-]*">
+					<setting id="user_name" class="login" track-old-value="true" type="string" min-length="3" max-length="60"
+						regex="^[a-zA-Z][0-9a-zA-Z_@\-\.]*">
 						<name>Account's Login</name>
 					</setting>
 					<setting id="user_password" class="password" type="password" min-length="4">
