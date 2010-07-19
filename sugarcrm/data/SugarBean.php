@@ -2865,6 +2865,7 @@ function save_relationship_changes($is_update, $exclude=array())
 					$query = ' UNION ALL ( '.$query . ' )';
 					$final_query_rows .= " UNION ALL ";
 				} else {
+					$query = '(' . $query . ')';
 					$first = false;
 				}
 				$query_array = $subquery['query_array'];

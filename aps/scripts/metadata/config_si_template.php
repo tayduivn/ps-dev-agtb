@@ -2,7 +2,7 @@
 
 // Make sure to define the config values in the format shown below, as not to override 
 $sugar_config_si['setup_db_pop_demo_data'] = 'no';
-$sugar_config_si['demoData'] = 'DEMO_STRING';
+$sugar_config_si['demoData'] = 'no';
 $sugar_config_si['setup_db_create_database'] = 1;
 $sugar_config_si['setup_db_create_sugarsales_user'] = 0;
 $sugar_config_si['setup_db_drop_tables'] = 1; 
