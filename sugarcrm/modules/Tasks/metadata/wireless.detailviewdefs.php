@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Tasks']['EditView'] = array(
+$viewdefs['Tasks']['DetailView'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
                             'widths' => array(

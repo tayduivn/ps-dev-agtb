@@ -3285,11 +3285,6 @@ body
 	background-color: #dedede;
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=bg.png');
 	background-repeat:no-repeat;
-        
-        /* //BEGIN SUGARCRM flav=com ONLY */
-	color: #000000;
-	background-color: #ffffff;
-        /* //END SUGARCRM flav=com ONLY */
 }
 h1, h2, h3
 {

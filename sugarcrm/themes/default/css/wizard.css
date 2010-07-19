@@ -39,16 +39,6 @@ color: #C60C30;
 	float: none;
 }
 
-/* //BEGIN SUGARCRM flav=com ONLY */
-.dashletPanelMenu
-{
-	border-left: 1px solid #4E8CCF;
-	border-right: 1px solid #4E8CCF;
-	border-bottom: 1px solid #4E8CCF;
-}
-/* //END SUGARCRM flav=com ONLY */
-
-
 .dashletPanelMenu .bd .bd-center .screen {
 
 	border: 0px none;
@@ -118,13 +108,6 @@ button,button[selected],button:focus {
 	color: #999;
 	font-weight: bold;
 	font-size: 16px;
-        /* //BEGIN SUGARCRM flav=pro || flav=sales ONLY */
-	background-image: none;
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	text-shadow: none;
-        /* //END SUGARCRM flav=pro || flav=sales ONLY */
 	}
 	
 button:hover {
