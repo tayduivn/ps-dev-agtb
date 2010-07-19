@@ -1513,7 +1513,9 @@ function getInstalledLangPacks($showButtons=true) {
 	            <td nowrap><b>{$mod_strings['LBL_ML_DESCRIPTION']}</b></td>
             </tr>\n";
     $files = array();
-    $files = findAllFiles(getcwd()."/cache/upload/upgrades", $files);
+    $dirLocation = getcwd()."/cache/upload/upgrades";
+    if( is_dir($dirLocation) )
+        $files = findAllFiles($dirLocation, $files);
     
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])){
     	if(count($_SESSION['INSTALLED_LANG_PACKS'] > 0)) {
