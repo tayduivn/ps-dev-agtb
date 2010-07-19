@@ -1486,6 +1486,28 @@ eoq;
 		            . $_REQUEST['qc_module'] . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c='
 		            . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
 
+		//BEGIN SUGARCRM flav=ent ONLY
+		if($focus->object_name == 'Contact') {
+			$admin = new Administration();
+			$admin->retrieveSettings();
+			
+	    	if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
+			   unset($EditView->sectionPanels[strtoupper('lbl_portal_information')]);
+			} else {
+			   $jsLanguage .= <<<EOQ
+			    <script src="modules/Contacts/Contact.js"></script>
+			    <script src="modules/Contacts/QuickCreateEmailContact.js"></script>
+			    <script language="javascript">
+				   addToValidateComparison('form_EmailQCView_Contacts', 'portal_password', 'varchar', false, SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD') + SUGAR.language.get('Contacts', 'LBL_PORTAL_PASSWORD'), 'portal_password1');
+		           addToValidateVerified('form_EmailQCView_Contacts', 'portal_name_verified', 'bool', false, SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'));
+		           YAHOO.util.Event.on('portal_name', 'blur', validatePortalName);
+				   YAHOO.util.Event.on('portal_name', 'keydown', handleKeyDown);			   
+			    </script>
+EOQ;
+			}					
+		}            
+		//END SUGARCRM flav=ent ONLY 		            
+		            
 		$EditView->view = 'EmailQCView';
 		$EditView->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		$EditView->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
