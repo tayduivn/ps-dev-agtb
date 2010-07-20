@@ -215,6 +215,7 @@ class aSubPanel
 			}
 			//Sync displayed list fields across the subpanels
 			$display_fields = $this->getDisplayFieldsFromCollection($this->sub_subpanels);
+		 	$query_fields = array();
 			foreach ( $this->sub_subpanels as $key => $subpanel )
 			{
 				$list_fields = $subpanel->get_list_fields();
@@ -250,6 +251,8 @@ class aSubPanel
 								);
 							}
 						}
+					} else {
+						$query_fields[$field] = $def;
 					}
 				}
 			}
@@ -266,6 +269,16 @@ class aSubPanel
 					}
 					else {
 						$list_fields[$list_key] = $display_fields[$vname];
+					}
+				}
+				foreach($query_fields as $field => $def)
+				{
+					if (isset($subpanel->panel_definition['list_fields'][$field]))
+					{
+						$list_fields[$field] = $subpanel->panel_definition['list_fields'][$field];
+					}
+					else {
+						$list_fields[$field] = $def;
 					}
 				}
 				$subpanel->panel_definition['list_fields'] = $list_fields;
