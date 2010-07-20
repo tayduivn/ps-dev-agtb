@@ -45,13 +45,23 @@ class UsersViewList extends ViewList
 
 //BEGIN SUGARCRM flav=sales ONLY
  	public function listViewProcess(){
-		if(!is_admin($GLOBALS['current_user'])){
-			if(!empty($this->where)){
-				$this->where .= "AND";
+ 		$this->processSearchForm();
+		$this->lv->searchColumns = $this->searchForm->searchColumns;
+		
+		if(!$this->headers)
+			return;
+		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
+			$this->lv->ss->assign("SEARCH",true);
+			if(!is_admin($GLOBALS['current_user'])){
+				if(!empty($this->where)){
+					$this->where .= "AND";
+				}
+				$this->where = " users.is_admin = '0'";
 			}
-			$this->where .= " users.is_admin = '0'";
+			$this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
+			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
+			echo $this->lv->display();
 		}
-		parent::listViewProcess();
  	}
 //END SUGARCRM flav=sales ONLY
 }
