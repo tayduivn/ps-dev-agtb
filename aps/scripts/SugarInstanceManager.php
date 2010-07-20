@@ -192,64 +192,55 @@ class SugarInstanceManager{
 		
 		$this->_log_this($mode, 'user_modify.log');
 		
-		$success_two = true;
-		$success_three = true;
+		// We get the user id in advance (if exists) for checks in the switch statement
+		$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+		$success = true;
 		switch($mode){
 			case 'install':
-				$user_id = $this->_create_unique_key();
-				$query = "INSERT INTO users SET ";
-				foreach($this->user_params as $index => $value){
-					$table_col_key = strtolower(substr($index, 2, -2));
-					if($table_col_key != 'user_email')
-						$query .= "{$table_col_key} = '{$value}', ";
-					else{
-						$email_id = $this->_create_unique_key();
-						$email_query = "INSERT INTO email_addresses SET id = '{$email_id}', ".
-														 "email_address = '{$value}', ".
-														 "email_address_caps = '".strtoupper($value)."', ".
-														 "date_created = '".gmdate('Y-m-d H:i:s')."', ".
-														 "date_modified = '".gmdate('Y-m-d H:i:s')."' ";
-						$this->_log_this($email_query, 'user_modify.log');
-						$success_two = mysql_query($email_query, $this->db_links['main']);
-						$email_rel_id = $this->_create_unique_key();
-						$email_rel_query = "INSERT INTO email_addr_bean_rel SET id = '{$email_rel_id}', ".
-														 "email_address_id = '{$email_id}', ".
-														 "bean_id = '{$user_id}', ".
-														 "bean_module = 'Users', ".
-														 "primary_address = 1, ".
-														 "reply_to_address = 1, ".
-														 "date_created = '".gmdate('Y-m-d H:i:s')."', ".
-														 "date_modified = '".gmdate('Y-m-d H:i:s')."' ";
-						$this->_log_this($email_rel_query, 'user_modify.log');
-						$success_three = mysql_query($email_rel_query, $this->db_links['main']);
-					}
+				if($user_id === -1){
+					echo "User {$mode}: Bad query or couldn't connect to DB when checking for valid user.";
+					$this->_db_close_connection('main');
+					exit(1);
 				}
-				$additional = array(
-					'id' => $user_id,
-					'date_entered' => gmdate('Y-m-d H:i:s'),
-					'date_modified' => gmdate('Y-m-d H:i:s'),
-					'modified_user_id' => '1',
-					'created_by' => '1',
-					'status' => 'Active',
-					'default_team' => '1',
-					'team_set_id' => '1',
-					'employee_status' => 'Active',
-				);
-				foreach($additional as $index => $value){
-					$query .= "{$index} = '{$value}', ";
+				else if($user_id !== 0){
+					// We found a valid user. Fail on creation
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} already exists.";
+					$this->_db_close_connection('main');
+					exit(1);
 				}
-				$query = substr($query, 0, -2);
+				
+				$success = $this->_install_sugar_user();
 				break;
 			case 'remove':
-				$query = "UPDATE users SET deleted = '1' WHERE user_name = '{$this->user_params['@@USER_NAME@@']}'";
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET deleted = '1' WHERE id = '{$user_id}'";
 				break;
 			case 'disable': 
-				$query = "UPDATE users SET status = 'Inactive' WHERE user_name = '{$this->user_params['@@USER_NAME@@']}'";
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET status = 'Inactive' WHERE id = '{$user_id}'";
 				break;
 			case 'enable':
-				$query = "UPDATE users SET status = 'Active' WHERE user_name = '{$this->user_params['@@USER_NAME@@']}'";
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET status = 'Active' WHERE id = '{$user_id}'";
 				break;
 			case 'configure':
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
 				$query = "UPDATE users SET ";
 				foreach($this->user_params as $index => $value){
 					$table_col_key = strtolower(substr($index, 2, -2));
@@ -263,22 +254,172 @@ class SugarInstanceManager{
 					$query .= "{$index} = '{$value}', ";
 				}
 				$query = substr($query, 0, -2);
-				$query .= "WHERE user_name = '{$this->user_params['@@USER_NAME@@']}'";
+				$query .= "WHERE id = '{$user_id}'";
 				break;
 			default:
 				echo "Invalid param passed to usermanager: {$mode}";
 				exit(1);
 				break;
 		}
-		$this->_log_this($query, 'user_modify.log');
+		
+		// In the install mode, we call a function which returns success and sets it above
+		if($mode != 'install'){
+			$success = mysql_query($query, $this->db_links['main']);
+			$this->_log_this($query, 'user_modify.log');
+		}
+		
 		$this->_log_this(var_export($this->user_params, true), 'user_modify.log');
 		
-		$success = mysql_query($query, $this->db_links['main']);
 		$failure = !$success;
 		$this->_log_this("success:{$success}", 'user_modify.log');
 		
 		$this->_db_close_connection('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
 		return $failure;
+	}
+	
+	private function _install_sugar_user(){
+		$success = true;
+		
+		// We pre create the ids below in case we need them
+		$email_id = $this->_create_unique_key();
+		$email_rel_id = $this->_create_unique_key();
+		$team_id = $this->_create_unique_key();
+		$team_mem_id = $this->_create_unique_key();
+		$team_mem_id_global = $this->_create_unique_key();
+		$user_id = $this->_create_unique_key();
+		$query = "INSERT INTO users SET ";
+		foreach($this->user_params as $index => $value){
+			$table_col_key = strtolower(substr($index, 2, -2));
+			if($table_col_key != 'user_email')
+				$query .= "{$table_col_key} = '{$value}', ";
+			else{
+				$email_query = "INSERT INTO email_addresses SET id = '{$email_id}', ".
+												 "email_address = '{$value}', ".
+												 "email_address_caps = '".strtoupper($value)."', ".
+												 "date_created = '".gmdate('Y-m-d H:i:s')."', ".
+												 "date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+				$this->_log_this($email_query, 'user_modify.log');
+				if(!mysql_query($email_query, $this->db_links['main'])){
+					echo "Could not insert email address.";
+					return false;
+				}
+				$email_rel_query = "INSERT INTO email_addr_bean_rel SET id = '{$email_rel_id}', ".
+												 "email_address_id = '{$email_id}', ".
+												 "bean_id = '{$user_id}', ".
+												 "bean_module = 'Users', ".
+												 "primary_address = 1, ".
+												 "reply_to_address = 1, ".
+												 "date_created = '".gmdate('Y-m-d H:i:s')."', ".
+												 "date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+				$this->_log_this($email_rel_query, 'user_modify.log');
+				if(!mysql_query($email_rel_query, $this->db_links['main'])){
+					echo "Could not insert email address relationship to user.";
+					mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+					return false;
+				}
+			}
+		}
+		$additional = array(
+			'id' => $user_id,
+			'date_entered' => gmdate('Y-m-d H:i:s'),
+			'date_modified' => gmdate('Y-m-d H:i:s'),
+			'modified_user_id' => '1',
+			'created_by' => '1',
+			'status' => 'Active',
+			'default_team' => '1',
+			'team_set_id' => '1',
+			'employee_status' => 'Active',
+		);
+		foreach($additional as $index => $value){
+			$query .= "{$index} = '{$value}', ";
+		}
+		$query = substr($query, 0, -2);
+		
+		$team_query = "INSERT INTO teams SET id = '{$team_id}', ".
+										"name = '{$this->user_params['@@FIRST_NAME@@']}', ".
+										"name_2 = '{$this->user_params['@@LAST_NAME@@']}', ".
+										"associated_user_id = '{$user_id}', ".
+										"date_entered = '".gmdate('Y-m-d H:i:s')."', ".
+										"date_modified = '".gmdate('Y-m-d H:i:s')."', ".
+										"modified_user_id = '1', ".
+										"created_by = '1', ".
+										"private = '1', ".
+										"description = 'Private team for {$this->user_params['@@FIRST_NAME@@']}' ";
+		if(!mysql_query($team_query, $this->db_links['main'])){
+			echo "Could not create user's private team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_membership_query = "INSERT INTO team_memberships SET id = '{$team_mem_id}', ".
+															"team_id = '{$team_id}', ".
+															"user_id = '{$user_id}', ".
+															"explicit_assign = '1', ".
+															"date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+		if(!mysql_query($team_membership_query, $this->db_links['main'])){
+			echo "Could not create team membership to private team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_membership_global_query = "INSERT INTO team_memberships SET id = '{$team_mem_id_global}', ".
+															"team_id = '1', ".
+															"user_id = '{$user_id}', ".
+															"explicit_assign = '1', ".
+															"date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+		if(!mysql_query($team_membership_global_query, $this->db_links['main'])){
+			echo "Could not create team membership to global team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		// LAST QUERY TO CREATE USER!
+		$success = mysql_query($query, $this->db_links['main']);
+		if(!$success){
+			echo "Could not create user.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+		}
+		
+		return $success;
+	}
+	
+	// This function assumes a valid db connection
+	// status is: empty, 'Active', or 'Inactive'
+	private function _get_user_id($user_name, $status = '', $include_deleted = false, $db = 'main'){
+		$query = "SELECT id FROM users WHERE user_name = '{$user_name}'";
+		if(!empty($status)){
+			$query .= " AND status = '{$status}'";
+		}
+		if(!$include_deleted){
+			$query .= " AND deleted = 0";
+		}
+		$res = mysql_query($query, $this->db_links[$db]);
+		
+		$return_val = 0;
+		if($res){
+			$row = mysql_fetch_assoc($res);
+			if(!empty($row['id'])){
+				$return_val = $row['id'];
+			}
+			else{
+				$return_val = 0;
+			}
+		}
+		else{
+			$return_val = -1;
+		}
+		
+		return $return_val;
 	}
 	
 	public function install_license(){

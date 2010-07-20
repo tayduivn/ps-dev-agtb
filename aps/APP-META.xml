@@ -1,9 +1,9 @@
 <!-- $Rev: 446921 $ -->
-<application xmlns="http://apstandard.com/ns/1" version="1.2" packaged="2010-07-19T13:21:25">
+<application xmlns="http://apstandard.com/ns/1" version="1.2" packaged="2010-07-20T13:35:48">
 	<id>http://www.sugarcrm.com/crm/sugarshop/professional</id>
 	<name>SugarCRM Professional</name>
 	<version>6.0.0</version>
-	<release>76</release>
+	<release>77</release>
 	<homepage>http://www.sugarcrm.com/crm/</homepage>
 	<vendor>
 		<name>SugarCRM Inc.</name>
@@ -28,6 +28,9 @@
 		<screenshot path="images/screen_calendar.png"><description>Calendar</description></screenshot>
 		<screenshot path="images/screen_documents.png"><description>Documents</description></screenshot>
 		<changelog>
+			<version release="77" version="6.0.0">
+				<entry>More usermanager updates</entry>
+			</version>
 			<version release="76" version="6.0.0">
 				<entry>Remove demo data</entry>
 			</version>

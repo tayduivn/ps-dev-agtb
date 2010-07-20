@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <files xmlns="http://apstandard.com/ns/1" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
-    <file sha256="8da42316584e6efe3f985febc818b4ee022dda58553240cf41c2bcb204254d87" size="11435" name="APP-META.xml"/>
+    <file sha256="35df1d3d2fe1c5bc414cf3762ca95a653983b0e6668f25b814f76b738f9a389c" size="11535" name="APP-META.xml"/>
     <file sha256="c76e7a6ced21b9f8e26473c39917fec28cf9f61adf0a1afc0c96e6692b754d3a" size="2294" name="htdocs/HandleAjaxCall.php"/>
     <file sha256="da7c64bf82ac708a91a8da793cc8bcfffd5e0c50f71b908cd602530bd8878b5a" size="30617" name="htdocs/LICENSE.txt"/>
     <file sha256="f1db65e0651b50fae68c4d84c67b974830aa754a5bf6c349d3a431e8792f8efb" size="92345" name="htdocs/ModuleInstall/ModuleInstaller.php"/>
@@ -6939,7 +6939,7 @@
     <file sha256="a5214761fc9a6ca1adbe71a2603f1e1b7f6d4cb6123c75de237b2b96f00d6b77" size="123269" name="images/screen_campaigns.png"/>
     <file sha256="9979c20de408cf058b2e92e72376906c9ba1445afd4ffbd2213d31ec3320c3a5" size="106937" name="images/screen_documents.png"/>
     <file sha256="a9425627e3a78f3778ab60c47a3d02257f4f50b456dccbf99a740194fb9bc89b" size="194964" name="images/screen_home.png"/>
-    <file sha256="414a81ad44ae773ee678ab592ff787364ab43f80eb86b0875a7aa43f937143aa" size="31381" name="scripts/SugarInstanceManager.php"/>
+    <file sha256="7108d0feecaff529e34de42cb546efb9b3da0fb15a77522f5b9f975b4d91c554" size="37085" name="scripts/SugarInstanceManager.php"/>
     <file sha256="3131621d4539dd4d32c3e171d7b91afb19c10ad22d1533585ec7c30fe1774495" size="814" name="scripts/configure"/>
     <file sha256="530909b69c5656aab72d90b54da3aeee7623489916b32b7f28f82b1c4d1ed73c" size="731" name="scripts/metadata/config_override_template.php"/>
     <file sha256="8e793470fd0aa84d29c39620fb539695d83d75760b00fb9da832905043b4e753" size="1057" name="scripts/metadata/config_si_template.php"/>
