@@ -1,4 +1,4 @@
-<?php
+<?php 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -29,16 +29,16 @@ function build_argument_string($arguments=array()) {
    if(!is_array($arguments)) {
    	  return '';
    }
-
+   
    $argument_string = '';
    $count = 0;
    foreach($arguments as $arg) {
    	   if($count != 0) {
-          $argument_string .= ' ' . escapeshellarg($arg);
-   	   }
+          $argument_string .= ' ' . escapeshellarg($arg);	 
+   	   } 
    	   $count++;
    }
-
+   
    return $argument_string;
 }
 
@@ -60,22 +60,26 @@ $p_info = pathinfo($php_file);
 $php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . '/' : '';
 
 $step1 = $php_path."php -f {$php_dir}silentUpgrade_step1.php " . build_argument_string($argv);
-exec($step1, $output);
+exec($step1, $output=array());
 
 $has_error = false;
 $run_dce_upgrade = false;
 
-foreach($output as $line) {
-    if(preg_match('/ERROR\:/', $line) || preg_match('/FAILURE/', $line) || preg_match('/Fatal\serror:/', $line)) {
-       $has_error = true;
-    } else if(preg_match('/RUNNING DCE UPGRADE/', $line)) {
-       $run_dce_upgrade = true;
-    }
+if(empty($output)) {
+   $has_error = true;
+} else {
+	foreach($output as $line) {
+	    if(preg_match('/ERROR\:/', $line) || preg_match('/FAILURE/', $line) || preg_match('/Fatal\serror\:/', $line)) {
+	       $has_error = true;
+	    } else if(preg_match('/RUNNING DCE UPGRADE/', $line)) {
+	       $run_dce_upgrade = true;
+	    }
+	}
 }
 
 foreach($output as $line) {
 	echo $line . "\n";
-}
+}	
 
 if(!$has_error) {
 	if($run_dce_upgrade) {
@@ -83,23 +87,27 @@ if(!$has_error) {
 		$step2 = $php_path."php -f {$php_dir}silentUpgrade_dce_step1.php " . build_argument_string($argv);
 		exec($step2, $output);
 	} else {
-		$step2 =  $php_path."php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
-		system($step2);
+		$step2 = "php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
+		system($step2);	
 	}
 }
 
 
 if($run_dce_upgrade) {
 	$has_error = false;
-	foreach($output as $line) {
-	   if(preg_match('/ERROR\:/', $line) || preg_match('/FAILURE/', $line) || preg_match('/Fatal\serror:/', $line)) {
-	      $has_error = true;
-	   }
+	if(empty($output)) {
+	   $has_error = true;
+	} else {
+		foreach($output as $line) {
+		   if(preg_match('/ERROR\:/', $line) || preg_match('/FAILURE/', $line) || preg_match('/Fatal\serror\:/', $line)) {
+		      $has_error = true;
+		   }
+		}
 	}
-
+	
 	if(!$has_error) {
 	   $step3 = $php_path."php -f {$php_dir}silentUpgrade_dce_step2.php " . build_argument_string($argv);
-	   system($step3);
+	   system($step3);	
 	}
 }
 ?>
