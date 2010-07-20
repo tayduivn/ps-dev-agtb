@@ -39,7 +39,11 @@ global $theme;
 global $app_strings;
 global $mod_strings;
 global $timezones;
-if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'Users') && ($_REQUEST['record'] != $current_user->id)) sugar_die("Unauthorized access to administration.");
+if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'Users')
+//BEGIN SUGARCRM flav=sales ONLY
+      && $current_user->user_type != 'UserAdministrator'
+//END SUGARCRM flav=sales ONLY
+      && ($_REQUEST['record'] != $current_user->id)) sugar_die("Unauthorized access to administration.");
 
 $focus = new User();
 
@@ -141,6 +145,13 @@ if((is_admin($current_user) || $_REQUEST['record'] == $current_user->id || is_ad
 	$usertype='Administrator';
 }
 
+//BEGIN SUGARCRM flav=sales ONLY
+if($focus->user_type == "UserAdministrator"){
+	$user_type_label=$mod_strings['LBL_USER_ADMINISTRATOR'];
+	$usertype='User Administrator';
+}
+//END SUGARCRM flav=sales ONLY
+
 $sugar_smarty->assign('IS_GROUP_OR_PORTAL','0');
 if(!empty($focus->is_group) && $focus->is_group == 1){
 	$user_type_label=$mod_strings['LBL_GROUP_USER'];
@@ -160,8 +171,11 @@ $sugar_smarty->assign("USER_TYPE", $usertype);
 $sugar_smarty->assign("USER_TYPE_LABEL", $user_type_label);
 
 
-
-
+//BEGIN SUGARCRM flav=sales ONLY
+if(is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Users')){
+	$sugar_smarty->assign("SYS_ADMIN", true);
+}
+//END SUGARCRM flav=sales ONLY
 
 
 
@@ -187,16 +201,32 @@ if (isset($_REQUEST['pwd_set']) && $_REQUEST['pwd_set']!= 0){
 $sugar_smarty->assign("ERRORS", $errors);
 $sugar_smarty->assign("ERROR_MESSAGE", $msgGood ? $mod_strings['LBL_PASSWORD_SENT'] : $mod_strings['LBL_CANNOT_SEND_PASSWORD']);
 $buttons = "";
-if ((is_admin($current_user) || $_REQUEST['record'] == $current_user->id)
-		&& !empty($sugar_config['default_user_name'])
+if ((is_admin($current_user) || $_REQUEST['record'] == $current_user->id
+     //BEGIN SUGARCRM flav=sales ONLY
+     || $current_user->user_type == 'UserAdministrator'
+     //END SUGARCRM flav=sales ONLY
+     )
+     //BEGIN SUGARCRM flav=sales ONLY
+        && !is_admin($focus)
+     //END SUGARCRM flav=sales ONLY
+        && !empty($sugar_config['default_user_name'])
 		&& $sugar_config['default_user_name'] == $focus->user_name
 		&& isset($sugar_config['lock_default_user_name'])
 		&& $sugar_config['lock_default_user_name']) {
 	$buttons .= "<input id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' class='button primary' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='$focus->id'; this.form.action.value='EditView'\" type='submit' name='Edit' value='".$app_strings['LBL_EDIT_BUTTON_LABEL']."'>  ";
 }
-elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],'Users')&& !$focus->is_admin) || $_REQUEST['record'] == $current_user->id) {
+elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],'Users')&& !$focus->is_admin)
+     //BEGIN SUGARCRM flav=sales ONLY
+     || ($current_user->user_type == 'UserAdministrator' && !$focus->is_admin)
+     //END SUGARCRM flav=sales ONLY
+     || $_REQUEST['record'] == $current_user->id) {
 	$buttons .= "<input id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' class='button primary' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='$focus->id'; this.form.action.value='EditView'\" type='submit' name='Edit' value='".$app_strings['LBL_EDIT_BUTTON_LABEL']."'>  ";
-	if (is_admin($current_user)|| is_admin_for_module($GLOBALS['current_user'],'Users')){
+	if ((is_admin($current_user)|| is_admin_for_module($GLOBALS['current_user'],'Users')
+     //BEGIN SUGARCRM flav=sales ONLY
+     || ($current_user->user_type == 'UserAdministrator' && !is_admin($focus))
+     //END SUGARCRM flav=sales ONLY
+        )
+	){
 		if (!$current_user->is_group){
 				$buttons .= "<input title='".$app_strings['LBL_DUPLICATE_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_DUPLICATE_BUTTON_KEY']."' class='button' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.isDuplicate.value=true; this.form.action.value='EditView'\" type='submit' name='Duplicate' value='".$app_strings['LBL_DUPLICATE_BUTTON_LABEL']."'>  ";
 			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only 
@@ -221,7 +251,13 @@ if (!$current_user->is_group){
     }
 	$buttons .="<input type='button' class='button' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_preferences=true\";' value='".$mod_strings['LBL_RESET_PREFERENCES']."' />";
 	$buttons .="&nbsp;<input type='button' class='button' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".$mod_strings['LBL_RESET_HOMEPAGE']."' />";
-    if($focus->id != $current_user->id && (is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users')) )
+    if($focus->id != $current_user->id && (is_admin($current_user)
+                                         ||is_admin_for_module($GLOBALS['current_user'],'Users')
+                                         //BEGIN SUGARCRM flav=sales ONLY
+                                         ||$GLOBALS['current_user']->user_type == 'UserAdministrator'
+                                         //END SUGARCRM flav=sales ONLY
+                                          )
+      )
         $buttons .="&nbsp;<input type='button' class='button' onclick='if(confirm(\"{$mod_strings['LBL_DELETE_USER_CONFIRM']}\"))window.location=\"".$_SERVER['PHP_SELF'] ."?module=Users&action=delete&record={$focus->id}\";' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' />";
 
 }

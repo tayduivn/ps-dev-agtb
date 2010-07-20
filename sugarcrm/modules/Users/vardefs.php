@@ -314,6 +314,15 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '9',
         ) ,
+        //BEGIN SUGARCRM flav=sales ONLY
+        'user_type' => array(
+            'name' => 'user_type',
+            'vname' => 'LBL_USER_TYPE',
+            'type' => 'enum',
+            'len' => 50,
+            'options' => 'user_type_dom',
+        ),
+        //END SUGARCRM flav=sales ONLY
         //BEGIN SUGARCRM flav=pro ONLY
         'default_team' => array(
             'name' => 'default_team',

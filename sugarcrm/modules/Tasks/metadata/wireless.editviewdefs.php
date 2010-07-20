@@ -37,6 +37,7 @@ $viewdefs['Tasks']['EditView'] = array(
     'panels' => array(
 		array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),    
 		array('date_due'),
+	    array('status'),
 	    array('priority'),
 	    //BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),

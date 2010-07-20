@@ -446,7 +446,7 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 		$ieX = new InboundEmail();
 		$ieX->retrieve($a['id']);
 		$ieX->connectMailserver();
-
+        $GLOBALS['log']->info("Bounced campaign scheduler connected to mail server id: {$a['id']} ");
 		$newMsgs = array();
 		if ($ieX->isPop3Protocol()) {
 			$newMsgs = $ieX->getPop3NewMessagesToDownload();
@@ -463,7 +463,7 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 				} else {
 					$uid = imap_uid($ieX->conn, $msgNo);
 				} // else
-
+                 $GLOBALS['log']->info("Bounced campaign scheduler will import message no: $msgNo");
 				$ieX->importOneEmail($msgNo, $uid, false,false);
 			}
 		}
@@ -515,7 +515,7 @@ function updateTrackerSessions() {
 	$db = DBManagerFactory::getInstance();
     require_once('include/utils/db_utils.php');
 	//Update tracker_sessions to set active flag to false
-	$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-20 minutes"))."'" ,"datetime");
+	$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-6 hours"))."'" ,"datetime");
 	$query = "UPDATE tracker_sessions set active = 0 where date_end < $sessionTimeout";
 	$GLOBALS['log']->info("----->Scheduler is about to update tracker_sessions table by running the query $query");
 	$db->query($query);

@@ -182,7 +182,6 @@ $layout_defs['Contacts'] = array(
             'get_distinct_data'=> true,
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
-				array('widget_class' => 'SubPanelTopSelectButton'),
 			),
 		),
 		//END SUGARCRM flav=pro ONLY
@@ -199,7 +198,7 @@ $layout_defs['Contacts'] = array(
 			'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
-				array('widget_class' => 'SubPanelTopSelectButton'),
+				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
 		//END SUGARCRM flav=pro ONLY
@@ -261,7 +260,7 @@ $layout_defs['Contacts'] = array(
 			'title_key' => 'LBL_PROJECTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-				array('widget_class' => 'SubPanelTopSelectButton'),
+				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
         'campaigns' => array(

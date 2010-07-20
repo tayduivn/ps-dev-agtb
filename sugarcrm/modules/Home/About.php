@@ -35,18 +35,21 @@ global $sugar_config, $mod_strings;
 <!-- //BEGIN SUGARCRM flav=sales ONLY
 <IMG src="include/images/sugar_md_sales.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=sales ONLY
-<!-- //BEGIN SUGARCRM flav=com && lic=sub ONLY
+<!-- //BEGIN SUGARCRM flav=dev ONLY
+<IMG src="include/images/sugar_md_dev.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<!-- //END SUGARCRM flav=dev ONLY
+<!-- //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 <IMG src="include/images/sugar_md_express.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=com && lic=sub ONLY		
+<!-- //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY		
 <!-- //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 <IMG src="include/images/sugar_md_open.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!--//END SUGARCRM flav=com && lic!=sub ONLY
 <!-- //BEGIN SUGARCRM flav=dce ONLY
 <IMG src="include/images/sugar_md_dce.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=dce ONLY
-<!-- //BEGIN SUGARCRM flav=ent ONLY
+<!-- //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 <IMG src="include/images/sugar_md_ent.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=ent ONLY -->
+<!-- //END SUGARCRM flav=ent && flav!=dev ONLY -->
 <br>
 <b><?php echo $mod_strings['LBL_VERSION']." ".$sugar_version." (".$mod_strings['LBL_BUILD']." ".$sugar_build.")";
     if( is_file( "custom_version.php" ) ){

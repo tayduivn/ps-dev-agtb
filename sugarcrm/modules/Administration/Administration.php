@@ -111,7 +111,24 @@ class Administration extends SugarBean {
 		return $this;
 	}
 
-	function saveConfig() {
+	function saveConfig() {		
+		//BEGIN SUGARCRM flav=ent ONLY
+		$this->retrieveSettings(false, true);
+		if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
+			if(file_exists('cache/modules/Contacts/EditView.tpl')) {
+			   unlink('cache/modules/Contacts/EditView.tpl');
+			}
+			
+		    if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
+			   unlink('cache/modules/Contacts/EditView.tpl');
+			}		
+			
+			if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
+			   unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
+			}
+		}
+		//END SUGARCRM flav!=ent ONLY		
+		
 		// outbound email settings
 		$oe = new OutboundEmail();
 

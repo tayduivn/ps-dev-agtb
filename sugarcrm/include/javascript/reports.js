@@ -778,6 +778,8 @@ SUGAR.reports = function() {
 							} else if(input_arr[l].type == 'text' && /id_collection_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name1.push(input_arr[l].value);
 							} else if(input_arr[l].type == 'radio' && input_arr[l].checked) {
+								//We use input_name2 to indicate that a primary team has been selected.  
+								//See SugarWidgetFieldteam_set_id.php file to see how this creates the primary team query portion.
 								filter_def.input_name2 = input_arr[l].value;
 							}
 						}
@@ -2958,7 +2960,7 @@ SUGAR.reports = function() {
 				if(users_array=="") {
 					SUGAR.reports.loadXML();
 				}
-				if (qualifier_name == 'one_of') {
+				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 					SUGAR.reports.addFilterInputSelectMultiple(row,users_array,filter);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
@@ -2968,7 +2970,7 @@ SUGAR.reports = function() {
 				}
 			} 
 			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type') {
-				if (qualifier_name == 'one_of') {
+				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 					SUGAR.reports.addFilterInputSelectMultiple(row,field.options,filter);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
@@ -3240,6 +3242,8 @@ SUGAR.reports = function() {
 			   var link = filter.table_key.replace(/:/g,'>');
 			   link = (link == 'self') ? module : link;
 			   filter.table_key = (filter.table_key == 'self') ? module : link;
+			   //C.L. 36987 - Add the "> Teams" indicator once more
+			   filter.table_key += '> ' +  SUGAR.language.get('app_strings', 'LBL_TEAMS');
 			} 
 			else if (module_defs[module].field_defs[fieldName]){
 			   var field = module_defs[module].field_defs[fieldName];

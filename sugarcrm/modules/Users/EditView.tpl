@@ -66,6 +66,9 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 var EditView_tabs = new YAHOO.widget.TabView("EditView_tabs");
 
 {literal}
+//Override so we do not force submit
+SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
+
 EditView_tabs.on('contentReady', function(e){
 {/literal}
 //BEGIN SUGARCRM flav!=com ONLY
@@ -132,6 +135,9 @@ EditView_tabs.on('contentReady', function(e){
                                 <td id='last_name_lbl' scope="row"  style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'><slot>{$MOD.LBL_LAST_NAME}: <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
                                 <td id='last_name_field'  style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'><slot><input id='last_name' name='last_name' type="text" {$LAST_NAME_DISABLED} tabindex='1' size='25' maxlength='25' value="{$LAST_NAME}"></slot></td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                            {if not $NON_ADMIN_USER_ADMIN_RIGHTS}
+                            {* //END SUGARCRM flav=sales ONLY *}                            
                             <tr style='display:{$HIDE_CHANGE_USERTYPE}'>
                                 <td width="17%" scope="row"><slot>{$MOD.LBL_USER_TYPE}:</slot></td>
                                 <td colspan='3'>
@@ -148,6 +154,9 @@ EditView_tabs.on('contentReady', function(e){
                                     {else}
                                         <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' tabindex='1' >
                                             <option value="RegularUser">{$MOD.LBL_REGULAR_USER}</option>
+                                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                                            <option value="UserAdministrator" {if $IS_USER_ADMIN} SELECTED {/if}>{$MOD.LBL_USER_ADMINISTRATOR}</option>
+                                            {* //END SUGARCRM flav=sales ONLY *}
                                             <option value="Administrator" {if $IS_FOCUS_ADMIN} SELECTED {/if}>{$MOD.LBL_ADMIN_USER}</option>
                                         </select></td>
                                     {/if}
@@ -157,6 +166,9 @@ EditView_tabs.on('contentReady', function(e){
                                     </table>
                                 </td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                            {/if}
+                            {* //END SUGARCRM flav=sales ONLY *}
                             {* //BEGIN SUGARCRM flav!=com ONLY *}
                             {if !$IS_GROUP && !$IS_PORTALONLY}
                             <tr>
@@ -731,6 +743,10 @@ function user_status_display(field){
 			document.getElementById('is_admin').value='0';
 			document.getElementById('UserTypeDesc').innerHTML="{/literal}{$MOD.LBL_REGULAR_DESC}{literal}";
 		break;
+		case 'UserAdministrator':
+			document.getElementById('is_admin').value='0';
+			document.getElementById('UserTypeDesc').innerHTML="{/literal}{$MOD.LBL_USER_ADMIN_DESC}{literal}";
+		break;
 	}
 }
 
@@ -878,11 +894,11 @@ document.getElementById('email_link_type').onchange();
 {/if}
 {literal}
 <!--//END SUGARCRM flav!=sales ONLY -->
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
-{/literal}
 -->
 </script>
 {$JAVASCRIPT}
+<!--//BEGIN SUGARCRM flav!=sales ONLY -->
+{/literal}
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
