@@ -58,6 +58,10 @@ function getSystemInfo($send_usage_info=true){
 		//BEGIN SUGARCRM dep=od ONLY
 		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);		
 		//END SUGARCRM dep=od ONLY
+
+		//BEGIN SUGARCRM flav=sales ONLY
+		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND is_admin = 0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);
+		//END SUGARCRM flav=sales ONLY
 		
 		$info['users']=count($user_list);
 		if(empty($administration)){

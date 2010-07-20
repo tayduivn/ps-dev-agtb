@@ -42,4 +42,16 @@ class UsersViewList extends ViewList
  	    $this->lv = new ListViewSmarty();
  		$this->lv->delete = false;
  	}
+
+//BEGIN SUGARCRM flav=sales ONLY
+ 	public function listViewProcess(){
+		if(!is_admin($GLOBALS['current_user'])){
+			if(!empty($this->where)){
+				$this->where .= "AND";
+			}
+			$this->where .= " users.is_admin = '0'";
+		}
+		parent::listViewProcess();
+ 	}
+//END SUGARCRM flav=sales ONLY
 }
