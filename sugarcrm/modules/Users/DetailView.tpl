@@ -105,8 +105,17 @@ user_detailview_tabs.on('contentReady', function(e){
                 <tr>
                     <td valign="top" scope="row"><slot>{$MOD.LBL_STATUS}:</slot></td>
                     <td valign="top"><slot>{$STATUS}&nbsp;</slot></td>
+                    {* //BEGIN SUGARCRM flav=sales ONLY *}
+                    {if $SYS_ADMIN}
+                    {* //END SUGARCRM flav=sales ONLY *}
                     <td valign="top" scope="row"><slot>{$MOD.LBL_USER_TYPE}:</slot></td>
                     <td valign="top" ><slot>{$USER_TYPE_LABEL}&nbsp;</slot></td>
+                    {* //BEGIN SUGARCRM flav=sales ONLY *}
+                    {else}
+                    <td valign="top" scope="row"><slot>&nbsp;</slot></td>
+                    <td valign="top" ><slot>&nbsp;</slot></td>
+                    {/if}
+                    {* //END SUGARCRM flav=sales ONLY *}
                 </tr>
                 {* //BEGIN SUGARCRM flav!=com ONLY *}
                 {if !$IS_GROUP_OR_PORTAL}

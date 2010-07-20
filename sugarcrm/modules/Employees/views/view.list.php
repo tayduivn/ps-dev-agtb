@@ -53,6 +53,12 @@ class EmployeesViewList extends ViewList
 			if (!is_admin($GLOBALS['current_user'])&& !is_admin_for_module($GLOBALS['current_user'],'Users')){
 				$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
 			}
+			//BEGIN SUGARCRM flav=sales ONLY
+			$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
+			$this->lv->export = false;
+			$this->lv->showMassupdateFields = false;
+			$this->lv->delete = false;
+			//END SUGARCRM flav=sales ONLY
 			$this->lv->setup($this->seed, $tplFile, $this->where, $this->params);
 			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $this->lv->display();
