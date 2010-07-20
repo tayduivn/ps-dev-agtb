@@ -575,9 +575,11 @@ function hide_iframes_and_feeds_modules() {
 	   rmdir_recursive('modules/Feeds');
 	   }
 		
-	   //Drop the table
-	   _logThis('Removing the Feeds table', $path);
-	   $GLOBALS['db']->dropTableName('feeds');
+		   //Drop the table
+	   if($GLOBALS['db']->tableExists('feeds')) {
+		   _logThis('Removing the Feeds table', $path);
+		   $GLOBALS['db']->dropTableName('feeds');
+	   }
 	} else {
 	   if(file_exists('modules/Feeds')) {
 		   _logThis('Writing Feed.php module to custom/Extension/application/Ext/Include', $path);
@@ -593,8 +595,10 @@ function hide_iframes_and_feeds_modules() {
 		}
 		
 		//Drop the table
-		_logThis('Removing the iframes table', $path);
-		$GLOBALS['db']->dropTableName('iframes');
+		if($GLOBALS['db']->tableExists('iframes')) {
+		   _logThis('Removing the iframes table', $path);
+		   $GLOBALS['db']->dropTableName('iframes');
+		}
 	} else {
 	   if(file_exists('modules/iFrames')) {
 		  _logThis('Writing iFrame.php module to custom/Extension/application/Ext/Include', $path);
