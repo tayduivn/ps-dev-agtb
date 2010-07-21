@@ -71,7 +71,7 @@ SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
 
 EditView_tabs.on('contentReady', function(e){
 {/literal}
-//BEGIN SUGARCRM flav!=com ONLY
+//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
@@ -83,7 +83,7 @@ EditView_tabs.on('contentReady', function(e){
     EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
 {/literal}
 {/if}
-//END SUGARCRM flav!=com ONLY
+//END SUGARCRM flav!=com && flav!=sales ONLY
 });
 </script> 
 

@@ -39,7 +39,7 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 {literal}
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
-//BEGIN SUGARCRM flav!=com ONLY
+//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
     user_detailview_tabs.addTab( new YAHOO.widget.Tab({
@@ -51,7 +51,7 @@ user_detailview_tabs.on('contentReady', function(e){
     user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
 {/literal}
 {/if}
-//END SUGARCRM flav!=com ONLY
+//END SUGARCRM flav!=com && flav!=sales ONLY
 });
 </script> 
 
