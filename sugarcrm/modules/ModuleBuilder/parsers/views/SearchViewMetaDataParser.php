@@ -106,7 +106,7 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
 		if(isset($def['type']) && $def['type'] == "assigned_user_name")
 		{
 			$origDefs = $this->getOriginalViewDefs();
-			if (isset($origDefs[$def['group']]))
+			if (isset($def['group']) && isset($origDefs[$def['group']]))
 				return false;
 			if (!isset($def [ 'studio' ]) || (is_array($def [ 'studio' ]) && !isset($def [ 'studio' ]['searchview'])))
 				return true;
