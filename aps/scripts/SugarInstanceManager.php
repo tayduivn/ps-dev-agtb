@@ -191,25 +191,29 @@ class SugarInstanceManager{
 		$this->_db_connect('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
 		
 		$this->_log_this($mode, 'user_modify.log');
+		$this->_log_this(var_export($this->user_params, true), 'user_modify.log');
 		
 		// We get the user id in advance (if exists) for checks in the switch statement
 		$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
 		$success = true;
 		switch($mode){
 			case 'install':
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@'], '', true);
 				if($user_id === -1){
 					echo "User {$mode}: Bad query or couldn't connect to DB when checking for valid user.";
 					$this->_db_close_connection('main');
 					exit(1);
 				}
 				else if($user_id !== 0){
-					// We found a valid user. Fail on creation
-					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} already exists.";
-					$this->_db_close_connection('main');
-					exit(1);
+					// We found a user, update and undelete
+					$GLOBALS['undelete_user'] = true;
+					// We do a logical not on the user_modify call since it returns failure
+					$success = !$this->user_modify('configure');
+					unset($GLOBALS['undelete_user']);
 				}
-				
-				$success = $this->_install_sugar_user();
+				else{
+					$success = $this->_install_sugar_user();
+				}
 				break;
 			case 'remove':
 				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
@@ -236,7 +240,11 @@ class SugarInstanceManager{
 				$query = "UPDATE users SET status = 'Active' WHERE id = '{$user_id}'";
 				break;
 			case 'configure':
-				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				$include_deleted = false;
+				if(!empty($GLOBALS['undelete_user']))
+					$include_deleted = true;
+				
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@'], '', $include_deleted);
 				if($user_id === 0 || $user_id === -1){
 					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
 					exit(1);
@@ -244,17 +252,22 @@ class SugarInstanceManager{
 				$query = "UPDATE users SET ";
 				foreach($this->user_params as $index => $value){
 					$table_col_key = strtolower(substr($index, 2, -2));
-					$query .= "{$table_col_key} = '{$value}', ";
+					if($table_col_key != 'user_email'){
+						$query .= "{$table_col_key} = '{$value}', ";
+					}
 				}
 				$additional = array(
 					'date_modified' => gmdate('Y-m-d H:i:s'),
 					'modified_user_id' => '1',
 				);
+				if(!empty($GLOBALS['undelete_user']))
+					$additional['deleted'] = '0';
+				
 				foreach($additional as $index => $value){
 					$query .= "{$index} = '{$value}', ";
 				}
 				$query = substr($query, 0, -2);
-				$query .= "WHERE id = '{$user_id}'";
+				$query .= " WHERE id = '{$user_id}'";
 				break;
 			default:
 				echo "Invalid param passed to usermanager: {$mode}";
@@ -267,8 +280,6 @@ class SugarInstanceManager{
 			$success = mysql_query($query, $this->db_links['main']);
 			$this->_log_this($query, 'user_modify.log');
 		}
-		
-		$this->_log_this(var_export($this->user_params, true), 'user_modify.log');
 		
 		$failure = !$success;
 		$this->_log_this("success:{$success}", 'user_modify.log');
@@ -286,6 +297,9 @@ class SugarInstanceManager{
 		$team_id = $this->_create_unique_key();
 		$team_mem_id = $this->_create_unique_key();
 		$team_mem_id_global = $this->_create_unique_key();
+		$team_set_id = $this->_create_unique_key();
+		$team_set_team_id = $this->_create_unique_key();
+		$user_pref_id = $this->_create_unique_key();
 		$user_id = $this->_create_unique_key();
 		$query = "INSERT INTO users SET ";
 		foreach($this->user_params as $index => $value){
@@ -379,6 +393,100 @@ class SugarInstanceManager{
 			return false;
 		}
 		
+		$team_set_md5 = md5($team_id);
+		$team_set_query = "INSERT into team_sets SET id='{$team_set_id}', ".
+											"name='{$team_set_md5}', ".
+											"team_md5='{$team_set_md5}', ".
+											"team_count=1, ".
+											"date_modified='".gmdate('Y-m-d H:i:s')."', ".
+											"deleted='0', ".
+											"created_by='1'";
+		if(!mysql_query($team_set_query, $this->db_links['main'])){
+			echo "Could not create team set for user private team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_set_team_query = "INSERT into team_sets_teams ".
+									"(team_set_id,team_id,deleted,date_modified,id) VALUES ".
+									"('$team_set_id}','{$team_id}','0','".gmdate('Y-m-d H:i:s')."','{$team_set_team_id}')";
+		if(!mysql_query($team_set_team_query, $this->db_links['main'])){
+			echo "Could not create team set to team relationship";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets WHERE id = '{$team_set_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		// Get serialized encoded user preference string
+		$up = base64_encode(
+			serialize(
+				array(
+					'mailmerge_on' => 'off',
+					'max_tabs' => 7,
+					'swap_last_viewed' => '',
+					'swap_shortcuts' => '',
+					'subpanel_tabs' => 'on',
+					'user_theme' => 'Sugar',
+					'module_favicon' => '',
+					'hide_tabs' => array(),
+					'remove_tabs' => array(),
+					'no_opps' => 'off',
+					'reminder_time' => -1,
+					'timezone' => 'America/Los_Angeles',
+					'ut' => 0,
+					'currency' => -99,
+					'default_currency_significant_digits' => 2,
+					'num_grp_sep' => ',',
+					'dec_sep' => '.',
+					'datef' => 'm/d/Y',
+					'timef' => 'H:i',
+					'default_locale_name_format' => 's f l',
+					'export_delimiter' => ',',
+					'default_export_charset' => 'UTF-8',
+					'use_real_names' => 'on',
+					'mail_smtpauth_req' => '',
+					'mail_smtpssl' => 0,
+					'sugarpdf_pdf_font_name_main' => 'helvetica',
+					'sugarpdf_pdf_font_size_main' => 8,
+					'sugarpdf_pdf_font_name_data' => 'helvetica',
+					'sugarpdf_pdf_font_size_data' => 8,
+					'email_link_type' => 'sugar',
+					'email_show_counts' => 0,
+					'calendar_publish_key' => '',
+				)
+			)
+		);
+		
+		$user_pref_query = "INSERT into user_preferences set id='{$user_pref_id}', ".
+											"category='global', ".
+											"deleted='0', ".
+											"date_entered='".gmdate('Y-m-d H:i:s')."', ".
+											"date_modified='".gmdate('Y-m-d H:i:s')."', ".
+											"assigned_user_id='{$user_id}', ".
+											"contents='{$up}'";
+		
+		if(!mysql_query($user_pref_query, $this->db_links['main'])){
+			echo "Could not create user preferences.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets WHERE id = '{$team_set_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets_teams WHERE id = '{$team_set_team_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		
+		
 		// LAST QUERY TO CREATE USER!
 		$success = mysql_query($query, $this->db_links['main']);
 		if(!$success){
@@ -388,6 +496,9 @@ class SugarInstanceManager{
 			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
 			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
 			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets WHERE id = '{$team_set_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets_teams WHERE id = '{$team_set_team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM user_preferences WHERE id = '{$user_pref_id}'");
 		}
 		
 		return $success;
