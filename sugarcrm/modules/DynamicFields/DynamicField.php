@@ -241,7 +241,7 @@ class DynamicField {
 				if (!empty($field['source']) && $field['source'] == 'custom_fields')
 					// assumption: that the column name in _cstm is the same as the field name. Currently true.
 					// however, two types of dynamic fields do not have columns in the custom table - html fields (they're readonly) and flex relates (parent_name doesn't exist)
-					if ( $field['type'] != 'html' && $name != 'parent_name' && $field['type'] != 'text')
+					if ( $field['type'] != 'html' && $name != 'parent_name')
 						$select .= ",{$this->bean->table_name}_cstm.{$name}" ;
 			}
         }
