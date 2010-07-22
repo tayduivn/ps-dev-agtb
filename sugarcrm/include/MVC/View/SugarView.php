@@ -449,6 +449,15 @@ class SugarView
                         );
                 }
             }
+            //BEGIN SUGARCRM flav=sales ONLY
+            if(is_admin($GLOBALS['current_user'])){
+            	foreach($moduleTopMenu as $mod_key => $arr){
+            		if($mod_key != 'Administration'){
+            			unset($moduleTopMenu[$mod_key]);
+            		}
+            	}
+            }
+            //END SUGARCRM flav=sales ONLY
             $ss->assign("moduleTopMenu",$moduleTopMenu);
             $ss->assign("shortcutTopMenu",$shortcutTopMenu);
             $ss->assign("moduleExtraMenu",$moduleExtraMenu);
