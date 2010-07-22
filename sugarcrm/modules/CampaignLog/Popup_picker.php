@@ -71,7 +71,7 @@ class Popup_Picker
 			$where .=" activity_type='targeted'";
 			
 		}
-		
+
 		return $where;
 	}
 	
@@ -155,7 +155,7 @@ class Popup_Picker
 		if ($multi_select) $ListView->xTemplate->assign("TAG_TYPE","SPAN"); else  $ListView->xTemplate->assign("TAG_TYPE","A");//FOR MULTI-SELECT
 		//$ListView->setHeaderTitle($mod_strings['LBL_LIST_FORM_TITLE']); //FOR MULTI-SELECT
 		//$ListView->setHeaderText($button); //FOR MULTI-SELECT
-		$ListView->setQuery($where, '', 'campaign_name', 'CAMPAIGNLOG');
+		$ListView->setQuery($where, '', 'campaign_name1', 'CAMPAIGNLOG');
 		$ListView->setModStrings($mod_strings);
 
 		ob_start();
