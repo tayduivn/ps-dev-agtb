@@ -474,9 +474,9 @@ filter_defs['fullname'] = qualifiers_name;
 
 var qualifiers_name = new Array();
 //qualifiers_name = qualifiers_name.concat(qualifiers);
-qualifiers_name.unshift(is_def);
-qualifiers_name.unshift(one_of_def);
 qualifiers_name.unshift(not_one_of_def);
+qualifiers_name.unshift(one_of_def);
+qualifiers_name.unshift(is_def);
 filter_defs['user_name'] = qualifiers_name;
 
 var qualifiers =  new Array();

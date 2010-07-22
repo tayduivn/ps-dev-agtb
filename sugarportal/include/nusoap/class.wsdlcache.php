@@ -8,7 +8,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * 
 * @author   Scott Nichol <snichol@computer.org>
 * @author	Ingo Fischer <ingo@apollon.de>
-* @version  $Id: class.wsdlcache.php,v 1.7 2006/06/06 17:57:53 majed Exp $
+* @version  $Id: class.wsdlcache.php 13782 2006-06-06 17:58:55Z majed $
 * @access public 
 */
 class wsdlcache {
@@ -117,11 +117,11 @@ class wsdlcache {
 			$this->debug("Lock for $filename already exists");
 			return false;
 		}
-		$this->fplock[md5($filename)] = @fopen($filename.".lock", "w");
+		$this->fplock[md5($filename)] = fopen($filename.".lock", "w");
 		if ($mode == "r") {
-			return @flock($this->fplock[md5($filename)], LOCK_SH);
+			return flock($this->fplock[md5($filename)], LOCK_SH);
 		} else {
-			return @flock($this->fplock[md5($filename)], LOCK_EX);
+			return flock($this->fplock[md5($filename)], LOCK_EX);
 		}
 	}
 

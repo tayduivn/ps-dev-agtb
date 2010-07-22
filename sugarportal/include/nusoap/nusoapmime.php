@@ -1,7 +1,7 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
-$Id: nusoapmime.php,v 1.11 2006/06/06 17:57:53 majed Exp $
+$Id: nusoapmime.php 39619 2008-09-09 20:41:34Z jmertic $
 
 NuSOAP - Web Services Toolkit for PHP
 
@@ -43,7 +43,7 @@ require_once('Mail/mimePart.php');
 *
 * @author   Scott Nichol <snichol@sourceforge.net>
 * @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
-* @version  $Id: nusoapmime.php,v 1.11 2006/06/06 17:57:53 majed Exp $
+* @version  $Id: nusoapmime.php 39619 2008-09-09 20:41:34Z jmertic $
 * @access   public
 */
 class nusoapclientmime extends nusoapclient {
@@ -128,7 +128,7 @@ class nusoapclientmime extends nusoapclient {
 	function getHTTPBody($soapmsg) {
 		if (count($this->requestAttachments) > 0) {
 			$params['content_type'] = 'multipart/related; type=text/xml';
-			$mimeMessage =& new Mail_mimePart('', $params);
+			$mimeMessage = new Mail_mimePart('', $params);
 			unset($params);
 
 			$params['content_type'] = 'text/xml';
@@ -263,7 +263,7 @@ class nusoapclientmime extends nusoapclient {
 *
 * @author   Scott Nichol <snichol@sourceforge.net>
 * @author	Thanks to Guillaume and Henning Reich for posting great attachment code to the mail list
-* @version  $Id: nusoapmime.php,v 1.11 2006/06/06 17:57:53 majed Exp $
+* @version  $Id: nusoapmime.php 39619 2008-09-09 20:41:34Z jmertic $
 * @access   public
 */
 class nusoapservermime extends soap_server {
@@ -348,7 +348,7 @@ class nusoapservermime extends soap_server {
 	function getHTTPBody($soapmsg) {
 		if (count($this->responseAttachments) > 0) {
 			$params['content_type'] = 'multipart/related; type=text/xml';
-			$mimeMessage =& new Mail_mimePart('', $params);
+			$mimeMessage = new Mail_mimePart('', $params);
 			unset($params);
 
 			$params['content_type'] = 'text/xml';

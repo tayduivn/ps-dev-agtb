@@ -966,7 +966,7 @@ function validate_siteConfig(){
                 if(empty($result)) {
                     $errors[] = $mod_strings['ERR_PARENT_SITEURL'];
                 }
-                elseif($result['error']['number'] != 0) {
+                elseif(isset($result['error']) && $result['error']['number'] != 0) {
                     $errors[] = $mod_strings['ERR_SOAP_USER_PASS'];
                 }
                 
@@ -1513,9 +1513,9 @@ function getInstalledLangPacks($showButtons=true) {
 	            <td nowrap><b>{$mod_strings['LBL_ML_DESCRIPTION']}</b></td>
             </tr>\n";
     $files = array();
-    $dirLocation = getcwd()."/cache/upload/upgrades";
-    if( is_dir($dirLocation) )
-        $files = findAllFiles($dirLocation, $files);
+    if(file_exists(getcwd()."/cache/upload/upgrades")) {
+    	$files = findAllFiles(getcwd()."/cache/upload/upgrades", $files);
+    }
     
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])){
     	if(count($_SESSION['INSTALLED_LANG_PACKS'] > 0)) {

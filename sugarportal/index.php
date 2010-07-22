@@ -250,9 +250,9 @@ if(!empty($action) && !empty($module)) {
 	$GLOBALS['log']->info('In module: '.$module.' -- About to take action '.$action);
 	$GLOBALS['log']->debug('in module '.$module.' -- in '.$action);
 	$GLOBALS['log']->debug('----------------------------------------------------------------------------------------------------------------------------------------------');
-	if(ereg('^Save', $action) || ereg('^Delete', $action) || ereg('^Popup', $action) || ereg('^Authenticate', $action) || ereg('^Logout', $action) || ereg('^Export', $action) || ereg('^SupportPortal', $action)) {
+	if(preg_match('/^Save/', $action) || preg_match('/^Delete/', $action) || preg_match('/^Popup/', $action) || preg_match('/^Authenticate/', $action) || preg_match('/^Logout/', $action) || preg_match('/^Export/', $action) || preg_match('/^SupportPortal/', $action)) {
 		$skipHeaders = true;
-		if(ereg('^Popup', $action) || ereg('^ChangePassword', $action) || ereg('^Export', $action) || ereg('^SupportPortal', $action))
+		if(preg_match('/^Popup/', $action) || preg_match('/^ChangePassword/', $action) || preg_match('/^Export/', $action) || preg_match('/^SupportPortal/', $action))
 			$skipFooters = true;
 	}
 	if((isset($_REQUEST['sugar_body_only']) && $_REQUEST['sugar_body_only'])) {

@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * unset($nusoapclient);
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id: class.soapclient.php,v 1.10 2006/06/06 17:57:53 majed Exp $
+* @version  $Id: class.soapclient.php 51443 2009-10-12 20:34:36Z jmertic $
 * @access   public
 */
 class nusoapclient extends nusoap_base  {
@@ -112,7 +112,7 @@ class nusoapclient extends nusoap_base  {
 				
 				// instantiate wsdl object and parse wsdl file
 				$this->debug('instantiating wsdl class with doc: '.$endpoint);
-				$this->wsdl =& new wsdl($this->wsdlFile,$this->proxyhost,$this->proxyport,$this->proxyusername,$this->proxypassword,$this->timeout,$this->response_timeout);
+				$this->wsdl = new wsdl($this->wsdlFile,$this->proxyhost,$this->proxyport,$this->proxyusername,$this->proxypassword,$this->timeout,$this->response_timeout);
 			}
 			$this->appendDebug($this->wsdl->getDebug());
 			$this->wsdl->clearDebug();
@@ -360,7 +360,7 @@ class nusoapclient extends nusoap_base  {
 		// detect transport
 		switch(true){
 			// http(s)
-			case ereg('^http',$this->endpoint):
+			case preg_match('/^http/',$this->endpoint):
 				$this->debug('transporting via HTTP');
 				if($this->persistentConnection == true && is_object($this->persistentConnection)){
 					$http =& $this->persistentConnection;
@@ -382,10 +382,10 @@ class nusoapclient extends nusoap_base  {
 					$http->setEncoding($this->http_encoding);
 				}
 				$this->debug('sending message, length='.strlen($msg));
-				if(ereg('^http:',$this->endpoint)){
+				if(preg_match('/^http:/',$this->endpoint)){
 				//if(strpos($this->endpoint,'http:')){
 					$this->responseData = $http->send($msg,$timeout,$response_timeout,$this->cookies);
-				} elseif(ereg('^https',$this->endpoint)){
+				} elseif(preg_match('/^https/',$this->endpoint)){
 				//} elseif(strpos($this->endpoint,'https:')){
 					//if(phpversion() == '4.3.0-dev'){
 						//$response = $http->send($msg,$timeout,$response_timeout);
@@ -443,7 +443,7 @@ class nusoapclient extends nusoap_base  {
 		if (strpos($headers['content-type'], '=')) {
 			$enc = str_replace('"', '', substr(strstr($headers["content-type"], '='), 1));
 			$this->debug('Got response encoding: ' . $enc);
-			if(eregi('^(ISO-8859-1|US-ASCII|UTF-8)$',$enc)){
+			if(preg_match('/^(ISO-8859-1|US-ASCII|UTF-8)$/',$enc)){
 				$this->xml_encoding = strtoupper($enc);
 			} else {
 				$this->xml_encoding = 'US-ASCII';
