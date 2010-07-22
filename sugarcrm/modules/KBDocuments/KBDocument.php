@@ -256,7 +256,7 @@ class KBDocument extends SugarBean {
     function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean){
         global $current_user;
         $ret_array=array();
-        $ret_array['select'] = "SELECT DISTINCT jt0.id assigned_user_id, jt0.user_name assigned_user_name, jt1.id kbdoc_approver_id, jt1.user_name kbdoc_approver_name, kvr.views_number views_number";
+        $ret_array['select'] = "SELECT jt0.id assigned_user_id, jt0.user_name assigned_user_name, jt1.id kbdoc_approver_id, jt1.user_name kbdoc_approver_name, kvr.views_number views_number";
         $ret_array['select'] .= ", kbdocuments.id, kbdocuments.kbdocument_name, kbdocuments.active_date, kbdocuments.exp_date, kbdocuments.status_id, kbdocuments.date_entered date_entered, kbdocuments.date_modified, kbdocuments.deleted, kbdocuments.is_external_article, kbdocuments.modified_user_id";
         //BEGIN SUGARCRM flav=ent ONLY
          $ret_array['select'] .= ", kbdocuments.created_by";
