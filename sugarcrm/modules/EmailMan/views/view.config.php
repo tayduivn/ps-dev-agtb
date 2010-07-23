@@ -94,7 +94,9 @@ class ViewConfig extends SugarView
         $this->ss->assign("notify_send_from_assigning_user", (isset($focus->settings['notify_send_from_assigning_user']) && !empty($focus->settings['notify_send_from_assigning_user'])) ? "checked='checked'" : "");
         $this->ss->assign("notify_on", ($focus->settings['notify_on']) ? "checked='checked'" : "");
         $this->ss->assign("notify_fromname", $focus->settings['notify_fromname']);
+        //BEGIN SUGARCRM flav!=sales ONLY
         $this->ss->assign("notify_allow_default_outbound_on", (!empty($focus->settings['notify_allow_default_outbound']) && $focus->settings['notify_allow_default_outbound']) ? "checked='checked'" : "");
+        //END SUGARCRM flav!=sales ONLY
         
         $this->ss->assign("mail_smtptype", $focus->settings['mail_smtptype']);
         $this->ss->assign("mail_smtpserver", $focus->settings['mail_smtpserver']);

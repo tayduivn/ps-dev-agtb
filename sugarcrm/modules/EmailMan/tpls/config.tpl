@@ -176,6 +176,7 @@ function change_state(radiobutton) {
                             <td width="20%">&nbsp;</td>
                             <td width="30%">&nbsp;</td>
                        </tr>
+                       {* //BEGIN SUGARCRM flav!=sales ONLY *}
 				 		<tr id="mail_allow_user">
 				 		     <td width="20%" scope="row">
 									{$MOD.LBL_ALLOW_DEFAULT_SELECTION}&nbsp;
@@ -188,6 +189,7 @@ function change_state(radiobutton) {
 							<td width="20%">&nbsp;</td>
 							<td width="30%">&nbsp;</td>
 				 		</tr>
+                       {* //END SUGARCRM flav!=sales ONLY *}
 				 	</table>
 				 </div>
 			</td>
