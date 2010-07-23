@@ -63,7 +63,6 @@ class SugarWirelessListView extends SugarWirelessView{
         parent::init($bean, $view_object_map);
     }
 
-    //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Retrieve the listview defs for this view.
      *
@@ -82,7 +81,6 @@ class SugarWirelessListView extends SugarWirelessView{
 			
         return $listViewDefs [ $GLOBALS['module'] ];
     }
-    //END SUGARCRM flav=ent ONLY
     
 	/**
 	 * Protected function that returns the filter_fields based on the module's
