@@ -5272,7 +5272,7 @@ visibility:visible
 .dcview table, .dcview div, .dcview a{
 font-size:75%;
 }
-.star {float:left}
+.star {float:right}
 .moduleTitle .star 
 {
     margin-top:-3px;

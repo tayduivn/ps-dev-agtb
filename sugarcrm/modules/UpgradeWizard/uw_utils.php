@@ -3271,7 +3271,8 @@ function resetUwSession() {
 	}
 	if(isset($_SESSION['license_shown']))
 		unset($_SESSION['license_shown']);
-
+    if(isset($_SESSION['sugarMergeDryRunResults']))
+		unset($_SESSION['sugarMergeDryRunResults']);
 }
 
 /**

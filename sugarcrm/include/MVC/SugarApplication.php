@@ -199,6 +199,22 @@ class SugarApplication
 	}
 		
 	function preProcess(){
+		//BEGIN SUGARCRM flav=sales ONLY
+		// Create a module whitelist of all modules in Administration
+		require('modules/Administration/metadata/adminpaneldefs.php');
+		foreach($admin_group_header as $index => $section_arr){
+			foreach($section_arr[3] as $group_index => $group_arr){
+				foreach($group_arr as $link_index => $link_arr){
+					 $module = getVariableFromQueryString("module", $link_arr[3]);
+					 $ss_module_whitelist[$module] = $module;
+				}
+			}
+		}
+		$ss_module_whitelist['Notifications'] = 'Notifications';
+		if(!in_array($this->controller->module, $ss_module_whitelist) && is_admin($GLOBALS['current_user'])){
+			self::redirect("index.php?module=Administration&action=index");
+		}
+		//END SUGARCRM flav=sales ONLY
 	    $config = new Administration;
 	    $config->retrieveSettings();
 		if(!empty($_SESSION['authenticated_user_id'])){ 

@@ -294,12 +294,12 @@ class ListViewDisplay {
 		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
 			$menuItems .= $this->buildMassUpdateLink();
 		//END SUGARCRM flav=sales ONLY
-        // merge
+		//BEGIN SUGARCRM flav!=sales ONLY
+		// merge
 		if ( $this->mailMerge )
 		    $menuItems .= $this->buildMergeLink();
 		if ( $this->mergeduplicates ) 
 		    $menuItems .= $this->buildMergeDuplicatesLink();
-		//BEGIN SUGARCRM flav!=sales ONLY
 		// add to target list
 		if ( isset($_REQUEST['module']) && in_array($_REQUEST['module'],array('Contacts','Prospects','Leads','Accounts')))
 		    $menuItems .= $this->buildTargetList();
@@ -433,7 +433,7 @@ EOHTML;
 
         return $selectedObjectSpan;
 	}
-
+	//BEGIN SUGARCRM flav!=sales ONLY
     /**
 	 * Builds the mail merge link
 	 * The link can be disabled by setting module level duplicate_merge property to false
@@ -485,7 +485,7 @@ EOHTML;
         }
         return $str;
 	}
-	//BEGIN SUGARCRM flav!=sales ONLY
+	
 	/**
 	 * Builds the add to target list link
 	 *
