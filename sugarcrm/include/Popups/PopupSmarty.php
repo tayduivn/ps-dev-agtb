@@ -118,8 +118,10 @@ class PopupSmarty extends ListViewSmarty{
 		if($this->overlib) $this->th->ss->assign('overlib', true);
 		if($this->export) $this->th->ss->assign('exportLink', $this->buildExportLink());
 		$this->th->ss->assign('quickViewLinks', $this->quickViewLinks);
+		//BEGIN SUGARCRM flav!=sales ONLY
 		if($this->mailMerge) $this->th->ss->assign('mergeLink', $this->buildMergeLink()); // still check for mailmerge access
-        if($this->mergeduplicates) $this->th->ss->assign('mergedupLink', $this->buildMergeDuplicatesLink());
+		//END SUGARCRM flav!=sales ONLY
+		if($this->mergeduplicates) $this->th->ss->assign('mergedupLink', $this->buildMergeDuplicatesLink());
         
 
 		if (!empty($_REQUEST['mode']) && strtoupper($_REQUEST['mode']) == 'MULTISELECT') {

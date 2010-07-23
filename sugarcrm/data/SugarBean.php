@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
+/********************************************************************************* 
  * $Id: SugarBean.php 57513 2010-07-16 21:07:48Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
@@ -3040,7 +3040,8 @@ function save_relationship_changes($is_update, $exclude=array())
     	$custom_join = false;
     	if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
     	{
-    		$custom_join = $this->custom_fields->getJOIN( true );
+    		
+    		$custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
     		if($custom_join)
     		{
     			$ret_array['select'] .= ' ' .$custom_join['select'];
@@ -3096,7 +3097,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	{
     		$fields = 	$this->field_defs;
     	}
-
+		
         $used_join_key = array();
 
     	foreach($fields as $field=>$value)

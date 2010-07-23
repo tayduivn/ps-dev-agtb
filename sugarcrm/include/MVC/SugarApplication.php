@@ -210,6 +210,7 @@ class SugarApplication
 				}
 			}
 		}
+		$ss_module_whitelist['Notifications'] = 'Notifications';
 		if(!in_array($this->controller->module, $ss_module_whitelist) && is_admin($GLOBALS['current_user'])){
 			self::redirect("index.php?module=Administration&action=index");
 		}

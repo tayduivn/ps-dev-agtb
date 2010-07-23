@@ -704,6 +704,11 @@ FP;
         $admin->saveSetting('system','name',$_SESSION['setup_system_name']);  
     }
     
+    //BEGIN SUGARCRM flav=sales ONLY
+    $admin=new Administration();
+    $admin->saveSetting('notify','allow_default_outbound', 2);
+    //END SUGARCRM flav=sales ONLY
+    
     // Bug 28601 - Set the default list of tabs to show
     $enabled_tabs = array();
     $enabled_tabs[] = 'Home';

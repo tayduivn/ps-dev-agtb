@@ -76,7 +76,7 @@ class ViewFunctiondetail extends SugarView
 		echo json_encode(array(
 			"func" => empty($_REQUEST['function']) ? "" : $_REQUEST['function'],
 			"desc" => $desc,
-		), JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP|JSON_FORCE_OBJECT );
+		));
  	}
 }
 ?>
