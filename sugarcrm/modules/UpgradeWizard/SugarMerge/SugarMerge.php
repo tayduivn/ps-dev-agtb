@@ -91,7 +91,7 @@ class SugarMerge {
 				if(substr($e , 0, 1) != '.') {
 					if(is_dir("{$searchDirectory}/{$e}/metadata")){
 					    if( is_array($merge) ){
-					        if ( array_key_exists($e,$filterModules) ) 
+					        if ( in_array($e,$merge) ) 
 					        	$this->merged[$e] = $this->mergeModule($e, TRUE, $save,$logHistory );
 					        else
 					        {

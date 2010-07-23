@@ -86,6 +86,7 @@ if( isset($_POST['layoutSelectedModules']) )
     logThis('Layout Commits completed successfully');
     $smarty->assign("CONFIRM_LAYOUT_HEADER", $mod_strings['LBL_UW_CONFIRM_LAYOUT_RESULTS']);
     $smarty->assign("CONFIRM_LAYOUT_DESC", $mod_strings['LBL_UW_CONFIRM_LAYOUT_RESULTS_DESC']);
+    $showCheckBoxes = FALSE;
 }
 else 
 {
@@ -94,11 +95,13 @@ else
     $smarty->assign("CONFIRM_LAYOUT_HEADER", $mod_strings['LBL_UW_CONFIRM_LAYOUTS']);
     $smarty->assign("CONFIRM_LAYOUT_DESC", $mod_strings['LBL_LAYOUT_MERGE_DESC']);
     $layoutMergeData = $_SESSION['sugarMergeDryRunResults'];
+    $showCheckBoxes = TRUE;
 }
 
 $smarty->assign("APP", $app_strings);
 $smarty->assign("APP_LIST", $app_list_strings);
 $smarty->assign("MOD", $mod_strings);
+$smarty->assign("showCheckboxes", $showCheckBoxes);
 $layoutMergeData = formatLayoutMergeDataForDisplay($layoutMergeData);
 $smarty->assign("METADATA_DATA", $layoutMergeData);
 $uwMain = $smarty->fetch('modules/UpgradeWizard/tpls/layoutsMerge.tpl');
@@ -130,7 +133,7 @@ function formatLayoutMergeDataForDisplay($layoutMergeData)
     foreach ($layoutMergeData as $k => $v)
     {
         $layouts = array();
-        foreach ($v as $layoutPath)
+        foreach ($v as $layoutPath => $isMerge)
         {
             if( preg_match('/listviewdefs.php/i', $layoutPath) )
                 $label = $module_builder_language['LBL_LISTVIEW'];
