@@ -240,7 +240,12 @@ function get_sugar_config_defaults() {
 	$sugar_config_defaults = array (
 	'admin_export_only' => false,
 	'export_delimiter' => ',',
+	//BEGIN SUGARCRM flav!=sales ONLY
 	'calculate_response_time' => true,
+	//END SUGARCRM flav!=sales ONLY
+	//BEGIN SUGARCRM flav=sales ONLY
+	'calculate_response_time' => false,
+	//END SUGARCRM flav=sales ONLY
 	'create_default_user' => false,
 	'date_formats' => array (
 	'Y-m-d' => '2010-12-23', 'm-d-Y' => '12-23-2010', 'd-m-Y' => '23-12-2010',
