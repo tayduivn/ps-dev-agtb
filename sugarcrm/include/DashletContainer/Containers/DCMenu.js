@@ -32,9 +32,15 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             			bodyContent: "",
            			    zIndex:10,
             			shim:false,
-            			visibility:false,
-            			plugins: [ Y.Plugin.Drag ]
+            			visibility:false
         		});
+        		overlays[depth].after('render', function(e) {
+                    //Get the bounding box node and plug
+                    this.get('boundingBox').plug(Y.Plugin.Drag, {
+                        //Set the handle to the header element.
+                        handles: ['.hd']
+                    });
+                });
         		overlays[depth].show = function(){
         			this.visible = true;
                     //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
