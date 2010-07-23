@@ -706,7 +706,7 @@ FP;
     
     //BEGIN SUGARCRM flav=sales ONLY
     $admin=new Administration();
-    $admin->saveSetting('notify','allow_default_outbound', 1);
+    $admin->saveSetting('notify','allow_default_outbound', 2);
     //END SUGARCRM flav=sales ONLY
     
     // Bug 28601 - Set the default list of tabs to show
