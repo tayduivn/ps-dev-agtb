@@ -1007,8 +1007,8 @@ EOHTML;
         $theTitle .= "</span></div>\n";
     	return $theTitle;
     }
-    
-    
+
+   //BEGIN SUGARCRM flav=ent ONLY
     /**
      * Return the metadata file that will be used by this view.
      *
@@ -1046,6 +1046,7 @@ EOHTML;
  		
  		return $metadataFile;
     }
+    //END SUGARCRM flav=ent ONLY
     
     /**
      * Returns an array composing of the breadcrumbs to use for the module title
