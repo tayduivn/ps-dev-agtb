@@ -1,9 +1,9 @@
 <!-- $Rev: 446921 $ -->
-<application xmlns="http://apstandard.com/ns/1" version="1.2" packaged="2010-07-21T15:42:48">
+<application xmlns="http://apstandard.com/ns/1" version="1.2" packaged="2010-07-23T14:34:12">
 	<id>http://www.sugarcrm.com/crm/sugarshop/professional</id>
 	<name>SugarCRM Professional</name>
 	<version>6.0.0</version>
-	<release>78</release>
+	<release>80</release>
 	<homepage>http://www.sugarcrm.com/crm/</homepage>
 	<vendor>
 		<name>SugarCRM Inc.</name>
@@ -28,6 +28,12 @@
 		<screenshot path="images/screen_calendar.png"><description>Calendar</description></screenshot>
 		<screenshot path="images/screen_documents.png"><description>Documents</description></screenshot>
 		<changelog>
+			<version release="80" version="6.0.0">
+				<entry>SugarCRM entry point for action 'Wizard' for service user auto login</entry>
+			</version>
+			<version release="79" version="6.0.0">
+				<entry>Usermanager entry point for service user used wrong variable name</entry>
+			</version>
 			<version release="78" version="6.0.0">
 				<entry>Usermanager wasn't adding team sets and user preferences on install. Fixed.</entry>
 			</version>
@@ -204,7 +210,7 @@
 						<variable name="login_module"/>
 						<variable name="login_action"/>
 						<variable name="login_record"/>
-						<variable name="user_name" class="login" value-of-setting="user_login"/>
+						<variable name="user_name" class="login" value-of-setting="user_name"/>
 						<variable name="user_password" class="password" value-of-setting="user_password"/>
 						<variable name="login_theme">Sugar</variable>
 						<variable name="login_language">en_us</variable>

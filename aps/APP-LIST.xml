@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <files xmlns="http://apstandard.com/ns/1" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
-    <file sha256="670db88ce48e4107c5f69ff0a0c2e2683590f36dec0587932a043911086bb753" size="11686" name="APP-META.xml"/>
+    <file sha256="3c8fbe73641e5589d3d18052e23f66adc07680c4f1fd3737c430f0fe7e414122" size="11970" name="APP-META.xml"/>
     <file sha256="c76e7a6ced21b9f8e26473c39917fec28cf9f61adf0a1afc0c96e6692b754d3a" size="2294" name="htdocs/HandleAjaxCall.php"/>
     <file sha256="da7c64bf82ac708a91a8da793cc8bcfffd5e0c50f71b908cd602530bd8878b5a" size="30617" name="htdocs/LICENSE.txt"/>
     <file sha256="f1db65e0651b50fae68c4d84c67b974830aa754a5bf6c349d3a431e8792f8efb" size="92345" name="htdocs/ModuleInstall/ModuleInstaller.php"/>
@@ -6941,7 +6941,7 @@
     <file sha256="a9425627e3a78f3778ab60c47a3d02257f4f50b456dccbf99a740194fb9bc89b" size="194964" name="images/screen_home.png"/>
     <file sha256="0898de0ae07a945bfb53fa001ae391df34df20dad5843f3be2f8cda677669523" size="42164" name="scripts/SugarInstanceManager.php"/>
     <file sha256="3131621d4539dd4d32c3e171d7b91afb19c10ad22d1533585ec7c30fe1774495" size="814" name="scripts/configure"/>
-    <file sha256="530909b69c5656aab72d90b54da3aeee7623489916b32b7f28f82b1c4d1ed73c" size="731" name="scripts/metadata/config_override_template.php"/>
+    <file sha256="76d77e27d5be555e54b701f4d2f849ea961972b7c0233e6b6ad3b75790556d46" size="794" name="scripts/metadata/config_override_template.php"/>
     <file sha256="8e793470fd0aa84d29c39620fb539695d83d75760b00fb9da832905043b4e753" size="1057" name="scripts/metadata/config_si_template.php"/>
     <file sha256="dcc310f9930fbb6480719cd67290a518fe91948dea62139268b960b31d2b9c42" size="8125" name="scripts/metadata/config_template.php"/>
     <file sha256="f1f7f545295162bbe7198fcb14dff08a09064181a45a93b80627ae51f90282b5" size="381915" name="scripts/metadata/sugar.sql"/>
