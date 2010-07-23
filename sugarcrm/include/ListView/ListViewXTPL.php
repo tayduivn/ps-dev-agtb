@@ -165,8 +165,13 @@ class ListViewXTPL extends ListViewDisplay{
 		
 		if($this->export) $export_link = $this->buildExportLink();
 		else $export_link = '';
+		//BEGIN SUGARCRM flav!=sales ONLY
 		if($this->mailMerge)$merge_link = $this->buildMergeLink();
 		else $merge_link = '';
+		//END SUGARCRM flav!=sales ONLY
+		//BEGIN SUGARCRM flav=sales ONLY
+		$merge_link = '';
+		//END SUGARCRM flav=sales ONLY
 		if($this->multiSelect) $selected_objects_span = $this->buildSelectedObjectsSpan();
 		else $selected_objects_span = '';
 
