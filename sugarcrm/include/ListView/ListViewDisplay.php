@@ -298,8 +298,10 @@ class ListViewDisplay {
 		// merge
 		if ( $this->mailMerge )
 		    $menuItems .= $this->buildMergeLink();
+		//END SUGARCRM flav!=sales ONLY
 		if ( $this->mergeduplicates ) 
 		    $menuItems .= $this->buildMergeDuplicatesLink();
+		//BEGIN SUGARCRM flav!=sales ONLY
 		// add to target list
 		if ( isset($_REQUEST['module']) && in_array($_REQUEST['module'],array('Contacts','Prospects','Leads','Accounts')))
 		    $menuItems .= $this->buildTargetList();
@@ -433,7 +435,6 @@ EOHTML;
 
         return $selectedObjectSpan;
 	}
-	//BEGIN SUGARCRM flav!=sales ONLY
     /**
 	 * Builds the mail merge link
 	 * The link can be disabled by setting module level duplicate_merge property to false
@@ -462,7 +463,8 @@ EOHTML;
         
         return '';
      }
-	/**
+	//BEGIN SUGARCRM flav!=sales ONLY
+    /**
 	 * Builds the mail merge link
 	 *
 	 * @return string HTML
