@@ -65,9 +65,7 @@ exec($step1, $output=array());
 $has_error = false;
 $run_dce_upgrade = false;
 
-if(empty($output)) {
-   $has_error = true;
-} else {
+if(!empty($output)) {
 	foreach($output as $line) {
 	    if(preg_match('/ERROR\:/', $line) || preg_match('/FAILURE/', $line) || preg_match('/Fatal\serror\:/', $line)) {
 	       $has_error = true;
@@ -95,9 +93,7 @@ if(!$has_error) {
 
 if($run_dce_upgrade) {
 	$has_error = false;
-	if(empty($output)) {
-	   $has_error = true;
-	} else {
+	if(!empty($output)) {
 		foreach($output as $line) {
 		   if(preg_match('/ERROR\:/', $line) || preg_match('/FAILURE/', $line) || preg_match('/Fatal\serror\:/', $line)) {
 		      $has_error = true;
