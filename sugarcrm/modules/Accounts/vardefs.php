@@ -315,6 +315,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'table' => 'users',
   ),
 
+//BEGIN SUGARCRM flav!=sales ONLY
   'products' => array(
       'name' => 'contracts',
       'type' => 'link',
@@ -322,6 +323,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
       'source' => 'non-db',
       'vname' => 'LBL_PRODUCTS',
   ),
+//END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
   'contracts' => array (
     'name' => 'contracts',

@@ -74,7 +74,9 @@ class EmailTemplate extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 		'account_description',
 		'contact_id',
+		//BEGIN SUGARCRM flav!=sales ONLY
 		'lead_id',
+		//END SUGARCRM flav!=sales ONLY
 		'opportunity_amount',
 		'opportunity_id',
 		'opportunity_name',
@@ -407,15 +409,20 @@ class EmailTemplate extends SugarBean {
 		// cn: bug 9277 - create a replace array with empty strings to blank-out invalid vars
 		if(!class_exists('Account'))
 		if(!class_exists('Contact'))
+		//BEGIN SUGARCRM flav!=sales ONLY
 		if(!class_exists('Leads'))
 		if(!class_exists('Prospects'))
-
+		//END SUGARCRM flav!=sales ONLY
+		
 		require_once('modules/Accounts/Account.php');
 		$acct = new Account();
 		$contact = new Contact();
+		//BEGIN SUGARCRM flav!=sales ONLY
 		$lead = new Lead();
 		$prospect = new Prospect();
-
+		//END SUGARCRM flav!=sales ONLY
+		
+		//BEGIN SUGARCRM flav!=sales ONLY
 		foreach($lead->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;
@@ -430,6 +437,7 @@ class EmailTemplate extends SugarBean {
 			$repl_arr["contact_".$field_def['name']] = '';
 			$repl_arr["contact_account_".$field_def['name']] = '';
 		}
+		//END SUGARCRM flav!=sales ONLY
 		foreach($contact->field_defs as $field_def) {
 			if(($field_def['type'] == 'relate' && empty($field_def['custom_type'])) || $field_def['type'] == 'assigned_user_name') {
          		continue;

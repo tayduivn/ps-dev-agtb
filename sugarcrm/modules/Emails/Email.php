@@ -425,8 +425,15 @@ class Email extends SugarBean {
 		/**********************************************************************
 		 * PHPMAILER PREP
 		 */
+		$mailer_account_id = $_REQUEST['fromAccount'];
+		//BEGIN SUGARCRM flav=sales ONLY
+		require_once('include/OutboundEmail/OutboundEmail.php');
+		$outbound_email = new OutboundEmail();
+		$oe_settings = $outbound_email->getSystemMailerSettings();
+		$mailer_account_id = $oe_settings->id;
+		//END SUGARCRM flav=sales ONLY
 		$mail = new SugarPHPMailer();
-		$mail = $this->setMailer($mail, '', $_REQUEST['fromAccount']);
+		$mail = $this->setMailer($mail, '', $mailer_account_id);
 		if (empty($mail->Host) && !$this->isDraftEmail($request)) 
 		{
             $this->status = 'send_error';
@@ -585,7 +592,12 @@ class Email extends SugarBean {
 			$mail->FromName = (!empty($fromName)) ? $fromName : $defaults['name'];
 			$replyToName = (!empty($replyToName)) ? $replyToName : $mail->FromName;
 		}
-
+		//BEGIN SUGARCRM flav=sales ONLY
+		// Force the current user's email address
+		$current_user_email = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
+		$mail->From = !empty($current_user_email) ? $current_user_email : $mail->From;
+		//END SUGARCRM flav=sales ONLY
+		
 		$mail->Sender = $mail->From; /* set Return-Path field in header to reduce spam score in emails sent via Sugar's Email module */
 		
 		if (!empty($replyToAddress)) {
@@ -800,8 +812,7 @@ class Email extends SugarBean {
             $mail->Body = $this->decodeDuringSend($mail->Body);
             $mail->AltBody = $this->decodeDuringSend($mail->AltBody);
             if (!$mail->Send()) {
-
-                $this->status = 'send_error';
+                $this->status = 'send_error'; 
                 ob_clean();
                 echo($app_strings['LBL_EMAIL_ERROR_PREPEND']. $mail->ErrorInfo);
                 return false;
