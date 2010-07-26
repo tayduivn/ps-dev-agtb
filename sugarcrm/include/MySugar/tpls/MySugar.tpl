@@ -187,11 +187,11 @@ document.body.setAttribute("class", "yui-skin-sam");
                         {$dashlet.displayFooter}
                   </div> 
 				</li>
-				{* //BEGIN SUGARCRM flav=pro ONLY *}
+				{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
 				<script>
 				SUGAR.mySugar.attachToggleToolsetEvent('{$id}');
 				</script>
-				{* //END SUGARCRM flav=pro ONLY *}
+				{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 				{/foreach}
 				<li id='page_{$activePage}_hidden{$hiddenCounter}' style='height: 5px' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
 			</ul>
