@@ -231,7 +231,7 @@ elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],
 			$buttons .= "<input title='".$app_strings['LBL_DUPLICATE_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_DUPLICATE_BUTTON_KEY']."' class='button' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.isDuplicate.value=true; this.form.action.value='EditView'\" type='submit' name='Duplicate' value='".$app_strings['LBL_DUPLICATE_BUTTON_LABEL']."'>  ";
 
                 if($focus->id != $current_user->id)
-                    $buttons .="<input type='button' class='button' onclick='if(confirm(\"{$mod_strings['LBL_DELETE_USER_CONFIRM']}\"))window.location=\"".$_SERVER['PHP_SELF'] ."?module=Users&action=delete&record={$focus->id}\";' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' />";
+                    $buttons .="<input type='button' class='button' onclick='if(confirm(\"{$mod_strings['LBL_DELETE_USER_CONFIRM']}\"))window.location=\"".$_SERVER['PHP_SELF'] ."?module=Users&action=delete&record={$focus->id}\";' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' /> ";
 
 			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only 
 			&& isset($sugar_config['passwordsetting']['SystemGeneratedPasswordON']) && $sugar_config['passwordsetting']['SystemGeneratedPasswordON']){
