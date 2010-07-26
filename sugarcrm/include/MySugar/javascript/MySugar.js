@@ -447,13 +447,13 @@ SUGAR.mySugar = function() {
 		},
 		//END SUGARCRM flav=pro ONLY
 				
-		//BEGIN SUGARCRM flav=pro ONLY
+		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 		showChangeLayoutDialog: function(tabNum){
 			document.getElementById('changeLayoutDialog_c').style.display = '';
 			SUGAR.mySugar.changeLayoutDialog.show();
 			SUGAR.mySugar.changeLayoutDialog.configFixedCenter(null, false) ;			
 		},
-		//END SUGARCRM flav=pro ONLY
+		//END SUGARCRM flav=pro || flav=sales ONLY
 		
 		// get the current dashlet layout
 		getLayout: function(asString) {
