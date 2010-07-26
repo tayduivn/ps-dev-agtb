@@ -9,7 +9,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * NOTE: PHP must be compiled with the CURL extension for HTTPS support
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id: class.soap_transport_http.php,v 1.8 2006/06/06 17:57:53 majed Exp $
+* @version  $Id: class.soap_transport_http.php 51509 2009-10-14 14:47:28Z jmertic $
 * @access public
 */
 class soap_transport_http extends nusoap_base {
@@ -50,7 +50,7 @@ class soap_transport_http extends nusoap_base {
 	function soap_transport_http($url){
 		parent::nusoap_base();
 		$this->setURL($url);
-		ereg('\$Revisio' . 'n: ([^ ]+)', $this->revision, $rev);
+		preg_match('/\$Revisio' . 'n: ([^ ]+)/', $this->revision, $rev);
 		$this->outgoing_headers['User-Agent'] = $this->title.'/'.$this->version.' ('.$rev[1].')';
 		$this->debug('set User-Agent: ' . $this->outgoing_headers['User-Agent']);
 	}
@@ -392,7 +392,6 @@ class soap_transport_http extends nusoap_base {
 				$this->persistentConnection = false;
 				$this->debug('set Connection: ' . $this->outgoing_headers['Connection']);
 			}
-			set_magic_quotes_runtime(0);
 			// deprecated
 			$this->encoding = $enc;
 		}
@@ -589,7 +588,7 @@ class soap_transport_http extends nusoap_base {
 				}
 			}
 			// remove 100 header
-			if(isset($lb) && ereg('^HTTP/1.1 100',$data)){
+			if(isset($lb) && preg_match('/^HTTP\/1.1 100/',$data)){
 				unset($lb);
 				$data = '';
 			}//
@@ -742,7 +741,7 @@ class soap_transport_http extends nusoap_base {
 		curl_close($this->ch);
 		
 		// remove 100 header(s)
-		while (ereg('^HTTP/1.1 100',$data)) {
+		while (preg_match('/^HTTP\/1.1 100/',$data)) {
 			if ($pos = strpos($data,"\r\n\r\n")) {
 				$data = ltrim(substr($data,$pos));
 			} elseif($pos = strpos($data,"\n\n") ) {
@@ -933,7 +932,7 @@ class soap_transport_http extends nusoap_base {
 	 */
 	function parseCookie($cookie_str) {
 		$cookie_str = str_replace('; ', ';', $cookie_str) . ';';
-		$data = split(';', $cookie_str);
+		$data = explode(';', $cookie_str);
 		$value_str = $data[0];
 
 		$cookie_param = 'domain=';

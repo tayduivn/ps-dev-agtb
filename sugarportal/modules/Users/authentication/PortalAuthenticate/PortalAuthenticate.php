@@ -49,7 +49,7 @@ class PortalAuthenticate {
 	 */
 	function loginAuthenticate($username, $password, $PARAMS){
 		global $mod_strings;
-		session_unregister('login_error');
+		unset($_SESSION['login_error']);
 
         if ($this->userAuthenticate->loadUserOnLogin($username, $password, $PARAMS)) {
 			return $this->postLoginAuthenticate();

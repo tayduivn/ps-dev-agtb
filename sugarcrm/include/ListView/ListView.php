@@ -419,7 +419,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
                         // We need to call into the old SugarWidgets for the time being, so it can generate a proper link with all the various corner-cases handled
                         // So we'll populate the field data with the pre-rendered display for the field
                         $list_field['fields'][$field_name] = $widget_contents;
-                        if('full_name' == $field_name || 'contact_name' == $field_name){//bug #32465
+                        if('full_name' == $field_name){//bug #32465
                            $list_field['fields'][strtoupper($field_name)] = $widget_contents;
                         }
                         $widget_contents = $layout_manager->widgetDisplay($list_field);
@@ -1166,7 +1166,7 @@ function getUserVariable($localVarName, $varName) {
 			$admin->retrieveSettings('system');
 
 			$user_merge = $current_user->getPreference('mailmerge_on');
-
+			//BEGIN SUGARCRM flav!=sales ONLY
 			if($user_merge == 'on' && isset($admin->settings['system_mailmerge_on']) && $admin->settings['system_mailmerge_on']) {
 				echo "<script>
 				function mailmerge_overlib() {
@@ -1183,7 +1183,11 @@ function getUserVariable($localVarName, $varName) {
 			} else {
 				$merge_link = "&nbsp;";
 			}
-
+			//END SUGARCRM flav!=sales ONLY
+			//BEGIN SUGARCRM flav=sales ONLY
+			$merge_link = "&nbsp;";
+			//END SUGARCRM flav=sales ONLY
+			
 			$selected_objects_span = "&nbsp;|&nbsp;{$this->local_app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly name='selectCount[]' value='" . (!empty($select_entire_list) ? $row_count : 0) . "' />";
 
 			if($_REQUEST['module'] == 'Home' || $this->local_current_module == 'Import'

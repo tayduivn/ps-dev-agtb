@@ -449,6 +449,15 @@ class SugarView
                         );
                 }
             }
+            //BEGIN SUGARCRM flav=sales ONLY
+            if(is_admin($GLOBALS['current_user'])){
+            	foreach($moduleTopMenu as $mod_key => $arr){
+            		if($mod_key != 'Administration'){
+            			unset($moduleTopMenu[$mod_key]);
+            		}
+            	}
+            }
+            //END SUGARCRM flav=sales ONLY
             $ss->assign("moduleTopMenu",$moduleTopMenu);
             $ss->assign("shortcutTopMenu",$shortcutTopMenu);
             $ss->assign("moduleExtraMenu",$moduleExtraMenu);
@@ -998,8 +1007,7 @@ EOHTML;
         $theTitle .= "</span></div>\n";
     	return $theTitle;
     }
-    
-    
+
     /**
      * Return the metadata file that will be used by this view.
      *
@@ -1009,8 +1017,8 @@ EOHTML;
         
         $metadataFile = null;
  		$foundViewDefs = false;
- 		$viewDef = strtolower($this->type) . 'viewdefs.php';
- 		$coreMetaPath = 'modules/'.$this->module.'/metadata/' . $viewDef;
+ 		$viewDef = strtolower($this->type) . 'viewdefs';
+ 		$coreMetaPath = 'modules/'.$this->module.'/metadata/' . $viewDef . '.php';
  		if(file_exists('custom/' .$coreMetaPath )){
  			$metadataFile = 'custom/' . $coreMetaPath;
  			$foundViewDefs = true;
@@ -1037,6 +1045,7 @@ EOHTML;
  		
  		return $metadataFile;
     }
+
     
     /**
      * Returns an array composing of the breadcrumbs to use for the module title

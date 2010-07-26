@@ -85,6 +85,11 @@ border-color:#cbdc2b;
 border-right:1px solid #cbdc2b;
 }
 
+#moduleList #moduleTabGroup .yuimenuitemlabel.group em
+{
+	background-image: url(../../../../index.php?entryPoint=getImage&imageName=grouped-menu.png);
+}
+
 #moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=otherTab.png");
 border-color: #CBDC2B;
@@ -186,7 +191,7 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png");
 }
 
-#moduleList .dashletPanelMenu,#moduleList #More.dashletPanelMenu {
+#moduleList .dashletPanelMenu,#moduleList #More.dashletPanelMenu,#moduleList #Group.dashletPanelMenu {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png");
 }
 
@@ -362,7 +367,7 @@ background-color: #6ea100;
 }
 
 
-#moduleList #moduleTabExtraMenu {
+#moduleList #moduleTabExtraMenu,#moduleList #moduleTabGroup {
 height:32px;
 }
 

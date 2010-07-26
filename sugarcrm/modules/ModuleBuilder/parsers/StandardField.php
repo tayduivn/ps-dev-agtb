@@ -33,13 +33,11 @@ require_once ('modules/DynamicFields/DynamicField.php') ;
 class StandardField extends DynamicField
 {
 	var $custom_def = array();
-	var $base_path = "";
 	var $baseField;
 	
 
     function __construct($module = '') {
-        $this->module = (! empty ( $module )) ? $module :( (isset($_REQUEST['module']) && ! empty($_REQUEST['module'])) ? $_REQUEST ['module'] : '');
-        $this->base_path = "custom/Extension/modules/{$this->module}/Ext/Vardefs";
+        parent::DynamicField($module);
     }
     
     protected function loadCustomDef($field){
@@ -74,9 +72,6 @@ class StandardField extends DynamicField
         
         require_once ('modules/DynamicFields/FieldCases.php') ;
         $this->baseField = get_widget ( $field->type) ;
-        echo ("<pre>");
-        	print_r($newDef);
-        echo "</pre>";
         foreach ($field->vardef_map as $property => $fmd_col){
            
         	if ($property == "action" || $property == "label_value" || $property == "label"
@@ -99,59 +94,10 @@ class StandardField extends DynamicField
         if (isset($this->custom_def["duplicate_merge_dom_value"]) && !isset($this->custom_def["duplicate_merge"]))
         	unset($this->custom_def["duplicate_merge_dom_value"]);
         
-        $file_loc = "$this->base_path/sugarfield_{$field->name}.php";
-        
-		$out =  "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
-        foreach ($this->custom_def as $property => $val) 
-        {
-        	$out .= override_value_to_string_recursive(array($bean_name, "fields", $field->name, $property), "dictionary", $val) . "\n";
-        }
-        
-        $out .= "\n ?>";
-        
-        if (!file_exists($this->base_path))
-            mkdir_recursive($this->base_path);
-            
-        if( $fh = @sugar_fopen( $file_loc, 'w' ) )
-	    {
-	        fputs( $fh, $out);
-	        fclose( $fh );
-	        return true ;
-	    }
-	    else
-	    {
-	        return false ;
-	    }
+        $this->writeVardefExtension($bean_name, $field, $this->custom_def);
     }
     
-    protected function isDefaultValue($property, $value, $baseField)
-    {
-     	switch ($property) {
-	        case "importable": 
-	        //BEGIN SUGARCRM flav=pro ONLY
-	        case "reportable":
-	        //END SUGARCRM flav=pro ONLY
-	        	return ( $value === 'true' || $value === '1' || $value === true || $value === 1 ); break;
-	        case "required":
-        	case "audited":
-        	case "massupdate":
-	        	return ( $value === 'false' || $value === '0' || $value === false || $value === 0); break;
-        	case "default_value":
-        	case "default":
-        	case "help":
-        	case "comments":
-        		return ($value == "");
-        	case "duplicate_merge":
-	        	return ( $value === 'false' || $value === '0' || $value === false || $value === 0 || $value === "disabled"); break;
-        }
-        
-        if (isset($baseField->$property))
-        {
-        	return $baseField->$property == $value;
-        }
-        
-        return false;
-    }
+    
 }
 
 ?>

@@ -444,11 +444,11 @@ for(module_name in module_defs)
 var filter_defs = new Object();
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'contains',value:'<?php echo $mod_strings['LBL_CONTAINS']; ?>'};
 qualifiers[qualifiers.length] = {name:'does_not_contain',value:'<?php echo $mod_strings['LBL_DOES_NOT_CONTAIN']; ?>'};
 qualifiers[qualifiers.length] = {name:'starts_with',value:'<?php echo $mod_strings['LBL_STARTS_WITH']; ?>'};
 qualifiers[qualifiers.length] = {name:'ends_with',value:'<?php echo $mod_strings['LBL_ENDS_WITH']; ?>'};
-qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['varchar'] = qualifiers;
@@ -474,9 +474,9 @@ filter_defs['fullname'] = qualifiers_name;
 
 var qualifiers_name = new Array();
 //qualifiers_name = qualifiers_name.concat(qualifiers);
-qualifiers_name.unshift(is_def);
-qualifiers_name.unshift(one_of_def);
 qualifiers_name.unshift(not_one_of_def);
+qualifiers_name.unshift(one_of_def);
+qualifiers_name.unshift(is_def);
 filter_defs['user_name'] = qualifiers_name;
 
 var qualifiers =  new Array();
@@ -526,11 +526,10 @@ filter_defs['datetimecombo'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'equals',value:'<?php echo $mod_strings['LBL_EQUALS']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_equals',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
 qualifiers[qualifiers.length] = {name:'less',value:'<?php echo $mod_strings['LBL_LESS_THAN']; ?>'};
 qualifiers[qualifiers.length] = {name:'greater',value:'<?php echo $mod_strings['LBL_GREATER_THAN']; ?>'};
 qualifiers[qualifiers.length] = {name:'between',value:'<?php echo $mod_strings['LBL_IS_BETWEEN']; ?>'};
-qualifiers[qualifiers.length] = {name:'not_equals',value:'<?php echo $mod_strings['LBL_DOES_NOT_EQUAL']; ?>'};
-
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['int'] = qualifiers;

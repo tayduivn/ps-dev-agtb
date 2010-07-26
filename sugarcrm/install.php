@@ -70,18 +70,21 @@ $icon = 'include/images/sugar_icon.ico';
 //BEGIN SUGARCRM flav=sales ONLY
 $sugar_md = 'include/images/sugar_md_sales.png';
 //END SUGARCRM flav=sales ONLY
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 $sugar_md = 'include/images/sugar_md_ent.png';
-//END SUGARCRM flav=ent ONLY
-//BEGIN SUGARCRM flav=com && lic=sub ONLY
+//END SUGARCRM flav=ent && flav!=dev ONLY
+//BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 $sugar_md = 'include/images/sugar_md_express.png';
-//END SUGARCRM flav=com && lic=sub ONLY
+//END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 $sugar_md = 'include/images/sugar_md_open.png';
 //END SUGARCRM flav=com && lic!=sub ONLY
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 $sugar_md = 'include/images/sugar_md.png';
 //END SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav=dev ONLY
+$sugar_md = 'include/images/sugar_md_dev.png';
+//END SUGARCRM flav=dev ONLY
 $loginImage = 'include/images/sugarcrm_login.png';
 $common = 'install/installCommon.js';
 

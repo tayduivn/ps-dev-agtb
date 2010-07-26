@@ -81,6 +81,7 @@ class SugarWirelessListView extends SugarWirelessView{
 			
         return $listViewDefs [ $GLOBALS['module'] ];
     }
+    
 	/**
 	 * Protected function that returns the filter_fields based on the module's
 	 * list view metadata

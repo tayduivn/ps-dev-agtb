@@ -132,6 +132,7 @@ class ImportViewStep4 extends SugarView
         
         while ( $row = $importFile->getNextRow() ) {
             $focus = loadImportBean($_REQUEST['import_module']);
+            $focus->unPopulateDefaultValues();
             $focus->save_from_post = false;
             $focus->team_id = null;
             $ifs->createdBeans = array();
@@ -154,7 +155,7 @@ class ImportViewStep4 extends SugarView
                 if ( !empty($focus->$field) ) {
                     continue;
                 }
-                        
+                
                 // translate strings
                 global $locale;
                 if(empty($locale)) {

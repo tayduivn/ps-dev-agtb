@@ -43,9 +43,9 @@ class StudioWizard{
     function options(){
     	$options = array('SelectModuleWizard'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_MODULE'], 
     	                 'EditDropDownWizard'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_DROPDOWNS'],
-    	                 //BEGIN SUGARCRM flav!=sales ONLY
-    	                 'ConfigureTabs'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_TABS'],
     	                 'RenameTabs'=>$GLOBALS['mod_strings']['LBL_SW_RENAME_TABS'],
+                         //BEGIN SUGARCRM flav!=sales ONLY
+    	                 'ConfigureTabs'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_TABS'],
     	                 'ConfigureGroupTabs'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_GROUPTABS'],
     	                 //END SUGARCRM flav!=sales ONLY
     	                 'Portal'=>$GLOBALS['mod_strings']['LBL_SW_EDIT_PORTAL'],
@@ -80,16 +80,16 @@ class StudioWizard{
                 $newWiz = new $option();
                 $newWiz->display();
                 break;
-            //BEGIN SUGARCRM flav!=sales ONLY
-            case 'ConfigureTabs':
-                header('Location: index.php?module=Administration&action=ConfigureTabs');
-                sugar_cleanup(true); 
             case 'RenameTabs':
                 $_REQUEST['dropdown_name'] = 'moduleList';
                 require_once('modules/Studio/wizards/EditDropDownWizard.php');
                 $newWiz = new EditDropDownWizard();
                 $newWiz->process('EditDropdown');
                 break; 
+            //BEGIN SUGARCRM flav!=sales ONLY
+            case 'ConfigureTabs':
+                header('Location: index.php?module=Administration&action=ConfigureTabs');
+                sugar_cleanup(true); 
             case 'ConfigureGroupTabs':
                 require_once('modules/Studio/TabGroups/EditViewTabs.php');
                 break;

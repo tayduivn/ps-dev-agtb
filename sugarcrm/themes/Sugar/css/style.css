@@ -3285,11 +3285,6 @@ body
 	background-color: #dedede;
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=bg.png');
 	background-repeat:no-repeat;
-        
-        /* //BEGIN SUGARCRM flav=com ONLY */
-	color: #000000;
-	background-color: #ffffff;
-        /* //END SUGARCRM flav=com ONLY */
 }
 h1, h2, h3
 {
@@ -3657,7 +3652,7 @@ border-radius: 4px;
 white-space: normal;
 }
 
-#moduleList #More.dashletPanelMenu .yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel:link, #More.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #More.dashletPanelMenu  .yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel:link{ 
+#moduleList #More.dashletPanelMenu .yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel:link, #More.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #More.dashletPanelMenu  .yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel:link,#moduleList #Group.dashletPanelMenu .yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel:link, #Group.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel:link{ 
 font-size: 16px;
 font-weight: bold;
 }
@@ -3690,11 +3685,15 @@ background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.pn
 background:none\9;  /*ie hack */
 }
 
-#moduleList #More.dashletPanelMenu  {
+#moduleList #More.dashletPanelMenu,#moduleList #Group.dashletPanelMenu  {
 width: 257px;
 padding: 0 18px 0 18px\9;  /*ie hack */
 background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png) repeat;
 background:none\9;  /*ie hack */
+}
+
+#moduleList #Group.dashletPanelMenu{
+margin-left: -20px;
 }
 
 #moduleList .dashletPanelMenu  .bd  {
@@ -3706,7 +3705,7 @@ left: -18px\9; /*ie hack */
 background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-top-menu.png) no-repeat\9; /*ie hack */
 }
 
-#moduleList #More.dashletPanelMenu  .bd  {
+#moduleList #More.dashletPanelMenu .bd, #moduleList #Group.dashletPanelMenu .bd  {
 width: 235px;
 }
 
@@ -3830,6 +3829,23 @@ border-right: 1px solid #ccc;
     background-position: center center; /* close (minus) icon */
     background-repeat: no-repeat;
 	width: 15px;
+	float: left;
+
+}
+
+#moduleList #moduleTabGroup {
+	float: right;
+	height: 31px;
+}
+
+#moduleList #moduleTabGroup .yuimenuitemlabel.group em
+{
+    overflow:hidden;
+    text-indent:-9999px;
+	background-image: url(../../../../index.php?entryPoint=getImage&imageName=grouped-menu.png);
+    background-position: center center; /* close (minus) icon */
+    background-repeat: no-repeat;
+	width: 39px;
 	float: left;
 
 }
@@ -5256,7 +5272,7 @@ visibility:visible
 .dcview table, .dcview div, .dcview a{
 font-size:75%;
 }
-.star {float:left}
+.star {float:right}
 .moduleTitle .star 
 {
     margin-top:-3px;

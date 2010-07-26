@@ -69,9 +69,12 @@ $sugar_smarty->assign("INSTRUCTION", $mod_strings['LBL_CHANGE_SYSTEM_PASSWORD'])
 //BEGIN SUGARCRM flav=sales ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_sales.png'));
 //END SUGARCRM flav=sales ONLY
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=dev ONLY
+$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_dev.png'));
+//END SUGARCRM flav=dev ONLY
+//BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ent.png'));
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=ent && flav!=dev ONLY
 //BEGIN SUGARCRM flav=com && lic=sub ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_express.png'));
 //END SUGARCRM flav=com && lic=sub ONLY

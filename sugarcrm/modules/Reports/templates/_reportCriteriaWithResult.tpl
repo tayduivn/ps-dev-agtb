@@ -388,12 +388,10 @@ function performFavAction(actionToPerfrom) {
 	if (actionToPerfrom == 'addtofavorites') {
 		favButton.title = {/literal}"{$app_strings.LBL_REMOVE_FROM_FAVORITES}";
 		favButton.value = "{$app_strings.LBL_REMOVE_FROM_FAVORITES}";
-		{literal}favButton.innerHTML = imageTag + {/literal}"{$app_strings.LBL_REMOVE_FROM_FAVORITES}" + {literal}imageTag{/literal};
 		{literal}favButton.onclick = function() {performFavAction('removefromfavorites')};
 	} else {
 		favButton.title = {/literal}"{$app_strings.LBL_ADD_TO_FAVORITES}";
 		favButton.value = "{$app_strings.LBL_ADD_TO_FAVORITES}";
-		{literal}favButton.innerHTML = imageTag + {/literal}"{$app_strings.LBL_ADD_TO_FAVORITES}" + {literal}imageTag{/literal};
 		{literal}favButton.onclick = function() {performFavAction('addtofavorites')};
 	} // else
 } // fn

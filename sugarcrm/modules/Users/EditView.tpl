@@ -71,7 +71,7 @@ SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
 
 EditView_tabs.on('contentReady', function(e){
 {/literal}
-//BEGIN SUGARCRM flav!=com ONLY
+//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
@@ -83,7 +83,7 @@ EditView_tabs.on('contentReady', function(e){
     EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
 {/literal}
 {/if}
-//END SUGARCRM flav!=com ONLY
+//END SUGARCRM flav!=com && flav!=sales ONLY
 });
 </script> 
 
@@ -135,6 +135,9 @@ EditView_tabs.on('contentReady', function(e){
                                 <td id='last_name_lbl' scope="row"  style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'><slot>{$MOD.LBL_LAST_NAME}: <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
                                 <td id='last_name_field'  style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'><slot><input id='last_name' name='last_name' type="text" {$LAST_NAME_DISABLED} tabindex='1' size='25' maxlength='25' value="{$LAST_NAME}"></slot></td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                            {if not $NON_ADMIN_USER_ADMIN_RIGHTS}
+                            {* //END SUGARCRM flav=sales ONLY *}                            
                             <tr style='display:{$HIDE_CHANGE_USERTYPE}'>
                                 <td width="17%" scope="row"><slot>{$MOD.LBL_USER_TYPE}:</slot></td>
                                 <td colspan='3'>
@@ -148,13 +151,6 @@ EditView_tabs.on('contentReady', function(e){
                                         <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' disabled>
                                             <option value="Administrator">{$MOD.LBL_ADMIN_USER}</option>
                                         </select></td>
-                                    {* //BEGIN SUGARCRM flav=sales ONLY *}
-                                    {elseif $NON_ADMIN_USER_ADMIN_RIGHTS}
-                                        <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' disabled>
-                                            <option value="RegularUser">{$MOD.LBL_REGULAR_USER}</option>
-                                            <option value="UserAdministrator" {if $IS_USER_ADMIN} SELECTED {/if}>{$MOD.LBL_USER_ADMINISTRATOR}</option>
-                                        </select></td>
-                                    {* //END SUGARCRM flav=sales ONLY *}
                                     {else}
                                         <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' tabindex='1' >
                                             <option value="RegularUser">{$MOD.LBL_REGULAR_USER}</option>
@@ -170,6 +166,9 @@ EditView_tabs.on('contentReady', function(e){
                                     </table>
                                 </td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                            {/if}
+                            {* //END SUGARCRM flav=sales ONLY *}
                             {* //BEGIN SUGARCRM flav!=com ONLY *}
                             {if !$IS_GROUP && !$IS_PORTALONLY}
                             <tr>
@@ -893,13 +892,14 @@ document.getElementById('email_link_type').onchange = function()
 document.getElementById('email_link_type').onchange();
 {/literal}
 {/if}
-{literal}
 <!--//END SUGARCRM flav!=sales ONLY -->
 -->
 </script>
 {$JAVASCRIPT}
+<script type="text/javascript" language="Javascript">
+{$confirmReassignJs}
+</script>
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
-{/literal}
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
@@ -909,7 +909,6 @@ document.getElementById('email_link_type').onchange();
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();
 
-{$confirmReassignJs}
 </script>
 
 </form>

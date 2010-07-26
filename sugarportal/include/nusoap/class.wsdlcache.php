@@ -8,7 +8,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * 
 * @author   Scott Nichol <snichol@computer.org>
 * @author	Ingo Fischer <ingo@apollon.de>
-* @version  $Id: class.wsdlcache.php,v 1.7 2006/06/06 17:57:53 majed Exp $
+* @version  $Id: class.wsdlcache.php 13782 2006-06-06 17:58:55Z majed $
 * @access public 
 */
 class wsdlcache {

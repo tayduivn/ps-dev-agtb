@@ -1,6 +1,6 @@
 <?php
 
-$config['builds']['dev']['flav'] = array('dev', 'ent','pro','exp','com');
+$config['builds']['dev']['flav'] = array('dev', 'ent','een','pro');
 $config['builds']['dev']['lic'] = array('sub');
 $config['blackList']['dev'] = array(
 'sugarcrm/build'=>1,
@@ -24,8 +24,6 @@ $config['blackList']['dev'] = array(
 'sugarcrm/themes/TrailBlazers'=>1,
 'sugarcrm/themes/VintageSugar'=>1,
 'sugarcrm/themes/WhiteSands'=>1,
-'sugarcrm/include/Expressions'=>1,
-'sugarcrm/modules/ExpressionEngine'=>1,
 
 'sugarcrm/modules/DCEActions'=>1,
 'sugarcrm/modules/DCEClients'=>1,
@@ -70,5 +68,16 @@ $config['blackList']['dev'] = array(
 'sugarcrm/modules/QueryBuilder'=>1,
 'sugarcrm/modules/Queues'=>1,
 
+'sugarcrm/include/images/sugarsales_lg.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_dce.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_ent.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_express.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_open.png'=>1,
+'sugarcrm/include/images/sugar_md.png'=>1,
+'sugarcrm/include/images/sugar_md_dce.png'=>1,
+'sugarcrm/include/images/sugar_md_ent.png'=>1,
+'sugarcrm/include/images/sugar_md_express.png'=>1,
+'sugarcrm/include/images/sugar_md_open.png'=>1,
+'sugarcrm/include/images/sugar_md_sales.png'=>1,
 );
 $build = 'dev';

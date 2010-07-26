@@ -182,7 +182,6 @@ $layout_defs['Contacts'] = array(
             'get_distinct_data'=> true,
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
-				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
 		//END SUGARCRM flav=pro ONLY

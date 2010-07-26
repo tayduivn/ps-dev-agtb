@@ -21,7 +21,7 @@ $config['builds']['ent']['flav'] = array('pro','ent');
 $config['builds']['ent']['lic'] = array('sub');
 
 
-$config['builds']['dev']['flav'] = array('een', 'ent','pro', 'com');
+$config['builds']['dev']['flav'] = array('een','ent','pro','dev');
 $config['builds']['dev']['lic'] = array('sub');
 
 $config['builds']['dce']['flav'] = array('ent'=>1, 'pro'=>1);

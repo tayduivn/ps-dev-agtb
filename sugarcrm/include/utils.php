@@ -240,7 +240,12 @@ function get_sugar_config_defaults() {
 	$sugar_config_defaults = array (
 	'admin_export_only' => false,
 	'export_delimiter' => ',',
+	//BEGIN SUGARCRM flav!=sales ONLY
 	'calculate_response_time' => true,
+	//END SUGARCRM flav!=sales ONLY
+	//BEGIN SUGARCRM flav=sales ONLY
+	'calculate_response_time' => false,
+	//END SUGARCRM flav=sales ONLY
 	'create_default_user' => false,
 	'date_formats' => array (
 	'Y-m-d' => '2010-12-23', 'm-d-Y' => '12-23-2010', 'd-m-Y' => '23-12-2010',
@@ -2429,7 +2434,7 @@ function get_unlinked_email_query($type, $bean) {
 	join email_addr_bean_rel eabr on eabr.bean_id ='$bean->id' and eabr.bean_module = '$bean->module_dir' and
 	eabr.email_address_id = eear.email_address_id and eabr.deleted=0
 	where eear.deleted=0 and eear.email_id not in
-	(select eb.email_id from emails_beans eb where eb.bean_module ='$bean->module_dir' and eb.bean_id = '$bean->id' and eb.deleted=0)
+	(select eb.email_id from emails_beans eb where eb.bean_module ='$bean->module_dir' and eb.bean_id = '$bean->id')
 	) derivedemails on derivedemails.email_id = emails.id";
     $return_array['join_tables'][0] = '';
 
@@ -4549,6 +4554,20 @@ function clearAllJsAndJsLangFilesWithoutOutput(){
 		$repair->clearJsLangFiles();
 		$repair->clearJsFiles();
 		$mod_strings = $MBmodStrings;
+}
+
+/**
+ * This function will allow you to get a variable value from query string
+ */
+function getVariableFromQueryString($variable, $string){
+	$matches = array();
+	$number = preg_match("/{$variable}=([a-zA-Z0-9_-]+)[&]?/", $string, $matches);
+	if($number){
+		return $matches[1];
+	}
+	else{
+		return false;
+	}
 }
 
 /**

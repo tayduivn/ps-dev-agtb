@@ -54,9 +54,11 @@ if(isset($_POST['tracking_entities_location_type'])) {
 if( !isset($_POST['mail_smtpauth_req']) ) 
 { 
     $_POST['mail_smtpauth_req'] = 0; 
+//BEGIN SUGARCRM flav!=sales ONLY
     $_POST['notify_allow_default_outbound'] = 0; //If smtp auth is disabled ensure outbound is disabled.
+//END SUGARCRM flav!=sales ONLY
 }
-
+//BEGIN SUGARCRM flav!=sales ONLY
 //Remove previous user override accoutns if users are now able to use the default account but previously weren't.
 if( !empty($_POST['notify_allow_default_outbound']) ) 
 {
@@ -64,6 +66,7 @@ if( !empty($_POST['notify_allow_default_outbound']) )
     if( !$oe->isAllowUserAccessToSystemDefaultOutbound() )
         $oe->removeUserOverrideAccounts();
 }
+//END SUGARCRM flav!=sales ONLY
 
 $focus->saveConfig();
 

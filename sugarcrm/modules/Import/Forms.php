@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: Forms.php 56650 2010-05-24 18:53:17Z jenny $
+ * $Id: Forms.php 57410 2010-07-09 22:41:31Z kjing $
  * Description:  Contains a variety of utility functions for the Import module
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -44,7 +44,7 @@ function loadImportBean(
     $module
     )
 {
-    $focus = SugarModule::get($module)->loadBean(false);
+    $focus = SugarModule::get($module)->loadBean();
     if ( $focus ) {
         if ( !$focus->importable )
             return false;

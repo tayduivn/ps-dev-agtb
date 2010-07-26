@@ -72,6 +72,19 @@
 				</div> 
 			</li>
 			{/if}
+			
+			<li class="yuimenubaritem" id="moduleTabGroup">
+				<a href="#" class="yuimenuitemlabel group"><em>&gt;&gt;</em></a>
+				<div id="Group" class="yuimenu dashletPanelMenu"><div class="bd">
+				<ul>
+					{foreach from=$moduleExtraMenu item=module key=name name=moduleList}
+					<li>{sugar_link id="moduleTab_$name" class="yuimenuitemlabel" module=$name data=$module}
+					{/foreach}
+				</ul>
+				</div>
+				<div class="clear"></div>
+				</div> 
+			</li>
 		</ul>            
 	</div>
 </div>
