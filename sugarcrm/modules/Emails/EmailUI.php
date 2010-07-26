@@ -2747,10 +2747,6 @@ eoq;
 		$ret['name'] = from_html($ret['name']);
 		$useMyAccountString = true;
 		
-		//BEGIN SUGARCRM flav=sales ONLY
-		$ret = array('name'=>'','email'=>'');
-		//END SUGARCRM flav=sales ONLY
-		
         if(empty($ret['email'])) {
         	$systemReturn = $current_user->getSystemDefaultNameAndEmail();
         	$ret['email'] = $systemReturn['email'];
