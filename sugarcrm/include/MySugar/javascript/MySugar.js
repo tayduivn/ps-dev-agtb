@@ -447,13 +447,13 @@ SUGAR.mySugar = function() {
 		},
 		//END SUGARCRM flav=pro ONLY
 				
-		//BEGIN SUGARCRM flav=pro ONLY
+		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 		showChangeLayoutDialog: function(tabNum){
 			document.getElementById('changeLayoutDialog_c').style.display = '';
 			SUGAR.mySugar.changeLayoutDialog.show();
 			SUGAR.mySugar.changeLayoutDialog.configFixedCenter(null, false) ;			
 		},
-		//END SUGARCRM flav=pro ONLY
+		//END SUGARCRM flav=pro || flav=sales ONLY
 		
 		// get the current dashlet layout
 		getLayout: function(asString) {
@@ -643,9 +643,9 @@ SUGAR.mySugar = function() {
 					var chartScriptObj = YAHOO.util.Connect.asyncRequest('GET', scriptUrl,
 													  {success: processChartScript, failure: processChartScript}, null);
 				}
-				//BEGIN SUGARCRM flav=pro ONLY
+				//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 				SUGAR.mySugar.attachToggleToolsetEvent(id);
-				//END SUGARCRM flav=pro ONLY
+				//END SUGARCRM flav=pro || flav=sales ONLY
 			}
 			
 			SUGAR.mySugar.currentDashlet = document.getElementById('dashlet_entire_' + id);
@@ -760,9 +760,9 @@ SUGAR.mySugar = function() {
 					dashletEntire.style.top = '0px';
 					dashletEntire.className = 'dashletPanel';
 					
-					//BEGIN SUGARCRM flav=pro ONLY
+					//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 					SUGAR.mySugar.attachToggleToolsetEvent(data.responseText);
-					//END SUGARCRM flav=pro ONLY
+					//END SUGARCRM flav=pro || flav=sales ONLY
 					
 					var anim = new YAHOO.util.Anim('dashlet_entire_' + data.responseText, { height: {to: dashletRegion.bottom - dashletRegion.top} }, .5 );
 					anim.onComplete.subscribe(function() { document.getElementById('dashlet_entire_' + data.responseText).style.height = '100%'; });	
@@ -1226,26 +1226,6 @@ SUGAR.mySugar = function() {
 			document.getElementById('changeLayoutDialog_c').style.display = 'none';
 		},
 		
-		attachToggleToolsetEvent: function(dashletId){
-			var header = document.getElementById("dashlet_header_"+dashletId);
-			if	(YAHOO.env.ua.ie) {
-					YAHOO.util.Event.on(header, 'mouseenter', function() { 
-						document.getElementById("dashlet_header_"+dashletId).className = "hd selected";
-					}); 
-					
-					YAHOO.util.Event.on(header, 'mouseleave', function() { 
-						document.getElementById("dashlet_header_"+dashletId).className = "hd";
-					}); 
-				} else {
-					YAHOO.util.Event.on(header, 'mouseover', function() { 
-						document.getElementById("dashlet_header_"+dashletId).className = "hd selected";
-					}); 
-					
-					YAHOO.util.Event.on(header, 'mouseout', function() { 
-						document.getElementById("dashlet_header_"+dashletId).className = "hd";
-					}); 
-				}
-		},
 		attachDashletCtrlEvent: function(){
 			var tablist = document.getElementById("tabList");
 			if	(YAHOO.env.ua.ie) {
@@ -1267,5 +1247,28 @@ SUGAR.mySugar = function() {
 				}
 		}
 		//END SUGARCRM flav=pro ONLY
+		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		,
+		attachToggleToolsetEvent: function(dashletId){
+			var header = document.getElementById("dashlet_header_"+dashletId);
+			if	(YAHOO.env.ua.ie) {
+					YAHOO.util.Event.on(header, 'mouseenter', function() { 
+						document.getElementById("dashlet_header_"+dashletId).className = "hd selected";
+					}); 
+					
+					YAHOO.util.Event.on(header, 'mouseleave', function() { 
+						document.getElementById("dashlet_header_"+dashletId).className = "hd";
+					}); 
+				} else {
+					YAHOO.util.Event.on(header, 'mouseover', function() { 
+						document.getElementById("dashlet_header_"+dashletId).className = "hd selected";
+					}); 
+					
+					YAHOO.util.Event.on(header, 'mouseout', function() { 
+						document.getElementById("dashlet_header_"+dashletId).className = "hd";
+					}); 
+				}
+		}
+		//END SUGARCRM flav=pro || flav=sales ONLY
 	 }; 
 }();

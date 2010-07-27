@@ -425,15 +425,17 @@ class Email extends SugarBean {
 		/**********************************************************************
 		 * PHPMAILER PREP
 		 */
-		$mailer_account_id = $_REQUEST['fromAccount'];
+		$mail = new SugarPHPMailer();
+		//BEGIN SUGARCRM flav!=sales ONLY
+		$mail = $this->setMailer($mail, '', $_REQUEST['fromAccount']);
+		//END SUGARCRM flav!=sales ONLY
 		//BEGIN SUGARCRM flav=sales ONLY
+		unset($_REQUEST['fromAccount']); // We always use the system settings
 		require_once('include/OutboundEmail/OutboundEmail.php');
 		$outbound_email = new OutboundEmail();
 		$oe_settings = $outbound_email->getSystemMailerSettings();
-		$mailer_account_id = $oe_settings->id;
+		$mail = $this->setMailer($mail, $oe_settings->id);
 		//END SUGARCRM flav=sales ONLY
-		$mail = new SugarPHPMailer();
-		$mail = $this->setMailer($mail, '', $mailer_account_id);
 		if (empty($mail->Host) && !$this->isDraftEmail($request)) 
 		{
             $this->status = 'send_error';
@@ -545,6 +547,7 @@ class Email extends SugarBean {
 		/* from account */
 		$replyToAddress = $current_user->emailAddress->getReplyToAddress($current_user);
 		$replyToName = "";
+		//BEGIN SUGARCRM flav=!sales ONLY // We don't care about this code block since we're always sending from the current user
 		if(empty($request['fromAccount'])) {
 			$defaults = $current_user->getPreferredEmail();
 			$mail->From = $defaults['email'];
@@ -592,10 +595,13 @@ class Email extends SugarBean {
 			$mail->FromName = (!empty($fromName)) ? $fromName : $defaults['name'];
 			$replyToName = (!empty($replyToName)) ? $replyToName : $mail->FromName;
 		}
+		//END SUGARCRM flav=!sales ONLY
 		//BEGIN SUGARCRM flav=sales ONLY
 		// Force the current user's email address
 		$current_user_email = $GLOBALS['current_user']->emailAddress->getPrimaryAddress($GLOBALS['current_user']);
 		$mail->From = !empty($current_user_email) ? $current_user_email : $mail->From;
+		$mail->FromName = $GLOBALS['current_user']->name;
+		$replyToName = $mail->FromName;
 		//END SUGARCRM flav=sales ONLY
 		
 		$mail->Sender = $mail->From; /* set Return-Path field in header to reduce spam score in emails sent via Sugar's Email module */

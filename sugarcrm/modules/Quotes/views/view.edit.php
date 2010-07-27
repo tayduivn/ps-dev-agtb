@@ -199,7 +199,9 @@ class QuotesViewEdit extends ViewEdit
 		// Set Currency values and currency javascript
 		require_once('modules/Currencies/ListCurrency.php');
 		$currency = new ListCurrency();
-        if ( isset($_REQUEST['currency_id']) && !empty($_REQUEST['currency_id']) ) {
+        if ( isset($this->bean->currency_id) && !empty($this->bean->currency_id) ) {
+            $curid = $this->bean->currency_id;
+        } elseif ( isset($_REQUEST['currency_id']) && !empty($_REQUEST['currency_id']) ) {
             $curid = $_REQUEST['currency_id'];
         } elseif ( empty($this->bean->id) ) {
             $curid = $current_user->getPreference('currency');
