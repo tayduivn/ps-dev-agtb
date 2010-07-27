@@ -85,7 +85,6 @@ function evalExpression() {
 		result = result.evaluate();
 		out += '<div class="result">' + result + "</div>";
 	} catch (e) {
-		//console.log(e);
 		if (e.message)
 			alert(e.message);
 		out += '<div class="result">' + e + "</div>";

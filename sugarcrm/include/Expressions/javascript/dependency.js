@@ -371,8 +371,6 @@ SUGAR.forms._performRangeReplace = function(expression)
 			// optional param is there
 			if ( loc_comma > -1 && loc_comma < loc_end )	end = expression.substring( loc_comma + 1, loc_end );
 
-			//console.log(start + " " + end );
-
 			// construct the range
 			var result = this.generateRange(prefix, this.valueReplace(start), this.valueReplace(end));
 			//var result = this.generateRange(prefix, start, end);
@@ -454,7 +452,7 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 		}
 		
 	} catch (e) {
-		if (console && console.log) console.log(' ERROR ' + e );
+		if (console && console.log){ console.log('ERROR: ' + e );}
 		return;
 	}
 };
@@ -517,14 +515,12 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	try {
 		eval = SUGAR.forms.evalVariableExpression(obj.condition);
 	} catch (e) {
-		//console.log(e);
+		{if (console && console.log) console.log('ERROR:' + e);}
 	}
 
 	// evaluate the result
 	if ( typeof(eval) != 'undefined' )
 		val = eval.evaluate();
-
-	//console.log("VALUE = " + val);
 
 	// if the condition is met
 	if ( val == SUGAR.expressions.Expression.TRUE ) {

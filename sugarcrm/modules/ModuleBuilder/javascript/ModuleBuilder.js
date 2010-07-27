@@ -1043,7 +1043,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					script: true
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
-			win.setHeader("Expression Builder");
+			win.setHeader("Formula Builder");
 			win.setBody("test");
 			win.render(document.body);
 			win.params = {
