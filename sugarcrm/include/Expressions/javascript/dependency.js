@@ -544,7 +544,7 @@ SUGAR.forms.Trigger.fire = function(e, obj)
  * a shade of light red and back.
  */
 SUGAR.forms.FlashField = function(field, to_color) {
-    if ( typeof(field) == 'undefined' /*|| ! (field instanceof HTMLElement)*/ )     return;
+    if ( typeof(field) == 'undefined')     return;
 
     // store the original background color
     var original = field.style.backgroundColor;

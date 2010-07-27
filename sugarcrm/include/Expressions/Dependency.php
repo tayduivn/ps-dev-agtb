@@ -163,5 +163,10 @@ class Dependency {
 		}
 	}
 	
+	function getFireOnLoad()
+	{
+		return $this->fireOnLoad;
+	}
+	
 }
 ?>
