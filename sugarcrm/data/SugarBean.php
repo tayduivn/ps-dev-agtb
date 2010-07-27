@@ -1356,6 +1356,8 @@ class SugarBean
 			$usedDefaultTeam = true;
 
 		}
+		$this->updateCalculatedFields();
+		
 		//END SUGARCRM flav=pro ONLY
 		if($isUpdate && !$this->update_date_entered)
 		{
@@ -1650,6 +1652,24 @@ class SugarBean
 
 		return $this->id;
 	}
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	/**
+	 * Retrieves and executes the CF dependencies for this bean
+	 */
+	function updateCalculatedFields()
+	{
+		require_once("include/Expressions/DependencyManager.php");
+		$deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+		foreach($deps as $dep)
+		{
+			if ($dep->getFireOnLoad())
+			{
+				$dep->fire($this);
+			}
+		}
+	}
+	//END SUGARCRM flav=pro ONLY
 
     /**
      * Performs a check if the record has been modified since the specified date

@@ -214,8 +214,6 @@ class TemplateHandler {
             $mod = $beanList[$module];
             if($mod == 'aCase')
                 $mod = 'Case';
-            $defs = $dictionary[$mod]['fields'];
-            $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, 'detail'); 
         }//if
 		//END SUGARCRM flav=pro ONLY
 

@@ -44,20 +44,22 @@ class DependencyManager {
 		    	
 		    	$dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field, 'value' => $def['formula'])));
 
-		    	$deps[] = $dep;
-		    	
-		    	if (isset($def['enforced']) && $def['enforced'] == true && $includeReadOnly) {
+		    	if (isset($def['enforced']) && $def['enforced'] == true) {
 			    	$dep->setFireOnLoad(true);
-		    				
-	    			$readOnlyDep = new Dependency("readOnly$field");
-	    			$readOnlyDep->setFireOnLoad(true);
-	    			$readOnlyDep->setTrigger(new Trigger('true', array()));
-	    			$readOnlyDep->addAction(ActionFactory::getNewAction('ReadOnly', 
-	    					array('target' => $field, 
-	    						  'value' => 'true')));
-			    			
-			    	$deps[] = $readOnlyDep;
+		    		if ($includeReadOnly)
+		    		{
+		    			$readOnlyDep = new Dependency("readOnly$field");
+		    			$readOnlyDep->setFireOnLoad(true);
+		    			$readOnlyDep->setTrigger(new Trigger('true', array()));
+		    			$readOnlyDep->addAction(ActionFactory::getNewAction('ReadOnly', 
+		    					array('target' => $field, 
+		    						  'value' => 'true')));
+				    			
+				    	$deps[] = $readOnlyDep;
+		    		}
 		    	}
+		    	
+		    	$deps[] = $dep;
 		    }
 	    }
 	    
