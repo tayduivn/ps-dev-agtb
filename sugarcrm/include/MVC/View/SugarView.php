@@ -450,9 +450,10 @@ class SugarView
                 }
             }
             //BEGIN SUGARCRM flav=sales ONLY
+			$ss_module_whitelist = getSugarSalesAdminModuleList();            
             if(is_admin($GLOBALS['current_user'])){
             	foreach($moduleTopMenu as $mod_key => $arr){
-            		if($mod_key != 'Administration'){
+            		if(!in_array($mod_key, $ss_module_whitelist)){
             			unset($moduleTopMenu[$mod_key]);
             		}
             	}

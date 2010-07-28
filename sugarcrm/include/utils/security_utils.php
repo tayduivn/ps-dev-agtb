@@ -132,3 +132,25 @@ function get_val_array($arr){
 	}
 	return $new;
 }
+
+//BEGIN SUGARCRM flav=sales ONLY
+function getSugarSalesAdminModuleList(){
+	$ss_module_whitelist = array();
+	
+	global $admin_group_header;
+	$admin_group_header_backup = $admin_group_header;
+	require('modules/Administration/metadata/adminpaneldefs.php');
+	foreach($admin_group_header as $index => $section_arr){
+		foreach($section_arr[3] as $group_index => $group_arr){
+			foreach($group_arr as $link_index => $link_arr){
+				 $module = getVariableFromQueryString("module", $link_arr[3]);
+				 $ss_module_whitelist[$module] = $module;
+			}
+		}
+	}
+	$ss_module_whitelist['Notifications'] = 'Notifications';
+	$admin_group_header = $admin_group_header_backup;
+	
+	return $ss_module_whitelist;
+}
+//END SUGARCRM flav=sales ONLY

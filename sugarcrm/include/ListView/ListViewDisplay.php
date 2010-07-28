@@ -276,10 +276,6 @@ class ListViewDisplay {
 		// delete
 		if ( ACLController::checkAccess($this->seed->module_dir,'delete',true) && $this->delete )
 			$menuItems .= $this->buildDeleteLink();
-		//BEGIN SUGARCRM flav=sales ONLY
-		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
-			$menuItems .= $this->buildDeleteLink();
-		//END SUGARCRM flav=sales ONLY
 		// compose email
         if ( isset($_REQUEST['module']) && $_REQUEST['module'] != 'Users' && $_REQUEST['module'] != 'Employees' &&
             ( SugarModule::get($_REQUEST['module'])->moduleImplements('Company') 
