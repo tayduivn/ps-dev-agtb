@@ -123,7 +123,7 @@ $mod_strings = array (
 
 
 	'LBL_CONFIRM_PASSWORD'				=> 'Confirm Password',
-	'LBL_CONFIRM_REGULAR_USER'			=> 'You have changed the user type from System Administrator User to Regular User.  After saving this change, the user will no longer have system administrator privileges.\n\nClick ‚ÄúOKÔøΩ? to proceed.\nClick ‚ÄúCancelÔøΩ? to return to the record.',
+	'LBL_CONFIRM_REGULAR_USER'			=> 'You have changed the user type from System Administrator User to Regular User.  After saving this change, the user will no longer have system administrator privileges.\n\nClick ‚Äö√Ñ√∫OK√î√∏Œ©? to proceed.\nClick ‚Äö√Ñ√∫Cancel√î√∏Œ©? to return to the record.',
 	'LBL_COUNTRY'						=> 'Country',
 	'LBL_CURRENCY_TEXT'					=> 'Select the currency that will be displayed by default when you create new records. This is also the currency that will be displayed in the Amount columns in the Opportunities ListView.',
 	'LBL_CURRENCY'						=> 'Currency',
@@ -564,7 +564,9 @@ $mod_strings = array (
 	'LBL_EXCHANGE_SMTPUSER'					=> 'Exchange Username:',
 	'LBL_EXCHANGE_SMTPPORT'					=> 'Exchange Server Port:',
 	'LBL_EXCHANGE_SMTPSERVER'				=> 'Exchange Server:',
-	
+        'LBL_OK'   =>'OK',
+        'LBL_CANCEL'    => 'Cancel',
+        'LBL_DELETE_USER' => 'Delete User',
 	// Wizard
 	'LBL_WIZARD_TITLE' => 'User Wizard',
     'LBL_WIZARD_WELCOME_TAB' => 'Welcome',
