@@ -286,7 +286,6 @@ EditView_tabs.on('contentReady', function(e){
                                     </select>
                                 </td>
                             </tr>
-                            <!--//END SUGARCRM flav!=sales ONLY -->
                             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                             <tr id="mail_smtpserver_tr">
                                 <td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_EMAIL_PROVIDER}</span></td>
@@ -313,6 +312,7 @@ EditView_tabs.on('contentReady', function(e){
                                 <td width="33%" >&nbsp;</td>
                             </tr>
                             {/if}
+                            <!--//END SUGARCRM flav!=sales ONLY -->
                         </table>
             </div>
         </div>

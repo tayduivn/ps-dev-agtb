@@ -215,7 +215,6 @@ user_detailview_tabs.on('contentReady', function(e){
                             {$EMAIL_LINK_TYPE}
                         </td>
                     </tr>
-                    <!--//END SUGARCRM flav!=sales ONLY -->
                     {if $SHOW_SMTP_SETTINGS}
                     <tr>
                         <td scope="row" width="15%">
@@ -234,6 +233,7 @@ user_detailview_tabs.on('contentReady', function(e){
                         </td>
                     </tr>
                     {/if}
+                    <!--//END SUGARCRM flav!=sales ONLY -->
                 </table>
             </div>
         </div>
