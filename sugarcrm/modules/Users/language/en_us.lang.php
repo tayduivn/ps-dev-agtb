@@ -123,7 +123,7 @@ $mod_strings = array (
 
 
 	'LBL_CONFIRM_PASSWORD'				=> 'Confirm Password',
-	'LBL_CONFIRM_REGULAR_USER'			=> 'You have changed the user type from System Administrator User to Regular User.  After saving this change, the user will no longer have system administrator privileges.\n\nClick ‚ÄúOKÔøΩ? to proceed.\nClick ‚ÄúCancelÔøΩ? to return to the record.',
+	'LBL_CONFIRM_REGULAR_USER'			=> 'You have changed the user type from System Administrator User to Regular User.  After saving this change, the user will no longer have system administrator privileges.\n\nClick OK to proceed.\nClick Cancel to return to the record.',
 	'LBL_COUNTRY'						=> 'Country',
 	'LBL_CURRENCY_TEXT'					=> 'Select the currency that will be displayed by default when you create new records. This is also the currency that will be displayed in the Amount columns in the Opportunities ListView.',
 	'LBL_CURRENCY'						=> 'Currency',
