@@ -30,6 +30,7 @@
 // $Id: enum.tpl 35784 2008-05-20 21:31:40Z dwheeler $
 *}
 {if $vardef.type != 'enum'}
+//BEGIN SUGARCRM flav=een ONLY
 {*<tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
@@ -41,11 +42,12 @@
             onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('dependency').value, 'dependency')"/> 
     </td>
 </tr>*}
-
+//END SUGARCRM flav=een ONLY
 <tr><td class='mbLBL'>Calculated:</td>
     <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
         {if !empty($vardef.calculated)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
+		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
     </td>
 </tr>
 <tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}><td class='mbLBL'>Formula:</td> 
@@ -54,11 +56,13 @@
             onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)"/> 
     </td>
 </tr>
+//BEGIN SUGARCRM flav=een ONLY
 <tr id='enforcedRow' {if empty($vardef.enforced)}style="display:none"{/if}><td class='mbLBL'>Enforced:</td>
     <td><input type="checkbox" name="enforced" id="enforced" value="1" onclick="ModuleBuilder.toggleEnforced();"{if !empty($vardef.enforced)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
     </td>
 </tr>
+//END SUGARCRM flav=een ONLY
 {else}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DYNAMIC_VALUES_CHECKBOX"}:</td>
