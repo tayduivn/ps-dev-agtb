@@ -170,6 +170,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $out['fromAccounts'] = $email->et->getFromAccountsArray($ie);
         $out['errorArray'] = array();
         
+        //BEGIN SUGARCRM flav!=sales ONLY // We remove this since we're always using the system account
         //Check if any error messages have been set for the user override account.
         $oe = new OutboundEmail();
         if( $oe->doesUserOverrideAccountRequireCredentials($current_user->id) )
@@ -181,6 +182,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 
 		    $out['errorArray'] = array($overideAccount->id => $app_strings['LBL_EMAIL_WARNING_MISSING_USER_CREDS']);
         }     
+        //END SUGARCRM flav!=sales ONLY
         
         $ret = $json->encode($out);
         echo $ret;

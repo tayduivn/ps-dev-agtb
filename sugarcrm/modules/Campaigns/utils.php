@@ -314,9 +314,18 @@ function get_subscription_lists_query($focus, $additional_fields = null) {
     //BEGIN SUGARCRM flav=pro ONLY
     // We need to confirm that the user is a member of the team of the item.
     global $current_user;
-
-    // We need to confirm that the user is a member of the team of the item.
     $focus->disable_row_level_security = false;
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    //In the event of portal user, retrieve subscriptions with Global team access
+    if($current_user->portal_only) {
+       $focus->disable_row_level_security = true;
+       $all_news_type_pl_query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsc ON tst.team_id = team_membershipsc.team_id
+				                    AND team_membershipsc.user_id = '1' AND team_membershipsc.deleted=0 group by tst.team_set_id) c_tf on c_tf.team_set_id  = c.team_set_id ";
+       
+    }    
+    //END SUGARCRM flav=ent ONLY
+    
 	$focus->add_team_security_where_clause($all_news_type_pl_query, 'c');
 	$focus->disable_row_level_security = true;
 	//END SUGARCRM flav=pro ONLY
@@ -558,6 +567,13 @@ function process_subscriptions($subscription_string_to_parse) {
                         // we need to remove the user from this unsubscription list.
                         //Begin by retrieving unsubscription prospect list
                         $exempt_subscription_list = new ProspectList();
+                        
+                        //BEGIN SUGARCRM flav=ent ONLY
+		                if($GLOBALS['current_user']->portal_only) {
+		                   $exempt_subscription_list->disable_row_level_security = true;
+		                }                          
+                        //END SUGARCRM flav=ent ONLY
+		                
                         $exempt_result = $exempt_subscription_list->retrieve($exempt_id);
                         if($exempt_result == null)
                         {//error happened while retrieving this list
@@ -585,6 +601,11 @@ function process_subscriptions($subscription_string_to_parse) {
             }else{
                 //user is not subscribed already, so add to subscription list
                 $subscription_list = new ProspectList();
+                //BEGIN SUGARCRM flav=ent ONLY
+                if($GLOBALS['current_user']->portal_only) {
+                   $subscription_list->disable_row_level_security = true;
+                }                          
+                //END SUGARCRM flav=ent ONLY                
                 $subs_result = $subscription_list->retrieve($prospect_list);
                 if($subs_result == null)
                 {//error happened while retrieving this list, iterate and continue

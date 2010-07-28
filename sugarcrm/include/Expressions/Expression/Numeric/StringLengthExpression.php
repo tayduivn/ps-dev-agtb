@@ -34,7 +34,8 @@ class StringLengthExpression extends NumericExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			return this.getParameters().evaluate().length;
+			var p = this.getParameters().evaluate() + "";
+			return p.length;
 EOQ;
 	}
 	

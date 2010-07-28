@@ -23,12 +23,20 @@
 <table width="100%" id="formulaBuilder">
 	<tr><td colspan=3><input name="formulaInput" id="formulaInput" size="120" value='{$formula}'/></td></tr>
 	<tr>
-		<td id="fieldsList" width="200" ><div id="fieldsGrid"></div></td>
-		<td id="functionsList" width="200"><div id="functionsGrid"></div></td>
+		<td id="fieldsList" width="200">
+			<input id="formulaFieldsSearch" style="width:180px"/>
+			<button id="formulaFieldClear">Clear</button><div id="fieldSearchResults"></div>
+			<div id="fieldsGrid"></div>
+		</td>
+		<td id="functionsList" width="200">
+			<input id="formulaFuncSearch" style="width:180px"/>
+			<button id="formulaFuncClear">Clear</button><div id="funcSearchResults"></div>
+			<div id="functionsGrid"></div>
+		</td>
 		<td id="functionDesc" style="text-align:center">Description</td>
 	</tr>
 </table>
-<div style="width:100%;text-align:right"
+<div style="width:100%;text-align:right">
 <input type='button' class='button' name='cancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'  
 	onclick="ModuleBuilder.formulaEditorWindow.hide()" >
 <input type='button' class='button' name='fsavebtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}' 

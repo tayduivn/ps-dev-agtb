@@ -52,9 +52,11 @@ class EmployeesController extends SugarController{
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
             
+            //BEGIN SUGARCRM flav!=sales ONLY
             if( !empty($u->user_name) ) //If user redirect back to assignment screen.
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
             else 
+            //END SUGARCRM flav!=sales ONLY
                 SugarApplication::redirect("index.php?module=Employees&action=index");
         }
         else 

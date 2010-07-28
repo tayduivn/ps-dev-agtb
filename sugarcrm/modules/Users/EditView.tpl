@@ -286,7 +286,6 @@ EditView_tabs.on('contentReady', function(e){
                                     </select>
                                 </td>
                             </tr>
-                            <!--//END SUGARCRM flav!=sales ONLY -->
                             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                             <tr id="mail_smtpserver_tr">
                                 <td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_EMAIL_PROVIDER}</span></td>
@@ -313,6 +312,7 @@ EditView_tabs.on('contentReady', function(e){
                                 <td width="33%" >&nbsp;</td>
                             </tr>
                             {/if}
+                            <!--//END SUGARCRM flav!=sales ONLY -->
                         </table>
             </div>
         </div>
@@ -896,15 +896,13 @@ document.getElementById('email_link_type').onchange();
 -->
 </script>
 {$JAVASCRIPT}
-<script type="text/javascript" language="Javascript">
-{$confirmReassignJs}
-</script>
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
 {$getNameJs}
 {$getNumberJs}
+{$confirmReassignJs}
 {$currencySymbolJs}
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();

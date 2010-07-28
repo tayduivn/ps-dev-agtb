@@ -34,6 +34,8 @@ $module_menu = array();
 if ( isTouchScreen() ) {
     $module_menu[] = Array('index.php?module=Home&action=index', $mod_strings['LBL_MODULE_NAME'], 'Home', 'Home');
 }
+//BEGIN SUGARCRM flav!=sales ONLY
 $module_menu[] = Array('index.php?module=Home&action=index&activeTab=AddTab', $app_strings['LBL_ADD_PAGE'], 'AddTab', 'Home');
+//END SUGARCRM flav!=sales ONLY
 //END SUGARCRM flav=pro || flav=sales ONLY
 ?>

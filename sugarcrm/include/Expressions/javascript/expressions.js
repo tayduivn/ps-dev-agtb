@@ -478,8 +478,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 	// trim spaces, left and right
 	expr = expr.replace(/^\s+|\s+$/g,"");
 
-	//console.log("Evaluating: " + expr);
-
 	// check if its a constant and return a constant expression
 	var fixed = this.toConstant(expr);
 	if ( fixed != null && typeof(fixed) != 'undefined' )
@@ -552,7 +550,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 				var start_reg = ( i < length - 1 ? i+1 : length - 1);
 
 				var temp = params.substring(start_reg , end_reg );
-				//console.log(start_reg + " " + end_reg + " " + params + " '" + temp + "'");
 				if ( (/^\s*$/).exec(temp) == null )
 					throw (func + ": Syntax Error (Improperly Terminated String '" + temp + "')" + (start_reg) + " " + end_reg);
 			}
@@ -609,7 +606,6 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	// a constant string literal
 	if ( (/^".*"$/).exec(expr) != null ) {
 		expr = expr.substring(1, expr.length-1);		// remove start/end quotes
-		//console.log("String Literal Detected " + expr);
 		return new SUGAR.StringLiteralExpression( expr );
 	}
 

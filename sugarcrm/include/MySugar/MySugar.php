@@ -755,9 +755,9 @@ EOJS;
 								$trackerScriptArray .= "'$id',";
 				                $trackerScript = empty($trackerScript) ? $dashlet->displayScript() : $trackerScript;
 							}
-							//BEGIN SUGARCRM flav=pro ONLY
+							//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 							$toggleHeaderToolsetScript .= "SUGAR.mySugar.attachToggleToolsetEvent('$id');";
-							//END SUGARCRM flav=pro ONLY
+							//END SUGARCRM flav=pro || flav=sales ONLY
 						   
 						} catch (Exception $ex) {
                             $display[$colNum]['dashlets'][$id]['display'] = $ex->getMessage();

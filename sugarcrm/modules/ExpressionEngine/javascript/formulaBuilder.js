@@ -159,49 +159,100 @@ SUGAR.expressions.GridToolTip = {
 		}
 		el.innerHTML = '<img src="themes/default/images/SugarLogic/icon_' + out + '_16.png"></img>';
 	}
-	var grid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
+	var fieldDS = new YAHOO.util.LocalDataSource(fieldsArray, {
+		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
+		responseSchema: {
+		   resultsList : "relationships",
+		   fields : ['name', 'type']
+	    }
+	});
+	var fieldsGrid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
 		[
 		    {key:'name', label: "Fields", width: 200, sortable: true},
 		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
-		new YAHOO.util.LocalDataSource(fieldsArray, {
-			responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
-			responseSchema: {
-			   resultsList : "relationships",
-			   fields : ['name', 'type']
-		    }
-		}),
+		fieldDS,
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
 	);
-	grid.render();
+	fieldsGrid.on("rowClickEvent", function(e){
+		Dom.get("formulaInput").value += "$" + e.target.firstChild.textContent;
+	});
+	
+	fieldDS.queryMatchContains = true;
+	var fieldAC = new YAHOO.widget.AutoComplete("formulaFieldsSearch","fieldSearchResults", fieldDS);
+	fieldAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
+		fieldsGrid.initializeTable();
+		fieldsGrid.addRows(oResponse.results);
+		fieldsGrid.render();
+    }
+	var fieldsJSON =  [];
+	for(var i in fieldsArray)
+	{
+		fieldsJSON[i] = {name: fieldsArray[i][0], type: fieldsArray[i][1]};
+	}
+	Dom.get("formulaFieldsSearch").onkeyup = function() {
+		if (this.value == '') {
+			fieldsGrid.initializeTable();
+			fieldsGrid.addRows(fieldsJSON);
+			fieldsGrid.render();
+		} // if
+	}
+	fieldsGrid.render();
+	SUGAR.expressions.fieldGrid = fieldsGrid;
 	
 	var functionsArray = SUGAR.expressions.getFunctionList(); 
-	grid = new YAHOO.widget.ScrollingDataTable('functionsGrid',
+	var funcDS = new YAHOO.util.LocalDataSource(functionsArray, 
+	{
+		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
+		responseSchema: 
+		{
+		   resultsList : "relationships",
+		   fields : ['name', 'type']
+	    }
+	});
+	var functionsGrid = new YAHOO.widget.ScrollingDataTable('functionsGrid',
 		[
 		    {key:'name', label: "Functions", width: 200, sortable: true},
 		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
-		new YAHOO.util.LocalDataSource(functionsArray, {
-			responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
-			responseSchema: {
-			   resultsList : "relationships",
-			   fields : ['name', 'type']
-		    }
-		}),
+		funcDS,
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
 	);
 	
-	grid.subscribe("rowMouseoverEvent", function(e){
+	functionsGrid.on("rowClickEvent", function(e){
+		Dom.get("formulaInput").value +=  e.target.firstChild.textContent + '(';
+	});
+	
+	functionsGrid.on("rowMouseoverEvent", function(e){
 		var ggt = SUGAR.expressions.GridToolTip;
 		if (ggt.timer)
 			ggt.timer.cancel();
 			ggt.timer = YAHOO.lang.later(250, this, function(e){
-				console.log(e);
 				ggt.showFunctionDescription("functionDesc", e.target.firstChild.textContent);
 		}, e);
 		
 	});
-	grid.render();
+	
+	funcDS.queryMatchContains = true;
+	var funcAC = new YAHOO.widget.AutoComplete("formulaFuncSearch","funcSearchResults", funcDS);
+	funcAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
+		functionsGrid.initializeTable();
+		functionsGrid.addRows(oResponse.results);
+		functionsGrid.render();
+    }
+	var funcsJSON =  [];
+	for(var i in functionsArray)
+	{
+		funcsJSON[i] = {name: functionsArray[i][0], type: functionsArray[i][1]};
+	}
+	Dom.get("formulaFuncSearch").onkeyup = function() {
+		if (this.value == '') {
+			functionsGrid.initializeTable();
+			functionsGrid.addRows(funcsJSON);
+			functionsGrid.render();
+		} // if
+	}
+	functionsGrid.render();
 
 	Dom.setStyle(Dom.get("formulaBuilder").parentNode, "padding", "0");
 };

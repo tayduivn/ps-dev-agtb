@@ -37,7 +37,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * views.
  *
  */
-class SugarWirelessView extends SugarView{
+class SugarWirelessView extends SugarView
+{
 	/**
 	 * wl_mod_select_list includes the list of modules to be added as options to
 	 * the navigation select list
@@ -276,7 +277,10 @@ class SugarWirelessView extends SugarView{
         return $bean_details;
  	}
 
-	private function setup_detail_field($field){
+	private function setup_detail_field(
+	    $field
+	    )
+	{
 		$displayParams = (isset($field['displayParams'])) ? $field['displayParams'] : array();
 		$customCode = null;
 		$GLOBALS['log']->debug( get_class($this)."->setup_detail_field($field)" ) ;
@@ -294,7 +298,11 @@ class SugarWirelessView extends SugarView{
             $type = $this->bean->field_name_map[$field]['type'];
 		}
 
-		// retrieve the field, id, and value, pass it as an array for Smarty
+		if ( !isset($this->bean->field_name_map[$field]) ) {
+		    return false;
+		}
+		
+        // retrieve the field, id, and value, pass it as an array for Smarty
         return array(
 				'id' => $this->bean->id,
                 'label' => $GLOBALS['mod_strings'][$this->bean->field_name_map[$field]['vname']],
@@ -308,8 +316,11 @@ class SugarWirelessView extends SugarView{
 
 	}
 
-	private function setup_edit_field($field){
-		$displayParams = (isset($field['displayParams'])) ? $field['displayParams'] : array();
+	private function setup_edit_field(
+	    $field
+	    )
+	{
+	    $displayParams = (isset($field['displayParams'])) ? $field['displayParams'] : array();
 		$required = false;
 		$detail_only = false;
 		$customCode = null;
@@ -323,7 +334,11 @@ class SugarWirelessView extends SugarView{
 			$field = $field['name'];
 		}
 
-        return array(
+        if ( !isset($this->bean->field_name_map[$field]) ) {
+		    return false;
+		}
+		
+		return array(
 				'id' => $this->bean->id,
 				'field' => $field,
 				'required' => $required,

@@ -45,7 +45,6 @@ class DefineDateExpression extends DateExpression
 		return <<<EOQ
 			var params = this.getParameters().evaluate();
 			var time   = SUGAR.util.DateUtils.convert(params);
-			console.log(time);
 			if (time == false)	throw "Incorrect date format";
 
 			return time;

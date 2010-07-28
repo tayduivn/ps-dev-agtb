@@ -43,8 +43,14 @@ $mod_strings = array (
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
 
 //END SUGARCRM flav=pro ONLY
-	'LBL_DELETE_USER_CONFIRM'           => 'Deleting the User record will also delete the Employee record. Do you want to proceed with deleting this record?',
-	'LNK_IMPORT_USERS'                 => 'Import Users',
+         'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
+                                                'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user.',
+         //BEGIN SUGARCRM flav=sales ONLY
+         'LBL_DELETE_USER_CONFIRM' => 'When the User record is deleted, the corresponding Employee record will also be deleted. <br/><br/>'.
+                                            'Click OK to delete the User record.',
+         //END SUGARCRM flav=sales ONLY
+
+        'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',
 	'ERR_EMAIL_NO_OPTS'					=> 'Could not find optimum settings for Inbound Email.',
@@ -122,7 +128,7 @@ $mod_strings = array (
 
 
 	'LBL_CONFIRM_PASSWORD'				=> 'Confirm Password',
-	'LBL_CONFIRM_REGULAR_USER'			=> 'You have changed the user type from System Administrator User to Regular User.  After saving this change, the user will no longer have system administrator privileges.\n\nClick “OK�? to proceed.\nClick “Cancel�? to return to the record.',
+	'LBL_CONFIRM_REGULAR_USER'			=> 'You have changed the user type from System Administrator User to Regular User.  After saving this change, the user will no longer have system administrator privileges.\n\nClick OK to proceed.\nClick Cancel to return to the record.',
 	'LBL_COUNTRY'						=> 'Country',
 	'LBL_CURRENCY_TEXT'					=> 'Select the currency that will be displayed by default when you create new records. This is also the currency that will be displayed in the Amount columns in the Opportunities ListView.',
 	'LBL_CURRENCY'						=> 'Currency',
@@ -563,7 +569,9 @@ $mod_strings = array (
 	'LBL_EXCHANGE_SMTPUSER'					=> 'Exchange Username:',
 	'LBL_EXCHANGE_SMTPPORT'					=> 'Exchange Server Port:',
 	'LBL_EXCHANGE_SMTPSERVER'				=> 'Exchange Server:',
-	
+        'LBL_OK'   =>'OK',
+        'LBL_CANCEL'    => 'Cancel',
+        'LBL_DELETE_USER' => 'Delete User',
 	// Wizard
 	'LBL_WIZARD_TITLE' => 'User Wizard',
     'LBL_WIZARD_WELCOME_TAB' => 'Welcome',
