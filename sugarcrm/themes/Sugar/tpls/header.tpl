@@ -42,11 +42,7 @@
     <br /><br />
     {/if}
 	{if $AUTHENTICATED}
-      {if $USE_GROUP_TABS}
-        {include file="_headerModuleListGroupTabs.tpl" theme_template=true}
-      {else}
-        {include file="_headerModuleList.tpl" theme_template=true}
-      {/if}
+      {include file="_headerModuleList.tpl" theme_template=true}
     {/if}
 	
     <div class="clear"></div>
