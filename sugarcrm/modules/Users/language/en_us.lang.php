@@ -43,10 +43,10 @@ $mod_strings = array (
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
 
 //END SUGARCRM flav=pro ONLY
-        'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
-                                                'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user',
+         'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
+                                                'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user.',
          //BEGIN SUGARCRM flav=sales ONLY
-            'LBL_DELETE_USER_CONFIRM' => 'When the User record is deleted, the corresponding Employee record will also be deleted. <br/><br/>'.
+         'LBL_DELETE_USER_CONFIRM' => 'When the User record is deleted, the corresponding Employee record will also be deleted. <br/><br/>'.
                                             'Click OK to delete the User record.',
          //END SUGARCRM flav=sales ONLY
 
