@@ -3505,7 +3505,7 @@ class InboundEmail extends SugarBean {
 			    if(empty($name)) continue;
 
 			    $attach = $this->getNoteBeanForAttachment($emailId);
-			    $attach->name = $name;
+			    $attach->name = $attach->filename = $name;
 				if(isset($this->imap_types[$part->type])) {
 				    $attach->file_mime_type = $this->imap_types[$part->type].'/'.$part->subtype;
 				}
