@@ -77,8 +77,8 @@
 				<a href="#" class="yuimenuitemlabel group"><em>&gt;&gt;</em></a>
 				<div id="Group" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
-					{foreach from=$moduleExtraMenu item=module key=name name=moduleList}
-					<li>{sugar_link id="moduleTab_$name" class="yuimenuitemlabel" module=$name data=$module}
+					{foreach from=$groupTabs item=module key=group name=groupList}
+					<li>{$module}
 					{/foreach}
 				</ul>
 				</div>

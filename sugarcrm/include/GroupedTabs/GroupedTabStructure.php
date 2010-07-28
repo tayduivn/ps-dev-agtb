@@ -49,7 +49,7 @@ class GroupedTabStructure
 	 */
     function get_tab_structure($modList = '', $patch = '', $ignoreSugarConfig=false, $labelAsKey=false)
     {
-    	global $modListHeader, $app_strings, $modInvisListActivities;
+    	global $modListHeader, $app_strings, $app_list_strings, $modInvisListActivities;
         
         /* Use default if not provided */
         if(!$modList)
@@ -102,7 +102,7 @@ class GroupedTabStructure
             }else{
                 $retStruct[$app_strings[$subModules['label']]]['modules']= array();
             }
-            
+
             foreach($subModules['modules'] as $key => $subModule)
             {
                /* Perform a case-insensitive in_array check
@@ -113,9 +113,9 @@ class GroupedTabStructure
                     if(is_string($module) && strcasecmp($subModule, $module) === 0)
                     {
                     	if($labelAsKey){
-                    		$retStruct[$subModules['label']]['modules'][] = $subModule;
+                    		$retStruct[$subModules['label']]['modules'][$module] = $app_list_strings['moduleList'][$module];
                     	}else{
-                    		$retStruct[$app_strings[$subModules['label']]]['modules'][] = $subModule;
+                    		$retStruct[$app_strings[$subModules['label']]]['modules'][$module] = $app_list_strings['moduleList'][$module];
                     	}                        
                         $mlhUsed[$module] = true;
                         break;
@@ -146,9 +146,9 @@ class GroupedTabStructure
 	        	if(is_array($module) || !isset($mlhUsed[$module]))
 	            {
 		            	if($labelAsKey){
-		            		$retStruct['LBL_TABGROUP_OTHER']['modules'] []= $module;
+		            		$retStruct['LBL_TABGROUP_OTHER']['modules'] [$module]= $app_list_strings['moduleList'][$module];
 	            		}else{
-			            	$retStruct[$app_strings['LBL_TABGROUP_OTHER']]['modules'] []= $module;
+			            	$retStruct[$app_strings['LBL_TABGROUP_OTHER']]['modules'] [$module]= $app_list_strings['moduleList'][$module];
 			            }
 	            }
 	        }
