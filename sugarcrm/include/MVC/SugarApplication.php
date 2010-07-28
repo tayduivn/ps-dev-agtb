@@ -201,8 +201,10 @@ class SugarApplication
 	function preProcess(){
 		//BEGIN SUGARCRM flav=sales ONLY
 		// Create a module whitelist of all modules in Administration
-		$ss_module_whitelist = getSugarSalesAdminModuleList();
-		if(!in_array($this->controller->module, $ss_module_whitelist) && is_admin($GLOBALS['current_user'])){
+		$ss_admin_whitelist = getSugarSalesAdminWhiteList();
+		if(!in_array($this->controller->module, $ss_admin_whitelist['modules'])
+		   && !in_array($this->controller->action, $ss_admin_whitelist['actions'])
+		   && is_admin($GLOBALS['current_user'])){
 			self::redirect("index.php?module=Administration&action=index");
 		}
 		//END SUGARCRM flav=sales ONLY
