@@ -402,7 +402,9 @@ $mod_strings = array (
     'LBL_TOO_MANY_CONCURRENT'           => 'This session has ended because another session has been started under the same username.',
 // MASS REASSIGNMENT SCRIPT STRINGS
 	'LBL_REASS_SCRIPT_TITLE'			=> 'Record Reassignment',
-	'LBL_REASS_DESC_PART1'				=> 'Find all records in the selected modules that are assigned to a user, and reassign them to another user.',
+	'LBL_REASS_DESC_PART1'				=> 'Select the modules containing the records to reassign from a specific user to another user. <br/><br/>
+                                                            Click Continue to view the number of records that will be updated in each selected module.
+                                                            Click Cancel to exit the page without reassigning any records.',
 	'LBL_REASS_STEP2_TITLE'				=> 'Team Reassignment',
 	'LBL_REASS_STEP2_DESC'				=> 'The teams listed below were available in the from user\'s team, but not in the to user\'s team. All records in the From User\'s team will not be visible in the To User team unless the team values are mapped. ',
 	'LBL_REASS_USER_FROM_TEAM'			=> 'From User Team:',
