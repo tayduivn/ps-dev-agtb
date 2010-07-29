@@ -289,7 +289,8 @@ else if(!isset($_GET['execute'])){
 	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
 	echo "</ul>\n";
 	//BEGIN SUGARCRM flav!=sales ONLY
-	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}<BR>\n";
+        $help_img = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_REASS_VERBOSE_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"');
+	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
 	//END SUGARCRM flav!=sales ONLY
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
@@ -517,7 +518,7 @@ if(!empty($quicksearch_js)){
 }
 //END SUGARCRM flav=pro ONLY
 ?>
-
+<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
 <script type="text/javascript">
 
 function clearCurrentRecords()
