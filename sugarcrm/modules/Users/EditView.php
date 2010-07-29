@@ -236,7 +236,7 @@ if($focus->getPreference('no_opps') == 'on') {
     $sugar_smarty->assign('NO_OPPS', 'CHECKED');
 }
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 // REASSIGNMENT SCRIPT CODE
 $confirmReassignJs = "
 	function confirmReassignRecords() {
@@ -279,7 +279,7 @@ $confirmReassignJs = "
 	}
 ";
 
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 // check if the user has access to the User Management
 $sugar_smarty->assign('USER_ADMIN',is_admin_for_module($current_user,'Users')&& !is_admin($current_user));
@@ -302,10 +302,10 @@ if(empty($focus->id)) {
 }else{
 	$sugar_smarty->assign('NEW_USER','0');
 	$sugar_smarty->assign('NEW_USER_TYPE','DISABLED');
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign('confirmReassignJs', $confirmReassignJs);
 	$sugar_smarty->assign('REASSIGN_JS', "return confirmReassignRecords();");
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
 }
 
 ////	END NEW USER CREATION ONLY
