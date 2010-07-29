@@ -602,7 +602,7 @@ $mod_strings = array (
     'LBL_WIZARD_SMTP' => 'Your Email Account',
     'LBL_WIZARD_PERSONALINFO_DESC' => 'Provide information about yourself. The information you provide about yourself will be visible to other Sugar users.<br />Fields marked with <span class="required">*</span> are required.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify your time zone and how you would like dates, currencies and names to appear in Sugar.',
-    'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for sending email.',
+    'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for the default outbound email server.',
 
 ); // END STRINGS DEFS
 
