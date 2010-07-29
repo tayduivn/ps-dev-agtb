@@ -50,7 +50,6 @@ else
     $cancel_location = "index.php?module=Users&action=index";
 		
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
-echo "{$mod_strings_users['LBL_REASS_DESC_PART1']}<BR><br>";
 
 // Include Metadata for processing
 require_once("modules/Users/metadata/reassignScriptMetadata.php");
@@ -79,6 +78,9 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 ?>
 <form method=post action="index.php?module=Users&action=reassignUserRecords" name='EditView' id='EditView'>
 <table cellspacing='1' cellpadding='1' border='0'>
+<tr>
+    <td><?php echo $mod_strings_users['LBL_REASS_DESC_PART1']."<BR><br>"?></td>
+</tr>
 <tr>
 <td>
 <input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CONTINUE']; ?>" name=steponesubmit>
@@ -280,7 +282,7 @@ else if(!isset($_GET['execute'])){
 	
 	$toteamname = TeamSetManager::getTeamsFromSet($team_set_id);
 	//END SUGARCRM flav=pro ONLY
-	
+        echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
 	echo "<form action=\"index.php?module=Users&action=reassignUserRecords&execute=true\" method=post>\n";
 	echo "<BR>{$mod_strings_users['LBL_REASS_NOTES_TITLE']}\n";
 	echo "<ul>\n";
