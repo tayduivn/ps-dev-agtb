@@ -81,7 +81,7 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 <table cellspacing='1' cellpadding='1' border='0'>
 <tr>
 <td>
-<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
+<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CONTINUE']; ?>" name=steponesubmit>
 &nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='clearCurrentRecords();'>
 <input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
@@ -236,7 +236,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 <table cellspacing='1' cellpadding='1' border='0'>
 <tr>
 <td>
-<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
+<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CONTINUE']; ?>" name=steponesubmit>
 &nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='clearCurrentRecords();'>
 <input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
