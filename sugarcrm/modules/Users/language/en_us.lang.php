@@ -405,6 +405,7 @@ $mod_strings = array (
 	'LBL_REASS_DESC_PART1'				=> 'Select the modules containing the records to reassign from a specific user to another user. <br/><br/>
                                                             Click Continue to view the number of records that will be updated in each selected module.
                                                             Click Cancel to exit the page without reassigning any records.',
+        'LBL_REASS_DESC_PART2'=>                    'Select which modules against which to run workflows, send assignment notifications, and do auditing tracking during re-assignment.',
 	'LBL_REASS_STEP2_TITLE'				=> 'Team Reassignment',
 	'LBL_REASS_STEP2_DESC'				=> 'The teams listed below were available in the from user\'s team, but not in the to user\'s team. All records in the From User\'s team will not be visible in the To User team unless the team values are mapped. ',
 	'LBL_REASS_USER_FROM_TEAM'			=> 'From User Team:',
