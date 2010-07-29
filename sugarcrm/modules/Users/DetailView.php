@@ -230,8 +230,9 @@ elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],
 		if (!$current_user->is_group){
 			$buttons .= "<input title='".$app_strings['LBL_DUPLICATE_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_DUPLICATE_BUTTON_KEY']."' class='button' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.isDuplicate.value=true; this.form.action.value='EditView'\" type='submit' name='Duplicate' value='".$app_strings['LBL_DUPLICATE_BUTTON_LABEL']."'>  ";
 
-                if($focus->id != $current_user->id)
-                    $buttons .="<input type='button' class='button' onclick='if(confirm(\"{$mod_strings['LBL_DELETE_USER_CONFIRM']}\"))window.location=\"".$_SERVER['PHP_SELF'] ."?module=Users&action=delete&record={$focus->id}\";' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' /> ";
+                if($focus->id != $current_user->id) {
+                    $buttons .="<input type='button' class='button' onclick='confirmDelete();' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' /> ";
+                }
 
 			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only 
 			&& isset($sugar_config['passwordsetting']['SystemGeneratedPasswordON']) && $sugar_config['passwordsetting']['SystemGeneratedPasswordON']){
@@ -528,7 +529,13 @@ $sugar_smarty->assign("MAIL_SMTPDISPLAY", $mail_smtpdisplay);
 $sugar_smarty->assign('SHOW_PDF_OPTIONS', (PDF_CLASS == "TCPDF"));
 //END SUGARCRM flav=pro ONLY
 
-$sugar_smarty->assign('SHOW_ROLES',(!($focus->is_group=='1' || $focus->portal_only=='1')));
+//BEGIN SUGARCRM flav!=sales ONLY
+$show_roles = (!($focus->is_group=='1' || $focus->portal_only=='1'));
+//END SUGARCRM flav!=sales ONLY
+//BEGIN SUGARCRM flav=sales ONLY
+$show_roles = false;
+//END SUGARCRM flav=sales ONLY
+$sugar_smarty->assign('SHOW_ROLES', $show_roles);
 
 // User Holidays subpanel on the advanced tab
 global $modules_exempt_from_availability_check;
@@ -541,7 +548,7 @@ $GLOBALS['sugar_config']['lock_subpanels'] = true;
 
 //BEGIN SUGARCRM flav=pro ONLY
 // User Holidays subpanels should not be displayed for group and portal users
-if(!($focus->is_group=='1' || $focus->portal_only=='1')){
+if($show_roles){
     require_once('include/SubPanel/SubPanelTiles.php');
     $subpanel = new SubPanelTiles($focus, 'Users');
 
@@ -553,7 +560,7 @@ $GLOBALS['sugar_config']['lock_subpanels'] = $locked;
 $sugar_smarty->display('modules/Users/DetailView.tpl');
 
 // Roles Grid and Roles subpanel should not be displayed for group and portal users
-if(!($focus->is_group=='1' || $focus->portal_only=='1')){
+if($show_roles){
     echo "<div>";
     require_once('modules/ACLRoles/DetailUserRole.php');
     echo "</div></div>";
@@ -577,4 +584,40 @@ YAHOO.util.Event.addListener(window, 'load', SUGAR.util.fillShortcuts, $savedSea
 </script>";
 echo $str;
 echo "<script type='text/javascript'>user_status_display('$usertype') </script>";
+
+$confirmDeleteJS = "
+<script type='text/javascript'>
+
+function confirmDelete() {
+    var handleYes = function() {
+        window.location=\"".$_SERVER['PHP_SELF'] ."?module=Users&action=delete&record={$focus->id}\";
+    };
+
+    var handleNo = function() {
+        confirmDeletePopup.hide();
+        return false;
+     };
+
+    var confirmDeletePopup = new YAHOO.widget.SimpleDialog(\"Confirm \", {
+                width: \"400px\",
+                draggable: true,
+                constraintoviewport: true,
+                modal: true,
+                fixedcenter: true,
+                text: SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM'),
+                bodyStyle: \"padding:5px\",
+                buttons: [{
+                        text: SUGAR.language.get('Users', 'LBL_OK'),
+                        handler: handleYes,
+                        isDefault:true
+                }, {
+                        text: SUGAR.language.get('Users', 'LBL_CANCEL'),
+                        handler: handleNo,
+                }]
+     });
+    confirmDeletePopup.setHeader(SUGAR.language.get('Users', 'LBL_DELETE_USER'));
+    confirmDeletePopup.render(document.body);
+}
+</script>";
+echo $confirmDeleteJS;
 ?>
