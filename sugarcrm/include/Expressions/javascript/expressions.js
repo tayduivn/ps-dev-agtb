@@ -63,7 +63,7 @@ SUGAR.expressions.Expression.FALSE = "false";
 
 SUGAR.expressions.NumericConstants = {
 	pi: 3.14159265,
-	e: 3.14159265
+	e: 2.718281828459045
 }
 
 
@@ -216,7 +216,7 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 
 	// check if it's an instance of type or a generic that could map to any (unknown type)
 	var isInstance = variable instanceof c || variable instanceof see.TYPE_MAP.generic;
-
+	
 	// now check for generics
 	switch(type) {
 		case see.STRING_TYPE:
@@ -230,6 +230,9 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 				variable = variable.evaluate();
 			}
 			return ( isInstance || variable == see.TRUE || variable == see.FALSE );
+			break;
+		case see.GENERIC_TYPE:
+			return true;
 			break;
 	}
 
@@ -393,7 +396,7 @@ SUGAR.expressions.Expression.TYPE_MAP	= {
 		"time" 		: SUGAR.TimeExpression,
 		"boolean" 	: SUGAR.BooleanExpression,
 		"enum" 		: SUGAR.EnumExpression,
-		"generic" 	: SUGAR.expressions.Expression
+		"generic" 	: SUGAR.GenericExpression
 };
 
 

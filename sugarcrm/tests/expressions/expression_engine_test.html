@@ -72,7 +72,7 @@ function evalExpression() {
 	var expression = document.getElementById('expression').value;
 
 	if ( expression == 'clear' ) {
-		output.innerHTML = "";
+		init();
 		return;
 	}
 
@@ -83,11 +83,11 @@ function evalExpression() {
 	try {
 		var result = parser.evaluate(expression);
 		result = result.evaluate();
-		out += '<div class="result">' + print_r(result, 0) + "</div>";
+		out += '<div class="result" id="js_result_' + resultCount + '">' + print_r(result, 0) + "</div>";
 	} catch (e) {
 		if (e.message)
 			alert(e.message);
-		out += '<div class="result">' + e + "</div>";
+		out += '<div class="result" id="js_result_' + resultCount + '">' + e + "</div>";
 	}
 
 	out += "<div class='clearer'></div>";
@@ -103,7 +103,8 @@ function ajaxEvalExpression(expr) {
 		{
 			success: function(o){
 				var output = document.getElementById('results');
-				output.innerHTML = "<div class='ajax result'>" + o.responseText + "</div>" + output.innerHTML;
+				output.innerHTML = "<div class='ajax result' id='php_result_" + resultCount + "'>" + o.responseText + "</div>" + output.innerHTML;
+				resultCount++;
 			}
 		}, "expression=" + expr);
 }
@@ -111,7 +112,8 @@ function ajaxEvalExpression(expr) {
 
 
 function init() {
-
+	resultCount = 0;
+	document.getElementById('results').innerHTML = "";
 }
 
 
@@ -206,7 +208,8 @@ BODY {
 
 	<div id="input">
 		<input type="text" id="expression" style="width: 288px" onkeypress="checkEnter(event)">
-		<input type="button" value="Evaluate" onclick="evalExpression()">
+		<input type="button" id="evaluate_button" value="Evaluate" onclick="evalExpression()">
+		<input type="button" id="clear_button" value="Clear" onclick="init()">
 	</div>
 
 </div>

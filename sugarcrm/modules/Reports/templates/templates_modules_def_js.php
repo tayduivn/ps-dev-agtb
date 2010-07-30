@@ -178,7 +178,8 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 		
 				foreach($field_def as $field_name=>$field_value)
 				{
-					if(empty($field_name) || empty($field_value) || $field_name  == 'comment')
+					if(empty($field_name) || empty($field_value) || $field_name  == 'comment'
+						|| $field_name == "formula" || $field_name == "dependency" || $field_name == "visibility_grid")
 					{
 						continue;
 					}
