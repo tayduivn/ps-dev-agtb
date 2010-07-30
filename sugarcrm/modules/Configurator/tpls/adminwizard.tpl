@@ -53,6 +53,9 @@ function disableReturnSubmission(e) {
 <form name="AdminWizard" id="AdminWizard" enctype='multipart/form-data' method="POST" action="index.php" onkeypress="return disableReturnSubmission(event);">
 <input type='hidden' name='action' value='SaveAdminWizard'/>
 <input type='hidden' name='module' value='Configurator'/>
+<!-- //BEGIN SUGARCRM flav=sales ONLY -->
+<input type='hidden' id='mail_smtptype' name='mail_smtptype' value='other'/>
+<!-- //END SUGARCRM flav=sales ONLY -->
 <span class='error'>{$error.main}</span>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Emails/javascript/vars.js'}"></script>
@@ -244,6 +247,7 @@ function disableReturnSubmission(e) {
             <tr>
                 <td align="left" scope="row" colspan="4"><i>{$MOD.LBL_WIZARD_SMTP_DESC}</i></td>
             </tr>
+            {* //BEGIN SUGARCRM flav!=sales ONLY *}
              <tr>
                 <td align="left" scope="row" colspan="4">{$MOD.LBL_CHOOSE_EMAIL_PROVIDER}</td>
             </tr>
@@ -291,6 +295,7 @@ function disableReturnSubmission(e) {
                     </div>
                 </td>
             </tr>
+            {* //END SUGARCRM flav!=sales ONLY *}
             <tr>
                 <td colspan="4">
                     <div id="smtp_settings">
@@ -498,6 +503,7 @@ var SugarWizard = new function()
             break;
         case 'smtp':
             if ( !SUGAR.smtpButtonGroup ) {
+                //BEGIN SUGARCRM flav!=sales ONLY
                 SUGAR.smtpButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
                 SUGAR.smtpButtonGroup.subscribe('checkedButtonChange', function(e)
                 {
@@ -505,6 +511,7 @@ var SugarWizard = new function()
                     document.getElementById('smtp_settings').style.display = '';
                     document.getElementById('AdminWizard').mail_smtptype.value = e.newValue.get('value');
                 });
+                //END SUGARCRM flav!=sales ONLY
                 YAHOO.widget.Button.addHiddenFieldsToForm(document.getElementById('AdminWizard'));
             }
             break;

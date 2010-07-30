@@ -150,6 +150,7 @@ function getSugarSalesAdminWhiteList(){
 	}
 	$ss_admin_whitelist['modules']['Notifications'] = 'Notifications';
 	$ss_admin_whitelist['actions']['RetrieveEmail'] = 'RetrieveEmail';
+	$ss_admin_whitelist['actions']['EmailUIAjax'] = 'EmailUIAjax';
 	$admin_group_header = $admin_group_header_backup;
 	
 	return $ss_admin_whitelist;

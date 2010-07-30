@@ -97,6 +97,7 @@ function change_state(radiobutton) {
 		    <td width="20%" scope="row">{$MOD.LBL_NOTIFY_FROMADDRESS} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
             <td width="30%"><input id='notify_fromaddress' name='notify_fromaddress' tabindex='1' size='25' maxlength='128' type="text" value="{$notify_fromaddress}"></td>
         </tr>
+        {* //BEGIN SUGARCRM flav!=sales ONLY *}
 		<tr>
             <td align="left" scope="row" colspan="4">{$MOD.LBL_CHOOSE_EMAIL_PROVIDER}</td>
         </tr>
@@ -143,10 +144,13 @@ function change_state(radiobutton) {
                 </div>
             </td>
         </tr>
+        {* //END SUGARCRM flav!=sales ONLY *}
+        {* //BEGIN SUGARCRM flav!=sales ONLY *}
 		<tr>
 			<td colspan="4">
 			     <div id="smtp_settings">
 					<table width="100%" cellpadding="0" cellspacing="0">
+        {* //END SUGARCRM flav!=sales ONLY *}
 						<tr id="mailsettings1">
 							<td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_MAIL_SMTPSERVER}</span> <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 							<td width="30%" ><input type="text" id="mail_smtpserver" name="mail_smtpserver" tabindex="1" size="25" maxlength="64" value="{$mail_smtpserver}"></td>
@@ -190,10 +194,12 @@ function change_state(radiobutton) {
 							<td width="30%">&nbsp;</td>
 				 		</tr>
                        {* //END SUGARCRM flav!=sales ONLY *}
+        {* //BEGIN SUGARCRM flav!=sales ONLY *}
 				 	</table>
 				 </div>
 			</td>
 		</tr>
+        {* //END SUGARCRM flav!=sales ONLY *}
 		<tr><td colspan="4">&nbsp;</tr>
 		<tr>
 		    <td width="15%"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="testOutboundSettings();">&nbsp;</td>
@@ -703,6 +709,7 @@ function changeEmailScreenDisplay(smtptype, clear)
     }
     notify_setrequired(document.ConfigureSettings);
 }
+//BEGIN SUGARCRM flav!=sales ONLY
 var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
 oButtonGroup.subscribe('checkedButtonChange', function(e)
 {
@@ -710,9 +717,12 @@ oButtonGroup.subscribe('checkedButtonChange', function(e)
     document.getElementById('smtp_settings').style.display = '';
     document.getElementById('EditView').mail_smtptype.value = e.newValue.get('value');
 });
+//END SUGARCRM flav!=sales ONLY
 YAHOO.widget.Button.addHiddenFieldsToForm(document.ConfigureSettings);
 {/literal}{if !empty($mail_smtptype)}{literal}
+//BEGIN SUGARCRM flav!=sales ONLY
 changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}", false);
+//END SUGARCRM flav!=sales ONLY
 {/literal}{/if}{literal}
 -->
 </script>
