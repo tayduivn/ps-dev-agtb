@@ -42,7 +42,7 @@
     <br /><br />
     {/if}
 	{if $AUTHENTICATED}
-    {include file="_headerModuleList.tpl" theme_template=true}
+      {include file="_headerModuleList.tpl" theme_template=true}
     {/if}
 	
     <div class="clear"></div>
