@@ -68,7 +68,7 @@ class VisibilityAction extends AbstractAction{
 						if (visibility == '' && this.view == 'EditView')
 							SUGAR.forms.FlashField(target);
 					}
-				} catch (e) {if (!SUGAR.isIE) console.log(e);}
+				} catch (e) {if (console && console.log) console.log(e);}
 			}
 		});";
 	}

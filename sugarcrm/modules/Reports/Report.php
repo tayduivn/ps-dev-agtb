@@ -1491,10 +1491,12 @@ print "<BR>";
 
         //for each field
         while($currCount<$arrCount){
-            $field = trim($field_list_name_array[$currCount]);
-            //if it has a space, then it is aliased, let's process
-            //to see if it has a period
-            $has_space = strrpos($field, " ");
+            $fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
+            foreach ( $fieldsInField as $field ) {
+                $field = trim($field);
+                //if it has a space, then it is aliased, let's process
+                //to see if it has a period
+                $has_space = strrpos($field, " ");
                     if($has_space){
                         $temp_field_name = substr($field,0,$has_space);
                         $has_period = strrpos($temp_field_name, ".");
@@ -1514,6 +1516,7 @@ print "<BR>";
                         }
                     }
                     $currCount = $currCount+1;
+            }
         }
 
        $this->$field_list_name = $field_list_name_array;

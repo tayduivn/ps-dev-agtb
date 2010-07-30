@@ -110,7 +110,7 @@ SUGAR.util.extend(SUGAR.forms.PanelVisibilityAction, SUGAR.forms.AbstractAction,
                     this.showChildren();
                 target.style.display = visibility;
             }
-        } catch (e) {if (!SUGAR.isIE) console.log(e);}
+        } catch (e) {if (console && console.log) console.log(e);}
     }
 });
 
@@ -142,8 +142,6 @@ SUGAR.forms.animation.Expand = function(target)
     t.style.overflow = "hidden";
     t.style.height = "0px";
     t.style.display = "";
-    
-    //console.log("expanding");
     
     var expandAnim = new YAHOO.util.Anim(target, { height: { to: SUGAR.forms.animation.sizes[target]  } },
         0.5, YAHOO.util.Easing.easeBoth);

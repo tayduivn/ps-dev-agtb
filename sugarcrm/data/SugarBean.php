@@ -1356,6 +1356,8 @@ class SugarBean
 			$usedDefaultTeam = true;
 
 		}
+		$this->updateCalculatedFields();
+		
 		//END SUGARCRM flav=pro ONLY
 		if($isUpdate && !$this->update_date_entered)
 		{
@@ -1650,6 +1652,24 @@ class SugarBean
 
 		return $this->id;
 	}
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	/**
+	 * Retrieves and executes the CF dependencies for this bean
+	 */
+	function updateCalculatedFields()
+	{
+		require_once("include/Expressions/DependencyManager.php");
+		$deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+		foreach($deps as $dep)
+		{
+			if ($dep->getFireOnLoad())
+			{
+				$dep->fire($this);
+			}
+		}
+	}
+	//END SUGARCRM flav=pro ONLY
 
     /**
      * Performs a check if the record has been modified since the specified date
@@ -2544,6 +2564,17 @@ function save_relationship_changes($is_update, $exclude=array())
 						$GLOBALS['log']->debug("process_order_by: ($list_column[0]) does not have a vardef entry.");
 					}
 				}
+			}
+			// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
+			if ( $this->db->dbType == 'mssql' 
+			        && isset($bean_queried->field_defs[$list_column[0]])
+			        && in_array(
+			            $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column[0]])),
+			            array('ntext','text','image')
+			            )
+			        ) {
+		        $list_column = explode(' ',trim($value));
+		        $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
 			}
 			$elements[$key]=$value;
 		}

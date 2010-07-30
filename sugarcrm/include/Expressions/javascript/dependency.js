@@ -371,8 +371,6 @@ SUGAR.forms._performRangeReplace = function(expression)
 			// optional param is there
 			if ( loc_comma > -1 && loc_comma < loc_end )	end = expression.substring( loc_comma + 1, loc_end );
 
-			//console.log(start + " " + end );
-
 			// construct the range
 			var result = this.generateRange(prefix, this.valueReplace(start), this.valueReplace(end));
 			//var result = this.generateRange(prefix, start, end);
@@ -454,7 +452,7 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 		}
 		
 	} catch (e) {
-		if (console && console.log) console.log(' ERROR ' + e );
+		if (console && console.log){ console.log('ERROR: ' + e );}
 		return;
 	}
 };
@@ -517,14 +515,12 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	try {
 		eval = SUGAR.forms.evalVariableExpression(obj.condition);
 	} catch (e) {
-		//console.log(e);
+		{if (console && console.log) console.log('ERROR:' + e);}
 	}
 
 	// evaluate the result
 	if ( typeof(eval) != 'undefined' )
 		val = eval.evaluate();
-
-	//console.log("VALUE = " + val);
 
 	// if the condition is met
 	if ( val == SUGAR.expressions.Expression.TRUE ) {
@@ -542,14 +538,18 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	}
 }
 
+SUGAR.forms.flashInProgress = {};
 /**
  * @STATIC
  * Animates a field when by changing it's background color to
  * a shade of light red and back.
  */
 SUGAR.forms.FlashField = function(field, to_color) {
-    if ( typeof(field) == 'undefined' /*|| ! (field instanceof HTMLElement)*/ )     return;
+    if ( typeof(field) == 'undefined')     return;
 
+    if (SUGAR.forms.flashInProgress[field.id])
+    	return;
+    SUGAR.forms.flashInProgress[field.id] = true;
     // store the original background color
     var original = field.style.backgroundColor;
 
@@ -569,10 +569,44 @@ SUGAR.forms.FlashField = function(field, to_color) {
         if ( this.attributes.backgroundColor.to == to_color ) {
             this.attributes.backgroundColor.to = original;
             this.animate();
-            return;
+        } else {
+        	field.style.backgroundColor = original;
+        	SUGAR.forms.flashInProgress[field.id] = false;
         }
-        field.style.backgroundColor = original;
     });
+    
+    //Flash tabs for fields that are not visible. 
+    var tabsId = field.form.getAttribute("name") + "_tabs";
+    if(typeof (window[tabsId]) != "undefined") {
+        var tabView = window[tabsId];
+        var parentDiv = YAHOO.util.Dom.getAncestorByTagName(field, "div");
+        if ( tabView.get ) {
+            var tabs = tabView.get("tabs");
+            for (var i in tabs) {
+                if (i != tabView.get("activeIndex") && (tabs[i].get("contentEl") == parentDiv 
+                		|| YAHOO.util.Dom.isAncestor(tabs[i].get("contentEl"), field)))
+                {
+                	var label = tabs[i].get("labelEl");
+                	
+                	if(SUGAR.forms.flashInProgress[label.parentNode.id])
+                		return;
+                	
+                	var tabAnim = new YAHOO.util.ColorAnim(label, { color: { to: '#F00' } }, 0.2);
+                	tabAnim.origColor = Dom.getStyle(label, "color");
+                	tabAnim.onComplete.subscribe(function () {
+                		if (this.attributes.color.to == '#F00') {
+                			this.attributes.color.to = this.origColor;
+                			this.animate();
+                        } else {
+                        	SUGAR.forms.flashInProgress[label.parentNode.id] = false;
+                        }
+                    });
+                	SUGAR.forms.flashInProgress[label.parentNode.id] = true;
+                	tabAnim.animate();
+                }
+            }
+        }
+	} 
 
     oButtonAnim.animate();
 }
