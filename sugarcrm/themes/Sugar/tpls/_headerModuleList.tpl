@@ -28,7 +28,7 @@
 *}
 <div class="yuimenubar yuimenubarnav" id="moduleList">
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
-	<div id="themeTabGroupMenu{$tabGroupName}" class="themeTabGroupMenu yuimenubar yuimenubarnav"><div class="bd" id="themeTabGroup{$tabGroupName}"  {if $tabGroupName != $currentGroupTab}style="display:none;"{/if}>
+	<div id="themeTabGroupMenu_{$tabGroupName}" class="themeTabGroupMenu yuimenubar yuimenubarnav"><div class="bd" id="themeTabGroup_{$tabGroupName}"  style="border: 0px !important; margin: 0px !important;{if $tabGroupName != $currentGroupTab}display:none;{/if}">
       <ul class="first-of-type">
       {if $USE_GROUP_TABS}
         <script type="text/javascript">
@@ -37,8 +37,8 @@
         </script>
         {* Tab group selection *}
         <li class="yuimenubaritem">
-        <a href="#" class="yuimenuitemlabel more group"><em>&gt;&gt;</em></a>
-        <div id="Group" class="yuimenu dashletPanelMenu"><div class="bd">
+        <a href="#" class="yuimenuitemlabel more group"><em>{$tabGroupName} &gt;&gt;</em></a>
+        <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
           {foreach from=$groupTabs item=module key=group name=groupList}
           <ul><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)">{$group}</a></ul>
           {/foreach}
@@ -48,12 +48,12 @@
 
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			{if $name == $MODULE_TAB}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$name" module=$name data=$module class="yuimenuitemlabel"}
+			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$tabGroupName_$name" module=$name data=$module class="yuimenuitemlabel"}
 			{else}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$name" module=$name data=$module class="yuimenuitemlabel"}
+			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$tabGroupName_$name" module=$name data=$module class="yuimenuitemlabel"}
 			{/if}
 			{if $shortcutTopMenu.$name}
-				<div id="{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
+				<div id="{$tabGroupName}_{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
 				
 										<ul class="shortCutsUl">
 										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
@@ -63,7 +63,7 @@
 										
 										{/foreach}
 										</ul>
-										<ul id="lastViewedContainer{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
 								
 				
 				</div>

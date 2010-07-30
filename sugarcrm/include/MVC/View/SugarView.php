@@ -398,9 +398,8 @@ class SugarView
             elseif (isset($fullModuleList['iFrames'])) {
                 unset($fullModuleList['iFrames']);
             }
-                    
 
-            if ( true || $user_navigation_paradigm == 'gm' && isset($themeObject->group_tabs) && $themeObject->group_tabs) {
+            if ( $user_navigation_paradigm == 'gm' && isset($themeObject->group_tabs) && $themeObject->group_tabs) {
                 // We are using grouped tabs
                 require_once('include/GroupedTabs/GroupedTabStructure.php');
                 $groupedTabsClass = new GroupedTabStructure();               
@@ -429,12 +428,12 @@ class SugarView
                 
             } else {
                 // Setup the default group tab.
-                $ss->assign('currentGroupTab','All');
+                $ss->assign('currentGroupTab',$app_strings['LBL_TABGROUP_ALL']);
 
                 $usingGroupTabs = false;
             }
             
-            $groupTabs['All']['modules'] = $fullModuleList;
+            $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
             $topTabList = array();
             
@@ -467,6 +466,8 @@ class SugarView
                 }
                 
                 
+                /*
+                // This was removed, but I like the idea, so I left the code in here in case we decide to turn it back on
                 // If we are using group tabs, add all the "hidden" tabs to the end of the extra menu
                 if ( $usingGroupTabs ) {
                     foreach($fullModuleList as $moduleKey => $module ) {
@@ -475,6 +476,7 @@ class SugarView
                         }
                     }
                 }
+                */
 
                 // Get a unique list of the top tabs so we can build the popup menus for them
                 foreach ( $topTabs as $moduleKey => $module ) {
@@ -505,6 +507,11 @@ class SugarView
             $ss->assign("groupTabs",$groupTabs);
             $ss->assign("shortcutTopMenu",$shortcutTopMenu);
             $ss->assign('USE_GROUP_TABS',$usingGroupTabs);
+
+            // This is here for backwards compatibility, someday, somewhere, it will be able to be removed
+            $ss->assign("moduleTopMenu",$groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules']);
+            $ss->assign("moduleExtraMenu",$groupTabs[$app_strings['LBL_TABGROUP_ALL']]['extra']);
+
         }
 
 		global $mod_strings;

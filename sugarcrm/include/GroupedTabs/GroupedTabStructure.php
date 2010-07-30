@@ -134,35 +134,6 @@ class GroupedTabStructure
 			}
         }
         
-       //The other tab is shown by default . If the other_group_tab_displayed was set false in sugar config, we will not show the 'Other' tab in Group Tab List.
-        global $sugar_config;
-        //If return result ignore sugar config or $sugar_config['other_group_tab_displayed'] is not set ever or $sugar_config['other_group_tab_displayed'] is true 
-        if($ignoreSugarConfig || ( !isset($sugar_config['other_group_tab_displayed']) || $sugar_config['other_group_tab_displayed'])){
-        /* Put all the unused modules in modList
-         * into the 'Other' tab.
-         */
-	        foreach($modList as $module)
-	        {
-	        	if(is_array($module) || !isset($mlhUsed[$module]))
-	            {
-		            	if($labelAsKey){
-		            		$retStruct['LBL_TABGROUP_OTHER']['modules'] [$module]= $app_list_strings['moduleList'][$module];
-	            		}else{
-			            	$retStruct[$app_strings['LBL_TABGROUP_OTHER']]['modules'] [$module]= $app_list_strings['moduleList'][$module];
-			            }
-	            }
-	        }
-        }else{
-        	//If  the 'Other' group tab was not allowed returned, we should check the $retStruct array to make sure there is no 'Other' group tab in it.
-        	if(isset($retStruct[$app_strings['LBL_TABGROUP_OTHER']])){
-        		if($labelAsKey){
-            		unset($retStruct['LBL_TABGROUP_OTHER']);
-        		}else{
-        			unset($retStruct[$app_strings['LBL_TABGROUP_OTHER']]);
-        		}
-        
-        	}	        	
-        }
 //        _pp($retStruct);
         return $retStruct;
     }

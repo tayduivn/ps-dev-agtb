@@ -3545,7 +3545,7 @@ margin-top: 0px;
     }
 }
 
-#moduleList.yui-module .bd {
+#moduleList.yui-module .bd, #moduleList div.themeTabGroupMenu, #moduleList > div.themeTabGroupMenu > div.bd {
 background-color: transparent;
 border: none;
 }
