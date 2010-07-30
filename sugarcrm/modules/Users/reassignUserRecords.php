@@ -286,9 +286,9 @@ else if(!isset($_GET['execute'])){
 	echo "<form action=\"index.php?module=Users&action=reassignUserRecords&execute=true\" method=post>\n";
 	echo "<BR>{$mod_strings_users['LBL_REASS_NOTES_TITLE']}\n";
 	echo "<ul>\n";
-	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_ONE']}\n";
-	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_TWO']}\n";
-	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
+	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_ONE']}\n";
+	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_TWO']}\n";
+	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
 	echo "</ul>\n";
 	//BEGIN SUGARCRM flav!=sales ONLY
         $help_img = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_REASS_VERBOSE_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"');
