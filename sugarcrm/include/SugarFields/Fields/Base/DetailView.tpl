@@ -28,5 +28,7 @@
 *}
 <span id='{{sugarvar key='name'}}'>{{sugarvar key='value'}}</span>
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{if !empty({{sugarvar key='value' string='true'}})}
+{{sugarvar_connector view='DetailView'}}
+{/if}
 {{/if}}

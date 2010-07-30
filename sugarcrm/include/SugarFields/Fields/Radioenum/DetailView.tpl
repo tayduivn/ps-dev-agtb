@@ -28,5 +28,7 @@
 *}
 { {{sugarvar  key='options' string=true}}[{{sugarvar key='value' string=true}}]}
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{if !empty({{sugarvar  key='options' string=true}}[{{sugarvar key='value' string=true}}])}
+{{sugarvar_connector view='DetailView'}}
+{/if}
 {{/if}}

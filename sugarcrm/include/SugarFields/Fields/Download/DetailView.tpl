@@ -28,6 +28,8 @@
 *}
 <a href="index.php?entryPoint=download&id={{$vardef.value}}&type={$module}">{$fields.filename.value}</a>
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{if !empty($fields.filename.value)}
+{{sugarvar_connector view='DetailView'}}
+{/if}
 {{/if}}
 
