@@ -230,7 +230,7 @@ foreach ( $FUNCTION_MAP as $key=>$value ) {
 	$entry = $FUNCTION_MAP[$key]['class'];
 	$cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
 }
-$cache_contents = substr($cache_contents, 0, -2);
+$cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 

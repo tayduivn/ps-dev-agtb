@@ -31,7 +31,7 @@ class IsNumericExpression extends BooleanExpression {
 	 */
 	function evaluate() {
 		$params = $this->getParameters()->evaluate();
-		if ( preg_match('/^(\-)?[0-9]+(\.[0-9]+)?$/', $params) )	return AbstractExpression::$TRUE;
+		if ( preg_match('/^(\-)?([0-9]+)?(\.[0-9]+)?$/', $params) )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;
 	}
 
@@ -41,7 +41,7 @@ class IsNumericExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters().evaluate();
-			if ( /^(\-)?[0-9]+(\.[0-9]+)?$/.test(params) )	return SUGAR.expressions.Expression.TRUE;
+			if ( /^(\-)?([0-9]+)?(\.[0-9]+)?$/.test(params) )	return SUGAR.expressions.Expression.TRUE;
 			return SUGAR.expressions.Expression.FALSE;
 EOQ;
 	}

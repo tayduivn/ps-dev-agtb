@@ -28,7 +28,7 @@ class IsValidPhoneExpression extends BooleanExpression {
 		$phoneStr = $this->getParameters()->evaluate();
 
 		if( strlen($phoneStr) == 0) return AbstractExpression::$TRUE;
-		if(! preg_match('/^[0-9\-\(\)\s]+$/', $phoneStr) )
+		if(! preg_match('/^\+?[0-9\-\(\)\s]+$/', $phoneStr) )
 			return AbstractExpression::$FALSE;
 		return AbstractExpression::$TRUE;
 	}
@@ -40,7 +40,7 @@ class IsValidPhoneExpression extends BooleanExpression {
 		return <<<EOQ
 		var phoneStr = this.getParameters().evaluate();
 		if(phoneStr.length== 0) 	return SUGAR.expressions.Expression.TRUE;
-		if( ! /^[0-9\-\(\)\s]+$/.test(phoneStr) )
+		if( ! /^\+?[0-9\-\(\)\s]+$/.test(phoneStr) )
 			return SUGAR.expressions.Expression.FALSE;
 		return SUGAR.expressions.Expression.TRUE;
 EOQ;

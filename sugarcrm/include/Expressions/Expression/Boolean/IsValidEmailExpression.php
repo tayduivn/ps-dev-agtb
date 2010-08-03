@@ -37,8 +37,8 @@ class IsValidEmailExpression extends BooleanExpression {
 		for ( $i = 0; $i < sizeof($emailArr) ; $i++) {
 			$emailAddress = $emailArr[$i];
 			if (trim($emailAddress) != '') {
-				if (!preg_match('/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}\s*$/i', $emailAddress) &&
-				    !preg_match('/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}>\s*$/i', $emailAddress) )
+				if (!preg_match('/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}\s*$/i', $emailAddress) &&
+				    !preg_match('/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}>\s*$/i', $emailAddress) )
 					return AbstractExpression::$FALSE;
 			}
 		}
@@ -63,8 +63,8 @@ class IsValidEmailExpression extends BooleanExpression {
 			var emailAddress = emailArr[i];
 			emailAddress = emailAddress.replace(/^\s+|\s+$/g,"");
 			if ( emailAddress != '') {
-				if(!/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}\s*$/i.test(emailAddress) &&
-				   !/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}>\s*$/i.test(emailAddress))
+				if(!/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}\s*$/i.test(emailAddress) &&
+				   !/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}>\s*$/i.test(emailAddress))
 				   return SUGAR.expressions.Expression.FALSE;
 			}
 		}
