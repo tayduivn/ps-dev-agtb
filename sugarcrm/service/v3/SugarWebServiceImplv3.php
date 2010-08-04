@@ -43,14 +43,14 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_module_fields_md5($session, $module_name){
-        
+
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields_md5');
         $results = self::get_module_fields($session, $module_name);
         if(!empty($results))
             return md5(serialize($results));
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields_md5');
     }
-    
+
     /**
      * Gets server info. This will return information like version, flavor and gmt_time.
      * @return Array - flavor - String - Retrieve the specific flavor of sugar.
@@ -62,7 +62,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_server_info');
     	require_once('sugar_version.php');
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_server_info');
-    	
+
     	return array('flavor' => $GLOBALS['sugar_flavor'], 'version' => $GLOBALS['sugar_version'], 'gmt_time' => gmdate('Y-m-d H:i:s'));
     } // fn
 
@@ -77,7 +77,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      */
     function get_module_layout($session, $a_module_names, $a_type, $a_view,$md5 = FALSE){
     	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
-    
+
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
         $results = array();
@@ -109,12 +109,12 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
                 }
             }
         }
-    	 
+
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout');
-    	
+
         return $results;
     }
-    
+
     /**
      * Retrieve the md5 hash of a layout metadata for a given module given a specific type and view.
      *
@@ -130,27 +130,27 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         return $results;
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout_md5');
     }
-    
+
     /**
      * Retrieve the list of available modules on the system available to the currently logged in user.
      *
      * @param String $session -- Session ID returned by a previous call to login.
      * @param String $filter --  Valid values are: all     - Return all modules,
-     *                                             default - Return all visible modules for the application 
+     *                                             default - Return all visible modules for the application
      *                                             mobile  - Return all visible modules for the mobile view
      * @return Array    'modules' -- Array - An array of module names
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_available_modules($session,$filter='all'){
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_available_modules');
-    
+
     	$error = new SoapError();
     	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) {
     		$error->set_error('invalid_login');
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_available_modules');
     		return;
     	} // if
-    
+
     	$modules = array();
     	$availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
     	switch ($filter){
@@ -164,13 +164,13 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	    default:
     	        $modules = $availModules;
     	}
-    	
+
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_available_modules');
     	return array('modules'=> $modules);
     } // fn
-    
+
     /**
-     * Retrieve a list of recently viewed records by module.  
+     * Retrieve a list of recently viewed records by module.
      *
      * @param String $session -- Session ID returned by a previous call to login.
      * @param String $modules -- An array of modules or 'Home' to indicate all.
@@ -181,13 +181,13 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_last_viewed');
         $error = new SoapError();
-    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) 
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
     	{
     		$error->set_error('invalid_login');
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_last_viewed');
     		return;
     	} // if
-    	
+
     	$results = array();
     	foreach ($module_names as $module )
     	{
@@ -195,9 +195,9 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
             {
                 $GLOBALS['log']->debug("SugarWebServiceImpl->get_last_viewed: NO ACCESS to $module");
                 continue;
-            } 
-             
-            if($module == 'Home') $module = '';   
+            }
+
+            if($module == 'Home') $module = '';
     	    $tracker = new Tracker();
             $entryList = $tracker->get_recently_viewed($GLOBALS['current_user']->id, $module);
             foreach ($entryList as $entry)
@@ -207,7 +207,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_last_viewed');
         return $results;
     }
-    
+
     /**
      * Retrieve a list of upcoming activities including Calls, Meetings,Tasks and Opportunities
      *
@@ -219,20 +219,20 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_upcoming_activities');
         $error = new SoapError();
-    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) 
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
     	{
     		$error->set_error('invalid_login');
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_upcoming_activities');
     		return;
     	} // if
-        
+
     	$results = self::$helperObject->get_upcoming_activities();
 
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_upcoming_activities');
-    
+
         return $results;
     }
-    
+
     /**
      * Given a list of modules to search and a search string, return the id, module_name, along with the fields
      * We will support Accounts, Bug Tracker, Cases, Contacts, Leads, Opportunities, Project, ProjectTask, Quotes
@@ -251,7 +251,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->search_by_module');
     	global  $beanList, $beanFiles;
     	global $sugar_config,$current_language;
-    
+
     	$error = new SoapError();
     	$output_list = array();
     	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) {
@@ -263,30 +263,30 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	if($max_results > 0){
     		$sugar_config['list_max_entries_per_page'] = $max_results;
     	}
-    
+
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
     	require_once 'include/utils.php';
     	$usa = new UnifiedSearchAdvanced();
         if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
             $usa->buildCache();
         }
-    
+
     	include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
     	$modules_to_search = array();
     	$unified_search_modules['Users'] =   array('fields' => array());
-    	
+
     	//BEGIN SUGARCRM flav!=sales ONLY
     	$unified_search_modules['ProjectTask'] =   array('fields' => array());
         //END SUGARCRM flav!=sales ONLY
-    	
+
         foreach($unified_search_modules as $module=>$data) {
         	if (in_array($module, $modules)) {
             	$modules_to_search[$module] = $beanList[$module];
         	} // if
         } // foreach
-    
+
         $GLOBALS['log']->info('SugarWebServiceImpl->search_by_module - search string = ' . $search_string);
-    
+
     	if(!empty($search_string) && isset($search_string)) {
     		$search_string = trim($GLOBALS['db']->quote(securexss(from_html(clean_string($search_string, 'UNIFIED_SEARCH')))));
         	foreach($modules_to_search as $name => $beanName) {
@@ -296,11 +296,11 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     				$unifiedSearchFields[$name] [ $field ] = $def ;
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
-    
+
     			require_once $beanFiles[$beanName] ;
     			$seed = new $beanName();
     			require_once 'include/SearchForm/SearchForm2.php' ;
-    			if ($beanName == "User" 
+    			if ($beanName == "User"
     			     //BEGIN SUGARCRM flav!=sales ONLY
     			    || $beanName == "ProjectTask"
     			     //END SUGARCRM flav!=sales ONLY
@@ -312,47 +312,47 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     					continue;
     				} // if
     			}
-    
-    			if ($beanName != "User" 
+
+    			if ($beanName != "User"
     			     //BEGIN SUGARCRM flav!=sales ONLY
     			    && $beanName != "ProjectTask"
     			     //END SUGARCRM flav!=sales ONLY
     			    ) {
     				$searchForm = new SearchForm ($seed, $name ) ;
-    
+
     				$searchForm->setup(array ($name => array()) ,$unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
     				$where_clauses = $searchForm->generateSearchWhere() ;
     				require_once 'include/SearchForm/SearchForm2.php' ;
     				$searchForm = new SearchForm ($seed, $name ) ;
-    
+
     				$searchForm->setup(array ($name => array()) ,$unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
     				$where_clauses = $searchForm->generateSearchWhere() ;
     				$emailQuery = false;
-    
+
     				$where = '';
     				if (count($where_clauses) > 0 ) {
     					$where = '('. implode(' ) OR ( ', $where_clauses) . ')';
     				}
-                    
+
     				$mod_strings = return_module_language($current_language, $seed->module_dir);
-    				
-    				if(count($select_fields) > 0) 
+
+    				if(count($select_fields) > 0)
     				    $filterFields = $select_fields;
     				else {
     				    if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
     					   require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
         				else
         					require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-        				
+
         				$filterFields = array();
         				foreach($listViewDefs[$seed->module_dir] as $colName => $param) {
-        	                if(!empty($param['default']) && $param['default'] == true) 
+        	                if(!empty($param['default']) && $param['default'] == true)
         	                    $filterFields[] = strtolower($colName);
-        	            } 
+        	            }
         	            if (!in_array('id', $filterFields))
         	            	$filterFields[] = 'id';
     				}
-    				
+
     				//Pull in any db fields used for the unified search query so the correct joins will be added
     				$selectOnlyQueryFields = array();
     				foreach ($unifiedSearchFields[$name] as $field => $def){
@@ -407,7 +407,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	            }
     	            $result = $seed->db->limitQuery($main_query, $offset, $limit + 1);
     			}
-    
+
     			$rowArray = array();
     			while($row = $seed->db->fetchByAssoc($result)) {
     				$nameValueArray = array();
@@ -423,13 +423,13 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     			} // while
     			$output_list[] = array('name' => $name, 'records' => $rowArray);
         	} // foreach
-    
+
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->search_by_module');
     	return array('entry_list'=>$output_list);
     	} // if
     	return array('entry_list'=>$output_list);
     } // fn
-    
+
     /**
      * Retrieve a collection of beans that are related to the specified bean and optionally return relationship data for those related beans.
      * So in this API you can get contacts info for an account and also return all those contact's email address or an opportunity info also.
@@ -448,7 +448,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     * @exception 'SoapFault' -- The SOAP error, if any
     */
     function get_relationships($session, $module_name, $module_id, $link_field_name, $related_module_query, $related_fields, $related_module_link_name_to_fields_array, $deleted, $order_by = ''){
-    
+
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_relationships');
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
@@ -456,20 +456,20 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
     		return;
     	} // if
-    
+
     	$class_name = $beanList[$module_name];
     	require_once($beanFiles[$class_name]);
     	$mod = new $class_name();
     	$mod->retrieve($module_id);
-    
+
         if (!self::$helperObject->checkACLAccess($mod, 'DetailView', $error, 'no_access')) {
     		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
         	return;
         } // if
-    
+
         $output_list = array();
     	$linkoutput_list = array();
-    
+
     	// get all the related mmodules data.
         $result = self::$helperObject->getRelationshipResults($mod, $link_field_name, $related_fields, $related_module_query,$order_by);
         if (self::$helperObject->isLogLevelDebug()) {
@@ -478,13 +478,13 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	if ($result) {
     		$list = $result['rows'];
     		$filterFields = $result['fields_set_on_rows'];
-    
+
     		if (sizeof($list) > 0) {
     			// get the related module name and instantiate a bean for that.
     			$submodulename = $mod->$link_field_name->getRelatedModuleName();
     			$submoduleclass = $beanList[$submodulename];
     			require_once($beanFiles[$submoduleclass]);
-    
+
     			$submoduletemp = new $submoduleclass();
     			foreach($list as $row) {
     				$submoduleobject = @clone($submoduletemp);
@@ -499,16 +499,56 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     				if (!empty($related_module_link_name_to_fields_array)) {
     					$linkoutput_list[] = self::$helperObject->get_return_value_for_link_fields($submoduleobject, $submodulename, $related_module_link_name_to_fields_array);
     				} // if
-    
+
     			} // foreach
     		}
-    
+
     	} // if
-    
+
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_relationships');
     	return array('entry_list'=>$output_list, 'relationship_list' => $linkoutput_list);
-    
+
     } // fn
+
+    public function oauth_request_token()
+    {
+        require_once "include/OAuth/SugarOAuth.php";
+        try {
+	        $oauth = new SugarOAuth(true);
+	        return $oauth->requestToken();
+        } catch(Exception $e) {
+            $GLOBALS['log']->debug("OAUTH Exception: $e");
+            return (string)$e;
+        }
+    }
+
+    public function oauth_access_token()
+    {
+        require_once "include/OAuth/SugarOAuth.php";
+        try {
+	        $oauth = new SugarOAuth();
+	        return $oauth->accessToken();
+        } catch(Exception $e) {
+            $GLOBALS['log']->debug("OAUTH Exception: $e");
+            return (string)$e;
+        }
+    }
+
+    public function oauth_access()
+    {
+        require_once "include/OAuth/SugarOAuth.php";
+        try {
+	        $oauth = new SugarOAuth();
+	        $auth = $oauth->authorization();
+	        if(empty($auth)) {
+	            return "Unauthorized!";
+	        }
+	        return "Welcome {$auth['user']}!";
+        } catch(Exception $e) {
+            $GLOBALS['log']->debug("OAUTH Exception: $e");
+            return (string)$e;
+        }
+    }
 }
 
 SugarWebServiceImplv3::$helperObject = new SugarWebServiceUtilv3();

@@ -41,13 +41,13 @@ $mod_strings = array (
     'LOADING_CATEGORIES' => 'Loading categories...',
     'SEARCHING_PACKAGES' => 'Searching for packages...',
     'AUTHENTICATING' => 'Authenticating...',
-    
+
     'LBL_MINUTES'=>'Minutes',
     'LBL_HOURS'=>'Hours',
     'LBL_DAYS'=>'Days',
     'LBL_WEEKS'=>'Weeks',
     'LBL_MONTHS'=>'Months',
-    
+
     'LBL_PUBLIC_KEY'=>'Public Key',
     'LBL_PRIVATE_KEY'=>'Private Key',
 
@@ -183,7 +183,7 @@ $mod_strings = array (
     'LBL_CONTRACT_TITLE'=>'Contracts',
     'LBL_CONTRACT_DESC'=>'Define contract types for the Contracts module. When users create a contract, the Types drop-down menu displays the contract types for selection.',
     'LBL_CONTRACT_TYPES'=>'Manage contract types',
-    'LBL_COULD_NOT_CONNECT'=>'Error: Could not connect to the Sugar Server. 
+    'LBL_COULD_NOT_CONNECT'=>'Error: Could not connect to the Sugar Server.
 	//BEGIN SUGARCRM flav!=sales ONLY
 	Please check your Proxy Settings value in the <a href="index.php?module=Configurator&action=EditView">System Settings</a> admin panel.
 	//END SUGARCRM flav!=sales ONLY
@@ -325,7 +325,7 @@ $mod_strings = array (
     'LBL_LIST_SYSTEM_KEY' => 'System Key',
     'LBL_LIST_SYSTEM_NAME' => 'System Name',
     'LBL_LIST_VIEW'          => 'List',
-    
+
     'LBL_LDAP_TITLE'=>'LDAP Support',
     'LBL_LDAP_ENABLE'=>'Enable LDAP Authentication',
     'LBL_LDAP_HELP_TXT'=>'When LDAP authentication is enabled, passwords can only be handled through LDAP. None of the Sugar Password Management feature settings will apply.',
@@ -407,7 +407,7 @@ $mod_strings = array (
     'LBL_MANUAL_VALIDATION_TXT' => 'Manual Validation',
     'LBL_MANUAL_VALIDATION'=>'
 	//BEGIN SUGARCRM flav!=sales ONLY
-	If you experience persistent problems with automatic validation, please check your Proxy configuration in the <a href="index.php?module=Configurator&action=EditView">System Settings</a> admin panel. 
+	If you experience persistent problems with automatic validation, please check your Proxy configuration in the <a href="index.php?module=Configurator&action=EditView">System Settings</a> admin panel.
 	//END SUGARCRM flav!=sales ONLY
 	If your system environment prohibits your system from communicating to the license validation server through the internet, you should proceed with the <a href="#" onclick="toggleDisplay(\'mainbody\');toggleDisplay(\'manualbody\');">Manual Validation</a> steps. ',
     'LBL_MANUAL_VALIDATION1'=> 'Step 1: Generate a license key information file by clicking the following button. ',
@@ -607,7 +607,7 @@ $mod_strings = array (
     'LBL_REPAIR_JS_FILES_PROCESSING' => 'Processing files. This may take several minutes.  Going away from this page will not cancel the process, so feel free to move on or wait for confirmation...',
     'LBL_REPAIR_JS_FILES_DONE_PROCESSING' => 'Done Processing files.',
     'LBL_REPAIR_FIELD_CASING_TITLE' => 'Repair Non-Lowercase Fields',
-    'LBL_REPAIR_FIELD_CASING_DESC_SHORT' => 'Repair mixed-case custom table(s) and metadata file(s) to fix issues where code expects lowercase field names', 
+    'LBL_REPAIR_FIELD_CASING_DESC_SHORT' => 'Repair mixed-case custom table(s) and metadata file(s) to fix issues where code expects lowercase field names',
 	'LBL_REPAIR_FIELD_CASING_PROCESSING' => 'Scanning custom fields and files...',
     'LBL_REPAIR_FIELD_CASING_SQL_FIELD_META_DATA' => 'Updating row entry {0} in table fields_meta_data',
     'LBL_REPAIR_FIELD_CASING_SQL_CUSTOM_TABLE' => 'Updating column {0} in table {1}',
@@ -822,7 +822,7 @@ $mod_strings = array (
     'LBL_USERS_DESC' => 'Create, edit, activate and deactivate users in Sugar. Create and manage teams and roles, including module- and field-level access.',
 
     //END SUGARCRM flav=pro ONLY
-    
+
 
     'LBL_UW_BTN_BACK_TO_MOD_LOADER'         => 'Back to Module Loader',
     'LBL_UW_BTN_BACK_TO_UW'                     => 'Back to Upgrade Wizard',
@@ -925,10 +925,10 @@ $mod_strings = array (
  	'WARN_LICENSE_EXPIRED'=> "Notice: Your license expires in ",
     'WARN_LICENSE_EXPIRED2' =>" day(s). Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",
     'WARN_LICENSE_SEATS'=>  "Warning: User licenses exceeded by ",
-    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:cagroup@sugarcrm.com'>cagroup@sugarcrm.com</a>.",    
-    'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users is already the maximum number of licenses allowed: ",    
+    'WARN_LICENSE_SEATS2' => ".  Please contact your sales representative or email <a href='mailto:cagroup@sugarcrm.com'>cagroup@sugarcrm.com</a>.",
+    'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users is already the maximum number of licenses allowed: ",
     'WARN_LICENSE_SEATS_EDIT_USER'=>  "Warning: The number of active users is already the maximum number of licenses allowed",
-    'WARN_LICENSE_SEATS_USER_CREATE'=>"Warning: The number of active users allowed by your license matches the number of active users in the system. You will not be able to create additional active users.", 
+    'WARN_LICENSE_SEATS_USER_CREATE'=>"Warning: The number of active users allowed by your license matches the number of active users in the system. You will not be able to create additional active users.",
     'WARN_REPAIR_CONFIG' => 'Warning: The config.php file needs to be repaired.  Please use the <a href=\'index.php?module=Administration&action=RebuildConfig\'>Rebuild Config File</a> script in the Repair page in the Admin area to repair the config file.',
     'WARN_UPGRADE_APP'=> "An updated version of the application is now available. ",
     'WARN_UPGRADE' => 'Warning: Please upgrade ',
@@ -1121,4 +1121,9 @@ $mod_strings = array (
 	'WorkFlowAlertShells'  => 'WorkFlowAlertShell',
 	'WorkFlowTriggerShells'  => 'WorkFlowTriggerShell',
 	'Worksheet'  => 'Worksheet',
-	);
+// OAuth
+    'LBL_OAUTH' => "OAuth support",
+    'LBL_OAUTH_AUTHORIZE' => "Authorize Token",
+    'LBL_OAUTH_REQUEST' => "Request token",
+	'LBL_OAUTH_VALIDATION' => "Verification code",
+);

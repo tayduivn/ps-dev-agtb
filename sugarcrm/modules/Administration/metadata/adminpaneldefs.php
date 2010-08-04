@@ -31,6 +31,7 @@ $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS
 //BEGIN SUGARCRM flav!=sales ONLY
 $admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
 //END SUGARCRM flav!=sales ONLY
+$admin_option_defs['Administration']['oauth']= array('OAuth','LBL_OAUTH','LBL_OAUTH','./index.php?module=Administration&action=OAuth');
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
 
 //BEGIN SUGARCRM flav=dce ONLY
@@ -264,8 +265,8 @@ $access = get_admin_modules_for_user($current_user);
 foreach ($admin_group_header as $key=>$values) {
 	$module_index = array_keys($values[3]);  //get the actual links..
 	foreach ($module_index as $mod_key=>$mod_val) {
-		if (is_admin($current_user) || 
-			in_array($mod_val, $access) || 
+		if (is_admin($current_user) ||
+			in_array($mod_val, $access) ||
 		    $mod_val=='studio'||
 		    ($mod_val=='Forecasts' && in_array('ForecastSchedule', $access)) ||
 		    ($mod_val =='any')
@@ -276,7 +277,7 @@ foreach ($admin_group_header as $key=>$values) {
                 if(displayStudioForCurrentUser() == false) {
                     unset($values[3]['studio']);
                 }
-		   	
+
 		   	   //BEGIN SUGARCRM PRO ONLY
                 if(displayWorkflowForCurrentUser() == false) {
                     unset($values[3]['any']['workflow_management']);
@@ -294,15 +295,15 @@ foreach ($admin_group_header as $key=>$values) {
                 if(!in_array('Campaigns', $access)&& isset($values[3]['Campaigns'])){
                     unset($values[3]['Campaigns']);
                 }
-                
+
                 //END SUGARCRM PRO ONLY
                 //////////////////
-		   	                        	
+
         } else {
         	//hide the link
         	unset($admin_group_header[$key][3][$mod_val]);
         }
-               
+
 	}
 }
 ?>
