@@ -7,6 +7,6 @@
 {/if}
 
 <p>{$MOD.LBL_OAUTH_REQUEST}: <input name="token"/><br/>
-</p>
+</p><br/>
 <input type="submit" name="authorize" value="{$MOD.LBL_OAUTH_AUTHORIZE}"/><br/>
 </form>
