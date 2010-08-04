@@ -369,6 +369,8 @@ class SugarFeed extends Basic {
         $data['NAME'] .= $sfh->displaySmarty($data, array('type'=>'Teamset','name'=>'TEAM_NAME'), 'ListView', array('col'=>'TEAM_NAME'));
 		//END SUGARCRM flav=pro ONLY
 		$data['NAME'] .= '&nbsp;</span><div class="byLineRight"> '.  $this->getTimeLapse($data['DATE_ENTERED']) . ' &nbsp;' .$delete. '</div></div>';
+
+        $data['NAME'] .= '<div class="clear"></div><blockquote>Replies will go here.</blockquote>';
 		return  $data ;
 	}
 	
