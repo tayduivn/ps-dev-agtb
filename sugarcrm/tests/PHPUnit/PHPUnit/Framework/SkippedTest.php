@@ -1,6 +1,6 @@
-#!/usr/bin/env php
 <?php
-/* PHPUnit
+/**
+ * PHPUnit
  *
  * Copyright (c) 2002-2010, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
@@ -29,31 +29,32 @@
  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRIC
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * @package    PHPUnit
+ * @subpackage Framework
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @link       http://www.phpunit.de/
+ * @since      File available since Release 3.0.0
  */
-// no memory limit needed, since we are running this from the command line
-ini_set('memory_limit', '-1');
 
-set_include_path(dirname(__FILE__) . "/PHPUnit" . PATH_SEPARATOR . get_include_path());
-
-if ( isset($_SERVER['_']) )
-	$_SERVER['_'] = realpath($_SERVER['_']);
-
-require_once 'PHP/CodeCoverage/Filter.php';
-PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'PHPUNIT');
-
-if (extension_loaded('xdebug')) {
-    xdebug_disable();
+/**
+ * A marker interface for marking a unit test as being skipped.
+ *
+ * @package    PHPUnit
+ * @subpackage Framework
+ * @author     Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
+ * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
+ * @version    Release: 3.5.0RC1
+ * @link       http://www.phpunit.de/
+ * @since      Interface available since Release 3.0.0
+ */
+interface PHPUnit_Framework_SkippedTest
+{
 }
-
-require_once 'PHPUnit/Autoload.php';
-
-define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
-
-PHPUnit_TextUI_Command::main();
-
-?>
-
