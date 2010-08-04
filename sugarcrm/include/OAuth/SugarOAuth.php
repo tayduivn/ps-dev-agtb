@@ -1,5 +1,7 @@
 <?php
 
+require_once 'include/OAuth/SugarOAuthToken.php';
+
 class SugarOAuth
 {
     /**
@@ -10,9 +12,14 @@ class SugarOAuth
 
     /**
      * OAuth token
-     * @var OAuthToken
+     * @var SugarOAuthToken
      */
     protected $token;
+
+    public static function requirementCheck()
+    {
+        return extension_loaded("oauth") && extension_loaded("mongo");
+    }
 
     /**
      * Find consumer by key
@@ -28,21 +35,30 @@ class SugarOAuth
         return OAUTH_OK;
     }
 
+    /**
+     * Check timestamps & nonces
+     * @param OAuthProvider $provider
+     */
     public function timestampNonceChecker($provider)
     {
+        // FIXME: add ts/nonce verification
          return OAUTH_OK;
     }
 
+    /**
+     * Vefiry incoming token
+     * @param OAuthProvider $provider
+     */
     public function tokenHandler($provider)
     {
         $GLOBALS['log']->debug("OAUTH: tokenHandler, token={$provider->token}, verify={$provider->verifier}");
 
-        $token = OAuthToken::load($provider->token);
+        $token = SugarOAuthToken::load($provider->token);
         if(empty($token)) {
             return OAUTH_TOKEN_REJECTED;
         }
         $GLOBALS['log']->debug("OAUTH: tokenHandler, found token=".var_export($token, true));
-        if($token->state == OAuthToken::REQUEST) {
+        if($token->state == SugarOAuthToken::REQUEST) {
             if(!empty($token->verify) && $provider->verifier == $token->verify) {
                 $provider->token_secret = $token->secret;
                 $token->invalidate();
@@ -52,7 +68,7 @@ class SugarOAuth
                 return OAUTH_TOKEN_USED;
             }
         }
-        if($token->state == OAuthToken::ACCESS) {
+        if($token->state == SugarOAuthToken::ACCESS) {
             $provider->token_secret = $token->secret;
             $this->token = $token;
             return OAUTH_OK;
@@ -60,6 +76,12 @@ class SugarOAuth
         return OAUTH_TOKEN_REJECTED;
     }
 
+    /**
+     * Create OAuth provider
+     *
+     * Checks current request for OAuth valitidy
+     * @param bool $add_rest add REST endpoint as request path
+     */
     public function __construct($add_rest = false)
     {
         global $sugar_config;
@@ -80,152 +102,66 @@ class SugarOAuth
         }
     }
 
+    /**
+     * Generate request token string
+     * @return string
+     */
     public function requestToken()
     {
         $GLOBALS['log']->debug("OAUTH: requestToken");
-        $token = OAuthToken::generate();
+        $token = SugarOAuthToken::generate();
         $token->save();
         return $token->queryString();
     }
 
+    /**
+     * Generate access token string - must have validated request token
+     * @return string
+     */
     public function accessToken()
     {
         $GLOBALS['log']->debug("OAUTH: accessToken");
-        $token = OAuthToken::generate();
-        $token->state = OAuthToken::ACCESS;
+        if($this->token->state != SugarOAuthToken::REQUEST) {
+            return null;
+        }
+        $token = SugarOAuthToken::generate();
+        $token->state = SugarOAuthToken::ACCESS;
         // transfer user data from request token
         $token->copyAuthData($this->token);
         $token->save();
         return $token->queryString();
     }
 
+    /**
+     * Authorize token and attach auth data
+     * @param string $token
+     * @param mixed $authdata
+     * @return string Verification code for generating access token
+     */
     public static function authorize($token, $authdata)
     {
-        $token = OAuthToken::load($token);
+        $token = SugarOAuthToken::load($token);
         $token->authorize($authdata);
         return $token->verify;
     }
 
+    /**
+     * Fetch authorization data from current token
+     * @return mixed Authorization data or null if none
+     */
     public function authorization()
     {
-        if($this->token->state == OAuthToken::ACCESS) {
+        if($this->token->state == SugarOAuthToken::ACCESS) {
             return $this->token->authdata;
         }
         return null;
     }
 
-    public function reportProblem($e)
+    /**
+     * Report OAuth problem as string
+     */
+    public function reportProblem(Exception $e)
     {
         return $this->provider->reportProblem($e);
     }
-}
-
-class OAuthToken
-{
-
-    protected $data = array();
-    protected static $mongo;
-
-    const REQUEST = 1;
-    const ACCESS = 2;
-    const INVALID = 3;
-
-    function __construct($token, $secret)
-	{
-        $this->data['token'] = $token;
-        $this->data['secret'] = $secret;
-        $this->setState(self::REQUEST);
-	}
-
-	public function __get($var)
-	{
-	    if(!isset($this->data[$var])) return null;
-	    return $this->data[$var];
-	}
-
-	public function __set($var, $val)
-	{
-	    $this->data[$var] = $val;
-	}
-
-	public function __isset($var)
-	{
-	    return isset($this->data[$var]);
-	}
-
-	public function __unset($var)
-	{
-	    unset($this->data[$var]);
-	}
-
-	public function setState($s)
-	{
-	    $this->data['state'] = $s;
-	    return $this;
-	}
-
-	protected static function randomValue()
-	{
-	    return bin2hex(OAuthProvider::generateToken(6));
-	}
-
-    static function generate()
-    {
-        $t = self::randomValue();
-        $s = self::randomValue();
-        return new self($t, $s);
-    }
-
-    public function save()
-    {
-        return self::getTable()->update(array("token" => $this->token), $this->data, array("upsert" => true));
-    }
-
-    public static function getTable()
-    {
-        if(!isset(self::$mongo)) {
-            self::$mongo = new Mongo();
-            self::$mongo->connect();
-        }
-        return self::$mongo->oauth->oauth_tokens;
-    }
-
-    static function load($token)
-	{
-        $data = self::getTable()->findOne(array("token" => $token));
-        if(empty($data)) return null;
-        $t = new self($data['token'], $data['secret']);
-	    foreach($data as $k => $v) {
-	        $t->$k = $v;
-	    }
-	    return $t;
-	}
-
-	public function invalidate()
-	{
-	    $this->state = self::INVALID;
-	    unset($this->verify);
-	    return $this->save();
-	}
-
-	public function authorize($authdata)
-	{
-	    // TODO: add user data
-	    $this->verify = self::randomValue();
-	    $this->authdata = $authdata;
-	    $this->save();
-	    return $this;
-	}
-
-	public function copyAuthData(OAuthToken $token)
-	{
-	    // TODO: copy data from $token
-	    $this->authdata = $token->authdata;
-	    return $this;
-	}
-
-	public function queryString()
-	{
-	    return "oauth_token={$this->token}&oauth_token_secret={$this->secret}";
-	}
 }
