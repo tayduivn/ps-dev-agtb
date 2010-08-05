@@ -1124,7 +1124,10 @@ $mod_strings = array (
 // OAuth
     'LBL_OAUTH' => "OAuth support",
     'LBL_OAUTH_AUTHORIZE' => "Authorize Token",
-    'LBL_OAUTH_REQUEST' => "Request token",
+	'LBL_OAUTH_CONSUMER' => "Register consumer key",
+	'LBL_OAUTH_CONSUMERKEY' => "Consumer key",
+	'LBL_OAUTH_CONSUMERSECRET' => "Consumer secret",
+	'LBL_OAUTH_REQUEST' => "Request token",
 	'LBL_OAUTH_VALIDATION' => "Verification code",
     'LBL_OAUTH_ROLE' => "Token role",
 );

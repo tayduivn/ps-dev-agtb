@@ -18,6 +18,11 @@ foreach($allroles as $role) {
 }
 $sugar_smarty->assign('roles', $roles);
 
+if(!empty($_REQUEST['cregister']) && !empty($_REQUEST['ckey']) && $_REQUEST['sid'] == session_id())
+{
+    SugarOAuthData::registerConsumer($_REQUEST['ckey'], $_REQUEST['csecret']);
+}
+
 if(!empty($_REQUEST['authorize']) && !empty($_REQUEST['token']) && $_REQUEST['sid'] == session_id())
 {
     $verify = SugarOAuth::authorize($_REQUEST['token'], array("user" => $current_user->user_name, "role" => $_REQUEST['role']));
