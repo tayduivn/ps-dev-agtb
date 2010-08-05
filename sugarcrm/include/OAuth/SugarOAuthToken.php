@@ -58,6 +58,7 @@ class SugarOAuthToken
 
     public function save()
     {
+        $this->data['ts'] = time();
         return self::getTable()->update(array("token" => $this->token), $this->data, array("upsert" => true));
     }
 
@@ -105,5 +106,13 @@ class SugarOAuthToken
 	public function queryString()
 	{
 	    return "oauth_token={$this->token}&oauth_token_secret={$this->secret}";
+	}
+
+	public function cleanup()
+	{
+	    // delete invalidated tokens older than 1 day
+	    return self::getTable()->remove(array("status" => self::INVALID, "ts" => array('$lt' => time()-60*60*24)));
+	    // delete request tokens older than 1 day
+	    return self::getTable()->remove(array("status" => self::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
 	}
 }
