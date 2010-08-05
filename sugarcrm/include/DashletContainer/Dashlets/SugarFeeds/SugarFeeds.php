@@ -120,6 +120,7 @@ class SugarFeeds extends Dashlet {
     {
         //<b>{this.CREATED_BY}</b> {SugarFeed.CREATED_CONTACT} [Contacts:6aa923f2-7cfe-d720-168b-4b9990c47ebb:SnipMe]
         //$feeds = $this->getFocusBeanFeeds();
+        /*
         $data = '<div><table>';
         foreach ($this->feeds as $key=>$val) {
             $data .= "<tr><td>".$val['name'];
@@ -141,11 +142,28 @@ class SugarFeeds extends Dashlet {
         $data .= '</table></div>';
 
         return parent::display() . $data;
-
-        /*
-	    $this->ss->assign('data', $data);
-        return  parent::display() . $this->ss->fetch('include/DashletContainer/Dashlets/SugarFeeds/tpls/content.tpl');
 */
+		$feedResuls = array();   
+		foreach ($this->feeds as $key=>$val) {
+            $data = $val['name'];
+
+            $GLOBALS['current_dc_sugarfeed'] = $this->focusBean->created_by_name;
+    		
+            $data = preg_replace_callback('/\{([^\}]+)\.([^\}]+)\}/', create_function(
+                '$matches',
+                'if($matches[1] == "this"){$var = $matches[2]; return $GLOBALS[\'current_dc_sugarfeed\'];}else{return translate($matches[2], $matches[1]);}'
+            ),$data);
+            $data = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $data);
+
+            if (!empty($val['replies'])) {
+                $data .= "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$val['replies']['name'];
+            }
+            $feedResults[] = $data;
+        }	
+        	     
+	    $this->ss->assign('data', $feedResults);
+        return  parent::display() . $this->ss->fetch('include/DashletContainer/Dashlets/SugarFeeds/tpls/content.tpl');
+
 	}
 
 }
