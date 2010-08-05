@@ -50,7 +50,6 @@ else
     $cancel_location = "index.php?module=Users&action=index";
 		
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
-echo "{$mod_strings_users['LBL_REASS_DESC_PART1']}<BR><br>";
 
 // Include Metadata for processing
 require_once("modules/Users/metadata/reassignScriptMetadata.php");
@@ -80,8 +79,11 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 <form method=post action="index.php?module=Users&action=reassignUserRecords" name='EditView' id='EditView'>
 <table cellspacing='1' cellpadding='1' border='0'>
 <tr>
+    <td><?php echo $mod_strings_users['LBL_REASS_DESC_PART1']."<BR><br>"?></td>
+</tr>
+<tr>
 <td>
-<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
+<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CONTINUE']; ?>" name=steponesubmit>
 &nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='clearCurrentRecords();'>
 <input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
@@ -236,7 +238,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 <table cellspacing='1' cellpadding='1' border='0'>
 <tr>
 <td>
-<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_SUBMIT']; ?>" name=steponesubmit>
+<input type=submit class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CONTINUE']; ?>" name=steponesubmit>
 &nbsp;<input type=button class="button" value="<?php echo $mod_strings_users['LBL_REASS_BUTTON_CLEAR']; ?>" onclick='clearCurrentRecords();'>
 <input type=button class="button" value="<?php echo $app_strings['LBL_CANCEL_BUTTON_LABEL']; ?>" onclick='document.location="<?php echo $cancel_location ?>"'>
 </td>
@@ -280,16 +282,17 @@ else if(!isset($_GET['execute'])){
 	
 	$toteamname = TeamSetManager::getTeamsFromSet($team_set_id);
 	//END SUGARCRM flav=pro ONLY
-	
+        echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
 	echo "<form action=\"index.php?module=Users&action=reassignUserRecords&execute=true\" method=post>\n";
 	echo "<BR>{$mod_strings_users['LBL_REASS_NOTES_TITLE']}\n";
 	echo "<ul>\n";
-	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_ONE']}\n";
-	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_TWO']}\n";
-	echo "<li>{$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
+	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_ONE']}\n";
+	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_TWO']}\n";
+	echo "<li>* {$mod_strings_users['LBL_REASS_NOTES_THREE']}\n";
 	echo "</ul>\n";
 	//BEGIN SUGARCRM flav!=sales ONLY
-	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}<BR>\n";
+        $help_img = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_REASS_VERBOSE_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"');
+	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
 	//END SUGARCRM flav!=sales ONLY
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
@@ -389,8 +392,8 @@ else if(!isset($_GET['execute'])){
 		echo "</td></tr></table>\n";
 	}
 	
-	echo "<BR><input type=submit class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_CONTINUE']}\">\n";
-	echo "&nbsp;<input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_GO_BACK']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords\"'>\n";
+	echo "<BR><input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_GO_BACK']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords\"'>\n";
+	echo "&nbsp;<input type=submit class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_REASSIGN']}\">\n";
 	echo "&nbsp;<input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_RESTART']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords&clear=true\"'>\n";
 	
 	echo "</form>\n";
@@ -517,7 +520,7 @@ if(!empty($quicksearch_js)){
 }
 //END SUGARCRM flav=pro ONLY
 ?>
-
+<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
 <script type="text/javascript">
 
 function clearCurrentRecords()

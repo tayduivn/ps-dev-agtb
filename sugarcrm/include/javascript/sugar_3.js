@@ -1596,7 +1596,9 @@ function disableOnUnloadEditView(theForm) {
         window.onbeforeunload = null;
     } else {
         // Otherwise, it just disables it for this form
-        editViewSnapshots[theForm.id] = null;
+        if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
+            editViewSnapshots[theForm.id] = null;
+        }
     }
 }
 
@@ -2277,7 +2279,8 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-		n = n.replace(num_grp_sep, '').replace(dec_sep, '.');
+	    num_grp_sep_re = new RegExp(num_grp_sep, 'g');
+	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
             // Need to strip out the currency symbols from the start.

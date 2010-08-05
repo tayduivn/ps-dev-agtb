@@ -473,6 +473,16 @@ else
 }
 //END SUGARCRM flav!=sales && flav!=dce ONLY
 
+// Grouped tabs?
+$useGroupTabs = $current_user->getPreference('navigation_paradigm');
+if ( ! isset($useGroupTabs) ) {
+    if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'm';
+    }
+    $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
+}
+$sugar_smarty->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
+
 $user_max_tabs = intval($focus->getPreference('max_tabs'));
 if(isset($user_max_tabs) && $user_max_tabs > 0)
     $sugar_smarty->assign("MAX_TAB", $user_max_tabs);
@@ -529,7 +539,13 @@ $sugar_smarty->assign("MAIL_SMTPDISPLAY", $mail_smtpdisplay);
 $sugar_smarty->assign('SHOW_PDF_OPTIONS', (PDF_CLASS == "TCPDF"));
 //END SUGARCRM flav=pro ONLY
 
-$sugar_smarty->assign('SHOW_ROLES',(!($focus->is_group=='1' || $focus->portal_only=='1')));
+//BEGIN SUGARCRM flav!=sales ONLY
+$show_roles = (!($focus->is_group=='1' || $focus->portal_only=='1'));
+//END SUGARCRM flav!=sales ONLY
+//BEGIN SUGARCRM flav=sales ONLY
+$show_roles = false;
+//END SUGARCRM flav=sales ONLY
+$sugar_smarty->assign('SHOW_ROLES', $show_roles);
 
 // User Holidays subpanel on the advanced tab
 global $modules_exempt_from_availability_check;
@@ -542,7 +558,7 @@ $GLOBALS['sugar_config']['lock_subpanels'] = true;
 
 //BEGIN SUGARCRM flav=pro ONLY
 // User Holidays subpanels should not be displayed for group and portal users
-if(!($focus->is_group=='1' || $focus->portal_only=='1')){
+if($show_roles){
     require_once('include/SubPanel/SubPanelTiles.php');
     $subpanel = new SubPanelTiles($focus, 'Users');
 
@@ -554,7 +570,7 @@ $GLOBALS['sugar_config']['lock_subpanels'] = $locked;
 $sugar_smarty->display('modules/Users/DetailView.tpl');
 
 // Roles Grid and Roles subpanel should not be displayed for group and portal users
-if(!($focus->is_group=='1' || $focus->portal_only=='1')){
+if($show_roles){
     echo "<div>";
     require_once('modules/ACLRoles/DetailUserRole.php');
     echo "</div></div>";

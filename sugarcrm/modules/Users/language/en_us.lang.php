@@ -43,14 +43,15 @@ $mod_strings = array (
 	'LBL_TEAM_UPLINE_EXPLICIT'			=> 'Member',
 
 //END SUGARCRM flav=pro ONLY
-         'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
-                                                'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user.',
-         //BEGIN SUGARCRM flav=sales ONLY
-         'LBL_DELETE_USER_CONFIRM' => 'When the User record is deleted, the corresponding Employee record will also be deleted. <br/><br/>'.
-                                            'Click OK to delete the User record.',
-         //END SUGARCRM flav=sales ONLY
-
-        'LNK_IMPORT_USERS'                 => 'Import Users',
+//BEGIN SUGARCRM flav!=sales ONLY
+	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
+                                                'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user',
+//END SUGARCRM flav!=sales ONLY
+//BEGIN SUGARCRM flav=sales ONLY
+	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
+                                                'Click OK to delete the User record.',
+//END SUGARCRM flav=sales ONLY
+	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',
 	'ERR_EMAIL_NO_OPTS'					=> 'Could not find optimum settings for Inbound Email.',
@@ -262,6 +263,7 @@ $mod_strings = array (
     'LBL_SIGNATURE_NAME'                                        =>  'Name',
     'LBL_NAVIGATION_PARADIGM'           => 'Navigation',
     'LBL_NAVIGATION_PARADIGM_DESCRIPTION'   => 'View modules grouped under tab categories or view modules by distinct tabs for each module.',
+    'LBL_USE_GROUP_TABS'                => 'Navigate using grouped modules',
 	'LBL_NEW_FORM_TITLE'				=> 'New User',
 	'LBL_NEW_PASSWORD'					=> 'New Password',
 	'LBL_NEW_PASSWORD1'					=> 'Password',
@@ -400,8 +402,11 @@ $mod_strings = array (
 
     'LBL_TOO_MANY_CONCURRENT'           => 'This session has ended because another session has been started under the same username.',
 // MASS REASSIGNMENT SCRIPT STRINGS
-	'LBL_REASS_SCRIPT_TITLE'			=> 'Record Reassignment',
-	'LBL_REASS_DESC_PART1'				=> 'Find all records in the selected modules that are assigned to a user, and reassign them to another user.',
+	'LBL_REASS_SCRIPT_TITLE'			=> 'Reassign Records',
+	'LBL_REASS_DESC_PART1'				=> 'Select the modules containing the records to reassign from a specific user to another user. <br/><br/>
+                                                            Click Next to view the number of records that will be updated in each selected module.
+                                                            Click Cancel to exit the page without reassigning any records.',
+        'LBL_REASS_DESC_PART2'=>                    'Select which modules against which to run workflows, send assignment notifications, and do auditing tracking during reassignment.',
 	'LBL_REASS_STEP2_TITLE'				=> 'Team Reassignment',
 	'LBL_REASS_STEP2_DESC'				=> 'The teams listed below were available in the from user\'s team, but not in the to user\'s team. All records in the From User\'s team will not be visible in the To User team unless the team values are mapped. ',
 	'LBL_REASS_USER_FROM_TEAM'			=> 'From User Team:',
@@ -415,15 +420,16 @@ $mod_strings = array (
 	'LBL_REASS_MOD_REASSIGN' 			=> 'Modules to Include in Reassignment:',
 	'LBL_REASS_FILTERS'					=> 'Filters',
 	'LBL_REASS_NOTES_TITLE'				=> 'Notes:',
-	'LBL_REASS_NOTES_ONE'				=> 'Assigning records to yourself will not trigger assignment notifications.',
+	'LBL_REASS_NOTES_THREE'				=> 'Assigning records to yourself will not trigger assignment notifications.',
 	//BEGIN SUGARCRM flav=sales ONLY
-	'LBL_REASS_NOTES_TWO'				=> 'Including Notifications, and Audit tracking in the reassignment is significantly slower.',
+	'LBL_REASS_NOTES_ONE'				=> 'Including Notifications, and Audit tracking in the reassignment is significantly slower.',
 	//END SUGARCRM flav=sales ONLY
 	//BEGIN SUGARCRM flav!=sales ONLY
-	'LBL_REASS_NOTES_TWO'				=> 'Including Workflow, Notifications, and Audit tracking in the reassignment is significantly slower.',
+	'LBL_REASS_NOTES_ONE'				=> 'Running workflows will cause the reassignment process to be significantly slower.',
 	//END SUGARCRM flav!=sales ONLY
-	'LBL_REASS_NOTES_THREE'				=> 'Even if you don\'t include Auditing, the Date Modified and Modified By are still updated accordingly.',
-	'LBL_REASS_VERBOSE_OUTPUT'			=> 'Verbose output (applies only to reassignment tasks that include workflows)',
+	'LBL_REASS_NOTES_TWO'				=> 'Even though you do not select to do audit tracking, the Date Modified and Modified By field in the records will still be updated accordingly.',
+	'LBL_REASS_VERBOSE_OUTPUT'			=> 'Verbose Output',
+        'LBL_REASS_VERBOSE_HELP'                     =>  'Select this option to view detailed information about the reassignment tasks that involve workflows.',
 	'LBL_REASS_ASSESSING'				=> 'Assessing',
 	'LBL_REASS_RECORDS_FROM'			=> 'records from',
 	'LBL_REASS_WILL_BE_UPDATED'			=> 'will be updated.',
@@ -447,8 +453,9 @@ $mod_strings = array (
 	'LBL_REASS_FAILED'					=> 'Failed',
 	'LBL_REASS_BUTTON_SUBMIT' 			=> 'Submit',
 	'LBL_REASS_BUTTON_CLEAR' 			=> 'Clear',
-	'LBL_REASS_BUTTON_CONTINUE'			=> 'Continue',
-	'LBL_REASS_BUTTON_GO_BACK' 			=> 'Go Back',
+	'LBL_REASS_BUTTON_CONTINUE'			=> 'Next >',
+        'LBL_REASS_BUTTON_REASSIGN'                     => 'Reassign',
+	'LBL_REASS_BUTTON_GO_BACK' 			=> '< Back',
 	'LBL_REASS_BUTTON_RESTART' 			=> 'Restart',
 	'LBL_REASS_BUTTON_RETURN' 			=> 'Return',
 	// js
@@ -601,7 +608,7 @@ $mod_strings = array (
     'LBL_WIZARD_SMTP' => 'Your Email Account',
     'LBL_WIZARD_PERSONALINFO_DESC' => 'Provide information about yourself. The information you provide about yourself will be visible to other Sugar users.<br />Fields marked with <span class="required">*</span> are required.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify your time zone and how you would like dates, currencies and names to appear in Sugar.',
-    'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for sending email.',
+    'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for the default outbound email server.',
 
 ); // END STRINGS DEFS
 

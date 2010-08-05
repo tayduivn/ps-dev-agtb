@@ -1078,8 +1078,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var display = enable ? "" : "none";
 			Dom.setStyle("formulaRow", "display", display);
 			Dom.setStyle("enforcedRow", "display", display);
+			Dom.get('enforced').value = enable;
             Dom.get('calculated').value = enable;
-            this.toggleEnforced();
+            //this.toggleEnforced();
         },
         toggleEnforced: function(enable) {
             if (typeof enable == "undefined")

@@ -22,18 +22,18 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 
 class MinimumExpression extends NumericExpression {
 	/**
-	 * Returns the smaller of the two values
+	 * Returns the smallest value in a set
 	 */
 	function evaluate() {
 		$params = $this->getParameters();
-
-		$a = $params[0]->evaluate();
-		$b = $params[1]->evaluate();
 		
-		if ($a < $b) {
-			return $a;
+		$min = false;
+		foreach ( $this->getParameters() as $expr ) {
+			$val = $expr->evaluate();
+			if ($min === false || $val < $min)
+				$min = $val;
 		}
-		return $b;
+		return $min;
 	}
 
 	/**
@@ -42,10 +42,14 @@ class MinimumExpression extends NumericExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters();
-			var a = params[0].evaluate();
-			var b = params[1].evaluate();
-
-			return a < b ? a : b;
+			var min = null;
+			for ( var i = 0; i < params.length; i++ )	
+			{
+				var val = 	params[i].evaluate();
+				if(min == null || val < min)
+					min = val;
+			}
+			return min;
 EOQ;
 	}
 
@@ -55,13 +59,6 @@ EOQ;
 	 */
 	static function getOperationName() {
 		return "min";
-	}
-
-	/**
-	 * Returns the exact number of parameters needed.
-	 */
-	static function getParamCount() {
-		return 2;
 	}
 }
 ?>

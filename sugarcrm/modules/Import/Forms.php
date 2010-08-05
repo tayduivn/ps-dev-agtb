@@ -48,7 +48,12 @@ function loadImportBean(
     if ( $focus ) {
         if ( !$focus->importable )
             return false;
-        if ( $module == 'Users' && !is_admin($GLOBALS['current_user']) && !is_admin_for_module($GLOBALS['current_user'],'Users'))
+        if ( $module == 'Users' && !is_admin($GLOBALS['current_user'])
+             && !is_admin_for_module($GLOBALS['current_user'],'Users')
+             //BEGIN SUGARCRM flav=sales ONLY
+             && $GLOBALS['current_user']->user_type != 'UserAdministrator'
+             //END SUGARCRM flav=sales ONLY
+           )
             return false;
         if ( $focus->bean_implements('ACL')){
             if(!ACLController::checkAccess($focus->module_dir, 'import', true)){

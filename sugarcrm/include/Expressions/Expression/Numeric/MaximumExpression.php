@@ -22,18 +22,18 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 
 class MaximumExpression extends NumericExpression {
 	/**
-	 * Returns the smaller of the two values
+	 * Returns the largest value in a set
 	 */
 	function evaluate() {
 		$params = $this->getParameters();
-
-		$a = $params[0]->evaluate();
-		$b = $params[1]->evaluate();
 		
-		if ($a > $b) {
-			return $a;
+		$max = false;
+		foreach ( $this->getParameters() as $expr ) {
+			$val = $expr->evaluate();
+			if ($max === false || $val > $max)
+				$max = $val;
 		}
-		return $b;
+		return $max;
 	}
 
 	/**
@@ -42,10 +42,14 @@ class MaximumExpression extends NumericExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters();
-			var a = params[0].evaluate();
-			var b = params[1].evaluate();
-
-			return a > b ? a : b;
+			var max = null;
+			for ( var i = 0; i < params.length; i++ )	
+			{
+				var val = 	params[i].evaluate();
+				if(max == null || val > max)
+					max = val;
+			}
+			return max;
 EOQ;
 	}
 
@@ -55,13 +59,6 @@ EOQ;
 	 */
 	static function getOperationName() {
 		return "max";
-	}
-
-	/**
-	 * Returns the exact number of parameters needed.
-	 */
-	static function getParamCount() {
-		return 2;
 	}
 }
 ?>
