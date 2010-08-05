@@ -293,8 +293,8 @@ $mod_strings = array (
 	'LBL_PORTAL_ONLY_USER'					=> 'Portal API User',
 	'LBL_POSTAL_CODE'					=> 'Postal Code',
 	'LBL_PRIMARY_ADDRESS'				=> 'Primary Address',
-	'LBL_PROMPT_TIMEZONE_TEXT'			=> 'Check to have the user goto the User Wizard on login.',
-	'LBL_PROMPT_TIMEZONE'				=> 'User Wizard prompt',
+	'LBL_PROMPT_TIMEZONE_TEXT'			=> 'Select to have new users go through the New User Wizard upon first login.',
+	'LBL_PROMPT_TIMEZONE'				=> 'User Wizard Prompt',
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a User Name and an Email Address.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
 	
@@ -455,7 +455,7 @@ $mod_strings = array (
 	'LBL_REASS_CONFIRM_REASSIGN'		=> 'Would you like to reassign all of this user\'s records?',
 	// end js
 	'ERR_REASS_SELECT_MODULE'			=> 'Please go back and select at least one module.',
-	'ERR_REASS_DIFF_USERS'				=> 'Please select an assign to user that is different from the assign from user.',
+	'ERR_REASS_DIFF_USERS'				=> 'Please select a To User that is different from the From User.',
 // END MASS REASSIGNMENT SCRIPT STRINGS
 
 //END SUGARCRM flav=pro||flav=sales ONLY
