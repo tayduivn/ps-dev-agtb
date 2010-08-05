@@ -503,7 +503,9 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    }
         global $current_user;
 		$current_user = $user;
+		ini_set("session.use_cookies", 0); // disable cookies to prevent session ID from going out
 		session_start();
+		session_regenerate_id();
 		$_SESSION['oauth'] = $auth;
 		$_SESSION['avail_modules'] = $this->get_user_module_list($user);
 		// handle role
