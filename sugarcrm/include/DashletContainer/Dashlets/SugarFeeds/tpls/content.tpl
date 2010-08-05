@@ -84,17 +84,6 @@ div .oddListDiv, .evenListDiv
     text-align:center;
 }
 
-#SEDAttachGridView
-{
-    background-image: url({/literal}{sugar_getimagepath file='snip_grid_icon.png'}{literal});
-    background-repeat: no-repeat;
-}
-#SEDAttachListView
-{
-    background-image: url({/literal}{sugar_getimagepath file='snip_list_icon.png'}{literal});
-    background-repeat: no-repeat;
-}
-
 .selectCol
 {
     -moz-border-radius-bottomleft:4px;
@@ -124,70 +113,15 @@ div .oddListDiv, .evenListDiv
         		{else}
         			{assign var='_rowColor' value='evenListDiv'}
         		{/if}
-        	<div class="{$_rowColor}" id='{$rowData.uid}'>
-        
-        	   <div name="SEDRelateSelectContainer" style="display: table-cell;" > 
-            	   <div name="SEDRelateSelect"  class="yui-hidden">
-            	       <input type="checkbox" value="{$rowData.uid}" name="mass[]" class="checkbox" onclick="">
-            	   </div>
-        	   </div>
-        	   
-        		<div class="rowLeftDiv" > 
-        		{if $rowData.hasAttach}
-        		<img width="18" align="absmiddle" border="0" class="image" src="index.php?entryPoint=getImage&amp;themeName=Sugar&amp;imageName=attachment.gif">
-        		{/if}
-        		
-        		{$rowData.from_addrs_name}
-        		
-        		</div>
-        		<div class="rowCenterDiv" >{$rowData.subject} <p style="font-size:10;font-weight:normal;font-style:italic;">{$rowData.short_desc}</p> </div>
-        		<div class="rowRightDiv" > <span style="font-weight:bold">{$rowData.date}</span> <p> {$rowData.type} </p></div>
-        
+        	<div class="{$_rowColor}">
+        		<div class="rowCenterDiv"><p>{$rowData}</p></div>
         	</div> 
         	{/foreach}
         </div>
 	</div>
 	<div class="sugarFeedDashlet yui-hidden" id="SEDDetailView" ></div>
 	
-	<div class="divTableContainer yui-hidden" id="SEDAttachListViewData" >
-	   <div id="SEDAttachListViewContainer" style="display:table">
-    	   {foreach name=rowIteration from=$attachmentData item=attachData}
-                    {if $smarty.foreach.rowIteration.iteration is odd}
-            			{assign var='_rowColor' value='oddListDiv'}
-            		{else}
-            			{assign var='_rowColor' value='evenListDiv'}
-            		{/if}
-            	<div class="{$_rowColor}" id='{$attachData.id}'>
-            		<div class="rowLeftDiv" > <span style="font-weight:bold">{$attachData.filename} </span> 
-            		</div>
-            		<div class="rowCenterDiv" style="width:65% !important">{$attachData.subject} <p style="font-size:10;font-weight:normal;font-style:italic;">{$attachData.date}</p> </div>
-            		<div class="rowRightDiv" > 
-            		  <img width="60px" height="60px" src='{$attachData.icon_image}' alt='{$navStrings.previous}' align='absmiddle' border='0'>
-            		  <p style="font-size:10;font-weight:normal;font-style:italic;">{$attachData.file_mime_type}</p>
-            		  
-            		</div>
-            		
-            	</div> 
-          {/foreach}
-	   </div>
-	</div>
-	
-	<div class="divTableContainer yui-hidden" id="SEDAttachGridViewData" >
-	   <div id="SEDAttachGridListViewContainer" style="display:table">
-    	   {foreach name=rowIteration from=$attachmentData item=attachData}
-            	<div style="width: 130px; float: left; background-color:white; padding:20px">
-            		  <img width="100px" height="100px" src='{$attachData.icon_image}' alt='{$navStrings.previous}' align='absmiddle' border='0'>
-            	       <p style="font-weight:bold">{$attachData.filename} </p> 
-            	</div> 
-          {/foreach}
-	   </div>
-	</div>
-	
-	
-	
-	
-	
-	
+
 	<div class="SEDLoadingDiv yui-hidden" id="SEDLoadingDiv" style="hieght:300px">
 	   <img style="padding-top:50px" src='{sugar_getimagepath file='yui_loading.gif'}' alt='{$navStrings.previous}' align='absmiddle' border='0'>
 	</div>
