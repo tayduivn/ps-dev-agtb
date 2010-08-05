@@ -31,7 +31,11 @@ class SugarOAuth
         // on unknown: OAUTH_CONSUMER_KEY_UNKNOWN
         // on bad key: OAUTH_CONSUMER_KEY_REFUSED
         $GLOBALS['log']->debug("OAUTH: lookupConsumer, key={$provider->consumer_key}");
-        $provider->consumer_secret = "CONSUMERSECRET";
+        $secret = SugarOAuthData::getConsumerSecret($provider->consumer_key);
+        if(!$secret) {
+            return OAUTH_CONSUMER_KEY_UNKNOWN;
+        }
+        $provider->consumer_secret = $secret;
         return OAUTH_OK;
     }
 
@@ -48,7 +52,7 @@ class SugarOAuth
         if(empty($provider->timestamp)) {
             return OAUTH_BAD_TIMESTAMP;
         }
-        return SugarOAuthToken::checkNonce($provider->consumer_key, $provider->nonce, $provider->timestamp);
+        return SugarOAuthData::checkNonce($provider->consumer_key, $provider->nonce, $provider->timestamp);
     }
 
     /**

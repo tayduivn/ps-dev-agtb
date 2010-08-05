@@ -1,0 +1,60 @@
+<?php
+
+class SugarOAuthData
+{
+    protected static $mongo;
+
+    public static function getTable($table = "oauth_tokens")
+    {
+        if(!isset(self::$mongo)) {
+            self::$mongo = new Mongo();
+            self::$mongo->connect();
+        }
+        return self::$mongo->oauth->$table;
+    }
+
+    static public function cleanup()
+	{
+	    $table = self::getTable();
+	    // delete invalidated tokens older than 1 day
+	    $table->remove(array("status" => self::INVALID, "ts" => array('$lt' => time()-60*60*24)));
+	    // delete request tokens older than 1 day
+	    $table->remove(array("status" => self::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
+        $table->ensureIndex(array("token" => 1));
+	}
+
+	public static function getConsumerSecret($key)
+	{
+	    $ctable = self::getTable("consumer");
+	    $consumer = $ctable->findOne(array("key" => $key));
+	    if($consumer) {
+	        return $consumer["secret"];
+	    }
+	    return null;
+	}
+
+	public static function registerConsumer($key, $secret)
+	{
+	    $ctable = self::getTable("consumer");
+	    $ctable->insert(array("key" => $key, "secret" => $secret));
+	}
+
+	public static function checkNonce($key, $nonce, $ts)
+	{
+	    $ntable = self::getTable("nonce");
+	    $tsbad = $ntable->findOne(array("key" => $key, "ts" => array('$gt' => $ts)));
+	    if(!empty($tsbad)) {
+	        // we have later ts
+	        return OAUTH_BAD_TIMESTAMP;
+	    }
+	    $data = array("key" => $key, "ts" => $ts, "nonce" => $nonce);
+        $nbad = $ntable->findOne($data);
+        if(!empty($nbad)) {
+            return OAUTH_BAD_NONCE;
+        }
+	    $ntable->insert($data);
+	    $ntable->remove(array("key" => $key, "ts" => array('$lt' => $ts)));
+	    return OAUTH_OK;
+	}
+
+}

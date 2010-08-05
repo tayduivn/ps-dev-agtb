@@ -1,10 +1,10 @@
 <?php
+require_once 'include/OAuth/SugarOAuthData.php';
 
 class SugarOAuthToken
 {
 
     protected $data = array();
-    protected static $mongo;
 
     const REQUEST = 1;
     const ACCESS = 2;
@@ -64,11 +64,7 @@ class SugarOAuthToken
 
     public static function getTable()
     {
-        if(!isset(self::$mongo)) {
-            self::$mongo = new Mongo();
-            self::$mongo->connect();
-        }
-        return self::$mongo->oauth->oauth_tokens;
+        return SugarOAuthData::getTable();
     }
 
     static function load($token)
@@ -89,7 +85,6 @@ class SugarOAuthToken
 
 	public function authorize($authdata)
 	{
-	    // TODO: add user data
 	    $this->verify = self::randomValue();
 	    $this->authdata = $authdata;
 	    $this->save();
@@ -98,7 +93,6 @@ class SugarOAuthToken
 
 	public function copyAuthData(SugarOAuthToken $token)
 	{
-	    // TODO: copy data from $token
 	    $this->authdata = $token->authdata;
 	    return $this;
 	}
@@ -106,31 +100,5 @@ class SugarOAuthToken
 	public function queryString()
 	{
 	    return "oauth_token={$this->token}&oauth_token_secret={$this->secret}";
-	}
-
-	public function cleanup()
-	{
-	    // delete invalidated tokens older than 1 day
-	    self::getTable()->remove(array("status" => self::INVALID, "ts" => array('$lt' => time()-60*60*24)));
-	    // delete request tokens older than 1 day
-	    self::getTable()->remove(array("status" => self::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
-	}
-
-	static function checkNonce($key, $nonce, $ts)
-	{
-	    $ntable = self::getTable()->db->nonce;
-	    $tsbad = $ntable->findOne(array("key" => $key, "ts" => array('$gt' => $ts)));
-	    if(!empty($tsbad)) {
-	        // we have later ts
-	        return OAUTH_BAD_TIMESTAMP;
-	    }
-	    $data = array("key" => $key, "ts" => $ts, "nonce" => $nonce);
-        $nbad = $ntable->findOne($data);
-        if(!empty($nbad)) {
-            return OAUTH_BAD_NONCE;
-        }
-	    $ntable->insert($data);
-	    $ntable->remove(array("key" => $key, "ts" => array('$lt' => $ts)));
-	    return OAUTH_OK;
 	}
 }
