@@ -61,7 +61,6 @@ class SugarOAuth
         if($token->state == SugarOAuthToken::REQUEST) {
             if(!empty($token->verify) && $provider->verifier == $token->verify) {
                 $provider->token_secret = $token->secret;
-                $token->invalidate();
                 $this->token = $token;
                 return OAUTH_OK;
             } else {
@@ -124,6 +123,7 @@ class SugarOAuth
         if($this->token->state != SugarOAuthToken::REQUEST) {
             return null;
         }
+        $this->token->invalidate();
         $token = SugarOAuthToken::generate();
         $token->state = SugarOAuthToken::ACCESS;
         // transfer user data from request token

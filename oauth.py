@@ -37,10 +37,9 @@ print
 # below.
 
 print "Go to the following link in your browser:"
-print authorize_url
-print "and authorize token %s" % (request_token['oauth_token'])
+print "%s&token=%s" % (authorize_url, request_token['oauth_token'])
 print 
-oauth_verifier = raw_input('What is the PIN? ')
+oauth_verifier = raw_input('What is the Verification Code? ')
 
 token = oauth.Token(request_token['oauth_token'],
     request_token['oauth_token_secret'])

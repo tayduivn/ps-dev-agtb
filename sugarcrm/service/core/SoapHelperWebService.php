@@ -103,7 +103,7 @@ class SoapHelperWebServices {
 			}
 		}
 		//END SUGARCRM flav!=sales ONLY
-		
+
 		if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
 			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
 			$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
@@ -207,7 +207,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated - validation failed');
 		return false;
 	}
-	
+
 	/**
 	 * Use the same logic as in SugarAuthenticate to validate the ip address
 	 *
@@ -329,7 +329,7 @@ function validate_user($user_name, $password){
 			} else {
 				$modules[$key] = '';
 			} // else
-		} // foreach		
+		} // foreach
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_user_module_list');
 		return $modules;
 
@@ -471,7 +471,7 @@ function validate_user($user_name, $password){
 		return $list;
 
 	} // fn
-	
+
 	function array_get_name_value_list($array){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->array_get_name_value_list');
 		$list = array();
@@ -560,7 +560,7 @@ function validate_user($user_name, $password){
 					$optional_where = $query_array['where'];
 				} // else
 			} // if
-			
+
 			$params = array();
 			$params['joined_tables'] = $query_array['join_tables'];
 

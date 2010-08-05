@@ -534,20 +534,17 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         }
     }
 
-    public function oauth_access()
+    public function oauth_access($session)
     {
-        require_once "include/OAuth/SugarOAuth.php";
-        try {
-	        $oauth = new SugarOAuth();
-	        $auth = $oauth->authorization();
-	        if(empty($auth)) {
-	            return "Unauthorized!";
-	        }
-	        return "Welcome {$auth['user']}!";
-        } catch(Exception $e) {
-            $GLOBALS['log']->debug("OAUTH Exception: $e");
-            return (string)$e;
-        }
+    	$error = new SoapError();
+    	$output_list = array();
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) {
+    		$error->set_error('invalid_login');
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->oauth_access');
+    		return $error;
+    	}
+    	global $current_user;
+        return "Welcome {$current_user->user_name}!";
     }
 }
 
