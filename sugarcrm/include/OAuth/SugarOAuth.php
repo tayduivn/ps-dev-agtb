@@ -91,18 +91,18 @@ class SugarOAuth
      * Checks current request for OAuth valitidy
      * @param bool $add_rest add REST endpoint as request path
      */
-    public function __construct($add_rest = false)
+    public function __construct($req_path = '')
     {
         global $sugar_config;
         $this->config = $sugar_config;
-        $GLOBALS['log']->debug("OAUTH: __construct: ".var_export($_REQUEST, true));
+        $GLOBALS['log']->debug("OAUTH: __construct($req_path): ".var_export($_REQUEST, true));
         $this->provider = new OAuthProvider();
         try {
 		    $this->provider->consumerHandler(array($this,'lookupConsumer'));
 		    $this->provider->timestampNonceHandler(array($this,'timestampNonceChecker'));
 		    $this->provider->tokenHandler(array($this,'tokenHandler'));
-	        if($add_rest) {
-		        $this->provider->setRequestTokenPath('/sugarent/service/v3/rest.php');  // No token needed for this end point
+	        if(!empty($req_path)) {
+		        $this->provider->setRequestTokenPath($req_path);  // No token needed for this end point
 	        }
 	    	$this->provider->checkOAuthRequest();
         } catch(Exception $e) {

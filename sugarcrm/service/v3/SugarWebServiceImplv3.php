@@ -514,7 +514,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     {
         require_once "include/OAuth/SugarOAuth.php";
         try {
-	        $oauth = new SugarOAuth(true);
+	        $oauth = new SugarOAuth($GLOBALS['sugar_config']['site_url'].'/service/v3/rest.php');
 	        return $oauth->requestToken();
         } catch(Exception $e) {
             $GLOBALS['log']->debug("OAUTH Exception: $e");
