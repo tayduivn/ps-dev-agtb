@@ -41,6 +41,9 @@ print "%s&token=%s" % (authorize_url, request_token['oauth_token'])
 print 
 oauth_verifier = raw_input('What is the Verification Code? ')
 
+if oauth_verifier == "":
+	exit()
+
 token = oauth.Token(request_token['oauth_token'],
     request_token['oauth_token_secret'])
 token.set_verifier(oauth_verifier)
