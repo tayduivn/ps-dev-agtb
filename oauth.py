@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import urlparse
 import oauth2 as oauth
 import urllib

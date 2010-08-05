@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import urlparse
 import oauth2 as oauth
 import urllib
@@ -24,6 +25,7 @@ client = oauth.Client(consumer, token)
 
 restparams['method'] = 'oauth_access'
 resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
+print resp
 print content
 
 restparams['method'] = 'get_available_modules'
