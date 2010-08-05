@@ -250,6 +250,33 @@ var $selectedCategories = array();
         }
        
     }
+
+	 function pushUserFeedReply( ) {
+         if(!empty($_REQUEST['text'])&&!empty($_REQUEST['parentFeed'])) {
+			$text = htmlspecialchars($_REQUEST['text']);
+			//allow for bold and italic user tags
+			$text = preg_replace('/&amp;lt;(\/*[bi])&amp;gt;/i','<$1>', $text);
+//BEGIN SUGARCRM flav=pro ONLY
+            // Fetch the parent, use the same team id's
+            $parentFeed = new SugarFeed();
+            $parentFeed->retrieve($_REQUEST['parentFeed']);
+			$team_id = $parentFeed->team_id;
+			$team_set_id = $team_id; //For now, but if we allow for multiple team selection then we'll have to change this
+//END SUGARCRM flav=pro ONLY
+            SugarFeed::pushFeed($text, 'SugarFeed', $_REQUEST['parentFeed'], 
+//BEGIN SUGARCRM flav=pro ONLY
+                                $team_id,
+//END SUGARCRM flav=pro ONLY
+								$GLOBALS['current_user']->id,
+                                '', ''
+//BEGIN SUGARCRM flav=pro ONLY
+                                ,$team_set_id
+//END SUGARCRM flav=pro ONLY
+                                );
+        }
+       
+    }
+
 	  function displayOptions() {
         global $app_strings;
         $ss = new Sugar_Smarty();
