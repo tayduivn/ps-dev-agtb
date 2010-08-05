@@ -42,7 +42,13 @@ class SugarOAuth
     public function timestampNonceChecker($provider)
     {
         // FIXME: add ts/nonce verification
-         return OAUTH_OK;
+        if(empty($provider->nonce)) {
+            return OAUTH_BAD_NONCE;
+        }
+        if(empty($provider->timestamp)) {
+            return OAUTH_BAD_TIMESTAMP;
+        }
+        return SugarOAuthToken::checkNonce($provider->consumer_key, $provider->nonce, $provider->timestamp);
     }
 
     /**

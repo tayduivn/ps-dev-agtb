@@ -111,8 +111,26 @@ class SugarOAuthToken
 	public function cleanup()
 	{
 	    // delete invalidated tokens older than 1 day
-	    return self::getTable()->remove(array("status" => self::INVALID, "ts" => array('$lt' => time()-60*60*24)));
+	    self::getTable()->remove(array("status" => self::INVALID, "ts" => array('$lt' => time()-60*60*24)));
 	    // delete request tokens older than 1 day
-	    return self::getTable()->remove(array("status" => self::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
+	    self::getTable()->remove(array("status" => self::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
+	}
+
+	static function checkNonce($key, $nonce, $ts)
+	{
+	    $ntable = self::getTable()->db->nonce;
+	    $tsbad = $ntable->findOne(array("key" => $key, "ts" => array('$gt' => $ts)));
+	    if(!empty($tsbad)) {
+	        // we have later ts
+	        return OAUTH_BAD_TIMESTAMP;
+	    }
+	    $data = array("key" => $key, "ts" => $ts, "nonce" => $nonce);
+        $nbad = $ntable->findOne($data);
+        if(!empty($nbad)) {
+            return OAUTH_BAD_NONCE;
+        }
+	    $ntable->insert($data);
+	    $ntable->remove(array("key" => $key, "ts" => array('$lt' => $ts)));
+	    return OAUTH_OK;
 	}
 }
