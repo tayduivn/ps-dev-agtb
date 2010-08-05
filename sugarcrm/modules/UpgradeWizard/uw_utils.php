@@ -5120,7 +5120,7 @@ function upgradeModulesForTeam() {
 			if(!empty($content['dashlets']) && !empty($content['pages'])){
 				$originalDashlets = $content['dashlets'];
 				foreach($originalDashlets as $key => $ds){
-				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://apps.sugarcrm.com/dashlet/go-pro.html')){
+				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://www.sugarcrm.com/crm/product/gopro')){
 						unset($originalDashlets[$key]);
 					}
 				}
