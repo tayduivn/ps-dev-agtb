@@ -1131,5 +1131,6 @@ $mod_strings = array (
 	'LBL_OAUTH_CONSUMERSECRET' => "Consumer secret",
 	'LBL_OAUTH_REQUEST' => "Request token",
     'LBL_OAUTH_ROLE' => "Token role",
-	'LBL_OAUTH_VALIDATION' => "Verification code",
+    'LBL_OAUTH_TITLE' => "OAuth support",
+'LBL_OAUTH_VALIDATION' => "Verification code",
 );
