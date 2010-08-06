@@ -9,5 +9,6 @@ $userfilters = array(
     ),
     'Cases' => array(
         'priority' => array('enabled' => true),
+        'status' => array('enabled' => true),
     ),
 );

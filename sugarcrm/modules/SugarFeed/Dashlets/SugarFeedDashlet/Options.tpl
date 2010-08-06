@@ -83,21 +83,33 @@
 {literal}
 <script type="text/javascript">
 var allselected = [];
+var div_list = new Array();
+{/literal}
+{$div_list_values}
+{literal}
 function updateDivDisplay(multiSelectObj){
     for(var i = 0; i < multiSelectObj.options.length; i++){
         if(multiSelectObj.options[i].selected != allselected[i]){
             allselected[i] = multiSelectObj.options[i].selected;
             
             if(allselected[i]){
-                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
-                if(theElement != null){
-                    theElement.style.display = 'block';
+                for(var div in div_list){
+                    if(div.substring(0, multiSelectObj.options[i].text.length) == multiSelectObj.options[i].text){
+                        theElement = document.getElementById('div_' + div);
+                        if(theElement != null){
+                            theElement.style.display = 'block';
+                        }
+                    }
                 }
             }
             else{
-                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
-                if(theElement != null){
-                    theElement.style.display = 'none';
+                for(var div in div_list){
+                    if(div.substring(0, multiSelectObj.options[i].text.length) == multiSelectObj.options[i].text){
+                        theElement = document.getElementById('div_' + div);
+                        if(theElement != null){
+                            theElement.style.display = 'none';
+                        }
+                    }
                 }
             }
         }

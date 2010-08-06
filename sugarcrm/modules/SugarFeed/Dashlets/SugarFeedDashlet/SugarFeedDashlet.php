@@ -250,17 +250,15 @@ var $selectedCategories = array();
 			$where .= $module_limiter;
 			
 			$table_joins_array = array();
+			$uf_where = array();
 			foreach($this->userfilters as $uf_module => $uf_meta){
 			    // Skip modules that aren't selected for the query
-    		    if(!array_key_exists($uf_module, $this->categories)){
+    		    if(!in_array($uf_module, $this->selectedCategories)){
     		        continue;
     		    }
 			    foreach($uf_meta as $uf_field => $uf_field_meta){
     		        $field_index = "{$uf_module}_{$uf_field}";
     		        if($uf_field_meta['enabled'] && !empty($this->$field_index)){
-			            if(!empty($where)) {
-			                $where .= ' AND ';
-			            }
 		                $seed = SugarModule::get($uf_module)->loadBean();
 		                $field_def = $seed->field_defs[$uf_field];
 			            $table_name = $seed->table_name;
@@ -278,7 +276,7 @@ var $selectedCategories = array();
                                     $lvsParams['custom_from'] .= " LEFT JOIN {$table_name} ON sugarfeed.related_module = '{$uf_module}' AND sugarfeed.related_id = {$table_name}.id AND {$table_name}.deleted = 0 ";
                                     $table_joins_array[] = $table_name;
                 			    }
-                                $where .= " ( ({$table_name}.{$uf_field} in {$where_in_clause}) {$null_check} ) ";
+                                $uf_where[$uf_module][$uf_field] = " ( sugarfeed.related_module = '{$uf_module}' AND ( ({$table_name}.{$uf_field} in {$where_in_clause}) {$null_check} ) ) ";
 			                    break;
 			                case 'int':
 			                    break;
@@ -295,6 +293,25 @@ var $selectedCategories = array();
 			            }
     		        }
     		    }
+    		}
+    		
+    		// Take the data from the above block and process
+    		if(!empty($uf_where)){
+    		    if(!empty($where)){
+    		        $where .= " AND ";
+    		    }
+    		    $where .= "( ";
+    		    foreach($uf_where as $filter_module => $filter_field_arr){
+    		        $first_iteration = false;
+    		        foreach($filter_field_arr as $filter_field => $query_component){
+    		            $where .= $query_component;
+    		            $where .= " AND ";
+    		        }
+    		        $where = substr($where, 0, -5);
+    		        $where .= " OR ";
+    		    }
+    		    $where = substr($where, 0, -4);
+    		    $where .= ") ";
     		}
 			
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
@@ -466,6 +483,7 @@ var $selectedCategories = array();
         
         //Sugar Feed User Filtering
         $user_filter_data = array();
+        $div_list_js = '';
 		foreach($this->userfilters as $uf_module => $uf_meta){
 		    foreach($uf_meta as $uf_field => $uf_field_meta){
 		        $field_index = "{$uf_module}_{$uf_field}";
@@ -488,9 +506,11 @@ var $selectedCategories = array();
 		            else if($field_def['type'] == 'date'){
 		                
 		            }
+		            $div_list_js .= "div_list['{$field_index}'] = '{$field_index}';\n";
 		        }
 		    }
 		}
+		$ss->assign('div_list_values', $div_list_js);
 		$ss->assign('user_filter_data', $user_filter_data);
         
         return  $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/Options.tpl');
