@@ -264,8 +264,36 @@ var $selectedCategories = array();
 
         }
 
-        // echo('IKEA: <pre>'.print_r($this->fbData['lastMessages'],true).'</pre>');
-        // echo('IKEA: <pre>'.print_r($this->lvs->data['data'][0],true).'</pre>');
+        $needResort = false;
+        $resortQueue = array();
+        // Check if we need to resort the FB messages
+        if ( isset($this->fbData['lastMessages']['data'][0]) ) {
+            // We need to resort
+            $needResort = true;
+            
+            // Put the FB messages in the resort queue.
+            foreach ( $this->fbData['lastMessages']['data'] as $message ) {
+                // Extract the timestamp, with passion
+                $unix_time = strtotime($message['created_time']);
+
+                $fake_record = array();
+                $fake_record['sort_key'] = $unix_time;
+                $fake_record['ID'] = create_guid();
+                $fake_record['NAME'] = $message['message'];
+                $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'];
+                $td = new TimeDate;
+                $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('m-d-Y H:i:s',$unix_time));
+
+                $resortQueue[] = $fake_record;
+            }
+        }
+        
+        // Check if we need to resort the Twitter messages
+
+        
+        
+        echo('IKEA: <pre>'.print_r($resortQueue,true).'</pre>');
+        echo('IKEA: <pre>'.print_r($this->lvs->data['data'][0],true).'</pre>');
         
     }
 	
