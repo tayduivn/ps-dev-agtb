@@ -37,6 +37,7 @@ var $displayRows = 15;
 var $categories;
 
 var $userfilters;
+var $userfeed_created;
 
 var $selectedCategories = array();
 
@@ -52,7 +53,7 @@ var $selectedCategories = array();
 		$this->isConfigurable = true;
 		$this->hasScript = true;
         // Add in some default categories.
-        $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
+        // $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
         // Need to get the rest of the active SugarFeed modules
         $module_list = SugarFeed::getActiveFeedModules();
         // Translate the category names
@@ -78,6 +79,7 @@ var $selectedCategories = array();
 		        }
 		    }
 		}
+		if(!empty($def['userfeed_created'])) $this->userfeed_created = $def['userfeed_created'];
 		
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
@@ -215,7 +217,9 @@ var $selectedCategories = array();
             if(!empty($whereArray)){
                 $where = '(' . implode(') AND (', $whereArray) . ')';
             }            
-
+            
+            $additional_where = '';
+            
 			$module_limiter = " sugarfeed.related_module in ('" . implode("','", $regular_modules) . "')";
 
             if ( count($owner_modules) > 0
@@ -297,23 +301,28 @@ var $selectedCategories = array();
     		
     		// Take the data from the above block and process
     		if(!empty($uf_where)){
-    		    if(!empty($where)){
-    		        $where .= " AND ";
-    		    }
-    		    $where .= "( ";
+    		    $additional_where .= "( ";
     		    foreach($uf_where as $filter_module => $filter_field_arr){
     		        $first_iteration = false;
     		        foreach($filter_field_arr as $filter_field => $query_component){
-    		            $where .= $query_component;
-    		            $where .= " AND ";
+    		            $additional_where .= $query_component;
+    		            $additional_where .= " AND ";
     		        }
-    		        $where = substr($where, 0, -5);
-    		        $where .= " OR ";
+    		        $additional_where = substr($additional_where, 0, -5);
+    		        $additional_where .= " OR ";
     		    }
-    		    $where = substr($where, 0, -4);
-    		    $where .= ") ";
+    		    $additional_where = substr($additional_where, 0, -4);
+    		    $additional_where .= ") ";
     		}
-			
+    		
+    		if(!empty($this->userfeed_created)){
+    		    if(!empty($additional_where)){
+    		        $additional_where = $additional_where." OR ";
+    		    }
+			    $userfeed_created_in = "('".implode("', '", $this->userfeed_created)."')";
+                $where = " ( {$where} ) AND ( {$additional_where} ( sugarfeed.related_module = 'UserFeed' AND sugarfeed.created_by in {$userfeed_created_in} ) ) ";
+            }
+    		
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
                               array('name', 
                                     'description', 
@@ -490,7 +499,7 @@ var $selectedCategories = array();
         $ss->assign('title', $this->title);
 		$ss->assign('categories', $this->categories);
         if ( empty($this->selectedCategories) ) {
-            $this->selectedCategories['ALL'] = 'ALL';
+            $this->selectedCategories = SugarFeed::getActiveFeedModules();
         }
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
@@ -527,7 +536,11 @@ var $selectedCategories = array();
 		}
 		$ss->assign('div_list_values', $div_list_js);
 		$ss->assign('user_filter_data', $user_filter_data);
-        
+		
+        $ss->assign('lbl_userfeed_created', translate('LBL_USERFEED_CREATED', 'SugarFeed'));
+        $ss->assign('userfeed_created_options', get_user_array(false));
+        $ss->assign('selected_userfeed_created', $this->userfeed_created);
+		
         return  $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/Options.tpl');
     }  
 	
@@ -556,6 +569,7 @@ var $selectedCategories = array();
 		        $options[$field_index] = $_REQUEST[$field_index];
 		    }
 		}
+		$options['userfeed_created'] = $_REQUEST['userfeed_created'];
 		foreach($options['categories'] as $cat){
 			if($cat == 'ALL'){
 				unset($options['categories']);

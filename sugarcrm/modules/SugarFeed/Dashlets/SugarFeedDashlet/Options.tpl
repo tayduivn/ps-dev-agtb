@@ -72,6 +72,12 @@
     </td>
 </tr>
 {/foreach}
+<tr id='div_userfeed_created' style='display:block'>
+    <td valign='top' nowrap class='dataLabel'>{$lbl_userfeed_created}</td>
+    <td valign='top' class='dataField'>
+    	{html_options name='userfeed_created[]' options=$userfeed_created_options selected=$selected_userfeed_created multiple=true size=4}
+    </td>
+</tr>
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
@@ -89,7 +95,21 @@ var div_list = new Array();
 {literal}
 function updateDivDisplay(multiSelectObj){
     for(var i = 0; i < multiSelectObj.options.length; i++){
-        if(multiSelectObj.options[i].selected != allselected[i]){
+        if(multiSelectObj.options[i].text == 'User Feed'){
+        	if(multiSelectObj.options[i].selected != allselected[i]){
+                allselected[i] = multiSelectObj.options[i].selected;
+                theElement = document.getElementById('div_userfeed_created');
+                if(theElement != null){
+                    if(allselected[i]){
+                        theElement.style.display = 'block';
+                    }
+                    else{
+                        theElement.style.display = 'none';
+                    }
+                }
+        	}
+        }
+        else if(multiSelectObj.options[i].selected != allselected[i]){
             allselected[i] = multiSelectObj.options[i].selected;
             
             if(allselected[i]){
