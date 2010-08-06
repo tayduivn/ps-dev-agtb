@@ -17,9 +17,9 @@ class SugarOAuthData
 	{
 	    $table = self::getTable();
 	    // delete invalidated tokens older than 1 day
-	    $table->remove(array("status" => self::INVALID, "ts" => array('$lt' => time()-60*60*24)));
+	    $table->remove(array("status" => SugarOAuthToken::INVALID, "ts" => array('$lt' => time()-60*60*24)));
 	    // delete request tokens older than 1 day
-	    $table->remove(array("status" => self::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
+	    $table->remove(array("status" => SugarOAuthToken::REQUEST, "ts" => array('$lt' => time()-60*60*24)));
         $table->ensureIndex(array("token" => 1));
 	}
 

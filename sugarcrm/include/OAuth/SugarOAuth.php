@@ -108,6 +108,10 @@ class SugarOAuth
 		        $this->provider->setRequestTokenPath($req_path);  // No token needed for this end point
 	        }
 	    	$this->provider->checkOAuthRequest();
+	    	if(mt_rand() % 10 == 0) {
+	    	    // cleanup 1 in 10 times
+	    	    SugarOAuthData::cleanup();
+	    	}
         } catch(Exception $e) {
             $GLOBALS['log']->debug($this->reportProblem($e));
             throw $e;
@@ -156,6 +160,9 @@ class SugarOAuth
     public static function authorize($token, $authdata)
     {
         $token = SugarOAuthToken::load($token);
+        if($token->state != SugarOAuthToken::REQUEST) {
+            return null;
+        }
         $token->authorize($authdata);
         return $token->verify;
     }
