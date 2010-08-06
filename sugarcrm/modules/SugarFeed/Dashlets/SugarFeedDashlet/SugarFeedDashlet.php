@@ -264,7 +264,9 @@ var $selectedCategories = array();
 
         }
 
-        // echo('IKEA: <pre>'.print_r($this->lvs->data,true).'</pre>');
+        // echo('IKEA: <pre>'.print_r($this->fbData['lastMessages'],true).'</pre>');
+        // echo('IKEA: <pre>'.print_r($this->lvs->data['data'][0],true).'</pre>');
+        
     }
 	
 	  function deleteUserFeed() {
