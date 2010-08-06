@@ -36,10 +36,15 @@ var $displayRows = 15;
 
 var $categories;
 
+var $userfilters;
+
 var $selectedCategories = array();
 
     function SugarFeedDashlet($id, $def = null) {
 		global $current_user, $app_strings, $app_list_strings;
+		
+        require('modules/SugarFeed/Dashlets/SugarFeedDashlet/metadata/userfilters.php');
+        $this->userfilters = $userfilters;
 		require('modules/SugarFeed/metadata/dashletviewdefs.php');
 		$this->myItemsOnly = false;
         parent::DashletGeneric($id, $def);
@@ -64,6 +69,22 @@ var $selectedCategories = array();
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
 		if(!empty($def['categories']))$this->selectedCategories = $def['categories'];
+		//Sugar Feed User Filtering
+		foreach($this->userfilters as $uf_module => $uf_meta){
+		    foreach($uf_meta as $uf_field => $uf_field_meta){
+		        $field_index = "{$uf_module}_{$uf_field}";
+		        if($uf_field_meta['enabled'] && !empty($def[$field_index])){
+		            $this->$field_index = $def[$field_index];
+		        }
+		    }
+		}
+		
+		//if revert to hard coded
+		/*
+		if(!empty($def['opportunity_types']))$this->selectedOpportunityTypes = $def['opportunity_types'];
+		if(!empty($def['min_amount']))$this->minAmount = $def['min_amount'];
+		*/
+		//END filtering
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
 		$catCount = count($this->categories);
@@ -76,7 +97,7 @@ var $selectedCategories = array();
 				unset($this->selectedCategories[0]);
 			}
 		}
-        $this->seedBean = new SugarFeed();
+        $this->seedBean = new SugarFeed();        
     }
 	
 	function process($lvsParams = array()) {
@@ -111,7 +132,8 @@ var $selectedCategories = array();
         $lvsParams['overrideOrder'] = true;
         $lvsParams['orderBy'] = 'date_entered';
         $lvsParams['sortOrder'] = 'DESC';
-                
+        $lvsParams['custom_from'] = '';
+        
         // Get the real module list
         if (empty($this->selectedCategories)){
             $mod_list = $this->categories;
@@ -144,7 +166,7 @@ var $selectedCategories = array();
                 $regular_modules[] = $module;
             }
         }
-
+        
         if(!empty($this->displayTpl))
         {
         	//MFH BUG #14296
@@ -162,7 +184,7 @@ var $selectedCategories = array();
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
+                $lvsParams['custom_from'] .= ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY
@@ -185,7 +207,51 @@ var $selectedCategories = array();
             }
 			if(!empty($where)) { $where .= ' AND '; }
 			$where .= $module_limiter;
-
+			
+			$table_joins_array = array();
+			foreach($this->userfilters as $uf_module => $uf_meta){
+    		    foreach($uf_meta as $uf_field => $uf_field_meta){
+    		        $field_index = "{$uf_module}_{$uf_field}";
+    		        if($uf_field_meta['enabled'] && !empty($this->$field_index)){
+			            if(!empty($where)) {
+			                $where .= ' AND ';
+			            }
+		                $seed = SugarModule::get($uf_module)->loadBean();
+		                $field_def = $seed->field_defs[$uf_field];
+			            $table_name = $seed->table_name;
+			            switch($field_def['type']){
+			                case 'enum':
+                			    $null_check = '';
+                			    if(in_array('', $this->$field_index)){
+                			        $null_check .= "OR opportunities.opportunity_type IS NULL";
+                			    }
+                			    else{
+                			        $null_check .= "AND opportunities.opportunity_type IS NOT NULL";
+                			    }
+                			    $where_in_clause = "('".implode("', '", $this->$field_index)."')";
+                			    if(!in_array($table_name, $table_joins_array)){
+                                    $lvsParams['custom_from'] .= " LEFT JOIN {$table_name} ON sugarfeed.related_module = '{$uf_module}' AND sugarfeed.related_id = {$table_name}.id AND {$table_name}.deleted = 0 ";
+                                    $table_joins_array[] = $table_name;
+                			    }
+                                $where .= " ( ({$table_name}.{$uf_field} in {$where_in_clause}) {$null_check} ) ";
+			                    break;
+			                case 'int':
+			                    break;
+			                case 'float':
+			                    break;
+			                case 'varchar':
+			                    break;
+			                case 'date':
+			                    break;
+			                default:
+			                    echo "Sugar Feeds Dashlet can't handle {$field_def['type']}. Sorry!";
+			                    die();
+			                    break;
+			            }
+    		        }
+    		    }
+    		}
+			
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
                               array('name', 
                                     'description', 
@@ -198,7 +264,7 @@ var $selectedCategories = array();
 //END SUGARCRM flav=pro ONLY
                                     'link_url', 
                                     'link_type'));
-
+            
             foreach($this->lvs->data['data'] as $row => $data) {
                 $this->lvs->data['data'][$row]['CREATED_BY'] = get_assigned_user_name($data['CREATED_BY']);
                 $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",$this->lvs->data['data'][$row]['CREATED_BY'],$data['NAME']);
@@ -215,6 +281,7 @@ var $selectedCategories = array();
 
             $this->lvs->ss->assign('dashletId', $this->id);
 
+            
         }
     }
 	
@@ -252,6 +319,7 @@ var $selectedCategories = array();
     }
 	  function displayOptions() {
         global $app_strings;
+        global $app_list_strings;
         $ss = new Sugar_Smarty();
         $ss->assign('titleLBL', translate('LBL_TITLE', 'SugarFeed'));
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
@@ -265,7 +333,30 @@ var $selectedCategories = array();
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
         $ss->assign('id', $this->id);
-
+        
+        //Sugar Feed User Filtering
+        $user_filter_data = array();
+		foreach($this->userfilters as $uf_module => $uf_meta){
+		    foreach($uf_meta as $uf_field => $uf_field_meta){
+		        $field_index = "{$uf_module}_{$uf_field}";
+		        if($uf_field_meta['enabled']){
+		            $seed = SugarModule::get($uf_module)->loadBean();
+		            $field_def = $seed->field_defs[$uf_field];
+		            $user_filter_data[$field_index]['index'] = $field_index;
+		            $user_filter_data[$field_index]['label'] = translate($field_def['vname'], $uf_module);
+		            $user_filter_data[$field_index]['value'] = !empty($this->$field_index) ? $this->$field_index : '';
+		            $user_filter_data[$field_index]['type']  = $field_def['type'];
+		            if($field_def['type'] == 'enum'){
+    		            $user_filter_data[$field_index]['options'] = $GLOBALS['app_list_strings'][$field_def['options']];
+		            }
+		            else if($field_def['type'] == 'date'){
+		                
+		            }
+		        }
+		    }
+		}
+		$ss->assign('user_filter_data', $user_filter_data);
+        
         return  $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/Options.tpl');
     }  
 	
@@ -287,6 +378,13 @@ var $selectedCategories = array();
 		}
         $options['rows'] = $rows;
 		$options['categories'] = $_REQUEST['categories'];
+        //BEGIN Sugar Feed Users Filtering
+		foreach($this->userfilters as $uf_module => $uf_meta){
+		    foreach($uf_meta as $uf_field => $uf_field_meta){
+		        $field_index = "{$uf_module}_{$uf_field}";
+		        $options[$field_index] = $_REQUEST[$field_index];
+		    }
+		}
 		foreach($options['categories'] as $cat){
 			if($cat == 'ALL'){
 				unset($options['categories']);

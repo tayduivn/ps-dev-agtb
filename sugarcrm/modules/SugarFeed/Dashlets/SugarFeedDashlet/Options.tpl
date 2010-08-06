@@ -58,6 +58,34 @@
     	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
     </td>
 </tr>
+{foreach from=$user_filter_data key=index item=filter_data}
+<tr id='div_{$filter_data.index}' style='display:block'>
+    <td valign='top' nowrap class='dataLabel'>{$filter_data.label}</td>
+    <td valign='top' class='dataField'>
+  {if $filter_data.type == 'enum'}
+	{capture name='msname'}{$filter_data.index}[]{/capture}
+    {html_options name=$smarty.capture.msname options=$filter_data.options selected=$filter_data.value multiple=true size=6}
+  {elseif $filter_data.type == 'int' or $filter_data.type == 'float' or $filter_data.type == 'double'}
+  {else}
+    {$filter_data.type}
+  {/if}
+    </td>
+</tr>
+{/foreach}
+<!-- if revert back to hard coded
+<tr id='div_opportunities_opportunity_type' style='display:block'>
+    <td valign='top' nowrap class='dataLabel'>{$opportunity_typeLBL}</td>
+    <td valign='top' class='dataField'>
+    	{html_options name='opportunity_types[]' options=$opportunity_types selected=$selected_opportunity_types multiple=true size=4}
+    </td>
+</tr>
+<tr id='div_opportunities_min_amount' style='display:block'>
+    <td valign='top' nowrap class='dataLabel'>{$min_amountLBL}</td>
+    <td valign='top' class='dataField'>
+    	<input class="text" name="min_amount" size='8' value='{$min_amount}'></input>
+    </td>
+</tr>
+-->
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
