@@ -67,6 +67,9 @@ class SugarOAuth
         if(empty($token)) {
             return OAUTH_TOKEN_REJECTED;
         }
+        if($token->consumer != $provider->consumer_key) {
+            return OAUTH_TOKEN_REJECTED;
+        }
         $GLOBALS['log']->debug("OAUTH: tokenHandler, found token=".var_export($token, true));
         if($token->state == SugarOAuthToken::REQUEST) {
             if(!empty($token->verify) && $provider->verifier == $token->verify) {
@@ -119,6 +122,7 @@ class SugarOAuth
     {
         $GLOBALS['log']->debug("OAUTH: requestToken");
         $token = SugarOAuthToken::generate();
+        $token->consumer = $this->provider->consumer_key;
         $token->save();
         return $token->queryString();
     }
@@ -136,6 +140,7 @@ class SugarOAuth
         $this->token->invalidate();
         $token = SugarOAuthToken::generate();
         $token->state = SugarOAuthToken::ACCESS;
+        $token->consumer = $this->provider->consumer_key;
         // transfer user data from request token
         $token->copyAuthData($this->token);
         $token->save();
