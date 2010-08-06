@@ -1,11 +1,20 @@
 <?php
+require_once 'include/OAuth/SugarOAuthDataDB.php';
 
 class SugarOAuthData
 {
     protected static $mongo;
+    /**
+     * Should we use Mongo or regular DB?
+     * @var bool
+     */
+    protected static $use_db = true;
 
-    public static function getTable($table = "oauth_tokens")
+    public static function getTable($table = "tokens")
     {
+        if(self::$use_db) {
+            return new SugarOAuthDataDB($table);
+        }
         if(!isset(self::$mongo)) {
             self::$mongo = new Mongo();
             self::$mongo->connect();
@@ -25,9 +34,7 @@ class SugarOAuthData
 
 	public static function getConsumer($key)
 	{
-	    $ctable = self::getTable("consumer");
-	    $consumer = $ctable->findOne(array("key" => $key));
-        return $consumer;
+	    return self::getTable("consumer")->findOne(array("key" => $key));
 	}
 
 	public static function registerConsumer($key, $secret, $name = '')
@@ -49,8 +56,8 @@ class SugarOAuthData
         if(!empty($nbad)) {
             return OAUTH_BAD_NONCE;
         }
-	    $ntable->insert($data);
 	    $ntable->remove(array("key" => $key, "ts" => array('$lt' => $ts)));
+        $ntable->insert($data);
 	    return OAUTH_OK;
 	}
 
