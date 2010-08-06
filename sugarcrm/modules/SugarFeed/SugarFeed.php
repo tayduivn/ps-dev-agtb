@@ -388,6 +388,15 @@ class SugarFeed extends Basic {
                 $delete = '<a id="sugarFieldDeleteLink'.$reply->id.'" href="#" onclick=\'SugarFeed.deleteFeed("'. $reply->id . '", "{this.id}"); return false;\'>'. $GLOBALS['app_strings']['LBL_DELETE_BUTTON_LABEL'].'</a>';
             }
 
+            $image_url = 'include/images/blank.gif';
+            if ( isset($reply->created_by) ) {
+                $user = loadBean('Users');
+                $user->retrieve($reply->created_by);
+                if ( !empty($user->picture) ) {
+                    $image_url = 'cache/upload/'.$user->picture;
+                }
+            }
+            $replyHTML .= '<div style="float: left; margin-right: 3px;"><img src="'.$image_url.'" height=50></div> ';
             $replyHTML .= html_entity_decode($reply->name).'<br>';
             $replyHTML .= '<div class="byLineBox"><span class="byLineLeft">'. $this->getTimeLapse($reply->date_entered) . '&nbsp;</span><div class="byLineRight">  &nbsp;' .$delete. '</div></div><div class="clear"></div>';
         }
