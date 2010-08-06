@@ -357,7 +357,7 @@ var $selectedCategories = array();
                     $fake_record['NAME'] .= '<br><img src="'.$message['picture'].'" height=50>';
                 }
                 $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
-                $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'];
+                $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'].'/picture';
 
 
                 $resortQueue[] = $fake_record;
@@ -383,6 +383,21 @@ var $selectedCategories = array();
             usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
 
             // echo('<pre> ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
+            
+            foreach ( $resortQueue as $key=>&$item ) {
+                if ( empty($item['IMAGE_URL']) ) {
+                    $item['IMAGE_URL'] = 'include/images/blank.gif';
+                    if ( isset($item['ASSIGNED_USER_ID']) ) {
+                        $user = loadBean('Users');
+                        $user->retrieve($item['ASSIGNED_USER_ID']);
+                        if ( !empty($user->picture) ) {
+                            $item['IMAGE_URL'] = 'cache/upload/'.$user->picture;
+                        }
+                    }
+                }
+                $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
+            }
+            
             $this->lvs->data['data'] = $resortQueue;
         }
         
