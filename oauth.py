@@ -7,7 +7,7 @@ consumer_key = 'CONSUMERKEY'
 consumer_secret = 'CONSUMERSECRET'
 
 url = 'http://localhost:8888/sugarent/service/v3/rest.php'
-authorize_url = 'http://localhost:8888/sugarent/index.php?module=Administration&action=OAuth'
+#authorize_url = 'http://localhost:8888/sugarent/index.php?module=Administration&action=OAuth'
 
 restparams = {
                 'input_type': 'json',
@@ -32,6 +32,7 @@ print "Request Token:"
 print "    - oauth_token        = %s" % request_token['oauth_token']
 print "    - oauth_token_secret = %s" % request_token['oauth_token_secret']
 print 
+authorize_url = request_token['authorize_url']
 
 # Step 2: Redirect to the provider. Since this is a CLI script we do not 
 # redirect. In a web application you would redirect the user to the URL
