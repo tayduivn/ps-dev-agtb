@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
-
+require_once('include/facebook.php');
 
 class SugarFeedDashlet extends DashletGeneric { 
 var $displayRows = 15;
@@ -76,6 +76,53 @@ var $selectedCategories = array();
 				unset($this->selectedCategories[0]);
 			}
 		}
+
+        // Need to un-safe this string, facebook passes raw JSON data back.
+        if ( !empty($_REQUEST['session']) ) {
+            $_REQUEST['session'] = str_replace('&quot;','"',$_REQUEST['session']);
+        }
+
+        // Fire up the Facebook
+        $this->fbData['appId'] = '141380979217659';
+        $this->fbData['secret'] = '93b0ed5908a2b23c3e17a2cc2a22cd77';
+        $this->fb = new Facebook(array(
+                                     'appId'  => $this->fbData['appId'],
+                                     'secret' => $this->fbData['secret'],
+                                     'cookie' => true,
+                                     ));
+        $parsedSiteUrl = parse_url($GLOBALS['sugar_config']['site_url']);
+        $host = $parsedSiteUrl['host'];
+		if(empty($parsedSiteUrl['port'])) {
+			$parsedSiteUrl['port'] = 80;
+		}
+        
+		$port = ($parsedSiteUrl['port'] != 80) ? ":".$parsedSiteUrl['port'] : '';
+		$path = !empty($parsedSiteUrl['path']) ? $parsedSiteUrl['path'] : "";
+		$this->fbData['hostUrl']  = "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}";
+        
+        $this->fbData['session'] = $this->fb->getSession();
+        $this->fbData['sessionJSON'] = json_encode($this->fbData['session']);
+        $this->fbData['me'] = null;
+        $this->fbData['lastMessages'] = array();
+        if ( $this->fbData['session'] ) {
+            try {
+                $this->fbData['uid'] = $this->fb->getUser();
+                $this->fbData['me'] = $this->fb->api('/me');
+                $this->fbData['lastMessages'] = $this->fb->api('/me/home?limit=15');
+            } catch ( Exception $e ) {
+                echo($e);
+            }
+        }
+        
+        if ( $this->fbData['me'] ) {
+            $this->fbData['logoutUrl'] = $this->fb->getLogoutUrl();
+        } else {
+            $this->fbData['loginUrl'] = $this->fb->getLoginUrl(array('req_params'=>'read_stream'));
+        }
+
+        
+        // All hands to the twitter!
+
         $this->seedBean = new SugarFeed();
     }
 	
@@ -216,6 +263,8 @@ var $selectedCategories = array();
             $this->lvs->ss->assign('dashletId', $this->id);
 
         }
+
+        // echo('IKEA: <pre>'.print_r($this->lvs->data,true).'</pre>');
     }
 	
 	  function deleteUserFeed() {
@@ -451,6 +500,8 @@ EOQ;
             $linkTypes[$key] = translate('LBL_LINK_TYPE_'.$value,'SugarFeed');
         }
 		$ss->assign('link_types', $linkTypes);
+        $ss->assign('fb', $this->fb);
+        $ss->assign('fbData', $this->fbData);
 		return $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/UserPostForm.tpl');
 	
 	}

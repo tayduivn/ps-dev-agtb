@@ -29,7 +29,6 @@
 
 *}
 
-
 <form name='form_{$id}' id='form_{$id}'>
 <div class="dashletNonTable" style='white-space:nowrap;'>
   <table border=0 cellspacing=0 cellpadding=2>
@@ -38,6 +37,8 @@
       <td style="padding-right: 5px;"><input id="text" name="text" type="text" size='25' maxlength='100' value="{$LBL_IS} " /></td>
       <td nowrap="nowrap">
       <input type="button" value="{$LBL_POST}" class="button" style="vertical-align:top" onclick="SugarFeed.pushUserFeed('{$id}');"></td>
+      <td width="80%">&nbsp;</td>
+      <td>{if $fbData.session}<a href="{$fbData.logoutUrl}">F</a>{else}<a href="{$fbData.loginUrl}">f</a>{/if}</td>
     </tr>
 </table>
 <div id='more_{$id}' style='display:none;padding-top:5px'>
