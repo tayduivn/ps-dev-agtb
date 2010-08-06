@@ -2356,8 +2356,6 @@ border-radius: 0px 0px 6px 6px;
 .sugarFeedDashlet
 {
 	overflow:auto;
-	max-height:375px;
-	height:expression(this.scrollHeight>375?'375px':'auto');
 }
 
 .sugarFeedDashlet td.list th, .sugarFeedDashlet td.list td[scope=col]
