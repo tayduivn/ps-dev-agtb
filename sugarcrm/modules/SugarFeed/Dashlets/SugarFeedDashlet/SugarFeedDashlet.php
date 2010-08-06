@@ -79,12 +79,6 @@ var $selectedCategories = array();
 		    }
 		}
 		
-		//if revert to hard coded
-		/*
-		if(!empty($def['opportunity_types']))$this->selectedOpportunityTypes = $def['opportunity_types'];
-		if(!empty($def['min_amount']))$this->minAmount = $def['min_amount'];
-		*/
-		//END filtering
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
 		$catCount = count($this->categories);
@@ -257,7 +251,11 @@ var $selectedCategories = array();
 			
 			$table_joins_array = array();
 			foreach($this->userfilters as $uf_module => $uf_meta){
-    		    foreach($uf_meta as $uf_field => $uf_field_meta){
+			    // Skip modules that aren't selected for the query
+    		    if(!array_key_exists($uf_module, $this->categories)){
+    		        continue;
+    		    }
+			    foreach($uf_meta as $uf_field => $uf_field_meta){
     		        $field_index = "{$uf_module}_{$uf_field}";
     		        if($uf_field_meta['enabled'] && !empty($this->$field_index)){
 			            if(!empty($where)) {
@@ -270,10 +268,10 @@ var $selectedCategories = array();
 			                case 'enum':
                 			    $null_check = '';
                 			    if(in_array('', $this->$field_index)){
-                			        $null_check .= "OR opportunities.opportunity_type IS NULL";
+                			        $null_check .= "OR {$table_name}.{$uf_field} IS NULL";
                 			    }
                 			    else{
-                			        $null_check .= "AND opportunities.opportunity_type IS NOT NULL";
+                			        $null_check .= "AND {$table_name}.{$uf_field} IS NOT NULL";
                 			    }
                 			    $where_in_clause = "('".implode("', '", $this->$field_index)."')";
                 			    if(!in_array($table_name, $table_joins_array)){
@@ -421,9 +419,15 @@ var $selectedCategories = array();
 		            $seed = SugarModule::get($uf_module)->loadBean();
 		            $field_def = $seed->field_defs[$uf_field];
 		            $user_filter_data[$field_index]['index'] = $field_index;
-		            $user_filter_data[$field_index]['label'] = translate($field_def['vname'], $uf_module);
+		            $user_filter_data[$field_index]['label'] = translate('LBL_MODULE_NAME', $uf_module)." ".translate($field_def['vname'], $uf_module);
 		            $user_filter_data[$field_index]['value'] = !empty($this->$field_index) ? $this->$field_index : '';
 		            $user_filter_data[$field_index]['type']  = $field_def['type'];
+        		    if(!in_array($uf_module, $this->selectedCategories)){
+		                $user_filter_data[$field_index]['div_display']  = 'none';
+        		    }
+        		    else{
+		                $user_filter_data[$field_index]['div_display']  = 'block';
+        		    }
 		            if($field_def['type'] == 'enum'){
     		            $user_filter_data[$field_index]['options'] = $GLOBALS['app_list_strings'][$field_def['options']];
 		            }

@@ -7,7 +7,7 @@ $userfilters = array(
 //        'type' => array('enabled' => true),
 //        'sales_stage' => array('enabled' => true),
     ),
-//    'Cases' => array(
-//        'priority' => array('enabled' => true),
-//    ),
+    'Cases' => array(
+        'priority' => array('enabled' => true),
+    ),
 );

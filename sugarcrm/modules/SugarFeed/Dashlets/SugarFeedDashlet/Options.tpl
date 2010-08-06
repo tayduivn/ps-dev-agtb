@@ -55,11 +55,11 @@
 <tr>
     <td valign='top' nowrap class='dataLabel'>{$categoriesLBL}</td>
     <td valign='top' class='dataField'>
-    	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
+    	{html_options id='categories' name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6 onchange="updateDivDisplay(this);"}
     </td>
 </tr>
 {foreach from=$user_filter_data key=index item=filter_data}
-<tr id='div_{$filter_data.index}' style='display:block'>
+<tr id='div_{$filter_data.index}' style='display:{$filter_data.div_display}'>
     <td valign='top' nowrap class='dataLabel'>{$filter_data.label}</td>
     <td valign='top' class='dataField'>
   {if $filter_data.type == 'enum'}
@@ -72,20 +72,6 @@
     </td>
 </tr>
 {/foreach}
-<!-- if revert back to hard coded
-<tr id='div_opportunities_opportunity_type' style='display:block'>
-    <td valign='top' nowrap class='dataLabel'>{$opportunity_typeLBL}</td>
-    <td valign='top' class='dataField'>
-    	{html_options name='opportunity_types[]' options=$opportunity_types selected=$selected_opportunity_types multiple=true size=4}
-    </td>
-</tr>
-<tr id='div_opportunities_min_amount' style='display:block'>
-    <td valign='top' nowrap class='dataLabel'>{$min_amountLBL}</td>
-    <td valign='top' class='dataField'>
-    	<input class="text" name="min_amount" size='8' value='{$min_amount}'></input>
-    </td>
-</tr>
--->
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
@@ -94,3 +80,29 @@
 </table>
 </form>
 </div>
+{literal}
+<script type="text/javascript">
+var allselected = [];
+function updateDivDisplay(multiSelectObj){
+    for(var i = 0; i < multiSelectObj.options.length; i++){
+        if(multiSelectObj.options[i].selected != allselected[i]){
+            allselected[i] = multiSelectObj.options[i].selected;
+            
+            if(allselected[i]){
+                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
+                if(theElement != null){
+                    theElement.style.display = 'block';
+                }
+            }
+            else{
+                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
+                if(theElement != null){
+                    theElement.style.display = 'none';
+                }
+            }
+        }
+    } 
+}
+updateDivDisplay(document.getElementById('categories'));
+</script>
+{/literal}
