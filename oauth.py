@@ -7,7 +7,6 @@ consumer_key = 'CONSUMERKEY'
 consumer_secret = 'CONSUMERSECRET'
 
 url = 'http://localhost:8888/sugarent/service/v3/rest.php'
-#authorize_url = 'http://localhost:8888/sugarent/index.php?module=Administration&action=OAuth'
 
 restparams = {
                 'input_type': 'json',

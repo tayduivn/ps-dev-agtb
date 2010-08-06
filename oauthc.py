@@ -11,7 +11,6 @@ consumer_secret = 'CONSUMERSECRET'
 
 url = 'http://localhost:8888/sugarent/service/v3/rest.php'
 urld = 'http://localhost:8888/sugarent/service/v3/rest.php?start_debug=1&debug_port=10137&debug_session_id=1012800&debug_host=127.0.0.1'
-authorize_url = 'http://localhost:8888/sugarent/index.php?module=Administration&action=OAuth'
 
 restparams = {
                 'input_type': 'json',
