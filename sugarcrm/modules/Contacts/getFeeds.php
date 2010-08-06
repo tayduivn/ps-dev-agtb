@@ -81,8 +81,9 @@ foreach ($feeds as $key=>$val) {
     'if($matches[1] == "this"){$var = $matches[2]; return $GLOBALS[\'current_dc_sugarfeed\'];}else{return translate($matches[2], $matches[1]);}'
     ),$data);
     $data = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $data);
+    $data = html_entity_decode($data);
     if (!empty($val['replies'])) {
-        $data .= "<br/><br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$val['replies']['name'];
+        $data .= "<br/><br/><div style='margin-left:40px'>".$val['replies']['name']."</div>";
         $data .="</td></tr>";
     }
     $data = preg_replace_callback('/\{([^\}]+)\.([^\}]+)\}/', create_function(
@@ -91,7 +92,7 @@ foreach ($feeds as $key=>$val) {
     ),$data);
 
     $data = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $data);
-  
+  	$data = html_entity_decode($data);
   $rowNum++;
 
 }
