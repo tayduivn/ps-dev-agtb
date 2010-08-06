@@ -331,6 +331,7 @@ var $selectedCategories = array();
             
         }
 
+        $td = $GLOBALS['timedate'];
         $needResort = false;
         $resortQueue = array();
         // Check if we need to resort the FB messages
@@ -340,27 +341,52 @@ var $selectedCategories = array();
             
             // Put the FB messages in the resort queue.
             foreach ( $this->fbData['lastMessages']['data'] as $message ) {
+                if ( empty($message['message']) ) {
+                    continue;
+                }
                 // Extract the timestamp, with passion
                 $unix_time = strtotime($message['created_time']);
 
                 $fake_record = array();
                 $fake_record['sort_key'] = $unix_time;
                 $fake_record['ID'] = create_guid();
-                $fake_record['NAME'] = $message['message'];
+                $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('Y-m-d H:i:s',$unix_time));
+                $fake_record['NAME'] = $message['from']['name'].'</b>';
+                if ( !empty($message['message']) ) {
+                    $fake_record['NAME'] .= ' '.$message['message'];
+                }
+                if ( !empty($message['picture'])) {
+                    $fake_record['NAME'] .= '<br><img src="'.$message['picture'].'" height=50>';
+                }
+                $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
                 $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'];
-                $td = new TimeDate;
-                $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('m-d-Y H:i:s',$unix_time));
+
 
                 $resortQueue[] = $fake_record;
             }
         }
         
         // Check if we need to resort the Twitter messages
+        
+        // If we need to resort, get to work!
+        if ( $needResort ) {
+            foreach ( $this->lvs->data['data'] as $normalMessage ) {
+                list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
+                list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
 
-        
-        
-        echo('IKEA: <pre>'.print_r($resortQueue,true).'</pre>');
-        echo('IKEA: <pre>'.print_r($this->lvs->data['data'][0],true).'</pre>');
+                $unix_timestamp = strtotime($db_date.' '.$db_time);
+                
+                $normalMessage['sort_key'] = $unix_timestamp;
+                $normalMessage['NAME'] = '</b>'.$normalMessage['NAME'];
+                
+                $resortQueue[] = $normalMessage;
+            }
+
+            usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
+
+            // echo('<pre> ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
+            $this->lvs->data['data'] = $resortQueue;
+        }
         
     }
 	

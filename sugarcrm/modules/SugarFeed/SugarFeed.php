@@ -397,7 +397,7 @@ class SugarFeed extends Basic {
         
     }
 
-	function getTimeLapse($startDate)
+	static function getTimeLapse($startDate)
 	{
 		$startDate = $GLOBALS['timedate']->to_db($startDate);
 		$start = array();
