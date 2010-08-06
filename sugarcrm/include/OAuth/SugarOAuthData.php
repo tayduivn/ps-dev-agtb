@@ -23,20 +23,17 @@ class SugarOAuthData
         $table->ensureIndex(array("token" => 1));
 	}
 
-	public static function getConsumerSecret($key)
+	public static function getConsumer($key)
 	{
 	    $ctable = self::getTable("consumer");
 	    $consumer = $ctable->findOne(array("key" => $key));
-	    if($consumer) {
-	        return $consumer["secret"];
-	    }
-	    return null;
+        return $consumer;
 	}
 
-	public static function registerConsumer($key, $secret)
+	public static function registerConsumer($key, $secret, $name = '')
 	{
 	    $ctable = self::getTable("consumer");
-	    $ctable->insert(array("key" => $key, "secret" => $secret));
+	    $ctable->insert(array("key" => $key, "secret" => $secret, "name" => $name));
 	}
 
 	public static function checkNonce($key, $nonce, $ts)

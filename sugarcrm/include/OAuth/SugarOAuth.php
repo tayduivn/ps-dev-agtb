@@ -31,11 +31,11 @@ class SugarOAuth
         // on unknown: OAUTH_CONSUMER_KEY_UNKNOWN
         // on bad key: OAUTH_CONSUMER_KEY_REFUSED
         $GLOBALS['log']->debug("OAUTH: lookupConsumer, key={$provider->consumer_key}");
-        $secret = SugarOAuthData::getConsumerSecret($provider->consumer_key);
-        if(!$secret) {
+        $consumer = SugarOAuthData::getConsumer($provider->consumer_key);
+        if(!$consumer) {
             return OAUTH_CONSUMER_KEY_UNKNOWN;
         }
-        $provider->consumer_secret = $secret;
+        $provider->consumer_secret = $consumer['secret'];
         return OAUTH_OK;
     }
 

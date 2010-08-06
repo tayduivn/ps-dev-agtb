@@ -10,6 +10,15 @@ $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
 $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
 $sugar_smarty->assign('token', $_REQUEST['token']);
+if($_REQUEST['token']) {
+    $token = SugarOAuthToken::load($_REQUEST['token']);
+    if($token && !empty($token->consumer)) {
+        $consumer = SugarOAuthData::getConsumer($token->consumer);
+        if(!empty($consumer) && !empty($consumer->name)) {
+            $sugar_smarty->assign('consumer', sprintf($GLOBALS['mod_strings']['LBL_OAUTH_CONSUMERREQ'], $consumer->name));
+        }
+    }
+}
 $sugar_smarty->assign('sid', session_id());
 $roles = array('' => '');
 $allroles = ACLRole::getAllRoles();
@@ -20,13 +29,14 @@ $sugar_smarty->assign('roles', $roles);
 
 if(!empty($_REQUEST['cregister']) && !empty($_REQUEST['ckey']) && $_REQUEST['sid'] == session_id())
 {
-    SugarOAuthData::registerConsumer($_REQUEST['ckey'], $_REQUEST['csecret']);
+    SugarOAuthData::registerConsumer($_REQUEST['ckey'], $_REQUEST['csecret'], $_REQUEST['cname']);
 }
 
 if(!empty($_REQUEST['authorize']) && !empty($_REQUEST['token']) && $_REQUEST['sid'] == session_id())
 {
     $verify = SugarOAuth::authorize($_REQUEST['token'], array("user" => $current_user->user_name, "role" => $_REQUEST['role']));
     $sugar_smarty->assign('VERIFY', $verify);
+    $sugar_smarty->assign('token', '');
 }
 
 echo $sugar_smarty->fetch('modules/Administration/OAuth.tpl');
