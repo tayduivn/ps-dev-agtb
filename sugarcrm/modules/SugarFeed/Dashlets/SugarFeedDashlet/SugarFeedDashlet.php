@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
-
+require_once('include/facebook.php');
 
 class SugarFeedDashlet extends DashletGeneric { 
 var $displayRows = 15;
@@ -97,7 +97,54 @@ var $selectedCategories = array();
 				unset($this->selectedCategories[0]);
 			}
 		}
-        $this->seedBean = new SugarFeed();        
+
+        // Need to un-safe this string, facebook passes raw JSON data back.
+        if ( !empty($_REQUEST['session']) ) {
+            $_REQUEST['session'] = str_replace('&quot;','"',$_REQUEST['session']);
+        }
+
+        // Fire up the Facebook
+        $this->fbData['appId'] = '141380979217659';
+        $this->fbData['secret'] = '93b0ed5908a2b23c3e17a2cc2a22cd77';
+        $this->fb = new Facebook(array(
+                                     'appId'  => $this->fbData['appId'],
+                                     'secret' => $this->fbData['secret'],
+                                     'cookie' => true,
+                                     ));
+        $parsedSiteUrl = parse_url($GLOBALS['sugar_config']['site_url']);
+        $host = $parsedSiteUrl['host'];
+		if(empty($parsedSiteUrl['port'])) {
+			$parsedSiteUrl['port'] = 80;
+		}
+        
+		$port = ($parsedSiteUrl['port'] != 80) ? ":".$parsedSiteUrl['port'] : '';
+		$path = !empty($parsedSiteUrl['path']) ? $parsedSiteUrl['path'] : "";
+		$this->fbData['hostUrl']  = "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}";
+        
+        $this->fbData['session'] = $this->fb->getSession();
+        $this->fbData['sessionJSON'] = json_encode($this->fbData['session']);
+        $this->fbData['me'] = null;
+        $this->fbData['lastMessages'] = array();
+        if ( $this->fbData['session'] ) {
+            try {
+                $this->fbData['uid'] = $this->fb->getUser();
+                $this->fbData['me'] = $this->fb->api('/me');
+                $this->fbData['lastMessages'] = $this->fb->api('/me/home?limit=15');
+            } catch ( Exception $e ) {
+                echo($e);
+            }
+        }
+        
+        if ( $this->fbData['me'] ) {
+            $this->fbData['logoutUrl'] = $this->fb->getLogoutUrl();
+        } else {
+            $this->fbData['loginUrl'] = $this->fb->getLoginUrl(array('req_params'=>'read_stream'));
+        }
+
+        
+        // All hands to the twitter!
+
+        $this->seedBean = new SugarFeed();
     }
 	
 	function process($lvsParams = array()) {
@@ -283,6 +330,10 @@ var $selectedCategories = array();
 
             
         }
+
+        // echo('IKEA: <pre>'.print_r($this->fbData['lastMessages'],true).'</pre>');
+        // echo('IKEA: <pre>'.print_r($this->lvs->data['data'][0],true).'</pre>');
+        
     }
 	
 	  function deleteUserFeed() {
@@ -317,6 +368,33 @@ var $selectedCategories = array();
         }
        
     }
+
+	 function pushUserFeedReply( ) {
+         if(!empty($_REQUEST['text'])&&!empty($_REQUEST['parentFeed'])) {
+			$text = htmlspecialchars($_REQUEST['text']);
+			//allow for bold and italic user tags
+			$text = preg_replace('/&amp;lt;(\/*[bi])&amp;gt;/i','<$1>', $text);
+//BEGIN SUGARCRM flav=pro ONLY
+            // Fetch the parent, use the same team id's
+            $parentFeed = new SugarFeed();
+            $parentFeed->retrieve($_REQUEST['parentFeed']);
+			$team_id = $parentFeed->team_id;
+			$team_set_id = $team_id; //For now, but if we allow for multiple team selection then we'll have to change this
+//END SUGARCRM flav=pro ONLY
+            SugarFeed::pushFeed($text, 'SugarFeed', $_REQUEST['parentFeed'], 
+//BEGIN SUGARCRM flav=pro ONLY
+                                $team_id,
+//END SUGARCRM flav=pro ONLY
+								$GLOBALS['current_user']->id,
+                                '', ''
+//BEGIN SUGARCRM flav=pro ONLY
+                                ,$team_set_id
+//END SUGARCRM flav=pro ONLY
+                                );
+        }
+       
+    }
+
 	  function displayOptions() {
         global $app_strings;
         global $app_list_strings;
@@ -522,6 +600,8 @@ EOQ;
             $linkTypes[$key] = translate('LBL_LINK_TYPE_'.$value,'SugarFeed');
         }
 		$ss->assign('link_types', $linkTypes);
+        $ss->assign('fb', $this->fb);
+        $ss->assign('fbData', $this->fbData);
 		return $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/UserPostForm.tpl');
 	
 	}
