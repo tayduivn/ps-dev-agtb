@@ -516,9 +516,12 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         try {
 	        $oauth = new SugarOAuth($GLOBALS['sugar_config']['site_url'].'/service/v3/rest.php');
 	        return $oauth->requestToken()."&authorize_url=".urlencode($GLOBALS['sugar_config']['site_url']."/index.php?module=Administration&action=OAuth");
-        } catch(Exception $e) {
+        } catch(OAuthException $e) {
             $GLOBALS['log']->debug("OAUTH Exception: $e");
-            return (string)$e;
+            $errorObject = new SoapError();
+            $errorObject->set_error('invalid_login');
+			self::$helperObject->setFaultObject($errorObject);
+            return null;
         }
     }
 
@@ -528,9 +531,12 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         try {
 	        $oauth = new SugarOAuth();
 	        return $oauth->accessToken();
-        } catch(Exception $e) {
+        } catch(OAuthException $e) {
             $GLOBALS['log']->debug("OAUTH Exception: $e");
-            return (string)$e;
+            $errorObject = new SoapError();
+            $errorObject->set_error('invalid_login');
+			self::$helperObject->setFaultObject($errorObject);
+            return null;
         }
     }
 

@@ -442,7 +442,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
   function checkSessionAndModuleAccess($session, $login_error_key, $module_name, $access_level, $module_access_level_error_key, $errorObject)
   {
       if(isset($_REQUEST['oauth_token'])) {
-          $session = $this->checkOAuthAccess();
+          $session = $this->checkOAuthAccess($errorObject);
       }
       if(!$session) return false;
       return parent::checkSessionAndModuleAccess($session, $login_error_key, $module_name, $access_level, $module_access_level_error_key, $errorObject);
@@ -480,7 +480,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         return false;
   }
 
-  public function checkOAuthAccess()
+  public function checkOAuthAccess($errorObject)
   {
         require_once "include/OAuth/SugarOAuth.php";
         try {
@@ -489,8 +489,10 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	        if(empty($auth) || empty($auth['user'])) {
 	            return false;
 	        }
-        } catch(Exception $e) {
+        } catch(OAuthException $e) {
             $GLOBALS['log']->debug("OAUTH Exception: $e");
+            $errorObject->set_error('invalid_login');
+			$this->setFaultObject($errorObject);
             return false;
         }
 
