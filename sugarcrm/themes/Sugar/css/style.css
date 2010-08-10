@@ -570,7 +570,7 @@ div.moduleTitle
 .moduleTitle img
 {
     margin-right: 0px;
-    margin-top: 5px;
+    margin-top: -4px;
     border: 0;
 }
 .moduleTitle h2
@@ -600,7 +600,7 @@ line-height: 16px;
 {
     display: block;
     float: right;
-    margin-top: 0;
+    margin-top: 6px;
 }
 
 .moduleTitle span.utils a img
@@ -5275,7 +5275,7 @@ font-size:75%;
 .star {float:right}
 .moduleTitle .star 
 {
-    margin-top:0px;
+    margin-top:4px;
     padding-right:5px;
 }
 
