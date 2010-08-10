@@ -339,19 +339,24 @@ class MssqlHelper extends DBHelper
     {
         //find all unique indexes and primary keys.
         $query = <<<EOSQL
-SELECT LEFT(so.name, 30) TableName, 
-        LEFT(si.name, 50) 'Key_name',
-        LEFT(sik.key_ordinal, 30) Sequence, 
-        LEFT(sc.name, 30) Column_name,
-		si.is_unique isunique
-    FROM sys.indexes si
-        INNER JOIN sys.index_columns sik 
-            ON (si.object_id = sik.object_id AND si.index_id = sik.index_id)
-        INNER JOIN sys.objects so 
-            ON si.object_id = so.object_id
-        INNER JOIN sys.columns sc 
-            ON (so.object_id = sc.object_id AND sik.column_id = sc.column_id)
-    WHERE so.name = '$tablename'
+SELECT LEFT(so.[name], 30) TableName, 
+        LEFT(si.[name], 50) 'Key_name',
+        LEFT(sik.[keyno], 30) Sequence, 
+        LEFT(sc.[name], 30) Column_name,
+		isunique = CASE
+            WHEN si.status & 2 = 2 AND so.xtype != 'PK' THEN 1
+            ELSE 0
+        END
+    FROM sysindexes si
+        INNER JOIN sysindexkeys sik 
+            ON (si.[id] = sik.[id] AND si.indid = sik.indid)
+        INNER JOIN sysobjects so 
+            ON si.[id] = so.[id]
+        INNER JOIN syscolumns sc 
+            ON (so.[id] = sc.[id] AND sik.colid = sc.colid)
+        INNER JOIN sysfilegroups sfg 
+            ON si.groupid = sfg.groupid
+    WHERE so.[name] = '$tablename'
     ORDER BY Key_name, Sequence, Column_name
 EOSQL;
         $result = $this->db->query($query);
