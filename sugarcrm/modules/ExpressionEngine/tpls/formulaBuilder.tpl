@@ -22,23 +22,18 @@
 <link rel="stylesheet" type="text/css" href="modules/ExpressionEngine/tpls/formulaBuilder.css" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
-		<input name="formulaInput" id="formulaInput" style="width:700px" value='{$formula}'/>
+		<input name="formulaInput" id="formulaInput" style="width:500px" value='{$formula}'/>
 	</td></tr>
 	<tr>
+		<td id="functionsList" width="200">
+            <input id="formulaFuncSearch" style="width:200px"/>
+            <button id="formulaFuncClear">{sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}</button><div id="funcSearchResults"></div>
+            <div id="functionsGrid"></div>
+        </td>
 		<td id="fieldsList" width="200">
 			<input id="formulaFieldsSearch" style="width:200px"/>
 			<button id="formulaFieldClear">{sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}</button><div id="fieldSearchResults"></div>
 			<div id="fieldsGrid"></div>
-		</td>
-		<td id="functionsList" width="200">
-			<input id="formulaFuncSearch" style="width:200px"/>
-			<button id="formulaFuncClear">{sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}</button><div id="funcSearchResults"></div>
-			<div id="functionsGrid"></div>
-		</td>
-		<td  style="text-align:center">
-			<div id="functionDesc" style="border:1px solid #AAA; height:215px;margin-top:24px;padding-top:5px;">
-			&nbsp;
-			</div>
 		</td>
 	</tr>
 </table>

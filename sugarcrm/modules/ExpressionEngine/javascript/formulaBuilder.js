@@ -104,27 +104,27 @@ SUGAR.expressions.saveCurrentExpression = function(target)
 SUGAR.expressions.GridToolTip = {
 	tipCache : [ ],
 	currentHelpFunc : "",
-	showFunctionDescription: function(target, func) {
+	showFunctionDescription: function(tip, func) {
 		var ggt = SUGAR.expressions.GridToolTip;
 		if (ggt.currentHelpFunc == func)
 			return;
 		ggt.currentHelpFunc = func;
 		var cache = ggt.tipCache;
-		var t = Dom.get(target);
+		
 		if (typeof cache[func] != 'undefined') {
-			t.innerHTML = cache[func];
+			tip.cfg.setProperty("text", cache[func]);
 		} else {
-			t.innerHTML = "loading...";
 			cache[func] = "loading...";
-			ggt.descTarget = t;
+			tip.cfg.setProperty("text", cache[func]);
+			ggt.tip = tip;
 			Connect.asyncRequest(
 			    Connect.method, 
-			    Connect.url + '&' + ModuleBuilder.paramsToUrl({
+			    Connect.url + '&' + SUGAR.util.paramsToUrl({
 			    	"function": func, 
 			    	action: "functionDetail", 
 			    	module: "ExpressionEngine"
-			    }), 
-			    {success: ggt.showAjaxResponse, failure: ModuleBuilder.failed}
+			    }),
+			    {success: ggt.showAjaxResponse, failure: function(){}}
 			);
 		}
 	},
@@ -132,8 +132,9 @@ SUGAR.expressions.GridToolTip = {
 		var ggt = SUGAR.expressions.GridToolTip;
 		var r = YAHOO.lang.JSON.parse(o.responseText);
 		ggt.tipCache[r.func] = r.desc;
-		if (r.func == ggt.currentHelpFunc)
-			ggt.descTarget.innerHTML = r.desc;
+		if (r.func == ggt.currentHelpFunc) {
+			ggt.tip.cfg.setProperty("text", r.desc);
+		}
 	}
 };
 
@@ -223,14 +224,30 @@ SUGAR.expressions.GridToolTip = {
 		Dom.get("formulaInput").value +=  e.target.firstChild.textContent + '(';
 	});
 	
-	functionsGrid.on("rowMouseoverEvent", function(e){
-		var ggt = SUGAR.expressions.GridToolTip;
-		if (ggt.timer)
-			ggt.timer.cancel();
-			ggt.timer = YAHOO.lang.later(250, this, function(e){
-				ggt.showFunctionDescription("functionDesc", e.target.firstChild.textContent);
-		}, e);
+	var funcTip = new YAHOO.widget.Tooltip("functionsTooltip", {
+		context: "functionsGrid",
+		text: "",
+		showDelay: 300,
+		zindex: 25
+	});
+	
+	funcTip.table = functionsGrid;
+	
+	funcTip.contextMouseOverEvent.subscribe(function(context, e){
+		var target = e[1].target;
+		if ((Dom.hasClass(target, "yui-dt-bd"))) {return false;}
 		
+		var row = this.table.getRecord(target);
+		if (!row) {return false;}
+		
+		if (this.timer)
+			this.timer.cancel();
+		
+		this.timer = YAHOO.lang.later(250, this, function(funcName){
+			SUGAR.expressions.GridToolTip.showFunctionDescription(this, funcName);
+		}, row.getData()['name']);
+		
+		return true;
 	});
 	
 	funcDS.queryMatchContains = true;

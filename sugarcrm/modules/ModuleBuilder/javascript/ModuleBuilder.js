@@ -1035,7 +1035,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             
             if (!ModuleBuilder.formulaEditorWindow)
             	ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
-					width: 800,
+					width: 510,
 					draggable: true,
 					close: true,
 					constraintoviewport: true,
