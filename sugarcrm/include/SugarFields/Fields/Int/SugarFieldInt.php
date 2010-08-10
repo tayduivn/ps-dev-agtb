@@ -23,7 +23,8 @@
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 require_once('modules/Currencies/Currency.php');
 
-class SugarFieldInt extends SugarFieldBase {
+class SugarFieldInt extends SugarFieldBase 
+{
     public function formatField($rawField, $vardef){
         if ( !empty($vardef['disable_num_format']) ) {
             return $rawField;
@@ -52,5 +53,23 @@ class SugarFieldInt extends SugarFieldBase {
         
     
     	return $this->fetch('include/SugarFields/Fields/Int/SearchForm.tpl');
-    }    
+    }  
+    
+    /**
+     * @see SugarFieldBase::importSanitize()
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        $value = str_replace($this->num_grp_sep,"",$value);
+        if (!is_numeric($value) || strstr($value,".")) {
+            return false;
+        }
+        
+        return $value;
+    }
 }

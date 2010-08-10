@@ -137,6 +137,8 @@ class MysqliManager extends MysqlManager
 		//BEGIN SUGARCRM flav=pro ONLY
         $this->addDistinctClause($sql);
 		//END SUGARCRM flav=pro ONLY
+        $GLOBALS['log']->debug('Pre Query Memory Usage:'.memory_get_usage());
+        
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
@@ -175,6 +177,8 @@ class MysqliManager extends MysqlManager
         if($autofree)
             $this->lastResult[] =& $result;
 
+        $GLOBALS['log']->debug('Post Query Memory Usage:'.memory_get_usage());
+        
         return $result;
     }
 
