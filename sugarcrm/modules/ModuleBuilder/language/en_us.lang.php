@@ -413,6 +413,12 @@ $mod_strings = array(
 'LBL_CALCULATED' => 'Calculated',
 'LBL_READ_ONLY' => 'Read Only',
 'LBL_FORMULA' => 'Formula',
+'LBL_FORMULA_BUILDER' => 'Formula Builder',
+'LBL_NO_FIELDS' => 'No Fields Found',
+'LBL_NO_FUNCS' => 'No Functions Found',
+'LBL_SEARCH_FUNCS' => 'Search Functions...',
+'LBL_SEARCH_FIELDS' => 'Search Fields...',
+'LBL_FORMULA' => 'Formula',
 //END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS

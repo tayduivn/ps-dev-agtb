@@ -1043,7 +1043,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					script: true
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
-			win.setHeader("Formula Builder");
+			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
 			win.setBody("test");
 			win.render(document.body);
 			win.params = {
@@ -1131,10 +1131,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 resizable:true,
                 nodyBorder:false,
                 width:800,
-                autoHeight:true,
-                onload: function() {
-                    console.log("Here6");
-                }
+                autoHeight:true
             });
             EditorWindow.show();
         }

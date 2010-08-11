@@ -22,17 +22,29 @@
 <link rel="stylesheet" type="text/css" href="modules/ExpressionEngine/tpls/formulaBuilder.css" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
-		<input name="formulaInput" id="formulaInput" style="width:500px" value='{$formula}'/>
+		<input name="formulaInput" id="formulaInput" style="width:480px" value='{$formula}'/>
+		<span class="id-ff multiple"><button id="formulaInputClear" class="button"
+            onclick="Dom.get('formulaInput').value='';">
+                {sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}
+        </button></span>
 	</td></tr>
 	<tr>
 		<td id="functionsList" width="200">
-            <input id="formulaFuncSearch" style="width:200px"/>
-            <button id="formulaFuncClear">{sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}</button><div id="funcSearchResults"></div>
+            <input id="formulaFuncSearch" style="width:200px" class="empty"
+			    value="{sugar_translate module="ModuleBuilder" label="LBL_SEARCH_FUNCS"}"/>
+            <span class="id-ff multiple"><button id="formulaFuncClear" class="button"
+                onclick="var i = Dom.get('formulaFuncSearch'); i.value='';i.onkeyup();i.focus()">
+            	{sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}
+			</button><div id="funcSearchResults"></div></span>
             <div id="functionsGrid"></div>
         </td>
 		<td id="fieldsList" width="200">
-			<input id="formulaFieldsSearch" style="width:200px"/>
-			<button id="formulaFieldClear">{sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}</button><div id="fieldSearchResults"></div>
+			<input id="formulaFieldsSearch" style="width:200px" class="empty"
+			     value="{sugar_translate module="ModuleBuilder" label="LBL_SEARCH_FIELDS"}"/>
+			<span class="id-ff multiple"><button id="formulaFieldClear" class="button"
+			    onclick="var i=Dom.get('formulaFieldsSearch'); i.value='';i.onkeyup();i.focus()">
+		      {sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}
+			</button><div id="fieldSearchResults"></div></span>
 			<div id="fieldsGrid"></div>
 		</td>
 	</tr>
