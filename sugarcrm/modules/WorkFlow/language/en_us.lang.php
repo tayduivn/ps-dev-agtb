@@ -96,6 +96,8 @@ $mod_strings = array (
   'LBL_BODY'=>'Body:',
   'LBL__S'=>'\'s',
   'LBL_ALERT_SUBJECT'=>'WORKFLOW ALERT',
+  'LBL_ACTION_ERROR'=>'This action contains errors and connot be executed.',
+  'LBL_ACTION_ERRORS'=>'Notice: One or more actions below contains errors.',
 );
 
 
