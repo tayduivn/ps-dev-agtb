@@ -77,6 +77,7 @@ $stepNext = '';
 $stepCancel = '';
 $stepBack = '';
 $stepRecheck = '';
+$showDone = '';
 $disableNextForLicense='';
 
 if(!isset($_SESSION['step']) || !is_array($_SESSION['step'])){
@@ -301,7 +302,7 @@ $upgrades_installed = 0;
 
 $uwHistory  = $mod_strings['LBL_UW_DESC_MODULES_INSTALLED']."<br>\n";
 $uwHistory .= "<ul>\n";
-$uwHistory .= "<table>\n";
+$uwHistory .= "<table cellspacing=10>\n";
 $uwHistory .= <<<eoq
 	<tr>
 		<th></th>
@@ -443,7 +444,16 @@ function handlePreflight(step) {
 		  
 		return;
 	}
-	
+
+function handleUploadCheck(step, u_allow) {
+	if(step == 'upload' && !u_allow) {
+		document.getElementById('error_messages').innerHTML = '<span class="error"><b>{$mod_strings['LBL_UW_FROZEN']}</b></span>';
+	}
+	  
+	return;
+}
+
+
 function getSelectedModulesForLayoutMerge()
 {
     var results = new Array();
@@ -483,6 +493,7 @@ $smarty->assign('showNext', $showNext);
 $smarty->assign('showCancel', $showCancel);
 $smarty->assign('showBack', $showBack);
 $smarty->assign('showRecheck', $showRecheck);
+$smarty->assign('showDone', $showDone);
 $smarty->assign('STEP_NEXT', $stepNext);
 $smarty->assign('STEP_CANCEL', $stepCancel);
 $smarty->assign('STEP_BACK', $stepBack);
@@ -490,9 +501,16 @@ $smarty->assign('STEP_RECHECK', $stepRecheck);
 $smarty->assign('step', $steps['files'][$_REQUEST['step']]);
 $smarty->assign('UW_HISTORY', $uwHistory);
 $smarty->assign('disableNextForLicense',$disableNextForLicense);
+$u_allow='true';
 if(isset($stop) && $stop == true) {
 	$frozen = (isset($frozen)) ? "<br />".$frozen : '';
-	$smarty->assign('frozen', $mod_strings['LBL_UW_FROZEN'].$frozen);
+	$smarty->assign('frozen', $frozen);
+	if($step == 'upload')
+	    $u_allow = 'false';
+}
+$smarty->assign('u_allow', $u_allow);
+if(!empty($GLOBALS['upload_success'])){
+	$smarty->assign('upload_success', $GLOBALS['upload_success']);
 }
 
 if ($sugar_config['sugar_version'] < '5.5') {
