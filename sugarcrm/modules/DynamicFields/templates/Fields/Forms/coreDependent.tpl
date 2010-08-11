@@ -43,17 +43,20 @@
     </td>
 </tr>*}
 //END SUGARCRM flav=een ONLY
-<tr><td class='mbLBL'>Calculated:</td>
+<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
     <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
         {if !empty($vardef.calculated)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
     </td>
 </tr>
-<tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}><td class='mbLBL'>Formula:</td> 
+<tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>
+	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_FORMULA"}:</td> 
     <td><input id="formula" type="text" name="formula" value="{$vardef.formula|escape:'html'}" maxlength=255 />
-          <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}" 
-            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)"/> 
+	    <button class="button"  name="editFormula" style="margin-top: -2px"
+            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)"/>
+            {sugar_translate label="LBL_BTN_EDIT_FORMULA"}
+        </button>
     </td>
 </tr>
 //BEGIN SUGARCRM flav=een ONLY

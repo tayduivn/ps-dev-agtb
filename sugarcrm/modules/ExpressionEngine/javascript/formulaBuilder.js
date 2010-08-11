@@ -173,7 +173,7 @@ SUGAR.expressions.GridToolTip = {
 		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
 		fieldDS,
-	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
+	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_FIELDS')}
 	);
 	fieldsGrid.on("rowClickEvent", function(e){
 		Dom.get("formulaInput").value += "$" + e.target.firstChild.textContent;
@@ -198,6 +198,20 @@ SUGAR.expressions.GridToolTip = {
 			fieldsGrid.render();
 		} // if
 	}
+	Dom.get("formulaFieldsSearch").onfocus = function() {
+		if (Dom.hasClass(this, "empty"))
+		{
+			this.value = '';
+			Dom.removeClass(this, "empty");
+		}
+	}
+	Dom.get("formulaFieldsSearch").onblur = function() {
+		if (this.value == '')
+		{
+			this.value = SUGAR.language.get("ModuleBuilder", "LBL_SEARCH_FIELDS");
+			Dom.addClass(this, "empty");
+		}
+	}
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
 	
@@ -217,7 +231,7 @@ SUGAR.expressions.GridToolTip = {
 		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
 		funcDS,
-	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_RELS')}
+	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_FUNCS')}
 	);
 	
 	functionsGrid.on("rowClickEvent", function(e){
@@ -264,10 +278,25 @@ SUGAR.expressions.GridToolTip = {
 	}
 	Dom.get("formulaFuncSearch").onkeyup = function() {
 		if (this.value == '') {
+			Dom.addClass(this, "empty");
 			functionsGrid.initializeTable();
 			functionsGrid.addRows(funcsJSON);
 			functionsGrid.render();
-		} // if
+		}
+	}
+	Dom.get("formulaFuncSearch").onfocus = function() {
+		if (Dom.hasClass(this, "empty"))
+		{
+			this.value = '';
+			Dom.removeClass(this, "empty");
+		}
+	}
+	Dom.get("formulaFuncSearch").onblur = function() {
+		if (this.value == '')
+		{
+			this.value = SUGAR.language.get("ModuleBuilder", "LBL_SEARCH_FUNCS");
+			Dom.addClass(this, "empty");
+		}
 	}
 	functionsGrid.render();
 
