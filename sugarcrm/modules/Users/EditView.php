@@ -374,6 +374,9 @@ if(empty($userTZ) && !$focus->is_group && !$focus->portal_only)
 
 if(!$focus->getPreference('ut')) {
 	$sugar_smarty->assign('PROMPTTZ', ' checked');
+	//BEGIN SUGARCRM flav=sales ONLY
+	$sugar_smarty->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
+	//END SUGARCRM flav=sales ONLY
 }
 
 $timezoneOptions = '';

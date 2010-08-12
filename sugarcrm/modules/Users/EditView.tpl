@@ -60,6 +60,9 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="is_current_admin" id="is_current_admin" value='{$IS_ADMIN}' >
 	<input type="hidden" name="edit_self" id="edit_self" value='{$EDIT_SELF}' >
 	<input type="hidden" name="required_email_address" id="required_email_address" value='{$REQUIRED_EMAIL_ADDRESS}' >
+<!-- //BEGIN SUGARCRM flav=sales ONLY -->
+	{$ut_hidden}
+<!-- //END SUGARCRM flav!=sales ONLY -->
 	<div id="popup_window"></div>
 						
 <script type="text/javascript">
@@ -609,27 +612,24 @@ EditView_tabs.on('contentReady', function(e){
                             <!-- END: currency -->
                             <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
-                        {if ($IS_ADMIN)} 
                         <tr>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {if ($IS_ADMIN)} 
                             <td scope="row"><slot>{$MOD.LBL_PROMPT_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_PROMPT_TIMEZONE_TEXT }</td>
                             <td ><slot><input type="checkbox" tabindex='14'class="checkbox" name="ut" value="0" {$PROMPTTZ}></slot></td>
-                            <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
-                            <td ><slot>
-                                <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
-                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
-                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
-                            </slot></td></tr>
                         {else}
-                            <tr>
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td scope="row"><slot></td>
                             <td ><slot></slot></td>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {/if}
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
                             <td ><slot>
                                 <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                             </slot></td></tr>
-                        {/if}
                         {capture name=SMARTY_LOCALE_NAME_FORMAT_DESC}&nbsp;{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}<br />{$MOD.LBL_LOCALE_NAME_FORMAT_DESC_2}{/capture}
                         <tr>
                             <td  scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}:&nbsp;{sugar_help text=$smarty.capture.SMARTY_LOCALE_NAME_FORMAT_DESC }</td>
