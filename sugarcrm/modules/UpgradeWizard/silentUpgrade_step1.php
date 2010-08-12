@@ -608,14 +608,13 @@ $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
 
-// Clear out previous upgrade files so the don't get intermixed with the new ones
-rmdir_recursive($unzip_dir);
 mkdir_recursive($unzip_dir);
 if(!is_dir($unzip_dir)) {
 	fwrite(STDERR,"\n{$unzip_dir} is not an available directory\nFAILURE\n");
 	exit(1);
 }
-unzip($argv[1], $unzip_dir);
+
+unzip($argv[1], $unzip_dir, true);
 // mimic standard UW by copy patch zip to appropriate dir
 copy($argv[1], $install_file);
 ////	END UPGRADE PREP
