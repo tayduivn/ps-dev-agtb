@@ -26,8 +26,17 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{assign var='underscore' value='_'}
 <div class="yuimenubar yuimenubarnav" id="moduleList">
 {foreach from=$groupTabs item=tabGroup key=tabGroupName name=tabGroups}
+  {* This is a little hack for Smarty, to make the ID's match up for compatibility *}
+  {if $tabGroupName == 'All'}
+  {assign var='groupTabId' value=''}
+  {else}
+  {assign var='groupTabId' value=$tabGroupName$underscore}
+  {/if}
+  
+  
 	<div id="themeTabGroupMenu_{$tabGroupName}" class="themeTabGroupMenu yuimenubar yuimenubarnav"><div class="bd" id="themeTabGroup_{$tabGroupName}"  style="border: 0px !important; margin: 0px !important;{if $tabGroupName != $currentGroupTab}display:none;{/if}">
       <ul class="first-of-type">
       {if $USE_GROUP_TABS}
@@ -48,12 +57,12 @@
 
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
 			{if $name == $MODULE_TAB}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$tabGroupName_$name" module=$name data=$module class="yuimenuitemlabel"}
+			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
 			{else}
-			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$tabGroupName_$name" module=$name data=$module class="yuimenuitemlabel"}
+			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if}">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
 			{/if}
 			{if $shortcutTopMenu.$name}
-				<div id="{$tabGroupName}_{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
+				<div id="{$groupTabId}{$name}" class="yuimenu dashletPanelMenu"><div class="bd">
 				
 										<ul class="shortCutsUl">
 										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
@@ -72,7 +81,7 @@
 			{/if}
 			</li>
 			{if $name == $MODULE_TAB}
-			<li class="yuimenubaritem currentTabRight">{sugar_link id="moduleTab_$name" module=$name data=$module class="yuimenuitemlabel"}</li>
+			<li class="yuimenubaritem currentTabRight">{sugar_link id="moduleTab_$groupTabId$name_right" module=$name data=$module class="yuimenuitemlabel"}</li>
 			{/if}
 		{/foreach}
 			{if count($tabGroup.extra) > 0}
@@ -81,7 +90,8 @@
 				<div id="More{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 				<ul>
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
-					<li>{sugar_link id="moduleTab$tabGroupName_$name" class="yuimenuitemlabel" module="$module" data="$name"}
+                  
+					<li>{sugar_link id="moduleTab_$groupTabId$name" class="yuimenuitemlabel" module="$module" data="$name"}
 					{/foreach}
 				</ul>
 				</div>
