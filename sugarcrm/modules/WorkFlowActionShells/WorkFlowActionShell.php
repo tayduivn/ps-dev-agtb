@@ -207,6 +207,17 @@ class WorkFlowActionShell extends SugarBean {
 				$table_html .= "<tr><td>";
     			$table_html .= "<li>".$mod_strings['LBL_SET']." ".$value["FIELD_NAME"]." ".$mod_strings['LBL_AS']." ".$value["ACTION_DISPLAY_TEXT"];
     			$table_html .= "</td></tr>";	
+			} else if (isset($value["ACTION_DISPLAY_TEXT"]) && $value["ACTION_DISPLAY_TEXT"] === false)
+			{
+				//There was an error in this action
+				$table_html .= "<tr><td>";
+                $table_html .= "<li class='error'>" . translate('LBL_ACTION_ERROR') . "</li>";
+                $table_html .= "</td></tr>";
+                if (empty($this->hasError))
+                {
+                	$this->hasError = true;
+                	echo '<p class="error"><b>' . translate('LBL_ACTION_ERRORS') . '</b></p>';
+                }
 			}
 		}
 		$table_html .= "</table>";

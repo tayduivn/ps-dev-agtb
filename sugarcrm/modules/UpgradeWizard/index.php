@@ -209,7 +209,25 @@ else{
 		);
 	}
 	else{
-		// Upgrading from 5.0 upwards and upload not performed yet.
+        /* BEGIN TEMP FIX:
+        This can be removed post 6.1.  As this is a new string that is introduced in 6.1, we can't
+        effectively load it into a pre 6.1 instance.  Running
+
+                global $current_language;
+                $lang = $current_language;
+                if(empty($lang))
+                    $lang = $GLOBALS['sugar_config']['default_language'];
+                require_once('include/SugarObjects/LanguageManager.php');
+                LanguageManager::clearLanguageCache('UpgradeWizard',$lang);
+                LanguageManager::loadModuleLanguage('UpgradeWizard',$lang,true);
+
+        causes strange theme issues with the Upgrade Wizard.
+        */
+        if (empty($mod_strings['LBL_UW_TITLE_LAYOUTS']))
+            $mod_strings['LBL_UW_TITLE_LAYOUTS'] = 'Layouts';
+        /* END TEMP FIX */
+
+        // Upgrading from 5.0 upwards and upload not performed yet.
 		$steps = array(
 			'files' => array(
 		            'start',
