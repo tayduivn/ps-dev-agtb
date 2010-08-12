@@ -2089,6 +2089,7 @@ $app_strings = array (
     'LBL_EMAIL_OPTIONS'                     => 'Options',
     'LBL_EMAIL_QUICK_COMPOSE'				=> 'Quick Compose',
     'LBL_EMAIL_OPT_OUT'                     => 'Opted Out',
+    'LBL_EMAIL_OPT_OUT_AND_INVALID'         => 'Opted Out and Invalid',
     'LBL_EMAIL_PAGE_AFTER'                  => 'of {0}',
     'LBL_EMAIL_PAGE_BEFORE'                 => 'Page',
     'LBL_EMAIL_PERFORMING_TASK'             => 'Performing Task',
