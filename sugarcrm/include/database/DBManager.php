@@ -1641,7 +1641,12 @@ abstract class DBManager
     {
         $GLOBALS['log']->info("Get One: . |$sql|");
         $this->checkConnection();
-        $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        if(stripos($sql, ' LIMIT ') === false) {
+            $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        } else {
+            // backward compatibility with queries having LIMIT
+            $queryresult = $this->query($sql, $dieOnError, $msg);
+        }
         if (!$queryresult)
             return false;
 
