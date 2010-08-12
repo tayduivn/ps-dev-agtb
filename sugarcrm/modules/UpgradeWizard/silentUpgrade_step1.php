@@ -527,7 +527,7 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 
 	ini_set('error_reporting',1);
 	require_once('include/entryPoint.php');
-	
+	require_once('include/SugarLogger/SugarLogger.php');
 	require_once('include/utils/zip_utils.php');
 	
 	
