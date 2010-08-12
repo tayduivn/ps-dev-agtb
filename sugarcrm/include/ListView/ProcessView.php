@@ -112,6 +112,8 @@ class ProcessView {
         $target_meta_array = $process_dictionary[$step]['elements'][$target_element];
 
         $prev_display_text = "";
+        
+        //echo "<pre>"; print_r($target_meta_array); echo "</pre>";
 
         foreach($target_meta_array['bottom']['options'] as $key => $option_array){
 
@@ -130,7 +132,10 @@ class ProcessView {
                 }
             }
             if($option_array['text_type']=="dynamic"){
-                $prev_display_text .= $this->translate_element($option_array)."&nbsp;";
+            	$trans_ele = $this->translate_element($option_array);
+            	if ($trans_ele === false)
+            	   return false;
+                $prev_display_text .= $trans_ele."&nbsp;";
             }
             //end for each option
         }
@@ -663,6 +668,9 @@ class ProcessView {
                 
             $text_array = $expression_object->get_selector_array($exp_type, "", $dom_name, true);
                 
+            if (empty($text_array[$target_element])) {
+                return false;
+            }
             $target_value = $text_array[$target_element];
             unset($expression_object);
             return $target_value;
@@ -941,7 +949,6 @@ class ProcessView {
         {
             $filter1_object = new Expression();
             $filter_list = $trigger_shell->get_linked_beans('expressions','Expression');
-            //_pp($trigger_shell);
             if(isset($filter_list[0]) && $filter_list[0]!= null)
             {
                 $filter1_id = $filter_list[0]->id;
@@ -950,6 +957,19 @@ class ProcessView {
             if(isset($filter1_id) && $filter1_id!="")
             {
                 $filter1_object->retrieve($filter1_id);
+                //Check if a relate object id is 
+                if ($filter1_object->exp_type == 'relate')
+                {
+                	$wfseed = get_module_info($filter1_object->lhs_module);
+                	$field_def = $wfseed->field_defs[$filter1_object->lhs_field];
+                	$rel_seed = get_module_info($field_def['module']);
+                	$rel_seed->retrieve($filter1_object->rhs_value);
+                	if (empty($rel_seed->id))
+                	{
+                		return '<span class="error">'. translate("LBL_TRIGGER_ERROR") . '</span>';
+                	}
+                }
+                
                 //$target_module = $focus->target_module;
                 if($trigger_shell->type != "compare_count")
                 {

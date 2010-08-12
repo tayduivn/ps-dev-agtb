@@ -98,6 +98,9 @@ $mod_strings = array (
   'LBL_ALERT_SUBJECT'=>'WORKFLOW ALERT',
   'LBL_ACTION_ERROR'=>'This action contains errors and connot be executed.',
   'LBL_ACTION_ERRORS'=>'Notice: One or more actions below contains errors.',
+  'LBL_ALERT_ERROR'=>'This alert contains errors and connot be executed.',
+  'LBL_ALERT_ERRORS'=>'Notice: One or more alerts below contains errors.',
+  'LBL_TRIGGER_ERROR'=>'Notice: This trigger contains invalid values and will not fire.',
 );
 
 
