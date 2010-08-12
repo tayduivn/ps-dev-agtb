@@ -91,6 +91,15 @@ array (
               ),
             ),
           ),
+          array (
+            'name' => 'type',
+            'fields' => 
+            array (
+              array (
+                'name' => 'type',
+              ),
+            ),
+          ),
         ),
         array (
           array (

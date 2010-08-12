@@ -109,6 +109,15 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'options' => 'meeting_status_dom',
     'comment' => 'Meeting status (ex: Planned, Held, Not held)'
   ),
+  'type' =>
+   array (
+     'name' => 'type',
+      'vname' => 'LBL_TYPE',
+      'type' => 'enum',
+      'len' => 100,
+      'options' => 'meeting_type_dom',
+      'comment' => 'Meeting type (ex: WebEx, Other)' 
+   ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>
   array (

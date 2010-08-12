@@ -90,6 +90,7 @@ $mod_strings = array (
 	'LBL_SEND_BUTTON_LABEL'=>'Send Invites',
 	'LBL_SEND_BUTTON_TITLE'=>'Send Invites [Alt+I]',
 	'LBL_STATUS' => 'Status:',
+   'LBL_TYPE' => 'Meeting Type',
 	'LBL_SUBJECT' => 'Subject:',
 	'LBL_TIME' => 'Start Time:',
 	'LBL_USERS_SUBPANEL_TITLE' => 'Users',

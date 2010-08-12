@@ -399,6 +399,11 @@ $app_list_strings = array (
     'Held' => 'Held',
     'Not Held' => 'Not Held',
   ),
+  'meeting_type_dom' =>
+   array (
+      'Other' => 'Other',
+      'WebEx' => 'WebEx'
+   ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (

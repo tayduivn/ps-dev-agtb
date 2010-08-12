@@ -48,6 +48,7 @@ class Meeting extends SugarBean {
 	var $name;
 	var $location;
 	var $status;
+	var $type;
 	var $date_start;
 	var $time_start;
 	var $date_end;
@@ -440,6 +441,7 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
+		$xtpl->assign("MEETING_TYPE",(isset($meeting->type)? $app_list_strings['meeting_type_dom'][$meeting->type]:""));
 		$xtpl->assign("MEETING_STARTDATE", $timedate->to_display_date_time($meeting->date_start,true,true,$notifyUser)." ".$prefDate['userGmt']);
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
