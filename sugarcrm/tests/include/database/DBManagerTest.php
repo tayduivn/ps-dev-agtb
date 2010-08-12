@@ -1001,8 +1001,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($id,$beanIds[0]);
 
         // bug 38994
-        $id = $this->_db->getOne("SELECT id From contacts where last_name = 'foobar' LIMIT 0,1");
-        $this->assertEquals($id,$beanIds[0]);
+        if($this->_db instanceof MysqlManager) {
+            $id = $this->_db->getOne("SELECT id From contacts where last_name = 'foobar' LIMIT 0,1");
+            $this->assertEquals($id,$beanIds[0]);
+        }
 
         $this->_removeRecords($beanIds);
     }
