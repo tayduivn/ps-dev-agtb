@@ -51,6 +51,14 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting location'
   ),
+  'webexurl' =>
+  array (
+    'name' => 'webexurl',
+    'vname' => 'LBL_WEBEXURL',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'URL of WebEx Meeting'
+  ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',

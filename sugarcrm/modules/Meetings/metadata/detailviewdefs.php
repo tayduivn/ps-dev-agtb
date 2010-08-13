@@ -70,13 +70,6 @@ array (
         ),
         array (
           array (
-            'name' => 'name',
-            //'label' => 'type_label',
-          ),
-          'type',
-        ),
-        array (
-          array (
             'name' => 'date_start',
             'label' => 'LBL_DATE_TIME',
           ),
@@ -92,6 +85,10 @@ array (
             'label' => 'LBL_DURATION',
           ),
           'location',
+        ),
+        array (
+          'type',
+          'webexurl',
         ),
         array (
           array (
