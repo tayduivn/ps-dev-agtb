@@ -3652,7 +3652,7 @@ border-radius: 4px;
 white-space: normal;
 }
 
-#moduleList #More.dashletPanelMenu .yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel:link, #More.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #More.dashletPanelMenu  .yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel:link,#moduleList #Group.dashletPanelMenu .yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel:link, #Group.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel:link{ 
+#moduleList .more .dashletPanelMenu .yuimenuitemlabel , .more .dashletPanelMenu a.yuimenuitemlabel, .more .dashletPanelMenu a.yuimenuitemlabel:link, .more .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .more .dashletPanelMenu  .yuimenuitemlabel, li.current .more .dashletPanelMenu  a.yuimenuitemlabel, li.current .more .dashletPanelMenu  a.yuimenuitemlabel:link,#moduleList #Group.dashletPanelMenu .yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel:link, #Group.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel:link{ 
 font-size: 16px;
 font-weight: bold;
 }
@@ -3662,7 +3662,7 @@ background-color: #355b7e;
 color: #fff;
 }
 
-#moduleList #More.dashletPanelMenu a.yuimenuitemlabel:hover {
+#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover {
 background-color: #355b7e;
 color: #fff;
 }
@@ -3685,7 +3685,7 @@ background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.pn
 background:none\9;  /*ie hack */
 }
 
-#moduleList #More.dashletPanelMenu,#moduleList #Group.dashletPanelMenu  {
+#moduleList .more .dashletPanelMenu,#moduleList #Group.dashletPanelMenu  {
 width: 257px;
 padding: 0 18px 0 18px\9;  /*ie hack */
 background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png) repeat;
@@ -3705,7 +3705,7 @@ left: -18px\9; /*ie hack */
 background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-top-menu.png) no-repeat\9; /*ie hack */
 }
 
-#moduleList #More.dashletPanelMenu .bd, #moduleList #Group.dashletPanelMenu .bd  {
+#moduleList .more .dashletPanelMenu .bd, #moduleList #Group.dashletPanelMenu .bd  {
 width: 235px;
 }
 
@@ -3797,7 +3797,7 @@ width:2px;
 z-index:2;
 }
 
-#moduleList #moduleTabExtraMenu .yuimenubaritemlabel-selected { 
+#moduleList .moduleTabExtraMenu .yuimenubaritemlabel-selected { 
 border-right: 1px solid #ccc;
 }
 
@@ -3812,16 +3812,16 @@ background-position: 0 .5em;
 border-left: 1px solid transparent;
 }
 
-#moduleList #moduleTabExtraMenu
+#moduleList .moduleTabExtraMenu
 {
 height: 31px;
 }
 
-#moduleTabExtraMenu .yuimenuitemlabel.more {
+.moduleTabExtraMenu .yuimenuitemlabel.more {
 border-right: 1px solid #ccc;
 }
 
-#moduleList #moduleTabExtraMenu .yuimenuitemlabel.more em
+#moduleList .moduleTabExtraMenu .yuimenuitemlabel.more em
 {
     overflow:hidden;
     text-indent:-9999px;
@@ -3850,7 +3850,7 @@ border-right: 1px solid #ccc;
 
 }
 
-#moduleList #moduleTabExtraMenu  .yuimenuitemlabel.more.yuimenubaritemlabel-selected em {
+#moduleList .moduleTabExtraMenu  .yuimenuitemlabel.more.yuimenubaritemlabel-selected em {
 
 }
 
