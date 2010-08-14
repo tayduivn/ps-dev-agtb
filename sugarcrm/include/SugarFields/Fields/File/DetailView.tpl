@@ -28,5 +28,7 @@
 *}
 <a href="index.php?entryPoint=download&id={$fields.{{$displayParams.id}}.value}&type={$module}" class="tabDetailViewDFLink">{$fields.{{$displayParams.link}}.value}</a>
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{if !empty($fields.{{$displayParams.link}}.value)}
+{{sugarvar_connector view='DetailView'}}
+{/if}
 {{/if}}

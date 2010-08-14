@@ -28,5 +28,7 @@
 *}
 {{if !$nolink}}<a href="index.php?module={{sugarvar objectName='fields' memberName='vardef.type_name' key='value'}}&action=DetailView&record={{sugarvar key='value' memberName='vardef.id_name'}}" class="tabDetailViewDFLink">{{/if}}{{sugarvar key='value'}}{{if !$nolink}}</a>{{/if}}
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{if !empty({{sugarvar key='value'}})}
+{{sugarvar_connector view='DetailView'}}
+{/if}
 {{/if}}
