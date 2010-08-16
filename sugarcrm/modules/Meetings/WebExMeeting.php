@@ -4,10 +4,12 @@ require_once('WebMeeting.php');
 
 class WebExMeeting extends WebMeeting {
 	
-	function WebExMeeting($url) {
+	function WebExMeeting($account_url, $account_name, $account_password) {
       require_once('WebExXML.php');
       
-      $this->url = $url;
+      $this->account_url = $account_url;
+      $this->account_name = $account_name;
+      $this->account_password = $account_password;
       $this->schedule_xml = $schedule_xml;
       $this->unschedule_xml = $unschedule_xml;
       $this->details_xml = $details_xml;
@@ -131,17 +133,16 @@ class WebExMeeting extends WebMeeting {
    }
 	
 	private function addAuthenticationInfo($doc) {
-		global $current_user;
-		// TODO: integrate with Sugar authentication
 		$securityContext = $doc->header->securityContext;
-      $securityContext->webExID = 'majed';
-      $securityContext->password = 'Changeme123';
-      $securityContext->siteName = 'sugarcrm';
+      $securityContext->webExID = $this->account_name;
+      $securityContext->password = $this->account_password;
+      $siteName = substr($this->account_url, 0, strpos($this->account_url, '.'));
+      $securityContext->siteName = $siteName;
 	}
 
    private function postMessage($doc) {
-      $host = substr($this->url, 0, strpos($this->url, "/"));
-      $uri = strstr($this->url, "/");
+      $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
+      $uri = strstr($this->account_url, "/");
       $xml = $doc->asXML();
       echo "<br /><br />$xml<br /><br />";
       $content_length = strlen($xml);
@@ -153,7 +154,7 @@ class WebExMeeting extends WebMeeting {
          "Content-Length: ".$content_length,
       );
 
-      $ch = curl_init('https://' . $this->url);
+      $ch = curl_init('https://' . $this->account_url);
       curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_POST, true);

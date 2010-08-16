@@ -129,11 +129,7 @@ array (
             'comment' => 'Meeting location',
             'label' => 'LBL_LOCATION',
           ),
-          array (
-            'name' => 'webexurl',
-            'comment' => 'URL of WebEx Meeting',
-            'label' => 'LBL_WEBEXURL',
-          ),
+
         ),
         array (
           array (

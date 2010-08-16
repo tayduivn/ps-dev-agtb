@@ -88,7 +88,6 @@ array (
         ),
         array (
           'type',
-          'webexurl',
         ),
         array (
           array (

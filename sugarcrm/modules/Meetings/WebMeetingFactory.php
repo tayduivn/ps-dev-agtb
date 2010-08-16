@@ -5,8 +5,8 @@ require_once('WebExMeeting.php');
 
 class WebMeetingFactory {
 
-   function getInstance($type, $url) {
-      $instance = new $type($url);
+   static function getInstance($type, $url, $name, $password) {
+      $instance = new $type($url, $name, $password);
       return $instance;
    }
 }
