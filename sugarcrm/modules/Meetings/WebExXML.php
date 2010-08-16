@@ -179,7 +179,7 @@ $joinmeeting_xml = <<<JMT
    <body>
       <bodyContent
           xsi:type="java:com.webex.service.binding.meeting.GetjoinurlMeeting">
-         <sessionKey>48591508</sessionKey>
+         <sessionKey></sessionKey>
          <attendeeName></attendeeName>
       </bodyContent>
    </body>

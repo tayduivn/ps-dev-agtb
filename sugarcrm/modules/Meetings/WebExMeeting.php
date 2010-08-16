@@ -41,18 +41,15 @@ class WebExMeeting extends WebMeeting {
 		$doc->body->bodyContent->participants->maxUserNumber = '1';		
 		$attendee = $doc->body->bodyContent->participants->attendees->addChild('attendee', '');
 		$person = $attendee->addChild('person');
-		// TODO: correctly pass current user info
-		//$person->addChild('name', $current_user->full_name);
-		//$person->addChild('email', $current_user->email1);
-		$person->addChild('name', 'testuser');
-		$person->addChild('email', 'test@email.com');
+		$person->addChild('name', $GLOBALS['current_user']->full_name);
+		$person->addChild('email', $GLOBALS['current_user']->email1);
 
 		$doc->body->bodyContent->schedule->startDate = $startDate;
 		// TODO: what's openTime?
 		$doc->body->bodyContent->schedule->openTime = '900';
 		$doc->body->bodyContent->schedule->duration = $duration;
-		// TODO: timezone
-		$doc->body->bodyContent->schedule->timeZoneID = '4';
+		//ID of 20 is GMT
+		$doc->body->bodyContent->schedule->timeZoneID = '20';
 		
 		return $this->postMessage($doc);
 	}
@@ -103,7 +100,7 @@ class WebExMeeting extends WebMeeting {
    /**
     *
     * @param array $attendeeID - WebEx attendee ID.
-	 * return: An array containing the XML response from the WebEx server.
+	 * return: The XML response from the WebEx server.
     */
    function uninviteAttendee($attendeeID) {
       $doc = new SimpleXMLElement($this->uninvite_xml);
@@ -124,7 +121,7 @@ class WebExMeeting extends WebMeeting {
 
    /**
     * @param string meeting- The WebEx meeting key. 
-    *
+	 * return: The XML response from the WebEx server.
     */
    function getMeetingDetails($meeting) {
       $doc = new SimpleXMLElement($this->details_xml);
