@@ -32,6 +32,30 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     	
     }
     
+    /**
+     * @group bug26803
+     */
+    public function testGetLocaleFormattedNameWhenNameIsEmpty()
+    {
+        $this->_user->setPreference('default_locale_name_format', 'l f');
+        $expectedOutput = ' ';
+        $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '',$this->_user);
+        
+        $this->assertEquals($expectedOutput, $outputName);
+    }
+    
+    /**
+     * @group bug26803
+     */
+    public function testGetLocaleFormattedNameWhenNameIsEmptyAndReturningEmptyString()
+    {
+        $this->_user->setPreference('default_locale_name_format', 'l f');
+        $expectedOutput = '';
+        $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '',$this->_user,true);
+        
+        $this->assertEquals($expectedOutput, $outputName);
+    }
+    
     public function testCurrenciesLoadingCorrectly()
     {
         global $sugar_config;
