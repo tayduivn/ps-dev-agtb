@@ -247,7 +247,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 		oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
 		oShadowBodyCenter.style.width = (oBd.offsetWidth)+"px";
 		
-		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,5) != "Group") {
+		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
 			if(oShadow.previousSibling.className != "vr") {
 			
 			oVR = document.createElement("div");
