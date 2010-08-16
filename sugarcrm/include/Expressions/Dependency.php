@@ -141,10 +141,15 @@ class Dependency {
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
-		if ($this->trigger->evaluate($target) === true) {
+		try {
+		  if ($this->trigger->evaluate($target) === true) {
 			$this->fireActions($target);
-		} else {
-			$this->fireActions($target, true);
+			} else {
+				$this->fireActions($target, true);
+			}
+		} catch (Exception $e)
+		{
+			$GLOBALS['log']->fatal($e->getMessage());
 		}
 	}
 	
@@ -155,12 +160,17 @@ class Dependency {
 	 * @param boolean $useFalse
 	 */
 	private function fireActions(&$target, $useFalse = false) {
-		$actions = $this->actions;
-		if ($useFalse)
-			$actions = $this->falseActions;
-		foreach ($actions as $action) {
-			$action->fire($target);
-		}
+		try {
+			$actions = $this->actions;
+			if ($useFalse)
+				$actions = $this->falseActions;
+			foreach ($actions as $action) {
+				$action->fire($target);
+			}
+		} catch (Exception $e)
+        {
+            $GLOBALS['log']->fatal($e->getMessage());
+        }
 	}
 	
 	function getFireOnLoad()

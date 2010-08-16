@@ -64,8 +64,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=KBDocuments&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
-$params[] = $focus->kbdocument_name;
+$params[] = "<span class='pointer'>&raquo;</span>".$focus->kbdocument_name;
 
 echo getClassicModuleTitle("KBDocuments", $params, true);
 
