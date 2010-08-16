@@ -312,7 +312,7 @@ $dictionary['User'] = array(
             'name' => 'address_postalcode',
             'vname' => 'LBL_ADDRESS_POSTALCODE',
             'type' => 'varchar',
-            'len' => '9',
+            'len' => '20',
         ) ,
         //BEGIN SUGARCRM flav=sales ONLY
         'user_type' => array(
