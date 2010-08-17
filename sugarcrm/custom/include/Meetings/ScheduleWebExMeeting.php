@@ -31,12 +31,11 @@ class ScheduleWebExMeeting {
             $row['password']
          );
 
-         // TODO: meeting password? now hardcoded as 'password123'
          $response = $meeting->scheduleMeeting(
             $bean->name,
             date('m/d/Y H:i:s', strtotime($bean->date_start)),
             $duration,
-            'password123'
+            $bean->password
          );
      }
    }

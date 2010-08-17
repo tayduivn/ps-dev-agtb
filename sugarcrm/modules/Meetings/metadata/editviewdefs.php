@@ -100,6 +100,15 @@ array (
               ),
             ),
           ),
+           array (
+            'name' => 'password',
+            'fields' => 
+            array (
+              array (
+                'name' => 'password',
+              ),
+            ),
+          ),
         ),
         array (
           array (

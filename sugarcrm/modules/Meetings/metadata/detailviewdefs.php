@@ -90,6 +90,9 @@ array (
           'type',
         ),
         array (
+           'password'
+        ),
+        array (
           array (
             'name' => 'reminder_checked',
             'fields' => 
@@ -115,6 +118,7 @@ array (
             'label' => 'LBL_DATE_MODIFIED',
             'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
           ),
+
         ),
         array (
 		  //BEGIN SUGARCRM flav=pro ONLY

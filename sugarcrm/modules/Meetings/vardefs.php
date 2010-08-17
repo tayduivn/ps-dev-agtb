@@ -51,6 +51,14 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting location'
   ),
+  'password' =>
+  array (
+    'name' => 'password',
+    'vname' => 'LBL_PASSWORD',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting password'
+  ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',
