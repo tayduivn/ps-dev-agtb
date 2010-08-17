@@ -545,8 +545,9 @@ function hide_iframes_and_feeds_modules() {
 	$remove_iframes = false;
 	$remove_feeds = false;
 	
-	//Check if we should remove iframes.  Use the count of entries in iframes table
-	if(!$GLOBALS['db']->tableExists('iframes')) {
+	//Check if we should remove iframes.  If the table does not exist or the directory
+	//does not exist then we set remove_iframes to true
+	if(!$GLOBALS['db']->tableExists('iframes') || !file_exists('modules/iFrames')) {
 		$remove_iframes = true;
 	} else {
 		$result = $GLOBALS['db']->query('SELECT count(id) as total from iframes');
@@ -563,25 +564,34 @@ function hide_iframes_and_feeds_modules() {
 	$controller = new TabController();
 	$tabs = $controller->get_tabs_system();
 	
-	//If the Feeds tab is hidden then remove it
-	if(!$GLOBALS['db']->tableExists('feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
+	//If the feeds table does not exists or if the directory does not exist or if it is hidden in 
+	//system tabs then set remove_feeds to true
+	if(!$GLOBALS['db']->tableExists('feeds') || !file_exists('modules/Feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
 	   $remove_feeds = true;
 	}
 	
 	if($remove_feeds) {
 	   //Remove the modules/Feeds files
-	   if(is_dir('modules/Feeds')) {
-	   _logThis('Removing the Feeds files', $path);
-	   rmdir_recursive('modules/Feeds');
+	   if(is_dir('modules/Feeds')) 
+	   {
+	      _logThis('Removing the Feeds files', $path);
+	      rmdir_recursive('modules/Feeds');
 	   }
 		
-		   //Drop the table
-	   if($GLOBALS['db']->tableExists('feeds')) {
+	   if(file_exists('custom/Extension/application/Ext/Include/Feeds.php'))
+	   {
+	      _logThis('Removing custom/Extension/application/Ext/Include/Feeds.php ', $path);
+	      unlink('custom/Extension/application/Ext/Include/Feeds.php');	   	
+	   }
+	   
+	   //Drop the table
+	   if($GLOBALS['db']->tableExists('feeds')) 
+	   {
 		   _logThis('Removing the Feeds table', $path);
 		   $GLOBALS['db']->dropTableName('feeds');
 	   }
 	} else {
-	   if(file_exists('modules/Feeds')) {
+	   if(file_exists('modules/Feeds') && $GLOBALS['db']->tableExists('feeds')) {
 		   _logThis('Writing Feed.php module to custom/Extension/application/Ext/Include', $path);
 		   write_to_modules_ext_php('Feed', 'Feeds', 'modules/Feeds/Feed.php', true);
 	   }
@@ -589,18 +599,27 @@ function hide_iframes_and_feeds_modules() {
 	
 	if($remove_iframes) {
 		//Remove the module/iFrames files
-		if(is_dir('modules/iFrames')) {
-		_logThis('Removing the iFrames files', $path);
-		rmdir_recursive('modules/iFrames');
+		if(is_dir('modules/iFrames')) 
+		{
+		   _logThis('Removing the iFrames files', $path);
+		   rmdir_recursive('modules/iFrames');
 		}
 		
+		if(file_exists('custom/Extension/application/Ext/Include/iFrames.php'))
+	    {
+	       _logThis('Removing custom/Extension/application/Ext/Include/iFrames.php ', $path);
+	       unlink('custom/Extension/application/Ext/Include/iFrames.php');	   	
+	    }		
+		
 		//Drop the table
-		if($GLOBALS['db']->tableExists('iframes')) {
+		if($GLOBALS['db']->tableExists('iframes')) 
+		{
 		   _logThis('Removing the iframes table', $path);
 		   $GLOBALS['db']->dropTableName('iframes');
 		}
+
 	} else {
-	   if(file_exists('modules/iFrames')) {
+	   if(file_exists('modules/iFrames') && $GLOBALS['db']->tableExists('iframes')) {
 		  _logThis('Writing iFrame.php module to custom/Extension/application/Ext/Include', $path);
 		  write_to_modules_ext_php('iFrame', 'iFrames', 'modules/iFrames/iFrame.php', true);
 	   }
