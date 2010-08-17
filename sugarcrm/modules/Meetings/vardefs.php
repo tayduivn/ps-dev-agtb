@@ -59,15 +59,38 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting password'
   ),
-  'url' =>
+  'join_url' =>
   array (
-    'name' => 'url',
+    'name' => 'join_url',
     'vname' => 'LBL_URL',
     'type' => 'varchar',
     'len' => '200',
+    'comment' => 'Join URL'
+  ),
+  'host_url' =>
+  array (
+    'name' => 'host_url',
+    'vname' => 'LBL_URL',
+    'type' => 'varchar',
+    'len' => '400',
+    'comment' => 'Host URL'
+  ),
+  'displayed_url' =>
+  array (
+    'name' => 'displayed_url',
+    'vname' => 'LBL_URL',
+    'type' => 'varchar',
+    'len' => '400',
     'comment' => 'Meeting URL'
   ),
-
+  'creator' =>
+  array (
+    'name' => 'creator',
+    'vname' => 'LBL_CREATOR',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting creator'
+  ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',

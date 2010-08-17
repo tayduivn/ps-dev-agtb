@@ -93,7 +93,10 @@ array (
            'password'
         ),
         array (
-           'url'
+           'displayed_url'
+        ),
+        array (
+           'creator'
         ),
         array (
           array (

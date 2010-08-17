@@ -7,6 +7,8 @@ abstract class WebMeeting {
 	abstract function unscheduleMeeting($meeting);
 	
 	abstract function joinMeeting($meeting, $attendeeName);
+
+   abstract function hostMeeting($meeting);
 	
 	abstract function inviteAttendee($meeting, $attendee);
 	

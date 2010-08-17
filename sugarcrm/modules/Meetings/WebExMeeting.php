@@ -17,12 +17,12 @@ class WebExMeeting extends WebMeeting {
       $this->invite_xml = $invite_xml;
       $this->uninvite_xml = $uninvite_xml;
       $this->joinmeeting_xml = $joinmeeting_xml;
+      $this->hostmeeting_xml = $hostmeeting_xml;
    }
 	
 	
 	/**
-	 * Create a new WebEx meeting with one attendee: the 
-	 * current user.
+	 * Create a new WebEx meeting.
 	 * @param string $name
 	 * @param string $startdate
 	 * @param string $duration
@@ -70,7 +70,8 @@ class WebExMeeting extends WebMeeting {
 	}
 	
    /**
-    *
+    * Get the url for joining the meeting with key $meeting as
+    * attendee $attendeeName.
     * @param string meeting - The WebEx meeting key.
     * @param string attendeeName - Name of joining attendee
 	 * return: The XML response from the WebEx server.
@@ -82,9 +83,22 @@ class WebExMeeting extends WebMeeting {
       $doc->body->bodyContent->attendeeName = $attendeeName;
       return $this->postMessage($doc);
 	}
+
+
+   /**
+    * Get the url for hosting the meeting with key $meeting.
+    * @param string meeting - The WebEx meeting key.
+	 * return: The XML response from the WebEx server.
+    */
+   function hostMeeting($meeting) {
+      $doc = new SimpleXMLElement($this->hostmeeting_xml);
+      $this->addAuthenticationInfo($doc);
+      $doc->body->bodyContent->sessionKey = $meeting;
+      return $this->postMessage($doc);
+   }
 	
 	/**
-	 * 
+	 * Invite $attendee to the meeting with key $session.
 	 * @param string $meeting - The WebEx session key. 
 	 * @param array $attendee - An array with entries for 'name' and 'email'
 	 * return: The XML response from the WebEx server.
@@ -102,7 +116,10 @@ class WebExMeeting extends WebMeeting {
 	}
 
    /**
-    *
+    * Uninvite the attendee with ID $attendeeID from the meeting.
+    * Note: attendee ID is returned as part of the response to
+    * inviteAtendee().  The attendee ID refers to a specific person
+    * and a specific meeting. 
     * @param array $attendeeID - WebEx attendee ID.
 	 * return: The XML response from the WebEx server.
     */
@@ -114,8 +131,7 @@ class WebExMeeting extends WebMeeting {
    }
 
    /**
-    * 
-    *
+    * List all meetings created by this object's WebEx user.
     */
    function listMyMeetings() {
       $doc = new SimpleXMLElement($this->listmeeting_xml);
@@ -124,6 +140,8 @@ class WebExMeeting extends WebMeeting {
    }
 
    /**
+    * Get detailed information about the meeting
+    * with key $meeting.
     * @param string meeting- The WebEx meeting key. 
 	 * return: The XML response from the WebEx server.
     */
@@ -134,6 +152,11 @@ class WebExMeeting extends WebMeeting {
       return $this->postMessage($doc);
    }
 	
+   /**
+    * Adds values to the security context header for a
+    * WebEx XML request.
+    * @param SimpleXMLElement $doc
+    */
 	private function addAuthenticationInfo($doc) {
 		$securityContext = $doc->header->securityContext;
       $securityContext->webExID = $this->account_name;
@@ -142,6 +165,10 @@ class WebExMeeting extends WebMeeting {
       $securityContext->siteName = $siteName;
 	}
 
+   /**
+    * Sends a request to the WebEx XML API.
+    * @param SimpleXMLElement $doc
+    */
    private function postMessage($doc) {
       $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
       $uri = strstr($this->account_url, "/");

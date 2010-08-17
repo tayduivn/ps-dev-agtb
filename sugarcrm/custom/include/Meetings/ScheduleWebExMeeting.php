@@ -11,9 +11,8 @@ require_once('modules/Meetings/WebMeetingFactory.php');
 require_once('modules/EAPM/EAPM.php');
 
 class ScheduleWebExMeeting {
-   function schedule(&$bean, $event, $arguments) {
-      global $current_user;
 
+   function schedule(&$bean, $event, $arguments) {
       if ($bean->type == 'WebEx') {
          $duration = (60 * (int)($bean->duration_hours)) +
             ((int)($bean->duration_minutes));
@@ -42,16 +41,23 @@ class ScheduleWebExMeeting {
          preg_match('/meetingkey.[0-9]+/', $meeting_response, $matches);
          $meeting_key= substr($matches[0], 11);
 
-         $join_response = $meeting->joinMeeting($meeting_key, $row['name']);
+         $join_response = $meeting->joinMeeting($meeting_key, '');
          preg_match('/joinMeetingURL.[^<]+/', $join_response, $join_matches);
-         $url = substr($join_matches[0], 15);
-         $bean->url = $url;
+         $join_url = substr($join_matches[0], 15);
+         $bean->join_url = $join_url;
+
+         $host_response = $meeting->hostMeeting($meeting_key);
+         preg_match('/hostMeetingURL.[^<]+/', $host_response, $host_matches);
+         $host_url = substr($host_matches[0], 15);
+         $bean->host_url = $host_url;
 
          $invitees = $this->getInviteesArray($bean->users_arr);
          foreach ($invitees as $invitee) {
             $meeting->inviteAttendee($meeting_key, $invitee);
          }
-     }
+
+         $bean->creator = $row['name'];
+      }
    }
 
    private function getInviteesArray($ids) {
@@ -63,4 +69,5 @@ class ScheduleWebExMeeting {
       }
       return $rtn;
    }
+
 }

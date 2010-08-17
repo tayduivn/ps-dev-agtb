@@ -185,3 +185,24 @@ $joinmeeting_xml = <<<JMT
    </body>
 </serv:message>
 JMT;
+
+$hostmeeting_xml = <<<HST
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <header>
+      <securityContext>
+         <webExID></webExID>
+         <password></password>
+         <siteID></siteID>
+         <siteName></siteName>
+         <partnerID></partnerID>
+      </securityContext>
+   </header>
+   <body>
+      <bodyContent
+          xsi:type="java:com.webex.service.binding.meeting.GethosturlMeeting">
+         <sessionKey></sessionKey>
+      </bodyContent>
+   </body>
+</serv:message>
+HST;
