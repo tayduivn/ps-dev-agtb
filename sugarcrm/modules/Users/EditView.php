@@ -195,9 +195,10 @@ $sugar_smarty->assign('DESCRIPTION', $focus->description);
 $sugar_smarty->assign('EXPORT_DELIMITER', getDelimiter());
 $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
 //BEGIN SUGARCRM flav=pro ONLY
-
-$pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-$sugar_smarty->assign("REGEX",$pwd_regex);
+if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
+    $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
+    $sugar_smarty->assign("REGEX",$pwd_regex);     
+}
 //END SUGARCRM flav=pro ONLY
 
 if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
@@ -629,8 +630,8 @@ if ( $usertype == 'GROUP' ) {
 }
 
 $configurator = new Configurator();
-if ( ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
-        && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' )
+if ( isset($configurator->config['passwordsetting']) && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
+        && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' ) 
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','1');
 else
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','0');
