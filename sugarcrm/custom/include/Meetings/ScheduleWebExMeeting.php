@@ -12,6 +12,8 @@ require_once('modules/EAPM/EAPM.php');
 
 class ScheduleWebExMeeting {
    function schedule(&$bean, $event, $arguments) {
+      global $current_user;
+
       if ($bean->type == 'WebEx') {
          $duration = (60 * (int)($bean->duration_hours)) +
             ((int)($bean->duration_minutes));
@@ -31,12 +33,19 @@ class ScheduleWebExMeeting {
             $row['password']
          );
 
-         $response = $meeting->scheduleMeeting(
+         $meeting_response = $meeting->scheduleMeeting(
             $bean->name,
             date('m/d/Y H:i:s', strtotime($bean->date_start)),
             $duration,
             $bean->password
          );
+         preg_match('/meetingkey.[0-9]+/', $meeting_response, $matches);
+         $meeting_key= substr($matches[0], 11);
+
+         $join_response = $meeting->joinMeeting($meeting_key, $row['name']);
+         preg_match('/joinMeetingURL.[^<]+/', $join_response, $join_matches);
+         $url = substr($join_matches[0], 15);
+         $bean->url = $url;
      }
    }
 }

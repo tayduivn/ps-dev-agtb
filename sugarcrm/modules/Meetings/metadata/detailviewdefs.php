@@ -93,6 +93,9 @@ array (
            'password'
         ),
         array (
+           'url'
+        ),
+        array (
           array (
             'name' => 'reminder_checked',
             'fields' => 

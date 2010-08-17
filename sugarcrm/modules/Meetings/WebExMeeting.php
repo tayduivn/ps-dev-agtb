@@ -41,7 +41,8 @@ class WebExMeeting extends WebMeeting {
 		$doc->body->bodyContent->metaData->agenda = '';
 		
 		$doc->body->bodyContent->participants->maxUserNumber = '1';		
-		$attendee = $doc->body->bodyContent->participants->attendees->addChild('attendee', '');
+      $attendee = 
+         $doc->body->bodyContent->participants->attendees->addChild('attendee', '');
 		$person = $attendee->addChild('person');
 		$person->addChild('name', $GLOBALS['current_user']->full_name);
 		$person->addChild('email', $GLOBALS['current_user']->email1);
@@ -144,7 +145,7 @@ class WebExMeeting extends WebMeeting {
       $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
       $uri = strstr($this->account_url, "/");
       $xml = $doc->asXML();
-      echo "<br /><br />$xml<br /><br />";
+      //echo "<br /><br />$xml<br /><br />";
       $content_length = strlen($xml);
       $headers = array(
          "POST $uri HTTP/1.0",
