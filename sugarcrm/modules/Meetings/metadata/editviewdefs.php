@@ -90,26 +90,9 @@ array (
                 'name' => 'status',
               ),
             ),
-          ),
-          array (
-            'name' => 'type',
-            'fields' => 
-            array (
-              array (
-                'name' => 'type',
-              ),
-            ),
-          ),
-           array (
-            'name' => 'password',
-            'fields' => 
-            array (
-              array (
-                'name' => 'password',
-              ),
-            ),
-          ),
-        ),
+         ),
+      ),
+      array('type','password'),
         array (
           array (
             'name' => 'date_start',
@@ -120,13 +103,13 @@ array (
               'updateCallback' => 'SugarWidgetScheduler.update_time();',
             ),
           ),
-          1 => 
+          
           array (
             'name' => 'parent_name',
             'label' => 'LBL_LIST_RELATED_TO',
           ),
         ),
-        2 => 
+       
         array (
           array (
             'name' => 'duration_hours',

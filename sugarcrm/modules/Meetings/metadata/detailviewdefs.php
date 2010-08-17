@@ -92,8 +92,11 @@ array (
         array (
            'password'
         ),
+
         array (
-           'displayed_url'
+           array('name'=>'displayed_url',
+           'customCode'=>'{if !empty($fields.displayed_url.value)}<a href="{$fields.displayed_url.value}">Join Meeting</a>{/if}'
+        ),
         ),
         array (
            'creator'

@@ -79,7 +79,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   array (
     'name' => 'displayed_url',
     'vname' => 'LBL_URL',
-    'type' => 'varchar',
+    'type' => 'url',
     'len' => '400',
     'comment' => 'Meeting URL'
   ),

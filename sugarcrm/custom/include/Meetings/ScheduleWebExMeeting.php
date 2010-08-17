@@ -38,6 +38,7 @@ class ScheduleWebExMeeting {
             $duration,
             $bean->password
          );
+
          preg_match('/meetingkey.[0-9]+/', $meeting_response, $matches);
          $meeting_key= substr($matches[0], 11);
 

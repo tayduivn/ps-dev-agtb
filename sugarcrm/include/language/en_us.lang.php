@@ -403,6 +403,7 @@ $app_list_strings = array (
    array (
       'Other' => 'Other',
       'WebEx' => 'WebEx'
+      'GoToMeeting' => 'GoToMeeting'
    ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
