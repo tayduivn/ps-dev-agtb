@@ -46,6 +46,21 @@ class ScheduleWebExMeeting {
          preg_match('/joinMeetingURL.[^<]+/', $join_response, $join_matches);
          $url = substr($join_matches[0], 15);
          $bean->url = $url;
+
+         $invitees = $this->getInviteesArray($bean->users_arr);
+         foreach ($invitees as $invitee) {
+            $meeting->inviteAttendee($meeting_key, $invitee);
+         }
      }
+   }
+
+   private function getInviteesArray($ids) {
+      $rtn = array();
+      foreach ($ids as $id) {
+         $user = new User();
+         $user->retrieve($id);
+         $rtn[] = array('user_name' => $user->name, 'email' => $user->email1);
+      }
+      return $rtn;
    }
 }

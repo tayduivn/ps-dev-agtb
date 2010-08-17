@@ -97,6 +97,7 @@ class WebExMeeting extends WebMeeting {
       $person->addChild('name', $attendee['name']);
       $person->addChild('email', $attendee['email']);
       $body->addChild('sessionKey', $session);
+      $body->addChild('emailInvitations', 'true');
       return $this->postMessage($doc);
 	}
 
