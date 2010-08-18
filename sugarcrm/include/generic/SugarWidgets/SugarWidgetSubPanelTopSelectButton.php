@@ -98,7 +98,7 @@ class SugarWidgetSubPanelTopSelectButton extends SugarWidgetSubPanelTopButton
 			if (is_array($widget_data['initial_filter_fields'])) {
 				foreach ($widget_data['initial_filter_fields'] as $value=>$alias) {
 					if (isset($focus->$value) and !empty($focus->$value)) {
-						$initial_filter.="&".$alias . '='.$focus->$value;
+						$initial_filter.="&".$alias . '='.urlencode($focus->$value);
 					}
 				}
 			}
