@@ -176,7 +176,7 @@ SUGAR.expressions.GridToolTip = {
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_FIELDS')}
 	);
 	fieldsGrid.on("rowClickEvent", function(e){
-		Dom.get("formulaInput").value += "$" + e.target.firstChild.textContent;
+		Dom.get("formulaInput").value += "$" + YAHOO.lang.trim(e.target.firstChild.innerText);
 	});
 	
 	fieldDS.queryMatchContains = true;
@@ -235,7 +235,7 @@ SUGAR.expressions.GridToolTip = {
 	);
 	
 	functionsGrid.on("rowClickEvent", function(e){
-		Dom.get("formulaInput").value +=  e.target.firstChild.textContent + '(';
+		Dom.get("formulaInput").value +=  YAHOO.lang.trim(e.target.firstChild.innerText) + '(';
 	});
 	
 	var funcTip = new YAHOO.widget.Tooltip("functionsTooltip", {
