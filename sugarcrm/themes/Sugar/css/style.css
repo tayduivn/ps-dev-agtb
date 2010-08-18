@@ -3523,6 +3523,7 @@ span.id-ff.multiple button.button.lastChild{
 {
     background-image : url(../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png);
     background-repeat: repeat-x;
+	padding-left: 20px;
 }
 
 #moduleList.yuimenubar ul, #moduleList.yuimenubar li {
@@ -3572,6 +3573,10 @@ border: none;
 #moduleList.yuimenubar .yuimenuitemlabel.group img  {
 position: relative;
 left: 0px;
+}
+
+#moduleList.yuimenubar .moduleTabGroupMenu {
+float: right;
 }
 
 #moduleList.yuimenubar .yuimenuitemlabel.group {
@@ -3707,6 +3712,9 @@ background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.pn
 background:none\9;  /*ie hack */
 }
 
+#moduleList .moduleTabGroupMenu .dashletPanelMenu {
+margin-left: -20px;
+}
 
 #moduleList .dashletPanelMenu  .bd  {
 float: left;
