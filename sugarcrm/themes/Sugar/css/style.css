@@ -3523,8 +3523,6 @@ span.id-ff.multiple button.button.lastChild{
 {
     background-image : url(../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png);
     background-repeat: repeat-x;
-
-	padding-left: 20px;
 }
 
 #moduleList.yuimenubar ul, #moduleList.yuimenubar li {
@@ -3569,6 +3567,24 @@ border: none;
 
 #moduleList.yuimenubarnav .yuimenubaritem {
 border: none;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group img  {
+position: relative;
+left: 0px;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group {
+color: #999;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group img.folder  {
+margin-right:8px;
+top: -2px;
+}
+#moduleList.yuimenubar .yuimenuitemlabel.group img.arrow  {
+margin-left:8px;
+top: -2px;
 }
 
 #moduleList.yuimenubarnav .yuimenubaritemlabel-selected {

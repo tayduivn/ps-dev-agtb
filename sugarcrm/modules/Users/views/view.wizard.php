@@ -219,7 +219,6 @@ eoq;
         $mail_smtpuser = "";
         $mail_smtppass = "";
         $hide_if_can_use_default = true;
-        // BEGIN SUGARCRM flav!=sales ONLY
         if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
         {	
             $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
@@ -229,7 +228,6 @@ eoq;
             }
             $hide_if_can_use_default = empty($systemOutboundEmail->mail_smtpserver) ? true : false;
         }
-        // END SUGARCRM flav!=sales ONLY
         $this->ss->assign("mail_smtpdisplay", $mail_smtpdisplay);
         $this->ss->assign("mail_smtpuser", $mail_smtpuser);
         $this->ss->assign("mail_smtppass", $mail_smtppass);
