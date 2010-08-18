@@ -45,7 +45,7 @@
 //END SUGARCRM flav=een ONLY
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
     <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
-        {if !empty($vardef.calculated)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+        {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
     </td>
