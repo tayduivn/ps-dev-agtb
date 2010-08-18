@@ -1641,7 +1641,7 @@ abstract class DBManager
     {
         $GLOBALS['log']->info("Get One: . |$sql|");
         $this->checkConnection();
-        if(stripos($sql, ' LIMIT ') === false) {
+        if(!($this instanceof MysqlManager) || stripos($sql, ' LIMIT ') === false) {
             $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
         } else {
             // backward compatibility with queries having LIMIT
