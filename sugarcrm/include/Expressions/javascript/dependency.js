@@ -485,11 +485,23 @@ SUGAR.forms.Trigger = function(variables, condition) {
 SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	var handler = SUGAR.forms.AssignmentHandler;
 	if ( ! (this.variables instanceof Array) ) {
-		YAHOO.util.Event.addListener(handler.getElement(this.variables), "change", SUGAR.forms.Trigger.fire, this);
+		var el = handler.getElement(this.variables);
+		if (el.type && el.type.toUpperCase() == "CHECKBOX")
+		{
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+		} else {
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+		}
 		return;
 	}
 	for ( var i = 0; i < this.variables.length; i++){
-		YAHOO.util.Event.addListener(handler.getElement(this.variables[i]), "change", SUGAR.forms.Trigger.fire, this);
+		var el = handler.getElement(this.variables[i]);
+		if (el.type && el.type.toUpperCase() == "CHECKBOX")
+		{
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+		} else {
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+		}
 	}
 }
 

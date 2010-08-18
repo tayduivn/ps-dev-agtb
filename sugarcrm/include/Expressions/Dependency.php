@@ -143,13 +143,14 @@ class Dependency {
 	function fire(&$target) {
 		try {
 		  if ($this->trigger->evaluate($target) === true) {
-			$this->fireActions($target);
+			     $this->fireActions($target);
 			} else {
 				$this->fireActions($target, true);
 			}
 		} catch (Exception $e)
 		{
 			$GLOBALS['log']->fatal($e->getMessage());
+			$GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
 		}
 	}
 	
@@ -160,6 +161,7 @@ class Dependency {
 	 * @param boolean $useFalse
 	 */
 	private function fireActions(&$target, $useFalse = false) {
+		$action;
 		try {
 			$actions = $this->actions;
 			if ($useFalse)
@@ -170,6 +172,9 @@ class Dependency {
 		} catch (Exception $e)
         {
             $GLOBALS['log']->fatal($e->getMessage());
+            $GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
+            $GLOBALS['log']->fatal("Target was : " . print_r($action, true));
+            
         }
 	}
 	

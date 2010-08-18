@@ -24,8 +24,8 @@ require_once("include/Expressions/Expression/Parser/Parser.php");
 require_once("include/Expressions/Expression/AbstractExpression.php");
 
 class Trigger {
-	private $triggerFields = array();
-	private $conditionFunction = "";
+	public $triggerFields = array();
+	public $conditionFunction = "";
 	static $ValueNotSetError = -1;
 	
 	function Trigger($condition, $fields = array()) {
