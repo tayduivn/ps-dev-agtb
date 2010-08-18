@@ -27,11 +27,18 @@ class ValueOfExpression extends NumericExpression {
 	 */
 	function evaluate() {
 		$val = $this->getParameters()->evaluate();
-		$val = str_replace(",", "", $val);
-		if (strpos($val, ".") !== false) {
-			return (float) $val;
+		if (is_string($val))
+		{
+			$val = str_replace(",", "", $val);
+			if (strpos($val, ".") !== false) {
+				return (float) $val;
+			}
+			return (int) $val;
+		} else if (is_numeric($val))
+		{
+			return $val;
 		}
-		return (int) $val;
+		return 0;
 	}
 	
 	/**
@@ -41,9 +48,15 @@ class ValueOfExpression extends NumericExpression {
 		return <<<EOQ
 			var val = this.getParameters().evaluate() + "";
 			val = val.replace(/,/g, "");
+			var out = 0;
 			if (val.indexOf(".") != -1)
-				return parseFloat(val);
-			return parseInt(val);
+				out = parseFloat(val);
+			else 
+			    out = parseInt(val);
+			if (isNaN(out))
+			   return 0;
+			else
+			   return out;
 EOQ;
 	}
 	
@@ -66,7 +79,7 @@ EOQ;
 	 * All parameters have to be a string.
 	 */
 	function getParameterTypes() {
-		return AbstractExpression::$STRING_TYPE;
+		return AbstractExpression::$GENERIC_TYPE;
 	}
 }
 ?>
