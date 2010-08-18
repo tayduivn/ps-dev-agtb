@@ -402,7 +402,7 @@ $app_list_strings = array (
   'meeting_type_dom' =>
    array (
       'Other' => 'Other',
-      'WebEx' => 'WebEx'
+      'WebEx' => 'WebEx',
       'GoToMeeting' => 'GoToMeeting'
    ),
   'call_status_default' => 'Planned',
