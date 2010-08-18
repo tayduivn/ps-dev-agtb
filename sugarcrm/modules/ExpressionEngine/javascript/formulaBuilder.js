@@ -248,7 +248,7 @@ SUGAR.expressions.GridToolTip = {
 	funcTip.table = functionsGrid;
 	
 	funcTip.contextMouseOverEvent.subscribe(function(context, e){
-		var target = e[1].target;
+		var target =  e[1].srcElement;
 		if ((Dom.hasClass(target, "yui-dt-bd"))) {return false;}
 		
 		var row = this.table.getRecord(target);
@@ -263,7 +263,6 @@ SUGAR.expressions.GridToolTip = {
 		
 		return true;
 	});
-	
 	funcDS.queryMatchContains = true;
 	var funcAC = new YAHOO.widget.AutoComplete("formulaFuncSearch","funcSearchResults", funcDS);
 	funcAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
