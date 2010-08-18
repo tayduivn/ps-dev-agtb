@@ -52,7 +52,7 @@
 <form action="index.php" method="post" name="UpgradeWizardForm" id="form">
 	<input type="hidden" name="module" value="UpgradeWizard">
 	<input type="hidden" name="action" value="index">
-	<input type="hidden" name="step" value="{$UW_STEP}">
+	<input type="hidden" name="step" id="step" value="{$UW_STEP}">
 	<input type="hidden" name="overwrite_files" id="over">
 	<input type="hidden" name="schema_change" id="schema">
 	<input type="hidden" name="schema_drop"   id="schema_drop">
