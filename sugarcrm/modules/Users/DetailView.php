@@ -327,7 +327,7 @@ if(isset($oc_status)) {
 $sugar_smarty->assign("SETTINGS_URL", $sugar_config['site_url']);
 
 
-$sugar_smarty->assign("EXPORT_DELIMITER", getDelimiter());
+$sugar_smarty->assign("EXPORT_DELIMITER", $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('EXPORT_CHARSET', $locale->getExportCharset('', $focus));
 $sugar_smarty->assign('USE_REAL_NAMES', $focus->getPreference('use_real_names'));
 
