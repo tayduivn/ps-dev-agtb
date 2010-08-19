@@ -1021,6 +1021,18 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				select[count] = new Option(ajaxResponse[key], key);
 				count++;
 			}
+		},
+		setSelectedOption : function (sel, option)
+		{
+			var sel = Dom.get(sel);
+			for (var i = 0; i < sel.options.length; i++)
+			{
+				if(sel.options[i].value == option) {
+					sel.selectedIndex = i;
+					return true;
+				}
+			}
+			return false;
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
 		,moduleLoadFormula: function(formula, targetId){
@@ -1063,12 +1075,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			});
 			win.show();
 			win.center();
-			/*buttons: [{text:"Validate", handler: SUGAR.expressions.validateCurrExpression}, 
-	  		{text:"Save", handler: function(){
-	  			if (SUGAR.expressions.validateCurrExpression(true))
-	  				returnFunction(Ext.getCmp('formula_input').getValue());
-	  		}},
-	  		{text:"Close", handler: onCloseFunction}],*/
         },
         
 		toggleCF: function(enable) {
@@ -1078,9 +1084,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var display = enable ? "" : "none";
 			Dom.setStyle("formulaRow", "display", display);
 			Dom.setStyle("enforcedRow", "display", display);
-			Dom.get('enforced').value = enable;
-            Dom.get('calculated').value = enable;
-            //this.toggleEnforced();
+			Dom.get('calculated').value = enable;
+            this.toggleEnforced(enable);
         },
         toggleEnforced: function(enable) {
             if (typeof enable == "undefined")
@@ -1090,8 +1095,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var duplicate  = Dom.get('duplicate_merge');
             var disable = enable ? true : "";
             if (reportable) reportable.disabled = disable;
-            importable.disabled = disable;
-            duplicate.disabled = enable;
+            if(enable)
+            {
+            	ModuleBuilder.setSelectedOption(duplicate, '0');
+            	ModuleBuilder.setSelectedOption(importable, 'false');
+            }
+            importable.disable = disable;
+            duplicate.disable = disable;
             Dom.get("enforced").value = enable;
         },
         toggleDF: function(enable) {

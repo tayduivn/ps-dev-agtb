@@ -50,6 +50,7 @@
         {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
+		<script>ModuleBuilder.toggleCF({if empty($vardef.calculated)}false{else}true{/if})</script>
     </td>
 </tr>
 <tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>
