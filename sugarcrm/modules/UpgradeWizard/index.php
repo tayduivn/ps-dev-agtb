@@ -37,7 +37,6 @@ if(!is_admin($current_user)) {
 	sugar_die($app_strings['ERR_NOT_ADMIN']);
 }
 
-
 require_once('include/utils/db_utils.php');
 
 require_once('include/utils/zip_utils.php');
@@ -309,6 +308,8 @@ if($upgradeStepFile == 'end'){
 
 require('modules/UpgradeWizard/'.$upgradeStepFile.'.php');
 
+$afterCurrentStep = $_REQUEST['step'] + 1;
+
 ////	END LOGIC
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -457,9 +458,14 @@ function handlePreflight(step) {
 			}
 		}
 		
+		var merge_necessary = true;
 		if(step == 'layouts')
-		   getSelectedModulesForLayoutMerge();
-		  
+		   merge_necessary = getSelectedModulesForLayoutMerge();
+		
+		if(!merge_necessary){
+			document.getElementById('step').value = '{$afterCurrentStep}';
+		}
+		
 		return;
 	}
 
@@ -474,6 +480,7 @@ function handleUploadCheck(step, u_allow) {
 
 function getSelectedModulesForLayoutMerge()
 {
+	var found_one = false;
     var results = new Array();
     var table = document.getElementById('layoutSelection');
     var moduleCheckboxes = table.getElementsByTagName('input');
@@ -483,6 +490,7 @@ function getSelectedModulesForLayoutMerge()
         if( typeof(singleCheckbox.type) != 'undefined' && singleCheckbox.type == 'checkbox' 
             && singleCheckbox.name.substring(0,2) == 'lm' && singleCheckbox.checked )
         {
+            found_one = true;
             results.push(singleCheckbox.name.substring(3)); //remove the 'lm_' key
         }
     }  
@@ -496,6 +504,7 @@ function getSelectedModulesForLayoutMerge()
     
     var upgradeForms = document.getElementsByName('UpgradeWizardForm');
     upgradeForms[0].appendChild(selectedModulesElement);
+    return found_one;
 }
 </script>
 eoq;

@@ -185,15 +185,30 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 {
 	// retrieve the variable
 	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
-	if ( field == null )	return null;
+		
+	if ( field == null )	
+		field = YAHOO.util.Dom.get(variable);
+
+	if ( field == null )	
+		return null;
 
 	// now check if this field is locked
 	if ( SUGAR.forms.AssignmentHandler.LOCKS[variable] != null ) {
 		throw ("Circular Reference Detected");
 	}
 
-	// TODO: Detect field types and add error handling.
-	field.value = value;
+	//Detect field types and add error handling.
+	if (Dom.hasClass(field, "imageUploader"))
+	{
+		var img = Dom.get("img_" + field.id);
+		img.src = value;
+		img.style.visibility = "";
+	} 
+	else {
+		field.value = value;
+	}
+	
+	
 
 	// animate
 	if ( SUGAR.forms.AssignmentHandler.ANIMATE )

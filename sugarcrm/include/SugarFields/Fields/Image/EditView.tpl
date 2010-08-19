@@ -46,18 +46,23 @@
 	type="file" id="{{$idname}}" name="{{$idname}}" 
 	title="" size="30" maxlength="255" value="" tabindex="0" 
 	onchange="SUGAR.image.confirm_imagefile('{{$idname}}');" 
-	{if !empty({{sugarvar key='value' string=true}})}
+	class="imageUploader"
+	{if !empty({{sugarvar key='value' string=true}}) {{if !empty($vardef.calculated)}}|| true{{/if}} }
 	style="display:none"
 	{/if}
 />
 
-{if empty({{sugarvar key='value' string=true}})}
+{if empty({{sugarvar key='value' string=true}}) {{if !empty($vardef.calculated)}}&& false{{/if}}}
 {else}
-<a href="javascript:SUGAR.image.lightbox('index.php?entryPoint=download&id={{sugarvar key='value'}}&type=SugarFieldImage&isTempFile=1')">
+<a href="javascript:SUGAR.image.lightbox(Dom.get('img_{{$idname}}').src)">
 <img 
 	id="img_{{$idname}}" 
 	name="img_{{$idname}}" 	
-	src='index.php?entryPoint=download&id={{sugarvar key='value'}}&type=SugarFieldImage&isTempFile=1'
+	{{if empty($vardef.calculated)}}
+	   src='index.php?entryPoint=download&id={{sugarvar key='value'}}&type=SugarFieldImage&isTempFile=1'
+	{{else}}
+	   src='{{sugarvar key='value'}}'
+	{{/if}}
 	style='
 		{if "{{$vardef.border}}" eq ""}
 			border: 0; 
@@ -74,9 +79,13 @@
 		{else}
 			height: {{$vardef.height}}px;
 		{/if}
+		{if empty({{sugarvar key='value' string=true}})} 
+		  visibility:hidden;
+		{/if}
 		'	
 
 ></a>
+{{if empty($vardef.calculated)}}
 <img 
 	id="bt_remove_{{$idname}}" 
 	name="bt_remvoe_{{$idname}}" 
@@ -89,4 +98,5 @@
 <input 
 	id="remove_imagefile_{{$idname}}" name="remove_imagefile_{{$idname}}" 
 	type="hidden"  value="" />
+{{/if}}
 {/if}
