@@ -423,18 +423,23 @@ class SugarView
                 
 				$subMoreModules = false;
 				$groupTabs = $groupedTabsClass->get_tab_structure(get_val_array($modules));
+                // We need to put this here, so the "All" group is valid for the user's preference.
+                $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
 
                 // Setup the default group tab.
                 $tmp = array_keys($groupTabs);
                 $ss->assign('currentGroupTab',$tmp[0]);
-                // Figure out which tab they currently have selected (stored in a cookie)                
-                if ( isset($_COOKIE['sugar_theme_gm_current']) ) {
-                    if ( isset($groupTabs[$_COOKIE['sugar_theme_gm_current']]) ) {
-                        $ss->assign('currentGroupTab',$_COOKIE['sugar_theme_gm_current']);
-                    }
+                $currentGroupTab = $tmp[0];
+                $usersGroup = $current_user->getPreference('theme_current_group');
+                // Figure out which tab they currently have selected (stored as a user preference)
+                if ( !empty($usersGroup) && isset($groupTabs[$usersGroup]) ) {
+                    $currentGroupTab = $usersGroup;
+                } else {
+                    $current_user->setPreference('theme_current_group',$currentGroupTab);
                 }
 
+                $ss->assign('currentGroupTab',$currentGroupTab);
                 $usingGroupTabs = true;
                 
             } else {
@@ -442,9 +447,11 @@ class SugarView
                 $ss->assign('currentGroupTab',$app_strings['LBL_TABGROUP_ALL']);
 
                 $usingGroupTabs = false;
+
+                $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
+
             }
             
-            $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
             $topTabList = array();
             
