@@ -250,7 +250,7 @@ SUGAR.expressions.GridToolTip = {
 	funcTip.table = functionsGrid;
 	
 	funcTip.contextMouseOverEvent.subscribe(function(context, e){
-		var target =  e[1].srcElement;
+		var target =  e[1].srcElement  ? e[1].srcElement : e[1].target;
 		if ((Dom.hasClass(target, "yui-dt-bd"))) {return false;}
 		
 		var row = this.table.getRecord(target);
