@@ -197,7 +197,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 	$display = (!empty($fieldArray['display_default']) && $fieldArray['display_default'] == true ? "block" : "none");
 	//Leon bug 20739
 	$t_mod_strings=return_module_language($GLOBALS['current_language'], $modFilter);
-	echo "<div id=\"div_{$app_list_strings['moduleList'][$modFilter]}\" style=\"display:$display\">\n";
+	echo "<div id=\"reassign_{$GLOBALS['beanList'][$modFilter]}\" style=\"display:$display\">\n";
 	echo "<h5 style=\"padding-left:0px; margin-bottom:4px;\">{$app_list_strings['moduleList'][$modFilter]} ", " {$mod_strings_users['LBL_REASS_FILTERS']}</h5>\n";
 	foreach($fieldArray['fields'] as $meta){
 		$multi = "";
@@ -544,13 +544,13 @@ function updateDivDisplay(multiSelectObj){
             allselected[i] = multiSelectObj.options[i].selected;
             
             if(allselected[i]){
-                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
+                theElement = document.getElementById('reassign_'+multiSelectObj.options[i].value);
                 if(theElement != null){
                     theElement.style.display = 'block';
                 }
             }
             else{
-                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
+                theElement = document.getElementById('reassign_'+multiSelectObj.options[i].value);
                 if(theElement != null){
                     theElement.style.display = 'none';
                 }
