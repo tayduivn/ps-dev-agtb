@@ -761,7 +761,9 @@ EOHTML;
         $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></A>\n";
 
           //END SUGARCRM lic=sub ONLY
-
+        
+        // Bug 38594 - Add in Trademark wording
+        $copyright .= 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.<br />';
 
         //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displaye regardless, so no need
 		//to display an empty image here.

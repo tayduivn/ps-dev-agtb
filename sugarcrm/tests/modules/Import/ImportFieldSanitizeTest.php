@@ -769,6 +769,34 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
+     * @group bug38885
+     */
+    public function testRelateToUserNameWhenFullNameIsGiven()
+    {
+        // setup
+        $beanList = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        
+        $accountFocus = new Account;
+        $userFocus = SugarTestUserUtilities::createAnonymousUser();
+        
+        $this->assertEquals(
+            $userFocus->user_name,
+            $this->_ifs->relate(
+                $userFocus->full_name,
+                $accountFocus->field_defs['assigned_user_name'],
+                $accountFocus,
+                false)
+            );
+        
+        // teardown
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
+    }
+    
+    /**
      * @group bug27562
      */
     public function testRelateCreateRecordUsingMultipleFieldToLinkRecords()
