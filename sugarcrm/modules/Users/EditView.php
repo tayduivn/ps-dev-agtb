@@ -705,7 +705,12 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
             $mail_smtppass = $userOverrideOE->mail_smtppass;
         }
 
-        $hide_if_can_use_default = empty($systemOutboundEmail->mail_smtpserver) ? true : false;
+        if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
+            $hide_if_can_use_default = true;
+        }
+        else{
+            $hide_if_can_use_default = false;
+        }
     }
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
     $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);
