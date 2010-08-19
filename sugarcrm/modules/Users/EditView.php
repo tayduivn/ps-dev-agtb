@@ -492,6 +492,30 @@ $sugar_smarty->assign("USER_THEME_COLOR", $focus->getPreference('user_theme_colo
 $sugar_smarty->assign("USER_THEME_FONT", $focus->getPreference('user_theme_font'));
 $sugar_smarty->assign("USER_THEME", $user_theme);
 
+// Build a list of themes that support group modules
+$sugar_smarty->assign("DISPLAY_GROUP_TAB", 'none');
+
+$selectedTheme = $user_theme;
+if(!isset($user_theme)) {
+    $selectedTheme = $GLOBALS['sugar_config']['default_theme'];
+}
+
+$themeList = SugarThemeRegistry::availableThemes();
+$themeGroupList = array();
+
+foreach ( $themeList as $themeId => $themeName ) {
+    $currThemeObj = SugarThemeRegistry::get($themeId);
+    if ( isset($currThemeObj->group_tabs) && $currThemeObj->group_tabs == 1 ) {
+        $themeGroupList[$themeId] = true;
+        if ( $themeId == $selectedTheme ) {
+            $sugar_smarty->assign("DISPLAY_GROUP_TAB", '');
+        }
+    } else {
+        $themeGroupList[$themeId] = false;
+    }
+}
+$sugar_smarty->assign("themeGroupListJSON",json_encode($themeGroupList));
+
 $sugar_smarty->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $focus->getPreference('mail_sendtype')));
 $reminder_time = $focus->getPreference('reminder_time');
 if(empty($reminder_time)){
