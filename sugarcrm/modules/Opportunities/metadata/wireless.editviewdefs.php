@@ -26,7 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
 $viewdefs['Opportunities']['EditView'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
