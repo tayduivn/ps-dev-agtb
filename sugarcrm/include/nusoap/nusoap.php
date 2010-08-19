@@ -3645,7 +3645,7 @@ class soap_server extends nusoap_base {
 	function serialize_return() {
 		$this->debug('Entering serialize_return methodname: ' . $this->methodname . ' methodURI: ' . $this->methodURI);
 		// if fault
-		if (isset($this->methodreturn) && (get_class($this->methodreturn) == 'soap_fault')) {
+		if (isset($this->methodreturn) && is_object($this->methodreturn) && (get_class($this->methodreturn) == 'soap_fault')) {
 			$this->debug('got a fault object from method');
 			$this->fault = $this->methodreturn;
 			return;
@@ -3748,7 +3748,7 @@ class soap_server extends nusoap_base {
         	$payload .= $this->getDebugAsXMLComment();
         }
 		$this->outgoing_headers[] = "Server: $this->title Server v$this->version";
-		preg_match('\$Revisio' . 'n: ([^ ]+)', $this->revision, $rev);
+		preg_match('|\$Revisio' . 'n: ([^ ]+)|', $this->revision, $rev);
 		$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".$rev[1].")";
 		// Let the Web server decide about this
 		//$this->outgoing_headers[] = "Connection: Close\r\n";
