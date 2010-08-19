@@ -29,7 +29,9 @@
 
 // $Id: enum.tpl 35784 2008-05-20 21:31:40Z dwheeler $
 *}
-{if $vardef.type != 'enum'}
+{if $vardef.type != 'enum' && $vardef.type != 'address' && $vardef.type != 'date' && $vardef.type != 'datetimecombo'
+ && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
+ && $vardef.type != 'url'}
 //BEGIN SUGARCRM flav=een ONLY
 {*<tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
@@ -66,7 +68,7 @@
     </td>
 </tr>
 //END SUGARCRM flav=een ONLY
-{else}
+{elseif $vardef.type == 'enum'}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DYNAMIC_VALUES_CHECKBOX"}:</td>
 	<td>
