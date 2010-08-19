@@ -68,7 +68,6 @@
         {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
     </td>
 </tr>
-//END SUGARCRM flav=een ONLY
 {elseif $vardef.type == 'enum'}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DYNAMIC_VALUES_CHECKBOX"}:</td>
@@ -84,4 +83,5 @@
 		<input type='hidden' name='visibility_grid' id='visibility_grid' value='{$visiblity_grid}'>
 	</td>
 </tr>
+//END SUGARCRM flav=een ONLY
 {/if}
