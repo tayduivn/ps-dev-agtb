@@ -176,7 +176,8 @@ SUGAR.expressions.GridToolTip = {
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_FIELDS')}
 	);
 	fieldsGrid.on("rowClickEvent", function(e){
-		Dom.get("formulaInput").value += "$" + YAHOO.lang.trim(e.target.firstChild.innerText);
+		var record = this.getRecord(e.target);
+		Dom.get("formulaInput").value += "$" + record.getData().name;
 	});
 	
 	fieldDS.queryMatchContains = true;
@@ -235,7 +236,8 @@ SUGAR.expressions.GridToolTip = {
 	);
 	
 	functionsGrid.on("rowClickEvent", function(e){
-		Dom.get("formulaInput").value +=  YAHOO.lang.trim(e.target.firstChild.innerText) + '(';
+		var record = this.getRecord(e.target);
+		Dom.get("formulaInput").value +=  record.getData().name + '(';
 	});
 	
 	var funcTip = new YAHOO.widget.Tooltip("functionsTooltip", {
@@ -300,6 +302,9 @@ SUGAR.expressions.GridToolTip = {
 	functionsGrid.render();
 
 	Dom.setStyle(Dom.get("formulaBuilder").parentNode, "padding", "0");
+	
+	if(ModuleBuilder && ModuleBuilder.formulaEditorWindow)
+		ModuleBuilder.formulaEditorWindow.center();
 };
 
 //SUGAR.expressions.FormulaPanel.show();
