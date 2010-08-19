@@ -46,6 +46,51 @@ class ScheduleMeeting {
          foreach ($invitees as $invitee) {
             $this->meeting->inviteAttendee($meeting_key, $invitee);
          }
+      } elseif ($bean->type == 'GoToMeeting') {
+         $this->eapm_appname = 'gotomeeting';
+         $this->url_extension = '/axis/services/G2M_Organizers';
+         $this->meeting_classname = 'GoToMeeting';
+         $this->date_format = 'Y-m-d\TH:i:s';
+         $meeting_response = $this->schedule_meeting($bean, $event, $arguments);
+
+         preg_match(
+            '/joinURL<.name>[\s]*<value xsi:type="xsd:string">([^<]+)/', 
+            $meeting_response, 
+            $matches
+         );
+         echo '----------------------';
+         echo $meeting_response;
+         $bean->join_url = $matches[1];
+         echo '++++++++++++++++++++++++';
+         echo $bean->join_url;
+
+         $pattern = 
+            '/uniqueMeetingId<.name>[\s]*<value xsi:type="xsd:string">([0-9]+)/';
+         preg_match($pattern, $meeting_response, $ukey_matches);
+         $unique_meeting_id = $ukey_matches[1];
+         echo '__________________________________';
+         echo $unique_meeting_id;
+
+         $pattern = '/id="id5"[^>]+>([0-9]+)/';
+         preg_match($pattern, $meeting_response, $key_matches);
+         $meeting_id = $key_matches[1];
+
+         $keys = array($meeting_id, $unique_meeting_id);
+         $host_response = $this->meeting->hostMeeting($keys);
+         echo ']]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]';
+         echo $host_response;
+
+         $pattern = '/startMeetingReturn\sxsi:type="xsd:string">([^<]+)/';
+         preg_match($pattern, $host_response, $host_matches);
+         echo '[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[';
+         $bean->host_url = $host_matches[1];
+         echo $bean->host_url;
+
+         $this->meeting->logoff();
+
+
+         //$bean->host_url = $host_matches[1];
+
       }
    }
 

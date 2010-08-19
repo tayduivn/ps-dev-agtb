@@ -40,3 +40,39 @@ xmlns:impl="G2M_Organizers">
   </soap:Body>
 </soap:Envelope>
 SCH;
+
+$host_xml = <<<HST
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+xmlns:impl="G2M_Organizers">
+  <soap:Body
+soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <impl:startMeeting>
+      <connectionId
+xsi:type="xsd:string"></connectionId>
+      <meetingId xsi:type="xsd:long"></meetingId>
+      <uniqueMeetingId xsi:type="xsd:string"></uniqueMeetingId>
+    </impl:startMeeting>
+  </soap:Body>
+</soap:Envelope>
+HST;
+
+$logoff_xml = <<<LGF
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+xmlns:impl="G2M_Organizers">
+  <soap:Body
+soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <impl:logoff>
+      <connectionId
+xsi:type="xsd:string"></connectionId>
+    </impl:logoff>
+  </soap:Body>
+</soap:Envelope>
+LGF;

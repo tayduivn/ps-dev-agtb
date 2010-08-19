@@ -15,6 +15,8 @@ class GoToMeeting extends WebMeeting {
 
       $this->login_xml = $login_xml;
       $this->schedule_xml = $schedule_xml;
+      $this->host_xml = $host_xml;
+      $this->logoff_xml = $logoff_xml;
    }
 
    function login() {
@@ -37,7 +39,22 @@ class GoToMeeting extends WebMeeting {
       return $response;
    }
 
+   function logoff() {
+      $doc = new SimpleXMLElement($this->logoff_xml);
+      $namespaces = $doc->getDocNamespaces();
+      $body = $doc->children($namespaces['soap']);
+      $impl = $body[0]->children($namespaces['impl']);
+      $child = $impl[0];
+      $child->connectionId = $this->login_key;
+
+      return $this->postMessage($doc);
+   }
+
    function scheduleMeeting($name, $startDate, $duration, $password) { 
+      if (!isset($this->login_key)) {
+         $this->login();
+      }
+
       $doc = new SimpleXMLElement($this->schedule_xml);
       $namespaces = $doc->getDocNamespaces();
       $body = $doc->children($namespaces['soap']);
@@ -48,7 +65,9 @@ class GoToMeeting extends WebMeeting {
       $createMeeting->meetingParameters->startTime = $startDate;
       if ($password != '') {
          $createMeeting->meetingParameters->passwordRequired = 'true';
-      } 
+      } else {
+         $createMeeting->meetingParameters->passwordRequired = 'false';
+      }
 
       return $this->postMessage($doc);
    }
@@ -59,7 +78,21 @@ class GoToMeeting extends WebMeeting {
    function joinMeeting($meeting, $attendeeName){
    }
 
-   function hostMeeting($meeting){
+   function hostMeeting($meeting_keys){
+      if (!isset($this->login_key)) {
+         $this->login();
+      }
+      
+      $doc = new SimpleXMLElement($this->host_xml);
+      $namespaces = $doc->getDocNamespaces();
+      $body = $doc->children($namespaces['soap']);
+      $impl = $body[0]->children($namespaces['impl']);
+      $startMeeting = $impl[0];
+      $startMeeting->connectionId = $this->login_key;
+      $startMeeting->meetingId = $meeting_keys[0];
+      $startMeeting->uniqueMeetingId = $meeting_keys[1];
+
+      return $this->postMessage($doc);
    }
 	
    function inviteAttendee($meeting, $attendee){

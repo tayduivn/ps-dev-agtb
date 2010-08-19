@@ -10,8 +10,8 @@ class MeetingsViewDetail extends ViewDetail {
    }
 
    function display() {
-      if ($this->bean->type == 'WebEx') {
-         $login_info = EAPM::getLoginInfo('webex');
+      if ($this->bean->type != 'Other') {
+         $login_info = EAPM::getLoginInfo(strtolower($this->bean->type));
          if ($login_info['name'] == $this->bean->creator) {
             $this->bean->displayed_url = $this->bean->host_url;
          } else {
