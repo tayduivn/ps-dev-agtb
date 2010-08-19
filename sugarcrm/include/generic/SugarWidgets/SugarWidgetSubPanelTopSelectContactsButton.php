@@ -110,7 +110,7 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 			if (is_array($widget_data['initial_filter_fields'])) {
 				foreach ($widget_data['initial_filter_fields'] as $value=>$alias) {
 					if (isset($focus->$value) and !empty($focus->$value)) {
-						$initial_filter.="&".$alias . '='.$focus->$value;
+						$initial_filter.="&".$alias . '='.urlencode($focus->$value);
 					}
 				}
 			}
@@ -151,7 +151,7 @@ class SugarWidgetSubPanelTopSelectContactsButton extends SugarWidgetSubPanelTopS
 		if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data']['return_type'])) {
 			
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='report') {
-				$initial_filter = "&module_name=${widget_data['module']}";
+				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
 			//BEGIN SUGARCRM flav!=sales ONLY
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='addtoprospectlist') {
