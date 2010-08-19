@@ -497,6 +497,13 @@ class ImportFieldSanitize
                     $focus->$idField = '';
             }
             
+            // Bug 38356 - Populate the table entry in the vardef from the bean information in case it's not provided
+            if (!isset($vardef['table'])) {
+                // Set target module table as the default table name
+                $tmpfocus = loadBean($vardef['module']);
+                $vardef['table'] = $tmpfocus->table_name;
+            }
+            
             // be sure that the id isn't already set for this row
             if ( empty($focus->$idField)
                     && $idField != $vardef['name']
