@@ -46,6 +46,8 @@ class ScheduleMeeting {
          foreach ($invitees as $invitee) {
             $this->meeting->inviteAttendee($meeting_key, $invitee);
          }
+
+         $bean->external_id = $meeting_key;
       } elseif ($bean->type == 'GoToMeeting') {
          $this->eapm_appname = 'gotomeeting';
          $this->url_extension = '/axis/services/G2M_Organizers';
@@ -88,6 +90,10 @@ class ScheduleMeeting {
 
          $this->meeting->logoff();
 
+         // The GoToMeeting API requires 'meetingId' and 'uniqueMeetingId',
+         // two separate ids, to edit a meeting.  So I'm saving them both,
+         // separated by a dash.
+         $bean->external_id = $keys[0] . '-' . $keys[1];
 
          //$bean->host_url = $host_matches[1];
 

@@ -91,6 +91,14 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting creator'
   ),
+  'external_id' =>
+  array (
+    'name' => 'external_id',
+    'vname' => 'LBL_EXTERNALID',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting ID for external app API'
+   ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',

@@ -94,6 +94,7 @@ $mod_strings = array (
    'LBL_PASSWORD' => 'Meeting Password',
    'LBL_URL' => 'Meeting URL',
    'LBL_CREATOR' => 'Meeting Creator',
+   'LBL_EXTERNALID' => 'External app ID',
 	'LBL_SUBJECT' => 'Subject:',
 	'LBL_TIME' => 'Start Time:',
 	'LBL_USERS_SUBPANEL_TITLE' => 'Users',
