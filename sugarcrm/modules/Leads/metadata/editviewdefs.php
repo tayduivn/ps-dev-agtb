@@ -119,12 +119,12 @@ $viewdefs['Leads']['EditView'] = array(
     ),  
   
     array(
-       'campaign_name',
+       'opportunity_amount',
        'refered_by'
     ),       
 	
 	array (
-	    '',
+	    'campaign_name',
 	    'do_not_call',
 	), 
     
