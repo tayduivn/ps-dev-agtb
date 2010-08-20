@@ -50,7 +50,6 @@ class Configurator {
 	}
 
 	function populateFromPost() {
-		echo "in populateFromPost\n";
 		$sugarConfig = SugarConfig::getInstance();
 		foreach ($_POST as $key => $value) {
 			if (isset ($this->config[$key]) || in_array($key, $this->allow_undefined)) {

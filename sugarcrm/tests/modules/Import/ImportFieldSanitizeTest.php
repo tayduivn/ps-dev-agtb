@@ -831,7 +831,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(
             $userFocus->user_name,
             $this->_ifs->relate(
-                $userFocus->full_name,
+                $userFocus->first_name.' '.$userFocus->last_name,
                 $accountFocus->field_defs['assigned_user_name'],
                 $accountFocus,
                 false)
