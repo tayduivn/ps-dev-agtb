@@ -371,6 +371,8 @@ class TemplateField{
                 else {
                 	$array['enforced'] = false;
                 }
+            } else {
+            	$array['calculated'] = false;
             }
             if (!empty($this->dependency) && is_string($this->dependency)) {
                 $array['dependency'] = html_entity_decode($this->dependency);
