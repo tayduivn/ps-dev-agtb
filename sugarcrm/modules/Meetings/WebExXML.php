@@ -20,7 +20,6 @@ $schedule_xml = <<<EXM
          </accessControl>
          <metaData>
             <confName></confName>
-            <meetingType>0</meetingType>
             <agenda></agenda>
          </metaData>
          <participants>
@@ -206,3 +205,56 @@ $hostmeeting_xml = <<<HST
    </body>
 </serv:message>
 HST;
+
+$edit_xml = <<<EDT
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <header>
+      <securityContext>
+         <webExID></webExID>
+         <password></password>
+         <siteID></siteID>
+         <siteName></siteName>
+         <partnerID></partnerID>
+      </securityContext>
+   </header>
+   <body>
+      <bodyContent
+          xsi:type="java:com.webex.service.binding.meeting.SetMeeting">
+         <metaData>
+            <confName></confName>
+            <agenda></agenda>
+         </metaData>
+         <accessControl>
+            <meetingPassword></meetingPassword>
+         </accessControl>
+         <participants>
+            <maxUserNumber>1</maxUserNumber>
+            <attendees></attendees>
+         </participants>
+         <enableOptions>
+            <chat>true</chat>
+            <poll>true</poll>
+            <audioVideo>true</audioVideo>
+         </enableOptions>
+         <schedule>
+            <startDate></startDate>
+            <duration></duration>
+            <timeZoneID></timeZoneID>
+         </schedule>
+         <telephony>
+            <telephonySupport>CALLIN</telephonySupport>
+            <extTelephonyDescription>
+            </extTelephonyDescription>
+         </telephony>
+         <remind>
+            <enableReminder>false</enableReminder>
+         </remind>
+         <attendeeOptions>
+            <auto>false</auto>
+         </attendeeOptions>
+         <meetingkey></meetingkey>
+      </bodyContent>
+   </body>
+</serv:message>
+EDT;

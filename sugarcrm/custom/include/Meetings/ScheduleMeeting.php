@@ -27,7 +27,7 @@ class ScheduleMeeting {
          $this->url_extension = '/WBXService/XMLService';
          $this->meeting_classname = 'WebExMeeting';
          $this->date_format = 'm/d/Y H:i:s';
-         if (!isset($bean->external_id)) {
+         if ($bean->external_id == '') {
             // New meeting
             $meeting_response = $this->schedule_meeting($bean, $event, $arguments);
 
@@ -44,15 +44,38 @@ class ScheduleMeeting {
             $host_url = substr($host_matches[0], 15);
             $bean->host_url = $host_url;
 
-            $invitees = $this->getInviteesArray($bean->users_arr);
-            foreach ($invitees as $invitee) {
-               $this->meeting->inviteAttendee($meeting_key, $invitee);
-            }
-
             $bean->external_id = $meeting_key;
          } else {
-            // TODO: Editing existing meeting
+            // Editing existing meeting
+            $row = EAPM::getLoginInfo($this->eapm_appname);
+            $url = $row['url'];
+            if ($url[strlen($url)-1] == "/") {
+      	      $url = substr($url, 0, -1);
+            }
+            $url .= $this->url_extension;
 
+            $this->meeting = WebMeetingFactory::getInstance(
+               $this->meeting_classname, 
+               $url, 
+               $row['name'],
+               $row['password']
+            );
+
+            $duration = (60 * (int)($bean->duration_hours)) +
+               ((int)($bean->duration_minutes));
+            $params = array( 
+               'name' => $bean->name,
+               'startDate' => date($this->date_format, strtotime($bean->date_start)),
+               'duration' => $duration,
+               'password' => $bean->password
+            );
+            $response = $this->meeting->editMeeting($bean->external_id, $params);
+         }
+
+         // After creating or editing, invite attendees
+         $invitees = $this->getInviteesArray($bean->users_arr);
+         foreach ($invitees as $invitee) {
+            $this->meeting->inviteAttendee($bean->external_id, $invitee);
          }
       } elseif ($bean->type == 'GoToMeeting') {
          $this->eapm_appname = 'gotomeeting';

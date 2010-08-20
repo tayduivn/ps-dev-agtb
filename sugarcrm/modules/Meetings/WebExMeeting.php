@@ -18,6 +18,7 @@ class WebExMeeting extends WebMeeting {
       $this->uninvite_xml = $uninvite_xml;
       $this->joinmeeting_xml = $joinmeeting_xml;
       $this->hostmeeting_xml = $hostmeeting_xml;
+      $this->edit_xml = $edit_xml;
    }
 	
 	
@@ -29,10 +30,14 @@ class WebExMeeting extends WebMeeting {
 	 * @param string $password
 	 * return: The XML response from the WebEx server.
 	 */
-	function scheduleMeeting($name, $startDate, $duration, $password) {
+	function scheduleMeeting($name, $startDate, $duration, $password, $meeting='') {
 		global $current_user;
 		
-      $doc = new SimpleXMLElement($this->schedule_xml);
+      if ($meeting != '') {
+         $doc = new SimpleXMLElement($this->edit_xml);
+      } else {
+         $doc = new SimpleXMLElement($this->schedule_xml);
+      }
 		$this->addAuthenticationInfo($doc);
 		
 		$doc->body->bodyContent->accessControl->meetingPassword = $password;
@@ -53,11 +58,30 @@ class WebExMeeting extends WebMeeting {
 		$doc->body->bodyContent->schedule->duration = $duration;
 		//ID of 20 is GMT
 		$doc->body->bodyContent->schedule->timeZoneID = '20';
-		
+      
+      if ($meeting != '') {
+         $doc->body->bodyContent->meetingkey = $meeting;
+      }
+
 		return $this->postMessage($doc);
 	}
 	
+	/**
+	 * Edit an existing webex meeting
+	 * @param string $name
+	 * @param string $startdate
+	 * @param string $duration
+	 * @param string $password
+	 * return: The XML response from the WebEx server.
+	 */
    function editMeeting($meeting, $params) {
+      return $this->scheduleMeeting(
+         $params['name'], 
+         $params['startDate'],
+         $params['duration'],
+         $params['password'],
+         $meeting
+      );
    }
 
 	/**
@@ -176,7 +200,7 @@ class WebExMeeting extends WebMeeting {
       $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
       $uri = strstr($this->account_url, "/");
       $xml = $doc->asXML();
-      //echo "<br /><br />$xml<br /><br />";
+      echo "<br /><br />$xml<br /><br />";
       $content_length = strlen($xml);
       $headers = array(
          "POST $uri HTTP/1.0",
