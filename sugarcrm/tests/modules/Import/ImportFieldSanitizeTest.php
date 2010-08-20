@@ -821,18 +821,32 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // setup
         $beanList = array();
+        $beanFiles = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         
         $accountFocus = new Account;
         $userFocus = SugarTestUserUtilities::createAnonymousUser();
+        $vardef = array(
+            "name" => "assigned_user_name",
+            "link" => "assigned_user_link",
+            "vname" => "LBL_ASSIGNED_TO_NAME",
+            "rname" => "user_name",
+            "type" => "relate",
+            "reportable" => false,
+            "source" => "non-db",
+            "table" => "users",
+            "id_name" => "assigned_user_id",
+            "module" => "Users",
+            "duplicate_merge" => "disabled",
+            );
         
         $this->assertEquals(
             $userFocus->user_name,
             $this->_ifs->relate(
                 $userFocus->first_name.' '.$userFocus->last_name,
-                $accountFocus->field_defs['assigned_user_name'],
+                $vardef,
                 $accountFocus,
                 false)
             );
