@@ -63,10 +63,6 @@ $viewdefs['Contacts']['EditView'] = array(
         array (
           array (
             'name' => 'last_name',
-            'displayParams' => 
-            array (
-              'required' => true,
-            ),
           ),
           array (
             'name' => 'phone_work',
