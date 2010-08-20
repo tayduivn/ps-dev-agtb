@@ -17,6 +17,7 @@ class GoToMeeting extends WebMeeting {
       $this->schedule_xml = $schedule_xml;
       $this->host_xml = $host_xml;
       $this->logoff_xml = $logoff_xml;
+      $this->edit_xml = $edit_xml;
    }
 
    function login() {
@@ -63,10 +64,52 @@ class GoToMeeting extends WebMeeting {
       $createMeeting->connectionId = $this->login_key;
       $createMeeting->meetingParameters->subject = $name;
       $createMeeting->meetingParameters->startTime = $startDate;
+
+      /* From the GoToMeeting API docs:
+       *
+       * 'Note: If passwordRequired is set to True then a password will be 
+       * requested of the organizer when starting the meeting. The password is 
+       * selected by the organizer and communicated to the attendees before the 
+       * meeting is started. The organizer must properly enter the password 
+       * communicated, otherwise the authentication will be different and the 
+       * attendees will not be able to join the meeting until the proper password
+       * is provided by the organizer.'
+       *
+       * Since the password is chosen at the start of the meeting, the value
+       * passed here can't be used.
+       * If a non-empty string is passed, the meeting will be created with
+       * the password option on.
+       */
       if ($password != '') {
          $createMeeting->meetingParameters->passwordRequired = 'true';
       } else {
          $createMeeting->meetingParameters->passwordRequired = 'false';
+      }
+
+      return $this->postMessage($doc);
+   }
+
+   function editMeeting($meeting_keys, $params) {
+      if (!isset($this->login_key)) {
+         $this->login();
+      }
+
+      $doc = new SimpleXMLElement($this->edit_xml);
+      $namespaces = $doc->getDocNamespaces();
+      $body = $doc->children($namespaces['soap']);
+      $impl = $body[0]->children($namespaces['impl']);
+      $updateMeeting = $impl[0];
+
+      $updateMeeting->connectionId = $this->login_key;
+      $updateMeeting->meetingId = $meeting_keys[0];
+      $updateMeeting->uniqueMeetingId = $meeting_keys[1];
+
+      $updateMeeting->meetingParameters->subject = $params['subject']; 
+      $updateMeeting->meetingParameters->startTime = $params['startTime']; 
+      if ($params['password'] != '') {
+         $updateMeeting->meetingParameters->passwordRequired = 'true';
+      } else {
+         $updateMeeting->meetingParameters->passwordRequired = 'false';
       }
 
       return $this->postMessage($doc);

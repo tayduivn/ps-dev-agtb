@@ -76,3 +76,28 @@ xsi:type="xsd:string"></connectionId>
   </soap:Body>
 </soap:Envelope>
 LGF;
+
+$edit_xml = <<<EDT
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+   xmlns:impl="G2M_Organizers">
+  <soap:Body soap:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+    <impl:updateMeeting>
+      <connectionId xsi:type="xsd:string"></connectionId>
+      <meetingId xsi:type="xsd:long"></meetingId>
+      <uniqueMeetingId xsi:type="xsd:string"></uniqueMeetingId>
+      <meetingParameters xsi:type="impl:MeetingParameters">
+        <subject xsi:type="xsd:string"></subject>
+        <startTime xsi:type="xsd:dateTime"></startTime>
+        <timeZoneKey xsi:type="xsd:string">50</timeZoneKey>
+        <conferenceCallInfo xsi:type="xsd:string">Free</conferenceCallInfo>
+        <meetingType xsi:type="xsd:string">Scheduled</meetingType>
+        <passwordRequired xsi:type="xsd:boolean"></passwordRequired>
+      </meetingParameters>
+    </impl:updateMeeting>
+  </soap:Body>
+</soap:Envelope>
+EDT;

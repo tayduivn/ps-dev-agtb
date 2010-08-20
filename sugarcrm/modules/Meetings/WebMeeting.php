@@ -3,6 +3,8 @@
 abstract class WebMeeting {
 	
 	abstract function scheduleMeeting($name, $startdate, $duration, $password);
+
+   abstract function editMeeting($meeting, $params);
 	
 	abstract function unscheduleMeeting($meeting);
 	

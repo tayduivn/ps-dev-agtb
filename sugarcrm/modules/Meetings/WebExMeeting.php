@@ -57,6 +57,9 @@ class WebExMeeting extends WebMeeting {
 		return $this->postMessage($doc);
 	}
 	
+   function editMeeting($meeting, $params) {
+   }
+
 	/**
 	 * Delete an existing WebEx meeting.
 	 * @param string $meeting - The WebEx meeting key.
