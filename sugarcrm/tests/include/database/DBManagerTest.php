@@ -1115,9 +1115,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->dropTableName($tablename);
     }
     
-    public function testCompareVarDefs()
+    public function providerCompareVardefs()
     {
-        $this->assertTrue($this->_db->compareVarDefs(
+        $returnArray = array(
+            array(
                 array(
                     'foo' => array (
                         'name' => 'foo',
@@ -1131,10 +1132,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'type' => 'varchar',
                         'len' => '255',
                         ),
-                )
-            ));
-        
-        $this->assertFalse($this->_db->compareVarDefs(
+                ), 
+                true),
+            array(
                 array(
                     'foo' => array (
                         'name' => 'foo',
@@ -1148,10 +1148,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'type' => 'varchar',
                         'len' => '255',
                         ),
-                )
-            ));
-        
-        $this->assertFalse($this->_db->compareVarDefs(
+                ),
+                false),
+            array(
                 array(
                     'foo' => array (
                     'name' => 'foo',
@@ -1164,10 +1163,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                         'name' => 'foo',
                         'len' => '255',
                         ),
-                )
-            ));
-        
-        $this->assertFalse($this->_db->compareVarDefs(
+                ),
+                false),
+            array(
                 array(
                     'foo' => array (
                         'name' => 'foo',
@@ -1177,11 +1175,40 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 array(
                     'foo' => array (
                         'name' => 'foo',
-                    'type' => 'varchar',
+                        'type' => 'varchar',
                         'len' => '255',
                         ),
-                )
-            ));
+                ),
+                false),
+            array(
+                array(
+                    'foo' => array (
+                        'name' => 'foo',
+                        'type' => 'varchar',
+                        'len' => '255',
+                        ),
+                    ),
+                array(
+                    'foo' => array (
+                        'name' => 'FOO',
+                        'type' => 'varchar',
+                        'len' => '255',
+                        ),
+                ), 
+                true),
+            );
+        
+        return $returnArray;
+    }
+    
+    public function testCompareVarDefs($fieldDef1,$fieldDef2,$expectedResult)
+    {
+        if ( $expectedResult ) {
+            $this->assertTrue($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
+        }
+        else {
+            $this->assertFalse($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
+        }
     }
     
     public function providerConvert()
