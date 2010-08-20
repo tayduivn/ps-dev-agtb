@@ -4637,6 +4637,7 @@ margin: 0 4px 0 0;
 
 .yuimenuitem-hassubmenu > a{
     background-image: url(../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png);
+	background-position:right -87px;
 }
 
  .yui-navset .yui-nav li a,.yui-navset-top .yui-nav li a, .yui-navset-bottom .yui-nav li a,
