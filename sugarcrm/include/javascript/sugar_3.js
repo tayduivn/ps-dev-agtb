@@ -608,7 +608,14 @@ function add_error_style(formname, input, txt) {
 	if ( txt.substring(txt.length-1) == ':' )
 	    txt = txt.substring(0,txt.length-1)
 	
-	if(inputHandle.parentNode.innerHTML.search(txt) == -1) {
+	// Bug 28249 - To help avoid duplicate messages for an element, strip off extra messages and
+	// match on the field name itself
+	requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
+    invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
+    nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
+    matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
+	
+	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
         errorTextNode.innerHTML = '<br />' + txt;
