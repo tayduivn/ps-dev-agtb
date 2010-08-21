@@ -72,7 +72,7 @@ $module_menu = Array(
 	Array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker"),
 //END SUGARCRM flav=ent ONLY
 	);
-
+	
 if(!(ACLController::checkAccess('Reports', 'edit', true)))
 {
     $module_menu = Array(
