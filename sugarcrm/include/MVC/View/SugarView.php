@@ -473,7 +473,9 @@ class SugarView
                         $lastElem = array_splice($topTabs,$max_tabs-1);
                         $extraTabs = $lastElem + $extraTabs;
                     }
-                    $topTabs[$moduleTab] = $app_list_strings['moduleList'][$moduleTab];
+                    if ( !empty($moduleTab) ) {
+                        $topTabs[$moduleTab] = $app_list_strings['moduleList'][$moduleTab];
+                    }
                 }
                 
                 
@@ -1003,7 +1005,7 @@ EOHTML;
             return $moduleTabMap[$this->module];
         // Special cases
         elseif ( $this->module == 'MergeRecords' )
-            return $_REQUEST['return_module'];
+            return !empty($_REQUEST['merge_module']) ? $_REQUEST['merge_module'] : $_REQUEST['return_module'];
         elseif ( $this->module == 'Users' && $this->action == 'SetTimezone' )
             return 'Home';
         // Default anonymous pages to be under Home
