@@ -419,6 +419,7 @@ $mod_strings = array(
 'LBL_SEARCH_FUNCS' => 'Search Functions...',
 'LBL_SEARCH_FIELDS' => 'Search Fields...',
 'LBL_FORMULA' => 'Formula',
+'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
 //END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS

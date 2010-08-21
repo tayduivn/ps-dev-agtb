@@ -1100,8 +1100,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
             	ModuleBuilder.setSelectedOption(duplicate, '0');
             	ModuleBuilder.setSelectedOption(importable, 'false');
             }
-            importable.disable = disable;
-            duplicate.disable = disable;
+            importable.disabled = disable;
+            duplicate.disabled = disable;
             Dom.get("enforced").value = enable;
         },
         toggleDF: function(enable) {
