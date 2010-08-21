@@ -324,7 +324,6 @@ array (
 		'type' => 'link',
 		'vname' => 'LBL_CONTRACTS',
 		'relationship' => 'contracts_contacts',
-		'link_type' => 'one',
 		'source' => 'non-db',
 	),
 //END SUGARCRM flav=pro ONLY

@@ -273,6 +273,18 @@ $layout_defs['Contacts'] = array(
 			'title_key' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
 		),
 //END SUGARCRM flav!=dce && flav!=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+		'contracts' => array(
+			'order' => 120,
+			'sort_order' => 'desc',
+			'sort_by' => 'end_date',
+			'module' => 'Contracts',
+			'subpanel_name' => 'default',
+			'get_subpanel_data' => 'contracts',
+			'add_subpanel_data' => 'contract_id',
+			'title_key' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
+		),
+        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>
