@@ -323,7 +323,7 @@ array (
 		'name' => 'contracts',
 		'type' => 'link',
 		'vname' => 'LBL_CONTRACTS',
-		'relationship' => 'contracts_quotes',
+		'relationship' => 'contracts_contacts',
 		'link_type' => 'one',
 		'source' => 'non-db',
 	),
