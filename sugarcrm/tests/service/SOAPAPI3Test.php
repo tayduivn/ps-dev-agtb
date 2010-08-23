@@ -197,7 +197,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetModuleLayoutMD5()
     {
         $result = $this->_getModuleLayoutMD5();
-        $this->assertEquals($result['faultcode'],'Client');
+        $this->assertContains('Client',$result['faultcode']);
         
     }
     
