@@ -49,12 +49,12 @@ if(isset($_REQUEST['record'])) {
     	sugar_die($app_strings['ERROR_NO_RECORD']);
     }
 }
-else 
+else
 {
     if(!empty($_REQUEST['mailbox_type']))
         $focus->mailbox_type = $_REQUEST['mailbox_type'];
-        
-    //Default to imap protocol for new accounts.    
+
+    //Default to imap protocol for new accounts.
     $focus->protocol = 'imap';
 }
 
@@ -65,7 +65,7 @@ if($focus->mailbox_type == 'bounce')
 }
 else
     unset($domMailBoxType['bounce']);
-        
+
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$GLOBALS['log']->debug("isDuplicate found - duplicating record of id: ".$focus->id);
 	$focus->id = "";
@@ -219,7 +219,7 @@ $xtpl->assign('NAME', $focus->name);
 $xtpl->assign('STATUS', $status);
 $xtpl->assign('SERVER_URL', $focus->server_url);
 $xtpl->assign('USER', $focus->email_user);
-$xtpl->assign('PASSWORD', $focus->email_password);
+// Don't send password back $xtpl->assign('PASSWORD', $focus->email_password);
 $xtpl->assign('TRASHFOLDER', $trashFolder);
 $xtpl->assign('SENTFOLDER', $sentFolder);
 $xtpl->assign('MAILBOX', $mailbox);
@@ -245,9 +245,9 @@ if(!empty($focus->port)) {
 $groupId = "";
 $is_auto_import = "";
 $allow_outbound = '';
-if(isset($focus->id)) 
+if(isset($focus->id))
 	$groupId = $focus->group_id;
-else 
+else
 {
 	$groupId = create_guid();
 	$is_auto_import = 'checked';
@@ -286,26 +286,26 @@ if($focus->is_personal) {
 	$xtpl->assign('AUTO_IMPORT_STYLE', "display:''");
 	$ret = $folder->getFoldersForSettings($current_user);
 
-	//For existing records, do not allow 
+	//For existing records, do not allow
 	$is_auto_import_disabled = "";
-	if (!empty($focus->groupfolder_id)) 
+	if (!empty($focus->groupfolder_id))
 	{
 		$is_auto_import = "checked";
 	    $xtpl->assign('EDIT_GROUP_FOLDER_STYLE', "visibility:inline");
 		$leaveMessagesOnMailServerStyle = "display:''";
 		$allow_outbound = (isset($storedOptions['allow_outbound_group_usage']) && $storedOptions['allow_outbound_group_usage'] == 1) ? 'CHECKED'  : '';
-	} 
-	else 
+	}
+	else
 	{
 		$xtpl->assign('EDIT_GROUP_FOLDER_STYLE', "visibility:hidden");
-	} 
-    
+	}
+
 	$xtpl->assign('ALLOW_OUTBOUND_USAGE', $allow_outbound);
 	$xtpl->assign('IS_AUTO_IMPORT', $is_auto_import);
-	
-	if ($focus->isMailBoxTypeCreateCase()) 
+
+	if ($focus->isMailBoxTypeCreateCase())
 		$createCaseRowStyle = "display:''";
-	
+
 }
 
 $xtpl->assign('hasGrpFld',$focus->groupfolder_id == null ? '' : 'checked="1"');
@@ -395,13 +395,13 @@ if ($focus->mailbox_type == 'bounce')
 }
 elseif ($focus->mailbox_type == 'createcase')
     $xtpl->assign("IS_CREATE_CASE", 'checked');
-    
+
 else if( $focus->is_personal == '1')
      $xtpl->assign('MODULE_TITLE', get_module_title($mod_strings['LBL_MODULE_TITLE'], $mod_strings['LBL_PERSONAL_MODULE_NAME'].": ".$focus->name, true));
 
-//else 
+//else
 
-    
+
 $xtpl->parse("main");
 $xtpl->out("main");
 ?>

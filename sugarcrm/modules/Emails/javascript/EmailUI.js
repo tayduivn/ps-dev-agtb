@@ -693,7 +693,6 @@ SE.accounts = {
         }
         document.getElementById('server_url').value = o.server_url;
         document.getElementById('email_user').value = o.email_user;
-        document.getElementById('email_password').value = o.email_password;
         document.getElementById('port').value = o.port;
         document.getElementById('group_id').value = o.group_id;
         document.getElementById('mailbox').value = o.mailbox;
@@ -951,9 +950,6 @@ SE.accounts = {
         }
         if(trim(email_user) == "") {
             errors.push(app_strings.LBL_EMAIL_ERROR_USER);
-        }
-        if(trim(email_password) == "") {
-            errors.push(app_strings.LBL_EMAIL_ERROR_PASSWORD);
         }
         if(protocol == "") {
             errors.push(app_strings.LBL_EMAIL_ERROR_PROTOCOL);
