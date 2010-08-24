@@ -482,8 +482,14 @@ class SugarBean
     	// '0' stands for the first index for all the audit tables
     	$indices[0]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[0]['name'];
     	$indices[1]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[1]['name'];
+    	$engine = null;
+    	if(isset($dictionary['audit']['engine'])) {
+    	    $engine = $dictionary['audit']['engine'];
+    	} else if($dictionary[$this->getObjectName()]['engine']) {
+    	    $engine = $dictionary[$this->getObjectName()]['engine'];
+    	}
 
-    	$sql=$this->dbManager->helper->createTableSQLParams($table_name, $fieldDefs, $indices);
+    	$sql=$this->dbManager->helper->createTableSQLParams($table_name, $fieldDefs, $indices, $engine);
 
     	$msg = "Error creating table: ".$table_name. ":";
     	$this->dbManager->query($sql,true,$msg);
