@@ -129,10 +129,27 @@ class UnifiedSearchAdvanced {
 			// MFH BUG 15404: Added support to trim off whitespace at the beginning and end of a search string
 			$_REQUEST['query_string'] = trim($_REQUEST['query_string']);
 			foreach($modules_to_search as $moduleName => $beanName) {
-                $unifiedSearchFields = array () ;
+                require_once $beanFiles[$beanName] ;
+                $seed = new $beanName();
+                
+                $lv = new ListViewSmarty();
+                $lv->lvd->additionalDetails = false;
+                $mod_strings = return_module_language($current_language, $seed->module_dir);
+                if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php')){
+                    require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+                }else{
+                    require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+                }
+                if ( !isset($listViewDefs) || !isset($listViewDefs[$seed->module_dir]) )
+                    continue;
+                
+			    $unifiedSearchFields = array () ;
                 $innerJoins = array();
                 foreach ( $unified_search_modules[ $moduleName ]['fields'] as $field=>$def )
                 {
+                    if ( empty($listViewDefs[$seed->module_dir][strtoupper($field)]['default']) )
+                        continue;
+                            
                     //bug: 34125 we might want to try to use the LEFT JOIN operator instead of the INNER JOIN in the case we are
                     //joining against a field that has not been populated.
                     if(!empty($def['innerjoin']) ){
@@ -149,8 +166,6 @@ class UnifiedSearchAdvanced {
                  * Use searchForm2->generateSearchWhere() to create the search query, as it can generate SQL for the full set of comparisons required
                  * generateSearchWhere() expects to find the search conditions for a field in the 'value' parameter of the searchFields entry for that field
                  */
-                require_once $beanFiles[$beanName] ;
-                $seed = new $beanName();
                 require_once 'include/SearchForm/SearchForm2.php' ;
                 $searchForm = new SearchForm ( $seed, $moduleName ) ;
 
@@ -171,16 +186,6 @@ class UnifiedSearchAdvanced {
                                     if (count($where_clauses) > 0 )
                                         $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
 
-                $lv = new ListViewSmarty();
-                $lv->lvd->additionalDetails = false;
-                $mod_strings = return_module_language($current_language, $seed->module_dir);
-                if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php')){
-                    require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-                }else{
-                    require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-                }
-                if ( !isset($listViewDefs) || !isset($listViewDefs[$seed->module_dir]) )
-                    continue;
                 $displayColumns = array();
                 foreach($listViewDefs[$seed->module_dir] as $colName => $param) {
                     if(!empty($param['default']) && $param['default'] == true) {
