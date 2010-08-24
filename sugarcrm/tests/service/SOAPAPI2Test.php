@@ -58,11 +58,12 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetEntryForContact() {
     	$result = $this->_getEntryForContact();
     	if (empty($this->_soapClient->faultcode)) {
+    	    var_dump($result);
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
     			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call") &&
     			($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')) {
     			
-    			$this->assertTrue(($result['entry_list'][0]['name_value_list'][2]['value'] == 1), ("testGetEntryForContact method - Get Entry For contact is not same as Set Entry" . $result['entry_list'][0]['name_value_list'][2]['value'] . " yes"));
+    			$this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],1,"testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
     		} // else
     	} else {
     		$this->assertTrue(empty($this->_soapClient->faultcode), 'Can not retrieve newly created contact. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
