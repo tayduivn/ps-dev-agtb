@@ -178,9 +178,9 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 			$this->createXTemplate();
 
 		$html_var = $this->subpanel_module . "_CELL";
-		
+
 		$list_data = $this->processUnionBeans($sugarbean,$subpanel_def, $html_var);
-		
+
 		$list = $list_data['list'];
 		$parent_data = $list_data['parent_data'];
 
@@ -189,8 +189,8 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
 		} else {
 			$thepanel=$subpanel_def;
 		}
-		
-		
+
+
 
 		$this->process_dynamic_listview_header($thepanel->get_module_name(), $thepanel, $html_var);
 		$this->process_dynamic_listview_rows($list,$parent_data, 'dyn_list_view', $html_var,$subpanel_def);
@@ -740,7 +740,7 @@ function displayArrow() {
  * Contributor(s): ______________________________________.
 */
  function setSessionVariable($localVarName,$varName, $value) {
-	$_SESSION[$this->local_current_module."_".$localVarName."_".$varName] = $value;		
+	$_SESSION[$this->local_current_module."_".$localVarName."_".$varName] = $value;
 }
 
 function setUserVariable($localVarName,$varName, $value) {
@@ -759,7 +759,7 @@ function setUserVariable($localVarName,$varName, $value) {
 	if(isset($_REQUEST[$this->getSessionVariableName($localVarName, $varName)])) {
 		$this->setSessionVariable($localVarName,$varName,$_REQUEST[$this->getSessionVariableName($localVarName, $varName)]);
 	}
-		
+
 	if(isset($_SESSION[$this->getSessionVariableName($localVarName, $varName)])) {
 	 	return $_SESSION[$this->getSessionVariableName($localVarName, $varName)];
 	 }
@@ -847,7 +847,7 @@ function getUserVariable($localVarName, $varName) {
 		}
 
 		$list_view_row_count = $row_count;
-		$this->processListNavigation($xtemplateSection,$html_varName, $current_offset, $next_offset, $previous_offset, $row_count, null, null, empty($seed->list_fields) ? null : count($seed->list_fields));
+		$this->processListNavigation($xtemplateSection,$html_varName, $current_offset, $next_offset, $previous_offset, $row_count, null, null, empty($seed->column_fields) ? null : count($seed->column_fields));
 
 		return $list;
 	}
@@ -868,12 +868,12 @@ function getUserVariable($localVarName, $varName) {
 			if(isset($subpanel_def->_instance_properties['sort_order'])) {
 			    $sort_order = $subpanel_def->_instance_properties['sort_order'];
 			}
-			
+
 			if(isset($_SESSION['last_sub' .$this->subpanel_module. '_order'])) {
 				// We swap the order when the request contains an offset (indicating a column sort issued);
 				// otherwise we do not sort.  If we don't make this check, then the subpanel listview will
 				// swap ordering each time a new record is entered via quick create forms
-				
+
 				if(isset($_REQUEST[$module. '_' . $html_var . '_offset'])) {
 				  	$this->sort_order = $_SESSION['last_sub' .$this->subpanel_module. '_order'] == 'asc' ? 'desc' : 'asc';
 				} else {
@@ -886,17 +886,17 @@ function getUserVariable($localVarName, $varName) {
 		}
 
 
-		if(isset($subpanel_def->_instance_properties['sort_by'])) 
+		if(isset($subpanel_def->_instance_properties['sort_by']))
 			$this->query_orderby = $subpanel_def->_instance_properties['sort_by'];
-        else 
+        else
         	$this->query_orderby = 'id';
-        	
+
         $this->getOrderBy($html_var,$this->query_orderby, $this->sort_order);
 
 		$_SESSION['last_sub' .$this->subpanel_module. '_order'] = $this->sort_order;
 		$_SESSION['last_sub' .$this->subpanel_module. '_url'] = $this->getBaseURL($html_var);
 
-		
+
 		if(!empty($this->response)){
 			$response =& $this->response;
 			echo 'cached';
@@ -937,9 +937,9 @@ function getUserVariable($localVarName, $varName) {
 			/*fixes an issue with deletes when doing a search*/
 			foreach(array_merge($_GET, $_POST) as $name=>$value) {
 				//echo ("$name = $value <br/>");
-				if(!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY") 
-						&& $name != ListView::getSessionVariableName($html_varName,"offset") 
-						/*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables)) 
+				if(!empty($value) && $name != 'sort_order' //&& $name != ListView::getSessionVariableName($html_varName,"ORDER_BY")
+						&& $name != ListView::getSessionVariableName($html_varName,"offset")
+						/*&& substr_count($name, "ORDER_BY")==0*/ && !in_array($name, $blockVariables))
 				{
 					if(is_array($value)) {
 						foreach($value as $valuename=>$valuevalue) {
@@ -1187,7 +1187,7 @@ function getUserVariable($localVarName, $varName) {
 			//BEGIN SUGARCRM flav=sales ONLY
 			$merge_link = "&nbsp;";
 			//END SUGARCRM flav=sales ONLY
-			
+
 			$selected_objects_span = "&nbsp;|&nbsp;{$this->local_app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly name='selectCount[]' value='" . (!empty($select_entire_list) ? $row_count : 0) . "' />";
 
 			if($_REQUEST['module'] == 'Home' || $this->local_current_module == 'Import'

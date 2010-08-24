@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/********************************************************************************* 
+/*********************************************************************************
  * $Id: SugarBean.php 57513 2010-07-16 21:07:48Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
@@ -293,6 +293,9 @@ class SugarBean
             if (!empty($dictionary[$this->object_name]['fields'])) {
                 foreach ($dictionary[$this->object_name]['fields'] as $key=>$value_array) {
                     $column_fields[] = $key;
+                    if(!empty($value_array['required']) && !empty($value_array['name'])) {
+                        $this->required_fields[$value_array['name']] = 1;
+                    }
                 }
                 $this->column_fields = $column_fields;
             }
@@ -353,7 +356,7 @@ class SugarBean
     		ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
     		//END SUGARCRM flav=pro ONLY
     	}
-    	$this->populateDefaultValues();  	
+    	$this->populateDefaultValues();
     	//BEGIN SUGARCRM flav=pro ONLY
     	if(isset($this->disable_team_security)){
     		$this->disable_row_level_security = $this->disable_team_security;
@@ -614,22 +617,22 @@ class SugarBean
      * Basically undoes the effects of SugarBean::populateDefaultValues(); this method is best called right after object
      * initialization.
      */
-    public function unPopulateDefaultValues() 
+    public function unPopulateDefaultValues()
     {
         if ( !is_array($this->field_defs) )
             return;
-        
+
         foreach ($this->field_defs as $field => $value) {
-            if( (isset($value['default']) || !empty($value['display_default'])) 
+            if( (isset($value['default']) || !empty($value['display_default']))
                     && !empty($this->$field)
-                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default'])) 
+                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default']))
                     ) {
                 $this->$field = null;
             }
         }
     }
-    
-    
+
+
     function populateDefaultValues($force=false){
         if ( !is_array($this->field_defs) )
             return;
@@ -1357,7 +1360,7 @@ class SugarBean
 
 		}
 		$this->updateCalculatedFields();
-		
+
 		//END SUGARCRM flav=pro ONLY
 		if($isUpdate && !$this->update_date_entered)
 		{
@@ -1365,10 +1368,10 @@ class SugarBean
 		}
 		// call the custom business logic
 		$custom_logic_arguments['check_notify'] = $check_notify;
-		
+
 		$this->call_custom_logic("before_save", $custom_logic_arguments);
 		unset($custom_logic_arguments);
-		
+
 		if(isset($this->custom_fields))
 		{
 			$this->custom_fields->bean =& $this;
@@ -1652,7 +1655,7 @@ class SugarBean
 
 		return $this->id;
 	}
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Retrieves and executes the CF dependencies for this bean
@@ -2559,7 +2562,7 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						$value = implode($list_column,' ');
 						// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
-						if ( $this->db->dbType == 'mssql' 
+						if ( $this->db->dbType == 'mssql'
 						     && $source == 'db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
@@ -3070,7 +3073,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	$custom_join = false;
     	if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
     	{
-    		
+
     		$custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
     		if($custom_join)
     		{
@@ -3127,7 +3130,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	{
     		$fields = 	$this->field_defs;
     	}
-		
+
         $used_join_key = array();
 
     	foreach($fields as $field=>$value)
@@ -4461,7 +4464,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	{
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 		$db = &DBManagerFactory::getInstance('listviews');
-			
+
 		if(!empty($row_offset) && $row_offset != 0 && !empty($limit) && $limit != -1)
 		{
 			$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $template->object_name list: ");
