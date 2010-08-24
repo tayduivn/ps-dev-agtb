@@ -465,9 +465,10 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 					action.exec();
 			}
 		}
-		
 	} catch (e) {
-		if (console && console.log){ console.log('ERROR: ' + e );}
+		if (!SUGAR.isIE && console && console.log){ 
+			console.log('ERROR: ' + e);
+		}
 		return;
 	}
 };
@@ -542,7 +543,9 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	try {
 		eval = SUGAR.forms.evalVariableExpression(obj.condition);
 	} catch (e) {
-		{if (console && console.log) console.log('ERROR:' + e);}
+		if (!SUGAR.isIE && console && console.log){ 
+			console.log('ERROR:' + e + "; in Condition: " + obj.condition);
+		}
 	}
 
 	// evaluate the result
