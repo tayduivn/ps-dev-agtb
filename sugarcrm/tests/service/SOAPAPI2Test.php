@@ -97,10 +97,15 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     } // fn
     
     
-    public function testGetRelationshipForOpportunity() {
+    public function testGetRelationshipForOpportunity() 
+    {    
     	global $soap_version_test_contactId;
     	$result = $this->_getRelationshipForOpportunity();
-    	$this->assertTrue((($result['entry_list'][0]['id'] == $soap_version_test_contactId) && ($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')), ("testGetRelationshipForOpportunity - Get Relationship of Opportynity to Contact failed " . $result['entry_list'][0]['id'] . " " . $soap_version_test_contactId . " " . $result['relationship_list'][0][0]['records'][0][1]['value']));  	
+    	$this->assertEquals(
+    	    $result['entry_list'][0]['id'],
+    	    $soap_version_test_contactId, 
+    	    "testGetRelationshipForOpportunity - Get Relationship of Opportunity to Contact failed"
+            );  	
     } // fn
     
     public function testSearchByModule() {
