@@ -1120,87 +1120,70 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $returnArray = array(
             array(
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
                     ),
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                ), 
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
                 true),
             array(
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                    'type' => 'char',
-                        'len' => '255',
-                        ),
-                    ),
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                ),
-                false),
-            array(
-                array(
-                    'foo' => array (
                     'name' => 'foo',
-                        'type' => 'char',
-                        'len' => '255',
-                        ),
+                    'type' => 'char',
+                    'len' => '255',
                     ),
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'len' => '255',
-                        ),
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                false),
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'char',
+                    'len' => '255',
+                    ),
+                array(
+                    'name' => 'foo',
+                    'len' => '255',
                 ),
                 false),
             array(
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'len' => '255',
-                        ),
+                    'name' => 'foo',
+                    'len' => '255',
                     ),
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                ),
-                false),
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                true),
             array(
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
                     ),
                 array(
-                    'foo' => array (
-                        'name' => 'FOO',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                ), 
+                    'name' => 'FOO',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ), 
                 true),
             );
         
         return $returnArray;
     }
     
+    /**
+     * @dataProvider providerCompareVarDefs
+     */
     public function testCompareVarDefs($fieldDef1,$fieldDef2,$expectedResult)
     {
         if ( $expectedResult ) {
@@ -1388,10 +1371,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-      * @group bug33283
-      * @dataProvider providerConvert
+     * @group bug33283
+     * @dataProvider providerConvert
      */
-     public function testConvert(
+    public function testConvert(
          array $parameters,
          $result
         )
