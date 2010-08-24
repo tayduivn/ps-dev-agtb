@@ -3897,6 +3897,10 @@ SUGAR.util.isLoginPage = function(content)
 	}
 }
 
+SUGAR.util.ajaxCallInProgress = function(){
+	return SUGAR_callsInProgress != 0;
+}
+
 SUGAR.util.closeActivityPanel = {
     show:function(module,id,new_status,viewType,parentContainerId){
         if (SUGAR.util.closeActivityPanel.panel) 

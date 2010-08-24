@@ -25,14 +25,16 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: sugar_connection_event_listener.js 24711 2007-07-27 01:51:57Z awu $
+// $Id: sugar_connection_event_listener.js 
+SUGAR_callsInProgress = 0;
 
-YAHOO.util.Connect.successEvent.subscribe(function(event, data){
-	if (SUGAR.util.isLoginPage(data.responseText))
+YAHOO.util.Connect.completeEvent.subscribe(function(event, data){
+	SUGAR_callsInProgress--;
+	if (SUGAR.util.isLoginPage(data[0].conn.responseText))
 		return false;
 });
 
-YAHOO.util.Connect.completeEvent.subscribe(function(event, data){
-	if (SUGAR.util.isLoginPage(data[0].conn.responseText))
-		return false;
+YAHOO.util.Connect.startEvent.subscribe(function(event, data)
+{
+	SUGAR_callsInProgress++;
 });
