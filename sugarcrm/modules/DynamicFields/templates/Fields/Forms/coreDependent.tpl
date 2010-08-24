@@ -31,7 +31,7 @@
 *}
 {if $vardef.type != 'enum' && $vardef.type != 'address' && $vardef.type != 'date' && $vardef.type != 'datetimecombo'
  && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
- && $vardef.type != 'url'}
+ && $vardef.type != 'url' && $vardef.type != 'parent'}
 //BEGIN SUGARCRM flav=een ONLY
 {*<tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
