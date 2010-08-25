@@ -519,10 +519,10 @@ SugarWizard.changeScreen('{/literal}{$START_PAGE}{literal}');
 document.onkeypress = SugarWizard.handleKeyStroke;
 
 function adjustEmailSettings(){
-    if( document.getElementById('mail_smtpserver').value == null ||
-		document.getElementById('mail_smtpuser').value == null ||
-		document.getElementById('mail_smtppass').value == null ||
-		document.getElementById('mail_smtpport').value == null)
+    if( !document.getElementById('mail_smtpserver').value ||
+		!document.getElementById('mail_smtpuser').value ||
+		!document.getElementById('mail_smtppass').value ||
+		!document.getElementById('mail_smtpport').value)
 	{
 			document.getElementById('mail_smtpserver').value = null;
 			document.getElementById('mail_smtpuser').value = null;
