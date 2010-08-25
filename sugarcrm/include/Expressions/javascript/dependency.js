@@ -198,7 +198,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 	}
 
 	//Detect field types and add error handling.
-	if (Dom.hasClass(field, "imageUploader"))
+	if (YAHOO.util.Dom.hasClass(field, "imageUploader"))
 	{
 		var img = Dom.get("img_" + field.id);
 		img.src = value;
