@@ -211,10 +211,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
 	Y.spot = function(q){
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + q, spotResults);
+		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + escape(q), spotResults);
 	}
 	DCMenu.spotZoom = function(q, module, offset){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + q + '&zoom=' + module + '&offset=' + offset,  spotResults);
+		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + escape(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
 	spotResults = function(id, data){
 		var overlay = setBody(data.responseText, 0, 'sugar_spot_search');
