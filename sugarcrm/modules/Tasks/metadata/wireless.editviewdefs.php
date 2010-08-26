@@ -43,7 +43,7 @@ $viewdefs['Tasks']['EditView'] = array(
 		array('assigned_user_name'),
 	    //BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
+		//END SUGARCRM flav=pro ONLY
 	),
 );
 ?>
