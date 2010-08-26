@@ -50,11 +50,11 @@
 	{/if}
 	<tr>
 		<td class='mbLBL' ><font color="#ff0000"> * </font><b>{$mod_strings.LBL_PACKAGE_NAME}</b></td><td>
-		<input type='text' name='name' size=50 value={$package->name}>
+		<input type='text' name='name' size='36' maxlength='36' value={$package->name}>
 		</td>
 	</tr>
 	<tr>
-		<td class='mbLBL' ><b>{$mod_strings.LBL_AUTHOR}</b></td><td><input type='text' name='author' size=50 value={$package->author}></td>
+		<td class='mbLBL' ><b>{$mod_strings.LBL_AUTHOR}</b></td><td><input type='text' name='author' size='36' maxlength='36' value={$package->author}></td>
 	</tr>
 	
 	<tr>
