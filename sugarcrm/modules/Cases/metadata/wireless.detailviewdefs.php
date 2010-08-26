@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
  
-$viewdefs['Cases']['EditView'] = array(
+$viewdefs['Cases']['DetailView'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
                             'widths' => array(
@@ -37,16 +37,16 @@ $viewdefs['Cases']['EditView'] = array(
                            ),
     'panels' => array(
 		array(array('name'=>'case_number', 'displayParams'=>array('required'=>false,'wireless_detail_only'=>true,)),),                           
-    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
-		array('account_name'),
-    	array('priority'),
-		array('status'),
-		array('description'),
-		array('resolution'),		
-		array('assigned_user_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array('team_name'),
-		//END SUGARCRM flav=pro ONLY
+        array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
+        array('account_name'),
+        array('priority'),
+        array('status'),
+        array('description'),
+        array('resolution'),        
+        array('assigned_user_name'),
+        //BEGIN SUGARCRM flav=pro ONLY
+        array('team_name'),
+        //END SUGARCRM flav=pro ONLY
 		
 	),
 );
