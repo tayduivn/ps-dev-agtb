@@ -48,7 +48,9 @@ class ACLController {
 	function filterModuleList(&$moduleList, $by_value=true){
 
 		global $aclModuleList, $current_user;
-		if(is_admin($current_user)) return;
+		// Backing out this change made for Bug 14678; causes many modules that should be available
+		// to admin not be available
+		//if(is_admin($current_user)) return;
 		$actions = ACLAction::getUserActions($current_user->id, false);
 
 		$compList = array();
