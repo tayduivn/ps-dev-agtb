@@ -98,7 +98,7 @@ if ( isset($_REQUEST['id'])) {
 	}
 }
 
-if(! empty($_REQUEST['to_pdf'])){
+if(! empty($_REQUEST['to_pdf']) && empty($_REQUEST['search_form_only'])){
 	template_handle_pdf($args['reporter']);
 	return;
 }
@@ -143,13 +143,15 @@ if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report')
 // show report lists
 else
 {
-//END SUGARCRM flav!=sales ONLY
-$params = array();
-if(!empty($_REQUEST['favorite']))
-    $params[] = "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_FAVORITES_TITLE'];
-else
-    $params[] = "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
-echo getClassicModuleTitle("Reports", $params, true);
+//END SUGARCRM flav!=sales ONLY                      
+if ( empty($_REQUEST['search_form_only']) ) {
+    $params = array();
+    if(!empty($_REQUEST['favorite']))
+        $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
+    else
+        $params[] = $mod_strings['LBL_MODULE_NAME'];
+    echo getClassicModuleTitle("Reports", $params, true);
+}
 
 include("modules/Reports/ListView.php");
 //BEGIN SUGARCRM flav!=sales ONLY
