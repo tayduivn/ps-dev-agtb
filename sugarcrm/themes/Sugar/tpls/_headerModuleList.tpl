@@ -45,12 +45,14 @@
         Set_Cookie('sugar_theme_gm_current','{$currentGroupTab}',30,'/','','');
         </script>
         {* Tab group selection *}
-        <li class="yuimenubaritem">
-        <a href="#" class="yuimenuitemlabel more group"><em>{$tabGroupName} &gt;&gt;</em></a>
+        <li class="yuimenubaritem moduleTabGroupMenu">
+        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">{$tabGroupName}<img src="{sugar_getimagepath file="grouped-menu-arrow.png"}" class="arrow"></a>
         <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
+			<ul>
           {foreach from=$groupTabs item=module key=group name=groupList}
-          <ul><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)">{$group}</a></ul>
+          <li><a href="javascript:(sugar_theme_gm_switch('{$group}') && false)" class="yuimenuitemlabel">{$group}</a></li>
           {/foreach}
+		  </ul>
         </div><div class="clear"></div></div> 
         </li>
       {/if}
@@ -72,7 +74,11 @@
 										
 										{/foreach}
 										</ul>
+										{if $groupTabId}
 										<ul id="lastViewedContainer{$tabGroupName}_{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{else}
+										<ul id="lastViewedContainer{$name}" class="lastViewedUl"><li class="yuimenuitem">{$APP.LBL_LAST_VIEWED}</li><li class="yuimenuitem" id="shortCutsLoading{$tabGroupName}_{$name}"><a href="#" class="yuimenuitemlabel">&nbsp;</a></li></ul>
+										{/if}
 								
 				
 				</div>

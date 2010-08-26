@@ -176,7 +176,8 @@ SUGAR.expressions.GridToolTip = {
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_FIELDS')}
 	);
 	fieldsGrid.on("rowClickEvent", function(e){
-		Dom.get("formulaInput").value += "$" + e.target.firstChild.textContent;
+		var record = this.getRecord(e.target);
+		Dom.get("formulaInput").value += "$" + record.getData().name;
 	});
 	
 	fieldDS.queryMatchContains = true;
@@ -235,7 +236,8 @@ SUGAR.expressions.GridToolTip = {
 	);
 	
 	functionsGrid.on("rowClickEvent", function(e){
-		Dom.get("formulaInput").value +=  e.target.firstChild.textContent + '(';
+		var record = this.getRecord(e.target);
+		Dom.get("formulaInput").value +=  record.getData().name + '(';
 	});
 	
 	var funcTip = new YAHOO.widget.Tooltip("functionsTooltip", {
@@ -248,7 +250,7 @@ SUGAR.expressions.GridToolTip = {
 	funcTip.table = functionsGrid;
 	
 	funcTip.contextMouseOverEvent.subscribe(function(context, e){
-		var target = e[1].target;
+		var target =  e[1].srcElement  ? e[1].srcElement : e[1].target;
 		if ((Dom.hasClass(target, "yui-dt-bd"))) {return false;}
 		
 		var row = this.table.getRecord(target);
@@ -263,7 +265,6 @@ SUGAR.expressions.GridToolTip = {
 		
 		return true;
 	});
-	
 	funcDS.queryMatchContains = true;
 	var funcAC = new YAHOO.widget.AutoComplete("formulaFuncSearch","funcSearchResults", funcDS);
 	funcAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
@@ -301,6 +302,9 @@ SUGAR.expressions.GridToolTip = {
 	functionsGrid.render();
 
 	Dom.setStyle(Dom.get("formulaBuilder").parentNode, "padding", "0");
+	
+	if(ModuleBuilder && ModuleBuilder.formulaEditorWindow)
+		ModuleBuilder.formulaEditorWindow.center();
 };
 
 //SUGAR.expressions.FormulaPanel.show();

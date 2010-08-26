@@ -197,7 +197,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetModuleLayoutMD5()
     {
         $result = $this->_getModuleLayoutMD5();
-        $this->assertTrue($result['faultcode'] == 'Client');
+        $this->assertContains('Client',$result['faultcode']);
         
     }
     
@@ -288,7 +288,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_login();
 		$result = $this->_soapClient->call('get_module_layout_md5',
-		              array('session'=>$this->_sessionId,'module'=> 'Accounts','type' => 'default','view' => 'list'));
+		              array('session'=>$this->_sessionId,'module_names'=> array('Accounts'),'types' => array('default'),'views' => array('list')));
 		return $result; 
     }
     

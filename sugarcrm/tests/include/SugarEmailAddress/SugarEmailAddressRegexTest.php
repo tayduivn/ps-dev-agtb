@@ -10,11 +10,15 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
 	        array('----!john.com',false),
 	        // For Bug 13765
 	        array('st.-annen-stift@t-online.de',true),
+	        // For Bug 39186
+	        array('qfflats-@uol.com.br',true),
+	        array('atendimento-hd.@uol.com.br',true),
 	        );
 	}
     
     /**
      * @group bug13765
+     * @group bug39186
      * @dataProvider providerEmailAddressRegex
      */
 	public function testEmailAddressRegex($email, $valid) 

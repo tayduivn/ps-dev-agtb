@@ -289,6 +289,7 @@ EditView_tabs.on('contentReady', function(e){
                                     </select>
                                 </td>
                             </tr>
+                            <!--//END SUGARCRM flav!=sales ONLY -->
                             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                             <tr id="mail_smtpserver_tr">
                                 <td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_EMAIL_PROVIDER}</span></td>
@@ -315,7 +316,6 @@ EditView_tabs.on('contentReady', function(e){
                                 <td width="33%" >&nbsp;</td>
                             </tr>
                             {/if}
-                            <!--//END SUGARCRM flav!=sales ONLY -->
                         </table>
             </div>
         </div>
@@ -535,7 +535,7 @@ EditView_tabs.on('contentReady', function(e){
                 <tr>
                     <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_LAYOUT_OPTIONS}</h4></th>
                 </tr>
-							<tr>	
+							<tr id="use_group_tabs_row" style="display: {$DISPLAY_GROUP_TAB};">	
                                 <td scope="row"><span>{$MOD.LBL_USE_GROUP_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_NAVIGATION_PARADIGM_DESCRIPTION }</td>
                                 <td colspan="3"><input id="use_group_tabs" type="checkbox" name="use_group_tabs" {$USE_GROUP_TABS} tabindex='12'></td>
                             </tr>
@@ -880,6 +880,12 @@ YAHOO.util.Event.onContentReady('user_theme_picker',function()
     {
         document.getElementById('themePreview').src =
             "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
+        if (typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
+            themeGroupList[document.getElementById('user_theme_picker').value] ) {
+            document.getElementById('use_group_tabs_row').style.display = '';
+        } else {
+            document.getElementById('use_group_tabs_row').style.display = 'none';
+        }
     }
 });
 {/literal}
@@ -908,6 +914,8 @@ document.getElementById('email_link_type').onchange();
 {$getNumberJs}
 {$confirmReassignJs}
 {$currencySymbolJs}
+themeGroupList = {$themeGroupListJSON};
+
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();
 
@@ -915,6 +923,7 @@ setSigDigits();
 
 </form>
 
+<!--//END SUGARCRM flav!=sales ONLY -->
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
         <form>
@@ -940,4 +949,3 @@ setSigDigits();
 		</form>
 	</div>
 </div>
-<!--//END SUGARCRM flav!=sales ONLY -->

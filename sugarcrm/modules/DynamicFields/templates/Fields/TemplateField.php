@@ -361,7 +361,18 @@ class TemplateField{
 			if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {
                 $array['calculated'] = $this->calculated;
                 $array['formula'] = html_entity_decode($this->formula);
-                $array['enforced'] = (!empty($this->enforced) && $this->enforced == true);
+                if (!empty($this->enforced) && $this->enforced == true)
+                {
+                	$array['enforced'] = true;
+                	$array['importable'] =false;
+                	$array['duplicate_merge'] = 0;
+                	$array['duplicate_merge_dom_value'] = 0;
+                }
+                else {
+                	$array['enforced'] = false;
+                }
+            } else {
+            	$array['calculated'] = false;
             }
             if (!empty($this->dependency) && is_string($this->dependency)) {
                 $array['dependency'] = html_entity_decode($this->dependency);

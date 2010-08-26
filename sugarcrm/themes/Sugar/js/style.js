@@ -247,7 +247,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 		oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
 		oShadowBodyCenter.style.width = (oBd.offsetWidth)+"px";
 		
-		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,5) != "Group") {
+		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
 			if(oShadow.previousSibling.className != "vr") {
 			
 			oVR = document.createElement("div");
@@ -384,7 +384,7 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
 function sugar_theme_gm_switch( groupName ) {
     document.getElementById('themeTabGroup_'+sugar_theme_gm_current).style.display='none';
     sugar_theme_gm_current = groupName;
-    Set_Cookie('sugar_theme_gm_current',groupName,30,'/','','');
+    YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
     document.getElementById('themeTabGroup_'+groupName).style.display='block';
     
     oMenuBar = allMenuBars[groupName];

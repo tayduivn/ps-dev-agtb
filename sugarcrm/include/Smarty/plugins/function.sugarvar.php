@@ -49,6 +49,9 @@ function smarty_function_sugarvar($params, &$smarty)
 		if(!empty($displayParams['htmlescape'])){
 		    $_contents .= '|escape:\'html\'';
 		}
+		if(!empty($displayParams['htmlescape'])){
+		    $_contents .= '|escape:\'html\'';
+		}
 		if(!empty($displayParams['strip_tags'])){
 			$_contents .= '|strip_tags';
 		}

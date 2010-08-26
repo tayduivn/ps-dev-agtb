@@ -481,6 +481,17 @@ class registry {
 		);
 		
 		$this->serviceClass->registerType(
+			'link_list2',
+			'complexType',
+			'struct',
+			'all',
+			'',
+			array(
+				'link_list'=>array('name'=>'link_list', 'type'=>'tns:link_list'),
+			)
+		);
+		
+		$this->serviceClass->registerType(
 		    'link_lists',
 			'complexType',
 		   	 'array',
@@ -488,9 +499,9 @@ class registry {
 		  	  'SOAP-ENC:Array',
 			array(),
 		    array(
-		        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:link_list[]')
+		        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:link_list2[]')
 		    ),
-			'tns:link_list'
+			'tns:link_list2'
 		);
 		
 		$this->serviceClass->registerType(
@@ -650,10 +661,22 @@ class registry {
 		  	  'SOAP-ENC:Array',
 			array(),
 		    array(
-		        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:field_list[]')
+		        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:field_list2[]')
 		    ),
-			'tns:field_list'
+			'tns:field_list2'
 		);
+		
+		$this->serviceClass->registerType(
+			'field_list2',
+			'complexType',
+			'struct',
+			'all',
+			'',
+			array(
+				"field_list"=>array('name'=>'field_list', 'type'=>'tns:field_list'),
+			)
+		);
+		
 		
 		$this->serviceClass->registerType(
 		    'report_entry_list',
@@ -663,9 +686,20 @@ class registry {
 		  	  'SOAP-ENC:Array',
 			array(),
 		    array(
-		        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:entry_list[]')
+		        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:entry_list2[]')
 		    ),
-			'tns:entry_list'
+			'tns:entry_list2'
+		);
+		
+		$this->serviceClass->registerType(
+			'entry_list2',
+			'complexType',
+			'struct',
+			'all',
+			'',
+			array(
+				"entry_list"=>array('name'=>'entry_list', 'type'=>'tns:entry_list'),
+			)
 		);
 		
 		$this->serviceClass->registerType(

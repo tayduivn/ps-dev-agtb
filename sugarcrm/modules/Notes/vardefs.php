@@ -19,7 +19,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['Note'] = array('table' => 'notes', 
+$dictionary['Note'] = array(
+    //BEGIN SUGARCRM flav=pro ONLY
+    'favorites'=>true, 
+    //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=following ONLY
+    'followable' => true, 
+    //END SUGARCRM flav=following ONLY
+    'table' => 'notes', 
 	'unified_search' => true,
 	'comment' => 'Notes and Attachments'
                                ,'fields' => array (

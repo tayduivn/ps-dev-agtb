@@ -11,3 +11,4 @@ After 6.1.0 released:
 
     Branch "pineapple" is still for 6.2.0. 
     Mango/master will be trunk (merge branch "dev" and 6.2.0 to it) 
+    rename "mango" to "sugarcrm" 

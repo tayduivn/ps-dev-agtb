@@ -29,7 +29,9 @@
 
 // $Id: enum.tpl 35784 2008-05-20 21:31:40Z dwheeler $
 *}
-{if $vardef.type != 'enum'}
+{if $vardef.type != 'enum' && $vardef.type != 'address' && $vardef.type != 'date' && $vardef.type != 'datetimecombo'
+ && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
+ && $vardef.type != 'url' && $vardef.type != 'parent'}
 //BEGIN SUGARCRM flav=een ONLY
 {*<tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
@@ -45,9 +47,10 @@
 //END SUGARCRM flav=een ONLY
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
     <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
-        {if !empty($vardef.calculated)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
+        {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+		{if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
+		<script>ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})</script>
     </td>
 </tr>
 <tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>
@@ -65,8 +68,7 @@
         {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
     </td>
 </tr>
-//END SUGARCRM flav=een ONLY
-{else}
+{elseif $vardef.type == 'enum'}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DYNAMIC_VALUES_CHECKBOX"}:</td>
 	<td>
@@ -81,4 +83,5 @@
 		<input type='hidden' name='visibility_grid' id='visibility_grid' value='{$visiblity_grid}'>
 	</td>
 </tr>
+//END SUGARCRM flav=een ONLY
 {/if}

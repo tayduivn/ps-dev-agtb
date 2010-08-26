@@ -512,7 +512,7 @@ function isValidEmail(emailStr) {
 	for (var i = 0; i < emailArr.length; i++) {
 		emailAddress = emailArr[i];
 		if (trim(emailAddress) != '') {
-			if(!/^\s*[\w.%+\-&'\/]+\w+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
+			if(!/^\s*[\w.%+\-&'\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
 			   !/^.*<[A-Z0-9._%+\-&']+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
 	
 			   return false;
@@ -2286,7 +2286,7 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	    num_grp_sep_re = new RegExp(num_grp_sep, 'g');
+	    num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
 	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
@@ -2994,7 +2994,7 @@ SUGAR.searchForm = function() {
 					enableQS(true);
 					ajaxStatus.hideStatus();
 				}
-				url = 	'index.php?module=' + module + '&action=ListView&search_form_only=true&to_pdf=true&search_form_view=' + theView;
+				url = 	'index.php?module=' + module + '&action=index&search_form_only=true&to_pdf=true&search_form_view=' + theView;
 
 				//check to see if tpl has been specified.  If so then pass location through url string
 				var tpl ='';
@@ -3902,6 +3902,10 @@ SUGAR.util.isLoginPage = function(content)
 		window.location.href = window.location.protocol + window.location.pathname;
 		return true;
 	}
+}
+
+SUGAR.util.ajaxCallInProgress = function(){
+	return SUGAR_callsInProgress != 0;
 }
 
 SUGAR.util.closeActivityPanel = {

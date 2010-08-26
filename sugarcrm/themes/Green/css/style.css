@@ -191,7 +191,7 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png");
 }
 
-#moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList #Group.dashletPanelMenu {
+#moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png");
 }
 
@@ -371,7 +371,7 @@ background-color: #6ea100;
 }
 
 
-#moduleList .moduleTabExtraMenu,#moduleList #moduleTabGroup {
+#moduleList .moduleTabExtraMenu,#moduleList .moduleTabGroupMenu {
 height:32px;
 }
 

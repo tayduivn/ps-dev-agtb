@@ -28,12 +28,13 @@ if(!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright(C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: commit.php 56510 2010-05-17 18:54:49Z jenny $
+ * $Id: commit.php 57723 2010-08-11 21:39:08Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
-$trackerManager = TrackerManager::getInstance();
+require_once('include/SugarLogger/SugarLogger.php');	
+$trackerManager = TrackerManager::getInstance();	
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
 

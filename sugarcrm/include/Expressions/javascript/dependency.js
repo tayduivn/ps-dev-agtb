@@ -185,15 +185,30 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 {
 	// retrieve the variable
 	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
-	if ( field == null )	return null;
+		
+	if ( field == null )	
+		field = YAHOO.util.Dom.get(variable);
+
+	if ( field == null )	
+		return null;
 
 	// now check if this field is locked
 	if ( SUGAR.forms.AssignmentHandler.LOCKS[variable] != null ) {
 		throw ("Circular Reference Detected");
 	}
 
-	// TODO: Detect field types and add error handling.
-	field.value = value;
+	//Detect field types and add error handling.
+	if (Dom.hasClass(field, "imageUploader"))
+	{
+		var img = Dom.get("img_" + field.id);
+		img.src = value;
+		img.style.visibility = "";
+	} 
+	else {
+		field.value = value;
+	}
+	
+	
 
 	// animate
 	if ( SUGAR.forms.AssignmentHandler.ANIMATE )
@@ -485,11 +500,23 @@ SUGAR.forms.Trigger = function(variables, condition) {
 SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	var handler = SUGAR.forms.AssignmentHandler;
 	if ( ! (this.variables instanceof Array) ) {
-		YAHOO.util.Event.addListener(handler.getElement(this.variables), "change", SUGAR.forms.Trigger.fire, this);
+		var el = handler.getElement(this.variables);
+		if (el.type && el.type.toUpperCase() == "CHECKBOX")
+		{
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+		} else {
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+		}
 		return;
 	}
 	for ( var i = 0; i < this.variables.length; i++){
-		YAHOO.util.Event.addListener(handler.getElement(this.variables[i]), "change", SUGAR.forms.Trigger.fire, this);
+		var el = handler.getElement(this.variables[i]);
+		if (el.type && el.type.toUpperCase() == "CHECKBOX")
+		{
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+		} else {
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+		}
 	}
 }
 

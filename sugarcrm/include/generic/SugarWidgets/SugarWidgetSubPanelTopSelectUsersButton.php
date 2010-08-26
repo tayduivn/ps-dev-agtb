@@ -151,7 +151,7 @@ class SugarWidgetSubPanelTopSelectUsersButton extends SugarWidgetSubPanelTopSele
 		if (is_array($this->button_properties) && !empty($this->button_properties['add_to_passthru_data']['return_type'])) {
 			
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='report') {
-				$initial_filter = "&module_name=${widget_data['module']}";
+				$initial_filter = "&module_name=". urlencode($widget_data['module']);
 			}
 			//BEGIN SUGARCRM flav!=sales ONLY
 			if ($this->button_properties['add_to_passthru_data']['return_type']=='addtoprospectlist') {

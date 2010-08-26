@@ -58,16 +58,25 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetEntryForContact() {
     	$result = $this->_getEntryForContact();
     	if (empty($this->_soapClient->faultcode)) {
+    	    var_dump($result);
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
     			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call") &&
     			($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')) {
     			
-    			$this->assertTrue(($result['entry_list'][0]['name_value_list'][2]['value'] == 1), ("testGetEntryForContact method - Get Entry For contact is not same as Set Entry" . $result['entry_list'][0]['name_value_list'][2]['value'] . " yes"));
+    			$this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],1,"testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
     		} // else
     	} else {
     		$this->assertTrue(empty($this->_soapClient->faultcode), 'Can not retrieve newly created contact. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
     	}
     } // fn
+    
+    public function testGetEntryForContactNoSelectFields(){
+    	global $soap_version_test_contactId;
+		$this->_login();
+		$result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>$soap_version_test_contactId,'select_fields'=>array(), 'link_name_to_fields_array' => array()));
+		$this->assertTrue(!empty($result['entry_list'][0]['name_value_list']), "testGetEntryForContactNoSelectFields returned no field data");
+    	
+    }
         
     public function testSetEntriesForAccount() {
     	$result = $this->_setEntriesForAccount();
@@ -87,10 +96,16 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     	
     } // fn
     
-    public function testGetRelationshipForOpportunity() {
+    
+    public function testGetRelationshipForOpportunity() 
+    {    
     	global $soap_version_test_contactId;
     	$result = $this->_getRelationshipForOpportunity();
-    	$this->assertTrue((($result['entry_list'][0]['id'] == $soap_version_test_contactId) && ($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')), ("testGetRelationshipForOpportunity - Get Relationship of Opportynity to Contact failed " . $result['entry_list'][0]['id'] . " " . $soap_version_test_contactId . " " . $result['relationship_list'][0][0]['records'][0][1]['value']));  	
+    	$this->assertEquals(
+    	    $result['entry_list'][0]['id'],
+    	    $soap_version_test_contactId, 
+    	    "testGetRelationshipForOpportunity - Get Relationship of Opportunity to Contact failed"
+            );  	
     } // fn
     
     public function testSearchByModule() {
@@ -115,7 +130,8 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
                 array('user_name' => $current_user->user_name,
                     'password' => $current_user->user_hash, 
                     'version' => '.01'), 
-                'application_name' => 'SoapTest')
+                'application_name' => 'SoapTest',
+                'name_value_list'=>array())
             );
         $this->_sessionId = $result['id'];
 		return $result;
@@ -137,8 +153,7 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     public function _getEntryForContact() {
     	global $soap_version_test_contactId;
 		$this->_login();
-		$result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>$soap_version_test_contactId,'select_fields'=>array('last_name', 'first_name', 'do_not_call', 'lead_source'), 'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))));
-		$GLOBALS['log']->fatal("_getEntryForContact" . " " . $soap_version_test_contactId);
+		$result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>$soap_version_test_contactId,'select_fields'=>array('last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'), 'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))));		$GLOBALS['log']->fatal("_getEntryForContact" . " " . $soap_version_test_contactId);
 		return $result;
     }
         
@@ -174,10 +189,18 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
 		return $result;
     } // fn
     
+  public function _getEntryForOpportunity() {
+    	global $soap_version_test_opportunityId;
+		$this->_login();
+		$result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Opportunities','id'=>$soap_version_test_opportunityId,'select_fields'=>array('name', 'amount'), 'link_name_to_fields_array' => array(array('name' =>  'contacts', 'value' => array('id', 'first_name', 'last_name')))));		$GLOBALS['log']->fatal("_getEntryForContact" . " " . $soap_version_test_opportunityId);
+		return $result;
+    }
+    
     public function _setRelationshipForOpportunity() {
+    	
     	global $soap_version_test_contactId, $soap_version_test_opportunityId;
 		$this->_login();
-		$result = $this->_soapClient->call('set_relationship',array('session'=>$this->_sessionId,'module_name' => 'Opportunities','module_id' => "$soap_version_test_opportunityId", 'link_field_name' => 'contacts','related_ids' =>array("$soap_version_test_contactId"), 'name_value_list' => array(array('name' => 'contact_role', 'value' => 'testrole'))));
+		$result = $this->_soapClient->call('set_relationship',array('session'=>$this->_sessionId,'module_name' => 'Opportunities','module_id' => "$soap_version_test_opportunityId", 'link_field_name' => 'contacts','related_ids' =>array("$soap_version_test_contactId"), 'name_value_list' => array(array('name' => 'contact_role', 'value' => 'testrole')), 'delete'=>0));
 		return $result;    	
     } // fn
     
@@ -192,8 +215,10 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
                 'link_field_name' => 'contacts',
                 'related_module_query' => '',
                 'related_fields' => array('id'),
-                'related_module_link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address'))))
-            );
+                'related_module_link_name_to_fields_array' => array(array('name' =>  'contacts', 'value' => array('id', 'first_name', 'last_name'))),
+            	'deleted'=>0,
+				)
+			);
 		return $result;    	
     } // fn
     
