@@ -26,9 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{if strlen({{sugarvar key='value' string=true}}) <= 0}
+{assign var="value" value={{sugarvar key='default_value' string=true}} }
+{else}
+{assign var="value" value={{sugarvar key='value' string=true}} }
+{/if} 
 <span id='{{sugarvar key='name'}}'>{{sugarvar key='value'}}</span>
 {{if !empty($displayParams.enableConnectors)}}
-{if !empty({{sugarvar key='value' string='true'}})}
+{if !empty($value)}
 {{sugarvar_connector view='DetailView'}}
 {/if}
 {{/if}}
