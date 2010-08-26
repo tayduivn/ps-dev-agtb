@@ -543,9 +543,6 @@ class SugarView
 			$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
-		if(!in_array($this->module, $GLOBALS['moduleList']) && !in_array($this->module, $GLOBALS['modInvisListActivities'])){
-			$ss->assign('FORCE_TOP_SHORTCUTS', true);
-		}
         //END SUGARCRM flav=sales || flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
