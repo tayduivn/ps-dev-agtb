@@ -483,7 +483,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
             	ob_clean();
                 $json = getJSONobj();
                 $_SESSION['SHOW_DUPLICATES'] = $get;
-                echo $json->encode(array('status' => 'dupe', 'get' => $location . $get));
+                echo $json->encode(array('status' => 'dupe', 'get' => $location));
             } else {
                 if(!empty($_POST['to_pdf'])) $location .= '&to_pdf='.$_POST['to_pdf'];
                 $_SESSION['SHOW_DUPLICATES'] = $get;
