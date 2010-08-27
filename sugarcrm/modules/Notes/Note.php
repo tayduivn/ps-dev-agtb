@@ -218,8 +218,7 @@ class Note extends SugarBean {
 		$note_fields = $this->get_list_view_array();
 		global $app_list_strings, $focus, $action, $currentModule,$mod_strings, $sugar_config;
 		
-		$this->_create_proper_name_field();
-        if(isset($this->parent_type)) {
+		if(isset($this->parent_type)) {
 			$note_fields['PARENT_MODULE'] = $this->parent_type;
 		}
 
