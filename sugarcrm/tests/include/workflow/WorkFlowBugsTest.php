@@ -1,16 +1,17 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
 
-class Bug32738Test extends Sugar_PHPUnit_Framework_TestCase 
+class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase 
 {
-    var $has_workflow_directory;
-    var $has_logic_hooks_file;
-    var $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
-    var $test_account;
-    var $test_team1;
-    var $test_team2;
+    private $has_workflow_directory;
+    private $has_logic_hooks_file;
+    private $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
+    private $test_account;
+    private $test_team1;
+    private $test_team2;
     
-    function setUp() {
+    public function setUp() 
+    {
         if(file_exists('custom/modules/Accounts/workflow')) 
         {
            $this->has_workflow_directory = true;
@@ -25,7 +26,7 @@ class Bug32738Test extends Sugar_PHPUnit_Framework_TestCase
              		copy($target_file, $target_file . '.bak');	
              }
            
-             $test_file = 'tests/include/workflow/Bug32738/workflow/' . $file;
+             $test_file = 'tests/include/workflow/testfiles/workflow/' . $file;
              if(file_exists($test_file))
              {
            		copy($test_file, $target_file);
@@ -37,7 +38,7 @@ class Bug32738Test extends Sugar_PHPUnit_Framework_TestCase
         	$this->has_logic_hooks_file = true;
         	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         } 
-        copy('tests/include/workflow/Bug32738/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
+        copy('tests/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
         
         $sql = "DELETE FROM workflow where id in ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', '43406320-49b6-6503-0074-4c73532a4325')";
         $GLOBALS['db']->query($sql);
@@ -97,8 +98,8 @@ class Bug32738Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->test_account->save();
     }
     
-    
-    function tearDown() {
+    public function tearDown() 
+    {
         if($this->has_workflow_directory) 
         {
            foreach($this->wf_files as $file) {
@@ -141,11 +142,30 @@ class Bug32738Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }    
     
-    function test_workflow() {
+    /**
+     * @group bug32738
+     */
+    public function testBug32738() 
+    {
     	$this->test_account->name = 'Sugar';
     	$this->test_account->save();
     	$this->assertTrue($this->test_account->team_id == '1');
     }
     
+    /**
+     * @group bug38859
+     */
+    public function testBug38859() 
+    {
+    	$this->test_account->description = 'Hey Lady!';
+    	$this->test_account->team_id = $this->test_team2->id;
+    	$this->test_account->team_set_id = $this->test_team2->id;
+    	$this->test_account->save();
+    	//Assert that the description was changed by the workflow
+    	$this->assertTrue($this->test_account->description == 'Hey Man!');
+    	//Assert that the team_id change was preserved
+    	$this->assertTrue($this->test_account->team_id == $this->test_team2->id);
+    	//Assert that the team_set_id change was preserved
+    	$this->assertTrue($this->test_account->team_set_id == $this->test_team2->id);
+    }   
 }
-?>
