@@ -40,7 +40,7 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
-{if $EDIT_SELF}
+{if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
 {literal}
     user_detailview_tabs.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_DOWNLOADS}{literal}',
