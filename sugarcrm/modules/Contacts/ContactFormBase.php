@@ -611,6 +611,14 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 			if(isset($_POST['inbound_email_id']) && !empty($_POST['inbound_email_id'])) {
 				$get .= '&inbound_email_id='.$_POST['inbound_email_id'];
 			}
+			
+			// Bug 25311 - Add special handling for when the form specifies many-to-many relationships
+			if(isset($_POST['relate_to']) && !empty($_POST['relate_to'])) {
+				$get .= '&Contactsrelate_to='.$_POST['relate_to'];
+			}
+			if(isset($_POST['relate_id']) && !empty($_POST['relate_id'])) {
+				$get .= '&Contactsrelate_id='.$_POST['relate_id'];
+			}
 
 			//add all of the post fields to redirect get string
 			foreach ($focus->column_fields as $field)
