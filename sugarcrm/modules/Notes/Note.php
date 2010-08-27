@@ -213,31 +213,8 @@ class Note extends SugarBean {
 	}
 
 	
-	
-	function _create_proper_name_field(){
-		global $locale;
-		if(isset($this->contact_id) && $this->contact_id != '') {
-			
-			$contact = new Contact();
-			$contact->retrieve($this->contact_id);
-			if(isset($contact->first_name , $contact->last_name)){
-				global $locale;
-				//BEGIN SUGARCRM flav=pro ONLY
-				if($this->bean_implements('ACL') && !ACLField::hasAccess('first_name', $contact->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))){
-					$full_name = $contact->last_name;
-				}else{
-				//END SUGARCRM flav=pro ONLY
-					$full_name = $locale->getLocaleFormattedName($contact->first_name, $contact->last_name, $contact->salutation, $contact->title);
-				//BEGIN SUGARCRM flav=pro ONLY
-				}
-				//END SUGARCRM flav=pro ONLY
-				$this->contact_name = $full_name;
-			}
-		}
-	
-	}
-	
-	function get_list_view_data() {
+	function get_list_view_data() 
+	{
 		$note_fields = $this->get_list_view_array();
 		global $app_list_strings, $focus, $action, $currentModule,$mod_strings, $sugar_config;
 		
@@ -261,6 +238,13 @@ class Note extends SugarBean {
             }
             //END SUGARCRM flav=pro ONLY
         }
+        if(isset($this->contact_id) && $this->contact_id != '') {
+			$contact = new Contact();
+			$contact->retrieve($this->contact_id);
+			if(isset($contact->id)) {
+			    $this->contact_name = $contact->full_name;
+			}
+		}
         if(isset($this->contact_name)){
         	$note_fields['CONTACT_NAME'] = $this->contact_name; 
         }

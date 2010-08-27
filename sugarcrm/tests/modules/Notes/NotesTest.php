@@ -31,7 +31,6 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $note = new Note();
         $note->contact_id = $contact_id;
         $note->disable_row_level_security = true;
-        $note->_create_proper_name_field();
         
         $this->assertContains($contact->first_name,$note->contact_name);
         $this->assertContains($contact->last_name,$note->contact_name);
