@@ -263,26 +263,4 @@ class ACLField  extends ACLAction{
 		$acl->save();
 
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-?>
