@@ -14,22 +14,46 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
     
-    public function testGetLocaleFormattedName()
+    public function providerGetLocaleFormattedName()
     {
-    	$this->_user->setPreference('default_locale_name_format', 't s f l');
-    	$firstName = 'Mason';
-    	$lastName = 'Hu';
-    	$title = 'Saler';
-    	$salution = 'Mr.';
-    	$expectedOutput = 'Saler Mr. Mason Hu';
-    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salution, $title, '',$this->_user);
+        return array(
+            array(
+                't s f l',
+                'Mason',
+                'Hu',
+                'Mr.',
+                'Saler',
+                'Saler Mr. Mason Hu',
+                ),
+            array(
+                'l f',
+                'Mason',
+                'Hu',
+                '',
+                '',
+                'Hu Mason',
+                ),
+                    
+            );
+    }
+    
+    /**
+     * @dataProvider providerGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedNameUsingFormatInUserPreference($nameFormat,$firstName,$lastName,$salutation,$title,$expectedOutput)
+    {
+    	$this->_user->setPreference('default_locale_name_format', $nameFormat);
+    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, '',$this->_user);
     	$this->assertEquals($expectedOutput, $outputName);
-    	
-    	$this->_user->setPreference('default_locale_name_format', 'l f');
-    	$expectedOutput = 'Hu Mason';
-    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, '', '', '',$this->_user);
+    }
+    
+    /**
+     * @dataProvider providerGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedNameUsingFormatSpecified($nameFormat,$firstName,$lastName,$salutation,$title,$expectedOutput)
+    {
+    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, $nameFormat,$this->_user);
     	$this->assertEquals($expectedOutput, $outputName);
-    	
     }
     
     /**
