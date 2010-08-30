@@ -1097,11 +1097,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
             if (reportable) reportable.disabled = disable;
             if(enable)
             {
-            	ModuleBuilder.setSelectedOption(duplicate, '0');
-            	ModuleBuilder.setSelectedOption(importable, 'false');
+            	if (duplicate)ModuleBuilder.setSelectedOption(duplicate, '0');
+            	if (importable)ModuleBuilder.setSelectedOption(importable, 'false');
             }
-            importable.disabled = disable;
-            duplicate.disabled = disable;
+            if (importable)importable.disabled = disable;
+            if (duplicate)duplicate.disabled = disable;
             Dom.get("enforced").value = enable;
         },
         toggleDF: function(enable) {

@@ -479,7 +479,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 	if ( typeof(expr) != 'string' )	throw "ExpressionParser requires a string expression.";
 
 	// trim spaces, left and right
-	expr = expr.replace(/^\s+|\s+$/g,"");
+	expr = expr.replace(/^\s+|\s+$|\n/g,"");
 
 	// check if its a constant and return a constant expression
 	var fixed = this.toConstant(expr);

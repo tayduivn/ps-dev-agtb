@@ -58,7 +58,6 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetEntryForContact() {
     	$result = $this->_getEntryForContact();
     	if (empty($this->_soapClient->faultcode)) {
-    	    var_dump($result);
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
     			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call") &&
     			($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')) {

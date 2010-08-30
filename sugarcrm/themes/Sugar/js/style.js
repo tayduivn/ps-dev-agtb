@@ -126,10 +126,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
             
             var moduleName = oElement.id;
-            if ( moduleName.indexOf('_') != -1 ) {
-                moduleName = moduleName.substr(moduleName.indexOf('_')+1);
-            }
-
+            
 			var handleSuccess = function(o){
 				if(o.responseText !== undefined){			
 				data = YAHOO.lang.JSON.parse(o.responseText);

@@ -198,7 +198,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 	}
 
 	//Detect field types and add error handling.
-	if (Dom.hasClass(field, "imageUploader"))
+	if (YAHOO.util.Dom.hasClass(field, "imageUploader"))
 	{
 		var img = Dom.get("img_" + field.id);
 		img.src = value;
@@ -465,9 +465,10 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 					action.exec();
 			}
 		}
-		
 	} catch (e) {
-		if (console && console.log){ console.log('ERROR: ' + e );}
+		if (!SUGAR.isIE && console && console.log){ 
+			console.log('ERROR: ' + e);
+		}
 		return;
 	}
 };
@@ -501,6 +502,8 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	var handler = SUGAR.forms.AssignmentHandler;
 	if ( ! (this.variables instanceof Array) ) {
 		var el = handler.getElement(this.variables);
+		if (!el) return;
+		
 		if (el.type && el.type.toUpperCase() == "CHECKBOX")
 		{
 			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
@@ -511,6 +514,7 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	}
 	for ( var i = 0; i < this.variables.length; i++){
 		var el = handler.getElement(this.variables[i]);
+		if (!el) continue;
 		if (el.type && el.type.toUpperCase() == "CHECKBOX")
 		{
 			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
@@ -542,7 +546,9 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	try {
 		eval = SUGAR.forms.evalVariableExpression(obj.condition);
 	} catch (e) {
-		{if (console && console.log) console.log('ERROR:' + e);}
+		if (!SUGAR.isIE && console && console.log){ 
+			console.log('ERROR:' + e + "; in Condition: " + obj.condition);
+		}
 	}
 
 	// evaluate the result

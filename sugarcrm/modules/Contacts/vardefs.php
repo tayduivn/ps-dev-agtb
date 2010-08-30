@@ -168,7 +168,6 @@ array (
 			'name' => 'portal_active',
 			'vname' => 'LBL_PORTAL_ACTIVE',
 			'type' => 'bool',
-			'required' => true,
 			'default' => '0',
 			'group'=>'portal',
 			'comment' => 'Indicator whether this contact is a portal user'

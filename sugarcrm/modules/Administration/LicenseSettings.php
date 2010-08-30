@@ -98,7 +98,7 @@ if(!empty($focus->settings['license_expire_date'])) $xtpl->assign("LICENSE_EXPIR
 if(!empty($focus->settings['license_key']))$xtpl->assign("LICENSE_KEY",            $focus->settings['license_key']);
 if(!empty($focus->settings['license_validation_key']))$xtpl->assign("LICENSE_VALIDATION_KEY",          md5($focus->settings['license_validation_key']));
 if(!empty($focus->settings['license_validation_notice'])){
-	$xtpl->assign("LICENSE_VALIDATION_NOTICE",          $focus->settings['license_validation_notice']);
+	$xtpl->assign("LICENSE_VALIDATION_NOTICE",           base64_decode($license->settings['license_msg_admin']));
 }else{
 	//BEGIN SUGARCRM flav=sales ONLY
 	$xtpl->assign("LICENSE_VALIDATION_HIDE", 'none');
@@ -157,6 +157,10 @@ $xtpl->parse("main");
 
 $xtpl->out("main");
 
+if(!empty($focus->settings['license_validation_notice']))
+{
+echo '<script type="text/javascript">YAHOO.util.Event.onAvailable("edit_view_div", function() { toggleDisplay("detail_view_div"); toggleDisplay("edit_view_div"); });</script>';
+}
 
 $javascript = new javascript();
 $javascript->setFormName("LicenseSettings");
