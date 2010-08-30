@@ -4598,7 +4598,11 @@ border: 0px none;
 }
 
 .yui-navset.detailview_tabs.yui-navset-top{
-height: auto;
+    height: auto;
+}
+
+.detailview_tabs {
+	position: static;
 }
 
 .yui-navset li em {
@@ -5462,4 +5466,8 @@ margin-left: 5px;
 #basic_search_link
 {
     margin-left:5px !important;
+}
+
+table.olBgClass, table.olBgClass table {
+    width: auto !important;   
 }
