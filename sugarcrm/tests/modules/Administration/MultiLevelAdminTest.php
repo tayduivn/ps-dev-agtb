@@ -32,7 +32,58 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(is_admin_for_module($user, $module, array('Accounts')));  
     }
     
-    public function testCurrentUserIsAdminForTheGivenModule()
+    public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreAdminAndDev()
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $user->is_admin = 0;
+        $mlaRoles = array(
+            'test_for_module'=>array(
+                'Accounts'=>array('admin'=>100),
+                )
+            );
+        addDefaultRoles($mlaRoles); 
+        
+        $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
+        $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
+        $this->_role_id = $user->role_id;
+        
+        $module = 'Accounts';
+        $actions = array();
+        $actions[$module]['module']['admin']['aclaccess'] = 96;
+        
+        unset($_SESSION['MLA_'.$user->user_name]);
+        
+        $this->assertTrue(is_admin_for_module($user, $module, $actions));
+    }
+    
+    /**
+     * @group bug33494
+     */
+    public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyAdmin()
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $user->is_admin = 0;
+        $mlaRoles = array(
+            'test_for_module'=>array(
+                'Accounts'=>array('admin'=>99),
+                )
+            );
+        addDefaultRoles($mlaRoles); 
+        
+        $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
+        $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
+        $this->_role_id = $user->role_id;
+        
+        $module = 'Accounts';
+        $actions = array();
+        $actions[$module]['module']['admin']['aclaccess'] = 96;
+        
+        unset($_SESSION['MLA_'.$user->user_name]);
+        
+        $this->assertTrue(is_admin_for_module($user, $module, $actions));
+    }
+    
+    public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyDev()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
