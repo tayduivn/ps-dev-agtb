@@ -548,6 +548,7 @@ array (
         'type' => 'bool',
         'source' => 'non-db',
         'comment' => 'Synch to outlook?  (Meta-Data only)',
+        'studio' => 'true',
       ),
 //BEGIN SUGARCRM flav=dce ONLY
     'dceinstance_role_fields' =>
