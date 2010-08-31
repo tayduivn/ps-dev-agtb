@@ -5297,7 +5297,13 @@ visibility:visible
 .dcview table, .dcview div, .dcview a{
 font-size:75%;
 }
-.star {float:right}
+.star {
+	float:right;
+	zoom: 1;
+	display: inline;
+	*float: none;
+	*width: 18px;
+}
 .moduleTitle .star 
 {
     margin-top:4px;
