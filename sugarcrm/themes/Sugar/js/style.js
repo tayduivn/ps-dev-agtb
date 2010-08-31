@@ -34,6 +34,9 @@
  */
 YAHOO.util.Event.onContentReady("globalLinksModule", function() 
 {
+    if ( !Get_Cookie('globalLinksOpen') ) {
+        Set_Cookie('globalLinksOpen','true',30,'/','','');
+    }
     if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
         document.getElementById('globalLinks').style.width = "auto";
     }
