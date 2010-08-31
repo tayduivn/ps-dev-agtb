@@ -52,8 +52,10 @@ class IsValidEmailExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 		var emailStr = this.getParameters().evaluate();
-
+		
 		if ( emailStr.length == 0 )		return SUGAR.expressions.Expression.TRUE;
+		if ( typeof emailStr != "string" ) return SUGAR.expressions.Expression.FALSE;
+		
 		var lastChar = emailStr.charAt(emailStr.length - 1);
 		if ( !lastChar.match(/[^\.]/i) )	return SUGAR.expressions.Expression.FALSE;
 
