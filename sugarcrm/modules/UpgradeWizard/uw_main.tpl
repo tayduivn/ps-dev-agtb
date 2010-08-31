@@ -70,7 +70,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_BACK}"
 					class		= "button"
 					onclick		= "document.getElementById('form').step.value='{$STEP_BACK}';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_BACK}  ">
 		{/if}
 		{if $showNext}
@@ -100,7 +100,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_DONE}"
 					class		= "button"
 					onclick		= "deleteCacheAjax();window.location.href='index.php?module=Home&action=About';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_DONE}  ">
 		{/if}
 
@@ -201,7 +201,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_DONE}"
 					class		= "button"
 					onclick		= "deleteCacheAjax();window.location.href='index.php?module=Home&action=About';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_DONE}  ">
 		{/if}
 
