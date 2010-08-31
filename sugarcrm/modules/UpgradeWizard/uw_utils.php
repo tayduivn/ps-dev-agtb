@@ -4554,17 +4554,20 @@ function upgradeUserPreferences() {
 		  } //if
 
 		  // move the favorite reports over to the SugarFavorites table
-		  $current_favorites = array_keys($current_user->getPreference('favorites', 'Reports'));
-		  foreach ($current_favorites as $report_id) {
-		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-		          continue;
-		      }
-
-		      $favFocus = new SugarFavorites;
-		      $favFocus->module = 'Reports';
-		      $favFocus->record_id = $report_id;
-		      $favFocus->assigned_user_id = $current_user->id;
-		      $favFocus->save();
+		  $fav_rep_prefs = $current_user->getPreference('favorites', 'Reports');
+		  if(is_array($fav_rep_prefs) && !empty($fav_rep_prefs)){
+    		  $current_favorites = array_keys($fav_rep_prefs);
+    		  foreach ($current_favorites as $report_id) {
+    		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
+    		          continue;
+    		      }
+    
+    		      $favFocus = new SugarFavorites;
+    		      $favFocus->module = 'Reports';
+    		      $favFocus->record_id = $report_id;
+    		      $favFocus->assigned_user_id = $current_user->id;
+    		      $favFocus->save();
+    		  }
 		  }
 
 		  // we need to force save the changes to disk, otherwise we lose them.
