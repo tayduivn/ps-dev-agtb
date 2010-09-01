@@ -44,7 +44,21 @@ abstract class NusoapSoap extends SugarSoapService{
 		parent::__construct();
 		$GLOBALS['log']->info('End: NusoapSoap->__construct');
 	} // ctor
-	
+
+	/**
+	 * Fallback function to catch unexpected failure in SOAP
+	 */
+	public function shutdown()
+	{
+		if($this->in_service) {
+			$out = ob_get_contents();
+			ob_end_clean();
+			$GLOBALS['log']->info('NusoapSoap->shutdown: service died unexpectedly');
+			$this->server->fault(-1, "Unknown error in SOAP call: service died unexpectedly", '', $out);
+			$this->server->send_response();
+		}
+	}
+
 	/**
 	 * It passes request data to NUSOAP server and sends response back to client
 	 * @access public
@@ -52,7 +66,11 @@ abstract class NusoapSoap extends SugarSoapService{
 	public function serve(){
 		$GLOBALS['log']->info('Begin: NusoapSoap->serve');
 		ob_clean();
+		$this->in_service = true;
+		register_shutdown_function(array($this, "shutdown"));
+		ob_start();
 		$this->server->service($GLOBALS['HTTP_RAW_POST_DATA']);
+		$this->in_service = false;
 		ob_end_flush();
 		flush();
 		$GLOBALS['log']->info('End: NusoapSoap->serve');
@@ -74,7 +92,7 @@ abstract class NusoapSoap extends SugarSoapService{
 	public function registerType($name, $typeClass, $phpType, $compositor, $restrictionBase, $elements, $attrs=array(), $arrayType=''){
 		$this->server->wsdl->addComplexType($name, $typeClass, $phpType, $compositor, $restrictionBase, $elements, $attrs, $arrayType);
   	} // fn
-	
+
   	/**
   	 * This method registers all the functions you want to expose as services with NUSOAP
   	 *
@@ -84,7 +102,7 @@ abstract class NusoapSoap extends SugarSoapService{
 	 * @access public
   	 */
 	function registerFunction($function, $input, $output){
-		if(in_array($function, $this->excludeFunctions))return;		
+		if(in_array($function, $this->excludeFunctions))return;
 		$use = false;
 		$style = false;
 		if (isset($_REQUEST['use']) && ($_REQUEST['use'] == 'literal')) {
@@ -95,7 +113,7 @@ abstract class NusoapSoap extends SugarSoapService{
 		} // if
 		$this->server->register($function, $input, $output, $this->getNameSpace(), '',$style, $use);
 	} // fn
-	
+
 	/**
 	 * This function registers implementation class name with NUSOAP so when NUSOAP makes a call to a funciton,
 	 * it will be made on this class object
@@ -111,7 +129,7 @@ abstract class NusoapSoap extends SugarSoapService{
 		$this->server->register_class($implementationClass);
 		$GLOBALS['log']->info('End: NusoapSoap->registerImplClass');
 	} // fn
-	
+
 	/**
 	 * Sets the name of the registry class
 	 *
@@ -123,7 +141,7 @@ abstract class NusoapSoap extends SugarSoapService{
 		$this->registryClass = $registryClass;
 		$GLOBALS['log']->info('End: NusoapSoap->registerClass');
 	} // fn
-	
+
 	/**
 	 * This function sets the fault object on the NUSOAP
 	 *
@@ -135,5 +153,5 @@ abstract class NusoapSoap extends SugarSoapService{
 		$this->server->fault($errorObject->getFaultCode(), $errorObject->getName(), '', $errorObject->getDescription());
 		$GLOBALS['log']->info('Begin: NusoapSoap->error');
 	} // fn
-	
+
 } // clazz
