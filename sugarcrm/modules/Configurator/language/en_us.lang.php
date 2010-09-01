@@ -98,7 +98,7 @@ $mod_strings = array (
 	'LBL_PROXY_USERNAME'=>'User Name',
 	'LBL_RESTORE_BUTTON_LABEL'=>'Restore',
 	'LBL_SYSTEM_SETTINGS' => 'System Settings',
-	'LBL_SKYPEOUT_ON_DESC' => 'Allows users to click on phone numbers to call using SkypeOut&reg;. The numbers must be formatted properly to make use of this feature. That is, it must be "+"  "The Country Code" "The Number", like +1 (555) 555-1234. For more information, see the Skype FAQ at <a href="http://www.skype.com/help/faq/skypeout.html#calling" target="skype">skype&reg; faq</a>	',
+	'LBL_SKYPEOUT_ON_DESC' => 'Allows users to click on phone numbers to call using SkypeOut&reg;. The numbers must be formatted properly to make use of this feature. That is, it must be "+"  "The Country Code" "The Number", like +1 (555) 555-1234.',
 	'LBL_SKYPEOUT_ON' => 'Enable SkypeOut&reg; integration',
 	'LBL_SKYPEOUT_TITLE' => 'SkypeOut&reg;',
 	'LBL_USE_REAL_NAMES'	=> 'Show Full Names',
