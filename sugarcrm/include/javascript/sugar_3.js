@@ -3925,7 +3925,9 @@ SUGAR.util.closeActivityPanel = {
                         var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
-                            {
+                            {	//refresh window to show updated changes
+								window.location.reload(true);
+								/*
                                 if(viewType == 'dashlet')
                                 {
                                     SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
@@ -3941,6 +3943,7 @@ SUGAR.util.closeActivityPanel = {
                                 }else if(viewType == 'listview'){
                                     document.location = 'index.php?module=' + module +'&action=index';
 									}
+								*/
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };
