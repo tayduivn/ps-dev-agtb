@@ -39,8 +39,11 @@ function copy_recursive( $source, $dest ){
     $status = true;
 
     $d = dir( $source );
-    while( $f = $d->read() ){
-        if( $f == "." || $f == ".." ){
+    if($d === false) {
+    	return false;
+    }
+    while(false !== ($f = $d->read())) {
+        if( $f == "." || $f == ".." ) {
             continue;
         }
         $status &= copy_recursive( "$source/$f", "$dest/$f" );
@@ -135,13 +138,13 @@ function findTextFiles( $the_dir, $the_array ){
 }
 
 function findAllFiles( $the_dir, $the_array, $include_dirs=false, $ext='', $exclude_dir=''){
-	// jchi  #24296 
+	// jchi  #24296
 	if(!empty($exclude_dir)){
 		$exclude_dir = is_array($exclude_dir)?$exclude_dir:array($exclude_dir);
-		foreach($exclude_dir as $ex_dir){             
+		foreach($exclude_dir as $ex_dir){
 			if($the_dir == $ex_dir){
 				  return $the_array;
-			}                
+			}
 		}
 	}
 	//end
@@ -155,17 +158,17 @@ function findAllFiles( $the_dir, $the_array, $include_dirs=false, $ext='', $excl
         }
 
         if( is_dir( "$the_dir/$f" ) ) {
-			// jchi  #24296 
+			// jchi  #24296
 			if(!empty($exclude_dir)){
 				//loop through array to compare directories..
-				foreach($exclude_dir as $ex_dir){             
+				foreach($exclude_dir as $ex_dir){
 					if("$the_dir/$f" == $ex_dir){
 						  continue 2;
-					}                
+					}
 				}
 			}
 			//end
-			
+
 			if($include_dirs) {
 				$the_array[] = clean_path("$the_dir/$f");
 			}
