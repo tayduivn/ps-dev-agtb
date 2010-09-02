@@ -5,12 +5,12 @@ require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/utils/ConnectorUtils.php');
 require_once('modules/Connectors/controller.php');
 
-class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
+class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase 
+{
+	protected $qual_module;
 
-	var $qual_module;
-
-    function setUp() {
-
+    public function setUp() 
+    {
 		require('modules/Connectors/connectors/sources/ext/rest/zoominfocompany/config.php');
 		$url = $config['properties']['company_search_url'] . $config['properties']['api_key'] . '&CompanyID=18579882';
 		$contents = @file_get_contents($url);
@@ -69,13 +69,15 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 		} 	
     }
     
-    function tearDown() {
+    public function tearDown() 
+    {
     	write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
         write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');    
         ConnectorFactory::$source_map = array();
     }    
     
-    function test_zoominfocompany_fillBeans() {
+    public function testZoominfoCompanyFillBeans() 
+    {
     	require_once('modules/Leads/Lead.php');
     	$source_instance = ConnectorFactory::getInstance('ext_rest_zoominfocompany');
     	$source_instance->getSource()->loadMapping();
@@ -87,7 +89,8 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     	}
     }
     
-    function test_zoominfocompany_fillBean() {
+    public function testZoominfoCompanyFillBean() 
+    {
     	require_once('modules/Leads/Lead.php');
     	$source_instance = ConnectorFactory::getInstance('ext_rest_zoominfocompany');
     	$source_instance->getSource()->loadMapping();
@@ -98,7 +101,8 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     	}
     }
     
-    function test_zoominfoperson_fillBeans() {
+    public function testZoominfoPersonFillBeans() 
+    {
     	require_once('modules/Leads/Lead.php');
     	$source_instance = SourceFactory::getSource('ext_rest_zoominfoperson');
     	$args = array('firstname'=>'John', 'lastname'=>'Roberts');
@@ -113,6 +117,4 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 	    	}
     	}
     }
-    
-}  
-?>
+}

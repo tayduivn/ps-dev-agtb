@@ -7,11 +7,18 @@ require_once('include/connectors/utils/ConnectorUtils.php');
 require_once('modules/Connectors/controller.php');
 require_once('include/MVC/Controller/SugarController.php');
     	
-class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
-	
-	var $parentFieldArray, $vardef, $displayParams, $tabindex, $ss, $original_modules_sources, $original_searchdefs;
+class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase 
+{	
+	protected $parentFieldArray;
+	protected $vardef;
+	protected $displayParams;
+	protected $tabindex;
+	protected $ss;
+	protected $original_modules_sources;
+	protected $original_searchdefs;
     
-    function setUp() {
+    public function setUp() 
+    {
     	//Store original files
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
     	$this->original_modules_sources = $modules_sources;
@@ -57,8 +64,8 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	ConnectorFactory::$source_map = array();
     }
     
-    function tearDown() {   	
-    	
+    public function tearDown() 
+    {   		
         if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/linkedin_backup/linkedin.php')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/rest/linkedin_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/linkedin');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/linkedin_backup');
@@ -73,10 +80,9 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
         write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
     }
     
-    function test_hover_link_for_accounts() { 	
-    	if(true) {
-		   $this->markTestSkipped("Skipping... cannot run this test in framework.");
-		}
+    public function testHoverLinkForAccounts() 
+    { 	
+    	$this->markTestSkipped("Skipping... cannot run this test in framework.");
     	
     	$enabled_sources = ConnectorUtils::getModuleConnectors('Accounts');
     	$hover_sources = array();
@@ -100,8 +106,11 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	}
     }
     
-    /*
-    function test_hover_link_for_linkedin_only() {
+    
+    public function testHoverLinkForLinkedinOnly() 
+    {
+        $this->markTestSkipped("Skipping... cannot run this test in framework.");
+        
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
     	$modules_sources['Accounts'] = array('ext_rest_linkedin'=>'ext_rest_linkedin');
     	$displayParams = array();
@@ -115,8 +124,9 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	   $this->assertTrue(!empty($matches[0][0]) && preg_match('/linkedin/', $matches[0][0]));
         }	    	
     }
-    */
-    function test_remove_hover_links_in_viewdefs() {
+    
+    public function testRemoveHoverLinksInViewdefs() 
+    {
     	$module = 'Accounts';
     	
     	if(file_exists("custom/modules/{$module}/metadata/detailviewdefs.php")) {
@@ -144,7 +154,10 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertTrue(!$foundHover);	  	
     }
     
-    function test_modify_display_changes() {
+    public function testModifyDisplayChanges() 
+    {
+    	$this->markTestSkipped("Skipping... cannot run this test in framework.");
+		
     	$module = 'Accounts';
     	    	
     	//Now call the code that will add the mapping fields
