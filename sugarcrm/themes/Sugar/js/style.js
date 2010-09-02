@@ -266,7 +266,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			
 	}
 
-    var nodes = YAHOO.util.Selector.query('#moduleList div.themeTabGroupMenu');
+    var nodes = YAHOO.util.Selector.query('#moduleList>div');
     allMenuBars = new Object();
 
     for ( var i = 0 ; i < nodes.length ; i++ ) {
