@@ -100,7 +100,6 @@ if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])){
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=KBDocuments&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 if(empty($focus->id)){
 	$params[] = "<span class='pointer'>&raquo;</span>".$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{

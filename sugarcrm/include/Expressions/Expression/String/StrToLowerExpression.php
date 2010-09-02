@@ -36,7 +36,7 @@ class StrToLowerExpression extends StringExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var string = this.getParameters().evaluate() ;
+			var string = this.getParameters().evaluate() + "";
 			return string.toLowerCase();
 EOQ;
 	}

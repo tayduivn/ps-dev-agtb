@@ -54,3 +54,5 @@ ALTER TABLE report_cache
 -- //END SUGARCRM flav=pro ONLY 
     
 ALTER TABLE users DROP user_preferences;    
+ALTER TABLE products DROP team_id;
+ALTER TABLE products DROP team_set_id;

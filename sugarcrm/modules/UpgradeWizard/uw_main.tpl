@@ -70,7 +70,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_BACK}"
 					class		= "button"
 					onclick		= "document.getElementById('form').step.value='{$STEP_BACK}';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_BACK}  ">
 		{/if}
 		{if $showNext}
@@ -85,8 +85,14 @@
 		{if $showCancel}
 			<input	title		= "{$MOD.LBL_BUTTON_CANCEL}"
 					class		= "button"
+				{if !$showBack}
+					{**** if this is the first step and there is no back button, cancel should take you to administration screen ****}
+					onclick		= "document.location.href='index.php?module=Administration&action=index';"
+					type		= "button"
+				{else}
 					onclick		= "cancelUpgrade();document.getElementById('form').step.value='{$STEP_CANCEL}';"
 					type		= "submit"
+				{/if}
 					value		= "  {$MOD.LBL_BUTTON_CANCEL}  ">
 		{/if}
 		{if $showRecheck}
@@ -100,7 +106,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_DONE}"
 					class		= "button"
 					onclick		= "deleteCacheAjax();window.location.href='index.php?module=Home&action=About';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_DONE}  ">
 		{/if}
 
@@ -123,7 +129,7 @@
 {if $upload_success}
 	<tr>
 		<td colspan="2">
-			<span class="error"><b>{$upload_success}</b></span>
+			<b>{$upload_success}</b>
 		</td>
 	</tr>
 {/if}
@@ -186,8 +192,14 @@
 		{if $showCancel}
 			<input	title		= "{$MOD.LBL_BUTTON_CANCEL}"
 					class		= "button"
+				{if !$showBack}
+					{**** if this is the first step and there is no back button, cancel should take you to administration screen ****}
+					onclick		= "document.location.href='index.php?module=Administration&action=index';"
+					type		= "button"
+				{else}
 					onclick		= "cancelUpgrade();document.getElementById('form').step.value='{$STEP_CANCEL}';"
 					type		= "submit"
+				{/if}
 					value		= "  {$MOD.LBL_BUTTON_CANCEL}  ">
 		{/if}
 		{if $showRecheck}
@@ -201,7 +213,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_DONE}"
 					class		= "button"
 					onclick		= "deleteCacheAjax();window.location.href='index.php?module=Home&action=About';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_DONE}  ">
 		{/if}
 

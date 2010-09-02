@@ -4598,7 +4598,11 @@ border: 0px none;
 }
 
 .yui-navset.detailview_tabs.yui-navset-top{
-height: auto;
+    height: auto;
+}
+
+.detailview_tabs {
+	position: static;
 }
 
 .yui-navset li em {
@@ -5293,7 +5297,13 @@ visibility:visible
 .dcview table, .dcview div, .dcview a{
 font-size:75%;
 }
-.star {float:right}
+.star {
+	float:right;
+	zoom: 1;
+	display: inline;
+	*float: none;
+	*width: 18px;
+}
 .moduleTitle .star 
 {
     margin-top:4px;
@@ -5462,4 +5472,8 @@ margin-left: 5px;
 #basic_search_link
 {
     margin-left:5px !important;
+}
+
+table.olBgClass, table.olBgClass table {
+    width: auto !important;   
 }

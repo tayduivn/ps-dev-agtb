@@ -1581,31 +1581,70 @@ function initEditView(theForm) {
         editViewSnapshots = new Object();
     }
 
+    // console.log('DEBUG: Adding checks for '+theForm.id);
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
 }
 
-function onUnloadEditView(theForm) {
+function onUnloadEditView(theForm) 
+{
     if ( typeof editViewSnapshots == 'undefined' || typeof theForm == 'undefined' || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+        // No snapshots, move along
         return;
     }
 
-    if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
-        // Data has changed.
+    if ( typeof theForm == 'undefined' ) {
+        // Need to check all editViewSnapshots
+        for ( var idx in editViewSnapshots ) {
+            
+            theForm = document.getElementById(idx);
+            // console.log('DEBUG: Checking all forms '+theForm.id);
+            if ( theForm == null 
+                 || typeof editViewSnapshots[theForm.id] == 'undefined'
+                 || editViewSnapshots[theForm.id] == null ) {
+                continue;
+            }
+            
+            if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+                dataHasChanged = true;
+            }
+        }
+    } else {
+        // Just need to check a single form for changes
+        if ( typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+            return;
+        }
+
+        // console.log('DEBUG: Checking one form '+theForm.id);
+        if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+            // Data has changed.
+            dataHasChanged = true;
+        }
+    }
+
+    if ( dataHasChanged == true ) {
         return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
     } else {
         return;
     }
+
 }
 
 function disableOnUnloadEditView(theForm) {
     // If you don't pass anything in, it disables all checking
     if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' ) {
         window.onbeforeunload = null;
+        editViewSnapshots = null;
+        
+        // console.log('DEBUG: Disabling all edit view checks');
+
     } else {
         // Otherwise, it just disables it for this form
         if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
             editViewSnapshots[theForm.id] = null;
         }
+
+        // console.log('DEBUG : Disabling just checks for '+theForm.id);
+
     }
 }
 
@@ -3053,7 +3092,7 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
                     if ( ( elem.name.length > 3 && elem.name.substring(elem.name.length-3) == '_id' )
-                         || ( elem.name.length > 11 && elem.name.substring(elem.name.length-11) == '_id_advanced' ) ) {
+                         || ( elem.name.length > 12 && elem.name.substring(elem.name.length-12) == '_id_advanced' ) ) {
                         elem.value = '';
                     }
                 }
@@ -3932,7 +3971,9 @@ SUGAR.util.closeActivityPanel = {
                         var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
-                            {
+                            {	//refresh window to show updated changes
+								window.location.reload(true);
+								/*
                                 if(viewType == 'dashlet')
                                 {
                                     SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
@@ -3948,6 +3989,7 @@ SUGAR.util.closeActivityPanel = {
                                 }else if(viewType == 'listview'){
                                     document.location = 'index.php?module=' + module +'&action=index';
 									}
+								*/
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };
