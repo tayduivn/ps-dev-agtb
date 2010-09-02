@@ -81,12 +81,24 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     
     DCMenu.closeOverlay = function(depth){
-    		
     		for(i in overlays){
     			if(!depth || i >= depth){
     				if(i == depth && !overlays[i].visible){
     					overlays[i].show();	
     				}else{
+                        // See if we are hiding a form, and if so if it has changed we need to alert and confirm.
+                        if ( typeof(overlays[i].bodyNode) != 'undefined'
+                             && typeof(overlays[i].bodyNode._node) != 'undefined' 
+                             && typeof(overlays[i].bodyNode._node.getElementsByTagName('form')[0]) != 'undefined' ) {
+                            var warnMsg = onUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                            if ( warnMsg != null ) {
+                                if ( confirm(warnMsg) ) {
+                                    disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
     					overlays[i].hide();
     				}
     			}
