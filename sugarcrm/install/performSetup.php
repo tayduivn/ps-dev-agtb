@@ -599,7 +599,9 @@ enableSugarFeeds();
         ini_set('default_socket_timeout', 360);
         echo '<b>Installing Offline Client</b>';
         require_once("include/utils/disc_client_utils.php");
-        echo convert_disc_client();
+        $oc_result = convert_disc_client();
+	installLog($oc_result);
+	echo $oc_result;
     }
     //END SUGARCRM flav=pro ONLY
 
