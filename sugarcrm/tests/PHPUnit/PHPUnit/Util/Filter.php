@@ -53,7 +53,7 @@ require_once 'File/Iterator/Factory.php';
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.0RC1
+ * @version    Release: 3.5.0RC2
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -85,7 +85,11 @@ class PHPUnit_Util_Filter
             $groups[] = 'TESTS';
         }
 
-        $eTrace = $e->getTrace();
+        if ($e instanceof PHPUnit_Framework_SyntheticError) {
+            $eTrace = $e->getSyntheticTrace();
+        } else {
+            $eTrace = $e->getTrace();
+        }
 
         if (!self::frameExists($eTrace, $e->getFile(), $e->getLine())) {
             array_unshift(

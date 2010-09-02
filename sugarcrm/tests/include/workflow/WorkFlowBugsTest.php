@@ -96,6 +96,12 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->test_account->team_id = $this->test_team1->id;
     	$this->test_account->team_set_id = $this->test_team1->id;
     	$this->test_account->save();
+    	
+    	$beanList = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
     
     public function tearDown() 
@@ -140,6 +146,10 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query($sql);
         
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+        unset($GLOBALS['beanList']);
+        
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
     }    
     
     /**

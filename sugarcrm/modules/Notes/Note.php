@@ -209,9 +209,14 @@ class Note extends SugarBean {
 			$this->contact_email = $emailAddress->getPrimaryAddress(false, 'Contacts', $this->contact_id);
 		}
 		
-		
+		if(isset($this->contact_id) && $this->contact_id != '') {
+		    $contact = new Contact();
+		    $contact->retrieve($this->contact_id);
+		    if(isset($contact->id)) {
+		        $this->contact_name = $contact->full_name;
+		    }
+		}
 	}
-
 	
 	function get_list_view_data() 
 	{

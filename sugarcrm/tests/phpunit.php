@@ -37,7 +37,7 @@
 // no memory limit needed, since we are running this from the command line
 ini_set('memory_limit', '-1');
 
-set_include_path(dirname(__FILE__) . "/PHPUnit" . PATH_SEPARATOR . get_include_path());
+set_include_path(dirname(__FILE__) . PATH_SEPARATOR . dirname(__FILE__) . "/PHPUnit" . PATH_SEPARATOR . get_include_path());
 
 if ( isset($_SERVER['_']) )
 	$_SERVER['_'] = realpath($_SERVER['_']);

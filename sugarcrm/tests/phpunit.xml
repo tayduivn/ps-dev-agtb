@@ -1,11 +1,13 @@
-<phpunit bootstrap="./SugarTestHelper.php" 
+<phpunit bootstrap="SugarTestHelper.php" 
     backupGlobals="false"
     backupStaticAttributes="false">
-    <testsuite name="All Sugar Tests">
-        <directory>./tests/include</directory>
-        <directory>./tests/modules</directory>  
-        <directory>./tests/ModuleInstall</directory>
-        <directory>./tests/service</directory>
-        <directory>./tests/tests</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite>
+            <directory>include</directory>
+            <directory>modules</directory>  
+            <directory>ModuleInstall</directory>
+            <directory>service</directory>
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

@@ -1,6 +1,5 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-require_once 'PHPUnit/Framework.php';
 
 class SugarTestTeamUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {

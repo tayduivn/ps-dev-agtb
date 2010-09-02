@@ -11,6 +11,8 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
 		$mod_strings = return_module_language($GLOBALS['current_language'], 'Accounts');
 		$app_strings = return_application_language($GLOBALS['current_language']);	
 		
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+		
 		// create a dummy module directory
 		$this->_moduleName = 'TestModule'.mt_rand();
         
@@ -26,6 +28,9 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
 		    rmdir_recursive("modules/{$this->_moduleName}");
 		if ( is_dir("custom/modules/{$this->_moduleName}") )
 		    rmdir_recursive("custom/modules/{$this->_moduleName}");
+		
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+		unset($GLOBALS['current_user']);
 	}
 	
 	public function testMenuDoesNotExists()

@@ -11,6 +11,9 @@ set_include_path(
 if (!defined('SUGAR_PHPUNIT_RUNNER'))
     define('SUGAR_PHPUNIT_RUNNER', true);
 
+$GLOBALS['_POST'] = array();
+$GLOBALS['_GET'] = array();
+
 // initialize the various globals we use
 global $sugar_config, $db, $fileName, $current_user, $locale, $current_language;
 

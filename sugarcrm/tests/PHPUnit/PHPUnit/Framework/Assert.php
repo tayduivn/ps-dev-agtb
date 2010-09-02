@@ -51,7 +51,7 @@
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.0RC1
+ * @version    Release: 3.5.0RC2
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -2490,6 +2490,20 @@ abstract class PHPUnit_Framework_Assert
     public static function fail($message = '')
     {
         throw new PHPUnit_Framework_AssertionFailedError($message);
+    }
+
+    /**
+     * Fails a test with a synthetic error.
+     *
+     * @param  string  $message
+     * @param  string  $file
+     * @param  integer $line
+     * @param  array   $trace
+     * @throws PHPUnit_Framework_SyntheticError
+     */
+    public static function syntheticFail($message = '', $file = '', $line = 0, $trace = array())
+    {
+        throw new PHPUnit_Framework_SyntheticError($message, 0, $file, $line, $trace);
     }
 
     /**

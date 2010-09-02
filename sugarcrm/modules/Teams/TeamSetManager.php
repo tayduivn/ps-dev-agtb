@@ -237,7 +237,7 @@ class TeamSetManager {
         if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) { 
             mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); 
         }
-        $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php','w');
+        $fd = @fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php','w');
         if ($fd) {
             fwrite($fd,"<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>");
             fclose($fd);
@@ -292,7 +292,7 @@ class TeamSetManager {
             mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); 
         }
         
-        $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php','w');
+        $fd = @fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php','w');
         if ( $fd ) {
             fwrite($fd,"<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>");
             fclose($fd);

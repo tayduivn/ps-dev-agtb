@@ -34,7 +34,6 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @category   Testing
  * @package    PHPUnit
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
@@ -43,6 +42,8 @@
  * @since      File available since Release 3.0.0
  */
 
+debug_print_backtrace();
+ 
 require_once 'PHP/CodeCoverage/Filter.php';
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'PHPUNIT');
 
