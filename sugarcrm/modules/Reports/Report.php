@@ -116,7 +116,7 @@ class Report
 		}
 		
 		//Scheduled reports don't have $_REQUEST.
-		if ((!isset($_REQUEST['module'])) || $_REQUEST['module'] == 'Reports'){
+		if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !SUGAR_PHPUNIT_RUNNER){
 			Report::cache_modules_def_js();
 		}
 

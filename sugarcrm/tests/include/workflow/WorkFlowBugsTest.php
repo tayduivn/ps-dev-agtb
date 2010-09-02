@@ -90,18 +90,20 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $this->test_team2 = SugarTestTeamUtilities::createAnonymousTeam();
               
-    	require_once('modules/Accounts/Account.php');
+    	$beanList = array();
+    	$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+    	
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+		
+		require_once('modules/Accounts/Account.php');
     	$this->test_account = new Account();    
     	$this->test_account->name = 'bug_32738_test';
     	$this->test_account->team_id = $this->test_team1->id;
     	$this->test_account->team_set_id = $this->test_team1->id;
     	$this->test_account->save();
-    	
-    	$beanList = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		
-		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
     
     public function tearDown() 

@@ -26,6 +26,8 @@ chdir(dirname(__FILE__) . '/..');
 
 require_once('include/entryPoint.php');
 
+require_once('include/utils/layout_utils.php');
+
 $GLOBALS['db'] = DBManagerFactory::getInstance();
 
 $current_language = $sugar_config['default_language'];

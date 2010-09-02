@@ -52,11 +52,13 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
     	$GLOBALS['_REQUEST']['module'] = 'Reports';
     	$GLOBALS['request_string'] = '';
     	    	
-    	$saved_report_seed = new SavedReport();
+    	ob_start();
+        $saved_report_seed = new SavedReport();
 	    $saved_report_seed->disable_row_level_security = true;
 	    $query = "SELECT id FROM saved_reports WHERE module = 'TrackerSessions'";
 	    $results = $GLOBALS['db']->query($query);
-	    
+	    ob_end_clean(); 	
+		    	
     	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
 		      	$id = $row['id'];
                 $GLOBALS['_REQUEST']['id'] = $id;
