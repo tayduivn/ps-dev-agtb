@@ -85,8 +85,8 @@
 		{if $showCancel}
 			<input	title		= "{$MOD.LBL_BUTTON_CANCEL}"
 					class		= "button"
-				{if !$showBack}
-					{**** if this is the first step and there is no back button, cancel should take you to administration screen ****}
+				{if $step == 'start'}
+					{**** if this is the first step, cancel should take you to administration screen ****}
 					onclick		= "document.location.href='index.php?module=Administration&action=index';"
 					type		= "button"
 				{else}
@@ -98,7 +98,7 @@
 		{if $showRecheck}
 			<input	title		= "{$MOD.LBL_BUTTON_RECHECK}"
 					class		= "button"
-					onclick		= "document.getElementById('form').step.value='{$STEP_RECHECK}';"
+					onclick		= "upgradeP('{$step}');document.getElementById('form').step.value='{$STEP_RECHECK}';"
 					type		= "submit"
 					value		= "  {$MOD.LBL_BUTTON_RECHECK}  ">
 		{/if}
@@ -115,7 +115,7 @@
 	</tr>
 </table>
 </div>
-<br />
+
 <div id="main">
 <table width="100%" border="0" cellpadding="0" cellpadding="0" 
     class="{if !isset($includeContainerCSS) || $includeContainerCSS}tabDetailView{else}detail view small{/if}">
@@ -152,7 +152,7 @@
 {/if}
 </table>
 </div>
-<br />
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td>
@@ -192,8 +192,8 @@
 		{if $showCancel}
 			<input	title		= "{$MOD.LBL_BUTTON_CANCEL}"
 					class		= "button"
-				{if !$showBack}
-					{**** if this is the first step and there is no back button, cancel should take you to administration screen ****}
+				{if $step == 'start'}
+					{**** if this is the first step, cancel should take you to administration screen ****}
 					onclick		= "document.location.href='index.php?module=Administration&action=index';"
 					type		= "button"
 				{else}
@@ -205,7 +205,7 @@
 		{if $showRecheck}
 			<input	title		= "{$MOD.LBL_BUTTON_RECHECK}"
 					class		= "button"
-					onclick		= "document.getElementById('form').step.value='{$STEP_RECHECK}';"
+					onclick		= "upgradeP('{$step}');document.getElementById('form').step.value='{$STEP_RECHECK}';"
 					type		= "submit"
 					value		= "  {$MOD.LBL_BUTTON_RECHECK}  ">
 		{/if}
@@ -246,9 +246,9 @@ var currStage
 var timeOutWindowMultiplier = 1
 var timeOutWindow = 60
 function upgradeP(step){
-if(step == 'systemCheck'){
-	return;
-}
+//if(step == 'systemCheck'){
+//	return;
+//}
 
 if(document.getElementById("upgradeDiv") != null){
 	    var args = {    width:"300px",
@@ -265,7 +265,7 @@ if(document.getElementById("upgradeDiv") != null){
 	            //If we haven't built our panel using existing markup,
 	            //we can set its content via script:
 
-				if(step == 'start'){
+				if(step == 'start' || step == 'systemCheck'){
                 	//currStage = START_IN_PROGRESS;
                 	currStage = SYSTEM_CHECK_IN_PROGRESS;
                 }
