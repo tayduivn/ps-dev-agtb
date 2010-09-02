@@ -181,7 +181,7 @@ $mod_strings = array(
 	'LBL_UW_PREFLIGHT_NOT_NEEDED'				=> 'Not needed.',
 	'LBL_UW_PREFLIGHT_PRESERVE_FILES'			=> 'Auto-preserved Files:',
 	'LBL_UW_PREFLIGHT_TESTS_PASSED'				=> 'All Preflight tests passed.',
-	'LBL_UW_PREFLIGHT_TESTS_PASSED2'			=> 'Click Next to copy the upgraded files to the system.',
+	'LBL_UW_PREFLIGHT_TESTS_PASSED2'			=> 'Click Next to copy the upgraded files to the system.<br><br><b>Please take note </b> that the rest of the process is mandatory and clicking on Next will <b>require</b> you to complete the upgrade process.  If you do not wish to proceed, click on the cancel button.',	
 	'LBL_UW_PREFLIGHT_TOGGLE_ALL'				=> 'Toggle All Files',
 
 	'LBL_UW_REBUILD_TITLE'						=> 'Rebuild Result',
