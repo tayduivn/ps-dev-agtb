@@ -1,12 +1,13 @@
 <?php
-//FILE SUGARCRM PRO ONLY
+//FILE SUGARCRM flav=pro ONLY
 class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-	var $quote_name;
+	protected $quote_name;
 	
 	public function setUp()
 	{
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	    
 		global $sugar_demodata;
 		$sugar_demodata['company_name_array'] = array();
 		$query = 'SELECT * FROM ACCOUNTS';
@@ -38,7 +39,8 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function tearDown() {
+	public function tearDown() 
+	{
 		$sql = "SELECT * FROM quotes WHERE name = '{$this->quote_name}'";
 		$results = $GLOBALS['db']->query($sql);
 		$quote_id = '';
@@ -81,9 +83,12 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 	        $GLOBALS['db']->query($sql);
         }
         
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
 	}
 	
-	public function test_create_seed_quotes() {
+	public function testCreateSeedQuotes() 
+	{
         require_once('install/seed_data/quotes_SeedData.php');
 		$sql = "SELECT * FROM quotes WHERE name = '{$this->quote_name}'";
 		$results = $GLOBALS['db']->query($sql); 

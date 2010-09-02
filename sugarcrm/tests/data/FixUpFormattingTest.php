@@ -22,17 +22,17 @@
 require_once('data/SugarBean.php');
 require_once('modules/Accounts/Account.php');
 
-class fixUpFormattingTest extends Sugar_PHPUnit_Framework_TestCase
+class FixUpFormattingTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $myBean;
+    protected $myBean;
 
 	public function setUp()
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         
-        $myBean = new SugarBean();
+        $this->myBean = new SugarBean();
         
-        $myBean->field_defs = array( 
+        $this->myBean->field_defs = array( 
             'id' => array('name' => 'id', 'vname' => 'LBL_ID', 'type' => 'id', 'required' => true, ),
             'name' => array('name' => 'name', 'vname' => 'LBL_NAME', 'type' => 'varchar', 'len' => '255', 'required' => true, ),
             'bool_field' => array('name' => 'bool_field', 'vname' => 'LBL_BOOL_FIELD', 'type' => 'bool', ),
@@ -43,14 +43,14 @@ class fixUpFormattingTest extends Sugar_PHPUnit_Framework_TestCase
             'datetime_field' => array('name' => 'datetime_field', 'vname' => 'LBL_DATETIME_FIELD', 'type' => 'datetime', ),
         );
 
-        $myBean->id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
-        $myBean->name = 'Fake Bean';
-        $myBean->bool_field = 1;
-        $myBean->int_field = 2001;
-        $myBean->float_field = 20.01;
-        $myBean->date_field = '2001-07-28';
-        $myBean->time_field = '21:19:37';
-        $myBean->datetime_field = '2001-07-28 21:19:37';
+        $this->myBean->id = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        $this->myBean->name = 'Fake Bean';
+        $this->myBean->bool_field = 1;
+        $this->myBean->int_field = 2001;
+        $this->myBean->float_field = 20.01;
+        $this->myBean->date_field = '2001-07-28';
+        $this->myBean->time_field = '21:19:37';
+        $this->myBean->datetime_field = '2001-07-28 21:19:37';
 
 	}
 
@@ -64,19 +64,19 @@ class fixUpFormattingTest extends Sugar_PHPUnit_Framework_TestCase
 	public function providerBoolFixups()
 	{
 	    return array(
-            array(true,1),
-            array(false,0),
-            array('',0),
-            array(1,1),
-            array(0,0),
-            array('1',1),
-            array('0',0),
-            array('true',1),
-            array('false',0),
-            array('on',1),
-            array('off',0),
-            array('yes',1),
-            array('no',0),
+            array(true,true),
+            array(false,false),
+            array('',false),
+            array(1,true),
+            array(0,false),
+            array('1',true),
+            array('0',false),
+            array('true',true),
+            array('false',false),
+            array('on',true),
+            array('off',false),
+            array('yes',true),
+            array('no',false),
 	        );
 	}
 
@@ -86,10 +86,8 @@ class fixUpFormattingTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testBoolFixups($from, $to)
 	{
-        $bean = new SugarBean();
-
-        $bean->bool_field = $from;
-        $bean->fixUpFormatting();
-        $this->assertEquals($to,$bean->bool_field,'fixUpFormatting did not adjust from ('.gettype($from).') "'.$from.'"');
+        $this->myBean->bool_field = $from;
+        $this->myBean->fixUpFormatting();
+        $this->assertEquals($to,$this->myBean->bool_field,'fixUpFormatting did not adjust from ('.gettype($from).') "'.$from.'"');
     }
 }
