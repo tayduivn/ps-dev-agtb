@@ -65,3 +65,5 @@ alter table report_cache drop constraint report_cache_pk;
 -- //END SUGARCRM flav=pro ONLY 
 
 alter table users drop column user_preferences;
+ALTER TABLE PRODUCTS DROP COLUMN team_id;
+ALTER TABLE PRODUCTS DROP COLUMN team_set_id;
