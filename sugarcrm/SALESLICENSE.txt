@@ -5,7 +5,7 @@ SUGARCRM, INC. ("SugarCRM") LICENSES THIS SOFTWARE TO YOU SUBJECT TO THE TERMS A
 1.	DEFINITIONS
 "Feedback" means suggestions, information, ideas, or feedback that you provide to SugarCRM concerning the Software, including, but not limited to, a report of any errors which you discover while using the Software or any related documentation.
 
-"Software" means SugarCRM's "Sugar Sales" (version 6.0.0beta) software or "Sugar Enterprise" (version 6.0.0beta) software, as applicable as you select to download, each in object code form only, and all updates and upgrades thereto provided by SugarCRM hereunder.
+"Software" means SugarCRM's "Sugar Sales" (version 6.1.0 Beta) software or "Sugar Enterprise" (version 6.1.0 Beta) software, as applicable as you select to download, each in object code form only, and all updates and upgrades thereto provided by SugarCRM hereunder.
 
 2.	LICENSE AND RESTRICTIONS
 Subject to the terms and conditions of this EULA, SugarCRM hereby grants to you a limited, non-exclusive, non-transferable license to use internally the Software and related documentation (if any), but only for the purposes of internally evaluating and testing the Software.  You may not use the Software for any other purpose.  You may also make a reasonable number of copies of the Software and related documentation (if any) solely for backup or archival purposes.
