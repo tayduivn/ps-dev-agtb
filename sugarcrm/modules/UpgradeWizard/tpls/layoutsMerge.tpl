@@ -1,5 +1,3 @@
-{*
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -26,8 +24,6 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-*}
  
  <br>
  <p>{$CONFIRM_LAYOUT_DESC}</p>
