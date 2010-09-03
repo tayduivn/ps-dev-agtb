@@ -31,7 +31,6 @@ $module_name='EAPM';
 $subpanel_layout = array(
 	'top_buttons' => array(
 		array('widget_class' => 'SubPanelTopCreateButton'),
-		array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => $module_name),
 	),
 
 	'where' => '',
@@ -40,11 +39,19 @@ $subpanel_layout = array(
 		'name'=>array(
 	 		'vname' => 'LBL_NAME',
 			'widget_class' => 'SubPanelDetailViewLink',
-	 		'width' => '45%',
+	 		'width' => '25%',
 		),
+		'application'=>array(
+	 		'vname' => 'LBL_APPLICATION',
+	 		'width' => '20%',
+		),
+		'url'=>array(
+	 		'vname' => 'LBL_URL',
+	 		'width' => '25%',
+		),		
 		'date_modified'=>array(
 	 		'vname' => 'LBL_DATE_MODIFIED',
-	 		'width' => '45%',
+	 		'width' => '20%',
 		),
 		'edit_button'=>array(
 			'widget_class' => 'SubPanelEditButton',
