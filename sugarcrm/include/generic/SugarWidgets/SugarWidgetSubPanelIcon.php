@@ -93,17 +93,17 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 				. '" >' . "$icon_img_html</a>";
 		}
 
-		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field']) && !empty($layout_def['module']) && $layout_def['module'] == 'Meetings'){
+		if(!empty($layout_def['image2']) &&  !empty($layout_def['image2_ext_url_field'])){
  
-			if (!empty($layout_def['fields'][strtoupper($layout_def['image2_url_field'])])) {
-				$join_url = $layout_def['fields'][strtoupper($layout_def['image2_url_field'])];						
+			if (!empty($layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])])) {
+				$link_url  = $layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])];						
 			}
  
 			$icon_img_html = SugarThemeRegistry::current()->getImage( $layout_def['image2'] . '', 'border="0" alt="' . $layout_def['image2'] . '"');
-			$ret.= (empty($join_url)) ? '' : '<a href="' . $join_url. '" TARGET = "_blank">' . "$icon_img_html</a>";	
+			$ret.= (empty($link_url)) ? '' : '<a href="' . $link_url. '" TARGET = "_blank">' . "$icon_img_html</a>";	
 		}
 //if requested, add attachement icon.
-		else if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
+		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
 			if (is_array($layout_def['image2_url_field'])) {
 				$filepath="";
 				//Generate file url.

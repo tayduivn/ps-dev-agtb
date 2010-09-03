@@ -412,7 +412,11 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-
+		if($this->assigned_user_id == $GLOBALS['current_user']->id){
+			$meeting_fields['DISPLAYED_URL'] = $this->host_url;
+		}else{
+			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
+		}
 		return $meeting_fields;
 	}
 
