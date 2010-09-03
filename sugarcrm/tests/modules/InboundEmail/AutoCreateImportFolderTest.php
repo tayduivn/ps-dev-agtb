@@ -3,7 +3,7 @@ require_once('include/SugarFolders/SugarFolders.php');
 require_once('modules/InboundEmail/InboundEmail.php');
 
 /**
- * @group bug33404
+ * @ticket 33404
  */
 class AutoCreateImportFolderTest extends Sugar_PHPUnit_Framework_TestCase
 {

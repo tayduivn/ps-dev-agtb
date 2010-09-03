@@ -118,7 +118,7 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug35307
+     * @ticket 35307
      */
     public function testOldThemeIsNotRecognized()
     {

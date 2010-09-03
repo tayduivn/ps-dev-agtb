@@ -81,7 +81,7 @@ class FixUpFormattingTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @group bug34562
+     * @ticket 34562
      * @dataProvider providerBoolFixups
      */
 	public function testBoolFixups($from, $to)

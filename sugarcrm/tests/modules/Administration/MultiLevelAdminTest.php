@@ -57,7 +57,7 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33494
+     * @ticket 33494
      */
     public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyAdmin()
     {

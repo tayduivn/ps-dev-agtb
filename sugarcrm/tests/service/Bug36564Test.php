@@ -1,7 +1,7 @@
 <?php
 require_once 'tests/service/SOAPTestCase.php';
 /**
- * @group bug36564
+ * @ticket 36564
  */
 class Bug36564Test extends SOAPTestCase
 {

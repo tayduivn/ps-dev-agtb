@@ -4,7 +4,7 @@ require_once 'modules/Contacts/Contact.php';
 require_once 'include/utils/layout_utils.php';
 
 /**
- * @group bug34125
+ * @ticket 34125
  */
 class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
 {

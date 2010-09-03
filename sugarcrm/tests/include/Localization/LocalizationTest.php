@@ -57,7 +57,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug26803
+     * @ticket 26803
      */
     public function testGetLocaleFormattedNameWhenNameIsEmpty()
     {
@@ -69,7 +69,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug26803
+     * @ticket 26803
      */
     public function testGetLocaleFormattedNameWhenNameIsEmptyAndReturningEmptyString()
     {

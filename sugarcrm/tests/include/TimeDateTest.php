@@ -438,7 +438,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
     /**
-     * @group bug17528
+     * @ticket 17528
      */
 	public function testSwapDatetimeFormatToDbFormat()
 	{
@@ -457,7 +457,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @group bug17528
+     * @ticket 17528
      */
 	public function testTodbCanHandleDdmmyyyyFormats()
 	{
@@ -479,7 +479,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @group bug17528
+     * @ticket 17528
      */
 	public function testTodbCanHandleMmddyyyyFormats()
 	{
@@ -496,7 +496,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @group bug17528
+     * @ticket 17528
      */
 	public function testTodbdateCanHandleDdmmyyyyFormats()
 	{
@@ -512,7 +512,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	/**
-     * @group bug17528
+     * @ticket 17528
      */
 	public function testTodbdateCanHandleMmddyyyyFormats()
 	{

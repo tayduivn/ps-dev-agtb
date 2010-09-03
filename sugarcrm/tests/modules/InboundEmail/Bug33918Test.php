@@ -4,7 +4,7 @@ require_once('include/SugarFolders/SugarFolders.php');
 require_once('modules/Campaigns/ProcessBouncedEmails.php');
 
 /**
- * @group bug33918 
+ * @ticket 33918 
  */
 class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
 {

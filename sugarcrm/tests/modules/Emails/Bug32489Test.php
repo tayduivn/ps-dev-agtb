@@ -4,7 +4,7 @@ require_once('modules/Emails/Email.php');
 require_once('modules/Notes/Note.php');
 
 /**
- * @group bug32489
+ * @ticket 32489
  */
 class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
 {

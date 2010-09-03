@@ -1377,7 +1377,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group bug33283
+     * @ticket 33283
      * @dataProvider providerConvert
      */
     public function testConvert(
@@ -1400,7 +1400,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      }
 
      /**
-      * @group bug33283
+      * @ticket 33283
       */
      public function testConcat()
      {
@@ -1445,7 +1445,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      }
 
      /**
-      * @group bug33283
+      * @ticket 33283
       * @dataProvider providerFromConvert
       */
      public function testFromConvert(
@@ -1459,7 +1459,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group bug34892
+     * @ticket 34892
      */
     public function testMssqlNotClearingErrorResults()
     {

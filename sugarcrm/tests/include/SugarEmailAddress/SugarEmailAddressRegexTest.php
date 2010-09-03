@@ -17,8 +17,8 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
 	}
     
     /**
-     * @group bug13765
-     * @group bug39186
+     * @ticket 13765
+     * @ticket 39186
      * @dataProvider providerEmailAddressRegex
      */
 	public function testEmailAddressRegex($email, $valid) 

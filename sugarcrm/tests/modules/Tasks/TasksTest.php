@@ -15,7 +15,7 @@ class TasksTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug39259
+     * @ticket 39259
      */
     public function testListviewTimeDueFieldProperlyHandlesDst()
     {

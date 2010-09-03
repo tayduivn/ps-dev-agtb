@@ -312,7 +312,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-	 * @group bug23485
+	 * @ticket 23485
 	 */
     public function testEnumWithDisplayValue()
     {
@@ -331,7 +331,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27467
+     * @ticket 27467
      */
     public function testEnumWithExtraSpacesAtTheEnd()
     {
@@ -350,7 +350,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33328
+     * @ticket 33328
      */
     public function testEnumWithKeyInDifferentCase()
     {
@@ -369,7 +369,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33328
+     * @ticket 33328
      */
     public function testEnumWithValueInDifferentCase()
     {
@@ -630,7 +630,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug38356
+     * @ticket 38356
      */
     public function testRelateCreateRecordNoTableInVardef()
     {
@@ -676,7 +676,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug32869
+     * @ticket 32869
      */
     public function testRelateCreateRecordIfNoRnameParameter()
     {
@@ -722,7 +722,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug26897
+     * @ticket 26897
      */
     public function testRelateCreateRecordCheckACL()
     {
@@ -773,7 +773,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33704
+     * @ticket 33704
      */
     public function testRelateDoNotCreateRecordIfRelatedModuleIsUsers()
     {
@@ -815,7 +815,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug38885
+     * @ticket 38885
      */
     public function testRelateToUserNameWhenFullNameIsGiven()
     {
@@ -856,7 +856,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27562
+     * @ticket 27562
      */
     public function testRelateCreateRecordUsingMultipleFieldToLinkRecords()
     {
@@ -955,7 +955,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27046
+     * @ticket 27046
      */
     public function testRelateWithInvalidDataFormatting()
     {

@@ -15,7 +15,7 @@ class SugarFieldEnumTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
      /**
-     * @group bug36744
+     * @ticket 36744
      */
 	public function testFormatEnumField()
 	{

@@ -394,7 +394,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testEmptyPrecision()
     {
@@ -429,7 +429,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testBlankSpacePrecision()
     {
@@ -464,7 +464,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecision()
     {
@@ -501,7 +501,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionInLen()
     {
@@ -536,7 +536,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testEmptyPrecisionMassageFieldDef()
     {
@@ -566,7 +566,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testBlankSpacePrecisionMassageFieldDef()
     {
@@ -596,7 +596,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionMassageFieldDef()
     {
@@ -626,7 +626,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionInLenMassageFieldDef()
     {

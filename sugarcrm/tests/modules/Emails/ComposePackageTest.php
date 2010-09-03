@@ -3,7 +3,7 @@ require_once('modules/Contacts/Contact.php');
 
 
 /**
- * @group bug32487
+ * @ticket 32487
  */
 class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -97,7 +97,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug21828
+     * @ticket 21828
      */
     public function testUndoRemovedAddedEmailAddresses()
     {

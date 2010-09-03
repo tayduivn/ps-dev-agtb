@@ -155,7 +155,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
     }    
     
     /**
-     * @group bug32738
+     * @ticket 32738
      */
     public function testBug32738() 
     {
@@ -165,7 +165,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug38859
+     * @ticket 38859
      */
     public function testBug38859() 
     {

@@ -67,7 +67,7 @@ EOQ;
 	}
 
     /**
-     * @group bug29114
+     * @ticket 29114
      */
     public function testMenuExistsCanFindModuleExtMenu()
     {
@@ -97,7 +97,7 @@ EOQ;
     }
 
     /**
-     * @group bug38935
+     * @ticket 38935
      */
     public function testMenuExistsCanFindModuleExtMenuWhenModuleMenuDefinedGlobal()
     {

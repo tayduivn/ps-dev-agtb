@@ -537,7 +537,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     }
      
     /**
-     * @group bug36658
+     * @ticket 36658
      */
     public function testOrderByClauseOfGetRelationship()
     {
