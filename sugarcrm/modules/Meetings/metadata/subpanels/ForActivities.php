@@ -42,6 +42,8 @@ $subpanel_layout = array(
 		'object_image'=>array(
 			'widget_class' => 'SubPanelIcon',
  		 	'width' => '2%',
+			'image2'=>'join_imeeting',
+ 		 	'image2_url_field'=>'join_url'
 		),
 		'close_button'=>array(
 			'widget_class' => 'SubPanelCloseButton',
@@ -104,7 +106,10 @@ $subpanel_layout = array(
 		'time_start'=>array(
 			'usage'=>'query_only',
 	
-		),					
+		),	
+		'join_url'=>array(
+			'usage'=>'query_only'
+		),				
 	),
 );		
 ?>

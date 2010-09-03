@@ -3765,5 +3765,5 @@ $app_list_strings['kbdocument_status_dom'] = array (
   );
   
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
-
+  $app_list_strings['eapm_list']= array('Other'=>'Other', 'webex'=>'WebEx', 'gotomeeting'=>'GoToMeeting', 'lotuslive'=>'LotusLive',);
 ?>
