@@ -281,7 +281,10 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_login();
 		$result = $this->_soapClient->call('get_module_fields_md5',array('session'=>$this->_sessionId,'module'=> $module ));
-		return $result; 
+		if(isset($result['md5']))
+		  return $result['md5']; 
+		else 
+		  return $result;
     }
     
     public function _getModuleLayoutMD5()
@@ -289,7 +292,10 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_login();
 		$result = $this->_soapClient->call('get_module_layout_md5',
 		              array('session'=>$this->_sessionId,'module_names'=> array('Accounts'),'types' => array('default'),'views' => array('list')));
-		return $result; 
+		if(isset($result['md5']))
+		  return $result['md5']; 
+		else 
+		  return $result; 
     }
     
     public function _setEntryForContact() {

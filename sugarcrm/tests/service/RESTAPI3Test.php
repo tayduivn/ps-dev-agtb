@@ -312,14 +312,14 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->_login();
         $session = $result['id'];
             
-        $result = $this->_makeRESTCall('get_module_layout_md5',
+        $fullResult = $this->_makeRESTCall('get_module_layout_md5',
                         array(
                             'session' => $session,
                             'module' => array($module),
                             'type' => array($type),
                             'view' => array($view) )
                         );
-
+        $result = $fullResult['md5'];
         if ( is_file('custom'  . DIRECTORY_SEPARATOR . $expected_file) ) 
         	require('custom'  . DIRECTORY_SEPARATOR . $expected_file);
         else
@@ -374,7 +374,8 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $session = $result['id'];
         
         //Test a regular module
-        $result = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'Accounts' )); 
+        $fullResult = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'Accounts' )); 
+        $result = $fullResult['md5'];
         $a = new Account();
         $soapHelper = new SugarWebServiceUtilv3();
         $actualVardef = $soapHelper->get_return_module_fields($a,'Accounts','');
