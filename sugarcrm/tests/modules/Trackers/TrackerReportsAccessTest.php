@@ -38,10 +38,10 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
     
     /**
      * Test whereby an Admin user attempts to access the TrackerSessions reports
-     *
+     * @outputBuffering enabled
      */
-    public function test_Admin_Tracker_Session_Report_access () {
-
+    public function test_Admin_Tracker_Session_Report_access () 
+    {
     	$admin = new User();
     	$admin->retrieve('1');
     	$GLOBALS['current_user'] = $admin;
@@ -52,19 +52,15 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
     	$GLOBALS['_REQUEST']['module'] = 'Reports';
     	$GLOBALS['request_string'] = '';
     	    	
-    	ob_start();
-        $saved_report_seed = new SavedReport();
+    	$saved_report_seed = new SavedReport();
 	    $saved_report_seed->disable_row_level_security = true;
 	    $query = "SELECT id FROM saved_reports WHERE module = 'TrackerSessions'";
 	    $results = $GLOBALS['db']->query($query);
-	    ob_end_clean(); 	
-		    	
+	        	
     	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
 		      	$id = $row['id'];
                 $GLOBALS['_REQUEST']['id'] = $id;
-		    	ob_start();
 		    	require('modules/Reports/ReportCriteriaResults.php');
-		    	ob_end_clean(); 	
 		    	$this->assertTrue(checkSavedReportACL($args['reporter'], $args)); 
 		}
     }
