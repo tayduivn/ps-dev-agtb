@@ -10,7 +10,7 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 	    
 		global $sugar_demodata;
 		$sugar_demodata['company_name_array'] = array();
-		$query = 'SELECT * FROM ACCOUNTS';
+		$query = 'SELECT * FROM accounts';
 		$results = $GLOBALS['db']->limitQuery($query,0,10,true,"Error retrieving Accounts");
         while($row = $GLOBALS['db']->fetchByAssoc($results)) {
         	$sugar_demodata['company_name_array'][] = $row['name'];
