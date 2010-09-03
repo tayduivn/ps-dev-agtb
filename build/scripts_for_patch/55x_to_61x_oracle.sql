@@ -67,3 +67,4 @@ alter table report_cache drop constraint report_cache_pk;
 alter table users drop column user_preferences;
 ALTER TABLE PRODUCTS DROP COLUMN team_id;
 ALTER TABLE PRODUCTS DROP COLUMN team_set_id;
+create index IDX_UD_ID on TEAM_SETS_TEAMS (id);
