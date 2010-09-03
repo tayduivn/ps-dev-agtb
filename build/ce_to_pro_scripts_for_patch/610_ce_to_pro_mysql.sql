@@ -1326,3 +1326,14 @@ UPDATE `prospect_lists` SET team_id = 1;
 UPDATE `prospects` SET team_id = 1;
 UPDATE `tasks` SET team_id = 1;
 UPDATE `folders` SET team_id = 1 WHERE is_group = '1';
+
+ALTER TABLE contracts_audit ADD INDEX idx_contracts_primary (id);
+ALTER TABLE kbcontents_audit ADD INDEX idx_kbcontents_primary (id);
+ALTER TABLE products_audit ADD INDEX idx_products_primary (id);
+ALTER TABLE quotes_audit ADD INDEX idx_quotes_primary (id);
+ALTER TABLE contracts_audit ADD INDEX idx_contracts_parent_id (parent_id);
+ALTER TABLE kbcontents_audit ADD INDEX idx_kbcontents_parent_id (parent_id);       
+ALTER TABLE products_audit ADD INDEX idx_products_parent_id (parent_id);
+ALTER TABLE quotes_audit ADD INDEX idx_quotes_parent_id (parent_id);   
+
+  
