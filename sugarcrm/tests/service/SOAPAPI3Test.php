@@ -141,7 +141,7 @@ class SOAPAPI3Test extends SOAPTestCase
 
          $this->_removeUpcomingActivities();
     }
-
+    //BEGIN SUGARCRM flav=pro ONLY 
     public function testGetLastViewed()
     {
          $testModule = 'Accounts';
@@ -164,7 +164,7 @@ class SOAPAPI3Test extends SOAPTestCase
 
          $this->assertTrue($found, "Unable to get last viewed modules");
      }
-
+     
      private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
      {
         $trackerManager = TrackerManager::getInstance();
@@ -181,7 +181,7 @@ class SOAPAPI3Test extends SOAPTestCase
         $monitor->setValue('item_summary', $summaryText);
         $trackerManager->saveMonitor($monitor, true, true);
      }
-
+     //END SUGARCRM flav=pro ONLY
 
     /**
      * Get Module Layout functions not exposed to soap service, make sure they are not available.

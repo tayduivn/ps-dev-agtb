@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 require_once('modules/SugarFavorites/SugarFavorites.php');
 require_once('modules/SugarFavorites/controller.php');
 

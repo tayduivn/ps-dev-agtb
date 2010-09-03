@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 //require_once dirname(__FILE__) . '/../../test_utilities/SugarTest_TeamUtilities.php';
 //require_once dirname(__FILE__) . '/../../test_utilities/SugarTest_UserUtilities.php';
 //require_once('modules/Teams/Team.php');

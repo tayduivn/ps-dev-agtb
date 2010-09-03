@@ -268,7 +268,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                     array('module' => 'Accounts','type' => 'default', 'view' => 'list','expected_file' => 'modules/Accounts/metadata/listviewdefs.php' ), 
                     array('module' => 'Accounts','type' => 'default', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/editviewdefs.php' ),  
                     array('module' => 'Accounts','type' => 'default', 'view' => 'detail','expected_file' => 'modules/Accounts/metadata/detailviewdefs.php' ),  
+                    //BEGIN SUGARCRM flav=pro ONLY
                     array('module' => 'Accounts','type' => 'wireless', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/wireless.editviewdefs.php' ),  
+                    //END SUGARCRM flav=pro ONLY
         );
     }
 
@@ -630,11 +632,13 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 'type' => 'default',
                 'view' => 'subpanel',
             ),
+            //BEGIN SUGARCRM flav!=sales ONLY
             array(
                 'module' => 'Leads',
                 'type' => 'wireless',
                 'view' => 'subpanel',
-            )
+            ),
+            //END SUGARCRM flav!=sales ONLY
         );
     }
 
@@ -656,7 +660,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue(isset($results[$module][$type][$view]), "Unable to get subpanel defs");
     }
-    
+     //BEGIN SUGARCRM flav=pro ONLY
      public function testGetLastViewed()
      {
          $result = $this->_login();
@@ -704,7 +708,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('item_summary', $summaryText);
         $trackerManager->saveMonitor($monitor, true, true);
      }
-     
+     //END SUGARCRM flav=pro ONLY
      public function testGetUpcomingActivities()
      {
          $result = $this->_login();

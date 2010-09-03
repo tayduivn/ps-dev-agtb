@@ -28,7 +28,11 @@ class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
         $contact->save();
 		$this->c = $contact;
 		
-		
+		$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
 	}
 
     public function tearDown()
@@ -36,6 +40,9 @@ class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         
+        unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
+		
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
         
         unset($this->c);
