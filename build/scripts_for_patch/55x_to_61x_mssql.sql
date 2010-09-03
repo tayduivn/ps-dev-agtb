@@ -44,8 +44,10 @@ ALTER TABLE [report_cache] ADD CONSTRAINT pk_report_cache PRIMARY KEY (id, assig
 -- //END SUGARCRM flav=pro ONLY 
 
 ALTER TABLE [users] DROP COLUMN user_preferences;
+-- //BEGIN SUGARCRM flav=pro ONLY 
 ALTER TABLE [products] DROP team_id;
 ALTER TABLE [products] DROP team_set_id;
+-- //END SUGARCRM flav=pro ONLY 
 
 CREATE NONCLUSTERED INDEX idx_accounts_primary on accounts_audit (id);
 CREATE NONCLUSTERED INDEX idx_bugs_primary on bugs_audit (id);
