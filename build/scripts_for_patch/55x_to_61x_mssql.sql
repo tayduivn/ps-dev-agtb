@@ -61,5 +61,5 @@ CREATE NONCLUSTERED INDEX idx_contracts_primary on contracts_audit (id);
 CREATE NONCLUSTERED INDEX idx_kbcontents_primary on kbcontents_audit (id);
 CREATE NONCLUSTERED INDEX idx_products_primary on products_audit (id);
 CREATE NONCLUSTERED INDEX idx_quotes_primary on quotes_audit (id);
-CREATE NONCLUSTERED INDEX pk_team_sets_teams on team_sets_teams (id);
+ALTER TABLE [team_sets_teams] ADD CONSTRAINT pk_team_sets_teams PRIMARY KEY (id);
 -- //END SUGARCRM flav=pro ONLY
