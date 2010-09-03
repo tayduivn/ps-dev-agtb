@@ -75,8 +75,7 @@ ALTER TABLE opportunities_audit
     ADD INDEX idx_opportunities_primary (id);
 ALTER TABLE project_task_audit
     ADD INDEX idx_project_task_primary (id);
-ALTER TABLE bugs_audit
-    ADD INDEX idx_bugs_primary (id);
+
 
 -- //BEGIN SUGARCRM flav=pro ONLY
 ALTER TABLE contracts_audit
