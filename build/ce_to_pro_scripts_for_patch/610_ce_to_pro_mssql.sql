@@ -334,3 +334,15 @@ UPDATE [tasks] SET team_id = 1;
 UPDATE [bugs] SET system_id = 1;
 UPDATE [cases] SET system_id = 1;
 UPDATE [folders] SET team_id = 1 WHERE is_group = '1';
+
+
+CREATE NONCLUSTERED INDEX idx_contracts_primary on contracts_audit (id);
+CREATE NONCLUSTERED INDEX idx_kbcontents_primary on kbcontents_audit (id);
+CREATE NONCLUSTERED INDEX idx_products_primary on products_audit (id);
+CREATE NONCLUSTERED INDEX idx_quotes_primary on quotes_audit (id);
+
+
+CREATE NONCLUSTERED INDEX idx_contracts_parent_id on contracts_audit (parent_id);
+CREATE NONCLUSTERED INDEX idx_kbcontents_parent_id on kbcontents_audit (parent_id);
+CREATE NONCLUSTERED INDEX idx_products_parent_id on products_audit (parent_id);
+CREATE NONCLUSTERED INDEX idx_quotes_parent_id on quotes_audit (parent_id);
