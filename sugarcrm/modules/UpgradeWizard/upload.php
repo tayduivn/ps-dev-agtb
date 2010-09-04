@@ -132,7 +132,7 @@ switch($run) {
 				if(copy($tempFile , $target_path)){
 					logThis('copying manifest.php to final destination.');
 					copy($manifest_file, $target_manifest);
-					$out .= "{$base_filename} {$mod_strings['LBL_UW_FILE_UPLOADED']}.<br>\n";
+					$out .= "<b>{$base_filename} {$mod_strings['LBL_UW_FILE_UPLOADED']}.</b><br>\n";
 				} else {
 					logThis('ERROR: cannot copy manifest.php to final destination.');
 					$out .= "<b><span class='error'>{$mod_strings['ERR_UW_UPLOAD_ERR']}</span></b><br />";
@@ -236,7 +236,7 @@ else if(!$frozen){
     $GLOBALS['top_message'] .= "<br />";
 }
 else{
-    $GLOBALS['top_message'] = $frozen;
+    $GLOBALS['top_message'] = "<b>{$frozen}</b>";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
