@@ -70,7 +70,12 @@ class EAPM extends Basic {
 
    static function getLoginInfo($application){
         $results = $GLOBALS['db']->query("SELECT name, password, url FROM eapm WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' AND application='$application' AND deleted = 0");
-        return $GLOBALS['db']->fetchByAssoc($results);
+        $row = $GLOBALS['db']->fetchByAssoc($results);
+        if(isset($row['password'])){
+        	require_once("include/utils/encryption_utils.php");
+        	$row['password'] = blowfishDecode(blowfishGetKey('encrypt_field'),$row['password']);;
+        }
+        return $row;
     }
 		
 }
