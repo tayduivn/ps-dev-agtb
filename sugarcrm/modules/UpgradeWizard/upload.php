@@ -223,9 +223,20 @@ if(isset($_SESSION['install_file']) && !empty($_SESSION['install_file']) && is_f
 if($stop == false) set_upgrade_progress('upload','done');
 $frozen = $out;
 
-$GLOBALS['upload_success'] = '';
 if(!$stop){
-    $GLOBALS['upload_success'] = $mod_strings['LBL_UPLOAD_SUCCESS'];
+    if(!empty($GLOBALS['top_message'])){
+        $GLOBALS['top_message'] .= "<br />";
+    }
+    else{
+        $GLOBALS['top_message'] = '';
+    }
+    $GLOBALS['top_message'] .= "<b>{$mod_strings['LBL_UPLOAD_SUCCESS']}</b>";
+}
+else if(!$frozen){
+    $GLOBALS['top_message'] .= "<br />";
+}
+else{
+    $GLOBALS['top_message'] = $frozen;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,7 +262,7 @@ $form =<<<eoq
 						{$disabled}
 						disabled="disabled"
 						value="{$mod_strings['LBL_UW_TITLE_UPLOAD']}"
-						onClick="uploadCheck();upgradeP('uploadingUpgardePackage');document.the_form.upgrade_zip_escaped.value = escape( document.the_form.upgrade_zip.value );document.the_form.submit();" />
+						onClick="uploadCheck();upgradeP('uploadingUpgradePackage', false);document.the_form.upgrade_zip_escaped.value = escape( document.the_form.upgrade_zip.value );document.the_form.submit();" />
 				<input type=hidden name="upgrade_zip_escaped" value="" />
 			</td>
 		</tr>
@@ -350,7 +361,7 @@ $form5 =<<<eoq5
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p>&nbsp;</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'></p>
         </td></tr>
      </table>
  </div>
