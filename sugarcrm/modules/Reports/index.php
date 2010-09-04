@@ -147,9 +147,9 @@ else
 if ( empty($_REQUEST['search_form_only']) ) {
     $params = array();
     if(!empty($_REQUEST['favorite']))
-        $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
+        $params[] = "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_FAVORITES_TITLE'];
     else
-        $params[] = $mod_strings['LBL_MODULE_NAME'];
+        $params[] = "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
     echo getClassicModuleTitle("Reports", $params, true);
 }
 
