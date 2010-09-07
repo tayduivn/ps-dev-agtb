@@ -83,7 +83,7 @@ $layout_defs['Meetings'] = array(
 			'collection_list' => array(		
 				'notes' => array(
 					'module' => 'Notes',
-					'subpanel_name' => 'ForHistory',
+					'subpanel_name' => 'ForMeetings',
 					'get_subpanel_data' => 'notes',
 				),		
 			)			
