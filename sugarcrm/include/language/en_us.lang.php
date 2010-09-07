@@ -2766,7 +2766,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_TIME' => 'Time: ',
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
-    'MSG_JS_ALERT_MTG_REMINDER_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
