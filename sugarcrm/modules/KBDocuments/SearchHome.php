@@ -104,7 +104,7 @@ if(isset($_POST['clear_loaded'])){
             $_POST['mode'] = $prefMode;
         }
     }
-
+    
     //Set parameters to be used in rendering initial tabs on form
     if(isset($_POST['mode']) && $_POST['mode'] == 'advanced'){
         //set form display properties to show advanced forms
@@ -115,6 +115,7 @@ if(isset($_POST['clear_loaded'])){
         $ss->assign('SHOW_INITIAL_BROWSE', 'display:none');
         $ss->assign('CURRENT_OTHER_BROWSE', '');
         $ss->assign('SHOW_INITIAL_LIST', '');
+        $ss->assign('MODE', 'advanced');
         $current_user->setPreference('KBSearchFormMode', $_POST['mode'],0,'KnowledgeBase');
      }elseif(isset($_POST['mode']) && $_POST['mode'] == 'browse'){
         //set form display properties to show browse forms
@@ -125,6 +126,7 @@ if(isset($_POST['clear_loaded'])){
         $ss->assign('SHOW_INITIAL_BROWSE', '');
         $ss->assign('CURRENT_OTHER_BROWSE', 'current');
         $ss->assign('SHOW_INITIAL_LIST', 'display:none');
+        $ss->assign('MODE', 'browse');
         $current_user->setPreference('KBSearchFormMode', $_POST['mode'],0,'KnowledgeBase');
      }else{
         //set form display properties to show basic forms
@@ -135,9 +137,11 @@ if(isset($_POST['clear_loaded'])){
         $ss->assign('SHOW_INITIAL_BROWSE', 'display:none');
         $ss->assign('CURRENT_OTHER_BROWSE', '');
         $ss->assign('SHOW_INITIAL_LIST', '');
+        $ss->assign('MODE', 'basic');
         $current_user->setPreference('KBSearchFormMode', 'basic',0,'KnowledgeBase');
     }
 
+    
 ////////////////////////////////// FTS Section ///////////////////////////////////////
 
     //set default so all records are returned
@@ -166,12 +170,9 @@ if(isset($_POST['clear_loaded'])){
             //handle the basic search case
             if(isset($_POST['mode']) && $_POST['mode'] =='basic'){
                 $search_str = perform_basic_search($_POST['searchText'],$focus);
-
-
             }elseif(isset($_POST['mode']) && $_POST['mode'] =='advanced'){
                 //handle the advanced search case
                 $search_str = perform_advanced_search($focus);
-
             }
 
             if(empty($search_str)){
