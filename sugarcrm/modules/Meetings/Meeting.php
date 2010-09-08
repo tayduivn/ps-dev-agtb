@@ -417,6 +417,12 @@ class Meeting extends SugarBean {
 		}else{
 			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
 		}
+		
+		$meeting_fields['JOIN_MEETING']  = '';
+		if(!empty($meeting_fields['DISPLAYED_URL'])){
+			$icon_img_html = SugarThemeRegistry::current()->getImage('join_imeeting', 'border="0" alt="join_imeeting"');
+			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . "$icon_img_html</a>";
+		}
 		return $meeting_fields;
 	}
 
