@@ -1,23 +1,23 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: DateTimeUtil.php 15853 2006-08-12 01:29:14 +0000 (Sat, 12 Aug 2006) jenny $
@@ -47,10 +47,18 @@ class DateTimeUtil
 
 		// unix epoch time
 		var $ts;
-	function get_time_start( $date_start, $time_start)
-	{	
-		$match=array();
-		
+    /**
+     * Convert from DB-formatted timedate to DateTimeUtil object
+     * @param string $date_start
+     * @param string $time_start
+     */
+    function get_time_start($date_start, $time_start = '')
+ 	{
+		if(empty($time_start)) {
+			list($date_start, $time_start) = explode(' ', $date_start);
+		}
+ 		$match=array();
+
 		preg_match("/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/",$date_start,$match);
 		$time_arr = array();
 		$time_arr['year'] = $match[1];
@@ -64,17 +72,20 @@ class DateTimeUtil
 		}
 		else
 		{
-			if (preg_match("/^(\d\d*):(\d\d*):(\d\d*)$/",$time_start,$match))
+			if (preg_match('/^(\d\d*):(\d\d*):(\d\d*)$/',$time_start,$match))
 			{
 				$time_arr['hour'] = $match[1];
 				$time_arr['min'] = $match[2];
 			}
-			else if ( preg_match("/^(\d\d*):(\d\d*)$/",$time_start,$match))
+			else if ( preg_match('/^(\d\d*):(\d\d*)$/',$time_start,$match))
 			{
 				$time_arr['hour'] = $match[1];
 				$time_arr['min'] = $match[2];
 			}
 		}
+		$date_time = new DateTimeUtil($time_arr,true);
+
+		$time_arr = array('ts'=>$date_time->ts + date("Z"));
 		return new DateTimeUtil($time_arr,true);
 
 	}
@@ -89,7 +100,7 @@ class DateTimeUtil
 			$duration_minutes = "00";
 		}
 
-		$added_seconds = ($duration_hours * 60 * 60 + $duration_minutes * 60 ) - 1; 
+		$added_seconds = ($duration_hours * 60 * 60 + $duration_minutes * 60 ) - 1;
 
 		$time_arr = array();
 		$time_arr['year'] = $start_time->year;
@@ -104,7 +115,7 @@ class DateTimeUtil
 
 	function get_date_str()
 	{
-		
+
 		$arr = array();
 		if ( isset( $this->hour))
 		{
@@ -127,7 +138,7 @@ class DateTimeUtil
 
 	function get_tomorrow()
 	{
-			$date_arr = array('day'=>($this->day + 1),		
+			$date_arr = array('day'=>($this->day + 1),
 			'month'=>$this->month,
 			'year'=>$this->year);
 
@@ -135,7 +146,7 @@ class DateTimeUtil
 	}
 	function get_yesterday()
 	{
-			$date_arr = array('day'=>($this->day - 1),		
+			$date_arr = array('day'=>($this->day - 1),
 			'month'=>$this->month,
 			'year'=>$this->year);
 
@@ -176,7 +187,7 @@ class DateTimeUtil
 
 	function get_first_day_of_last_year()
 	{
-			$date_arr = array('day'=>1,		
+			$date_arr = array('day'=>1,
 			'month'=>1,
 			'year'=>($this->year - 1));
 
@@ -185,7 +196,7 @@ class DateTimeUtil
 	}
 	function get_first_day_of_next_year()
 	{
-			$date_arr = array('day'=>1,		
+			$date_arr = array('day'=>1,
 			'month'=>1,
 			'year'=>($this->year + 1));
 
@@ -196,7 +207,7 @@ class DateTimeUtil
 	function get_first_day_of_next_week()
 	{
 		$first_day = $this->get_day_by_index_this_week(0);
-			$date_arr = array('day'=>($first_day->day + 7),		
+			$date_arr = array('day'=>($first_day->day + 7),
 			'month'=>$first_day->month,
 			'year'=>$first_day->year);
 
@@ -206,7 +217,7 @@ class DateTimeUtil
 	function get_first_day_of_last_week()
 	{
 		$first_day = $this->get_day_by_index_this_week(0);
-			$date_arr = array('day'=>($first_day->day - 7),		
+			$date_arr = array('day'=>($first_day->day - 7),
 			'month'=>$first_day->month,
 			'year'=>$first_day->year);
 
@@ -224,7 +235,7 @@ class DateTimeUtil
 			$month = $this->month - 1;
 			$year = $this->year ;
 		}
-			$date_arr = array('day'=>1,		
+			$date_arr = array('day'=>1,
 			'month'=>$month,
 			'year'=>$year);
 
@@ -235,16 +246,16 @@ class DateTimeUtil
 	{
 		$month = $this->month;
 		$year = $this->year ;
-		$date_arr = array('day'=>1,		
+		$date_arr = array('day'=>1,
 		'month'=>$month,
 		'year'=>$year);
 
 		return new DateTimeUtil($date_arr,true);
 
-	}	
+	}
 	function get_first_day_of_next_month()
 	{
-		$date_arr = array('day'=>1,		
+		$date_arr = array('day'=>1,
 			'month'=>($this->month + 1),
 			'year'=>$this->year);
 		return new DateTimeUtil($date_arr,true);
@@ -301,7 +312,7 @@ class DateTimeUtil
 		$mod_list_strings = return_mod_list_strings_language($current_language,"Calendar");
 		if ( empty($timestamp))
 		{
-		
+
 			$timestamp = time();
 		}
 
@@ -327,7 +338,7 @@ class DateTimeUtil
 		$this->tz_offset)
 		 = explode(':',$date_str);
 		$this->tz_offset = date('Z') - $tdiff * 60;
-		
+
 		$this->day_of_week_short =$mod_list_strings['dom_cal_weekdays'][$this->day_of_week];
 		$this->day_of_week_long=$mod_list_strings['dom_cal_weekdays_long'][$this->day_of_week];
 		$this->month_short=$mod_list_strings['dom_cal_month'][$this->month];
@@ -344,7 +355,7 @@ class DateTimeUtil
 	}
 
 	function DateTimeUtil(&$time,$fill_in_details)
-	{	
+	{
 		if (! isset( $time) || count($time) == 0 )
 		{
 			$this->load_ts(null);
@@ -355,7 +366,7 @@ class DateTimeUtil
 		}
 		else if ( isset( $time['date_str']))
 		{
-			list($this->year,$this->month,$this->day)= 
+			list($this->year,$this->month,$this->day)=
 				explode("-",$time['date_str']);
 			if ($fill_in_details == true)
 			{
@@ -427,12 +438,12 @@ class DateTimeUtil
 		}
 		return $hour;
 	}
-	
+
 	function get_24_hour()
 	{
 		return $this->hour;
 	}
-	
+
 	function get_am_pm()
 	{
 		if ($this->hour >=12)
@@ -441,7 +452,7 @@ class DateTimeUtil
 		}
 		return "AM";
 	}
-	
+
 	function get_day()
 	{
 		return $this->day;
@@ -523,7 +534,7 @@ class DateTimeUtil
 			sugar_die("day is outside of week range");
 		}
 
-		$arr['day'] = $this->day + 
+		$arr['day'] = $this->day +
 			($day_index - $this->day_of_week);
 
 		$arr['month'] = $this->month;
@@ -555,12 +566,12 @@ class DateTimeUtil
 	function getHashList($view, &$start_time, &$end_time)
 	{
 		$hash_list = array();
-        
-        if (version_compare(phpversion(), '5.0') < 0) 
+
+        if (version_compare(phpversion(), '5.0') < 0)
             $new_time = $start_time;
-        else 
+        else
             $new_time = clone($start_time);
-        
+
 		$arr = array();
 
 		if ( $view != 'day')
@@ -581,7 +592,7 @@ class DateTimeUtil
 
 		 while( $new_time->ts < $end_time->ts)
 		 {
-		     
+
 		  $arr['month'] = $new_time->month;
 		  $arr['year'] = $new_time->year;
 		  $arr['day'] = $new_time->day;
