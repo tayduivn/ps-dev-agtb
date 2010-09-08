@@ -280,9 +280,9 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     public function _getVardefsMD5($module)
     {
         $this->_login();
-		$result = $this->_soapClient->call('get_module_fields_md5',array('session'=>$this->_sessionId,'module'=> $module ));
-		if(isset($result['md5']))
-		  return $result['md5']; 
+		$result = $this->_soapClient->call('get_module_fields_md5',array('session'=>$this->_sessionId,'module'=> array($module) ));
+		if(isset($result[0]))
+		  return $result[0]; 
 		else 
 		  return $result;
     }

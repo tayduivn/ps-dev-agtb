@@ -117,8 +117,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     $lv->lvd->additionalDetailsAjax=false;
     $lv->export = false;
     $lv->show_mass_update_form = false;
+    $lv->show_action_dropdown = false;
     $lv->delete = false;
     $lv->select = false;
+
     $lv->setup($seedDocument, 'modules/KBDocuments/SearchListView.tpl', $where, $params);
     $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
     //if this is a sort from browse tab, then set the ajaxsort flag to true
@@ -178,12 +180,6 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
     
     require_once('include/ListView/ListViewSmarty.php');
-	
-
-	
-	
-	require_once('include/ListView/ListViewSmarty.php');
-
 	require_once('modules/KBDocuments/metadata/listviewdefs.php');
     require_once('modules/KBDocuments/KBListViewData.php');
 
@@ -280,40 +276,21 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 	    $GLOBALS['log']->info("Here is the where clause for the list view: $where");
 	}
 
-	//$lv->show_mass_update_form = true;
-
-	//$lv->setup($seedCase, 'include/ListView/AdminSearchListView.tpl', $where, $params);
 	$lv->export = false;
     $lv->show_mass_update_form = false;
+    $lv->show_action_dropdown = false;
     $lv->delete = false;
     $lv->select = false;
     $lv->setup($seedCase, 'modules/KBDocuments/AdminSearchListView.tpl', $where, $params);
 	$lv->show_mass_update_form=false;
 	$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
-	//echo get_form_header($current_module_strings['LBL_LIST_FORM_TITLE'] . $savedSearchName, '', false);
-    //assign the number of items selected
-  //  $lv->ss->assign('selectedObjectsSpanTop', buildKBSelectedObjectsSpan(true));
-   // $lv->ss->assign('selectedObjectsSpanBot', buildKBSelectedObjectsSpan(false));
 
-	    $ret_str =  $lv->display(false);
-	    $json = getJSONobj();
-	    return $ret_str;
+	$ret_str =  $lv->display(false);
+	$json = getJSONobj();
+	return $ret_str;
 
-    }
-
-/*
-function buildKBSelectedObjectsSpan($top = true){
-        global $app_strings;
-        if($top){
-            $selectedObjectSpan = "{$app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly id='selectCountTop' name='selectCount[]' value='0' />";
-        }else{
-            $selectedObjectSpan = "{$app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly id='selectCountBot' name='selectCount[]' value='0' />";
-        }
-        return $selectedObjectSpan;
-
-
-
-}*/
+}
+    
 
    /**
     * get_faq_list
