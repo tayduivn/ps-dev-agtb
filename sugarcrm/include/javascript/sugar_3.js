@@ -1631,7 +1631,7 @@ function onUnloadEditView(theForm)
 
 function disableOnUnloadEditView(theForm) {
     // If you don't pass anything in, it disables all checking
-    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' ) {
+    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
         window.onbeforeunload = null;
         editViewSnapshots = null;
         
