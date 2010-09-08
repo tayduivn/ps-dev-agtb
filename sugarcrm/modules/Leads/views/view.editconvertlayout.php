@@ -156,8 +156,8 @@ class ViewEditConvertLayout extends SugarView {
             $buttons [] = array ( 'id' => 'saveBtn' , 'text' => translate ( 'LBL_BTN_SAVE', 'ModuleBuilder' ) , 'actionScript' => "onclick='if (Studio2.countGridFields()==0) ModuleBuilder.layoutValidation.popup() ; else Studio2.handleSave();'" ) ;
             $buttons [] = array ( 'id' => 'publishBtn' , 'text' => translate ( 'LBL_BTN_SAVEPUBLISH', 'ModuleBuilder' ) , 'actionScript' => "onclick='if (Studio2.countGridFields()==0) ModuleBuilder.layoutValidation.popup() ; else Studio2.handlePublish();'" ) ;
             $buttons [] = array ( 'id' => 'spacer' , 'width' => '50px' ) ;
-            $buttons [] = array ( 'id' => 'historyBtn' , 'text' => translate ( 'LBL_HISTORY', 'ModuleBuilder' ) , 'actionScript' => "onclick='ModuleBuilder.history.browse(\"{$this->editModule}\", \"{$this->editLayout}\")'") ;
-            $buttons [] = array ( 'id' => 'historyDefault' , 'text' => translate ( 'LBL_RESTORE_DEFAULT', 'ModuleBuilder' ) , 'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'" ) ;
+            //$buttons [] = array ( 'id' => 'historyBtn' , 'text' => translate ( 'LBL_HISTORY', 'ModuleBuilder' ) , 'actionScript' => "onclick='ModuleBuilder.history.browse(\"{$this->editModule}\", \"{$this->editLayout}\")'") ;
+            //$buttons [] = array ( 'id' => 'historyDefault' , 'text' => translate ( 'LBL_RESTORE_DEFAULT', 'ModuleBuilder' ) , 'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'" ) ;
         }
 
         $html = "" ;
