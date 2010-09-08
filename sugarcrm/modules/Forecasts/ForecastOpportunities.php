@@ -185,6 +185,10 @@ class ForecastOpportunities extends SugarBean {
 	}
 	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean){
 //        _pp(func_get_args());
+		// Workaround due to fix for Bug 14232. date_entered is ambiguous in this case, so we specify it if it is the default sort
+		if(strpos($order_by, 'date_entered') !== false){
+			$order_by = str_replace('date_entered', 'opportunities.date_entered', $order_by);
+		}
 		$ret_array=array();
 		$ret_array['select'] = "SELECT  opportunities.id, opportunities.name ,opportunities.assigned_user_id opportunity_owner, opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, opportunities.probability,opportunities.description, opportunities.next_step,opportunities.opportunity_type";
 		$ret_array['select'] .=" ,worksheet.id worksheet_id, best_case,likely_case,worst_case ";
