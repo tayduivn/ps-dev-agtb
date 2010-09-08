@@ -45,6 +45,7 @@ ALTER TABLE [report_cache] ADD CONSTRAINT pk_report_cache PRIMARY KEY (id, assig
 
 ALTER TABLE [users] DROP COLUMN user_preferences;
 -- //BEGIN SUGARCRM flav=pro ONLY 
+DROP INDEX idx_products_tmst_id on [products];
 ALTER TABLE [products] DROP COLUMN team_id;
 ALTER TABLE [products] DROP COLUMN team_set_id;
 -- //END SUGARCRM flav=pro ONLY 
