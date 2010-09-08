@@ -31,7 +31,6 @@ $searchFields['Products'] =
         'vendor_part_num' => array( 'query_type'=>'default'),
         'tax_class'=> array('query_type'=>'default', 'options' => 'tax_class_dom', 'template_var' => 'TAX_CLASS_OPTIONS', 'options_add_blank' => true),
         'date_available' => array( 'query_type'=>'default'),
-		'support_term' => array('query_type'=>'default'),
 		//BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
