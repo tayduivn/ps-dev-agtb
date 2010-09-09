@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 // Call is used to store customer information.
-class Call extends SugarBean 
+class Call extends SugarBean
 {
 	var $field_name_map;
 	// Stored fields
@@ -116,14 +116,14 @@ class Call extends SugarBean
 		foreach ($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;
 		}
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;	
+		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
-		}		
+		}
 		//END SUGARCRM flav=pro ONLY
 
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
@@ -140,16 +140,9 @@ class Call extends SugarBean
         if(	isset($this->date_start) &&
         	isset($this->duration_hours) &&
         	isset($this->duration_minutes) ) {
-
-
-			$date_start_in_db_fmt=$this->date_start;
-			$date_start_array=explode(" ",trim($date_start_in_db_fmt));
-			$date_time_start =DateTimeUtil::get_time_start($date_start_array[0],$date_start_array[1]);
-
-			$date_start_timestamp=mktime($date_time_start->hour,$date_time_start->min,$date_time_start->sec,$date_time_start->month,$date_time_start->day);
-			$date_start_timestamp+= (( $this->duration_hours * 3600 )+ ($this->duration_minutes * 60));
-
-			$this->date_end = gmdate('Y-m-d H:i:s',$date_start_timestamp);
+    			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
+    			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
+    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
         }
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
@@ -169,7 +162,7 @@ class Call extends SugarBean
                     $this->new_assigned_user_name = $_REQUEST['assigned_user_name'];
                 }
 			}
-		}        
+		}
         if (empty($this->status) ) {
             $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
             $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
@@ -182,12 +175,12 @@ class Call extends SugarBean
 
         $return_id = parent::save($check_notify);
         global $current_user;
-        
+
 
         if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
         }
-        
+
         return $return_id;
 	}
 
@@ -363,7 +356,7 @@ class Call extends SugarBean
 			$query  = "SELECT first_name, last_name FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in additional detail fields: ");
-	
+
 			// Get the contact name.
 			$row = $this->db->fetchByAssoc($result);
 			$GLOBALS['log']->info("additional call fields $query");
@@ -412,8 +405,8 @@ class Call extends SugarBean
 		        $this->reminder_time = $reminder_t;
 		}
 		$this->reminder_checked = $this->reminder_time == -1 ? false : true;
-		
-		
+
+
 		if (isset ($_REQUEST['parent_type'])) {
 			$this->parent_type = $_REQUEST['parent_type'];
 		} elseif (is_null($this->parent_type)) {
@@ -433,10 +426,10 @@ class Call extends SugarBean
 		}
 		if ($this->status == "Planned") {
 			//cn: added this if() to deal with sequential Closes in Meetings.  this is a hack to a hack (formbase.php->handleRedirect)
-			if(empty($action)) 
-			    $action = "index"; 
-			    
-			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";  
+			if(empty($action))
+			    $action = "index";
+
+			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$currentModule\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Calls')." border='0'")."</a>";
 		}
 		global $timedate;
@@ -564,7 +557,7 @@ class Call extends SugarBean
       $data_values = array('accept_status'=>$status);
       $this->set_relationship($this->rel_users_table, $relate_values, true, true,$data_values);
       global $current_user;
-      
+
       if ( $this->update_vcal )
       {
         vCal::cache_sugar_vcal($user);
@@ -590,7 +583,7 @@ class Call extends SugarBean
 		if($this->special_notification) {
 			return parent::get_notification_recipients();
 		}
-		
+
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($this,true));
 		$list = array();
 

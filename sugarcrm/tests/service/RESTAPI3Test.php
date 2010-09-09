@@ -375,7 +375,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         
         //Test a regular module
         $fullResult = $this->_makeRESTCall('get_module_fields_md5', array('session' => $session, 'module' => 'Accounts' )); 
-        $result = $fullResult['md5'];
+        $result = $fullResult['Accounts'];
         $a = new Account();
         $soapHelper = new SugarWebServiceUtilv3();
         $actualVardef = $soapHelper->get_return_module_fields($a,'Accounts','');

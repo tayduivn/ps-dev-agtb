@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: DBHelper.php 56786 2010-06-02 18:29:56Z jenny $
+* $Id: DBHelper.php 57848 2010-08-20 19:37:11Z kjing $
 * Description: This file is an abstract class and handles the Data base functionality for
 * the application. It is called by the DBManager class to generate various sql statements.
 *
@@ -943,13 +943,9 @@ abstract class DBHelper
         }
         $type = $this->getColumnType($fieldDef['dbType'],$fieldDef['name'],$tablename);
         $matches = array();
-        preg_match_all("/(\w+)(?:\(([A-z0-9]+,?[0-9]*)\)|)/i", $type, $matches);
-        if ( isset($matches[1][0]) ) {
+        preg_match_all("/(\w+)(?:\(([0-9]+,?[0-9]*)\)|)/i", $type, $matches);
+        if ( isset($matches[1][0]) )
             $fieldDef['type'] = $matches[1][0];
-        }
-        else{
-            $fieldDef['type'] = $type;
-        }
         if ( isset($matches[2][0]) && empty($fieldDef['len']) )
             $fieldDef['len'] = $matches[2][0];
         if ( !empty($fieldDef['precision']) && is_numeric($fieldDef['precision']) && !strstr($fieldDef['len'],',') )
