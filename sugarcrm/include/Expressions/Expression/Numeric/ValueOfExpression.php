@@ -57,9 +57,9 @@ class ValueOfExpression extends NumericExpression {
 			else 
 			    out = parseInt(val);
 			if (isNaN(out))
-			   return 0;
-			else
-			   return out;
+			   throw "Error: '" + val + "' is not a number";
+			
+			return out;
 EOQ;
 	}
 	
