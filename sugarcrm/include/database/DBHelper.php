@@ -112,6 +112,8 @@ abstract class DBHelper
                 continue;
 
             $val = $bean->getFieldValue($fieldDef['name']);
+            // clean the incoming value..
+            $val = from_html($val);
             if (strlen($val) <= 0) {
                 if(isset($fieldDef['default']) && (strlen($fieldDef['default']) > 0))
                     $val = $fieldDef['default'];
@@ -177,6 +179,8 @@ abstract class DBHelper
            if (isset($bean->$fieldDef['name'])
                     && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
                $val = $bean->getFieldValue($fieldDef['name']);
+               // clean the incoming value..
+               $val = from_html($val);
 
                // need to do some thing about types of values
                if (strlen($val) <= 0)
