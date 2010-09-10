@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,6 +20,11 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Date/DateExpression.php');
 
+/**
+ * <b>dayofweek(Date d)</b><br>
+ * Returns the day of week that <i>d</i> falls on.<br/>
+ * Sun = 0, Mon = 1, ... , Sat = 6
+ **/
 class DayOfWeekExpression extends DateExpression
 {
 	/**

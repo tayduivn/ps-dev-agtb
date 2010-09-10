@@ -18,66 +18,68 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
+require_once("include/Expressions/Expression/String/StringExpression.php");
+
 /**
- * <b>isRequiredCollection(String table)</b><br/>
- * Returns true none of the fields under html element <i>table</i> are empty.
- */
-class IsRequiredCollectionExpression extends BooleanExpression {
+ * <b>getDDValue(String list_name, String key)</b><br>
+ * Returns the translated value for the given <i>key</i><br/>
+ * found in the <i>list_name</i> DropDown list<br/>
+ * This list must be defined in the DropDown editor.<br/>
+ * ex: <i>getDDValue("my_list", "foo")</i>
+ **/
+class SugarDropDownValueExpression extends StringExpression {
+	
 	/**
-	 * Returns itself when evaluating.
+	 * Returns the negative of the expression that it contains.
 	 */
 	function evaluate() {
+		global $app_list_strings;
 		$params = $this->getParameters();
-		$val = $params[0]->evaluate();
-	    return AbstractExpression::$TRUE;
-
-		//return AbstractExpression::$FALSE;
+        $list = $params[0]->evaluate();
+        $key = $params[1]->evaluate();
+		
+        if (isset($app_list_strings[$list]) && is_array($app_list_strings[$list]) 
+                && isset($app_list_strings[$list][$key])) 
+        {
+            return $app_list_strings[$list][$key];
+        }
+        
+        
+        
+        return ""; 
 	}
-
+	
 	/**
 	 * Returns the JS Equivalent of the evaluate function.
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var params = this.getParameters().evaluate();
-            table = document.getElementById(params);
-            children = YAHOO.util.Dom.getElementsByClassName('sqsEnabled', 'input', table);
-            for(id in children) {
-                if(trim(children[id].value) != '') {
-                   return SUGAR.expressions.Expression.TRUE;
-                }
+		    var params = this.getParameters();
+		    var list = params[0].evaluate();
+		    var key = params[1].evaluate();
+            var arr = SUGAR.language.get('app_list_strings', list);
+            if (arr == "undefined") return "";
+            for (var i in arr) {
+                if (typeof i == "string" && i == key)
+                    return arr[i];
             }
-			return SUGAR.expressions.Expression.FALSE;
+            return "";
 EOQ;
 	}
-
+	
 	/**
-	 * Any generic type will suffice.
+	 * Returns the opreation name that this Expression should be
+	 * called by.
 	 */
-	function getParameterTypes() {
-		return array("string");
+	static function getOperationName() {
+		return "getDDValue";
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 1;
-	}
-
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return "isRequiredCollection";
-	}
-
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
+		return 2;
 	}
 }
 ?>

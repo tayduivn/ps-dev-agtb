@@ -43,10 +43,10 @@ class ViewFunctiondetail extends SugarView
 			$doc = $class->getDocComment();
 			if (!empty($doc)) {
 				//Remove the javadoc style comment *'s
-				$desc = preg_replace("/((\/\*+)|(\*+\/)|(\n\s*\*)[^\/])/", "", $doc);
+				$desc = preg_replace("/((\/\*+)|(\*+\/)|(\n\s*\*)[^\/])/", "", $doc) . " [phpdoc]";
 			} else if (isset($mod_strings['func_descriptions'][$_REQUEST['function']]))
 			{
-				$desc = $mod_strings['func_descriptions'][$_REQUEST['function']] ;//. "[modstrings]";
+				$desc = $mod_strings['func_descriptions'][$_REQUEST['function']] . "[modstrings]";
 			} 
 			else 
 			{
@@ -66,7 +66,7 @@ class ViewFunctiondetail extends SugarView
 							$desc .=  $type . ($i+1);
 					}
 				}
-				$desc .= ")" ;//. "[generated]";
+				$desc .= ")" . "[generated]";
 			}
 		}
 		else { 
