@@ -52,7 +52,7 @@ class TrackerSessionsDatabaseStore implements Store {
        }
        
        //BEGIN SUGARCRM flav=pro ONLY
-       if($GLOBALS['db']->dbType == 'oci8') {
+       if($GLOBALS['db']->dbType == 'oci8'  &&  method_exists( $GLOBALS['db']->getHelper()  , 'getAutoIncrementSQL')) {
        	  $columns[] = 'id';
        	  $values[] = $GLOBALS['db']->getHelper()->getAutoIncrementSQL($monitor->table_name,'id');
        }

@@ -128,7 +128,12 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			oShadow = oElement.lastChild;
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
             
+            // We need to figure out the module name from the ID. Sometimes it will have the group name in it
+            // But sometimes it will just use the module name (in the case of the All group which don't have the
+            // group prefixes due to the automated testing suite.
             var moduleName = oElement.id;
+            var groupName = oElement.parentNode.parentNode.parentNode.id.replace('themeTabGroup_','');
+            moduleName = moduleName.replace(groupName+'_','');
             
 			var handleSuccess = function(o){
 				if(o.responseText !== undefined){			

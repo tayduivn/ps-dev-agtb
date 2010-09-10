@@ -573,18 +573,8 @@ $uwMain =<<<eoq
 </script>
 <table cellpadding="3" cellspacing="0" border="0">
 	<tr>
-		<th align="left">
-			{$mod_strings['LBL_UW_TITLE_COMMIT']}
-		</th>
-	</tr>
-	<tr>
 		<td>
 			&nbsp;
-		</td>
-	</tr>
-	<tr>
-		<td>
-			{$mod_strings['LBL_UW_COMMIT_DESC']}
 		</td>
 	</tr>
 	<tr>
@@ -624,7 +614,7 @@ $uwMain =<<<eoq
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
         </td></tr>
      </table>
  </div>
@@ -651,6 +641,7 @@ $showCancel = false;
 $showRecheck = false;
 $showNext =($stop) ? false : true;
 
+$GLOBALS['top_message'] = "<b>{$mod_strings['LBL_UW_COMMIT_DESC']}</b>";
 $stepBack = $_REQUEST['step'] - 1;
 //Skip ahead to the end page as no layouts need to be merged.
 $stepNext = (count($_SESSION['sugarMergeRunResults']) > 0 ) ? $_REQUEST['step'] + 1 : $_REQUEST['step'] + 2; 

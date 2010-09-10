@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 57232 2010-07-01 16:14:36Z kjing $
+ * $Id: en_us.lang.php 57929 2010-08-25 21:52:39Z kjing $
  * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -3027,6 +3027,7 @@ $app_strings = array (
     'LBL_HOURS' => 'Hours',
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
+    'LBL_DATE' => 'Date',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

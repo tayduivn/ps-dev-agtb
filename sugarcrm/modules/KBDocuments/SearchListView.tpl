@@ -33,7 +33,7 @@
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
 {*  --export and pagination-- *}
-	{include file='include/ListView/ListViewPagination.tpl'}
+	{include file='modules/KBDocuments/tpls/ListViewPagination.tpl'}
 {*  --Header Row -- *}
 	<tr height='20'>
 		{if $prerow}
@@ -162,5 +162,5 @@
 			{/if}
 	 	
 	{/foreach}
-	{include file='include/ListView/ListViewPagination.tpl'}
+	{include file='modules/KBDocuments/tpls/ListViewPagination.tpl'}
 </table>

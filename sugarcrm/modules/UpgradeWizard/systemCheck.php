@@ -200,6 +200,7 @@ foreach($errors as $k => $type) {
 	}
 }
 
+$GLOBALS['top_message'] = "{$mod_strings['LBL_UW_NEXT_TO_UPLOAD']}";
 $showBack		= true;
 $showCancel		= true;
 $showRecheck	= true;
@@ -265,7 +266,7 @@ $uwMain =<<<eoq
 <div id="upgradeDiv" style="display:none">
     <table border="0" cellspacing="0" cellpadding="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
         </td></tr>
      </table>
  </div>

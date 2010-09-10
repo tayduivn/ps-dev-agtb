@@ -1205,8 +1205,8 @@ function get_report_entries($session, $ids, $select_fields ){
 	    	return;
 	    }
 		$result = self::$helperObject->get_report_value($seed, $select_fields);
-		$output_list[]['entry_list'] = $result['output_list'];
-		$field_list[]['field_list'] = $result['field_list'];
+		$output_list[] = $result['output_list'];
+		$field_list[] = $result['field_list'];
 	} // foreach
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_entries');
 	return array('field_list'=>$field_list, 'entry_list'=>$output_list);

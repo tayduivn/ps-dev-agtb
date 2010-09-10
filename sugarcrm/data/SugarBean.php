@@ -19,8 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: SugarBean.php 57513 2010-07-16 21:07:48Z kjing $
+/********************************************************************************* 
+ * $Id: SugarBean.php 57813 2010-08-19 17:34:44Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -5249,6 +5249,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
 	}
 	//END SUGARCRM flav=pro ONLY
+	/**
+	 * Check whether the user has access to a particular view for the current bean/module
+	 * @param $view string required, the view to determine access for i.e. DetailView, ListView...
+	 * @param $is_owner bool optional, this is part of the ACL check if the current user is an owner they will receive different access
+	 */
     function ACLAccess($view,$is_owner='not_set')
     {
     	global $current_user;
