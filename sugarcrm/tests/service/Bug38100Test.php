@@ -21,7 +21,8 @@ class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function setUp() 
     {
-        $this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php',false,false,false,false,false,600,600);
+        $this->markTestSkipped('Skip this soap test.');
+    	$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php',false,false,false,false,false,600,600);
         $this->_setupTestUser();
         
         $unid = uniqid();
