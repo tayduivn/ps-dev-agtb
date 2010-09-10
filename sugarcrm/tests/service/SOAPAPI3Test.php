@@ -122,7 +122,7 @@ class SOAPAPI3Test extends SOAPTestCase
         $soapHelper = new SugarWebServiceUtilv3();
         $actualVardef = $soapHelper->get_return_module_fields($a,'Accounts','');
         $actualMD5 = md5(serialize($actualVardef));
-        $this->assertEquals($actualMD5, $result, "Unable to retrieve vardef md5.");
+        $this->assertEquals($actualMD5, $result[0], "Unable to retrieve vardef md5.");
 
         //Test a fake module
         $result = $this->_getVardefsMD5('BadModule');

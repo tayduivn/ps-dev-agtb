@@ -51,7 +51,7 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
        $this->c1->accounts->add($this->a1->id);
        
        $contact2 = new Contact();
-		$contac2->id = 'c2_'.$unid;
+		$contact2->id = 'c2_'.$unid;
        $contact2->first_name = 'testfirst';
         $contact2->last_name = 'testlast';
         $contact2->email1 = 'fred@rogers.com';
@@ -87,13 +87,15 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSetEntries() {
     	$this->_login();
 		$result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c1->last_name), array('name'=>'email1' , 'value'=>$this->c1->email1), array('name'=>'first_name' , 'value'=>$this->c1->first_name), array('name'=>'account_name' , 'value'=>$this->a1->name)))));
-		$this->assertTrue(isset($result['ids']) && $result['ids'][0] == $this->c1->id);
+		$this->assertTrue(isset($result['ids']));
+		$this->assertEquals($result['ids'][0],$this->c1->id);
     } // fn
     
      public function testSetEntries2() {
     	$this->_login();
 		$result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c2->last_name), array('name'=>'email1' , 'value'=>$this->c2->email1), array('name'=>'first_name' , 'value'=>$this->c2->first_name), array('name'=>'account_name' , 'value'=>'joe pizza')))));
-		$this->assertTrue(isset($result['ids']) && $result['ids'][0] != $this->c1->id);
+		$this->assertTrue(isset($result['ids']));
+		$this->assertNotEquals($result['ids'][0],$this->c1->id);
     } // fn
     
 	/**********************************
