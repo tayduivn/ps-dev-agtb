@@ -261,6 +261,19 @@ class EmailUI {
 		////	END FOLDERS
 		///////////////////////////////////////////////////////////////////////
 
+        // This is to disable the Compose button if we don't have a valid outbound email account.
+        $composeAction = 'SUGAR.email2.composeLayout.c0_composeNewEmail();';
+
+        require_once('include/OutboundEmail/OutboundEmail.php');
+        // Figure out if the user has an outbound email settings set up properly and only let them compose an email if they do.
+        $oe = new OutboundEmail();
+        if ( !$oe->hasValidOutboundSettings() ) {
+            $composeAction = "alert('".$app_strings['LBL_EMAIL_ERROR_DESC']."\\n".$app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']."');";
+        }
+        
+
+        $this->smarty->assign('composeAction',$composeAction);
+
 		$out = "";
 		$out .= $this->smarty->fetch("modules/Emails/templates/_baseEmail.tpl");
 		$out .= $tree->generate_header();
@@ -357,6 +370,17 @@ eoq;
     function generateComposePackageForQuickCreate($composeData,$fullLinkUrl)
     {
         $_REQUEST['forQuickCreate'] = true;
+        
+        // If they can't compose an email, send up a warning.
+        require_once('include/OutboundEmail/OutboundEmail.php');
+        // Figure out if the user has an outbound email settings set up properly and only let them compose an email if they do.
+        $oe = new OutboundEmail();
+        if ( !$oe->hasValidOutboundSettings() ) {
+            // $onclick = "alert(\"".$app_strings['LBL_EMAIL_ERROR_DESC']."\\n".$app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']."\");";
+            return json_encode(array('error'=>1,'error_msg'=>'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND'));
+        }
+            
+
     	require_once('modules/Emails/Compose.php');
     	$composePackage = generateComposeDataPackage($composeData,FALSE);
     		

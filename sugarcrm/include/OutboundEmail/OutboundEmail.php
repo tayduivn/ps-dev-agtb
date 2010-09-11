@@ -223,12 +223,32 @@ class OutboundEmail {
 		$a = $this->db->fetchByAssoc($r);
 
 		if(empty($a)) {
-			$ret = $this->getSystemMailerSettings();
+			$ret = $this->getSystemMailerSettings(true);
 		} else {
 			$ret = $this->retrieve($a['id']);
 		}
 		return $ret;
 	}
+
+
+	/**
+	 * Checks to see if the user has valid outbound email settings
+     *
+	 * @param object user
+	 * @return bool
+	 */
+	function hasValidOutboundSettings(&$user=null) {
+        if ( $user == null ) {
+            $user = $GLOBALS['current_user'];
+        }
+        $testBean = $this->getUserMailerSettings($user);
+        
+        if(!empty($testBean)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 	/**
 	 * Retrieve an array containing inbound emails ids for all inbound email accounts which have
@@ -326,13 +346,16 @@ class OutboundEmail {
 	
 	/**
 	 * Retrieves the system's Outbound options
+     * @param bool forUser Are we getting the system mailer settings for the system, or for a user?
 	 */
-	function getSystemMailerSettings() {
+	function getSystemMailerSettings($forUser=false) {
 		$q = "SELECT id FROM outbound_email WHERE type = 'system'";
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
 
 		if(empty($a)) {
+            /*
+            // Auto-create system settings
 			$this->id = "";
 			$this->name = 'system';
 			$this->type = 'system';
@@ -348,8 +371,17 @@ class OutboundEmail {
 			$this->mail_smtpdisplay = $this->_getOutboundServerDisplay($this->mail_smtptype,$this->mail_smtpserver);
 			$this->save();
 			$ret = $this;
+            */
+            $ret = null;
 		} else {
 			$ret = $this->retrieve($a['id']);
+            if ($forUser && $this->mail_smtpauth_req==1) {
+                // We are grabbing system settings for a user, and SMTP authentication is required
+                // Now we will need to check and see if they are allowed to use it
+                if (!$this->isAllowUserAccessToSystemDefaultOutbound()){
+                    $ret = null;
+                }
+            }
 		}
 
 		return $ret;
