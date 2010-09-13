@@ -153,7 +153,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetPrecedentPreferenceForDefaultEmailCharset()
     {
         $emailSettings = array('defaultOutboundCharset' => 'something fun');
-        $this->_user->setPreference('emailSettings',$emailSettings);
+        $this->_user->setPreference('emailSettings',$emailSettings, 'Emails');
         
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('default_email_charset',$this->_user),
