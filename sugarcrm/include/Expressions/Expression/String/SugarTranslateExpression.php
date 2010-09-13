@@ -18,66 +18,51 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
+require_once("include/Expressions/Expression/String/StringExpression.php");
+
 /**
- * <b>isRequiredCollection(String table)</b><br/>
- * Returns true none of the fields under html element <i>table</i> are empty.
- */
-class IsRequiredCollectionExpression extends BooleanExpression {
-	/**
-	 * Returns itself when evaluating.
-	 */
+ * <b>translate(String label, String module)</b><br>
+ * Returns the translated version of a given label key<br/>
+ * ex: <i>valueAt(2, getTransDD("my_list"))</i>
+ **/
+class SugarTranslateExpression extends StringExpression {
+	
 	function evaluate() {
 		$params = $this->getParameters();
-		$val = $params[0]->evaluate();
-	    return AbstractExpression::$TRUE;
-
-		//return AbstractExpression::$FALSE;
+        $module = $params[1]->evaluate();
+        if ($module == "")
+              $module = "app_strings";
+        $key = $params[0]->evaluate();
+        return translate($key, $module);
 	}
-
+	
 	/**
 	 * Returns the JS Equivalent of the evaluate function.
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var params = this.getParameters().evaluate();
-            table = document.getElementById(params);
-            children = YAHOO.util.Dom.getElementsByClassName('sqsEnabled', 'input', table);
-            for(id in children) {
-                if(trim(children[id].value) != '') {
-                   return SUGAR.expressions.Expression.TRUE;
-                }
-            }
-			return SUGAR.expressions.Expression.FALSE;
+		  var params = this.getParameters();
+		  var module = params[1].evaluate();
+		  if (module == "")
+		      module = "app_strings";
+		  var key = params[0].evaluate();
+		  return SUGAR.language.get(module, key);
 EOQ;
 	}
-
+	
 	/**
-	 * Any generic type will suffice.
+	 * Returns the opreation name that this Expression should be
+	 * called by.
 	 */
-	function getParameterTypes() {
-		return array("string");
+	static function getOperationName() {
+		return "translate";
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 1;
-	}
-
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return "isRequiredCollection";
-	}
-
-	/**
-	 * Returns the String representation of this Expression.
-	 */
-	function toString() {
+		return 2;
 	}
 }
 ?>

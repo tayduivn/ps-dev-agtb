@@ -266,10 +266,10 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         	 * 4) The field is not an id field
         	 * 5) The field type is not in the $invalidTypes Array
         	 */
-            if ((empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') &&
-                empty($def['function']) &&
-                strcmp($field, 'deleted') != 0 &&
-                $def['type'] != 'id' && (empty($def ['dbType']) || $def ['dbType'] != 'id') &&
+        	if ((empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') &&
+                empty($def['function']) && strcmp($field, 'deleted') != 0 &&
+                (empty($def['calculated']) || $this->_view != "editview")  && $def['type'] != 'id' && 
+                (empty($def ['dbType']) || $def ['dbType'] != 'id') &&
                 (isset($def['type']) && !in_array($def['type'], $invalidTypes)))
             {
             	$label = isset($def['vname']) ? $def ['vname'] : $def['name'];

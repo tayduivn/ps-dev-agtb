@@ -3,17 +3,18 @@ require_once('include/nusoap/nusoap.php');
 
 
 /**
- * @group bug38100
+ * @group bug39234
  */
-class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public $_user = null;
 	public $_soapClient = null;
 	public $_session = null;
 	public $_sessionId = '';
     public $_contactId = '';
-    var $c = null;
-    var $a1 = null;
+    var $c1 = null;
+    var $c2 = null;
+	var $a1 = null;
 	
     /**
      * Create test user
@@ -21,8 +22,7 @@ class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function setUp() 
     {
-        $this->markTestSkipped('Skip this soap test.');
-    	$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php',false,false,false,false,false,600,600);
+    	$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,600,600);
         $this->_setupTestUser();
         
         $unid = uniqid();
@@ -32,22 +32,33 @@ class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
 		$contact->id = 'c_'.$unid;
         $contact->first_name = 'testfirst';
         $contact->last_name = 'testlast';
+        $contact->email1 = 'fred@rogers.com';
         $contact->new_with_id = true;
         $contact->disable_custom_fields = true;
         $contact->save();
-		$this->c = $contact;
-		/*
+		$this->c1 = $contact;
+		
 		$account = new Account();
 		$account->id = 'a_'.$unid;
         $account->name = 'acctfirst';
+        $account->assigned_user_id = 'SugarUser';
         $account->new_with_id = true;
         $account->disable_custom_fields = true;
         $account->save();
         $this->a1 = $account;
         
-        $this->c->load_relationship('accounts');
-      	$this->c->accounts->add($this->a1->id);
-      	*/
+       $this->c1->load_relationship('accounts');
+       $this->c1->accounts->add($this->a1->id);
+       
+       $contact2 = new Contact();
+		$contac2->id = 'c2_'.$unid;
+       $contact2->first_name = 'testfirst';
+        $contact2->last_name = 'testlast';
+        $contact2->email1 = 'fred@rogers.com';
+        $contact2->new_with_id = true;
+        $contact2->disable_custom_fields = true;
+        $contact2->save();
+		$this->c2 = $contact2;
     }
 
     /**
@@ -59,37 +70,30 @@ class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_tearDownTestUser();
         $this->_user = null;
         $this->_sessionId = '';
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
-        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c->id}'");
-       // $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$this->a1->id}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c1->id}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c2->id}'");
+        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c1->id}'");
+        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c2->id}'");
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$this->a1->id}'");
         
-        //unset($this->a);
+        unset($this->c1);
+        unset($this->c2);
+        unset($this->a1);
         unset($soap_version_test_accountId);
         unset($soap_version_test_opportunityId);
         unset($soap_version_test_contactId);
     }	
     
-    public function testGetReportEntries() {
-    	require_once('service/core/SoapHelperWebService.php');
-    	require_once('modules/Reports/Report.php');
-    	require_once('modules/Reports/SavedReport.php');
-    	$savedReportId = '616f5353-12a8-64ae-4707-4c7d244d76d1';//$GLOBALS['db']->getOne("SELECT id FROM saved_reports");
-    	$savedReport = new SavedReport();
-    	$savedReport->retrieve($savedReportId);
-    	$helperObject = new SoapHelperWebServices();
-    	$helperResult = $helperObject->get_report_value($savedReport, array());
+    public function testSetEntries() {
     	$this->_login();
-		$result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
-		
-		$this->assertTrue(isset($result['field_list']));
-		$this->assertTrue(isset($result['entry_list']));
+		$result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c1->last_name), array('name'=>'email1' , 'value'=>$this->c1->email1), array('name'=>'first_name' , 'value'=>$this->c1->first_name), array('name'=>'account_name' , 'value'=>$this->a1->name)))));
+		$this->assertTrue(isset($result['ids']) && $result['ids'][0] == $this->c1->id);
     } // fn
     
-    public function testGetEntryList() {
-    	$this->markTestSkipped('Fix Sql issue');
+     public function testSetEntries2() {
     	$this->_login();
-		$result = $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,'modules' => 'Contacts','query' => "contacts.id = '{$this->c->id}'", 'order_by' => 'contacts.first_name','offset' => 0, 'select_fields' => array('last_name', 'first_name', 'id'), 'link_name_to_fields_array' => array(), 'max_results' => 10, 'deleted' => 0));
-		$this->assertTrue(isset($result['entry_list']) && $result['entry_list'][0]['id'] == $this->c->id);
+		$result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c2->last_name), array('name'=>'email1' , 'value'=>$this->c2->email1), array('name'=>'first_name' , 'value'=>$this->c2->first_name), array('name'=>'account_name' , 'value'=>'joe pizza')))));
+		$this->assertTrue(isset($result['ids']) && $result['ids'][0] != $this->c1->id);
     } // fn
     
 	/**********************************
