@@ -102,7 +102,7 @@ SUGAR.expressions.saveCurrentExpression = function(target)
 }
 
 SUGAR.expressions.GridToolTip = {
-	tipCache : [ ],
+	tipCache : { },
 	currentHelpFunc : "",
 	showFunctionDescription: function(tip, func) {
 		var ggt = SUGAR.expressions.GridToolTip;

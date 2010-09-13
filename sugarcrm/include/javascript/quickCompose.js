@@ -195,6 +195,11 @@ SUGAR.quickCompose = function() {
 		 **/
 		init: function(o) {
 
+              if(typeof o.error != 'undefined' && o.error == 1 ) {
+                  alert(SUGAR.language.get('app_strings','LBL_EMAIL_ERROR_DESC')+"\n"+SUGAR.language.get('app_strings',o.error_msg));
+                  return false;
+              }
+
 			  if(typeof o.menu_id != 'undefined') {
 			     this.dceMenuPanel = o.menu_id;
 			  } else {
@@ -221,6 +226,8 @@ SUGAR.quickCompose = function() {
 		          this.loadResources(o);
 		      else
 		          this.initUI(o);
+
+              return true;
 		},
 		/**
 		 * Pull in all the required js files.
