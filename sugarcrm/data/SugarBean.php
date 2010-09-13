@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /********************************************************************************* 
- * $Id: SugarBean.php 57813 2010-08-19 17:34:44Z kjing $
+ * $Id: SugarBean.php 58121 2010-09-09 18:35:17Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -2564,7 +2564,7 @@ function save_relationship_changes($is_update, $exclude=array())
 						$value = implode($list_column,' ');
 						// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
 						if ( $this->db->dbType == 'mssql' 
-						     && $source == 'db'
+						     && $source != 'non-db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
                                 array('ntext','text','image')
@@ -2574,7 +2574,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         }
 						// Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
 						if ( $this->db->dbType == 'oci8' 
-						     && $source == 'db'
+						     && $source != 'non-db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
                                 array('clob')
