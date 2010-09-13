@@ -210,35 +210,41 @@ eoq;
 		
 		// email smtp
 		$systemOutboundEmail = new OutboundEmail();
-        $systemOutboundEmail = $systemOutboundEmail->getSystemMailerSettings();
-        $mail_smtpserver = $systemOutboundEmail->mail_smtpserver;
-        $mail_smtptype = $systemOutboundEmail->mail_smtptype;
-        $mail_smtpport = $systemOutboundEmail->mail_smtpport;
-        $mail_smtpssl = $systemOutboundEmail->mail_smtpssl;
-        $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
-        $mail_smtpuser = "";
-        $mail_smtppass = "";
-        $hide_if_can_use_default = true;
-        if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
-        {	
-            $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
-            if($userOverrideOE != null) {
-                $mail_smtpuser = $userOverrideOE->mail_smtpuser;
-                $mail_smtppass = $userOverrideOE->mail_smtppass;
-            }
-            if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
-                $hide_if_can_use_default = true;
-            }
-            else{
-                $hide_if_can_use_default = false;
-            }
-        }
-        $this->ss->assign("mail_smtpdisplay", $mail_smtpdisplay);
-        $this->ss->assign("mail_smtpuser", $mail_smtpuser);
-        $this->ss->assign("mail_smtppass", $mail_smtppass);
-        $this->ss->assign('mail_smtpserver',$mail_smtpserver);
-        $this->ss->assign('MAIL_SMTPPORT',$mail_smtpport);
-        $this->ss->assign('MAIL_SMTPSSL',$mail_smtpssl);
+		$systemOutboundEmail = $systemOutboundEmail->getSystemMailerSettings();
+		$hide_if_can_use_default = true;
+
+		//$systemOutboundEmail->getSystemMailerSettings() can return null, so we need to make sure object is not null
+        if($systemOutboundEmail)
+		{	
+			$mail_smtpserver = $systemOutboundEmail->mail_smtpserver;
+			$mail_smtptype = $systemOutboundEmail->mail_smtptype;
+			$mail_smtpport = $systemOutboundEmail->mail_smtpport;
+			$mail_smtpssl = $systemOutboundEmail->mail_smtpssl;
+			$mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
+			$mail_smtpuser = "";
+			$mail_smtppass = "";
+
+			if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
+			{	
+				$userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
+				if($userOverrideOE != null) {
+					$mail_smtpuser = $userOverrideOE->mail_smtpuser;
+					$mail_smtppass = $userOverrideOE->mail_smtppass;
+				}
+				if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
+					$hide_if_can_use_default = true;
+				}
+				else{
+					$hide_if_can_use_default = false;
+				}
+			}
+			$this->ss->assign("mail_smtpdisplay", $mail_smtpdisplay);
+			$this->ss->assign("mail_smtpuser", $mail_smtpuser);
+			$this->ss->assign("mail_smtppass", $mail_smtppass);
+			$this->ss->assign('mail_smtpserver',$mail_smtpserver);
+			$this->ss->assign('MAIL_SMTPPORT',$mail_smtpport);
+			$this->ss->assign('MAIL_SMTPSSL',$mail_smtpssl);
+		}
         
         $this->ss->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default);
         
