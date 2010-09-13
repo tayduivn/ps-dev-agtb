@@ -131,7 +131,7 @@ class SqlsrvHelper extends MssqlHelper
         
         // Change the first index listed to be a clustered one instead ( so we have at least one for the table )
         if ( isset($indices[0]) ) {
-            $indices[0]['type'] = 'clustered';
+            //$indices[0]['type'] = 'clustered';
         }
         
         return parent::indexSQL($tableName, $fieldDefs, $indices); 
