@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/********************************************************************************* 
+/*********************************************************************************
  * $Id: SugarBean.php 57813 2010-08-19 17:34:44Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
@@ -2582,7 +2582,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
                         }
 						// Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
-						if ( $this->db->dbType == 'oci8' 
+						if ( $this->db->dbType == 'oci8'
 						     && $source == 'db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
