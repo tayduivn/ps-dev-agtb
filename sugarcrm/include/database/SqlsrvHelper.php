@@ -125,18 +125,13 @@ class SqlsrvHelper extends MssqlHelper
         $indices
         ) 
     {
-        foreach ( $indices as $index ) {
-            if ( $index['type'] == 'primary' ) {
-                return parent::indexSQL($tableName, $fieldDefs, $indices); 
-            }
+        if ( $this->doesTableHaveAClusteredIndexDefined($tableName) ) {
+            return parent::indexSQL($tableName, $fieldDefs, $indices); 
         }
         
         // Change the first index listed to be a clustered one instead ( so we have at least one for the table )
         if ( isset($indices[0]) ) {
             $indices[0]['type'] = 'clustered';
-        }
-        else {
-            $GLOBALS['log']->warning("Table '$tablename' has no indices defined; this could be a problem on SQL Server.");
         }
         
         return parent::indexSQL($tableName, $fieldDefs, $indices); 
@@ -200,7 +195,7 @@ class SqlsrvHelper extends MssqlHelper
      * @see DBHelper::get_indices()
      */
     public function get_indices(
-        $tablename
+        $tableName
         ) 
     {
         //find all unique indexes and primary keys.
@@ -213,7 +208,7 @@ SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as 
             AND sys.tables.object_id = sys.columns.object_id
             AND sys.indexes.index_id = sys.index_columns.index_id 
             AND sys.index_columns.column_id = sys.columns.column_id) 
-        AND sys.tables.name = '$tablename'
+        AND sys.tables.name = '$tableName'
 EOSQL;
         $result = $this->db->query($query);
         
@@ -230,6 +225,30 @@ EOSQL;
             $indices[$name]['fields'][] = strtolower($row['column_name']);
         }
         return $indices;
+    }
+    
+    /**
+     * protected function to return true if the given tablename has any clustered indexes defined.
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    protected function doesTableHaveAClusteredIndexDefined($tableName)
+    {
+        $query = <<<EOSQL
+SELECT IST.TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES IST
+    WHERE objectProperty(object_id(IST.TABLE_NAME), 'IsUserTable') = 1 
+        AND objectProperty(object_id(IST.TABLE_NAME), 'TableHasClustIndex') = 1
+        AND IST.TABLE_NAME = '{$tableName}'
+EOSQL;
+
+        $result = $this->db->getOne($query);
+        if ( !$result ) {
+            return false;
+        }
+
+        return true;
     }
 }
 ?>
