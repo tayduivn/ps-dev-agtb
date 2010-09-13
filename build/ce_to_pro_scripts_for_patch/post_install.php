@@ -76,7 +76,7 @@ function post_install()
 	   $schemaFile = "$self_dir/610_ce_to_pro_mysql.sql";
     } else if ($sugar_config['dbconfig']['db_type'] == 'mssql') {
 	   $schemaFile = "$self_dir/610_ce_to_pro_mssql.sql";
-	   if(is_freetds() && file_exists("$self_dir/610_ce_to_pro_mssql_freetds.sql")){
+	   if(in_array(get_class($db),array('SqlsrvManager','FreeTDSManager')) && file_exists("$self_dir/610_ce_to_pro_mssql_freetds.sql")){
 	       $schemaFile = "$self_dir/610_ce_to_pro_mssql_freetds.sql";
 	   }
 	   $log->info("Running SQL file $schemaFile");
