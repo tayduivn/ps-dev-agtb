@@ -729,7 +729,7 @@ class TimeDate2
     }
 
     /**
-     * Return current time in DB format
+     * Return current date in DB format
      * @return string
      */
     public function nowDbDate()
