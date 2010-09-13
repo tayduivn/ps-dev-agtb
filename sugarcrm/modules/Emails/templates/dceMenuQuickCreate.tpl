@@ -44,6 +44,8 @@ function closeEmailOverlay() {
 }
 {/literal}   
  
+SUGAR.quickCompose.init({$json_output});
+
 {literal}
 
 YAHOO.util.Event.onAvailable('dcmenu_close_link', function() {
@@ -53,12 +55,5 @@ YAHOO.util.Event.onAvailable('dcmenu_close_link', function() {
 //override the action here so we know to close the menu when email is sent
 action_sugar_grp1 = 'quickcreate';
 
-if ( SUGAR.quickCompose.init({/literal}{$json_output}{literal}) == false ) {
-// The quickCompose failed to load, probably warning the user about invalid email settings
-// we should close the overlay, because it will be blank.
-DCMenu.closeOverlay();
-}
-
 {/literal}
-
 </script>

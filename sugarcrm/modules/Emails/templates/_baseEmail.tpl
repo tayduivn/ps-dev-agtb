@@ -72,7 +72,7 @@
     <tr>
         <td NOWRAP style="padding-bottom: 2px;">
             <button class="button" id="checkEmailButton" onclick="SUGAR.email2.folders.startEmailAccountCheck();"><img src="themes/default/images/icon_email_check.gif" align="absmiddle" border="0"> {$app_strings.LBL_EMAIL_CHECK}</button>
-            <button class="button" id="composeButton" onclick="{$composeAction}"><img src="themes/default/images/icon_email_compose.gif" align="absmiddle" border="0"> {$mod_strings.LNK_NEW_SEND_EMAIL}</button>
+            <button class="button" id="composeButton" onclick="SUGAR.email2.composeLayout.c0_composeNewEmail();"><img src="themes/default/images/icon_email_compose.gif" align="absmiddle" border="0"> {$mod_strings.LNK_NEW_SEND_EMAIL}</button>
             <button class="button" id="settingsButton" onclick="SUGAR.email2.settings.showSettings();"><img src="themes/default/images/icon_email_settings.gif" align="absmiddle" border="0"> {$app_strings.LBL_EMAIL_SETTINGS}</button>
         </td>
         <td NOWRAP align="right" style="padding-bottom: 2px;">
