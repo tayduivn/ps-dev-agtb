@@ -1,4 +1,5 @@
 <?php
+ //FILE SUGARCRM flav=een ONLY
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -32,7 +33,7 @@ class IsValidDateExpression extends BooleanExpression {
 	function evaluate() {
 		$dtStr = $this->getParameters()->evaluate();
 		$date_reg_positions = array( 'Y'=>1 ,'m'=>2,'d'=>3 );
-		$date_reg_format    = '/([0-9]{4})[-\/.]([0-9]{1,2})[-\/.]([0-9]{1,2})/';
+		$date_reg_format    = '/(^[0-9]{4})[-\/.]([0-9]{1,2})[-\/.]([0-9]{1,2})$/';
 		if(strlen($dtStr) == 0) return AbstractExpression::$TRUE;
 	    // Check that we have numbers
 		$dateParts = array();
@@ -44,8 +45,7 @@ class IsValidDateExpression extends BooleanExpression {
 	    $d = '';
 	    $y = '';
 	    
-	   // _pp($dateParts);
-	    //preg_match( $date_reg_format, $dtStr, $dateParts);
+	   //preg_match( $date_reg_format, $dtStr, $dateParts);
 
 	    foreach ( $date_reg_positions as $key => $index )
 	    {
@@ -82,10 +82,10 @@ class IsValidDateExpression extends BooleanExpression {
 		return <<<EOQ
 		var dtStr = this.getParameters().evaluate();
 		var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
-		var date_reg_format = '([0-9]{4})[-/.]([0-9]{1,2})[-/.]([0-9]{1,2})';
+		var date_reg_format = '(^[0-9]{4})[-/.]([0-9]{1,2})[-/.]([0-9]{1,2})$';
 		if(dtStr.length == 0) return SUGAR.expressions.Expression.TRUE;
 	    // Check that we have numbers
-		myregexp = new RegExp(date_reg_format)
+		var myregexp = new RegExp(date_reg_format)
 		if(!myregexp.test(dtStr))	return SUGAR.expressions.Expression.FALSE;
 	    var m = '';
 	    var d = '';

@@ -163,7 +163,7 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_TestCase
     }
     //BEGIN SUGARCRM flav=pro ONLY
     /**
-     * @group bug32626
+     * @ticket 32626
      */
     public function testGetControlEnumWhenOptionsAreInTheModStrings()
     {

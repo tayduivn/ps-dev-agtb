@@ -3,7 +3,7 @@
 require_once 'modules/Users/User.php';
 
 /**
- * @group bug31013
+ * @ticket 31013
  */
 class Bug31013Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -105,7 +105,7 @@ if(!$hasUserPreferences){
                                          'forceColumn' => 0,
                                          'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
                                          'options' => array('title' => translate('LBL_DASHLET_DISCOVER_SUGAR_PRO','Home'),
-                                                            'url' => 'http://apps.sugarcrm.com/dashlet/5.2.0/go-pro.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@',
+                                                            'url' => 'http://www.sugarcrm.com/crm/product/gopro',
                                                             'height' => 315,
                                              ));
 
@@ -121,7 +121,7 @@ if(!$hasUserPreferences){
                                          'forceColumn' => 1,
                                          'fileLocation' => $dashletsFiles['iFrameDashlet']['file'],
                                          'options' => array('title' => translate('LBL_DASHLET_SUGAR_NEWS','Home'),
-                                                            'url' => 'http://apps.sugarcrm.com/dashlet/5.2.0/sugarcrm-news-dashlet.html?lang=@@LANG@@&edition=@@EDITION@@&ver=@@VER@@',
+                                                            'url' => 'http://www.sugarcrm.com/crm/product/news',
                                                             'height' => 315,
                                              ));
         
@@ -704,7 +704,7 @@ $sugar_smarty->assign('lblNumberOfColumns', $GLOBALS['app_strings']['LBL_NUMBER_
 $sugar_smarty->assign('lbl1Column', $GLOBALS['app_strings']['LBL_1_COLUMN']);
 $sugar_smarty->assign('lbl2Column', $GLOBALS['app_strings']['LBL_2_COLUMN']);
 $sugar_smarty->assign('lbl3Column', $GLOBALS['app_strings']['LBL_3_COLUMN']);
-$sugar_smarty->assign('form_header', get_module_title("Home","Home", true));
+$sugar_smarty->assign('form_header', get_module_title("Home","", true));
 //END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));

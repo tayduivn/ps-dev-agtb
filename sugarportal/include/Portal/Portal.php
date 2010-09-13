@@ -21,6 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once("include/nusoap/nusoap.php");
+require_once("include/nusoap/class.wsdlcache.php");
+
 
 class Portal {
     var $soapClientProxy;
@@ -79,19 +81,51 @@ class Portal {
      */
     function loadSoapClient() {
         global $sugar_config;
-
-        $this->soapClient = new nusoapclient($sugar_config['parent_site_url'] . '/soap.php?wsdl', true, false, false, false, false, 50, 50);
+        if( empty($GLOBALS['log']) ) 
+        {
+            require_once ('log4php/LoggerManager.php');
+            $GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
+        } 
+        	
+        $siteUrl = $sugar_config['parent_site_url'] . '/soap.php?wsdl';
+        $cacheSubDirectory = 'wsdlCache';
+        $cacheLocation = $sugar_config['cache_dir'] . $cacheSubDirectory;
+        $cacheLifetime = 86400; //1 day
+        $disableWsdlCache = ( isset( $sugar_config['disableWsdlCache'] ) && $sugar_config['disableWsdlCache']) ? TRUE : FALSE;
+        
+        if(!$disableWsdlCache)
+        {
+            $GLOBALS['log']->debug("Wsdl cache enabled, attempting to retrieve");
+            $cache = new wsdlcache($cacheLocation, $cacheLifetime);
+            $wsdl = $cache->get($siteUrl);
+            //Check for cache hit.
+            if( is_null($wsdl) )
+            {
+                $GLOBALS['log']->debug("WSDL cache does not exist, retrieving fresh wsdl");
+                require_once('include/utils/file_utils.php');
+                create_cache_directory("$cacheSubDirectory/");
+                $wsdl = new wsdl($siteUrl, FALSE, FALSE, FALSE, FALSE, 50, 50);
+                $cache->put($wsdl);
+            }
+    
+            $this->soapClient = new nusoapclient($wsdl, TRUE, FALSE, FALSE, FALSE, FALSE, 50, 50);
+        }
+        else 
+        {
+            $GLOBALS['log']->debug("Wsdl cache not enabled.");
+            $this->soapClient = new nusoapclient($siteUrl, TRUE, FALSE, FALSE, FALSE, FALSE, 50, 50);
+        }
+            
         $err = $this->soapClient->getError();
-        if($err) {
-        	if(empty($GLOBALS['log'])) {
-        	   require_once ('log4php/LoggerManager.php');
-        	   $GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
-        	} //if
+        if($err) 
+        {
             $GLOBALS['log']->fatal('There was a problem connecting to the SugarCRM Server. The SugarCRM server is not responding.');
             $GLOBALS['log']->fatal($err);
 
             header('Location: error.php?from=portal.php');
-        } else {
+        } 
+        else 
+        {
             $this->soapClientProxy = $this->soapClient->getProxy();
         }
     }

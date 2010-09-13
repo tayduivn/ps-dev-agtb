@@ -279,6 +279,12 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 			//return false if there is no email set
 			return false;
 		}
+		
+		if ($notify_user->status == "Inactive")
+		{
+			$GLOBALS['log']->fatal("workflow attempting to send alert to inactive user {$notify_user->name}");
+            return false;
+		}
 
 		$notify_address = (empty($notify_user->email1)) ? from_html($notify_user->email2) : from_html($notify_user->email1);
 		$notify_name = (empty($notify_user->first_name)) ? from_html($notify_user->user_name) : $locale->getLocaleFormattedName(from_html($notify_user->first_name), from_html($notify_user->last_name));

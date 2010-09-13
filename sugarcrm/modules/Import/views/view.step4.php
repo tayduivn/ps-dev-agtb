@@ -132,6 +132,7 @@ class ImportViewStep4 extends SugarView
         
         while ( $row = $importFile->getNextRow() ) {
             $focus = loadImportBean($_REQUEST['import_module']);
+            $focus->unPopulateDefaultValues();
             $focus->save_from_post = false;
             $focus->team_id = null;
             $ifs->createdBeans = array();
@@ -154,7 +155,7 @@ class ImportViewStep4 extends SugarView
                 if ( !empty($focus->$field) ) {
                     continue;
                 }
-                        
+                
                 // translate strings
                 global $locale;
                 if(empty($locale)) {
@@ -385,6 +386,7 @@ class ImportViewStep4 extends SugarView
             
             // Now try to validate flex relate fields
             if ( isset($focus->field_defs['parent_name']) 
+                    && isset($focus->parent_name)
                     && ($focus->field_defs['parent_name']['type'] == 'parent') ) {
                 // populate values from the picker widget if the import file doesn't have them
                 $parent_idField = $focus->field_defs['parent_name']['id_name'];
@@ -471,6 +473,9 @@ class ImportViewStep4 extends SugarView
             }
         
             if ($do_save) {
+                // Populate in any default values to the bean
+                $focus->populateDefaultValues();
+                
                 if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord ) {
                     $focus->assigned_user_id = $current_user->id;
                 }

@@ -32,7 +32,7 @@ class ACLField  extends ACLAction{
 		$this->disable_row_level_security =true;
 		//END SUGARCRM flav=pro ONLY
 	}
-	
+
 	/**
 	 * static addActions($category, $type='module')
 	 * Adds all default actions for a category/type
@@ -40,7 +40,7 @@ class ACLField  extends ACLAction{
 	 * @param STRING $category - the category (e.g module name - Accounts, Contacts)
 	 * @param STRING $type - the type (e.g. 'module', 'field')
 	 */
-	
+
 
 	function getAvailableFields($module, $object=false){
 		static $exclude = array('deleted', 'assigned_user_id');
@@ -58,19 +58,19 @@ class ACLField  extends ACLAction{
 					return array();
 				}
 			}
-			
+
 			$availableFields = array();
 			foreach($fieldDefs as $field=>$def){
-				
+
 				if((!empty($def['source'])&& $def['source']== 'custom_fields') ||!empty($def['group']) || (empty($def['hideacl']) &&!empty($def['type']) && !in_array($field, $exclude) &&
-					((empty($def['source']) 
-					&& $def['type'] != 'id' 
+					((empty($def['source'])
+					&& $def['type'] != 'id'
 					&& (empty($def['dbType']) || ($def['dbType'] != 'id' ))
-					) || !empty($def['link']) || $def['type'] == 'relate') 
+					) || !empty($def['link']) || $def['type'] == 'relate')
 				))
 					{
 						if(empty($def['vname']))$def['vname'] = '';
-						$fkey = (!empty($def['group']))? $def['group']: $field;	
+						$fkey = (!empty($def['group']))? $def['group']: $field;
 						$label = (!empty($fieldDefs[$fkey]['vname']))?$fieldDefs[$fkey]['vname']:$def['vname'];
 						$fkey = strtolower($fkey);
 						$field = strtolower($field);
@@ -92,21 +92,21 @@ class ACLField  extends ACLAction{
 		}
 		return $modulesAvailableFields[$module];
 	}
-	
+
 	function getFields($module,$user_id='',$role_id=''){
 		static $userFields = array();
 		$fields = ACLField::getAvailableFields($module, false);
 		if(!empty($role_id)){
 			$query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
 			if(!empty($user_id)){
-				$query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0 
+				$query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
 							INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
 			}
-		
+
 			$query .=  " WHERE af.deleted = 0 ";
 			$query .= " AND af.role_id='$role_id' ";
 			$query .= " AND af.category='$module'";
-			$result = $GLOBALS['db']->query($query); 
+			$result = $GLOBALS['db']->query($query);
 			while($row = $GLOBALS['db']->fetchByAssoc($result)){
 				if(!empty($fields[$row['name']]) && ($row['aclaccess'] < $fields[$row['name']]['aclaccess'] || $fields[$row['name']]['aclaccess'] == 0) ){
 					$row['key'] = $row['name'];
@@ -119,7 +119,7 @@ class ACLField  extends ACLAction{
 				}
 			}
 		}
-		
+
 		ksort($fields);
 		return $fields;
 	}
@@ -128,21 +128,25 @@ class ACLField  extends ACLAction{
         $query = "SELECT  af.id, af.name, af.category, af.role_id, af.aclaccess FROM acl_fields af ";
         $query .=  " WHERE af.deleted = 0 ";
         $query .= " AND af.role_id='$role_id' ";
-        $result = $GLOBALS['db']->query($query); 
+        $result = $GLOBALS['db']->query($query);
         while($row = $GLOBALS['db']->fetchByAssoc($result)){
             $fields[$row['id']] =  $row;
         }
         return $fields;
     }
-	
+
 	function loadUserFields($category,$object, $user_id, $refresh=false){
 		if(!$refresh && isset($_SESSION['ACL'][$user_id][$category]['fields']))return $_SESSION['ACL'][$user_id][$category]['fields'];
+		if(empty($_SESSION['ACL'][$user_id])) {
+		    // load actions to prevent cache poisoning for ACLAction
+		    ACLAction::getUserActions($user_id);
+		}
 		$query = "SELECT  af.name, af.aclaccess FROM acl_fields af ";
-		$query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0 
+		$query .= " INNER JOIN acl_roles_users aru ON aru.user_id = '$user_id' AND aru.deleted=0
 					INNER JOIN acl_roles ar ON aru.role_id = ar.id AND ar.id = af.role_id AND ar.deleted = 0";
 		$query .=  " WHERE af.deleted = 0 ";
 		$query .= " AND af.category='$category'";
-		$result = $GLOBALS['db']->query($query); 
+		$result = $GLOBALS['db']->query($query);
 
 		$allFields = ACLField::getAvailableFields($category, $object);
 		$_SESSION['ACL'][$user_id][$category]['fields'] = array();
@@ -157,21 +161,21 @@ class ACLField  extends ACLAction{
 				}
 			}
 			}
-				
+
 	}
-	
-	
+
+
 	function listFilter(&$list,$category, $user_id, $is_owner, $by_key=true, $min_access = 1, $blank_value=false, $addACLParam=false, $suffix=''){
 		static $cache = array();
-                
+
 		foreach($list as $key=>$value){
-			
+
 			if($by_key){
 				$field = $key;
 				if(is_array($value) && !empty($value['group'])){
-					
+
 					$field = $value['group'];
-				}	
+				}
 			}else{
 				if(is_array($value)){
 					if(!empty($value['group'])){
@@ -206,9 +210,9 @@ class ACLField  extends ACLAction{
 			}else{
 				unset($list[$key]);
 			}
-			
+
 		}
-				
+
 	}
 	}
 	/**
@@ -231,10 +235,10 @@ class ACLField  extends ACLAction{
 		}
 		//if(is_admin($GLOBALS['current_user']))return 4;
 		if(!isset($_SESSION['ACL'][$user_id][$category]['fields'][$field])){
-			return 4;	
+			return 4;
 		}
 		$access = $_SESSION['ACL'][$user_id][$category]['fields'][$field];
-		
+
 		if($access == ACL_READ_WRITE || ($is_owner && ($access == ACL_READ_OWNER_WRITE || $access == ACL_OWNER_READ_WRITE))){
 			return 4;
 		}elseif($access == ACL_READ_ONLY || $access==ACL_READ_OWNER_WRITE){
@@ -251,34 +255,12 @@ class ACLField  extends ACLAction{
 			$acl->id = $id;
 			$acl->new_with_id = true;
 		}
-		
+
 		$acl->aclaccess = $access;
 		$acl->category = $module;
 		$acl->name = $field_id;
 		$acl->role_id = $role_id;
 		$acl->save();
-		
+
 	}
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
-	
-	
-
 }
-
-
-?>

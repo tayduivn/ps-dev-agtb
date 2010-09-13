@@ -820,11 +820,11 @@ function getValidPatchName($returnFull = true) {
 	$_SESSION['install_file'] = urldecode($newest); // in-case it was there from a prior.
 	logThis("*** UW using [ {$_SESSION['install_file']} ] as source for patch files.");
 
-	$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 	$cleanUpgradeContent = urlencode($_SESSION['install_file']);
 
 	// cn: 10606 - cannot upload a patch file since this returned always.
 	if(!empty($cleanUpgradeContent)) {
+		$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 		$ready .=<<<eoq
 	        <td>
 				<form action="index.php" method="post">
@@ -835,17 +835,18 @@ function getValidPatchName($returnFull = true) {
 	        		<input type=hidden name="install_file" value="{$cleanUpgradeContent}" />
 	        		<input type=submit value="{$mod_strings['LBL_BUTTON_DELETE']}" />
 				</form>
-			</td>
+			</td></table>\n
 eoq;
 		$disabled = "DISABLED";
 	}
 
-	$ready .= "</table>\n";
+	
 
 	if(empty($cleanUpgradeContent)){
-	    $ready .= "<i>None</i><br>\n";
+	    $ready .= "<tr><td colspan='7'><i>None</i></td>\n";
+		$ready .= "</table>\n";
 	}
-	$ready .= "</ul>\n";
+	$ready .= "<br></ul>\n";
 
 	$return['ready'] = $ready;
 	$return['disabled'] = $disabled;
@@ -2848,10 +2849,10 @@ function fileCopy($file_path){
 function getChecklist($steps, $step) {
 	global $mod_strings;
 
-	$skip = array('start', 'cancel', 'uninstall');
+	$skip = array('start', 'cancel', 'uninstall','end');
 	$j=0;
 	$i=1;
-	$ret  = '<table cellpadding="3" cellspacing="0" border="0">';
+	$ret  = '<table cellpadding="3" cellspacing="4" border="0">';
 	$ret .= '<tr><th colspan="3" align="left">'.$mod_strings['LBL_UW_CHECKLIST'].':</th></tr>';
 	foreach($steps['desc'] as $k => $desc) {
 		if(in_array($steps['files'][$j], $skip)) {
@@ -2860,17 +2861,22 @@ function getChecklist($steps, $step) {
 		}
 
 		//$status = "<span class='error'>{$mod_strings['LBL_UW_INCOMPLETE']}</span>";
-		$status = '';
+		$desc_mod_pre = '';
+		$desc_mod_post = '';
+		/*
 		if(isset($_SESSION['step'][$steps['files'][$k]]) && $_SESSION['step'][$steps['files'][$k]] == 'success') {
-			$status = $mod_strings['LBL_UW_COMPLETE'];
+			//$status = $mod_strings['LBL_UW_COMPLETE'];
 		}
+		*/
 
 		if($k == $_REQUEST['step']) {
-			$status = $mod_strings['LBL_UW_IN_PROGRESS'];
+			//$status = $mod_strings['LBL_UW_IN_PROGRESS'];
+			$desc_mod_pre = "<font color=blue><i>";
+			$desc_mod_post = "</i></font>";
 		}
 
-		$ret .= "<tr><td>&nbsp;</td><td><b>{$i}: {$desc}</b></td>";
-		$ret .= "<td id={$steps['files'][$j]}><i>{$status}</i></td></tr>";
+		$ret .= "<tr><td>&nbsp;</td><td><b>{$i}: {$desc_mod_pre}{$desc}{$desc_mod_post}</b></td>";
+		$ret .= "<td id={$steps['files'][$j]}><i></i></td></tr>";
 		$i++;
 		$j++;
 	}
@@ -3271,7 +3277,8 @@ function resetUwSession() {
 	}
 	if(isset($_SESSION['license_shown']))
 		unset($_SESSION['license_shown']);
-
+    if(isset($_SESSION['sugarMergeRunResults']))
+		unset($_SESSION['sugarMergeRunResults']);
 }
 
 /**
@@ -4548,17 +4555,20 @@ function upgradeUserPreferences() {
 		  } //if
 
 		  // move the favorite reports over to the SugarFavorites table
-		  $current_favorites = array_keys($current_user->getPreference('favorites', 'Reports'));
-		  foreach ($current_favorites as $report_id) {
-		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-		          continue;
-		      }
-
-		      $favFocus = new SugarFavorites;
-		      $favFocus->module = 'Reports';
-		      $favFocus->record_id = $report_id;
-		      $favFocus->assigned_user_id = $current_user->id;
-		      $favFocus->save();
+		  $fav_rep_prefs = $current_user->getPreference('favorites', 'Reports');
+		  if(is_array($fav_rep_prefs) && !empty($fav_rep_prefs)){
+    		  $current_favorites = array_keys($fav_rep_prefs);
+    		  foreach ($current_favorites as $report_id) {
+    		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
+    		          continue;
+    		      }
+    
+    		      $favFocus = new SugarFavorites;
+    		      $favFocus->module = 'Reports';
+    		      $favFocus->record_id = $report_id;
+    		      $favFocus->assigned_user_id = $current_user->id;
+    		      $favFocus->save();
+    		  }
 		  }
 
 		  // we need to force save the changes to disk, otherwise we lose them.
@@ -5119,7 +5129,7 @@ function upgradeModulesForTeam() {
 			if(!empty($content['dashlets']) && !empty($content['pages'])){
 				$originalDashlets = $content['dashlets'];
 				foreach($originalDashlets as $key => $ds){
-				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://apps.sugarcrm.com/dashlet/5.2.0/go-pro.html')){
+				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://www.sugarcrm.com/crm/product/gopro')){
 						unset($originalDashlets[$key]);
 					}
 				}

@@ -351,6 +351,9 @@ class ConnectorsController extends SugarController {
 			$connector_keys = array_keys($connectors);
 			
 			$modules_sources = ConnectorUtils::getDisplayConfig();
+			if ( !is_array($modules_sources) ) {
+			    $modules_sources = (array) $modules_sources;
+			}
 			
 			$sources = array();
 			$values = array();

@@ -143,50 +143,34 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 	if(!isset($_SESSION['schema_change']) || /* pre-4.5.0 upgrade wizard */
 		$_SESSION['schema_change'] == 'sugar') {
 		_logThis("Upgrading the database from {$origVersion} to version {$destVersion}", $path);
+		$origVersion = substr($origVersion, 0, 2) . 'x';
+		$destVersion = substr($destVersion, 0, 2) . 'x';
 		$schemaFileName = $origVersion."_to_".$destVersion;
 
-		if($sugar_config['dbconfig']['db_type'] == 'oci8') {
-			//BEGIN SUGARCRM flav=ent ONLY 
-			//$schemaFile = "$unzip_dir/scripts/$schemaFileName"."_oracle.sql";
-			$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$origVersion.'_to_'.$destVersion.'_oracle.sql';
-			_logThis("Running SQL file $schemaFile", $path);
-			if(is_file($schemaFile)) {
-				//parse the sql file and run one statement at a time. keep logging into
-				//the upgrade_progress
-				ob_start();
-				@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
-				ob_end_clean();
-				//$sql_run_result = run_sql_file_for_oracle($schemaFile);
-			} else {
-				logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-			}
-			//END SUGARCRM flav=ent ONLY 
-		} elseif($sugar_config['dbconfig']['db_type'] == 'mssql') {
-			//$schemaFile = "$unzip_dir/scripts/$schemaFileName"."_mssql.sql";
-			$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$origVersion.'_to_'.$destVersion.'_mssql.sql';
-			_logThis("Running SQL file $schemaFile", $path);
-			if(is_file($schemaFile)) {
-				//$sql_run_result = _run_sql_file($schemaFile);
-				ob_start();
-				@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
-				ob_end_clean();
-			} else {
-				logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-			}
+		switch($sugar_config['dbconfig']['db_type']) {
+			case 'mysql':
+				$schemaFileName = $schemaFileName . '_mysql.sql';
+				break;
+			case 'mssql':
+			    $schemaFileName = $schemaFileName . '_mssql.sql';
+				break;
+			case 'oci8':
+				$schemaFileName = $schemaFileName . '_oracle.sql';
+				break;
 		}
-		else {
-			//$schemaFile = "$unzip_dir/scripts/$schemaFileName"."_mysql.sql";
-			$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$origVersion.'_to_'.$destVersion.'_mysql.sql';
-			_logThis("Running SQL file $schemaFile", $path);
-			if(is_file($schemaFile)) {
-				//$sql_run_result = _run_sql_file($schemaFile);
-				ob_start();
-				@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
-				ob_end_clean();
-			} else {
-				logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
-			}
+		
+
+		$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$schemaFileName;
+		_logThis("Running SQL file $schemaFile", $path);
+		if(is_file($schemaFile)) {
+			//$sql_run_result = _run_sql_file($schemaFile);
+			ob_start();
+			@parseAndExecuteSqlFile($schemaFile,$queryType,$resumeFromQuery);
+			ob_end_clean();
+		} else {
+			logThis("*** ERROR: Schema change script [{$schemaFile}] could not be found!", $path);
 		}
+
 	} else {
 		_logThis('*** Skipping Schema Change Scripts - Admin opted to run queries manually and should have done so by now.', $path);
 	}
@@ -561,8 +545,11 @@ function hide_iframes_and_feeds_modules() {
 	$remove_iframes = false;
 	$remove_feeds = false;
 	
-	//Check if we should remove iframes.  Use the count of entries in iframes table
-	if($GLOBALS['db']->tableExists('iframes')) {
+	//Check if we should remove iframes.  If the table does not exist or the directory
+	//does not exist then we set remove_iframes to true
+	if(!$GLOBALS['db']->tableExists('iframes') || !file_exists('modules/iFrames')) {
+		$remove_iframes = true;
+	} else {
 		$result = $GLOBALS['db']->query('SELECT count(id) as total from iframes');
 		if(!empty($result)) {
 			$row = $GLOBALS['db']->fetchByAssoc($result);
@@ -577,23 +564,34 @@ function hide_iframes_and_feeds_modules() {
 	$controller = new TabController();
 	$tabs = $controller->get_tabs_system();
 	
-	//If the Feeds tab is hidden then remove it
-	if(isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds'])) {
+	//If the feeds table does not exists or if the directory does not exist or if it is hidden in 
+	//system tabs then set remove_feeds to true
+	if(!$GLOBALS['db']->tableExists('feeds') || !file_exists('modules/Feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
 	   $remove_feeds = true;
 	}
 	
 	if($remove_feeds) {
 	   //Remove the modules/Feeds files
-	   if(is_dir('modules/Feeds')) {
-	   _logThis('Removing the Feeds files', $path);
-	   rmdir_recursive('modules/Feeds');
+	   if(is_dir('modules/Feeds')) 
+	   {
+	      _logThis('Removing the Feeds files', $path);
+	      rmdir_recursive('modules/Feeds');
 	   }
 		
+	   if(file_exists('custom/Extension/application/Ext/Include/Feeds.php'))
+	   {
+	      _logThis('Removing custom/Extension/application/Ext/Include/Feeds.php ', $path);
+	      unlink('custom/Extension/application/Ext/Include/Feeds.php');	   	
+	   }
+	   
 	   //Drop the table
-	   _logThis('Removing the Feeds table', $path);
-	   $GLOBALS['db']->dropTableName('feeds');
+	   if($GLOBALS['db']->tableExists('feeds')) 
+	   {
+		   _logThis('Removing the Feeds table', $path);
+		   $GLOBALS['db']->dropTableName('feeds');
+	   }
 	} else {
-	   if(file_exists('modules/Feeds')) {
+	   if(file_exists('modules/Feeds') && $GLOBALS['db']->tableExists('feeds')) {
 		   _logThis('Writing Feed.php module to custom/Extension/application/Ext/Include', $path);
 		   write_to_modules_ext_php('Feed', 'Feeds', 'modules/Feeds/Feed.php', true);
 	   }
@@ -601,16 +599,27 @@ function hide_iframes_and_feeds_modules() {
 	
 	if($remove_iframes) {
 		//Remove the module/iFrames files
-		if(is_dir('modules/iFrames')) {
-		_logThis('Removing the iFrames files', $path);
-		rmdir_recursive('modules/iFrames');
+		if(is_dir('modules/iFrames')) 
+		{
+		   _logThis('Removing the iFrames files', $path);
+		   rmdir_recursive('modules/iFrames');
 		}
 		
+		if(file_exists('custom/Extension/application/Ext/Include/iFrames.php'))
+	    {
+	       _logThis('Removing custom/Extension/application/Ext/Include/iFrames.php ', $path);
+	       unlink('custom/Extension/application/Ext/Include/iFrames.php');	   	
+	    }		
+		
 		//Drop the table
-		_logThis('Removing the iframes table', $path);
-		$GLOBALS['db']->dropTableName('iframes');
+		if($GLOBALS['db']->tableExists('iframes')) 
+		{
+		   _logThis('Removing the iframes table', $path);
+		   $GLOBALS['db']->dropTableName('iframes');
+		}
+
 	} else {
-	   if(file_exists('modules/iFrames')) {
+	   if(file_exists('modules/iFrames') && $GLOBALS['db']->tableExists('iframes')) {
 		  _logThis('Writing iFrame.php module to custom/Extension/application/Ext/Include', $path);
 		  write_to_modules_ext_php('iFrame', 'iFrames', 'modules/iFrames/iFrame.php', true);
 	   }

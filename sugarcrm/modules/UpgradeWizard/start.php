@@ -74,27 +74,32 @@ $uwMain =<<<eoq
 	<tr>
 		<td align="left">
 			<p>
-			{$mod_strings['LBL_UW_START_DESC']}
+		    {$mod_strings['LBL_UW_START_DESC']}
 			</p>
+			<BR>
 			<p>
 			<span class="error">
 			{$mod_strings['LBL_UW_START_DESC2']}
 			</span>
 			</p>
-		</td>
+			<BR>
+			<p>
+			{$mod_strings['LBL_UW_START_DESC3']}
+			</p>
+			</td>
 	</tr>
 </table>
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
         </td></tr>
      </table>
  </div>
 eoq;
 
 $showBack		= false;
-$showCancel		= false;
+$showCancel		= true;
 $showRecheck	= false;
 $showNext		= true;
 

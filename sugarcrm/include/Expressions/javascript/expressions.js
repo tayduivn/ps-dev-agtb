@@ -63,7 +63,7 @@ SUGAR.expressions.Expression.FALSE = "false";
 
 SUGAR.expressions.NumericConstants = {
 	pi: 3.14159265,
-	e: 3.14159265
+	e: 2.718281828459045
 }
 
 
@@ -216,7 +216,7 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 
 	// check if it's an instance of type or a generic that could map to any (unknown type)
 	var isInstance = variable instanceof c || variable instanceof see.TYPE_MAP.generic;
-
+	
 	// now check for generics
 	switch(type) {
 		case see.STRING_TYPE:
@@ -230,6 +230,9 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 				variable = variable.evaluate();
 			}
 			return ( isInstance || variable == see.TRUE || variable == see.FALSE );
+			break;
+		case see.GENERIC_TYPE:
+			return true;
 			break;
 	}
 
@@ -393,7 +396,7 @@ SUGAR.expressions.Expression.TYPE_MAP	= {
 		"time" 		: SUGAR.TimeExpression,
 		"boolean" 	: SUGAR.BooleanExpression,
 		"enum" 		: SUGAR.EnumExpression,
-		"generic" 	: SUGAR.expressions.Expression
+		"generic" 	: SUGAR.GenericExpression
 };
 
 
@@ -476,9 +479,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 	if ( typeof(expr) != 'string' )	throw "ExpressionParser requires a string expression.";
 
 	// trim spaces, left and right
-	expr = expr.replace(/^\s+|\s+$/g,"");
-
-	//console.log("Evaluating: " + expr);
+	expr = expr.replace(/^\s+|\s+$|\n/g,"");
 
 	// check if its a constant and return a constant expression
 	var fixed = this.toConstant(expr);
@@ -552,7 +553,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 				var start_reg = ( i < length - 1 ? i+1 : length - 1);
 
 				var temp = params.substring(start_reg , end_reg );
-				//console.log(start_reg + " " + end_reg + " " + params + " '" + temp + "'");
 				if ( (/^\s*$/).exec(temp) == null )
 					throw (func + ": Syntax Error (Improperly Terminated String '" + temp + "')" + (start_reg) + " " + end_reg);
 			}
@@ -609,7 +609,6 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	// a constant string literal
 	if ( (/^".*"$/).exec(expr) != null ) {
 		expr = expr.substring(1, expr.length-1);		// remove start/end quotes
-		//console.log("String Literal Detected " + expr);
 		return new SUGAR.StringLiteralExpression( expr );
 	}
 

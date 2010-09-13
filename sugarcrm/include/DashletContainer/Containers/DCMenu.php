@@ -112,6 +112,11 @@ EOQ;
 		$sugarsurvey = "http://survey-js.sugarcrm.com/SugarSurvey/index.php?do=jssurvey&version={$version}&build={$build}&flavor={$flavor}";
 		//END SUGARCRM flav=sugarsurvey ONLY
 		$html = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+		// TODO: Come back and make a SugarFields grouping file for all of these
+		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Collection/SugarFieldCollection.js')."'></script>";
+		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Teamset/Teamset.js')."'></script>";
+		$html .= "<script src='".getJSPath('include/JSON.js')."'></script>";
+		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js')."'></script>";
 		$html .= <<<EOQ
 		<script>
 			
@@ -163,6 +168,10 @@ EOQ;
 
 		foreach($DCActions as $action){
 			if(ACLController::checkAccess($action, 'edit', true)) {
+			   //BEGIN SUGARCRM flav=sales ONLY
+			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
+			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
+			   //END SUGARCRM flav=sales ONLY
 			   $html .= $this->getMenuItem($action);	
 			}
 		}
@@ -175,9 +184,18 @@ EOQ;
 		$html .= <<<EOQ
 		</ul>
 		</div>
-		
+EOQ;
+//BEGIN SUGARCRM flav=sales ONLY
+if(!is_admin($GLOBALS['current_user'])){
+//END SUGARCRM flav=sales ONLY
+$html .= <<<EOQ
 		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);"><img src="$iconSearch" class="icon" align="top"></a></div>
 		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'></div>
+EOQ;
+//BEGIN SUGARCRM flav=sales ONLY
+}
+//END SUGARCRM flav=sales ONLY
+$html .= <<<EOQ
 		</div>
 		</div>
 		

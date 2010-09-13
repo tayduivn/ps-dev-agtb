@@ -81,7 +81,7 @@ class SalesEditionConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
         require('custom/modules/connectors/metadata/connectors.php');
         require('custom/modules/connectors/metadata/display_config.php');
         
-        $this->assertEquals(count($default_connectors), 3, "Assert that there are three connectors enabled.");
+        $this->assertEquals(count($default_connectors), 2, "Assert that there are two connectors enabled.");
         $this->assertEquals(count($default_modules_sources), 2, "Assert that there are two modules (Accounts, Contacts) enabled.");
         
         /*

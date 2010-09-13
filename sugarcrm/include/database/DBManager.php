@@ -200,14 +200,14 @@ abstract class DBManager
                 break;
             //END SUGARCRM flav=ent ONLY
             case "mssql":
-                if (is_freetds()
+                if ( function_exists('sqlsrv_connect')
+                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' ))
+                    $my_db_helper = 'SqlsrvHelper';
+                elseif (is_freetds() 
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' ))
                     $my_db_helper = 'FreeTDSHelper';
-                elseif (function_exists('mssql_connect')
-                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'mssql' ))
-                    $my_db_helper = 'MssqlHelper';
                 else
-                    $my_db_helper = 'SqlsrvHelper';
+                    $my_db_helper = 'MssqlHelper';
                 break;
             default:
                 $my_db_helper = 'MysqlHelper';
@@ -1641,7 +1641,12 @@ abstract class DBManager
     {
         $GLOBALS['log']->info("Get One: . |$sql|");
         $this->checkConnection();
-        $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        if(!($this instanceof MysqlManager) || stripos($sql, ' LIMIT ') === false) {
+            $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        } else {
+            // backward compatibility with queries having LIMIT
+            $queryresult = $this->query($sql, $dieOnError, $msg);
+        }
         if (!$queryresult)
             return false;
 

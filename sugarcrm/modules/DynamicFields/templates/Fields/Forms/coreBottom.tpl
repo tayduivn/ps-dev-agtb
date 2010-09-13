@@ -27,39 +27,14 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: coreBottom.tpl 56676 2010-05-25 21:33:32Z dwheeler $
+// $Id: coreBottom.tpl 57813 2010-08-19 17:34:44Z kjing $
 
 *}
-{* //BEGIN SUGARCRM flav=een ONLY *}
-{*<tr><td class='mbLBL'>Dependent:</td>
-    <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
-        {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-    </td>
-</tr>
-<tr id='visFormulaRow' {if empty($vardef.dependency)}style="display:none"{/if}><td class='mbLBL'>Visible If:</td> 
-    <td><input id="dependency" type="text" name="dependency" value="{$vardef.dependency|escape:'html'}" maxlength="255" />
-          <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}" 
-            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('dependency').value, 'dependency')"/> 
-    </td>
-</tr>
-<tr><td class='mbLBL'>Calculated:</td>
-    <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
-        {if !empty($vardef.calculated)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
-    </td>
-</tr>
-<tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}><td class='mbLBL'>Formula:</td> 
-    <td><input id="formula" type="text" name="formula" value="{$vardef.formula|escape:'html'}" maxlength=255 />
-          <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}" 
-            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)"/> 
-    </td>
-</tr>
-<tr id='enforcedRow' {if empty($vardef.enforced)}style="display:none"{/if}><td class='mbLBL'>Enforced:</td>
-    <td><input type="checkbox" name="enforced" id="enforced" value="1" onclick="ModuleBuilder.toggleEnforced();"{if !empty($vardef.enforced)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
-    </td>
-</tr>*}
-{* //END SUGARCRM flav=een ONLY *}
+
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+{include file='modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl'}
+{* //END SUGARCRM flav=pro ONLY *}
+
 {if $vardef.type != 'bool'}
 <tr ><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_REQUIRED_OPTION"}:</td><td><input type="checkbox" name="required" value="1" {if !empty($vardef.required)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="required" value="{$vardef.required}">{/if}</td></tr>
 {/if}
@@ -89,16 +64,12 @@
 {/if}
 {if !$hideDuplicatable}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DUPLICATE_MERGE"}:</td><td>
-{if $vardef.type != 'multienum'}
-	{if $hideLevel < 5}
-    	{html_options name="duplicate_merge" id="duplicate_merge" selected=$vardef.duplicate_merge_dom_value options=$duplicate_merge_options}
-    	{sugar_help text=$mod_strings.LBL_POPHELP_DUPLICATE_MERGE FIXX=260 FIXY=0}
-	{else}
-    	{if isset($vardef.duplicate_merge_dom_value)}{$vardef.duplicate_merge_dom_value}
-    	{else}{$duplicate_merge_options[0]}{/if}
-	{/if}
+{if $hideLevel < 5}
+    {html_options name="duplicate_merge" id="duplicate_merge" selected=$vardef.duplicate_merge_dom_value options=$duplicate_merge_options}
+    {sugar_help text=$mod_strings.LBL_POPHELP_DUPLICATE_MERGE FIXX=260 FIXY=0}
 {else}
-	{$duplicate_merge_options[0]}
+    {if isset($vardef.duplicate_merge_dom_value)}{$vardef.duplicate_merge_dom_value}
+    {else}{$duplicate_merge_options[0]}{/if}
 {/if}
 </td></tr>
 {/if}

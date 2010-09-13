@@ -557,12 +557,23 @@ $out .=<<<EOQ
 EOQ;
 
 // CRON Settings
+if ( !isset($sugar_config['default_language']) )
+    $sugar_config['default_language'] = $_SESSION['default_language'];
+if ( !isset($sugar_config['cache_dir']) )
+    $sugar_config['cache_dir'] = $sugar_config_defaults['cache_dir'];
+if ( !isset($sugar_config['site_url']) )
+    $sugar_config['site_url'] = $_SESSION['setup_site_url'];
+if ( !isset($sugar_config['translation_string_prefix']) )
+    $sugar_config['translation_string_prefix'] = $sugar_config_defaults['translation_string_prefix'];
 $mod_strings_scheduler = return_module_language($GLOBALS['current_language'], 'Schedulers');
 $error = '';
 
+if (!isset($_SERVER['Path'])) {
+    $_SERVER['Path'] = getenv('Path');
+}
 if(is_windows()) {
-if(isset($_ENV['Path']) && !empty($_ENV['Path'])) { // IIS IUSR_xxx may not have access to Path or it is not set
-    if(!strpos($_ENV['Path'], 'php')) {
+if(isset($_SERVER['Path']) && !empty($_SERVER['Path'])) { // IIS IUSR_xxx may not have access to Path or it is not set
+    if(!strpos($_SERVER['Path'], 'php')) {
         $error = '<em>'.$mod_strings_scheduler['LBL_NO_PHP_CLI'].'</em>';
     }
 }
@@ -579,8 +590,8 @@ $cronString = '
 			</tr>
 ';          
 } else {
-if(isset($_ENV['Path']) && !empty($_ENV['Path'])) { // some Linux servers do not make this available
-    if(!strpos($_ENV['PATH'], 'php')) {
+if(isset($_SERVER['Path']) && !empty($_SERVER['Path'])) { // some Linux servers do not make this available
+    if(!strpos($_SERVER['PATH'], 'php')) {
         $error = '<em>'.$mod_strings_scheduler['LBL_NO_PHP_CLI'].'</em>';
     }
 }

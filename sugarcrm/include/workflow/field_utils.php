@@ -573,6 +573,8 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && $for_action_display) {
             $assigned_user = loadBean('Users');
             $assigned_user->retrieve($field_value);
+            if (empty($assigned_user->id))
+                return false;
             if($current_user->getPreference('use_real_names') == 'on'){
                 return $assigned_user->full_name;
             }
@@ -587,8 +589,7 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 	} else {
 		$target_type = $temp_module->field_defs[$field]['type'];
 	}
-
-
+	
 
 	//Land of the "one offs"
 	//This is for meetings and calls, the reminder time
@@ -601,6 +602,11 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 
 		if($adv_type==null){
 			$user_array = get_user_array(TRUE, "Active", $field_value, true);
+			if (!isset($user_array[$field_value])) {
+				return false;
+			}
+			
+			
 			return $user_array[$field_value];
 		}
 		if($adv_type=="exist_user"){
@@ -610,11 +616,7 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 			} else {
 				return $app_list_strings['wflow_adv_user_type_dom'][$field_value];
 			}
-
-
 		}
-
-
 	}
 
 
@@ -711,9 +713,9 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sugarField = SugarFieldHandler::getSugarField($target_type);
-    $GLOBALS['log']->fatal("Field: $field is of type $target_type, before: $field_value");
+    $GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");
     $field_value = $sugarField->getEmailTemplateValue($field_value,$temp_module->field_defs[$field]);
-    $GLOBALS['log']->fatal("after: $field_value");
+    $GLOBALS['log']->debug("after: $field_value");
 
 	return $field_value;
 

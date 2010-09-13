@@ -22,7 +22,7 @@ class BasicTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27361
+     * @ticket 27361
      */
     public function testSettingImportableFieldDefAttributeTrueAsAString()
     {
@@ -32,7 +32,7 @@ class BasicTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27361
+     * @ticket 27361
      */
     public function testSettingImportableFieldDefAttributeTrueAsABoolean()
     {
@@ -42,7 +42,7 @@ class BasicTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27361
+     * @ticket 27361
      */
     public function testSettingImportableFieldDefAttributeFalseAsAString()
     {
@@ -52,7 +52,7 @@ class BasicTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27361
+     * @ticket 27361
      */
     public function testSettingImportableFieldDefAttributeFalseAsABoolean()
     {

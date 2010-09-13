@@ -57,6 +57,9 @@ class EmployeesViewDetail extends ViewDetail {
  		         $deleteWarning = $GLOBALS['mod_strings']['LBL_DELETE_USER_CONFIRM'];
  		     $this->ss->assign('DELETE_WARNING', $deleteWarning);
         }
+        //BEGIN SUGARCRM flav=sales ONLY
+        $showDeleteButton = FALSE;
+        //END SUGARCRM flav=sales ONLY
         $this->ss->assign('DISPLAY_DELETE', $showDeleteButton);
         
  		parent::display();

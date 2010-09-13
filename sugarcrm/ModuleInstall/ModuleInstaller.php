@@ -328,7 +328,9 @@ class ModuleInstaller{
 				//if it's not a sugar file then we remove it otherwise we can't restor it
 				if(!$this->ms->sugarFileExists($to)){
 					$GLOBALS['log']->debug('ModuleInstaller[uninstall_new_file] deleting file ' . $to);
-					unlink($to);
+					if(file_exists($to)) {
+					    unlink($to);
+					}
 				}else{
 					$GLOBALS['log']->fatal('ModuleInstaller[uninstall_new_file] Could not remove file ' . $to . ' as no backup file was found to restore to');
 				}
@@ -1620,6 +1622,7 @@ private function dir_get_files($path, $base_path){
 private function dir_file_count($path){
 	//if its a file then it has at least 1 file in the directory
 	if(is_file($path)) return 1;
+	if(!is_dir($path)) return 0;
 	$d = dir($path);
 	$count = 0;
 	while ($e = $d->read()){
@@ -1988,7 +1991,7 @@ private function dir_file_count($path){
                         $path ='custom/Extension/' . $relationship['module']. '/Ext/Layoutdefs';
                     }
 				}
-                
+
 				if(!empty($relationship['module_layoutdefs']) && file_exists($path . '/'. $this->id_name . '.php')){
 					mkdir_recursive($path . '/'.DISABLED_PATH, true);
 					rename( $path . '/'. $this->id_name . '.php', $path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php');
@@ -2292,7 +2295,13 @@ private function dir_file_count($path){
 
 	public function reset_opcodes()
     {
-    	sugar_clean_opcodes();
+        /* Bug 39354 - added function_exists check. Not optimal fix, but safe nonetheless.
+         * This is for the upgrade to 6.1 from pre 6.1, since the utils files haven't been updated to 6.1 when this is called,
+         * but this file has been updated to 6.1
+         */
+        if(function_exists('sugar_clean_opcodes')){
+            sugar_clean_opcodes();
+        }
     }
 
 }

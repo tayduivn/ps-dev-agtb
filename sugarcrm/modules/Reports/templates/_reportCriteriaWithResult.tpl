@@ -240,17 +240,21 @@ ACLAllowedModules = {$ACLAllowedModules};
 				<td wrap="true">
 					<b>{$mod_strings.LBL_DISPLAY_COLUMNS}:</b> {$reportDisplayColumnsList}
 				</td>
+				{* //BEGIN SUGARCRM flav!=sales ONLY *}
 				<td wrap="true">
 					<b>{$mod_strings.LBL_OWNER}:</b> {$reportAssignedToName}
 				</td>
+				{* //END SUGARCRM flav!=sales ONLY *}
 			</tr>
 			{$summaryAndGroupDefData}
 			<tr>
+			{* //BEGIN SUGARCRM flav!=sales ONLY *}
 			<tr>
 				<td wrap="true" colspan="2">
 					<b>{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}:</b> <span id="schduleDateTimeDiv">{$schedule_value}</span>
 				</td>
 			</tr>
+			{* //END SUGARCRM flav!=sales ONLY *}
 			<tr>
 				<td wrap="true" colspan="2">
 					<b>{$mod_strings.LBL_FILTERS}:</b>{$reportFilters}
@@ -372,7 +376,7 @@ function showFilterString() {
 
 function schedulePOPUP(){
 	var id = document.getElementById('record').value;
-	window.open("index.php?module=Reports&action=add_schedule&to_pdf=true&refreshPage=false&id=" + id ,"test","width=600,height=250,resizable=1,scrollbars=1")
+	window.open("index.php?module=Reports&action=add_schedule&to_pdf=true&refreshPage=false&id=" + id ,"test","width=650,height=250,resizable=1,scrollbars=1")
 }
 
 function performFavAction(actionToPerfrom) {
@@ -388,12 +392,10 @@ function performFavAction(actionToPerfrom) {
 	if (actionToPerfrom == 'addtofavorites') {
 		favButton.title = {/literal}"{$app_strings.LBL_REMOVE_FROM_FAVORITES}";
 		favButton.value = "{$app_strings.LBL_REMOVE_FROM_FAVORITES}";
-		{literal}favButton.innerHTML = imageTag + {/literal}"{$app_strings.LBL_REMOVE_FROM_FAVORITES}" + {literal}imageTag{/literal};
 		{literal}favButton.onclick = function() {performFavAction('removefromfavorites')};
 	} else {
 		favButton.title = {/literal}"{$app_strings.LBL_ADD_TO_FAVORITES}";
 		favButton.value = "{$app_strings.LBL_ADD_TO_FAVORITES}";
-		{literal}favButton.innerHTML = imageTag + {/literal}"{$app_strings.LBL_ADD_TO_FAVORITES}" + {literal}imageTag{/literal};
 		{literal}favButton.onclick = function() {performFavAction('addtofavorites')};
 	} // else
 } // fn
@@ -413,13 +415,12 @@ function showHideReportDetailsButton() {
 		{literal}showHideReportDetailsButton.value = {/literal}"{$mod_strings.LBL_REPORT_SHOW_DETAILS}";{literal}
 	} // else
 } // fn
-
 function saveReportOptionsState(name, value) {
 	var callback = {
         success:function(o){},
         failure:function(o){}
     };
-	var postDataString = 'report_options=1&report_id=' + document.getElementById('record').value + "&" + name + "=" + value;
+	var postDataString = 'to_pdf=true&report_options=1&report_id=' + document.getElementById('record').value + "&" + name + "=" + value;
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=ReportCriteriaResults&module=Reports&page=report", callback, postDataString);
 } // fn
 

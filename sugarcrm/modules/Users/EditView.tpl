@@ -60,16 +60,22 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="is_current_admin" id="is_current_admin" value='{$IS_ADMIN}' >
 	<input type="hidden" name="edit_self" id="edit_self" value='{$EDIT_SELF}' >
 	<input type="hidden" name="required_email_address" id="required_email_address" value='{$REQUIRED_EMAIL_ADDRESS}' >
+<!-- //BEGIN SUGARCRM flav=sales ONLY -->
+	{$ut_hidden}
+<!-- //END SUGARCRM flav!=sales ONLY -->
 	<div id="popup_window"></div>
 						
 <script type="text/javascript">
 var EditView_tabs = new YAHOO.widget.TabView("EditView_tabs");
 
 {literal}
+//Override so we do not force submit
+SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
+
 EditView_tabs.on('contentReady', function(e){
 {/literal}
-//BEGIN SUGARCRM flav!=com ONLY
-{if $EDIT_SELF}
+//BEGIN SUGARCRM flav!=com && flav!=sales ONLY
+{if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_DOWNLOADS}{literal}',
@@ -80,7 +86,7 @@ EditView_tabs.on('contentReady', function(e){
     EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
 {/literal}
 {/if}
-//END SUGARCRM flav!=com ONLY
+//END SUGARCRM flav!=com && flav!=sales ONLY
 });
 </script> 
 
@@ -132,6 +138,9 @@ EditView_tabs.on('contentReady', function(e){
                                 <td id='last_name_lbl' scope="row"  style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'><slot>{$MOD.LBL_LAST_NAME}: <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
                                 <td id='last_name_field'  style='display:{$HIDE_FOR_GROUP_AND_PORTAL}'><slot><input id='last_name' name='last_name' type="text" {$LAST_NAME_DISABLED} tabindex='1' size='25' maxlength='25' value="{$LAST_NAME}"></slot></td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                            {if not $NON_ADMIN_USER_ADMIN_RIGHTS}
+                            {* //END SUGARCRM flav=sales ONLY *}                            
                             <tr style='display:{$HIDE_CHANGE_USERTYPE}'>
                                 <td width="17%" scope="row"><slot>{$MOD.LBL_USER_TYPE}:</slot></td>
                                 <td colspan='3'>
@@ -148,6 +157,9 @@ EditView_tabs.on('contentReady', function(e){
                                     {else}
                                         <td width="20%"><select id="UserType" name="UserType" onchange="user_status_display(this);" value='' tabindex='1' >
                                             <option value="RegularUser">{$MOD.LBL_REGULAR_USER}</option>
+                                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                                            <option value="UserAdministrator" {if $IS_USER_ADMIN} SELECTED {/if}>{$MOD.LBL_USER_ADMINISTRATOR}</option>
+                                            {* //END SUGARCRM flav=sales ONLY *}
                                             <option value="Administrator" {if $IS_FOCUS_ADMIN} SELECTED {/if}>{$MOD.LBL_ADMIN_USER}</option>
                                         </select></td>
                                     {/if}
@@ -157,6 +169,9 @@ EditView_tabs.on('contentReady', function(e){
                                     </table>
                                 </td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=sales ONLY *}
+                            {/if}
+                            {* //END SUGARCRM flav=sales ONLY *}
                             {* //BEGIN SUGARCRM flav!=com ONLY *}
                             {if !$IS_GROUP && !$IS_PORTALONLY}
                             <tr>
@@ -520,6 +535,10 @@ EditView_tabs.on('contentReady', function(e){
                 <tr>
                     <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_LAYOUT_OPTIONS}</h4></th>
                 </tr>
+							<tr id="use_group_tabs_row" style="display: {$DISPLAY_GROUP_TAB};">	
+                                <td scope="row"><span>{$MOD.LBL_USE_GROUP_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_NAVIGATION_PARADIGM_DESCRIPTION }</td>
+                                <td colspan="3"><input name="use_group_tabs" type="hidden" value="m"><input id="use_group_tabs" type="checkbox" name="use_group_tabs" {$USE_GROUP_TABS} tabindex='12' value="gm"></td>
+                            </tr>
                             <tr>
                                 <td colspan="4">
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -593,27 +612,24 @@ EditView_tabs.on('contentReady', function(e){
                             <!-- END: currency -->
                             <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
-                        {if ($IS_ADMIN)} 
                         <tr>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {if ($IS_ADMIN)} 
                             <td scope="row"><slot>{$MOD.LBL_PROMPT_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_PROMPT_TIMEZONE_TEXT }</td>
                             <td ><slot><input type="checkbox" tabindex='14'class="checkbox" name="ut" value="0" {$PROMPTTZ}></slot></td>
-                            <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
-                            <td ><slot>
-                                <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
-                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
-                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
-                            </slot></td></tr>
                         {else}
-                            <tr>
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td scope="row"><slot></td>
                             <td ><slot></slot></td>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {/if}
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
                             <td ><slot>
                                 <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                             </slot></td></tr>
-                        {/if}
                         {capture name=SMARTY_LOCALE_NAME_FORMAT_DESC}&nbsp;{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}<br />{$MOD.LBL_LOCALE_NAME_FORMAT_DESC_2}{/capture}
                         <tr>
                             <td  scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}:&nbsp;{sugar_help text=$smarty.capture.SMARTY_LOCALE_NAME_FORMAT_DESC }</td>
@@ -730,6 +746,10 @@ function user_status_display(field){
 		case 'RegularUser':
 			document.getElementById('is_admin').value='0';
 			document.getElementById('UserTypeDesc').innerHTML="{/literal}{$MOD.LBL_REGULAR_DESC}{literal}";
+		break;
+		case 'UserAdministrator':
+			document.getElementById('is_admin').value='0';
+			document.getElementById('UserTypeDesc').innerHTML="{/literal}{$MOD.LBL_USER_ADMIN_DESC}{literal}";
 		break;
 	}
 }
@@ -860,6 +880,12 @@ YAHOO.util.Event.onContentReady('user_theme_picker',function()
     {
         document.getElementById('themePreview').src =
             "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
+        if (typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
+            themeGroupList[document.getElementById('user_theme_picker').value] ) {
+            document.getElementById('use_group_tabs_row').style.display = '';
+        } else {
+            document.getElementById('use_group_tabs_row').style.display = 'none';
+        }
     }
 });
 {/literal}
@@ -876,27 +902,28 @@ document.getElementById('email_link_type').onchange = function()
 document.getElementById('email_link_type').onchange();
 {/literal}
 {/if}
-{literal}
 <!--//END SUGARCRM flav!=sales ONLY -->
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
-{/literal}
 -->
 </script>
 {$JAVASCRIPT}
+<!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
 {$getNameJs}
 {$getNumberJs}
+{$confirmReassignJs}
 {$currencySymbolJs}
+themeGroupList = {$themeGroupListJSON};
+
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();
 
-{$confirmReassignJs}
 </script>
 
 </form>
 
+<!--//END SUGARCRM flav!=sales ONLY -->
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
         <form>
@@ -922,4 +949,3 @@ setSigDigits();
 		</form>
 	</div>
 </div>
-<!--//END SUGARCRM flav!=sales ONLY -->

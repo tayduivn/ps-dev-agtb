@@ -228,6 +228,25 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 			.$GLOBALS['db']->quote($input_name0)."'\n";
 	}
 
+	function queryFilteris_not($layout_def)
+	{
+		require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
+		$layout_def['name'] = 'id';
+		$layout_def['type'] = 'id';
+		$input_name0 = $layout_def['input_name0'];
+		
+		if ( is_array($layout_def['input_name0']))
+		{
+			$input_name0 = $layout_def['input_name0'][0];
+		}
+		if ($input_name0 == 'Current User') {
+			global $current_user;
+			$input_name0 = $current_user->id;
+		}
+
+		return SugarWidgetFieldid::_get_column_select($layout_def)."<>'"
+			.$GLOBALS['db']->quote($input_name0)."'\n";
+	}
     // $rename_columns, if true then you're coming from reports
 	function queryFilterone_of(&$layout_def, $rename_columns = true)
 	{
@@ -252,7 +271,30 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
         
 		return SugarWidgetFieldid::_get_column_select($layout_def)." IN (".$str.")\n";
 	}
-	
+    // $rename_columns, if true then you're coming from reports
+	function queryFilternot_one_of(&$layout_def, $rename_columns = true)
+	{
+		require_once('include/generic/SugarWidgets/SugarWidgetFieldid.php');
+        if($rename_columns) { // this was a hack to get reports working, sugarwidgets should not be renaming $name!
+    		$layout_def['name'] = 'id';
+    		$layout_def['type'] = 'id';
+        }
+		$arr = array();
+
+		foreach($layout_def['input_name0'] as $value)
+		{
+			if ($value == 'Current User') {
+				global $current_user;
+				array_push($arr,"'".$GLOBALS['db']->quote($current_user->id)."'");
+			}
+			else
+				array_push($arr,"'".$GLOBALS['db']->quote($value)."'");
+		}
+
+		$str = implode(",",$arr);
+
+		return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN (".$str.")\n";
+	}
 	function &queryGroupBy($layout_def)
 	{
         if( $this->reporter->db->dbType == 'mysql') {

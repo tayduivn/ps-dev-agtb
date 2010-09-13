@@ -211,6 +211,9 @@ function createSchema($execute=false,$return=false,&$response){
 		} else {
 		    $focus = new $bean();
 		}
+		if(!isset($focus->table_name)){
+			continue;
+		}
 	    $tablename = $focus->table_name;
 		$tablename = $focus->getTableName();
 		$fielddefs = $focus->getFieldDefinitions();

@@ -31,8 +31,7 @@
 {foreach from=$vals item=item}
 <li style="margin-left:10px;">{ {{sugarvar key='options' string=true}}.$item }</li>
 {/foreach}
-{/if}
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{{sugarvar_connector view='DetailView'}}
 {{/if}}
-
+{/if}

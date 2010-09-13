@@ -1021,8 +1021,20 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				select[count] = new Option(ajaxResponse[key], key);
 				count++;
 			}
+		},
+		setSelectedOption : function (sel, option)
+		{
+			var sel = Dom.get(sel);
+			for (var i = 0; i < sel.options.length; i++)
+			{
+				if(sel.options[i].value == option) {
+					sel.selectedIndex = i;
+					return true;
+				}
+			}
+			return false;
 		}
-		//BEGIN SUGARCRM flav=een ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		,moduleLoadFormula: function(formula, targetId){
             if (!targetId)
                 targetId = "formula";
@@ -1035,7 +1047,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             
             if (!ModuleBuilder.formulaEditorWindow)
             	ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
-					width: 800,
+					width: 512,
 					draggable: true,
 					close: true,
 					constraintoviewport: true,
@@ -1043,7 +1055,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					script: true
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
-			win.setHeader("Expression Builder");
+			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
 			win.setBody("test");
 			win.render(document.body);
 			win.params = {
@@ -1063,14 +1075,47 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			});
 			win.show();
 			win.center();
-			/*buttons: [{text:"Validate", handler: SUGAR.expressions.validateCurrExpression}, 
-	  		{text:"Save", handler: function(){
-	  			if (SUGAR.expressions.validateCurrExpression(true))
-	  				returnFunction(Ext.getCmp('formula_input').getValue());
-	  		}},
-	  		{text:"Close", handler: onCloseFunction}],*/
         },
-        moduleLoadVisibility: function(fieldname, options, trigger , targetId){
+        
+		toggleCF: function(enable) {
+            if (typeof(enable) == 'undefined') {
+                enable = Dom.get('calculated').checked;
+            }
+            var display = enable ? "" : "none";
+			Dom.setStyle("formulaRow", "display", display);
+			Dom.setStyle("enforcedRow", "display", display);
+			Dom.get('calculated').value = enable;
+            this.toggleEnforced(enable);
+        },
+        toggleEnforced: function(enable) {
+            if (typeof enable == "undefined")
+                enable = Dom.get("enforced").checked && Dom.get('calculated').checked;
+            var reportable = Dom.get('reportable');
+            var importable = Dom.get('importable');
+            var duplicate  = Dom.get('duplicate_merge');
+            var disable = enable ? true : "";
+            if (reportable) reportable.disabled = disable;
+            if(enable)
+            {
+            	if (duplicate)ModuleBuilder.setSelectedOption(duplicate, '0');
+            	if (importable)ModuleBuilder.setSelectedOption(importable, 'false');
+            }
+            if (importable)importable.disabled = disable;
+            if (duplicate)duplicate.disabled = disable;
+            Dom.get("enforced").value = enable;
+        },
+        toggleDF: function(enable) {
+            if (typeof(enable) == 'undefined') {
+                enable = Dom.get('dependent').checked;
+            }
+            var display = enable ? "" : "none";
+            Dom.setStyle('visFormulaRow', 'display', display);
+            Dom.get('dependency').disabled = !enable;
+            Dom.get('dependent').value = enable;
+        }
+		//END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=een ONLY
+        ,moduleLoadVisibility: function(fieldname, options, trigger , targetId){
             var EditorWindow = new Ext.Window({
                 id: 'visibilityEditorWindow',
                 title: SUGAR.language.get('ModuleBuilder','LBL_SECTION_VISIBILITY_EDITOR' ),
@@ -1096,45 +1141,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 resizable:true,
                 nodyBorder:false,
                 width:800,
-                autoHeight:true,
-                onload: function() {
-                    console.log("Here6");
-                }
+                autoHeight:true
             });
             EditorWindow.show();
-        },
-		toggleCF: function(enable) {
-            if (typeof(enable) == 'undefined') {
-                enable = Dom.get('calculated').checked;
-            }
-            var display = enable ? "" : "none";
-			Dom.setStyle("formulaRow", "display", display);
-			Dom.setStyle("enforcedRow", "display", display);
-            Dom.get('calculated').value = enable;
-            this.toggleEnforced();
-        },
-        toggleEnforced: function(enable) {
-            if (typeof enable == "undefined")
-                enable = Dom.get("enforced").checked && Dom.get('calculated').checked;
-            var reportable = Dom.get('reportable');
-            var importable = Dom.get('importable');
-            var duplicate  = Dom.get('duplicate_merge');
-            var disable = enable ? true : "";
-            if (reportable) reportable.disabled = disable;
-            importable.disabled = disable;
-            duplicate.disabled = enable;
-            Dom.get("enforced").value = enable;
-        },
-        toggleDF: function(enable) {
-            if (typeof(enable) == 'undefined') {
-                enable = Dom.get('dependent').checked;
-            }
-            var display = enable ? "" : "none";
-            Dom.setStyle('visFormulaRow', 'display', display);
-            Dom.get('dependency').disabled = !enable;
-            Dom.get('dependent').value = enable;
         }
-		//END SUGARCRM flav=een ONLY
+        //END SUGARCRM flav=een ONLY
 	};
 	ModuleBuilder.buttons = {};
 	ModuleBuilder.selected = {};

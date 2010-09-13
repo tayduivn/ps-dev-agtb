@@ -74,7 +74,7 @@ document.body.setAttribute("class", "yui-skin-sam");
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/swfobject.js'}"></script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
+<!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {$form_header}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" id="tabListContainerTable">
 <tr>
@@ -113,7 +113,7 @@ document.body.setAttribute("class", "yui-skin-sam");
 <!--//END SUGARCRM flav=pro ONLY -->
 </td>
 
-<!--//BEGIN SUGARCRM flav=pro ONLY -->
+<!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {if !$lock_homepage}
 <td nowrap align="right">
 	<div id="dashletCtrls">
@@ -121,18 +121,19 @@ document.body.setAttribute("class", "yui-skin-sam");
 			<img src='{sugar_getimagepath file="info-add.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
 			    {$mod.LBL_ADD_DASHLETS}
             </a>
+			<!--//BEGIN SUGARCRM flav=pro ONLY -->
             <a href="#" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
 			<img src='{sugar_getimagepath file="info-layout.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
 			    {$app.LBL_CHANGE_LAYOUT}
             </a>
-			
+			<!--//END SUGARCRM flav=pro ONLY -->
 	</div>
 </td>
 {/if}
-<!--//END SUGARCRM flav=pro ONLY -->
+<!--//END SUGARCRM flav=pro || flav=sales ONLY -->
 </tr>
 </table>
-<!--//END SUGARCRM flav=pro ONLY -->
+<!--//END SUGARCRM flav=pro || flav=sales ONLY -->
 <div class="clear"></div>
 <div id="pageContainer" class="yui-skin-sam">
 <div id="pageNum_{$activePage}_div">
@@ -186,11 +187,11 @@ document.body.setAttribute("class", "yui-skin-sam");
                         {$dashlet.displayFooter}
                   </div> 
 				</li>
-				{* //BEGIN SUGARCRM flav=pro ONLY *}
+				{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
 				<script>
 				SUGAR.mySugar.attachToggleToolsetEvent('{$id}');
 				</script>
-				{* //END SUGARCRM flav=pro ONLY *}
+				{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 				{/foreach}
 				<li id='page_{$activePage}_hidden{$hiddenCounter}' style='height: 5px' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
 			</ul>

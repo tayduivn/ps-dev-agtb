@@ -1,5 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro ONLY 
+//FILE SUGARCRM flav=pro ONLY 
 require_once('modules/Teams/Team.php');
 
 class Bug33745 extends Sugar_PHPUnit_Framework_TestCase

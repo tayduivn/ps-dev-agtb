@@ -92,7 +92,7 @@ $mod_strings = array(
 	'listViewEditor'=>array(
 		'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Available</b> column contains fields that a user can select in the Search to create a custom ListView. <br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.',
 		'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
-		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.', 
+		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 		'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
 		'Hidden' 	=> '<b>Hidden</b> fields not currently available for users to see in ListViews.',
 		'Available' => '<b>Available</b> fields are not shown by default, but can be added to ListViews by users.',
@@ -101,7 +101,7 @@ $mod_strings = array(
 	'popupListViewEditor'=>array(
 		'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.',
 		'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
-		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.', 
+		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 		'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
 		'Hidden' 	=> '<b>Hidden</b> fields not currently available for users to see in ListViews.',
 		'Default'	=> '<b>Default</b> fields appear in ListViews that are not customized by users.'
@@ -110,7 +110,7 @@ $mod_strings = array(
 		'modify'	=> 'All of the fields that can be displayed in the <b>Search</b> form appear here.<br><br>The <b>Default</b> column contains the fields that will be displayed in the Search form.<br/><br/>The <b>Hidden</b> column contains fields available for you as an admin to add to the Search form.',
 		'savebtn'	=> 'Clicking <b>Save & Deploy</b> will save all changes and make them active',
 		'Hidden' 	=> '<b>Hidden</b> fields do not appear in the Search.',
-		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.', 
+		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 		'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
 		'Default'	=> '<b>Default</b> fields appear in the Search.'
 	),
@@ -120,7 +120,7 @@ $mod_strings = array(
 		//this defualt will be used for edit view
 		'default'	=> 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>EditView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.',
 		'saveBtn'	=> 'Click <b>Save</b> to preserve the changes you made to the layout since the last time you saved it.<br><br>The changes will not be displayed in the module until you Deploy the saved changes.',
-		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.', 
+		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 		'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
 		'publishBtn'=> 'Click <b>Save & Deploy</b> to save all changes you made to the layout since the last time you saved it, and to make the changes active in the module.<br><br>The layout will immediately be displayed in the module.',
 		'toolbox'	=> 'The <b>Toolbox</b> contains the <b>Recycle Bin</b>, additional layout elements and the set of available fields to add to the layout.<br/><br/>The layout elements and fields in the Toolbox can be dragged and dropped into the layout, and the layout elements and fields can be dragged and dropped from the layout into the Toolbox.<br><br>The layout elements are <b>Panels</b> and <b>Rows</b>. Adding a new row or a new panel to the layout provides additional locations in the layout for fields.<br/><br/>Drag and drop any of the fields in the Toolbox or layout onto a occupied field position to swap the locations of the two fields.<br/><br/>The <b>Filler</b> field creates blank space in the layout where it is placed.',
@@ -190,7 +190,7 @@ $mod_strings = array(
         'relationshipHelp'=>'<b>Relationships</b> can be created between the module and another deployed module.<br><br> Relationships are visually expressed through subpanels and relate fields in the module records.<br><br>Select one of the following relationship <b>Types</b> for the module:<br><br> <b>One-to-One</b> - Both modules\' records will contain relate fields.<br><br> <b>One-to-Many</b> - The Primary Module\'s record will contain a subpanel, and the Related Module\'s record will contain a relate field.<br><br> <b>Many-to-Many</b> - Both modules\' records will display subpanels.<br><br> Select the <b>Related Module</b> for the relationship. <br><br>If the relationship type involves subpanels, select the subpanel view for the appropriate modules.<br><br> Click <b>Save</b> to create the relationship.',
 		'convertLeadHelp' => "Here you can add modules to the convert layout screen and modify the layouts of existing ones.<br/>
 		You can re-order the modules by dragging their rows in the table.<br/><br/>
-		
+
 		<b>Module:</b> The name of the module.<br/><br/>
 		<b>Required:</b> Required modules must be created or selected before the lead can be converted.<br/><br/>
 		<b>Copy Data:</b> If checked, fields from the lead will be copied to fields with the same name in the newly created records.<br/><br/>
@@ -338,6 +338,7 @@ $mod_strings = array(
 'LBL_DASHLETLISTVIEW'=>'Sugar Dashlet ListView',
 'LBL_DASHLETSEARCH'=>'Sugar Dashlet Search',
 'LBL_POPUP'=>'PopupView',
+'LBL_POPUPLIST'=>'Popup ListView',
 'LBL_POPUPLISTVIEW'=>'Popup ListView',
 'LBL_POPUPSEARCH'=>'Popup Search',
 'LBL_DASHLETSEARCHVIEW'=>'Sugar Dashlet Search',
@@ -353,6 +354,7 @@ $mod_strings = array(
 'LBL_EDIT_PORTAL'=>'Edit Portal for ',
 'LBL_EDIT_FIELDS'=>'Edit Fields',
 'LBL_EDITVIEW'=>'EditView',
+'LBL_CONVERTLEAD' => 'Convert Lead',
 'LBL_FILLER'=>'(filler)',
 'LBL_FIELDS'=>'Fields',
 'LBL_FAILED_TO_SAVE' => 'Failed To Save',
@@ -405,14 +407,21 @@ $mod_strings = array(
 'LBL_WIRELESSSEARCH'=>'Mobile Search',
 //END SUGARCRM flav=pro || flav=sales ONLY
 
-//BEGIN SUGARCRM flav=een ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
 'LBL_BTN_EDIT_FORMULA'=>'Edit Formula',
 'LBL_DEPENDENCY' => 'Dependency',
 'LBL_CALCULATED' => 'Calculated',
 'LBL_READ_ONLY' => 'Read Only',
 'LBL_FORMULA' => 'Formula',
-//END SUGARCRM flav=een ONLY
+'LBL_FORMULA_BUILDER' => 'Formula Builder',
+'LBL_NO_FIELDS' => 'No Fields Found',
+'LBL_NO_FUNCS' => 'No Functions Found',
+'LBL_SEARCH_FUNCS' => 'Search Functions...',
+'LBL_SEARCH_FIELDS' => 'Search Fields...',
+'LBL_FORMULA' => 'Formula',
+'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
+//END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS
 'LBL_MODULE' => 'Module',
@@ -663,7 +672,9 @@ $mod_strings = array(
 'LBL_JS_VALIDATE_REL_LABEL'=>'Label - please add a label that will be displayed above the subpanel',
 
 //CONFIRM
-'LBL_CONFIRM_FIELD_DELETE'=>'Deleting this custom field will delete both the custom field and all the data related to the custom field in the database. The field will be no longer appear in any module layouts, and will no longer be available for Reports. The change in Reports will be seen after logging out and logging back in, and any reports containing the field will need to be updated in order to be able to be run. Do you wish to continue?',
+'LBL_CONFIRM_FIELD_DELETE'=>"Deleting this custom field will delete both the custom field and all the data related to the custom field in the database. The field will be no longer appear in any module layouts, and will no longer be available for Reports."
+		. "\\n\\nThe change in Reports will be seen after logging out and logging back in, and any reports containing the field will need to be updated in order to be able to be run."
+		. "\\n\\nDo you wish to continue?",
 'LBL_CONFIRM_RELATIONSHIP_DELETE'=>'Are you sure you wish to delete this relationship?',
 'LBL_CONFIRM_RELATIONSHIP_DEPLOY'=>'This will make this relationship permanent. Are you sure you wish to deploy this relationship?',
 'LBL_CONFIRM_DONT_SAVE' => 'Changes have been made since you last saved, would you like to save?',
@@ -720,6 +731,10 @@ $mod_strings = array(
                 'encrypt'=>'Encrypt',
                 'datetimecombo' =>'Datetime',
 				'decimal'=>'Decimal',
+),
+'labelTypes' => array(
+    "" => "Frequently used labels",
+	"all" => "All Labels",
 ),
 
 'parent' => 'Flex Relate',

@@ -697,9 +697,6 @@ function template_calendar_month(& $args) {
 	}
 ?>
 <tr class="monthCalBodyTH">
-<?php if($args['calendar']->show_week_on_month_view ) { ?>
-<th width="1%" scope='row'><?php echo $mod_strings['LBL_WEEK']; ?></th>
-<?php } ?>
 <?php
 
 
@@ -727,9 +724,6 @@ function template_calendar_month(& $args) {
 	for($i = 0; $i < $rows; $i ++) {
 ?>
 <tr class="<?php echo $height_class; ?>">
-<?php if($args['calendar']->show_week_on_month_view ) { ?>
-<td scope='row'><a href="index.php?module=Calendar&action=index&view=week&<?php echo $args['calendar']->slice_hash[$args['calendar']->slices_arr[$count]]->start_time->get_date_str(); ?>"><?php echo $args['calendar']->slice_hash[$args['calendar']->slices_arr[$count + 1]]->start_time->week; ?></a></td>
-<?php } ?>
 <?php
 
 		for($j = 0; $j < 7; $j ++) {

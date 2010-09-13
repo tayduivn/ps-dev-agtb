@@ -76,6 +76,13 @@ $viewdefs['Campaigns']['DetailView'] = array(
           	'customLabel' => '{if $fields.campaign_type.value == "NewsLetter"}<div style=\'none\' id=\'freq_label\'>{$MOD.LBL_CAMPAIGN_FREQUENCY}</div>{/if}&nbsp;'
           ),
 	  ),
+	  
+	  array (
+		array (
+	      'name' => 'impressions',
+	      'label' => 'LBL_CAMPAIGN_IMPRESSIONS',
+	    ),
+	  ),
 	
 	  array (
 	
@@ -83,20 +90,6 @@ $viewdefs['Campaigns']['DetailView'] = array(
 	      'name' => 'budget',
 	      'label' => '{$MOD.LBL_CAMPAIGN_BUDGET} ({$CURRENCY})',
 	    ),
-	
-	    array (
-	      'name' => 'actual_cost',
-	      'label' => '{$MOD.LBL_CAMPAIGN_ACTUAL_COST} ({$CURRENCY})',
-	    ),
-	  ),
-	
-	  array (
-	
-	    array (
-	      'name' => 'expected_revenue',
-	      'label' => '{$MOD.LBL_CAMPAIGN_EXPECTED_REVENUE} ({$CURRENCY})',
-	    ),
-	
 	    array (
 	      'name' => 'expected_cost',
 	      'label' => '{$MOD.LBL_CAMPAIGN_EXPECTED_COST} ({$CURRENCY})',
@@ -104,10 +97,13 @@ $viewdefs['Campaigns']['DetailView'] = array(
 	  ),
 	
 	  array (
-	
+		array (
+	      'name' => 'actual_cost',
+	      'label' => '{$MOD.LBL_CAMPAIGN_ACTUAL_COST} ({$CURRENCY})',
+	    ),
 	    array (
-	      'name' => 'impressions',
-	      'label' => 'LBL_CAMPAIGN_IMPRESSIONS',
+	      'name' => 'expected_revenue',
+	      'label' => '{$MOD.LBL_CAMPAIGN_EXPECTED_REVENUE} ({$CURRENCY})',
 	    ),
 	  ),
 	

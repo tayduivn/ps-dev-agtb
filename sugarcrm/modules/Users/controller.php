@@ -54,7 +54,11 @@ class UsersController extends SugarController
 	
 	protected function action_delete()
 	{
-	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')))
+	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')
+//BEGIN SUGARCRM flav=sales ONLY
+|| $GLOBALS['current_user']->user_type == 'UserAdministrator'
+//END SUGARCRM flav=sales ONLY
+	    ))
         {
             $u = new User();
             $u->retrieve($_REQUEST['record']);
@@ -63,7 +67,12 @@ class UsersController extends SugarController
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
+            //BEGIN SUGARCRM flav!=sales ONLY
             SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
+            //END SUGARCRM flav!=sales ONLY
+            //BEGIN SUGARCRM flav=sales ONLY
+            SugarApplication::redirect("index.php?module=Users&action=index");
+            //END SUGARCRM flav=sales ONLY
         }
         else 
             sugar_die("Unauthorized access to administration.");

@@ -89,7 +89,7 @@ function make_sugar_config(&$sugar_config)
 	$sugar_config = array (
 	'admin_export_only' => empty($admin_export_only) ? false : $admin_export_only,
 	'export_delimiter' => empty($export_delimiter) ? ',' : $export_delimiter,
-	'cache_dir' => empty($cache_dir) ? $_GLOBALS['sugar_config']['cache_dir'] : $cache_dir,
+	'cache_dir' => empty($cache_dir) ? 'cache/' : $cache_dir,
 	'calculate_response_time' => empty($calculate_response_time) ? true : $calculate_response_time,
 	'create_default_user' => empty($create_default_user) ? false : $create_default_user,
 	'date_formats' => empty($dateFormats) ? array(
@@ -177,7 +177,7 @@ function make_sugar_config(&$sugar_config)
 	'default_subpanel_links' => empty($subpanel_links) ? false : $subpanel_links,
 	'default_swap_last_viewed' => empty($swap_last_viewed) ? false : $swap_last_viewed,
 	'default_swap_shortcuts' => empty($swap_shortcuts) ? false : $swap_shortcuts,
-	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'm' : $navigation_paradigm,
+	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
 	'js_lang_version' => 1,
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -240,7 +240,13 @@ function get_sugar_config_defaults() {
 	$sugar_config_defaults = array (
 	'admin_export_only' => false,
 	'export_delimiter' => ',',
+	'cache_dir' => 'cache/',
+	//BEGIN SUGARCRM flav!=sales ONLY
 	'calculate_response_time' => true,
+	//END SUGARCRM flav!=sales ONLY
+	//BEGIN SUGARCRM flav=sales ONLY
+	'calculate_response_time' => false,
+	//END SUGARCRM flav=sales ONLY
 	'create_default_user' => false,
 	'date_formats' => array (
 	'Y-m-d' => '2010-12-23', 'm-d-Y' => '12-23-2010', 'd-m-Y' => '23-12-2010',
@@ -353,7 +359,7 @@ function get_sugar_config_defaults() {
 	'default_subpanel_links' => false,
 	'default_swap_last_viewed' => false,
 	'default_swap_shortcuts' => false,
-	'default_navigation_paradigm' => 'm',
+	'default_navigation_paradigm' => 'gm',
 	'admin_access_control' => false,
   	'use_common_ml_dir'	=> false,
   	'common_ml_dir' => '',
@@ -459,10 +465,10 @@ function get_notify_template_file($language){
 	 * 3) custom version of en_us template
 	 * 4) stock en_us template
 	 */
-	
+
 	// set $file to the base code template so it's set if none of the conditions pass
 	$file = "include/language/en_us.notify_template.html";
-	
+
 	if(file_exists("custom/include/language/{$language}.notify_template.html")){
 		$file = "custom/include/language/{$language}.notify_template.html";
 	}
@@ -472,7 +478,7 @@ function get_notify_template_file($language){
 	else if(file_exists("custom/include/language/en_us.notify_template.html")){
 		$file = "custom/include/language/en_us.notify_template.html";
 	}
-	
+
 	return $file;
 }
 
@@ -776,7 +782,7 @@ function getUserArrayFromFullName($args) {
 		if(empty($arg))
 		continue;
 
-		$inClause .= "first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%'";
+		$inClause .= "(first_name LIKE '{$arg}%' OR last_name LIKE '{$arg}%')";
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
@@ -1568,7 +1574,7 @@ function is_admin_for_module($user,$module) {
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
     if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module]['module']))||
-    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
+    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
     }
@@ -2429,7 +2435,7 @@ function get_unlinked_email_query($type, $bean) {
 	join email_addr_bean_rel eabr on eabr.bean_id ='$bean->id' and eabr.bean_module = '$bean->module_dir' and
 	eabr.email_address_id = eear.email_address_id and eabr.deleted=0
 	where eear.deleted=0 and eear.email_id not in
-	(select eb.email_id from emails_beans eb where eb.bean_module ='$bean->module_dir' and eb.bean_id = '$bean->id' and eb.deleted=0)
+	(select eb.email_id from emails_beans eb where eb.bean_module ='$bean->module_dir' and eb.bean_id = '$bean->id')
 	) derivedemails on derivedemails.email_id = emails.id";
     $return_array['join_tables'][0] = '';
 
@@ -2462,7 +2468,12 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
+		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
+		//BEGIN SUGARCRM flav=pro ONLY
+		// We need to confirm that the user is a member of the team of the item.
+		$focus->add_team_security_where_clause($query);
+		//END SUGARCRM flav=pro ONLY
+		$query .= "where ";
 		if ( $where != '')
 		{
 			$query .= $where." AND ";
@@ -3448,6 +3459,17 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 			}
 		}
 	}
+
+	// special case for unlisted parent-type relationships
+	if($focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
+		$temp_bean = get_module_info($tar_rel_module);
+		$temp_bean->retrieve($focus->parent_id);
+		if($temp_bean->id!=""){
+			$rel_list[] = $temp_bean;
+			return $rel_list;
+		}
+	}
+
 	return $rel_list;
 
 	//end function search_filter_rel_info
@@ -3668,9 +3690,12 @@ if(file_exists('custom/include/custom_utils.php')){
  */
 function setPhpIniSettings() {
 	// zlib module
-	if(function_exists('gzclose') && headers_sent() == false) {
+	// Bug 37579 - Comment out force enabling zlib.output_compression, since it can cause problems on certain hosts
+	/*
+    if(function_exists('gzclose') && headers_sent() == false) {
 		ini_set('zlib.output_compression', 1);
 	}
+	*/
 	// mbstring module
 	//nsingh: breaks zip/unzip functionality. Commenting out 4/23/08
 
@@ -4538,6 +4563,20 @@ function clearAllJsAndJsLangFilesWithoutOutput(){
 		$repair->clearJsLangFiles();
 		$repair->clearJsFiles();
 		$mod_strings = $MBmodStrings;
+}
+
+/**
+ * This function will allow you to get a variable value from query string
+ */
+function getVariableFromQueryString($variable, $string){
+	$matches = array();
+	$number = preg_match("/{$variable}=([a-zA-Z0-9_-]+)[&]?/", $string, $matches);
+	if($number){
+		return $matches[1];
+	}
+	else{
+		return false;
+	}
 }
 
 /**

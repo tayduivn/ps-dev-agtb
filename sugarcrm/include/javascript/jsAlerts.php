@@ -138,7 +138,7 @@ EOQ;
 			$timeStart -= $timeRemind;
 			
 			$url = 'index.php?action=DetailView&module=Meetings&record=' . $row['id'];
-			$instructions = $app_strings['MSG_JS_ALERT_MTG_REMINDER_MSG'];
+			$instructions = $app_strings['MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG'];
 		
 			///////////////////////////////////////////////////////////////////
 			////	MEETING INTEGRATION
@@ -252,12 +252,12 @@ EOQ;
 			//Add the notification
 			$n = new Notifications();
 			$n->name = $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'] . ": ".$row['name'];
-			$n->description = $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_MSG'];
+			$n->description = $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'];
 			$n->assigned_user_id = $current_user->id;
 			$n->save(FALSE);
 			//END SUGARCRM flav=notifications ONLY
 			
-			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($row['date_start']) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_MSG'] , $timeStart - strtotime($dateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
+			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($row['date_start']) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'] , $timeStart - strtotime($dateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
 		}
 	}
 	

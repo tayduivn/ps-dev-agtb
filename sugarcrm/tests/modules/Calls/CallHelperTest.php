@@ -18,7 +18,7 @@ class CallHelperTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array('EditView',<<<EOHTML
-<select onchange="SugarWidgetScheduler.update_time();"tabindex="1" name="duration_minutes">
+<select id="duration_minutes"onchange="SugarWidgetScheduler.update_time();"tabindex="1" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
@@ -26,7 +26,7 @@ class CallHelperTest extends Sugar_PHPUnit_Framework_TestCase
 EOHTML
                 ),
             array('MassUpdate',<<<EOHTML
-<select tabindex="1" name="duration_minutes">
+<select id="duration_minutes"tabindex="1" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
@@ -34,21 +34,23 @@ EOHTML
 EOHTML
                 ),
             array('QuickCreate',<<<EOHTML
-<select onchange="SugarWidgetScheduler.update_time();"tabindex="1" name="duration_minutes">
+<select id="duration_minutes"onchange="SugarWidgetScheduler.update_time();"tabindex="1" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
 EOHTML
                 ),
+            //BEGIN SUGARCRM flav=pro ONLY
             array('wirelessedit',<<<EOHTML
-<select tabindex="1" name="duration_minutes">
+<select id="duration_minutes"tabindex="1" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
 EOHTML
                 ),
+            //END SUGARCRM flav=pro ONLY
             array('DetailView','15'),
         );
     }
@@ -111,7 +113,7 @@ EOHTML
     {
         return array(
             array('EditView',<<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>
@@ -121,7 +123,7 @@ EOHTML
 EOHTML
                 ),
             array('MassUpdate',<<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>
@@ -131,7 +133,7 @@ EOHTML
 EOHTML
                 ),
             array('SubpanelCreates',<<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>
@@ -141,7 +143,7 @@ EOHTML
 EOHTML
                 ),
             array('QuickCreate',<<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>
@@ -150,8 +152,9 @@ EOHTML
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML
                 ),
+            //BEGIN SUGARCRM flav=pro ONLY
             array('wirelessedit',<<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>
@@ -160,6 +163,7 @@ EOHTML
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML
                 ),
+            //END SUGARCRM flav=pro ONLY
             array('DetailView',''),
         );
     }
@@ -188,7 +192,7 @@ EOHTML
         $this->assertEquals(
             getReminderTime($focus,'','','EditView'),
             <<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION selected value='600'>10 minutes prior</OPTION>
@@ -219,7 +223,7 @@ EOHTML
         $this->assertEquals(
             getReminderTime($focus,'','','EditView'),
             <<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>
@@ -241,7 +245,7 @@ EOHTML
         $this->assertEquals(
             getReminderTime($focus,'','1800','EditView'),
             <<<EOHTML
-<select name="reminder_time">
+<select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
 <OPTION value='600'>10 minutes prior</OPTION>

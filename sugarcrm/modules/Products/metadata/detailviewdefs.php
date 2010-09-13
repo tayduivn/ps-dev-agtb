@@ -111,7 +111,7 @@ array(
 array(
   array (
     array('name'=>'website', 'type'=>'link'),
-    'type_name',
+    'tax_class',
   ),
   
   array (
@@ -126,7 +126,7 @@ array(
   
   array (
     'vendor_part_num',
-    'tax_class',
+  	'type_name',
   ),
   
   array (

@@ -28,12 +28,13 @@ if(!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright(C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: commit.php 56510 2010-05-17 18:54:49Z jenny $
+ * $Id: commit.php 57723 2010-08-11 21:39:08Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
-$trackerManager = TrackerManager::getInstance();
+require_once('include/SugarLogger/SugarLogger.php');	
+$trackerManager = TrackerManager::getInstance();	
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
 
@@ -269,9 +270,12 @@ $uwMain = $upgrade_directories_not_found;
 
 		if(file_exists('modules/UpgradeWizard/SugarMerge/SugarMerge.php')){
 		    require_once('modules/UpgradeWizard/SugarMerge/SugarMerge.php');
-		    if(isset($_SESSION['unzip_dir']) && isset($_SESSION['zip_from_dir'])){
+		    if(isset($_SESSION['unzip_dir']) && isset($_SESSION['zip_from_dir']) && !isset($_SESSION['sugarMergeRunResults'])){
 		        $merger = new SugarMerge($_SESSION['unzip_dir'].'/'.$_SESSION['zip_from_dir']);
-		        $merger->mergeAll();
+		        //Perform the actual merge and store which modules were merged.  We will rolllback the files if the
+		        //user determines that they did not want to upgade a particular module.
+		        $_SESSION['sugarMergeRunResults'] = $merger->mergeAll(TRUE,TRUE,TRUE);
+		        logThis('Commit step finished SugarMerge run with the following results:' . print_r($_SESSION['sugarMergeRunResults'], true));
 		    }
 		}
 
@@ -283,13 +287,6 @@ $uwMain = $upgrade_directories_not_found;
 		 		$copiedFiles = $split['copiedFiles'];
 		 		$skippedFiles = $split['skippedFiles'];
 				set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
-
-				/// RELOAD to have new files loaded
-				LanguageManager::clearLanguageCache();
-				logThis('Reloading....');
-				$query=http_build_query($_REQUEST);
-				header("Location: index.php?$query");
-				exit();
          }
 		 //END COPY NEW FILES INTO TARGET INSTANCE
     ///////////////////////////////////////////////////////////////////////////////
@@ -557,17 +554,6 @@ commitHandleReminders($skippedFiles);
 ///////////////////////////////////////////////////////////////////////////////
 
 
-if(!didThisStepRunBefore('commit','cleanAll')){
-			set_upgrade_progress('commit','in_progress','cleanAll','done');
-			SugarThemeRegistry::buildRegistry();
-			SugarThemeRegistry::clearAllCaches();
-			/// RELOAD to have new files loaded
-			logThis('Reloading....');
-			$query=http_build_query($_REQUEST);
-			header("Location: index.php?$query");
-			exit();
-         }
-
 logThis("Resetting error_reporting() to system level.");
 error_reporting($standardErrorLevel);
 
@@ -587,9 +573,9 @@ $uwMain =<<<eoq
 </script>
 <table cellpadding="3" cellspacing="0" border="0">
 	<tr>
-		<th align="left">
-			{$mod_strings['LBL_UW_TITLE_COMMIT']}
-		</th>
+		<td>
+			&nbsp;
+		</td>
 	</tr>
 	<tr>
 		<td align="left">
@@ -628,7 +614,7 @@ $uwMain =<<<eoq
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
         </td></tr>
      </table>
  </div>
@@ -655,8 +641,10 @@ $showCancel = false;
 $showRecheck = false;
 $showNext =($stop) ? false : true;
 
+$GLOBALS['top_message'] = "<b>{$mod_strings['LBL_UW_COMMIT_DESC']}</b>";
 $stepBack = $_REQUEST['step'] - 1;
-$stepNext = $_REQUEST['step'] + 1;
+//Skip ahead to the end page as no layouts need to be merged.
+$stepNext = (count($_SESSION['sugarMergeRunResults']) > 0 ) ? $_REQUEST['step'] + 1 : $_REQUEST['step'] + 2; 
 $stepCancel = -1;
 $stepRecheck = $_REQUEST['step'];
 

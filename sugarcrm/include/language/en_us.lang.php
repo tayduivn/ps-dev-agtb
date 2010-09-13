@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 57232 2010-07-01 16:14:36Z kjing $
+ * $Id: en_us.lang.php 57929 2010-08-25 21:52:39Z kjing $
  * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -450,6 +450,14 @@ $app_list_strings = array (
     'P3' => 'Low',
   ),
   //END SUGARCRM flav!=sales ONLY
+  //BEGIN SUGARCRM flav=sales ONLY
+  'user_type_dom' =>
+  array (
+    'RegularUser' => 'Regular User',
+    'UserAdministrator' => 'User Administrator',
+    'Administrator' => 'Administrator',
+  ),
+  //END SUGARCRM flav=sales ONLY
   'user_status_dom' =>
   array (
     'Active' => 'Active',
@@ -2081,6 +2089,7 @@ $app_strings = array (
     'LBL_EMAIL_OPTIONS'                     => 'Options',
     'LBL_EMAIL_QUICK_COMPOSE'				=> 'Quick Compose',
     'LBL_EMAIL_OPT_OUT'                     => 'Opted Out',
+    'LBL_EMAIL_OPT_OUT_AND_INVALID'         => 'Opted Out and Invalid',
     'LBL_EMAIL_PAGE_AFTER'                  => 'of {0}',
     'LBL_EMAIL_PAGE_BEFORE'                 => 'Page',
     'LBL_EMAIL_PERFORMING_TASK'             => 'Performing Task',
@@ -2178,9 +2187,9 @@ $app_strings = array (
     'LBL_EMAIL_SETTINGS_TITLE_PREFERENCES'  => 'Preferences',
     'LBL_EMAIL_SETTINGS_TOGGLE_ADV'         => 'Show Advanced',
     'LBL_EMAIL_SETTINGS_USER_FOLDERS'       => 'Available User Folders',
-    'LBL_EMAIL_ERROR_PREPEND'               => 'Error emailing:',
+    'LBL_EMAIL_ERROR_PREPEND'               => 'Error:',
 	'LBL_EMAIL_INVALID_PERSONAL_OUTBOUND' => 'The outbound mail server selected for the mail account you are using is invalid.  Check the settings or select a different mail server for the mail account.',
-	'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND' => 'An outbound mail server is not configured for outoing email for the mail account that you are using. Please select or add an outbound mail server for the mail account.',
+	'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND' => 'An outgoing mail server is not configured to send emails. Please configure an outgoing mail server or select an outgoing mail server for the mail account that you are using in Settings >> Mail Account.',
     'LBL_EMAIL_SHOW_READ'                   => 'Show All',
     'LBL_EMAIL_SHOW_UNREAD_ONLY'            => 'Show Unread Only',
     'LBL_EMAIL_SIGNATURES'                  => 'Signatures',
@@ -2316,6 +2325,9 @@ $app_strings = array (
     'LBL_ADDITIONAL_DETAILS_CLOSE' => 'Close',
     'LBL_ADDITIONAL_DETAILS' => 'Additional Details',
     'LBL_ADMIN' => 'Admin',
+//BEGIN SUGARCRM flav=sales ONLY
+    'LBL_USER_ADMIN' => 'User Admin',
+//END SUGARCRM flav=sales ONLY
     'LBL_ALT_HOT_KEY' => 'Alt+',
     'LBL_ARCHIVE' => 'Archive',
     'LBL_ASSIGNED_TO_USER'=>'Assigned to User',
@@ -2512,7 +2524,7 @@ $app_strings = array (
     'LBL_PANEL_ADVANCED' => 'More Information',
     'LBL_PARENT_TYPE' => 'Parent Type',
     'LBL_PERCENTAGE_SYMBOL' => '%',
-    'LBL_PHASE' => 'Phase',
+    'LBL_PHASE' => 'Range',
     //BEGIN SUGARCRM flav!=com ONLY
     'LBL_PICTURE_FILE' => 'Picture',
     //END SUGARCRM flav!=com ONLY
@@ -2546,6 +2558,7 @@ $app_strings = array (
     'LBL_REMOVE' => 'Remove',
     'LBL_REPORTS_TO' => 'Reports To',
     'LBL_REQUIRED_SYMBOL' => '*',
+    'LBL_REQUIRED_TITLE' => 'Indicates required field',
     'LBL_SAVE_BUTTON_KEY' => 'S',
     'LBL_SAVE_BUTTON_LABEL' => 'Save',
     'LBL_EMAIL_DONE_BUTTON_LABEL' => 'Done',
@@ -2604,14 +2617,14 @@ $app_strings = array (
 
     /* The following version of LBL_SUGAR_COPYRIGHT is intended for Sugar Open Source only. */
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
     //END SUGARCRM flav=com  && dep=os ONLY
 
     //BEGIN SUGARCRM lic=sub ONLY
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
     //END SUGARCRM lic=sub ONLY
 
@@ -2632,7 +2645,7 @@ $app_strings = array (
     'LBL_TABGROUP_DCE' => 'DCE',
 //END SUGARCRM flav=dce ONLY
     'LBL_TASKS'=>'Tasks',
-    'LBL_TEAMS_LINK'=>'Team',
+    'LBL_TEAMS_LINK'=>'Teams',
     'LBL_THEME_COLOR'=>'Color',
     'LBL_THEME_FONT'=>'Font',
     'LBL_THOUSANDS_SYMBOL' => 'K',
@@ -2685,8 +2698,8 @@ $app_strings = array (
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected record(s)?',
-    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record. Are you sure you want to delete it?',
-    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records. Are you sure you want to delete them?\n",	
+    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record or system settings. Are you sure you want to delete it?',
+    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records or system settings. Are you sure you want to delete them?\n",	
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
@@ -2753,7 +2766,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_TIME' => 'Time: ',
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
-    'MSG_JS_ALERT_MTG_REMINDER_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -3013,6 +3027,7 @@ $app_strings = array (
     'LBL_HOURS' => 'Hours',
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
+    'LBL_DATE' => 'Date',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

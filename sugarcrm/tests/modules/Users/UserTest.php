@@ -42,7 +42,7 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug36657
+     * @ticket 36657
      */
     public function testCertainPrefsAreNotResetWhenResetingUserPreferences()
     {

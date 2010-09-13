@@ -247,10 +247,15 @@ Studio2.checkGridLayout = function()
 	   return false;
 	}
 	{/literal}
-	   {if $view != "detailview"}	
-	return Studio2.checkRequiredFields();
+	   {if $view == "detailview"}	
+	       return true;  
+	   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	   {elseif $view == "wirelessdetailview"}
+	       return true;
+	   //END SUGARCRM flav=pro || flav=sales ONLY
 	   {else}
-	return true;   
+    return Studio2.checkRequiredFields();
+	 
 	   {/if}
 	{literal}
 }

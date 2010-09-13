@@ -128,9 +128,6 @@ class TeamSetLink extends Link {
 						}
 					}
 					
-					if(!empty($this->_bean->in_workflow)){
-						$this->_teamList = array();
-					}
 					//this stmt is intended to handle the situation where the code has set the team_id but not the team_set_id as may be the case
 					//from SOAP.
 					if(!in_array($this->_bean->team_id, $this->_teamList)){

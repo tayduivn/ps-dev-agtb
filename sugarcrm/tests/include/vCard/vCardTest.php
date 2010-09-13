@@ -18,7 +18,7 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug10419
+     * @ticket 10419
      */
 	public function testImportedVcardWithDifferentCharsetIsTranslatedToTheDefaultCharset()
     {

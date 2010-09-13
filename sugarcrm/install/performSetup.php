@@ -599,7 +599,9 @@ enableSugarFeeds();
         ini_set('default_socket_timeout', 360);
         echo '<b>Installing Offline Client</b>';
         require_once("include/utils/disc_client_utils.php");
-        echo convert_disc_client();
+        $oc_result = convert_disc_client();
+	installLog($oc_result);
+	echo $oc_result;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -703,6 +705,11 @@ FP;
         $admin=new Administration();
         $admin->saveSetting('system','name',$_SESSION['setup_system_name']);  
     }
+    
+    //BEGIN SUGARCRM flav=sales ONLY
+    $admin=new Administration();
+    $admin->saveSetting('notify','allow_default_outbound', 0);
+    //END SUGARCRM flav=sales ONLY
     
     // Bug 28601 - Set the default list of tabs to show
     $enabled_tabs = array();

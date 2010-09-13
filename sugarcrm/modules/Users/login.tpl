@@ -44,18 +44,21 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 					    {* //BEGIN SUGARCRM flav=sales ONLY
 						<IMG src="include/images/sugar_md_sales.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
 					    {* //END SUGARCRM flav=sales ONLY
-					    {* //BEGIN SUGARCRM flav=com && lic=sub ONLY
+					    {* //BEGIN SUGARCRM flav=dev ONLY
+						<IMG src="include/images/sugar_md_dev.png" alt="Sugar" width="340" height="25">
+					    {* //END SUGARCRM flav=dev ONLY
+					    {* //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 						<IMG src="include/images/sugar_md_express.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=com && lic=sub ONLY
+					    {* //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 					    {* //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 						<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
 					    {* //END SUGARCRM flav=com && lic!=sub ONLY
 					    {* //BEGIN SUGARCRM flav=dce ONLY
 						<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">
 					    {* //END SUGARCRM flav=dce ONLY
-					    {* //BEGIN SUGARCRM flav=ent ONLY
+					    {* //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 						<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=ent ONLY *}
+					    {* //END SUGARCRM flav=ent && flav!=dev ONLY *}
 					</td>
 				</tr>
 				<tr>
@@ -92,15 +95,15 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 									</tr>
 									<tr>
 										<td scope="row" width="30%">{$MOD.LBL_USER_NAME}:</td>
-										<td width="70%"><input type="text" size='35' tabindex="1" id="user_name" name="user_name" value='{$LOGIN_USER_NAME}' /></td>
+										<td width="70%"><input type="text" size='35' tabindex="1" id="user_name" name="user_name"  value='{$LOGIN_USER_NAME}' /></td>
 									</tr>
 									<tr>
 										<td scope="row">{$MOD.LBL_PASSWORD}:</td>
-										<td width="30%"><input type="password" size='26' tabindex="2" id="user_password" name="user_password" value='' /></td>
+										<td width="30%"><input type="password" size='26' tabindex="2" id="user_password" name="user_password" value='{$LOGIN_PASSWORD}' /></td>
 									</tr>
 									{if !empty($SELECT_LANGUAGE)}
 									<tr>
-										<td colspan="2" class="login_more"><div  style="cursor: hand; cursor: pointer; display:{$LOGIN_DISPLAY}" onclick='toggleDisplay("more");'><IMG src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" border="0" alt="Hide Options" id="more_options">&nbsp;<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_OPTIONS}</a></div>
+										<td colspan="2" class="login_more"><div  style="cursor: hand; cursor: pointer; display:{$LOGIN_DISPLAY}" onclick='toggleDisplay("more");'><IMG src="{sugar_getimagepath file='advanced_search.gif'}" border="0" alt="Hide Options" id="more_options">&nbsp;<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_OPTIONS}</a></div>
 											<div id='more' style='display: none'>
 												<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
 												    <tr>
@@ -114,7 +117,7 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 									{/if}
 									<tr>
 										<td>&nbsp;</td>
-										<td><input title="{$MOD.LBL_LOGIN_BUTTON_TITLE}" accessKey="{$MOD.LBL_LOGIN_BUTTON_TITLE}" class="button primary" type="submit" tabindex="3" id="login_button" name="Login" value="{$MOD.LBL_LOGIN_BUTTON_LABEL}"><br>&nbsp;</td>
+										<td><input title="{$MOD.LBL_LOGIN_BUTTON_TITLE}" accessKey="{$MOD.LBL_LOGIN_BUTTON_TITLE}" class="button primary" type="submit" tabindex="3" id="login_button" name="Login" value="{$MOD.LBL_LOGIN_BUTTON_LABEL}"><br>&nbsp;</td>		
 									</tr>
 								</table>
 							</form>
@@ -123,7 +126,7 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 									<tr>
 										<td colspan="2" class="login_more">
 										<div  style="cursor: hand; cursor: pointer; display:{$DISPLAY_FORGOT_PASSWORD_FEATURE};" onclick='toggleDisplay("forgot_password_dialog");'>
-											<IMG src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" border="0" alt="Hide Options" id="forgot_password_dialog_options">
+											<IMG src="{sugar_getimagepath file='advanced_search.gif'}" border="0" alt="Hide Options" id="forgot_password_dialog_options">
 											<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_FORGOT_PASSWORD}</a>
 										</div>
 											<div id="forgot_password_dialog" style="display:none" >

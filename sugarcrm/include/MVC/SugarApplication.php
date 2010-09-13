@@ -80,15 +80,19 @@ class SugarApplication
 				$post_login_nav .= '&login_module='.$this->controller->module;
 			}
 			if(!empty($this->controller->action)){
-				$post_login_nav .= '&login_action='.$this->controller->action;
+			    if(in_array(strtolower($this->controller->action), array('delete')))
+			        $post_login_nav .= '&login_action=DetailView';
+			    elseif(in_array(strtolower($this->controller->action), array('save')))
+			        $post_login_nav .= '&login_action=EditView';
+			    elseif(isset($_REQUEST['massupdate'])|| isset($_GET['massupdate']) || isset($_POST['massupdate']))
+			        $post_login_nav .= '&login_action=index';
+			    else
+				    $post_login_nav .= '&login_action='.$this->controller->action;
 			}
 			if(!empty($this->controller->record)){
 				$post_login_nav .= '&login_record='.$this->controller->record;
 			}
-			if(in_array(strtolower($this->controller->action), array('save', 'delete')) || isset($_REQUEST['massupdate'])
-					|| isset($_GET['massupdate']) || isset($_POST['massupdate']))
-				$post_login_nav = '';
-		
+			
 			header('Location: index.php?action=Login&module=Users'.$post_login_nav);
 			exit ();
 		}
@@ -195,6 +199,15 @@ class SugarApplication
 	}
 		
 	function preProcess(){
+		//BEGIN SUGARCRM flav=sales ONLY
+		// Create a module whitelist of all modules in Administration
+		$ss_admin_whitelist = getSugarSalesAdminWhiteList();
+		if(!in_array($this->controller->module, $ss_admin_whitelist['modules'])
+		   && !in_array($this->controller->action, $ss_admin_whitelist['actions'])
+		   && is_admin($GLOBALS['current_user'])){
+			self::redirect("index.php?module=Administration&action=index");
+		}
+		//END SUGARCRM flav=sales ONLY
 	    $config = new Administration;
 	    $config->retrieveSettings();
 		if(!empty($_SESSION['authenticated_user_id'])){ 
@@ -644,7 +657,7 @@ class SugarApplication
 	 */
 	function checkHTTPReferer(){
 		global $sugar_config;
-		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView');
+		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView', 'Login');
 		if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
 			$http_ref = parse_url($_SERVER['HTTP_REFERER']);
 			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $whiteListActions) && 
@@ -680,9 +693,10 @@ EOQ;
 			}
 		}
 	}	
-	
-	function startSession(){
-		if(isset($_REQUEST['MSID'])) {
+	function startSession()
+	{	
+	    $sessionIdCookie = isset($_COOKIE['PHPSESSID']) ? $_COOKIE['PHPSESSID'] : null;
+	    if(isset($_REQUEST['MSID'])) {
 			session_id($_REQUEST['MSID']);
 			session_start();
 			if(isset($_SESSION['user_id']) && isset($_SESSION['seamless_login'])){
@@ -700,6 +714,14 @@ EOQ;
 				session_start();
 			}
 		}
+		
+		if ( isset($_REQUEST['login_module']) && isset($_REQUEST['login_action']) 
+		        && !($_REQUEST['login_module'] == 'Home' && $_REQUEST['login_action'] == 'index') ) {
+            if ( !is_null($sessionIdCookie) && empty($_SESSION) ) {
+                self::setCookie('loginErrorMessage', 'LBL_SESSION_EXPIRED', time()+30, '/');
+            }
+        }
+		
 		//BEGIN SUGARCRM flav=pro ONLY
 		
 	    $trackerManager = TrackerManager::getInstance(); 

@@ -1,0 +1,85 @@
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ *(i) the "Powered by SugarCRM" logo and
+ *(ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+xmlseclibs.php
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+11 Jan 2010, 1.2.2
+Features:
+- Add support XPath support when creating signature. Provides support for 
+  working with EBXML documents.
+- Add reference option to force creation of URI attribute. For use
+  when adding a DOM Document where by default no URI attribute is added.
+- Add support for RSA-SHA256
+
+Bug Fixes:
+- fix bug #5: createDOMDocumentFragment() in decryptNode when data is node 
+  content (patch by Francois Wang)
+
+
+08 Jul 2008, 1.2.1
+Features:
+- Attempt to use mhash when hash extension is not present. (Alfredo Cubitos).
+- Add fallback to built-in sha1 if both hash and mhash are not available and 
+  throw error for other for other missing hashes. (patch by Olav Morken).
+- Add getX509Certificate method to retrieve the x509 cert used for Key. 
+  (patch by Olav Morken).
+- Add getValidatedNodes method to retrieve the elements signed by the 
+  signature. (patch by Olav Morken).
+- Add insertSignature method for precision signature insertion. Merge 
+  functionality from appendSignature in the process. (Olav Morken, Rob).
+- Finally add some tests
+
+Bug Fixes:
+- Fix canonicalization for Document node when using PHP < 5.2.
+- Add padding for RSA_SHA1. (patch by Olav Morken).
+
+
+27 Nov 2007, 1.2.0
+Features:
+- New addReference/List option (overwrite). Boolean flag indicating if URI
+  value should be overwritten if already existing within document.
+  Default is TRUE to maintain BC.
+
+18 Nov 2007, 1.1.2
+Bug Fixes:
+- Remove closing PHP tag to fix extra whitespace characters from being output
+
+11 Nov 2007, 1.1.1
+Features:
+- Add getRefNodeID() and getRefIDs() methods missed in previous release.
+  Provide functionality to find URIs of existing reference nodes.
+  Required by simpleSAMLphp project
+
+Bug Fixes:
+- Remove erroneous whitespace causing issues under certain circumastances.
+
+18 Oct 2007, 1.1.0
+Features:
+- Enable creation of enveloping signature. This allows the creation of
+  managed information cards.
+- Add addObject method for enveloping signatures.
+- Add staticGet509XCerts method. Chained certificates within a PEM file can
+  now be added within the X509Data node.
+- Add xpath support within transformations
+- Add InclusiveNamespaces prefix list support within exclusive transformations.
+
+Bug Fixes:
+- Initialize random number generator for mcrypt_create_iv. (Joan Cornadó).
+- Fix an interoperability issue with .NET when encrypting data in CBC mode.
+  (Joan Cornadó).

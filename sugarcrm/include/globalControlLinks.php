@@ -33,6 +33,9 @@ global $app_strings, $current_user;
 if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client']){
 	require_once('modules/Sync/headermenu.php');
 }
+//BEGIN SUGARCRM flav=sales ONLY
+if(!is_admin($GLOBALS['current_user']))
+//END SUGARCRM flav=sales ONLY
 $global_control_links['employees'] = array(
 'linkinfo' => array($app_strings['LBL_EMPLOYEES']=> 'index.php?module=Employees&action=index'),
 'submenu' => ''
@@ -48,6 +51,13 @@ if (
 'linkinfo' => array($app_strings['LBL_ADMIN'] => 'index.php?module=Administration&action=index'),
 'submenu' => ''
 );
+//BEGIN SUGARCRM flav=sales ONLY
+if ($current_user->user_type == "UserAdministrator")
+$global_control_links['admin'] = array(        
+'linkinfo' => array($app_strings['LBL_USER_ADMIN'] => 'index.php?module=Users&action=index'),
+'submenu' => ''
+);
+//END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 $global_control_links['training'] = array(
 'linkinfo' => array($app_strings['LBL_TRAINING'] => ' javascript:void window.open(\'http://support.sugarcrm.com\')'),

@@ -50,12 +50,38 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp("/insert\s*into\s*contacts/i",$sql);
     }
     
+    /**
+     * ticket 38216
+     */
+    public function testInsertSQLProperlyDecodesHtmlEntities()
+    {
+        $bean = new Contact;
+        $bean->last_name = '&quot;Test&quot;';
+        
+        $sql = $this->_helper->insertSQL($bean);
+
+        $this->assertNotContains("&quot;",$sql);
+    }
+    
     public function testUpdateSQL()
     {
         $sql = $this->_helper->updateSQL(new Contact, array("id" => "1"));
     
         $this->assertRegExp("/update\s*contacts\s*set/i",$sql);
         $this->assertRegExp("/where\s*contacts.id\s*=\s*'1'/i",$sql);
+    }
+    
+    /**
+     * ticket 38216
+     */
+    public function testUpdateSQLProperlyDecodesHtmlEntities()
+    {
+        $bean = new Contact;
+        $bean->last_name = '&quot;Test&quot;';
+        
+        $sql = $this->_helper->updateSQL($bean, array("id" => "1"));
+
+        $this->assertNotContains("&quot;",$sql);
     }
     
     public function testDeleteSQL()
@@ -394,7 +420,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testEmptyPrecision()
     {
@@ -429,7 +455,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testBlankSpacePrecision()
     {
@@ -464,7 +490,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecision()
     {
@@ -501,7 +527,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionInLen()
     {
@@ -536,7 +562,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testEmptyPrecisionMassageFieldDef()
     {
@@ -566,7 +592,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testBlankSpacePrecisionMassageFieldDef()
     {
@@ -596,7 +622,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionMassageFieldDef()
     {
@@ -626,7 +652,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionInLenMassageFieldDef()
     {

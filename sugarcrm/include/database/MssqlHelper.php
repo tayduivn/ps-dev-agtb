@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: MssqlHelper.php 56786 2010-06-02 18:29:56Z jenny $
+* $Id: MssqlHelper.php 57849 2010-08-20 19:38:14Z kjing $
 * Description: This file handles the Data base functionality for the application specific
 * to Mssql database. It is called by the DBManager class to generate various sql statements.
 *

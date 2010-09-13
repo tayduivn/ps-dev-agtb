@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: Localization.php 55091 2010-03-05 05:49:15Z rob $
+ * $Id: Localization.php 58121 2010-09-09 18:35:17Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
@@ -57,7 +57,7 @@ class Localization {
 		'KOI8-R',       //Cyrillic Russian
 		'KOI8-U',       //Cyrillic Ukranian
 		'SJIS',         //MS Japanese
-		'UTF-8',        //'UTF-8
+		'UTF-8',        //UTF-8
 		);
 	var $localeNameFormat;
 	var $localeNameFormatDefault;
@@ -115,6 +115,17 @@ class Localization {
 			$userPref = $user->getPreference($prefName);
 		} elseif(!empty($current_user)) {
 			$userPref = $current_user->getPreference($prefName);
+		}
+		// Bug 39171 - If we are asking for default_email_charset, check in emailSettings['defaultOutboundCharset'] as well
+		if ( $prefName == 'default_email_charset' ) {
+		    if($user != null) {
+                $emailSettings = $user->getPreference('emailSettings');
+            } elseif(!empty($current_user)) {
+                $emailSettings = $current_user->getPreference('emailSettings');
+            }
+            if ( isset($emailSettings['defaultOutboundCharset']) ) {
+                $userPref = $emailSettings['defaultOutboundCharset'];
+            }
 		}
 
 		// set fallback defaults defined in this class
@@ -534,11 +545,18 @@ eoq;
 	 * @param string title
 	 * @param string format If a particular format is desired, then pass this optional parameter as a simple string.
 	 * sfl is "Salutation FirstName LastName", "l, f s" is "LastName[comma][space]FirstName[space]Salutation"
+	 * @param object user object
+	 * @param bool returnEmptyStringIfEmpty true if we should return back an empty string rather than a single space
+	 * when the formatted name would be blank             
 	 * @return string formattedName
 	 */
-	function getLocaleFormattedName($firstName, $lastName, $salutationKey='', $title='', $format="", $user=null) {
+	function getLocaleFormattedName($firstName, $lastName, $salutationKey='', $title='', $format="", $user=null, $returnEmptyStringIfEmpty = false) {
 		global $current_user;
 		global $app_list_strings;
+		
+		if ( $user == null ) {
+		    $user = $current_user;
+		}
 
 		$salutation = $salutationKey;
 		if(!empty($salutationKey) && !empty($app_list_strings['salutation_dom'][$salutationKey])) {
@@ -567,7 +585,7 @@ eoq;
 
 		$formattedName = trim($formattedName);
         if (strlen($formattedName)==0) {
-            return ' ';
+            return $returnEmptyStringIfEmpty ? '' : ' ';
         }
 
 		if(strpos($formattedName,',',strlen($formattedName)-1)) { // remove trailing commas

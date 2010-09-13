@@ -15,6 +15,12 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->_user;
         $this->eui = new EmailUI();
         $this->_folders = array();
+		
+		$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
     }
     
     public function tearDown()
@@ -22,6 +28,9 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         unset($this->eui);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        
+        unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
         foreach ($this->_folders as $f)
             $this->_clearFolder($f);
     }

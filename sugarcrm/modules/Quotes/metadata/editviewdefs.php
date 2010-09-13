@@ -64,8 +64,8 @@ $viewdefs['Quotes']['EditView'] = array(
 	    ),
 	    
 	    array (
-	      array('name'=>'billing_contact_name'),
-	       array('name'=>'shipping_contact_name')
+	      array('name'=>'billing_contact_name','displayParams' => array('initial_filter' => '&account_id_advanced="+this.form.{$fields.billing_account_name.id_name}.value+"&account_name_advanced="+this.form.{$fields.billing_account_name.name}.value+"'),),
+	       array('name'=>'shipping_contact_name','displayParams' => array('initial_filter' => '&account_id_advanced="+this.form.{$fields.shipping_account_name.id_name}.value+"&account_name_advanced="+this.form.{$fields.shipping_account_name.name}.value+"'),),
 	    ),
     ),
     'lbl_address_information' => array (

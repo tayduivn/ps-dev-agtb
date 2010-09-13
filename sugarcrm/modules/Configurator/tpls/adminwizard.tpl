@@ -324,6 +324,7 @@ function disableReturnSubmission(e) {
                                 <td scope="row">&nbsp;</td>
                                 <td >&nbsp;</td>
                             </tr>
+				            {* //BEGIN SUGARCRM flav!=sales ONLY *}
 				            <tr>
 					 		    <td width="20%" scope="row">
 					 		    	<span id="notify_allow_default_outbound_label">
@@ -340,6 +341,7 @@ function disableReturnSubmission(e) {
 				                <td scope="row">&nbsp;</td>
 				                <td >&nbsp;</td>
 				            </tr>                            
+				            {* //END SUGARCRM flav!=sales ONLY *}
                             <tr>
                                 <td width="50%" cellspan="2" scope="row" nowrap>
 							        <input title="{$APP.LBL_CLEAR_BUTTON_TITLE}"
@@ -364,7 +366,7 @@ function disableReturnSubmission(e) {
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
             onclick="SugarWizard.changeScreen('locale',true);" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" class="button primary"
-            type="submit" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" />&nbsp;
+            onclick="adjustEmailSettings(); this.form.submit();" type="button" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" />&nbsp;
     </div>
 </div>
 			</div>
@@ -448,9 +450,11 @@ var SugarWizard = new function()
                 smtp_type = document.getElementById('AdminWizard').mail_smtptype.value;
                 smtp_server_required = smtp_type == 'exchange' || smtp_type == 'other' ? true : false;
             
-                if(document.getElementById('notify_allow_default_outbound').checked ||
-                   document.getElementById('mail_smtpuser').value != '' ||
+                if(document.getElementById('mail_smtpuser').value != '' ||
                    document.getElementById('mail_smtppass').value != '' ||
+                   //BEGIN SUGARCRM flav!=sales ONLY
+                   document.getElementById('notify_allow_default_outbound').checked ||
+                   //END SUGARCRM flav!=sales ONLY
                    (smtp_server_required &&  document.getElementById('mail_smtpserver').value != '') 
                    ) {
                        
@@ -494,6 +498,7 @@ var SugarWizard = new function()
             break;
         case 'smtp':
             if ( !SUGAR.smtpButtonGroup ) {
+                //BEGIN SUGARCRM flav!=sales ONLY
                 SUGAR.smtpButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
                 SUGAR.smtpButtonGroup.subscribe('checkedButtonChange', function(e)
                 {
@@ -501,6 +506,7 @@ var SugarWizard = new function()
                     document.getElementById('smtp_settings').style.display = '';
                     document.getElementById('AdminWizard').mail_smtptype.value = e.newValue.get('value');
                 });
+                //END SUGARCRM flav!=sales ONLY
                 YAHOO.widget.Button.addHiddenFieldsToForm(document.getElementById('AdminWizard'));
             }
             break;
@@ -512,10 +518,25 @@ var SugarWizard = new function()
 SugarWizard.changeScreen('{/literal}{$START_PAGE}{literal}');
 document.onkeypress = SugarWizard.handleKeyStroke;
 
+function adjustEmailSettings(){
+    if( !document.getElementById('mail_smtpserver').value ||
+		!document.getElementById('mail_smtpuser').value ||
+		!document.getElementById('mail_smtppass').value ||
+		!document.getElementById('mail_smtpport').value)
+	{
+			document.getElementById('mail_smtpserver').value = null;
+			document.getElementById('mail_smtpuser').value = null;
+			document.getElementById('mail_smtppass').value = null;
+			document.getElementById('mail_smtpport').value = null;
+    }
+}
+
 function clearEmailFields() { 
  	document.getElementById('AdminWizard').mail_smtpuser.value = '';
     document.getElementById('AdminWizard').mail_smtppass.value = '';
+    //BEGIN SUGARCRM flav!=sales ONLY
     document.getElementById('notify_allow_default_outbound').checked = false;
+    //END SUGARCRM flav!=sales ONLY
     changeEmailScreenDisplay(document.getElementById('AdminWizard').mail_smtptype.value);
 }
 

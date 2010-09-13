@@ -54,7 +54,7 @@ $current_forecastype='Direct';
 
 //output the module header.
 //echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_DV_HEADER'], true);
-$middleText = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a><span class='pointer'>&raquo;</span>{$mod_strings['LBL_QC_WORKSHEET_BUTTON']}";
+$middleText = "<span class='pointer'>&raquo;</span>{$mod_strings['LBL_QC_WORKSHEET_BUTTON']}";
 echo get_module_title($mod_strings['LBL_MODULE_NAME'], $middleText, true);
 $sugar_smarty = new Sugar_Smarty();
 

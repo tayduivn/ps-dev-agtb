@@ -312,7 +312,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-	 * @group bug23485
+	 * @ticket 23485
 	 */
     public function testEnumWithDisplayValue()
     {
@@ -331,7 +331,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27467
+     * @ticket 27467
      */
     public function testEnumWithExtraSpacesAtTheEnd()
     {
@@ -350,7 +350,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33328
+     * @ticket 33328
      */
     public function testEnumWithKeyInDifferentCase()
     {
@@ -369,7 +369,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33328
+     * @ticket 33328
      */
     public function testEnumWithValueInDifferentCase()
     {
@@ -630,7 +630,53 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug32869
+     * @ticket 38356
+     */
+    public function testRelateCreateRecordNoTableInVardef()
+    {
+        $account_name = 'test case account'.date("YmdHis");
+        
+        $focus = loadBean('Contacts');
+        $vardef = array (
+			'name' => 'account_name',
+			'rname' => 'name',
+			'id_name' => 'account_id',
+			'vname' => 'LBL_ACCOUNT_NAME',
+			'join_name'=>'accounts',
+			'type' => 'relate',
+			'link' => 'accounts',
+			'isnull' => 'true',
+			'module' => 'Accounts',
+			'dbType' => 'varchar',
+			'len' => '255',
+			'source' => 'non-db',
+			'unified_search' => true,
+		);
+        
+        // setup
+        $beanList = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        
+        $this->_ifs->relate(
+            $account_name,
+            $vardef,
+            $focus);
+        
+        // teardown
+        unset($GLOBALS['beanList']);
+        
+        $result = $GLOBALS['db']->query(
+            "SELECT id FROM accounts where name = '$account_name'");
+        $relaterow = $focus->db->fetchByAssoc($result);
+        
+        $this->assertEquals($focus->account_id,$relaterow['id']);
+        
+        $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
+    }
+    
+    /**
+     * @ticket 32869
      */
     public function testRelateCreateRecordIfNoRnameParameter()
     {
@@ -676,7 +722,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug26897
+     * @ticket 26897
      */
     public function testRelateCreateRecordCheckACL()
     {
@@ -727,7 +773,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33704
+     * @ticket 33704
      */
     public function testRelateDoNotCreateRecordIfRelatedModuleIsUsers()
     {
@@ -769,7 +815,48 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27562
+     * @ticket 38885
+     */
+    public function testRelateToUserNameWhenFullNameIsGiven()
+    {
+        // setup
+        $beanList = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        
+        $accountFocus = new Account;
+        $userFocus = SugarTestUserUtilities::createAnonymousUser();
+        $vardef = array(
+            "name" => "assigned_user_name",
+            "link" => "assigned_user_link",
+            "vname" => "LBL_ASSIGNED_TO_NAME",
+            "rname" => "user_name",
+            "type" => "relate",
+            "reportable" => false,
+            "source" => "non-db",
+            "table" => "users",
+            "id_name" => "assigned_user_id",
+            "module" => "Users",
+            "duplicate_merge" => "disabled",
+            );
+        
+        $this->assertEquals(
+            $userFocus->user_name,
+            $this->_ifs->relate(
+                $userFocus->first_name.' '.$userFocus->last_name,
+                $vardef,
+                $accountFocus,
+                false)
+            );
+        
+        // teardown
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
+    }
+    
+    /**
+     * @ticket 27562
      */
     public function testRelateCreateRecordUsingMultipleFieldToLinkRecords()
     {
@@ -868,7 +955,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27046
+     * @ticket 27046
      */
     public function testRelateWithInvalidDataFormatting()
     {

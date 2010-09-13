@@ -104,6 +104,7 @@ SUGAR.reports = function() {
 	var totalFilterRows = 0;
 	var totalDisplayColRows = 0;
 	var totalGroupByRows = 0;
+	var totalSqsEnabledFields = 0;
 	var fieldGridCell;
 	var chartTypesHolder = new Array();	
 	
@@ -777,6 +778,8 @@ SUGAR.reports = function() {
 							} else if(input_arr[l].type == 'text' && /id_collection_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name1.push(input_arr[l].value);
 							} else if(input_arr[l].type == 'radio' && input_arr[l].checked) {
+								//We use input_name2 to indicate that a primary team has been selected.  
+								//See SugarWidgetFieldteam_set_id.php file to see how this creates the primary team query portion.
 								filter_def.input_name2 = input_arr[l].value;
 							}
 						}
@@ -2368,6 +2371,8 @@ SUGAR.reports = function() {
 			 	current_parent.value = name_to_value_array['name'];
 		},		
 		addFilterInputRelate: function(row,field,filter,isCustom) {
+			totalSqsEnabledFields++;
+
 			var filter_row = filters_arr[filters_count_map[current_filter_id]];
 			if (!isCustom)
 				var module_name = filter_row.module;
@@ -2375,8 +2380,8 @@ SUGAR.reports = function() {
 				var module_name = field.ext2;
 			var field = filter_row.field;
 			var field_name = filter_row.field.name;
-			var field_id_name= module_name+":"+field.name+":id";
-			var field_name_name= module_name+":"+field.name+":name";
+			var field_id_name= module_name+":"+field.name+":id:"+totalSqsEnabledFields;
+			var field_name_name= module_name+":"+field.name+":name:"+totalSqsEnabledFields;
 		
 			var cell = document.createElement('td');
 			var id_input = document.createElement("input");
@@ -2397,7 +2402,7 @@ SUGAR.reports = function() {
 			name_input.setAttribute("id", field_name_name);
 			name_input.setAttribute("class", "sqsEnabled");
 			name_input.setAttribute("autocomplete", "off");
-					
+			
 			if ( typeof (filter.input_name1) == 'undefined') {
 				filter.input_name1= '';
 			}
@@ -2931,7 +2936,7 @@ SUGAR.reports = function() {
 				}
 			} 
 			else if (field_type == 'id' || field_type == 'name' || field_type == 'fullname') {
-				if ( qualifier_name == 'is') {
+				if ( qualifier_name == 'is' || qualifier_name =='is_not') {
 					SUGAR.reports.addFilterInputRelate(row,field,filter,false);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				} 
@@ -2941,7 +2946,7 @@ SUGAR.reports = function() {
 				}
 			} 
 			else if (field_type == 'relate') {
-				if ( qualifier_name == 'is') {
+				if ( qualifier_name == 'is' || qualifier_name == 'is_not') {
 					SUGAR.reports.addFilterInputRelate(row,field,filter,true);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				} 
@@ -2955,7 +2960,7 @@ SUGAR.reports = function() {
 				if(users_array=="") {
 					SUGAR.reports.loadXML();
 				}
-				if (qualifier_name == 'one_of') {
+				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 					SUGAR.reports.addFilterInputSelectMultiple(row,users_array,filter);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
@@ -2965,7 +2970,7 @@ SUGAR.reports = function() {
 				}
 			} 
 			else if (field_type == 'enum' || field_type == 'multienum'  || field_type == 'radioenum' || field_type == 'parent_type') {
-				if (qualifier_name == 'one_of') {
+				if (qualifier_name == 'one_of' || qualifier_name == 'not_one_of') {
 					SUGAR.reports.addFilterInputSelectMultiple(row,field.options,filter);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
@@ -3237,6 +3242,8 @@ SUGAR.reports = function() {
 			   var link = filter.table_key.replace(/:/g,'>');
 			   link = (link == 'self') ? module : link;
 			   filter.table_key = (filter.table_key == 'self') ? module : link;
+			   //C.L. 36987 - Add the "> Teams" indicator once more
+			   filter.table_key += '> ' +  SUGAR.language.get('app_strings', 'LBL_TEAMS');
 			} 
 			else if (module_defs[module].field_defs[fieldName]){
 			   var field = module_defs[module].field_defs[fieldName];

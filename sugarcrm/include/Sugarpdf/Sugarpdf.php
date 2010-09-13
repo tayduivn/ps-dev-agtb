@@ -624,5 +624,19 @@ class Sugarpdf extends TCPDF
         }
         return $lines;
     }
+    
+    /**
+     * Disable zlib output compression if we are downloading the PDF.
+     *
+     * @see TCPDF::Output()
+     */
+    public function Output($name='doc.pdf', $dest='I') 
+    {
+        if ( $dest == 'I' || $dest == 'D') {
+            ini_set('zlib.output_compression', 'Off');
+        }
+        
+        return parent::Output($name,$dest);
+    }
 }
 

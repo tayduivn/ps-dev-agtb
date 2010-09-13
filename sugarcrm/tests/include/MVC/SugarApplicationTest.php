@@ -111,7 +111,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug33283
+     * @ticket 33283
      */
     public function testCheckDatabaseVersion()
     {

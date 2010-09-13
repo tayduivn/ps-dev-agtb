@@ -110,6 +110,7 @@ $dictionary['User'] = array(
             'type' => 'name',
             'len' => '30',
             'importable' => 'required',
+        	'required' => true,
         ) ,
         'full_name' => array(
             'name' => 'full_name',
@@ -312,8 +313,17 @@ $dictionary['User'] = array(
             'name' => 'address_postalcode',
             'vname' => 'LBL_ADDRESS_POSTALCODE',
             'type' => 'varchar',
-            'len' => '9',
+            'len' => '20',
         ) ,
+        //BEGIN SUGARCRM flav=sales ONLY
+        'user_type' => array(
+            'name' => 'user_type',
+            'vname' => 'LBL_USER_TYPE',
+            'type' => 'enum',
+            'len' => 50,
+            'options' => 'user_type_dom',
+        ),
+        //END SUGARCRM flav=sales ONLY
         //BEGIN SUGARCRM flav=pro ONLY
         'default_team' => array(
             'name' => 'default_team',

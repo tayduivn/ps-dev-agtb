@@ -108,8 +108,7 @@ SUGAR.forms.FormValidator.validateForm = function(formname) {
 
 	// if not defined let be
 	if ( typeof( myself.FORMS[formname] ) == 'undefined' )	return true;
-	//console.log("typeof " + typeof(myself.FORMS[formname]) );
-
+	
 	// update the submit time
 	var _date = new Date();
 	if ( typeof(myself.LAST_SUBMIT_TIME[formname]) == 'undefined' )				// define its last submit time, if needed
@@ -137,8 +136,6 @@ SUGAR.forms.FormValidator.validateForm = function(formname) {
 
 		// get the field
 		var field = form[name];
-
-		///console.log(field);
 
 		// if the field doesn't exist
 		if ( typeof(field) == 'undefined' ) continue;
@@ -197,11 +194,8 @@ SUGAR.forms.FormValidator.validateForm = function(formname) {
 
 	// if no errors, return true
 	if ( count <= 0 )  {
-		//console.log('found no errors');
 		return true;
 	}
-
-	//console.log(errors);
 
 	// render all the errors
 	for ( var name in errors )
@@ -458,7 +452,7 @@ SUGAR.forms.FormValidator._test = function(condition, formname) {
 		return (ev.evaluate() == 'true');
 	} catch ( error )  {
 		//debugger;
-		if (!Ext.isIE()) console.log(error);
+		if (console && console.log){ console.log('ERROR: ' + e );}
 		return false;
 	}
 

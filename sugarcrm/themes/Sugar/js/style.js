@@ -34,6 +34,9 @@
  */
 YAHOO.util.Event.onContentReady("globalLinksModule", function() 
 {
+    if ( !Get_Cookie('globalLinksOpen') ) {
+        Set_Cookie('globalLinksOpen','true',30,'/','','');
+    }
     if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
         document.getElementById('globalLinks').style.width = "auto";
     }
@@ -124,6 +127,14 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			oBd = oElement.firstChild;
 			oShadow = oElement.lastChild;
 			oLastViewContainer = document.getElementById("lastViewedContainer"+oElement.id);
+            
+            // We need to figure out the module name from the ID. Sometimes it will have the group name in it
+            // But sometimes it will just use the module name (in the case of the All group which don't have the
+            // group prefixes due to the automated testing suite.
+            var moduleName = oElement.id;
+            var groupName = oElement.parentNode.parentNode.parentNode.id.replace('themeTabGroup_','');
+            moduleName = moduleName.replace(groupName+'_','');
+            
 			var handleSuccess = function(o){
 				if(o.responseText !== undefined){			
 				data = YAHOO.lang.JSON.parse(o.responseText);
@@ -159,7 +170,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			  argument: { foo:"foo", bar:"bar" }
 			};
 
-			var sUrl = "index.php?module="+oElement.id+"&action=modulelistmenu";
+			var sUrl = "index.php?module="+moduleName+"&action=modulelistmenu";
 			
 			if(oLastViewContainer && oLastViewContainer.lastChild.firstChild.innerHTML == "&nbsp;") {
 				var request = YAHOO.util.Connect.asyncRequest('GET', sUrl, callback);
@@ -241,7 +252,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 		oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
 		oShadowBodyCenter.style.width = (oBd.offsetWidth)+"px";
 		
-		if(oElement.id != "More") {
+		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
 			if(oShadow.previousSibling.className != "vr") {
 			
 			oVR = document.createElement("div");
@@ -260,26 +271,39 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			
 	}
 
-	var oMenuBar = new YAHOO.widget.MenuBar("moduleList", { 
-												autosubmenudisplay: true, 
-												hidedelay: 750, 
-												lazyload: true });
+    var nodes = YAHOO.util.Selector.query('#moduleList>div');
+    allMenuBars = new Object();
 
+    for ( var i = 0 ; i < nodes.length ; i++ ) {
+	    var currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, { 
+		    autosubmenudisplay: true, 
+            visible: false,
+		    hidedelay: 750, 
+		    lazyload: true });
+        
+        
+	    /*
+	      Subscribe to the "beforeShow" and "show" events for 
+	      each submenu of the MenuBar instance.
+	    */
+	    
+	    currMenuBar.subscribe("beforeShow", onSubmenuBeforeShow);
+	    currMenuBar.subscribe("show", onSubmenuShow);
+        
+	    /*
+	      Call the "render" method with no arguments since the 
+	      markup for this MenuBar already exists in the page.
+	    */
+        
+	    currMenuBar.render();
+        allMenuBars[nodes[i].id.substr(nodes[i].id.indexOf('_')+1)] = currMenuBar;
+        
+        if ( nodes[i].children[0].style.display != 'none' ) {
+            // This is the currently displayed menu bar
+            oMenuBar = currMenuBar;
+        }
+    }
 
-	/*
-		 Subscribe to the "beforeShow" and "show" events for 
-		 each submenu of the MenuBar instance.
-	*/
-	
-	oMenuBar.subscribe("beforeShow", onSubmenuBeforeShow);
-	oMenuBar.subscribe("show", onSubmenuShow);
-
-	/*
-		 Call the "render" method with no arguments since the 
-		 markup for this MenuBar already exists in the page.
-	*/
-
-	oMenuBar.render();       
 	
 	// Remove the href attribute if we are on an touch device ( like an iPad )
 	if ( SUGAR.util.isTouchScreen() ) {
@@ -299,16 +323,22 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y) 
     {
         var content = Y.get('#content');
+        //BEGIN SUGARCRM flav!=sales ONLY
         var addPage = Y.get('#add_page');
+        //END SUGARCRM flav!=sales ONLY
         var tabListContainer = Y.get('#tabListContainer');
         var tabList = Y.get('#tabList');
         var dashletCtrlsElem = Y.get('#dashletCtrls');
         var contentWidth = content.get('offsetWidth');
         var dashletCtrlsWidth = dashletCtrlsElem.get('offsetWidth')+10;
+        //BEGIN SUGARCRM flav!=sales ONLY
         var addPageWidth = addPage.get('offsetWidth')+2;
+        //END SUGARCRM flav!=sales ONLY
         var tabListContainerWidth = tabListContainer.get('offsetWidth');
         var tabListWidthElem = tabList.get('offsetWidth');
+        //BEGIN SUGARCRM flav!=sales ONLY
         var maxWidth = (contentWidth-3)-(dashletCtrlsWidth+addPageWidth+2);
+        //END SUGARCRM flav!=sales ONLY
         
         var tabListChildren = tabList.get('children');
         
@@ -321,11 +351,13 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
 			}
         }
         
+        //BEGIN SUGARCRM flav!=sales ONLY
         if(tabListWidth > maxWidth) {
             tabListContainer.setStyle('width',maxWidth+"px");
             tabList.setStyle('width',tabListWidth+"px");
             tabListContainer.addClass('active');
         }
+        //END SUGARCRM flav!=sales ONLY
         
     
         var node = Y.get('#tabListContainer .yui-bd');
@@ -353,5 +385,14 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
         Y.all('#tabListContainer .yui-hd a').on('click', onClick);
     });
 });
+
+function sugar_theme_gm_switch( groupName ) {
+    document.getElementById('themeTabGroup_'+sugar_theme_gm_current).style.display='none';
+    sugar_theme_gm_current = groupName;
+    YAHOO.util.Connect.asyncRequest('POST','index.php?module=Users&action=ChangeGroupTab&to_pdf=true',false,'newGroup='+groupName);
+    document.getElementById('themeTabGroup_'+groupName).style.display='block';
+    
+    oMenuBar = allMenuBars[groupName];
+}
 
 offsetPadding = 15;

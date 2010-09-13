@@ -585,7 +585,7 @@ class Email extends SugarBean {
 			$mail->FromName = (!empty($fromName)) ? $fromName : $defaults['name'];
 			$replyToName = (!empty($replyToName)) ? $replyToName : $mail->FromName;
 		}
-
+		
 		$mail->Sender = $mail->From; /* set Return-Path field in header to reduce spam score in emails sent via Sugar's Email module */
 		
 		if (!empty($replyToAddress)) {
@@ -800,8 +800,7 @@ class Email extends SugarBean {
             $mail->Body = $this->decodeDuringSend($mail->Body);
             $mail->AltBody = $this->decodeDuringSend($mail->AltBody);
             if (!$mail->Send()) {
-
-                $this->status = 'send_error';
+                $this->status = 'send_error'; 
                 ob_clean();
                 echo($app_strings['LBL_EMAIL_ERROR_PREPEND']. $mail->ErrorInfo);
                 return false;
@@ -892,14 +891,16 @@ class Email extends SugarBean {
 					if(!class_exists('aCase')) {
 						
 					}
-					$c = new aCase();
-					if($caseId = InboundEmail::getCaseIdFromCaseNumber($mail->Subject, $c)) {
-						$c->retrieve($caseId);
-						$c->load_relationship('emails');
-						$c->emails->add($this->id);
-						$this->parent_type = "Cases";
-						$this->parent_id = $caseId;
-					} // if
+					else{
+						$c = new aCase();
+						if($caseId = InboundEmail::getCaseIdFromCaseNumber($mail->Subject, $c)) {
+							$c->retrieve($caseId);
+							$c->load_relationship('emails');
+							$c->emails->add($this->id);
+							$this->parent_type = "Cases";
+							$this->parent_id = $caseId;
+						} // if
+					}
 
 				} // else
 

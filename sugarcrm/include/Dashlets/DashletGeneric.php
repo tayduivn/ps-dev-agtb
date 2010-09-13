@@ -260,6 +260,7 @@ class DashletGeneric extends Dashlet {
                 switch($widgetDef['type']) {// handle different types
                     case 'date':
                     case 'datetime':
+                    case 'datetimecombo':
                         if(is_array($params) && !empty($params)) {
                             if(!empty($params['date']))
                                 $widgetDef['input_name0'] = $params['date'];
@@ -415,7 +416,7 @@ class DashletGeneric extends Dashlet {
         $options['filters'] = array();
         foreach($this->searchFields as $name=>$params) {
             $widgetDef = $this->seedBean->field_defs[$name];
-            if($widgetDef['type'] == 'datetime' || $widgetDef['type'] == 'date') { // special case datetime types
+            if($widgetDef['type'] == 'datetimecombo' || $widgetDef['type'] == 'datetime' || $widgetDef['type'] == 'date') { // special case datetime types
                 $options['filters'][$widgetDef['name']] = array();
                 if(!empty($req['type_' . $widgetDef['name']])) { // save the type of date filter
                     $options['filters'][$widgetDef['name']]['type'] = $req['type_' . $widgetDef['name']];

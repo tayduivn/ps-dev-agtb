@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: sugar_3.js 57033 2010-06-18 21:05:47Z kjing $
+// $Id: sugar_3.js 57264 2010-07-02 18:45:27Z kjing $
 
 /**
  * Namespace for Sugar Objects
@@ -608,7 +608,14 @@ function add_error_style(formname, input, txt) {
 	if ( txt.substring(txt.length-1) == ':' )
 	    txt = txt.substring(0,txt.length-1)
 	
-	if(inputHandle.parentNode.innerHTML.search(txt) == -1) {
+	// Bug 28249 - To help avoid duplicate messages for an element, strip off extra messages and
+	// match on the field name itself
+	requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
+    invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
+    nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
+    matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
+	
+	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
         errorTextNode.innerHTML = '<br />' + txt;
@@ -1574,29 +1581,70 @@ function initEditView(theForm) {
         editViewSnapshots = new Object();
     }
 
+    // console.log('DEBUG: Adding checks for '+theForm.id);
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
 }
 
-function onUnloadEditView(theForm) {
-    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+function onUnloadEditView(theForm) 
+{
+    if ( typeof editViewSnapshots == 'undefined' || typeof theForm == 'undefined' || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+        // No snapshots, move along
         return;
     }
 
-    if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
-        // Data has changed.
+    if ( typeof theForm == 'undefined' ) {
+        // Need to check all editViewSnapshots
+        for ( var idx in editViewSnapshots ) {
+            
+            theForm = document.getElementById(idx);
+            // console.log('DEBUG: Checking all forms '+theForm.id);
+            if ( theForm == null 
+                 || typeof editViewSnapshots[theForm.id] == 'undefined'
+                 || editViewSnapshots[theForm.id] == null ) {
+                continue;
+            }
+            
+            if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+                dataHasChanged = true;
+            }
+        }
+    } else {
+        // Just need to check a single form for changes
+		if ( editViewSnapshots == null  || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+            return;
+        }
+
+        // console.log('DEBUG: Checking one form '+theForm.id);
+        if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+            // Data has changed.
+            dataHasChanged = true;
+        }
+    }
+
+    if ( dataHasChanged == true ) {
         return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
     } else {
         return;
     }
+
 }
 
 function disableOnUnloadEditView(theForm) {
     // If you don't pass anything in, it disables all checking
-    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' ) {
+    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
         window.onbeforeunload = null;
+        editViewSnapshots = null;
+        
+        // console.log('DEBUG: Disabling all edit view checks');
+
     } else {
         // Otherwise, it just disables it for this form
-        editViewSnapshots[theForm.id] = null;
+        if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
+            editViewSnapshots[theForm.id] = null;
+        }
+
+        // console.log('DEBUG : Disabling just checks for '+theForm.id);
+
     }
 }
 
@@ -2277,7 +2325,8 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-		n = n.replace(num_grp_sep, '').replace(dec_sep, '.');
+	    num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
+	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
             // Need to strip out the currency symbols from the start.
@@ -2984,7 +3033,7 @@ SUGAR.searchForm = function() {
 					enableQS(true);
 					ajaxStatus.hideStatus();
 				}
-				url = 	'index.php?module=' + module + '&action=ListView&search_form_only=true&to_pdf=true&search_form_view=' + theView;
+				url = 	'index.php?module=' + module + '&action=index&search_form_only=true&to_pdf=true&search_form_view=' + theView;
 
 				//check to see if tpl has been specified.  If so then pass location through url string
 				var tpl ='';
@@ -3043,7 +3092,7 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
                     if ( ( elem.name.length > 3 && elem.name.substring(elem.name.length-3) == '_id' )
-                         || ( elem.name.length > 11 && elem.name.substring(elem.name.length-11) == '_id_advanced' ) ) {
+                         || ( elem.name.length > 12 && elem.name.substring(elem.name.length-12) == '_id_advanced' ) ) {
                         elem.value = '';
                     }
                 }
@@ -3894,6 +3943,10 @@ SUGAR.util.isLoginPage = function(content)
 	}
 }
 
+SUGAR.util.ajaxCallInProgress = function(){
+	return SUGAR_callsInProgress != 0;
+}
+
 SUGAR.util.closeActivityPanel = {
     show:function(module,id,new_status,viewType,parentContainerId){
         if (SUGAR.util.closeActivityPanel.panel) 
@@ -3918,16 +3971,25 @@ SUGAR.util.closeActivityPanel = {
                         var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
-                            {
+                            {	//refresh window to show updated changes
+								window.location.reload(true);
+								/*
                                 if(viewType == 'dashlet')
                                 {
                                     SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
                                     ajaxStatus.hideStatus();
                                 }
-                                else if(viewType == 'subpanel')
+                                else if(viewType == 'subpanel'){
                                     showSubPanel(o.argument['parentContainerId'],null,true);
-                                else if(viewType == 'listview')
+									if(o.argument['parentContainerId'] == 'activities'){
+										showSubPanel('history',null,true);
+									}
+									ajaxStatus.hideStatus();
+
+                                }else if(viewType == 'listview'){
                                     document.location = 'index.php?module=' + module +'&action=index';
+									}
+								*/
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };

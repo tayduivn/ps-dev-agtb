@@ -107,20 +107,32 @@ class ListViewSmarty extends ListViewDisplay{
         //END SUGARCRM flav=pro ONLY
         if($this->overlib) $this->ss->assign('overlib', true);
 		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current']));
-		$this->ss->assign('actionsLink', $this->buildActionsLink());
+		
+		if($this->show_action_dropdown)
+		{
+			$this->ss->assign('actionsLink', $this->buildActionsLink());
+		}
 		
 		$this->ss->assign('quickViewLinks', $this->quickViewLinks);
-		
+
 		// handle save checks and stuff
 		if($this->multiSelect) {
-		if($this->data['pageData']['bean']['moduleDir']== 'KBDocuments') $this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
-		else $this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['total']));
+		
+		//if($this->data['pageData']['bean']['moduleDir']== 'KBDocuments')
+		//{ 
+		//	$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
+		//} else {
+			$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['total']));
+		//}
+		
 		$this->ss->assign('multiSelectData', $this->getMultiSelectData());
 		}
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// include button for Adding to Target List if in one of four applicable modules
-		if ( isset ( $_REQUEST['module']) && in_array ( $_REQUEST['module'] , array ( 'Contacts','Prospects','Leads','Accounts' )))
+		if ( isset ( $_REQUEST['module']) && in_array ( $_REQUEST['module'] , array ( 'Contacts','Prospects','Leads','Accounts' ))
+		&& ACLController::checkAccess('ProspectLists','edit',true)) {
 			$this->ss->assign( 'targetLink', $this->buildTargetList() ) ;
+		}
 		//END SUGARCRM flav!=sales ONLY
 		$this->processArrows($data['pageData']['ordering']);
 		$this->ss->assign('prerow', $this->multiSelect);
@@ -177,7 +189,7 @@ class ListViewSmarty extends ListViewDisplay{
         $this->ss->assign('data', $this->data['data']);
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
-	
+
         $navStrings = array('next' => $app_strings['LNK_LIST_NEXT'],
                             'previous' => $app_strings['LNK_LIST_PREVIOUS'],
                             'end' => $app_strings['LNK_LIST_END'],

@@ -6,6 +6,7 @@ class SugarInstanceManager{
 	private $db_params;
 	private $psa_params;
 	private $install_params;
+	private $user_params;
 	private $db_links = array();
 
 	// logging variables
@@ -80,26 +81,54 @@ class SugarInstanceManager{
 		$this->license_params = $this->_get_license_env_vars($license_ids);
 	}
 	
+	/**
+	 * This function prepares all the environment variables for the install, remove, upgrade, and configure actions
+	 */
+	private function _prep_usermanager_data(){
+		$db_ids = array('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
+		$this->db_params = $this->_get_db_env_vars($db_ids);
+		$this->psa_params = $this->_get_psa_env_vars();
+		$this->user_params = $this->_get_user_options_env_vars(); // These are the user entered options during user configuration
+	}
+	
 	public function install(){
 		$this->_prep_configure_data();
 		
-		$successful_install = true;
+		$failed_install = false;
 		// FILES ARE AUTOMATICALLY COPIED OVER TO WEB ROOT
 		
-		if(!$this->_write_silent_install_config()){
-			echo "Could not write silent install config\n";
+		/*
+		// Switched back from manual sql creation to silent installer
+		if(!$this->_install_database_tables()){
+			echo "Could not create database tables\n";
 			exit(1);
 		}
 		
-		$this->_run_silent_install();
-		
-		if(!$this->_write_config_override()){
+		if(!$this->_write_config()){
 			$this->_drop_all_sugar_tables();
+			echo "Could not write the config after database tables were created\n";
+			exit(1);
+		}
+		*/
+		
+		if(!$this->_write_silent_install_config()){
+			echo "Could not write silent install config file\n";
+			exit(1);
+		}
+				
+		if(!$this->_write_config_override()){
+			// $this->_drop_all_sugar_tables(); Switched back from manual sql creation
 			echo "Could not write config override after installation\n";
 			exit(1);
 		}
 		
-		return $successful_install;
+		// Silent installer prep - This will override the index.php to run install
+		if(!$this->_write_temporary_index_file()){
+			echo "Could not write temporary index file for install\n";
+			exit(1);
+		}
+		
+		return $failed_install;
 	}
 	
 	public function remove(){
@@ -111,13 +140,32 @@ class SugarInstanceManager{
 		}
 	}
 	
-	public function upgrade(){
+	public function upgrade($from_v, $to_v){
 		$this->_prep_configure_data();
 		
+		$argv_backup = $argv;
+		$argc_backup = $argc;
 		
+		$argv = array(
+			"modules/UpgradeWizard/silentUpgrade.php",
+			//ZIP_FILE LOCATION
+			$this->psa_params['@@ROOT_DIR@@']."/apsSilentUpgrade.log",
+			$this->psa_params['@@ROOT_DIR@@'],
+			$this->install_params['@@ADMIN_NAME@@'],
+		);
+		$argc = count($argv);
+		
+		$current_dir = getcwd();
+		chdir($this->psa_params['@@ROOT_DIR@@']);
+		try {
+			require($argv[0]);
+		} catch( Exception $e ) {
+			echo 'Caught exception: ',  $e->getMessage(), "\n";
+			exit(1);
+		}
+		chdir($current_dir);
 	}
 	
-	// TODO: Get the configuration working
 	public function configure(){
 		$this->_prep_configure_data();
 		
@@ -132,6 +180,359 @@ class SugarInstanceManager{
 		return;
 	}
 	
+	/**
+	 * user_modify
+	 * This function allows you to remove, install, enable, disable, configure a sugar user
+	 * @param string $mode - the action you want to take on the sugar user, options on the above line
+	 */
+	public function user_modify($mode){
+		$this->_prep_usermanager_data();
+		
+		$this->_db_connect('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
+		
+		$this->_log_this($mode, 'user_modify.log');
+		$this->_log_this(var_export($this->user_params, true), 'user_modify.log');
+		
+		// We get the user id in advance (if exists) for checks in the switch statement
+		$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+		$success = true;
+		switch($mode){
+			case 'install':
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@'], '', true);
+				if($user_id === -1){
+					echo "User {$mode}: Bad query or couldn't connect to DB when checking for valid user.";
+					$this->_db_close_connection('main');
+					exit(1);
+				}
+				else if($user_id !== 0){
+					// We found a user, update and undelete
+					$GLOBALS['undelete_user'] = true;
+					// We do a logical not on the user_modify call since it returns failure
+					$success = !$this->user_modify('configure');
+					unset($GLOBALS['undelete_user']);
+				}
+				else{
+					$success = $this->_install_sugar_user();
+				}
+				break;
+			case 'remove':
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET deleted = '1' WHERE id = '{$user_id}'";
+				break;
+			case 'disable': 
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET status = 'Inactive' WHERE id = '{$user_id}'";
+				break;
+			case 'enable':
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@']);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET status = 'Active' WHERE id = '{$user_id}'";
+				break;
+			case 'configure':
+				$include_deleted = false;
+				if(!empty($GLOBALS['undelete_user']))
+					$include_deleted = true;
+				
+				$user_id = $this->_get_user_id($this->user_params['@@USER_NAME@@'], '', $include_deleted);
+				if($user_id === 0 || $user_id === -1){
+					echo "User {$mode}: User with user name {$this->user_params['@@USER_NAME@@']} doesn't exist.";
+					exit(1);
+				}
+				$query = "UPDATE users SET ";
+				foreach($this->user_params as $index => $value){
+					$table_col_key = strtolower(substr($index, 2, -2));
+					if($table_col_key != 'user_email'){
+						$query .= "{$table_col_key} = '{$value}', ";
+					}
+				}
+				$additional = array(
+					'date_modified' => gmdate('Y-m-d H:i:s'),
+					'modified_user_id' => '1',
+				);
+				if(!empty($GLOBALS['undelete_user']))
+					$additional['deleted'] = '0';
+				
+				foreach($additional as $index => $value){
+					$query .= "{$index} = '{$value}', ";
+				}
+				$query = substr($query, 0, -2);
+				$query .= " WHERE id = '{$user_id}'";
+				break;
+			default:
+				echo "Invalid param passed to usermanager: {$mode}";
+				exit(1);
+				break;
+		}
+		
+		// In the install mode, we call a function which returns success and sets it above
+		if($mode != 'install'){
+			$success = mysql_query($query, $this->db_links['main']);
+			$this->_log_this($query, 'user_modify.log');
+		}
+		
+		$failure = !$success;
+		$this->_log_this("success:{$success}", 'user_modify.log');
+		
+		$this->_db_close_connection('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
+		return $failure;
+	}
+	
+	private function _install_sugar_user(){
+		$success = true;
+		
+		// We pre create the ids below in case we need them
+		$email_id = $this->_create_unique_key();
+		$email_rel_id = $this->_create_unique_key();
+		$team_id = $this->_create_unique_key();
+		$team_mem_id = $this->_create_unique_key();
+		$team_mem_id_global = $this->_create_unique_key();
+		$team_set_id = $this->_create_unique_key();
+		$team_set_team_id = $this->_create_unique_key();
+		$user_pref_id = $this->_create_unique_key();
+		$user_id = $this->_create_unique_key();
+		$query = "INSERT INTO users SET ";
+		foreach($this->user_params as $index => $value){
+			$table_col_key = strtolower(substr($index, 2, -2));
+			if($table_col_key != 'user_email')
+				$query .= "{$table_col_key} = '{$value}', ";
+			else{
+				$email_query = "INSERT INTO email_addresses SET id = '{$email_id}', ".
+												 "email_address = '{$value}', ".
+												 "email_address_caps = '".strtoupper($value)."', ".
+												 "date_created = '".gmdate('Y-m-d H:i:s')."', ".
+												 "date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+				$this->_log_this($email_query, 'user_modify.log');
+				if(!mysql_query($email_query, $this->db_links['main'])){
+					echo "Could not insert email address.";
+					return false;
+				}
+				$email_rel_query = "INSERT INTO email_addr_bean_rel SET id = '{$email_rel_id}', ".
+												 "email_address_id = '{$email_id}', ".
+												 "bean_id = '{$user_id}', ".
+												 "bean_module = 'Users', ".
+												 "primary_address = 1, ".
+												 "reply_to_address = 1, ".
+												 "date_created = '".gmdate('Y-m-d H:i:s')."', ".
+												 "date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+				$this->_log_this($email_rel_query, 'user_modify.log');
+				if(!mysql_query($email_rel_query, $this->db_links['main'])){
+					echo "Could not insert email address relationship to user.";
+					mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+					return false;
+				}
+			}
+		}
+		$additional = array(
+			'id' => $user_id,
+			'date_entered' => gmdate('Y-m-d H:i:s'),
+			'date_modified' => gmdate('Y-m-d H:i:s'),
+			'modified_user_id' => '1',
+			'created_by' => '1',
+			'status' => 'Active',
+			'default_team' => '1',
+			'team_set_id' => '1',
+			'employee_status' => 'Active',
+		);
+		foreach($additional as $index => $value){
+			$query .= "{$index} = '{$value}', ";
+		}
+		$query = substr($query, 0, -2);
+		
+		$team_query = "INSERT INTO teams SET id = '{$team_id}', ".
+										"name = '{$this->user_params['@@FIRST_NAME@@']}', ".
+										"name_2 = '{$this->user_params['@@LAST_NAME@@']}', ".
+										"associated_user_id = '{$user_id}', ".
+										"date_entered = '".gmdate('Y-m-d H:i:s')."', ".
+										"date_modified = '".gmdate('Y-m-d H:i:s')."', ".
+										"modified_user_id = '1', ".
+										"created_by = '1', ".
+										"private = '1', ".
+										"description = 'Private team for {$this->user_params['@@FIRST_NAME@@']}' ";
+		if(!mysql_query($team_query, $this->db_links['main'])){
+			echo "Could not create user's private team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_membership_query = "INSERT INTO team_memberships SET id = '{$team_mem_id}', ".
+															"team_id = '{$team_id}', ".
+															"user_id = '{$user_id}', ".
+															"explicit_assign = '1', ".
+															"date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+		if(!mysql_query($team_membership_query, $this->db_links['main'])){
+			echo "Could not create team membership to private team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_membership_global_query = "INSERT INTO team_memberships SET id = '{$team_mem_id_global}', ".
+															"team_id = '1', ".
+															"user_id = '{$user_id}', ".
+															"explicit_assign = '1', ".
+															"date_modified = '".gmdate('Y-m-d H:i:s')."' ";
+		if(!mysql_query($team_membership_global_query, $this->db_links['main'])){
+			echo "Could not create team membership to global team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_set_md5 = md5($team_id);
+		$team_set_query = "INSERT into team_sets SET id='{$team_set_id}', ".
+											"name='{$team_set_md5}', ".
+											"team_md5='{$team_set_md5}', ".
+											"team_count=1, ".
+											"date_modified='".gmdate('Y-m-d H:i:s')."', ".
+											"deleted='0', ".
+											"created_by='1'";
+		if(!mysql_query($team_set_query, $this->db_links['main'])){
+			echo "Could not create team set for user private team.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			return false;
+		}
+		
+		$team_set_team_query = "INSERT into team_sets_teams ".
+									"(team_set_id,team_id,deleted,date_modified,id) VALUES ".
+									"('$team_set_id}','{$team_id}','0','".gmdate('Y-m-d H:i:s')."','{$team_set_team_id}')";
+		if(!mysql_query($team_set_team_query, $this->db_links['main'])){
+			echo "Could not create team set to team relationship";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets WHERE id = '{$team_set_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		// Get serialized encoded user preference string
+		$up = base64_encode(
+			serialize(
+				array(
+					'mailmerge_on' => 'off',
+					'max_tabs' => 7,
+					'swap_last_viewed' => '',
+					'swap_shortcuts' => '',
+					'subpanel_tabs' => 'on',
+					'user_theme' => 'Sugar',
+					'module_favicon' => '',
+					'hide_tabs' => array(),
+					'remove_tabs' => array(),
+					'no_opps' => 'off',
+					'reminder_time' => -1,
+					'timezone' => 'America/Los_Angeles',
+					'ut' => 0,
+					'currency' => -99,
+					'default_currency_significant_digits' => 2,
+					'num_grp_sep' => ',',
+					'dec_sep' => '.',
+					'datef' => 'm/d/Y',
+					'timef' => 'H:i',
+					'default_locale_name_format' => 's f l',
+					'export_delimiter' => ',',
+					'default_export_charset' => 'UTF-8',
+					'use_real_names' => 'on',
+					'mail_smtpauth_req' => '',
+					'mail_smtpssl' => 0,
+					'sugarpdf_pdf_font_name_main' => 'helvetica',
+					'sugarpdf_pdf_font_size_main' => 8,
+					'sugarpdf_pdf_font_name_data' => 'helvetica',
+					'sugarpdf_pdf_font_size_data' => 8,
+					'email_link_type' => 'sugar',
+					'email_show_counts' => 0,
+					'calendar_publish_key' => '',
+				)
+			)
+		);
+		
+		$user_pref_query = "INSERT into user_preferences set id='{$user_pref_id}', ".
+											"category='global', ".
+											"deleted='0', ".
+											"date_entered='".gmdate('Y-m-d H:i:s')."', ".
+											"date_modified='".gmdate('Y-m-d H:i:s')."', ".
+											"assigned_user_id='{$user_id}', ".
+											"contents='{$up}'";
+		
+		if(!mysql_query($user_pref_query, $this->db_links['main'])){
+			echo "Could not create user preferences.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets WHERE id = '{$team_set_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets_teams WHERE id = '{$team_set_team_id}'", $this->db_links['main']);
+			return false;
+		}
+		
+		
+		
+		// LAST QUERY TO CREATE USER!
+		$success = mysql_query($query, $this->db_links['main']);
+		if(!$success){
+			echo "Could not create user.";
+			mysql_query("DELETE FROM email_addresses WHERE id = '{$email_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM email_addr_bean_rel WHERE id = '{$email_rel_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM teams WHERE id = '{$team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_memberships WHERE id = '{$team_mem_id_global}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets WHERE id = '{$team_set_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM team_sets_teams WHERE id = '{$team_set_team_id}'", $this->db_links['main']);
+			mysql_query("DELETE FROM user_preferences WHERE id = '{$user_pref_id}'");
+		}
+		
+		return $success;
+	}
+	
+	// This function assumes a valid db connection
+	// status is: empty, 'Active', or 'Inactive'
+	private function _get_user_id($user_name, $status = '', $include_deleted = false, $db = 'main'){
+		$query = "SELECT id FROM users WHERE user_name = '{$user_name}'";
+		if(!empty($status)){
+			$query .= " AND status = '{$status}'";
+		}
+		if(!$include_deleted){
+			$query .= " AND deleted = 0";
+		}
+		$res = mysql_query($query, $this->db_links[$db]);
+		
+		$return_val = 0;
+		if($res){
+			$row = mysql_fetch_assoc($res);
+			if(!empty($row['id'])){
+				$return_val = $row['id'];
+			}
+			else{
+				$return_val = 0;
+			}
+		}
+		else{
+			$return_val = -1;
+		}
+		
+		return $return_val;
+	}
+	
 	public function install_license(){
 		$this->_prep_configure_data();
 	}
@@ -142,6 +543,81 @@ class SugarInstanceManager{
 	
 	public function query_license(){
 		$this->_prep_configure_data();
+	}
+	
+	private function _install_database_tables(){
+		$this->_db_connect('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
+		
+		$success = false;
+		if(file_exists('metadata/sugar.sql')){
+			$sql = file_get_contents('metadata/sugar.sql');
+			$final_sql = $this->_substitute_variables($sql);
+			
+			$success = $this->_load_sql($final_sql);
+		}
+		else{
+			echo "Install SQL file missing\n";
+		}
+		
+		$this->_db_close_connection('main'); // This is set to 'main' because it is the hardcoded db name in APP-META.XML
+		return $success;
+	}
+	
+	private function _load_sql($sql){
+		$in_string = false;
+		$in_comment = false;
+		$start = 0;
+		$len = strlen($sql);
+	
+		for($i = 0; $i < $len; $i++){
+			// Do we flag the start of a comment?
+			if(($sql[$i] == "#" || ($sql[$i] == "-" && $sql[$i+1] == "-")) && !$in_string){
+				$in_comment = true;
+				continue;
+			}
+			
+			// Do we flag the end of a comment?
+			if($sql[$i] == "\n" && $in_comment){
+				$in_comment = false;
+				$start = $i+1;
+				continue;
+			}
+			
+			// If in a comment, move along
+			if($in_comment){
+				continue;
+			}
+			
+			// If we hit the end of a statement, and we're not in a string
+			if($sql[$i] == ";" && !$in_string){
+				// Retrieve the statement
+				$statement = substr($sql, $start, $i - $start);
+				
+				// So long as the statement isn't blank, execute it
+				if(!preg_match("/^[ \n\r\t]*$/", $statement))
+					mysql_query($statement, $this->db_links['main']);
+				
+				$start = $i+1;
+			}
+			
+			if($sql[$i] == $in_string && $sql[$i-1] != "\\"){
+				$in_string = false;
+			}
+			else if(($sql[$i] == '"' || $sql[$i] == "'") && !$in_string && ($i > 0 && $sql[$i-1] != "\\")){
+				$in_string = $sql[$i];
+			}
+		}
+		// Execute the last statement
+		if(!$in_comment){
+			$statement = substr($sql, $start);
+			
+			// So long as the statement isn't blank, execute it
+			if(!preg_match("/^[ \n\r\t]*$/", $statement)){
+				mysql_query($statement, $this->db_links['main']);
+			}
+		}
+		
+		return true;
 	}
 	
 	private function _write_silent_install_config(){
@@ -170,6 +646,26 @@ class SugarInstanceManager{
 		$success_config_write = $this->_write_array_to_file('sugar_config_si', $sugar_config_si, $config_si_path, true);
 		
 		return $success_config_write;
+	}
+	
+	/**
+	 * 
+	 * This function writes a temporary index file, so that upon first visit to the instance,
+	 * it runs the silent installere
+	 */
+	private function _write_temporary_index_file(){
+		$index_file = $this->psa_params['@@ROOT_DIR@@']."/index.php";
+		$index_contents = file_get_contents($index_file);
+		if($index_contents === false){
+			return false;
+		}
+		
+		$replacement_string = "<?php
+if(!file_exists('config.php') || filesize('config.php') == 0){ header(\"Location: install.php?goto=SilentInstall&cli=true\"); }";
+		
+		$final_index_contents = preg_replace('/<\?php/', $replacement_string, $index_contents, 1);
+		
+		return file_put_contents($index_file, $final_index_contents);
 	}
 	
 	private function _run_silent_install(){
@@ -211,6 +707,33 @@ class SugarInstanceManager{
 		}
 	}
 	
+	private function _write_config(){
+		$config_path = $this->psa_params['@@ROOT_DIR@@']."/config.php";
+		
+		$config_template_string = file_get_contents('metadata/config_template.php');
+		
+		$final_config_string = $this->_substitute_variables($config_template_string);
+		
+		$success_write = file_put_contents($config_path, $final_config_string);
+		
+		return $success_write;
+	}
+	
+	private function _substitute_variables($string){
+		$db_params_keys = array_keys($this->db_params);
+		$db_params_vals = array_values($this->db_params);
+		$psa_params_keys = array_keys($this->psa_params);
+		$psa_params_vals = array_values($this->psa_params);
+		$install_params_keys = array_keys($this->install_params);
+		$install_params_vals = array_values($this->install_params);
+		
+		$string = str_replace($db_params_keys, $db_params_vals, $string);
+		$string = str_replace($psa_params_keys, $psa_params_vals, $string);
+		$string = str_replace($install_params_keys, $install_params_vals, $string);
+		
+		return $string;
+	}
+	
 	/**
 	 * This is used to set some of the config override values after installation.
 	 * * Original purpose for this function is to set default permissions for dirs and files
@@ -229,6 +752,8 @@ class SugarInstanceManager{
 		
 		// Add any parameters we want to set in the config_override in this file
 		require('metadata/config_override_template.php');
+		// Add in the current host as an acceptable referer
+		$sugar_config['http_referer']['list'][] = $this->psa_params['@@BASE_URL_HOST@@'];
 		
 		$success_write = $this->_write_array_to_file('sugar_config', $sugar_config, $config_override_path, false);
 		
@@ -298,6 +823,7 @@ class SugarInstanceManager{
 	
 	/**
 	 * This function retrieves all the options that the user is prompted to fill
+	 *   in the installation options page
 	 * When that list is updated in APP-META.xml, the setting_options array below
 	 *   needs to be updated as well
 	 * 
@@ -313,6 +839,46 @@ class SugarInstanceManager{
 		);
 		
 		$parameters = $this->_get_settings_env_vars($setting_options);
+		$parameters['@@UNIQUE_KEY@@'] = $this->_create_unique_key();
+		$parameters['@@ADMIN_PASSWORD_MD5@@'] = md5($parameters['@@ADMIN_PASSWORD@@']);
+		return $parameters;
+	}
+	
+	/**
+	 * This function retrieves all the options that the user is prompted to fill
+	 *   in the user management page
+	 * When that list is updated in APP-META.xml, the setting_options array below
+	 *   needs to be updated as well
+	 * 
+	 * Note: You will need to update the installer and the configure functionality
+	 *   when you update this
+	 */
+	private function _get_user_options_env_vars(){
+		$setting_options = array(
+			'user_name',
+			'user_password',
+			'first_name',
+			'last_name',
+			'user_email',
+			'title',
+			'department',
+			'phone_work',
+			'phone_mobile',
+			'phone_fax',
+			'phone_home',
+			'address_street',
+			'address_city',
+			'address_state',
+			'address_country',
+			'address_postalcode',
+			'description',
+		);
+		
+		$parameters = $this->_get_settings_env_vars($setting_options);
+		if(!empty($parameters['@@USER_PASSWORD@@'])){
+			$parameters['@@USER_HASH@@'] = md5($parameters['@@USER_PASSWORD@@']);
+			unset($parameters['@@USER_PASSWORD@@']);
+		}
 		return $parameters;
 	}
 	
@@ -575,7 +1141,10 @@ class SugarInstanceManager{
 		);
 		
 		foreach($config_files as $config){
-			unlink($this->psa_params['@@ROOT_DIR@@']."/".$config);
+			$file = $this->psa_params['@@ROOT_DIR@@']."/".$config;
+			if(file_exists($file)){
+				unlink($file);
+			}
 		}
 	}
 	
@@ -594,6 +1163,10 @@ class SugarInstanceManager{
 			}
 			putenv($env_string);
 		}
+	}
+	
+	private function _create_unique_key(){
+		return md5(uniqid(rand(), true));
 	}
 	
 	/**
@@ -633,12 +1206,18 @@ class SugarInstanceManager{
 		putenv("SETTINGS_admin_name=admin");
 		putenv("SETTINGS_admin_password=asdf");
 		putenv("SETTINGS_title=SugarCRM APS DEBUG");
+		
+		putenv("SETTINGS_user_name=sadek");
+		putenv("SETTINGS_user_password=asdf");
+		putenv("SETTINGS_first_name=Sadek");
+		putenv("SETTINGS_last_name=Baroudi");
+		putenv("SETTINGS_user_email=sadek@sugarcrm.com");
 	}
 	
-	private function _log_this($file, $log){
+	private function _log_this($msg, $file){
 		if($this->_logging == true){
 			$fp = fopen($this->psa_params['@@ROOT_DIR@@']."/".$file, 'a');
-			fwrite($fp, "[".date("Y-m-d H:i:s")."] ".$log."\n");
+			fwrite($fp, "[".date("Y-m-d H:i:s")."] ".$msg."\n");
 			fclose($fp);
 		}
 	}

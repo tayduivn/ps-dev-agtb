@@ -107,6 +107,7 @@ class ViewEditFormula extends SugarView
  			switch($def['type']) {
  				case "int":
  				case "float":
+ 				case "decimal":
  				case "currency":
  					$fieldArray[] = array($fieldName, 'number');
  					break;

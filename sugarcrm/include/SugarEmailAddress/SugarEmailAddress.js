@@ -118,7 +118,7 @@
 		        }
 		        
 		        if(savePressed || this.enterPressed) {
-		        	setTimeout("SUGAR.EmailAddressWidget.instances." + this.id + ".forceSubmit()", 2100);
+		           setTimeout("SUGAR.EmailAddressWidget.instances." + this.id + ".forceSubmit()", 2100);
 		        } else if(this.tabPressed) {
 		           Dom.get(this.id + 'emailAddressPrimaryFlag' + index).focus();
 		        }
@@ -475,7 +475,7 @@
 		          SUGAR.subpanelUtils.inlineSave(theForm.id, theForm.module.value.toLowerCase());
 		       }
 		    } 
-		} //forceSubmit 
+		} //forceSubmit
 	};
 	emailAddressWidgetLoaded = true;
 })();

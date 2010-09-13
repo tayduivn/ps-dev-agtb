@@ -175,7 +175,7 @@ $mod_strings = array (
 	'LBL_CONFIGURATOR_DESC'=>'Set up Config.php',
     'LBL_CONFIGURATOR_TITLE'=>'Configurator',
     'LBL_CONFIGURE_GROUP_TABS_DESC' => 'Create and edit the grouping of navigation tabs',
-    'LBL_CONFIGURE_GROUP_TABS' => 'Configure Tab Groups',
+    'LBL_CONFIGURE_GROUP_TABS' => 'Configure Grouped Modules',
     'LBL_CONFIGURE_SETTINGS_TITLE' => 'System Settings',
     'LBL_CONFIGURE_SETTINGS' => 'Configure system-wide settings',
     'LBL_CONFIGURE_TABS_AND_SUBPANELS' => 'Display Module Tabs and Subpanels',
@@ -823,7 +823,6 @@ $mod_strings = array (
 
     //END SUGARCRM flav=pro ONLY
     
-	//BEGIN SUGARCRM flav!=sales ONLY
 
     'LBL_UW_BTN_BACK_TO_MOD_LOADER'         => 'Back to Module Loader',
     'LBL_UW_BTN_BACK_TO_UW'                     => 'Back to Upgrade Wizard',
@@ -873,7 +872,6 @@ $mod_strings = array (
 	'LBL_UW_MODE_DISABLE'                       => 'Disabled',
     'LBL_UW_MODE_ENABLE'                        => 'Enabled',
     'LBL_UW_UPLOAD_SUCCESS'                     => " has been uploaded.<br>",
-    //END SUGARCRM flav!=sales ONLY
     'LBL_VALIDATION_FAIL_DATE'=>'Last failed validation : ',
     'LBL_VALIDATION_FILE'=>'Validation Key File',
     'LBL_VALIDATION_SUCCESS_DATE'=>'Last successful validation : ',
@@ -1123,4 +1121,11 @@ $mod_strings = array (
 	'WorkFlowAlertShells'  => 'WorkFlowAlertShell',
 	'WorkFlowTriggerShells'  => 'WorkFlowTriggerShell',
 	'Worksheet'  => 'Worksheet',
+   'LBL_SAML_ENABLE' => 'Enable SAML Authentication',
+   'LBL_SAML_HELP_TXT' => 'When SAML authentication is enabled, passwords can only be handled through SAML. None of the Sugar Password Management feature settings will apply.',
+   'LBL_SAML_TITLE' => 'SAML Authentication',
+   'LBL_SAML_CERT' => 'X509 Certificate',
+   'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
+   'LBL_SAML_LOGIN_URL' => 'Login URL',
+   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL'
 	);

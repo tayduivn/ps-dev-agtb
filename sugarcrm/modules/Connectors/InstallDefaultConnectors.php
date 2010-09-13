@@ -82,7 +82,7 @@ $default_modules_sources = array (
      'ext_rest_twitter' => 'ext_rest_twitter',   
     //END SUGARCRM flav=pro ONLY
   ),
-   
+   //BEGIN SUGARCRM flav!=sales || flav=pro ONLY
   'Leads' =>
   array (
      //BEGIN SUGARCRM flav!=sales ONLY 
@@ -102,7 +102,7 @@ $default_modules_sources = array (
      'ext_rest_twitter' => 'ext_rest_twitter',   
     //END SUGARCRM flav=pro ONLY
   ),
-    
+   //END SUGARCRM flav!=sales || flav=pro ONLY 
 );
 
 if(!file_exists('custom/modules/Connectors/metadata')) {

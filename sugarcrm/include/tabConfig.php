@@ -30,65 +30,61 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  // $Id: tabConfig.php 53116 2009-12-10 01:24:37Z mitani $
 
 $GLOBALS['tabStructure'] = array(
-    "LBL_TABGROUP_HOME" => array(
-        'label' => 'LBL_TABGROUP_HOME',
-        'modules' => array(
-            "Home",
-            "Dashboard",
-        )
-    ),
     "LBL_TABGROUP_SALES" => array(
         'label' => 'LBL_TABGROUP_SALES',
         'modules' => array(
+            "Home",
             "Accounts",
+            "Contacts",
             "Opportunities",
             //BEGIN SUGARCRM flav!=sales ONLY
             "Leads",
             "Contracts",
             "Quotes",
-            "Forecasts",
             //END SUGARCRM flav!=sales ONLY
             //BEGIN SUGARCRM flav=pro ONLY
             "Products",
             //END SUGARCRM flav=pro ONLY
-            "Contacts",
+            //BEGIN SUGARCRM flav!=sales ONLY
+            "Forecasts",
+            //END SUGARCRM flav!=sales ONLY
         )
     ),
+    //BEGIN SUGARCRM flav!=sales ONLY
     "LBL_TABGROUP_MARKETING" => array(
         'label' => 'LBL_TABGROUP_MARKETING',
         'modules' => array(
-            //BEGIN SUGARCRM flav!=sales ONLY
-            "Campaigns",
-            "Leads",    
-            //END SUGARCRM flav!=sales ONLY
-            "Contacts",
+            "Home",
             "Accounts",
+            "Contacts",
+            "Leads",    
+            "Campaigns",
         )
     ),
     "LBL_TABGROUP_SUPPORT" => array(
         'label' => 'LBL_TABGROUP_SUPPORT',
         'modules' => array(
-            //BEGIN SUGARCRM flav!=sales ONLY
-            "Cases",
-            "Bugs",
-            "Products",    
-            //END SUGARCRM flav!=sales ONLY
+            "Home",
             "Accounts",
             "Contacts",
+            "Cases",
+            "Bugs",
+    //END SUGARCRM flav!=sales ONLY
             //BEGIN SUGARCRM flav=pro ONLY
-
             "KBDocuments",
             //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav!=sales ONLY
         )
     ),
+    //END SUGARCRM flav!=sales ONLY
     "LBL_TABGROUP_ACTIVITIES" => array(
         'label' => 'LBL_TABGROUP_ACTIVITIES',
         'modules' => array(
-            "Activities",
+            "Home",
             "Calendar",
-            "Emails",
             "Calls",
             "Meetings",
+            "Emails",
             "Tasks",
             "Notes",
         )
@@ -96,34 +92,30 @@ $GLOBALS['tabStructure'] = array(
     "LBL_TABGROUP_COLLABORATION"=>array(
         'label' => 'LBL_TABGROUP_COLLABORATION',
         'modules' => array(
+            "Home",
             "Emails",
+            "Documents",
             //BEGIN SUGARCRM flav!=sales ONLY
             "Project",
     	    //END SUGARCRM flav!=sales ONLY
-            "Documents",
-            //"Forums",
+            //BEGIN SUGARCRM flav=pro ONLY
+            "KBDocuments",
+            //END SUGARCRM flav=pro ONLY
         )
     ),
-    /*
-    "LBL_TABGROUP_TOOLS"=>array(
-        'label' => 'LBL_TABGROUP_TOOLS',
-        'modules' => array(
-            "Feeds",
-            "iFrames",
-        )
-    ),
-    */
     "LBL_TABGROUP_REPORTS"=>array(
         'label' => 'LBL_TABGROUP_REPORTS',
         'modules' => array(
+            "Home",
             "Reports",
-            "Dashboard",
+            "Forecasts",
         )
     ),
 //BEGIN SUGARCRM flav=dce ONLY
     "LBL_TABGROUP_DCE"=>array(
         'label' => 'LBL_TABGROUP_DCE',
         'modules' => array(
+            "Home",
             "DCEActions",
             "DCEInstances",
             "DCETemplates",

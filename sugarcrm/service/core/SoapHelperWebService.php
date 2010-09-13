@@ -25,7 +25,8 @@ $disable_date_format = true;
 
 class SoapHelperWebServices {
 
-	function get_field_list($value,$fields,  $translate=true) {
+	function get_field_list($value, $fields, $translate=true)
+	{
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list');
 		$module_fields = array();
 		$link_fields = array();
@@ -33,7 +34,7 @@ class SoapHelperWebServices {
 
 			foreach($value->field_defs as $var){
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
-				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' &&$var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
+				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
 				if ($var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
 					continue;
 				}
@@ -42,7 +43,7 @@ class SoapHelperWebServices {
 				$options_ret = array();
 				// Apparently the only purpose of this check is to make sure we only return fields
 				//   when we've read a record.  Otherwise this function is identical to get_module_field_list
-				if(isset($value->required_fields) && key_exists($var['name'], $value->required_fields)){
+				if(!empty($var['required'])) {
 					$required = 1;
 				}
 				if(isset($var['options'])){
@@ -103,7 +104,7 @@ class SoapHelperWebServices {
 			}
 		}
 		//END SUGARCRM flav!=sales ONLY
-		
+
 		if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
 			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
 			$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
@@ -187,7 +188,7 @@ function validate_user($user_name, $password){
 		if(!empty($session_id)){
 			session_id($session_id);
 			session_start();
-			if(!empty($_SESSION['is_valid_session']) && is_valid_ip_address('ip_address') && $_SESSION['type'] == 'user'){
+			if(!empty($_SESSION['is_valid_session']) && $this->is_valid_ip_address('ip_address') && $_SESSION['type'] == 'user'){
 
 				global $current_user;
 				require_once('modules/Users/User.php');
@@ -207,7 +208,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated - validation failed');
 		return false;
 	}
-	
+
 	/**
 	 * Use the same logic as in SugarAuthenticate to validate the ip address
 	 *
@@ -329,7 +330,7 @@ function validate_user($user_name, $password){
 			} else {
 				$modules[$key] = '';
 			} // else
-		} // foreach		
+		} // foreach
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_user_module_list');
 		return $modules;
 
@@ -357,7 +358,7 @@ function validate_user($user_name, $password){
 
 	}
 
-	function get_name_value_list(&$value){
+	function get_name_value_list($value){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list');
 		global $app_list_strings;
 		$list = array();
@@ -429,9 +430,10 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list_for_fields');
 		global $app_list_strings;
 		global $invalid_contact_fields;
-
+		
 		$list = array();
 		if(!empty($value->field_defs)){
+			if(empty($fields))$fields = array_keys($value->field_defs);
 			if(isset($value->assigned_user_name) && in_array('assigned_user_name', $fields)) {
 				$list['assigned_user_name'] = $this->get_name_value('assigned_user_name', $value->assigned_user_name);
 			}
@@ -446,7 +448,7 @@ function validate_user($user_name, $password){
 			if(isset($value->created_by_name) && in_array('created_by_name', $fields)) {
 				$list['created_by_name'] = $this->get_name_value('created_by_name', $value->created_by_name);
 			}
-
+			
 			$filterFields = $this->filter_fields($value, $fields);
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];
@@ -471,7 +473,7 @@ function validate_user($user_name, $password){
 		return $list;
 
 	} // fn
-	
+
 	function array_get_name_value_list($array){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->array_get_name_value_list');
 		$list = array();
@@ -560,7 +562,7 @@ function validate_user($user_name, $password){
 					$optional_where = $query_array['where'];
 				} // else
 			} // if
-			
+
 			$params = array();
 			$params['joined_tables'] = $query_array['join_tables'];
 
@@ -882,7 +884,7 @@ function validate_user($user_name, $password){
 		}
 	}
 
-	function get_return_value(&$value, $module){
+	function get_return_value($value, $module){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_return_value');
 		global $module_name, $current_user;
 		$module_name = $module;
@@ -1093,7 +1095,7 @@ function validate_user($user_name, $password){
 	    } // else
 	} // fn
 
-	function check_for_duplicate_contacts(&$seed){
+	function check_for_duplicate_contacts($seed){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->check_for_duplicate_contacts');
 		require_once('modules/Contacts/Contact.php');
 
@@ -1119,12 +1121,20 @@ function validate_user($user_name, $password){
 					if(!empty($trimmed_last) && strcmp($trimmed_last, $contact->last_name) == 0){
 						if(!empty($trimmed_email) && strcmp($trimmed_email, $contact->email1) == 0){
 							if(!empty($trimmed_email)){
-								if(strcmp($trimmed_email, $contact->email1) == 0)
-									$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found ' . $contact->id);
-									return $contact->id;
-							}else
-									$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found' . $contact->id);
-									return $contact->id;
+								if(strcmp($trimmed_email, $contact->email1) == 0){
+								 	//bug: 39234 - check if the account names are the same
+								 	//if the incoming contact's account_name is empty OR it is not empty and is the same
+								 	//as an existing contact's account name, then find the match.
+									$contact->load_relationship('accounts');
+									if(empty($seed->account_name) || strcmp($seed->account_name, $contact->account_name) == 0){
+										$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found ' . $contact->id);
+										return $contact->id;
+									}
+								}
+							}else{
+								$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found' . $contact->id);
+								return $contact->id;
+							}
 						}
 					}
 				}

@@ -285,7 +285,6 @@ class SugarModule
     /**
      * Returns the bean object of the given module
      *
-     * @param  string $module
      * @return object
      */
     public function loadBean()
@@ -299,7 +298,7 @@ class SugarModule
             $bean = $beanList[$this->_moduleName];
             if (isset($beanFiles[$bean])) {
                 require_once($beanFiles[$bean]);
-                $focus = new $bean();
+                $focus = new $bean;
             }
             else
                 return false;

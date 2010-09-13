@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: EditView.php 57102 2010-06-24 00:43:39Z kjing $
+ * $Id: EditView.php 57829 2010-08-19 23:26:17Z kjing $
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -41,7 +41,11 @@ $admin = new Administration();
 $admin->retrieveSettings();
 
 $focus = new User();
-$is_current_admin=is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users');
+$is_current_admin=is_admin($current_user)
+//BEGIN SUGARCRM flav=sales ONLY
+                ||$current_user->user_type = 'UserAdministrator'
+//END SUGARCRM flav=sales ONLY
+                ||is_admin_for_module($GLOBALS['current_user'],'Users');
 $is_super_admin = is_admin($current_user);
 if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
 
@@ -121,11 +125,10 @@ if (isset($buttons)) $sugar_smarty->assign("BUTTONS", $buttons);
 
 echo "\n<p>\n";
 $params = array();
-$params[] = "<a href='index.php?module=Users&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 if(empty($focus->id)){
-	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
+	$params[] = "<span class='pointer'>&raquo;</span>".$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
-	$params[] = "<a href='index.php?module=Users&action=DetailView&record={$focus->id}'>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name)."</a>";
+	$params[] = "<span class='pointer'>&raquo;</span><a href='index.php?module=Users&action=DetailView&record={$focus->id}'>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name)."</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
 echo getClassicModuleTitle("Users", $params, true);
@@ -188,12 +191,13 @@ $sugar_smarty->assign('ADDRESS_STATE', $focus->address_state);
 $sugar_smarty->assign('ADDRESS_POSTALCODE', $focus->address_postalcode);
 $sugar_smarty->assign('ADDRESS_COUNTRY', $focus->address_country);
 $sugar_smarty->assign('DESCRIPTION', $focus->description);
-$sugar_smarty->assign('EXPORT_DELIMITER', getDelimiter());
+$sugar_smarty->assign('EXPORT_DELIMITER', $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
 //BEGIN SUGARCRM flav=pro ONLY
-
-$pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-$sugar_smarty->assign("REGEX",$pwd_regex);
+if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
+    $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
+    $sugar_smarty->assign("REGEX",$pwd_regex);     
+}
 //END SUGARCRM flav=pro ONLY
 
 if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
@@ -232,7 +236,7 @@ if($focus->getPreference('no_opps') == 'on') {
     $sugar_smarty->assign('NO_OPPS', 'CHECKED');
 }
 
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 // REASSIGNMENT SCRIPT CODE
 $confirmReassignJs = "
 	function confirmReassignRecords() {
@@ -275,10 +279,20 @@ $confirmReassignJs = "
 	}
 ";
 
-//END SUGARCRM flav=pro || flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
 // check if the user has access to the User Management
 $sugar_smarty->assign('USER_ADMIN',is_admin_for_module($current_user,'Users')&& !is_admin($current_user));
+
+//BEGIN SUGARCRM flav=sales ONLY
+if($current_user->user_type == "UserAdministrator" && !is_admin($current_user)){
+    $sugar_smarty->assign('USER_ADMIN', false);
+    $sugar_smarty->assign('NON_ADMIN_USER_ADMIN_RIGHTS', true);
+}
+if(!empty($focus->id) && $focus->user_type == "UserAdministrator" && !is_admin($focus)){
+    $sugar_smarty->assign('IS_USER_ADMIN', true); // although wording is similar as above, these are different
+}
+//END SUGARCRM flav=sales ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	NEW USER CREATION ONLY
@@ -288,10 +302,10 @@ if(empty($focus->id)) {
 }else{
 	$sugar_smarty->assign('NEW_USER','0');
 	$sugar_smarty->assign('NEW_USER_TYPE','DISABLED');
-	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign('confirmReassignJs', $confirmReassignJs);
 	$sugar_smarty->assign('REASSIGN_JS', "return confirmReassignRecords();");
-	//END SUGARCRM flav=pro || flav=sales ONLY
+	//END SUGARCRM flav=pro ONLY
 }
 
 ////	END NEW USER CREATION ONLY
@@ -360,6 +374,9 @@ if(empty($userTZ) && !$focus->is_group && !$focus->portal_only)
 
 if(!$focus->getPreference('ut')) {
 	$sugar_smarty->assign('PROMPTTZ', ' checked');
+	//BEGIN SUGARCRM flav=sales ONLY
+	$sugar_smarty->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
+	//END SUGARCRM flav=sales ONLY
 }
 
 $timezoneOptions = '';
@@ -436,6 +453,16 @@ $sugar_smarty->assign('getNameJs', $locale->getNameJs());
 //require_once($theme_path.'config.php');
 
 
+// Grouped tabs?
+$useGroupTabs = $current_user->getPreference('navigation_paradigm');
+if ( ! isset($useGroupTabs) ) {
+    if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
+    }
+    $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
+}
+$sugar_smarty->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
+
 $user_max_tabs = $focus->getPreference('max_tabs');
 if(isset($user_max_tabs) && $user_max_tabs > 0) {
 	$sugar_smarty->assign("MAX_TAB", $user_max_tabs);
@@ -465,6 +492,30 @@ $sugar_smarty->assign("SHOW_THEMES",count(SugarThemeRegistry::availableThemes())
 $sugar_smarty->assign("USER_THEME_COLOR", $focus->getPreference('user_theme_color'));
 $sugar_smarty->assign("USER_THEME_FONT", $focus->getPreference('user_theme_font'));
 $sugar_smarty->assign("USER_THEME", $user_theme);
+
+// Build a list of themes that support group modules
+$sugar_smarty->assign("DISPLAY_GROUP_TAB", 'none');
+
+$selectedTheme = $user_theme;
+if(!isset($user_theme)) {
+    $selectedTheme = $GLOBALS['sugar_config']['default_theme'];
+}
+
+$themeList = SugarThemeRegistry::availableThemes();
+$themeGroupList = array();
+
+foreach ( $themeList as $themeId => $themeName ) {
+    $currThemeObj = SugarThemeRegistry::get($themeId);
+    if ( isset($currThemeObj->group_tabs) && $currThemeObj->group_tabs == 1 ) {
+        $themeGroupList[$themeId] = true;
+        if ( $themeId == $selectedTheme ) {
+            $sugar_smarty->assign("DISPLAY_GROUP_TAB", '');
+        }
+    } else {
+        $themeGroupList[$themeId] = false;
+    }
+}
+$sugar_smarty->assign("themeGroupListJSON",json_encode($themeGroupList));
 
 $sugar_smarty->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $focus->getPreference('mail_sendtype')));
 $reminder_time = $focus->getPreference('reminder_time');
@@ -602,7 +653,7 @@ if ( $usertype == 'GROUP' ) {
 }
 
 $configurator = new Configurator();
-if ( ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
+if ( isset($configurator->config['passwordsetting']) && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
         && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' )
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','1');
 else
@@ -620,15 +671,15 @@ else{
 
 $sugar_smarty->assign('IS_FOCUS_ADMIN', is_admin($focus));
 
-$disable_download_tab = (!isset($sugar_config['disable_download_tab']) || $admin_edit_self) ? false : $sugar_config['disable_download_tab'];
-
-if($edit_self && !$disable_download_tab) {
+if($edit_self) {
 	$sugar_smarty->assign('EDIT_SELF','1');
 }
 if($admin_edit_self) {
 	$sugar_smarty->assign('ADMIN_EDIT_SELF','1');
 }
 
+$enable_download_tab = !isset($sugar_config['disable_download_tab']) ? true : !$sugar_config['disable_download_tab'];
+$sugar_smarty->assign('SHOW_DOWNLOADS_TAB',$enable_download_tab);
 
 /////////////////////////////////////////////
 /// Handle email account selections for users
@@ -655,7 +706,12 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
             $mail_smtppass = $userOverrideOE->mail_smtppass;
         }
 
-        $hide_if_can_use_default = empty($systemOutboundEmail->mail_smtpserver) ? true : false;
+        if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
+            $hide_if_can_use_default = true;
+        }
+        else{
+            $hide_if_can_use_default = false;
+        }
     }
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
     $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);

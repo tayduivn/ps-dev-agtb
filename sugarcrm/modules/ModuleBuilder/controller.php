@@ -332,14 +332,10 @@ class ModuleBuilderController extends SugarController
         		global $mod_strings;
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
                 $repair = new RepairAndClear();
-        		$repair->show_output = false;
-        		$repair->module_list = array($class_name);
-                $repair->repairDatabase();
-        		$repair->clearVardefs();
-        		$repair->clearTpls();
-        		//#28707 ,clear all the js files in cache
-        		$repair->module_list = array();
-        		$repair->clearJsFiles();
+		        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+		        //#28707 ,clear all the js files in cache
+		        $repair->module_list = array();
+		        $repair->clearJsFiles();
             }
         } else
         {
@@ -521,6 +517,12 @@ class ModuleBuilderController extends SugarController
                 //Need to load the entire field_meta_data for some field types
                 $field = $df->getFieldWidget($moduleName, $field->name);
                 $field->delete ( $df ) ;
+                
+                $GLOBALS [ 'mod_strings' ]['LBL_ALL_MODULES'] = 'all_modules';
+                $_REQUEST['execute_sql'] = true;
+                include_once ('modules/Administration/QuickRepairAndRebuild.php') ;
+                $repair = new RepairAndClear();
+                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
                 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
                 $module = StudioModuleFactory::getStudioModule( $moduleName ) ;
             }

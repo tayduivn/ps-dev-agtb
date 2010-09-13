@@ -68,10 +68,9 @@ class MyMeetingsDashlet extends DashletGeneric {
         $mod_strings = return_module_language($current_language, 'Meetings');
         
         if($this->myItemsOnly) { // handle myitems only differently
+			$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
             $lvsParams = array(
-                           'custom_from' => ' INNER JOIN meetings_users ON meetings.id = meetings_users.meeting_id ',
-                           'custom_where' => ' AND meetings_users.deleted = 0 AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR meetings_users.user_id = \'' . $current_user->id . '\') ',
-                           'distinct' => true
+                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\')',
                            );
         } else {
             $lvsParams = array();

@@ -19,8 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: SugarBean.php 57276 2010-07-06 09:50:08Z kjing $
+/********************************************************************************* 
+ * $Id: SugarBean.php 57813 2010-08-19 17:34:44Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -254,12 +254,8 @@ class SugarBean
      * 3. Setup row-level security preference
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
-     * @param bool $populateDefaults true if we should populate the default values into the bean
-     * @return  nothing
      */
-    function SugarBean(
-        $populateDefaults = true
-        )
+    function SugarBean()
     {
     	global  $dictionary, $current_user;
     	static $loaded_defs = array();
@@ -297,6 +293,9 @@ class SugarBean
             if (!empty($dictionary[$this->object_name]['fields'])) {
                 foreach ($dictionary[$this->object_name]['fields'] as $key=>$value_array) {
                     $column_fields[] = $key;
+                    if(!empty($value_array['required']) && !empty($value_array['name'])) {
+                        $this->required_fields[$value_array['name']] = 1;
+                    }
                 }
                 $this->column_fields = $column_fields;
             }
@@ -357,10 +356,7 @@ class SugarBean
     		ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
     		//END SUGARCRM flav=pro ONLY
     	}
-
-    	if ( $populateDefaults ) {
-    	    $this->populateDefaultValues();  	
-    	}
+    	$this->populateDefaultValues();
     	//BEGIN SUGARCRM flav=pro ONLY
     	if(isset($this->disable_team_security)){
     		$this->disable_row_level_security = $this->disable_team_security;
@@ -486,8 +482,14 @@ class SugarBean
     	// '0' stands for the first index for all the audit tables
     	$indices[0]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[0]['name'];
     	$indices[1]['name'] = 'idx_' . strtolower($this->getTableName()) . '_' . $indices[1]['name'];
+    	$engine = null;
+    	if(isset($dictionary['audit']['engine'])) {
+    	    $engine = $dictionary['audit']['engine'];
+    	} else if(isset($dictionary[$this->getObjectName()]['engine'])) {
+    	    $engine = $dictionary[$this->getObjectName()]['engine'];
+    	}
 
-    	$sql=$this->dbManager->helper->createTableSQLParams($table_name, $fieldDefs, $indices);
+    	$sql=$this->dbManager->helper->createTableSQLParams($table_name, $fieldDefs, $indices, $engine);
 
     	$msg = "Error creating table: ".$table_name. ":";
     	$this->dbManager->query($sql,true,$msg);
@@ -617,10 +619,30 @@ class SugarBean
     	return $this->$name;
     }
 
+    /**
+     * Basically undoes the effects of SugarBean::populateDefaultValues(); this method is best called right after object
+     * initialization.
+     */
+    public function unPopulateDefaultValues()
+    {
+        if ( !is_array($this->field_defs) )
+            return;
+
+        foreach ($this->field_defs as $field => $value) {
+            if( (isset($value['default']) || !empty($value['display_default']))
+                    && !empty($this->$field)
+                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default']))
+                    ) {
+                $this->$field = null;
+            }
+        }
+    }
+
+
     function populateDefaultValues($force=false){
         if ( !is_array($this->field_defs) )
             return;
-    	foreach($this->field_defs as $field=>$value){
+        foreach($this->field_defs as $field=>$value){
     		if((isset($value['default']) || !empty($value['display_default'])) && ($force || empty($this->$field))){
     		    $type = $value['type'];
 
@@ -1343,6 +1365,8 @@ class SugarBean
 			$usedDefaultTeam = true;
 
 		}
+		$this->updateCalculatedFields();
+
 		//END SUGARCRM flav=pro ONLY
 		if($isUpdate && !$this->update_date_entered)
 		{
@@ -1350,10 +1374,10 @@ class SugarBean
 		}
 		// call the custom business logic
 		$custom_logic_arguments['check_notify'] = $check_notify;
-		
+
 		$this->call_custom_logic("before_save", $custom_logic_arguments);
 		unset($custom_logic_arguments);
-		
+
 		if(isset($this->custom_fields))
 		{
 			$this->custom_fields->bean =& $this;
@@ -1637,6 +1661,24 @@ class SugarBean
 
 		return $this->id;
 	}
+
+	//BEGIN SUGARCRM flav=pro ONLY
+	/**
+	 * Retrieves and executes the CF dependencies for this bean
+	 */
+	function updateCalculatedFields()
+	{
+		require_once("include/Expressions/DependencyManager.php");
+		$deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+		foreach($deps as $dep)
+		{
+			if ($dep->getFireOnLoad())
+			{
+				$dep->fire($this);
+			}
+		}
+	}
+	//END SUGARCRM flav=pro ONLY
 
     /**
      * Performs a check if the record has been modified since the specified date
@@ -2151,7 +2193,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'decimal':
                 case 'currency':
                 case 'float':
-                    if ( $this->$field === '' ) {
+                	if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
                     }
                     if ( is_string($this->$field) ) {
@@ -2165,7 +2207,7 @@ function save_relationship_changes($is_update, $exclude=array())
                case 'short':
                case 'tinyint':
                case 'int':
-                    if ( $this->$field === '' ) {
+                    if ( $this->$field === '' || $this->$field == NULL || $this->$field == 'NULL') {
                         continue;
                     }
                     if ( is_string($this->$field) ) {
@@ -2524,7 +2566,31 @@ function save_relationship_changes($is_update, $exclude=array())
 						{
 							$list_column[0] = $bean_queried->table_name .".".$list_column[0] ;
 						}
+						if (empty($bean_queried->field_defs[$list_column_name]['table']) && $source=='custom_fields')
+						{
+						    $list_column[0] = $bean_queried->table_name ."_cstm.".$list_column[0] ;
+						}
 						$value = implode($list_column,' ');
+						// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
+						if ( $this->db->dbType == 'mssql'
+						     && $source == 'db'
+                            && in_array(
+                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                array('ntext','text','image')
+                                )
+                            ) {
+                        $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
+                        }
+						// Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
+						if ( $this->db->dbType == 'oci8' 
+						     && $source == 'db'
+                            && in_array(
+                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                array('clob')
+                                )
+                            ) {
+                        $value = "TO_CHAR({$list_column[0]}) {$list_column[1]}";
+                        }
 					}
 					else
 					{
@@ -2852,6 +2918,7 @@ function save_relationship_changes($is_update, $exclude=array())
 					$query = ' UNION ALL ( '.$query . ' )';
 					$final_query_rows .= " UNION ALL ";
 				} else {
+					$query = '(' . $query . ')';
 					$first = false;
 				}
 				$query_array = $subquery['query_array'];
@@ -3026,7 +3093,8 @@ function save_relationship_changes($is_update, $exclude=array())
     	$custom_join = false;
     	if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
     	{
-    		$custom_join = $this->custom_fields->getJOIN( true );
+
+    		$custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
     		if($custom_join)
     		{
     			$ret_array['select'] .= ' ' .$custom_join['select'];
@@ -3541,6 +3609,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function process_list_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '')
     {
     	global $sugar_config;
+    	$db = &DBManagerFactory::getInstance('listviews');
     	/**
 		 * if the row_offset is set to 'end' go to the end of the list
 		 */
@@ -3557,8 +3626,8 @@ function save_relationship_changes($is_update, $exclude=array())
     		if(!empty($count_query) && (empty($limit) || $limit == -1))
     		{
     			// We have a count query.  Run it and get the results.
-    			$result = $this->db->query($count_query, true, "Error running count query for $this->object_name List: ");
-    			$assoc = $this->db->fetchByAssoc($result);
+    			$result = $db->query($count_query, true, "Error running count query for $this->object_name List: ");
+    			$assoc = $db->fetchByAssoc($result);
     			if(!empty($assoc['c']))
     			{
     				$rows_found = $assoc['c'];
@@ -3586,18 +3655,18 @@ function save_relationship_changes($is_update, $exclude=array())
     	}
     	if(!empty($limit) && $limit != -1 && $limit != -99)
     	{
-    		$result = $this->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
+    		$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
     	}
     	else
     	{
-    		$result = $this->db->query($query,true,"Error retrieving $this->object_name list: ");
+    		$result = $db->query($query,true,"Error retrieving $this->object_name list: ");
     	}
 
     	$list = Array();
 
     	if(empty($rows_found))
     	{
-    		$rows_found =  $this->db->getRowCount($result);
+    		$rows_found =  $db->getRowCount($result);
     	}
 
     	$GLOBALS['log']->debug("Found $rows_found ".$this->object_name."s");
@@ -3606,7 +3675,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	$next_offset = $row_offset + $max_per_page;
 
     	$class = get_class($this);
-    	if($rows_found != 0 or $this->db->dbType != 'mysql')
+    	if($rows_found != 0 or $db->dbType != 'mysql')
     	{
     		//todo Bug? we should remove the magic number -99
     		//use -99 to return all
@@ -3616,11 +3685,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
     			if(!empty($sugar_config['disable_count_query']))
     			{
-    				$row = $this->db->fetchByAssoc($result);
+    				$row = $db->fetchByAssoc($result);
     			}
     			else
     			{
-    				$row = $this->db->fetchByAssoc($result, $index);
+    				$row = $db->fetchByAssoc($result, $index);
     			}
     			if (empty($row))
     			{
@@ -3735,6 +3804,7 @@ function save_relationship_changes($is_update, $exclude=array())
     $row_offset, $limit= -1, $max_per_page = -1, $where = '', $subpanel_def, $query_row_count='', $secondary_queries = array())
 
     {
+		$db = &DBManagerFactory::getInstance('listviews');
 		/**
 		 * if the row_offset is set to 'end' go to the end of the list
 		 */
@@ -3797,19 +3867,19 @@ function save_relationship_changes($is_update, $exclude=array())
 		{
 			if(!empty($limit) && $limit != -1 && $limit != -99)
 			{
-				$result = $parent_bean->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $parent_bean->object_name list: ");
+				$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $parent_bean->object_name list: ");
 			}
 			else
 			{
-				$result = $parent_bean->db->query($query,true,"Error retrieving $this->object_name list: ");
+				$result = $db->query($query,true,"Error retrieving $this->object_name list: ");
 			}
 			if(empty($rows_found))
 			{
-				$rows_found =  $parent_bean->db->getRowCount($result);
+				$rows_found =  $db->getRowCount($result);
 			}
 
 			$GLOBALS['log']->debug("Found $rows_found ".$parent_bean->object_name."s");
-			if($rows_found != 0 or $parent_bean->db->dbType != 'mysql')
+			if($rows_found != 0 or $db->dbType != 'mysql')
 			{
 				//use -99 to return all
 
@@ -3817,11 +3887,11 @@ function save_relationship_changes($is_update, $exclude=array())
 				$index = $row_offset;
 				if(!empty($sugar_config['disable_count_query']))
 				{
-					$row = $parent_bean->db->fetchByAssoc($result);
+					$row = $db->fetchByAssoc($result);
 				}
 				else
 				{
-					$row = $parent_bean->db->fetchByAssoc($result, $index);
+					$row = $db->fetchByAssoc($result, $index);
 				}
 
 				$post_retrieve = array();
@@ -3829,7 +3899,7 @@ function save_relationship_changes($is_update, $exclude=array())
 				while($row)
 				{
 					$function_fields = array();
-					if(($index < $row_offset + $max_per_page || $max_per_page == -99) or ($parent_bean->db->dbType != 'mysql'))
+					if(($index < $row_offset + $max_per_page || $max_per_page == -99) or ($db->dbType != 'mysql'))
 					{
 						if ($processing_collection)
 						{
@@ -3948,7 +4018,7 @@ function save_relationship_changes($is_update, $exclude=array())
 					}
 					// go to the next row
 					$index++;
-					$row = $parent_bean->db->fetchByAssoc($result, $index);
+					$row = $db->fetchByAssoc($result, $index);
 				}
 			}
 			//now handle retrieving many-to-many relationships
@@ -3956,9 +4026,9 @@ function save_relationship_changes($is_update, $exclude=array())
 			{
 				foreach($secondary_queries as $query2)
 				{
-					$result2 = $this->db->query($query2);
+					$result2 = $db->query($query2);
 
-					$row2 = $this->db->fetchByAssoc($result2);
+					$row2 = $db->fetchByAssoc($result2);
 					while($row2)
 					{
 						$id_ref = $row2['ref_id'];
@@ -3973,7 +4043,7 @@ function save_relationship_changes($is_update, $exclude=array())
 								}
 							}
 						}
-						$row2 = $this->db->fetchByAssoc($result2);
+						$row2 = $db->fetchByAssoc($result2);
 					}
 				}
 
@@ -4413,14 +4483,15 @@ function save_relationship_changes($is_update, $exclude=array())
 	function build_related_list($query, &$template, $row_offset = 0, $limit = -1)
 	{
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
+		$db = &DBManagerFactory::getInstance('listviews');
 
 		if(!empty($row_offset) && $row_offset != 0 && !empty($limit) && $limit != -1)
 		{
-			$result = $this->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $template->object_name list: ");
+			$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $template->object_name list: ");
 		}
 		else
 		{
-			$result = $this->db->query($query, true);
+			$result = $db->query($query, true);
 		}
 
 		$list = Array();
@@ -4461,6 +4532,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	*/
   function build_related_list_where($query, &$template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
   {
+  	$db = &DBManagerFactory::getInstance('listviews');
   	// No need to do an additional query
   	$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
   	if(empty($in) && !empty($query))
@@ -4498,11 +4570,11 @@ function save_relationship_changes($is_update, $exclude=array())
   	}
   	if (!empty($limit))
   	{
-  		$result = $this->db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
+  		$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $this->object_name list: ");
   	}
   	else
   	{
-  		$result = $this->db->query($query, true);
+  		$result = $db->query($query, true);
   	}
 
   	$list = Array();
@@ -4510,7 +4582,7 @@ function save_relationship_changes($is_update, $exclude=array())
   	$class = get_class($template);
 
   	$disable_security_flag = ($template->disable_row_level_security) ? true : false;
-  	while($row = $this->db->fetchByAssoc($result))
+  	while($row = $db->fetchByAssoc($result))
   	{
   		if(!$isFirstTime)
   		{
@@ -5177,6 +5249,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
 	}
 	//END SUGARCRM flav=pro ONLY
+	/**
+	 * Check whether the user has access to a particular view for the current bean/module
+	 * @param $view string required, the view to determine access for i.e. DetailView, ListView...
+	 * @param $is_owner bool optional, this is part of the ACL check if the current user is an owner they will receive different access
+	 */
     function ACLAccess($view,$is_owner='not_set')
     {
     	global $current_user;

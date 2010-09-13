@@ -103,11 +103,6 @@ require_once('include/EditView/EditView2.php');
  			$this->_build_field_defs();
  		}
 
- 		/*if(file_exists('modules/' . $this->module . '/metadata/SearchFields.php'))
- 			require_once('modules/' . $this->module . '/metadata/SearchFields.php');
-       	if(file_exists('custom/modules/' . $this->module . '/metadata/SearchFields.php'))
-       		require_once('custom/modules/' . $this->module . '/metadata/SearchFields.php');
-        */
         $this->searchFields = $searchFields[$this->module];
 
         // Setub the tab array
@@ -304,6 +299,9 @@ require_once('include/EditView/EditView2.php');
 		$this->fieldDefs = array();
 		foreach($this->searchdefs['layout'][$this->displayView] as $data){
 			if(is_array($data)){
+				//Fields may be listed but disabled so that when they are enabled, they have the correct custom display data.
+				if (isset($data['enabled']) && $data['enabled'] == false)
+					continue;
 				$data['name'] = $data['name'].'_'.$this->parsedView;
 				$this->formData[] = array('field' => $data);
 				$this->fieldDefs[$data['name']]= $data;
@@ -405,7 +403,7 @@ require_once('include/EditView/EditView2.php');
      * @param bool $addAllBeanFields true to process at all bean fields
      */
     function populateFromArray(&$array, $switchVar = null, $addAllBeanFields = true) {
-
+	
        if((!empty($array['searchFormTab']) || !empty($switchVar)) && !empty($this->searchFields)) {
 			$arrayKeys = array_keys($array);
             $searchFieldsKeys = array_keys($this->searchFields);
@@ -452,28 +450,40 @@ require_once('include/EditView/EditView2.php');
 
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;           /*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-                    if(isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool' && ($array[$long_name]=='0' || $array[$long_name]=='1'))) ) { //advanced*/
+                    if(isset($array[$long_name]) && ( $array[$long_name] !== '' 
+						|| (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool' 
+							&& ($array[$long_name]=='0' || $array[$long_name]=='1'))) ) 
+					{ //advanced*/
                         $this->searchFields[$name]['value'] = $array[$long_name];
-                        if(empty($this->fieldDefs[$long_name]['value'])) $this->fieldDefs[$long_name]['value'] = $array[$long_name];
+                        if(empty($this->fieldDefs[$long_name]['value'])) {
+                        	$this->fieldDefs[$long_name]['value'] = $array[$long_name];
+                        }
                     }else if(!empty($array[$name]) && !$fromMergeRecords) { //basic
                         $this->searchFields[$name]['value'] = $array[$name];
                         if(empty($this->fieldDefs[$long_name]['value'])) $this->fieldDefs[$long_name]['value'] = $array[$name];
                     }
                 }
+   
                 if((empty($array['massupdate']) || $array['massupdate'] == 'false') && $addAllBeanFields) {
                     foreach($this->seed->field_name_map as $key => $params) {
-                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys)) {
-                        	$this->searchFields[$key] = array('query_type' => 'default',
-                                                              'value'      => $array[$key.'_'.$SearchName]);
-
-
-                    		if (!empty($params['type']) && $params['type'] == 'parent' && !empty($params['type_name']) && !empty($this->searchFields[$key]['value'])) {
-                    			$this->searchFields[$params['type_name']] = array('query_type' => 'default',
-                                                              					  'value'      => $array[$params['type_name']]);
-                    		}
+                    	if($key != 'assigned_user_name' && $key != 'modified_by_name')
+                    	{
+	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys)) {
+	                        	$this->searchFields[$key] = array('query_type' => 'default',
+	                                                              'value'      => $array[$key.'_'.$SearchName]);
+                                if (!empty($params['type']) && $params['type'] == 'parent'
+                                    && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
+                                {
+                                        $this->searchFields[$params['type_name']] = array('query_type' => 'default',
+                                                                                          'value'      => $array[$params['type_name']]);
+                                    }
+                                if(empty($this->fieldDefs[$long_name]['value'])) {
+                                    $this->fieldDefs[$key.'_'.$SearchName]['value'] =  $array[$key.'_'.$SearchName];
+                                }
+                            }
                         }
                     }
-
+             
 
                     //BEGIN SUGARCRM flav=pro ONLY
                 	if(isset($array['team_name_advanced_new_on_update'])){
@@ -490,6 +500,14 @@ require_once('include/EditView/EditView2.php');
                 }
             }
         }
+
+       if ( is_array($this->searchFields) ) {
+           foreach ( $this->searchFields as $fieldName => $field ) {
+               if ( !empty($field['value']) && is_string($field['value']) ) {
+                   $this->searchFields[$fieldName]['value'] = trim($field['value']);
+               }
+           }
+       }
     }
 
     /**
@@ -522,7 +540,6 @@ require_once('include/EditView/EditView2.php');
         	}
         }
         //END SUGARCRM flav=pro ONLY
-
         foreach($this->searchFields as $field=>$parms) {
 			$customField = false;
             // Jenny - Bug 7462: We need a type check here to avoid database errors
@@ -766,6 +783,15 @@ require_once('include/EditView/EditView2.php');
 
                         switch(strtolower($operator)) {
                         	case 'subquery':
+                        	    $in = 'IN';
+                        	    if ( isset($parms['subquery_in_clause']) ) {
+                        	        if ( !is_array($parms['subquery_in_clause']) ) {
+                        	            $in = $parms['subquery_in_clause'];
+                        	        }
+                        	        elseif ( isset($parms['subquery_in_clause'][$field_value]) ) {
+                        	            $in = $parms['subquery_in_clause'][$field_value];
+                        	        }
+                        	    }
                                 $sq = $parms['subquery'];
                         		if(is_array($sq)){
                                     $and_or = ' AND ';
@@ -778,13 +804,14 @@ require_once('include/EditView/EditView2.php');
                                         if(!$first){
                                             $where .= $and_or;
                                         }
-                                        $where .= " {$db_field} IN ({$q} '{$field_value}%') ";
+                                        $where .= " {$db_field} $in ({$q} '{$field_value}%') ";
                                         $first = false;
                                     }
                                 }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
-                                	$where .= "{$db_field} IN (".string_format($parms['subquery'], array($field_value)).")";
+                                    $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
+                                    $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
                                 }else{
-                                  $where .= "{$db_field} IN ({$parms['subquery']} '{$field_value}%')";
+                                    $where .= "{$db_field} $in ({$parms['subquery']} '{$field_value}%')";
                                 }
 
     	                    	break;

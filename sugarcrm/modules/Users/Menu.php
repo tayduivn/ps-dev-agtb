@@ -31,7 +31,11 @@ global $mod_strings, $app_strings;
 global $current_user, $sugar_config;
 
 $module_menu=Array();
-if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users'))
+if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users')
+		//BEGIN SUGARCRM flav=sales ONLY
+		|| $current_user->user_type == 'UserAdministrator'
+		//END SUGARCRM flav=sales ONLY
+)
 {
 
 	$module_menu = Array(
@@ -51,11 +55,11 @@ if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users'
 	$module_menu[] = Array("index.php?module=Users&action=EditView&usertype=portal&return_module=Users&return_action=DetailView", $mod_strings['LNK_NEW_PORTAL_USER'],"CreateUsers");
 	//END SUGARCRM flav=ent ONLY
 	$module_menu[] = Array("index.php?module=Users&action=ListView&return_module=Users&return_action=DetailView", $mod_strings['LNK_USER_LIST'],"Users");
-//BEGIN SUGARCRM flav=pro||flav=sales ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 
 	$module_menu[] = Array("index.php?module=Users&action=reassignUserRecords", $mod_strings['LNK_REASSIGN_RECORDS'],"ReassignRecords");
 
-//END SUGARCRM flav=pro||flav=sales ONLY
+//END SUGARCRM flav=pro ONLY
 
     $module_menu[] = Array("index.php?module=Import&action=Step1&import_module=Users&return_module=Users&return_action=index", $mod_strings['LNK_IMPORT_USERS'],"Import", 'Contacts');
 }

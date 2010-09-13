@@ -2,7 +2,7 @@
 require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
- * @group bug23140
+ * @ticket 23140
  */
 class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -22,6 +22,15 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
 		global $mod_strings, $app_strings;
 		$mod_strings = return_module_language('en_us', 'Accounts');
 		$app_strings = return_application_language('en_us');
+		
+		$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+
+		require('sugar_version.php');
+		$GLOBALS['sugar_version'] = $sugar_version;
 	}
 	
 	public function tearDown() 
@@ -35,6 +44,8 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['current_language'] = $this->current_language;
 		unset($GLOBALS['mod_strings']);
 		unset($GLOBALS['app_strings']);
+		unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
 	}
 
     public function test_populate_only_no_query()

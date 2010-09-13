@@ -38,9 +38,8 @@
 <script>
 	var jstransaction = new JSTransaction();
 </script>
-<script src = "include/javascript/yui/dragdrop.js" ></script>
-<script src='modules/Studio/studiotabgroups.js'></script>
-<script src = "modules/Studio/ygDDListStudio.js" ></script>				 	
+<script src="modules/Studio/studiotabgroups.js"></script>
+<script src="modules/Studio/ygDDListStudio.js"></script>				 	
 <script type="text/javascript" src="modules/Studio/studiodd.js" ></script>	
 <script type="text/javascript" src="modules/Studio/studio.js" ></script>	
 <style type='text/css'>
@@ -89,20 +88,10 @@
             onclick='studiotabs.generateForm("edittabs");document.edittabs.submit()'>
             {$MOD.LBL_BTN_SAVEPUBLISH}</button>
 </table>
-{if isset($tabs[$otherLabel]) }
 <p />
 <form name='edittabs' id='edittabs' method='POST' action='index.php'>
 <input type="hidden" name="slot_count" id="slot_count" value="" />  
 <table  cellpadding="0" cellspacing="0" border="0" width="100%">
-<tr>
-	<td width="2%" class='dataLabel'>
-		<input name="other_group_tab_displayed" value="1" class="checkbox"  type="checkbox" {$other_group_tab_displayed} >
-	</td>
-	<td width="97%" class='dataLabel'>
-	{$MOD.LBL_DISPLAY_OTHER_TAB}
-	{sugar_help text=$MOD.LBL_DISPLAY_OTHER_TAB_HELP}
-	</td>
-</tr>
 <tr>
 	<td width="100%" class='dataLabel' colspan=2>
 	{$MOD.LBL_TABGROUP_LANGUAGE}&nbsp;
@@ -111,7 +100,6 @@
 	</td>
 </tr>
 </table>
-{/if}
 <table><tr><td valign='top' nowrap class="edit view" style="width: auto;">
 <table  cellpadding="0" cellspacing="0" width="100%"   id='s_field_delete'>
 							<tr><td ><ul id='trash' class='listContainer'>
@@ -156,7 +144,7 @@ subtabModules['modSlot{$modCounter}'] = '{$value.label}'</script>
 </span></h2><input type='hidden' name='tablabelid_{$tabCounter}' id='tablabelid_{$tabCounter}'  value='{$tab.label}'><input type='text' name='tablabel_{$tabCounter}' id='tablabel_{$tabCounter}' style='display:none' value='{$tab.labelValue}' onblur='studiotabs.editTabGroupLabel({$tabCounter}, true)'>
 <ul id='ul{$tabCounter}' class='listContainer'>
 {counter start=0 name="subtabCounter" print=false assign="subtabCounter"}
-{foreach from=$tab.modules item='list'}
+{foreach from=$tab.modules key='list' item='name'}
 
 <li id='subslot{$tabCounter}_{$subtabCounter}' class='listStyle' name='{$list}'><span class='slotB' >{$availableModuleList[$list].label}</span></li>
 <script>subtabModules['subslot{$tabCounter}_{$subtabCounter}'] = '{$availableModuleList[$list].label}'</script>

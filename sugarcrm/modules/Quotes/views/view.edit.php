@@ -199,7 +199,9 @@ class QuotesViewEdit extends ViewEdit
 		// Set Currency values and currency javascript
 		require_once('modules/Currencies/ListCurrency.php');
 		$currency = new ListCurrency();
-        if ( isset($_REQUEST['currency_id']) && !empty($_REQUEST['currency_id']) ) {
+        if ( isset($this->bean->currency_id) && !empty($this->bean->currency_id) ) {
+            $curid = $this->bean->currency_id;
+        } elseif ( isset($_REQUEST['currency_id']) && !empty($_REQUEST['currency_id']) ) {
             $curid = $_REQUEST['currency_id'];
         } elseif ( empty($this->bean->id) ) {
             $curid = $current_user->getPreference('currency');
@@ -249,7 +251,7 @@ class QuotesViewEdit extends ViewEdit
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name', '$line_item->mft_part_num', '$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '"
 											. format_number($product_bundle->shipping)."', '".js_escape(br2nl($line_item->description))."', '". $line_item->type_id."'"
-											. ", '".format_number($line_item->discount_amount, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid))."'"
+											. ", '".format_number($line_item->discount_amount_usdollar, $significantDigits, $significantDigits, array('convert' => !$line_item->discount_select, 'currency_id' => $curid))."'"
                                     . ", ".($line_item->discount_select?'1':'0').");\n";
 							}
 							else if ($line_item->object_name == "ProductBundleNote") {
@@ -286,7 +288,7 @@ class QuotesViewEdit extends ViewEdit
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'";
-							$add_row .=  ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name', '$line_item->mft_part_num', 'group_$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."', '".js_escape(br2nl($line_item->description))."', '" . $line_item->type_id ."','".$line_item->discount_amount."','".($line_item->discount_select?'1':'0')."');\n";
+							$add_row .=  ", '', '', '$line_item->pricing_factor', '$line_item->tax_class', '$tax_class_name', '$line_item->mft_part_num', 'group_$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."', '".js_escape(br2nl($line_item->description))."', '" . $line_item->type_id ."','".$line_item->discount_amount_usdollar."','".($line_item->discount_select?'1':'0')."');\n";
 		
 						} //foreach
 						if(empty($product_list)){

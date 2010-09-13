@@ -168,7 +168,6 @@ array (
 			'name' => 'portal_active',
 			'vname' => 'LBL_PORTAL_ACTIVE',
 			'type' => 'bool',
-			'required' => true,
 			'default' => '0',
 			'group'=>'portal',
 			'comment' => 'Indicator whether this contact is a portal user'
@@ -323,8 +322,7 @@ array (
 		'name' => 'contracts',
 		'type' => 'link',
 		'vname' => 'LBL_CONTRACTS',
-		'relationship' => 'contracts_quotes',
-		'link_type' => 'one',
+		'relationship' => 'contracts_contacts',
 		'source' => 'non-db',
 	),
 //END SUGARCRM flav=pro ONLY
@@ -549,6 +547,7 @@ array (
         'type' => 'bool',
         'source' => 'non-db',
         'comment' => 'Synch to outlook?  (Meta-Data only)',
+        'studio' => 'true',
       ),
 //BEGIN SUGARCRM flav=dce ONLY
     'dceinstance_role_fields' =>
