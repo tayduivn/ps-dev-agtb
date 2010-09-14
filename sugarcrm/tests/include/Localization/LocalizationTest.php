@@ -5,8 +5,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() 
     {
-        $this->markTestSkipped('Skip this test');
-    	$this->_locale = new Localization();
+        $this->_locale = new Localization();
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
     }
     
@@ -154,7 +153,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetPrecedentPreferenceForDefaultEmailCharset()
     {
         $emailSettings = array('defaultOutboundCharset' => 'something fun');
-        $this->_user->setPreference('emailSettings',$emailSettings, 'Emails');
+        $this->_user->setPreference('emailSettings',$emailSettings, 0, 'Emails');
         
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('default_email_charset',$this->_user),
