@@ -31,16 +31,16 @@ require_once('data/SugarBean.php');
 
 class TrackerSession extends SugarBean {
 
-	var $module_dir = 'TrackerSessions';
+	var $module_dir = 'Trackers';
 	var $object_name = 'tracker_sessions';
 	var $table_name = 'tracker_sessions';
     var $acltype = 'TrackerSession';
-    
+
 	function TrackerSession() {
     	global $dictionary;
     	if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
     	    require('metadata/tracker_sessionsMetaData.php');
-    	}			
+    	}
 		parent::SugarBean();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security = true;
@@ -52,6 +52,6 @@ class TrackerSession extends SugarBean {
 			case 'ACL': return true;
 		}
 		return false;
-	}	
+	}
 }
 ?>
