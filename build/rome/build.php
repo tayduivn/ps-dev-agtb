@@ -66,12 +66,20 @@ if(!empty($config['base_dir'])){
 		$path = $config['base_dir'];
 		$rome->build("$path");
 	}
+	if(!empty($config['latin'])){
+		echo "\nImporting Languages\n\n";
+		require_once('Latin.php');
+		$latin = new Latin($rome, $config['languages']['gitPath']);
+		$latin->copyTranslations();
+	}
+	
 }else{
 	$rome->throwException("No Base Directory To Build From", true);
 }
+
+
 $total = microtime(true) - $time;
 echo "\n\n" . 'TOTAL TIME: ' . $total . "\n";
-
 
 
 function getConfig(){

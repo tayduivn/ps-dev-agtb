@@ -1,6 +1,7 @@
 <?php
 
 $config['builds']['ent']['flav'] = array('ent','pro');
+$config['builds']['ent']['languages']= array('it_it', 'de_DE');
 $config['builds']['ent']['lic'] = array('sub');
 $config['blackList']['ent'] = array(
 'sugarcrm/build'=>1,

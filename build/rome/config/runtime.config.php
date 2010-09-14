@@ -1,6 +1,7 @@
 <?php
 
 $config = array();
+$config['languages']['gitPath'] = '../../translations'; 
 $config['build_dir'] = 'builds';
 $config['regions'] = array();
 $config['deployments'] = array("od");
