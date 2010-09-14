@@ -234,7 +234,9 @@ function export($type, $records = null, $members = false) {
 			            && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) ) {
                     $valueArray = explode(",",$value);
                     foreach ( $valueArray as $multikey => $multivalue ) {
-                        $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                        if ( isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) ) {
+                            $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                        }
                     }
                     $value = implode(",",$valueArray);
 			    }
