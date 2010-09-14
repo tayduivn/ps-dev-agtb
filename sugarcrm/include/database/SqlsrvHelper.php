@@ -129,9 +129,16 @@ class SqlsrvHelper extends MssqlHelper
             return parent::indexSQL($tableName, $fieldDefs, $indices); 
         }
         
+        // check to see if one of the passed in indices is a primary one; if so we can bail as well
+        foreach ( $indices as $index ) {
+            if ( $index['type'] == 'primary' ) {
+                return parent::indexSQL($tableName, $fieldDefs, $indices); 
+            }
+        }
+        
         // Change the first index listed to be a clustered one instead ( so we have at least one for the table )
         if ( isset($indices[0]) ) {
-            //$indices[0]['type'] = 'clustered';
+            $indices[0]['type'] = 'clustered';
         }
         
         return parent::indexSQL($tableName, $fieldDefs, $indices); 
