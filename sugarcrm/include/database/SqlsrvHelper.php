@@ -257,5 +257,51 @@ EOSQL;
 
         return true;
     }
+    
+    /**
+     * protected function to return true if the given tablename has any fulltext indexes defined.
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    protected function doesTableHaveAFulltextIndexDefined($tableName)
+    {
+        $query = <<<EOSQL
+SELECT 1
+    FROM sys.fulltext_indexes i
+        JOIN sys.objects o ON i.object_id = o.object_id
+    WHERE o.name = {$tableName}
+EOSQL;
+
+        $result = $this->db->getOne($query);
+        if ( !$result ) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * Override method to add support for detecting and dropping fulltext indices.
+     *
+     * @see DBHelper::changeColumnSQL()
+     * @see MssqlHelper::changeColumnSQL()
+     */
+    protected function changeColumnSQL(
+        $tablename, 
+        $fieldDefs, 
+        $action, 
+        $ignoreRequired = false
+        )
+    {
+        $sql = '';
+        if ( $this->doesTableHaveAFulltextIndexDefined($tableName) ) {
+            $sql .= "DROP FULLTEXT INDEX ON {$table}";
+        }
+        
+        $sql .= parent::changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
+        
+        return $sql;
+    }
 }
 ?>
