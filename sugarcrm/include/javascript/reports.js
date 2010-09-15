@@ -1707,7 +1707,7 @@ SUGAR.reports = function() {
 				else {
 					summary_sort_by_elem = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value);
 				}
-				summary_sort_by_elem.table_key = SUGAR.reports.getLinkedFieldName(document.ReportsWizardForm.summary_sort_by.value);
+				summary_sort_by_elem.table_key = summaryFieldLink;
 				summary_sort_by_elem.sort_dir = document.ReportsWizardForm.summary_sort_dir.value;
 				summary_sort_by.push(summary_sort_by_elem);
 				report_def.summary_order_by = summary_sort_by;
