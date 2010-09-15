@@ -38,7 +38,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/modules/ACLFields'=>1,
 'sugarcrm/modules/ProjectResources'=>1,
 'sugarcrm/modules/Holidays'=>1,
-
+'sugarcrm/service/v3_1'=>1,
 'sugarcrm/modules/Connectors/connectors/filters/ext/rest/zoominfocompany'=>1,
 'sugarcrm/modules/Connectors/connectors/filters/ext/rest/zoominfoperson'=>1,
 'sugarcrm/modules/Connectors/connectors/filters/ext/soap/hoovers'=>1,
