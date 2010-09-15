@@ -223,8 +223,8 @@ if(empty($focus->id)) {
 		$product->quote_id=$focus->id;
         $product->account_id=$focus->billing_account_id;  //<--------------
         $product->contact_id=$focus->billing_contact_id;
-		$product->status=$focus->quote_type;
-		if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
+		//SM: removed as per Bug 15305 $product->status=$focus->quote_type;
+		// if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
     		$product->save();
     		$pb->set_productbundle_product_relationship($product->id,$_POST['parent_group_position'][$i], $product_bundels[$_REQUEST['parent_group'][$i]] );
 		}
