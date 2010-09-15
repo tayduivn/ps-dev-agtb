@@ -445,6 +445,23 @@ class Call extends SugarBean
 			$call_fields['DATE_START'] = "<font class='futureTask'>".$call_fields['DATE_START']."</font>";
 		}
 		$this->fill_in_additional_detail_fields();
+
+		//make sure we grab the localized version of the contact name, if a contact is provided
+		if (!empty($this->contact_id)) {
+			global $locale;
+			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
+			$query .= "WHERE id='$this->contact_id' AND deleted=0";
+			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
+	
+			// Get the contact name.
+			$row = $this->db->fetchByAssoc($result);
+
+			if($row != null)
+			{
+				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
+			}
+		}
+		
         $call_fields['CONTACT_ID'] = $this->contact_id;
         $call_fields['CONTACT_NAME'] = $this->contact_name;
 
