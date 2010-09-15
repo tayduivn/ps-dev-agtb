@@ -136,8 +136,6 @@ function getConfig(){
 		}   	
             
 	}  
-	//$config['latin'] = true;
-	//$config['file'] ='sugarcrm/portal/index.php';
 	return $config;
 
 }

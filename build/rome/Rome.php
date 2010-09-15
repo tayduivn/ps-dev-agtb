@@ -232,7 +232,7 @@ protected function addToOutput($line){
         foreach($this->active as $build=>$active){
         		if($flushComment && !empty($this->commentBuffer[$build])){
         			if($replaceComment){
-        				print_r($build);
+        				//print_r($build);
                     	$this->output[$build] .= $this->config['license'][$build];
                     }else{
                         $this->output[$build] .= $this->commentBuffer[$build];
