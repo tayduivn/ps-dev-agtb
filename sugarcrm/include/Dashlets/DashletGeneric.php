@@ -136,7 +136,8 @@ class DashletGeneric extends Dashlet {
         $chooser->args['values_array'][1] = array();
 
         $this->loadCustomMetadata();
-        $this->addCustomFields();
+        // Bug 39517 - Don't add custom fields automatically to the available fields to display in the listview
+        //$this->addCustomFields();
         if($this->displayColumns) {
              // columns to display
              foreach($this->displayColumns as $num => $name) {
