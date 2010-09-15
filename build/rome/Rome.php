@@ -571,7 +571,7 @@ public function build($path, $skipBuilds=array()){
                          }
 			$this->build($next, $nextSkip);
 		}else if($this->isFile($next)){
-			$this->buildFile($next, $skipBuilds);
+			$this->buildFile($next,"",$skipBuilds);
 
 		}else{
                         //these aren't files we scan just copy them over
