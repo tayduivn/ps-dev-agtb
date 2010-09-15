@@ -10,6 +10,7 @@ $config['registry']['dep'] = array('os'=>1, 'od'=>1, 'een' => 1);
 $config['registry']['reg'] = array('zh_cn'=>1);
 $config['registry']['lic'] = array('sub'=>1, 'gpl'=>1);
 $config['sugarVariables'] = array('@_SUGAR_VERSION'=>'','@_SUGAR_FLAV'=>'' );
+$config['mergeDirs'] = array('translations'=>'sugarcrm');
 
 $config['builds']['exp']['flav'] = array('com');
 $config['builds']['exp']['lic'] = array('sub'=>'sub');

@@ -2,9 +2,11 @@
 
 class Latin{
 	
-	function __construct($rome, $translationPath){
+	function __construct($rome, $translationPath, $baseDir){
 		$this->translationPath = $translationPath;
 		$this->rome = $rome;
+		$this->baseDir = realpath($baseDir);
+		if(empty($this->startPath))$this->startPath = $this->baseDir;
 		
 	}
 	
@@ -31,9 +33,22 @@ class Latin{
 					foreach($build['languages'] as $lang){
 	   					if(strpos($fileInfo->getFilename(), $lang. '.') !== false){
     						$path = $fileInfo->getPathname();
-    						$path = str_replace($this->translationPath . '/', '' , $path);
+    						
+    						//$config['file'] = $path;
+	   						//$config['file'] = realpath($config['file']);
+							//$config['file'] = str_replace($config['base_dir']. '/','', $config['file']);
+							//if(is_file($config['base_dir'] .'/' .  $config['file'])){
+								//$rome->setStartPath($config['base_dir']);
+								//echo "Building " . $config['base_dir']  .'/' . $config['file'];
+								//$this->rome->setOnlyOutput($flav);
+								//$rome->buildFile($config['base_dir']  .'/' . $config['file']);
+							//}
+    						    						
+    						//$path = str_replace($this->translationPath . '/', '' , $path);
+    						$path = realpath($path);
+    						$path = str_replace($this->baseDir . '/','', $path);
     						$this->rome->setOnlyOutput($flav);
-    						$this->rome->buildFile($path);
+    						$this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
     					}
 					}
     			}
@@ -44,7 +59,8 @@ class Latin{
 	
 	function copyTranslations(){
 		$this->updateGit();
-		$this->copyFiles($this->translationPath);
+		$tmp_path=realpath("$this->cwd" ."/". "$this->translationPath");
+		$this->copyFiles($tmp_path);
 		chdir($this->cwd);
 	} 
 	

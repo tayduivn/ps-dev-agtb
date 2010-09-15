@@ -454,8 +454,9 @@ protected function getTags(){
 
 
 
-public function buildFile ($path, $skipBuilds = array() ){
+public function buildFile ($path, $startPath, $skipBuilds = array() ){
 	    $this->file = $path;
+	    if(!empty($startPath))$this->startPath = $startPath ;
         echo $path . "\n";
 	    $fp = fopen($path, 'r');
         $out = '';
@@ -488,7 +489,12 @@ public function buildFile ($path, $skipBuilds = array() ){
 
 protected function cleanPath($path){
 		if(empty($this->startPath))return $path;
-        return str_replace($this->startPath . '/', '', $path);
+        else if(empty ($this->config['mergeDirs']) ){
+         	return str_replace($this->startPath . '/', '', $path);
+        }else {
+        	$path = str_replace($this->startPath . '/', '', $path);
+        	return str_replace( 'translations', $this->config['mergeDirs']['translations'], $path);
+        }
 }
 
 
