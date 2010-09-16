@@ -160,6 +160,7 @@ function post_install()
 
 	//Upgrade Projects
 	upgradeProjects();
+        setConnectorDefaults();
     rebuild_teams();
 	rebuild_roles();
 }
@@ -368,4 +369,9 @@ function upgradeProjects(){
 	updateProjectTaskData();
 	updateProjectResources();
 }
+
+function setConnectorDefaults(){
+    require('modules/Connectors/InstallDefaultConnectors.php');
+} 
+
 ?>

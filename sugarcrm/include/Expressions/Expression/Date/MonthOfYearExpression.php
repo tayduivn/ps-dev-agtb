@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,7 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/Date/DateExpression.php');
-
+/**
+ * <b>monthofyear(Date d)</b><br>
+ * Returns the month of year that <i>d</i> is in.<br/>
+ * Jan = 1, Feb = 2, ... , Dec = 12
+ **/
 class MonthOfYearExpression extends DateExpression
 {
 	/**

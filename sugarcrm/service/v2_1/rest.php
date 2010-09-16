@@ -26,11 +26,11 @@
  * This is a rest entry point for rest version 3.1
  */
 chdir('../..');
-require_once('SugarWebServiceImplv5.php');
+require_once('SugarWebServiceImplv2_1.php');
 $webservice_class = 'SugarRestService';
 $webservice_path = 'service/core/SugarRestService.php';
-$webservice_impl_class = 'SugarWebServiceImplv5';
-$registry_class = 'registry_v5';
-$location = '/service/v5/rest.php';
-$registry_path = 'service/v5/registry.php';
+$webservice_impl_class = 'SugarWebServiceImplv2_1';
+$registry_class = 'registry_v2_1';
+$location = '/service/v2_1/rest.php';
+$registry_path = 'service/v2_1/registry.php';
 require_once('service/core/webservice.php');

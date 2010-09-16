@@ -26,14 +26,11 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  * This class is an implemenatation class for all the rest services
  */
 require_once('service/core/SugarWebServiceImpl.php');
-require_once('service/v3/SugarWebServiceUtilv3.php');
 
+class SugarWebServiceImplv2_1 extends SugarWebServiceImpl {
 
-class SugarWebServiceImplv5 extends SugarWebServiceImpl {
-
-    public function __construct()
-    {
-        self::$helperObject = new SugarWebServiceUtilv3();
+	public function __construct(){
+    	parent::__construct();
     }
     
     /**
@@ -100,5 +97,3 @@ class SugarWebServiceImplv5 extends SugarWebServiceImpl {
 		return $result;
 	} // fn
 }
-
-SugarWebServiceImplv5::$helperObject = new SugarWebServiceUtilv3();
