@@ -475,8 +475,13 @@ filter_defs['fullname'] = qualifiers_name;
 
 var qualifiers_name = new Array();
 //qualifiers_name = qualifiers_name.concat(qualifiers);
+var is_not_empty_def = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
+var is_empty_def = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
+qualifiers_name.unshift(is_not_empty_def);
+qualifiers_name.unshift(is_empty_def);
 qualifiers_name.unshift(not_one_of_def);
 qualifiers_name.unshift(one_of_def);
+qualifiers_name.unshift(is_not_def);
 qualifiers_name.unshift(is_def);
 filter_defs['user_name'] = qualifiers_name;
 
