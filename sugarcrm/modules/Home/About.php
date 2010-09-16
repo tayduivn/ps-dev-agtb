@@ -63,7 +63,12 @@ global $sugar_config, $mod_strings;
 </b></p>
 
 <?php
+//BEGIN SUGARCRM lic!=sub ONLY
 echo "<P>Copyright ".$app_strings['LBL_SUGAR_COPYRIGHT']."</P>";
+//END SUGARCRM lic!=sub ONLY
+//BEGIN SUGARCRM lic=sub ONLY
+echo "<P>Copyright ".$app_strings['LBL_SUGAR_COPYRIGHT_SUB']."</P>";
+//END SUGARCRM lic=sub ONLY
 //BEGIN SUGARCRM flav=com  && dep=os ONLY
 
 // This version of viewLicenseText is for Community Edition only.
