@@ -621,7 +621,7 @@ function confirmDelete() {
                         isDefault:true
                 }, {
                         text: SUGAR.language.get('Users', 'LBL_CANCEL'),
-                        handler: handleNo,
+                        handler: handleNo
                 }]
      });
     confirmDeletePopup.setHeader(SUGAR.language.get('Users', 'LBL_DELETE_USER'));
