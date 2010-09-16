@@ -55,7 +55,7 @@
 </tr>
 <tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_FORMULA"}:</td> 
-    <td><input id="formula" type="text" name="formula" value="{$vardef.formula|escape:'html'}" maxlength=255 />
+    <td><input id="formula" type="text" name="formula" value="{$vardef.formula}" maxlength=255 />
 	    <input type="button" class="button"  name="editFormula" style="margin-top: -2px" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
             onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)" />
     </td>

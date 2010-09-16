@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: Localization.php 58121 2010-09-09 18:35:17Z kjing $
+ * $Id: Localization.php 58128 2010-09-09 22:51:07Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
@@ -119,9 +119,9 @@ class Localization {
 		// Bug 39171 - If we are asking for default_email_charset, check in emailSettings['defaultOutboundCharset'] as well
 		if ( $prefName == 'default_email_charset' ) {
 		    if($user != null) {
-                $emailSettings = $user->getPreference('emailSettings');
+                $emailSettings = $user->getPreference('emailSettings', 'Emails');
             } elseif(!empty($current_user)) {
-                $emailSettings = $current_user->getPreference('emailSettings');
+                $emailSettings = $current_user->getPreference('emailSettings', 'Emails');
             }
             if ( isset($emailSettings['defaultOutboundCharset']) ) {
                 $userPref = $emailSettings['defaultOutboundCharset'];

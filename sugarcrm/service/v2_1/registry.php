@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -22,9 +21,9 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  ********************************************************************************/
 
-require_once('service/v3/registry.php'); //Extend off of v2 registry
+require_once('service/v2/registry.php'); //Extend off of v2 registry
 
-class registry_v5 extends registry_v3 {
+class registry_v2_1 extends registry {
 	
 	/**
 	 * This method registers all the functions on the service class

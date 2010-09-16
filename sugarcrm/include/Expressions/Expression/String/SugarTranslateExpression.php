@@ -1,7 +1,5 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
- if(!defined('sugarEntry'))define('sugarEntry', true);
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,18 +17,52 @@
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- *
  ********************************************************************************/
+require_once("include/Expressions/Expression/String/StringExpression.php");
 
 /**
- * This is a rest entry point for rest version 3.1
- */
-chdir('../..');
-require_once('SugarWebServiceImplv5.php');
-$webservice_class = 'SugarRestService';
-$webservice_path = 'service/core/SugarRestService.php';
-$webservice_impl_class = 'SugarWebServiceImplv5';
-$registry_class = 'registry_v5';
-$location = '/service/v5/rest.php';
-$registry_path = 'service/v5/registry.php';
-require_once('service/core/webservice.php');
+ * <b>translate(String label, String module)</b><br>
+ * Returns the translated version of a given label key<br/>
+ * ex: <i>valueAt(2, getTransDD("my_list"))</i>
+ **/
+class SugarTranslateExpression extends StringExpression {
+	
+	function evaluate() {
+		$params = $this->getParameters();
+        $module = $params[1]->evaluate();
+        if ($module == "")
+              $module = "app_strings";
+        $key = $params[0]->evaluate();
+        return translate($key, $module);
+	}
+	
+	/**
+	 * Returns the JS Equivalent of the evaluate function.
+	 */
+	static function getJSEvaluate() {
+		return <<<EOQ
+		  var params = this.getParameters();
+		  var module = params[1].evaluate();
+		  if (module == "")
+		      module = "app_strings";
+		  var key = params[0].evaluate();
+		  return SUGAR.language.get(module, key);
+EOQ;
+	}
+	
+	/**
+	 * Returns the opreation name that this Expression should be
+	 * called by.
+	 */
+	static function getOperationName() {
+		return "translate";
+	}
+
+	/**
+	 * Returns the maximum number of parameters needed.
+	 */
+	static function getParamCount() {
+		return 2;
+	}
+}
+?>
