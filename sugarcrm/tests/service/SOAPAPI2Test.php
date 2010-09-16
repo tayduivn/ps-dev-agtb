@@ -69,6 +69,9 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     	}
     } // fn
     
+    /**
+     * @ticket 38986
+     */
     public function testGetEntryForContactNoSelectFields(){
     	global $soap_version_test_contactId;
 		$this->_login();
