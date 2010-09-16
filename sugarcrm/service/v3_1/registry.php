@@ -118,5 +118,18 @@ class registry_v3_1 extends registry_v3 {
 				)
 		);
 		
+		$this->serviceClass->registerType(
+		    'new_module_fields',
+			'complexType',
+		   	 'struct',
+		   	 'all',
+		  	  '',
+				array(
+		        	'module_name'=>array('name'=>'module_name', 'type'=>'xsd:string'),
+		        	'module_name'=>array('name'=>'table_name', 'type'=>'xsd:string'),
+					'module_fields'=>array('name'=>'module_fields', 'type'=>'tns:field_list'),
+					'link_fields'=>array('name'=>'link_fields', 'type'=>'tns:link_field_list'),
+				)
+		);
 	}
 }

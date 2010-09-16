@@ -24,7 +24,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/themes/TrailBlazers'=>1,
 'sugarcrm/themes/VintageSugar'=>1,
 'sugarcrm/themes/WhiteSands'=>1,
-
+'sugarcrm/service/v3_1'=>1,
 'sugarcrm/modules/CustomQueries'=>1,
 'sugarcrm/modules/DataSets'=>1,
 'sugarcrm/modules/ReportMaker'=>1,

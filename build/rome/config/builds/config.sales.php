@@ -8,7 +8,7 @@ $config['blackList']['sales'] = array(
 'sugarcrm/modules/ACLFields'=>1,
 
 'sugarcrm/modules/Bugs'=>1,
-
+'sugarcrm/service/v3_1'=>1,
 'sugarcrm/modules/Campaigns'=>1,
 'sugarcrm/modules/CampaignLog'=>1,
 'sugarcrm/modules/CampaignTrackers'=>1,

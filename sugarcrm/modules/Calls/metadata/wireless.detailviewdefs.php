@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -25,44 +26,26 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-// $Id: expression_utils.php 51719 2009-10-22 17:18:00Z mitani $
-//FILE SUGARCRM flav=pro ONLY
-
-function get_expression($express_type, $first, $second){
-	
-	if($express_type=="+"){
-		return express_add($first, $second);
-	}	
-	if($express_type=="-"){
-		return express_subtract($first, $second);
-	}		
-	if($express_type=="*"){
-		return express_multiple($first, $second);
-	}		
-	if($express_type=="/"){
-		return express_divide($first, $second);
-	}			
-//end function get_expression
-}
-
-function express_add($first, $second){
-	return $first + $second;
-}	
-
-function express_subtract($first, $second){
-	return $first - $second;
-}
-
-function express_multiple($first, $second){
-	return $first * $second;
-}
-
-function express_divide($first, $second){
-	return $first / $second;
-}
-
-
-
+$viewdefs['Calls']['DetailView'] = array(
+	'templateMeta' => array(
+                            'maxColumns' => '1', 
+                            'widths' => array(
+								array('label' => '10', 'field' => '30'), 
+                            ),                                  
+                           ),
+    'panels' => array(
+    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
+		array('date_start'),
+		array('direction'),
+	    array('status'),
+	    array('duration_hours'),
+		array('duration_minutes'),
+        array('description'),
+		array('assigned_user_name'),
+		//BEGIN SUGARCRM flav=pro ONLY
+		array('team_name'),
+		//END SUGARCRM flav=pro ONLY
+        
+	),
+);
 ?>

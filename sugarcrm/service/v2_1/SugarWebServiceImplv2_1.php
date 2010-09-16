@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -33,7 +32,9 @@ class SugarWebServiceImplv2_1 extends SugarWebServiceImpl {
     	parent::__construct();
     }
     
-    /**
+//BEGIN SUGARCRM flav=pro ONLY
+
+/**
  * Retrieve a list of Reports info based on provided IDs. Override from v2
  *
  * @param String $session -- Session ID returned by a previous call to login.
@@ -59,6 +60,8 @@ class SugarWebServiceImplv2_1 extends SugarWebServiceImpl {
 		}
 		return array('field_list'=>$fieldList, 'entry_list'=>$outputList);
 	} // fn
+
+//END SUGARCRM flav=pro ONLY
 	
 	/**
 	 * Retrieve a list of beans.  This is the primary method for getting list of SugarBeans from Sugar using the SOAP API.
