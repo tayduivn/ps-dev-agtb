@@ -26,8 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-$viewdefs['Tasks']['DetailView'] = array(
+$viewdefs['Opportunities']['DetailView'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
                             'widths' => array(
@@ -35,15 +34,15 @@ $viewdefs['Tasks']['DetailView'] = array(
                             ),                                  
                            ),
     'panels' => array(
-		array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),    
-	    array('priority'),    
-	    array('status'),
-	    array('date_due'),
-	    array('description'),
+    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
+	    array('amount'),
+		array('account_name'),
+		array('date_closed'),
+	    array('sales_stage'),
 		array('assigned_user_name'),
-	    //BEGIN SUGARCRM flav=pro ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),
-		//END SUGARCRM flav=pro ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
 	),
 );
 ?>

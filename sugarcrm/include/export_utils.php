@@ -55,6 +55,7 @@ function export($type, $records = null, $members = false) {
 	global $beanFiles;
 	global $current_user;
 	global $app_strings;
+	global $app_list_strings;
 	global $timedate;
 	$contact_fields = array(
 		"id"=>"Contact ID"
@@ -225,6 +226,20 @@ function export($type, $records = null, $members = false) {
 			//kbrill Bug #16296
 			if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'date'){
 				$value = $timedate->to_display_date($value, false);
+			}
+			// Bug 32463 - Properly have multienum field translated into something useful for the client
+			if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'multienum'){
+			    $value = str_replace("^","",$value);
+			    if ( isset($focus->field_name_map[$fields_array[$key]]['options'])
+			            && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) ) {
+                    $valueArray = explode(",",$value);
+                    foreach ( $valueArray as $multikey => $multivalue ) {
+                        if ( isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) ) {
+                            $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                        }
+                    }
+                    $value = implode(",",$valueArray);
+			    }
 			}
 			//BEGIN SUGARCRM flav=pro ONLY
 			if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
