@@ -17,6 +17,7 @@ class Latin{
                 }
 		$this->cwd = getcwd();
 		chdir($this->translationPath);
+		echo getcwd();
 		passthru("git pull origin master");
 	}
 	
@@ -45,7 +46,7 @@ class Latin{
     							
     						}
 	   					}
-	   					$langConfig[$lang] = (!empty($config['languages'][$lang]))?$config['languages'][$lang]:$lang;
+	   					$langConfig[$lang] = (!empty($sugar_config['languages'][$lang]))?$sugar_config['languages'][$lang]:$lang;
 	   					
 					}
 					file_put_contents($this->rome->buildPath . '/' . $flav . '/sugarcrm/install/lang.config.php', '<?php' . "\n" . '$config["languages"]=' . var_export($langConfig, true)  . ';');

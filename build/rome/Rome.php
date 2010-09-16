@@ -457,7 +457,7 @@ protected function getTags(){
 public function buildFile ($path, $startPath, $skipBuilds = array() ){
 	    $this->file = $path;
 	    if(!empty($startPath))$this->startPath = $startPath ;
-        echo $path . "\n";
+        //echo $path . "\n";
 	    $fp = fopen($path, 'r');
         $out = '';
         $this->clearOutput();
