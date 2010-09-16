@@ -56,11 +56,16 @@ protected function addTestDirectoriesToBlackList()
  */
 
 public function setBuildDir($dir){
-	$this->buildPath = $dir;
+	if(!file_exists($dir))mkdir($dir, 0777, true);
+	$this->buildPath = realpath($dir);
 }
 
 public function getBuildDir(){
 	return $this->buildPath;
+}
+
+public function setOnlyOutput($flav){
+	$this->onlyOutput = array($flav=>$flav);
 }
 
 /**
@@ -200,7 +205,11 @@ protected function addToOutput($line){
             }
             if($is_lic === -1){
                 //check if it's a license
-                $i = strpos($line, $this->config['license']['search']);
+                foreach($this->config['license']['search'] as $licenseComment){
+                	$i = strpos($line, $licenseComment);
+                	if($i !== false)break;
+                }
+                
                 if($i !== false)$is_lic = true;
             }
             if($pe !== false && !$emp){
@@ -210,6 +219,7 @@ protected function addToOutput($line){
                     $comment .= substr($line, 0, $pe + 2);
                     if($is_lic !== -1)$replaceComment  = true;
                     $tailout .= substr($line, $pe + 2);
+                    
             }
             //not ending and not starting a comment then it's just a line in a comment
             if($pe === false && $ps === false){
@@ -222,6 +232,7 @@ protected function addToOutput($line){
         foreach($this->active as $build=>$active){
         		if($flushComment && !empty($this->commentBuffer[$build])){
         			if($replaceComment){
+        				//print_r($build);
                     	$this->output[$build] .= $this->config['license'][$build];
                     }else{
                         $this->output[$build] .= $this->commentBuffer[$build];
@@ -443,9 +454,10 @@ protected function getTags(){
 
 
 
-public function buildFile ($path, $skipBuilds = array() ){
+public function buildFile ($path, $startPath, $skipBuilds = array() ){
 	    $this->file = $path;
-        //echo $path . '<br>';
+	    if(!empty($startPath))$this->startPath = $startPath ;
+        //echo $path . "\n";
 	    $fp = fopen($path, 'r');
         $out = '';
         $this->clearOutput();
@@ -475,8 +487,14 @@ public function buildFile ($path, $skipBuilds = array() ){
 
 
 
-protected function cleanPath($path){
-        return str_replace($this->startPath . '/', '', $path);
+public function cleanPath($path){
+		if(empty($this->startPath))return $path;
+        else if(empty ($this->config['mergeDirs']) ){
+         	return str_replace($this->startPath . '/', '', $path);
+        }else {
+        	$path = str_replace($this->startPath . '/', '', $path);
+        	return str_replace( 'translations', $this->config['mergeDirs']['translations'], $path);
+        }
 }
 
 
@@ -553,7 +571,7 @@ public function build($path, $skipBuilds=array()){
                          }
 			$this->build($next, $nextSkip);
 		}else if($this->isFile($next)){
-			$this->buildFile($next, $skipBuilds);
+			$this->buildFile($next,"",$skipBuilds);
 
 		}else{
                         //these aren't files we scan just copy them over
