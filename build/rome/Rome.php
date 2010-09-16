@@ -487,7 +487,7 @@ public function buildFile ($path, $startPath, $skipBuilds = array() ){
 
 
 
-protected function cleanPath($path){
+public function cleanPath($path){
 		if(empty($this->startPath))return $path;
         else if(empty ($this->config['mergeDirs']) ){
          	return str_replace($this->startPath . '/', '', $path);

@@ -21,6 +21,8 @@ class Latin{
 	}
 	
 	function copyFiles($path){
+		require_once('config_override.php');
+		$langConfig = array();
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $fileInfo) {
     		if($fileInfo->isDot()) continue;
@@ -33,24 +35,21 @@ class Latin{
 					foreach($build['languages'] as $lang){
 	   					if(strpos($fileInfo->getFilename(), $lang. '.') !== false){
     						$path = $fileInfo->getPathname();
-    						
-    						//$config['file'] = $path;
-	   						//$config['file'] = realpath($config['file']);
-							//$config['file'] = str_replace($config['base_dir']. '/','', $config['file']);
-							//if(is_file($config['base_dir'] .'/' .  $config['file'])){
-								//$rome->setStartPath($config['base_dir']);
-								//echo "Building " . $config['base_dir']  .'/' . $config['file'];
-								//$this->rome->setOnlyOutput($flav);
-								//$rome->buildFile($config['base_dir']  .'/' . $config['file']);
-							//}
-    						    						
-    						//$path = str_replace($this->translationPath . '/', '' , $path);
     						$path = realpath($path);
     						$path = str_replace($this->baseDir . '/','', $path);
     						$this->rome->setOnlyOutput($flav);
-    						$this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
-    					}
+    						$this->rome->setStartPath($this->startPath);
+    						$en_usPath =$this->rome->buildPath . '/' . $flav . '/'. str_replace($lang . '.', 'en_us.',$this->rome->cleanPath($this->baseDir . '/' . $path));
+    						if(file_exists($en_usPath)){
+    							$this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
+    							
+    						}
+	   					}
+	   					$langConfig[$lang] = (!empty($config['languages'][$lang]))?$config['languages'][$lang]:$lang;
+	   					
 					}
+					file_put_contents($this->rome->buildPath . '/' . $flav . '/sugarcrm/install/lang.config.php', '<?php' . "\n" . '$config["languages"]=' . var_export($langConfig, true)  . ';');
+					
     			}
     		}
 		}	
@@ -59,6 +58,7 @@ class Latin{
 	
 	function copyTranslations(){
 		$this->updateGit();
+		
 		$tmp_path=realpath("$this->cwd" ."/". "$this->translationPath");
 		$this->copyFiles($tmp_path);
 		chdir($this->cwd);
