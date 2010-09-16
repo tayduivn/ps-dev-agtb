@@ -21,7 +21,25 @@
 require_once('service/v3/SugarWebServiceUtilv3.php');
 class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3 
 {
-	/**
+	
+    function get_return_module_fields($value, $module,$fields, $translate=true)
+    {
+		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_return_module_fields');
+		global $module_name;
+		$module_name = $module;
+		$result = $this->get_field_list($value,$fields,  $translate);
+		$GLOBALS['log']->info('End: SoapHelperWebServices->get_return_module_fields');
+		
+		$tableName = $value->getTableName();
+		
+		return Array('module_name'=>$module, 'table_name' => $tableName,
+					'module_fields'=> $result['module_fields'],
+					'link_fields'=> $result['link_fields'],
+					);
+	} // fn
+    
+    
+    /**
 	 * Track a view for a particular bean.  
 	 *
 	 * @param SugarBean $seed
