@@ -2911,7 +2911,10 @@ SUGAR.reports = function() {
 			} 
 			else if (qualifier_name == 'empty' || qualifier_name == 'not_empty') {
 			    SUGAR.reports.addFilterNoInput(row,filter);
-				SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
+				SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);	
+				if (((field_type == 'user_name')||(field_type == 'assigned_user_name')) && qualifier_name == 'empty' && typeof(filter.name) =='undefined') {
+					alert(SUGAR.language.get("Reports", 'LBL_USER_EMPTY_HELP'));							
+				}
 		 	}
 			else if (field_type == 'date' || field_type == 'datetime') {
 				if (qualifier_name.indexOf('tp_') == 0) {
@@ -2964,10 +2967,6 @@ SUGAR.reports = function() {
 					SUGAR.reports.addFilterInputSelectMultiple(row,users_array,filter);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
 				}
-				else if (qualifier_name == 'empty' || qualifier_name == 'not_empty') {
-				    SUGAR.reports.addFilterNoInput(row,filter);
-					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
-			 	}
 				else {
 					SUGAR.reports.addFilterInputSelectSingle(row,users_array,filter);
 					SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		

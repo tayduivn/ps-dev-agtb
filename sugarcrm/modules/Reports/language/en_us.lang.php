@@ -407,8 +407,9 @@ $mod_strings = array (
     'LBL_REPORT_SCHEDULE_TITLE' => 'Schedule',
     'LBL_FAVORITES_TITLE' => 'My Favorite Reports',
     'LBL_TABLE_CHANGED' => 'Module list has been modified, please double check the criteria entered in the Group tab.',
-    'LBL_OPTIONAL_HELP' => 'Select the boxes to display the primary module records even if the related module records do not exist. When the box is not selected, then primary module records will display only when there are one or more related module records.',
+    'LBL_OPTIONAL_HELP' => 'Select the boxes to display the primary module records even if the related module records do not exist. When the box is not selected, primary module records will display only if they have one or more related module records.',
     'LBL_RUNTIME_HELP' => 'Select this box to allow users to change the filter value before running the report.',
+  	'LBL_USER_EMPTY_HELP'=>'In order to view records with no value in the Assigned To field, check the \'Optional Related Modules\' checkbox in the \'Reports Details\' step in addition to using the \'Is Empty\' option. This will display all records for which there is no relationship with a User in the system.',
 
     // Default Report Titles
     'DEFAULT_REPORT_TITLE_1' => 'Current Quarter Forecast',
