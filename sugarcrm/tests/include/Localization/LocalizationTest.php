@@ -208,4 +208,30 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
             $emailSettings['defaultOutboundCharset']
             );
     }
+    
+    /**
+     * @ticket 23992
+     */
+    public function testGetCurrencySymbol()
+    {
+        $this->_user->setPreference('default_currency_symbol','&&');
+        
+        $this->assertEquals(
+            $this->_locale->getCurrencySymbol($this->_user),
+            '&&'
+            );
+    }
+    
+    /**
+     * @ticket 23992
+     */
+    public function testGetLocaleFormattedNumberWithNoCurrencySymbolSpecified()
+    {
+        $this->_user->setPreference('default_currency_symbol','**');
+        
+        $this->assertEquals(
+            $this->_locale->getLocaleFormattedNumber(20),
+            '**20'
+            );
+    }
 }

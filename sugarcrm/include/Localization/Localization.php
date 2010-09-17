@@ -389,6 +389,11 @@ class Localization {
 		$precision = $this->getPrecedentPreference('default_currency_significant_digits', $user);
 		return $precision;
 	}
+	
+	function getCurrencySymbol($user=null) {
+		$dec = $this->getPrecedentPreference('default_currency_symbol', $user);
+		return $dec;
+	}
 
 	/**
 	 * returns a number formatted by user preference or system default
