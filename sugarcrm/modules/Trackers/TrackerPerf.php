@@ -36,6 +36,7 @@ class TrackerPerf extends SugarBean {
     var $table_name = 'tracker_perf';
     var $acltype = 'TrackerPerf';
     var $acl_category = 'TrackerPerfs';
+    var $disable_custom_fields = true;
 
     function TrackerPerf() {
         global $dictionary;
