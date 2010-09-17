@@ -228,6 +228,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetLocaleFormattedNumberWithNoCurrencySymbolSpecified()
     {
         $this->_user->setPreference('default_currency_symbol','**');
+        $this->_user->setPreference('default_decimal_separator','.');
         
         $this->assertEquals(
             $this->_locale->getLocaleFormattedNumber(20),
