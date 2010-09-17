@@ -409,12 +409,12 @@ class Localization {
 		$dec			= $this->getDecimalSeparator($user);
 		$thou			= $this->getNumberGroupingSeparator($user);
 		$precision		= $this->getPrecision($user);
-		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol() : $currencySymbol;
-
+		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol($user) : $currencySymbol;
+		
 		$exNum = explode($dec, $number);
 		// handle grouping
 		if(is_array($exNum) && count($exNum) > 0) {
-			if(strlen($exNum) > 3) {
+			if(strlen($exNum[0]) > 3) {
 				$offset = strlen($exNum[0]) % 3;
 				if($offset > 0) {
 					for($i=0; $i<$offset; $i++) {
