@@ -428,6 +428,17 @@ SE.accounts = {
 		document.getElementById("smtp_auth1").style.display = smtpauth_req.checked ? "" : "none";
 		document.getElementById("smtp_auth2").style.display = smtpauth_req.checked ? "" : "none";
 	},
+	
+	smtp_setDefaultSMTPPort : function() {
+		useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
+    
+        if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
+            document.getElementById("mail_smtpport").value = '465';
+        }
+        if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
+            document.getElementById("mail_smtpport").value = '25';
+        }
+	},
 
     /**
      * Changes the display used in the outbound email SMTP dialog to match the 
@@ -500,6 +511,7 @@ SE.accounts = {
         }
         
         SUGAR.email2.accounts.smtp_authenticate_field_display();
+        SUGAR.email2.accounts.smtp_setDefaultSMTPPort()
     },
 
     /**

@@ -161,7 +161,7 @@ function change_state(radiobutton) {
 							</td>
 						    <td width="15%" scope="row"><span id="mail_smtpssl_label">{$APP.LBL_EMAIL_SMTP_SSL_OR_TLS}</span></td>
 					        <td width="35%" >
-							<select id="mail_smtpssl" name="mail_smtpssl" tabindex="501">{$MAIL_SSL_OPTIONS}</select>
+							<select id="mail_smtpssl" name="mail_smtpssl" tabindex="501" onchange="setDefaultSMTPPort();" >{$MAIL_SSL_OPTIONS}</select>
 					        </td>
 						</tr>
 						<tr id="smtp_auth1">
@@ -609,6 +609,20 @@ function notify_setrequired(f) {
 	
 	return true;
 }
+
+function setDefaultSMTPPort() 
+{
+    useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
+    
+    if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
+        document.getElementById("mail_smtpport").value = '465';
+    }
+    if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
+        document.getElementById("mail_smtpport").value = '25';
+    }
+        
+}
+
 //BEGIN SUGARCRM flav!=sales ONLY
 /**
 *  If the outlook options are all set on page load then enable the outlook field so that the user has an indication
@@ -701,6 +715,7 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPUSER}{literal}';
         break;
     }
+    setDefaultSMTPPort();
     notify_setrequired(document.ConfigureSettings);
 }
 var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
