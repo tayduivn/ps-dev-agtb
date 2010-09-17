@@ -37,6 +37,14 @@ class ViewConvertLead extends SugarView
             $this->medataDataFile = "custom/$this->fileName";
         }
     }
+    
+    public function preDisplay()
+    {
+        if (!$this->bean->ACLAccess('edit')) {
+            ACLController::displayNoAccess();
+            sugar_die('');
+        }
+    }
 	
     /**
 	 * @see SugarView::display()
