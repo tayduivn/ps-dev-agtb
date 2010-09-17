@@ -374,7 +374,7 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 //END SUGARCRM flav=int ONLY
 
 
-// TODO: Remove the Library module, it is an example. 
+// TODO: Remove the Library module, it is an example.
 //$moduleList[] = 'Library';
 //$beanList['Library']= 'Library';
 //$beanFiles['Library'] = 'modules/Library/Library.php';
@@ -402,9 +402,9 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
     ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses',
     //BEGIN SUGARCRM flav=int ONLY
-	'TeamHierarchy', 
+    'TeamHierarchy',
     //END SUGARCRM flav=int ONLY
-    'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates', 
+    'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates',
     //BEGIN SUGARCRM flav!=sales ONLY
     'CampaignTrackers', 'CampaignLog', 'EmailMan', 'Prospects', 'ProspectLists',
     //END SUGARCRM flav!=sales ONLY
@@ -422,7 +422,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav!=dce ONLY
     'ProjectTask',
     //END SUGARCRM flav!=dce ONLY
-	  //BEGIN SUGARCRM flav=sales ONLY
+    //BEGIN SUGARCRM flav=sales ONLY
     'Emails',
     //END SUGARCRM flav=sales ONLY
     );
@@ -481,11 +481,9 @@ $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
 
-//BEGIN SUGARCRM flav=notifications ONLY
 $beanList['Notifications'] = 'Notifications';
 $beanFiles['Notifications'] = 'modules/Notifications/Notifications.php';
 $modInvisList[] = 'Notifications';
-//END SUGARCRM flav=notification ONLY
 
 // This is the mapping for modules that appear under a different module's tab
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
@@ -508,7 +506,7 @@ $GLOBALS['moduleTabMap'] = array(
 //BEGIN SUGARCRM flav!=sales ONLY
     'ProspectLists' => 'Campaigns',
     'Prospects' => 'Campaigns',
-	'EmailMarketing' => 'Campaigns',
+    'EmailMarketing' => 'Campaigns',
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'Quotas' => 'Forecasts',

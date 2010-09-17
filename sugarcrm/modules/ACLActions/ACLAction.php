@@ -25,7 +25,7 @@ class ACLAction  extends SugarBean{
     var $object_name = 'ACLAction';
     var $table_name = 'acl_actions';
     var $new_schema = true;
-
+    var $disable_custom_fields = true;
     function ACLAction(){
         parent::SugarBean();
         //BEGIN SUGARCRM flav=pro ONLY

@@ -36,6 +36,7 @@ class TrackerQuery extends SugarBean {
     var $table_name = 'tracker_queries';
     var $acltype = 'TrackerQuery';
     var $acl_category = 'TrackerQueries';
+    var $disable_custom_fields = true;
 
     function TrackerQuery() {
         global $dictionary;

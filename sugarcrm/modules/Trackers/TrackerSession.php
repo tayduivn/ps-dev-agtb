@@ -36,6 +36,7 @@ class TrackerSession extends SugarBean {
     var $table_name = 'tracker_sessions';
     var $acltype = 'TrackerSession';
     var $acl_category = 'TrackerSessions';
+    var $disable_custom_fields = true;
 
     function TrackerSession() {
         global $dictionary;

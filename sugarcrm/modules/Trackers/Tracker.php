@@ -42,6 +42,7 @@ class Tracker extends SugarBean
     var $disable_var_defs = true;
     var $acltype = 'Tracker';
     var $acl_category = 'Trackers';
+    var $disable_custom_fields = true;
 
     var $column_fields = Array(
         "id",
