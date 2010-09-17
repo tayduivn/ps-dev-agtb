@@ -23,7 +23,6 @@ class SugarEmailAddress extends SugarBean {
     var $disable_custom_fields = true;
     var $db;
     var $smarty;
-    var $disable_custom_fields = true;
     var $addresses = array(); // array of emails
     var $view = '';
 
