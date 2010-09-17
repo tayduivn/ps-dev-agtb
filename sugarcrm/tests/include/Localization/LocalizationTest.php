@@ -231,7 +231,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->setPreference('default_decimal_separator','.');
         
         $this->assertEquals(
-            $this->_locale->getLocaleFormattedNumber(20),
+            $this->_locale->getLocaleFormattedNumber(20,'',true,$this->_user),
             '**20'
             );
     }
