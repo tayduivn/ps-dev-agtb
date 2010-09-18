@@ -11,13 +11,12 @@ class Latin{
 	}
 	
 	function updateGit(){
+		$this->cwd = getcwd();
 		 if(!file_exists($this->translationPath)){
                         chdir(dirname($this->translationPath));
                         passthru("git clone git@github.com:sugarcrm/translations");
-                }
-		$this->cwd = getcwd();
+         }
 		chdir($this->translationPath);
-		echo getcwd();
 		passthru("git pull origin master");
 	}
 	
