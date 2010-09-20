@@ -1000,7 +1000,7 @@ function toggleTaxSelect(doc, count, hideselect){
 			buttonEl.textElement = 'name_' + count;
 			buttonEl.count = count;
 			buttonEl.tabIndex = 6;
-			buttonEl.setAttribute('name',  "product_name[" + count + "]" );
+			buttonEl.setAttribute('name',  "btn_product_name[" + count + "]" );
 			buttonEl.setAttribute('id', itemName );
 			buttonEl.onclick = function(){openPopup( lookup_item(this.textElement, document).value,this.count);}
 			buttonEl.className = 'button';
