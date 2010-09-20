@@ -394,10 +394,7 @@ class ListViewData {
 
 			$pageData = array();
 
-			$additionalDetailsAllow = $this->additionalDetails && $this->seed->ACLAccess('DetailView') && (file_exists('modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php'));
-            if($additionalDetailsAllow) $pageData['additionalDetails'] = array();
-			$additionalDetailsEdit = $this->seed->ACLAccess('EditView');
-            reset($rows);
+			reset($rows);
 			while($row = current($rows)){
                 $temp = clone $seed;
 			    $dataIndex = count($data);
@@ -418,7 +415,11 @@ class ListViewData {
 			    	ACLField::listFilter($data[$dataIndex],$temp->module_dir,$GLOBALS['current_user']->id, $temp->isOwner($GLOBALS['current_user']->id));
 				}
 				//END SUGARCRM flav=pro ONLY
-			    if($additionalDetailsAllow) {
+			    $pageData['rowAccess'][$dataIndex] = array('view' => $temp->ACLAccess('DetailView'), 'edit' => $temp->ACLAccess('EditView'));
+			    $additionalDetailsAllow = $this->additionalDetails && $temp->ACLAccess('DetailView') && (file_exists('modules/' . $temp->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
+			    //if($additionalDetailsAllow) $pageData['additionalDetails'] = array();
+			    $additionalDetailsEdit = $temp->ACLAccess('EditView');
+				if($additionalDetailsAllow) {
                     if($this->additionalDetailsAjax) {
 					   $ar = $this->getAdditionalDetailsAjax($data[$dataIndex]['ID']);
                     }
