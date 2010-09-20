@@ -191,7 +191,7 @@ $sugar_smarty->assign('ADDRESS_STATE', $focus->address_state);
 $sugar_smarty->assign('ADDRESS_POSTALCODE', $focus->address_postalcode);
 $sugar_smarty->assign('ADDRESS_COUNTRY', $focus->address_country);
 $sugar_smarty->assign('DESCRIPTION', $focus->description);
-$sugar_smarty->assign('EXPORT_DELIMITER', getDelimiter());
+$sugar_smarty->assign('EXPORT_DELIMITER', $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
 //BEGIN SUGARCRM flav=pro ONLY
 if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
