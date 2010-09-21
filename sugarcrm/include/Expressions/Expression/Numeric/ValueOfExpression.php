@@ -33,15 +33,22 @@ class ValueOfExpression extends NumericExpression {
 		if (is_string($val))
 		{
 			$val = str_replace(",", "", $val);
+			if (!is_numeric($val))
+			   throw new Exception("Error: '$val' is not a number");
 			if (strpos($val, ".") !== false) {
-				return (float) $val;
+				$val =  $val;
 			}
-			return (int) $val;
-		} else if (is_numeric($val))
+			else {
+			    $val = (int) $val;
+			}
+		}
+		if (is_numeric($val))
 		{
 			return $val;
 		}
-		return 0;
+		else {
+		    throw new Exception("Error: '$val' is not a number");
+		}
 	}
 	
 	/**
