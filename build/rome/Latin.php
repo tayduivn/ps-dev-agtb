@@ -16,7 +16,8 @@ class Latin{
                         chdir(dirname($this->translationPath));
                         passthru("git clone git@github.com:sugarcrm/translations");
          }
-		chdir($this->translationPath);
+		//chdir($this->translationPath);
+                chdir(realpath("$this->cwd" ."/". "$this->translationPath"));
 		passthru("git pull origin master");
 	}
 	
