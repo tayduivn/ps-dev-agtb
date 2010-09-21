@@ -136,13 +136,34 @@ class TimeDate2
      */
     protected $always_gmt = false;
 
+    /**
+     * Global instance of TimeDate
+     * @var TimeDate2
+     */
+    protected static $timedate;
+
+    public $allow_user_cache = true;
+
     public function __construct(User $user = null)
     {
         if (self::$gmtTimezone == null) {
             self::$gmtTimezone = new DateTimeZone("UTC");
         }
         $this->now = new SugarDateTime();
+        $this->tzGMT($this->now);
         $this->user = $user;
+    }
+
+    /**
+     * Get TimeDate instance
+     * @return TimeDate2
+     */
+    public function getInstance()
+    {
+        if(empty(self::$timedate)) {
+            self::$timedate = new self;
+        }
+        return self::$timedate;
     }
 
     /**
@@ -201,7 +222,7 @@ class TimeDate2
             return self::$gmtTimezone;
         }
 
-        if ($user->id == $this->current_user_id && ! empty($this->current_user_tz)) {
+        if ($this->allow_user_cache && $user->id == $this->current_user_id && ! empty($this->current_user_tz)) {
             // current user is cached
             return $this->current_user_tz;
         }
@@ -353,6 +374,7 @@ class TimeDate2
      */
     public function asDb(DateTime $date)
     {
+        $date->setTimezone(self::$gmtTimezone);
         return $date->format($this->get_db_date_time_format());
     }
 
@@ -364,28 +386,31 @@ class TimeDate2
      */
     public function asUser(DateTime $date)
     {
+        $this->tzUser($date);
         return $date->format($this->get_date_time_format());
     }
 
     /**
      * Format DateTime object as DB date
-     *
+     * Note: by default does not convert TZ!
      * @param DateTime $date
      * @return string
      */
-    public function asDbDate(DateTime $date)
+    public function asDbDate(DateTime $date, $tz = false)
     {
+        if($tz) $date->setTimezone(self::$gmtTimezone);
         return $date->format($this->get_db_date_format());
     }
 
     /**
      * Format DateTime object as user date
-     *
+     * Note: by default does not convert TZ!
      * @param DateTime $date
      * @return string
      */
-    public function asUserDate(DateTime $date)
+    public function asUserDate(DateTime $date, $tz = false)
     {
+        if($tz) $this->tzUser($date);
         return $date->format($this->get_date_format());
     }
 
@@ -397,6 +422,7 @@ class TimeDate2
      */
     public function asDbTime(DateTime $date)
     {
+        $date->setTimezone(self::$gmtTimezone);
         return $date->format($this->get_db_time_format());
     }
 
@@ -408,6 +434,7 @@ class TimeDate2
      */
     public function asUserTime(DateTime $date)
     {
+        $this->tzUser($date);
         return $date->format($this->get_time_format());
     }
 
@@ -439,6 +466,23 @@ class TimeDate2
             return SugarDateTime::createFromFormat($this->get_date_time_format($user), $date, $this->_getUserTZ($user));
         } catch (Exception $e) {
             $uf = $this->get_date_time_format($user);
+            $GLOBALS['log']->error("Conversion of $date from user format $uf failed: {$e->getMessage()}");
+            return null;
+        }
+    }
+
+    /**
+     * Get DateTime from user time string
+     *
+     * @param string $date
+     * @return SugarDateTime
+     */
+    public function fromUserTime($date, User $user = null)
+    {
+        try {
+            return SugarDateTime::createFromFormat($this->get_time_format($user), $date, $this->_getUserTZ($user));
+        } catch (Exception $e) {
+            $uf = $this->get_time_format($user);
             $GLOBALS['log']->error("Conversion of $date from user format $uf failed: {$e->getMessage()}");
             return null;
         }

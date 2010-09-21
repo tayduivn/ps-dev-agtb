@@ -54,7 +54,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		$this->time_date = new TimeDate();
+		$this->time_date = TimeDate2::getInstance();
 		$this->_noUserCache();
 	}
 
@@ -75,7 +75,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 			$GLOBALS['current_user']->setPreference('timef', $timef);
 			$GLOBALS['current_user']->setPreference('timezone', $tz);
 			// new object to avoid TZ caching
-			$this->time_date = new TimeDate();
+			$this->time_date = TimeDate2::getInstance();
 			$this->_noUserCache();
 	}
 

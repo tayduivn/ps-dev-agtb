@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/timezone/timezones.php');
-
+require_once('include/SugarDateTime.php');
 /**
  * Date/time conversion class
  *
@@ -106,6 +106,12 @@ class TimeDate {
      * @var bool
      */
     public $allow_cache = true;
+
+    /**
+     * Cached value of the current timestamp
+     * @var string
+     */
+    protected $nowDb = null;
 
     /**
      * Constructor
@@ -502,7 +508,8 @@ class TimeDate {
 	 * @param bool $use_offset Perform TZ conversion?
 	 * @return string Date in user-defined format
 	 */
-	function to_display_date($date, $use_offset = true) {
+	function to_display_date($date, $use_offset = true)
+	{
 		$date = trim($date);
 		if (empty($date)) {
 			return $date;
@@ -1238,4 +1245,25 @@ S	S	S	12	20	-8	0	0
         return $result;
     }
 
+    /**
+     * Get new DateTime object representing this moment
+     *
+     * @return SugarDateTime
+     */
+    public function now()
+    {
+        return new SugarDateTime();
+    }
+
+    /**
+     * Return current timestamp in DB format
+     * @return string
+     */
+    public function nowDb()
+    {
+        if(empty($this->nowDb)) {
+            $this->nowDb = gmdate($this->dbDateTimeFormat, time());
+        }
+        return $this->nowDb;
+    }
 }

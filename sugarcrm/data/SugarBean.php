@@ -650,8 +650,6 @@ class SugarBean
 		    		case 'date':
 		    			if(!empty($value['display_default'])){
 							global $timedate;
-							require_once('modules/DynamicFields/templates/Fields/TemplateDate.php');
-							$td = new TemplateDate();
                             $timeValue = ($value['display_default'] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($value['display_default']) ;
                             $this->$field = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat,$timeValue), false);
 							break;
@@ -1316,7 +1314,7 @@ class SugarBean
 		}
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
-			$this->date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+			$this->date_modified = $GLOBALS['timedate']->nowDb();
 		}
 
 		$this->_checkOptimisticLocking($action, $isUpdate);
@@ -1380,7 +1378,7 @@ class SugarBean
 
 		if(isset($this->custom_fields))
 		{
-			$this->custom_fields->bean =& $this;
+			$this->custom_fields->bean = $this;
 			$this->custom_fields->save($isUpdate);
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -2024,7 +2022,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		}
 		global $timedate;
 		if (empty($timedate))
-			$timedate=new TimeDate();
+			$timedate=TimeDate2::getInstance();
 
 		if(empty($this->field_defs))
 		{
@@ -2055,7 +2053,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
 					if($type == 'date')
 					{
-						$this->$field = from_db_convert($this->$field, 'date');
+						$this->$field = $this->db->fromConvert($this->$field, 'date');
 
 						if($this->$field == '0000-00-00')
 						{
@@ -2066,7 +2064,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
 							if(!empty($this->$rel_field))
 							{
-								$this->$rel_field=from_db_convert($this->$rel_field, 'time');
+								$this->$rel_field=$this->db->fromConvert($this->$rel_field, 'time');
 								$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
 								$this->$field = $timedate->to_display_date($mergetime);
 								$this->$rel_field = $timedate->to_display_time($mergetime);
@@ -2185,7 +2183,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'time':
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
-                        $this->$field = $timedate->to_db_time($timedate->to_display_date(gmdate('Y-m-d')).' '.$this->$field);
+                        $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
                         $reformatted = true;
                     }
                     break;
@@ -4232,7 +4230,7 @@ function save_relationship_changes($is_update, $exclude=array())
 			//BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
 			//END SUGARCRM flav=pro ONLY
-	        $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+	        $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
 	        $monitor->setValue('user_id', $user_id);
 	        $monitor->setValue('module_name', $current_module);
 	        $monitor->setValue('action', $current_view);
@@ -4406,7 +4404,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	function mark_deleted($id)
 	{
 		global $current_user;
-		$date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+		$date_modified = $GLOBALS['timedate']->nowDb();
 		if(isset($_SESSION['show_deleted']))
 		{
 			$this->mark_undeleted($id);
@@ -4449,7 +4447,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		$custom_logic_arguments['id'] = $id;
 		$this->call_custom_logic("before_restore", $custom_logic_arguments);
 
-		$date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+		$date_modified = $GLOBALS['timedate']->nowDb();
 		$query = "UPDATE $this->table_name set deleted=0 , date_modified = '$date_modified' where id='$id'";
 		$this->db->query($query, true,"Error marking record undeleted: ");
 
@@ -5015,7 +5013,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		$where = '';
 
 		// make sure there is a date modified
-		$date_modified = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime');
+		$date_modified = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
 
 		$row=null;
 		if($check_duplicates)

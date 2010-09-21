@@ -126,9 +126,9 @@ class Report
 		$this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))?$GLOBALS['sugar_config']['list_report_max_per_page']:100;
 		$this->report_offset = (!empty($_REQUEST['report_offset']))?$_REQUEST['report_offset']:0;
 		if($this->report_offset < 0)$this->report_offset = 0;
-		$this->time_date_obj =  new TimeDate();
+		$this->time_date_obj = TimeDate2::getInstance();
 		$this->name = $mod_strings['LBL_UNTITLED'];
-		$this->db = &DBManagerFactory::getInstance('reports');
+		$this->db = DBManagerFactory::getInstance('reports');
 		if ( Report::is_old_content($report_def_str))
 		{
 			sugar_die('this report was created with an older version of reports. please upgrade');

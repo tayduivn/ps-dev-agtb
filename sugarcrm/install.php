@@ -36,7 +36,7 @@ require_once('sugar_version.php');
 require_once('include/utils.php');
 require_once('install/install_utils.php');
 require_once('install/install_defaults.php');
-require_once('include/TimeDate.php');
+require_once('include/TimeDate2.php');
 require_once('include/Localization/Localization.php');
 require_once('include/SugarTheme/SugarTheme.php');
 require_once('include/utils/LogicHook.php');
@@ -47,7 +47,7 @@ require_once('include/entryPoint.php');
     $_REQUEST['js_rebuild_concat'] = 'rebuild';
     require_once('jssource/minify.php');
 
-$timedate = new TimeDate();
+$timedate = TimeDate2::getInstance();
 // cn: set php.ini settings at entry points
 setPhpIniSettings();
 $locale = new Localization();
@@ -371,7 +371,7 @@ if($next_clicked) {
       case 'license.php':
                 $_SESSION['setup_license_accept']   = get_boolean_from_request('setup_license_accept');
                 $_SESSION['license_submitted']      = true;
-                
+
 
            // eventually default all vars here, with overrides from config.php
             if(is_readable('config.php')) {
@@ -549,7 +549,7 @@ switch($the_file) {
         // check to see if installer has been disabled
         if(is_readable('config.php') && (filesize('config.php') > 0)) {
             include_once('config.php');
-			
+
             if(!isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == true) {
                 $the_file = 'installDisabled.php';
 				$disabled_title = $mod_strings['LBL_DISABLED_DESCRIPTION'];

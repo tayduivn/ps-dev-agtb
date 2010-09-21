@@ -196,7 +196,8 @@ class SugarDateTime extends DateTime
 	{
 		$newdate = clone $this;
 		$newdate->setDate($this->year, $month_index+1, 1);
-		$newdate->modify("midnight last day of this month");
+		$newdate->modify("last day of this month");
+		$newdate->setTime(0, 0);
 		return $newdate;
 	}
 
@@ -204,7 +205,7 @@ class SugarDateTime extends DateTime
 	{
 		$newdate = clone $this;
 		$newdate->setDate($this->year, $this->month, $day_index+1);
-		$newdate->modify("midnight");
+		$newdate->setTime(0, 0);
 		return $newdate;
 	}
 
@@ -270,5 +271,40 @@ class SugarDateTime extends DateTime
         }
 
 		return $hash_list;
+	}
+
+	/**
+	 * Get the beginning of the current day
+	 */
+	function get_day_begin($day = null, $month = null, $year = null)
+	{
+	    $newdate = clone $this;
+	    $newdate->setDate(
+	         $year?$year:$this->year,
+	         $month?$month:$this->month,
+	         $day?$day:$this->day);
+	    $newdate->setTime(0, 0);
+	    return $newdate;
+	}
+
+	/**
+	 * Get the last timestamp of the current day
+	 */
+	function get_day_end()
+	{
+	    $newdate = clone $this;
+	    $newdate->setDate(
+	         $year?$year:$this->year,
+	         $month?$month:$this->month,
+	         $day?$day:$this->day);
+	    $newdate->setTime(23, 59, 59);
+	    return $newdate;
+	}
+
+	function get_year_begin($year)
+	{
+        $newdate = clone $this;
+
+        $this->setTime(0,0);
 	}
 }

@@ -142,7 +142,7 @@ $viewdefs = array (
             array (
               'name' => 'trial_expiration_c',
               'label' => 'Trial Expiration',
-              'customCode' => '{php} $myTimeDate = new TimeDate(); $this->assign("jmo_trialExpirationDB", $myTimeDate->to_db($this->_tpl_vars["fields"]["trial_expiration_c"]["value"])); unset($myTimeDate); {/php} {$fields.trial_expiration_c.value}{if $fields.trial_extended_c.value eq 0 && !empty($fields.trial_name_c.value) && strtotime("now") < $jmo_trialExpirationDB|date_format:"%s"} &nbsp; <button type="submit" onClick="document.location=\'/scripts/7daytrials/trials.php?opportunity_id={$fields.id.value}\';">Extend Trial</button>{/if}',
+              'customCode' => '{php} global $timedate; $this->assign("jmo_trialExpirationDB", $timeDate->to_db($this->_tpl_vars["fields"]["trial_expiration_c"]["value"])); {/php} {$fields.trial_expiration_c.value}{if $fields.trial_extended_c.value eq 0 && !empty($fields.trial_name_c.value) && strtotime("now") < $jmo_trialExpirationDB|date_format:"%s"} &nbsp; <button type="submit" onClick="document.location=\'/scripts/7daytrials/trials.php?opportunity_id={$fields.id.value}\';">Extend Trial</button>{/if}',
             ),
             1 => 
             array (
