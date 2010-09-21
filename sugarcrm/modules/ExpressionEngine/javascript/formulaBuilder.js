@@ -281,9 +281,15 @@ SUGAR.expressions.GridToolTip = {
 	}
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
-	
-	var functionsArray = SUGAR.expressions.getFunctionList(); 
-	var funcDS = new YAHOO.util.LocalDataSource(functionsArray, 
+	var functionsArray = SUGAR.expressions.getFunctionList();
+	var gridData = [];
+	for (var i in functionsArray)
+	{
+		//For now, hide date functions in the formula builder as they are unstable.
+		if (functionsArray[i][1] != "date" && functionsArray[i][1] != "time" && functionsArray[i][0] != "daysUntil")
+			gridData.push(functionsArray[i]);
+	}
+	var funcDS = new YAHOO.util.LocalDataSource(gridData, 
 	{
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 		responseSchema: 
