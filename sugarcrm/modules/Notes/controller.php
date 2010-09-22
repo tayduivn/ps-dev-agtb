@@ -62,6 +62,7 @@
 		if ($do_final_move)
 		{
        		 $upload_file->final_move($this->bean->id);
+       		 $upload_file->upload_doc($this->bean, $this->bean->id, $this->bean->doc_type, $this->bean->filename, $this->bean->mime_type);
 		}
 		else if ( ! empty($_REQUEST['old_id']))
 		{

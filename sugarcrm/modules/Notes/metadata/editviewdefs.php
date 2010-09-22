@@ -57,7 +57,11 @@ function deleteAttachmentCallBack(text)
                         array('name'=>'name', 'displayParams'=>array('size'=>60)),''
                     ),
 					array ( 
-						array (
+					    '0' => array(
+							 'name' => 'doc_type',
+	          				 'label' => 'LBL_DOC_TYPE',
+						),
+						'1' => array (
 	        				'name' => 'filename',
 	        				'customCode' => '<span id=\'new_attachment\' style=\'display:{if !empty($fields.filename.value)}none{/if}\'>
         									 <input name="uploadfile" tabindex="3" type="file" size="60"/>

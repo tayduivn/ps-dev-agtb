@@ -46,7 +46,7 @@ $viewdefs['Documents']['EditView'] = array(
  'panels' =>array (
   'lbl_document_information' => 
   array (
-    
+    array('doc_type'),
     array (
       array(
       		'name'=>'uploadfile', 

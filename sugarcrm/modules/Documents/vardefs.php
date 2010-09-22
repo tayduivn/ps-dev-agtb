@@ -51,7 +51,24 @@ $dictionary['Document'] = array('table' => 'documents'
      'type' => 'file',
      'source' => 'non-db',
   ),
-
+'doc_id' =>
+  array (
+  	'name' => 'doc_id',
+  	'vname' => 'LBL_DOC_ID',
+  	'type' => 'varchar',
+  	'len' => '100',
+  	'comment' => 'Document ID from documents web server provider',
+  	'importable' => false,
+  ),
+  'doc_type' =>
+  array (
+  	'name' => 'doc_type',
+  	'vname' => 'LBL_DOC_TYPE',
+  	'type' => 'enum',
+  	'options' => 'doc_type_dom',
+  	'len' => '100',
+  	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+  ),
 'active_date' =>
   array (
     'name' => 'active_date',

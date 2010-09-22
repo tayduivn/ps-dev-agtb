@@ -26,7 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+
+{if !isset($fields.{{$displayParams.doc_type}}) || empty($fields.{{$displayParams.doc_type}}) || $fields.{{$displayParams.doc_type}} == 'Sugar'}
 <a href="index.php?entryPoint=download&id={$fields.{{$displayParams.id}}.value}&type={$module}" class="tabDetailViewDFLink">{$fields.{{$displayParams.link}}.value}</a>
+{elseif !empty($fields.{{$displayParams.doc_id}}.value) }
+<a href="http://docs.google.com/document/edit?id={$fields.{{$displayParams.doc_id}}.value}&hl=en" class="tabDetailViewDFLink" target="_blank">{$fields.{{$displayParams.link}}.value}</a>
+{else}
+<a href="index.php?entryPoint=download&id={$fields.{{$displayParams.id}}.value}&type={$module}" class="tabDetailViewDFLink">{$fields.{{$displayParams.link}}.value}</a>
+{/if}
 {{if !empty($displayParams.enableConnectors)}}
 {{sugarvar_connector view='DetailView'}} 
 {{/if}}

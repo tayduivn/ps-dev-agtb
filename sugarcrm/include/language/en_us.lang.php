@@ -405,6 +405,13 @@ $app_list_strings = array (
       'WebEx' => 'WebEx',
       'GoToMeeting' => 'GoToMeeting'
    ),
+   'doc_type_dom' => 
+   array (
+   	'Sugar' => 'Sugar',
+    'Google' => 'Google',
+    'Box.net' => 'Box.net',
+   	'LotusLive' => 'LotusLive',
+   ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (

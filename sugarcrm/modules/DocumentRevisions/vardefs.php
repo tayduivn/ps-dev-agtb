@@ -49,7 +49,24 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'required'=>false,
     'reportable'=>false,
   ),
-
+'doc_id' =>
+  array (
+  	'name' => 'doc_id',
+  	'vname' => 'LBL_DOC_ID',
+  	'type' => 'varchar',
+  	'len' => '100',
+  	'comment' => 'Document ID from documents web server provider',
+  	'importable' => false,
+  ),
+  'doc_type' =>
+  array (
+  	'name' => 'doc_type',
+  	'vname' => 'LBL_DOC_TYPE',
+  	'type' => 'enum',
+  	'options' => 'doc_type_dom',
+  	'len' => '100',
+  	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+  ),
    'date_entered' =>
   array (
     'name' => 'date_entered',

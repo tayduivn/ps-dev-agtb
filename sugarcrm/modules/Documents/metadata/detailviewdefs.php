@@ -37,11 +37,16 @@ $viewdefs['Documents']['DetailView'] = array(
     array (
       'lbl_document_information' => 
       array (
+        array('doc_type'),
+        
         array (
           array (
             'name' => 'filename',
+          	'type' => 'file',
             'displayParams' => 
-            array (
+            array (              
+              'doc_type' => 'doc_type',
+              'doc_id' => 'doc_id',
               'link' => 'filename',
               'id' => 'document_revision_id',
             ),
