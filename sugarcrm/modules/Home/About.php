@@ -24,7 +24,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //the code and end-user application.
 
 global $sugar_config, $mod_strings;
+//BEGIN SUGARCRM flav=PRO ONLY
 include('ThirdPartyCredits.php');
+//END SUGARCRM flav=PRO ONLY
 ?>
 <style type="text/css">
 ul li {
@@ -240,6 +242,7 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_RECAPTCHA']; ?> (<a href="http://recaptcha.net/" target="_blank">http://recaptcha.net/</a>)</LI>
 </ul>
 
+//BEGIN SUGARCRM flav=PRO ONLY
 <?php foreach($credits as $type => $details) {
 	echo "<P><h3>". $type . "</h3></p>";
 	echo "<ul style=\"margin-bottom: 20px; padding-left: 0px;\">";
@@ -248,6 +251,7 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 		}
 	echo "</ul>";
 }?>
+//END SUGARCRM flav=PRO ONLY
 	</td>
 
 </tr>
