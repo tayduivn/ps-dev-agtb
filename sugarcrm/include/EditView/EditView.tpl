@@ -112,8 +112,8 @@ class="yui-navset"
 			{{/if}}
 			{{* Show the required symbol if field is required, but override not set.  Or show if override is set *}}
 			{{if ($fields[$colData.field.name].required && !isset($colData.field.displayParams.required)) || 
-			     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required)}}
-			    <span class="required" title="{{$APP.LBL_REQUIRED_TITLE}}">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
+			     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required && $fields[$colData.field.name].required !== false)}}
+			    <span class="required">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
 			{{/if}}
 		</td>
 		{{/if}}
@@ -218,5 +218,5 @@ var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{/if}}
 <script type="text/javascript">
 window.setTimeout(function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim}, 100);
-window.onbeforeunload = function () {ldelim} return onUnloadEditView(document.forms.{{$form_name}}); {rdelim};
+window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};
 </script>

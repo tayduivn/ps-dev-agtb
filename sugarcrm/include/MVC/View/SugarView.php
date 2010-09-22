@@ -423,18 +423,23 @@ class SugarView
                 
 				$subMoreModules = false;
 				$groupTabs = $groupedTabsClass->get_tab_structure(get_val_array($modules));
+                // We need to put this here, so the "All" group is valid for the user's preference.
+                $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
 
                 // Setup the default group tab.
-                $tmp = array_keys($groupTabs);
-                $ss->assign('currentGroupTab',$tmp[0]);
-                // Figure out which tab they currently have selected (stored in a cookie)                
-                if ( isset($_COOKIE['sugar_theme_gm_current']) ) {
-                    if ( isset($groupTabs[$_COOKIE['sugar_theme_gm_current']]) ) {
-                        $ss->assign('currentGroupTab',$_COOKIE['sugar_theme_gm_current']);
-                    }
+                $allGroup = $app_strings['LBL_TABGROUP_ALL'];
+                $ss->assign('currentGroupTab',$allGroup);
+                $currentGroupTab = $allGroup;
+                $usersGroup = $current_user->getPreference('theme_current_group');
+                // Figure out which tab they currently have selected (stored as a user preference)
+                if ( !empty($usersGroup) && isset($groupTabs[$usersGroup]) ) {
+                    $currentGroupTab = $usersGroup;
+                } else {
+                    $current_user->setPreference('theme_current_group',$currentGroupTab);
                 }
 
+                $ss->assign('currentGroupTab',$currentGroupTab);
                 $usingGroupTabs = true;
                 
             } else {
@@ -442,9 +447,11 @@ class SugarView
                 $ss->assign('currentGroupTab',$app_strings['LBL_TABGROUP_ALL']);
 
                 $usingGroupTabs = false;
+
+                $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
+
             }
             
-            $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
             $topTabList = array();
             
@@ -536,9 +543,6 @@ class SugarView
 			$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
-		if(!in_array($this->module, $GLOBALS['moduleList']) && !in_array($this->module, $GLOBALS['modInvisListActivities'])){
-			$ss->assign('FORCE_TOP_SHORTCUTS', true);
-		}
         //END SUGARCRM flav=sales || flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
@@ -636,7 +640,7 @@ EOHTML;
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
             echo '<script>jscal_today = ' . (1000*strtotime($GLOBALS['timedate']->handle_offset(gmdate($GLOBALS['timedate']->get_db_date_time_format()), $GLOBALS['timedate']->get_db_date_time_format()))) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-	        if (!is_file("include/javascript/sugar_grp1.js")) {
+	        if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
 	        	$_REQUEST['root_directory'] = ".";
 	        	require_once("jssource/minify_utils.php");
 	        	ConcatenateFiles(".");
@@ -761,7 +765,9 @@ EOHTML;
         $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></A>\n";
 
           //END SUGARCRM lic=sub ONLY
-
+        
+        // Bug 38594 - Add in Trademark wording
+        $copyright .= 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.<br />';
 
         //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displaye regardless, so no need
 		//to display an empty image here.
@@ -956,33 +962,39 @@ EOHTML;
         
         $module_menu = sugar_cache_retrieve("{$current_user->id}_{$module}_module_menu_{$current_language}");
         if ( !is_array($module_menu) ) {
-            $module_menu = array();
+            $final_module_menu = array();
             
             if (file_exists('modules/' . $module . '/Menu.php')) {
+                $GLOBAL['module_menu'] = $module_menu = array();
                 require('modules/' . $module . '/Menu.php');
+                $final_module_menu = array_merge($final_module_menu,$GLOBAL['module_menu'],$module_menu);
             }
             if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
+                $GLOBAL['module_menu'] = $module_menu = array();
                 require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
+                $final_module_menu = array_merge($final_module_menu,$GLOBAL['module_menu'],$module_menu);
             }
             if (!file_exists('modules/' . $module . '/Menu.php') 
                     && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php') 
                     && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
-                $module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
+                $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
                     $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
-                $module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'], 
+                $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'], 
                     $module, $module);
                 if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
                     if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
-                        $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
+                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
                             $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
                     else
-                        $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
+                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
                             $app_strings['LBL_IMPORT'], "Import", $module);
             }
             if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
+                $GLOBAL['module_menu'] = $module_menu = array();
                 require('custom/application/Ext/Menus/menu.ext.php');
+                $final_module_menu = array_merge($final_module_menu,$GLOBAL['module_menu'],$module_menu);
             }
-            
+            $module_menu = $final_module_menu;
             sugar_cache_put("{$current_user->id}_{$module}_module_menu_{$current_language}",$module_menu);
         }
         

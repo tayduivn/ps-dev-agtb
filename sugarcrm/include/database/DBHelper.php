@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: DBHelper.php 56786 2010-06-02 18:29:56Z jenny $
+* $Id: DBHelper.php 57848 2010-08-20 19:37:11Z kjing $
 * Description: This file is an abstract class and handles the Data base functionality for
 * the application. It is called by the DBManager class to generate various sql statements.
 *
@@ -112,6 +112,8 @@ abstract class DBHelper
                 continue;
 
             $val = $bean->getFieldValue($fieldDef['name']);
+            // clean the incoming value..
+            $val = from_html($val);
             if (strlen($val) <= 0) {
                 if(isset($fieldDef['default']) && (strlen($fieldDef['default']) > 0))
                     $val = $fieldDef['default'];
@@ -177,6 +179,8 @@ abstract class DBHelper
            if (isset($bean->$fieldDef['name'])
                     && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
                $val = $bean->getFieldValue($fieldDef['name']);
+               // clean the incoming value..
+               $val = from_html($val);
 
                // need to do some thing about types of values
                if (strlen($val) <= 0)

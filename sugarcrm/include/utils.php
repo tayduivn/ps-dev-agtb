@@ -177,7 +177,7 @@ function make_sugar_config(&$sugar_config)
 	'default_subpanel_links' => empty($subpanel_links) ? false : $subpanel_links,
 	'default_swap_last_viewed' => empty($swap_last_viewed) ? false : $swap_last_viewed,
 	'default_swap_shortcuts' => empty($swap_shortcuts) ? false : $swap_shortcuts,
-	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'm' : $navigation_paradigm,
+	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
 	'js_lang_version' => 1,
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -359,7 +359,7 @@ function get_sugar_config_defaults() {
 	'default_subpanel_links' => false,
 	'default_swap_last_viewed' => false,
 	'default_swap_shortcuts' => false,
-	'default_navigation_paradigm' => 'm',
+	'default_navigation_paradigm' => 'gm',
 	'admin_access_control' => false,
   	'use_common_ml_dir'	=> false,
   	'common_ml_dir' => '',
@@ -3685,9 +3685,12 @@ if(file_exists('custom/include/custom_utils.php')){
  */
 function setPhpIniSettings() {
 	// zlib module
-	if(function_exists('gzclose') && headers_sent() == false) {
+	// Bug 37579 - Comment out force enabling zlib.output_compression, since it can cause problems on certain hosts
+	/*
+    if(function_exists('gzclose') && headers_sent() == false) {
 		ini_set('zlib.output_compression', 1);
 	}
+	*/
 	// mbstring module
 	//nsingh: breaks zip/unzip functionality. Commenting out 4/23/08
 

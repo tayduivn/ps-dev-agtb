@@ -141,7 +141,7 @@ if (version_compare(phpversion(),'5.2.0') >=0) {
 	if((count($errors) == 1)) { // only diffs
 		logThis('file preflight check passed successfully.');
 		$stop = false;
-		$out  = $mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED']."<BR><BR>".$mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED2'];
+		$out  = $mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED']."<BR><BR><font color='red'>".$mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED3']."</font>";
 		$stop = false;
 
 		$disableEmail = (empty($current_user->email1)) ? 'DISABLED' : 'CHECKED';
@@ -366,14 +366,9 @@ $style_for_schemaChange = empty($schema)?'style=\'display:none\'':'';
 
 $final =<<<eoq
 <table cellpadding="3" cellspacing="0" border="0">
-    <tr>
-        <th colspan="2" align="left">
-            <b>{$mod_strings['LBL_UW_PREFLIGHT_COMPLETE']}<i>{$php_521}</i></b><hr />
-        </th>
-    </tr>
     <tr {$style_for_out}>
         <td colspan="2" align="left" valign="top">
-            {$out}
+            <br>{$out}
         </td>
     </tr>
     <tr {$style_for_dif}>
@@ -420,7 +415,7 @@ $form5 =<<<eoq5
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'></p>
         </td></tr>
      </table>
  </div>
@@ -473,6 +468,7 @@ if($php_warnings != null){
 	$uwMain = $php_warnings;
 }
 
+$GLOBALS['top_message'] = "<b>{$mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED2']}</b>";
 $showBack		= false;
 $showCancel		= true;
 $showRecheck	= true;

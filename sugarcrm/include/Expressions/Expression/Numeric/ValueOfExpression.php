@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,7 +19,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
-
+/**
+ * <b>number(String s)</b><br>
+ * Returns the numeric value of <i>s</i>.
+ **/
 class ValueOfExpression extends NumericExpression {
 	
 	/**
@@ -27,11 +30,18 @@ class ValueOfExpression extends NumericExpression {
 	 */
 	function evaluate() {
 		$val = $this->getParameters()->evaluate();
-		$val = str_replace(",", "", $val);
-		if (strpos($val, ".") !== false) {
-			return (float) $val;
+		if (is_string($val))
+		{
+			$val = str_replace(",", "", $val);
+			if (strpos($val, ".") !== false) {
+				return (float) $val;
+			}
+			return (int) $val;
+		} else if (is_numeric($val))
+		{
+			return $val;
 		}
-		return (int) $val;
+		return 0;
 	}
 	
 	/**
@@ -41,9 +51,15 @@ class ValueOfExpression extends NumericExpression {
 		return <<<EOQ
 			var val = this.getParameters().evaluate() + "";
 			val = val.replace(/,/g, "");
+			var out = 0;
 			if (val.indexOf(".") != -1)
-				return parseFloat(val);
-			return parseInt(val);
+				out = parseFloat(val);
+			else 
+			    out = parseInt(val);
+			if (isNaN(out))
+			   return 0;
+			else
+			   return out;
 EOQ;
 	}
 	
@@ -66,7 +82,7 @@ EOQ;
 	 * All parameters have to be a string.
 	 */
 	function getParameterTypes() {
-		return AbstractExpression::$STRING_TYPE;
+		return AbstractExpression::$GENERIC_TYPE;
 	}
 }
 ?>

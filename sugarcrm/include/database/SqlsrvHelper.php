@@ -49,6 +49,10 @@ class SqlsrvHelper extends MssqlHelper
 		if ( in_array($columnType,array('char','varchar')) )
 			$columnType = 'n'.$columnType;
 		
+		if ( in_array($columnType,array('text','ntext','image')) ) {
+		    $columnType = 'nvarchar(max)';
+        } 
+
         return $columnType;
     }
 	
@@ -121,6 +125,11 @@ class SqlsrvHelper extends MssqlHelper
         $indices
         ) 
     {
+        if ( $this->doesTableHaveAClusteredIndexDefined($tableName) ) {
+            return parent::indexSQL($tableName, $fieldDefs, $indices); 
+        }
+        
+        // check to see if one of the passed in indices is a primary one; if so we can bail as well
         foreach ( $indices as $index ) {
             if ( $index['type'] == 'primary' ) {
                 return parent::indexSQL($tableName, $fieldDefs, $indices); 
@@ -131,52 +140,168 @@ class SqlsrvHelper extends MssqlHelper
         if ( isset($indices[0]) ) {
             $indices[0]['type'] = 'clustered';
         }
-        else {
-            $GLOBALS['log']->warning("Table '$tablename' has no indices defined; this could be a problem on SQL Server.");
-        }
         
         return parent::indexSQL($tableName, $fieldDefs, $indices); 
+    }
+    
+    /**
+     * @see DBHelper::get_columns()
+     */
+    public function get_columns(
+        $tablename
+        ) 
+    {
+        //find all unique indexes and primary keys.
+        $result = $this->db->query("sp_columns_90 $tablename");
+        
+        $columns = array();
+        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+            $column_name = strtolower($row['COLUMN_NAME']);
+            $columns[$column_name]['name']=$column_name;
+            $columns[$column_name]['type']=strtolower($row['TYPE_NAME']);
+            if ( $row['TYPE_NAME'] == 'decimal' ) {
+                $columns[$column_name]['len']=strtolower($row['PRECISION']);
+                $columns[$column_name]['len'].=','.strtolower($row['SCALE']);
+            }
+			elseif ( in_array($row['TYPE_NAME'],array('nchar','nvarchar')) ) {
+				$columns[$column_name]['len']=strtolower($row['PRECISION']);
+				if ( $row['TYPE_NAME'] == 'nvarchar' && $row['PRECISION'] == '0' ) {
+				    $columns[$column_name]['len']='max';
+				}
+			}
+            elseif ( !in_array($row['TYPE_NAME'],array('datetime','text')) ) {
+                $columns[$column_name]['len']=strtolower($row['LENGTH']);
+            }
+            if ( stristr($row['TYPE_NAME'],'identity') ) {
+                $columns[$column_name]['auto_increment'] = '1';
+                $columns[$column_name]['type']=str_replace(' identity','',strtolower($row['TYPE_NAME']));
+            }
+            
+            if (!empty($row['IS_NULLABLE']) && $row['IS_NULLABLE'] == 'NO' && (empty($row['KEY']) || !stristr($row['KEY'],'PRI')))
+                $columns[strtolower($row['COLUMN_NAME'])]['required'] = 'true';
+            
+            $column_def = 0;
+            if ( strtolower($tablename) == 'relationships' ) {
+                $column_def = $this->db->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
+            }
+            if ( $column_def != 0 ) {
+                $matches = array();
+                $row['COLUMN_DEF'] = html_entity_decode($row['COLUMN_DEF'],ENT_QUOTES);
+                if ( preg_match("/\([\(|'](.*)[\)|']\)/i",$row['COLUMN_DEF'],$matches) )
+                    $columns[$column_name]['default'] = $matches[1];
+                elseif ( preg_match("/\(N'(.*)'\)/i",$row['COLUMN_DEF'],$matches) )
+                    $columns[$column_name]['default'] = $matches[1];
+                else
+                    $columns[$column_name]['default'] = $row['COLUMN_DEF'];
+            }
+        }
+        return $columns;
     }
     
     /**
      * @see DBHelper::get_indices()
      */
     public function get_indices(
-        $tablename
+        $tableName
         ) 
     {
         //find all unique indexes and primary keys.
         $query = <<<EOSQL
-SELECT LEFT(so.name, 30) TableName, 
-        LEFT(si.name, 50) 'Key_name',
-        LEFT(sik.key_ordinal, 30) Sequence, 
-        LEFT(sc.name, 30) Column_name,
-		si.is_unique isunique
-    FROM sys.indexes si
-        INNER JOIN sys.index_columns sik 
-            ON (si.object_id = sik.object_id AND si.index_id = sik.index_id)
-        INNER JOIN sys.objects so 
-            ON si.object_id = so.object_id
-        INNER JOIN sys.columns sc 
-            ON (so.object_id = sc.object_id AND sik.column_id = sc.column_id)
-    WHERE so.name = '$tablename'
-    ORDER BY Key_name, Sequence, Column_name
+SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name, 
+        sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
+    FROM sys.tables, sys.indexes, sys.index_columns, sys.columns 
+    WHERE (sys.tables.object_id = sys.indexes.object_id 
+            AND sys.tables.object_id = sys.index_columns.object_id 
+            AND sys.tables.object_id = sys.columns.object_id
+            AND sys.indexes.index_id = sys.index_columns.index_id 
+            AND sys.index_columns.column_id = sys.columns.column_id) 
+        AND sys.tables.name = '$tableName'
 EOSQL;
         $result = $this->db->query($query);
         
         $indices = array();
         while (($row=$this->db->fetchByAssoc($result)) != null) {
             $index_type = 'index';
-            if ($row['Key_name'] == 'PRIMARY')
+            if ($row['is_primary_key'] == '1')
                 $index_type = 'primary';
-            elseif ($row['isunique'] == 1 )
+            elseif ($row['is_unique'] == 1 )
                 $index_type = 'unique';
-            $name = strtolower($row['Key_name']);
+            $name = strtolower($row['index_name']);
             $indices[$name]['name']     = $name;
             $indices[$name]['type']     = $index_type;
-            $indices[$name]['fields'][] = strtolower($row['Column_name']);
+            $indices[$name]['fields'][] = strtolower($row['column_name']);
         }
         return $indices;
+    }
+    
+    /**
+     * protected function to return true if the given tablename has any clustered indexes defined.
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    protected function doesTableHaveAClusteredIndexDefined($tableName)
+    {
+        $query = <<<EOSQL
+SELECT IST.TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES IST
+    WHERE objectProperty(object_id(IST.TABLE_NAME), 'IsUserTable') = 1 
+        AND objectProperty(object_id(IST.TABLE_NAME), 'TableHasClustIndex') = 1
+        AND IST.TABLE_NAME = '{$tableName}'
+EOSQL;
+
+        $result = $this->db->getOne($query);
+        if ( !$result ) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * protected function to return true if the given tablename has any fulltext indexes defined.
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    protected function doesTableHaveAFulltextIndexDefined($tableName)
+    {
+        $query = <<<EOSQL
+SELECT 1
+    FROM sys.fulltext_indexes i
+        JOIN sys.objects o ON i.object_id = o.object_id
+    WHERE o.name = {$tableName}
+EOSQL;
+
+        $result = $this->db->getOne($query);
+        if ( !$result ) {
+            return false;
+        }
+
+        return true;
+    }
+    
+    /**
+     * Override method to add support for detecting and dropping fulltext indices.
+     *
+     * @see DBHelper::changeColumnSQL()
+     * @see MssqlHelper::changeColumnSQL()
+     */
+    protected function changeColumnSQL(
+        $tablename, 
+        $fieldDefs, 
+        $action, 
+        $ignoreRequired = false
+        )
+    {
+        $sql = '';
+        if ( $this->doesTableHaveAFulltextIndexDefined($tablename) ) {
+            $sql .= "DROP FULLTEXT INDEX ON {$table}";
+        }
+        
+        $sql .= parent::changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
+        
+        return $sql;
     }
 }
 ?>

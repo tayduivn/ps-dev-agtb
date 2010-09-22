@@ -88,15 +88,11 @@
        whether or not the user needs to be prompted for this. -->
   <parameter name="DbAdmin"
         defaultValue="root" tags="MySQL, DbAdminUsername">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbAdminUserName" />
   </parameter>
   <!-- Prompts for the admin password and uses it for the administrator
        connection string. -->
   <parameter name="DbAdminPW" 
         tags="Password, MySQL, DbAdminPassword">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbAdminPassword" />
   </parameter>
   <!-- This is the hidden admin connection string used to run the
        database scripts.  Note that this connection string is just used

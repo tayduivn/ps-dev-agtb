@@ -89,6 +89,37 @@ EOQ;
         	}
         }
         $this->assertTrue($found_custom_menu, "Assert that custom menu was detected");
+    }
+
+    /**
+     * @group bug38935
+     */
+    public function testMenuExistsCanFindModuleExtMenuWhenModuleMenuDefinedGlobal()
+    {
+        // Create module ext menu
+        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/",null,true);
+        if( $fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+') ) {
+	        $string = <<<EOQ
+<?php
+global \$module_menu;
+\$module_menu[]=Array("index.php?module=Import&action=foo&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
+?>
+EOQ;
+            fputs( $fh, $string);
+            fclose( $fh );
+        }
+        
+        $view = new SugarView;
+        $module_menu = $view->getMenu($this->_moduleName);
+        $found_custom_menu = false;
+        foreach ($module_menu as $key => $menu_entry) {
+        	foreach ($menu_entry as $id => $menu_item) {
+        		if (preg_match('/action=foo/', $menu_item)) {
+        		   $found_custom_menu = true;
+        		}
+        	}
+        }
+        $this->assertTrue($found_custom_menu, "Assert that custom menu was detected");
     }    
     
     public function testMenuExistsCanFindApplicationExtMenu()

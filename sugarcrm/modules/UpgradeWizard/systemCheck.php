@@ -200,6 +200,7 @@ foreach($errors as $k => $type) {
 	}
 }
 
+$GLOBALS['top_message'] = "{$mod_strings['LBL_UW_NEXT_TO_UPLOAD']}";
 $showBack		= true;
 $showCancel		= true;
 $showRecheck	= true;
@@ -229,7 +230,7 @@ $uwMain =<<<eoq
 <table cellpadding="3" cellspacing="4" border="0">
 	<tr>
 		<td align="left" valign="top">
-			{$mod_strings['LBL_UW_FILE_ISSUES_PERMS']}
+			{$mod_strings['LBL_UW_FILE_ISSUES_PERMS']}:
 		</td>
 		<td>
 			{$filesOut}
@@ -242,7 +243,7 @@ $uwMain =<<<eoq
 	</tr>
 	<tr>
 		<td align="left" valign="top">
-			{$mod_strings['LBL_UW_DB_ISSUES_PERMS']}
+			{$mod_strings['LBL_UW_DB_ISSUES_PERMS']}:
 		</td>
 		<td>
 			{$dbOut}
@@ -255,7 +256,7 @@ $uwMain =<<<eoq
 	</tr>
 	<tr>
 		<td align="left" valign="top">
-			{$mod_strings['LBL_UW_COMPLIANCE_TITLE2']}
+			{$mod_strings['LBL_UW_COMPLIANCE_TITLE2']}:
 		</td>
 		<td>
 			{$sysCompliance}
@@ -265,7 +266,7 @@ $uwMain =<<<eoq
 <div id="upgradeDiv" style="display:none">
     <table border="0" cellspacing="0" cellpadding="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
         </td></tr>
      </table>
  </div>

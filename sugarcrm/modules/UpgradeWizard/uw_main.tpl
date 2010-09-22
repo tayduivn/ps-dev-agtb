@@ -52,7 +52,7 @@
 <form action="index.php" method="post" name="UpgradeWizardForm" id="form">
 	<input type="hidden" name="module" value="UpgradeWizard">
 	<input type="hidden" name="action" value="index">
-	<input type="hidden" name="step" value="{$UW_STEP}">
+	<input type="hidden" name="step" id="step" value="{$UW_STEP}">
 	<input type="hidden" name="overwrite_files" id="over">
 	<input type="hidden" name="schema_change" id="schema">
 	<input type="hidden" name="schema_drop"   id="schema_drop">
@@ -69,7 +69,7 @@
 		{if $showBack}
 			<input	title		= "{$MOD.LBL_BUTTON_BACK}"
 					class		= "button"
-					onclick		= "this.form.step.value='{$STEP_BACK}';"
+					onclick		= "document.getElementById('form').step.value='{$STEP_BACK}';"
 					type		= "submit"
 					value		= "  {$MOD.LBL_BUTTON_BACK}  ">
 		{/if}
@@ -77,7 +77,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_NEXT}"
 					class		= "button"
 					{$disableNextForLicense}
- 					onclick	= " handleUploadCheck('{$step}', {$u_allow}); if(!{$u_allow}) return; upgradeP('{$step}');this.form.step.value='{$STEP_NEXT}'; handlePreflight('{$step}'); document.forms['form'].submit();"
+ 					onclick	= " handleUploadCheck('{$step}', {$u_allow}); if(!{$u_allow}) return; upgradeP('{$step}', false);document.getElementById('form').step.value='{$STEP_NEXT}'; handlePreflight('{$step}'); document.getElementById('form').submit();"
 					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_NEXT}  "
 					id			= "next_button" >
@@ -85,14 +85,20 @@
 		{if $showCancel}
 			<input	title		= "{$MOD.LBL_BUTTON_CANCEL}"
 					class		= "button"
-					onclick		= "cancelUpgrade();this.form.step.value='{$STEP_CANCEL}';"
+				{if $step == 'start'}
+					{**** if this is the first step, cancel should take you to administration screen ****}
+					onclick		= "document.location.href='index.php?module=Administration&action=index';"
+					type		= "button"
+				{else}
+					onclick		= "cancelUpgrade();document.getElementById('form').step.value='{$STEP_CANCEL}';"
 					type		= "submit"
+				{/if}
 					value		= "  {$MOD.LBL_BUTTON_CANCEL}  ">
 		{/if}
 		{if $showRecheck}
 			<input	title		= "{$MOD.LBL_BUTTON_RECHECK}"
 					class		= "button"
-					onclick		= "this.form.step.value='{$STEP_RECHECK}';"
+					onclick		= "upgradeP('{$step}', true);document.getElementById('form').step.value='{$STEP_RECHECK}';"
 					type		= "submit"
 					value		= "  {$MOD.LBL_BUTTON_RECHECK}  ">
 		{/if}
@@ -100,8 +106,15 @@
 			<input	title		= "{$MOD.LBL_BUTTON_DONE}"
 					class		= "button"
 					onclick		= "deleteCacheAjax();window.location.href='index.php?module=Home&action=About';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_DONE}  ">
+		{/if}
+		{if $showExit}
+			<input	title		= "{$MOD.LBL_BUTTON_EXIT}"
+					class		= "button"
+					onclick		= "window.location.href='index.php?module=Administration&action=index';"
+					type		= "button"
+					value		= "  {$MOD.LBL_BUTTON_EXIT}  ">
 		{/if}
 
 </form>
@@ -109,25 +122,17 @@
 	</tr>
 </table>
 </div>
-<br />
+
 <div id="main">
 <table width="100%" border="0" cellpadding="0" cellpadding="0" 
     class="{if !isset($includeContainerCSS) || $includeContainerCSS}tabDetailView{else}detail view small{/if}">
-{if $frozen}
+{if $step != "start" && $step != "cancel" && $step != "end"}
 	<tr>
 		<td id=error_messages colspan="2">
-			<span class="error"><b>{$frozen}</b></span>
+			<div id="top_message">{$top_message}</div>
 		</td>
 	</tr>
 {/if}
-{if $upload_success}
-	<tr>
-		<td colspan="2">
-			<span class="error"><b>{$upload_success}</b></span>
-		</td>
-	</tr>
-{/if}
-
 	<tr>
 		<td width="25%" rowspan="2" {if !isset($includeContainerCSS) || $includeContainerCSS}class="tabDetailViewDL"{else}scope="row"{/if}><slot>
 			{$CHECKLIST}
@@ -146,7 +151,7 @@
 {/if}
 </table>
 </div>
-<br />
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td>
@@ -170,7 +175,7 @@
 		{if $showBack}
 			<input	title		= "{$MOD.LBL_BUTTON_BACK}"
 					class		= "button"
-					onclick		= "this.form.step.value='{$STEP_BACK}';"
+					onclick		= "document.getElementById('form').step.value='{$STEP_BACK}';"
 					type		= "submit"
 					value		= "  {$MOD.LBL_BUTTON_BACK}  ">
 		{/if}
@@ -178,7 +183,7 @@
 			<input	title		= "{$MOD.LBL_BUTTON_NEXT}"
 					class		= "button"
 					{$disableNextForLicense}
- 					onclick	= " handleUploadCheck('{$step}', {$u_allow}); if(!{$u_allow}) return; upgradeP('{$step}');this.form.step.value='{$STEP_NEXT}'; handlePreflight('{$step}'); document.forms['form'].submit();"
+ 					onclick	= " handleUploadCheck('{$step}', {$u_allow}); if(!{$u_allow}) return; upgradeP('{$step}', false);document.getElementById('form').step.value='{$STEP_NEXT}'; handlePreflight('{$step}'); document.getElementById('form').submit();"
 					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_NEXT}  "
 					id			= "next_button" >
@@ -186,14 +191,20 @@
 		{if $showCancel}
 			<input	title		= "{$MOD.LBL_BUTTON_CANCEL}"
 					class		= "button"
-					onclick		= "cancelUpgrade();this.form.step.value='{$STEP_CANCEL}';"
+				{if $step == 'start'}
+					{**** if this is the first step, cancel should take you to administration screen ****}
+					onclick		= "document.location.href='index.php?module=Administration&action=index';"
+					type		= "button"
+				{else}
+					onclick		= "cancelUpgrade();document.getElementById('form').step.value='{$STEP_CANCEL}';"
 					type		= "submit"
+				{/if}
 					value		= "  {$MOD.LBL_BUTTON_CANCEL}  ">
 		{/if}
 		{if $showRecheck}
 			<input	title		= "{$MOD.LBL_BUTTON_RECHECK}"
 					class		= "button"
-					onclick		= "this.form.step.value='{$STEP_RECHECK}';"
+					onclick		= "upgradeP('{$step}', true);document.getElementById('form').step.value='{$STEP_RECHECK}';"
 					type		= "submit"
 					value		= "  {$MOD.LBL_BUTTON_RECHECK}  ">
 		{/if}
@@ -201,8 +212,15 @@
 			<input	title		= "{$MOD.LBL_BUTTON_DONE}"
 					class		= "button"
 					onclick		= "deleteCacheAjax();window.location.href='index.php?module=Home&action=About';"
-					type		= "submit"
+					type		= "button"
 					value		= "  {$MOD.LBL_BUTTON_DONE}  ">
+		{/if}
+		{if $showExit}
+			<input	title		= "{$MOD.LBL_BUTTON_EXIT}"
+					class		= "button"
+					onclick		= "window.location.href='index.php?module=Administration&action=index';"
+					type		= "button"
+					value		= "  {$MOD.LBL_BUTTON_EXIT}  ">
 		{/if}
 
 </form>
@@ -221,10 +239,12 @@ LICENSE_CHECK_IN_PROGRESS = "{$MOD.LBL_LICENSE_CHECK_IN_PROGRESS}";
 PREFLIGHT_CHECK_IN_PROGRESS ="{$MOD.LBL_PREFLIGHT_CHECK_IN_PROGRESS}";
 COMMIT_UPGRADE_IN_PROGRESS ="{$MOD.LBL_COMMIT_UPGRADE_IN_PROGRESS}";
 UPGRADE_SUMMARY_IN_PROGRESS ="{$MOD.LBL_UPGRADE_SUMMARY_IN_PROGRESS}";
+UPGRADE_SCRIPTS_IN_PROGRESS ="{$MOD.LBL_UPGRADE_SCRIPTS_IN_PROGRESS}";
 SET_STEP_TO_COMPLETE = "{$MOD.LBL_UW_COMPLETE}";
 UPLOADE_UPGRADE_IN_PROGRESS= "{$MOD.LBL_UPLOADE_UPGRADE_IN_PROGRESS}";
 UPLOADING_UPGRADE_PACKAGE = "{$MOD.LBL_UPLOADING_UPGRADE_PACKAGE}";
 UPGRADE_CANCEL_IN_PROGRESS ="{$MOD.LBL_UPGRADE_CANCEL_IN_PROGRESS}";
+PREFLIGHT_FILE_COPYING_PROGRESS = "{$MOD.LBL_PREFLIGHT_FILE_COPYING_PROGRESS}";
 {literal}
 var msgPanel;
 var c=0
@@ -233,7 +253,11 @@ var t
 var currStage
 var timeOutWindowMultiplier = 1
 var timeOutWindow = 60
-function upgradeP(step){
+function upgradeP(step, recheck){
+//if(step == 'systemCheck'){
+//	return;
+//}
+
 if(document.getElementById("upgradeDiv") != null){
 	    var args = {    width:"300px",
 	                    modal:true,
@@ -249,15 +273,18 @@ if(document.getElementById("upgradeDiv") != null){
 	            //If we haven't built our panel using existing markup,
 	            //we can set its content via script:
 
-				if(step == 'start'){
+				if(step == 'start' || step == 'systemCheck'){
                 	//currStage = START_IN_PROGRESS;
                 	currStage = SYSTEM_CHECK_IN_PROGRESS;
                 }
+                /* removed window from system check. if you need to add back, remove check at the top
+                 * of this function as well
                 if(step == 'systemCheck'){
                 	currStage = UPLOADE_UPGRADE_IN_PROGRESS;
                 	//document.getElementById(step).innerHTML='<i>'+SET_STEP_TO_COMPLETE+'</i>'
                 }
-                if(step == 'uploadingUpgardePackage'){
+                */
+                if(step == 'uploadingUpgradePackage'){
                 	currStage = UPLOADING_UPGRADE_PACKAGE;
                 }
                 if(step == 'license_fiveO'){
@@ -271,12 +298,16 @@ if(document.getElementById("upgradeDiv") != null){
                 	//document.getElementById(step).innerHTML='<i>'+SET_STEP_TO_COMPLETE+'</i>'
                 }
                 if(step == 'preflight'){
-                	//currStage = PREFLIGHT_CHECK_IN_PROGRESS;
-                	currStage = COMMIT_UPGRADE_IN_PROGRESS;
+                	if(recheck){
+                    	currStage = PREFLIGHT_CHECK_IN_PROGRESS;
+                	}
+                	else{
+	                	currStage = PREFLIGHT_FILE_COPYING_PROGRESS;
+                	}
                 	//document.getElementById(step).innerHTML='<i>'+SET_STEP_TO_COMPLETE+'</i>'
                 }
                 if(step == 'commit'){
-                	currStage = UPGRADE_SUMMARY_IN_PROGRESS;
+                	currStage = UPGRADE_SCRIPTS_IN_PROGRESS;
                 	//document.getElementById(step).innerHTML='<i>'+SET_STEP_TO_COMPLETE+'</i>'
                 }
                 if(step == 'layouts'){

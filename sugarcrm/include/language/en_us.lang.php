@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 57232 2010-07-01 16:14:36Z kjing $
+ * $Id: en_us.lang.php 57929 2010-08-25 21:52:39Z kjing $
  * Description:  Defines the English language pack for the base application.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -2199,9 +2199,9 @@ $app_strings = array (
     'LBL_EMAIL_SETTINGS_TITLE_PREFERENCES'  => 'Preferences',
     'LBL_EMAIL_SETTINGS_TOGGLE_ADV'         => 'Show Advanced',
     'LBL_EMAIL_SETTINGS_USER_FOLDERS'       => 'Available User Folders',
-    'LBL_EMAIL_ERROR_PREPEND'               => 'Error emailing:',
+    'LBL_EMAIL_ERROR_PREPEND'               => 'Error:',
 	'LBL_EMAIL_INVALID_PERSONAL_OUTBOUND' => 'The outbound mail server selected for the mail account you are using is invalid.  Check the settings or select a different mail server for the mail account.',
-	'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND' => 'An outbound mail server is not configured for outoing email for the mail account that you are using. Please select or add an outbound mail server for the mail account.',
+	'LBL_EMAIL_INVALID_SYSTEM_OUTBOUND' => 'An outgoing mail server is not configured to send emails. Please configure an outgoing mail server or select an outgoing mail server for the mail account that you are using in Settings >> Mail Account.',
     'LBL_EMAIL_SHOW_READ'                   => 'Show All',
     'LBL_EMAIL_SHOW_UNREAD_ONLY'            => 'Show Unread Only',
     'LBL_EMAIL_SIGNATURES'                  => 'Signatures',
@@ -2536,7 +2536,7 @@ $app_strings = array (
     'LBL_PANEL_ADVANCED' => 'More Information',
     'LBL_PARENT_TYPE' => 'Parent Type',
     'LBL_PERCENTAGE_SYMBOL' => '%',
-    'LBL_PHASE' => 'Phase',
+    'LBL_PHASE' => 'Range',
     //BEGIN SUGARCRM flav!=com ONLY
     'LBL_PICTURE_FILE' => 'Picture',
     //END SUGARCRM flav!=com ONLY
@@ -2629,14 +2629,14 @@ $app_strings = array (
 
     /* The following version of LBL_SUGAR_COPYRIGHT is intended for Sugar Open Source only. */
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
     //END SUGARCRM flav=com  && dep=os ONLY
 
     //BEGIN SUGARCRM lic=sub ONLY
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
     //END SUGARCRM lic=sub ONLY
 
@@ -3038,6 +3038,7 @@ $app_strings = array (
     'LBL_HOURS' => 'Hours',
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
+    'LBL_DATE' => 'Date',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

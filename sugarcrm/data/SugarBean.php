@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /********************************************************************************* 
- * $Id: SugarBean.php 57513 2010-07-16 21:07:48Z kjing $
+ * $Id: SugarBean.php 58121 2010-09-09 18:35:17Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -2557,16 +2557,30 @@ function save_relationship_changes($is_update, $exclude=array())
 						{
 							$list_column[0] = $bean_queried->table_name .".".$list_column[0] ;
 						}
+						if (empty($bean_queried->field_defs[$list_column_name]['table']) && $source=='custom_fields')
+						{
+						    $list_column[0] = $bean_queried->table_name ."_cstm.".$list_column[0] ;
+						}
 						$value = implode($list_column,' ');
 						// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
 						if ( $this->db->dbType == 'mssql' 
-						     && $source == 'db'
+						     && $source != 'non-db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
                                 array('ntext','text','image')
                                 )
                             ) {
                         $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
+                        }
+						// Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
+						if ( $this->db->dbType == 'oci8' 
+						     && $source != 'non-db'
+                            && in_array(
+                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                array('clob')
+                                )
+                            ) {
+                        $value = "TO_CHAR({$list_column[0]}) {$list_column[1]}";
                         }
 					}
 					else
@@ -5226,6 +5240,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
 	}
 	//END SUGARCRM flav=pro ONLY
+	/**
+	 * Check whether the user has access to a particular view for the current bean/module
+	 * @param $view string required, the view to determine access for i.e. DetailView, ListView...
+	 * @param $is_owner bool optional, this is part of the ACL check if the current user is an owner they will receive different access
+	 */
     function ACLAccess($view,$is_owner='not_set')
     {
     	global $current_user;

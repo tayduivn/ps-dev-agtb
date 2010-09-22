@@ -478,12 +478,10 @@ class CalendarActivity
 		else
 		{
             // Convert it back to database time so we can properly manage it for getting the proper start and end dates
-			list($dbDate,$dbTime) = $timedate->to_db_date_time($this->sugar_bean->date_start, $this->sugar_bean->time_start);
-            $this->sugar_bean->time_start = $dbTime;
-			$this->start_time =DateTimeUtil::get_time_start($dbDate,$dbTime);
-
-		$this->end_time =DateTimeUtil::get_time_end(
-			$this->start_time,
+            $dbDate = $timedate->to_db($this->sugar_bean->date_start);
+            $this->start_time =DateTimeUtil::get_time_start($dbDate);
+		    $this->end_time =DateTimeUtil::get_time_end(
+			    $this->start_time,
          		$this->sugar_bean->duration_hours,
         		$this->sugar_bean->duration_minutes
 			);
@@ -516,9 +514,6 @@ class CalendarActivity
 
 		$where = "($field_date >= '{$start_day['start']}' AND $field_date < '{$end_day['start']}'";
 
-		if($rel_table != '') {
-			$where .= " AND $rel_table.accept_status != 'decline'";
-		}
 		$where .= ")";
 		return $where;
 	}
@@ -628,5 +623,3 @@ class CalendarActivity
 		return $act_list;
 	}
 }
-
-?>

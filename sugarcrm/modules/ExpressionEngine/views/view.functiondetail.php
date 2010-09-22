@@ -43,8 +43,7 @@ class ViewFunctiondetail extends SugarView
 			$doc = $class->getDocComment();
 			if (!empty($doc)) {
 				//Remove the javadoc style comment *'s
-				$doc = preg_replace("/((\/\*+)|(\*+\/)|(\n\s*\*)[^\/])/", "", $doc);
-				$desc =  $doc . "[phpdoc]";
+				$desc = preg_replace("/((\/\*+)|(\*+\/)|(\n\s*\*)[^\/])/", "", $doc) . " [phpdoc]";
 			} else if (isset($mod_strings['func_descriptions'][$_REQUEST['function']]))
 			{
 				$desc = $mod_strings['func_descriptions'][$_REQUEST['function']] . "[modstrings]";

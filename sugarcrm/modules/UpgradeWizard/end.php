@@ -297,15 +297,15 @@ $cleanUrl		= "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}/index.php";
 
 $uwMain =<<<eoq
 <table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th align="left">
-			{$mod_strings['LBL_UW_TITLE_END']}
-		</th>
-	</tr>
+
 	<tr>
 		<td align="left">
 			<p>
-				<b class="error">{$mod_strings['LBL_UW_END_LOGOUT']}</b>
+			<br>
+			{$mod_strings['LBL_UW_END_LOGOUT_PRE2']}
+			<br>
+			<br>
+            <b>{$mod_strings['LBL_UW_END_LOGOUT_PRE']}</b> {$mod_strings['LBL_UW_END_LOGOUT']}
 			</p>
 		</td>
 	</tr>

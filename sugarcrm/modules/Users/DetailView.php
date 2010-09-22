@@ -75,8 +75,7 @@ if(isset($_REQUEST['reset_homepage'])){
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=Users&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
-$params[] = $locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
+$params[] = "<span class='pointer'>&raquo;</span>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
 echo getClassicModuleTitle("Users", $params, true);
 
 global $app_list_strings;
@@ -477,7 +476,7 @@ else
 $useGroupTabs = $current_user->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'm';
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
     }
     $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
 }

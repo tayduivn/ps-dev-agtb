@@ -53,9 +53,6 @@ function disableReturnSubmission(e) {
 <form name="AdminWizard" id="AdminWizard" enctype='multipart/form-data' method="POST" action="index.php" onkeypress="return disableReturnSubmission(event);">
 <input type='hidden' name='action' value='SaveAdminWizard'/>
 <input type='hidden' name='module' value='Configurator'/>
-<!-- //BEGIN SUGARCRM flav=sales ONLY -->
-<input type='hidden' id='mail_smtptype' name='mail_smtptype' value='other'/>
-<!-- //END SUGARCRM flav=sales ONLY -->
 <span class='error'>{$error.main}</span>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Emails/javascript/vars.js'}"></script>
@@ -247,7 +244,6 @@ function disableReturnSubmission(e) {
             <tr>
                 <td align="left" scope="row" colspan="4"><i>{$MOD.LBL_WIZARD_SMTP_DESC}</i></td>
             </tr>
-            {* //BEGIN SUGARCRM flav!=sales ONLY *}
              <tr>
                 <td align="left" scope="row" colspan="4">{$MOD.LBL_CHOOSE_EMAIL_PROVIDER}</td>
             </tr>
@@ -295,7 +291,6 @@ function disableReturnSubmission(e) {
                     </div>
                 </td>
             </tr>
-            {* //END SUGARCRM flav!=sales ONLY *}
             <tr>
                 <td colspan="4">
                     <div id="smtp_settings">
@@ -371,7 +366,7 @@ function disableReturnSubmission(e) {
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
             onclick="SugarWizard.changeScreen('locale',true);" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" class="button primary"
-            type="submit" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" />&nbsp;
+            onclick="adjustEmailSettings(); this.form.submit();" type="button" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" />&nbsp;
     </div>
 </div>
 			</div>
@@ -522,6 +517,19 @@ var SugarWizard = new function()
 } 
 SugarWizard.changeScreen('{/literal}{$START_PAGE}{literal}');
 document.onkeypress = SugarWizard.handleKeyStroke;
+
+function adjustEmailSettings(){
+    if( !document.getElementById('mail_smtpserver').value ||
+		!document.getElementById('mail_smtpuser').value ||
+		!document.getElementById('mail_smtppass').value ||
+		!document.getElementById('mail_smtpport').value)
+	{
+			document.getElementById('mail_smtpserver').value = null;
+			document.getElementById('mail_smtpuser').value = null;
+			document.getElementById('mail_smtppass').value = null;
+			document.getElementById('mail_smtpport').value = null;
+    }
+}
 
 function clearEmailFields() { 
  	document.getElementById('AdminWizard').mail_smtpuser.value = '';

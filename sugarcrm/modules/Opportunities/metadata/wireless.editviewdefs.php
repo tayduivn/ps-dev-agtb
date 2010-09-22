@@ -26,7 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
 $viewdefs['Opportunities']['EditView'] = array(
 	'templateMeta' => array(
                             'maxColumns' => '1', 
@@ -38,7 +37,7 @@ $viewdefs['Opportunities']['EditView'] = array(
     	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
 	    array('amount'),
 		array('account_name'),
-		array('opportunity_type'),
+		array('date_closed'),
 	    array('sales_stage'),
 		array('assigned_user_name'),
 		//BEGIN SUGARCRM flav=pro ONLY

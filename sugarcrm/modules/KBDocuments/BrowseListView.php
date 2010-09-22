@@ -181,7 +181,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
        
    //if set to 'all tags', pass in query 'where' clause into method that returns list for admins
    if(!empty($zero_node) && strtolower($zero_node) == 'all_tags'){
-        $results = get_admin_fts_list($search_str,false,true);
+   		$results = get_admin_fts_list($search_str,false,true);
    }else{   
         $results = get_fts_list($search_str,false,true);
    }

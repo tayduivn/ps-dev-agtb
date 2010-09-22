@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,13 +20,20 @@
  ********************************************************************************/
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 
+/**
+ * <b>Log(number, base)</b><br/>
+ * Returns the supplied </i>base</i> Log of <i>number</i>.<br>
+ * ex: <em>log(100, 10)</em> = 2
+ */
 class LogExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.
 	 */
 	function evaluate() {
-		// TODO: add caching of return values
-		return log( $this->getParameters()->evaluate() );
+		$params = $this->getParameters();
+        $base = $params[1]->evaluate();
+        $value = $params[0]->evaluate();
+        return log( $value ) / log ( $base );
 	}
 	
 	/**
@@ -34,7 +41,11 @@ class LogExpression extends NumericExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			return Math.log( this.getParameters().evaluate() );
+		      var params = this.getParameters();
+
+            var base = params[1].evaluate();
+            var value = params[0].evaluate();
+            return Math.log( value ) / Math.log ( base );
 EOQ;
 	}
 	
@@ -50,7 +61,7 @@ EOQ;
 	 * Returns the exact number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 1;
+		return 2;
 	}
 }
 ?>

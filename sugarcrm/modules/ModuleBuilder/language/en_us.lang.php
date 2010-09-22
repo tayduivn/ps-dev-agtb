@@ -354,6 +354,7 @@ $mod_strings = array(
 'LBL_EDIT_PORTAL'=>'Edit Portal for ',
 'LBL_EDIT_FIELDS'=>'Edit Fields',
 'LBL_EDITVIEW'=>'EditView',
+'LBL_CONVERTLEAD' => 'Convert Lead',
 'LBL_FILLER'=>'(filler)',
 'LBL_FIELDS'=>'Fields',
 'LBL_FAILED_TO_SAVE' => 'Failed To Save',
@@ -419,6 +420,7 @@ $mod_strings = array(
 'LBL_SEARCH_FUNCS' => 'Search Functions...',
 'LBL_SEARCH_FIELDS' => 'Search Fields...',
 'LBL_FORMULA' => 'Formula',
+'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
 //END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS

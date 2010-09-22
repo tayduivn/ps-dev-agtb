@@ -732,25 +732,25 @@ function getValidPatchName($returnFull = true) {
 	$ready .= "
 		<table>
 			<tr>
-				<th></th>
-				<th align=left>
-					{$mod_strings['LBL_ML_NAME']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_TYPE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_VERSION']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_PUBLISHED']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_UNINSTALLABLE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_DESCRIPTION']}
-				</th>
+				<td></td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_NAME']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_TYPE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_VERSION']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_PUBLISHED']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_UNINSTALLABLE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_DESCRIPTION']}</b>
+				</td>
 			</tr>";
 	$disabled = '';
 
@@ -820,11 +820,11 @@ function getValidPatchName($returnFull = true) {
 	$_SESSION['install_file'] = urldecode($newest); // in-case it was there from a prior.
 	logThis("*** UW using [ {$_SESSION['install_file']} ] as source for patch files.");
 
-	$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 	$cleanUpgradeContent = urlencode($_SESSION['install_file']);
 
 	// cn: 10606 - cannot upload a patch file since this returned always.
 	if(!empty($cleanUpgradeContent)) {
+		$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 		$ready .=<<<eoq
 	        <td>
 				<form action="index.php" method="post">
@@ -835,17 +835,18 @@ function getValidPatchName($returnFull = true) {
 	        		<input type=hidden name="install_file" value="{$cleanUpgradeContent}" />
 	        		<input type=submit value="{$mod_strings['LBL_BUTTON_DELETE']}" />
 				</form>
-			</td>
+			</td></table>\n
 eoq;
 		$disabled = "DISABLED";
 	}
 
-	$ready .= "</table>\n";
+	
 
 	if(empty($cleanUpgradeContent)){
-	    $ready .= "<i>None</i><br>\n";
+	    $ready .= "<tr><td colspan='7'><i>None</i></td>\n";
+		$ready .= "</table>\n";
 	}
-	$ready .= "</ul>\n";
+	$ready .= "<br></ul>\n";
 
 	$return['ready'] = $ready;
 	$return['disabled'] = $disabled;
@@ -2848,7 +2849,7 @@ function fileCopy($file_path){
 function getChecklist($steps, $step) {
 	global $mod_strings;
 
-	$skip = array('start', 'cancel', 'uninstall');
+	$skip = array('start', 'cancel', 'uninstall','end');
 	$j=0;
 	$i=1;
 	$ret  = '<table cellpadding="3" cellspacing="4" border="0">';
@@ -4554,17 +4555,20 @@ function upgradeUserPreferences() {
 		  } //if
 
 		  // move the favorite reports over to the SugarFavorites table
-		  $current_favorites = array_keys($current_user->getPreference('favorites', 'Reports'));
-		  foreach ($current_favorites as $report_id) {
-		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-		          continue;
-		      }
-
-		      $favFocus = new SugarFavorites;
-		      $favFocus->module = 'Reports';
-		      $favFocus->record_id = $report_id;
-		      $favFocus->assigned_user_id = $current_user->id;
-		      $favFocus->save();
+		  $fav_rep_prefs = $current_user->getPreference('favorites', 'Reports');
+		  if(is_array($fav_rep_prefs) && !empty($fav_rep_prefs)){
+    		  $current_favorites = array_keys($fav_rep_prefs);
+    		  foreach ($current_favorites as $report_id) {
+    		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
+    		          continue;
+    		      }
+    
+    		      $favFocus = new SugarFavorites;
+    		      $favFocus->module = 'Reports';
+    		      $favFocus->record_id = $report_id;
+    		      $favFocus->assigned_user_id = $current_user->id;
+    		      $favFocus->save();
+    		  }
 		  }
 
 		  // we need to force save the changes to disk, otherwise we lose them.

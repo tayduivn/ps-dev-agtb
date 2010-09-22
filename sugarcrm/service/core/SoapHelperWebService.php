@@ -429,9 +429,10 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list_for_fields');
 		global $app_list_strings;
 		global $invalid_contact_fields;
-
+		
 		$list = array();
 		if(!empty($value->field_defs)){
+			if(empty($fields))$fields = array_keys($value->field_defs);
 			if(isset($value->assigned_user_name) && in_array('assigned_user_name', $fields)) {
 				$list['assigned_user_name'] = $this->get_name_value('assigned_user_name', $value->assigned_user_name);
 			}
@@ -446,7 +447,7 @@ function validate_user($user_name, $password){
 			if(isset($value->created_by_name) && in_array('created_by_name', $fields)) {
 				$list['created_by_name'] = $this->get_name_value('created_by_name', $value->created_by_name);
 			}
-
+			
 			$filterFields = $this->filter_fields($value, $fields);
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];
@@ -1119,12 +1120,20 @@ function validate_user($user_name, $password){
 					if(!empty($trimmed_last) && strcmp($trimmed_last, $contact->last_name) == 0){
 						if(!empty($trimmed_email) && strcmp($trimmed_email, $contact->email1) == 0){
 							if(!empty($trimmed_email)){
-								if(strcmp($trimmed_email, $contact->email1) == 0)
-									$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found ' . $contact->id);
-									return $contact->id;
-							}else
-									$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found' . $contact->id);
-									return $contact->id;
+								if(strcmp($trimmed_email, $contact->email1) == 0){
+								 	//bug: 39234 - check if the account names are the same
+								 	//if the incoming contact's account_name is empty OR it is not empty and is the same
+								 	//as an existing contact's account name, then find the match.
+									$contact->load_relationship('accounts');
+									if(empty($seed->account_name) || strcmp($seed->account_name, $contact->account_name) == 0){
+										$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found ' . $contact->id);
+										return $contact->id;
+									}
+								}
+							}else{
+								$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found' . $contact->id);
+								return $contact->id;
+							}
 						}
 					}
 				}

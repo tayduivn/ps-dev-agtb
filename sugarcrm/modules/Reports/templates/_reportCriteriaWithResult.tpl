@@ -240,17 +240,21 @@ ACLAllowedModules = {$ACLAllowedModules};
 				<td wrap="true">
 					<b>{$mod_strings.LBL_DISPLAY_COLUMNS}:</b> {$reportDisplayColumnsList}
 				</td>
+				{* //BEGIN SUGARCRM flav!=sales ONLY *}
 				<td wrap="true">
 					<b>{$mod_strings.LBL_OWNER}:</b> {$reportAssignedToName}
 				</td>
+				{* //END SUGARCRM flav!=sales ONLY *}
 			</tr>
 			{$summaryAndGroupDefData}
 			<tr>
+			{* //BEGIN SUGARCRM flav!=sales ONLY *}
 			<tr>
 				<td wrap="true" colspan="2">
 					<b>{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}:</b> <span id="schduleDateTimeDiv">{$schedule_value}</span>
 				</td>
 			</tr>
+			{* //END SUGARCRM flav!=sales ONLY *}
 			<tr>
 				<td wrap="true" colspan="2">
 					<b>{$mod_strings.LBL_FILTERS}:</b>{$reportFilters}
@@ -411,13 +415,12 @@ function showHideReportDetailsButton() {
 		{literal}showHideReportDetailsButton.value = {/literal}"{$mod_strings.LBL_REPORT_SHOW_DETAILS}";{literal}
 	} // else
 } // fn
-
 function saveReportOptionsState(name, value) {
 	var callback = {
         success:function(o){},
         failure:function(o){}
     };
-	var postDataString = 'report_options=1&report_id=' + document.getElementById('record').value + "&" + name + "=" + value;
+	var postDataString = 'to_pdf=true&report_options=1&report_id=' + document.getElementById('record').value + "&" + name + "=" + value;
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=ReportCriteriaResults&module=Reports&page=report", callback, postDataString);
 } // fn
 

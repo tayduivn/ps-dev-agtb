@@ -61,6 +61,7 @@ class ViewPortalPreview extends SugarView
         echo get_module_title($GLOBALS['mod_strings']['LBL_MODULE_TITLE'], $GLOBALS['mod_strings']['LBL_MODULE_TITLE'], true); 
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod', $GLOBALS['mod_strings']);
+        $smarty->assign('app', $GLOBALS['app_strings']);
         $smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SP_UPLOADSTYLE']);
         $smarty->assign('useCustomFile', file_exists('custom/portal/custom/style.css'));
         echo $smarty->fetch('modules/ModuleBuilder/tpls/portalpreview.tpl');

@@ -22,11 +22,11 @@
 <link rel="stylesheet" type="text/css" href="modules/ExpressionEngine/tpls/formulaBuilder.css" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
-		<input name="formulaInput" id="formulaInput" style="width:480px" value='{$formula}'/>
-		<span class="id-ff multiple"><button id="formulaInputClear" class="button"
+		<textarea type="text" name="formulaInput" id="formulaInput" style="width:480px;height:120px;">{$formula}</textarea>
+		{*<span class="id-ff multiple"><button id="formulaInputClear" class="button"
             onclick="Dom.get('formulaInput').value='';">
                 {sugar_image image="id-ff-clear.png" name="id-ff-clear" height="14" width="14"}
-        </button></span>
+        </button></span>*}
 	</td></tr>
 	<tr>
 		<td id="functionsList" width="200">
@@ -57,7 +57,27 @@
 </div>
 <script src="modules/ExpressionEngine/javascript/formulaBuilder.js"></script>
 <script type="text/javascript">
+{literal}
+var FBLoader = new YAHOO.util.YUILoader({
+    require : ["formulabuilder"],
+    loadOptional: true,
+    //BEGIN SUGARCRM flav=int ONLY
+    filter: 'debug',
+    //END SUGARCRM flav=int ONLY
+    skin: { base: 'blank', defaultSkin: '' },
+    onSuccess: function(){SUGAR.expressions.initFormulaBuilder()},
+    allowRollup: true,
+    base: "include/javascript/yui/build/"
+});
+FBLoader.addModule({
+    name :"formulabuilder",
+    type : "js",
+    fullpath: "modules/ExpressionEngine/javascript/formulaBuilder.js",
+    varName: "SUGAR.expressions.initFormulaBuilder",
+    requires: ["layout", "element"]
+});
+{/literal}
 var fieldsArray = {$Field_Array};
 var returnType = '{$returnType}';
-SUGAR.expressions.initFormulaBuilder();
+FBLoader.insert();
 </script>
