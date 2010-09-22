@@ -2401,4 +2401,6 @@ function enableSugarFeeds()
     
     foreach ( SugarFeed::getAllFeedModules() as $module )
         SugarFeed::activateModuleFeed($module);
+    
+    check_logic_hook_file('Users','after_login', array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php', 'SugarFeedFlush', 'flushStaleEntries'));
 }
