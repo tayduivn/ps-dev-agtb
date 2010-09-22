@@ -21,7 +21,7 @@ class Latin{
 	}
 	
 	function copyFiles($path){
-		require_once('config_override.php');
+		require($this->cwd ."/". $this->translationPath . '/config_override.php');
 		$langConfig = array();
 		$dir = new DirectoryIterator($path);
 		foreach ($dir as $fileInfo) {
