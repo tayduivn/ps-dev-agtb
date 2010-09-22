@@ -1491,32 +1491,64 @@ print "<BR>";
 
         //for each field
         while($currCount<$arrCount){
-            $fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
-            foreach ( $fieldsInField as $field ) {
-                $field = trim($field);
-                //if it has a space, then it is aliased, let's process
-                //to see if it has a period
-                $has_space = strrpos($field, " ");
-                    if($has_space){
-                        $temp_field_name = substr($field,0,$has_space);
-                        $has_period = strrpos($temp_field_name, ".");
-						$aggregate_func = substr($temp_field_name, 0, 3);
-						$is_aggregate = false;
-						if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
-							$is_aggregate = true;
-                        //has period, and is aliased, so wrap an "ISNULL function around it"
-                        // get field type, and don't wrap numeric or date fields with ISNULL
-                        $field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
-                        if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
-                            $temp_field_alias  = substr($field,$has_space+1);
-                            $field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-                            $field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
-                            for ( $i = 0; $i < count($this->order_by_arr); $i++ )
-                                $this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
-                        }
-                    }
-                    $currCount = $currCount+1;
-            }
+            // Bug 39692 - Correctly add the ISNULL() for concatenated fields
+            if ( strpos($field_list_name_array[$currCount],'+') ) {
+				$fieldsInField = explode('+',trim($field_list_name_array[$currCount]));
+				$newField = '';
+				foreach ( $fieldsInField as $field ) {
+					$field = trim($field);
+					//if it has a space, then it is aliased, let's process
+					//to see if it has a period
+					$has_space = strrpos($field, " ");
+					if($has_space && !stristr("' '",$field)){
+						$temp_field_name = substr($field,0,$has_space);
+						$temp_field_alias  = substr($field,$has_space+1);
+						if ( stristr('ISNULL',$temp_field_name) ) {
+							$newField .= "$temp_field_name $temp_field_alias";
+						}
+						else {
+							$newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
+						}
+					}
+					else {
+						if ( stristr('ISNULL',$field) ) {
+							$newField .= "$field + ";
+						}
+						else {
+							$newField .= "ISNULL({$field},' ') + ";
+						}
+					}
+				}
+				$field_list_name_array[$currCount] = $newField;
+			}
+			else {
+				$fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
+				foreach ( $fieldsInField as $field ) {
+					$field = trim($field);
+					//if it has a space, then it is aliased, let's process
+					//to see if it has a period
+					$has_space = strrpos($field, " ");
+						if($has_space){
+							$temp_field_name = substr($field,0,$has_space);
+							$has_period = strrpos($temp_field_name, ".");
+							$aggregate_func = substr($temp_field_name, 0, 3);
+							$is_aggregate = false;
+							if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
+								$is_aggregate = true;
+							//has period, and is aliased, so wrap an "ISNULL function around it"
+							// get field type, and don't wrap numeric or date fields with ISNULL
+							$field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
+							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
+								$temp_field_alias  = substr($field,$has_space+1);
+								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
+								$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
+									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
+							}
+						}
+				}
+			}
+			$currCount = $currCount+1;
         }
 
        $this->$field_list_name = $field_list_name_array;
