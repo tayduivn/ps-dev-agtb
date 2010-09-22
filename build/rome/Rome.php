@@ -13,9 +13,11 @@ class Rome {
     protected  $tagStack = array();
     protected  $buildPath = 'buildstest';
     public $startPath = '';
-    //FILE ONLY TAGS
+    //FILE ONLY TAGS (reset at build of each file)
     protected  $onlyOutput = array();
     protected  $retainCommentSpacing = false;
+    //LANGUAGE BUILDS (never reset)
+    protected  $onlyBuild = array();
 
 /**
  * Construct that loads the config file
@@ -64,8 +66,8 @@ public function getBuildDir(){
 	return $this->buildPath;
 }
 
-public function setOnlyOutput($flav){
-	$this->onlyOutput = array($flav=>$flav);
+public function setOnlyBuild($flav){
+	$this->onlyBuild = (is_array($flav))? $flav: array($flav=>$flav);
 }
 
 /**
@@ -505,6 +507,7 @@ protected function writeFiles($path, $skipBuilds=array()){
 
 
      foreach($this->output as $f=>$o){
+     			if(!empty($this->onlyBuild) && empty($this->onlyBuild[$f]))continue;
 
                 if(!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])|| (!empty($this->onlyOutput) && empty($this->onlyOutput[$f])))continue;
                 $this->makeDirs(dirname($path), $f);

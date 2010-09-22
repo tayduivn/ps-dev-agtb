@@ -16,8 +16,7 @@ class Latin{
                         chdir(dirname($this->translationPath));
                         passthru("git clone git@github.com:sugarcrm/translations");
          }
-		//chdir($this->translationPath);
-                chdir(realpath("$this->cwd" ."/". "$this->translationPath"));
+        chdir(realpath($this->cwd ."/". $this->translationPath));
 		passthru("git pull origin master");
 	}
 	
@@ -38,7 +37,7 @@ class Latin{
     						$path = $fileInfo->getPathname();
     						$path = realpath($path);
     						$path = str_replace($this->baseDir . '/','', $path);
-    						$this->rome->setOnlyOutput($flav);
+    						$this->rome->setOnlyBuild($flav);
     						$this->rome->setStartPath($this->startPath);
     						$en_usPath =$this->rome->buildPath . '/' . $flav . '/'. str_replace($lang . '.', 'en_us.',$this->rome->cleanPath($this->baseDir . '/' . $path));
     						if(file_exists($en_usPath)){
