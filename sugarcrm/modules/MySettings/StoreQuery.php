@@ -98,26 +98,26 @@ class StoreQuery{
 
 	
 	function saveFromRequest($name){
-		//make new request array out of superglobal post and get arrays, this is done
-		//manually so as to avoid cookie array
-		$request =  array_merge($_POST,$_GET);	
-
-		if(isset($request['query'])){
-			if(!empty($request['clear_query']) && $request['clear_query'] == 'true'){
+		if(isset($_REQUEST['query'])){
+			if(!empty($_REQUEST['clear_query']) && $_REQUEST['clear_query'] == 'true'){
 				$this->clearQuery($name);
 				return;	
 			}
 			$saveType = $this->getSaveType($name);
 			
 			if($saveType == 'myitems'){
-				if(!empty($request['current_user_only'])){
-					$this->query['current_user_only'] = $request['current_user_only'];
+				if(!empty($_REQUEST['current_user_only'])){
+					$this->query['current_user_only'] = $_REQUEST['current_user_only'];
 					$this->query['query'] = true;
 				}
 				$this->saveQuery($name);
 				
 			}else if($saveType == 'all'){
                 $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount', 'current_query_by_page');
+				
+				//make new request array out of superglobal post and get arrays, this is done manually so as to avoid cookie array
+				$request =  array_merge($_POST,$_GET);	
+				
 				$this->query = $request;
                 foreach($blockVariables as $block) {
                     unset($this->query[$block]);
