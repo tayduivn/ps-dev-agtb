@@ -177,7 +177,7 @@ SUGAR.expressions.GridToolTip = {
 		ggt.currentHelpFunc = func;
 		var cache = ggt.tipCache;
 		
-		if (typeof cache[func] != 'undefined') {
+		if (typeof cache[func] == 'string') {
 			tip.cfg.setProperty("text", cache[func]);
 		} else {
 			cache[func] = "loading...";
@@ -211,7 +211,7 @@ SUGAR.expressions.GridToolTip = {
 		{
 			case "string":
 				out = "string"; break;
-			case "number":
+			case "_number":
 				out = "num"; break;
 			case "time":
 				out = "date"; break;
@@ -282,12 +282,41 @@ SUGAR.expressions.GridToolTip = {
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
 	var functionsArray = SUGAR.expressions.getFunctionList();
+	var usedClasses = { };
 	var gridData = [];
 	for (var i in functionsArray)
 	{
+		var fName = functionsArray[i][0];
+		//Internal Sugar functions that most users will not find useful
+		switch (fName) {
+		case "daysUntil":
+		case "isValidTime":
+		case "isAlpha":
+		case "doBothExist":
+		case "isValidPhone":
+		case "isInEnum":
+		case "isRequiredCollection":
+		case "isNumeric":
+		case "isValidDBName":
+		case "isAlphaNumeric":
+		case "indexOf":
+		case "stddev":
+		case "charAt":
+		case "formatName":
+			continue;
+			break;
+		}
 		//For now, hide date functions in the formula builder as they are unstable.
-		if (functionsArray[i][1] != "date" && functionsArray[i][1] != "time" && functionsArray[i][0] != "daysUntil")
+		if (functionsArray[i][1] == "date" || functionsArray[i][1] == "time")
+			continue;
+		if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
+			continue;
+		if (functionsArray[i][1] == "number")
+			gridData.push([functionsArray[i][0], "_number"]);
+		else
 			gridData.push(functionsArray[i]);
+		usedClasses[SUGAR.FunctionMap[fName].prototype.className] = true;
+		
 	}
 	var funcDS = new YAHOO.util.LocalDataSource(gridData, 
 	{
@@ -342,6 +371,7 @@ SUGAR.expressions.GridToolTip = {
 	funcAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
 		functionsGrid.initializeTable();
 		functionsGrid.addRows(oResponse.results);
+		functionsGrid.sortColumn(functionsGrid.getColumn(1));
 		functionsGrid.render();
     }
 	var funcsJSON =  [];
@@ -372,6 +402,7 @@ SUGAR.expressions.GridToolTip = {
 		}
 	}
 	functionsGrid.render();
+	functionsGrid.sortColumn(functionsGrid.getColumn(1));
 
 	Dom.setStyle(Dom.get("formulaBuilder").parentNode, "padding", "0");
 	

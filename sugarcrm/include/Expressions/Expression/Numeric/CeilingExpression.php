@@ -46,7 +46,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "ceil";
+		return array("ceil", "ceiling");
 	}
 	
 	/**
