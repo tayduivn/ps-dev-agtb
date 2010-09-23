@@ -29,5 +29,5 @@
 {if isset($parentFieldArray.DOC_ID) && !empty($parentFieldArray.DOC_ID)}
 <a href="http://docs.google.com/document/edit?id={$parentFieldArray.DOC_ID}&hl=en" class="tabDetailViewDFLink" target="_blank">{$parentFieldArray.FILENAME}</a>
 {elseif isset($parentFieldArray.FILENAME) && !empty($parentFieldArray.FILENAME)}
-<a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$displayParams.MODULE}" class="tabDetailViewDFLink">{$parentFieldArray.FILENAME}</a>
+<a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$vardef.displayParams.module}" class="tabDetailViewDFLink">{$parentFieldArray.FILENAME}</a>
 {/if}

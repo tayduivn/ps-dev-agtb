@@ -87,8 +87,8 @@ array (
     ),
     'displayParams' =>
     array(
-      'module' => 'notes',
-    )
+      'module' => 'Notes',
+    ),
   ),
   'CREATED_BY_NAME' => 
   array (
