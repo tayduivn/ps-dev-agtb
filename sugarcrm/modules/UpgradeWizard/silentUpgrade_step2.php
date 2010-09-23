@@ -33,7 +33,7 @@
 //// php.exe -f silentUpgrade.php [Path to Upgrade Package zip] [Path to Log file] [Path to Instance]
 //// See below the Usage for more details.
 /////////////////////////////////////////////////////////////////////////////////////////
-
+ini_set('memory_limit',-1);
 ///////////////////////////////////////////////////////////////////////////////
 ////	UTILITIES THAT MUST BE LOCAL :(
  //Bug 24890, 24892. default_permissions not written to config.php. Following function checks and if
