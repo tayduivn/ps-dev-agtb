@@ -225,7 +225,11 @@ SUGAR.expressions.GridToolTip = {
 				out = "generic";
 		}
 		el.innerHTML = '<img src="themes/default/images/SugarLogic/icon_' + out + '_16.png"></img>';
-	}
+	};
+	var fieldFormatter = function(el, rec, col, data)
+	{
+		el.innerHTML = "$" + data;
+	};
 	var fieldDS = new YAHOO.util.LocalDataSource(fieldsArray, {
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 		responseSchema: {
@@ -235,7 +239,7 @@ SUGAR.expressions.GridToolTip = {
 	});
 	var fieldsGrid = new YAHOO.widget.ScrollingDataTable('fieldsGrid',
 		[
-		    {key:'name', label: "Fields", width: 200, sortable: true},
+		    {key:'name', label: "Fields", width: 200, sortable: true, formatter: fieldFormatter},
 		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
 		],
 		fieldDS,
