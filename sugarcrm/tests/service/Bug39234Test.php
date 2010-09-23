@@ -51,7 +51,7 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
        $this->c1->accounts->add($this->a1->id);
        
        $contact2 = new Contact();
-		$contac2->id = 'c2_'.$unid;
+		$contact2->id = 'c2_'.$unid;
        $contact2->first_name = 'testfirst';
         $contact2->last_name = 'testlast';
         $contact2->email1 = 'fred@rogers.com';
