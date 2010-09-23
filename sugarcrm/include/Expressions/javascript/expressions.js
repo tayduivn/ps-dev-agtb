@@ -216,7 +216,7 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 
 	// check if it's an instance of type or a generic that could map to any (unknown type)
 	var isInstance = variable instanceof c || variable instanceof see.TYPE_MAP.generic;
-	
+
 	// now check for generics
 	switch(type) {
 		case see.STRING_TYPE:
@@ -275,7 +275,7 @@ SUGAR.expressions.Expression.prototype.getParameterTypes = function() {
 
 /** GENERIC TYPE EXPRESSIONS **/
 SUGAR.GenericExpression = function(params) {
-	
+
 };
 SUGAR.util.extend(SUGAR.GenericExpression, SUGAR.expressions.Expression, {
 	/**
@@ -469,6 +469,163 @@ SUGAR.expressions.ExpressionParser = function() {
 	// nothing
 };
 
+SUGAR.expressions.ExpressionParser.prototype.validate = function(expr)
+{
+	if ( typeof(expr) != 'string' )	throw "ExpressionParser requires a string expression.";
+	// check if its a constant and return a constant expression
+	var fixed = this.toConstant(expr);
+
+	if ( fixed != null && typeof(fixed) != 'undefined' )
+		return true;
+
+	// VALIDATE: expression format
+	if ((/^[\w\-]+\(.*\)$/).exec(expr) == null) {
+		throw ("Syntax Error (Expression Format Incorrect '" + expr + "' )");
+	}
+
+	// if no open-paren '(' found
+	if ( expr.indexOf('(') < 0 )
+		throw ("Syntax Error (No opening paranthesis found)");
+
+	return true;
+}
+
+SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
+{
+	var fixed = this.toConstant(expr);
+	if ( fixed != null && typeof(fixed) != 'undefined' )
+	{
+		return {
+			type: "constant",
+			returnType : this.getType(fixed)
+		}
+	}
+
+	if(/^[$]\w+$/.test(expr))
+	{
+		return {
+			type:"variable",
+			name:YAHOO.lang.trim(expr).substr(1)
+		}
+	}
+
+	// EXTRACT: Function
+	var open_paren_loc = expr.indexOf('(');
+	if (open_paren_loc < 1)
+		throw (expr + ": Syntax Error");
+
+	// get the function
+	var func = expr.substring(0, open_paren_loc);
+
+	// EXTRACT: Parameters
+	var params = expr.substring(open_paren_loc + 1, expr.length-1);
+
+	// now parse the individual parameters recursively
+	var level  = 0;
+	var length = params.length;
+	var argument = "";
+	var args = new Array();
+
+	// flags
+	var currChar		= null;
+	var lastCharRead	= null;
+	var justReadString	= false;		// did i just read in a string
+	var isInQuotes 		= false;		// am i currently reading in a string
+	var isPrevCharBK 	= false;		// is my previous character a backslash
+
+	for ( var i = 0 ; i <= length ; i++ ) {
+		// store the last character read
+		lastCharRead = currChar;
+
+		// the last parameter
+		if ( i == length ) {
+			argument = YAHOO.lang.trim(argument);
+			if (argument != "")
+				args[args.length] = this.tokenize(argument);
+			break;
+		}
+
+		// set isprevcharbk
+		isPrevCharBK = ( lastCharRead == '\\' );
+
+		// get the charAt index i
+		currChar = params.charAt(i);
+
+		// if i am in quotes, then keep reading
+		if ( isInQuotes && currChar != '"' && !isPrevCharBK ) {
+			argument += currChar;
+			continue;
+		}
+
+		// check for quotes
+		if ( currChar == '"' && !isPrevCharBK && level == 0 )
+		{
+			// if i am ending a quote, then make sure nothing follows
+			if ( isInQuotes ) {
+				// only spaces may follow the end of a string
+				var end_reg = params.indexOf(",", i);
+				if ( end_reg < 0 )	end_reg = params.length-1;
+				var start_reg = ( i < length - 1 ? i+1 : length - 1);
+
+				var temp = params.substring(start_reg , end_reg );
+				if ( (/^\s*$/).exec(temp) == null )
+					throw (func + ": Syntax Error (Improperly Terminated String '" + temp + "')" + (start_reg) + " " + end_reg);
+			}
+
+			// negate if i am in quotes
+			isInQuotes = !isInQuotes;
+		}
+
+		// check parantheses open/close
+		if ( currChar == '(' ) {
+			level++;
+		} else if ( currChar == ')' ) {
+			level--;
+		}
+
+		// argument splitting
+		else if ( currChar == ',' && level == 0 ) {
+			argument = YAHOO.lang.trim(argument);
+			if (argument == "")
+				throw ("Syntax Error: Unexpected ','");
+				args[args.length] = this.tokenize(argument);
+			argument = "";
+			continue;
+		}
+
+		// construct the next argument
+		argument += currChar;
+	}
+
+	// now check to make sure all the quotes opened were closed
+	if ( isInQuotes )	throw ("Syntax Error (Unterminated String Literal)");
+
+	// now check to make sure all the parantheses opened were closed
+	if ( level != 0 )	throw ("Syntax Error (Incorrectly Matched Parantheses)");
+
+	// require and return the appropriate expression object
+	return {
+		type: "function",
+		name: YAHOO.lang.trim(func),
+		args: args
+	}
+}
+
+
+SUGAR.expressions.ExpressionParser.prototype.getType = function(variable) {
+	var see = SUGAR.expressions.Expression;
+
+	for(var type in see.TYPE_MAP)
+	{
+		if (variable instanceof see.TYPE_MAP[type])
+		{
+			return type;
+		}
+	}
+
+	return false;
+};
+
 /**
  * Evaluate a given string expression and return an Expression
  * object.
@@ -491,6 +648,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 		throw ("Syntax Error (Expression Format Incorrect '" + expr + "' )");
 		debugger; 
 	}
+
 	// EXTRACT: Function
 	var open_paren_loc = expr.indexOf('(');
 
@@ -711,7 +869,7 @@ SUGAR.util.DateUtils = {
 			time = date.substring(date.indexOf(" ") + 1, date.length);
 			date = date.substring(0, date.indexOf(" "));
 		}
-		
+
 		//First detect if the date contains "-" or "/"
 		var dateSep = "/";
 		if (date.indexOf("/") != -1){}
@@ -742,7 +900,7 @@ SUGAR.util.DateUtils = {
 		{
 			return false;
 		}
-		
+
 		//Detect the Time format
 		if (time != "")
 		{
@@ -768,11 +926,11 @@ SUGAR.util.DateUtils = {
 				if (timeEnd == "am" || timeEnd == "pm") {
 					return dateFormat + " h" + timeSep + "iA";
 				}
-				
+
 				return dateFormat + " H" + timeSep + "i";
 			}
 		}
-		
+
 		return dateFormat;
 	}
  }

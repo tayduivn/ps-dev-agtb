@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>devide(Number numerator, Number denominator)</b><br>
- * Returns the <i>numerator</i> devided by the <i>denominator</i>.
- **/
+ * Returns the <i>numerator</i> devided by the <i>denominator</i>.<br/>
+ * ex: <i>devide(8, 2)</i> = 4
+ */
 class DivideExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.

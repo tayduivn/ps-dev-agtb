@@ -80,239 +80,171 @@ class Popup_Picker
 
         $history_list = array();
 
-        if(!empty($_REQUEST['record'])) {
-            $result = $focus->retrieve($_REQUEST['record']);
-            if($result == null)
-            {
-                sugar_die($app_strings['ERROR_NO_RECORD']);
-            }
-        }
+		foreach ($focus_tasks_list as $task) {
+			$sort_date_time='';
+			if ($task->date_due == '0000-00-00') {
+				$date_due = '';
+			}
+			else {
+				$date_due = $task->date_due;
+			}
 
-        $activitiesRels = array('tasks' => 'Task', 'meetings' => 'Meeting', 'calls' => 'Call', 'emails' => 'Email', 'notes' => 'Note');
-        //Setup the arrays to store the linked records.
-        foreach($activitiesRels as $relMod => $beanName) {
-            $varname = "focus_" . $relMod . "_list";
-            $$varname = array();
-        }
-        foreach($focus->get_linked_fields() as $field => $def) {
-            if ($focus->load_relationship($field)) {
-                $relTable = $focus->$field->getRelatedTableName();
-                if (in_array($relTable, array_keys($activitiesRels)))
-                {
-                    $varname = "focus_" . $relTable . "_list";
-                    $$varname = sugarArrayMerge($$varname, $focus->get_linked_beans($field,$activitiesRels[$relTable]));
-                }
+			if ($task->status != "Not Started" && $task->status != "In Progress" && $task->status != "Pending Input") {
+				$history_list[] = array('name' => $task->name,
+									 'id' => $task->id,
+									 'type' => "Task",
+									 'direction' => '',
+									 'module' => "Tasks",
+									 'status' => $task->status,
+									 'parent_id' => $task->parent_id,
+									 'parent_type' => $task->parent_type,
+									 'parent_name' => $task->parent_name,
+									 'contact_id' => $task->contact_id,
+									 'contact_name' => $task->contact_name,
+									 'date_modified' => $date_due,
+									 'description' => $this->getTaskDetails($task),
+									 'date_type' => $app_strings['DATA_TYPE_DUE'],
+									 'sort_value' => $task->date_entered,
+									 );
+			} else {
+				$open_activity_list[] = array('name' => $task->name,
+									 'id' => $task->id,
+									 'type' => "Task",
+									 'direction' => '',
+									 'module' => "Tasks",
+									 'status' => $task->status,
+									 'parent_id' => $task->parent_id,
+									 'parent_type' => $task->parent_type,
+									 'parent_name' => $task->parent_name,
+									 'contact_id' => $task->contact_id,
+									 'contact_name' => $task->contact_name,
+									 'date_due' => $date_due,
+									 'description' => $this->getTaskDetails($task),
+									 'date_type' => $app_strings['DATA_TYPE_DUE']
+									 );
+			}
+		} // end Tasks
 
-            }
-        }
+		foreach ($focus_meetings_list as $meeting) {
+			if ($meeting->status != "Planned") {
 
-        foreach ($focus_tasks_list as $task) {
-            $sort_date_time='';
-            if ($task->date_due == '0000-00-00') {
-                $date_due = '';
-            }
-            else {
-                $date_due = $task->date_due;
-            }
-            if (!empty($task->date_due) and !empty($task->time_due)) {
+				$history_list[] = array('name' => $meeting->name,
+									 'id' => $meeting->id,
+									 'type' => "Meeting",
+									 'direction' => '',
+									 'module' => "Meetings",
+									 'status' => $meeting->status,
+									 'parent_id' => $meeting->parent_id,
+									 'parent_type' => $meeting->parent_type,
+									 'parent_name' => $meeting->parent_name,
+									 'contact_id' => $meeting->contact_id,
+									 'contact_name' => $meeting->contact_name,
+									 'date_modified' => $meeting->date_start,
+									 'description' => $this->formatDescription($meeting->description),
+									 'date_type' => $app_strings['DATA_TYPE_START'],
+									 'sort_value' => $meeting->date_entered,
+									 );
+			} else {
+				$open_activity_list[] = array('name' => $meeting->name,
+									 'id' => $meeting->id,
+									 'type' => "Meeting",
+									 'direction' => '',
+									 'module' => "Meetings",
+									 'status' => $meeting->status,
+									 'parent_id' => $meeting->parent_id,
+									 'parent_type' => $meeting->parent_type,
+									 'parent_name' => $meeting->parent_name,
+									 'contact_id' => $meeting->contact_id,
+									 'contact_name' => $meeting->contact_name,
+									 'date_due' => $meeting->date_start,
+									 'description' => $this->formatDescription($meeting->description),
+									 'date_type' => $app_strings['DATA_TYPE_START']
+									 );
+			}
+		} // end Meetings
 
-                $sort_date_time=$timedate->to_db_date_time($task->date_due,$task->time_due);
-                $sort_date_time=implode(' ', $sort_date_time);
-                // kbrill - Bug #16714
-                //$sort_date_time=$timedate->handle_offset($sort_date_time,'Y-m-d H:i:s',true);
-            }
-            if ($task->status != "Not Started" && $task->status != "In Progress" && $task->status != "Pending Input") {
-                $history_list[] = array('name' => $task->name,
-                                    'id' => $task->id,
-                                    'type' => "Task",
-                                    'direction' => '',
-                                    'module' => "Tasks",
-                                    'status' => $task->status,
-                                    'parent_id' => $task->parent_id,
-                                    'parent_type' => $task->parent_type,
-                                    'parent_name' => $task->parent_name,
-                                    'contact_id' => $task->contact_id,
-                                    'contact_name' => $task->contact_name,
-                                    'date_modified' => $date_due,
-                                    'description' => $this->getTaskDetails($task),
-                                    'date_type' => $app_strings['DATA_TYPE_DUE'],
-                                    'sort_value' => $sort_date_time
-                                    );
-            } else {
-                $open_activity_list[] = array('name' => $task->name,
-                                    'id' => $task->id,
-                                    'type' => "Task",
-                                    'direction' => '',
-                                    'module' => "Tasks",
-                                    'status' => $task->status,
-                                    'parent_id' => $task->parent_id,
-                                    'parent_type' => $task->parent_type,
-                                    'parent_name' => $task->parent_name,
-                                    'contact_id' => $task->contact_id,
-                                    'contact_name' => $task->contact_name,
-                                    'date_due' => $date_due,
-                                    'description' => $this->getTaskDetails($task),
-                                    'date_type' => $app_strings['DATA_TYPE_DUE']
-                                    );
-            }
-        } // end Tasks
+		foreach ($focus_calls_list as $call) {
+			if ($call->status != "Planned") {		
+				$history_list[] = array('name' => $call->name,
+									 'id' => $call->id,
+									 'type' => "Call",
+									 'direction' => $call->direction,
+									 'module' => "Calls",
+									 'status' => $call->status,
+									 'parent_id' => $call->parent_id,
+									 'parent_type' => $call->parent_type,
+									 'parent_name' => $call->parent_name,
+									 'contact_id' => $call->contact_id,
+									 'contact_name' => $call->contact_name,
+									 'date_modified' => $call->date_start,
+									 'description' => $this->formatDescription($call->description),
+									 'date_type' => $app_strings['DATA_TYPE_START'],
+									 'sort_value' => $call->date_entered,
+									 );
+			} else {
+				$open_activity_list[] = array('name' => $call->name,
+									 'id' => $call->id,
+									 'direction' => $call->direction,
+									 'type' => "Call",
+									 'module' => "Calls",
+									 'status' => $call->status,
+									 'parent_id' => $call->parent_id,
+									 'parent_type' => $call->parent_type,
+									 'parent_name' => $call->parent_name,
+									 'contact_id' => $call->contact_id,
+									 'contact_name' => $call->contact_name,
+									 'date_due' => $call->date_start,
+									 'description' => $this->formatDescription($call->description),
+									 'date_type' => $app_strings['DATA_TYPE_START']
+									 );
+			}
+		} // end Calls
 
-        foreach ($focus_meetings_list as $meeting) {
-            if ($meeting->status != "Planned") {
-                $sort_date_time='';
-                if (!empty($meeting->date_start) and !empty($meeting->time_start)) {
-                    $sort_date_time=$timedate->to_db_date_time($meeting->date_start,$meeting->time_start);
-                    $sort_date_time=implode(' ', $sort_date_time);
-                    // kbrill - Bug #16714
-                    //$sort_date_time=$timedate->handle_offset($sort_date_time,'Y-m-d H:i:s',true);
-                }
+		foreach ($focus_emails_list as $email) {
 
+			$history_list[] = array('name' => $email->name,
+									 'id' => $email->id,
+									 'type' => "Email",
+									 'direction' => '',
+									 'module' => "Emails",
+									 'status' => '',
+									 'parent_id' => $email->parent_id,
+									 'parent_type' => $email->parent_type,
+									 'parent_name' => $email->parent_name,
+									 'contact_id' => $email->contact_id,
+									 'contact_name' => $email->contact_name,
+									 'date_modified' => $email->date_start." ".$email->time_start,
+									 'description' => $this->getEmailDetails($email),
+									 'date_type' => $app_strings['DATA_TYPE_SENT'],
+									 'sort_value' => $email->date_entered,
+									 );
+		} //end Emails
 
-                $history_list[] = array('name' => $meeting->name,
-                                    'id' => $meeting->id,
-                                    'type' => "Meeting",
-                                    'direction' => '',
-                                    'module' => "Meetings",
-                                    'status' => $meeting->status,
-                                    'parent_id' => $meeting->parent_id,
-                                    'parent_type' => $meeting->parent_type,
-                                    'parent_name' => $meeting->parent_name,
-                                    'contact_id' => $meeting->contact_id,
-                                    'contact_name' => $meeting->contact_name,
-                                    'date_modified' => $meeting->date_start,
-                                    'description' => $this->formatDescription($meeting->description),
-                                    'date_type' => $app_strings['DATA_TYPE_START'],
-                                    'sort_value' => $sort_date_time
-                                    );
-            } else {
-                $open_activity_list[] = array('name' => $meeting->name,
-                                    'id' => $meeting->id,
-                                    'type' => "Meeting",
-                                    'direction' => '',
-                                    'module' => "Meetings",
-                                    'status' => $meeting->status,
-                                    'parent_id' => $meeting->parent_id,
-                                    'parent_type' => $meeting->parent_type,
-                                    'parent_name' => $meeting->parent_name,
-                                    'contact_id' => $meeting->contact_id,
-                                    'contact_name' => $meeting->contact_name,
-                                    'date_due' => $meeting->date_start,
-                                    'description' => $this->formatDescription($meeting->description),
-                                    'date_type' => $app_strings['DATA_TYPE_START']
-                                    );
-            }
-        } // end Meetings
+		foreach ($focus_notes_list as $note) {
 
-        foreach ($focus_calls_list as $call) {
-            if ($call->status != "Planned") {
-                $sort_date_time='';
-                if (!empty($call->date_start) and !empty($call->time_start)) {
-                    $sort_date_time=$timedate->to_db_date_time($call->date_start,$call->time_start);
-                    $sort_date_time=implode(' ', $sort_date_time);
-                    // kbrill - Bug #16714
-                    //$sort_date_time=$timedate->handle_offset($sort_date_time,'Y-m-d H:i:s',true);
-                }
-         elseif(!empty($call->date_start) && empty($call->time_start))
-         {
-           //jc - Bug#19862
-           //for some reason the calls module does not populate the time_start variable in
-           //this case, so the date_start attribute contains the information we need
-           //to determine where in the history this call belongs.
-           //using swap_formats to get from the format '03/31/2008 09:45pm' to the format
-           //'2008-03-31 09:45:00'
-           $sort_date_time = $timedate->swap_formats($call->date_start, $timedate->get_date_time_format(), $timedate->get_db_date_time_format());
-         }
-
-                $history_list[] = array('name' => $call->name,
-                                    'id' => $call->id,
-                                    'type' => "Call",
-                                    'direction' => $call->direction,
-                                    'module' => "Calls",
-                                    'status' => $call->status,
-                                    'parent_id' => $call->parent_id,
-                                    'parent_type' => $call->parent_type,
-                                    'parent_name' => $call->parent_name,
-                                    'contact_id' => $call->contact_id,
-                                    'contact_name' => $call->contact_name,
-                                    'date_modified' => $call->date_start,
-                                    'description' => $this->formatDescription($call->description),
-                                    'date_type' => $app_strings['DATA_TYPE_START'],
-                                    'sort_value' => $sort_date_time
-                                    );
-            } else {
-                $open_activity_list[] = array('name' => $call->name,
-                                    'id' => $call->id,
-                                    'direction' => $call->direction,
-                                    'type' => "Call",
-                                    'module' => "Calls",
-                                    'status' => $call->status,
-                                    'parent_id' => $call->parent_id,
-                                    'parent_type' => $call->parent_type,
-                                    'parent_name' => $call->parent_name,
-                                    'contact_id' => $call->contact_id,
-                                    'contact_name' => $call->contact_name,
-                                    'date_due' => $call->date_start,
-                                    'description' => $this->formatDescription($call->description),
-                                    'date_type' => $app_strings['DATA_TYPE_START']
-                                    );
-            }
-        } // end Calls
-
-        foreach ($focus_emails_list as $email) {
-            $sort_date_time='';
-            if (!empty($email->date_start) and !empty($email->time_start)) {
-                $sort_date_time=$timedate->to_db_date_time($email->date_start,$email->time_start);
-                $sort_date_time=implode(' ', $sort_date_time);
-                // kbrill - Bug #16714
-                //$sort_date_time=$timedate->handle_offset($sort_date_time,'Y-m-d H:i:s',true);
-            }
-
-            $history_list[] = array('name' => $email->name,
-                                    'id' => $email->id,
-                                    'type' => "Email",
-                                    'direction' => '',
-                                    'module' => "Emails",
-                                    'status' => '',
-                                    'parent_id' => $email->parent_id,
-                                    'parent_type' => $email->parent_type,
-                                    'parent_name' => $email->parent_name,
-                                    'contact_id' => $email->contact_id,
-                                    'contact_name' => $email->contact_name,
-                                    'date_modified' => $email->date_start." ".$email->time_start,
-                                    'description' => $this->getEmailDetails($email),
-                                    'date_type' => $app_strings['DATA_TYPE_SENT'],
-                                    'sort_value' => $sort_date_time
-                                    );
-        } //end Emails
-
-        foreach ($focus_notes_list as $note) {
-            if (!empty($note->date_modified)) {
-                 $sort_date_time = $timedate->swap_formats($note->date_modified, $timedate->get_date_time_format(), $timedate->get_db_date_time_format());
-            }
-
-            $history_list[] = array('name' => $note->name,
-                                    'id' => $note->id,
-                                    'type' => "Note",
-                                    'direction' => '',
-                                    'module' => "Notes",
-                                    'status' => '',
-                                    'parent_id' => $note->parent_id,
-                                    'parent_type' => $note->parent_type,
-                                    'parent_name' => $note->parent_name,
-                                    'contact_id' => $note->contact_id,
-                                    'contact_name' => $note->contact_name,
-                                    'date_modified' => $note->date_modified,
-                                    'description' => $this->formatDescription($note->description),
-                                    'date_type' => $app_strings['DATA_TYPE_MODIFIED'],
-                                    'sort_value' => $sort_date_time
-                                    );
-            if(!empty($note->filename)) {
-                $count = count($history_list);
-                $count--;
-                $history_list[$count]['filename'] = $note->filename;
-                $history_list[$count]['fileurl'] = UploadFile::get_url($note->filename,$note->id);
-            }
-        } // end Notes
+			$history_list[] = array('name' => $note->name,
+									 'id' => $note->id,
+									 'type' => "Note",
+									 'direction' => '',
+									 'module' => "Notes",
+									 'status' => '',
+									 'parent_id' => $note->parent_id,
+									 'parent_type' => $note->parent_type,
+									 'parent_name' => $note->parent_name,
+									 'contact_id' => $note->contact_id,
+									 'contact_name' => $note->contact_name,
+									 'date_modified' => $note->date_modified,
+									 'description' => $this->formatDescription($note->description),
+									 'date_type' => $app_strings['DATA_TYPE_MODIFIED'],
+									 'sort_value' => $note->date_entered,
+									 );
+			if(!empty($note->filename)) {
+				$count = count($history_list);
+				$count--;
+				$history_list[$count]['filename'] = $note->filename;
+				$history_list[$count]['fileurl'] = UploadFile::get_url($note->filename,$note->id);
+			}
+		} // end Notes
 
         $xtpl=new XTemplate ('modules/Activities/Popup_picker.html');
 

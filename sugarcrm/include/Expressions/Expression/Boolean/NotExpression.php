@@ -22,7 +22,8 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>not(Boolean b)</b><br/>
- * Returns false if <i>b</i> is true, and true if <i>b</i> is false.
+ * Returns false if <i>b</i> is true, and true if <i>b</i> is false.<br/>
+ * ex: <i>not(false)</i> = true
  */
 class NotExpression extends BooleanExpression {
 	/**

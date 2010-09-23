@@ -23,8 +23,8 @@ require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
  * <b>translate(String label, String module)</b><br>
  * Returns the translated version of a given label key<br/>
- * ex: <i>valueAt(2, getTransDD("my_list"))</i>
- **/
+ * ex: <i>translate("LBL_NAME", "Accounts")</i>
+ */
 class SugarTranslateExpression extends StringExpression {
 	
 	function evaluate() {

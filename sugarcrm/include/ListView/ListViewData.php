@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * governing these rights and limitations under the License.  Portions created
 * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
-// $Id: ListViewData.php 56945 2010-06-14 19:51:27Z jmertic $
+// $Id: ListViewData.php 57227 2010-06-30 23:02:27Z kjing $
 require_once('include/EditView/SugarVCR.php');
 class ListViewData {
 	var $additionalDetails = true;

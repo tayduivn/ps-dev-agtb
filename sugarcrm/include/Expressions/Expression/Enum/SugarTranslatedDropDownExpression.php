@@ -24,7 +24,7 @@ require_once('include/Expressions/Expression/Enum/EnumExpression.php');
  * Returns a collection of the translated values in the supplied dropdown list.<br/>
  * This list must be defined in the DropDown editor.<br/>
  * ex: <i>valueAt(2, getTransDD("my_list"))</i>
- **/
+ */
 class SugarTranslatedDropDownExpression extends EnumExpression
 {
 	/**

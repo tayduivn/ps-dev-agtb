@@ -217,6 +217,7 @@ class Note extends SugarBean {
 		    }
 		}
 	}
+
 	
 	function get_list_view_data() 
 	{

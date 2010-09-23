@@ -46,6 +46,8 @@ $mod_strings = array (
 //BEGIN SUGARCRM flav!=sales ONLY
 	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user.',
+	'LBL_DELETE_GROUP_CONFIRM'          => 'Are you sure you want to delete this Group User? Click OK to delete the User record.<br/>After clicking OK, you will be given the ability to reassign records assigned to the Group User to another user.',
+	'LBL_DELETE_PORTAL_CONFIRM'         => 'Are you sure you want to delete this Portal API User? Click OK to delete the User record.',
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=sales ONLY
 	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
@@ -406,7 +408,7 @@ $mod_strings = array (
 	'LBL_REASS_DESC_PART1'				=> 'Select the modules containing the records to reassign from a specific user to another user. <br/><br/>
                                                             Click Next to view the number of records that will be updated in each selected module.
                                                             Click Cancel to exit the page without reassigning any records.',
-        'LBL_REASS_DESC_PART2'=>                    'Select which modules against which to run workflows, send assignment notifications, and do auditing tracking during reassignment.',
+        'LBL_REASS_DESC_PART2'=>                    'Select which modules against which to run workflows, send assignment notifications, and do auditing tracking during reassignment. Click Next to continue and reassign records. Click Restart to start over.',
 	'LBL_REASS_STEP2_TITLE'				=> 'Team Reassignment',
 	'LBL_REASS_STEP2_DESC'				=> 'The teams listed below were available in the from user\'s team, but not in the to user\'s team. All records in the From User\'s team will not be visible in the To User team unless the team values are mapped. ',
 	'LBL_REASS_USER_FROM_TEAM'			=> 'From User Team:',
@@ -454,7 +456,7 @@ $mod_strings = array (
 	'LBL_REASS_BUTTON_SUBMIT' 			=> 'Submit',
 	'LBL_REASS_BUTTON_CLEAR' 			=> 'Clear',
 	'LBL_REASS_BUTTON_CONTINUE'			=> 'Next >',
-        'LBL_REASS_BUTTON_REASSIGN'                     => 'Reassign',
+    'LBL_REASS_BUTTON_REASSIGN'         => 'Reassign',
 	'LBL_REASS_BUTTON_GO_BACK' 			=> '< Back',
 	'LBL_REASS_BUTTON_RESTART' 			=> 'Restart',
 	'LBL_REASS_BUTTON_RETURN' 			=> 'Return',

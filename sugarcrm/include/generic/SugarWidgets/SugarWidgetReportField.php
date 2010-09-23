@@ -29,11 +29,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: SugarWidgetReportField.php 53409 2010-01-04 03:31:15Z roger $
+// $Id: SugarWidgetReportField.php 57924 2010-08-25 06:29:43Z kjing $
 
 require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 
-$used_aliases_names = array();
 $used_aliases = array();
 $alias_map = array();
 
@@ -320,27 +319,16 @@ class SugarWidgetReportField extends SugarWidgetField
                 array_push($alias_arr,$layout_def['name']);
         }
 
- 				global $used_aliases, $used_aliases_names, $alias_map;
+				global $used_aliases,$alias_map;
 
-        		$alias = strtolower(implode("_",$alias_arr));
-        		if(strlen($alias) > 28)
-        		{
-        		  $short_alias = substr($alias,0,24) . substr(md5($alias), 0, 4);
-        		  //Check for situation here if short_alias is not unique... at this point just use 28-character md5 of time()        		  
-        		  if(!empty($used_aliases_names[$short_alias]) && $used_aliases_names[$short_alias] != $alias)
-        		  {
-        		  	 $short_alias = substr(md5(time()), 0, 28);
-        		  }
-        		} else {
-        		  $short_alias = $alias;
-        		}
+        $alias = strtolower(implode("_",$alias_arr));
+				$short_alias = substr($alias,0,28);
 
 				if ( empty($used_aliases[$short_alias]))
 				{
 					$alias_map[$alias] = $short_alias;
-				    $used_aliases[$short_alias] = 1;
-				    $used_aliases_names[$short_alias] = $alias;
-          			return $short_alias;
+				  $used_aliases[$short_alias] = 1;
+          return $short_alias;
 				} else if ( ! empty($alias_map[$alias]) )
 				{
 					return $alias_map[$alias];

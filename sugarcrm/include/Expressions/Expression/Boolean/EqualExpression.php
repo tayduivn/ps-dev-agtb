@@ -22,8 +22,8 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>equal(Generic item1, Generic item2)</b><br>
- * Returns true if "item1" is equal to "item2".
- *
+ * Returns true if "item1" is equal to "item2".<br/>
+ * ex: <i>equal("one", "one")</i> = true, <i>equal(1, "one")</i> = false
  */
 class EqualExpression extends BooleanExpression {
 	/**

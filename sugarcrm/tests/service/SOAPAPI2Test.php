@@ -62,7 +62,10 @@ class SOAPAPI2Test extends SOAPTestCase
     		$this->assertTrue(empty($this->_soapClient->faultcode), 'Can not retrieve newly created contact. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
     	}
     } // fn
-
+    
+    /**
+     * @ticket 38986
+     */
     public function testGetEntryForContactNoSelectFields(){
     	global $soap_version_test_contactId;
 		$this->_login();
