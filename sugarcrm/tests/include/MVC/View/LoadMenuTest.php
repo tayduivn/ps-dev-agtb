@@ -13,6 +13,8 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
 		
 		// create a dummy module directory
 		$this->_moduleName = 'TestModule'.mt_rand();
+		
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         
         sugar_mkdir("modules/{$this->_moduleName}",null,true);
 	}
@@ -21,7 +23,10 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 		unset($GLOBALS['mod_strings']);
 		unset($GLOBALS['app_strings']);
-			
+        
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+		unset($GLOBALS['current_user']);
+        
 		if ( is_dir("modules/{$this->_moduleName}") )
 		    rmdir_recursive("modules/{$this->_moduleName}");
 		if ( is_dir("custom/modules/{$this->_moduleName}") )
