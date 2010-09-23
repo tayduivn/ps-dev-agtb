@@ -20,8 +20,9 @@
  ********************************************************************************/
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
- * <b>Log(Number n, Number p)</b><br/>
- * Returns </i>n</i> to the <i>p</i> power.<br>
+ * <b>pow(Number n, Number p)</b><br/>
+ * Returns </i>n</i> to the <i>p</i> power.<br/>
+ * ex: <i>pow(2, 3)</i> = 8
  */
 class PowerExpression extends NumericExpression {
 	/**

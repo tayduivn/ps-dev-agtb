@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>average(Number n, ...)</b><br>
- * Returns the average of the given numbers
- **/
+ * Returns the average of the given numbers<br/>
+ * ex: <i>average(2, 5, 11)</i> = 6
+ */
 class AverageExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.

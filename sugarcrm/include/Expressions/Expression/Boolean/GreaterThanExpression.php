@@ -23,7 +23,8 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>greaterThan(Number num1, Number num2)</b><br>
- * Returns true num1 is greater than num2.
+ * Returns true num1 is greater than num2.<br/>
+ * ex: <i>greaterThan(3, 5)</i> = false
  */
 class GreaterThanExpression extends BooleanExpression {
 	/**

@@ -22,8 +22,10 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>indexOf(val, Enum e)</b><br>
  * Returns the position of <i>val</i> in <i>e</i><br/>
- * or -1 if <i>e</i> does not contain <i>val</i>.
- **/
+ * or -1 if <i>e</i> does not contain <i>val</i>.<br/>
+ * ex: <i>indexOf("a", enum("a", "b", "c"))</i> = 0,<br/>
+ * <i>indexOf("foo", enum("a", "b", "c"))</i> = -1
+ */
 class IndexOfExpression extends NumericExpression
 {
 	/**

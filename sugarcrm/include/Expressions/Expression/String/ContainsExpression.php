@@ -22,8 +22,8 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>contains(stringNeedle, stringHaystack)</b><br/>
- * Returns true if needle is within haystack.<br>
- * ex: contains("llo", "Hello World")
+ * Returns true if needle is within haystack.<br/>
+ * ex: <i>contains("llo", "Hello World")</i> = true
  */
 class ContainsExpression extends BooleanExpression {
 	/**

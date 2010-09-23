@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>number(String s)</b><br>
- * Returns the numeric value of <i>s</i>.
- **/
+ * Returns the numeric value of <i>s</i>.<br/>
+ * ex: <i>number("1,200")</i> = 1200
+ */
 class ValueOfExpression extends NumericExpression {
 	
 	/**

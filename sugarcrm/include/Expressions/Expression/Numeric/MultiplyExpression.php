@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>multiply(Number n, ...)</b><br>
- * Multiplies the supplied numbers and returns the result.
- **/
+ * Multiplies the supplied numbers and returns the result.<br/>
+ * ex: <i>multiply(-4, 2, 3)</i> = -24
+ */
 class MultiplyExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.

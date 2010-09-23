@@ -22,7 +22,7 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>subtract(Number a, Number b)</b><br>
  * Returns <i>a</i> minus <i>b</i>.
- **/
+ */
 class SubtractExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.
