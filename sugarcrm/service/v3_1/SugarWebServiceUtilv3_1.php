@@ -281,4 +281,28 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_field_list');
 		return array('module_fields' => $module_fields, 'link_fields' => $link_fields);
 	}
+	
+	/**
+	 * Return the contents of a file base64 encoded
+	 *
+	 * @param string $filename - Full path of filename
+	 * @param bool $remove - Indicates if the file should be removed after the contents is retrieved.
+	 * 
+	 * @return string - Contents base64'd.
+	 */
+	function get_file_contents_base64($filename, $remove = FALSE)
+	{
+	    $contents = "";
+	    if( file_exists($filename) )
+	    {
+	        $fp = sugar_fopen($filename, 'rb');
+	        $file = fread($fp, filesize($filename));
+	        fclose($fp);
+	        $contents =  base64_encode($file);
+	        if($remove)
+    	        @unlink($filename);
+	    }
+	    
+	    return $contents;
+	}
 }

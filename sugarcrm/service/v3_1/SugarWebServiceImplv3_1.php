@@ -135,14 +135,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             return;
         } // if
 
-        if($module_name == 'Reports')
-        {
-            $error->set_error('invalid_call_error');
-            self::$helperObject->setFaultObject($error);
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
-            return;
-        }
-
         $class_name = $beanList[$module_name];
         require_once($beanFiles[$class_name]);
 
@@ -304,6 +296,56 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         $GLOBALS['log']->info('End: SugarWebServiceImpl->login - failed login');
     }
 
+    /**
+     * For a particular report, generate the associated pdf report.  All caching should be done
+     * on the client side.
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param string $report_id - The id of the report bean.
+     * 
+     * @return array - file_contents key with pdf base64 encoded.
+     * 
+     */
+    function get_report_pdf($session, $report_id)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_report_pdf');
+    	global  $beanList, $beanFiles;
+    	global $sugar_config,$current_language;
+    
+    	$error = new SoapError();
+    	$output_list = array();
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) 
+    	{
+    		$error->set_error('invalid_login');
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+    		return;
+    	}
+        
+    	require_once('modules/Reports/templates/templates_pdf.php');
+    	
+    	$saved_report = new SavedReport();
+    	$saved_report->retrieve($report_id);
+    	
+    	$contents = '';
+    	if($saved_report->id != null)
+    	{
+    	    $reporter = new Report(html_entity_decode($saved_report->content));
+    	    $reporter->layout_manager->setAttribute("no_sort",1);
+    	    //Translate pdf to correct language
+    	    $module_for_lang = $reporter->module;
+    	    $mod_strings = return_module_language($current_language, 'Reports');
+
+    	    //Generate actual pdf
+    	    $report_filename = template_handle_pdf($reporter, false);
+
+    	    //Get file pdf file contents
+    	    $contents = self::$helperObject->get_file_contents_base64($report_filename, TRUE);
+    	}
+    	   
+    	return array('file_contents' => $contents);
+    	
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+    }
     
     /**
      * Given a list of modules to search and a search string, return the id, module_name, along with the fields
