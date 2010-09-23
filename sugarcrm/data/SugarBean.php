@@ -1065,7 +1065,12 @@ class SugarBean
                     //END SUGARCRM flav!=com ONLY
                     || (isset($value_array['auto_increment'])
                         && ($value_array['type'] == true || $value_array['type'] == 'true')) ) {
-                    // do not allow import.
+                    // only allow import if we force it
+                    if (isset($value_array['importable']) 
+                        && (is_string($value_array['importable']) && $value_array['importable'] == 'true'
+                           || is_bool($value_array['importable']) && $value_array['importable'] == true)) {
+                        $importableFields[$key]=$value_array;
+                    }
                 }
                 else {
                     $importableFields[$key]=$value_array;
@@ -1117,9 +1122,11 @@ class SugarBean
         $importable_fields = $this->get_importable_fields();
         $required_fields   = array();
 
-        foreach ( $importable_fields as $name => $properties )
-            if ( isset($properties['importable']) && $properties['importable'] == 'required' )
+        foreach ( $importable_fields as $name => $properties ) {
+            if ( isset($properties['importable']) && is_string($properties['importable']) && $properties['importable'] == 'required' ) {
                 $required_fields[$name] = $properties;
+            }
+        }
 
         return $required_fields;
     }

@@ -87,6 +87,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'source'=>'non-db',
     'vname'=>'LBL_MEMBER_OF',
     'side'=>'right',
+    'importable'=>true,
   ),
   'email_opt_out' =>
 		array(
