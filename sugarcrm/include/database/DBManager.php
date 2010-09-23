@@ -1540,16 +1540,6 @@ abstract class DBManager
     }
 
     /**
-     * Returns quoted value for the database with quotes
-     * @param string String to quote
-     * @return string quoted string
-     */
-    public function inQuotes($string)
-    {
-        return "'".$this->quote($string)."'";
-    }
-
-    /**
      * Returns a string properly quoted for this database that is an email
      *
      * @param string $string
