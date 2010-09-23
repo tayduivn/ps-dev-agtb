@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: MssqlHelper.php 57849 2010-08-20 19:38:14Z kjing $
+* $Id: MssqlHelper.php 58175 2010-09-14 19:52:39Z kjing $
 * Description: This file handles the Data base functionality for the application specific
 * to Mssql database. It is called by the DBManager class to generate various sql statements.
 *
@@ -698,6 +698,12 @@ EOQ;
 	        $colType = $this->getColumnType($type, $name, $table);
 	    	if(stristr($colType, 'decimal')){
 				$fieldDef['len'] = isset($fieldDef['len'])? min($fieldDef['len'],38) : 38;
+			}
+			//bug: 39690 float(8) is interpreted as real and this generates a diff when doing repair
+			if(stristr($colType, 'float')){
+				if(isset($fieldDef['len']) && $fieldDef['len'] == 8){
+					unset($fieldDef['len']);
+				}
 			}
 		}
 		
