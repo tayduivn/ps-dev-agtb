@@ -113,12 +113,8 @@ class StoreQuery{
 				$this->saveQuery($name);
 				
 			}else if($saveType == 'all'){
-                $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount', 'current_query_by_page');
-				
-				//make new request array out of superglobal post and get arrays, this is done manually so as to avoid cookie array
-				$request =  array_merge($_POST,$_GET);	
-				
-				$this->query = $request;
+                $blockVariables = array('mass', 'uid', 'massupdate', 'delete', 'merge', 'selectCount', 'current_query_by_page','EmailTreeLayout','EmailGridWidths');
+				$this->query = $_REQUEST;
                 foreach($blockVariables as $block) {
                     unset($this->query[$block]);
                 }
