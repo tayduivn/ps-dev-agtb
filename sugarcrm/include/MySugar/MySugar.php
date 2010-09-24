@@ -40,9 +40,9 @@ class MySugar{
 
     function checkDashletDisplay () {
 
-		if((!in_array($this->type, $GLOBALS['moduleList'])
-				&& !in_array($this->type, $GLOBALS['modInvisList']))
-				&& (!in_array('Activities', $GLOBALS['moduleList']) || !in_array($this->type, $GLOBALS['modInvisListActivities']))){
+		if((!in_array($this->type, $GLOBALS['moduleList']) 
+				&& !in_array($this->type, $GLOBALS['modInvisList'])) 
+				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
 		}
 		elseif (ACLController::moduleSupportsACL($this->type) && !ACLController::checkAccess($this->type,'list',true)) {

@@ -62,7 +62,7 @@ class ViewWirelessdetail extends SugarWirelessView{
 	 	    foreach($layout_defs[$this->module]['subpanel_setup'] as $subpanel=>$subpaneldefs){	   
 	 	    	$subpanel = $subpaneldefs['module'];
 	 	    	// check if the user has access to the subpanel module
-				if (in_array($subpanel, $GLOBALS['moduleList']) || in_array($subpanel, $GLOBALS['modInvisListActivities'])){
+				if (in_array($subpanel, $GLOBALS['moduleList'])){
 					// include and instantiate child seed 	    	
 		 	        require_once($GLOBALS['beanFiles'][$GLOBALS['beanList'][$subpanel]]);
 		 	        $obj = new $GLOBALS['beanList'][$subpaneldefs['module']]();

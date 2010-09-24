@@ -32,7 +32,6 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['moduleList']);
-        unset($GLOBALS['modInvisListActivities']);
         unset($GLOBALS['request_string']);
         unset($GLOBALS['adminOnlyList']);
         unset($GLOBALS['modListHeader']);

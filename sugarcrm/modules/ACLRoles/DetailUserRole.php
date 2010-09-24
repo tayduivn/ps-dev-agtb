@@ -40,10 +40,10 @@ $categories = ACLAction::getUserActions($_REQUEST['record'],true);
 //clear out any removed tabs from user display
 if(!is_admin($current_user)&& !is_admin_for_module($GLOBALS['current_user'],'Users')){
 	$tabs = $focus->getPreference('display_tabs');
-	global $modInvisList, $modInvisListActivities;
+	global $modInvisList;
 	if(!empty($tabs)){
 		foreach($categories as $key=>$value){
-			if(!in_array($key, $tabs) &&  !in_array($key, $modInvisList) && !in_array($key, $modInvisListActivities) ){
+			if(!in_array($key, $tabs) &&  !in_array($key, $modInvisList) ){
 				unset($categories[$key]);
 				
 			}

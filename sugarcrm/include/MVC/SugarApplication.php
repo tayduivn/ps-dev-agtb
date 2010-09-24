@@ -159,7 +159,6 @@ class SugarApplication
 	
 	function ACLFilter(){
 		ACLController :: filterModuleList($GLOBALS['moduleList']);
-		ACLController :: filterModuleList($GLOBALS['modInvisListActivities']);
 	}
 	
 	/**
@@ -300,15 +299,6 @@ class SugarApplication
 		
 		if(!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader']))
 			$GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
-			
-		if(in_array($this->controller->module, $GLOBALS['modInvisList']) &&
-			((in_array('Activities', $GLOBALS['moduleList'])              &&	
-			in_array('Calendar',$GLOBALS['moduleList']))                 &&	
-			in_array($this->controller->module, $GLOBALS['modInvisListActivities']))
-			){
-				$this->controller->hasAccess = false;
-				return;
-		}
 	}
 	
 	/**
