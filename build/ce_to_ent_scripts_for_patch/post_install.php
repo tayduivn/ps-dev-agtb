@@ -157,7 +157,28 @@ function post_install()
 	
 	//Create the default reports. Going from ce to ent
 	createDefaultReports();
+	
+	//BEGIN SUGARCRM flav=ent ONLY
+	//add language pack config information to config.php
+   	if(is_file('install/lang.config.php')){
+		global $sugar_config;
+		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
+		require_once('install/lang.config.php');
 
+		foreach($config as $k=>$v){
+			$sugar_config[$k] = $v;
+		}
+		
+		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
+	    }else{
+			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
+		}		
+    }else{
+    	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
+    }
+	//END SUGARCRM flav=ent ONLY
+	
 	//Upgrade Projects
 	upgradeProjects();
         setConnectorDefaults();
