@@ -1573,8 +1573,8 @@ function is_admin_for_module($user,$module) {
     if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
-    if(!empty($user) && (($user->is_admin == '1' || ($user->is_admin === 'on' && isset($actions[$module]['module'])))|| 
-    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
+    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module]['module']))||
+    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
     }
@@ -2468,12 +2468,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$focus->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
-		$query .= "where ";
+		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
 		if ( $where != '')
 		{
 			$query .= $where." AND ";
