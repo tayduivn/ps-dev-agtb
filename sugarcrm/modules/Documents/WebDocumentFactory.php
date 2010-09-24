@@ -11,9 +11,34 @@ class WebDocumentFactory {
    }
    
    static function getDocClass($doc_type){
-		if($doc_type == 'Google')
-		return 'GoogleDocument';
-		else
-		return 'Sugar';
+   		switch($doc_type) {
+   			case 'Google':
+   				return 'GoogleDocument';
+   				break;
+   			case 'Box.net':
+   				return 'BoxDocument';
+   				break;
+   			case 'LotusLive':
+   				return "LotusDocument";
+   				break;
+   			default:
+   				return 'Sugar';
+   		}
+   }
+   
+   static function getEapmType($doc_type) {
+       switch($doc_type) {
+       	case 'Google':
+       		return 'google';
+       		break;
+       	case 'Box.net':
+       		return 'box';
+       		break;
+       	case 'LotusLive':
+       		return 'lotuslive';
+       		break;
+       	default:
+       		return 'Sugar';
+       }   	
    }
 }

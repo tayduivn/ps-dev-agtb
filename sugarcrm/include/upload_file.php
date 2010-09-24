@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Documents/WebDocument.php');
 require_once('modules/Documents/WebDocumentFactory.php');
 require_once('modules/Documents/GoogleDocument.php');
+require_once('modules/EAPM/EAPM.php');
 
 class UploadFile 
 {
@@ -279,39 +280,37 @@ class UploadFile
 	        $destination = clean_path($this->get_upload_path($bean_id));
 	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
 	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
-	        //echo $destination;
-	        $row=  array();
-	      $row['url'] = 'docs.google.com';
-	      $row['name'] = 'xye@sugarcrm.com';
-	      $row['password'] = '7626688ab';
-	      $url = $row['url'];
-	      if ($url[strlen($url)-1] == "/") {
-	      	$url = substr($url, 0, -1);
-	      }
+	        
+	        $eapmType = WebDocumentFactory::getEapmType($doc_type);
+	        $row = EAPM::getLoginInfo($eapmType);
+            $url = $row['url'];
+            if ($url[strlen($url)-1] == "/") {
+      	      $url = substr($url, 0, -1);
+            }
 
-	      $this->document = WebDocumentFactory::getInstance(
-	         $document_classname, 
-	         $url, 
-	         $row['name'],
-	         $row['password']
-	      );
-		  
-	      $doc_id = '';
-	      
-	      try{
-		      $doc_id = $this->document->uploadDoc(
-		         $new_destination,
-		         $file_name,
-		         $mime_type
+		      $this->document = WebDocumentFactory::getInstance(
+		         $document_classname, 
+		         $url, 
+		         $row['name'],
+		         $row['password']
 		      );
-		      $bean->doc_id = $doc_id;
-		      unlink($new_destination);
-		      $bean->save();
-	      }catch(Exception $e){
-	      	 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
-	      	 $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
-	      }
-		}
+			  
+		      $doc_id = '';
+		      
+		      try{
+			      $doc_id = $this->document->uploadDoc(
+			         $new_destination,
+			         $file_name,
+			         $mime_type
+			      );
+			      $bean->doc_id = $doc_id;
+			      unlink($new_destination);
+			      $bean->save();
+		      }catch(Exception $e){
+		      	 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
+		      	 $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
+		      }
+			}
 	}
 
 	/**

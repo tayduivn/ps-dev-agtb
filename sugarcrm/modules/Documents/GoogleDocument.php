@@ -43,30 +43,6 @@ class GoogleDocument extends WebDocument{
 	}
 
     function downloadDoc($documentId, $documentFormat){
-    	
-//    	function download($client, $url, $format=null) {
-//		  $sessionToken = $client->getHttpClient()->getAuthSubToken();
-//		  $opts = array(
-//		    'http' => array(
-//		      'method' => 'GET',
-//		      'header' => "GData-Version: 3.0\r\n".
-//		                  "Authorization: AuthSub token=\"$sessionToken\"\r\n"
-//		    )
-//		  );
-//		  if ($url != null) {
-//		    $url =  $url . "&exportFormat=$format";
-//		  }
-//		  return file_get_contents($url, false, stream_context_create($opts));
-//		}
-//		
-//		// TODO 1: setup a Zend_Gdata_Docs client in $docs_client
-//		// TODO 2: fetch a $feed or $entry
-//		$contentLink = $feed->entries[0]->content->getSrc();
-//		$fileContents = download($docs_client, $contentLink, 'txt');
-//		echo 'Contents of document "' . $feed->entries[0]->title . '":<hr>';
-//		echo "<pre>$fileContents</pre>";
-    	
-    	
     	$format = 'txt';
     	$document = $this->gdClient->getDocument($documentId);
     	//var_dump(var_export($document));

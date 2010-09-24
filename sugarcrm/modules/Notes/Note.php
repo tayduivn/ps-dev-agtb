@@ -35,6 +35,7 @@ require_once('modules/Documents/WebDocument.php');
 require_once('modules/Documents/WebDocumentFactory.php');
 require_once('modules/Documents/GoogleDocument.php');
 require_once('include/upload_file.php');
+require_once('modules/EAPM/EAPM.php');
 
 // Note is used to store customer information.
 class Note extends SugarBean {
@@ -142,14 +143,13 @@ class Note extends SugarBean {
 		}
 		if(!empty($this->doc_type) && !empty($this->doc_id)){
 			$document_classname = WebDocumentFactory::getDocClass($this->doc_type);
-			$row=  array();
-	        $row['url'] = 'docs.google.com';
-	        $row['name'] = 'xye@sugarcrm.com';
-	        $row['password'] = '7626688ab';
-	        $url = $row['url'];
-	        if ($url[strlen($url)-1] == "/") {
-	        	$url = substr($url, 0, -1);
-	        }
+			$eapmType = WebDocumentFactory::getEapmType($this->doc_type);
+	        $row = EAPM::getLoginInfo($eapmType);
+            $url = $row['url'];
+            if ($url[strlen($url)-1] == "/") {
+      	      $url = substr($url, 0, -1);
+            }
+            
 			$document = WebDocumentFactory::getInstance(
 	            $document_classname, 
 	            $url, 
