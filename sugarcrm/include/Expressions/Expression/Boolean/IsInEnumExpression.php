@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
- * <b>isInEnum(Generic item, Enum enum)</b>
- * Returns true if item is contained within the enum. 
+ * <b>isInEnum(Generic item, Enum enum)</b><br/>
+ * Returns true if item is contained within the enum. <br/>
+ * <i>isInEnum(3, enum(2, 3, 4, 5))</i> = false
  */
 class IsInEnumExpression extends BooleanExpression {
 	/**
