@@ -172,6 +172,21 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
                     $fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
             }
         }
+        
+        //If no fields with the unified flag have been set then lets add a default field.
+        if( empty($fields) )
+        {
+            if( isset($dictionary[$beanName]['fields']['name']) && isset($searchFields[$moduleName]['name'])  )
+                $fields['name'] = $searchFields[$moduleName]['name'];
+            else 
+            {
+                if( isset($dictionary[$beanName]['fields']['first_name']) && isset($searchFields[$moduleName]['first_name']) )
+                    $fields['first_name'] = $searchFields[$moduleName]['first_name'];
+                if( isset($dictionary[$beanName]['fields']['last_name']) && isset($searchFields[$moduleName]['last_name'])  )
+                    $fields['last_name'] = $searchFields[$moduleName]['last_name'];
+            }
+        }
+        
 		return $fields;
     }
     
