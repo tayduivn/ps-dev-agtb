@@ -512,7 +512,7 @@ protected function writeFiles($path, $skipBuilds=array()){
                 if(!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f])|| (!empty($this->onlyOutput) && empty($this->onlyOutput[$f])))continue;
                 $this->makeDirs(dirname($path), $f);
                 //replace some sugar variables
-           	    $this->config['sugarVariables']['@_SUGAR_FLAV'] = $f;
+           	    $this->config['sugarVariables']['@_SUGAR_FLAV'] = strtoupper($f);
                 foreach ($this->config['sugarVariables'] as $var=>$data ) {
                 	if ( $data != '') $o = str_replace("$var", "$data", $o);
                 }
