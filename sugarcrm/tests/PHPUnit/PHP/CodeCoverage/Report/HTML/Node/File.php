@@ -57,7 +57,7 @@ require_once 'PHP/Token/Stream/CachingFactory.php';
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright  2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 1.0.0RC1
+ * @version    Release: 1.0.0
  * @link       http://github.com/sebastianbergmann/php-code-coverage
  * @since      Class available since Release 1.0.0
  */
@@ -632,11 +632,9 @@ class PHP_CodeCoverage_Report_HTML_Node_File extends PHP_CodeCoverage_Report_HTM
      */
     protected function loadFile($file)
     {
+        $buffer = file_get_contents($file);
+        $lines  = explode("\n", str_replace("\t", '    ', $buffer));
         $result = array();
-
-        $lines = explode(
-          "\n", str_replace("\t", '    ', file_get_contents($file))
-        );
 
         if (count($lines) == 0) {
             return $result;
@@ -655,7 +653,7 @@ class PHP_CodeCoverage_Report_HTML_Node_File extends PHP_CodeCoverage_Report_HTM
             return $lines;
         }
 
-        $tokens     = token_get_all(file_get_contents($file));
+        $tokens     = token_get_all($buffer);
         $stringFlag = FALSE;
         $i          = 0;
         $result[$i] = '';

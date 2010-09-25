@@ -52,7 +52,7 @@
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.0RC2
+ * @version    Release: 3.5.0
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.0.0
  */
@@ -436,16 +436,34 @@ class PHPUnit_TextUI_Command
                 break;
 
                 case '--story': {
+                    $this->showMessage(
+                      'The --story functionality is deprecated and ' .
+                      'will be removed in the future.',
+                      FALSE
+                    );
+
                     $this->arguments['printer'] = new PHPUnit_Extensions_Story_ResultPrinter_Text;
                 }
                 break;
 
                 case '--story-html': {
+                    $this->showMessage(
+                      'The --story-html functionality is deprecated and ' .
+                      'will be removed in the future.',
+                      FALSE
+                    );
+
                     $this->arguments['storyHTMLFile'] = $option[1];
                 }
                 break;
 
                 case '--story-text': {
+                    $this->showMessage(
+                      'The --story-text functionality is deprecated and ' .
+                      'will be removed in the future.',
+                      FALSE
+                    );
+
                     $this->arguments['storyTextFile'] = $option[1];
                 }
                 break;
@@ -789,9 +807,6 @@ Usage: phpunit [switches] UnitTest [UnitTest.php]
   --coverage-html <dir>    Generate code coverage report in HTML format.
   --coverage-clover <file> Write code coverage data in Clover XML format.
 
-  --story-html <file>      Write Story/BDD results in HTML format to file.
-  --story-text <file>      Write Story/BDD results in Text format to file.
-
   --testdox-html <file>    Write agile documentation in HTML format to file.
   --testdox-text <file>    Write agile documentation in Text format to file.
 
@@ -803,7 +818,6 @@ Usage: phpunit [switches] UnitTest [UnitTest.php]
   --loader <loader>        TestSuiteLoader implementation to use.
   --repeat <times>         Runs the test(s) repeatedly.
 
-  --story                  Report test execution progress in Story/BDD format.
   --tap                    Report test execution progress in TAP format.
   --testdox                Report test execution progress in TestDox format.
 

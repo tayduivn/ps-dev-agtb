@@ -42,8 +42,6 @@
  * @since      File available since Release 3.0.0
  */
 
-debug_print_backtrace();
- 
 require_once 'PHP/CodeCoverage/Filter.php';
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'PHPUNIT');
 
