@@ -42,8 +42,14 @@ class SetValueAction extends AbstractAction{
 		SUGAR.util.extend(SUGAR.forms.SetValueAction, SUGAR.forms.AbstractAction, {
 			exec : function()
 			{
+				try {
+				SUGAR.forms.AssignmentHandler.clearError(this.target);    
 				SUGAR.forms.AssignmentHandler.assign(this.target, SUGAR.forms.evalVariableExpression(this.expr).evaluate());
-			}
+	            } catch (e) {
+			        SUGAR.forms.AssignmentHandler.showError(this.target, e + '');
+			        SUGAR.forms.AssignmentHandler.assign(this.target, '');
+			    }        
+	       }
 		});";
 	}
 

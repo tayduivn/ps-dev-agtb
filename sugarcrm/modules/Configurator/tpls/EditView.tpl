@@ -125,6 +125,10 @@
 		{* //END SUGARCRM flav!=sales ONLY*}
 	</tr>
 	<tr>
+		<td  scope="row" width='15%' nowrap>{$MOD.DEFAULT_THEME} </td>
+		<td   width='35%'>
+			<select name='default_theme' id='default_theme'>{$THEMES}</select>
+		</td>
 		<td  scope="row" width='15%' nowrap>{$MOD.SYSTEM_NAME} </td>
 		<td   width='35%'>
 			<input type='text' name='system_name' value='{$settings.system_name}'>

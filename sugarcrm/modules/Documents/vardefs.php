@@ -341,7 +341,7 @@ $dictionary['Document'] = array('table' => 'documents'
     ),
 
 );
-VardefManager::createVardef('Documents','Document', array('default',
+VardefManager::createVardef('Documents','Document', array('default','assignable',
 //BEGIN SUGARCRM flav=pro ONLY
 'team_security',
 //END SUGARCRM flav=pro ONLY

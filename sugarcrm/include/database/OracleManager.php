@@ -991,7 +991,7 @@ class OracleManager extends DBManager
 			else
 			    $ret = "CONCAT($ret, CONCAT(".db_convert($table.".".$field,'IFNULL', array("''")).",' '))";
 
-		return $ret;
+		return empty($ret)?$ret:"TRIM($ret)";
     }
 
     /**

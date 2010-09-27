@@ -136,7 +136,8 @@ class DashletGeneric extends Dashlet {
         $chooser->args['values_array'][1] = array();
 
         $this->loadCustomMetadata();
-        $this->addCustomFields();
+        // Bug 39517 - Don't add custom fields automatically to the available fields to display in the listview
+        //$this->addCustomFields();
         if($this->displayColumns) {
              // columns to display
              foreach($this->displayColumns as $num => $name) {
@@ -329,7 +330,7 @@ class DashletGeneric extends Dashlet {
         if(isset($this->filters) || $this->myItemsOnly) {
             $whereArray = $this->buildWhere();
         }
-
+	
         $this->lvs->export = false;
         $this->lvs->multiSelect = false;
         // columns
@@ -351,6 +352,12 @@ class DashletGeneric extends Dashlet {
         }
         $this->lvs->displayColumns = $displayColumns;
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        if($this->seedBean->bean_implements('ACL')) {
+            ACLField::listFilter($this->lvs->displayColumns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
+        }
+        //END SUGARCRM flav=pro ONLY
+        
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default
         if(empty($lvdOrderBy['orderBy'])) {

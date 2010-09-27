@@ -78,7 +78,7 @@ class ConfiguratorViewEdit extends ViewEdit
         $this->ss->assign('APP_LIST', $app_list_strings);
         $this->ss->assign('config', $configurator->config);
         $this->ss->assign('error', $configurator->errors);
-        $this->ss->assign('THEMES', SugarThemeRegistry::availableThemes());
+        $this->ss->assign("THEMES", get_select_options_with_id(SugarThemeRegistry::availableThemes(), $GLOBALS['sugar_config']['default_theme']));
         $this->ss->assign('LANGUAGES', get_languages());
         $this->ss->assign("JAVASCRIPT",get_set_focus_js(). get_configsettings_js());
         $this->ss->assign('company_logo', SugarThemeRegistry::current()->getImageURL('company_logo.png'));

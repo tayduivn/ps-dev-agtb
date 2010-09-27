@@ -41,7 +41,7 @@ class ViewCampaignconfig extends SugarView
 	    
     	return array(
     	   "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
-    	   $mod_strings['LBL_CONFIGURE_CAMPAIGN_EMAIL_SETTINGS'],
+    	   translate('LBL_CAMPAIGN_CONFIG_TITLE','Administration'),
     	   );
     }
     

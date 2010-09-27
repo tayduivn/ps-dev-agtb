@@ -1707,7 +1707,7 @@ SUGAR.reports = function() {
 				else {
 					summary_sort_by_elem = SUGAR.reports.getFieldDef(document.ReportsWizardForm.summary_sort_by.value);
 				}
-				summary_sort_by_elem.table_key = SUGAR.reports.getLinkedFieldName(document.ReportsWizardForm.summary_sort_by.value);
+				summary_sort_by_elem.table_key = summaryFieldLink;
 				summary_sort_by_elem.sort_dir = document.ReportsWizardForm.summary_sort_dir.value;
 				summary_sort_by.push(summary_sort_by_elem);
 				report_def.summary_order_by = summary_sort_by;
@@ -2911,7 +2911,10 @@ SUGAR.reports = function() {
 			} 
 			else if (qualifier_name == 'empty' || qualifier_name == 'not_empty') {
 			    SUGAR.reports.addFilterNoInput(row,filter);
-				SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);		
+				SUGAR.reports.addRunTimeCheckBox(row,filter,rowId);	
+				if (((field_type == 'user_name')||(field_type == 'assigned_user_name')) && qualifier_name == 'empty' && typeof(filter.name) =='undefined') {
+					alert(SUGAR.language.get("Reports", 'LBL_USER_EMPTY_HELP'));							
+				}
 		 	}
 			else if (field_type == 'date' || field_type == 'datetime') {
 				if (qualifier_name.indexOf('tp_') == 0) {

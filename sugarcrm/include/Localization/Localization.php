@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: Localization.php 58121 2010-09-09 18:35:17Z kjing $
+ * $Id: Localization.php 58128 2010-09-09 22:51:07Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
@@ -119,9 +119,9 @@ class Localization {
 		// Bug 39171 - If we are asking for default_email_charset, check in emailSettings['defaultOutboundCharset'] as well
 		if ( $prefName == 'default_email_charset' ) {
 		    if($user != null) {
-                $emailSettings = $user->getPreference('emailSettings');
+                $emailSettings = $user->getPreference('emailSettings', 'Emails');
             } elseif(!empty($current_user)) {
-                $emailSettings = $current_user->getPreference('emailSettings');
+                $emailSettings = $current_user->getPreference('emailSettings', 'Emails');
             }
             if ( isset($emailSettings['defaultOutboundCharset']) ) {
                 $userPref = $emailSettings['defaultOutboundCharset'];
@@ -389,6 +389,11 @@ class Localization {
 		$precision = $this->getPrecedentPreference('default_currency_significant_digits', $user);
 		return $precision;
 	}
+	
+	function getCurrencySymbol($user=null) {
+		$dec = $this->getPrecedentPreference('default_currency_symbol', $user);
+		return $dec;
+	}
 
 	/**
 	 * returns a number formatted by user preference or system default
@@ -404,12 +409,12 @@ class Localization {
 		$dec			= $this->getDecimalSeparator($user);
 		$thou			= $this->getNumberGroupingSeparator($user);
 		$precision		= $this->getPrecision($user);
-		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol() : $currencySymbol;
-
+		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol($user) : $currencySymbol;
+		
 		$exNum = explode($dec, $number);
 		// handle grouping
 		if(is_array($exNum) && count($exNum) > 0) {
-			if(strlen($exNum) > 3) {
+			if(strlen($exNum[0]) > 3) {
 				$offset = strlen($exNum[0]) % 3;
 				if($offset > 0) {
 					for($i=0; $i<$offset; $i++) {

@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,7 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
-
+/**
+ * <b>number(String s)</b><br>
+ * Returns the numeric value of <i>s</i>.<br/>
+ * ex: <i>number("1,200")</i> = 1200
+ */
 class ValueOfExpression extends NumericExpression {
 	
 	/**
@@ -30,15 +34,22 @@ class ValueOfExpression extends NumericExpression {
 		if (is_string($val))
 		{
 			$val = str_replace(",", "", $val);
+			if (!is_numeric($val))
+			   throw new Exception("Error: '$val' is not a number");
 			if (strpos($val, ".") !== false) {
-				return (float) $val;
+				$val =  $val;
 			}
-			return (int) $val;
-		} else if (is_numeric($val))
+			else {
+			    $val = (int) $val;
+			}
+		}
+		if (is_numeric($val))
 		{
 			return $val;
 		}
-		return 0;
+		else {
+		    throw new Exception("Error: '$val' is not a number");
+		}
 	}
 	
 	/**
@@ -54,9 +65,9 @@ class ValueOfExpression extends NumericExpression {
 			else 
 			    out = parseInt(val);
 			if (isNaN(out))
-			   return 0;
-			else
-			   return out;
+			   throw "Error: '" + val + "' is not a number";
+			
+			return out;
 EOQ;
 	}
 	

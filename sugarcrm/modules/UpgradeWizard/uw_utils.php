@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: uw_utils.php 56650 2010-05-24 18:53:17Z jenny $
+// $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
  * Backs-up files that are targeted for patch/upgrade to a restore directory
@@ -732,25 +732,25 @@ function getValidPatchName($returnFull = true) {
 	$ready .= "
 		<table>
 			<tr>
-				<th></th>
-				<th align=left>
-					{$mod_strings['LBL_ML_NAME']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_TYPE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_VERSION']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_PUBLISHED']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_UNINSTALLABLE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_DESCRIPTION']}
-				</th>
+				<td></td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_NAME']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_TYPE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_VERSION']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_PUBLISHED']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_UNINSTALLABLE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_DESCRIPTION']}</b>
+				</td>
 			</tr>";
 	$disabled = '';
 
@@ -3917,7 +3917,7 @@ function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubS
 			if($currStepSub != null && $currStepSubState !=null){
 				//check if new status to be set or update
 				//get the latest in array. since it has sub components prepare an array
-				if(is_array($upgrade_config[sizeof($upgrade_config)][$currStep])){
+				if(!empty($upgrade_config[sizeof($upgrade_config)][$currStep]) && is_array($upgrade_config[sizeof($upgrade_config)][$currStep])){
 					$latestStepSub = currSubStep($upgrade_config[sizeof($upgrade_config)][$currStep]);
 					if($latestStepSub == $currStepSub){
 						$upgrade_config[sizeof($upgrade_config)][$currStep][$latestStepSub]=$currStepSubState;

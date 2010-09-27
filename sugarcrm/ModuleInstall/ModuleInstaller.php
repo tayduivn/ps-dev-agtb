@@ -1295,12 +1295,12 @@ class ModuleInstaller{
 
 	function rebuild_dashletcontainers(){
             $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-			$this->merge_files('Ext/DashletContainer/Containers', 'dcactions.ext.php');
+			$this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php');
 	}
 
 	function rebuild_modules(){
             $this->log(translate('LBL_MI_REBUILDING') . " Modules...");
-			$this->merge_files('Ext/Include', 'modules.ext.php', '', true);
+			$this->merge_files('Ext/Include/', 'modules.ext.php', '', true);
 	}
 
 	function rebuild_administration(){

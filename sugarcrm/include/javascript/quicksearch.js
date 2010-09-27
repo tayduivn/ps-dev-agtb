@@ -151,19 +151,22 @@ function enableQS(noReload){
 	                    //Method to fill in form fields with the returned results. 
 	                    //Should be called on select, and must be called from the AC instance scope.
 	                    setFields : function (data, filter) {
-	                    	
-	                    	for(var i in this.fields) {
-	                    		
+	                    	this.updateFields(data, filter);	
+	                    },
+	                    
+	                    updateFields: function(data, filter) {
+	                    	for(var i in this.fields) {		
 	                    		for (var key in this.qs_obj.field_list) {
-	                    			//Check that the field exists and matches the filter
+	                    		   //Check that the field exists and matches the filter
 	                	           if (this.fields[i] == this.qs_obj.field_list[key] && 
 	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]] &&
 	                	        	   this.qs_obj.populate_list[key].match(filter)) {
 	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value = data[i];
 	                	           }
 	                	       }
-	                    	}
-	                    },
+	                    	}		                    	
+	                    },	                    
+	                    
 	                    clearFields : function() {
 	                    	for (var key in this.qs_obj.field_list) {
 	                    	    if (document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]]){
@@ -173,6 +176,52 @@ function enableQS(noReload){
 							this.oldValue = "";
 	                    }
                     });
+
+                    //C.L. Bug 36575: In event of account_name quicksearch, check to see if we need to warn user
+                    //that address fields may change.  This code has similarities to code block in set_return method
+                    //of sugar_3.js when building the alert message contents.
+                    if(qsFields[qsField].name == 'account_name')
+                    {
+                       search.setFields = function(data, filter) {
+                    	    var label_str = '';
+	                		var label_data_str = '';
+	                		var current_label_data_str = '';
+	                    	
+	                    	for(var i in this.fields) {
+	                    		for (var key in this.qs_obj.field_list) {
+	                    		   //Check that the field exists and matches the filter
+	                	           if (this.fields[i] == this.qs_obj.field_list[key] && 
+	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]] &&
+	                	        	   document.getElementById(this.qs_obj.populate_list[key]+'_label') &&
+	                	        	   this.qs_obj.populate_list[key].match(filter)) {
+	                	        	   
+	                	        	    var displayValue = data[i].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+		   	        					var data_label =  document.getElementById(this.qs_obj.populate_list[key]+'_label').innerHTML.replace(/\n/gi,'');
+			        					label_str += data_label + ' \n';
+			        					label_data_str += data_label  + ' ' + displayValue + '\n';
+	                	        	   
+			        					if(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]])
+			        					{
+			        						current_label_data_str += data_label + ' ' + document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value + '\n';
+			        					}
+	                	           }
+	                	       }
+	                    	}
+	                    	
+	        			    if(label_data_str != label_str && current_label_data_str != label_str){
+	       			        	if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
+	       						{
+	       			        		this.updateFields(data,filter); 
+	       						} else {
+	       							this.updateFields(data,/account_id/);
+	       						}
+	        			    } else {
+		                        this.updateFields(data,filter); 	        			    	
+	        			    }
+                       };
+                    }
+                    
+                    
                     
                     //fill in the data fields on selection
                     search.itemSelectEvent.subscribe(function(e, args){

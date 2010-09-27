@@ -54,7 +54,6 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'id_name' => 'parent_id',
     'vname' => 'LBL_MEMBER_OF',
     'type' => 'relate',
-    'table' => 'parent_accounts',
     'isnull' => 'true',
     'module' => 'Accounts',
     'massupdate' => false,
@@ -62,7 +61,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'len' => 36,
     'link'=>'member_of',
     'unified_search' => true,
-    'importable' => 'false',
+    'importable' => 'true',
   ),
 
 

@@ -1050,6 +1050,14 @@ function handleSugarConfig() {
             }
         }
     }
+    if(file_exists('install/lang.config.php')){
+    	include('install/lang.config.php');
+    	if(!empty($config['languages'])){
+    		foreach($config['languages'] as $lang=>$label){
+    			$sugar_config['languages'][$lang] = $label;	
+    		}
+    	}
+    }
 
     ksort($sugar_config);
     $sugar_config_string = "<?php\n" .
@@ -2401,4 +2409,6 @@ function enableSugarFeeds()
     
     foreach ( SugarFeed::getAllFeedModules() as $module )
         SugarFeed::activateModuleFeed($module);
+    
+    check_logic_hook_file('Users','after_login', array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php', 'SugarFeedFlush', 'flushStaleEntries'));
 }

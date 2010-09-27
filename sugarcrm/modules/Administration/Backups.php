@@ -99,7 +99,14 @@ else{
 ?>
 
     <?php 
-    echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_BACKUPS_TITLE'], true); 
+    echo getClassicModuleTitle(
+        "Administration", 
+        array(
+            "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
+           $mod_strings['LBL_BACKUPS_TITLE'],
+           ), 
+        true
+        );
     echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_1']; ?>
     <br>
     <?php echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_2']; ?><br>

@@ -206,7 +206,7 @@ class Note extends SugarBean {
 		if(!empty($this->contact_name)){
 			
 			$emailAddress = new SugarEmailAddress();
-			$this->contact_email = $emailAddress->getPrimaryAddress(false, 'Contacts', $this->contact_id);
+			$this->contact_email = $emailAddress->getPrimaryAddress(false, $this->contact_id, 'Contacts');
 		}
 		
 		if(isset($this->contact_id) && $this->contact_id != '') {
@@ -217,6 +217,7 @@ class Note extends SugarBean {
 		    }
 		}
 	}
+
 	
 	function get_list_view_data() 
 	{

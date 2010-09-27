@@ -53,6 +53,11 @@ class registry_v3_1 extends registry_v3 {
 		    'get_available_modules',
 	        array('session'=>'xsd:string','filter'=>'xsd:string'),
 	        array('return'=>'tns:module_list'));
+	        
+	   $this->serviceClass->registerFunction(
+		    'get_module_fields_md5',
+		    array('session'=>'xsd:string', 'module_names'=>'tns:select_fields'),
+		    array('return'=>'tns:md5_results')); 
 	}
 	
 	/**
@@ -63,6 +68,20 @@ class registry_v3_1 extends registry_v3 {
 	{
 	    parent::registerTypes();
 	    
+	    $this->serviceClass->registerType(
+		   	 'md5_results',
+		   	 'complexType',
+    	    'array',
+    	    '',
+    	    'SOAP-ENC:Array',
+    	    array(),
+    	    array(
+    	       array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'xsd:string[]')
+    	    ),
+    	    'xsd:string'
+		);
+		
+		
 	    $this->serviceClass->registerType(
 		    'module_list',
 			'complexType',
@@ -99,5 +118,18 @@ class registry_v3_1 extends registry_v3 {
 				)
 		);
 		
+		$this->serviceClass->registerType(
+		    'new_module_fields',
+			'complexType',
+		   	 'struct',
+		   	 'all',
+		  	  '',
+				array(
+		        	'module_name'=>array('name'=>'module_name', 'type'=>'xsd:string'),
+		        	'module_name'=>array('name'=>'table_name', 'type'=>'xsd:string'),
+					'module_fields'=>array('name'=>'module_fields', 'type'=>'tns:field_list'),
+					'link_fields'=>array('name'=>'link_fields', 'type'=>'tns:link_field_list'),
+				)
+		);
 	}
 }

@@ -48,7 +48,7 @@
  * @author    Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright 2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license   http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version   Release: 1.2.2
+ * @version   Release: 1.2.3
  * @link      http://github.com/sebastianbergmann/php-file-iterator/tree
  * @since     Class available since Release 1.0.0
  */
@@ -138,11 +138,9 @@ class File_Iterator extends FilterIterator
      */
     protected function acceptPath($path)
     {
-        if (is_dir($path)) {
-            foreach ($this->exclude as $exclude) {
-                if (strpos($path, $exclude) === 0) {
-                    return FALSE;
-                }
+        foreach ($this->exclude as $exclude) {
+            if (strpos($path, $exclude) === 0) {
+                return FALSE;
             }
         }
 

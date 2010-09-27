@@ -306,7 +306,7 @@ CREATE TABLE kbdocuments_views_ratings (id varchar(36)  NOT NULL ,date_modified 
 CREATE TABLE users_holidays (id varchar(36)  NOT NULL ,user_id varchar(36)  NULL ,holiday_id varchar(36)  NULL ,date_modified datetime  NULL ,deleted bit  DEFAULT '0' NOT NULL  ) ALTER TABLE users_holidays ADD CONSTRAINT pk_users_holidays PRIMARY KEY (id) create index idx_user_holi_user on users_holidays ( user_id ) create index idx_user_holi_holi on users_holidays ( holiday_id ) create index users_quotes_alt on users_holidays ( user_id, holiday_id );
 
 
-CREATE TABLE report_cache (id varchar(36)  NOT NULL ,assigned_user_id varchar(36)  NOT NULL ,contents text  NULL ,report_options text  NULL ,deleted varchar(1)  NULL ,date_entered datetime  NOT NULL ,date_modified datetime  NOT NULL  ) ALTER TABLE report_cache ADD CONSTRAINT pk_report_cache PRIMARY KEY (id, assigned_user_id, deleted);
+CREATE TABLE report_cache (id varchar(36)  NOT NULL ,assigned_user_id varchar(36)  NOT NULL ,contents text  NULL ,report_options text  NULL ,deleted varchar(1) NOT NULL ,date_entered datetime  NOT NULL ,date_modified datetime  NOT NULL  ) ALTER TABLE report_cache ADD CONSTRAINT pk_report_cache PRIMARY KEY (id, assigned_user_id, deleted);
 
 
 CREATE TABLE session_history (id varchar(36)  NOT NULL ,session_id varchar(100)  NULL ,date_entered datetime  NULL ,date_modified datetime  NULL ,last_request_time datetime  NULL ,session_type varchar(100)  NULL ,is_violation bit  DEFAULT '0' NULL ,num_active_sessions int  DEFAULT '0' NULL ,deleted bit  DEFAULT '0' NOT NULL  ) ALTER TABLE session_history ADD CONSTRAINT pk_session_history PRIMARY KEY (id);

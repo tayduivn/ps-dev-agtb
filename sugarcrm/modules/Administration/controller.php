@@ -55,4 +55,54 @@ class AdministrationController extends SugarController
         
         header("Location: index.php?module=Administration&action=ConfigureTabs");
     }
+    
+    public function action_updatewirelessenabledmodules()
+    {
+        require_once('modules/Administration/Forms.php');
+
+        global $mod_strings;
+        global $app_list_strings;
+        global $app_strings;
+        global $current_user;
+        
+        if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
+        
+        require_once('modules/Configurator/Configurator.php');
+        $configurator = new Configurator();
+        $configurator->saveConfig();
+        
+        if ( isset( $_REQUEST['enabled_modules'] ) && ! empty ($_REQUEST['enabled_modules'] ))
+        {
+            $updated_enabled_modules = array () ;
+            foreach ( explode (',', $_REQUEST['enabled_modules'] ) as $e )
+            {
+                $updated_enabled_modules [ $e ] = array () ;
+            }
+        
+            // transfer across any pre-existing definitions for the enabled modules from the current module registry
+            if (file_exists('include/MVC/Controller/wireless_module_registry.php'))
+            {
+                require('include/MVC/Controller/wireless_module_registry.php');
+                if ( ! empty ( $wireless_module_registry ) )
+                {
+                    foreach ( $updated_enabled_modules as $e => $def )
+                    {
+                        if ( isset ( $wireless_module_registry [ $e ] ) )
+                        {
+                            $updated_enabled_modules [ $e ] = $wireless_module_registry [ $e ] ;
+                        }
+        
+                    }
+                }
+            }
+        
+            $filename = 'custom/include/MVC/Controller/wireless_module_registry.php' ;
+        
+            mkdir_recursive ( dirname ( $filename ) ) ;
+            write_array_to_file ( 'wireless_module_registry', $updated_enabled_modules, $filename );
+        
+        }
+        
+        echo "true";
+    }
 }

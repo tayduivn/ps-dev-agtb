@@ -56,23 +56,89 @@ SUGAR.expressions.getFunctionList = function(){
 /**
  * Pulls the current expression from the input field, replaces variables and validates through the parser.
  */
+SUGAR.expressions.setReturnTypes = function(t, vMap)
+{
+	var see = SUGAR.expressions.Expression;
+	if (t.type == "variable")
+	{
+		if(typeof(vMap[t.name]) == "undefined")
+			throw ("Unknown field: " + t.name);
+		t.returnType = vMap[t.name];
+	}
+	if (t.type == "function")
+	{
+		for(var i in t.args)
+		{
+			SUGAR.expressions.setReturnTypes(t.args[i], vMap);
+		}
+		var fMap = SUGAR.FunctionMap;
+		if(typeof(fMap[t.name]) == "undefined")
+			throw (t.name + ": No such function defined");
+		for (var j in see.TYPE_MAP){
+			if (fMap[t.name].prototype instanceof see.TYPE_MAP[j]) {
+				t.returnType = j;
+				break;
+			}
+		}
+		if(!t.returnType)
+			throw (t.name + ": No known return type!");
+	}
+}
+SUGAR.expressions.validateReturnTypes = function(t)
+{
+	if (t.type == "function")
+	{
+		//Depth first recursion
+		for(var i in t.args)
+		{
+			SUGAR.expressions.validateReturnTypes(t.args[i]);
+		}
+		
+		var fMap = SUGAR.FunctionMap;
+		var see = SUGAR.expressions.Expression;
+		if(typeof(fMap[t.name]) == "undefined")
+			throw (t.name + ": No such function defined");
+		
+		var types = fMap[t.name].prototype.getParameterTypes();
+		var count = fMap[t.name].prototype.getParamCount();
+		
+		// check parameter count
+		if ( count == see.INFINITY && t.args.length == 0 ) {
+			throw (t.name + ": Requires at least one parameter");
+		}
+		if ( count != see.INFINITY && t.args instanceof Array && t.args.length != count ) {
+			throw (t.name + ": Requires exactly " + count + " parameter(s)");
+		}
+		
+		if ( typeof(types) == 'string' ) {
+			for (var i = 0 ; i < t.args.length ; i ++ ) {
+				if(!t.args[i].returnType)
+					throw (t.name + ": No known return type!");
+				if ( !fMap[t.name].prototype.isProperType(new see.TYPE_MAP[t.args[i].returnType],types)) {
+					throw (t.name + ": All parameters must be of type '" + types + "'");
+				}
+			}
+		}
+		else {
+			for ( var i = 0 ; i < types.length ; i++ ) {
+				if ( !fMap[t.name].prototype.isProperType(new see.TYPE_MAP[t.args[i].returnType],types[i]) ) {
+					throw (this.getClass() + ": The parameter at index " + i + " must be of type " + types[i] );
+				}
+			}
+		}
+	}
+};
 SUGAR.expressions.validateCurrExpression = function(silent) {
 	try {
-		var expression = Dom.get('formulaInput').value;
+		var varTypeMap = {};
 		for (var i = 0; i < fieldsArray.length; i++){
-			var replace = "";
-			if (fieldsArray[i][1] == 'number')
-				replace = "0";
-			else if (fieldsArray[i][1] == 'boolean')
-				replace = "true";
-			else if (fieldsArray[i][1] == 'string')
-				replace = '"Hello"';
-				
-			var replaceEx = new RegExp('\\$' + fieldsArray[i][0], "g");
-			expression = expression.replace(replaceEx, replace);
+			varTypeMap[fieldsArray[i][0]] = fieldsArray[i][1];
 		}
-		var result = new SUGAR.expressions.ExpressionParser().evaluate(expression);
-		result = result.evaluate();
+		var expression = YAHOO.lang.trim(Dom.get('formulaInput').value);
+		var tokens = new SUGAR.expressions.ExpressionParser().tokenize(expression);
+		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
+		SUGAR.expressions.validateReturnTypes(tokens);
+		
 		if (typeof (silent) == 'undefined' || !silent) 
 			Msg.show({msg: "Validation Sucessfull"});
 		
@@ -102,7 +168,7 @@ SUGAR.expressions.saveCurrentExpression = function(target)
 }
 
 SUGAR.expressions.GridToolTip = {
-	tipCache : [ ],
+	tipCache : { },
 	currentHelpFunc : "",
 	showFunctionDescription: function(tip, func) {
 		var ggt = SUGAR.expressions.GridToolTip;
@@ -215,9 +281,15 @@ SUGAR.expressions.GridToolTip = {
 	}
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
-	
-	var functionsArray = SUGAR.expressions.getFunctionList(); 
-	var funcDS = new YAHOO.util.LocalDataSource(functionsArray, 
+	var functionsArray = SUGAR.expressions.getFunctionList();
+	var gridData = [];
+	for (var i in functionsArray)
+	{
+		//For now, hide date functions in the formula builder as they are unstable.
+		if (functionsArray[i][1] != "date" && functionsArray[i][1] != "time" && functionsArray[i][0] != "daysUntil")
+			gridData.push(functionsArray[i]);
+	}
+	var funcDS = new YAHOO.util.LocalDataSource(gridData, 
 	{
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 		responseSchema: 
@@ -306,5 +378,3 @@ SUGAR.expressions.GridToolTip = {
 	if(ModuleBuilder && ModuleBuilder.formulaEditorWindow)
 		ModuleBuilder.formulaEditorWindow.center();
 };
-
-//SUGAR.expressions.FormulaPanel.show();

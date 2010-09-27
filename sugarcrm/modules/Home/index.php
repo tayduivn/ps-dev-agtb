@@ -616,7 +616,11 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
 			$module = 'Home';
 			if ( isset($dashletsFiles[$dashlets[$id]['className']]['module']) )
         		$module = $dashletsFiles[$dashlets[$id]['className']]['module'];
-
+        	// Bug 24772 - Look into the user preference for the module the dashlet is a part of in case
+        	//             of the Report Chart dashlets.
+        	elseif ( isset($dashlets[$id]['module']) )
+        	    $module = $dashlets[$id]['module'];
+			
 			$myDashlet = new MySugar($module);
 
 			if($myDashlet->checkDashletDisplay()) {

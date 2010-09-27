@@ -92,7 +92,8 @@ class Parser {
 
 			// the last parameter
 			if ( $i == $length ) {
-				$args[] = Parser::evaluate($argument);
+                if ($argument != "")
+				    $args[] = Parser::evaluate($argument);
 				break;
 			}
 

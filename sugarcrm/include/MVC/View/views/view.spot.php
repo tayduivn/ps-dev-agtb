@@ -69,6 +69,7 @@ class ViewSpot extends ViewAjax
 		}
 		require_once('include/SearchForm/SugarSpot.php');
 		$sugarSpot = new SugarSpot;
-		echo $sugarSpot->searchAndDisplay($_REQUEST['q'], $modules, $offset);
+		$trimmed_query = trim($_REQUEST['q']);
+		echo $sugarSpot->searchAndDisplay($trimmed_query, $modules, $offset);
     }
 }

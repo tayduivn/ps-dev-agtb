@@ -331,6 +331,9 @@ abstract class DBHelper
 	 */
 	protected function getFieldNameFromSelect($string)
 	{
+	    if(strncasecmp($string, "DISTINCT ", 9) == 0) {
+	        $string = substr($string, 9);
+	    }
 		if (stripos($string, " as ") !== false)
 			//"as" used for an alias
 			return trim(substr($string, strripos($string, " as ") + 4));

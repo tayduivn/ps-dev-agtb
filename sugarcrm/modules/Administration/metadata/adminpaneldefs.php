@@ -147,7 +147,7 @@ $admin_option_defs['Administration']['enable_wireless_modules']=array('icon_Admi
 //$admin_option_defs['module_loader'] = array('ModuleLoader','LBL_MODULE_LOADER_TITLE','LBL_MODULE_LOADER','./index.php?module=Administration&action=UpgradeWizard&view=module');
 //END SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav=ent && flav!=dce ONLY
-$admin_option_defs['Administration']['offline_client']= array('OfflineClient','LBL_MANAGE_OFFLINE_CLIENT','LBL_OFFLINE_CLIENT','./index.php?module=Administration&action=ListViewOfflineClient');
+$admin_option_defs['Administration']['offline_client']= array('OfflineClient','LBL_MANAGE_OFFLINE_CLIENT','LBL_OFFLINE_CLIENT','./index.php?module=Administration&action=ViewOfflineClients');
 //END SUGARCRM flav=ent && flav!=dce ONLY
 
 

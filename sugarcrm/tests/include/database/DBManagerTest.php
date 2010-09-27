@@ -1408,15 +1408,15 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
          if ( $this->_db instanceOf MysqlManager )
              $this->assertEquals($ret,
-                 "CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))"
+                 "TRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,'')))"
                  );
          if ( $this->_db instanceOf MssqlManager )
              $this->assertEquals($ret,
-                 "CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))"
+                 "LTRIM(RTRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))))"
                  );
          if ( $this->_db instanceOf OracleManager )
              $this->assertEquals($ret,
-                 "CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))"
+                 "TRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,'')))"
                  );
      }
 

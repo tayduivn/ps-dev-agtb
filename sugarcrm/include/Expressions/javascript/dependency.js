@@ -144,7 +144,7 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
  * Retrieve the value of a variable.
  */
 SUGAR.forms.AssignmentHandler.getValue = function(variable) {
-	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
 	if ( field == null || field.tagName == null) 	return null;
 
 	// special select case for IE6
@@ -172,8 +172,12 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
  * Retrieve the element behind a variable.
  */
 SUGAR.forms.AssignmentHandler.getElement = function(variable) {
+	// retrieve the variable
 	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
-	if ( field == null ) 	return null;
+		
+	if ( field == null )	
+		field = YAHOO.util.Dom.get(variable);
+
 	return field;
 }
 
@@ -184,11 +188,8 @@ SUGAR.forms.AssignmentHandler.getElement = function(variable) {
 SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 {
 	// retrieve the variable
-	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
-		
-	if ( field == null )	
-		field = YAHOO.util.Dom.get(variable);
-
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
+	
 	if ( field == null )	
 		return null;
 
@@ -230,6 +231,43 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 	SUGAR.forms.AssignmentHandler.LOCKS[variable] = null;
 }
 
+SUGAR.forms.AssignmentHandler.showError = function(variable, error)
+{
+	// retrieve the variable
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
+	
+	if ( field == null )	
+		return null;
+	
+	add_error_style(field.form.name, field, error);
+}
+
+SUGAR.forms.AssignmentHandler.clearError = function(variable)
+{
+	// retrieve the variable
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
+	
+	if ( field == null )	
+		return;
+	
+	for(var i in inputsWithErrors)
+	{
+		if (inputsWithErrors[i] == field)
+		{
+			if ( field.parentNode.className.indexOf('x-form-field-wrap') != -1 ) 
+            {
+				field.parentNode.parentNode.removeChild(field.parentNode.parentNode.lastChild);
+            }
+            else 
+            {
+            	field.parentNode.removeChild(field.parentNode.lastChild);
+            }
+			delete inputsWithErrors[i];
+			return;
+		}
+	}
+}
+
 /**
  * @STATIC
  * Change the style attributes of the given variable.
@@ -237,7 +275,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 SUGAR.forms.AssignmentHandler.setStyle = function(variable, styles)
 {
 	// retrieve the variable
-	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
 	if ( field == null )	return null;
 
 	// set the styles

@@ -26,14 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Opportunities']['DetailView'] = array(
-    'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 
-                                                         array('customCode'=>'<input title="{$APP.LBL_DUP_MERGE}" ' .
-                                                         		'accesskey="M" ' .
-                                                         		'class="button" ' .
-                                                         		'onclick="this.form.return_module.value=\'Opportunities\';this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Step1\'; this.form.module.value=\'MergeRecords\';" ' .
-                                                         		'name="button" ' .
-                                                         		'value="{$APP.LBL_DUP_MERGE}" ' .
-                                                         		'type="submit">'),)),
+    'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',)),
        						'maxColumns' => '2', 
                             'widths' => array(
                                             array('label' => '10', 'field' => '30'), 

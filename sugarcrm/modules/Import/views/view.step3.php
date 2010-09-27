@@ -198,14 +198,17 @@ class ImportViewStep3 extends SugarView
         $rows = array();
         $system_charset = $locale->default_export_charset;
         $user_charset = $locale->getExportCharset();
-        $other_charsets = 'UTF-8, UTF-7, ASCII, EUC-JP,SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
+        $other_charsets = 'UTF-8, UTF-7, ASCII, CP1252, EUC-JP, SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
+        $detectable_charsets = "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}";
+        // Bug 26824 - mb_detect_encoding() thinks CP1252 is IS0-8859-1, so use that instead in the encoding list passed to the function
+        $detectable_charsets = str_replace('CP1252','ISO-8859-1',$detectable_charsets);
         $charset_for_import = $user_charset; //We will set the default import charset option by user's preference.
         $able_to_detect = function_exists('mb_detect_encoding');
         for ( $i = 0; $i < 3; $i++ ) {
             $rows[$i] = $importFile->getNextRow();
             if(!empty($rows[$i]) && $able_to_detect) {
                 foreach($rows[$i] as & $temp_value) {
-                    $current_charset = mb_detect_encoding($temp_value, "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}");
+                    $current_charset = mb_detect_encoding($temp_value, $detectable_charsets);
                     if(!empty($current_charset) && $current_charset != "UTF-8") {
                         $temp_value = $locale->translateCharset($temp_value, $current_charset);// we will use utf-8 for displaying the data on the page.
                         $charset_for_import = $current_charset;

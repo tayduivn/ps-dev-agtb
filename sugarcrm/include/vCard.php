@@ -39,7 +39,10 @@ class vCard
 		require_once($GLOBALS['beanFiles'][$GLOBALS['beanList'][$module]]);
 		$contact = new $GLOBALS['beanList'][$module]();
 		$contact->retrieve($contactid);
-		
+		//BEGIN SUGARCRM flav=pro ONLY
+		// Bug 21824 - Filter fields exported to a vCard by ACLField permissions.
+		$contact->ACLFilterFields();
+		//END SUGARCRM flav=pro ONLY
 		// cn: bug 8504 - CF/LB break Outlook's vCard import
 		$bad = array("\n", "\r");
 		$good = array("=0A", "=0D");

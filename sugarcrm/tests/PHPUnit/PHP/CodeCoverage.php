@@ -55,7 +55,7 @@ require_once 'PHP/CodeCoverage/Util.php';
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright  2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 1.0.0RC1
+ * @version    Release: 1.0.0
  * @link       http://github.com/sebastianbergmann/php-code-coverage
  * @since      Class available since Release 1.0.0
  */
@@ -459,9 +459,16 @@ class PHP_CodeCoverage
                 continue;
             }
 
+            if (!defined('PHP_TIMER_TESTSUITE') &&
+                (substr($filename, -13) == 'PHP/Timer.php')) {
+                unset($data[$filename]);
+                continue;
+            }
+
             if (!defined('PHP_TOKENSTREAM_TESTSUITE') &&
                 (substr($filename, -13) == 'PHP/Token.php' ||
-                 substr($filename, -20) == 'PHP/Token/Stream.php')) {
+                 substr($filename, -20) == 'PHP/Token/Stream.php' ||
+                 substr($filename, -35) == 'PHP/Token/Stream/CachingFactory.php')) {
                 unset($data[$filename]);
                 continue;
             }

@@ -33,6 +33,36 @@ class ModuleBuilderController extends SugarController
 {
     var $action_remap = array ( ) ;
 
+    /**
+     * Used by the _getModuleTitleParams() method calls in ModuleBuilder views to get the correct string
+     * for the section you are in
+     *
+     * @return string
+     */
+    public static function getModuleTitle()
+    {
+        global $mod_strings;
+        
+        if ( $_REQUEST['type'] == 'studio' ) {
+            return $mod_strings['LBL_STUDIO'];
+	    }
+	    elseif ( $_REQUEST['type'] == 'sugarportal' ) {
+            return $mod_strings['LBL_SUGARPORTAL'];
+	    }
+	    elseif ( $_REQUEST['type'] == 'mb' ) {
+            return $mod_strings['LBL_MODULEBUILDER'];
+        }
+        elseif ( $_REQUEST['type'] == 'dropdowns') {
+            return $mod_strings['LBL_DROPDOWNEDITOR'];
+        }
+	    elseif ( $_REQUEST['type'] == 'home' ) {
+            return $mod_strings['LBL_HOME'];
+        }
+        else {
+            return $mod_strings['LBL_DEVELOPER_TOOLS'];
+        }
+    }
+    
     function fromModuleBuilder ()
     {
         return (isset ( $_REQUEST [ 'MB' ] ) && ($_REQUEST [ 'MB' ] == '1')) ;

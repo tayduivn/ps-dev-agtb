@@ -1573,7 +1573,7 @@ function is_admin_for_module($user,$module) {
     if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
-    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module]['module']))||
+    if(!empty($user) && (($user->is_admin == '1' || ($user->is_admin === 'on' && isset($actions[$module]['module'])))|| 
     	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;

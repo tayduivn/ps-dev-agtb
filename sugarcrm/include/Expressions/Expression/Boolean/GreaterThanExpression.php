@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -21,9 +21,10 @@
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 
-/*
+/**
  * <b>greaterThan(Number num1, Number num2)</b><br>
- * Returns true num1 is greater than num2.
+ * Returns true num1 is greater than num2.<br/>
+ * ex: <i>greaterThan(3, 5)</i> = false
  */
 class GreaterThanExpression extends BooleanExpression {
 	/**

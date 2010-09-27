@@ -609,14 +609,24 @@ function confirmDelete() {
         confirmDeletePopup.hide();
         return false;
      };
-
+    var user_portal_group = '{$usertype}';
+    var confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM');
+    if(user_portal_group == 'GroupUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_GROUP_CONFIRM');
+    }
+    //BEGIN SUGARCRM flav=pro ONLY
+    else if(user_portal_group == 'PortalUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_PORTAL_CONFIRM');
+    }
+    //END SUGARCRM flav=pro ONLY
+    
     var confirmDeletePopup = new YAHOO.widget.SimpleDialog(\"Confirm \", {
                 width: \"400px\",
                 draggable: true,
                 constraintoviewport: true,
                 modal: true,
                 fixedcenter: true,
-                text: SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM'),
+                text: confirm_text,
                 bodyStyle: \"padding:5px\",
                 buttons: [{
                         text: SUGAR.language.get('Users', 'LBL_OK'),
@@ -624,7 +634,7 @@ function confirmDelete() {
                         isDefault:true
                 }, {
                         text: SUGAR.language.get('Users', 'LBL_CANCEL'),
-                        handler: handleNo,
+                        handler: handleNo
                 }]
      });
     confirmDeletePopup.setHeader(SUGAR.language.get('Users', 'LBL_DELETE_USER'));

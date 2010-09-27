@@ -289,6 +289,15 @@ class SugarApplication
 			return;
 		}	
 
+		// Bug 20916 - Special case for check ACL access rights for Subpanel QuickCreates
+		if(isset($_POST['action']) && $_POST['action'] == 'SubpanelCreates') {
+            $actual_module = $_POST['target_module'];
+            if(!in_array($actual_module,$GLOBALS['modListHeader'])) {
+                $this->controller->hasAccess = false;
+            }
+            return;
+        }
+		
 		if(!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader']))
 			$GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
 			
@@ -657,11 +666,21 @@ class SugarApplication
 	 */
 	function checkHTTPReferer(){
 		global $sugar_config;
-		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView', 'Login');
+		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView');
+		// Bug 39691 - Make sure localhost and 127.0.0.1 are always valid HTTP referers
+		$whiteListReferers = array('127.0.0.1','localhost');
+		if ( !empty($sugar_config['http_referer']['list']) ) {
+			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
+		}
+		// Bug 39691 - Make sure localhost and 127.0.0.1 are always valid HTTP referers
+		$whiteListReferers = array('127.0.0.1','localhost');
+		if ( !empty($sugar_config['http_referer']['list']) ) {
+			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
+		}
 		if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
 			$http_ref = parse_url($_SERVER['HTTP_REFERER']);
 			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $whiteListActions) && 
-				(empty($sugar_config['http_referer']['list']) || !in_array($http_ref['host'], $sugar_config['http_referer']['list']))){
+				(empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))){
 				header("Cache-Control: no-cache, must-revalidate");
 				$whiteListActions[] = $this->controller->action;
 				$whiteListString = "'" . implode("', '", $whiteListActions) . "'";

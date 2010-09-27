@@ -55,7 +55,7 @@ require_once 'Text/Template.php';
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright  2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 1.0.0RC1
+ * @version    Release: 1.0.0
  * @link       http://github.com/sebastianbergmann/php-code-coverage
  * @since      Class available since Release 1.0.0
  */
@@ -182,14 +182,14 @@ class PHP_CodeCoverage_Report_HTML
                                           'D M j G:i:s T Y',
                                           $_SERVER['REQUEST_TIME']
                                         ),
-            'version'                => '1.0.0RC1',
+            'version'                => '1.0.0',
             'php_version'            => PHP_VERSION,
             'generator'              => $this->options['generator'],
             'least_tested_methods'   => $this->leastTestedMethods($classes),
             'top_project_risks'      => $this->topProjectRisks($classes),
             'cc_values'              => $this->classComplexity($classes),
             'ccd_values'             => $this->classCoverageDistribution($classes),
-            'backlink'               => str_replace('.dashboard', '', $file)
+            'backlink'               => basename(str_replace('.dashboard', '', $file))
           )
         );
 
