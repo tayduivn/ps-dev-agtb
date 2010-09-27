@@ -41,7 +41,11 @@ if(!empty($config['cleanCache'])){
 if(!empty($config['base_dir'])){
 	$config['base_dir'] = realpath($config['base_dir']);
 	if(!empty($config['file'])){
-		$config['file'] = realpath($config['base_dir'] .'/' .$config['file']);
+		if(file_exists($config['file'])) {
+			$config['file'] = realpath($config['file']);
+		} else {
+			$config['file'] = realpath($config['base_dir'] .'/' .$config['file']);
+		}
 		$config['file'] = str_replace($config['base_dir']. '/','', $config['file']);
 		if(is_file($config['base_dir'] .'/' .  $config['file'])){
 			$rome->setStartPath($config['base_dir']);
