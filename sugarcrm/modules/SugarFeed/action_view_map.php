@@ -26,5 +26,4 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$action_view_map['adminwizard'] = 'adminwizard';
-$action_view_map['sugarpdfsettings'] = 'sugarpdfsettings';
+$action_view_map['adminsettings']= 'adminsettings';

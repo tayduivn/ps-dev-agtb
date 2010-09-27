@@ -34,7 +34,7 @@
 	<input type="hidden" name="action" value="ThemeSettings">
 	<input type="hidden" name="disabled_themes" value="">
 	
-	<table border="0" cellspacing="1" cellpadding="1">
+	<table border="0" cellspacing="1" cellpadding="1" class="actionsContainer">
 		<tr>
 			<td>
 			<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="SUGAR.saveThemeSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">
@@ -56,7 +56,7 @@
 		</table>
 	</div>
 	
-	<table border="0" cellspacing="1" cellpadding="1">
+	<table border="0" cellspacing="1" cellpadding="1" class="actionsContainer">
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="SUGAR.saveThemeSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">

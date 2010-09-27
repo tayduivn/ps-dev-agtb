@@ -22,3 +22,5 @@
 $action_view_map['themesettings'] = 'themesettings';
 $action_view_map['repair'] = 'repair';
 $action_view_map['configuretabs'] = 'configuretabs';
+$action_view_map['enablewirelessmodules'] = 'enablewirelessmodules';
+$action_view_map['configureshortcutbar'] = 'configureshortcutbar';
