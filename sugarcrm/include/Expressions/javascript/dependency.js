@@ -455,9 +455,15 @@ SUGAR.forms._performRangeReplace = function(expression)
 SUGAR.forms.createTrigger = function(variables, condition, triggeronload)
 {
 	var trigger = new SUGAR.forms.Trigger(variables, condition);
-	
 	if ( triggeronload ) {
-		YAHOO.util.Event.addListener(window, "load", SUGAR.forms.Trigger.trigger, trigger);
+		var empty = false;
+		for (var i in variables)
+		{
+			if (SUGAR.forms.AssignmentHandler.getValue(variables[i]) == "")
+				empty = true;
+		}
+		if (!empty)
+			YAHOO.util.Event.addListener(window, "load", SUGAR.forms.Trigger.trigger, trigger);
 	}
 
 	return trigger;
@@ -479,7 +485,15 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad)
 	trigger.setDependency(this);
 	this.trigger = trigger;
 	if (testOnLoad) {
-		SUGAR.forms.Trigger.fire("", trigger);
+		var vars = trigger.variables;
+		var empty = false;
+		for (var i in vars)
+		{
+			if (SUGAR.forms.AssignmentHandler.getValue(vars[i]) == "")
+				empty = true;
+		}
+		if (!empty)
+			SUGAR.forms.Trigger.fire("", trigger);
 	}
 }
 
