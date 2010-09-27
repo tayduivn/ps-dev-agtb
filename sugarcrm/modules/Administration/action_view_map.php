@@ -24,3 +24,4 @@ $action_view_map['repair'] = 'repair';
 $action_view_map['configuretabs'] = 'configuretabs';
 $action_view_map['enablewirelessmodules'] = 'enablewirelessmodules';
 $action_view_map['configureshortcutbar'] = 'configureshortcutbar';
+$action_view_map['viewofflineclients'] = 'viewofflineclients';
