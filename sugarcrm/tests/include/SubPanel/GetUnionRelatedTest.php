@@ -16,7 +16,9 @@ class GetUnionRelatedTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	    global $moduleList, $beanList, $beanFiles;
+        require('include/modules.php');
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = new Contact();
 	}
 
