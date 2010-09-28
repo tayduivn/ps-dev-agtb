@@ -33,6 +33,7 @@ class Bug38850Test extends Sugar_PHPUnit_Framework_TestCase
             ob_end_clean();
         }
         catch (PHPUnit_Framework_Error $e) {
+		ob_end_clean();
         }
         
         $this->assertNotContains('Can Interject Code',$output);
