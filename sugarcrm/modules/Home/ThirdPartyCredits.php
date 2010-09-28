@@ -24,7 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //the code and end-user application.
 //FILE SUGARCRM flav=pro ONLY
 $credits = array(
-/*	'Language Packs' => array(
+	'Language Packs' => array(
 
 	),
 	'Modules' => array(
@@ -43,7 +43,5 @@ $credits = array(
 			'website' => 'www.website.com',
 		),
 	)
-*/
-
 );
 ?>
