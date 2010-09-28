@@ -97,7 +97,7 @@ if (isset($_REQUEST['guid']))
 	    	$delay=$pwd_settings['linkexpirationtime']*$pwd_settings['linkexpirationtype'];
 			$stim = strtotime($row['date_generated']);
 	    	$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+$delay, date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));
-	    	$timenow = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	    	$timenow = TimeDate2::getInstance()->nowDb();
 	    	if ($timenow > $expiretime)
 	    		$expired='1';	
 	    }

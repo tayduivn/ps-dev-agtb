@@ -75,7 +75,7 @@ $emailman = new EmailMan();
         $select_query.=" join prospect_list_campaigns plc on em.campaign_id = plc.campaign_id";
         $select_query.=" join prospect_lists pl on pl.id = plc.prospect_list_id ";
         $select_query.=" WHERE em.list_id = pl.id and pl.list_type = 'test'";
-        $select_query.=" AND em.send_date_time <= ". db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'" ,"datetime");    
+        $select_query.=" AND em.send_date_time <= ". db_convert("'".TimeDate2::getInstance()->nowDb()."'" ,"datetime");    
         $select_query.=" AND (em.in_queue ='0' OR ( em.in_queue ='1' AND em.in_queue_date <= " .db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'" ,"datetime")."))";
         $select_query.=" AND em.campaign_id='{$campaign_id}'";
         $select_query.=" ORDER BY em.send_date_time ASC, em.user_id, em.list_id";
@@ -86,7 +86,7 @@ $emailman = new EmailMan();
         //2. were never processed or last attempt was 24 hours ago
         $select_query =" SELECT *";
         $select_query.=" FROM $emailman->table_name";
-        $select_query.=" WHERE send_date_time <= ". db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'" ,"datetime");
+        $select_query.=" WHERE send_date_time <= ". db_convert("'".TimeDate2::getInstance()->nowDb()."'" ,"datetime");
         $select_query.=" AND (in_queue ='0' OR ( in_queue ='1' AND in_queue_date <= " .db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'" ,"datetime")."))"; 
         
         if (!empty($campaign_id)) {
@@ -154,7 +154,7 @@ do {
 		//if the database does not support repeatable read isolation by default, we might get data that does not meet 
         //the criteria in the original query, and we care most about the in_queue_date and process_date_time, 
         //if they are null or in past(older than 24 horus) then we are okay.
-		$lock_query="UPDATE emailman SET in_queue=1, in_queue_date='". gmdate($GLOBALS['timedate']->get_db_date_time_format()) ."' WHERE id = '${row['id']}'";
+		$lock_query="UPDATE emailman SET in_queue=1, in_queue_date='". TimeDate2::getInstance()->nowDb() ."' WHERE id = '${row['id']}'";
 		$lock_query.=" AND (in_queue ='0' OR ( in_queue ='1' AND in_queue_date <= " .db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'" ,"datetime")."))"; 
 
  		//if the query fails to execute.. terminate campaign email process.

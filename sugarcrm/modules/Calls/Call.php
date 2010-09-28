@@ -374,7 +374,7 @@ class Call extends SugarBean
         global $timedate;
         //setting default date and time
 		if (is_null($this->date_start)) {
-			$this->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			$this->date_start = $timedate->now();
 		}
 
 		if (is_null($this->duration_hours))

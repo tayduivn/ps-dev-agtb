@@ -62,10 +62,10 @@ if (!empty($campaign->status) && $campaign->status == 'sending') {
 }
 if ($campaign->db->dbType=='oci8') {
 //BEGIN SUGARCRM flav=ent ONLY
-	$current_date="TO_DATE('".gmdate($GLOBALS['timedate']->get_db_date_time_format())."','YYYY-MM-DD HH24:MI:SS')";
+	$current_date="TO_DATE('".TimeDate2::getInstance()->nowDb()."','YYYY-MM-DD HH24:MI:SS')";
 //END SUGARCRM flav=ent ONLY
 } else {
-	$current_date= "'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'";
+	$current_date= "'".TimeDate2::getInstance()->nowDb()."'";
 }
 
 //start scheduling now.....

@@ -155,7 +155,7 @@ class DCEInstance extends DCEInstance_sugar {
             $action->template_id = $inst->dcetemplate_id;
             $action->type = $actionType;//'create';
             $action->status = 'queued';
-            $action->start_date = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+            $action->start_date = $timedate->now();
             $action->priority = $priority;
             $action->action_parms .= ', previous_status:'.$inst->status;
             

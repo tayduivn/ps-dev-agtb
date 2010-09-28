@@ -41,7 +41,7 @@ $trackerManager->unsetMonitors();
 //BEGIN SUGARCRM flav=pro ONLY
 //bug: 38017 - SugarView is not yet pulled out of memory and to avoid putting a check-in there for every call, will just
 //put in here for one call
-$timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$timeStamp = TimeDate2::getInstance()->nowDb();
 $monitor3 = $trackerManager->getMonitor('tracker_sessions');
 if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);

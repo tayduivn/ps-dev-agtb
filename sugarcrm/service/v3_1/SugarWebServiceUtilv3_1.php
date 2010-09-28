@@ -53,7 +53,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 			//BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
 			//END SUGARCRM flav=pro ONLY
-	        $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+	        $monitor->setValue('date_modified', TimeDate2::getInstance()->nowDb());
 	        $monitor->setValue('user_id', $GLOBALS['current_user']->id);
 	        $monitor->setValue('module_name', $seed->module_dir);
 	        $monitor->setValue('action', $current_view);

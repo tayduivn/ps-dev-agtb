@@ -332,9 +332,9 @@ class Meeting extends SugarBean {
 
         //setting default date and time
 		if (is_null($this->date_start))
-			$this->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			$this->date_start = $timedate->now();
 		if (is_null($this->time_start))
-			$this->time_start = $timedate->to_display_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()), true);
+			$this->time_start = $timedate->to_display_time(TimeDate2::getInstance()->nowDb(), true);
 		if (is_null($this->duration_hours)) {
 			$this->duration_hours = "0";
 		}

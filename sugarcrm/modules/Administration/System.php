@@ -306,7 +306,7 @@ class System extends SugarBean {
             if(isset($row['num_syncs'])){
                     $this->num_syncs = $row['num_syncs'] + 1;
             }
-            $this->last_connect_date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+            $this->last_connect_date = TimeDate2::getInstance()->nowDb();
             $this->save();
             if($row['deleted'] == 0){
                     if($row['status'] == 'Active'){
@@ -322,7 +322,7 @@ class System extends SugarBean {
             if($this->canAddNewOfflineClient()){
                 $this->system_key = $system_key;
                 $this->user_id = $user_id;
-                $this->last_connect_date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+                $this->last_connect_date = TimeDate2::getInstance()->nowDb();
                 $this->retrieveNextKey();
                 return 0;
             }else{

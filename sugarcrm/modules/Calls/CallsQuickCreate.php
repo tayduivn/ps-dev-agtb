@@ -60,9 +60,9 @@ class CallsQuickCreate extends QuickCreate {
         $this->javascript->addAllFields('');
         
 		if (is_null($focus->date_start))
-			$focus->date_start = $timedate->to_display_date(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			$focus->date_start = $timedate->to_display_date(TimeDate2::getInstance()->nowDb());
 		if (is_null($focus->time_start))
-			$focus->time_start = $timedate->to_display_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()), true);
+			$focus->time_start = $timedate->to_display_time(TimeDate2::getInstance()->nowDb(), true);
 		if (!isset ($focus->duration_hours))
 			$focus->duration_hours = "1";
 

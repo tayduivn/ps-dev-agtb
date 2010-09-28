@@ -692,8 +692,8 @@ class SchedulerDaemon extends Scheduler {
 						VALUES (
 						'".$guid."',
 						0, 
-						".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').",
-						".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').",
+						".db_convert("'".TimeDate2::getInstance()->nowDb()."'", 'datetime').",
+						".db_convert("'".TimeDate2::getInstance()->nowDb()."'", 'datetime').",
 						'".$jobsArr['ids'][$k]."',
 						".db_convert("'".$time."'", 'datetime').",
 						'ready'
@@ -750,8 +750,8 @@ class SchedulerDaemon extends Scheduler {
 				"FROM schedulers " .
 				"WHERE deleted=0 " .
 				"AND status = 'Active' " .
-				"AND date_time_start < ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'",'datetime')." " .
-				"AND (date_time_end > ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'",'datetime')." OR date_time_end IS NULL)";
+				"AND date_time_start < ".db_convert("'".TimeDate2::getInstance()->nowDb()."'",'datetime')." " .
+				"AND (date_time_end > ".db_convert("'".TimeDate2::getInstance()->nowDb()."'",'datetime')." OR date_time_end IS NULL)";
 				
 		$result	= $this->db->query($query);
 		$rows=0;

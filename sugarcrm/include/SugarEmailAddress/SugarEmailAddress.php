@@ -160,7 +160,8 @@ class SugarEmailAddress extends SugarBean {
 
                         unset($current_links[$emailId]);
                     } else {
-                        $upd_eabr = "INSERT INTO email_addr_bean_rel (id, email_address_id,bean_id, bean_module,primary_address,reply_to_address,date_created,date_modified,deleted) VALUES('{$guid}', '{$emailId}', '{$id}', '{$module}', {$address['primary_address']}, {$address['reply_to_address']}, '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', 0)";
+                        $now = TimeDate2::getInstance()->nowDb();
+                        $upd_eabr = "INSERT INTO email_addr_bean_rel (id, email_address_id,bean_id, bean_module,primary_address,reply_to_address,date_created,date_modified,deleted) VALUES('{$guid}', '{$emailId}', '{$id}', '{$module}', {$address['primary_address']}, {$address['reply_to_address']}, '$now', '$now', 0)";
                     }
 
                     if (!empty($upd_eabr)) {
@@ -500,7 +501,7 @@ class SugarEmailAddress extends SugarBean {
 
                     if(!empty($a)) {
                         if(isset($a['invalid_email']) && isset($addressMeta['invalid_email']) && isset($addressMeta['opt_out']) && $a['invalid_email'] != $addressMeta['invalid_email'] || $a['opt_out'] != $addressMeta['opt_out']) {
-                            $qUpdate = "UPDATE email_addresses SET invalid_email = {$addressMeta['invalid_email']}, opt_out = {$addressMeta['opt_out']}, date_modified = '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."' WHERE id = '{$a['id']}'";
+                            $qUpdate = "UPDATE email_addresses SET invalid_email = {$addressMeta['invalid_email']}, opt_out = {$addressMeta['opt_out']}, date_modified = '".TimeDate2::getInstance()->nowDb()."' WHERE id = '{$a['id']}'";
                             $rUpdate = $this->db->query($qUpdate);
                         }
                     }
@@ -548,8 +549,9 @@ class SugarEmailAddress extends SugarBean {
                 $guid = create_guid();
                 $address = $GLOBALS['db']->quote($address);
                 $addressCaps = $GLOBALS['db']->quote($addressCaps);
+                $now = TimeDate2::getInstance()->nowDb();
                 $qa = "INSERT INTO email_addresses (id, email_address, email_address_caps, date_created, date_modified, deleted)
-                        VALUES('{$guid}', '{$address}', '{$addressCaps}', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', 0)";
+                        VALUES('{$guid}', '{$address}', '{$addressCaps}', '$now', '$now', 0)";
                 $ra = $this->db->query($qa);
             }
             return $guid;
@@ -567,7 +569,7 @@ class SugarEmailAddress extends SugarBean {
         if(!empty($a) && !empty($a['id'])) {
             //verify the opt out and invalid flags.
             if ($a['invalid_email'] != $invalid or $a['opt_out'] != $opt_out) {
-                $upd_q="update email_addresses set invalid_email={$invalid}, opt_out={$opt_out},date_modified = '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."' where id='{$a['id']}'";
+                $upd_q="update email_addresses set invalid_email={$invalid}, opt_out={$opt_out},date_modified = '".TimeDate2::getInstance()->nowDb()."' where id='{$a['id']}'";
                 $upd_r= $this->db->query($upd_q);
             }
             return $a['id'];
@@ -577,8 +579,9 @@ class SugarEmailAddress extends SugarBean {
                 $guid = create_guid();
                 $address = $GLOBALS['db']->quote($address);
                 $addressCaps = $GLOBALS['db']->quote($addressCaps);
+                $now = TimeDate2::getInstance()->nowDb();
                 $qa = "INSERT INTO email_addresses (id, email_address, email_address_caps, date_created, date_modified, deleted, invalid_email, opt_out)
-                        VALUES('{$guid}', '{$address}', '{$addressCaps}', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', 0 , $invalid, $opt_out)";
+                        VALUES('{$guid}', '{$address}', '{$addressCaps}', '$now', '$now', 0 , $invalid, $opt_out)";
                 $this->db->query($qa);
             }
             return $guid;

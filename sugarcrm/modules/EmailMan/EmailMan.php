@@ -304,7 +304,7 @@ class EmailMan extends SugarBean{
 				$campaign_log->more_information=$email_address;
 			}
 			$campaign_log->activity_type=$activity_type;
-			$campaign_log->activity_date=$timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			$campaign_log->activity_date=$timedate->now();
 			$campaign_log->list_id=$this->list_id;
 			$campaign_log->related_id= $email_id;
 			$campaign_log->related_type=$email_type;
@@ -314,7 +314,7 @@ class EmailMan extends SugarBean{
 			$this->db->query($query);
 		}else{
 			//try to send the email again a day later.
-			$query = 'UPDATE ' . $this->table_name . " SET in_queue='1', send_attempts='$this->send_attempts', in_queue_date='". gmdate($GLOBALS['timedate']->get_db_date_time_format()) ."' WHERE id = '$this->id'";
+			$query = 'UPDATE ' . $this->table_name . " SET in_queue='1', send_attempts='$this->send_attempts', in_queue_date='". TimeDate2::getInstance()->nowDb() ."' WHERE id = '$this->id'";
 			$this->db->query($query);
 		}
 	}

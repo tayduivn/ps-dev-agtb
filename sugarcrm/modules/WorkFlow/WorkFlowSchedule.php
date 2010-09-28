@@ -247,13 +247,13 @@ class WorkFlowSchedule extends SugarBean {
         global $disable_date_format;
 
         if($is_update == false){
-            $target_stamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+            $target_stamp = TimeDate2::getInstance()->nowDb();
             //$target_stamp = $timedate->to_display_date_time($target_stamp, true);
         } else {
 
             if($target_field=="none"){
 
-                $target_stamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+                $target_stamp = TimeDate2::getInstance()->nowDb();
                 //$target_stamp = $timedate->to_display_date_time($target_stamp, true);
             } else {
                 $target_stamp = $bean_object->$target_field;
@@ -297,7 +297,7 @@ function process_scheduled(){
         require('include/modules.php');
     }
 
-    $current_stamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+    $current_stamp = TimeDate2::getInstance()->nowDb();
 
     $query = "	SELECT *
                 FROM $this->table_name

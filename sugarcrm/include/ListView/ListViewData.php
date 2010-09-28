@@ -73,7 +73,7 @@ class ListViewData {
 				        $monitor->setValue('item_summary', "lvso=".$direction."&".$this->var_order_by."=".$_REQUEST[$this->var_order_by]);
 				        $monitor->setValue('action', 'listview');
 						$monitor->setValue('user_id', $GLOBALS['current_user']->id);
-						$monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+						$monitor->setValue('date_modified', TimeDate2::getInstance()->nowDb());
 				        $monitor->save();
 					}
     			}
@@ -408,7 +408,7 @@ class ListViewData {
 				}
 				$data[$dataIndex] = $temp->get_list_view_data($filter_fields);
 				//BEGIN SUGARCRM flav=pro ONLY
-                if($temp->isFavoritesEnabled()){ 
+                if($temp->isFavoritesEnabled()){
 					$data[$dataIndex]['star'] = SugarFavorites::generateStar(!empty($row['is_favorite']), $temp->module_dir, $temp->id);
 				}
 				if($temp->bean_implements('ACL')){

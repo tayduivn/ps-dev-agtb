@@ -136,7 +136,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
 
         //update Instance Status, and url
@@ -222,7 +222,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed= $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed= $timedate->now();
         $act->save();
 
 
@@ -255,7 +255,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
         
         //now delete the instance bean
@@ -290,7 +290,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
 
         //only send out email if toggle is for on, not off
@@ -342,7 +342,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
 
         //if is live then just send out email
@@ -738,7 +738,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                     $emailObj->from_addr = $mail->From;
                     $emailObj->parent_type = 'DCEInstance';
                     $emailObj->parent_id = $inst_id ;
-                    $emailObj->date_sent =gmdate($GLOBALS['timedate']->get_db_date_time_format());
+                    $emailObj->date_sent =TimeDate2::getInstance()->now();
                     $emailObj->modified_user_id = '1';                               
                     $emailObj->created_by = '1';
                     $emailObj->status='sent';

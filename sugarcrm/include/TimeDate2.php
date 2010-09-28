@@ -401,6 +401,20 @@ class TimeDate2
     }
 
     /**
+     * Produce timestamp offset by user's timezone
+     *
+     * So if somebody converts it to format assuming GMT, it would actually display user's time.
+     * This is used by Javascript.
+     *
+     * @param DateTime $date
+     * @return int
+     */
+    public function asUserTs(DateTime $date)
+    {
+        return $date->format('U')+$this->_getUserTZ()->getOffset($date);
+    }
+
+    /**
      * Format DateTime object as DB date
      * Note: by default does not convert TZ!
      * @param DateTime $date

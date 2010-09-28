@@ -38,7 +38,7 @@ global $app_list_strings;
 global $current_language, $current_user;
 $current_module_strings = return_module_language($current_language, 'Tasks');
 
-$today = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$today = TimeDate2::getInstance()->nowDb();
 // Break down the date, add a day, and print it back out again
 list($date_tmp,$time_tmp) = explode(' ',$today);
 $date = explode('-',$date_tmp);

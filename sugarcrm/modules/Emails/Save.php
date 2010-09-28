@@ -205,7 +205,7 @@ elseif(isset($_REQUEST['parent_type']) && !empty($_REQUEST['parent_type'])
 // If came from email archiving edit view, this would have been set from form input.
 if (!isset($focus->date_start))
 {
-	$today = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	$today = TimeDate2::getInstance()->nowDb();
 	$focus->date_start = $timedate->to_display_date($today);
 	$focus->time_start = $timedate->to_display_time($today, true);
 }

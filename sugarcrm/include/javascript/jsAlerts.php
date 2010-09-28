@@ -59,7 +59,7 @@ EOQ;
 			
 		// cn: get a boundary limiter
 		$dateTimeMax = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time() + $app_list_strings['reminder_max_time']);
-		$dateTimeNow = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+		$dateTimeNow = TimeDate2::getInstance()->nowDb();
 		$dateMax = gmdate($GLOBALS['timedate']->dbDayFormat, time() + $app_list_strings['reminder_max_time']);
 		$todayGMT = gmdate($GLOBALS['timedate']->dbDayFormat);
 		

@@ -75,7 +75,7 @@ function portal_login($portal_auth, $user_name, $application_name){
 		$_SESSION['type'] = 'lead';
         //BEGIN SUGARCRM flav=ent ONLY
         $sessionManager->session_type = 'lead';
-        $sessionManager->last_request_time = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $sessionManager->last_request_time = TimeDate2::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
         //END SUGARCRM flav=ent ONLY
@@ -89,7 +89,7 @@ function portal_login($portal_auth, $user_name, $application_name){
 		$_SESSION['type'] = 'portal';
         //BEGIN SUGARCRM flav=ent ONLY
         $sessionManager->session_type = 'portal';
-        $sessionManager->last_request_time = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $sessionManager->last_request_time = TimeDate2::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
         //END SUGARCRM flav=ent ONLY
@@ -113,7 +113,7 @@ function portal_login($portal_auth, $user_name, $application_name){
 		$_SESSION['assigned_user_id'] = $contact->assigned_user_id;
         //BEGIN SUGARCRM flav=ent ONLY
         $sessionManager->session_type = 'contact';
-        $sessionManager->last_request_time = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $sessionManager->last_request_time = TimeDate2::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
         //END SUGARCRM flav=ent ONLY
@@ -169,7 +169,7 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         $_SESSION['assigned_user_id'] = $contact->assigned_user_id;
         //BEGIN SUGARCRM flav=ent ONLY
         $sessionManager->session_type = 'contact';
-        $sessionManager->last_request_time = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $sessionManager->last_request_time = TimeDate2::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
         //END SUGARCRM flav=ent ONLY
@@ -199,7 +199,7 @@ function portal_validate_authenticated($session_id){
 		if(!empty($_SESSION['is_valid_session']) && $_SESSION['ip_address'] == query_client_ip() && $valid_session != null && ($_SESSION['type'] == 'contact' || $_SESSION['type'] == 'lead' || $_SESSION['type'] == 'portal')){
 			global $current_user;
 			//BEGIN SUGARCRM flav=pro ONLY
-            $valid_session->last_request_time = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+            $valid_session->last_request_time = TimeDate2::getInstance()->nowDb();
             $valid_session->save();
             //END SUGARCRM flav=pro ONLY
 			$current_user = new User();
