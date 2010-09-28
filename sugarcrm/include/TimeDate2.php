@@ -371,7 +371,6 @@ class TimeDate2
                 return false;
             }
         } catch (Exception $e) {
-            var_dump($e);
             return false;
         }
         return true;
@@ -562,8 +561,7 @@ class TimeDate2
         }
         try {
             if ($expand && strlen($date) <= 10) {
-                $formats = $this->split_date_time($fromFormat);
-                $date = $this->merge_date_time($date, $this->_get_midnight($formats[1]));
+                $date = $this->expandDate($date, $fromFormat);
             }
             $phpdate = SugarDateTime::createFromFormat($fromFormat, $date, $fromTZ);
             if ($phpdate == false) {
@@ -612,6 +610,10 @@ class TimeDate2
      */
     public function to_display_time($date, $meridiem = true, $convert_tz = true)
     {
+        if($convert_tz && strpos($date, ' ') === false) {
+            // we need TZ adjustment but have no date, assume today
+            $date = $this->expandTime($date, self::DB_DATETIME_FORMAT, self::$gmtTimezone);
+        }
         return $this->_convert($date,
             $convert_tz ? self::DB_DATETIME_FORMAT : self::DB_TIME_FORMAT, self::$gmtTimezone,
             $this->get_time_format(), $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone);
@@ -656,8 +658,8 @@ class TimeDate2
     public function to_display_date($date, $convert_tz = true)
     {
         return $this->_convert($date,
-            $convert_tz ? self::DB_DATETIME_FORMAT : self::DB_DATE_FORMAT, self::$gmtTimezone,
-            $this->get_date_format(), $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone);
+            self::DB_DATETIME_FORMAT, self::$gmtTimezone,
+            $this->get_date_format(), $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone, true);
     }
 
     /**
@@ -730,8 +732,8 @@ class TimeDate2
     public function to_db_date($date, $convert_tz = true)
     {
         return $this->_convert($date,
-            $convert_tz ? $this->get_date_time_format() : $this->get_date_format(), $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone,
-            self::DB_DATE_FORMAT, self::$gmtTimezone, $convert_tz);
+            $this->get_date_time_format(), $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone,
+            self::DB_DATE_FORMAT, self::$gmtTimezone, true);
     }
 
     /**
@@ -745,10 +747,16 @@ class TimeDate2
      */
     public function to_db_time($date, $convert_tz = true)
     {
+        $format = $this->get_date_time_format();
+        $tz = $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone;
+        if($convert_tz && strpos($date, ' ') === false) {
+            // we need TZ adjustment but have no date, assume today
+            $date = $this->expandTime($date, $format, $tz);
+        }
         return $this->_convert($date,
-            $convert_tz ? $this->get_date_time_format() : $this->get_time_format(),
-                $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone,
-            self::DB_TIME_FORMAT, self::$gmtTimezone, $convert_tz);
+            $convert_tz ? $format : $this->get_time_format(),
+            $tz,
+            self::DB_TIME_FORMAT, self::$gmtTimezone);
     }
 
     /**
@@ -1191,4 +1199,47 @@ class TimeDate2
 
         return '23:00'; //default
     }
+
+    /**
+     * Expand date format by adding midnight to it
+     * Note: date is assumed to be in target format already
+     * @param string $date
+     * @param string $format Target format
+     */
+    public function expandDate($date, $format)
+    {
+        $formats = $this->split_date_time($format);
+        if(isset($formats[1])) {
+            return $this->merge_date_time($date, $this->_get_midnight($formats[1]));
+        }
+        return $date;
+    }
+
+    /**
+     * Expand time format by adding today to it
+     * Note: time is assumed to be in target format already
+     * @param string $date
+     * @param string $format Target format
+     * @param DateTimeZone $tz
+     */
+    public function expandTime($date, $format, $tz)
+    {
+        $formats = $this->split_date_time($format);
+        if(isset($formats[1])) {
+            $now = clone $this->getNow();
+            $now->setTimezone($tz);
+            return $this->merge_date_time($now->format($formats[0]), $date);
+        }
+        return $date;
+    }
+
+    /**
+	 * Get midnight (start of the day) in local time format
+	 *
+	 * @return Time string
+	 */
+	function get_default_midnight()
+	{
+        return $this->_get_midnight($this->get_time_format());
+	}
 }
