@@ -148,9 +148,14 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 		foreach($this->date_tests as $datetest) {
 			$tf = isset($datetest["tf"]) ? $datetest["tf"] : self::DEFAULT_TIME_FORMAT;
 			$this->_setPrefs($datetest["df"], $tf, $datetest["tz"]);
+			if(strpos($datetest["display"], ' ') === false) {
+			    $date = $datetest["display"].' '.$this->time_date->get_default_midnight(true);
+			} else {
+			    $date = $datetest["display"];
+			}
 			$this->assertEquals(
 				$this->_timeOnly($datetest["db"]),
-				$this->time_date->to_db_time($datetest["display"], true),
+				$this->time_date->to_db_time($date, true),
 				"Broken conversion for '{$datetest["df"]} $tf' with date '{$datetest["display"]}' and TZ {$datetest["tz"]}");
 		}
 	}
@@ -322,9 +327,6 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testGetMidnight()
 	{
-		if(!is_callable(array($this->time_date, "get_default_midnight"))) {
-			$this->markTestSkipped("Method is no longer public");
-		}
 		$times = array(
 			array("tf" => "H:i", "time" => "00:00"),
 			array("tf" => "H:i:s", "time" => "00:00:00"),
