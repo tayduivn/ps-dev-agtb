@@ -302,7 +302,6 @@ class TimeDate2
         if (empty($timef)) {
             $timef = '';
         }
-
         return $timef;
     }
 
@@ -937,8 +936,11 @@ class TimeDate2
      */
     function handle_offset($date, $format, $to = true, $user = null, $usetimezone = null)
     {
-        $tz = $this->_getUserTZ($user);
-        return $this->_convert($date, $format, $to ? self::$gmtTimezone : $tz, $format, $to ? $tz : self::$gmtTimezone);
+        $tz = empty($usetimezone)?$this->_getUserTZ($user):new DateTimeZone($usetimezone);
+        $dateobj = new SugarDateTime($date, $to? self::$gmtTimezone : $tz);
+        $dateobj->setTimezone($to ? $tz: self::$gmtTimezone);
+        return $dateobj->format($format);
+//        return $this->_convert($date, $format, $to ? self::$gmtTimezone : $tz, $format, $to ? $tz : self::$gmtTimezone);
     }
 
     /**
