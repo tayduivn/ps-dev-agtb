@@ -25,8 +25,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=pro ONLY
 $credits = array(
 	'Language Packs' => array(
-
-	),
+        'fr' => array (
+            'name' => 'French Language Pack',
+            'author' => 'CARRENET',
+            'description' => 'French Language Pack by CARRENT',
+            'website' => 'www.carrenet.com',
+        ),
+        'de' => array (
+            'name' => 'German Language Pack',
+            'author' => 'ISCONGROUP',
+            'description' => 'German Language Pack by ISCONGROUP',
+            'website' => 'www.iscongroup.com',
+        ),
+	),/*
 	'Modules' => array(
 		'module_id' => array (
 			'name' => 'Module Name',
@@ -42,6 +53,6 @@ $credits = array(
 			'description' => 'Description',
 			'website' => 'www.website.com',
 		),
-	)
+	)*/
 );
 ?>
