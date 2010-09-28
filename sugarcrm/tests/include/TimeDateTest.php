@@ -4,7 +4,7 @@ require_once 'include/TimeDate.php';
 class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var TimeDate
+	 * @var TimeDate2
 	 */
 	protected $time_date;
 
@@ -598,7 +598,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 		foreach($this->date_tests as $datetest) {
 			if(isset($datetest["tf"])) {
-				$df = $this->time_date->merge_date_time($df = $datetest["df"], $datetest["tf"]);
+				$df = $this->time_date->merge_date_time($datetest["df"], $datetest["tf"]);
 			} else {
 				$df = $datetest["df"];
 			}
@@ -729,7 +729,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 		);
 		foreach($day_tests as $datetest) {
 			$this->_setPrefs('m/d/Y', '', $datetest["tz"]);
-			$dates = $this->time_date->getDayStartEndGMT($datetest["date"], '');
+			$dates = $this->time_date->getDayStartEndGMT($datetest["date"], null);
 			$this->assertEquals($datetest["start"], $dates["start"],
 				"Bad min result for {$datetest["date"]} tz {$datetest["tz"]}");
 			$this->assertEquals($datetest["end"], $dates["end"],

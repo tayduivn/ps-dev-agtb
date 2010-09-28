@@ -45,7 +45,11 @@ class SugarDateTime extends DateTime
 	{
 		if(is_callable(array("DateTime", "createFromFormat"))) {
 			// 5.3, hurray!
-			$d = parent::createFromFormat($format, $time, $timezone);
+			if(!empty($timezone)) {
+			    $d = parent::createFromFormat($format, $time, $timezone);
+			} else {
+			    $d = parent::createFromFormat($format, $time);
+			}
 		} else {
 			// doh, 5.2, will have to simulate
 			$d = self::_createFromFormat($format, $time, $timezone);

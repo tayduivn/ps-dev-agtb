@@ -87,7 +87,7 @@ class TimeDate2
        	//'G' => '%H',
 
        	'i' => '%M',
-       	's' => '%s',
+       	's' => '%S',
     );
 
     /**
@@ -142,7 +142,7 @@ class TimeDate2
      */
     protected static $timedate;
 
-    public $allow_user_cache = true;
+    public $allow_cache = true;
 
     public function __construct(User $user = null)
     {
@@ -222,7 +222,7 @@ class TimeDate2
             return self::$gmtTimezone;
         }
 
-        if ($this->allow_user_cache && $user->id == $this->current_user_id && ! empty($this->current_user_tz)) {
+        if ($this->allow_cache && $user->id == $this->current_user_id && ! empty($this->current_user_tz)) {
             // current user is cached
             return $this->current_user_tz;
         }
@@ -319,7 +319,7 @@ class TimeDate2
     }
 
     /**
-     * makes one datetime string from date string and time string
+     * Make one datetime string from date string and time string
      *
      * @param string $date
      * @param string $time
@@ -328,6 +328,17 @@ class TimeDate2
     function merge_date_time($date, $time)
     {
         return $date . ' ' . $time;
+    }
+
+    /**
+     * Split datetime string into date & time
+     *
+     * @param string $datetime
+     * @return array
+     */
+    function split_date_time($datetime)
+    {
+        return explode(' ', $datetime);
     }
 
     function get_cal_date_format()
@@ -361,6 +372,7 @@ class TimeDate2
                 return false;
             }
         } catch (Exception $e) {
+            var_dump($e);
             return false;
         }
         return true;
@@ -518,17 +530,18 @@ class TimeDate2
      */
     public function tzUser(DateTime $date, User $user = null)
     {
-        return $date->setTimezone($this->_getUser($user));
+        return $date->setTimezone($this->_getUserTZ($user));
     }
 
     /**
      * Get string defining midnight in current user's format
+     * @param string $format Time format to use
      * @return string
      */
-    protected function _get_midnight()
+    protected function _get_midnight($format = null)
     {
-        $zero = new DateTime("@0");
-        return $this->asUserTime($zero);
+        $zero = new DateTime("@0", self::$gmtTimezone);
+        return $zero->format($format?$format:$this->get_time_format());
     }
 
     /**
@@ -550,7 +563,8 @@ class TimeDate2
         }
         try {
             if ($expand && strlen($date) <= 10) {
-                $date = $this->merge_date_time($date, $this->_get_midnight());
+                $formats = $this->split_date_time($fromFormat);
+                $date = $this->merge_date_time($date, $this->_get_midnight($formats[1]));
             }
             $phpdate = SugarDateTime::createFromFormat($fromFormat, $date, $fromTZ);
             if ($phpdate == false) {
@@ -767,7 +781,11 @@ class TimeDate2
      */
     public function nowDb()
     {
-        $nowGMT = clone $this->now;
+        if(!$this->allow_cache) {
+            $nowGMT = $this->getNow();
+        } else {
+            $nowGMT = clone $this->now;
+        }
         $nowGMT->setTimezone(self::$gmtTimezone);
         return $this->asDb($nowGMT);
     }
@@ -778,7 +796,11 @@ class TimeDate2
      */
     public function nowDbDate()
     {
-        $nowGMT = clone $this->now;
+        if(!$this->allow_cache) {
+            $nowGMT = $this->getNow();
+        } else {
+            $nowGMT = clone $this->now;
+        }
         $nowGMT->setTimezone(self::$gmtTimezone);
         return $this->asDbDate($nowGMT);
     }
@@ -789,6 +811,9 @@ class TimeDate2
      */
     public function getNow()
     {
+        if(!$this->allow_cache) {
+            return new SugarDateTime("now", self::$gmtTimezone);
+        }
         return $this->now;
     }
 
@@ -798,6 +823,9 @@ class TimeDate2
      */
     public function now()
     {
+        if(!$this->allow_cache) {
+            return  $this->asUser($this->getNow());
+        }
         return $this->asUser($this->now);
     }
 
