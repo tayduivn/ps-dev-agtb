@@ -212,6 +212,7 @@ SUGAR.expressions.GridToolTip = {
 			case "string":
 				out = "string"; break;
 			case "_number":
+			case "number":
 				out = "num"; break;
 			case "time":
 				out = "date"; break;
