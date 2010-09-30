@@ -30,15 +30,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/DetailView/DetailView.php');
 require_once('include/export_utils.php');
-require_once('include/timezone/timezones.php');
-
-
-
 global $current_user;
 global $theme;
 global $app_strings;
 global $mod_strings;
-global $timezones;
 if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'Users')
 //BEGIN SUGARCRM flav=sales ONLY
       && $current_user->user_type != 'UserAdministrator'
@@ -51,7 +46,7 @@ $detailView = new DetailView();
 $offset=0;
 if (isset($_REQUEST['offset']) || !empty($_REQUEST['record'])) {
 	$result = $detailView->processSugarBean("USER", $focus, $offset);
-	
+
 	if($result == null) {
 	    sugar_die($app_strings['ERROR_NO_RECORD']);
 	}
@@ -192,7 +187,7 @@ if (isset($_REQUEST['pwd_set']) && $_REQUEST['pwd_set']!= 0){
 		$errors.=canSendPassword();
 	}
 	else {
-		$errors.=$mod_strings['LBL_NEW_USER_PASSWORD_'.$_REQUEST['pwd_set']];	
+		$errors.=$mod_strings['LBL_NEW_USER_PASSWORD_'.$_REQUEST['pwd_set']];
 		$msgGood = true;
 	}
 }else{
@@ -236,7 +231,7 @@ elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],
                     $buttons .="<input type='button' class='button' onclick='confirmDelete();' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' /> ";
                 }
 
-			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only 
+			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only
 			&& isset($sugar_config['passwordsetting']['SystemGeneratedPasswordON']) && $sugar_config['passwordsetting']['SystemGeneratedPasswordON']){
 				$buttons .= "<input title='".$mod_strings['LBL_GENERATE_PASSWORD_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_GENERATE_PASSWORD_BUTTON_KEY']."' class='button' LANGUAGE=javascript onclick='generatepwd(\"".$focus->id."\");' type='button' name='password' value='".$mod_strings['LBL_GENERATE_PASSWORD_BUTTON_LABEL']."'>  ";
 			}
@@ -258,7 +253,7 @@ if (!$current_user->is_group){
     }
 	$buttons .="<input type='button' class='button' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_preferences=true\";' value='".$mod_strings['LBL_RESET_PREFERENCES']."' />";
 	$buttons .="&nbsp;<input type='button' class='button' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".$mod_strings['LBL_RESET_HOMEPAGE']."' />";
- 
+
 }
 if (isset($buttons)) $sugar_smarty->assign("BUTTONS", $buttons);
 
@@ -340,20 +335,7 @@ $sugar_smarty->assign("DATEFORMAT", $sugar_config['date_formats'][$timedate->get
 $sugar_smarty->assign("TIMEFORMAT", $sugar_config['time_formats'][$timedate->get_time_format()]);
 
 $userTZ = $focus->getPreference('timezone');
-if(!empty($userTZ) && isset($timezones[$userTZ])) {
-	$value = $timezones[$userTZ];
-}
-if(!empty($value['dstOffset'])) {
-	$dst = " (+DST)";
-} else {
-	$dst = "";
-}
-$gmtOffset = ($value['gmtOffset'] / 60);
-if(!strstr($gmtOffset,'-')) {
-	$gmtOffset = "+".$gmtOffset;
-}
-
-$sugar_smarty->assign("TIMEZONE", $userTZ. str_replace('_',' '," (GMT".$gmtOffset.") ".$dst) );
+$sugar_smarty->assign("TIMEZONE", TimeDate2::tzName($userTZ));
 $datef = $focus->getPreference('datef');
 $timef = $focus->getPreference('timef');
 
@@ -526,7 +508,7 @@ if($userOverrideOE == null)
     if( $oe->isAllowUserAccessToSystemDefaultOutbound() )
         $mail_smtpuser = $systemOE->mail_smtpuser;
 }
-else 
+else
 {
     $mail_smtpdisplay = $userOverrideOE->mail_smtpdisplay;
     $mail_smtpuser = $userOverrideOE->mail_smtpuser;
@@ -619,7 +601,7 @@ function confirmDelete() {
         confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_PORTAL_CONFIRM');
     }
     //END SUGARCRM flav=pro ONLY
-    
+
     var confirmDeletePopup = new YAHOO.widget.SimpleDialog(\"Confirm \", {
                 width: \"400px\",
                 draggable: true,
@@ -642,4 +624,3 @@ function confirmDelete() {
 }
 </script>";
 echo $confirmDeleteJS;
-?>

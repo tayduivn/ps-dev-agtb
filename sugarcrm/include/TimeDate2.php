@@ -211,7 +211,7 @@ class TimeDate2
     /**
      * Get timezone for the specified user
      *
-     * @param [User] $user
+     * @param User $user
      * @return DateTimeZone
      */
     protected function _getUserTZ(User $user = null)
@@ -1141,7 +1141,7 @@ class TimeDate2
 
         $the_script = "<script type=\"text/javascript\">\n" . "\tvar time_reg_format = '" .
              $timereg['format'] . "';\n" . "\tvar date_reg_format = '" .
-             $datereg['format'] . "';\n" . "\tvar date_reg_positions = $date_pos;\n" .
+             $datereg['format'] . "';\n" . "\tvar date_reg_positions = { $date_pos };\n" .
              "\tvar time_separator = '$time_separator';\n" .
              "\tvar cal_date_format = '$cal_date_format';\n" .
              "\tvar time_offset = $hour_offset;\n" . "\tvar num_grp_sep = '$num_grp_sep';\n" .
@@ -1255,5 +1255,104 @@ class TimeDate2
 	function get_default_midnight()
 	{
         return $this->_get_midnight($this->get_time_format());
+	}
+
+	/**
+	 * Get the name of the timezone for current user
+	 * @return string
+	 */
+	public static function userTimezone()
+	{
+	    $user = $GLOBALS['current_user'];
+	    if(empty($user)) {
+	        return '';
+	    }
+	    $tz = $this->_getUserTZ($user);
+	    if($tz) {
+	        return $tz->getName();
+	    }
+	    return '';
+	}
+
+	/**
+	 * Guess the timezone for the current user
+	 * @return string
+	 */
+	public static function guessTimezone($userOffset = 0)
+	{
+	    if(!is_numeric($userOffset)) {
+		    return '';
+	    }
+	    $defaultZones= array('America/New_York', 'America/Los_Angeles','America/Chicago', 'America/Denver',
+	    	'America/Anchorage', 'America/Phoenix', 'Europe/Amsterdam','Europe/Athens','Europe/London',
+	    	'Australia/Sydney', 'Australia/Perth');
+
+	    $now = new DateTime();
+    	if($userOffset == 0) {
+    	     array_unshift($defaultZones, date('T'));
+    	     $gmtOffset = date('Z');
+    	} else {
+    	    $gmtOffset = $userOffset * 60;
+    	}
+	    foreach($defaultZones as $zoneName) {
+	        $tz = new DateTimeZone($zoneName);
+	        if($tz->getOffset($now) == $gmtOffset) {
+                return $tz->getName();
+	        }
+	    }
+    	// try all zones
+	    foreach(timezone_identifiers_list() as $zoneName) {
+	        $tz = new DateTimeZone($zoneName);
+	        if($tz->getOffset($now) == $gmtOffset) {
+                return $tz->getName();
+	        }
+	    }
+	    return null;
+	}
+
+	/**
+	 * Get display name for a certain timezone
+	 * @param string|DateTimeZone $name TZ name
+	 * @return string
+	 */
+	public static function tzName($name)
+	{
+	    if(empty($name)) {
+	        return '';
+	    }
+	    if($name instanceof DateTimeZone) {
+	        $tz = $name;
+	    } else {
+            $tz = timezone_open($name);
+	    }
+        if(!$tz) {
+            return "???";
+        }
+        $now = new DateTime("now", $tz);
+        $off = $now->getOffset();
+        $translated = translate('timezone_dom','',$name);
+        if(is_string($translated) && !empty($translated)) {
+            $name = $translated;
+        }
+        return sprintf("%s (GMT%+2d:%02d)%s", str_replace('_',' ', $name), $off/3600, (abs($off)/60)%60, "");//$now->format('I')==1?"(+DST)":"");
+	}
+
+	/**
+	 * Get list of all timezones in the system
+	 * @return array
+	 */
+	public static function getTimezoneList()
+	{
+        $now = new DateTime();
+        $zones = array();
+	    foreach(timezone_identifiers_list() as $zoneName) {
+            $tz = new DateTimeZone($zoneName);
+	        $zones[$zoneName] = $tz->getOffset($now);
+	    }
+	    asort($zones);
+	    foreach($zones as $name => $offset) {
+	        $res_zones[$name] = self::tzName($name);
+	    }
+	    return $res_zones;
 	}
 }

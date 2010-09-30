@@ -631,7 +631,7 @@ EOQ;
      */
     protected function _displayJavascript()
     {
-        global $locale, $sugar_config;
+        global $locale, $sugar_config, $timedate;
 
 
         //BEGIN SUGARCRM flav=int ONLY

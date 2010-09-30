@@ -1573,7 +1573,7 @@ function is_admin_for_module($user,$module) {
     if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
-    if(!empty($user) && (($user->is_admin == '1' || ($user->is_admin === 'on' && isset($actions[$module]['module'])))|| 
+    if(!empty($user) && (($user->is_admin == '1' || ($user->is_admin === 'on' && isset($actions[$module]['module'])))||
     	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
@@ -3335,30 +3335,9 @@ function is_writable_windows($file) {
 /**
  * best guesses Timezone based on webserver's TZ settings
  */
-function lookupTimezone($userOffset = 0){
-	require_once('include/timezone/timezones.php');
-
-	$defaultZones= array('America/New_York'=>1, 'America/Los_Angeles'=>1,'America/Chicago'=>1, 'America/Denver'=>1,'America/Anchorage'=>1, 'America/Phoenix'=>1, 'Europe/Amsterdam'=>1,'Europe/Athens'=>1,'Europe/London'=>1, 'Australia/Sydney'=>1, 'Australia/Perth'=>1);
-	global $timezones;
-	$serverOffset = date('Z');
-	if(date('I')) {
-		$serverOffset -= 3600;
-	}
-	if(!is_int($userOffset)) {
-		return '';
-	}
-	$gmtOffset = $serverOffset/60 + $userOffset * 60;
-	$selectedZone = ' ';
-	foreach($timezones as $zoneName=>$zone) {
-
-		if($zone['gmtOffset'] == $gmtOffset) {
-			$selectedZone = $zoneName;
-		}
-		if(!empty($defaultZones[$selectedZone]) ) {
-			return $selectedZone;
-		}
-	}
-	return $selectedZone;
+function lookupTimezone($userOffset = 0)
+{
+    return TimeDate2::guessTimezone($userOffset);
 }
 
 function convert_module_to_singular($module_array){
@@ -4037,8 +4016,7 @@ function createGroupUser($name) {
 	$group->is_group	= 1;
 	$group->deleted		= 0;
 	$group->status		= 'Active'; // cn: bug 6711
-	$timezone = lookupTimezone();
-	$group->setPreference('timezone', $timezone);
+	$group->setPreference('timezone', TimeDate2::userTimezone());
 	$group->save();
 
 	return $group->id;
