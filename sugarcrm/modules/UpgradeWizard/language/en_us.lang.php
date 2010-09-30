@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: en_us.lang.php 54737 2010-02-23 18:18:56Z kjing $
+ * $Id: en_us.lang.php 58178 2010-09-15 00:30:38Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
@@ -164,7 +164,7 @@ $mod_strings = array(
 	'LBL_UW_INCOMPLETE'							=> 'Incomplete',
 	'LBL_UW_INSTALL'							=> 'File INSTALL',
 	'LBL_UW_MANUAL_MERGE'						=> 'File Merge',
-	'LBL_UW_MODULE_READY_UNINSTALL'				=> "Module is ready to be uninstalled.  Click \"Commit\" to proceed with installation.<br>\n",
+	'LBL_UW_MODULE_READY_UNINSTALL'				=> "Module is ready to be uninstalled.  Click \"Commit\" to proceed with uninstallation.<br>\n",
 	'LBL_UW_MODULE_READY'						=> "Module is ready to be installed.  Click \"Commit\" to proceed with installation.",
 	'LBL_UW_NO_INSTALLED_UPGRADES'				=> 'No recorded Upgrades detected.',
 	'LBL_UW_NONE'								=> 'None',
