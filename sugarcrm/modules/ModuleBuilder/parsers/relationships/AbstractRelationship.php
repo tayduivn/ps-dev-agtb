@@ -367,8 +367,11 @@ class AbstractRelationship
             require_once 'modules/ModuleBuilder/MB/ModuleBuilder.php' ;
             $mb = new ModuleBuilder ( ) ;
             $module = $mb->getPackageModule ( $parsedModuleName['packageName'] , $parsedModuleName['moduleName'] ) ;
-            if (in_array( 'file' , array_keys ( $module->config [ 'templates' ] ) ) )
+            if (in_array( 'file' , array_keys ( $module->config [ 'templates' ] ) ) ){
                 $vardef [ 'rname' ] = 'document_name' ;
+            }elseif(in_array ( 'person' , array_keys ( $module->config [ 'templates' ] ) ) ){
+            	$vardef [ 'db_concat_fields' ] = array( 0 =>'first_name', 1 =>'last_name') ;
+            }
         }
         else
         {
@@ -395,8 +398,14 @@ class AbstractRelationship
                     $object = $GLOBALS ['beanList'] [ $sourceModule ];
                     require_once ( $GLOBALS ['beanFiles'] [ $object ] );
                     $bean = new $object();
-                    if ( isset ( $GLOBALS [ 'dictionary' ] [ $object ] [ 'templates'] ) && in_array ( 'file' , $GLOBALS [ 'dictionary' ] [ $object ] [ 'templates'] ) )
-                        $vardef [ 'rname' ] = 'document_name' ;
+                    if ( isset ( $GLOBALS [ 'dictionary' ] [ $object ] [ 'templates'] )){
+                    	if(in_array ( 'file' , $GLOBALS [ 'dictionary' ] [ $object ] [ 'templates'] )){
+                    		$vardef [ 'rname' ] = 'document_name' ;
+                    	}elseif(in_array ( 'person' , $GLOBALS [ 'dictionary' ] [ $object ] [ 'templates'] )){
+                    		 $vardef [ 'db_concat_fields' ] = array( 0 =>'first_name', 1 =>'last_name') ;
+                    	}
+                    }
+                        
             }
             
         }
