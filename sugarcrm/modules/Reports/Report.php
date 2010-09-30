@@ -2058,6 +2058,7 @@ print "<BR>";
             else {
                 $this->layout_manager->setAttribute('context', 'List');
             }
+            
 			if ($display_column['type']!='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) { 
 				$pos = $display_column['table_key'];
 				$module_name = '';
@@ -2066,12 +2067,13 @@ print "<BR>";
 				}
 				
 				if (isset($display_column['group_function'])) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
                 }
+                
                 if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
                                          
 				if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
@@ -2092,28 +2094,31 @@ print "<BR>";
 				}else { 
             	   $display = $this->layout_manager->widgetDisplay($display_column);
 				}
-        	}
-            else {
+				
+			} else {
+				
 				if (isset($display_column['group_function'])) {
-            		$field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
+                }          
+              
+                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-            		$field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
-                }
-
-
-            	if (isset($display_column['fields'][$field_name])) 
+                
+            	if (isset($display_column['fields'][$field_name])) {
             		$display = $display_column['fields'][$field_name];
-					
-					global $locale;				   
-				    $params = array();
-				    $params['currency_id'] = $locale->getPrecedentPreference('currency');
-			    	$params['convert'] = true;
-			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-				    $display = currency_format_number($display, $params);
-        	}
+            	}
+            		
+				global $locale;				   
+				$params = array();
+				$params['currency_id'] = $locale->getPrecedentPreference('currency');
+			    $params['convert'] = true;
+			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+				$display = currency_format_number($display, $params);
+        	
+			}
 
             if (isset($display_column['type']) && $display_column['type'] == 'bool') {
             	if (isset($display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])])) {
@@ -2131,13 +2136,11 @@ print "<BR>";
             }
 
             if (isset($display_column['type'])) {
-            	$fieldsData = strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']);
-            	//rrs bug: 34933 - in SugarWidgetReportField.php we shortened the field name to 29 chars, but
-            	//here we used the full length so it could not propery look it up.
-            	$fieldsData = substr($fieldsData,0,28);
             	
-            	if (array_key_exists($fieldsData, $display_column['fields'])) {
-            		$displayData = $display_column['fields'][substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0, 28)];
+            	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])); 
+            	
+            	if (array_key_exists($field_namae, $display_column['fields'])) {
+            		$displayData = $display_column['fields'][$field_name];
             		if (empty($displayData) && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
             			$display = "";
             		}
@@ -2149,6 +2152,7 @@ print "<BR>";
             
             //  for charts
             if($column_field_name == 'summary_columns' && $this->do_chart) {
+            	//_pp($display);
                 $raw_display = preg_replace('/^\$/','',$display);
                /*
                 if ($type == 'currency') {
@@ -2160,7 +2164,9 @@ print "<BR>";
 			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
 				    $raw_display = currency_format_number($raw_display, $params);
             	}*/
+                
                 $cell_arr = array('val'=>$raw_display,'key'=>$display_column['column_key']);
+                //_pp($cell_arr);
                 array_push($chart_cells,$cell_arr);
             }
 
@@ -2333,6 +2339,23 @@ print "<BR>";
   }
 
 
+  /**
+   * getTruncatedColumnAlias
+   * This function ensures that a column alias is no more than 28 characters.  Shoulud the column_name
+   * argument exceed 28 charcters, it creates an alias using the first 22 characters of the column_name
+   * plus an md5 of the first 6 characters of the lowercased column_name value.
+   *
+   */
+  private function getTruncatedColumnAlias($column_name)
+  {
+  	  if(empty($column_name) || !is_string($column_name) || strlen($column_name) < 28)
+  	  {
+  	  	 return $column_name;
+  	  }
+  	  
+      return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));  	
+  }
+  
 }
 
 ?>
