@@ -20,9 +20,9 @@
  ********************************************************************************/
 require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
- * <b>string(val)</b><br/>
+ * <b>toString(val)</b><br/>
  * Converts the given value to a string.<br>
- * ex: <i>string(5.5)</i> = "5.5"
+ * ex: <i>toString(5.5)</i> = "5.5"
  */
 class DefineStringExpression extends StringExpression {
 	/**
@@ -46,7 +46,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "string";
+		return array("toString", "string");
 	}
 
 	/**

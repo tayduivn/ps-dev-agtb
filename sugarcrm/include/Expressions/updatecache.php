@@ -99,6 +99,8 @@ function recursiveParse($dir, $silent = false)
 			}
 			continue;
 		}
+		if (!is_array($op_name))
+		  $op_name = array($op_name);
 
 		$parent_class = get_parent_class($entry);
 		$parent_types = call_user_func(array($parent_class, "getParameterTypes"));
@@ -111,6 +113,7 @@ SUGAR.$entry = function(params) {
 	this.init(params);
 }
 SUGAR.util.extend(SUGAR.$entry, SUGAR.$parent_class, {
+    className: "$entry",
 	evaluate: function() {
 $js_code
 	}
@@ -162,18 +165,21 @@ EOQ;
 
 $js_contents .= "});\n\n";
 
-		//echo the entry
-		if ($silent === false) 
+		foreach ($op_name as $alias)
 		{
-			echo "<li>($op_name) $entry<br>";
-		}
-
-		$contents .= <<<EOQ
-		'$op_name' => array(
-					'class'	=>	'$entry',
-					'src'	=>	'$dir/$entry.php',
-		),\n
+	        //echo the entry
+			if ($silent === false) 
+			{
+				echo "<li>($alias) $entry<br>";
+			}
+	
+			$contents .= <<<EOQ
+			'$alias' => array(
+						'class'	=>	'$entry',
+						'src'	=>	'$dir/$entry.php',
+			),\n
 EOQ;
+		}
 	}
 	if ($silent === false) 
 	{

@@ -22,11 +22,50 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //NOTE: Under the License referenced above, you are required to leave in all copyright statements in both
 //the code and end-user application.
-
+//FILE SUGARCRM flav=pro ONLY
 $credits = array(
-/*	'Language Packs' => array(
-
-	),
+	'Language Packs' => array(
+		'bg_BG' => array (
+            'name' => 'Bulgarian Language Pack',
+            'author' => 'CreaSoft Ltd',
+            'description' => 'Bulgarian Language Pack by CreaSoft',
+            'website' => 'www.creasoft.biz',
+        ),
+        'de_DE' => array (
+            'name' => 'German Language Pack',
+            'author' => 'Kinamu',
+            'description' => 'German Language Pack by Kinamu',
+            'website' => 'www.kinamu.com',
+       	),
+        'fr_FR' => array (
+            'name' => 'French Language Pack',
+            'author' => 'Synolia',
+            'description' => 'French Language Pack by Synolia',
+            'website' => 'www.synolia.com',
+        ),
+        'it_it' => array (
+            'name' => 'Italian Language Pack',
+            'author' => 'OpenSymbol',
+            'description' => 'Italian Language Pack by OpenSymbol',
+            'website' => 'www.opensymbol.it',
+        ),
+        
+        'pt_PT' => array (
+            'name' => 'Portuguese Language Pack',
+            'author' => 'DRI',
+            'description' => 'Portuguese Language Pack by DRI',
+            'website' => 'www.dri.pt',
+        ),
+       
+         'ru_RU' => array (
+            'name' => 'Russian Language Pack',
+            'author' => 'Richlode Solutions',
+            'description' => 'Russian Language Pack by Richlode Solutions',
+            'website' => 'www.richlodesolutions.com',
+        ),
+        
+        ),
+	/*
 	'Modules' => array(
 		'module_id' => array (
 			'name' => 'Module Name',
@@ -42,8 +81,6 @@ $credits = array(
 			'description' => 'Description',
 			'website' => 'www.website.com',
 		),
-	)
-*/
-
+	)*/
 );
 ?>

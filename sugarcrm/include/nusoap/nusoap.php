@@ -2,7 +2,7 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
-$Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+$Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 
 NuSOAP - Web Services Toolkit for PHP
 
@@ -80,7 +80,7 @@ $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 0;
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access   public
 */
 class nusoap_base {
@@ -104,7 +104,7 @@ class nusoap_base {
 	 * @var string
 	 * @access private
 	 */
-	var $revision = '$Revision: 1.123 $';
+	var $revision = '$Revision: 57813 $';
     /**
      * Current error string (manipulated by getError/setError)
 	 *
@@ -1002,7 +1002,7 @@ function usleepWindows($usec)
 * Mainly used for returning faults from deployed functions
 * in a server instance.
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access public
 */
 class nusoap_fault extends nusoap_base {
@@ -1090,7 +1090,7 @@ class soap_fault extends nusoap_fault {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access   public
 */
 class nusoap_xmlschema extends nusoap_base  {
@@ -2067,7 +2067,7 @@ class XMLSchema extends nusoap_xmlschema {
 * xsd:anyType and user-defined types.
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access   public
 */
 class soapval extends nusoap_base {
@@ -2169,7 +2169,7 @@ class soapval extends nusoap_base {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access public
 */
 class soap_transport_http extends nusoap_base {
@@ -3474,7 +3474,7 @@ class soap_transport_http extends nusoap_base {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access   public
 */
 class nusoap_server extends nusoap_base {
@@ -6544,7 +6544,7 @@ class wsdl extends nusoap_base {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access   public
 */
 class nusoap_parser extends nusoap_base {
@@ -7195,7 +7195,7 @@ class soap_parser extends nusoap_parser {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php,v 1.123 2010/04/26 20:15:08 snichol Exp $
+* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
 * @access   public
 */
 class nusoap_client extends nusoap_base  {
@@ -7226,7 +7226,7 @@ class nusoap_client extends nusoap_base  {
 	var $response = '';				// HTTP response
 	var $responseData = '';			// SOAP payload of response
 	var $cookies = array();			// Cookies from response or for request
-    var $decode_utf8 = true;		// toggles whether the parser decodes element content w/ utf8_decode()
+    var $decode_utf8 = false;		// toggles whether the parser decodes element content w/ utf8_decode()
 	var $operations = array();		// WSDL operations, empty for WSDL initialization error
 	var $curl_options = array();	// User-specified cURL options
 	var $bindingType = '';			// WSDL operation binding type
