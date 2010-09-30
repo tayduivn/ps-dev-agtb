@@ -287,30 +287,33 @@ class UploadFile
             if ($url[strlen($url)-1] == "/") {
       	      $url = substr($url, 0, -1);
             }
-
-		      $this->document = WebDocumentFactory::getInstance(
-		         $document_classname, 
-		         $url, 
-		         $row['name'],
-		         $row['password']
-		      );
-			  
-		      $doc_id = '';
-		      
-		      try{
-			      $doc_id = $this->document->uploadDoc(
-			         $new_destination,
-			         $file_name,
-			         $mime_type
-			      );
-			      $bean->doc_id = $doc_id;
-			      unlink($new_destination);
-			      $bean->save();
-		      }catch(Exception $e){
-		      	 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
-		      	 $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
-		      }
-			}
+            
+		    try{
+                
+                $this->document = WebDocumentFactory::getInstance(
+                    $document_classname, 
+                    $url, 
+                    $row['name'],
+                    $row['password']
+                    );
+                
+                $doc_id = '';
+                
+                $doc_id = $this->document->uploadDoc(
+                    $new_destination,
+                    $file_name,
+                    $mime_type
+                    );
+                $bean->doc_id = $doc_id;
+                unlink($new_destination);
+                $bean->save();
+            }catch(Exception $e){
+                sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
+                // FIXME: Translate
+                $_SESSION['administrator_error'] = 'Error during plugin save: '.$e->getMessage();
+                $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
+            }
+        }
 	}
 
 	/**

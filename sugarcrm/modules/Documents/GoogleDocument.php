@@ -47,7 +47,7 @@ class GoogleDocument extends WebDocument{
     	$document = $this->gdClient->getDocument($documentId);
     	//var_dump(var_export($document));
 		$sessionToken = $this->httpClient->getClientLoginToken();
-		var_dump($sessionToken);
+		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);
 		$url = $document->content->getSrc();
 		//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
 		$opts = array(  
@@ -64,7 +64,7 @@ class GoogleDocument extends WebDocument{
 		if ($url != null) {  
 		    $url =  $url . "&exportFormat=$format";  
 		}
-		echo $url;
+		$GLOBALS['log']->fatal('Google Doc URL: '.$url);
 		echo file_get_contents($url, false, stream_context_create($opts)); 
     }
     
