@@ -34,7 +34,7 @@ include_once('include/workflow/workflow_utils.php');
 include_once('include/workflow/field_utils.php');
 include_once('include/utils/expression_utils.php');
 
-function process_workflow_actions(& $focus, $action_array){
+function process_workflow_actions($focus, $action_array){
 
 
 	if($action_array['action_type']=="update"){
@@ -54,7 +54,7 @@ function process_workflow_actions(& $focus, $action_array){
 //end function process_workflow_actions
 }
 
-function process_action_update(&$focus, $action_array){
+function process_action_update($focus, $action_array){
 
 	foreach($action_array['basic'] as $field => $new_value){
 
@@ -331,13 +331,13 @@ function clean_save_data(& $target_module, $action_array){
 					$target_module->$field = 0;
 					$data_cleaned = true;
 				}
-                
-				if( isset($target_module->field_defs[$field]['auto_increment'] ) 
+
+				if( isset($target_module->field_defs[$field]['auto_increment'] )
 				    && $target_module->field_defs[$field]['auto_increment']  ){
 					$target_module->$field = null;
 					$data_cleaned = true;
 				}
-				
+
 				if($target_module->field_defs[$field]['type']=='enum'){
 
 					$options_array_name = $target_module->field_defs[$field]['options'];
@@ -406,40 +406,30 @@ function clean_save_data(& $target_module, $action_array){
 }
 
 
-	function get_expiry_date($stamp_type, $time_interval, $is_update = false, $value=null){
-
+	function get_expiry_date($stamp_type, $time_interval, $is_update = false, $value=null)
+	{
 		/* This function needs to be combined with the one in WorkFlowSchedule.php
 		Really it should all be moved into the TimeDate stuff. TODO - jgreen.  Contact me
 		with questions.
-
 		*/
-
 		global $timedate;
 
+		$format = dbstampformat($stamp_type);
 		if($is_update == false){
-
-
-			$target_stamp = date(dbstampformat($stamp_type));
-			//$target_stamp = $timedate->to_display_date_time($target_stamp, true);
+			$date = $timedate->getNow();
 		} else {
-			//$target_stamp = $timedate->to_display_date_time($value, true);
-			$target_stamp = $value;
+			$date = $timedate->fromDbFormat($value, $format);
 		}
-
-		//convert stamp and add interval
-		$current_unix_stamp = strtotime($target_stamp);
-		$new_unix_stamp = $time_interval + $current_unix_stamp;
-
-		$newtimestamp = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $new_unix_stamp);
+		$date->modify("+$time_interval seconds");
 
 		if($stamp_type=="date"){
-			$final_stamp = $timedate->to_display_date($newtimestamp, true);
+			$final_stamp = $timedate->asUserDate($date, true);
 		}
 		if($stamp_type=="time"){
-			$final_stamp = $timedate->to_display_time($newtimestamp, true);
+			$final_stamp = $timedate->asUserTime($date, true);
 		}
 		if($stamp_type=="datetime" || $stamp_type=="datetimecombo" ){
-			$final_stamp = $timedate->to_display_date_time($newtimestamp, true);
+			$final_stamp = $GLOBALS['disable_date_format']?$timedate->asDb($date):$timedate->asUser($date);
 		}
 
 		return $final_stamp;
@@ -448,13 +438,10 @@ function clean_save_data(& $target_module, $action_array){
 	}
 
 
-	function dbstampformat($stamp_type){
-
+	function dbstampformat($stamp_type)
+	{
 		if($stamp_type=="date") return $GLOBALS['timedate']->dbDayFormat;
 		if($stamp_type=="time") return $GLOBALS['timedate']->dbTimeFormat;
 		if($stamp_type=="datetime"||$stamp_type=="datetimecombo") return $GLOBALS['timedate']->get_db_date_time_format();
 
 	}
-
-
-?>

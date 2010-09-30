@@ -479,6 +479,23 @@ class TimeDate2
     }
 
     /**
+     * Get DateTime from DB datetime string
+     *
+     * @param string $date
+     * @param string $format format to accept
+     * @return SugarDateTime
+     */
+    public function fromDbFromat($date, $format)
+    {
+        try {
+            return SugarDateTime::createFromFormat($format, $date, self::$gmtTimezone);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("Conversion of $date from DB format $format failed: {$e->getMessage()}");
+            return null;
+        }
+    }
+
+    /**
      * Get DateTime from user datetime string
      *
      * @param string $date

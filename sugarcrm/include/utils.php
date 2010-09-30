@@ -1805,7 +1805,7 @@ function array_csort() {
  * Contributor(s): ______________________________________..
  */
 function parse_calendardate($local_format) {
-	preg_match("/\(?([^-]{1})[^-]*-([^-]{1})[^-]*-([^-]{1})[^-]*\)/", $local_format, $matches);
+	preg_match('/\(?([^-]{1})[^-]*-([^-]{1})[^-]*-([^-]{1})[^-]*\)/', $local_format, $matches);
 	$calendar_format = "%" . $matches[1] . "-%" . $matches[2] . "-%" . $matches[3];
 	return str_replace(array("y", "ￄ1�7", "a", "j"), array("Y", "Y", "Y", "d"), $calendar_format);
 }
