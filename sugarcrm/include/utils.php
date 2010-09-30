@@ -1402,7 +1402,11 @@ function microtime_diff($a, $b) {
 }
 
 // check if Studio is displayed.
-function displayStudioForCurrentUser(){
+function displayStudioForCurrentUser()
+{
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
@@ -1427,8 +1431,12 @@ function displayStudioForCurrentUser(){
 
 }
 
-function displayWorkflowForCurrentUser(){
+function displayWorkflowForCurrentUser()
+{
     //BEGIN SUGARCRM flav=pro ONLY
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     if (isset($_SESSION['display_workflow_for_user'])) {
         return $_SESSION['display_workflow_for_user'];
     }
@@ -1573,8 +1581,8 @@ function is_admin_for_module($user,$module) {
     if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
-    if(!empty($user) && (($user->is_admin == '1' || ($user->is_admin === 'on' && isset($actions[$module]['module'])))|| 
-    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
+    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module]['module']))||
+    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
     }
@@ -2468,12 +2476,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
-		//BEGIN SUGARCRM flav=pro ONLY
-		// We need to confirm that the user is a member of the team of the item.
-		$focus->add_team_security_where_clause($query);
-		//END SUGARCRM flav=pro ONLY
-		$query .= "where ";
+		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
 		if ( $where != '')
 		{
 			$query .= $where." AND ";

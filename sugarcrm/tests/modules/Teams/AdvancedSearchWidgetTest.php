@@ -39,6 +39,7 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown()
     {
+		@ob_end_clean();	
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }

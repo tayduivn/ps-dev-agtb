@@ -59,7 +59,11 @@ Calendar._SMN = new Array
  "Dez");
 
 // tooltips
-Calendar._TT = {};
+if(Calendar._TT == undefined) Calendar._TT = {};
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 
 Calendar._TT["ABOUT"] =
 "DHTML Datum/Zeit Selector\n" +
@@ -96,6 +100,6 @@ Calendar._TT["WEEKEND"] = "0,6";
 
 // date formats
 Calendar._TT["DEF_DATE_FORMAT"] = "dd-mm-y";
-Calendar._TT["TT_DATE_FORMAT"] = "Datum ausw\u00e4hlen";
+Calendar._TT["TT_DATE_FORMAT"] = "%a, %b %e";
 
 Calendar._TT["WK"] = "KW";

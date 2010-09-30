@@ -36,7 +36,7 @@ class Bug36329Test extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown() 
 	{
 		global $sugar_config;
-		
+		@ob_end_clean();	
 		if(!$this->save_query) {
 		   unset($sugar_config['save_query']);
 		}

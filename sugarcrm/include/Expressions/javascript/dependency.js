@@ -185,8 +185,10 @@ SUGAR.forms.AssignmentHandler.getElement = function(variable) {
  * @STATIC
  * Assign a value to a variable.
  */
-SUGAR.forms.AssignmentHandler.assign = function(variable, value)
+SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 {
+	if (typeof flash == "undefined")
+		flash = true;
 	// retrieve the variable
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
 	
@@ -209,10 +211,8 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value)
 		field.value = value;
 	}
 	
-	
-
 	// animate
-	if ( SUGAR.forms.AssignmentHandler.ANIMATE )
+	if ( SUGAR.forms.AssignmentHandler.ANIMATE && flash)
 		SUGAR.forms.FlashField(field);
 
 	// lock this variable
@@ -239,7 +239,7 @@ SUGAR.forms.AssignmentHandler.showError = function(variable, error)
 	if ( field == null )	
 		return null;
 	
-	add_error_style(field.form.name, field, error);
+	add_error_style(field.form.name, field, error, false);
 }
 
 SUGAR.forms.AssignmentHandler.clearError = function(variable)
@@ -300,7 +300,6 @@ SUGAR.forms.DefaultExpressionParser = new SUGAR.expressions.ExpressionParser();
  */
 SUGAR.forms.evalVariableExpression = function(expression, varmap)
 {
-	//debugger;
 	// perform range replaces
 	expression = SUGAR.forms._performRangeReplace(expression);
 
@@ -314,7 +313,6 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 		return str;
 	}
 
-	// for reference shortening
 	var handler = SUGAR.forms.AssignmentHandler;
 
 	// resort to the master variable map if not defined
@@ -331,13 +329,13 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 	if ( expression == SUGAR.expressions.Expression.TRUE || expression == SUGAR.expressions.Expression.FALSE )
 		return SUGAR.forms.DefaultExpressionParser.evaluate(expression);
 
-	// first complete the expression
-	
-	for ( var i = 0 ; i < varmap.length ; i ++ ) {
-		var v 	  = varmap[i];
+	var vars = SUGAR.forms.getFieldsFromExpression(expression);
+	for (var i in vars)
+	{
+		var v = vars[i];
 		var value = handler.getValue(v);
 		if (value == null)
-			continue;
+			throw "Unable to find field: " + v;
 		
 		value = value.replace(/\n/g, "");
 		var regex = new RegExp("\\$" + v, "g");
@@ -355,6 +353,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 			expression = expression.replace(regex, '"' + value + '"');
 		}
 	}
+
 	return SUGAR.forms.DefaultExpressionParser.evaluate(expression);
 }
 
@@ -444,6 +443,18 @@ SUGAR.forms._performRangeReplace = function(expression)
 	return expression;
 }
 
+SUGAR.forms.getFieldsFromExpression = function(expression)
+{
+	var re = /[^$]*?\$(\w+)[^$]*?/g, 
+		matches = [], 
+		result;
+	while (result = re.exec(expression))
+	{
+		matches.push(result[result.length-1]);
+	}
+	return matches;
+}
+
 
 
 
@@ -455,9 +466,15 @@ SUGAR.forms._performRangeReplace = function(expression)
 SUGAR.forms.createTrigger = function(variables, condition, triggeronload)
 {
 	var trigger = new SUGAR.forms.Trigger(variables, condition);
-	
 	if ( triggeronload ) {
-		YAHOO.util.Event.addListener(window, "load", SUGAR.forms.Trigger.trigger, trigger);
+		var empty = false;
+		for (var i in variables)
+		{
+			if (SUGAR.forms.AssignmentHandler.getValue(variables[i]) == "")
+				empty = true;
+		}
+		if (!empty)
+			YAHOO.util.Event.addListener(window, "load", SUGAR.forms.Trigger.trigger, trigger);
 	}
 
 	return trigger;
@@ -479,7 +496,15 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad)
 	trigger.setDependency(this);
 	this.trigger = trigger;
 	if (testOnLoad) {
-		SUGAR.forms.Trigger.fire("", trigger);
+		var vars = trigger.variables;
+		var empty = false;
+		for (var i in vars)
+		{
+			if (SUGAR.forms.AssignmentHandler.getValue(vars[i]) == "")
+				empty = true;
+		}
+		if (!empty)
+			SUGAR.forms.Trigger.fire("", trigger);
 	}
 }
 

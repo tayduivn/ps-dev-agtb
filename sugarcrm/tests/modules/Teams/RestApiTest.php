@@ -19,6 +19,7 @@ class RestApiTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown() 
     {        
+	@ob_end_clean();
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     } 	
 	

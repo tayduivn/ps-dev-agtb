@@ -20,11 +20,11 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
- * <b>cond(Boolean c, Val1, Val2)</b><br>
+ * <b>ifElse(Boolean c, Val1, Val2)</b><br>
  * Returns <i>Val1</i> if <i>c</i> is true<br/>
  * or <i>Val2</i> if <i>c</i> is false.<br/>
- * ex: <i>cond(true, "first", "second") = "first"</i><br/>
- * <i>cond(false, "first", "second")</i> = "second"
+ * ex: <i>ifElse(true, "first", "second") = "first"</i><br/>
+ * <i>ifElse(false, "first", "second")</i> = "second"
  */
 class ConditionExpression extends GenericExpression
 {
@@ -62,7 +62,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "cond";
+		return array("ifElse","cond");
 	}
 
 	/**

@@ -48,6 +48,8 @@ class ReadOnlyAction extends AbstractAction{
 			exec: function()
 			{
 				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
+				if (!el)
+				    return;
 				var val = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
 				if (val == SUGAR.expressions.Expression.TRUE) {
 					el.readOnly = true;

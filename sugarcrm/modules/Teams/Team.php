@@ -121,12 +121,19 @@ class Team extends SugarBean
 
 		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) {
 			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) {
-				$list_form->parse($xTemplateSection.".row.admin_team");
-				$list_form->parse($xTemplateSection.".row.admin_edit");
+			    $list_form->parse($xTemplateSection.".row.admin_team");
+			    $list_form->parse($xTemplateSection.".row.admin_edit");
+                if ( isset($this->implicit_assign) && $this->implicit_assign == '1' ) {
+			        $list_form->parse($xTemplateSection.".row.user_rem");
+			    }
+			    else {
+			        $list_form->parse($xTemplateSection.".row.admin_rem");
+			    }
 			}
 			else {
 				$list_form->parse($xTemplateSection.".row.user_team");
 				$list_form->parse($xTemplateSection.".row.user_edit");
+				$list_form->parse($xTemplateSection.".row.user_rem");
 			}
 		}
 

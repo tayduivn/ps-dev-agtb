@@ -85,6 +85,12 @@ class quicksearchQuery {
         if($table == 'users.') 
             $whereClause .= " AND {$table}status='Active'";
         
+        // Need to include the default whereStatement
+		if(!empty($query_obj['whereExtra'])){
+            if(!empty($whereClause))$whereClause .= ' AND ';
+            $whereClause .= html_entity_decode($query_obj['whereExtra'],ENT_QUOTES);
+		}
+		
         return $whereClause;
     }
     

@@ -323,6 +323,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                     $sqs_objects[$name1]['primary_populate_list'] = array();
                     $sqs_objects[$name1]['primary_field_list'] = array();
                 }
+                $sqs_objects[$name1]['whereExtra'] = "( teams.associated_user_id IS NULL OR teams.associated_user_id NOT IN ( SELECT id FROM users WHERE status = 'Inactive' OR portal_only = '1' ))";
         }
         
         $id = "{$this->form_name}_{$fieldName}_collection_0";
