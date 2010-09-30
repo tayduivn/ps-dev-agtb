@@ -254,7 +254,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 			} //foreach
 		} //if
 
-		if($value->module_dir == 'Meetings')
+		if($value->module_dir == 'Meetings' || $value->module_dir == 'Calls')
 		{
 		    if( isset($module_fields['duration_minutes']) && isset($GLOBALS['app_list_strings']['duration_intervals'])) 
 		    {
