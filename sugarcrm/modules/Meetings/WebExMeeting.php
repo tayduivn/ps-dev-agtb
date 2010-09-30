@@ -3,13 +3,20 @@
 require_once('WebMeeting.php');
 
 class WebExMeeting extends WebMeeting {
+
+    protected $dateFormat = 'm/d/Y H:i:s';
+    protected $eapmAppname = 'webex';
+    protected $urlExtension = '/WBXService/XMLService';
 	
-	function WebExMeeting($account_url, $account_name, $account_password) {
+	function __construct() {
       require_once('WebExXML.php');
       
-      $this->account_url = $account_url;
-      $this->account_name = $account_name;
-      $this->account_password = $account_password;
+      $eapmData = EAPM::getLoginInfo($this->eapmAppname);
+      $this->account_url = $eapmData['url'].$this->urlExtension;
+      $this->account_name = $eapmData['name'];
+      $this->account_password = $eapmData['password'];
+
+
       $this->schedule_xml = $schedule_xml;
       $this->unschedule_xml = $unschedule_xml;
       $this->details_xml = $details_xml;
@@ -30,40 +37,72 @@ class WebExMeeting extends WebMeeting {
 	 * @param string $password
 	 * return: The XML response from the WebEx server.
 	 */
-	function scheduleMeeting($name, $startDate, $duration, $password, $meeting='') {
+	function scheduleMeeting($bean) {
 		global $current_user;
 		
-      if ($meeting != '') {
-         $doc = new SimpleXMLElement($this->edit_xml);
-      } else {
-         $doc = new SimpleXMLElement($this->schedule_xml);
-      }
+        if (!empty($bean->external_id)) {
+            $doc = new SimpleXMLElement($this->edit_xml);
+            $doc->body->bodyContent->meetingkey = $bean->external_id;
+        } else {
+            $doc = new SimpleXMLElement($this->schedule_xml);
+        }
 		$this->addAuthenticationInfo($doc);
 		
-		$doc->body->bodyContent->accessControl->meetingPassword = $password;
+		$doc->body->bodyContent->accessControl->meetingPassword = $bean->password;
 		
-		$doc->body->bodyContent->metaData->confName = $name;
+		$doc->body->bodyContent->metaData->confName = $bean->name;
 		$doc->body->bodyContent->metaData->agenda = '';
 		
 		$doc->body->bodyContent->participants->maxUserNumber = '1';		
-      $attendee = 
-         $doc->body->bodyContent->participants->attendees->addChild('attendee', '');
+        $attendee = $doc->body->bodyContent->participants->attendees->addChild('attendee', '');
 		$person = $attendee->addChild('person');
 		$person->addChild('name', $GLOBALS['current_user']->full_name);
 		$person->addChild('email', $GLOBALS['current_user']->email1);
 
+        // FIXME: Use TimeDate
+        $startDate = date($this->dateFormat, strtotime($bean->date_start));
+
 		$doc->body->bodyContent->schedule->startDate = $startDate;
 		// TODO: what's openTime?
 		$doc->body->bodyContent->schedule->openTime = '900';
+
+        $duration = (60 * (int)($bean->duration_hours)) + ((int)($bean->duration_minutes));
 		$doc->body->bodyContent->schedule->duration = $duration;
 		//ID of 20 is GMT
 		$doc->body->bodyContent->schedule->timeZoneID = '20';
       
-      if ($meeting != '') {
-         $doc->body->bodyContent->meetingkey = $meeting;
-      }
+        $reply = $this->postMessage($doc);
+        
+        if ($reply['success']) {
+            if ( empty($bean->external_id) ) {
+                $xp = new DOMXPath($reply['responseXML']);
+                // Only get the external ID when I create a new meeting.
+                $bean->external_id = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:meetingkey')->item(0)->nodeValue;
+                $GLOBALS['log']->fatal('External ID: '.print_r($bean->external_id,true));
+            }
 
-		return $this->postMessage($doc);
+            // Figure out the join url
+            $join_reply = $this->joinMeeting($bean->external_id);
+            $xp = new DOMXPath($join_reply['responseXML']);
+            $bean->join_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:joinMeetingURL')->item(0)->nodeValue;
+            $GLOBALS['log']->fatal('Join URL: '.print_r($bean->join_url,true));
+
+
+            // Figure out the host url
+            $host_reply = $this->hostMeeting($bean->external_id);
+            $xp = new DOMXPath($host_reply['responseXML']);
+            $bean->host_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:hostMeetingURL')->item(0)->nodeValue;
+            $GLOBALS['log']->fatal('Host URL: '.print_r($bean->host_url,true));
+
+            $bean->creator = $this->account_name;
+        } else {
+            $bean->join_url = '';
+            $bean->host_url = '';
+            $bean->external_id = '';
+            $bean->creator = '';
+        }
+        
+        return $reply;
 	}
 	
 	/**
@@ -74,14 +113,8 @@ class WebExMeeting extends WebMeeting {
 	 * @param string $password
 	 * return: The XML response from the WebEx server.
 	 */
-   function editMeeting($meeting, $params) {
-      return $this->scheduleMeeting(
-         $params['name'], 
-         $params['startDate'],
-         $params['duration'],
-         $params['password'],
-         $meeting
-      );
+   function editMeeting($bean) {
+      return $this->scheduleMeeting($bean);
    }
 
 	/**
@@ -200,7 +233,7 @@ class WebExMeeting extends WebMeeting {
       $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
       $uri = strstr($this->account_url, "/");
       $xml = $doc->asXML();
-      echo "<br /><br />$xml<br /><br />";
+
       $content_length = strlen($xml);
       $headers = array(
          "POST $uri HTTP/1.0",
@@ -218,8 +251,52 @@ class WebExMeeting extends WebMeeting {
       curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
+      $GLOBALS['log']->fatal("Where: https://".$this->account_url);
+      $GLOBALS['log']->fatal("Before:\n".print_r($xml,true));
       $response = curl_exec($ch);
-      return $response;
+      $GLOBALS['log']->fatal("After:\n".print_r($response,true));
+      // $reply is an associative array that formats the basic information in a way that
+      // callers can get most of the data out without having to understand any underlying formats.
+      $reply = array();
+      $reply['responseRAW'] = $response;
+      $reply['responseXML'] = null;
+      if ( empty($response) ) {
+          $reply['success'] = FALSE;
+          // FIXME: Translate
+          $reply['errorMessage'] = 'No response from the server.';
+      } else {
+          // The namespaces seem to destroy SimpleXML.
+          // $responseXML = new SimpleXMLElement(str_replace('serv:message','message',$response),NULL,false,'http://www.webex.com/schemas/2002/06/service');
+          $responseXML = new DOMDocument();
+          $responseXML->preserveWhiteSpace = false;
+          $responseXML->strictErrorChecking = false;
+          $responseXML->loadXML($response);
+          if ( !is_object($responseXML) ) {
+              $GLOBALS['log']->fatal("XML ERRORS:\n".print_r(libxml_get_errors(),true));
+              // Looks like the XML processing didn't go so well.
+              $reply['success'] = FALSE;
+              // FIXME: Translate
+              $reply['errorMessage'] = 'Server responded with an unknown message';
+          } else {
+              $reply['responseXML'] = $responseXML;
+              $xpath = new DOMXPath($responseXML);
+              // $status = (string)$responseXML->header->response->result;
+              $status = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:result')->item(0)->nodeValue;
+              if ( $status == 'SUCCESS' ) {
+                  $reply['success'] = TRUE;
+                  $reply['errorMessage'] = '';
+              } else {
+                  $GLOBALS['log']->fatal("Status:\n".print_r($status,true));
+                  $reply['success'] = FALSE;
+                  // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
+                  $reply['errorMessage'] = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:reason')->item(0)->nodeValue;
+              }
+          }
+      }
+      $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
+      return $reply;
    }
+
+   function logoff() { }
 	
 }

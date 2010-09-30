@@ -30,6 +30,8 @@
  * PLEASE DO NOT CHANGE THIS CLASS
  * PLACE ANY CUSTOMIZATIONS IN SUGAR_eapm
  */
+require_once('data/SugarBean.php');
+require_once('include/SugarObjects/templates/basic/Basic.php');
 
 
 class EAPM extends Basic {

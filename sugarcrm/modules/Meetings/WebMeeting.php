@@ -2,15 +2,13 @@
 
 abstract class WebMeeting {
 	
-	abstract function scheduleMeeting($name, $startdate, $duration, $password);
-
-   abstract function editMeeting($meeting, $params);
-	
+	abstract function scheduleMeeting($bean);
+    
 	abstract function unscheduleMeeting($meeting);
 	
 	abstract function joinMeeting($meeting, $attendeeName);
 
-   abstract function hostMeeting($meeting);
+    abstract function hostMeeting($meeting);
 	
 	abstract function inviteAttendee($meeting, $attendee);
 	

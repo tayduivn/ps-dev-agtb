@@ -2,7 +2,7 @@
 
 $schedule_xml = <<<EXM
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
  <securityContext>
       <webExID></webExID>
@@ -46,12 +46,12 @@ $schedule_xml = <<<EXM
          </telephony>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 EXM;
 
 $unschedule_xml = <<<UNS
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
        <securityContext>
       <webExID></webExID>
@@ -67,12 +67,12 @@ $unschedule_xml = <<<UNS
          <meetingKey></meetingKey>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 UNS;
 
 $invite_xml = <<<INV
 <?xml version="1.0"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
        <securityContext>
          <webExID></webExID>
@@ -87,12 +87,12 @@ $invite_xml = <<<INV
           "java:com.webex.service.binding.attendee.CreateMeetingAttendee">
      </bodyContent>
    </body>
-</serv:message>
+</message>
 INV;
 
 $uninvite_xml = <<<UNI
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
       <securityContext>
          <webExID></webExID>
@@ -108,11 +108,11 @@ $uninvite_xml = <<<UNI
          <attendeeID></attendeeID>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 UNI;
 
 $details_xml = <<<DTL
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
       <securityContext>
          <webExID></webExID>
@@ -127,12 +127,12 @@ $details_xml = <<<DTL
          <meetingKey></meetingKey>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 DTL;
 
 $listmeeting_xml = <<<LST
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
       <securityContext>
          <webExID></webExID>
@@ -160,12 +160,12 @@ $listmeeting_xml = <<<LST
          </order>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 LST;
 
 $joinmeeting_xml = <<<JMT
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
       <securityContext>
          <webExID></webExID>
@@ -182,12 +182,12 @@ $joinmeeting_xml = <<<JMT
          <attendeeName></attendeeName>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 JMT;
 
 $hostmeeting_xml = <<<HST
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
       <securityContext>
          <webExID></webExID>
@@ -203,12 +203,12 @@ $hostmeeting_xml = <<<HST
          <sessionKey></sessionKey>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 HST;
 
 $edit_xml = <<<EDT
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<serv:message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <header>
       <securityContext>
          <webExID></webExID>
@@ -256,5 +256,5 @@ $edit_xml = <<<EDT
          <meetingkey></meetingkey>
       </bodyContent>
    </body>
-</serv:message>
+</message>
 EDT;

@@ -6,12 +6,17 @@ class GoToMeeting extends WebMeeting {
 
    private $login_key;
 
-	function GoToMeeting($account_url, $account_name, $account_password) {
+   protected $dateFormat = 'Y-m-d\TH:i:s';
+   protected $eapmAppname = 'gotomeeting';
+   protected $urlExtension = '/axis/services/G2M_Organizers';
+
+	function __construct() {
       require_once('GoToXML.php');
 
-      $this->account_url = $account_url;
-      $this->account_name = $account_name;
-      $this->account_password = $account_password;
+      $eapmData = EAPM::getLoginInfo($this->eapmAppname);
+      $this->account_url = $eapmData['url'].$this->urlExtension;
+      $this->account_name = $eapmData['name'];
+      $this->account_password = $eapmData['password'];
 
       $this->login_xml = $login_xml;
       $this->schedule_xml = $schedule_xml;
@@ -30,12 +35,13 @@ class GoToMeeting extends WebMeeting {
       $child->password = $this->account_password;
 
       $response = $this->postMessage($doc);
-      preg_match(
-         '/logonReturn xsi:type="xsd:string">[0-9A-Z:]+/', 
-         $response, 
-         $matches
-      );
-      $this->login_key = substr($matches[0], 34); 
+      if ( $response['success'] ) {
+          $xp = new DOMXPath($response['responseXML']);
+          $this->login_key = $xp->query('/soapenv:Envelope/soapenv:Body')->item(0)->nodeValue;
+          $GLOBALS['log']->fatal("LOGIN KEY: ".print_r($this->login_key,true));
+      } else {
+          $this->login_key = '';
+      }
 
       return $response;
    }
@@ -51,9 +57,18 @@ class GoToMeeting extends WebMeeting {
       return $this->postMessage($doc);
    }
 
-   function scheduleMeeting($name, $startDate, $duration, $password) { 
-      if (!isset($this->login_key)) {
-         $this->login();
+   function scheduleMeeting($bean) {
+       // $name, $startDate, $duration, $password) { 
+      if (empty($this->login_key)) {
+         $response = $this->login();
+         if (empty($this->login_key) ) {
+             // Login failed, send the error message back to the parent
+             return $response;
+         }
+      }
+      
+      if (!empty($bean->external_id) ) {
+          return $this->editMeeting($bean);
       }
 
       $doc = new SimpleXMLElement($this->schedule_xml);
@@ -62,7 +77,9 @@ class GoToMeeting extends WebMeeting {
       $impl = $body[0]->children($namespaces['impl']);
       $createMeeting = $impl[0];
       $createMeeting->connectionId = $this->login_key;
-      $createMeeting->meetingParameters->subject = $name;
+      $createMeeting->meetingParameters->subject = $bean->name;
+      // FIXME: Use TimeDate
+      $startDate = date($this->dateFormat, strtotime($bean->date_start));
       $createMeeting->meetingParameters->startTime = $startDate;
 
       /* From the GoToMeeting API docs:
@@ -80,16 +97,46 @@ class GoToMeeting extends WebMeeting {
        * If a non-empty string is passed, the meeting will be created with
        * the password option on.
        */
-      if ($password != '') {
+      if (!empty($bean->password)) {
          $createMeeting->meetingParameters->passwordRequired = 'true';
       } else {
          $createMeeting->meetingParameters->passwordRequired = 'false';
       }
 
-      return $this->postMessage($doc);
+      $reply = $this->postMessage($doc);
+      if ($reply['success']) {
+          
+          $xp = new DOMXPath($reply['responseXML']);
+          // $xp->registerNamespace('soapenv','http://schemas.xmlsoap.org/soap/envelope/');
+          
+          $bean->join_url = $xp->query('//multiRef[name="joinURL"]/value')->item(0)->nodeValue;
+          
+          $uniqueMeetingId = $xp->query('//multiRef[name="uniqueMeetingId"]/value')->item(0)->nodeValue;
+          
+          $meetingId = $xp->query('//multiRef[@id="id5"]')->item(0)->nodeValue;
+          
+          $bean->external_id = $meetingId.'-'.$uniqueMeetingId;
+          
+          $hostReply = $this->hostMeeting(array($meetingId,$uniqueMeetingId));
+          if ( $hostReply['success'] == FALSE ) {
+              // Trying to host failed, send the error message back to the user.
+              return $hostReply;
+          }
+          $xp = new DOMXPath($hostReply['responseXML']);
+          $bean->host_url = $xp->query('//startMeetingReturn')->item(0)->nodeValue;
+          
+          $bean->creator = $this->account_name;
+      } else {
+          $bean->join_url = '';
+          $bean->host_url = '';
+          $bean->external_id = '';
+          $bean->creator = '';
+      }
+
+      return $reply;
    }
 
-   function editMeeting($meeting_keys, $params) {
+   function editMeeting($bean) {
       if (!isset($this->login_key)) {
          $this->login();
       }
@@ -101,12 +148,16 @@ class GoToMeeting extends WebMeeting {
       $updateMeeting = $impl[0];
 
       $updateMeeting->connectionId = $this->login_key;
+      $meeting_keys = explode('-',$bean->external_id);
       $updateMeeting->meetingId = $meeting_keys[0];
       $updateMeeting->uniqueMeetingId = $meeting_keys[1];
 
-      $updateMeeting->meetingParameters->subject = $params['subject']; 
-      $updateMeeting->meetingParameters->startTime = $params['startTime']; 
-      if ($params['password'] != '') {
+      $updateMeeting->meetingParameters->subject = $bean->name; 
+
+      // FIXME: Use TimeDate
+      $startDate = date($this->dateFormat, strtotime($bean->date_start));
+      $updateMeeting->meetingParameters->startTime = $startDate; 
+      if (!empty($bean->password)) {
          $updateMeeting->meetingParameters->passwordRequired = 'true';
       } else {
          $updateMeeting->meetingParameters->passwordRequired = 'false';
@@ -154,7 +205,7 @@ class GoToMeeting extends WebMeeting {
       $host = substr($this->account_url, 0, strpos($this->account_url, "/"));
       $uri = strstr($this->account_url, "/");
       $xml = $doc->asXML();
-      echo "<br /><br />$xml<br /><br />";
+
       $content_length = strlen($xml);
       $headers = array(
          "POST $uri HTTP/1.1",
@@ -173,8 +224,47 @@ class GoToMeeting extends WebMeeting {
       curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
+      $GLOBALS['log']->fatal("Where: https://".$this->account_url);
+      $GLOBALS['log']->fatal("Before:\n".print_r($xml,true));
       $response = curl_exec($ch);
-      return $response;  
+      $GLOBALS['log']->fatal("Raw Reply:\n".print_r($response,true));
+      
+      $reply = array();
+      $reply['success'] = FALSE;
+      $reply['errorMessage'] = '';
+      
+      if ( empty($response) ) {
+          // FIXME: Translate
+          $reply['errorMessage'] = 'No response from the server.';
+      } else {
+          $responseXML = new DOMDocument();
+          $responseXML->preserveWhiteSpace = false;
+          $responseXML->strictErrorChecking = false;
+          $responseXML->loadXML($response);
+          if ( !is_object($responseXML) ) {
+              $GLOBALS['log']->fatal("XML ERRORS:\n".print_r(libxml_get_errors(),true));
+              // Looks like the XML processing didn't go so well.
+              $reply['success'] = FALSE;
+              // FIXME: Translate
+              $reply['errorMessage'] = 'Server responded with an unknown message';
+          } else {
+              $reply['responseXML'] = $responseXML;
+              $xp = new DOMXPath($responseXML);
+              $bodyElem = $xp->query('/soapenv:Envelope/soapenv:Body/soapenv:Fault');
+              if ( !is_object($bodyElem) || $bodyElem->length == 0 ) {
+                  $reply['success'] = TRUE;
+                  $reply['errorMessage'] = '';
+              } else {
+                  $reply['success'] = FALSE;
+                  // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
+                  $reply['errorMessage'] = (string)$xp->query('/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultstring')->item(0)->nodeValue;
+              }
+              
+          }          
+      }
+      
+      $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
+      return $reply;
    }
 
 }
