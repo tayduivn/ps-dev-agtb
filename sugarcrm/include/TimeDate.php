@@ -980,23 +980,12 @@ S	S	S	12	20	-8	0	0
 	}
 	
 	/**
-	 * Splits a datetime string into date and time parts
-	 *
-	 * @param string $datetime
-	 * @return array first key is date, second is time
-	 */
-	function split_date_time($datetime) 
-	{
-		return explode(' ',$datetime);
-	}
-	
-	/**
 	 * Returns the time portion of a datetime string
 	 *
 	 * @param string $datetime
 	 * @return string
 	 */
-	function getTimePart($datetime)
+	public function getTimePart($datetime)
 	{
 	    return trim(array_pop($this->split_date_time($datetime)));
 	}
@@ -1007,7 +996,7 @@ S	S	S	12	20	-8	0	0
 	 * @param string $datetime
 	 * @return string
 	 */
-	function getDatePart($datetime)
+	public function getDatePart($datetime)
 	{
 	    return trim(array_shift($this->split_date_time($datetime)));
 	}

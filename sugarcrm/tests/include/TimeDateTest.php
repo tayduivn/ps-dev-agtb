@@ -779,8 +779,6 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    $timedateparts = $this->time_date->split_date_time($datetime);
 	    
-	    $this->assertEquals($date,$timedateparts[0]);
-	    $this->assertEquals($time,$timedateparts[1]);
 	    $this->assertEquals($date,$this->time_date->getDatePart($datetime));
 	    $this->assertEquals($time,$this->time_date->getTimePart($datetime));
 	}
