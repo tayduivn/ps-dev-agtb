@@ -258,7 +258,12 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 		{
 		    if( isset($module_fields['duration_minutes']) && isset($GLOBALS['app_list_strings']['duration_intervals'])) 
 		    {
-		        $module_fields['duration_minutes']['options'] = $GLOBALS['app_list_strings']['duration_intervals'];
+		        $options_dom = $GLOBALS['app_list_strings']['duration_intervals'];
+		        $options_ret = array();
+		        foreach($options_dom as $key=>$oneOption)
+						$options_ret[$key] = $this->get_name_value($key,$oneOption);
+		        
+		        $module_fields['duration_minutes']['options'] = $options_ret;
 		    }
 		}
 		
