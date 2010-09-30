@@ -292,7 +292,7 @@ class SugarApplication
 		// Bug 20916 - Special case for check ACL access rights for Subpanel QuickCreates
 		if(isset($_POST['action']) && $_POST['action'] == 'SubpanelCreates') {
             $actual_module = $_POST['target_module'];
-            if(!in_array($actual_module,$GLOBALS['modListHeader'])) {
+            if(!empty($GLOBALS['modListHeader']) && !in_array($actual_module,$GLOBALS['modListHeader'])) {
                 $this->controller->hasAccess = false;
             }
             return;
