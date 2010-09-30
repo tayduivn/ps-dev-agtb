@@ -254,6 +254,14 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 			} //foreach
 		} //if
 
+		if($value->module_dir == 'Meetings')
+		{
+		    if( isset($module_fields['duration_minutes']) && isset($GLOBALS['app_list_strings']['duration_intervals'])) 
+		    {
+		        $module_fields['duration_minutes']['options'] = $GLOBALS['app_list_strings']['duration_intervals'];
+		    }
+		}
+		
 		if($value->module_dir == 'Bugs'){
 			require_once('modules/Releases/Release.php');
 			$seedRelease = new Release();
