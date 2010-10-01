@@ -179,10 +179,6 @@ class quicksearchQuery {
                         $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
                     }
                 }
-                //Match name field for People
-             	if ($list_return[$i] instanceof Person) {
-                	$list_return[$i]->_create_proper_name_field();
-                }
                
                 //BEGIN SUGARCRM flav=pro ONLY
                 if($list_return[$i] instanceof Team){
