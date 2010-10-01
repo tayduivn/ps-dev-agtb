@@ -193,14 +193,14 @@ function editPanelProperties(panelId, view) {
     //BEGIN SUGARCRM flav=een ONLY
 	var value_dep = document.getElementById('le_paneldep_' + panelId).innerHTML;
     //END SUGARCRM flav=een ONLY
-	var params = "module=ModuleBuilder&action=editProperty&view_module=" + ModuleBuilder.module 
-	            + (ModuleBuilder.package ?  "&view_package=" + ModuleBuilder.package : "")
-                + "&view=" + view + "&id_label=le_panelname_" + panelId + "&name_label=label_" + key_label.toUpperCase()
+	var params = "module=ModuleBuilder&action=editProperty&view_module=" + encodeURIComponent(ModuleBuilder.module) 
+	            + (ModuleBuilder.package ?  "&view_package=" + encodeURIComponent(ModuleBuilder.package) : "")
+                + "&view=" + encodeURIComponent(view) + "&id_label=le_panelname_" + encodeURIComponent(panelId) + "&name_label=label_" + encodeURIComponent(key_label.toUpperCase())
 				//BEGIN SUGARCRM flav=een ONLY
-                + "&title_dep=" + SUGAR.language.get("ModuleBuilder", "LBL_DEPENDENCY") + "&name_dep=" + "dep_" + key_label.toUpperCase() 
-                + "&id_dep=le_paneldep_" + key_label + "&value_dep=" + value_dep + "&expression_dep=true"
+                + "&title_dep=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_DEPENDENCY")) + "&name_dep=" + "dep_" + encodeURIComponent(key_label.toUpperCase()) 
+                + "&id_dep=le_paneldep_" + encodeURIComponent(key_label) + "&value_dep=" + encodeURIComponent(value_dep) + "&expression_dep=true"
                 //END SUGARCRM flav=een ONLY
-                + "&title_label=" + SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE") + "&value_label=" + value_label;
+                + "&title_label=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE")) + "&value_label=" + encodeURIComponent(value_label);
     ModuleBuilder.getContent(params);
 }
 {/literal}
@@ -209,12 +209,12 @@ function editFieldProperties(idCount, label) {ldelim}
 	var value_tabindex = document.getElementById('le_tabindex_' + idCount).innerHTML.replace(/^\s+|\s+$/g,'');
 	ModuleBuilder.getContent(
 	  	'module=ModuleBuilder&action=editProperty'
-	  + '&view_module={$view_module}' + '{if $fromModuleBuilder}&view_package={$view_package}{/if}'
-	  +	'&view={$view}&id_label=le_label_' + idCount 
-	  + '&name_label=label_' + label + '&title_label={sugar_translate label="LBL_LABEL_TITLE" module="ModuleBuilder"}' 
-	  + '&value_label=' + value_label + '&id_tabindex=le_tabindex_' + idCount 
+	  + '&view_module={$view_module|escape:'url'}' + '{if $fromModuleBuilder}&view_package={$view_package}{/if}'
+	  +	'&view={$view|escape:'url'}&id_label=le_label_' + encodeURIComponent(idCount) 
+	  + '&name_label=label_' + encodeURIComponent(label) + '&title_label={sugar_translate label="LBL_LABEL_TITLE" module="ModuleBuilder"}' 
+	  + '&value_label=' + encodeURIComponent(value_label) + '&id_tabindex=le_tabindex_' + encodeURIComponent(idCount) 
 	  + '&title_tabindex={sugar_translate label="LBL_TAB_ORDER" module="ModuleBuilder"}' 
-	  + '&name_tabindex=tabindex&value_tabindex=' + value_tabindex );
+	  + '&name_tabindex=tabindex&value_tabindex=' + encodeURIComponent(value_tabindex) );
 	
 {rdelim}
 

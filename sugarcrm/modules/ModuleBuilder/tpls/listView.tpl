@@ -95,17 +95,17 @@ studiotabs.reset();
 				    {if !($view|substr:-6 == "search") }
 					var value_width = document.getElementById('subslot{$modCounter}width').innerHTML;
 					{/if}
-					ModuleBuilder.getContent('module=ModuleBuilder&action=editProperty&view_module={$view_module}'+
-							'{if isset($subpanel)}&subpanel={$subpanel}{/if}'+
-							'{if $MB}&MB={$MB}&view_package={$view_package}{/if}'+
+					ModuleBuilder.getContent('module=ModuleBuilder&action=editProperty&view_module={$view_module|escape:'url'}'+
+							'{if isset($subpanel)}&subpanel={$subpanel|escape:'url'}{/if}'+
+							'{if $MB}&MB={$MB|escape:'url'}&view_package={$view_package|escape:'url'}{/if}'+
 							'&id_label=subslot{$modCounter}label'+
 							'&name_label=label_'+
-							  '{if isset($value.label)}{$value.label}'+
-							  '{elseif !empty($value.vname)}{$value.vname}'+
-							  '{else}{$key}{/if}'+
-							'&title_label={$MOD.LBL_LABEL_TITLE}&value_label=' + value_label
+							  '{if isset($value.label)}{$value.label|escape:'url'}'+
+							  '{elseif !empty($value.vname)}{$value.vname|escape:'url'}'+
+							  '{else}{$key|escape:'url'}{/if}'+
+							'&title_label={$MOD.LBL_LABEL_TITLE}&value_label=' + encodeURIComponent(value_label)
 							{if ($view|substr:-6 != "search") }
-							+ '&id_width=subslot{$modCounter}width&name_width={$MOD.LBL_WIDTH}&value_width=' + value_width
+							+ '&id_width=subslot{$modCounter}width&name_width={$MOD.LBL_WIDTH|escape:'url'}&value_width=' + encodeURIComponent(value_width)
 							{/if}
 					);"
 				>
