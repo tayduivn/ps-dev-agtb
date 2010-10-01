@@ -94,6 +94,18 @@ $dictionary['SugarFavorites'] = array(
 ),
     'indices' => array(
         array(
+            'name' => 'idx_favs_date_entered', 
+            'type'=>'index',
+            'fields'=>array('date_entered','deleted')
+          ),
+        ),
+        array(
+            'name' => 'idx_favs_user_module', 
+            'type'=>'index',
+            'fields'=>array('modified_user_id','module','deleted')
+          ),
+        ),
+        array(
             'name' => 'idx_favs_module_record_deleted', 
             'type'=>'index',
             'fields'=>array('module','record_id','deleted')
