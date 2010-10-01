@@ -92,6 +92,13 @@ $dictionary['SugarFavorites'] = array(
 ),
 	'relationships'=>array (
 ),
+    'indices' => array(
+        array(
+            'name' => 'idx_favs_module_record_deleted', 
+            'type'=>'index',
+            'fields'=>array('module','record_id','deleted')
+          ),
+        ),
 	'optimistic_lock'=>true,
 );
 require_once('include/SugarObjects/VardefManager.php');
