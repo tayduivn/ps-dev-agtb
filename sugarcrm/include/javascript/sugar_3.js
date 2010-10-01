@@ -1619,8 +1619,7 @@ function onUnloadEditView(theForm) {
             
             var snap = snapshotForm(theForm);
             if ( editViewSnapshots[theForm.id] != snap ) {
-                debugger;
-            	dataHasChanged = true;
+                dataHasChanged = true;
             }
         }
     } else {
@@ -1632,13 +1631,11 @@ function onUnloadEditView(theForm) {
         // console.log('DEBUG: Checking one form '+theForm.id);
         if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
             // Data has changed.
-        	debugger;
         	dataHasChanged = true;
         }
     }
 
     if ( dataHasChanged == true ) {
-    	debugger;
     	return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
     } else {
         return;
