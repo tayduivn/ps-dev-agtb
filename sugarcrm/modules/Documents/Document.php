@@ -191,7 +191,7 @@ class Document extends SugarBean {
 			$file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
 
 			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_id))
-			$file_url= "<a href='http://docs.google.com/document/edit?id=".$this->doc_id."&hl=en' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+                $file_url= "<a href='http://docs.google.com/document/edit?id=".$this->doc_id."&hl=en' target='_blank'>".SugarThemeRegistry::current()->getImage('google_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
     		$this->file_url = $file_url;
     		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
 		}else{
