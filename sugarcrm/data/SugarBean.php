@@ -1194,10 +1194,11 @@ class SugarBean
                 }else{
 //END SUGARCRM flav=dce ONLY
                     if($this->bean_implements('ACL')){
+                        $category = isset($this->acl_category)?$this->acl_category:$this->module_dir;
                         if(!empty($this->acltype)){
-                            ACLAction::addActions($this->module_dir, $this->acltype);
+                            ACLAction::addActions($category, $this->acltype);
                         }else{
-                            ACLAction::addActions($this->module_dir);
+                            ACLAction::addActions($category);
                         }
                     }
 //BEGIN SUGARCRM flav=dce ONLY
@@ -5724,5 +5725,16 @@ function save_relationship_changes($is_update, $exclude=array())
         // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation
         sugar_cache_put($cache_key, EXTERNAL_CACHE_NULL_VALUE);
         return null;
+    }
+    
+    /**
+     * Returns the ACL category for this module; defaults to the SugarBean::$acl_category if defined
+     * otherwise it is SugarBean::$module_dir
+     *
+     * @return string
+     */
+    public function getACLCategory()
+    {
+        return !empty($this->acl_category)?$this->acl_category:$this->module_dir;
     }
 }

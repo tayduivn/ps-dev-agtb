@@ -137,7 +137,7 @@ if(!class_exists('Tracker')){
         if(isset($configEntry['bean']) && $configEntry['bean'] != 'Tracker') {
             $bean = new $configEntry['bean']();
             if($bean->bean_implements('ACL')) {
-                  ACLAction::addActions($bean->module_dir, $configEntry['bean']);
+                  ACLAction::addActions($bean->getACLCategory(), $configEntry['bean']);
                }
         }
         }
