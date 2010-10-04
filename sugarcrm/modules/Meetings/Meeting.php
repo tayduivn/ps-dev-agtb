@@ -639,5 +639,20 @@ class Meeting extends SugarBean {
 
 	    parent::afterImportSave();
 	}
+
 } // end class def
+
+// External API integration, for the dropdown list of what external API's are available
+function getMeetingsExternalApiDropDown() {
+    require_once('include/externalAPI/externalAPIFactory.php');
+    
+    $apiList = externalAPIFactory::getModuleDropDown('Meetings');
+    
+    // FIXME: translate
+    $apiList = array_merge(array('Other'=>'Other'),$apiList);
+    
+    return $apiList;
+    
+}
+
 ?>

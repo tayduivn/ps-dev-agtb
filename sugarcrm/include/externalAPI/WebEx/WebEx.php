@@ -1,22 +1,20 @@
 <?php
 
-require_once('WebMeeting.php');
+require_once('include/externalAPI/Base/WebMeeting.php');
 
-class WebExMeeting extends WebMeeting {
+class WebEx extends WebMeeting {
 
     protected $dateFormat = 'm/d/Y H:i:s';
-    protected $eapmAppname = 'webex';
     protected $urlExtension = '/WBXService/XMLService';
 	
+    public $useAuth = true;
+    public $requireAuth = true;
+    public $supportedModules = array('Meetings');
+
+
 	function __construct() {
-      require_once('WebExXML.php');
+      require('include/externalAPI/WebEx/WebExXML.php');
       
-      $eapmData = EAPM::getLoginInfo($this->eapmAppname);
-      $this->account_url = $eapmData['url'].$this->urlExtension;
-      $this->account_name = $eapmData['name'];
-      $this->account_password = $eapmData['password'];
-
-
       $this->schedule_xml = $schedule_xml;
       $this->unschedule_xml = $unschedule_xml;
       $this->details_xml = $details_xml;
@@ -28,6 +26,12 @@ class WebExMeeting extends WebMeeting {
       $this->edit_xml = $edit_xml;
    }
 	
+    function loadEAPM($eapmData) {
+        $this->account_url = $eapmData['url'].$this->urlExtension;
+        $this->account_name = $eapmData['name'];
+        $this->account_password = $eapmData['password'];    
+    }
+    
 	
 	/**
 	 * Create a new WebEx meeting.

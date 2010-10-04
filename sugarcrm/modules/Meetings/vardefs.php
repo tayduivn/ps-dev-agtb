@@ -162,8 +162,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
      'name' => 'type',
       'vname' => 'LBL_TYPE',
       'type' => 'enum',
-      'len' => 100,
-      'options' => 'meeting_type_dom',
+      'len' => 255,
+      'function' => 'getMeetingsExternalApiDropDown',
       'comment' => 'Meeting type (ex: WebEx, Other)' 
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly

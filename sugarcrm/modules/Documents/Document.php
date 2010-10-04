@@ -297,4 +297,18 @@ class Document extends SugarBean {
 		return null;
 	}
 }
+
+// External API integration, for the dropdown list of what external API's are available
+function getDocumentsExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = externalAPIFactory::getModuleDropDown('Documents');
+    
+    // FIXME: translate
+    $apiList = array_merge(array('Sugar'=>'Sugar'),$apiList);
+    
+    return $apiList;
+    
+}
+
 ?>

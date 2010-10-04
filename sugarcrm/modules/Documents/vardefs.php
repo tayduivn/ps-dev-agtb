@@ -65,7 +65,7 @@ $dictionary['Document'] = array('table' => 'documents'
   	'name' => 'doc_type',
   	'vname' => 'LBL_DOC_TYPE',
   	'type' => 'enum',
-  	'options' => 'doc_type_dom',
+    'function' => 'getDocumentsExternalApiDropDown',
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
   ),

@@ -71,7 +71,7 @@ class EAPM extends Basic {
 }
 
    static function getLoginInfo($application){
-        $results = $GLOBALS['db']->query("SELECT name, password, url FROM eapm WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' AND application='$application' AND deleted = 0");
+        $results = $GLOBALS['db']->query("SELECT * FROM eapm WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' AND application='$application' AND deleted = 0");
         $row = $GLOBALS['db']->fetchByAssoc($results);
         if(isset($row['password'])){
         	require_once("include/utils/encryption_utils.php");
@@ -81,4 +81,15 @@ class EAPM extends Basic {
     }
 		
 }
+
+// External API integration, for the dropdown list of what external API's are available
+function getEAPMExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = externalAPIFactory::getModuleDropDown('',true);
+    
+    return $apiList;
+    
+}
+
 ?>

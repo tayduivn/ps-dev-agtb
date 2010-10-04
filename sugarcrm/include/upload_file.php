@@ -23,10 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: upload_file.php 55278 2010-03-15 13:45:13Z jmertic $
  * Description:
  ********************************************************************************/
-require_once('modules/Documents/WebDocument.php');
-require_once('modules/Documents/WebDocumentFactory.php');
-require_once('modules/Documents/GoogleDocument.php');
-require_once('modules/EAPM/EAPM.php');
+require_once('include/externalAPI/ExternalAPIFactory.php');
 
 class UploadFile 
 {
@@ -274,29 +271,15 @@ class UploadFile
 	}
 	
 	function upload_doc(&$bean, $bean_id, $doc_type, $file_name, $mime_type){
-		$document_classname = WebDocumentFactory::getDocClass($doc_type);
-		if($document_classname!='Sugar') {
+        
+		if(!empty($doc_type)&&$doc_type!='Sugar') {
 			global $sugar_config;
 	        $destination = clean_path($this->get_upload_path($bean_id));
 	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
 	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
-	        
-	        $eapmType = WebDocumentFactory::getEapmType($doc_type);
-	        $row = EAPM::getLoginInfo($eapmType);
-            $url = $row['url'];
-            if ($url[strlen($url)-1] == "/") {
-      	      $url = substr($url, 0, -1);
-            }
-            
+	                    
 		    try{
-                
-                $this->document = WebDocumentFactory::getInstance(
-                    $document_classname, 
-                    $url, 
-                    $row['name'],
-                    $row['password']
-                    );
-                
+                $this->document = ExternalAPIFactory::loadAPI($doc_type);
                 $doc_id = '';
                 
                 $doc_id = $this->document->uploadDoc(

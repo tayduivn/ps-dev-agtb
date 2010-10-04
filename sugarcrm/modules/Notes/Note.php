@@ -31,11 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-require_once('modules/Documents/WebDocument.php');
-require_once('modules/Documents/WebDocumentFactory.php');
-require_once('modules/Documents/GoogleDocument.php');
 require_once('include/upload_file.php');
-require_once('modules/EAPM/EAPM.php');
 
 // Note is used to store customer information.
 class Note extends SugarBean {
@@ -142,20 +138,8 @@ class Note extends SugarBean {
             $removeFile = clean_path(getAbsolutePath("{$GLOBALS['sugar_config']['upload_dir']}{$this->id}"));
 		}
 		if(!empty($this->doc_type) && !empty($this->doc_id)){
-			$document_classname = WebDocumentFactory::getDocClass($this->doc_type);
-			$eapmType = WebDocumentFactory::getEapmType($this->doc_type);
-	        $row = EAPM::getLoginInfo($eapmType);
-            $url = $row['url'];
-            if ($url[strlen($url)-1] == "/") {
-      	      $url = substr($url, 0, -1);
-            }
-            
-			$document = WebDocumentFactory::getInstance(
-	            $document_classname, 
-	            $url, 
-	            $row['name'],
-	        	$row['password']
-	      	);
+            $document = ExternalAPIFactory::loadAPI($this->doc_type);
+
 	      	$response = $document->deleteDoc($this->doc_id);
 		}
 		if(file_exists($removeFile)) {

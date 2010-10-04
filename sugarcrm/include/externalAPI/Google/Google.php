@@ -1,24 +1,36 @@
 <?php
-require_once('WebDocument.php');
+require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
-class GoogleDocument extends WebDocument{
-	function GoogleDocument($account_url, $account_name, $account_password){
-		require_once('GoogleXML.php');
-		$this->account_url = $account_url;
-		$this->account_name = $account_name;
-		$this->account_password = $account_password;
-		$this->getClient();
+class Google extends WebDocument{
+    public $useAuth = true;
+    public $requireAuth = true;
+    public $supportedModules = array('Documents');
+
+
+	function __construct(){
+		require_once('include/externalAPI/Google/GoogleXML.php');
 	}
 	
+    function loadEAPM($eapmData) {
+		$this->account_url = $eapmData['url'];
+		$this->account_name = $eapmData['name'];
+		$this->account_password = $eapmData['password'];
+    }
+
 	protected function getClient(){
+        if ( isset($this->httpClient) ) {
+            // Already logged in
+            return;
+        }
 		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents	
 		$this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
 		$this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
 	}
 			
 	function uploadDoc($fileToUpload, $docName, $mimeType){
+		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
 		try{
@@ -43,6 +55,7 @@ class GoogleDocument extends WebDocument{
 	}
 
     function downloadDoc($documentId, $documentFormat){
+		$this->getClient();
     	$format = 'txt';
     	$document = $this->gdClient->getDocument($documentId);
     	//var_dump(var_export($document));
@@ -69,6 +82,7 @@ class GoogleDocument extends WebDocument{
     }
     
     function deleteDoc($documentId) {
+		$this->getClient();
     	$document = $this->gdClient->getDocument($documentId);
     	return  $document->delete();
     }

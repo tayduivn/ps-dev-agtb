@@ -80,7 +80,7 @@ $dictionary['EAPM'] = array(
     'reportable' => true,
     'len' => 100,
     'size' => '20',
-    'options' => 'eapm_list',
+    'function' => 'getEAPMExternalApiDropDown',    
     'studio' => 'visible',
     'dependency' => 
     array (
