@@ -1,5 +1,5 @@
 <?php
-/************************************
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -18,42 +18,48 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
-/**
- * <b>ln(Number n)</b><br/>
- * Returns the natural log of <i>n</i>.
- * ex: <i>ln(e)</i> = 1
- */
-class NaturalLogExpression extends NumericExpression {
-	/**
-	 * Returns itself when evaluating.
-	 */
-	function evaluate() {
-		return log( $this->getParameters()->evaluate() );
+
+require_once('data/SugarBean.php');
+
+class GetACLCategoryTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function setUp()
+	{
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
-	
-	/**
-	 * Returns the JS Equivalent of the evaluate function.
-	 */
-	static function getJSEvaluate() {
-		return <<<EOQ
-            return Math.log( this.getParameters().evaluate() );
-EOQ;
+
+	public function tearDown()
+	{
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
 	}
-	
-	/**
-	 * Returns the opreation name that this Expression should be
-	 * called by.
-	 */
-	static function getOperationName() {
-		return "ln";
-	}
-	
-	/**
-	 * Returns the exact number of parameters needed.
-	 */
-	static function getParamCount() {
-		return 1;
-	}
+    
+    /**
+     * @ticket 39846
+     */
+	public function testGetACLCategoryWhenACLCategoryIsDefined()
+	{
+        $bean = new SugarBean();
+        $bean->module_dir = 'Foo';
+        $bean->acl_category = 'Bar';
+        
+        $this->assertEquals(
+            'Bar',
+            $bean->getACLCategory()
+            );
+    }
+    
+    /**
+     * @ticket 39846
+     */
+	public function testGetACLCategoryWhenACLCategoryIsNotDefined()
+	{
+        $bean = new SugarBean();
+        $bean->module_dir = 'Foo';
+        
+        $this->assertEquals(
+            'Foo',
+            $bean->getACLCategory()
+            );
+    }
 }
-?>

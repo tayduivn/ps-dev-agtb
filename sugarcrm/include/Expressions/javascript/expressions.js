@@ -247,7 +247,6 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
  */
 SUGAR.expressions.Expression.prototype.evaluate = function() {
 	// does nothing .. needs to be overridden
-	alert("Please override me 1!");
 };
 
 /**
@@ -268,7 +267,6 @@ SUGAR.expressions.Expression.prototype.getClass = function(exp) {
  */
 SUGAR.expressions.Expression.prototype.getParameterTypes = function() {
 	// does nothing .. needs to be overridden
-	alert("Please override me 2!");
 };
 
 

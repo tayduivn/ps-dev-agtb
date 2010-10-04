@@ -115,6 +115,11 @@ echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['
 <BR>
 <select name="touser" id="touser">
 <?php
+if(isset($_SESSION['reassignRecords']['fromuser']) && isset($all_users[$_SESSION['reassignRecords']['fromuser']]))
+{
+	unset($all_users[$_SESSION['reassignRecords']['fromuser']]);
+}
+
 echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['touser']) ? $_SESSION['reassignRecords']['touser'] : '');
 ?>
 </select>

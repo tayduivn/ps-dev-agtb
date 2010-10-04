@@ -212,15 +212,22 @@ class Employee extends Person {
 		return $query;
 	}
 	
+	//BEGIN SUGARCRM flav=int ONLY
+	//C.L. - Comment this out... the parent class Person has the proper implementation
+	//and the method is now protected so either make this protected as well or just
+	//END SUGARCRM flav=int ONLY
+	//use parent class
 	/**
 	 * Generate the name field from the first_name and last_name fields.
 	 */
+	/*
 	function _create_proper_name_field() {
         global $locale;
         $full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
         $this->name = $full_name;
         $this->full_name = $full_name; 
 	}
+	*/
 	
 	function preprocess_fields_on_save(){		
 		parent::preprocess_fields_on_save();	

@@ -58,11 +58,10 @@ if(is_admin($current_user)){
                     if(!isset($_REQUEST['upgradeWizard'])){
                         echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
                     }
-                    $category = isset($mod->acl_category)?$mod->acl_category:$mod->module_dir;
                     if(!empty($mod->acltype)){
-                        ACLAction::addActions($category, $mod->acltype);
+                        ACLAction::addActions($mod->getACLCategory(), $mod->acltype);
                     }else{
-                        ACLAction::addActions($category);
+                        ACLAction::addActions($mod->getACLCategory());
                     }
 
                     $installed_classes[$class] = true;
@@ -72,7 +71,7 @@ if(is_admin($current_user)){
                     if(!isset($_REQUEST['upgradeWizard'])){
                         echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
                     }
-                    ACLAction::addActions($mod->module_dir, 'DCE');
+                    ACLAction::addActions($mod->getACLCategory(), 'DCE');
                     $installed_classes[$class] = true;
 
                 }

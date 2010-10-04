@@ -85,6 +85,12 @@ class quicksearchQuery {
         if($table == 'users.') 
             $whereClause .= " AND {$table}status='Active'";
         
+        // Need to include the default whereStatement
+		if(!empty($query_obj['whereExtra'])){
+            if(!empty($whereClause))$whereClause .= ' AND ';
+            $whereClause .= html_entity_decode($query_obj['whereExtra'],ENT_QUOTES);
+		}
+		
         return $whereClause;
     }
     
@@ -172,10 +178,6 @@ class quicksearchQuery {
                     if(!empty($app_list_strings[$list_return[$i]->field_name_map[$field]['options']])) {
                         $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
                     }
-                }
-                //Match name field for People
-             	if ($list_return[$i] instanceof Person) {
-                	$list_return[$i]->_create_proper_name_field();
                 }
                
                 //BEGIN SUGARCRM flav=pro ONLY

@@ -3788,6 +3788,8 @@ class InboundEmail extends SugarBean {
 		///////////////////////////////////////////////////////////////////
 		////	CALCULATE CORRECT SENT DATE/TIME FOR EMAIL
 		if(!empty($headerDate)) {
+		    // Bug 25254 - Strip trailing space that come in some header dates (maybe ones with 1-digit day number)
+		    $headerDate = trim($headerDate);
 			// need to hack PHP/windows' bad handling of strings when using POP3
 			if(strstr($headerDate,'+0000 GMT')) {
 				$headerDate = str_replace('GMT','', $headerDate);

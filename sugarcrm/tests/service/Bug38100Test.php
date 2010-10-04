@@ -1,6 +1,8 @@
-<?php
+<?php 
 //FILE SUGARCRM flav=pro ONLY
+require_once('include/nusoap/nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
+
 /**
  * @ticket 38100
  */

@@ -26,7 +26,7 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-        @ob_end_clean();
+		@ob_end_clean();
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact->id}'");
         unset($this->_contact);
 	}

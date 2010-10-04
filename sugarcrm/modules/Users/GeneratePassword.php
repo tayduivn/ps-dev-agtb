@@ -31,6 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
     require_once('modules/Users/language/en_us.lang.php');
     global $app_strings;
+    global $sugar_config;
     global $new_pwd;
 
   	$mod_strings=return_module_language('','Users');
@@ -196,6 +197,10 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
     	$htmlBody = str_replace('$contact_user_user_hash', $password, $htmlBody);
     	$body = str_replace('$contact_user_user_hash', $password, $body);
     }
+    // Bug 36833 - Add replacing of special value $instance_url
+    $htmlBody = str_replace('$config_site_url',$sugar_config['site_url'], $htmlBody);
+    $body = str_replace('$config_site_url',$sugar_config['site_url'], $body);
+    
     $htmlBody = str_replace('$contact_user_user_name', $usr->user_name, $htmlBody);
     $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate2::getInstance()->nowDb(), $htmlBody);
     $body = str_replace('$contact_user_user_name', $usr->user_name, $body);

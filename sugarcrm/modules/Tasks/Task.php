@@ -259,11 +259,22 @@ class Task extends SugarBean {
 	function get_list_view_data(){
 		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate;
 
+		$override_date_for_subpanel = false;
+		if(!empty($_REQUEST['module']) && $_REQUEST['module'] !='Tasks' && $_REQUEST['module'] !='Home'){
+			//this is a subpanel list view, so override the due date with start date so that collections subpanel works as expected
+			$override_date_for_subpanel = true;
+		}
+		
 		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
 		$task_fields = $this->get_list_view_array();
 		$dbtime = $timedate->to_db($task_fields['DATE_DUE']);
+		if($override_date_for_subpanel){		
+			$dbtime = $timedate->to_db($task_fields['DATE_START']);
+		}
+		
         $task_fields['TIME_DUE'] = $timedate->to_display_time($dbtime);
         $task_fields['DATE_DUE'] = $timedate->to_display_date($dbtime);
+		
 
         $date_due = $task_fields['DATE_DUE'];
 
@@ -280,10 +291,19 @@ class Task extends SugarBean {
         $dd = $timedate->to_db_date($date_due, false);
 		if ($dd < $today){
 			$task_fields['DATE_DUE']= "<font class='overdueTask'>".$date_due."</font>";
+			if($override_date_for_subpanel){			
+				$task_fields['DATE_START']= "<font class='overdueTask'>".$date_due."</font>";
+			}
 		}else if( $dd	== $today ){
 			$task_fields['DATE_DUE'] = "<font class='todaysTask'>".$date_due."</font>";
+			if($override_date_for_subpanel){			
+				$task_fields['DATE_START'] = "<font class='todaysTask'>".$date_due."</font>";
+			}
 		}else{
 			$task_fields['DATE_DUE'] = "<font class='futureTask'>".$date_due."</font>";
+			if($override_date_for_subpanel){			
+				$task_fields['DATE_START'] = "<font class='futureTask'>".$date_due."</font>";
+			}
 		}
 
 		//make sure we grab the localized version of the contact name, if a contact is provided

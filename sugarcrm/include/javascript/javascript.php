@@ -158,7 +158,7 @@ class javascript{
 	}
 	
 	function addFieldGeneric($field, $type,$displayName, $required, $prefix=''){
-		$this->script .= "addToValidate('".$this->formname."', '".$prefix.$field."', '".$type . "', $required,'". $this->stripEndColon(translate($displayName,$this->sugarbean->module_dir)) . "' );\n";
+		$this->script .= "addToValidate('".$this->formname."', '".$prefix.$field."', '".$type . "', $required,\"". $this->stripEndColon(translate($displayName,$this->sugarbean->module_dir)) . "\" );\n";
 	}
 
 	function addFieldRange($field, $type,$displayName, $required, $prefix='',$min, $max){

@@ -172,6 +172,21 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
                     $fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
             }
         }
+        
+        //If no fields with the unified flag have been set then lets add a default field.
+        if( empty($fields) )
+        {
+            if( isset($dictionary[$beanName]['fields']['name']) && isset($searchFields[$moduleName]['name'])  )
+                $fields['name'] = $searchFields[$moduleName]['name'];
+            else 
+            {
+                if( isset($dictionary[$beanName]['fields']['first_name']) && isset($searchFields[$moduleName]['first_name']) )
+                    $fields['first_name'] = $searchFields[$moduleName]['first_name'];
+                if( isset($dictionary[$beanName]['fields']['last_name']) && isset($searchFields[$moduleName]['last_name'])  )
+                    $fields['last_name'] = $searchFields[$moduleName]['last_name'];
+            }
+        }
+        
 		return $fields;
     }
     
@@ -239,6 +254,19 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 			} //foreach
 		} //if
 
+		if($value->module_dir == 'Meetings')
+		{
+		    if( isset($module_fields['duration_minutes']) && isset($GLOBALS['app_list_strings']['duration_intervals'])) 
+		    {
+		        $options_dom = $GLOBALS['app_list_strings']['duration_intervals'];
+		        $options_ret = array();
+		        foreach($options_dom as $key=>$oneOption)
+						$options_ret[$key] = $this->get_name_value($key,$oneOption);
+		        
+		        $module_fields['duration_minutes']['options'] = $options_ret;
+		    }
+		}
+		
 		if($value->module_dir == 'Bugs'){
 			require_once('modules/Releases/Release.php');
 			$seedRelease = new Release();
@@ -280,5 +308,29 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_field_list');
 		return array('module_fields' => $module_fields, 'link_fields' => $link_fields);
+	}
+	
+	/**
+	 * Return the contents of a file base64 encoded
+	 *
+	 * @param string $filename - Full path of filename
+	 * @param bool $remove - Indicates if the file should be removed after the contents is retrieved.
+	 * 
+	 * @return string - Contents base64'd.
+	 */
+	function get_file_contents_base64($filename, $remove = FALSE)
+	{
+	    $contents = "";
+	    if( file_exists($filename) )
+	    {
+	        $fp = sugar_fopen($filename, 'rb');
+	        $file = fread($fp, filesize($filename));
+	        fclose($fp);
+	        $contents =  base64_encode($file);
+	        if($remove)
+    	        @unlink($filename);
+	    }
+	    
+	    return $contents;
 	}
 }
