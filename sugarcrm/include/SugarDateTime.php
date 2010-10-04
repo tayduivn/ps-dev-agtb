@@ -278,7 +278,7 @@ class SugarDateTime extends DateTime
 	}
 
 	/**
-	 * Get the beginning of the current day
+	 * Get the beginning of the given day
 	 */
 	function get_day_begin($day = null, $month = null, $year = null)
 	{
@@ -292,9 +292,9 @@ class SugarDateTime extends DateTime
 	}
 
 	/**
-	 * Get the last timestamp of the current day
+	 * Get the last timestamp of the given day
 	 */
-	function get_day_end()
+	function get_day_end($day = null, $month = null, $year = null)
 	{
 	    $newdate = clone $this;
 	    $newdate->setDate(
