@@ -418,6 +418,7 @@ class TimeDate2
      * Format DateTime object as DB date
      * Note: by default does not convert TZ!
      * @param DateTime $date
+     * @param boolean $tz Perform TZ conversion?
      * @return string
      */
     public function asDbDate(DateTime $date, $tz = false)
@@ -430,6 +431,7 @@ class TimeDate2
      * Format DateTime object as user date
      * Note: by default does not convert TZ!
      * @param DateTime $date
+     * @param boolean $tz Perform TZ conversion?
      * @return string
      */
     public function asUserDate(DateTime $date, $tz = false)
@@ -479,7 +481,9 @@ class TimeDate2
     }
 
     /**
-     * Get DateTime from DB datetime string
+     * Get DateTime from DB datetime string using non-standard format
+     *
+     * Non-standard format usually would be only date, only time, etc.
      *
      * @param string $date
      * @param string $format format to accept
@@ -525,6 +529,25 @@ class TimeDate2
         } catch (Exception $e) {
             $uf = $this->get_time_format($user);
             $GLOBALS['log']->error("Conversion of $date from user format $uf failed: {$e->getMessage()}");
+            return null;
+        }
+    }
+
+    /**
+     * Create a date object from any string
+     *
+     * Same formats accepted as for DateTime ctor
+     *
+     * @param string $date
+     * @param User $user
+     * @return SugarDateTime
+     */
+    public function fromString($date, User $user = null)
+    {
+        try {
+            $sdate = new SugarDateTime($date, $this->_getUserTZ($user));
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("Conversion of $date from string failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -1020,8 +1043,8 @@ class TimeDate2
         $min->setTimezone(self::$gmtTimezone);
         $max->setTimezone(self::$gmtTimezone);
 
-        $gmtDateTime['date'] = $this->asDbDate($max);
-        $gmtDateTime['time'] = $this->asDbDate($max);
+        $gmtDateTime['date'] = $this->asDbDate($max, false);
+        $gmtDateTime['time'] = $this->asDbDate($max, false);
         $gmtDateTime['min'] = $this->asDb($min);
         $gmtDateTime['max'] = $this->asDb($max);
 
