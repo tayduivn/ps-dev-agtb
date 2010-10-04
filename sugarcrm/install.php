@@ -404,10 +404,8 @@ if($next_clicked) {
             if(empty($_SESSION['setup_license_key'])){
                 $_SESSION['setup_license_key']  = '';
             }
-                $_SESSION['setup_license_key_users'] = 50;
-                $nextYear = time() + (7 * 24 * 60 * 60 * 4 * 12);
-                $_SESSION['setup_license_key_expire_date'] = date($timedate->get_date_format(), $nextYear);
-
+            $_SESSION['setup_license_key_users'] = 50;
+            $_SESSION['setup_license_key_expire_date'] = $timedate->asDbDate($timedate->getNow()->get("next year"));
             //END SUGARCRM flav=int ONLY
 
             break;

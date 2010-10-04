@@ -467,8 +467,8 @@ rebuildConfigFile($sugar_config, $sugar_config['sugar_version']);
             $inst->account_id = $accounts[mt_rand(0,$accCount)];
             $inst->license_key = create_guid();
             $inst->license_duration = returnLicenseDuration($instance_type);
-            $inst->license_start_date = $timedate->now();
-            $inst->license_expire_date = $timedate->to_db_date($inst->returnExpirationDate($inst->license_start_date,$inst->license_duration));
+            $inst->license_start_date = $timedate->asDbDate($timedate->getNow());
+            $inst->license_expire_date = $inst->returnExpirationDate($inst->license_start_date,$inst->license_duration);
             $inst->licensed_users = mt_rand(1,15);
             $inst->type =$instance_type;
             $inst->dcetemplate_id= $templates[mt_rand(0,$templCount)];//gettemplate
@@ -649,13 +649,7 @@ rebuildConfigFile($sugar_config, $sugar_config['sugar_version']);
     //this function sets the time ranges for the dce report seed data
     function returnTimeRanges($datesToRemove = 1){
         global $timedate;
-         //change time into timestamp
-        $now = date($GLOBALS['timedate']->get_db_date_time_format());
-        $stim = strtotime($now);
-        //remove a day from timestamp
-        $ytim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)-$datesToRemove,   date("Y",$stim));
-        //convert back into gm date format
-        $yesterday = gmdate($GLOBALS['timedate']->dbDayFormat,$ytim);
+        $yesterday = $timedate->asDbDate($timedate->getNow()->get("yesterday"));
 
         //create the 24 hour ranges
         $hour['range1']['start'] = $timedate->to_display_date_time($yesterday. ' 0:00:00');
@@ -725,12 +719,12 @@ rebuildConfigFile($sugar_config, $sugar_config['sugar_version']);
         if($inst->db->dbType == 'oci8'){
             $insrtQRY = "INSERT INTO dceinstances_contacts (id , contact_id , instance_id , contact_role , date_modified , deleted )
             VALUES ('".create_guid()."', '".$relContacts[0]."', '".$inst->id."',
-                    '".$roles[mt_rand(0,1)]."',  to_date('".TimeDate2::getInstance()->nowDb()."', 'YYYY-MM-DD HH24:MI:SS'), '0')";
+                    '".$roles[mt_rand(0,1)]."',  to_date('".$timedate->nowDb()."', 'YYYY-MM-DD HH24:MI:SS'), '0')";
 
         }else{
             $insrtQRY = "INSERT INTO dceinstances_contacts (id , contact_id , instance_id , contact_role , date_modified , deleted )
             VALUES ('".create_guid()."', '".$relContacts[0]."', '".$inst->id."',
-                    '".$roles[mt_rand(0,1)]."', '".TimeDate2::getInstance()->nowDb()."', '0')";
+                    '".$roles[mt_rand(0,1)]."', '".$timedate->nowDb()."', '0')";
         }
              //execute query
              $inst->db->query($insrtQRY);
