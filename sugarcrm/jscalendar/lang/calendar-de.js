@@ -60,10 +60,6 @@ Calendar._SMN = new Array
 
 // tooltips
 if(Calendar._TT == undefined) Calendar._TT = {};
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 
 Calendar._TT["ABOUT"] =
 "DHTML Datum/Zeit Selector\n" +

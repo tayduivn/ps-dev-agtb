@@ -2750,7 +2750,6 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-//BEGIN SUGARCRM flav=int || flav=sales ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2760,7 +2759,6 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
-//END SUGARCRM flav=int || flav=sales ONLY
 }
 
 /**
@@ -3824,6 +3822,7 @@ function getTrackerSubstring($name) {
 	static $max_tracker_item_length;
 
 	//Trim the name
+	$name = html_entity_decode($name, ENT_QUOTES, 'UTF-8');
 	$strlen = function_exists('mb_strlen') ? mb_strlen($name) : strlen($name);
 
 	global $sugar_config;
