@@ -55,14 +55,8 @@
 </tr>
 {/if}
 <tr>
-    <td valign='top' nowrap class='dataLabel'>{$heightLbl}</td>
-    <td valign='top' class='dataField'>
-    	<input class="text" name="height" size='3' value='{$height}'>
-    </td>
-</tr>
-<tr>
     <td align="right" colspan="2">
-        <input type='submit' class='button' value='{$saveLbl}'>
+        <input type='submit' class='button' value='{$lang.LBL_SAVE}'>
    	</td>
 </tr>
 </table>

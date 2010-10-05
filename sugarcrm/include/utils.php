@@ -194,7 +194,6 @@ function make_sugar_config(&$sugar_config)
 	    'systexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
-
 	 //BEGIN SUGARCRM flav=pro ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
 	    'minpwdlength' => '',
