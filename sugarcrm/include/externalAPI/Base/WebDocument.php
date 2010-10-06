@@ -1,14 +1,14 @@
 <?php
-abstract class WebDocument{
-	abstract function uploadDoc($fileToUpload, $docName, $mineType);
+interface WebDocument {
+	public function uploadDoc($fileToUpload, $docName, $mineType);
 
-    abstract function downloadDoc($documentId, $documentFormat);
+    public function downloadDoc($documentId, $documentFormat);
 	
-	abstract function shareDoc($documentId, $emails);
+	public function shareDoc($documentId, $emails);
 	
-	abstract function browseDoc($meeting, $attendeeName);
+	public function browseDoc($meeting, $attendeeName);
 	
-	abstract function deleteDoc($documentId);
+	public function deleteDoc($documentId);
 
-    abstract function searchDoc($keywords);
+    public function searchDoc($keywords);
 }

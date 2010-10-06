@@ -1,8 +1,9 @@
 <?php
 
+require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class GoToMeeting extends WebMeeting {
+class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
     private $login_key;
     
@@ -22,10 +23,19 @@ class GoToMeeting extends WebMeeting {
         $this->edit_xml = $edit_xml;
     }
     
-    function loadEAPM($eapmData) {
+    public function loadEAPM($eapmData) {
         $this->account_url = $eapmData['url'].$this->urlExtension;
         $this->account_name = $eapmData['name'];
         $this->account_password = $eapmData['password'];    
+    }
+
+    public function checkLogin() {
+        $reply = $this->login();
+        if ( $reply['success'] ) {
+            $this->logoff();
+        }
+
+        return $reply;
     }
     
     function login() {
@@ -49,7 +59,7 @@ class GoToMeeting extends WebMeeting {
         return $response;
     }
     
-    function logoff() {
+    public function logoff() {
         $doc = new SimpleXMLElement($this->logoff_xml);
         $namespaces = $doc->getDocNamespaces();
         $body = $doc->children($namespaces['soap']);

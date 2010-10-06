@@ -258,3 +258,23 @@ $edit_xml = <<<EDT
    </body>
 </message>
 EDT;
+
+$getuser_xml = <<<EXM
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<message xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <header>
+ <securityContext>
+      <webExID></webExID>
+      <password></password>
+      <siteID></siteID>
+      <siteName></siteName>
+      <partnerID></partnerID>
+    </securityContext>
+   </header>
+   <body>
+      <bodyContent xsi:type="java:com.webex.service.binding.user.GetUser">
+          <webExId></webExId>
+      </bodyContent>
+   </body>
+</message>
+EXM;

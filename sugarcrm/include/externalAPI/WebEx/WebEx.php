@@ -1,8 +1,9 @@
 <?php
 
+require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class WebEx extends WebMeeting {
+class WebEx implements ExternalAPIPlugin,WebMeeting {
 
     protected $dateFormat = 'm/d/Y H:i:s';
     protected $urlExtension = '/WBXService/XMLService';
@@ -24,14 +25,25 @@ class WebEx extends WebMeeting {
       $this->joinmeeting_xml = $joinmeeting_xml;
       $this->hostmeeting_xml = $hostmeeting_xml;
       $this->edit_xml = $edit_xml;
+      $this->getuser_xml = $getuser_xml;
    }
 	
-    function loadEAPM($eapmData) {
+    public function loadEAPM($eapmData) {
         $this->account_url = $eapmData['url'].$this->urlExtension;
         $this->account_name = $eapmData['name'];
         $this->account_password = $eapmData['password'];    
     }
-    
+
+    public function checkLogin() {
+        $doc = new SimpleXMLElement($this->getuser_xml);
+        $this->addAuthenticationInfo($doc);
+        
+        $doc->body->bodyContent->webExId = $this->account_name;
+
+        $reply = $this->postMessage($doc);
+        
+        return $reply;
+    }
 	
 	/**
 	 * Create a new WebEx meeting.

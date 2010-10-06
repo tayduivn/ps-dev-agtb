@@ -1,9 +1,10 @@
 <?php
+require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
-class Google extends WebDocument{
+class Google implements ExternalAPIPlugin,WebDocument {
     public $useAuth = true;
     public $requireAuth = true;
     public $supportedModules = array('Documents');
@@ -13,10 +14,29 @@ class Google extends WebDocument{
 		require_once('include/externalAPI/Google/GoogleXML.php');
 	}
 	
-    function loadEAPM($eapmData) {
+    public function loadEAPM($eapmData) {
 		$this->account_url = $eapmData['url'];
 		$this->account_name = $eapmData['name'];
 		$this->account_password = $eapmData['password'];
+    }
+
+    public function checkLogin() {
+        // Emulate a reply
+        $reply['success'] = TRUE;
+
+        try {
+            $this->getClient();
+        } catch (Exception $e) {
+            $reply['success'] = FALSE;
+            $reply['errorMessage'] = $e->getMessage();
+        }
+
+        return $reply;
+    }
+
+    public function logOff() {
+        // Not sure if we should do anything.
+        return true;
     }
 
 	protected function getClient(){
