@@ -33,7 +33,7 @@ $popupMeta = array(
 		'is_group' => 'users.is_group',
 		//END SUGARCRM flav!=sales ONLY
 	),
-	'whereStatement'=> " users.status = 'Active' and users.portal_only= '0'",
+	'whereStatement'=> " users.status = 'Active' and users.portal_only= '0' and users.is_group = '0'",
 	'searchInputs' => array(
 		'first_name',
 		'last_name',

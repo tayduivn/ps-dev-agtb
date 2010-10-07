@@ -83,7 +83,7 @@ class vCard
 	
 	function setName($first_name, $last_name, $prefix){
 		$this->name = strtr($first_name.'_'.$last_name, ' ' , '_');
-		$this->setProperty('N',$last_name.';'.$first_name.';'.$prefix );
+		$this->setProperty('N',$last_name.';'.$first_name.';;'.$prefix );
 		$this->setProperty('FN',"$prefix $first_name $last_name"); 
 	}
 	
@@ -91,8 +91,14 @@ class vCard
 		$this->setProperty('EMAIL;INTERNET', $address);
 	}
 	
-	function setPhoneNumber( $number, $type){
-		$this->setProperty("TEL;$type", $number);
+	function setPhoneNumber( $number, $type)
+	{
+		if($type != 'FAX') {
+		    $this->setProperty("TEL;$type", $number);
+		} 
+		else {
+		    $this->setProperty("TEL;WORK;$type", $number);
+		}
 	}
 	function setBirthDate($date){
 			$this->setProperty('BDAY',$date);
