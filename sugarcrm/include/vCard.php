@@ -91,8 +91,14 @@ class vCard
 		$this->setProperty('EMAIL;INTERNET', $address);
 	}
 	
-	function setPhoneNumber( $number, $type){
-		$this->setProperty("TEL;$type", $number);
+	function setPhoneNumber( $number, $type)
+	{
+		if($type != 'FAX') {
+		    $this->setProperty("TEL;$type", $number);
+		} 
+		else {
+		    $this->setProperty("TEL;WORK;$type", $number);
+		}
 	}
 	function setBirthDate($date){
 			$this->setProperty('BDAY',$date);
