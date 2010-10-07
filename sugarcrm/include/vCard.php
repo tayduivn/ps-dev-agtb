@@ -83,7 +83,7 @@ class vCard
 	
 	function setName($first_name, $last_name, $prefix){
 		$this->name = strtr($first_name.'_'.$last_name, ' ' , '_');
-		$this->setProperty('N',$last_name.';'.$first_name.';'.$prefix );
+		$this->setProperty('N',$last_name.';'.$first_name.';;'.$prefix );
 		$this->setProperty('FN',"$prefix $first_name $last_name"); 
 	}
 	
