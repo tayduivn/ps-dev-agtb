@@ -33,7 +33,7 @@ global $current_user;
 
 $dashletData['MyQuotesDashlet']['searchFields'] = array('quote_stage'             => array('default' => ''),
                                                        'name'             => array('default' => ''),
-												       'quote_num'             => array('default' => ''),
+												       'date_quote_expected_closed'             => array('default' => ''),
                                                        //'date_modified'    => array('default' => ''),
                                                        //BEGIN SUGARCRM flav=pro ONLY
                                                        'team_id'          => array('default' => '', 'label' => 'LBL_TEAMS'),
@@ -72,7 +72,7 @@ $dashletData['MyQuotesDashlet']['columns'] = array('quote_num' => array(
         'currency_format' => true,
         'align' => 'right'
     ),
-	'date_quote_expected_close' => array(
+	'date_quote_expected_closed' => array(
 		'width' => '15', 
 		'label' => 'LBL_LIST_DATE_QUOTE_EXPECTED_CLOSED',
         'link' => false,
