@@ -119,6 +119,9 @@ class SugarFieldRelate extends SugarFieldBase {
         if(isset($displayParams['formName'])) {
             $form_name = $displayParams['formName'];
         }
+     	if(!empty($vardef['rname']) && $vardef['rname'] == 'user_name'){
+        	$displayParams['useIdSearch'] = true;
+        }
         
         //Special Case for accounts; use the displayParams array and retrieve
         //the key and copy indexes.  'key' is the suffix of the field we are searching

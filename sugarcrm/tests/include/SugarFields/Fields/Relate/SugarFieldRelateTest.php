@@ -79,4 +79,54 @@ class SugarFieldRelateTest extends Sugar_PHPUnit_Framework_TestCase
             'John Mertic'
             );
     }
+    
+    /**
+     * @group bug38548
+    */
+    public function testGetSearchViewSmarty(){
+    	$vardef = array (
+			'name' => 'assigned_user_id',
+			'rname' => 'user_name',
+			'id_name' => 'assigned_user_id',
+			'vname' => 'LBL_ASSIGNED_TO_ID',
+			'group'=>'assigned_user_name',
+			'type' => 'relate',
+			'table' => 'users',
+			'module' => 'Users',
+			'reportable'=>true,
+			'isnull' => 'false',
+			'dbType' => 'id',
+			'audited'=>true,
+			'comment' => 'User ID assigned to record',
+            'duplicate_merge'=>'disabled'           
+		);
+		$displayParams = array();
+		$sfr = new SugarFieldRelate('relate');
+		$output = $sfr->getSearchViewSmarty(array(), $vardef, $displayParams, 0);
+		$this->assertContains('name="{$Array.assigned_user_id', $output, 'Testing that the name property is in the form for thr assigned_user_id field');
+		
+		$vardef =  array (
+				    'name' => 'account_name',
+				    'rname' => 'name',
+				    'id_name' => 'account_id',
+				    'vname' => 'LBL_ACCOUNT_NAME',
+				    'type' => 'relate',
+				    'table' => 'accounts',
+				    'join_name'=>'accounts',
+				    'isnull' => 'true',
+				    'module' => 'Accounts',
+				    'dbType' => 'varchar',
+				    'link'=>'accounts',
+				    'len' => '255',
+				   	 'source'=>'non-db',
+				   	 'unified_search' => true,
+				   	 'required' => true,
+				   	 'importable' => 'required',
+				     'required' => true,
+				  );
+		$displayParams = array();
+		$sfr = new SugarFieldRelate('relate');
+		$output = $sfr->getSearchViewSmarty(array(), $vardef, $displayParams, 0);
+		$this->assertNotContains('name="{$Array.account_id', $output, 'Testing that the name property for account_id is not in the form.');
+    }
 }
