@@ -758,4 +758,26 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 				"Bad min result for {$datetest["date"]} format {$datetest["tf"]}");
 		}
 	}
+	
+	public function providerSplitDateTime()
+	{
+	    return array(
+	        array("2009-10-04 02:00:00","2009-10-04","02:00:00"),
+	        array("10/04/2010 2:00pm","10/04/2010","2:00pm"),
+	        array("10-04-2010 2:00","10-04-2010","2:00"),
+	        );
+	}
+	
+	/**
+	 * @dataProvider providerSplitDateTime
+	 */
+	public function testSplitDateTime(
+	    $datetime,
+	    $date,
+	    $time
+	    )
+	{
+	    $this->assertEquals($date,$this->time_date->getDatePart($datetime));
+	    $this->assertEquals($time,$this->time_date->getTimePart($datetime));
+	}
 }

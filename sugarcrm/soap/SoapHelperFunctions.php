@@ -262,7 +262,7 @@ function get_name_value($field,$value){
 }
 
 function get_user_module_list($user){
-	global $app_list_strings, $current_language;
+	global $app_list_strings, $current_language, $beanList, $beanFiles;
 
 	$app_list_strings = return_app_list_strings_language($current_language);
 	$modules = query_module_access_list($user);
@@ -290,8 +290,18 @@ function get_user_module_list($user){
 		} else {
 			$modules[$key] = '';
 		} // else
-	} // foreach
-
+	} // foreach		
+	
+	//Remove all modules that don't have a beanFiles entry associated with it
+	foreach($modules as $module_name=>$module)
+	{
+		$class_name = $beanList[$module_name];
+		if(empty($beanFiles[$class_name]))
+		{
+		   unset($modules[$module_name]);   
+		}
+	}	
+	
 	return $modules;
 
 }
