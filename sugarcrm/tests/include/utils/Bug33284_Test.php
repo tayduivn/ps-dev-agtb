@@ -21,6 +21,8 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function test_get_tracker_substring1()
     {
+        global $sugar_config;       
+        
         //BEGIN SUGARCRM flav=com ONLY
         $default_length = 15;
         //END SUGARCRM flav=com ONLY
