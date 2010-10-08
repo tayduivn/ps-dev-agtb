@@ -5474,8 +5474,8 @@ margin-left: 5px;
     margin-left:5px !important;
 }
 
-table.olBgClass, table.olBgClass table {
-    width: auto !important;   
+#detailpanel_1 table.olBgClass, #detailpanel_1 table.olBgClass table {
+    *width: auto !important;   
 }
 
 
