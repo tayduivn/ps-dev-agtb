@@ -5477,3 +5477,8 @@ margin-left: 5px;
 table.olBgClass, table.olBgClass table {
     width: auto !important;   
 }
+
+
+.acceptMeeting {
+white-space: nowrap;
+}
