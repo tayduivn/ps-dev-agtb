@@ -21,6 +21,8 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function test_get_tracker_substring1()
     {
+        global $sugar_config;       
+        
         //BEGIN SUGARCRM flav=com ONLY
         $default_length = 15;
         //END SUGARCRM flav=com ONLY
@@ -28,6 +30,8 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
         $default_length = 30;
         //END SUGARCRM flav!=com ONLY    	
     	
+        $sugar_config['tracker_max_display_length'] = $default_length;
+        
         $test_string = 'The quick brown fox jumps over lazy dogs';
         $display_string = getTrackerSubstring($test_string);
         $this->assertEquals(strlen($display_string), $default_length, 'Assert that the string length is equal to ' . $default_length . ' characters');
