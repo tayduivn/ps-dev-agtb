@@ -399,6 +399,10 @@ $app_list_strings = array (
     'Held' => 'Held',
     'Not Held' => 'Not Held',
   ),
+  'extapi_meeting_password' =>
+  array (
+      'WebEx' => 'WebEx',
+  ),
   'meeting_type_dom' =>
    array (
       'Other' => 'Other',

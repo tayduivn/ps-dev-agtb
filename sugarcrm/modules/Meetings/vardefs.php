@@ -57,7 +57,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_PASSWORD',
     'type' => 'varchar',
     'len' => '50',
-    'comment' => 'Meeting password'
+    'comment' => 'Meeting password',
+    'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
   ),
   'join_url' =>
   array (

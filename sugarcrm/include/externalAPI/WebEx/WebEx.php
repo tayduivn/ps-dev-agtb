@@ -11,7 +11,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
     public $useAuth = true;
     public $requireAuth = true;
     public $supportedModules = array('Meetings');
-
+    public $supportMeetingPassword = true;
 
 	function __construct() {
       require('include/externalAPI/WebEx/WebExXML.php');

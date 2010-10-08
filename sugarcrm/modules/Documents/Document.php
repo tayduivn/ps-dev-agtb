@@ -302,7 +302,7 @@ class Document extends SugarBean {
 function getDocumentsExternalApiDropDown() {
     require_once('include/externalAPI/ExternalAPIFactory.php');
     
-    $apiList = externalAPIFactory::getModuleDropDown('Documents');
+    $apiList = ExternalAPIFactory::getModuleDropDown('Documents');
     
     // FIXME: translate
     $apiList = array_merge(array('Sugar'=>'Sugar'),$apiList);

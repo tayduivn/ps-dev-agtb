@@ -79,7 +79,7 @@ class EAPM extends Basic {
        $id = parent::save($check_notify);
        
        // Now time to test if the login info they typed in actually works.
-       $api = ExternalAPIFactory::loadAPI($this->application);
+       $api = ExternalAPIFactory::loadAPI($this->application,false);
        $reply = $api->checkLogin();
        
        $this->login_success = $reply['success'];
