@@ -5314,7 +5314,7 @@ li div.star {float:none;}
 .star div {background-image:url('../../../../index.php?entryPoint=getImage&imageName=star-sheet.png');width:18px;height:18px;float:left;}
 .star div.on {background-position:0px 0px}
 .star div.off {background-position:0px -18px}
-.star div:hover {cursor:pointer;}
+.star div:hover {cursor:pointer;background-position:0px 0px;}
 
 .follow {float:left}
 li div.follow {float:none;}
