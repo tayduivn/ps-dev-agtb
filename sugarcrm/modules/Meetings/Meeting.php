@@ -401,7 +401,9 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
+		
 		if($this->assigned_user_id == $GLOBALS['current_user']->id){
+			$join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" alt="Start Meeting"');
 			$meeting_fields['DISPLAYED_URL'] = $this->host_url;
 		}else{
 			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
@@ -409,9 +411,10 @@ class Meeting extends SugarBean {
 		
 		$meeting_fields['JOIN_MEETING']  = '';
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
-			$icon_img_html = SugarThemeRegistry::current()->getImage('join_imeeting', 'border="0" alt="join_imeeting"');
-			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . "$icon_img_html</a>";
+			if(empty($join_icon))$join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" alt="Join Meeting"');
+			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . $join_icon . '</a>';
 		}
+	
 		return $meeting_fields;
 	}
 
