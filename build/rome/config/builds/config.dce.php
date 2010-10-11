@@ -64,7 +64,7 @@ $config['blackList']['dce'] = array(
 
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,
 'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,
-'sugarcrm/themes/default/images/exchange_logo.png'=>1
+'sugarcrm/themes/default/images/exchange_logo.png'=>1,
 
 'sugarcrm/modules/Notifications'=>1,
 'sugarcrm/themes/default/images/icon_notifications.gif'=>1,
