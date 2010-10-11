@@ -260,7 +260,7 @@ class Task extends SugarBean {
 		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate;
 
 		$override_date_for_subpanel = false;
-		if(!empty($_REQUEST['module']) && $_REQUEST['module'] !='Tasks' && $_REQUEST['module'] !='Home'){
+		if(!empty($_REQUEST['module']) && $_REQUEST['module'] !='Calendar' && $_REQUEST['module'] !='Tasks' && $_REQUEST['module'] !='Home'){
 			//this is a subpanel list view, so override the due date with start date so that collections subpanel works as expected
 			$override_date_for_subpanel = true;
 		}
