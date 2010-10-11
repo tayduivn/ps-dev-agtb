@@ -117,7 +117,8 @@ $lv->delete = false;
 $lv->select = false;
 $lv->mailMerge = false;
 $lv->multiSelect = false;
-$lv->setup($seedTask, 'include/ListView/ListViewGeneric.tpl', $where, $params);
+$lv->showMassupdateFields = false;
+$lv->setup($seedTask, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params);
 echo get_module_title($current_module_strings['LBL_MODULE_NAME'], $current_module_strings['LBL_LIST_FORM_TITLE'], false);
 
 

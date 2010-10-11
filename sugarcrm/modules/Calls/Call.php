@@ -142,7 +142,7 @@ class Call extends SugarBean
         	isset($this->duration_minutes) ) {
     			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
     			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
+    			$this->date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
         }
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
@@ -429,7 +429,7 @@ class Call extends SugarBean
 			if(empty($action))
 			    $action = "index";
 
-			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$currentModule\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";  
 			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Calls')." border='0'")."</a>";
 		}
 		global $timedate;

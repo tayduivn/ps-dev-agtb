@@ -45,7 +45,10 @@
 	
 	<div class='add_table' style='margin-bottom:5px'>
 		<table id="themeSettings" class="themeSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
-			<tr>
+            <td nowrap><b>{$MOD.DEFAULT_THEME}</b> &nbsp;
+                <select name='default_theme' id='default_theme'>{$THEMES}</select>
+            </td>
+		    <tr>
 				<td width='1%'>
 					<div id="enabled_div"></div>	
 				</td>
@@ -109,8 +112,14 @@
 		var themes = [];
 		for(var i=0; i < disabledTable.getRecordSet().getLength(); i++){
 			var data = disabledTable.getRecord(i).getData();
-			if (data.dir && data.dir != '')
+			if (data.dir && data.dir != '') {
 			    themes[i] = data.dir;
+			    if ( themes[i] == document.getElementById('default_theme').value ) {
+			        if ( !confirm(SUGAR.language.get('Administration', 'LBL_DEFAULT_THEME_IS_DISABLED')) ) {
+			            return false;
+			        }
+			    }
+			}
 		}
 		
 		ajaxStatus.showStatus(SUGAR.language.get('Administration', 'LBL_SAVING'));
@@ -118,7 +127,7 @@
             Connect.method, 
             Connect.url, 
             {success: SUGAR.saveCallBack},
-			'to_pdf=1&module=Administration&action=ThemeSettings&disabled_themes=' + YAHOO.lang.JSON.stringify(themes)
+			'to_pdf=1&module=Administration&action=ThemeSettings&default_theme='+document.getElementById('default_theme').value+'&disabled_themes=' + YAHOO.lang.JSON.stringify(themes)
         );
 		
 		return true;

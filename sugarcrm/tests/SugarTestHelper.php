@@ -53,7 +53,7 @@ require_once('modules/Administration/QuickRepairAndRebuild.php');
 $repair = new RepairAndClear();
 $repair->module_list = array();
 $repair->show_output = false;
-$repair->clearJsLangFiles();    		
+$repair->clearJsLangFiles();
 $repair->clearJsFiles();
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -88,22 +88,68 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
     protected $backupGlobals = FALSE;
 }
 
+// define output testcase subclass
+class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTestCase
+{
+    protected $backupGlobals = FALSE;
+
+    protected $_notRegex;
+    protected $_outputCheck;
+
+    protected function NotRegexCallback($output)
+    {
+        if(empty($this->_notRegex)) {
+            return true;
+        }
+        $this->assertNotRegExp($this->_notRegex, $output);
+        return true;
+    }
+
+    public function setOutputCheck($callback)
+    {
+        if (!is_callable($callback)) {
+            throw new PHPUnit_Framework_Exception;
+        }
+
+        $this->_outputCheck = $callback;
+    }
+
+    protected function runTest()
+    {
+        $testResult = parent::runTest();
+        if($this->_outputCheck) {
+            $this->assertTrue(call_user_func($this->_outputCheck, $this->output));
+        }
+        return $testResult;
+    }
+
+    public function expectOutputNotRegex($expectedRegex)
+    {
+        if (is_string($expectedRegex) || is_null($expectedRegex)) {
+            $this->_notRegex = $expectedRegex;
+        }
+
+        $this->setOutputCheck(array($this, "NotRegexCallback"));
+    }
+
+}
+
 // define a mock logger interface; used for capturing logging messages emited
 // the test suite
 class SugarMockLogger
 {
 	private $_messages = array();
-	
+
 	public function __call($method, $message)
 	{
 		$this->messages[] = strtoupper($method) . ': ' . $message[0];
 	}
-	
+
 	public function getLastMessage()
 	{
 		return end($this->messages);
 	}
-	
+
 	public function getMessageCount()
 	{
 		return count($this->messages);

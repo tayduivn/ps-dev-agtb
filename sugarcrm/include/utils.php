@@ -763,7 +763,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
-function getUserArrayFromFullName($args) {
+function getUserArrayFromFullName($args, $show_group_and_portal_users = true) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 
@@ -786,6 +786,9 @@ function getUserArrayFromFullName($args) {
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
+	if ( $show_group_and_portal_users ) {
+	    $query .= " portal_only=0 AND is_group=0 AND "; 
+	}
 	$query .= $inClause;
 	$query .= " ORDER BY last_name ASC";
 
@@ -2750,7 +2753,6 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-//BEGIN SUGARCRM flav=int || flav=sales ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2760,7 +2762,6 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
-//END SUGARCRM flav=int || flav=sales ONLY
 }
 
 /**
@@ -3803,6 +3804,7 @@ function getTrackerSubstring($name) {
 	static $max_tracker_item_length;
 
 	//Trim the name
+	$name = html_entity_decode($name, ENT_QUOTES, 'UTF-8');
 	$strlen = function_exists('mb_strlen') ? mb_strlen($name) : strlen($name);
 
 	global $sugar_config;

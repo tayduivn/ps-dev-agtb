@@ -251,10 +251,19 @@ class Team extends SugarBean
 	function delete_team() {
 		//todo: Verify that no items are still assigned to this team.
 		if($this->id == $this->global_team) {
-			die($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM']);
+			$msg = $GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
+			$GLOBALS['log']->fatal($msg);
+			die($msg);
 		}
-		if ($this->private == '1') {
-			die($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_PRIVATE_TEAMS']);
+		
+		//Check if the associated user is deleted
+		$user = new User();
+		$user->retrieve($this->associated_user_id);
+		if($this->private == 1 && (!empty($user->id) && $user->deleted != 1))
+		{
+			$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name));
+			$GLOBALS['log']->fatal($msg);
+			die($msg);	
 		}
 
 		// Delete all team memberships for this team_id.

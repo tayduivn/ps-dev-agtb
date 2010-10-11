@@ -440,7 +440,12 @@ if($origVersion < '550' || $ce_to_pro_ent) {
                 $GLOBALS['db']->wakeupFTS();
             }
     }  
-} 
+}
+
+//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
+if($origVersion < '620'){
+	upgradeDateTimeFields();
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////

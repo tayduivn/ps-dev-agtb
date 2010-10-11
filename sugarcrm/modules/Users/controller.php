@@ -67,15 +67,7 @@ class UsersController extends SugarController
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
-                      
-            //BEGIN SUGARCRM flav=pro ONLY
-            //Mark the private team as deleted
-            $team = new Team();
-            $team->retrieve($u->getPrivateTeamID());
-            $team->deleted = 1;
-            $team->save();
-            //END SUGARCRM flav=pro ONLY
-            
+                                  
             //BEGIN SUGARCRM flav!=sales ONLY
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");

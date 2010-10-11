@@ -14,7 +14,7 @@ class SugarFieldRelate extends SugarFieldBase {
             $this->ss->assign('nolink', false);
         }
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Relate/DetailView.tpl');
+        return $this->fetch($this->findTemplate('DetailView'));
     }
     
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -102,7 +102,7 @@ class SugarFieldRelate extends SugarFieldBase {
            $displayParams['readOnly'] = $displayParams['readOnly'] == false ? '' : 'READONLY';  
         }
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Relate/EditView.tpl'); 
+        return $this->fetch($this->findTemplate('EditView')); 
     }
     
     function getPopupViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex){
@@ -118,6 +118,9 @@ class SugarFieldRelate extends SugarFieldBase {
         $form_name = 'search_form';
         if(isset($displayParams['formName'])) {
             $form_name = $displayParams['formName'];
+        }
+     	if(!empty($vardef['rname']) && $vardef['rname'] == 'user_name'){
+        	$displayParams['useIdSearch'] = true;
         }
         
         //Special Case for accounts; use the displayParams array and retrieve
@@ -191,7 +194,7 @@ class SugarFieldRelate extends SugarFieldBase {
            $displayParams['readOnly'] = $displayParams['readOnly'] == false ? '' : 'READONLY';  
         }
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Relate/SearchView.tpl'); 
+        return $this->fetch($this->findTemplate('SearchView')); 
     }    
     
     function formatField($rawField, $vardef) {

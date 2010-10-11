@@ -254,7 +254,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 			} //foreach
 		} //if
 
-		if($value->module_dir == 'Meetings')
+		if($value->module_dir == 'Meetings' || $value->module_dir == 'Calls')
 		{
 		    if( isset($module_fields['duration_minutes']) && isset($GLOBALS['app_list_strings']['duration_intervals'])) 
 		    {
@@ -333,4 +333,54 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    
 	    return $contents;
 	}
+	
+	function get_module_view_defs($module_name, $type, $view){
+        require_once('include/MVC/View/SugarView.php');
+        $metadataFile = null;
+        $results = array();
+        $view = strtolower($view);
+        switch (strtolower($type)){
+            case 'wireless':
+                if( $view == 'list'){
+                    require_once('include/SugarWireless/SugarWirelessListView.php');
+                    $GLOBALS['module'] = $module_name; //WirelessView keys off global variable not instance variable...
+                    $v = new SugarWirelessListView();
+                    $results = $v->getMetaDataFile();
+                }
+                elseif ($view == 'subpanel')
+                    $results = $this->get_subpanel_defs($module_name, $type);
+                else{
+                    require_once('include/SugarWireless/SugarWirelessView.php');
+                    $v = new SugarWirelessView();
+                    $v->module = $module_name;
+                    $fullView = ucfirst($view) . 'View';
+                    $meta = $v->getMetaDataFile('Wireless' . $fullView);
+                    $metadataFile = $meta['filename'];
+                    require($metadataFile);
+                    //Wireless detail metadata may actually be just edit metadata.
+                    $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
+                }
+                
+                break;
+            case 'default':
+            default:
+                if ($view == 'subpanel')
+                    $results = $this->get_subpanel_defs($module_name, $type);
+                else 
+                {    
+                    $v = new SugarView(null,array());
+                    $v->module = $module_name;
+                    $v->type = $view;
+                    $fullView = ucfirst($view) . 'View';
+                    $metadataFile = $v->getMetaDataFile();
+                    require_once($metadataFile);
+                    if($view == 'list')
+                        $results = $listViewDefs[$module_name];            
+                    else
+                        $results = $viewdefs[$module_name][$fullView];
+                }
+        }
+        
+        return $results;
+    }
 }

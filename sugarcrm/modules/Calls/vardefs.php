@@ -71,7 +71,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'date',
+    'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date is which call is scheduled to (or did) end'
   ),

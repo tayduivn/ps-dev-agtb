@@ -1276,7 +1276,10 @@ function http_fetch_sync(url,post_data) {
 	}
 
 	global_xmlhttp.send(post_data);
-
+	
+	if (SUGAR.util.isLoginPage(global_xmlhttp.responseText))
+		return false;
+	
 	var args = {"responseText" : global_xmlhttp.responseText,
 				"responseXML" : global_xmlhttp.responseXML,
 				"request_id" : request_id};
@@ -1303,6 +1306,8 @@ function http_fetch_async(url,callback,request_id,post_data) {
 	global_xmlhttp.onreadystatechange = function() {
 		if(global_xmlhttp.readyState==4) {
 			if(global_xmlhttp.status == 200) {
+				if (SUGAR.util.isLoginPage(global_xmlhttp.responseText))
+					return false;
 				var args = {"responseText" : global_xmlhttp.responseText,
 							"responseXML" : global_xmlhttp.responseXML,
 							"request_id" : request_id };
@@ -1626,8 +1631,7 @@ function onUnloadEditView(theForm) {
             
             var snap = snapshotForm(theForm);
             if ( editViewSnapshots[theForm.id] != snap ) {
-                debugger;
-            	dataHasChanged = true;
+                dataHasChanged = true;
             }
         }
     } else {
@@ -1639,13 +1643,11 @@ function onUnloadEditView(theForm) {
         // console.log('DEBUG: Checking one form '+theForm.id);
         if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
             // Data has changed.
-        	debugger;
         	dataHasChanged = true;
         }
     }
 
     if ( dataHasChanged == true ) {
-    	debugger;
     	return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
     } else {
         return;

@@ -157,8 +157,7 @@ $layout_defs['Accounts'] = array(
 			'add_subpanel_data' => 'opportunity_id',
 			'title_key' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
 			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
+				array('widget_class' => 'SubPanelTopButtonQuickCreate')
 			),
 		),
 //BEGIN SUGARCRM flav!=sales ONLY

@@ -47,6 +47,17 @@ class SugarFieldBase {
         
         $tplName = '';
         foreach ( $classList as $className ) {
+            global $current_language;
+            if(isset($current_language)) {
+                $tplName = 'include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl';
+                if ( file_exists('custom/'.$tplName) ) {
+                    $tplName = 'custom/'.$tplName;
+                    break;
+                }
+                if ( file_exists($tplName) ) {
+                    break;
+                }
+            }
             $tplName = 'include/SugarFields/Fields/'. $className .'/'. $view .'.tpl';
             if ( file_exists('custom/'.$tplName) ) {
                 $tplName = 'custom/'.$tplName;

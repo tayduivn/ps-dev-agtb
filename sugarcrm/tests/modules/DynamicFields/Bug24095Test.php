@@ -2,7 +2,7 @@
 require_once("modules/Accounts/Account.php");
 
 /**
- * Test cases for Bug 24095
+ * @ticket 24095
  */
 class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -56,5 +56,3 @@ class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($bean->foo_c, '67890');
     }
 }
-
-
