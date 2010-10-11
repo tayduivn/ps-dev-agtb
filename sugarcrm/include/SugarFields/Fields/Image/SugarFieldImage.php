@@ -33,25 +33,25 @@ class SugarFieldImage extends SugarFieldBase {
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {    	
     	$displayParams['bean_id']='id';
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);    	
-		return $this->fetch('include/SugarFields/Fields/Image/EditView.tpl');
+		return $this->fetch($this->findTemplate('EditView'));
     }	
 
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
 		$displayParams['bean_id']='id';
 		$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);		
-		return $this->fetch('include/SugarFields/Fields/Image/DetailView.tpl');
+		return $this->fetch($this->findTemplate('DetailView'));
 	}
 	
     function getUserEditView($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {    	
     	$displayParams['bean_id']='id';
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);    	
-		return $this->fetch('include/SugarFields/Fields/Image/UserEditView.tpl');
+		return $this->fetch($this->findTemplate('UserEditView'));
     }	
     
     function getUserDetailView($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {    	
     	$displayParams['bean_id']='id';
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);    	
-		return $this->fetch('include/SugarFields/Fields/Image/UserDetailView.tpl');
+		return $this->fetch($this->findTemplate('UserDetailView'));
     }		
 	
 	public function save(&$bean, $params, $field, $properties, $prefix = ''){

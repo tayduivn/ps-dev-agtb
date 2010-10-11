@@ -8,7 +8,7 @@ class SugarFieldFullname extends SugarFieldBase {
    
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Fullname/DetailView.tpl');
+        return $this->fetch($this->findTemplate('DetailView'));
     }
 }
 ?>

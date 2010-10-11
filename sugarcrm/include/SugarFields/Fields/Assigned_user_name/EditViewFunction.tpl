@@ -1,4 +1,4 @@
-<?php
+{*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -25,13 +25,5 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
-
-class SugarFieldUsername extends SugarFieldBase {
-	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
- 
-        return $this->fetch($this->findTemplate('DetailView'));
-    }
-}
-?>
+*}
+{{include file="/include/SugarFields/Fields/Multienum/EditViewFunction.tpl"}}

@@ -294,7 +294,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderEditView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');
+		return $this->fetch($this->findTemplate('Teamset'));
     }	
 
 	/**
@@ -304,7 +304,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
 		$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderDetailView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');
+		return $this->fetch($this->findTemplate('Teamset'));
 	}
 
 	
@@ -343,7 +343,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     	$this->view->displayParams = $displayParams;
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
     	$this->ss->assign('renderView', 'renderSearchView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');		
+		return $this->fetch($this->findTemplate('Teamset'));		
 	}
 
 	function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
@@ -351,13 +351,13 @@ class SugarFieldTeamset extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         $this->ss->assign('rowData',$parentFieldArray);
         $this->ss->assign('col',$vardef['name']);
-		return $this->fetch('include/SugarFields/Fields/Teamset/TeamsetListView.tpl');
+		return $this->fetch($this->findTemplate('TeamsetListView'));
 	}
 	
 	function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderImportView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');
+		return $this->fetch($this->findTemplate('Teamset'));
     }	
 	
 	/**

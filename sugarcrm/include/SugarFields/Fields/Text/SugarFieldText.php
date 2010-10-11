@@ -69,11 +69,7 @@ class SugarFieldText extends SugarFieldBase {
 			$this->ss->assign('RICH_TEXT_EDITOR_WIDTH', '95%');
 		}
 
-		if(file_exists('custom/include/SugarFields/Fields/Text/ClassicEditView.tpl')) {
-		   return $this->ss->fetch('custom/include/SugarFields/Fields/Text/ClassicEditView.tpl');
-		} else {
-		   return $this->ss->fetch('include/SugarFields/Fields/Text/ClassicEditView.tpl');
-		}
+		return $this->ss->fetch($this->findTemplate('ClassicEditView'));
     }
 }
 ?>

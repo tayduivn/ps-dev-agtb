@@ -1,5 +1,5 @@
 <?php
-$k_path_url = 'http://localhost/';
+require_once("include/Sugarpdf/sugarpdf_config.php");
 require_once('include/tcpdf/config/lang/eng.php');
 require_once('include/tcpdf/tcpdf.php');
 /**

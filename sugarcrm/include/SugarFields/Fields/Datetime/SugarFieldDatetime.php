@@ -32,10 +32,10 @@ class SugarFieldDatetime extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         //jchi , bug #24557 , 10/31/2008
         if(isset($vardef['name']) && ($vardef['name'] == 'date_entered' || $vardef['name'] == 'date_modified')){
-        	return $this->fetch('include/SugarFields/Fields/Base/DetailView.tpl');
+        	return $this->fetch($this->findTemplate('DetailView'));
         }
         //end
-        return $this->fetch('include/SugarFields/Fields/Datetime/EditView.tpl');
+        return $this->fetch($this->findTemplate('EditView'));
     }
     
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
@@ -65,7 +65,7 @@ class SugarFieldDatetime extends SugarFieldBase {
     	$this->ss->assign('use_meridian', $use_24_hours);
     	
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
-    	return $this->fetch('include/SugarFields/Fields/Datetime/WirelessEditView.tpl');
+    	return $this->fetch($this->findTemplate('WirelessEditView'));
     }   
     //END SUGARCRM flav=pro || flav=sales ONLY
 
