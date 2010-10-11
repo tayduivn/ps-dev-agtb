@@ -78,5 +78,15 @@ $dashletData['MyQuotesDashlet']['columns'] = array('quote_num' => array(
         'link' => false,
         'default' => true        
         ),
+    'quote_type' => array(
+		'width' => '15', 
+		'label' => 'LBL_QUOTE_TYPE',
+        'link' => false,      
+        ),
+     'order_stage' => array(
+		'width' => '15', 
+		'label' => 'LBL_ORDER_STAGE',
+        'link' => false,       
+        ),
 );
 ?>
