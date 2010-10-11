@@ -481,11 +481,11 @@ $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
 
-//BEGIN SUGARCRM flav=notifications ONLY
+//BEGIN SUGARCRM flav=pro OR flav=sales ONLY
 $beanList['Notifications'] = 'Notifications';
 $beanFiles['Notifications'] = 'modules/Notifications/Notifications.php';
 $modInvisList[] = 'Notifications';
-//END SUGARCRM flav=notifications ONLY
+//END SUGARCRM flav=pro OR flav=sales ONLY
 // This is the mapping for modules that appear under a different module's tab
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
