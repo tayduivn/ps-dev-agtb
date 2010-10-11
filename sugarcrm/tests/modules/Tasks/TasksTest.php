@@ -6,12 +6,14 @@ class TasksTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $_REQUEST['module'] = 'Tasks';
 	}
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        unset($_REQUEST['module']);
     }
     
     /**
