@@ -497,7 +497,12 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     	               $ownerWhere = $seed->getOwnerWhere($assigned_user_id);
     	               $where = "($where) AND $ownerWhere";
     	            }
-
+                    
+    	            if( $beanName == "Employee" )
+    	            {
+    	                $where = "($where) AND users.deleted = 0 AND users.is_group = 0 AND users.employee_status = 'Active'";
+    	            }
+    	            
     				$ret_array = $seed->create_new_list_query('', $where, $filterFields, array(), 0, '', true, $seed, true);
     		        if(empty($params) or !is_array($params)) $params = array();
     		        if(!isset($params['custom_select'])) $params['custom_select'] = '';
