@@ -9,7 +9,7 @@ class SugarFieldEnum extends SugarFieldBase {
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 		if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return "<span id='{$vardef['name']}'>" . $this->fetch('include/SugarFields/Fields/Enum/DetailViewFunction.tpl') . '</span>';
+        	  return "<span id='{$vardef['name']}'>" . $this->fetch($this->findTemplate('DetailViewFunction')) . '</span>';
     	}else{
     		  return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     	}
@@ -23,7 +23,7 @@ class SugarFieldEnum extends SugarFieldBase {
     	
     	if(isset($vardef['function']) && !empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/EditViewFunction.tpl');
+        	  return $this->fetch($this->findTemplate('EditViewFunction'));
     	}else{
     		  return parent::getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     	}
@@ -37,7 +37,7 @@ class SugarFieldEnum extends SugarFieldBase {
             $this->ss->assign('value', $GLOBALS['app_list_strings'][$vardef['options']][$vardef['value']]);
 		if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/WirelessDetailViewFunction.tpl');
+        	  return $this->fetch($this->findTemplate('WirelessDetailViewFunction'));
     	}else{
     		  return parent::getWirelessDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     	}
@@ -50,7 +50,7 @@ class SugarFieldEnum extends SugarFieldBase {
     	$this->ss->assign('selected', isset($vardef['value'])?$vardef['value']:'');
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/WirelessEditViewFunction.tpl');
+        	  return $this->fetch($this->findTemplate('WirelessEditViewFunction'));
     	}else{
     		  return parent::getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     	}
@@ -65,10 +65,10 @@ class SugarFieldEnum extends SugarFieldBase {
 		
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/EditViewFunction.tpl');
+        	  return $this->fetch($this->findTemplate('EditViewFunction'));
     	}else{
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/SearchView.tpl');
+        	  return $this->fetch($this->findTemplate('SearchView'));
     	}
     }
     
@@ -76,10 +76,10 @@ class SugarFieldEnum extends SugarFieldBase {
     function getWirelessSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/EditViewFunction.tpl');
+        	  return $this->fetch($this->findTemplate('EditViewFunction'));
     	}else{
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return $this->fetch('include/SugarFields/Fields/Enum/SearchView.tpl');
+        	  return $this->fetch($this->findTemplate('SearchView'));
     	}
     }
     //END SUGARCRM flav=pro || flav=sales ONLY

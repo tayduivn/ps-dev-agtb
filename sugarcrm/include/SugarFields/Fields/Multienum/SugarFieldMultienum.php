@@ -16,10 +16,10 @@ class SugarFieldMultienum extends SugarFieldBase {
 	function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
     	   $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-           return $this->fetch('include/SugarFields/Fields/Multienum/EditViewFunction.tpl');
+           return $this->fetch($this->findTemplate('EditViewFunction'));
     	}else{
     	   $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-           return $this->fetch('include/SugarFields/Fields/Multienum/SearchView.tpl');
+           return $this->fetch($this->findTemplate('SearchView'));
     	}
     }
 

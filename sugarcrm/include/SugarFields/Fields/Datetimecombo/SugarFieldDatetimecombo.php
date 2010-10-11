@@ -29,7 +29,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
 
         $displayParams['timeFormat'] = $timedate->get_user_time_format();
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);       
-        return $this->fetch('include/SugarFields/Fields/Datetimecombo/EditView.tpl');
+        return $this->fetch($this->findTemplate('EditView'));
     }
 	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -55,7 +55,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
 
         $displayParams['timeFormat'] = $timedate->get_user_time_format();
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Datetimecombo/SearchView.tpl'); 
+        return $this->fetch($this->findTemplate('SearchView')); 
     }
     
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
@@ -85,7 +85,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     	$this->ss->assign('use_meridian', $use_24_hours);
     	
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
-    	return $this->fetch('include/SugarFields/Fields/Datetimecombo/WirelessEditView.tpl');
+    	return $this->fetch($this->findTemplate('WirelessEditView'));
     }   
     //END SUGARCRM flav=pro || flav=sales ONLY
     
