@@ -556,6 +556,8 @@ class SugarView
 			require_once('include/DashletContainer/DCFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
 			$data = $dcm->getLayout();
+			$dcjs = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+			$ss->assign('SUGAR_DCJS', $dcjs);
 			$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
