@@ -411,7 +411,7 @@ $mod_strings = array(
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
 'LBL_BTN_EDIT_FORMULA'=>'Edit Formula',
 'LBL_DEPENDENCY' => 'Dependency',
-'LBL_CALCULATED' => 'Calculated',
+'LBL_CALCULATED' => 'Calculated Value',
 'LBL_READ_ONLY' => 'Read Only',
 'LBL_FORMULA' => 'Formula',
 'LBL_FORMULA_BUILDER' => 'Formula Builder',
@@ -691,6 +691,9 @@ $mod_strings = array(
 . '<br><b>In Filter</b>: The field will appear in the Merge Duplicates feature, and will also be available in the Find Duplicates feature.<br><b>Filter Only</b>: The field will not appear in the Merge Duplicates feature, but will be available in the Find Duplicates feature.<br><b>Default Selected Filter</b>: The field will be used for a filter condition by default in the Find Duplicates page, and will also appear in the Merge Duplicates feature.'
 //END SUGARCRM flav=pro ONLY
 ,
+//BEGIN SUGARCRM flav=pro ONLY
+'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br><br>Fields using formulas cannot be added to Sugar Self-Service Portal or Sugar Mobile EditView layouts.",
+//END SUGARCRM flav=pro ONLY
 
 //Revert Module labels
 'LBL_RESET' => 'Reset',

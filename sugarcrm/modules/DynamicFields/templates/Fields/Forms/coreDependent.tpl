@@ -49,6 +49,7 @@
     <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
         {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
 		{if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
+		{sugar_help text=$mod_strings.LBL_POPHELP_CALCULATED FIXX=150 FIXY=380}
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
 		<script>ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})</script>
     </td>
