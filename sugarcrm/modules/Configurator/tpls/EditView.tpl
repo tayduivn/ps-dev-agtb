@@ -347,7 +347,18 @@
 		<td >
 			<input type='text' size='4' name='vcal_time' value='{$config.vcal_time}'>
 		</td>
+
+	<td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: </td>
+		{if !empty($config.show_download_tab)}
+			{assign var='show_download_tab_checked' value='CHECKED'}
+		{else}
+			{assign var='show_download_tab_checked' value=''}
+		{/if}
+	<td ><input type='hidden' name='show_download_tab' value='false'><input name='show_download_tab'  type="checkbox" value='true' {$show_download_tab_checked}></td>
 	</tr>
+	
+	
+	
 </table>
 
 

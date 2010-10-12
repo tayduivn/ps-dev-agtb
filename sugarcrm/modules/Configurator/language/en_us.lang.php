@@ -175,6 +175,9 @@ $mod_strings = array (
     'LBL_LDAP_AUTO_CREATE_USERS_DESC'=> 'If an authenticated user does not exist one will be created in Sugar.',
     'LBL_LDAP_ENC_KEY'	=> 'Encryption Key:',
     'DEVELOPER_MODE'=>'Developer Mode',
+	
+	'SHOW_DOWNLOADS_TAB' =>'Display Downloads Tab',
+	
     'LBL_LDAP_ENC_KEY_DESC'	=> 'For SOAP authentication when using LDAP.',
     'LDAP_ENC_KEY_NO_FUNC_DESC' => 'The php_mcrypt extension must be enabled in your php.ini file.',
     'LBL_ALL' => 'All',

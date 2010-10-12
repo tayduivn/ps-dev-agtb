@@ -27,6 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+
+
 $sugar_smarty = new Sugar_Smarty();
 require_once('include/export_utils.php');
 require_once('modules/Configurator/Configurator.php');
@@ -235,6 +237,9 @@ if( $focus->getPreference('use_real_names') == 'on' || ( empty($focus->id) && is
 if($focus->getPreference('no_opps') == 'on') {
     $sugar_smarty->assign('NO_OPPS', 'CHECKED');
 }
+
+
+
 
 //BEGIN SUGARCRM flav=pro ONLY
 // REASSIGNMENT SCRIPT CODE
@@ -663,8 +668,18 @@ if($admin_edit_self) {
 	$sugar_smarty->assign('ADMIN_EDIT_SELF','1');
 }
 
-$enable_download_tab = !isset($sugar_config['disable_download_tab']) ? true : !$sugar_config['disable_download_tab'];
-$sugar_smarty->assign('SHOW_DOWNLOADS_TAB',$enable_download_tab);
+
+if (isset($sugar_config['show_download_tab']))
+{
+	$enable_download_tab = $sugar_config['show_download_tab'];
+}else{
+	
+	$enable_download_tab = true;
+}	
+
+$sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
+	
+
 
 /////////////////////////////////////////////
 /// Handle email account selections for users
