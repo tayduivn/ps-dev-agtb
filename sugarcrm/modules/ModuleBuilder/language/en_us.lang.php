@@ -549,9 +549,11 @@ $mod_strings = array(
 'ERROR_MINIMUM_FIELDS' => 'The layout must contain at least one field',
 'ERROR_GENERIC_TITLE' => 'An error has occured',
 'ERROR_REQUIRED_FIELDS' => 'Are you sure you wish to continue? The following required fields are missing from the layout:  ',
+'ERROR_ARE_YOU_SURE' => 'Are you sure you wish to continue?',
 
+//BEGIN SUGARCRM flav=ent ONLY
 
-//BEGIN SUGARCRM flav=pro ONLY
+'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
 //SUGAR PORTAL
 'LBL_PORTAL'=>'Portal',
@@ -585,7 +587,7 @@ $mod_strings = array(
 'LBL_SUBJECT'=>'Subject',
 'LBL_DESCRIPTION'=>'Description:',
 
-//END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav=ent ONLY
 
 
 //PACKAGE AND MODULE BUILDER
