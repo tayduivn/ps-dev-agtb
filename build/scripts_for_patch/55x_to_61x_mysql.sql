@@ -54,10 +54,6 @@ ALTER TABLE report_cache
 -- //END SUGARCRM flav=pro ONLY 
     
 ALTER TABLE users DROP user_preferences;    
--- //BEGIN SUGARCRM flav=pro ONLY 
-ALTER TABLE products DROP team_id;
-ALTER TABLE products DROP team_set_id;
--- //END SUGARCRM flav=pro ONLY 
 
 ALTER TABLE accounts_audit ADD INDEX idx_accounts_primary (id);
 ALTER TABLE bugs_audit ADD INDEX idx_bugs_primary (id);
