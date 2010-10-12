@@ -51,6 +51,6 @@ class SugarFieldInt extends SugarFieldBase {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         
     
-    	return $this->fetch('include/SugarFields/Fields/Int/SearchForm.tpl');
+    	return $this->fetch($this->findTemplate('SearchForm'));
     }    
 }

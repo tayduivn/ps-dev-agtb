@@ -3541,7 +3541,10 @@ class InboundEmail extends SugarBean {
 	        $attachTeamSet = new TeamSet();
 	        $attachTeamIdsArray =  (isset($_REQUEST['team_ids']) ?  explode(",", $_REQUEST['team_ids']) : $this->team_set_id);
 	        $attach->team_set_id = $attachTeamSet->addTeams($attachTeamIdsArray);
-	    } else {
+	    }elseif(!empty($GLOBALS['current_user']->team_id) && !empty($GLOBALS['current_user']->team_set_id)){ 
+	    	$attach->team_id = $GLOBALS['current_user']->team_id;
+	        $attach->team_set_id = $GLOBALS['current_user']->team_set_id;
+	    }else {
 	        $attach->team_id = $this->team_id;
 	        $attach->team_set_id = $this->team_set_id;
 	    }
