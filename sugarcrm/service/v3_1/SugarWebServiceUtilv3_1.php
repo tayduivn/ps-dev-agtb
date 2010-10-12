@@ -205,7 +205,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         foreach ($actions as $action)
         {
             $access = ACLController::checkAccess($module, $action, true);
-            $results[$action] = $access;
+            $results[] = array('action' => $action, 'access' => $access);
         }
         
         return $results;
