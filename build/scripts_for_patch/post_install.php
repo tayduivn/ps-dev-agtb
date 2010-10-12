@@ -401,6 +401,12 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY 
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
+	  
+	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
+	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
+    if(file_exists('modules/Administration/SaveTabs.php'))
+        unlink('modules/Administration/SaveTabs.php');
+	// End Bug 40044 //////////////////
 	
 	upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
