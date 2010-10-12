@@ -34,7 +34,7 @@ $row = $callBean->db->fetchByAssoc($result);
 while ($row != null) {
 	$date_time_start =DateTimeUtil::get_time_start($row['date_start']);
     $date_time_end =DateTimeUtil::get_time_end($date_time_start,$row['duration_hours'], $row['duration_minutes']);
-    $date_end = gmdate("Y-m-d", $date_time_end->ts);
+    $date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
     $updateQuery = "UPDATE calls set calls.date_end='{$date_end}' where calls.id='{$row['id']}'";
 	$call = new Call();
     $call->db->query($updateQuery);
@@ -50,7 +50,7 @@ $row = $meetingBean->db->fetchByAssoc($result);
 while ($row != null) {
 	$date_time_start =DateTimeUtil::get_time_start($row['date_start']);
     $date_time_end =DateTimeUtil::get_time_end($date_time_start,$row['duration_hours'], $row['duration_minutes']);
-    $date_end = gmdate("Y-m-d", $date_time_end->ts);
+    $date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
 	$updateQuery = "UPDATE meetings set meetings.date_end='{$date_end}' where meetings.id='{$row['id']}'";
 	$call = new Call();
     $call->db->query($updateQuery);
