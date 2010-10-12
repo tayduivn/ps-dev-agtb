@@ -115,6 +115,7 @@ class registry_v3_1 extends registry_v3 {
 				array(
 					'module_key'=>array('name'=>'module_key', 'type'=>'xsd:string'),
 					'module_label'=>array('name'=>'module_label', 'type'=>'xsd:string'),
+					'acls'=>array('name'=>'acls', 'type'=>'tns:name_value_list'),
 				)
 		);
 		
