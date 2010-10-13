@@ -31,15 +31,15 @@
 	<div id="globalLinksCtrl">
 	</div>
 {* //END SUGARCRM flav=pro || flav=sales ONLY *}
-<div id="globalLinks">					
-  
+<div id="globalLinks">
+
     {foreach from=$GCLS item=GCL name=gcl}
 
     <span {if $smarty.foreach.gcl.first}class="first"{/if}>|</span>
-    <a href="{$GCL.URL}" {if $smarty.foreach.gcl.last}class="last"{/if}>{$GCL.LABEL}</a>
-	
+    <a href="{$GCL.URL}" {if $smarty.foreach.gcl.last}class="last"{/if}{if !empty($GCL.ONCLICK)} onclick="{$GCL.ONCLICK}"{/if}>{$GCL.LABEL}</a>
+
     {foreach from=$GCL.SUBMENU item=GCL_SUBMENU name=gcl_submenu}
-    <a href="{$GCL_SUBMENU.URL}">{$GCL_SUBMENU.LABEL}</a>
+    <a href="{$GCL_SUBMENU.URL}"{if !empty($GCL_SUBMENU.ONCLICK)} onclick="{$GCL_SUBMENU.ONCLICK}"{/if}>{$GCL_SUBMENU.LABEL}</a>
     {/foreach}
 
     {/foreach}
