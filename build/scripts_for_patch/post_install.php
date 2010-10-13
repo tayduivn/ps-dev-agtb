@@ -286,6 +286,11 @@ function genericFunctions(){
 	    _logThis("Applying .htaccess update security fix.", $path);
         include_once("modules/Administration/UpgradeAccess.php");
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+    ////    CLEAR SUGARLOGIC CACHE
+	_logThis("Rebuilding SugarLogic Cache", $path);
+	clear_SugarLogic_cache();
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PRO/ENT ONLY FINAL TOUCHES
