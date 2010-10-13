@@ -26,8 +26,6 @@ class SugarDateTime extends DateTime
 		"day_of_week_short" => "day_of_week_short",
 		"month_name" => "month_long",
 		"hour" => "hour_12",
-		"get_day_of_week_short" => "get_day_of_week_short",
-		"get_day_of_week" => "get_day_of_week_long",
 	);
 
 	/**
@@ -142,15 +140,14 @@ class SugarDateTime extends DateTime
 
 		// getters
 		if(substr($name, 0, 4) == "get_") {
-			$var = substr($name, 5);
+			$var = substr($name, 4);
 
 			if(isset($this->var_gets[$var])) {
-				$var = $this->gets[$var];
-				return $this->$var;
+				return $this->__get($this->var_gets[$var]);
 			}
 
 			if(isset($this->formats[$var])) {
-				return $this->$var;
+				return $this->__get($var);
 			}
 		}
 		sugar_die("SugarDateTime: unknowm method $name called");
@@ -379,10 +376,6 @@ class SugarDateTime extends DateTime
 			{
         			$day = $time['day'];
 			}
-			if ( isset($time['week']))
-			{
-        			$week = $time['week'];
-			}
 			if ( isset($time['month']))
 			{
         			$month = $time['month'];
@@ -391,8 +384,8 @@ class SugarDateTime extends DateTime
 			{
         			$year = $time['year'];
 			}
-			$result = new self("now", new DateTimeZone("UTC"));
-			$result->setDate($year, $month, $day)->setTime($hour, $min, $sec);
+			$result = $GLOBALS['timedate']->tzUser(new self("now"));
+			$result->setDate($year, $month, $day)->setTime($hour, $min, $sec)->setTimeZone(new DateTimeZone("UTC"));
 		}
         return $result;
 	}
@@ -403,6 +396,6 @@ class SugarDateTime extends DateTime
 	 */
 	function get_date_str()
 	{
-        return sprintf("year=%d&month=%d&day=%d&hour=%d", $this->year, $this->month, $this->day, $this->hour);
+        return sprintf("&year=%d&month=%d&day=%d&hour=%d", $this->year, $this->month, $this->day, $this->hour);
 	}
 }

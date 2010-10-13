@@ -66,7 +66,7 @@ class Calendar
 
 	function Calendar($view,$time_arr=array())
 	{
-		global $current_user;
+		global $current_user, $timedate;
 		global $sugar_config;
 		if ( $current_user->getPreference('time'))
 		{
@@ -117,9 +117,11 @@ class Calendar
         		{
         			sugar_die ("day view: day and month was not set");
         		}
+		        // FIXME: what format?
+			    $this->date_time = SugarDateTime::fromTimeArray($time_arr);
+		    } else {
+		        $this->date_time = $timedate->getNow();
 		    }
-		    // FIXME: what format?
-			$this->date_time = SugarDateTime::fromTimeArray($time_arr);
 		}
 
 		$timedate->tzUser($this->date_time, $current_user);
@@ -323,7 +325,7 @@ class Calendar
 		else
 		if ($this->view == 'day')
 		{
-			$day = $this->get("tomorrow")->get_day_begin();
+			$day = $this->date_time->get("tomorrow")->get_day_begin();
 		}
 		else
 		if ($this->view == 'year')

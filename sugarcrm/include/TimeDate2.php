@@ -34,6 +34,7 @@ class TimeDate2
 	const DB_TIME_FORMAT = 'H:i:s';
     // little optimization
 	const DB_DATETIME_FORMAT = 'Y-m-d H:i:s';
+	const RFC2616_FORMAT = 'D, d M Y H:i:s \G\M\T';
 
     // Standard DB date/time formats
     // they are constant, vars are for compatibility
@@ -484,7 +485,7 @@ class TimeDate2
         try {
             return SugarDateTime::createFromFormat($this->get_db_date_time_format(), $date, self::$gmtTimezone);
         } catch (Exception $e) {
-            $GLOBALS['log']->error("Conversion of $date from DB format failed: {$e->getMessage()}");
+            $GLOBALS['log']->error("fromDb: Conversion of $date from DB format failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -503,7 +504,7 @@ class TimeDate2
         try {
             return SugarDateTime::createFromFormat($format, $date, self::$gmtTimezone);
         } catch (Exception $e) {
-            $GLOBALS['log']->error("Conversion of $date from DB format $format failed: {$e->getMessage()}");
+            $GLOBALS['log']->error("fromDbFormat: Conversion of $date from DB format $format failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -520,7 +521,7 @@ class TimeDate2
             return SugarDateTime::createFromFormat($this->get_date_time_format($user), $date, $this->_getUserTZ($user));
         } catch (Exception $e) {
             $uf = $this->get_date_time_format($user);
-            $GLOBALS['log']->error("Conversion of $date from user format $uf failed: {$e->getMessage()}");
+            $GLOBALS['log']->error("fromUser: Conversion of $date from user format $uf failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -537,7 +538,7 @@ class TimeDate2
             return SugarDateTime::createFromFormat($this->get_time_format($user), $date, $this->_getUserTZ($user));
         } catch (Exception $e) {
             $uf = $this->get_time_format($user);
-            $GLOBALS['log']->error("Conversion of $date from user format $uf failed: {$e->getMessage()}");
+            $GLOBALS['log']->error("fromUserTime: Conversion of $date from user format $uf failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -556,7 +557,7 @@ class TimeDate2
         try {
             $sdate = new SugarDateTime($date, $this->_getUserTZ($user));
         } catch (Exception $e) {
-            $GLOBALS['log']->error("Conversion of $date from string failed: {$e->getMessage()}");
+            $GLOBALS['log']->error("fromString: Conversion of $date from string failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -629,7 +630,7 @@ class TimeDate2
             $phpdate = SugarDateTime::createFromFormat($fromFormat, $date, $fromTZ);
             if ($phpdate == false) {
                 //		    	var_dump($date, $phpdate, $fromFormat,  DateTime::getLastErrors() );
-                $GLOBALS['log']->error("Conversion of $date from $fromFormat to $toFormat failed");
+                $GLOBALS['log']->error("convert: Conversion of $date from $fromFormat to $toFormat failed");
                 return '';
             }
             if ($fromTZ !== $toTZ) {
@@ -658,7 +659,7 @@ class TimeDate2
     {
         return $this->_convert($date,
             self::DB_DATETIME_FORMAT, self::$gmtTimezone, $this->get_date_time_format($user),
-            $convert_tz ? $this->_getUserTZ($user) : self::$gmtTimezone);
+            $convert_tz ? $this->_getUserTZ($user) : self::$gmtTimezone, true);
     }
 
     /**
@@ -1404,4 +1405,17 @@ class TimeDate2
 	    }
 	    return $res_zones;
 	}
+
+	/**
+	 * Print timestamp in RFC2616 format:
+	 * @return string
+	 */
+	public static function httpTime($ts = null)
+	{
+	    if($ts === null) {
+	        $ts = time();
+	    }
+	    return gmdate(self::RFC2616_FORMAT, $ts);
+	}
+
 }
