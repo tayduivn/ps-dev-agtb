@@ -63,6 +63,41 @@ function do_repair_workflow_conditions() {
 	$workflow_object = new WorkFlow();
 	$workflow_object->repair_workflow();
 }
+
+function migrate_sugar_favorite_reports(){
+    require_once('modules/SugarFavorites/SugarFavorites.php');
+
+    $active_users = array();
+    $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $active_users[] = $row['id'];
+    }
+
+    foreach($active_users as $user_id){
+        $user = new User();
+        $user->retrieve($user_id);
+
+        $user_favorites = $user->getPreference('favorites', 'Reports');
+        if(!is_array($user_favorites)) $user_favorites = array();
+
+        if(!empty($user_favorites)){
+            foreach($user_favorites as $report_id => $bool){
+                $fav = new SugarFavorites();
+                $record = SugarFavorites::generateGUID('Reports', $report_id);
+                if(!$fav->retrieve($record, true, false)){
+                        $fav->new_with_id = true;
+                }
+                $fav->id = $record;
+                $fav->module = 'Reports';
+                $fav->record_id = $report_id;
+                $fav->assigned_user_id = $user->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+    }
+}
+
 // END SUGARCRM flav=pro ONLY 
 
 function add_EZ_PDF() {
@@ -251,6 +286,11 @@ function genericFunctions(){
 	    _logThis("Applying .htaccess update security fix.", $path);
         include_once("modules/Administration/UpgradeAccess.php");
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+    ////    CLEAR SUGARLOGIC CACHE
+	_logThis("Rebuilding SugarLogic Cache", $path);
+	clear_SugarLogic_cache();
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PRO/ENT ONLY FINAL TOUCHES
@@ -694,40 +734,6 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 		$moduleInstaller->merge_files('Ext/Include', 'modules.ext.php', '', true);			
 	}
 
-}
-
-function migrate_sugar_favorite_reports(){
-    require_once('modules/SugarFavorites/SugarFavorites.php');
-
-    $active_users = array();
-    $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
-    while($row = $GLOBALS['db']->fetchByAssoc($res)){
-        $active_users[] = $row['id'];
-    }
-
-    foreach($active_users as $user_id){
-        $user = new User();
-        $user->retrieve($user_id);
-
-        $user_favorites = $user->getPreference('favorites', 'Reports');
-        if(!is_array($user_favorites)) $user_favorites = array();
-
-        if(!empty($user_favorites)){
-            foreach($user_favorites as $report_id => $bool){
-                $fav = new SugarFavorites();
-                $record = SugarFavorites::generateGUID('Reports', $report_id);
-                if(!$fav->retrieve($record, true, false)){
-                        $fav->new_with_id = true;
-                }
-                $fav->id = $record;
-                $fav->module = 'Reports';
-                $fav->record_id = $report_id;
-                $fav->assigned_user_id = $user->id;
-                $fav->deleted = 0;
-                $fav->save();
-            }
-        }
-    }
 }
 
 ?>

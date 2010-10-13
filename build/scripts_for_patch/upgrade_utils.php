@@ -131,6 +131,17 @@ function rebuild_js_lang(){
     LanguageManager::clearLanguageCache();
 }
 
+function clear_SugarLogic_cache(){
+    require_once('include/utils/file_utils.php');
+    global $sugar_config;
+
+    $files = array();
+    getFiles($files, $sugar_config['cache_dir'] . 'Expressions');
+    foreach($files as $file) {
+        unlink($file);
+    }
+}
+
 
 /**
  * update DB version and sugar_version.php
