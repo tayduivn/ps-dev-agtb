@@ -104,25 +104,13 @@ class ViewQuickcreate extends ViewAjax
 		$ev->defs['templateMeta']['form']['hidden'] = '<input type="hidden" name="is_ajax_call" value="1" />';
 		$ev->defs['templateMeta']['form']['hidden'] .= '<input type="hidden" name="from_dcmenu" value="1" />';
 		$defaultProcess = true;
-
-		$foundView = false;
-		
-		if(file_exists('custom/modules/'.$module.'/views/view.edit.php')) {
-            include('custom/modules/'.$module.'/views/view.edit.php'); 
-            $foundView = true;
-		} else if(file_exists('modules/'.$module.'/views/view.edit.php')) {
-			include('modules/'.$module.'/views/view.edit.php'); 
-			$foundView = true;
-		}
-		
-		if($foundView)
-		{
+		if(file_exists('modules/'.$module.'/views/view.edit.php')) {
+            include('modules/'.$module.'/views/view.edit.php'); 
             $c = $module . 'ViewEdit';
-            if(class_exists($c)) 
-            {
+            
+            if(class_exists($c)) {
 	            $view = new $c;
-	            if($view->useForSubpanel) 
-	            {
+	            if($view->useForSubpanel) {
 	            	$defaultProcess = false;
 	            	
 	            	//Check if we shold use the module's QuickCreate.tpl file
@@ -143,8 +131,7 @@ class ViewQuickcreate extends ViewAjax
 		            $view->display(); 
 	            }
             }
-		} //if		
-		
+		} //if
 		
 		if($defaultProcess) {
 		   $form_name = 'form_DC'.$ev->view .'_'.$module;

@@ -56,14 +56,7 @@ class SubpanelQuickCreate{
 		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');
 		
 
-		//First check custom view.quickcreate.php
-
-		//Second check custom view.edit.php
 		
-		//Third check view.quickcreate.php
-		
-		//Fourth check 
-		display_stack_trace();
 		$viewEditSource = 'modules/'.$module.'/views/view.edit.php';
 		if (file_exists('custom/'. $viewEditSource)) {
 			$viewEditSource = 'custom/'. $viewEditSource;

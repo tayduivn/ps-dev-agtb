@@ -43,41 +43,7 @@ $focus->retrieve($_REQUEST['record']);
 if($focus->has_records_in_modules()) {
    header("Location: index.php?module=Teams&action=ReassignTeams&record={$focus->id}");
 } else {
-	//todo: Verify that no items are still assigned to this team.
-	if($focus->id == $focus->global_team) {
-		$msg = $GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
-		$GLOBALS['log']->fatal($msg);
-		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id.'&message=LBL_MASSUPDATE_DELETE_GLOBAL_TEAM');
-		return;
-	}
-	
-	//Check if the associated user is deleted
-	$user = new User();
-	$user->retrieve($focus->associated_user_id);
-	if($focus->private == 1 && (!empty($user->id) && $user->deleted != 1))
-	{
-		$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name));
-		$GLOBALS['log']->fatal($msg);
-		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id.'&message=LBL_MASSUPDATE_DELETE_USER_EXISTS');
-		return;
-	}
-
-	// Delete all team memberships for this team_id.
-	$query = "delete from team_memberships where team_id='{$focus->id}'";
-	$GLOBALS['db']->query($query,true,"Error deleting memberships while deleting team: ");
-
-	// Delete the team record itself.
-	$query = "delete from teams where id='{$focus->id}'";
-	$GLOBALS['db']->query($query,true,"Error deleting team: ");
-	
-	require_once('modules/Teams/TeamSetManager.php');
-	TeamSetManager::flushBackendCache();
-	//clean up any team sets that use this team id
-	TeamSetManager::removeTeamFromSets($focus->id);
-		   
-    // Take the item off the recently viewed lists
-    $tracker = new Tracker();
-    $tracker->makeInvisibleForAll($focus->id);$focus->mark_deleted();
-    header("Location: index.php?module=Teams&action=index");
+   $focus->mark_deleted();
+   header("Location: index.php?module=Teams&action=index");
 }
 ?>

@@ -244,8 +244,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		$this->log($this->_client->request);
 		$this->log($this->_client->response);
 		 		
-		$GLOBALS['log']->fatal($this->_client->response);
-		
  		if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->response)) {
  		   $errorCode = 'Unknown';
  		   if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->response, $matches)) {
@@ -303,7 +301,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	    	$item = $this->getItem(array('uniqueId' => '168338536'), 'Leads');
 	        return !empty($item['recname']) && (preg_match('/^SugarCRM/i', $item['recname'])); 
 		} catch(Exception $ex) {
-            return false;		
+           return false;		
 		}
 	}
 	

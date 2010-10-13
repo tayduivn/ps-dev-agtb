@@ -51,15 +51,7 @@ class TasksViewEdit extends ViewEdit
  	 * @see SugarView::display()
  	 */
  	public function display() 
- 	{	
- 		dislpay_stack_trace();	
- 		if(empty($this->bean->id))
- 		{
- 			$this->bean->assigned_user_id = '';
- 			$this->bean->assigned_user_name = '';
- 		}
- 		
- 		
+ 	{		
  		if($this->ev->isDuplicate){
 	       $this->bean->status = $GLOBALS['mod_strings']['LBL_DEFAULT_STATUS'];
  		} //if	
