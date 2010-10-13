@@ -132,7 +132,6 @@ class Meeting extends SugarBean {
 	// save date_end by calculating user input
 	// this is for calendar
 	function save($check_notify = FALSE) {
-		require_once('modules/Calendar/DateTimeUtil.php');
 		global $timedate;
 		global $current_user;
 		global $disable_date_format;
@@ -140,9 +139,7 @@ class Meeting extends SugarBean {
 		if(isset($this->date_start)
 			&& isset($this->duration_hours)
 			&& isset($this->duration_minutes)) {
-    			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
-    			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-    			$this->date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
+			    $this->date_end = $timedate->fromDb($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
@@ -401,7 +398,7 @@ class Meeting extends SugarBean {
 			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
-	
+
 			// Get the contact name.
 			$row = $this->db->fetchByAssoc($result);
 
@@ -410,7 +407,7 @@ class Meeting extends SugarBean {
 				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
 			}
 		}
-		
+
         $meeting_fields['CONTACT_ID'] = $this->contact_id;
         $meeting_fields['CONTACT_NAME'] = $this->contact_name;
 

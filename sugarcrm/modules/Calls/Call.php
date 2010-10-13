@@ -133,16 +133,13 @@ class Call extends SugarBean
     // save date_end by calculating user input
     // this is for calendar
 	function save($check_notify = FALSE) {
-		require_once('modules/Calendar/DateTimeUtil.php');
 		global $timedate,$current_user;
 		global $disable_date_format;
 
         if(	isset($this->date_start) &&
         	isset($this->duration_hours) &&
         	isset($this->duration_minutes) ) {
-    			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
-    			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-    			$this->date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
+    			$this->date_end = $timedate->fromDb($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
         }
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
@@ -429,12 +426,12 @@ class Call extends SugarBean
 			if(empty($action))
 			    $action = "index";
 
-            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";  
+            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Calls')." border='0'")."</a>";
 		}
 		global $timedate;
-		$today = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
-		$nextday = gmdate($GLOBALS['timedate']->dbDayFormat, time() + 3600*24);
+		$today = $timedate->nowDb();
+		$nextday = $timedate->asDbDate($timedate->getNow()->modify("+1 day"));
 		$mergeTime = $call_fields['DATE_START']; //$timedate->merge_date_time($call_fields['DATE_START'], $call_fields['TIME_START']);
 		$date_db = $timedate->to_db($mergeTime);
 		if( $date_db	< $today){
@@ -452,7 +449,7 @@ class Call extends SugarBean
 			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
-	
+
 			// Get the contact name.
 			$row = $this->db->fetchByAssoc($result);
 
@@ -461,7 +458,7 @@ class Call extends SugarBean
 				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
 			}
 		}
-		
+
         $call_fields['CONTACT_ID'] = $this->contact_id;
         $call_fields['CONTACT_NAME'] = $this->contact_name;
 
@@ -479,14 +476,8 @@ class Call extends SugarBean
 		global $app_list_strings;
 		global $timedate;
 
-        if ( method_exists($call->current_notify_user,'getUserDateTimePreferences') ) {
-            $prefDate = $call->current_notify_user->getUserDateTimePreferences();
-        } else {
-            $prefDate['date'] = $timedate->get_date_format(true, $current_user);
-            $prefDate['time'] = $timedate->get_time_format(true, $current_user);
-        }
-		$x = date($prefDate['date']." ".$prefDate['time'], strtotime(($call->date_start . " " . $call->time_start)));
-		$xOffset = $timedate->handle_offset($x, $prefDate['date']." ".$prefDate['time'], true, $current_user);
+		// Assumes $call dates are in user format
+		$xOffset = $timedate->asUser($timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start)), $call->current_notify_user);
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].

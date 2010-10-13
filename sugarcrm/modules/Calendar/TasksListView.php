@@ -105,8 +105,7 @@ global $timedate;
 
 //jc: bug 14616 - dates need to specificy the end of the current date in order to get tasks
 // that are scheduled to start today
-$today = $timedate->to_db_date(date($timedate->get_date_format() . " H:m:s"), false) . " 23:59:59";
-$today = $timedate->handle_offset($today, $timedate->dbDayFormat, true) . " 23:59:59";
+$today = $timedate->getNow(true)->get_day_end_time()->asDb();
 //end bug 14616
 
 $where = "(tasks.assigned_user_id='$current_user->id' and tasks.status<>'Completed' and tasks.status<>'Deferred'";

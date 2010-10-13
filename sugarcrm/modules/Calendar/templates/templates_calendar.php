@@ -185,7 +185,7 @@ function template_cal_tabs(& $args) {
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">";
-					echo $timedate->getTimePart($act->sugar_bean->date_start); 
+					echo $timedate->getTimePart($act->sugar_bean->date_start);
 					echo "</td></tr>";
 				} else {
 					echo "<td width=\"100%\">
@@ -202,7 +202,7 @@ function template_cal_tabs(& $args) {
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">".
-						$timedate->getTimePart($act->sugar_bean->date_start); 
+						$timedate->getTimePart($act->sugar_bean->date_start);
 					echo "</td></tr>";
 				} else {
 					echo "<td width=\"100%\">
@@ -211,7 +211,7 @@ function template_cal_tabs(& $args) {
 						$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].":".
 						$act->sugar_bean->name."<br>(".
 						$timedate->getTimePart($act->sugar_bean->date_start).")</a>";
-						
+
 					// MEETING INTEGRATION
 					if($act->sugar_bean->hasIntegratedMeeting()) {
 						$out .= $act->sugar_bean->miIcon;
@@ -228,7 +228,7 @@ function template_cal_tabs(& $args) {
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">".
-						$timedate->getTimePart($act->sugar_bean->date_due); 
+						$timedate->getTimePart($act->sugar_bean->date_due);
 					echo "</td></tr>";
 				} else {
 					echo "<td width=\"100%\">
@@ -746,21 +746,11 @@ function template_calendar_month(& $args) {
 
 function get_current_day(& $args) {
 	global $timedate;
-	static $user_today_timestamp = null;
-
-	// adjust for user's TZ
-	if(!isset($user_today_timestamp)) {
-	    $gmt_today = $timedate->get_gmt_db_datetime();
-	    $user_today = $timedate->handle_offset($gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
-		preg_match_all('/\d*/', $user_today, $matches);
-		$matches = $matches[0];
-		$user_today_timestamp = mktime($matches[6], $matches[8], '0', $matches[2], $matches[4], $matches[0]);
-	}
-
 	$slice = $args['slice'];
-	if($slice->start_time->get_mysql_date() == date($GLOBALS['timedate']->get_db_date_time_format(), $user_today_timestamp)) {
+	if($slice->start_time->get_mysql_date() == $timedate->asDbDate($timedate->getNow())) {
 		return true;
 	}
+	return false;
 }
 
 function template_echo_daily_view_hour(& $args) {
