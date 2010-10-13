@@ -37,7 +37,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 class UnifiedSearchAdvanced {
-
+    
+    var $query_string = '';
+    
+    function __construct(){
+        if(!empty($_REQUEST['query_string'])){
+            $query_string = trim($_REQUEST['query_string']);
+            if(!empty($query_string)){
+                $this->query_string = $query_string;
+            }
+        }
+    }
+    
 	function getDropDownDiv($tpl = 'modules/Home/UnifiedSearchAdvanced.tpl') {
 		global $app_list_strings;
 
@@ -68,7 +79,7 @@ class UnifiedSearchAdvanced {
             }
 		}
 
-		if(!empty($_REQUEST['query_string'])) $sugar_smarty->assign('query_string', securexss($_REQUEST['query_string']));
+		if(!empty($this->query_string)) $sugar_smarty->assign('query_string', securexss($this->query_string));
 		else $sugar_smarty->assign('query_string', '');
 		$sugar_smarty->assign('USE_SEARCH_GIF', 0);
 		$sugar_smarty->assign('LBL_SEARCH_BUTTON_LABEL', $app_strings['LBL_SEARCH_BUTTON_LABEL']);
@@ -90,7 +101,7 @@ class UnifiedSearchAdvanced {
 		$home_mod_strings = return_module_language($current_language, 'Home');
 
 		$overlib = true;
-		$_REQUEST['query_string'] = $GLOBALS['db']->quote(securexss(from_html(clean_string($_REQUEST['query_string'], 'UNIFIED_SEARCH'))));
+		$this->query_string = $GLOBALS['db']->quote(securexss(from_html(clean_string($this->query_string, 'UNIFIED_SEARCH'))));
 
 		if(!empty($_REQUEST['advanced']) && $_REQUEST['advanced'] != 'false') {
 			$modules_to_search = array();
@@ -125,52 +136,11 @@ class UnifiedSearchAdvanced {
 		$module_counts = array();
 		$has_results = false;
 
-		if(!empty($_REQUEST['query_string'])) {
-			// MFH BUG 15404: Added support to trim off whitespace at the beginning and end of a search string
-			$_REQUEST['query_string'] = trim($_REQUEST['query_string']);
+		if(!empty($this->query_string)) {
 			foreach($modules_to_search as $moduleName => $beanName) {
-                $unifiedSearchFields = array () ;
-                $innerJoins = array();
-                foreach ( $unified_search_modules[ $moduleName ]['fields'] as $field=>$def )
-                {
-                    //bug: 34125 we might want to try to use the LEFT JOIN operator instead of the INNER JOIN in the case we are
-                    //joining against a field that has not been populated.
-                    if(!empty($def['innerjoin']) ){
-                        if (empty($def['db_field']) )
-                            continue;
-                        $innerJoins[$field] = $def;
-                        $def['innerjoin'] = str_replace('INNER', 'LEFT', $def['innerjoin']);
-                    }
-                    $unifiedSearchFields[ $moduleName ] [ $field ] = $def ;
-                    $unifiedSearchFields[ $moduleName ] [ $field ][ 'value' ] = $_REQUEST['query_string'] ;
-                }
-
-                /*
-                 * Use searchForm2->generateSearchWhere() to create the search query, as it can generate SQL for the full set of comparisons required
-                 * generateSearchWhere() expects to find the search conditions for a field in the 'value' parameter of the searchFields entry for that field
-                 */
                 require_once $beanFiles[$beanName] ;
                 $seed = new $beanName();
-                require_once 'include/SearchForm/SearchForm2.php' ;
-                $searchForm = new SearchForm ( $seed, $moduleName ) ;
-
-                $searchForm->setup (array ( $moduleName => array() ) , $unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
-                $where_clauses = $searchForm->generateSearchWhere() ;
-                //add inner joins back into the where clause
-                $params = array('custom_select' => "");
-                foreach($innerJoins as $field=>$def) {
-                    if (isset ($def['db_field'])) {
-                      foreach($def['db_field'] as $dbfield)
-                          $where_clauses[] = $dbfield . " LIKE '" . $_REQUEST['query_string'] . "%'";
-                          $params['custom_select'] .= ", $dbfield";
-                          $params['distinct'] = true;
-                          //$filterFields[$dbfield] = $dbfield;
-                    }
-                }
-
-                                    if (count($where_clauses) > 0 )
-                                        $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
-
+                
                 $lv = new ListViewSmarty();
                 $lv->lvd->additionalDetails = false;
                 $mod_strings = return_module_language($current_language, $seed->module_dir);
@@ -181,6 +151,59 @@ class UnifiedSearchAdvanced {
                 }
                 if ( !isset($listViewDefs) || !isset($listViewDefs[$seed->module_dir]) )
                     continue;
+                
+			    $unifiedSearchFields = array () ;
+                $innerJoins = array();
+                foreach ( $unified_search_modules[ $moduleName ]['fields'] as $field=>$def )
+                {
+                    $listViewCheckField = strtoupper($field);
+                    if ( empty($listViewDefs[$seed->module_dir][$listViewCheckField]['default']) ) {
+                        // Bug 40032 - Add special case for field EMAIL; check for matching column 
+                        //             EMAIL1 in the listviewdefs as an alternate column.
+                        if ( $listViewCheckField == 'EMAIL' 
+                                && !empty($listViewDefs[$seed->module_dir]['EMAIL1']['default']) ) {
+                            // we've found the alternate matching column
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+                    //bug: 34125 we might want to try to use the LEFT JOIN operator instead of the INNER JOIN in the case we are
+                    //joining against a field that has not been populated.
+                    if(!empty($def['innerjoin']) ){
+                        if (empty($def['db_field']) )
+                            continue;
+                        $innerJoins[$field] = $def;
+                        $def['innerjoin'] = str_replace('INNER', 'LEFT', $def['innerjoin']);
+                    }
+                    $unifiedSearchFields[ $moduleName ] [ $field ] = $def ;
+                    $unifiedSearchFields[ $moduleName ] [ $field ][ 'value' ] = $this->query_string ;
+                }
+
+                /*
+                 * Use searchForm2->generateSearchWhere() to create the search query, as it can generate SQL for the full set of comparisons required
+                 * generateSearchWhere() expects to find the search conditions for a field in the 'value' parameter of the searchFields entry for that field
+                 */
+                require_once 'include/SearchForm/SearchForm2.php' ;
+                $searchForm = new SearchForm ( $seed, $moduleName ) ;
+
+                $searchForm->setup (array ( $moduleName => array() ) , $unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
+                $where_clauses = $searchForm->generateSearchWhere() ;
+                //add inner joins back into the where clause
+                $params = array('custom_select' => "");
+                foreach($innerJoins as $field=>$def) {
+                    if (isset ($def['db_field'])) {
+                      foreach($def['db_field'] as $dbfield)
+                          $where_clauses[] = $dbfield . " LIKE '" . $this->query_string . "%'";
+                          $params['custom_select'] .= ", $dbfield";
+                          $params['distinct'] = true;
+                          //$filterFields[$dbfield] = $dbfield;
+                    }
+                }
+
+                                    if (count($where_clauses) > 0 )
+                                        $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
+
                 $displayColumns = array();
                 foreach($listViewDefs[$seed->module_dir] as $colName => $param) {
                     if(!empty($param['default']) && $param['default'] == true) {

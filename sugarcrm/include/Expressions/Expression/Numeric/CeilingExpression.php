@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>ceil(Number n)</b><br>
- * Returns <i>n</i> rounded up to the next integer.
- **/
+ * Returns <i>n</i> rounded up to the next integer.<br/>
+ * ex: <i>ceil(5.12)</i> = 6
+ */
 class CeilingExpression extends NumericExpression {
 	/**
 	 * Returns the negative of the expression that it contains.
@@ -45,7 +46,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "ceil";
+		return array("ceil", "ceiling");
 	}
 	
 	/**

@@ -81,7 +81,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     
     DCMenu.closeOverlay = function(depth){
-    		for(i in overlays){
+    	var i=0;
+    		while(i < overlays.length){
     			if(!depth || i >= depth){
     				if(i == depth && !overlays[i].visible){
     					overlays[i].show();	
@@ -102,6 +103,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     					overlays[i].hide();
     				}
     			}
+				i++;
     		}
     }
     DCMenu.minimizeOverlay = function(){

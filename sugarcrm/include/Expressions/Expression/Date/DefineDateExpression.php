@@ -23,7 +23,7 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
 /**
  * <b>date(String d)</b><br>
  * Converts the given string into a date.
- **/
+ */
 class DefineDateExpression extends DateExpression
 {
 	/**

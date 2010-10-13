@@ -463,7 +463,7 @@ filter_defs['url'] = qualifiers;
 
 var qualifiers_name = new Array();
 var is_def = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
-var is_not_def = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
+var is_not_def = {name:'is_not',value:"<?php echo $mod_strings['LBL_IS_NOT']; ?>"};
 var one_of_def = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 var not_one_of_def = {name:'not_one_of',value:'<?php echo $mod_strings['LBL_IS_NOT_ONE_OF']; ?>'};
 qualifiers_name = qualifiers_name.concat(qualifiers);
@@ -475,8 +475,13 @@ filter_defs['fullname'] = qualifiers_name;
 
 var qualifiers_name = new Array();
 //qualifiers_name = qualifiers_name.concat(qualifiers);
+var is_not_empty_def = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
+var is_empty_def = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
+qualifiers_name.unshift(is_not_empty_def);
+qualifiers_name.unshift(is_empty_def);
 qualifiers_name.unshift(not_one_of_def);
 qualifiers_name.unshift(one_of_def);
+qualifiers_name.unshift(is_not_def);
 qualifiers_name.unshift(is_def);
 filter_defs['user_name'] = qualifiers_name;
 
@@ -541,9 +546,9 @@ filter_defs['num'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
-qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:"<?php echo $mod_strings['LBL_IS_NOT']; ?>"};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
-qualifiers[qualifiers.length] = {name:'not_one_of',value:'<?php echo $mod_strings['LBL_IS_NOT_ONE_OF']; ?>'};
+qualifiers[qualifiers.length] = {name:'not_one_of',value:"<?php echo $mod_strings['LBL_IS_NOT_ONE_OF']; ?>"};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['enum'] = qualifiers;
@@ -553,7 +558,7 @@ filter_defs['parent_type'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
-qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:"<?php echo $mod_strings['LBL_IS_NOT']; ?>"};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_one_of',value:'<?php echo $mod_strings['LBL_IS_NOT_ONE_OF']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
@@ -562,7 +567,7 @@ filter_defs['multienum'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
-qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:"<?php echo $mod_strings['LBL_IS_NOT']; ?>"};
 qualifiers[qualifiers.length] = {name:'one_of',value:'<?php echo $mod_strings['LBL_ONE_OF']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
@@ -570,7 +575,7 @@ filter_defs['assigned_user_name'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};
-qualifiers[qualifiers.length] = {name:'is_not',value:'<?php echo $mod_strings['LBL_IS_NOT']; ?>'};
+qualifiers[qualifiers.length] = {name:'is_not',value:"<?php echo $mod_strings['LBL_IS_NOT']; ?>"};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
 filter_defs['relate'] = qualifiers;

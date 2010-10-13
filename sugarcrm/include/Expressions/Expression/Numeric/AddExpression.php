@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>add(Number n, ...)</b><br>
- * Returns the sum of the given numbers
- **/
+ * Returns the sum of the given numbers.<br/>
+ * ex: <i>add(2, 1, 3)</i> = 6
+ */
 class AddExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.

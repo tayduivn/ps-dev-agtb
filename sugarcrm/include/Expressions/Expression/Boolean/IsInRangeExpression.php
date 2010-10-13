@@ -22,7 +22,9 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 /**
  * <b>isWithinRange(Number num, Number min, Number max)</b><br/>
  * Returns true if <i>num</i> is greater than or equal to <i>min</i> <br/>
- * and less than or equal to <i>max</i>.
+ * and less than or equal to <i>max</i>.<br/>
+ * ex: <i>isWithinRange(3, 3, 5)</i> = true,<br/>
+ * <i>isWithinRange(2, 3, 5)</i> = false,
  *
  */
 class IsInRangeExpression extends BooleanExpression {

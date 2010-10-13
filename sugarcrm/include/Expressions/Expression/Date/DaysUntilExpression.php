@@ -23,7 +23,7 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 /**
  * <b>daysUntil(Date d)</b><br>
  * Returns number of days from now until the specified date. 
- **/
+ */
 class DaysUntilExpression extends NumericExpression
 {
 	/**

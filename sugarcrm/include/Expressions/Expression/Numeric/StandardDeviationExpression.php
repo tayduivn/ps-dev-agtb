@@ -22,8 +22,9 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>stddev(Number n, ...)</b><br>
  * Returns the population standard deviation of the <br/>
- * given values.
- **/
+ * given values.<br>
+ * ex: <i>stddev(4, 5, 6, 7, 10)</i> = 2.06
+ */
 class StandardDeviationExpression extends NumericExpression {
 	/**
 	 * Returns itself when evaluating.

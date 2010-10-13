@@ -37,11 +37,18 @@ $viewdefs['Contacts']['DetailView'] = array(
                            ),
     'panels' => array(
     	array (
-            array (
-                'name' => 'full_name',
-                'label' => 'LBL_NAME',
-            ),
-        ),  
+	    	array (
+		        'name' => 'first_name',
+		        'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
+		        'displayParams'=>array('wireless_edit_only'=>true,),
+	      	),
+	    ),
+	    array (
+	      	array('name'=>'last_name',
+	            'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,),
+	      	),  
+	    ),  
+	    array('title'),
 		array('account_name'),
 		array('phone_work'),
 	    array('phone_mobile'),

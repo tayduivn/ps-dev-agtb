@@ -22,7 +22,8 @@ require_once("include/Expressions/Expression/String/StringExpression.php");
 
 /**
  * <b>concat(String s, ...)</b><br/>
- * Appends two or more pieces of text together.
+ * Appends two or more pieces of text together.<br/>
+ * ex: <i>concat("Hello", " ", "World")</i> = "Hello World"
  */
 class ConcatenateExpression extends StringExpression {
 	/**

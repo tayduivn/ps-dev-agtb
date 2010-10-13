@@ -63,6 +63,41 @@ function do_repair_workflow_conditions() {
 	$workflow_object = new WorkFlow();
 	$workflow_object->repair_workflow();
 }
+
+function migrate_sugar_favorite_reports(){
+    require_once('modules/SugarFavorites/SugarFavorites.php');
+
+    $active_users = array();
+    $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $active_users[] = $row['id'];
+    }
+
+    foreach($active_users as $user_id){
+        $user = new User();
+        $user->retrieve($user_id);
+
+        $user_favorites = $user->getPreference('favorites', 'Reports');
+        if(!is_array($user_favorites)) $user_favorites = array();
+
+        if(!empty($user_favorites)){
+            foreach($user_favorites as $report_id => $bool){
+                $fav = new SugarFavorites();
+                $record = SugarFavorites::generateGUID('Reports', $report_id);
+                if(!$fav->retrieve($record, true, false)){
+                        $fav->new_with_id = true;
+                }
+                $fav->id = $record;
+                $fav->module = 'Reports';
+                $fav->record_id = $report_id;
+                $fav->assigned_user_id = $user->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+    }
+}
+
 // END SUGARCRM flav=pro ONLY 
 
 function add_EZ_PDF() {
@@ -251,6 +286,11 @@ function genericFunctions(){
 	    _logThis("Applying .htaccess update security fix.", $path);
         include_once("modules/Administration/UpgradeAccess.php");
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+    ////    CLEAR SUGARLOGIC CACHE
+	_logThis("Rebuilding SugarLogic Cache", $path);
+	clear_SugarLogic_cache();
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PRO/ENT ONLY FINAL TOUCHES
@@ -401,6 +441,12 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY 
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
+	  
+	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
+	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
+    if(file_exists('modules/Administration/SaveTabs.php'))
+        unlink('modules/Administration/SaveTabs.php');
+	// End Bug 40044 //////////////////
 	
 	upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -444,6 +490,27 @@ function post_install() {
 	}		
         //END SUGARCRM flav=pro ONLY
 
+	
+	//BEGIN SUGARCRM flav=ent ONLY
+	//add language pack config information to config.php
+   	if(is_file('install/lang.config.php')){
+		global $sugar_config;
+		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
+		require_once('install/lang.config.php');
+
+		foreach($config as $k=>$v){
+			$sugar_config[$k] = $v;
+		}
+		
+		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
+	    }else{
+			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
+		}		
+    }else{
+    	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
+    }
+	//END SUGARCRM flav=ent ONLY		
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.

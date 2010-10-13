@@ -315,19 +315,29 @@ class SugarView
             
             foreach ($value as $linkattribute => $attributevalue) {
                 // get the main link info
-                if ( $linkattribute == 'linkinfo' )
+                if ( $linkattribute == 'linkinfo' ) {
                     $gcls[$key] = array(
                         "LABEL" => key($attributevalue),
                         "URL"   => current($attributevalue),
                         "SUBMENU" => array(),
                         );
+                   if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
+                       $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
+                       $gcls[$key]["URL"] = "#";
+                   }
+                }
                 // and now the sublinks
-                if ( $linkattribute == 'submenu' && is_array($attributevalue) )
+                if ( $linkattribute == 'submenu' && is_array($attributevalue) ) {
                     foreach ($attributevalue as $submenulinkkey => $submenulinkinfo)
                         $gcls[$key]['SUBMENU'][$submenulinkkey] = array(
                             "LABEL" => key($submenulinkinfo),
                             "URL"   => current($submenulinkinfo),
                         );
+                       if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "#";
+                       }
+                }
             }
         }
         $ss->assign("GCLS",$gcls);
@@ -416,9 +426,25 @@ class SugarView
                 $groupedTabsClass = new GroupedTabStructure();               
                 $modules = query_module_access_list($current_user);
                 //handle with submoremodules
-				$max_tabs = $current_user->getPreference('max_subtabs');
-				if ( !isset($max_subtabs) || $max_subtabs <= 0 ){
-                	$max_tabs = isset($GLOBALS['sugar_config']['default_max_subtabs'])?$GLOBALS['sugar_config']['default_max_subtabs']:8;
+                $max_tabs = $current_user->getPreference('max_subtabs');
+                // If the max_tabs isn't set incorrectly, set it within the range, to the default max sub tabs size
+                if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
+                    // We have a default value. Use it
+                    if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
+                        // As of 6.1, we shouldn't have a max subtabs higher than 10.
+                        // If it's larger, bring it down to the max and save it in the config override
+                        if($GLOBALS['sugar_config']['default_max_subtabs'] > 10){
+                            require_once('modules/Configurator/Configurator.php');
+                            $configurator = new Configurator();
+                            $configurator->config['default_max_subtabs'] = '10';
+                            $configurator->handleOverride();
+                            $configurator->clearCache();
+                        }
+                        $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
+                    }
+                    else{
+                        $max_tabs = 8;
+                    }
                 }
                 
 				$subMoreModules = false;
@@ -540,6 +566,8 @@ class SugarView
 			require_once('include/DashletContainer/DCFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
 			$data = $dcm->getLayout();
+			$dcjs = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+			$ss->assign('SUGAR_DCJS', $dcjs);
 			$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
@@ -965,14 +993,14 @@ EOHTML;
             $final_module_menu = array();
             
             if (file_exists('modules/' . $module . '/Menu.php')) {
-                $GLOBAL['module_menu'] = $module_menu = array();
+                $GLOBALS['module_menu'] = $module_menu = array();
                 require('modules/' . $module . '/Menu.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBAL['module_menu'],$module_menu);
+                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
             }
             if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
-                $GLOBAL['module_menu'] = $module_menu = array();
+                $GLOBALS['module_menu'] = $module_menu = array();
                 require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBAL['module_menu'],$module_menu);
+                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
             }
             if (!file_exists('modules/' . $module . '/Menu.php') 
                     && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php') 
@@ -990,9 +1018,9 @@ EOHTML;
                             $app_strings['LBL_IMPORT'], "Import", $module);
             }
             if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
-                $GLOBAL['module_menu'] = $module_menu = array();
+                $GLOBALS['module_menu'] = $module_menu = array();
                 require('custom/application/Ext/Menus/menu.ext.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBAL['module_menu'],$module_menu);
+                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
             }
             $module_menu = $final_module_menu;
             sugar_cache_put("{$current_user->id}_{$module}_module_menu_{$current_language}",$module_menu);

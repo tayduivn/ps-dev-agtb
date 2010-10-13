@@ -21,9 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>abs(Number num)</b><br>
- * Returns the absolte value of <i>num</i>.
+ * Returns the absolute value of <i>num</i>.
  * ex: <i>abs(-5)</i> = 5
- **/
+ */
 class AbsoluteValueExpression extends NumericExpression {
 	/**
 	 * Returns the negative of the expression that it contains.

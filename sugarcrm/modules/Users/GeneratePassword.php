@@ -98,7 +98,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	    $LOWERCASE = "abcdefghijklmnpqrstuvwxyz";
 	    $NUMBER = "0123456789";
 	    $UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	    $SPECIAL = "~!@#$%^&*()_+=-{}|";
+	    $SPECIAL = '~!@#$%^&*()_+=-{}|'; 
 	    $condition = 0;
 	    $charBKT.=$UPPERCASE.$LOWERCASE.$NUMBER;
 	    $password="";
@@ -161,7 +161,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if (isset($_POST['link']) && $_POST['link'] == '1'){
 	global $timedate;
 	$guid=create_guid();
-	$url="http://".$GLOBALS['_SERVER']['HTTP_HOST'].$GLOBALS['_SERVER']['PHP_SELF']."?entryPoint=Changenewpassword&guid=$guid";
+	$url=$GLOBALS['sugar_config']['site_url']."/index.php?entryPoint=Changenewpassword&guid=$guid";
 	$time_now=gmdate($GLOBALS['timedate']->get_db_date_time_format());
 	//$q2="UPDATE `users_password_link` SET `deleted` = '1' WHERE `username` = '".$_POST['username']."'";
 	//$usr->db->query($q2);
@@ -274,8 +274,8 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
 	        $user_hash = strtolower(md5($password));
 	        $usr->setPreference('loginexpiration','0');
 	        $usr->setPreference('lockout','');
-	        $usr->setPreference('loginfailed','0');
-	        $usr->savePreferencesToDB();
+		$usr->setPreference('loginfailed','0');
+		$usr->savePreferencesToDB();
 	        //set new password
 	        $now=gmdate("Y-m-d H:i:s");
 	        $query = "UPDATE $usr->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$usr->id'";

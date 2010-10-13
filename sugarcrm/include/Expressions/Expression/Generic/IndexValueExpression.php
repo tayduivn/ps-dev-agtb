@@ -28,8 +28,9 @@
 require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
  * <b>valueAt(Number index, Enum values)</b><br>
- * Returns the value at position <i>index</i> in the collection <i>values</i>.
- **/
+ * Returns the value at position <i>index</i> in the collection <i>values</i>.<br/>
+ * ex: <i>valueAt(1, enum("a", "b", "c") = "b"</i>
+ */
 class IndexValueExpression extends GenericExpression
 {
 	/**

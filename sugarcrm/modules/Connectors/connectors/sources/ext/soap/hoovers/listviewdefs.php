@@ -31,22 +31,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: listviewdefs.php 38404 2008-07-30 00:50:16Z dwheeler $
 
 $listViewDefs['ext_soap_hoovers'] = array(
-	'recname' => array(
-		'width' => '25', 
+	'companyname' => array(
+		'width' => '20', 
 		), 
-	'addrcity' => array(
+	'city' => array(
 		'width' => '15', 
 		),
-	'addrstateprov' => array(
+	'stateorprovince' => array(
 		'width' => '15', 
 		),
 	'country' => array(
 		'width' => '10', 
 		),
 	'hqphone' => array(
-		'width' => '10',
+		'width' => '15',
 		),
-	'finsales' => array(
+	'sales' => array(
         'width' => '10',
 		),
 		

@@ -23,8 +23,9 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>doBothExist(String s1, String s2)</b><br>
- * Returns true if both <i>s1</i> and <i>s2</i> are not empty.
- *
+ * Returns true if both <i>s1</i> and <i>s2</i> are not empty.<br/>
+ * ex: <i>doBothExist("not", "empty")</i> = true,<br/>
+ * <i>doBothExist("empty", "")</i> = false
  */
 class BinaryDependencyExpression extends BooleanExpression {
 	/**

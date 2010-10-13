@@ -22,8 +22,9 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>and(boolean1, ...)</b><br>
- * Returns true if and only if all parameters are true.
- **/
+ * Returns true if and only if all parameters are true.<br/>
+ * ex: <i>and(true, true)</i> = true, <i>and(true, false)</i> = false
+ */
 class AndExpression extends BooleanExpression {
 	/**
 	 * Returns itself when evaluating.

@@ -1,6 +1,3 @@
-ALTER TABLE PRODUCTS DROP COLUMN team_id;
-ALTER TABLE PRODUCTS DROP COLUMN team_set_id;
-
 create index idx_accounts_primary on accounts_audit (id);
 create index idx_bugs_primary on bugs_audit (id);
 create index idx_campaigns_primary on campaigns_audit (id);

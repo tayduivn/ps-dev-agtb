@@ -115,8 +115,48 @@ class registry_v3_1 extends registry_v3 {
 				array(
 					'module_key'=>array('name'=>'module_key', 'type'=>'xsd:string'),
 					'module_label'=>array('name'=>'module_label', 'type'=>'xsd:string'),
+					'acls'=>array('name'=>'acls', 'type'=>'tns:acl_list'),
 				)
 		);
 		
+		$this->serviceClass->registerType(
+		    'acl_list',
+			'complexType',
+		   	 'array',
+		   	 '',
+		  	  'SOAP-ENC:Array',
+			array(),
+		    array(
+		        array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:acl_list_entry[]')
+		    ),
+			'tns:acl_list_entry'
+		);
+		
+		$this->serviceClass->registerType(
+		    'acl_list_entry',
+			'complexType',
+		   	 'struct',
+		   	 'all',
+		  	  '',
+				array(
+					'action'=>array('name'=>'action', 'type'=>'xsd:string'),
+					'access'=>array('name'=>'access', 'type'=>'xsd:string'),
+				)
+		);
+		
+		
+		$this->serviceClass->registerType(
+		    'new_module_fields',
+			'complexType',
+		   	 'struct',
+		   	 'all',
+		  	  '',
+				array(
+		        	'module_name'=>array('name'=>'module_name', 'type'=>'xsd:string'),
+		        	'module_name'=>array('name'=>'table_name', 'type'=>'xsd:string'),
+					'module_fields'=>array('name'=>'module_fields', 'type'=>'tns:field_list'),
+					'link_fields'=>array('name'=>'link_fields', 'type'=>'tns:link_field_list'),
+				)
+		);
 	}
 }

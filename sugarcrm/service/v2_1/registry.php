@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -95,7 +94,7 @@ class registry_v2_1 extends registry {
 			'link_value'=>array('name'=>'link_value', 'type'=>'tns:link_value'),
 			)
 		);
-		
+		//BEGIN SUGARCRM flav=pro ONLY
 		 $this->serviceClass->registerType(
 			'report_field_list',
 			'complexType',
@@ -108,7 +107,7 @@ class registry_v2_1 extends registry {
 			),
 			'tns:field_list2'
 		);
-		
+		//END SUGARCRM flav=pro ONLY
 		$this->serviceClass->registerType(
 			'field_list2',
 			'complexType',
@@ -119,7 +118,7 @@ class registry_v2_1 extends registry {
 			"field_list"=>array('name'=>'field_list', 'type'=>'tns:field_list'),
 			)
 		);
-		
+		//BEGIN SUGARCRM flav=pro ONLY
 		 $this->serviceClass->registerType(
 			'report_entry_list',
 			'complexType',
@@ -132,7 +131,7 @@ class registry_v2_1 extends registry {
 			),
 			'tns:entry_list2'
 		);
-		
+		//END SUGARCRM flav=pro ONLY
 		$this->serviceClass->registerType(
 			'entry_list2',
 			'complexType',

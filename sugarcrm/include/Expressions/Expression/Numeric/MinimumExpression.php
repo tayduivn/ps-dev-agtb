@@ -20,9 +20,9 @@
  ********************************************************************************/
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
- * <b>max(Number num, ...)</b><br/>
+ * <b>min(Number num, ...)</b><br/>
  * Returns lowest value number passed in<br>
- * ex: <i>max(-4, 2, 3)</i> = -4
+ * ex: <i>min(-4, 2, 3)</i> = -4
  */
 class MinimumExpression extends NumericExpression {
 	/**

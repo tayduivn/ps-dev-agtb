@@ -1,6 +1,6 @@
 <?php 
+//FILE SUGARCRM flav=pro ONLY
 require_once('include/nusoap/nusoap.php');
-
 
 /**
  * @group bug38100
@@ -48,6 +48,15 @@ class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
         $this->c->load_relationship('accounts');
       	$this->c->accounts->add($this->a1->id);
       	*/
+     
+		$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+    	
+		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+       
     }
 
     /**
@@ -73,23 +82,15 @@ class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
     	require_once('service/core/SoapHelperWebService.php');
     	require_once('modules/Reports/Report.php');
     	require_once('modules/Reports/SavedReport.php');
-    	$savedReportId = '616f5353-12a8-64ae-4707-4c7d244d76d1';//$GLOBALS['db']->getOne("SELECT id FROM saved_reports");
+    	$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports");
     	$savedReport = new SavedReport();
     	$savedReport->retrieve($savedReportId);
     	$helperObject = new SoapHelperWebServices();
     	$helperResult = $helperObject->get_report_value($savedReport, array());
     	$this->_login();
 		$result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
-		
-		$this->assertTrue(isset($result['field_list']));
-		$this->assertTrue(isset($result['entry_list']));
-    } // fn
-    
-    public function testGetEntryList() {
-    	$this->markTestSkipped('Fix Sql issue');
-    	$this->_login();
-		$result = $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,'modules' => 'Contacts','query' => "contacts.id = '{$this->c->id}'", 'order_by' => 'contacts.first_name','offset' => 0, 'select_fields' => array('last_name', 'first_name', 'id'), 'link_name_to_fields_array' => array(), 'max_results' => 10, 'deleted' => 0));
-		$this->assertTrue(isset($result['entry_list']) && $result['entry_list'][0]['id'] == $this->c->id);
+		$this->assertTrue(!empty($result['field_list']));
+		$this->assertTrue(!empty($result['entry_list']));
     } // fn
     
 	/**********************************

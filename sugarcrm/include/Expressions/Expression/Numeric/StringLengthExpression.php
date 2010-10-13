@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>strlen(String s)</b><br>
- * Returns the number of characters in the String <i>s</i>.
- *****************************/
+ * Returns the number of characters in the String <i>s</i>.<br/>
+ * ex: <i>strlen("Hello")</i> = 5
+ */
 class StringLengthExpression extends NumericExpression {
 	
 	/**

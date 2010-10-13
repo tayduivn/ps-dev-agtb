@@ -54,6 +54,7 @@ class DateTimeUtil
      */
     function get_time_start($date_start, $time_start = '')
  	{
+ 		global $timedate;
 		if(empty($time_start)) {
 			list($date_start, $time_start) = explode(' ', $date_start);
 		}
@@ -83,12 +84,11 @@ class DateTimeUtil
 				$time_arr['min'] = $match[2];
 			}
 		}
-		$date_time = new DateTimeUtil($time_arr,true);
-
-		$time_arr = array('ts'=>$date_time->ts + date("Z"));
+		$gmtdiff = date('Z')-$timedate->adjustmentForUserTimeZone()*60;
+		$time_arr['sec'] = $gmtdiff;
 		return new DateTimeUtil($time_arr,true);
-
 	}
+
 	function get_time_end( $start_time, $duration_hours,$duration_minutes)
 	{
 		if ( empty($duration_hours))
@@ -182,7 +182,7 @@ class DateTimeUtil
 
 	function get_utc_date_time()
 	{
-		return $this->year.$this->zmonth.$this->zday. "T".$this->zhour.$this->min."00Z";
+		return gmdate('Ymd\THi', $this->ts)."00Z";
 	}
 
 	function get_first_day_of_last_year()
@@ -264,7 +264,7 @@ class DateTimeUtil
 
 	function fill_in_details()
 	{
-		global $mod_strings;
+		global $mod_strings, $timedate;
 		$hour = 0;
 		$min = 0;
 		$sec = 0;
@@ -300,7 +300,7 @@ class DateTimeUtil
 		{
 			sugar_die ("fill_in_details: year was not set");
 		}
-		$this->ts = mktime($hour,$min,$sec,$month,$day,$year);
+		$this->ts = mktime($hour,$min,$sec,$month,$day,$year)+$timedate->adjustmentForUserTimeZone()*60;
 		$this->load_ts($this->ts);
 
 	}
@@ -319,8 +319,8 @@ class DateTimeUtil
 		$this->ts = $timestamp;
    		global $timedate;
 
-		$date_str = date('i:G:H:j:d:t:w:z:L:W:n:m:Y:Z',$timestamp);
 		$tdiff = $timedate->adjustmentForUserTimeZone();
+   		$date_str = date('i:G:H:j:d:t:w:z:L:W:n:m:Y:Z',$timestamp-$tdiff*60);
 		list(
 		$this->min,
 		$this->hour,
@@ -354,7 +354,7 @@ class DateTimeUtil
 
 	}
 
-	function DateTimeUtil(&$time,$fill_in_details)
+	function DateTimeUtil($time,$fill_in_details)
 	{
 		if (! isset( $time) || count($time) == 0 )
 		{

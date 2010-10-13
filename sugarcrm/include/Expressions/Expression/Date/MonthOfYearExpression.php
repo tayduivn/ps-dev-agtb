@@ -23,7 +23,7 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
  * <b>monthofyear(Date d)</b><br>
  * Returns the month of year that <i>d</i> is in.<br/>
  * Jan = 1, Feb = 2, ... , Dec = 12
- **/
+ */
 class MonthOfYearExpression extends DateExpression
 {
 	/**

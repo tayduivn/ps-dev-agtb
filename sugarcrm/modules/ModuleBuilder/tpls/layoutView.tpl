@@ -175,9 +175,11 @@
 <input type='hidden' name='view_module' value='{$view_module}'>
 <input type='hidden' name='view' value='{$view}'>
 <input type='hidden' name="panels_as_tabs" value='{$displayAsTabs}'>
+<!-- BEGIN SUGARCRM flav=ent ONLY -->
 {if $fromPortal}
     <input type='hidden' name='PORTAL' value='1'>
 {/if}
+<!-- END SUGARCRM flav=ent ONLY -->
 {if $fromModuleBuilder}
     <input type='hidden' name='MB' value='1'>
     <input type='hidden' name='view_package' value='{$view_package}'>
@@ -186,6 +188,42 @@
 </form>
 <script>
 {literal}
+//BEGIN SUGARCRM flav=ent ONLY
+SUGAR.portal = {
+	checkCalcFields: function() {
+		{/literal}
+		{if $view == "DetailView"}    
+           return true;
+		{/if}
+		{literal}
+		var Dom = YAHOO.util.Dom;
+	    var panels = Dom.get('panels');
+	    var fields = Dom.getElementsByClassName('field_name', 'span', 'panels');
+	    var cfs = [ ];
+	    for(i in fields){
+	        if (SUGAR.portal.calcField.indexOf(fields[i].innerHTML) != -1) {
+	            cfs.push(fields[i].innerHTML);
+	        }
+	    }
+	    if (cfs.length > 0) 
+	    {
+	        var msg = SUGAR.language.get("ModuleBuilder", "ERROR_CALCULATED_PORTAL_FIELDS") + "\n";
+	        for (var i = 0; i < cfs.length; i++) {
+	          msg += '"' + cfs[i] + '"';
+	          if (i != cfs.length - 1)
+	              msg += ",";
+	        }
+			msg += "\n" + SUGAR.language.get("ModuleBuilder", "ERROR_ARE_YOU_SURE");
+	        return window.confirm(msg);
+	    }
+	            
+	    return true;
+		
+	},
+	calcField: {/literal}{$calc_field_list}{literal}
+};
+
+//END SUGARCRM flav=ent ONLY
 function editPanelProperties(panelId, view) {
     panelId = "" + panelId;
 	var key_label = document.getElementById('le_panelid_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
