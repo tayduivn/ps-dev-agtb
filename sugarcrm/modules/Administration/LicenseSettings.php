@@ -48,21 +48,21 @@ if(isset($_REQUEST['validate'])){
 $focus = new Administration();
 $focus->retrieveSettings();
 if(!empty( $_FILES['VKFile']) ){
-	
+
 	$response_data = array();
 	$response_data['key'] =  $focus->settings['license_key'];
 	$response_data['data'] = file_get_contents($_FILES['VKFile']['tmp_name']);
-	check_now(false, true, $response_data );	
+	check_now(false, true, $response_data );
 	$focus->retrieveSettings(false, true);
 }
 if(!empty( $_REQUEST['exportKey']) ){
 
-	
+
 	$content = check_now(get_sugarbeat(), true);
 	header("Content-Disposition: attachment; filename=sugarkey.lic");
 	header("Content-Type: text/plain; charset={$app_strings['LBL_CHARSET']}");
 	header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-	header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
+	header( "Last-Modified: " . TimeDate2::httpTime() );
 	header("Cache-Control: max-age=0");
 	header("Pragma: public");
 	header("Content-Length: ".strlen($content));
@@ -71,11 +71,11 @@ if(!empty( $_REQUEST['exportKey']) ){
 }
 
 echo getClassicModuleTitle(
-        "Administration", 
+        "Administration",
         array(
             "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
            $mod_strings['LBL_MANAGE_LICENSE_TITLE'],
-           ), 
+           ),
         true
         );
 global $currentModule;
@@ -118,19 +118,19 @@ $status = translate('LBL_VALIDATION_SUCCESS_DATE', 'Administration');
 if(empty($focus->settings['license_last_validation_success'])){
 	$status .= translate('LBL_NEVER', 'Administration');
 }else{
-	$status .= $timedate->to_display_date_time($focus->settings['license_last_validation_success']);	
+	$status .= $timedate->to_display_date_time($focus->settings['license_last_validation_success']);
 }
 $status .='<br>';
 $status .= translate('LBL_VALIDATION_FAIL_DATE', 'Administration');
 if(empty($focus->settings['license_last_validation_fail'])){
 	$status .= translate('LBL_NEVER', 'Administration');
 }else{
-	$status .=  $timedate->to_display_date_time($focus->settings['license_last_validation_fail']);	
+	$status .=  $timedate->to_display_date_time($focus->settings['license_last_validation_fail']);
 }
 if(!empty($focus->settings['license_last_validation']) && $focus->settings['license_last_validation'] == 'no_connection'){
 	$status .= '<br><span class="error" >' . translate('LBL_FAILED_CONNECTION', 'Administration') . ' ' . $timedate->to_display_date_time($focus->settings['license_last_connection_fail']) . '</span>';
-		
-	
+
+
 }
 $xtpl->assign("LICENSE_VALIDATION_STATUS"	, $status);
 //BEGIN SUGARCRM flav=ent ONLY

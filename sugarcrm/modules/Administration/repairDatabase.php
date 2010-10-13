@@ -41,7 +41,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 			header("Content-Disposition: attachment; filename=repairSugarDB.sql");
 			header("Content-Type: text/sql; charset={$app_strings['LBL_CHARSET']}");
 			header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-			header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+			header("Last-Modified: " . TimeDate2::httpTime());
 			header("Cache-Control: post-check=0, pre-check=0", false);
 			header("Content-Length: " . strlen($_POST['sql']));
 

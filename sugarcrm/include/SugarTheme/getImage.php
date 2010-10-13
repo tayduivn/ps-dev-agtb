@@ -30,7 +30,7 @@ while(substr_count($_REQUEST['imageName'], '..') > 0){
 	$_REQUEST['imageName'] = str_replace('..', '.', $_REQUEST['imageName']);
 }
 $filename = SugarThemeRegistry::current()->getImageURL($_REQUEST['imageName']);
-if ( empty($filename) ) { 
+if ( empty($filename) ) {
     header($_SERVER["SERVER_PROTOCOL"].' 404 Not Found');
     die;
 }
@@ -41,7 +41,7 @@ $file_ext = substr($filename,-3);
 $extensions = SugarThemeRegistry::current()->imageExtensions;
 if(!in_array($file_ext, $extensions)){
 	header($_SERVER["SERVER_PROTOCOL"].' 404 Not Found');
-    die;	
+    die;
 }
 
 
@@ -57,16 +57,16 @@ header("Cache-Control: private");
 header("Pragma: dummy=bogus");
 header("Etag: $etag");
 
-$ifmod = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) 
-    ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $last_modified_time : null; 
-$iftag = isset($_SERVER['HTTP_IF_NONE_MATCH']) 
-    ? $_SERVER['HTTP_IF_NONE_MATCH'] == $etag : null; 
-if (($ifmod || $iftag) && ($ifmod !== false && $iftag !== false)) { 
-    header($_SERVER["SERVER_PROTOCOL"].' 304 Not Modified'); 
-    die; 
+$ifmod = isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
+    ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $last_modified_time : null;
+$iftag = isset($_SERVER['HTTP_IF_NONE_MATCH'])
+    ? $_SERVER['HTTP_IF_NONE_MATCH'] == $etag : null;
+if (($ifmod || $iftag) && ($ifmod !== false && $iftag !== false)) {
+    header($_SERVER["SERVER_PROTOCOL"].' 304 Not Modified');
+    die;
 }
-header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 86400) . 'GMT');
-header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified_time)." GMT");
+header('Expires: ' . TimeDate2::httpTime(time() + 86400));
+header("Last-Modified: ".TimeDate2::httpTime($last_modified_time));
 
 // now send the content
 if ( substr($filename,-3) == 'gif' )

@@ -37,7 +37,7 @@ class SugarFeedFlush {
 
             $tmpTime = time();
             $tmpSF = new SugarFeed();
-            $flushBefore = $timedate->asDbDate($timedate->getNow()->get("-14 days")->setTime(0,0));
+            $flushBefore = $timedate->asDbDate($timedate->getNow()->modify("-14 days")->setTime(0,0));
             $db->query("DELETE FROM ".$tmpSF->table_name." WHERE date_entered < '".$db->quote($flushBefore)."'");
             $admin->saveSetting('sugarfeed','flushdate',$currDate);
             // Flush the cache

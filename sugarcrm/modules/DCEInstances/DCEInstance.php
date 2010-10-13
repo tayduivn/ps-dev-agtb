@@ -224,14 +224,7 @@ class DCEInstance extends DCEInstance_sugar {
                     $exp_hours =$adm->settings['dce_support_user_time_limit'];
                     if(empty($exp_hours)) $exp_hours = 5;
 
-                    //change time into timestamp
-                    $stim = strtotime($action->start_date);
-                    //add day to timestamp
-                    $tim = mktime(date("H",$stim)+$exp_hours, date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim));
-
-                    //convert back into date format
-                    $future = $timedate->to_display_date_time(date($GLOBALS['timedate']->get_db_date_time_format(),$tim));
-                    $action2->start_date = $future;
+                    $action2->start_date = $timedate->fromUser($action->start_date)->modify("+$exp_hours hours")->asUser();
                     $action2->save();
 
                     //support user is not already set, then create new action to disable and set support user
@@ -254,7 +247,7 @@ class DCEInstance extends DCEInstance_sugar {
             return false;
         }
         // license start date plus $duration days
-        return TimeDate2::fromDbFormat($lic_start, $timedate->get_db_date_format())->get("+{$lic_duration} days")->asDbDate();
+        return TimeDate2::fromDbFormat($lic_start, $timedate->get_db_date_format())->modify("+{$lic_duration} days")->asDbDate();
     }
 
 }

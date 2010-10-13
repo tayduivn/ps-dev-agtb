@@ -28,10 +28,10 @@ require_once('service/core/REST/SugarRest.php');
  *
  */
 class SugarRestRSS extends SugarRest{
-	
+
 	/**
 	 * It will serialize the input object and echo's it
-	 * 
+	 *
 	 * @param array $input - assoc array of input values: key = param name, value = param type
 	 * @return String - echos serialize string of $input
 	 */
@@ -43,9 +43,9 @@ class SugarRestRSS extends SugarRest{
 		$this->generateItems($input);
 		$this->generateResponseFooter();
 	} // fn
-	
+
 	function generateResponseHeader($count){
-		$date = gmdate("D, d M Y H:i:s") . " GMT";
+		$date = TimeDate2::httpTime();
 echo'<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
@@ -57,13 +57,13 @@ echo'<?xml version="1.0" encoding="UTF-8" ?>
 <ttl>' . $count . '</ttl>
 ';
 	}
-	
+
 function generateItems($input){
 	if(!empty($input['entry_list'])){
 		foreach($input['entry_list'] as $item){
 			$this->generateItem($item);
 		}
-		
+
 	}
 }
 
@@ -83,7 +83,7 @@ foreach($item['name_value_list'] as $k=>$v){
 }
 echo "]]></description>\n";
 if(!empty($item['name_value_list']['date_modified'])){
-	$date = date("D, d M Y H:i:s", strtotime($item['name_value_list']['date_modified'])) . " GMT";
+	$date = TimeDate2::httpTime(TimeDate2::getInstance()->fromDb($item['name_value_list']['date_modified'])->getTimestamp());
 	echo "<pubDate>$date</pubDate>";
 }
 
@@ -93,7 +93,7 @@ echo "</item>\n";
 function generateResponseFooter(){
 		echo'</channel></rss>';
 	}
-	
+
 	/**
 	 * This method calls functions on the implementation class and returns the output or Fault object in case of error to client
 	 *
@@ -102,7 +102,7 @@ function generateResponseFooter(){
 	function serve(){
 		$this->fault('RSS is not a valid input_type');
 	} // fn
-	
+
 	function fault($faultObject){
 		ob_clean();
 		$this->generateResponseHeader();
@@ -117,8 +117,8 @@ function generateResponseFooter(){
 		echo $error;
 		echo '</name></item>';
 		$this->generateResponseFooter();
-		
+
 	}
-	
-	
+
+
 } // clazz

@@ -67,9 +67,9 @@ if (empty($_REQUEST['appointment_filter'])) {
 }
 
 if ($appointment_filter == 'last this_month') {
-    $laterDate = $timedate->getNow()->get("last day of this month");
+    $laterDate = $timedate->getNow(true)->get("last day of this month");
 } elseif ($appointment_filter == 'last next_month') {
-    $laterDate = $timedate->getNow()->get("last day of next month");
+    $laterDate = $timedate->getNow(true)->get("last day of next month");
 } else {
 	$laterDate = $timedate->fromString($appointment_filter);
 }

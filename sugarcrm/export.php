@@ -52,7 +52,7 @@ header("Content-type: application/octet-stream; charset=".$GLOBALS['locale']->ge
 header("Content-Disposition: attachment; filename={$filename}.csv");
 header("Content-transfer-encoding: binary");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-header("Last-Modified: " . TimeDate2::getInstance()->getNow()->format("D, d M Y H:i:s") . " GMT" );
+header("Last-Modified: " . TimeDate2::httpTime() );
 header("Cache-Control: post-check=0, pre-check=0", false );
 header("Content-Length: ".strlen($content));
 

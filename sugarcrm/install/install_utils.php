@@ -2286,7 +2286,7 @@ function create_phone_number() {
 function create_date($year=null,$mnth=null,$day=null)
 {
     global $timedate;
-    $now = $timedate->getNow();
+    $now = $timedate->getNow(true);
     if ($day==null) $day=$now->day+mt_rand(0,365);
     return $timedate->asDbDate($now->get_day_begin($day, $mnth, $year));
 }

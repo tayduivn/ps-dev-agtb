@@ -167,25 +167,22 @@ class SessionManager extends SugarBean {
     }
 
     /*
-     * Return the proper offset from GMT
+     * Return GMT date that represents the cutoff for expiring sessions
      *
-     * return a gmt offset accounting for the number of seconds from now
+     * The date returned is "now" - X seconds, where X is the session timeout
+     * return @string
      */
     function getTimeDiff(){
         $admin = new Administration();
         $admin->retrieveSettings('system');
-        $session_timeout = $admin->settings['system_session_timeout'];
+        $session_timeout = abs($admin->settings['system_session_timeout']);
         if(!isset($session_timeout)){
-            $session_timeout = ini_get('session.gc_maxlifetime');
+            $session_timeout = abs(ini_get('session.gc_maxlifetime'));
         }
         $GLOBALS['log']->debug("System Session Timeout: ".$session_timeout);
 
-        $time = time();
-        $gm_time = $time - date('Z', $time);
-        $date_array = getdate($gm_time);
-        $time_diff = mktime($date_array['hours'],$date_array['minutes'],$date_array['seconds'] - $session_timeout,$date_array['mon'],$date_array['mday'],$date_array['year']);
-        $time_diff = date($GLOBALS['timedate']->get_db_date_time_format(), $time_diff);
-        return $time_diff;
+        $now = $timedate->getNow();
+        return $timedate->asDb($now->get("-{$session_timeout} seconds"));
     }
 
     /*
