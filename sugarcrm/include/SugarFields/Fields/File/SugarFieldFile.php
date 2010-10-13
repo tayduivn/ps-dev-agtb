@@ -24,7 +24,7 @@ class SugarFieldFile extends SugarFieldBase {
         }        
 
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/File/DetailView.tpl');
+        return $this->fetch($this->findTemplate('DetailView'));
     }
     
 	public function save(&$bean, $params, $field, $properties, $prefix = ''){

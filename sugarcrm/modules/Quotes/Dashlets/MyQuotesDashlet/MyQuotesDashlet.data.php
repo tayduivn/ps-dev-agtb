@@ -78,5 +78,75 @@ $dashletData['MyQuotesDashlet']['columns'] = array('quote_num' => array(
         'link' => false,
         'default' => true        
         ),
+    'quote_type' => array(
+		'width' => '15', 
+		'label' => 'LBL_QUOTE_TYPE',
+        'link' => false,      
+        ),
+     'order_stage' => array(
+		'width' => '15', 
+		'label' => 'LBL_ORDER_STAGE',
+        'link' => false,       
+        ),
+  'billing_address_street' =>
+  array (
+    'width' => '20', 
+    'label' => 'LBL_BILLING_ADDRESS_STREET',
+    'link' => false, 
+  ),
+  'billing_address_city' =>
+  array (
+     'width' => '20',
+    'label' => 'LBL_BILLING_ADDRESS_CITY',
+   'link' => false, 
+  ),
+  'billing_address_state' =>
+  array (
+     'width' => '20',
+    'label' => 'LBL_BILLING_ADDRESS_STATE',
+    'link' => false, 
+  ),
+  'billing_address_postalcode' =>
+  array (
+     'width' => '20',
+    'label' => 'LBL_BILLING_ADDRESS_POSTAL_CODE',
+    'link' => false, 
+  ),
+  'billing_address_country' =>
+  array (
+     'width' => '20',
+    'label' => 'LBL_BILLING_ADDRESS_COUNTRY',
+    'link' => false, 
+  ),
+  'shipping_address_street' =>
+  array (
+    'width' => '20',
+    'label' => 'LBL_SHIPPING_ADDRESS_STREET',
+    'link' => false, 
+  ),
+  'shipping_address_city' =>
+  array (
+     'width' => '20',
+    'label' => 'LBL_SHIPPING_ADDRESS_CITY',
+    'link' => false, 
+  ),
+  'shipping_address_state' =>
+  array (
+    'width' => '20',
+    'label' => 'LBL_SHIPPING_ADDRESS_STATE',
+    'link' => false, 
+  ),
+  'shipping_address_postalcode' =>
+  array (
+    'width' => '20',
+    'label' => 'LBL_SHIPPING_ADDRESS_POSTAL_CODE',
+   'link' => false, 
+  ),
+  'shipping_address_country' =>
+  array (
+     'width' => '20',
+    'label' => 'LBL_SHIPPING_ADDRESS_COUNTRY',
+   'link' => false, 
+  ),
 );
 ?>

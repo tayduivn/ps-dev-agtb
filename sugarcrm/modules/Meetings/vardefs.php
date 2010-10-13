@@ -86,7 +86,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'date',
+    'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date meeting ends'
   ),

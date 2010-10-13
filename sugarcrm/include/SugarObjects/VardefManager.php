@@ -127,7 +127,9 @@ class VardefManager{
 		
 		$file = create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
 		write_array_to_file('GLOBALS["dictionary"]["'. $object . '"]',$GLOBALS['dictionary'][$object], $file);
-		include($file);
+		if ( is_readable($file) ) {
+		    include($file);
+		}
 		
 		// put the item in the sugar cache.
 		$key = "VardefManager.$module.$object";
@@ -260,8 +262,9 @@ class VardefManager{
 			//which was created from the refreshVardefs so let's try to load it.
 			if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php'))
 			{
-				include_once($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php');
-				
+			    if ( is_readable($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php') ) {
+			        include_once($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php');
+				}
 				// now that we hae loaded the data from disk, put it in the cache.
 				if(!empty($GLOBALS['dictionary'][$object]))
 					sugar_cache_put($key,$GLOBALS['dictionary'][$object]);

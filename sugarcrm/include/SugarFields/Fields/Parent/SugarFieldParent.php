@@ -14,7 +14,7 @@ class SugarFieldParent extends SugarFieldBase {
 			$this->ss->assign('nolink', false);
 		}
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Parent/DetailView.tpl');
+        return $this->fetch($this->findTemplate('DetailView'));
     }
     
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -48,7 +48,7 @@ class SugarFieldParent extends SugarFieldBase {
     	$displayParams['disabled_parent_types'] = '<script>var disabledModules='. $json->encode($disabled_parent_types).';</script>';
     	$this->ss->assign('quickSearchCode', $this->createQuickSearchCode($form_name, $vardef));
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);        
-        return $this->fetch('include/SugarFields/Fields/Parent/EditView.tpl');
+        return $this->fetch($this->findTemplate('EditView'));
     }
  	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -83,7 +83,7 @@ class SugarFieldParent extends SugarFieldBase {
 		$displayParams['popupData'] = '{literal}'.$json->encode($popup_request_data).'{/literal}';
     	$displayParams['disabled_parent_types'] = '<script>var disabledModules='. $json->encode($disabled_parent_types).';</script>';
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);        
-        return $this->fetch('include/SugarFields/Fields/Parent/SearchView.tpl');
+        return $this->fetch($this->findTemplate('SearchView'));
     }
     
     function createQuickSearchCode($formName = 'EditView', $vardef){

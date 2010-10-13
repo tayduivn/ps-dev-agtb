@@ -5294,4 +5294,22 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
+	
+	/**
+	 * upgradeDateTimeFields
+	 * 
+	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
+	 * which prevents you from performing timezone offset calculations once the data has been saved.
+	 * 
+	 */
+	function upgradeDateTimeFields(){
+		//bug: 39757
+		$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+		$GLOBALS['db']->query($meetingsSql);
+		
+		$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+		$GLOBALS['db']->query($callsSql);
+	}
 ?>

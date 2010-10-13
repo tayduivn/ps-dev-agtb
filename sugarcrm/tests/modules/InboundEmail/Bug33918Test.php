@@ -159,6 +159,7 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
         $email = new stdClass();
         $email->id = $parentID;
         $email->description = $message;
+        $email->raw_source = $message;
         $email->date_created = gmdate('Y-m-d H:i:s'); 
         $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
@@ -223,6 +224,7 @@ CIA;
         $email = new stdClass();
         $email->id = $parentID;
         $email->description = $message;
+        $email->raw_source = $message;
         $email->date_created = gmdate('Y-m-d H:i:s'); 
         $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
