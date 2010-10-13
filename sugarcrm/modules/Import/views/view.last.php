@@ -189,6 +189,8 @@ class ImportViewLast extends SugarView
                 
             $lbl_last_imported = $mod_strings['LBL_LAST_IMPORTED'];
             $lvf->lv->mergeduplicates = false;
+            $lvf->lv->showMassupdateFields = false;
+            $lvf->template = 'include/ListView/ListViewNoMassUpdate.tpl';
             $module_mod_strings = return_module_language($current_language, $focus->module_dir);
             $lvf->setup('', $where, $params, $module_mod_strings, 0, -1, '', strtoupper($beanname), array(), 'id');
             $lvf->display($lbl_last_imported.": ".$module_mod_strings['LBL_MODULE_NAME']);
