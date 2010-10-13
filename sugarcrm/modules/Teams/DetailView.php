@@ -58,7 +58,18 @@ if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {
 
 echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME']. ": " . $focus->get_summary_text(), true);
 
-
+$error_message = isset($_REQUEST['message']) ? $_REQUEST['message'] : '';
+if(!empty($error_message))
+{
+   if($error_message == 'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM')
+   {
+   	  $error_message = $app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
+   } else if($error_message == 'LBL_MASSUPDATE_DELETE_USER_EXISTS') {
+   	  $user = new User();
+	  $user->retrieve($focus->associated_user_id);
+	  $error_message = '<div class="error">' . string_format($app_strings['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name)) . '</div>';
+   }
+}
 
 $GLOBALS['log']->info("Team detail view");
 
@@ -71,9 +82,9 @@ $xtpl->assign("ID", $focus->id);
 $xtpl->assign("RETURN_MODULE", "Teams");
 $xtpl->assign("RETURN_ACTION", "DetailView");
 $xtpl->assign("ACTION", "EditView");
-
 $xtpl->assign("NAME", Team::getDisplayName($focus->name, $focus->name_2));
 $xtpl->assign("DESCRIPTION", nl2br(url2html($focus->description)));
+$xtpl->assign("DELETE_ERROR_MESSAGE", $error_message);
 global $current_user;
 if((is_admin($current_user) || is_admin_for_module($current_user,'Users')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
 	

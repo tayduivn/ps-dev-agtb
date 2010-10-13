@@ -149,6 +149,7 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account->emailAddress->addAddress(createEmailAddress(), true);
 	$account->emailAddress->addAddress(createEmailAddress());
 	$account->website = createWebAddress();
+		
 	$account->billing_address_street = $sugar_demodata['street_address_array'][mt_rand(0,$street_address_count-1)];
 	$account->billing_address_city = $sugar_demodata['city_array'][mt_rand(0,$city_array_count-1)];
 	if($i % 3 == 1)	{
@@ -210,7 +211,7 @@ for($i = 0; $i < $number_companies; $i++) {
 	$account->shipping_address_postalcode = $account->billing_address_postalcode;
 	$account->shipping_address_country = $account->billing_address_country;
 	$account->industry = array_rand($app_list_strings['industry_dom']);
-	$account->account_type = "Customer";
+	$account->account_type = "Customer";	
 	$account->save();
 	$account_ids[] = $account->id;
 	$accounts[] = $account;

@@ -39,8 +39,7 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
     
     
     public function test_get_tracker_substring2()
-    {
-    	global $sugar_config;       
+    {    
         $test_string = '"Hello There How Are You? " This has quotes too';
         
         //BEGIN SUGARCRM flav=com ONLY
@@ -57,7 +56,6 @@ class Bug33284_Test extends Sugar_PHPUnit_Framework_TestCase
 
 		$test_string = '早前於美國完成民族音樂學博士學位回港後在大專院校的音樂系任教123456789';
         $display_string = getTrackerSubstring($test_string);
-
         $this->assertEquals(mb_strlen($display_string, 'UTF-8'), $default_length, 'Assert that the string length is equal to ' . $default_length . ' characters (default)');    
     }  
 }
