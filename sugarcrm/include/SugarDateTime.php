@@ -247,6 +247,13 @@ class SugarDateTime extends DateTime
 		return new self($str);
 	}
 
+	/**
+	 * Create a list of time slots for calendar view
+	 * Times must be in user TZ
+	 * @param string $view Which view we are using - day, week, month
+	 * @param SugarDateTime $start_time Start time
+	 * @param SugarDateTime $end_time End time
+	 */
 	static function getHashList($view, $start_time, $end_time)
 	{
 		$hash_list = array();
@@ -308,7 +315,94 @@ class SugarDateTime extends DateTime
 	function get_year_begin($year)
 	{
         $newdate = clone $this;
+        $newdate->setDate($this->year, 1, 1);
+        $newdate->setTime(0,0);
+        return $newdate;
+	}
+	/*
+	 * Print datetime in standard DB format
+	 *
+	 * Set $tz parameter to false if you are sure if the date is in UTC.
+	 *
+	 * @param bool $tz do conversion to UTC
+	 * @return string
+	 */
+	function asDb($tz = true)
+	{
+        if($tz) {
+            $this->setTimezone(new DateTimeZone("UTC"));
+        }
+        return $this->format(TimeDate2::DB_DATETIME_FORMAT);
+	}
 
-        $this->setTime(0,0);
+	/**
+	 * Create datetime object from calendar array
+	 * @param array $time
+	 * @return SugarDateTime
+	 */
+	static function fromTimeArray($time)
+	{
+		if (! isset( $time) || count($time) == 0 )
+		{
+			$result = new self("now", new DateTimeZone("UTC"));
+		}
+		elseif ( isset( $time['ts']))
+		{
+			$result = new self("@".$time['ts'], new DateTimeZone("UTC"));
+		}
+		elseif ( isset( $time['date_str']))
+		{
+            $result = self::createFromFormat(TimeDate2::DB_DATE_FORMAT, $time['date_str']);
+            $result->setTimezone(new DateTimeZone("UTC"));
+		}
+		else
+		{
+    		$hour = 0;
+    		$min = 0;
+    		$sec = 0;
+    		$day = 1;
+    		$month = 1;
+    		$year = 1970;
+		    if ( isset($time['sec']))
+			{
+        			$sec = $time['sec'];
+			}
+			if ( isset($time['min']))
+			{
+        			$min = $time['min'];
+			}
+			if ( isset($time['hour']))
+			{
+        			$hour = $time['hour'];
+			}
+			if ( isset($time['day']))
+			{
+        			$day = $time['day'];
+			}
+			if ( isset($time['week']))
+			{
+        			$week = $time['week'];
+			}
+			if ( isset($time['month']))
+			{
+        			$month = $time['month'];
+			}
+			if ( isset($time['year']) && $time['year'] >= 1970)
+			{
+        			$year = $time['year'];
+			}
+			$result = new self("now", new DateTimeZone("UTC"));
+			$result->setDate($year, $month, $day)->setTime($hour, $min, $sec);
+		}
+        return $result;
+	}
+
+	/**
+	 * Get query string for the date
+	 * @return string
+	 */
+	function get_date_str()
+	{
+        return sprintf("year=%d&month=%d&day=%d&hour=%d", $this->year, $this->month, $this->day, $this->hour);
 	}
 }

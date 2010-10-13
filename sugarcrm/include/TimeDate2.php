@@ -263,6 +263,7 @@ class TimeDate2
      */
     public function get_date_format(User $user = null)
     {
+
         $user = $this->_getUser($user);
 
         if (empty($user)) {
@@ -270,6 +271,10 @@ class TimeDate2
         }
 
         $datef = $user->getPreference('datef');
+        if(empty($datef) && isset($GLOBALS['current_user']) && $GLOBALS['current_user'] !== $user) {
+            // if we got another user and it has no date format, try current user
+            $datef = $GLOBALS['current_user']->getPreference('datef');
+        }
         if (empty($datef)) {
             $datef = $GLOBALS['sugar_config']['default_date_format'];
         }
@@ -296,6 +301,10 @@ class TimeDate2
         }
 
         $timef = $user->getPreference('timef');
+        if(empty($timef) && isset($GLOBALS['current_user']) && $GLOBALS['current_user'] !== $user) {
+            // if we got another user and it has no time format, try current user
+            $datef = $GLOBALS['current_user']->getPreference('$timef');
+        }
         if (empty($timef)) {
             $timef = $GLOBALS['sugar_config']['default_time_format'];
         }
@@ -394,10 +403,10 @@ class TimeDate2
      * @param DateTime $date
      * @return string
      */
-    public function asUser(DateTime $date)
+    public function asUser(DateTime $date, User $user = null)
     {
-        $this->tzUser($date);
-        return $date->format($this->get_date_time_format());
+        $this->tzUser($date, $user);
+        return $date->format($this->get_date_time_format($user));
     }
 
     /**
