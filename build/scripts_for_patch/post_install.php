@@ -342,7 +342,15 @@ function genericFunctions(){
     //Rebuild roles
      _logThis("Rebuilding Roles", $path);
 	 add_EZ_PDF();     
-
+    //BEGIN SUGARCRM flav=pro ONLY 
+	 // If going from pre 610 to 610+, migrate the report favorites
+	if($sugar_version < '6.1.0')
+	{
+	    _logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+	    migrate_sugar_favorite_reports();
+	    _logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+	}
+	//END SUGARCRM flav=pro ONLY 
      ob_start();
      rebuild_roles();
      ob_end_clean();
