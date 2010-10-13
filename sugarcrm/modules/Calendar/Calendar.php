@@ -64,7 +64,7 @@ class Calendar
 	var $slice_hash = array();
 	var $shared_users_arr = array();
 
-	function Calendar($view,$time_arr=array())
+	function __construct($view,$time_arr=array())
 	{
 		global $current_user, $timedate;
 		global $sugar_config;
@@ -97,35 +97,15 @@ class Calendar
 		else
 		{
 		    if(!empty($time_arr)) {
-        		if ( empty($time_arr["year"]))
-        		{
-        			sugar_die ("all views: year was not set");
-        		}
-        		else if ( $this->view == 'month' &&  empty($time_arr["month"]))
-        		{
-        			sugar_die ("month view: month was not set");
-        		}
-        		else if ( $this->view == 'week' && empty($time_arr["week"]))
-        		{
-        			sugar_die ("week view: week was not set");
-        		}
-        		else if ( $this->view == 'shared' && empty($time_arr["week"]))
-        		{
-        			sugar_die ("shared view: week was not set");
-        		}
-        		else if ( $this->view == 'day' &&  empty($time_arr["day"]) && empty($time_arr["month"]))
-        		{
-        			sugar_die ("day view: day and month was not set");
-        		}
 		        // FIXME: what format?
-			    $this->date_time = SugarDateTime::fromTimeArray($time_arr);
+			    $this->date_time = $timedate->fromTimeArray($time_arr);
 		    } else {
 		        $this->date_time = $timedate->getNow();
 		    }
 		}
 
 		$timedate->tzUser($this->date_time, $current_user);
-
+        $GLOBALS['log']->debug("CALENDATE: ".$this->date_time->format('r'));
 		$this->create_slices();
 
 	}
@@ -247,8 +227,7 @@ class Calendar
     	}
 
 	    // loop thru each activity for this user
-		for ($i = 0;$i < count($acts_arr);$i++) {
-			$act = $acts_arr[$i];
+		foreach ($acts_arr as $act) {
 			// get "hashed" time slots for the current activity we are looping through
 			$start = $timedate->tzUser($act->start_time);
 			$end = $timedate->tzUser($act->end_time);
@@ -330,7 +309,7 @@ class Calendar
 		else
 		if ($this->view == 'year')
 		{
-			$day = $this->date_time->date_time->get_year_begin($this->year+1);
+			$day = $this->date_time->get_year_begin($this->year+1);
 		}
 		else
 		{
@@ -460,18 +439,14 @@ class CalendarActivity
 
 		if ($sugar_bean->object_name == 'Task')
 		{
-
+		    $due = $this->sugar_bean->date_due;
+            if(!empty($this->sugar_bean->time_due)) {
+                $due = $timedate->merge_date_time($due, $this->sugar_bean->time_due);
+            }
 		    if($DO_USER_TIME_OFFSET) {
-    			$this->start_time = $timedate->fromUser($timedate->merge_date_time(
-    				$this->sugar_bean->date_due,
-    				$this->sugar_bean->time_due
-    			));
+    			$this->start_time = $timedate->fromUser($due);
 		    } else {
-    			$this->start_time = $timedate->fromDbFormat($timedate->merge_date_time(
-    				$this->sugar_bean->date_due,
-    				$this->sugar_bean->time_due
-    			), $timedate->get_date_time_format());
-
+    			$this->start_time = $timedate->fromDbFormat($due, $timedate->get_date_time_format());
 		    }
 			if ( empty($this->start_time))
 			{
@@ -484,9 +459,9 @@ class CalendarActivity
 		{
             // Convert it back to database time so we can properly manage it for getting the proper start and end dates
             $this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
-		    $this->end_time = $this->start_time->get("+{$this->duration_hours} hours {$this->duration_minutes} mins");
+		    $this->end_time = $this->start_time->get("+{$this->sugar_bean->duration_hours} hours {$this->sugar_bean->duration_minutes} mins");
 		}
-        $timedate->tzGMT($this->start_time);
+		$timedate->tzGMT($this->start_time);
         $timedate->tzGMT($this->end_time);
 	}
 

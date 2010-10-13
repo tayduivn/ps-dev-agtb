@@ -189,7 +189,7 @@ class SugarDateTime extends DateTime
 	{
 		$newdate = clone $this;
 		$newdate->setDate($this->year, $this->month, $this->day +
-			($day_index - $this->day_of_week));
+			($day_index - $this->day_of_week))->setTime(0,0);
 		return $newdate;
 	}
 
@@ -333,69 +333,16 @@ class SugarDateTime extends DateTime
 	}
 
 	/**
-	 * Create datetime object from calendar array
-	 * @param array $time
-	 * @return SugarDateTime
-	 */
-	static function fromTimeArray($time)
-	{
-		if (! isset( $time) || count($time) == 0 )
-		{
-			$result = new self("now", new DateTimeZone("UTC"));
-		}
-		elseif ( isset( $time['ts']))
-		{
-			$result = new self("@".$time['ts'], new DateTimeZone("UTC"));
-		}
-		elseif ( isset( $time['date_str']))
-		{
-            $result = self::createFromFormat(TimeDate2::DB_DATE_FORMAT, $time['date_str']);
-            $result->setTimezone(new DateTimeZone("UTC"));
-		}
-		else
-		{
-    		$hour = 0;
-    		$min = 0;
-    		$sec = 0;
-    		$day = 1;
-    		$month = 1;
-    		$year = 1970;
-		    if ( isset($time['sec']))
-			{
-        			$sec = $time['sec'];
-			}
-			if ( isset($time['min']))
-			{
-        			$min = $time['min'];
-			}
-			if ( isset($time['hour']))
-			{
-        			$hour = $time['hour'];
-			}
-			if ( isset($time['day']))
-			{
-        			$day = $time['day'];
-			}
-			if ( isset($time['month']))
-			{
-        			$month = $time['month'];
-			}
-			if ( isset($time['year']) && $time['year'] >= 1970)
-			{
-        			$year = $time['year'];
-			}
-			$result = $GLOBALS['timedate']->tzUser(new self("now"));
-			$result->setDate($year, $month, $day)->setTime($hour, $min, $sec)->setTimeZone(new DateTimeZone("UTC"));
-		}
-        return $result;
-	}
-
-	/**
 	 * Get query string for the date
 	 * @return string
 	 */
 	function get_date_str()
 	{
         return sprintf("&year=%d&month=%d&day=%d&hour=%d", $this->year, $this->month, $this->day, $this->hour);
+	}
+
+	function __toString()
+	{
+	    return $this->format('r');
 	}
 }

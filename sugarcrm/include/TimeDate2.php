@@ -499,7 +499,7 @@ class TimeDate2
      * @param string $format format to accept
      * @return SugarDateTime
      */
-    public function fromDbFromat($date, $format)
+    public function fromDbFormat($date, $format)
     {
         try {
             return SugarDateTime::createFromFormat($format, $date, self::$gmtTimezone);
@@ -880,12 +880,17 @@ class TimeDate2
      * Get 'now' DateTime object
      * @return DateTime (with User timezone)
      */
-    public function getNow()
+    public function getNow($userTz = false)
     {
         if(!$this->allow_cache) {
-            return new SugarDateTime("now", self::$gmtTimezone);
+            return new SugarDateTime("now", $userTz?$this->_getUserTz():self::$gmtTimezone);
         }
-        return $this->now;
+        // TODO: should we return clone?
+        $now = clone $this->now;
+        if($userTz) {
+            return $this->tzUser($now);
+        }
+        return $now;
     }
 
     /**
@@ -1418,4 +1423,84 @@ class TimeDate2
 	    return gmdate(self::RFC2616_FORMAT, $ts);
 	}
 
+	/**
+	 * Create datetime object from calendar array
+	 * @param array $time
+	 * @return SugarDateTime
+	 */
+	public function fromTimeArray($time)
+	{
+		if (! isset( $time) || count($time) == 0 )
+		{
+			return $this->nowDb();
+		}
+		elseif ( isset( $time['ts']))
+		{
+			return $this->fromTimestamp($time['ts']);
+		}
+		elseif ( isset( $time['date_str']))
+		{
+		    return $this->fromDb($time['date_str']);
+		}
+		else
+		{
+    		$hour = 0;
+    		$min = 0;
+    		$sec = 0;
+    		$now = $this->getNow(true);
+    		$day = $now->day;
+    		$month = $now->month;
+    		$year = $now->year;
+		    if (isset($time['sec']))
+			{
+        			$sec = $time['sec'];
+			}
+			if (isset($time['min']))
+			{
+        			$min = $time['min'];
+			}
+			if (isset($time['hour']))
+			{
+        			$hour = $time['hour'];
+			}
+			if (isset($time['day']))
+			{
+        			$day = $time['day'];
+			}
+			if (isset($time['month']))
+			{
+        			$month = $time['month'];
+			}
+			if (isset($time['year']) && $time['year'] >= 1970)
+			{
+        			$year = $time['year'];
+			}
+			return $now->setDate($year, $month, $day)->setTime($hour, $min, $sec)->setTimeZone(self::$gmtTimezone);
+		}
+        return null;
+	}
+
+	/**
+	 * Returns the date portion of a datetime string
+	 *
+	 * @param string $datetime
+	 * @return string
+	 */
+	public function getDatePart($datetime)
+	{
+	    list($date, $time) = $this->split_date_time($datetime);
+	    return $date;
+	}
+
+	/**
+	 * Returns the time portion of a datetime string
+	 *
+	 * @param string $datetime
+	 * @return string
+	 */
+	public function getTimePart($datetime)
+	{
+	    list($date, $time) = $this->split_date_time($datetime);
+	    return $time;
+	}
 }
