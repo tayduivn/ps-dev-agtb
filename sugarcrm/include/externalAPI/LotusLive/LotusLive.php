@@ -3,12 +3,12 @@
 require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
+class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
 
     protected $lotusURL = "https://eval-cloud2.castiron.com/envq/Production/";
     public $useAuth = true;
     public $requireAuth = true;
-    public $supportedModules = array('Meetings');
+    public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = true;
     protected $joinURL = "https://apps.lotuslive.com/meetings/join?id=611-107";
 	protected $hostURL = "https://apps.lotuslive.com/meetings/host";

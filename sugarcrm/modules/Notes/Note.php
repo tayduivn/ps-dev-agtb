@@ -312,6 +312,21 @@ class Note extends SugarBean {
 		}
 		return false;
 	}
+	
 
+
+
+}
+
+	// External API integration, for the dropdown list of what external API's are available
+function getNotesExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = ExternalAPIFactory::getModuleDropDown('Notes');
+    // FIXME: translate
+    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
+    
+    return $apiList;
+    
 }
 ?>

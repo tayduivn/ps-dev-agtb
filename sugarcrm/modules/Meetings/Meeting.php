@@ -651,7 +651,6 @@ function getMeetingsExternalApiDropDown() {
     
     $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
     
-    // FIXME: translate
     $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
     
     return $apiList;
