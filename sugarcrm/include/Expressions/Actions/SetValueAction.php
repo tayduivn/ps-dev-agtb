@@ -43,11 +43,16 @@ class SetValueAction extends AbstractAction{
 			exec : function()
 			{
 				try {
+				//BEGIN SUGARCRM flav=een ONLY
 				SUGAR.forms.AssignmentHandler.clearError(this.target);    
+				//END SUGARCRM flav=een ONLY
 				SUGAR.forms.AssignmentHandler.assign(this.target, SUGAR.forms.evalVariableExpression(this.expr).evaluate());
 	            } catch (e) {
+	                //BEGIN SUGARCRM flav=een ONLY
 			        SUGAR.forms.AssignmentHandler.showError(this.target, e + '');
+		            //END SUGARCRM flav=een ONLY
 			        SUGAR.forms.AssignmentHandler.assign(this.target, '');
+			       
 			    }        
 	       }
 		});";

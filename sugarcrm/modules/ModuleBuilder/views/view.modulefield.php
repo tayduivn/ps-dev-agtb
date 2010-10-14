@@ -75,6 +75,10 @@ class ViewModulefield extends SugarView
 				'relate' => 'Relate', 'address' => 'Address', 'text' => 'TextArea', 'url' => 'Link');
 		*/
 		$field_types = $GLOBALS['mod_strings']['fieldTypes'];
+		//BEGIN SUGARCRM flav=com ONLY
+		if (isset($field_types['encrypt']))
+		  unset($field_types['encrypt']);
+		//END SUGARCRM flav=com ONLY
         $field_name_exceptions = array(
             //bug 22264: Field name must not be an SQL keyword.
             //Taken from SQL Server's list of reserved keywords; http://msdn.microsoft.com/en-us/library/aa238507(SQL.80).aspx

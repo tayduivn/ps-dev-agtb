@@ -298,7 +298,10 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 	    currMenuBar.render();
         allMenuBars[nodes[i].id.substr(nodes[i].id.indexOf('_')+1)] = currMenuBar;
         
-        if ( nodes[i].children[0].style.display != 'none' ) {
+        
+        
+        if (typeof YAHOO.util.Dom.getChildren(nodes[i]) == 'object' && YAHOO.util.Dom.getChildren(nodes[i]).shift().style.display != 'none') 
+        {
             // This is the currently displayed menu bar
             oMenuBar = currMenuBar;
         }

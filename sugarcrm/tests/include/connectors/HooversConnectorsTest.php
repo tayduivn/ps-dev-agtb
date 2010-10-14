@@ -12,6 +12,9 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 	var $company_id;
     
     function setUp() {
+		$this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
+  	    return;
+  	    	
     	ConnectorFactory::$source_map = array();
 		//Skip if we do not have an internet connection
 		require('modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
@@ -21,6 +24,12 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 		   $this->markTestSkipped("Unable to retrieve Hoovers wsdl.  Skipping.");
 		} 	
     	
+		try {
+		  $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
+		} catch(Exception $ex) {
+		  $this->markTestSkipped("Unable to retrieve Hoovers wsdl.  Skipping.");
+		}
+		
     	//Enable mapping for Accounts
     	ConnectorUtils::getDisplayConfig();
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
