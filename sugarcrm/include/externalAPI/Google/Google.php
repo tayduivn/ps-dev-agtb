@@ -7,7 +7,7 @@ require_once('Zend/Gdata/ClientLogin.php');
 class Google implements ExternalAPIPlugin,WebDocument {
     public $useAuth = true;
     public $requireAuth = true;
-    public $supportedModules = array('Documents');
+    public $supportedModules = array('Documents', 'Notes');
 
 
 	function __construct(){
@@ -111,7 +111,7 @@ class Google implements ExternalAPIPlugin,WebDocument {
 		
 	}
 	
-	function browseDoc($meeting, $attendeeName){
+	function browseDoc($path){
 		
 	}
 

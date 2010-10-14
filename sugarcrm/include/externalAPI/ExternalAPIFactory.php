@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  **/
 class ExternalAPIFactory{
     
-    public static function loadFullAPIList($forceRebuild=false) {
+    public static function loadFullAPIList($forceRebuild=true) {
         if ( isset($GLOBALS['sugar_config']['developer_mode']) && $GLOBALS['sugar_config']['developer_mode'] ) {
             $forceRebuild = true;
         }
