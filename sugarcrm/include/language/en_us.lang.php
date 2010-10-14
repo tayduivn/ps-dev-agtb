@@ -2989,7 +2989,7 @@ $app_strings = array (
     'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
     
     //cma
-    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'Sorry, you cannot delete the global team. Aborting',
+    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
     'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team cannot be deleted unless the user [{0}] is deleted.',
     
     //martin #25548
