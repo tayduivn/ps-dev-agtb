@@ -406,9 +406,20 @@ foreach ($dictionary as $meta) {
 
 logThis('database repaired', $path);  	
 
+
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
 $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
+
+//BEGIN SUGARCRM flav=pro ONLY 
+// If going from pre 610 to 610+, migrate the report favorites
+if($origVersion < '610')
+{
+    logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+    migrate_sugar_favorite_reports();
+    logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+}
+//END SUGARCRM flav=pro ONLY 
 
 if($origVersion < '550' || $ce_to_pro_ent) {	
 	//add the global team if it does not exist
