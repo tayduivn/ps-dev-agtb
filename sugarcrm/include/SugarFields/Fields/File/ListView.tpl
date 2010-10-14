@@ -27,7 +27,7 @@
  ********************************************************************************/
 *}
 {if isset($parentFieldArray.DOC_ID) && !empty($parentFieldArray.DOC_ID)}
-<a href="http://docs.google.com/document/edit?id={$parentFieldArray.DOC_ID}&hl=en" class="tabDetailViewDFLink" target="_blank">{$parentFieldArray.FILENAME}</a>
+<a href="https://apps.lotuslive.com/files/filer2/home.do#files.do%3FsubContent%3DfileDetails.do%3FfileId%3D36A40110D5BC11DF8278B49A0A050301" class="tabDetailViewDFLink" target="_blank">{$parentFieldArray.FILENAME}</a>
 {elseif isset($parentFieldArray.FILENAME) && !empty($parentFieldArray.FILENAME)}
 <a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$vardef.displayParams.module}" class="tabDetailViewDFLink">{$parentFieldArray.FILENAME}</a>
 {/if}

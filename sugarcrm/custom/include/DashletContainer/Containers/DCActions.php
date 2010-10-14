@@ -39,18 +39,21 @@ $DCActions = array(
 	'Calls' => 'Calls', 
 
 );
+$meetnowbutton = <<<EOQ
+<button onclick=\'DCMenu.hostMeeting();\'>Meet Now</button>
+EOQ;
 
 $dynamicDCActions = array(
 	'LotusMeetings' => array(
 		'module'=>'Meetings',
 		'label'=>'View LotusLive Meetings',
-		'action'=>'DCMenu.loadView(\'Lotus Meetings\',\'index.php?module=Meetings&action=listbytype\');',
+		'action'=>'DCMenu.loadView(\'LotusLive Meetings ' . $meetnowbutton .'\',\'index.php?module=Meetings&action=listbytype\');',
 		'icon'=> SugarThemeRegistry::current()->getImageURL("icon_LotusMeetings_bar_32.png"),
 	), 
 	'LotusDocuments' => array(
 		'module'=>'Documents',
 		'label'=>'View LotusLive Documents',
-		'action'=>'DCMenu.loadView(\'Lotus Meetings\',\'index.php?module=Meetings&action=listbytype\');',
+		'action'=>'DCMenu.loadView(\'LotusLive Documents\',\'index.php?module=Documents&action=extdoc&type=LotusLive\');',
 		'icon'=> SugarThemeRegistry::current()->getImageURL("icon_LotusDocuments_bar_32.png"),
 	), 
 );

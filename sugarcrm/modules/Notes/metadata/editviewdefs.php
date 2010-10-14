@@ -73,7 +73,7 @@ function deleteAttachmentCallBack(text)
 											 <input type=\'button\' class=\'button\' value=\'{$APP.LBL_REMOVE}\' onclick=\'ajaxStatus.showStatus(SUGAR.language.get("Notes", "LBL_REMOVING_ATTACHMENT"));this.form.deleteAttachment.value=1;this.form.action.value="EditView";SUGAR.dashlets.postForm(this.form, deleteAttachmentCallBack);this.form.deleteAttachment.value=0;this.form.action.value="";\' >       
 											 </span><span id="SelectLotusLiveDoc" style="display:none"><br><h4>Select From LotusLive</h4>
 											 <input type="hidden" name="doc_id">
-											 <input name="file_name" size="40"><input type="button" value="Select" 
+											 <input name="filename" size="40"><input type="button" value="Select" 
 											 onclick="DCMenu.loadView(\'LotusLive Documents\',\'index.php?module=Documents&action=extdoc&type=LotusLive&form_id=\'+ this.form.id);"></span>',
 	      				),
 	      				//BEGIN SUGARCRM flav=pro ONLY

@@ -28,7 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
 require_once('include/MVC/View/views/view.detail.php');
 
 class DocumentsViewExtdoc extends ViewDetail 
@@ -36,13 +35,25 @@ class DocumentsViewExtdoc extends ViewDetail
 	var $options = array('show_header' => false, 'show_title' => false, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => false, 'show_javascript' => false, 'view_print' => false,);
 
  	public function display(){
-		echo "<script>
-		function fillSelect(filename) {
-			var oForm = document.forms[form_id];
-			oForm.elements[\"file_name\"].value = filename;
-			DCMenu.closeOverlay();
+ 		if(!empty($_REQUEST['form_id'])){
+ 			$name_field = !empty($_REQUEST['name_field'])?$_REQUEST['name_field']: 'filename';
+ 			$form_id = $_REQUEST['form_id'];
+ 		
+			echo "<script>
+			function fillSelect(filename) {
+				var oForm = document.forms['$form_id'];
+				oForm.elements[\"filename\"].value = filename;
+				oForm.elements[\"doc_id\"].value = filename;
+				DCMenu.closeTopOverlay();
+			}
+			</script>";
+		}else{
+			echo "<script>
+			function fillSelect(filename) {
+				window.open('https://apps.lotuslive.com/files/filer2/home.do#files.do%3FsubContent%3DfileDetails.do%3FfileId%3D36A40110D5BC11DF8278B49A0A050301', 'download');
+			}
+			</script>";	
 		}
-		</script>";
 		echo "<style>
 		table.dcListView th,table.dcListView td {
 			text-align: left;
@@ -86,9 +97,9 @@ class DocumentsViewExtdoc extends ViewDetail
 		</tr>
 		<tr>
 			<td class='type' width='20'><img src='themes/default/images/pdf_image_inline.gif'></td>
-			<td class='name'><a href='javascript: fillSelect(\"whitepaper.pdf\")'>Product White Paper</a></td>
-			<td class='lastModified'>12/11/10 05:30:00</td>
-			<td class='owner'>Roger Smith</td>
+			<td class='name' nowrap><a href='javascript: fillSelect(\"Sugar vs sfdc_Overview_08-31-2010.pdf\")'>Sugar vs sfdc_Overview_08-31-2010.pdf</a></td>
+			<td class='lastModified'>10/11/10 05:30:00</td>
+			<td class='owner' nowrap>Jan Sysmans</td>
 		</tr>
 		<tr>
 			<td class='type' width='20'><img src='themes/default/images/doc_image_inline.gif'></td>

@@ -46,7 +46,7 @@ $dictionary['Document'] = array('table' => 'documents'
   'uploadfile' =>
   array (
      'name'=>'uploadfile',
-     'required' => true,
+     'required' => false,
      'vname' => 'LBL_FILENAME',
      'type' => 'file',
      'source' => 'non-db',
