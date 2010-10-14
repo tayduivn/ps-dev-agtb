@@ -2140,13 +2140,11 @@ print "<BR>";
             }
 
             if (isset($display_column['type'])) {
-            	$fieldsData = strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']);
-            	//rrs bug: 34933 - in SugarWidgetReportField.php we shortened the field name to 29 chars, but
-            	//here we used the full length so it could not propery look it up.
-            	$fieldsData = substr($fieldsData,0,28);
-
-            	if (array_key_exists($fieldsData, $display_column['fields'])) {
-            		$displayData = $display_column['fields'][substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0, 28)];
+            	
+            	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])); 
+            	
+            	if (array_key_exists($field_name, $display_column['fields'])) {
+            		$displayData = $display_column['fields'][$field_name];
             		if (empty($displayData) && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
             			$display = "";
             		}

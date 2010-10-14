@@ -563,14 +563,16 @@ class SugarView
         global $mod_strings;
         $mod_strings = $bakModStrings;
         //BEGIN SUGARCRM flav=sales || flav=pro ONLY
-        /******************DC MENU*********************/
-        if(!empty($current_user->id) && !$this->_getOption('view_print')){
-            require_once('include/DashletContainer/DCFactory.php');
-            $dcm = DCFactory::getContainer(null, 'DCMenu');
-            $data = $dcm->getLayout();
-            $ss->assign('SUGAR_DCMENU', $data['html']);
-        }
-        /******************END DC MENU*********************/
+		/******************DC MENU*********************/
+		if(!empty($current_user->id) && !$this->_getOption('view_print')){
+			require_once('include/DashletContainer/DCFactory.php');
+			$dcm = DCFactory::getContainer(null, 'DCMenu');
+			$data = $dcm->getLayout();
+			$dcjs = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+			$ss->assign('SUGAR_DCJS', $dcjs);
+			$ss->assign('SUGAR_DCMENU', $data['html']);
+		}
+		/******************END DC MENU*********************/
         //END SUGARCRM flav=sales || flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )

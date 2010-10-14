@@ -715,14 +715,14 @@ function displayArrow() {
  * Contributor(s): ______________________________________.
 */
  function getOffset($localVarName) {
-    if($this->query_where_has_changed) {
-        $this->setSessionVariable($localVarName,"offset", 0);
-    }
-    $offset = $this->getSessionVariable($localVarName,"offset");
-    if(isset($offset)) {
-        return $offset;
-    }
-    return 0;
+ 	if($this->query_where_has_changed || isset($GLOBALS['record_has_changed'])) {
+ 		$this->setSessionVariable($localVarName,"offset", 0);
+ 	}
+	$offset = $this->getSessionVariable($localVarName,"offset");
+	if(isset($offset)) {
+		return $offset;
+	}
+	return 0;
 }
 
 /**INTERNAL FUNCTION sets the offset in the session
@@ -857,9 +857,15 @@ function getUserVariable($localVarName, $varName) {
         $date_start_time = microtime(true);
         //END SUGARCRM flav=int ONLY
 
-        $current_offset = $this->getOffset($html_var);
-        $module = isset($_REQUEST['module']) ? $_REQUEST['module'] : '';
-        $response = array();
+		$last_detailview_record = $this->getSessionVariable("detailview", "record");
+		if(!empty($last_detailview_record) && $last_detailview_record != $sugarbean->id){
+			$GLOBALS['record_has_changed'] = true;
+		}
+		$this->setSessionVariable("detailview", "record", $sugarbean->id);
+		
+		$current_offset = $this->getOffset($html_var);
+		$module = isset($_REQUEST['module']) ? $_REQUEST['module'] : '';
+		$response = array();
 
         $this->sort_order = 'asc';
         if(isset($_REQUEST['sort_order'])) {
