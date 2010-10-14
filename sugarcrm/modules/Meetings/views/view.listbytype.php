@@ -20,7 +20,7 @@ class MeetingsViewListbytype extends ViewList {
 		unset($this->searchForm->searchdefs['layout']['advanced_search']);
 	
 		parent::listViewProcess();
-	
+		echo "</div>";
  	}
 
 }
