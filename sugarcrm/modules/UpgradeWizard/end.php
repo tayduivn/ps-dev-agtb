@@ -153,6 +153,13 @@ logThis(" Finish Rebuilding the config file again", $path);
 
 set_upgrade_progress('end','in_progress');
 
+// If going from pre 610 to 610+, migrate the report favorites
+if(isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '610')
+{
+    logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+    migrate_sugar_favorite_reports();
+    logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+}
 
 
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
