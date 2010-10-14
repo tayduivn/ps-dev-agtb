@@ -414,12 +414,11 @@ $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
 
 //BEGIN SUGARCRM flav=pro ONLY 
 // If going from pre 610 to 610+, migrate the report favorites
-if($origVersion < '610')
-{
-    logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
-    migrate_sugar_favorite_reports();
-    logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
-}
+// At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
+// so that we can check against that in 6.1.1. 
+logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+migrate_sugar_favorite_reports();
+logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
 //END SUGARCRM flav=pro ONLY 
 
 if($origVersion < '550' || $ce_to_pro_ent) {	
