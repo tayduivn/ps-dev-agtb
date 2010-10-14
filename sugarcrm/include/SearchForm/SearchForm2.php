@@ -539,6 +539,7 @@ require_once('include/EditView/EditView2.php');
         		unset($this->searchFields['team_name']);
         	}
         }
+        
         //END SUGARCRM flav=pro ONLY
         foreach($this->searchFields as $field=>$parms) {
 			$customField = false;
@@ -668,6 +669,8 @@ require_once('include/EditView/EditView2.php');
                         				//Best Guess for table name
                         				$db_field = strtolower($link['module']) . '.' . $db_field;
                         			}
+                        			
+
                         	}
                         	else if ($type == 'parent') {
                         		if (!empty($this->searchFields['parent_type'])) {
@@ -698,7 +701,7 @@ require_once('include/EditView/EditView2.php');
                         	}
 
                         }
-
+                        
                         if($type == 'date') {
                            // Collin - Have mysql as first because it's usually the case
                            // The regular expression check is to circumvent special case YYYY-MM
@@ -826,15 +829,15 @@ require_once('include/EditView/EditView2.php');
                                 	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'UnifiedSearch'){
                                 		$UnifiedSearch = true;
                                 	}
+                                	
                                 	//check to see if this is a universal search, AND the field name is "last_name"
 									if($UnifiedSearch && strpos($db_field, 'last_name') !== false){
 										//split the string value, and the db field name
 										$string = explode(' ', $field_value);
 										$column_name =  explode('.', $db_field);
-
 										//when a search is done with a space, we concatenate and search against the full name.
 										if(count($string)>1){
-										    //add where clause agains concatenated fields
+										    //add where clause against concatenated fields
 											$where .= $GLOBALS['db']->concat($column_name[0],array('first_name','last_name')) . " LIKE '{$field_value}%'";
 										    $where .= ' OR ' . $GLOBALS['db']->concat($column_name[0],array('last_name','first_name')) . " LIKE '{$field_value}%'";
 										}else{
@@ -842,7 +845,28 @@ require_once('include/EditView/EditView2.php');
 											$where .=  $db_field . " like '".$field_value.$like_char."'";
 										}
 
-									}else{
+									}else {
+										
+										//Check if this is a first_name, last_name search
+										if(isset($this->seed->field_name_map) && isset($this->seed->field_name_map[$db_field]))
+										{
+											$vardefEntry = $this->seed->field_name_map[$db_field];
+											if(!empty($vardefEntry['db_concat_fields']) && in_array('first_name', $vardefEntry['db_concat_fields']) && in_array('last_name', $vardefEntry['db_concat_fields']))
+					                    	{
+					                    	   	  if(!empty($GLOBALS['app_list_strings']['salutation_dom']) && is_array($GLOBALS['app_list_strings']['salutation_dom']))
+					                    	   	  {
+					                    	   	  	 foreach($GLOBALS['app_list_strings']['salutation_dom'] as $salutation)
+					                    	   	  	 {
+					                    	   	  	 	if(!empty($salutation) && strpos($field_value, $salutation) == 0)
+					                    	   	  	 	{
+					                    	   	  	 	   $field_value = trim(substr($field_value, strlen($salutation)));
+					                    	   	  	 	   break;
+					                    	   	  	 	}	
+					                    	   	  	 }
+					                    	   	  }
+					                    	}
+										} 
+										
 										//field is not last name or this is not from global unified search, so do normal where clause
 										$where .=  $db_field . " like '".$field_value.$like_char."'";
 									}
