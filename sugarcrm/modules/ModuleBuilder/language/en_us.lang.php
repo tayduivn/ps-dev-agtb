@@ -695,11 +695,11 @@ $mod_strings = array(
 ,
 //BEGIN SUGARCRM flav=pro ONLY
 'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br>" 
-   . "<br>Fields using formulas cannot be added to " 
+   . "Fields using formulas will not be calculated in real-time in " 
    //BEGIN SUGARCRM flav=ent ONLY
    . "the Sugar Self-Service Portal or " 
    //END SUGARCRM flav=ent ONLY
-   . "Sugar Mobile EditView layouts.",
+   . "Mobile EditView layouts.",
 //END SUGARCRM flav=pro ONLY
 
 //Revert Module labels
