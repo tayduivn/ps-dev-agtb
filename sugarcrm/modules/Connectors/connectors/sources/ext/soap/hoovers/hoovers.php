@@ -55,7 +55,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		$this->_client = new nusoapclient($properties['hoovers_endpoint'], true);
             $this->_client->setHeaders("<API-KEY xmlns='http://webservice.hoovers.com'>{$clientKey}</API-KEY>");
             */
-	 		
+	 		if ( !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
+	 		    throw new Exception('PHP Soap library not enabled');
+	 		} 
 	 		$this->_client = new SoapClient($properties['hoovers_wsdl'],
                 array('trace' => true, 'exceptions' => true, 'location' => $properties['hoovers_endpoint'])
             );
