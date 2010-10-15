@@ -306,7 +306,9 @@ function genericFunctions(){
     }
     //Rebuild roles
      _logThis("Rebuilding Roles", $path);
-	 add_EZ_PDF();     
+	 if($sugar_version < '5.5.0') {
+	     add_EZ_PDF();
+     }    
      ob_start();
      rebuild_roles();
      ob_end_clean();
