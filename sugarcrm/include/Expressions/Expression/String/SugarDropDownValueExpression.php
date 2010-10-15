@@ -21,11 +21,11 @@
 require_once("include/Expressions/Expression/String/StringExpression.php");
 
 /**
- * <b>getDDValue(String list_name, String key)</b><br>
+ * <b>getDropdownValue(String list_name, String key)</b><br>
  * Returns the translated value for the given <i>key</i><br/>
  * found in the <i>list_name</i> DropDown list<br/>
  * This list must be defined in the DropDown editor.<br/>
- * ex: <i>getDDValue("my_list", "foo")</i>
+ * ex: <i>getDropdownValue("my_list", "foo")</i>
  */
 class SugarDropDownValueExpression extends StringExpression {
 	
@@ -72,7 +72,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "getDDValue";
+		return array("getDropdownValue", "getDDValue");
 	}
 
 	/**

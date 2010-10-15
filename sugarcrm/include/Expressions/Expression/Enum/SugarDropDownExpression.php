@@ -20,10 +20,10 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
- * <b>getDD(String list_name)</b><br>
+ * <b>getDropdownKeySet(String list_name)</b><br>
  * Returns a collection of the keys in the supplied dropdown list.<br/>
  * This list must be defined in the DropDown editor.<br/>
- * ex: <i>valueAt(2, getDD("my_list"))</i>
+ * ex: <i>valueAt(2, getDropdownKeySet("my_list"))</i>
  */
 class SugarDropDownExpression extends EnumExpression
 {
@@ -79,7 +79,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "getDD";
+		return array("getDropdownKeySet", "getDD");
 	}
 
 	/**

@@ -455,7 +455,7 @@ function post_install() {
         //END SUGARCRM flav=pro ONLY
 
 	
-	//BEGIN SUGARCRM flav=ent ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){
 		global $sugar_config;
@@ -474,7 +474,7 @@ function post_install() {
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
-	//END SUGARCRM flav=ent ONLY		
+	//END SUGARCRM flav=pro ONLY		
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.

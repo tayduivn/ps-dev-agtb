@@ -21,9 +21,9 @@
 require_once("include/Expressions/Expression/String/StringExpression.php");
 
 /**
- * <b>translate(String label, String module)</b><br/>
+ * <b>translateLabel(String label, String module)</b><br/>
  * Returns the translated version of a given label key<br/>
- * ex: <i>translate("LBL_NAME", "Accounts")</i> = "Name"
+ * ex: <i>translateLabel("LBL_NAME", "Accounts")</i> = "Name"
  */
 class SugarTranslateExpression extends StringExpression {
 	
@@ -55,7 +55,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "translate";
+		return array("translateLabel", "translate");
 	}
 
 	/**

@@ -2139,7 +2139,7 @@ print "<BR>";
             	
             	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])); 
             	
-            	if (array_key_exists($field_namae, $display_column['fields'])) {
+            	if (array_key_exists($field_name, $display_column['fields'])) {
             		$displayData = $display_column['fields'][$field_name];
             		if (empty($displayData) && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
             			$display = "";
