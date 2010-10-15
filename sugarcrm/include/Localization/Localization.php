@@ -576,6 +576,19 @@ eoq;
 		$names['s'] = (empty($salutation)	&& $salutation	!= 0) ? '' : $salutation;
 		$names['t'] = (empty($title)		&& $title		!= 0) ? '' : $title;
 
+		//Bug: 39936 - if all of the inputs are empty, then don't try to format the name.
+		$allEmpty = true;
+		foreach($names as $key => $val){
+			if(!empty($val)){
+				$allEmpty = false;
+				break;
+			}
+		}
+		if($allEmpty){
+			return $returnEmptyStringIfEmpty ? '' : ' ';
+		}
+		//end Bug: 39936
+		
 		if(empty($format)) {
 			$this->localeNameFormat = $this->getLocaleFormatMacro($user);
 		} else {
