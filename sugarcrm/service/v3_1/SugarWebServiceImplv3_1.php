@@ -283,6 +283,14 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $nameValueArray['mobile_max_list_entries'] = self::$helperObject->get_name_value('mobile_max_list_entries', $sugar_config['wl_list_max_entries_per_page'] );
             $nameValueArray['mobile_max_subpanel_entries'] = self::$helperObject->get_name_value('mobile_max_subpanel_entries', $sugar_config['wl_list_max_entries_per_subpanel'] );
             
+            if($application == 'mobile')
+            {
+                $modules = array();
+                $availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
+                $modules = self::$helperObject->get_visible_mobile_modules($availModules);
+                $nameValueArray['available_modules'] = $modules;
+            }
+            
             $currencyObject = new Currency();
             $currencyObject->retrieve($cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
