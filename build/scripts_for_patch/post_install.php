@@ -412,6 +412,12 @@ function post_install() {
         unlink('modules/Administration/SaveTabs.php');
 	// End Bug 40044 //////////////////
 	
+    // Bug 40119 - JennyG - The location of this file changed since 60RC.  So we need to remove it for
+    // old instances that have this file.
+    if(file_exists('include/Expressions/Expression/Enum/IndexValueExpression.php'))
+        unlink('include/Expressions/Expression/Enum/IndexValueExpression.php');
+    // End Bug 40119///////////////////
+               
 	upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
         if($origVersion < '600') {
