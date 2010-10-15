@@ -55,6 +55,7 @@ $connector_strings = array (
 	
     //error messages
     'ERROR_NULL_CLIENT' => 'Unable to create SoapClient to connect to Hoovers.  The service may be unavailable or your license key may be expired or have reached a daily usage limit.',
+    'ERROR_MISSING_SOAP_LIBRARIES' => 'Error: Unable to load the SOAP libraries (SoapClient, SoapHeader).',
 
 	//Configuration labels
 	'hoovers_endpoint' => 'Endpoint URL',

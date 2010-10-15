@@ -55,9 +55,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		$this->_client = new nusoapclient($properties['hoovers_endpoint'], true);
             $this->_client->setHeaders("<API-KEY xmlns='http://webservice.hoovers.com'>{$clientKey}</API-KEY>");
             */
-	 		if ( !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
-	 		    throw new Exception('PHP Soap library not enabled');
+	 		if (!class_exists('SoapClient') || !class_exists('SoapHeader') ) {
+	 			require_once('include/connectors/utils/ConnectorUtils.php');
+				$connector_language = ConnectorUtils::getConnectorStrings('ext_soap_hoovers');
+	 		    throw new Exception($connector_language['ERROR_MISSING_SOAP_LIBRARIES']);
 	 		} 
+	 		
 	 		$this->_client = new SoapClient($properties['hoovers_wsdl'],
                 array('trace' => true, 'exceptions' => true, 'location' => $properties['hoovers_endpoint'])
             );
@@ -295,6 +298,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   return $result;
  		}
  		
+  		if (empty($this->_client) || !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
+ 			require_once('include/connectors/utils/ConnectorUtils.php');
+			$connector_language = ConnectorUtils::getConnectorStrings('ext_soap_hoovers');
+ 		    throw new Exception($connector_language['ERROR_MISSING_SOAP_LIBRARIES']);
+	 	}
+ 		
  		try {
  			//$result = $this->_client->call($function, array('parameters'=>$args[0]), $namespace='http://webservice.hoovers.com');
 	 		$result = $this->_client->__soapCall($function, array('parameters'=>$args[0]), NULL);
@@ -358,12 +367,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 * @return boolean result of the test call false if failed, true otherwise
 	 */
  	public function test() {
-		try {
-	    	$item = $this->getItem(array('uniqueId' => '2205698'), 'Leads');
-	        return !empty($item['companyname']) && (preg_match('/^Gannett/i', $item['companyname'])); 
-		} catch(Exception $ex) {
-           return false;		
-		}
+	    $item = $this->getItem(array('uniqueId' => '2205698'), 'Leads');
+	    return !empty($item['companyname']) && (preg_match('/^Gannett/i', $item['companyname'])); 
 	}
 	
 	
