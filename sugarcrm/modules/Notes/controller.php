@@ -58,6 +58,12 @@
 		{
 	       	 $this->bean->filename = $_REQUEST['old_filename'];
 		}
+		
+		 if ( !empty( $_REQUEST['filename']) &&  !empty( $_REQUEST['doc_id']))
+		{
+
+	       	 $this->bean->filename = $_REQUEST['filename'];
+		}
 		$this->bean->save();
 		if ($do_final_move)
 		{

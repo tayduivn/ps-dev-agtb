@@ -116,7 +116,7 @@ class Report
 		}
 		
 		//Scheduled reports don't have $_REQUEST.
-		if ((!isset($_REQUEST['module'])) || $_REQUEST['module'] == 'Reports'){
+		if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')){
 			Report::cache_modules_def_js();
 		}
 
@@ -1491,32 +1491,64 @@ print "<BR>";
 
         //for each field
         while($currCount<$arrCount){
-            $fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
-            foreach ( $fieldsInField as $field ) {
-                $field = trim($field);
-                //if it has a space, then it is aliased, let's process
-                //to see if it has a period
-                $has_space = strrpos($field, " ");
-                    if($has_space){
-                        $temp_field_name = substr($field,0,$has_space);
-                        $has_period = strrpos($temp_field_name, ".");
-						$aggregate_func = substr($temp_field_name, 0, 3);
-						$is_aggregate = false;
-						if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
-							$is_aggregate = true;
-                        //has period, and is aliased, so wrap an "ISNULL function around it"
-                        // get field type, and don't wrap numeric or date fields with ISNULL
-                        $field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
-                        if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
-                            $temp_field_alias  = substr($field,$has_space+1);
-                            $field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-                            $field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
-                            for ( $i = 0; $i < count($this->order_by_arr); $i++ )
-                                $this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
-                        }
-                    }
-                    $currCount = $currCount+1;
-            }
+            // Bug 39692 - Correctly add the ISNULL() for concatenated fields
+            if ( strpos($field_list_name_array[$currCount],'+') ) {
+				$fieldsInField = explode('+',trim($field_list_name_array[$currCount]));
+				$newField = '';
+				foreach ( $fieldsInField as $field ) {
+					$field = trim($field);
+					//if it has a space, then it is aliased, let's process
+					//to see if it has a period
+					$has_space = strrpos($field, " ");
+					if($has_space && !stristr("' '",$field)){
+						$temp_field_name = substr($field,0,$has_space);
+						$temp_field_alias  = substr($field,$has_space+1);
+						if ( stristr('ISNULL',$temp_field_name) ) {
+							$newField .= "$temp_field_name $temp_field_alias";
+						}
+						else {
+							$newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
+						}
+					}
+					else {
+						if ( stristr('ISNULL',$field) ) {
+							$newField .= "$field + ";
+						}
+						else {
+							$newField .= "ISNULL({$field},' ') + ";
+						}
+					}
+				}
+				$field_list_name_array[$currCount] = $newField;
+			}
+			else {
+				$fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
+				foreach ( $fieldsInField as $field ) {
+					$field = trim($field);
+					//if it has a space, then it is aliased, let's process
+					//to see if it has a period
+					$has_space = strrpos($field, " ");
+						if($has_space){
+							$temp_field_name = substr($field,0,$has_space);
+							$has_period = strrpos($temp_field_name, ".");
+							$aggregate_func = substr($temp_field_name, 0, 3);
+							$is_aggregate = false;
+							if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
+								$is_aggregate = true;
+							//has period, and is aliased, so wrap an "ISNULL function around it"
+							// get field type, and don't wrap numeric or date fields with ISNULL
+							$field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
+							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
+								$temp_field_alias  = substr($field,$has_space+1);
+								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
+								$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
+									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
+							}
+						}
+				}
+			}
+			$currCount = $currCount+1;
         }
 
        $this->$field_list_name = $field_list_name_array;
@@ -2026,6 +2058,7 @@ print "<BR>";
             else {
                 $this->layout_manager->setAttribute('context', 'List');
             }
+            
 			if ($display_column['type']!='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) { 
 				$pos = $display_column['table_key'];
 				$module_name = '';
@@ -2034,12 +2067,13 @@ print "<BR>";
 				}
 				
 				if (isset($display_column['group_function'])) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
                 }
+                
                 if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
                                          
 				if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
@@ -2060,28 +2094,31 @@ print "<BR>";
 				}else { 
             	   $display = $this->layout_manager->widgetDisplay($display_column);
 				}
-        	}
-            else {
+				
+			} else {
+				
 				if (isset($display_column['group_function'])) {
-            		$field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
+                }          
+              
+                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-            		$field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
-                }
-
-
-            	if (isset($display_column['fields'][$field_name])) 
+                
+            	if (isset($display_column['fields'][$field_name])) {
             		$display = $display_column['fields'][$field_name];
-					
-					global $locale;				   
-				    $params = array();
-				    $params['currency_id'] = $locale->getPrecedentPreference('currency');
-			    	$params['convert'] = true;
-			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-				    $display = currency_format_number($display, $params);
-        	}
+            	}
+            		
+				global $locale;				   
+				$params = array();
+				$params['currency_id'] = $locale->getPrecedentPreference('currency');
+			    $params['convert'] = true;
+			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+				$display = currency_format_number($display, $params);
+        	
+			}
 
             if (isset($display_column['type']) && $display_column['type'] == 'bool') {
             	if (isset($display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])])) {
@@ -2099,13 +2136,11 @@ print "<BR>";
             }
 
             if (isset($display_column['type'])) {
-            	$fieldsData = strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']);
-            	//rrs bug: 34933 - in SugarWidgetReportField.php we shortened the field name to 29 chars, but
-            	//here we used the full length so it could not propery look it up.
-            	$fieldsData = substr($fieldsData,0,28);
             	
-            	if (array_key_exists($fieldsData, $display_column['fields'])) {
-            		$displayData = $display_column['fields'][substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0, 28)];
+            	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])); 
+            	
+            	if (array_key_exists($field_namae, $display_column['fields'])) {
+            		$displayData = $display_column['fields'][$field_name];
             		if (empty($displayData) && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
             			$display = "";
             		}
@@ -2117,6 +2152,7 @@ print "<BR>";
             
             //  for charts
             if($column_field_name == 'summary_columns' && $this->do_chart) {
+            	//_pp($display);
                 $raw_display = preg_replace('/^\$/','',$display);
                /*
                 if ($type == 'currency') {
@@ -2128,7 +2164,9 @@ print "<BR>";
 			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
 				    $raw_display = currency_format_number($raw_display, $params);
             	}*/
+                
                 $cell_arr = array('val'=>$raw_display,'key'=>$display_column['column_key']);
+                //_pp($cell_arr);
                 array_push($chart_cells,$cell_arr);
             }
 
@@ -2301,6 +2339,23 @@ print "<BR>";
   }
 
 
+  /**
+   * getTruncatedColumnAlias
+   * This function ensures that a column alias is no more than 28 characters.  Shoulud the column_name
+   * argument exceed 28 charcters, it creates an alias using the first 22 characters of the column_name
+   * plus an md5 of the first 6 characters of the lowercased column_name value.
+   *
+   */
+  private function getTruncatedColumnAlias($column_name)
+  {
+  	  if(empty($column_name) || !is_string($column_name) || strlen($column_name) < 28)
+  	  {
+  	  	 return $column_name;
+  	  }
+  	  
+      return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));  	
+  }
+  
 }
 
 ?>

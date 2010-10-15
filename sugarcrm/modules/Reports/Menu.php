@@ -73,7 +73,7 @@ $module_menu = Array(
 //END SUGARCRM flav=ent ONLY
 	);
 	
-if(!(ACLController::checkAccess('Reports', 'edit')))
+if(!(ACLController::checkAccess('Reports', 'edit', true)))
 {
     $module_menu = Array(
 //BEGIN SUGARCRM flav=dce ONLY

@@ -20,10 +20,10 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
- * <b>enum(v1, ...)</b><br>
- * Returns a collection made up of the passed in variables.
- * Ex: <i>enum(123, "Hello World", "three", 4.5)</i>
- **/
+ * <b>enum(v1, ...)</b><br/>
+ * Returns a collection made up of the passed in variables.<br/>
+ * ex: <i>enum(123, "Hello World", "three", 4.5)</i>
+ */
 class DefineEnumExpression extends EnumExpression
 {
 	/**

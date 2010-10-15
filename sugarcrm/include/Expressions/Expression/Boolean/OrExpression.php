@@ -22,8 +22,9 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>or(boolean1, ...)</b><br>
- * Returns true if any parameters are true.
- **/
+ * Returns true if any parameters are true.<br/>
+ * ex: <i>or(false, true)</i> = true
+ */
 class OrExpression extends BooleanExpression {
 	/**
 	 * Returns itself when evaluating.

@@ -26,7 +26,7 @@ require_once("include/Expressions/Expression/String/StringExpression.php");
  * found in the <i>list_name</i> DropDown list<br/>
  * This list must be defined in the DropDown editor.<br/>
  * ex: <i>getDDValue("my_list", "foo")</i>
- **/
+ */
 class SugarDropDownValueExpression extends StringExpression {
 	
 	/**

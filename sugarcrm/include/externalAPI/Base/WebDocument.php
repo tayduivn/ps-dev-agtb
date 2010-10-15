@@ -6,7 +6,7 @@ interface WebDocument {
 	
 	public function shareDoc($documentId, $emails);
 	
-	public function browseDoc($meeting, $attendeeName);
+	public function browseDoc($path);
 	
 	public function deleteDoc($documentId);
 

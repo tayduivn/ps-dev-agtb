@@ -93,7 +93,7 @@ class EAPM extends Basic {
 
 // External API integration, for the dropdown list of what external API's are available
 function getEAPMExternalApiDropDown() {
-    $apiList = externalAPIFactory::getModuleDropDown('',true);
+    $apiList = ExternalAPIFactory::getModuleDropDown('',true);
     
     return $apiList;
     

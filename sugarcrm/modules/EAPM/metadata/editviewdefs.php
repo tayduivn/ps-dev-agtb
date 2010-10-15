@@ -44,7 +44,7 @@ $viewdefs[$module_name]['EditView'] = array(
       'application',
     ),
     array (
-       'password',
+       array('name'=>'password', 'type'=>'password'),
        'assigned_user_name',
    ),
    array (

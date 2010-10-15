@@ -69,6 +69,9 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     	}
     } // fn
     
+    /**
+     * @ticket 38986
+     */
     public function testGetEntryForContactNoSelectFields(){
     	global $soap_version_test_contactId;
 		$this->_login();
@@ -109,6 +112,7 @@ class SOAPAPI2Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testSearchByModule() {
     	$result = $this->_searchByModule();
+    	var_dump($result);
     	$this->assertTrue(($result['entry_list'][0]['records'] > 0 && $result['entry_list'][1]['records'] && $result['entry_list'][2]['records']), "testSearchByModule - could not retrieve any data by search");  	
     } // fn
     

@@ -1402,7 +1402,11 @@ function microtime_diff($a, $b) {
 }
 
 // check if Studio is displayed.
-function displayStudioForCurrentUser(){
+function displayStudioForCurrentUser()
+{
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
@@ -1427,8 +1431,12 @@ function displayStudioForCurrentUser(){
 
 }
 
-function displayWorkflowForCurrentUser(){
+function displayWorkflowForCurrentUser()
+{
     //BEGIN SUGARCRM flav=pro ONLY
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     if (isset($_SESSION['display_workflow_for_user'])) {
         return $_SESSION['display_workflow_for_user'];
     }

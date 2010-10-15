@@ -41,17 +41,21 @@ if(!empty($config['cleanCache'])){
 if(!empty($config['base_dir'])){
 	$config['base_dir'] = realpath($config['base_dir']);
 	if(!empty($config['file'])){
-		$config['file'] = realpath($config['file']);
+		if(file_exists($config['file'])) {
+			$config['file'] = realpath($config['file']);
+		} else {
+			$config['file'] = realpath($config['base_dir'] .'/' .$config['file']);
+		}
 		$config['file'] = str_replace($config['base_dir']. '/','', $config['file']);
 		if(is_file($config['base_dir'] .'/' .  $config['file'])){
 			$rome->setStartPath($config['base_dir']);
 			echo "Building " . $config['base_dir']  .'/' . $config['file'];
-			$rome->buildFile($config['base_dir']  .'/' . $config['file']);
+			$rome->buildFile($config['base_dir']  .'/' . $config['file'], "");
 		}else{
 			echo "Build Stopped.  You entered an invalid file name: ".$config['base_dir']  .'/' . $config['file'];
 		}
 	}elseif(!empty($config['dir'])){
-		$config['dir'] = realpath($config['dir']);
+		$config['dir'] = realpath($config['base_dir'] .'/' .$config['dir']);
 		$config['dir'] = str_replace($config['base_dir'],'', $config['dir']);
 		if(is_dir($config['base_dir'] .'/' . $config['dir'])){
 			$rome->setStartPath($config['base_dir']);
@@ -66,12 +70,20 @@ if(!empty($config['base_dir'])){
 		$path = $config['base_dir'];
 		$rome->build("$path");
 	}
+	if(!empty($config['latin'])){
+		echo "\nImporting Languages\n\n";
+		require_once('Latin.php');
+		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir']);
+		$latin->copyTranslations();
+	}
+	
 }else{
 	$rome->throwException("No Base Directory To Build From", true);
 }
+
+
 $total = microtime(true) - $time;
 echo "\n\n" . 'TOTAL TIME: ' . $total . "\n";
-
 
 
 function getConfig(){

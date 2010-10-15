@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: InboundEmail.php 56906 2010-06-11 00:08:09Z asandberg $
+ * $Id: InboundEmail.php 58364 2010-09-30 05:39:05Z kjing $
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -3568,7 +3568,10 @@ class InboundEmail extends SugarBean {
 	        $attachTeamSet = new TeamSet();
 	        $attachTeamIdsArray =  (isset($_REQUEST['team_ids']) ?  explode(",", $_REQUEST['team_ids']) : $this->team_set_id);
 	        $attach->team_set_id = $attachTeamSet->addTeams($attachTeamIdsArray);
-	    } else {
+	    }elseif(!empty($GLOBALS['current_user']->team_id) && !empty($GLOBALS['current_user']->team_set_id)){ 
+	        $attach->team_id = $GLOBALS['current_user']->team_id;
+            $attach->team_set_id = $GLOBALS['current_user']->team_set_id;
+	    }else {
 	        $attach->team_id = $this->team_id;
 	        $attach->team_set_id = $this->team_set_id;
 	    }
@@ -6080,6 +6083,7 @@ eoq;
 
 		// cache
 		$ret = array();
+		$cacheUsed = false;
 		if($forceRefresh == 'false' && $this->validCacheExists($this->mailbox)) {
 			$emailSettings = $current_user->getPreference('emailSettings', 'Emails');
 

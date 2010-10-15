@@ -21,7 +21,7 @@
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>negate(Number n)</b><br/>
- * Returns begated value of <i>n</i>.
+ * Returns negated value of <i>n</i>.
  * ex: <i>negate(4)</i> = -4
  */
 class NegateExpression extends NumericExpression {

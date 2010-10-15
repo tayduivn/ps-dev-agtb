@@ -22,6 +22,7 @@ require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
 /**
  * <b>median(Number n, ...)</b><br/>
  * Returns the median of the supplied numbers.
+ * ex: <i>median(4, 5, 5, 6, 7)</i> = 5
  */
 class MedianExpression extends NumericExpression {
 	/**

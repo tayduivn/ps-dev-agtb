@@ -24,7 +24,7 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
  * <b>dayofweek(Date d)</b><br>
  * Returns the day of week that <i>d</i> falls on.<br/>
  * Sun = 0, Mon = 1, ... , Sat = 6
- **/
+ */
 class DayOfWeekExpression extends DateExpression
 {
 	/**

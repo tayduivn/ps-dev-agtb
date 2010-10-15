@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
  if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
