@@ -452,8 +452,15 @@ function post_install() {
 	   }
 	   _logThis("End of check to see if Jigsaw connector should be disabled", $path);
 	}		
-        //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav=pro ONLY
 
+	//Remove jssource/src_files directory if it still exists
+    if(is_dir('jssource/src_files'))
+    {
+       _logThis('Remove jssource/src_files directory');
+       rmdir_recursive('jssource/src_files');
+       _logThis('Finished removing jssource/src_files directory');
+    }	
 	
 	//BEGIN SUGARCRM flav=ent ONLY
 	//add language pack config information to config.php
