@@ -3113,6 +3113,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 #moduleList
 {
     height: 45px;
+	min-width: 1030px;
 }
 
 #subModuleList
