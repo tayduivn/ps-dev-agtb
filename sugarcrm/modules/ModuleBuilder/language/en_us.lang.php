@@ -552,7 +552,7 @@ $mod_strings = array(
 'ERROR_ARE_YOU_SURE' => 'Are you sure you wish to continue?',
 
 //BEGIN SUGARCRM flav=pro ONLY
-
+'ERROR_CALCULATED_MOBILE_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Mobile Edit View:',
 'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
 //SUGAR PORTAL
