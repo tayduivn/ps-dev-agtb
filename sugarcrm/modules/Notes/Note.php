@@ -31,7 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-
 require_once('include/upload_file.php');
 
 // Note is used to store customer information.
@@ -138,6 +137,11 @@ class Note extends SugarBean {
 			}
             $removeFile = clean_path(getAbsolutePath("{$GLOBALS['sugar_config']['upload_dir']}{$this->id}"));
 		}
+		if(!empty($this->doc_type) && !empty($this->doc_id)){
+            $document = ExternalAPIFactory::loadAPI($this->doc_type);
+
+	      	$response = $document->deleteDoc($this->doc_id);
+		}
 		if(file_exists($removeFile)) {
 			if(!unlink($removeFile)) {
 				$GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
@@ -148,6 +152,13 @@ class Note extends SugarBean {
 				$this->save();
 				return true;
 			}
+		} else {
+			$this->filename = '';
+			$this->file_mime_type = ''; 
+			$this->file = '';
+			$this->doc_id = '';
+			$this->save();
+			return true;
 		}
 		return false;
 	}	
@@ -301,6 +312,21 @@ class Note extends SugarBean {
 		}
 		return false;
 	}
+	
 
+
+
+}
+
+	// External API integration, for the dropdown list of what external API's are available
+function getNotesExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = ExternalAPIFactory::getModuleDropDown('Notes');
+    // FIXME: translate
+    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
+    
+    return $apiList;
+    
 }
 ?>
