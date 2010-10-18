@@ -269,8 +269,8 @@ abstract class DashletGenericChart extends Dashlet
      */
     protected function getSeedBean()
     {
-        if ( !($this->_seedBean instanceof $this->_seedName) )
-            $this->_seedBean = loadBean($this->_seedName);
+        if ( !($this->_seedBean instanceof SugarBean) )
+            $this->_seedBean = SugarModule::get($this->_seedName)->loadBean();
         
         return $this->_seedBean;
     }

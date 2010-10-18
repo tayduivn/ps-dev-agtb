@@ -1,6 +1,9 @@
 <?php
 require_once 'include/Dashlets/Dashlet.php';
 
+/**
+ * @ticket 33948
+ */
 class DashletAutoRefreshTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setup()
