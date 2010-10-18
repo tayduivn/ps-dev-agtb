@@ -18,7 +18,7 @@
  * @return string
  */
 function smarty_modifier_strip_semicolon($text)
-{   
-	return preg_replace('/[:][\s]*$/', '', trim($text));
+{
+	return preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", '', trim($text));
 }
 ?>
