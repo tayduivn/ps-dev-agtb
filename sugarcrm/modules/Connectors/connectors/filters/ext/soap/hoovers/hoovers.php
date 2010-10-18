@@ -56,10 +56,10 @@ public function getList($args, $module) {
 	}
 
 	//Sometimes Hoovers makes the mistake of returning the first entry that may not be what we want
-	if(count($list) == 1 && isset($args['bal']['specialtyCriteria']['companyKeyword'])) {
-	   if(preg_match('/^(.*?)([\,|\s]+.*?)$/', $args['bal']['specialtyCriteria']['companyKeyword'], $matches)) {
-	   	 $GLOBALS['log']->info("ext_soap_hoovers_filter, change companyKeyword search term");
-	   	 $args['bal']['specialtyCriteria']['companyKeyword'] = $matches[1];
+	if(count($list) == 1 && isset($args['bal']['specialtyCriteria']['companyName'])) {
+	   if(preg_match('/^(.*?)([\,|\s]+.*?)$/', $args['bal']['specialtyCriteria']['companyName'], $matches)) {
+	   	 $GLOBALS['log']->info("ext_soap_hoovers_filter, change companyName search term");
+	   	 $args['bal']['specialtyCriteria']['companyName'] = $matches[1];
 	     $list = $this->_component->getSource()->getList($args, $module);
 	     if(!empty($list)) {
 	        return $list;	

@@ -103,6 +103,7 @@ class SugarAuthenticate{
 				        $_SESSION['waiting_error'].=floor($lol).$mod_strings['LBL_LOGIN_LOGIN_TIME_SECONDS'];
 				        break;
 					}
+					$usr->savePreferencesToDB();
 					return false;
 			    }
 			    else{
@@ -116,6 +117,7 @@ class SugarAuthenticate{
 		    	$usr->setPreference('lockout','1');
 			    $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
 		        $_SESSION['waiting_error']=$mod_strings['LBL_LOGIN_ADMIN_CALL'];
+		        $usr->savePreferencesToDB();
 		        return false;
 			}
 		}

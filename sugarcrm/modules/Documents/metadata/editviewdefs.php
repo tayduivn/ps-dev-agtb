@@ -105,16 +105,18 @@ $viewdefs['Documents']['EditView'] = array(
     ),
     //END SUGARCRM flav!=sales ONLY
     
-    
-     //BEGIN SUGARCRM flav=pro ONLY
-    array (
+    ),
+  'LBL_PANEL_ASSIGNMENT' =>
+  array (
+     array (
         array (
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO_NAME',
           ),
+        //BEGIN SUGARCRM flav=pro ONLY
         array('name'=>'team_name','displayParams'=>array('required'=>true)),
+        //END SUGARCRM flav=pro ONLY
     ),
-    //END SUGARCRM flav=pro ONLY
   ),
 )
 

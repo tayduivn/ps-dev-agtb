@@ -3431,8 +3431,27 @@ function save_relationship_changes($is_update, $exclude=array())
                     // and this code changes accounts to jt4 as there is a self join with the accounts table.
                     //Martin fix #27494
                     if(isset($data['db_concat_fields'])){
-                        $db_field = $db_field = db_concat($params['join_table_alias'], $data['db_concat_fields']);
-                        $where = preg_replace('/'.$data['name'].'/', $db_field, $where);
+                    	$buildWhere = false;
+                        if(in_array('first_name', $data['db_concat_fields']) && in_array('last_name', $data['db_concat_fields']))
+                    	{
+                     	   $exp = '/\(\s*?'.$data['name'].'.*?\%\'\s*?\)/';
+                    	   if(preg_match($exp, $where, $matches))
+                    	   {
+                    	   	  $search_expression = $matches[0];                    	   	  
+                    	   	  //Create three search conditions - first + last, first, last
+                    	   	  $first_name_search = str_replace($data['name'], $params['join_table_alias'] . '.first_name', $search_expression);
+                    	   	  $last_name_search = str_replace($data['name'], $params['join_table_alias'] . '.last_name', $search_expression);
+							  $full_name_search = str_replace($data['name'], db_concat($params['join_table_alias'], $data['db_concat_fields']), $search_expression);
+							  $buildWhere = true;
+							  $where = str_replace($search_expression, '(' . $full_name_search . ' OR ' . $first_name_search . ' OR ' . $last_name_search . ')', $where);
+                    	   }	
+                    	}
+                    	
+                    	if(!$buildWhere)
+                    	{
+	                       $db_field = db_concat($params['join_table_alias'], $data['db_concat_fields']);
+	                       $where = preg_replace('/'.$data['name'].'/', $db_field, $where);
+                    	}
                     }else{
                         $where = preg_replace('/(^|[\s(])' . $data['name'] . '/', '${1}' . $params['join_table_alias'] . '.'.$data['rname'], $where);
                     }

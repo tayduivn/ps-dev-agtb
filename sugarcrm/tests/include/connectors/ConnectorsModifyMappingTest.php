@@ -12,6 +12,9 @@ class ConnectorsModifyMappingTest extends Sugar_PHPUnit_Framework_TestCase {
 	var $original_searchdefs;
     
     function setUp() {
+		$this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
+  		return;
+  		
  		if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
     	   ConnectorUtils::getDisplayConfig();
     	}

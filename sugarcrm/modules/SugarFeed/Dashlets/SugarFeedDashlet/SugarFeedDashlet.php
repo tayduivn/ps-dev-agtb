@@ -265,6 +265,12 @@ var $selectedCategories = array();
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
         $ss->assign('id', $this->id);
+        if($this->isAutoRefreshable()) {
+       		$ss->assign('isRefreshable', true);
+			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
+			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
+			$ss->assign('autoRefreshSelect', $this->autoRefresh);
+		}
 
         return  $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/Options.tpl');
     }
@@ -277,7 +283,7 @@ var $selectedCategories = array();
 	  function saveOptions($req) {
         global $sugar_config, $timedate, $current_user, $theme;
         $options = array();
-        $options['title'] = $_REQUEST['title'];
+        $options['title'] = $req['title'];
 		$rows = intval($_REQUEST['rows']);
         if($rows <= 0) {
             $rows = 15;
@@ -285,13 +291,16 @@ var $selectedCategories = array();
 		if($rows > 100){
 			$rows = 100;
 		}
+        if ( isset($req['autoRefresh']) ) 
+            $options['autoRefresh'] = $req['autoRefresh'];
         $options['rows'] = $rows;
-		$options['categories'] = $_REQUEST['categories'];
+		$options['categories'] = $req['categories'];
 		foreach($options['categories'] as $cat){
 			if($cat == 'ALL'){
 				unset($options['categories']);
 			}
 		}
+		
         return $options;
     }
 
@@ -346,7 +355,7 @@ EOQ;
 
 		$listview = parent::display();
 		$GLOBALS['current_sugarfeed'] = $this;
-		$listview = preg_replace_callback('/\{([^\}]+)\.([^\}]+)\}/', create_function(
+		$listview = preg_replace_callback('/\{([^\^ }]+)\.([^\}]+)\}/', create_function(
             '$matches',
             'if($matches[1] == "this"){$var = $matches[2]; return $GLOBALS[\'current_sugarfeed\']->$var;}else{return translate($matches[2], $matches[1]);}'
         ),$listview);

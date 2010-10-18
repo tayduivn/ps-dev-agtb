@@ -664,7 +664,7 @@ class Email extends SugarBean {
 						$note->name = $filename;
 						$note->filename = $filename;
 						$noteFile = "{$sugar_config['upload_dir']}{$note->id}";
-						$note->file_mime_type = $this->email2GetMime($noteFile);
+						$note->file_mime_type = $this->email2GetMime($fileLocation);
 						//BEGIN SUGARCRM flav=pro ONLY
             			$note->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
             			$noteTeamSet = new TeamSet();

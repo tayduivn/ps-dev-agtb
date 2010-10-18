@@ -13,7 +13,7 @@
 require_once("include/Expressions/DependencyManager.php");
 //END SUGARCRM flav=pro ONLY
 
-class TemplateHandler {    
+class TemplateHandler {
     var $cacheDir;
     var $templateDir = 'modules/';
     var $ss;
@@ -86,13 +86,13 @@ class TemplateHandler {
 
             global $dictionary, $beanList, $app_strings, $mod_strings;
             $mod = $beanList[$module];
-            
+
             //BEGIN SUGARCRM flav!=sales ONLY
             if($mod == 'aCase') {
                 $mod = 'Case';
             }
             //END SUGARCRM flav!=sales ONLY
-            
+
             $defs = $dictionary[$mod]['fields'];
             $defs2 = array();
             //Retrieve all panel field definitions with displayParams Array field set
@@ -134,8 +134,7 @@ class TemplateHandler {
 
                       foreach($nameList as $x) {
                          if(isset($defs[$x]) &&
-                            isset($defs[$x]['type']) &&
-                            !isset($defs[$x]['required'])) {
+                            isset($defs[$x]['type'])) {
                             $defs[$x]['required'] = true;
                          }
                       }
@@ -145,7 +144,7 @@ class TemplateHandler {
             $sugarbean = new stdClass;
             $sugarbean->field_name_map = $defs;
             $sugarbean->module_dir = $module;
-            
+
             $javascript = new javascript();
             $view = $view == 'QuickCreate' ? "QuickCreate_{$module}" : $view;
             $javascript->setFormName($view);
@@ -196,13 +195,13 @@ class TemplateHandler {
         }else if(preg_match('/^SearchForm_.+/', $view)){
             global $dictionary, $beanList, $app_strings, $mod_strings;
             $mod = $beanList[$module];
-            
+
             //BEGIN SUGARCRM flav!=sales ONLY
             if($mod == 'aCase') {
                 $mod = 'Case';
             }
             //END SUGARCRM flav!=sales ONLY
-            
+
             $defs = $dictionary[$mod]['fields'];
             $contents .= '{literal}';
             $contents .= $this->createQuickSearchCode($defs, array(), $view);
@@ -379,8 +378,8 @@ class TemplateHandler {
 					   $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
-				
-				
+
+
 
                 if($field['type'] == 'relate' && isset($field['module']) && (preg_match('/_name$|_c$/si',$name) || !empty($field['quicksearch']))) {
                     if(!preg_match('/_c$/si',$name) && preg_match('/^(Campaigns|Teams|Users|Contacts|Accounts)$/si', $field['module'], $matches)) {
@@ -451,7 +450,7 @@ class TemplateHandler {
                 } //if-else
             } //foreach
         }
-        
+
        //Implement QuickSearch for the field
        if(!empty($sqs_objects) && count($sqs_objects) > 0) {
            $quicksearch_js = '<script language="javascript">';
@@ -464,7 +463,7 @@ class TemplateHandler {
        }
        return '';
     }
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
     /**
      * createDependencyJavascript
@@ -479,16 +478,16 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
-        
+
         $dependencies = array_merge(
            DependencyManager::getDependenciesForFields($fieldDefs),
            DependencyManager::getDependenciesForView($viewDefs)
         );
-        
+
         foreach($dependencies as $dep) {
             $js .= $dep->getJavascript();
         }
-        
+
         $js .= "</script>";
         return $js;
     }

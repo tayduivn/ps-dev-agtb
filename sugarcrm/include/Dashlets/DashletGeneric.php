@@ -106,6 +106,7 @@ class DashletGeneric extends Dashlet {
             if(!empty($options['displayRows'])) $this->displayRows = $options['displayRows'];
             if(!empty($options['displayColumns'])) $this->displayColumns = $options['displayColumns'];
             if(isset($options['myItemsOnly'])) $this->myItemsOnly = $options['myItemsOnly'];
+            if(isset($options['autoRefresh'])) $this->autoRefresh = $options['autoRefresh'];
         }
 
         $this->layoutManager = new LayoutManager();
@@ -210,7 +211,9 @@ class DashletGeneric extends Dashlet {
                                      'myItems' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY'],
                                      'displayRows' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_DISPLAY_ROWS'],
                                      'title' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_TITLE'],
-                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL']));
+                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'],
+                                     'autoRefresh' => $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH'],
+                                     ));
         $this->configureSS->assign('id', $this->id);
         $this->configureSS->assign('showMyItemsOnly', $this->showMyItemsOnly);
         $this->configureSS->assign('myItemsOnly', $this->myItemsOnly);
@@ -222,6 +225,12 @@ class DashletGeneric extends Dashlet {
         $displayRowOptions = $GLOBALS['sugar_config']['dashlet_display_row_options'];
         $this->configureSS->assign('displayRowOptions', $displayRowOptions);
         $this->configureSS->assign('displayRowSelect', $this->displayRows);
+        
+        if($this->isAutoRefreshable()) {
+       		$this->configureSS->assign('isRefreshable', true);
+			$this->configureSS->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
+			$this->configureSS->assign('autoRefreshSelect', $this->autoRefresh);
+		}
     }
     /**
      * Displays the options for this Dashlet
@@ -394,7 +403,6 @@ class DashletGeneric extends Dashlet {
             }
 
             $this->lvs->ss->assign('dashletId', $this->id);
-
         }
     }
 
@@ -404,7 +412,7 @@ class DashletGeneric extends Dashlet {
      * @return string HTML that displays Dashlet
      */
     function display() {
-        return parent::display() . $this->lvs->display(false);
+        return parent::display() . $this->lvs->display(false) . $this->processAutoRefresh();
     }
 
     /**
@@ -451,6 +459,7 @@ class DashletGeneric extends Dashlet {
         if(!empty($req['displayColumnsDef'])) {
             $options['displayColumns'] = explode('|', $req['displayColumnsDef']);
         }
+        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
         return $options;
     }
 

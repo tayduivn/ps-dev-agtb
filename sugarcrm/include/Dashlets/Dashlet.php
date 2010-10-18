@@ -25,6 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+require_once('include/Sugar_Smarty.php');			
 
 class Dashlet {
    /**
@@ -57,6 +58,14 @@ class Dashlet {
      * @var array
      */
     var $dashletStrings;
+    /**
+     * Time period in minutes to refresh the dashlet (0 for never) 
+     * Do not refresh if $isRefreshable is set to false
+     *
+     * To support auto refresh all refreshable dashlets that override process() must call processAutoRefresh()
+     * @var int
+     */
+    var $autoRefresh = "0";
     
     function Dashlet($id) {
         $this->id = $id;
@@ -172,6 +181,49 @@ class Dashlet {
     }
     
     /**
+     * Processes and displays the auto refresh code for the dashlet
+     *
+     * @param int $dashletOffset
+     * @return string HTML code
+     */
+    function processAutoRefresh($dashletOffset = 0) 
+    {
+        global $sugar_config;
+        
+        if ( empty($dashletOffset) ) {
+            $dashletOffset = 0;
+            $module = $_REQUEST['module'];
+            if(isset($_REQUEST[$module.'2_'.strtoupper($this->seedBean->object_name).'_offset'])) {
+            	$dashletOffset = $_REQUEST[$module.'2_'.strtoupper($this->seedBean->object_name).'_offset'];
+            }
+        }
+        
+        if ( !$this->isRefreshable ) {
+            return '';
+        }
+        if ( !empty($sugar_config['dashlet_auto_refresh_min']) && $sugar_config['dashlet_auto_refresh_min'] == -1 ) {
+            return '';
+        }
+        $autoRefreshSS = new Sugar_Smarty();	
+        $autoRefreshSS->assign('dashletOffset', $dashletOffset);
+        $autoRefreshSS->assign('dashletId', $this->id);
+        $autoRefreshSS->assign('strippedDashletId', str_replace("-","",$this->id)); //javascript doesn't like "-" in function names
+        if ( empty($this->autoRefresh) ) {
+            $this->autoRefresh = 0;
+        }
+        elseif ( !empty($sugar_config['dashlet_auto_refresh_min']) ) {
+            $this->autoRefresh = min($sugar_config['dashlet_auto_refresh_min'],$this->autoRefresh);
+        }
+        $autoRefreshSS->assign('dashletRefreshInterval', $this->autoRefresh * 1000);
+        $tpl = 'include/Dashlets/DashletGenericAutoRefresh.tpl';
+        if ( $_REQUEST['action'] == "DynamicAction" ) {
+            $tpl = 'include/Dashlets/DashletGenericAutoRefreshDynamic.tpl';
+        }
+        
+        return $autoRefreshSS->fetch($tpl);
+    }
+    
+    /**
      * Override this if your dashlet is configurable (this is called when the the configureDashlet form is shown)
      * Filters the array for only the parameters it needs to save
      * 
@@ -248,6 +300,28 @@ class Dashlet {
      */
     function hasAccess(){
     	return true;
+    }
+    
+    protected function getAutoRefreshOptions()
+    {
+        $options = $GLOBALS['app_list_strings']['dashlet_auto_refresh_options'];
+    
+        if ( isset($GLOBALS['sugar_config']['dashlet_auto_refresh_min']) ) {
+            foreach ( $options as $time => $desc ) {
+                if ( $time != -1 && $time < $GLOBALS['sugar_config']['dashlet_auto_refresh_min'] ) {
+                    unset($options[$time]);
+                }
+            }
+        }
+        
+        return $options;
+    }
+    
+    protected function isAutoRefreshable()
+    {
+        return $this->isRefreshable &&
+            ( isset($GLOBALS['sugar_config']['dashlet_auto_refresh_min']) ?
+                $GLOBALS['sugar_config']['dashlet_auto_refresh_min'] != -1 : true );
     }
 }
 ?>

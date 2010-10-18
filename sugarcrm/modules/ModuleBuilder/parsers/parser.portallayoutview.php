@@ -166,8 +166,9 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
             {
                 foreach($row as $fieldID=>$field)
                 {
-                    if (! empty($this->_fieldDefs [$field ['name']] ['auto_increment']) && 
-                            $this->_fieldDefs [$field ['name']] ['auto_increment'])
+                    if ((! empty($this->_fieldDefs [$field ['name']] ['auto_increment']) && 
+                            $this->_fieldDefs [$field ['name']] ['auto_increment']) ||
+                        !empty($this->_fieldDefs [$field ['name']]['calculated']))
                     {
                         $field['readOnly'] = true;
                     }
@@ -268,8 +269,7 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
         	 */
         	if ((empty($def ['source']) || $def ['source'] == 'db' || $def ['source'] == 'custom_fields') &&
                 empty($def['function']) && strcmp($field, 'deleted') != 0 &&
-                (empty($def['calculated']) || $this->_view != "editview")  && $def['type'] != 'id' && 
-                (empty($def ['dbType']) || $def ['dbType'] != 'id') &&
+                $def['type'] != 'id' && (empty($def ['dbType']) || $def ['dbType'] != 'id') &&
                 (isset($def['type']) && !in_array($def['type'], $invalidTypes)))
             {
             	$label = isset($def['vname']) ? $def ['vname'] : $def['name'];
@@ -278,6 +278,22 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
             }
         }
         return $modelFields;
+    }
+    
+    /**
+     * @return Array list of fields in this module that have the calculated property
+     */
+    public function getCalculatedFields() {
+    	$ret = array();
+    	foreach ($this->_fieldDefs as $field => $def)
+        {
+        	if(!empty($def['calculated']) && !empty($def['formula']))
+        	{
+        		$ret[] = $field;
+        	}
+        }
+        
+        return $ret;
     }
 	
 	function getHistory ()

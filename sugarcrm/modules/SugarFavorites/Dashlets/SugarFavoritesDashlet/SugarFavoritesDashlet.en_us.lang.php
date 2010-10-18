@@ -34,4 +34,4 @@ $dashletStrings['SugarFavoritesDashlet'] = array(
                                             'LBL_TITLE'               => 'My Favorite Records',
                                             'LBL_HOMEPAGE_TITLE'      => 'Sugar_Favorites',
                                          );
-?> 
+?>

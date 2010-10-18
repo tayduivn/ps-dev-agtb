@@ -108,6 +108,8 @@ abstract class DashletGenericChart extends Dashlet
         
         if ( empty($options['title']) ) 
             $this->title = $this->dashletStrings['LBL_TITLE'];
+        if ( isset($options['autoRefresh']) ) 
+            $this->autoRefresh = $options['autoRefresh'];
         
         $this->layoutManager = new LayoutManager();
         $this->layoutManager->setAttribute('context', 'Report');
@@ -200,6 +202,8 @@ abstract class DashletGenericChart extends Dashlet
         if (!empty($req['dashletTitle']))
             $options['title'] = $req['dashletTitle'];
         
+        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
+        
         return $options;
     }
     
@@ -247,6 +251,13 @@ abstract class DashletGenericChart extends Dashlet
         $this->getConfigureSmartyInstance()->assign('dashletType', 'predefined_chart');
         $this->getConfigureSmartyInstance()->assign('module', $_REQUEST['module']);
         
+        if($this->isAutoRefreshable()) {
+       		$this->getConfigureSmartyInstance()->assign('isRefreshable', true);
+			$this->getConfigureSmartyInstance()->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
+			$this->getConfigureSmartyInstance()->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
+			$this->getConfigureSmartyInstance()->assign('autoRefreshSelect', $this->autoRefresh);
+		}
+        
         return parent::displayOptions() . $this->getConfigureSmartyInstance()->fetch($this->_configureTpl);
     }
     
@@ -258,8 +269,8 @@ abstract class DashletGenericChart extends Dashlet
      */
     protected function getSeedBean()
     {
-        if ( !($this->_seedBean instanceof $this->_seedName) )
-            $this->_seedBean = loadBean($this->_seedName);
+        if ( !($this->_seedBean instanceof SugarBean) )
+            $this->_seedBean = SugarModule::get($this->_seedName)->loadBean();
         
         return $this->_seedBean;
     }

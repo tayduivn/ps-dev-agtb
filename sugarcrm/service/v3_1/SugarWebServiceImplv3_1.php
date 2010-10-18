@@ -297,6 +297,45 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     }
 
     /**
+     * Retrieve the list of available modules on the system available to the currently logged in user.
+     *
+     * @param String $session -- Session ID returned by a previous call to login.
+     * @param String $filter --  Valid values are: all     - Return all modules,
+     *                                             default - Return all visible modules for the application 
+     *                                             mobile  - Return all visible modules for the mobile view
+     * @return Array    'modules' -- Array - An array of module names
+     * @exception 'SoapFault' -- The SOAP error, if any
+     */
+    function get_available_modules($session,$filter='all'){
+    	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_available_modules');
+    
+    	$error = new SoapError();
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) {
+    		$error->set_error('invalid_login');
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_available_modules');
+    		return;
+    	} // if
+    
+    	$modules = array();
+    	$availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
+    	switch ($filter){
+    	    case 'default':
+    	        $modules = self::$helperObject->get_visible_modules($availModules);
+    	       break;
+    	    case 'mobile':
+    	        $modules = self::$helperObject->get_visible_mobile_modules($availModules);
+    	        break;
+    	    case 'all':
+    	    default:
+    	        $modules = $availModules;
+    	}
+    	
+    	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_available_modules');
+    	return array('modules'=> $modules);
+    } // fn
+    
+    
+    /**
      * For a particular report, generate the associated pdf report.  All caching should be done
      * on the client side.
      *
@@ -497,7 +536,12 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     	               $ownerWhere = $seed->getOwnerWhere($assigned_user_id);
     	               $where = "($where) AND $ownerWhere";
     	            }
-
+                    
+    	            if( $beanName == "Employee" )
+    	            {
+    	                $where = "($where) AND users.deleted = 0 AND users.is_group = 0 AND users.employee_status = 'Active'";
+    	            }
+    	            
     				$ret_array = $seed->create_new_list_query('', $where, $filterFields, array(), 0, '', true, $seed, true);
     		        if(empty($params) or !is_array($params)) $params = array();
     		        if(!isset($params['custom_select'])) $params['custom_select'] = '';

@@ -41,10 +41,10 @@ $dictionary['ext_soap_hoovers'] = array(
 	    'hidden' => true,
 	    'comment' => 'Unique identifier for records'
 	),
-    'recname'=> array(
-	    'name' => 'recname',
-		'input' => 'bal.specialtyCriteria.companyKeyword',
-		'output' => 'recname',
+    'companyname'=> array(
+	    'name' => 'companyname',
+		'input' => 'bal.specialtyCriteria.companyName',
+		'output' => 'companyname',
 	    'vname' => 'LBL_NAME',
 	    'type' => 'varchar',
 	    'search' => true,
@@ -70,40 +70,38 @@ $dictionary['ext_soap_hoovers'] = array(
     	'required' => true,
     	'hidden' => true,
     ),
-   'addrcity' => array (
-	    'name' => 'addrcity',
+   'city' => array (
+	    'name' => 'city',
    		'input' => 'bal.location.city',
-   		'output' => 'addrcity',
 	    'vname' => 'LBL_CITY',
 	    'type' => 'varchar',
 	    'search' => true,
 	    'comment' => 'The city address for the company', 
    ),
-   'addrstreet1' => array(
-        'name' => 'addrstreet1',
+   'address1' => array(
+        'name' => 'address1',
         'vname' => 'LBL_ADDRESS_STREET1',
         'type' => 'varchar',
         'comment' => 'street address',
    ),
-   'addrstreet2' => array(
-        'name' => 'addrstreet2',
+   'address2' => array(
+        'name' => 'address2',
         'vname' => 'LBL_ADDRESS_STREET2',
         'type' => 'varchar',
         'comment' => 'street address (continued)',   
    ),
-   'addrstateprov' => array(
-        'name' => 'addrstateprov',
-   		'input' => 'bal.location.state', //$args['bal']['location']['state'] = 'California'
-   		'output' => 'addrstateprov',
+   'stateorprovince' => array(
+        'name' => 'stateorprovince',
+   		'input' => 'bal.location.globalState',
         'vname' => 'LBL_STATE',
         'type' => 'varchar',
         'search' => true,
         'options' => 'addrstateprov_dom',
         'comment' => 'The state address for the company',
    ),
-   'addrcountry' => array(
-        'name' => 'addrcountry',
-        'input' => 'bal.location.country',
+   'country' => array(
+        'name' => 'country',
+        'input' => 'bal.location.countryId',
         'vname' => 'LBL_COUNTRY',
         'type' => 'varchar',
         'search' => true,
@@ -111,17 +109,16 @@ $dictionary['ext_soap_hoovers'] = array(
    ),
    'addrzip' => array(
         'name' => 'addrzip',
-   		'input' => 'bal.location.zip',
-   		'output' => 'addrzip',
+   		'input' => 'bal.location.postalCode',
         'vname' => 'LBL_ZIP',
         'type' => 'varchar',
         'search' => true,
         'comment' => 'The postal code address for the company',
    ),
-   'finsales' => array(
-        'name' => 'finsales',
-        'vname' => 'LBL_FINSALES',
-        'type' => 'enum',
+   'sales' => array(
+        'name' => 'sales',
+        'vname' => 'LBL_SALES',
+        'type' => 'decimal',
         'comment' => 'Annual sales (in millions)',
    ),
    /*
@@ -152,6 +149,18 @@ $dictionary['ext_soap_hoovers'] = array(
         'type' => 'decimal',
         'comment' => 'Total number of employees',
    ),
+   'description' => array(
+        'name' => 'description',
+        'vname' => 'LBL_DESCRIPTION',
+        'type' => 'varchar',
+        'comment' => 'Company Description',      
+   ),
+   'synopsis' => array(
+        'name' => 'synopsis',
+        'vname' => 'LBL_SYNOPSIS',
+        'type' => 'varchar',
+        'comment' => 'Company Synopsis',      
+   )
    )
 );
 ?>

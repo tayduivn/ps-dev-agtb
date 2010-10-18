@@ -251,6 +251,11 @@ function genericFunctions(){
 	    _logThis("Applying .htaccess update security fix.", $path);
         include_once("modules/Administration/UpgradeAccess.php");
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+    ////    CLEAR SUGARLOGIC CACHE
+	_logThis("Rebuilding SugarLogic Cache", $path);
+	clear_SugarLogic_cache();
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PRO/ENT ONLY FINAL TOUCHES
@@ -302,7 +307,6 @@ function genericFunctions(){
     //Rebuild roles
      _logThis("Rebuilding Roles", $path);
 	 add_EZ_PDF();     
-
      ob_start();
      rebuild_roles();
      ob_end_clean();
@@ -401,6 +405,12 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY 
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
+	  
+	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
+	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
+    if(file_exists('modules/Administration/SaveTabs.php'))
+        unlink('modules/Administration/SaveTabs.php');
+	// End Bug 40044 //////////////////
 	
 	upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -442,8 +452,15 @@ function post_install() {
 	   }
 	   _logThis("End of check to see if Jigsaw connector should be disabled", $path);
 	}		
-        //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav=pro ONLY
 
+	//Remove jssource/src_files directory if it still exists
+    if(is_dir('jssource/src_files'))
+    {
+       _logThis('Remove jssource/src_files directory');
+       rmdir_recursive('jssource/src_files');
+       _logThis('Finished removing jssource/src_files directory');
+    }	
 	
 	//BEGIN SUGARCRM flav=ent ONLY
 	//add language pack config information to config.php
@@ -452,8 +469,8 @@ function post_install() {
 		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
 		require_once('install/lang.config.php');
 
-		foreach($config as $k=>$v){
-			$sugar_config[$k] = $v;
+		foreach($config['languages'] as $k=>$v){
+			$sugar_config['languages'][$k] = $v;
 		}
 		
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {

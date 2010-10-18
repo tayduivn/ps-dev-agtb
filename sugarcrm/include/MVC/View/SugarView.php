@@ -315,19 +315,29 @@ class SugarView
 
             foreach ($value as $linkattribute => $attributevalue) {
                 // get the main link info
-                if ( $linkattribute == 'linkinfo' )
+                if ( $linkattribute == 'linkinfo' ) {
                     $gcls[$key] = array(
                         "LABEL" => key($attributevalue),
                         "URL"   => current($attributevalue),
                         "SUBMENU" => array(),
                         );
+                   if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
+                       $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
+                       $gcls[$key]["URL"] = "#";
+                   }
+                }
                 // and now the sublinks
-                if ( $linkattribute == 'submenu' && is_array($attributevalue) )
+                if ( $linkattribute == 'submenu' && is_array($attributevalue) ) {
                     foreach ($attributevalue as $submenulinkkey => $submenulinkinfo)
                         $gcls[$key]['SUBMENU'][$submenulinkkey] = array(
                             "LABEL" => key($submenulinkinfo),
                             "URL"   => current($submenulinkinfo),
                         );
+                       if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "#";
+                       }
+                }
             }
         }
         $ss->assign("GCLS",$gcls);
@@ -553,14 +563,16 @@ class SugarView
         global $mod_strings;
         $mod_strings = $bakModStrings;
         //BEGIN SUGARCRM flav=sales || flav=pro ONLY
-        /******************DC MENU*********************/
-        if(!empty($current_user->id) && !$this->_getOption('view_print')){
-            require_once('include/DashletContainer/DCFactory.php');
-            $dcm = DCFactory::getContainer(null, 'DCMenu');
-            $data = $dcm->getLayout();
-            $ss->assign('SUGAR_DCMENU', $data['html']);
-        }
-        /******************END DC MENU*********************/
+		/******************DC MENU*********************/
+		if(!empty($current_user->id) && !$this->_getOption('view_print')){
+			require_once('include/DashletContainer/DCFactory.php');
+			$dcm = DCFactory::getContainer(null, 'DCMenu');
+			$data = $dcm->getLayout();
+			$dcjs = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+			$ss->assign('SUGAR_DCJS', $dcjs);
+			$ss->assign('SUGAR_DCMENU', $data['html']);
+		}
+		/******************END DC MENU*********************/
         //END SUGARCRM flav=sales || flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )

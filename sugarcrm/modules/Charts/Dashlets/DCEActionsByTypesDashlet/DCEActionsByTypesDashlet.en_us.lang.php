@@ -34,5 +34,4 @@ $dashletStrings['DCEActionsByTypesDashlet'] = array('LBL_TITLE'       => 'DCE Ac
                                                  'LBL_DESCRIPTION' => 'Chart of DCE Actions By Types For The Current Month.',
                                                  'LBL_SUCCEEDED' => 'Succeeded',
                                                  'LBL_REFRESH'     => 'Refresh Chart');
-?> 
-
+?>

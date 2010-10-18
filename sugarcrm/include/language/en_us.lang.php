@@ -1785,6 +1785,15 @@ $app_list_strings = array (
         '_blank' => 'New Window',
         '_self' => 'Same Window',
     ),
+    'dashlet_auto_refresh_options' => 
+    array (
+        '-1' 	=> 'Never',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
 );
 
 $app_strings = array (
@@ -2989,9 +2998,8 @@ $app_strings = array (
     'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
     
     //cma
-    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'Sorry, you cannot delete the global team. Aborting',
-    'LBL_MASSUPDATE_DELETE_PRIVATE_TEAMS'=>'Sorry, you cannot delete private team(s). Aborting',
-    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'Sorry, you must first delete the user {0} associated with this team(s). Aborting',
+    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
+    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team cannot be deleted unless the user [{0}] is deleted.',
     
     //martin #25548
     'LBL_NO_FLASH_PLAYER' => 'You either have Abobe Flash turned off or are using an older version of the Adobe Flash Player. To get the latest version of the Flash Player, <a href="http://www.adobe.com/go/getflashplayer/">click here</a>.',
@@ -3027,6 +3035,8 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
+    
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto Refesh',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

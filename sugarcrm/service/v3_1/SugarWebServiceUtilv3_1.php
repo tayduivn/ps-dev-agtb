@@ -87,7 +87,8 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         	if( isset($availModulesKey[$e]) )
         	{
                 $label = !empty( $app_list_strings['moduleList'][$e] ) ? $app_list_strings['moduleList'][$e] : '';
-        	    $enabled_modules[] = array('module_key' => $e,'module_label' => $label);
+        	    $acl = self::checkModuleRoleAccess($e);
+        	    $enabled_modules[] = array('module_key' => $e,'module_label' => $label, 'acls' => $acl);
         	}
         }
         
@@ -114,7 +115,8 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
             if( isset($availModulesKey[$key]) )
             {
                 $label = !empty( $app_list_strings['moduleList'][$key] ) ? $app_list_strings['moduleList'][$key] : '';
-        	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label);
+        	    $acl = self::checkModuleRoleAccess($key);
+        	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label, 'acls' => $acl);
             }
         }
         
@@ -188,6 +190,25 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         }
         
 		return $fields;
+    }
+    
+    /**
+     * Check a module for acces to a set of available actions.
+     *
+     * @param string $module
+     * @return array results containing access and boolean indicating access
+     */
+    function checkModuleRoleAccess($module)
+    {
+        $results = array();
+        $actions = array('edit','delete','list','view','import','export');
+        foreach ($actions as $action)
+        {
+            $access = ACLController::checkAccess($module, $action, true);
+            $results[] = array('action' => $action, 'access' => $access);
+        }
+        
+        return $results;
     }
     
     function get_field_list($value,$fields,  $translate=true) {

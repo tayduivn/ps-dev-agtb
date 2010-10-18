@@ -622,5 +622,9 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
 	)
 );
 
-VardefManager::createVardef('Products','Product', array('default'));
+VardefManager::createVardef('Products','Product', array('default',
+//BEGIN SUGARCRM flav=pro ONLY
+'team_security',
+//END SUGARCRM flav=pro ONLY
+));
 ?>

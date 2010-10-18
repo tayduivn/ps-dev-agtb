@@ -25,14 +25,14 @@ $searchdefs = array(
 	'ext_soap_hoovers' => array(
  		//BEGIN SUGARCRM flav!=sales ONLY
 		'Leads' => array(
-			'recname',
+			'companyname',
 		),
 		 //END SUGARCRM flav!=sales ONLY
 		'Accounts' => array(
-			'recname',
+			'companyname',
 		),
 		'Contacts' => array(
-		    'recname',
+		    'companyname',
 		),	
 	),
 	//END SUGARCRM flav=sales || flav=pro ONLY
