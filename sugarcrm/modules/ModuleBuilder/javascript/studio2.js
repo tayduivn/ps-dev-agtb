@@ -903,7 +903,6 @@ Studio2 = {
 	          if (i != cfs.length - 1)
 	              msg += ",";
 	        }
-			msg += "\n" + SUGAR.language.get("ModuleBuilder", "ERROR_ARE_YOU_SURE");
 	        return window.confirm(msg);
 	    }
 	    return true;
