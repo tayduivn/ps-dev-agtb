@@ -34,4 +34,4 @@ $dashletStrings['MyForecastsDashlet'] = array('LBL_TITLE'            => 'My Fore
                                               'LBL_SAVING'           => 'Saving Forecast ...',
                                               'LBL_SAVED'            => 'Saved',
                                               'LBL_DESCRIPTION'      => 'Displays Forecasts');
-?> 
+?>
