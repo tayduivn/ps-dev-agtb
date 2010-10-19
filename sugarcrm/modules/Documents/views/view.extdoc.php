@@ -54,30 +54,16 @@ class DocumentsViewExtdoc extends ViewDetail
 			}
 			</script>";	
 		}
-		echo "<style>
-		table.dcListView th,table.dcListView td {
-			text-align: left;
-			color: #666;
-			padding: 5px 10px;
-		}
-		
-		table.dcListView th {
-			background-color:#EBEBED;
-		}
 
-		table.dcListView td {
-			border-bottom: 1px solid #eee;
-		}
-		
-		</style>";
+
 		echo "
-		<table>
+		<table class='dcSearch'>
 			<tr>
 			<td>
-			<input type=\"text\" id=\"search\" name=\"search\">
+			<input type='text' id='dcSearch' name='dcSearch'>
 			</td>
 			<td>
-			<input type=\"submit\" name=\"submit\" value=\"Search Documents\">
+			<input type='submit' name='submit' class='dcSubmit' value='Search Documents'>
 			</td>
 			</tr>
 		</table>
