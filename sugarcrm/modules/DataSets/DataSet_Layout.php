@@ -247,7 +247,7 @@ class DataSet_Layout extends SugarBean {
 
         //if this is the final report then hide_columns should be set to true
         if($hide_columns==true){
-            $hide_columns_where = "AND (".$this->table_name.".hide_column='0' OR ".$this->table_name.".hide_column='off')";
+            $hide_columns_where = "AND (".$this->table_name.".hide_column='0' OR ".$this->table_name.".hide_column='off' OR ".$this->table_name.".hide_column IS NULL )";
         } else {
             $hide_columns_where = "";
         }
