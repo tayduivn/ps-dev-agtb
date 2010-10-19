@@ -557,6 +557,7 @@ $mod_strings = array(
 
 //SUGAR PORTAL
 'LBL_PORTAL'=>'Portal',
+'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',
 'LBL_SYNCP_WELCOME'=>'Please enter the URL of the portal instance you wish to update.',
 'LBL_SP_UPLOADSTYLE'=>'Select a style sheet to upload from your computer.<br> The style sheet will be implemented in the Sugar Portal the next time you perform a sync.',
 'LBL_SP_UPLOADED'=> 'Uploaded',
