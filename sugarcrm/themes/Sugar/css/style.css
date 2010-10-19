@@ -5483,3 +5483,15 @@ margin-left: 5px;
 .acceptMeeting {
 white-space: nowrap;
 }
+
+/* override tinyMCE content box */
+body.mceContentBody {
+	margin: 0px;
+	font-family: Arial,Verdana,Helvetica,sans-serif;
+	list-style-type: none; 
+	margin-left: 6px; 
+	margin-bottom: 2px;	
+	margin-top: 2px;
+    margin-right: 0;
+	background:none repeat scroll 0 0 #FFFFFF;
+}
