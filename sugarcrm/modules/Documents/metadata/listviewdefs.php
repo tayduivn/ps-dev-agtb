@@ -34,11 +34,13 @@ $listViewDefs['Documents'] = array(
   array (
     'width' => '2%',
     'label' => '&nbsp;',
-    'link' => true,
+    'link' => false,
     'default' => true,
     'related_fields' => 
     array (
       0 => 'document_revision_id',
+      1 => 'doc_id', 
+      2 => 'doc_type',
     ),
     'sortable' => false,
     'studio' => false,
@@ -50,6 +52,12 @@ $listViewDefs['Documents'] = array(
     'link' => true,
     'default' => true,
     'bold' => true,
+  ),
+  'DOC_TYPE' => array (
+  	'width' => '5%',
+  	'label' => 'LBL_DOC_TYPE',
+    'link' => false,
+  	'default' => true,
   ),
   'CATEGORY_ID' => 
   array (
@@ -114,6 +122,6 @@ $listViewDefs['Documents'] = array(
     array (
       0 => 'modified_user_id',
     ),
-  )
+  ),
 );
 ?>

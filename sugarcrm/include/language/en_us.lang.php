@@ -399,6 +399,23 @@ $app_list_strings = array (
     'Held' => 'Held',
     'Not Held' => 'Not Held',
   ),
+  'extapi_meeting_password' =>
+  array (
+      'WebEx' => 'WebEx',
+  ),
+  'meeting_type_dom' =>
+   array (
+      'Other' => 'Other',
+      'WebEx' => 'WebEx',
+      'GoToMeeting' => 'GoToMeeting'
+   ),
+   'doc_type_dom' => 
+   array (
+   	'Sugar' => 'Sugar',
+    'Google' => 'Google',
+    'Box.net' => 'Box.net',
+   	'LotusLive' => 'LotusLive',
+   ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (
@@ -3757,5 +3774,12 @@ $app_list_strings['kbdocument_status_dom'] = array (
   );
   
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
-
+  $app_list_strings['eapm_list']= array(
+  	'SugarCRM'=>'SugarCRM', 
+  	'webex'=>'WebEx', 
+  	'gotomeeting'=>'GoToMeeting', 
+  	'lotuslive'=>'LotusLive',
+  	'google' => 'Google Document',
+    'box' => 'Box.net',
+  );
 ?>

@@ -111,11 +111,14 @@ class Document extends SugarBean {
 				$Revision->filename = $this->filename;
 				$Revision->file_ext = $this->file_ext;
 				$Revision->file_mime_type = $this->file_mime_type;
+				$Revision->doc_type = $this->doc_type;
 				$Revision->save();
 				
 				//Move file saved during populatefrompost to match the revision id rather than document id
 				rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
-				
+				$upload_file = new UploadFile('uploadfile');
+				$upload_file->upload_doc($Revision, $Revision->id, $Revision->doc_type, $Revision->filename, $Revision->file_mime_type);
+				$this->doc_id =  $Revision->doc_id;
 				//update document with latest revision id
 				$this->process_save_dates=false; //make sure that conversion does not happen again.
 				$this->document_revision_id = $Revision->id;	
@@ -185,7 +188,11 @@ class Document extends SugarBean {
 			$img_name = "def_image_inline"; //todo change the default image.						
 		}
 		if($this->ACLAccess('DetailView')){
-    		$this->file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+			$file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+
+			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_id))
+                $file_url= "<a href='http://docs.google.com/document/edit?id=".$this->doc_id."&hl=en' target='_blank'>".SugarThemeRegistry::current()->getImage('google_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
+    		$this->file_url = $file_url;
     		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
 		}else{
             $this->file_url = "";
@@ -290,4 +297,18 @@ class Document extends SugarBean {
 		return null;
 	}
 }
+
+// External API integration, for the dropdown list of what external API's are available
+function getDocumentsExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = ExternalAPIFactory::getModuleDropDown('Documents');
+    
+    // FIXME: translate
+    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
+    
+    return $apiList;
+    
+}
+
 ?>

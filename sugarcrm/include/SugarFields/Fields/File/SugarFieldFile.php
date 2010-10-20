@@ -21,8 +21,18 @@ class SugarFieldFile extends SugarFieldBase {
            $GLOBALS['log']->error($error);	
            $this->ss->trigger_error($error);
            return;
-        }        
+        }
 
+        if(!isset($displayParams['doc_type'])) {
+        	//set default document type field
+        	$displayParams['doc_type'] = 'doc_type';
+        }
+        
+		if(!isset($displayParams['doc_id'])) {
+        	//set default document type field
+        	$displayParams['doc_id'] = 'doc_id';
+        }
+		
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         return $this->fetch('include/SugarFields/Fields/File/DetailView.tpl');
     }

@@ -149,6 +149,8 @@ $mod_strings = array (
     'LBL_CREATED_USER' => 'Created User',
     'LBL_THEREVISIONS_SUBPANEL_TITLE' => 'Reversions',
     'LBL_DOCUMENT_INFORMATION' => 'Document Overview',
+	'LBL_DOC_ID' => 'Document Server ID',
+	'LBL_DOC_TYPE' => 'Document Server',
 );
 
 

@@ -72,11 +72,17 @@ $created_user->retrieve($focus->created_by);
 $xtpl->assign("CREATED_BY",$locale->getLocaleFormattedName($created_user->first_name, $created_user->last_name));
 
 $xtpl->assign("DATE_CREATED",$focus->date_entered);
+$xtpl->assign("DOC_TYPE",$focus->doc_type);
 $xtpl->assign("REVISION",$focus->revision);
 $xtpl->assign("FILENAME",$focus->filename);
 
 $xtpl->assign("FILE_NAME", $focus->filename);
 $xtpl->assign("SAVE_FILE", $focus->id);
+$download_url = 'index.php?entryPoint=download&id='.$focus->id.'&type=Documents';
+if($focus->doc_type!='Sugar' && !empty($focus->doc_id)) {
+	$download_url = 'http://docs.google.com/document/edit?id='.$focus->doc_id.'&hl=en';
+}
+$xtpl->assign('DOWNLOAD_URL', $download_url);
 
 $xtpl->assign("FILE_URL", UploadFile::get_url($focus->filename,$focus->id));
 $xtpl->assign("GRIDLINE", $gridline);
