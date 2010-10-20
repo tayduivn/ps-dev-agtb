@@ -97,7 +97,6 @@ class RepairAndClear
                 $this->clearThemeCache();
                 $this->clearXMLfiles();
                 $this->clearSearchCache();
-                $this->clearExternalAPICache();
                 //BEGIN SUGARCRM flav=pro ONLY
                 $this->clearPDFFontCache();
                 //END SUGARCRM flav=pro ONLY
@@ -361,13 +360,6 @@ class RepairAndClear
             unlink( "$src_file" );
         }
         
-    }
-    public function clearExternalAPICache() 
-	{
-        global $mod_strings, $sugar_config;
-        if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARPDFFONT']}</h3>";
-        require_once('include/externalAPI/ExternalAPIFactory.php');
-        ExternalAPIFactory::clearCache();
     }
 	//BEGIN SUGARCRM flav=pro ONLY
     public function clearPDFFontCache() 

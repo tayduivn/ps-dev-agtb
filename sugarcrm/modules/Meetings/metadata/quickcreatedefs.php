@@ -97,7 +97,7 @@ array (
             ),
           ),
         ),
-         array('type','password'),
+         
         array (
            
           array (

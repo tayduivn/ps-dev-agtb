@@ -81,14 +81,6 @@ $subpanel_layout = array(
 		  array (
 		    'usage' => 'query_only',
 		  ),
-		  'doc_id' => 
-		  array (
-		    'usage' => 'query_only',
-		  ),
-		  'doc_type' => 
-		  array (
-		    'usage' => 'query_only',
-		  ),
 	),
 );
 ?>

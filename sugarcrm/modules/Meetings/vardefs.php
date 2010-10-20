@@ -51,55 +51,6 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting location'
   ),
-  'password' =>
-  array (
-    'name' => 'password',
-    'vname' => 'LBL_PASSWORD',
-    'type' => 'varchar',
-    'len' => '50',
-    'comment' => 'Meeting password',
-    'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
-  ),
-  'join_url' =>
-  array (
-    'name' => 'join_url',
-    'vname' => 'LBL_URL',
-    'type' => 'varchar',
-    'len' => '200',
-    'comment' => 'Join URL'
-  ),
-  'host_url' =>
-  array (
-    'name' => 'host_url',
-    'vname' => 'LBL_URL',
-    'type' => 'varchar',
-    'len' => '400',
-    'comment' => 'Host URL'
-  ),
-  'displayed_url' =>
-  array (
-    'name' => 'displayed_url',
-    'vname' => 'LBL_URL',
-    'type' => 'url',
-    'len' => '400',
-    'comment' => 'Meeting URL'
-  ),
-  'creator' =>
-  array (
-    'name' => 'creator',
-    'vname' => 'LBL_CREATOR',
-    'type' => 'varchar',
-    'len' => '50',
-    'comment' => 'Meeting creator'
-  ),
-  'external_id' =>
-  array (
-    'name' => 'external_id',
-    'vname' => 'LBL_EXTERNALID',
-    'type' => 'varchar',
-    'len' => '50',
-    'comment' => 'Meeting ID for external app API'
-   ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',
@@ -158,15 +109,6 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'options' => 'meeting_status_dom',
     'comment' => 'Meeting status (ex: Planned, Held, Not held)'
   ),
-  'type' =>
-   array (
-     'name' => 'type',
-      'vname' => 'LBL_TYPE',
-      'type' => 'enum',
-      'len' => 255,
-      'function' => 'getMeetingsExternalApiDropDown',
-      'comment' => 'Meeting type (ex: WebEx, Other)' 
-   ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>
   array (
