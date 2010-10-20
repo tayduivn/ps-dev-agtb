@@ -87,7 +87,6 @@ class SugarTinyMCE {
 		$config['theme_advanced_buttons1'] = $this->buttonConfigs['default']['buttonConfig']; 
 		$config['theme_advanced_buttons2'] = $this->buttonConfigs['default']['buttonConfig2']; 
 		$config['theme_advanced_buttons3'] = $this->buttonConfigs['default']['buttonConfig3']; 
-		$config['content_css'] = SugarThemeRegistry::current()->getCSSURL('style.css');
 		$jsConfig = $json->encode($config);
 		
 		$instantiateCall = '';

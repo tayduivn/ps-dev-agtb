@@ -300,10 +300,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 				$module_fields['fixed_in_release']['type'] = 'enum';
 				$module_fields['fixed_in_release']['options'] = $options_ret;
 			}
-			if(isset($module_fields['found_in_release'])){
-				$module_fields['found_in_release']['type'] = 'enum';
-				$module_fields['found_in_release']['options'] = $options_ret;
-			}			
 			if(isset($module_fields['release'])){
 				$module_fields['release']['type'] = 'enum';
 				$module_fields['release']['options'] = $options_ret;

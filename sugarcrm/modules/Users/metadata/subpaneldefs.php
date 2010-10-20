@@ -48,20 +48,6 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
-		
-		'eapm' => array(
-			'order' => 30,
-			'module' => 'EAPM',
-			'sort_order' => 'asc',
-			'sort_by' => 'name',
-			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'eapm',
-			'add_subpanel_data' => 'assigned_user_id',
-			'title_key' => 'LBL_EAPM_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopCreateButton'),
-			),
-		),
 		//END SUGARCRM flav=pro ONLY
 	),
 	'default_subpanel_define' => array(

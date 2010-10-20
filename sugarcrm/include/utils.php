@@ -1967,7 +1967,7 @@ function clean_xss($str, $cleanImg=true) {
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror";
 
 	$attribute_regex	= "#<[^/>][^>]+({$jsEvents}\w+)[^=>]*=[^>]*>#sim";
-	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
+	$javascript_regex	= '@<[^/>][^>]+(expression|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
 	$css_url			= "#url\(.*\.\w+\)#";
 

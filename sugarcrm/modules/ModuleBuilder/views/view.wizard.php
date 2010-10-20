@@ -348,13 +348,12 @@ class ModuleBuilderViewWizard extends SugarView
 		$this->buttons = array ( ) ;
 		foreach ( $nodes as $modules )
 		{
-			if ($modules [ 'name' ] == translate('LBL_PORTAL_LAYOUTS'))
+			if ($modules [ 'name' ] == translate('LBL_LAYOUTS'))
 			{
 				foreach ( $modules [ 'children' ] as $module )
 				{
 					$this->buttons [ $module [ 'name' ] ] = array ( 'action' => $module [ 'action' ] , 'imageTitle' => ucfirst ( $module [ 'module' ] ) , 'size' => '48' ) ;
 				}
-				ksort($this->buttons);
 				break ;
 			}
 		}

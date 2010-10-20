@@ -54,15 +54,8 @@
 	</tr>
 
 	<tr>
-		<td width="15%" valign="top" scope="row"><slot>{MOD.LBL_DOC_TYPE}</slot></td>
-		<td width="35%" valign="top"><slot>{DOC_TYPE}&nbsp;</slot></td>		
-        <td width="15%" valign="top" scope="row"><slot></slot></td>
-		<td width="35%" valign="top"><slot></slot></td>		        
-	</tr>
-	
-	<tr>
         <td width="15%" valign="top" scope="row"><slot>{MOD.LBL_FILENAME}</slot></td>
-        <td width="35%" valign="top"><slot><a href='{DOWNLOAD_URL}'>{FILE_NAME}</a>&nbsp;</slot></td>	
+        <td width="35%" valign="top"><slot><a href='index.php?entryPoint=download&id={SAVE_FILE}&type=Documents'>{FILE_NAME}</a>&nbsp;</slot></td>	
         <td width="15%" valign="top" scope="row"><slot>{MOD.LBL_DOC_VERSION}</slot></td>
 		<td width="35%" valign="top"><slot>{REVISION}&nbsp;</slot></td>		        
 	</tr>

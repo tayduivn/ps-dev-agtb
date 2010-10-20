@@ -45,12 +45,7 @@ $subpanel_layout = array(
 			'widget_class' => 'SubPanelIcon',
  		 	'width' => '2%',
  		 	'image2'=>'attachment',
- 		 	'image2_url_field'=>array(
- 		 		'id_field'=>'selected_revision_id',
- 		 		'filename_field'=>'selected_revision_filename',
- 		 		'doc_id' => 'doc_id',
-				'doc_type' => 'doc_type',
-			),
+ 		 	'image2_url_field'=>array('id_field'=>'selected_revision_id','filename_field'=>'selected_revision_filename'),
  		 	'attachment_image_only'=>true,
  		 	
 		),

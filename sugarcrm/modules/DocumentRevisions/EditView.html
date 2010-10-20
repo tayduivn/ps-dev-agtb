@@ -53,12 +53,6 @@
 		<td width="35%" ><slot>{CURRENT_REVISION}</slot>&nbsp;</td>		        
 	</tr>
 	<tr>
-		<td width="15%" scope="row"><slot>{MOD.LBL_DOC_TYPE}</slot>&nbsp;</td>
-		<td width="35%" ><slot><select name='doc_type'>{DOC_TYPE_OPTIONS}</select></slot>&nbsp;</td>		
-        <td width="15%" scope="row"></td>
-		<td width="35%" ></td>		        
-	</tr>
-	<tr>
         <td width="15%" scope="row"><slot>{MOD.LBL_FILENAME}  <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
         <td width="35%" ><slot><input name="uploadfile" tabindex="2" type="file" size="60"/></slot></td>	
         <td width="15%" scope="row"><slot>{MOD.LBL_DOC_VERSION} <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></slot></td>

@@ -48,7 +48,6 @@ class Meeting extends SugarBean {
 	var $name;
 	var $location;
 	var $status;
-	var $type;
 	var $date_start;
 	var $time_start;
 	var $date_end;
@@ -401,20 +400,7 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-		
-		if($this->assigned_user_id == $GLOBALS['current_user']->id){
-			$join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" alt="Start Meeting"');
-			$meeting_fields['DISPLAYED_URL'] = $this->host_url;
-		}else{
-			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
-		}
-		
-		$meeting_fields['JOIN_MEETING']  = '';
-		if(!empty($meeting_fields['DISPLAYED_URL'])){
-			if(empty($join_icon))$join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" alt="Join Meeting"');
-			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . $join_icon . '</a>';
-		}
-	
+
 		return $meeting_fields;
 	}
 
@@ -443,7 +429,6 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
-		$xtpl->assign("MEETING_TYPE",(isset($meeting->type)? $app_list_strings['meeting_type_dom'][$meeting->type]:""));
 		$xtpl->assign("MEETING_STARTDATE", $timedate->to_display_date_time($meeting->date_start,true,true,$notifyUser)." ".$prefDate['userGmt']);
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
@@ -642,19 +627,5 @@ class Meeting extends SugarBean {
 
 	    parent::afterImportSave();
 	}
-
 } // end class def
-
-// External API integration, for the dropdown list of what external API's are available
-function getMeetingsExternalApiDropDown() {
-    require_once('include/externalAPI/ExternalAPIFactory.php');
-    
-    $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
-    
-    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
-    
-    return $apiList;
-    
-}
-
 ?>

@@ -28,7 +28,7 @@ function smarty_function_sugar_translate($params, &$smarty)
     if(isset($params['select'])){
     	if(empty($params['select']))
 		    $value = "";
-		else
+		else 
 		    $value = translate($params['label'] , $module, $params['select']);
 	}else{
 		$value = translate($params['label'] , $module);
@@ -39,6 +39,7 @@ function smarty_function_sugar_translate($params, &$smarty)
     elseif($params['label'] == '0')
    		return translate("DEFAULT", $module);
     else {
-        return preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", "", $value);
+        return rtrim($value, ':');
     }
 }
+?>
