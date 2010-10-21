@@ -215,11 +215,19 @@ class DashletsDialog {
 		    	break;
 		    	
 		    case 'myFavorites':
-		    	global $current_user;
-		    	$current_favorites = $current_user->getPreference('favorites', 'Reports');
-				$current_favorite_ids = !empty($current_favorites) ? $current_favorites : array();
-		    	$where = 'AND saved_reports.id IN (\'' . implode("','", array_keys($current_favorite_ids)) . '\')';
-		    	break;
+                global $current_user;
+                $sugaFav = new SugarFavorites();
+                $current_favorites_beans = $sugaFav->getUserFavoritesByModule('Reports', $current_user);
+                $current_favorites = array();
+                foreach ($current_favorites_beans as $key=>$val) {
+                    array_push($current_favorites,$val->record_id);
+                }
+                if(is_array($current_favorites) && !empty($current_favorites))
+                    $where = ' AND saved_reports.id IN (\'' . implode("','", array_values($current_favorites)) . '\')';
+                else
+                    $where = ' AND saved_reports.id IN (\'-1\')';
+                break;
+		    	
 		    	
     		default:
     			break;
