@@ -1415,8 +1415,10 @@ function calculate_formula(doc, formula, table_id){
 	for(i = 0 ; i < rows.length; i++){	
 	   	if (formula_type == 'discount_amount') {
 	   	 	formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+			//checkbox number is one behind the row number
+			checkboxCount = i - 1;
 			if (i != 0) {
-				if (doc.getElementById('checkbox_select_' + table_array[table_id][i]) && doc.getElementById('checkbox_select_' + table_array[table_id][i]).checked == true) {
+				if (doc.getElementById('checkbox_select_' + table_array[table_id][checkboxCount]) && doc.getElementById('checkbox_select_' + table_array[table_id][checkboxCount]).checked == true) {
 					formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
 				}
 				else {
