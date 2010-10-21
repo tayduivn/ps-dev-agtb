@@ -221,7 +221,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 			foreach($value->field_defs as $var){
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
 				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' &&$var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
-				if ((isset($var['source']) && $var['source'] == 'non_db') || (isset($var['type']) && $var['type'] == 'link')) {
+				if ((isset($var['source']) && $var['source'] == 'non_db') && (isset($var['type']) && $var['type'] != 'link')) {
 					continue;
 				}
 				$required = 0;
@@ -264,6 +264,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 		            $entry['required'] = $required;
 		            $entry['options'] = $options_ret;
 		            $entry['related_module'] = (isset($var['id_name']) && isset($var['module'])) ? $var['module'] : '';
+		            $entry['calculated'] =  (isset($var['calculated']) && $var['calculated']) ? true : false;
 					if(isset($var['default'])) {
 					   $entry['default_value'] = $var['default'];
 					}
