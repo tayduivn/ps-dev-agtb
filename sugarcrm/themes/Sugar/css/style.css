@@ -5375,6 +5375,39 @@ color: #0B578F;
 	height: 26px;
 }
 
+table.dcListView th,table.dcListView td {
+	text-align: left;
+	color: #666;
+	padding: 5px 10px;
+}
+
+table.dcListView th {
+	background-color:#EBEBED;
+}
+
+
+table.dcListView th a.listViewThLinkS1 {
+color:#666666;
+text-decoration: none;
+}
+
+table.dcListView th a.listViewThLinkS1:hover {
+text-decoration: underline;
+}
+
+table.dcListView td {
+	border-bottom: 1px solid #eee;
+	white-space: nowrap;
+}
+
+table.dcSearch {
+	margin-bottom: 10px;	
+}
+
+.dcSubmit {
+margin-left:10px;	
+}
+		
 #sugar_spot_search_div {
 	background: url(../../../../index.php?entryPoint=getImage&imageName=dcMenuSearchBox.png) no-repeat top left;
 	height: 26px;
