@@ -497,7 +497,7 @@ class Call extends SugarBean
 	function get_call_users() {
 		$template = new User();
 		// First, get the list of IDs.
-		$query = "SELECT calls_users.required, calls_users.accept_status, calls_users.user_id from calls_users where calls_users.call_id='$this->id' AND calls_users.deleted=0";
+		$query = "SELECT calls_users.required, calls_users.accept_status, calls_users.user_id from calls_users where calls_users.call_id='$this->id' AND calls_users.deleted=0  AND calls_users.accept_status != 'decline'";
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 		$result = $this->db->query($query, true);
 		$list = Array();
