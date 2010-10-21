@@ -71,18 +71,23 @@ class SugarFavorites extends Basic
 	
 	public static function generateGUID(
 	    $module, 
-	    $record
+	    $record,
+	    $user_id = ''
 	    )
 	{
-		return md5($module . $record . $GLOBALS['current_user']->id);
+	    if(empty($user_id))
+	        $user_id = $GLOBALS['current_user']->id;
+	    
+		return md5($module . $record . $user_id);
 	}
 	
 	public static function isUserFavorite(
 	    $module, 
-	    $record
+	    $record,
+	    $user_id = ''
 	    )
 	{
-		$id = SugarFavorites::generateGUID($module, $record);
+		$id = SugarFavorites::generateGUID($module, $record, $user_id);
 
 		$focus = new SugarFavorites;
 		$focus->retrieve($id);
