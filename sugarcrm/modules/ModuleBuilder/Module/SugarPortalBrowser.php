@@ -57,7 +57,7 @@ class SugarPortalBrowser
             $layouts[$module->name] = $module->getNodes();
         }
         $nodes[] = array(
-            'name'=> translate('LBL_PORTAL_LAYOUTS'),
+            'name'=> translate('LBL_LAYOUTS'),
             'imageTitle' => 'Layouts', 
             'type'=>'Folder', 
             'children'=>$layouts, 

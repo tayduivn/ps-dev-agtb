@@ -348,7 +348,7 @@ class ModuleBuilderViewWizard extends SugarView
 		$this->buttons = array ( ) ;
 		foreach ( $nodes as $modules )
 		{
-			if ($modules [ 'name' ] == translate('LBL_PORTAL_LAYOUTS'))
+			if ($modules [ 'name' ] == translate('LBL_LAYOUTS'))
 			{
 				foreach ( $modules [ 'children' ] as $module )
 				{
