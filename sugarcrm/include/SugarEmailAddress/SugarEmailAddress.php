@@ -568,7 +568,7 @@ class SugarEmailAddress extends SugarBean {
             //verify the opt out and invalid flags.
            //bug# 39378- did not allow change of case of an email address
             if ($a['invalid_email'] != $invalid or $a['opt_out'] != $opt_out or strcasecmp(trim($a['email_address']), trim($address))==0) {
-                $upd_q="update email_addresses set email_address =' {$address}', invalid_email={$invalid}, opt_out={$opt_out},date_modified = '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."' where id='{$a['id']}'";
+                $upd_q="update email_addresses set email_address='{$address}', invalid_email={$invalid}, opt_out={$opt_out},date_modified = '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."' where id='{$a['id']}'";
                 $upd_r= $this->db->query($upd_q);
             }
             return $a['id'];
