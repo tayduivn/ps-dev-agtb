@@ -1455,7 +1455,7 @@ $app_list_strings = array (
     'advance' => 'Move dropdown forwards by ',
   ),
   'wflow_record_type_dom' =>
-        array (
+   array (
     'All' => 'New and Existing Records',
     'New' => 'New Records Only',
     'Update' => 'Existing Records Only',
