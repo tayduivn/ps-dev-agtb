@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: upload_file.php 55278 2010-03-15 13:45:13Z jmertic $
  * Description:
  ********************************************************************************/
+require_once('include/externalAPI/ExternalAPIFactory.php');
 
 class UploadFile 
 {
@@ -267,6 +268,35 @@ class UploadFile
 			}
 		}
 		return true;
+	}
+	
+	function upload_doc(&$bean, $bean_id, $doc_type, $file_name, $mime_type){
+        
+		if(!empty($doc_type)&&$doc_type!='Sugar') {
+			global $sugar_config;
+	        $destination = clean_path($this->get_upload_path($bean_id));
+	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
+	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
+	                    
+		    try{
+                $this->document = ExternalAPIFactory::loadAPI($doc_type);
+                $doc_id = '';
+                
+                $doc_id = $this->document->uploadDoc(
+                    $new_destination,
+                    $file_name,
+                    $mime_type
+                    );
+                $bean->doc_id = $doc_id;
+                unlink($new_destination);
+                $bean->save();
+            }catch(Exception $e){
+                sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
+                // FIXME: Translate
+                $_SESSION['administrator_error'] = 'Error during plugin save: '.$e->getMessage();
+                $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
+            }
+        }
 	}
 
 	/**

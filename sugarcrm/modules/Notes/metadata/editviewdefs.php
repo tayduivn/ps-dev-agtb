@@ -57,16 +57,24 @@ function deleteAttachmentCallBack(text)
                         array('name'=>'name', 'displayParams'=>array('size'=>60)),''
                     ),
 					array ( 
-						array (
+					    '0' => array(
+							 'name' => 'doc_type',
+	          				 'label' => 'LBL_DOC_TYPE',
+	          				 'displayParams'=>array('field'=>array('onchange'=>"if(this.value == 'LotusLive')document.getElementById('SelectLotusLiveDoc').style.display=''; else document.getElementById('SelectLotusLiveDoc').style.display='none'")),
+						),
+						'1' => array (
 	        				'name' => 'filename',
 	        				'customCode' => '<span id=\'new_attachment\' style=\'display:{if !empty($fields.filename.value)}none{/if}\'>
-        									 <input name="uploadfile" tabindex="3" type="file" size="60"/>
+        									 <h4>Upload From Your Computer</h4><input name="uploadfile" tabindex="3" type="file" size="40"/>
         									 </span>
 											 <span id=\'old_attachment\' style=\'display:{if empty($fields.filename.value)}none{/if}\'>
 		 									 <input type=\'hidden\' name=\'deleteAttachment\' value=\'0\'>
 		 									 {$fields.filename.value}<input type=\'hidden\' name=\'old_filename\' value=\'{$fields.filename.value}\'/><input type=\'hidden\' name=\'old_id\' value=\'{$fields.id.value}\'/>
 											 <input type=\'button\' class=\'button\' value=\'{$APP.LBL_REMOVE}\' onclick=\'ajaxStatus.showStatus(SUGAR.language.get("Notes", "LBL_REMOVING_ATTACHMENT"));this.form.deleteAttachment.value=1;this.form.action.value="EditView";SUGAR.dashlets.postForm(this.form, deleteAttachmentCallBack);this.form.deleteAttachment.value=0;this.form.action.value="";\' >       
-											 </span>',
+											 </span><span id="SelectLotusLiveDoc" style="display:none"><br><h4>Select From LotusLive</h4>
+											 <input type="hidden" name="doc_id">
+											 <input name="filename" size="40"><input type="button" value="Select" 
+											 onclick="DCMenu.loadView(\'LotusLive Documents\',\'index.php?module=Documents&action=extdoc&type=LotusLive&form_id=\'+ this.form.id);"></span>',
 	      				),
 	      				//BEGIN SUGARCRM flav=pro ONLY
 					    array('name'=>'portal_flag',

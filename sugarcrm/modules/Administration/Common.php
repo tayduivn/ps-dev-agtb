@@ -350,7 +350,7 @@ function return_custom_app_list_strings_file_contents($language, $custom_filenam
 		$filename = $custom_filename;
 	$handle = @sugar_fopen($filename, 'rt');
 
-	if($handle)
+	if($handle && filesize($filename) > 0 )
 	{
 		$contents = fread($handle, filesize($filename));
 		fclose($handle);

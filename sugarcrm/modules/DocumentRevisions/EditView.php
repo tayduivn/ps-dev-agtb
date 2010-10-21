@@ -66,6 +66,9 @@ if (isset($_REQUEST['return_id'])) $xtpl->assign("RETURN_ID", $_REQUEST['return_
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js().get_validate_record_document_revision_js());
 
+$doc_type_options = get_select_options_with_id($app_list_strings[$focus->field_defs['doc_type']['options']], $_REQUEST['doc_type']);
+
+$xtpl->assign("DOC_TYPE_OPTIONS", $doc_type_options);
 $focus->fill_document_name_revision($_REQUEST['return_id']);
 
 $xtpl->assign("ID", $focus->id);
@@ -76,7 +79,15 @@ if($_REQUEST['document_revision'] == null) {
 	$xtpl->assign("CURRENT_REVISION",$focus->latest_revision);
 }
 
-$xtpl->assign("FILE_URL", UploadFile::get_url($_REQUEST['document_filename'],$_REQUEST['document_revision_id']));
+$doc_revision = new DocumentRevision();
+$doc_revision->retrieve($_REQUEST['document_revision_id']);
+$file_url = 'index.php?entryPoint=download&id='.$doc_revision->id.'&type=Documents';
+
+if($doc_revision->doc_type!='Sugar' && !empty($doc_revision->doc_id)) {
+	$file_url = 'http://docs.google.com/document/edit?id='.$doc_revision->doc_id.'&hl=en';
+}
+
+$xtpl->assign("FILE_URL", $file_url);
 
 
 $xtpl->parse("main");
