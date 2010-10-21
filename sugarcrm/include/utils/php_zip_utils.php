@@ -28,57 +28,51 @@
 
  // $Id: zip_utils.php 16276 2006-08-22 18:56:15Z awu $
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-if(class_exists("ZipArchive")) {
-    require_once 'include/utils/php_zip_utils.php';
-    return;
-} else {
-require_once('include/pclzip/pclzip.lib.php');
 
-function unzip( $zip_archive, $zip_dir, $forceOverwrite = false ){
+function unzip( $zip_archive, $zip_dir)
+{
+   return unzip_file($zip_archive, null, $zip_dir);
+}
+
+function unzip_file( $zip_archive, $archive_file, $zip_dir)
+{
     if( !is_dir( $zip_dir ) ){
         die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
     }
-
-    $archive = new PclZip( $zip_archive );
-
-    if ( $forceOverwrite ) {
-        if( $archive->extract( PCLZIP_OPT_PATH, $zip_dir, PCLZIP_OPT_REPLACE_NEWER ) == 0 ){
-            die( "Error: " . $archive->errorInfo(true) );
-        }
+    $zip = new ZipArchive;
+    $res = $zip->open($zip_archive);
+    if($res !== true) {
+        die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
     }
-    else {
-        if( $archive->extract( PCLZIP_OPT_PATH, $zip_dir ) == 0 ){
-            die( "Error: " . $archive->errorInfo(true) );
-        }
+
+    if($archive_file !== null) {
+        $res = $zip->extractTo($zip_dir, $archive_file);
+    } else {
+        $res = $zip->extractTo($zip_dir);
     }
+    if($res !== true) {
+        die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+    }
+    return true;
 }
 
-function unzip_file( $zip_archive, $archive_file, $to_dir, $forceOverwrite = false ){
-    if( !is_dir( $to_dir ) ){
-        die( "Specified directory '$to_dir' for zip file '$zip_archive' extraction does not exist." );
+function zip_dir( $zip_dir, $zip_archive )
+{
+    if( !is_dir( $zip_dir ) ){
+        die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
     }
-
-    $archive = new PclZip( "$zip_archive" );
-    if ( $forceOverwrite ) {
-        if( $archive->extract(  PCLZIP_OPT_BY_NAME, $archive_file,
-                                PCLZIP_OPT_PATH,    $to_dir,
-                                PCLZIP_OPT_REPLACE_NEWER ) == 0 ){
-            die( "Error: " . $archive->errorInfo(true) );
+    $zip = new ZipArchive();
+    $zip->open($zip_archive, ZIPARCHIVE::OVERWRITE);
+    $path = realpath($zip_dir);
+    $chop = strlen($path)+1;
+    $dir = new RecursiveDirectoryIterator($path);
+    $it = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+    foreach ($it as $k => $fileinfo) {
+        $localname = substr($fileinfo->getPathname(), $chop);
+        if($fileinfo->isDir()) {
+            $zip->addEmptyDir($localname);
+        } else {
+            $zip->addFile($fileinfo->getPathname(), $localname);
         }
     }
-    else {
-        if( $archive->extract(  PCLZIP_OPT_BY_NAME, $archive_file,
-                                PCLZIP_OPT_PATH,    $to_dir        ) == 0 ){
-            die( "Error: " . $archive->errorInfo(true) );
-        }
-    }
-}
-
-function zip_dir( $zip_dir, $zip_archive ){
-    $archive    = new PclZip( "$zip_archive" );
-    $v_list     = $archive->create( "$zip_dir" );
-    if( $v_list == 0 ){
-        die( "Error: " . $archive->errorInfo(true) );
-    }
-}
 }
