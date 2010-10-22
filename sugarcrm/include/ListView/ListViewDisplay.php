@@ -110,52 +110,7 @@ class ListViewDisplay {
 		}
 		$this->seed = $seed;
 
-        // create filter fields based off of display columns
-        if(empty($filter_fields) || $this->mergeDisplayColumns) {
-            foreach($this->displayColumns as $columnName => $def) {
-
-               $filter_fields[strtolower($columnName)] = true;
-
-            if(isset($this->seed->field_defs[strtolower($columnName)]['type']) &&
-               strtolower($this->seed->field_defs[strtolower($columnName)]['type']) == 'currency' &&
-               isset($this->seed->field_defs['currency_id'])) {
-               		$filter_fields['currency_id'] = true;
-            }
-
-               if(!empty($def['related_fields'])) {
-                    foreach($def['related_fields'] as $field) {
-                        //id column is added by query construction function. This addition creates duplicates
-                        //and causes issues in oracle. #10165
-                        if ($field != 'id') {
-                            $filter_fields[$field] = true;
-                        }
-                    }
-                }
-                if (!empty($this->seed->field_defs[strtolower($columnName)]['db_concat_fields'])) {
-	                foreach($this->seed->field_defs[strtolower($columnName)]['db_concat_fields'] as $index=>$field){
-	                    if(!isset($filter_fields[strtolower($field)]) || !$filter_fields[strtolower($field)])
-	                    {
-	                        $filter_fields[strtolower($field)] = true;
-	                    }
-	                }
-                }
-            }
-            foreach ($this->searchColumns as $columnName => $def )
-            {
-                $filter_fields[strtolower($columnName)] = true;
-            }
-        }
-
-        //BEGIN SUGARCRM flav=pro ONLY
-
-        //check for team_set_count
-        if(!empty($filter_fields['team_name']) && empty($filter_fields['team_count'])){
-        	$filter_fields['team_count'] = true;
-
-        	//Add the team_id entry so that we can retrieve the team_id to display primary team
-			$filter_fields['team_id'] = true;
-        }
-        //END SUGARCRM flav=pro ONLY
+        $filter_fields = $this->setupFilterFields($filter_fields);
 
         $data = $this->lvd->getListViewData($seed, $where, $offset, $limit, $filter_fields, $params, $id_field);
 
@@ -210,6 +165,57 @@ class ListViewDisplay {
 		$this->process($file, $data, $seed->object_name);
 		return true;
 	}
+	
+	function setupFilterFields($filter_fields = array())
+	{
+		// create filter fields based off of display columns
+        if(empty($filter_fields) || $this->mergeDisplayColumns) {
+            foreach($this->displayColumns as $columnName => $def) {
+
+               $filter_fields[strtolower($columnName)] = true;
+
+            if(isset($this->seed->field_defs[strtolower($columnName)]['type']) &&
+               strtolower($this->seed->field_defs[strtolower($columnName)]['type']) == 'currency' &&
+               isset($this->seed->field_defs['currency_id'])) {
+                    $filter_fields['currency_id'] = true;
+            }
+
+               if(!empty($def['related_fields'])) {
+                    foreach($def['related_fields'] as $field) {
+                        //id column is added by query construction function. This addition creates duplicates
+                        //and causes issues in oracle. #10165
+                        if ($field != 'id') {
+                            $filter_fields[$field] = true;
+                        }
+                    }
+                }
+                if (!empty($this->seed->field_defs[strtolower($columnName)]['db_concat_fields'])) {
+                    foreach($this->seed->field_defs[strtolower($columnName)]['db_concat_fields'] as $index=>$field){
+                        if(!isset($filter_fields[strtolower($field)]) || !$filter_fields[strtolower($field)])
+                        {
+                            $filter_fields[strtolower($field)] = true;
+                        }
+                    }
+                }
+            }
+            foreach ($this->searchColumns as $columnName => $def )
+            {
+                $filter_fields[strtolower($columnName)] = true;
+            }
+        }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+
+        //check for team_set_count
+        if(!empty($filter_fields['team_name']) && empty($filter_fields['team_count'])){
+            $filter_fields['team_count'] = true;
+
+            //Add the team_id entry so that we can retrieve the team_id to display primary team
+            $filter_fields['team_id'] = true;
+        }
+        //END SUGARCRM flav=pro ONLY
+	}
+	
 
 	/**
 	 * Any additional processing
