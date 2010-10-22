@@ -698,29 +698,38 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
     $mail_smtppass = "";
     $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
     $hide_if_can_use_default = true;
+    $mail_smtpauth_req=true;
+    
     if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
     {
+    	
+    	$mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
         $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
         if($userOverrideOE != null) {
+        	
             $mail_smtpuser = $userOverrideOE->mail_smtpuser;
             $mail_smtppass = $userOverrideOE->mail_smtppass;
+            
         }
+        
 
-        if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
+        if(!$mail_smtpauth_req &&( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass))){
             $hide_if_can_use_default = true;
         }
         else{
             $hide_if_can_use_default = false;
         }
     }
+     
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
     $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);
     $sugar_smarty->assign("mail_smtpuser", $mail_smtpuser);
     $sugar_smarty->assign("mail_smtppass", $mail_smtppass);
+    $sugar_smarty->assign("mail_smtpauth_req", $mail_smtpauth_req);
     $sugar_smarty->assign('MAIL_SMTPPORT',$mail_smtpport);
     $sugar_smarty->assign('MAIL_SMTPSSL',$mail_smtpssl);
 }
-$sugar_smarty->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default);
+$sugar_smarty->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default );
 
 $reports_to_change_button_html = '';
 
