@@ -801,19 +801,19 @@ function testOutboundSettings()
         return false;
     }
     
-    if(document.getElementById('mail_smtpuser')){
-    if(trim(document.getElementById('mail_smtpuser').value) == '') 
+   
+    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '') 
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPUSER}{literal}" + "<br/>";
-    }}
+    }
 
-    if(document.getElementById('mail_smtppass')){
-    if(trim(document.getElementById('mail_smtppass').value) == '') 
+    
+    if(document.getElementById('mail_smtppass') && trim(document.getElementById('mail_smtppass').value) == '') 
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPASS}{literal}" + "<br/>";
-    }}
+    }
     if(isError) {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
         return false;    

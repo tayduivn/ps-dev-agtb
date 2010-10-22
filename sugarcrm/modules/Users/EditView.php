@@ -713,7 +713,10 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
         }
         
 
-        if(!$mail_smtpauth_req &&( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass))){
+        if(!$mail_smtpauth_req && 
+            ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) 
+            || empty($systemOutboundEmail->mail_smtppass)))
+        {
             $hide_if_can_use_default = true;
         }
         else{
