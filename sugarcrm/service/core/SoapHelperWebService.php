@@ -42,7 +42,8 @@ class SoapHelperWebServices {
 				$options_ret = array();
 				// Apparently the only purpose of this check is to make sure we only return fields
 				//   when we've read a record.  Otherwise this function is identical to get_module_field_list
-				if(isset($value->required_fields) && key_exists($var['name'], $value->required_fields)){
+				if(isset($value->required_fields) && key_exists($var['name'], $value->required_fields) ||
+				(isset($var['required']) && $var['required'] == '1')) {
 					$required = 1;
 				}
 				if(isset($var['options'])){
@@ -103,7 +104,7 @@ class SoapHelperWebServices {
 			}
 		}
 		//END SUGARCRM flav!=sales ONLY
-		
+
 		if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
 			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
 			$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
@@ -207,7 +208,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('End: SoapHelperWebServices->validate_authenticated - validation failed');
 		return false;
 	}
-	
+
 	/**
 	 * Use the same logic as in SugarAuthenticate to validate the ip address
 	 *
@@ -329,7 +330,7 @@ function validate_user($user_name, $password){
 			} else {
 				$modules[$key] = '';
 			} // else
-		} // foreach		
+		} // foreach
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_user_module_list');
 		return $modules;
 
@@ -429,7 +430,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list_for_fields');
 		global $app_list_strings;
 		global $invalid_contact_fields;
-		
+
 		$list = array();
 		if(!empty($value->field_defs)){
 			if(empty($fields))$fields = array_keys($value->field_defs);
@@ -447,7 +448,7 @@ function validate_user($user_name, $password){
 			if(isset($value->created_by_name) && in_array('created_by_name', $fields)) {
 				$list['created_by_name'] = $this->get_name_value('created_by_name', $value->created_by_name);
 			}
-			
+
 			$filterFields = $this->filter_fields($value, $fields);
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];
@@ -561,7 +562,7 @@ function validate_user($user_name, $password){
 					$optional_where = $query_array['where'];
 				} // else
 			} // if
-			
+
 			$params = array();
 			$params['joined_tables'] = $query_array['join_tables'];
 
