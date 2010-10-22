@@ -4647,6 +4647,64 @@ function migrate_sugar_favorite_reports(){
         }
     }
 }
+
+function add_custom_modules_favorites_search(){
+    require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
+    require_once('modules/ModuleBuilder/MB/MBPackage.php');
+    require_once('modules/ModuleBuilder/MB/MBModule.php');
+
+    $mb = new ModuleBuilder();
+
+    $list = $mb->getPackageList();
+
+    foreach($list as $package_name){
+        $package = new MBPackage($package_name);
+        foreach($package->modules as $mbmodule_object){
+            $module_directory = "modules/{$mbmodule_object->key_name}/";
+            $searchdefs_file = "{$module_directory}/metadata/searchdefs.php";
+            $SearchFields_file = "{$module_directory}/metadata/SearchFields.php";
+            if(file_exists($searchdefs_file) && file_exists($SearchFields_file)){
+                $found_sf1 = false;
+                $found_sf2 = false;
+                require($searchdefs_file);
+                foreach($searchdefs[$mbmodule_object->key_name] as $sf_array){
+                    if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+                        $found_sf1 = true;
+                    }
+                }
+
+                require($SearchFields_file);
+                if(isset($searchFields[$mbmodule_object->key_name]['favorites_only'])){
+                    $found_sf2 = true;
+                }
+
+                if(!$found_sf1 && !$found_sf2){
+                    $sf1 = file_get_contents($searchdefs_file);
+                    $sf1 = str_replace("?>", "", $sf1);
+                    $sf1 .= "\n\n";
+                    $sf1 .= "\$searchdefs[\$module_name]['layout']['basic_search']['favorites_only'] = array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);\n";
+                    $sf1 .= "\$searchdefs[\$module_name]['layout']['advanced_search']['favorites_only'] = array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);\n";
+                    $sf1 .= "\n?>";
+                    file_put_contents($searchdefs_file, $sf1);
+
+                    $sf2 = file_get_contents($SearchFields_file);
+                    $sf2 = str_replace("?>", "", $sf2);
+                    $sf2 .= "\n\n";
+                    $sf2 .= "\$searchFields[\$module_name]['favorites_only'] = array(
+                'query_type'=>'format',
+                'operator' => 'subquery',
+                'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+                                    WHERE sugarfavorites.deleted=0
+                                        and sugarfavorites.module = \''.\$module_name.'\'
+                                        and sugarfavorites.assigned_user_id = \'{0}\'',
+                'db_field'=>array('id'));\n";
+                    $sf2 .= "\n?>";
+                    file_put_contents($SearchFields_file, $sf2);
+                }
+            }
+        }
+    }
+}
 // END SUGARCRM flav=pro ONLY 
 
 /**
