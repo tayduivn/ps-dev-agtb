@@ -8,7 +8,7 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
 
     protected $dateFormat = 'm/d/Y H:i:s';
     protected $urlExtension = '/envq/Production/';
-	
+
     public $useAuth = true;
     public $requireAuth = true;
     public $supportedModules = array('Meetings','Documents');
@@ -22,17 +22,17 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
         $this->account_host = $eapmData['url'];
         $this->account_url = $eapmData['url'].$this->urlExtension;
         $this->account_name = $eapmData['name'];
-        $this->account_password = $eapmData['password'];    
+        $this->account_password = $eapmData['password'];
     }
 
     public function checkLogin() {
         // FIXME: Stub
         $reply = array();
         $reply['success'] = true;
-        
+
         return $reply;
     }
-    
+
     public function logOff() {
     }
 
@@ -65,7 +65,7 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
 	public function uploadDoc($fileToUpload, $docName, $mineType) {}
     public function downloadDoc($documentId, $documentFormat) {}
 	public function shareDoc($documentId, $emails) {}
-	public function browseDoc($meeting, $attendeeName) {}
+	public function browseDoc($documentId) {}
 	public function deleteDoc($documentId) {}
     public function searchDoc($keywords) {}
 
@@ -77,12 +77,12 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
         $urlParams['ciPassword'] = 'changeIt!';
         $urlParams['UserName'] = $this->account_name;
         $urlParams['Password'] = $this->account_password;
-        
+
         $url = 'https://' . $this->account_url . $requestMethod . '?';
         foreach($urlParams as $key => $value ) {
             // FIXME: urlencode the ciUser and ciPassword once they are ready for it
             if ( $key == 'ciUser' || $key == 'ciPassword' ) {
-                $url .= $key .'='. $value .'&';                
+                $url .= $key .'='. $value .'&';
             } else {
                 $url .= $key .'='. urlencode($value) .'&';
             }
@@ -102,7 +102,7 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-        
+
         $GLOBALS['log']->fatal("Where: ".$url);
         $GLOBALS['log']->fatal("Sent:\n".print_r($data,true));
         $rawResponse = curl_exec($ch);
@@ -113,7 +113,7 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
         $rawResponse = preg_replace('/(todoItemLink": ".*)/','\1",',$rawResponse);
         $rawResponse = preg_replace('/(fileDetails": ".*)/','\1",',$rawResponse);
 //        die("IKEA: <pre>".print_r($rawResponse,true));
-        
+
         $reply = array();
         $reply['responseRAW'] = $rawResponse;
         $reply['responseJSON'] = null;
@@ -130,7 +130,7 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
             // The JSON appears to be a pretty direct translation from XML.. so I'm going to sort it out a bit.
             $reply['success'] = TRUE;
         }
-        
+
         return $reply;
     }
 
