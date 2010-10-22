@@ -353,7 +353,7 @@ eoq;
 
 						} // if
 
-						if(!empty($old_reports_to_id)) {
+						if(!empty($old_reports_to_id) && method_exists($newbean, 'update_team_memberships')) {
 						   $old_id = $old_reports_to_id == 'null' ? '' : $old_reports_to_id;
 						   //BEGIN SUGARCRM flav=pro ONLY
 						   $newbean->update_team_memberships($old_id);

@@ -990,7 +990,6 @@ $mod_strings = array (
     'LBL_FOR'=>'for',
     'LBL_QR_CBOX_CLEARPDFFONT'=> 'Clear PDF Font Cache File',
     'LBL_QR_CLEARPDFFONT'=>'Clearing PDF Font Cache File...done',
-    'LBL_QR_CLEAR_EXT_API'=>'Clearing External API Cache File...done',
 //BEGIN SUGARCRM flav=dce ONLY
     'LBL_DCE_TITLE'=>'DCE',
     'LBL_DCE_DESC'=>'Sugar Data Center',

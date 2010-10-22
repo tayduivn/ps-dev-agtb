@@ -4554,23 +4554,6 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
 		  } //if
 
-		  // move the favorite reports over to the SugarFavorites table
-		  $fav_rep_prefs = $current_user->getPreference('favorites', 'Reports');
-		  if(is_array($fav_rep_prefs) && !empty($fav_rep_prefs)){
-    		  $current_favorites = array_keys($fav_rep_prefs);
-    		  foreach ($current_favorites as $report_id) {
-    		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-    		          continue;
-    		      }
-    
-    		      $favFocus = new SugarFavorites;
-    		      $favFocus->module = 'Reports';
-    		      $favFocus->record_id = $report_id;
-    		      $favFocus->assigned_user_id = $current_user->id;
-    		      $favFocus->save();
-    		  }
-		  }
-
 		  // we need to force save the changes to disk, otherwise we lose them.
 		  $current_user->savePreferencesToDB();
 	} //while
@@ -4636,7 +4619,7 @@ function migrate_sugar_favorite_reports(){
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
         $active_users[] = $row['id'];
     }
-
+    
     foreach($active_users as $user_id){
         $user = new User();
         $user->retrieve($user_id);
@@ -4647,7 +4630,7 @@ function migrate_sugar_favorite_reports(){
         if(!empty($user_favorites)){
             foreach($user_favorites as $report_id => $bool){
                 $fav = new SugarFavorites();
-                $record = SugarFavorites::generateGUID('Reports', $report_id);
+                $record = SugarFavorites::generateGUID('Reports', $report_id, $user_id);
                 if(!$fav->retrieve($record, true, false)){
                         $fav->new_with_id = true;
                 }
@@ -4655,6 +4638,9 @@ function migrate_sugar_favorite_reports(){
                 $fav->module = 'Reports';
                 $fav->record_id = $report_id;
                 $fav->assigned_user_id = $user->id;
+                $fav->created_by = $user->id;
+                $fav->modified_user_id = $user->id;
+                
                 $fav->deleted = 0;
                 $fav->save();
             }

@@ -1262,7 +1262,7 @@ class SugarBean
 			if((strpos($type, 'char') !== false ||
 				strpos($type, 'text') !== false ||
 				$type == 'enum') &&
-				isset($this->$key)
+                !empty($this->$key)
 			) {
 				$str = from_html($this->$key);
 				// Julian's XSS cleaner
@@ -1270,8 +1270,9 @@ class SugarBean
 
 				if(is_array($potentials) && !empty($potentials)) {
 					foreach($potentials as $bad) {
-						$this->$key = to_html(str_replace($bad, "", $str));
+                        $str = str_replace($bad, "", $str);
 					}
+                    $this->$key = to_html($str);
 				}
 			}
 		}
@@ -5105,12 +5106,12 @@ function save_relationship_changes($is_update, $exclude=array())
 		if($return_handler==true)
 		{
 			$rel_handler = new RelationshipHandler($this->db, $this->$target_base);
-			$rel_handler->base_bean = & $this;
+            $rel_handler->base_bean = $this;
 		}
 		else
 		{
 			$this->rel_handler = new RelationshipHandler($this->db, $this->$target_base);
-			$this->base_bean = & $this;
+            $this->base_bean = $this;
 		}
 
 		return $rel_handler;

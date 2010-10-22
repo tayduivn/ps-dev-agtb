@@ -64,31 +64,18 @@ array (
       1 => 'parent_type',
     ),
   ),
-  
-  'DOC_TYPE' =>
-  array(
-	'width' => '5%', 
-  	'label' => 'LBL_DOC_TYPE',
-    'link' => false,
- 	'default' => true,
-  ), 
   'FILENAME' => 
   array (
     'width' => '20%',
     'label' => 'LBL_LIST_FILENAME',
+    'link' => false,
     'default' => true,
-    'type' => 'file',
     'related_fields' => 
     array (
       0 => 'file_url',
       1 => 'id',
-      2 => 'doc_id',
-      3 => 'doc_type',
     ),
-    'displayParams' =>
-    array(
-      'module' => 'Notes',
-    ),
+    'customCode' => '<a href="index.php?entryPoint=download&id={$ID}&type=Notes" >{$FILENAME}</a>',
   ),
   'CREATED_BY_NAME' => 
   array (

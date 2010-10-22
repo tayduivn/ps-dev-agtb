@@ -32,16 +32,6 @@ array (
       0 => 'status',
     ),
   ),
-  'JOIN_MEETING' => 
-  array (
-    'width' => '1%',
-    'label' => 'LBL_LIST_JOIN_MEETING',
-    'link' => true,
-    'sortable' => false,
-    'default' => true,
-    'related_fields' => 
-    array('join_url', 'host_url'),
-  ),
   'NAME' => 
   array (
     'width' => '40%',

@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: SugarWidgetField.php 53409 2010-01-04 03:31:15Z roger $
+// $Id: SugarWidgetField.php 57035 2010-06-19 01:58:47Z kjing $
 
 require_once ('include/generic/SugarWidgets/SugarWidget.php');
 
@@ -67,7 +67,7 @@ class SugarWidgetField extends SugarWidget {
 			array_push($alias_arr, $layout_def['name']);
 		}
 
-		return implode("_", $alias_arr);
+		return $this->getTruncatedColumnAlias(implode("_", $alias_arr));
 	}
 
 	function & displayDetailLabel(& $layout_def) {

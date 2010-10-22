@@ -68,29 +68,23 @@ if (isset($_REQUEST['SaveRevision'])) {
   	 	  	 	
   	 	$do_final_move = 1;
 	}
-				
+	
 	//save revision
 	$Revision->document_id = $_REQUEST['return_id'];
 	$Revision->id = null;  // 17767: Security fix, make sure no id is passed in via form.
 	$Revision->save();
-	
-	if ($do_final_move)
-	{
-	   	 $upload_file->final_move($Revision->id);
-	}
-	$upload_file->upload_doc($Revision, $Revision->id, $Revision->doc_type, $Revision->filename, $Revision->file_mime_type);
-	//$this->doc_id =  $Revision->doc_id;
 
 	//revsion is the document.	
 	$Document->document_revision_id = $Revision->id;
-
-	$Document->doc_id = empty($Revision->doc_id)?'':$Revision->doc_id;
-	$Document->doc_type = empty($Revision->doc_id)?'Sugar':$Revision->doc_type;
 	$Document->save();
 	$return_id = $Document->id;
 } 
 
-if ( !$do_final_move && ! empty($_REQUEST['old_id']))
+if ($do_final_move)
+{
+   	 $upload_file->final_move($Revision->id);
+}
+else if ( ! empty($_REQUEST['old_id']))
 {
    	 $upload_file->duplicate_file($_REQUEST['old_id'], $Revision->id, $Revision->filename);
 }
