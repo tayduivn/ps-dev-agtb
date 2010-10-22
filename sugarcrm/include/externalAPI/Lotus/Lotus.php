@@ -19,13 +19,13 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
     }
 
     public function loadEAPM($eapmData) {
-        $this->account_host = $eapmData['url'];
-        $this->account_url = $eapmData['url'].$this->urlExtension;
-        $this->account_name = $eapmData['name'];
-        $this->account_password = $eapmData['password'];    
+        $this->account_host = $eapmData->url;
+        $this->account_url = $eapmData->url.$this->urlExtension;
+        $this->account_name = $eapmData->name;
+        $this->account_password = $eapmData->password;    
     }
 
-    public function checkLogin() {
+    public function checkLogin($eapmBean) {
         // FIXME: Stub
         $reply = array();
         $reply['success'] = true;
@@ -45,11 +45,11 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
         // $reply = $this->makeRequest('uploadfile', array(),array('collectionid'=>'EB366350CC5911DFA2325E610A060702','fileid'=>'D6286FC0060D11DFAE6C3BA70A060702'));
         // $reply = $this->makeRequest('uploadfile', array(),array('collectionid'=>'3CAA8D80D29311DFA08B9C830A060702','fileid'=>'D6286FC0060D11DFAE6C3BA70A060702'));
 
-        // die('Attempted a schedule: <pre>'.print_r($reply,true));
+        die('Attempted a schedule: <pre>'.print_r($reply,true));
 
-        $bean->external_id = $reply['responseJSON']['feed']['entry'][0]['content']['data'];
-        $bean->host_url = $reply['responseJSON']['feed']['entry'][2]['content']['data'];
-        $bean->join_url = $reply['responseJSON']['feed']['entry'][1]['content']['data'];
+        $bean->external_id = $reply['responseJSON']['feed']['entry']['meetingID'];
+        $bean->host_url = $reply['responseJSON']['feed']['entry']['hostURL'];
+        $bean->join_url = $reply['responseJSON']['feed']['entry']['joinURL'];
 
         return $reply;
     }
@@ -62,10 +62,10 @@ class Lotus implements ExternalAPIPlugin,WebMeeting,WebDocument {
 	public function getMeetingDetails($meeting) {}
 
     // Web Document Functions
-	public function uploadDoc($fileToUpload, $docName, $mineType) {}
+	public function uploadDoc($bean, $fileToUpload, $docName, $mineType) {}
     public function downloadDoc($documentId, $documentFormat) {}
 	public function shareDoc($documentId, $emails) {}
-	public function browseDoc($meeting, $attendeeName) {}
+	public function browseDoc($path) {}
 	public function deleteDoc($documentId) {}
     public function searchDoc($keywords) {}
 

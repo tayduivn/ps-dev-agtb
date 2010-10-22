@@ -131,9 +131,9 @@ class ExternalAPIFactory{
         $apiClassName = $myApi['className'];
 
         if ( $myApi['useAuth'] ) {
-            $eapmAuth = EAPM::getLoginInfo($apiName);
+            $eapmBean = EAPM::getLoginInfo($apiName);
             
-            if ( !isset($eapmAuth['id']) && $myApi['requireAuth'] && !$ignoreAuth ) {
+            if ( !isset($eapmBean->application) && $myApi['requireAuth'] && !$ignoreAuth ) {
                 // We need authentication, and they don't have it, don't load the API
                 return false;
             }
@@ -141,8 +141,8 @@ class ExternalAPIFactory{
 
         $apiClass = new $apiClassName();
 
-        if ( $myApi['useAuth'] && isset($eapmAuth['id']) ) {
-            $apiClass->loadEAPM($eapmAuth);
+        if ( $myApi['useAuth'] && isset($eapmBean->application) ) {
+            $apiClass->loadEAPM($eapmBean);
         }
 
         return $apiClass;
@@ -173,8 +173,8 @@ class ExternalAPIFactory{
                     $apiFinalList[$apiName] = $apiOpts;
                 } else {
                     // We need to worry about authentication
-                    $eapmAuth = EAPM::getLoginInfo($apiName);
-                    if ( isset($eapmAuth['id']) ) {
+                    $eapmBean = EAPM::getLoginInfo($apiName);
+                    if ( isset($eapmBean->application) ) {
                         // We have authentication
                         $apiFinalList[$apiName] = $apiOpts;
                     }

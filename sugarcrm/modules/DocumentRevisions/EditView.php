@@ -83,8 +83,8 @@ $doc_revision = new DocumentRevision();
 $doc_revision->retrieve($_REQUEST['document_revision_id']);
 $file_url = 'index.php?entryPoint=download&id='.$doc_revision->id.'&type=Documents';
 
-if($doc_revision->doc_type!='Sugar' && !empty($doc_revision->doc_id)) {
-	$file_url = 'http://docs.google.com/document/edit?id='.$doc_revision->doc_id.'&hl=en';
+if($doc_revision->doc_type!='Sugar' && !empty($doc_revision->doc_url)) {
+	$file_url = $doc_revision->doc_url;
 }
 
 $xtpl->assign("FILE_URL", $file_url);

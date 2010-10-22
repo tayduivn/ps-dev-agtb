@@ -107,6 +107,16 @@ $dictionary['EAPM'] = array(
     'reportable' => true,
     'size' => '20',
   ),
+	  'api_data' =>
+	  array (
+	    'name' => 'api_data',
+	    'vname' => 'LBL_API_DATA',
+	    'type' => 'text',
+	    'comment' => 'Any API data that the external API may wish to store on a per-user basis',
+	    'rows' => 6,
+	    'cols' => 80,
+	  ),
+
 ),
 	'relationships'=>array (
 ),

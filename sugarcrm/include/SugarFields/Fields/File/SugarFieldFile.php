@@ -32,6 +32,11 @@ class SugarFieldFile extends SugarFieldBase {
         	//set default document type field
         	$displayParams['doc_id'] = 'doc_id';
         }
+
+		if(!isset($displayParams['doc_url'])) {
+        	//set default document type field
+        	$displayParams['doc_url'] = 'doc_url';
+        }
 		
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         return $this->fetch('include/SugarFields/Fields/File/DetailView.tpl');

@@ -66,6 +66,12 @@ class EAPM extends Basic {
 }
 
    static function getLoginInfo($application){
+       global $current_user;
+
+       $eapmBean = new EAPM();
+       $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application));
+
+       /*
         $results = $GLOBALS['db']->query("SELECT * FROM eapm WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' AND application='$application' AND deleted = 0");
         $row = $GLOBALS['db']->fetchByAssoc($results);
         if(isset($row['password'])){
@@ -73,20 +79,29 @@ class EAPM extends Basic {
         	$row['password'] = blowfishDecode(blowfishGetKey('encrypt_field'),$row['password']);;
         }
         return $row;
+       */
+
+       if(isset($eapmBean->password)){
+           require_once("include/utils/encryption_utils.php");
+           $eapmBean->password = blowfishDecode(blowfishGetKey('encrypt_field'),$eapmBean->password);;
+       }
+
+       return $eapmBean;
     }
 
    function save($check_notify = FALSE) {
-       $id = parent::save($check_notify);
-       
        // Now time to test if the login info they typed in actually works.
-       $api = ExternalAPIFactory::loadAPI($this->application,false);
-       $reply = $api->checkLogin();
+       $api = ExternalAPIFactory::loadAPI($this->application,true);
+       $reply = $api->checkLogin($this);
        
-       $this->login_success = $reply['success'];
-       if ( !$this->login_success ) {
+       if ( !$reply['success'] ) {
            // FIXME: Translate
            $_SESSION['administrator_error'] = 'Error during login: '.$reply['errorMessage'];
+           return;
        }
+
+       $id = parent::save($check_notify);
+       
    }
 		
 }

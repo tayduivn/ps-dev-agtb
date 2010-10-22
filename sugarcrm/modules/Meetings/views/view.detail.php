@@ -12,7 +12,7 @@ class MeetingsViewDetail extends ViewDetail {
    function display() {
       if ($this->bean->type != 'SugarCRM') {
          $login_info = EAPM::getLoginInfo(strtolower($this->bean->type));
-         if ($login_info['name'] == $this->bean->creator) {
+         if ($login_info->name == $this->bean->creator) {
             $this->bean->displayed_url = $this->bean->host_url;
          } else {
             $this->bean->displayed_url = $this->bean->join_url;

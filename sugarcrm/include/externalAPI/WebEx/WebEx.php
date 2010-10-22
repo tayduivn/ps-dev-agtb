@@ -28,13 +28,14 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
       $this->getuser_xml = $getuser_xml;
    }
 	
-    public function loadEAPM($eapmData) {
-        $this->account_url = $eapmData['url'].$this->urlExtension;
-        $this->account_name = $eapmData['name'];
-        $this->account_password = $eapmData['password'];    
+    public function loadEAPM($eapmBean) {
+        $this->account_url = $eapmBean->url.$this->urlExtension;
+        $this->account_name = $eapmBean->name;
+        $this->account_password = $eapmBean->password;
     }
 
-    public function checkLogin() {
+    public function checkLogin($eapmBean) {
+        $this->loadEAPM($eapmBean);
         $doc = new SimpleXMLElement($this->getuser_xml);
         $this->addAuthenticationInfo($doc);
         

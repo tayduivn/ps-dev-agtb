@@ -151,6 +151,7 @@ $mod_strings = array (
     'LBL_DOCUMENT_INFORMATION' => 'Document Overview',
 	'LBL_DOC_ID' => 'Document Server ID',
 	'LBL_DOC_TYPE' => 'Document Server',
+	'LBL_DOC_URL' => 'Document Server URL',
 );
 
 

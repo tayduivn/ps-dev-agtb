@@ -61,5 +61,6 @@ $mod_strings = array (
   'LBL_USER_NAME' => 'user name',
   'LBL_URL' => 'url',
   'LBL_APPLICATION' => 'application',
+  'LBL_API_DATA' => 'API Data',
 );
 ?>

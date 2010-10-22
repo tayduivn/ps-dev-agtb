@@ -119,6 +119,7 @@ class Document extends SugarBean {
 				$upload_file = new UploadFile('uploadfile');
 				$upload_file->upload_doc($Revision, $Revision->id, $Revision->doc_type, $Revision->filename, $Revision->file_mime_type);
 				$this->doc_id =  $Revision->doc_id;
+                $this->doc_url = $Revision->doc_url;
 				//update document with latest revision id
 				$this->process_save_dates=false; //make sure that conversion does not happen again.
 				$this->document_revision_id = $Revision->id;	
@@ -190,8 +191,8 @@ class Document extends SugarBean {
 		if($this->ACLAccess('DetailView')){
 			$file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
 
-			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_id))
-                $file_url= "<a href='http://docs.google.com/document/edit?id=".$this->doc_id."&hl=en' target='_blank'>".SugarThemeRegistry::current()->getImage('google_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
+			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_url))
+                $file_url= "<a href='".$this->doc_url."' target='_blank'>".SugarThemeRegistry::current()->getImage($this->doc_type.'_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
     		$this->file_url = $file_url;
     		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
 		}else{

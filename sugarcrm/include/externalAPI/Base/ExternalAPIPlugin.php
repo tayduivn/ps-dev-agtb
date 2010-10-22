@@ -1,6 +1,6 @@
 <?php
 interface ExternalAPIPlugin {
-    public function loadEAPM($eapmData);
-    public function checkLogin();
+    public function loadEAPM($eapmBean);
+    public function checkLogin($eapmBean);
     public function logOff();
 }

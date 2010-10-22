@@ -67,6 +67,15 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
   ),
+'doc_url' =>
+  array (
+  	'name' => 'doc_url',
+  	'vname' => 'LBL_DOC_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider',
+  	'importable' => false,
+  ),
    'date_entered' =>
   array (
     'name' => 'date_entered',

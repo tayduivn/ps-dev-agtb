@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{if isset($parentFieldArray.DOC_ID) && !empty($parentFieldArray.DOC_ID)}
-<a href="https://apps.lotuslive.com/files/filer2/home.do#files.do%3FsubContent%3DfileDetails.do%3FfileId%3D36A40110D5BC11DF8278B49A0A050301" class="tabDetailViewDFLink" target="_blank">{$parentFieldArray.FILENAME}</a>
+{if isset($parentFieldArray.DOC_URL) && !empty($parentFieldArray.DOC_URL)}
+<a href="$parentFieldArray.DOC_URL" class="tabDetailViewDFLink" target="_blank">{$parentFieldArray.FILENAME}</a>
 {elseif isset($parentFieldArray.FILENAME) && !empty($parentFieldArray.FILENAME)}
 <a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$vardef.displayParams.module}" class="tabDetailViewDFLink">{$parentFieldArray.FILENAME}</a>
 {/if}

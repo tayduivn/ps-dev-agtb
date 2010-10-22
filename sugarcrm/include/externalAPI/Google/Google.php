@@ -14,13 +14,15 @@ class Google implements ExternalAPIPlugin,WebDocument {
 		require_once('include/externalAPI/Google/GoogleXML.php');
 	}
 	
-    public function loadEAPM($eapmData) {
-		$this->account_url = $eapmData['url'];
-		$this->account_name = $eapmData['name'];
-		$this->account_password = $eapmData['password'];
+    public function loadEAPM($eapmBean) {
+		$this->account_url = $eapmBean->url;
+		$this->account_name = $eapmBean->name;
+		$this->account_password = $eapmBean->password;
     }
 
-    public function checkLogin() {
+    public function checkLogin($eapmBean) {
+        $this->loadEAPM($eapmBean);
+        
         // Emulate a reply
         $reply['success'] = TRUE;
 
@@ -49,29 +51,34 @@ class Google implements ExternalAPIPlugin,WebDocument {
 		$this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
 	}
 			
-	function uploadDoc($fileToUpload, $docName, $mimeType){
+	function uploadDoc($bean, $fileToUpload, $docName, $mimeType){
 		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
 		try{
-		$newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
-     					 $mimeType, 
-     					 Zend_Gdata_Docs::DOCUMENTS_LIST_FEED_URI);
-     					 
-		// Find the URL of the HTML view of this document.
-		$alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
+            $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
+                                                            $mimeType, 
+                                                            Zend_Gdata_Docs::DOCUMENTS_LIST_FEED_URI);
+            
+            // Find the URL of the HTML view of this document.
+            $alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
-		
-		preg_match(
-               '/id=([\S]*)[&|$]/', 
-               $alternateLink, 
-               $matches
-            );            
-			return $matches[1];
+            
+            preg_match(
+                '/id=([\S]*)[&|$]/', 
+                $alternateLink, 
+                $matches
+                );            
+			$bean->doc_id = $matches[1];
+            $bean->doc_url = $alternateLink;
+            $result['success'] = TRUE;
 		}catch (Exception $e)
-		{
-			throw $e;
-		}
+         {
+             $result['success'] = FALSE;
+             $result['errorMsg'] = $e->getMessage();
+         }
+        
+        return $result;
 	}
 
     function downloadDoc($documentId, $documentFormat){

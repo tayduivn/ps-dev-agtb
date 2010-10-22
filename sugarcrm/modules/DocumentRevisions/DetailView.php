@@ -79,8 +79,8 @@ $xtpl->assign("FILENAME",$focus->filename);
 $xtpl->assign("FILE_NAME", $focus->filename);
 $xtpl->assign("SAVE_FILE", $focus->id);
 $download_url = 'index.php?entryPoint=download&id='.$focus->id.'&type=Documents';
-if($focus->doc_type!='Sugar' && !empty($focus->doc_id)) {
-	$download_url = 'http://docs.google.com/document/edit?id='.$focus->doc_id.'&hl=en';
+if($focus->doc_type!='Sugar' && !empty($focus->doc_url)) {
+	$download_url = $focus->doc_url;
 }
 $xtpl->assign('DOWNLOAD_URL', $download_url);
 
