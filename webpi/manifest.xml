@@ -5,7 +5,7 @@
   <!-- dbmysql path identifies the SQL script file that will be executed
        for database setup.  In this app's case, the script is being used
        to create the database user for the application -->
-  <dbmysql path="install.sql" commandDelimiter="//" removeCommandDelimiter="true" />
+  <dbmysql path="install.sql" />
   <!-- alias is used to make a copy of a distribution file to a location
        where it will be used.  Note that when you specify the Application
        name in the "to" attribute, you should specify the full path using
