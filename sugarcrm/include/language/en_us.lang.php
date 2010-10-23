@@ -102,6 +102,7 @@ $app_list_strings = array (
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
+    'EAPM' => 'External Accounts',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -184,7 +185,7 @@ $app_list_strings = array (
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow',
-
+    'EAPM' => 'External Account',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
 	'SugarFavorites'=>'SugarFavorites'
