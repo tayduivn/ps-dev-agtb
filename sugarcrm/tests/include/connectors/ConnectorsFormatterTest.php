@@ -10,11 +10,8 @@ require_once('include/MVC/Controller/SugarController.php');
 class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
 	
 	var $parentFieldArray, $vardef, $displayParams, $tabindex, $ss, $original_modules_sources, $original_searchdefs;
-	
+    
     function setUp() {
-    	$this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
-  	    return;
-  	    
     	//Store original files
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
     	$this->original_modules_sources = $modules_sources;
@@ -50,7 +47,7 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	$_REQUEST['from_unit_test'] = true;
     	$_REQUEST['modify'] = true;
     	$_REQUEST['action'] = 'SaveModifyMapping';
-		$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:addrcountry=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:addrcity=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:recname=name,ext_soap_hoovers:Accounts:addrstateprov=billing_address_state,ext_rest_linkedin:Accounts:name=name';
+    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:companyname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
     	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers,ext_rest_linkedin';
     	
     	$controller = new ConnectorsController();
@@ -76,11 +73,7 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
         write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
     }
     
-    function test_hover_link_for_accounts() { 	
-    	if(true) {
-		   $this->markTestSkipped("Skipping... cannot run this test in framework.");
-		}
-    	
+    function test_hover_link_for_accounts() {
     	$enabled_sources = ConnectorUtils::getModuleConnectors('Accounts');
     	$hover_sources = array();
     	$displayParams = array();
