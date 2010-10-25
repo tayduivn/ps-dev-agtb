@@ -69,6 +69,7 @@ $mod_strings = array (
 	'LNK_NEW_MAIL_MERGE' => 'Mail Merge',
 	'LBL_DOC_ID' => 'Document Server ID',
 	'LBL_DOC_TYPE' => 'Document Server',
+	'LBL_DOC_URL' => 'Document Server URL',
 );
 
 

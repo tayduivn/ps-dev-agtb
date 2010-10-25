@@ -90,6 +90,7 @@ $mod_strings = array (
 	'LBL_NOTE_INFORMATION' => 'Note Overview',
 	'LBL_DOC_TYPE' => 'Document Type',
 	'LBL_DOC_ID' => 'Document ID',
+	'LBL_DOC_URL' => 'Document URL',
 	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
 );
 

@@ -26,14 +26,15 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-
-{if !isset($fields.{{$displayParams.doc_type}}) || empty($fields.{{$displayParams.doc_type}}) || $fields.{{$displayParams.doc_type}} == 'Sugar'}
-<a href="index.php?entryPoint=download&id={$fields.{{$displayParams.id}}.value}&type={$module}" class="tabDetailViewDFLink">{$fields.{{$displayParams.link}}.value}</a>
-{elseif !empty($fields.{{$displayParams.doc_id}}.value) }
-<a href="https://apps.lotuslive.com/files/filer2/home.do#files.do%3FsubContent%3DfileDetails.do%3FfileId%3D36A40110D5BC11DF8278B49A0A050301" class="tabDetailViewDFLink" target="_blank">{$fields.{{$displayParams.link}}.value}</a>
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+{if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
+{{/if}}
+<a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
+{{if isset($vardef) && isset($vardef.allowEapm) && $vardef.allowEapm}}
 {else}
-<a href="index.php?entryPoint=download&id={$fields.{{$displayParams.id}}.value}&type={$module}" class="tabDetailViewDFLink">{$fields.{{$displayParams.link}}.value}</a>
+<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
 {/if}
+{{/if}}
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{{sugarvar_connector view='DetailView'}}
 {{/if}}

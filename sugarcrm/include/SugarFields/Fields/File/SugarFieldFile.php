@@ -5,36 +5,40 @@
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldFile extends SugarFieldBase {
-   
+    private function fillInOptions(&$vardef,$displayParams) {
+        if ( isset($vardef['allowEapm']) && $vardef['allowEapm'] == true ) {
+            if ( empty($vardef['docType']) ) {
+                $vardef['docType'] = 'doc_type';
+            }
+            if ( empty($vardef['docId']) ) {
+                $vardef['docId'] = 'doc_id';
+            }
+            if ( empty($vardef['docUrl']) ) {
+                $vardef['docUrl'] = 'doc_url';
+            }
+        } else {
+            $vardef['allowEapm'] = false;
+        }
+
+        // This is needed because these aren't always filled out in the edit/detailview defs
+        if ( !isset($vardef['fileId']) ) {
+            if ( isset($displayParams['id']) ) {
+                $vardef['fileId'] = $displayParams['id'];
+            } else {
+                $vardef['fileId'] = 'id';
+            }
+        }
+    }
+
+
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-
-        global $app_strings;
-        if(!isset($displayParams['link'])) {
-           $error = $app_strings['ERR_SMARTY_MISSING_DISPLAY_PARAMS'] . 'link';
-           $GLOBALS['log']->error($error);	
-           $this->ss->trigger_error($error);
-           return;
-        }
-        
-        if(!isset($displayParams['id'])) {
-           $error = $app_strings['ERR_SMARTY_MISSING_DISPLAY_PARAMS'] . 'id';
-           $GLOBALS['log']->error($error);	
-           $this->ss->trigger_error($error);
-           return;
-        }
-
-        if(!isset($displayParams['doc_type'])) {
-        	//set default document type field
-        	$displayParams['doc_type'] = 'doc_type';
-        }
-        
-		if(!isset($displayParams['doc_id'])) {
-        	//set default document type field
-        	$displayParams['doc_id'] = 'doc_id';
-        }
-		
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/File/DetailView.tpl');
+        $this->fillInOptions($vardef,$displayParams);
+        return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+    
+	function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+        $this->fillInOptions($vardef,$displayParams);
+        return parent::getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
     
 	public function save(&$bean, $params, $field, $properties, $prefix = ''){

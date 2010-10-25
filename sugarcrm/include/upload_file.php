@@ -280,21 +280,25 @@ class UploadFile
 	                    
 		    try{
                 $this->document = ExternalAPIFactory::loadAPI($doc_type);
-                $doc_id = '';
-                
-                $doc_id = $this->document->uploadDoc(
+
+                $result = $this->document->uploadDoc(
+                    $bean,
                     $new_destination,
                     $file_name,
                     $mime_type
                     );
-                $bean->doc_id = $doc_id;
                 unlink($new_destination);
                 $bean->save();
             }catch(Exception $e){
+                $result['success'] = FALSE;
+                $result['errorMessage'] = $e->getMessage();
+                $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
+            }
+            if ( !$result['success'] ) {
                 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
                 // FIXME: Translate
-                $_SESSION['administrator_error'] = 'Error during plugin save: '.$e->getMessage();
-                $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
+                $_SESSION['administrator_error'] = 'Error during plugin save: '.$result['errorMessage'];
+
             }
         }
 	}

@@ -124,11 +124,14 @@ $dictionary['Note'] = array(
   array (
     'name' => 'filename',
     'vname' => 'LBL_FILENAME',
-    'type' => 'varchar',
+    'type' => 'file',
     'len' => '255',
     'reportable'=>true,
     'comment' => 'File name associated with the note (attachment)',
     'importable' => false,
+    // Special file-only options
+    // This one allows the use of external api's to store files to.
+    'allowEapm'=>true,
   ),
   'file_mime_type' =>
   array (
@@ -156,6 +159,15 @@ $dictionary['Note'] = array(
   	'function' => 'getNotesExternalApiDropDown',
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+  ),
+'doc_url' =>
+  array (
+  	'name' => 'doc_url',
+  	'vname' => 'LBL_DOC_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider',
+  	'importable' => false,
   ),
   'file_url'=>
   array(

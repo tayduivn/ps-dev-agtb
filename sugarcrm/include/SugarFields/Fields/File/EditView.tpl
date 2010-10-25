@@ -26,8 +26,43 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<input id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" 
-name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" 
+<script type="text/javascript" src='{{sugar_getjspath file="cache/include/externalAPI.cache.js"}}'></script>
+<script type="text/javascript" src='{{sugar_getjspath file="include/SugarFields/Fields/File/SugarFieldFile.js"}}'></script>
+{{capture name=idName assign=idName}}{{sugarvar key='name'}}{{/capture}}
+{{if !empty($displayParams.idName)}}
+    {{assign var=idName value=$displayParams.idName}}
+{{/if}}
+
+{{if !isset($vardef.noRemove) || !$vardef.noRemove}}
+{if !empty({{sugarvar key='value' stringFormat=true}}) }
+    {assign var=showRemove value=true}
+{else}
+    {assign var=showRemove value=false}
+{/if}
+{{else}}
+    {assign var=showRemove value=false}
+{{/if}}
+
+<input type="hidden" name="deleteAttachment" value="0">
+<span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+  {if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
+{{/if}}
+  <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+  {else}
+  <a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
+  {/if}
+{{/if}}
+<input type='button' class='button' value='{$APP.LBL_REMOVE}' onclick='SUGAR.field.file.deleteAttachment("{{$idName}}",this);'>
+</span>
+
+<span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+<h4>Upload From Your Computer</h4>
+{{/if}}
+<input type="hidden" name="{{$idName}}_escaped">
+<input id="{{$idName}}" name="{{$idName}}" 
 type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -36,4 +71,28 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}} 
-value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}" {{$displayParams.field}}>
+value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name' stringFormat=true}}{/if}"
+{{$displayParams.field}}>
+
+
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+<span id="{{$idName}}_externalApiSelector" style="display:inline;">
+<br><h4>Search External Source</h4>
+<input type="hidden" name="{{$vardef.docId}}" value="{$fields[{{$vardef.docId}}].value}">
+<input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
+{{if !empty($vardef.len)}}
+    maxlength='{{$vardef.len}}'
+{{elseif !empty($displayParams.maxlength)}}
+    maxlength="{{$displayParams.maxlength}}"
+{{else}}
+    maxlength="255"
+{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
+<input type="button" value="Select" onclick="DCMenu.loadView('LotusLive Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
+</span>
+<script type="text/javascript">
+YAHOO.util.Event.onDOMReady(function() {ldelim}
+SUGAR.field.file.setupEapiShowHide("{{$idName}}","{{$vardef.docType}}");
+{rdelim});
+</script>
+{{/if}}
+</span>

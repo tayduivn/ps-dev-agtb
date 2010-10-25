@@ -72,14 +72,6 @@ array (
            
           '0' => array (
             'name' => 'filename',
-            'type' => 'file',
-            'displayParams' => 
-            array (
-              'id' => 'id',
-              'doc_type' => 'doc_type',
-              'doc_id' => 'doc_id',
-              'link' => 'filename',
-            ),
           ),
           
           '1' => array(

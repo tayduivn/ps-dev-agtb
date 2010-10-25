@@ -5,24 +5,50 @@ require_once('include/externalAPI/Base/WebMeeting.php');
 
 class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
 
-    protected $lotusURL = "https://eval-cloud2.castiron.com/envq/Production/";
+    protected $dateFormat = 'm/d/Y H:i:s';
+    protected $urlExtension = '/envq/Production/';
+    
     public $useAuth = true;
     public $requireAuth = true;
     public $supportedModules = array('Meetings','Notes', 'Documents');
-    public $supportMeetingPassword = true;
-    protected $joinURL = "https://apps.lotuslive.com/meetings/join?id=611-107";
+    public $supportMeetingPassword = false;
+    public $docSearch = true;
+	protected $meetingID;
+    protected $joinURL;
 	protected $hostURL = "https://apps.lotuslive.com/meetings/host";
+    
 	function __construct() {
-   }
+    }
 	
-    public function loadEAPM($eapmData) {
-        $this->account_url = $eapmData['url'].$this->urlExtension;
-        $this->account_name = $eapmData['name'];
-        $this->account_password = $eapmData['password'];    
+    public function loadEAPM($eapmBean) {
+        $this->account_url = $eapmBean->url.$this->urlExtension;
+        $this->account_name = $eapmBean->name;
+        $this->account_password = $eapmBean->password;
+        
+        if ( !empty($eapmBean->api_data) ) {
+            $api_data = json_decode(base64_decode($eapmBean->api_data),true);
+            if ( isset($api_data['meetingID']) ) {
+                $this->meetingID = $api_data['meetingID'];
+                $this->hostURL = $api_data['hostURL'];
+                $this->joinURL = $api_data['joinURL'];
+                // FIXME: Need to figure out how we want to handle collections
+                $this->collectionID = '3CAA8D80D29311DFA08B9C830A060702';
+            }
+        }
     }
 
-    public function checkLogin() {
-        return true;
+    public function checkLogin($eapmBean) {
+        $this->loadEAPM($eapmBean);
+        $reply = $this->makeRequest('GetMeeting', array());
+        
+        if ( $reply['success'] == TRUE ) {
+            $eapmBean->api_data = base64_encode(json_encode(array(
+                'meetingID'=>$reply['responseJSON']['feed']['entry']['meetingID'],
+                'hostURL'=>$reply['responseJSON']['feed']['entry']['hostURL'],
+                'joinURL'=>$reply['responseJSON']['feed']['entry']['joinURL'],)));
+        }
+
+        return $reply;
     }
 	
 	/**
@@ -34,12 +60,11 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
 	 * return: boolean
 	 */
 	function scheduleMeeting($bean) {
-		//TODO: call on API and get URL add meeting tags based on bean->id;
 		global $current_user;
-		$bean->join_url = $this->joinURL;
-		$bean->host_url = $this->hostURL;
+		$bean->join_url = $this->joinURL.'&TagCode=SugarCRM&TagID='.$bean->id;
+		$bean->host_url = $this->hostURL.'?TagCode=SugarCRM&TagID='.$bean->id;
 		$bean->creator = $this->account_name;
-        return true;
+        return array('success'=>TRUE);
 	}
 	
 	/**
@@ -50,40 +75,19 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
 	 * @param string $password
 	 * return: boolean
 	 */
-   function editMeeting($bean) {
-      return $this->scheduleMeeting($bean);
-   }
-
+    function editMeeting($bean) {
+        return $this->scheduleMeeting($bean);
+    }
+    
 	/**
 	 * Delete an existing Lotus meeting.
 	 * @param string $meeting - The Lotus meeting key.
 	 * return: boolean
 	 */
 	function unscheduleMeeting($meeting) {
-		//TODO: will need to untag meeting
-		return true;
+        // There is nothing to do here.
+        return array('success'=>TRUE);
 	}
-	
-   /**
-    * Get the url for joining the meeting with key $meeting as
-    * attendee $attendeeName.
-    * @param string meeting - The Lotus meeting key.
-    * @param string attendeeName - Name of joining attendee
-	 * return: URL.
-    */
-	function joinMeeting($meeting, $attendeeName) {
-    	return $this->joinURL;
-	}
-
-
-   /**
-    * Get the url for hosting the meeting with key $meeting.
-    * @param string meeting - The Lotus meeting key.
-	 * return: URL.
-    */
-   function hostMeeting($meeting) {
-     	return $this->hostURL;
-   }
 	
 	/**
 	 * NOT SUPPORTED BY LOTUS
@@ -92,54 +96,123 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
 	 * @param array $attendee - An array with entries for 'name' and 'email'
 	 * return: boolean.
 	 */
-	function inviteAttendee($session, $attendee) {
-     	return true;
+	function inviteAttendee($meetingID, $attendee) {
+        // There is nothing to do here, this is not supported by Lotus Live
+        return array('success'=>TRUE);
 	}
-
-   /**
-   	* NOT SUPPORTED BY LOTUS
-    * Uninvite the attendee with ID $attendeeID from the meeting.
-    * Note: attendee ID is returned as part of the response to
-    * inviteAtendee().  The attendee ID refers to a specific person
-    * and a specific meeting. 
-    * @param array $attendeeID - Lotus attendee ID.
+    
+    /**
+     * NOT SUPPORTED BY LOTUS
+     * Uninvite the attendee with ID $attendeeID from the meeting.
+     * Note: attendee ID is returned as part of the response to
+     * inviteAtendee().  The attendee ID refers to a specific person
+     * and a specific meeting. 
+     * @param array $attendeeID - Lotus attendee ID.
 	 * return: boolean.
-    */
-   function uninviteAttendee($attendeeID) {
-     	return true;
-   }
-
-   /**
-    * List all meetings created by this object's Lotus user.
-    */
-   function listMyMeetings() {
-      return array();
-   }
-
-   /**
-    * Get detailed information about the meeting
-    * with key $meeting.
-    * @param string meeting- The Lotus meeting key. 
+     */
+    function uninviteAttendee($attendeeID) {
+        // There is nothing to do here, this is not supported by Lotus Live
+        return array('success'=>TRUE);
+    }
+    
+    /**
+     * List all meetings created by this object's Lotus user.
+     */
+    function listMyMeetings() {
+        // There is nothing to do here, this is not supported by Lotus Live
+        return array('success'=>TRUE);
+    }
+    
+    /**
+     * Get detailed information about the meeting
+     * with key $meeting.
+     * @param string meeting- The Lotus meeting key. 
 	 * return: The XML response from the Lotus server.
-    */
-   function getMeetingDetails($meeting) {
-      return array();
-   }
+     */
+    function getMeetingDetails($meeting) {
+        // TODO: Implement this, get the meeting information from the provided tags.
+        return array('success'=>TRUE);
+    }
 	
-  
-   function logoff() { }
+    
+    function logoff() { }
    
    
-   	public function uploadDoc($fileToUpload, $docName, $mineType){}
+    public function uploadDoc($bean, $fileToUpload, $docName, $mineType) {
+        $result = $this->makeRequest('uploadfile',array('file'=>'@'.$fileToUpload),
+                              array('collectionid'=>$this->collectionId,
+                                    'fileid'=>$bean->id));
+
+        $bean->doc_id = $bean->id;
+        $bean->doc_url = 'https://apps.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
+
+        return array('success'=>TRUE);
+    }
 
     public function downloadDoc($documentId, $documentFormat){}
-	
-	public function shareDoc($documentId, $emails){}
-	
-	public function browseDoc($path){}
-	
-	public function deleteDoc($documentId){}
-
+    public function shareDoc($documentId, $emails){}
+    public function deleteDoc($documentId){}
     public function searchDoc($keywords){}
+   
+    // Internal functions
+    protected function makeRequest($requestMethod, $data = array(), $urlParams = array() ) {
+        $dataString = json_encode($data);
+       
+        $urlParams['ciUser'] = 'admin@LL_SugarCRM';
+        $urlParams['ciPassword'] = 'changeIt!';
+        $urlParams['UserName'] = $this->account_name;
+        $urlParams['Password'] = $this->account_password;
+       
+        $url = 'https://' . $this->account_url . $requestMethod . '?';
+        foreach($urlParams as $key => $value ) {
+            // FIXME: urlencode the ciUser and ciPassword once they are ready for it
+            if ( $key == 'ciUser' || $key == 'ciPassword' ) {
+                $url .= $key .'='. $value .'&';                
+            } else {
+                $url .= $key .'='. urlencode($value) .'&';
+            }
+        }
+        $url = rtrim($url,'&');
+       
+        $headers = array(
+            "User-Agent: SugarCRM",
+            "Content-Type: application/x-www-form-urlencoded",
+            "Content-Length: ".strlen($dataString),
+            );
+       
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+        
+        $GLOBALS['log']->fatal("Where: ".$url);
+        $GLOBALS['log']->fatal("Sent:\n".print_r($data,true));
+        $rawResponse = curl_exec($ch);
+        $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
+        
+        $reply = array();
+        $reply['responseRAW'] = $rawResponse;
+        $reply['responseJSON'] = null;
+
+        $response = json_decode($rawResponse,true);
+        if ( empty($rawResponse) || !is_array($response) ) {
+            $reply['success'] = FALSE;
+            // FIXME: Translate
+            $reply['errorMessage'] = 'No response from the server.';
+        } else {
+            $GLOBALS['log']->fatal("Decoded:\n".print_r($response,true));
+            $reply['responseJSON'] = $response;
+            
+            if ( $reply['responseJSON']['status'] == 'OK' ) {
+                $reply['success'] = TRUE;
+            }
+        }
+        
+        return $reply;
+    }
+    
 	
 }
