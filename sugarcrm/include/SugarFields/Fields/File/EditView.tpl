@@ -26,8 +26,30 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<input id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" 
-name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" 
+{{capture name=idName assign=idName}}{{sugarvar key='name'}}{{/capture}}
+{{if !empty($displayParams.idName)}}
+    {{assign var=idName value=$displayParams.idName}}
+{{/if}}
+
+{{if isset($vardef.onlyOnce) && $vardef.onlyOnce}}
+{if !empty({{sugarvar key='value' stringFormat=true}})}
+{* Can we only upload once, and do we already have something *}
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+{if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
+{{/if}}
+<a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
+{{if isset($vardef) && isset($vardef.allowEapm) && $vardef.allowEapm}}
+{else}
+<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
+{/if}
+{{/if}}
+{else} {* Upload once, don't have anything *}
+{{/if}}
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+<h4>Upload From Your Computer</h4>
+{{/if}}
+<input type="hidden" name="{{$idName}}_escaped">
+<input id="{{$idName}}" name="{{$idName}}" 
 type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -36,4 +58,23 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}} 
-value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}" {{$displayParams.field}}>
+value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}"
+{{$displayParams.field}}>
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+<span id="{{$idName}}_externalApiSelector" style="display:inline;">
+<br><h4>Search External Source</h4>
+<input type="hidden" name="{{$vardef.docId}}">
+<input type="text" class="sqsEnabled" name="remote_filename" size="{{$displayParams.size|default:30}}" 
+{{if !empty($vardef.len)}}
+    maxlength='{{$vardef.len}}'
+{{elseif !empty($displayParams.maxlength)}}
+    maxlength="{{$displayParams.maxlength}}"
+{{else}}
+    maxlength="255"
+{{/if}} autocomplete="off">
+<input type="button" value="Select" onclick="DCMenu.loadView('LotusLive Documents','index.php?module=Documents&action=extdoc&type=LotusLive&form_id='+ this.form.id);">
+</span>
+{{/if}}
+{{if isset($vardef.onlyOnce) && $vardef.onlyOnce}}
+{/if} {* End of upload once, don't have anything *}
+{{/if}}

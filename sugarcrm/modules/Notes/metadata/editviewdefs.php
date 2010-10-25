@@ -64,6 +64,7 @@ function deleteAttachmentCallBack(text)
 						),
 						'1' => array (
 	        				'name' => 'filename',
+/*
 	        				'customCode' => '<span id=\'new_attachment\' style=\'display:{if !empty($fields.filename.value)}none{/if}\'>
         									 <h4>Upload From Your Computer</h4><input name="uploadfile" tabindex="3" type="file" size="40"/>
         									 </span>
@@ -75,6 +76,7 @@ function deleteAttachmentCallBack(text)
 											 <input type="hidden" name="doc_id">
 											 <input name="filename" size="40"><input type="button" value="Select" 
 											 onclick="DCMenu.loadView(\'LotusLive Documents\',\'index.php?module=Documents&action=extdoc&type=LotusLive&form_id=\'+ this.form.id);"></span>',
+*/
 	      				),
 	      				//BEGIN SUGARCRM flav=pro ONLY
 					    array('name'=>'portal_flag',

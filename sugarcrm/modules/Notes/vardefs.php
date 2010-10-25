@@ -124,11 +124,16 @@ $dictionary['Note'] = array(
   array (
     'name' => 'filename',
     'vname' => 'LBL_FILENAME',
-    'type' => 'varchar',
+    'type' => 'file',
     'len' => '255',
     'reportable'=>true,
     'comment' => 'File name associated with the note (attachment)',
     'importable' => false,
+    // Special file-only options
+    // This one only allows to upload the file once and never overwrite it
+    'onceOnly'=>true,
+    // This one allows the use of external api's to store files to.
+    'allowEapm'=>true,
   ),
   'file_mime_type' =>
   array (

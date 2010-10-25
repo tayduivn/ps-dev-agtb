@@ -49,16 +49,21 @@ $viewdefs['Documents']['EditView'] = array(
       array(
 							array( 'name' => 'doc_type',
 	          				 'label' => 'LBL_DOC_TYPE',
-	          				 'displayParams'=>array('field'=>array('onchange'=>"if(this.value == 'LotusLive')document.getElementById('SelectLotusLiveDoc').style.display=''; else document.getElementById('SelectLotusLiveDoc').style.display='none'")),
+/*
+  'displayParams'=>array('field'=>array('onchange'=>"if(this.value == 'LotusLive')document.getElementById('SelectLotusLiveDoc').style.display=''; else document.getElementById('SelectLotusLiveDoc').style.display='none'")*/
+                                ),
 		)),
     array (
+        'filename',
+/*
       array(
       		'name'=>'uploadfile', 
-            'customCode' => ' <h4>Upload From Your Computer</h4><input type="hidden" name="escaped_document_name"><input name="uploadfile" type="{$FILE_OR_HIDDEN}" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value} <span id="SelectLotusLiveDoc" style="display:none"><br><h4>Select From LotusLive</h4>
+            'customCode' => '<h4>Upload From Your Computer</h4><input type="hidden" name="escaped_document_name"><input name="uploadfile" type="{$FILE_OR_HIDDEN}" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value} <span id="SelectLotusLiveDoc" style="display:none"><br><h4>Select From LotusLive</h4>
 											 <input type="hidden" name="doc_id">
 											 <input name="remote_filename" size="30"><input type="button" value="Select" 
 											 onclick="DCMenu.loadView(\'LotusLive Documents\',\'index.php?module=Documents&action=extdoc&type=LotusLive&form_id=\'+ this.form.id);"></span>',
       ),
+*/
       array (
             'name' => 'status_id',
             'label' => 'LBL_DOC_STATUS',

@@ -40,17 +40,7 @@ $viewdefs['Documents']['DetailView'] = array(
         array('doc_type'),
         
         array (
-          array (
-            'name' => 'filename',
-          	'type' => 'file',
-            'displayParams' => 
-            array (              
-              'doc_type' => 'doc_type',
-              'doc_id' => 'doc_id',
-              'link' => 'filename',
-              'id' => 'document_revision_id',
-            ),
-          ),
+          'filename',
           'status',
         ),
 
