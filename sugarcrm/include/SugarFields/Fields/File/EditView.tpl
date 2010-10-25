@@ -26,25 +26,37 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<script type="text/javascript" src='{{sugar_getjspath file="include/SugarFields/Fields/File/SugarFieldFile.js"}}'></script>
 {{capture name=idName assign=idName}}{{sugarvar key='name'}}{{/capture}}
 {{if !empty($displayParams.idName)}}
     {{assign var=idName value=$displayParams.idName}}
 {{/if}}
 
-{{if isset($vardef.onlyOnce) && $vardef.onlyOnce}}
-{if !empty({{sugarvar key='value' stringFormat=true}})}
-{* Can we only upload once, and do we already have something *}
-{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-{if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
-{{/if}}
-<a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
-{{if isset($vardef) && isset($vardef.allowEapm) && $vardef.allowEapm}}
+{{if !isset($vardef.noRemove) || !$vardef.noRemove}}
+{if !empty({{sugarvar key='value' stringFormat=true}}) }
+    {assign var=showRemove value=true}
 {else}
-<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
+    {assign var=showRemove value=false}
 {/if}
+{{else}}
+    {assign var=showRemove value=false}
 {{/if}}
-{else} {* Upload once, don't have anything *}
+
+<input type="hidden" name="deleteAttachment" value="0">
+<span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+  {if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
 {{/if}}
+  <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+  {else}
+  <a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
+  {/if}
+{{/if}}
+<input type='button' class='button' value='{$APP.LBL_REMOVE}' onclick='SUGAR.field.file.deleteAttachment("{{$idName}}",this);'>
+</span>
+
+<span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <h4>Upload From Your Computer</h4>
 {{/if}}
@@ -60,6 +72,8 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{/if}} 
 value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}"
 {{$displayParams.field}}>
+
+
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:inline;">
 <br><h4>Search External Source</h4>
@@ -72,9 +86,7 @@ value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}"
 {{else}}
     maxlength="255"
 {{/if}} autocomplete="off">
-<input type="button" value="Select" onclick="DCMenu.loadView('LotusLive Documents','index.php?module=Documents&action=extdoc&type=LotusLive&form_id='+ this.form.id);">
+<input type="button" value="Select" onclick="DCMenu.loadView('LotusLive Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
 </span>
 {{/if}}
-{{if isset($vardef.onlyOnce) && $vardef.onlyOnce}}
-{/if} {* End of upload once, don't have anything *}
-{{/if}}
+</span>

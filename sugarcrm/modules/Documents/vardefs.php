@@ -41,6 +41,7 @@ $dictionary['Document'] = array('table' => 'documents'
      'source' => 'non-db',
      'comment' => 'The filename of the document attachment',
 	 'required' => true,
+     'noRemove' => true,
      'allowEapm' => true,
      'fileId' => 'document_revision_id',
   ),
