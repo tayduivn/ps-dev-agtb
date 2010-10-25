@@ -91,9 +91,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      * @return array $view(s) The view requested.  Current supported types are edit, detail, and list.
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    function get_module_layout_md5($session, $module_name, $type, $view){
+    function get_module_layout_md5($session, $module_name, $type, $view, $acl_check = TRUE){
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout_md5');
-    	$results = self::get_module_layout($session, $module_name, $type, $view, TRUE);
+    	$results = self::get_module_layout($session, $module_name, $type, $view, $acl_check, TRUE);
             return array('md5'=> $results);
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout_md5');
     }
@@ -394,6 +394,55 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
     
+        /**
+     * Retrieve the layout metadata for a given module given a specific type and view.
+     *
+     * @param String $session -- Session ID returned by a previous call to login.
+     * @param array $module_name(s) -- The name of the module(s) to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
+     * @return array $type The type(s) of views requested.  Current supported types are 'default' (for application) and 'wireless'
+     * @return array $view The view(s) requested.  Current supported types are edit, detail, list, and subpanel.
+     * @exception 'SoapFault' -- The SOAP error, if any
+     */
+    function get_module_layout($session, $a_module_names, $a_type, $a_view,$acl_check = TRUE, $md5 = FALSE){
+    	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
+    
+    	global  $beanList, $beanFiles;
+    	$error = new SoapError();
+        $results = array();
+        foreach ($a_module_names as $module_name)
+        {
+            if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error))
+            {
+                $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout');
+                continue;
+            }
+
+            $class_name = $beanList[$module_name];
+            require_once($beanFiles[$class_name]);
+            $seed = new $class_name();
+
+            foreach ($a_view as $view)
+            {
+                $aclViewCheck = (strtolower($view) == 'subpanel') ? 'DetailView' : ucfirst(strtolower($view)) . 'View';
+                if(!$acl_check || $seed->ACLAccess($aclViewCheck, true) )
+                {
+                    foreach ($a_type as $type)
+                    {
+                        $a_vardefs = self::$helperObject->get_module_view_defs($module_name, $type, $view);
+                        if($md5)
+                            $results[$module_name][$type][$view] = md5(serialize($a_vardefs));
+                        else
+                            $results[$module_name][$type][$view] = $a_vardefs;
+                    }
+                }
+            }
+        }
+    	 
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout');
+    	
+        return $results;
+    }
+
     /**
      * Given a list of modules to search and a search string, return the id, module_name, along with the fields
      * We will support Accounts, Bug Tracker, Cases, Contacts, Leads, Opportunities, Project, ProjectTask, Quotes
