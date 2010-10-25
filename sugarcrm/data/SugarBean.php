@@ -3955,14 +3955,12 @@ function save_relationship_changes($is_update, $exclude=array())
                         foreach($current_bean->field_defs as $field=>$value)
                         {
 
-                            if (!empty($row[$field]))
+                            if (isset($row[$field]))
                             {
                                 $current_bean->$field = $row[$field];
-
                                 unset($row[$field]);
-                                //$GLOBALS['log']->debug("$current_bean->object_name({$row['id']}): ".$field." = ".$current_bean->$field);
                             }
-                            else if (!empty($row[$this->table_name .'.'.$field]))
+                            else if (isset($row[$this->table_name .'.'.$field]))
                             {
                                 $current_bean->$field = $row[$current_bean->table_name .'.'.$field];
                                 unset($row[$current_bean->table_name .'.'.$field]);
