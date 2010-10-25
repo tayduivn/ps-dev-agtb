@@ -12,6 +12,7 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
     public $requireAuth = true;
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
+    public $docSearch = true;
 	protected $meetingID;
     protected $joinURL;
 	protected $hostURL = "https://apps.lotuslive.com/meetings/host";

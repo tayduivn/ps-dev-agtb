@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<script type="text/javascript" src='{{sugar_getjspath file="cache/include/externalAPI.cache.js"}}'></script>
 <script type="text/javascript" src='{{sugar_getjspath file="include/SugarFields/Fields/File/SugarFieldFile.js"}}'></script>
 {{capture name=idName assign=idName}}{{sugarvar key='name'}}{{/capture}}
 {{if !empty($displayParams.idName)}}
@@ -70,23 +71,28 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}} 
-value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}"
+value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name' stringFormat=true}}{/if}"
 {{$displayParams.field}}>
 
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:inline;">
 <br><h4>Search External Source</h4>
-<input type="hidden" name="{{$vardef.docId}}">
-<input type="text" class="sqsEnabled" name="remote_filename" size="{{$displayParams.size|default:30}}" 
+<input type="hidden" name="{{$vardef.docId}}" value="{$fields[{{$vardef.docId}}].value}">
+<input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
 {{elseif !empty($displayParams.maxlength)}}
     maxlength="{{$displayParams.maxlength}}"
 {{else}}
     maxlength="255"
-{{/if}} autocomplete="off">
+{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
 <input type="button" value="Select" onclick="DCMenu.loadView('LotusLive Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
 </span>
+<script type="text/javascript">
+YAHOO.util.Event.onDOMReady(function() {ldelim}
+SUGAR.field.file.setupEapiShowHide("{{$idName}}","{{$vardef.docType}}");
+{rdelim});
+</script>
 {{/if}}
 </span>

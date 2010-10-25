@@ -50,6 +50,29 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
 		            ajaxStatus.flashStatus(SUGAR.language.get('Notes', 'ERR_REMOVING_ATTACHMENT'), 2000); 
 	            }
             }
+        },
+        setupEapiShowHide: function(elemBaseName,docTypeName) {
+            var showHideFunc = function() {
+                console.log("Looking for: " + elemBaseName);
+                console.log("Dropdown: " + docTypeName);
+                var docShowHideElem = document.getElementById(elemBaseName + "_externalApiSelector");
+                console.log("Found: " + docShowHideElem.id);
+                var dropdownValue = document.getElementById(docTypeName).value;
+                console.log("Dropdown Value: " + dropdownValue);
+                if ( typeof(SUGAR.eapm) != 'undefined' 
+                     && typeof(SUGAR.eapm[dropdownValue]) != 'undefined' 
+                     && typeof(SUGAR.eapm[dropdownValue].docSearch) != 'undefined'
+                     && SUGAR.eapm[dropdownValue].docSearch ) {
+                    docShowHideElem.style.display = '';
+                    console.log("I'm showing... I hope");
+                } else {
+                    docShowHideElem.style.display = 'none';
+                    console.log("I'm hiding");
+                }
+            }
+            document.getElementById(docTypeName).onchange = showHideFunc;
+
+            showHideFunc();
         }
     }
 }
