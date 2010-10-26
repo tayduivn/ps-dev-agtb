@@ -85,6 +85,7 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testBreadCrumbStack()
     {
+    	$GLOBALS['sugar_config']['history_max_viewed'] = 50;
     	$breadCrumbStack = new BreadCrumbStack($GLOBALS['current_user']->id);
     	$list = $breadCrumbStack->getBreadCrumbList('Accounts');
     	$this->assertEquals(count($list), 10, 'Assert that there are 10 entries for Accounts module');
@@ -92,6 +93,7 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
     	$list = $breadCrumbStack->getBreadCrumbList('Contacts');
     	$this->assertEquals(count($list), 10, 'Assert that there are 10 entries for Contacts module');    	
     	
+    	$breadCrumbStack = new BreadCrumbStack($GLOBALS['current_user']->id);
     	$list = $breadCrumbStack->getBreadCrumbList(array('Accounts', 'Contacts'));
     	$contacts = 0;
     	$accounts = 0;
