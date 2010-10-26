@@ -3460,7 +3460,7 @@ function save_relationship_changes($is_update, $exclude=array())
 				$ret_array['from'] .= " LEFT JOIN ";
 			}
 
-		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
+		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.assigned_user_id='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
 		}
 		//END SUGARCRM flav=pro ONLY
         $where_auto = '1=1';
