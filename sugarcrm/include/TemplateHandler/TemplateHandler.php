@@ -156,7 +156,7 @@ class TemplateHandler {
             //BEGIN SUGARCRM flav=pro ONLY
             $validatedFields[] = 'team_name';
             //END SUGARCRM flav=pro ONLY
-            $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty(array('ERR_SQS_NO_MATCH_FIELD','LBL_ASSIGNED_TO')), 'false', '', 'assigned_user_id');
+            $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty('LBL_ASSIGNED_TO'), 'false', '', 'assigned_user_id');
             $validatedFields[] = 'assigned_user_name';
             //Add remaining validation dependency for related fields
             //1) a relate type as defined in vardefs
@@ -180,7 +180,7 @@ class TemplateHandler {
                   else{
                      $vname = "undefined";
                   }
-                  $javascript->addToValidateBinaryDependency($name, 'alpha', $javascript->buildStringToTranslateInSmarty(array('ERR_SQS_NO_MATCH_FIELD',$vname)), (!empty($def['required']) ? 'true' : 'false'), '', $def['id_name']);
+                  $javascript->addToValidateBinaryDependency($name, 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty($vname), (!empty($def['required']) ? 'true' : 'false'), '', $def['id_name']);
                   $validatedFields[] = $name;
                }
             } //foreach
