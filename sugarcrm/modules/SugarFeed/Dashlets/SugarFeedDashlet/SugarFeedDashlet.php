@@ -139,6 +139,19 @@ var $selectedCategories = array();
 
         
         // All hands to the twitter!
+        if ( isset($_SESSION['feed_twitter_enabled']) && $_SESSION['feed_twitter_enabled'] ) {
+            $this->twitData['enabled'] = true;
+            
+            $twitter_json_url = 'http://twitter.com/statuses/user_timeline/sugarcrm.json?count=15';
+            // $twitter_json_url = 'http://api.twitter.com/1/statuses/friends_timeline.json?count=15';
+            $twitter_buffer = file_get_contents($twitter_json_url);
+            $this->twitData['messages'] = json_decode($twitter_buffer,true);
+
+        } else {
+            $this->twitData['enabled'] = false;
+            
+            $this->twitData['messages'] = array();
+        }
 
         $this->seedBean = new SugarFeed();
     }
@@ -391,9 +404,34 @@ var $selectedCategories = array();
         }
         
         // Check if we need to resort the Twitter messages
-        
+        if ( $this->twitData['enabled'] && count($this->twitData['messages']) > 0 ) {
+            $needResort = true;
+            
+            foreach ( $this->twitData['messages'] as $message ) {
+                if ( empty($message['text']) ) {
+                    continue;
+                }
+                // Extract the timestamp, with passion
+                $unix_time = strtotime($message['created_at']);
+            
+                $fake_record = array();
+                $fake_record['sort_key'] = $unix_time;
+                $fake_record['ID'] = create_guid();
+                $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('Y-m-d H:i:s',$unix_time));
+                $fake_record['NAME'] = $message['user']['name'].'</b>';
+                if ( !empty($message['text']) ) {
+                    $fake_record['NAME'] .= ' '.$message['text'];
+                }
+                $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
+                $fake_record['IMAGE_URL'] = $message['user']['profile_image_url'];
+            
+            
+                $resortQueue[] = $fake_record;
+            }
+        }
+
         // If we need to resort, get to work!
-        if ( $needResort ) {
+        if ( true ) {
             foreach ( $this->lvs->data['data'] as $normalMessage ) {
                 list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
                 list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
@@ -709,6 +747,7 @@ EOQ;
 		$ss->assign('link_types', $linkTypes);
         $ss->assign('fb', $this->fb);
         $ss->assign('fbData', $this->fbData);
+        $ss->assign('twitData', $this->twitData);
 		return $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/UserPostForm.tpl');
 	
 	}
@@ -725,4 +764,15 @@ EOQ;
             return true;
         }
     }
+
+    function enableTwitter() {
+        $_SESSION['feed_twitter_enabled'] = true;
+        header('Location: index.php?module=Home&action=index');
+    }
+
+    function disableTwitter() {
+        $_SESSION['feed_twitter_enabled'] = false;
+        header('Location: index.php?module=Home&action=index');
+    }
+
 }

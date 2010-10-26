@@ -47,6 +47,15 @@
         <img src="modules/SugarFeed/Dashlets/SugarFeedDashlet/fb_off_20.png" border=0>
         </a>
         {/if}</td>
+      <td>{if $twitData.enabled}
+        <a href="?module=Home&action=CallMethodDashlet&method=disableTwitter&id={$id}">
+        <img src="modules/SugarFeed/Dashlets/SugarFeedDashlet/tw_on_20.png" border=0>
+        </a>
+        {else}
+        <a href="?modlue=Home&action=CallMethodDashlet&method=enableTwitter&id={$id}">
+        <img src="modules/SugarFeed/Dashlets/SugarFeedDashlet/tw_off_20.png" border=0>
+        </a>
+        {/if}</td>
     </tr>
 </table>
 <div id='more_{$id}' style='display:none;padding-top:5px'>
