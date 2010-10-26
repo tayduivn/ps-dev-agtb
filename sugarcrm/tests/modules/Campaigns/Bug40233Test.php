@@ -8,10 +8,18 @@ require_once('modules/EmailMarketing/EmailMarketing.php');
 require_once('include/ListView/ListView.php');
 require_once('SugarTestContactUtilities.php');
 require_once('SugarTestLeadUtilities.php');
-require_once('tests/modules/Campaigns/Bug39665Test.php');
 
-class Bug40233Test extends Bug39665Test
+class Bug40233Test extends Sugar_PHPUnit_Framework_TestCase
 {
+	
+	var $campaign = null;
+	var $prospectlist = null;
+	var $prospectlist2 = null;
+	var $emailmarketing = null;
+	var $emailmarketing2 = null;
+	var $saved_current_user = null;
+	var $clear_database = true;
+	var $remove_beans = true;	
 	
 	public function setUp()
     {
@@ -211,18 +219,54 @@ class Bug40233Test extends Bug39665Test
 		}
 	}
 	
-	function tearDown()
-	{
-		parent::tearDown();
+    public function tearDown()
+    {
+    	$GLOBALS['current_user'] = $this->saved_current_user;
+    	
+    	if($this->remove_beans)
+    	{
+			$this->campaign->mark_deleted($this->campaign->id);
+			$this->prospectlist->mark_deleted($this->prospectlist->id);
+			
+			SugarTestContactUtilities::removeAllCreatedContacts();
+			SugarTestLeadUtilities::removeAllCreatedLeads();
+    	}
+		
 		if($this->clear_database)
-		{			
+		{
+			$sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
+			$GLOBALS['db']->query($sql);
+			
 			$sql = 'DELETE FROM emailman WHERE campaign_id = \'' . $this->campaign->id . '\'';
+			$GLOBALS['db']->query($sql);				
+			
+			$sql = 'DELETE FROM campaign_log WHERE campaign_id = \'' . $this->campaign->id . '\'';
+			$GLOBALS['db']->query($sql);
+			
+			$sql = 'DELETE FROM prospect_lists_prospects WHERE prospect_list_id=\'' . $this->prospectlist->id . '\'';
+			$GLOBALS['db']->query($sql);
+			
+			$sql = 'DELETE FROM prospect_lists_prospects WHERE prospect_list_id=\'' . $this->prospectlist2->id . '\'';
+			$GLOBALS['db']->query($sql);			
+			
+			$sql = 'DELETE FROM prospect_lists WHERE id = \'' . $this->prospectlist->id . '\'';
+			$GLOBALS['db']->query($sql);				
+
+			$sql = 'DELETE FROM prospect_lists WHERE id = \'' . $this->prospectlist2->id . '\'';
+			$GLOBALS['db']->query($sql);				
+			
+			$sql = 'DELETE FROM prospect_list_campaigns WHERE campaign_id = \'' . $this->campaign->id . '\'';
+			$GLOBALS['db']->query($sql);				
+			
+			$sql = 'DELETE FROM campaigns WHERE id = \'' . $this->campaign->id . '\'';
 			$GLOBALS['db']->query($sql);	
-		}		
-	}
-    
+		}
+		
+    }	
+	
 	function test_viewed_message()
 	{
+		$this->markTestSkipped('Skip for now');
 		$this->assertTrue(true);
     }
     
