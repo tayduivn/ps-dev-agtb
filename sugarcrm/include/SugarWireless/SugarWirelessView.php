@@ -125,6 +125,9 @@ class SugarWirelessView extends SugarView
 		$wl_module_select_list = array();
         $wl_mod_create_list = array();
 		foreach($wl_module_list as $module){
+		    //Explicitly remove the Reports module if selected for other mobile devices.
+		    if($module == 'Reports')
+			     continue;
 			// check if user has access to the listed module
 			if (in_array($module, $GLOBALS['moduleList']) || in_array($module, $GLOBALS['modInvisListActivities'])){
 				$wl_module_select_list[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];

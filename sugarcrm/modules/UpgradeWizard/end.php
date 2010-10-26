@@ -160,6 +160,10 @@ if(isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '
     logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
     migrate_sugar_favorite_reports();
     logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+
+    logThis("Begin: Update custom module built using module builder to add favorites", $path);
+    add_custom_modules_favorites_search();
+    logThis("Complete: Update custom module built using module builder to add favorites", $path);
 }
 //END SUGARCRM flav=pro ONLY
 

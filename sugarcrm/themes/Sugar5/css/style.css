@@ -3618,15 +3618,3 @@ li div.star {float:none;}
 .star div.off {background-position:0px -18px}
 .star div:hover {cursor:pointer;background-position:0px 0px;}
 
-
-/* override tinyMCE content box */
-body.mceContentBody {
-	margin: 0px;
-	font-family: Arial,Verdana,Helvetica,sans-serif;
-	list-style-type: none; 
-	margin-left: 6px; 
-	margin-bottom: 2px;	
-	margin-top: 2px;
-    margin-right: 0;
-	background:none repeat scroll 0 0 #FFFFFF;
-}
