@@ -270,5 +270,21 @@ class Bug40233Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertTrue(true);
     }
     
+    protected function create_campaign_log($campaign, $target, $marketing, $prospectlist, $activity_type, $target_tracker_key='')
+    {
+			$campaign_log = new CampaignLog();
+			$campaign_log->campaign_id=$campaign->id;
+			$campaign_log->target_tracker_key=$target_tracker_key;
+			$campaign_log->target_id= $target->id;
+			$campaign_log->target_type=$target->module_dir;
+            $campaign_log->marketing_id=$marketing->id;
+			$campaign_log->more_information=$target->email1;
+			$campaign_log->activity_type=$activity_type;
+			$campaign_log->activity_date=$GLOBALS['timedate']->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			$campaign_log->list_id=$prospectlist->id;
+			$campaign_log->related_type='Emails';
+            $campaign_log->save();
+    }    
+    
 }
 ?>
