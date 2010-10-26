@@ -60,6 +60,17 @@ $viewdefs['Contacts']['DetailView'] = array(
           array (
             'name' => 'full_name',
             'label' => 'LBL_NAME',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'displayParams' => 
+              array (
+                'enableConnectors' => true,
+                'module' => 'Contacts',
+                'connectors' => 
+                array (
+                  0 => 'ext_rest_twitter',
+                ),
+            ),
+            //END SUGARCRM flav=pro ONLY         
           ),
 
 	      //BEGIN SUGARCRM flav!=com ONLY
@@ -95,6 +106,17 @@ $viewdefs['Contacts']['DetailView'] = array(
           array (
             'name' => 'account_name',
             'label' => 'LBL_ACCOUNT_NAME',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'displayParams' => 
+              array (
+                'enableConnectors' => true,
+                'module' => 'Contacts',
+                'connectors' => 
+                array (
+                  0 => 'ext_rest_linkedin',
+                ),
+            ),
+            //END SUGARCRM flav=pro ONLY
           ),
           array (
             'name' => 'phone_fax',

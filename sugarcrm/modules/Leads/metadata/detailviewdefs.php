@@ -69,6 +69,16 @@ $viewdefs['Leads']['DetailView'] = array (
 			array (
 				'name' => 'full_name',
 				'label' => 'LBL_NAME',
+	            //BEGIN SUGARCRM flav=pro ONLY
+	            'displayParams' => array (
+	                'enableConnectors' => true,
+	                'module' => 'Leads',
+	                'connectors' => 
+	                array (
+	                  0 => 'ext_rest_twitter',
+	                ),
+	            ),
+	            //END SUGARCRM flav=pro ONLY 			
 			),
 			'phone_work',
 		),
@@ -84,8 +94,20 @@ $viewdefs['Leads']['DetailView'] = array (
 		),					
 
 	    array (
-		     'account_name',
-			 'website'
+            array (
+              'name' => 'account_name',
+			    //BEGIN SUGARCRM flav=pro ONLY
+			    'displayParams' => array (
+			       'enableConnectors' => true,
+			       'module' => 'Leads',
+			       'connectors' => 
+			       array (
+			          0 => 'ext_rest_linkedin',
+			       ),
+			    ),
+			    //END SUGARCRM flav=pro ONLY 
+            ),
+			'website'
 	    ),		
 		
 		array (
