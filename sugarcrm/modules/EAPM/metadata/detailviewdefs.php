@@ -37,19 +37,18 @@ $viewdefs[$module_name]['DetailView'] = array(
                         ),
 
 'panels' =>array (
-
+  array('type', 'application'),
   array (
     'name',
     'assigned_user_name',
   ),
   array (
-
-    'team_name',''
+    'active', 'validated'
   ),
-
   array (
-     'url'
+     'url', ''
   ),
+
 
   array (
 	array (

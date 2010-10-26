@@ -29,7 +29,7 @@ $dictionary['EAPM'] = array(
 	'table'=>'eapm',
 	'audited'=>true,
 	'fields'=>array (
-  'password' => 
+  'password' =>
   array (
     'required' => false,
     'name' => 'password',
@@ -46,8 +46,9 @@ $dictionary['EAPM'] = array(
     'reportable' => false,
     'len' => '255',
     'size' => '20',
+	'dependency' => 'equal($type, "password")',
   ),
-  'url' => 
+  'url' =>
   array (
     'required' => false,
     'name' => 'url',
@@ -64,7 +65,7 @@ $dictionary['EAPM'] = array(
     'len' => '255',
     'size' => '20',
   ),
-  'application' => 
+  'application' =>
   array (
     'required' => false,
     'name' => 'application',
@@ -80,15 +81,11 @@ $dictionary['EAPM'] = array(
     'reportable' => true,
     'len' => 100,
     'size' => '20',
-    'function' => 'getEAPMExternalApiDropDown',    
+    'function' => 'getEAPMExternalApiDropDown',
     'studio' => 'visible',
-    'dependency' => 
-    array (
-      'application' => 'saveField',
-    ),
     'default' => 'webex',
   ),
-  'name' => 
+  'name' =>
   array (
     'name' => 'name',
     'vname' => 'LBL_NAME',
@@ -96,7 +93,7 @@ $dictionary['EAPM'] = array(
     'dbType' => 'varchar',
     'len' => '255',
     'unified_search' => true,
-    'required' => true,
+//    'required' => true,
     'importable' => 'required',
     'massupdate' => 0,
     'comments' => '',
@@ -106,6 +103,7 @@ $dictionary['EAPM'] = array(
     'audited' => false,
     'reportable' => true,
     'size' => '20',
+	'dependency' => 'equal($type, "password")',
   ),
 	  'api_data' =>
 	  array (
@@ -116,9 +114,91 @@ $dictionary['EAPM'] = array(
 	    'rows' => 6,
 	    'cols' => 80,
 	  ),
+    'type' =>
+	  array(
+	  	"name" => "type",
+	  	"vname" => "LBL_API_TYPE",
+	  	"type" => "enum",
+        'required' => true,
+        'importable' => 'required',
+        'massupdate' => 0,
+        'comments' => '',
+        'help' => '',
+        'duplicate_merge' => 'disabled',
+        'duplicate_merge_dom_value' => '0',
+        'audited' => false,
+        'reportable' => true,
+        'size' => '20',
+        'len' => 100,
+    	'size' => '20',
+    	'options' => 'LBL_API_TYPE_ENUM',
+    	'studio' => 'visible',
+    	'default' => 'password',
+	  ),
+	  'consumer_key' => array(
+	  	'name' => 'consumer_key',
+	    'type' => 'varchar',
+	    'vname' => 'LBL_API_CONSKEY',
+//        'required' => true,
+        'importable' => 'required',
+        'massupdate' => 0,
+        'audited' => false,
+        'reportable' => false,
+	    'dependency' => 'equal($type, "oauth")',
+	  ),
+	  'consumer_secret' => array(
+	  	'name' => 'consumer_secret',
+	    'type' => 'varchar',
+	    'vname' => 'LBL_API_CONSSECRET',
+//        'required' => true,
+        'importable' => 'required',
+        'massupdate' => 0,
+        'audited' => false,
+        'reportable' => false,
+	    'dependency' => 'equal($type, "oauth")',
+	  ),
+	  'oauth_token' => array(
+	  	'name' => 'oauth_token',
+	    'type' => 'varchar',
+	    'vname' => 'LBL_API_OAUTHTOKEN',
+        'importable' => false,
+        'massupdate' => 0,
+        'audited' => false,
+        'reportable' => false,
+	  ),
+	  'oauth_secret' => array(
+	  	'name' => 'oauth_secret',
+	    'type' => 'varchar',
+	    'vname' => 'LBL_API_OAUTHSECRET',
+        'importable' => false,
+        'massupdate' => 0,
+        'audited' => false,
+        'reportable' => false,
+	  ),
+	  'validated' => array(
+        'required' => false,
+        'name' => 'validated',
+        'vname' => 'LBL_VALIDATED',
+        'type' => 'bool',
+	    'default' => false,
+	  ),
+	  'active' => array(
+        'required' => false,
+        'name' => 'active',
+        'vname' => 'LBL_ACTIVE',
+        'type' => 'bool',
+	    'default' => true,
+	  ),
 
 ),
 	'relationships'=>array (
+),
+    'indices' => array(
+        array(
+                'name' => 'idx_app_active',
+                'type' => 'index',
+                'fields'=> array('application', 'active'),
+        ),
 ),
 	'optimistic_locking'=>true,
 );

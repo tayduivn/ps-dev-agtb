@@ -8,12 +8,13 @@ class Google implements ExternalAPIPlugin,WebDocument {
     public $useAuth = true;
     public $requireAuth = true;
     public $supportedModules = array('Documents', 'Notes');
+    public $authMethods = array("password" => 1);
 
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
 	}
-	
+
     public function loadEAPM($eapmBean) {
 		$this->account_url = $eapmBean->url;
 		$this->account_name = $eapmBean->name;
@@ -22,7 +23,7 @@ class Google implements ExternalAPIPlugin,WebDocument {
 
     public function checkLogin($eapmBean) {
         $this->loadEAPM($eapmBean);
-        
+
         // Emulate a reply
         $reply['success'] = TRUE;
 
@@ -46,29 +47,29 @@ class Google implements ExternalAPIPlugin,WebDocument {
             // Already logged in
             return;
         }
-		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents	
+		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents
 		$this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
 		$this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
 	}
-			
+
 	function uploadDoc($bean, $fileToUpload, $docName, $mimeType){
 		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
 		try{
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
-                                                            $mimeType, 
+                                                            $mimeType,
                                                             Zend_Gdata_Docs::DOCUMENTS_LIST_FEED_URI);
-            
+
             // Find the URL of the HTML view of this document.
             $alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
-            
+
             preg_match(
-                '/id=([\S]*)[&|$]/', 
-                $alternateLink, 
+                '/id=([\S]*)[&|$]/',
+                $alternateLink,
                 $matches
-                );            
+                );
 			$bean->doc_id = $matches[1];
             $bean->doc_url = $alternateLink;
             $result['success'] = TRUE;
@@ -77,7 +78,7 @@ class Google implements ExternalAPIPlugin,WebDocument {
              $result['success'] = FALSE;
              $result['errorMsg'] = $e->getMessage();
          }
-        
+
         return $result;
 	}
 
@@ -90,39 +91,43 @@ class Google implements ExternalAPIPlugin,WebDocument {
 		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);
 		$url = $document->content->getSrc();
 		//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
-		$opts = array(  
-		    'http' => array(  
-		    'method' => 'GET',  
+		$opts = array(
+		    'http' => array(
+		    'method' => 'GET',
 		    'header' => "Host: docs.google.com\r\n".
-		    			"GData-Version: 2.0\r\n". 
-						"Content-type: application/x-www-form-urlencoded\r\n". 
-		                "Authorization: $sessionToken"  
-		
-//			    'header' => "Authorization: \"$sessionToken\"\r\n"  
-			)  
-		);  
-		if ($url != null) {  
-		    $url =  $url . "&exportFormat=$format";  
+		    			"GData-Version: 2.0\r\n".
+						"Content-type: application/x-www-form-urlencoded\r\n".
+		                "Authorization: $sessionToken"
+
+//			    'header' => "Authorization: \"$sessionToken\"\r\n"
+			)
+		);
+		if ($url != null) {
+		    $url =  $url . "&exportFormat=$format";
 		}
 		$GLOBALS['log']->fatal('Google Doc URL: '.$url);
-		echo file_get_contents($url, false, stream_context_create($opts)); 
+		echo file_get_contents($url, false, stream_context_create($opts));
     }
-    
+
     function deleteDoc($documentId) {
 		$this->getClient();
     	$document = $this->gdClient->getDocument($documentId);
     	return  $document->delete();
     }
-	
+
 	function shareDoc($documentId, $emails){
-		
+
 	}
-	
+
 	function browseDoc($path){
-		
+
 	}
 
     function searchDoc($keywords){
-    	
+
     }
+    public function supports($method = '')
+	{
+	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
+	}
 }

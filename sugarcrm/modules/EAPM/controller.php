@@ -28,12 +28,41 @@
 
 class EAPMController extends SugarController
 {
-    protected function post_save() {
-        if (! $this->bean->login_success ) {
-            $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
-            return $this->set_redirect($url);
-        } else {
-            return parent::post_save();
+    /**
+     * API implementation
+     * @var ExternalAPIPlugin
+     */
+    protected $api;
+
+    public function failed($error)
+    {
+        $_SESSION['administrator_error'] = $error;
+        $GLOBALS['log']->error("Login error: $error");
+        $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
+        return $this->set_redirect($url);
+    }
+
+    public function pre_save()
+    {
+        parent::pre_save();
+        $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
+        if(!$this->api->supports($this->bean->type)) {
+            return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
         }
+        $this->api->loadEAPM($this->bean);
+        $this->bean->validated = false;
+    }
+
+    protected function post_save()
+    {
+        if($this->bean->active) {
+            $reply = $this->api->checkLogin();
+            if ( !$reply['success'] ) {
+                return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+            } else {
+                $this->bean->validated();
+            }
+        }
+        return parent::post_save();
     }
 }

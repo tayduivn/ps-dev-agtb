@@ -6,15 +6,16 @@ require_once('include/externalAPI/Base/WebMeeting.php');
 class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
     private $login_key;
-    
+
     protected $dateFormat = 'Y-m-d\TH:i:s';
     protected $urlExtension = '/axis/services/G2M_Organizers';
-    
+
     public $useAuth = true;
     public $requireAuth = true;
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
-    
+    public $authMethods = array("password" => 1);
+
     function __construct() {
         require('include/externalAPI/GoToMeeting/GoToXML.php');
         $this->login_xml = $login_xml;
@@ -23,7 +24,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         $this->logoff_xml = $logoff_xml;
         $this->edit_xml = $edit_xml;
     }
-    
+
     public function loadEAPM($eapmBean) {
         $this->account_url = $eapmBean->url.$this->urlExtension;
         $this->account_name = $eapmBean->name;
@@ -40,7 +41,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
         return $reply;
     }
-    
+
     function login() {
         $doc = new SimpleXMLElement($this->login_xml);
         $namespaces = $doc->getDocNamespaces();
@@ -49,7 +50,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         $child = $impl[0];
         $child->id = $this->account_name;
         $child->password = $this->account_password;
-        
+
         $response = $this->postMessage($doc);
         if ( $response['success'] ) {
             $xp = new DOMXPath($response['responseXML']);
@@ -58,23 +59,23 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         } else {
             $this->login_key = '';
         }
-        
+
         return $response;
     }
-    
-    public function logoff() {
+
+    public function logOff() {
         $doc = new SimpleXMLElement($this->logoff_xml);
         $namespaces = $doc->getDocNamespaces();
         $body = $doc->children($namespaces['soap']);
         $impl = $body[0]->children($namespaces['impl']);
         $child = $impl[0];
         $child->connectionId = $this->login_key;
-        
+
         return $this->postMessage($doc);
     }
-    
+
     function scheduleMeeting($bean) {
-        // $name, $startDate, $duration, $password) { 
+        // $name, $startDate, $duration, $password) {
         if (empty($this->login_key)) {
             $response = $this->login();
             if (empty($this->login_key) ) {
@@ -82,11 +83,11 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
                 return $response;
             }
         }
-        
+
         if (!empty($bean->external_id) ) {
             return $this->editMeeting($bean);
         }
-        
+
         $doc = new SimpleXMLElement($this->schedule_xml);
         $namespaces = $doc->getDocNamespaces();
         $body = $doc->children($namespaces['soap']);
@@ -97,14 +98,14 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         // FIXME: Use TimeDate
         $startDate = date($this->dateFormat, strtotime($bean->date_start));
         $createMeeting->meetingParameters->startTime = $startDate;
-        
+
         /* From the GoToMeeting API docs:
          *
-         * 'Note: If passwordRequired is set to True then a password will be 
-         * requested of the organizer when starting the meeting. The password is 
-         * selected by the organizer and communicated to the attendees before the 
-         * meeting is started. The organizer must properly enter the password 
-         * communicated, otherwise the authentication will be different and the 
+         * 'Note: If passwordRequired is set to True then a password will be
+         * requested of the organizer when starting the meeting. The password is
+         * selected by the organizer and communicated to the attendees before the
+         * meeting is started. The organizer must properly enter the password
+         * communicated, otherwise the authentication will be different and the
          * attendees will not be able to join the meeting until the proper password
          * is provided by the organizer.'
          *
@@ -121,18 +122,18 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
         $reply = $this->postMessage($doc);
         if ($reply['success']) {
-          
+
             $xp = new DOMXPath($reply['responseXML']);
             // $xp->registerNamespace('soapenv','http://schemas.xmlsoap.org/soap/envelope/');
-          
+
             $bean->join_url = $xp->query('//multiRef[name="joinURL"]/value')->item(0)->nodeValue;
-          
+
             $uniqueMeetingId = $xp->query('//multiRef[name="uniqueMeetingId"]/value')->item(0)->nodeValue;
-          
+
             $meetingId = $xp->query('//multiRef[@id="id5"]')->item(0)->nodeValue;
-          
+
             $bean->external_id = $meetingId.'-'.$uniqueMeetingId;
-          
+
             $hostReply = $this->hostMeeting(array($meetingId,$uniqueMeetingId));
             if ( $hostReply['success'] == FALSE ) {
                 // Trying to host failed, send the error message back to the user.
@@ -140,7 +141,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
             }
             $xp = new DOMXPath($hostReply['responseXML']);
             $bean->host_url = $xp->query('//startMeetingReturn')->item(0)->nodeValue;
-          
+
             $bean->creator = $this->account_name;
         } else {
             $bean->join_url = '';
@@ -168,11 +169,11 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         $updateMeeting->meetingId = $meeting_keys[0];
         $updateMeeting->uniqueMeetingId = $meeting_keys[1];
 
-        $updateMeeting->meetingParameters->subject = $bean->name; 
+        $updateMeeting->meetingParameters->subject = $bean->name;
 
         // FIXME: Use TimeDate
         $startDate = date($this->dateFormat, strtotime($bean->date_start));
-        $updateMeeting->meetingParameters->startTime = $startDate; 
+        $updateMeeting->meetingParameters->startTime = $startDate;
         if (!empty($bean->password)) {
             $updateMeeting->meetingParameters->passwordRequired = 'true';
         } else {
@@ -184,7 +185,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
     function unscheduleMeeting($meeting){
     }
-	
+
     function joinMeeting($meeting, $attendeeName){
     }
 
@@ -192,7 +193,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         if (!isset($this->login_key)) {
             $this->login();
         }
-      
+
         $doc = new SimpleXMLElement($this->host_xml);
         $namespaces = $doc->getDocNamespaces();
         $body = $doc->children($namespaces['soap']);
@@ -204,16 +205,16 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
         return $this->postMessage($doc);
     }
-	
+
     function inviteAttendee($meeting, $attendee){
     }
-	
+
     function uninviteAttendee($attendee){
     }
-	
+
     function listMyMeetings(){
     }
-	
+
     function getMeetingDetails($meeting){
     }
 
@@ -244,11 +245,11 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         $GLOBALS['log']->fatal("Before:\n".print_r($xml,true));
         $response = curl_exec($ch);
         $GLOBALS['log']->fatal("Raw Reply:\n".print_r($response,true));
-      
+
         $reply = array();
         $reply['success'] = FALSE;
         $reply['errorMessage'] = '';
-      
+
         if ( empty($response) ) {
             // FIXME: Translate
             $reply['errorMessage'] = 'No response from the server.';
@@ -275,12 +276,16 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
                     // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
                     $reply['errorMessage'] = (string)$xp->query('/soapenv:Envelope/soapenv:Body/soapenv:Fault/faultstring')->item(0)->nodeValue;
                 }
-              
-            }          
+
+            }
         }
-      
+
         $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
         return $reply;
     }
 
+    public function supports($method = '')
+	{
+	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
+	}
 }

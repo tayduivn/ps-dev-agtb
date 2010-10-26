@@ -62,5 +62,13 @@ $mod_strings = array (
   'LBL_URL' => 'URL',
   'LBL_APPLICATION' => 'Application',
   'LBL_API_DATA' => 'API Data',
+  'LBL_API_TYPE' => 'Login type',
+  'LBL_API_CONSKEY' => 'Consumer key',
+  'LBL_API_CONSSECRET' => 'Consumer secret',
+  'LBL_API_OAUTHTOKEN' => 'OAuth token',
+  'LBL_AUTH_UNSUPPORTED' => "This authorization method is not supported by the application",
+  'LBL_AUTH_ERROR' => 'Error during login: %s',
+  'LBL_VALIDATED' => 'Access validated',
+  'LBL_ACTIVE' => 'Active',
+  'LBL_OAUTH_NAME' => 'OAuth for %s',
 );
-?>
