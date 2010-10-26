@@ -138,12 +138,11 @@ class EAPM extends Basic {
         if($stage == 0) {
             $callback_url = urlencode($sugar_config['site_url'].'/index.php?module=EAPM&action=OAuth&record='.$this->id);
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
-            $request_token_info = $oauth->getRequestToken($oauthReq."?oauth_callback=$callback_url");
+            $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
             $_SESSION['oauth_secret'] = $request_token_info['oauth_token_secret'];
             $_SESSION['oauth_token'] = $request_token_info['oauth_token'];
-            header("Location: {$authReq}?oauth_token={$request_token_info['oauth_token']}");
-            exit();
+            SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
         } else {
             $oauth->setToken($_SESSION['oauth_token'],$_SESSION['oauth_secret']);
             $GLOBALS['log']->debug("OAuth access token: {$accReq}");
