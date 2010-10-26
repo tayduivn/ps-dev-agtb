@@ -4614,6 +4614,19 @@ function upgradeUserPreferences() {
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
 
+    // Need to repair the RC1 instances that have incorrect GUIDS
+    $deleteRows = array();      
+    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
+        if ($row['id'] != $expectedId) {
+            $deleteRows[] = $row['id'];
+        }
+    }
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");    
+    // End Repair
+        
+    
     $active_users = array();
     $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
@@ -4647,6 +4660,7 @@ function migrate_sugar_favorite_reports(){
         }
     }
 }
+// END SUGARCRM flav=pro ONLY 
 
 function add_custom_modules_favorites_search(){
     $module_directories = scandir('modules');
@@ -4721,7 +4735,7 @@ function add_custom_modules_favorites_search(){
 		}
 	}
 }
-// END SUGARCRM flav=pro ONLY 
+
 
 /**
  * upgradeModulesForTeamsets
