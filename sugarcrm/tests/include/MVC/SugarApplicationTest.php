@@ -139,4 +139,15 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         if ( isset($old_sugar_version) )
             $GLOBALS['sugar_version'] = $old_sugar_version;
     }
+    
+    public function testLoadLanguages()
+    {
+    	$this->_app->controller->module = 'Contacts';
+    	$this->_app->loadLanguages();
+    	//since there is a logged in user, the welcome screen should not be empty
+    	$this->assertEmpty($GLOBALS['app_strings']['NTC_WELCOME'], 'Testing that Welcome message is not empty');
+    	$this->assertNotEmpty($GLOBALS['app_strings'], "App Strings is not empty.");
+    	$this->assertNotEmpty($GLOBALS['app_list_strings'], "App List Strings is not empty.");
+    	$this->assertNotEmpty($GLOBALS['mod_strings'], "Mod Strings is not empty.");
+    }
 }

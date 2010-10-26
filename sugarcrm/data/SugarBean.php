@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/********************************************************************************* 
+/*********************************************************************************
  * $Id: SugarBean.php 58121 2010-09-09 18:35:17Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
@@ -1066,7 +1066,7 @@ class SugarBean
                     || (isset($value_array['auto_increment'])
                         && ($value_array['type'] == true || $value_array['type'] == 'true')) ) {
                     // only allow import if we force it
-                    if (isset($value_array['importable']) 
+                    if (isset($value_array['importable'])
                         && (is_string($value_array['importable']) && $value_array['importable'] == 'true'
                            || is_bool($value_array['importable']) && $value_array['importable'] == true)) {
                         $importableFields[$key]=$value_array;
@@ -1280,7 +1280,7 @@ class SugarBean
             if((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
                 $type == 'enum') &&
-                isset($this->$key)
+                !empty($this->$key)
             ) {
                 $str = from_html($this->$key);
                 // Julian's XSS cleaner
@@ -1288,8 +1288,9 @@ class SugarBean
 
                 if(is_array($potentials) && !empty($potentials)) {
                     foreach($potentials as $bad) {
-                        $this->$key = to_html(str_replace($bad, "", $str));
+                        $str = str_replace($bad, "", $str);
                     }
+                    $this->$key = to_html($str);
                 }
             }
         }
@@ -1387,26 +1388,26 @@ class SugarBean
         $this->call_custom_logic("before_save", $custom_logic_arguments);
         unset($custom_logic_arguments);
 
-		if(isset($this->custom_fields))
-		{
-			$this->custom_fields->bean = $this;
-			$this->custom_fields->save($isUpdate);
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		//rrs new functionality to check if the team_id is set and the team_set_id is not set,
-		//then see what we can do about savign to team_set_id. It is important for this code block to be below
-		//the 'before_save' custom logic hook as that is where workflow is called.
-    	if (isset($this->field_defs['team_id'])){
-			if(empty($this->teams)){
-				$this->load_relationship('teams');
-			}
-			if(!empty($this->teams)){
-				//we do not need to the TeamSetLink to update the bean's table here
-				//since it will be handled below.
-				$this->teams->save(false, $usedDefaultTeam);
-			}
-		}
-		//END SUGARCRM flav=pro ONLY
+        if(isset($this->custom_fields))
+        {
+            $this->custom_fields->bean = $this;
+            $this->custom_fields->save($isUpdate);
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        //rrs new functionality to check if the team_id is set and the team_set_id is not set,
+        //then see what we can do about savign to team_set_id. It is important for this code block to be below
+        //the 'before_save' custom logic hook as that is where workflow is called.
+        if (isset($this->field_defs['team_id'])){
+            if(empty($this->teams)){
+                $this->load_relationship('teams');
+            }
+            if(!empty($this->teams)){
+                //we do not need to the TeamSetLink to update the bean's table here
+                //since it will be handled below.
+                $this->teams->save(false, $usedDefaultTeam);
+            }
+        }
+        //END SUGARCRM flav=pro ONLY
 
         // use the db independent query generator
         $this->preprocess_fields_on_save();
@@ -3437,16 +3438,16 @@ function save_relationship_changes($is_update, $exclude=array())
                      	   $exp = '/\(\s*?'.$data['name'].'.*?\%\'\s*?\)/';
                     	   if(preg_match($exp, $where, $matches))
                     	   {
-                    	   	  $search_expression = $matches[0];                    	   	  
+                    	   	  $search_expression = $matches[0];
                     	   	  //Create three search conditions - first + last, first, last
                     	   	  $first_name_search = str_replace($data['name'], $params['join_table_alias'] . '.first_name', $search_expression);
                     	   	  $last_name_search = str_replace($data['name'], $params['join_table_alias'] . '.last_name', $search_expression);
 							  $full_name_search = str_replace($data['name'], db_concat($params['join_table_alias'], $data['db_concat_fields']), $search_expression);
 							  $buildWhere = true;
 							  $where = str_replace($search_expression, '(' . $full_name_search . ' OR ' . $first_name_search . ' OR ' . $last_name_search . ')', $where);
-                    	   }	
+                    	   }
                     	}
-                    	
+
                     	if(!$buildWhere)
                     	{
 	                       $db_field = db_concat($params['join_table_alias'], $data['db_concat_fields']);
@@ -3954,14 +3955,12 @@ function save_relationship_changes($is_update, $exclude=array())
                         foreach($current_bean->field_defs as $field=>$value)
                         {
 
-                            if (!empty($row[$field]))
+                            if (isset($row[$field]))
                             {
                                 $current_bean->$field = $row[$field];
-
                                 unset($row[$field]);
-                                //$GLOBALS['log']->debug("$current_bean->object_name({$row['id']}): ".$field." = ".$current_bean->$field);
                             }
-                            else if (!empty($row[$this->table_name .'.'.$field]))
+                            else if (isset($row[$this->table_name .'.'.$field]))
                             {
                                 $current_bean->$field = $row[$current_bean->table_name .'.'.$field];
                                 unset($row[$current_bean->table_name .'.'.$field]);
@@ -5142,12 +5141,12 @@ function save_relationship_changes($is_update, $exclude=array())
         if($return_handler==true)
         {
             $rel_handler = new RelationshipHandler($this->db, $this->$target_base);
-            $rel_handler->base_bean = & $this;
+            $rel_handler->base_bean = $this;
         }
         else
         {
             $this->rel_handler = new RelationshipHandler($this->db, $this->$target_base);
-            $this->base_bean = & $this;
+            $this->base_bean = $this;
         }
 
         return $rel_handler;
@@ -5745,7 +5744,7 @@ function save_relationship_changes($is_update, $exclude=array())
         sugar_cache_put($cache_key, EXTERNAL_CACHE_NULL_VALUE);
         return null;
     }
-    
+
     /**
      * Returns the ACL category for this module; defaults to the SugarBean::$acl_category if defined
      * otherwise it is SugarBean::$module_dir

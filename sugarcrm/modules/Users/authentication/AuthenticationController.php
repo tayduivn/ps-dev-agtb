@@ -83,6 +83,7 @@ class AuthenticationController {
 		unset($GLOBALS['login_error']);
 
 		if($this->loggedIn)return $this->loginSuccess;
+		LogicHook::initialize()->call_custom_logic('Users', 'before_login');
 
 		$this->loginSuccess = $this->authController->loginAuthenticate($username, $password, false, $PARAMS);
 		$this->loggedIn = true;

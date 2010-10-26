@@ -350,6 +350,18 @@ class ModuleBuilderController extends SugarController
             if (! empty ( $_REQUEST [ 'view_module' ] ))
             {
                 $module = $_REQUEST [ 'view_module' ] ;
+                
+                $bean = loadBean($module);
+                if(!empty($bean))
+                {
+	                $field_defs = $bean->field_defs;          
+	                if(isset($field_defs[$field->name. '_c']))
+	                {
+						$GLOBALS['log']->error($GLOBALS['mod_strings']['ERROR_ALREADY_EXISTS'] . '[' . $field->name . ']');
+						sugar_die($GLOBALS['mod_strings']['ERROR_ALREADY_EXISTS']);
+	                }
+                }                
+                
                 $df = new DynamicField ( $module ) ;
                 $class_name = $GLOBALS [ 'beanList' ] [ $module ] ;
                 require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
