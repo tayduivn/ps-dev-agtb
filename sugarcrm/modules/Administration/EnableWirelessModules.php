@@ -52,7 +52,8 @@ foreach ( array ( '','custom/') as $prefix)
 
 foreach ( $wireless_module_registry as $e => $def )
 {
-	$enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+	$enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) 
+	                               : ( ($e == "Reports") ? $app_list_strings['moduleList'][$e] . '*' : $app_list_strings['moduleList'][$e] );
 }
 require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
 $browser = new StudioBrowser();
@@ -62,6 +63,12 @@ foreach ( $browser->modules as $e => $def)
 {
 	if ( empty ( $enabled_modules [ $e ]))
 		$disabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+}
+
+//Always make the reports module an option, not a studio enabled module so must be explicitly added.
+if( !isset($enabled_modules['Reports']) )
+{
+    $disabled_modules['Reports'] = $app_list_strings['moduleList']['Reports'] . "*";
 }
 
 natcasesort($enabled_modules);
