@@ -4649,61 +4649,77 @@ function migrate_sugar_favorite_reports(){
 }
 
 function add_custom_modules_favorites_search(){
-    require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
-    require_once('modules/ModuleBuilder/MB/MBPackage.php');
-    require_once('modules/ModuleBuilder/MB/MBModule.php');
+    $module_directories = scandir('modules');
 
-    $mb = new ModuleBuilder();
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
 
-    $list = $mb->getPackageList();
+		$matches = array();
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
 
-    foreach($list as $package_name){
-        $package = new MBPackage($package_name);
-        foreach($package->modules as $mbmodule_object){
-            $module_directory = "modules/{$mbmodule_object->key_name}/";
-            $searchdefs_file = "{$module_directory}/metadata/searchdefs.php";
-            $SearchFields_file = "{$module_directory}/metadata/SearchFields.php";
-            if(file_exists($searchdefs_file) && file_exists($SearchFields_file)){
-                $found_sf1 = false;
-                $found_sf2 = false;
-                require($searchdefs_file);
-                foreach($searchdefs[$mbmodule_object->key_name] as $sf_array){
-                    if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
-                        $found_sf1 = true;
-                    }
-                }
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
 
-                require($SearchFields_file);
-                if(isset($searchFields[$mbmodule_object->key_name]['favorites_only'])){
-                    $found_sf2 = true;
-                }
+		$full_module_dir = "modules/{$module_dir}/";
+		$read_searchdefs_from = "{$full_module_dir}/metadata/searchdefs.php";
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
 
-                if(!$found_sf1 && !$found_sf2){
-                    $sf1 = file_get_contents($searchdefs_file);
-                    $sf1 = str_replace("?>", "", $sf1);
-                    $sf1 .= "\n\n";
-                    $sf1 .= "\$searchdefs[\$module_name]['layout']['basic_search']['favorites_only'] = array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);\n";
-                    $sf1 .= "\$searchdefs[\$module_name]['layout']['advanced_search']['favorites_only'] = array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);\n";
-                    $sf1 .= "\n?>";
-                    file_put_contents($searchdefs_file, $sf1);
+		// Studio can possibly override this file, so we check for a custom version of it
+		if(file_exists("custom/{$full_module_dir}/metadata/searchdefs.php")){
+			$read_searchdefs_from = "custom/{$full_module_dir}/metadata/searchdefs.php";
+		}
 
-                    $sf2 = file_get_contents($SearchFields_file);
-                    $sf2 = str_replace("?>", "", $sf2);
-                    $sf2 .= "\n\n";
-                    $sf2 .= "\$searchFields[\$module_name]['favorites_only'] = array(
-                'query_type'=>'format',
-                'operator' => 'subquery',
-                'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
-                                    WHERE sugarfavorites.deleted=0
-                                        and sugarfavorites.module = \''.\$module_name.'\'
-                                        and sugarfavorites.assigned_user_id = \'{0}\'',
-                'db_field'=>array('id'));\n";
-                    $sf2 .= "\n?>";
-                    file_put_contents($SearchFields_file, $sf2);
-                }
-            }
-        }
-    }
+		if(file_exists($read_searchdefs_from) && file_exists($read_SearchFields_from)){
+			$found_sf1 = false;
+			$found_sf2 = false;
+			require($read_searchdefs_from);
+			foreach($searchdefs[$module_dir]['layout']['basic_search'] as $sf_array){
+				if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+					$found_sf1 = true;
+				}
+			}
+
+			require($read_SearchFields_from);
+			if(isset($searchFields[$module_dir]['favorites_only'])){
+				$found_sf2 = true;
+			}
+
+			if(!$found_sf1 && !$found_sf2){
+				$searchdefs[$module_dir]['layout']['basic_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchdefs[$module_dir]['layout']['advanced_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchFields[$module_dir]['favorites_only'] = array(
+					'query_type'=>'format',
+					'operator' => 'subquery',
+					'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+								WHERE sugarfavorites.deleted=0
+									and sugarfavorites.module = \''.$module_dir.'\'
+									and sugarfavorites.assigned_user_id = \'{0}\'',
+					'db_field'=>array('id')
+				);
+
+				if(!is_dir("custom/{$full_module_dir}/metadata")){
+					mkdir_recursive("custom/{$full_module_dir}/metadata");
+				}
+				$success_sf1 = write_array_to_file('searchdefs', $searchdefs, "custom/{$full_module_dir}/metadata/searchdefs.php");
+				$success_sf2 = write_array_to_file('searchFields', $searchFields, "{$full_module_dir}/metadata/SearchFields.php");
+
+				if(!$success_sf1){
+					logThis("add_custom_modules_favorites_search failed for searchdefs.php for {$module_dir}");
+				}
+				if(!$success_sf2){
+					logThis("add_custom_modules_favorites_search failed for SearchFields.php for {$module_dir}");
+				}
+				if($success_sf1 && $success_sf2){
+					logThis("add_custom_modules_favorites_search successfully updated searchdefs and searchFields for {$module_dir}");
+				}
+			}
+		}
+	}
 }
 // END SUGARCRM flav=pro ONLY 
 
