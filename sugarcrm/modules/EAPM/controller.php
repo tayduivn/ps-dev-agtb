@@ -34,7 +34,7 @@ class EAPMController extends SugarController
      */
     protected $api;
 
-    public function failed($error)
+    protected function failed($error)
     {
         $_SESSION['administrator_error'] = $error;
         $GLOBALS['log']->error("Login error: $error");
@@ -46,7 +46,7 @@ class EAPMController extends SugarController
     {
         parent::pre_save();
         $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
-        if(!$this->api->supports($this->bean->type)) {
+        if(empty($this->api) || !$this->api->supports($this->bean->type)) {
             return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
         }
         $this->api->loadEAPM($this->bean);
@@ -56,6 +56,7 @@ class EAPMController extends SugarController
     protected function post_save()
     {
         if($this->bean->active) {
+            // do not load bean here since password is already encoded
             $reply = $this->api->checkLogin();
             if ( !$reply['success'] ) {
                 return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
@@ -64,5 +65,26 @@ class EAPMController extends SugarController
             }
         }
         return parent::post_save();
+    }
+
+    protected function action_oauth()
+    {
+        if(empty($this->bean->id)) {
+            return $this->set_redirect('index.php');
+        }
+		if(!$this->bean->ACLAccess('save')){
+			ACLController::displayNoAccess(true);
+			sugar_cleanup(true);
+			return true;
+		}
+        $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
+        $reply = $this->api->checkLogin($this->bean);
+        if ( !$reply['success'] ) {
+            return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+        } else {
+            $this->bean->validated();
+            // redirect to detail view, as in save
+            return parent::post_save();
+        }
     }
 }

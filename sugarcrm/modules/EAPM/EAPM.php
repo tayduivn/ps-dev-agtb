@@ -136,7 +136,7 @@ class EAPM extends Basic {
             $stage = 0;
         }
         if($stage == 0) {
-            $callback_url = urlencode($sugar_config['site_url'].'/index.php?module=EAPM&action=OAuth&record='.$this->id);
+            $callback_url = urlencode($sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->id);
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
@@ -154,6 +154,7 @@ class EAPM extends Basic {
             $this->save();
             unset($_SESSION['oauth_secret']);
             unset($_SESSION['oauth_token']);
+            return true;
         }
 	}
 

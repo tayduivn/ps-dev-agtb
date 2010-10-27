@@ -1,12 +1,14 @@
 <?php
 if(extension_loaded("oauth")) {
     // use PHP native oauth
-    class SugarOauth extends OAuth {
+    class SugarOAuth extends OAuth {
     }
 } else {
     require_once 'Zend/Oauth/Consumer.php';
     // use ZF oauth
-    class SugarOauth extends Zend_Oauth_Consumer {
+    class SugarOAuth extends Zend_Oauth_Consumer
+    {
+        protected $_last = '';
         public function __construct($consumer_key , $consumer_secret, $signature_method, $auth_type)
         {
             $config = array(
@@ -14,6 +16,9 @@ if(extension_loaded("oauth")) {
                 'consumerSecret' => $consumer_secret,
             );
             parent::__construct($config);
+            if(!empty($signature_method)) {
+                $this->setSignatureMethod($signature_method);
+            }
         }
 
         public function enableDebug()
@@ -48,18 +53,18 @@ if(extension_loaded("oauth")) {
                 $this->setCallbackUrl($callback);
             }
             $this->setRequestTokenUrl($url);
-            $token = parent::getRequestToken();
+            $this->_last = $token = parent::getRequestToken();
             return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
         }
 
         public function getAccessToken($url)
         {
             $this->setAccessTokenUrl($url);
-            $token = parent::getAccessToken($_REQUEST, $this->makeRequestToken());
+            $this->_last = $token = parent::getAccessToken($_REQUEST, $this->makeRequestToken());
             return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
         }
 
-       public function fetch($url, $params = null, $method = Zend_Http_Client::GET, $headers = null)
+       public function fetch($url, $params = null, $method = 'GET', $headers = null)
        {
             $acc = $this->makeAccessToken();
             $config = array(
@@ -72,17 +77,27 @@ if(extension_loaded("oauth")) {
                 $client->setHeaders($headers);
             }
             if(!empty($params)) {
-                // FIXME: post too
-                $client->setParameterGet($params);
+                if($method == 'GET') {
+                    $client->setParameterGet($params);
+                } else {
+                    $client->setParameterPost($params);
+                }
             }
-            $resp = $client->request();
+            $this->_last = $resp = $client->request();
             return $resp->getBody();
        }
 
-        public function __call($method, $args)
-        {
-            $GLOBALS['log']->fatal("SugarOAUTH: unsupported method $method called");
-            return false;
-        }
+       public function getLastResponse()
+       {
+            return $this->_last;
+       }
+
+//        public function __call($method, $args)
+//        {
+//            parent::
+//            debug_print_backtrace();
+//            die("SugarOAUTH: unsupported method $method called");
+//            return false;
+//        }
     }
 }
