@@ -5352,6 +5352,7 @@ color: #0B578F;
 }
 #SpotResults ul li{
 	margin-left:0px;
+	list-style-type:none;
 }
 
 #SpotResults li a
