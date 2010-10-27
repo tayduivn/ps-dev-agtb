@@ -1,16 +1,14 @@
 <?php
 
-require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
+class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
     protected $dateFormat = 'm/d/Y H:i:s';
 //    protected $urlExtension = '/envq/Production/';
     protected $url = 'eval-cloud2.castiron.com/envq/Production/';
 
-    public $useAuth = true;
-    public $requireAuth = true;
     public $authMethods = array("password" => 1, "oauth" => 1);
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
@@ -21,22 +19,10 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
 	protected $oauthReq = "https://apps.lotuslive.com/manage/oauth/getRequestToken";
     protected $oauthAuth = 'https://apps.lotuslive.com/manage/oauth/authorizeToken';
     protected $oauthAccess = 'https://apps.lotuslive.com/manage/oauth/getAccessToken';
-    protected $authData;
 
-    public function loadEAPM($eapmBean) {
-        if(!$this->supports($eapmBean->type)) {
-            // FIXME: produce error message for the user
-            $GLOBALS['log']->fatal("Unknown auth type: {$eapmBean->type}");
-            return false;
-        }
-        // FIXME: check if the bean is validated, if not, refuse it
-        //$this->account_url = $eapmBean->url.$this->urlExtension;
-        $this->account_url = $this->url;
-        $this->authData = $eapmBean;
-        if($eapmBean->type == 'password') {
-            $this->account_name = $eapmBean->name;
-            $this->account_password = $eapmBean->password;
-        }
+    public function loadEAPM($eapmBean)
+    {
+        parent::loadEAPM($eapmBean);
 
         if ( !empty($eapmBean->api_data) ) {
             $api_data = json_decode(base64_decode($eapmBean->api_data),true);
@@ -50,17 +36,9 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
         }
     }
 
-    public function checkLogin($eapmBean = null) {
-        if(!empty($eapmBean)) {
-            $this->loadEAPM($eapmBean);
-        }
-        if($this->authData->type == 'oauth') {
-            if(empty($this->authData->oauth_token)) {
-                $this->oauthLogin($this->oauthReq, $this->oauthAuth, $this->oauthAccess);
-            }
-            // FIXME: remove the return
-            return array('success'=>TRUE);
-        }
+    public function checkLogin($eapmBean = null)
+    {
+        parent::checkLogin($eapmBean);
         $reply = $this->makeRequest('GetMeeting', array());
 
         if ( $reply['success'] == TRUE ) {
@@ -185,7 +163,7 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
         $urlParams['UserName'] = $this->account_name;
         $urlParams['Password'] = $this->account_password;
 
-        $url = 'https://' . $this->account_url . $requestMethod . '?';
+        $url = 'https://' . $this->url . $requestMethod . '?';
         foreach($urlParams as $key => $value ) {
             // FIXME: urlencode the ciUser and ciPassword once they are ready for it
             if ( $key == 'ciUser' || $key == 'ciPassword' ) {
@@ -202,18 +180,7 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
             "Content-Length: ".strlen($dataString),
             );
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-        $GLOBALS['log']->fatal("Where: ".$url);
-        $GLOBALS['log']->fatal("Sent:\n".print_r($data,true));
-        $rawResponse = curl_exec($ch);
-        $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
+        $rawResponse = $this->postData($url, $dataString, $headers);
 
         $reply = array();
         $reply['responseRAW'] = $rawResponse;
@@ -236,8 +203,4 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
         return $reply;
     }
 
-	public function supports($method = '')
-	{
-	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
-	}
 }

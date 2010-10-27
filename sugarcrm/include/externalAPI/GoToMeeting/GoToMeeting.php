@@ -1,17 +1,15 @@
 <?php
 
-require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
+class GoToMeeting extends ExternalAPIBase implements WebMeeting {
 
     private $login_key;
 
     protected $dateFormat = 'Y-m-d\TH:i:s';
     protected $urlExtension = '/axis/services/G2M_Organizers';
 
-    public $useAuth = true;
-    public $requireAuth = true;
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
     public $authMethods = array("password" => 1);
@@ -27,12 +25,12 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
 
     public function loadEAPM($eapmBean) {
         $this->account_url = $eapmBean->url.$this->urlExtension;
-        $this->account_name = $eapmBean->name;
-        $this->account_password = $eapmBean->password;
+        parent::loadEAPM($eapmBean);
     }
 
-    public function checkLogin($eapmBean) {
-        $this->loadEAPM($eapmBean);
+    public function checkLogin($eapmBean)
+    {
+        parent::checkLogin($eapmBean);
 
         $reply = $this->login();
         if ( $reply['success'] ) {
@@ -233,18 +231,7 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
             'SOAPAction: ""'
             );
 
-        $ch = curl_init('https://' . $this->account_url);
-        curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-        $GLOBALS['log']->fatal("Where: https://".$this->account_url);
-        $GLOBALS['log']->fatal("Before:\n".print_r($xml,true));
-        $response = curl_exec($ch);
-        $GLOBALS['log']->fatal("Raw Reply:\n".print_r($response,true));
+        $response = $this->postData('https://' . $this->account_url, $xml, $headers);
 
         $reply = array();
         $reply['success'] = FALSE;
@@ -283,9 +270,4 @@ class GoToMeeting implements ExternalAPIPlugin,WebMeeting {
         $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
         return $reply;
     }
-
-    public function supports($method = '')
-	{
-	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
-	}
 }

@@ -1,28 +1,20 @@
 <?php
-require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
-class Google implements ExternalAPIPlugin,WebDocument {
-    public $useAuth = true;
-    public $requireAuth = true;
+class Google extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
-    public $authMethods = array("password" => 1);
-
+    public $authMethods = array("password" => 1, "oauth" => 1);
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
 	}
 
-    public function loadEAPM($eapmBean) {
-		$this->account_url = $eapmBean->url;
-		$this->account_name = $eapmBean->name;
-		$this->account_password = $eapmBean->password;
-    }
-
-    public function checkLogin($eapmBean) {
-        $this->loadEAPM($eapmBean);
+    public function checkLogin($eapmBean)
+    {
+        parent::checkLogin($eapmBean);
 
         // Emulate a reply
         $reply['success'] = TRUE;
@@ -37,12 +29,7 @@ class Google implements ExternalAPIPlugin,WebDocument {
         return $reply;
     }
 
-    public function logOff() {
-        // Not sure if we should do anything.
-        return true;
-    }
-
-	protected function getClient(){
+    protected function getClient(){
         if ( isset($this->httpClient) ) {
             // Already logged in
             return;
@@ -126,8 +113,4 @@ class Google implements ExternalAPIPlugin,WebDocument {
     function searchDoc($keywords){
 
     }
-    public function supports($method = '')
-	{
-	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
-	}
 }

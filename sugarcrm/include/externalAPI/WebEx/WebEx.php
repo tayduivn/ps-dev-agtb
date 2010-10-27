@@ -1,15 +1,13 @@
 <?php
 
-require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class WebEx implements ExternalAPIPlugin,WebMeeting {
+class WebEx extends ExternalAPIBase implements WebMeeting {
 
     protected $dateFormat = 'm/d/Y H:i:s';
     protected $urlExtension = '/WBXService/XMLService';
 
-    public $useAuth = true;
-    public $requireAuth = true;
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
     public $authMethods = array("password" => 1);
@@ -31,12 +29,11 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
 
     public function loadEAPM($eapmBean) {
         $this->account_url = $eapmBean->url.$this->urlExtension;
-        $this->account_name = $eapmBean->name;
-        $this->account_password = $eapmBean->password;
+        parent::loadEAPM($eapmBean);
     }
 
     public function checkLogin($eapmBean) {
-        $this->loadEAPM($eapmBean);
+        parent::checkLogin($eapmBean);
         $doc = new SimpleXMLElement($this->getuser_xml);
         $this->addAuthenticationInfo($doc);
 
@@ -261,18 +258,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
          "Content-Length: ".$content_length,
       );
 
-      $ch = curl_init('https://' . $this->account_url);
-      curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-      $GLOBALS['log']->fatal("Where: https://".$this->account_url);
-      $GLOBALS['log']->fatal("Before:\n".print_r($xml,true));
-      $response = curl_exec($ch);
-      $GLOBALS['log']->fatal("After:\n".print_r($response,true));
+      $response = $this->postData('https://' . $this->account_url, $xml, $headers);
       // $reply is an associative array that formats the basic information in a way that
       // callers can get most of the data out without having to understand any underlying formats.
       $reply = array();
@@ -314,11 +300,4 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
       $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
       return $reply;
    }
-
-   function logoff() { }
-
-    public function supports($method = '')
-	{
-	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
-	}
 }
