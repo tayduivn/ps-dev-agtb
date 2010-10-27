@@ -296,7 +296,7 @@ EOSQL;
     {
         $sql = '';
         if ( $this->doesTableHaveAFulltextIndexDefined($tablename) ) {
-            $sql .= "DROP FULLTEXT INDEX ON {$table}";
+            $sql .= "DROP FULLTEXT INDEX ON {$tablename}";
         }
         
         $sql .= parent::changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
