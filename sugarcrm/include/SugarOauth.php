@@ -1,5 +1,5 @@
 <?php
-if(extension_loaded("oauth")) {
+if(0 && extension_loaded("oauth")) {
     // use PHP native oauth
     class SugarOAuth extends OAuth {
     }
@@ -9,16 +9,18 @@ if(extension_loaded("oauth")) {
     class SugarOAuth extends Zend_Oauth_Consumer
     {
         protected $_last = '';
-        public function __construct($consumer_key , $consumer_secret, $signature_method, $auth_type)
+        protected $_oauth_config = array();
+
+        public function __construct($consumer_key , $consumer_secret, $signature_method = null, $auth_type = null)
         {
-            $config = array(
+            $this->_oauth_config = array(
                 'consumerKey' => $consumer_key,
                 'consumerSecret' => $consumer_secret,
             );
-            parent::__construct($config);
             if(!empty($signature_method)) {
-                $this->setSignatureMethod($signature_method);
+                $this->_oauth_config['signatureMethod'] = $signature_method;
             }
+            parent::__construct($this->_oauth_config);
         }
 
         public function enableDebug()
@@ -67,11 +69,7 @@ if(extension_loaded("oauth")) {
        public function fetch($url, $params = null, $method = 'GET', $headers = null)
        {
             $acc = $this->makeAccessToken();
-            $config = array(
-                'consumerKey' => $this->getConsumerKey(),
-                'consumerSecret' => $this->getConsumerSecret(),
-            );
-            $client = $acc->getHttpClient($config, $url);
+            $client = $acc->getHttpClient($this->_oauth_config, $url);
             $client->setMethod($method);
             if(!empty($headers)) {
                 $client->setHeaders($headers);
