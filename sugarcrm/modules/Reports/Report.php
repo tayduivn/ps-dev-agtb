@@ -810,7 +810,7 @@ print "<BR>";
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
         if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
-                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_average')))) {          		
+                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {          		
                 global $mod_strings;
 	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
 			
