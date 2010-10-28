@@ -62,7 +62,8 @@ class ExternalAPIFactory{
             }
         }
 
-        $optionList = array('supportedModules','useAuth','requireAuth','meetingPasswordSupported','docSearch', 'authMethods');
+        $optionList = array('supportedModules','useAuth','requireAuth','meetingPasswordSupported','docSearch');
+        $api_types = translate('LBL_API_TYPE_ENUM', 'EAPM');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {
@@ -78,6 +79,12 @@ class ExternalAPIFactory{
                 // Special handling for the show/hide of the Meeting Password field, we need to create a dropdown for the Sugar Logic code.
                 if ( isset($apiClass->supportMeetingPassword) && $apiClass->supportMeetingPassword == true ) {
                     $meetingPasswordList[$apiName] = $apiName;
+                }
+
+            }
+            if(isset($apiClass->authMethods)) {
+                foreach($apiClass->authMethods as $method => $yes) {
+                    $apiFullList[$apiName]['authMetods'][$method] = $api_types[$method];
                 }
             }
         }
@@ -126,8 +133,8 @@ class ExternalAPIFactory{
      * @param bool $apiName Ignore authentication requirements (optional)
      * @return API class
      */
-    public static function loadAPI($apiName,$ignoreAuth=false) {
-
+    public static function loadAPI($apiName, $ignoreAuth=false)
+    {
         $apiList = self::loadFullAPIList();
         if ( ! isset($apiList[$apiName]) ) {
             return false;
@@ -138,18 +145,22 @@ class ExternalAPIFactory{
         if ( !empty($myApi['file_cstm']) ) {
             require_once($myApi['file_cstm']);
         }
+
         $apiClassName = $myApi['className'];
 
-        if ( $myApi['useAuth'] ) {
+        $apiClass = new $apiClassName();
+        if ($ignoreAuth) {
+            return $apiClass;
+        }
+
+        if ($myApi['useAuth']) {
             $eapmBean = EAPM::getLoginInfo($apiName);
 
-            if ( !$ignoreAuth && !isset($eapmBean->application) && $myApi['requireAuth']) {
+            if (!isset($eapmBean->application) && $myApi['requireAuth']) {
                 // We need authentication, and they don't have it, don't load the API
                 return false;
             }
         }
-
-        $apiClass = new $apiClassName();
 
         if ( $myApi['useAuth'] && isset($eapmBean->application) ) {
             $apiClass->loadEAPM($eapmBean);

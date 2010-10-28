@@ -60,7 +60,7 @@ class Google extends ExternalAPIBase implements WebDocument {
 		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents
 		if(isset($this->authData) && $this->authData->type == 'oauth') {
 		    // FIXME: bail if auth token not set
-            $this->httpClient = $this->authData->getHttpClient();
+            $this->httpClient = $this->authData->getHttpClient($this);
 		} else {
 		    $this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
 		}

@@ -1,15 +1,15 @@
 <?php
-if(0 && extension_loaded("oauth")) {
-    // use PHP native oauth
-    class SugarOAuth extends OAuth
-    {
-        public function getHttpClient()
-        {
-            // FIXME
-            throw new Exception("FIXME: getHttpClient not implemented!");
-        }
-    }
-} else {
+//if(0 && extension_loaded("oauth")) {
+//    // use PHP native oauth
+//    class SugarOAuth extends OAuth
+//    {
+//        public function getHttpClient()
+//        {
+//            // FIXME
+//            throw new Exception("FIXME: getHttpClient not implemented!");
+//        }
+//    }
+//} else {
     require_once 'Zend/Oauth/Consumer.php';
     // use ZF oauth
     class SugarOAuth extends Zend_Oauth_Consumer
@@ -17,14 +17,14 @@ if(0 && extension_loaded("oauth")) {
         protected $_last = '';
         protected $_oauth_config = array();
 
-        public function __construct($consumer_key , $consumer_secret, $signature_method = null, $auth_type = null)
+        public function __construct($consumer_key , $consumer_secret, $params = null)
         {
             $this->_oauth_config = array(
                 'consumerKey' => $consumer_key,
                 'consumerSecret' => $consumer_secret,
             );
-            if(!empty($signature_method)) {
-                $this->_oauth_config['signatureMethod'] = $signature_method;
+            if(!empty($params)) {
+                $this->_oauth_config = array_merge($this->_oauth_config, $params);
             }
             parent::__construct($this->_oauth_config);
         }
@@ -119,13 +119,4 @@ if(0 && extension_loaded("oauth")) {
        {
             return $this->_lastReq;
        }
-
-       //        public function __call($method, $args)
-//        {
-//            parent::
-//            debug_print_backtrace();
-//            die("SugarOAUTH: unsupported method $method called");
-//            return false;
-//        }
     }
-}
