@@ -8,7 +8,7 @@ require_once('Zend/Gdata/ClientLogin.php');
 class Google extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
     public $authMethods = array("password" => 1, "oauth" => 1);
-    protected $scope = "https://www.google.com/m8/feeds/ http://docs.google.com/feeds/";
+    protected $scope = "https://docs.google.com/feeds/ http://docs.google.com/feeds/";
     protected $oauthReq ="https://www.google.com/accounts/OAuthGetRequestToken";
     protected $oauthAuth ="https://www.google.com/accounts/OAuthAuthorizeToken";
     protected $oauthAccess ="https://www.google.com/accounts/OAuthGetAccessToken";
@@ -22,12 +22,12 @@ class Google extends ExternalAPIBase implements WebDocument {
 
     protected function getIdFromUrl($url) {
         preg_match(
-            '/id=([\S]*)[&|$]/', 
-            $url, 
+            '/id=([\S]*)[&|$]/',
+            $url,
             $matches
-            );            
+            );
         $id = $matches[1];
-        
+
         return $id;
     }
 
@@ -96,24 +96,29 @@ class Google extends ExternalAPIBase implements WebDocument {
     	$format = 'txt';
     	$document = $this->gdClient->getDocument($documentId);
     	//var_dump(var_export($document));
-		$sessionToken = $this->httpClient->getClientLoginToken();
-		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);
-		$url = $document->content->getSrc();
-		//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
-		$opts = array(
-		    'http' => array(
-		    'method' => 'GET',
-		    'header' => "Host: docs.google.com\r\n".
-		    			"GData-Version: 2.0\r\n".
-						"Content-type: application/x-www-form-urlencoded\r\n".
-		                "Authorization: $sessionToken"
-			)
-		);
-		if ($url != null) {
-		    $url =  $url . "&exportFormat=$format";
-		}
-		$GLOBALS['log']->fatal('Google Doc URL: '.$url);
-		echo file_get_contents($url, false, stream_context_create($opts));
+    	if($this->authData->type == "password") {
+    	    // FIXME: can't we just use the httpClient? It should add auth automatically
+    		$sessionToken = $this->httpClient->getClientLoginToken();
+    		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);
+    		$url = $document->content->getSrc();
+	    	//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
+    		$opts = array(
+    		    'http' => array(
+    		    'method' => 'GET',
+    		    'header' => "Host: docs.google.com\r\n".
+    		    			"GData-Version: 2.0\r\n".
+    						"Content-type: application/x-www-form-urlencoded\r\n".
+    		                "Authorization: $sessionToken"
+    			)
+    		);
+    		if ($url != null) {
+    		    $url =  $url . "&exportFormat=$format";
+    		}
+    		$GLOBALS['log']->fatal('Google Doc URL: '.$url);
+    		echo file_get_contents($url, false, stream_context_create($opts));
+    	} else {
+    	    echo $this->httpClient->setUri($url)->request('GET')->getBody();
+    	}
     }
 
     function deleteDoc($documentId) {
@@ -135,9 +140,9 @@ class Google extends ExternalAPIBase implements WebDocument {
             $docsQuery->setQuery($keywords);
             $feed = $this->gdClient->getDocumentListFeed($docsQuery);
         }
-        
+
         $rawResults = $feed->getEntry();
-        
+
         $results = array();
         foreach ( $rawResults as $result ) {
             $alternateLink = $result->getAlternateLink()->getHref();
@@ -149,7 +154,7 @@ class Google extends ExternalAPIBase implements WebDocument {
 
             $curr['id'] = $this->getIdFromUrl($alternateLink);
 
-            
+
             $results[] = $curr;
         }
 
