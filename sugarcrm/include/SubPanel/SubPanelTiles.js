@@ -191,6 +191,10 @@ function set_return_and_save_background(popup_reply_data)
 
 function got_data(args, inline)
 {
+	//check for the objects that are null or undefined when a timeout occurs.
+	if(typeof(request_map) == 'undefined' || typeof(args) == 'undefined' || request_map == null || args == null || typeof(args.request_id) == 'undefined' || typeof(		return;
+	}
+
 	var list_subpanel = document.getElementById('list_subpanel_'+request_map[args.request_id].toLowerCase());
 	//this function assumes that we are always working with a subpanel..
 	//add a null check to prevent failures when we are not.
