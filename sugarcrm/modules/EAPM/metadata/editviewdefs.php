@@ -27,38 +27,34 @@
  *******************************************************************************/
 $module_name = 'EAPM';
 $viewdefs[$module_name]['EditView'] = array(
-    'templateMeta' => array('maxColumns' => '2', 
+    'templateMeta' => array('maxColumns' => '2',
                             'widths' => array(
-                                            array('label' => '10', 'field' => '30'), 
+                                            array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
-                                            ),                                                                                                                                    
                                             ),
-                                            
-                                            
+                                            ),
+
+
  'panels' =>array (
-  'default' => 
+  'default' =>
   array (
-    
+    array('application', 'type'),
+    array('active'),
     array (
       'name',
-      'application',
-    ),
-    array (
        array('name'=>'password', 'type'=>'password'),
-       'assigned_user_name',
+    ),
+    array('consumer_key', 'consumer_secret'),
+    array (
+      'url',
+    'assigned_user_name',
    ),
-   array (
-      'url'
-   ),
-
-
-    
     array (
       'description',
     ),
   ),
-                                                    
+
 ),
-                        
+
 );
 ?>

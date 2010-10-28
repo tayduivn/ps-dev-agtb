@@ -28,11 +28,62 @@
 
 class EAPMController extends SugarController
 {
-    protected function post_save() {
-        if (! $this->bean->login_success ) {
-            $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
-            return $this->set_redirect($url);
+    /**
+     * API implementation
+     * @var ExternalAPIPlugin
+     */
+    protected $api;
+
+    protected function failed($error)
+    {
+        $_SESSION['administrator_error'] = $error;
+        $GLOBALS['log']->error("Login error: $error");
+        $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
+        return $this->set_redirect($url);
+    }
+
+    public function pre_save()
+    {
+        parent::pre_save();
+        $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
+        if(empty($this->api) || !$this->api->supports($this->bean->type)) {
+            return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
+        }
+        $this->api->loadEAPM($this->bean);
+        $this->bean->validated = false;
+    }
+
+    protected function post_save()
+    {
+        if($this->bean->active) {
+            // do not load bean here since password is already encoded
+            $reply = $this->api->checkLogin();
+            if ( !$reply['success'] ) {
+                return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+            } else {
+                $this->bean->validated();
+            }
+        }
+        return parent::post_save();
+    }
+
+    protected function action_oauth()
+    {
+        if(empty($this->bean->id)) {
+            return $this->set_redirect('index.php');
+        }
+		if(!$this->bean->ACLAccess('save')){
+			ACLController::displayNoAccess(true);
+			sugar_cleanup(true);
+			return true;
+		}
+        $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
+        $reply = $this->api->checkLogin($this->bean);
+        if ( !$reply['success'] ) {
+            return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
         } else {
+            $this->bean->validated();
+            // redirect to detail view, as in save
             return parent::post_save();
         }
     }

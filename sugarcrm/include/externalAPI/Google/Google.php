@@ -1,16 +1,15 @@
 <?php
-require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/Docs/Query.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
-class Google implements ExternalAPIPlugin,WebDocument {
-    public $useAuth = true;
-    public $requireAuth = true;
-    public $docSearch = true;
+class Google extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
+    public $authMethods = array("password" => 1, "oauth" => 1);
 
+    public $docSearch = true;
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
@@ -26,16 +25,11 @@ class Google implements ExternalAPIPlugin,WebDocument {
         
         return $id;
     }
-	
-    public function loadEAPM($eapmBean) {
-		$this->account_url = $eapmBean->url;
-		$this->account_name = $eapmBean->name;
-		$this->account_password = $eapmBean->password;
-    }
 
-    public function checkLogin($eapmBean) {
-        $this->loadEAPM($eapmBean);
-        
+    public function checkLogin($eapmBean)
+    {
+        parent::checkLogin($eapmBean);
+
         // Emulate a reply
         $reply['success'] = TRUE;
 
@@ -49,30 +43,25 @@ class Google implements ExternalAPIPlugin,WebDocument {
         return $reply;
     }
 
-    public function logOff() {
-        // Not sure if we should do anything.
-        return true;
-    }
-
-	protected function getClient(){
+    protected function getClient(){
         if ( isset($this->httpClient) ) {
             // Already logged in
             return;
         }
-		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents	
+		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents
 		$this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
 		$this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
 	}
-			
+
 	function uploadDoc($bean, $fileToUpload, $docName, $mimeType){
 		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
 		try{
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
-                                                            $mimeType, 
+                                                            $mimeType,
                                                             Zend_Gdata_Docs::DOCUMENTS_LIST_FEED_URI);
-            
+
             // Find the URL of the HTML view of this document.
             $alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
@@ -84,7 +73,7 @@ class Google implements ExternalAPIPlugin,WebDocument {
              $result['success'] = FALSE;
              $result['errorMsg'] = $e->getMessage();
          }
-        
+
         return $result;
 	}
 
@@ -97,34 +86,33 @@ class Google implements ExternalAPIPlugin,WebDocument {
 		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);
 		$url = $document->content->getSrc();
 		//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
-		$opts = array(  
-		    'http' => array(  
-		    'method' => 'GET',  
+		$opts = array(
+		    'http' => array(
+		    'method' => 'GET',
 		    'header' => "Host: docs.google.com\r\n".
-		    			"GData-Version: 2.0\r\n". 
-						"Content-type: application/x-www-form-urlencoded\r\n". 
-		                "Authorization: $sessionToken"  
-		
-//			    'header' => "Authorization: \"$sessionToken\"\r\n"  
-			)  
-		);  
-		if ($url != null) {  
-		    $url =  $url . "&exportFormat=$format";  
+		    			"GData-Version: 2.0\r\n".
+						"Content-type: application/x-www-form-urlencoded\r\n".
+		                "Authorization: $sessionToken"
+
+//			    'header' => "Authorization: \"$sessionToken\"\r\n"
+			)
+		);
+		if ($url != null) {
+		    $url =  $url . "&exportFormat=$format";
 		}
 		$GLOBALS['log']->fatal('Google Doc URL: '.$url);
-		echo file_get_contents($url, false, stream_context_create($opts)); 
+		echo file_get_contents($url, false, stream_context_create($opts));
     }
-    
+
     function deleteDoc($documentId) {
 		$this->getClient();
     	$document = $this->gdClient->getDocument($documentId);
     	return  $document->delete();
     }
-	
+
 	function shareDoc($documentId, $emails){
-		
+
 	}
-	
     function searchDoc($keywords){
 		$this->getClient();
 

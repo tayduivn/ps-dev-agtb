@@ -1,21 +1,20 @@
 <?php
 
-require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class WebEx implements ExternalAPIPlugin,WebMeeting {
+class WebEx extends ExternalAPIBase implements WebMeeting {
 
     protected $dateFormat = 'm/d/Y H:i:s';
     protected $urlExtension = '/WBXService/XMLService';
-	
-    public $useAuth = true;
-    public $requireAuth = true;
+
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
+    public $authMethods = array("password" => 1);
 
 	function __construct() {
       require('include/externalAPI/WebEx/WebExXML.php');
-      
+
       $this->schedule_xml = $schedule_xml;
       $this->unschedule_xml = $unschedule_xml;
       $this->details_xml = $details_xml;
@@ -27,25 +26,24 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
       $this->edit_xml = $edit_xml;
       $this->getuser_xml = $getuser_xml;
    }
-	
+
     public function loadEAPM($eapmBean) {
         $this->account_url = $eapmBean->url.$this->urlExtension;
-        $this->account_name = $eapmBean->name;
-        $this->account_password = $eapmBean->password;
+        parent::loadEAPM($eapmBean);
     }
 
     public function checkLogin($eapmBean) {
-        $this->loadEAPM($eapmBean);
+        parent::checkLogin($eapmBean);
         $doc = new SimpleXMLElement($this->getuser_xml);
         $this->addAuthenticationInfo($doc);
-        
+
         $doc->body->bodyContent->webExId = $this->account_name;
 
         $reply = $this->postMessage($doc);
-        
+
         return $reply;
     }
-	
+
 	/**
 	 * Create a new WebEx meeting.
 	 * @param string $name
@@ -56,7 +54,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
 	 */
 	function scheduleMeeting($bean) {
 		global $current_user;
-		
+
         if (!empty($bean->external_id)) {
             $doc = new SimpleXMLElement($this->edit_xml);
             $doc->body->bodyContent->meetingkey = $bean->external_id;
@@ -64,13 +62,13 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
             $doc = new SimpleXMLElement($this->schedule_xml);
         }
 		$this->addAuthenticationInfo($doc);
-		
+
 		$doc->body->bodyContent->accessControl->meetingPassword = $bean->password;
-		
+
 		$doc->body->bodyContent->metaData->confName = $bean->name;
 		$doc->body->bodyContent->metaData->agenda = '';
-		
-		$doc->body->bodyContent->participants->maxUserNumber = '1';		
+
+		$doc->body->bodyContent->participants->maxUserNumber = '1';
         $attendee = $doc->body->bodyContent->participants->attendees->addChild('attendee', '');
 		$person = $attendee->addChild('person');
 		$person->addChild('name', $GLOBALS['current_user']->full_name);
@@ -87,9 +85,9 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
 		$doc->body->bodyContent->schedule->duration = $duration;
 		//ID of 20 is GMT
 		$doc->body->bodyContent->schedule->timeZoneID = '20';
-      
+
         $reply = $this->postMessage($doc);
-        
+
         if ($reply['success']) {
             if ( empty($bean->external_id) ) {
                 $xp = new DOMXPath($reply['responseXML']);
@@ -118,10 +116,10 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
             $bean->external_id = '';
             $bean->creator = '';
         }
-        
+
         return $reply;
 	}
-	
+
 	/**
 	 * Edit an existing webex meeting
 	 * @param string $name
@@ -145,7 +143,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
 		$doc->body->bodyContent->meetingKey = $meeting;
 		return $this->postMessage($doc);
 	}
-	
+
    /**
     * Get the url for joining the meeting with key $meeting as
     * attendee $attendeeName.
@@ -173,10 +171,10 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
       $doc->body->bodyContent->sessionKey = $meeting;
       return $this->postMessage($doc);
    }
-	
+
 	/**
 	 * Invite $attendee to the meeting with key $session.
-	 * @param string $meeting - The WebEx session key. 
+	 * @param string $meeting - The WebEx session key.
 	 * @param array $attendee - An array with entries for 'name' and 'email'
 	 * return: The XML response from the WebEx server.
 	 */
@@ -196,7 +194,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
     * Uninvite the attendee with ID $attendeeID from the meeting.
     * Note: attendee ID is returned as part of the response to
     * inviteAtendee().  The attendee ID refers to a specific person
-    * and a specific meeting. 
+    * and a specific meeting.
     * @param array $attendeeID - WebEx attendee ID.
 	 * return: The XML response from the WebEx server.
     */
@@ -219,7 +217,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
    /**
     * Get detailed information about the meeting
     * with key $meeting.
-    * @param string meeting- The WebEx meeting key. 
+    * @param string meeting- The WebEx meeting key.
 	 * return: The XML response from the WebEx server.
     */
    function getMeetingDetails($meeting) {
@@ -228,7 +226,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
       $doc->body->bodyContent->meetingKey = $meeting;
       return $this->postMessage($doc);
    }
-	
+
    /**
     * Adds values to the security context header for a
     * WebEx XML request.
@@ -260,18 +258,7 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
          "Content-Length: ".$content_length,
       );
 
-      $ch = curl_init('https://' . $this->account_url);
-      curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, false);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
-      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
-
-      $GLOBALS['log']->fatal("Where: https://".$this->account_url);
-      $GLOBALS['log']->fatal("Before:\n".print_r($xml,true));
-      $response = curl_exec($ch);
-      $GLOBALS['log']->fatal("After:\n".print_r($response,true));
+      $response = $this->postData('https://' . $this->account_url, $xml, $headers);
       // $reply is an associative array that formats the basic information in a way that
       // callers can get most of the data out without having to understand any underlying formats.
       $reply = array();
@@ -313,7 +300,4 @@ class WebEx implements ExternalAPIPlugin,WebMeeting {
       $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
       return $reply;
    }
-
-   function logoff() { }
-	
 }
