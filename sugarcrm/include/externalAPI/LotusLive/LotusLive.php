@@ -152,7 +152,24 @@ class LotusLive implements ExternalAPIPlugin,WebMeeting,WebDocument {
     public function downloadDoc($documentId, $documentFormat){}
     public function shareDoc($documentId, $emails){}
     public function deleteDoc($documentId){}
-    public function searchDoc($keywords){}
+    public function searchDoc($keywords){
+        global $db;
+
+        $sql = "
+SELECT doc_id AS id, filename AS name, date_modified AS date_modified FROM notes WHERE filename LIKE '".$db->quote($keywords)."%' OR name LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLive'
+UNION ALL
+SELECT doc_id AS id, filename AS name, date_modified AS date_modified FROM document_revisions WHERE filename LIKE '".$db->quote($keywords)."%' OR name LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLive' ORDER BY date_modified DESC";
+
+        $ret = $db->query($sql);
+
+        $results = array();
+
+        while ( $row = $db->fetchByAssoc($ret) ) {
+            $results[] = $row;
+        }
+
+        return $results;
+    }
    
     // Internal functions
     protected function makeRequest($requestMethod, $data = array(), $urlParams = array() ) {

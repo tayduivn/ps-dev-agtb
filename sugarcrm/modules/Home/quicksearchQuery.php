@@ -338,6 +338,21 @@ class quicksearchQuery {
         return $json->encodeReal($list_arr);
     }
     //END SUGARCRM flav=pro ONLY
+
+    function externalApi($data) {
+        require_once('include/externalAPI/ExternalAPIFactory.php');
+        
+        $api = ExternalAPIFactory::loadAPI($data['api']);
+
+    	$json = getJSONobj();
+
+        $listArray['fields'] = $api->searchDoc($_REQUEST['query']);
+        $listArray['totalCount'] = count($listArray['fields']);
+        
+        $listJson = $json->encodeReal($listArray);
+        
+        return $listJson;
+    }
 }
 
 $json = getJSONobj();

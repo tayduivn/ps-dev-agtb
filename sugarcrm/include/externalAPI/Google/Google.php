@@ -2,17 +2,30 @@
 require_once('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
+require_once('Zend/Gdata/Docs/Query.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
 class Google implements ExternalAPIPlugin,WebDocument {
     public $useAuth = true;
     public $requireAuth = true;
+    public $docSearch = true;
     public $supportedModules = array('Documents', 'Notes');
 
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
 	}
+
+    protected function getIdFromUrl($url) {
+        preg_match(
+            '/id=([\S]*)[&|$]/', 
+            $url, 
+            $matches
+            );            
+        $id = $matches[1];
+        
+        return $id;
+    }
 	
     public function loadEAPM($eapmBean) {
 		$this->account_url = $eapmBean->url;
@@ -63,13 +76,7 @@ class Google implements ExternalAPIPlugin,WebDocument {
             // Find the URL of the HTML view of this document.
             $alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
-            
-            preg_match(
-                '/id=([\S]*)[&|$]/', 
-                $alternateLink, 
-                $matches
-                );            
-			$bean->doc_id = $matches[1];
+            $bean->doc_id = $this->getIdFromUrl($alternateLink);
             $bean->doc_url = $alternateLink;
             $result['success'] = TRUE;
 		}catch (Exception $e)
@@ -118,11 +125,34 @@ class Google implements ExternalAPIPlugin,WebDocument {
 		
 	}
 	
-	function browseDoc($path){
-		
-	}
-
     function searchDoc($keywords){
-    	
+		$this->getClient();
+
+        if ( empty($keywords) ) {
+            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full/-/document');
+        } else {
+            $docsQuery = new Zend_Gdata_Docs_Query();
+            $docsQuery->setQuery($keywords);
+            $feed = $this->gdClient->getDocumentListFeed($docsQuery);
+        }
+        
+        $rawResults = $feed->getEntry();
+        
+        $results = array();
+        foreach ( $rawResults as $result ) {
+            $alternateLink = $result->getAlternateLink()->getHref();
+//        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
+
+            $curr['url'] = $alternateLink;
+            $curr['name'] = $result->title->getText();
+            $curr['date_modified'] = $result->updated->getText();
+
+            $curr['id'] = $this->getIdFromUrl($alternateLink);
+
+            
+            $results[] = $curr;
+        }
+
+        return $results;
     }
 }

@@ -5,7 +5,7 @@
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldFile extends SugarFieldBase {
-    private function fillInOptions(&$vardef,$displayParams) {
+    private function fillInOptions(&$vardef,&$displayParams) {
         if ( isset($vardef['allowEapm']) && $vardef['allowEapm'] == true ) {
             if ( empty($vardef['docType']) ) {
                 $vardef['docType'] = 'doc_type';
@@ -41,7 +41,9 @@ class SugarFieldFile extends SugarFieldBase {
         return parent::getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
     
-	public function save(&$bean, $params, $field, $properties, $prefix = ''){
+	public function save(&$bean, $params, $field, $vardef, $prefix = ''){
+        $GLOBALS['log']->fatal('IKEA: Im trying to save');
+
 		require_once('include/upload_file.php');
 		$upload_file = new UploadFile($prefix . $field);
 
@@ -59,6 +61,7 @@ class SugarFieldFile extends SugarFieldBase {
     		$bean->file_mime_type = $upload_file->mime_type;
 			$bean->file_ext = $upload_file->file_ext;
 			$move=true;
+            $GLOBALS['log']->fatal('IKEA: It is looking good so far');
 		}
  		
 		if ($move) {
@@ -68,7 +71,24 @@ class SugarFieldFile extends SugarFieldBase {
 			}
         
 			$upload_file->final_move($bean->id);
-		}
+            $GLOBALS['log']->fatal('IKEA: Calling upload_doc, doc_type:'.$bean->doc_type);
+            $upload_file->upload_doc($bean, $bean->id, $bean->doc_type, $bean->filename, $bean->mime_type);
+		} else if ( !empty($params[$prefix . $vardef['name'] . '_remoteName']) ) {
+            // We ain't moving, we might need to do some remote linking
+            $displayParams = array();
+            $this->fillInOptions($vardef,$displayParams);
+
+            $GLOBALS['log']->fatal('IKEA: Params: '.print_r($params,true));
+            $GLOBALS['log']->fatal('IKEA: vardef: '.print_r($vardef,true));
+            
+            if ( isset($params[$prefix . $vardef['docId']])
+                 && ! empty($params[$prefix . $vardef['docId']])
+                 && isset($params[$prefix . $vardef['docType']]) 
+                 && ! empty($params[$prefix . $vardef['docType']])
+                ) {
+                $bean->filename = $params[$prefix . $vardef['name'] . '_remoteName'];
+            }
+        }
 	}
 }
 ?>

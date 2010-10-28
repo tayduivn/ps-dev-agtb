@@ -140,7 +140,10 @@ class Note extends SugarBean {
 		if(!empty($this->doc_type) && !empty($this->doc_id)){
             $document = ExternalAPIFactory::loadAPI($this->doc_type);
 
-	      	$response = $document->deleteDoc($this->doc_id);
+	      	$response = $document->deleteDoc($this);
+            $this->doc_type = '';
+            $this->doc_id = '';
+            $this->doc_url = '';
 		}
 		if(file_exists($removeFile)) {
 			if(!unlink($removeFile)) {

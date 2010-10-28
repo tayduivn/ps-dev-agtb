@@ -120,19 +120,6 @@ $dictionary['Note'] = array(
     'importable' => 'required',
     'required' => true,
   ),
-  'filename' =>
-  array (
-    'name' => 'filename',
-    'vname' => 'LBL_FILENAME',
-    'type' => 'file',
-    'len' => '255',
-    'reportable'=>true,
-    'comment' => 'File name associated with the note (attachment)',
-    'importable' => false,
-    // Special file-only options
-    // This one allows the use of external api's to store files to.
-    'allowEapm'=>true,
-  ),
   'file_mime_type' =>
   array (
     'name' => 'file_mime_type',
@@ -183,6 +170,19 @@ $dictionary['Note'] = array(
   	'comment' => 'Path to file (can be URL)',
     'importable' => false,
   	),
+  'filename' =>
+  array (
+    'name' => 'filename',
+    'vname' => 'LBL_FILENAME',
+    'type' => 'file',
+    'len' => '255',
+    'reportable'=>true,
+    'comment' => 'File name associated with the note (attachment)',
+    'importable' => false,
+    // Special file-only options
+    // This one allows the use of external api's to store files to.
+    'allowEapm'=>true,
+  ),
   'parent_type'=>
   array(
   	'name'=>'parent_type',
