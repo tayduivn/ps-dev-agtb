@@ -51,24 +51,20 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
 	            }
             }
         },
-        setupEapiShowHide: function(elemBaseName,docTypeName) {
+        setupEapiShowHide: function(elemBaseName,docTypeName,formName) {
             var showHideFunc = function() {
-                console.log("Looking for: " + elemBaseName);
-                console.log("Dropdown: " + docTypeName);
                 var docShowHideElem = document.getElementById(elemBaseName + "_externalApiSelector");
-                console.log("Found: " + docShowHideElem.id);
                 var dropdownValue = document.getElementById(docTypeName).value;
-                console.log("Dropdown Value: " + dropdownValue);
                 if ( typeof(SUGAR.eapm) != 'undefined' 
                      && typeof(SUGAR.eapm[dropdownValue]) != 'undefined' 
                      && typeof(SUGAR.eapm[dropdownValue].docSearch) != 'undefined'
                      && SUGAR.eapm[dropdownValue].docSearch ) {
                     docShowHideElem.style.display = '';
-                    console.log("I'm showing... I hope");
                 } else {
                     docShowHideElem.style.display = 'none';
-                    console.log("I'm hiding");
                 }
+
+                sqs_objects[formName+"_"+elemBaseName+"_remoteName"].api = dropdownValue;
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 

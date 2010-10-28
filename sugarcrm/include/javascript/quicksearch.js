@@ -42,6 +42,10 @@ function enableQS(noReload){
     	if(typeof sqs_objects == 'undefined') {
     	   return;
     	}
+        
+        // Try and push this global
+        ikea_sqs_objects = sqs_objects;
+        console.log("IKEA: made global? "+ikea_sqs_objects.length);
     	
     	var Dom = YAHOO.util.Dom;
     	
@@ -68,15 +72,19 @@ function enableQS(noReload){
 
         	//Another safety check, if the sqs_objects entry is not defined, we can't do anything useful
         	if(typeof sqs_objects[qs_index_id] == 'undefined') {
+                console.log("IKEA: Could not find sqs object (1): "+qs_index_id);
         		qs_index_id = qsFields[qsField].name;
         		if(typeof sqs_objects[qs_index_id] == 'undefined') {
+                    console.log("IKEA: Could not find sqs object (2): "+qs_index_id);
         	   		continue;
         	   	}
         	}
+            console.log("IKEA: FOUND: "+qs_index_id+" in length: "+sqs_objects.length);
         	
         	//Track if this field has already been processed.  The way the enableQS function is called
         	//is a bit problematic in that it lends itself to a lot of duplicate processing
         	if(QSProcessedFieldsArray[qs_index_id]) {
+                console.log("IKEA: Already processed: "+qs_index_id);
         	   continue;
         	}      	        	
         	
@@ -86,6 +94,7 @@ function enableQS(noReload){
             var loaded = false;   
 
             if (!document.forms[qs_obj.form]) {
+                console.log("IKEA: Not in form: "+qs_index_id);
         		continue;
         	}
             //Skip quicksearch fields that are readOnly or that are disabled since you can't search on them anyway
@@ -124,10 +133,12 @@ function enableQS(noReload){
         				},
         				connMethodPost: true
         		    });
+                    console.log("IKEA, ds type: "+typeof(ds));
                     
                     // Don't force selection for search fields
                     var forceSelect = !((qsFields[qsField].form && typeof(qsFields[qsField].form) == 'object' && qsFields[qsField].form.name == 'search_form')
 							|| qsFields[qsField].className.match('sqsNoAutofill') !=  null);
+                    console.log("IKEA, forceSelect: "+forceSelect);
                     
                     //Finally Declare the Autocomplete
                     var search = new YAHOO.widget.AutoComplete(qsFields[qsField], resultDiv, ds, {
@@ -173,6 +184,8 @@ function enableQS(noReload){
 							this.oldValue = "";
 	                    }
                     });
+                    console.log("IKEA, search: "+typeof(search));
+
                     
                     //fill in the data fields on selection
                     search.itemSelectEvent.subscribe(function(e, args){

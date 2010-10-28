@@ -71,15 +71,16 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}} 
-value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name' stringFormat=true}}{/if}"
+value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}"
 {{$displayParams.field}}>
 
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:inline;">
 <br><h4>Search External Source</h4>
-<input type="hidden" name="{{$vardef.docId}}" value="{$fields[{{$vardef.docId}}].value}">
-<input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
+<input type="hidden" name="{{$vardef.docId}}" id="{{$vardef.docId}}" value="{$fields[{{$vardef.docId}}].value}">
+<input type="hidden" name="{{$vardef.docUrl}}" id="{{$vardef.docUrl}}" value="{$fields[{{$vardef.docUrl}}].value}">
+<input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
 {{elseif !empty($displayParams.maxlength)}}
@@ -91,8 +92,32 @@ value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$v
 </span>
 <script type="text/javascript">
 YAHOO.util.Event.onDOMReady(function() {ldelim}
-SUGAR.field.file.setupEapiShowHide("{{$idName}}","{{$vardef.docType}}");
+SUGAR.field.file.setupEapiShowHide("{{$idName}}","{{$vardef.docType}}","{$form_name}");
 {rdelim});
+
+console.log("I'm over here");
+
+if ( typeof(sqs_objects) == 'undefined' ) {ldelim}
+    sqs_objects = new Array;
+{rdelim}
+
+sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
+"form":"{$form_name}",
+"method":"externalApi",
+"api":"",
+"modules":["EAPM"],
+"field_list":["name", "id", "url"],
+"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}"],
+"required_list":["name"],
+"conditions":[],
+"no_match_text":"No Match"
+{rdelim};
+
+if(typeof QSProcessedFieldsArray != 'undefined') {ldelim}
+	QSProcessedFieldsArray["{$form_name}_{{$idName}}_remoteName"] = false;
+{rdelim}
+
+enableQS(false);
 </script>
 {{/if}}
 </span>
