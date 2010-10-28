@@ -69,7 +69,7 @@ class MyCallsDashlet extends DashletGeneric {
         	$this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
 	    	
             $lvsParams = array(
-                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\')',
+                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\')  GROUP BY calls.assigned_user_id,calls.id',
                            );
         } else {
             $lvsParams = array();

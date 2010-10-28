@@ -70,7 +70,7 @@ class MyMeetingsDashlet extends DashletGeneric {
         if($this->myItemsOnly) { // handle myitems only differently
 			$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
             $lvsParams = array(
-                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\')',
+                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\')  GROUP BY meetings.assigned_user_id, meetings.id',
                            );
         } else {
             $lvsParams = array();
