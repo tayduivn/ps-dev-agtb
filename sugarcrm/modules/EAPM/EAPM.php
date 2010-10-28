@@ -59,6 +59,8 @@ class EAPM extends Basic {
 		var $oauth_token;
 		var $oauth_secret;
 		var $application;
+		var $consumer_key;
+		var $consumer_secret;
 		var $disable_row_level_security = true;
 
 	function bean_implements($interface){
@@ -72,7 +74,7 @@ class EAPM extends Basic {
        global $current_user;
 
        $eapmBean = new EAPM();
-       $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application, 'active' => 1));
+       $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application, 'active' => 1, 'validated' => 1));
 
        /*
         $results = $GLOBALS['db']->query("SELECT * FROM eapm WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' AND application='$application' AND deleted = 0");
@@ -120,40 +122,55 @@ class EAPM extends Basic {
        }
    }
 
+   /**
+    * Get OAuth client
+    * @return SugarOauth
+    */
    protected function getOauth()
    {
-        $oauth = new SugarOAuth($this->oauthData->consumer_key, $this->oauthData->consumer_secret);
+        $oauth = new SugarOAuth($this->consumer_key, $this->consumer_secret);
         return $oauth;
+   }
+
+   public function getHttpClient()
+   {
+       if($this->type == 'oauth') {
+           $oauth = $this->getOauth();
+           $oauth->setToken($this->oauth_token, $this->oauth_secret);
+           return $oauth->getClient();
+       }
+       return false;
    }
 
    public function oauthLogin($oauthReq, $authReq, $accReq)
    {
         global $sugar_config;
         $oauth = $this->getOauth();
-        if(isset($_SESSION['oauth_secret']) && isset($_SESSION['oauth_token']) && isset($_REQUEST['oauth_token']) && isset($_REQUEST['oauth_verifier'])) {
+        if(isset($_SESSION['eapm_oauth_secret']) && isset($_SESSION['eapm_oauth_token']) && isset($_REQUEST['oauth_token']) && isset($_REQUEST['oauth_verifier'])) {
             $stage = 1;
         } else {
             $stage = 0;
         }
         if($stage == 0) {
-            $callback_url = urlencode($sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->id);
+            $callback_url = $sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->id;
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
-            $_SESSION['oauth_secret'] = $request_token_info['oauth_token_secret'];
-            $_SESSION['oauth_token'] = $request_token_info['oauth_token'];
+            $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
+            $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
             SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
         } else {
-            $oauth->setToken($_SESSION['oauth_token'],$_SESSION['oauth_secret']);
+            $oauth->setToken($_SESSION['eapm_oauth_token'],$_SESSION['eapm_oauth_secret']);
             $GLOBALS['log']->debug("OAuth access token: {$accReq}");
             $access_token_info = $oauth->getAccessToken($accReq);
             $GLOBALS['log']->debug("OAuth token: ".var_export($access_token_info, true));
             $this->oauth_token = $access_token_info['oauth_token'];
             $this->oauth_secret = $access_token_info['oauth_token_secret'];
+            $oauth->setToken($this->oauth_token, $this->oauth_secret);
             $this->validated = 1;
             $this->save();
-            unset($_SESSION['oauth_secret']);
-            unset($_SESSION['oauth_token']);
+            unset($_SESSION['eapm_oauth_token']);
+            unset($_SESSION['eapm_oauth_secret']);
             return true;
         }
 	}
@@ -177,6 +194,11 @@ class EAPM extends Basic {
 	    parent::fill_in_additional_list_fields();
 	}
 
+	public function save_cleanup()
+	{
+	    $this->oauth_token = "";
+        $this->oauth_secret = "";
+	}
 }
 
 // External API integration, for the dropdown list of what external API's are available

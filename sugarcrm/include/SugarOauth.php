@@ -1,7 +1,13 @@
 <?php
 if(0 && extension_loaded("oauth")) {
     // use PHP native oauth
-    class SugarOAuth extends OAuth {
+    class SugarOAuth extends OAuth
+    {
+        public function getHttpClient()
+        {
+            // FIXME
+            throw new Exception("FIXME: getHttpClient not implemented!");
+        }
     }
 } else {
     require_once 'Zend/Oauth/Consumer.php';
@@ -49,13 +55,19 @@ if(0 && extension_loaded("oauth")) {
             return $token;
         }
 
-        public function getRequestToken($url, $callback = null)
+        public function getRequestToken($url, $callback = null, $params = array())
         {
             if(!empty($callback)) {
                 $this->setCallbackUrl($callback);
             }
+            list($clean_url, $query) = explode('?', $url);
+            if($query) {
+                $url = $clean_url;
+                parse_str($query, $query_params);
+                $params = array_merge($params, $query_params);
+            }
             $this->setRequestTokenUrl($url);
-            $this->_last = $token = parent::getRequestToken();
+            $this->_last = $token = parent::getRequestToken($params);
             return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
         }
 
@@ -69,6 +81,12 @@ if(0 && extension_loaded("oauth")) {
        public function fetch($url, $params = null, $method = 'GET', $headers = null)
        {
             $acc = $this->makeAccessToken();
+            list($clean_url, $query) = explode('?', $url);
+            if($query) {
+                $url = $clean_url;
+                parse_str($query, $query_params);
+                $params = array_merge($params?$params:array(), $query_params);
+            }
             $client = $acc->getHttpClient($this->_oauth_config, $url);
             $client->setMethod($method);
             if(!empty($headers)) {
@@ -82,7 +100,14 @@ if(0 && extension_loaded("oauth")) {
                 }
             }
             $this->_last = $resp = $client->request();
+            $this->_lastReq = $client->getLastRequest();
             return $resp->getBody();
+       }
+
+       public function getClient()
+       {
+            $acc = $this->makeAccessToken();
+            return $acc->getHttpClient($this->_oauth_config);
        }
 
        public function getLastResponse()
@@ -90,7 +115,12 @@ if(0 && extension_loaded("oauth")) {
             return $this->_last;
        }
 
-//        public function __call($method, $args)
+       public function getLastRequest()
+       {
+            return $this->_lastReq;
+       }
+
+       //        public function __call($method, $args)
 //        {
 //            parent::
 //            debug_print_backtrace();

@@ -160,9 +160,15 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
         $urlParams['ciUser'] = 'admin@LL_SugarCRM';
         $urlParams['ciPassword'] = 'changeIt!';
-        $urlParams['UserName'] = $this->account_name;
-        $urlParams['Password'] = $this->account_password;
-
+        if($this->authData->type == 'oauth') {
+             $urlParams['OAuthConsumerKey'] = $this->authData->consumer_key;
+             $urlParams['OAuthConsumerSecret'] = $this->authData->consumer_secret;
+             $urlParams['OAuthToken'] = $this->authData->oauth_token;
+             $urlParams['OAuthTokenSecret'] = $this->authData->oauth_secret;
+        } else {
+            $urlParams['UserName'] = $this->account_name;
+            $urlParams['Password'] = $this->account_password;
+        }
         $url = 'https://' . $this->url . $requestMethod . '?';
         foreach($urlParams as $key => $value ) {
             // FIXME: urlencode the ciUser and ciPassword once they are ready for it

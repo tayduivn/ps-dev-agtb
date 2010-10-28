@@ -7,12 +7,17 @@ require_once('Zend/Gdata/ClientLogin.php');
 class Google extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
     public $authMethods = array("password" => 1, "oauth" => 1);
+    protected $scope = "https://www.google.com/m8/feeds/ http://docs.google.com/feeds/";
+    protected $oauthReq ="https://www.google.com/accounts/OAuthGetRequestToken";
+    protected $oauthAuth ="https://www.google.com/accounts/OAuthAuthorizeToken";
+    protected $oauthAccess ="https://www.google.com/accounts/OAuthGetAccessToken";
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
+		$this->oauthReq .= "?scope=".urlencode($this->scope);
 	}
 
-    public function checkLogin($eapmBean)
+    public function checkLogin($eapmBean = null)
     {
         parent::checkLogin($eapmBean);
 
@@ -21,9 +26,13 @@ class Google extends ExternalAPIBase implements WebDocument {
 
         try {
             $this->getClient();
+		    // test documents access
+		    $docs = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full?title=TestTestTest');
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
+//            $GLOBALS['log']->debug("REQ: ".var_export($this->httpClient->getLastRequest(), true));
+//            $GLOBALS['log']->debug("REQ: ".var_export($this->httpClient->getLastResponse(), true));
         }
 
         return $reply;
@@ -35,9 +44,14 @@ class Google extends ExternalAPIBase implements WebDocument {
             return;
         }
 		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents
-		$this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
+		if(isset($this->authData) && $this->authData->type == 'oauth') {
+		    // FIXME: bail if auth token not set
+            $this->httpClient = $this->authData->getHttpClient();
+		} else {
+		    $this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
+		}
 		$this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
-	}
+    }
 
 	function uploadDoc($bean, $fileToUpload, $docName, $mimeType){
 		$this->getClient();
@@ -85,8 +99,6 @@ class Google extends ExternalAPIBase implements WebDocument {
 		    			"GData-Version: 2.0\r\n".
 						"Content-type: application/x-www-form-urlencoded\r\n".
 		                "Authorization: $sessionToken"
-
-//			    'header' => "Authorization: \"$sessionToken\"\r\n"
 			)
 		);
 		if ($url != null) {

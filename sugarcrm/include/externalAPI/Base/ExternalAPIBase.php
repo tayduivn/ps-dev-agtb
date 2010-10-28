@@ -54,7 +54,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if(empty($this->authData)) return;
 
         if($this->authData->type == 'oauth') {
-            if(empty($this->authData->oauth_token)) {
+            if(empty($this->authData->oauth_token) || empty($this->authData->oauth_secret)) {
                 $this->authData->oauthLogin($this->oauthReq, $this->oauthAuth, $this->oauthAccess);
             }
         }

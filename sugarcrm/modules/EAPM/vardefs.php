@@ -165,6 +165,8 @@ $dictionary['EAPM'] = array(
         'massupdate' => 0,
         'audited' => false,
         'reportable' => false,
+    	'required' => false,
+	    'dbtype' => 'varchar',
 	  ),
 	  'oauth_secret' => array(
 	  	'name' => 'oauth_secret',
@@ -174,6 +176,8 @@ $dictionary['EAPM'] = array(
         'massupdate' => 0,
         'audited' => false,
         'reportable' => false,
+    	'required' => false,
+	    'dbtype' => 'varchar',
 	  ),
 	  'validated' => array(
         'required' => false,

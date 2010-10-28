@@ -51,6 +51,7 @@ class EAPMController extends SugarController
         }
         $this->api->loadEAPM($this->bean);
         $this->bean->validated = false;
+        $this->bean->save_cleanup();
     }
 
     protected function post_save()
