@@ -69,12 +69,16 @@ class MyCallsDashlet extends DashletGeneric {
         	$this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
 	    	
             $lvsParams = array(
-                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\')  GROUP BY calls.assigned_user_id,calls.id',
+                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ',
                            );
         } else {
             $lvsParams = array();
         }
         $this->myItemsOnly = false; 
+		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
+		//so we need to make sure date entered is also set so the sort can work with the group by
+		$lvsParams['custom_select']=', calls.date_entered ';
+		$lvsParams['distinct']=true;
         
         parent::process($lvsParams);
    
