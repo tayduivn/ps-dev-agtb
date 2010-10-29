@@ -31,22 +31,11 @@ require_once('include/utils/array_utils.php');
  */
 function create_include_lang_dir()
 {
-   $continue = true;
+   
+	if(!is_dir("custom/include/language"))
+	   return sugar_mkdir("custom/include/language", null, true);
 
-   if(!is_dir('custom/include'))
-   {
-      $continue = sugar_mkdir('custom/include');
-   }
-
-   if($continue)
-   {
-      if(!is_dir("custom/include/language"))
-      {
-         $continue = sugar_mkdir("custom/include/language");
-      }
-   }
-
-   return $continue;
+   return true;
 }
 
 /**
@@ -56,30 +45,11 @@ function create_include_lang_dir()
  */
 function create_module_lang_dir($module)
 {
-   $continue = true;
-
-   if(!is_dir('custom/modules'))
-   {
-      $continue = sugar_mkdir('custom/modules');
-   }
-
-   if($continue)
-   {
-      if(!is_dir("custom/modules/$module"))
-      {
-         $continue = sugar_mkdir("custom/modules/$module");
-      }
-   }
-
-   if($continue)
-   {
-      if(!is_dir("custom/modules/$module/language"))
-      {
-         $continue = sugar_mkdir("custom/modules/$module/language");
-      }
-   }
-
-   return $continue;
+   
+	if(!is_dir("custom/modules/$module/language"))
+       return sugar_mkdir("custom/modules/$module/language", null, true);
+       
+   return true;
 }
 
 /**
