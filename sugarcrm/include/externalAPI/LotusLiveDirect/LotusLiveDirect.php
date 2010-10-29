@@ -252,10 +252,10 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified FROM docum
         $GLOBALS['log']->debug("REQUEST: $url");
         $rawResponse = $client->setUri($url)->request($method);
         $reply = array('rawResponse' => $rawResponse->getBody());
-        $GLOBALS['log']->debug("RESPONSE: ".var_export($reply, true));
+//        $GLOBALS['log']->debug("RESPONSE: ".var_export($reply, true));
         if($json) {
             $response = json_decode($reply['rawResponse'],true);
-            $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
+//            $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
             if ( empty($rawResponse) || !is_array($response) ) {
                 $reply['success'] = FALSE;
                 // FIXME: Translate
