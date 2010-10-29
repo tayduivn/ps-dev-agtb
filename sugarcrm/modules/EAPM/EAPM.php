@@ -70,7 +70,8 @@ class EAPM extends Basic {
 		return false;
 }
 
-   static function getLoginInfo($application){
+   static function getLoginInfo($application)
+   {
        global $current_user;
 
        $eapmBean = new EAPM();
@@ -126,44 +127,49 @@ class EAPM extends Basic {
     * Get OAuth client
     * @return SugarOauth
     */
-   protected function getOauth()
+   protected function getOauth(ExternalOAuthAPIPlugin $api)
    {
-        $oauth = new SugarOAuth($this->consumer_key, $this->consumer_secret);
+        $oauth = new SugarOAuth($this->consumer_key, $this->consumer_secret, $api->getOauthParams());
         return $oauth;
    }
 
-   public function getHttpClient()
+   public function getHttpClient(ExternalOAuthAPIPlugin $api)
    {
        if($this->type == 'oauth') {
-           $oauth = $this->getOauth();
+           $oauth = $this->getOauth($api);
            $oauth->setToken($this->oauth_token, $this->oauth_secret);
            return $oauth->getClient();
        }
        return false;
    }
 
-   public function oauthLogin($oauthReq, $authReq, $accReq)
+   public function oauthLogin(ExternalOAuthAPIPlugin $api)
    {
         global $sugar_config;
-        $oauth = $this->getOauth();
+        $oauth = $this->getOauth($api);
         if(isset($_SESSION['eapm_oauth_secret']) && isset($_SESSION['eapm_oauth_token']) && isset($_REQUEST['oauth_token']) && isset($_REQUEST['oauth_verifier'])) {
             $stage = 1;
         } else {
             $stage = 0;
         }
         if($stage == 0) {
+            $oauthReq = $api->getOauthRequestURL();
             $callback_url = $sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->id;
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
+            // FIXME: error checking here
             $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
             $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
+            $authReq = $api->getOauthAuthURL();
             SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
         } else {
+            $accReq = $api->getOauthAccessURL();
             $oauth->setToken($_SESSION['eapm_oauth_token'],$_SESSION['eapm_oauth_secret']);
             $GLOBALS['log']->debug("OAuth access token: {$accReq}");
             $access_token_info = $oauth->getAccessToken($accReq);
             $GLOBALS['log']->debug("OAuth token: ".var_export($access_token_info, true));
+            // FIXME: error checking here
             $this->oauth_token = $access_token_info['oauth_token'];
             $this->oauth_secret = $access_token_info['oauth_token_secret'];
             $oauth->setToken($this->oauth_token, $this->oauth_secret);

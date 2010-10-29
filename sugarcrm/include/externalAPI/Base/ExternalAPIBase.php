@@ -1,8 +1,9 @@
 <?php
 
 require_once ('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once ('include/externalAPI/Base/ExternalOAuthAPIPlugin.php');
 
-abstract class ExternalAPIBase implements ExternalAPIPlugin
+abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlugin
 {
     public $account_name;
     public $account_password;
@@ -55,9 +56,37 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
 
         if($this->authData->type == 'oauth') {
             if(empty($this->authData->oauth_token) || empty($this->authData->oauth_secret)) {
-                $this->authData->oauthLogin($this->oauthReq, $this->oauthAuth, $this->oauthAccess);
+                $this->authData->oauthLogin($this);
             }
         }
+    }
+
+    protected function getValue($value)
+    {
+        if(!empty($this->$value)) {
+            return $this->$value;
+        }
+        return null;
+    }
+
+    public function getOauthParams()
+    {
+        return $this->getValue("oauthParams");
+    }
+
+    public function getOauthRequestURL()
+    {
+        return $this->getValue("oauthReq");
+    }
+
+    public function getOauthAuthURL()
+    {
+        return $this->getValue("oauthAuth");
+    }
+
+    public function getOauthAccessURL()
+    {
+        return $this->getValue("oauthAccess");
     }
 
     public function logOff()

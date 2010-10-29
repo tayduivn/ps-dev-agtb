@@ -39,6 +39,38 @@ class EAPMViewEdit extends ViewEdit {
         } else {
         	ACLController::displayNoAccess();
         }
+        echo <<<JS
+<script>
+SUGAR.forms.EapmAction = function(source, target) {
+    this.source = source;
+	this.target = target;
+}
+
+SUGAR.util.extend(SUGAR.forms.EapmAction, SUGAR.forms.AbstractAction, {
+	exec: function() {
+			var sfield = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[this.source];
+			if ( sfield == null || sfield.value == null )	return null;
+			var transl = SUGAR.language.get('app_list_strings', 'LBL_API_TYPE_ENUM');
+			var eapmvalue = SUGAR.eapm[sfield.value];
+			if(eapmvalue == null || eapmvalue.authMethods == null) return null;
+			keys = []
+			values = []
+			for(v in eapmvalue.authMethods) {
+				keys.push(v);
+				values.push(transl[v]);
+			}
+			kenum = 'enum("'+keys.join('","')+'")';
+			venum = 'enum("'+values.join('","')+'")';
+			setevent = new SUGAR.forms.SetOptionsAction(this.target, kenum, venum);
+			setevent.exec();
+	}
+});
+var app_type_dep = new SUGAR.forms.Dependency(new SUGAR.forms.Trigger(['application'], 'true'),
+	[new SUGAR.forms.EapmAction('application','type')],
+	[],
+	true);
+ </script>
+JS;
  	}
 }
 ?>
