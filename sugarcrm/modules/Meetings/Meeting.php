@@ -440,7 +440,7 @@ class Meeting extends SugarBean {
 	function get_meeting_users() {
 		$template = new User();
 		// First, get the list of IDs.
-		$query = "SELECT meetings_users.required, meetings_users.accept_status, meetings_users.user_id from meetings_users where meetings_users.meeting_id='$this->id' AND meetings_users.deleted=0";
+		$query = "SELECT meetings_users.required, meetings_users.accept_status, meetings_users.user_id from meetings_users where meetings_users.meeting_id='$this->id' AND meetings_users.deleted=0  AND meetings_users.accept_status != 'decline'";
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 		$result = $this->db->query($query, true);
 		$list = Array();
