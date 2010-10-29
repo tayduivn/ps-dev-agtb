@@ -620,8 +620,9 @@ class SugarBean
             return;
         
         foreach ($this->field_defs as $field => $value) {
-            if( !empty($this->$field)
-                  && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['default']) && $this->$field == $value['display_default'])) 
+            if( (isset($value['default']) || !empty($value['display_default'])) 
+                    && !empty($this->$field)
+                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default'])) 
                     ) {
                 $this->$field = null;
             }
