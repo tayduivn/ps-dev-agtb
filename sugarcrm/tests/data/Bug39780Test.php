@@ -27,6 +27,9 @@ class Bug39780Test extends Sugar_PHPUnit_Framework_TestCase
         }
         catch(Exception $e){
             $this->assertTrue(false, "SugarBean->unPopulateDefaultValues is generating a notice/warning/fatal: " .$e->getMessage());
+            return;
         }
+        
+        $this->assertTrue(true);
     }
 }
