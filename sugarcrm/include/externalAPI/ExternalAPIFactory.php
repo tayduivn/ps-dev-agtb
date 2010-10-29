@@ -62,7 +62,7 @@ class ExternalAPIFactory{
             }
         }
 
-        $optionList = array('supportedModules','useAuth','requireAuth','meetingPasswordSupported','docSearch');
+        $optionList = array('supportedModules','useAuth','requireAuth','meetingPasswordSupported','docSearch', 'authMethods');
         $api_types = translate('LBL_API_TYPE_ENUM', 'EAPM');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
@@ -81,11 +81,6 @@ class ExternalAPIFactory{
                     $meetingPasswordList[$apiName] = $apiName;
                 }
 
-            }
-            if(isset($apiClass->authMethods)) {
-                foreach($apiClass->authMethods as $method => $yes) {
-                    $apiFullList[$apiName]['authMetods'][$method] = $api_types[$method];
-                }
             }
         }
 

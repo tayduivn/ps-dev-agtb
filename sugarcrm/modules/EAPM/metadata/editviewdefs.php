@@ -32,8 +32,8 @@ $viewdefs[$module_name]['EditView'] = array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
                                             ),
+'javascript' => '<script type="text/javascript" src="cache/include/externalAPI.cache.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>',
                                             ),
-
 
  'panels' =>array (
   'default' =>
