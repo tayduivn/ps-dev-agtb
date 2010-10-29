@@ -33,27 +33,6 @@ $dictionary['Document'] = array('table' => 'documents'
   ),
   'name'=>
   array('name'=>'name', 'vname' => 'LBL_NAME', 'source'=>'non-db', 'type'=>'varchar'),
-  'filename' =>
-  array (
-     'name' => 'filename',
-     'vname' => 'LBL_FILENAME',
-     'type' => 'file',
-     'source' => 'non-db',
-     'comment' => 'The filename of the document attachment',
-	 'required' => true,
-     'noRemove' => true,
-     'allowEapm' => true,
-     'fileId' => 'document_revision_id',
-  ),
-
-  'uploadfile' =>
-  array (
-     'name'=>'uploadfile',
-     'required' => false,
-     'vname' => 'LBL_FILENAME',
-     'type' => 'file',
-     'source' => 'non-db',
-  ),
 'doc_id' =>
   array (
   	'name' => 'doc_id',
@@ -80,6 +59,27 @@ $dictionary['Document'] = array('table' => 'documents'
   	'len' => '255',
   	'comment' => 'Document URL from documents web server provider',
   	'importable' => false,
+  ),
+  'filename' =>
+  array (
+     'name' => 'filename',
+     'vname' => 'LBL_FILENAME',
+     'type' => 'file',
+     'source' => 'non-db',
+     'comment' => 'The filename of the document attachment',
+	 'required' => true,
+     'noChange' => true,
+     'allowEapm' => true,
+     'fileId' => 'document_revision_id',
+  ),
+
+  'uploadfile' =>
+  array (
+     'name'=>'uploadfile',
+     'required' => false,
+     'vname' => 'LBL_FILENAME',
+     'type' => 'file',
+     'source' => 'non-db',
   ),
 'active_date' =>
   array (

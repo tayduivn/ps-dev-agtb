@@ -272,7 +272,7 @@ class UploadFile
 	
 	function upload_doc(&$bean, $bean_id, $doc_type, $file_name, $mime_type){
         
-		if(!empty($doc_type)&&$doc_type!='Sugar') {
+		if(!empty($doc_type)&&$doc_type!='SugarCRM') {
 			global $sugar_config;
 	        $destination = clean_path($this->get_upload_path($bean_id));
 	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
@@ -281,12 +281,18 @@ class UploadFile
 		    try{
                 $this->document = ExternalAPIFactory::loadAPI($doc_type);
 
-                $result = $this->document->uploadDoc(
-                    $bean,
-                    $new_destination,
-                    $file_name,
-                    $mime_type
-                    );
+                if ( isset($this->document) && $this->document !== false ) {
+                    $result = $this->document->uploadDoc(
+                        $bean,
+                        $new_destination,
+                        $file_name,
+                        $mime_type
+                        );
+                } else {
+                    $result['success'] = FALSE;
+                    // FIXME: Translate
+                    $result['errorMessage'] = 'Could not find a proper API';
+                }
                 unlink($new_destination);
                 $bean->save();
             }catch(Exception $e){

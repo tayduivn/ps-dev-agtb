@@ -43,6 +43,17 @@
     {assign var=showRemove value=false}
 {{/if}}
 
+{{if isset($vardef.noChange) && $vardef.noChange }}
+{if !empty({{sugarvar key='value' stringFormat=true}}) }
+    {assign var=showRemove value=true}
+    {assign var=noChange value=true}
+{else}
+    {assign var=noChange value=false}
+{/if}
+{{else}}
+    {assign var=noChange value=false}
+{{/if}}
+
 <input type="hidden" name="deleteAttachment" value="0">
 <span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
@@ -54,9 +65,11 @@
   <a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
   {/if}
 {{/if}}
+{if !$noChange}
 <input type='button' class='button' value='{$APP.LBL_REMOVE}' onclick='SUGAR.field.file.deleteAttachment("{{$idName}}",this);'>
+{/if}
 </span>
-
+{if !$noChange}
 <span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <h4>Upload From Your Computer</h4>
@@ -119,5 +132,6 @@ if(typeof QSProcessedFieldsArray != 'undefined') {ldelim}
 
 enableQS(false);
 </script>
+{/if}
 {{/if}}
 </span>

@@ -96,9 +96,8 @@ class Document extends SugarBean {
 	function save($check_notify = false) {
 		if (empty($this->id) || $this->new_with_id)
 		{
-			if (!empty($this->uploadfile))
+			if (!empty($_FILES['filename']))
 			{
-				$this->filename = $this->uploadfile;
 				if (empty($this->id)) { 
 					$this->id = create_guid();
 					$this->new_with_id = true;
@@ -112,14 +111,12 @@ class Document extends SugarBean {
 				$Revision->file_ext = $this->file_ext;
 				$Revision->file_mime_type = $this->file_mime_type;
 				$Revision->doc_type = $this->doc_type;
+				$Revision->doc_id = $this->doc_id;
+				$Revision->doc_url = $this->doc_url;
 				$Revision->save();
 				
 				//Move file saved during populatefrompost to match the revision id rather than document id
 				rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
-				$upload_file = new UploadFile('uploadfile');
-				$upload_file->upload_doc($Revision, $Revision->id, $Revision->doc_type, $Revision->filename, $Revision->file_mime_type);
-				$this->doc_id =  $Revision->doc_id;
-                $this->doc_url = $Revision->doc_url;
 				//update document with latest revision id
 				$this->process_save_dates=false; //make sure that conversion does not happen again.
 				$this->document_revision_id = $Revision->id;	

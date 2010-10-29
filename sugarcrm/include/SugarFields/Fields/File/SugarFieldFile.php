@@ -71,8 +71,8 @@ class SugarFieldFile extends SugarFieldBase {
 			}
         
 			$upload_file->final_move($bean->id);
-            $GLOBALS['log']->fatal('IKEA: Calling upload_doc, doc_type:'.$bean->doc_type);
-            $upload_file->upload_doc($bean, $bean->id, $bean->doc_type, $bean->filename, $bean->mime_type);
+            $GLOBALS['log']->fatal('IKEA: Calling upload_doc, doc_type:'.$params[$prefix . $vardef['docType']]);
+            $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $bean->mime_type);
 		} else if ( !empty($params[$prefix . $vardef['name'] . '_remoteName']) ) {
             // We ain't moving, we might need to do some remote linking
             $displayParams = array();
