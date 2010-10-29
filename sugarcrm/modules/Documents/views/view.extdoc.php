@@ -28,72 +28,61 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('include/MVC/View/views/view.detail.php');
+require_once('include/Sugar_Smarty.php');
+require_once('include/externalAPI/ExternalAPIFactory.php');
 
-class DocumentsViewExtdoc extends ViewDetail 
+
+class DocumentsViewExtdoc extends SugarView
 {
-	var $options = array('show_header' => false, 'show_title' => false, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => false, 'show_javascript' => false, 'view_print' => false,);
+    var $options = array('show_header' => false, 'show_title' => false, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => false, 'show_javascript' => false, 'view_print' => false,);
+
+    public function init($bean, $view_object_map) {
+        $this->seed = $bean;
+    }
 
  	public function display(){
- 		if(!empty($_REQUEST['form_id'])){
- 			$name_field = !empty($_REQUEST['name_field'])?$_REQUEST['name_field']: 'filename';
- 			$form_id = $_REQUEST['form_id'];
- 		
-			echo "<script>
-			function fillSelect(filename) {
-				var oForm = document.forms['$form_id'];
-				oForm.elements[\"filename\"].value = filename;
-				oForm.elements[\"doc_id\"].value = filename;
-				DCMenu.closeTopOverlay();
-			}
-			</script>";
-		}else{
-			echo "<script>
-			function fillSelect(filename) {
-				window.open('https://apps.lotuslive.com/files/filer2/home.do#files.do%3FsubContent%3DfileDetails.do%3FfileId%3D36A40110D5BC11DF8278B49A0A050301', 'download');
-			}
-			</script>";	
-		}
+
+        if ( isset($_REQUEST['name_basic']) ) {
+            $file_search = trim($_REQUEST['name_basic']);
+        } else {
+            $file_search = '';
+        }
+        
+        $apiName = 'LotusLiveDirect';
+        $api = ExternalAPIFactory::loadAPI($apiName);
+
+        $searchDataLower = $api->searchDoc($file_search);
 
 
-		echo "
-		<table class='dcSearch'>
-			<tr>
-			<td>
-			<input type='text' id='dcSearch' name='dcSearch'>
-			</td>
-			<td>
-			<input type='submit' name='submit' class='dcSubmit' value='Search Documents'>
-			</td>
-			</tr>
-		</table>
-		
-		<table width='500' class='dcListView' cellpadding='0' cellspacing='0'>
-		<tr>
-			<th>Type</th>
-			<th>Name</th>
-			<th>Last Modified</th>
-			<th>Owner</th>
-		</tr>
-		<tr>
-			<td class='type' width='20'><img src='themes/default/images/xls_image_inline.gif'></td>
-			<td class='name'><a href='javascript: fillSelect(\"sales.xls\")'>Sales Matrix</a></td>
-			<td class='lastModified'>12/12/10 05:30:00</td>
-			<td class='owner'>Majed Itani</td>
-		</tr>
-		<tr>
-			<td class='type' width='20'><img src='themes/default/images/pdf_image_inline.gif'></td>
-			<td class='name' nowrap><a href='javascript: fillSelect(\"Sugar vs sfdc_Overview_08-31-2010.pdf\")'>Sugar vs sfdc_Overview_08-31-2010.pdf</a></td>
-			<td class='lastModified'>10/11/10 05:30:00</td>
-			<td class='owner' nowrap>Jan Sysmans</td>
-		</tr>
-		<tr>
-			<td class='type' width='20'><img src='themes/default/images/doc_image_inline.gif'></td>
-			<td class='name'><a href='javascript: fillSelect(\"letter.doc\")'>Company Letter Head</a></td>
-			<td class='lastModified'>02/11/10 05:30:00</td>
-			<td class='owner'>Roger Smith</td>
-		</tr>
-		</table>";
+        // In order to emulate the list views for the SugarFields, I need to uppercase all of the key names.
+        $searchData = array();
 
+        if ( is_array($searchDataLower) ) {
+            foreach ( $searchDataLower as $row ) {
+                $newRow = array();
+                foreach ( $row as $key => $value ) {
+                    $newRow[strtoupper($key)] = $value;
+                }
+                $searchData[] = $newRow;
+            }
+        }
+
+        $displayColumns = array(
+            'NAME' => array(
+                'label' => 'LBL_LIST_DOCUMENT_NAME',
+                'type' => 'varchar',
+                'link' => true,
+                ),
+            'DATE_MODIFIED' => array(
+                'label' => 'LBL_DATE_MODIFIED',
+                'type' => 'date',
+                ),
+        );
+
+        $ss = new Sugar_Smarty();
+        $ss->assign('data', $searchData);
+        $ss->assign('displayColumns',$displayColumns);
+        $ss->assign('DCSEARCH',$file_search);
+        $ss->display('modules/Documents/tpls/view.extdoc.tpl');
  	}
 }
