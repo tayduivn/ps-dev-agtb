@@ -41,7 +41,6 @@ $this->ss->assign('config', $configurator->config);
 
 $enabled_modules = array();
 $disabled_modules = array();
-$blacklisted_modules = array('Project','ProjectTask','ProductTemplates','KBDocuments');
 
 // replicate the essential part of the behavior of the private loadMapping() method in SugarController
 foreach ( array ( '','custom/') as $prefix)
@@ -53,10 +52,7 @@ foreach ( array ( '','custom/') as $prefix)
 
 foreach ( $wireless_module_registry as $e => $def )
 {
-	if( in_array($e,$blacklisted_modules, FALSE) )
-	   continue;
-	   
-    $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) 
+	$enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) 
 	                               : ( ($e == "Reports") ? $app_list_strings['moduleList'][$e] . '*' : $app_list_strings['moduleList'][$e] );
 }
 require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
@@ -65,10 +61,7 @@ $browser->loadModules();
 
 foreach ( $browser->modules as $e => $def)
 {
-	if( in_array($e,$blacklisted_modules, FALSE) )
-	   continue;
-	   
-    if ( empty ( $enabled_modules [ $e ]))
+	if ( empty ( $enabled_modules [ $e ]))
 		$disabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
 }
 
