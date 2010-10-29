@@ -141,7 +141,7 @@
 			{foreach from=$displayColumns key=col item=params}
 			    {strip}
 				<td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
-					{if $col == 'NAME' || $params.bold}<b>{/if}
+					{if $col == 'NAME' || $params.bold}{/if}
 				    {if $params.link && !$params.customCode}				
 						<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='index.php?action={$params.action|default:'DetailView'}&module={if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}'>
 					{/if}
@@ -154,7 +154,7 @@
 					{if $params.link && !$params.customCode}
 						</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
                     {/if}
-                    {if $col == 'NAME' || $params.bold}</b>{/if}
+                    {if $col == 'NAME' || $params.bold}{/if}
 				</td>
 				{/strip}
 				{counter name="colCounter"}
