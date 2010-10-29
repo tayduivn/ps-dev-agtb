@@ -139,9 +139,10 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
 
     public function uploadDoc($bean, $fileToUpload, $docName, $mineType) {
-        $result = $this->makeRequest('uploadfile',array('file'=>'@'.$fileToUpload),
-                              array('collectionid'=>$this->collectionId,
-                                    'fileid'=>$bean->id));
+        // FIXME: don't try uploading a file yet.
+//        $result = $this->makeRequest('uploadfile',array('file'=>'@'.$fileToUpload),
+//                              array('collectionid'=>$this->collectionId,
+//                                    'fileid'=>$bean->id));
 
         $bean->doc_id = $bean->id;
         $bean->doc_url = 'https://apps.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;

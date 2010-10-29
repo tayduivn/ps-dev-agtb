@@ -30,18 +30,40 @@
 // $Id: ListViewGeneric.tpl 56945 2010-06-14 19:51:27Z jmertic $
 
 *}
+<script type="text/javascript">
+{literal}
+function submitListViewDCMenu(submitElem) {
+var callback = {
+success: function(o) {
+var contentElem = document.getElementById('dcSearch');
+while ( typeof(contentElem) != 'undefined' && contentElem.className != 'dccontent' ) {
+contentElem = contentElem.parentNode;
+}
+contentElem.innerHTML = o.responseText;
+},
+failure: function(o) {
+// AJAX failed, we have probably timed out of our session, force a reload
+window.history.go(0);
+}
+};
 
-	<table class='dcSearch' cellpadding='0' cellspacing='0'>
+YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&action=listbytype&button=Search&name_basic="+document.getElementById('dcSearch').value);
+
+}
+{/literal}
+</script>
+<form id="dcSearchForm">
+<table class='dcSearch' cellpadding='0' cellspacing='0'>
 			<tr>
 			<td>
-			<input type='text' id='dcSearch' name='dcSearch'>
+			<input type='text' id='dcSearch' name='dcSearch' value="{$DCSEARCH}">
 			</td>
 			<td>
-			<input type='submit' name='submit' class='dcSubmit' value='Search Meetings'>
+			<input type='submit' name='submit' class='dcSubmit' value='Search Meetings' onclick="submitListViewDCMenu(this); return false;">
 			</td>
 			</tr>
 		</table>
-		
+</form>		
 		<table width='500' class='dcListView' cellpadding='0' cellspacing='0'>
 <tr height='20'>
 		{if $prerow}
@@ -64,7 +86,7 @@
 		{foreach from=$displayColumns key=colHeader item=params}
 			<th scope='col' width='{$params.width}%' nowrap="nowrap">
 				<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
-                {if $params.sortable|default:true}
+                {if false}
                     {if $params.url_sort}
                         <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1'>
                     {else}

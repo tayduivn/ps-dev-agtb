@@ -20,57 +20,60 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Calls module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
  
 require_once('include/MVC/View/views/view.list.php');
 require_once('modules/EAPM/EAPM.php');
 class MeetingsViewListbytype extends ViewList {
     var $options = array('show_header' => false, 'show_title' => false, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => false, 'show_javascript' => false, 'view_print' => false,);
-
-   function MeetingsViewListbytype() {
-  	
-      parent::ViewList();
-        $this->params['orderBy'] = 'meetings.date_start DESC';
-      $this->params['overrideOrder'] = true;
-   }
-
+    
+    function MeetingsViewListbytype() {
+        parent::ViewList();
+    }
+    
  	function listViewProcess(){
 		$this->processSearchForm();
+        $this->params['orderBy'] = 'meetings.date_start';
+        $this->params['overrideOrder'] = true;
 		$this->lv->searchColumns = $this->searchForm->searchColumns;
 		$this->lv->show_action_dropdown = false;
-   		$this->lv->multiSelect = false;
-   		
+   		$this->lv->multiSelect = false;   		
    		
    		unset($this->searchForm->searchdefs['layout']['advanced_search']);
    		
-		if(!$this->headers)
+		if(!$this->headers) {
 			return;
+        }
+
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
-			$this->lv->ss->assign("SEARCH",true);
+			$this->lv->ss->assign("SEARCH",false);
+            if ( !isset($_REQUEST['name_basic']) ) {
+                $_REQUEST['name_basic'] = '';
+            }
+            $this->lv->ss->assign('DCSEARCH',$_REQUEST['name_basic']);
 			$this->lv->setup($this->seed, 'include/ListView/ListViewDCMenu.tpl', $this->where, $this->params);
 			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $this->lv->display();
 		}
  	}
  	
+    function listViewPrepare() {
+        $oldRequest = $_REQUEST;
+        parent::listViewPrepare();
+        $_REQUEST = $oldRequest;
+    }
+
  	function processSearchForm(){
  		$type = 'LotusLive';
  		$where =  " meetings.type = '$type' AND meetings.date_start > UTC_TIMESTAMP() - 7200 ";
- 		//parent::processSearchForm();
- 		if(!empty($this->where)){
- 			$this->where .= " AND $where ";
- 		}else{
- 			$this->where = $where;	
- 		}
- 		
- 			
+
+        if ( isset($_REQUEST['name_basic']) ) {
+            $name_search = trim($_REQUEST['name_basic']);
+            if ( ! empty($name_search) ) {
+                $where .= " AND meetings.name LIKE '".$GLOBALS['db']->quote($name_search)."%' ";
+            }
+        }
+
+        $this->where = $where;
  	}
 
 }
