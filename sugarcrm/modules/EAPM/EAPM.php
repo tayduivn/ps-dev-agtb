@@ -116,7 +116,8 @@ class EAPM extends Basic {
            return false;
        }
         // FIXME: use save?
-       $GLOBALS['db']->query("UPDATE eapm SET validated=1 WHERE id = '{$this->id}' AND deleted = 0");
+       $adata = $GLOBALS['db']->quote($this->api_data);
+       $GLOBALS['db']->query("UPDATE eapm SET validated=1,api_data='$adata'  WHERE id = '{$this->id}' AND deleted = 0");
        if($this->active && !empty($this->application)) {
            // deactivate other EAPMs with same app
            $GLOBALS['db']->query("UPDATE eapm SET active=0 WHERE application = '{$this->application}' AND id != '{$this->id}' AND active=1 AND deleted = 0");
@@ -204,6 +205,7 @@ class EAPM extends Basic {
 	{
 	    $this->oauth_token = "";
         $this->oauth_secret = "";
+        $this->api_data = "";
 	}
 }
 

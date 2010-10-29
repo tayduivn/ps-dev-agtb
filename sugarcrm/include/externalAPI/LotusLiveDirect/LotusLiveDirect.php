@@ -88,8 +88,8 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
 	 */
 	function scheduleMeeting($bean) {
 		global $current_user;
-		$bean->join_url = $this->joinURL.'&TagCode=SugarCRM&TagID='.$bean->id;
-		$bean->host_url = $this->hostURL.'?TagCode=SugarCRM&TagID='.$bean->id;
+		$bean->join_url = $this->api_data['joinURL'].'&TagCode=SugarCRM&TagID='.$bean->id;
+		$bean->host_url = $this->api_data['hostURL'].'?TagCode=SugarCRM&TagID='.$bean->id;
 		$bean->creator = $this->account_name;
         return array('success'=>TRUE);
 	}
@@ -162,20 +162,63 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
     }
 
 
-    public function uploadDoc($bean, $fileToUpload, $docName, $mineType) {
-        $result = $this->makeRequest('uploadfile',array('file'=>'@'.$fileToUpload),
-                              array('collectionid'=>$this->collectionId,
-                                    'fileid'=>$bean->id));
+    public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
+    {
+        $client = $this->authData->getHttpClient($this);
+        $client->setHeaders('Accept-Encoding', 'identity');
+        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/folderc/snx:files!{$this->api_data['subscriberId']}";
+        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
+        $rawResponse = $client->setUri($url)
+            ->setRawData(file_get_contents($fileToUpload), $mimeType?$mimeType:"application/octet-stream")
+            ->setHeaders("slug", $docName)
+            ->request("POST");
+        $reply = array('rawResponse' => $rawResponse->getBody());
+//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
+//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
+        if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
+            $reply['success'] = false;
+            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+            return;
+        }
+        // parse XML response
+        $xml = simplexml_load_string($reply['rawResponse']);
+        if($xml == false) {
+            $reply['success'] = false;
+            $reply['errorMessage'] = 'Bad response from the server';
+            return;
+        }
+        // find atom:link attribute with rel=self
+        $els = $xml->children('atom', true);
+        foreach($els as $el) {
+            $attr = $el->attributes('');
+            if($attr['rel'] != 'self') continue;
+            $bean->doc_url = (string)$attr['href'];
+            $attrc = $el->attributes('cmisra', true);
+            $cmsid = (string)$attrc['id']; // looks like snx:file!5288F1B0E38B11DF834C785E0A060702
+            list($prefix, $id) = explode('!', $cmsid);
+            $bean->doc_id = $id;
+            break;
+        }
 
-        $bean->doc_id = $bean->id;
-        $bean->doc_url = 'https://apps.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
+        return array('success'=>TRUE);
+    }
 
+    public function deleteDoc($document)
+    {
+        $client = $this->authData->getHttpClient($this);
+        $client->setHeaders('Accept-Encoding', 'identity');
+        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
+        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
+        $rawResponse = $client->setUri($url)
+            ->request("DELETE");
+        $reply = array('rawResponse' => $rawResponse->getBody());
+//        $GLOBALS['log']->debug("REQUEST: ".var_export($client->getLastRequest(), true));
+//        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         return array('success'=>TRUE);
     }
 
     public function downloadDoc($documentId, $documentFormat){}
     public function shareDoc($documentId, $emails){}
-    public function deleteDoc($documentId){}
     public function searchDoc($keywords){
         global $db;
 
@@ -216,7 +259,7 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified FROM docum
             if ( empty($rawResponse) || !is_array($response) ) {
                 $reply['success'] = FALSE;
                 // FIXME: Translate
-                $reply['errorMessage'] = 'Bad response from the server.';
+                $reply['errorMessage'] = 'Bad response from the server';
             } else {
                 $reply['responseJSON'] = $response;
                 $reply['success'] = TRUE;

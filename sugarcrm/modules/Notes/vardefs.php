@@ -21,12 +21,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $dictionary['Note'] = array(
     //BEGIN SUGARCRM flav=pro ONLY
-    'favorites'=>true, 
+    'favorites'=>true,
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=following ONLY
-    'followable' => true, 
+    'followable' => true,
     //END SUGARCRM flav=following ONLY
-    'table' => 'notes', 
+    'table' => 'notes',
 	'unified_search' => true,
 	'comment' => 'Notes and Attachments'
                                ,'fields' => array (
@@ -67,7 +67,7 @@ $dictionary['Note'] = array(
 	    'reportable'=>true,
 	    'comment' => 'User who last modified record',
 	  ),
-	  'modified_by_name' => 
+	  'modified_by_name' =>
 	  array (
 	    'name' => 'modified_by_name',
     'vname' => 'LBL_MODIFIED_BY',
@@ -79,8 +79,8 @@ $dictionary['Note'] = array(
 	    'id_name' => 'modified_user_id',
 	    'module'=>'Users',
 	    'link'=>'modified_user_link',
-	    'duplicate_merge'=>'disabled' 
-	  ),  
+	    'duplicate_merge'=>'disabled'
+	  ),
 	  'created_by' =>
 	  array (
 	    'name' => 'created_by',
@@ -93,7 +93,7 @@ $dictionary['Note'] = array(
 	    'dbType' => 'id',
     'comment' => 'User who created record'
 	  ),
-	  	'created_by_name' => 
+	  	'created_by_name' =>
 	  array (
 	    'name' => 'created_by_name',
 		'vname' => 'LBL_CREATED_BY',
@@ -182,6 +182,7 @@ $dictionary['Note'] = array(
     // Special file-only options
     // This one allows the use of external api's to store files to.
     'allowEapm'=>true,
+    'docType' => 'doc_type',
   ),
   'parent_type'=>
   array(
