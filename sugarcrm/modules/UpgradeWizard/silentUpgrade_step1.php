@@ -834,6 +834,9 @@ if(!didThisStepRunBefore('commit')){
 	$new_sugar_version = getUpgradeVersion();
     $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
     $destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
+    setSilentUpgradeVar('origVersion', $origVersion);
+    setSilentUpgradeVar('destVersion', $destVersion);
+    writeSilentUpgradeVars();
      require_once('modules/DynamicFields/templates/Fields/TemplateText.php');
 	///////////////////////////////////////////////////////////////////////////////
     ///    RELOAD NEW DEFINITIONS

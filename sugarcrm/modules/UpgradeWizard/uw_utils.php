@@ -5315,4 +5315,84 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
+	
+	function removeSilentUpgradeVarsCache(){
+	    global $silent_upgrade_vars_loaded;
+	    
+	    $cacheFileDir = "{$sugar_config['cache_dir']}/modules/UpgradeWizard";
+	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+	    
+	    if(file_exists($cacheFile)){
+	        unlink($cacheFile);
+	    }
+	    
+	    unset($silent_upgrade_vars_loaded);
+	    
+	    return true;
+	}
+	
+	function loadSilentUpgradeVars(){
+	    global $silent_upgrade_vars_loaded;
+	    
+	    if(empty($silent_upgrade_vars_loaded)){
+	        global $sugar_config;
+	        $cacheFile = "{$sugar_config['cache_dir']}/modules/UpgradeWizard/silentUpgradeCache.php";
+	        // We have no pre existing vars
+	        if(!file_exists($cacheFile)){
+	            // Set the vars array so it's loaded
+	            $silent_upgrade_vars_loaded = array('vars' => array());
+	        }
+	        else{
+	            require_once($cacheFile);
+	            $silent_upgrade_vars_loaded = $silent_upgrade_vars_cache;
+	        }
+	    }
+	    
+	    return true;
+	}
+	
+	function writeSilentUpgradeVars(){
+	    if(!loadSilentUpgradeVars()){
+	        return false;
+	    }
+	    
+	    global $silent_upgrade_vars_loaded;
+	    
+	    $cacheFileDir = "{$sugar_config['cache_dir']}/modules/UpgradeWizard";
+	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+	    
+	    require_once('include/dir_inc.php');
+	    if(!mkdir_recursive($cacheFileDir)){
+	        return false;
+	    }
+	    require_once('include/utils/file_utils.php');
+	    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
+	        return false;
+	    }
+	}
+	
+	function setSilentUpgradeVar($var, $value){
+	    if(!loadSilentUpgradeVars()){
+	        return false;
+	    }
+	    
+	    global $silent_upgrade_vars_loaded;
+	    
+	    $silent_upgrade_vars_loaded['vars'][$var] = $value;
+	}
+	
+	function getSilentUpgradeVar($var){
+	    if(!loadSilentUpgradeVars()){
+	        return false;
+	    }
+	    
+	    global $silent_upgrade_vars_loaded;
+	    
+	    if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
+	        return null;
+	    }
+	    else{
+	        return $silent_upgrade_vars_loaded['vars'][$var];
+	    }
+	}
 ?>
