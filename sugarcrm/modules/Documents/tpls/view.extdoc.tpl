@@ -57,7 +57,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
 			<input type='text' id='dcSearch' name='dcSearch' value="{$DCSEARCH}">
 			</td>
 			<td>
-			<input type='submit' name='submit' class='dcSubmit' value='Search Meetings' onclick="submitListViewDCMenu(this); return false;">
+			<input type='submit' name='submit' class='dcSubmit' value='Search Documents' onclick="submitListViewDCMenu(this); return false;">
 			</td>
 			</tr>
 		</table>
