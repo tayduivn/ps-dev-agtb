@@ -45,8 +45,7 @@ class ScheduleMeeting {
           }
           */
       } else {
-          // FIXME: Translate
-          $_SESSION['administrator_error'] = 'Error during plugin save: '.$response['errorMessage'];
+          $_SESSION['administrator_error'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
       }
       $this->meeting->logoff();
           

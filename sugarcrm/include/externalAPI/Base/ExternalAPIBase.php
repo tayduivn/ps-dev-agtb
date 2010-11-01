@@ -24,7 +24,6 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
     public function loadEAPM($eapmBean)
     {
         if (!$this->supports($eapmBean->type)) {
-            // FIXME: produce error message for the user
             $GLOBALS['log']->fatal("Unknown auth type: {$eapmBean->type}");
             return false;
         }
