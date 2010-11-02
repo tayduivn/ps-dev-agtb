@@ -855,9 +855,8 @@ class TimeDate2
         if(!$this->allow_cache) {
             $nowGMT = $this->getNow();
         } else {
-            $nowGMT = clone $this->now;
+            $nowGMT = $this->now;
         }
-        $nowGMT->setTimezone(self::$gmtTimezone);
         return $this->asDb($nowGMT);
     }
 
@@ -870,9 +869,8 @@ class TimeDate2
         if(!$this->allow_cache) {
             $nowGMT = $this->getNow();
         } else {
-            $nowGMT = clone $this->now;
+            $nowGMT = $this->now;
         }
-        $nowGMT->setTimezone(self::$gmtTimezone);
         return $this->asDbDate($nowGMT);
     }
 
@@ -899,10 +897,16 @@ class TimeDate2
      */
     public function now()
     {
-        if(!$this->allow_cache) {
-            return  $this->asUser($this->getNow());
-        }
-        return $this->asUser($this->now);
+        return  $this->asUser($this->getNow());
+    }
+
+    /**
+     * Return current date in User format
+     * @return string
+     */
+    public function nowDate()
+    {
+        return  $this->asUserDate($this->getNow());
     }
 
     /**
