@@ -175,6 +175,24 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue( isset($results['Leads']['LBL_ID']) );
     }
     
+    public function testGetQuotesPDFContents()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        
+        $quote = new Quote();
+        $quote->name = "Test " . uniqid();
+        $quote->save(FALSE);
+        
+        $results = $this->_makeRESTCall('get_quotes_pdf',
+                        array(
+                            'session' => $session,
+                            'quote_id' => $quote->id,
+                            'pdf_format'   => 'Standard',
+                        )); 
+        
+        $this->assertTrue( !empty($results['file_contents']) );          
+    }
      /**
      * Test the available modules returned from the login call to make sure they are correct.
      *

@@ -401,6 +401,40 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         return $results;
     }
     
+    /**
+     * Get the base64 contents of a quote pdf.  
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param string $quote_id
+     * @param string $pdf_format Either Standard or Invoice
+     */
+    function get_quotes_pdf($session, $quote_id, $pdf_format = 'Standard')
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_quotes_pdf');
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+
+        $error = new SoapError();
+        $output_list = array();
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
+        {
+            $error->set_error('invalid_login');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+            return;
+        }
+
+        require_once('include/Sugarpdf/SugarpdfFactory.php');
+        $bean = new Quote();
+        $bean->retrieve($quote_id);
+        $sugarpdfBean = SugarpdfFactory::loadSugarpdf($pdf_format, 'Quotes', $bean, array() );
+        $sugarpdfBean->process();
+
+        $pdfContents = $sugarpdfBean->Output('','S');
+        $pdfContents = base64_encode($pdfContents);
+
+        return array('file_contents' => $pdfContents);
+    }
+    
     
     /**
      * For a particular report, generate the associated pdf report.  All caching should be done
