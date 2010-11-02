@@ -424,8 +424,13 @@ function post_install() {
     if(file_exists('modules/Leads/ConvertLead.php'))
         unlink('modules/Leads/ConvertLead.php');
     // End Bug 40382///////////////////
-            
-	upgradeGroupInboundEmailAccounts();
+             
+    // Bug 40458 - JennyG - This file was removed in 6.1. and we need to remove it for upgraded instances.
+    if(file_exists('modules/Reports/add_schedule.php'))
+        unlink('modules/Reports/add_schedule.php');
+    // End Bug 40458///////////////////
+
+    upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
         if($origVersion < '600') {
 	   _logThis("Start of check to see if Jigsaw connector should be disabled", $path);

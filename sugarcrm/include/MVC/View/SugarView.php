@@ -1202,19 +1202,37 @@ EOHTML;
     	else
     		$firstParam = $this->module;
     	
-    	if($this->action == "ListView" || $this->action == "index")
-			if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png',false)) && !$bTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png')."' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a><span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
+    	$iconPath = $this->getModuleTitleIconPath($this->module);
+    	if($this->action == "ListView" || $this->action == "index") 
+    	{
+    	    if (!empty($iconPath) && !$bTitle) {
+				return "<a href='index.php?module={$this->module}&action=index'>" 
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+				     . "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
 			} else {
 				return $firstParam;
 			}
-    	else
-		
-			if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png',false)) && !$bTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png')."' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
+    	} else 
+    	{
+		    if (!empty($iconPath) && !$bTitle) {
+				return "<a href='index.php?module={$this->module}&action=index'>" 
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
 			} else {
 				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
 			}
+    	}
+    }
+    
+    protected function getModuleTitleIconPath($module) {
+    	$iconPath = "";
+    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
+    	{
+    		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
+    	} else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
+    	{
+    		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
+    	}
+    	return $iconPath;
     }
     
     /**
