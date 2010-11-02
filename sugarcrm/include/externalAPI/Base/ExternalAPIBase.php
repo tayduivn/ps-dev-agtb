@@ -113,5 +113,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
         $GLOBALS['log']->fatal("Sent:\n".print_r($data,true));
         $rawResponse = curl_exec($ch);
         $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
+
+        return $rawResponse;
 	}
 }
