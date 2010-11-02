@@ -215,12 +215,10 @@ SUGAR.portal = {
 	        }
 			msg += "\n" + SUGAR.language.get("ModuleBuilder", "ERROR_ARE_YOU_SURE");
 	        return window.confirm(msg);
-	    }
-	            
+	    }       
 	    return true;
-		
 	},
-	calcField: {/literal}{$calc_field_list}{literal}
+	calcField: {/literal}{if !empty($calc_field_list)}{$calc_field_list}{else}""{/if}{literal}
 };
 
 //END SUGARCRM flav=ent ONLY
