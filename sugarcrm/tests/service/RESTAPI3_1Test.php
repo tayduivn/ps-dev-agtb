@@ -109,6 +109,72 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
     
+    public function testGetSingleModuleLanguage()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        
+        $results = $this->_makeRESTCall('get_language_definition',
+                        array(
+                            'session' => $session,
+                            'modules'  => 'Accounts',
+                            'md5'   => false,
+                        ));
+        $this->assertTrue( isset($results['Accounts']['LBL_NAME']) );
+    }
+    
+     public function testGetSingleModuleLanguageMD5()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        
+        $results = $this->_makeRESTCall('get_language_definition',
+                        array(
+                            'session' => $session,
+                            'modules'  => 'Accounts',
+                            'md5'   => true,
+                        ));
+
+        $this->assertTrue( isset($results['Accounts']) );
+        $this->assertTrue( !empty($results['Accounts']) );
+    }
+    
+    public function testGetMultipleModuleLanguage()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        
+        $results = $this->_makeRESTCall('get_language_definition',
+                        array(
+                            'session' => $session,
+                            'modules'  => array('Accounts','Contacts','Leads'),
+                            'md5'   => false,
+                        ));
+        $this->assertTrue( isset($results['Accounts']['LBL_NAME']) );
+        $this->assertTrue( isset($results['Contacts']['LBL_NAME']) );
+        $this->assertTrue( isset($results['Leads']['LBL_ID']) );
+    }
+    
+    public function testGetMultipleModuleLanguageAndAppStrings()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        
+        $results = $this->_makeRESTCall('get_language_definition',
+                        array(
+                            'session' => $session,
+                            'modules'  => array('Accounts','Contacts','Leads','app_strings','app_list_strings'),
+                            'md5'   => false,
+                        ));        
+                                
+        $this->assertTrue( isset($results['app_strings']['LBL_NO_ACTION']) );
+        $this->assertTrue( isset($results['app_strings']['LBL_EMAIL_YES']) );
+        $this->assertTrue( isset($results['app_list_strings']['account_type_dom']) );
+        $this->assertTrue( isset($results['app_list_strings']['moduleList']) );
+        $this->assertTrue( isset($results['Contacts']['LBL_NAME']) );
+        $this->assertTrue( isset($results['Leads']['LBL_ID']) );
+    }
+    
      /**
      * Test the available modules returned from the login call to make sure they are correct.
      *

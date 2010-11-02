@@ -349,6 +349,60 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     
     
     /**
+     * Enter description here...
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param array $modules Array of modules to return
+     * @param bool $MD5 Should the results be md5d
+     */
+    function get_language_definition($session, $modules, $MD5 = FALSE)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_language_file');
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+
+        $error = new SoapError();
+        $output_list = array();
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
+        {
+            $error->set_error('invalid_login');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+            return;
+        }
+    
+        if( is_string($modules) )
+            $modules = array($modules);
+            
+        $results = array();
+        foreach ($modules as $mod)
+        {
+            if( strtolower($mod) == 'app_strings' )
+            {
+                $values = return_application_language($current_language);
+                $key = 'app_strings';
+            }
+            else if ( strtolower($mod) == 'app_list_strings' ) 
+            {
+            	$values = return_app_list_strings_language($current_language);
+            	$key = 'app_list_strings';
+            }
+            else
+            {
+                $values = return_module_language($current_language, $mod);
+                $key = $mod;
+            }
+            
+            if( $MD5 )
+                $values = md5(serialize($values));
+                
+            $results[$key] = $values;
+        }
+        
+        return $results;
+    }
+    
+    
+    /**
      * For a particular report, generate the associated pdf report.  All caching should be done
      * on the client side.
      *
