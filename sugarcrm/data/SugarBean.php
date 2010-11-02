@@ -242,8 +242,7 @@ class SugarBean
     var $in_workflow = false;
     
     /**
-     * 
-     * used for 'visibile' column in tracker table. 
+     *  
      * By default it will be true but if any module is to be kept non visible 
      * to tracker, then its value needs to be overriden in that particular module to false.
      * 
@@ -4274,28 +4273,11 @@ function save_relationship_changes($is_update, $exclude=array())
             $monitor->setValue('action', $current_view);
             $monitor->setValue('item_id', $this->id);
             $monitor->setValue('item_summary', $this->get_summary_text());
-            $monitor->setValue('visible' , $this->get_tracker_visibility());
+            $monitor->setValue('visible' , $this->tracker_visibility);
             $trackerManager->saveMonitor($monitor);
         }
     }
-    /**
-     * 
-     * Returns the value of variable $tracker_visibility, which by default true in SugarBean.
-     * But if any module is not supposed to be tracked, then the value of the variable is assigned 
-     * as false in the bean of that module.
-     * This value is used in function track_view()
-     * of SugarBean to set the value of 'visible' column in tracker table.
-     * 
-     * If the value of 'visible' is false, the record does not get inserted in the tracker table, and hence not shown in
-     * 'Last Viewed'.
-     */
     
-    function get_tracker_visibility()
-	{
-		return $this->tracker_visibility;
-	}
-    
-
     /**
     * Returns the summary text that should show up in the recent history list for this object.
     *
