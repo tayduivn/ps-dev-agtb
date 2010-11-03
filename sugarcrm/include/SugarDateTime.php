@@ -28,13 +28,19 @@ class SugarDateTime extends DateTime
 		"hour" => "hour_12",
 	);
 
+    /**
+     * Calendar strings
+     * @var array
+     */
+    protected $_strings;
+
 	/**
 	 * Copy of DateTime::createFromFormat
 	 *
 	 * Needed to return right type of the object
 	 *
 	 * @param string $format
-	 * @param strinf $time
+	 * @param string $time
 	 * @param DateTimeZone $timezone
 	 * @return SugarDateTime
 	 * @see DateTime::createFromFormat

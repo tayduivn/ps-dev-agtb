@@ -304,7 +304,7 @@ class TimeDate2
         $timef = $user->getPreference('timef');
         if(empty($timef) && isset($GLOBALS['current_user']) && $GLOBALS['current_user'] !== $user) {
             // if we got another user and it has no time format, try current user
-            $datef = $GLOBALS['current_user']->getPreference('$timef');
+            $timef = $GLOBALS['current_user']->getPreference('$timef');
         }
         if (empty($timef)) {
             $timef = $GLOBALS['sugar_config']['default_time_format'];
@@ -555,7 +555,7 @@ class TimeDate2
     public function fromString($date, User $user = null)
     {
         try {
-            $sdate = new SugarDateTime($date, $this->_getUserTZ($user));
+            return new SugarDateTime($date, $this->_getUserTZ($user));
         } catch (Exception $e) {
             $GLOBALS['log']->error("fromString: Conversion of $date from string failed: {$e->getMessage()}");
             return null;
@@ -634,7 +634,7 @@ class TimeDate2
                 return '';
             }
             if ($fromTZ !== $toTZ) {
-                $phpdate->setTimezone($toTZ);
+                $phpdate->setTimeZone($toTZ);
             }
             return $phpdate->format($toFormat);
         } catch (Exception $e) {
@@ -876,7 +876,8 @@ class TimeDate2
 
     /**
      * Get 'now' DateTime object
-     * @return DateTime (with User timezone)
+     * @param $userTz return in user timezone?
+     * @return SugarDateTime
      */
     public function getNow($userTz = false)
     {
@@ -1326,7 +1327,7 @@ class TimeDate2
 	    if(empty($user)) {
 	        return '';
 	    }
-	    $tz = $this->_getUserTZ($user);
+	    $tz = self::getInstance()->_getUserTZ($user);
 	    if($tz) {
 	        return $tz->getName();
 	    }
