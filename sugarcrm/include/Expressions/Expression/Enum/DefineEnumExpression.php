@@ -20,9 +20,9 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Enum/EnumExpression.php');
 /**
- * <b>enum(v1, ...)</b><br/>
- * Returns a collection made up of the passed in variables.<br/>
- * ex: <i>enum(123, "Hello World", "three", 4.5)</i>
+ * <b>createList(v1, ...)</b><br/>
+ * Returns a list made up of the passed in variables.<br/>
+ * ex: <i>createList(123, "Hello World", "three", 4.5)</i>
  */
 class DefineEnumExpression extends EnumExpression
 {
@@ -79,7 +79,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "enum";
+		return array("createList", "enum");
 	}
 
 	/**

@@ -219,6 +219,16 @@ class nusoap_base {
 		'lt' => '<','gt' => '>','apos' => "'");
 
 	/**
+	 * Payload override
+	 * This is to allows us to override the payload to resolve issues where we need to take
+	 * control of the xml content
+	 * @var string
+	 * @access public
+	 * 
+	 */
+	var $payloadOverride;	
+	
+	/**
 	* constructor
 	*
 	* @access	public
@@ -7490,6 +7500,10 @@ class nusoap_client extends nusoap_base  {
 				}
 			}
 		}
+		
+		// check for payload override		
+		$payload = !empty($this->payloadOverride) ? $this->payloadOverride : $payload;		
+		
 		// serialize envelope
 		$soapmsg = $this->serializeEnvelope($payload,$this->requestHeaders,$usedNamespaces,$style,$use,$encodingStyle);
 		$this->debug("endpoint=$this->endpoint, soapAction=$soapAction, namespace=$namespace, style=$style, use=$use, encodingStyle=$encodingStyle");

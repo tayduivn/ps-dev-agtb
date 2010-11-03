@@ -49,9 +49,17 @@
     <td style="line-height:1em"><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
         {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
 		{if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
-		{sugar_help text=$mod_strings.LBL_POPHELP_CALCULATED FIXX=150 FIXY=380}
+		<img id="calcToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
-		<script>ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})</script>
+		<script>
+			if (!ModuleBuilder.cfToolTip)
+			     ModuleBuilder.cfToolTip = new YAHOO.widget.Tooltip("cfToolTip", {ldelim}
+				    context:"calcToolTipIcon", text:SUGAR.language.get("ModuleBuilder", "LBL_POPHELP_CALCULATED")
+				 {rdelim});
+		    else
+			    ModuleBuilder.cfToolTip.cfg.setProperty("context", "calcToolTipIcon");
+			ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})
+		</script>
     </td>
 </tr>
 <tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>

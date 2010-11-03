@@ -97,7 +97,7 @@ input[type=checkbox],input[type=radio]
 }
 ul li 
 {
-	list-style-type: none; 
+	list-style-type: disc; 
 	margin-left: 6px; 
 	margin-bottom: 2px;
 }
@@ -3113,6 +3113,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 #moduleList
 {
     height: 45px;
+	min-width: 1030px;
 }
 
 #subModuleList
@@ -5351,6 +5352,7 @@ color: #0B578F;
 }
 #SpotResults ul li{
 	margin-left:0px;
+	list-style-type:none;
 }
 
 #SpotResults li a

@@ -638,9 +638,8 @@ class SugarBean
             return;
 
         foreach ($this->field_defs as $field => $value) {
-            if( (isset($value['default']) || !empty($value['display_default']))
-                    && !empty($this->$field)
-                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default']))
+		if( !empty($this->$field)
+                  && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
                     ) {
                 $this->$field = null;
             }
@@ -2031,99 +2030,102 @@ function save_relationship_changes($is_update, $exclude=array())
     * @param $id - If ID is specified, it overrides the current value of $this->id.  If not specified the current value of $this->id will be used.
     * @return this - The object that it was called apon or null if exactly 1 record was not found.
     *
-    */
+	*/
 
-    function check_date_relationships_load()
-    {
-        global $disable_date_format;
-        if(!empty($disable_date_format))
-        {
-            return;
-        }
-        global $timedate;
-        if (empty($timedate))
-            $timedate=new TimeDate();
+	function check_date_relationships_load()
+	{
+		global $disable_date_format;
+		global $timedate;
+		if (empty($timedate))
+			$timedate=new TimeDate();
 
-        if(empty($this->field_defs))
-        {
-            return;
-        }
-        foreach($this->field_defs as $fieldDef)
-        {
-            $field = $fieldDef['name'];
-            if(!isset($this->processed_dates_times[$field]))
-            {
-                $this->processed_dates_times[$field] = '1';
+		if(empty($this->field_defs))
+		{
+			return;
+		}
+		foreach($this->field_defs as $fieldDef)
+		{
+			$field = $fieldDef['name'];
+			if(!isset($this->processed_dates_times[$field]))
+			{
+				$this->processed_dates_times[$field] = '1';
+				if(empty($this->$field)) continue; 
+				if($field == 'date_modified' || $field == 'date_entered')
+				{
+					$this->$field = from_db_convert($this->$field, 'datetime');
+					if(empty($disable_date_format)) {
+						$this->$field = $timedate->to_display_date_time($this->$field);
+					}
+				} 
+				elseif(isset($this->field_name_map[$field]['type'])) 
+				{
+					$type = $this->field_name_map[$field]['type'];
 
-                if($field == 'date_modified' || $field == 'date_entered')
-                {
-                    if(!empty($this->$field))
-                    {
-                        $this->$field = $timedate->to_display_date_time($this->$field);
-                    }
-                }
-                elseif(!empty($this->$field) && isset($this->field_name_map[$field]['type']))
-                {
-                    $type = $this->field_name_map[$field]['type'];
+					if($type == 'relate'  && isset($this->field_name_map[$field]['custom_module']))
+					{
+						$type = $this->field_name_map[$field]['type'];
+					}
 
-                    if($type == 'relate'  && isset($this->field_name_map[$field]['custom_module']))
-                    {
-                        $type = $this->field_name_map[$field]['type'];
-                    }
+					if($type == 'date')
+					{
+						$this->$field = from_db_convert($this->$field, 'date');
 
-                    if($type == 'date')
-                    {
-                        $this->$field = from_db_convert($this->$field, 'date');
+						if($this->$field == '0000-00-00')
+						{
+							$this->$field = '';
+						} elseif(!empty($this->field_name_map[$field]['rel_field']))
+						{
+							$rel_field = $this->field_name_map[$field]['rel_field'];
 
-                        if($this->$field == '0000-00-00')
-                        {
-                            $this->$field = '';
-                        } elseif(!empty($this->field_name_map[$field]['rel_field']))
-                        {
-                            $rel_field = $this->field_name_map[$field]['rel_field'];
-
-                            if(!empty($this->$rel_field))
-                            {
-                                $this->$rel_field=from_db_convert($this->$rel_field, 'time');
-                                $mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
-                                $this->$field = $timedate->to_display_date($mergetime);
-                                $this->$rel_field = $timedate->to_display_time($mergetime);
-                            }
-                        }
-                        else
-                        {
-                            $this->$field = $timedate->to_display_date($this->$field, false);
-                        }
-                    } elseif($type == 'datetime' || $type == 'datetimecombo')
-                    {
-                        if($this->$field == '0000-00-00 00:00:00')
-                        {
-                            $this->$field = '';
-                        }
-                        else
-                        {
-                            $this->$field = $timedate->to_display_date_time($this->$field, true, true);
-                        }
-                    } elseif($type == 'time')
-                    {
-                        if($this->$field == '00:00:00')
-                        {
-                            $this->$field = '';
-                        } else
-                        {
-                            //$this->$field = from_db_convert($this->$field, 'time');
-                            if(empty($this->field_name_map[$field]['rel_field']))
-                            {
-                                $this->$field = $timedate->to_display_time($this->$field,true, false);
-                            }
-                        }
-                    } elseif($type == 'encrypt'){
-                        $this->$field = $this->decrypt_after_retrieve($this->$field);
-                    }
-                }
-            }
-        }
-    }
+							if(!empty($this->$rel_field))
+							{
+								$this->$rel_field=from_db_convert($this->$rel_field, 'time');
+								if(empty($disable_date_format)) {
+									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
+									$this->$field = $timedate->to_display_date($mergetime);
+									$this->$rel_field = $timedate->to_display_time($mergetime);
+								}
+							}
+						}
+						else
+						{
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date($this->$field, false);
+							}
+						}
+					} elseif($type == 'datetime' || $type == 'datetimecombo')
+					{
+						if($this->$field == '0000-00-00 00:00:00')
+						{
+							$this->$field = '';
+						}
+						else
+						{
+							$this->$field = from_db_convert($this->$field, 'datetime');
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							}
+						}
+					} elseif($type == 'time')
+					{
+						if($this->$field == '00:00:00')
+						{
+							$this->$field = '';
+						} else
+						{
+							//$this->$field = from_db_convert($this->$field, 'time');
+							if(empty($this->field_name_map[$field]['rel_field']) && empty($disable_date_format))
+							{
+								$this->$field = $timedate->to_display_time($this->$field,true, false);
+							}
+						}
+					} elseif($type == 'encrypt' && empty($disable_date_format)){
+						$this->$field = $this->decrypt_after_retrieve($this->$field);
+					}
+				}
+			}
+		}
+	}
 
     /**
      * This function processes the fields before save.

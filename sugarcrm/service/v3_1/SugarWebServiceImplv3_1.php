@@ -91,9 +91,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      * @return array $view(s) The view requested.  Current supported types are edit, detail, and list.
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    function get_module_layout_md5($session, $module_name, $type, $view){
+    function get_module_layout_md5($session, $module_name, $type, $view, $acl_check = TRUE){
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout_md5');
-    	$results = self::get_module_layout($session, $module_name, $type, $view, TRUE);
+    	$results = self::get_module_layout($session, $module_name, $type, $view, $acl_check, TRUE);
             return array('md5'=> $results);
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout_md5');
     }
@@ -283,6 +283,19 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $nameValueArray['mobile_max_list_entries'] = self::$helperObject->get_name_value('mobile_max_list_entries', $sugar_config['wl_list_max_entries_per_page'] );
             $nameValueArray['mobile_max_subpanel_entries'] = self::$helperObject->get_name_value('mobile_max_subpanel_entries', $sugar_config['wl_list_max_entries_per_subpanel'] );
             
+            if($application == 'mobile')
+            {
+                $modules = $availModuleNames = array();
+                $availModules = array_keys($_SESSION['avail_modules']); //ACL check already performed.
+                $modules = self::$helperObject->get_visible_mobile_modules($availModules);
+                $nameValueArray['available_modules'] = $modules;
+                //Get the vardefs md5
+                foreach($modules as $mod_def)
+                    $availModuleNames[] = $mod_def['module_key'];
+                
+                $nameValueArray['vardefs_md5'] = self::get_module_fields_md5(session_id(), $availModuleNames);
+            }
+            
             $currencyObject = new Currency();
             $currencyObject->retrieve($cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
@@ -336,6 +349,94 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     
     
     /**
+     * Enter description here...
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param array $modules Array of modules to return
+     * @param bool $MD5 Should the results be md5d
+     */
+    function get_language_definition($session, $modules, $MD5 = FALSE)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_language_file');
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+
+        $error = new SoapError();
+        $output_list = array();
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
+        {
+            $error->set_error('invalid_login');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+            return;
+        }
+    
+        if( is_string($modules) )
+            $modules = array($modules);
+            
+        $results = array();
+        foreach ($modules as $mod)
+        {
+            if( strtolower($mod) == 'app_strings' )
+            {
+                $values = return_application_language($current_language);
+                $key = 'app_strings';
+            }
+            else if ( strtolower($mod) == 'app_list_strings' ) 
+            {
+            	$values = return_app_list_strings_language($current_language);
+            	$key = 'app_list_strings';
+            }
+            else
+            {
+                $values = return_module_language($current_language, $mod);
+                $key = $mod;
+            }
+            
+            if( $MD5 )
+                $values = md5(serialize($values));
+                
+            $results[$key] = $values;
+        }
+        
+        return $results;
+    }
+    
+    /**
+     * Get the base64 contents of a quote pdf.  
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param string $quote_id
+     * @param string $pdf_format Either Standard or Invoice
+     */
+    function get_quotes_pdf($session, $quote_id, $pdf_format = 'Standard')
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_quotes_pdf');
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+
+        $error = new SoapError();
+        $output_list = array();
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
+        {
+            $error->set_error('invalid_login');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+            return;
+        }
+
+        require_once('include/Sugarpdf/SugarpdfFactory.php');
+        $bean = new Quote();
+        $bean->retrieve($quote_id);
+        $sugarpdfBean = SugarpdfFactory::loadSugarpdf($pdf_format, 'Quotes', $bean, array() );
+        $sugarpdfBean->process();
+
+        $pdfContents = $sugarpdfBean->Output('','S');
+        $pdfContents = base64_encode($pdfContents);
+
+        return array('file_contents' => $pdfContents);
+    }
+    
+    
+    /**
      * For a particular report, generate the associated pdf report.  All caching should be done
      * on the client side.
      *
@@ -385,6 +486,161 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     	
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
+    
+        /**
+     * Retrieve the layout metadata for a given module given a specific type and view.
+     *
+     * @param String $session -- Session ID returned by a previous call to login.
+     * @param array $module_name(s) -- The name of the module(s) to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
+     * @return array $type The type(s) of views requested.  Current supported types are 'default' (for application) and 'wireless'
+     * @return array $view The view(s) requested.  Current supported types are edit, detail, list, and subpanel.
+     * @exception 'SoapFault' -- The SOAP error, if any
+     */
+    function get_module_layout($session, $a_module_names, $a_type, $a_view,$acl_check = TRUE, $md5 = FALSE){
+    	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
+    
+    	global  $beanList, $beanFiles;
+    	$error = new SoapError();
+        $results = array();
+        foreach ($a_module_names as $module_name)
+        {
+            if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error))
+            {
+                $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout');
+                continue;
+            }
+
+            $class_name = $beanList[$module_name];
+            require_once($beanFiles[$class_name]);
+            $seed = new $class_name();
+
+            foreach ($a_view as $view)
+            {
+                $aclViewCheck = (strtolower($view) == 'subpanel') ? 'DetailView' : ucfirst(strtolower($view)) . 'View';
+                if(!$acl_check || $seed->ACLAccess($aclViewCheck, true) )
+                {
+                    foreach ($a_type as $type)
+                    {
+                        $a_vardefs = self::$helperObject->get_module_view_defs($module_name, $type, $view);
+                        if($md5)
+                            $results[$module_name][$type][$view] = md5(serialize($a_vardefs));
+                        else
+                            $results[$module_name][$type][$view] = $a_vardefs;
+                    }
+                }
+            }
+        }
+    	 
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout');
+    	
+        return $results;
+    }
+
+    /**
+     * Retrieve a list of beans.  This is the primary method for getting list of SugarBeans from Sugar using the SOAP API.
+     *
+     * @param String $session -- Session ID returned by a previous call to login.
+     * @param String $module_name -- The name of the module to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
+     * @param String $query -- SQL where clause without the word 'where'
+     * @param String $order_by -- SQL order by clause without the phrase 'order by'
+     * @param integer $offset -- The record offset to start from.
+     * @param Array  $select_fields -- A list of the fields to be included in the results. This optional parameter allows for only needed fields to be retrieved.
+     * @param Array $link_name_to_fields_array -- A list of link_names and for each link_name, what fields value to be returned. For ex.'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))
+    * @param integer $max_results -- The maximum number of records to return.  The default is the sugar configuration value for 'list_max_entries_per_page'
+     * @param integer $deleted -- false if deleted records should not be include, true if deleted records should be included.
+     * @return Array 'result_count' -- integer - The number of records returned
+     *               'next_offset' -- integer - The start of the next page (This will always be the previous offset plus the number of rows returned.  It does not indicate if there is additional data unless you calculate that the next_offset happens to be closer than it should be.
+     *               'entry_list' -- Array - The records that were retrieved
+     *	     		 'relationship_list' -- Array - The records link field data. The example is if asked about accounts email address then return data would look like Array ( [0] => Array ( [name] => email_addresses [records] => Array ( [0] => Array ( [0] => Array ( [name] => id [value] => 3fb16797-8d90-0a94-ac12-490b63a6be67 ) [1] => Array ( [name] => email_address [value] => hr.kid.qa@example.com ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 1 ) ) [1] => Array ( [0] => Array ( [name] => id [value] => 403f8da1-214b-6a88-9cef-490b63d43566 ) [1] => Array ( [name] => email_address [value] => kid.hr@example.name ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 0 ) ) ) ) )
+    * @exception 'SoapFault' -- The SOAP error, if any
+    */
+    function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted, $favorites ){
+
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
+        global  $beanList, $beanFiles;
+        $error = new SoapError();
+        $using_cp = false;
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if($module_name == 'CampaignProspects'){
+            $module_name = 'Prospects';
+            $using_cp = true;
+        }
+        //END SUGARCRM flav!=sales ONLY
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+            return;
+        } // if
+
+        // If the maximum number of entries per page was specified, override the configuration value.
+        if($max_results > 0){
+            global $sugar_config;
+            $sugar_config['list_max_entries_per_page'] = $max_results;
+        } // if
+
+        $class_name = $beanList[$module_name];
+        require_once($beanFiles[$class_name]);
+        $seed = new $class_name();
+
+        if (!self::$helperObject->checkACLAccess($seed, 'Export', $error, 'no_access')) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+            return;
+        } // if
+
+        if (!self::$helperObject->checkACLAccess($seed, 'list', $error, 'no_access')) {
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+            return;
+        } // if
+
+        if($query == ''){
+            $where = '';
+        } // if
+        if($offset == '' || $offset == -1){
+            $offset = 0;
+        } // if
+        if($using_cp){
+            $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
+        }else
+        {
+            $response = self::$helperObject->get_data_list($seed,$order_by, $query, $offset,-1,-1,$deleted,$favorites);
+        } // else
+        $list = $response['list'];
+
+        $output_list = array();
+        $linkoutput_list = array();
+
+        foreach($list as $value) {
+            if(isset($value->emailAddress)){
+                $value->emailAddress->handleLegacyRetrieve($value);
+            } // if
+            $value->fill_in_additional_detail_fields();
+
+            $output_list[] = self::$helperObject->get_return_value_for_fields($value, $module_name, $select_fields);
+            if(!empty($link_name_to_fields_array)){
+                $linkoutput_list[] = self::$helperObject->get_return_value_for_link_fields($value, $module_name, $link_name_to_fields_array);
+            }
+        } // foreach
+
+        // Calculate the offset for the start of the next page
+        $next_offset = $offset + sizeof($output_list);
+
+		$returnRelationshipList = array();
+		foreach($linkoutput_list as $rel){
+			$link_output = array();
+			foreach($rel as $row){
+				$rowArray = array();
+				foreach($row['records'] as $record){
+					$rowArray[]['link_value'] = $record;
+				}
+				$link_output[] = array('name' => $row['name'], 'records' => $rowArray);
+			}
+			$returnRelationshipList[]['link_list'] = $link_output;
+		}
+
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
+        return array('result_count'=>sizeof($output_list), 'next_offset'=>$next_offset, 'entry_list'=>$output_list, 'relationship_list' => $returnRelationshipList);
+    } // fn
+    
+    
     
     /**
      * Given a list of modules to search and a search string, return the id, module_name, along with the fields

@@ -188,41 +188,13 @@
 </form>
 <script>
 {literal}
-//BEGIN SUGARCRM flav=ent ONLY
-SUGAR.portal = {
-	checkCalcFields: function() {
-		{/literal}
-		{if $view == "DetailView"}    
-           return true;
-		{/if}
-		{literal}
-		var Dom = YAHOO.util.Dom;
-	    var panels = Dom.get('panels');
-	    var fields = Dom.getElementsByClassName('field_name', 'span', 'panels');
-	    var cfs = [ ];
-	    for(i in fields){
-	        if (SUGAR.portal.calcField.indexOf(fields[i].innerHTML) != -1) {
-	            cfs.push(fields[i].innerHTML);
-	        }
-	    }
-	    if (cfs.length > 0) 
-	    {
-	        var msg = SUGAR.language.get("ModuleBuilder", "ERROR_CALCULATED_PORTAL_FIELDS") + "\n";
-	        for (var i = 0; i < cfs.length; i++) {
-	          msg += '"' + cfs[i] + '"';
-	          if (i != cfs.length - 1)
-	              msg += ",";
-	        }
-			msg += "\n" + SUGAR.language.get("ModuleBuilder", "ERROR_ARE_YOU_SURE");
-	        return window.confirm(msg);
-	    }       
-	    return true;
-	},
-	calcField: {/literal}{if !empty($calc_field_list)}{$calc_field_list}{else}""{/if}{literal}
-};
 
-//END SUGARCRM flav=ent ONLY
-function editPanelProperties(panelId, view) {
+//BEGIN SUGARCRM flav=pro ONLY
+Studio2.calcFieldList = {/literal}{$calc_field_list}{literal};
+//END SUGARCRM flav=pro ONLY
+
+
+var editPanelProperties = function (panelId, view) {
     panelId = "" + panelId;
 	var key_label = document.getElementById('le_panelid_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
 	var value_label = document.getElementById('le_panelname_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
@@ -238,9 +210,9 @@ function editPanelProperties(panelId, view) {
                 //END SUGARCRM flav=een ONLY
                 + "&title_label=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE")) + "&value_label=" + encodeURIComponent(value_label);
     ModuleBuilder.getContent(params);
-}
+}; 
 {/literal}
-function editFieldProperties(idCount, label) {ldelim}
+var editFieldProperties = function (idCount, label) {ldelim}
 	var value_label = document.getElementById('le_label_' + idCount).innerHTML.replace(/^\s+|\s+$/g,''); 
 	var value_tabindex = document.getElementById('le_tabindex_' + idCount).innerHTML.replace(/^\s+|\s+$/g,'');
 	ModuleBuilder.getContent(
@@ -265,7 +237,7 @@ ModuleBuilder.MBpackage = "{$view_package}";
 Studio2.requiredFields = [{$required_fields}];
 {literal}
 //rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
-if (!Array.indexOf) {
+if (typeof new Array().indexOf == "undefined") {
   Array.prototype.indexOf = function (obj, start) {
     for (var i = (start || 0); i < this.length; i++) {
       if (this[i] == obj) {
@@ -275,60 +247,6 @@ if (!Array.indexOf) {
     return -1;
   }
 }
-	
-Studio2.checkGridLayout = function()
-{
-    if (Studio2.countGridFields() == 0) {
-	   ModuleBuilder.layoutValidation.popup() ;
-	   return false;
-	}
-	{/literal}
-	   {if $view == "detailview"}	
-	       return true;  
-	   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-	   {elseif $view == "wirelessdetailview"}
-	       return true;
-	   //END SUGARCRM flav=pro || flav=sales ONLY
-	   {else}
-    return Studio2.checkRequiredFields();
-	 
-	   {/if}
-	{literal}
-}
-
-Studio2.countGridFields = function() {
-    var count = 0;
-    var divs = document.getElementById( 'panels' ).getElementsByTagName( 'div' ) ;
-    for ( var j=0;j<divs.length;j++) {
-        if (divs[j].className == 'le_field')
-		    count++;
-    }
-    return count;
-};  
-
-Studio2.checkRequiredFields = function(){
-	var Dom = YAHOO.util.Dom;
-	var availablefields = Dom.get('availablefields');
-	var fields = Dom.getElementsByClassName('field_name', '', 'availablefields');
-	var missing = [ ];
-	for(field in fields){
-	    if (Studio2.requiredFields.indexOf(fields[field].innerHTML) != -1) {
-			missing[missing.length] = fields[field].innerHTML;
-		}
-	}
-	if (missing.length > 0)	
-	{
-	    var msg = SUGAR.language.get("ModuleBuilder", "ERROR_REQUIRED_FIELDS");
-		for (var i = 0; i < missing.length; i++) {
-		  msg += '"' + missing[i] + '"';
-		  if (i != missing.length - 1)
-		      msg += ",";
-		}
-        return window.confirm(msg);
-	}
-			
-    return true;
-};
 {/literal}
 ModuleBuilder.module = "{$view_module}";
 ModuleBuilder.package={if $fromModuleBuilder}"{$view_package}"{else}false{/if};

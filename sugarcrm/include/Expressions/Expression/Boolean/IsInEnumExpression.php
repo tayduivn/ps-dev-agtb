@@ -21,9 +21,9 @@
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
- * <b>isInEnum(Generic item, Enum enum)</b><br/>
- * Returns true if item is contained within the enum. <br/>
- * <i>isInEnum(3, enum(2, 3, 4, 5))</i> = false
+ * <b>isInList(Generic item, List list)</b><br/>
+ * Returns true if item is contained within the list. <br/>
+ * <i>isInList(3, craeteList(2, 3, 4, 5))</i> = false
  */
 class IsInEnumExpression extends BooleanExpression {
 	/**
@@ -80,7 +80,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "isInEnum";
+		return array("isInList", "isInEnum");
 	}
 
 	/**

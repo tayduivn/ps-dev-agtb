@@ -4554,23 +4554,6 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
 		  } //if
 
-		  // move the favorite reports over to the SugarFavorites table
-		  $fav_rep_prefs = $current_user->getPreference('favorites', 'Reports');
-		  if(is_array($fav_rep_prefs) && !empty($fav_rep_prefs)){
-    		  $current_favorites = array_keys($fav_rep_prefs);
-    		  foreach ($current_favorites as $report_id) {
-    		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-    		          continue;
-    		      }
-    
-    		      $favFocus = new SugarFavorites;
-    		      $favFocus->module = 'Reports';
-    		      $favFocus->record_id = $report_id;
-    		      $favFocus->assigned_user_id = $current_user->id;
-    		      $favFocus->save();
-    		  }
-		  }
-
 		  // we need to force save the changes to disk, otherwise we lose them.
 		  $current_user->savePreferencesToDB();
 	} //while
@@ -4631,12 +4614,25 @@ function upgradeUserPreferences() {
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
 
+    // Need to repair the RC1 instances that have incorrect GUIDS
+    $deleteRows = array();      
+    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
+        if ($row['id'] != $expectedId) {
+            $deleteRows[] = $row['id'];
+        }
+    }
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");    
+    // End Repair
+        
+    
     $active_users = array();
     $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
         $active_users[] = $row['id'];
     }
-
+    
     foreach($active_users as $user_id){
         $user = new User();
         $user->retrieve($user_id);
@@ -4647,7 +4643,7 @@ function migrate_sugar_favorite_reports(){
         if(!empty($user_favorites)){
             foreach($user_favorites as $report_id => $bool){
                 $fav = new SugarFavorites();
-                $record = SugarFavorites::generateGUID('Reports', $report_id);
+                $record = SugarFavorites::generateGUID('Reports', $report_id, $user_id);
                 if(!$fav->retrieve($record, true, false)){
                         $fav->new_with_id = true;
                 }
@@ -4655,6 +4651,9 @@ function migrate_sugar_favorite_reports(){
                 $fav->module = 'Reports';
                 $fav->record_id = $report_id;
                 $fav->assigned_user_id = $user->id;
+                $fav->created_by = $user->id;
+                $fav->modified_user_id = $user->id;
+                
                 $fav->deleted = 0;
                 $fav->save();
             }
@@ -4662,6 +4661,81 @@ function migrate_sugar_favorite_reports(){
     }
 }
 // END SUGARCRM flav=pro ONLY 
+
+function add_custom_modules_favorites_search(){
+    $module_directories = scandir('modules');
+
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
+
+		$matches = array();
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
+
+		$full_module_dir = "modules/{$module_dir}/";
+		$read_searchdefs_from = "{$full_module_dir}/metadata/searchdefs.php";
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
+
+		// Studio can possibly override this file, so we check for a custom version of it
+		if(file_exists("custom/{$full_module_dir}/metadata/searchdefs.php")){
+			$read_searchdefs_from = "custom/{$full_module_dir}/metadata/searchdefs.php";
+		}
+
+		if(file_exists($read_searchdefs_from) && file_exists($read_SearchFields_from)){
+			$found_sf1 = false;
+			$found_sf2 = false;
+			require($read_searchdefs_from);
+			foreach($searchdefs[$module_dir]['layout']['basic_search'] as $sf_array){
+				if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+					$found_sf1 = true;
+				}
+			}
+
+			require($read_SearchFields_from);
+			if(isset($searchFields[$module_dir]['favorites_only'])){
+				$found_sf2 = true;
+			}
+
+			if(!$found_sf1 && !$found_sf2){
+				$searchdefs[$module_dir]['layout']['basic_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchdefs[$module_dir]['layout']['advanced_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchFields[$module_dir]['favorites_only'] = array(
+					'query_type'=>'format',
+					'operator' => 'subquery',
+					'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+								WHERE sugarfavorites.deleted=0
+									and sugarfavorites.module = \''.$module_dir.'\'
+									and sugarfavorites.assigned_user_id = \'{0}\'',
+					'db_field'=>array('id')
+				);
+
+				if(!is_dir("custom/{$full_module_dir}/metadata")){
+					mkdir_recursive("custom/{$full_module_dir}/metadata");
+				}
+				$success_sf1 = write_array_to_file('searchdefs', $searchdefs, "custom/{$full_module_dir}/metadata/searchdefs.php");
+				$success_sf2 = write_array_to_file('searchFields', $searchFields, "{$full_module_dir}/metadata/SearchFields.php");
+
+				if(!$success_sf1){
+					logThis("add_custom_modules_favorites_search failed for searchdefs.php for {$module_dir}");
+				}
+				if(!$success_sf2){
+					logThis("add_custom_modules_favorites_search failed for SearchFields.php for {$module_dir}");
+				}
+				if($success_sf1 && $success_sf2){
+					logThis("add_custom_modules_favorites_search successfully updated searchdefs and searchFields for {$module_dir}");
+				}
+			}
+		}
+	}
+}
+
 
 /**
  * upgradeModulesForTeamsets

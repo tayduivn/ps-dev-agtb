@@ -250,12 +250,17 @@ SUGAR.expressions.GridToolTip = {
 		var record = this.getRecord(e.target);
 		Dom.get("formulaInput").value += "$" + record.getData().name;
 	});
+	fieldsGrid.on("sortedByChange", function(e){
+		if(e.newValue)
+			fieldsGrid.sortedColumn = e.newValue;
+	});
 	
 	fieldDS.queryMatchContains = true;
 	var fieldAC = new YAHOO.widget.AutoComplete("formulaFieldsSearch","fieldSearchResults", fieldDS);
 	fieldAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
 		fieldsGrid.initializeTable();
 		fieldsGrid.addRows(oResponse.results);
+		fieldsGrid.sortColumn(fieldsGrid.sortedColumn.column, fieldsGrid.sortedColumn.dir);
 		fieldsGrid.render();
     }
 	var fieldsJSON =  [];
@@ -267,6 +272,7 @@ SUGAR.expressions.GridToolTip = {
 		if (this.value == '') {
 			fieldsGrid.initializeTable();
 			fieldsGrid.addRows(fieldsJSON);
+			fieldsGrid.sortColumn(fieldsGrid.sortedColumn.column, fieldsGrid.sortedColumn.dir);
 			fieldsGrid.render();
 		} // if
 	}
@@ -284,46 +290,47 @@ SUGAR.expressions.GridToolTip = {
 			Dom.addClass(this, "empty");
 		}
 	}
+	fieldsGrid.sortColumn(fieldsGrid.getColumn(0))
 	fieldsGrid.render();
 	SUGAR.expressions.fieldGrid = fieldsGrid;
 	var functionsArray = SUGAR.expressions.getFunctionList();
 	var usedClasses = { };
-	var gridData = [];
-	for (var i in functionsArray)
-	{
-		var fName = functionsArray[i][0];
-		//Internal Sugar functions that most users will not find useful
-		switch (fName) {
-		case "daysUntil":
-		case "isValidTime":
-		case "isAlpha":
-		case "doBothExist":
-		case "isValidPhone":
-		case "isInEnum":
-		case "isRequiredCollection":
-		case "isNumeric":
-		case "isValidDBName":
-		case "isAlphaNumeric":
-		case "indexOf":
-		case "stddev":
-		case "charAt":
-		case "formatName":
-			continue;
-			break;
+	if (!SUGAR.expressions.funcGridData) {
+		SUGAR.expressions.funcGridData = [];
+		for (var i in functionsArray)
+		{
+			var fName = functionsArray[i][0];
+			//Internal Sugar functions that most users will not find useful
+			switch (fName) {
+			case "daysUntil":
+			case "isValidTime":
+			case "isAlpha":
+			case "doBothExist":
+			case "isValidPhone":
+			case "isRequiredCollection":
+			case "isNumeric":
+			case "isValidDBName":
+			case "isAlphaNumeric":
+			case "stddev":
+			case "charAt":
+			case "formatName":
+				continue;
+				break;
+			}
+			//For now, hide date functions in the formula builder as they are unstable.
+			if (functionsArray[i][1] == "date" || functionsArray[i][1] == "time")
+				continue;
+			if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
+				continue;
+			if (functionsArray[i][1] == "number")
+				SUGAR.expressions.funcGridData.push([functionsArray[i][0], "_number"]);
+			else
+				SUGAR.expressions.funcGridData.push(functionsArray[i]);
+			
+			usedClasses[SUGAR.FunctionMap[fName].prototype.className] = true;
 		}
-		//For now, hide date functions in the formula builder as they are unstable.
-		if (functionsArray[i][1] == "date" || functionsArray[i][1] == "time")
-			continue;
-		if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
-			continue;
-		if (functionsArray[i][1] == "number")
-			gridData.push([functionsArray[i][0], "_number"]);
-		else
-			gridData.push(functionsArray[i]);
-		usedClasses[SUGAR.FunctionMap[fName].prototype.className] = true;
-		
 	}
-	var funcDS = new YAHOO.util.LocalDataSource(gridData, 
+	var funcDS = new YAHOO.util.LocalDataSource(SUGAR.expressions.funcGridData, 
 	{
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 		responseSchema: 
@@ -332,7 +339,7 @@ SUGAR.expressions.GridToolTip = {
 		   fields : ['name', 'type']
 	    }
 	});
-	var functionsGrid = new YAHOO.widget.ScrollingDataTable('functionsGrid',
+	var fg = SUGAR.expressions.functionsGrid = new YAHOO.widget.ScrollingDataTable('functionsGrid',
 		[
 		    {key:'name', label: "Functions", width: 200, sortable: true},
 		    {key:'type', label: "&nbsp;", width: 20, sortable: true, formatter:typeFormatter}
@@ -341,9 +348,13 @@ SUGAR.expressions.GridToolTip = {
 	    {height: "200px", MSG_EMPTY: SUGAR.language.get('ModuleBuilder','LBL_NO_FUNCS')}
 	);
 	
-	functionsGrid.on("rowClickEvent", function(e){
+	fg.on("rowClickEvent", function(e){
 		var record = this.getRecord(e.target);
 		Dom.get("formulaInput").value +=  record.getData().name + '(';
+	});
+	fg.on("sortedByChange", function(e){
+		if(e.newValue)
+		    SUGAR.expressions.functionsGrid.sortedColumn = e.newValue;
 	});
 	
 	var funcTip = new YAHOO.widget.Tooltip("functionsTooltip", {
@@ -353,7 +364,7 @@ SUGAR.expressions.GridToolTip = {
 		zindex: 25
 	});
 	
-	funcTip.table = functionsGrid;
+	funcTip.table = fg;
 	
 	funcTip.contextMouseOverEvent.subscribe(function(context, e){
 		var target =  e[1].srcElement  ? e[1].srcElement : e[1].target;
@@ -374,22 +385,28 @@ SUGAR.expressions.GridToolTip = {
 	funcDS.queryMatchContains = true;
 	var funcAC = new YAHOO.widget.AutoComplete("formulaFuncSearch","funcSearchResults", funcDS);
 	funcAC.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
-		functionsGrid.initializeTable();
-		functionsGrid.addRows(oResponse.results);
-		functionsGrid.sortColumn(functionsGrid.getColumn(1));
-		functionsGrid.render();
+		var fg = SUGAR.expressions.functionsGrid;
+		fg.initializeTable();
+		fg.addRows(oResponse.results);
+		fg.sortColumn(fg.sortedColumn.column, fg.sortedColumn.dir);
+		fg.render();
     }
-	var funcsJSON =  [];
-	for(var i in functionsArray)
+	if (!SUGAR.expressions.funcionListJSON)
 	{
-		funcsJSON[i] = {name: functionsArray[i][0], type: functionsArray[i][1]};
+		SUGAR.expressions.funcionListJSON =  [];
+		for(var i in SUGAR.expressions.funcGridData)
+		{
+			SUGAR.expressions.funcionListJSON[i] = {name: SUGAR.expressions.funcGridData[i][0], type: SUGAR.expressions.funcGridData[i][1]};
+		}
 	}
 	Dom.get("formulaFuncSearch").onkeyup = function() {
 		if (this.value == '') {
 			Dom.addClass(this, "empty");
-			functionsGrid.initializeTable();
-			functionsGrid.addRows(funcsJSON);
-			functionsGrid.render();
+			var fg = SUGAR.expressions.functionsGrid;
+			fg.initializeTable();
+			fg.addRows(SUGAR.expressions.funcionListJSON);
+			fg.sortColumn(fg.sortedColumn.column, fg.sortedColumn.dir);
+			fg.render();
 		}
 	}
 	Dom.get("formulaFuncSearch").onfocus = function() {
@@ -406,8 +423,8 @@ SUGAR.expressions.GridToolTip = {
 			Dom.addClass(this, "empty");
 		}
 	}
-	functionsGrid.render();
-	functionsGrid.sortColumn(functionsGrid.getColumn(1));
+	fg.render();
+	fg.sortColumn(fg.getColumn(1));
 
 	Dom.setStyle(Dom.get("formulaBuilder").parentNode, "padding", "0");
 	

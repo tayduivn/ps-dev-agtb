@@ -531,6 +531,7 @@ foreach($sync_modules as $name=>$val){
 						foreach($sync_info as $key => $val){
 							$sync_info[$key] = $sync_end_time;
 						}
+						$sync_info['last_sync'.$sync_module] = $sync_end_time;
 						$sync_info['local_last_sync'.$sync_module] = $local_time;
 						unset($_SESSION['sync_start_time']);
 						require_once ('include/utils/file_utils.php');

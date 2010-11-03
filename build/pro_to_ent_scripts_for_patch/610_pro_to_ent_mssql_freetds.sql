@@ -15,3 +15,9 @@ ALTER TABLE bugs ADD portal_viewable bit  DEFAULT '0' NULL ;
 ALTER TABLE contacts ADD portal_password nvarchar(32)  NULL ,portal_name nvarchar(255) NULL default NULL,portal_active bit NOT NULL default '0',portal_app nvarchar(255) NULL default NULL;
 
 ALTER TABLE cases ADD portal_viewable bit  DEFAULT '0' NULL ;
+
+DROP INDEX idx_message_id on emails;
+
+ALTER TABLE emails ALTER COLUMN message_id nvarchar(255) NULL;
+
+CREATE INDEX idx_message_id on emails (message_id);

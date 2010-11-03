@@ -83,6 +83,7 @@ class CampaignLog extends SugarBean {
         if($temp_array['TARGET_TYPE']=='Accounts'){
                $query="select name from ".strtolower($temp_array['TARGET_TYPE']) .  " where id ='{$temp_array['TARGET_ID']}'";
         }
+
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
 
@@ -96,6 +97,15 @@ class CampaignLog extends SugarBean {
         }
         $temp_array['RECIPIENT_EMAIL']=$this->retrieve_email_address($temp_array['TARGET_ID']);
 
+        $query = 'select name from email_marketing where id = \'' . $temp_array['MARKETING_ID'] . '\'';
+        $result=$this->db->query($query);
+        $row=$this->db->fetchByAssoc($result);
+
+        if ($row)
+        {
+        	$temp_array['MARKETING_NAME'] = $row['name'];
+        }
+        
         return $temp_array;
     }
 
@@ -175,10 +185,8 @@ class CampaignLog extends SugarBean {
                 return $row['name'];
             }
         }
-
-        return $related_id.$related_type;
-    }
-
+		return $related_id.$related_type;
+	}
 }
 
 ?>

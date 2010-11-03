@@ -179,7 +179,7 @@ class quicksearchQuery {
                         $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
                     }
                 }
-               
+
                 //BEGIN SUGARCRM flav=pro ONLY
                 if($list_return[$i] instanceof Team){
                 	$list_return[$i]->name = Team::getDisplayName($list_return[$i]->name, $list_return[$i]->name_2);

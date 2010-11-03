@@ -1268,6 +1268,7 @@ class MssqlManager extends DBManager
         $type)
     {
         switch($type) {
+        case 'datetime': return substr($string, 0,19);
         case 'date': return substr($string, 0,11);
         case 'time': return substr($string, 11);
 		}

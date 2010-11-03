@@ -687,7 +687,8 @@ class ConnectorsController extends SugarController {
 	    $source->init();
 	    
 	    global $mod_strings;
-		try {
+
+	    try {
 		    if($source->isRequiredConfigFieldsForButtonSet() && $source->test()) {
 		      echo $mod_strings['LBL_TEST_SOURCE_SUCCESS'];
 		    } else {

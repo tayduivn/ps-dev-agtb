@@ -27,4 +27,4 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<input type='text' name='{$vardef.name}' id='{$vardef.name}' size='{$displayParams.size|default:20}' {if !empty($vardef.len)}maxlength='{$vardef.len}'{elseif !empty($displayParams.maxlength)}maxlength='{$displayParams.maxlength}'{/if} value='{$vardef.value}' title='{$vardef.help}' {$displayParams.field}> 
+<input type='text' name='{$vardef.name}' id='{$vardef.name}' size='{$displayParams.size|default:20}' {if !empty($vardef.len)}maxlength='{$vardef.len}'{elseif !empty($displayParams.maxlength)}maxlength='{$displayParams.maxlength}'{/if} value='{$vardef.value}' title='{$vardef.help}' {if !empty($vardef.readOnly) || !empty($displayParams.readOnly)}readonly="1"{/if} {$displayParams.field}> 

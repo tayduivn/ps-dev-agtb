@@ -62,26 +62,32 @@ class SugarFavorites extends Basic
 	    $record
 	    )
 	{
+	global $app_strings;
 		if ($on)
-			return '<div class="star"><div class="on" onclick="DCMenu.removeFromFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
+			return '<div class="star" title="'.$app_strings['LBL_REMOVE_FROM_FAVORITES'].'"><div class="on" onclick="DCMenu.removeFromFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
 		else
-			return '<div class="star"><div class="off" onclick="DCMenu.addToFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
+			return '<div class="star" title="'.$app_strings['LBL_ADD_TO_FAVORITES'].'"><div class="off" onclick="DCMenu.addToFavorites(this, \''.$module. '\',  \''.$record. '\');">&nbsp;</div></div>';
 	}
 	
 	public static function generateGUID(
 	    $module, 
-	    $record
+	    $record,
+	    $user_id = ''
 	    )
 	{
-		return md5($module . $record . $GLOBALS['current_user']->id);
+	    if(empty($user_id))
+	        $user_id = $GLOBALS['current_user']->id;
+	    
+		return md5($module . $record . $user_id);
 	}
 	
 	public static function isUserFavorite(
 	    $module, 
-	    $record
+	    $record,
+	    $user_id = ''
 	    )
 	{
-		$id = SugarFavorites::generateGUID($module, $record);
+		$id = SugarFavorites::generateGUID($module, $record, $user_id);
 
 		$focus = new SugarFavorites;
 		$focus->retrieve($id);
@@ -95,9 +101,9 @@ class SugarFavorites extends Basic
 	    )
 	{
 	    if ( empty($user) )
-	        $where = " sugarfavorites.modified_user_id = '{$GLOBALS['current_user']->id}' ";
+	        $where = " sugarfavorites.assigned_user_id = '{$GLOBALS['current_user']->id}' ";
 	    else
-	        $where = " sugarfavorites.modified_user_id = '{$user->id}' ";
+	        $where = " sugarfavorites.assigned_user_id = '{$user->id}' ";
 	    
         if ( !empty($module) )
             if ( is_array($module) )

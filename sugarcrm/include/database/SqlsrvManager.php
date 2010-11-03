@@ -487,7 +487,7 @@ class SqlsrvManager extends MssqlManager
      */
     public function compareVarDefs($fielddef1,$fielddef2)
     {
-        if(isset($fielddef2['dbType']) && $fielddef2['dbType'] == 'id'){
+        if((isset($fielddef2['dbType']) && $fielddef2['dbType'] == 'id') || preg_match('/(_id$|^id$)/', $fielddef2['name'])){
             if(isset($fielddef1['type']) && isset($fielddef2['type'])){
                 $fielddef2['type'] = $fielddef1['type'];
             }

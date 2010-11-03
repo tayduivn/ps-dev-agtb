@@ -352,8 +352,9 @@ class ModuleBuilderViewWizard extends SugarView
 			{
 				foreach ( $modules [ 'children' ] as $module )
 				{
-					$this->buttons [ $module [ 'name' ] ] = array ( 'action' => $module [ 'action' ] , 'imageTitle' => ucfirst ( $module [ 'module' ] ) , 'size' => '48' ) ;
+					$this->buttons [ $module [ 'name' ] ] = array ( 'action' => $module [ 'action' ] , 'imageTitle' => ucfirst ( $module [ 'module' ]. "_32" ) , 'size' => '32' ) ;
 				}
+				ksort($this->buttons);
 				break ;
 			}
 		}
