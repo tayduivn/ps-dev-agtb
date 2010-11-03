@@ -467,7 +467,7 @@ rebuildConfigFile($sugar_config, $sugar_config['sugar_version']);
             $inst->account_id = $accounts[mt_rand(0,$accCount)];
             $inst->license_key = create_guid();
             $inst->license_duration = returnLicenseDuration($instance_type);
-            $inst->license_start_date = $timedate->asDbDate($timedate->getNow());
+            $inst->license_start_date = $timedate->nowDbDate();
             $inst->license_expire_date = $inst->returnExpirationDate($inst->license_start_date,$inst->license_duration);
             $inst->licensed_users = mt_rand(1,15);
             $inst->type =$instance_type;

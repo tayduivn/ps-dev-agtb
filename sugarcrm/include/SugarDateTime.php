@@ -28,6 +28,11 @@ class SugarDateTime extends DateTime
 		"hour" => "hour_12",
 	);
 
+	/**
+	 * @var DateTimeZone
+	 */
+	protected $_gmt;
+
     /**
      * Calendar strings
      * @var array
@@ -333,7 +338,10 @@ class SugarDateTime extends DateTime
 	function asDb($tz = true)
 	{
         if($tz) {
-            $this->setTimezone(new DateTimeZone("UTC"));
+            if(empty(self::$_gmt)) {
+                self::$_gmt = new DateTimeZone("UTC");
+            }
+            $this->setTimezone(self::$_gmt);
         }
         return $this->format(TimeDate2::DB_DATETIME_FORMAT);
 	}

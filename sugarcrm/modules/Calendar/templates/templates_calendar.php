@@ -747,7 +747,7 @@ function template_calendar_month($args) {
 function get_current_day($args) {
 	global $timedate;
 	$slice = $args['slice'];
-	if($slice->start_time->get_mysql_date() == $timedate->asDbDate($timedate->getNow())) {
+	if($slice->start_time->get_mysql_date() == $timedate->nowDbDate()) {
 		return true;
 	}
 	return false;

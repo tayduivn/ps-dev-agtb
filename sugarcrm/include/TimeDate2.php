@@ -159,7 +159,7 @@ class TimeDate2
      * Get TimeDate instance
      * @return TimeDate2
      */
-    public function getInstance()
+    public static function getInstance()
     {
         if(empty(self::$timedate)) {
             self::$timedate = new self;
@@ -377,7 +377,7 @@ class TimeDate2
     {
         try {
             $dt = SugarDateTime::createFromFormat($format, $date);
-            if ($dt == false) {
+            if (!is_object($dt)) {
                 return false;
             }
         } catch (Exception $e) {

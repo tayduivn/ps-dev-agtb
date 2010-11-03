@@ -88,7 +88,7 @@ function getSystemInfo($send_usage_info=true){
 		if(!empty($row)) {
 			$info['registered_users'] = $row['count'];
 		}
-		$lastMonth = db_convert("'". $timedate->getNow()->get("-1 month")->asDb(false) . "'", 'datetime');
+		$lastMonth = db_convert("'". $timedate->getNow()->modify("-30 days")->asDb(false) . "'", 'datetime');
 		if( !$send_usage_info){
 			$info['users_active_30_days'] = -1;
 		}
@@ -449,7 +449,7 @@ function shouldCheckSugar(){
 	if(
 
 	  //BEGIN SUGARCRM lic=sub ONLY
-	(empty($license->settings['license_last_validation_fail']) ||  $license->settings['license_last_validation_fail'] < $timedate->getNow()->get("-6 hours")->asDb(false))  &&
+	(empty($license->settings['license_last_validation_fail']) ||  $license->settings['license_last_validation_fail'] < $timedate->getNow()->modify("-6 hours")->asDb(false))  &&
 	  //END SUGARCRM lic=sub ONLY
 	get_CheckUpdates_config_setting() == 'automatic' ){
 		return true;

@@ -155,7 +155,6 @@ class Common {
     //todo add date format for sqlserver.
 	function get_my_timeperiods() {
 
-        $systemdate = date('y-m-d');
         $format="'%Y%m%d'";
         if ($this->db->dbType=='oci8') {
             //BEGIN SUGARCRM flav=ent ONLY

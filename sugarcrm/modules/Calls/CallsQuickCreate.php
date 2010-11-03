@@ -60,7 +60,7 @@ class CallsQuickCreate extends QuickCreate {
         $this->javascript->addAllFields('');
 
 		if (is_null($focus->date_start))
-			$focus->date_start = $timedate->asUserDate($timedate->getNow());
+			$focus->date_start = $timedate->nowDate();
 		if (is_null($focus->time_start))
 			$focus->time_start = $timedate->asUserTime($timedate->getNow(), true);
 		if (!isset ($focus->duration_hours))
