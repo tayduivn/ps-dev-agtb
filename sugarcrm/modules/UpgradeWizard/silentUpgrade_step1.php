@@ -639,6 +639,7 @@ foreach($uwFiles as $uwFile) {
 	copy($uwFile, $destFile);
 }
 require_once('modules/UpgradeWizard/uw_utils.php'); // must upgrade UW first
+removeSilentUpgradeVarsCache(); // Clear the silent upgrade vars - Note: Any calls to these functions within this file are removed here
 logThis("*** SILENT UPGRADE INITIATED.", $path);
 logThis("*** UpgradeWizard Upgraded  ", $path);
 

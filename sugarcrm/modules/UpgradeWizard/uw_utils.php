@@ -5319,14 +5319,14 @@ function upgradeModulesForTeam() {
 	function removeSilentUpgradeVarsCache(){
 	    global $silent_upgrade_vars_loaded;
 	    
-	    $cacheFileDir = "{$sugar_config['cache_dir']}/modules/UpgradeWizard";
+	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard";
 	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
 	    
 	    if(file_exists($cacheFile)){
 	        unlink($cacheFile);
 	    }
 	    
-	    unset($silent_upgrade_vars_loaded);
+	    $silent_upgrade_vars_loaded = array(); // Set to empty to reset it
 	    
 	    return true;
 	}
@@ -5335,8 +5335,7 @@ function upgradeModulesForTeam() {
 	    global $silent_upgrade_vars_loaded;
 	    
 	    if(empty($silent_upgrade_vars_loaded)){
-	        global $sugar_config;
-	        $cacheFile = "{$sugar_config['cache_dir']}/modules/UpgradeWizard/silentUpgradeCache.php";
+	        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard/silentUpgradeCache.php";
 	        // We have no pre existing vars
 	        if(!file_exists($cacheFile)){
 	            // Set the vars array so it's loaded
@@ -5352,13 +5351,13 @@ function upgradeModulesForTeam() {
 	}
 	
 	function writeSilentUpgradeVars(){
-	    if(!loadSilentUpgradeVars()){
-	        return false;
-	    }
-	    
 	    global $silent_upgrade_vars_loaded;
 	    
-	    $cacheFileDir = "{$sugar_config['cache_dir']}/modules/UpgradeWizard";
+	    if(empty($silent_upgrade_vars_loaded)){
+	        return false; // You should have set some values before trying to write the silent upgrade vars
+	    }
+	    
+	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard";
 	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
 	    
 	    require_once('include/dir_inc.php');
@@ -5369,6 +5368,8 @@ function upgradeModulesForTeam() {
 	    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
 	        return false;
 	    }
+	    
+	    return true;
 	}
 	
 	function setSilentUpgradeVar($var, $value){
@@ -5379,6 +5380,8 @@ function upgradeModulesForTeam() {
 	    global $silent_upgrade_vars_loaded;
 	    
 	    $silent_upgrade_vars_loaded['vars'][$var] = $value;
+	    
+	    return true;
 	}
 	
 	function getSilentUpgradeVar($var){
