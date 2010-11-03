@@ -27,6 +27,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+
+
+
+require_once('include/json_config.php');
+
 // Call is used to store customer information.
 class Call extends SugarBean
 {
@@ -126,6 +131,13 @@ class Call extends SugarBean
 		}
 		//END SUGARCRM flav=pro ONLY
 
+		global $current_user;	
+		if(!empty($current_user)) {
+			$this->team_id = $current_user->default_team;	//default_team is a team id
+		} else {
+			$this->team_id = 1; // make the item globally accessible
+		}		
+		
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
 	}
@@ -172,8 +184,7 @@ class Call extends SugarBean
 			$this->reminder_checked = '1';
 			$this->reminder_time = $current_user->getPreference('reminder_time');
 		}*/
-
-        $return_id = parent::save($check_notify);
+        parent::save($check_notify);
         global $current_user;
 
 
@@ -399,11 +410,6 @@ class Call extends SugarBean
 			$this->reminder_time = -1;
 		}
 
-		if ( empty($this->id) ) {
-		    $reminder_t = $GLOBALS['current_user']->getPreference('reminder_time');
-		    if ( isset($reminder_t) )
-		        $this->reminder_time = $reminder_t;
-		}
 		$this->reminder_checked = $this->reminder_time == -1 ? false : true;
 
 
@@ -450,8 +456,6 @@ class Call extends SugarBean
 
 		$call_fields['PARENT_NAME'] = $this->parent_name;
 
-        $call_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-
 		return $call_fields;
 	}
 
@@ -462,12 +466,7 @@ class Call extends SugarBean
 		global $app_list_strings;
 		global $timedate;
 
-        if ( method_exists($call->current_notify_user,'getUserDateTimePreferences') ) {
-            $prefDate = $call->current_notify_user->getUserDateTimePreferences();
-        } else {
-            $prefDate['date'] = $timedate->get_date_format(true, $current_user);
-            $prefDate['time'] = $timedate->get_time_format(true, $current_user);
-        }
+		$prefDate = User::getUserDateTimePreferences($call->current_notify_user);
 		$x = date($prefDate['date']." ".$prefDate['time'], strtotime(($call->date_start . " " . $call->time_start)));
 		$xOffset = $timedate->handle_offset($x, $prefDate['date']." ".$prefDate['time'], true, $current_user);
 

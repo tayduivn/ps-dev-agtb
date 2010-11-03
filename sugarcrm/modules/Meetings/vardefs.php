@@ -19,18 +19,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['Meeting'] = array('table' => 'meetings', 
-	'unified_search' => true,
-	'comment' => 'Meeting activities'
+$dictionary['Meeting'] = array('table' => 'meetings', 'comment' => 'Meeting activities'
                                ,'fields' => array (
   'name' =>
   array (
     'name' => 'name',
     'vname' => 'LBL_SUBJECT',
-    'required' => true,
     'type' => 'name',
     'dbType' => 'varchar',
-	'unified_search' => true,
     'len' => '50',
     'comment' => 'Meeting name',
     'importable' => 'required',
@@ -59,7 +55,6 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '2',
     'comment' => 'Duration (hours)',
     'importable' => 'required',
-    'required' => true,
   ),
   'duration_minutes' =>
   array (
@@ -76,10 +71,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'name' => 'date_start',
     'vname' => 'LBL_DATE',
     'type' => 'datetimecombo',
-    'dbType' => 'datetime',
     'comment' => 'Date of start of meeting',
     'importable' => 'required',
-    'required' => true,
   ),
 
   'date_end' =>
@@ -147,7 +140,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'name' => 'reminder_time',
     'vname' => 'LBL_REMINDER_TIME',
     'type' => 'int',
-    'function' => array('name'=>'getReminderTime', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php', 'onListView'=>true ),
+    'function' => array('name'=>'getReminderTime', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php'),
     'reportable' => false,
     'default'=>-1,
     'comment' => 'Specifies when a reminder alert should be issued; -1 means no alert; otherwise the number of seconds prior to the start'

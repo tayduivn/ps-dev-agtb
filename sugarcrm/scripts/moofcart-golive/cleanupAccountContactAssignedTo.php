@@ -1,0 +1,351 @@
+<?php
+chdir('../..');
+define('sugarEntry', true);
+require_once('include/entryPoint.php');
+require_once('custom/si_custom_files/UpdateSalesAssignedTo.php');
+
+global $current_user;
+$current_user = new User();
+$current_user->getSystemUser();
+
+$inactive_si_users = array(
+						"d003ee0a-b59d-ef4e-9ac7-45b92e6c7e7a",//Dean Warshawsky,
+						"4e140c74-a82f-7cca-54a7-44cfad077fdd",//John Roberts,
+						"1c464994-291a-f735-9fd1-45ec9a4c7c60",//Tara Spalding,
+						"42bef0dc-b914-1bcc-29f9-47e30fe5e8c0",//Ken Lilley,
+						"eff91fe6-3953-57b3-0985-42de00fb16eb",//SigniusAgent1,
+						"9c9f8327-b4be-cf6f-b1ce-42de01f52546",//SigniusAgent2,
+						"348a91e1-ff16-f051-1be7-464116d147a8",//Kelly Ann Bagley,
+						"8204859b-921a-ff98-a9d5-4374067465f6",//Hot Mkting Hot Mkting"
+						"ee52d683-1333-32b7-10f2-43f4c99ac523",//247intouch 24-7 INTouch"
+						"5af42a6d-a540-9b4d-153c-43ff50611491",//247intouch-sales 24-7 INTouch"
+						"9a2e22f7-e0db-c0cf-9a82-47a253efaab0",//augm_adalia Adalia Miao"
+						"c68f98a9-7030-b563-1633-4755ff7d9ac5",//aahmed Afzal Ahmed"
+						"8aeee6c7-a835-c676-9a84-48bd8d4a3076",//ajahani AJ Jahani"
+						"e8b3b790-0a3b-685f-8771-42386d1fa302",//ajay Ajay Gupta"
+						"ced8a786-9821-f0fb-5bef-4439e6324f30",//alain Alain Tsai"
+						"1648bf66-229b-2aa3-b05b-465222dc4ca5",//apark Alden Park"
+						"a487d475-e85a-254d-b0ad-46ae82b3df2a",//airavani Ali Iravani"
+						"3a4176b8-6957-4269-15e7-4637576ee35c",//azhang Alice Zhang"
+						"97ae04a6-e1d6-89d3-3e21-42769ec78dca",//allan Allan Arguello"
+						"d2fe160f-0619-06f9-3271-444469ef645e",//augm_allen Allen Zhang"
+						"4bc73c9b-9918-f50d-4f74-4a383653651e",//azhong Amanda Zhong"
+						"da40c785-eff8-37bc-df67-414f1cf6857f",//amie Amie Doolittle"
+						"4f30301e-beaf-e938-0cbb-41882ae8c20c",//amie3 amie doolittle 3"
+						"f2f72cb3-f360-8b37-64e8-416ec2bb9630",//amielead Amie's Leads"
+						"88280e20-7233-122e-e197-463f65208d74",//ahu Amy Hu"
+						"23e04ab6-9440-9bb1-1701-46ae8974d0d3",//akappagantu Anantha Kappagantu"
+						"e330063c-4fbb-43bd-7deb-44d3c9c8bcbc",//augm_anderson Andrerson Chen"
+						"5d014724-5038-f331-df0d-41af65e41a55",//andrew Andrew Hsu"
+						"6372e89c-69ec-92f7-af2a-44562f03cbba",//awu Andrew Wu"
+						"25e1d3b4-1276-ea94-6179-452e69dfb366",//achaudhry Anil Chaudhry"
+						"869bd252-3e90-4f58-2bb4-4370e54e6681",//anitha Anitha Palabindela"
+						"c4cb8de8-0fc0-c631-bac3-4434af26e1f1",//augmentum Augmentum QA"
+						"67e6ec28-c446-169c-d01a-418a747fc8ae",//badlead bad lead"
+						"82150932-0a77-b657-de94-45b506830954",//bchester Barry Chester"
+						"797fb86c-5fce-2799-db20-450af1f9a48e",//ben Ben Koo"
+						"9a5013de-dba9-0efb-9247-46b12228e59a",//bsoufflet Benjamin Soufflet"
+						"eb64e496-0075-c99a-8833-428129d6eef1",//bernadette Bernadette Bosinger"
+						"59a10254-1b7f-a726-f1f5-485698e51f3a",//bbuchanan Beth Buchanan"
+						"5e0686ad-af6e-335d-0463-47f11e474e75",//bdellaportas Bill Dellaportas"
+						"ee3b0674-9a1b-cae7-fc83-42386d95dd12",//bob Bob Schwarzmann"
+						"460ad2cd-70b8-7d99-15bf-4782bedbc85a",//bboyer Brad Boyer"
+						"1679638b-7f10-7fed-30bd-4761f088c1d5",//bsmith Brad Smith"
+						"e1491ad1-92b8-4adb-23ba-470fa249c625",//bgomes Breno Gomes"
+						"626d966d-af62-8f00-addb-4761ca3b073e",//btowne Brooke Towne"
+						"b85ee0ac-5a54-67bf-bdb6-41c85e8665dd",//cameron Cameron Jackson"
+						"825e0b3e-60da-2ea9-8693-4a2030a0f24c",//chicks_test Carl Hicks - Test"
+						"eebff7f0-fcd1-6421-ec14-4735112a155f",//csage Carlota Sage"
+						"2c4f0ab9-b6c6-95cf-fbb3-4394caca1b99",//carolyn Carolyn Cooper"
+						"ce9d97f5-4541-7d45-0390-4845bd203c20",//cma Catherine Ma"
+						"d01c1667-b3af-ec3c-612a-488921b4f6a4",//Channel_Americas Channel Americas"
+						"31a3a0d2-1731-41d8-bc96-488921af1087",//Channel_AsiaPac Channel AsiaPac"
+						"6219c047-1547-89a4-cf86-488921e95887",//Channel_EMEA Channel EMEA"
+						"9be81f86-1222-7dca-3efc-46e5eb68bda7",//crankowicz Chantal Rankowicz"
+						"cde3468e-d047-5a0a-012b-469c2af36af2",//augm_cherry Cherry Zhou"
+						"693e1f72-dff6-f936-e904-462fa1b19696",//cbennett Chris Bennett"
+						"5e892a55-4449-b534-9be4-477bf9935333",//ckelly Chris Kelly"
+						"8ba13881-3efa-a61b-e690-43187a919708",//chris Chris Nojima"
+						"964d0cd9-904c-2593-a8e7-4845d997be6d",//cdai Cici Dai"
+						"a00602df-9ae0-38d6-7b40-42c450a8247d",//test Clint Test"
+						"b1828b19-f3f6-9505-fa18-4730be6dc01c",//cbeasty Colin Beasty"
+						"1775f590-cd50-ca65-8165-467aa5a51b10",//cfilipponi Craig Filipponi"
+						"39de7d5d-bfb7-e1b0-a6a4-447130f59842",//craig Craig Parker"
+						"5ee57af9-d49d-32c5-56bc-461c492ace39",//cking Curri King"
+						"685fa57f-844b-ded0-a088-45760d79e8e6",//dfindley Dan Findley"
+						"8240fce8-ed6c-df48-a4b3-447c85c62292",//dlopez Dan Lopez"
+						"2696fab0-bfe1-da9d-2818-46a14aff712d",//dreverri Dan Reverri"
+						"2607211a-ec6d-1d4a-7b28-4856ce37b7a4",//ddelossantos Daniel De Los Santos"
+						"6d9a5acf-8612-3fbd-e256-43a70186499a",//daniel Daniel Hoherd"
+						"442a8ad9-320e-a5d6-f69e-4554fc302fac",//dreis Daniel Reis"
+						"7b3ebcc0-a930-deef-f771-42233d1c7aca",//davef Dave Fancella"
+						"37a5ced4-c6e8-ee57-44ec-43baa8f76ed3",//david David Djanikian"
+						"d2f333f6-9849-6d03-bf2b-469ea130c18c",//dedelhart David Edelhart"
+						"6f7c4848-9830-02a9-9301-469c2aa565bd",//augm_david David Xing"
+						"6083e3a2-b7b0-39fc-2285-445f6fea85ab",//dean Dean Warshawsky"
+						"99caf6ee-7df0-cd5e-de54-444470fab178",//augm_demi Demi Dai"
+						"53839331-1011-b648-640b-466d7886b418",//dwong Donald Wong"
+						"9cb4f353-d3d6-1e6b-2556-48f900a88abf",//dshen Doni Shen"
+						"764f1a6f-af8f-726a-c254-443c47aa8ec1",//donna Donna Weber"
+						"c3bb0c76-3ccd-58c1-3256-46a7e1cc9666",//dribback Doug Ribback"
+						"7bed7108-e96b-e3fb-4628-4231355bc253",//drew Drew Currie"
+						"2219f124-cf40-9c6c-8091-459bf0d65f50",//augm_edward Edward Zhou"
+						"316b0465-d9aa-afda-7af7-4b73290c9636",//elara Elizabeth Lara"
+						"7498d380-d117-1877-a465-47880c65cf85",//etaylor Emilio Taylor"
+						"82521e8a-9104-0244-9953-47d0319ecb35",//augm_eunice Eunice Zhang"
+						"73bf3ce1-96b0-c113-9377-48a9d685d404",//faissah Fabrice Aissah"
+						"22a77eb2-89d8-e8e7-03d2-449da1e88708",//augm_fiona Fiona Zhao"
+						"b014aec2-a7d4-18f1-0260-4444735f0903",//augm_forrest Forrest Shi"
+						"ebd7d5bf-935e-0784-6009-461bfc79739e",//gsantos Gaspar Santos"
+						"c11865d2-1d7a-28d2-55ec-475db31018bf",//gso Genevieve So"
+						"e81a4e75-5c22-d172-f3ed-483340722f68",//gwright George Wright"
+						"3702f50b-e09d-a8ad-c0d8-47266d9e4012",//getfile_portal GetFile Portal"
+						"687f28d6-9807-c808-7c50-4950485bec09",//gburns Gia Burns"
+						"88a30289-b200-753b-58d2-4444629b271c",//augm_gina Gina Li"
+						"43935898-1d7a-5443-09c5-4730b29ad013",//grogers Glenn Rogers"
+						"823209a0-8d8a-cc39-6197-48f8ffcfafe6",//gchen Gloria Chen"
+						"e1cb6321-1b2d-a930-8cca-43e0f3644871",//jgreentest Green Test"
+						"282159b2-bf1a-478f-70e6-4b5788ad5775",//gmurray Gwyn Murray"
+						"6b00e3b8-35cf-ee14-f2b0-4803d88f78df",//hbirdi Harman Birdi"
+						"b7ada758-6d85-60a4-83c5-48f900b03d60",//hwang Hesong Wang"
+						"ebdd06a4-6794-f03a-c0f8-4460e9bde0d8",//Leads_HotCorpMktg HotCorp Leads"
+						"b73f0af6-c9b7-f485-32f7-4782e5af0c62",//Leads_HotEntMktg HotEnt Leads"
+						"aae90c83-c98b-2891-8821-489a31c2458d",//hhu Hulda Hu"
+						"1b850a81-fefd-da09-007d-462d2e7a6e96",//ispivak Igor Spivak"
+						"b0de0a7e-b2ea-2818-967b-4238609a07da",//isabel Isabel Sarkis"
+						"3ecbac36-da31-be36-f10d-444460ce6668",//augm_jack Jack Ahn"
+						"d72a6542-b901-7d28-a9ba-47b3757579ae",//jjasser Jacob Jasser"
+						"3c5d80b1-f6cf-3ab4-6948-45dcc47424bf",//jacobtest Jacob Test"
+						"aaf768e5-0479-4d4c-a477-44a9656757dd",//james James Nakamura"
+						"93ac0021-448e-ebeb-5533-48f8ff9684c8",//jye Jane Ye"
+						"13a1b07d-3fe5-38d6-504d-44107881c182",//janelle Janelle Martin"
+						"d7b90a6e-4131-4122-0477-47f3bf64a673",//jhsu Janice Hsu"
+						"2ba202bd-5cb9-ae79-d797-44ca8ba152b3",//jbenterou Jason Benterou"
+						"c6305781-7d5b-ce3e-6d9a-4acfb6925788",//jclark Jason Clark"
+						"86100975-e95d-e3c1-2004-4252c3b20c99",//jgreen Jason Green"
+						"360543ce-3268-d6fc-18bc-42ebfb388f6a",//jnorth Jason North"
+						"d0b65ebd-4199-4b96-27ab-44333ca441fe",//jay Jay Kamchi"
+						"992ba10a-261f-b5ac-2409-46522f942da0",//jcarouth Jeff Carouth"
+						"83edccce-6fed-2d37-f61b-47cef7d11f94",//jgraham Jeff Graham"
+						"addefa8e-6805-4043-9da3-427ff013cc70",//jli Jeff Li"
+						"c23afcdb-5b49-0b5b-f4c8-465c87d7391c",//jho Jenny Ho"
+						"ab1b4505-5453-38c6-f51b-443fffa353b6",//jesse Jesse Janzer"
+						"4bc5df9e-2c6c-17f7-8531-48b304a90ad4",//jmullan Jesse Mullan"
+						"c9560c31-6012-c6fe-17a3-46cdcee4f791",//augm_jessie Jessie Zhang"
+						"ac5696b6-7a14-9db1-893c-4c161e222c5e",//jnicolas Jim Nicolas"
+						"3ebd100d-e07e-bac5-9120-470fa31a7698",//jstukas Jim Stukas"
+						"8e82fa95-86aa-3ee1-db2b-4941ce8dc653",//jmullan_test not real jmullan_test EMAIL TESTER"
+						"65093e8b-de84-7cfa-29c8-4941cf4d5baa",//jmullan_test jmullan_test test_jmullan"
+						"9900e778-23de-230e-ae66-443ad99d23fb",//joe Joe Accorsi"
+						"bbd47eb0-9b94-4c9b-0d83-4693ba697909",//jguzman Joe Guzman"
+						"bfe1d17f-1788-ec3a-d6c8-47c855bfb199",//jhickman Joe Hickman"
+						"f38ae1c6-025d-c893-bce6-45463d4fba60",//jchao Joey Chao"
+						"db09cffc-5cf7-d484-6050-4735118aed02",//jpavolotsky John Pavolotsky"
+						"ec8d5bf5-9589-c4b6-a54c-414767d15de8",//john John Roberts"
+						"9ecc45f8-5bc6-15b0-0fe5-454bb9e8fa47",//augm_josephine Josephine Zhu"
+						"e49182e9-2552-cb02-e60c-481538c1cadf",//jsweeney Josh Sweeney"
+						"61a479a6-4c8d-2470-51f6-4845bd8a7023",//jchi Joshua Chi"
+						"17f419b6-9a5f-b12f-2f4d-427f9579c6d2",//julie Julie Stephens"
+						"1cf74990-88cb-80c6-338f-4ac676e39195",//kjing Kai Jing"
+						"5cd64ac9-3cbd-34e1-1016-4353b22a4391",//karen Karen Salay"
+						"86e568cd-7687-a508-3072-4370e5c5193c",//karishma Karishma Dattapuram"
+						"3478dcba-0987-04d6-cbc5-421f68a97031",//kash Kashyap Narayana"
+						"cf0ce419-6690-1ef2-07fa-452b1982a37c",//augm_kathy Kathy Geng"
+						"e912aa2b-a286-284f-a343-45e32614c5be",//kbagley Kelly Ann Bagley"
+						"bcb65716-762d-f586-f91f-471e110f53cd",//klilley Ken Lilley"
+						"2459c0df-d819-83ef-741d-42b71a8cab0b",//kevin Kevin Jordan"
+						"e1c6bbe4-01a7-25ca-8a78-443ee28ede84",//Kevinwu Kevin Wu"
+						"a9df0cb7-c414-59e6-a320-44d8c543f7ea",//kim Kim Miller"
+						"ad864d93-3e18-c3e5-b294-4329d502e352",//kristie Kristie Starink"
+						"77720e6a-c056-ab1d-4815-4af3625570c2",//kthornquist Kristin Thornquist"
+						"4636add8-95c2-322e-9db3-47df040851df",//karchibald Kyle Archibald"
+						"5fd690b9-bb2b-d463-74a8-4701540e651c",//kpark Kyung Park"
+						"d3e66341-c1a6-62e2-764b-42f393d0dd27",//lars Lars Nordwall"
+						"65f58bf7-563f-c0ca-81c7-446a54da8e75",//lars2 lars2 lars2"
+						"14de533c-89b1-6fc1-82ff-49593aa87f7a",//lpage Laura Page"
+						"26e2b189-d8c1-c5c4-fc7d-4bf70ff81290",//lwittges Laurie Wittges"
+						"313409c6-0c70-8517-e9c5-44d3caf3c38a",//augm_leigh Leigh Yu"
+						"b70a0bb1-de62-0dfd-9420-4444611c39fc",//augm_leon Leon Chen"
+						"666c2fa2-b1a0-47f5-53cf-4845bce4593e",//lzhang Leon Zhang"
+						"4c09bf1b-673e-b780-8757-46522fc0650b",//lyang Li Yang"
+						"191223de-1e6a-fdda-2109-4a304af695a7",//lhopkins Libby Hopkins"
+						"87f62523-a59c-8607-7c12-44fdf920bc3d",//lily Lily Armstrong"
+						"b7f5aeaf-2e6e-0b18-f1c3-47d031b83d00",//augm_livia Livia Chen"
+						"475e8c3f-63b5-d645-2430-482398ba2e7e",//augm_lucas Lucas Chen"
+						"197f6d78-7638-dacf-a3fc-4302713d3d3b",//manoj Manoj Jayadevan"
+						"62f9e7be-b900-84f1-89d1-442c6fa77db4",//marc Marc Paley"
+						"f1a03407-6ea5-ec20-1563-4262de83b20f",//marcus Marcus Diaz"
+						"cbee0858-8aa2-601d-a4d2-47bdc1af88be",//mmoore Margaret Moore"
+						"30ecf9b8-26a2-4ee9-5b49-478413699072",//mjansdotter Mari Jansdotter"
+						"a917b798-4677-1076-60f1-4a397aa4a15f",//mvicencio Maria Vicencio"
+						"4f4e66ee-d9cc-8cec-6712-4730d0ea8fd9",//mbilling Maricar Billing"
+						"6bd6d2bc-1e80-2219-dfa7-494c3027a340",//mbautista Mark Bautista"
+						"6965bef9-b0ff-29ae-268e-446e55886d26",//mark Mark Flessel"
+						"8eafc645-9309-f852-df8a-4b6cc0a04ecc",//mccorkle Mark McCorkle"
+						"7e05ace5-ae7f-d8c9-d3bf-4845d7ea64ef",//martinhu Martin Hu"
+						"f161a5e8-ec44-48c2-59c0-4701667616d3",//mroesch Mary Roesch"
+						"e27d0ea3-1b3b-b005-a80f-4845d73a359e",//masonhu Mason Hu"
+						"d08de56d-f2b7-9262-d8b5-4c162c879583",//mcarroll Matt Carroll"
+						"d061a034-612a-a72d-7244-46098ed047e6",//heitzenroder-pager Matt Heitzenroder-Pager (temp)"
+						"32a66602-0b79-671b-2d9e-473e274f8d42",//mjudkins Matt Judkins"
+						"de3206f9-f141-0db7-09a8-4651d6610d20",//mmotherway Matt Motherway"
+						"4b1e6337-d835-1dc3-12b9-48e282a07a62",//myoung Matthew Young"
+						"42e72b96-a75f-5aaa-7500-46113ddea84e",//mjackson Maureen Jackson"
+						"53e619a1-3b74-f36a-a093-477c1577ffff",//mescobar Mauricio Escobar"
+						"fb830dd2-a057-474d-bd7e-4489b58be89a",//max Max Hwang"
+						"d5ecb5f6-e04b-13bb-f29c-48a9d5d14c64",//maubert Maxime Aubert"
+						"ea4abf3d-7f10-ff06-ceea-462e4a08b52f",//msokhn Megan Sokhn"
+						"5725f0f5-d663-9e1d-ad46-4329df1c76d9",//melissa Melissa Becht"
+						"12365a61-dfb4-acb6-aea7-420ceb41dc16",//mike Michael Bunge"
+						"113970aa-5a5c-f947-c8ac-4766a592b964",//mhamson Michael Hamson"
+						"75b917e6-260d-01b0-0091-43fb44383852",//metheridge Mike Etheridge"
+						"effd5abe-6838-9e94-f552-46ae89365768",//mmarcus Mike Marcus"
+						"ab83f24c-599d-2062-34ca-468005f5c8ff",//mroosli Mimi Roosli"
+						"962c2f8e-da79-da3d-6b9d-44e0aec56067",//mitch Mitch Lieberman"
+						"63908d78-1eab-6633-5d62-46bb555fe294",//mgalardi Monia Galardi"
+						"cfb18ffd-b4dc-e6dd-7347-4328c1398cff",//msitest MSI Test"
+						"e42168cf-9aa0-f9e2-0182-43172f1b3800",//nancy Nancy Archambault"
+						"1393af34-c7d5-46c7-4b80-41ca1b43899f",//nate Nate D'Amico"
+						"bce30b3c-3190-c512-faef-469e6aebc705",//nsingh Navjeet Singh"
+						"bb8de9e0-9dd4-ef1a-3117-46dd8b957904",//npatel Neel Patel"
+						"80916375-a004-4113-ffb4-472a18220f49",//npommerenke Niamh Pommerenke"
+						"d723297f-3589-09b0-f47e-47b228b75385",//nspanos Nicholas Spanos"
+						"dd3773f7-031d-4180-2c21-46ccf271b4bb",//nithya Nithya Shunmugham"
+						"4dce84cb-01f9-1643-5f90-48374fdc8454",//naitharaju Nitish Aitharaju"
+						"81cd8f0b-63ec-6884-b7d8-44984578c129",//norma Norma Navarro"
+						"695d8c65-0f78-9622-8466-484e9efcb8d1",//ondemand On Demand Support"
+						"242894ae-3895-a0b6-e52d-470412e9eac8",//ple Paige Le"
+						"a8fda649-3981-fb5e-7470-4a9845a27754",//pho Patrick Ho"
+						"b057ea4a-b2e4-da20-b48d-44b290b20ff4",//paul Paul Oh"
+						"36e64166-912f-41bf-2978-46fa052b7c7c",//augm_payne Payne Chen"
+						"6d33a772-1782-99f4-3573-48f8ff6da580",//pgao Penny Gao"
+						"17240be9-8446-d5a4-e520-4c43777236ea",//pyotova Polina Yotova"
+						"307a0895-084e-b06d-f2c8-4405c54ae97c",//racquel Racquel Brown"
+						"7465c2ad-efef-1e31-34db-459bf15bb07e",//augm_raine Raine Zhang"
+						"4c277346-d05f-a84d-c14e-47221af30b7e",//rmorton Ranjita Morton"
+						"1cacec02-54df-1ebe-cf93-49e77e60ae86",//ryu Ray Yu"
+						"a6764d0d-927e-0828-b5a5-44e345a5be4e",//reggy Reggy Hardy"
+						"584fde86-82c4-a3be-7ba4-4824bf21d2a9",//ryoung Rich Young"
+						"dbf6f810-d9f9-6bac-40ab-4468c398adee",//richard Richard Baldwin"
+						"ad4c864b-ad40-abb2-b56d-41c85e6738b0",//rob_term Rob Brewster"
+						"ac29bf41-19b6-30ff-3d0c-44b28f81e023",//rlackey Rob Lackey"
+						"2bcc4d66-e5f0-9b27-39b6-47c86bfb14e4",//rtodd Robb Todd"
+						"77a6b686-c27f-9ee0-0fd1-4147906fcb06",//robert Robert Rangel"
+						"49042589-01ff-2708-01c6-429d0e7bd2e7",//rodney Rodney Son"
+						"ef5b1e2e-16fb-ce62-0d28-41d9a1cf51e1",//ron Ron Cootes"
+						"defdd19a-8c61-d4d0-0dff-4342b0ee884c",//ronald Ronald Leung"
+						"9f072b75-9b26-bbcd-71e0-42680c99b718",//russ Russell Kojima"
+						"cb78e060-72be-39f7-b52b-4378d18f08cf",//ruth Ruth Harris"
+						"d447ff1c-f2f2-3061-c1f3-463046f91f44",//systek_ryan Ryan Bland"
+						"7c1f8f25-1dca-6dfe-1f11-4aae97348a98",//RyanTestUser Ryan's Test User"
+						"1f67ea67-aece-0cf5-a6ec-444045f895d2",//sbaroudi-pager Sadek Baroudi-pager (Temp)"
+						"bef39034-2c14-3c53-5e32-47f274d7598c",//snazar Sam Nazar"
+						"81186b3d-39d9-d9b8-2773-4468ae9dfbda",//samer Samer Baroudi"
+						"839384ca-09dd-4b2b-80e2-46c3940ef502",//sgandhi Samir Gandhi"
+						"4cc00515-d542-3b28-1608-4730b139b80b",//sjha Samir Jha"
+						"1ef6bf7e-f1f7-0a26-90f9-478b714d1ea6",//sstringham Samuel Stringham"
+						"b1b5c902-919e-1ddb-a6b1-4a833b06d1ce",//Leads_scrubber Scrubber Leads"
+						"1d851304-1ef6-ad7e-a18c-4427fdfef55c",//shane Shane Karlin"
+						"78337945-6b7c-5786-9381-44313895da01",//sharon Sharon Sim"
+						"444f1818-60a7-01d9-b019-47b21ca3dcae",//srezayan Sheila Rezayan"
+						"a6b2d110-9f2a-f43b-4bb1-468946d520b1",//slingamneni Shivaram Lingamneni"
+						"ad711e35-66a3-b673-d3aa-42f27161db6e",//elpsiggm Signius elpsiggm"
+						"1d1d3aa4-972f-3c46-183c-42f272cb3450",//iehelpsig Signius iehelpsig"
+						"ceda0d15-c035-98fc-92ab-42f3cbd14e4b",//pos10elpsig Signius pos10elpsig"
+						"3359c04b-9426-4bad-5115-42f3cb6efd22",//pos13elpsig Signius pos13elpsig"
+						"121b5beb-5496-3c88-677f-42f3cb53fa41",//pos14elpsig Signius pos14elpsig"
+						"c0dbcf01-d912-b0c5-126a-42f2728b8283",//pos1elpsig Signius pos1elpsig"
+						"19b049ad-0b3b-2796-acc8-42f3c1dd7b5a",//pos3elpsig3 Signius pos3elpsig3"
+						"e035477c-dc48-a142-e703-42f3c2101500",//pos4elpsig Signius pos4elpsig"
+						"45913318-8841-7bbe-85db-42f3c259f15e",//pos5elpsig Signius pos5elpsig"
+						"27a813fb-e93f-dfe3-0df1-42f3c6399fab",//pos6elpsig Signius pos6elpsig"
+						"bd2fa7e9-7f97-42b7-99db-42f3c6b3effe",//pos7elpsig Signius pos7elpsig"
+						"684e7761-8e4a-b520-da43-42f3c6542493",//pos8elpsig Signius pos8elpsig"
+						"634dace0-9a3b-67fb-e681-42f3c6aba355",//pos9elpsig Signius pos9elpsig"
+						"88aac5bf-c8bb-f617-57df-49f748f4e098",//invalid_user_123 Someone Else"
+						"69fe2746-efee-7879-2154-48f900b877cb",//szhu Stacey Zhu"
+						"35519268-f9a9-c0d4-8c05-4804fdceff5a",//sheinrich Steve Heinrich"
+						"a29b5e5e-d56e-de5c-d0b2-4609a9b14c8d",//skasinetz Steve Kasinetz"
+						"4f900a59-9a83-3b0c-0256-45d9f7ef2ab2",//sspry Steven Spry"
+						"f2a70ee0-33f2-d4da-3b8d-464a772b69f7",//sbalfus Sue Balfus"
+						"8f660600-8610-e639-488a-45d9f843078f",//swilliams Susie Williams"
+						"ce7f37e5-7777-5650-27f0-41478e9b0494",//tara Tara Spalding"
+						"46c01adb-c13f-cc44-2a37-4b9ffd6809d5",//thsiung Techen 'Jenny' Hsiung"
+						"d23fe000-1221-bcde-c6db-468d94ffa0a8",//ttuazon Ted Tuazon"
+						"a0309cc8-d34d-6173-b238-4240b6181543",//terra Terra Wadsworth"
+						"87714330-0a9c-3af1-c0b2-48d12a14f5d8",//tcaldwell Terry Caldwell"
+						"c5319326-8060-7328-c19f-4af45737b128",//chicks_test2 Test Account"
+						"537a7e33-0123-0d64-d7e1-4a8c399856d0",//LTest TEST LTest"
+						"31b97218-bfe0-dcb9-cc77-4bfc6e95524f",//testing1 Testing One"
+						"19bae5cf-b197-550d-8ac4-466e10e7be99",//tyoung Thomas Young"
+						"7409f750-3865-5b37-0d67-4579d683d6bf",//temko Tod Emko"
+						"e4e21d33-72f9-6676-2f88-42233e26eb07",//toddc Todd Cook"
+						"ef79b2ea-f7b9-6942-fb1a-45481a914260",//tbrennan Tom Brennan"
+						"ca7f0dc0-622c-4d78-2c93-452b161e07d8",//augm_tomÊTom Ma"
+						"73d25bdb-c934-ac9e-249c-46325b7c8aa9",//tswicegood Travis Swicegood"
+						"8b037eb0-d946-9368-0e7c-4615b8efbf86",//augm_tristan Tristan Zeng"
+						"e4c9a2c0-eff3-4a31-0301-4600144e242f",//urhett-hughes Ursula Rhett-Hughes"
+						"62365f6e-4fda-58a9-58ef-48d940a9d334",//vmoorer Vernon Moorer"
+						"74772e4a-540a-57e2-6c76-450af13a3aeb",//vineet Vineet Dhyani"
+						"30f36631-aa77-1437-14c5-4338331d5ab3",//wayne Wayne Pan"
+						"80e49884-b6c8-829c-0a4e-4845bdd9781d",//weidong Wei Dong"
+						"b4cf4d00-1d1c-a1f4-c3a8-4c226570e4bf",//weizhang WeiWei Zhang - Ignore this User"
+						"9f7703aa-1d0e-7e1b-2477-4a60f67708dc",//wwang Will Wang"
+						"ef11762f-a58b-5959-2b45-462e4ce7564f",//wmclaughlin William McLaughlin"
+						"5b312180-27d0-4099-fe0d-42b6d90fc92f",//yajaira Yajaira Pereyra"
+						"8715a74b-8ea3-0461-25df-4201225b63af",//yousuf Yousuf Haq"
+						"a4010b53-8069-d069-7fc6-43bab79f897d",//yuan Yuan Cheng"
+						"a51be024-d8c7-27d1-6ba9-4341ac0b2508",//yun-ping Yun-Ping Hsu"
+						"3563f83d-d491-67b8-89e9-44a88d031c4d",//zach Zachary Kurey"
+						"cad83105-0ffb-8b91-951a-43a2f313b954",//zarnaz Zarnaz Arlia"
+						);
+
+
+$keys = array_keys($regionToRepMap);
+
+foreach($keys AS $k) {
+	$last_used[$k] = false;
+}	
+
+$display = (empty($argv[1])) ? 0 : $argv[1];
+
+
+// QUERY for ACC_ID where
+	//	account_type IN ('Customer','Past Customer', 'Customer-Other', 'Customer-Ent', 'Customer-OEM', 'Customer-OCDE', 'Customer-Pro-Webex', 'Prospect-customer')
+	// assigned_user_id IN ( list_above )
+
+// SELECT account_id FROM accounts WHERE account_type IN ('Customer','Past Customer', 'Customer-Other', 'Customer-Ent', 'Customer-OEM', 'Customer-OCDE', 'Customer-Pro-Webex', 'Prospect-customer') AND assigned_user_id IN ('". implode("','", $inactive_si_users) . "') AND deleted = 0
+
+$query = "SELECT id FROM accounts WHERE account_type IN ('Customer','Past Customer', 'Customer-Other', 'Customer-Ent', 'Customer-OEM', 'Customer-OCDE', 'Customer-Pro-Webex', 'Prospect-customer') AND assigned_user_id IN ('". implode("','", $inactive_si_users) . "') AND deleted = 0";
+
+$qry = $GLOBALS['db']->query($query);
+
+if($display == 1) {
+	echo $query;
+}
+
+$GLOBALS['log']->info(__FILE__ . '::' . __FUNCTION__ . ' - ' . $query);
+
+
+// loop over ACC_ID's
+while($row = $GLOBALS['db']->fetchByAssoc($qry)) {
+	$acc_id = $row['id'];
+	$msg = "Updating Account id: {$acc_id}\r\n";
+	if($display == 1) {
+		echo $msg;
+	}
+	$GLOBALS['log']->info(__FILE__ . '::' . __FUNCTION__ . ' - ' . $msg);
+	
+	$ret = reassign_user($acc_id,$display);
+	
+	if($ret == false) {
+		$msg = "Failed to associated account: {$acc_id} with a Inside Sales User";
+		
+		if($display == 1) {
+			echo $msg;
+		}
+		
+		$GLOBALS['log']->info(__FILE__ . '::' . __FUNCTION__ . ' - ' . $msg);		
+	}
+}
+// end loop

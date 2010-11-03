@@ -1,0 +1,247 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+/*********************************************************************************
+ * $Id: Selector.html,v 1.8 2005/12/22 01:55:46 wayne Exp $
+ * Description:
+ ********************************************************************************/
+-->
+<!-- BEGIN: embeded -->
+<script type="text/javascript" src="include/workflow/jutils.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
+<script type="text/javascript" src="include/javascript/sugar_3.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
+<script>
+
+
+function copy_text_dyn_var(){
+	var iframe_object = window.frames['fields_iframe'].document;	
+	var mod_pick = get_value('ext3');
+	var inner_text = iframe_object.getElementById('target_dropdown').value;
+
+	var total_text = '{::'+ mod_pick + '::' + inner_text + '::}';
+	//alert(total_text);
+	this.document.getElementById('temp_copy_dyn').value = total_text;
+	
+//end function copy_text
+}
+
+function updatedroplist_dyn_var(target_iframe, field_type, start){
+	
+	//check to see if action_type is new or new_rel
+	var action_type = get_value('action_type');
+	var field_type = get_value(field_type);
+	var base_module = get_value('base_module');
+	var field_num = get_value('field_num');
+	
+	if(start == 'yes'){
+
+				var start_value = get_value('field_'+field_num + '__value');
+		
+	//end if start is yes
+	} else {
+		
+		var start_value = '';
+			
+	}		
+	
+	if(action_type=='new'){
+		
+		var target_module = get_value('base_module');
+		
+	//end if new
+	}
+	
+	if(action_type=='new_rel'){
+		
+		
+		//check value of ext3
+		if(get_value('ext3')=='triggered'){
+			
+			var target_module = get_value('base_module');
+			
+		} else {
+			
+			var target_module = window.opener.document.getElementById('rel_module').value;
+		
+		//end if else trigger related	
+		}		
+		
+		
+	//end if new_rel	
+	}	
+	
+	document.getElementById(target_iframe).src = 'index.php?module=WorkFlowActionShells&action=CustomPlugin&plugin_action=IframeDropdown&plugin_module=dynamic_var&to_pdf=true&target_module='+ target_module + '&field_type=' + field_type + '&base_module=' + base_module + '&start_value=' + start_value;
+
+//end function updatedroplist_dynamic_var
+}
+
+
+function set_return(field_num){
+	
+	var display_text = 'Dynamic Data from triggered or related module';
+	
+	//if field type is enum, then copy the iframed target_dropdown to 'value' else set the value to value of dynamic_value field
+	if(get_value('field_'+field_num + '__field_type')=='enum'){
+		var iframe_object = window.frames['fields_iframe'].document;	
+		var value = iframe_object.getElementById('target_dropdown').value;
+
+	} else {
+		var value = get_value('dynamic_value');
+	}		 
+
+	window.opener.document.getElementById('set_type_' + field_num).value = get_value('field_'+field_num + '__set_type');
+	window.opener.document.getElementById('adv_type_' + field_num).value = get_value('field_'+field_num + '__adv_type');
+	window.opener.document.getElementById('adv_value_' + field_num).value = value;
+	
+	window.opener.document.getElementById('ext1_' + field_num).value = get_value('field_'+field_num + '__ext1');
+	window.opener.document.getElementById('ext2_' + field_num).value = get_value('field_'+field_num + '__ext2');
+	window.opener.document.getElementById('ext3_' + field_num).value = get_value('ext3');
+
+		
+
+	
+	
+	window.opener.document.getElementById('display_text_' + field_num).value = display_text;
+	window.opener.changehref_text('value_' + field_num, 'href_text_' + field_num, field_num);
+
+	
+		
+	window.close();
+	
+//end function set_return
+}
+
+function build_display_text(field_num, type){
+	
+	if(type=='Basic'){
+		
+		var selected_text = get_inner_text('field_'+field_num + '__field_value');
+		
+		if(	get_value('field_'+field_num + '__field_type') == 'datetime' || 
+			get_value('field_'+field_num + '__field_type') == 'date')
+		{
+			selected_text += ' from ' + get_inner_text('field_'+field_num + '__ext1');
+		}
+		return selected_text;	
+	//end if type is basic		
+	} else {
+		if(get_value('field_'+field_num + '__adv_type') == 'value_calc'){
+			var selected_text = ' existing value ' + get_inner_text('field_'+field_num + '__ext1');
+			selected_text += ' ' + get_inner_text('field_'+field_num + '__adv_value');
+			return selected_text;
+		}		
+			
+		if(get_value('field_'+field_num + '__adv_type') == 'enum_step'){
+			var selected_text = ' ' + get_inner_text('field_'+field_num + '__ext1');
+			selected_text += ' ' + get_inner_text('field_'+field_num + '__adv_value') + ' step(s)';
+			return selected_text;
+		}		
+			var selected_text = get_inner_text('field_'+field_num + '__adv_value');
+			selected_text += ' ' + get_inner_text('field_'+field_num + '__ext1');
+			selected_text += ' ' + get_inner_text('field_'+field_num + '__ext2');
+			selected_text += ' ' + get_inner_text('field_'+field_num + '__ext3');
+			return selected_text;
+		
+	//end if type is advanced
+	}		
+	
+
+
+//end function build_display_text
+}
+	
+
+</script>
+<!-- END: embeded -->
+<!-- BEGIN: main -->
+
+{SET_RETURN_JS}
+
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="tabForm">
+<tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			<form name="EditView" method="POST" action="index.php">
+			<input id="{PREFIX}set_type" type="hidden" name="{PREFIX}set_type" value="{SET_TYPE}">
+			<input id="{PREFIX}adv_type" type="hidden" name="{PREFIX}adv_type" value="{ADV_TYPE}">			
+			<input id="{PREFIX}field_type" type="hidden" name="{PREFIX}field_type" value="{FIELD_TYPE}">			
+			<input id="{PREFIX}value" type="hidden" name="{PREFIX}value" value="{VALUE}">	
+			<input id="base_module" type="hidden" name="base_module" value="{BASE_MODULE}">
+			<input id="action_type" type="hidden" name="action_type" value="{ACTION_TYPE}">
+			<input id="field_num" type="hidden" name="field_num" value="{FIELD_NUMBER}">
+			
+			<input id="{PREFIX}ext1" type="hidden" name="{PREFIX}ext1" value="{EXT1}">
+			<input id="{PREFIX}ext2" type="hidden" name="{PREFIX}ext2" value="{EXT2}">
+			
+			</tr>
+<!-- BEGIN: enum -->			
+			<tr>
+			<td colspan="3" class="dataLabel">
+			Set <b>{LABEL_NAME}</b> The&nbsp;<select name='ext3' id='ext3' onchange="updatedroplist_dyn_var('fields_iframe', '{PREFIX}field_type');">{DYN_REL_OPTIONS}</select>&nbsp;using the value from this field:<BR>
+					<iframe name='fields_iframe' id='fields_iframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='25'></iframe>
+			</td>
+			</tr>
+<!-- END: enum -->
+<!-- BEGIN: non_enum -->			
+			<tr>
+			<td colspan="3" class="dataLabel">
+			Set <b>{LABEL_NAME}</b> The&nbsp;<select name='ext3' id='ext3' onchange="updatedroplist_dyn_var('fields_iframe', '{PREFIX}field_type');">{DYN_REL_OPTIONS}</select>&nbsp;using the value from this field:<BR>
+					<iframe name='fields_iframe' id='fields_iframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='25'></iframe>
+					&nbsp;Copy variable from this box:&nbsp;<input type='text' name='temp_copy_dyn' id='temp_copy_dyn' size='40' readonly>
+			<BR><BR>
+			into this box:&nbsp;
+<!-- BEGIN: text -->			
+			<textarea id='dynamic_value' name='dynamic_value' tabindex='5' cols="60" rows="8">{DYNAMIC_VALUE}</textarea>
+<!-- END: text -->
+<!-- BEGIN: non_text -->			
+			<input type='text' name='dynamic_value' id='dynamic_value' size='60' max-size="255" value="{DYNAMIC_VALUE}">
+<!-- END: non_text -->
+			</td>
+			</tr>	
+<!-- END: non_enum -->					
+			<tr>
+			<td colspan = "3" width = '100%' class="dataLabel" align="right">
+				 <input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" type="button" name="button" value="{APP.LBL_SAVE_BUTTON_LABEL}"
+					onclick="return set_return('{FIELD_NUMBER}')">
+	 <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.close();" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
+			</td>			
+			</tr>
+			<tr>
+			<td colspan ="3">&nbsp;</td>
+			</tr>
+			
+			</form>
+</tr>
+</table>
+	
+<script>
+updatedroplist_dyn_var('fields_iframe', '{PREFIX}field_type', 'yes');
+</script>
+<!-- END: main -->
+<!-- BEGIN: not_available -->
+<BR><BR>Dynamic Data input for this field type is not available.
+<!-- END: not_available -->

@@ -188,7 +188,6 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'type' => 'decimal',
     'options' => 'discount_amount_class_dom',
     'len' => '26,6',
-    'precision' => 6,
     'comment' => 'Discounted amount'
   ),
   'discount_amount_usdollar' =>
@@ -322,7 +321,6 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'vname' => 'LBL_WEIGHT',
     'type' => 'decimal',
     'len' => '12,2',
-    'precision' => 2,
     'comment' => 'Weight of the product'
   ),
   'quantity' =>
@@ -417,7 +415,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
   array (
     'name' => 'book_value',
     'vname' => 'LBL_BOOK_VALUE',
-    'type' => 'currency',
+    'type' => 'decimal',
     'len' => '26,6',
     'comment' => 'Book value of product in use'
   ),
@@ -488,7 +486,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'id_name' => 'quote_id',
     'join_name' => 'quotes',
     'type' => 'relate',
-    'link' => 'quotes',
+    'link' => 'quote_link',
     'table' => 'quotes',
     'isnull' => 'true',
     'module' => 'Quotes',
@@ -497,6 +495,17 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'vname' => 'LBL_QUOTE_NAME',
     'source'=>'non-db',
     'comment' => 'Quote Name'
+  ),
+  'quote_link' =>
+  array(
+    'name' => 'quote_link',
+    'type' => 'link',
+    'relationship' => 'quote_products',
+    'vname' => 'LBL_QUOTES',
+    'link_type', 'one',
+    'module' => 'Quotes',
+    'bean_name', 'Quote',
+    'source' => 'non-db'
   ),
   'manufacturer_name' =>
   array (

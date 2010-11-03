@@ -1,9 +1,8 @@
-//FILE SUGARCRM flav=int ONLY
 /*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.8.0r4
+version: 2.7.0
 */
 (function() {
 
@@ -95,10 +94,10 @@ Anim.prototype = {
             val = (val > 0) ? val : 0;
         }
 
-        if (attr in el && !('style' in el && attr in el.style)) {
-            el[attr] = val;
-        } else {
+        if ('style' in el) {
             Y.Dom.setStyle(el, attr, val + unit);
+        } else if (attr in el) {
+            el[attr] = val;
         }
     },                        
     
@@ -547,7 +546,7 @@ YAHOO.util.AnimMgr = new function() {
      */
     this.unRegister = function(tween, index) {
         index = index || getIndex(tween);
-        if (!tween.isAnimated() || index === -1) {
+        if (!tween.isAnimated() || index == -1) {
             return false;
         }
         
@@ -620,7 +619,7 @@ YAHOO.util.AnimMgr = new function() {
     
     var getIndex = function(anim) {
         for (var i = 0, len = queue.length; i < len; ++i) {
-            if (queue[i] === anim) {
+            if (queue[i] == anim) {
                 return i; // note return;
             }
         }
@@ -653,8 +652,6 @@ YAHOO.util.AnimMgr = new function() {
             tween.currentFrame += tweak;      
         }
     };
-    this._queue = queue;
-    this._getIndex = getIndex;
 };
 /**
  * Used to calculate Bezier splines for any number of control points.
@@ -1394,4 +1391,4 @@ YAHOO.util.Easing = {
 
     Y.Scroll = Scroll;
 })();
-YAHOO.register("animation", YAHOO.util.Anim, {version: "2.8.0r4", build: "2449"});
+YAHOO.register("animation", YAHOO.util.Anim, {version: "2.7.0", build: "1799"});

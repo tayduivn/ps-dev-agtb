@@ -101,7 +101,15 @@
 {/if}
 </td>
 <td>
-<input type="text" name="{{$country}}" id="{{$country}}" size="{{$displayParams.size|default:30}}" {{if !empty($vardef.len)}}maxlength='{{$vardef.len}}'{{/if}} value='{$fields.{{$country}}.value}' tabindex="{{$tabindex}}">
+{* SADEK - BEGIN IT REQUEST 5026 - BUG 17408 - BEGIN SUGARINTERNAL CUSTOMIZATION - DISPLAY COUNTRY FIELDS AS DROPDOWNS *}
+<select name="{{$country}}" id="{{$country}}" size="{{$displayParams.size|default:1}}" tabindex="{{$tabindex}}">
+{if isset($fields.{{$country}}.value) && $fields.{{$country}}.value != ''}
+{html_options options=$fields.{{$country}}.options selected=$fields.{{$country}}.value}
+{else}
+{html_options options=$fields.{{$country}}.options selected=$fields.{{$country}}.default}
+{/if}
+</select>
+{* SADEK - END IT REQUEST 5026 - BUG 17408 - BEGIN SUGARINTERNAL CUSTOMIZATION - DISPLAY COUNTRY FIELDS AS DROPDOWNS *}
 </td>
 </tr>
 

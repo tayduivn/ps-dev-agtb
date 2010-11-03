@@ -42,24 +42,24 @@ $viewdefs['Contracts']['DetailView'] = array(
 		),
 		'status',
 	  ),
-
+	  
 	  array (
 		'reference_code',
 	  	'start_date',
 	  ),
-
+	  
 	  array (
 	  	'account_name',
 		'end_date',
 	  ),
-
+	  
 	  array (
 		array (
 		  'name' => 'opportunity_name',
 		  'label' => 'LBL_OPPORTUNITY',
 		),
 	  ),
-
+	  
 	  array (
 		array (
 		  'name' => 'type',
@@ -71,7 +71,7 @@ $viewdefs['Contracts']['DetailView'] = array(
 		  'label' => 'LBL_CONTRACT_TERM',
 		),
 	  ),
-
+	  
 	  array (
 		array (
 		  'name' => 'total_contract_value',
@@ -79,13 +79,13 @@ $viewdefs['Contracts']['DetailView'] = array(
 		),
 		'company_signed_date',
 	  ),
-
+	  
 	  array (
 		
 		'expiration_notice',
 		'customer_signed_date',
 	  ),
-
+	  
 	  array (
 		'description',
 	  ),

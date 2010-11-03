@@ -1,10 +1,3 @@
-//FILE SUGARCRM flav=int ONLY
-/*
-Copyright (c) 2009, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 2.8.0r4
-*/
 (function () {
     var Dom = YAHOO.util.Dom,
         Event = YAHOO.util.Event,
@@ -17,8 +10,8 @@ version: 2.8.0r4
  * The treeview widget is a generic tree building tool.
  * @module treeview
  * @title TreeView Widget
- * @requires yahoo, dom, event
- * @optional animation, json, calendar
+ * @requires yahoo, event
+ * @optional animation, json
  * @namespace YAHOO.widget
  */
 
@@ -28,14 +21,16 @@ version: 2.8.0r4
  * @class TreeView
  * @uses YAHOO.util.EventProvider
  * @constructor
- * @param {string|HTMLElement} id The id of the element, or the element itself that the tree will be inserted into.  
- *        Existing markup in this element, if valid, will be used to build the tree
- * @param {Array|Object|String}  oConfig (optional)  If present, it will be used to build the tree via method <a href="#method_buildTreeFromObject">buildTreeFromObject</a>
+ * @param {string|HTMLElement} id The id of the element, or the element itself that the tree will be inserted into.  Existing markup in this element, if valid, will be used to build the tree
+ * @param {Array|object|string}  oConfig (optional)  An array containing the definition of the tree.  (see buildTreeFromObject)
  * 
  */
 YAHOO.widget.TreeView = function(id, oConfig) {
     if (id) { this.init(id); }
     if (oConfig) {
+        if (!Lang.isArray(oConfig)) {
+            oConfig = [oConfig];
+        }
         this.buildTreeFromObject(oConfig);
     } else if (Lang.trim(this._el.innerHTML)) {
         this.buildTreeFromMarkup(id);
@@ -165,7 +160,7 @@ TV.prototype = {
     /**
      * Sets up the animation for collapsing children
      * @method setCollapseAnim
-     * @param {string} type of animation (acceptable values defined in 
+     * @param {string} the type of animation (acceptable values defined in 
      * YAHOO.widget.TVAnim)
      */
     setCollapseAnim: function(type) {
@@ -277,8 +272,8 @@ TV.prototype = {
          * starts
          * @event animStart
          * @type CustomEvent
-         * @param {YAHOO.widget.Node} oArgs.node the node that is expanding/collapsing
-         * @param {String} oArgs.type the type of animation ("expand" or "collapse")
+         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing
+         * @parm {String} type the type of animation ("expand" or "collapse")
          */
         this.createEvent("animStart", this);
 
@@ -287,8 +282,8 @@ TV.prototype = {
          * completes
          * @event animComplete
          * @type CustomEvent
-         * @param {YAHOO.widget.Node} oArgs.node the node that is expanding/collapsing
-         * @param {String} oArgs.type the type of animation ("expand" or "collapse")
+         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing
+         * @parm {String} type the type of animation ("expand" or "collapse")
          */
         this.createEvent("animComplete", this);
 
@@ -391,7 +386,7 @@ TV.prototype = {
      * Depending on <a href="YAHOO.widget.Node.html#property_propagateHighlight">nodeRef.propagateHighlight</a>, other nodes might have changed
      * @event highlightEvent
      * @type CustomEvent
-     * @param node {YAHOO.widget.Node} the node that started the change in highlighting state
+        * @param node{YAHOO.widget.Node} the node that started the change in highlighting state
     */
         this.createEvent("highlightEvent",this);
      
@@ -429,15 +424,12 @@ TV.prototype = {
      *  A tree can be described by an array of objects, each object corresponding to a node.
      *  Node descriptions may contain values for any property of a node plus the following extra properties: <ul>
      * <li>type:  can be one of the following:<ul>
-     *    <li> A shortname for a node type (<code>'text','menu','html'</code>) </li>
-     *    <li>The name of a Node class under YAHOO.widget (<code>'TextNode', 'MenuNode', 'DateNode'</code>, etc) </li>
-     *    <li>a reference to an actual class: <code>YAHOO.widget.DateNode</code></li>
-	 * </ul></li>
+     *  <li> A shortname for a node type (<code>'text','menu','html'</code>) </li>
+     * <li>The name of a Node class under YAHOO.widget (<code>'TextNode', 'MenuNode', 'DateNode'</code>, etc) </li>
+     * <li>a reference to an actual class: <code>YAHOO.widget.DateNode</code></li></ul></li>
      * <li>children: an array containing further node definitions</li></ul>
-	 * A string instead of an object will produce a node of type 'text' with the given string as its label.
      * @method buildTreeFromObject
-     * @param  oConfig {Array|Object|String}  array containing a full description of the tree.
-     *        An object or a string will be turned into an array with the given object or string as its only element.
+     * @param  oConfig {Array}  array containing a full description of the tree
      * 
      */
     buildTreeFromObject: function (oConfig) {
@@ -489,10 +481,7 @@ TV.prototype = {
                 }
             }
         };
-        if (!Lang.isArray(oConfig)) {
-            oConfig = [oConfig];
-        }
-
+                            
                     
         build(this.root,oConfig);
     },
@@ -510,7 +499,7 @@ TV.prototype = {
      * If the &lt;LI&gt; element contains an attribute called <code>yuiConfig</code>, its contents should be a JSON-encoded object
      * as the one used in method <a href="#method_buildTreeFromObject">buildTreeFromObject</a>.
      * @method buildTreeFromMarkup
-     * @param  id {string|HTMLElement} The id of the element that contains the markup or a reference to it.
+     * @param  id{string|HTMLElement} The id of the element that contains the markup or a reference to it.
      */
     buildTreeFromMarkup: function (id) {
         this.logger.log('Building tree from existing markup');
@@ -784,36 +773,19 @@ TV.prototype = {
                 if (newNode) { newNode.focus();}
                 Event.preventDefault(ev);
                 break;
-			case KEY.RIGHT:
-				this.logger.log('RIGHT');
-				var self = this,
-					moveFocusRight,
-					focusOnExpand = function (newNode) {
-						self.unsubscribe('expandComplete',focusOnExpand);
-						moveFocusRight(newNode);
-					};
-				moveFocusRight = function (newNode) {
-					do {
-						if (newNode.isDynamic() && !newNode.childrenRendered) {
-							self.subscribe('expandComplete',focusOnExpand);
-							newNode.expand();
-							newNode = null;
-							break;
-						} else {
-							newNode.expand();
-							if (newNode.children.length) {
-								newNode = newNode.children[0];
-							} else {
-								newNode = newNode.nextSibling;
-							}
-						}
-					} while (newNode && !newNode._canHaveFocus());
-					if (newNode) { newNode.focus();}
-				};
-					
-				moveFocusRight(newNode);
-				Event.preventDefault(ev);
-				break;
+            case KEY.RIGHT:
+                this.logger.log('RIGHT');
+                do {
+                    newNode.expand();
+                    if (newNode.children.length) {
+                        newNode = newNode.children[0];
+                    } else {
+                        newNode = newNode.nextSibling;
+                    }
+                } while (newNode && !newNode._canHaveFocus());
+                if (newNode) { newNode.focus();}
+                Event.preventDefault(ev);
+                break;
             case KEY.ENTER:
                 this.logger.log('ENTER: ' + newNode.href);
                 if (node.href) {
@@ -1011,33 +983,12 @@ TV.prototype = {
         return (values.length) ? values : null;
     },
 
-
     /**
-     * Returns a collection of nodes that have passed the test function
-	 * passed as its only argument.  
-	 * The function will receive a reference to each node to be tested.  
-     * @method getNodesBy
-     * @param {function} a boolean function that receives a Node instance and returns true to add the node to the results list
-     * @return {Array} the matching collection of nodes, null if no match
-     */
-    getNodesBy: function(fn) {
-        var values = [];
-        for (var i in this._nodes) {
-            if (this._nodes.hasOwnProperty(i)) {
-                var n = this._nodes[i];
-                if (fn(n)) {
-                    values.push(n);
-                }
-            }
-        }
-        return (values.length) ? values : null;
-    },
-    /**
-     * Returns the treeview node reference for an ancestor element
+     * Returns the treeview node reference for an anscestor element
      * of the node, or null if it is not contained within any node
      * in this tree.
      * @method getNodeByElement
-     * @param el {HTMLElement} the element to test
+     * @param {HTMLElement} the element to test
      * @return {YAHOO.widget.Node} a node reference or null
      */
     getNodeByElement: function(el) {
@@ -1064,23 +1015,12 @@ TV.prototype = {
 
         return null;
     },
-	
-    /**
-     * When in singleNodeHighlight it returns the node highlighted
-	 * or null if none.  Returns null if singleNodeHighlight is false.
-     * @method getHighlightedNode
-     * @return {YAHOO.widget.Node} a node reference or null
-     */
-	getHighlightedNode: function() {
-		return this._currentlyHighlighted;
-	},
-
 
     /**
      * Removes the node and its children, and optionally refreshes the 
      * branch of the tree that was affected.
      * @method removeNode
-     * @param {Node} node to remove
+     * @param {Node} The node to remove
      * @param {boolean} autoRefresh automatically refreshes branch if true
      * @return {boolean} False is there was a problem, true otherwise.
      */
@@ -1176,7 +1116,7 @@ TV.prototype = {
      * to make it possible to insert the branch into another part of the 
      * tree, or another tree.
      * @method popNode
-     * @param {Node} node to remove
+     * @param {Node} the node to remove
      */
     popNode: function(node) { 
         var p = node.parent;
@@ -1405,10 +1345,47 @@ TV.getNode = function(treeId, nodeIndex) {
     */ 
 TV.FOCUS_CLASS_NAME = 'ygtvfocus';
 
+/**
+ * Attempts to preload the images defined in the styles used to draw the tree by
+ * rendering off-screen elements that use the styles.
+ * @method YAHOO.widget.TreeView.preload
+ * @param {string} prefix the prefix to use to generate the names of the
+ * images to preload, default is ygtv
+ * @static
+ */
+TV.preload = function(e, prefix) {
+    prefix = prefix || "ygtv";
 
+    YAHOO.log("Preloading images: " + prefix, "info", "TreeView");
 
+    var styles = ["tn","tm","tmh","tp","tph","ln","lm","lmh","lp","lph","loading"];
+    // var styles = ["tp"];
+
+    var sb = [];
+    
+    // save the first one for the outer container
+    for (var i=1; i < styles.length; i=i+1) { 
+        sb[sb.length] = '<span class="' + prefix + styles[i] + '">&#160;</span>';
+    }
+
+    var f = document.createElement("div");
+    var s = f.style;
+    s.className = prefix + styles[0];
+    s.position = "absolute";
+    s.height = "1px";
+    s.width = "1px";
+    s.top = "-1000px";
+    s.left = "-1000px";
+    f.innerHTML = sb.join("");
+
+    document.body.appendChild(f);
+
+    Event.removeListener(window, "load", TV.preload);
+
+};
+
+Event.addListener(window,"load", TV.preload);
 })();
-
 (function () {
     var Dom = YAHOO.util.Dom,
         Lang = YAHOO.lang,
@@ -2298,8 +2275,7 @@ YAHOO.widget.Node.prototype = {
             return false;
         } else {
             return ( this.children.length > 0 || 
-				(checkForLazyLoad && this.isDynamic() && !this.dynamicLoadComplete) 
-			);
+(checkForLazyLoad && this.isDynamic() && !this.dynamicLoadComplete) );
         }
     },
 
@@ -2442,18 +2418,6 @@ YAHOO.widget.Node.prototype = {
     loadComplete: function() {
         this.logger.log(this.index + " loadComplete, children: " + this.children.length);
         this.getChildrenEl().innerHTML = this.completeRender();
-		if (this.propagateHighlightDown) {
-			if (this.highlightState === 1 && !this.tree.singleNodeHighlight) {
-				for (var i = 0; i < this.children.length; i++) {
-				this.children[i].highlight(true);
-			}
-			} else if (this.highlightState === 0 || this.tree.singleNodeHighlight) {
-				for (i = 0; i < this.children.length; i++) {
-					this.children[i].unhighlight(true);
-				}
-			} // if (highlighState == 2) leave child nodes with whichever highlight state they are set
-		}
-				
         this.dynamicLoadComplete = true;
         this.isLoading = false;
         this.expand(true);
@@ -2505,7 +2469,7 @@ YAHOO.widget.Node.prototype = {
         this.logger.log("Generating html");
         var sb = [];
 
-        sb[sb.length] = '<table id="ygtvtableel' + this.index + '" border="0" cellpadding="0" cellspacing="0" class="ygtvtable ygtvdepth' + this.depth;
+        sb[sb.length] = '<table id="ygtvtableel' + this.index + '"border="0" cellpadding="0" cellspacing="0" class="ygtvtable ygtvdepth' + this.depth;
         if (this.enableHighlight) {
             sb[sb.length] = ' ygtv-highlight' + this.highlightState;
         }
@@ -2781,7 +2745,7 @@ YAHOO.widget.Node.prototype = {
         if (this.enableHighlight) {
             if (this.tree.singleNodeHighlight) {
                 if (this.tree._currentlyHighlighted) {
-                    this.tree._currentlyHighlighted.unhighlight(_silent);
+                    this.tree._currentlyHighlighted.unhighlight();
                 }
                 this.tree._currentlyHighlighted = this;
             }
@@ -2887,7 +2851,6 @@ YAHOO.widget.Node.prototype = {
 
 YAHOO.augment(YAHOO.widget.Node, YAHOO.util.EventProvider);
 })();
-
 /**
  * A custom YAHOO.widget.Node that handles the unique nature of 
  * the virtual, presentationless root node.
@@ -2972,7 +2935,6 @@ YAHOO.extend(YAHOO.widget.RootNode, YAHOO.widget.Node, {
     focus: function () {}
 
 });
-
 (function () {
     var Dom = YAHOO.util.Dom,
         Lang = YAHOO.lang,
@@ -3169,7 +3131,6 @@ YAHOO.extend(YAHOO.widget.TextNode, YAHOO.widget.Node, {
     
 });
 })();
-
 /**
  * A menu-specific implementation that differs from TextNode in that only 
  * one sibling can be expanded at a time.
@@ -3209,7 +3170,6 @@ YAHOO.extend(YAHOO.widget.MenuNode, YAHOO.widget.TextNode, {
     _type: "MenuNode"
 
 });
-
 (function () {
     var Dom = YAHOO.util.Dom,
         Lang = YAHOO.lang,
@@ -3292,7 +3252,7 @@ YAHOO.extend(YAHOO.widget.HTMLNode, YAHOO.widget.Node, {
     },
 
     /**
-     * Synchronizes the node.html, and the node's content
+     * Synchronizes the node.data, node.html, and the node's content
      * @property setHtml
      * @param o {object} An html string or object containing an html property
      */
@@ -3328,7 +3288,6 @@ YAHOO.extend(YAHOO.widget.HTMLNode, YAHOO.widget.Node, {
     }
 });
 })();
-
 (function () {
     var Dom = YAHOO.util.Dom,
         Lang = YAHOO.lang,
@@ -3475,7 +3434,6 @@ YAHOO.extend(YAHOO.widget.DateNode, YAHOO.widget.TextNode, {
 
 });
 })();
-
 (function () {
     var Dom = YAHOO.util.Dom,
         Lang = YAHOO.lang, 
@@ -3880,7 +3838,6 @@ YAHOO.extend(YAHOO.widget.DateNode, YAHOO.widget.TextNode, {
         editorData.inputContainer.innerHTML = '';
     };
 })();
-
 /**
  * A static factory class for tree view expand/collapse animations
  * @class TVAnim
@@ -3933,7 +3890,6 @@ YAHOO.widget.TVAnim = function() {
         }
     };
 } ();
-
 /**
  * A 1/2 second fade-in animation.
  * @class TVFadeIn
@@ -3995,7 +3951,6 @@ YAHOO.widget.TVFadeIn.prototype = {
         return "TVFadeIn";
     }
 };
-
 /**
  * A 1/2 second fade out animation.
  * @class TVFadeOut
@@ -4041,7 +3996,7 @@ YAHOO.widget.TVFadeOut.prototype = {
     onComplete: function() {
         var s = this.el.style;
         s.display = "none";
-        s.opacity = 1;
+        // s.opacity = 1;
         s.filter = "alpha(opacity=100)";
         this.callback();
     },
@@ -4055,5 +4010,4 @@ YAHOO.widget.TVFadeOut.prototype = {
         return "TVFadeOut";
     }
 };
-
-YAHOO.register("treeview", YAHOO.widget.TreeView, {version: "2.8.0r4", build: "2449"});
+YAHOO.register("treeview", YAHOO.widget.TreeView, {version: "@VERSION@", build: "@BUILD@"});

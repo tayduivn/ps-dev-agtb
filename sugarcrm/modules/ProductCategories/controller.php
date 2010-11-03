@@ -31,7 +31,9 @@ class ProductCategoriesController extends SugarController {
 	}
 
 	public function process(){
-		if(!is_admin($GLOBALS['current_user']) && (!is_admin_for_module($GLOBALS['current_user'],'Products'))){
+		// BEGIN SUGARINTERNAL CUSTOMIZATION - ITREQUEST 2205 and 6130 - PROVIDE ACCESS TO PRODUCT CATALOG TO MICHELLE, bobby and brendan
+		if (!is_admin($GLOBALS['current_user']) && (!is_admin_for_module($GLOBALS['current_user'],'Products')) && $GLOBALS['current_user']->user_name != 'michelle' && $GLOBALS['current_user']->user_name != 'bhurwitz' && $GLOBALS['current_user']->user_name != 'rasmar' && $GLOBALS['current_user']->user_name != 'balcisto') {
+		// END SUGARINTERNAL CUSTOMIZATION - ITREQUEST 2205 and 6130 - PROVIDE ACCESS TO PRODUCT CATALOG TO MICHELLE, bobby and brendan
 			$this->hasAccess = false;
 		}
 		parent::process();

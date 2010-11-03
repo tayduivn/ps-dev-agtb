@@ -424,7 +424,12 @@ class EmailMan extends SugarBean{
             $this->ref_email->load_relationship('users');
             $this->ref_email->load_relationship('prospects');
             $this->ref_email->load_relationship('contacts');
-            $this->ref_email->load_relationship('leads');            
+                        // Sugar Internal Customization for the M2 Projects
+            /*
+            $this->ref_email->load_relationship('leads');
+            */
+            $this->ref_email->load_relationship('leadcontacts');
+                        // End Customization from the M2 Project
             $this->ref_email->load_relationship('accounts');
        }
 
@@ -444,9 +449,16 @@ class EmailMan extends SugarBean{
                     $rel_name="contacts";
                     break;
 
+                // Sugar Internal Customization for the M2 Projects
+                    /*
                 case 'Leads':
                     $rel_name="leads";
-                    break;                
+                    break;
+                    */
+                case 'LeadContacts':
+                    $rel_name="leadcontacts";
+                    break;
+                // End Customization from the M2 Project
                     
                 case 'Accounts':
                     $rel_name="accounts";
@@ -521,9 +533,16 @@ class EmailMan extends SugarBean{
                         $rel_name="contacts";
                         break;
 
+                                        // Sugar Internal Customization for the M2 Projects
+                        /*
                     case 'Leads':
                         $rel_name="leads";
                         break;
+                        */
+                    case 'LeadContacts':
+                            $rel_name="leadcontacts";
+                            break;
+                                        // End Customization for the M2 Projects
                     
                     case 'Accounts':
                         $rel_name="accounts";

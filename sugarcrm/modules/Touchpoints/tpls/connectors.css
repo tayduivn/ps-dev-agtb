@@ -1,0 +1,12 @@
+div.showConnectorPanel { 
+	display:block;
+	overflow:auto;
+	width:auto;
+	clear:left;
+	height:auto;
+}
+
+div.hideConnectorPanel {
+	display:none;
+	height:0px;
+}

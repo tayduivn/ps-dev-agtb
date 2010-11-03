@@ -164,6 +164,9 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
                 $name = $defines['focus']->kbdocument_name ;
                 break ;
             case 'leads' :
+			// BEGIN SUGARINTERNAL M2 CUSTOMIZATION
+            case 'leadcontacts':
+			// END SUGARINTERNAL M2 CUSTOMIZATION
             case 'contacts' : 
                 $name = $defines['focus']->first_name . " " .$defines['focus']->last_name ;
                 break ;

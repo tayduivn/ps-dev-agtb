@@ -18,52 +18,28 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs ['Meetings'] = 
-array (
-  'EditView' => 
-  array (
-    'templateMeta' => 
-    array (
-      'maxColumns' => '2',
-      'form' => 
-      array (
-        'hidden' => 
-        array (
-          0 => '<input type="hidden" name="isSaveAndNew" value="false">',
-        ),
-        'buttons' => 
-        array (
-          0 => 
-          array (
-            'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="fill_invitees();this.form.action.value=\'Save\'; this.form.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}this.form.return_id.value=\'\'; {/if}return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
-          ),
-          1 => 'CANCEL',
-          2 => 
-          array (
-            'customCode' => '<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" class="button" onclick="this.form.send_invites.value=\'1\';fill_invitees();this.form.action.value=\'Save\';this.form.return_action.value=\'EditView\';this.form.return_module.value=\'{$smarty.request.return_module}\';return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">',
-          ),
-          3 => 
-          array (
-            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" accessKey="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_KEY}" class="button" onclick="fill_invitees(); this.form.status.value=\'Held\'; this.form.action.value=\'Save\'; this.form.return_module.value=\'Meetings\'; this.form.isDuplicate.value=true; this.form.isSaveAndNew.value=true; this.form.return_action.value=\'EditView\'; this.form.return_id.value=\'{$fields.id.value}\'; return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
-          ),
-        ),
-        'headerTpl' => 'modules/Meetings/tpls/header.tpl',
-        'footerTpl' => 'modules/Meetings/tpls/footer.tpl',
-      ),
-      'widths' => 
-      array (
-        0 => 
-        array (
-          'label' => '10',
-          'field' => '30',
-        ),
-        1 => 
-        array (
-          'label' => '10',
-          'field' => '30',
-        ),
-      ),
-      'javascript' => '<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+$viewdefs['Meetings']['EditView'] = array(
+    'templateMeta' => array('maxColumns' => '2', 
+                            'form' => array('hidden'=>array('<input type="hidden" name="isSaveAndNew" value="false">'),
+											'buttons' => array(
+                                             array('customCode'=>'<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="fill_invitees();this.form.action.value=\'Save\'; this.form.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}this.form.return_id.value=\'\'; {/if}return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">'), 
+                                             'CANCEL',
+                                             array('customCode'=>'<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" class="button" onclick="this.form.send_invites.value=\'1\';fill_invitees();this.form.action.value=\'Save\';this.form.return_action.value=\'EditView\';this.form.return_module.value=\'{$smarty.request.return_module}\';return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">'),
+                                             array('customCode'=>'{if $fields.status.value != "Held"}' .
+                                             		'<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" ' .
+                                             		'accessKey="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_KEY}" ' .
+                                             		'class="button" ' .
+                                             		'onclick="fill_invitees(); this.form.status.value=\'Held\'; this.form.action.value=\'Save\'; this.form.return_module.value=\'Meetings\'; this.form.isDuplicate.value=true; this.form.isSaveAndNew.value=true; this.form.return_action.value=\'EditView\'; this.form.return_id.value=\'{$fields.id.value}\'; return check_form(\'EditView\') && isValidDuration();" ' .
+                                             		'type="submit" name="button" ' .
+                                             		'value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}'),
+                                            ),
+                                            'headerTpl'=>'modules/Meetings/tpls/header.tpl',
+                                            'footerTpl'=>'modules/Meetings/tpls/footer.tpl'),
+                            'widths' => array(
+                                            array('label' => '10', 'field' => '30'), 
+                                            array('label' => '10', 'field' => '30')
+                                            ),
+    						'javascript' => '<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" src="include/jsolait/init.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" src="include/jsolait/lib/urllib.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>

@@ -1,0 +1,88 @@
+
+
+<!-- BEGIN: potential_parent_contact -->
+<div id={DIV_ID}>
+<table cellpadding="0" cellspacing="0" width="100%" border="0" class="listView">
+<!-- BEGIN: list_nav_row -->
+{PAGINATION}
+<!-- END: list_nav_row -->
+<tr height="20">
+	<td scope="col" class="listViewThS1" NOWRAP>Action:</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{MOD.LBL_LIST_NAME}</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{MOD.LBL_LIST_ACCOUNT_NAME}</td>
+	<td scope="col" class="listViewThS1" NOWRAP>&nbsp;</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{MOD.LBL_LIST_EMAIL_ADDRESS}</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{APP.LBL_LIST_ASSIGNED_USER}</td>
+</tr>
+
+<!-- BEGIN: row -->			
+<tr height="20"  onmouseover="setPointer(this, '{LEAD.ID}', 'over', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');" onmouseout="setPointer(this, '{LEAD.ID}', 'out', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');" onmousedown="setPointer(this, '{LEAD.ID}', 'click', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');">
+	<td scope="col" class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><input title="Connect to Contact" class="button" type="button" name="button" value="Connect to Contact" onclick="return_parent_lead('','Convert to Contact: {CONTACT.FULL_NAME}','set_as_contact','Parent','{CONTACT.ID}','{CONTACT.ACCOUNT_ID}');" ></td>
+
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="{URL_PREFIX}index.php?action=DetailView&module=Contacts&record={CONTACT.ID}&offset={CONTACT.OFFSET}&stamp={CONTACT.STAMP}"  class="listViewTdLinkS1" target='blank'>{CONTACT.FULL_NAME}</a>&nbsp;</td>
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap>{CONTACT.ACCOUNT_NAME}&nbsp;</td>
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap>&nbsp;</td>
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="javascript:populate_search_email('{CONTACT.EMAIL1}')">{CONTACT.EMAIL1}</a>&nbsp;</td>
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap>{CONTACT.ASSIGNED_USER_NAME}&nbsp;</td>
+</tr>
+<!-- END: row -->
+
+<!-- BEGIN: potential_parent_contact_none -->
+<tr>
+	<td nowrap="nowrap" colspan='5'><h3><b><font color='red'>No potential Contacts Found</font></b></h3></td>
+</tr>
+<!-- END: potential_parent_contact_none -->
+</table>
+<BR>
+</div>
+<!-- END: potential_parent_contact -->
+
+
+<!-- BEGIN: potential_parent_account -->
+<div id={DIV_ID}>
+<table cellpadding="0" cellspacing="0" width="100%" border="0" class="listView">
+
+<!-- BEGIN: list_nav_row -->
+{PAGINATION}
+<!-- END: list_nav_row -->
+<tr height="20">
+	<td scope="col" class="listViewThS1" NOWRAP>Action:</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{MOD.LBL_LIST_ACCOUNT_NAME}</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{APP.LBL_LIST_BILLING_ADDRESS_STATE}</td>
+	<td scope="col" class="listViewThS1" NOWRAP>{APP.LBL_LIST_ASSIGNED_USER}</td>
+</tr>
+
+<!-- BEGIN: row -->			
+<tr height="20"  onmouseover="setPointer(this, '{LEAD.ID}', 'over', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');" onmouseout="setPointer(this, '{LEAD.ID}', 'out', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');" onmousedown="setPointer(this, '{LEAD.ID}', 'click', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');">
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><input title="Connect to Account" class="button" type="button" name="button" value="Connect to Account" onclick="return_parent_lead('','Convert to Account: {ACCOUNT.NAME}','set_as_account','Parent','','{ACCOUNT.ID}');" ></td>
+
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="{URL_PREFIX}index.php?action=DetailView&module=Accounts&record={ACCOUNT.ID}&offset={ACCOUNT.OFFSET}&stamp={ACCOUNT.STAMP}" class="listViewTdLinkS1" target='blank'>{ACCOUNT.NAME}</a>&nbsp;</td>
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap>{ACCOUNT.BILLING_ADDRESS_STATE}&nbsp;</td>
+	<td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap>{ACCOUNT.ASSIGNED_USER_NAME}&nbsp;</td>
+</tr>
+<!-- END: row -->
+
+<!-- BEGIN: potential_parent_account_none -->
+<tr>
+	<td nowrap="nowrap" colspan='5'><h3><b><font color='red'>No potential Accounts Found</font></b></h3></td>
+</tr>
+<!-- END: potential_parent_account_none -->
+</table>
+<BR>
+</div>
+<!-- END: potential_parent_account -->
+
+
+
+
+
+
+
+
+
+<!-- BEGIN: set_as_parent -->
+<!-- END: set_as_parent -->
+	
+<!-- BEGIN: main_end -->
+
+<!-- END: main_end -->

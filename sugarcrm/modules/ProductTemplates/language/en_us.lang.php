@@ -95,7 +95,7 @@ $mod_strings = array (
   'LNK_NEW_PRODUCT_TYPE' => 'Product Types',
   'LNK_NEW_PRODUCT' => 'Create Product for Catalog',
   'LNK_NEW_SHIPPER' => 'Shipping Providers',
-  'LNK_PRODUCT_LIST' => 'View Product Catalog',
+  'LNK_PRODUCT_LIST' => 'Product Catalog',
   'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
 );
 

@@ -76,7 +76,17 @@ function process_action_update(&$focus, $action_array){
 		}
 		//otherwise rely on the basic_ext to handle the action for this field
         if($field == "assigned_user_id" && (empty($_REQUEST['massupdate']) || $_REQUEST['massupdate']==='false')) {
-            $focus->notify_inworkflow = true;
+            /*
+            ** @author: jwhitcraft
+            ** SUGARINTERNAL CUSTOMIZATION
+            ** ITRequest #: 16528
+            ** Description: Non upgrade safe customization to make it stop spamming the sales team.
+            ** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/Action_utils.php
+            */
+            if(!in_array($focus->object_name, array('Touchpoint', 'LeadAccount', 'LeadContact'))) {
+                $focus->notify_inworkflow = true;
+            }
+            /* END SUGARINTERNAL CUSTOMIZATION */
         }
 
         if($field == "email1") $focus->email1_set_in_workflow = $focus->email1;

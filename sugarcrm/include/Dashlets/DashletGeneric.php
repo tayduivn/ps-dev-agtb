@@ -249,6 +249,11 @@ class DashletGeneric extends Dashlet {
             if(!empty($params)) {
                 if($name == 'assigned_user_id' && $this->myItemsOnly) continue; // don't handle assigned user filter if filtering my items only
                 $widgetDef = $this->seedBean->field_defs[$name];
+                                // SADEK BEGIN SUGARINTERNAL CUSTOMIZATION - IT REQUEST 9796 - LEAD TYPE VALUES ARE NOT POPULATED, CAUSING FATAL CALL ON queryFilterone_of() BELOW - TEMPORARY FIX
+                                if(empty($widgetDef['type'])){
+                                        continue;
+                                }
+                                // SADEK END SUGARINTERNAL CUSTOMIZATION - IT REQUEST 9796 - LEAD TYPE VALUES ARE NOT POPULATED, CAUSING FATAL CALL ON queryFilterone_of() BELOW - TEMPORARY FIX
 
                 $widgetClass = $this->layoutManager->getClassFromWidgetDef($widgetDef, true);
                 $widgetDef['table'] = $this->seedBean->table_name;

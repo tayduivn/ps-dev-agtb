@@ -1,0 +1,144 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+/*********************************************************************************
+
+ ********************************************************************************/
+-->
+<!-- BEGIN: main -->
+<script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
+<script type="text/javascript" src="include/javascript/dashlets.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
+
+<script>
+	function deleteAttachmentCallBack(text){
+		if(text == 'true'){
+			document.getElementById('new_attachment').style.display = '';
+			ajaxStatus.hideStatus();
+			document.getElementById('old_attachment').innerHTML = '';
+			
+		}else{
+			document.getElementById('new_attachment').style.display = 'none';
+			ajaxStatus.flashStatus(SUGAR.language.get('Notes', 'ERR_REMOVING_ATTACHMENT'), 2000);
+		}
+	}
+</script>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td style="padding-bottom: 2px;">
+			<form name="EditView" method="POST" action="index.php" enctype="multipart/form-data">
+			<input type="hidden" name="module" value="Notes">
+			<input type="hidden" name="record" value="{ID}">
+			<input type="hidden" name="action">
+			<input type="hidden" name="form">
+			<input type='hidden' name='deleteAttachment' value='0'>
+			<input type="hidden" name="return_module" value="{RETURN_MODULE}">
+			<input type="hidden" name="return_id" value="{RETURN_ID}">
+			<input type="hidden" name="return_action" value="{RETURN_ACTION}">
+		<input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save'; return check_form('EditView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " > <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  "></td>
+	<td align="right" nowrap><span  class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
+	<td align='right'>{ADMIN_EDIT}</td>
+	</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"  class="tabForm">
+<tr>
+<td>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<td width="15%" class="dataLabel"><span sugar='slot1'>{MOD.LBL_CONTACT_NAME}</span sugar='slot'></td>
+	<td width="35%" class="dataField"><span sugar='slot1b'><input name='contact_name' readonly type='text' value='{CONTACT_NAME}'><input name='contact_id' type="hidden" value='{CONTACT_ID}'>&nbsp;<input title="{APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{APP.LBL_SELECT_BUTTON_KEY}" tabindex="1" type="button" class="button" value='{APP.LBL_SELECT_BUTTON_LABEL}' name='button'
+		onclick='open_popup("Contacts", 600, 400, "", true, false, {encoded_contact_popup_request_data});'></span sugar='slot'></td>
+	<td width="15%" class="dataField" valign="top"><span sugar='slot2'><select name='parent_type' id='parent_type' onchange='document.EditView.parent_name.value="";document.EditView.parent_id.value="";changeQS();toggle_portal_flag(); checkParentType(document.EditView.parent_type.value, document.EditView.change_parent);' tabindex="2">{TYPE_OPTIONS}</select></span sugar='slot'></td>
+	<td width="35%" class="dataField"><span sugar='slot2b'><input type="hidden" name='parent_id' id='parent_id' value='{PARENT_ID}' /><input class="sqsEnabled" tabindex="2" autocomplete="off" type='text' name='parent_name' id='parent_name' value='{PARENT_NAME}' /> {CHANGE_PARENT_BUTTON}</span sugar='slot'></td>
+	</tr><tr>
+
+	<!-- BEGIN: pro -->
+	<td  class="dataLabel"><span sugar='slot3'>{APP.LBL_DATE_MODIFIED}<span class="required">*</span></span sugar='slot'></td>
+	<td class="dataField"><span sugar='slot3b'>{DATE_MODIFIED}</span sugar='slot'>
+	</td>
+	<!-- END: pro -->
+
+	<!-- BEGIN: open_source -->
+	<td  class="dataLabel"><span sugar='slot4'>{MOD.Portal_Name_c}</span sugar='slot'></td>
+	<td class="dataField"><span sugar='slot4b'><input type='text' name='portal_name_c' id='portal_name_c' size='20' maxlength='255' value='{PORTAL_NAME_C}'{PORTAL_SUBMITTER_DISABLED}></span sugar='slot'></td>
+	<!-- END: open_source -->
+</tr>		<tr>
+			<td  class="dataLabel"><span sugar='slot3'>{APP.LBL_DATE_MODIFIED}<span class="required">*</span></span sugar='slot'></td>
+			<td class="dataField"><span sugar='slot3b'>{DATE_MODIFIED}</span sugar='slot'></td>
+			<td  class="dataLabel"><span sugar='slot4'>{MOD.Portal_Name_c}</span sugar='slot'></td>
+			<td class="dataField"><span sugar='slot4b'><input type='text' name='portal_name_c' id='portal_name_c' size='20' maxlength='255' value='{PORTAL_NAME_C}'{PORTAL_SUBMITTER_DISABLED}></span sugar='slot'></td>
+</tr></table>
+
+<div id='portal_flag_row' style='display:none'>
+<!-- BEGIN: portal_on -->
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>
+	<td width="15%" class="dataField"><span sugar='slot5'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" class="dataField"><span sugar='slot5b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" class="dataLabel"><span sugar='slot6'>{MOD.LBL_PORTAL_FLAG}</span sugar='slot'></td>
+	<td width="35%" class="dataField"><span sugar='slot6b'><input name="portal_flag" value="1" class="checkbox" type="checkbox" {PORTAL_FLAG}></span sugar='slot'></td>
+</tr></table>
+<!-- END: portal_on -->
+</div>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<td colspan='4' class="dataLabel" valign="top"><span sugar='slot7'>&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td width="15%" class="dataLabel"><span sugar='slot7b'>{MOD.LBL_SUBJECT} <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></span sugar='slot'></td>
+	<td colspan="3"  class="dataField"><span sugar='slot8'><input name='name' tabindex="3" type="text" size='100' maxlength="255" value="{NAME}"></span sugar='slot'></td>
+	</tr>
+	<tr>
+        <td class="dataLabel">{MOD.LBL_FILENAME}</td>
+        <td colspan="3" class="dataField">
+        <span id='new_attachment' style='display:{NEW_ATTACHMENT}'>
+        	<input name="uploadfile" tabindex="3" type="file" size="60"/>
+        </span>
+<!-- BEGIN: deleteAttachment -->
+			<span id='old_attachment'>
+		 {FILENAME_TEXT}<input type='hidden' name='old_filename' value='{FILENAME}'/><input type='hidden' name='old_id' value='{OLD_ID}'/>
+		<input type='button' class='button' value='{APP.LBL_REMOVE}' onclick='ajaxStatus.showStatus(SUGAR.language.get("Notes", "LBL_REMOVING_ATTACHMENT"));this.form.deleteAttachment.value=1;this.form.action.value="EditView";SUGAR.dashlets.postForm(this.form, deleteAttachmentCallBack);this.form.deleteAttachment.value=0;this.form.action.value="";' >       
+		</span>
+<!-- END: deleteAttachment -->
+        </td>
+        </tr>
+	<tr>
+	<td valign="top" class="dataLabel"><span sugar='slot9'>{MOD.LBL_NOTE}</span sugar='slot'></td>
+	<td colspan="3"  class="dataField"><span sugar='slot9b'><textarea name='description' tabindex="3" cols="90" rows="30">{DESCRIPTION}</textarea></span sugar='slot'></td>
+</tr></table>
+</td></tr></table>
+</form>
+
+<script>
+toggle_portal_flag();
+
+function toggle_portal_flag() {
+	{TOGGLE_JS}
+}
+	
+</script>
+{JAVASCRIPT}
+<!-- END: main -->

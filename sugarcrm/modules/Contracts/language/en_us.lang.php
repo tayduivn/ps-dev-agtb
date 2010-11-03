@@ -34,7 +34,7 @@ $mod_strings = array (
 	
 	// quick menu link labels
 	'LNK_NEW_CONTRACT' => 'Create Contract',
-	'LNK_CONTRACT_LIST' => 'View Contracts',
+	'LNK_CONTRACT_LIST' => 'Contracts List',
 
     // quick create label
     'LBL_NEW_FORM_TITLE' => 'New Contract',

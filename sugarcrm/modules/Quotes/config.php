@@ -21,12 +21,27 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //include any group of products in these stages for the standard pdf template
 //Does not need to be translated this is just for the keys
-$in_total_group_stages =  $GLOBALS['app_list_strings']['in_total_group_stages'];
+
+/* BEGIN SUGARINTERNAL CUSTOMIZATION */
+/* Do our best to make this always available */
+global $in_total_group_stages;
+/* END SUGARINTERNAL CUSTOMIZATION */
+
+$in_total_group_stages =  array (
+    'Draft' => 'Draft',
+    'Negotiation' => 'Negotiation',
+    'Delivered' => 'Delivered',
+    'On Hold' => 'On Hold',
+    'Confirmed' => 'Confirmed',
+    'Closed Accepted' => 'Closed Accepted',
+  );
 $pdf_group_subtotal = true;
 
 if (file_exists('custom/modules/Quotes/config.php'))
 {
-	include_once('custom/modules/Quotes/config.php');
+    /* BEGIN SUGARINTERNAL CUSTOMIZATION */
+    include('custom/modules/Quotes/config.php');
+    /* END SUGARINTERNAL CUSTOMIZATION */
 }
 
 ?>

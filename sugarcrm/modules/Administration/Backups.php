@@ -26,7 +26,6 @@ if (!is_admin($GLOBALS['current_user']))
    sugar_die("Unauthorized access to administration.");
 }
 
-
 require_once('include/utils/zip_utils.php');
 
 $form_action = "index.php?module=Administration&action=Backups";

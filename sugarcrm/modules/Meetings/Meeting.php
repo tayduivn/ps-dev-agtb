@@ -170,13 +170,13 @@ class Meeting extends SugarBean {
             $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
             $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
         }
-		$return_id = parent::save($check_notify);
+		parent::save($check_notify);
 
 		if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
-		return $return_id;
+
 	}
 
 	// this is for calendar
@@ -341,6 +341,12 @@ class Meeting extends SugarBean {
 		if (is_null($this->duration_minutes))
 			$this->duration_minutes = "1";
 
+		global $current_user;
+		$reminder_t = $current_user->getPreference('reminder_time');
+		if (!empty ($this->reminder_time)) {
+			$reminder_t = $this->reminder_time;
+		}
+
 		global $app_list_strings;
 		$parent_types = $app_list_strings['record_type_display'];
 		$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
@@ -355,11 +361,6 @@ class Meeting extends SugarBean {
 			$this->reminder_time = -1;
 		}
 
-		if ( empty($this->id) ) {
-		    $reminder_t = $GLOBALS['current_user']->getPreference('reminder_time');
-		    if ( isset($reminder_t) )
-		        $this->reminder_time = $reminder_t;
-		}
 		$this->reminder_checked = $this->reminder_time == -1 ? false : true;
 
 		if (isset ($_REQUEST['parent_type'])) {
@@ -399,8 +400,6 @@ class Meeting extends SugarBean {
 
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
-        $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-
 		return $meeting_fields;
 	}
 
@@ -414,7 +413,7 @@ class Meeting extends SugarBean {
 		// cn: bug 9494 - passing a contact breaks this call
 		$notifyUser =($meeting->current_notify_user->object_name == 'User') ? $meeting->current_notify_user : $current_user;
 		// cn: bug 8078 - fixed call to $timedate
-		$prefDate = $notifyUser->getUserDateTimePreferences();
+		$prefDate = User::getUserDateTimePreferences($notifyUser);
 
 		if(strtolower(get_class($meeting->current_notify_user)) == 'contact') {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].

@@ -124,8 +124,8 @@ class Contract extends SugarBean {
                 check_for_schedule($this,CONTRACT_BUILT_IN_WORKFLOW_ID,$time_array);//check if it is update, then save();
             }
         }
-		if ( $this->total_contract_value == '' ) { $this->total_contract_value = 0; }
-		if ( $this->total_contract_value_usdollar == '' ) { $this->total_contract_value_usdollar = 0; }
+		if ( $this->total_contract_value == '' ) { $this->total_contract_value = '0'; }	
+		if ( $this->total_contract_value_usdollar == '' ) { $this->total_contract_value_usdollar = '0'; }		
 		$currency = new Currency();
 		$currency->retrieve($this->currency_id);
 		if(!empty($this->total_contract_value)){
@@ -269,7 +269,7 @@ class Contract extends SugarBean {
 	function get_list_view_data() {
 		$fields = $this->get_list_view_array();
 		
-		//$fields['TOTAL_CONTRACT_VALUE']= format_number($fields['TOTAL_CONTRACT_VALUE']);
+		$fields['TOTAL_CONTRACT_VALUE']= format_number($fields['TOTAL_CONTRACT_VALUE']);
 		$this->contract_types = getContractTypesDropDown();
 		$fields['TYPE'] = isset($this->contract_types[$fields['TYPE']]) ? $this->contract_types[$fields['TYPE']] : $fields['TYPE'];
 		return $fields;

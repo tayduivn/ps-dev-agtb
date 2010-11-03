@@ -94,7 +94,7 @@ class ProjectTask extends SugarBean {
 	/*
 	 *
 	 */
-	function ProjectTask($init=true)
+	function ProjectTask()
 	{
 		parent::SugarBean();
 		if ($init) {
@@ -124,6 +124,12 @@ class ProjectTask extends SugarBean {
 			}		
 			//END SUGARCRM flav=pro ONLY
 		}
+		
+		if(!empty($current_user)) {
+			$this->team_id = $current_user->default_team;	//default_team is a team id
+		} else {
+			$this->team_id = 1; // make the item globally accessible
+		}		
 	}
 	
 	function save($check_notify = FALSE){
@@ -253,7 +259,7 @@ class ProjectTask extends SugarBean {
 	}
 
 	function get_list_view_data(){
-		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate, $locale;
+		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate;
 		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
 		$task_fields =$this->get_list_view_array();
 		//$date_due = $timedate->to_db_date($task_fields['DATE_DUE'],false);
@@ -273,11 +279,7 @@ class ProjectTask extends SugarBean {
 		}
         */
 
-        if ( !isset($task_fields["FIRST_NAME"]) )
-            $task_fields["FIRST_NAME"] = '';
-        if ( !isset($task_fields["LAST_NAME"]) )
-            $task_fields["LAST_NAME"] = '';
-		$task_fields['CONTACT_NAME']= $locale->getLocaleFormattedName($task_fields["FIRST_NAME"],$task_fields["LAST_NAME"]);
+		$task_fields['CONTACT_NAME']= return_name($task_fields,"FIRST_NAME","LAST_NAME");
 		$task_fields['TITLE'] = '';
 		if (!empty($task_fields['CONTACT_NAME'])) {
 			$task_fields['TITLE'] .= $current_module_strings['LBL_LIST_CONTACT'].": ".$task_fields['CONTACT_NAME'];
@@ -338,7 +340,7 @@ class ProjectTask extends SugarBean {
         if($custom_join){
 			$query .=  $custom_join['select'];
 		}
-        $query .= " FROM project_task ";
+        $query .= "FROM project_task ";
         
 		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.

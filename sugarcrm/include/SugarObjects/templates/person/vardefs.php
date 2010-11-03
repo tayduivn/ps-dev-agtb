@@ -275,7 +275,10 @@ $vardefs =array(
 		array (
 			'name' => 'primary_address_country',
 			'vname' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
-			'type' => 'varchar',
+                        // SADEK - BEGIN IT REQUEST 5026 - BUG 17408 - BEGIN SUGARINTERNAL CUSTOMIZATION - DISPLAY COUNTRY FIELDS AS DROPDOWNS
+                        'type' => 'enum',
+                        'options' => 'countries_dom',
+                        // SADEK - END IT REQUEST 5026 - BUG 17408 - BEGIN SUGARINTERNAL CUSTOMIZATION - DISPLAY COUNTRY FIELDS AS DROPDOWNS
 			'group'=>'primary_address',
 			'comment' => 'Country for primary address',
             'merge_filter' => 'enabled',
@@ -340,7 +343,10 @@ $vardefs =array(
 		array (
 			'name' => 'alt_address_country',
 			'vname' => 'LBL_ALT_ADDRESS_COUNTRY',
-			'type' => 'varchar',
+                        // SADEK - BEGIN IT REQUEST 5026 - BUG 17408 - BEGIN SUGARINTERNAL CUSTOMIZATION - DISPLAY COUNTRY FIELDS AS DROPDOWNS
+                        'type' => 'enum',
+                        'options' => 'countries_dom',
+                        // SADEK - END IT REQUEST 5026 - BUG 17408 - BEGIN SUGARINTERNAL CUSTOMIZATION - DISPLAY COUNTRY FIELDS AS DROPDOWNS
 			'group'=>'alt_address',
 			'comment' => 'Country for alternate address',
             'merge_filter' => 'enabled',

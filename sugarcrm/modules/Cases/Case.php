@@ -264,9 +264,17 @@ class aCase extends Basic {
 		global $app_list_strings;
 
 		$xtpl->assign("CASE_SUBJECT", $case->name);
-		$xtpl->assign("CASE_PRIORITY", (isset($case->priority) ? $app_list_strings['case_priority_dom'][$case->priority]:""));
+		// BEGIN Internal Sugar customization -- jostrow 2006-03-01 - Sadek - moved over during backwards compat migration 2008-09-11
+		$xtpl->assign("CASE_PRIORITY", (isset($case->priority_level) ? $app_list_strings['Support Priority Levels'][$case->priority_level]:""));
+		// END Internal Sugar customization
 		$xtpl->assign("CASE_STATUS", (isset($case->status) ? $app_list_strings['case_status_dom'][$case->status]:""));
 		$xtpl->assign("CASE_DESCRIPTION", $case->description);
+		// BEGIN Internal Sugar customization
+		$xtpl->assign("ACCOUNT_NAME", $case->account_name);
+		$xtpl->assign("ACCOUNT_ID", $case->account_id);
+		$xtpl->assign("SUBMITTER_LINE", empty($case->submitter_c) ? "" : "Portal Submitter: {$case->submitter_c}\n");
+		$xtpl->assign("SUPPORT_SERVICE_LEVEL", empty($case->support_service_level_c) ? "" : $case->support_service_level_c);
+		// END Internal Sugar customization
 
 		return $xtpl;
 	}
@@ -324,5 +332,13 @@ class aCase extends Basic {
 		}		
 		return $ret_array;
 	}
+	
+	//DEE SUGARINTERNAL CUSTOMIZATION - ITREQUEST 6961
+        function get_open_cases() {
+                 $query_array = "SELECT cases.*, cases_cstm.* FROM cases LEFT JOIN cases_cstm ON cases.id = cases_cstm.id_c WHERE cases.status IN ('New', 'Assigned', 'Pending Input', 'Pending Internal Input', 'Closed Pending') AND cases.id <> '" .$this->id."' AND cases.account_id = '".$this->account_id."' AND cases.deleted = 0";
+                return $query_array;
+        }
+        //END DEE CUSTOMIZATION
+
 }
 ?>

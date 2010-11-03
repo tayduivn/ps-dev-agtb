@@ -61,7 +61,7 @@ function get_node_data($params,$get_array=false) {
             $cat_name=$mod_strings['LBL_CAT_OR_SUBCAT_UNSPEC'];
         } else {
             $cat_id=$row['category_id'];
-            $cat_name=$app_list_strings['document_category_dom'][$row['category_id']];
+		    $cat_name=$app_list_strings['document_category_dom'][$row['category_id']];
         }            
         if (empty($current_cat_id) or $current_cat_id != $cat_id) {
             $current_cat_id = $cat_id;

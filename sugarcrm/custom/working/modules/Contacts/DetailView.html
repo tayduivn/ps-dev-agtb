@@ -1,0 +1,213 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+
+<!-- BEGIN: main -->
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+{PREFORM}
+<td style="padding-bottom: 2px;">
+<form action="index.php" method="post" name="DetailView" id="form">
+			<input type="hidden" name="module" value="Contacts">
+			<input type="hidden" name="record" value="{ID}">
+			<input type="hidden" name="isDuplicate" value=false>
+			<input type="hidden" name="action">
+			<input type="hidden" name="return_module">
+			<input type="hidden" name="return_action">
+			<input type="hidden" name="return_id">
+			<input type="hidden" name="reports_to_id">
+			<input type="hidden" name="opportunity_id">
+			<input type="hidden" name="contact_id" value="{ID}">
+			<input type="hidden" name="contact_role">
+			<input type="hidden" name="task_id">
+			<input type="hidden" name="meeting_id">
+			<input type="hidden" name="call_id">
+			<input type="hidden" name="case_id">
+			<input type="hidden" name="bug_id">
+
+			<input type="hidden" name="quote_id">
+
+<!-- BEGIN: open_source_dummy_filler -->
+<!-- END: open_source_dummy_filler -->
+			<input type="hidden" name="new_reports_to_id">
+
+<input title="{APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{APP.LBL_EDIT_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='Contacts'; this.form.return_action.value='DetailView'; this.form.return_id.value='{ID}'; this.form.action.value='EditView'" type="submit" name="Edit" value="  {APP.LBL_EDIT_BUTTON_LABEL}  ">
+
+<input title="{APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='Contacts'; this.form.return_action.value='index'; this.form.isDuplicate.value=true; this.form.action.value='EditView'" type="submit" name="Duplicate" value=" {APP.LBL_DUPLICATE_BUTTON_LABEL} ">
+
+<input title="{APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='Contacts'; this.form.return_action.value='ListView'; this.form.action.value='Delete'; return confirm('{APP.NTC_DELETE_CONFIRMATION}')" type="submit" name="Delete" value=" {APP.LBL_DELETE_BUTTON_LABEL} ">
+{FIND_DUPES_MERGE_BUTTON}
+{MANAGE_SUBSCRIPTIONS_BUTTON}
+	</form>
+	</td>
+	<td align='right'>{ADMIN_EDIT}</td>
+	</tr>
+</table>
+
+
+<table width="100%" border="0" cellspacing="{GRIDLINE}" cellpadding="0" class="tabDetailView">
+{PAGINATION}
+	<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot1'>{MOD.LBL_NAME}&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot1b'>{SALUTATION}{FIRST_NAME} {LAST_NAME}&nbsp;&nbsp;{VCARD_LINK}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot2'>{MOD.LBL_OFFICE_PHONE}&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot2b'>{PHONE_WORK}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot3'>&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot3b'>&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot4'>{MOD.LBL_MOBILE_PHONE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot4b'>{PHONE_MOBILE}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot5'>{MOD.LBL_ACCOUNT_NAME}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot5b'><{TAG.ACCOUNT} href="index.php?module=Accounts&action=DetailView&record={ACCOUNT_ID}" class="tabDetailViewDFLink">{ACCOUNT_NAME}</{TAG.ACCOUNT}>&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot6'>{MOD.LBL_HOME_PHONE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot6b'>{PHONE_HOME}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot7'>{MOD.LBL_LEAD_SOURCE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot7b'>{LEAD_SOURCE}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot8'>{MOD.LBL_OTHER_PHONE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot8b'>{PHONE_OTHER}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot9'>{MOD.LBL_TITLE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot9b'>{TITLE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot10'>{MOD.LBL_FAX_PHONE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot10b'>{PHONE_FAX}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot11'>{MOD.LBL_DEPARTMENT}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot11b'>{DEPARTMENT}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot12'>{MOD.LBL_EMAIL_ADDRESS}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot12b'>
+	<a href="index.php?module=Emails&action=EditView&type=out
+			&contact_id={ID}
+			&parent_type=Contacts
+			&parent_id={ID}
+			&parent_name={FULL_NAME}
+			&to_addrs_ids={ID}
+			&to_addrs_names={URLENCODED_FIRST_NAME}&nbsp;{URLENCODED_LAST_NAME}
+			&to_addrs_emails={URLENCODED_EMAIL1}
+			&to_email_addrs={URLENCODED_FIRST_NAME}&nbsp;{URLENCODED_LAST_NAME}&nbsp;&lt;{URLENCODED_EMAIL1}&gt;
+			&return_module=Contacts
+			&return_action=DetailView
+			&return_id={ID}"
+	 class="tabDetailViewDFLink">{EMAIL1}</a></span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot13'>{MOD.LBL_BIRTHDATE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot13b'>{BIRTHDATE}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot14'>{MOD.LBL_OTHER_EMAIL_ADDRESS}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot14b'>
+	<a href="index.php?module=Emails&action=EditView&type=out
+			&contact_id={ID}
+			&parent_type=Contacts
+			&parent_id={ID}
+			&parent_name={FULL_NAME}
+			&to_addrs_ids={ID}
+			&to_addrs_names={URLENCODED_FIRST_NAME}&nbsp;{URLENCODED_LAST_NAME}
+			&to_addrs_emails={EMAIL2}
+			&to_email_addrs={URLENCODED_FIRST_NAME}&nbsp;{URLENCODED_LAST_NAME}&nbsp;&lt;{URLENCODED_EMAIL2}&gt;
+			&return_module=Contacts
+			&return_action=DetailView
+			&return_id={ID}"
+	 class="tabDetailViewDFLink">{EMAIL2}</a></span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot15'>{MOD.LBL_REPORTS_TO}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot15b'><a href="index.php?module=Contacts&action=DetailView&record={REPORTS_TO_ID}" class="tabDetailViewDFLink">{REPORTS_TO_NAME}</a>&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot16'>{MOD.LBL_ASSISTANT}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot16b'>{ASSISTANT}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot17'>{MOD.LBL_TECHNICAL_PROFICIENCY_}</span sugar='slot'></td>
+	<td  valign="top"  class="tabDetailViewDF"><span sugar='slot17b'>{TECHNICAL_PROFICIENCY_}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot18'>{MOD.LBL_ASSISTANT_PHONE}</span sugar='slot'></td>
+	<td  valign="top"  class="tabDetailViewDF"><span sugar='slot18b'>{ASSISTANT_PHONE}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot19'>{MOD.LBL_DO_NOT_CALL}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot19b'><input name='do_not_call' class="checkbox" type="checkbox" disabled {DO_NOT_CALL}></span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot20'>{MOD.LBL_EMAIL_OPT_OUT}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot20b'><input name='email_opt_out' class="checkbox" type="checkbox" disabled {EMAIL_OPT_OUT}></span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot21'>{MOD.LBL_SYNC_CONTACT}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot21b'><input name='sync_contact' class="checkbox" type="checkbox" disabled {SYNC_CONTACT}></span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot22'>{MOD.LBL_INVALID_EMAIL}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot22b'><input name='invalid_email' class="checkbox" type="checkbox" disabled {INVALID_EMAIL}></span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot23'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot23b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot24'>{MOD.Primary_Business_Contact__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot24b'><input type='checkbox' name='primary_business_c' id='primary_business_c'  value='1' disabled {PRIMARY_BUSINESS_C_CHECKED}></span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot25'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot25b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot26'>{MOD.Support_Authorized_Contact__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot26b'><input type='checkbox' name='support_authorized_c' id='support_authorized_c'  value='1' disabled {SUPPORT_AUTHORIZED_C_CHECKED}></span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot27'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot27b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot28'>{MOD.Billing_Contact__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot28b'><input type='checkbox' class='checkbox' name='billing_contact_c' id='billing_contact_c'  value='1' disabled {BILLING_CONTACT_C_CHECKED}></span sugar='slot'></td>
+	</tr>
+	<tr>
+
+	<!-- BEGIN: pro -->
+	<td class="tabDetailViewDL"><span sugar='slot29'>{APP.LBL_TEAM}</span sugar='slot'></td>
+	<td class="tabDetailViewDF"><span sugar='slot29b'>{TEAM}</span sugar='slot'></td>
+	<!-- END: pro -->
+
+	<!-- BEGIN: open_source -->
+	<td class="tabDetailViewDL"><span sugar='slot30'>&nbsp;</span sugar='slot'></td>
+	<td class="tabDetailViewDF"><span sugar='slot30b'>&nbsp;</span sugar='slot'></td>
+	<!-- END: open_source -->
+	<td  class="tabDetailViewDL"><span sugar='slot31'>{APP.LBL_DATE_MODIFIED}&nbsp;</span sugar='slot'></td>
+	<td  class="tabDetailViewDF"><span sugar='slot31b'>{DATE_MODIFIED} {APP.LBL_BY} {MODIFIED_BY}</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot32'>{APP.LBL_ASSIGNED_TO}&nbsp;</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot32b'>{ASSIGNED_TO}&nbsp;</span sugar='slot'></td>
+	<td  class="tabDetailViewDL"><span sugar='slot33'>{APP.LBL_DATE_ENTERED}&nbsp;</span sugar='slot'></td>
+	<td  class="tabDetailViewDF"><span sugar='slot33b'>{DATE_ENTERED} {APP.LBL_BY} {CREATED_BY}</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot34'>{MOD.LBL_PRIMARY_ADDRESS}&nbsp;</span sugar='slot'></td>
+	<td  valign="top"  class="tabDetailViewDF"><span sugar='slot34b'>{PRIMARY_ADDRESS_STREET}<br>
+	{PRIMARY_ADDRESS_CITY} {PRIMARY_ADDRESS_STATE}&nbsp;&nbsp;{PRIMARY_ADDRESS_POSTALCODE}<br>
+	{PRIMARY_ADDRESS_COUNTRY}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot35'>{MOD.LBL_ALTERNATE_ADDRESS}</span sugar='slot'></td>
+	<td  valign="top"  class="tabDetailViewDF"><span sugar='slot35b'>{ALT_ADDRESS_STREET}<br>
+	{ALT_ADDRESS_CITY} {ALT_ADDRESS_STATE}&nbsp;&nbsp;{ALT_ADDRESS_POSTALCODE}<br>
+	{ALT_ADDRESS_COUNTRY}</span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot36'>{MOD.LBL_PORTAL_NAME}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot36b'>{PORTAL_NAME}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDL"><span sugar='slot37'>{MOD.LBL_PORTAL_ACTIVE}</span sugar='slot'></td>
+	<td  valign="top" class="tabDetailViewDF"><span sugar='slot37b'><input name='portal_active' class="checkbox" type="checkbox" disabled {IS_PORTAL_ACTIVE}></span sugar='slot'></td>
+	</tr><tr>
+	<td  valign="top" valign="top" class="tabDetailViewDL"><span sugar='slot38'>{MOD.LBL_DESCRIPTION}&nbsp;</span sugar='slot'></td>
+	<td colspan="3" class="tabDetailViewDF"><span sugar='slot38b'>{DESCRIPTION}&nbsp;</span sugar='slot'></td>
+</tr></table>
+
+<!-- END: main -->
+<!-- BEGIN: subpanel -->
+<span sugar='slot39'>{SUBPANEL}</span sugar='slot'>
+<!-- END: subpanel -->

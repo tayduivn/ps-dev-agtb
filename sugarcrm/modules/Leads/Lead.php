@@ -121,6 +121,7 @@ class Lead extends Person {
 	var $team_name;
 	//END SUGARCRM flav=pro ONLY
 
+
 	var $table_name = "leads";
 	var $object_name = "Lead";
 	var $object_names = "Leads";
@@ -279,6 +280,7 @@ class Lead extends Person {
             //BEGIN SUGARCRM flav=pro ONLY
             $query .=		"LEFT JOIN teams ON leads.team_id=teams.id ";
             //END SUGARCRM flav=pro ONLY
+
 
 				//join email address table too.
 				$query .=  ' LEFT JOIN  email_addr_bean_rel on leads.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Leads\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
@@ -506,8 +508,12 @@ class Lead extends Person {
 					$form .= "</td></tr>";
 					$form .= "<tr><td nowrap colspan='4' class='dataField' nowrap>";
 
+					//MFH #13473
 					if(isset($value['isMultiSelect']) && $value['isMultiSelect'] == 1){
-						$this->$field = unencodeMultienum($this->$field);
+
+						if ( strstr($this->$field, '^,^')){
+							$this->$field = explode('^,^',$this->$field);
+						}
 						$multiple = "multiple";
 						$array = '[]';
 					} else {

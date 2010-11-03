@@ -25,6 +25,9 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+ini_set('memory_limit', -1);
+ini_set('max_execution_time', 0);
+
 function build_argument_string($arguments=array()) {
    if(!is_array($arguments)) {
    	  return '';

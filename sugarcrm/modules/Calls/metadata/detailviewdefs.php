@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
- 
+
 $viewdefs ['Calls'] = 
 array (
   'DetailView' => 

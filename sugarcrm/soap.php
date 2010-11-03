@@ -55,6 +55,21 @@ if(!empty($administrator->settings['portal_on'])) {
 	require_once('soap/SoapPortalUsers.php');
 }
 
+// BEGIN: SUGARINTERNAL CUSTOMIZATION - Sadek - added custom soap file
+require_once('custom/si_custom_files/SoapCustomFunctions.php');
+// END: SUGARINTERNAL CUSTOMIZATION - Sadek
+
+
+/**
+ * @author Jim Bartek
+ * @project moofcart
+ * @tasknum 57
+ * Include Moofcart specific soap functions
+*/
+require_once('custom/si_custom_files/SoapMoofcartFunctions.php');
+
+/********** END BARTEK CUSTOMIZATION FOR MOOFCART ****/
+
 require_once('soap/SoapSugarUsers.php');
 //require_once('soap/SoapSugarUsers_version2.php');
 require_once('soap/SoapData.php');
@@ -91,6 +106,24 @@ $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
 global $soap_server_object;
 $soap_server_object = $server;
 $server->service($HTTP_RAW_POST_DATA);
+//BEGIN: SUGARINTERNAL CUSTOMIZATION
+//Log SOAP calls
+if(!empty($server->methodname)){
+	$fp = fopen('/var/www/sugarinternal/logs/soap_calls.log', 'a');
+	$params = '';
+	if (!empty($server->methodparams) && is_array($server->methodparams)){
+		foreach($server->methodparams as $k => $v){
+			$params .= "$k::$v,";
+		}
+		$params = substr($params, 0, -1);
+	}
+	$the_session_id = session_id();
+	$ip_addr = $_SERVER['REMOTE_ADDR'];
+	$msg = "\"".date('Y-m-d H:i:s')."\",\"{$server->methodname}\",\"$params\"" . (!empty($the_session_id) ? ",\"$the_session_id\"" : ",\"\"") . "\"" . $ip_addr . "\"";
+	fwrite($fp, $msg."\n");
+	fclose($fp);	
+}
+//END: SUGARINTERNAL CUSTOMIZATION
 ob_end_flush();
 flush();
 sugar_cleanup();

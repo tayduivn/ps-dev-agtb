@@ -34,7 +34,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Project'] = array(
 	'table' => 'project',
 	'unified_search' => true,
-	'unified_search_default_enabled' => false,
 	'comment' => 'Project',
 	'fields' => array(
 		'id' => array(
@@ -133,7 +132,6 @@ $dictionary['Project'] = array(
 			'unified_search' => true,
 			'comment' => 'Project name',
 			'importable' => 'required',
-            'required' => true,
 		),
 		'description' => array(
 			'name' => 'description',
@@ -146,7 +144,7 @@ $dictionary['Project'] = array(
 			'name' => 'deleted',
 			'vname' => 'LBL_DELETED',
 			'type' => 'bool',
-			'required' => false,
+			'required' => true,
             'reportable'=>false,
 			'default' => '0',
 			'comment' => 'Record deletion indicator'
@@ -159,7 +157,6 @@ $dictionary['Project'] = array(
             'validation' => array('type' => 'isbefore', 'compareto' => 'estimated_end_date', 'blank' => true),
             'type' => 'date',
             'importable' => 'required',
-            'required' => true,
         ),
         'estimated_end_date' =>
         array(
@@ -168,7 +165,6 @@ $dictionary['Project'] = array(
             'required' => true,
             'type' => 'date',
             'importable' => 'required',
-            'required' => true,
         ),
         'status' =>
         array(

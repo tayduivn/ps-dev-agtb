@@ -130,6 +130,14 @@ function getAllowedReportModules(&$local_modListHeader) {
 	$report_modules['DCEDataBases']   = 'DCEDataBase';
 //END SUGARCRM flav=dce ONLY
 
+	// BEGIN SUGARINTERNAL CUSTOMIZATION - ALLOW FOR THESE CUSTOM MODULES TO BE REPORTABLE
+        $report_modules['LeadAccounts']   = 'LeadAccount';
+        $report_modules['LeadContacts']   = 'LeadContact';
+        $report_modules['Touchpoints']   = 'Touchpoint';
+        $report_modules['Interactions']   = 'Interaction';
+        $report_modules['SugarInstallations']   = 'SugarInstallation';
+        // END SUGARINTERNAL CUSTOMIZATION - ALLOW FOR THESE CUSTOM MODULES TO BE REPORTABLE
+
 	global $beanFiles;
 	
     $exemptModules = array('Dashboard','Reports');

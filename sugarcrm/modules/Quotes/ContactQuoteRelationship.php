@@ -65,8 +65,6 @@ class ContactQuoteRelationship extends SugarBean {
 
 	function fill_in_additional_detail_fields()
 	{
-	    global $locale;
-	    
 		if(isset($this->contact_id) && $this->contact_id != "")
 		{
 			$query = "SELECT first_name, last_name from contacts where id='$this->contact_id' AND deleted=0";
@@ -76,7 +74,7 @@ class ContactQuoteRelationship extends SugarBean {
 
 			if($row != null)
 			{
-				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
+				$this->contact_name = return_name($row, 'first_name', 'last_name');
 			}
 		}
 

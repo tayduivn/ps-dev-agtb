@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $searchFields['Products'] = 
 	array (
 		'name' => array( 'query_type'=>'default'),
-		'contact_name' => array( 'query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name'),'force_unifiedsearch'=>true),
+		'contact_name' => array( 'query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name')),
         'status'=> array('query_type'=>'default', 'options' => 'product_status_dom', 'template_var' => 'STATUS_OPTIONS', 'options_add_blank' => true),
         'type_id'=> array('query_type'=>'default', 'options' => 'product_type_dom', 'template_var' => 'TYPE_OPTIONS'),
         'category_id'=> array('query_type'=>'default', 'options' => 'products_cat_dom', 'template_var' => 'CATEGORY_OPTIONS'),

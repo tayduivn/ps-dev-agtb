@@ -685,7 +685,15 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	}
 
 	global $current_user;
-	if(is_admin($current_user)){
+        /*
+        ** sadek
+        ** SUGARINTERNAL CUSTOMIZATION
+        ** ITRequest #: none
+        ** Bug #: none
+        ** Description: Sales Ops needed access to check the portal user checkbox
+        */
+        if(is_admin($current_user) || $current_user->check_role_membership('Sales Operations')){
+        /* END SUGARINTERNAL CUSTOMIZATION */
 		if (!isset($_POST[$prefix.'portal_active'])) $focus->portal_active = '0';
 		//if no password is set set account to inactive for portal
 		if(empty($_POST[$prefix.'portal_name']))$focus->portal_active = '0';

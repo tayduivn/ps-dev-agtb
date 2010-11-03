@@ -44,6 +44,7 @@ $dictionary['Note'] = array(
     'name' => 'date_entered',
     'vname' => 'LBL_DATE_ENTERED',
     'type' => 'datetime',
+    'required' => true,
     'comment' => 'Date record created'
   ),
   'date_modified' =>
@@ -51,6 +52,7 @@ $dictionary['Note'] = array(
     'name' => 'date_modified',
     'vname' => 'LBL_DATE_MODIFIED',
     'type' => 'datetime',
+    'required' => true,
     'comment' => 'Date record last modified'
   ),
    'modified_user_id' =>
@@ -115,10 +117,8 @@ $dictionary['Note'] = array(
     'dbType' => 'varchar',
     'type' => 'name',
     'len' => '255',
-	'unified_search' => true,
     'comment' => 'Name of the note',
     'importable' => 'required',
-    'required' => true,
   ),
   'filename' =>
   array (
@@ -127,8 +127,7 @@ $dictionary['Note'] = array(
     'type' => 'varchar',
     'len' => '255',
     'reportable'=>true,
-    'comment' => 'File name associated with the note (attachment)',
-    'importable' => false,
+    'comment' => 'File name associated with the note (attachment)'
   ),
   'file_mime_type' =>
   array (
@@ -136,8 +135,7 @@ $dictionary['Note'] = array(
     'vname' => 'LBL_FILE_MIME_TYPE',
     'type' => 'varchar',
     'len' => '100',
-    'comment' => 'Attachment MIME type',
-    'importable' => false,
+    'comment' => 'Attachment MIME type'
   ),
   'file_url'=>
   array(
@@ -150,8 +148,7 @@ $dictionary['Note'] = array(
   	'function_params'=> array('filename', 'id'),
   	'source'=>'function',
   	'reportable'=>false,
-  	'comment' => 'Path to file (can be URL)',
-    'importable' => false,
+  	'comment' => 'Path to file (can be URL)'
   	),
   'parent_type'=>
   array(
@@ -160,7 +157,7 @@ $dictionary['Note'] = array(
   	'type' =>'parent_type',
     'dbType' => 'varchar',
     'group'=>'parent_name',
-  	'len'=> '255',
+  	'len'=> '25',
   	'comment' => 'Sugar module the Note is associated with'
   ),
   'parent_id'=>
@@ -195,12 +192,13 @@ $dictionary['Note'] = array(
     'vname' => 'LBL_EMBED_FLAG',
     'type' => 'bool',
     'default' => 0,
+	'required' => true,
 	'comment' => 'Embed flag indicator determines if note embedded in email'
   ),
   'description' =>
   array (
     'name' => 'description',
-    'vname' => 'LBL_NOTE_STATUS',
+    'vname' => 'LBL_DESCRIPTION',
     'type' => 'text',
     'comment' => 'Full text of the note'
   ),
@@ -209,7 +207,7 @@ $dictionary['Note'] = array(
     'name' => 'deleted',
     'vname' => 'LBL_DELETED',
     'type' => 'bool',
-    'required' => false,
+    'required' => true,
     'default' => '0',
     'reportable'=>false,
     'comment' => 'Record deletion indicator'
@@ -449,15 +447,6 @@ $dictionary['Note'] = array(
     'source'=>'non-db',
     'vname'=>'LBL_CALLS',
   ),
-  'description' =>
-      array (
-        'name' => 'description',
-        'vname' => 'LBL_DESCRIPTION',
-        'type' => 'text',
-        'comment' => 'Full text of the note',
-        'rows' => 30,
-        'cols' => 90,
-      ),
 ),
 'relationships'=>array(
 'notes_modified_user' =>

@@ -38,7 +38,7 @@ global $app_strings;
 global $theme;
 global $focus;
 global $action;
-global $locale;
+
 
 
 
@@ -71,7 +71,7 @@ foreach($focus_users_list as $user)
 {
 	$user_fields = array(
 		'USER_NAME' => $user->user_name,
-		'FULL_NAME' => $locale->getLocaleFormattedName($user->first_name, $user->last_name),
+		'FULL_NAME' => $user->first_name." ".$user->last_name,
 		'ID' => $user->id,
 		'EMAIL' => $user->email1,
 		'PHONE_WORK' => $user->phone_work

@@ -990,5 +990,3 @@ function quick_create_overlib(id, theme) {
             , STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0  style="margin-left:2px; margin-right: 2px;" src="index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif">', WIDTH, 150, CLOSETITLE, SUGAR.language.get('app_strings', 'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olOptionsFgClass',
             CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass');
 }
-
-

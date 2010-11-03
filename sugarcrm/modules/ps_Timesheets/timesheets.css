@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+
+.activity_date
+{
+position:inherit;
+}
+
+.account_name
+{
+position:inherit;
+left:310px;
+}
+
+.activity_type
+{
+position:inherit;
+left:500px;
+}
+
+.time_spent
+{
+position:inherit;
+left:600px;
+}
+
+.description
+{
+position:inherit;
+left:700px;
+}
+
+.save
+{
+position:inherit;
+left:1100px;
+}
+
+.fieldLabel
+{
+font:1.5em arial;
+}
+
+.fieldValue
+{
+font:1.5em arial;
+}

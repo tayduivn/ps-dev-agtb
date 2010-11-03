@@ -78,12 +78,6 @@ $subpanel_layout = array(
 			'module' => 'Products',
 		 	'width' => '4%',
 		),
-		'remove_button'=>array(
-			'vname' => 'LBL_REMOVE',
-			'widget_class' => 'SubPanelRemoveButton',
-		 	'module' => 'Products',
-	 		'width' => '4%',
-		),
 		'discount_usdollar'=>array(
 	 		 		'usage' => 'query_only',
 				),	

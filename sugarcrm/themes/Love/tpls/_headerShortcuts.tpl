@@ -1,7 +1,7 @@
 {*
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
- * License Agreement ("License") which can be viewed at
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -23,10 +23,10 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{if$LEFT_FORM_SHORTCUTS}
+{if $LEFT_FORM_SHORTCUTS}
 <div id="subshortcuts" class="headerList">
     <ul>
     {counter start=1 name="num" assign="num"}

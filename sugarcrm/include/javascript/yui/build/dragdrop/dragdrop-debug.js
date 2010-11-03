@@ -1,9 +1,8 @@
-//FILE SUGARCRM flav=int ONLY
 /*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.8.0r4
+version: 2.7.0
 */
 /**
  * The drag and drop utility provides a framework for building drag and drop
@@ -3708,4 +3707,4 @@ YAHOO.extend(YAHOO.util.DDTarget, YAHOO.util.DragDrop, {
         return ("DDTarget " + this.id);
     }
 });
-YAHOO.register("dragdrop", YAHOO.util.DragDropMgr, {version: "2.8.0r4", build: "2449"});
+YAHOO.register("dragdrop", YAHOO.util.DragDropMgr, {version: "2.7.0", build: "1799"});

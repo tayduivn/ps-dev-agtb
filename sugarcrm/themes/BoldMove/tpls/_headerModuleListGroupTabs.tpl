@@ -1,7 +1,7 @@
 {*
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
- * License Agreement ("License") which can be viewed at
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -23,7 +23,7 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
 <div id="moduleList">
@@ -35,14 +35,14 @@
     {if ( ( $parentTab == $group || (!$parentTab && in_array($MODULE_TAB,$modules.modules)) ) && !$groupSelected ) || ($smarty.foreach.groupList.index == 0 && $defaultFirst)}
     <li class="noBorder">
         <span class="currentTabLeft">&nbsp;</span><span class="currentTab" {if $smarty.foreach.groupList.last}style="border-right: 1px solid;"{/if}>
-            <a href="{sugar_link module=$modules.modules.0 data=$modules.modules.0 link_only=1 extraparams=$extraparams}"
+            <a href="{sugar_link module=$modules.modules.0 data=$modules.modules.0 link_only=1 extraparams=$extraparams}" 
                 id="grouptab_{$smarty.foreach.groupList.index}">{$group}</a>
         </span><span class="currentTabRight">&nbsp;</span>
         {assign var="groupSelected" value=true}
     {else}
     <li>
         <span class="notCurrentTabLeft">&nbsp;</span><span class="notCurrentTab" {if $smarty.foreach.groupList.last}style="border-right: 1px solid;"{/if}>
-        <a href="{sugar_link module=$modules.modules.0 data=$modules.modules.0 link_only=1 extraparams=$extraparams}"
+        <a href="{sugar_link module=$modules.modules.0 data=$modules.modules.0 link_only=1 extraparams=$extraparams}" 
             id="grouptab_{$smarty.foreach.groupList.index}">{$group}</a>
         </span><span class="notCurrentTabRight">&nbsp;</span>
     {/if}
@@ -68,20 +68,20 @@
 	        {/foreach}
 	        {if $subMoreModules.$group.modules}
 	        <li class="subTabMore">
-	        	<a>>></a>
+	        	<a>>></a>      
 		        <ul class="cssmenu">
 		        {foreach from=$subMoreModules.$group.modules item=submodule}
 					<li>
-						<a href="{sugar_link module=$submodule link_only=1 extraparams=$extraparams}" class="menuItem">{$moduleNames.$submodule}
+						<a href="{sugar_link module=$submodule link_only=1 extraparams=$extraparams}" class="menuItem">{$submodule}
 						</a>
 					</li>
 		        {/foreach}
-		        </ul>
+		        </ul> 
 	        </li>
-	        {/if}
+	        {/if}	        
         </ul>
     </span>
-    {/foreach}
+    {/foreach}    
 </div>
 	{include file="_headerSearch.tpl" theme_template=true}
 </div>

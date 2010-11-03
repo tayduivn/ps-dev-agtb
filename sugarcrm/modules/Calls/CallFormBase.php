@@ -185,8 +185,8 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	global $timedate;
 
 	//BUG 17418 MFH
-	if (isset($_POST[$prefix.'duration_hours'])){
-		$_POST[$prefix.'duration_hours'] = trim($_POST[$prefix.'duration_hours']);
+	if (isset($_POST['duration_hours'])){
+		$_POST['duration_hours'] = trim($_POST['duration_hours']);
 	}
 
 	$focus = new Call();
@@ -194,14 +194,13 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	if($useRequired && !checkRequired($prefix, array_keys($focus->required_fields))) {
 		return null;
 	}
-    if ( !isset($_POST[$prefix.'reminder_checked']) or ($_POST[$prefix.'reminder_checked'] == 0)) {
-        $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): No reminder checked, resetting the reminder_time');
-        $_POST[$prefix.'reminder_time'] = -1;
-    }
-
-	if(!isset($_POST[$prefix.'reminder_time'])) {
-        $GLOBALS['log']->debug(__FILE__.'('.__LINE__.'): Getting the users default reminder time');
-		$_POST[$prefix.'reminder_time'] = $current_user->getPreference('reminder_time');
+	if( !isset($_POST['reminder_checked']) or ( isset($_POST['reminder_checked']) && $_POST['reminder_checked'] == '0')) {
+		$_POST['reminder_time'] = null;
+	}
+	
+	if(!isset($_POST['reminder_time'])) {
+		$_POST['reminder_time'] = $current_user->getPreference('reminder_time');
+		$_POST['reminder_checked']=1;
 	}
 
 	$time_format = $timedate->get_user_time_format();
@@ -306,9 +305,16 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 
         // Calculate which leads to flag as deleted and which to add
         $deleteLeads = array();
-    	$focus->load_relationship('leads');
+	/*
+        ** @author: SADEK, ENGINEERING (M2)
+        ** SUGARINTERNAL CUSTOMIZATION
+        ** Description: M2. Changing reference from leads to leadcontacts
+        ** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/CallFormBase.php
+        */
+    	$focus->load_relationship('leadcontacts');
     	// Get all leads for the call
-    	$q = 'SELECT mu.lead_id, mu.accept_status FROM calls_leads mu WHERE mu.call_id = \''.$focus->id.'\'';
+    	$q = 'SELECT mu.lead_id, mu.accept_status FROM calls_leadcontacts mu WHERE mu.call_id = \''.$focus->id.'\'';
+	/* END SUGARINTERNAL CUSTOMIZATION */
     	$r = $focus->db->query($q);
     	$acceptStatusLeads = array();
     	while($a = $focus->db->fetchByAssoc($r)) {
@@ -328,7 +334,14 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
     		}
     		$sql = substr($sql, 1);
     		// We could run a delete SQL statement here, but will just mark as deleted instead
-    		$sql = "UPDATE calls_leads set deleted = 1 where lead_id in ($sql) AND call_id = '". $focus->id . "'";
+		/*
+        	** @author: SADEK, ENGINEERING (M2)
+        	** SUGARINTERNAL CUSTOMIZATION
+        	** Description: M2. Changing reference from leads to leadcontacts
+        	** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/CallFormBase.php
+        	*/
+    		$sql = "UPDATE calls_leadcontacts set deleted = 1 where leadcontact_id in ($sql) AND call_id = '". $focus->id . "'";
+		/* END SUGARINTERNAL CUSTOMIZATION */
     		$focus->db->query($sql);
     	}
     	//END SUGARCRM flav!=sales ONLY
@@ -417,13 +430,20 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
     		}
 
     		if(!isset($acceptStatusLeads[$lead_id])) {
-    			$focus->load_relationship('leads');
-    		    $focus->leads->add($lead_id);
+    		    	/*
+        		** @author: SADEK, ENGINEERING (M2)
+        		** SUGARINTERNAL CUSTOMIZATION
+        		** Description: M2. Changing reference from leads to leadcontacts
+        		** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/CallFormBase.php
+        		*/
+    			$focus->load_relationship('leadcontacts');
+			$focus->leadcontacts->add($lead_id);
     		} else {
     			// update query to preserve accept_status
-    			$qU  = 'UPDATE calls_leads SET deleted = 0, accept_status = \''.$acceptStatusLeads[$lead_id].'\' ';
+			$qU  = 'UPDATE calls_leadcontacts SET deleted = 0, accept_status = \''.$acceptStatusLeads[$lead_id].'\' ';
     			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
-    			$qU .= 'AND lead_id = \''.$lead_id.'\'';
+    			$qU .= 'AND leadcontact_id = \''.$lead_id.'\'';
+			/* END SUGARINTERNAL CUSTOMIZATION */
     			$focus->db->query($qU);
     		}
     	}
@@ -452,6 +472,7 @@ function getWideFormBody ($prefix, $mod='', $formname='', $wide =true){
 	if(!ACLController::checkAccess('Calls', 'edit', true)){
 		return '';
 	}
+require_once('include/time.php');
 global $mod_strings;
 $temp_strings = $mod_strings;
 if(!empty($mod)){

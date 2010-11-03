@@ -112,7 +112,7 @@ $layout_defs['Quotes'] = array(
 			)
 		),
 		'project' => array(
-			'order' => 40,
+			'order' => 30,
 			'module' => 'Project',
 			'sort_order' => 'asc',
 			'sort_by' => 'name',
@@ -126,7 +126,7 @@ $layout_defs['Quotes'] = array(
 		),
         //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
-			'order' => 30,
+			'order' => 70,
 			'module' => 'Contracts',
 			'sort_order' => 'desc',
 			'sort_by' => 'end_date',

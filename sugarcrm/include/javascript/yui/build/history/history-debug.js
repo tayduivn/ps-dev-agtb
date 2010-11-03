@@ -1,9 +1,8 @@
-//FILE SUGARCRM flav=int ONLY
 /*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.8.0r4
+version: 2.7.0
 */
 /**
  * The Browser History Manager provides the ability to use the back/forward
@@ -434,20 +433,20 @@ YAHOO.util.History = (function () {
          * @method onReady
          * @param {function} fn what to execute when the Browser History Manager is ready.
          * @param {object} obj an optional object to be passed back as a parameter to fn.
-         * @param {boolean|object} overrideContext If true, the obj passed in becomes fn's execution scope.
+         * @param {boolean|object} override If true, the obj passed in becomes fn's execution scope.
          * @see onLoadEvent
          */
-        onReady: function (fn, obj, overrideContext) {
+        onReady: function (fn, obj, override) {
 
             if (_initialized) {
 
                 setTimeout(function () {
                     var ctx = window;
-                    if (overrideContext) {
-                        if (overrideContext === true) {
+                    if (override) {
+                        if (override === true) {
                             ctx = obj;
                         } else {
-                            ctx = overrideContext;
+                            ctx = override;
                         }
                     }
                     fn.call(ctx, "onLoad", [], obj);
@@ -455,7 +454,7 @@ YAHOO.util.History = (function () {
 
             } else {
 
-                YAHOO.util.History.onLoadEvent.subscribe(fn, obj, overrideContext);
+                YAHOO.util.History.onLoadEvent.subscribe(fn, obj, override);
 
             }
         },
@@ -472,10 +471,10 @@ YAHOO.util.History = (function () {
          *     state of the specified module has changed.
          * @param {object} obj An arbitrary object that will be passed as a
          *     parameter to the handler.
-         * @param {boolean} overrideContext If true, the obj passed in becomes the
+         * @param {boolean} override If true, the obj passed in becomes the
          *     execution scope of the listener.
          */
-        register: function (module, initialState, onStateChange, obj, overrideContext) {
+        register: function (module, initialState, onStateChange, obj, override) {
 
             var scope, wrappedFn;
 
@@ -509,10 +508,10 @@ YAHOO.util.History = (function () {
             // If the user chooses to override the scope, we use the
             // custom object passed in as the execution scope.
             scope = null;
-            if (overrideContext === true) {
+            if (override === true) {
                 scope = obj;
             } else {
-                scope = overrideContext;
+                scope = override;
             }
 
             wrappedFn = function (state) {
@@ -801,4 +800,4 @@ YAHOO.util.History = (function () {
     };
 
 })();
-YAHOO.register("history", YAHOO.util.History, {version: "2.8.0r4", build: "2449"});
+YAHOO.register("history", YAHOO.util.History, {version: "2.7.0", build: "1799"});

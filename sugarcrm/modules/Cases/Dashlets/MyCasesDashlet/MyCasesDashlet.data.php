@@ -66,6 +66,10 @@ $dashletData['MyCasesDashlet']['columns'] = array('case_number' => array('width'
                                                                     'default' => true),                                            
                                                   'resolution' => array('width' => '8', 
                                                                         'label' => 'LBL_RESOLUTION'),
+// BEGIN SUGARINTERNAL CUSTOMIZATION - SADEK - IT REQUEST 6029 - Adding case score to the dashlet (unfortunately no upgrade safe way of doing this)
+                                                  'case_score' => array('width' => '8',
+                                                                        'label' => 'LBL_CASE_SCORE'),
+// END SUGARINTERNAL CUSTOMIZATION - SADEK - IT REQUEST 6029 - Adding case score to the dashlet (unfortunately no upgrade safe way of doing this)
                                                   'date_entered' => array('width'   => '15', 
                                                                           'label'   => 'LBL_DATE_ENTERED'),
                                                   'date_modified' => array('width'   => '15', 

@@ -90,8 +90,6 @@ class Campaign extends SugarBean {
 	var $new_schema = true;
 	
 	function list_view_parse_additional_sections(&$listTmpl) {
-		global $locale;
-		
 		// take $assigned_user_id and get the Username value to assign
 		$assId = $this->getFieldValue('assigned_user_id');
 		
@@ -101,7 +99,7 @@ class Campaign extends SugarBean {
 		
 		//_ppd($user);
 		if(!empty($user)) {
-			$fullName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+			$fullName = $user["first_name"]." ".$user["last_name"];
 			$listTmpl->assign('ASSIGNED_USER_NAME', $fullName);
 		}
 	}
@@ -258,30 +256,22 @@ class Campaign extends SugarBean {
 		return $xtpl;
 	}
 
+
+
 	function track_log_entries($type=array()) {
         //get arguments being passed in
         $args = func_get_args();
         $mkt_id ='';
-        
-		$this->load_relationship('log_entries');
-		$query_array = $this->log_entries->getQuery(true);
-        
         //if one of the arguments is marketing ID, then we need to filter by it
         foreach($args as $arg){
             if(isset($arg['EMAIL_MARKETING_ID_VALUE'])){
                 $mkt_id = $arg['EMAIL_MARKETING_ID_VALUE'];
             }
-            
-            if(isset($arg['group_by'])) {
-            	$query_array['group_by'] = $arg['group_by'];
-            }            
         }
-        
-        
-        
 		if (empty($type)) 
 			$type[0]='targeted';
-
+		$this->load_relationship('log_entries');
+		$query_array = $this->log_entries->getQuery(true);
 		$query_array['select'] ="SELECT campaign_log.* ";
 		$query_array['where'] = $query_array['where']. " AND activity_type='{$type[0]}' AND archived=0";
         //add filtering by marketing id, if it exists
@@ -306,7 +296,7 @@ class Campaign extends SugarBean {
         }
        
         $query = (implode(" ",$query_array));
-        return $query;     
+        return $query;
 	}
 
 
@@ -314,27 +304,20 @@ class Campaign extends SugarBean {
         //get arguments being passed in
         $args = func_get_args();
         $mkt_id ='';
-
-        $this->load_relationship('queueitems');
-		$query_array = $this->queueitems->getQuery(true);        
-        
         //if one of the arguments is marketing ID, then we need to filter by it
         foreach($args as $arg){
             if(isset($arg['EMAIL_MARKETING_ID_VALUE'])){
                 $mkt_id = $arg['EMAIL_MARKETING_ID_VALUE'];
             }
-            
-            if(isset($arg['group_by'])) {
-            	$query_array['group_by'] = $arg['group_by'];
-            }
         }
-		                
+		$this->load_relationship('queueitems');
+		$query_array = $this->queueitems->getQuery(true);
         //add filtering by marketing id, if it exists, and if where key is not empty
         if (!empty($mkt_id) && !empty($query_array['where'])){
              $query_array['where'] = $query_array['where']. " AND marketing_id ='$mkt_id' ";
         }
-
-		//get select query from email man
+		//get select query from email man.
+		
 		$man = new EmailMan();
 		$listquery= $man->create_queue_items_query('',str_replace(array("WHERE","where"),"",$query_array['where']),null,$query_array);	
 		return $listquery;

@@ -92,7 +92,7 @@ $viewdefs['ProductTemplates']['DetailView'] = array(
     
     array (
       'name' => 'cost_price',
-      'label' => '{$MOD.LBL_COST_PRICE|strip_semicolon} ({$CURRENCY})',
+      'customCode' => '{$fields.currency_symbol.value}{$fields.cost_price.value}&nbsp;',
     ),
     'support_contact',
   ),
@@ -101,7 +101,7 @@ $viewdefs['ProductTemplates']['DetailView'] = array(
     
     array (
       'name' => 'list_price',
-      'label' => '{$MOD.LBL_LIST_PRICE|strip_semicolon} ({$CURRENCY})',
+      'customCode' => '{$fields.currency_symbol.value}{$fields.list_price.value}&nbsp;',
     ),
     'support_description',
   ),
@@ -110,7 +110,7 @@ $viewdefs['ProductTemplates']['DetailView'] = array(
     
     array (
       'name' => 'discount_price',
-      'label' => '{$MOD.LBL_DISCOUNT_PRICE|strip_semicolon} ({$CURRENCY})',
+      'customCode' => '{$fields.currency_symbol.value}{$fields.discount_price.value}&nbsp;',
     ),
     'support_term',
   ),

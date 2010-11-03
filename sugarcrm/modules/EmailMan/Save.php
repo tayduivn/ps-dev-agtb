@@ -36,7 +36,7 @@ if( !isset($sugar_config['allow_sendmail_outbound']) || !$sugar_config['allow_se
 	$_REQUEST['mail_sendtype'] = "SMTP";
 
 // save Outbound settings  #Bug 20033 Ensure data for Outbound email exists before trying to update the system mailer.
-if(isset($_REQUEST['mail_sendtype']) && empty($_REQUEST['campaignConfig'])) {
+if(isset($_REQUEST['mail_sendtype'])) {
 	$oe = new OutboundEmail();
 	$oe->populateFromPost();
 	$oe->saveSystem();

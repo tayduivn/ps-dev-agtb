@@ -72,7 +72,7 @@ $listViewDefs['Quotes'] = array(
 		'width' => '10', 
 		'label' => 'LBL_LIST_TEAM',
         'link' => false,
-        'default' => false,
+        'default' => true,
         'related_fields' => array('team_id'),        
         ),
 //END SUGARCRM flav=pro ONLY

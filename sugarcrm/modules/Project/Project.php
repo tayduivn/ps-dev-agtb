@@ -267,7 +267,7 @@ class Project extends SugarBean {
         if($custom_join){
 			$query .=  $custom_join['select'];
 		}
-        $query .= " FROM project ";
+        $query .= "FROM project ";
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.

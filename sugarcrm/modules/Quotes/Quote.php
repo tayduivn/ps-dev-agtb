@@ -328,7 +328,7 @@ class Quote extends SugarBean {
 	}
 
 	function calculate_total() {
-		$this->total = $this->subtotal + $this->shipping + $this->tax;
+            $this->total = $this->subtotal + $this->shipping + $this->tax;
 	}
 
 	function set_taxrate_info() {

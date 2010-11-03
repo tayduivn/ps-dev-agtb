@@ -1,9 +1,8 @@
-//FILE SUGARCRM flav=int ONLY
 /*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.8.0r4
+version: 2.7.0
 */
 /**
  * @description <p>Provides a fixed layout containing, top, bottom, left, right and center layout units. It can be applied to either the body or an element.</p>
@@ -143,12 +142,6 @@ version: 2.8.0r4
                 }
             }
             if (set) {
-                if (h < 0) {
-                    h = 0;
-                }
-                if (w < 0) {
-                    w = 0;
-                }
                 Dom.setStyle(this._doc, 'height', h + 'px');
                 Dom.setStyle(this._doc, 'width', w + 'px');
             }
@@ -355,9 +348,9 @@ version: 2.8.0r4
 
             var unit = new YAHOO.widget.LayoutUnit(el, unitConfig);
 
-            unit.on('heightChange', this.resize, { unit: unit }, this);
-            unit.on('widthChange', this.resize, { unit: unit }, this);
-            unit.on('gutterChange', this.resize, { unit: unit }, this);
+            unit.on('heightChange', this.resize, this, true);
+            unit.on('widthChange', this.resize, this, true);
+            unit.on('gutterChange', this.resize, this, true);
             this._units[cfg.position] = unit;
 
             if (this._rendered) {
@@ -381,27 +374,11 @@ version: 2.8.0r4
         },
         /**
         * @method resize
-        * @param Boolean/Event set If set to false, it will NOT set the size, just perform the calculations (used for collapsing units). This can also have an attribute event passed to it.
+        * @param {Boolean} set If set to false, it will NOT set the size, just perform the calculations (used for collapsing units)
         * @description Starts the chain of resize routines that will resize all the units.
         * @return {<a href="YAHOO.widget.Layout.html">YAHOO.widget.Layout</a>} The Layout instance
         */
-        resize: function(set, info) {
-            /*
-            * Fixes bug #2528175
-            * If the event comes from an attribute and the value hasn't changed, don't process it.
-            */
-            var ev = set;
-            if (ev && ev.prevValue && ev.newValue) {
-                if (ev.prevValue == ev.newValue) {
-                    if (info) {
-                        if (info.unit) {
-                            if (!info.unit.get('animate')) {
-                                set = false;
-                            }
-                        }
-                    }
-                }
-            }
+        resize: function(set) {
             set = ((set === false) ? false : true);
             if (set) {
                 var retVal = this.fireEvent('beforeResize');
@@ -420,7 +397,7 @@ version: 2.8.0r4
             }
             this._setBodySize(set);
             if (set) {
-                this.fireEvent('resize', { target: this, sizes: this._sizes, event: ev });
+                this.fireEvent('resize', { target: this, sizes: this._sizes });
             }
             return this;
         },
@@ -589,9 +566,6 @@ version: 2.8.0r4
                 value: attr.height || false,
                 validator: YAHOO.lang.isNumber,
                 method: function(h) {
-                    if (h < 0) {
-                        h = 0;
-                    }
                     this.setStyle('height', h + 'px');
                 }
             });
@@ -605,9 +579,6 @@ version: 2.8.0r4
                 value: attr.width || false,
                 validator: YAHOO.lang.isNumber,
                 method: function(w) {
-                    if (w < 0) {
-                        w = 0;
-                    }
                     this.setStyle('width', w + 'px');
                 }
             });
@@ -1012,7 +983,7 @@ version: 2.8.0r4
                 i1 = 1;
                 i2 = 3;
             }
-            if ((this.browser.ie < 8) && !this.browser.standardsMode) {
+            if (this.browser.ie && !this.browser.standardsMode) {
                 //Internet Explorer - Quirks Mode
                 var b = this._getBorderSizes(el),
                     bp = this._getBorderSizes(el.parentNode);
@@ -1563,11 +1534,6 @@ version: 2.8.0r4
             */
             this.setAttributeConfig('minWidth', {
                 value: attr.minWidth || false,
-                method: function(v) {
-                    if (this._resize) {
-                        this._resize.set('minWidth', v);
-                    }
-                },
                 validator: YAHOO.lang.isNumber
             });
 
@@ -1578,11 +1544,6 @@ version: 2.8.0r4
             */
             this.setAttributeConfig('maxWidth', {
                 value: attr.maxWidth || false,
-                method: function(v) {
-                    if (this._resize) {
-                        this._resize.set('maxWidth', v);
-                    }
-                },
                 validator: YAHOO.lang.isNumber
             });
 
@@ -1593,11 +1554,6 @@ version: 2.8.0r4
             */
             this.setAttributeConfig('minHeight', {
                 value: attr.minHeight || false,
-                method: function(v) {
-                    if (this._resize) {
-                        this._resize.set('minHeight', v);
-                    }
-                },
                 validator: YAHOO.lang.isNumber
             });
 
@@ -1608,11 +1564,6 @@ version: 2.8.0r4
             */
             this.setAttributeConfig('maxHeight', {
                 value: attr.maxHeight || false,
-                method: function(v) {
-                    if (this._resize) {
-                        this._resize.set('maxHeight', v);
-                    }
-                },
                 validator: YAHOO.lang.isNumber
             });
 
@@ -1904,7 +1855,7 @@ version: 2.8.0r4
                         YAHOO.log('Position center unit cannot have close', 'error', 'LayoutUnit');
                         return false;
                     }
-                    if (!this.header && close) {
+                    if (!this.header) {
                         this._createHeader();
                     }
                     var c = Dom.getElementsByClassName('close', 'div', this.header)[0];
@@ -1920,7 +1871,7 @@ version: 2.8.0r4
                             Event.on(c, 'click', this.close, this, true);
                         }
                         c.title = this.STR_CLOSE;
-                    } else if (c && c.parentNode) {
+                    } else if (c) {
                         Event.purgeElement(c);
                         c.parentNode.removeChild(c);
                     }
@@ -1941,7 +1892,7 @@ version: 2.8.0r4
                         YAHOO.log('Position center unit cannot have collapse', 'error', 'LayoutUnit');
                         return false;
                     }
-                    if (!this.header && collapse) {
+                    if (!this.header) {
                         this._createHeader();
                     }
                     var c = Dom.getElementsByClassName('collapse', 'div', this.header)[0];
@@ -1957,7 +1908,7 @@ version: 2.8.0r4
                         }
                         c.title = this.STR_COLLAPSE;
                         c.className = 'collapse' + ((this.get('close')) ? ' collapse-close' : '');
-                    } else if (c && c.parentNode) {
+                    } else if (c) {
                         Event.purgeElement(c);
                         c.parentNode.removeChild(c);
                     }
@@ -2303,4 +2254,4 @@ version: 2.8.0r4
 
     YAHOO.widget.LayoutUnit = LayoutUnit;
 })();
-YAHOO.register("layout", YAHOO.widget.Layout, {version: "2.8.0r4", build: "2449"});
+YAHOO.register("layout", YAHOO.widget.Layout, {version: "2.7.0", build: "1799"});

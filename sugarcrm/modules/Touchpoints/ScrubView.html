@@ -1,0 +1,687 @@
+<!-- BEGIN: main -->
+<link rel="stylesheet" type="text/css" href="modules/Connectors/tpls/tabs.css"/>
+<link rel="stylesheet" type="text/css" href="modules/Touchpoints/tpls/connectors.css"/>
+<script type="text/javascript" src="include/workflow/jutils.js"></script>
+<script type="text/javascript" src="include/javascript/sugar_3.js"></script>
+<script type="text/javascript" src="include/javascript/yui/ext/yui-ext.js"></script>
+<script type="text/javascript" src="include/javascript/yui/tabview.js"></script>
+<script type="text/javascript" src="modules/Connectors/Connector.js"></script>
+<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="include/javascript/yui/event.js"></script>
+<script type="text/javascript" src="modules/Connectors/tpls/modify_mapping.js"></script>
+<script type="text/javascript" src="include/javascript/overlibmws.js"></script>
+
+{RESCRUB_WARNING}
+<form name="ScrubView" method="POST" action="index.php">
+<input type="hidden" name="module" value="Touchpoints">
+<input type="hidden" name="record" value="{ID}">
+<input type="hidden" name="action">
+<input type="hidden" name="rescrub" value="{RESCRUB}">
+<input type="hidden" name="start" value="{START}">
+<input type="hidden" name="type" value="{TYPE}">
+<input type="hidden" name="user" value="{USER}">
+<input type="hidden" id="process_related_leads" name="process_related_leads" value="false">
+<input type="hidden" name="return_module" value="{RETURN_MODULE}">
+<input type="hidden" name="return_id" value="{RETURN_ID}">
+<input type="hidden" name="return_action" value="{RETURN_ACTION}">
+<p>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<td style="padding-bottom: 2px;">
+	<input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" tabindex='1' class="button" onclick="this.form.action.value='ScrubSave'; this.form.module.value='Touchpoints'; this.form.record.value='{ID}'; return check_form('ScrubView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " >
+	<input title="Junk" class="button" onclick="this.form.action.value='ScrubJunk'; this.form.module.value='Touchpoints'; this.form.record.value='{ID}'; this.form.process_related_leads.value='false';" type="submit" name="button" tabindex='1' value="  Junk  ">
+	<input title="Nurture" class="button" onclick="this.form.action.value='ScrubNurture'; this.form.module.value='Touchpoints'; this.form.record.value='{ID}'; this.form.process_related_leads.value='false';" type="submit" name="button" tabindex='1' value="  Nurture  ">
+    <input title="Escalate" class="button" onclick="this.form.action.value='ScrubEscalate'; this.form.module.value='Touchpoints'; this.form.record.value='{ID}'; this.form.process_related_leads.value='false';" type="submit" name="button" tabindex='1' value="  Escalate  ">
+	<input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" tabindex='1' value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
+    </td>
+	<td align="right" nowrap><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
+	<td align='right'>{ADMIN_EDIT}</td>
+</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabForm">
+<tr>
+<td>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<th align="left" class="dataLabel" colspan="4">
+	<h4 class="dataLabel">{MOD.LBL_CONTACT_INFORMATION}</h4>
+	</th>
+	</tr>
+    <tr>
+    <td width="15%" class="dataLabel"><span sugar='slot1'>{MOD.LBL_CAMPAIGN_NAME}</span></td>
+    <td width="35%" class="dataField"><span sugar='slot1b'><select name="campaign_name_no_change" tabindex='1' title="{CAMPAIGN_NAME_HELP}" disabled>{OPTIONS_CAMPAIGN_NAME}</select></span></td>
+    <td width="15%" class="dataLabel"><span sugar='slot2'>&nbsp;</td>
+    <td width="35%" class="dataField"><span sugar='slot2b'>&nbsp;</td>
+    </tr>
+	<tr>
+	<td class="dataLabel"><span sugar='slot21'>{MOD.LBL_FIRST_NAME}</span></td>
+	<td class="dataField"><span sugar='slot21b'><select  tabindex='1' name='salutation'>{SALUTATION_OPTIONS}</select>&nbsp;<input name='first_name' tabindex='1' size='11' maxlength='25' type="text" value="{FIRST_NAME}"></span></td>
+	<td class="dataLabel"><span sugar='slot22'>{MOD.LBL_OFFICE_PHONE}</span></td>
+	<td class="dataField"><span sugar='slot22b'><input id='phone_work' name='phone_work' type="text" tabindex='2' size='20' maxlength='25' value='{PHONE_WORK}' onblur="leadParsePhone(this.value, this.id);"></span></td>
+	</tr>
+	<tr>
+	<td class="dataLabel"><span sugar='slot23'>{MOD.LBL_LAST_NAME}</span><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></td>
+	<td class="dataField"><span sugar='slot23b'><input name='last_name' type="text" tabindex='1' size='25' maxlength='25' value="{LAST_NAME}"></span></td>
+	<td class="dataLabel"><span sugar='slot24'>{MOD.LBL_MOBILE_PHONE}</span></td>
+	<td class="dataField"><span sugar='slot24b'><input id='phone_mobile' name='phone_mobile' type="text" tabindex='2' size='20' maxlength='25' value='{PHONE_MOBILE}' onblur="leadParsePhone(this.value, this.id);"></span></td>
+	</tr>		
+	<tr>
+	<td class="dataLabel"><span sugar='slot29'>{MOD.LBL_COMPANY_NAME}</span></td>
+	<td class="dataField"><span sugar='slot29b'><input  name='company_name' type="text" tabindex='1' value="{COMPANY_NAME}" size='25'></span></td>
+	<td class="dataLabel"><span sugar='slot28'>{MOD.LBL_EMAIL_ADDRESS}</span></td>
+	<td class="dataField"><span sugar='slot28b'><input name='email1' type="text" tabindex='2' size='35' maxlength='100' value='{EMAIL1}' onkeyup='replaceWebsiteLink("email_domain_website", this.value, true);'></span></td>
+	</tr>
+	<tr>
+    <td class="dataLabel"><span sugar='slot32'>Website:</span></td>
+    <td class="dataField"><span sugar='slot32b'><input type='text' tabindex='1' name='website_c' id='website_c' size='20' maxlength='255' value='{WEBSITE_C}' onkeyup='replaceWebsiteLink("company_website", this.value, false);'></span></td>
+	<td class="dataLabel"><span sugar='slot30'>{MOD.LBL_OTHER_EMAIL_ADDRESS}</span></td>
+	<td class="dataField"><span sugar='slot30b'><input name='email2' type="text" tabindex='2' size='35' maxlength='100' value='{EMAIL2}'></span></td>
+	</tr>
+	<tr>
+    <td class="dataLabel"><span sugar='slot33'>Trial Name:</span></td>
+    <td class="dataField"><span sugar='slot33b'><a href="{TRIAL_NAME_C}" target="_blank">{TRIAL_NAME_C}</a></span></td>
+	<td class="dataLabel"><span sugar='slot31'>Trial Expiration:</span></td>
+	<td class="dataField"><span sugar='slot31b'>{TRIAL_EXPIRATION_C}</span></td>
+	</tr>
+	<tr>
+    <td width="15%" class="dataLabel"><span sugar='slot9'>Scrub Action:</span><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></td>
+    <td width="35%" class="dataField">
+    <input size='35' id="parent_lead_name" name='parent_lead_name' tabindex='1' type="text" value="{PARENT_LEAD_NAME}" readonly>
+    <input id='parent_lead_id' name='parent_lead_id' type="hidden" value="{PARENT_LEAD_ID}">
+    <input id='parent_lead_action' name='parent_lead_action' type="hidden" value="">
+    <input id='lead_relation_c' name='lead_relation_c' type="hidden" value="{LEAD_RELATION_C}">
+    <input id='parent_contact_id' name='parent_contact_id' type="hidden" value="">
+    <input id='parent_account_id' name='parent_account_id' type="hidden" value="">
+    <input id='parent_leadaccount_id' name='parent_leadaccount_id' type="hidden" value="">
+    </td>
+	<td width="15%" class="dataLabel"><span sugar='slot2'>&nbsp;</span></td>
+	<td width="35%" class="dataField"><span sugar='slot2b'>&nbsp;</span></td>
+	</tr>
+	</table>
+</td>
+</tr>	
+</table>
+<p>
+<input type='hidden' id='primary_address_street' name='primary_address_street' value='{PRIMARY_ADDRESS_STREET}'>
+<input type='hidden' id='primary_address_city' name='primary_address_city' value='{PRIMARY_ADDRESS_CITY}'>
+<input type='hidden' id='primary_address_state' name='primary_address_state' value='{PRIMARY_ADDRESS_STATE}'>
+<input type='hidden' id='primary_address_postalcode' name='primary_address_postalcode' value='{PRIMARY_ADDRESS_POSTALCODE}'>
+<input type='hidden' id='primary_address_country' name='primary_address_country' value='{PRIMARY_ADDRESS_COUNTRY}'>
+<p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabForm">
+<tr><td>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+		<th align="left" class="dataLabel" colspan="2"><h4 class="dataLabel">Lead Qual Tools</h4></th>
+		</tr>
+		<tr>
+	        <td width="15%" class="dataLabel"><span sugar='slot86b'>Paste Address Here</span></td>
+	        <td width="30%" class="dataField"><span sugar='slot87'><textarea id="address_parser_input_value" rows="2" tabindex='3' cols="30"></textarea><br><center><input type="button" class="button" value="Parse Address" onclick="leadParseAddress(document.getElementById('address_parser_input_value').value);"></center></span></td>
+			<td class="dataField">
+				<b>Original Address:</b><br>
+				Street: <span id='original_address_street'>{PRIMARY_ADDRESS_STREET}</span><br>
+				City: <span id='original_address_city'>{PRIMARY_ADDRESS_CITY}</span><br>
+				State: <span id='original_address_state'>{PRIMARY_ADDRESS_STATE}</span><br>
+				Zip: <span id='original_address_postalcode'>{PRIMARY_ADDRESS_POSTALCODE}</span><br>
+				Country: <span id='original_address_country'>{PRIMARY_ADDRESS_COUNTRY}</span><br>
+			</td>
+			<td class="dataField">
+				<b>Current Address:</b><br>
+				Street: <span id='display_address_street'>{PRIMARY_ADDRESS_STREET}</span><br>
+				City: <span id='display_address_city'>{PRIMARY_ADDRESS_CITY}</span><br>
+				State: <span id='display_address_state'>{PRIMARY_ADDRESS_STATE}</span><br>
+				Zip: <span id='display_address_postalcode'>{PRIMARY_ADDRESS_POSTALCODE}</span><br>
+				Country: <span id='display_address_country'>{PRIMARY_ADDRESS_COUNTRY}</span><br>
+			</td>
+		</tr>
+		<tr>
+		<td class="dataLabel"><span sugar='slot29'>Company Website:</span></td>
+		<td class="dataField"><span sugar='slot29b'><div id=company_website>{COMPANY_WEBSITE_LINK}</div></span></td>
+		<td width="15%" class="dataLabel" colspan="1"><span sugar='slot542'>&nbsp;</span></td>
+		<td width="30%" class="dataField" colspan="1"><span sugar='slot542b'>&nbsp;</span></td>
+		</tr>
+		<tr>
+		<td class="dataLabel"><span sugar='slot28'>Email Domain Website:</span></td>
+		<td class="dataField"><span sugar='slot28b'><div id=email_domain_website>{EMAIL_DOMAIN_WEBSITE_LINK}</div></span></td>
+		<td width="15%" class="dataLabel" colspan="1"><span sugar='slot542'>&nbsp;</span></td>
+		<td width="30%" class="dataField" colspan="1"><span sugar='slot542b'>&nbsp;</span></td>
+		</tr>
+		<tr>
+	    <td class="dataLabel"><span sugar='slot3'>Hoovers:</span></td>
+	    <td class="dataLabel"><span sugar='slot3b'><a href='http://premium.hoovers.com/subscribe/search/simple/company/index.xhtml?query_string={COMPANY_NAME}&which=company&page=1' target=_blank>{COMPANY_NAME}</a></span></td>
+		<td class="dataLabel"><span sugar='slot3'>Lead Score:</span></td>
+		<td class="dataField"><span sugar='slot3b'><a href="index.php?module=Touchpoints&action=LeadScoreDetails&lead_id={ID}&to_pdf=1" onclick="window.open(this.href,'window','width=950,height=400,resizable,menubar'); return false;">{LEAD_SCORE}</a></span></td>
+		</tr>
+	</table>
+</td></tr>
+</table>
+<p>
+<!-- BEGIN: full_ps_section -->
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="tabForm">
+<tr>
+<th align="left" class="dataLabel" colspan="4">
+	<h4 class="dataLabel">
+	<span id=ps_form_advanced style='display:none'><img src="/themes/Sugar5/images/advanced_search.gif"></span>
+	<span id=ps_form_basic style='display:inline'><img src="/themes/Sugar5/images/basic_search.gif"></span>&nbsp;
+	<a href='javascript:div_show_hide("scrub_ps_form"); div_show_hide("ps_form_advanced"); div_show_hide("ps_form_basic");'>Lead Search</a>
+	</h4>
+</th>
+</tr>
+<tr>
+<td>
+	<div id='scrub_ps_form'>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td colspan="2">
+	        <input title="Smart Search" accessKey="Smart Search" onclick="doParentSearch('{ID}', false);" class="button" type="button" value="Smart Search"/>
+	        <input title="Fill Defaults" accessKey="Fill Defaults" onclick="populate_search_value('{TARGET_FIRST_NAME}', 'ps_first_name'); populate_search_value('{TARGET_LAST_NAME}', 'ps_last_name'); populate_search_value('{PS_EMAIL}', 'ps_email'); populate_search_value('{TARGET_COMPANY_NAME}', 'ps_company_name')" class="button" type="button" name="fill_defaults" value=" Fill Defaults "/>
+	        <input title="{APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{APP.LBL_CLEAR_BUTTON_KEY}" onclick="clear_search_fields(this.form);" class="button" type="button" name="clear" value=" Clear All "/>
+			<input title="Create Lead Company / Person" class="button" type="button" name="button" value="Create Lead Company / Person" onclick="return_parent_lead('','Creating New Lead Company / Person','set_as_parent','Parent','','');" >
+				<a href="javascript:void(0);" onclick="window.open('index.php?module=Touchpoints&action=ScrubSmartSearchHelp&to_pdf=true','new','width=800,height=400,resizable=1,scrollbars=1');"><img  border='0' src='{IMAGE_PATH}help.png'></a>
+			</td>
+		</tr>
+	    <tr>
+	        <td class="dataLabel" noWrap><slot>{MOD.LBL_FIRST_NAME}</slot></td>
+	        <td class="dataLabel" noWrap><slot><input type=text size="15" id="ps_first_name" name="ps_first_name" class=dataField tabindex=3 value="{PS_FIRST_NAME}">&nbsp;<input type=button class=button value=Clear onclick='javascript:populate_search_value("", "ps_first_name");'></slot></td>
+	        <td class="dataLabel" noWrap><slot>{MOD.LBL_LAST_NAME}</slot></td>
+	        <td class="dataLabel" noWrap><slot><input type=text size="15" id="ps_last_name" name="ps_last_name" class=dataField tabindex=3 value="{PS_LAST_NAME}">&nbsp;<input type=button class=button value=Clear onclick='javascript:populate_search_value("", "ps_last_name");'></slot></td>
+	    </tr>
+	    <tr>
+	        <td class="dataLabel" noWrap><slot>{MOD.LBL_COMPANY_NAME}</slot></td>
+	        <td class="dataLabel" noWrap><slot><input type=text size="20" id="ps_company_name" name="ps_company_name" class=dataField tabindex=3 value="{PS_COMPANY_NAME}">&nbsp;<input type=button class=button value=Clear onclick='javascript:populate_search_value("", "ps_company_name");'></slot></td>
+	        <td class="dataLabel" noWrap><slot>{MOD.LBL_EMAIL_ADDRESS}</slot></td>
+	        <td class="dataLabel" noWrap><slot><input type=text size="20" id="ps_email" name="ps_email" class=dataField tabindex=3 value="{PS_EMAIL}">&nbsp;<input type=button class=button value=Clear onclick='javascript:populate_search_value("", "ps_email");'></slot></td>
+	    </tr>
+		<tr>
+		<td colspan=4>
+			<!-- BEGIN: remove_this_if_they_want_links_back -->
+			<table cellpadding="0" cellspacing="0" width="100%" border="1" class="listView">
+			<tr>
+			    <td nowrap="nowrap" colspan='5'><h3>Searching for:</h3></td>
+			</tr>
+			<tr height="20">
+			    <td scope="col" class="listViewThS1" NOWRAP>Lead Name:</td>
+			    <td scope="col" class="listViewThS1" NOWRAP>{MOD.LBL_COMPANY_NAME}</td>
+			    <td scope="col" class="listViewThS1" NOWRAP>Email1:</td>
+			    <td scope="col" class="listViewThS1" NOWRAP>Email2:</td>
+			</tr>
+			<tr>
+			    <td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="javascript:populate_search_value('{TARGET_FIRST_NAME}', 'ps_first_name')">{TARGET_FIRST_NAME}</a>&nbsp;<a href="javascript:populate_search_value('{TARGET_LAST_NAME}', 'ps_last_name')">{TARGET_LAST_NAME}</a>&nbsp;</td>
+			    <td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="javascript:populate_search_value('{TARGET_COMPANY_NAME}', 'ps_company_name')">{TARGET_COMPANY_NAME}</a>&nbsp;</td>
+			    <td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="javascript:populate_search_value('{TARGET_EMAIL1}', 'ps_email')">{TARGET_EMAIL1}</a>&nbsp;<a href="javascript:populate_search_value('{TARGET_EMAIL1_DOMAIN}', 'ps_email')">{LABEL_EMAIL1_DOMAIN}</a>&nbsp;</td>
+			    <td scope="row" valign=TOP class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}" nowrap><a href="javascript:populate_search_value('{TARGET_EMAIL2}', 'ps_email')">{TARGET_EMAIL2}</a>&nbsp;<a href="javascript:populate_search_value('{TARGET_EMAIL2_DOMAIN}', 'ps_email')">{LABEL_EMAIL2_DOMAIN}</a>&nbsp;</td>
+			</tr>
+			</table>
+			<!-- END: remove_this_if_they_want_links_back -->
+		</td>
+		</tr>
+		<tr>
+			<td colspan=4>
+				<div id=scrub_ps_list>
+				</div>
+			</td>
+		</tr>
+	    </table>
+	</div>
+</td>
+</tr>
+</table>
+
+<script type="text/javascript">
+function clear_search_fields(form){
+    form.ps_company_name.value = '';
+    form.ps_email.value = '';
+    form.ps_first_name.value = '';
+    form.ps_last_name.value = '';
+}
+
+function process_ps(form){
+    
+    return;
+}
+</script>
+<!-- END: full_ps_section -->
+{CONNECTOR}
+<p>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabForm">
+<tr><td>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+	<th align="left" class="dataLabel" colspan="5"><h4 class="dataLabel">Qualification</h4></th>
+	</tr>
+	<tr>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot208'>Annual Revenue:</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot208b'><select tabindex='6' id="annual_revenue" name="annual_revenue" onchange="javascript:setLeadGroup(document.getElementById('annual_revenue').value, document.getElementById('potential_users_c').value);" (>{OPTIONS_ANNUAL_REVENUE2_C}</select></span></td>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot206'>Number of Employees:</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot206b'><select tabindex='6' id="employees" name="employees">{OPTIONS_EMPLOYEE_QTY_C}</select></span></td>
+	</tr>
+	<tr>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot215'>Lead Group:</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot215b'><select tabindex='5' id="lead_group_c" name="lead_group_c">{OPTIONS_LEAD_GROUP_C}</select></span></td>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot205'>Potential Users:</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot205b'><select tabindex='5' id="potential_users_c" name="potential_users_c" onchange="javascript:setLeadGroup(document.getElementById('annual_revenue').value, document.getElementById('potential_users_c').value);">{OPTIONS_POTENTIAL_USERS_C}</select></span></td>
+	</tr>
+	<tr>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot215'>Third Party Validation:</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot215b'><input type=checkbox id="third_party_validation_c" name="third_party_validation_c" {THIRD_PARTY_CHECKED}></span></td>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot205'></span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot205b'></span></td>
+	</tr>
+	</table>
+</td></tr>
+</table>
+
+<p>
+<p>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabForm">
+<tr><td>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<th align="left" class="dataLabel" colspan="5"><h4 class="dataLabel">Assignment</h4></th>
+	</tr>
+	<tr>
+		<td width="15%" class="dataLabel"><span sugar='slot300'>{APP.LBL_ASSIGNED_TO}</span></td>
+		<td width="30%" class="dataField">
+			<span sugar='slot300b'>
+			<input class="sqsEnabled" tabindex="7" autocomplete="off" id="assigned_user_name" name='assigned_user_name' type="text" value="{ASSIGNED_USER_NAME}">
+			<input id='assigned_user_id' name='assigned_user_id' type="hidden" value="{ASSIGNED_USER_ID}">
+			<input title="{APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='7' class="button" value='{APP.LBL_SELECT_BUTTON_LABEL}' name="btn1" onclick='open_popup("Users", 600, 400, "", true, false, {encoded_users_popup_request_data});'>
+			</span>
+		</td>
+		<td width="15%" class="dataLabel"><span sugar='slot301'>&nbsp;</span></td>
+		<td width="30%" class="dataField"><span sugar='slot301b'>&nbsp;</span></td>
+	</tr>
+	<tr>
+		<td width="15%" class="dataLabel" colspan="1">{APP.LBL_TEAM}<span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></td>
+		<td width="30%" class="dataField" colspan="1">
+			<span sugar='slot539b'>
+				<input class="sqsEnabled" tabindex="7" autocomplete="off" id="team_name" name='team_name' type="text" value="{TEAM_NAME}">
+				<input id='team_id' name='team_id' type="hidden" value="{TEAM_ID}">&nbsp;
+				<input title="{APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='7' class="button" value='{APP.LBL_SELECT_BUTTON_LABEL}' name=btn1 onclick='open_popup("Teams", 600, 400, "", true, false, {encoded_team_popup_request_data});'>
+			</span>
+		</td>
+		<td width="15%" class="dataLabel" colspan="1"><span sugar='slot540'>&nbsp;</span></td>
+		<td width="30%" class="dataField" colspan="1"><span sugar='slot540b'>&nbsp;</span></td>
+	</tr>
+	<tr>
+		<td width="15%" class="dataLabel" colspan="1"><span sugar='slot541'>Partner Assigned To:</span></td>
+		<td width="30%" class="dataField" colspan="1"><span sugar='slot541b'><select tabindex='7' name="partner_assigned_to_c">{OPTIONS_PARTNER_ASSIGNED_TO_C}</select></span></td>
+		<td width="15%" class="dataLabel" colspan="1"><span sugar='slot542'>&nbsp;</span></td>
+		<td width="30%" class="dataField" colspan="1"><span sugar='slot542b'>&nbsp;</span></td>
+	</tr>
+	<tr>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot545'>{MOD.LBL_REFERED_BY}</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot545b'><input name='refered_by' tabindex='7' type="text" size='20'  value='{REFERED_BY}'></span></td>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot546'>&nbsp;</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot546b'>&nbsp;</span></td>
+	</tr>
+	<tr>
+	<td width="15%" class="dataLabel" colspan="1"><span sugar='slot546'>Associated Rep:</span></td>
+	<td width="30%" class="dataField" colspan="1"><span sugar='slot546b'><select name='lead_owner_c' tabindex='7'>{OPTIONS_LEAD_OWNER_C}</select></span></td>
+    <td width="15%" class="dataLabel">&nbsp;</span></td>
+    <td width="30%" class="dataField">&nbsp;</span></td>
+	</tr>
+	</table>
+</td></tr>
+</table>
+<p>
+<div style="padding-top: 2px;">
+<input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" tabindex='1' class="button" onclick="this.form.action.value='ScrubSave'; return check_form('ScrubView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " >
+<input title="Junk" class="button" onclick="this.form.action.value='ScrubJunk'; this.form.module.value='Touchpoints'; this.form.record.value='{ID}'" type="submit" name="button" tabindex='1' value="  Junk  ">
+<input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" tabindex='1' value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
+</div>
+</form>
+<script type="text/javascript">
+enableQS(false);
+
+function copyAddressRight(form) {
+	form.alt_address_street.value = form.primary_address_street.value;
+	form.alt_address_city.value = form.primary_address_city.value;
+	form.alt_address_state.value = form.primary_address_state.value;
+	form.alt_address_postalcode.value = form.primary_address_postalcode.value;
+	form.alt_address_country.value = form.primary_address_country.value;
+	return true;
+}
+function copyAddressLeft(form) {
+	form.primary_address_street.value =	form.alt_address_street.value;
+	form.primary_address_city.value = form.alt_address_city.value;
+	form.primary_address_state.value = form.alt_address_state.value;
+	form.primary_address_postalcode.value =	form.alt_address_postalcode.value;
+	form.primary_address_country.value = form.alt_address_country.value;
+	return true;
+}
+</script>
+<script type="text/javascript">
+function get_lead_finder_popup(lead_id, width, height){
+	
+	window.open('index.php?lead_id=' + lead_id +'&module=Touchpoints&action=LeadFinderPopup&to_pdf=true','new','width=' + width + ',height=' + height + ',resizable=1,scrollbars=1');
+	
+}	
+function check_scrub_parent_protect(){
+	
+	var scrub_value = this.document.getElementById('scrub_status_c').options[document.getElementById('scrub_status_c').selectedIndex].value;
+	
+	var lead_relation_c = this.document.getElementById('lead_relation_c').value;
+	
+	//check to make sure a lead relation has been picked
+	if(scrub_value!='None'){
+	
+		if(lead_relation_c=='Unknown'){
+		
+			alert('A lead role must be determined before scrubbing can be complete');
+			return false;
+		}
+		
+	//end if scrub_value is not none
+	}	
+}	
+</script>
+
+<!-- BEGIN: parent_search_js -->
+<script type="text/javascript">
+
+function trimString(s) {
+	s = s.replace(/^\s+/g, "");
+	s = s.replace(/\s+$/g, "");
+	return s;
+}
+
+function leadParseAddress(value){
+	var tempDisplayString = '';
+    var lineSplit = value.split("\n");
+    var citystatezip_line = '';
+    var account = document.getElementById('company_name');
+    var country = document.getElementById('primary_address_country');
+    var street = lineSplit[0];
+    if(lineSplit.length == 1){
+        commaSplit = lineSplit[0].split(",");
+		// 555 Five Ave, San Jose, CA 95555
+        if(commaSplit.length == 3){
+			street = trimString(commaSplit[0]);
+			citystatezip_line = trimString(commaSplit[1]) + ", " + trimString(commaSplit[2]);
+        }
+    }
+	// 555 Five Ave
+	// San Jose, CA 95555
+    else if(lineSplit.length == 2){
+        citystatezip_line = lineSplit[1];
+    }
+	// 555 Five Ave
+	// Suite 222
+	// San Jose, CA 95555
+    else if(lineSplit.length == 3){
+        street = lineSplit[0] + "\n" + lineSplit[1];
+        citystatezip_line = lineSplit[2];
+    }
+	// 555 Five Ave
+	// Suite 222
+	// San Jose, CA 95555
+	// USA
+    else if(lineSplit.length == 4){
+        street = lineSplit[0] + "\n" + lineSplit[1];
+        citystatezip_line = lineSplit[2];
+        country = lineSplit[3];
+    }
+	// SugarCRM
+	// 555 Five Ave
+	// Suite 222
+	// San Jose, CA 95555
+	// USA
+    else if(lineSplit.length == 5){
+        account = lineSplit[0];
+		tempDisplayString = tempDisplayString + "Account: " + account + "<br>\n";
+        street = lineSplit[1] + "\n" + lineSplit[2];
+        citystatezip_line = lineSplit[3];
+        country = lineSplit[4];
+    }
+
+    if(citystatezip_line != ''){
+        var firstComma = citystatezip_line.indexOf(",");
+        if(firstComma == -1){
+            street = lineSplit[0] + "\n" + lineSplit[1];
+        }
+        else{
+            var city = citystatezip_line.substring(0, firstComma);
+            var citystatezip_array = citystatezip_line.substring(firstComma + 1).split(" ");
+            var state = citystatezip_array[1];
+			if(citystatezip_array.length > 2){
+				var zip = citystatezip_array[2];
+				var zip_regex = /^\d{5}/;
+				var valid_zipcode = (zip_regex.test(zip));
+				if(!valid_zipcode){
+					state = citystatezip_array[1] + " " + citystatezip_array[2];
+					zip = citystatezip_array[3];
+				}
+			}
+        }
+        
+        if(typeof(street) != 'undefined' && street != ''){
+			tempDisplayString = tempDisplayString + "Street: " + street;
+            document.getElementById('primary_address_street').value = street;
+            document.getElementById('display_address_street').innerHTML = street;
+			primary_address_street_copy = document.getElementById('primary_address_street_copy');
+			if(primary_address_street_copy != null){
+				primary_address_street_copy.value = street;
+			}
+		}
+        if(typeof(city) != 'undefined' && city != ''){
+			tempDisplayString = tempDisplayString + "\n<br>City: " + city;
+            document.getElementById('primary_address_city').value = city;
+            document.getElementById('display_address_city').innerHTML = city;
+			primary_address_city_copy = document.getElementById('primary_address_city_copy');
+			if(primary_address_city_copy != null){
+				primary_address_city_copy.value = city;
+			}
+		}
+        if(typeof(state) != 'undefined' && state != ''){
+			tempDisplayString = tempDisplayString + "\n<br>State: " + state;
+            document.getElementById('primary_address_state').value = state;
+            document.getElementById('display_address_state').innerHTML = state;
+			primary_address_state_copy = document.getElementById('primary_address_state_copy');
+			if(primary_address_state_copy != null){
+				primary_address_state_copy.value = state;
+			}
+		}
+        if(typeof(zip) != 'undefined' && zip != ''){
+			tempDisplayString = tempDisplayString + "\n<br>Zip: " + zip;
+            document.getElementById('primary_address_postalcode').value = zip;
+            document.getElementById('display_address_postalcode').innerHTML = zip;
+			primary_address_postalcode_copy = document.getElementById('primary_address_postalcode_copy');
+			if(primary_address_postalcode_copy != null){
+				primary_address_postalcode_copy.value = zip;
+			}
+		}
+    }
+}
+
+function leadParsePhone(value, id){
+    final_value = value;
+    value = value.replace(/[^0-9]/g, '');
+    if(value.length == 7){
+        final_value = value.substr(0, 3) + "-" + value.substr(3);
+    }
+    else if(value.length == 10){
+        final_value = "(" + value.substr(0, 3) + ")" + value.substr(3, 3) + "-" + value.substr(6);
+    }
+    else if(value.length == 11 && value.substr(0, 1) == '1'){
+        final_value = "+1(" + value.substr(1, 3) + ")" + value.substr(4, 3) + "-" + value.substr(7);
+    }
+    document.getElementById(id).value = final_value;
+}
+function doParentSearch(lead_id, initial){
+  var xmlHttp;
+  try{
+    // Firefox, Opera 8.0+, Safari
+    xmlHttp=new XMLHttpRequest();
+  }
+  catch (e){
+    // Internet Explorer
+    try{
+      xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+    }
+    catch (e){
+      try{
+        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+      catch (e){
+        alert("Your browser does not support AJAX!");
+        return false;
+      }
+    }
+  }
+  xmlHttp.onreadystatechange=function(){
+    if(xmlHttp.readyState==4){
+      var response = xmlHttp.responseText;
+      document.getElementById('scrub_ps_list').style.display = "block";
+      document.getElementById('scrub_ps_list').innerHTML = response;
+      if(response.search('show_related_leads_true') == -1){
+        document.getElementById('process_related_leads').value = 'false';
+      }
+      else{
+        document.getElementById('process_related_leads').value = 'true';
+      }
+    }
+  }
+  var webstring = "index.php?module=Touchpoints&action=ScrubParentList&to_pdf=1&lead_id=" + lead_id;
+  if(initial != true){
+    webstring = webstring + "&query=yes";
+    webstring = webstring + "&ps_first_name=" + escape(document.getElementById('ps_first_name').value);
+    webstring = webstring + "&ps_last_name=" + escape(document.getElementById('ps_last_name').value);
+    webstring = webstring + "&ps_email=" + escape(document.getElementById('ps_email').value);
+    webstring = webstring + "&ps_company_name=" + escape(document.getElementById('ps_company_name').value);
+  }
+  xmlHttp.open("GET",webstring,true);
+  xmlHttp.send(null);
+}
+
+function return_parent_lead(parent_lead_id, parent_lead_name,parent_lead_action, relation_value, parent_contact_id, parent_account_id, parent_leadaccount_id){
+
+    document.getElementById('parent_lead_id').value = parent_lead_id;
+    document.getElementById('parent_lead_name').value = parent_lead_name;
+    document.getElementById('parent_lead_action').value = parent_lead_action;
+    document.getElementById('lead_relation_c').value = relation_value;
+    document.getElementById('parent_contact_id').value = parent_contact_id;
+    document.getElementById('parent_account_id').value = parent_account_id;
+    document.getElementById('parent_leadaccount_id').value = parent_leadaccount_id;
+	document.getElementById('scrub_ps_list').style.display = "none";
+	document.getElementById('scrub_ps_form').style.display = "none";
+	div_show_hide('ps_form_advanced'); div_show_hide('ps_form_basic');
+}   
+
+
+function populate_search_value(value, formid){
+
+    this.document.getElementById(formid).value = value;
+
+}
+
+function psShowHide(id, img_id){
+	var element = document.getElementById(id);
+	if(element.style.display == 'none')
+		element.style.display = 'inline';
+	else
+		element.style.display = 'none';
+	
+	var show_img = document.getElementById("show_" + img_id);
+	var hide_img = document.getElementById("hide_" + img_id);
+	if(show_img.style.display == 'none'){
+		show_img.style.display = 'inline';
+		hide_img.style.display = 'none';
+	}
+	else{
+		show_img.style.display = 'none';
+		hide_img.style.display = 'inline';
+	}
+}
+
+function replaceWebsiteLink(id_to_replace, website, is_email){
+	if(website.length == 0 || website.value == ''){
+		document.getElementById(id_to_replace).innerHTML = "";
+		return;
+	}
+	if(is_email == true){
+		email_split = website.split('@');
+		website = "http://www." + email_split[1];
+	}
+	else{
+		var prefix = website.substring(0, 4);
+		if(prefix != "http"){
+			website = "http://" + website;
+		}
+	}
+	document.getElementById(id_to_replace).innerHTML = "<a href='" + website + "' target=_blank>" + website + "</a>";
+}
+
+function div_show_hide(div_id){
+	var e = document.getElementById(div_id);
+	if(typeof(e) != 'undefined'){
+		if(e.style.display == 'inline'){
+			e.style.display = 'none';
+		}
+		else if(e.style.display == 'none'){
+			e.style.display = 'inline';
+		}
+		else if(e.style.display == 'block'){
+			e.style.display = 'none';
+		}
+		else{
+			e.style.display = 'none';
+		}
+	}
+}
+
+function setLeadGroup(annual_revenue, potential_users){
+	var inside_revenue_values = new Array("under 10M", "10 - 25M", "25 - 99M");
+	var inside_potential_values = new Array("1 - 4", "5 - 10", "11 - 20", "21 - 49", "50 - 75");
+	var channel_revenue_values = new Array("100M - 249M", "250 - 499M", "500M - 1B", "more than 1B");
+	var channel_potential_values = new Array("75 - 100", "101 - 174", "175 - 499", "500 - 999", "more than 1000");
+	
+	lead_group_value = document.getElementById('lead_group_c').value;
+	
+	assigned_user_id = document.getElementById('assigned_user_id').value;
+	
+	if(assigned_user_id == '2c780a1f-1f07-23fd-3a49-434d94d78ae5'){
+		lead_group_value = 'Partner';
+	}
+	else{
+	
+		if(lead_group_value == 'Unknown' && annual_revenue == 'Unknown' && potential_users == 'Unknown'){
+			lead_group_value = 'Unknown';
+		}
+		if(inside_revenue_values.toString().indexOf(annual_revenue) !== -1 || inside_potential_values.toString().indexOf(potential_users) !== -1){
+			lead_group_value = 'Inside';
+		}
+		if(channel_revenue_values.toString().indexOf(annual_revenue) !== -1 || (channel_potential_values.toString().indexOf(potential_users) !== -1 && potential_users != "5 - 10")){ // Had to add the exception for "5 - 10" since there is an entry for "75 - 100" which matches
+			lead_group_value = 'Partner';
+		}
+	}
+	
+	document.getElementById('lead_group_c').value = lead_group_value;
+}
+
+function overrideReturnKey(event) {
+	event = getEvent(event);
+	var node = getEventElement(event);
+	if ((event.keyCode == 13) && (node.type=="text")){
+		if(node.id == 'ps_first_name' || node.id == 'ps_last_name' || node.id == 'ps_company_name' || node.id == 'ps_email'){
+			doParentSearch('{ID}', false);
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	else{
+		return true;
+	}
+}
+document.onkeypress = overrideReturnKey;
+
+setLeadGroup(document.getElementById('annual_revenue').value, document.getElementById('potential_users_c').value);
+doParentSearch('{ID}', true);
+</script>
+<!-- END: parent_search_js -->
+{JAVASCRIPT}
+<!-- END: main -->

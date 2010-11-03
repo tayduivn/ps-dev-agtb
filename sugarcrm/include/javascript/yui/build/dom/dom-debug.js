@@ -1,9 +1,8 @@
-//FILE SUGARCRM flav=int ONLY
 /*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.8.0r4
+version: 2.7.0
 */
 /**
  * The dom module provides helper methods for manipulating Dom elements.
@@ -12,10 +11,9 @@ version: 2.8.0r4
  */
 
 (function() {
-    // for use with generateId (global to save state if Dom is overwritten)
-    YAHOO.env._id_counter = YAHOO.env._id_counter || 0;
+    YAHOO.env._id_counter = YAHOO.env._id_counter || 0;     // for use with generateId (global to save state if Dom is overwritten)
 
-    // internal shorthand
+        // internal shorthand
     var Y = YAHOO.util,
         lang = YAHOO.lang,
         UA = YAHOO.env.ua,
@@ -84,8 +82,6 @@ version: 2.8.0r4
             'className': _CLASS
         },
 
-        DOT_ATTRIBUTES: {},
-
         /**
          * Returns an HTMLElement reference.
          * @method get
@@ -93,7 +89,7 @@ version: 2.8.0r4
          * @return {HTMLElement | Array} A DOM reference to an HTML element or an array of HTMLElements.
          */
         get: function(el) {
-            var id, nodes, c, i, len, attr;
+            var id, nodes, c, i, len;
 
             if (el) {
                 if (el[NODE_TYPE] || el.item) { // Node, or NodeList
@@ -103,9 +99,8 @@ version: 2.8.0r4
                 if (typeof el === 'string') { // id
                     id = el;
                     el = document.getElementById(el);
-                    attr = (el) ? el.attributes : null;
-                    if (el && attr && attr.id && attr.id.value === id) { // IE: avoid false match on "name" attribute
-                        return el;
+                    if (el && el.id === id) { // IE: avoid false match on "name" attribute
+                    return el;
                     } else if (el && document.all) { // filter by name
                         el = null;
                         nodes = document.all[id];
@@ -118,7 +113,7 @@ version: 2.8.0r4
                     return el;
                 }
                 
-                if (YAHOO.util.Element && el instanceof YAHOO.util.Element) {
+                if (el.DOM_EVENTS) { // YAHOO.util.Element
                     el = el.get('element');
                 }
 
@@ -294,6 +289,8 @@ version: 2.8.0r4
                             off1 = 2;
                             off2 = 2;
                             mode = doc[COMPAT_MODE];
+                            bLeft = _getComputedStyle(doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
+                            bTop = _getComputedStyle(doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
 
                             if (UA.ie === 6) {
                                 if (mode !== _BACK_COMPAT) {
@@ -302,9 +299,7 @@ version: 2.8.0r4
                                 }
                             }
                             
-                            if ((mode === _BACK_COMPAT)) {
-                                bLeft = _getComputedStyle(doc[DOCUMENT_ELEMENT], BORDER_LEFT_WIDTH);
-                                bTop = _getComputedStyle(doc[DOCUMENT_ELEMENT], BORDER_TOP_WIDTH);
+                            if ((mode == _BACK_COMPAT)) {
                                 if (bLeft !== MEDIUM) {
                                     off1 = parseInt(bLeft, 10);
                                 }
@@ -559,7 +554,7 @@ version: 2.8.0r4
         },
 
         /**
-         * Returns an array of HTMLElements with the given class.
+         * Returns a array of HTMLElements with the given class.
          * For optimized performance, include a tag and/or root node when possible.
          * Note: This method operates against a live collection, so modifying the 
          * collection in the callback (removing/appending nodes, etc.) will have
@@ -568,14 +563,14 @@ version: 2.8.0r4
          * @method getElementsByClassName
          * @param {String} className The class name to match against
          * @param {String} tag (optional) The tag name of the elements being collected
-         * @param {String | HTMLElement} root (optional) The HTMLElement or an ID to use as the starting point.
-         * This element is not included in the className scan.
+         * @param {String | HTMLElement} root (optional) The HTMLElement or an ID to use as the starting point 
          * @param {Function} apply (optional) A function to apply to each element when found 
          * @param {Any} o (optional) An optional arg that is passed to the supplied method
          * @param {Boolean} overrides (optional) Whether or not to override the scope of "method" with "o"
          * @return {Array} An array of elements that have the given class name
          */
         getElementsByClassName: function(className, tag, root, apply, o, overrides) {
+            className = lang.trim(className);
             tag = tag || '*';
             root = (root) ? Y.Dom.get(root) : null || document; 
             if (!root) {
@@ -615,7 +610,7 @@ version: 2.8.0r4
                 current;
             
             if (el && className) {
-                current = Y.Dom._getAttribute(el, CLASS_NAME) || EMPTY;
+                current = Y.Dom.getAttribute(el, CLASS_NAME) || EMPTY;
                 if (className.exec) {
                     ret = className.test(current);
                 } else {
@@ -645,7 +640,7 @@ version: 2.8.0r4
                 current;
 
             if (el && className) {
-                current = Y.Dom._getAttribute(el, CLASS_NAME) || EMPTY;
+                current = Y.Dom.getAttribute(el, CLASS_NAME) || EMPTY;
                 if ( !Y.Dom._hasClass(el, className) ) {
                     Y.Dom.setAttribute(el, CLASS_NAME, trim(current + SPACE + className));
                     ret = true;
@@ -675,15 +670,15 @@ version: 2.8.0r4
                 attr;
 
             if (el && className) {
-                current = Y.Dom._getAttribute(el, CLASS_NAME) || EMPTY;
+                current = Y.Dom.getAttribute(el, CLASS_NAME) || EMPTY;
                 Y.Dom.setAttribute(el, CLASS_NAME, current.replace(Y.Dom._getClassRegex(className), EMPTY));
 
-                newClass = Y.Dom._getAttribute(el, CLASS_NAME);
+                newClass = Y.Dom.getAttribute(el, CLASS_NAME);
                 if (current !== newClass) { // else nothing changed
                     Y.Dom.setAttribute(el, CLASS_NAME, trim(newClass)); // trim after comparing to current class
                     ret = true;
 
-                    if (Y.Dom._getAttribute(el, CLASS_NAME) === '') { // remove class attribute if empty
+                    if (Y.Dom.getAttribute(el, CLASS_NAME) === '') { // remove class attribute if empty
                         attr = (el.hasAttribute && el.hasAttribute(_CLASS)) ? _CLASS : CLASS_NAME;
                         YAHOO.log('removeClass removing empty class attribute', 'info', 'Dom');
                         el.removeAttribute(attr);
@@ -727,7 +722,7 @@ version: 2.8.0r4
                     ret = Y.Dom._addClass(el, classObj.to);
                 } else if (from !== to) { // else nothing to replace
                     // May need to lead with DBLSPACE?
-                    current = Y.Dom._getAttribute(el, CLASS_NAME) || EMPTY;
+                    current = Y.Dom.getAttribute(el, CLASS_NAME) || EMPTY;
                     className = (SPACE + current.replace(Y.Dom._getClassRegex(from), SPACE + to)).
                                split(Y.Dom._getClassRegex(to));
 
@@ -763,7 +758,7 @@ version: 2.8.0r4
                 YAHOO.log('generateId generating ' + id, 'info', 'Dom');
 
                 if (el) {
-                    if (el[OWNER_DOCUMENT] && el[OWNER_DOCUMENT].getElementById(id)) { // in case one already exists
+                    if (el[OWNER_DOCUMENT].getElementById(id)) { // in case one already exists
                         // use failed id plus prefix to help ensure uniqueness
                         return Y.Dom.generateId(el, id + prefix);
                     }
@@ -827,7 +822,7 @@ version: 2.8.0r4
         },
         
         /**
-         * Returns an array of HTMLElements that pass the test applied by supplied boolean method.
+         * Returns a array of HTMLElements that pass the test applied by supplied boolean method.
          * For optimized performance, include a tag and/or root node when possible.
          * Note: This method operates against a live collection, so modifying the 
          * collection in the callback (removing/appending nodes, etc.) will have
@@ -1280,54 +1275,27 @@ version: 2.8.0r4
 
         /**
          * Provides a normalized attribute interface. 
-         * @method setAttribute
+         * @method setAttibute
          * @param {String | HTMLElement} el The target element for the attribute.
          * @param {String} attr The attribute to set.
          * @param {String} val The value of the attribute.
          */
         setAttribute: function(el, attr, val) {
-            Y.Dom.batch(el, Y.Dom._setAttribute, { attr: attr, val: val });
+            attr = Y.Dom.CUSTOM_ATTRIBUTES[attr] || attr;
+            el.setAttribute(attr, val);
         },
 
-        _setAttribute: function(el, args) {
-            var attr = Y.Dom._toCamel(args.attr),
-                val = args.val;
-
-            if (el && el.setAttribute) {
-                if (Y.Dom.DOT_ATTRIBUTES[attr]) {
-                    el[attr] = val;
-                } else {
-                    attr = Y.Dom.CUSTOM_ATTRIBUTES[attr] || attr;
-                    el.setAttribute(attr, val);
-                }
-            } else {
-                YAHOO.log('setAttribute method not available for ' + el, 'error', 'Dom');
-            }
-        },
 
         /**
          * Provides a normalized attribute interface. 
-         * @method getAttribute
+         * @method getAttibute
          * @param {String | HTMLElement} el The target element for the attribute.
          * @param {String} attr The attribute to get.
          * @return {String} The current value of the attribute. 
          */
         getAttribute: function(el, attr) {
-            return Y.Dom.batch(el, Y.Dom._getAttribute, attr);
-        },
-
-
-        _getAttribute: function(el, attr) {
-            var val;
             attr = Y.Dom.CUSTOM_ATTRIBUTES[attr] || attr;
-
-            if (el && el.getAttribute) {
-                val = el.getAttribute(attr, 2);
-            } else {
-                YAHOO.log('getAttribute method not available for ' + el, 'error', 'Dom');
-            }
-
-            return val;
+            return el.getAttribute(attr);
         },
 
         _toCamel: function(property) {
@@ -1361,7 +1329,7 @@ version: 2.8.0r4
 
         _patterns: {
             ROOT_TAG: /^body|html$/i, // body for quirks mode, html for standards,
-            CLASS_RE_TOKENS: /([\.\(\)\^\$\*\+\?\|\[\]\{\}\\])/g
+            CLASS_RE_TOKENS: /([\.\(\)\^\$\*\+\?\|\[\]\{\}])/g
         },
 
 
@@ -1410,10 +1378,6 @@ version: 2.8.0r4
             return val;
         };
 
-    }
-
-    if (UA.ie && UA.ie >= 8 && document.documentElement.hasAttribute) { // IE 8 standards
-        Y.Dom.DOT_ATTRIBUTES.type = true; // IE 8 errors on input.setAttribute('type')
     }
 })();
 /**
@@ -1870,4 +1834,4 @@ Y.Dom.Color = {
     }
 };
 }());
-YAHOO.register("dom", YAHOO.util.Dom, {version: "2.8.0r4", build: "2449"});
+YAHOO.register("dom", YAHOO.util.Dom, {version: "2.7.0", build: "1799"});

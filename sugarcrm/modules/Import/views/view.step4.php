@@ -477,7 +477,15 @@ class ImportViewStep4 extends SugarView
                 $focus->populateDefaultValues();
                 
                 if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord ) {
-                    $focus->assigned_user_id = $current_user->id;
+                        //$focus->assigned_user_id = $current_user->id;
+                        //DEE CUSTOMIZATION ITREQUEST 8380
+                        if( isset($_REQUEST['assigned_user_id']) && !empty($_REQUEST['assigned_user_id']) ) {
+                                $focus->assigned_user_id = $_REQUEST['assigned_user_id'];
+                        }
+                        else {
+                                $focus->assigned_user_id = $current_user->id;
+                        }
+                        //END DEE CUSTOMIZATION ITREQUEST 8380
                 }
                 //BEGIN SUGARCRM flav=pro ONLY
                 if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord ) {

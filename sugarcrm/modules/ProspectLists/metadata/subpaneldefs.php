@@ -68,12 +68,12 @@ $layout_defs['ProspectLists'] = array(
 		),
         'leads' => array(
 			'order' => 30,
-			'module' => 'Leads',
+			'module' => 'LeadContacts',
 			'sort_by' => 'last_name, first_name',
 			'sort_order' => 'asc',
 			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'leads',
-			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
+			'get_subpanel_data' => 'leadcontacts',
+			'title_key' => 'LBL_LEAD_CONTACTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 			    array('widget_class' => 'SubPanelTopButtonQuickCreate'),
 				array('widget_class'=>'SubPanelTopSelectButton','mode'=>'MultiSelect'),
@@ -81,8 +81,8 @@ $layout_defs['ProspectLists'] = array(
 				array('widget_class'=>'SubPanelTopSelectFromReportButton'),
 				//END SUGARCRM flav=pro ONLY
 			),
-		),        
-		'users' => array(
+		),
+        'users' => array(
 			'order' => 40,
 			'module' => 'Users',
 			'sort_by' => 'name',

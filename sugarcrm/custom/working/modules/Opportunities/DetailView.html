@@ -1,0 +1,201 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+/*********************************************************************************
+
+ ********************************************************************************/
+-->
+<!-- BEGIN: main -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td style="padding-bottom: 2px;">
+<form action="index.php" method="post" name="DetailView" id="form">
+
+			<input type="hidden" name="module" value="Opportunities">
+			<input type="hidden" name="record" value="{ID}">
+			<input type="hidden" name="isDuplicate" value=false>
+			<input type="hidden" name="action">
+			<input type="hidden" name="return_module">
+			<input type="hidden" name="return_action">
+			<input type="hidden" name="return_id" >
+			<input type="hidden" name="contact_id">
+			<input type="hidden" name="contact_role">
+			<input type="hidden" name="opportunity_id" value="{ID}">
+			<input type="hidden" name="task_id">
+			<input type="hidden" name="meeting_id">
+			<input type="hidden" name="call_id">
+			<input type="hidden" name="email_id">
+
+<!-- BEGIN: quote -->
+		<input type="hidden" name="quote_id">
+<!-- END: quote -->
+
+<!-- BEGIN: quote_open_source -->
+<!-- END: quote_open_source -->
+		<input title="{APP.LBL_EDIT_BUTTON_TITLE}" accessKey="{APP.LBL_EDIT_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='Opportunities'; this.form.return_action.value='DetailView'; this.form.return_id.value='{ID}'; this.form.action.value='EditView'" type="submit" name="Edit" id='edit_button' value="  {APP.LBL_EDIT_BUTTON_LABEL}  "> <input title="{APP.LBL_DUPLICATE_BUTTON_TITLE}" accessKey="{APP.LBL_DUPLICATE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='Opportunities'; this.form.return_action.value='index'; this.form.isDuplicate.value=true; this.form.action.value='EditView'" type="submit" name="Duplicate" value=" {APP.LBL_DUPLICATE_BUTTON_LABEL} " id='duplicate_button'> <input title="{APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value='Opportunities'; this.form.return_action.value='ListView'; this.form.action.value='Delete'; return confirm('{APP.NTC_DELETE_CONFIRMATION}')" type="submit" name="Delete" value=" {APP.LBL_DELETE_BUTTON_LABEL} " >
+		{FIND_DUPES_MERGE_BUTTON}
+	</td>
+
+	</form>
+	<td align='right'>{ADMIN_EDIT}</td>
+</tr>
+</table>
+
+<table width="100%" border="0" cellspacing="{GRIDLINE}" cellpadding="0" class="tabDetailView">
+{PAGINATION}
+<tr>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot1'>{MOD.LBL_OPPORTUNITY_NAME}</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot1b'>{NAME}&nbsp;</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot2'>{MOD.LBL_AMOUNT}({CURRENCY})</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot2b'>{AMOUNT}&nbsp;</span sugar='slot'></td>
+	</tr><tr>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot3'>{MOD.LBL_ACCOUNT_NAME}</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot3b'><{TAG.ACCOUNT} href="index.php?module=Accounts&action=DetailView&record={ACCOUNT_ID}" class="tabDetailViewDFLink">{ACCOUNT_NAME}</{TAG.ACCOUNT}>&nbsp;</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot4'>{MOD.LBL_DATE_CLOSED}</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot4b'>{DATE_CLOSED}</span sugar='slot'></td>
+	</tr>
+        
+		<tr>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot5'>{MOD.LBL_OPPORTUNITY_TYPE}:</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot5b'>{OPPORTUNITY_TYPE}</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot6'>{MOD.LBL_USERS_1}:</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot6b'>{USERS}</span sugar='slot'></td>
+       </tr>           <tr>
+         <td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot7'>{MOD.LBL_EMAIL_CLIENT}:</span sugar='slot'></td>
+         <td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot7b'>{EMAIL_CLIENT}</span sugar='slot'></td>
+        <td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot8'>{MOD.Additional_Support_Cases__c}</span sugar='slot'></td>
+        <td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot8b'>{ADDITIONAL_SUPPORT_CASES_C}</span sugar='slot'></td>
+       </tr><tr><td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot51'>&nbsp;</span sugar='slot'></td><td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot51b'>&nbsp;</span sugar='slot'></td><td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot52'>{MOD.Learning_Credits__c}</span sugar='slot'></td><td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot52b'>{ADDITIONAL_TRAINING_CREDITS_C}</span sugar='slot'></td></tr><tr><td width="15%" valign="top" class="tabDetailViewDL" colspan="1"><span sugar='slot54'>&nbsp;</span sugar='slot'></td><td width="35%" valign="top" class="tabDetailViewDF" colspan="1"><span sugar='slot54b'>&nbsp;</span sugar='slot'></td>
+<td width="15%" valign="top" class="tabDetailViewDL" colspan="1"><span sugar='slot55'>{MOD.LBL_SALES_STAGE}</span sugar='slot'></td><td width="35%" valign="top" class="tabDetailViewDF" colspan="1"><span sugar='slot55b'>{SALES_STAGE}</span sugar='slot'></td></tr>
+               		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot9'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot9b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot10'>{MOD.LBL_PROBABILITY}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot10b'>{PROBABILITY}</span sugar='slot'></td>
+       </tr>           <tr>
+        <td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot11'>{MOD.LBL_CAMPAIGN}</span sugar='slot'></td>
+        <td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot11b'>{CAMPAIGN_NAME}&nbsp;</span sugar='slot'></td>
+        <td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot12'>&nbsp;</span sugar='slot'></td>
+        <td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot12b'>&nbsp;</span sugar='slot'></td>
+        </tr>                           <tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot13'>{MOD.LBL_LEAD_SOURCE}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot13b'>{LEAD_SOURCE}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot14'>{MOD.Finance_Sales_Stage__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot14b'>{FINANCE_SALES_STAGE_C}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot15'>{MOD.LBL_CURRENT_SOLUTION}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot15b'>{CURRENT_SOLUTION}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot16'>{MOD.Term__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot16b'>{TERM_C}</span sugar='slot'></td>
+	</tr><tr>
+       <td width="20%" class="tabDetailViewDL"><span sugar='slot19'>{MOD.LBL_COMPETITOR_1}:</span sugar='slot'></td>
+       <td width="30%" class="tabDetailViewDF"><span sugar='slot19b'>{COMPETITOR_1}</span sugar='slot'></td>
+       <td width="20%" class="tabDetailViewDL"><span sugar='slot20'>{MOD.Revenue_Type__c}</span sugar='slot'></td>
+       <td width="30%" class="tabDetailViewDF"><span sugar='slot20b'>{REVENUE_TYPE_C}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot19'>{MOD.LBL_COMPETITOR_1}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot19b'>{COMPETITOR_1}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot20'>{MOD.Revenue_Type__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot20b'>{REVENUE_TYPE_C}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot21'>{MOD.LBL_COMPETITOR_2}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot21b'>{COMPETITOR_2}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot22'>{MOD.LBL_ORDER_NUMBER}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot22b'><A class="tabDetailViewDFLink" HREF="http://www.sugarcrm.com/sugarshop/admin/order.php?orderid={ORDER_NUMBER}" target="_blank">{ORDER_NUMBER}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot23'>{MOD.LBL_COMPETITOR_3}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot23b'>{COMPETITOR_3}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot24'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot24b'>&nbsp;</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot25'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot25b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot26'>{MOD.LBL_NEXT_STEP}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot26b'>{NEXT_STEP}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot27'>{MOD.Demo_c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot27b'><input type='checkbox' name='Demo_c' id='Demo_c'  value='1' disabled {DEMO_C_CHECKED}></span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot28'>{MOD.LBL_NEXT_STEP_DUE_DATE}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot28b'>{NEXT_STEP_DUE_DATE}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot29'>{MOD.Demo_Date_c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot29b'>{DEMO_DATE_C}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot30'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot30b'>&nbsp;</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot31'>{MOD.LBL_EVALUATION}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot31b'><input type="checkbox" name="evaluation" {EVALUATION} disabled/></span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot32'>{MOD.LBL_CLOSED_LOST_REASON}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot32b'>{CLOSED_LOST_REASON}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot33'>{MOD.LBL_EVALUATION_START_DATE}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot33b'>{EVALUATION_START_DATE}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot34'>{MOD.LBL_CLOSED_LOST_DESCRIPTION}:</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot34b'>{CLOSED_LOST_DESCRIPTION}</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot35'>{MOD.Evaluation_Close_Date__c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot35b'>{EVALUATION_CLOSE_DATE_C}</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot36'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot36b'>&nbsp;</span sugar='slot'></td>
+	</tr>		<tr>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot37'>&nbsp;</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot37b'>&nbsp;</span sugar='slot'></td>
+	<td width="15%" valign="top" class="tabDetailViewDL"><span sugar='slot38'>{MOD.Partner_Assigned_To_c}</span sugar='slot'></td>
+	<td width="35%" valign="top" class="tabDetailViewDF"><span sugar='slot38b'>{PARTNER_ASSIGNED_TO_C}</span sugar='slot'></td>
+	</tr><tr>
+
+	<!-- BEGIN: pro -->
+	<td class="tabDetailViewDL"><span sugar='slot39'>{APP.LBL_TEAM}</span sugar='slot'></td>
+	<td class="tabDetailViewDF"><span sugar='slot39b'>{TEAM}</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot40'>&nbsp;</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot40b'>&nbsp;</span sugar='slot'></td>
+	<!-- END: pro -->
+
+	<!-- BEGIN: open_source -->
+	<td class="tabDetailViewDL"><span sugar='slot41'>&nbsp;</span sugar='slot'></td>
+	<td class="tabDetailViewDF"><span sugar='slot41b'>&nbsp;</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot42'>{MOD.LBL_PROBABILITY}</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot42b'>{PROBABILITY}</span sugar='slot'></td>
+	<!-- END: open_source -->
+	</tr><tr>
+	<td width="20%" valign="top" class="tabDetailViewDL"><span sugar='slot43'>{APP.LBL_ASSIGNED_TO}</span sugar='slot'></td>
+	<td width="30%" valign="top" class="tabDetailViewDF"><span sugar='slot43b'>{ASSIGNED_TO}</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot44'>{APP.LBL_DATE_MODIFIED}</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot44b'>{DATE_MODIFIED} {APP.LBL_BY} {MODIFIED_BY}</span sugar='slot'></td>
+	</tr><tr>
+	<td width="20%" valign="top" class="tabDetailViewDL"><span sugar='slot45'>{MOD.Associated_Rep_c}</span sugar='slot'></td>
+	<td width="30%" valign="top" class="tabDetailViewDF"><span sugar='slot45b'>{ASSOCIATED_REP_C}</span sugar='slot'></td>
+	<td width="20%" class="tabDetailViewDL"><span sugar='slot46'>{APP.LBL_DATE_ENTERED}</span sugar='slot'></td>
+	<td width="30%" class="tabDetailViewDF"><span sugar='slot46b'>{DATE_ENTERED} {APP.LBL_BY} {CREATED_BY}</span sugar='slot'></td>
+	</tr><tr>
+	<td width="20%" valign="top" valign="top" class="tabDetailViewDL"><span sugar='slot47'>{MOD.LBL_DESCRIPTION}</span sugar='slot'></td>
+	<td colspan="3" class="tabDetailViewDF"><span sugar='slot47b'>{DESCRIPTION}</span sugar='slot'></td>
+</tr></table>
+<!-- END: main -->
+<!-- BEGIN: subpanel -->
+<span sugar='slot48'>{SUBPANEL}</span sugar='slot'>
+<!-- END: subpanel -->

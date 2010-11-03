@@ -623,6 +623,11 @@ class SubPanelDefinitions
 			if (file_exists ( 'modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php' ))
 				require ('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php') ;
 
+            // SugarInternal Customization to fix bug 36328 which does not load custom subpaneldef.php files - jwhitcraft
+            if (file_exists ( 'custom/modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php' ))
+                                require ('custom/modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php') ;
+            // end customization for bug 36328 - jwhitcraft
+
 			if (! $original_only && file_exists ( 'custom/modules/' . $this->_focus->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php' ))
 				require ('custom/modules/' . $this->_focus->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php') ;
 

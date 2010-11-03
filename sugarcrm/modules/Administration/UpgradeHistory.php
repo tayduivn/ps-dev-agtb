@@ -81,7 +81,7 @@ class UpgradeHistory extends SugarBean
         $uh = new UpgradeHistory();
         if($patch_to_check != null){
         	
-        	if(empty($patch_to_check->id_name)){
+            if(empty($patch_to_check->id_name)){
             	$where = " WHERE name = '$patch_to_check->name' ";
             }else{
             	$where = " WHERE id_name = '$patch_to_check->id_name' ";	

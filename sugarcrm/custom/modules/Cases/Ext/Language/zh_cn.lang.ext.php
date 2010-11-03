@@ -1,0 +1,13 @@
+<?php 
+ //WARNING: The contents of this file are auto-generated
+
+
+//THIS FILE IS AUTO GENERATED, DO NOT MODIFY
+$mod_strings['LBL_E1_ESCALATIONS_CASES_FROM_E1_ESCALATIONS_TITLE'] = 'Escalations';
+
+
+//THIS FILE IS AUTO GENERATED, DO NOT MODIFY
+$mod_strings['LBL_E1_ESCALATIONS_CASES_FROM_E1_ESCALATIONS_TITLE'] = 'Escalations';
+$mod_strings['LBL_E1_ESCALATIONS_CASES_1_FROM_E1_ESCALATIONS_TITLE'] = 'Escalations';
+
+?>

@@ -35,8 +35,7 @@ require_once('include/MVC/View/views/view.edit.php');
 class MeetingsViewEdit extends ViewEdit
 {
  	/**
- 	 * @see SugarView::preDisplay()
- 	 *
+ 	 * preDisplay
  	 * Override preDisplay to check for presence of 'status' in $_REQUEST
  	 * This is to support the "Close And Create New" operation.
  	 */
@@ -73,3 +72,4 @@ class MeetingsViewEdit extends ViewEdit
  		parent::display();
  	}
 }
+?>

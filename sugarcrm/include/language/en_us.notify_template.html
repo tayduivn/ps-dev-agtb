@@ -60,6 +60,9 @@ SugarCRM Case - {CASE_SUBJECT}
 <!-- BEGIN: Case -->
 {ASSIGNER} has assigned a Case to {ASSIGNED_USER}.
 
+Account: {ACCOUNT_NAME}
+Support Service Level: {SUPPORT_SERVICE_LEVEL}
+
 Subject: {CASE_SUBJECT}
 Priority: {CASE_PRIORITY}
 Status: {CASE_STATUS}
@@ -68,6 +71,22 @@ Description: {CASE_DESCRIPTION}
 You may review this Case at:
 <{URL}>
 <!-- END: Case -->
+
+
+<!-- BEGIN: ITRequest_Subject -->
+SugarCRM ITRequest - {ITREQUEST_SUBJECT}
+<!-- END: ITRequest_Subject -->
+<!-- BEGIN: ITRequest -->
+{ASSIGNER} has assigned an ITRequest to {ASSIGNED_USER}.
+
+Subject: {ITREQUEST_SUBJECT}
+Priority: {ITREQUEST_PRIORITY}
+Status: {ITREQUEST_STATUS}
+Description: {ITREQUEST_DESCRIPTION}
+
+You may review this ITRequest at:
+<{URL}>
+<!-- END: ITRequest -->
 
 
 <!-- BEGIN: Task_Subject -->
@@ -143,6 +162,51 @@ You may review this Email at:
 <!-- END: Email -->
 
 
+<!-- BEGIN: BugUpdated_Subject -->
+SugarCRM Bug Update: {BUG_SUBJECT}
+<!-- END: BugUpdated_Subject -->
+<!-- BEGIN: BugUpdated -->
+{ASSIGNER} has updated a bug:
+
+Bug Number: {BUG_BUG_NUMBER}
+Subject: {BUG_SUBJECT}
+{PRIORITY_CHANGED}Priority: {BUG_PRIORITY}
+{STATUS_CHANGED}Status: {BUG_STATUS}
+{TYPE_CHANGED}Type: {BUG_TYPE}
+{FIXED_IN_RELEASE_CHANGED}Fixed in Release: {BUG_FIXED_IN_RELEASE}
+{RESOLUTION_CHANGED}Resolution: {BUG_RESOLUTION}
+
+(*) denotes an updated field
+
+{REVIEW_BUG_TEXT}
+<!-- END: BugUpdated -->
+
+<!-- BEGIN: Note_Subject -->
+SugarCRM New Note [{PARENT_TYPE_UPPER}:{PARENT_NUMBER}]: {NOTE_SUBJECT}
+<!-- END: Note_Subject -->
+<!-- BEGIN: Note -->
+{ASSIGNER} has created a new Note:
+
+{PARENT_TYPE} Number: {PARENT_NUMBER}
+{PARENT_TYPE} Name: {PARENT_NAME}
+Subject: {NOTE_SUBJECT}
+{NOTE_ATTACHMENT_LINE}Note: {NOTE_NOTE}
+
+{REVIEW_NOTE_TEXT}
+<!-- END: Note -->
+
+<!-- BEGIN: MoofCartNote_Subject -->
+SugarCRM New Note: {NOTE_SUBJECT}
+<!-- END: MoofCartNote_Subject -->
+<!-- BEGIN: MoofCartNote -->
+MoofCart has created a new Note:
+
+{PARENT_TYPE} Name: {PARENT_NAME}
+Subject: {NOTE_SUBJECT}
+Note: {NOTE_NOTE}
+
+{REVIEW_NOTE_TEXT}
+<!-- END: MoofCartNote -->
 
 
 
@@ -161,6 +225,38 @@ You may review this Contact at:
 <!-- END: Contact -->
 
 
+<!-- BEGIN: LeadAccount_Subject -->
+SugarCRM Lead Company - {LEAD_NAME}
+<!-- END: LeadAccount_Subject -->
+<!-- BEGIN: LeadAccount -->
+{ASSIGNER} has assigned a Lead Company to {ASSIGNED_USER}.
+
+Name: {LEAD_NAME}
+Campaign: {LEAD_CAMPAIGN_NAME}
+Description: {LEAD_DESCRIPTION}
+
+You may review this Lead Company at:
+<{URL}>
+<!-- END: LeadAccount -->
+
+<!-- BEGIN: LeadContact_Subject -->
+SugarCRM Lead Person - {LEAD_NAME}
+<!-- END: LeadContact_Subject -->
+<!-- BEGIN: LeadContact -->
+{ASSIGNER} has assigned a Lead Person to {ASSIGNED_USER}.
+
+Name: {LEAD_NAME}
+Status: {LEAD_STATUS}
+Phone: {LEAD_PHONE_WORK}
+Email: {LEAD_EMAIL1}
+Lead Company Name: {LEAD_ACCOUNT_NAME}
+Campaign: {LEAD_CAMPAIGN_NAME}
+Description: {LEAD_DESCRIPTION}
+
+You may review this Lead Person at:
+<{URL}>
+<!-- END: LeadContact -->
+
 <!-- BEGIN: Lead_Subject -->
 SugarCRM Lead - {LEAD_NAME}
 <!-- END: Lead_Subject -->
@@ -170,6 +266,11 @@ SugarCRM Lead - {LEAD_NAME}
 Name: {LEAD_NAME}
 Lead Source: {LEAD_SOURCE}
 Status: {LEAD_STATUS}
+Phone: {LEAD_PHONE_WORK}
+Email: {LEAD_EMAIL1}
+Account Name: {LEAD_ACCOUNT_NAME}
+Campaign: {LEAD_CAMPAIGN_NAME}
+Refered By: {REFERED_BY}
 Description: {LEAD_DESCRIPTION}
 
 You may review this Lead at:
@@ -289,7 +390,7 @@ SugarCRM Quotas - Your Quota for {QUOTA_TIMEPERIOD}
 Amount: {QUOTA_AMOUNT}
 Timeperiod: {QUOTA_TIMEPERIOD}
 
-You may review this Quota assignment at:
+You may review this Quota assignment at: 
 <{QUOTA_URL}>
 <!-- END: Quota -->
 
@@ -299,10 +400,10 @@ SugarCRM Document - {KBDOCUMENT_NAME}
 <!-- BEGIN: KBDocument -->
 
 {NOTIFICATION_MESSAGE}
-
+ 
 Name: {KBDOCUMENT_NAME}
 Created Date: {KBDOCUMENT_DATE_CREATED}
-Created By: {KBDOCUMENT_CREATED_BY}
+Created By: {KBDOCUMENT_CREATED_BY} 
 Status: {KBDOCUMENT_STATUS}
 Description: {KBDOCUMENT_DESCRIPTION}
 

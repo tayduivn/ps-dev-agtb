@@ -860,7 +860,11 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
     $result=$GLOBALS['db']->query($update);
     
     //get affected row count...
-    $count=$GLOBALS['db']->getAffectedRowCount();
+    if ($GLOBALS['db']->dbType=='oci8')
+        $count=$GLOBALS['db']->getRowCount($result);
+    else {
+        $count=$GLOBALS['db']->getAffectedRowCount($result);
+    }
     if ($count==0) {
         $data=array();
         
@@ -881,8 +885,38 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 }     
 
     function track_campaign_prospects($focus){
-		$delete_query="delete from campaign_log where campaign_id='{$focus->id}' and activity_type='targeted'";
-		$focus->db->query($delete_query);
+        global $mod_strings;
+        
+         //load target list relationships
+        $focus->load_relationship('prospectlists');
+        $target_lists = $focus->prospectlists->get();
+        $prospect_lists = array();
+               
+
+        //retrieve the default target list if it exists
+        foreach($target_lists as $list){
+             //create subscription list     
+             $p_list = new ProspectList();
+             $p_list->retrieve($list);
+             if($p_list->list_type == 'default'){
+                $prospect_lists[] = $p_list;
+             }
+        }
+        //list does not exist, send back error message
+        if(count($prospect_lists) == 0){
+            return $mod_strings['LBL_DEFAULT_LIST_NOT_FOUND'];
+        }
+        
+        //iterate through each Prospect list and make sure entries exist.
+        $entry_count =0;
+        foreach($prospect_lists as $default_target_list){
+            $entry_count = $entry_count + $default_target_list->get_entry_count();
+        }
+        //if no entries exist, then return error message.
+        if($entry_count == 0){
+            return $mod_strings['LBL_DEFAULT_LIST_ENTRIES_NOT_FOUND'];
+        }
+        
 
 		$query="SELECT prospect_lists.id prospect_list_id from prospect_lists ";
 		$query.=" INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = prospect_lists.id";
@@ -937,6 +971,7 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
         global $mod_strings;
         //return success message   
         return $mod_strings['LBL_DEFAULT_LIST_ENTRIES_WERE_PROCESSED'];
+        
     }
     
     function create_campaign_log_entry($campaign_id, $focus, $rel_name, $rel_bean, $target_id = ''){

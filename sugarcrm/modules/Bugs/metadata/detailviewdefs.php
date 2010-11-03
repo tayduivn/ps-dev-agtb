@@ -45,20 +45,36 @@ $viewdefs['Bugs']['DetailView'] = array(
   'lbl_bug_information'=>array( 
 	  array (
 	    'bug_number',
-	    'priority',
+	    'assigned_user_name',
 	  ),
 	  
 	  array (
-	    array (
-	      'name' => 'name',      
-	      'label' => 'LBL_SUBJECT',
-	    ),	  
+	    'priority',
+			'team_name', 
+	  ),
+	  
+	  array (
 	    'status',
 	  ),
 	  
 	  array (
 	    'type',
+	    
+	     array (
+	      'name' => 'date_modified',
+	      'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
+	      'label' => 'LBL_DATE_MODIFIED',
+	    ),
+	  ),
+	  
+	  array (
 	    'source',
+	    
+	    array (
+	      'name' => 'date_entered',
+	      'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
+	      'label' => 'LBL_DATE_ENTERED',
+	    ),
 	  ),
 	  
 	  array (
@@ -67,11 +83,23 @@ $viewdefs['Bugs']['DetailView'] = array(
 	  ),
 	  
 	  array (
+	    
 	    array (
 	      'name' => 'found_in_release',
 	      'label' => 'LBL_FOUND_IN_RELEASE',      
 	    ),    
 	    'fixed_in_release',
+	  ),
+	  
+	  array (
+	  ),
+	  
+	  array (
+	    
+	    array (
+	      'name' => 'name',      
+	      'label' => 'LBL_SUBJECT',
+	    ),
 	  ),
 	  
 	  array (

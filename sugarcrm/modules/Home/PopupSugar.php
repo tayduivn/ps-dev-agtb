@@ -49,10 +49,18 @@ switch($_REQUEST['style']){
 			 break;
 			 
 }
-
-$founders = array("<b>Founders:</b>", 'John Roberts', 'Clint Oram', 'Jacob Taylor');
-
-$body =  implode('<br>', $founders) . "<br><br><b>Developers:</b><br>" . implode('<br>', $sugarteam);
+/*
+** SUGARINTERNAL CUSTOMIZATION
+** Description: Change text in body of about popup
+*/
+$special = array("<br><br><b>Special Thanks To</b>",
+					 "Josh Stein",
+					 "Mary Coleman",
+					 "Larry Augustin",
+					 "Scott Sandell",
+					 "<br><br><p>&copy; 2010 SugarCRM Inc. All Rights Reserved.");
+$body =  "<p><b>Sugar Team Members</b></p>" . implode('<br>', $sugarteam) . implode('<br>', $special);
+//END CUSTOMIZATION
 ?>
 <script>
 	var user_notices = new Array();

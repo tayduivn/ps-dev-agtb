@@ -46,7 +46,7 @@ class OpportunitiesQuickCreate extends QuickCreate {
         $this->ss->assign('NUM_GRP_SEP', $num_grp_sep);
         $this->ss->assign('DEC_SEP', $dec_sep);
         $this->ss->assign('CURRENCY_ID', $current_user->getPreference('currency'));
-  
+
         $this->ss->assign("SALES_STAGE_OPTIONS", get_select_options_with_id($app_list_strings['sales_stage_dom'], ''));
         $this->ss->assign("LEAD_SOURCE_OPTIONS", get_select_options_with_id($app_list_strings['lead_source_dom'], ''));
         $this->ss->assign('prob_array', $json->encode($app_list_strings['sales_probability_dom']));        

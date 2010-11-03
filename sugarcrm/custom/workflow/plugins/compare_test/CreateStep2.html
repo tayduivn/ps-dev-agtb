@@ -1,0 +1,147 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+/*********************************************************************************
+ * $Id: CreateStep2.html,v 1.1 2006/07/07 22:00:05 jgreen Exp $
+ * Description:
+ ********************************************************************************/
+-->
+<!-- BEGIN: embeded -->
+<script type="text/javascript" src="include/workflow/jutils.js"></script>
+<script>
+function changehref_text(href_object, selected_text){
+	
+	this.document.getElementById(href_object).innerHTML = selected_text;
+	
+//end function changehref_text
+}
+
+function getCheckedValue(radioObj) {
+	if(!radioObj)
+		return "";
+	var radioLength = radioObj.length;
+	if(radioLength == undefined)
+		if(radioObj.checked)
+			return radioObj.value;
+		else
+			return "";
+	for(var i = 0; i < radioLength; i++) {
+		if(radioObj[i].checked) {
+			return radioObj[i].value;
+		}
+	}
+	return "";
+}	
+
+</script>
+<script>
+	
+function confirm_safety(){
+
+		var check_one = "";		
+
+		check_one = confirm_value_present('compare_test_list_array', 'You must enter an element in the array');
+		
+		if(check_one==false){
+			return false;
+		} else {
+			return true;	
+		}	
+//end function confirm_safety
+}	
+
+
+
+</script>
+<!-- END: embeded -->
+<!-- BEGIN: main -->
+
+{SET_RETURN_JS}
+
+
+<table cellpadding="0" cellspacing="0" border="0" width="100%" class="tabForm">
+<tr><td>
+<table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+			<form name="EditView" method="POST" action="index.php">
+			<input type="hidden" name="module" value="WorkFlowTriggerShells">
+			<input type="hidden" id='record' name="record" value="{ID}">
+			<input type="hidden" id='workflow_id' name="workflow_id" value="{WORKFLOW_ID}">
+			<input type="hidden" id='parent_id' name="parent_id" value="{PARENT_ID}">
+			<input type="hidden" name="action" value="CustomPlugin">
+			<input type="hidden" name="plugin_action" value="Save">
+			<input type="hidden" name="plugin_module" value="compare_test">
+			<input type="hidden" name="return_module" value="{RETURN_MODULE}">
+			<input type="hidden" name="return_id" value="{RETURN_ID}">
+			<input type="hidden" name="return_action" value="{RETURN_ACTION}">
+			<input type="hidden" name="to_pdf" value="true">
+			<input type="hidden" id='type' name="type" value="{TYPE}">
+			<input type="hidden" id='field' name="field" value="{FIELD}">
+			<input type="hidden" name="frame_type" value="{FRAME_TYPE}">
+			<input type="hidden" id='base_module' name="base_module" value="{BASE_MODULE}">
+			<td></td></tr>
+</table>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">	
+		<tr>
+		<td class="dataLabel" colspan="2"><slot>{FILTER_TOP_DISPLAY}</slot></td>
+		</tr>	
+		<tr>
+		<td>&nbsp;</td>
+		</tr>
+		<tr>
+		<td colspan="4">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0"  class="tabDetailView" height="50px">
+		<tr>
+		<td class="tabDetailViewDF">{PREV_DISPLAY_TEXT}</td>
+		</tr>
+		<tr>
+		<td class="tabDetailViewDF"><slot><BR><i>Please ensure each element is seperated by a comma.  The last element in the list should not be followed with a comma</i><br>
+		<BR><textarea id='compare_test_list_array' name='compare_test_list_array' tabindex='5' cols="60" rows="8">{LIST_ARRAY}</textarea></slot></td>
+		</tr>
+		<tr>
+		<td class="tabDetailViewDF">&nbsp;</td>
+		</tr>	
+		</table>		
+		</td>
+		</tr>
+		<tr>
+		<td>&nbsp;</td>
+		</tr>
+	<tr>
+	<td align='right' colspan="2">
+	<input type='submit' class='button' value='{APP.LBL_SAVE_BUTTON_LABEL}' id='save' name='save' title='{APP.LBL_SAVE_BUTTON_LABEL}' onclick="return confirm_safety();">
+	<input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.close();" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
+	</td>
+	</tr>	
+		</form>
+</table>
+
+<script>
+{SPECIAL_JAVASCRIPT}
+</script>
+
+<!-- END: main -->
+

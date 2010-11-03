@@ -167,7 +167,6 @@ $dictionary['Contract'] = array(
             'vname'=>'LBL_CURRENCY',
             'function'=>'getCurrencyDropDown',
             'source' => 'non-db',
-            'studio' => 'false',
             'comment' => 'Currency name used for Meta-data framework',
         ),
 
@@ -220,7 +219,7 @@ $dictionary['Contract'] = array(
 		'expiration_notice' => array (
 			'name' => 'expiration_notice',
 			'vname' => 'LBL_EXPIRATION_NOTICE',
-			'type' => 'datetimecombo',
+			'type' => 'datetime',
 			'reportable' => false,
 			'massupdate' => false,
 			'comment' => 'Date to issue an expiration notice (useful for workflow rules)'

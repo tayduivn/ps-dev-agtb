@@ -97,7 +97,15 @@ function pollMonitoredInboxes() {
 
 	$ie = new InboundEmail();
 	$emailUI = new EmailUI();
-	$r = $ie->db->query('SELECT id, name FROM inbound_email WHERE is_personal = 0 AND deleted=0 AND status=\'Active\' AND mailbox_type != \'bounce\'');
+/*
+** @author: Sadek, Jon
+** SUGARINTERNAL CUSTOMIZATION
+** ITRequest #: 3919
+** Description: CHANGED QUERY TO Only POLL SUPPORT INBOX and Orders Inbox
+** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/AddJobsHere
+*/
+	$r = $ie->db->query('SELECT id, name FROM inbound_email WHERE is_personal = 0 AND deleted=0 AND status=\'Active\' AND mailbox_type != \'bounce\' and name IN (\'Support Inbox\',\'Orders Inbox\') ');
+/* END SUGARINTERNAL CUSTOMIZATION */
 	$GLOBALS['log']->debug('Just got Result from get all Inbounds of Inbound Emails');
 
 	while($a = $ie->db->fetchByAssoc($r)) {

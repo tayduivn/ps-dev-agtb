@@ -31,7 +31,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '50',
     'comment' => 'Brief description of the call',
     'unified_search' => true,
-	'required'=>true,
     'importable' => 'required',
   ),
 
@@ -41,8 +40,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'vname' => 'LBL_DURATION_HOURS',
     'type' => 'int',
     'len' => '2',
-    'comment' => 'Call duration, hours portion',
-	'required' => true,
+    'comment' => 'Call duration, hours portion'
   ),
   'duration_minutes' =>
   array (
@@ -52,7 +50,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'function' => array('name'=>'getDurationMinutesOptions', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php'),
     'len' => '2',
     'group'=>'duration_hours',
-    'importable' => 'required',
     'comment' => 'Call duration, minutes portion'
   ),
 
@@ -61,10 +58,8 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'name' => 'date_start',
     'vname' => 'LBL_DATE',
     'type' => 'datetimecombo',
-    'dbType' => 'datetime',
     'comment' => 'Date in which call is schedule to (or did) start',
     'importable' => 'required',
-	'required' => true,
   ),
 
   'date_end' =>
@@ -84,8 +79,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'dbType'=>'varchar',
   	'required'=>false,
   	'group'=>'parent_name',
-    'options'=> 'parent_type_display',
-  	'len'=>255,
+  	'len'=>25,
       'comment' => 'The Sugar object to which the call is related'
   	),
 
@@ -108,9 +102,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'enum',
     'len' => 100,
     'options' => 'call_status_dom',
-    'comment' => 'The status of the call (Held, Not Held, etc.)',
-	'required' => true,
-	'importable' => 'required',
+    'comment' => 'The status of the call (Held, Not Held, etc.)'
   ),
   'direction' =>
   array (
@@ -143,7 +135,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'name' => 'reminder_time',
     'vname' => 'LBL_REMINDER_TIME',
     'type' => 'int',
-    'function' => array('name'=>'getReminderTime', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php', 'onListView'=>true),
+    'function' => array('name'=>'getReminderTime', 'returns'=>'html', 'include'=>'modules/Calls/CallHelper.php'),
     'required' => false,
     'reportable' => false,
     'default' => -1,
@@ -186,7 +178,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
     'len' => 36,
     'importable' => 'false',
-    'studio' => array('required' => false, 'listview'=>true),
+  	'studio' => 'false',
   ),
   'account' =>
   array (
@@ -298,7 +290,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 		'name' => 'contact_id',
 		'type' => 'id',
 		'source' => 'non-db',
-		'importable' => false,
 	),
 ),
 'indices' => array (

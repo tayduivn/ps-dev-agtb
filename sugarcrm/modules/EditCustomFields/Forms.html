@@ -1,0 +1,56 @@
+<!--
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+-->
+
+<!-- BEGIN: main -->
+<form action="index.php" method="post" name="quick_save">
+<input type="hidden" name="module" value="EditCustomFields" />
+<input type="hidden" name="action" value="Save" />
+<input type="hidden" name="return_action" value="index" />
+<input type="hidden" name="return_module" value="EditCustomFields" />
+<input type="hidden" name="return_module_select" value="{return_module_select}" />
+<input type="hidden" name="custom_module" value="{return_module_select}" />
+<p>
+{mod.COLUMN_TITLE_NAME}<br />
+<input type="text" name="name" value="" /><br />
+{mod.COLUMN_TITLE_LABEL}<br />
+<input type="text" name="label" value="" /><br />
+{mod.COLUMN_TITLE_DATA_TYPE}<br />
+<select name="data_type">{data_type_options}</select><br />
+{mod.COLUMN_TITLE_MAX_SIZE}<br />
+<input type="text" name="max_size" value="" /><br />
+{mod.COLUMN_TITLE_REQUIRED_OPTION}<br />
+<input type="checkbox" name="required_option" value="1" /><br />
+{mod.COLUMN_TITLE_DEFAULT_VALUE}
+<input type="text" name="default_value" value="" /><br />
+</p>
+<p><input class="button" title="{app.LBL_SAVE_BUTTON_TITLE}"
+	type="submit" name="button" value="{app.LBL_SAVE_BUTTON_LABEL}"
+	accessKey="{app.LBL_SAVE_BUTTON_KEY}" /></p>
+</form>
+<!-- END: main -->

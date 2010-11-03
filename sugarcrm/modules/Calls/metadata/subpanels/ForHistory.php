@@ -47,16 +47,16 @@ $subpanel_layout = array(
 			 'widget_class' => 'SubPanelDetailViewLink',
 			 'width' => '30%',
 		),
+		'reply_to_status' => array(
+			 'usage'				=> 'query_only',
+             'force_exists'			=> true,
+             'force_default'		=> 0,
+		),
 		'status'=>array(
 			 'widget_class' => 'SubPanelActivitiesStatusField',
 			 'vname' => 'LBL_LIST_STATUS',
 			 'width' => '15%',
 			 'force_exists'=>true //this will create a fake field in the case a field is not defined
-		),
-		'reply_to_status' => array(
-			 'usage'				=> 'query_only',
-             'force_exists'			=> true,
-             'force_default'		=> 0,
 		),
 		'contact_name'=>array(
 			 'widget_class'			=> 'SubPanelDetailViewLink',
@@ -78,14 +78,6 @@ $subpanel_layout = array(
 			'usage'=>'query_only',
 			'force_exists'=>true
 		),
-		'parent_id'=>array(
-            'usage'=>'query_only',
-			'force_exists'=>true
-        ),
-		'parent_type'=>array(
-            'usage'=>'query_only',
-			'force_exists'=>true
-        ),
 		'date_modified'=>array(
 			'vname' => 'LBL_LIST_DATE_MODIFIED',
 			'width' => '10%',

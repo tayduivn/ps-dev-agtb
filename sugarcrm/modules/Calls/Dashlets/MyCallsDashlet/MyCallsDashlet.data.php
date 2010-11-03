@@ -31,9 +31,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $current_user;
 
-$dashletData['MyCallsDashlet']['searchFields'] = array(
-													   
-                                                       'name'        => array('default' => ''),
+$dashletData['MyCallsDashlet']['searchFields'] = array('date_start'       => array('default' => ''),
+                                                       'direction'        => array('default' => ''),
                                                        'status'           => array('default' => array('Planned')),
                                                        'date_entered'       => array('default' => ''),
                                                        'date_start'             => array('default' => ''),
@@ -60,23 +59,20 @@ $dashletData['MyCallsDashlet']['columns'] = array('set_complete' => array('width
                                                                          'link' => true,
                                                                          'id' => 'PARENT_ID',
                                                                          'ACLTag' => 'PARENT',
-                                                                         'related_fields' => array('parent_id', 'parent_type'),
-																		 'default' => true,
-																		),
-                                                  
+                                                                         'related_fields' => array('parent_id', 'parent_type')),
                                                   'duration' => array('width'    => '10', 
                                                                       'label'    => 'LBL_DURATION',
+                                                                      'default'  => true,
                                                                       'sortable' => false,
                                                                       'related_fields' => array('duration_hours', 'duration_minutes')),
                                                   'direction' => array('width'   => '10', 
-                                                                       'label'   => 'LBL_DIRECTION'),  
+                                                                       'label'   => 'LBL_DIRECTION'), 
                                                   'date_start' => array('width'   => '15', 
                                                                         'label'   => 'LBL_DATE',
                                                                         'default' => true,
                                                                         'related_fields' => array('time_start')),                               
                                                   'status' => array('width'   => '8', 
-                                                                    'label'   => 'LBL_STATUS',
-																	'default'  => true),
+                                                                    'label'   => 'LBL_STATUS'),
                                                   'date_entered' => array('width'   => '15', 
                                                                           'label'   => 'LBL_DATE_ENTERED'),
                                                   'date_modified' => array('width'   => '15', 

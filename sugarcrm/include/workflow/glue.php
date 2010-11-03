@@ -313,6 +313,8 @@ class WorkFlowGlue {
 		
 		$eval_string .= ")  \n";
 		
+		_ppd($eval_string);
+		
 		return $eval_string;
 		
 	//end function glue_date

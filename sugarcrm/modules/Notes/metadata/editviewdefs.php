@@ -53,8 +53,12 @@ function deleteAttachmentCallBack(text)
 	'panels' =>array (
   		'lbl_note_information' => array (
   					array ('contact_name','parent_name'),
+				    array(
+				    	array('name'=>'team_name','displayParams'=>array('required'=>true)),
+				    	''
+				    ),
 	    			array (
-                        array('name'=>'name', 'displayParams'=>array('size'=>60)),''
+                        array('name'=>'name', 'label'=>'LBL_SUBJECT', 'displayParams'=>array('size'=>100, 'required'=>true)),
                     ),
 					array ( 
 						array (
