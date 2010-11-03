@@ -54,8 +54,7 @@ class PercentageDiscount {
 			$precision = (empty($precision_val) ? $sugar_config['default_currency_significant_digits'] : $precision_val);			
 		}	
 		$the_script = "form.discount_price.readOnly = true;\n";
-		$the_script .= 	"this.document.getElementById('discount_price').value = unformatNumber(this.document.getElementById('list_price').value, num_grp_sep, dec_sep) * (1 - (unformatNumber(this.document.getElementById('pricing_factor_PercentageDiscount').value, num_grp_sep, dec_sep) /100));\n";
-	    $the_script .= "this.document.getElementById('discount_price').value = formatNumber(this.document.getElementById('discount_price').value, num_grp_sep, dec_sep, $precision, $precision);\n";
+		$the_script .= 	"this.document.getElementById('discount_price').value = formatNumber(Math.round(unformatNumber(this.document.getElementById('list_price').value, num_grp_sep, dec_sep) * (1 - (unformatNumber(this.document.getElementById('pricing_factor_PercentageDiscount').value, num_grp_sep, dec_sep) /100))*100)/100, num_grp_sep, dec_sep, $precision, $precision);\n";
 		return $the_script;  
 	}
 

@@ -156,7 +156,7 @@ $viewdefs['ProductTemplates']['EditView'] = array(
     ),
     
     array (
-      array('name'=>'description','label'=> 'LBL_DESCRIPTION', 'displayParams'=>array('rows'=>8, 'cols'=>60)),
+      array('name'=>'description','label'=> 'LBL_DESCRIPTION'),
     ),
   ),
 )

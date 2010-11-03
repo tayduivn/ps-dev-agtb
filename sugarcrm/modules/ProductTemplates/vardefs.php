@@ -37,7 +37,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'name' => 'deleted',
 		'vname' => 'LBL_DELETED',
 		'type' => 'bool',
-		'required' => true,
+		'required' => false,
 		'default' => '0',
 		'reportable'=>false,
 		'importable' => 'false',
@@ -168,6 +168,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'len' => '50',
 		'comment' => 'Name of the product',
 		'importable' => 'required',
+        'required' => true,
 	),
 	'mft_part_num' =>
 	array (
@@ -202,6 +203,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'len' => '26,6',
 		'comment' => 'Product cost ("Cost" in Quote)',
 		'importable' => 'required',
+        'required' => true,
 	),
 	'discount_price' =>
 	array (
@@ -212,6 +214,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'len' => '26,6',
 		'comment' => 'Discounted price ("Unit Price" in Quote)',
 		'importable' => 'required',
+        'required' => true,
 	),
 	'list_price' =>
 	array (
@@ -221,13 +224,14 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'type' => 'currency',
 		'len' => '26,6',
 	    'importable' => 'required',
+        'required' => true,
 		'comment' => 'List price of product ("List" in Quote)'
 	),
 	'cost_usdollar' =>
 	array (
 		'name' => 'cost_usdollar',
 		'vname' => 'LBL_COST_USDOLLAR',
-		'type' => 'decimal',
+		'type' => 'currency',
 		'len' => '26,6',
 		'comment' => 'Cost expressed in USD'
 	),
@@ -235,7 +239,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	array (
 		'name' => 'discount_usdollar',
 		'vname' => 'LBL_DISCOUNT_USDOLLAR',
-		'type' => 'decimal',
+		'type' => 'currency',
 		'len' => '26,6',
 		'comment' => 'Discount price expressed in USD'
 	),
@@ -243,7 +247,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	array (
 		'name' => 'list_usdollar',
 		'vname' => 'LBL_LIST_USDOLLAR',
-		'type' => 'decimal',
+		'type' => 'currency',
 		'len' => '26,6',
 		'comment' => 'List price expressed in USD'
 	),
@@ -314,7 +318,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'name' => 'weight',
 		'vname' => 'LBL_WEIGHT',
 		'type' => 'decimal',
-		'len' => '12,2',
+		'len' => '12',
+        'precision' => '2',
 		'comment' => 'Weight of the product'
 	),
 	'qty_in_stock' =>
@@ -378,8 +383,9 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	array (
 		'name' => 'pricing_factor',
 		'vname' => 'LBL_PRICING_FACTOR',
-		'type' => 'int',
-		'len' => '4',
+		'type' => 'decimal',
+		'len' => '8',
+        'precision' => '2',
 		'comment' => 'Variable pricing factor depending on pricing_formula'
 	),
 	'account_name'=>array(

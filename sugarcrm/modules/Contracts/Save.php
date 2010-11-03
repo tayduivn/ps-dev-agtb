@@ -43,17 +43,6 @@ if(!empty($_POST['expiration_notice_time_meridiem']) && !empty($_POST['expiratio
 
 $sugarbean = new Contract();
 $sugarbean = populateFromPost('', $sugarbean);
-if (!empty($sugarbean->expiration_notice_date) or !empty($sugarbean->expiration_notice_time)) {
-	$now=gmdate($GLOBALS['timedate']->get_db_date_time_format());
-	if (empty($sugarbean->expiration_notice_date)) {
-		$sugarbean->expiration_notice_date=$timedate->to_display_date($now);
-	}
-	if (empty($sugarbean->expiration_notice_time)) {
-		$sugarbean->expiration_notice_time=$timedate->to_display_time($now);
-	}
-	$sugarbean->expiration_notice = $sugarbean->expiration_notice_date . ' ' . $sugarbean->expiration_notice_time;
-}
-
 
 if (!$sugarbean->ACLAccess('Save')) {
 	ACLController :: displayNoAccess(true);
@@ -63,7 +52,7 @@ if(empty($sugarbean->id)) {
     $sugarbean->id = create_guid();
     $sugarbean->new_with_id = true;
 }
-$sugarbean->unformat_all_fields();  // this is to transform the displayed numbers back into database-formated numbers.
+
 $check_notify = isset($GLOBALS['check_notify']) ? $GLOBALS['check_notify'] : false;
 $sugarbean->save($check_notify);
 $return_id = $sugarbean->id;

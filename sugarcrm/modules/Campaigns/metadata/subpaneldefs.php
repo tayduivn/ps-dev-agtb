@@ -194,5 +194,5 @@ $layout_defs['Campaigns'] = array(
         ),           
         
 	),
-);	
+);		
 ?>

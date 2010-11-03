@@ -83,7 +83,7 @@ $subpanel_layout = array(
 		 	'module' => 'Leads',
 	 		'width' => '4%',
 		),
-		'total_usdollar'=>array(
+		'currency_id'=>array(
 			'usage'=>'query_only',
 		),
 	),

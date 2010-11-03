@@ -310,8 +310,9 @@ class Prospect extends Person {
         }
     }
 
+    
+	function get_unlinked_email_query($type=array()) {
+		
+		return get_unlinked_email_query($type, $this);
+	}
 }
-
-
-
-?>

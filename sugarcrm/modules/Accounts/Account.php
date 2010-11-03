@@ -27,18 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once("include/SugarObjects/templates/company/Company.php");
 
-/*
-** @sadek (engineering m2)
-** SUGARINTERNAL CUSTOMIZATION
-** ITRequest #: none
-** Bug #: none
-** Description: require files for use in this class
-** Wiki customization page:
-*/
-require_once('modules/LeadContacts/LeadContact.php');
-require_once('modules/LeadAccounts/LeadAccount.php');
-/* END SUGARINTERNAL CUSTOMIZATION */
-
 // Account is used to store account information.
 class Account extends Company {
 	var $field_name_map = array();
@@ -170,40 +158,6 @@ class Account extends Company {
 			$_REQUEST['parent_id'] = '';	
 		}
 	}
-
-        /*
-        ** @sadek (engineering m2)
-        ** SUGARINTERNAL CUSTOMIZATION
-        ** ITRequest #: none
-        ** Bug #: none
-        ** Description: custom logic for workflow for M2
-        ** Wiki customization page:
-        */
-        /**
-         * Does a bit of overloading on save()
-         */
-        function save($check_notify=false) {
-        $this->add_address_streets('billing_address_street');
-        $this->add_address_streets('shipping_address_street');
-        $ori_in_workflow = empty($this->in_workflow) ? false : true;
-        $this->emailAddress->handleLegacySave($this, $this->module_dir);
-        parent::save($check_notify);
-        $override_email = array();
-        if(!empty($this->email1_set_in_workflow)) {
-            $override_email['emailAddress0'] = $this->email1_set_in_workflow;
-        }
-        if(!empty($this->email2_set_in_workflow)) {
-            $override_email['emailAddress1'] = $this->email2_set_in_workflow;
-        }
-        if(!isset($this->in_workflow)) {
-            $this->in_workflow = false;
-        }
-        if($ori_in_workflow === false || !empty($override_email)){
-            $this->emailAddress->save($this->id, $this->module_dir, $override_email,'','','','',$this->in_workflow);
-        }
-                return $this;
-        }
-        /* END SUGARINTERNAL CUSTOMIZATION */
 	
 	function get_summary_text()
 	{
@@ -430,59 +384,9 @@ class Account extends Company {
 		}
 		return false;
 	}
-        /*
-        ** @sadek (engineering m2)
-        ** SUGARINTERNAL CUSTOMIZATION
-        ** ITRequest #: none
-        ** Bug #: none
-        ** Description: custom logic for email address handling for M2
-        ** Wiki customization page:
-        */
-        function retrieve($id = -1, $encode=true) {
-                $ret_val = parent::retrieve($id, $encode);
-                $this->emailAddress->handleLegacyRetrieve($this);
-                return $ret_val;
-        }
-        /* END SUGARINTERNAL CUSTOMIZATION */
 	function get_unlinked_email_query($type=array()) {
 		
 		return get_unlinked_email_query($type, $this);
 	}
-        /*
-        ** @sadek (engineering m2)
-        ** SUGARINTERNAL CUSTOMIZATION
-        ** ITRequest #: none
-        ** Bug #: http://internalwiki.sjc.sugarcrm.pvt/index.php/ENG/PM_Notes#Use_of_Autoloader_to_override_beans
-        ** Description: This is a custom function so we can retrieve interactions for a subpanel on the accounts module
-        */
-    /**
-     * Returns the interactions query parts; ready to be consumed by a subpaneldef
-     */
-    public function getInteractionsQuery()
-    {
-        $return_array['select'] = 'SELECT interactions.id ';
-        $return_array['from']   = 'FROM interactions ';
-        $return_array['where']  = " WHERE ( (parent_type = '{$this->module_dir}' AND parent_id = '{$this->id}') ";
-        $return_array['join'] = "";
-        $return_array['join_tables'][0] = '';
-
-        $this->load_relationship('contacts');
-        foreach ($this->build_related_list($this->contacts->getQuery(), new Contact) as $contact)
-            $return_array['where'] .= " OR (parent_type = 'Contacts' AND parent_id = '{$contact->id}')";
-
-        $leadAccountFocus = new LeadAccount;
-        $leadAccountFocus->retrieve_by_string_fields(array('account_id'=>$this->id));
-        if ( !empty($leadAccountFocus->id) ) {
-            $return_array['where'] .= " OR (parent_type = 'LeadAccounts' AND parent_id = '{$leadAccountFocus->id}')";
-            $leadAccountFocus->load_relationship('leadcontacts');
-            foreach ( $leadAccountFocus->build_related_list($leadAccountFocus->leadcontacts->getQuery(), new LeadContact) as $leadcontact)
-                $return_array['where'] .= " OR (parent_type = 'LeadContacts' AND parent_id = '{$leadcontact->id}')";
-        }
-
-        $return_array['where'] .= ")";
-
-        return $return_array;
-    }
-        /* END SUGARINTERNAL CUSTOMIZATION */
 
 }

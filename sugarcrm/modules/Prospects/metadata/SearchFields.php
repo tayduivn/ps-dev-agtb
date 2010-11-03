@@ -23,14 +23,17 @@ $searchFields['Prospects'] =
 	array (
 		'first_name' => array( 'query_type'=>'default'),
 		'last_name'=> array('query_type'=>'default'),
+		'search_name'=> array('query_type'=>'default','db_field'=>array('first_name','last_name'),'force_unifiedsearch'=>true),
 		'do_not_call'=> array('query_type'=>'default', 'operator'=>'='),
 		'phone'=> array('query_type'=>'default','db_field'=>array('phone_mobile','phone_work','phone_other','phone_fax','phone_home')),
 		'email'=> array(
-            'query_type' => 'default',
-            'operator' => 'innerjoin',
-            'innerjoin' => 'INNER JOIN email_addr_bean_rel eabr on eabr.bean_id = prospects.id INNER JOIN email_addresses ea on (ea.id = eabr.email_address_id and eabr.deleted=0 AND ea.email_address LIKE ',
-            'db_field' => array('ea.email_address'),
-        ),
+			'query_type' => 'default',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address LIKE',
+			'db_field' => array(
+				'id',
+			),
+		),
 		'assistant'=> array('query_type'=>'default'),
 		'address_street'=> array('query_type'=>'default','db_field'=>array('primary_address_street','alt_address_street')),
 		'address_city'=> array('query_type'=>'default','db_field'=>array('primary_address_city','alt_address_city')),

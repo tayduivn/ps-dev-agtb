@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-require_once('modules/Campaigns/Forms.php');
+
 require_once('include/DetailView/DetailView.php');
 require_once('modules/Campaigns/Charts.php');
 
@@ -133,11 +133,12 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
 
     //if this is a newsletter, we need to build dropdown
     $selected_marketing_id = '';
-    if(isset($focus->campaign_type)  && ($focus->campaign_type == "NewsLetter")){
+    if(isset($focus->campaign_type)){
         //we need to build the dropdown of related marketing values
         $options_str = "<select onchange= \"this.form.module.value='Campaigns';this.form.action.value='TrackDetailView'; submit()\" name='mkt_id'>";        
         $latest_marketing_id = '';
         if(isset($_REQUEST['mkt_id'])) $selected_marketing_id = $_REQUEST['mkt_id'];
+        
         $options_str .= '<option value="all">--None--</option>';
         //query for all email marketing records related to this campaign
         $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
@@ -147,14 +148,17 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
         if ($row = $focus->db->fetchByAssoc($result)){
             //first, populated the latest marketing id variable, as this
             // variable will be used to build chart and subpanels
-            $latest_marketing_id = $row['id'];
+            if($focus->campaign_type == 'NewsLetter') {
+            	$latest_marketing_id = $row['id'];
+            }
+            
             //fill in first option value
             $options_str .= '<option value="'. $row['id'] .'"';
             // if the marketing id is same as selected marketing id, set this option to render as "selected"
             if (!empty($selected_marketing_id) && $selected_marketing_id == $row['id']) {
                 $options_str .=' selected>'. $row['name'] .'</option>';
             // if the marketing id is empty then set this first option to render as "selected"
-            }elseif(empty($selected_marketing_id)){
+            }elseif(empty($selected_marketing_id) && $focus->campaign_type == 'NewsLetter'){
                 $options_str .=' selected>'. $row['name'] .'</option>';
             // if the marketing is not empty, but not same as selected marketing id, then..
             //.. do not set this option to render as "selected"            

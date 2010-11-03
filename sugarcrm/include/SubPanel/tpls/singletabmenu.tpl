@@ -62,7 +62,6 @@
 </script>
 
 
-
 {if !empty($sugartabs)}
 {* //BEGIN SUGARCRM flav!=sales ONLY*}
 <ul id="groupTabs" class="subpanelTablist">

@@ -140,11 +140,7 @@ class forecast_charts {
             $opp_query  = "select sum(" . db_convert("amount_usdollar","IFNULL",array(0))." * (" .db_convert("probability","IFNULL",array(0)). "/100)) total_value";
             $opp_query .= " from opportunities";
             $opp_query .= " where assigned_user_id IN ('$user_id', '$my_downline')";
-                        // SADEK BEGIN SUGARINTERNAL CUSTOMIZATION 03/07/08 - ADDED SUPPORT FOR OUR MULTIPLE CLOSED SALES STAGES
-                        require_once('custom/si_custom_files/custom_functions.php');
-                        $closed_in_clause = getSugarInternalClosedStages('in_clause');
-            $opp_query .= " and sales_stage in $closed_in_clause";
-                        // SADEK END SUGARINTERNAL CUSTOMIZATION 03/07/08 - ADDED SUPPORT FOR OUR MULTIPLE CLOSED SALES STAGES
+            $opp_query .= " and sales_stage='Closed Won'";
             $opp_query .= " and deleted=0";
             $opp_query .= " and date_closed >= ". db_convert("'".$row['start_date']."'","datetime")." and date_closed <= ". db_convert( "'".$row['end_date']."'","datetime");
             

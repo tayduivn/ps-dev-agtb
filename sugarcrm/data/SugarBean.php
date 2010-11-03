@@ -1826,16 +1826,11 @@ class SugarBean
 		if(isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) {
 			$port = $_SERVER['SERVER_PORT'];
 		}
-		
-                /* BEGIN SUGARINTERNAL CUSTOMIZATION */
-                /* If Sugar is run from the command line, http_host is not
-                 * guaranteed to be populated.  Meh.
-                 */
-                if (empty($_SERVER['HTTP_HOST'])) {
-                    $_SERVER['HTTP_HOST'] = '';
-                }
-                /* END SUGARINTERNAL CUSTOMIZATION */
-		
+
+		if (!isset($_SERVER['HTTP_HOST'])) {
+			$_SERVER['HTTP_HOST'] = '';
+		}
+
 		$httpHost = $_SERVER['HTTP_HOST'];
 
 		if($colon = strpos($httpHost, ':')) {
@@ -3607,10 +3602,6 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     function process_list_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '')
     {
-                // SADEK BEGIN SUGARINTERNAL CUSTOMIZATION - USE SLAVE DB FOR LISTVIEWS 
-                $temp_db = $this->db; 
-                $this->db = &DBManagerFactory::getInstance('slave_select'); 
-                // SADEK END SUGARINTERNAL CUSTOMIZATION - USE SLAVE DB FOR LISTVIEWS 
     	global $sugar_config;
     	$db = &DBManagerFactory::getInstance('listviews');
     	/**
@@ -3754,9 +3745,6 @@ function save_relationship_changes($is_update, $exclude=array())
     	$response['next_offset'] = $next_offset;
     	$response['previous_offset'] = $previous_offset;
     	$response['current_offset'] = $row_offset ;
-                // SADEK BEGIN SUGARINTERNAL CUSTOMIZATION - USE SLAVE DB FOR LISTVIEWS
-                $this->db = $temp_db;
-                // SADEK END SUGARINTERNAL CUSTOMIZATION - USE SLAVE DB FOR LISTVIEWS
     	return $response;
     }
 

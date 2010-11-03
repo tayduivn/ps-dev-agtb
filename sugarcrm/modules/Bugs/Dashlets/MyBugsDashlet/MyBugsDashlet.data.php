@@ -31,10 +31,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $current_user;
 
-$dashletData['MyBugsDashlet']['searchFields'] = array('priority'              => array('default' => ''),
+$dashletData['MyBugsDashlet']['searchFields'] = array('date_entered'          => array('default' => ''),
+													  ''                      => array('default' => ''),
+													  'priority'              => array('default' => ''),
                                                       'status'                => array('default' => array('Assigned', 'New', 'Pending')),
-                                                      'found_in_release'      => array('default' => ''),
-                                                      'fixed_in_release' => array('default' => ''),
                                                       'type'                  => array('default' => ''),
                                                       'name'                  => array('default' => ''),
                                                       //BEGIN SUGARCRM flav=pro ONLY

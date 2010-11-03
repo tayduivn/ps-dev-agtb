@@ -111,15 +111,21 @@ class TeamSetLink extends Link {
 			//disable_team_sanity_check can be set to allow for us to just take the values provided on the bean blindly rather than
 			//doing a check to confirm whether the data is correct.
 			if(empty($GLOBALS['sugar_config']['disable_team_sanity_check'])){
-			if(!empty($this->_bean->team_id)){
-				if(empty($this->_teamList)){
-					//we have added this logic here to account for side quick create. If you use side quick create then we do not set the team_id nor the team_set_id
-					//from the UI. In that case the team_id will be set in SugarBean.php by the current user's default team but the team_set_id will still not be set
-					//we have to hold off on setting the team_set_id until in here so we can be sure to check that it is not waiting to be saved to the db and is being held in
-					//_teamList.  So we use $usedDefaultTeam to signify that we did in fact not have a team_id until we set it in SugarBean.php and that this is not an 
-					//update so we do not have a team_set_id on the bean. In that case we can use the current user's default team set.
-					if($usedDefaultTeam && empty($this->_bean->team_set_id) && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->team_set_id)){
-						$this->_bean->team_set_id = $GLOBALS['current_user']->team_set_id;
+				if(!empty($this->_bean->team_id)){
+					if(empty($this->_teamList)){
+						//we have added this logic here to account for side quick create. If you use side quick create then we do not set the team_id nor the team_set_id
+						//from the UI. In that case the team_id will be set in SugarBean.php by the current user's default team but the team_set_id will still not be set
+						//we have to hold off on setting the team_set_id until in here so we can be sure to check that it is not waiting to be saved to the db and is being held in
+						//_teamList.  So we use $usedDefaultTeam to signify that we did in fact not have a team_id until we set it in SugarBean.php and that this is not an 
+						//update so we do not have a team_set_id on the bean. In that case we can use the current user's default team set.
+						if($usedDefaultTeam && empty($this->_bean->team_set_id) && isset($GLOBALS['current_user']) && isset($GLOBALS['current_user']->team_set_id)){
+							$this->_bean->team_set_id = $GLOBALS['current_user']->team_set_id;
+						}
+						
+						//this is a safety check to ensure we actually do have a set team_set_id
+						if(!empty($this->_bean->team_set_id)){
+							$this->_teamList = $this->_teamSet->getTeamIds($this->_bean->team_set_id);
+						}
 					}
 					
 					//this stmt is intended to handle the situation where the code has set the team_id but not the team_set_id as may be the case
@@ -129,15 +135,8 @@ class TeamSetLink extends Link {
 					}
 				}
 				
-				//this stmt is intended to handle the situation where the code has set the team_id but not the team_set_id as may be the case
-				//from SOAP.
-				if(!in_array($this->_bean->team_id, $this->_teamList)){
-					$this->_teamList[] = $this->_bean->team_id;
-				}
-			}
-				
-			//we need to check if the assigned_user has access to any of the teams on this record,
-			//if they do not then we need to be sure to add their private team to the list.
+				//we need to check if the assigned_user has access to any of the teams on this record,
+				//if they do not then we need to be sure to add their private team to the list.
 				//If assigned_user_id is not set on the object as is the case with Documents, then use created_by
 				
 				//we added 'disable_team_access_check' config entry to allow for admins to revert back to the way things were
@@ -152,14 +151,14 @@ class TeamSetLink extends Link {
 					}
 					if(!is_null($assigned_user_id) && !$this->_teamSet->isUserAMember($assigned_user_id, '', $this->_teamList)){
 						$privateTeamId = User::staticGetPrivateTeamID($assigned_user_id);
-					if(!empty($privateTeamId)){
-						$this->_teamList[] = $privateTeamId;
+						if(!empty($privateTeamId)){
+							$this->_teamList[] = $privateTeamId;
+						}
 					}
 				}
-			}
-			$this->_bean->team_set_id = $this->_teamSet->addTeams($this->_teamList);
+				$this->_bean->team_set_id = $this->_teamSet->addTeams($this->_teamList);
 			}//fi empty($GLOBALS['sugar_config']['disable_team_sanity_check']))
-			
+	        
 	        //if this bean already exists in the database, and is not new with id
 	        //and if we are not saving this bean from Import or Mass Update, then perform the query
 	        //otherwise the bean should be saved later.

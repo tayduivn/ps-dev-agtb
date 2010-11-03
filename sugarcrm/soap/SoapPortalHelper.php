@@ -29,7 +29,6 @@ $portal_modules[] = 'Bugs';
 $portal_modules[] = 'KBDocuments';
 //END SUGARCRM flav=pro ONLY
 
-
 /*
 BUGS
 */
@@ -39,10 +38,8 @@ BUGS
 
 //BEGIN SUGARCRM flav=pro ONLY
 
-
 require_once('modules/KBDocuments/SearchUtils.php');
 //END SUGARCRM flav=pro ONLY
-
 
 function get_bugs_in_contacts($in, $orderBy = '', $where='')
 	{
@@ -59,7 +56,7 @@ function get_bugs_in_contacts($in, $orderBy = '', $where='')
 		//BEGIN SUGARCRM flav=pro ONLY
 		$query = "SELECT cb.bug_id as id from contacts_bugs cb, bugs b where cb.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and cb.contact_id IN $in AND cb.deleted=0";
 		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
+			$query .= ' ORDER BY cb.' . $orderBy;
 		}
 		//END SUGARCRM flav=pro ONLY
 
@@ -69,12 +66,6 @@ function get_bugs_in_contacts($in, $orderBy = '', $where='')
 		//END SUGARCRM flav=pro ONLY
 		set_module_in($sugar->build_related_in($query), 'Bugs');
 	}
-
-//BEGIN Sugar Internal customizations
-function get_module_from_cache($module) {
-    return $_SESSION['viewable'][$module];
-}
-//END Sugar Internal customizations
 
 function get_bugs_in_accounts($in, $orderBy = '', $where='')
 	{
@@ -91,7 +82,7 @@ function get_bugs_in_accounts($in, $orderBy = '', $where='')
 		//BEGIN SUGARCRM flav=pro ONLY
 		$query = "SELECT ab.bug_id as id from accounts_bugs ab, bugs b where ab.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and ab.account_id IN $in AND ab.deleted=0";
 		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
+			$query .= ' ORDER BY ab.' . $orderBy;
 		}
 		//END SUGARCRM flav=pro ONLY
 
@@ -122,7 +113,7 @@ function get_cases_in_contacts($in, $orderBy = '')
 		//BEGIN SUGARCRM flav=pro ONLY
 		$query = "SELECT case_id as id from contacts_cases cc, cases c where cc.case_id = c.id AND c.deleted = 0 AND c.portal_viewable = 1 AND cc.contact_id IN $in AND cc.deleted=0";
 		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
+			$query .= ' ORDER BY cc.' . $orderBy;
 		}
 		//END SUGARCRM flav=pro ONLY
 
@@ -177,7 +168,7 @@ function get_notes_in_contacts($in, $orderBy = '')
 		if(!empty($orderBy)){
 			$query .= ' ORDER BY ' . $orderBy;
 		}
-
+			
 		$contact = new Contact();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$contact->disable_row_level_security = true;
@@ -231,12 +222,19 @@ function get_notes_in_module($in, $module, $orderBy = '')
         
         //bail if the in is empty
         if($in == '()')return;
+
         // First, get the list of IDs.
-        $query = "SELECT id from $rel->table_name where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
+		if ($module == 'KBDocuments' || $module == 'DocumentRevisions') {
+			$query = "SELECT dr.* from document_revisions dr
+                      inner join kbdocument_revisions kr on kr.document_revision_id = dr.id AND kr.kbdocument_id IN ($in)
+                      AND dr.file_mime_type is not null";
+		} else {
+			$query = "SELECT id from $rel->table_name where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
+		}
+
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
         }
-        
 
         if(!empty($beanList[$module])){
             $class_name = $beanList[$module];
@@ -297,9 +295,7 @@ function get_contacts_from_account($account_id, $orderBy = '')
 		set_module_in($sugar->build_related_in($query), 'Contacts');
 	}
 
-// BEGIN jostrow customization
-function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = "", $pre_query = ""){
-// END jostrow customization
+function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = ""){
 
 		$list = array();
 		//bail if the in is empty
@@ -308,9 +304,7 @@ function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $l
 		$template->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
 
-		// BEGIN jostrow customization
-		return $template->build_related_list_where($pre_query,$template, $where, $in, $order_by, $limit, $row_offset);
-		// END jostrow customization
+		return $template->build_related_list_where('',$template, $where, $in, $order_by, $limit, $row_offset);
 
 
 }
@@ -367,7 +361,7 @@ function set_module_in($arrayList, $module_name){
 
         if(!empty($_SESSION['viewable'][strtolower($module_name).'_in'])){
         	if($arrayList['in'] != '()') {
-            	$_SESSION['viewable'][strtolower($module_name).'_in'] = "('" . implode("', '", $_SESSION['viewable'][$module_name]);
+            	$_SESSION['viewable'][strtolower($module_name).'_in'] = "('" . implode("', '", $_SESSION['viewable'][strtolower($module_name).'_in']);
             	$_SESSION['viewable'][strtolower($module_name).'_in'] .= implode("', '", $arrayList['list']) . "')";
             }
 		}else{
@@ -383,7 +377,7 @@ function login_user($portal_auth){
      $error = new SoapError();
      $user = new User();
      $user = $user->retrieve_by_string_fields(array('user_name'=>$portal_auth['user_name'],'user_hash'=>$portal_auth['password'], 'deleted'=>0, 'status'=>'Active', 'portal_only'=>1) );    
-    
+        
         if($user != null){
             global $current_user;
             $current_user = $user;
@@ -456,7 +450,6 @@ function portal_get_kbdocument_body_query($session, $id) {
 }
 //END SUGARCRM flav=pro ONLY
 
-
 function portal_get_entry_list_limited($session, $module_name,$where, $order_by, $select_fields, $row_offset, $limit){
     global  $beanList, $beanFiles, $portal_modules;
     $error = new SoapError();
@@ -477,7 +470,7 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
             get_cases_in_contacts(get_contacts_in());
             get_cases_in_accounts(get_accounts_in());
         }
-
+         
         $sugar = new aCase();
         $list =  get_related_list(get_module_in($module_name), new aCase(), $where,$order_by, $row_offset, $limit);
 
@@ -547,10 +540,8 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
             $field_list = get_field_list($value);
         }
     }
-
     $output_list = filter_return_list($output_list, $select_fields, $module_name);
     $field_list = filter_field_list($field_list,$select_fields, $module_name);
-
 
     return array('result_count'=>sizeof($output_list), 'next_offset'=>0,'field_list'=>$field_list, 'entry_list'=>$output_list, 'error'=>$error->get_soap_array());
 }

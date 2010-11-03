@@ -57,18 +57,10 @@ foreach ($beanFiles as $bean => $file) {
 		require_once ($file);
 		unset($GLOBALS['dictionary'][$bean]);
 		$focus = new $bean ();
-		// SADEK UPGRADE CUSTOMIZATION: CODE TO SKIP LARGE TABLES
-		$skipLargeTables = array('campaign_log', 'prospects', 'emails', 'emails_text', 'prospect_lists_prospects', 'sugar_installations', 'sugar_updates', 'tracker', 'itrequests', 'leads'); 
 		if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
-			if(!in_array($focus->getTableName(), $skipLargeTables)){
-				$sql = $db->repairTable($focus, true);
-				logThis('Running sql:' . $sql, $path);
-				$repairedTables[$focus->table_name] = true;
-			}
-			else{
-				$sql = $db->repairTable($focus, false);
-				logThis('Skipped ' . $focus->getTableName() . ' because its a large table (si customization). Heres what would have run: ' . $sql, $path);
-			}
+			$sql = $db->repairTable($focus, true);
+			logThis('Running sql:' . $sql, $path);
+			$repairedTables[$focus->table_name] = true;
 		}
 	}
 }

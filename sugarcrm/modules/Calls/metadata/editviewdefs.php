@@ -25,96 +25,65 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Calls']['EditView'] = array(
-    'templateMeta' => array('maxColumns' => '2',
-                            'form' => array('hidden'=>array('<input type="hidden" name="isSaveAndNew" value="false">',
-															'<input type="hidden" name="send_invites">',
-															'<input type="hidden" name="user_invitees">',
-															'<input type="hidden" name="lead_invitees">',
-															'<input type="hidden" name="contact_invitees">'), 
-                                            'buttons' => array(
-                                                array('customCode'=>'<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="fill_invitees();this.form.action.value=\'Save\'; this.form.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}this.form.return_id.value=\'\'; {/if}return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">'), 
-                                             'CANCEL',
-                                             array('customCode'=>'<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" class="button" onclick="this.form.send_invites.value=\'1\';fill_invitees();this.form.action.value=\'Save\';this.form.return_action.value=\'EditView\';this.form.return_module.value=\'{$smarty.request.return_module}\';return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">'),
-                                             array('customCode'=>'{if $fields.status.value != "Held"}' .
-                                             		'<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" ' .
-                                             		'accessKey="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_KEY}" ' .
-                                             		'class="button" ' .
-                                             		'onclick="fill_invitees(); this.form.status.value=\'Held\'; this.form.action.value=\'Save\'; this.form.return_module.value=\'Calls\'; this.form.isDuplicate.value=true; this.form.isSaveAndNew.value=true; this.form.return_action.value=\'EditView\'; this.form.return_id.value=\'{$fields.id.value}\'; return check_form(\'EditView\') && isValidDuration();" ' .
-                                             		'type="submit" name="button" ' .
-                                             		'value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}'),
-                                            ),
-                                            'footerTpl'=>'modules/Calls/tpls/footer.tpl'),
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'), 
-                                            array('label' => '10', 'field' => '30')
-                                            ),
-    						'javascript' => '<script type="text/javascript" src="' . getJSPath('include/JSON.js') . '"></script>
-<script type="text/javascript" src="' . getJSPath('include/jsolait/init.js') . '"></script>
-<script type="text/javascript" src="' . getJSPath('include/jsolait/lib/urllib.js') . '"></script>
-<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
-<script type="text/javascript" src="' . getJSPath('include/javascript/jsclass_base.js') . '"></script>
-<script type="text/javascript" src="' . getJSPath('include/javascript/jsclass_async.js') . '"></script>
-<script type="text/javascript" src="' . getJSPath('modules/Meetings/jsclass_scheduler.js') . '"></script>
-<script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim} </script>',
-),
- 'panels' =>array (
-  'default' => 
+$viewdefs ['Calls'] = 
+array (
+  'EditView' => 
   array (
-    
+    'templateMeta' => 
     array (
-      array('name'=>'name', 'displayParams'=>array('required'=>true)),
-      
+      'maxColumns' => '2',
+      'form' => 
       array (
-        'name' => 'status',
-        'displayParams' => array('required'=>true),
-        'fields' => 
+        'hidden' => 
         array (
-          array('name'=>'direction'),
-          array('name'=>'status'),
+          0 => '<input type="hidden" name="isSaveAndNew" value="false">',
+          1 => '<input type="hidden" name="send_invites">',
+          2 => '<input type="hidden" name="user_invitees">',
+          3 => '<input type="hidden" name="lead_invitees">',
+          4 => '<input type="hidden" name="contact_invitees">',
+        ),
+        'buttons' => 
+        array (
+          0 => 
+          array (
+            'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="fill_invitees();this.form.action.value=\'Save\'; this.form.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}this.form.return_id.value=\'\'; {/if}return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
+          ),
+          1 => 'CANCEL',
+          2 => 
+          array (
+            'customCode' => '<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" class="button" onclick="this.form.send_invites.value=\'1\';fill_invitees();this.form.action.value=\'Save\';this.form.return_action.value=\'EditView\';this.form.return_module.value=\'{$smarty.request.return_module}\';return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">',
+          ),
+          3 => 
+          array (
+            'customCode' => '{if $fields.status.value != "Held"}<input title="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}" accessKey="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_KEY}" class="button" onclick="fill_invitees(); this.form.status.value=\'Held\'; this.form.action.value=\'Save\'; this.form.return_module.value=\'Calls\'; this.form.isDuplicate.value=true; this.form.isSaveAndNew.value=true; this.form.return_action.value=\'EditView\'; this.form.return_id.value=\'{$fields.id.value}\'; return check_form(\'EditView\') && isValidDuration();" type="submit" name="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_LABEL}">{/if}',
+          ),
+        ),
+        'footerTpl' => 'modules/Calls/tpls/footer.tpl',
+      ),
+      'widths' => 
+      array (
+        0 => 
+        array (
+          'label' => '10',
+          'field' => '30',
+        ),
+        1 => 
+        array (
+          'label' => '10',
+          'field' => '30',
         ),
       ),
+      'javascript' => '<script type="text/javascript" src="include/JSON.js?s=94932f0dc915603816562a2cc59dbcd0&c=1"></script>
+<script type="text/javascript" src="include/jsolait/init.js?s=94932f0dc915603816562a2cc59dbcd0&c=1"></script>
+<script type="text/javascript" src="include/jsolait/lib/urllib.js?s=94932f0dc915603816562a2cc59dbcd0&c=1"></script>
+<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
+<script type="text/javascript" src="include/javascript/jsclass_base.js?s=94932f0dc915603816562a2cc59dbcd0&c=1"></script>
+<script type="text/javascript" src="include/javascript/jsclass_async.js?s=94932f0dc915603816562a2cc59dbcd0&c=1"></script>
+<script type="text/javascript" src="modules/Meetings/jsclass_scheduler.js?s=94932f0dc915603816562a2cc59dbcd0&c=1"></script>
+<script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim} </script>',
+      'useTabs' => false,
     ),
-    
-    array (
-      array('name'=>'date_start',       
-            'type'=>'datetimecombo',
-            'displayParams'=>array('required' => true, 'updateCallback'=>'SugarWidgetScheduler.update_time();'),
-            'label'=>'LBL_DATE_TIME'),
-      array('name'=>'team_name', 
-            'displayParams'=>array('display'=>true),
-           )
-    ),
-    
-    array (
-      'assigned_user_name',
-      NULL,
-    ),
-    
-    array (
-      array (
-        'name' => 'duration_hours',
-        'label' => 'LBL_DURATION',
-        'customCode' => '{literal}<script type="text/javascript">function isValidDuration() { form = document.getElementById(\'EditView\'); if ( form.duration_hours.value + form.duration_minutes.value <= 0 ) { alert(\'{/literal}{$MOD.NOTICE_DURATION_TIME}{literal}\'); return false; } return true; }</script>{/literal}<input name="duration_hours" tabindex="1" size="2" maxlength="2" type="text" value="{$fields.duration_hours.value}" onkeyup="SugarWidgetScheduler.update_time();"/>{$fields.duration_minutes.value}&nbsp;<span class="dateFormat">{$MOD.LBL_HOURS_MINUTES}',
-        'displayParams' => array('required'=>true),
-      ),
-      
-      'parent_name',
-    ),
-    
-    array (
-      array('name' => 'reminder_time',
-            'customCode' => '{if $fields.reminder_checked.value == "1"}' .
-            	 	        '{assign var="REMINDER_TIME_DISPLAY" value="inline"}' .
-            	 	        '{assign var="REMINDER_CHECKED" value="checked"}' .
-            	 	        '{else}' .
-            	 	        '{assign var="REMINDER_TIME_DISPLAY" value="none"}' .
-            	 	        '{assign var="REMINDER_CHECKED" value=""}' .
-            	 	        '{/if}' .
-            	 	        '<input name="reminder_checked" type="hidden" value="0"><input name="reminder_checked" onclick=\'toggleDisplay("should_remind_list");\' type="checkbox" class="checkbox" value="1" {$REMINDER_CHECKED}><div id="should_remind_list" style="display:{$REMINDER_TIME_DISPLAY}">{$fields.reminder_time.value}</div>',
-            'label' => 'LBL_REMINDER'),
-    ),
-    
+    'panels' => 
     array (
       'lbl_call_information' => 
       array (
@@ -185,8 +154,5 @@ $viewdefs['Calls']['EditView'] = array(
       ),
     ),
   ),
-)
-
-
 );
 ?>

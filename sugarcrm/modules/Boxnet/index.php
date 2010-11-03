@@ -1,1 +1,0 @@
-<iframe src='http://www.box.net/' style='width:100%;height:600px;border:0px'></iframe>

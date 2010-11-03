@@ -158,15 +158,7 @@ function get_quote_pdf($layout) {
 		$log->fatal($msg);
 		sugar_die($msg);
 	} else {
-		/* 
-		** @author: Julian or Jesse
-		** SUGARINTERNAL CUSTOMIZATION
-		** ITRequest #: unknown
-		** Description: Dont have details but this was done as a part of MoofCart Renewal process
-		*/ 
-		include($layouts[$layout]); 	 
-		/* END SUGARINTERNAL CUSTOMIZATION */
-
+		include_once($layouts[$layout]);
 		return $filename;
 	}
 	//end function get_quote_pdf

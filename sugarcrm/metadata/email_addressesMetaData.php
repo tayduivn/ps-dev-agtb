@@ -47,14 +47,6 @@ $dictionary['email_addresses'] = array(
 			'required'		=> true,
                         'reportable'            => false,
 		),
-		// BEGIN SUGARINTERNAL CUSTOM CODE - ADDING DOMAIN TO THE EMAIL_ADDRESSES TABLE FOR INDEX AND FASTER SEARCH
-		'email_address_domain' => array(
-			'name'			=> 'email_address_domain',
-			'type'			=> 'varchar',
-			'length'		=> 255,
-			'required'		=> true,
-		),
-		// END SUGARINTERNAL CUSTOM CODE - ADDING DOMAIN TO THE EMAIL_ADDRESSES TABLE FOR INDEX AND FASTER SEARCH
 		'invalid_email' => array(
 			'name'			=> 'invalid_email',
 			'type'			=> 'bool',
@@ -100,13 +92,6 @@ $dictionary['email_addresses'] = array(
 			'type'			=> 'index',
 			'fields'		=> array('email_address', 'opt_out', 'invalid_email')
 		),
-		// BEGIN SUGARINTERNAL CUSTOM CODE - ADDING DOMAIN TO THE EMAIL_ADDRESSES TABLE FOR INDEX AND FASTER SEARCH
-		array(
-			'name'			=> 'idx_email_address_domain',
-			'type'			=> 'index',
-			'fields'		=> array('email_address_domain','deleted')
-		),
-		// END SUGARINTERNAL CUSTOM CODE - ADDING DOMAIN TO THE EMAIL_ADDRESSES TABLE FOR INDEX AND FASTER SEARCH
 	),
 );
 

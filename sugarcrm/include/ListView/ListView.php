@@ -1123,7 +1123,7 @@ function getUserVariable($localVarName, $varName) {
 			}
 
 			$GLOBALS['log']->info("Offset (next, current, prev)($next_offset, $current_offset, $previous_offset)");
-			$GLOBALS['log']->info("Start/end records ($start_record, $end_record, $row_count)");
+			$GLOBALS['log']->info("Start/end records ($start_record, $end_record)");
 
 			$end_record = $end_record-1;
 

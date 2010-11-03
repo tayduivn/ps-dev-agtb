@@ -1,4 +1,0 @@
-<?php
-
-$themedef = array(
-    );

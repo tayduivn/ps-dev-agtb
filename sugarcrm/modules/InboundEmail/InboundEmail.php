@@ -2986,23 +2986,21 @@ class InboundEmail extends SugarBean {
 		} else {
 			$relationShipAddress = $relationShipAddress . "," . $email->to_addrs;
 		}
-// BEGIN SUGARINTERNAL CUSTOMIZATION - M2 - LEAD CONTACTS INSTEAD OF LEADS
-                if($leadcontactIds = $this->getRelatedId($relationShipAddress, 'leadcontacts')) {
-                        $GLOBALS['log']->debug('I-E linking email to Lead Person');
-                        $email->load_relationship('leadcontacts');
-                        $email->leadcontacts->add($leadcontactIds);
+		if($leadIds = $this->getRelatedId($relationShipAddress, 'leads')) {
+			$GLOBALS['log']->debug('I-E linking email to Lead');
+			$email->load_relationship('leads');
+			$email->leads->add($leadIds);
 
-                        if(!class_exists('LeadContact')) {
-                                require_once('modules/LeadContacts/LeadContact.php');
-                        }
-                        foreach($leadcontactIds as $leadcontactId) {
-                                $leadcontact = new LeadContact();
-                                $leadcontact->retrieve($leadcontactId);
-                                $leadcontact->load_relationship('emails');
-                                $leadcontact->emails->add($email->id);
-                        }
-                }
-// END SUGARINTERNAL CUSTOMIZATION - M2 - LEAD CONTACTS INSTEAD OF LEADS
+			if(!class_exists('Lead')) {
+
+			}
+			foreach($leadIds as $leadId) {
+				$lead = new Lead();
+				$lead->retrieve($leadId);
+				$lead->load_relationship('emails');
+				$lead->emails->add($email->id);
+			}
+		}
 
 		if($contactIds = $this->getRelatedId($relationShipAddress, 'contacts')) {
 			$GLOBALS['log']->debug('I-E linking email to Contact');
@@ -4964,7 +4962,8 @@ eoq;
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
         
-		$q = "SELECT DISTINCT inbound_email.id FROM inbound_email {$teamJoin} WHERE is_personal = 0 AND mailbox_type not like 'bounce' AND status = 'Active' AND inbound_email.deleted = 0 ";
+		$q = "SELECT inbound_email.id FROM inbound_email {$teamJoin} WHERE is_personal = 0 AND groupfolder_id is null AND mailbox_type not like 'bounce' AND inbound_email.deleted = 0 AND status = 'Active' ";
+
 
 
 		$r = $this->db->query($q, true);

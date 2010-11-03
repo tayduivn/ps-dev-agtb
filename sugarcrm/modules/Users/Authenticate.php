@@ -80,13 +80,6 @@ if(isset($_SESSION['authenticated_user_id'])) {
 	    	$record = '';
 	    }
     }
-    
-    // BEGIN LAM HUYNH SUGARINTERNAL CUSTOMIZATION - Initiates customer cards upon login. ITR 9326
-    	if(empty($_SESSION['isMobile'])){
-		require_once('custom/modules/Home/Dashlets/SugarCardsDashlet/SugarCardsDashlet.php');
-        	SugarCardsDashlet::getScreen('index.php'. $module.$action.$record);
-	}
-	// END
 
 } else {
 	// Login has failed

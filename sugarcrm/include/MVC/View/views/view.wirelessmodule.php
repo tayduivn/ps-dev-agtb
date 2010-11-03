@@ -38,9 +38,8 @@ require_once('include/SugarWireless/SugarWirelessView.php');
  */
 class ViewWirelessmodule extends SugarWirelessView
 {
-
-    private function oppPipelineBySalesStage()
-	{
+	private function oppPipelineBySalesStage()
+    {
 		require_once('modules/Charts/Dashlets/MyPipelineBySalesStageDashlet/MyPipelineBySalesStageDashlet.php');
         
         $myplbss = new MyPipelineBySalesStageDashlet('',array());
@@ -76,11 +75,11 @@ class ViewWirelessmodule extends SugarWirelessView
  	 * Public function that handles the display of the module view
  	 */
  	public function display()
-	{
-		global $current_user;
-		
-		$current_user->setPreference('wireless_last_module', $this->module);
-		
+    {
+        global $current_user;
+        
+        $current_user->setPreference('wireless_last_module', $this->module);
+        
  		// print the header
 		$this->wl_header();
 		// print the select list

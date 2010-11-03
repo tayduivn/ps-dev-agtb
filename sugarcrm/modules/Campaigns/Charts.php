@@ -66,6 +66,8 @@ class campaign_charts {
 			$leadSourceArr = array();
 			$total=0;
 			$total_targeted=0;
+			$rowTotalArr = array();
+			$rowTotalArr[] = 0;
 			while($row = $focus->db->fetchByAssoc($result, -1, false))
 			{
 				if(!isset($leadSourceArr[$row['activity_type']]['row_total'])) {
@@ -101,8 +103,10 @@ class campaign_charts {
 				if(!isset($leadSourceArr[$key])){
 					$leadSourceArr[$key] = $key;
 				}
-				if(isset($leadSourceArr[$key]['row_total'])){$rowTotalArr[]=$leadSourceArr[$key]['row_total'];}
-				if(isset($leadSourceArr[$key]['row_total']) && $leadSourceArr[$key]['row_total']>100){
+				
+				
+				if(is_array($leadSourceArr[$key]) && isset($leadSourceArr[$key]['row_total'])){$rowTotalArr[]=$leadSourceArr[$key]['row_total'];}
+				if(is_array($leadSourceArr[$key]) && isset($leadSourceArr[$key]['row_total']) && $leadSourceArr[$key]['row_total']>100){
 					$leadSourceArr[$key]['row_total'] = round($leadSourceArr[$key]['row_total']);
 				}
 				$fileContents .= '          <dataRow title="'.$translation.'" endLabel="'.$leadSourceArr[$key]['row_total'].'">'."\n";

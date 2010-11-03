@@ -127,9 +127,9 @@ class ReportMaker extends SugarBean {
 
     //first update and remove report_id's for any datasets
     		$query = "update data_sets set report_id='' where report_id='$id' and deleted=0";
-			// BEGIN SUGARINTERNAL CUSTOMIZATION - THIS IS AN UPDATE SO WE CANT USE SLAVE
-			$GLOBALS['db']->query($query,true,"error removing data sets from reports: ");
-			// END SUGARINTERNAL CUSTOMIZATION - THIS IS AN UPDATE SO WE CANT USE SLAVE
+			
+			$this->db->query($query,true,"error removing data sets from reports: ");
+    	
 			$this->mark_deleted($id);
 
 	//end function clear_deleted

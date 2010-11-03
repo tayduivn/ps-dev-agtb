@@ -86,14 +86,14 @@ $mod_strings = array (
 	'CONTACT_REMOVE_PROJECT_CONFIRM' => 'Are you sure you want to remove this contact from this project?',
 
 	'LNK_NEW_PROJECT'	=> 'Create Project',
-	'LNK_PROJECT_LIST'	=> 'Project List',
+	'LNK_PROJECT_LIST'	=> 'View Project List',
 	'LNK_NEW_PROJECT_TASK'	=> 'Create Project Task',
 	'LNK_PROJECT_TASK_LIST'	=> 'View Project Tasks',
 	//BEGIN SUGARCRM flav=pro ONLY
     'LNK_PROJECT_DASHBOARD' => 'View My Projects Dashboard',
     'LNK_PROJECT_TASKS_DASHBOARD'   => 'My Project Tasks Dashboard',   
 	'LNK_NEW_PROJECT_TEMPLATES' => 'Create Project Template',
-	'LNK_PROJECT_TEMPLATES_LIST' => 'Project Templates',
+	'LNK_PROJECT_TEMPLATES_LIST' => 'View Project Templates',
     'LNK_PROJECT_RESOURCE_REPORT' => 'Resource Report',
     //END SUGARCRM flav=pro ONLY
 	

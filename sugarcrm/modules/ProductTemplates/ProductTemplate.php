@@ -346,17 +346,7 @@ class ProductTemplate extends SugarBean {
 	       }
 	    }
 	    
-		/*
-                ** @author: DEE
-                ** SUGARINTERNAL CUSTOMIZATION
-                ** ITRequest #: 14570, 15082  
-                ** Bug #: 36633
-                ** Description: If tax_class_dom is empty and undefined a PHP Notice is throws
-                ** Dependency: ./scripts/moofcart/siFindOpenOpps.php
-                ** Wiki URL: http://internalwiki.sjc.sugarcrm.pvt/index.php/ProductTemplates
-                */
-                $this->tax_class_name = (!empty($this->tax_class) && !empty($app_list_strings['tax_class_dom'][$this->tax_class])) ? $app_list_strings['tax_class_dom'][$this->tax_class] : "";
-                /* END SUGARINTERNAL CUSTOMIZATION */
+		$this->tax_class_name = (!empty($this->tax_class) && !empty($app_list_strings['tax_class_dom'][$this->tax_class])) ? $app_list_strings['tax_class_dom'][$this->tax_class] : ""; 
 		$this->get_manufacturer();
 		$this->get_type();
 		$this->get_category();
@@ -449,14 +439,13 @@ class ProductTemplate extends SugarBean {
 			$this->currency_symbol = $this->default_currency_symbol;
 		}
 		
-		$sigDigits = $locale->getPrecedentPreference('default_currency_significant_digits');
 		$temp_array = parent::get_list_view_data();
 		$temp_array['NAME'] = (($this->name == "") ? "<em>blank</em>" : $this->name);
 		$temp_array['STATUS'] = !empty($this->status) ? $app_list_strings['product_template_status_dom'][$this->status] : "";
-		$temp_array['COST_PRICE'] = format_number($this->cost_price, $sigDigits, $sigDigits);
+		$temp_array['COST_PRICE'] = $this->cost_price;
 		$temp_array['CURRENCY_SYMBOL'] = $this->currency_symbol;
-		$temp_array['DISCOUNT_PRICE'] = format_number($this->discount_price, $sigDigits, $sigDigits);
-		$temp_array['LIST_PRICE'] = format_number($this->list_price, $sigDigits, $sigDigits);
+		$temp_array['DISCOUNT_PRICE'] = $this->discount_price;
+		$temp_array['LIST_PRICE'] = $this->list_price;
 		$temp_array['TAX_CLASS_NAME'] = !empty($this->tax_class)? $app_list_strings['tax_class_dom'][$this->tax_class] : "";
 		$temp_array['PRICING_FORMULA_NAME'] = !empty($this->pricing_formula) ?$app_list_strings['pricing_formula_dom'][$this->pricing_formula]:"";
 		$temp_array['ENCODED_NAME'] = $this->name;
@@ -464,7 +453,8 @@ class ProductTemplate extends SugarBean {
 		$temp_array['CATEGORY'] = $this->category_id;
 		$temp_array['CATEGORY_NAME'] = $this->category_name;
 		$temp_array['TYPE_NAME'] =  $this->type_name;
-		$temp_array['QTY_IN_STOCK'] = $this->qty_in_stock;				
+		$temp_array['QTY_IN_STOCK'] = $this->qty_in_stock;
+
 		return $temp_array;
 	}
 	/**

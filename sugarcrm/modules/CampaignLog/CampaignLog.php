@@ -153,13 +153,6 @@ class CampaignLog extends SugarBean {
 	 			return $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 	 		}
 	 	}
-	/*
-	** @author: SADEK, ENGINEERING (M2)
-	** SUGARINTERNAL CUSTOMIZATION
-	** Description: M2. Changed leads to leadcontacts
-	** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/CampaignLog.php
-	*/
-	/*
         if ($related_type == 'Leads') {
             $query="SELECT first_name, last_name from leads where id='$related_id'";
             $result=$db->query($query);
@@ -167,17 +160,7 @@ class CampaignLog extends SugarBean {
             if ($row != null) {
                 return $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
             }
-        }
-        */       
-        if ($related_type == 'LeadContacts') {
-            $query="SELECT first_name, last_name from leadcontacts where id='$related_id'";
-            $result=$db->query($query);
-            $row=$db->fetchByAssoc($result);
-            if ($row != null) {
-                return $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
-            }
-        }
-	/* END SUGARINTERNAL CUSTOMIZATION */
+        }        
         if ($related_type == 'Prospects') {
 	 		$query="SELECT first_name, last_name from prospects where id='$related_id'";
 	 		$result=$db->query($query);

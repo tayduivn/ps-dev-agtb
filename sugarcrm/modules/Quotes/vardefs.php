@@ -77,6 +77,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'len' => '50',
     'unified_search' => true,
     'importable' => 'required',
+    'required'=>true,
   ),
   'quote_type' =>
   array (
@@ -93,6 +94,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'audited'=>true,
     'reportable'=>true,
     'importable' => 'required',
+    'required'=>true,
   ),
   'original_po_date' =>
   array (
@@ -142,6 +144,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'len' => 100,
     'audited'=>true,
     'importable' => 'required',
+    'required'=>true,
   ),
   'purchase_order_num' =>
   array (
@@ -451,6 +454,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 		'module'=>'Accounts',
 		'source'=>'non-db',
 		'importable' => 'required',
+	    'required'=>true,
 	),
   'billing_account_id' =>
  	array(

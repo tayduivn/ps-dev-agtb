@@ -37,14 +37,14 @@ $viewdefs[$module_name]['DetailView'] = array(
                         ),
 
 'panels' =>array (
-  
+
   array (
     'name',
     'assigned_user_name',
   ),
    //BEGIN SUGARCRM flav=pro ONLY
   array (
-    
+
     'team_name',''
   ),
    //END SUGARCRM flav=pro ONLY
@@ -61,7 +61,7 @@ $viewdefs[$module_name]['DetailView'] = array(
       'label' => 'LBL_DATE_MODIFIED',
     ),
   ),
-  
+
   array (
     'description',
   ),

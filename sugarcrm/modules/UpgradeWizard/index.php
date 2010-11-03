@@ -33,9 +33,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
 
-ini_set('memory_limit', -1);
-ini_set('max_execution_time', 0);
-
 if(!is_admin($current_user)) {
 	sugar_die($app_strings['ERR_NOT_ADMIN']);
 }

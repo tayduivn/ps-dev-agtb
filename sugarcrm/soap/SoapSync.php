@@ -104,6 +104,10 @@ function sync_get_entries($session, $module_name,$from_date,$to_date,$offset, $m
 	
 	foreach($list as $value)
 	{
+		//bug: 31668 - rrs ensure we are sending back the email address along with the bean when performing a sync.
+		if(isset($value->emailAddress)){
+			$value->emailAddress->handleLegacyRetrieve($value);
+		}
 		$output_list[] = get_return_value($value, $module_name);
 		if(empty($field_list)){
 			$field_list = get_field_list($value);	
@@ -291,6 +295,8 @@ $server->register(
 
 function sync_set_relationships($session, $module_name, $related_module, $from_date, $to_date, $sync_entry_list, $deleted){
 	global  $beanList, $beanFiles;
+	global $current_user;
+	
 	$error = new SoapError();
 	$output_list = array();
 	if(!validate_authenticated($session)){
@@ -301,6 +307,7 @@ function sync_set_relationships($session, $module_name, $related_module, $from_d
 		$error->set_error('no_module');	
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
+	
 	require_once('modules/Sync/SyncController.php');
 	if((!check_modules_access($current_user, $module_name, 'write') && !in_array($module_name, $read_only_override)) || 
 	   (!check_modules_access($current_user, $related_module, 'write') && !in_array($related_module, $read_only_override))){

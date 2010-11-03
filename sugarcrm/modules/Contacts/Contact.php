@@ -702,39 +702,6 @@ class Contact extends Person {
 		}
 	}
 
-        /*
-        ** sadek (engineering m2)
-        ** SUGARINTERNAL CUSTOMIZATION
-        ** ITRequest #: none
-        ** Bug #: http://internalwiki.sjc.sugarcrm.pvt/index.php/ENG/PM_Notes#Use_of_Autoloader_to_override_beans
-        ** Description: This is a custom function so we can retrieve interactions for a subpanel on the contacts module
-        */
-    /**
-     * Returns the interactions query parts; ready to be consumed by a subpaneldef
-     */
-    public function getInteractionsQuery()
-    {
-        $return_array['select'] = 'SELECT interactions.id ';
-        $return_array['from']   = 'FROM interactions ';
-        $return_array['where']  = " WHERE ( (parent_type = '{$this->module_dir}' AND parent_id = '{$this->id}') ";
-        $return_array['join'] = "";
-        $return_array['join_tables'][0] = '';
-
-        if ( isset($this->account_id) )
-            $return_array['where'] .= " OR (parent_type = 'Accounts' AND parent_id = '{$this->account_id}')";
-
-        $leadContactFocus = new LeadContact;
-        $leadContactFocus->retrieve_by_string_fields(array('contact_id'=>$this->id));
-        if ( !empty($leadContactFocus->id) )
-            $return_array['where'] .= " OR (parent_type = 'LeadContacts' AND parent_id = '{$leadContactFocus->id}')";
-        if ( !empty($leadContactFocus->leadaccount_id) )
-            $return_array['where'] .= " OR (parent_type = 'LeadAccounts' AND parent_id = '{$leadContactFocus->leadaccount_id}')";
-
-        $return_array['where'] .= ")";
-
-        return $return_array;
-    }
-        /* END SUGARINTERNAL CUSTOMIZATION */
 }
 
 

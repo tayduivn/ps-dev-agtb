@@ -1,4 +1,0 @@
-<?php
-//auto-generated file DO NOT EDIT
-$layout_defs['Accounts']['subpanel_setup']['cases']['override_subpanel_name'] = 'AccountForAccounts';
-?>

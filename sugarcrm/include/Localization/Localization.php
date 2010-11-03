@@ -309,24 +309,14 @@ class Localization {
 	 * @return string the translated string
 	 */
 	function translateCharset($string, $fromCharset, $toCharset='UTF-8') {
-	/*
-	** @author: dtam
-	** SUGARINTERNAL CUSTOMIZATION
-	** ITRequest #:17099
-	** Bug # 33964
-	** Description: Reimplement fix to allow cron script siFindOpenOpps.php
-	** Wiki customization page: internalwiki.sjc.sugarcrm.pvt/index.php/Localization.php
-	*/
-		if(is_scalar($string)) {
-			$GLOBALS['log']->debug("Localization: translating [ {$string} ] into {$toCharset}");
-			if(function_exists('mb_convert_encoding')) {
-				return mb_convert_encoding($string, $toCharset, $fromCharset);
-			} elseif(function_exists('iconv')) { // iconv is flakey
-				return iconv($fromCharset, $toCharset, $string);
-			} else {
-				return $string;
-			} // end else clause
-		}
+		$GLOBALS['log']->debug("Localization: translating [ {$string} ] into {$toCharset}");
+		if(function_exists('mb_convert_encoding')) {
+			return mb_convert_encoding($string, $toCharset, $fromCharset);
+		} elseif(function_exists('iconv')) { // iconv is flakey
+			return iconv($fromCharset, $toCharset, $string);
+		} else {
+			return $string;
+		} // end else clause
 	}
 
 	/**

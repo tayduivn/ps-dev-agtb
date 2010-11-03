@@ -43,7 +43,6 @@ $current_user = $user;
 
 $process_object = new WorkFlowSchedule();
 $process_object->process_scheduled();
-
 unset($process_object);
 
 

@@ -1104,7 +1104,7 @@ function get_relationships($session, $module_name, $module_id, $related_module, 
 
 	$list = array();
 
-	$id_list_quoted = array_map("add_squotes", $id_list);
+	$id_list_quoted = array_map(create_function('$str','return "\'" . $str . "\'";'), $id_list);
 	$in = implode(", ", $id_list_quoted);
 
 	$related_class_name = $beanList[$related_module];
@@ -1342,12 +1342,8 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 							//BEGIN SUGARCRM flav!=sales ONLY
 	                        'Bugs'=>array('where'=>array('Bugs' => array(0 => "bugs.name like '{0}%'", 1 => "bugs.bug_number = {0}")),'fields'=>"bugs.id, bugs.name, bugs.bug_number"),
 							'Cases'=>array('where'=>array('Cases' => array(0 => "cases.name like '{0}%'", 1 => "cases.case_number = {0}")),'fields'=>"cases.id, cases.name, cases.case_number"),
-							'Contacts'=>array('where'=>array('Contacts' => array(0 => "contacts.first_name like '{0}%'", 1 => "contacts.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"contacts.id, contacts.first_name, contacts.last_name"),
 							'Leads'=>array('where'=>array('Leads' => array(0 => "leads.first_name like '{0}%'",1 => "leads.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")), 'fields'=>"leads.id, leads.first_name, leads.last_name, leads.status"),
-							'LeadContacts'=>array('where'=>array('LeadContacts' => array(0 => "leadcontacts.first_name like '{0}%'",1 => "leadcontacts.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")), 'fields'=>"leadcontacts.id, leadcontacts.first_name, leadcontacts.last_name, leadcontacts.status"),
-							'LeadAccounts'=>array('where'=>array('LeadAccounts' => array(0 => "leadaccounts.name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")), 'fields'=>"leadaccounts.id, leadaccounts.name"),
-							'Opportunities'=>array('where'=>array('Opportunities' => array(0 => "opportunities.name like '{0}%'")), 'fields'=>"opportunities.id, opportunities.name"),
-                            'Project'=>array('where'=>array('Project' => array(0 => "project.name like '{0}%'")), 'fields'=>"project.id, project.name"),
+ 							'Project'=>array('where'=>array('Project' => array(0 => "project.name like '{0}%'")), 'fields'=>"project.id, project.name"),
                             'ProjectTask'=>array('where'=>array('ProjectTask' => array(0 => "project.id = '{0}'")), 'fields'=>"project_task.id, project_task.name"),
 							//END SUGARCRM flav!=sales ONLY
 							'Contacts'=>array('where'=>array('Contacts' => array(0 => "contacts.first_name like '{0}%'", 1 => "contacts.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"contacts.id, contacts.first_name, contacts.last_name"),
@@ -1384,8 +1380,8 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 						// We need to confirm that the user is a member of the team of the item.
 						//BEGIN SUGARCRM flav=pro ONLY
 						if ($module_name != 'Users') {
-						$seed->add_team_security_where_clause($tmpQuery);
-						$tmpQuery .= "LEFT JOIN teams ON $seed->table_name.team_id=teams.id AND (teams.deleted=0) ";
+							$seed->add_team_security_where_clause($tmpQuery);
+							$tmpQuery .= "LEFT JOIN teams ON $seed->table_name.team_id=teams.id AND (teams.deleted=0) ";
 						}
 						//END SUGARCRM flav=pro ONLY
 						
@@ -1922,7 +1918,7 @@ function set_entries_details($session, $module_name, $name_value_lists, $select_
 
 // INTERNAL FUNCTION NOT EXPOSED THROUGH API
 function handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
-	global $beanList, $beanFiles;
+	global $beanList, $beanFiles, $app_list_strings;
 
 	$error = new SoapError();
 	$ret_values = array();
@@ -1955,7 +1951,7 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 
 		foreach($name_value_list as $value) {
 			$val = $value['value'];
-			if($seed->field_name_map[$value['name']]['type'] == 'enum'){
+			if($seed->field_name_map[$value['name']]['type'] == 'enum' ||$seed->field_name_map[$value['name']]['type'] == 'radioenum'){
 				$vardef = $seed->field_name_map[$value['name']];
 				if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$value]) ) {
 		            if ( in_array($val,$app_list_strings[$vardef['options']]) ){
@@ -2003,7 +1999,6 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 			else{
 				//since we found a duplicate we should set the sync flag
 				if( $seed->ACLAccess('Save')){
-					$seed = new $class_name();
 					$seed->id = $duplicate_id;
 					$seed->contacts_users_id = $current_user->id;
 					$seed->save();

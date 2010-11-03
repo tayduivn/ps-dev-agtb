@@ -63,7 +63,7 @@ $listViewDefs['Contracts'] = array(
     'TEAM_NAME' => array(
         'width' => '2', 
         'label' => 'LBL_LIST_TEAM',
-        'default' => true,
+        'default' => false,
         'related_fields' => array('team_id')),        
     //END SUGARCRM flav=pro ONLY
     

@@ -301,15 +301,6 @@ class Note extends SugarBean {
 		}
 		return false;
 	}
-	// BEGIN SUGARINTERNAL CUSTOMIZATION -- jostrow 2006-02-28
-	// Notifications for Notes are already being handled by custom logic-- avoid duplicate e-mail notifications
-	function get_notification_recipients() {
-		return array();
-	}
 
-	function send_assignment_notifications($notify_user, $admin) {
-		return FALSE;
-	}
-	// END SUGARINTERNAL CUSTOMIZATION
 }
 ?>

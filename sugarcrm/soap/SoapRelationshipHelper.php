@@ -433,6 +433,7 @@ function retrieve_relationship_query($module_name,  $related_module, $relationsh
 		$mod->disable_row_level_security = DISABLE_ROW_LEVEL_SECURITY;
 		$mod2->disable_row_level_security = DISABLE_ROW_LEVEL_SECURITY;
 	}
+
 	if(!$mod->disable_row_level_security){
 		if(!empty($mod->field_defs['team_id'])){
 			$query .= " INNER JOIN (select tst.team_set_id from team_sets_teams tst ";

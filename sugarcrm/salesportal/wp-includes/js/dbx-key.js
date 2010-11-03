@@ -1,3 +1,0 @@
-
-addLoadEvent(function()
-{var meta=new dbxGroup('grabit','vertical','10','no','10','yes','closed','open','close','click-down and drag to move this box','click to %toggle% this box','use the arrow keys to move this box',', or press the enter key to %toggle% it','%mytitle%  [%dbxtitle%]');var advanced=new dbxGroup('advancedstuff','vertical','10','yes','10','yes','closed','open','close','click-down and drag to move this box','click to %toggle% this box','use the arrow keys to move this box',', or press the enter key to %toggle% it','%mytitle%  [%dbxtitle%]');});

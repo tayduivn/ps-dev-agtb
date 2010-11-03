@@ -48,7 +48,7 @@ function get_time_contents($workflow_id){
 
 
 function check_for_schedule(& $focus, $workflow_id, $time_array){
-
+	
 	$is_update = false;
 	
 	//check to see if it exists;

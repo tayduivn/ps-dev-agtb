@@ -106,10 +106,10 @@ class ImportCacheFiles
         global $sugar_config;
         
         if ( is_dir($sugar_config['import_dir']) ) {
-        $files = dir($sugar_config['import_dir']);
-        while (false !== ($file = $files->read())) {
-            if ( !is_dir($file) && stristr($file,'.csv') )
-                unlink($sugar_config['import_dir'].$file);
+            $files = dir($sugar_config['import_dir']);
+            while (false !== ($file = $files->read())) {
+                if ( !is_dir($file) && stristr($file,'.csv') )
+                    unlink($sugar_config['import_dir'].$file);
             }
         }
     }

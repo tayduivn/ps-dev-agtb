@@ -97,11 +97,12 @@ function get_edit($formulas, $formula) {
 	foreach ($formulas as $name=>$content) {
 		$the_script .= "		case '$name': \n";
 		$the_script .= "			${content['formula_js']} \n";
-		$the_script .= "			this.document.getElementById('pricing_factor').value = this.document.getElementById('pricing_factor_$name').value; \n";
+		$the_script .= "			form.pricing_factor.value = form.pricing_factor_$name.value; \n";
 		$the_script .= "		  	return true; \n"; 
 }
 	$the_script .= "		} \n";
 	$the_script .= "} \n";
+    $the_script .= "if ( typeof document.forms.EditView != 'undefined' ) { set_discount_price(document.forms.EditView); }\n";
 
 	$the_script .= "//  End -->\n</script> \n\n";
 	

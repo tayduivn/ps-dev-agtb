@@ -50,12 +50,21 @@ if(is_admin($current_user)){
 				ACLAction::addActions('Trackers', 'Tracker');
 				//END SUGARCRM flav=pro ONLY
 			} else {
-			require_once($beanFiles[$class]);
-			$mod = new $class();
-			if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
-				// BUG 10339: do not display messages for upgrade wizard
-				if(!isset($_REQUEST['upgradeWizard'])){
-					echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
+				require_once($beanFiles[$class]);
+				$mod = new $class();
+				if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
+					// BUG 10339: do not display messages for upgrade wizard
+					if(!isset($_REQUEST['upgradeWizard'])){
+						echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
+					}
+	
+	                if(!empty($mod->acltype)){
+	                	ACLAction::addActions($mod->module_dir, $mod->acltype);
+	                }else{
+	                	ACLAction::addActions($mod->module_dir);
+	                }				
+	
+	                $installed_classes[$class] = true;
 				}
 	//BEGIN SUGARCRM flav=dce ONLY
 				if($mod->bean_implements('DCEACL') && empty($mod->acl_display_only)){
@@ -69,7 +78,6 @@ if(is_admin($current_user)){
 	//END SUGARCRM flav=dce ONLY
 			}
 		}
-	}
 	}
 
 

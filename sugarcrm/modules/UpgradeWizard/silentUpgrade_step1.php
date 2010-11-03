@@ -1,8 +1,5 @@
 <?php
 
-ini_set('memory_limit', -1);
-ini_set('max_execution_time', 0);
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional Subscription
  * Agreement ("License") which can be viewed at
@@ -27,7 +24,7 @@ ini_set('max_execution_time', 0);
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
-
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -711,24 +708,18 @@ if(file_exists('ModuleInstall/PackageManager/PackageManagerDisplay.php')) {
 if(file_exists(clean_path("{$zipBasePath}/include/SugarFields"))) {
 	$parserFiles = findAllFiles(clean_path("{$zipBasePath}/include/SugarFields"), $parserFiles);
 }
-
-logThis('zipBasePath: '.var_export($zipBasePath, true), $path);
-logThis('files to copy array: '.var_export($parserFiles, true), $path);
  //$cwd = clean_path(getcwd());
 foreach($parserFiles as $file) {
-logThis("Copying file {$file}", $path);
 	$srcFile = clean_path($file);
 	//$targetFile = clean_path(getcwd() . '/' . $srcFile);
     if (strpos($srcFile,".svn") !== false) {
 	  //do nothing
-logThis("  -- was a .svn, skipping", $path);
     }
     else{
     $targetFile = str_replace(clean_path($zipBasePath), $cwd, $srcFile);
 
 	if(!is_dir(dirname($targetFile))) {
 		mkdir_recursive(dirname($targetFile)); // make sure the directory exists
-logThis("  -- creating dir ".dirname($targetFile), $path);
 	}
 
 	if(!file_exists($targetFile))
@@ -738,7 +729,6 @@ logThis("  -- creating dir ".dirname($targetFile), $path);
 			logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
 		} else {
 			$copiedFiles[] = $targetFile;
-logThis("  -- copied successfully", $path);
 		}
 	} else {
 		logThis('Skipping file: ' . $targetFile, $path);

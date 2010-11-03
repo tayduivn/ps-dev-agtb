@@ -1348,15 +1348,6 @@ class ModuleInstaller{
 		$this->silent=$silent;
 		global $sugar_config;
 
-                /*
-                ** @author: EDDY
-                ** SUGARINTERNAL CUSTOMIZATION
-                ** ITRequest #: 15071
-                ** Bug 33636 should produce hotfix when ready
-                ** Description: this ensures modules.ext.php is rebuilt during rebuildExtensions
-                */
-                $this->merge_files('Ext/Include', 'modules.ext.php', '', true);
-                /*END SUGARINTERNAL CUSTOMIZATION */
 		//Check for new module extensions
 		$this->rebuild_modules();
 

@@ -1354,7 +1354,7 @@ font-weight: bold;
  * 
  * http://extjs.com/license
  */
-.loading-indicator{font-size:11px;background-image:url(../../../themes/default/ext/resources/images/default/grid/loading.gif);background-repeat:no-repeat;background-position:left;padding-left:20px;line-height:16px;margin:3px;}
+.loading-indicator{font-size:11px;background-image:url(../../../include/javascript/yui/build/assets/skins/sam/wait.gif);background-repeat:no-repeat;background-position:left;padding-left:20px;line-height:16px;margin:3px;}
 .x-sqs-list{border:1px solid #d0d0d0;background:#d0d0d0;zoom:1;overflow:hidden;}
 .x-sqs-list-inner{overflow:auto;background:white;position:relative;zoom:1;overflow-x:hidden;}
 .x-sqs-list-item{font:normal 12px tahoma,arial,helvetica,sans-serif;padding:1px;border:1px solid #fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}

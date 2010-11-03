@@ -75,9 +75,11 @@ class Product extends SugarBean {
 	var $date_support_starts;
 	var $pricing_formula;
 	var $pricing_factor;
+	var $team_id;
 	var $serial_number;
 	var $asset_number;
 	var $book_value;
+	var $book_value_usdollar;
 	var $book_value_date;
     var $currency_symbol;
     var $currency_name;
@@ -122,14 +124,15 @@ class Product extends SugarBean {
     //#9668: removed description from this list..default product desc was overwriting the 
     //the description provided by the user in the quote screen.
 	var $template_fields = array('mft_part_num', 'vendor_part_num', 'website', 'tax_class', 'manufacturer_id',
-								 'type_id', 'category_id',
+								 'type_id', 'category_id', 'team_id',
 								 'weight',  'support_name', 'support_term',
 								 'support_description', 'support_contact');
 
 	function Product() {
-		$this->disable_row_level_security = true;
 	
 		parent::SugarBean();
+		
+		$this->team_id = 1; // make the item globally accessible
 		
 		$currency= new Currency();
 		$this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
@@ -309,12 +312,14 @@ class Product extends SugarBean {
 		$query = "SELECT c1.id, c1.first_name, c1.last_name, c1.assigned_user_id from contacts  c1, $this->table_name p1 where c1.id = p1.contact_id and p1.id = '$this->id' and p1.deleted=0 and c1.deleted=0";
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
 
+		global $locale;
+		
 		// Get the id and the name.
 		$row = $this->db->fetchByAssoc($result);
 
 		if($row != null)
 		{
-			$this->contact_name = $row['first_name'].' '.$row['last_name'];
+			$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 			$this->contact_id = $row['id'];
 			$this->contact_name_owner = $row['assigned_user_id'];
 			$this->contact_name_mod = 'Contacts';
@@ -436,13 +441,13 @@ class Product extends SugarBean {
                 
             
         $params['currency_id'] = $this->currency_id;    
-        $temp_array['LIST_PRICE'] = currency_format_number($this->list_price, $params);
-        $temp_array['DISCOUNT_PRICE'] = currency_format_number($this->discount_price, $params);
-        $temp_array['COST_PRICE'] = currency_format_number($this->cost_price, $params);
+        $temp_array['LIST_PRICE'] = $this->list_price;
+        $temp_array['DISCOUNT_PRICE'] = $this->discount_price;
+        $temp_array['COST_PRICE'] = $this->cost_price;
         if ($this->discount_select) {
              $temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount . "%";
         } else {
-        	$temp_array['DISCOUNT_AMOUNT'] = currency_format_number($this->discount_amount, $params);
+        	$temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount;
         }
 		
 		$this->get_account();
@@ -498,6 +503,9 @@ class Product extends SugarBean {
 		}
 		if(isset($this->cost_price) && (!empty($this->cost_price) || $this->cost_price == '0')) {
 			$this->cost_usdollar = $currency->convertToDollar($this->cost_price);
+		}
+		if(isset($this->book_value) && (!empty($this->book_value) || $this->book_value == '0')) {
+			$this->book_value_usdollar = $currency->convertToDollar($this->book_value);
 		}
 	    if(isset($this->deal_calc) && (!empty($this->deal_calc) || $this->deal_calc == '0')) {
             $this->deal_calc_usdollar = $currency->convertToDollar($this->deal_calc);

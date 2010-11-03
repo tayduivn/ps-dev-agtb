@@ -88,7 +88,7 @@ $dictionary['SugarFavorites'] = array(
     'unified_search' => false,
     'audited' => false,
    
-  ),i
+  ),
 ),
 	'relationships'=>array (
 ),

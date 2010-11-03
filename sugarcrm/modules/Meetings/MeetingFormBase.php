@@ -34,7 +34,6 @@ class MeetingFormBase{
 		if(!ACLController::checkAccess('Meetings', 'edit', true)){
 		return '';
 	}
-		require_once('include/time.php');
 		global $mod_strings;
 		global $app_strings;
 		global $app_list_strings;
@@ -132,7 +131,7 @@ $the_form .= <<<EOQ
 			<input type="hidden" name="${prefix}action" value="Save">
 
 EOQ;
-$the_form	.= $this->getFormBody($prefix, 'Meetings',"${prefix}MeetingSave" );
+$the_form	.= $this->getFormBody($prefix, 'Meetings',"{$prefix}MeetingSave" );
 $the_form .= <<<EOQ
 		<p><input title="$lbl_save_button_title" accessKey="$lbl_save_button_key" class="button" type="submit" name="button" value="  $lbl_save_button_label  " ></p>
 		</form>
@@ -166,7 +165,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	}
 	
 	if( !isset($_POST['reminder_checked']) or ( isset($_POST['reminder_checked']) && $_POST['reminder_checked'] == '0')) {
-		$_POST['reminder_time'] = null;
+		$_POST['reminder_time'] = -1;
 	}
 	if(!isset($_POST['reminder_time'])) {
 		$_POST['reminder_time'] = $current_user->getPreference('reminder_time');
@@ -272,8 +271,8 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
     	}
     
         $deleteLeads = array();
-    	$focus->load_relationship('leadcontacts');
-    	$q = 'SELECT mu.lead_id, mu.accept_status FROM meetings_leadcontacts mu WHERE mu.meeting_id = \''.$focus->id.'\'';
+    	$focus->load_relationship('leads');
+    	$q = 'SELECT mu.lead_id, mu.accept_status FROM meetings_leads mu WHERE mu.meeting_id = \''.$focus->id.'\'';
     	$r = $focus->db->query($q);
     	$acceptStatusLeads = array();
     	while($a = $focus->db->fetchByAssoc($r)) {
@@ -291,7 +290,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
     		}
     		$sql = substr($sql, 1);
     		// We could run a delete SQL statement here, but will just mark as deleted instead
-    		$sql = "UPDATE meetings_leadcontacts set deleted = 1 where leadcontact_id in ($sql) AND meeting_id = '". $focus->id . "'";
+    		$sql = "UPDATE meetings_leads set deleted = 1 where lead_id in ($sql) AND meeting_id = '". $focus->id . "'";
     		$focus->db->query($sql);
     	}
     	//END SUGARCRM flav!=sales ONLY
@@ -372,18 +371,19 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
     	if(!empty($_POST['existing_lead_invitees'])) {
     	   $existing_leads =  explode(",", trim($_POST['existing_lead_invitees'], ','));
     	}
+    	    
     	foreach($focus->leads_arr as $lead_id) {
     		if(empty($lead_id) || isset($exiting_leads[$lead_id]) || isset($deleteLeads[$lead_id])) {
     			continue;
     		}
     		
     		if(!isset($acceptStatusLeads[$lead_id])) {
-    		    $focus->leadcontacts->add($lead_id);
+    		    $focus->leads->add($lead_id);
     		} else {
     			// update query to preserve accept_status
-    			$qU  = 'UPDATE meetings_leadcontacts SET deleted = 0, accept_status = \''.$acceptStatusLeads[$lead_id].'\' ';
+    			$qU  = 'UPDATE meetings_leads SET deleted = 0, accept_status = \''.$acceptStatusLeads[$lead_id].'\' ';
     			$qU .= 'WHERE meeting_id = \''.$focus->id.'\' ';
-    			$qU .= 'AND leadcontact_id = \''.$lead_id.'\'';
+    			$qU .= 'AND lead_id = \''.$lead_id.'\'';
     			$focus->db->query($qU);
     		}
     	}

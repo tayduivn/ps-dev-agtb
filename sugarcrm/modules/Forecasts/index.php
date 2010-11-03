@@ -32,14 +32,6 @@ global $theme;
 require_once('modules/Forecasts/ForecastUtils.php');
 global $mod_strings;
 
-// BEGIN SUGARINTERNAL CUSTOMIZATION: provide lance with access to see camerons forecasts
-$tmp_user = null;
-if($GLOBALS['current_user']->user_name == 'lkaji' || $GLOBALS['current_user']->user_name == 'msunder' || $GLOBALS['current_user']->user_name == 'tdaimee'){
-	$tmp_user = $GLOBALS['current_user'];
-	// Larry's user
-	$GLOBALS['current_user']->retrieve('21c60e95-5fcd-c0c7-d871-4a021699a004');
-}
-// END SUGARINTERNAL CUSTOMIZATION: provide lance with access to see camerons forecasts
 if (!empty($_REQUEST['page'])) {
     $user = new User();
     $user->retrieve($user,$_REQUEST['page']);
@@ -48,14 +40,4 @@ if (!empty($_REQUEST['page'])) {
     include ('modules/Forecasts/DetailView.php');
 }
 
-// BEGIN SUGARINTERNAL CUSTOMIZATION: provide lance with access to see camerons forecasts
-if(!is_null($tmp_user)){
-	unset($GLOBALS['current_user']);
-	$GLOBALS['current_user'] = $tmp_user;
-	echo "<script>\n document.CommitEditView.elements['saveworksheet'].disabled = 'disabled'; \n</script>\n";
-	echo "<script>\n document.CommitEditView.elements['resetworksheet'].disabled = 'disabled'; \n</script>\n";
-	echo "<script>\n document.CommitEditView.elements['getchart'].disabled = 'disabled'; \n</script>\n";
-	echo "<script>\n document.CommitEditView.elements['rollupcommit'].disabled = 'disabled'; \n</script>\n";
-}
-// END SUGARINTERNAL CUSTOMIZATION: provide lance with access to see camerons forecasts
 ?>

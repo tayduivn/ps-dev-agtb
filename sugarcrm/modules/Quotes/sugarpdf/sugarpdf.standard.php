@@ -96,7 +96,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         );
     }
     function preDisplay(){
-        global $mod_strings, $timedate;
+        global $mod_strings, $timedate, $user;
         parent::preDisplay();
         $this->_initOptions();
         //retrieve the sales person's first name
@@ -105,13 +105,17 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         $rep = new User;
         $rep->retrieve($this->bean->assigned_user_id);
         
+        $userCurrentTime = time();
+        $offset = $timedate->getUserTimeZone($user);
+        $userCurrentTime += $offset['gmtOffset'] * 60;
+        
         $quote[0]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_NUMBER'];
         $quote[1]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_DATE'];
         $quote[2]['TITLE'] = $mod_strings['LBL_PDF_SALES_PERSON'];
         $quote[3]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_CLOSE'];
         
         $quote[0]['VALUE']['value'] = format_number_display($this->bean->quote_num,$this->bean->system_id);
-        $quote[1]['VALUE']['value'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, time()), false);
+        $quote[1]['VALUE']['value'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, $userCurrentTime), false);
         $quote[2]['VALUE']['value'] = $rep->first_name.' '.$rep->last_name;
         $quote[3]['VALUE']['value'] = $this->bean->date_quote_expected_closed;
         
@@ -361,20 +365,16 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
      */
     function buildFileName(){
         global $mod_strings;
-        
-        $fileName = preg_replace("#[^A-Z0-9\-_\.]#i", "_", $this->bean->shipping_account_name);
+        $fileName = html_entity_decode($this->bean->shipping_account_name, ENT_QUOTES, 'UTF-8');//bug #8584
         
         if (!empty($this->bean->quote_num)) {
             $fileName .= "_{$this->bean->quote_num}";
         }
-        
-        $fileName = $mod_strings['LBL_PROPOSAL']."_{$fileName}.pdf";
-        
+        $fileName = $mod_strings['LBL_PROPOSAL'].'_' . $fileName . '.pdf';
         if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT'])) {
             //$fileName = $locale->translateCharset($fileName, $locale->getExportCharset());
             $fileName = urlencode($fileName);
         }
-        
         $this->fileName = $fileName;
     }
 }

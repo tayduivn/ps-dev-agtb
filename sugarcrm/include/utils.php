@@ -1541,11 +1541,6 @@ function get_admin_modules_for_user($user) {
                 $workflow_admin_modules[$key] = $val;
         }
     }
-    // BEGIN SUGARINTERNAL CUSTOMIZATION - ADD M2 MODULES TO WORKFLOW
-    $workflow_admin_modules['LeadContacts'] = "LeadContacts";
-    $workflow_admin_modules['Touchpoints'] = "Touchpoints";
-    $workflow_admin_modules['LeadAccounts'] = "LeadAccounts";
-    // END SUGARINTERNAL CUSTOMIZATION - ADD M2 MODULES TO WORKFLOW
     $_SESSION['get_workflow_admin_modules_for_user'] = $workflow_admin_modules;
     return ($workflow_admin_modules);
 }

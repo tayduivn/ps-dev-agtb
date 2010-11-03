@@ -274,24 +274,17 @@ function get_user_module_list($user){
 	foreach($modInvisList as $invis){
 		$modules[$invis] = 'read_only';
 	}
-	//rrs fix for M2 -- SUGAR INTERNAL CUSTOMIZATION
-	$modules['Touchpoints'] = 'Touchpoints';
-	//rrs fix for M2 -- SUGAR INTERNAL CUSTOMIZATION
 
 	if(isset($modules['Calendar']) || $modules['Activities']){
 		foreach($modInvisListActivities as $invis){
-			$modules[$invis] = $invis;
+				$modules[$invis] = $invis;
 		}
 	}
 
 	$actions = ACLAction::getUserActions($user->id,true);
 	foreach($actions as $key=>$value){
-		/* BEGIN SUGARINTERNAL CUSTOMIZATION */
-		if(!isset($value['module']['access']['aclaccess'])
-		   || $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
-			if (!isset($value['module']['access']['aclaccess'])
-				|| $value['module']['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
-		/* END SUGARINTERNAL CUSTOMIZATION */
+		if($value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
+			if ($value['module']['access']['aclaccess'] == ACL_ALLOW_DISABLED) {
 				unset($modules[$key]);
 			} else {
 				$modules[$key] = 'read_only';
@@ -367,15 +360,6 @@ function get_name_value_list(&$value, $returnDomValue = false){
 				}elseif(strcmp($type, 'enum') == 0 && !empty($var['options']) && $returnDomValue){
 					$val = $app_list_strings[$var['options']][$val];
 				}
-
-				// BEGIN jostrow customization
-				// These lines of code MUST be removed, or many applications relying on the SOAP API will break
-				// This bug was originally fixed a year ago, but has resurfaced
-
-				//elseif(strcmp($type, 'enum') == 0 && !empty($var['options'])){
-				//	$val = $app_list_strings[$var['options']][$val];
-				//}
-				// END jostrow customization
 
 				$list[$var['name']] = get_name_value($var['name'], $val);
 			}
@@ -493,9 +477,7 @@ function name_value_lists_get_array($list){
 
 function array_get_return_value($array, $module){
 
-	/* BEGIN SUGARINTERNAL CUSTOMIZATION */
-	return Array('id' => (!empty($value->id) ? $value->id : null),
-			 /* END SUGARINTERNAL CUSTOMIZATION */
+	return Array('id'=>$array['id'],
 				'module_name'=> $module,
 				'name_value_list'=>array_get_name_value_list($array)
 				);
@@ -1050,7 +1032,7 @@ function check_for_duplicate_contacts(&$seed){
 	
 
 	if(isset($seed->id)){
-	    return null;
+		return null;
 	}
 
 	$query = '';
@@ -1099,7 +1081,7 @@ function check_for_duplicate_contacts(&$seed){
                     return $contact->id;
                 }
             }
-	    return null;
+            return null;
         }
 	}	
 }

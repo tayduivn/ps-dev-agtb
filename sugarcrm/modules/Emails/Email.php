@@ -2554,15 +2554,7 @@ class Email extends SugarBean {
 				break;
 
 				case 'sales':
-                                        /*
-                                        ** @author: SADEK, ENGINEERING (M2)
-                                        ** SUGARINTERNAL CUSTOMIZATION
-                                        ** ITRequest #: none
-                                        ** Description: M2 customization. Changing reference from Leads to LeadContacts
-                                        ** Wiki customization page: http://internalwiki.sjc.sugarcrm.pvt/index.php/Emails.php
-                                        */
-                                        $email_fields['CREATE_RELATED'] = '<a href="index.php?module=LeadContacts&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateLeads.gif').'">'.$mod_strings['LBL_CREATE_LEAD'].'</a>';
-                                        /* END SUGARINTERNAL CUSTOMIZATION */
+					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Leads&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateLeads.gif').'">'.$mod_strings['LBL_CREATE_LEAD'].'</a>';
 				break;
 
 				case 'contact':
