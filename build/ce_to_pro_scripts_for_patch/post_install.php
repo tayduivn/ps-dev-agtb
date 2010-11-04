@@ -162,9 +162,9 @@ function post_install()
 		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
 		require_once('install/lang.config.php');
 
-		foreach($config as $k=>$v){
-			$sugar_config[$k] = $v;
-		}
+   	    foreach($config['languages'] as $k=>$v){
+            $sugar_config['languages'][$k] = $v;
+        }
 		
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
 	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);

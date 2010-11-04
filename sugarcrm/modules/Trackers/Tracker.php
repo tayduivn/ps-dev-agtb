@@ -86,11 +86,14 @@ class Tracker extends SugarBean
         	$breadCrumb = $_SESSION['breadCrumbs'];
 	        $module_query = '';
 	        if(!empty($modules)) {
+	           $history_max_viewed = 10;
 	           $module_query = is_array($modules) ? ' AND module_name IN (\'' . implode("','" , $modules) . '\')' :  ' AND module_name = \'' . $modules . '\'';
+	        } else {
+	           $history_max_viewed = (!empty($GLOBALS['sugar_config']['history_max_viewed']))? $GLOBALS['sugar_config']['history_max_viewed'] : 50;
 	        }
 	         
 	        $query = 'SELECT item_id, item_summary, module_name, id FROM ' . $this->table_name . ' WHERE id = (SELECT MAX(id) as id FROM ' . $this->table_name . ' WHERE user_id = \'' . $user_id . '\' AND visible = 1' . $module_query . ')';
-	        $result = $this->db->limitQuery($query,0,10,true,$query);
+	        $result = $this->db->limitQuery($query,0,$history_max_viewed,true,$query);
 	        while(($row = $this->db->fetchByAssoc($result))) {
 	               $breadCrumb->push($row);
 	        }

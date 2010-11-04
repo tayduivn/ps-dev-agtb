@@ -46,7 +46,7 @@ class SqlsrvHelper extends MssqlHelper
     {
 		$columnType = parent::getColumnType($type,$name,$table);
         
-		if ( in_array($columnType,array('char','varchar')) )
+		if ( in_array($columnType,array('char','varchar')) && !preg_match('/(_id$|^id$)/', $name))
 			$columnType = 'n'.$columnType;
 		
 		if ( in_array($columnType,array('text','ntext','image')) ) {

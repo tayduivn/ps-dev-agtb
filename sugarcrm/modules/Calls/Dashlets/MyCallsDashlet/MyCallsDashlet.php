@@ -69,12 +69,16 @@ class MyCallsDashlet extends DashletGeneric {
         	$this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
 	    	
             $lvsParams = array(
-                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\')  GROUP BY calls.assigned_user_id,calls.id',
+                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ',
                            );
         } else {
             $lvsParams = array();
         }
         $this->myItemsOnly = false; 
+		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
+		//so we need to make sure date entered is also set so the sort can work with the group by
+		$lvsParams['custom_select']=', calls.date_entered ';
+		$lvsParams['distinct']=true;
         
         parent::process($lvsParams);
    
@@ -108,8 +112,9 @@ class MyCallsDashlet extends DashletGeneric {
             }
             if ($this->lvs->data['data'][$rowNum]['STATUS'] == $app_list_strings['meeting_status_dom']['Planned'])
             {
-                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == '' ||
-                    $this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')                
+                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
+					//if no status has been set, then do not show accept options
+				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')                
                 {
                     $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\"><a title=\"".$app_list_strings['dom_meeting_accept_options']['accept'].
                         "\" href=\"javascript:SUGAR.util.retrieveAndFill('index.php?module=Activities&to_pdf=1&action=SetAcceptStatus&id=".$this->id."&object_type=Call&object_id=".$this->lvs->data['data'][$rowNum]['ID'] . "&accept_status=accept', null, null, SUGAR.mySugar.retrieveDashlet, '{$this->id}');\">". 

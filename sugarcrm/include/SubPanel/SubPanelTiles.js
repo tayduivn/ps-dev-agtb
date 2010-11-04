@@ -191,6 +191,7 @@ function set_return_and_save_background(popup_reply_data)
 
 function got_data(args, inline)
 {
+
 	var list_subpanel = document.getElementById('list_subpanel_'+request_map[args.request_id].toLowerCase());
 	//this function assumes that we are always working with a subpanel..
 	//add a null check to prevent failures when we are not.
