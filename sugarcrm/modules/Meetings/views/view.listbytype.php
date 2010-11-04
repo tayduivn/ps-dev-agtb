@@ -63,7 +63,7 @@ class MeetingsViewListbytype extends ViewList {
     }
 
  	function processSearchForm(){
- 		$type = 'LotusLive';
+ 		$type = 'LotusLiveDirect';
  		$where =  " meetings.type = '$type' AND meetings.date_start > UTC_TIMESTAMP() - 7200 ";
 
         if ( isset($_REQUEST['name_basic']) ) {

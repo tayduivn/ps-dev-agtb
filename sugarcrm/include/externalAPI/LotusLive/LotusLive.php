@@ -2,6 +2,8 @@
 
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
+require_once('include/externalAPI/Base/WebDocument.php');
+
 
 class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
@@ -158,8 +160,6 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url AS url FROM notes WHERE filename LIKE '".$db->quote($keywords)."%' OR name LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLive'
 UNION ALL
 SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url AS url FROM document_revisions WHERE filename LIKE '".$db->quote($keywords)."%' OR name LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLive' ORDER BY date_modified DESC";
-
-        $GLOBALS['log']->fatal('IKEA: '.$sql);
 
         $ret = $db->query($sql);
 
