@@ -67,7 +67,6 @@ public function tearDown() {
 	{
 		global $argv;
 		$argv = $this->original_argv;
-		unset($this->original_argv);
 	}
 	
 	if(file_exists('config.php.bug37214'))
@@ -93,6 +92,7 @@ public function tearDown() {
 	}
 }
 	
+
 public function test_silent_upgrade_parameters() {
 	
 	if(!file_exists($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php'))
@@ -140,6 +140,64 @@ public function test_silent_upgrade_parameters() {
 	$this->assertEquals(true, $sugar_config['external_cache_disabled_memcache'], "Assert external_cache_disabled_memcache is set to true.");
 	$this->assertEquals(true, $sugar_config['external_cache_disabled'], "Assert external_cache_disabled is set to true.");
 }
+
+
+/**
+ * test_silent_upgrade_parameters2
+ * This is similar to test_silent_upgrade_parameters except that $argv[0] simulates the current directory
+ * (imagine the caes of something like >php silentUpgrade.php xxx yyy zzz).  This is to prove that the
+ * merge_config_si_settings() can correctly determine the presence of the config_si.php file given the
+ * current directory.
+ * 
+ */
+public function test_silent_upgrade_parameters2() {
+	
+	if(!file_exists($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php'))
+	{
+		$this->markTestSkipped('Unable to locate post_intall.php file.  Skipping test.');
+		return;
+	}
+	
+	if(!file_exists('config.php'))
+	{
+		$this->markTestSkipped('Unable to locate config.php file.  Skipping test.');
+		return;
+	}
+
+	
+	if(!file_exists($this->current_working_dir . DIRECTORY_SEPARATOR . 'config_si.php'))
+	{
+		$this->markTestSkipped('Unable to locate config_si.php file.  Skipping test.');
+		return;
+	}	
+
+	//Simulate silent upgrade arguments
+	global $argv;
+	$argv[0] = 'config.php'; //This would really be silentUpgrade.php, but this will suffice
+	$argv[1] = $this->current_working_dir . DIRECTORY_SEPARATOR . 'someZipFile.php';
+	$argv[2] = $this->current_working_dir . DIRECTORY_SEPARATOR . 'silent_upgrade.log';
+	$argv[3] = $this->current_working_dir;
+	$argv[4] = 'admin';
+	
+	include('config.php');
+	$original_sugar_config = $sugar_config;
+	
+	global $unzip_dir;
+	$unzip_dir = $this->build_directory;
+	
+	require_once($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php');
+	$merge_result = merge_config_si_settings();
+	//$this->assertEquals(true, $merge_result, "Assert that we have merged values");
+	
+	include('config.php');
+	//echo var_export($sugar_config, true);
+	$this->assertEquals(true, $sugar_config['disable_count_query'], "Assert disable_count_query is set to true.");
+	$this->assertEquals(true, $sugar_config['external_cache_disabled_apc'], "Assert external_cache_disabled_apc is set to true.");
+	$this->assertEquals(true, $sugar_config['external_cache_disabled_zend'], "Assert external_cache_disabled_zend is set to true.");
+	$this->assertEquals(true, $sugar_config['external_cache_disabled_memcache'], "Assert external_cache_disabled_memcache is set to true.");
+	$this->assertEquals(true, $sugar_config['external_cache_disabled'], "Assert external_cache_disabled is set to true.");
+}
+
 
 }
 
