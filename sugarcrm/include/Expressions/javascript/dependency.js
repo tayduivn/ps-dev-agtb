@@ -309,7 +309,8 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 	// internal function for replacing all which is to circumvent
 	// not using a regex
 	this.replaceAll = function(haystack, needle, rpl) {
-		var str = haystack;
+		if (needle == rpl) return haystack;
+        var str = haystack;
 		while ( str.indexOf(needle) > -1 ) {
 			str = str.replace(needle, rpl);
 		}
