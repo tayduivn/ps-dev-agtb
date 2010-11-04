@@ -309,7 +309,6 @@ class InboundEmail extends SugarBean {
 		//if($this->protocol == 'pop3') {
 		//$raw = $app_strings['LBL_EMAIL_VIEW_UNSUPPORTED'];
 		//} else {
-			$raw;
 			if (empty($this->id)) {
 				$q = "SELECT raw_source FROM emails_text WHERE email_id = '{$uid}'";
 				$r = $this->db->query($q);
@@ -1771,7 +1770,7 @@ class InboundEmail extends SugarBean {
 
 			if(file_exists($file)) {
 				if(!unlink($file)) {
-					$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ] to [ {$newFile} ]");
+					$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ]");
 				}
 			}
 		}
@@ -2000,14 +1999,14 @@ class InboundEmail extends SugarBean {
 
 		if(imap_createmailbox($this->conn, imap_utf7_encode($connectString))) {
 			imap_subscribe($this->conn, imap_utf7_encode($connectString));
-			$status = imap_status($this->conn, str_replace("{$delimiter}{$name}","",$connectString));
+			$status = imap_status($this->conn, str_replace("{$delimiter}{$name}","",$connectString), SA_ALL);
         	$this->mailbox = $this->mailbox . "," . $newFolder;
         	$this->save();
         	$sessionFoldersString  = $this->getSessionInboundFoldersString($this->server_url, $this->email_user, $this->port, $this->protocol);
         	$sessionFoldersString = $sessionFoldersString . "," . $newFolder;
 			$this->setSessionInboundFoldersString($this->server_url, $this->email_user, $this->port, $this->protocol, $sessionFoldersString);
 
-			echo $status;
+			echo json_encode($status);
 			return true;
 		} else {
 			echo "NOOP: could not create folder";
@@ -2689,8 +2688,8 @@ class InboundEmail extends SugarBean {
 					}
 				}
 
-				$replyToName = (!empty($storedOptions['reply_to_name']))? from_html($storedOptions['reply_to_name']) :$fromName ;
-				$replyToAddr = (!empty($storedOptions['reply_to_addr'])) ? $storedOptions['reply_to_addr'] : $fromAddress;
+				$replyToName = (!empty($storedOptions['reply_to_name']))? from_html($storedOptions['reply_to_name']) :$from_name ;
+				$replyToAddr = (!empty($storedOptions['reply_to_addr'])) ? $storedOptions['reply_to_addr'] : $from_addr;
 
 				if(!empty($email->reply_to_email)) {
 					$to[0]['email'] = $email->reply_to_email;
@@ -4415,7 +4414,7 @@ class InboundEmail extends SugarBean {
 		$ooto = array("Out of the Office", "Out of Office");
 
 		foreach($ooto as $str) {
-			if(preg_replace('/'.$str.'/i', $subject)) {
+			if(preg_match('/'.$str.'/i', $subject)) {
 				$GLOBALS['log']->debug('Autoreply cancelled - found "Out of Office" type of subject.');
 				return false;
 			}
@@ -5576,9 +5575,9 @@ eoq;
 			$GLOBALS['log']->info("INBOUNDEMAIL: Using cache file for setEmailForDisplay()");
 
 			include($cache); // profides $cacheFile
+            /** @var $cacheFile array */
 
-
-			$metaOut = unserialize($cacheFile['out']);
+            $metaOut = unserialize($cacheFile['out']);
 			$meta = $metaOut['meta']['email'];
 			$email = new Email();
 
@@ -5977,7 +5976,7 @@ eoq;
 			//_pp("count post-sort: ".count($revSorts));
 			$sorts[$sort] = $revSorts;
 		}
-
+        $timedate = TimeDate2::getInstance();
 		foreach($sorts[$sort] as $k2 => $overview2) {
 		    $arr[$k2]->date = $timedate->fromString($arr[$k2]->date)->asDb();
 			$retArr[] = $arr[$k2];
@@ -5999,7 +5998,7 @@ eoq;
 
 		// cache
 		if($this->validCacheExists($this->mailbox)) {
-			$ret = $eui->getCacheValue($this->mailbox);
+			$ret = $this->getCacheValue($this->mailbox);
 
 			$updates = array();
 
