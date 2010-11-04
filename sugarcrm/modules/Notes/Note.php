@@ -316,9 +316,6 @@ class Note extends SugarBean {
 		return false;
 	}
 	
-
-
-
 }
 
 	// External API integration, for the dropdown list of what external API's are available

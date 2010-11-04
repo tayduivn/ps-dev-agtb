@@ -227,8 +227,6 @@ SELECT doc_id AS id, doc_url AS url, filename AS name, date_modified AS date_mod
 UNION ALL
 SELECT doc_id AS id, doc_url AS url, filename AS name, date_modified AS date_modified FROM document_revisions WHERE filename LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLiveDirect' ORDER BY date_modified DESC";
 
-        $GLOBALS['log']->fatal('IKEA: SearchDoc: '.$sql);
-
         $ret = $db->query($sql,true);
 
         $results = array();

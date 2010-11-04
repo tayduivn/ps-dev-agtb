@@ -98,10 +98,15 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 			if (!empty($layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])])) {
 				$link_url  = $layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])];						
 			}
+            if ( $layout_def['image2'] == '__VARIABLE' ) {
+                $imagePath = $layout_def['fields'][$key.'_ICON'];
+            } else {
+                $imagePath = $layout_def['image2'];
+            }
  
-			$icon_img_html = SugarThemeRegistry::current()->getImage( $layout_def['image2'] . '', 'border="0" alt="' . $layout_def['image2'] . '"');
+			$icon_img_html = SugarThemeRegistry::current()->getImage( $imagePath . '', 'border="0" alt="' . $imagePath . '"');
 			$ret.= (empty($link_url)) ? '' : '<a href="' . $link_url. '" TARGET = "_blank">' . "$icon_img_html</a>";	
-		}
+        }
 //if requested, add attachement icon.
 		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
 			if (is_array($layout_def['image2_url_field'])) {

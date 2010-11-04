@@ -294,11 +294,10 @@ class UploadFile
                     $result['errorMessage'] = 'Could not find a proper API';
                 }
                 unlink($new_destination);
-                $bean->save();
             }catch(Exception $e){
                 $result['success'] = FALSE;
                 $result['errorMessage'] = $e->getMessage();
-                $GLOBALS['log']->fatal("Caught exception:   $e->getMessage() ");
+                $GLOBALS['log']->fatal("Caught exception: (".$e->getMessage().") ");
             }
             if ( !$result['success'] ) {
                 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
