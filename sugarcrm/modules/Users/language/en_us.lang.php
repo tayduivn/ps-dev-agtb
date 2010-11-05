@@ -601,8 +601,6 @@ $mod_strings = array (
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
 <tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a href="http://kb.sugarcrm.com/" target="_blank"><b>Knowledge Base</b></a><br>Tips from SugarCRM Support for performing common tasks and processes in Sugar</td></tr>
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/wiki.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/wiki" target="_blank"><b>Wiki</b></a><br>Tips and answers from the Sugar Community for commonly asked questions</td></tr>
-<tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
 <tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b>Forums</b></a><br>Forums dedicated to the Sugar Community to discuss topics of interest with each other and with SugarCRM Developers</td></tr>
 </table>',
     'LBL_WIZARD_PERSONALINFO' => 'Your Information',
