@@ -247,7 +247,7 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 	echo "<P><h3>". $type . "</h3></p>";
 	echo "<ul style=\"margin-bottom: 20px; padding-left: 0px;\">";
 		foreach($details as $key => $value) {
-			echo "<li><b>".$value['name']."</b> by ".$value['author']." (<a href='{$value['website']}' target='_blank'>".$value['website']."</a>)</li>";
+			echo "<li><b>".$value['name']."</b> by ".$value['author']." (<a href='http://{$value['website']}' target='_blank'>".$value['website']."</a>)</li>";
 		}
 	echo "</ul>";
 }?>
