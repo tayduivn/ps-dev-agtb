@@ -1,15 +1,13 @@
 <?php
 
 require_once('install/install_utils.php');
+require_once('modules/UpgradeWizard/uw_utils.php');
 
 class Bug37214Test extends Sugar_PHPUnit_Framework_TestCase {
 
 var $original_argv;
 var $has_original_config_si_file;
 var $current_working_dir;
-var $scripts_directory;
-var $scripts_for_patch_directory;
-var $build_directory;
 
 public function setUp() {
 	global $argv;
@@ -44,22 +42,6 @@ public function setUp() {
 	);
 	
 	write_array_to_file("sugar_config_si", $sugar_config_si, $this->current_working_dir . DIRECTORY_SEPARATOR . 'config_si.php');
-	
-	//Do this twice to go two directories below
-	$directory = substr($this->current_working_dir, 0, strrpos($this->current_working_dir, DIRECTORY_SEPARATOR));
-	$this->build_directory = $directory . DIRECTORY_SEPARATOR . 'build';
-	
-	recursive_make_writable( $this->build_directory);
-		
-	$this->scripts_directory = $this->build_directory . DIRECTORY_SEPARATOR . 'scripts';
-	$this->scripts_for_patch_directory = $this->build_directory . DIRECTORY_SEPARATOR . 'scripts_for_patch';
-	//echo 'build_dir = ' . $this->build_directory . "\n";
-	//echo 'scripts_directory = ' . $this->scripts_directory . "\n";	
-	
-	if(!is_dir($this->scripts_directory))
-	{
-		copy_recursive($this->scripts_for_patch_directory, $this->scripts_directory);
-	}
 }
 
 public function tearDown() {
@@ -85,22 +67,10 @@ public function tearDown() {
 	   }
 	   unlink($this->current_working_dir . DIRECTORY_SEPARATOR . 'config_si.php.bug37214');
 	}
-
-	if(file_exists($this->scripts_directory))
-	{
-	   rmdir_recursive($this->scripts_directory);
-	}
 }
 	
 
 public function test_silent_upgrade_parameters() {
-	
-	if(!file_exists($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php'))
-	{
-		$this->markTestSkipped('Unable to locate post_intall.php file.  Skipping test.');
-		return;
-	}
-	
 	if(!file_exists('config.php'))
 	{
 		$this->markTestSkipped('Unable to locate config.php file.  Skipping test.');
@@ -122,15 +92,7 @@ public function test_silent_upgrade_parameters() {
 	$argv[3] = $this->current_working_dir;
 	$argv[4] = 'admin';
 	
-	include('config.php');
-	$original_sugar_config = $sugar_config;
-	
-	global $unzip_dir;
-	$unzip_dir = $this->build_directory;
-	
-	require_once($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php');
 	$merge_result = merge_config_si_settings();
-	//$this->assertEquals(true, $merge_result, "Assert that we have merged values");
 	
 	include('config.php');
 	//echo var_export($sugar_config, true);
@@ -151,12 +113,6 @@ public function test_silent_upgrade_parameters() {
  * 
  */
 public function test_silent_upgrade_parameters2() {
-	
-	if(!file_exists($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php'))
-	{
-		$this->markTestSkipped('Unable to locate post_intall.php file.  Skipping test.');
-		return;
-	}
 	
 	if(!file_exists('config.php'))
 	{
@@ -179,14 +135,7 @@ public function test_silent_upgrade_parameters2() {
 	$argv[3] = $this->current_working_dir;
 	$argv[4] = 'admin';
 	
-	include('config.php');
-	$original_sugar_config = $sugar_config;
-	
-	global $unzip_dir;
-	$unzip_dir = $this->build_directory;
-	
-	require_once($this->scripts_for_patch_directory . DIRECTORY_SEPARATOR . 'post_install.php');
-	$merge_result = merge_config_si_settings();
+	$merge_result = merge_config_si_settings(false);
 	//$this->assertEquals(true, $merge_result, "Assert that we have merged values");
 	
 	include('config.php');

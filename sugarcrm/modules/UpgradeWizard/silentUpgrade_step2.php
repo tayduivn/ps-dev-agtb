@@ -463,8 +463,9 @@ if($origVersion < '620'){
 }
 
 //bug: 37214 - merge config_si.php settings if available
-require_once('scripts/post_install.php');
-merge_config_si_settings();
+logThis('Begin merge_config_si_settings', $path);
+merge_config_si_settings(true);
+logThis('End merge_config_si_settings', $path);
 
 //also add the cache cleaning here.
 if(function_exists('deleteCache')){

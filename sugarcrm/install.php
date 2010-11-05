@@ -664,6 +664,13 @@ EOQ;
         	$_SESSION['oc_install'] = false;
         }
         //END SUGARCRM flav=pro ONLY
+        
+        //Now merge the config_si.php settings into config.php
+        if(file_exists('config.php') && file_exists('config_si.php'))
+        {
+            require_once('modules/UpgradeWizard/uw_utils.php');
+        	merge_config_si_settings(false, 'config.php', 'config_si.php');
+        }
         break;
 	}
 }

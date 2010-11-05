@@ -5421,4 +5421,147 @@ function upgradeModulesForTeam() {
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 		$GLOBALS['db']->query($callsSql);
 	}
+	
+	
+/**
+ * merge_config_si_settings
+ * This method checks for the presence of a config_si.php file and, if found, merges the configuration
+ * settings from the config_si.php file into config.php.  If a config_si_location parameter value is not
+ * supplied it will attempt to discover the config_si.php file location from where the executing script
+ * was invoked.
+ * 
+ * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
+ * @param config_location String optional value to config.php file location
+ * @param config_si_location String optional value to config_si.php file location
+ * @return boolean value indicating whether or not a merge was attempted with config_si.php file
+ */
+function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='')
+{	
+	if(!empty($config_location) && !file_exists($config_location))
+	{
+		if($write_to_upgrade_log)
+		{
+	       _logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+		}
+	    return false;
+	} else if(empty($config_location)) {
+		global $argv;
+		//We are assuming this is from the silentUpgrade scripts so argv[3] will point to SugarCRM install location
+		if(isset($argv[3]) && is_dir($argv[3]))
+		{
+			$config_location = $argv[3] . DIRECTORY_SEPARATOR . 'config.php';
+		} 
+	}
+	
+	//If config_location is still empty or if the file cannot be found, skip merging
+	if(empty($config_location) || !file_exists($config_location))
+	{
+	   if($write_to_upgrade_log)
+	   {		
+	   	  _logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
+	   }
+	   return false;
+	} else {
+	   if($write_to_upgrade_log)
+	   {	
+	      _logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
+	   }
+	   
+	   include($config_location);
+	   if(empty($sugar_config))
+	   {
+	   	  if($write_to_upgrade_log)
+		  {
+	   	     _logThis('config.php contents are empty.  Skip merging.', $path);
+		  }
+	   	  return false;
+	   }   
+	}
+	
+	if(!empty($config_si_location) && !file_exists($config_si_location))
+	{
+		if($write_to_upgrade_log)
+		{
+	       _logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+		}
+	    return false;
+	} else if(empty($config_si_location)) {
+		if(isset($argv[0]) && is_file($argv[0]))
+		{
+			$php_file = $argv[0];
+			$p_info = pathinfo($php_file);
+			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : ''; 
+			$config_si_location = $php_dir . 'config_si.php';
+		} 
+	}
+	
+	//If config_si_location is still empty or if the file cannot be found, skip merging
+	if(empty($config_si_location) || !file_exists($config_si_location))
+	{
+	   if($write_to_upgrade_log)
+	   {
+	      _logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
+	   }
+	   return false;
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      _logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
+	   }
+	   
+	   include($config_si_location);
+	   if(empty($sugar_config_si))
+	   {
+	      if($write_to_upgrade_log)
+		  {
+	   	     _logThis('config_si.php contents are empty.  Skip merging.', $path);
+		  }
+	   	  return false;
+	   }
+	}
+	
+	//Now perform the merge operation
+	$modified = false;
+	foreach($sugar_config_si as $key=>$value)
+	{
+		if(!preg_match('/^setup_/', $key) && !isset($sugar_config[$key]))
+		{
+		   if($write_to_upgrade_log)
+		   {
+		      _logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
+		   }
+		   $sugar_config[$key] = $value;
+		   $modified = true;
+		}
+	}
+	
+	if($modified)
+	{
+		if($write_to_upgrade_log)
+		{
+	       _logThis('Update config.php file with new values', $path);
+		}
+		
+	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
+	       if($write_to_upgrade_log)
+		   {
+	    	  _logThis('*** ERROR: could not write to config.php', $path);
+		   }
+		   return false;
+		}
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      _logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	   }
+	   return false;
+	}
+	
+	if($write_to_upgrade_log)
+	{
+	   _logThis('End merge_config_si_settings', $path);
+	}
+	return true;
+}
+	
 ?>
