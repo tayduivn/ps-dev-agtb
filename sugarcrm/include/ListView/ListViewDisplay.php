@@ -196,7 +196,7 @@ class ListViewDisplay {
             if ($this->displayColumns[$columnName]['type'] == "relate" && !empty($seedDef['link']))
             {
                 $link = $seedDef['link'];
-                if (!empty($this->lvd->seed->field_defs[$link]))
+                if (!empty($this->lvd->seed->field_defs[$link]) && !empty($this->lvd->seed->field_defs[$seedDef['link']]['module']))
                 {
                     $this->displayColumns[$columnName]['module'] = $this->lvd->seed->field_defs[$seedDef['link']]['module'];
                 }
