@@ -39,6 +39,15 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 {literal}
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
+{literal}
+    user_detailview_tabs.addTab( new YAHOO.widget.Tab({
+        label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
+        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record=1&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
+        content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
+        cacheData: true
+    }));
+    user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
+{/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
@@ -48,7 +57,7 @@ user_detailview_tabs.on('contentReady', function(e){
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-    user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
+    user_detailview_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY

@@ -2,6 +2,7 @@
 
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
+require_once('include/externalAPI/Base/WebDocument.php');
 
 class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument {
 
