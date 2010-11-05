@@ -462,6 +462,10 @@ if($origVersion < '620'){
 	upgradeDateTimeFields();
 }
 
+//bug: 37214 - merge config_si.php settings if available
+require_once('scripts/post_install.php');
+merge_config_si_settings();
+
 //also add the cache cleaning here.
 if(function_exists('deleteCache')){
 	@deleteCache();
