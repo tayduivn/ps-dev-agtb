@@ -245,6 +245,11 @@ class SugarBean
      * Used to pass inner join string to ListView Data.
      */
     var $listview_inner_join = array();
+    
+    /**
+     * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
+     */
+    var $in_import = false;
     /**
      * Constructor for the bean, it performs following tasks:
      *
