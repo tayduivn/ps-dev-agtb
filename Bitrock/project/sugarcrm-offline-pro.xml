@@ -1,7 +1,7 @@
 <project>
     <shortName>Sugar</shortName>
     <fullName>Sugar Offline Client</fullName>
-    <version>6.1.0RC2</version>
+    <version>6.1.0RC3</version>
     <installerFilename>${product_shortname}-OfflineClient-PRO-${product_version}-${platform_name}-installer.${platform_exec_suffix}</installerFilename>
     <readmeFile></readmeFile>
     <licenseFile>license.txt</licenseFile>
@@ -21,7 +21,7 @@
     <defaultUnixDirectoryPermissions>755</defaultUnixDirectoryPermissions>
     <defaultUnixFilePermissions>644</defaultUnixFilePermissions>
     <description>One-line description of your software</description>
-    <outputDirectory>/home/build/sugarbuild-BitRock-6.1.0RC2/zip</outputDirectory>
+    <outputDirectory>/home/build/sugarbuild-BitRock-6.1.0RC3/zip</outputDirectory>
     <projectSchemaVersion>1.2</projectSchemaVersion>
     <saveRelativePaths>1</saveRelativePaths>
     <slideShowLoop>1</slideShowLoop>
