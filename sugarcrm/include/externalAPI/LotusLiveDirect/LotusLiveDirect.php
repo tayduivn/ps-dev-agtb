@@ -7,18 +7,16 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
 
     protected $dateFormat = 'm/d/Y H:i:s';
 
-    public $authMethods = array("oauth" => 1);
+    public $authMethods = array("oauth" => 1, "password" => 1);
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
     public $docSearch = true;
-	protected $meetingID;
-    protected $joinURL;
-	protected $hostURL = "https://apps.test.lotuslive.com/meetings/host";
-	protected $oauthReq = "https://apps.test.lotuslive.com/manage/oauth/getRequestToken";
-    protected $oauthAuth = 'https://apps.test.lotuslive.com/manage/oauth/authorizeToken';
-    protected $oauthAccess = 'https://apps.test.lotuslive.com/manage/oauth/getAccessToken';
+
+    protected $oauthReq = "/manage/oauth/getRequestToken";
+    protected $oauthAuth = '/manage/oauth/authorizeToken';
+    protected $oauthAccess = '/manage/oauth/getAccessToken';
     protected $oauthParams = array('signatureMethod' => 'PLAINTEXT');
-    protected $url = 'https://apps.test.lotuslive.com/';
+    protected $url = 'https://apps.lotuslive.com/';
 
     public function loadEAPM($eapmBean)
     {
@@ -29,14 +27,7 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
         }
 
         if ( !empty($eapmBean->api_data) ) {
-            $this->api_data = json_decode(base64_decode($eapmBean->api_data),true);
-//            if ( isset($api_data['meetingID']) ) {
-//                $this->meetingID = $api_data['meetingID'];
-//                $this->hostURL = $api_data['hostURL'];
-//                $this->joinURL = $api_data['joinURL'];
-//                // FIXME: Need to figure out how we want to handle collections
-//                $this->collectionID = '3CAA8D80D29311DFA08B9C830A060702';
-//            }
+            $this->api_data = json_decode(base64_decode($eapmBean->api_data), true);
         }
     }
 
@@ -161,11 +152,28 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
         return array('success'=>TRUE);
     }
 
+    /**
+     * Get HTTP client for communication with Lotus
+     *
+     * Creates and setup the http client object, including authorization data if needed
+     *
+     * @return Zend_Http_Client
+     */
+    protected function getClient()
+    {
+        if($this->authData->type == 'oauth') {
+            $client = $this->authData->getHttpClient($this);
+        } else {
+            $client = new Zend_Http_Client();
+            $client->setAuth($this->account_name, $this->account_password);
+        }
+        $client->setHeaders('Accept-Encoding', 'identity');
+        return $client;
+    }
 
     public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
     {
-        $client = $this->authData->getHttpClient($this);
-        $client->setHeaders('Accept-Encoding', 'identity');
+        $client = $this->getClient();
         $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/folderc/snx:files!{$this->api_data['subscriberId']}";
         $GLOBALS['log']->debug("LOTUS REQUEST: $url");
         $rawResponse = $client->setUri($url)
@@ -205,8 +213,7 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
 
     public function deleteDoc($document)
     {
-        $client = $this->authData->getHttpClient($this);
-        $client->setHeaders('Accept-Encoding', 'identity');
+        $client = $this->getClient();
         $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
         $GLOBALS['log']->debug("LOTUS REQUEST: $url");
         $rawResponse = $client->setUri($url)
@@ -246,16 +253,15 @@ SELECT doc_id AS id, doc_url AS url, filename AS name, date_modified AS date_mod
      */
     protected function makeRequest($urlReq, $method = 'GET', $json = true)
     {
-        $client = $this->authData->getHttpClient($this);
-        $client->setHeaders('Accept-Encoding', 'identity');
-        $url = $this->url.$urlReq;
+        $client = $this->getClient();
+        $url = rtrim($this->url,"/")."/".ltrim($urlReq, "/");
         $GLOBALS['log']->debug("REQUEST: $url");
         $rawResponse = $client->setUri($url)->request($method);
         $reply = array('rawResponse' => $rawResponse->getBody());
-//        $GLOBALS['log']->debug("RESPONSE: ".var_export($reply, true));
+        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         if($json) {
             $response = json_decode($reply['rawResponse'],true);
-//            $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
+            $GLOBALS['log']->debug("RESPONSE-JSON: ".var_export($response, true));
             if ( empty($rawResponse) || !is_array($response) ) {
                 $reply['success'] = FALSE;
                 // FIXME: Translate
@@ -271,4 +277,18 @@ SELECT doc_id AS id, doc_url AS url, filename AS name, date_modified AS date_mod
         return $reply;
     }
 
+    public function getOauthRequestURL()
+    {
+        return rtrim($this->url,"/")."/".ltrim($this->oauthReq, "/");
+    }
+
+    public function getOauthAuthURL()
+    {
+        return rtrim($this->url,"/")."/".ltrim($this->oauthAuth, "/");
+    }
+
+    public function getOauthAccessURL()
+    {
+        return rtrim($this->url,"/")."/".ltrim($this->oauthAccess, "/");
+    }
 }
