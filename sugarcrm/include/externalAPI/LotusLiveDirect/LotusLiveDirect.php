@@ -11,11 +11,17 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
     public $docSearch = true;
+    public $oauthFixed = true;
 
     protected $oauthReq = "/manage/oauth/getRequestToken";
     protected $oauthAuth = '/manage/oauth/authorizeToken';
     protected $oauthAccess = '/manage/oauth/getAccessToken';
-    protected $oauthParams = array('signatureMethod' => 'PLAINTEXT');
+    protected $oauthParams = array(
+    	'signatureMethod' => 'PLAINTEXT',
+        'consumerKey' => "test_app",
+    // FIXME: encode?
+        'consumerSecret' => "87323at4aj6y8e9a0pa92w",
+    );
     protected $url = 'https://apps.lotuslive.com/';
 
     public function loadEAPM($eapmBean)

@@ -62,7 +62,7 @@ class ExternalAPIFactory{
             }
         }
 
-        $optionList = array('supportedModules','useAuth','requireAuth','meetingPasswordSupported','docSearch', 'authMethods');
+        $optionList = array('supportedModules','useAuth','requireAuth','meetingPasswordSupported','docSearch', 'authMethods', 'oauthFixed');
         $api_types = translate('LBL_API_TYPE_ENUM', 'EAPM');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
