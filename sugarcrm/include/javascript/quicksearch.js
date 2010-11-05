@@ -270,6 +270,10 @@ function enableQS(noReload){
 						}
                     });
 
+					search.typeAheadEvent.subscribe(function (e, args) {
+						this.getInputEl().value = this.getInputEl().value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');			
+					});					
+					
                 	//BEGIN SUGARCRM flav=pro ONLY
                     //For IE browsers below 8 we have to set the z-index to allow the Autocomplete field to appear correctly
                     if(SUGAR.isIE && navigator.appVersion.match(/MSIE (.\..)/)[1] < 8 && /team_name/.test(search.getInputEl().id)) {
