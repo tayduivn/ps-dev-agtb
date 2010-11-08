@@ -478,10 +478,9 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
-
         $dependencies = array_merge(
            DependencyManager::getDependenciesForFields($fieldDefs),
-           DependencyManager::getDependenciesForView($viewDefs)
+           DependencyManager::getDependenciesForView($viewDefs, $view)
         );
 
         foreach($dependencies as $dep) {
