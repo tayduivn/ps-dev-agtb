@@ -844,6 +844,11 @@ function check_special_fields($field_name, & $source_object, $use_past_array=fal
         require_once('modules/Teams/TeamSetManager.php');
         if($use_past_array==false)
         {
+        	if(empty($source_object->team_set_id)){
+        		if(!empty($source_object->teams)){
+        			$source_object->teams->save();
+        		}
+        	}
             $team_set_id = $source_object->team_set_id; 
             $team_id = $source_object->team_id;
         }
@@ -852,7 +857,6 @@ function check_special_fields($field_name, & $source_object, $use_past_array=fal
             $team_set_id = $source_object->fetched_row['team_set_id']; 
             $team_id = $source_object->fetched_row['team_id'];
         }
-
         return TeamSetManager::getCommaDelimitedTeams($team_set_id, $team_id, true);
     }
     else {
