@@ -223,7 +223,7 @@ class DependencyManager {
                     $dep->addFalseAction(
                         ActionFactory::getNewAction($aDef['name'], $aDef['params']));
                 }
-                $dep->setFireOnLoad(!isset($def['onload']) || $def['onload'] === false);
+                $dep->setFireOnLoad(!isset($def['onload']) || $def['onload'] !== false);
                 $deps[] = $dep;
             }
         }
