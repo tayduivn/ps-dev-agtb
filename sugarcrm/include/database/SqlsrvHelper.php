@@ -39,33 +39,33 @@ class SqlsrvHelper extends MssqlHelper
      * @see DBHelper::getColumnType()
      */
     public function getColumnType(
-        $type, 
-        $name = '', 
+        $type,
+        $name = '',
         $table = ''
         )
     {
 		$columnType = parent::getColumnType($type,$name,$table);
-        
+
 		if ( in_array($columnType,array('char','varchar')) && !preg_match('/(_id$|^id$)/', $name))
 			$columnType = 'n'.$columnType;
-		
+
 		if ( in_array($columnType,array('text','ntext','image')) ) {
 		    $columnType = 'nvarchar(max)';
-        } 
+        }
 
         return $columnType;
     }
-	
+
 	/**
 	 * @see DBHelper::massageValue()
 	 */
 	public function massageValue(
-        $val, 
+        $val,
         $fieldDef
         )
     {
         $type = $this->getFieldType($fieldDef);
-        
+
 		switch ($type) {
 		case 'int':
 		case 'double':
@@ -78,7 +78,7 @@ class SqlsrvHelper extends MssqlHelper
             return $val;
             break;
         }
-        
+
         $qval = $this->quote($val);
 
         switch ($type) {
@@ -101,7 +101,7 @@ class SqlsrvHelper extends MssqlHelper
             return "$qval";
             break;
         case 'text':
-        case 'ntext':		  
+        case 'ntext':
         case 'blob':
         case 'longblob':
         case 'clob':
@@ -110,51 +110,50 @@ class SqlsrvHelper extends MssqlHelper
             return $qval;
             break;
 		}
-        
+
         return $val;
 	}
-	
+
 	/**
 	 * Detect if no clustered index has been created for a table; if none created then just pick the first index and make it that
 	 *
 	 * @see MssqlHelper::indexSQL()
      */
-    public function indexSQL( 
-        $tableName, 
-        $fieldDefs, 
+    public function indexSQL(
+        $tableName,
+        $fieldDefs,
         $indices
-        ) 
+        )
     {
         if ( $this->doesTableHaveAClusteredIndexDefined($tableName) ) {
-            return parent::indexSQL($tableName, $fieldDefs, $indices); 
+            return parent::indexSQL($tableName, $fieldDefs, $indices);
         }
-        
+
         // check to see if one of the passed in indices is a primary one; if so we can bail as well
         foreach ( $indices as $index ) {
             if ( $index['type'] == 'primary' ) {
-                return parent::indexSQL($tableName, $fieldDefs, $indices); 
+                return parent::indexSQL($tableName, $fieldDefs, $indices);
             }
         }
-        
+
         // Change the first index listed to be a clustered one instead ( so we have at least one for the table )
         if ( isset($indices[0]) ) {
             $indices[0]['type'] = 'clustered';
         }
-        
-        return parent::indexSQL($tableName, $fieldDefs, $indices); 
+
+        return parent::indexSQL($tableName, $fieldDefs, $indices);
     }
-    
+
     /**
-<<<<<<< HEAD
      * @see DBHelper::get_columns()
      */
     public function get_columns(
         $tablename
-        ) 
+        )
     {
         //find all unique indexes and primary keys.
         $result = $this->db->query("sp_columns_90 $tablename");
-        
+
         $columns = array();
         while (($row=$this->db->fetchByAssoc($result)) !=null) {
             $column_name = strtolower($row['COLUMN_NAME']);
@@ -177,10 +176,10 @@ class SqlsrvHelper extends MssqlHelper
                 $columns[$column_name]['auto_increment'] = '1';
                 $columns[$column_name]['type']=str_replace(' identity','',strtolower($row['TYPE_NAME']));
             }
-            
+
             if (!empty($row['IS_NULLABLE']) && $row['IS_NULLABLE'] == 'NO' && (empty($row['KEY']) || !stristr($row['KEY'],'PRI')))
                 $columns[strtolower($row['COLUMN_NAME'])]['required'] = 'true';
-            
+
             $column_def = 0;
             if ( strtolower($tablename) == 'relationships' ) {
                 $column_def = $this->db->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
@@ -198,67 +197,46 @@ class SqlsrvHelper extends MssqlHelper
         }
         return $columns;
     }
-    
+
     /**
      * @see DBHelper::get_indices()
      */
-    public function get_indices(
-        $tableName
-=======
-     * @see DBHelper::get_indices()
-     */
-    public function get_indices(
-        $tablename
->>>>>>> Bugs 38892/38894/38896/38897 - Change fix; add function SqlsrvHelper::get_indices() with the updated query and revert MssqlHelper::get_indices() back to using the deprecated queries, in case there is someone still using SQL Server 2000 out there.
-        ) 
+    public function get_indices($tableName)
     {
         //find all unique indexes and primary keys.
         $query = <<<EOSQL
-<<<<<<< HEAD
-SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name, 
-        sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
-    FROM sys.tables, sys.indexes, sys.index_columns, sys.columns 
-    WHERE (sys.tables.object_id = sys.indexes.object_id 
-            AND sys.tables.object_id = sys.index_columns.object_id 
-            AND sys.tables.object_id = sys.columns.object_id
-            AND sys.indexes.index_id = sys.index_columns.index_id 
-            AND sys.index_columns.column_id = sys.columns.column_id) 
-        AND sys.tables.name = '$tableName'
-=======
-SELECT LEFT(so.name, 30) TableName, 
+SELECT LEFT(so.name, 30) TableName,
         LEFT(si.name, 50) 'Key_name',
-        LEFT(sik.key_ordinal, 30) Sequence, 
+        LEFT(sik.key_ordinal, 30) Sequence,
         LEFT(sc.name, 30) Column_name,
 		si.is_unique isunique
     FROM sys.indexes si
-        INNER JOIN sys.index_columns sik 
+        INNER JOIN sys.index_columns sik
             ON (si.object_id = sik.object_id AND si.index_id = sik.index_id)
-        INNER JOIN sys.objects so 
+        INNER JOIN sys.objects so
             ON si.object_id = so.object_id
-        INNER JOIN sys.columns sc 
+        INNER JOIN sys.columns sc
             ON (so.object_id = sc.object_id AND sik.column_id = sc.column_id)
     WHERE so.name = '$tablename'
     ORDER BY Key_name, Sequence, Column_name
->>>>>>> Bugs 38892/38894/38896/38897 - Change fix; add function SqlsrvHelper::get_indices() with the updated query and revert MssqlHelper::get_indices() back to using the deprecated queries, in case there is someone still using SQL Server 2000 out there.
 EOSQL;
         $result = $this->db->query($query);
-        
+
         $indices = array();
         while (($row=$this->db->fetchByAssoc($result)) != null) {
             $index_type = 'index';
-<<<<<<< HEAD
-            if ($row['is_primary_key'] == '1')
+            if ($row['Key_name'] == 'PRIMARY')
                 $index_type = 'primary';
-            elseif ($row['is_unique'] == 1 )
+            elseif ($row['isunique'] == 1 )
                 $index_type = 'unique';
-            $name = strtolower($row['index_name']);
+            $name = strtolower($row['Key_name']);
             $indices[$name]['name']     = $name;
             $indices[$name]['type']     = $index_type;
-            $indices[$name]['fields'][] = strtolower($row['column_name']);
+            $indices[$name]['fields'][] = strtolower($row['Column_name']);
         }
         return $indices;
     }
-    
+
     /**
      * protected function to return true if the given tablename has any clustered indexes defined.
      *
@@ -270,7 +248,7 @@ EOSQL;
         $query = <<<EOSQL
 SELECT IST.TABLE_NAME
     FROM INFORMATION_SCHEMA.TABLES IST
-    WHERE objectProperty(object_id(IST.TABLE_NAME), 'IsUserTable') = 1 
+    WHERE objectProperty(object_id(IST.TABLE_NAME), 'IsUserTable') = 1
         AND objectProperty(object_id(IST.TABLE_NAME), 'TableHasClustIndex') = 1
         AND IST.TABLE_NAME = '{$tableName}'
 EOSQL;
@@ -282,7 +260,7 @@ EOSQL;
 
         return true;
     }
-    
+
     /**
      * protected function to return true if the given tablename has any fulltext indexes defined.
      *
@@ -305,7 +283,7 @@ EOSQL;
 
         return true;
     }
-    
+
     /**
      * Override method to add support for detecting and dropping fulltext indices.
      *
@@ -313,9 +291,9 @@ EOSQL;
      * @see MssqlHelper::changeColumnSQL()
      */
     protected function changeColumnSQL(
-        $tablename, 
-        $fieldDefs, 
-        $action, 
+        $tablename,
+        $fieldDefs,
+        $action,
         $ignoreRequired = false
         )
     {
@@ -323,23 +301,10 @@ EOSQL;
         if ( $this->doesTableHaveAFulltextIndexDefined($tablename) ) {
             $sql .= "DROP FULLTEXT INDEX ON {$tablename}";
         }
-        
+
         $sql .= parent::changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
-        
+
         return $sql;
     }
-=======
-            if ($row['Key_name'] == 'PRIMARY')
-                $index_type = 'primary';
-            elseif ($row['isunique'] == 1 )
-                $index_type = 'unique';
-            $name = strtolower($row['Key_name']);
-            $indices[$name]['name']     = $name;
-            $indices[$name]['type']     = $index_type;
-            $indices[$name]['fields'][] = strtolower($row['Column_name']);
-        }
-        return $indices;
-    }
->>>>>>> Bugs 38892/38894/38896/38897 - Change fix; add function SqlsrvHelper::get_indices() with the updated query and revert MssqlHelper::get_indices() back to using the deprecated queries, in case there is someone still using SQL Server 2000 out there.
 }
 ?>
