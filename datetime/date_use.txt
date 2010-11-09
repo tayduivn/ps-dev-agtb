@@ -23,8 +23,6 @@
 ./modules/ProductBundles/ProductBundle.php:		$query = "insert into $this->rel_products (id,product_index,product_id,bundle_id, date_modified) VALUES ('".create_guid()."','$product_index', '$product_id', '$bundle_id', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
 ./modules/ProductBundles/ProductBundle.php:    	$query = "INSERT INTO $this->rel_notes (id,bundle_id,note_id,note_index, date_modified) VALUES ('".create_guid()."','".$bundle_id."','".$note_id."','".$note_index."', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
 ./modules/ProductBundles/ProductBundle.php:		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values ('".create_guid()."', '$quote_id', '$bundle_id', '$bundle_index', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
-./modules/Products/Product.php:			$db_date_purchased = $timedate->to_db_date($this->date_purchased, false);
-./modules/Products/Product.php:		$db_date_support_expires = $timedate->to_db_date($this->date_support_expires, false);
 ./modules/Products/Product.php:		$expired = date('Y-m-d', strtotime($support_expired));
 ./modules/Products/Product.php:		$coming_due = date('Y-m-d', strtotime($support_coming_due));
 ./modules/Project/Convert.php:$focus->fetched_row['date_entered'] = date($GLOBALS['timedate']->dbDayFormat);
@@ -38,9 +36,6 @@
 ./modules/Project/EditGridView.php:        "' AND '". $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false)."' OR project_task.date_finish BETWEEN '".
 ./modules/Project/EditGridView.php:        $timedate->to_db_date($_REQUEST['view_filter_date_start'], false) ."' AND '" . $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false).
 ./modules/Project/Export.php:$mpx .= "30," . $focus->name . ",,,Standard," . $timedate->to_db_date($focus->estimated_start_date, false) .",,0," . date($GLOBALS['timedate']->dbDayFormat) .",,$0.00,$0.00,$0.00,0h,0h,0h,0%,0d,0d,0d,0%,,,,,0d,0d\n";
-./modules/Project/Export.php:	$mpx .= $timedate->to_db_date($projectTasks[$i]->date_start, false) . ",";
-./modules/Project/Export.php:	$mpx .= $timedate->to_db_date($projectTasks[$i]->date_start, false) . ",";
-./modules/Project/Export.php:	$mpx .= $timedate->to_db_date($projectTasks[$i]->date_start, false);
 ./modules/Project/layouts/ProjectGrid_PDF.php:$grid[4]['VALUE'] = $locale->translateCharset(date("m/d/Y", time()), 'UTF-8', $locale->getExportCharset());
 ./modules/Project/ResourceReport.php:        " AND (project_task.date_start BETWEEN '". $timedate->to_db_date($_REQUEST['date_start'], false) .
 ./modules/Project/ResourceReport.php:        "' AND '". $timedate->to_db_date($_REQUEST['date_finish'], false)."' OR project_task.date_finish BETWEEN '".

@@ -576,7 +576,6 @@ class TimeDate2
     /**
      * Convert DateTime to GMT timezone
      * @param DateTime $date
-     * @param [User] $user
      * @return DateTime
      */
     public function tzGMT(DateTime $date)
@@ -1261,6 +1260,8 @@ class TimeDate2
 
     /**
      * TODO: REMOVE?
+     * @deprecated
+     * @return string
      */
     function get_user_time_format()
     {
