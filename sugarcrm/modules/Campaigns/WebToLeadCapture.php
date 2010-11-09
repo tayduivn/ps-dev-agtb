@@ -118,21 +118,54 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 }
             }              
 			if(isset($_POST['redirect_url']) && !empty($_POST['redirect_url'])){
-				echo '<html><head><title>SugarCRM</title></head><body>';
-				echo '<form name="redirect" action="' .$_POST['redirect_url']. '" method="GET">';
-
-				foreach($_POST as $param => $value) {
-					if($param != 'redirect_url' ||$param != 'submit') {
-						echo '<input type="hidden" name="'.$param.'" value="'.$value.'">';
-
-					}
-
-				}
-				if(empty($lead)) {
-					echo '<input type="hidden" name="error" value="1">';
-				}
-				echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
-				echo '</body></html>';
+			    if(headers_sent()){
+    				echo '<html><head><title>SugarCRM</title></head><body>';
+    				echo '<form name="redirect" action="' .$_POST['redirect_url']. '" method="GET">';
+    
+    				foreach($_POST as $param => $value) {
+    					if($param != 'redirect_url' ||$param != 'submit') {
+    						echo '<input type="hidden" name="'.$param.'" value="'.$value.'">';
+    
+    					}
+    
+    				}
+    				if(empty($lead)) {
+    					echo '<input type="hidden" name="error" value="1">';
+    				}
+    				echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
+    				echo '</body></html>';
+    			}
+				else{
+    				$redirect_url = $_POST['redirect_url'];
+    				$first_char = '&';
+    				if(strpos($redirect_url, '?') === FALSE){
+    					$first_char = '?';
+    				}
+    				$first_iteration = true;
+    				foreach($_REQUEST as $param => $value) {
+    					if($param == 'redirect_url' || $param == 'submit')
+    						continue;
+    					
+    					if($first_iteration){
+    						$first_iteration = false;
+    						$redirect_url .= $first_char;
+    					}
+    					else{
+    						$redirect_url .= "&";
+    					}
+    					$redirect_url .= "{$param}={$value}";
+    				}
+    				if(empty($lead)) {
+    					if($first_iteration){
+    						$redirect_url .= $first_char;
+    					}
+    					else{
+    						$redirect_url .= "&";
+    					}
+    					$redirect_url .= "error=1";
+    				}
+    				header("Location: {$redirect_url}");
+			    }
 			}
 			else{
 				echo $mod_strings['LBL_THANKS_FOR_SUBMITTING_LEAD'];
@@ -146,11 +179,17 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	  }
 }
 
-echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 if (!empty($_POST['redirect'])) {
-	echo '<html><head><title>SugarCRM</title></head><body>';
-	echo '<form name="redirect" action="' .$_POST['redirect']. '" method="GET">';
-	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
-	echo '</body></html>';
+    if(headers_sent()){
+    	echo '<html><head><title>SugarCRM</title></head><body>';
+    	echo '<form name="redirect" action="' .$_POST['redirect']. '" method="GET">';
+    	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
+    	echo '</body></html>';
+    }
+    else{
+    	header("Location: {$_POST['redirect']}");
+    	sugar_die();
+    }
 }
+echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 ?>
