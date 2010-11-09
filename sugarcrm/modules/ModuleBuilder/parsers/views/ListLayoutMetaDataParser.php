@@ -185,8 +185,10 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         {
             if (is_array($def [ 'studio' ]))
             {
-                if (isset($def [ 'studio' ]['listview']))
-                   return $def [ 'studio' ]['listview'] !== false && $def [ 'studio' ]['listview'] != 'false';
+                if (isset($def [ 'studio' ]['listview'])) {
+                    $lv = $def [ 'studio' ]['listview'];
+                    return $lv !== false && (!is_string($lv) || $lv != 'false');
+                }
                 if (isset($def [ 'studio' ]['visible']))
                    return $def [ 'studio' ]['visible'];
             } else
