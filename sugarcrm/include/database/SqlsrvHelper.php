@@ -201,38 +201,35 @@ class SqlsrvHelper extends MssqlHelper
     /**
      * @see DBHelper::get_indices()
      */
-    public function get_indices($tableName)
+    public function get_indices(
+        $tableName
+        ) 
     {
         //find all unique indexes and primary keys.
         $query = <<<EOSQL
-SELECT LEFT(so.name, 30) TableName,
-        LEFT(si.name, 50) 'Key_name',
-        LEFT(sik.key_ordinal, 30) Sequence,
-        LEFT(sc.name, 30) Column_name,
-		si.is_unique isunique
-    FROM sys.indexes si
-        INNER JOIN sys.index_columns sik
-            ON (si.object_id = sik.object_id AND si.index_id = sik.index_id)
-        INNER JOIN sys.objects so
-            ON si.object_id = so.object_id
-        INNER JOIN sys.columns sc
-            ON (so.object_id = sc.object_id AND sik.column_id = sc.column_id)
-    WHERE so.name = '$tablename'
-    ORDER BY Key_name, Sequence, Column_name
+SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name, 
+        sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
+    FROM sys.tables, sys.indexes, sys.index_columns, sys.columns 
+    WHERE (sys.tables.object_id = sys.indexes.object_id 
+            AND sys.tables.object_id = sys.index_columns.object_id 
+            AND sys.tables.object_id = sys.columns.object_id
+            AND sys.indexes.index_id = sys.index_columns.index_id 
+            AND sys.index_columns.column_id = sys.columns.column_id) 
+        AND sys.tables.name = '$tableName'
 EOSQL;
         $result = $this->db->query($query);
 
         $indices = array();
         while (($row=$this->db->fetchByAssoc($result)) != null) {
             $index_type = 'index';
-            if ($row['Key_name'] == 'PRIMARY')
+            if ($row['is_primary_key'] == '1')
                 $index_type = 'primary';
-            elseif ($row['isunique'] == 1 )
+            elseif ($row['is_unique'] == 1 )
                 $index_type = 'unique';
-            $name = strtolower($row['Key_name']);
+            $name = strtolower($row['index_name']);
             $indices[$name]['name']     = $name;
             $indices[$name]['type']     = $index_type;
-            $indices[$name]['fields'][] = strtolower($row['Column_name']);
+            $indices[$name]['fields'][] = strtolower($row['column_name']);
         }
         return $indices;
     }
