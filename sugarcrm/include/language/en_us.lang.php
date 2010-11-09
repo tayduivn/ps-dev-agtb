@@ -1787,6 +1787,15 @@ $app_list_strings = array (
     ),
     'dashlet_auto_refresh_options' => 
     array (
+        '-1' 	=> 'Do not auto-refresh',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
+	'dashlet_auto_refresh_options_admin' => 
+    array (
         '-1' 	=> 'Never',
         '30' 	=> 'Every 30 seconds',
         '60' 	=> 'Every 1 minute',
@@ -3036,7 +3045,7 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     
-    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto Refesh',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
