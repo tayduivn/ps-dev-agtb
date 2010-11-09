@@ -2398,7 +2398,7 @@ function formatNumber(n, num_grp_sep, dec_sep, round, precision) {
   }
 
   regex = /(\d+)(\d{3})/;
-  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].replace(regex, '$1' + num_grp_sep + '$2');
+  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].toString().replace(regex, '$1' + num_grp_sep + '$2');
   return n[0] + (n.length > 1 && n[1] != '' ? dec_sep + n[1] : '');
 }
 
