@@ -25,6 +25,7 @@ class SetOptionsAction extends AbstractAction{
 	protected $labelsExpressions =  "";
 	
 	function SetOptionsAction($params) {
+        $this->params = $params;
 		$this->targetField = $params['target'];
 		$this->keysExpression = $params['keys'];
 		$this->labelsExpression = $params['labels'];
@@ -136,18 +137,6 @@ class SetOptionsAction extends AbstractAction{
 		$result = Parser::evaluate($expr)->evaluate();
 		$field = $this->targetField;
 		$target->$field = $result;*/
-	}
-	
-	/**
-	 * Returns the definition of this action in array format.
-	 *
-	 */
-	function getDefinition() {
-		return array(	
-			"action" => $this->getActionName(), 
-	        "target" => $this->targetField, 
-	        "value" => $this->expression,
-	    );
 	}
 	
 	static function getActionName() {
