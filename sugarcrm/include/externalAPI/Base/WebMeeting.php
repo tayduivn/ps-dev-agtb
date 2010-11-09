@@ -2,9 +2,9 @@
 
 interface WebMeeting {
 	public function scheduleMeeting($bean);
-	public function unscheduleMeeting($meeting);
-	public function inviteAttendee($meeting, $attendee);
-	public function uninviteAttendee($attendee);
+	public function unscheduleMeeting($bean);
+	public function inviteAttendee($bean, $attendee, $sendInvites);
+	public function uninviteAttendee($bean, $attendee);
 	public function listMyMeetings();
-	public function getMeetingDetails($meeting);
+	public function getMeetingDetails($bean);
 }

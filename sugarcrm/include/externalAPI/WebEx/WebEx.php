@@ -12,6 +12,9 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
     public $supportMeetingPassword = true;
     public $authMethods = array("password" => 1);
 
+    public $canInvite = true;
+    public $sendsInvites = true;
+
 	function __construct() {
       require('include/externalAPI/WebEx/WebExXML.php');
 
@@ -137,10 +140,10 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
 	 * @param string $meeting - The WebEx meeting key.
 	 * return: The XML response from the WebEx server.
 	 */
-	function unscheduleMeeting($meeting) {
+	function unscheduleMeeting($bean) {
 		$doc = new SimpleXMLElement($this->unschedule_xml);
 		$this->addAuthenticationInfo($doc);
-		$doc->body->bodyContent->meetingKey = $meeting;
+		$doc->body->bodyContent->meetingKey = $bean->external_id;
 		return $this->postMessage($doc);
 	}
 
@@ -151,10 +154,10 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
     * @param string attendeeName - Name of joining attendee
 	 * return: The XML response from the WebEx server.
     */
-	function joinMeeting($meeting, $attendeeName) {
+	function joinMeeting($bean, $attendeeName) {
       $doc = new SimpleXMLElement($this->joinmeeting_xml);
       $this->addAuthenticationInfo($doc);
-      $doc->body->bodyContent->sessionKey = $meeting;
+      $doc->body->bodyContent->sessionKey = $bean->external_id;
       $doc->body->bodyContent->attendeeName = $attendeeName;
       return $this->postMessage($doc);
 	}
@@ -165,10 +168,10 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
     * @param string meeting - The WebEx meeting key.
 	 * return: The XML response from the WebEx server.
     */
-   function hostMeeting($meeting) {
+   function hostMeeting($bean) {
       $doc = new SimpleXMLElement($this->hostmeeting_xml);
       $this->addAuthenticationInfo($doc);
-      $doc->body->bodyContent->sessionKey = $meeting;
+      $doc->body->bodyContent->sessionKey = $bean->external_id;
       return $this->postMessage($doc);
    }
 
@@ -178,15 +181,15 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
 	 * @param array $attendee - An array with entries for 'name' and 'email'
 	 * return: The XML response from the WebEx server.
 	 */
-	function inviteAttendee($session, $attendee) {
+   function inviteAttendee($bean, $attendee, $sendInvites = false) {
       $doc = new SimpleXMLElement($this->invite_xml);
       $this->addAuthenticationInfo($doc);
       $body = $doc->body->bodyContent;
       $person = $body->addChild('person', '');
-      $person->addChild('name', $attendee['name']);
-      $person->addChild('email', $attendee['email']);
-      $body->addChild('sessionKey', $session);
-      $body->addChild('emailInvitations', 'true');
+      $person->addChild('name', $attendee->name);
+      $person->addChild('email', $attendee->email);
+      $body->addChild('sessionKey', $bean->external_id);
+      $body->addChild('emailInvitations', $sendInvites?'true':'false');
       return $this->postMessage($doc);
 	}
 
@@ -198,7 +201,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
     * @param array $attendeeID - WebEx attendee ID.
 	 * return: The XML response from the WebEx server.
     */
-   function uninviteAttendee($attendeeID) {
+   function uninviteAttendee($bean, $attendeeID) {
       $doc = new SimpleXMLElement($this->uninvite_xml);
       $this->addAuthenticationInfo($doc);
       $doc->body->bodyContent->attendeeID = $attendeeID;
@@ -220,10 +223,10 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
     * @param string meeting- The WebEx meeting key.
 	 * return: The XML response from the WebEx server.
     */
-   function getMeetingDetails($meeting) {
+   function getMeetingDetails($bean) {
       $doc = new SimpleXMLElement($this->details_xml);
       $this->addAuthenticationInfo($doc);
-      $doc->body->bodyContent->meetingKey = $meeting;
+      $doc->body->bodyContent->meetingKey = $bean->external_id;
       return $this->postMessage($doc);
    }
 

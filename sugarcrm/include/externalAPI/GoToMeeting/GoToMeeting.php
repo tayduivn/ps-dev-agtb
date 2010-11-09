@@ -14,6 +14,11 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
     public $supportMeetingPassword = true;
     public $authMethods = array("password" => 1);
 
+    public $canInvite = false;
+    public $sendsInvites = false;
+
+
+
     function __construct() {
         require('include/externalAPI/GoToMeeting/GoToXML.php');
         $this->login_xml = $login_xml;
@@ -181,10 +186,10 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
         return $this->postMessage($doc);
     }
 
-    function unscheduleMeeting($meeting){
+    function unscheduleMeeting($bean){
     }
 
-    function joinMeeting($meeting, $attendeeName){
+    function joinMeeting($bean, $attendeeName){
     }
 
     function hostMeeting($meeting_keys){
@@ -204,16 +209,16 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
         return $this->postMessage($doc);
     }
 
-    function inviteAttendee($meeting, $attendee){
+    function inviteAttendee($bean, $attendee, $sendInvites = false){
     }
 
-    function uninviteAttendee($attendee){
+    function uninviteAttendee($bean, $attendee){
     }
 
     function listMyMeetings(){
     }
 
-    function getMeetingDetails($meeting){
+    function getMeetingDetails($bean){
     }
 
     private function postMessage($doc) {

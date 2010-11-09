@@ -23,6 +23,10 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
     protected $oauthAccess = 'https://apps.lotuslive.com/manage/oauth/getAccessToken';
     protected $oauthParams = array('signatureMethod' => 'PLAINTEXT');
 
+    public $canInvite = false;
+    public $sendsInvites = false;
+
+
     public function loadEAPM($eapmBean)
     {
         parent::loadEAPM($eapmBean);
@@ -87,7 +91,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 	 * @param string $meeting - The Lotus meeting key.
 	 * return: boolean
 	 */
-	function unscheduleMeeting($meeting) {
+	function unscheduleMeeting($bean) {
         // There is nothing to do here.
         return array('success'=>TRUE);
 	}
@@ -99,7 +103,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 	 * @param array $attendee - An array with entries for 'name' and 'email'
 	 * return: boolean.
 	 */
-	function inviteAttendee($meetingID, $attendee) {
+	function inviteAttendee($bean, $attendee, $sendInvites = false) {
         // There is nothing to do here, this is not supported by Lotus Live
         return array('success'=>TRUE);
 	}
@@ -113,7 +117,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
      * @param array $attendeeID - Lotus attendee ID.
 	 * return: boolean.
      */
-    function uninviteAttendee($attendeeID) {
+    function uninviteAttendee($bean, $attendeeID) {
         // There is nothing to do here, this is not supported by Lotus Live
         return array('success'=>TRUE);
     }
@@ -132,7 +136,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
      * @param string meeting- The Lotus meeting key.
 	 * return: The XML response from the Lotus server.
      */
-    function getMeetingDetails($meeting) {
+    function getMeetingDetails($bean) {
         // TODO: Implement this, get the meeting information from the provided tags.
         return array('success'=>TRUE);
     }

@@ -171,11 +171,53 @@ class Meeting extends SugarBean {
             $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
             $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
         }
+
+        // Do any external API saving
+        // Clear out the old external API stuff if we have changed types
+        if (isset($this->fetched_row) && $this->fetched_row['type'] != $this->type ) {
+            $this->join_url = '';
+            $this->host_url = '';
+            $this->external_id = '';
+            $this->creator = '';
+        }
+
+        if (!empty($this->type) && $this->type != 'SugarCRM' ) {
+            require_once('include/externalAPI/ExternalAPIFactory.php');
+            $api = ExternalAPIFactory::loadAPI($this->type);           
+        }
+
+        if ( isset($api) && is_a($api,'WebMeeting') ) {
+            // Make sure the API initialized and it supports Web Meetings
+            $response = $api->scheduleMeeting($this);
+            if ( $response['success'] == TRUE ) {
+                // Need to send out notifications
+                
+            } else {
+                $_SESSION['administrator_error'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
+                if ( $api->canInvite ) {
+                    $notifyList = $this->get_notification_recipients();
+                    foreach($notifyList as $person) {
+                        $api->inviteAttendee($bean,$person,$check_notify);
+                    }
+                    
+                    // Don't double-send if the WebMeeting API sends invites
+                    if ( $api->sendsInvites ) {
+                        $check_notify = false;
+                    }
+                }
+                
+            }
+            
+            $api->logoff();
+        }
+
 		$return_id = parent::save($check_notify);
 
 		if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
 		}
+
+        
 
 		return $return_id;
 	}
