@@ -84,7 +84,7 @@ class ImportViewStep1 extends SugarView
 	    global $mod_strings;
 	    
     	return array(
-    	   "<a href='index.php?module={$_REQUEST['import_module']}&action=index'>".translate('LBL_MODULE_NAME',$_REQUEST['import_module'])."</a>",
+           "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$_REQUEST['import_module'].'_32.png')."' alt='".$_REQUEST['import_module']."' title='".$_REQUEST['import_module']."' align='absmiddle'></a>",
     	   "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>",
     	   $mod_strings['LBL_STEP_1_TITLE'],
     	   );
@@ -95,12 +95,10 @@ class ImportViewStep1 extends SugarView
      */
  	public function display()
     {
-        global $mod_strings, $app_list_strings, $app_strings, $current_user;
+        global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
         
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
-        $this->ss->assign("MOD", $mod_strings);
-        $this->ss->assign("APP", $app_strings);
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
@@ -137,13 +135,6 @@ class ImportViewStep1 extends SugarView
         
         }
         
-        // load bean
-        $focus = loadImportBean($_REQUEST['import_module']);
-        if ( !$focus ) {
-            showImportError($mod_strings['LBL_ERROR_IMPORTS_NOT_SET_UP'],$_REQUEST['import_module']);
-            return;
-        }
-        
         //BEGIN SUGARCRM flav!=sales ONLY
         // trigger showing other software packages
         $this->ss->assign("show_salesforce",false);
@@ -166,6 +157,26 @@ class ImportViewStep1 extends SugarView
                 break;
         }
         //END SUGARCRM flav!=sales ONLY
+        
+        // show any custom mappings
+        if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import')) {
+            while (($file = readdir('custom/modules/Import')) !== false) {
+                if ($file == ".." 
+                        || $file == "."
+                        || $file == ".svn"
+                        || $file == "CVS" 
+                        || $file == "Attic"
+                        || !sugar_is_dir("./$dirPath".$file)
+                        || sugar_is_file("modules/Import/{$file}")
+                        )
+                    continue;
+                require_once("custom/modules/Import/{$file}");
+                $classname = str_replace('.php','',$file);
+                $mappingClass = new $classname;
+                $custom_mappings[] = $mappingClass->name;
+            }
+        }
+        
         
         // get user defined import maps
         $this->ss->assign('is_admin',is_admin($current_user));

@@ -267,16 +267,10 @@ function get_user_module_list($user){
 	$app_list_strings = return_app_list_strings_language($current_language);
 	$modules = query_module_access_list($user);
 	ACLController :: filterModuleList($modules, false);
-	global $modInvisList, $modInvisListActivities;
+	global $modInvisList;
 
 	foreach($modInvisList as $invis){
 		$modules[$invis] = 'read_only';
-	}
-
-	if(isset($modules['Calendar']) || $modules['Activities']){
-		foreach($modInvisListActivities as $invis){
-				$modules[$invis] = $invis;
-		}
 	}
 
 	$actions = ACLAction::getUserActions($user->id,true);

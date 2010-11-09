@@ -132,13 +132,15 @@ if(file_exists('custom/modules/Connectors/metadata/display_config.php')){
     }
     
     // Merge in the new connector default settings with the current settings
-    foreach($modules_sources as $module => $sources){
-        if(!empty($default_modules_sources[$module])){
-            $merged = array_merge($modules_sources[$module], $default_modules_sources[$module]);
-            $default_modules_sources[$module] = $merged;
-        }
-        else{
-            $default_modules_sources[$module] = $modules_sources[$module];
+    if ( isset($modules_sources) && is_array($modules_sources) ) {
+        foreach($modules_sources as $module => $sources){
+            if(!empty($default_modules_sources[$module])){
+                $merged = array_merge($modules_sources[$module], $default_modules_sources[$module]);
+                $default_modules_sources[$module] = $merged;
+            }
+            else{
+                $default_modules_sources[$module] = $modules_sources[$module];
+            }
         }
     }
 }

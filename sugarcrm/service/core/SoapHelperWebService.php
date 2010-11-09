@@ -308,17 +308,12 @@ function validate_user($user_name, $password){
 		$app_list_strings = return_app_list_strings_language($current_language);
 		$modules = query_module_access_list($user);
 		ACLController :: filterModuleList($modules, false);
-		global $modInvisList, $modInvisListActivities;
+		global $modInvisList;
 
 		foreach($modInvisList as $invis){
 			$modules[$invis] = 'read_only';
 		}
 
-		if(isset($modules['Calendar']) || $modules['Activities']){
-			foreach($modInvisListActivities as $invis){
-					$modules[$invis] = $invis;
-			}
-		}
 		$actions = ACLAction::getUserActions($user->id,true);
 		foreach($actions as $key=>$value){
 			if(isset($value['module']) && $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
@@ -430,7 +425,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list_for_fields');
 		global $app_list_strings;
 		global $invalid_contact_fields;
-		
+
 		$list = array();
 		if(!empty($value->field_defs)){
 			if(empty($fields))$fields = array_keys($value->field_defs);
@@ -448,7 +443,7 @@ function validate_user($user_name, $password){
 			if(isset($value->created_by_name) && in_array('created_by_name', $fields)) {
 				$list['created_by_name'] = $this->get_name_value('created_by_name', $value->created_by_name);
 			}
-			
+
 			$filterFields = $this->filter_fields($value, $fields);
 			foreach($filterFields as $field){
 				$var = $value->field_defs[$field];

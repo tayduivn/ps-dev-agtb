@@ -100,24 +100,10 @@ function template_cal_tabs($args) {
 					if(!empty($act->sugar_bean->$field['name']))
 						$fields[strtoupper($field['name'])] = $act->sugar_bean->$field['name'];
 			}
-			if($act->sugar_bean->ACLAccess('DetailView') && file_exists('modules/' . $act->sugar_bean->module_dir . '/metadata/additionalDetails.php')) {
-				require_once('modules/' . $act->sugar_bean->module_dir . '/metadata/additionalDetails.php');
-				$ad_function = 'additionalDetails' . $act->sugar_bean->object_name;
-				$results = $ad_function($fields);
-				$results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
-
-				if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
-			}
-
-			$extra = "onmouseover=\"return overlib('" .
-					str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
-					. "', CAPTION, '{$app_strings['LBL_ADDITIONAL_DETAILS']}"
-					. "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
-					.(empty($results['width']) ? '300' : $results['width'])
-					. ", CLOSETEXT, '<img border=0  style=\'margin-left:2px; margin-right: 2px;\' src=".SugarThemeRegistry::current()->getImageURL('close.gif').">', "
-					. "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
-					. "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
-					. "onmouseout=\"return nd(1000);\" ";
+			
+			$extra = "id=\"adspan_{$act->sugar_bean->id}\" "
+					. "onmouseover=\"return SUGAR.util.getAdditionalDetails( '{$act->sugar_bean->module_dir}','{$act->sugar_bean->id}', 'adspan_{$act->sugar_bean->id}');\" "
+					. "onmouseout=\"return SUGAR.util.clearAdditionalDetailsCall()\" onmouseout=\"return nd(1000);\" ";
 
 
 			$count ++;

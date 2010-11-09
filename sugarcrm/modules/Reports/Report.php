@@ -809,8 +809,11 @@ print "<BR>";
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
-        if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count')))) {
-        		global $mod_strings;
+
+        if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
+                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {          		
+                global $mod_strings;
+
 	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
 
 
@@ -1520,9 +1523,9 @@ print "<BR>";
 					}
 				}
 				$field_list_name_array[$currCount] = $newField;
-			}
-			else {
+			} else {
 				$fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
+				$loopCount = 0;
 				foreach ( $fieldsInField as $field ) {
 					$field = trim($field);
 					//if it has a space, then it is aliased, let's process
@@ -1534,19 +1537,41 @@ print "<BR>";
 							$aggregate_func = substr($temp_field_name, 0, 3);
 							$is_aggregate = false;
 							if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
+							{
 								$is_aggregate = true;
+							}
 							//has period, and is aliased, so wrap an "ISNULL function around it"
 							// get field type, and don't wrap numeric or date fields with ISNULL
 							$field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
 							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
 								$temp_field_alias  = substr($field,$has_space+1);
 								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-								$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+								
+								if($loopCount > 0)
+								{
+								    $field_list_name_array[$currCount] .= ", ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+								} else {
+									$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+								}
+								
 								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
+								{
 									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
+								}
+							} else if(!$is_aggregate && !empty($field_type) && $field_type == 'currency') {
+
+								if($loopCount > 0)
+								{
+								    $field_list_name_array[$currCount] .= ", " . $field;
+								} else {
+									$field_list_name_array[$currCount] = $field;
+								}								
+								
 							}
-						}
-				}
+					    } //if($has_space)
+					    
+					    $loopCount++;
+				} //foreach
 			}
 			$currCount = $currCount+1;
         }

@@ -2398,7 +2398,7 @@ function formatNumber(n, num_grp_sep, dec_sep, round, precision) {
   }
 
   regex = /(\d+)(\d{3})/;
-  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].replace(regex, '$1' + num_grp_sep + '$2');
+  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].toString().replace(regex, '$1' + num_grp_sep + '$2');
   return n[0] + (n.length > 1 && n[1] != '' ? dec_sep + n[1] : '');
 }
 
@@ -2600,7 +2600,7 @@ SUGAR.util = function () {
 					SUGAR.evalScript_waitCount--;
 					if (SUGAR.evalScript_waitCount == 0) {
                       var headElem = document.getElementsByTagName('head')[0];
-                      for ( var i in SUGAR.evalScript_evalElem ) {
+                      for ( var i = 0; i < SUGAR.evalScript_evalElem.length; i++) {
                         var tmpElem = document.createElement('script');
                         tmpElem.type = 'text/javascript';
                         tmpElem.text = SUGAR.evalScript_evalElem[i];
@@ -2621,7 +2621,7 @@ SUGAR.util = function () {
 				var tmpElem = null;
 				SUGAR.evalScript_waitCount = 0;
 				SUGAR.evalScript_evalElem = new Array();
-				for (var i in results) {
+				for (var i = 0; i < results.length; i++) {
 					if (typeof(results[i]) != 'object') {
 						continue;
 					};

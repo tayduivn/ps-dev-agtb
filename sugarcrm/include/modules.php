@@ -28,10 +28,14 @@ $moduleList = array();
 //the order of this list is the default order displayed - do not change the order unless it is on purpose
 $moduleList[] = 'Home';
 //BEGIN SUGARCRM flav!=dce ONLY
-
-$moduleList[] = 'Activities';
+$moduleList[] = 'Calendar';
+$moduleList[] = 'Calls';
+$moduleList[] = 'Meetings';
+$moduleList[] = 'Tasks';
+$moduleList[] = 'Notes';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 $moduleList[] = 'Reports';
+$moduleList[] = 'ReportMaker';
 //END SUGARCRM flav=pro || flav=sales ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Leads';
@@ -43,6 +47,8 @@ $moduleList[] = 'Opportunities';
 //BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Emails';
 $moduleList[] = 'Campaigns';
+$moduleList[] = 'Prospects';
+$moduleList[] = 'ProspectLists';
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
@@ -446,14 +452,9 @@ $adminOnlyList = array(
                     'Studio' => array('all' => 1),
                     );
 
-
-$modInvisListActivities = array('Calls', 'Meetings','Notes','Tasks','Calendar');
-
-
 //BEGIN SUGARCRM flav=ent ONLY
 $modInvisList[] = 'CustomQueries';
 $modInvisList[] = 'DataSets';
-$modInvisList[] = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY

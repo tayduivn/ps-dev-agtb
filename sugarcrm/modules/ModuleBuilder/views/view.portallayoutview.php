@@ -87,13 +87,13 @@ class ViewPortalLayoutView extends ViewLayoutView
 		  'id'=>'saveBtn',
 		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_save'],''),
 		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVE'],
-		  'actionScript'=>"onclick='if(SUGAR.portal.checkCalcFields())Studio2.handleSave();'"
+		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handleSave();'"
 		);
 		$buttons[] = array(
 		  'id'=>'publishBtn',
 		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_publish'],''),
 		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],
-		  'actionScript'=>"onclick='if(SUGAR.portal.checkCalcFields())Studio2.handlePublish();'"
+		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handlePublish();'"
 		);
 
 		$html = "";

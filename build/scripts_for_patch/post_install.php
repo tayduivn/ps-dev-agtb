@@ -306,7 +306,9 @@ function genericFunctions(){
     }
     //Rebuild roles
      _logThis("Rebuilding Roles", $path);
-	 add_EZ_PDF();     
+	 if($sugar_version < '5.5.0') {
+	     add_EZ_PDF();
+     }    
      ob_start();
      rebuild_roles();
      ob_end_clean();
@@ -412,7 +414,23 @@ function post_install() {
         unlink('modules/Administration/SaveTabs.php');
 	// End Bug 40044 //////////////////
 	
-	upgradeGroupInboundEmailAccounts();
+    // Bug 40119 - JennyG - The location of this file changed since 60RC.  So we need to remove it for
+    // old instances that have this file.
+    if(file_exists('include/Expressions/Expression/Enum/IndexValueExpression.php'))
+        unlink('include/Expressions/Expression/Enum/IndexValueExpression.php');
+    // End Bug 40119///////////////////
+               
+    // Bug 40382 - JennyG - This file was removed in 6.0.
+    if(file_exists('modules/Leads/ConvertLead.php'))
+        unlink('modules/Leads/ConvertLead.php');
+    // End Bug 40382///////////////////
+             
+    // Bug 40458 - JennyG - This file was removed in 6.1. and we need to remove it for upgraded instances.
+    if(file_exists('modules/Reports/add_schedule.php'))
+        unlink('modules/Reports/add_schedule.php');
+    // End Bug 40458///////////////////
+
+    upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
         if($origVersion < '600') {
 	   _logThis("Start of check to see if Jigsaw connector should be disabled", $path);
@@ -452,17 +470,10 @@ function post_install() {
 	   }
 	   _logThis("End of check to see if Jigsaw connector should be disabled", $path);
 	}		
-    //END SUGARCRM flav=pro ONLY
+        //END SUGARCRM flav=pro ONLY
 
-	//Remove jssource/src_files directory if it still exists
-    if(is_dir('jssource/src_files'))
-    {
-       _logThis('Remove jssource/src_files directory');
-       rmdir_recursive('jssource/src_files');
-       _logThis('Finished removing jssource/src_files directory');
-    }	
 	
-	//BEGIN SUGARCRM flav=ent ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){
 		global $sugar_config;
@@ -481,7 +492,7 @@ function post_install() {
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
-	//END SUGARCRM flav=ent ONLY		
+	//END SUGARCRM flav=pro ONLY		
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.

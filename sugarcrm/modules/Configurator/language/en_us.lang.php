@@ -57,7 +57,7 @@ $mod_strings = array (
 	'LBL_ALLOW_USER_TABS' => 'Allow users to hide tabs',
 	'LBL_CONFIGURE_SETTINGS_TITLE' => 'System Settings',
 	'LBL_ENABLE_MAILMERGE' => 'Enable mail merge?',
-	'LBL_LOGVIEW' => 'Configure Log Settings',
+	'LBL_LOGVIEW' => 'View Log',
 	'LBL_MAIL_SMTPAUTH_REQ'				=> 'Use SMTP Authentication?',
 	'LBL_MAIL_SMTPPASS'					=> 'SMTP Password:',
 	'LBL_MAIL_SMTPPORT'					=> 'SMTP Port:',
@@ -108,8 +108,8 @@ $mod_strings = array (
 	'LIST_ENTRIES_PER_LISTVIEW'=>'Listview items per page',
 	'LIST_ENTRIES_PER_SUBPANEL'=>'Subpanel items per page',
 	//BEGIN SUGARCRM flav=pro ONLY
-	'LBL_WIRELESS_LIST_ENTRIES' => 'Listview items per page (Mobile)',
-	'LBL_WIRELESS_SUBPANEL_LIST_ENTRIES' => 'Subpanel items per page (Mobile)',
+	'LBL_WIRELESS_LIST_ENTRIES' => 'Listview items per page',
+	'LBL_WIRELESS_SUBPANEL_LIST_ENTRIES' => 'Subpanel items per page',
 	//END SUGARCRM flav=pro ONLY
 	'LOG_MEMORY_USAGE'=>'Log memory usage',
 	'LOG_SLOW_QUERIES'=>'Log slow queries',
@@ -439,6 +439,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_WIZARD_SYSTEM_DESC' => 'Provide your organization\'s name and logo in order to brand your Sugar.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify how you would like data in Sugar to be displayed, based on your geographical location. The settings you provide here will be the default settings. Users will be able set their own preferences.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide the email account that will be used to send emails, such as the assignment notifications and new user passwords. Users will receive emails from Sugar, as sent from the specified email account.',
+    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the Sugar Mobile iPhone client.',
 );
 
 

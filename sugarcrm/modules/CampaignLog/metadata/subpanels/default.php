@@ -49,7 +49,11 @@ $subpanel_layout = array(
 			'width' => '14%',
 			'sortable'=>false,
 		),		
-
+		'marketing_name'=>array(			
+			'vname' => 'LBL_LIST_MARKETING_NAME',
+			'width' => '14%',
+			'sortable'=>false,		
+		),
 		'activity_type' => array(
 			'vname' => 'LBL_ACTIVITY_TYPE',
 			'width' => '14%',
@@ -65,7 +69,7 @@ $subpanel_layout = array(
             'parent_id' =>'target_id',
             'parent_module'=>'target_type',         
 			'vname' => 'LBL_RELATED',
-			'width' => '39%',
+			'width' => '20%',
 			'sortable'=>false,
 		),
 		'hits' => array(

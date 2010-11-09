@@ -113,7 +113,7 @@ class TemplateMultiEnum extends TemplateEnum{
 
 	function get_field_def(){
 		$def = parent::get_field_def();
-		if ( isset ( $this->ext4 ) )
+		if ( !empty ( $this->ext4 ) )
 		{
 			// turn off error reporting in case we are unpacking a value that hasn't been packed...
 			// this is kludgy, but unserialize doesn't throw exceptions correctly
@@ -123,8 +123,9 @@ class TemplateMultiEnum extends TemplateEnum{
 
 			// if we have a new error, then unserialize must have failed => we don't have a packed ext4
 			// safe to assume that false means the unpack failed, as ext4 will either contain an imploded string of default values, or an array, not a boolean false value
-			if ( $unpacked === false )
+			if ( $unpacked === false ) {
 				$def [ 'default' ] = $this->ext4 ;
+			}
 			else
 			{
 				// we have a packed representation containing one or both of default and dependency
@@ -134,7 +135,6 @@ class TemplateMultiEnum extends TemplateEnum{
 					$def [ 'dependency' ] = $unpacked [ 'dependency' ] ;
 			}
 		}
-		//$def['default'] = isset($this->ext4)? $this->ext4 : $def['default'];
 		$def['isMultiSelect'] = true;
 		unset($def['len']);
 		return $def;

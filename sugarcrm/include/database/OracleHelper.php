@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: OracleHelper.php 56133 2010-04-28 02:09:10Z jmertic $
+* $Id: OracleHelper.php 56151 2010-04-28 21:02:22Z jmertic $
 * Description: This file handles the Data base functionality for the application specific
 * to oracle database. It is called by the DBManager class to generate various sql statements.
 *
@@ -371,6 +371,8 @@ class OracleHelper extends DBHelper
 		foreach ($indices as $index) {
             if(!empty($index['db']) && $index['db'] != 'oci8')
                 continue;
+            if (isset($index['source']) && $index['source'] != 'db')
+               continue;
             
             $type = '';
             if (!empty($index['type']))

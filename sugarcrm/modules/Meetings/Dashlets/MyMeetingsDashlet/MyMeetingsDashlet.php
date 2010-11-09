@@ -70,12 +70,16 @@ class MyMeetingsDashlet extends DashletGeneric {
         if($this->myItemsOnly) { // handle myitems only differently
 			$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
             $lvsParams = array(
-                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\')',
+                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ',
                            );
         } else {
             $lvsParams = array();
         }
         $this->myItemsOnly = false; 
+		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
+		//so we need to make sure date entered is also set so the sort can work with the group by
+		$lvsParams['custom_select']=', meetings.date_entered ';
+		$lvsParams['distinct']=true;
         
         parent::process($lvsParams);
         
@@ -112,8 +116,9 @@ class MyMeetingsDashlet extends DashletGeneric {
             $this->lvs->data['data'][$rowNum]['DURATION'] .= $mod_strings['LBL_MINSS_ABBREV'];
             if (!empty($this->lvs->data['data'][$rowNum]['STATUS']) && $this->lvs->data['data'][$rowNum]['STATUS'] == $app_list_strings['meeting_status_dom']['Planned'])
             {
-                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == '' ||
-                    $this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
+                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
+					//if no status has been set, then do not show accept options
+				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
                 {
                     $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" class=\"acceptMeeting\"><a title=\"".
                         $app_list_strings['dom_meeting_accept_options']['accept'].

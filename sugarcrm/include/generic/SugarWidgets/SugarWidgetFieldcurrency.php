@@ -151,9 +151,10 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
                $add_currency_id = isset($cols['currency_id']) ? true : false;
             }
          }
+         
+         if($add_currency_id) {         	
+         	return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)." , ".$table.".currency_id ". $this->getTruncatedColumnAlias($this->_get_column_alias($layout_def)."_currency") . "\n";
 
-         if($add_currency_id) {
-         	return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)." , ".$table.".currency_id ".$this->_get_column_alias($layout_def)."_currency\n";
          } else {
          	return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)."\n";
          }

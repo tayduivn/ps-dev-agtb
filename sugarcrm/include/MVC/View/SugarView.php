@@ -864,29 +864,34 @@ EOHTML;
 
         $trackerManager = TrackerManager::getInstance();
         //BEGIN SUGARCRM flav=pro ONLY
-        $timeStamp = TimeDate2::getInstance()->nowDb();
-        //Track to tracker_perf
-        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){
-            $monitor2->setValue('server_response_time', $this->responseTime);
-            $dbManager = &DBManagerFactory::getInstance();
-            $monitor2->db_round_trips = $dbManager->getQueryCount();
-            $monitor2->setValue('date_modified', $timeStamp);
-            $monitor2->setValue('db_round_trips', $dbManager->getQueryCount());
-            $monitor2->setValue('files_opened', $this->fileResources);
-            if (function_exists('memory_get_usage')) {
-                $monitor2->setValue('memory_usage', memory_get_usage());
-            }
+
+        if(!$trackerManager->isPaused())
+        {
+	        $timeStamp = TimeDate2::getInstance()->nowDb();
+	        //Track to tracker_perf
+	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
+		        $monitor2->setValue('server_response_time', $this->responseTime);
+		        $dbManager = &DBManagerFactory::getInstance();
+		        $monitor2->db_round_trips = $dbManager->getQueryCount();
+		        $monitor2->setValue('date_modified', $timeStamp);
+		        $monitor2->setValue('db_round_trips', $dbManager->getQueryCount());
+		        $monitor2->setValue('files_opened', $this->fileResources);
+		        if (function_exists('memory_get_usage')) {
+		            $monitor2->setValue('memory_usage', memory_get_usage());
+		        }
+			}
+		    
+			// Track to tracker_sessions
+		    if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
+		        $monitor3->setValue('date_end', $timeStamp);
+		        if ( !isset($monitor3->date_start) ) $monitor3->setValue('date_start', $timeStamp);
+		        $seconds = strtotime($monitor3->date_end) -strtotime($monitor3->date_start);
+		        $monitor3->setValue('seconds', $seconds);
+		        $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
+			}
         }
-            // Track to tracker_sessions
-        if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
-            $monitor3->setValue('date_end', $timeStamp);
-            if ( !isset($monitor3->date_start) ) $monitor3->setValue('date_start', $timeStamp);
-            $seconds = strtotime($monitor3->date_end) -strtotime($monitor3->date_start);
-            $monitor3->setValue('seconds', $seconds);
-            $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
-        }
-            //END SUGARCRM flav=pro ONLY
-        $trackerManager->save();
+	    //END SUGARCRM flav=pro ONLY
+	    $trackerManager->save();
 
     }
 
@@ -1196,27 +1201,45 @@ EOHTML;
      */
     protected function _getModuleTitleListParam($bTitle=false)
     {
-        global $current_user;
-        global $app_strings;
-
-        if(!empty($GLOBALS['app_list_strings']['moduleList'][$this->module]))
-            $firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
-        else
-            $firstParam = $this->module;
-
-        if($this->action == "ListView" || $this->action == "index")
-            if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png',false)) && !$bTitle) {
-                return "<a href='index.php?module={$this->module}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png')."' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a><span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
-            } else {
-                return $firstParam;
-            }
-        else
-
-            if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png',false)) && !$bTitle) {
-                return "<a href='index.php?module={$this->module}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$this->module.'_32.png')."' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
-            } else {
-                return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
-            }
+    	global $current_user;
+    	global $app_strings;
+    	
+    	if(!empty($GLOBALS['app_list_strings']['moduleList'][$this->module]))
+    		$firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
+    	else
+    		$firstParam = $this->module;
+    	
+    	$iconPath = $this->getModuleTitleIconPath($this->module);
+    	if($this->action == "ListView" || $this->action == "index") 
+    	{
+    	    if (!empty($iconPath) && !$bTitle) {
+				return "<a href='index.php?module={$this->module}&action=index'>" 
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+				     . "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
+			} else {
+				return $firstParam;
+			}
+    	} else 
+    	{
+		    if (!empty($iconPath) && !$bTitle) {
+				return "<a href='index.php?module={$this->module}&action=index'>" 
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
+			} else {
+				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
+			}
+    	}
+    }
+    
+    protected function getModuleTitleIconPath($module) {
+    	$iconPath = "";
+    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
+    	{
+    		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
+    	} else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
+    	{
+    		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
+    	}
+    	return $iconPath;
     }
 
     /**

@@ -91,15 +91,32 @@ $common = 'install/installCommon.js';
 ///////////////////////////////////////////////////////////////////////////////
 ////	INSTALLER LANGUAGE
 
-$supportedLanguages = array(
+
+
+function getSupportedInstallLanguages(){
+	$supportedLanguages = array(
 	'en_us'	=> 'English (US)',
-	'ja'	=> 'Japanese - 日本語',
-	'fr_fr'	=> 'French - Français',
-	'zh_cn' => 'Chinese - 简体中文',
-//	'ge_ge'	=> 'German - Deutch',
-//	'pt_br'	=> 'Portuguese (Brazil)',
-//	'es_es'	=> 'Spanish (Spain) - Español',
-);
+	);
+	if(file_exists('install/lang.config.php')){
+		include('install/lang.config.php');
+		if(!empty($config['languages'])){
+			
+			foreach($config['languages'] as $k=>$v){
+				if(file_exists('install/language/' . $k . '.lang.php')){
+					$supportedLanguages[$k] = $v;	
+				}	
+			}	
+		}
+	}
+	return $supportedLanguages;
+}
+$supportedLanguages = getSupportedInstallLanguages();
+
+
+
+
+
+
 
 // after install language is selected, use that pack
 $default_lang = 'en_us';
@@ -115,7 +132,7 @@ if(!isset($_POST['language']) && (!isset($_SESSION['language']) && empty($_SESSI
 }
 
 if(isset($_POST['language'])) {
-	$_SESSION['language'] = strtolower(str_replace('-','_',$_POST['language']));
+	$_SESSION['language'] = str_replace('-','_',$_POST['language']);
 }
 
 $current_language = isset($_SESSION['language']) ? $_SESSION['language'] : $default_lang;
@@ -645,6 +662,13 @@ EOQ;
         	$_SESSION['oc_install'] = false;
         }
         //END SUGARCRM flav=pro ONLY
+        
+        //Now merge the config_si.php settings into config.php
+        if(file_exists('config.php') && file_exists('config_si.php'))
+        {
+            require_once('modules/UpgradeWizard/uw_utils.php');
+        	merge_config_si_settings(false, 'config.php', 'config_si.php');
+        }
         break;
 	}
 }

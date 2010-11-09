@@ -722,14 +722,21 @@ FP;
     //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Leads';
     //END SUGARCRM flav!=sales ONLY
-    $enabled_tabs[] = 'Activities';
+    $enabled_tabs[] = 'Calendar';
+    $enabled_tabs[] = 'Calls';
+    $enabled_tabs[] = 'Meetings';
+    $enabled_tabs[] = 'Tasks';
+    $enabled_tabs[] = 'Notes';
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     $enabled_tabs[] = 'Reports';
+    $enabled_tabs[] = 'ReportMaker';
     //END SUGARCRM flav=pro || flav=sales ONLY
     $enabled_tabs[] = 'Documents';
     $enabled_tabs[] = 'Emails';
     //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Campaigns';
+    $enabled_tabs[] = 'Prospects';
+    $enabled_tabs[] = 'ProspectLists';
     //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Quotes';

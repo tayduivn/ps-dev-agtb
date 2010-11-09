@@ -219,13 +219,7 @@ function get_user_module_list($user){
 	global $app_list_strings, $current_language;
 	$app_list_strings = return_app_list_strings_language($current_language);
 	$modules = query_module_access_list($user);
-	global $modInvisList, $modInvisListActivities;
-
-	if(isset($modules['Calendar']) || $modules['Activities']){
-		foreach($modInvisListActivities as $invis){
-				$modules[$invis] = $invis;
-		}
-	}
+	global $modInvisList;
 
 	return $modules;
 }

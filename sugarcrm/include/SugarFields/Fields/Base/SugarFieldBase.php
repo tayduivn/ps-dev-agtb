@@ -354,5 +354,28 @@ class SugarFieldBase {
          	 }
          }
      }
+     
+    /**
+     * Handles import field sanitizing for an field type
+     *
+     * @param  $value    string value to be sanitized
+     * @param  $vardefs  array
+     * @param  $focus    SugarBean object
+     * @param  $settings ImportFieldSanitize object
+     * @return string sanitized value or boolean false if there's a problem with the value
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        if( isset($vardef['len']) ) { 
+            // check for field length
+            $value = sugar_substr($value, $vardef['len']);
+        }
+        
+        return $value;
+    }
 }
-?>

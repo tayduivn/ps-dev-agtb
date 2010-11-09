@@ -175,104 +175,105 @@ class DataSet_Layout extends SugarBean {
     return $the_where;
 }
 
-    function construct($parent_id, $layout_type, $list_order_x, $display_type, $parent_value){
+	
+	function construct($parent_id, $layout_type, $list_order_x, $display_type, $parent_value){	
 
-    //used when enabling custom layout on dataset
-        $this->parent_id = $parent_id;
-        $this->layout_type = $layout_type;
-        //it could be false if coming from the add_columns_to_layout function in custom query
-        if($list_order_x!==false){
-            $this->list_order_x = $list_order_x;
-        }
-        $this->display_type = $display_type;
-        $this->parent_value = $parent_value;
-        $this->save();
-    //end function construct
-    }
+	//used when enabling custom layout on dataset
+		$this->parent_id = $parent_id;
+		$this->layout_type = $layout_type;
+		//it could be false if coming from the add_columns_to_layout function in custom query
+		if($list_order_x!==false){
+			$this->list_order_x = $list_order_x;
+		}
+		$this->display_type = $display_type;
+		$this->parent_value = $parent_value;
+		$this->save();
+	//end function construct
+	}
 
-    function get_attribute_id($attribute_type, $layout_id=""){
-        if($layout_id=="") $layout_id = $this->id;
-            $query = "	SELECT ".$this->rel_attribute_table.".id
-                        FROM ".$this->rel_attribute_table."
-                        WHERE ".$this->rel_attribute_table.".parent_id = '".$layout_id."'
-                        AND ".$this->rel_attribute_table.".attribute_type = '$attribute_type'
-                        AND ".$this->rel_attribute_table.".deleted=0
-                        AND ".$this->rel_attribute_table.".deleted=0
-                        ";
+	function get_attribute_id($attribute_type, $layout_id=""){
+		if($layout_id=="") $layout_id = $this->id;
+			$query = "	SELECT ".$this->rel_attribute_table.".id
+						FROM ".$this->rel_attribute_table."
+						WHERE ".$this->rel_attribute_table.".parent_id = '".$layout_id."'
+						AND ".$this->rel_attribute_table.".attribute_type = '$attribute_type'
+						AND ".$this->rel_attribute_table.".deleted=0
+						AND ".$this->rel_attribute_table.".deleted=0
+						";
 
-        $result = $this->db->query($query,true," Error getting attribute ID: ");
+		$result = $this->db->query($query,true," Error getting attribute ID: ");
 
-        // Get the id and the name.
-        $row = $this->db->fetchByAssoc($result);
+		// Get the id and the name.
+		$row = $this->db->fetchByAssoc($result);
 
-        if($row != null){
-            return $row['id'];
-        }else{
-            return false;
-        }
-    //end function get_attribute_id
-    }
+		if($row != null){
+			return $row['id'];
+		}else{
+			return false;
+		}
+	//end function get_attribute_id
+	}
 
-    function clear_all_layout($data_set_id){
-        //Select all layout records
-        $query = 	"SELECT * from $this->table_name
-                    where $this->table_name.parent_id='$data_set_id'
-                    ";
-        $result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
+	function clear_all_layout($data_set_id){
+		//Select all layout records
+		$query = 	"SELECT * from $this->table_name
+					 where $this->table_name.parent_id='$data_set_id'
+				 	";
+		$result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
 
-        //if($this->db->getRowCount($result) > 0){
+		//if($this->db->getRowCount($result) > 0){
+		
+			// Print out the calculation column info
+			while (($row = $this->db->fetchByAssoc($result)) != null) {
+			//while($row = $this->db->fetchByAssoc($result)){
+	
+				//Mark all attributes deleted
+				$attribute_object = new DataSet_Attribute();
+				$attribute_object->mark_deleted($row['id']);
+				//Mark all layout rows deleted
+		
+				//Remove the layout records
+				$this->mark_deleted($row['id']);	
+			
+			//end while
+			}	
+		//end if rows exist
+		//}
 
-            // Print out the calculation column info
-            while (($row = $this->db->fetchByAssoc($result)) != null) {
-            //while($row = $this->db->fetchByAssoc($result)){
+	//end function mark_all_layout
+	}
 
-                //Mark all attributes deleted
-                $attribute_object = new DataSet_Attribute();
-                $attribute_object->mark_deleted($row['id']);
-                //Mark all layout rows deleted
+	function get_layout_array($data_set_id, $hide_columns=false){
+	
+		
+		//if this is the final report then hide_columns should be set to true
+		if($hide_columns==true){
+			$hide_columns_where = "AND (".$this->table_name.".hide_column='0' OR ".$this->table_name.".hide_column='off' OR ".$this->table_name.".hide_column IS NULL )";
+		} else {
+			$hide_columns_where = "";
+		}		
+		
+		$layout_array = array();
+	
+		//gets custom_layout column_array	
+		//Select all layout records for this data set
+		$query = 	"SELECT $this->table_name.* from $this->table_name
+					 where $this->table_name.parent_id='$data_set_id'
+					 AND $this->table_name.deleted='0'
+					 ".$hide_columns_where."
+					 ORDER BY list_order_x
+					 ";	
 
-                //Remove the layout records
-                $this->mark_deleted($row['id']);
+		$result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
 
-            //end while
-            }
-        //end if rows exist
-        //}
-
-    //end function mark_all_layout
-    }
-
-    function get_layout_array($data_set_id, $hide_columns=false){
-
-
-        //if this is the final report then hide_columns should be set to true
-        if($hide_columns==true){
-            $hide_columns_where = "AND (".$this->table_name.".hide_column='0' OR ".$this->table_name.".hide_column='off' OR ".$this->table_name.".hide_column IS NULL )";
-        } else {
-            $hide_columns_where = "";
-        }
-
-        $layout_array = array();
-
-        //gets custom_layout column_array
-        //Select all layout records for this data set
-        $query = 	"SELECT $this->table_name.* from $this->table_name
-                    where $this->table_name.parent_id='$data_set_id'
-                    AND $this->table_name.deleted='0'
-                    ".$hide_columns_where."
-                    ORDER BY list_order_x
-                    ";
-
-        $result = $this->db->query($query,true," Error retrieving layout records for this data set: ");
-
-        //if($this->db->getRowCount($result) > 0){
-            while (($row = $this->db->fetchByAssoc($result)) != null) {
-            //while($row = $this->db->fetchByAssoc($result)){
-                //Get head attribute information
-                $head_attribute_id = $this->get_attribute_id("Head", $row['id']);
-                $head_att_object = new DataSet_Attribute();
-                if(!empty($head_attribute_id) && $head_attribute_id!=""){
-                    $head_att_object->retrieve($head_attribute_id);
+		//if($this->db->getRowCount($result) > 0){
+			while (($row = $this->db->fetchByAssoc($result)) != null) {
+			//while($row = $this->db->fetchByAssoc($result)){
+				//Get head attribute information
+				$head_attribute_id = $this->get_attribute_id("Head", $row['id']);
+				$head_att_object = new DataSet_Attribute();
+				if(!empty($head_attribute_id) && $head_attribute_id!=""){
+					$head_att_object->retrieve($head_attribute_id);
 ////////////////Head Specific Information
                     $layout_array[$row['parent_value']]['head']['font_size'] 	= $head_att_object->font_size;
                     $layout_array[$row['parent_value']]['head']['font_color'] 	= $head_att_object->font_color;

@@ -552,11 +552,12 @@ $mod_strings = array(
 'ERROR_ARE_YOU_SURE' => 'Are you sure you wish to continue?',
 
 //BEGIN SUGARCRM flav=pro ONLY
-
+'ERROR_CALCULATED_MOBILE_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Mobile Edit View:',
 'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
 //SUGAR PORTAL
 'LBL_PORTAL'=>'Portal',
+'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',
 'LBL_SYNCP_WELCOME'=>'Please enter the URL of the portal instance you wish to update.',
 'LBL_SP_UPLOADSTYLE'=>'Select a style sheet to upload from your computer.<br> The style sheet will be implemented in the Sugar Portal the next time you perform a sync.',
 'LBL_SP_UPLOADED'=> 'Uploaded',
@@ -696,11 +697,11 @@ $mod_strings = array(
 ,
 //BEGIN SUGARCRM flav=pro ONLY
 'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br>" 
-   . "<br>Fields using formulas cannot be added to " 
+   . "Fields using formulas will not be calculated in real-time in " 
    //BEGIN SUGARCRM flav=ent ONLY
    . "the Sugar Self-Service Portal or " 
    //END SUGARCRM flav=ent ONLY
-   . "Sugar Mobile EditView layouts.",
+   . "Mobile EditView layouts.",
 //END SUGARCRM flav=pro ONLY
 
 //Revert Module labels

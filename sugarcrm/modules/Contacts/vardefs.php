@@ -177,7 +177,8 @@ array (
         array (
             'name' => 'portal_password',
             'vname' => 'LBL_USER_PASSWORD',
-            'type' => 'varchar',
+            'type' => 'password',
+            'dbType' => 'varchar',
             'len' => '32',
             'group'=>'portal',
             'reportable' => false,

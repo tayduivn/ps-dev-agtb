@@ -539,6 +539,18 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 	{
                         $newRow [ $colID - $offset ] = $fieldname;
                 	}
+                	//BEGIN SUGARCRM flav=pro ONLY
+	                if ($this->_view == MB_WIRELESSEDITVIEW && !empty($fielddefs [ $fieldname ]['calculated']))
+			        {
+			            if (is_array($newRow [ $colID - $offset ]))
+			            {
+			            	$newRow [ $colID - $offset ]['readOnly'] = true;
+			            } else 
+			            {
+			            	$newRow [ $colID - $offset ] = array('name' => $newRow [ $colID - $offset ],  'ReadOnly' => true);
+			            }
+			        }
+			        //END SUGARCRM flav=pro ONLY
                 }
                 $panels [ $panelID ] [ $rowID ] = $newRow ;
             }
@@ -707,19 +719,21 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     public function setUseTabs($useTabs){
         $this->_viewdefs  [ 'templateMeta' ]['useTabs'] = $useTabs;
     }
-	
-    static function validField ( $def, $view = "")
-    {
-    	if (!parent::validField($def, $view))
-    		return false;
-    	//BEGIN SUGARCRM flav=pro ONLY
-    	if ($view == MB_WIRELESSEDITVIEW && isset($def['calculated']) && $def['calculated'])
-    	{
-    		return false;
-    	}
-    	//END SUGARCRM flav=pro ONLY
-    	
-    	return true;
+    
+    /**
+     * @return Array list of fields in this module that have the calculated property
+     */
+    public function getCalculatedFields() {
+        $ret = array();
+        foreach ($this->_fielddefs as $field => $def)
+        {
+            if(!empty($def['calculated']) && !empty($def['formula']))
+            {
+                $ret[] = $field;
+            }
+        }
+        
+        return $ret;
     }
 }
 

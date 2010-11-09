@@ -25,6 +25,7 @@ class VisibilityAction extends AbstractAction{
 	protected $expression = "";
 	
 	function VisibilityAction($params) {
+        $this->params = $params;
 		$this->targetField = $params['target'];
 		$this->expression = $params['value'];
 		$this->view = isset($params['view']) ? $params['view'] : "";

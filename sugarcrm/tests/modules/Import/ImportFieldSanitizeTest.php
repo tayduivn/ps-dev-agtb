@@ -232,11 +232,13 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $date = date($this->_ifs->dateformat);
-
+        $focus = new stdClass;
+        
         $this->assertEquals(
             $this->_ifs->date(
                 $date,
-                array()),
+                array(),
+                $focus),
             $date);
     }
 
@@ -249,32 +251,38 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_date_format(),
             strtotime($date));
-
+        $focus = new stdClass;
+        
         $this->assertEquals(
             $this->_ifs->date(
                 $date,
-                array()),
+                array(),
+                $focus),
             $comparedate);
     }
 
     public function testInvalidDate()
     {
         $this->_ifs->dateformat = 'm/d/Y';
-
+        $focus = new stdClass;
+        
         $this->assertFalse(
             $this->_ifs->date(
                 '11/22/08',
-                array()));
+                array(),
+                $focus));
     }
 
     public function testInvalidDateBadMonth()
     {
         $this->_ifs->dateformat = 'm/d/Y';
-
+        $focus = new stdClass;
+        
         $this->assertFalse(
             $this->_ifs->date(
                 '22/11/08',
-                array()));
+                array(),
+                $focus));
     }
 
     public function testValidEmail()
@@ -1070,11 +1078,13 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->timezone = 'America/New_York';
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->timeformat);
-
+        $focus = new stdClass;
+        
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
-                $vardef),
+                $vardef,
+                $focus),
             $date);
 
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
@@ -1094,11 +1104,13 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_time_format(),
             strtotime($date));
-
+        $focus = new stdClass;
+        
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
-                $vardef),
+                $vardef,
+                $focus),
             $comparedate);
 
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
@@ -1115,11 +1127,13 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_time_format(),
             strtotime('+2 hours',strtotime($date)));
-
+        $focus = new stdClass;
+        
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
-                $vardef),
+                $vardef,
+                $focus),
             $comparedate);
 
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
@@ -1129,22 +1143,26 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
-
+        $focus = new stdClass;
+        
         $this->assertFalse(
             $this->_ifs->time(
                 '11:21',
-                array('name' => 'some_date')));
+                array('name' => 'some_date'),
+                $focus));
     }
 
     public function testInvalidTimeBadSeconds()
     {
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
-
+        $focus = new stdClass;
+        
         $this->assertFalse(
             $this->_ifs->time(
                 '11:60',
-                array('name' => 'some_date')));
+                array('name' => 'some_date'),
+                $focus));
     }
 }
 
@@ -1163,6 +1181,8 @@ class Import_Bug26897_Mock extends Account
 
 class Import_Bug27562_Mock extends Contact
 {
+    var $contact_id;
+    
     function ACLAccess($view,$is_owner='not_set')
     {
         return true;

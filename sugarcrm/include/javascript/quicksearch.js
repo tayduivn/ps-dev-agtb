@@ -161,12 +161,13 @@ function enableQS(noReload){
 	                	           if (this.fields[i] == this.qs_obj.field_list[key] && 
 	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]] &&
 	                	        	   this.qs_obj.populate_list[key].match(filter)) {
-	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value = data[i];
+	                	        	   //bug: 30823 - remove the apostrophe
+	                	        	   var displayValue = data[i].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value = displayValue;
 	                	           }
 	                	       }
 	                    	}		                    	
-	                    },	                    
-	                    
+	                    },
 	                    clearFields : function() {
 	                    	for (var key in this.qs_obj.field_list) {
 	                    	    if (document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]]){
@@ -207,7 +208,7 @@ function enableQS(noReload){
 	                	           }
 	                	       }
 	                    	}
-	                    	
+
 	        			    if(label_data_str != label_str && current_label_data_str != label_str){
 	       			        	if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
 	       						{
@@ -269,6 +270,10 @@ function enableQS(noReload){
 						}
                     });
 
+					search.typeAheadEvent.subscribe(function (e, args) {
+						this.getInputEl().value = this.getInputEl().value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');			
+					});					
+					
                 	//BEGIN SUGARCRM flav=pro ONLY
                     //For IE browsers below 8 we have to set the z-index to allow the Autocomplete field to appear correctly
                     if(SUGAR.isIE && navigator.appVersion.match(/MSIE (.\..)/)[1] < 8 && /team_name/.test(search.getInputEl().id)) {

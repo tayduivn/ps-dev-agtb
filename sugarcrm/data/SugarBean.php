@@ -240,6 +240,14 @@ class SugarBean
      * Set to true if the bean is being dealt with in a workflow
      */
     var $in_workflow = false;
+    
+    /**
+     *  
+     * By default it will be true but if any module is to be kept non visible 
+     * to tracker, then its value needs to be overriden in that particular module to false.
+     * 
+     */
+    var $tracker_visibility = true;
 
     /**
      * Used to pass inner join string to ListView Data.
@@ -630,9 +638,8 @@ class SugarBean
             return;
 
         foreach ($this->field_defs as $field => $value) {
-            if( (isset($value['default']) || !empty($value['display_default']))
-                    && !empty($this->$field)
-                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default']))
+		if( !empty($this->$field)
+                  && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
                     ) {
                 $this->$field = null;
             }
@@ -2023,68 +2030,68 @@ function save_relationship_changes($is_update, $exclude=array())
     * @param $id - If ID is specified, it overrides the current value of $this->id.  If not specified the current value of $this->id will be used.
     * @return this - The object that it was called apon or null if exactly 1 record was not found.
     *
-    */
+	*/
 
 	function check_date_relationships_load()
 	{
 		global $disable_date_format;
-		if(!empty($disable_date_format))
-		{
-			return;
-		}
 		global $timedate;
 		if (empty($timedate))
 			$timedate=TimeDate2::getInstance();
 
-        if(empty($this->field_defs))
-        {
-            return;
-        }
-        foreach($this->field_defs as $fieldDef)
-        {
-            $field = $fieldDef['name'];
-            if(!isset($this->processed_dates_times[$field]))
-            {
-                $this->processed_dates_times[$field] = '1';
+		if(empty($this->field_defs))
+		{
+			return;
+		}
+		foreach($this->field_defs as $fieldDef)
+		{
+			$field = $fieldDef['name'];
+			if(!isset($this->processed_dates_times[$field]))
+			{
+				$this->processed_dates_times[$field] = '1';
+				if(empty($this->$field)) continue; 
+				if($field == 'date_modified' || $field == 'date_entered')
+				{
+					$this->$field = from_db_convert($this->$field, 'datetime');
+					if(empty($disable_date_format)) {
+						$this->$field = $timedate->to_display_date_time($this->$field);
+					}
+				} 
+				elseif(isset($this->field_name_map[$field]['type'])) 
+				{
+					$type = $this->field_name_map[$field]['type'];
 
-                if($field == 'date_modified' || $field == 'date_entered')
-                {
-                    if(!empty($this->$field))
-                    {
-                        $this->$field = $timedate->to_display_date_time($this->$field);
-                    }
-                }
-                elseif(!empty($this->$field) && isset($this->field_name_map[$field]['type']))
-                {
-                    $type = $this->field_name_map[$field]['type'];
-
-                    if($type == 'relate'  && isset($this->field_name_map[$field]['custom_module']))
-                    {
-                        $type = $this->field_name_map[$field]['type'];
-                    }
+					if($type == 'relate'  && isset($this->field_name_map[$field]['custom_module']))
+					{
+						$type = $this->field_name_map[$field]['type'];
+					}
 
 					if($type == 'date')
 					{
-						$this->$field = $this->db->fromConvert($this->$field, 'date');
+						$this->$field = from_db_convert($this->$field, 'date');
 
-                        if($this->$field == '0000-00-00')
-                        {
-                            $this->$field = '';
-                        } elseif(!empty($this->field_name_map[$field]['rel_field']))
-                        {
-                            $rel_field = $this->field_name_map[$field]['rel_field'];
+						if($this->$field == '0000-00-00')
+						{
+							$this->$field = '';
+						} elseif(!empty($this->field_name_map[$field]['rel_field']))
+						{
+							$rel_field = $this->field_name_map[$field]['rel_field'];
 
 							if(!empty($this->$rel_field))
 							{
-								$this->$rel_field=$this->db->fromConvert($this->$rel_field, 'time');
-								$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
-								$this->$field = $timedate->to_display_date($mergetime);
-								$this->$rel_field = $timedate->to_display_time($mergetime);
+								$this->$rel_field=from_db_convert($this->$rel_field, 'time');
+								if(empty($disable_date_format)) {
+									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
+									$this->$field = $timedate->to_display_date($mergetime);
+									$this->$rel_field = $timedate->to_display_time($mergetime);
+								}
 							}
 						}
 						else
 						{
-							$this->$field = $timedate->to_display_date($this->$field, false);
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date($this->$field, false);
+							}
 						}
 					} elseif($type == 'datetime' || $type == 'datetimecombo')
 					{
@@ -2094,7 +2101,10 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						else
 						{
-							$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							$this->$field = from_db_convert($this->$field, 'datetime');
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							}
 						}
 					} elseif($type == 'time')
 					{
@@ -2104,12 +2114,12 @@ function save_relationship_changes($is_update, $exclude=array())
 						} else
 						{
 							//$this->$field = from_db_convert($this->$field, 'time');
-							if(empty($this->field_name_map[$field]['rel_field']))
+							if(empty($this->field_name_map[$field]['rel_field']) && empty($disable_date_format))
 							{
 								$this->$field = $timedate->to_display_time($this->$field,true, false);
 							}
 						}
-					} elseif($type == 'encrypt'){
+					} elseif($type == 'encrypt' && empty($disable_date_format)){
 						$this->$field = $this->decrypt_after_retrieve($this->$field);
 					}
 				}
@@ -4265,7 +4275,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	        $monitor->setValue('action', $current_view);
 	        $monitor->setValue('item_id', $this->id);
 	        $monitor->setValue('item_summary', $this->get_summary_text());
-	        $monitor->setValue('visible',true);
+	        $monitor->setValue('visible', $this->tracker_visibilit);
 	        $trackerManager->saveMonitor($monitor);
 		}
 	}
