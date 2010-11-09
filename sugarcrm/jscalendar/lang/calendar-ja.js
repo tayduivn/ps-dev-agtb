@@ -1,3 +1,16 @@
+/*
+
+Modification information for LGPL compliance
+
+r58364 - 2010-09-29 22:39:05 -0700 (Wed, 29 Sep 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    Fix languages in JS calendar
+
+r58354 - 2010-09-29 14:39:04 -0700 (Wed, 29 Sep 2010) - kjing - Author: Majed Itani <mitani@mitani.local>
+     fixes issues where language pack calendars were not compatible
+
+
+*/
+
 // ** I18N
 Calendar._DN = new Array
 ("日曜日",

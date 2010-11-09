@@ -1,4 +1,23 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r53865 - 2010-01-19 21:51:54 -0800 (Tue, 19 Jan 2010) - lam - updated styles for button slider
+
+r53792 - 2010-01-18 13:37:35 -0800 (Mon, 18 Jan 2010) - roger - adding code to support slider buttons.
+
+
+*/
+
+
 /**
  * smarty_function_sugar_button
  * This is the constructor for the Smarty plugin.

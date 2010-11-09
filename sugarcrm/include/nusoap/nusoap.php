@@ -1,8 +1,209 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*
-$Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+$Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 
 NuSOAP - Web Services Toolkit for PHP
 
@@ -80,7 +281,7 @@ $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 0;
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access   public
 */
 class nusoap_base {
@@ -104,7 +305,7 @@ class nusoap_base {
 	 * @var string
 	 * @access private
 	 */
-	var $revision = '$Revision: 57813 $';
+	var $revision = '$Revision: 58622 $';
     /**
      * Current error string (manipulated by getError/setError)
 	 *
@@ -1005,6 +1206,207 @@ function usleepWindows($usec)
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -1012,7 +1414,7 @@ function usleepWindows($usec)
 * Mainly used for returning faults from deployed functions
 * in a server instance.
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access public
 */
 class nusoap_fault extends nusoap_base {
@@ -1092,6 +1494,207 @@ class soap_fault extends nusoap_fault {
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -1100,7 +1703,7 @@ class soap_fault extends nusoap_fault {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access   public
 */
 class nusoap_xmlschema extends nusoap_base  {
@@ -2067,6 +2670,207 @@ class XMLSchema extends nusoap_xmlschema {
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -2077,7 +2881,7 @@ class XMLSchema extends nusoap_xmlschema {
 * xsd:anyType and user-defined types.
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access   public
 */
 class soapval extends nusoap_base {
@@ -2171,6 +2975,207 @@ class soapval extends nusoap_base {
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -2179,7 +3184,7 @@ class soapval extends nusoap_base {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access public
 */
 class soap_transport_http extends nusoap_base {
@@ -3475,6 +4480,207 @@ class soap_transport_http extends nusoap_base {
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -3484,7 +4690,7 @@ class soap_transport_http extends nusoap_base {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access   public
 */
 class nusoap_server extends nusoap_base {
@@ -4611,6 +5817,207 @@ class soap_server extends nusoap_server {
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -4619,7 +6026,7 @@ class soap_server extends nusoap_server {
 * 
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access public 
 */
 class wsdl extends nusoap_base {
@@ -6546,6 +7953,207 @@ class wsdl extends nusoap_base {
 }
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -6554,7 +8162,7 @@ class wsdl extends nusoap_base {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access   public
 */
 class nusoap_parser extends nusoap_base {
@@ -7186,6 +8794,207 @@ class soap_parser extends nusoap_parser {
 
 ?><?php
 
+/*
+
+Modification information for LGPL compliance
+
+r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
+    bug 40066
+
+r58361 - 2010-09-29 16:59:02 -0700 (Wed, 29 Sep 2010) - kjing - Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merging with maint_6_0_1 (svn merge -r 58250:58342)
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r57707 - 2010-08-10 12:26:13 -0700 (Tue, 10 Aug 2010) - kjing - Author: Stanislav Malyshev <smalyshev@gmail.com>
+    fix SOAP calls with no parameters
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51508 - 2009-10-14 07:40:23 -0700 (Wed, 14 Oct 2009) - jmertic - More fallout fixes from the PHP 5.3 ereg to preg changes.
+
+r51455 - 2009-10-13 07:56:48 -0700 (Tue, 13 Oct 2009) - jmertic - Bug 33202 - Enable install of SugarCRM on PHP 5.3.0, asserting that the minimum supported version is PHP 5.2.x.
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r45763 - 2009-04-01 12:16:18 -0700 (Wed, 01 Apr 2009) - majed - Removed half of the require_once and include_onces in the product that were redundant or could be handled easily by the auto loader
+
+r45680 - 2009-03-30 14:34:35 -0700 (Mon, 30 Mar 2009) - Samir Gandhi - modifeid serializeSchema to generate WS-I compliant WSDL
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
+
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+
+r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
+
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+
+r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
+Touched:
+- data/SugarBean.php
+- include/domit/php_http_client_generic.php
+- include/domit/php_http_connector.php
+- include/domit/testing_domit.php
+- include/domit/xml_domit_getelementsbypath.php
+- include/domit/xml_domit_lite_parser.php
+- include/domit/xml_domit_nodemaps.php
+- include/domit/xml_domit_parser.php
+- include/domit/xml_domit_shared.php
+- include/generic/SugarWidgets/SugarWidgetField.php
+- include/generic/SugarWidgets/SugarWidgetReportField.php
+- include/ListView/ProcessView.php
+- include/nusoap/class.soapclient.php
+- include/nusoap/nusoap.php
+- include/nusoap/nusoapmime.php
+- include/Pear/HTML_Safe/Safe.php
+- include/Pear/XML_HTMLSax3/HTMLSax3.php
+- modules/Administration/RebuildWorkFlow.php
+- modules/Expressions/RelateSelector.php
+- modules/Reports/templates/templates_reports.php
+- modules/WorkFlow/Delete.php
+- modules/WorkFlow/Save.php
+- modules/WorkFlow/SaveSequence.php
+- modules/WorkFlow/WorkFlow.php
+- modules/WorkFlowActionShells/CreateStep1.php
+- modules/WorkFlowActionShells/CreateStep2.php
+- modules/WorkFlowActionShells/Save.php
+- modules/WorkFlowActionShells/WorkFlowActionShell.php
+- modules/WorkFlowAlerts/Save.php
+- modules/WorkFlowAlerts/WorkFlowAlert.php
+- modules/WorkFlowAlertShells/DetailView.php
+- modules/WorkFlowAlertShells/WorkFlowAlertShell.php
+- modules/WorkFlowTriggerShells/CreateStep1.php
+- modules/WorkFlowTriggerShells/CreateStepFilter.php
+- modules/WorkFlowTriggerShells/SaveFilter.php
+- modules/WorkFlowTriggerShells/WorkFlowTriggerShell.php
+- soap/SoapHelperFunctions.php
+- test/modules/DynamicFields/DynamicFields_Bug24095_test.php
+- test/simpletest/browser.php
+- test/simpletest/default_reporter.php
+- test/simpletest/detached.php
+- test/simpletest/eclipse.php
+- test/simpletest/expectation.php
+- test/simpletest/extensions/pear_test_case.php
+- test/simpletest/form.php
+- test/simpletest/http.php
+- test/simpletest/mock_objects.php
+- test/simpletest/page.php
+- test/simpletest/parser.php
+- test/simpletest/remote.php
+- test/simpletest/shell_tester.php
+- test/simpletest/simple_test.php
+- test/simpletest/simpletest.php
+- test/simpletest/test/acceptance_test.php
+- test/simpletest/test/adapter_test.php
+- test/simpletest/test/authentication_test.php
+- test/simpletest/test/browser_test.php
+- test/simpletest/test/collector_test.php
+- test/simpletest/test/compatibility_test.php
+- test/simpletest/test/detached_test.php
+- test/simpletest/test/eclipse_test.php
+- test/simpletest/test/encoding_test.php
+- test/simpletest/test/errors_test.php
+- test/simpletest/test/expectation_test.php
+- test/simpletest/test/form_test.php
+- test/simpletest/test/frames_test.php
+- test/simpletest/test/http_test.php
+- test/simpletest/test/live_test.php
+- test/simpletest/test/mock_objects_test.php
+- test/simpletest/test/page_test.php
+- test/simpletest/test/parse_error_test.php
+- test/simpletest/test/parser_test.php
+- test/simpletest/test/remote_test.php
+- test/simpletest/test/shell_test.php
+- test/simpletest/test/shell_tester_test.php
+- test/simpletest/test/simpletest_test.php
+- test/simpletest/test/site/page_request.php
+- test/simpletest/test/tag_test.php
+- test/simpletest/test/unit_tester_test.php
+- test/simpletest/test/user_agent_test.php
+- test/simpletest/test/visual_test.php
+- test/simpletest/test/xml_test.php
+- test/simpletest/test_case.php
+- test/simpletest/ui/array_reporter/test.php
+- test/simpletest/ui/recorder/test.php
+- test/simpletest/unit_tester.php
+- test/simpletest/url.php
+- test/simpletest/user_agent.php
+- test/simpletest/web_tester.php
+- test/spikephpcoverage/src/PEAR.php
+- test/spikephpcoverage/src/util/Utility.php
+- test/spikephpcoverage/src/XML/Parser.php
+- test/spikephpcoverage/src/XML/Parser/Simple.php
+- test/test_utilities/SugarTest_SimpleBrowser.php
+
+r38362 - 2008-07-28 14:06:59 -0700 (Mon, 28 Jul 2008) - roger - bug: 23897. Using print_r when using the debug statement in nusoap will print out the statements to the screen if the call is coming from the UI.
+
+r38300 - 2008-07-25 13:33:43 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - put the debug in parseresponse function
+
+r38293 - 2008-07-25 12:32:34 -0700 (Fri, 25 Jul 2008) - Samir Gandhi - to put all the debug statements return value in the call function
+
+r36824 - 2008-06-18 09:26:11 -0700 (Wed, 18 Jun 2008) - roger - bug: 21832
+
+r26422 - 2007-09-05 17:29:12 -0700 (Wed, 05 Sep 2007) - majed - migrate from beta 1 to trunk
+
+r15787 - 2006-08-10 10:14:41 -0700 (Thu, 10 Aug 2006) - roger - RRS: bug 7961
+
+r14701 - 2006-07-17 13:37:26 -0700 (Mon, 17 Jul 2006) - roger - RRS: bug 5801
+
+r13782 - 2006-06-06 10:58:55 -0700 (Tue, 06 Jun 2006) - majed - changes entry point code
+
+r11466 - 2006-02-01 15:49:47 -0800 (Wed, 01 Feb 2006) - jacob - Adding extra !empty check to get around a PHP warning.
+
+r11115 - 2006-01-17 14:54:45 -0800 (Tue, 17 Jan 2006) - majed - add entry point validation
+
+r10585 - 2005-12-13 14:42:26 -0800 (Tue, 13 Dec 2005) - majed - adds new license mechanisim
+
+r10170 - 2005-12-05 18:37:46 -0800 (Mon, 05 Dec 2005) - majed - fixes various issues
+
+r8999 - 2005-11-04 05:26:49 -0800 (Fri, 04 Nov 2005) - roger - When nusoap was upgraded we had an issue with the user's default language not being populated during a soap request. I determined the reason this was happening and have checked in the corresponding change to nusoap.
+
+r8991 - 2005-11-03 19:07:25 -0800 (Thu, 03 Nov 2005) - majed - fixes nusoap issue
+
+r8846 - 2005-10-31 11:01:12 -0800 (Mon, 31 Oct 2005) - majed - new version of nusoap
+
+r7905 - 2005-09-21 19:12:57 -0700 (Wed, 21 Sep 2005) - majed - restores old nusoap pre & with a few fixes
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r7452 - 2005-08-17 11:32:34 -0700 (Wed, 17 Aug 2005) - majed - changes soap to nusoap
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r5462 - 2005-05-25 13:50:11 -0700 (Wed, 25 May 2005) - majed - upgraded nusoap to .6.9
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r573 - 2004-09-04 13:03:32 -0700 (Sat, 04 Sep 2004) - sugarclint - undoing copyrights added in inadvertantly.  --clint
+
+r546 - 2004-09-03 11:49:38 -0700 (Fri, 03 Sep 2004) - sugarmsi - removed echo count
+
+r354 - 2004-08-02 23:00:37 -0700 (Mon, 02 Aug 2004) - sugarjacob - Adding Soap
+
+
+*/
+
+
+
 
 
 /**
@@ -7205,7 +9014,7 @@ class soap_parser extends nusoap_parser {
 *
 * @author   Dietrich Ayala <dietrich@ganx4.com>
 * @author   Scott Nichol <snichol@users.sourceforge.net>
-* @version  $Id: nusoap.php 57813 2010-08-19 17:34:44Z kjing $
+* @version  $Id: nusoap.php 58622 2010-10-23 01:18:59Z engsvnbuild $
 * @access   public
 */
 class nusoap_client extends nusoap_base  {
