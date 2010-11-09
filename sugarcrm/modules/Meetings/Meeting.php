@@ -191,9 +191,6 @@ class Meeting extends SugarBean {
             $response = $api->scheduleMeeting($this);
             if ( $response['success'] == TRUE ) {
                 // Need to send out notifications
-                
-            } else {
-                $_SESSION['administrator_error'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
                 if ( $api->canInvite ) {
                     $notifyList = $this->get_notification_recipients();
                     foreach($notifyList as $person) {
@@ -205,7 +202,8 @@ class Meeting extends SugarBean {
                         $check_notify = false;
                     }
                 }
-                
+            } else {
+                $_SESSION['administrator_error'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
             }
             
             $api->logoff();
@@ -492,6 +490,10 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
+        if ( !empty($meeting->join_url) ) {
+            $xtpl->assign('MEETING_URL', $meeting->join_url);
+            $xtpl->parse('Meeting.Meeting_External_API');
+        }
 
 		return $xtpl;
 	}

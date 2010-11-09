@@ -92,7 +92,7 @@ array (
         array (
             array(
                 'name'=>'host_url',
-                'customCode'=>'{if !empty($fields.join_url.value)}{if $current_user->id == $fields.assigned_user_id.value}<a href="{$fields.host_url.value}">{$MOD.LBL_HOST_EXT_MEETING}</a>{/if} / <a href="{$fields.displayed_url.value}">{$MOD.LBL_JOIN_EXT_MEETING}</a>{/if}',
+                'customCode'=>'{if !empty($fields.join_url.value)}{if $current_user->id == $fields.assigned_user_id.value}<a href="{$fields.host_url.value}">{$MOD.LBL_HOST_EXT_MEETING}</a>{/if} / <a href="{$fields.join_url.value}">{$MOD.LBL_JOIN_EXT_MEETING}</a>{/if}',
                 'customLabel'=>'{if !empty($fields.join_url.value)}{$MOD.LBL_URL}{/if}',
             ),           
             array(
