@@ -39,6 +39,12 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 </script>
 <script type='text/javascript' src='{sugar_getjspath file='modules/Users/PasswordRequirementBox.js'}'></script>
 {$ERROR_STRING}
+<!-- This is here for the external API forms -->
+<form name="DetailView" id="DetailView" method="POST" action="index.php">
+	<input type="hidden" name="record" id="record" value="{$ID}">
+	<input type="hidden" name="module" value="Users">
+</form>
+
 <form name="EditView" enctype="multipart/form-data" id="EditView" method="POST" action="index.php">
 	<input type="hidden" name="display_tabs_def">
 	<input type="hidden" name="hide_tabs_def">
