@@ -240,12 +240,12 @@ class SugarBean
      * Set to true if the bean is being dealt with in a workflow
      */
     var $in_workflow = false;
-    
+
     /**
-     *  
-     * By default it will be true but if any module is to be kept non visible 
+     *
+     * By default it will be true but if any module is to be kept non visible
      * to tracker, then its value needs to be overriden in that particular module to false.
-     * 
+     *
      */
     var $tracker_visibility = true;
 
@@ -2049,15 +2049,15 @@ function save_relationship_changes($is_update, $exclude=array())
 			if(!isset($this->processed_dates_times[$field]))
 			{
 				$this->processed_dates_times[$field] = '1';
-				if(empty($this->$field)) continue; 
+				if(empty($this->$field)) continue;
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
 					$this->$field = from_db_convert($this->$field, 'datetime');
 					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
-				} 
-				elseif(isset($this->field_name_map[$field]['type'])) 
+				}
+				elseif(isset($this->field_name_map[$field]['type']))
 				{
 					$type = $this->field_name_map[$field]['type'];
 
@@ -4275,7 +4275,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	        $monitor->setValue('action', $current_view);
 	        $monitor->setValue('item_id', $this->id);
 	        $monitor->setValue('item_summary', $this->get_summary_text());
-	        $monitor->setValue('visible', $this->tracker_visibilit);
+	        $monitor->setValue('visible', $this->tracker_visibility);
 	        $trackerManager->saveMonitor($monitor);
 		}
 	}
