@@ -48,7 +48,10 @@ function process($pdf, $reportname, $stream){
         //Force download as a file
         $pdf->Output($filename,'D');
     }else{
-        $fp = sugar_fopen('cache/pdf/'.$filename,'w');
+	    if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'pdf')){
+	        sugar_mkdir($GLOBALS['sugar_config']['cache_dir'].'pdf');
+	    }
+        $fp = sugar_fopen($GLOBALS['sugar_config']['cache_dir'].'pdf/'.$filename,'w');
         fwrite($fp, $pdf->Output('','S'));
         fclose($fp);
 
