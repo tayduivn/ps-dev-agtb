@@ -206,7 +206,7 @@ $viewdefs['Contacts']['EditView'] = array(
 	    array (
 	      array('name'=>'portal_name',
 	            'customCode'=>'<table border="0" cellspacing="0" cellpadding="0"><tr><td>
-	                           <input id="portal_name" name="portal_name" type="text" size="30" maxlength="30" value="{$fields.portal_name.value}" autocomplete="off">
+	                           <input id="portal_name" name="portal_name" type="text" size="30" maxlength="{$fields.portal_name.len|default:\'30\'}" value="{$fields.portal_name.value}" autocomplete="off">
 	                           <input type="hidden" id="portal_name_existing" value="{$fields.portal_name.value}" autocomplete="off">
 	                           </td><tr><tr><td><input type="hidden" id="portal_name_verified" value="true"></td></tr></table>',
 	      ),
@@ -215,14 +215,14 @@ $viewdefs['Contacts']['EditView'] = array(
 	    array (
 	      array('name'=>'portal_password1',
 	            'type'=>'password',
-	            'customCode'=>'<input id="portal_password1" name="portal_password1" type="password" size="32" maxlength="32" value="{$fields.portal_password.value}" autocomplete="off">',
+	            'customCode'=>'<input id="portal_password1" name="portal_password1" type="password" size="32" maxlength="{$fields.portal_password.len|default:\'32\'}" value="{$fields.portal_password.value}" autocomplete="off">',
 	            'label'=>'LBL_PORTAL_PASSWORD'
 	      ),
 	    ),
 
 	    array (
 	      array('name'=>'portal_password',
-	            'customCode'=>'<input id="portal_password" name="portal_password" type="password" size="32" maxlength="32" value="{$fields.portal_password.value}" autocomplete="off">' .
+	            'customCode'=>'<input id="portal_password" name="portal_password" type="password" size="32" maxlength="{$fields.portal_password.len|default:\'32\'}" value="{$fields.portal_password.value}" autocomplete="off">' .
 	            		      '<input name="old_portal_password" type="hidden" value="{$fields.portal_password.value}" autocomplete="off">',
 	            'label'=>'LBL_CONFIRM_PORTAL_PASSWORD'
 	      ),
