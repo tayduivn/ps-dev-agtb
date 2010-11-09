@@ -57,15 +57,6 @@ function process_workflow_actions(& $focus, $action_array){
 function process_action_update(&$focus, $action_array){
 
 	foreach($action_array['basic'] as $field => $new_value){
-		
-		//bug: 35297 - when setting the team_id in workflow the save has already occurred, so we need to ensure that when 
-		//setting the team_id that we re-run the save logic in TeamSetLink
-		if($field == 'team_id'){
-			if(!empty($focus->teams)){
-				$focus->teams->setSaved(false);
-			}
-		}
-
 		if(empty($action_array['basic_ext'][$field])){
 			//if we have a relate field, make sure the related record still exists.
 			if ($focus->field_defs[$field]['type'] == "relate")
