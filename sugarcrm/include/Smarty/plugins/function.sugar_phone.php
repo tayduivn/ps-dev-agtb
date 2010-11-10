@@ -45,6 +45,12 @@ function smarty_function_sugar_phone($params, &$smarty)
 		return '';
 	}
 	
+	//Check if we need usa_format
+	if(!empty($params['usa_format']) && preg_match('/^([01])?[- .]?\(?(\d{3})\)?[- .]?([\da-zA-Z]{3})[- .]?([\da-zA-Z]{4})(.*?)$/', $params['value'], $matches))
+	{
+	   $params['value'] = $matches[1] . '(' . $matches[2] . ')' . $matches[3] . '-' . $matches[4] . $matches[5];
+	}
+	
 	global $system_config;
     if(isset($system_config->settings['system_skypeout_on']) && $system_config->settings['system_skypeout_on'] == 1
     	&& isset($params['value']) && skype_formatted($params['value'])  ) {
