@@ -66,7 +66,7 @@
   {/if}
 {{/if}}
 {if !$noChange}
-<input type='button' class='button' value='{$APP.LBL_REMOVE}' onclick='SUGAR.field.file.deleteAttachment("{{$idName}}",this);'>
+<input type='button' class='button' value='{$APP.LBL_REMOVE}' onclick='SUGAR.field.file.deleteAttachment("{{$idName}}","{{$vardef.docType}}",this);'>
 {/if}
 </span>
 {if !$noChange}
@@ -108,8 +108,6 @@ YAHOO.util.Event.onDOMReady(function() {ldelim}
 SUGAR.field.file.setupEapiShowHide("{{$idName}}","{{$vardef.docType}}","{$form_name}");
 {rdelim});
 
-console.log("I'm over here");
-
 if ( typeof(sqs_objects) == 'undefined' ) {ldelim}
     sqs_objects = new Array;
 {rdelim}
@@ -129,6 +127,9 @@ sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
 if(typeof QSProcessedFieldsArray != 'undefined') {ldelim}
 	QSProcessedFieldsArray["{$form_name}_{{$idName}}_remoteName"] = false;
 {rdelim}
+{if $showRemove && strlen("{{$vardef.docType}}") > 0 }
+document.getElementById("{{$vardef.docType}}").disabled = true;
+{/if}
 
 enableQS(false);
 </script>

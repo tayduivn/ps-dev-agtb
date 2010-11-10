@@ -42,8 +42,6 @@ class SugarFieldFile extends SugarFieldBase {
     }
     
 	public function save(&$bean, $params, $field, $vardef, $prefix = ''){
-        $GLOBALS['log']->fatal('IKEA: Im trying to save');
-
 		require_once('include/upload_file.php');
 		$upload_file = new UploadFile($prefix . $field);
 
@@ -61,7 +59,6 @@ class SugarFieldFile extends SugarFieldBase {
     		$bean->file_mime_type = $upload_file->mime_type;
 			$bean->file_ext = $upload_file->file_ext;
 			$move=true;
-            $GLOBALS['log']->fatal('IKEA: It is looking good so far');
 		}
  		
 		if ($move) {
@@ -71,15 +68,11 @@ class SugarFieldFile extends SugarFieldBase {
 			}
         
 			$upload_file->final_move($bean->id);
-            $GLOBALS['log']->fatal('IKEA: Calling upload_doc, doc_type:'.$params[$prefix . $vardef['docType']]);
             $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $bean->mime_type);
 		} else if ( !empty($params[$prefix . $vardef['name'] . '_remoteName']) ) {
             // We ain't moving, we might need to do some remote linking
             $displayParams = array();
             $this->fillInOptions($vardef,$displayParams);
-
-            $GLOBALS['log']->fatal('IKEA: Params: '.print_r($params,true));
-            $GLOBALS['log']->fatal('IKEA: vardef: '.print_r($vardef,true));
             
             if ( isset($params[$prefix . $vardef['docId']])
                  && ! empty($params[$prefix . $vardef['docId']])

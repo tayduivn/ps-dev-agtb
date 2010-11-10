@@ -31,20 +31,21 @@ if ( typeof(SUGAR.field) == 'undefined' ) {
 
 if ( typeof(SUGAR.field.file) == 'undefined' ) {
     SUGAR.field.file = {
-        deleteAttachment: function(elemBaseName,elem) {
+        deleteAttachment: function(elemBaseName,docTypeName,elem) {
             ajaxStatus.showStatus(SUGAR.language.get("Notes", "LBL_REMOVING_ATTACHMENT"));
             elem.form.deleteAttachment.value=1;
             elem.form.action.value="EditView";
-            SUGAR.dashlets.postForm(elem.form, SUGAR.field.file.deleteAttachmentCallbackGen(elemBaseName));
+            SUGAR.dashlets.postForm(elem.form, SUGAR.field.file.deleteAttachmentCallbackGen(elemBaseName,docTypeName));
             elem.form.deleteAttachment.value=0;
             elem.form.action.value="";
         },
-        deleteAttachmentCallbackGen: function(elemBaseName) {
+        deleteAttachmentCallbackGen: function(elemBaseName,docTypeName) {
             return function(text) {
 	            if(text == 'true') {
 		            document.getElementById(elemBaseName+'_new').style.display = '';
 		            ajaxStatus.hideStatus();
-		            document.getElementById(elemBaseName+'_old').innerHTML = ''; 
+		            document.getElementById(elemBaseName+'_old').innerHTML = '';
+                    document.getElementById(docTypeName).disabled = false;
 	            } else {
 		            document.getElementById(elemBaseName+'_new').style.display = 'none';
 		            ajaxStatus.flashStatus(SUGAR.language.get('Notes', 'ERR_REMOVING_ATTACHMENT'), 2000); 
