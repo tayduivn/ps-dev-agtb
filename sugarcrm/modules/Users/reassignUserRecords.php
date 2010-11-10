@@ -184,6 +184,9 @@ if(!empty($_SESSION['reassignRecords']['modules'])){
 	foreach($_SESSION['reassignRecords']['modules'] as $mod => $arr)
 		$selected[] = $mod;
 }
+//Bug 40608 - Don't show SugarFavorites here.
+if (isset($beanListFlip['SugarFavorites']))
+    unset($beanListFlip['SugarFavorites']);
 echo get_select_options_with_id($beanListFlip, $selected);
 ?>
 </select>
