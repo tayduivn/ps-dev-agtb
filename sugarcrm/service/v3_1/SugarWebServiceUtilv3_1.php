@@ -233,6 +233,9 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 					$required = 1;
 				}
 				
+				if($var['type'] == 'bool')
+				    $var['options'] = 'checkbox_dom';
+				    
 				if(isset($var['options'])){
 					$options_dom = translate($var['options'], $value->module_dir);
 					if(!is_array($options_dom)) $options_dom = array();
