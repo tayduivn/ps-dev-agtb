@@ -144,6 +144,20 @@ class registry_v3_1 extends registry_v3 {
 				)
 		);
 		
+		$this->serviceClass->registerType(
+		   	 'get_entry_list_result_version2',
+		   	 'complexType',
+		   	 'struct',
+		   	 'all',
+		  	  '',
+			array(
+				'result_count' => array('name'=>'result_count', 'type'=>'xsd:int'),
+				'total_count' => array('name'=>'total_count', 'type'=>'xsd:int'),
+				'next_offset' => array('name'=>'next_offset', 'type'=>'xsd:int'),
+				'entry_list' => array('name' =>'entry_list', 'type'=>'tns:entry_list'),
+				'relationship_list' => array('name' =>'relationship_list', 'type'=>'tns:link_lists'),
+			)
+		);
 		
 		$this->serviceClass->registerType(
 		    'new_module_fields',

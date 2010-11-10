@@ -713,9 +713,13 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 			}
 			$returnRelationshipList[]['link_list'] = $link_output;
 		}
-
+        
+		$totalRecordCount = $response['row_count'];
+        if( !empty($sugar_config['disable_count_query']) )
+            $totalRecordCount = -1;
+            
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
-        return array('result_count'=>sizeof($output_list), 'next_offset'=>$next_offset, 'entry_list'=>$output_list, 'relationship_list' => $returnRelationshipList);
+        return array('result_count'=>sizeof($output_list), 'total_count' => $totalRecordCount, 'next_offset'=>$next_offset, 'entry_list'=>$output_list, 'relationship_list' => $returnRelationshipList);
     } // fn
     
     
