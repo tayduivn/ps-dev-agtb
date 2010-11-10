@@ -38,6 +38,9 @@ if(empty($focus->teams)){
 	$focus->load_relationship('teams');
 }
 $focus->teams->save();
+//bug: 35297 - set the teams to have not been saved, so workflow can update if necessary
+$focus->teams->setSaved(false);
+
 if(!$focus->ACLAccess('Save')){
 	ACLController::displayNoAccess(true);
 	sugar_cleanup(true);
