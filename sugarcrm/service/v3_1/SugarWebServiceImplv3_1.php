@@ -233,7 +233,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
         $seed->save(self::$helperObject->checkSaveOnNotify());
         
-        $return_entry_list = self::$helperObject->get_return_value_for_fields($seed, $module_name,$return_fields );
+        $return_entry_list = self::$helperObject->get_name_value_list_for_fields($seed, $return_fields );
         
         if($seed->deleted == 1){
             $seed->mark_deleted($seed->id);
