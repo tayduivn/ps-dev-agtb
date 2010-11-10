@@ -189,7 +189,7 @@ abstract class SugarCacheAbstract
      */
     public function __toString()
     {
-        return str_replace('SugarCache','',get_class($this));
+        return strtolower(str_replace('SugarCache','',get_class($this)));
     }
     
     /**
@@ -240,11 +240,18 @@ abstract class SugarCacheAbstract
     public function useBackend()
     {
         if ( !empty($GLOBALS['sugar_config']['external_cache_disabled']) 
-                && $GLOBALS['sugar_config']['external_cache_disabled'] == true )
+                && $GLOBALS['sugar_config']['external_cache_disabled'] == true ) {
             return false;
-            
-        if (defined('SUGARCRM_IS_INSTALLING'))
+        }
+        
+        if (defined('SUGARCRM_IS_INSTALLING')) {
             return false;
+        }
+        
+        if ( isset($GLOBALS['sugar_config']['external_cache_force_backend'])
+                && ( $GLOBALS['sugar_config']['external_cache_force_backend'] != (string) $this ) ) {
+            return false;
+        }
         
         return true;
     }
