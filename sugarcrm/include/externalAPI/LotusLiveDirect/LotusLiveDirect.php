@@ -23,7 +23,7 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
     // FIXME: encode?
         'consumerSecret' => "87323at4aj6y8e9a0pa92w",
     );
-    protected $url = 'https://apps.lotuslive.com/';
+    protected $url = 'https://apps.test.lotuslive.com/';
 
     public $canInvite = false;
     public $sendsInvites = false;
