@@ -56,6 +56,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'type' => 'relate',
     'isnull' => 'true',
     'module' => 'Accounts',
+    'table' => 'accounts',
     'massupdate' => false,
     'source'=>'non-db',
     'len' => 36,
