@@ -647,7 +647,7 @@ else
     $sugar_smarty->assign('REQUIRED_PASSWORD','0');
 
 // If my account page or portal only user or regular user without system generated password or a duplicate user
-if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
+if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || $usertype == 'ADMIN' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
    $sugar_smarty->assign('CHANGE_PWD', '1');
 else
    $sugar_smarty->assign('CHANGE_PWD', '0');
