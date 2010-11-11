@@ -274,6 +274,12 @@ function addToValidateMoreThan(formname, name, type, required, msg, min) {
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'more';
     validate[formname][validate[formname].length - 1][minIndex] = min;
 }
+
+function addToValidateUSAPhone(formname, name, type, required, msg) {
+	addToValidate(formname, name, type, required, msg);
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'usa_phone';
+}
+
 function removeFromValidate(formname, name) {
 	for(i = 0; i < validate[formname].length; i++){
 		if(validate[formname][i][nameIndex] == name){
@@ -978,6 +984,22 @@ function validate_form(formname, startsWith){
 							   //Fake an error so form does not submit
 							   isError = true;
 							}
+							break;
+							case 'usa_phone':
+								var nodes = YAHOO.util.Selector.query('input[name=' + validate[formname][i][nameIndex] + ']', form);
+								for(el in nodes)
+								{
+									if(typeof nodes[el].type != 'undefined' && nodes[el].type == 'text')
+									{
+									    phone = trim(nodes[el].value);
+										if(phone.length != 0 && !/^[01]?[- .]?(\([0-9]\d{2}\)|[0-9]\d{2})[- .]?[0-9a-zA-Z]{3}[- .]?[0-9a-zA-Z]{4}/.test(phone))
+									    {
+									       isError = true;
+									       add_error_style(formname, nodes[el], invalidTxt + " " +	validate[formname][i][msgIndex]);
+									    }
+									    break;
+									}
+								}
 							break;
 							}
 						}

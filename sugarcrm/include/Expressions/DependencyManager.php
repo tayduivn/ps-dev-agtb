@@ -246,7 +246,6 @@ class DependencyManager {
                 "custom/{$location}",
                 "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
             {
-                echo "$loc : " . is_file($loc) . "</br>";
                 if(is_file($loc)) {
                     include $loc;
                 }
@@ -272,7 +271,6 @@ class DependencyManager {
      */
     public static function getJSUserVariables($user)
     {
-        //echo "<pre>" . print_r($_SESSION[$user->user_name . '_PREFERENCES']['global'], true) . "</pre>";
         return "SUGAR.expressions.userPrefs = " . json_encode(array(
             "num_grp_sep" => $user->getPreference("num_grp_sep"),
             "dec_sep" => $user->getPreference("dec_sep"),

@@ -3044,8 +3044,10 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
-    
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
+    
+    //SugarFieldPhone labels
+    'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter USA phone format (999-999-9999)',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
