@@ -19,5 +19,12 @@ class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase
        	$lang = parseAcceptLanguage();
        	$this->assertEquals('en_us,en', $lang, 'parse_accept_language did not return proper values');
 	}
+	
+	public function testRemoveConfig_SIFile(){
+		if(write_array_to_file('config_si', array(), 'config_si.php')) {
+			removeConfig_SIFile();
+			$this->assertFileNotExists('config_si.php', 'removal of config_si did not succeed');
+		}
+	}
 }
 ?>
