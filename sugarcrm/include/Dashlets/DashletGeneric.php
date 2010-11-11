@@ -140,6 +140,11 @@ class DashletGeneric extends Dashlet {
         // Bug 39517 - Don't add custom fields automatically to the available fields to display in the listview
         //$this->addCustomFields();
         if($this->displayColumns) {
+             //BEGIN SUGARCRM flav=pro ONLY
+             if($this->seedBean->bean_implements('ACL')) {
+                    ACLField::listFilter($this->displayColumns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
+             }
+             //END SUGARCRM flav=pro ONLY
              // columns to display
              foreach($this->displayColumns as $num => $name) {
                     // defensive code for array being returned
@@ -156,6 +161,11 @@ class DashletGeneric extends Dashlet {
              }
         }
         else {
+             //BEGIN SUGARCRM flav=pro ONLY
+             if($this->seedBean->bean_implements('ACL')) {
+                ACLField::listFilter($this->columns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
+             }
+             //END SUGARCRM flav=pro ONLY
              foreach($this->columns as $name => $val) {
                 // defensive code for array being returned
                 $translated = translate($this->columns[$name]['label'], $this->seedBean->module_dir);
