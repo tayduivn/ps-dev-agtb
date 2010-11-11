@@ -180,7 +180,6 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 			"$this->table_name.schedule_type='".$schedule_type."' AND\n".
 			"users.status='Active' AND users.deleted='0'".
 			"ORDER BY $this->table_name.next_run ASC";
-	$GLOBALS['log']->debug('FRANK: '.$query);
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
