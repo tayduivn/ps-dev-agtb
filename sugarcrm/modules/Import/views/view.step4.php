@@ -352,25 +352,24 @@ class ImportViewStep4 extends SugarView
                     case 'fullname':
                         break;
                     default:
-                        if ( method_exists('ImportFieldSanitize',$fieldDef['type']) ) {
-                            $fieldtype = $fieldDef['type'];
-                            $returnValue = $ifs->$fieldtype($rowValue, $fieldDef);
-                            // try the default value on fail
-                            if ( !$returnValue && !empty($defaultRowValue) )
-                                $returnValue = $ifs->$fieldtype(
-                                    $defaultRowValue, 
-                                    $fieldDef, 
-                                    $focus);
-                            if ( !$returnValue ) {
-                                $do_save=0;
-                                $importFile->writeError(
-                                    $mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],
-                                    $fieldTranslated,
-                                    $rowValue, 
-                                    $focus);
-                            }
-                            else
-                                $rowValue = $returnValue;
+                        $fieldtype = $fieldDef['type'];
+                        $returnValue = $ifs->$fieldtype($rowValue, $fieldDef);
+                        // try the default value on fail
+                        if ( !$returnValue && !empty($defaultRowValue) )
+                            $returnValue = $ifs->$fieldtype(
+                                $defaultRowValue, 
+                                $fieldDef, 
+                                $focus);
+                        if ( !$returnValue ) {
+                            $do_save=0;
+                            $importFile->writeError(
+                                $mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],
+                                $fieldTranslated,
+                                $rowValue, 
+                                $focus);
+                        }
+                        else {
+                            $rowValue = $returnValue;
                         }
                     }
                 }
