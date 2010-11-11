@@ -24,7 +24,6 @@ require_once('modules/Leads/LeadFormBase.php');
 
 
 
-
 global $app_strings, $app_list_strings, $sugar_config, $timedate, $current_user;
 
 $mod_strings = return_module_language($sugar_config['default_language'], 'Leads');
@@ -118,16 +117,49 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 }
             }              
 			if(isset($_POST['redirect_url']) && !empty($_POST['redirect_url'])){
-			    if(headers_sent()){
+			    // Get the redirect url, and make sure the query string is not too long
+		        $redirect_url = $_POST['redirect_url'];
+		        $query_string = '';
+				$first_char = '&';
+				if(strpos($redirect_url, '?') === FALSE){
+					$first_char = '?';
+				}
+				$first_iteration = true;
+				foreach($_REQUEST as $param => $value) {
+					if($param == 'redirect_url' || $param == 'submit')
+						continue;
+					
+					if($first_iteration){
+						$first_iteration = false;
+						$query_string .= $first_char;
+					}
+					else{
+						$query_string .= "&";
+					}
+					$query_string .= "{$param}={$value}";
+				}
+				if(empty($lead)) {
+					if($first_iteration){
+						$query_string .= $first_char;
+					}
+					else{
+						$query_string .= "&";
+					}
+					$query_string .= "error=1";
+				}
+				
+				$redirect_url = $redirect_url.$query_string;
+				
+				// Check if the headers have been sent, or if the redirect url is greater than 2083 characters (IE max URL length)
+				//   and use a javascript form submission if that is the case.
+			    if(headers_sent() || strlen($redirect_url) > 2083){
     				echo '<html><head><title>SugarCRM</title></head><body>';
     				echo '<form name="redirect" action="' .$_POST['redirect_url']. '" method="GET">';
     
     				foreach($_POST as $param => $value) {
     					if($param != 'redirect_url' ||$param != 'submit') {
     						echo '<input type="hidden" name="'.$param.'" value="'.$value.'">';
-    
     					}
-    
     				}
     				if(empty($lead)) {
     					echo '<input type="hidden" name="error" value="1">';
@@ -136,35 +168,8 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
     				echo '</body></html>';
     			}
 				else{
-    				$redirect_url = $_POST['redirect_url'];
-    				$first_char = '&';
-    				if(strpos($redirect_url, '?') === FALSE){
-    					$first_char = '?';
-    				}
-    				$first_iteration = true;
-    				foreach($_REQUEST as $param => $value) {
-    					if($param == 'redirect_url' || $param == 'submit')
-    						continue;
-    					
-    					if($first_iteration){
-    						$first_iteration = false;
-    						$redirect_url .= $first_char;
-    					}
-    					else{
-    						$redirect_url .= "&";
-    					}
-    					$redirect_url .= "{$param}={$value}";
-    				}
-    				if(empty($lead)) {
-    					if($first_iteration){
-    						$redirect_url .= $first_char;
-    					}
-    					else{
-    						$redirect_url .= "&";
-    					}
-    					$redirect_url .= "error=1";
-    				}
     				header("Location: {$redirect_url}");
+    				die();
 			    }
 			}
 			else{
@@ -188,7 +193,7 @@ if (!empty($_POST['redirect'])) {
     }
     else{
     	header("Location: {$_POST['redirect']}");
-    	sugar_die();
+    	die();
     }
 }
 echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
