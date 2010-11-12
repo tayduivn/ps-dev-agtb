@@ -18,7 +18,7 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
         
         // try to test the backend if we can, rather than the in-memory store
         if ( !(SugarCache::instance() instanceOf SugarCacheMemory) )
-            SugarCache::instance()->disableLocalStore = true;
+            SugarCache::instance()->useLocalStore = false;
     }
 
     public function tearDown() 
@@ -30,6 +30,7 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
            sugar_cache_clear($this->_cacheKey2);
        if ( sugar_cache_retrieve($this->_cacheKey3) )
            sugar_cache_clear($this->_cacheKey3);
+       SugarCache::$isCacheReset = false;
     }
 
     public function testSugarCacheValidate()

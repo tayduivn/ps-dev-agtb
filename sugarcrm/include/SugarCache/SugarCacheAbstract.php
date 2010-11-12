@@ -110,16 +110,14 @@ abstract class SugarCacheAbstract
         $value
         )
     {
-        
-        if ( empty($value) ) {
+        if ( is_null($value) ) {
             $value = SugarCache::EXTERNAL_CACHE_NULL_VALUE;
         }
-        else {
-            if ( $this->useLocalStore ) {
-                $this->_localStore[$key] = $value;
-            }
-            $this->_setExternal($this->_keyPrefix.$key,$value);
+        
+        if ( $this->useLocalStore ) {
+            $this->_localStore[$key] = $value;
         }
+        $this->_setExternal($this->_keyPrefix.$key,$value);
     }
     
     /**

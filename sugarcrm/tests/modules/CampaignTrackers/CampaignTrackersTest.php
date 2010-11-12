@@ -11,6 +11,8 @@ class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
     public function setup()
     {
 		global $current_user;	
+		
+		$current_user = SugarTestUserUtilities::createAnonymousUser();
 		//for the purpose of this test, we need to create a campaign and relate it to a campaign tracker object
 
 		//create campaign
@@ -48,7 +50,7 @@ class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['db']->query('DELETE FROM campaign_tracker WHERE id = \''.$this->campaign_tracker->id.'\' ');
 		unset($this->campaign_tracker);
         unset($this->campaign_log );
-
+        unset($current_user);
     }
 	
 
