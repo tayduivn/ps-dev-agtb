@@ -102,15 +102,16 @@ $credits = array(
        
         
         ),
-	/*
+	
 	'Modules' => array(
-		'module_id' => array (
-			'name' => 'Module Name',
-			'author' => 'Author',
-			'description' => 'Description',
-			'website' => 'www.website.com',
+		'Twitter Connector' => array (
+			'name' => 'Twitter Connector',
+			'author' => 'Synolia',
+			'description' => 'Twitter Connector by Synolia',
+			'website' => 'www.synolia.com',
 		),
 	),
+	/*
 	'Themes' => array(
 		'theme_id' => array (
 			'name' => 'Theme Name',

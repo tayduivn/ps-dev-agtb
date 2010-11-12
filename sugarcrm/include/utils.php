@@ -4057,6 +4057,11 @@ function createGroupUser($name) {
 function _getIcon($iconFileName)
 {
     $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconPath) )
+        $iconPath = SugarThemeRegistry::current()->getImageURL(
+            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
+    //Next try removing the icon prefix
     if ( empty($iconPath) )
         $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 
