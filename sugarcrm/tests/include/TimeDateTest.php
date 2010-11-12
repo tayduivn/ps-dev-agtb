@@ -541,10 +541,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function providerGetDateFromRules()
 	{
-		if(!is_callable(array($this->time_date, "getDateFromRules"))) {
-			return array();
-		}
-	    return array(
+		return array(
 	        array('2009',10,1,0,7200,"2009-10-04 02:00:00"),
 	        array('2009',4,1,0,7200,"2009-04-05 02:00:00"),
 	        array('2010',3,24,5,7200,"2010-03-26 02:00:00"),
@@ -564,9 +561,6 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	    $returnValue
 	    )
 	{
-		if(!is_callable(array($this->time_date, "getDateFromRules"))) {
-			$this->markTestSkipped("Method is no longer public");
-		}
 		$this->assertEquals(
 	        $this->time_date->getDateFromRules($year, $startMonth, $startDate, $weekday, $startTime),
 	        $returnValue
