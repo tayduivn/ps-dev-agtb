@@ -313,6 +313,12 @@ class MergeRecord extends SugarBean {
                 }                
             }
         }
+        // Add ACL Check
+        if($this->merge_bean->bean_implements('ACL') && ACLController::requireOwner($this->merge_bean->module_dir, 'delete') )
+        {
+            global $current_user;
+            $where_clauses[] = $this->merge_bean->getOwnerWhere($current_user->id);
+        }
         array_push($where_clauses, $this->merge_bean->table_name.".id !='".$GLOBALS['db']->quote($this->merge_bean->id)."'");
         return $where_clauses;
     }
