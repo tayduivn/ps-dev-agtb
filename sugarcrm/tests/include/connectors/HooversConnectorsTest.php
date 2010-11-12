@@ -12,9 +12,6 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 	var $company_id;
     
     function setUp() {
-		$this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
-  	    return;
-  	    	
     	ConnectorFactory::$source_map = array();
 		//Skip if we do not have an internet connection
 		require('modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
@@ -24,12 +21,6 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 		   $this->markTestSkipped("Unable to retrieve Hoovers wsdl.  Skipping.");
 		} 	
     	
-		try {
-		  $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
-		} catch(Exception $ex) {
-		  $this->markTestSkipped("Unable to retrieve Hoovers wsdl.  Skipping.");
-		}
-		
     	//Enable mapping for Accounts
     	ConnectorUtils::getDisplayConfig();
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
@@ -61,21 +52,8 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     	$controller->action_SaveModifyMapping();
     	//Test parameters
     	$this->qual_module = 'Accounts';
-    	$this->company_id = '168338536';
-    	$this->listArgs = array('name' => 'SugarCRM');
-    	
-    	//Pre-Test to make sure we can access service
-        $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
-		$account = new Account();
-    	try {
-			$account = @$source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);    	
-    	} catch (Exception $ex) {
-    		
-    	}
-    	
-		if(empty($account->name)) {
-           $this->markTestSkipped("Hoovers service may be unavailable at this time.");	
-        }    	
+    	$this->company_id = '2205698';
+    	$this->listArgs = array('name' => 'Gannett');
     }
     
     function tearDown() {
@@ -85,20 +63,18 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     }
     
     function test_hoovers_fillBean() {
-    	$this->markTestSkipped('Mark test skipped.  Likely Key issue. Failing on 553/60/61.');
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
     	$account = new Account();
     	$account = $source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);
-    	$this->assertEquals(preg_match('/^SugarCRM/i', $account->name), 1, "Assert that account name is like SugarCRM");
+    	$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
     }
 
     function test_hoovers_fillBeans() {
-    	$this->markTestSkipped('Mark test skipped.  Likely Key issue. Failing on 553/60/61.');
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
     	$accounts = array();
     	$accounts = $source_instance->fillBeans($this->listArgs, $this->qual_module, $accounts);
         foreach($accounts as $count=>$account) {
-    		$this->assertEquals(preg_match('/^SugarCRM/i', $account->name), 1, "Assert that a bean has been filled with account name like SugarCRM");
+    		$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that a bean has been filled with account name like Gannett");
     		break;
     	}
     } 

@@ -4614,6 +4614,19 @@ function upgradeUserPreferences() {
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
 
+    // Need to repair the RC1 instances that have incorrect GUIDS
+    $deleteRows = array();      
+    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
+        if ($row['id'] != $expectedId) {
+            $deleteRows[] = $row['id'];
+        }
+    }
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");    
+    // End Repair
+        
+    
     $active_users = array();
     $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
@@ -4648,6 +4661,81 @@ function migrate_sugar_favorite_reports(){
     }
 }
 // END SUGARCRM flav=pro ONLY 
+
+function add_custom_modules_favorites_search(){
+    $module_directories = scandir('modules');
+
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
+
+		$matches = array();
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
+
+		$full_module_dir = "modules/{$module_dir}/";
+		$read_searchdefs_from = "{$full_module_dir}/metadata/searchdefs.php";
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
+
+		// Studio can possibly override this file, so we check for a custom version of it
+		if(file_exists("custom/{$full_module_dir}/metadata/searchdefs.php")){
+			$read_searchdefs_from = "custom/{$full_module_dir}/metadata/searchdefs.php";
+		}
+
+		if(file_exists($read_searchdefs_from) && file_exists($read_SearchFields_from)){
+			$found_sf1 = false;
+			$found_sf2 = false;
+			require($read_searchdefs_from);
+			foreach($searchdefs[$module_dir]['layout']['basic_search'] as $sf_array){
+				if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+					$found_sf1 = true;
+				}
+			}
+
+			require($read_SearchFields_from);
+			if(isset($searchFields[$module_dir]['favorites_only'])){
+				$found_sf2 = true;
+			}
+
+			if(!$found_sf1 && !$found_sf2){
+				$searchdefs[$module_dir]['layout']['basic_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchdefs[$module_dir]['layout']['advanced_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchFields[$module_dir]['favorites_only'] = array(
+					'query_type'=>'format',
+					'operator' => 'subquery',
+					'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+								WHERE sugarfavorites.deleted=0
+									and sugarfavorites.module = \''.$module_dir.'\'
+									and sugarfavorites.assigned_user_id = \'{0}\'',
+					'db_field'=>array('id')
+				);
+
+				if(!is_dir("custom/{$full_module_dir}/metadata")){
+					mkdir_recursive("custom/{$full_module_dir}/metadata");
+				}
+				$success_sf1 = write_array_to_file('searchdefs', $searchdefs, "custom/{$full_module_dir}/metadata/searchdefs.php");
+				$success_sf2 = write_array_to_file('searchFields', $searchFields, "{$full_module_dir}/metadata/SearchFields.php");
+
+				if(!$success_sf1){
+					logThis("add_custom_modules_favorites_search failed for searchdefs.php for {$module_dir}");
+				}
+				if(!$success_sf2){
+					logThis("add_custom_modules_favorites_search failed for SearchFields.php for {$module_dir}");
+				}
+				if($success_sf1 && $success_sf2){
+					logThis("add_custom_modules_favorites_search successfully updated searchdefs and searchFields for {$module_dir}");
+				}
+			}
+		}
+	}
+}
+
 
 /**
  * upgradeModulesForTeamsets
@@ -5316,86 +5404,54 @@ function upgradeModulesForTeam() {
 	}
 	//END SUGARCRM flav=pro ONLY
 	
-	function removeSilentUpgradeVarsCache(){
-	    global $silent_upgrade_vars_loaded;
-	    
-	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard";
-	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
-	    
-	    if(file_exists($cacheFile)){
-	        unlink($cacheFile);
-	    }
-	    
-	    $silent_upgrade_vars_loaded = array(); // Set to empty to reset it
-	    
-	    return true;
-	}
-	
-	function loadSilentUpgradeVars(){
-	    global $silent_upgrade_vars_loaded;
-	    
-	    if(empty($silent_upgrade_vars_loaded)){
-	        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard/silentUpgradeCache.php";
-	        // We have no pre existing vars
-	        if(!file_exists($cacheFile)){
-	            // Set the vars array so it's loaded
-	            $silent_upgrade_vars_loaded = array('vars' => array());
-	        }
-	        else{
-	            require_once($cacheFile);
-	            $silent_upgrade_vars_loaded = $silent_upgrade_vars_cache;
-	        }
-	    }
-	    
-	    return true;
-	}
-	
-	function writeSilentUpgradeVars(){
-	    global $silent_upgrade_vars_loaded;
-	    
-	    if(empty($silent_upgrade_vars_loaded)){
-	        return false; // You should have set some values before trying to write the silent upgrade vars
-	    }
-	    
-	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard";
-	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
-	    
-	    require_once('include/dir_inc.php');
-	    if(!mkdir_recursive($cacheFileDir)){
-	        return false;
-	    }
-	    require_once('include/utils/file_utils.php');
-	    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
-	        return false;
-	    }
-	    
-	    return true;
-	}
-	
-	function setSilentUpgradeVar($var, $value){
-	    if(!loadSilentUpgradeVars()){
-	        return false;
-	    }
-	    
-	    global $silent_upgrade_vars_loaded;
-	    
-	    $silent_upgrade_vars_loaded['vars'][$var] = $value;
-	    
-	    return true;
-	}
-	
-	function getSilentUpgradeVar($var){
-	    if(!loadSilentUpgradeVars()){
-	        return false;
-	    }
-	    
-	    global $silent_upgrade_vars_loaded;
-	    
-	    if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
-	        return null;
-	    }
-	    else{
-	        return $silent_upgrade_vars_loaded['vars'][$var];
-	    }
+	/**
+	 * upgrade_connectors
+	 * @param $path String variable for the log path
+	 */
+	function upgrade_connectors($path='') {
+		logThis('Begin upgrade_connectors', $path);
+		
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
+		if(file_exists($filePath))
+		{
+		   logThis("{$filePath} file", $path);	
+		   require($filePath);
+		   if(!is_null($config))
+		   {
+		   	  $modified = false;
+		   	  if(isset($config['properties']['hoovers_endpoint']))
+		   	  {
+		   	  	 $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
+		   	  	 $modified = true;
+		   	  }
+		   	  
+		   	  if(isset($config['properties']['hoovers_wsdl']))
+		   	  {
+		   	  	 $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
+		   	     $modified = true;
+		   	  }
+		   	  
+		   	  if($modified)
+		   	  {
+		   	      if(!write_array_to_file('config', $config, $filePath)) {
+		             logThis("Could not write new configuration to {$filePath} file", $path);	
+		          } else {
+		          	 logThis('Modified file successfully with new configuration entries', $path);
+		          }
+		   	  }
+		   }
+		}
+
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
+	    if(file_exists($filePath))
+		{
+		   logThis("Modifying {$filePath} file", $path);	
+		   require($filePath);		  
+		   $fileContents = file_get_contents($filePath);
+		   $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
+		   file_put_contents($filePath, $out);		   
+		}
+		
+		logThis('End upgrade_connectors', $path);
 	}
 ?>
