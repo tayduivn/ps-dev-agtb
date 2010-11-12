@@ -1,4 +1,5 @@
 <?php
+require_once('include/SugarCache/SugarCacheAbstract.php');
 
 /**
  * Redis SugarCache backend, using the PHP Redis C library at http://github.com/owlient/phpredis

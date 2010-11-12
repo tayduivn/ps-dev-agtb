@@ -1,4 +1,5 @@
 <?php
+require_once('include/SugarCache/SugarCacheAbstract.php');
 
 class SugarCacheFile extends SugarCacheAbstract
 {
