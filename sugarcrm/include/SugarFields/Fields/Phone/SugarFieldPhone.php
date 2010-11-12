@@ -5,34 +5,22 @@
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldPhone extends SugarFieldBase {
-
-    function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {	
-        $tabindex = 1;
-        $isArray = is_array($parentFieldArray);
-        $fieldName = $vardef['name'];
-       
-        if ( $isArray ) {
-        	$fieldNameUpper = strtoupper($fieldName);
-            if ( isset($parentFieldArray[$fieldNameUpper])) {
-                $parentFieldArray[$fieldName] = $this->formatField($parentFieldArray[$fieldNameUpper],$vardef);
-            } else {
-                $parentFieldArray[$fieldName] = '';
-            }
-        } else {
-            if ( isset($parentFieldArray->$fieldName) ) {
-                $parentFieldArray->$fieldName = $this->formatField($parentFieldArray->$fieldName,$vardef);
-            } else {
-                $parentFieldArray->$fieldName = '';
-            }
-        }
-    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
-        
-        $this->ss->left_delimiter = '{';
-        $this->ss->right_delimiter = '}';
-        $this->ss->assign('col',$vardef['name']);
-        $this->ss->assign('usa_format', !empty($vardef['validate_usa_format']) ? true : false);
-        return $this->fetch($this->findTemplate('ListView'));
-    }	
-
+    
+	/**
+     * This should be called when the bean is saved. The bean itself will be passed by reference
+     * @param SugarBean bean - the bean performing the save
+     * @param array params - an array of paramester relevant to the save, most likely will be $_REQUEST
+     */
+	public function save(&$bean, $params, $field, $properties, $prefix = ''){
+         if (!empty($params[$prefix.$field]) 
+             && !empty($properties['validate_usa_format']) 
+             && preg_match('/^([\+])?([1])?[- .]?[\(]?([2-9]\d{2})[\)]?[- .]?([0-9]{3})[- .]?([0-9]{4})$/', $params[$prefix.$field], $matches))
+         {
+         	 $international_sign = !empty($matches[1]) ? $matches[1] : '';
+         	 $country_code = !empty($matches[2]) ? $matches[2] . ' ' : '';
+             $bean->$field = $international_sign . $country_code . '(' . $matches[3] . ') ' . $matches[4] . '-' . $matches[5];
+         }
+     }    
+    
 }
 ?>

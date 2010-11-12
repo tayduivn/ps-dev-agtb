@@ -55,7 +55,7 @@ class TemplatePhone extends TemplateText{
 		
     	if(!empty($this->validate_usa_format))
     	{
-		   $def['validate_usa_format'] = $this->validate_usa_format;	
+		   $def['validate_usa_format'] = $this->validate_usa_format;
 		}
 		return $def;	
 	}
