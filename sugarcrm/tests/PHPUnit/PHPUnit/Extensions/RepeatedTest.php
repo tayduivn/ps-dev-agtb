@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package    PHPUnit
- * @subpackage Extensions
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -44,14 +43,9 @@
  */
 
 /**
- * A Decorator for Tests.
- *
- * Use TestDecorator as the base class for defining new
- * test decorators. Test decorator subclasses can be introduced
- * to add behaviour before or after a test is run.
+ * A Decorator that runs a test repeatedly.
  *
  * @package    PHPUnit
- * @subpackage Extensions
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
@@ -59,44 +53,61 @@
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
-class PHPUnit_Extensions_TestDecorator extends PHPUnit_Framework_Assert implements PHPUnit_Framework_Test, PHPUnit_Framework_SelfDescribing
+class PHPUnit_Extensions_RepeatedTest extends PHPUnit_Extensions_TestDecorator
 {
     /**
-     * The Test to be decorated.
-     *
-     * @var    object
+     * @var mixed
      */
-    protected $test = NULL;
+    protected $filter = FALSE;
+
+    /**
+     * @var array
+     */
+    protected $groups = array();
+
+    /**
+     * @var array
+     */
+    protected $excludeGroups = array();
+
+    /**
+     * @var boolean
+     */
+    protected $processIsolation = FALSE;
+
+    /**
+     * @var integer
+     */
+    protected $timesRepeat = 1;
 
     /**
      * Constructor.
      *
      * @param  PHPUnit_Framework_Test $test
+     * @param  integer                $timesRepeat
+     * @param  mixed                  $filter
+     * @param  array                  $groups
+     * @param  array                  $excludeGroups
+     * @param  boolean                $processIsolation
+     * @throws InvalidArgumentException
      */
-    public function __construct(PHPUnit_Framework_Test $test)
+    public function __construct(PHPUnit_Framework_Test $test, $timesRepeat = 1, $filter = FALSE, array $groups = array(), array $excludeGroups = array(), $processIsolation = FALSE)
     {
-        $this->test = $test;
-    }
+        parent::__construct($test);
 
-    /**
-     * Returns a string representation of the test.
-     *
-     * @return string
-     */
-    public function toString()
-    {
-        return $this->test->toString();
-    }
+        if (is_integer($timesRepeat) &&
+            $timesRepeat >= 0) {
+            $this->timesRepeat = $timesRepeat;
+        } else {
+            throw PHPUnit_Util_InvalidArgumentHelper::factory(
+              2, 'positive integer'
+            );
+        }
 
-    /**
-     * Runs the test and collects the
-     * result in a TestResult.
-     *
-     * @param  PHPUnit_Framework_TestResult $result
-     */
-    public function basicRun(PHPUnit_Framework_TestResult $result)
-    {
-        $this->test->run($result);
+        $this->filter           = $filter;
+        $this->groups           = $groups;
+        $this->excludeGroups    = $excludeGroups;
+        $this->processIsolation = $processIsolation;
     }
 
     /**
@@ -107,27 +118,7 @@ class PHPUnit_Extensions_TestDecorator extends PHPUnit_Framework_Assert implemen
      */
     public function count()
     {
-        return count($this->test);
-    }
-
-    /**
-     * Creates a default TestResult object.
-     *
-     * @return PHPUnit_Framework_TestResult
-     */
-    protected function createResult()
-    {
-        return new PHPUnit_Framework_TestResult;
-    }
-
-    /**
-     * Returns the test to be run.
-     *
-     * @return PHPUnit_Framework_Test
-     */
-    public function getTest()
-    {
-        return $this->test;
+        return $this->timesRepeat * count($this->test);
     }
 
     /**
@@ -144,7 +135,19 @@ class PHPUnit_Extensions_TestDecorator extends PHPUnit_Framework_Assert implemen
             $result = $this->createResult();
         }
 
-        $this->basicRun($result);
+        for ($i = 0; $i < $this->timesRepeat && !$result->shouldStop(); $i++) {
+            if ($this->test instanceof PHPUnit_Framework_TestSuite) {
+                $this->test->run(
+                  $result,
+                  $this->filter,
+                  $this->groups,
+                  $this->excludeGroups,
+                  $this->processIsolation
+                );
+            } else {
+                $this->test->run($result);
+            }
+        }
 
         return $result;
     }
