@@ -26,7 +26,7 @@ class SugarCacheFile extends SugarCacheAbstract
         if ( !parent::useBackend() )
             return false;
         
-        if ( empty($GLOBALS['sugar_config']['external_cache_disabled_file']) )
+        if ( !empty($GLOBALS['sugar_config']['external_cache_enabled_file']) )
             return true;
             
         return false;
