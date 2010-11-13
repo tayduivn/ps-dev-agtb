@@ -729,8 +729,10 @@ FP;
     $enabled_tabs[] = 'Notes';
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     $enabled_tabs[] = 'Reports';
-    $enabled_tabs[] = 'ReportMaker';
     //END SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
+    $enabled_tabs[] = 'ReportMaker';
+    //END SUGARCRM flav=ent ONLY
     $enabled_tabs[] = 'Documents';
     $enabled_tabs[] = 'Emails';
     //BEGIN SUGARCRM flav!=sales ONLY
