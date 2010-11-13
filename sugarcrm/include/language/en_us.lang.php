@@ -35,9 +35,6 @@ $app_list_strings = array (
   'moduleList' =>
   array (
     'Home' => 'Home',
-	//BEGIN SUGARCRM flav!=sales ONLY
-    'Dashboard' => 'Dashboard',
-	//END SUGARCRM flav!=sales ONLY
     'Contacts' => 'Contacts',
     'Accounts' => 'Accounts',
     'Opportunities' => 'Opportunities',
