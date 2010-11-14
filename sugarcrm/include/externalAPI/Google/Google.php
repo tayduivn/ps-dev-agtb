@@ -14,6 +14,7 @@ class Google extends ExternalAPIBase implements WebDocument {
     protected $oauthAccess ="https://www.google.com/accounts/OAuthGetAccessToken";
 
     public $docSearch = true;
+    public $needsUrl = false;
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');

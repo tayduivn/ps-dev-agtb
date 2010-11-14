@@ -64,6 +64,7 @@ $dictionary['EAPM'] = array(
     'reportable' => true,
     'len' => '255',
     'size' => '20',
+    'dependency' => 'isInEnum($application,getDD("extapi_need_url"))',
   ),
   'application' =>
   array (

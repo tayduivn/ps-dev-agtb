@@ -25,6 +25,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
     public $canInvite = false;
     public $sendsInvites = false;
+    public $needsUrl = false;
 
 
     public function loadEAPM($eapmBean)

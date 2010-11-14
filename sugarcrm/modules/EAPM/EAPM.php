@@ -120,7 +120,7 @@ class EAPM extends Basic {
        $GLOBALS['db']->query("UPDATE eapm SET validated=1,api_data='$adata'  WHERE id = '{$this->id}' AND deleted = 0");
        if($this->active && !empty($this->application)) {
            // deactivate other EAPMs with same app
-           $GLOBALS['db']->query("UPDATE eapm SET active=0 WHERE application = '{$this->application}' AND id != '{$this->id}' AND active=1 AND deleted = 0");
+           $GLOBALS['db']->query("UPDATE eapm SET active=0 WHERE application = '{$this->application}' AND id != '{$this->id}' AND active=1 AND deleted = 0 AND assigned_user_id != '{$this->assigned_user_id}'");
        }
    }
 

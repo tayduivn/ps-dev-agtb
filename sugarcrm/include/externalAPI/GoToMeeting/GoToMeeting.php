@@ -16,8 +16,7 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
 
     public $canInvite = false;
     public $sendsInvites = false;
-
-
+    public $needsUrl = false;
 
     function __construct() {
         require('include/externalAPI/GoToMeeting/GoToXML.php');

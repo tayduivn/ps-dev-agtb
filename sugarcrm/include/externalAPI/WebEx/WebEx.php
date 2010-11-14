@@ -14,6 +14,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
 
     public $canInvite = true;
     public $sendsInvites = true;
+    public $needsUrl = true;
 
 	function __construct() {
       require('include/externalAPI/WebEx/WebExXML.php');
