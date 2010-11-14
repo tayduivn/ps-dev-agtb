@@ -70,6 +70,7 @@ $mod_strings = array (
 	'LBL_DOC_ID' => 'Document Server ID',
 	'LBL_DOC_TYPE' => 'Document Server',
 	'LBL_DOC_URL' => 'Document Server URL',
+	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
 );
 
 

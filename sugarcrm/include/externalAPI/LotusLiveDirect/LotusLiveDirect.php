@@ -197,28 +197,36 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
 //        $GLOBALS['log']->debug("RESPONSE: ".var_export($rawResponse, true));
         if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
             $reply['success'] = false;
+            // FIXME: Translate
             $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
             return;
         }
-        // parse XML response
-        $xml = simplexml_load_string($reply['rawResponse']);
-        if($xml == false) {
+        
+        $xml = new DOMDocument();
+        $xml->preserveWhiteSpace = false;
+        $xml->strictErrorChecking = false;
+        $xml->loadXML($reply['rawResponse']);
+        if ( !is_object($xml) ) {
             $reply['success'] = false;
-            $reply['errorMessage'] = 'Bad response from the server';
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
             return;
         }
-        // find atom:link attribute with rel=self
-        $els = $xml->children('atom', true);
-        foreach($els as $el) {
-            $attr = $el->attributes('');
-            if($attr['rel'] != 'self') continue;
-            $bean->doc_url = (string)$attr['href'];
-            $attrc = $el->attributes('cmisra', true);
-            $cmsid = (string)$attrc['id']; // looks like snx:file!5288F1B0E38B11DF834C785E0A060702
-            list($prefix, $id) = explode('!', $cmsid);
-            $bean->doc_id = $id;
-            break;
+
+        $xp = new DOMXPath($xml);
+        $url = $xp->query('//atom:entry/atom:link[attribute::rel="alternate"]');
+        $directUrl = $xp->query('//atom:entry/atom:link[attribute::rel="edit-media"]');
+        $id = $xp->query('//atom:entry/cmisra:pathSegment');
+
+        if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
+            $reply['success'] = false;
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server';
+            return;            
         }
+        $bean->doc_url = $url->item(0)->getAttribute("href");
+        $bean->doc_direct_url = $directUrl->item(0)->getAttribute("href");
+        $bean->doc_id = $id->item(0)->textContent;
 
         return array('success'=>TRUE);
     }

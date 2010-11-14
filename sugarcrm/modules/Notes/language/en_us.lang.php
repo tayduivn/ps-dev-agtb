@@ -91,6 +91,7 @@ $mod_strings = array (
 	'LBL_DOC_TYPE' => 'Document Server',
 	'LBL_DOC_ID' => 'Document ID',
 	'LBL_DOC_URL' => 'Document URL',
+	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
 	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
 );
 

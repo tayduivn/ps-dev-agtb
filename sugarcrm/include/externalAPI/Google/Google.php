@@ -82,6 +82,7 @@ class Google extends ExternalAPIBase implements WebDocument {
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
             $bean->doc_id = $this->getIdFromUrl($alternateLink);
             $bean->doc_url = $alternateLink;
+            $bean->doc_direct_url = $alternateLink;
             $result['success'] = TRUE;
 		}catch (Exception $e)
          {

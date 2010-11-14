@@ -52,7 +52,13 @@ else {
 	    if(!$focus->ACLAccess('view')){
 	        die($mod_strings['LBL_NO_ACCESS']);
 	    } // if
+        // See if it is a remote file, if so, send them that direction
+        if ( isset($focus->doc_direct_url) && !empty($focus->doc_direct_url) ) {
+            header('Location: '.$focus->doc_direct_url);
+            sugar_die();
+        }
     } // if
+
 	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"
 		 : $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
 

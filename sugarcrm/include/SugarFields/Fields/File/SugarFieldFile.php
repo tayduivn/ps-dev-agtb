@@ -16,6 +16,9 @@ class SugarFieldFile extends SugarFieldBase {
             if ( empty($vardef['docUrl']) ) {
                 $vardef['docUrl'] = 'doc_url';
             }
+            if ( empty($vardef['docDirectUrl']) ) {
+                $vardef['docDirectUrl'] = 'doc_direct_url';
+            }
         } else {
             $vardef['allowEapm'] = false;
         }

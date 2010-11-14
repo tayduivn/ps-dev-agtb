@@ -56,14 +56,15 @@
 
 <input type="hidden" name="deleteAttachment" value="0">
 <span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
-{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-  {if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
-{{/if}}
   <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
+
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-  {else}
-  <a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
-  {/if}
+{if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'SugarCRM' && !empty($fields.{{$vardef.docUrl}}.value) }
+{capture name=imageNameCapture assign=imageName}
+{$fields.{{$vardef.docType}}.value}_image_inline.png
+{/capture}
+<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file=$imageName}"></a>
+{/if}
 {{/if}}
 {if !$noChange}
 <input type='button' class='button' value='{$APP.LBL_REMOVE}' onclick='SUGAR.field.file.deleteAttachment("{{$idName}}","{{$vardef.docType}}",this);'>
@@ -101,7 +102,7 @@ value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$v
 {{else}}
     maxlength="255"
 {{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
-<input type="button" value="Select" onclick="DCMenu.loadView('LotusLive Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
+<input type="button" value="Select" onclick="DCMenu.loadView('External Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
 </span>
 <script type="text/javascript">
 YAHOO.util.Event.onDOMReady(function() {ldelim}
@@ -117,8 +118,8 @@ sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
 "method":"externalApi",
 "api":"",
 "modules":["EAPM"],
-"field_list":["name", "id", "url"],
-"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}"],
+"field_list":["name", "id", "url", "directUrl"],
+"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$vardef.docDirectUrl}}"],
 "required_list":["name"],
 "conditions":[],
 "no_match_text":"No Match"

@@ -26,13 +26,13 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-{if !isset($fields.{{$vardef.docType}}) || empty($fields.{{$vardef.docType}}) || $fields.{{$vardef.docType}} == 'Sugar' || empty($fields.{{$vardef.docUrl}}.value) }
-{{/if}}
 <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
 {{if isset($vardef) && isset($vardef.allowEapm) && $vardef.allowEapm}}
-{else}
-<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank">{{sugarvar key='value'}}</a>
+{if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'SugarCRM' && !empty($fields.{{$vardef.docUrl}}.value) }
+{capture name=imageNameCapture assign=imageName}
+{$fields.{{$vardef.docType}}.value}_image_inline.png
+{/capture}
+<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file=$imageName}"></a>
 {/if}
 {{/if}}
 {{if !empty($displayParams.enableConnectors)}}
