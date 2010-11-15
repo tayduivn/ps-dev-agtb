@@ -175,7 +175,7 @@ $dictionary['EAPM'] = array(
 
 ),
 	'relationships'=>array (
-),
+    ),
     'indices' => array(
         array(
                 'name' => 'idx_app_active',

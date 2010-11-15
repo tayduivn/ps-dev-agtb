@@ -26,7 +26,7 @@ require_once('include/MVC/View/views/view.detail.php');
 class EAPMViewDetail extends ViewDetail {
 
  	function display(){
- 		if($GLOBALS['current_user']->is_admin || $this->ev->focus->isOwner($GLOBALS['current_user']->id)){
+        if($GLOBALS['current_user']->is_admin || empty($this->bean) || empty($this->bean->id) || $this->bean->isOwner($GLOBALS['current_user']->id)){
  			parent::display();
         } else {
         	ACLController::displayNoAccess();

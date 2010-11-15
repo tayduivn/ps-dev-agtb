@@ -86,7 +86,7 @@ EditView_tabs.on('contentReady', function(e){
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
-        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record=1&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
+        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
