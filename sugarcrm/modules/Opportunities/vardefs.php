@@ -238,7 +238,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'link',
     'relationship' => 'accounts_opportunities',
     'source'=>'non-db',
-		'link_type'=>'one',
+    'link_type'=>'one',
     'module'=>'Accounts',
     'bean_name'=>'Account',
 		'vname'=>'LBL_ACCOUNTS',
@@ -361,8 +361,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'type' => 'link',
 	'vname' => 'LBL_CONTRACTS',
 	'relationship' => 'contracts_opportunities',
-	'link_type' => 'one',
+	//'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
 	'source' => 'non-db',
+    
   ),
  //END SUGARCRM flav=pro ONLY
 ),
