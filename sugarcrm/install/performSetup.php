@@ -726,7 +726,7 @@ FP;
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     $enabled_tabs[] = 'Reports';
     //END SUGARCRM flav=pro || flav=sales ONLY
-    //BEGIN SUGARCRM flav=pro
+    //BEGIN SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Quotes';
     //END SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Documents';
