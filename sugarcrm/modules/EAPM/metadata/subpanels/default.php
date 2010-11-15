@@ -45,9 +45,13 @@ $subpanel_layout = array(
 	 		'vname' => 'LBL_APPLICATION',
 	 		'width' => '20%',
 		),
-		'url'=>array(
-	 		'vname' => 'LBL_URL',
-	 		'width' => '25%',
+		'active'=>array(
+	 		'vname' => 'LBL_ACTIVE',
+	 		'width' => '5%',
+		),		
+		'validated'=>array(
+	 		'vname' => 'LBL_VALIDATED',
+	 		'width' => '5%',
 		),		
 		'date_modified'=>array(
 	 		'vname' => 'LBL_DATE_MODIFIED',

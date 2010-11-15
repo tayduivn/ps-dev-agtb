@@ -7,7 +7,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
 {
     public $account_name;
     public $account_password;
-    public $authMetods = array();
+    public $authMethod = 'password';
     public $useAuth = true;
     public $requireAuth = true;
     /**
@@ -23,13 +23,9 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
      */
     public function loadEAPM($eapmBean)
     {
-        if (!$this->supports($eapmBean->type)) {
-            $GLOBALS['log']->fatal("Unknown auth type: {$eapmBean->type}");
-            return false;
-        }
         // FIXME: check if the bean is validated, if not, refuse it?
         $this->authData = $eapmBean;
-        if ($eapmBean->type == 'password') {
+        if ($this->authMethod == 'password') {
             $this->account_name = $eapmBean->name;
             $this->account_password = $eapmBean->password;
         }
@@ -53,7 +49,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
     {
         if(empty($this->authData)) return;
 
-        if($this->authData->type == 'oauth') {
+        if($this->authMethod == 'oauth') {
             if(empty($this->authData->oauth_token) || empty($this->authData->oauth_secret)) {
                 $this->authData->oauthLogin($this);
             }
@@ -96,7 +92,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
 
     public function supports($method = '')
 	{
-	    return empty($method)?$this->authMethods:isset($this->authMethods[$method]);
+        return $method==$this->authMethod;
 	}
 
 	protected function postData($url, $postfields, $headers)

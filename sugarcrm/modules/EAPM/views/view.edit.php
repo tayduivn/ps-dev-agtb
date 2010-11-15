@@ -39,20 +39,6 @@ class EAPMViewEdit extends ViewEdit {
         } else {
         	ACLController::displayNoAccess();
         }
-        echo <<<JS
-<script>
-// See also EAPMEdit.js
-var app_type_dep = new SUGAR.forms.Dependency(new SUGAR.forms.Trigger(['application'], 'true'),
-	[new SUGAR.forms.EapmAction('application','type'),
-		new SUGAR.forms.EapmOauthAction('application','type', ['consumer_key', 'consumer_secret'])],
-	[],
-	true);
-var auth_type_dep = new SUGAR.forms.Dependency(new SUGAR.forms.Trigger(['type'], 'true'),
-	[new SUGAR.forms.EapmOauthAction('application','type', ['consumer_key', 'consumer_secret'])],
-	[],
-	true);
-</script>
-JS;
  	}
 }
 ?>

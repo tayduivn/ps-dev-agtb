@@ -46,7 +46,7 @@ class EAPMController extends SugarController
     {
         parent::pre_save();
         $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
-        if(empty($this->api) || !$this->api->supports($this->bean->type)) {
+        if(empty($this->api)) {
             return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
         }
         $this->api->loadEAPM($this->bean);

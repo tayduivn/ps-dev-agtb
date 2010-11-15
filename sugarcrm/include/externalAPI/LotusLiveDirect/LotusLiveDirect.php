@@ -8,7 +8,7 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
 
     protected $dateFormat = 'm/d/Y H:i:s';
 
-    public $authMethods = array("oauth" => 1, "password" => 1);
+    public $authMethod = 'oauth';
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
     public $docSearch = true;
@@ -173,12 +173,7 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
      */
     protected function getClient()
     {
-        if($this->authData->type == 'oauth') {
-            $client = $this->authData->getHttpClient($this);
-        } else {
-            $client = new Zend_Http_Client();
-            $client->setAuth($this->account_name, $this->account_password);
-        }
+        $client = $this->authData->getHttpClient($this);
         $client->setHeaders('Accept-Encoding', 'identity');
         return $client;
     }

@@ -32,21 +32,18 @@ $viewdefs[$module_name]['EditView'] = array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
                                             ),
-'javascript' => '<script type="text/javascript" src="cache/include/externalAPI.cache.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="modules/EAPM/EAPMEdit.js"></script>
-',
+                            'form' => array('footerTpl'=>'modules/EAPM/tpls/EditViewFooter.tpl',),
                                             ),
 
  'panels' =>array (
   'default' =>
   array (
-    array('application', 'type'),
-    array('active'),
+    array('application', 'active',
+    ),
     array (
       'name',
        array('name'=>'password', 'type'=>'password'),
     ),
-    array('consumer_key', 'consumer_secret'),
     array (
       'url',
     'assigned_user_name',

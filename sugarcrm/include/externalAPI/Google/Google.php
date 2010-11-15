@@ -7,7 +7,7 @@ require_once('Zend/Gdata/ClientLogin.php');
 
 class Google extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
-    public $authMethods = array("password" => 1, "oauth" => 1);
+    public $authMethod = 'password';
     protected $scope = "https://docs.google.com/feeds/ http://docs.google.com/feeds/";
     protected $oauthReq ="https://www.google.com/accounts/OAuthGetRequestToken";
     protected $oauthAuth ="https://www.google.com/accounts/OAuthAuthorizeToken";
@@ -32,7 +32,7 @@ class Google extends ExternalAPIBase implements WebDocument {
         return $id;
     }
 
-    public function checkLogin($eapmBean)
+    public function checkLogin($eapmBean = null)
     {
         parent::checkLogin($eapmBean);
 
@@ -46,8 +46,8 @@ class Google extends ExternalAPIBase implements WebDocument {
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
-//            $GLOBALS['log']->debug("REQ: ".var_export($this->httpClient->getLastRequest(), true));
-//            $GLOBALS['log']->debug("REQ: ".var_export($this->httpClient->getLastResponse(), true));
+            // $GLOBALS['log']->fatal("IKEA REQ: ".var_export($this->httpClient->getLastRequest(), true));
+            // $GLOBALS['log']->fatal("IKEA RES: ".var_export($this->httpClient->getLastResponse(), true));
         }
 
         return $reply;
@@ -59,7 +59,7 @@ class Google extends ExternalAPIBase implements WebDocument {
             return;
         }
 		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents
-		if(isset($this->authData) && $this->authData->type == 'oauth') {
+		if( $this->authMethod == 'oauth') {
 		    // FIXME: bail if auth token not set
             $this->httpClient = $this->authData->getHttpClient($this);
 		} else {
@@ -98,7 +98,7 @@ class Google extends ExternalAPIBase implements WebDocument {
     	$format = 'txt';
     	$document = $this->gdClient->getDocument($documentId);
     	//var_dump(var_export($document));
-    	if($this->authData->type == "password") {
+    	if($this->authMethod == "password") {
     	    // FIXME: can't we just use the httpClient? It should add auth automatically
     		$sessionToken = $this->httpClient->getClientLoginToken();
     		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);

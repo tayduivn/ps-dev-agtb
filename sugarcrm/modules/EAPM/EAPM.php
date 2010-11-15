@@ -95,6 +95,11 @@ class EAPM extends Basic {
        return $eapmBean;
     }
 
+   function save($check_notify = FALSE ) {
+       $this->fillInName();
+       return parent::save($check_notify);
+   }
+
 //   function save($check_notify = FALSE) {
 //       // Now time to test if the login info they typed in actually works.
 //       $api = ExternalAPIFactory::loadAPI($this->application,true);
@@ -136,7 +141,7 @@ class EAPM extends Basic {
 
    public function getHttpClient(ExternalOAuthAPIPlugin $api)
    {
-       if($this->type == 'oauth') {
+       if($api->authMethod == 'oauth') {
            $oauth = $this->getOauth($api);
            $oauth->setToken($this->oauth_token, $this->oauth_secret);
            return $oauth->getClient();
@@ -184,7 +189,10 @@ class EAPM extends Basic {
 
 	protected function fillInName()
 	{
-	    if(empty($this->name) && $this->type == "oauth") {
+        if ( !empty($this->application) ) {
+            $apiList = ExternalAPIFactory::loadFullAPIList();
+        }
+	    if(empty($this->name) && !empty($apiList) && isset($apiList[$this->application]) && $apiList[$this->application]['authMethod'] == "oauth") {
 	        $this->name = sprintf(translate('LBL_OAUTH_NAME', $this->module_dir), $this->application);
 	    }
 	}

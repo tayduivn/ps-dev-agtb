@@ -8,11 +8,11 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
     private $login_key;
 
     protected $dateFormat = 'Y-m-d\TH:i:s';
-    protected $urlExtension = '/axis/services/G2M_Organizers';
+    protected $account_url = 'gotomeeting.com/axis/services/G2M_Organizers';
 
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
-    public $authMethods = array("password" => 1);
+    public $authMethod = 'password';
 
     public $canInvite = false;
     public $sendsInvites = false;
@@ -28,11 +28,10 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
     }
 
     public function loadEAPM($eapmBean) {
-        $this->account_url = $eapmBean->url.$this->urlExtension;
         parent::loadEAPM($eapmBean);
     }
 
-    public function checkLogin($eapmBean)
+    public function checkLogin($eapmBean = null)
     {
         parent::checkLogin($eapmBean);
 

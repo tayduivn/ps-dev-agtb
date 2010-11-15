@@ -46,7 +46,6 @@ $dictionary['EAPM'] = array(
     'reportable' => false,
     'len' => '255',
     'size' => '20',
-	'dependency' => 'equal($type, "password")',
   ),
   'url' =>
   array (
@@ -64,7 +63,6 @@ $dictionary['EAPM'] = array(
     'reportable' => true,
     'len' => '255',
     'size' => '20',
-    'dependency' => 'isInEnum($application,getDD("extapi_need_url"))',
   ),
   'application' =>
   array (
@@ -104,7 +102,6 @@ $dictionary['EAPM'] = array(
     'audited' => false,
     'reportable' => true,
     'size' => '20',
-	'dependency' => 'equal($type, "password")',
   ),
 	  'api_data' =>
 	  array (
@@ -115,27 +112,6 @@ $dictionary['EAPM'] = array(
 	    'rows' => 6,
 	    'cols' => 80,
 	  ),
-    'type' =>
-	  array(
-	  	"name" => "type",
-	  	"vname" => "LBL_API_TYPE",
-	  	"type" => "enum",
-        'required' => true,
-        'importable' => 'required',
-        'massupdate' => 0,
-        'comments' => '',
-        'help' => '',
-        'duplicate_merge' => 'disabled',
-        'duplicate_merge_dom_value' => '0',
-        'audited' => false,
-        'reportable' => true,
-        'size' => '20',
-        'len' => 100,
-    	'size' => '20',
-    	'options' => 'LBL_API_TYPE_ENUM',
-    	'studio' => 'visible',
-    	'default' => 'password',
-	  ),
 	  'consumer_key' => array(
 	  	'name' => 'consumer_key',
 	    'type' => 'varchar',
@@ -145,7 +121,7 @@ $dictionary['EAPM'] = array(
         'massupdate' => 0,
         'audited' => false,
         'reportable' => false,
-	    'dependency' => 'equal($type, "oauth")',
+        'studio' => 'hidden',
 	  ),
 	  'consumer_secret' => array(
 	  	'name' => 'consumer_secret',
@@ -156,7 +132,7 @@ $dictionary['EAPM'] = array(
         'massupdate' => 0,
         'audited' => false,
         'reportable' => false,
-	    'dependency' => 'equal($type, "oauth")',
+        'studio' => 'hidden',
 	  ),
 	  'oauth_token' => array(
 	  	'name' => 'oauth_token',
@@ -168,6 +144,7 @@ $dictionary['EAPM'] = array(
         'reportable' => false,
     	'required' => false,
 	    'dbtype' => 'varchar',
+        'studio' => 'hidden',
 	  ),
 	  'oauth_secret' => array(
 	  	'name' => 'oauth_secret',
@@ -179,6 +156,7 @@ $dictionary['EAPM'] = array(
         'reportable' => false,
     	'required' => false,
 	    'dbtype' => 'varchar',
+        'studio' => 'hidden',
 	  ),
 	  'validated' => array(
         'required' => false,
@@ -202,7 +180,7 @@ $dictionary['EAPM'] = array(
         array(
                 'name' => 'idx_app_active',
                 'type' => 'index',
-                'fields'=> array('application', 'active'),
+                'fields'=> array('assigned_user_id', 'application', 'active'),
         ),
 ),
 	'optimistic_locking'=>true,

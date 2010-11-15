@@ -30,7 +30,11 @@ class ExternalAPIFactory{
 
     public static function loadFullAPIList($forceRebuild=true) {
         if ( isset($GLOBALS['sugar_config']['developer_mode']) && $GLOBALS['sugar_config']['developer_mode'] ) {
-            $forceRebuild = true;
+            static $beenHereBefore = false;
+            if ( !$beenHereBefore ) {
+                $forceRebuild = true;
+                $beenHereBefore = true;
+            }
         }
         if ( file_exists('cache/include/externalAPI.cache.php') && !$forceRebuild ) {
             // Already have a cache file built, no need to rebuild
@@ -63,8 +67,7 @@ class ExternalAPIFactory{
             }
         }
 
-        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethods', 'oauthFixed','needsUrl','canInvite','sendsInvites');
-        $api_types = translate('LBL_API_TYPE_ENUM', 'EAPM');
+        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {
@@ -83,11 +86,6 @@ class ExternalAPIFactory{
                 $meetingPasswordList[$apiName] = $apiName;
             }
             
-            // Special handling for the show/hide of the External Access URL field, we need to create a dropdown for the Sugar Logic code.
-            if ( isset($apiClass->needsUrl) && $apiClass->needsUrl == true ) {
-                $needUrlList[$apiName] = $apiName;
-            }
-
         }
 
         create_cache_directory('/include/');
@@ -110,17 +108,6 @@ class ExternalAPIFactory{
             foreach( $languages as $lang => $langLabel ) {
                 $contents = return_custom_app_list_strings_file_contents($lang);
                 $new_contents = replace_or_add_dropdown_type('extapi_meeting_password', $meetingPasswordList, $contents);
-                save_custom_app_list_strings_contents($new_contents, $lang);
-            }
-        }
-
-        if ( !isset($GLOBALS['app_list_strings']['extapi_need_url']) || !is_array($GLOBALS['app_list_strings']['extapi_need_url']) || count(array_diff($needUrlList,$GLOBALS['app_list_strings']['extapi_need_url'])) != 0 ) {
-            // Our external api url list is different... we need to do something about this.
-            require_once('modules/Administration/Common.php');
-            $languages = get_languages();
-            foreach( $languages as $lang => $langLabel ) {
-                $contents = return_custom_app_list_strings_file_contents($lang);
-                $new_contents = replace_or_add_dropdown_type('extapi_need_url', $needUrlList, $contents);
                 save_custom_app_list_strings_contents($new_contents, $lang);
             }
         }

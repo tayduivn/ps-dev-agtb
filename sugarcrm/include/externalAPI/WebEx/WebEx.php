@@ -10,7 +10,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
 
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
-    public $authMethods = array("password" => 1);
+    public $authMethod = 'password';
 
     public $canInvite = true;
     public $sendsInvites = true;
@@ -36,7 +36,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
         parent::loadEAPM($eapmBean);
     }
 
-    public function checkLogin($eapmBean) {
+    public function checkLogin($eapmBean = null) {
         parent::checkLogin($eapmBean);
         $doc = new SimpleXMLElement($this->getuser_xml);
         $this->addAuthenticationInfo($doc);

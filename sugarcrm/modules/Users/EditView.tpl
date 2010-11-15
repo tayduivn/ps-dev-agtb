@@ -43,6 +43,9 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 <form name="DetailView" id="DetailView" method="POST" action="index.php">
 	<input type="hidden" name="record" id="record" value="{$ID}">
 	<input type="hidden" name="module" value="Users">
+	<input type="hidden" name="return_module" value="Users">
+	<input type="hidden" name="return_id" value="{$ID}">
+	<input type="hidden" name="return_action" value="EditView">
 </form>
 
 <form name="EditView" enctype="multipart/form-data" id="EditView" method="POST" action="index.php">

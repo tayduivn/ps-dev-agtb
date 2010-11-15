@@ -34,10 +34,11 @@ $viewdefs[$module_name]['DetailView'] = array(
                                         array('label' => '10', 'field' => '30'),
                                         array('label' => '10', 'field' => '30')
                                         ),
+                            'form' => array('footerTpl'=>'modules/EAPM/tpls/DetailViewFooter.tpl',),
                         ),
 
 'panels' =>array (
-  array('type', 'application'),
+  array('application'),
   array (
     'name',
     'assigned_user_name',
@@ -46,7 +47,7 @@ $viewdefs[$module_name]['DetailView'] = array(
     'active', 'validated'
   ),
   array (
-     'url', ''
+     'url'
   ),
 
 

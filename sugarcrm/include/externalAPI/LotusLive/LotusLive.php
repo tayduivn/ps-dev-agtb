@@ -11,7 +11,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 //    protected $urlExtension = '/envq/Production/';
     protected $url = 'eval-cloud2.castiron.com/envq/Production/';
 
-    public $authMethods = array("password" => 1, "oauth" => 1);
+    public $authMethod = 'oauth';
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
     public $docSearch = true;
@@ -183,7 +183,7 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url A
 
         $urlParams['ciUser'] = 'admin@LL_SugarCRM';
         $urlParams['ciPassword'] = 'changeIt!';
-        if($this->authData->type == 'oauth') {
+        if($this->authmethod == 'oauth') {
              $urlParams['OAuthConsumerKey'] = $this->authData->consumer_key;
              $urlParams['OAuthConsumerSecret'] = $this->authData->consumer_secret;
              $urlParams['OAuthToken'] = $this->authData->oauth_token;
