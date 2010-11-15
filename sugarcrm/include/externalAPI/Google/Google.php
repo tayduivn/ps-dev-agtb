@@ -15,6 +15,7 @@ class Google extends ExternalAPIBase implements WebDocument {
 
     public $docSearch = true;
     public $needsUrl = false;
+    public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','linkable'=>'LBL_SHARE_LINKABLE','public'=>'LBL_SHARE_PUBLIC');
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');

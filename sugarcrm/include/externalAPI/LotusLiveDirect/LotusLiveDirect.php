@@ -28,10 +28,10 @@ class LotusLiveDirect extends ExternalAPIBase implements WebMeeting,WebDocument 
     public $canInvite = false;
     public $sendsInvites = false;
     public $needsUrl = false;
-
+    public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','company'=>'LBL_SHARE_COMPANY','public'=>'LBL_SHARE_PUBLIC');
 
     public function loadEAPM($eapmBean)
-    {
+    { 
         parent::loadEAPM($eapmBean);
 
         if($eapmBean->url) {

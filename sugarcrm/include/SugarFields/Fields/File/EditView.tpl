@@ -73,7 +73,7 @@
 {if !$noChange}
 <span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<h4>Upload From Your Computer</h4>
+<h4>{$APP.LBL_UPLOAD_FROM_COMPUTER}</h4>
 {{/if}}
 <input type="hidden" name="{{$idName}}_escaped">
 <input id="{{$idName}}" name="{{$idName}}" 
@@ -91,7 +91,7 @@ value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$v
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:inline;">
-<br><h4>Search External Source</h4>
+<br><h4>{$APP.LBL_SEARCH_EXTERNAL_API}</h4>
 <input type="hidden" name="{{$vardef.docId}}" id="{{$vardef.docId}}" value="{$fields[{{$vardef.docId}}].value}">
 <input type="hidden" name="{{$vardef.docUrl}}" id="{{$vardef.docUrl}}" value="{$fields[{{$vardef.docUrl}}].value}">
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
@@ -102,8 +102,13 @@ value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$v
 {{else}}
     maxlength="255"
 {{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
-<input type="button" value="Select" onclick="DCMenu.loadView('External Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
+<input type="button" value="{$APP.LBL_SELECT_BUTTON_LABEL}" onclick="DCMenu.loadView('External Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
 </span>
+<div style="display: none;" id="{{$idName}}_securityLevelBox">
+  <b>{$APP.LBL_EXTERNAL_SECURITY_LEVEL}: </b>
+  <select name="{{$idName}}_securityLevel" id="{{$idName}}_securityLevel">
+  </select>
+</div>
 <script type="text/javascript">
 YAHOO.util.Event.onDOMReady(function() {ldelim}
 SUGAR.field.file.setupEapiShowHide("{{$idName}}","{{$vardef.docType}}","{$form_name}");

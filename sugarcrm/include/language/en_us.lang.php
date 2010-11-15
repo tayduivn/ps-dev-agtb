@@ -3042,6 +3042,15 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
+
+    // File fields
+    'LBL_UPLOAD_FROM_COMPUTER' => 'Upload From Your Computer',
+    'LBL_SEARCH_EXTERNAL_API' => 'Search External API',
+    'LBL_EXTERNAL_SECURITY_LEVEL' => 'Security',
+    'LBL_SHARE_PRIVATE' => 'Private',
+    'LBL_SHARE_COMPANY' => 'Company',
+    'LBL_SHARE_LINKABLE' => 'Linkable',
+    'LBL_SHARE_PUBLIC' => 'Public',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

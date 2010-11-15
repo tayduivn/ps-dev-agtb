@@ -64,8 +64,28 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 } else {
                     docShowHideElem.style.display = 'none';
                 }
-
+                // Update the quick search
                 sqs_objects[formName+"_"+elemBaseName+"_remoteName"].api = dropdownValue;
+                
+                // Now time to see if we can select security options
+                var secLevelBoxElem = document.getElementById(elemBaseName + '_securityLevelBox');
+                var secLevelElem = document.getElementById(elemBaseName + '_securityLevel');
+                
+                secLevelElem.options.length = 0;
+                
+                if ( SUGAR.eapm[dropdownValue].sharingOptions ) {
+                    var opts = SUGAR.eapm[dropdownValue].sharingOptions;
+                    var i = 0;
+
+                    for ( idx in opts ) {
+                        secLevelElem.options[i] = new Option(SUGAR.language.get('app_strings',opts[idx]),idx,false,false);
+                        i++;
+                    }
+                    
+                    secLevelBoxElem.style.display='';
+                } else {
+                    secLevelBoxElem.style.display='none';
+                }
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 
