@@ -286,13 +286,7 @@ class SugarTheme
         chdir(realpath(dirname(__FILE__) . '/../..'));
         
         // clear out the cache on destroy if we are asked to
-        if ( $this->_clearCacheOnDestroy ) {
-            sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_templateCache');
-        }
-        elseif ( !inDeveloperMode() ) {
+        if ( !inDeveloperMode() && !$this->_clearCacheOnDestroy ) {
             // push our cache into the sugar cache
             // only update the caches if they have been changed in this request
             if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] )
@@ -306,7 +300,7 @@ class SugarTheme
         }
         // clear out the cache if we are in developerMode 
         // ( so it will be freshly rebuilt for the next load )
-        elseif ( $GLOBALS['external_cache_enabled'] ) {
+        else {
             sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
             sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
             sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
