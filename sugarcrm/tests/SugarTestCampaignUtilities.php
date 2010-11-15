@@ -7,7 +7,7 @@ class SugarTestCampaignUtilities
 
     private function __construct() {}
 
-    public static function createCampaign() 
+    public static function createCampaign($id = '') 
     {
         $time = mt_rand();
     	$name = 'SugarCampaign';
@@ -16,6 +16,11 @@ class SugarTestCampaignUtilities
         $campaign->status = 'Active';
         $campaign->campaign_type = 'Email';
         $campaign->end_date = '2010-11-08';
+        if(!empty($id))
+        {
+            $campaign->new_with_id = true;
+            $campaign->id = $id;
+        }
         $campaign->save();
         self::$_createdCampaigns[] = $campaign;
         return $campaign;

@@ -12,7 +12,7 @@ class SugarTestUserUtilities
         self::removeAllCreatedAnonymousUsers();
     }
 
-    public static function createAnonymousUser() 
+    public static function createAnonymousUser($id = '') 
     {
         if (isset($_REQUEST['action'])) { 
         unset($_REQUEST['action']);
@@ -29,6 +29,11 @@ class SugarTestUserUtilities
         //BEGIN SUGARCRM flav=pro ONLY
         $user->default_team = '1'; //Set Default Team to Global
         //END SUGARCRM flav=pro ONLY
+        if(!empty($id))
+        {
+            $user->new_with_id = true;
+            $user->id = $id;
+        }
         $user->save();
         $user->fill_in_additional_detail_fields();
         self::$_createdUsers[] = $user;

@@ -13,10 +13,15 @@ class SugarTestTeamUtilities
         self::removeAllCreatedAnonymousTeams();
     }
 
-    public static function createAnonymousTeam() 
+    public static function createAnonymousTeam($id = '') 
     {
         $team = new Team();
         $team->name = 'Test Team - ' . mt_rand();
+        if(!empty($id))
+        {
+            $team->new_with_id = true;
+            $team->id = $id;
+        }
         $team->save();
         self::$_createdTeams[] = $team;
         return $team;
