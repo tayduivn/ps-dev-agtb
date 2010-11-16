@@ -753,5 +753,7 @@ $mod_strings = array(
 
 'LBL_ILLEGAL_FIELD_VALUE' =>"Drop down key cannot contain quotes.",
 'LBL_CONFIRM_SAVE_DROPDOWN' =>"You are selecting this item for removal from the dropdown list. Any dropdown fields using this list with this item as a value will no longer display the value, and the value will no longer be able to be selected from the dropdown fields. Are you sure you want to continue?",
+
+'LBL_POPHELP_VALIDATE_US_PHONE'=>'Select to enforce the entry of a 10-digit number.',
 );
 

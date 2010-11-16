@@ -164,6 +164,31 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 		
 }
 
+function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
+	$where = '';
+	if(!empty($user_id)){
+		$where = "AND user_id='$user_id'";	
+	}
+	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
+	$query = "SELECT report_schedules.* FROM $this->table_name \n".
+			"join report_maker on report_maker.id=$this->table_name.report_id \n".
+			"join users on users.id = report_schedules.user_id".
+			" WHERE report_maker.deleted=0 AND \n" .
+			"$this->table_name.next_run < '$time' $where AND \n".
+			"$this->table_name.deleted=0 AND \n".
+			"$this->table_name.active=1 AND " .
+			"$this->table_name.schedule_type='".$schedule_type."' AND\n".
+			"users.status='Active' AND users.deleted='0'".
+			"ORDER BY $this->table_name.next_run ASC";
+	$results = $this->db->query($query);
+	$return_array = array();
+	while($row = $this->db->fetchByAssoc($results)){
+			$return_array[$row['report_id']] = $row;
+	}
+	return $return_array;
+		
+}
+
 function update_next_run_time($schedule_id, $next_run, $interval){
 		$last_run = strtotime($next_run);
 		$time = time();

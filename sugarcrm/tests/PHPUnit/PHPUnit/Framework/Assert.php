@@ -51,7 +51,7 @@
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.0
+ * @version    Release: 3.5.3
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -1837,7 +1837,7 @@ abstract class PHPUnit_Framework_Assert
         // assert specific number of elements
         if (is_numeric($count)) {
             $counted = $tags ? count($tags) : 0;
-            self::assertEquals($count, $counted);
+            self::assertEquals($count, $counted, $message);
         }
 
         // assert any elements exist if true, assert no elements exist if false

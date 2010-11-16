@@ -33,15 +33,20 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 $focus = new Quote();
 $focus = populateFromPost('', $focus);
+
+if(!$focus->ACLAccess('Save')){
+	ACLController::displayNoAccess(true);
+	sugar_cleanup(true);
+}
+
 //we have to commit the teams here in order to obtain the team_set_id for use with products and product bundles.
 if(empty($focus->teams)){
 	$focus->load_relationship('teams');
 }
 $focus->teams->save();
-if(!$focus->ACLAccess('Save')){
-	ACLController::displayNoAccess(true);
-	sugar_cleanup(true);
-}
+//bug: 35297 - set the teams to have not been saved, so workflow can update if necessary
+$focus->teams->setSaved(false);
+
 if (!empty($_POST['assigned_user_id']) && ($focus->assigned_user_id != $_POST['assigned_user_id']) && ($_POST['assigned_user_id'] != $current_user->id)) {
 	$check_notify = TRUE;
 }

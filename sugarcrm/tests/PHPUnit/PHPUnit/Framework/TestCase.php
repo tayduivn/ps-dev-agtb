@@ -94,7 +94,7 @@ require_once 'Text/Template.php';
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.0
+ * @version    Release: 3.5.3
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -578,6 +578,12 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
                 $coverage = 'FALSE';
             }
 
+            if ($result->isStrict()) {
+                $strict = 'TRUE';
+            } else {
+                $strict = 'FALSE';
+            }
+
             $data            = addcslashes(serialize($this->data), "'");
             $dependencyInput = addcslashes(
               serialize($this->dependencyInput), "'"
@@ -596,7 +602,8 @@ abstract class PHPUnit_Framework_TestCase extends PHPUnit_Framework_Assert imple
                 'constants'                      => $constants,
                 'globals'                        => $globals,
                 'include_path'                   => $includePath,
-                'included_files'                 => $includedFiles
+                'included_files'                 => $includedFiles,
+                'strict'                         => $strict
               )
             );
 

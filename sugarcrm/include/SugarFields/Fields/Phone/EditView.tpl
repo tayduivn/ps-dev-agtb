@@ -26,10 +26,24 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{if !empty({{sugarvar key='value' string=true}})}
-{assign var="phone_value" value={{sugarvar key='value' string=true}} }
-{sugar_phone value=$phone_value }
-{{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}}
+{{capture name=idname assign=idname}}{{sugarvar key='name'}}{{/capture}}
+{{if !empty($displayParams.idName)}}
+   {{assign var=idname value=$displayParams.idName}}
 {{/if}}
-{/if}
+
+{if strlen({{sugarvar key='value' string=true}}) <= 0}
+{assign var="value" value={{sugarvar key='default_value' string=true}} }
+{else}
+{assign var="value" value={{sugarvar key='value' string=true}} }
+{/if}  
+
+<input type='tel' name='{{$idname}}' 
+    id='{{$idname}}' size='{{$displayParams.size|default:30}}' 
+    {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{elseif isset($vardef.len)}}maxlength='{{$vardef.len}}'{{/if}} 
+    value='{$value}' title='{{$vardef.help}}' tabindex='{{$tabindex}}' {{$displayParams.field}}>
+
+{{if !empty($vardef.validate_usa_format)}}
+<script type="text/javascript">
+addToValidateUSAPhone("{$form_name}", "{{$idname}}", 'usa_phone', {{if !empty($vardef.required)}}true{{else}}false{{/if}}, SUGAR.language.get('app_strings', 'LBL_INVALID_USA_PHONE_FORMAT'));
+</script>
+{{/if}}

@@ -48,5 +48,6 @@ $listViewDefs['ProspectLists'] = array(
         'label' => 'LBL_LIST_ASSIGNED_USER',
         'module' => 'Employees',
         'id' => 'ASSIGNED_USER_ID', 
-        'default' => true),
+        'default' => true,
+		'sortable' => false),
 );

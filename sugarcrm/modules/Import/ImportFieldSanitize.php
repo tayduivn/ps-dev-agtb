@@ -91,7 +91,9 @@ class ImportFieldSanitize
             $this->addRelatedBean = false;
         
         $field = $sfh->getSugarField(ucfirst($name));
-        $value = $field->importSanitize($value,$vardef,$focus,$this);
+        if ( $field instanceOf SugarFieldBase ) {
+            $value = $field->importSanitize($value,$vardef,$focus,$this);
+        }
         
         return $value;
     }

@@ -439,28 +439,20 @@ class CalendarActivity
 
 		if ($sugar_bean->object_name == 'Task')
 		{
-		    $due = $this->sugar_bean->date_due;
-            if(!empty($this->sugar_bean->time_due)) {
-                $due = $timedate->merge_date_time($due, $this->sugar_bean->time_due);
-            }
-		    if($DO_USER_TIME_OFFSET) {
-    			$this->start_time = $timedate->fromUser($due);
-		    } else {
-    			$this->start_time = $timedate->fromDbFormat($due, $timedate->get_date_time_format());
-		    }
+		    $this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
 			if ( empty($this->start_time))
 			{
 				return null;
 			}
 
-			$this->end_time = $this->start_time;
+			$this->end_time = $timedate->fromUser($this->sugar_bean->date_due);
 		}
 		else
 		{
-            // Convert it back to database time so we can properly manage it for getting the proper start and end dates
             $this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
-		    $this->end_time = $this->start_time->get("+{$this->sugar_bean->duration_hours} hours {$this->sugar_bean->duration_minutes} mins");
+		    $this->end_time = $this->start_time->get("+{$this->sugar_bean->duration_hours} hours {$this->sugar_bean->duration_minutes} minutes");
 		}
+        // Convert it back to database time so we can properly manage it for getting the proper start and end dates
 		$timedate->tzGMT($this->start_time);
         $timedate->tzGMT($this->end_time);
 	}

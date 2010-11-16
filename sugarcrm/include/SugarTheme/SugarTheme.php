@@ -261,26 +261,11 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            // load stored theme cache from sugar cache if it's there
-            if ( $GLOBALS['external_cache_enabled'] 
-                    && $GLOBALS['external_cache_type'] != 'base-in-memory' ) {
-                $this->_jsCache       = sugar_cache_retrieve('theme_'.$this->dirName.'_jsCache');
-                $this->_cssCache      = sugar_cache_retrieve('theme_'.$this->dirName.'_cssCache');
-                $this->_imageCache    = sugar_cache_retrieve('theme_'.$this->dirName.'_imageCache');
-                $this->_templateCache = sugar_cache_retrieve('theme_'.$this->dirName.'_templateCache');
-            }
-            // otherwise, see if we serialized them to a file
-            elseif ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
-                $caches = unserialize(file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
-                if ( isset($caches['jsCache']) )
-                    $this->_jsCache       = $caches['jsCache'];
-                if ( isset($caches['cssCache']) )
-                    $this->_cssCache      = $caches['cssCache'];
-                if ( isset($caches['imageCache']) )
-                    $this->_imageCache    = $caches['imageCache'];
-                if ( isset($caches['templateCache']) )
-                    $this->_templateCache = $caches['templateCache'];
-            }
+            // load stored theme cache from sugar cache
+            $this->_jsCache       = sugar_cache_retrieve('theme_'.$this->dirName.'_jsCache');
+            $this->_cssCache      = sugar_cache_retrieve('theme_'.$this->dirName.'_cssCache');
+            $this->_imageCache    = sugar_cache_retrieve('theme_'.$this->dirName.'_imageCache');
+            $this->_templateCache = sugar_cache_retrieve('theme_'.$this->dirName.'_templateCache');
         }
         $this->_initialCacheSize = array(
             'jsCache'       => count($this->_jsCache),
@@ -300,60 +285,22 @@ class SugarTheme
         set_include_path(realpath(dirname(__FILE__) . '/../..') . PATH_SEPARATOR . get_include_path());
         chdir(realpath(dirname(__FILE__) . '/../..'));
         
-        // Bug 30807/30808 - Re-setup the external cache since the object isn't there when calling this method.
-        $GLOBALS['external_cache_checked'] = false;
-        check_cache();
-        
         // clear out the cache on destroy if we are asked to
-        if ( $this->_clearCacheOnDestroy ) {
-            if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
-                unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
-            if ( $GLOBALS['external_cache_enabled']
-                    && $GLOBALS['external_cache_type'] != 'base-in-memory' ) {
-                sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
-                sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
-                sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
-                sugar_cache_clear('theme_'.$this->dirName.'_templateCache');
-            }
-        }
-        elseif ( !inDeveloperMode() ) {
+        if ( !inDeveloperMode() && !$this->_clearCacheOnDestroy ) {
             // push our cache into the sugar cache
-            if ( $GLOBALS['external_cache_enabled'] 
-                    && $GLOBALS['external_cache_type'] != 'base-in-memory' ) {
-                // only update the caches if they have been changed in this request
-                if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_jsCache',$this->_jsCache);
-                if ( count($this->_cssCache) != $this->_initialCacheSize['cssCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_cssCache',$this->_cssCache);
-                if ( count($this->_imageCache) != $this->_initialCacheSize['imageCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_imageCache',$this->_imageCache);
-                if ( count($this->_templateCache) != $this->_initialCacheSize['templateCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_templateCache',$this->_templateCache);
-            }
-            // fallback in case there is no useful external caching available
             // only update the caches if they have been changed in this request
-            elseif ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] 
-                    || count($this->_cssCache) != $this->_initialCacheSize['cssCache']
-                    || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
-                    || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
-                ) {
-                sugar_file_put_contents(
-                    create_cache_directory($this->getFilePath().'/pathCache.php'),
-                    serialize(
-                        array(
-                            'jsCache'       => $this->_jsCache,
-                            'cssCache'      => $this->_cssCache,
-                            'imageCache'    => $this->_imageCache,
-                            'templateCache' => $this->_templateCache,
-                            )
-                        )
-                    );
-                
-            }
+            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] )
+                sugar_cache_put('theme_'.$this->dirName.'_jsCache',$this->_jsCache);
+            if ( count($this->_cssCache) != $this->_initialCacheSize['cssCache'] )
+                sugar_cache_put('theme_'.$this->dirName.'_cssCache',$this->_cssCache);
+            if ( count($this->_imageCache) != $this->_initialCacheSize['imageCache'] )
+                sugar_cache_put('theme_'.$this->dirName.'_imageCache',$this->_imageCache);
+            if ( count($this->_templateCache) != $this->_initialCacheSize['templateCache'] )
+                sugar_cache_put('theme_'.$this->dirName.'_templateCache',$this->_templateCache);
         }
         // clear out the cache if we are in developerMode 
         // ( so it will be freshly rebuilt for the next load )
-        elseif ( $GLOBALS['external_cache_enabled'] ) {
+        else {
             sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
             sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
             sugar_cache_clear('theme_'.$this->dirName.'_imageCache');

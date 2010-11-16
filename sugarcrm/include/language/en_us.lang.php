@@ -35,9 +35,6 @@ $app_list_strings = array (
   'moduleList' =>
   array (
     'Home' => 'Home',
-	//BEGIN SUGARCRM flav!=sales ONLY
-    'Dashboard' => 'Dashboard',
-	//END SUGARCRM flav!=sales ONLY
     'Contacts' => 'Contacts',
     'Accounts' => 'Accounts',
     'Opportunities' => 'Opportunities',
@@ -96,7 +93,7 @@ $app_list_strings = array (
     'Notifications'=>'Notifications',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=ent ONLY
-    'ReportMaker' => ' Enterprise Reports',
+    'ReportMaker' => 'Enterprise Reports',
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
 //END SUGARCRM flav=ent ONLY
@@ -1787,6 +1784,15 @@ $app_list_strings = array (
     ),
     'dashlet_auto_refresh_options' => 
     array (
+        '-1' 	=> 'Do not auto-refresh',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
+	'dashlet_auto_refresh_options_admin' => 
+    array (
         '-1' 	=> 'Never',
         '30' 	=> 'Every 30 seconds',
         '60' 	=> 'Every 1 minute',
@@ -2712,7 +2718,7 @@ $app_strings = array (
     'NTC_DELETE_SELECTED_RECORDS' =>' selected record(s)?',
     'NTC_LOGIN_MESSAGE' => 'Please enter your user name and password.',
     'NTC_NO_ITEMS_DISPLAY' => 'none',
-    'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship?',
+    'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship? Only the relationship will be removed. The record will not be deleted.',
     'NTC_REQUIRED' => 'Indicates required field',
     'NTC_SUPPORT_SUGARCRM' => 'Support the SugarCRM open source project with a donation through PayPal - it\'s fast, free and secure!',
     'NTC_TIME_FORMAT' => '(24:00)',
@@ -3035,8 +3041,10 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
     
-    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto Refesh',
+    //SugarFieldPhone labels
+    'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter USA phone format',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

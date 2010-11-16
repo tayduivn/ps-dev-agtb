@@ -43,16 +43,12 @@
 <script type='text/javascript'>
 <!--
 document.getElementById("{$dashletId}_offset").value = "{$dashletOffset}";
-
-//check current interval...if different set and restart autorefresh interval
-if (document.getElementById("{$dashletId}_interval").value != "{$dashletRefreshInterval}") {ldelim}
-	document.getElementById("{$dashletId}_interval").value = "{$dashletRefreshInterval}";
-	if (autoRefreshProcId{$strippedDashletId}) {ldelim}
-	    clearInterval(autoRefreshProcId{$strippedDashletId});
-    {rdelim}
-	if(document.getElementById("{$dashletId}_interval").value > 0) {ldelim}
-		autoRefreshProcId{$strippedDashletId} = setInterval('refreshDashlet{$strippedDashletId}()', document.getElementById("{$dashletId}_interval").value);
-    {rdelim}
+document.getElementById("{$dashletId}_interval").value = "{$dashletRefreshInterval}";
+if (typeof autoRefreshProcId{$strippedDashletId} != 'undefined') {ldelim}
+    clearInterval(autoRefreshProcId{$strippedDashletId});
+{rdelim}
+if(document.getElementById("{$dashletId}_interval").value > 0) {ldelim}
+    autoRefreshProcId{$strippedDashletId} = setInterval('refreshDashlet{$strippedDashletId}()', document.getElementById("{$dashletId}_interval").value);
 {rdelim}
 -->
 </script>

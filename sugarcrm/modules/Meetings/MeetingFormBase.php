@@ -308,15 +308,16 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
         $focus->leads_arr = array();
     	$focus->leads_arr = $leadInvitees;
     	//END SUGARCRM flav!=sales ONLY
-        
-    	if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Contacts') {
-    		$focus->contacts_arr[] = $_POST['parent_id'];
+    	if(!isset($_POST['invite_parent_id']) || $_POST['invite_parent_id'] == 'true'){
+	    	if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Contacts') {
+	    		$focus->contacts_arr[] = $_POST['parent_id'];
+	    	}
+	    	//BEGIN SUGARCRM flav!=sales ONLY
+	        if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
+	    		$focus->leads_arr[] = $_POST['parent_id'];
+	    	}	
+	    	//END SUGARCRM flav!=sales ONLY
     	}
-    	//BEGIN SUGARCRM flav!=sales ONLY
-        if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
-    		$focus->leads_arr[] = $_POST['parent_id'];
-    	}	
-    	//END SUGARCRM flav!=sales ONLY
     	// Call the Meeting module's save function to handle saving other fields besides
     	// the users and contacts relationships
     	$focus->save(true);

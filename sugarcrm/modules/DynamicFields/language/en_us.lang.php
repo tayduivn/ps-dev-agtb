@@ -101,6 +101,7 @@ $mod_strings = array (
     'LBL_IMAGE_WIDTH' => 'Width',
     'LBL_IMAGE_HEIGHT' => 'Height',
     'LBL_IMAGE_BORDER' => 'Border',
+	'COLUMN_TITLE_VALIDATE_US_FORMAT' => 'Validate and Apply US Format',
 
 );
 

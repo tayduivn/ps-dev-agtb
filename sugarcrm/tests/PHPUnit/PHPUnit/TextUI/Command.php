@@ -52,7 +52,7 @@
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.0
+ * @version    Release: 3.5.3
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.0.0
  */
@@ -578,7 +578,7 @@ class PHPUnit_TextUI_Command
         }
 
         if (isset($this->arguments['bootstrap'])) {
-            PHPUnit_Util_Fileloader::load($this->arguments['bootstrap']);
+            $this->handleBootstrap($this->arguments['bootstrap'], $this->arguments['syntaxCheck']);
         }
 
         if ($this->arguments['loader'] !== NULL) {
@@ -643,7 +643,7 @@ class PHPUnit_TextUI_Command
                 $phpunitConfiguration = $configuration->getPHPUnitConfiguration();
 
                 if (isset($phpunitConfiguration['bootstrap'])) {
-                    PHPUnit_Util_Fileloader::load($phpunitConfiguration['bootstrap']);
+                    $this->handleBootstrap($phpunitConfiguration['bootstrap'], $this->arguments['syntaxCheck']);
                 }
             }
 
@@ -768,6 +768,23 @@ class PHPUnit_TextUI_Command
         }
 
         return $loader;
+    }
+
+    /**
+     * Loads a bootstrap file.
+     *
+     * @param  string  $filename
+     * @param  boolean $syntaxCheck
+     */
+    protected function handleBootstrap($filename, $syntaxCheck = FALSE)
+    {
+        try {
+            PHPUnit_Util_Fileloader::checkAndLoad($filename, $syntaxCheck);
+        }
+
+        catch (RuntimeException $e) {
+            PHPUnit_TextUI_TestRunner::showError($e->getMessage());
+        }
     }
 
     /**

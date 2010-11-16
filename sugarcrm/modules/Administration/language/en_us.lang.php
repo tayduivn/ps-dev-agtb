@@ -283,6 +283,8 @@ $mod_strings = array (
     'LBL_FORECAST_TITLE'=> 'Forecast',
     'LBL_FORECAST_DESC'=> 'Define time periods for the Forecasts module. These time periods display in the Time Periods drop-down menus in the Forecasts Module.',
     //END SUGARCRM flav!=sales ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS' => 'Global Search',
+	'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Configure the global search options for the system.',
     'LBL_GLOBAL_TEAM_DESC' => 'Globally Visible',
     'LBL_GLOBAL_TEAM_SELECT' => 'A default global team was not found. Please select a team from this list.',
     'LBL_GLOBAL_TEAM' => 'Rebuild access to global team.',
@@ -1099,7 +1101,7 @@ $mod_strings = array (
 
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',
-	'ReportMaker'  => 'ReportMaker',
+	'ReportMaker'  => 'Enterprise Reports',
 	'Reports_1'      => 'SavedReport',
 	'Roles'  => 'Role',
 	'Schedulers'  => 'Scheduler',

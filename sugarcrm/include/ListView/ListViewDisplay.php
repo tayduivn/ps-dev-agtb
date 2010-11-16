@@ -214,6 +214,8 @@ class ListViewDisplay {
             $filter_fields['team_id'] = true;
         }
         //END SUGARCRM flav=pro ONLY
+        
+        return $filter_fields;
 	}
 	
 

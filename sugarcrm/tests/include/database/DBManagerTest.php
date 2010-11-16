@@ -12,7 +12,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_db = DBManagerFactory::getInstance();
-		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     public function tearDown()
