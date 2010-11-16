@@ -229,20 +229,13 @@ EOHTML;
 					
 				}
 
-		    //$GLOBALS['log']->fatal(var_export($searchFields, true));
-				
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
 			$where = "";
 			if (count($where_clauses) > 0 ){ 
 				$where = '('. implode(' ) OR ( ', $where_clauses) . ')';
-			}
-			
-			if($moduleName == 'Documents')
-			{
-			$GLOBALS['log']->fatal(">>>" . $where);
-			}
+			}			
 			
 			$lvd = new ListViewData();
 			$lvd->additionalDetails = false;
@@ -256,12 +249,7 @@ EOHTML;
 			    $params['orderBy'] = 'name';
 			}
 			$results[$moduleName]= $lvd->getListViewData($seed, $where, $offset,  $max, $return_fields,$params,'id') ;
-			
-			if($moduleName == 'Documents')
-			{
-			$GLOBALS['log']->fatal(var_export($results[$moduleName], true));
-			}			
-			
+								
 		}
         //BEGIN SUGARCRM flav=spotactions ONLY
         //Search actions...
