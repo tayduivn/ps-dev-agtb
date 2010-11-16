@@ -54,7 +54,7 @@ EOQ;
 		global $sugar_config;
 
 		if (empty($current_user->id)) {
-			return;
+            return;
 		}
 			
 		// cn: get a boundary limiter
@@ -70,6 +70,7 @@ EOQ;
 				SELECT meetings.id, name,reminder_time, description,location, date_start, assigned_user_id
 				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id 
 				WHERE meetings_users.user_id ='".$current_user->id."' 
+					AND meetings_users.accept_status != 'decline'
 					AND meetings.reminder_time != -1
 					AND meetings_users.deleted != 1
 					AND meetings.status != 'Held'
@@ -89,6 +90,7 @@ EOQ;
 				SELECT meetings.id, name,reminder_time, description,location, date_start,  assigned_user_id
 				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id 
 				WHERE meetings_users.user_id ='".$current_user->id."' 
+					AND meetings_users.accept_status != 'decline'
 					AND meetings.reminder_time != -1
 					AND meetings_users.deleted != 1
 					AND meetings.status != 'Held'". 
@@ -105,6 +107,7 @@ EOQ;
 				SELECT meetings.id, name,reminder_time, CAST(description AS varchar(8000)),location, date_start, assigned_user_id 
 				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id 
 				WHERE meetings_users.user_id ='".$current_user->id."' 
+					AND meetings_users.accept_status != 'decline'
 					AND meetings.reminder_time != -1
 					AND meetings_users.deleted != 1
 					AND meetings.status != 'Held'
