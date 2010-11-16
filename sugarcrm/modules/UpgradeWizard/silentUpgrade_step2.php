@@ -425,7 +425,7 @@ add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
 //END SUGARCRM flav=pro ONLY 
 
-if($origVersion < '550' || $ce_to_pro_ent) {	
+if($ce_to_pro_ent) {	
 	//add the global team if it does not exist
 	$globalteam = new Team();
 	$globalteam->retrieve('1');

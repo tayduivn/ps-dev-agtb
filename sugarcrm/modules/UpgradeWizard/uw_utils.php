@@ -3289,9 +3289,6 @@ function UWrebuild() {
 	global $path;
 
 	logThis('Rebuilding everything...', $path);
-//	require_once('ModuleInstall/ModuleInstaller.php');
-//	$mi = new ModuleInstaller();
-//	$mi->rebuild_all(true);
 	require_once('modules/Administration/QuickRepairAndRebuild.php');
 	$randc = new RepairAndClear();
     $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
@@ -4929,12 +4926,8 @@ function upgradeModulesForTeam() {
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
 
     //Update team_set_id
-	if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_or_ent) {
-	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
-	}
-
-	//Update default_team
 	if($ce_to_pro_or_ent) {
+	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
 	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
 
