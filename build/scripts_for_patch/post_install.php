@@ -239,13 +239,8 @@ function clearCompanyLogo(){
 
 function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
-	if(strpos($server_software,'Microsoft-IIS') !== false)
+	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
-		if($sugar_version < '5.5.0'){
-		    _logThis("Rebuild web.config.", $path);
-		    include_once("modules/Administration/UpgradeIISAccess.php");
-		}
-	} else {
 		///////////////////////////////////////////////////////////////////////////
         ////    FILESYSTEM SECURITY FIX (Bug 9365)
 	    _logThis("Applying .htaccess update security fix.", $path);
@@ -276,42 +271,6 @@ function genericFunctions(){
 	////	REBUILD DASHLETS
 	_logThis("Rebuilding Dashlets", $path);
 	rebuild_dashlets();
-
-    //BEGIN SUGARCRM flav=pro ONLY 
-    ///////////////////////////////////////////////////////////////////////////
-    ////    REBUILD TEAMS, REWORK IMPLICIT TEAM RELATIONSHIP
-    _logThis("Rebuilding Teams", $path);
-    rebuild_teams();
-    //END SUGARCRM flav=pro ONLY 
-
-  	global $sugar_version;
-    if($sugar_version < '5.5.0') {
-        _logThis("Begin Upgrade LDAP authentication", $path);
-        upgrade_LDAP();
-        _logThis("End Upgrade LDAP authentication", $path);
-        
-        _logThis("BEGIN CLEAR COMPANY LOGO", $path);
-        clearCompanyLogo();
-        _logThis("END CLEAR COMPANY LOGO", $path);
-        
-        _logThis("BEGIN CLEAR IMAGES IN THEME SUGAR", $path);
-        clearSugarImages();
-        _logThis("END CLEAR IMAGES IN THEME SUGAR", $path);
-    } 
-    
-	if($sugar_version < '5.5.1') {
-    	_logThis("Begin Clear all English inline help files", $path);
-    	clearHelpFiles();
-    	_logThis("End all English inline help files", $path);
-    }
-    //Rebuild roles
-     _logThis("Rebuilding Roles", $path);
-	 if($sugar_version < '5.5.0') {
-	     add_EZ_PDF();
-     }    
-     ob_start();
-     rebuild_roles();
-     ob_end_clean();
 }
 
 function status_post_install_action($action){
