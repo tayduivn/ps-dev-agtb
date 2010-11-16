@@ -322,7 +322,17 @@ class UserPreference extends SugarBean
 			    $focus->deleted = 0;
 			    $focus->contents = base64_encode(serialize($contents));
 			    $focus->category = $category;
-			    $focus->save();
+				//save if length is under column max
+				if (strlen($focus->contents) > 65535){
+					//log error and add to error message
+					$GLOBALS['log']->fatal("USERPREFERENCE ERROR:: User preference  for user: '$user->user_name' and category '$focus->category' is ".strlen($focus->contents)." characters long which is too big to save");
+					$errors[] = 'category: '.$focus->category.' is '.strlen($focus->contents).' characters long which is too big and will cause the query to fail.';
+					//set global flag to indicate error has ocurred.  This will cause sugar_cleanup() in utils.php to flash a warning message to user.
+					$_SESSION['USER_PREFRENCE_ERRORS'] = true;
+				}else{
+					$focus->save();
+				}	
+
 			}
 		}
 	}
