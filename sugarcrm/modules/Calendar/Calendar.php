@@ -453,27 +453,14 @@ class CalendarActivity
 
 		if ($sugar_bean->object_name == 'Task')
 		{
-
-			$newdate = $timedate->merge_date_time($this->sugar_bean->date_due, $this->sugar_bean->time_due);
-			$tempdate  = $timedate->to_db_date($newdate,$DO_USER_TIME_OFFSET);
-
-			if($newdate != $tempdate){
-				$this->sugar_bean->date_due = $tempdate;
-			}
-			$temptime = $timedate->to_db_time($newdate, $DO_USER_TIME_OFFSET);
-			if($newdate != $temptime){
-				$this->sugar_bean->time_due = $temptime;
-			}
-			$this->start_time =DateTimeUtil::get_time_start(
-				$this->sugar_bean->date_due,
-				$this->sugar_bean->time_due
-			);
+		    $dbDate  = $timedate->to_db($this->sugar_bean->date_start);
+		    $this->start_time = DateTimeUtil::get_time_start($dbDate);
 			if ( empty($this->start_time))
 			{
 				return null;
 			}
-
-			$this->end_time = $this->start_time;
+			$dbDate  = $timedate->to_db($this->sugar_bean->date_due);
+		    $this->end_time = DateTimeUtil::get_time_start($dbDate);
 		}
 		else
 		{
