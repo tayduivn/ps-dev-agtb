@@ -160,7 +160,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile, $path);
+			//logThis('Copying file to destination: ' . $targetFile, $path);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
@@ -168,7 +168,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile, $path);
+			//logThis('Skipping file: ' . $targetFile, $path);
 			$skippedFiles[] = $targetFile;
 		}
 	}
@@ -248,12 +248,12 @@ function copyRecursiveBetweenDirectories($from,$to){
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
 					} else {
-						logThis('Copied file: ' . $targetFile);
+						//logThis('Copied file: ' . $targetFile);
 						//$copiedFiles[] = $targetFile;
 					}
 
@@ -325,7 +325,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -333,7 +333,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						$copiedFiles[] = $targetFile;
 					}
 				} else {
-					logThis('Skipping file: ' . $targetFile);
+					//logThis('Skipping file: ' . $targetFile);
 					$skippedFiles[] = $targetFile;
 				}
 			  }
@@ -2567,7 +2567,7 @@ $uwMain = $upgrade_directories_not_found;
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile);
+			//logThis('Copying file to destination: ' . $targetFile);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -2575,7 +2575,7 @@ $uwMain = $upgrade_directories_not_found;
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile);
+			//logThis('Skipping file: ' . $targetFile);
 			//$skippedFiles[] = $targetFile;
 		}
 	   }
@@ -3164,7 +3164,7 @@ function unlinkTempFiles() {
 		rsort($files);
 		foreach($files as $file) {
 			if(!is_dir($file)) {
-				logThis('unlinking ['.$file.']', $path);
+				//logThis('unlinking ['.$file.']', $path);
 				@unlink($file);
 			}
 		}
@@ -3172,7 +3172,7 @@ function unlinkTempFiles() {
 		$files = findAllFiles($tempDir, array(), true);
 		foreach($files as $dir) {
 			if(is_dir($dir)) {
-				logThis('removing dir ['.$dir.']', $path);
+				//logThis('removing dir ['.$dir.']', $path);
 				@rmdir($dir);
 			}
 		}
@@ -3632,7 +3632,7 @@ function deletePackageOnCancel(){
     // delete file in upgrades/patch
     $delete_me = urldecode( $_SESSION['install_file'] );
     if(@unlink($delete_me)) {
-    	logThis('unlinking: '.$delete_me);
+    	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
     } else {
     	logThis('ERROR: could not delete ['.$delete_me.']');

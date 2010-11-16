@@ -724,14 +724,14 @@ foreach($parserFiles as $file) {
 
 	if(!file_exists($targetFile))
 	 {
-		logThis('Copying file to destination: ' . $targetFile, $path);
+		//logThis('Copying file to destination: ' . $targetFile, $path);
 		if(!copy($srcFile, $targetFile)) {
 			logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
 		} else {
 			$copiedFiles[] = $targetFile;
 		}
 	} else {
-		logThis('Skipping file: ' . $targetFile, $path);
+		//logThis('Skipping file: ' . $targetFile, $path);
 		//$skippedFiles[] = $targetFile;
 	}
    }
