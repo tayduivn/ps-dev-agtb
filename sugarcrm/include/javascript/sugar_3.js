@@ -992,7 +992,7 @@ function validate_form(formname, startsWith){
 									if(typeof nodes[el].type != 'undefined' && nodes[el].type == 'text')
 									{
 									    phone = trim(nodes[el].value);
-										if(phone.length != 0 && !/^[01]?[- .]?(\([0-9]\d{2}\)|[0-9]\d{2})[- .]?[0-9a-zA-Z]{3}[- .]?[0-9a-zA-Z]{4}/.test(phone))
+										if(phone.length != 0 && !/^[+]?[1]?[- .]?[\(]?[2-9]\d{2}[\)]?[- .]?[\d]{3}[- .]?[\d]{4}$/.test(phone))
 									    {
 									       isError = true;
 									       add_error_style(formname, nodes[el], invalidTxt + " " +	validate[formname][i][msgIndex]);
