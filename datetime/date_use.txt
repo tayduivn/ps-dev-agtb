@@ -1,29 +1,15 @@
-./modules/Meetings/Meeting.php:    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
-./modules/Meetings/Meeting.php:			$this->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
-./modules/Meetings/Meeting.php:			$this->time_start = $timedate->to_display_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()), true);
-./modules/Meetings/Meeting.php:		$today = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
-./modules/Meetings/Meeting.php:		$nextday = gmdate($GLOBALS['timedate']->dbDayFormat, time() + 3600*24);
 ./modules/Meetings/MeetingFormBase.php:$default_date_start = $timedate->to_display_date(date('Y-m-d'),false);
 ./modules/Meetings/MeetingFormBase.php:$default_time_start = $timedate->to_display_time((date('H:i')), true, false);
 ./modules/Meetings/MeetingFormBase.php:$time_ampm = $timedate->AMPMMenu($prefix,date('H:i'));
-./modules/Meetings/MeetingsQuickCreate.php:			$focus->date_start = $timedate->to_display_date(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
-./modules/Meetings/MeetingsQuickCreate.php:			$focus->time_start = $timedate->to_display_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()), true);
-./modules/ModuleBuilder/MB/MBPackage.php:    $date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+
+
+
 ./modules/ModuleBuilder/MB/MBPackage.php:        $date = date('Y_m_d_His');
 ./modules/ModuleBuilder/MB/MBPackage.php:        $date = date('Y_m_d_His');
-./modules/ModuleBuilder/MB/MBPackage.php:                $out = "<?php \n // created: " . date('Y-m-d H:i:s') . "\n";
 ./modules/ModuleBuilder/MB/MBPackage.php:        $date = date('Y_m_d_His');
-./modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php:            $out =  "<?php\n// created: " . date('Y-m-d H:i:s') . "\n";
-./modules/ModuleBuilder/parsers/relationships/AbstractRelationships.php:            $out =  "<?php\n// created: " . date('Y-m-d H:i:s') . "\n";
-./modules/ModuleBuilder/parsers/views/History.php:        $time = strtotime ( gmdate ( 'r' ) ) ;
-./modules/ModuleBuilder/parsers/views/History.php:            $time = strtotime ( gmdate ( 'r' ) ) ;
-./modules/ModuleBuilder/views/view.history.php:            $dbDate = gmdate ( $timedate->get_db_date_time_format (), $ts ) ;
-./modules/Notifications/controller.php:	    $thirtySecondsAgoFormatted = gmdate($timedate->get_db_date_time_format(), $thirtySecondAgo);
-./modules/Notifications/controller.php:	    $now = gmdate($timedate->get_db_date_time_format());
-./modules/ProductBundles/ProductBundle.php:		$query = "insert into $this->rel_products (id,product_index,product_id,bundle_id, date_modified) VALUES ('".create_guid()."','$product_index', '$product_id', '$bundle_id', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
-./modules/ProductBundles/ProductBundle.php:    	$query = "INSERT INTO $this->rel_notes (id,bundle_id,note_id,note_index, date_modified) VALUES ('".create_guid()."','".$bundle_id."','".$note_id."','".$note_index."', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
-./modules/ProductBundles/ProductBundle.php:		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values ('".create_guid()."', '$quote_id', '$bundle_id', '$bundle_index', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
-./modules/Products/Product.php:		$expired = date('Y-m-d', strtotime($support_expired));
+
+
+/modules/Products/Product.php:		$expired = date('Y-m-d', strtotime($support_expired));
 ./modules/Products/Product.php:		$coming_due = date('Y-m-d', strtotime($support_coming_due));
 ./modules/Project/Convert.php:$focus->fetched_row['date_entered'] = date($GLOBALS['timedate']->dbDayFormat);
 ./modules/Project/Convert.php:$focus->fetched_row['date_modified'] = date($GLOBALS['timedate']->dbDayFormat);

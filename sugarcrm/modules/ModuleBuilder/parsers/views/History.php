@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *right to remove SugarCRM copyrights from the source code or user interface. 
  * All copies of the Covered Code must include on each user interface screen:
  * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (ii) the SugarCRM copyright  
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
  *to the License for the specific language governing these rights and limitations under the License.
@@ -131,12 +131,12 @@ class History
         // because so unlikely in normal use we handle this the naive way by waiting a second so our naming scheme doesn't get overelaborated
         $retries = 0 ;
         
-        $time = strtotime ( gmdate ( 'r' ) ) ;
+        $time = strtotime(TimeDate2::getInstance()->httpTime());
         while ( (file_exists ( $this->_previewFilename . "_" . $time ) && $retries < 5) )
         
         {
             sleep ( 1 ) ;
-            $time = strtotime ( gmdate ( 'r' ) ) ;
+            $time = strtotime(TimeDate2::getInstance()->httpTime());
             $retries ++ ;
         }
         // now we have a unique filename, copy the file into the history

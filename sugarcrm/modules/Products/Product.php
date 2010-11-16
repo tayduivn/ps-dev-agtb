@@ -419,7 +419,7 @@ class Product extends SugarBean {
 		$the_date_support_expires = $this->date_support_expires;
 		$db_date_support_expires = $timedate->to_db_date($this->date_support_expires, false);
 		
-		$expired = date('Y-m-d', strtotime($support_expired));
+		$expired = $timedate->asDbDate($timedate->getNow()->get($support_expired)); 
 		$coming_due = date('Y-m-d', strtotime($support_coming_due));
 
 	
