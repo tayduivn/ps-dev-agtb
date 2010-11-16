@@ -37,6 +37,18 @@ function fill_invitees() {
 		SugarWidgetScheduler.fill_invitees(document.EditView);
 	} 
 }
+
+function promptForRelatedInvite(){
+	var oldParentId = '{/literal}{$fields.parent_id.value}{literal}';
+	//no need to ask if the parent_id field is empty
+	if(document.getElementById('parent_id').value != "" && (document.getElementById('parent_type').value == "Contacts" || document.getElementById('parent_type').value == "Leads") && oldParentId != document.getElementById('parent_id').value){
+		if(confirm("{/literal}{$MOD.LBL_INVITE_PROMPT}{literal}")){
+			document.getElementById('invite_parent_id').value = true;
+		}else{
+			document.getElementById('invite_parent_id').value = false;
+		}
+	}
+}
 {/literal}
 
 var root_div = document.getElementById('scheduler');
