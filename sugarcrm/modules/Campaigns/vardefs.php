@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Campaign'] = array ('audited'=>true,
 	'comment' => 'Campaigns are a series of operations undertaken to accomplish a purpose, usually acquiring leads',
 	'table' => 'campaigns',
-
+	'unified_search' => true,
 	'fields' => array (
 		'tracker_key' => array (
 			'name' => 'tracker_key',

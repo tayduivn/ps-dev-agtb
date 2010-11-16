@@ -50,7 +50,7 @@ class UnifiedSearchAdvanced {
     }
     
 	function getDropDownDiv($tpl = 'modules/Home/UnifiedSearchAdvanced.tpl') {
-		global $app_list_strings;
+		global $app_list_strings, $app_strings;
 
 		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
 		$this->buildCache();
@@ -79,8 +79,14 @@ class UnifiedSearchAdvanced {
             }
 		}
 
-		if(!empty($this->query_string)) $sugar_smarty->assign('query_string', securexss($this->query_string));
-		else $sugar_smarty->assign('query_string', '');
+		if(!empty($this->query_string))
+		{
+			$sugar_smarty->assign('query_string', securexss($this->query_string));
+		} else {
+			$sugar_smarty->assign('query_string', '');
+		}
+		
+		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('USE_SEARCH_GIF', 0);
 		$sugar_smarty->assign('LBL_SEARCH_BUTTON_LABEL', $app_strings['LBL_SEARCH_BUTTON_LABEL']);
 		$sugar_smarty->assign('MODULES_TO_SEARCH', $modules_to_search);
@@ -111,8 +117,8 @@ class UnifiedSearchAdvanced {
 				}
 			}
 			$current_user->setPreference('globalSearch', $modules_to_search, 0, 'search'); // save selections to user preference
-		}
-		else {
+		    header('Location: index.php?module=Administration&action=index');
+		} else {
 			$users_modules = $current_user->getPreference('globalSearch', 'search');
 			if(isset($users_modules)) { // use user's previous selections
 			    foreach ( $users_modules as $key => $value ) {
@@ -163,23 +169,25 @@ class UnifiedSearchAdvanced {
                         if ( $listViewCheckField == 'EMAIL' 
                                 && !empty($listViewDefs[$seed->module_dir]['EMAIL1']['default']) ) {
                             // we've found the alternate matching column
-                        }
-                        else {
+                        } else {
                             continue;
                         }
                     }
                     //bug: 34125 we might want to try to use the LEFT JOIN operator instead of the INNER JOIN in the case we are
                     //joining against a field that has not been populated.
-                    if(!empty($def['innerjoin']) ){
+                    if(!empty($def['innerjoin']) )
+                    {
                         if (empty($def['db_field']) )
+                        {
                             continue;
+                        }
                         $innerJoins[$field] = $def;
                         $def['innerjoin'] = str_replace('INNER', 'LEFT', $def['innerjoin']);
                     }
                     $unifiedSearchFields[ $moduleName ] [ $field ] = $def ;
                     $unifiedSearchFields[ $moduleName ] [ $field ][ 'value' ] = $this->query_string ;
                 }
-
+                
                 /*
                  * Use searchForm2->generateSearchWhere() to create the search query, as it can generate SQL for the full set of comparisons required
                  * generateSearchWhere() expects to find the search conditions for a field in the 'value' parameter of the searchFields entry for that field
@@ -212,8 +220,12 @@ class UnifiedSearchAdvanced {
                     }
                 }
 
-                if(count($displayColumns) > 0) $lv->displayColumns = $displayColumns;
-                else $lv->displayColumns = $listViewDefs[$seed->module_dir];
+                if(count($displayColumns) > 0) 
+                {
+                	$lv->displayColumns = $displayColumns;
+                } else {
+                	$lv->displayColumns = $listViewDefs[$seed->module_dir];
+                }
 
                 $lv->export = false;
                 $lv->mergeduplicates = false;
@@ -224,10 +236,9 @@ class UnifiedSearchAdvanced {
                 if($overlib) {
                     $lv->overlib = true;
                     $overlib = false;
+                } else {
+                	$lv->overlib = false;
                 }
-                else $lv->overlib = false;
-                
-                
                 
                 $lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params, 0, 10);
 
@@ -236,8 +247,7 @@ class UnifiedSearchAdvanced {
 
                 if($lv->data['pageData']['offsets']['total'] == 0) {
                     $module_results[$moduleName] .= '<h2>' . $home_mod_strings['LBL_NO_RESULTS_IN_MODULE'] . '</h2>';
-                }
-                else {
+                } else {
                     $has_results = true;
                     $module_results[$moduleName] .= $lv->display(false, false);
                 }
@@ -290,7 +300,7 @@ class UnifiedSearchAdvanced {
 			elseif(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
 				require "modules/{$moduleName}/metadata/SearchFields.php" ;
 
-			if(isset($dictionary[$beanName]['unified_search']) && $dictionary[$beanName]['unified_search']) // if bean participates in uf
+			if(!empty($dictionary[$beanName]['unified_search'])) // if bean participates in uf
 			{
 
 				$fields = array();
@@ -307,7 +317,7 @@ class UnifiedSearchAdvanced {
 					if (strpos($field,'phone') !== false)
 						$field = 'phone' ;
 
-					if ( isset($def['unified_search']) && $def['unified_search'] && isset ( $searchFields [ $moduleName ] [ $field ]  ))
+					if ( !empty($def['unified_search']) && isset ( $searchFields [ $moduleName ] [ $field ]  ))
 					{
 						$fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
 					}
@@ -327,6 +337,7 @@ class UnifiedSearchAdvanced {
 			}
 
 		}
+		
 		ksort($supported_modules);
 		write_array_to_file('unified_search_modules', $supported_modules, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
 

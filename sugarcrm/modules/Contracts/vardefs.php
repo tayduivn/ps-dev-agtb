@@ -32,6 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Contract'] = array(
 	'table' => 'contracts',
 	'audited' => true,
+    'unified_search' => true,
 	'comment' => 'A contract collects information about important legal and contractural obligations',
 	'fields' => array (
 		'name' => array (
@@ -43,6 +44,7 @@ $dictionary['Contract'] = array(
 			'required' => true,
 			'comment' => 'The name of the contract',
 			'importable' => 'required',
+			'unified_search' => true,
 		),
 		'reference_code' => array (
 			'name' => 'reference_code',
@@ -90,6 +92,7 @@ $dictionary['Contract'] = array(
 			'len' => '255',
 			'source' => 'non-db',
 			'massupdate' => false,
+			'unified_search' => true,
 		),
 		'opportunity_id' => array(
 		    'name'=>'opportunity_id',
@@ -113,6 +116,7 @@ $dictionary['Contract'] = array(
 			'source' => 'non-db',
 			'required' => true,
 			'importable' => 'required',
+			'unified_search' => true,
 		),
 
 		'account_id' => array (

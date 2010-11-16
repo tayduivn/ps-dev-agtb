@@ -5564,4 +5564,161 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	return true;
 }
 	
+
+/**
+ * upgrade_connectors
+ * This function handles support for upgrading connectors, in particular the Hoovers connector
+ * that needs the wsdl and endpoint modifications in the config.php file as well as the search 
+ * term change (from bal.specialtyCriteria.companyKeyword to bal.specialtyCriteria.companyName).
+ * @param $path String variable for the log path
+ */
+function upgrade_connectors($path='') 
+{
+		logThis('Begin upgrade_connectors', $path);
+		
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
+		if(file_exists($filePath))
+		{
+		   logThis("{$filePath} file", $path);	
+		   require($filePath);
+		   if(!is_null($config))
+		   {
+		   	  $modified = false;
+		   	  if(isset($config['properties']['hoovers_endpoint']))
+		   	  {
+		   	  	 $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
+		   	  	 $modified = true;
+		   	  }
+		   	  
+		   	  if(isset($config['properties']['hoovers_wsdl']))
+		   	  {
+		   	  	 $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
+		   	     $modified = true;
+		   	  }
+		   	  
+		   	  if($modified)
+		   	  {
+		   	      if(!write_array_to_file('config', $config, $filePath)) {
+		             logThis("Could not write new configuration to {$filePath} file", $path);	
+		          } else {
+		          	 logThis('Modified file successfully with new configuration entries', $path);
+		          }
+		   	  }
+		   }
+		}
+
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
+	    if(file_exists($filePath))
+		{
+		   logThis("Modifying {$filePath} file", $path);	
+		   require($filePath);		  
+		   $fileContents = file_get_contents($filePath);
+		   $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
+		   file_put_contents($filePath, $out);		   
+		}
+		
+		logThis('End upgrade_connectors', $path);
+}
+
+
+/**
+ * add_unified_search_to_custom_modules_vardefs
+ * This method scans all custom modules installed on the system and then attempts to modify the
+ * vardefs.php file to support global searching where possible.
+ * 
+ */
+function add_unified_search_to_custom_modules_vardefs()
+{
+    require_once('modules/ModuleBuilder/MB/MBPackage.php');
+	$module_directories = scandir('modules');
+    $modified_search = false;
+    
+    //If there is no package directory, just return false
+    if(!file_exists('custom/modulebuilder/packages'))
+    {
+       return false;
+    }
+    
+    $scanned_packages = array();
+    
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
+
+		$matches = array();
+		preg_match('/^([a-z0-9]{1,5})_([a-z0-9]+)$/i' , $module_dir, $matches);
+
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
+
+		$full_module_dir = "modules/{$module_dir}/";
+
+		if(!file_exists("{$full_module_dir}/vardefs.php"))
+		{
+		   continue;
+		}
+		
+		require("{$full_module_dir}/vardefs.php");
+		
+		//If unified_search is already set to true, just skip
+		if(isset($GLOBALS['dictionary']["{$module_dir}"]['unified_search']))
+		{
+		   continue;
+		}		
+		
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		
+		if(file_exists("custom/{$full_module_dir}/metadata/SearchFields.php"))
+		{
+			$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
+		} else {
+			$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		}
+
+		//If there are no search fields, just skip since it won't make sense to change to support search
+		if(!file_exists($read_SearchFields_from))
+		{
+			continue;
+		}
+		
+		$package_directories = scandir('custom/modulebuilder/packages');
+		foreach($package_directories as $package_dir)
+		{
+			if($package_dir == '.' || $package_dir == '..' || !is_dir("custom/modulebuilder/packages/{$package_dir}"))
+			{
+				continue;
+			}
+			
+			if(isset($scanned_packages[$package_dir]))
+			{
+			    continue;
+			}
+			
+			if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
+			   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
+			{
+			   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
+			   $package_key = $manifest['key'];
+			   $mbPackage = new MBPackage("{$package_dir}"); 
+			   $mbPackage->getModule($matches[2]);
+			   $mbPackage->modules[$matches[2]]->createClasses($full_module_dir);
+			   $modified_search = true;
+			   $scanned_packages[$package_dir] = true;
+			}
+		}
+				
+	}
+	
+	//Now clear the search cache
+	if(!empty($scanned_packages))
+	{
+		require_once('modules/Administration/QuickRepairAndRebuild.php');
+		$repair = new RepairAndClear();
+		$repair->clearSearchCache();
+	}
+}
+
 ?>

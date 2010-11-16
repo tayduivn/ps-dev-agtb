@@ -71,6 +71,10 @@ class Account extends Company {
     var $shipping_address_street_3;    
     var $shipping_address_street_4;    
     
+//BEGIN SUGARCRM flav!=sales ONLY
+    var $campaign_id;
+//END SUGARCRM flav!=sales ONLY
+    
 	var $sic_code;
 	var $ticker_symbol;
 	var $account_type;
@@ -269,6 +273,17 @@ class Account extends Company {
 				$this->parent_name = '';
 			}
         }		
+        
+//BEGIN SUGARCRM flav!=sales ONLY
+        // Set campaign name if there is a campaign id
+		if( !empty($this->campaign_id)){
+			
+			$camp = new Campaign();
+		    $where = "campaigns.id='{$this->campaign_id}'";
+		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
+		    $this->campaign_name = $campaign_list[0]->name;	
+		}
+//END SUGARCRM flav!=sales ONLY        
 	}
 	
 	function get_list_view_data(){

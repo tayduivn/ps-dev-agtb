@@ -467,6 +467,11 @@ logThis('Begin merge_config_si_settings', $path);
 merge_config_si_settings(true);
 logThis('End merge_config_si_settings', $path);
 
+//bug: 36845 - ability to provide global search support for custom modules
+if($origVersion < '620'){
+   add_unified_search_to_custom_modules_vardefs();
+}
+
 //also add the cache cleaning here.
 if(function_exists('deleteCache')){
 	@deleteCache();

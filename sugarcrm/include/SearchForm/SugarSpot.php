@@ -39,6 +39,7 @@ class SugarSpot
 		$query_encoded = urlencode($query);
 	    $results = $this->_performSearch($query, $modules, $offset);
 		$str = '<div id="SpotResults">';
+
 		$actions=0;
 		$foundData = false;
 		foreach($results as $m=>$data){ 
@@ -86,10 +87,21 @@ EOHTML;
 			}
 			$str.= '</ul>';
 		}
-		$str .= <<<EOHTML
-<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$query_encoded}'">{$GLOBALS['app_strings']['LBL_EMAIL_SHOW_READ']}</button>
-</div>
+		
+		
+		
+		if($foundData)
+		{
+			$str = <<<EOHTML
+			<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$query_encoded}'">{$GLOBALS['app_strings']['LBL_EMAIL_SHOW_READ']}</button>
+			{$str}
+			<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$query_encoded}'">{$GLOBALS['app_strings']['LBL_EMAIL_SHOW_READ']}</button>
+			</div>
 EOHTML;
+		} else {
+			$str .= $GLOBALS['app_strings']['LBL_EMAIL_SEARCH_NO_RESULTS'] . '</div>';
+		}
+		
 		return $str;
 	}
 	
@@ -217,13 +229,19 @@ EOHTML;
 					
 				}
 
-		
+		    //$GLOBALS['log']->fatal(var_export($searchFields, true));
+				
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
 			$where = "";
 			if (count($where_clauses) > 0 ){ 
 				$where = '('. implode(' ) OR ( ', $where_clauses) . ')';
+			}
+			
+			if($moduleName == 'Documents')
+			{
+			$GLOBALS['log']->fatal(">>>" . $where);
 			}
 			
 			$lvd = new ListViewData();
@@ -238,6 +256,11 @@ EOHTML;
 			    $params['orderBy'] = 'name';
 			}
 			$results[$moduleName]= $lvd->getListViewData($seed, $where, $offset,  $max, $return_fields,$params,'id') ;
+			
+			if($moduleName == 'Documents')
+			{
+			$GLOBALS['log']->fatal(var_export($results[$moduleName], true));
+			}			
 			
 		}
         //BEGIN SUGARCRM flav=spotactions ONLY

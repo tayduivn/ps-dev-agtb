@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $dictionary['KBDocument'] = array('table' => 'kbdocuments',
+								  'unified_search' => true,
                 'comment' => 'Knowledge Document management and FTS'
                                ,'fields' => array (
   'id' =>
@@ -40,6 +41,7 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'type' => 'varchar',
     'required'=>true,
     'importable' => 'required',
+  	'unified_search' => true,
   ),
 
   'name' =>

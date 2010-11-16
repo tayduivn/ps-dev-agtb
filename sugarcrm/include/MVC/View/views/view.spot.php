@@ -40,7 +40,8 @@ class ViewSpot extends ViewAjax
         $modules = array();
         
         // check to see if the user has customized the list of modules available to search
-        $users_modules = $GLOBALS['current_user']->getPreference('globalSearch', 'search');
+        
+        //$users_modules = $GLOBALS['current_user']->getPreference('globalSearch', 'search');
         if(!isset($users_modules)) {
             $unified_search_modules = array();
             include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
@@ -70,6 +71,7 @@ class ViewSpot extends ViewAjax
 		require_once('include/SearchForm/SugarSpot.php');
 		$sugarSpot = new SugarSpot;
 		$trimmed_query = trim($_REQUEST['q']);
+		$GLOBALS['log']->fatal(var_export($modules, true));
 		echo $sugarSpot->searchAndDisplay($trimmed_query, $modules, $offset);
     }
 }
