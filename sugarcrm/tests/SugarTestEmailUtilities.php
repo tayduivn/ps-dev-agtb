@@ -9,6 +9,8 @@ class SugarTestEmailUtilities
 
     public static function createEmail($id = '', $override = array()) 
     {
+        global $timedate;
+        
         $time = mt_rand();
     	$name = 'SugarEmail';
     	$email = new Email();
@@ -26,6 +28,10 @@ class SugarTestEmailUtilities
             $email->$key = $value;
         }
         $email->save();
+        if(!empty($override['parent_id']) && !empty($override['parent_type']))
+        {
+            self::createEmailsBeansRelationship($email->id, $override['parent_type'], $override['parent_id']);
+        }
         self::$_createdEmails[] = $email;
         return $email;
     }
@@ -35,6 +41,13 @@ class SugarTestEmailUtilities
         $email_ids = self::getCreatedEmailIds();
         $GLOBALS['db']->query('DELETE FROM emails WHERE id IN (\'' . implode("', '", $email_ids) . '\')');
         self::removeCreatedEmailBeansRelationships();
+    }
+    
+    private static function createEmailsBeansRelationship($email_id, $parent_type, $parent_id)
+    {
+        $unique_id = create_guid();
+        $GLOBALS['db']->query("INSERT INTO emails_beans SET id = '{$unique_id}', email_id = '{$email_id}', bean_id = '{$parent_id}', ".
+        					  "bean_module = '{$parent_type}', date_modified = '".gmdate('Y-m-d H:i:s')."', deleted = 0");
     }
     
     private static function removeCreatedEmailBeansRelationships(){
