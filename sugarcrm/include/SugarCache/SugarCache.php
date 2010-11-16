@@ -19,6 +19,7 @@ class SugarCache
      */
     protected static function _init()
     {
+        $lastPriority = 1000;
         $locations = array('include/SugarCache','custom/include/SugarCache');
  	    foreach ( $locations as $location ) {
             if (sugar_is_dir($location) && $dir = opendir($location)) {
@@ -30,14 +31,14 @@ class SugarCache
                         continue;
                     require_once("$location/$file");
                     $cacheClass = basename($file, ".php");
-                    $lastPriority = 1000;
                     if ( class_exists($cacheClass) && is_subclass_of($cacheClass,'SugarCacheAbstract') ) {
                         $GLOBALS['log']->debug("Found cache backend $cacheClass");
                         $cacheInstance = new $cacheClass();
                         if ( $cacheInstance->useBackend() 
                                 && $cacheInstance->getPriority() < $lastPriority ) {
-                            $GLOBALS['log']->debug("Using cache backend $cacheClass");
+                            $GLOBALS['log']->debug("Using cache backend $cacheClass, since ".$cacheInstance->getPriority()." is less than ".$lastPriority);
                             self::$_cacheInstance = $cacheInstance;
+                            $lastPriority = $cacheInstance->getPriority();
                         }
                     }
                 }
