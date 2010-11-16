@@ -3013,11 +3013,11 @@ function sugar_cleanup($exit = false) {
 
 	//check to see if this is not an ajax call AND the user preference error flag is set
 	if( 
-		$_SESSION['USER_PREFRENCE_ERRORS']
+		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
 		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
 		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
 		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
-		&& (isset($_SESSION['USER_PREFRENCE_ERRORS']))
+		
 	){
 		global $app_strings;
 		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
