@@ -1,0 +1,39 @@
+<?php 
+//FILE SUGARCRM flav!=sales ONLY
+require_once('modules/Emails/Email.php');
+
+class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    private $contact;
+    private $account;
+    private $email;
+    
+	public function setUp()
+    {
+        $this->contact = SugarTestContactUtilities::createContact('SDizzle');
+        $this->account = SugarTestAccountUtilities::createAccount('SDizzle');
+        
+        $override_data = array(
+            'parent_type' => 'Accounts',
+            'parent_id' => $this->account->id,
+        );
+        $this->email   = SugarTestEmailUtilities::createEmail('', $override_data);
+	}
+
+    public function tearDown()
+    {
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestEmailUtilities::removeAllCreatedEmails();
+    }
+    
+    public function testContactRelationship()
+    {
+        $this->assertTrue($this->email->parent_type == 'Accounts', "The email parent_type should be Accounts");
+        $this->assertTrue($this->email->parent_id == 'SDizzle', "The email parent_id should be SDizzle");
+        
+        $this->email->fill_in_additional_detail_fields();
+        $this->assertTrue(empty($this->email->contact_id), "There should be no contact associated with the Email");
+    }
+}
+?>
