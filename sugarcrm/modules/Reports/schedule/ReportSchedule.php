@@ -143,7 +143,7 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 	if(!empty($user_id)){
 		$where = "AND user_id='$user_id'";	
 	}
-	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
+	$time = date($GLOBALS['timedate']->get_db_date_time_format(), time());
 	$query = "SELECT report_schedules.* FROM $this->table_name \n".
 			"join saved_reports on saved_reports.id=$this->table_name.report_id \n".
 			"join users on users.id = report_schedules.user_id".
