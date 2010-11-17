@@ -143,7 +143,7 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 	if(!empty($user_id)){
 		$where = "AND user_id='$user_id'";	
 	}
-	$time = date($GLOBALS['timedate']->get_db_date_time_format(), time());
+	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
 	$query = "SELECT report_schedules.* FROM $this->table_name \n".
 			"join saved_reports on saved_reports.id=$this->table_name.report_id \n".
 			"join users on users.id = report_schedules.user_id".
@@ -165,14 +165,17 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 }
 
 function update_next_run_time($schedule_id, $next_run, $interval){
-		$last_run = strtotime($next_run);
-		$time = time();
-		while($last_run <= $time){
-			$last_run += $interval;	
-		}
-		$next_run = date($GLOBALS['timedate']->get_db_date_time_format(), $last_run);
-		$query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
-		$this->db->query($query);
+    $next_run .= " GMT"; // Append GMT to the value from the database to ensure it is converted correctly in strtotime
+    $last_run = strtotime($next_run);
+    $time = time();
+
+    while($last_run <= $time){
+        $last_run += $interval;
+    }
+
+    $next_run = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $last_run); //GMT for database
+    $query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
+    $this->db->query($query);
 			
 }
 }
