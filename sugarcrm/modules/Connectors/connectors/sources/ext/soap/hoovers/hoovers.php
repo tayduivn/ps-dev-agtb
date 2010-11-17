@@ -44,7 +44,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	
  	public function init() 
  	{
- 		parent::init();
+ 		parent::init();		
+ 	}
+ 	
+ 	
+ 	private function setUp()
+ 	{
  		try{
 	 		$properties = $this->getProperties();
 	 		//BEGIN ENCODE
@@ -131,7 +136,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	    }	
 
  	    require(HOOVERS_LOOKUP_MAPPING_FILE);
- 	    $this->_lookupMap = $lookup_mapping; 		
+ 	    $this->_lookupMap = $lookup_mapping;  		
  	}
  	
  	/**
@@ -143,6 +148,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @return $result Array of results based on the search results from the given arguments
  	 */
  	public function getList($args=array(), $module=null) {
+ 		$this->setUp();
  		//Call the soap method (AdvancedCompanySearch)
  		//$args['bal']['orderBy'] = 'IndustryName';
 		$args['bal']['sortDirection'] = 'Ascending';
@@ -183,7 +189,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @param $module String value of the module we are mapping input arguments from
  	 * @return $result Array of result based on the search results from the given arguments
  	 */
- 	public function getItem($args=array(), $module=null) { 		
+ 	public function getItem($args=array(), $module=null) {
+ 		$this->setUp(); 		
  		$result = $this->GetCompanyDetail($args);
 
  		if(empty($result) || empty($result['return'])) {
