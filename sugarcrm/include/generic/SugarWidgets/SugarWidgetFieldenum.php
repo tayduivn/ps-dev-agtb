@@ -19,21 +19,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('include/generic/SugarWidgets/SugarWidgetFieldVarchar.php');
 
-class SugarWidgetFieldEnum extends SugarWidgetReportField {
+class SugarWidgetFieldEnum extends SugarWidgetFieldVarchar
+{
 
     function SugarWidgetFieldEnum(&$layout_manager) {
         parent::SugarWidgetReportField($layout_manager);
-        $this->reporter = $this->layout_manager->getAttribute('reporter');  
+        $this->reporter = $this->layout_manager->getAttribute('reporter');
     }
-	
+
 	function queryFilterEmpty(&$layout_def)
 	{
         if( $this->reporter->db->dbType == 'mysql') {
 			return '( '.$this->_get_column_select($layout_def).' IS NULL'.
 				 ' OR '.$this->_get_column_select($layout_def)." = ''".
 				 ' OR '.$this->_get_column_select($layout_def)." = '^^' )\n";
-        }		
+        }
         elseif( $this->reporter->db->dbType == 'mssql') {
 			return '( '.$this->_get_column_select($layout_def).' IS NULL'.
 				 ' OR '.$this->_get_column_select($layout_def)." LIKE ''".
@@ -68,17 +70,28 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 	    }
 	//END SUGARCRM flav=ent ONLY
 	 }
-	
-	    
-	function queryFilteris(& $layout_def) {
+
+
+	function queryFilterEquals($layout_def)
+	{
+	    return $this->queryFilteris($layout_def);
+	}
+
+	function queryFilterNot_Equals_Str($layout_def)
+	{
+	    return $this->queryFilteris_not($layout_def);
+	}
+
+	function queryFilteris($layout_def) {
 		$input_name0 = $layout_def['input_name0'];
 		if (is_array($layout_def['input_name0'])) {
 			$input_name0 = $layout_def['input_name0'][0];
 		}
 		return $this->_get_column_select($layout_def)." = '".$GLOBALS['db']->quote($input_name0)."'\n";
 	}
-	
-	function queryFilteris_not(& $layout_def) {
+
+	function queryFilteris_not(& $layout_def)
+	{
 		$input_name0 = $layout_def['input_name0'];
 		if (is_array($layout_def['input_name0'])) {
 			$input_name0 = $layout_def['input_name0'][0];
@@ -109,11 +122,11 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 
 	function & displayListPlain($layout_def) {
 		if(!empty($layout_def['column_key'])){
-			$field_def = $this->reporter->all_fields[$layout_def['column_key']];	
+			$field_def = $this->reporter->all_fields[$layout_def['column_key']];
 		}else if(!empty($layout_def['fields'])){
 			$field_def = $layout_def['fields'];
 		}
-		
+
 		if (!empty($layout_def['table_key'] ) &&( empty ($field_def['fields']) || empty ($field_def['fields'][0]) || empty ($field_def['fields'][1]))){
 			$value = $this->_get_list_value($layout_def);
 		}else if(!empty($layout_def['name']) && !empty($layout_def['fields'])){
@@ -135,8 +148,8 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 	            $cell = $list[$value];
 	        }
 		if (is_array($cell)) {
-			
-			//#22632  
+
+			//#22632
 			$value = unencodeMultienum($value);
 			$cell=array();
 			foreach($value as $val){
@@ -220,7 +233,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 		}
 		//END SUGARCRM flav=ent ONLY
     }
-    
+
     function displayInput(&$layout_def) {
         global $app_list_strings;
 
@@ -228,12 +241,12 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
             if ( isset($layout_def['options']) &&  is_array($layout_def['options']) ) {
                 $ops = $layout_def['options'];
             }
-            elseif (isset($layout_def['options']) && isset($app_list_strings[$layout_def['options']])){ 
+            elseif (isset($layout_def['options']) && isset($app_list_strings[$layout_def['options']])){
             	$ops = $app_list_strings[$layout_def['options']];
                 if(array_key_exists('', $app_list_strings[$layout_def['options']])) {
              	   unset($ops['']);
 	            }
-            } 
+            }
             else{
             	$ops = array();
             }
@@ -241,7 +254,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
         else {
             $ops = $app_list_strings[$layout_def['options']];
         }
-        
+
         $str = '<select multiple="true" size="3" name="' . $layout_def['name'] . '[]">';
         $str .= get_select_options_with_id($ops, $layout_def['input_name0']);
         $str .= '</select>';
