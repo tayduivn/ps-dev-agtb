@@ -160,7 +160,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile, $path);
+			//logThis('Copying file to destination: ' . $targetFile, $path);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
@@ -168,7 +168,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile, $path);
+			//logThis('Skipping file: ' . $targetFile, $path);
 			$skippedFiles[] = $targetFile;
 		}
 	}
@@ -248,12 +248,12 @@ function copyRecursiveBetweenDirectories($from,$to){
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
 					} else {
-						logThis('Copied file: ' . $targetFile);
+						//logThis('Copied file: ' . $targetFile);
 						//$copiedFiles[] = $targetFile;
 					}
 
@@ -325,7 +325,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -333,7 +333,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						$copiedFiles[] = $targetFile;
 					}
 				} else {
-					logThis('Skipping file: ' . $targetFile);
+					//logThis('Skipping file: ' . $targetFile);
 					$skippedFiles[] = $targetFile;
 				}
 			  }
@@ -2567,7 +2567,7 @@ $uwMain = $upgrade_directories_not_found;
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile);
+			//logThis('Copying file to destination: ' . $targetFile);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -2575,7 +2575,7 @@ $uwMain = $upgrade_directories_not_found;
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile);
+			//logThis('Skipping file: ' . $targetFile);
 			//$skippedFiles[] = $targetFile;
 		}
 	   }
@@ -3164,7 +3164,7 @@ function unlinkTempFiles() {
 		rsort($files);
 		foreach($files as $file) {
 			if(!is_dir($file)) {
-				logThis('unlinking ['.$file.']', $path);
+				//logThis('unlinking ['.$file.']', $path);
 				@unlink($file);
 			}
 		}
@@ -3172,7 +3172,7 @@ function unlinkTempFiles() {
 		$files = findAllFiles($tempDir, array(), true);
 		foreach($files as $dir) {
 			if(is_dir($dir)) {
-				logThis('removing dir ['.$dir.']', $path);
+				//logThis('removing dir ['.$dir.']', $path);
 				@rmdir($dir);
 			}
 		}
@@ -3287,15 +3287,13 @@ function resetUwSession() {
 function UWrebuild() {
 	global $db;
 	global $path;
-
+	/*
+	//CCL - Comment this block out, it is called in end.php
 	logThis('Rebuilding everything...', $path);
-//	require_once('ModuleInstall/ModuleInstaller.php');
-//	$mi = new ModuleInstaller();
-//	$mi->rebuild_all(true);
 	require_once('modules/Administration/QuickRepairAndRebuild.php');
 	$randc = new RepairAndClear();
     $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
-
+    */
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
 	logThis('Registering rebuild record: '.$query, $path);
@@ -3635,7 +3633,7 @@ function deletePackageOnCancel(){
     // delete file in upgrades/patch
     $delete_me = urldecode( $_SESSION['install_file'] );
     if(@unlink($delete_me)) {
-    	logThis('unlinking: '.$delete_me);
+    	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
     } else {
     	logThis('ERROR: could not delete ['.$delete_me.']');
@@ -4929,12 +4927,8 @@ function upgradeModulesForTeam() {
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
 
     //Update team_set_id
-	if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_or_ent) {
-	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
-	}
-
-	//Update default_team
 	if($ce_to_pro_or_ent) {
+	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
 	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
 
@@ -5647,7 +5641,7 @@ function add_unified_search_to_custom_modules_vardefs()
 		}
 
 		$matches = array();
-		preg_match('/^([a-z0-9]{1,5})_([a-z0-9]+)$/i' , $module_dir, $matches);
+		preg_match('/^([a-z0-9]{1,6})_([a-z0-9_]+)$/i' , $module_dir, $matches);
 
 		// Make sure the module was created by module builder
 		if(empty($matches)){
@@ -5700,6 +5694,7 @@ function add_unified_search_to_custom_modules_vardefs()
 			if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
 			   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
 			{
+			   require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 			   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
 			   $package_key = $manifest['key'];
 			   $mbPackage = new MBPackage("{$package_dir}"); 

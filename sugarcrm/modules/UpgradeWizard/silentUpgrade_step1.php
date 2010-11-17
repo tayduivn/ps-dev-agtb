@@ -724,14 +724,14 @@ foreach($parserFiles as $file) {
 
 	if(!file_exists($targetFile))
 	 {
-		logThis('Copying file to destination: ' . $targetFile, $path);
+		//logThis('Copying file to destination: ' . $targetFile, $path);
 		if(!copy($srcFile, $targetFile)) {
 			logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
 		} else {
 			$copiedFiles[] = $targetFile;
 		}
 	} else {
-		logThis('Skipping file: ' . $targetFile, $path);
+		//logThis('Skipping file: ' . $targetFile, $path);
 		//$skippedFiles[] = $targetFile;
 	}
    }
@@ -865,10 +865,6 @@ if(!didThisStepRunBefore('commit')){
 				$progArray['post_install']='in_progress';
 				post_install_progress($progArray,'set');
 				    global $moduleList;
-				    if($origVersion < '551' && !in_array('Feeds', $moduleList))
-				    {
-				        $moduleList[] = 'Feeds';
-				    }
 					include($file);
 					post_install();
 				// cn: only run conversion if admin selects "Sugar runs SQL"
@@ -903,26 +899,8 @@ if(!didThisStepRunBefore('commit')){
 		require("sugar_version.php");
 		require('config.php');
 		global $sugar_config;
-
-		if($origVersion < '550' && $sugar_config['dbconfig']['db_type'] == 'mssql' && !is_freetds()){
-		     convertImageToText('import_maps', 'content');
-		     convertImageToText('import_maps', 'default_values');
-		      convertImageToText('saved_reports', 'content');
-		}
 		
-		/*
-		if($origVersion < '550'){
-			logThis("Upgrading multienum data", $path);
-            require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-            upgrade_multienum_data();
-		}
-		if($origVersion < '550' && $sugar_config['dbconfig']['db_type'] == 'mssql') {
- 			dropColumnConstraintForMSSQL("outbound_email", "mail_smtpssl");
- 			$GLOBALS['db']->query("ALTER TABLE outbound_email alter column mail_smtpssl int NULL");
- 		} // if
-		*/
-		
-		if($ce_to_pro_ent || $origVersion < '550'){
+		if($ce_to_pro_ent){
 			if(isset($sugar_config['sugarbeet']))
 			{
 			    //$sugar_config['sugarbeet'] is only set in COMM
@@ -1042,11 +1020,6 @@ if(!didThisStepRunBefore('commit')){
 		$_REQUEST['silent'] = true;
 	}
 	 
-    if($origVersion < '550')
-    {
-    	include("install/seed_data/Advanced_Password_SeedData.php"); 
-    	$GLOBALS['db']->query(" update email_templates set team_set_id=team_id where team_set_id is null and team_id is not null ");
-    }
 	logThis('Start rebuild relationships.', $path);
 	 	@rebuildRelations();
 	logThis('End rebuild relationships.', $path);
