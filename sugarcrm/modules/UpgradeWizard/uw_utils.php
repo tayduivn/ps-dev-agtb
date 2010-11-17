@@ -3287,12 +3287,13 @@ function resetUwSession() {
 function UWrebuild() {
 	global $db;
 	global $path;
-
+	/*
+	//CCL - Comment this block out, it is called in end.php
 	logThis('Rebuilding everything...', $path);
 	require_once('modules/Administration/QuickRepairAndRebuild.php');
 	$randc = new RepairAndClear();
     $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
-
+    */
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
 	logThis('Registering rebuild record: '.$query, $path);
@@ -5640,7 +5641,7 @@ function add_unified_search_to_custom_modules_vardefs()
 		}
 
 		$matches = array();
-		preg_match('/^([a-z0-9]{1,5})_([a-z0-9]+)$/i' , $module_dir, $matches);
+		preg_match('/^([a-z0-9]{1,6})_([a-z0-9_]+)$/i' , $module_dir, $matches);
 
 		// Make sure the module was created by module builder
 		if(empty($matches)){
@@ -5693,6 +5694,7 @@ function add_unified_search_to_custom_modules_vardefs()
 			if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
 			   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
 			{
+			   require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
 			   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
 			   $package_key = $manifest['key'];
 			   $mbPackage = new MBPackage("{$package_dir}"); 
