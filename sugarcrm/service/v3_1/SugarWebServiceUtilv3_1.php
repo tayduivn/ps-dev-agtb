@@ -410,7 +410,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
                 }
         }
         
-        $results = $this->addFieldLevelACLs($module_name,$type, $view, $results);
         return $results;
     }
     
