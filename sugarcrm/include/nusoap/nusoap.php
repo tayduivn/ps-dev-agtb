@@ -1653,7 +1653,7 @@ class nusoap_xmlschema extends nusoap_base  {
 						$xml .= " <$schemaPrefix:import location=\"" . $ii['location'] . '" namespace="' . $ns . "\" />\n";
 					} else {
 						if ($schemaLocationCount == 0) {
-							$xml .= " <$schemaPrefix:import namespace=\"" . $ns . "\" schemaLocation=\"http://schemas.xmlsoap.org/soap/encoding/\"/>\n";
+							$xml .= " <$schemaPrefix:import namespace=\"" . $ns . "\" schemaLocation=\"" . $ns . "\"/>\n";
 						} else {
 							$xml .= " <$schemaPrefix:import namespace=\"" . $ns . "\" />\n";
 						}
