@@ -67,17 +67,17 @@ class UsersController extends SugarController
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
-            //BEGIN SUGARCRM flav!=sales ONLY
+            //BEGIN SUGARCRM flav=PRO ONLY
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
             }
             else{
                 SugarApplication::redirect("index.php?module=Users&action=index");
             }
-            //END SUGARCRM flav!=sales ONLY
-            //BEGIN SUGARCRM flav=sales ONLY
+            //END SUGARCRM flav=PRO ONLY
+            //BEGIN SUGARCRM flav=sales || flav=COM ONLY
             SugarApplication::redirect("index.php?module=Users&action=index");
-            //END SUGARCRM flav=sales ONLY
+            //END SUGARCRM flav=sales || flav=COM ONLY
         }
         else 
             sugar_die("Unauthorized access to administration.");
