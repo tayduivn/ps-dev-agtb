@@ -109,7 +109,8 @@ $mod_strings = array (
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
     'LBL_CALL_INFORMATION' => 'Call Overview',
     'LBL_REMOVE' => 'rem',
-	'LBL_INVITE_PROMPT' => 'Invite related Lead/Contact to the call?',
+	'LBL_INVITE_PROMPT' => 'Do you wish to invite the related Lead/Contact to the call?',
+	'LBL_INVITE_HEADER' => 'Invite',
    );
 
 
