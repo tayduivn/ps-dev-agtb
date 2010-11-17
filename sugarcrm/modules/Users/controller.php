@@ -51,7 +51,7 @@ class UsersController extends SugarController
 			$this->view = 'classic';
 		}
 	}
-	
+    //END SUGARCRM flav=pro || flav=sales ONLY	
 	protected function action_delete()
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')
@@ -82,7 +82,7 @@ class UsersController extends SugarController
         else 
             sugar_die("Unauthorized access to administration.");
 	}
-	
+    //BEGIN SUGARCRM flav=pro || flav=sales ONLY	
 	/**
 	 * Clear the reassign user records session variables. 
 	 *
@@ -94,7 +94,7 @@ class UsersController extends SugarController
         else
 	       sugar_die("You cannot access this page.");
 	}
-	
+
 	protected function action_wirelessmain() 
 	{
 		$this->view = 'wirelessmain';
