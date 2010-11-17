@@ -254,6 +254,8 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMetadataListViewFieldLevelACLS($module, $view_type, $view, $field_name, $expeced_acl)
     {
+        $this->markTestSkipped('Should be enabled for 611 patch.');
+        
         $result = $this->_login();
         $session = $result['id'];
         
@@ -273,6 +275,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMetadataEditViewFieldLevelACLS($module, $view_type, $view, $field_name, $expeced_acl)
     {
+        $this->markTestSkipped('Should be enabled for 611 patch.');
         $result = $this->_login();
         $session = $result['id'];
 
