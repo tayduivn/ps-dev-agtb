@@ -40,11 +40,11 @@ class SugarCacheWincache extends SugarCacheAbstract
         $key
         )
     {
-        $result = true;
-        $returnVal = wincache_ucache_get($key,$result);
-        if ( $result ) {
-            return $returnVal;
+        if ( !wincache_ucache_exists($key) ) {
+            return null;
         }
+        
+        return wincache_ucache_get($key);
     }
     
     /**
