@@ -499,7 +499,7 @@ class SugarTheme
                 $font = $this->fonts[0];
             $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('fonts.'.$font.'.css').'" id="current_font_style" />';
         }
-        
+
         return $html;
     }
     
@@ -674,7 +674,7 @@ EOHTML;
         $addJSPath = true
         )
     {
-        if ( isset($this->_cssCache[$cssFileName]) ) {
+        if ( isset($this->_cssCache[$cssFileName]) && sugar_is_file($this->_cssCache[$cssFileName]) ) {
             if ( $addJSPath )
                 return getJSPath($this->_cssCache[$cssFileName]);
             else
@@ -748,7 +748,7 @@ EOHTML;
         $addJSPath = true
         )
     {
-        if ( isset($this->_jsCache[$jsFileName]) ) {
+        if ( isset($this->_jsCache[$jsFileName]) && sugar_is_file($this->_jsCache[$jsFileName]) ) {
             if ( $addJSPath )
                 return getJSPath($this->_jsCache[$jsFileName]);
             else
