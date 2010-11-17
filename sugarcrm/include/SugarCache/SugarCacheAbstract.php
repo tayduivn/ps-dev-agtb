@@ -96,7 +96,11 @@ abstract class SugarCacheAbstract
         }
         
         $this->_cacheHits++;
-        return $this->_localStore[$key];
+        if ( isset($this->_localStore[$key]) ) {
+            return $this->_localStore[$key];
+        }
+        
+        return null;
     }
     
     /**
@@ -130,7 +134,7 @@ abstract class SugarCacheAbstract
         $key
         )
     {
-        return $this->__get($key) === FALSE;
+        return !is_null($this->__get($key));
     }
     
     /**
@@ -207,7 +211,7 @@ abstract class SugarCacheAbstract
      * getting a value from cache
      *
      * @param  string $key
-     * @return mixed  $value
+     * @return mixed  $value, returns null if the key is not in the cache
      */
     abstract protected function _getExternal(
         $key

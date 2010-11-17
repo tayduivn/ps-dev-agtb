@@ -87,7 +87,12 @@ class SugarCacheMemcache extends SugarCacheAbstract
         $key
         )
     {
-        return $this->_getMemcacheObject()->get($key);
+        $returnValue = $this->_getMemcacheObject()->get($key);
+        if ( !$returnValue ) {
+            return null;
+        }
+        
+        return $returnValue;
     }
     
     /**
