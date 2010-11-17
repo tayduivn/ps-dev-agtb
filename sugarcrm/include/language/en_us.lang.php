@@ -2764,6 +2764,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
 	'ERROR_USER_PREFS' => "WARNING: Not all of your preferences could be saved!  Please contact your administrator.",
+	'ERROR_USER_PREFS_DASH' => "WARNING: Dashlet changes could not be saved because your user preferences could not be stored!  Please report this to your administrator.",
+	'ERROR_USER_PREFS_TAB' => "WARNING: Tab/Page changes could not be saved because your user preferences could not be stored!  Please report this to your administrator.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
