@@ -55,6 +55,13 @@
 {{/if}}
 
 <input type="hidden" name="deleteAttachment" value="0">
+<input type="hidden" name="{{$idName}}" id="{{$idName}}" value="{{sugarvar key='value'}}">
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+<input type="hidden" name="{{$vardef.docId}}" id="{{$vardef.docId}}" value="{$fields.{{$vardef.docId}}.value}">
+<input type="hidden" name="{{$vardef.docUrl}}" id="{{$vardef.docUrl}}" value="{$fields.{{$vardef.docUrl}}.value}">
+<input type="hidden" name="{{$vardef.docDirectUrl}}" id="{{$vardef.docDirectUrl}}" value="{$fields.{{$vardef.docDirectUrl}}.value}">
+<input type="hidden" name="{{$idName}}_old_doctype" id="{{$idName}}_old_doctype" value="{$fields.{{$vardef.docType}}.value}">
+{{/if}}
 <span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
   <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
 
@@ -76,7 +83,7 @@
 <h4>{$APP.LBL_UPLOAD_FROM_COMPUTER}</h4>
 {{/if}}
 <input type="hidden" name="{{$idName}}_escaped">
-<input id="{{$idName}}" name="{{$idName}}" 
+<input id="{{$idName}}_file" name="{{$idName}}_file" 
 type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -92,8 +99,6 @@ value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$v
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:inline;">
 <br><h4>{$APP.LBL_SEARCH_EXTERNAL_API}</h4>
-<input type="hidden" name="{{$vardef.docId}}" id="{{$vardef.docId}}" value="{$fields[{{$vardef.docId}}].value}">
-<input type="hidden" name="{{$vardef.docUrl}}" id="{{$vardef.docUrl}}" value="{$fields[{{$vardef.docUrl}}].value}">
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'

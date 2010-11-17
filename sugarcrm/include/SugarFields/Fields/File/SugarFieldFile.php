@@ -45,35 +45,61 @@ class SugarFieldFile extends SugarFieldBase {
     }
     
 	public function save(&$bean, $params, $field, $vardef, $prefix = ''){
+        $fakeDisplayParams = array();
+        $this->fillInOptions($vardef,$fakeDisplayParams);
+
 		require_once('include/upload_file.php');
-		$upload_file = new UploadFile($prefix . $field);
+		$upload_file = new UploadFile($prefix . $field . '_file');
 
 		//remove file
-		if (isset($_REQUEST['remove_file_' . $field]) && $_REQUEST['remove_file_' . $field] == 1)
+		if (isset($_REQUEST['remove_file_' . $field]) && $params['remove_file_' . $field] == 1)
 		{
 			$upload_file->unlink_file($bean->$field);
 			$bean->$field="";
 		}
 		
 		$move=false;
-		if (isset($_FILES[$prefix . $field]) && $upload_file->confirm_upload())
+		if (isset($_FILES[$prefix . $field . '_file']) && $upload_file->confirm_upload())
 		{
     		$bean->$field = $upload_file->get_stored_file_name();
+            $GLOBALS['log']->fatal("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
     		$bean->file_mime_type = $upload_file->mime_type;
 			$bean->file_ext = $upload_file->file_ext;
 			$move=true;
 		}
+
+        if (isset($params['isDuplicate']) && $params['isDuplicate'] == true && $params['isDuplicate'] != 'false' ) {
+            // It's a duplicate
+            $old_id = $params['relate_id'];
+        }
+
+        if (empty($bean->id)) { 
+            $bean->id = create_guid();
+            $bean->new_with_id = true;
+        }
+
+        $GLOBALS['log']->fatal("IKEA: OLD ID: ".$old_id);
+        $GLOBALS['log']->fatal("IKEA: PARAMS: ".print_r($params,true));
  		
 		if ($move) {
-			if (empty($bean->id)) { 
-				$bean->id = create_guid();
-				$bean->new_with_id = true;
-			}
-        
+            $GLOBALS['log']->fatal("IKEA: Moving the file ({$bean->filename})");
 			$upload_file->final_move($bean->id);
             $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $bean->mime_type);
-		} else if ( !empty($params[$prefix . $vardef['name'] . '_remoteName']) ) {
+        } else if ( ! empty($old_id) ) {
+            // It's a duplicate, I think
+            $GLOBALS['log']->fatal("IKEA: It's a duplicate old id ($old_id) / isDuplicate ({$params['isDuplicate']})");
+
+            if ( empty($params[$prefix . $vardef['docUrl'] ]) ) {
+                $GLOBALS['log']->fatal("IKEA: It's a locally stored file, ($prefix{$vardef['docUrl']}) is empty");
+                $upload_file->duplicate_file($old_id, $bean->id, $bean->$field);
+            } else {
+                $GLOBALS['log']->fatal("IKEA: It's a remotely stored file, lets copy manually");
+                $docType = $vardef['docType'];
+                $bean->$docType = $params[$prefix . $field . '_old_doctype'];
+            }
+		} else if ( !empty($params[$prefix . $field . '_remoteName']) ) {
             // We ain't moving, we might need to do some remote linking
+            $GLOBALS['log']->fatal("IKEA: Remotely linking the file");
             $displayParams = array();
             $this->fillInOptions($vardef,$displayParams);
             
@@ -82,9 +108,24 @@ class SugarFieldFile extends SugarFieldBase {
                  && isset($params[$prefix . $vardef['docType']]) 
                  && ! empty($params[$prefix . $vardef['docType']])
                 ) {
-                $bean->filename = $params[$prefix . $vardef['name'] . '_remoteName'];
+                $GLOBALS['log']->fatal("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
+                $bean->$field = $params[$prefix . $field . '_remoteName'];
+            }
+        } else {
+            $GLOBALS['log']->fatal("IKEA: Not doing a thing");
+        }
+        
+        if ( empty($bean->$field) ) {
+            $GLOBALS['log']->fatal("The $field is empty, clearing out the lot");
+            // Looks like we are emptying this out
+            $clearFields = array('docId', 'docType', 'docUrl', 'docDirectUrl');
+            foreach ( $clearFields as $clearMe ) {
+                if ( ! isset($vardef[$clearMe]) ) {
+                    continue;
+                }
+                $clearField = $vardef[$clearMe];
+                $bean->$clearField = '';
             }
         }
 	}
 }
-?>

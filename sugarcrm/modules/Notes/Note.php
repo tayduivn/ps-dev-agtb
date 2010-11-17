@@ -144,6 +144,8 @@ class Note extends SugarBean {
             $this->doc_type = '';
             $this->doc_id = '';
             $this->doc_url = '';
+            $this->filename = '';
+            $this->file_mime_type = ''; 
 		}
 		if(file_exists($removeFile)) {
 			if(!unlink($removeFile)) {
@@ -314,8 +316,7 @@ class Note extends SugarBean {
 			case 'ACL':return true;
 		}
 		return false;
-	}
-	
+	}	
 }
 
 	// External API integration, for the dropdown list of what external API's are available

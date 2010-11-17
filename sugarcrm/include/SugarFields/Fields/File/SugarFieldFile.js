@@ -46,6 +46,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
 		            ajaxStatus.hideStatus();
 		            document.getElementById(elemBaseName+'_old').innerHTML = '';
                     document.getElementById(docTypeName).disabled = false;
+                    document.getElementById(elemBaseName).value = '';
 	            } else {
 		            document.getElementById(elemBaseName+'_new').style.display = 'none';
 		            ajaxStatus.flashStatus(SUGAR.language.get('Notes', 'ERR_REMOVING_ATTACHMENT'), 2000); 
