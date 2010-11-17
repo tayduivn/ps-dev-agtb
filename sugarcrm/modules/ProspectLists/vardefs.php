@@ -200,9 +200,9 @@ $dictionary['ProspectList'] = array (
 		),
 	),
 	'relationships'=>array(
-	  strtolower($module).'_assigned_user' =>
+	  'prospectlists_assigned_user' =>
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
-   'rhs_module'=> $module , 'rhs_table'=> 'prospect_lists', 'rhs_key' => 'assigned_user_id',
+   'rhs_module'=> 'prospectlists' , 'rhs_table'=> 'prospect_lists', 'rhs_key' => 'assigned_user_id',
    'relationship_type'=>'one-to-many')
 )
 );
