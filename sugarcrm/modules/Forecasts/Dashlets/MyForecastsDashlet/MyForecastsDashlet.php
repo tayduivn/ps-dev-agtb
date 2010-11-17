@@ -179,7 +179,7 @@ class MyForecastsDashlet extends Dashlet {
         
      
         return parent::display() . $str; // return parent::display for title and such
-    
+    }
     /**
      * Displays the javascript for the dashlet
      * 
