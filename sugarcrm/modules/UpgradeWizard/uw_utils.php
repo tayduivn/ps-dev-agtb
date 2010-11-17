@@ -5627,12 +5627,6 @@ function add_unified_search_to_custom_modules_vardefs()
 	$module_directories = scandir('modules');
     $modified_search = false;
     
-    //If there is no package directory, just return false
-    if(!file_exists('custom/modulebuilder/packages'))
-    {
-       return false;
-    }
-    
     $scanned_packages = array();
     
 	foreach($module_directories as $module_dir){
@@ -5678,31 +5672,52 @@ function add_unified_search_to_custom_modules_vardefs()
 			continue;
 		}
 		
-		$package_directories = scandir('custom/modulebuilder/packages');
-		foreach($package_directories as $package_dir)
+		$module_processed = false;
+		
+		if(file_exists('custom/modulebuilder/packages'))
 		{
-			if($package_dir == '.' || $package_dir == '..' || !is_dir("custom/modulebuilder/packages/{$package_dir}"))
+			$package_directories = scandir('custom/modulebuilder/packages');
+			foreach($package_directories as $package_dir)
 			{
-				continue;
+				if($package_dir == '.' || $package_dir == '..' || !is_dir("custom/modulebuilder/packages/{$package_dir}"))
+				{
+					continue;
+				}
+				
+				if(isset($scanned_packages[$package_dir]))
+				{
+				    continue;
+				}
+				
+				if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
+				   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
+				{
+				   require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
+				   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
+				   $package_key = $manifest['key'];
+				   $mbPackage = new MBPackage("{$package_dir}"); 
+				   $mbPackage->getModule($matches[2]);
+				   $mbPackage->modules[$matches[2]]->createClasses($full_module_dir);
+				   $modified_search = true;
+				   $scanned_packages[$package_dir] = true;
+				   $module_processed = true;
+				}
 			}
-			
-			if(isset($scanned_packages[$package_dir]))
-			{
-			    continue;
-			}
-			
-			if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
-			   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
-			{
-			   require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
-			   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
-			   $package_key = $manifest['key'];
-			   $mbPackage = new MBPackage("{$package_dir}"); 
-			   $mbPackage->getModule($matches[2]);
-			   $mbPackage->modules[$matches[2]]->createClasses($full_module_dir);
-			   $modified_search = true;
-			   $scanned_packages[$package_dir] = true;
-			}
+		}
+		
+		//Perhaps this was a custom module loaded via Module Loader
+		//If so, then we just attempt to modify the vardefs.php file accordingly
+		if(!$module_processed)
+		{
+		   $fileContents = file_get_contents("{$full_module_dir}/vardefs.php");
+		   $tableAttributeRegex = "/[\'\"]table[\'\"]\s*?=>\s*?[\'\"]{$module_dir}[\'\"]\s*?\,/";
+		   $tableAttributeReplacement = "'table'=>'{$module_dir}', 'unified_search'=>true,";
+		   
+		   if(preg_match($tableAttributeRegex, $fileContents)) 
+		   {
+			   $out = preg_replace($tableAttributeRegex, $tableAttributeReplacement, $fileContents);
+			   file_put_contents("{$full_module_dir}/vardefs.php", $out);
+		   }				   
 		}
 				
 	}
