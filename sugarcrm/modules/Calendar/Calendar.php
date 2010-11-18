@@ -453,14 +453,13 @@ class CalendarActivity
 
 		if ($sugar_bean->object_name == 'Task')
 		{
-		    $dbDate  = $timedate->to_db($this->sugar_bean->date_start);
+		    $dbDate  = $timedate->to_db($this->sugar_bean->date_due);
 		    $this->start_time = DateTimeUtil::get_time_start($dbDate);
 			if ( empty($this->start_time))
 			{
 				return null;
 			}
-			$dbDate  = $timedate->to_db($this->sugar_bean->date_due);
-		    $this->end_time = DateTimeUtil::get_time_start($dbDate);
+			$this->end_time = $this->start_time;
 		}
 		else
 		{
