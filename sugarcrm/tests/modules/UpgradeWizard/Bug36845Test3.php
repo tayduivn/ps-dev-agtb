@@ -62,11 +62,11 @@ $fp = sugar_fopen($this->module_dir . '/metadata/SearchFields.php', "w");
 fwrite( $fp, $the_string );
 fclose( $fp );	
 	
-
+$table_name = strtolower($this->module);
 $the_string = <<<EOQ
 <?php
 \$dictionary["{$this->module}"] = array(
-	'table'=>"{$this->module}",
+	'table'=>"{$table_name}",
 	'audited'=>true,
 	'fields'=>array (
 ),

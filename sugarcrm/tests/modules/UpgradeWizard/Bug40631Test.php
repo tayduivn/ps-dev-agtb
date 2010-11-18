@@ -184,6 +184,7 @@ $the_string = <<<EOQ
     ),
     'Contacts' => 
     array (
+    
       'address1' => 'primary_address_street',
       'address2' => 'primary_address_street_2',
       'city' => 'primary_address_city',

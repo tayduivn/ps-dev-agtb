@@ -234,7 +234,9 @@ if(function_exists('upgrade_connectors'))
 //Global search support
 if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
 {
+   logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
+   logThis('Add global search for custom modules finished .', $path);
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');

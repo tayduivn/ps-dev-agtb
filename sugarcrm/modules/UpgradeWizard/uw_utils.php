@@ -5623,11 +5623,8 @@ function upgrade_connectors($path='')
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-    require_once('modules/ModuleBuilder/MB/MBPackage.php');
 	$module_directories = scandir('modules');
     $modified_search = false;
-    
-    $scanned_packages = array();
     
 	foreach($module_directories as $module_dir){
 		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
@@ -5642,7 +5639,7 @@ function add_unified_search_to_custom_modules_vardefs()
 			continue;
 		}
 
-		$full_module_dir = "modules/{$module_dir}/";
+		$full_module_dir = "modules/{$module_dir}";
 
 		if(!file_exists("{$full_module_dir}/vardefs.php"))
 		{
@@ -5652,7 +5649,7 @@ function add_unified_search_to_custom_modules_vardefs()
 		require("{$full_module_dir}/vardefs.php");
 		
 		//If unified_search is already set to true, just skip
-		if(isset($GLOBALS['dictionary']["{$module_dir}"]['unified_search']))
+		if(isset($dictionary["{$module_dir}"]['unified_search']))
 		{
 		   continue;
 		}		
@@ -5671,59 +5668,23 @@ function add_unified_search_to_custom_modules_vardefs()
 		{
 			continue;
 		}
-		
-		$module_processed = false;
-		
-		if(file_exists('custom/modulebuilder/packages'))
+
+		$fileContents = file_get_contents("{$full_module_dir}/vardefs.php");
+		//Lower case this module_dir value to match table name
+		$mod = strtolower($module_dir);
+		$tableAttributeRegex = "/[\'\"]table[\'\"]\s*?=>\s*?[\'\"]".$mod."[\'\"]\s*?\,/";
+		$tableAttributeReplacement = "'table'=>'{$mod}', 'unified_search'=>true,";
+
+		if(preg_match($tableAttributeRegex, $fileContents)) 
 		{
-			$package_directories = scandir('custom/modulebuilder/packages');
-			foreach($package_directories as $package_dir)
-			{
-				if($package_dir == '.' || $package_dir == '..' || !is_dir("custom/modulebuilder/packages/{$package_dir}"))
-				{
-					continue;
-				}
-				
-				if(isset($scanned_packages[$package_dir]))
-				{
-				    continue;
-				}
-				
-				if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
-				   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
-				{
-				   require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
-				   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
-				   $package_key = $manifest['key'];
-				   $mbPackage = new MBPackage("{$package_dir}"); 
-				   $mbPackage->getModule($matches[2]);
-				   $mbPackage->modules[$matches[2]]->createClasses($full_module_dir);
-				   $modified_search = true;
-				   $scanned_packages[$package_dir] = true;
-				   $module_processed = true;
-				}
-			}
-		}
-		
-		//Perhaps this was a custom module loaded via Module Loader
-		//If so, then we just attempt to modify the vardefs.php file accordingly
-		if(!$module_processed)
-		{
-		   $fileContents = file_get_contents("{$full_module_dir}/vardefs.php");
-		   $tableAttributeRegex = "/[\'\"]table[\'\"]\s*?=>\s*?[\'\"]{$module_dir}[\'\"]\s*?\,/";
-		   $tableAttributeReplacement = "'table'=>'{$module_dir}', 'unified_search'=>true,";
-		   
-		   if(preg_match($tableAttributeRegex, $fileContents)) 
-		   {
-			   $out = preg_replace($tableAttributeRegex, $tableAttributeReplacement, $fileContents);
-			   file_put_contents("{$full_module_dir}/vardefs.php", $out);
-		   }				   
-		}
-				
+		   $out = preg_replace($tableAttributeRegex, $tableAttributeReplacement, $fileContents);
+		   file_put_contents("{$full_module_dir}/vardefs.php", $out);
+		   $modified_search = true;
+		}	
 	}
 	
 	//Now clear the search cache
-	if(!empty($scanned_packages))
+	if($modified_search)
 	{
 		require_once('modules/Administration/QuickRepairAndRebuild.php');
 		$repair = new RepairAndClear();

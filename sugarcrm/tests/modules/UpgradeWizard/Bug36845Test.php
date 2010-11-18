@@ -6,7 +6,7 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase {
 
 var $has_custom_unified_search_modules = false;	
 var $module_dir = 'modules/clabc_Bug36845Test';
-var $module = 'clabc_Bug3645Test';
+var $module = 'clabc_Bug36845Test';
 
 public function setUp() 
 {
@@ -62,11 +62,11 @@ $fp = sugar_fopen($this->module_dir . '/metadata/SearchFields.php', "w");
 fwrite( $fp, $the_string );
 fclose( $fp );	
 	
-
+$table_name = strtolower($this->module);
 $the_string = <<<EOQ
 <?php
 \$dictionary["{$this->module}"] = array(
-	'table'=>"{$this->module}",
+	'table'=>"{$table_name}",
 	'audited'=>true,
 	'fields'=>array (
 ),
@@ -176,7 +176,7 @@ public function test_update_custom_vardefs()
     require_once('modules/UpgradeWizard/uw_utils.php');
     add_unified_search_to_custom_modules_vardefs();
     require($this->module_dir . '/vardefs.php');
-    $this->assertTrue($dictionary['clabc_Bug36845Test']['unified_search'], 'Assert that the add_unified_search_to_custom_modules function worked');
+    $this->assertTrue($dictionary["{$this->module}"]['unified_search'], 'Assert that the add_unified_search_to_custom_modules function worked');
 }
 
 
@@ -188,7 +188,7 @@ public function test_update_custom_vardefs_without_searchfields()
     require_once('modules/UpgradeWizard/uw_utils.php');
     add_unified_search_to_custom_modules_vardefs();
     require($this->module_dir . '/vardefs.php');
-    $this->assertTrue(!isset($dictionary['clabc_Bug36845Test']['unified_search']), 'Assert that add_unified_search_to_custom_modules function worked');
+    $this->assertTrue(!isset($dictionary["{$this->module}"]['unified_search']), 'Assert that add_unified_search_to_custom_modules function worked');
 }
 
 
