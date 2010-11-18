@@ -284,18 +284,18 @@ function get_user_module_list($user){
 		} else {
 			$modules[$key] = '';
 		} // else
-	} // foreach		
-	
+	} // foreach
+
 	//Remove all modules that don't have a beanFiles entry associated with it
 	foreach($modules as $module_name=>$module)
 	{
 		$class_name = $beanList[$module_name];
 		if(empty($beanFiles[$class_name]))
 		{
-		   unset($modules[$module_name]);   
+		   unset($modules[$module_name]);
 		}
-	}	
-	
+	}
+
 	return $modules;
 
 }
@@ -611,11 +611,11 @@ function new_handle_set_relationship($module_name, $module_id, $link_field_name,
 }
 
 function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
-	global $beanList, $beanFiles;
+	global $beanList, $beanFiles, $app_list_strings;
+	global $current_user;
 
 	$ret_values = array();
 
-	global $current_user;
 	$class_name = $beanList[$module_name];
 	require_once($beanFiles[$class_name]);
 	$ids = array();
