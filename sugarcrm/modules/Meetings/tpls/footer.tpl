@@ -67,7 +67,10 @@ function promptForRelatedInvite(){
 	     });
 	     confirmDeletePopup.setHeader(SUGAR.language.get('Calls', 'LBL_INVITE_HEADER'));
 	    confirmDeletePopup.render(document.body);
+	}else{
+		document.EditView.submit();
 	}
+	
 }
 
 var handleYes = function() {
