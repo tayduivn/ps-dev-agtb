@@ -4669,7 +4669,7 @@ function add_custom_modules_favorites_search(){
 		}
 
 		$matches = array();
-		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9_]+$/i' , $module_dir, $matches);
 
 		// Make sure the module was created by module builder
 		if(empty($matches)){
@@ -5632,7 +5632,7 @@ function add_unified_search_to_custom_modules_vardefs()
 		}
 
 		$matches = array();
-		preg_match('/^([a-z0-9]{1,6})_([a-z0-9_]+)$/i' , $module_dir, $matches);
+		preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $module_dir, $matches);
 
 		// Make sure the module was created by module builder
 		if(empty($matches)){
