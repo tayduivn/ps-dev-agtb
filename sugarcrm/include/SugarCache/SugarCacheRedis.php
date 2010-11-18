@@ -99,7 +99,7 @@ class SugarCacheRedis extends SugarCacheAbstract
         $key = $this->_fixKeyName($key);
         $returnValue = $this->_getRedisObject()->get($key);
         // return null if we don't get a cache hit
-        if ( !$returnValue ) {
+        if ( $returnValue === false ) {
             return null;
         }
         

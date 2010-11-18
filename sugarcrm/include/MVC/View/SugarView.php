@@ -970,11 +970,10 @@ EOHTML;
             }
             $return .= $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_RESOURCES'] . '(' . DBManager::getQueryCount() . ',' . sizeof($list_of_files_case_insensitive) . ')<br>';
             // Display performance of the internal and external caches....
-            $return .= "External cache (hits/total=ratio) local ({$GLOBALS['external_cache_request_local_hits']}/{$GLOBALS['external_cache_request_local_total']}=" . round($GLOBALS['external_cache_request_local_hits']*100/$GLOBALS['external_cache_request_local_total'], 0) . "%)";
-            if ($GLOBALS['external_cache_request_external_total']) {
-                // Only display out of process cache results if there was at least one attempt to retrieve from the out of process cache (this signifies that it was enabled).
-                $return .= " external ({$GLOBALS['external_cache_request_external_hits']}/{$GLOBALS['external_cache_request_external_total']}=" . round($GLOBALS['external_cache_request_external_hits']*100/$GLOBALS['external_cache_request_external_total'], 0) . "%)<br />";
-            }
+            $cacheStats = SugarCache::instance()->getCacheStats();
+            $return .= "External cache (hits/total=ratio) local ({$cacheStats['localHits']}/{$cacheStats['requests']}=" . round($cacheStats['localHits']*100/$cacheStats['requests'], 0) . "%)";
+            $return .= " external ({$cacheStats['externalHits']}/{$cacheStats['requests']}=" . round($cacheStats['externalHits']*100/$cacheStats['requests'], 0) . "%)<br />";
+            $return .= " misses ({$cacheStats['misses']}/{$cacheStats['requests']}=" . round($cacheStats['misses']*100/$cacheStats['requests'], 0) . "%)<br />";
         }
 
         return $return;

@@ -41,7 +41,7 @@ class SugarCacheAPC extends SugarCacheAbstract
         $key
         )
     {
-        if ( !apc_fetch($key) ) {
+        if ( apc_fetch($key) === false ) {
             return null;
         }
         
