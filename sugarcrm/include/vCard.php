@@ -273,7 +273,6 @@ class vCard
                             $GLOBALS['log']->debug('I found a company name (fer real)');
                             $full_company_name = trim($values[0]);
                             if ( is_a($contact,"Contact") ) {
-								$GLOBALS['log']->fatal('vCard Contact');
                                 $GLOBALS['log']->debug('And Im dealing with a person!');
                                 $accountBean = loadBean('Accounts');
                                 // It's a contact, we better try and match up an account
@@ -309,11 +308,9 @@ class vCard
                                 }
                                 $contact->department = $values[1];
                             } else if ( is_a($contact,"Lead") ){
-								$GLOBALS['log']->fatal('vCard Lead');
                                 $contact->account_name = $full_company_name;
                             }
                             else {
-								$GLOBALS['log']->fatal('vCard Other');
 								$contact->department = $value;
                             }
 						}
