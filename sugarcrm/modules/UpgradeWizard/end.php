@@ -58,7 +58,7 @@ foreach ($beanFiles as $bean => $file) {
 		unset($GLOBALS['dictionary'][$bean]);
 		$focus = new $bean ();
 		if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
-			$sql = $db->repairTable($focus, true);
+			$sql = $focus->db->repairTable($focus, true);
 			logThis('Running sql:' . $sql, $path);
 			$repairedTables[$focus->table_name] = true;
 		}

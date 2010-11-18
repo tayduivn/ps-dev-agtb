@@ -4190,22 +4190,6 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 		}
 	}
 }
-function createTable(){
-	if($sugar_config['dbconfig']['db_type'] == 'oci8'){
-		$query= "select table_name from user_tables where table_name=strtoupper(trim($qarr[2]))";
-		$result = $db->query($query);
-		$row = $db->fetchByAssociation($result);
-		if($row['table_name'] != null){
-			//already exists
-		}
-		else{
-			//create table
-			$query= $completeLine;
-			$db->query($query);
-		}
-	}
-}
-
 
 function repairDBForUpgrade($execute=false,$path=''){
 

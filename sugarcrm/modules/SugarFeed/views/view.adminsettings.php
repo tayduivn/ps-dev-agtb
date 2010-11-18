@@ -64,9 +64,7 @@ class ViewAdminsettings extends SugarView
                 if ( $_REQUEST['feed_enable'] == '1' ) {
                     // The feed is enabled, pay attention to what categories should be enabled or disabled
         
-                    if ( ! isset($db) ) {
-                        $db = DBManagerFactory::getInstance();
-                    }
+                    $db = DBManagerFactory::getInstance();
                     $ret = $db->query("SELECT * FROM config WHERE category = 'sugarfeed' AND name LIKE 'module_%'");
                     $current_modules = array();
                     while ( $row = $db->fetchByAssoc($ret) ) {
