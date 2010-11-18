@@ -219,11 +219,18 @@ class ModuleBuilderController extends SugarController
             $pm->performUninstall ( $load ) ;           
 			 //#23177 , js cache clear
 			 clearAllJsAndJsLangFilesWithoutOutput();
-    		//#30747, clear the cache in memoy
+    		//#30747, clear the cache in memory
     		$cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
     		sugar_cache_clear($cache_key );
     		sugar_cache_reset();
     		//clear end
+    		
+    		//clear the unified_search_module.php file
+    		if(file_exists('cache/modules/unified_search_modules.php'))
+    		{
+    		   $GLOBALS['log']->info('unlink cache/modules/unified_search_modules.php file');
+    		   unlink('cache/modules/unified_search_modules.php');
+    		}
             $pm->performInstall ( $_REQUEST [ 'install_file' ] , true) ;
         }
         echo 'complete' ;
