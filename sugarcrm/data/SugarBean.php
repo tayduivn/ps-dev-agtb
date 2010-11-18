@@ -4278,7 +4278,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name))
             $this->team_name = get_assigned_team_name($this->team_id);
 		//END SUGARCRM flav=pro ONLY
-		if(!empty($this->field_defs['created_by']))
+		if(!empty($this->field_defs['created_by']) && !empty($this->created_by))
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		if(!empty($this->field_defs['modified_user_id']) && !empty($this->modified_user_id))
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
