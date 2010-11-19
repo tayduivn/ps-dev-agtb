@@ -1283,7 +1283,7 @@ EOQ;
             $searchForm = new SearchForm($seed, $module);
             $searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl');
         }
-        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false);
+        $searchForm->populateFromArray(unserialize(base64_decode($query)));
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
         if (count($where_clauses) > 0 ) {
