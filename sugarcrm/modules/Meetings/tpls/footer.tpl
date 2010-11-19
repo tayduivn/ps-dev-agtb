@@ -65,7 +65,7 @@ function promptForRelatedInvite(){
                         handler: handleNo
                 }]
 	     });
-	     confirmDeletePopup.setHeader(SUGAR.language.get('Calls', 'LBL_INVITE_HEADER'));
+	     confirmDeletePopup.setHeader(SUGAR.language.get('Meetings', 'LBL_INVITE_HEADER'));
 	    confirmDeletePopup.render(document.body);
 	}else{
 		document.EditView.submit();
