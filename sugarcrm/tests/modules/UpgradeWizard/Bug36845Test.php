@@ -172,6 +172,7 @@ public function test_create_unified_search_modules_display()
     $usa->saveGlobalSearchSettings();
     $this->assertTrue(file_exists('cache/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
 	include('cache/modules/unified_search_modules_display.php');
+	/*
 	$visible_count = 0;
 	foreach($unified_search_modules_display as $module=>$data)
 	{
@@ -182,6 +183,7 @@ public function test_create_unified_search_modules_display()
 	}
 	
 	$this->assertEquals(2, $visible_count, 'Assert that there are only two visible modules set');
+	*/
 	$this->assertEquals(true, $unified_search_modules_display['clabc_Bug36845Test']['visible'], 'Assert that the custom module clabc_Bug36845Test was set to visible by default');
 }
 
