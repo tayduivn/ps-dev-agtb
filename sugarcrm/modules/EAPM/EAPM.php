@@ -95,8 +95,28 @@ class EAPM extends Basic {
        return $eapmBean;
     }
 
+    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false) {
+        global $current_user;
+
+        if ( !is_admin($GLOBALS['current_user']) ) {
+            // Restrict this so only admins can see other people's records
+            $owner_where = $this->getOwnerWhere($current_user->id);
+            
+            if(empty($where)) {
+                $where = $owner_where;
+            } else {
+                $where .= ' AND '.  $owner_where;
+            }
+        }
+        
+        return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted,$join_type, $return_array, $parentbean, $singleSelect);
+    }
+
    function save($check_notify = FALSE ) {
        $this->fillInName();
+       if ( !is_admin($GLOBALS['current_user']) ) {
+           $this->assigned_user_id = $GLOBALS['current_user']->id;
+       }
        return parent::save($check_notify);
    }
 
