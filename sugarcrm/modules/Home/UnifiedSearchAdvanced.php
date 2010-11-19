@@ -99,12 +99,12 @@ class UnifiedSearchAdvanced {
 		$sugar_smarty->assign('USE_SEARCH_GIF', 0);
 		$sugar_smarty->assign('LBL_SEARCH_BUTTON_LABEL', $app_strings['LBL_SEARCH_BUTTON_LABEL']);
 
-		if(!file_exists('custom/modules/Home/unified_search_modules_display.php'))
+		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
 		
-		include('custom/modules/Home/unified_search_modules_display.php');
+		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 		
 		$modules_to_display = array();
 		
@@ -337,16 +337,16 @@ class UnifiedSearchAdvanced {
  		
 			
 			if(!empty($metafiles[$moduleName]['searchfields']))
-				require $metafiles[$moduleName]['searchfields'] ;
-			elseif(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
-				require "modules/{$moduleName}/metadata/SearchFields.php" ;
-
-			if($beanName == 'Campaign')
 			{
-			   $GLOBALS['log']->fatal(var_export($dictionary['Campaign'], true));
-			}	
-				
-			if(!empty($dictionary[$beanName]['unified_search'])) // if bean participates in uf
+				require $metafiles[$moduleName]['searchfields'] ;
+			} else if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) {
+				require "modules/{$moduleName}/metadata/SearchFields.php" ;
+			}		
+			
+			$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $moduleName);
+			
+			//If the bean supports unified search or if it's a custom module bean and unified search is not defined
+			if(!empty($dictionary[$beanName]['unified_search']) || $isCustomModule)
 			{
 
 				$fields = array();
@@ -371,11 +371,9 @@ class UnifiedSearchAdvanced {
 
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
-					if ( isset($dictionary[$beanName]['unified_search_default_enabled']) && 
-					        $dictionary[$beanName]['unified_search_default_enabled'] == FALSE ) {
+					if ($isCustomModule || (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] == FALSE)) {
                         $supported_modules [$moduleName]['default'] = false;
-                    }
-                    else {
+                    } else {
                         $supported_modules [$moduleName]['default'] = true;
                     }
 				}
@@ -396,12 +394,12 @@ class UnifiedSearchAdvanced {
 	{
 		global $mod_strings, $app_strings, $app_list_strings;
 
-		if(!file_exists('custom/modules/Home/unified_search_modules_display.php'))
+		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 		
-		include('custom/modules/Home/unified_search_modules_display.php');
+		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 		
 		//Add the translated attribute for display label
 		foreach($unified_search_modules_display as $module=>$data)
@@ -428,12 +426,12 @@ class UnifiedSearchAdvanced {
 	 */
 	function saveGlobalSearchSettings()
 	{
-		if(!file_exists('custom/modules/Home/unified_search_modules_display.php'))
+		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 
-		include('custom/modules/Home/unified_search_modules_display.php');
+		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 
 		foreach($unified_search_modules_display as $module => $data)
 		{
@@ -457,9 +455,9 @@ class UnifiedSearchAdvanced {
 	private function createUnifiedSearchModulesDisplay()
 	{
 		//Make directory if it doesn't exist
-		if(!file_exists('custom/modules/Home'))
+		if(!file_exists('cache/modules'))
 		{
-		   mkdir_recursive('custom/modules/Home');	
+		   mkdir_recursive('cache/modules');	
 		}
 		
 		//Load unified_search_modules.pp file
@@ -499,11 +497,11 @@ class UnifiedSearchAdvanced {
 		   return false;
 		}
 		
-	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/Home/unified_search_modules_display.php')) 
+	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php')) 
 	    {
 	    	//Log error message and throw Exception
 	    	global $app_strings;
-	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array('custom/modules/Home/unified_search_modules_display.php'));
+	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'));
 	    	$GLOBALS['log']->error($msg);
 	    	throw new Exception($msg);
 	    }		

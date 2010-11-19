@@ -5601,79 +5601,17 @@ function upgrade_connectors($path='')
 
 /**
  * add_unified_search_to_custom_modules_vardefs
- * This method scans all custom modules installed on the system and then attempts to modify the
- * vardefs.php file to support global searching where possible.
+ * 
+ * This method calls the repair code to remove the unified_search_modules.php fiel
  * 
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-	$module_directories = scandir('modules');
-    $modified_search = false;
-    
-	foreach($module_directories as $module_dir){
-		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
-			continue;
-		}
-
-		$matches = array();
-		preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $module_dir, $matches);
-
-		// Make sure the module was created by module builder
-		if(empty($matches)){
-			continue;
-		}
-
-		$full_module_dir = "modules/{$module_dir}";
-
-		if(!file_exists("{$full_module_dir}/vardefs.php"))
-		{
-		   continue;
-		}
-		
-		require("{$full_module_dir}/vardefs.php");
-		
-		//If unified_search is already set to true, just skip
-		if(isset($dictionary["{$module_dir}"]['unified_search']))
-		{
-		   continue;
-		}		
-		
-		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
-		
-		if(file_exists("custom/{$full_module_dir}/metadata/SearchFields.php"))
-		{
-			$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
-		} else {
-			$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
-		}
-
-		//If there are no search fields, just skip since it won't make sense to change to support search
-		if(!file_exists($read_SearchFields_from))
-		{
-			continue;
-		}
-
-		$fileContents = file_get_contents("{$full_module_dir}/vardefs.php");
-		//Lower case this module_dir value to match table name
-		$mod = strtolower($module_dir);
-		$tableAttributeRegex = "/[\'\"]table[\'\"]\s*?=>\s*?[\'\"]".$mod."[\'\"]\s*?\,/";
-		$tableAttributeReplacement = "'table'=>'{$mod}', 'unified_search'=>true,";
-
-		if(preg_match($tableAttributeRegex, $fileContents)) 
-		{
-		   $out = preg_replace($tableAttributeRegex, $tableAttributeReplacement, $fileContents);
-		   file_put_contents("{$full_module_dir}/vardefs.php", $out);
-		   $modified_search = true;
-		}	
-	}
-	
-	//Now clear the search cache
-	if($modified_search)
+	if(file_exists('cache/modules/unified_search_modules.php'))
 	{
-		require_once('modules/Administration/QuickRepairAndRebuild.php');
-		$repair = new RepairAndClear();
-		$repair->clearSearchCache();
+	   unlink('cache/modules/unified_search_modules.php');
 	}
+
 }
 
 ?>

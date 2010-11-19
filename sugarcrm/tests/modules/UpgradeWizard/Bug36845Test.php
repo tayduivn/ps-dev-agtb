@@ -1,9 +1,8 @@
 <?php
 
-require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
-
 class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase {
 
+var $has_custom_unified_search_modules_display = false;
 var $has_custom_unified_search_modules = false;	
 var $module_dir = 'modules/clabc_Bug36845Test';
 var $module = 'clabc_Bug36845Test';
@@ -15,6 +14,12 @@ public function setUp()
 		$this->has_custom_unified_search_modules = true;
 		copy('cache/modules/unified_search_modules.php', 'cache/modules/unified_search_modules.php.bak');
 	}
+
+	if(file_exists('cache/modules/unified_search_modules_display.php'))
+	{
+		$this->has_custom_unified_search_modules_display = true;
+		copy('cache/modules/unified_search_modules_display.php', 'cache/modules/unified_search_modules_display.php.bak');
+	}	
 	
 	if(file_exists($this->module_dir))
 	{
@@ -85,67 +90,10 @@ $fp = sugar_fopen($this->module_dir . '/vardefs.php', "w");
 fwrite( $fp, $the_string );
 fclose( $fp );
 
-if(file_exists('custom/modulebuilder/packages/clabc'))
-{
-	rmdir_recursive('custom/modulebuilder/packages/clabc');
-}
 
-mkdir_recursive('custom/modulebuilder/packages/clabc/modules/Bug36845Test');
-
-$the_string = <<<EOQ
-<?php
-\$config = array (
-  'team_security' => true,
-  'assignable' => true,
-  'acl' => true,
-  'has_tab' => true,
-  'studio' => true,
-  'audit' => true,
-  'templates' => 
-  array (
-    'basic' => 1,
-    'company' => 1,
-  ),
-  'label' => 'Bug 36845Test',
-  'importable' => false,
-);
-?>
-EOQ;
-
-$fp = sugar_fopen('custom/modulebuilder/packages/clabc/modules/Bug36845Test/config.php', "w");
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-$the_string = <<<EOQ
-<?php
-    \$manifest = array (
-         'acceptable_sugar_versions' => 
-          array (
-            
-          ),
-          'acceptable_sugar_flavors' =>
-          array(
-            'ENT'
-          ),
-          'readme'=>'',
-          'key'=>'clabc',
-          'author' => 'Collin Lee',
-          'description' => '',
-          'icon' => '',
-          'is_uninstallable' => true,
-          'name' => 'test',
-          'published_date' => '2010-11-15 18:06:52',
-          'type' => 'module',
-          'version' => '1289844412',
-          'remove_tables' => 'prompt',
-          );
-?>
-EOQ;
-
-$fp = sugar_fopen('custom/modulebuilder/packages/clabc/manifest.php', "w");
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
+global $beanFiles, $beanList;
+$beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
+$beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
 
 }
 
@@ -155,18 +103,26 @@ public function tearDown()
 	{
 		unlink('cache/modules/unified_search_modules.php');
 	}
+
+	if(file_exists('cache/modules/unified_search_modules_display.php'))
+	{
+		unlink('cache/modules/unified_search_modules_display.php');
+	}	
 	
 	if($this->has_custom_unified_search_modules)
 	{
 		copy('cache/modules/unified_search_modules.php.bak', 'cache/modules/unified_search_modules.php');
 	}
+
+	if($this->has_custom_unified_search_modules_display)
+	{
+		copy('cache/modules/unified_search_modules_display.php.bak', 'cache/modules/unified_search_modules_display.php');
+	}	
 	
 	if(file_exists($this->module_dir))
 	{
 	   rmdir_recursive($this->module_dir);
-	}	
-	
-	rmdir_recursive('custom/modulebuilder/packages/clabc');
+	}
 }
 
 public function test_update_custom_vardefs()
@@ -175,8 +131,13 @@ public function test_update_custom_vardefs()
     $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
     require_once('modules/UpgradeWizard/uw_utils.php');
     add_unified_search_to_custom_modules_vardefs();
-    require($this->module_dir . '/vardefs.php');
-    $this->assertTrue($dictionary["{$this->module}"]['unified_search'], 'Assert that the add_unified_search_to_custom_modules function worked');
+    require_once('modules/Home/UnifiedSearchAdvanced.php');
+    $usa = new UnifiedSearchAdvanced();
+    $usa->buildCache();
+    $this->assertTrue(file_exists('cache/modules/unified_search_modules.php'), 'Assert that we have a unified_search_modules.php file');
+    include('cache/modules/unified_search_modules.php');
+    $this->assertTrue(isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was added to unified_search_modules.php');
+	$this->assertEquals(false, $unified_search_modules['clabc_Bug36845Test']['default'], 'Assert that the custom module was set to not be searched on by default');
 }
 
 
@@ -187,10 +148,42 @@ public function test_update_custom_vardefs_without_searchfields()
     $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
     require_once('modules/UpgradeWizard/uw_utils.php');
     add_unified_search_to_custom_modules_vardefs();
-    require($this->module_dir . '/vardefs.php');
-    $this->assertTrue(!isset($dictionary["{$this->module}"]['unified_search']), 'Assert that add_unified_search_to_custom_modules function worked');
+    require_once('modules/Home/UnifiedSearchAdvanced.php');
+    $usa = new UnifiedSearchAdvanced();
+    $usa->buildCache();
+    $this->assertTrue(file_exists("cache/modules/unified_search_modules.php"), 'Assert that we have a unified_search_modules.php file');
+    include('cache/modules/unified_search_modules.php');
+    $this->assertTrue(!isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
+    
 }
 
+
+public function test_create_unified_search_modules_display()
+{
+	if(file_exists('cache/modules/unified_search_modules_display.php'))
+	{
+		unlink('cache/modules/unified_search_modules_display.php');
+	}		
+	
+    require_once('modules/UpgradeWizard/uw_utils.php');
+    $usa = new UnifiedSearchAdvanced();
+    $_REQUEST['search_mod_Accounts'] = true;
+    $_REQUEST['search_mod_clabc_Bug36845Test'] = true;
+    $usa->saveGlobalSearchSettings();
+    $this->assertTrue(file_exists('cache/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
+	include('cache/modules/unified_search_modules_display.php');
+	$visible_count = 0;
+	foreach($unified_search_modules_display as $module=>$data)
+	{
+		if($data['visible'])
+		{
+			$visible_count++;
+		}
+	}
+	
+	$this->assertEquals(2, $visible_count, 'Assert that there are only two visible modules set');
+	$this->assertEquals(true, $unified_search_modules_display['clabc_Bug36845Test']['visible'], 'Assert that the custom module clabc_Bug36845Test was set to visible by default');
+}
 
 }
 ?>
