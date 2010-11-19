@@ -2477,7 +2477,12 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
+		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
+		//BEGIN SUGARCRM flav=pro ONLY
+		// Bug 36162 - We need to confirm that the user is a member of the team of the item.
+		$focus->add_team_security_where_clause($query);
+		//END SUGARCRM flav=pro ONLY
+		$query .= "where ";
 		if ( $where != '')
 		{
 			$query .= $where." AND ";
