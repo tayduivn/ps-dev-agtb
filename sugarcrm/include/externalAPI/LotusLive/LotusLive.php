@@ -162,7 +162,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
         // die('IKEA uploading file: '.$fileToUpload.': <pre>'.print_r($result,true));
         $bean->doc_id = $result['file_id'];
 
-        $bean->doc_direct_url = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!20023739/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id
+        $bean->doc_direct_url = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!20023739/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
 
         $bean->doc_url = 'https://apps.test.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
 
