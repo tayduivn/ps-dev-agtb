@@ -105,4 +105,23 @@ class AdministrationController extends SugarController
         
         echo "true";
     }
+    
+    
+    /**
+     * action_saveglobalsearchsettings
+     * 
+     * This method handles saving the selected modules to display in the Global Search Settings.
+     * It instantiates an instance of UnifiedSearchAdvanced and then calls the saveGlobalSearchSettings
+     * method.
+     * 
+     */
+    public function action_saveglobalsearchsettings()
+    {
+    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
+    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
+    	 $unifiedSearchAdvanced->saveGlobalSearchSettings();
+    	 //Redirect back to Administration main page
+    	 header('location: index.php?module=Administration&action=index');
+    	 exit;
+    }
 }
