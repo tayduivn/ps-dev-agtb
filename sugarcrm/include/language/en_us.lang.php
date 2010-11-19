@@ -3045,6 +3045,10 @@ $app_strings = array (
     
     //SugarFieldPhone labels
     'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter USA phone format',
+    
+    //File write error label
+    'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
+    
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

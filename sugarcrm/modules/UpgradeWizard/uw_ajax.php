@@ -67,7 +67,7 @@ function ajaxSqlProgress($persistence, $sql, $type) {
  */
 function commitAjaxFinalTouches($persistence) {
 	global $current_user;
-	global $locale;
+	global $timedate;
 	global $mod_strings;
 	global $sugar_version;
 
@@ -77,7 +77,7 @@ function commitAjaxFinalTouches($persistence) {
 
 	// convert to UTF8 if needed
 	if(!empty($persistence['allTables']))
-		executeConvertTablesSql($db->dbType, $persistence['allTables']);
+		executeConvertTablesSql($GLOBALS['db']->dbType, $persistence['allTables']);
 
 	// rebuild
 	logThis('Performing UWrebuild()...');

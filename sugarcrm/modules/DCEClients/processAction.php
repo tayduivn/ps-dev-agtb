@@ -420,10 +420,10 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $filenames['sprintStr'] = trim($filenames['sprintStr']);
     if(empty($filenames['sprintStr'])){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
-            $singleActionLog .=  " updating actions table. $nl";
+            $singleActionLog .=  " updating actions table\n";
             updateDCEAction($inst, $action['id'], $db, $filenames);
 
-        $singleActionLog .=  " done!!!! $nl";        
+        $singleActionLog .=  " done!!!!\n";
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
@@ -431,7 +431,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         //remove files and database
         deleteCore($db, $action,$inst,false);        
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors\n";
         return false;
                
     }
@@ -559,22 +559,22 @@ This is here as a hook, for future use.  Currently no client action needs to occ
   function deleteInstance($db, $action,$inst){
     global $dce_config, $singleActionLog;
     
-    $singleActionLog .=  "processing delete action$nl";
+    $singleActionLog .=  "processing delete action\n";
     $sprintStr = deleteCore($db, $action,$inst);
 
     $sprintStr = trim($sprintStr);
     if(empty($sprintStr)){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
-            $singleActionLog .=  " updating actions table. $nl";
+            $singleActionLog .=  " updating actions table\n";
             updateDCEAction($inst, $action['id'], $db, '');   
 
-        $singleActionLog .=  " done!!!! $nl";        
+        $singleActionLog .=  " done!!!!\n";
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $sprintStr;
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors $nl";   
+        $singleActionLog .=  " done with errors\n";
         return false;
                
     }    
@@ -1016,7 +1016,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
   function gatherReportData($db, $action, $inst){
     global $dce_config, $singleActionLog;
 
-    $singleActionLog .=  " gathering report data$nl";  
+    $singleActionLog .=  " gathering report data\n";
     //get list of all instances for this cluster
     $getParInstQry = "select name, id from dceinstances where dcecluster_id = '".$dce_config['client_cluster_id']."' and status='live' and deleted = 0 and from_copy_template = 0";
     $piqRes = $db->query($getParInstQry);
@@ -1218,7 +1218,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
   function importInstances($db, $action, $inst){
     require_once('instanceImport.php');
     global $dce_config, $singleActionLog;
-    $singleActionLog .=  " processing new instance $nl";
+    $singleActionLog .=  " processing new instance\n";
     $rootpath =  checkSlash($dce_config['client_instancePath']) .$inst['name'];
 
     $importResult = importClientInstances($rootpath,$db);    

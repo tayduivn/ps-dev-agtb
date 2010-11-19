@@ -1131,5 +1131,7 @@ $mod_strings = array (
    'LBL_SAML_CERT' => 'X509 Certificate',
    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
    'LBL_SAML_LOGIN_URL' => 'Login URL',
-   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL'
+   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
+   'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be allowed to run global searching against',
+
 	);

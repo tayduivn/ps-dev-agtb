@@ -52,7 +52,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
 		echo $this->getModuleTitle();
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
 		$usa = new UnifiedSearchAdvanced();
-		echo $usa->getDropDownDiv();
+		echo $usa->modifyGlobalSearchSettings();
     }
 }
 ?>

@@ -154,6 +154,7 @@ class quicksearchQuery {
     }
     
     protected function formatResults($args, $list_return){
+        global $sugar_config;
         $app_list_strings = null;
         $list_arr['totalCount']=count($list_return);
         $list_arr['fields']= array();

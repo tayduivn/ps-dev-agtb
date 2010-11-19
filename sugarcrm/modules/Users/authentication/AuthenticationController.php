@@ -79,7 +79,7 @@ class AuthenticationController {
 	 */
 	function login($username, $password, $PARAMS = array ()) {
 		//kbrill bug #13225
-		$_SESSION['loginAttempts'] = (isset($_fSESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
+		$_SESSION['loginAttempts'] = (isset($_SESSION['loginAttempts']))? $_SESSION['loginAttempts'] + 1: 1;
 		unset($GLOBALS['login_error']);
 
 		if($this->loggedIn)return $this->loginSuccess;
