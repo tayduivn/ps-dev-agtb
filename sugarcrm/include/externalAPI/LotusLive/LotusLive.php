@@ -17,11 +17,16 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
     public $docSearch = true;
 	protected $meetingID;
     protected $joinURL;
-	protected $hostURL = "https://apps.lotuslive.com/meetings/host";
-	protected $oauthReq = "https://apps.lotuslive.com/manage/oauth/getRequestToken";
-    protected $oauthAuth = 'https://apps.lotuslive.com/manage/oauth/authorizeToken';
-    protected $oauthAccess = 'https://apps.lotuslive.com/manage/oauth/getAccessToken';
-    protected $oauthParams = array('signatureMethod' => 'PLAINTEXT');
+	protected $hostURL = "https://apps.test.lotuslive.com/meetings/host";
+	protected $oauthReq = "https://apps.test.lotuslive.com/manage/oauth/getRequestToken";
+    protected $oauthAuth = 'https://apps.test.lotuslive.com/manage/oauth/authorizeToken';
+    protected $oauthAccess = 'https://apps.test.lotuslive.com/manage/oauth/getAccessToken';
+    protected $oauthParams = array(
+    	'signatureMethod' => 'PLAINTEXT',
+        'consumerKey' => "test_app",
+    // FIXME: encode?
+        'consumerSecret' => "87323at4aj6y8e9a0pa92w",
+    );
 
     public $canInvite = false;
     public $sendsInvites = false;
@@ -47,7 +52,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
     public function checkLogin($eapmBean = null)
     {
         parent::checkLogin($eapmBean);
-        $reply = $this->makeRequest('GetMeeting', array());
+        $reply = $this->makeRequest('GetMeeting/OAuth', array());
 
         if ( $reply['success'] == TRUE ) {
             $this->authData->api_data = base64_encode(json_encode(array(
@@ -143,14 +148,23 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
     }
 
 
-    public function uploadDoc($bean, $fileToUpload, $docName, $mineType) {
+    public function uploadDoc($bean, $fileToUpload, $docName, $mimeType) {
         // FIXME: don't try uploading a file yet.
 //        $result = $this->makeRequest('uploadfile',array('file'=>'@'.$fileToUpload),
 //                              array('collectionid'=>$this->collectionId,
 //                                    'fileid'=>$bean->id));
 
-        $bean->doc_id = $bean->id;
-        $bean->doc_url = 'https://apps.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
+        $result = $this->makeRequest('FileUpload/OAuth',base64_encode(file_get_contents($fileToUpload)),
+                                     array('filename' => $docName,
+                                           'mimetype' => $mimeType,
+                                         ));
+
+        // die('IKEA uploading file: '.$fileToUpload.': <pre>'.print_r($result,true));
+        $bean->doc_id = $result['file_id'];
+
+        $bean->doc_direct_url = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!20023739/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id
+
+        $bean->doc_url = 'https://apps.test.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
 
         return array('success'=>TRUE);
     }
@@ -178,20 +192,15 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url A
     }
 
     // Internal functions
-    protected function makeRequest($requestMethod, $data = array(), $urlParams = array() ) {
-        $dataString = json_encode($data);
+    protected function makeRequest($requestMethod, $data = '', $urlParams = array() ) {
 
         $urlParams['ciUser'] = 'admin@LL_SugarCRM';
         $urlParams['ciPassword'] = 'changeIt!';
-        if($this->authmethod == 'oauth') {
-             $urlParams['OAuthConsumerKey'] = $this->authData->consumer_key;
-             $urlParams['OAuthConsumerSecret'] = $this->authData->consumer_secret;
-             $urlParams['OAuthToken'] = $this->authData->oauth_token;
-             $urlParams['OAuthTokenSecret'] = $this->authData->oauth_secret;
-        } else {
-            $urlParams['UserName'] = $this->account_name;
-            $urlParams['Password'] = $this->account_password;
-        }
+        $urlParams['csKey'] = $this->oauthParams['consumerKey'];
+        $urlParams['csSecret'] = $this->oauthParams['consumerSecret'];
+        $urlParams['oAuthKey'] = $this->authData->oauth_token;
+        $urlParams['oAuthSecret'] = $this->authData->oauth_secret;
+
         $url = 'https://' . $this->url . $requestMethod . '?';
         foreach($urlParams as $key => $value ) {
             // FIXME: urlencode the ciUser and ciPassword once they are ready for it
@@ -206,10 +215,12 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url A
         $headers = array(
             "User-Agent: SugarCRM",
             "Content-Type: application/x-www-form-urlencoded",
-            "Content-Length: ".strlen($dataString),
+            "Content-Length: ".strlen($data),
             );
 
-        $rawResponse = $this->postData($url, $dataString, $headers);
+        $GLOBALS['log']->fatal("IKEA: Sent ($url), $data, ".print_r($headers,true));
+        $rawResponse = $this->postData($url, $data, $headers);
+        $GLOBALS['log']->fatal("IKEA: Got $rawResponse");
 
         $reply = array();
         $reply['responseRAW'] = $rawResponse;
