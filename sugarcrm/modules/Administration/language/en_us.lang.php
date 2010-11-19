@@ -1101,7 +1101,7 @@ $mod_strings = array (
 
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',
-	'ReportMaker'  => 'Enterprise Reports',
+	'ReportMaker'  => 'Advanced Reports',
 	'Reports_1'      => 'SavedReport',
 	'Roles'  => 'Role',
 	'Schedulers'  => 'Scheduler',

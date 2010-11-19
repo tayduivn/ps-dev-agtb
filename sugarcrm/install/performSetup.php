@@ -748,9 +748,6 @@ FP;
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
     //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=ent ONLY
-    $enabled_tabs[] = 'ReportMaker';
-    //END SUGARCRM flav=ent ONLY
     //END SUGARCRM flav!=dce ONLY
     
     //BEGIN SUGARCRM flav=dce ONLY

@@ -35,7 +35,6 @@ $moduleList[] = 'Tasks';
 $moduleList[] = 'Notes';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 $moduleList[] = 'Reports';
-$moduleList[] = 'ReportMaker';
 //END SUGARCRM flav=pro || flav=sales ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Leads';
@@ -455,6 +454,7 @@ $adminOnlyList = array(
 //BEGIN SUGARCRM flav=ent ONLY
 $modInvisList[] = 'CustomQueries';
 $modInvisList[] = 'DataSets';
+$modInvisList[] = 'ReportMaker';
 //END SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
