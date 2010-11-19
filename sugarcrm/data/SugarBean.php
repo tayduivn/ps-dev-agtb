@@ -3201,8 +3201,6 @@ function save_relationship_changes($is_update, $exclude=array())
 				$selectedFields["$this->table_name.$field"] = true;
     		}
 
-
-
     		if($data['type'] != 'relate' && isset($data['db_concat_fields']))
     		{
     			$ret_array['select'] .= ", " . db_concat($this->table_name, $data['db_concat_fields']) . " as $field";
@@ -3256,6 +3254,7 @@ function save_relationship_changes($is_update, $exclude=array())
        		if($data['type'] == 'relate' && isset($data['link']))
     		{
     			$this->load_relationship($data['link']);
+
     			if(!empty($this->$data['link']))
     			{
     				$params = array();
@@ -3291,6 +3290,20 @@ function save_relationship_changes($is_update, $exclude=array())
     				$rel_module = $this->$data['link']->getRelatedModuleName();
     				$table_joined = !empty($joined_tables[$params['join_table_alias']]) || (!empty($joined_tables[$params['join_table_link_alias']]) && isset($data['link_type']) && $data['link_type'] == 'relationship_info');
 
+					//if rnanme is set to 'name', and bean files exist, then check if field should be a concatenated name
+					global $beanFiles, $beanList;
+					if($data['rname'] && !empty($beanFiles[$beanList[$rel_module]])) {
+
+						//create an instance of the related bean
+						require_once($beanFiles[$beanList[$rel_module]]);
+						$rel_mod = new $beanList[$rel_module]();
+						//if bean has first and last name fields, then name should be concatenated
+						if(isset($rel_mod->field_name_map['first_name']) && isset($rel_mod->field_name_map['last_name'])){
+								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
+						}
+					}
+					
+					
     				if($join['type'] == 'many-to-many')
     				{
     					if(empty($ret_array['secondary_select']))
