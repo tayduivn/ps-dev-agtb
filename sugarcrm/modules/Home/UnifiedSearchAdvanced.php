@@ -480,7 +480,7 @@ class UnifiedSearchAdvanced {
 			}
 		}
 		
-		$this->writeUnifiedSearchModulesDisplayFile();
+		$this->writeUnifiedSearchModulesDisplayFile($unified_search_modules_display);
 	}
 	
 	
