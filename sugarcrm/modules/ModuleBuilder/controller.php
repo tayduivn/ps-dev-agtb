@@ -226,10 +226,10 @@ class ModuleBuilderController extends SugarController
     		//clear end
     		
     		//clear the unified_search_module.php file
-    		if(file_exists('cache/modules/unified_search_modules.php'))
+    		if(file_exists($GLOBALS['sugar_config']['cache_dir'].'/unified_search_modules.php'))
     		{
-    		   $GLOBALS['log']->info('unlink cache/modules/unified_search_modules.php file');
-    		   unlink('cache/modules/unified_search_modules.php');
+    		   $GLOBALS['log']->info("unlink {$GLOBALS['sugar_config']['cache_dir']}/unified_search_modules.php file");
+    		   unlink($GLOBALS['sugar_config']['cache_dir'].'/unified_search_modules.php');
     		}
             $pm->performInstall ( $_REQUEST [ 'install_file' ] , true) ;
         }
