@@ -367,7 +367,6 @@ class OracleHelper extends DBHelper
          * Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY 
          * and UNIQUE (which can defined inline with the CREATE TABLE)
          */
-        $ret = '';
 		foreach ($indices as $index) {
             if(!empty($index['db']) && $index['db'] != 'oci8')
                 continue;
@@ -493,7 +492,7 @@ class OracleHelper extends DBHelper
         $start_value
         )
     {
-    	$sequence_name = _getSequenceName($table, $field_name, true);
+    	$sequence_name = $this->_getSequenceName($table, $field_name, true);
     	$result = $this->db->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
     	$row = $this->db->fetchByAssoc($result);
     	$current = $row['currval'];
