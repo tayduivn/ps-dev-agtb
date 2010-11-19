@@ -301,8 +301,10 @@ class UploadFile
             }
             if ( !$result['success'] ) {
                 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
+                $bean->doc_type = 'SugarCRM';
                 // FIXME: Translate
-                $_SESSION['administrator_error'] = 'Error during plugin save: '.$result['errorMessage'];
+                if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
+                $_SESSION['user_error_message'][] = 'Error during external API save: '.$result['errorMessage'];
 
             }
         }

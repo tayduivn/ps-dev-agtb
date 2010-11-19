@@ -36,7 +36,8 @@ class EAPMController extends SugarController
 
     protected function failed($error)
     {
-        $_SESSION['administrator_error'] = $error;
+        if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
+        $_SESSION['user_error_message'][] = $error;
         $GLOBALS['log']->error("Login error: $error");
         $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
         return $this->set_redirect($url);
