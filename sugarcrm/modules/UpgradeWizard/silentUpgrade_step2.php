@@ -411,6 +411,10 @@ logThis('database repaired', $path);
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
 $origVersion = getSilentUpgradeVar('origVersion');
+if(!$origVersion){
+    global $silent_upgrade_vars_loaded;
+    logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
+}
 
 //BEGIN SUGARCRM flav=pro ONLY 
 // If going from pre 610 to 610+, migrate the report favorites

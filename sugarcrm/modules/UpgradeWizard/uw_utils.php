@@ -5459,7 +5459,7 @@ function upgradeModulesForTeam() {
 	function removeSilentUpgradeVarsCache(){
 	    global $silent_upgrade_vars_loaded;
 
-	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard";
+	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
 	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
 
 	    if(file_exists($cacheFile)){
@@ -5475,7 +5475,7 @@ function upgradeModulesForTeam() {
 	    global $silent_upgrade_vars_loaded;
 
 	    if(empty($silent_upgrade_vars_loaded)){
-	        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard/silentUpgradeCache.php";
+	        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
 	        // We have no pre existing vars
 	        if(!file_exists($cacheFile)){
 	            // Set the vars array so it's loaded
@@ -5497,7 +5497,7 @@ function upgradeModulesForTeam() {
 	        return false; // You should have set some values before trying to write the silent upgrade vars
 	    }
 
-	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard";
+	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
 	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
 
 	    require_once('include/dir_inc.php');
@@ -5506,6 +5506,8 @@ function upgradeModulesForTeam() {
 	    }
 	    require_once('include/utils/file_utils.php');
 	    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
+	        global $path;
+	        logThis("WARNING: writeSilentUpgradeVars could not write to {$cacheFile}", $path);
 	        return false;
 	    }
 
