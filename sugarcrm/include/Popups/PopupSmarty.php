@@ -234,7 +234,9 @@ class PopupSmarty extends ListViewSmarty{
 			$formBase = new $this->_popupMeta['create']['formBaseClass']();
 			if(isset($_REQUEST['doAction']) && $_REQUEST['doAction'] == 'save')
 			{
-				$formBase->handleSave('', false, true);
+				//If it's a new record, set useRequired to false
+				$useRequired = empty($_REQUEST['id']) ? false : true;
+				$formBase->handleSave('', false, $useRequired);
 			}
 		}
 	    
