@@ -82,15 +82,6 @@ $dictionary['Document'] = array('table' => 'documents'
      'allowEapm' => true,
      'fileId' => 'document_revision_id',
   ),
-
-  'uploadfile' =>
-  array (
-     'name'=>'uploadfile',
-     'required' => false,
-     'vname' => 'LBL_FILENAME',
-     'type' => 'file',
-     'source' => 'non-db',
-  ),
 'active_date' =>
   array (
     'name' => 'active_date',

@@ -262,7 +262,7 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 		
 		global $app_strings;
 		
-        if ( $_REQUEST['layout_def_key'] == 'UserEAPM' ) {
+        if ( isset($_REQUEST['layout_def_key']) && $_REQUEST['layout_def_key'] == 'UserEAPM' ) {
             // Subpanels generally don't go on the editview, so we have to handle this special
             $megaLink = $this->_get_form($defines, $additionalFormFields,true);
             $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='" . $this->getWidgetId() . "_create_button' value='  $this->form_value  ' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";

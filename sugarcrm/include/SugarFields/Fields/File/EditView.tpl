@@ -63,7 +63,7 @@
 <input type="hidden" name="{{$idName}}_old_doctype" id="{{$idName}}_old_doctype" value="{$fields.{{$vardef.docType}}.value}">
 {{/if}}
 <span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
-  <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={$module}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
+  <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={{$vardef.linkModule}}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 {if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'SugarCRM' && !empty($fields.{{$vardef.docUrl}}.value) }
@@ -91,8 +91,8 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
     maxlength="{{$displayParams.maxlength}}"
 {{else}}
     maxlength="255"
-{{/if}} 
-value="{if !isset($vardef.allowEapm) || !$vardef.allowEapm || empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}"
+{{/if}}
+onchange="document.getElementById('{{$idName}}').value='something'"
 {{$displayParams.field}}>
 
 

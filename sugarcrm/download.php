@@ -52,11 +52,25 @@ else {
 	    if(!$focus->ACLAccess('view')){
 	        die($mod_strings['LBL_NO_ACCESS']);
 	    } // if
+
+        // Pull up the document revision, if it's of type Document
+        if ( isset($focus->object_name) && $focus->object_name == 'Document' ) {
+            // It's a document, get the revision that really stores this file
+            $focusRevision = new DocumentRevision();
+            $focusRevision->retrieve($_REQUEST['id']);
+        }
+        
         // See if it is a remote file, if so, send them that direction
         if ( isset($focus->doc_direct_url) && !empty($focus->doc_direct_url) ) {
             header('Location: '.$focus->doc_direct_url);
             sugar_die();
         }
+
+        if ( isset($focusRevision) && isset($focusRevision->doc_direct_url) && !empty($focusRevision->doc_direct_url) ) {
+            header('Location: '.$focusRevision->doc_direct_url);
+            sugar_die();
+        }
+
     } // if
 
 	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"

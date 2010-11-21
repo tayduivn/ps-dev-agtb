@@ -107,9 +107,11 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
   array (
     'name' => 'filename',
     'vname' => 'LBL_FILENAME',
-    'type' => 'varchar',
+    'type' => 'file',
     'required'=>true,
     'len' => '255',
+    'allowEapm' => true,
+    'linkModuleOverride' => 'Documents',
   ),
   'file_ext' =>
   array (
@@ -194,6 +196,23 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'len' => '36',
     'source'=>'non-db',
   ),
+  'document_name' =>
+  array (
+      'name' => 'document_name',
+      'vname' => 'LBL_DOC_NAME',
+      'type' => 'varchar',
+      'len' => '255',
+      'source' => 'non-db',
+  ),
+  'latest_revision' =>
+  array (
+      'name' => 'latest_revision',
+      'vname' => 'LBL_CURRENT_DOC_VERSION',
+      'type' => 'varchar',
+      'len' => '255',
+      'source' => 'non-db',
+  ),
+  
 ),
 'relationships'=>array(
    'revisions_created_by' => array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',

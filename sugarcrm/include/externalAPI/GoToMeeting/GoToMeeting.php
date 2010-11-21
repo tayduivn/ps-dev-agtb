@@ -56,7 +56,7 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
         if ( $response['success'] ) {
             $xp = new DOMXPath($response['responseXML']);
             $this->login_key = $xp->query('/soapenv:Envelope/soapenv:Body')->item(0)->nodeValue;
-            $GLOBALS['log']->fatal("LOGIN KEY: ".print_r($this->login_key,true));
+            $GLOBALS['log']->debug("LOGIN KEY: ".print_r($this->login_key,true));
         } else {
             $this->login_key = '';
         }
@@ -249,7 +249,7 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
             $responseXML->strictErrorChecking = false;
             $responseXML->loadXML($response);
             if ( !is_object($responseXML) ) {
-                $GLOBALS['log']->fatal("XML ERRORS:\n".print_r(libxml_get_errors(),true));
+                $GLOBALS['log']->error("XML ERRORS:\n".print_r(libxml_get_errors(),true));
                 // Looks like the XML processing didn't go so well.
                 $reply['success'] = FALSE;
                 // FIXME: Translate
@@ -270,7 +270,7 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
             }
         }
 
-        $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
+        $GLOBALS['log']->debug("Parsed Reply:\n".print_r($reply,true));
         return $reply;
     }
 }

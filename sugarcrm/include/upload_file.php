@@ -279,10 +279,10 @@ class UploadFile
 	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
 	                    
 		    try{
-                $this->document = ExternalAPIFactory::loadAPI($doc_type);
+                $this->api = ExternalAPIFactory::loadAPI($doc_type);
 
-                if ( isset($this->document) && $this->document !== false ) {
-                    $result = $this->document->uploadDoc(
+                if ( isset($this->api) && $this->api !== false ) {
+                    $result = $this->api->uploadDoc(
                         $bean,
                         $new_destination,
                         $file_name,
@@ -291,13 +291,14 @@ class UploadFile
                 } else {
                     $result['success'] = FALSE;
                     // FIXME: Translate
+                    $GLOBALS['log']->error("Could not load the requested API (".$doc_type.")");
                     $result['errorMessage'] = 'Could not find a proper API';
                 }
                 unlink($new_destination);
             }catch(Exception $e){
                 $result['success'] = FALSE;
                 $result['errorMessage'] = $e->getMessage();
-                $GLOBALS['log']->fatal("Caught exception: (".$e->getMessage().") ");
+                $GLOBALS['log']->error("Caught exception: (".$e->getMessage().") ");
             }
             if ( !$result['success'] ) {
                 sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));

@@ -22,6 +22,13 @@ class SugarFieldFile extends SugarFieldBase {
         } else {
             $vardef['allowEapm'] = false;
         }
+        
+        // Override the default module
+        if ( isset($vardef['linkModuleOverride']) ) {
+            $vardef['linkModule'] = $vardef['linkModuleOverride'];
+        } else {
+            $vardef['linkModule'] = '{$module}';
+        }
 
         // This is needed because these aren't always filled out in the edit/detailview defs
         if ( !isset($vardef['fileId']) ) {
@@ -78,13 +85,10 @@ class SugarFieldFile extends SugarFieldBase {
             $bean->new_with_id = true;
         }
 
-        $GLOBALS['log']->fatal("IKEA: OLD ID: ".$old_id);
-        $GLOBALS['log']->fatal("IKEA: PARAMS: ".print_r($params,true));
- 		
 		if ($move) {
             $GLOBALS['log']->fatal("IKEA: Moving the file ({$bean->filename})");
 			$upload_file->final_move($bean->id);
-            $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $bean->mime_type);
+            $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $upload_file->mime_type);
         } else if ( ! empty($old_id) ) {
             // It's a duplicate, I think
             $GLOBALS['log']->fatal("IKEA: It's a duplicate old id ($old_id) / isDuplicate ({$params['isDuplicate']})");

@@ -94,47 +94,48 @@ class Document extends SugarBean {
 	}
 
 	function save($check_notify = false) {
-		if (empty($this->id) || $this->new_with_id)
-		{
-			if (!empty($_FILES['filename']))
-			{
-				if (empty($this->id)) { 
-					$this->id = create_guid();
-					$this->new_with_id = true;
-				}
-				$Revision = new DocumentRevision();
-				//save revision.
-				$Revision->change_log = translate('DEF_CREATE_LOG','Documents');
-				$Revision->revision = $this->revision;
-				$Revision->document_id = $this->id;
-				$Revision->filename = $this->filename;
-				$Revision->file_ext = $this->file_ext;
-				$Revision->file_mime_type = $this->file_mime_type;
-				$Revision->doc_type = $this->doc_type;
-				$Revision->doc_id = $this->doc_id;
-				$Revision->doc_url = $this->doc_url;
-				$Revision->save();
-				
-				//Move file saved during populatefrompost to match the revision id rather than document id
-				rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
-				//update document with latest revision id
-				$this->process_save_dates=false; //make sure that conversion does not happen again.
-				$this->document_revision_id = $Revision->id;	
-			}
+        if (!empty($_FILES['filename_file']))
+        {
+            if (empty($this->id)) { 
+                $this->id = create_guid();
+                $this->new_with_id = true;
+            }
+            $Revision = new DocumentRevision();
+            //save revision.
+            $Revision->change_log = translate('DEF_CREATE_LOG','Documents');
+            $Revision->revision = $this->revision;
+            $Revision->document_id = $this->id;
+            $Revision->filename = $this->filename;
+            $Revision->file_ext = $this->file_ext;
+            $Revision->file_mime_type = $this->file_mime_type;
+            $Revision->doc_type = $this->doc_type;
+            $Revision->doc_id = $this->doc_id;
+            $Revision->doc_url = $this->doc_url;
+            $Revision->doc_direct_url = $this->doc_direct_url;
+            $Revision->save();
 			
-			//set relationship field values if contract_id is passed (via subpanel create)
-			if (!empty($_POST['contract_id'])) {
-				$save_revision['document_revision_id']=$this->document_revision_id;	
-				$this->load_relationship('contracts');
-				$this->contracts->add($_POST['contract_id'],$save_revision);
-			}
-		    
-			if ((isset($_POST['load_signed_id']) and !empty($_POST['load_signed_id']))) {
-				$query="update linked_documents set deleted=1 where id='".$_POST['load_signed_id']."'";
-				$this->db->query($query);
-			}
-		}
-	
+            //Move file saved during populatefrompost to match the revision id rather than document id
+            rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+            //update document with latest revision id
+            $this->process_save_dates=false; //make sure that conversion does not happen again.
+            $this->document_revision_id = $Revision->id;	
+        }
+		
+        if (empty($this->id) || $this->new_with_id)
+		{
+            //set relationship field values if contract_id is passed (via subpanel create)
+            if (!empty($_POST['contract_id'])) {
+                $save_revision['document_revision_id']=$this->document_revision_id;	
+                $this->load_relationship('contracts');
+                $this->contracts->add($_POST['contract_id'],$save_revision);
+            }
+            
+            if ((isset($_POST['load_signed_id']) and !empty($_POST['load_signed_id']))) {
+                $query="update linked_documents set deleted=1 where id='".$_POST['load_signed_id']."'";
+                $this->db->query($query);
+            }
+        }
+        
 		return parent :: save($check_notify);
 	}
 	function get_summary_text() {
@@ -296,17 +297,5 @@ class Document extends SugarBean {
 	}
 }
 
-// External API integration, for the dropdown list of what external API's are available
-function getDocumentsExternalApiDropDown() {
-    require_once('include/externalAPI/ExternalAPIFactory.php');
-    
-    $apiList = ExternalAPIFactory::getModuleDropDown('Documents');
-    
-    // FIXME: translate
-    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
-    
-    return $apiList;
-    
-}
+require_once('modules/Documents/DocumentExternalApiDropDown.php');
 
-?>

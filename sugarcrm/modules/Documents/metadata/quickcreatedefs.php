@@ -52,8 +52,7 @@ $viewdefs['Documents']['QuickCreate'] = array(
     
     array (
 
-      array('name'=>'uploadfile', 
-            'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="file" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
+      array('name'=>'filename', 
             'displayParams'=>array('required'=>true),
             ),
       'status_id',            
