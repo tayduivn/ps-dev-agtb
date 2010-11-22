@@ -159,7 +159,18 @@ class UserPreference extends SugarBean
 				$GLOBALS['savePreferencesToDBCats'][$category] = true;
 		}
 
-		$_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+		//check to see if the preference being saved is too large
+		if ($this->isPreferenceSizeTooLarge($category)){
+			//log error and set error message flag
+			$GLOBALS['log']->fatal("USERPREFERENCE ERROR 00:: User preference  for user: '$user->user_name' and category '$category' is ".strlen(base64_encode(serialize($value)))." characters long which is too big to save");  //<<----------				
+
+			//set global flag to indicate error has ocurred.  This will cause sugar_cleanup() in utils.php to flash a warning message to user.
+			$_SESSION['USER_PREFRENCE_ERRORS'] = true;
+
+		}else{
+			$_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+		}
+
 	}
 
 	/**
@@ -322,11 +333,53 @@ class UserPreference extends SugarBean
 			    $focus->deleted = 0;
 			    $focus->contents = base64_encode(serialize($contents));
 			    $focus->category = $category;
-			    $focus->save();
+				//save if length is under column max
+				if (strlen($focus->contents) > 65535){
+					//log error and add to error message
+					$GLOBALS['log']->fatal("USERPREFERENCE ERROR:: User preference  for user: '$user->user_name' and category '$focus->category' is ".strlen($focus->contents)." characters long which is too big to save");
+					$errors[] = 'category: '.$focus->category.' is '.strlen($focus->contents).' characters long which is too big and will cause the query to fail.';
+					//set global flag to indicate error has ocurred.  This will cause sugar_cleanup() in utils.php to flash a warning message to user.
+					$_SESSION['USER_PREFRENCE_ERRORS'] = true;
+				}else{
+					$focus->save();
+				}	
+
 			}
 		}
 	}
 
+	
+	/**
+	 * Checks to see if preference size is too large to store in contents field of userpreference table in database
+	 * @return returns true or false by default.  Returns string length number if returnCount value is set to true.
+	 * @param string $category category to check
+	 * @param bool $returnCount whether to return count or default boolean
+	 */
+	 function isPreferenceSizeTooLarge($category = 'global',$returnCount=false){
+		$user = $this->_userFocus;
+		
+		//retrieve the user preferences for this category, then serialize and encode the way the string would be stored in db
+		if(!isset($_SESSION[$user->user_name . '_PREFERENCES'][$category])){
+			$contents='';  
+		}else{
+			$contents = base64_encode(serialize($_SESSION[$user->user_name . '_PREFERENCES'][$category]));
+		}
+
+		//log error if string is too large
+		if (strlen($contents)>65535){
+			$GLOBALS['log']->fatal("USERPREFERENCE::isPreferenceSizeTooLarge - User preference  for user: '$user->user_name' and category '$category' did not pass size check as it is ".strlen($contents)." characters long which is too big to save.");
+		}
+			
+		//check returnCount flag to see whether we return true/false or actual count of content size
+		if($returnCount){
+			return strlen($contents);
+		}elseif (strlen($contents)>65535){
+			return true;
+		}
+		return false;
+
+	}
+	
 	/**
 	 * Resets preferences for a particular user. If $category is null all user preferences will be reset
 	 *
