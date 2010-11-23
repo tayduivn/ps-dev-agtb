@@ -289,9 +289,9 @@ class quicksearchQuery {
         $response = array();
         
         if(showFullName()) { // utils.php, if system is configured to show full name
-        	$user_array = getUserArrayFromFullName($args['conditions'][0]['value']);
+        	$user_array = getUserArrayFromFullName($args['conditions'][0]['value'], true);
         } else {
-            $user_array = get_user_array(false, "Active", '', false, $args['conditions'][0]['value'],' AND portal_only=0 AND is_group=0',false);
+            $user_array = get_user_array(false, "Active", '', false, $args['conditions'][0]['value'],' AND portal_only=0 ',false);
         }
         $response['totalCount']=count($user_array);
         $response['fields']=array();

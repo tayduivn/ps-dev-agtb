@@ -761,7 +761,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
-function getUserArrayFromFullName($args, $show_group_and_portal_users = true) {
+function getUserArrayFromFullName($args, $hide_portal_users = true) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 
@@ -784,8 +784,8 @@ function getUserArrayFromFullName($args, $show_group_and_portal_users = true) {
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
-	if ( $show_group_and_portal_users ) {
-	    $query .= " portal_only=0 AND is_group=0 AND "; 
+	if ( $hide_portal_users ) {
+	    $query .= " portal_only=0 AND "; 
 	}
 	$query .= $inClause;
 	$query .= " ORDER BY last_name ASC";
