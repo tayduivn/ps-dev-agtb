@@ -48,6 +48,7 @@ $subpanel_layout = array(
 		),
 		'name'=>array(
 			'vname' => 'LBL_LIST_NAME',
+		 	'target_module' => 'Employees',
 		 	'module' => 'Users',
 		    'widget_class' => 'SubPanelDetailViewLink',
 	 		'width' => '35%',
