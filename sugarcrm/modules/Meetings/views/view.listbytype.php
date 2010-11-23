@@ -31,6 +31,12 @@ class MeetingsViewListbytype extends ViewList {
     }
     
  	function listViewProcess(){
+        if ( ! EAPM::getLoginInfo('LotusLive') ) {
+            $smarty = new Sugar_Smarty();
+            echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
+            return;
+        }
+
 		$this->processSearchForm();
         $this->params['orderBy'] = 'meetings.date_start';
         $this->params['overrideOrder'] = true;
@@ -63,7 +69,8 @@ class MeetingsViewListbytype extends ViewList {
     }
 
  	function processSearchForm(){
- 		$type = 'LotusLiveDirect';
+ 		// $type = 'LotusLiveDirect';
+ 		$type = 'LotusLive';
  		$where =  " meetings.type = '$type' AND meetings.date_start > UTC_TIMESTAMP() - 7200 ";
 
         if ( isset($_REQUEST['name_basic']) ) {

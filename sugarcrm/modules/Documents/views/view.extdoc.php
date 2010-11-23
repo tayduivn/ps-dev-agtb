@@ -48,7 +48,16 @@ class DocumentsViewExtdoc extends SugarView
             $file_search = '';
         }
         
-        $apiName = 'LotusLiveDirect';
+        // $apiName = 'LotusLiveDirect';
+        $apiName = 'LotusLive';
+
+        if ( ! EAPM::getLoginInfo($apiName) ) {
+            $smarty = new Sugar_Smarty();
+            echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
+            return;
+        }
+
+
         $api = ExternalAPIFactory::loadAPI($apiName);
 
         $searchDataLower = $api->searchDoc($file_search);
