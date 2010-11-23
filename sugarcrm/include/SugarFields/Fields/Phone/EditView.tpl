@@ -37,10 +37,7 @@
 {assign var="value" value={{sugarvar key='value' string=true}} }
 {/if}  
 
-<input type='tel' name='{{$idname}}' 
-    id='{{$idname}}' size='{{$displayParams.size|default:30}}' 
-    {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{elseif isset($vardef.len)}}maxlength='{{$vardef.len}}'{{/if}} 
-    value='{$value}' title='{{$vardef.help}}' tabindex='{{$tabindex}}' {{$displayParams.field}}>
+<input type='text' name='{{$idname}}' id='{{$idname}}' size='{{$displayParams.size|default:30}}' {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{elseif isset($vardef.len)}}maxlength='{{$vardef.len}}'{{/if}} value='{$value}' title='{{$vardef.help}}' tabindex='{{$tabindex}}' {{$displayParams.field}}>
 
 {{if !empty($vardef.validate_usa_format)}}
 <script type="text/javascript">
