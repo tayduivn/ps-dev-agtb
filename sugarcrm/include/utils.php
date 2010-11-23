@@ -761,7 +761,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
-function getUserArrayFromFullName($args, $hide_portal_users = true) {
+function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 

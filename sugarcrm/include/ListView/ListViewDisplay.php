@@ -325,9 +325,10 @@ class ListViewDisplay {
 		    $menuItems .= $item;
 
 		$menuItems = str_replace('"','\"',$menuItems);
-
+		$menuItems = str_replace(array("\r","\n"),'',$menuItems);
 		if ( empty($menuItems) )
 		    return '';
+		
 
 		return <<<EOHTML
 <script type="text/javascript">
