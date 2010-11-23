@@ -2231,7 +2231,7 @@ class InboundEmail extends SugarBean {
 		$this->status = $_REQUEST['ie_status'];
 		$this->server_url = trim($_REQUEST['server_url']);
 		$this->email_user = trim($_REQUEST['email_user']);
-		$this->email_password = $_REQUEST['email_password'];
+		$this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
 		$this->port = trim($_REQUEST['port']);
 		$this->protocol = $_REQUEST['protocol'];
 		if ($this->protocol == "pop3") {
@@ -3541,7 +3541,7 @@ class InboundEmail extends SugarBean {
 	        $attachTeamSet = new TeamSet();
 	        $attachTeamIdsArray =  (isset($_REQUEST['team_ids']) ?  explode(",", $_REQUEST['team_ids']) : $this->team_set_id);
 	        $attach->team_set_id = $attachTeamSet->addTeams($attachTeamIdsArray);
-	    }elseif(!empty($GLOBALS['current_user']->team_id) && !empty($GLOBALS['current_user']->team_set_id)){ 
+	    }elseif(!empty($GLOBALS['current_user']->team_id) && !empty($GLOBALS['current_user']->team_set_id)){
 	        $attach->team_id = $GLOBALS['current_user']->team_id;
             $attach->team_set_id = $GLOBALS['current_user']->team_set_id;
 	    }else {
