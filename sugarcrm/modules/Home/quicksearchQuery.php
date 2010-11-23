@@ -80,7 +80,7 @@ class quicksearchQuery {
 	        }
 	    }
 	    
-        $whereClause = implode(" {$query_obj['group']} ",$cond_arr);
+        $whereClause = '('.implode(" {$query_obj['group']} ",$cond_arr).')';
         
         if($table == 'users.') 
             $whereClause .= " AND {$table}status='Active'";
