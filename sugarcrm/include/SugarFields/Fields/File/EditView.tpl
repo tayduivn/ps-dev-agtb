@@ -128,7 +128,7 @@ sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
 "method":"externalApi",
 "api":"",
 "modules":["EAPM"],
-"field_list":["name", "id", "url", "directUrl"],
+"field_list":["name", "id", "url", "direct_url"],
 "populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$vardef.docDirectUrl}}"],
 "required_list":["name"],
 "conditions":[],
