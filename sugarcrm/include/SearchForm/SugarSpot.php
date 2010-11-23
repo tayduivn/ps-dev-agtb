@@ -38,6 +38,7 @@ class SugarSpot
 	{
 		$query_encoded = urlencode($query);
 	    $results = $this->_performSearch($query, $modules, $offset);
+	    
 		$str = '<div id="SpotResults">';
 
 		$actions=0;
@@ -46,6 +47,7 @@ class SugarSpot
 			if(empty($data['data'])){
 				continue;
 			}
+			
 			$foundData = true;
 			
 			$countRemaining = $data['pageData']['offsets']['total'] - count($data['data']);
@@ -65,10 +67,20 @@ EOHTML;
 					$name = $row['NAME'];
 				}else{
 					foreach($row as $k=>$v){
-						if(strpos($k, 'NAME') !== false){
+						if(strpos($k, 'NAME') !== false && !empty($row[$k])){
 							$name = $v;
 							break;
 						}
+					}
+					
+					if(empty($name))
+					{
+						foreach($row as $k=>$v){
+							if(strpos($k, 'NAME') !== false){
+								$name = $v;
+								break;
+							}
+						}	
 					}
 				}
 			
@@ -184,6 +196,7 @@ EOHTML;
 			$class = $GLOBALS['beanList'][$moduleName];
 			$return_fields = array();
 			$seed = new $class();
+			
 			if (empty($searchFields[$moduleName]))
 			    continue;
 			    
@@ -238,7 +251,7 @@ EOHTML;
 			if (count($where_clauses) > 0 ){ 
 				$where = '('. implode(' ) OR ( ', $where_clauses) . ')';
 			}			
-			
+						
 			$lvd = new ListViewData();
 			$lvd->additionalDetails = false;
 			$max = ( !empty($sugar_config['max_spotresults_initial']) ? $sugar_config['max_spotresults_initial'] : 5 );
@@ -250,8 +263,8 @@ EOHTML;
 			    $params['overrideOrder'] = true;
 			    $params['orderBy'] = 'name';
 			}
-			$results[$moduleName]= $lvd->getListViewData($seed, $where, $offset,  $max, $return_fields,$params,'id') ;
-								
+			$results[$moduleName]= $lvd->getListViewData($seed, $where, $offset,  $max, $return_fields,$params,'id') ;		
+			
 		}
         //BEGIN SUGARCRM flav=spotactions ONLY
         //Search actions...

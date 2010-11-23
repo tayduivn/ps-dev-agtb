@@ -74,18 +74,24 @@ class UnifiedSearchAdvanced {
 		$sugar_smarty = new Sugar_Smarty();
 
 		$modules_to_search = array();
-		foreach($unified_search_modules as $module => $data) 
+
+		foreach($users_modules as $key=>$module) 
 		{
-            if(ACLController::checkAccess($module, 'list', true)) 
+            if(ACLController::checkAccess($key, 'list', true)) 
             {
-                $modules_to_search[$module] = array('translated' => $app_list_strings['moduleList'][$module]);
-                if(array_key_exists($module, $users_modules)) 
-                {
-                	$modules_to_search[$module]['checked'] = true;
-                } else {
-                	$modules_to_search[$module]['checked'] = false;
-                }
+                $modules_to_search[$key] = array('translated' => $app_list_strings['moduleList'][$key]);
+                $modules_to_search[$key]['checked'] = true;
             }
+		}
+		
+		//Now add the rest
+		foreach($unified_search_modules as $key=>$data)
+		{
+		    if(ACLController::checkAccess($key, 'list', true) && !isset($users_modules[$key])) 
+            {
+                $modules_to_search[$key] = array('translated' => $app_list_strings['moduleList'][$key]);
+                $modules_to_search[$key]['checked'] = false;
+            }			
 		}
 
 		if(!empty($this->query_string))
@@ -95,6 +101,7 @@ class UnifiedSearchAdvanced {
 			$sugar_smarty->assign('query_string', '');
 		}
 		
+		$sugar_smarty->assign('MOD', return_module_language($GLOBALS['current_language'], 'Administration'));
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('USE_SEARCH_GIF', 0);
 		$sugar_smarty->assign('LBL_SEARCH_BUTTON_LABEL', $app_strings['LBL_SEARCH_BUTTON_LABEL']);
@@ -117,9 +124,15 @@ class UnifiedSearchAdvanced {
 	    	}	
 	    }
 
+		$showDiv = $current_user->getPreference('showGSDiv', 'search');
+		if(!isset($showDiv))
+		{
+		   $showDiv = 'no';
+		}	    
+
+		$sugar_smarty->assign('SHOWGSDIV', $showDiv);
 		$sugar_smarty->assign('MODULES_TO_SEARCH', $modules_to_display);
 		$sugar_smarty->debugging = true;
-
 		return $sugar_smarty->fetch($tpl);
 	}
 
@@ -140,22 +153,24 @@ class UnifiedSearchAdvanced {
 
 		if(!empty($_REQUEST['advanced']) && $_REQUEST['advanced'] != 'false') {
 			$modules_to_search = array();
-			foreach($_REQUEST as $param => $value) {
-				if(preg_match('/^search_mod_(.*)$/', $param, $match)) {
-					$modules_to_search[$match[1]] = $beanList[$match[1]];
+			if(!empty($_REQUEST['search_modules']))
+			{
+				foreach($_REQUEST['search_modules'] as $module) {
+						$modules_to_search[$module] = $beanList[$module];
 				}
 			}
+
+			$current_user->setPreference('showGSDiv', isset($_REQUEST['showGSDiv']) ? $_REQUEST['showGSDiv'] : 'no', 0, 'search');
 			$current_user->setPreference('globalSearch', $modules_to_search, 0, 'search'); // save selections to user preference
 		} else {
-			$users_modules = $current_user->getPreference('globalSearch', 'search');
+			$users_modules = $current_user->getPreference('globalSearch', 'search');			
 			if(isset($users_modules)) { // use user's previous selections
 			    foreach ( $users_modules as $key => $value ) {
 			        if ( isset($unified_search_modules[$key]) ) {
 			            $modules_to_search[$key] = $value;
 			        }
 			    }
-			}
-			else { // select all the modules (ie first time user has used global search)
+			} else { // select all the modules (ie first time user has used global search)
 				foreach($unified_search_modules as $module=>$data) {
 				    if ( !empty($data['default']) ) {
 				        $modules_to_search[$module] = $beanList[$module];
@@ -287,21 +302,38 @@ class UnifiedSearchAdvanced {
                 $module_counts[$moduleName] = $lv->data['pageData']['offsets']['total'];
 
                 if($lv->data['pageData']['offsets']['total'] == 0) {
+                    //$module_results[$moduleName] .= "<li class='noBullet' id='whole_subpanel_{$moduleName}'><div id='div_{$moduleName}'><h2>" . $home_mod_strings['LBL_NO_RESULTS_IN_MODULE'] . '</h2></div></li>';
                     $module_results[$moduleName] .= '<h2>' . $home_mod_strings['LBL_NO_RESULTS_IN_MODULE'] . '</h2>';
                 } else {
                     $has_results = true;
+                    //$module_results[$moduleName] .= "<li class='noBullet' id='whole_subpanel_{$moduleName}'><div id='div_{$moduleName}'>" . $lv->display(false, false) . '</div></li>';
                     $module_results[$moduleName] .= $lv->display(false, false);
                 }
+                
 			}
 		}
-
+                		
 		if($has_results) {
-			arsort($module_counts);
+			//arsort($module_counts);
+			//echo "<ul class='noBullet'>\n";
 			foreach($module_counts as $name=>$value) {
 				echo $module_results[$name];
 			}
-		}
-		else {
+			//echo "</ul>\n";
+			
+			/*
+			$sugar_smarty = new Sugar_Smarty();		
+			$sugar_smarty->assign('APP', $app_strings);
+			$sugar_smarty->assign('MOD', $mod_strings);
+			$sugar_smarty->assign('MODULE_RESULTS', $module_results);
+			$tpl = 'modules/Home/UnifiedSearchAdvancedResults.tpl';
+			if(file_exists('custom/' . $tpl))
+			{
+			   $tpl = 'custom/' . $tpl;
+			}
+			echo $sugar_smarty->fetch($tpl);
+			*/
+		} else {
 			echo '<br>';
 			echo $home_mod_strings['LBL_NO_RESULTS'];
 			echo $home_mod_strings['LBL_NO_RESULTS_TIPS'];
@@ -411,7 +443,7 @@ class UnifiedSearchAdvanced {
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('MOD', $mod_strings);
 		
-		uasort($unified_search_modules_display, 'unified_search_modules_cmp');
+		//uasort($unified_search_modules_display, 'unified_search_modules_cmp');
 		$sugar_smarty->assign('UNIFIED_SEARCH_MODULES_DISPLAY', $unified_search_modules_display);
 		$tpl = 'modules/Administration/templates/GlobalSearchSettings.tpl';
 		if(file_exists('custom/' . $tpl))
@@ -432,15 +464,22 @@ class UnifiedSearchAdvanced {
 		}
 
 		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
-
-		foreach($unified_search_modules_display as $module => $data)
+		
+		if(isset($_REQUEST['search_modules'])) 
 		{
-			if(isset($_REQUEST['search_mod_' . $module]))
+			foreach($_REQUEST['search_modules'] as $module)
 			{
-			   $unified_search_modules_display[$module]['visible'] = true;	
-			} else {
-			   $unified_search_modules_display[$module]['visible'] = false;
-			}
+				$unified_search_modules_display[$module]['visible'] = true;
+			}			
+		}
+
+		
+		if(isset($_REQUEST['skip_modules'])) 
+		{
+			foreach($_REQUEST['skip_modules'] as $module)
+			{
+				$unified_search_modules_display[$module]['visible'] = false;
+			}			
 		}
 		
 		$this->writeUnifiedSearchModulesDisplayFile($unified_search_modules_display);

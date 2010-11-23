@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['ProductTemplate'] = array('table' => 'product_templates', 'unified_search' => true,
+$dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'comment' => 'The Admin view of a Product in Product Catalog; used as template for a product instance'
 								,'fields' => array (
 	'id' =>
@@ -148,7 +148,6 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates', 'unified_
 	'dbType' => 'varchar',
 	'len' => '255',
 	'source' => 'non-db',
-	//'unified_search' => true,
   ),
   'type_name' =>
   array (
@@ -165,7 +164,6 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates', 'unified_
 	'dbType' => 'varchar',
 	'len' => '255',
 	'source' => 'non-db',
-	//'unified_search' => true,
 	'importable' => 'true',
     'studio' => false,
   ),
@@ -179,7 +177,6 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates', 'unified_
 		'comment' => 'Name of the product',
 		'importable' => 'required',
         'required' => true,
-		'unified_search' => true,
 	),
 	'mft_part_num' =>
 	array (

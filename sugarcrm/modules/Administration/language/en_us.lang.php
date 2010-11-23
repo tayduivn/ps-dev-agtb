@@ -1133,5 +1133,7 @@ $mod_strings = array (
    'LBL_SAML_LOGIN_URL' => 'Login URL',
    'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be allowed to run global searching against',
+   'LBL_GLOBAL_SEARCH_MODULES_ALLOWED' => 'Search Modules',
+   'LBL_GLOBAL_SEARCH_MODULES_NOT_ALLOWED' => 'Don\'t Search Modules',
 
 	);

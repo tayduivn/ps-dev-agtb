@@ -167,8 +167,7 @@ public function test_create_unified_search_modules_display()
 	
     require_once('modules/UpgradeWizard/uw_utils.php');
     $usa = new UnifiedSearchAdvanced();
-    $_REQUEST['search_mod_Accounts'] = true;
-    $_REQUEST['search_mod_clabc_Bug36845Test'] = true;
+    $_REQUEST['search_modules'] = array('Accounts', 'Bug36845Test');
     $usa->saveGlobalSearchSettings();
     $this->assertTrue(file_exists('cache/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
 	/*
