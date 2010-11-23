@@ -42,7 +42,6 @@ class MBLanguage{
 		
 		function loadStrings($file)
         {
-            global $mod_strings;
             $module = strtoupper($this->name);
             $object_name = strtoupper($this->key_name);
             $_object_name = strtolower($this->name);		
