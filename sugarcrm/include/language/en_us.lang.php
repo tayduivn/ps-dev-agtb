@@ -93,7 +93,7 @@ $app_list_strings = array (
     'Notifications'=>'Notifications',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=ent ONLY
-    'ReportMaker' => 'Enterprise Reports',
+    'ReportMaker' => 'Advanced Reports',
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
 //END SUGARCRM flav=ent ONLY
@@ -1453,9 +1453,9 @@ $app_list_strings = array (
   ),
   'wflow_record_type_dom' =>
    array (
-    'All' => 'New and Existing Records',
+    'All' => 'New and Updated Records',
     'New' => 'New Records Only',
-    'Update' => 'Existing Records Only',
+    'Update' => 'Updated Records Only',
   ),
   'wflow_rel_type_dom' =>
         array (
@@ -3044,7 +3044,11 @@ $app_strings = array (
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
     
     //SugarFieldPhone labels
-    'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter USA phone format',
+    'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter a numeric U.S. phone number, including area code.',
+    
+    //File write error label
+    'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
+    
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

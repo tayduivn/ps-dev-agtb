@@ -58,7 +58,7 @@
         </td>
         <td colspan='3'>
             <select name='autoRefresh'>
-				{html_options values=$autoRefreshOptionsValues output=$autoRefreshOptions selected=$autoRefreshSelect}
+				{html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
            	</select>
         </td>
 	</tr>

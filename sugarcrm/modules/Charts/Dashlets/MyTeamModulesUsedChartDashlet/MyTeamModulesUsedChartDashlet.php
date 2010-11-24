@@ -33,9 +33,20 @@ require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyTeamModulesUsedChartDashlet extends DashletGenericChart
 {
-    public $isConfigurable = false;
-
-    public function display()
+    /**
+     * @see Dashlet::$isConfigurable
+     */
+    public $isConfigurable = true;
+    
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
+    protected $_seedName = 'Trackers';
+    
+    /**
+     * @see DashletGenericChart::display()
+     */
+    public function display() 
     {
         global $db;
 
@@ -58,16 +69,23 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
 
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
-
-        return $this->getTitle('<div align="center"></div>') .
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+	
+        return $this->getTitle('<div align="center"></div>') . 
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
 	}
 
-    public function hasAccess(){
+    /**
+     * @see Dashlet::hasAccess()
+     */
+    public function hasAccess()
+    {
     	return ACLController::checkAccess('Trackers', 'view', false, 'Tracker');
-    }
-
-    protected function constructQuery()
+    }	
+	
+    /**
+     * @see DashletGenericChart::constructQuery()
+     */
+    protected function constructQuery() 
     {
 		return "SELECT l1.user_name, tracker.module_name, count(*) count " .
                     "FROM tracker INNER JOIN users l1 ON l1.id = tracker.user_id and l1.deleted = 0 " .
@@ -77,5 +95,3 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
                     "ORDER BY l1.user_name ASC";
 	}
 }
-
-?>

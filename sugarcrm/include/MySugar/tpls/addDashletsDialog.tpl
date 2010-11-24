@@ -89,22 +89,22 @@
 	</div>
 	{/if}
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
-	<h3><span id="reportChartDashletsExpCol"><a href="#" onClick="javascript:SUGAR.mySugar.collapseList('reportChartDashlets');"><img border="0" src="{sugar_getimagepath file='basic_search.gif'}" align="absmiddle" /></span></a>&nbsp;{sugar_translate label='LBL_REPORT_CHARTS' module='Home'}</h3>
+	<h3><span id="reportChartDashletsExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList('reportChartDashlets');"><img border="0" src="{sugar_getimagepath file='basic_search.gif'}" align="absmiddle" /></span></a>&nbsp;{sugar_translate label='LBL_REPORT_CHARTS' module='Home'}</h3>
 	<div id="reportChartDashletsList">
 		<div id="myFavoriteReportsChartDashlets" style="display:inline;">
-			<h4><span id="myFavoriteExpCol"><a href="#" onClick="javascript:SUGAR.mySugar.collapseReportList('myFavorite');"><img border="0" src="{sugar_getimagepath file='ProjectMinus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_MY_FAVORITE_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="myFavoriteExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseReportList('myFavorite');"><img border="0" src="{sugar_getimagepath file='ProjectMinus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_MY_FAVORITE_REPORT_CHARTS' module='Home'}</h4>
 			<div id="myFavoriteReportsChartDashletsList"><img src="{sugar_getimagepath file='img_loading.gif'}" align="absmiddle" /></div>
 		</div>
 		<div id="mySavedReportsChartDashlets" style="display:inline;">
-			<h4><span id="mySavedExpCol"><a href="#" onClick="javascript:SUGAR.mySugar.expandReportList('mySaved');"><img border="0" src="{sugar_getimagepath file='ProjectPlus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_MY_SAVED_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="mySavedExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('mySaved');"><img border="0" src="{sugar_getimagepath file='ProjectPlus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_MY_SAVED_REPORT_CHARTS' module='Home'}</h4>
 			<div id="mySavedReportsChartDashletsList" style="display:none;"><img src="{sugar_getimagepath file='img_loading.gif'}" align="absmiddle" /></div>
 		</div>
 		<div id="myTeamReportsChartDashlets" style="display:inline;">
-			<h4><span id="myTeamExpCol"><a href="#" onClick="javascript:SUGAR.mySugar.expandReportList('myTeam');"><img border="0" src="{sugar_getimagepath file='ProjectPlus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_MY_TEAM_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="myTeamExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('myTeam');"><img border="0" src="{sugar_getimagepath file='ProjectPlus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_MY_TEAM_REPORT_CHARTS' module='Home'}</h4>
 			<div id="myTeamReportsChartDashletsList" style="display:none;"><img src="{sugar_getimagepath file='img_loading.gif'}" align="absmiddle" /></div>
 		</div>
 		<div id="globalReportsChartDashlets" style="display:inline;">
-			<h4><span id="globalExpCol"><a href="#" onClick="javascript:SUGAR.mySugar.expandReportList('global');"><img border="0" src="{sugar_getimagepath file='ProjectPlus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_GLOBAL_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="globalExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('global');"><img border="0" src="{sugar_getimagepath file='ProjectPlus.gif'}" align="absmiddle" /></a></span>&nbsp;{sugar_translate label='LBL_GLOBAL_REPORT_CHARTS' module='Home'}</h4>
 			<div id="globalReportsChartDashletsList" style="display:none;"><img src="{sugar_getimagepath file='img_loading.gif'}" align="absmiddle" /></div>
 		</div>
 	</div>

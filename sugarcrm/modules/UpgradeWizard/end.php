@@ -58,7 +58,7 @@ foreach ($beanFiles as $bean => $file) {
 		unset($GLOBALS['dictionary'][$bean]);
 		$focus = new $bean ();
 		if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
-			$sql = $db->repairTable($focus, true);
+			$sql = $focus->db->repairTable($focus, true);
 			logThis('Running sql:' . $sql, $path);
 			$repairedTables[$focus->table_name] = true;
 		}
@@ -87,7 +87,7 @@ $ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_
 
 //BEGIN SUGARCRM flav=pro ONLY
 // Run this code if we are upgrading from pre-550 version or if we are doing a CE to PRO/ENT conversion
-if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_ent) 
+if($ce_to_pro_ent) 
 {
     logThis(" Start Building private teams", $path);
 	upgradeModulesForTeam();
@@ -114,19 +114,6 @@ if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < 
     }       
 }
 //END SUGARCRM flav=pro ONLY
-if(isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550')
-{
-    include("install/seed_data/Advanced_Password_SeedData.php");
-}
-
-if(isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550' && $sugar_config['dbconfig']['db_type'] == 'mssql' && !is_freetds())
-{
-     convertImageToText('import_maps', 'content');
-     convertImageToText('import_maps', 'default_values');
-     //BEGIN SUGARCRM flav=pro ONLY
-     convertImageToText('saved_reports', 'content');
-     //END SUGARCRM flav=pro ONLY
-}
 
 logThis(" Start Rebuilding the config file again", $path);
 
@@ -247,7 +234,9 @@ if(function_exists('upgrade_connectors'))
 //Global search support
 if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
 {
+   logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
+   logThis('Add global search for custom modules finished .', $path);
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');

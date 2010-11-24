@@ -275,11 +275,11 @@ class Scheduler extends SugarBean {
 			curl_close($ch);
 
 			if($cInfo['http_code'] < 400) {
-				$GLOBALS['log']->debug('----->Firing was successful: ('.$focus->id.') at');
+				$GLOBALS['log']->debug('----->Firing was successful: ('.$this->id.') at');
 				$GLOBALS['log']->debug('----->WTIH RESULT: '.strip_tags($result).' AND '.strip_tags(print_r($cInfo)));
 				return true;
 			} else {
-				$GLOBALS['log']->fatal('Job errored: ('.$focus->id.')');
+				$GLOBALS['log']->fatal('Job errored: ('.$this->id.')');
 				return false;
 			}
 

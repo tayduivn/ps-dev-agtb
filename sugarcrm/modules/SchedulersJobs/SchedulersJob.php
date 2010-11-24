@@ -192,7 +192,7 @@ class SchedulersJob extends SugarBean {
 		curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);  // open brand new conn
 		curl_setopt($ch, CURLOPT_HEADER, true); // do not return header info with result
 		curl_setopt($ch, CURLOPT_NOPROGRESS, true); // do not have progress bar
-		$urlparts = parse_url($url);
+		$urlparts = parse_url($job);
 		if(empty($urlparts['port'])) {
 		    if($urlparts['scheme'] == 'https'){
 				$urlparts['port'] = 443;

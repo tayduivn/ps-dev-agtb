@@ -36,8 +36,14 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
     public $lsbo_lead_sources = array();
     public $lsbo_ids          = array();
     
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
     protected $_seedName = 'Opportunities';
     
+    /**
+     * @see DashletGenericChart::displayOptions()
+     */
     public function displayOptions()
     {
         global $app_list_strings;
@@ -58,6 +64,9 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         return parent::displayOptions();
     }
 
+    /**
+     * @see DashletGenericChart::display()
+     */
     public function display() 
     {
     	global $current_user, $sugar_config;
@@ -87,9 +96,12 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
 	}
     
+    /**
+     * @see DashletGenericChart::constructQuery()
+     */
     protected function constuctQuery()
     {
         $query = "SELECT lead_source,sales_stage,sum(amount_usdollar/1000) as total, ".
@@ -109,5 +121,3 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         return $query;
 	}
 }
-
-?>

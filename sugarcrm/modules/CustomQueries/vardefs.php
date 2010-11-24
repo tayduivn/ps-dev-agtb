@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['CustomQuery'] = array('table' => 'custom_queries',
-	'comment' => 'Stores the query used in Enterprise Reports'
+	'comment' => 'Stores the query used in Advanced Reports'
                                ,'fields' => array (
   'id' =>
   array (

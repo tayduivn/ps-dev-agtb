@@ -425,7 +425,7 @@ add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
 //END SUGARCRM flav=pro ONLY 
 
-if($origVersion < '550' || $ce_to_pro_ent) {	
+if($ce_to_pro_ent) {	
 	//add the global team if it does not exist
 	$globalteam = new Team();
 	$globalteam->retrieve('1');
@@ -468,8 +468,10 @@ merge_config_si_settings(true);
 logThis('End merge_config_si_settings', $path);
 
 //bug: 36845 - ability to provide global search support for custom modules
-if($origVersion < '620'){
+if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
+   logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
+   logThis('Add global search for custom modules finished .', $path);
 }
 
 //also add the cache cleaning here.

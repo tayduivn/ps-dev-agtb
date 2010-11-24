@@ -51,6 +51,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'comment' => 'The name of the campaign',
 			'importable' => 'required',
             'required' => true,
+			'unified_search' => true,
 			),
 		'refer_url' => array (
 			'name' => 'refer_url',

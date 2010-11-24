@@ -37,7 +37,10 @@ class OutcomeByMonthDashlet extends DashletGenericChart
     public $obm_ids = array();
     public $obm_date_start;
     public $obm_date_end;
-
+    
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
     protected $_seedName = 'Opportunities';
 
     /**
@@ -99,9 +102,9 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         $sugarChart->data_set = $sugarChart->sortData($sugarChart->data_set, 'm', false, 'sales_stage', true, true);
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
-
-        return $this->getTitle('<div align="center"></div>') .
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+	
+        return $this->getTitle('<div align="center"></div>') . 
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
 	}
 
     /**
@@ -127,5 +130,3 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         return $query;
     }
 }
-
-?>

@@ -619,11 +619,11 @@ SUGAR.mySugar = function() {
 
 		 		ajaxStatus.hideStatus();
 				if(data) {		
-					document.getElementById('dashlet_entire_' + id).innerHTML = data.responseText;			
+					SUGAR.mySugar.currentDashlet.innerHTML = data.responseText;			
 				}
 
 				SUGAR.util.evalScript(data.responseText);
-				if(callback && typeof callback == 'function') callback();
+				if(callback) callback();
 				
 				var processChartScript = function(scriptData){
 					SUGAR.util.evalScript(scriptData.responseText);
@@ -649,12 +649,8 @@ SUGAR.mySugar = function() {
 			}
 			
 			SUGAR.mySugar.currentDashlet = document.getElementById('dashlet_entire_' + id);
-			var callback = {
-                success: fillInDashlet,
-                failure: fillInDashlet,
-                argument: {'id': id}
-            };
-            var cObj = YAHOO.util.Connect.asyncRequest('GET', url, callback);
+			var cObj = YAHOO.util.Connect.asyncRequest('GET', url,
+			                    {success: fillInDashlet, failure: fillInDashlet}, null); 
 			return false;
 		},
 		

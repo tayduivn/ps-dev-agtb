@@ -41,7 +41,7 @@ class SugarCachesMash extends SugarCacheAbstract
         $key
         )
     {
-        return zget('/tmp/'.$this->_keyPrefix.'/'.$key);
+        return zget('/tmp/'.$this->_keyPrefix.'/'.$key,null);
     }
     
     /**

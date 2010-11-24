@@ -57,7 +57,7 @@ class TrackerDashlet extends Dashlet {
         // if no custom title, use default
         if(empty($def['title'])) $this->title = $this->dashletStrings['LBL_TITLE'];
         else $this->title = $def['title'];   
-        if(isset($options['autoRefresh'])) $this->autoRefresh = $options['autoRefresh'];
+        if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
         
         $this->tReporter = new TrackerReporter();
     }

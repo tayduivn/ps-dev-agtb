@@ -306,7 +306,7 @@ eoq;
 						if(!empty($_POST['reports_to_id']) && $newbean->reports_to_id != $_POST['reports_to_id']) {
 						   $old_reports_to_id = empty($newbean->reports_to_id) ? 'null' : $newbean->reports_to_id;
 						}
-						
+
 						$check_notify = FALSE;
 
 						if (isset( $this->sugarbean->assigned_user_id)) {
@@ -317,15 +317,15 @@ eoq;
 								$check_notify = TRUE;
 							}
 						}
-	                    
+
 						//Call include/formbase.php, but do not call retrieve again
 						populateFromPost('', $newbean, true);
 						$newbean->save_from_post = false;
-						
+
 						if (!isset($_POST['parent_id'])) {
 							$newbean->parent_type = null;
 						}
-						
+
 						$email_address_id = '';
 	                    if (!empty($_POST['optout_primary'])) {
 	                    	$optout_flag_value = 0;
@@ -1251,13 +1251,13 @@ EOQ;
         else{
             $this->use_old_search = false;
             require_once('include/SearchForm/SearchForm2.php');
-            
+
             if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-                require('custom/modules/'.$module.'/metadata/metafiles.php');	
+                require('custom/modules/'.$module.'/metadata/metafiles.php');
             }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
                 require('modules/'.$module.'/metadata/metafiles.php');
             }
-            
+
             if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
             {
                 require_once('custom/modules/'.$module.'/metadata/searchdefs.php');
@@ -1283,7 +1283,9 @@ EOQ;
             $searchForm = new SearchForm($seed, $module);
             $searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl');
         }
-        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false);
+	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
+	   can have fields named 'module' etc. which may break the query */ 
+        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false); // see bug 31271
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
         if (count($where_clauses) > 0 ) {

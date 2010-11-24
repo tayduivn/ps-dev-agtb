@@ -37,8 +37,14 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
     public $pbls_lead_sources = array();
     public $pbls_ids          = array();
     
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
     protected $_seedName = 'Opportunities';
     
+    /**
+     * @see DashletGenericChart::displayOptions()
+     */
     public function displayOptions()
     {
         global $app_list_strings;
@@ -59,6 +65,9 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
         return parent::displayOptions();
     }
     
+    /**
+     * @see DashletGenericChart::display()
+     */
     public function display() 
     {
     	global $current_user, $sugar_config;
@@ -88,9 +97,12 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
 		$sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
 		return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
     }  
     
+    /**
+     * @see DashletGenericChart::constructQuery()
+     */
     protected function constructQuery()
     {
 		$query = "SELECT lead_source,sum(amount_usdollar/1000) as total,count(*) as opp_count ".
@@ -109,7 +121,4 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
 
         return $query;		
 	}
-    
 }
-
-?>

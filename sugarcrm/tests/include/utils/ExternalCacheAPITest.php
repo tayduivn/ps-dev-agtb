@@ -15,10 +15,6 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
             'test cache value 3 key 2 '.date("YmdHis") => 'test cache value 3 value 2 '.date("YmdHis"),
             'test cache value 3 key 3 '.date("YmdHis") => 'test cache value 3 value 3 '.date("YmdHis"),
             );
-        
-        // try to test the backend if we can, rather than the in-memory store
-        if ( !(SugarCache::instance() instanceOf SugarCacheMemory) )
-            SugarCache::instance()->useLocalStore = false;
     }
 
     public function tearDown() 
@@ -44,14 +40,14 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
         sugar_cache_put($this->_cacheKey2,$this->_cacheValue2);
         sugar_cache_put($this->_cacheKey3,$this->_cacheValue3);
         $this->assertEquals(
-            sugar_cache_retrieve($this->_cacheKey1),
-            $this->_cacheValue1);
+            $this->_cacheValue1,
+            sugar_cache_retrieve($this->_cacheKey1));
         $this->assertEquals(
-            sugar_cache_retrieve($this->_cacheKey2),
-            $this->_cacheValue2);
+            $this->_cacheValue2,
+            sugar_cache_retrieve($this->_cacheKey2));
         $this->assertEquals(
-            sugar_cache_retrieve($this->_cacheKey3),
-            $this->_cacheValue3);
+            $this->_cacheValue3,
+            sugar_cache_retrieve($this->_cacheKey3));
     }
 
     public function testStoreClearCacheKeyAndRetrieve()
@@ -60,11 +56,11 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
         sugar_cache_put($this->_cacheKey2,$this->_cacheValue2);
         sugar_cache_clear($this->_cacheKey1);
         $this->assertNotEquals(
-            sugar_cache_retrieve($this->_cacheKey1),
-            $this->_cacheValue1);
+            $this->_cacheValue1,
+            sugar_cache_retrieve($this->_cacheKey1));
         $this->assertEquals(
-            sugar_cache_retrieve($this->_cacheKey2),
-            $this->_cacheValue2);
+            $this->_cacheValue2,
+            sugar_cache_retrieve($this->_cacheKey2));
     }
     
     public function testStoreResetCacheAndRetrieve()
@@ -73,10 +69,18 @@ class ExternalCacheAPITest extends Sugar_PHPUnit_Framework_TestCase
         sugar_cache_put($this->_cacheKey2,$this->_cacheValue2);
         sugar_cache_reset();
         $this->assertNotEquals(
-            sugar_cache_retrieve($this->_cacheKey1),
-            $this->_cacheValue1);
+            $this->_cacheValue1,
+            sugar_cache_retrieve($this->_cacheKey1));
         $this->assertNotEquals(
-            sugar_cache_retrieve($this->_cacheKey2),
-            $this->_cacheValue2);
+            $this->_cacheValue2,
+            sugar_cache_retrieve($this->_cacheKey2));
+    }
+    
+    /**
+     * @ticket 40797
+     */
+    public function testRetrieveNonExistantKeyReturnsNull()
+    {
+        $this->assertNull(sugar_cache_retrieve('iamlookingforakeythatainthere'));
     }
 }

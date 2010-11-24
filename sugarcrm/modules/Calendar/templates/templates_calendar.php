@@ -209,7 +209,7 @@ function template_cal_tabs($args) {
 				}
 			} else if($act->sugar_bean->object_name == 'Task') {
 				echo "<td>".
-					SugarThemeRegistry::current()->getImage('Tasks','alt="'.$act->sugar_bean->status.': '.$act->sugar_bean->name.'"');
+					SugarThemeRegistry::current()->getImage('Tasks','alt="'.$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"');
 				echo "</td>";
 
 				if(empty($act->sugar_bean->name)) {
@@ -220,7 +220,7 @@ function template_cal_tabs($args) {
 					echo "<td width=\"100%\">
 						<a href=\"index.php?module=Tasks&action=DetailView&record=".
 						$act->sugar_bean->id."\">".
-						$act->sugar_bean->status.': '.$act->sugar_bean->name."<br>(".
+						$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name."<br>(".
 						$timedate->getTimePart($act->sugar_bean->date_due).")</a></td></tr>";
 				}
 			}

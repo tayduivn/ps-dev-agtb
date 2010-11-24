@@ -33,13 +33,10 @@ class TeamNoticesDashlet extends Dashlet
     public $isRefreshable = false;
     public $hasScript     = true;
 
-    public function __construct(
-        $id
-        ) 
+    public function __construct($id)
     {
         parent::Dashlet($id);
-        if(empty($def['title'])) 
-            $this->title = translate('LBL_MODULE_NAME', 'TeamNotices');        
+        $this->title = translate('LBL_MODULE_NAME', 'TeamNotices');
     }
     
     public function displayScript() 

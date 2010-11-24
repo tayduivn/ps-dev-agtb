@@ -180,7 +180,6 @@ class MyForecastsDashlet extends Dashlet {
      
         return parent::display() . $str; // return parent::display for title and such
     }
-    
     /**
      * Displays the javascript for the dashlet
      * 
@@ -190,6 +189,7 @@ class MyForecastsDashlet extends Dashlet {
         $ss = new Sugar_Smarty();
         $ss->assign('saving', $this->dashletStrings['LBL_SAVING']);
         $ss->assign('saved', $this->dashletStrings['LBL_SAVED']);
+        $ss->assign('titleLbl', $this->dashletStrings['LBL_CONFIGURE_TITLE']);
         $ss->assign('id', $this->id);
         //get current language for the forecasts module and load the module strings for that language
         global $current_language;

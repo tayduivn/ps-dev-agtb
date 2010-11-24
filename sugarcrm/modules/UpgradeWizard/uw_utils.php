@@ -160,7 +160,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile, $path);
+			//logThis('Copying file to destination: ' . $targetFile, $path);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
@@ -168,7 +168,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile, $path);
+			//logThis('Skipping file: ' . $targetFile, $path);
 			$skippedFiles[] = $targetFile;
 		}
 	}
@@ -248,12 +248,12 @@ function copyRecursiveBetweenDirectories($from,$to){
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
 					} else {
-						logThis('Copied file: ' . $targetFile);
+						//logThis('Copied file: ' . $targetFile);
 						//$copiedFiles[] = $targetFile;
 					}
 
@@ -325,7 +325,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -333,7 +333,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						$copiedFiles[] = $targetFile;
 					}
 				} else {
-					logThis('Skipping file: ' . $targetFile);
+					//logThis('Skipping file: ' . $targetFile);
 					$skippedFiles[] = $targetFile;
 				}
 			  }
@@ -2567,7 +2567,7 @@ $uwMain = $upgrade_directories_not_found;
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile);
+			//logThis('Copying file to destination: ' . $targetFile);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -2575,7 +2575,7 @@ $uwMain = $upgrade_directories_not_found;
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile);
+			//logThis('Skipping file: ' . $targetFile);
 			//$skippedFiles[] = $targetFile;
 		}
 	   }
@@ -3164,7 +3164,7 @@ function unlinkTempFiles() {
 		rsort($files);
 		foreach($files as $file) {
 			if(!is_dir($file)) {
-				logThis('unlinking ['.$file.']', $path);
+				//logThis('unlinking ['.$file.']', $path);
 				@unlink($file);
 			}
 		}
@@ -3172,7 +3172,7 @@ function unlinkTempFiles() {
 		$files = findAllFiles($tempDir, array(), true);
 		foreach($files as $dir) {
 			if(is_dir($dir)) {
-				logThis('removing dir ['.$dir.']', $path);
+				//logThis('removing dir ['.$dir.']', $path);
 				@rmdir($dir);
 			}
 		}
@@ -3287,15 +3287,13 @@ function resetUwSession() {
 function UWrebuild() {
 	global $db;
 	global $path;
-
+	/*
+	//CCL - Comment this block out, it is called in end.php
 	logThis('Rebuilding everything...', $path);
-//	require_once('ModuleInstall/ModuleInstaller.php');
-//	$mi = new ModuleInstaller();
-//	$mi->rebuild_all(true);
 	require_once('modules/Administration/QuickRepairAndRebuild.php');
 	$randc = new RepairAndClear();
     $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
-
+    */
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
 	logThis('Registering rebuild record: '.$query, $path);
@@ -3635,7 +3633,7 @@ function deletePackageOnCancel(){
     // delete file in upgrades/patch
     $delete_me = urldecode( $_SESSION['install_file'] );
     if(@unlink($delete_me)) {
-    	logThis('unlinking: '.$delete_me);
+    	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
     } else {
     	logThis('ERROR: could not delete ['.$delete_me.']');
@@ -4192,22 +4190,6 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 		}
 	}
 }
-function createTable(){
-	if($sugar_config['dbconfig']['db_type'] == 'oci8'){
-		$query= "select table_name from user_tables where table_name=strtoupper(trim($qarr[2]))";
-		$result = $db->query($query);
-		$row = $db->fetchByAssociation($result);
-		if($row['table_name'] != null){
-			//already exists
-		}
-		else{
-			//create table
-			$query= $completeLine;
-			$db->query($query);
-		}
-	}
-}
-
 
 function repairDBForUpgrade($execute=false,$path=''){
 
@@ -4671,7 +4653,7 @@ function add_custom_modules_favorites_search(){
 		}
 
 		$matches = array();
-		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9_]+$/i' , $module_dir, $matches);
 
 		// Make sure the module was created by module builder
 		if(empty($matches)){
@@ -4929,12 +4911,8 @@ function upgradeModulesForTeam() {
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
 
     //Update team_set_id
-	if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_or_ent) {
-	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
-	}
-
-	//Update default_team
 	if($ce_to_pro_or_ent) {
+	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
 	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
 
@@ -5623,102 +5601,17 @@ function upgrade_connectors($path='')
 
 /**
  * add_unified_search_to_custom_modules_vardefs
- * This method scans all custom modules installed on the system and then attempts to modify the
- * vardefs.php file to support global searching where possible.
+ * 
+ * This method calls the repair code to remove the unified_search_modules.php fiel
  * 
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-    require_once('modules/ModuleBuilder/MB/MBPackage.php');
-	$module_directories = scandir('modules');
-    $modified_search = false;
-    
-    //If there is no package directory, just return false
-    if(!file_exists('custom/modulebuilder/packages'))
-    {
-       return false;
-    }
-    
-    $scanned_packages = array();
-    
-	foreach($module_directories as $module_dir){
-		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
-			continue;
-		}
-
-		$matches = array();
-		preg_match('/^([a-z0-9]{1,5})_([a-z0-9]+)$/i' , $module_dir, $matches);
-
-		// Make sure the module was created by module builder
-		if(empty($matches)){
-			continue;
-		}
-
-		$full_module_dir = "modules/{$module_dir}/";
-
-		if(!file_exists("{$full_module_dir}/vardefs.php"))
-		{
-		   continue;
-		}
-		
-		require("{$full_module_dir}/vardefs.php");
-		
-		//If unified_search is already set to true, just skip
-		if(isset($GLOBALS['dictionary']["{$module_dir}"]['unified_search']))
-		{
-		   continue;
-		}		
-		
-		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
-		
-		if(file_exists("custom/{$full_module_dir}/metadata/SearchFields.php"))
-		{
-			$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
-		} else {
-			$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
-		}
-
-		//If there are no search fields, just skip since it won't make sense to change to support search
-		if(!file_exists($read_SearchFields_from))
-		{
-			continue;
-		}
-		
-		$package_directories = scandir('custom/modulebuilder/packages');
-		foreach($package_directories as $package_dir)
-		{
-			if($package_dir == '.' || $package_dir == '..' || !is_dir("custom/modulebuilder/packages/{$package_dir}"))
-			{
-				continue;
-			}
-			
-			if(isset($scanned_packages[$package_dir]))
-			{
-			    continue;
-			}
-			
-			if(is_dir("custom/modulebuilder/packages/{$package_dir}/modules/{$matches[2]}") && 
-			   file_exists("custom/modulebuilder/packages/{$package_dir}/manifest.php"))
-			{
-			   require("custom/modulebuilder/packages/{$package_dir}/manifest.php");
-			   $package_key = $manifest['key'];
-			   $mbPackage = new MBPackage("{$package_dir}"); 
-			   $mbPackage->getModule($matches[2]);
-			   $mbPackage->modules[$matches[2]]->createClasses($full_module_dir);
-			   $modified_search = true;
-			   $scanned_packages[$package_dir] = true;
-			}
-		}
-				
-	}
-	
-	//Now clear the search cache
-	if(!empty($scanned_packages))
+	if(file_exists('cache/modules/unified_search_modules.php'))
 	{
-		require_once('modules/Administration/QuickRepairAndRebuild.php');
-		$repair = new RepairAndClear();
-		$repair->clearSearchCache();
+	   unlink('cache/modules/unified_search_modules.php');
 	}
+
 }
 
 ?>

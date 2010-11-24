@@ -435,7 +435,7 @@ class QueryBuilder extends SugarBean {
     //only call this after the bean has been made and the vardef file exists
     function display_label($focus, $field){
 
-        global $dictionary;
+        global $dictionary, $current_language;
 
         if(!file_exists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
             return $field;

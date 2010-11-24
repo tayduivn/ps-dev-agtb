@@ -737,11 +737,10 @@ function validate_user($user_name, $password){
 
 	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
-		global $beanList, $beanFiles, $current_user;
+		global $beanList, $beanFiles, $current_user, $app_list_strings;
 
 		$ret_values = array();
 
-		global $current_user;
 		$class_name = $beanList[$module_name];
 		require_once($beanFiles[$class_name]);
 		$ids = array();

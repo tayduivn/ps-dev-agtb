@@ -761,7 +761,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
-function getUserArrayFromFullName($args, $show_group_and_portal_users = true) {
+function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 
@@ -784,8 +784,8 @@ function getUserArrayFromFullName($args, $show_group_and_portal_users = true) {
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
-	if ( $show_group_and_portal_users ) {
-	    $query .= " portal_only=0 AND is_group=0 AND "; 
+	if ( $hide_portal_users ) {
+	    $query .= " portal_only=0 AND "; 
 	}
 	$query .= $inClause;
 	$query .= " ORDER BY last_name ASC";
@@ -2477,7 +2477,12 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
+		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
+		//BEGIN SUGARCRM flav=pro ONLY
+		// Bug 36162 - We need to confirm that the user is a member of the team of the item.
+		$focus->add_team_security_where_clause($query);
+		//END SUGARCRM flav=pro ONLY
+		$query .= "where ";
 		if ( $where != '')
 		{
 			$query .= $where." AND ";

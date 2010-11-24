@@ -897,7 +897,7 @@ if(file_exists($newtemplate_path . '/include/SugarLogger/LoggerManager.php')){
 		
 	}
 	if(class_exists('LoggerManager')){
-		unset($GsLOBALS['log']);
+		unset($GLOBALS['log']);
 		$GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 	}
 	set_upgrade_progress('logger','done');

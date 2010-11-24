@@ -533,15 +533,7 @@ $defaultTrackerRoles = array(
      )
 );
 addDefaultRoles($defaultTrackerRoles);
-$queryTrackerRole = "SELECT id FROM acl_roles where name='Tracker'";
-$result = $db->query($queryTrackerRole);
-$trackerRoleId = $db->fetchByAssoc($result);
-if(isset($trackerRoleId['id']) && !empty($trackerRoleId['id'])) {
-   
-   $role1= new ACLRole();
-   $role1->retrieve($trackerRoleId['id']);
-   $role1->set_relationship('acl_roles_users', array('role_id'=>$role1->id ,'user_id'=>1), false);
-}
+
 // Adding MLA Roles
 require_once('modules/ACLRoles/SeedRoles.php');
 create_default_roles();
@@ -748,9 +740,6 @@ FP;
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
     //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=ent ONLY
-    $enabled_tabs[] = 'ReportMaker';
-    //END SUGARCRM flav=ent ONLY
     //END SUGARCRM flav!=dce ONLY
     
     //BEGIN SUGARCRM flav=dce ONLY

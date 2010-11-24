@@ -192,7 +192,7 @@ class ModuleBuilderController extends SugarController
         {
             $mb->getPackage ( $load ) ;
             $mb->packages [ $load ]->build () ;
-        }
+        }        
     }
 
     function action_DeployPackage ()
@@ -219,13 +219,17 @@ class ModuleBuilderController extends SugarController
             $pm->performUninstall ( $load ) ;           
 			 //#23177 , js cache clear
 			 clearAllJsAndJsLangFilesWithoutOutput();
-    		//#30747, clear the cache in memoy
+    		//#30747, clear the cache in memory
     		$cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
     		sugar_cache_clear($cache_key );
     		sugar_cache_reset();
     		//clear end
             $pm->performInstall ( $_REQUEST [ 'install_file' ] , true) ;
-        }
+
+            //clear the unified_search_module.php file 
+            require_once('modules/Home/UnifiedSearchAdvanced.php');
+            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();          
+        }        
         echo 'complete' ;
 
     }
@@ -244,7 +248,7 @@ class ModuleBuilderController extends SugarController
             $mb->packages [ $load ]->description = $description ;
             $mb->packages [ $load ]->exportProject () ;
             $mb->packages [ $load ]->readme = $readme ;
-        }
+        }       
     }
 
     function action_DeletePackage ()

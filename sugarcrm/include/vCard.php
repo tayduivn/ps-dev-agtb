@@ -114,9 +114,14 @@ class vCard
 	}
 
 	function toString(){
+	    global $locale;
 		$temp = "BEGIN:VCARD\n";
 		foreach($this->properties as $key=>$value){
-			$temp .= $key. ':'.$value."\n";
+		    if(!empty($value)) {
+			    $temp .= $key. ';CHARSET='.strtolower($locale->getExportCharset()).':'.$value."\n";
+		    } else {
+		        $temp .= $key. ':'.$value."\n";
+		    }
 		}
 		$temp.= "END:VCARD\n";
 
@@ -126,7 +131,6 @@ class vCard
 
 	function saveVCard(){
 		global $locale;
-
 		$content = $this->toString();
 		header("Content-Disposition: attachment; filename={$this->name}.vcf");
 		header("Content-Type: text/x-vcard; charset=".$locale->getExportCharset());

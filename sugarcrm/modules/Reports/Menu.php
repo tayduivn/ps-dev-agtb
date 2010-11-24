@@ -67,6 +67,10 @@ $module_menu = Array(
 	Array("index.php?module=Reports&action=index&report_module=Prospects&query=true", $mod_strings['LBL_PROSPECT_REPORTS'],"TaskReports", 'Prospects'),
 	Array("index.php?module=Reports&action=index&report_module=Contracts&query=true", $mod_strings['LBL_CONTRACT_REPORTS'],"ContractReports", 'Contracts'),
 	*/
+		
+//BEGIN SUGARCRM flav=ent ONLY
+	Array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker"),
+//END SUGARCRM flav=ent ONLY
 	);
 	
 if(!(ACLController::checkAccess('Reports', 'edit', true)))
@@ -77,6 +81,9 @@ if(!(ACLController::checkAccess('Reports', 'edit', true)))
 //END SUGARCRM flav=dce ONLY
     Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'),
     Array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports'),
+//BEGIN SUGARCRM flav=ent ONLY
+    Array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker",'Reports'),
+//END SUGARCRM flav=ent ONLY
     );
 }
 

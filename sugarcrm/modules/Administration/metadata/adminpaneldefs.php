@@ -187,7 +187,7 @@ $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL
 $admin_option_defs=array();
 $admin_option_defs['studio']['studio']= array('Studio','LBL_STUDIO','LBL_STUDIO_DESC','./index.php?module=ModuleBuilder&action=index&type=studio');
 //BEGIN SUGARCRM flav!=sales ONLY
-if(isset($GLOBSALS['beanFiles']['iFrame'])) {
+if(isset($GLOBALS['beanFiles']['iFrame'])) {
 	$admin_option_defs['Administration']['portal']= array('iFrames','LBL_IFRAME','DESC_IFRAME','./index.php?module=iFrames&action=index');
 }
 //END SUGARCRM flav!=sales ONLY

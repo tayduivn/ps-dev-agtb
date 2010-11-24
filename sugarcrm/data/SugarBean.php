@@ -3764,7 +3764,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
                 $temp->check_date_relationships_load();
                 $temp->fill_in_additional_list_fields();
-                $temp->custom_fields->fill_relationships();
+                if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
                 $temp->call_custom_logic("process_record");
 
                 $list[] = $temp;
@@ -4281,11 +4281,11 @@ function save_relationship_changes($is_update, $exclude=array())
 	}
 
     /**
-    * Returns the summary text that should show up in the recent history list for this object.
-    *
-    * Internal function, do not override.
-    */
-    function get_summary_text()
+     * Returns the summary text that should show up in the recent history list for this object.
+     *
+     * @return string
+     */
+    public function get_summary_text()
     {
         return "Base Implementation.  Should be overridden.";
     }
@@ -5766,4 +5766,16 @@ function save_relationship_changes($is_update, $exclude=array())
         return !empty($this->acl_category)?$this->acl_category:$this->module_dir;
     }
 
+    /**
+     * Returns the query used for the export functionality for a module. Override this method if you wish
+     * to have a custom query to pull this data together instead
+     *
+     * @param string $order_by
+     * @param string $where
+     * @return string SQL query
+     */
+	public function create_export_query($order_by, $where)
+	{
+		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
+	}	
 }

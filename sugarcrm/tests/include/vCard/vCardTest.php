@@ -14,14 +14,14 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['beanList']['vCardMockModule'] = 'vCardMockModule';
         $GLOBALS['beanFiles']['vCardMockModule'] = 'tests/include/vCard/vCardTest.php';
     }
-    
+
     public function tearDown()
     {
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
     }
-    
+
     /**
      * @ticket 10419
      */
@@ -29,49 +29,94 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $filename  = dirname(__FILE__)."/ISO88591SampleFile.vcf";
         $module = "vCardMockModule";
-        
+
         $vcard = new vCard();
         $record = $vcard->importVCard($filename,$module);
-        
+
         $bean = new vCardMockModule;
         $bean = $bean->retrieve($record);
-        
+
         $this->assertEquals('Hans Müster',$bean->first_name.' '.$bean->last_name);
     }
-    
+
     public function testImportedVcardWithSameCharsetIsNotTranslated()
     {
         $filename  = dirname(__FILE__)."/UTF8SampleFile.vcf";
         $module = "vCardMockModule";
-        
+
         $vcard = new vCard();
         $record = $vcard->importVCard($filename,$module);
-        
+
         $bean = new vCardMockModule;
         $bean = $bean->retrieve($record);
-        
+
         $this->assertEquals('Hans Müster',$bean->first_name.' '.$bean->last_name);
+    }
+
+
+    public function checkExportCard($vcard)
+    {
+        var_dump($vcard);
+        return true;
+    }
+
+    public function vCardNames()
+    {
+        return array(
+            array('', "Last Name"),
+            array('First Name', "Last Name"),
+            array("Иван", "Č, Ć ŐŐŐ Lastname"),
+        );
+    }
+
+    /**
+     * @ticket 24487
+	 * @dataProvider vCardNames
+     */
+    public function testExportVcard($fname, $lname)
+    {
+        $vcard = new vCard();
+
+        $data = new vCardMockModule();
+        $data->first_name = $fname;
+        $data->last_name = $lname;
+        $GLOBALS['current_user']->setPreference('default_export_charset', 'UTF-8');
+        $id = $data->save();
+
+        $vcard->loadContact($id, 'vCardMockModule');
+        $cardtext = $vcard->toString();
+
+        $this->assertContains("N;CHARSET=utf-8:$lname;$fname", $cardtext, "Cannot find N name", true);
+        $this->assertContains("FN;CHARSET=utf-8: $fname $lname", $cardtext, "Cannot find FN name", true);
     }
 }
 
 class vCardMockModule extends Person
 {
-    private static $_savedObjects = array();
-    
+    public static $_savedObjects = array();
+
     public function save()
     {
         $this->id = create_guid();
-        
+
         self::$_savedObjects[$this->id] = $this;
-        
+
         return $this->id;
     }
-    
+
     public function retrieve($id = -1, $encode=true,$deleted=true)
 	{
-        if ( isset(self::$_savedObjects[$id]) ) 
+        if ( isset(self::$_savedObjects[$id]) ) {
+            foreach(get_object_vars(self::$_savedObjects[$id]) as $var => $val) {
+                $this->$var = $val;
+            }
             return self::$_savedObjects[$id];
-        
+        }
+
         return null;
+    }
+
+    public function ACLFilterFields()
+    {
     }
 }

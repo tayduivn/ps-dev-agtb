@@ -111,9 +111,6 @@ $GLOBALS['tabStructure'] = array(
         'modules' => array(
             "Home",
             "Reports",
-            //BEGIN SUGARCRM flav=ent ONLY
-            "ReportMaker",
-            //END SUGARCRM flav=ent ONLY
             //BEGIN SUGARCRM flav!=sales ONLY
             "Forecasts",
             //END SUGARCRM flav!=sales ONLY

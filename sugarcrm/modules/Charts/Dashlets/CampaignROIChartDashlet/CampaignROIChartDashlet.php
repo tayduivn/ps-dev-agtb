@@ -36,6 +36,9 @@ class CampaignROIChartDashlet extends DashletGenericChart
 {
     public $campaign_id;
     
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
     protected $_seedName = 'Campaigns';
     
     /**
@@ -70,9 +73,6 @@ class CampaignROIChartDashlet extends DashletGenericChart
         
 		$returnStr = '<script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js') . '"></script>' . $chartStr;
 		
-        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div><br />';
-    }  
-
+        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div><br />'. $this->processAutoRefresh();
+    }
 }
-
-?>

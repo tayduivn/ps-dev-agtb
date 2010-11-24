@@ -35,10 +35,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $mod_strings = array (
-  'LBL_MODULE_NAME' => 'Enterprise Reports',
-  'LBL_MODULE_TITLE' => 'Enterprise Reports',
-  'LBL_SEARCH_FORM_TITLE' => 'Enterprise Reports: Search',
-  'LBL_LIST_FORM_TITLE' => 'All Enterprise Reports',
+  'LBL_MODULE_NAME' => 'Advanced Reports',
+  'LBL_MODULE_TITLE' => 'Advanced Reports',
+  'LBL_SEARCH_FORM_TITLE' => 'Advanced Reports: Search',
+  'LBL_LIST_FORM_TITLE' => 'All Advanced Reports',
   'LBL_LIST_NAME' => 'Name',
   'LBL_LIST_QUERY_NAME' => 'Query',
   'LBL_LIST_PUBLISHED' => 'Published',
@@ -62,15 +62,15 @@ $mod_strings = array (
   'ERR_DELETE_RECORD' => 'You must specify a record number to delete the product.',
   'LBL_CURRENCY' => 'Currency:',
   
-  'LNK_LIST_REPORTMAKER' => 'View Enterprise Reports',
-  'LNK_NEW_REPORTMAKER' => 'Create Enterprise Report',
+  'LNK_LIST_REPORTMAKER' => 'View Advanced Reports',
+  'LNK_NEW_REPORTMAKER' => 'Create Advanced Report',
   'LNK_LIST_DATASET' => 'View Data Formats',
   'LNK_NEW_DATASET' => 'Create Data Format',
   'LNK_NEW_CUSTOMQUERY' => 'Create Custom Query',
   'LNK_CUSTOMQUERIES' => 'View Custom Queries',
   'LNK_NEW_QUERYBUILDER' => 'Create Query',
   'LNK_QUERYBUILDER' => 'Query Builder',
-  'LNK_ADVANCED_REPORTING' => 'Manage Enterprise Reports',
+  'LNK_ADVANCED_REPORTING' => 'Manage Advanced Reports',
   'LBL_ALL_REPORTS' => 'View Reports',
   
   'LBL_ADD_DATA_SET'=>'Add a new Data Set',

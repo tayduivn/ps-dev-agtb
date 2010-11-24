@@ -74,6 +74,10 @@ class Popup_Picker
         global $currentModule;
         global $odd_bg;
         global $even_bg;
+        global $focus_tasks_list;
+        global $focus_meetings_list;
+        global $focus_calls_list;
+        global $focus_emails_list;
 
         global $timedate;
 

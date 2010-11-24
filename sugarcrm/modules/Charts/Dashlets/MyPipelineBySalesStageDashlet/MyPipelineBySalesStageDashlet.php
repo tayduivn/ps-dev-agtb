@@ -137,9 +137,9 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
 
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
-
-        return $this->getTitle('') .
-            '<div align="center">' .$sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+		
+        return $this->getTitle('') . 
+            '<div align="center">' .$sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
     }
 
 	/**

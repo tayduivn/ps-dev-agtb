@@ -56,7 +56,7 @@ class SchedulerMonitor extends Scheduler {
 		$this->socketPort = $this->socketPortMonitor;
 		
 		if($this->sendMsg("heartbeat\n", true)) {
-			$GLOBAL['log']->fatal('Monitor FAILURE monitor already listening on port '.$this->socketPortMonitor);
+			$GLOBALS['log']->fatal('Monitor FAILURE monitor already listening on port '.$this->socketPortMonitor);
 			die();	
 		} elseif($this->createListener()) {
 			$GLOBALS['log']->debug('----->SC Monitor up ready to go!');

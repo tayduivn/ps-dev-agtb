@@ -24,14 +24,9 @@ abstract class SugarCacheAbstract
     protected $_localStore = array();
     
     /**
-     * @var records the number of hits made against the cache
-     */
-    protected $_cacheTotalHits = 0;
-    
-    /**
      * @var records the number of get requests made against the cache
      */
-    protected $_cacheTotalRequests = 0;
+    protected $_cacheRequests = 0;
     
     /**
      * @var records the number of hits made against the cache that have been resolved without hitting the
@@ -40,10 +35,14 @@ abstract class SugarCacheAbstract
     protected $_cacheLocalHits = 0;
     
     /**
-     * @var records the number of get requests made against the cache that have been resolved without 
-     * hitting the external cache
+     * @var records the number of hits made against the cache that are resolved using the external cache
      */
-    protected $_cacheLocalRequests = 0;
+    protected $_cacheExternalHits = 0;
+    
+    /**
+     * @var records the number of get requests that aren't in the cache
+     */
+    protected $_cacheMisses = 0;
     
     /**
      * @var indicates the priority level for using this cache; the lower number indicates the highest
@@ -83,20 +82,25 @@ abstract class SugarCacheAbstract
         if ( SugarCache::$isCacheReset )
             return;
         
-        $this->_cacheTotalRequests++;
+        $this->_cacheRequests++;
         if ( !$this->useLocalStore || !isset($this->_localStore[$key]) ) {
-            $this->_cacheLocalRequests++;
             $this->_localStore[$key] = $this->_getExternal($this->_keyPrefix.$key);
-            if ( isset($this->_localStore[$key]) )
-                $this->_cacheTotalHits++;
+            if ( isset($this->_localStore[$key]) ) {
+                $this->_cacheExternalHits++;
+            }
+            else {
+                $this->_cacheMisses++;
+            }
         }
-        else {
-            $this->_cacheTotalHits++;
+        elseif ( isset($this->_localStore[$key]) ) {
             $this->_cacheLocalHits++;
         }
         
-        $this->_cacheHits++;
-        return $this->_localStore[$key];
+        if ( isset($this->_localStore[$key]) ) {
+            return $this->_localStore[$key];
+        }
+        
+        return null;
     }
     
     /**
@@ -130,7 +134,7 @@ abstract class SugarCacheAbstract
         $key
         )
     {
-        return $this->__get($key) === FALSE;
+        return !is_null($this->__get($key));
     }
     
     /**
@@ -173,10 +177,10 @@ abstract class SugarCacheAbstract
     public function getCacheStats()
     {
         return array(
-            'total_hits'     => $this->_cacheTotalHits,
-            'total_requests' => $this->_cacheTotalRequests,
-            'local_hits'     => $this->_cacheLocalHits,
-            'local_requests' => $this->_cacheLocalRequests,
+            'requests'     => $this->_cacheRequests,
+            'externalHits' => $this->_cacheExternalHits,
+            'localHits'    => $this->_cacheLocalHits,
+            'misses'       => $this->_cacheMisses,
             );
     }
     
@@ -207,7 +211,7 @@ abstract class SugarCacheAbstract
      * getting a value from cache
      *
      * @param  string $key
-     * @return mixed  $value
+     * @return mixed  $value, returns null if the key is not in the cache
      */
     abstract protected function _getExternal(
         $key
