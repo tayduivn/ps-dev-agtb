@@ -102,7 +102,6 @@ class Opportunity extends SugarBean {
 									//BEGIN SUGARCRM flav=pro ONLY
 									'quote_id'=>'quotes',
 									//END SUGARCRM flav=pro ONLY
-									'currency_id' => 'currencies',
 									);
 	
 	function Opportunity() {
