@@ -215,10 +215,13 @@ class ModuleInstaller{
 				$rac = new RepairAndClear();
 				$rac->repairAndClearAll($selectedActions, $installed_modules,true, false);
 				$this->rebuild_relationships();
-				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
-
 				UpdateSystemTabs('Add',$tab_modules);
-
+				
+				//clear the unified_search_module.php file 
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile(); 
+	            				
+				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
 			die("No \$installdefs Defined In $this->base_dir/manifest.php");
 		}
@@ -1254,6 +1257,10 @@ class ModuleInstaller{
 
 				UpdateSystemTabs('Restore',$installed_modules);
 
+	            //clear the unified_search_module.php file 
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();     				
+				
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
 					update_progress_bar('install', $total_steps, $total_steps);
