@@ -24,63 +24,54 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2008 SugarCRM, Inc.; All Rights Reserved.
  */
-
-// $Id: DashletGenericConfigure.tpl 29847 2007-11-20 02:21:09Z awu $
-
 *}
 
 
-<div>
+<div style='width:100%'>
 <form name='configure_{$id}' action="index.php" method="post" onSubmit='return SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.uncoverPage);'>
 <input type='hidden' name='id' value='{$id}'>
-<input type='hidden' name='module' value='{$module}'>
-<input type='hidden' name='action' value='DynamicAction'>
-<input type='hidden' name='DynamicAction' value='configureDashlet'>
+<input type='hidden' name='module' value='Home'>
+<input type='hidden' name='action' value='ConfigureDashlet'>
 <input type='hidden' name='to_pdf' value='true'>
 <input type='hidden' name='configure' value='true'>
-<input type='hidden' id='dashletType' name='dashletType' value='{$dashletType}' />
-
-<table cellpadding="0" cellspacing="0" border="0" width="100%" class="edit view">
-	<tr>
-	    <td scope='row'>
-		    {$title}
-        </td>
-        <td colspan='3'>
-            <input type='text' name='dashletTitle' value='{$dashletTitle}'>
-        </td>
-	</tr>
-	{if $isRefreshable}
-    <tr>
-	    <td scope='row'>
-		    {$autoRefresh}
-        </td>
-        <td colspan='3'>
-            <select name='autoRefresh'>
-				{html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
-           	</select>
-        </td>
-	</tr>
-    {/if}
-    <tr>
-    {foreach name=searchIteration from=$searchFields key=name item=params}
-        <td scope='row' valign='top'>
-            {$params.label}
-        </td>
-        <td valign='top' style='padding-bottom: 5px'>
-            {$params.input}
-        </td>
-        {if ($smarty.foreach.searchIteration.iteration is even) and $smarty.foreach.searchIteration.iteration != $smarty.foreach.searchIteration.last}
-        </tr><tr>
-        {/if}
-    {/foreach}
-    </tr>
-    <tr>
-	    <td colspan='4' align='right'>
-	        <input type='submit' class='button' value='{$save}'>
-	    </td>    
-	</tr>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="edit view" align="center">
+<tr>
+    <td scope='row'>{$titleLBL}</td>
+    <td>
+    	<input class="text" name="title" size='20' maxlength='80' value='{$title}'>
+    </td>
+</tr>
+{if $isRefreshable}
+<tr>
+    <td scope='row'>
+        {$autoRefresh}
+    </td>
+    <td>
+        <select name='autoRefresh'>
+            {html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
+        </select>
+    </td>
+</tr>
+{/if}
+<tr>
+    <td scope='row'>{$urlLBL}</td>
+    <td>
+    	<input class="text" name="url" size='20' maxlength='255' value='{$url}'>
+    </td>
+</tr>
+<tr>
+    <td scope='row'>{$heightLBL}</td>
+    <td>
+    	<input class="text" name="height" size='20' maxlength='80' value='{$height}'>
+    </td>
+</tr>
+<tr>
+    <td align="right" colspan="2">
+        <input type='submit' class='button' value='{$saveLBL}'>
+   	</td>
+</tr>
 </table>
 </form>
 </div>

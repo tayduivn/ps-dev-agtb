@@ -186,7 +186,7 @@ class Dashlet {
      * @param int $dashletOffset
      * @return string HTML code
      */
-    function processAutoRefresh($dashletOffset = 0) 
+    protected function processAutoRefresh($dashletOffset = 0) 
     {
         global $sugar_config;
         

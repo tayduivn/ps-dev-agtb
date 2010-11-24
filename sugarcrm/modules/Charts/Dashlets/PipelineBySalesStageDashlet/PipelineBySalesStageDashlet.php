@@ -41,6 +41,9 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
     public $pbss_chart_type = 'fun';
     //END SUGARCRM flav=pro ONLY
     
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
     protected $_seedName = 'Opportunities';
     
     /**
@@ -130,7 +133,7 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 		
-        return $this->getTitle('') . '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';		
+        return $this->getTitle('') . '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();		
     }
 
 	/**
@@ -219,5 +222,3 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
            );
     }
 }
-
-?>

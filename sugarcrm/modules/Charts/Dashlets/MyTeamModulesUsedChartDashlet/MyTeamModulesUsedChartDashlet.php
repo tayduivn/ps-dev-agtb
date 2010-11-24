@@ -33,8 +33,19 @@ require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyTeamModulesUsedChartDashlet extends DashletGenericChart 
 {
-    public $isConfigurable = false;
+    /**
+     * @see Dashlet::$isConfigurable
+     */
+    public $isConfigurable = true;
     
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
+    protected $_seedName = 'Trackers';
+    
+    /**
+     * @see DashletGenericChart::display()
+     */
     public function display() 
     {
         global $db;
@@ -60,13 +71,20 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
 	}
 
-    public function hasAccess(){
+    /**
+     * @see Dashlet::hasAccess()
+     */
+    public function hasAccess()
+    {
     	return ACLController::checkAccess('Trackers', 'view', false, 'Tracker');
     }	
 	
+    /**
+     * @see DashletGenericChart::constructQuery()
+     */
     protected function constructQuery() 
     {
 		return "SELECT l1.user_name, tracker.module_name, count(*) count " .
@@ -77,5 +95,3 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
                     "ORDER BY l1.user_name ASC";
 	}
 }
-
-?>
