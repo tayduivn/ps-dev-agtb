@@ -413,10 +413,14 @@ function process_all_team_access($user,$add_to_global_team=false,$private_team=f
         //create a private team
         if(empty($team_id) && !empty($user->user_name) ) {
             $GLOBALS['log']->debug("RepairTeams:No private team found creating new for $user->user_name");
-
-            $name = "({$user->user_name})";
+            if ( !empty($user->first_name) ) {
+                $name = $user->first_name;
+            }
+            else {
+                $name = "({$user->user_name})";
+            }
             $description = "{$mod_strings['LBL_PRIVATE_TEAM_FOR']} {$user->user_name}";
-            $team_id = Team::create_team($name, $description, create_guid(), 1);
+            $team_id = Team::create_team($name, $description, create_guid(), 1, '', $user->id);
         }
         $GLOBALS['log']->debug("RepairTeams:User $user->user_name private team id is $team_id");        
         

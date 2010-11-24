@@ -150,4 +150,9 @@ class DashletAutoRefreshTestMock extends Dashlet
     {
         return parent::getAutoRefreshOptions();
     }
+    
+    public function processAutoRefresh() 
+    {
+        return parent::processAutoRefresh();
+    }
 }
