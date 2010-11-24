@@ -64,8 +64,8 @@ class HomeViewAdditionaldetailsretrieve extends SugarView
             $retArray['body'] = str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string']);
             if(!$bean->ACLAccess('EditView')) $results['editLink'] = '';
             
-            $retArray['caption'] = "<div style='float:left'>{$app_strings['LBL_ADDITIONAL_DETAILS']}</div><div style='float: right'>" . (!empty($results['editLink']) ? "<a title='{$app_strings['LBL_EDIT_BUTTON']}' href={$results['editLink']}><img border=0 src=".SugarThemeRegistry::current()->getImageURL('edit_inline.gif')."></a>" : '');
-            $retArray['caption'] .= (!empty($results['viewLink']) ? "<a title='{$app_strings['LBL_VIEW_BUTTON']}' href={$results['viewLink']}><img style='margin-left: 2px;' border=0 src=".SugarThemeRegistry::current()->getImageURL('view_inline.gif')."></a>" : '') . ""; 
+            $retArray['caption'] = "<div style='float:left'>{$app_strings['LBL_ADDITIONAL_DETAILS']}</div><div style='float: right'>";
+            $retArray['caption'] .= ""; 
             $retArray['width'] = (empty($results['width']) ? '300' : $results['width']);              
             echo 'result = ' . $json->encode($retArray);
         }
