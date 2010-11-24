@@ -62,10 +62,10 @@ class UnifiedSearchAdvanced {
 		global $mod_strings, $modListHeader, $app_list_strings, $current_user, $app_strings, $beanList;
 		$users_modules = $current_user->getPreference('globalSearch', 'search');
 
-		if(!isset($users_modules)) { // preferences are empty, select all
+		if(empty($users_modules)) { // preferences are empty, select all
 			$users_modules = array();
 			foreach($unified_search_modules as $module=>$data) {
-				if ( !empty($data['default']) ) {
+				if (!empty($data['default']) ) {
                     $users_modules[$module] = $beanList[$module];
                 }
 			}
@@ -79,21 +79,10 @@ class UnifiedSearchAdvanced {
 		{
             if(ACLController::checkAccess($key, 'list', true)) 
             {
-                $modules_to_search[$key] = array('translated' => $app_list_strings['moduleList'][$key]);
                 $modules_to_search[$key]['checked'] = true;
             }
 		}
 		
-		//Now add the rest
-		foreach($unified_search_modules as $key=>$data)
-		{
-		    if(ACLController::checkAccess($key, 'list', true) && !isset($users_modules[$key])) 
-            {
-                $modules_to_search[$key] = array('translated' => $app_list_strings['moduleList'][$key]);
-                $modules_to_search[$key]['checked'] = false;
-            }			
-		}
-
 		if(!empty($this->query_string))
 		{
 			$sugar_smarty->assign('query_string', securexss($this->query_string));
@@ -113,17 +102,34 @@ class UnifiedSearchAdvanced {
 		
 		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 		
-		$modules_to_display = array();
+		$json_enabled = array();
+		$json_disabled = array();
 		
-	    foreach($modules_to_search as $module => $data)
-	    {
-	    	//If module has been explictly marked to be not visible, unset it
-	    	if(!isset($unified_search_modules_display[$module]['visible']) || $unified_search_modules_display[$module]['visible'])
-	    	{
-	    	   $modules_to_display[$module] = $data;
-	    	}	
-	    }
+		//Now add the rest of the modules that are searchable via Global Search settings
+		foreach($unified_search_modules_display as $module=>$data)
+		{
+			if(!isset($modules_to_search[$module]) && $data['visible'] && ACLController::checkAccess($module, 'list', true)){
+			   $modules_to_search[$module]['checked'] = false;
+			} else if (isset($modules_to_search[$module]) && !$data['visible']) {
+			   unset($modules_to_search[$module]);
+			}
+		}		
 
+		//Create the two lists (doing it this way preserves the user's ordering choice for enabled modules)
+		foreach($modules_to_search as $module=>$data)
+		{
+			$label = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
+			if($data['checked'])
+			{
+				$json_enabled[] = array("module" => $module, 'label' => $label);
+			} else {
+				$json_disabled[] = array("module" => $module, 'label' => $label);
+			}	
+		}			
+		
+		$sugar_smarty->assign('enabled_modules', json_encode($json_enabled));
+		$sugar_smarty->assign('disabled_modules', json_encode($json_disabled));			
+		
 		$showDiv = $current_user->getPreference('showGSDiv', 'search');
 		if(!isset($showDiv))
 		{
@@ -131,7 +137,6 @@ class UnifiedSearchAdvanced {
 		}	    
 
 		$sugar_smarty->assign('SHOWGSDIV', $showDiv);
-		$sugar_smarty->assign('MODULES_TO_SEARCH', $modules_to_display);
 		$sugar_smarty->debugging = true;
 		return $sugar_smarty->fetch($tpl);
 	}
@@ -155,9 +160,10 @@ class UnifiedSearchAdvanced {
 			$modules_to_search = array();
 			if(!empty($_REQUEST['search_modules']))
 			{
-				foreach($_REQUEST['search_modules'] as $module) {
-						$modules_to_search[$module] = $beanList[$module];
-				}
+			    foreach(explode (',', $_REQUEST['search_modules'] ) as $e)
+	            {
+	                $modules_to_search[$e] = $beanList[$e];
+	            }
 			}
 
 			$current_user->setPreference('showGSDiv', isset($_REQUEST['showGSDiv']) ? $_REQUEST['showGSDiv'] : 'no', 0, 'search');
@@ -180,7 +186,26 @@ class UnifiedSearchAdvanced {
 			$current_user->setPreference('globalSearch', $modules_to_search, 'search');
 		}
 		
-		echo $this->getDropDownDiv('modules/Home/UnifiedSearchAdvancedForm.tpl');
+		/*
+		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		{
+		   $this->createUnifiedSearchModulesDisplay();
+		}
+		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
+		//Filter again?
+		foreach($unified_search_modules_display as $module=>$data)
+		{
+
+		}			
+		*/
+		
+		$templateFile = 'modules/Home/UnifiedSearchAdvancedForm.tpl';
+		if(file_exists('custom/' . $templateFile))
+		{
+		   $templateFile = 'custom/'.$templateFile;
+		}
+		
+		echo $this->getDropDownDiv($templateFile);
 
 		$module_results = array();
 		$module_counts = array();
@@ -315,26 +340,10 @@ class UnifiedSearchAdvanced {
                 		
 		if($has_results) {
 			//arsort($module_counts);
-			//echo "<ul class='noBullet'>\n";
 			foreach($module_counts as $name=>$value) {
 				echo $module_results[$name];
 			}
-			//echo "</ul>\n";
-			
-			/*
-			$sugar_smarty = new Sugar_Smarty();		
-			$sugar_smarty->assign('APP', $app_strings);
-			$sugar_smarty->assign('MOD', $mod_strings);
-			$sugar_smarty->assign('MODULE_RESULTS', $module_results);
-			$tpl = 'modules/Home/UnifiedSearchAdvancedResults.tpl';
-			if(file_exists('custom/' . $tpl))
-			{
-			   $tpl = 'custom/' . $tpl;
-			}
-			echo $sugar_smarty->fetch($tpl);
-			*/
 		} else {
-			echo '<br>';
 			echo $home_mod_strings['LBL_NO_RESULTS'];
 			echo $home_mod_strings['LBL_NO_RESULTS_TIPS'];
 		}
@@ -403,10 +412,10 @@ class UnifiedSearchAdvanced {
 
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
-					if ($isCustomModule || (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] == FALSE)) {
-                        $supported_modules [$moduleName]['default'] = false;
-                    } else {
+					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) {
                         $supported_modules [$moduleName]['default'] = true;
+                    } else {
+                        $supported_modules [$moduleName]['default'] = false;
                     }
 				}
 
@@ -432,19 +441,29 @@ class UnifiedSearchAdvanced {
 		}
 		
 		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
-		
-		//Add the translated attribute for display label
-		foreach($unified_search_modules_display as $module=>$data)
-		{
-			$unified_search_modules_display[$module]['translated'] = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
-		}
-		
+				
 		$sugar_smarty = new Sugar_Smarty();		
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('MOD', $mod_strings);
 		
+		//Add the translated attribute for display label
+		$json_enabled = array();
+		$json_disabled = array();
+		foreach($unified_search_modules_display as $module=>$data)
+		{
+			$label = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
+			if($data['visible'] === true)
+			{
+			   $json_enabled[] = array("module" => $module, 'label' => $label);
+			} else {
+			   $json_disabled[] = array("module" => $module, 'label' => $label);
+			}
+		}
+		
+		$sugar_smarty->assign('enabled_modules', json_encode($json_enabled));
+		$sugar_smarty->assign('disabled_modules', json_encode($json_disabled));		
+		
 		//uasort($unified_search_modules_display, 'unified_search_modules_cmp');
-		$sugar_smarty->assign('UNIFIED_SEARCH_MODULES_DISPLAY', $unified_search_modules_display);
 		$tpl = 'modules/Administration/templates/GlobalSearchSettings.tpl';
 		if(file_exists('custom/' . $tpl))
 		{
@@ -465,21 +484,22 @@ class UnifiedSearchAdvanced {
 
 		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 		
-		if(isset($_REQUEST['search_modules'])) 
+		if(isset($_REQUEST['enabled_modules'])) 
 		{
-			foreach($_REQUEST['search_modules'] as $module)
+            foreach(explode (',', $_REQUEST['enabled_modules'] ) as $e)
+            {
+                $enabled_modules[$e] = true;
+            }
+     
+			foreach($unified_search_modules_display as $module=>$data)
 			{
-				$unified_search_modules_display[$module]['visible'] = true;
-			}			
-		}
-
-		
-		if(isset($_REQUEST['skip_modules'])) 
-		{
-			foreach($_REQUEST['skip_modules'] as $module)
-			{
-				$unified_search_modules_display[$module]['visible'] = false;
-			}			
+				if(isset($enabled_modules[$module]))
+				{
+				   $unified_search_modules_display[$module]['visible'] = true;
+				} else {
+				   $unified_search_modules_display[$module]['visible'] = false;
+				}
+			}
 		}
 		
 		$this->writeUnifiedSearchModulesDisplayFile($unified_search_modules_display);

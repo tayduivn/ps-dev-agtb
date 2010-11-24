@@ -27,7 +27,7 @@ $dictionary['Note'] = array(
     'followable' => true, 
     //END SUGARCRM flav=following ONLY
     'table' => 'notes', 
-	'unified_search' => true,
+	'unified_search' => true, 'unified_search_default_enabled' => true,
 	'comment' => 'Notes and Attachments'
                                ,'fields' => array (
   'id' =>

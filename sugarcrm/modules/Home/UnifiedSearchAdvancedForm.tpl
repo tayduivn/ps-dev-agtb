@@ -31,18 +31,22 @@
 
 *}
 
-<br/>
+<script type="text/javascript" src="include/javascript/sugar_grp_yui_widgets.js"></script>
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
+
 <form name='UnifiedSearchAdvancedMain' action='index.php' method='POST'>
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='query_string' value='test'>
 <input type='hidden' name='advanced' value='true'>
 <input type='hidden' name='action' value='UnifiedSearch'>
 <input type='hidden' name='search_form' value='false'>
+<input type='hidden' name='search_modules' value=''>
+<input type='hidden' name='skip_modules' value=''>
 	<table width='600' class='edit view' border='0' cellspacing='1'>
 	<tr style='padding-bottom: 10px'>
 		<td colspan='8' nowrap>
 			<input id='searchFieldMain' class='searchField' type='text' size='80' name='query_string' value='{$query_string}'>
-		    &nbsp;<input type="submit" class="button" value="{$LBL_SEARCH_BUTTON_LABEL}" onclick="select_modules();">&nbsp;
+		    &nbsp;<input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}" onclick="SUGAR.saveGlobalSearchSettings();">&nbsp;
 			<a class='tabFormAdvLink' href='javascript:toggleInlineSearch()'>
 			{if $SHOWGSDIV == 'yes'}
 			<img src='{sugar_getimagepath file="basic_search.gif"}' id='up_down_img' border=0>
@@ -56,55 +60,16 @@
 	<tr height='5'><td></td></tr>
 	<tr style='padding-top: 10px;'>
 		<td colspan='8' nowrap'>
-		<div id='inlineGlobalSearch' {if $SHOWGSDIV == 'yes'}style='display:"";'{else}style='display:none;'{/if}>
-		<table class="edit view" border="0" cellpadding="0" cellspacing="1">
+		<div id='inlineGlobalSearch' class='add_table'>
+		<table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
 		    <tr>
-		    <td colspan="4">
-		        <table border="0" cellspacing="0" cellpadding="0">
-		            <tr>
-			        	<td>&nbsp;</td>
-			            <td scope="row" id="chooser_search_modules_text" align="center">
-			            <nobr>{$MOD.LBL_GLOBAL_SEARCH_MODULES_ALLOWED}</nobr></td>            
-			            <td>&nbsp;</td>
-			            <td scope="row" id="chooser_skip_modules" align="center"><nobr>{$MOD.LBL_GLOBAL_SEARCH_MODULES_NOT_ALLOWED}</nobr></td>
-			            <td>&nbsp;</td>
-		            </tr>
-		            <tr>
-		            	<td valign="top" style="padding-right: 2px; padding-left: 2px;" align="center">
-		            	<a onclick="return SUGAR.tabChooser.up('search_modules','search_modules','skip_modules');"><img src="themes/default/images/uparrow_big.gif?s=fe60f15f2f73b51bf4110c3e393d8963&c=1" width="13" height="13" border="0" style="margin-bottom: 1px;" alt="" /></a><br>
-		                <a onclick="return SUGAR.tabChooser.down('search_modules','search_modules','skip_modules');"><img src="themes/default/images/downarrow_big.gif?s=fe60f15f2f73b51bf4110c3e393d8963&c=1" width="16" height="16" border="0" style="margin-top: 1px;" alt="" /></a>
-		                </td>    
-		                <td align="center">
-		                <table border="0" cellspacing=0 cellpadding="0" align="center">
-		                <tr>
-		                <td id="search_modules_td" align="center">
-			                <select id="search_modules" name="search_modules[]" size="10" multiple="multiple" style="width: 150px;">
-							{foreach from=$MODULES_TO_SEARCH name=m key=module item=info}
-								{if $info.checked}<option value="{$module}">{$info.translated}</option>{/if}
-							{/foreach}		                  
-			                </select>
-		                </td>
-		            	</tr>
-		       			</table>
-		    			</td>
-			            <td valign="top" style="padding-right: 2px; padding-left: 2px;" align="center">
-			            <a onclick="return SUGAR.tabChooser.right_to_left('search_modules','skip_modules', '10', '10', '');"><img src="themes/default/images/leftarrow_big.gif?s=fe60f15f2f73b51bf4110c3e393d8963&c=1" width="16" height="16" border="0" style="margin-right: 1px;" alt=""/></a>
-			            <a onclick="return SUGAR.tabChooser.left_to_right('search_modules','skip_modules', '10', '10');"><img src="themes/default/images/rightarrow_big.gif?s=fe60f15f2f73b51bf4110c3e393d8963&c=1" width="16" height="16" border="0" style="margin-left: 1px;" alt=""/></a>
-			            </td>
-		            	<td id="skip_modules_td" align="center">
-			                <select id="skip_modules" name="skip_modules[]" size="10" multiple="multiple" style="width: 150px;">
-							{foreach from=$MODULES_TO_SEARCH name=m key=module item=info}
-								{if !$info.checked}<option value="{$module}">{$info.translated}</option>{/if}
-							{/foreach}	
-			                </select>
-		                </td>
-		        		<td valign="top" style="padding-right: 2px; padding-left: 2px;" align="center">
-		        	</tr>
-		    	</table>
-		   </td>
-		   <td width="90%" valign="top"><BR>&nbsp;</td>
-		   </td>
-		   </tr>
+				<td width='1%'>
+					<div id="enabled_div"></div>	
+				</td>
+				<td>
+					<div id="disabled_div"></div>
+				</td>
+			</tr>
 		</table>
 		</div>
 		</td>
@@ -112,25 +77,8 @@
 	</table>
 </form>
 
-
-{literal}
 <script type="text/javascript">
-function select_modules()
-{
-	var search_ref = document.getElementsByTagName('select')[0];
-	for(i=0; i < search_ref.options.length ;i++)
-	{
-	    search_ref.options[i].selected = true;
-	}
-
-	var skip_ref = document.getElementsByTagName('select')[1];
-	for(x=0; x < skip_ref.options.length ;x++)
-	{
-	    skip_ref.options[x].selected = true;
-	}
-}
-
-
+{literal}
 function toggleInlineSearch()
 {
     if (document.getElementById('inlineGlobalSearch').style.display == 'none')
@@ -148,5 +96,67 @@ function toggleInlineSearch()
         document.getElementById('inlineGlobalSearch').style.display = 'none';		
     }
 }
-</script>
 {/literal}
+
+(function(){ldelim}
+	var get = YAHOO.util.Dom.get;
+	var enabled_modules = {$enabled_modules};
+	var disabled_modules = {$disabled_modules};
+	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
+	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
+	{literal}
+	
+	SUGAR.globalSearchEnabledTable = new YAHOO.SUGAR.DragDropTable(
+		"enabled_div",
+		[{key:"label",  label: lblEnabled, width: 200, sortable: false},
+		 {key:"module", label: lblEnabled, hidden:true}],
+		new YAHOO.util.LocalDataSource(enabled_modules, {
+			responseSchema: {fields : [{key : "module"}, {key : "label"}]}
+		}),  
+		{height: "200px"}
+	);
+	
+	SUGAR.globalSearchDisabledTable = new YAHOO.SUGAR.DragDropTable(
+		"disabled_div",
+		[{key:"label",  label: lblDisabled, width: 200, sortable: false},
+		 {key:"module", label: lblDisabled, hidden:true}],
+		new YAHOO.util.LocalDataSource(disabled_modules, {
+			responseSchema: {fields : [{key : "module"}, {key : "label"}]}
+		}),
+		{height: "200px"}
+	);
+	
+	SUGAR.globalSearchEnabledTable.disableEmptyRows = true;
+	SUGAR.globalSearchDisabledTable.disableEmptyRows = true;
+	SUGAR.globalSearchEnabledTable.addRow({module: "", label: ""});
+	SUGAR.globalSearchDisabledTable.addRow({module: "", label: ""});
+	SUGAR.globalSearchEnabledTable.render();
+	SUGAR.globalSearchDisabledTable.render();
+
+	SUGAR.saveGlobalSearchSettings = function()
+	{
+		var enabledTable = SUGAR.globalSearchEnabledTable;
+		var modules = "";
+		for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
+			var data = enabledTable.getRecord(i).getData();
+			if (data.module && data.module != '')
+			    modules += "," + data.module;
+		}
+		modules = modules == "" ? modules : modules.substr(1);
+		document.forms['UnifiedSearchAdvancedMain'].elements['search_modules'].value = modules;
+	}
+})();
+{/literal}
+
+var handleHideShow = function()
+{ldelim}
+{if $SHOWGSDIV == 'yes'}
+	document.getElementById("inlineGlobalSearch").style.display="";
+{else}
+	document.getElementById("inlineGlobalSearch").style.display="none";
+{/if}	
+{rdelim};
+
+YAHOO.util.Event.onDOMReady(handleHideShow); 
+
+</script>

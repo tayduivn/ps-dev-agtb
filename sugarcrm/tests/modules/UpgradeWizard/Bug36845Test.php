@@ -112,11 +112,13 @@ public function tearDown()
 	if($this->has_custom_unified_search_modules)
 	{
 		copy('cache/modules/unified_search_modules.php.bak', 'cache/modules/unified_search_modules.php');
+		unlink('cache/modules/unified_search_modules.php.bak');
 	}
 
 	if($this->has_custom_unified_search_modules_display)
 	{
 		copy('cache/modules/unified_search_modules_display.php.bak', 'cache/modules/unified_search_modules_display.php');
+		unlink('cache/modules/unified_search_modules_display.php.bak');
 	}	
 	
 	if(file_exists($this->module_dir))
@@ -167,7 +169,7 @@ public function test_create_unified_search_modules_display()
 	
     require_once('modules/UpgradeWizard/uw_utils.php');
     $usa = new UnifiedSearchAdvanced();
-    $_REQUEST['search_modules'] = array('Accounts', 'Bug36845Test');
+    $_REQUEST['enabled_modules'] = 'Accounts,Bug36845Test';
     $usa->saveGlobalSearchSettings();
     $this->assertTrue(file_exists('cache/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
 	/*

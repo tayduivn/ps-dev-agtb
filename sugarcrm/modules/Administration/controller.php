@@ -117,11 +117,13 @@ class AdministrationController extends SugarController
      */
     public function action_saveglobalsearchsettings()
     {
-    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
-    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
-    	 $unifiedSearchAdvanced->saveGlobalSearchSettings();
-    	 //Redirect back to Administration main page
-    	 header('location: index.php?module=Administration&action=index');
-    	 exit;
+    	 try {
+	    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
+	    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
+	    	 $unifiedSearchAdvanced->saveGlobalSearchSettings();
+	    	 echo "true";
+    	 } catch (Exception $ex) {
+    	 	 echo "false";
+    	 }
     }
 }
