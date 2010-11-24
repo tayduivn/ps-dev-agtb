@@ -3965,7 +3965,7 @@ SUGAR.util.isLoginPage = function(content)
 }
 
 SUGAR.util.isPackageManager=function(){
-	if(typeof(document.the_form.language_pack_escaped) !='undefined'){
+	if(typeof(document.the_form) !='undefined' && typeof(document.the_form.language_pack_escaped) !='undefined'){
 		return true;
 	}else{return false;}
 }
