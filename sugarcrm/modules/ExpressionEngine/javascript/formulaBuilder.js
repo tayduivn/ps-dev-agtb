@@ -122,7 +122,7 @@ SUGAR.expressions.validateReturnTypes = function(t)
 		else {
 			for ( var i = 0 ; i < types.length ; i++ ) {
 				if ( !fMap[t.name].prototype.isProperType(new see.TYPE_MAP[t.args[i].returnType],types[i]) ) {
-					throw (this.getClass() + ": The parameter at index " + i + " must be of type " + types[i] );
+					throw (t.name + ": The parameter at index " + i + " must be of type " + types[i] );
 				}
 			}
 		}
@@ -302,7 +302,6 @@ SUGAR.expressions.GridToolTip = {
 			var fName = functionsArray[i][0];
 			//Internal Sugar functions that most users will not find useful
 			switch (fName) {
-			case "daysUntil":
 			case "isValidTime":
 			case "isAlpha":
 			case "doBothExist":
@@ -318,7 +317,7 @@ SUGAR.expressions.GridToolTip = {
 				break;
 			}
 			//For now, hide date functions in the formula builder as they are unstable.
-			if (functionsArray[i][1] == "date" || functionsArray[i][1] == "time")
+			if (functionsArray[i][1] == "time")
 				continue;
 			if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
 				continue;

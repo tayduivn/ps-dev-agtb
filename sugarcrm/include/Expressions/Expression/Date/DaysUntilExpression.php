@@ -42,10 +42,16 @@ class DaysUntilExpression extends NumericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var time = this.getParameters().evaluate();
-			var then = new Date(time).getTime();
-			var now = new Date().getTime();
-			return Math.ceil((then - now) / 86400000);
+			var then = this.getParameters().evaluate();
+			var now = new Date();
+			then.setHours(0);
+			then.setMinutes(0);
+			now.setHours(0);
+			now.setMinutes(0);
+			now.setSeconds(0);
+			now.setMilliseconds(0);
+			var diff = then - now;
+			return Math.ceil(diff / 86400000);
 EOQ;
 	}
 

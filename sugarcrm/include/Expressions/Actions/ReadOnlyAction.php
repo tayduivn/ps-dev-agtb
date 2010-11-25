@@ -50,14 +50,15 @@ class ReadOnlyAction extends AbstractAction{
 				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if (!el)
 				    return;
+				var property = el.type == 'checkbox' ? 'disabled' : 'readonly';
 				var val = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
 				if (val == SUGAR.expressions.Expression.TRUE) {
-					el.readOnly = true;
+					el[property] = true;
 					YAHOO.util.Dom.setStyle(el, 'background-color', '#EEE');
 					if (!SUGAR.isIE)
 					   YAHOO.util.Dom.setStyle(el, 'color', '#22');
 				} else if (val == SUGAR.expressions.Expression.FALSE){
-					el.readOnly = false;
+					el[property] = false;
 					YAHOO.util.Dom.setStyle(el, 'background-color', '');
 					if (!SUGAR.isIE)
                         YAHOO.util.Dom.setStyle(el, 'color', '');
