@@ -226,6 +226,3 @@ class SugarWidgetField extends SugarWidget {
         }
     }
 }
-?>
-
-
