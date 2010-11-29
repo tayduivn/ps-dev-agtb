@@ -57,8 +57,6 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testCallEmptyStatusLang()
     {
-         $this->markTestIncomplete("Enable when bug 40999 is fixed");
-
          file_put_contents($GLOBALS['sugar_config']['cache_dir'].'modules/Calls/language/test_test.lang.php',
               '<?php   $mod_strings=array("LBL_DEFAULT_STATUS" => \'FAILED!\'); ');
          $GLOBALS['current_language'] = 'test_test';
@@ -70,5 +68,26 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $call = new Call();
          $call->retrieve($this->callid);
          $this->assertEquals('Planned', $call->status);
+    }
+
+    /**
+     * @group bug40999
+     * Check if empty status is handled correctly
+     */
+    public function testCallEmptyStatusLangConfig()
+    {
+         file_put_contents($GLOBALS['sugar_config']['cache_dir'].'modules/Calls/language/test_test.lang.php',
+              '<?php   $mod_strings=array("LBL_DEFAULT_STATUS" => \'FAILED!\'); ');
+         $GLOBALS['current_language'] = 'test_test';
+         global $sugar_config;
+         $sugar_config['default_call_status'] = "My Call";
+         $call = new Call();
+         $this->callid = $call->id = create_guid();
+         $call->new_with_id = 1;
+         $call->save();
+         // then retrieve
+         $call = new Call();
+         $call->retrieve($this->callid);
+         $this->assertEquals('My Call', $call->status);
     }
 }

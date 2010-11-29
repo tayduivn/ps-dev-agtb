@@ -177,6 +177,7 @@ function make_sugar_config(&$sugar_config)
 	'default_swap_last_viewed' => empty($swap_last_viewed) ? false : $swap_last_viewed,
 	'default_swap_shortcuts' => empty($swap_shortcuts) ? false : $swap_shortcuts,
 	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
+    'default_call_status' => 'Planned',
 	'js_lang_version' => 1,
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -222,7 +223,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationtime' => '',
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
-		) : $passwordsetting
+		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
 	);
 }
@@ -785,7 +786,7 @@ function getUserArrayFromFullName($args, $hide_portal_users = false) {
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
 	if ( $hide_portal_users ) {
-	    $query .= " portal_only=0 AND "; 
+	    $query .= " portal_only=0 AND ";
 	}
 	$query .= $inClause;
 	$query .= " ORDER BY last_name ASC";
