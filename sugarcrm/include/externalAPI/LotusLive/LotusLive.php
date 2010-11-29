@@ -31,6 +31,7 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
     public $canInvite = false;
     public $sendsInvites = false;
     public $needsUrl = false;
+    public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','company'=>'LBL_SHARE_COMPANY','public'=>'LBL_SHARE_PUBLIC');
 
 
     public function loadEAPM($eapmBean)
@@ -39,12 +40,11 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
         if ( !empty($eapmBean->api_data) ) {
             $api_data = json_decode(base64_decode($eapmBean->api_data),true);
-            if ( isset($api_data['meetingID']) ) {
+            if ( isset($api_data['subscriberID']) ) {
                 $this->meetingID = $api_data['meetingID'];
                 $this->hostURL = $api_data['hostURL'];
                 $this->joinURL = $api_data['joinURL'];
-                // FIXME: Need to figure out how we want to handle collections
-                $this->collectionID = '3CAA8D80D29311DFA08B9C830A060702';
+                $this->subscriberID = $api_data['subscriberID'];
             }
         }
     }
@@ -52,13 +52,21 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
     public function checkLogin($eapmBean = null)
     {
         parent::checkLogin($eapmBean);
-        $reply = $this->makeRequest('GetMeeting/OAuth', array());
+        $reply = $this->makeRequest('GetSubscriberId/OAuth');
 
         if ( $reply['success'] == TRUE ) {
-            $this->authData->api_data = base64_encode(json_encode(array(
-                'meetingID'=>$reply['responseJSON']['feed']['entry']['meetingID'],
-                'hostURL'=>$reply['responseJSON']['feed']['entry']['hostURL'],
-                'joinURL'=>$reply['responseJSON']['feed']['entry']['joinURL'],)));
+            $reply2 = $this->makeRequest('GetMeeting/OAuth');
+            if ( $reply2['success'] == TRUE ) {
+
+                $apiData = array(
+                    'meetingID'=>$reply2['responseJSON']['feed']['entry']['meetingID'],
+                    'hostURL'=>$reply2['responseJSON']['feed']['entry']['hostURL'],
+                    'joinURL'=>$reply2['responseJSON']['feed']['entry']['joinURL'],
+                    'subscriberID'=>$reply['responseJSON']['subscriber_id'],
+                );
+                $GLOBALS['log']->fatal('IKEA (api_data): '.print_r($apiData,true));
+                $this->authData->api_data = base64_encode(json_encode($apiData));
+            }
         }
 
         return $reply;
@@ -157,37 +165,92 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
         $result = $this->makeRequest('FileUpload/OAuth',base64_encode(file_get_contents($fileToUpload)),
                                      array('filename' => $docName,
                                            'mimetype' => $mimeType,
+                                           'subscriberid' => $this->subscriberID,
                                          ));
 
         // die('IKEA uploading file: '.$fileToUpload.': <pre>'.print_r($result,true));
-        $bean->doc_id = $result['file_id'];
+        if ( $result['success'] != TRUE ) {
+            return $result;
+        }
+        $bean->doc_id = $result['responseJSON']['FileId'];
 
-        $bean->doc_direct_url = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!20023739/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
+        $bean->doc_direct_url = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
 
         $bean->doc_url = 'https://apps.test.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
 
-        return array('success'=>TRUE);
+        return $result;
     }
 
     public function downloadDoc($documentId, $documentFormat){}
     public function shareDoc($documentId, $emails){}
     public function deleteDoc($documentId){}
-    public function searchDoc($keywords){
-        global $db;
 
-        $sql = "
-SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url AS url FROM notes WHERE filename LIKE '".$db->quote($keywords)."%' OR name LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLive'
-UNION ALL
-SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url AS url FROM document_revisions WHERE filename LIKE '".$db->quote($keywords)."%' OR name LIKE '".$db->quote($keywords)."%' AND doc_type = 'LotusLive' ORDER BY date_modified DESC";
+    public function loadDocCache($forceReload = false) {
+        global $db, $current_user;
 
-        $ret = $db->query($sql);
+        create_cache_directory('/include/externalAPI/');
+        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_LotusLiveDirect';
+        if ( !$forceReload && file_exists($cacheFileBase.'.php') ) {
+            // File exists
+            include_once($cacheFileBase.'.php');
+            if ( abs(time()-$docCache['loadTime']) < 3600 ) {
+                // And was last updated an hour or less ago
+                return $docCache['results'];
+            }
+        }
+        
+        $reply = $this->makeRequest('GetFileList/OAuth',null,array('subscriberid' => $this->subscriberID));
 
-        $results = array();
-
-        while ( $row = $db->fetchByAssoc($ret) ) {
-            $results[] = $row;
+        if ( $reply['success'] != true ) {
+            return array();
         }
 
+        if ( !is_array($reply['responseJSON']['file_list']) ) {
+            $reply['responseJSON']['file_list'] = array();
+        }
+        
+        $results = array();
+        foreach ( $reply['responseJSON']['file_list'] as $remoteFile ) {
+            $result['id'] = $remoteFile['file_id'];
+            $result['name'] = $remoteFile['file_name'];
+            $result['date_modified'] = preg_replace('/^([^T]*)T([^.]*)\....Z$/','\1 \2',$remoteFile['date_modified']);
+            $result['direct_url'] = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$remoteFile['file_id'].'/stream/'.$remoteFile['file_id'];
+
+            $result['url'] = 'https://apps.test.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$remoteFile['file_id'];
+
+            $results[] = $result;
+        }
+
+
+        $docCache['loadTime'] = time();
+        $docCache['results'] = $results;
+        $fd = fopen($cacheFileBase.'_tmp.php','w');
+        fwrite($fd,'<'."?php\n// This file was auto generated by include/externalAPI/LotusLiveDirect/LotusLiveDirect.php do not overwrite.\n\n".'$docCache = '.var_export($docCache,true).";\n");
+        fclose($fd);
+        rename($cacheFileBase.'_tmp.php',$cacheFileBase.'.php');
+        
+        return $results;
+    }
+
+    public function searchDoc($keywords){
+        $docList = $this->loadDocCache();
+
+        $results = array();
+        
+        $searchLen = strlen($keywords);
+
+        foreach ( $docList as $doc ) {
+            if ( strncmp($keywords,$doc['name'],$searchLen) === 0 ) {
+                // It matches
+                $results[] = $doc;
+                
+                if ( count($results) > 15 ) {
+                    // Only return the first 15 results
+                    break;
+                }
+            }
+        }
+        
         return $results;
     }
 
@@ -226,7 +289,16 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url A
         $reply['responseRAW'] = $rawResponse;
         $reply['responseJSON'] = null;
 
+        // IKEA: Ugly hack (for GetSubscriberId)
+        // $rawResponse = preg_replace('/^{ {([^}]*)},{([^}]*)} }$/','{\1,\2}',$rawResponse);
+
         $response = json_decode($rawResponse,true);
+
+        // IKEA: Ugly hack #2 (for GetFileList)
+        // if( isset($response['GetFileList']) ) {
+        //     $response = $response['GetFileList'];
+        //}
+
         if ( empty($rawResponse) || !is_array($response) ) {
             $reply['success'] = FALSE;
             // FIXME: Translate
@@ -235,8 +307,12 @@ SELECT doc_id AS id, filename AS name, date_modified AS date_modified, doc_url A
             $GLOBALS['log']->fatal("Decoded:\n".print_r($response,true));
             $reply['responseJSON'] = $response;
 
-            if ( $reply['responseJSON']['status'] == 'OK' ) {
+            if ( strtoupper($reply['responseJSON']['status']) == 'OK' ) {
                 $reply['success'] = TRUE;
+            } else {
+                $reply['success'] = FALSE;
+                // FIXME: Translate
+                $reply['errorMessage'] = 'Request denied by server.';
             }
         }
 

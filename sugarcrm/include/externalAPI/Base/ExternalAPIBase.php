@@ -100,13 +100,19 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
+        if ( ( is_array($postfields) && count($postfields) == 0 ) || 
+             empty($postfields) ) {
+            curl_setopt($ch, CURLOPT_POST, false);
+        } else {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+        }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
         $GLOBALS['log']->fatal("Where: ".$url);
-        $GLOBALS['log']->fatal("Sent:\n".print_r($data,true));
+        $GLOBALS['log']->fatal("Headers:\n".print_r($headers,true));
+        $GLOBALS['log']->fatal("Postfields:\n".print_r($postfields,true));
         $rawResponse = curl_exec($ch);
         $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
 
