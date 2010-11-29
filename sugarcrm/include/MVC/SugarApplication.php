@@ -184,9 +184,13 @@ class SugarApplication
 		{
 		   if(is_array($val)) 
 		   {
-		       foreach ($val as $k => $v) 
+		       foreach ($val as $k => $v)
 		       {
-		           $GLOBALS['request_string'] .= urlencode($key).'[]='.urlencode($v).'&';
+                           //If an array, then skip the urlencoding. This should be handled with stringify instead.
+                           if(is_array($v))
+                                continue;
+
+                           $GLOBALS['request_string'] .= urlencode($key).'['.$k.']='.urlencode($v).'&';
 		       }
 		   } 
 		   else 

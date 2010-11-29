@@ -57,6 +57,24 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
             'foo=bar&dog=cat&print=true'
         );
     }
+
+    /*
+     * @ticket 40277
+     */
+    public function testSetupPrintWithMultidimensionalArray()
+    {
+        $_GET['foo'] = array(
+                            '0' => array(
+                                   '0'=>'bar',
+                                   'a' => 'hej'),
+                            '1' => 'notMultidemensional',
+                            '2' => 'notMultidemensional',
+                           );
+        $_POST['dog'] = 'cat';
+        $this->_app->setupPrint();
+        $this->assertEquals('foo[1]=notMultidemensional&foo[2]=notMultidemensional&dog=cat&print=true', $GLOBALS['request_string']
+        );
+    }
     
     public function testLoadDisplaySettingsDefault()
     {
