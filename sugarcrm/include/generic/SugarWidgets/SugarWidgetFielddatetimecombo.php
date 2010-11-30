@@ -40,15 +40,15 @@ class SugarWidgetFieldDateTimecombo extends SugarWidgetFieldDateTime {
 			$ontime = $layout_def['input_name0'];
 		}
 
-		//BEGIN SUGARCRM flav=ent ONLY 
+		//BEGIN SUGARCRM flav=ent ONLY
 		if ($this->reporter->db->dbType == 'oci8') {
 			return $this->_get_column_select($layout_def).">=TO_DATE('".$this->reporter->db->quote($ontime)."','YYYY-MM-DD hh24:mi:ss')  \n";
 		} else {
-			//END SUGARCRM flav=ent ONLY 
+			//END SUGARCRM flav=ent ONLY
 			return $this->_get_column_select($layout_def)."='".$this->reporter->db->quote($ontime)."' \n";
-			//BEGIN SUGARCRM flav=ent ONLY 
+			//BEGIN SUGARCRM flav=ent ONLY
 		}
-		//END SUGARCRM flav=ent ONLY 
+		//END SUGARCRM flav=ent ONLY
 	}
 
 	//TODO:now for date time field , we just search from date start to date end. The time is from 00:00:00 to 23:59:59
@@ -63,16 +63,14 @@ class SugarWidgetFieldDateTimecombo extends SugarWidgetFieldDateTime {
 			$begin = $layout_def['input_name0'];
 			$end = $layout_def['input_name1'];
 		}
-		//BEGIN SUGARCRM flav=ent ONLY 
+		//BEGIN SUGARCRM flav=ent ONLY
 		if ($this->reporter->db->dbType == 'oci8') {
 			return "(".$this->_get_column_select($layout_def).">=TO_DATE('".$this->reporter->db->quote($begin)."','yyyy-mm-dd hh24:mi:ss') AND \n ".$this->_get_column_select($layout_def)."<=TO_DATE('".$this->reporter->db->quote($end)."','yyyy-mm-dd hh24:mi:ss'))\n";
 		} else {
-			//END SUGARCRM flav=ent ONLY 
+			//END SUGARCRM flav=ent ONLY
 			return "(".$this->_get_column_select($layout_def).">='".$this->reporter->db->quote($begin)."' AND \n".$this->_get_column_select($layout_def)."<='".$this->reporter->db->quote($end)."')\n";
-			//BEGIN SUGARCRM flav=ent ONLY 
+			//BEGIN SUGARCRM flav=ent ONLY
 		}
-		//END SUGARCRM flav=ent ONLY 
+		//END SUGARCRM flav=ent ONLY
 	}
 }
-?>
-
