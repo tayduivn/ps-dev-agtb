@@ -6,6 +6,11 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['beanList']['vCardMockModule'] = 'vCardMockModule';
         $GLOBALS['beanFiles']['vCardMockModule'] = 'tests/include/vCard/vCardTest.php';
     }
@@ -13,8 +18,8 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']['vCardMockModule']);
-        unset($GLOBALS['beanFiles']['vCardMockModule']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
     
     /**

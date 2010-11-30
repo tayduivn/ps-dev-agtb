@@ -42,8 +42,8 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
 				  'name' => 'Hoovers&#169;',
 				  'properties' => 
 				  array (
-				    'hoovers_endpoint' => 'http://hapi.hoovers.com/axis2/services/AccessHoovers',
-				    'hoovers_wsdl' => 'http://hapi.hoovers.com/axis2/Hapi.wsdl',
+				    'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
+    				'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
 				  ),
 				);   
 				write_array_to_file('config', $config, 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');           	
@@ -58,8 +58,8 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
 		  'name' => 'Hoovers&#169;',
 		  'properties' => 
 		  array (
-		    'hoovers_endpoint' => 'http://hapi.hoovers.com/axis2/services/AccessHoovers',
-		    'hoovers_wsdl' => 'http://hapi.hoovers.com/axis2/Hapi.wsdl',
+		    'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
+   			'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
 		    'hoovers_api_key' => '',
 		  ),
 		);       	
@@ -94,8 +94,8 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
 		  'name' => 'Hoovers&#169;',
 		  'properties' => 
 		  array (
-		    'hoovers_endpoint' => 'http://hapi.hoovers.com/axis2/services/AccessHoovers',
-		    'hoovers_wsdl' => 'http://hapi.hoovers.com/axis2/Hapi.wsdl',
+   			'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
+    		'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
 		    'hoovers_api_key' => '',
 		  ),
 		);       	

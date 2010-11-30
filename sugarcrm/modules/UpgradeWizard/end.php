@@ -153,6 +153,17 @@ logThis(" Finish Rebuilding the config file again", $path);
 
 set_upgrade_progress('end','in_progress');
 
+//BEGIN SUGARCRM flav=pro ONLY
+// If going from pre 610 to 610+, migrate the report favorites
+logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+migrate_sugar_favorite_reports();
+logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+
+logThis("Begin: Update custom module built using module builder to add favorites", $path);
+add_custom_modules_favorites_search();
+logThis("Complete: Update custom module built using module builder to add favorites", $path);
+//END SUGARCRM flav=pro ONLY
+
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
 	if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -164,7 +175,6 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 		logThis("Upgrading multienum data", $path);
         require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
         upgrade_multienum_data();	
-
 	 }
 	 
 
@@ -227,6 +237,13 @@ if(!$ce_to_pro_ent) {
    fix_report_relationships($path);
 }
 //END SUGARCRM flav=pro ONLY
+
+//Upgrade connectors
+if(function_exists('upgrade_connectors'))
+{
+   upgrade_connectors($path);
+}
+
 
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
@@ -297,35 +314,16 @@ $cleanUrl		= "{$parsedSiteUrl['scheme']}://{$host}{$port}{$path}/index.php";
 
 $uwMain =<<<eoq
 <table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th align="left">
-			{$mod_strings['LBL_UW_TITLE_END']}
-		</th>
-	</tr>
-	<tr>
-		<td align="left">
-			<p>
-			{$mod_strings['LBL_UW_END_DESC']}
-			</p>
-			<p>
-			{$mod_strings['LBL_UW_END_DESC2']}
-			</p>
-		</td>
-	</tr>
-	<tr>
-		<td align="left">
-			<p>
-				<b class="error">{$mod_strings['LBL_UW_END_LOGOUT']}</b>
-			</p>
-			<p>
-				<a href="index.php?module=Users&action=Logout">{$mod_strings['LBL_UW_END_LOGOUT2']}</a>
-			</p>
-		</td>
-	</tr>
 
 	<tr>
 		<td align="left">
-			<input type="button" value="{$mod_strings['LBL_BUTTON_DONE']}" onclick="deleteCacheAjax();window.location.href='$cleanUrl?module=Home&action=About'">
+			<p>
+			<br>
+			{$mod_strings['LBL_UW_END_LOGOUT_PRE2']}
+			<br>
+			<br>
+            <b>{$mod_strings['LBL_UW_END_LOGOUT_PRE']}</b> {$mod_strings['LBL_UW_END_LOGOUT']}
+			</p>
 		</td>
 	</tr>
 </table>
@@ -348,6 +346,7 @@ $showBack		= false;
 $showCancel		= false;
 $showRecheck	= false;
 $showNext		= false;
+$showDone       = true;
 
 $stepBack		= 0;
 $stepNext		= 0;

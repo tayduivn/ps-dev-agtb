@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * governing these rights and limitations under the License.  Portions created
 * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
-// $Id: ListViewData.php 56945 2010-06-14 19:51:27Z jmertic $
+// $Id: ListViewData.php 57227 2010-06-30 23:02:27Z kjing $
 require_once('include/EditView/SugarVCR.php');
 class ListViewData {
 	var $additionalDetails = true;
@@ -137,8 +137,16 @@ class ListViewData {
                 $blockVariables[] = 'Home2_'.strtoupper($bean).'_ORDER_BY';
             }
             $blockVariables[] = 'Home2_CASE_ORDER_BY';
-            foreach(array_merge($_POST, $_GET) as $name=>$value) {
-                if(!in_array($name, $blockVariables)){
+
+            $params = array();
+            if ( isset($_POST) && is_array($_POST) ) {
+                $params = array_merge($params,$_POST);
+            }
+            if ( isset($_GET) && is_array($_GET) ) {
+                $params = array_merge($params,$_GET);
+            }
+            foreach($params as $name=>$value) {
+                if(!in_array($name, $blockVariables)){ 
 					if(is_array($value)) {
 						foreach($value as $v) {
                             $base_url .= $name.urlencode('[]').'='.urlencode($v) . '&';

@@ -177,7 +177,7 @@ function make_sugar_config(&$sugar_config)
 	'default_subpanel_links' => empty($subpanel_links) ? false : $subpanel_links,
 	'default_swap_last_viewed' => empty($swap_last_viewed) ? false : $swap_last_viewed,
 	'default_swap_shortcuts' => empty($swap_shortcuts) ? false : $swap_shortcuts,
-	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'm' : $navigation_paradigm,
+	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
 	'js_lang_version' => 1,
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -359,7 +359,7 @@ function get_sugar_config_defaults() {
 	'default_subpanel_links' => false,
 	'default_swap_last_viewed' => false,
 	'default_swap_shortcuts' => false,
-	'default_navigation_paradigm' => 'm',
+	'default_navigation_paradigm' => 'gm',
 	'admin_access_control' => false,
   	'use_common_ml_dir'	=> false,
   	'common_ml_dir' => '',
@@ -1402,7 +1402,11 @@ function microtime_diff($a, $b) {
 }
 
 // check if Studio is displayed.
-function displayStudioForCurrentUser(){
+function displayStudioForCurrentUser()
+{
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
@@ -1427,8 +1431,12 @@ function displayStudioForCurrentUser(){
 
 }
 
-function displayWorkflowForCurrentUser(){
+function displayWorkflowForCurrentUser()
+{
     //BEGIN SUGARCRM flav=pro ONLY
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     if (isset($_SESSION['display_workflow_for_user'])) {
         return $_SESSION['display_workflow_for_user'];
     }
@@ -1959,7 +1967,7 @@ function clean_xss($str, $cleanImg=true) {
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror";
 
 	$attribute_regex	= "#<[^/>][^>]+({$jsEvents}\w+)[^=>]*=[^>]*>#sim";
-	$javascript_regex	= '@<[^/>][^>]+(expression|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
+	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
 	$css_url			= "#url\(.*\.\w+\)#";
 
@@ -3003,6 +3011,25 @@ function sugar_cleanup($exit = false) {
 	        $GLOBALS['current_user']->savePreferencesToDB();
 	}
 
+	//check to see if this is not an ajax call AND the user preference error flag is set
+	if( 
+		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
+		
+	){
+		global $app_strings;
+		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
+		$err_mess = $app_strings['ERROR_USER_PREFS'];
+		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
+		echo " 
+		<script>
+			ajaxStatus.flashStatus('$err_mess',7000);
+		</script>";				
+		
+	}	
+	
 	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
@@ -3685,9 +3712,12 @@ if(file_exists('custom/include/custom_utils.php')){
  */
 function setPhpIniSettings() {
 	// zlib module
-	if(function_exists('gzclose') && headers_sent() == false) {
+	// Bug 37579 - Comment out force enabling zlib.output_compression, since it can cause problems on certain hosts
+	/*
+    if(function_exists('gzclose') && headers_sent() == false) {
 		ini_set('zlib.output_compression', 1);
 	}
+	*/
 	// mbstring module
 	//nsingh: breaks zip/unzip functionality. Commenting out 4/23/08
 
@@ -4046,6 +4076,11 @@ function createGroupUser($name) {
 function _getIcon($iconFileName)
 {
     $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconPath) )
+        $iconPath = SugarThemeRegistry::current()->getImageURL(
+            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
+    //Next try removing the icon prefix
     if ( empty($iconPath) )
         $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 

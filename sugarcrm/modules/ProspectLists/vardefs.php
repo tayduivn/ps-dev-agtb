@@ -20,7 +20,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['ProspectList'] = array (
-
+    //BEGIN SUGARCRM flav=pro ONLY
+    'favorites'=>true, 
+    //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=following ONLY
+    'followable' => true, 
+    //END SUGARCRM flav=following ONLY
 	'table' => 'prospect_lists',
 	'fields' => array (
 		'id' => array (

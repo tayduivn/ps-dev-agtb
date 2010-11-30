@@ -75,8 +75,7 @@ if(isset($_REQUEST['reset_homepage'])){
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=Users&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
-$params[] = $locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
+$params[] = "<span class='pointer'>&raquo;</span>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
 echo getClassicModuleTitle("Users", $params, true);
 
 global $app_list_strings;
@@ -328,7 +327,7 @@ if(isset($oc_status)) {
 $sugar_smarty->assign("SETTINGS_URL", $sugar_config['site_url']);
 
 
-$sugar_smarty->assign("EXPORT_DELIMITER", getDelimiter());
+$sugar_smarty->assign("EXPORT_DELIMITER", $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('EXPORT_CHARSET', $locale->getExportCharset('', $focus));
 $sugar_smarty->assign('USE_REAL_NAMES', $focus->getPreference('use_real_names'));
 
@@ -477,7 +476,7 @@ else
 $useGroupTabs = $current_user->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'm';
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
     }
     $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
 }
@@ -607,14 +606,24 @@ function confirmDelete() {
         confirmDeletePopup.hide();
         return false;
      };
-
+    var user_portal_group = '{$usertype}';
+    var confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM');
+    if(user_portal_group == 'GroupUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_GROUP_CONFIRM');
+    }
+    //BEGIN SUGARCRM flav=pro ONLY
+    else if(user_portal_group == 'PortalUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_PORTAL_CONFIRM');
+    }
+    //END SUGARCRM flav=pro ONLY
+    
     var confirmDeletePopup = new YAHOO.widget.SimpleDialog(\"Confirm \", {
                 width: \"400px\",
                 draggable: true,
                 constraintoviewport: true,
                 modal: true,
                 fixedcenter: true,
-                text: SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM'),
+                text: confirm_text,
                 bodyStyle: \"padding:5px\",
                 buttons: [{
                         text: SUGAR.language.get('Users', 'LBL_OK'),
@@ -622,7 +631,7 @@ function confirmDelete() {
                         isDefault:true
                 }, {
                         text: SUGAR.language.get('Users', 'LBL_CANCEL'),
-                        handler: handleNo,
+                        handler: handleNo
                 }]
      });
     confirmDeletePopup.setHeader(SUGAR.language.get('Users', 'LBL_DELETE_USER'));

@@ -175,9 +175,11 @@
 <input type='hidden' name='view_module' value='{$view_module}'>
 <input type='hidden' name='view' value='{$view}'>
 <input type='hidden' name="panels_as_tabs" value='{$displayAsTabs}'>
+<!-- BEGIN SUGARCRM flav=ent ONLY -->
 {if $fromPortal}
     <input type='hidden' name='PORTAL' value='1'>
 {/if}
+<!-- END SUGARCRM flav=ent ONLY -->
 {if $fromModuleBuilder}
     <input type='hidden' name='MB' value='1'>
     <input type='hidden' name='view_package' value='{$view_package}'>
@@ -186,7 +188,11 @@
 </form>
 <script>
 {literal}
-function editPanelProperties(panelId, view) {
+//BEGIN SUGARCRM flav=pro ONLY
+Studio2.calcFieldList = {/literal}{$calc_field_list}{literal};
+//END SUGARCRM flav=pro ONLY
+
+var editPanelProperties = function (panelId, view) {
     panelId = "" + panelId;
 	var key_label = document.getElementById('le_panelid_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
 	var value_label = document.getElementById('le_panelname_' + panelId).innerHTML.replace(/^\s+|\s+$/g,'');
@@ -202,9 +208,9 @@ function editPanelProperties(panelId, view) {
                 //END SUGARCRM flav=een ONLY
                 + "&title_label=" + SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE") + "&value_label=" + value_label;
     ModuleBuilder.getContent(params);
-}
+}; 
 {/literal}
-function editFieldProperties(idCount, label) {ldelim}
+var editFieldProperties = function (idCount, label) {ldelim}
 	var value_label = document.getElementById('le_label_' + idCount).innerHTML.replace(/^\s+|\s+$/g,''); 
 	var value_tabindex = document.getElementById('le_tabindex_' + idCount).innerHTML.replace(/^\s+|\s+$/g,'');
 	ModuleBuilder.getContent(
@@ -229,7 +235,7 @@ ModuleBuilder.MBpackage = "{$view_package}";
 Studio2.requiredFields = [{$required_fields}];
 {literal}
 //rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
-if (!Array.indexOf) {
+if (typeof new Array().indexOf == "undefined") {
   Array.prototype.indexOf = function (obj, start) {
     for (var i = (start || 0); i < this.length; i++) {
       if (this[i] == obj) {
@@ -239,55 +245,6 @@ if (!Array.indexOf) {
     return -1;
   }
 }
-	
-Studio2.checkGridLayout = function()
-{
-    if (Studio2.countGridFields() == 0) {
-	   ModuleBuilder.layoutValidation.popup() ;
-	   return false;
-	}
-	{/literal}
-	   {if $view != "detailview"}	
-	return Studio2.checkRequiredFields();
-	   {else}
-	return true;   
-	   {/if}
-	{literal}
-}
-
-Studio2.countGridFields = function() {
-    var count = 0;
-    var divs = document.getElementById( 'panels' ).getElementsByTagName( 'div' ) ;
-    for ( var j=0;j<divs.length;j++) {
-        if (divs[j].className == 'le_field')
-		    count++;
-    }
-    return count;
-};  
-
-Studio2.checkRequiredFields = function(){
-	var Dom = YAHOO.util.Dom;
-	var availablefields = Dom.get('availablefields');
-	var fields = Dom.getElementsByClassName('field_name', '', 'availablefields');
-	var missing = [ ];
-	for(field in fields){
-	    if (Studio2.requiredFields.indexOf(fields[field].innerHTML) != -1) {
-			missing[missing.length] = fields[field].innerHTML;
-		}
-	}
-	if (missing.length > 0)	
-	{
-	    var msg = SUGAR.language.get("ModuleBuilder", "ERROR_REQUIRED_FIELDS");
-		for (var i = 0; i < missing.length; i++) {
-		  msg += '"' + missing[i] + '"';
-		  if (i != missing.length - 1)
-		      msg += ",";
-		}
-        return window.confirm(msg);
-	}
-			
-    return true;
-};
 {/literal}
 ModuleBuilder.module = "{$view_module}";
 ModuleBuilder.package={if $fromModuleBuilder}"{$view_package}"{else}false{/if};

@@ -60,6 +60,17 @@ function process_action_update(&$focus, $action_array){
 
 
 		if(empty($action_array['basic_ext'][$field])){
+			//if we have a relate field, make sure the related record still exists.
+			if ($focus->field_defs[$field]['type'] == "relate")
+			{
+				$relBean = get_module_info($focus->field_defs[$field]['module']);
+				$relBean->retrieve($new_value);
+				if (empty($relBean->id))
+				{
+					$GLOBALS['log']->fatal("workflow attempting to set relate field $field to invalid id: $new_value");
+					continue;
+				}
+			}
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
 			execute_special_logic($field, $focus);
 		}
@@ -404,7 +415,8 @@ function clean_save_data(& $target_module, $action_array){
 		*/
 
 		global $timedate;
-
+		global $disable_date_format;
+		
 		if($is_update == false){
 
 
@@ -421,14 +433,18 @@ function clean_save_data(& $target_module, $action_array){
 
 		$newtimestamp = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $new_unix_stamp);
 
-		if($stamp_type=="date"){
-			$final_stamp = $timedate->to_display_date($newtimestamp, true);
-		}
-		if($stamp_type=="time"){
-			$final_stamp = $timedate->to_display_time($newtimestamp, true);
-		}
-		if($stamp_type=="datetime" || $stamp_type=="datetimecombo" ){
-			$final_stamp = $timedate->to_display_date_time($newtimestamp, true);
+		if(!empty($disable_date_format)){
+			if($stamp_type=="date"){
+				$final_stamp = $timedate->to_display_date($newtimestamp, true);
+			}
+			if($stamp_type=="time"){
+				$final_stamp = $timedate->to_display_time($newtimestamp, true);
+			}
+			if($stamp_type=="datetime" || $stamp_type=="datetimecombo" ){
+				$final_stamp = $timedate->to_display_date_time($newtimestamp, true);
+			}
+		}else{
+			$final_stamp = $newtimestamp;
 		}
 
 		return $final_stamp;

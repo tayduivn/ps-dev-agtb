@@ -24,7 +24,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //the code and end-user application.
 
 global $sugar_config, $mod_strings;
+//BEGIN SUGARCRM flav=PRO ONLY
+include('ThirdPartyCredits.php');
+//END SUGARCRM flav=PRO ONLY
 ?>
+<style type="text/css">
+ul li {
+list-style-type: square;
+}
+</style>
 <script language="javascript" src="modules/Home/about.js"></script>
 <span>
 <div class="about" style="padding: 10px 15px 20px 15px;">
@@ -63,7 +71,12 @@ global $sugar_config, $mod_strings;
 </b></p>
 
 <?php
+//BEGIN SUGARCRM lic!=sub ONLY
 echo "<P>Copyright ".$app_strings['LBL_SUGAR_COPYRIGHT']."</P>";
+//END SUGARCRM lic!=sub ONLY
+//BEGIN SUGARCRM lic=sub ONLY
+echo "<P>Copyright ".$app_strings['LBL_SUGAR_COPYRIGHT_SUB']."</P>";
+//END SUGARCRM lic=sub ONLY
 //BEGIN SUGARCRM flav=com  && dep=os ONLY
 
 // This version of viewLicenseText is for Community Edition only.
@@ -202,12 +215,12 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 
 <P>&nbsp;</p>
 <P><h3><?php echo $mod_strings['LBL_SOURCE_CODE']; ?></h3></p>
+<ul style="margin-bottom: 20px; padding-left: 0px;">
 <LI><?php echo $mod_strings['LBL_SOURCE_SUGAR']; ?> (<A href="http://www.sugarcrm.com" target="_blank">http://www.sugarcrm.com</A>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_XTEMPLATE']; ?> (<A href="http://sourceforge.net/projects/xtpl" target="_blank">http://sourceforge.net/projects/xtpl</A>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_NUSOAP']; ?> (<a href="http://dietrich.ganx4.com/nusoap" target="_blank">http://dietrich.ganx4.com/nusoap</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSCALENDAR']; ?> (<a href="http://www.dynarch.com/mishoo/calendar.epl" target="_blank">http://www.dynarch.com/mishoo/calendar.epl</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_PHPPDF']; ?> (<a href="http://ros.co.nz/pdf/" target="_blank">http://ros.co.nz/pdf/</a>)
-<LI><?php echo $mod_strings['LBL_SOURCE_PNGBEHAVIOR']; ?> (<a href="http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html" target="_blank">http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSONPHP']; ?> (<a href="http://mike.teczno.com/json.html" target="_blank">http://mike.teczno.com/json.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSON']; ?> (<a href="http://www.json.org/js.html" target="_blank">http://www.json.org/js.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_HTTP_WEBDAV_SERVER']; ?> (<a href="http://pear.php.net/package/HTTP_WebDAV_Server" target="_blank">http://pear.php.net/package/HTTP_WebDAV_Server</a>)</LI>
@@ -228,7 +241,16 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_RECAPTCHA']; ?> (<a href="http://recaptcha.net/" target="_blank">http://recaptcha.net/</a>)</LI>
 </ul>
 
-
+//BEGIN SUGARCRM flav=PRO ONLY
+<?php foreach($credits as $type => $details) {
+	echo "<P><h3>". $type . "</h3></p>";
+	echo "<ul style=\"margin-bottom: 20px; padding-left: 0px;\">";
+		foreach($details as $key => $value) {
+			echo "<li><b>".$value['name']."</b> by ".$value['author']." (<a href='http://{$value['website']}' target='_blank'>".$value['website']."</a>)</li>";
+		}
+	echo "</ul>";
+}?>
+//END SUGARCRM flav=PRO ONLY
 	</td>
 
 </tr>

@@ -450,6 +450,8 @@ class DynamicField {
         $sql = $widget->get_db_delete_alter_table( $this->bean->table_name . "_cstm" ) ;
         if (! empty( $sql ) )
             $GLOBALS['db']->query( $sql );
+        
+        $this->removeVardefExtension($widget);
         VardefManager::clearVardef();
         VardefManager::refreshVardefs($this->module, $object_name);
 
@@ -600,12 +602,14 @@ class DynamicField {
     
     protected function writeVardefExtension($bean_name, $field, $def_override)
     {
+    	//Hack for the broken cases module
+    	$vBean = $bean_name == "aCase" ? "Case" : $bean_name;
     	$file_loc = "$this->base_path/sugarfield_{$field->name}.php";
         
 		$out =  "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
         foreach ($def_override as $property => $val) 
         {
-        	$out .= override_value_to_string_recursive(array($bean_name, "fields", $field->name, $property), "dictionary", $val) . "\n";
+        	$out .= override_value_to_string_recursive(array($vBean, "fields", $field->name, $property), "dictionary", $val) . "\n";
         }
         
         $out .= "\n ?>";
@@ -624,6 +628,17 @@ class DynamicField {
 	        return false ;
 	    }
     }
+    
+    protected function removeVardefExtension($field)
+    {
+    	$file_loc = "$this->base_path/sugarfield_{$field->name}.php";
+    	
+    	if (is_file($file_loc))
+    	{
+    		unlink($file_loc);
+    	}
+    }
+    
 
     /**
      * DEPRECIATED: Use addFieldObject instead.
@@ -675,37 +690,79 @@ class DynamicField {
      * Creates the custom table with an id of id_c
      *
      */
-    function createCustomTable(){
-
+    function createCustomTable($execute = true){
+        $out = "";
         if (!$GLOBALS['db']->tableExists($this->bean->table_name."_cstm")) {
         	$GLOBALS['log']->debug('creating custom table for '. $this->bean->table_name);
-            $query = 'CREATE TABLE '.$this->bean->table_name.'_cstm ( ';
+            $query = "/* Missing Table: {$this->bean->table_name}_cstm */\n"
+                   . "CREATE TABLE ".$this->bean->table_name.'_cstm ( ';
             $query .='id_c ' . $this->bean->dbManager->helper->getColumnType('id') .' NOT NULL';
             $query .=', PRIMARY KEY ( id_c ) )';
             if($GLOBALS['db']->dbType == 'mysql'){
                 $query .= ' CHARACTER SET utf8 COLLATE utf8_general_ci';
             }
-
-            $GLOBALS['db']->query($query);
-            $this->add_existing_custom_fields();
+            $out = $query . "\n";
+            if ($execute)
+                $GLOBALS['db']->query($query);
+            $out .= $this->add_existing_custom_fields($execute);
         }
-
+        
+        return $out;
     }
 
     /**
      * Updates the db schema and adds any custom fields we have used if the custom table was dropped
      *
      */
-    function add_existing_custom_fields(){
-    	if($this->bean->hasCustomFields()){
+    function add_existing_custom_fields($execute = true){
+    	$out = "";
+        if($this->bean->hasCustomFields()){
 	        foreach($this->bean->field_defs as $name=>$data){
-	        	if(empty($data['source']) || $data['source'] != 'custom_fields')continue;
-	            $field = get_widget ( $data ['type'] );
-	            $field->populateFromRow($data);
-	            $query = $field->get_db_add_alter_table($this->bean->table_name . '_cstm');
-	            $GLOBALS['db']->query($query);
+	        	if(empty($data['source']) || $data['source'] != 'custom_fields')
+                    continue;
+	            $out .= $this->add_existing_custom_field($data, $execute);
 	        }
     	}
+        return $out;
+    }
+
+    function add_existing_custom_field($data, $execute = true)
+    {
+
+        $field = get_widget ( $data ['type'] );
+        $field->populateFromRow($data);
+        $query = "/*MISSING IN DATABASE - {$data['name']} -  ROW*/\n"
+                . $field->get_db_add_alter_table($this->bean->table_name . '_cstm');
+        $out = $query . "\n";
+        if ($execute)
+            $GLOBALS['db']->query($query);
+
+        return $out;
+    }
+
+    public function repairCustomFields($execute = true)
+    {
+        $out = $this->createCustomTable($execute);
+        //If the table didn't exist, createCustomTable will have returned all the SQL to create and populate it
+        if (!empty($out))
+            return "/*Checking Custom Fields for module : {$this->module} */\n$out";
+        //Otherwise make sure all the custom fields defined in the vardefs exist in the custom table.
+        //We aren't checking for data types, just that the column exists.
+        $db = $GLOBALS['db'];
+        $tablename = $this->bean->table_name."_cstm";
+        $compareFieldDefs = $db->getHelper()->get_columns($tablename);
+        foreach($this->bean->field_defs as $name=>$data){
+            if(empty($data['source']) || $data['source'] != 'custom_fields')
+                continue;
+            if(!empty($compareFieldDefs[$name])) {
+                continue;
+        }
+            $out .= $this->add_existing_custom_field($data, $execute);
+        }
+        if (!empty($out))
+            $out = "/*Checking Custom Fields for module : {$this->module} */\n$out";
+
+        return $out;
     }
 
     /**

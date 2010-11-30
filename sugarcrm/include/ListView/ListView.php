@@ -715,7 +715,7 @@ function displayArrow() {
  * Contributor(s): ______________________________________.
 */
  function getOffset($localVarName) {
- 	if($this->query_where_has_changed) {
+ 	if($this->query_where_has_changed || isset($GLOBALS['record_has_changed'])) {
  		$this->setSessionVariable($localVarName,"offset", 0);
  	}
 	$offset = $this->getSessionVariable($localVarName,"offset");
@@ -857,6 +857,12 @@ function getUserVariable($localVarName, $varName) {
 		$date_start_time = microtime(true);
 		//END SUGARCRM flav=int ONLY
 
+		$last_detailview_record = $this->getSessionVariable("detailview", "record");
+		if(!empty($last_detailview_record) && $last_detailview_record != $sugarbean->id){
+			$GLOBALS['record_has_changed'] = true;
+		}
+		$this->setSessionVariable("detailview", "record", $sugarbean->id);
+		
 		$current_offset = $this->getOffset($html_var);
 		$module = isset($_REQUEST['module']) ? $_REQUEST['module'] : '';
 		$response = array();
@@ -1134,7 +1140,7 @@ function getUserVariable($localVarName, $varName) {
 				</script>";
 
 			if($this->show_select_menu) {
-				$select_link = "<a id='select_link' onclick='return select_overlib();' href=\"#\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;<img src='".SugarThemeRegistry::current()->getImageURL('MoreDetail.png')."' width='8' height='7' border='0''>"."</a>";
+				$select_link = "<a id='select_link' onclick='return select_overlib();' href=\"#\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;<img src='".SugarThemeRegistry::current()->getImageURL('MoreDetail.png')."' width='11' height='7' border='0''>"."</a>";
 			} else {
 				$select_link = "&nbsp;";
 			}

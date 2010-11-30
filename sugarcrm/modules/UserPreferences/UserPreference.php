@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-class UserPreference extends SugarBean 
+class UserPreference extends SugarBean
 {
     public $db;
     public $field_name_map;
@@ -51,16 +51,16 @@ class UserPreference extends SugarBean
     public $field_defs = array();
     public $field_defs_map = array();
     public $new_schema = true;
-	
+
     protected $_userFocus;
-	
+
 	// Do not actually declare, use the functions statically
 	public function __construct(
 	    User $user = null
-	    ) 
+	    )
 	{
 		parent::SugarBean();
-		
+
 		$this->_userFocus = $user;
 	}
 
@@ -72,9 +72,9 @@ class UserPreference extends SugarBean
 	 * @return mixed the value of the preference (string, array, int etc)
 	 */
 	public function getPreference(
-	    $name, 
+	    $name,
 	    $category = 'global'
-	    ) 
+	    )
 	{
         global $sugar_config;
 
@@ -87,7 +87,7 @@ class UserPreference extends SugarBean
 		if(isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name])) {
 			return $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name];
 		}
-		
+
 		// check to see if a default preference ( i.e. $sugar_config setting ) exists for this value )
 		// if so, return it
 		$value = $this->getDefaultPreference($name,$category);
@@ -96,7 +96,7 @@ class UserPreference extends SugarBean
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get preference by name and category from the system settings.
 	 *
@@ -105,20 +105,20 @@ class UserPreference extends SugarBean
 	 * @return mixed the value of the preference (string, array, int etc)
 	 */
 	public function getDefaultPreference(
-	    $name, 
+	    $name,
 	    $category = 'global'
-	    ) 
+	    )
 	{
 	    global $sugar_config;
-	    
+
 	    // Doesn't support any prefs but global ones
 	    if ( $category != 'global' )
 	        return null;
-	    
+
 	    // First check for name matching $sugar_config variable
 	    if ( isset($sugar_config[$name]) )
 	        return $sugar_config[$name];
-	    
+
 	    // Next, check to see if it's one of the common problem ones
 	    if ( isset($sugar_config['default_'.$name]) )
 	        return $sugar_config['default_'.$name];
@@ -136,16 +136,16 @@ class UserPreference extends SugarBean
 	 * @param string $category name of the category to retreive, defaults to global scope
 	 */
 	public function setPreference(
-	    $name, 
-	    $value, 
+	    $name,
+	    $value,
 	    $category = 'global'
-	    ) 
+	    )
 	{
 	    $user = $this->_userFocus;
 
 		if ( empty($user->user_name) )
 		    return;
-		
+
 		if(!isset($_SESSION[$user->user_name.'_PREFERENCES'][$category])) {
 			if(!$user->loadPreferences($category))
                 $_SESSION[$user->user_name.'_PREFERENCES'][$category] = array();
@@ -159,7 +159,18 @@ class UserPreference extends SugarBean
 				$GLOBALS['savePreferencesToDBCats'][$category] = true;
 		}
 
-		$_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+		//check to see if the preference being saved is too large
+		if ($this->isPreferenceSizeTooLarge($category)){
+			//log error and set error message flag
+			$GLOBALS['log']->fatal("USERPREFERENCE ERROR 00:: User preference  for user: '$user->user_name' and category '$category' is ".strlen(base64_encode(serialize($value)))." characters long which is too big to save");  //<<----------				
+
+			//set global flag to indicate error has ocurred.  This will cause sugar_cleanup() in utils.php to flash a warning message to user.
+			$_SESSION['USER_PREFRENCE_ERRORS'] = true;
+
+		}else{
+			$_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+		}
+
 	}
 
 	/**
@@ -170,31 +181,47 @@ class UserPreference extends SugarBean
 	 */
 	public function loadPreferences(
 	    $category = 'global'
-	    ) 
+	    )
 	{
         global $sugar_config;
 
 		$user = $this->_userFocus;
-		
+
 		if($user->object_name != 'User')
 			return;
 		if(!empty($user->id) && (!isset($_SESSION[$user->user_name . '_PREFERENCES'][$category]) || (!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key']))) {
 			// cn: moving this to only log when valid - throwing errors on install
-			$GLOBALS['log']->debug('Loading Preferences DB ' . $user->user_name);
-			if(!isset($_SESSION[$user->user_name . '_PREFERENCES'])) $_SESSION[$user->user_name . '_PREFERENCES'] = array();
-			if(!isset($user->user_preferences) || !is_array($user->user_preferences)) $user->user_preferences = array();
-			$result = $GLOBALS['db']->query("SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' AND category = '" . $category . "' AND deleted = 0", false, 'Failed to load user preferences');
-			$row = $GLOBALS['db']->fetchByAssoc($result);
-			if ($row) {
-			    $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
-				$user->user_preferences[$category] = unserialize(base64_decode($row['contents']));
-				return true;
-			} else {
-			    $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
-				$user->user_preferences[$category] = array();
-            }
+			return $this->reloadPreferences($category);
 		}
 		return false;
+	}
+
+	/**
+	 * Unconditionally reloads user preferences from the DB and updates the session
+	 * @param string $category name of the category to retreive, defaults to global scope
+	 * @return bool successful?
+	 */
+	public function reloadPreferences($category = 'global')
+	{
+		$user = $this->_userFocus;
+
+		if($user->object_name != 'User' || empty($user->id) || empty($user->user_name)) {
+			return false;
+		}
+	    $GLOBALS['log']->debug('Loading Preferences DB ' . $user->user_name);
+		if(!isset($_SESSION[$user->user_name . '_PREFERENCES'])) $_SESSION[$user->user_name . '_PREFERENCES'] = array();
+		if(!isset($user->user_preferences) || !is_array($user->user_preferences)) $user->user_preferences = array();
+		$result = $GLOBALS['db']->query("SELECT contents FROM user_preferences WHERE assigned_user_id='$user->id' AND category = '" . $category . "' AND deleted = 0", false, 'Failed to load user preferences');
+		$row = $GLOBALS['db']->fetchByAssoc($result);
+		if ($row) {
+		    $_SESSION[$user->user_name . '_PREFERENCES'][$category] = unserialize(base64_decode($row['contents']));
+			$user->user_preferences[$category] = unserialize(base64_decode($row['contents']));
+			return true;
+		} else {
+		    $_SESSION[$user->user_name . '_PREFERENCES'][$category] = array();
+			$user->user_preferences[$category] = array();
+        }
+        return false;
 	}
 
 	/**
@@ -202,7 +229,7 @@ class UserPreference extends SugarBean
 	 *
 	 * @return array 'date' - date format for user ; 'time' - time format for user
 	 */
-	public function getUserDateTimePreferences() 
+	public function getUserDateTimePreferences()
 	{
 		global $sugar_config, $db, $timezones, $timedate, $current_user;
 
@@ -271,7 +298,7 @@ class UserPreference extends SugarBean
 	 */
 	public function savePreferencesToDB(
 	    $all = false
-	    ) 
+	    )
 	{
         global $sugar_config;
         $GLOBALS['savePreferencesToDB'] = false;
@@ -301,16 +328,58 @@ class UserPreference extends SugarBean
 			    $result = $focus->retrieve_by_string_fields(array(
 			        'assigned_user_id' => $user->id,
 			        'category' => $category,
-			        )); 
+			        ));
 			    $focus->assigned_user_id = $user->id; // MFH Bug #13862
 			    $focus->deleted = 0;
 			    $focus->contents = base64_encode(serialize($contents));
 			    $focus->category = $category;
-			    $focus->save();
+				//save if length is under column max
+				if (strlen($focus->contents) > 65535){
+					//log error and add to error message
+					$GLOBALS['log']->fatal("USERPREFERENCE ERROR:: User preference  for user: '$user->user_name' and category '$focus->category' is ".strlen($focus->contents)." characters long which is too big to save");
+					$errors[] = 'category: '.$focus->category.' is '.strlen($focus->contents).' characters long which is too big and will cause the query to fail.';
+					//set global flag to indicate error has ocurred.  This will cause sugar_cleanup() in utils.php to flash a warning message to user.
+					$_SESSION['USER_PREFRENCE_ERRORS'] = true;
+				}else{
+					$focus->save();
+				}	
+
 			}
 		}
 	}
 
+	
+	/**
+	 * Checks to see if preference size is too large to store in contents field of userpreference table in database
+	 * @return returns true or false by default.  Returns string length number if returnCount value is set to true.
+	 * @param string $category category to check
+	 * @param bool $returnCount whether to return count or default boolean
+	 */
+	 function isPreferenceSizeTooLarge($category = 'global',$returnCount=false){
+		$user = $this->_userFocus;
+		
+		//retrieve the user preferences for this category, then serialize and encode the way the string would be stored in db
+		if(!isset($_SESSION[$user->user_name . '_PREFERENCES'][$category])){
+			$contents='';  
+		}else{
+			$contents = base64_encode(serialize($_SESSION[$user->user_name . '_PREFERENCES'][$category]));
+		}
+
+		//log error if string is too large
+		if (strlen($contents)>65535){
+			$GLOBALS['log']->fatal("USERPREFERENCE::isPreferenceSizeTooLarge - User preference  for user: '$user->user_name' and category '$category' did not pass size check as it is ".strlen($contents)." characters long which is too big to save.");
+		}
+			
+		//check returnCount flag to see whether we return true/false or actual count of content size
+		if($returnCount){
+			return strlen($contents);
+		}elseif (strlen($contents)>65535){
+			return true;
+		}
+		return false;
+
+	}
+	
 	/**
 	 * Resets preferences for a particular user. If $category is null all user preferences will be reset
 	 *
@@ -318,10 +387,10 @@ class UserPreference extends SugarBean
 	 */
 	public function resetPreferences(
 	    $category = null
-	    ) 
+	    )
 	{
         $user = $this->_userFocus;
-		
+
         $GLOBALS['log']->debug('Reseting Preferences for user ' . $user->user_name);
 
         $remove_tabs = $this->getPreference('remove_tabs');
@@ -330,19 +399,19 @@ class UserPreference extends SugarBean
         $home_dashlets = $this->getPreference('dashlets', 'home');
         $ut = $this->getPreference('ut');
         $timezone = $this->getPreference('timezone');
-        
+
         $query = "UPDATE user_preferences SET deleted = 1 WHERE assigned_user_id = '" . $user->id . "'";
-        if($category) 
+        if($category)
             $query .= " AND category = '" . $category . "'";
         $this->db->query($query);
-		
+
         //BEGIN SUGARCRM flav=sales ONLY
         $this->setPreference('use_real_names', 'on');
         $this->setPreference('reminder_time', 1800);
         $this->setPreference('mailmerge_on', 'on');
         $this->setPreference('email_link_type', 'mailto');
         //END SUGARCRM flav=sales ONLY
-		
+
         if($category) {
             unset($_SESSION[$user->user_name."_PREFERENCES"][$category]);
         }
@@ -363,57 +432,57 @@ class UserPreference extends SugarBean
             }
         }
 	}
-		
+
 	/**
-	 * Updates every user pref with a new key value supports 2 levels deep, use append to 
+	 * Updates every user pref with a new key value supports 2 levels deep, use append to
 	 * array if you want to append the value to an array
 	 */
 	public static function updateAllUserPrefs(
-	    $key, 
-	    $new_value, 
-	    $sub_key = '', 
-	    $is_value_array = false, 
+	    $key,
+	    $new_value,
+	    $sub_key = '',
+	    $is_value_array = false,
 	    $unset_value = false )
 	{
         global $current_user, $db;
-        
+
         // Admin-only function; die if calling as a non-admin
 	    if(!is_admin($current_user)){
             sugar_die('only admins may call this function');
         }
-        
+
         // we can skip this if we've already upgraded to the user_preferences format.
         if ( !array_key_exists('user_preferences',$db->getHelper()->get_columns('users')) )
             return;
-        
+
         $result = $db->query("SELECT id, user_preferences, user_name FROM users");
         while ($row = $db->fetchByAssoc($result)) {
             $prefs = array();
             $newprefs = array();
-            
+
             $prefs = unserialize(base64_decode($row['user_preferences']));
-            
+
             if(!empty($sub_key)){
                 if($is_value_array ){
                     if(!isset($prefs[$key][$sub_key])){
                         continue;
                     }
-                        
+
                     if(empty($prefs[$key][$sub_key])){
-                        $prefs[$key][$sub_key] = array();	
+                        $prefs[$key][$sub_key] = array();
                     }
                     $already_exists = false;
                     foreach($prefs[$key][$sub_key] as $k=>$value){
                         if($value == $new_value){
-                            
-                            $already_exists = true;	
+
+                            $already_exists = true;
                             if($unset_value){
                                 unset($prefs[$key][$sub_key][$k]);
                             }
-                        }	
+                        }
                     }
                     if(!$already_exists && !$unset_value){
-                        $prefs[$key][$sub_key][] = $new_value;	
+                        $prefs[$key][$sub_key][] = $new_value;
                     }
                 }
                 else{
@@ -425,33 +494,33 @@ class UserPreference extends SugarBean
                     if(!isset($prefs[$key])){
                         continue;
                     }
-                    
+
                     if(empty($prefs[$key])){
-                        $prefs[$key] = array();	
+                        $prefs[$key] = array();
                     }
                     $already_exists = false;
                     foreach($prefs[$key] as $k=>$value){
                         if($value == $new_value){
-                            $already_exists = true;	
-                            
+                            $already_exists = true;
+
                             if($unset_value){
                                 unset($prefs[$key][$k]);
                             }
-                        }	
+                        }
                     }
                     if(!$already_exists && !$unset_value){
-                        
-                        $prefs[$key][] = $new_value;	
+
+                        $prefs[$key][] = $new_value;
                     }
                 }else{
                     if(!$unset_value)$prefs[$key] = $new_value;
                 }
             }
-            
+
             $newstr = $GLOBALS['db']->quote(base64_encode(serialize($prefs)));
             $db->query("UPDATE users SET user_preferences = '{$newstr}' WHERE id = '{$row['id']}'");
         }
-        
+
         unset($prefs);
         unset($newprefs);
         unset($newstr);

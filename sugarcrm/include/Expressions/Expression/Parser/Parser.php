@@ -38,14 +38,19 @@ class Parser {
 
 
 		// VALIDATE: expression format
-		if ( ! preg_match('/^[a-zA-Z0-9_-]+\(.*\)$/', $expr) )
-			throw new Exception("Syntax Error (Expression Format Incorrect '$expr' )");
+		if ( ! preg_match('/^[a-zA-Z0-9_-]+\(.*\)$/', $expr) ) {
+			throw new Exception("Attempted to evaluate expression with an invalid format: $expr");
+			return;
+		}
 
 		// EXTRACT: Function
 		$open_paren_loc = strpos($expr, '(');
 
 		// if no open-paren '(' found
-		if ( $open_paren_loc < 0 )	throw new Exception("Syntax Error (No opening paranthesis found)");
+		if ( $open_paren_loc < 0 )	{
+            throw new Exception("Attempted to evaluate expression with a Syntax Error (No opening paranthesis found): $expr");
+            return;
+        }
 
 		// get the function
 		$func   = substr( $expr , 0 ,  $open_paren_loc);
@@ -60,7 +65,10 @@ class Parser {
 		}
 			
 
-		if ( !isset($FUNCTION_MAP[$func]) )	throw new Exception("$func: No such function defined");
+		if ( !isset($FUNCTION_MAP[$func]) )	{
+            throw new Exception("Attempted to evaluate expression with an invalid function '$func': $expr");
+            return;
+        }
 
 		// EXTRACT: Parameters
 		$params = substr( $expr , $open_paren_loc + 1, -1);
@@ -84,7 +92,8 @@ class Parser {
 
 			// the last parameter
 			if ( $i == $length ) {
-				$args[] = Parser::evaluate($argument);
+                if ($argument != "")
+				    $args[] = Parser::evaluate($argument);
 				break;
 			}
 
@@ -108,8 +117,10 @@ class Parser {
 				if ( $isInQuotes ) {
 					// only spaces may follow the end of a string
 					$temp = substr($params, $i+1, strpos($params, ",", $i) - $i - 1 );
-					if ( !preg_match( '/^(\s*|\s*\))$/', $temp ) )
-						Parser::throwException($func, "Syntax Error", "Improperly Terminated String '$temp'");
+					if ( !preg_match( '/^(\s*|\s*\))$/', $temp ) ) {
+			            throw new Exception("Syntax Error:Improperly Terminated String '$temp' in formula: $expr");
+			            return;
+			        }
 				}
 
 				// negate if i am in quotes
@@ -136,10 +147,16 @@ class Parser {
 
 
 		// now check to make sure all the parantheses opened were closed
-		if ( $level != 0 )	throw new Exception("Syntax Error (Incorrectly Matched Parantheses)");
+		if ( $level != 0 )	{
+            throw new Exception("Syntax Error (Incorrectly Matched Parantheses) in formula: $expr");
+            return;
+        }
 
 		// now check to make sure all the quotes opened were closed
-		if ( $isInQuotes )	throw new Exception("Syntax Error (Unterminated String Literal)");
+		if ( $isInQuotes )	if ( $level != 0 ) {
+            throw new Exception("Syntax Error (Unterminated String Literal) in formula: $expr");
+            return;
+        }
 
 		// require and return the appropriate expression object
 		require_once( $FUNCTION_MAP[$func]['src'] );
@@ -235,7 +252,8 @@ class Parser {
 					$val = Parser::getFormatedValue($target[$field]);
 					$ret = str_replace("$$field", $val, $ret);
 				} else {
-					throw new Exception("Unknown variable $$field in expression: $expr");
+				    throw new Exception("Unknown variable $$field in formula: $expr");
+                    return;
 				}
 			} else 
 			{
@@ -243,7 +261,8 @@ class Parser {
 					$val = Parser::getFormatedValue($target->$field);
 					$ret = str_replace("$$field", $val, $ret);	
 				} else  {
-					throw new Exception("Unknown variable $$field in expression: $expr");
+					throw new Exception("Unknown variable $$field in formula: $expr");
+                    return;
 				}
 			}
 		}

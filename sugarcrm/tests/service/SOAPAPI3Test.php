@@ -197,7 +197,7 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetModuleLayoutMD5()
     {
         $result = $this->_getModuleLayoutMD5();
-        $this->assertTrue($result['faultcode'] == 'Client');
+        $this->assertContains('Client',$result['faultcode']);
         
     }
     
@@ -280,16 +280,22 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     public function _getVardefsMD5($module)
     {
         $this->_login();
-		$result = $this->_soapClient->call('get_module_fields_md5',array('session'=>$this->_sessionId,'module'=> $module ));
-		return $result; 
+		$result = $this->_soapClient->call('get_module_fields_md5',array('session'=>$this->_sessionId,'module'=> array($module) ));
+		if(isset($result[0]))
+		  return $result[0]; 
+		else 
+		  return $result;
     }
     
     public function _getModuleLayoutMD5()
     {
         $this->_login();
 		$result = $this->_soapClient->call('get_module_layout_md5',
-		              array('session'=>$this->_sessionId,'module'=> 'Accounts','type' => 'default','view' => 'list'));
-		return $result; 
+		              array('session'=>$this->_sessionId,'module_names'=> array('Accounts'),'types' => array('default'),'views' => array('list')));
+		if(isset($result['md5']))
+		  return $result['md5']; 
+		else 
+		  return $result; 
     }
     
     public function _setEntryForContact() {

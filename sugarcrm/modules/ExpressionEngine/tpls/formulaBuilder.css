@@ -27,3 +27,6 @@
 }
 .icon_boolean {background-position: 0px 12px;}
 .icon_number {background-position: 0px 24px;}
+input.empty {
+	color: grey;
+}

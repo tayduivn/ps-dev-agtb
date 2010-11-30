@@ -60,6 +60,9 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="is_current_admin" id="is_current_admin" value='{$IS_ADMIN}' >
 	<input type="hidden" name="edit_self" id="edit_self" value='{$EDIT_SELF}' >
 	<input type="hidden" name="required_email_address" id="required_email_address" value='{$REQUIRED_EMAIL_ADDRESS}' >
+<!-- //BEGIN SUGARCRM flav=sales ONLY -->
+	{$ut_hidden}
+<!-- //END SUGARCRM flav!=sales ONLY -->
 	<div id="popup_window"></div>
 						
 <script type="text/javascript">
@@ -286,6 +289,7 @@ EditView_tabs.on('contentReady', function(e){
                                     </select>
                                 </td>
                             </tr>
+                            <!--//END SUGARCRM flav!=sales ONLY -->
                             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                             <tr id="mail_smtpserver_tr">
                                 <td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_EMAIL_PROVIDER}</span></td>
@@ -293,6 +297,8 @@ EditView_tabs.on('contentReady', function(e){
                                 <td>&nbsp;</td>
                                 <td >&nbsp;</td>
                             </tr>
+                             {if !empty($mail_smtpauth_req) }
+                            
                             <tr id="mail_smtpuser_tr">
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtpuser_label">{$MOD.LBL_MAIL_SMTPUSER}</span></td>
                                 <td width="30%" ><slot><input type="text" id="mail_smtpuser" name="mail_smtpuser" size="25" maxlength="64" value="{$mail_smtpuser}" tabindex='1' ></slot></td>
@@ -305,6 +311,8 @@ EditView_tabs.on('contentReady', function(e){
                                 <td>&nbsp;</td>
                                 <td >&nbsp;</td>
                             </tr>
+                            {/if}
+                         
                             <tr id="test_outbound_settings_tr">
                                 <td width="17%" scope="row"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="startOutBoundEmailSettingsTest();"></td>
                                 <td width="33%" >&nbsp;</td>
@@ -312,7 +320,6 @@ EditView_tabs.on('contentReady', function(e){
                                 <td width="33%" >&nbsp;</td>
                             </tr>
                             {/if}
-                            <!--//END SUGARCRM flav!=sales ONLY -->
                         </table>
             </div>
         </div>
@@ -532,9 +539,9 @@ EditView_tabs.on('contentReady', function(e){
                 <tr>
                     <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_LAYOUT_OPTIONS}</h4></th>
                 </tr>
-							<tr>	
+							<tr id="use_group_tabs_row" style="display: {$DISPLAY_GROUP_TAB};">	
                                 <td scope="row"><span>{$MOD.LBL_USE_GROUP_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_NAVIGATION_PARADIGM_DESCRIPTION }</td>
-                                <td colspan="3"><input type="checkbox" name="use_group_tabs" {$USE_GROUP_TABS} tabindex='12'></td>
+                                <td colspan="3"><input name="use_group_tabs" type="hidden" value="m"><input id="use_group_tabs" type="checkbox" name="use_group_tabs" {$USE_GROUP_TABS} tabindex='12' value="gm"></td>
                             </tr>
                             <tr>
                                 <td colspan="4">
@@ -609,27 +616,24 @@ EditView_tabs.on('contentReady', function(e){
                             <!-- END: currency -->
                             <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
-                        {if ($IS_ADMIN)} 
                         <tr>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {if ($IS_ADMIN)} 
                             <td scope="row"><slot>{$MOD.LBL_PROMPT_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_PROMPT_TIMEZONE_TEXT }</td>
                             <td ><slot><input type="checkbox" tabindex='14'class="checkbox" name="ut" value="0" {$PROMPTTZ}></slot></td>
-                            <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
-                            <td ><slot>
-                                <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
-                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
-                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
-                            </slot></td></tr>
                         {else}
-                            <tr>
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td scope="row"><slot></td>
                             <td ><slot></slot></td>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {/if}
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
                             <td ><slot>
                                 <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                             </slot></td></tr>
-                        {/if}
                         {capture name=SMARTY_LOCALE_NAME_FORMAT_DESC}&nbsp;{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}<br />{$MOD.LBL_LOCALE_NAME_FORMAT_DESC_2}{/capture}
                         <tr>
                             <td  scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}:&nbsp;{sugar_help text=$smarty.capture.SMARTY_LOCALE_NAME_FORMAT_DESC }</td>
@@ -797,12 +801,15 @@ function testOutboundSettings()
         return false;
     }
     
-    if(trim(document.getElementById('mail_smtpuser').value) == '') 
+   
+    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '') 
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPUSER}{literal}" + "<br/>";
     }
-    if(trim(document.getElementById('mail_smtppass').value) == '') 
+
+    
+    if(document.getElementById('mail_smtppass') && trim(document.getElementById('mail_smtppass').value) == '') 
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPASS}{literal}" + "<br/>";
@@ -840,7 +847,13 @@ function sendTestEmail()
     	}
     };    
     var smtpServer = document.getElementById('mail_smtpserver').value;
-	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    
+    if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass')){
+    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    }
+    else{
+	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress;
+    }
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
@@ -880,6 +893,12 @@ YAHOO.util.Event.onContentReady('user_theme_picker',function()
     {
         document.getElementById('themePreview').src =
             "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
+        if (typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
+            themeGroupList[document.getElementById('user_theme_picker').value] ) {
+            document.getElementById('use_group_tabs_row').style.display = '';
+        } else {
+            document.getElementById('use_group_tabs_row').style.display = 'none';
+        }
     }
 });
 {/literal}
@@ -908,6 +927,8 @@ document.getElementById('email_link_type').onchange();
 {$getNumberJs}
 {$confirmReassignJs}
 {$currencySymbolJs}
+themeGroupList = {$themeGroupListJSON};
+
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();
 
@@ -915,6 +936,7 @@ setSigDigits();
 
 </form>
 
+<!--//END SUGARCRM flav!=sales ONLY -->
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
         <form>
@@ -940,4 +962,3 @@ setSigDigits();
 		</form>
 	</div>
 </div>
-<!--//END SUGARCRM flav!=sales ONLY -->

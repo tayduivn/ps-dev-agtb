@@ -81,15 +81,29 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     
     DCMenu.closeOverlay = function(depth){
-    		
-    		for(i in overlays){
+    	var i=0;
+    		while(i < overlays.length){
     			if(!depth || i >= depth){
     				if(i == depth && !overlays[i].visible){
     					overlays[i].show();	
     				}else{
+                        // See if we are hiding a form, and if so if it has changed we need to alert and confirm.
+                        if ( typeof(overlays[i].bodyNode) != 'undefined'
+                             && typeof(overlays[i].bodyNode._node) != 'undefined' 
+                             && typeof(overlays[i].bodyNode._node.getElementsByTagName('form')[0]) != 'undefined' ) {
+                            var warnMsg = onUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                            if ( warnMsg != null ) {
+                                if ( confirm(warnMsg) ) {
+                                    disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
     					overlays[i].hide();
     				}
     			}
+				i++;
     		}
     }
     DCMenu.minimizeOverlay = function(){
@@ -211,10 +225,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
 	Y.spot = function(q){
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + q, spotResults);
+		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
 	}
 	DCMenu.spotZoom = function(q, module, offset){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + q + '&zoom=' + module + '&offset=' + offset,  spotResults);
+		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q) + '&zoom=' + module + '&offset=' + offset,  spotResults);
 	}
 	spotResults = function(id, data){
 		var overlay = setBody(data.responseText, 0, 'sugar_spot_search');

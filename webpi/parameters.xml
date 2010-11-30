@@ -6,33 +6,31 @@
         tags="iisapp">
     <parameterEntry type="ProviderPath" scope="iisapp" match="SugarCE-Full-%SUGAR_VERSION%" />
   </parameter>
-  <parameter
-   name="Site URL"
-   description="Enter the fully qualified URL for your Sugar instance ( i.e., http://localhost/sugarcrm/ )"
-   defaultValue="http://localhost/sugarcrm"
-   tags="">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForSiteUrl" />
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\web.config" 
-            match="PlaceholderForSiteUrl" />
+  <parameter name="Site URL" description="Enter the fully qualified URL for your Sugar instance ( i.e., http://localhost/sugarcrm/ )" defaultValue="http://localhost/sugarcrm" tags="AppURL">   
+  </parameter>
+  <parameter name="Automatic Site URL phpconfig" defaultValue="'setup_site_url' => '{Site URL}'," tags="Hidden" >
+    <parameterEntry kind="TextFile" scope="\\config_si.php$" match="'setup_site_url'\s*=>\s*'[^']*'\s*," />
+  </parameter>
+  <parameter name="Automatic Site URL PostInstall" defaultValue="'site_url' => '{Site URL}'," tags="Hidden" >
+    <parameterEntry type="TextFile" scope="\\config.php$" match="'site_url'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <parameter name="SetAclParameter2"
         defaultValue="{AppPath}" tags="Hidden">
-    <parameterEntry type="ProviderPath" scope="setAcl" match="SugarCE-Full-%SUGAR_VERSION%" />
+    <parameterEntry type="ProviderPath" scope="setAcl" match="SugarCE-Full-%SUGAR_VERSION%$" />
   </parameter>
   <parameter name="AdminUserPass"
-        friendlyName="Administrator Password" 
-        description="Password for the SugarCRM admin user ( the administration username is 'admin' )" 
-        defaultValue="" tags="Password, New">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForSiteAdminPassword" />
+        friendlyName="Administrator Password"
+        description="Password for the SugarCRM admin user ( the administration username is 'admin' )"
+        defaultValue="" tags="Password, New,NoStore">
+  </parameter>
+  <parameter name="Automatic AdminUserPass" defaultValue="'setup_site_admin_password' => '{AdminUserPass}'," tags="NoStore,Hidden">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_site_admin_password'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- NOTE - When we support multiple databases, we need a way to get this
        parameter populated without prompting the user a second time -->
   <parameter name="setup_db_type" description="Default to mysql - as this is the only one supported" 
-        defaultValue="mysql" tags="Hidden">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbType" />
+        defaultValue="'setup_db_type' => 'mysql'," tags="Hidden">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_type'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- ACL Section -->
   <!-- For now, we're doing one big ACL for everything.  -->
@@ -50,33 +48,52 @@
        This parameter is used with the configuration file and the
        connection string.  It is not used within the SQL script itself
        like the other paramters are. -->
-  <parameter name="DbServer"
-        defaultValue="localhost" tags="MySQL,dbServer">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbHostName" />
+  <parameter name="DbServer"  defaultValue="localhost" tags="MySQL,dbServer" />
+  <parameter name="Automatic host name " defaultValue="'setup_db_host_name' => '{DbServer}'," tags="NoStore,Hidden">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_host_name'\s*=>\s*'[^']*'\s*," />
+  </parameter>
+  <parameter name="Automatic host name PostInstall " defaultValue="'db_host_name' => '{DbServer}'," tags="NoStore,Hidden">
+    <parameterEntry type="TextFile" scope="\\config.php$" match="'db_host_name'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- This parameter prompts the user for the database name. -->
   <parameter name="DbName"
         defaultValue="sugarcrm" tags="MySQL, dbName">
     <parameterValidation type="RegularExpression" validationString="^\w{1,16}$" />
     <parameterEntry type="TextFile" scope="install.sql" match="PlaceHolderForDbName" />
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbDatabaseName" />
+  </parameter>
+  <parameter name="Automatic DbName" defaultValue="'setup_db_database_name' => '{DbName}'," tags="Hidden,MySQL">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_database_name'\s*=>\s*'[^']*'\s*," />
+  </parameter>
+  <parameter name="Automatic DbName PostInstall" defaultValue="'db_name' => '{DbName}'," tags="Hidden,MySQL">
+    <parameterEntry type="TextFile" scope="\\config.php$" match="'db_name'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- This parameter prompts the user for the database username. -->
   <parameter name="DbUsername"
         defaultValue="sugaruser" tags="MySQL, DbUsername">
     <parameterValidation type="RegularExpression" validationString="^\w{1,16}$" />
     <parameterEntry type="TextFile" scope="install.sql" match="PlaceHolderForUser" />
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForSugarSalesUser" />
+  </parameter>
+  <parameter name="Automatic DbUsername" defaultValue="'setup_db_sugarsales_user' => '{DbUsername}'," tags="Hidden,MySQL">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_sugarsales_user'\s*=>\s*'[^']*'\s*," />
+  </parameter> 
+  <parameter name="Automatic DbAdmin" defaultValue="'setup_db_admin_user_name' => '{DbUsername}'," tags="Hidden,MySQL">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_admin_user_name'\s*=>\s*'[^']*'\s*," />
+  </parameter>
+  <parameter name="Automatic DbUsername PostInstall" defaultValue="'db_user_name' => '{DbUsername}'," tags="Hidden,MySQL">
+    <parameterEntry type="TextFile" scope="\\config.php$" match="'db_user_name'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- This parameter prompts the user for the database user's password. -->
-  <parameter name="DbPassword" 
-        tags="New, Password, MySQL, DbUserPassword">
+  <parameter name="DbPassword" tags="New, Password, MySQL, DbUserPassword">
     <parameterEntry type="TextFile" scope="install.sql" match="PlaceHolderForPassword" />
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForSugarSalesPassword" />
+  </parameter>
+  <parameter name="Automatic DbPassword" defaultValue="'setup_db_sugarsales_password' => '{DbPassword}'," tags="Hidden,MySQL" >
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_sugarsales_password'\s*=>\s*'[^']*'\s*," />
+  </parameter>
+  <parameter name="Automatic DbPassword PostInstall" defaultValue="'db_password' => '{DbPassword}'," tags="Hidden,MySQL" >
+    <parameterEntry type="TextFile" scope="\\config.php$" match="'db_password'\s*=>\s*'[^']*'\s*," />
+  </parameter>
+  <parameter name="Automatic DbAdminPW" defaultValue="'setup_db_admin_password' => '{DbPassword}'," tags="Hidden,MySQL">
+    <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_admin_password'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- Prompts for the admin creds and uses it for the administrator
        connection string. This is used to create a login and assign
@@ -88,15 +105,11 @@
        whether or not the user needs to be prompted for this. -->
   <parameter name="DbAdmin"
         defaultValue="root" tags="MySQL, DbAdminUsername">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbAdminUserName" />
   </parameter>
   <!-- Prompts for the admin password and uses it for the administrator
        connection string. -->
   <parameter name="DbAdminPW" 
         tags="Password, MySQL, DbAdminPassword">
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
-            match="PlaceholderForDbAdminPassword" />
   </parameter>
   <!-- This is the hidden admin connection string used to run the
        database scripts.  Note that this connection string is just used
@@ -116,7 +129,7 @@
         defaultValue="no"
         tags="">
     <parameterValidation type="Enumeration" validationString="Yes,No" />
-    <parameterEntry type="TextFile" scope="SugarCE-Full-%SUGAR_VERSION%\\config_si.php" 
+    <parameterEntry type="TextFile" scope="\\config_si.php" 
             match="PlaceholderForDemoData" />
   </parameter>
 </parameters>

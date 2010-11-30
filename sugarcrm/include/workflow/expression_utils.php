@@ -55,7 +55,7 @@ function express_subtract($first, $second){
 	return $first - $second;
 }
 
-function express_mulitple($first, $second){
+function express_multiple($first, $second){
 	return $first * $second;
 }
 

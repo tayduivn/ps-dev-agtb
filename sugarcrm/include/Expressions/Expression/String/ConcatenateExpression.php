@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -21,9 +21,9 @@
 require_once("include/Expressions/Expression/String/StringExpression.php");
 
 /**
- * <b>concat(String, ...)</b><br/>
- * Appends two or more pieces of text together.
- *
+ * <b>concat(String s, ...)</b><br/>
+ * Appends two or more pieces of text together.<br/>
+ * ex: <i>concat("Hello", " ", "World")</i> = "Hello World"
  */
 class ConcatenateExpression extends StringExpression {
 	/**

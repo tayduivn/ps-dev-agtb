@@ -3599,15 +3599,22 @@ ul.tablist li a.current:link, ul.tablist li a.current:visited, ul.tablist li a.c
     margin-left:6px !important;
 }
 
-.star {float:right}
+.star {
+	float:right;
+	zoom: 1;
+	display: inline;
+	*float: none;
+	*width: 18px;
+}
 .moduleTitle .star 
 {
-    margin-top:-3px;
+    margin-top:4px;
     padding-right:5px;
 }
 
 li div.star {float:none;}
-.star div {background-image:url('../../../../index.php?entryPoint=getImage&imageName=star-sheet.png');width:22px;height:22px;float:left;}
+.star div {background-image:url('../../../../index.php?entryPoint=getImage&imageName=star-sheet.png');width:18px;height:18px;float:left;}
 .star div.on {background-position:0px 0px}
-.star div.off {background-position:0px -22px}
-.star div:hover {cursor:pointer;}
+.star div.off {background-position:0px -18px}
+.star div:hover {cursor:pointer;background-position:0px 0px;}
+

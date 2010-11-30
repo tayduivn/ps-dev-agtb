@@ -96,7 +96,7 @@ else
 
 $seedForecast = new Forecast();
 
-$middleText = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a><span class='pointer'>&raquo;</span>{$mod_strings['LBL_FORECAST_HISTORY_TITLE']}";
+$middleText = "<span class='pointer'>&raquo;</span>{$mod_strings['LBL_FORECAST_HISTORY_TITLE']}";
 echo get_module_title($mod_strings['LBL_MODULE_NAME'], $middleText, true);
 //echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_FORECAST_HISTORY_TITLE'], true);
 

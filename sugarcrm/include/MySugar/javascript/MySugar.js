@@ -341,6 +341,13 @@ SUGAR.mySugar = function() {
 			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+JSON.stringify(newPageName);
 
 			var addBlankPage = function(data) {
+				//check to see if a user preference error occurred
+				if(data.responseText == 'userpref_error'){
+					//user preference error occured, flash message and exit processing
+					ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_TAB'),7000);
+					return;
+				} 
+				
 			    var pageContainerDivElem = document.getElementById('pageContainer');
 			    var newPageId = 'pageNum_' + pageCount + '_div';
 			    var newPageDivElem = document.createElement('div');
@@ -356,48 +363,50 @@ SUGAR.mySugar = function() {
 			    
                 ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_NEW_PAGE_FEEDBACK'));
                 window.setTimeout('ajaxStatus.hideStatus()', 7500);
+				
+				var new_tab = document.createElement("li");
+				new_tab.id = 'pageNum_' + num_pages;
+				
+				var new_anchor = document.createElement("a");
+				new_anchor.id = 'pageNum_' + num_pages + '_anchor';
+				new_anchor.className = 'active';
+				new_anchor.href = "javascript:SUGAR.mySugar.togglePages('" + num_pages + "');"
+				
+				newPageName = newPageName.replace(/\\'/g,"'"); // Takes out the escaped quotes like \"
+
+				new_anchor.appendChild(SUGAR.mySugar.insertInputSpanElement(num_pages, newPageName));
+				new_anchor.appendChild(SUGAR.mySugar.insertTabNameDisplay(num_pages, newPageName));
+
+				var new_delete_img = document.createElement("img");
+				new_delete_img.id = 'pageNum_' + num_pages + '_delete_page_img';
+				new_delete_img.className = 'deletePageImg';
+				new_delete_img.style.display = 'none';
+				new_delete_img.onclick = function() {return SUGAR.mySugar.deletePage();};
+				new_delete_img.src = 'index.php?entryPoint=getImage&imageName=info-del.png';
+				new_delete_img.border = 0;
+				new_delete_img.align = 'absmiddle';
+
+				new_anchor.appendChild(new_delete_img);
+
+				new_tab.appendChild(new_anchor);
+				tabListElem.appendChild(new_tab);
+				if(tabListElemWidth + new_tab.offsetWidth > maxWidth) {
+						tabListContainerElem.style.width = maxWidth+"px";
+						tabListElem.style.width = tabListElemWidth + new_tab.offsetWidth+"px";
+						tabListContainerElem.setAttribute("className","active yui-module yui-scroll");
+						tabListContainerElem.setAttribute("class","active yui-module yui-scroll");
+					}
+
+	//			SUGAR.mySugar.togglePages(num_pages);
+				num_pages = num_pages + 1;			
+				
                 SUGAR.mySugar.togglePages(pageCount);
-			}	
+			}
 
             ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_CREATING_NEW_PAGE'));
 			var cObj = YAHOO.util.Connect.asyncRequest('GET', url,
                                                    {success: addBlankPage, failure: addBlankPage} , null);
 		
-			var new_tab = document.createElement("li");
-			new_tab.id = 'pageNum_' + num_pages;
-			
-			var new_anchor = document.createElement("a");
-			new_anchor.id = 'pageNum_' + num_pages + '_anchor';
-			new_anchor.className = 'active';
-			new_anchor.href = "javascript:SUGAR.mySugar.togglePages('" + num_pages + "');"
-			
-			newPageName = newPageName.replace(/\\'/g,"'"); // Takes out the escaped quotes like \"
-
-		    new_anchor.appendChild(SUGAR.mySugar.insertInputSpanElement(num_pages, newPageName));
-			new_anchor.appendChild(SUGAR.mySugar.insertTabNameDisplay(num_pages, newPageName));
-
-            var new_delete_img = document.createElement("img");
-            new_delete_img.id = 'pageNum_' + num_pages + '_delete_page_img';
-            new_delete_img.className = 'deletePageImg';
-            new_delete_img.style.display = 'none';
-            new_delete_img.onclick = function() {return SUGAR.mySugar.deletePage();};
-            new_delete_img.src = 'index.php?entryPoint=getImage&imageName=info-del.png';
-            new_delete_img.border = 0;
-            new_delete_img.align = 'absmiddle';
-
-            new_anchor.appendChild(new_delete_img);
-
-			new_tab.appendChild(new_anchor);
-			tabListElem.appendChild(new_tab);
-			if(tabListElemWidth + new_tab.offsetWidth > maxWidth) {
-					tabListContainerElem.style.width = maxWidth+"px";
-					tabListElem.style.width = tabListElemWidth + new_tab.offsetWidth+"px";
-					tabListContainerElem.setAttribute("className","active yui-module yui-scroll");
-					tabListContainerElem.setAttribute("class","active yui-module yui-scroll");
-				}
-
-//			SUGAR.mySugar.togglePages(num_pages);
-			num_pages = num_pages + 1;			
 		},
 		//END SUGARCRM flav=pro ONLY
 		
@@ -594,19 +603,19 @@ SUGAR.mySugar = function() {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 					
 			if(!url) {
-				url = 'index.php?action=DynamicAction&DynamicAction=displayDashlet&module='+module+'&to_pdf=1&id=' + id;
+				url = 'index.php?action=DynamicAction&DynamicAction=displayDashlet&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
 				is_chart_dashlet = false;
 			}
 			else if (url == 'predefined_chart'){
-				url = 'index.php?action=DynamicAction&DynamicAction=displayDashlet&module='+module+'&to_pdf=1&id=' + id;
-				scriptUrl = 'index.php?action=DynamicAction&DynamicAction=getPredefinedChartScript&module='+module+'&to_pdf=1&id=' + id;
+				url = 'index.php?action=DynamicAction&DynamicAction=displayDashlet&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
+				scriptUrl = 'index.php?action=DynamicAction&DynamicAction=getPredefinedChartScript&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
 				is_chart_dashlet = true;
 			}
 			
 			//BEGIN SUGARCRM flav=pro ONLY
 			else if (url == 'chart'){
-				url = 'index.php?action=DynamicAction&DynamicAction=displayChartDashlet&module='+module+'&to_pdf=1&id=' + id;
-				scriptUrl = 'index.php?action=DynamicAction&DynamicAction=getChartScript&module='+module+'&to_pdf=1&id=' + id;
+				url = 'index.php?action=DynamicAction&DynamicAction=displayChartDashlet&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
+				scriptUrl = 'index.php?action=DynamicAction&DynamicAction=getChartScript&session_commit=1&module='+module+'&to_pdf=1&id=' + id;
 				is_chart_dashlet = true;
 			}
 			//END SUGARCRM flav=pro ONLY
@@ -737,6 +746,14 @@ SUGAR.mySugar = function() {
 			}*/
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_ADDING_DASHLET'));
 			var success = function(data) {
+
+			//check to see if a user preference error occurred
+			if(data.responseText == 'userpref_error'){
+				//user preference error occured, close the dashlet dialog, flash the error message and exit processing
+				SUGAR.mySugar.closeDashletsDialog();
+				ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_DASH'),7000);
+				return;
+			}
 				colZero = document.getElementById('col_'+activeTab+'_0');
 				newDashlet = document.createElement('li'); // build the list item
 				newDashlet.id = 'dashlet_' + data.responseText;
@@ -768,7 +785,9 @@ SUGAR.mySugar = function() {
 					anim.onComplete.subscribe(function() { document.getElementById('dashlet_entire_' + data.responseText).style.height = '100%'; });	
 					anim.animate();
 					
-					window.setTimeout('ajaxStatus.hideStatus()', 2000);
+					newLayout =	SUGAR.mySugar.getLayout(true);
+					SUGAR.mySugar.saveLayout(newLayout);	
+//					window.setTimeout('ajaxStatus.hideStatus()', 2000);
 				}
 				
 				if (type == 'module' || type == 'web'){
@@ -785,9 +804,6 @@ SUGAR.mySugar = function() {
 				}
 				
 				SUGAR.mySugar.retrieveDashlet(data.responseText, url, finishRetrieve, true); // retrieve it from the server
-				
-				newLayout =	SUGAR.mySugar.getLayout(true);
-				SUGAR.mySugar.saveLayout(newLayout);	
 			}
 			var cObj = YAHOO.util.Connect.asyncRequest('GET','index.php?to_pdf=1&module='+module+'&action=DynamicAction&DynamicAction=addDashlet&activeTab=' + activeTab + '&id=' + id+'&type=' + type + '&type_module=' + type_module, 
 													  {success: success, failure: success}, null);						  

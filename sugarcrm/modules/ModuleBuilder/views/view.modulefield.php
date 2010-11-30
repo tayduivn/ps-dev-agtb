@@ -75,6 +75,10 @@ class ViewModulefield extends SugarView
 				'relate' => 'Relate', 'address' => 'Address', 'text' => 'TextArea', 'url' => 'Link');
 		*/
 		$field_types = $GLOBALS['mod_strings']['fieldTypes'];
+		//BEGIN SUGARCRM flav=com ONLY
+		if (isset($field_types['encrypt']))
+		  unset($field_types['encrypt']);
+		//END SUGARCRM flav=com ONLY
         $field_name_exceptions = array(
             //bug 22264: Field name must not be an SQL keyword.
             //Taken from SQL Server's list of reserved keywords; http://msdn.microsoft.com/en-us/library/aa238507(SQL.80).aspx
@@ -143,6 +147,7 @@ class ViewModulefield extends SugarView
             if($isClone){
                 unset($vardef['name']);
             }
+          
             if(empty($vardef['name'])){
                 if(!empty($_REQUEST['type']))
                     $vardef['type'] = $_REQUEST['type'];
@@ -153,7 +158,10 @@ class ViewModulefield extends SugarView
                 $action = 'saveSugarField'; // tyoung - for OOB fields we currently only support modifying the label
                 $fv->ss->assign('hideLevel', 3);
             }
-
+            if($isClone && isset($vardef['type']) && $vardef['type'] == 'datetime'){
+            	$vardef['type'] = 'datetimecombo';
+            }
+            
 			require_once ('modules/DynamicFields/FieldCases.php') ;
             $tf = get_widget ( empty($vardef [ 'type' ]) ?  "" : $vardef [ 'type' ]) ;
             $tf->module = $module;

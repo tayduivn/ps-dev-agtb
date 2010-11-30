@@ -49,7 +49,16 @@ $connector_strings = array (
 	'LBL_FINSALES' => 'Annual Sales',
     'LBL_HQPHONE' => 'Phone Office',
     'LBL_TOTAL_EMPLOYEES' => 'Total Employees',
-   
+	'LBL_PRIMARY_URL' => 'Primary URL',
+	'LBL_DESCRIPTION' => 'Description',
+	'LBL_SYNOPSIS' => 'Synopsis',
+	'LBL_LOCATION_TYPE' => 'Location Type',
+	'LBL_COMPANY_TYPE' => 'Company Type',
+	
+    //error messages
+    'ERROR_NULL_CLIENT' => 'Unable to create SoapClient to connect to Hoovers.  The service may be unavailable or your license key may be expired or have reached a daily usage limit.',
+    'ERROR_MISSING_SOAP_LIBRARIES' => 'Error: Unable to load the SOAP libraries (SoapClient, SoapHeader).',
+
 	//Configuration labels
 	'hoovers_endpoint' => 'Endpoint URL',
 	'hoovers_wsdl' => 'WSDL URL',

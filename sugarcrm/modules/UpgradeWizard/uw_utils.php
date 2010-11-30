@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: uw_utils.php 56650 2010-05-24 18:53:17Z jenny $
+// $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
  * Backs-up files that are targeted for patch/upgrade to a restore directory
@@ -732,25 +732,25 @@ function getValidPatchName($returnFull = true) {
 	$ready .= "
 		<table>
 			<tr>
-				<th></th>
-				<th align=left>
-					{$mod_strings['LBL_ML_NAME']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_TYPE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_VERSION']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_PUBLISHED']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_UNINSTALLABLE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_DESCRIPTION']}
-				</th>
+				<td></td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_NAME']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_TYPE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_VERSION']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_PUBLISHED']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_UNINSTALLABLE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_DESCRIPTION']}</b>
+				</td>
 			</tr>";
 	$disabled = '';
 
@@ -820,11 +820,11 @@ function getValidPatchName($returnFull = true) {
 	$_SESSION['install_file'] = urldecode($newest); // in-case it was there from a prior.
 	logThis("*** UW using [ {$_SESSION['install_file']} ] as source for patch files.");
 
-	$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 	$cleanUpgradeContent = urlencode($_SESSION['install_file']);
 
 	// cn: 10606 - cannot upload a patch file since this returned always.
 	if(!empty($cleanUpgradeContent)) {
+		$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 		$ready .=<<<eoq
 	        <td>
 				<form action="index.php" method="post">
@@ -835,17 +835,18 @@ function getValidPatchName($returnFull = true) {
 	        		<input type=hidden name="install_file" value="{$cleanUpgradeContent}" />
 	        		<input type=submit value="{$mod_strings['LBL_BUTTON_DELETE']}" />
 				</form>
-			</td>
+			</td></table>\n
 eoq;
 		$disabled = "DISABLED";
 	}
 
-	$ready .= "</table>\n";
+	
 
 	if(empty($cleanUpgradeContent)){
-	    $ready .= "<i>None</i><br>\n";
+	    $ready .= "<tr><td colspan='7'><i>None</i></td>\n";
+		$ready .= "</table>\n";
 	}
-	$ready .= "</ul>\n";
+	$ready .= "<br></ul>\n";
 
 	$return['ready'] = $ready;
 	$return['disabled'] = $disabled;
@@ -2848,10 +2849,10 @@ function fileCopy($file_path){
 function getChecklist($steps, $step) {
 	global $mod_strings;
 
-	$skip = array('start', 'cancel', 'uninstall');
+	$skip = array('start', 'cancel', 'uninstall','end');
 	$j=0;
 	$i=1;
-	$ret  = '<table cellpadding="3" cellspacing="0" border="0">';
+	$ret  = '<table cellpadding="3" cellspacing="4" border="0">';
 	$ret .= '<tr><th colspan="3" align="left">'.$mod_strings['LBL_UW_CHECKLIST'].':</th></tr>';
 	foreach($steps['desc'] as $k => $desc) {
 		if(in_array($steps['files'][$j], $skip)) {
@@ -2860,17 +2861,22 @@ function getChecklist($steps, $step) {
 		}
 
 		//$status = "<span class='error'>{$mod_strings['LBL_UW_INCOMPLETE']}</span>";
-		$status = '';
+		$desc_mod_pre = '';
+		$desc_mod_post = '';
+		/*
 		if(isset($_SESSION['step'][$steps['files'][$k]]) && $_SESSION['step'][$steps['files'][$k]] == 'success') {
-			$status = $mod_strings['LBL_UW_COMPLETE'];
+			//$status = $mod_strings['LBL_UW_COMPLETE'];
 		}
+		*/
 
 		if($k == $_REQUEST['step']) {
-			$status = $mod_strings['LBL_UW_IN_PROGRESS'];
+			//$status = $mod_strings['LBL_UW_IN_PROGRESS'];
+			$desc_mod_pre = "<font color=blue><i>";
+			$desc_mod_post = "</i></font>";
 		}
 
-		$ret .= "<tr><td>&nbsp;</td><td><b>{$i}: {$desc}</b></td>";
-		$ret .= "<td id={$steps['files'][$j]}><i>{$status}</i></td></tr>";
+		$ret .= "<tr><td>&nbsp;</td><td><b>{$i}: {$desc_mod_pre}{$desc}{$desc_mod_post}</b></td>";
+		$ret .= "<td id={$steps['files'][$j]}><i></i></td></tr>";
 		$i++;
 		$j++;
 	}
@@ -3911,7 +3917,7 @@ function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubS
 			if($currStepSub != null && $currStepSubState !=null){
 				//check if new status to be set or update
 				//get the latest in array. since it has sub components prepare an array
-				if(is_array($upgrade_config[sizeof($upgrade_config)][$currStep])){
+				if(!empty($upgrade_config[sizeof($upgrade_config)][$currStep]) && is_array($upgrade_config[sizeof($upgrade_config)][$currStep])){
 					$latestStepSub = currSubStep($upgrade_config[sizeof($upgrade_config)][$currStep]);
 					if($latestStepSub == $currStepSub){
 						$upgrade_config[sizeof($upgrade_config)][$currStep][$latestStepSub]=$currStepSubState;
@@ -4548,20 +4554,6 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
 		  } //if
 
-		  // move the favorite reports over to the SugarFavorites table
-		  $current_favorites = array_keys($current_user->getPreference('favorites', 'Reports'));
-		  foreach ($current_favorites as $report_id) {
-		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-		          continue;
-		      }
-
-		      $favFocus = new SugarFavorites;
-		      $favFocus->module = 'Reports';
-		      $favFocus->record_id = $report_id;
-		      $favFocus->assigned_user_id = $current_user->id;
-		      $favFocus->save();
-		  }
-
 		  // we need to force save the changes to disk, otherwise we lose them.
 		  $current_user->savePreferencesToDB();
 	} //while
@@ -4616,6 +4608,132 @@ function upgradeUserPreferences() {
 	   write_array_to_file("dashletsFiles", $dashletsFiles, $GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 	} //if
 	//END SUGARCRM flav=pro ONLY
+}
+
+// BEGIN SUGARCRM flav=pro ONLY 
+function migrate_sugar_favorite_reports(){
+    require_once('modules/SugarFavorites/SugarFavorites.php');
+
+    // Need to repair the RC1 instances that have incorrect GUIDS
+    $deleteRows = array();      
+    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
+        if ($row['id'] != $expectedId) {
+            $deleteRows[] = $row['id'];
+        }
+    }
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");    
+    // End Repair
+        
+    
+    $active_users = array();
+    $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $active_users[] = $row['id'];
+    }
+    
+    foreach($active_users as $user_id){
+        $user = new User();
+        $user->retrieve($user_id);
+
+        $user_favorites = $user->getPreference('favorites', 'Reports');
+        if(!is_array($user_favorites)) $user_favorites = array();
+
+        if(!empty($user_favorites)){
+            foreach($user_favorites as $report_id => $bool){
+                $fav = new SugarFavorites();
+                $record = SugarFavorites::generateGUID('Reports', $report_id, $user_id);
+                if(!$fav->retrieve($record, true, false)){
+                        $fav->new_with_id = true;
+                }
+                $fav->id = $record;
+                $fav->module = 'Reports';
+                $fav->record_id = $report_id;
+                $fav->assigned_user_id = $user->id;
+                $fav->created_by = $user->id;
+                $fav->modified_user_id = $user->id;
+                
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+    }
+}
+// END SUGARCRM flav=pro ONLY 
+
+function add_custom_modules_favorites_search(){
+    $module_directories = scandir('modules');
+
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
+
+		$matches = array();
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
+
+		$full_module_dir = "modules/{$module_dir}/";
+		$read_searchdefs_from = "{$full_module_dir}/metadata/searchdefs.php";
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
+
+		// Studio can possibly override this file, so we check for a custom version of it
+		if(file_exists("custom/{$full_module_dir}/metadata/searchdefs.php")){
+			$read_searchdefs_from = "custom/{$full_module_dir}/metadata/searchdefs.php";
+		}
+
+		if(file_exists($read_searchdefs_from) && file_exists($read_SearchFields_from)){
+			$found_sf1 = false;
+			$found_sf2 = false;
+			require($read_searchdefs_from);
+			foreach($searchdefs[$module_dir]['layout']['basic_search'] as $sf_array){
+				if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+					$found_sf1 = true;
+				}
+			}
+
+			require($read_SearchFields_from);
+			if(isset($searchFields[$module_dir]['favorites_only'])){
+				$found_sf2 = true;
+			}
+
+			if(!$found_sf1 && !$found_sf2){
+				$searchdefs[$module_dir]['layout']['basic_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchdefs[$module_dir]['layout']['advanced_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchFields[$module_dir]['favorites_only'] = array(
+					'query_type'=>'format',
+					'operator' => 'subquery',
+					'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+								WHERE sugarfavorites.deleted=0
+									and sugarfavorites.module = \''.$module_dir.'\'
+									and sugarfavorites.assigned_user_id = \'{0}\'',
+					'db_field'=>array('id')
+				);
+
+				if(!is_dir("custom/{$full_module_dir}/metadata")){
+					mkdir_recursive("custom/{$full_module_dir}/metadata");
+				}
+				$success_sf1 = write_array_to_file('searchdefs', $searchdefs, "custom/{$full_module_dir}/metadata/searchdefs.php");
+				$success_sf2 = write_array_to_file('searchFields', $searchFields, "{$full_module_dir}/metadata/SearchFields.php");
+
+				if(!$success_sf1){
+					logThis("add_custom_modules_favorites_search failed for searchdefs.php for {$module_dir}");
+				}
+				if(!$success_sf2){
+					logThis("add_custom_modules_favorites_search failed for SearchFields.php for {$module_dir}");
+				}
+				if($success_sf1 && $success_sf2){
+					logThis("add_custom_modules_favorites_search successfully updated searchdefs and searchFields for {$module_dir}");
+				}
+			}
+		}
+	}
 }
 
 
@@ -5120,7 +5238,7 @@ function upgradeModulesForTeam() {
 			if(!empty($content['dashlets']) && !empty($content['pages'])){
 				$originalDashlets = $content['dashlets'];
 				foreach($originalDashlets as $key => $ds){
-				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://apps.sugarcrm.com/dashlet/go-pro.html')){
+				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://www.sugarcrm.com/crm/product/gopro')){
 						unset($originalDashlets[$key]);
 					}
 				}
@@ -5285,4 +5403,141 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
+	/**
+	 * upgrade_connectors
+	 * @param $path String variable for the log path
+	 */
+	function upgrade_connectors($path='') {
+		logThis('Begin upgrade_connectors', $path);
+		
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
+		if(file_exists($filePath))
+		{
+		   logThis("{$filePath} file", $path);	
+		   require($filePath);
+		   if(!is_null($config))
+		   {
+		   	  $modified = false;
+		   	  if(isset($config['properties']['hoovers_endpoint']))
+		   	  {
+		   	  	 $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
+		   	  	 $modified = true;
+		   	  }
+		   	  
+		   	  if(isset($config['properties']['hoovers_wsdl']))
+		   	  {
+		   	  	 $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
+		   	     $modified = true;
+		   	  }
+		   	  
+		   	  if($modified)
+		   	  {
+		   	      if(!write_array_to_file('config', $config, $filePath)) {
+		             logThis("Could not write new configuration to {$filePath} file", $path);	
+		          } else {
+		          	 logThis('Modified file successfully with new configuration entries', $path);
+		          }
+		   	  }
+		   }
+		}
+
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
+	    if(file_exists($filePath))
+		{
+		   logThis("Modifying {$filePath} file", $path);	
+		   require($filePath);		  
+		   $fileContents = file_get_contents($filePath);
+		   $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
+		   file_put_contents($filePath, $out);		   
+		}
+		
+		logThis('End upgrade_connectors', $path);
+	}
+
+
+	function removeSilentUpgradeVarsCache(){
+	    global $silent_upgrade_vars_loaded;
+
+	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+
+	    if(file_exists($cacheFile)){
+	        unlink($cacheFile);
+	    }
+
+	    $silent_upgrade_vars_loaded = array(); // Set to empty to reset it
+
+	    return true;
+	}
+
+	function loadSilentUpgradeVars(){
+	    global $silent_upgrade_vars_loaded;
+
+	    if(empty($silent_upgrade_vars_loaded)){
+	        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
+	        // We have no pre existing vars
+	        if(!file_exists($cacheFile)){
+	            // Set the vars array so it's loaded
+	            $silent_upgrade_vars_loaded = array('vars' => array());
+	        }
+	        else{
+	            require_once($cacheFile);
+	            $silent_upgrade_vars_loaded = $silent_upgrade_vars_cache;
+	        }
+	    }
+
+	    return true;
+	}
+
+	function writeSilentUpgradeVars(){
+	    global $silent_upgrade_vars_loaded;
+
+	    if(empty($silent_upgrade_vars_loaded)){
+	        return false; // You should have set some values before trying to write the silent upgrade vars
+	    }
+
+	    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+	    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+
+	    require_once('include/dir_inc.php');
+	    if(!mkdir_recursive($cacheFileDir)){
+	        return false;
+	    }
+	    require_once('include/utils/file_utils.php');
+	    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
+	        global $path;
+	        logThis("WARNING: writeSilentUpgradeVars could not write to {$cacheFile}", $path);
+	        return false;
+	    }
+
+	    return true;
+	}
+
+	function setSilentUpgradeVar($var, $value){
+	    if(!loadSilentUpgradeVars()){
+	        return false;
+	    }
+
+	    global $silent_upgrade_vars_loaded;
+
+	    $silent_upgrade_vars_loaded['vars'][$var] = $value;
+
+	    return true;
+	}
+
+	function getSilentUpgradeVar($var){
+	    if(!loadSilentUpgradeVars()){
+	        return false;
+	    }
+
+	    global $silent_upgrade_vars_loaded;
+
+	    if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
+	        return null;
+	    }
+	    else{
+	        return $silent_upgrade_vars_loaded['vars'][$var];
+	    }
+	}
+
 ?>

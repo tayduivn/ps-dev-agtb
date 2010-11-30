@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: preflight.php 51719 2009-10-22 17:18:00Z mitani $
+ * $Id: preflight.php 58178 2010-09-15 00:30:38Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
@@ -141,7 +141,7 @@ if (version_compare(phpversion(),'5.2.0') >=0) {
 	if((count($errors) == 1)) { // only diffs
 		logThis('file preflight check passed successfully.');
 		$stop = false;
-		$out  = $mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED'];
+		$out  = $mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED']."<BR><BR><font color='red'>".$mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED3']."</font>";
 		$stop = false;
 
 		$disableEmail = (empty($current_user->email1)) ? 'DISABLED' : 'CHECKED';
@@ -278,6 +278,12 @@ $diffs ='';
 	// aw: BUG 10161: check flavor conversion sql files
 	$sqlFile = ''; // cn: bug
 	if($current_version == $targetVersion) {
+		
+		if(preg_match('/(.*?)([^0])$/', $current_version, $matches))
+		{
+			$current_version = $matches[1].'0';
+		}
+	
 		switch($manifest['name']){
 			case 'SugarCE to SugarPro':
 				$sqlFile = $current_version.'_ce_to_pro_'.$db->dbType;
@@ -366,14 +372,9 @@ $style_for_schemaChange = empty($schema)?'style=\'display:none\'':'';
 
 $final =<<<eoq
 <table cellpadding="3" cellspacing="0" border="0">
-    <tr>
-        <th colspan="2" align="left">
-            <b>{$mod_strings['LBL_UW_PREFLIGHT_COMPLETE']}<i>{$php_521}</i></b><hr />
-        </th>
-    </tr>
     <tr {$style_for_out}>
         <td colspan="2" align="left" valign="top">
-            {$out}
+            <br>{$out}
         </td>
     </tr>
     <tr {$style_for_dif}>
@@ -420,7 +421,7 @@ $form5 =<<<eoq5
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'></p>
         </td></tr>
      </table>
  </div>
@@ -473,6 +474,7 @@ if($php_warnings != null){
 	$uwMain = $php_warnings;
 }
 
+$GLOBALS['top_message'] = "<b>{$mod_strings['LBL_UW_PREFLIGHT_TESTS_PASSED2']}</b>";
 $showBack		= false;
 $showCancel		= true;
 $showRecheck	= true;

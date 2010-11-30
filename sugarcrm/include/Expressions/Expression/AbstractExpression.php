@@ -207,7 +207,8 @@ abstract class AbstractExpression
 		// now check for generics
 		switch($type) {
 			case AbstractExpression::$STRING_TYPE:
-				return ( $isInstance || is_string($variable) );
+				return ( $isInstance || is_string($variable) || is_numeric($variable) 
+				    || $variable instanceof AbstractExpression::$TYPE_MAP[AbstractExpression::$NUMERIC_TYPE]);
 				break;
 			case AbstractExpression::$NUMERIC_TYPE:
 				return ( $isInstance || is_numeric($variable) );

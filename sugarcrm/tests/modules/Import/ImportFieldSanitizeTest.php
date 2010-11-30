@@ -630,6 +630,52 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
+     * @group bug38356
+     */
+    public function testRelateCreateRecordNoTableInVardef()
+    {
+        $account_name = 'test case account'.date("YmdHis");
+        
+        $focus = loadBean('Contacts');
+        $vardef = array (
+			'name' => 'account_name',
+			'rname' => 'name',
+			'id_name' => 'account_id',
+			'vname' => 'LBL_ACCOUNT_NAME',
+			'join_name'=>'accounts',
+			'type' => 'relate',
+			'link' => 'accounts',
+			'isnull' => 'true',
+			'module' => 'Accounts',
+			'dbType' => 'varchar',
+			'len' => '255',
+			'source' => 'non-db',
+			'unified_search' => true,
+		);
+        
+        // setup
+        $beanList = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        
+        $this->_ifs->relate(
+            $account_name,
+            $vardef,
+            $focus);
+        
+        // teardown
+        unset($GLOBALS['beanList']);
+        
+        $result = $GLOBALS['db']->query(
+            "SELECT id FROM accounts where name = '$account_name'");
+        $relaterow = $focus->db->fetchByAssoc($result);
+        
+        $this->assertEquals($focus->account_id,$relaterow['id']);
+        
+        $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
+    }
+    
+    /**
      * @group bug32869
      */
     public function testRelateCreateRecordIfNoRnameParameter()
@@ -766,6 +812,47 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNull($relaterow,'Record should not be added to the related table');
         
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
+    }
+    
+    /**
+     * @group bug38885
+     */
+    public function testRelateToUserNameWhenFullNameIsGiven()
+    {
+        // setup
+        $beanList = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        
+        $accountFocus = new Account;
+        $userFocus = SugarTestUserUtilities::createAnonymousUser();
+        $vardef = array(
+            "name" => "assigned_user_name",
+            "link" => "assigned_user_link",
+            "vname" => "LBL_ASSIGNED_TO_NAME",
+            "rname" => "user_name",
+            "type" => "relate",
+            "reportable" => false,
+            "source" => "non-db",
+            "table" => "users",
+            "id_name" => "assigned_user_id",
+            "module" => "Users",
+            "duplicate_merge" => "disabled",
+            );
+        
+        $this->assertEquals(
+            $userFocus->user_name,
+            $this->_ifs->relate(
+                $userFocus->first_name.' '.$userFocus->last_name,
+                $vardef,
+                $accountFocus,
+                false)
+            );
+        
+        // teardown
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
     
     /**

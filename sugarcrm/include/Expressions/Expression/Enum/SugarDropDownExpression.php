@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,6 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/Enum/EnumExpression.php');
+/**
+ * <b>getDropdownKeySet(String list_name)</b><br>
+ * Returns a collection of the keys in the supplied dropdown list.<br/>
+ * This list must be defined in the DropDown editor.<br/>
+ * ex: <i>valueAt(2, getDropdownKeySet("my_list"))</i>
+ */
 class SugarDropDownExpression extends EnumExpression
 {
 	/**
@@ -73,7 +79,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "getDD";
+		return array("getDropdownKeySet", "getDD");
 	}
 
 	/**

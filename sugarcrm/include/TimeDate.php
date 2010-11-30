@@ -54,7 +54,7 @@ class TimeDate {
 		'H' => '[0-9]{1,2}',
 		'i' => '[0-9]{1,2}',
 		'm' => '[0-9]{1,2}',
-		'Y' => '[0-9]{4}',
+		'Y' => '[0-9]{2,4}',
 		's' => '[0-9]{1,2}'
 	);
 
@@ -977,6 +977,28 @@ S	S	S	12	20	-8	0	0
 		$noMerFormat = str_replace(array('a', 'A'), array('', ''), $format);
 		$newDate = $this->swap_formats($date, $noMerFormat, $fakeMerFormat);
 		return str_replace('!@!', $mer, $newDate);
+	}
+	
+	/**
+	 * Returns the time portion of a datetime string
+	 *
+	 * @param string $datetime
+	 * @return string
+	 */
+	public function getTimePart($datetime)
+	{
+	    return trim(array_pop($this->split_date_time($datetime)));
+	}
+	
+	/**
+	 * Returns the date portion of a datetime string
+	 *
+	 * @param string $datetime
+	 * @return string
+	 */
+	public function getDatePart($datetime)
+	{
+	    return trim(array_shift($this->split_date_time($datetime)));
 	}
 
 	/**

@@ -840,8 +840,21 @@ require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
 					if(!$uninstallable){
 						$file_uninstall = 'UNINSTALLABLE';
 						$enabled_string = 'UNINSTALLABLE';
+					} else {
+						$file_uninstall = fileToHash( $file_uninstall );
 					}
-				$packages[] = array('name' => $name, 'version' => $version, 'type' => $type, 'published_date' => $date_entered, 'description' => $description, 'uninstallable' =>$uninstallable, 'file_install' => fileToHash($filename), 'file' => fileToHash( $file_uninstall ), 'enabled' => $enabled_string);
+					
+				$packages[] = array(
+				    'name' => $name, 
+				    'version' => $version, 
+				    'type' => $type, 
+				    'published_date' => $date_entered, 
+				    'description' => $description, 
+				    'uninstallable' =>$uninstallable, 
+				    'file_install' =>  $file_uninstall , 
+				    'file' =>  fileToHash($filename),
+				    'enabled' => $enabled_string
+				);
 				break;
 				default:
 				break;

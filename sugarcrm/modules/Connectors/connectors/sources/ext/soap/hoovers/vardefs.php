@@ -43,7 +43,7 @@ $dictionary['ext_soap_hoovers'] = array(
 	),
     'recname'=> array(
 	    'name' => 'recname',
-		'input' => 'bal.specialtyCriteria.companyKeyword',
+		'input' => 'bal.specialtyCriteria.companyName',
 		'output' => 'recname',
 	    'vname' => 'LBL_NAME',
 	    'type' => 'varchar',
@@ -73,7 +73,7 @@ $dictionary['ext_soap_hoovers'] = array(
    'addrcity' => array (
 	    'name' => 'addrcity',
    		'input' => 'bal.location.city',
-   		'output' => 'addrcity',
+        'output' => 'addrcity',
 	    'vname' => 'LBL_CITY',
 	    'type' => 'varchar',
 	    'search' => true,
@@ -93,8 +93,7 @@ $dictionary['ext_soap_hoovers'] = array(
    ),
    'addrstateprov' => array(
         'name' => 'addrstateprov',
-   		'input' => 'bal.location.state', //$args['bal']['location']['state'] = 'California'
-   		'output' => 'addrstateprov',
+   		'input' => 'bal.location.globalState',
         'vname' => 'LBL_STATE',
         'type' => 'varchar',
         'search' => true,
@@ -103,7 +102,7 @@ $dictionary['ext_soap_hoovers'] = array(
    ),
    'addrcountry' => array(
         'name' => 'addrcountry',
-        'input' => 'bal.location.country',
+        'input' => 'bal.location.countryId',
         'vname' => 'LBL_COUNTRY',
         'type' => 'varchar',
         'search' => true,
@@ -111,8 +110,7 @@ $dictionary['ext_soap_hoovers'] = array(
    ),
    'addrzip' => array(
         'name' => 'addrzip',
-   		'input' => 'bal.location.zip',
-   		'output' => 'addrzip',
+   		'input' => 'bal.location.postalCode',
         'vname' => 'LBL_ZIP',
         'type' => 'varchar',
         'search' => true,
@@ -121,7 +119,7 @@ $dictionary['ext_soap_hoovers'] = array(
    'finsales' => array(
         'name' => 'finsales',
         'vname' => 'LBL_FINSALES',
-        'type' => 'enum',
+        'type' => 'decimal',
         'comment' => 'Annual sales (in millions)',
    ),
    /*
@@ -152,6 +150,18 @@ $dictionary['ext_soap_hoovers'] = array(
         'type' => 'decimal',
         'comment' => 'Total number of employees',
    ),
+   'description' => array(
+        'name' => 'description',
+        'vname' => 'LBL_DESCRIPTION',
+        'type' => 'varchar',
+        'comment' => 'Company Description',      
+   ),
+   'synopsis' => array(
+        'name' => 'synopsis',
+        'vname' => 'LBL_SYNOPSIS',
+        'type' => 'varchar',
+        'comment' => 'Company Synopsis',      
+   )
    )
 );
 ?>

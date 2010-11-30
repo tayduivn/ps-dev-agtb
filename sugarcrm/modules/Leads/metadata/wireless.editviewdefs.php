@@ -46,18 +46,22 @@ $viewdefs['Leads']['EditView'] = array(
 	      	array('name'=>'last_name',
 	            'displayParams'=>array('wireless_edit_only'=>true,),
 	      	),  
-	    ),      
-	    array('status'),
-		array('lead_source'),
+	    ),
 		array('title'),
-        array('website'),
-	    array('account_name'),
+	    array('account_name'),			          
 		array('phone_work'),
 		array('phone_mobile'),
-		array('phone_home'),
 		array('email1'),
+		array('primary_address_street'),
+		array('primary_address_city'),
+		array('primary_address_state'),
+		array('primary_address_postalcode'),
+		array('primary_address_country'),			    			    
+	    array('status'),
 		array('assigned_user_name'),
+		//BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),
+		//END SUGARCRM flav=pro ONLY
 	),
 );
 ?>

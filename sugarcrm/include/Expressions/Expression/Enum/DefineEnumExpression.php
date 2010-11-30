@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,6 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/Enum/EnumExpression.php');
+/**
+ * <b>createList(v1, ...)</b><br/>
+ * Returns a list made up of the passed in variables.<br/>
+ * ex: <i>createList(123, "Hello World", "three", 4.5)</i>
+ */
 class DefineEnumExpression extends EnumExpression
 {
 	/**
@@ -74,7 +79,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "enum";
+		return array("createList", "enum");
 	}
 
 	/**

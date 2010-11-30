@@ -1,7 +1,7 @@
 <project>
     <shortName>Sugar</shortName>
     <fullName>Sugar Offline Client</fullName>
-    <version>@_SUGAR_VERSION</version>
+    <version>6.1.1</version>
     <installerFilename>${product_shortname}-OfflineClient-ENT-${product_version}-${platform_name}-installer.${platform_exec_suffix}</installerFilename>
     <readmeFile></readmeFile>
     <licenseFile>license.txt</licenseFile>
@@ -21,7 +21,7 @@
     <defaultUnixDirectoryPermissions>755</defaultUnixDirectoryPermissions>
     <defaultUnixFilePermissions>644</defaultUnixFilePermissions>
     <description>One-line description of your software</description>
-    <outputDirectory>/home/build/sugarbuild-BitRock-@_SUGAR_VERSION/zip</outputDirectory>
+    <outputDirectory>/home/build/sugarbuild-BitRock-6.1.1/zip</outputDirectory>
     <projectSchemaVersion>1.2</projectSchemaVersion>
     <saveRelativePaths>1</saveRelativePaths>
     <slideShowLoop>1</slideShowLoop>
@@ -1008,6 +1008,7 @@ the installation of the bundled MySQL database.</explanation>
     'setup_db_drop_tables' =&gt; 0,
     'setup_db_create_database' =&gt; 1,
     'setup_db_pop_demo_data' =&gt; 0,
+    'setup_site_admin_user_name' =&gt; 'admin',
     'setup_site_admin_password' =&gt; '${sugarpassword}',
     'setup_db_create_sugarsales_user' =&gt; 0,
     'setup_db_admin_user_name' =&gt; 'root',

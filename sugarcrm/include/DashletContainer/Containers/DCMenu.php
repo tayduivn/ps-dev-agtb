@@ -168,6 +168,10 @@ EOQ;
 
 		foreach($DCActions as $action){
 			if(ACLController::checkAccess($action, 'edit', true)) {
+			   //BEGIN SUGARCRM flav=sales ONLY
+			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
+			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
+			   //END SUGARCRM flav=sales ONLY
 			   $html .= $this->getMenuItem($action);	
 			}
 		}
@@ -180,9 +184,18 @@ EOQ;
 		$html .= <<<EOQ
 		</ul>
 		</div>
-		
+EOQ;
+//BEGIN SUGARCRM flav=sales ONLY
+if(!is_admin($GLOBALS['current_user'])){
+//END SUGARCRM flav=sales ONLY
+$html .= <<<EOQ
 		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);"><img src="$iconSearch" class="icon" align="top"></a></div>
 		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'></div>
+EOQ;
+//BEGIN SUGARCRM flav=sales ONLY
+}
+//END SUGARCRM flav=sales ONLY
+$html .= <<<EOQ
 		</div>
 		</div>
 		

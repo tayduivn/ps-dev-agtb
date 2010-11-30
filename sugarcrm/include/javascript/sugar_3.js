@@ -512,7 +512,7 @@ function isValidEmail(emailStr) {
 	for (var i = 0; i < emailArr.length; i++) {
 		emailAddress = emailArr[i];
 		if (trim(emailAddress) != '') {
-			if(!/^\s*[\w.%+\-&'\/]+\w+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
+			if(!/^\s*[\w.%+\-&'\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
 			   !/^.*<[A-Z0-9._%+\-&']+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
 	
 			   return false;
@@ -599,9 +599,11 @@ function check_form(formname) {
 	return validate_form(formname, '');
 }
 
-function add_error_style(formname, input, txt) {
-  try {
-	inputHandle = document.forms[formname][input];
+function add_error_style(formname, input, txt, flash) {
+	if (typeof flash == "undefined")
+		flash = true;
+	try {
+	inputHandle = typeof input == "object" ? input : document.forms[formname][input];
 	style = get_current_bgcolor(inputHandle);
 
 	// strip off the colon at the end of the warning strings
@@ -618,30 +620,36 @@ function add_error_style(formname, input, txt) {
         else {
             inputHandle.parentNode.appendChild(errorTextNode);
         }
-        inputHandle.style.backgroundColor = "#FF0000";
+        if (flash)
+        	inputHandle.style.backgroundColor = "#FF0000";
         inputsWithErrors.push(inputHandle);
 	}
-    // We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
-    if ( inputsWithErrors.length == 1 ) {
-      for(wp = 1; wp <= 10; wp++) {
-        window.setTimeout('fade_error_style(style, '+wp*10+')',1000+(wp*50));
-      }
+    if (flash)
+    {
+		// We only need to setup the flashy-flashy on the first entry, it loops through all fields automatically
+	    if ( inputsWithErrors.length == 1 ) {
+	      for(wp = 1; wp <= 10; wp++) {
+	        window.setTimeout('fade_error_style(style, '+wp*10+')',1000+(wp*50));
+	      }
+	    }
+		if(typeof (window[formname + "_tabs"]) != "undefined") {
+	        var tabView = window[formname + "_tabs"];
+	        var parentDiv = YAHOO.util.Dom.getAncestorByTagName(inputHandle, "div");
+	        if ( tabView.get ) {
+	            var tabs = tabView.get("tabs");
+	            for (var i in tabs) {
+	                if (tabs[i].get("contentEl") == parentDiv 
+	                		|| YAHOO.util.Dom.isAncestor(tabs[i].get("contentEl"), inputHandle)) 
+	                {
+	                    tabs[i].get("labelEl").style.color = "red";
+	                    if ( inputsWithErrors.length == 1 )
+	                        tabView.selectTab(i);
+	                }
+	            }
+	        }
+		} 
+		window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
     }
-	if(typeof (window[formname + "_tabs"]) != "undefined") {
-        var tabView = window[formname + "_tabs"];
-        var parentDiv = YAHOO.util.Dom.getAncestorByTagName(inputHandle, "div");
-        if ( tabView.get ) {
-            var tabs = tabView.get("tabs");
-            for (var i in tabs) {
-                if (tabs[i].get("contentEl") == parentDiv || YAHOO.util.Dom.isAncestor(tabs[i].get("contentEl"), inputHandle)) {
-                    tabs[i].get("labelEl").style.color = "red";
-                    if ( inputsWithErrors.length == 1 )
-                        tabView.selectTab(i);
-                }
-            }
-        }
-	} 
-	window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
 
   } catch ( e ) {
       // Catch errors here so we don't allow an incomplete record through the javascript validation
@@ -1261,7 +1269,10 @@ function http_fetch_sync(url,post_data) {
 	}
 
 	global_xmlhttp.send(post_data);
-
+	
+	if (SUGAR.util.isLoginPage(global_xmlhttp.responseText))
+		return false;
+	
 	var args = {"responseText" : global_xmlhttp.responseText,
 				"responseXML" : global_xmlhttp.responseXML,
 				"request_id" : request_id};
@@ -1288,6 +1299,8 @@ function http_fetch_async(url,callback,request_id,post_data) {
 	global_xmlhttp.onreadystatechange = function() {
 		if(global_xmlhttp.readyState==4) {
 			if(global_xmlhttp.status == 200) {
+				if (SUGAR.util.isLoginPage(global_xmlhttp.responseText))
+					return false;
 				var args = {"responseText" : global_xmlhttp.responseText,
 							"responseXML" : global_xmlhttp.responseXML,
 							"request_id" : request_id };
@@ -1570,35 +1583,87 @@ function snapshotForm(theForm) {
 }
 
 function initEditView(theForm) {
-    if ( typeof editViewSnapshots == 'undefined' ) {
+    if (SUGAR.util.ajaxCallInProgress()) {
+    	window.setTimeout(function(){initEditView(theForm);}, 100);
+    	return;
+    }
+	if ( typeof editViewSnapshots == 'undefined' ) {
         editViewSnapshots = new Object();
     }
+    if ( typeof SUGAR.loadedForms == 'undefined' ) {
+    	SUGAR.loadedForms = new Object();
+    }
 
+    // console.log('DEBUG: Adding checks for '+theForm.id);
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
+    SUGAR.loadedForms[theForm.id] = true;
+    
 }
 
 function onUnloadEditView(theForm) {
-    if ( typeof editViewSnapshots == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+	
+	var dataHasChanged = false;
+
+    if ( typeof editViewSnapshots == 'undefined' ) {
+        // No snapshots, move along
         return;
     }
 
-    if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
-        // Data has changed.
-        return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
+    if ( typeof theForm == 'undefined' ) {
+        // Need to check all editViewSnapshots
+        for ( var idx in editViewSnapshots ) {
+            
+            theForm = document.getElementById(idx);
+            // console.log('DEBUG: Checking all forms '+theForm.id);
+            if ( theForm == null 
+                 || typeof editViewSnapshots[theForm.id] == 'undefined'
+                 || editViewSnapshots[theForm.id] == null
+                 || !SUGAR.loadedForms[theForm.id]) {
+                continue;
+            }
+            
+            var snap = snapshotForm(theForm);
+            if ( editViewSnapshots[theForm.id] != snap ) {
+                dataHasChanged = true;
+            }
+        }
+    } else {
+        // Just need to check a single form for changes
+		if ( editViewSnapshots == null  || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+            return;
+        }
+
+        // console.log('DEBUG: Checking one form '+theForm.id);
+        if ( editViewSnapshots[theForm.id] != snapshotForm(theForm) ) {
+            // Data has changed.
+        	dataHasChanged = true;
+        }
+    }
+
+    if ( dataHasChanged == true ) {
+    	return SUGAR.language.get('app_strings','WARN_UNSAVED_CHANGES');
     } else {
         return;
     }
+
 }
 
 function disableOnUnloadEditView(theForm) {
     // If you don't pass anything in, it disables all checking
-    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' ) {
+    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
         window.onbeforeunload = null;
+        editViewSnapshots = null;
+        
+        // console.log('DEBUG: Disabling all edit view checks');
+
     } else {
         // Otherwise, it just disables it for this form
         if ( typeof(theForm.id) != 'undefined' && typeof(editViewSnapshots[theForm.id]) != 'undefined' ) {
             editViewSnapshots[theForm.id] = null;
         }
+
+        // console.log('DEBUG : Disabling just checks for '+theForm.id);
+
     }
 }
 
@@ -2279,7 +2344,7 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	    num_grp_sep_re = new RegExp(num_grp_sep, 'g');
+	    num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
 	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
@@ -2525,7 +2590,7 @@ SUGAR.util = function () {
 					SUGAR.evalScript_waitCount--;
 					if (SUGAR.evalScript_waitCount == 0) {
                       var headElem = document.getElementsByTagName('head')[0];
-                      for ( var i in SUGAR.evalScript_evalElem ) {
+                      for ( var i = 0; i < SUGAR.evalScript_evalElem.length; i++) {
                         var tmpElem = document.createElement('script');
                         tmpElem.type = 'text/javascript';
                         tmpElem.text = SUGAR.evalScript_evalElem[i];
@@ -2546,7 +2611,7 @@ SUGAR.util = function () {
 				var tmpElem = null;
 				SUGAR.evalScript_waitCount = 0;
 				SUGAR.evalScript_evalElem = new Array();
-				for (var i in results) {
+				for (var i = 0; i < results.length; i++) {
 					if (typeof(results[i]) != 'object') {
 						continue;
 					};
@@ -2987,7 +3052,7 @@ SUGAR.searchForm = function() {
 					enableQS(true);
 					ajaxStatus.hideStatus();
 				}
-				url = 	'index.php?module=' + module + '&action=ListView&search_form_only=true&to_pdf=true&search_form_view=' + theView;
+				url = 	'index.php?module=' + module + '&action=index&search_form_only=true&to_pdf=true&search_form_view=' + theView;
 
 				//check to see if tpl has been specified.  If so then pass location through url string
 				var tpl ='';
@@ -3046,7 +3111,7 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
                     if ( ( elem.name.length > 3 && elem.name.substring(elem.name.length-3) == '_id' )
-                         || ( elem.name.length > 11 && elem.name.substring(elem.name.length-11) == '_id_advanced' ) ) {
+                         || ( elem.name.length > 12 && elem.name.substring(elem.name.length-12) == '_id_advanced' ) ) {
                         elem.value = '';
                     }
                 }
@@ -3890,11 +3955,23 @@ SUGAR.util.isTouchScreen = function()
 
 SUGAR.util.isLoginPage = function(content) 
 {
+	//skip if this is packageManager screen
+	if(SUGAR.util.isPackageManager()) {return false;}
 	var loginPageStart = "<!DOCTYPE";
-	if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html>") != -1) {
+	if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html>") != -1  && content.indexOf("login_module") != -1) {
 		window.location.href = window.location.protocol + window.location.pathname;
 		return true;
 	}
+}
+
+SUGAR.util.isPackageManager=function(){
+	if(typeof(document.the_form) !='undefined' && typeof(document.the_form.language_pack_escaped) !='undefined'){
+		return true;
+	}else{return false;}
+}
+
+SUGAR.util.ajaxCallInProgress = function(){
+	return SUGAR_callsInProgress != 0;
 }
 
 SUGAR.util.closeActivityPanel = {
@@ -3921,16 +3998,25 @@ SUGAR.util.closeActivityPanel = {
                         var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
-                            {
+                            {	//refresh window to show updated changes
+								window.location.reload(true);
+								/*
                                 if(viewType == 'dashlet')
                                 {
                                     SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
                                     ajaxStatus.hideStatus();
                                 }
-                                else if(viewType == 'subpanel')
+                                else if(viewType == 'subpanel'){
                                     showSubPanel(o.argument['parentContainerId'],null,true);
-                                else if(viewType == 'listview')
+									if(o.argument['parentContainerId'] == 'activities'){
+										showSubPanel('history',null,true);
+									}
+									ajaxStatus.hideStatus();
+
+                                }else if(viewType == 'listview'){
                                     document.location = 'index.php?module=' + module +'&action=index';
+									}
+								*/
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };

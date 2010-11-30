@@ -54,8 +54,18 @@ $searchFields['Contacts'] =
 			'operator' => 'subquery',
 			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
 			                    WHERE sugarfavorites.deleted=0 
-			                        and sugarfavorites.module = "Contacts" 
-			                        and sugarfavorites.assigned_user_id = "{0}"',
+			                        and sugarfavorites.module = \'Contacts\' 
+			                        and sugarfavorites.assigned_user_id = \'{0}\'',
+			'db_field'=>array('id')),
+		//END SUGARCRM flav=pro ONLY
+		//BEGIN SUGARCRM flav=pro ONLY
+		'sync_contact' => array(
+            'query_type'=>'format',
+			'operator' => 'subquery',
+			'subquery_in_clause' => array('0'=>'NOT IN','1'=>'IN'),
+			'subquery' => 'SELECT contacts_users.contact_id FROM contacts_users 
+			                    WHERE contacts_users.deleted=0 
+			                        and contacts_users.user_id = \'{1}\'',
 			'db_field'=>array('id')),
 		//END SUGARCRM flav=pro ONLY
 	);

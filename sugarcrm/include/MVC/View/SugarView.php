@@ -315,19 +315,29 @@ class SugarView
             
             foreach ($value as $linkattribute => $attributevalue) {
                 // get the main link info
-                if ( $linkattribute == 'linkinfo' )
+                if ( $linkattribute == 'linkinfo' ) {
                     $gcls[$key] = array(
                         "LABEL" => key($attributevalue),
                         "URL"   => current($attributevalue),
                         "SUBMENU" => array(),
                         );
+                   if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
+                       $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
+                       $gcls[$key]["URL"] = "#";
+                   }
+                }
                 // and now the sublinks
-                if ( $linkattribute == 'submenu' && is_array($attributevalue) )
+                if ( $linkattribute == 'submenu' && is_array($attributevalue) ) {
                     foreach ($attributevalue as $submenulinkkey => $submenulinkinfo)
                         $gcls[$key]['SUBMENU'][$submenulinkkey] = array(
                             "LABEL" => key($submenulinkinfo),
                             "URL"   => current($submenulinkinfo),
                         );
+                       if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "#";
+                       }
+                }
             }
         }
         $ss->assign("GCLS",$gcls);
@@ -416,25 +426,46 @@ class SugarView
                 $groupedTabsClass = new GroupedTabStructure();               
                 $modules = query_module_access_list($current_user);
                 //handle with submoremodules
-				$max_tabs = $current_user->getPreference('max_subtabs');
-				if ( !isset($max_subtabs) || $max_subtabs <= 0 ){
-                	$max_tabs = isset($GLOBALS['sugar_config']['default_max_subtabs'])?$GLOBALS['sugar_config']['default_max_subtabs']:8;
+                $max_tabs = $current_user->getPreference('max_subtabs');
+                // If the max_tabs isn't set incorrectly, set it within the range, to the default max sub tabs size
+                if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
+                    // We have a default value. Use it
+                    if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
+                        // As of 6.1, we shouldn't have a max subtabs higher than 10.
+                        // If it's larger, bring it down to the max and save it in the config override
+                        if($GLOBALS['sugar_config']['default_max_subtabs'] > 10){
+                            require_once('modules/Configurator/Configurator.php');
+                            $configurator = new Configurator();
+                            $configurator->config['default_max_subtabs'] = '10';
+                            $configurator->handleOverride();
+                            $configurator->clearCache();
+                        }
+                        $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
+                    }
+                    else{
+                        $max_tabs = 8;
+                    }
                 }
                 
 				$subMoreModules = false;
 				$groupTabs = $groupedTabsClass->get_tab_structure(get_val_array($modules));
+                // We need to put this here, so the "All" group is valid for the user's preference.
+                $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
 
                 // Setup the default group tab.
-                $tmp = array_keys($groupTabs);
-                $ss->assign('currentGroupTab',$tmp[0]);
-                // Figure out which tab they currently have selected (stored in a cookie)                
-                if ( isset($_COOKIE['sugar_theme_gm_current']) ) {
-                    if ( isset($groupTabs[$_COOKIE['sugar_theme_gm_current']]) ) {
-                        $ss->assign('currentGroupTab',$_COOKIE['sugar_theme_gm_current']);
-                    }
+                $allGroup = $app_strings['LBL_TABGROUP_ALL'];
+                $ss->assign('currentGroupTab',$allGroup);
+                $currentGroupTab = $allGroup;
+                $usersGroup = $current_user->getPreference('theme_current_group');
+                // Figure out which tab they currently have selected (stored as a user preference)
+                if ( !empty($usersGroup) && isset($groupTabs[$usersGroup]) ) {
+                    $currentGroupTab = $usersGroup;
+                } else {
+                    $current_user->setPreference('theme_current_group',$currentGroupTab);
                 }
 
+                $ss->assign('currentGroupTab',$currentGroupTab);
                 $usingGroupTabs = true;
                 
             } else {
@@ -442,9 +473,11 @@ class SugarView
                 $ss->assign('currentGroupTab',$app_strings['LBL_TABGROUP_ALL']);
 
                 $usingGroupTabs = false;
+
+                $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
+
             }
             
-            $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] = $fullModuleList;
 
             $topTabList = array();
             
@@ -533,12 +566,11 @@ class SugarView
 			require_once('include/DashletContainer/DCFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
 			$data = $dcm->getLayout();
+			$dcjs = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+			$ss->assign('SUGAR_DCJS', $dcjs);
 			$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
 		/******************END DC MENU*********************/
-		if(!in_array($this->module, $GLOBALS['moduleList']) && !in_array($this->module, $GLOBALS['modInvisListActivities'])){
-			$ss->assign('FORCE_TOP_SHORTCUTS', true);
-		}
         //END SUGARCRM flav=sales || flav=pro ONLY
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
@@ -636,7 +668,7 @@ EOHTML;
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
             echo '<script>jscal_today = ' . (1000*strtotime($GLOBALS['timedate']->handle_offset(gmdate($GLOBALS['timedate']->get_db_date_time_format()), $GLOBALS['timedate']->get_db_date_time_format()))) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-	        if (!is_file("include/javascript/sugar_grp1.js")) {
+	        if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
 	        	$_REQUEST['root_directory'] = ".";
 	        	require_once("jssource/minify_utils.php");
 	        	ConcatenateFiles(".");
@@ -761,7 +793,9 @@ EOHTML;
         $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></A>\n";
 
           //END SUGARCRM lic=sub ONLY
-
+        
+        // Bug 38594 - Add in Trademark wording
+        $copyright .= 'SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.<br />';
 
         //rrs bug: 20923 - if this image does not exist as per the license, then the proper image will be displaye regardless, so no need
 		//to display an empty image here.
@@ -828,28 +862,32 @@ EOHTML;
         
         $trackerManager = TrackerManager::getInstance();
         //BEGIN SUGARCRM flav=pro ONLY
-        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-        //Track to tracker_perf
-        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
-	        $monitor2->setValue('server_response_time', $this->responseTime);
-	        $dbManager = &DBManagerFactory::getInstance();
-	        $monitor2->db_round_trips = $dbManager->getQueryCount();
-	        $monitor2->setValue('date_modified', $timeStamp);
-	        $monitor2->setValue('db_round_trips', $dbManager->getQueryCount());
-	        $monitor2->setValue('files_opened', $this->fileResources);
-	        if (function_exists('memory_get_usage')) {
-	            $monitor2->setValue('memory_usage', memory_get_usage());
-	        }
-		}
-	        // Track to tracker_sessions
-	     if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
-	        $monitor3->setValue('date_end', $timeStamp);
-	        if ( !isset($monitor3->date_start) ) $monitor3->setValue('date_start', $timeStamp);
-	        $seconds = strtotime($monitor3->date_end) -strtotime($monitor3->date_start);
-	        $monitor3->setValue('seconds', $seconds);
-	        $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
-		}
-	        //END SUGARCRM flav=pro ONLY
+        if(!$trackerManager->isPaused())
+        {
+	        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	        //Track to tracker_perf
+	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
+		        $monitor2->setValue('server_response_time', $this->responseTime);
+		        $dbManager = &DBManagerFactory::getInstance();
+		        $monitor2->db_round_trips = $dbManager->getQueryCount();
+		        $monitor2->setValue('date_modified', $timeStamp);
+		        $monitor2->setValue('db_round_trips', $dbManager->getQueryCount());
+		        $monitor2->setValue('files_opened', $this->fileResources);
+		        if (function_exists('memory_get_usage')) {
+		            $monitor2->setValue('memory_usage', memory_get_usage());
+		        }
+			}
+		    
+			// Track to tracker_sessions
+		    if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
+		        $monitor3->setValue('date_end', $timeStamp);
+		        if ( !isset($monitor3->date_start) ) $monitor3->setValue('date_start', $timeStamp);
+		        $seconds = strtotime($monitor3->date_end) -strtotime($monitor3->date_start);
+		        $monitor3->setValue('seconds', $seconds);
+		        $monitor3->setValue('user_id', $GLOBALS['current_user']->id);
+			}
+        }
+	    //END SUGARCRM flav=pro ONLY
 	    $trackerManager->save();
 		
     }
@@ -949,39 +987,47 @@ EOHTML;
         $module = null
         )
     {
-        global $current_language, $mod_strings, $app_strings;
+        global $current_language, $current_user, $mod_strings, $app_strings;
         
         if ( empty($module) )
             $module = $this->module;
         
-        $module_menu = sugar_cache_retrieve("{$module}_module_menu_{$current_language}");
+        $module_menu = sugar_cache_retrieve("{$current_user->id}_{$module}_module_menu_{$current_language}");
         if ( !is_array($module_menu) ) {
-            $module_menu = array();
+            $final_module_menu = array();
             
-            if (file_exists('modules/' . $module . '/Menu.php'))
+            if (file_exists('modules/' . $module . '/Menu.php')) {
+                $GLOBALS['module_menu'] = $module_menu = array();
                 require('modules/' . $module . '/Menu.php');
-            if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php'))
+                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+            }
+            if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
+                $GLOBALS['module_menu'] = $module_menu = array();
                 require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
-            if (file_exists('custom/application/Ext/Menus/menu.ext.php'))
-                require('custom/application/Ext/Menus/menu.ext.php');
+                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+            }
             if (!file_exists('modules/' . $module . '/Menu.php') 
                     && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php') 
-                    && !file_exists('custom/application/Ext/Menus/menu.ext.php') 
                     && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
-                $module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
+                $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
                     $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
-                $module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'], 
+                $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'], 
                     $module, $module);
                 if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
                     if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
-                        $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
+                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
                             $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
                     else
-                        $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
+                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index", 
                             $app_strings['LBL_IMPORT'], "Import", $module);
             }
-            
-            sugar_cache_put("{$module}_module_menu_{$current_language}",$module_menu);
+            if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
+                $GLOBALS['module_menu'] = $module_menu = array();
+                require('custom/application/Ext/Menus/menu.ext.php');
+                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+            }
+            $module_menu = $final_module_menu;
+            sugar_cache_put("{$current_user->id}_{$module}_module_menu_{$current_language}",$module_menu);
         }
         
         return $module_menu;
@@ -1026,9 +1072,6 @@ EOHTML;
     	$theTitle = "<div class='moduleTitle'>\n<h2>";
     	
     	$module = preg_replace("/ /","",$this->module);
-        if (is_file(SugarThemeRegistry::current()->getImageURL($this->module.'.gif'))) {
-            $theTitle .= "<img src='".SugarThemeRegistry::current()->getImageURL($module.'.gif')."' alt='".$module."'>&nbsp;";
-        }
         
         $params = $this->_getModuleTitleParams();
         $count = count($params);
@@ -1114,9 +1157,9 @@ EOHTML;
      *
      * @return array
      */
-    protected function _getModuleTitleParams()
+    protected function _getModuleTitleParams($bTitle=false)
     {
-    	$params = array($this->_getModuleTitleListParam());
+    	$params = array($this->_getModuleTitleListParam($bTitle));
     	
     	if (isset($this->action)){
     	    switch ($this->action) {
@@ -1153,19 +1196,47 @@ EOHTML;
      *
      * @return string
      */
-    protected function _getModuleTitleListParam()
+    protected function _getModuleTitleListParam($bTitle=false)
     {
     	global $current_user;
+    	global $app_strings;
     	
     	if(!empty($GLOBALS['app_list_strings']['moduleList'][$this->module]))
     		$firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
     	else
     		$firstParam = $this->module;
     	
-    	if($this->action == "ListView" || $this->action == "index")
-    		return $firstParam;
-    	else
-    		return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
+    	$iconPath = $this->getModuleTitleIconPath($this->module);
+    	if($this->action == "ListView" || $this->action == "index") 
+    	{
+    	    if (!empty($iconPath) && !$bTitle) {
+				return "<a href='index.php?module={$this->module}&action=index'>" 
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+				     . "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
+			} else {
+				return $firstParam;
+			}
+    	} else 
+    	{
+		    if (!empty($iconPath) && !$bTitle) {
+				return "<a href='index.php?module={$this->module}&action=index'>" 
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
+			} else {
+				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
+			}
+    	}
+    }
+    
+    protected function getModuleTitleIconPath($module) {
+    	$iconPath = "";
+    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
+    	{
+    		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
+    	} else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
+    	{
+    		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
+    	}
+    	return $iconPath;
     }
     
     /**
@@ -1181,8 +1252,8 @@ EOHTML;
         $browserTitle = $app_strings['LBL_BROWSER_TITLE'];
         if ( $this->module == 'Users' && ($this->action == 'SetTimezone' || $this->action == 'Login') )
             return $browserTitle;
-        
-        foreach ( $this->_getModuleTitleParams() as $value )
+        $params = $this->_getModuleTitleParams(true);
+        foreach ($params  as $value )
             $browserTitle = strip_tags($value) . ' &raquo; ' . $browserTitle;
         
         return $browserTitle;

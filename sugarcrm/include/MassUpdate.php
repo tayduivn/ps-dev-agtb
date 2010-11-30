@@ -306,14 +306,7 @@ eoq;
 						if(!empty($_POST['reports_to_id']) && $newbean->reports_to_id != $_POST['reports_to_id']) {
 						   $old_reports_to_id = empty($newbean->reports_to_id) ? 'null' : $newbean->reports_to_id;
 						}
-
-						//Call include/formbase.php, but do not call retrieve again
-						populateFromPost('', $newbean, true);
-						$newbean->save_from_post = false;
-
-						if (!isset($_POST['parent_id']))
-							$newbean->parent_type = null;
-
+						
 						$check_notify = FALSE;
 
 						if (isset( $this->sugarbean->assigned_user_id)) {
@@ -324,7 +317,16 @@ eoq;
 								$check_notify = TRUE;
 							}
 						}
-	                    $email_address_id = '';
+	                    
+						//Call include/formbase.php, but do not call retrieve again
+						populateFromPost('', $newbean, true);
+						$newbean->save_from_post = false;
+						
+						if (!isset($_POST['parent_id'])) {
+							$newbean->parent_type = null;
+						}
+						
+						$email_address_id = '';
 	                    if (!empty($_POST['optout_primary'])) {
 	                    	$optout_flag_value = 0;
 	                    	if ($_POST['optout_primary'] == 'true') {
@@ -351,7 +353,7 @@ eoq;
 
 						} // if
 
-						if(!empty($old_reports_to_id)) {
+						if(!empty($old_reports_to_id) && method_exists($newbean, 'update_team_memberships')) {
 						   $old_id = $old_reports_to_id == 'null' ? '' : $old_reports_to_id;
 						   //BEGIN SUGARCRM flav=pro ONLY
 						   $newbean->update_team_memberships($old_id);
@@ -1281,7 +1283,7 @@ EOQ;
             $searchForm = new SearchForm($seed, $module);
             $searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl');
         }
-        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false);
+        $searchForm->populateFromArray(unserialize(base64_decode($query)));
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
         if (count($where_clauses) > 0 ) {

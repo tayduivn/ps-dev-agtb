@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,7 +19,13 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/Generic/GenericExpression.php');
-
+/**
+ * <b>ifElse(Boolean c, Val1, Val2)</b><br>
+ * Returns <i>Val1</i> if <i>c</i> is true<br/>
+ * or <i>Val2</i> if <i>c</i> is false.<br/>
+ * ex: <i>ifElse(true, "first", "second") = "first"</i><br/>
+ * <i>ifElse(false, "first", "second")</i> = "second"
+ */
 class ConditionExpression extends GenericExpression
 {
 	/**
@@ -56,7 +62,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "cond";
+		return array("ifElse","cond");
 	}
 
 	/**
