@@ -123,7 +123,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
           	   }
            }
         } else {
-           rmdir_recursive('custom/modules/Accounts');
+           rmdir_recursive('custom/modules/Accounts/workflow');
         }
 
         if($this->has_logic_hooks_file)
