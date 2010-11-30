@@ -233,6 +233,9 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 					$required = 1;
 				}
 				
+				if($var['type'] == 'bool')
+				    $var['options'] = 'checkbox_dom';
+				    
 				if(isset($var['options'])){
 					$options_dom = translate($var['options'], $value->module_dir);
 					if(!is_array($options_dom)) $options_dom = array();
@@ -409,4 +412,150 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         
         return $results;
     }
+    
+    /**
+     * Equivalent of get_list function within SugarBean but allows the possibility to pass in an indicator
+     * if the list should filter for favorites.  Should eventually update the SugarBean function as well.
+     *
+     */
+    function get_data_list($seed, $order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $favorites = false, $singleSelect=false)
+	{
+		$GLOBALS['log']->debug("get_list:  order_by = '$order_by' and where = '$where' and limit = '$limit'");
+		if(isset($_SESSION['show_deleted']))
+		{
+			$show_deleted = 1;
+		}
+		$order_by=$seed->process_order_by($order_by, null);
+
+		if($seed->bean_implements('ACL') && ACLController::requireOwner($seed->module_dir, 'list') )
+		{
+			global $current_user;
+			$owner_where = $seed->getOwnerWhere($current_user->id);
+			if(!empty($owner_where)){
+				if(empty($where)){
+					$where = $owner_where;
+				}else{
+					$where .= ' AND '.  $owner_where;
+				}
+			}
+		}
+		$params = array();
+		if($favorites)
+		  $params['favorites'] = true;
+		  
+		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted,'',false,null,$singleSelect);
+		return $seed->process_list_query($query, $row_offset, $limit, $max, $where);
+	}
+	
+    /**
+     * Add ACL values to metadata files.
+     *
+     * @param String $module_name
+     * @param String $view_type (wireless or detail)
+     * @param String $view  (list, detail,edit, etc)
+     * @param array $metadata The metadata for the view type and view.
+     * @return unknown
+     */
+	function addFieldLevelACLs($module_name,$view_type, $view, $metadata)
+	{
+	    $functionName = "metdataAclParser" . ucfirst($view_type) . ucfirst($view);
+	    if( method_exists($this, $functionName) )
+	       return $this->$functionName($module_name, $metadata);
+	    else 
+	       return $metadata;
+	}
+	
+	/**
+	 * Parse wireless listview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessList($module_name, $metadata)
+	{
+	    global  $beanList, $beanFiles;
+	    $class_name = $beanList[$module_name];
+	    require_once($beanFiles[$class_name]);
+	    $seed = new $class_name();
+
+	    $results = array();
+	    foreach ($metadata as $field_name => $entry)
+	    {
+	        if($seed->bean_implements('ACL'))
+	            $entry['acl'] = $this->getFieldLevelACLValue($seed->module_dir, strtolower($field_name));
+	        else
+	            $entry['acl'] = 99;
+	            
+	        $results[$field_name] = $entry;
+	    }
+	    
+	    return $results;
+	}
+	
+	/**
+	 * Parse wireless detailview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessEdit($module_name, $metadata)
+	{
+	    global  $beanList, $beanFiles;
+	    $class_name = $beanList[$module_name];
+	    require_once($beanFiles[$class_name]);
+	    $seed = new $class_name();
+	    
+	    $results = array();
+	    $results['templateMeta'] = $metadata['templateMeta'];
+	    $aclRows = array();
+	    //Wireless metadata only has a single panel definition.
+	    foreach ($metadata['panels'] as $row)
+	    {
+	        $aclRow = array();
+	        foreach ($row as $field)
+	        {
+	            $aclField = array();
+	            if( is_string($field) )
+	                $aclField['name'] = $field;
+	            else 
+	                $aclField = $field;
+	            
+	            if($seed->bean_implements('ACL'))
+	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']); 
+	            else
+	                $aclField['acl'] = 99;
+	            
+	            $aclRow[] = $aclField;
+	        }
+	        $aclRows[] = $aclRow;
+	    }
+	    
+	    $results['panels'] = $aclRows;
+	    return $results;
+	}
+	/**
+	 * Return the field level acl raw value.  We cannot use the hasAccess call as we do not have a valid bean
+	 * record at the moment and therefore can not specify the is_owner flag.  We need the raw access value so we
+	 * can do the computation on the client side.  TODO: Move function into ACLField class.
+	 *
+	 * @param String $module Name of the module
+	 * @param String $field Name of the field
+	 * @return int
+	 */
+	function getFieldLevelACLValue($module, $field, $current_user = null)
+	{   
+	    if($current_user == null)
+	       $current_user = $GLOBALS['current_user'];
+	       
+	    if( is_admin($current_user) )
+	         return 99;
+	       
+	    if(!isset($_SESSION['ACL'][$current_user->id][$module]['fields'][$field])){
+			 return 99;	
+		}
+		
+		return $_SESSION['ACL'][$current_user->id][$module]['fields'][$field];
+	}
 }
