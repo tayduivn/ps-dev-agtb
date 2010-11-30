@@ -1,4 +1,4 @@
-<?php 
+<?php
 //FILE SUGARCRM flav=pro ONLY
 require_once('include/nusoap/nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
@@ -17,18 +17,18 @@ class Bug38100Test extends SOAPTestCase
 	public function setUp()
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
-		
+
 		$beanList = array();
 		$beanFiles = array();
 		require('include/modules.php');
 		$GLOBALS['beanList'] = $beanList;
 		$GLOBALS['beanFiles'] = $beanFiles;
-    	
+
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-       
+
 		parent::setUp();
     }
-    
+
     public function tearDown()
     {
 		unset($GLOBALS['beanList']);
@@ -36,12 +36,15 @@ class Bug38100Test extends SOAPTestCase
 		unset($GLOBALS['app_list_strings']);
     }
 
-    public function testGetReportEntries() 
+    public function testGetReportEntries()
     {
     	require_once('service/core/SoapHelperWebService.php');
     	require_once('modules/Reports/Report.php');
     	require_once('modules/Reports/SavedReport.php');
-    	$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports");
+    	$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports WHERE deleted=0");
+    	if(!$savedReportId) {
+    	    $this->markTestSkipped("No live reports!");
+    	}
     	$savedReport = new SavedReport();
     	$savedReport->retrieve($savedReportId);
     	$helperObject = new SoapHelperWebServices();
