@@ -118,6 +118,8 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
           	   {
           	   		copy($target_file . '.bak', $target_file);
           	   		unlink($target_file . '.bak');
+          	   } else {
+          	       unlink($target_file);
           	   }
            }
         } else {
@@ -128,6 +130,8 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         {
         	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
         	unlink('custom/modules/Accounts/logic_hooks.php.bak');
+        } else {
+            unlink('custom/modules/Accounts/logic_hooks.php');
         }
 
         $sql = "DELETE FROM workflow where id in ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', '43406320-49b6-6503-0074-4c73532a4325')";
