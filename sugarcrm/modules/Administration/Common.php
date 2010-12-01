@@ -318,6 +318,7 @@ function return_custom_app_list_strings_file_contents($language, $custom_filenam
 	$filename = "custom/include/language/$language.lang.php";
 	if(!empty($custom_filename))
 		$filename = $custom_filename;
+	
 	if (is_file($filename))
 	{
 		$contents = file_get_contents($filename);
