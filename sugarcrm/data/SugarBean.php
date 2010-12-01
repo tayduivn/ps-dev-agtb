@@ -3737,7 +3737,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     			$temp->check_date_relationships_load();
     			$temp->fill_in_additional_list_fields();
-				$temp->custom_fields->fill_relationships();
+				if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
 				$temp->call_custom_logic("process_record");
 
     			$list[] = $temp;
