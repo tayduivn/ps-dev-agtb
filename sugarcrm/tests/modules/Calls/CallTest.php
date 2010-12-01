@@ -27,6 +27,9 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
         @unlink($GLOBALS['sugar_config']['cache_dir'].'modules/Calls/language/test_test.lang.php');
     }
 
+    /**
+     * @group bug40999
+     */
     public function testCallStatus()
     {
          $call = new Call();
@@ -40,6 +43,9 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $this->assertEquals('Test', $call->status);
     }
 
+    /**
+     * @group bug40999
+     */
     public function testCallEmptyStatus()
     {
          $call = new Call();
@@ -82,6 +88,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
          $GLOBALS['current_language'] = 'test_test';
          $call = new Call();
          $call->field_defs['status']['default'] = 'My Call';
+         $call = new Call();
          $this->callid = $call->id = create_guid();
          $call->new_with_id = 1;
          $call->save();

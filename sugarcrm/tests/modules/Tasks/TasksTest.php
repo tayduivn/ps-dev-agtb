@@ -3,20 +3,28 @@ require_once "modules/Tasks/Task.php";
 
 class TasksTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $_REQUEST['module'] = 'Tasks';
 	}
+
+	public static function tearDownAfterClass()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
+
+    public function setUp()
+    {
+        $_REQUEST['module'] = 'Tasks';
+    }
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($_REQUEST['module']);
         if(!empty($this->taskid)) {
             $GLOBALS['db']->query("DELETE FROM tasks WHERE id='{$this->taskid}'");
         }
-        unset($GLOBALS['current_user']);
-        unset($_REQUEST['module']);
     }
 
     /**
@@ -32,6 +40,25 @@ class TasksTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($listViewFields['TIME_DUE'], $GLOBALS['timedate']->to_display_time("15:00:00"));
     }
 
+    /**
+     * @group bug40999
+     */
+    public function testTaskStatus()
+    {
+         $task = new Task();
+         $this->taskid = $task->id = create_guid();
+         $task->new_with_id = 1;
+         $task->status = 'Done';
+         $task->save();
+         // then retrieve
+         $task = new Task();
+         $task->retrieve($this->taskid);
+         $this->assertEquals('Done', $task->status);
+    }
+
+    /**
+     * @group bug40999
+     */
     public function testTaskEmptyStatus()
     {
          $task = new Task();
@@ -41,7 +68,7 @@ class TasksTest extends Sugar_PHPUnit_Framework_TestCase
          // then retrieve
          $task = new Task();
          $task->retrieve($this->taskid);
-         $this->assertEquals('Planned', $task->status);
+         $this->assertEquals('Not Started', $task->status);
     }
 
 }
