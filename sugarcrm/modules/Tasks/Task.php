@@ -94,8 +94,7 @@ class Task extends SugarBean {
     function save($check_notify = FALSE)
     {
         if (empty($this->status) ) {
-            $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
-            $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
+            $this->status = $this->getDefaultStatus();
         }
         return parent::save($check_notify);
     }
@@ -264,17 +263,17 @@ class Task extends SugarBean {
 			//this is a subpanel list view, so override the due date with start date so that collections subpanel works as expected
 			$override_date_for_subpanel = true;
 		}
-		
+
 		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
 		$task_fields = $this->get_list_view_array();
 		$dbtime = $timedate->to_db($task_fields['DATE_DUE']);
-		if($override_date_for_subpanel){		
+		if($override_date_for_subpanel){
 			$dbtime = $timedate->to_db($task_fields['DATE_START']);
 		}
-		
+
         $task_fields['TIME_DUE'] = $timedate->to_display_time($dbtime);
         $task_fields['DATE_DUE'] = $timedate->to_display_date($dbtime);
-		
+
 
         $date_due = $task_fields['DATE_DUE'];
 
@@ -282,7 +281,7 @@ class Task extends SugarBean {
 			$task_fields['PRIORITY'] = $app_list_strings['task_priority_dom'][$this->priority];
 		if (isset($this->parent_type))
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
-		if ($this->status != "Completed" && $this->status != "Deferred" ) 
+		if ($this->status != "Completed" && $this->status != "Deferred" )
 		{
 			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
 		    $task_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'")."</a>";
@@ -291,17 +290,17 @@ class Task extends SugarBean {
         $dd = $timedate->to_db_date($date_due, false);
 		if ($dd < $today){
 			$task_fields['DATE_DUE']= "<font class='overdueTask'>".$date_due."</font>";
-			if($override_date_for_subpanel){			
+			if($override_date_for_subpanel){
 				$task_fields['DATE_START']= "<font class='overdueTask'>".$date_due."</font>";
 			}
 		}else if( $dd	== $today ){
 			$task_fields['DATE_DUE'] = "<font class='todaysTask'>".$date_due."</font>";
-			if($override_date_for_subpanel){			
+			if($override_date_for_subpanel){
 				$task_fields['DATE_START'] = "<font class='todaysTask'>".$date_due."</font>";
 			}
 		}else{
 			$task_fields['DATE_DUE'] = "<font class='futureTask'>".$date_due."</font>";
-			if($override_date_for_subpanel){			
+			if($override_date_for_subpanel){
 				$task_fields['DATE_START'] = "<font class='futureTask'>".$date_due."</font>";
 			}
 		}
@@ -312,7 +311,7 @@ class Task extends SugarBean {
 			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
-	
+
 			// Get the contact name.
 			$row = $this->db->fetchByAssoc($result);
 
@@ -331,7 +330,7 @@ class Task extends SugarBean {
 			$task_fields['TITLE'] .= "\n".$app_list_strings['parent_type_display'][$this->parent_type].": ".$this->parent_name;
 			$task_fields['PARENT_NAME']=$this->parent_name;
 		}
-		
+
 		return $task_fields;
 	}
 
@@ -389,5 +388,19 @@ class Task extends SugarBean {
 		return $array_assign;
 	}
 
+	public function getDefaultStatus()
+    {
+         $def = $this->field_defs['status'];
+         if (isset($def['default'])) {
+             return $def['default'];
+         } else {
+            $app = return_app_list_strings_language($GLOBALS['current_language']);
+            if (isset($def['options']) && isset($app[$def['options']])) {
+                $keys = array_keys($app[$def['options']]);
+                return $keys[0];
+            }
+        }
+        return '';
+    }
+
 }
-?>
