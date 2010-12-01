@@ -216,6 +216,7 @@ class OracleHelper extends DBHelper
             'decimal2' => 'number (30,6)',
             'url'=>'varchar2(255)',
             'encrypt'=>'varchar2(255)',
+            'file'     => 'varchar2(255)',
             );
                     
 		return $map[$type];

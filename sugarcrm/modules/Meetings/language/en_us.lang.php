@@ -90,6 +90,11 @@ $mod_strings = array (
 	'LBL_SEND_BUTTON_LABEL'=>'Send Invites',
 	'LBL_SEND_BUTTON_TITLE'=>'Send Invites [Alt+I]',
 	'LBL_STATUS' => 'Status:',
+   'LBL_TYPE' => 'Meeting Type',
+   'LBL_PASSWORD' => 'Meeting Password',
+   'LBL_URL' => 'Meeting URL',
+   'LBL_CREATOR' => 'Meeting Creator',
+   'LBL_EXTERNALID' => 'External app ID',
 	'LBL_SUBJECT' => 'Subject:',
 	'LBL_TIME' => 'Start Time:',
 	'LBL_USERS_SUBPANEL_TITLE' => 'Users',
@@ -105,5 +110,8 @@ $mod_strings = array (
     'LBL_MODIFIED_USER' => 'Modified User',
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
     'LBL_MEETING_INFORMATION' => 'Meeting Overview',
+	'LBL_LIST_JOIN_MEETING' => ' ',
+	'LBL_JOIN_EXT_MEETING' => 'Join Meeting',
+	'LBL_HOST_EXT_MEETING' => 'Start Meeting',
 );
 ?>

@@ -39,6 +39,15 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 </script>
 <script type='text/javascript' src='{sugar_getjspath file='modules/Users/PasswordRequirementBox.js'}'></script>
 {$ERROR_STRING}
+<!-- This is here for the external API forms -->
+<form name="DetailView" id="DetailView" method="POST" action="index.php">
+	<input type="hidden" name="record" id="record" value="{$ID}">
+	<input type="hidden" name="module" value="Users">
+	<input type="hidden" name="return_module" value="Users">
+	<input type="hidden" name="return_id" value="{$ID}">
+	<input type="hidden" name="return_action" value="EditView">
+</form>
+
 <form name="EditView" enctype="multipart/form-data" id="EditView" method="POST" action="index.php">
 	<input type="hidden" name="display_tabs_def">
 	<input type="hidden" name="hide_tabs_def">
@@ -74,6 +83,15 @@ SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
 
 EditView_tabs.on('contentReady', function(e){
 {/literal}
+{literal}
+    EditView_tabs.addTab( new YAHOO.widget.Tab({
+        label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
+        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
+        content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
+        cacheData: true
+    }));
+    EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
+{/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
@@ -83,7 +101,7 @@ EditView_tabs.on('contentReady', function(e){
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-    EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
+    EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY

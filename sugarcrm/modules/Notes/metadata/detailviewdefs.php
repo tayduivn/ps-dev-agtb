@@ -70,14 +70,13 @@ array (
          
         array (
            
-          array (
+          '0' => array (
             'name' => 'filename',
-            'type' => 'file',
-            'displayParams' => 
-            array (
-              'id' => 'id',
-              'link' => 'filename',
-            ),
+          ),
+          
+          '1' => array(
+          	'name' => 'doc_type',
+            'label' => 'LBL_DOC_TYPE',
           ),
         ),
          

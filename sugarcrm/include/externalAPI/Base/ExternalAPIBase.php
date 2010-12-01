@@ -1,0 +1,165 @@
+<?php
+
+require_once ('include/externalAPI/Base/ExternalAPIPlugin.php');
+require_once ('include/externalAPI/Base/ExternalOAuthAPIPlugin.php');
+
+abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlugin
+{
+    public $account_name;
+    public $account_password;
+    public $authMethod = 'password';
+    public $useAuth = true;
+    public $requireAuth = true;
+    /**
+     * Authorization data
+     * @var EAPM
+     */
+    protected $authData;
+
+    /**
+     * Load authorization data
+     * @param EAPM $eapmBean
+     * @see ExternalAPIPlugin::loadEAPM()
+     */
+    public function loadEAPM($eapmBean)
+    {
+        // FIXME: check if the bean is validated, if not, refuse it?
+        $this->authData = $eapmBean;
+        if ($this->authMethod == 'password') {
+            $this->account_name = $eapmBean->name;
+            $this->account_password = $eapmBean->password;
+        } else if ( $this->authMethod == 'oauth') {
+            $this->oauth_token = $eapmBean->oauth_token;
+            $this->oauth_secret = $eapmBean->oauth_secret;
+        }
+        return true;
+    }
+
+    /**
+     * Check login
+     * @param EAPM $eapmBean
+     * @see ExternalAPIPlugin::checkLogin()
+     */
+    public function checkLogin($eapmBean = null)
+    {
+        if(!empty($eapmBean)) {
+            $this->loadEAPM($eapmBean);
+        }
+        $this->checkOauthLogin();
+    }
+
+    protected function checkOauthLogin()
+    {
+        if(empty($this->authData)) return;
+
+        if($this->authMethod == 'oauth') {
+            if(empty($this->authData->oauth_token) || empty($this->authData->oauth_secret)) {
+                $this->authData->oauthLogin($this);
+            }
+        }
+    }
+
+    protected function getValue($value)
+    {
+        if(!empty($this->$value)) {
+            return $this->$value;
+        }
+        return null;
+    }
+
+    public function getOauthParams()
+    {
+        return $this->getValue("oauthParams");
+    }
+
+    public function getOauthRequestURL()
+    {
+        return $this->getValue("oauthReq");
+    }
+
+    public function getOauthAuthURL()
+    {
+        return $this->getValue("oauthAuth");
+    }
+
+    public function getOauthAccessURL()
+    {
+        return $this->getValue("oauthAccess");
+    }
+
+    /**
+     * Get OAuth client
+     * @return SugarOauth
+     */
+    public function getOauth()
+    {
+        $oauth = new SugarOAuth($this->oauthParams['consumerKey'], $this->oauthParams['consumerSecret'], $this->getOauthParams());
+        
+        if ( isset($this->oauth_token) && !empty($this->oauth_token) ) {
+            $oauth->setToken($this->oauth_token, $this->oauth_secret);
+        }
+        
+        return $oauth;
+    }
+
+    protected function encodeParams($params = array())
+    {
+		if(empty($params)) {
+            return '';
+        }
+
+        // Encode _everything_
+		$keys = rawurlencode(array_keys($params));
+		$values = rawurlencode(array_values($params));
+
+		// Combine the parameters
+		$params = array_combine($keys, $values);
+
+        // Sort it for the signature
+		uksort($params, 'strcmp');
+
+        $paramString = '';
+
+		// Build the parameter string
+		foreach($params as $key => $value) {
+            $paramString .= $key.'='.str_replace('%25', '%', $value).'&';
+        }
+
+		return rtrim('&', $paramString);        
+    }
+
+    public function logOff()
+    {
+        // Not sure if we should do anything.
+        return true;
+    }
+
+    public function supports($method = '')
+	{
+        return $method==$this->authMethod;
+	}
+
+	protected function postData($url, $postfields, $headers)
+	{
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if ( ( is_array($postfields) && count($postfields) == 0 ) || 
+             empty($postfields) ) {
+            curl_setopt($ch, CURLOPT_POST, false);
+        } else {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+
+        $GLOBALS['log']->fatal("Where: ".$url);
+        $GLOBALS['log']->fatal("Headers:\n".print_r($headers,true));
+        $GLOBALS['log']->fatal("Postfields:\n".print_r($postfields,true));
+        $rawResponse = curl_exec($ch);
+        $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
+
+        return $rawResponse;
+	}
+}

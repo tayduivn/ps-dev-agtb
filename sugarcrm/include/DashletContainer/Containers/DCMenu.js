@@ -30,7 +30,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		if(typeof overlays[depth] == 'undefined'){
     			 overlays[depth] = new Y.Overlay({
             			bodyContent: "",
-           			    zIndex:10,
+           			    zIndex:10 + depth,
             			shim:false,
             			visibility:false
         		});
@@ -78,6 +78,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     DCMenu.displayModuleMenu = function(obj, module){
     	loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module); 	
     	
+    }
+    
+    DCMenu.closeTopOverlay = function(){
+        overlays[overlays.length - 1].hide();
     }
     
     DCMenu.closeOverlay = function(depth){
@@ -281,6 +285,30 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		DCMenu.closeOverlay();	
 		return false;	
 	}
+    
+    DCMenu.submitForm = function(id, status, title){
+		ajaxStatus.showStatus(status);
+		Y.io('index.php',{
+			method:'POST',
+			form:{
+				id:id,
+				upload: true
+			},
+			on:{
+				complete: function(id, data){
+                    alert('hello');
+				}	
+			}
+			
+		});
+		lastLoadedMenu=undefined;
+		return false;	
+	}
+    
+    DCMenu.hostMeeting = function(){
+        window.open('https://apps.lotuslive.com/meetings/host', 'hostmeeting');
+    }
+
 	
   
    

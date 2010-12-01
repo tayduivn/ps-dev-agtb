@@ -90,8 +90,9 @@ array (
                 'name' => 'status',
               ),
             ),
-          ),
-        ),
+         ),
+      ),
+      array('type','password'),
         array (
           array (
             'name' => 'date_start',
@@ -102,13 +103,13 @@ array (
               'updateCallback' => 'SugarWidgetScheduler.update_time();',
             ),
           ),
-          1 => 
+          
           array (
             'name' => 'parent_name',
             'label' => 'LBL_LIST_RELATED_TO',
           ),
         ),
-        2 => 
+       
         array (
           array (
             'name' => 'duration_hours',
@@ -120,6 +121,7 @@ array (
             'comment' => 'Meeting location',
             'label' => 'LBL_LOCATION',
           ),
+
         ),
         array (
           array (

@@ -514,7 +514,12 @@ $GLOBALS['moduleTabMap'] = array(
     'Quotas' => 'Forecasts',
     'TeamNotices' => 'Teams',
 //END SUGARCRM flav=pro ONLY
-);
+ );
+$beanList['EAPM'] = 'EAPM';
+$beanFiles['EAPM'] = 'modules/EAPM/EAPM.php';
+$modules_exempt_from_availability_check['EAPM'] = 'EAPM';
+$modInvisList[] = 'EAPM';
+
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['SugarFavorites'] = 'SugarFavorites';
 $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';

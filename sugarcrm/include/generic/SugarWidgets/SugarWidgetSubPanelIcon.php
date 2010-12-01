@@ -92,6 +92,21 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 				. '&record=' . $record
 				. '" >' . "$icon_img_html</a>";
 		}
+
+		if(!empty($layout_def['image2']) &&  !empty($layout_def['image2_ext_url_field'])){
+ 
+			if (!empty($layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])])) {
+				$link_url  = $layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])];						
+			}
+            if ( $layout_def['image2'] == '__VARIABLE' ) {
+                $imagePath = $layout_def['fields'][$key.'_ICON'];
+            } else {
+                $imagePath = $layout_def['image2'];
+            }
+ 
+			$icon_img_html = SugarThemeRegistry::current()->getImage( $imagePath . '', 'border="0" alt="' . $imagePath . '"');
+			$ret.= (empty($link_url)) ? '' : '<a href="' . $link_url. '" TARGET = "_blank">' . "$icon_img_html</a>";	
+        }
 //if requested, add attachement icon.
 		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
 			if (is_array($layout_def['image2_url_field'])) {
@@ -101,9 +116,14 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 				and !empty($layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])]) ){
 					
 					$key=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['id_field'])];
-					$file=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])];
-					//$filepath=UploadFile :: get_url(from_html($file), $key);	
-					$filepath="index.php?entryPoint=download&id=".$key."&type=".$layout_def['module'];
+					$doc_id = $layout_def['fields'][strtoupper($layout_def['image2_url_field']['doc_id'])];
+					if(empty($doc_url)){
+						$file=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])];
+						//$filepath=UploadFile :: get_url(from_html($file), $key);	
+						$filepath="index.php?entryPoint=download&id=".$key."&type=".$layout_def['module'];
+					} else {
+						$filepath = $doc_url."\" target=\"_blank";	
+					}					
 				}
 			}
 			else {

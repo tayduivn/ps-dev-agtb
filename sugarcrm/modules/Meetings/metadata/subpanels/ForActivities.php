@@ -42,6 +42,9 @@ $subpanel_layout = array(
 		'object_image'=>array(
 			'widget_class' => 'SubPanelIcon',
  		 	'width' => '2%',
+			'image2'=>'__VARIABLE',
+ 		 	'image2_ext_url_field'=>'displayed_url',
+            'attachment_image_only'=>true,
 		),
 		'close_button'=>array(
 			'widget_class' => 'SubPanelCloseButton',
@@ -105,7 +108,13 @@ $subpanel_layout = array(
 		'time_start'=>array(
 			'usage'=>'query_only',
 	
-		),					
+		),	
+		'join_url'=>array(
+			'usage'=>'query_only'
+		),	
+		'host_url'=>array(
+			'usage'=>'query_only'
+		),			
 	),
 );		
 ?>

@@ -33,6 +33,43 @@ $dictionary['Document'] = array('table' => 'documents'
   ),
   'name'=>
   array('name'=>'name', 'vname' => 'LBL_NAME', 'source'=>'non-db', 'type'=>'varchar'),
+'doc_id' =>
+  array (
+  	'name' => 'doc_id',
+  	'vname' => 'LBL_DOC_ID',
+  	'type' => 'varchar',
+  	'len' => '100',
+  	'comment' => 'Document ID from documents web server provider',
+  	'importable' => false,
+  ),
+  'doc_type' =>
+  array (
+  	'name' => 'doc_type',
+  	'vname' => 'LBL_DOC_TYPE',
+  	'type' => 'enum',
+    'function' => 'getDocumentsExternalApiDropDown',
+  	'len' => '100',
+  	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+  ),
+'doc_url' =>
+  array (
+  	'name' => 'doc_url',
+  	'vname' => 'LBL_DOC_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider',
+  	'importable' => false,
+  ),
+'doc_direct_url' =>
+  array (
+  	'name' => 'doc_direct_url',
+  	'vname' => 'LBL_DOC_DIRECT_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider for direct download',
+  	'importable' => false,
+  ),
+
   'filename' =>
   array (
      'name' => 'filename',
@@ -41,17 +78,10 @@ $dictionary['Document'] = array('table' => 'documents'
      'source' => 'non-db',
      'comment' => 'The filename of the document attachment',
 	 'required' => true,
+     'noChange' => true,
+     'allowEapm' => true,
+     'fileId' => 'document_revision_id',
   ),
-
-  'uploadfile' =>
-  array (
-     'name'=>'uploadfile',
-     'required' => true,
-     'vname' => 'LBL_FILENAME',
-     'type' => 'file',
-     'source' => 'non-db',
-  ),
-
 'active_date' =>
   array (
     'name' => 'active_date',

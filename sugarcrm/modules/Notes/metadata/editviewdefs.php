@@ -57,17 +57,8 @@ function deleteAttachmentCallBack(text)
                         array('name'=>'name', 'displayParams'=>array('size'=>60)),''
                     ),
 					array ( 
-						array (
-	        				'name' => 'filename',
-	        				'customCode' => '<span id=\'new_attachment\' style=\'display:{if !empty($fields.filename.value)}none{/if}\'>
-        									 <input name="uploadfile" tabindex="3" type="file" size="60"/>
-        									 </span>
-											 <span id=\'old_attachment\' style=\'display:{if empty($fields.filename.value)}none{/if}\'>
-		 									 <input type=\'hidden\' name=\'deleteAttachment\' value=\'0\'>
-		 									 {$fields.filename.value}<input type=\'hidden\' name=\'old_filename\' value=\'{$fields.filename.value}\'/><input type=\'hidden\' name=\'old_id\' value=\'{$fields.id.value}\'/>
-											 <input type=\'button\' class=\'button\' value=\'{$APP.LBL_REMOVE}\' onclick=\'ajaxStatus.showStatus(SUGAR.language.get("Notes", "LBL_REMOVING_ATTACHMENT"));this.form.deleteAttachment.value=1;this.form.action.value="EditView";SUGAR.dashlets.postForm(this.form, deleteAttachmentCallBack);this.form.deleteAttachment.value=0;this.form.action.value="";\' >       
-											 </span>',
-	      				),
+					    '0' => 'doc_type',
+						'1' => 'filename',
 	      				//BEGIN SUGARCRM flav=pro ONLY
 					    array('name'=>'portal_flag',
 					          'displayParams'=>array('required'=>false),

@@ -42,7 +42,7 @@ function enableQS(noReload){
     	if(typeof sqs_objects == 'undefined') {
     	   return;
     	}
-    	
+        
     	var Dom = YAHOO.util.Dom;
     	
     	//Get all the fields where sqsEnabled is an attribue, these should be the input text fields for quicksearch
@@ -73,7 +73,6 @@ function enableQS(noReload){
         	   		continue;
         	   	}
         	}
-        	
         	//Track if this field has already been processed.  The way the enableQS function is called
         	//is a bit problematic in that it lends itself to a lot of duplicate processing
         	if(QSProcessedFieldsArray[qs_index_id]) {
@@ -173,6 +172,7 @@ function enableQS(noReload){
 							this.oldValue = "";
 	                    }
                     });
+
                     
                     //fill in the data fields on selection
                     search.itemSelectEvent.subscribe(function(e, args){

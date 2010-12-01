@@ -20,13 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id$
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
 require_once('include/facebook.php');
@@ -102,7 +95,7 @@ var $selectedCategories = array();
         // Fire up the Facebook
         $this->fbData['appId'] = '141380979217659';
         $this->fbData['secret'] = '93b0ed5908a2b23c3e17a2cc2a22cd77';
-        $this->fb = new Facebook(array(
+        $this->fb = new FacebookLib(array(
                                      'appId'  => $this->fbData['appId'],
                                      'secret' => $this->fbData['secret'],
                                      'cookie' => true,
@@ -371,9 +364,9 @@ var $selectedCategories = array();
         $td = $GLOBALS['timedate'];
         $needResort = false;
         $resortQueue = array();
-        // Check if we need to resort the FB messages
+        // Check if we need to re-sort the FB messages
         if ( isset($this->fbData['lastMessages']['data'][0]) ) {
-            // We need to resort
+            // We need to re-sort
             $needResort = true;
             
             // Put the FB messages in the resort queue.
@@ -403,39 +396,20 @@ var $selectedCategories = array();
             }
         }
         
-        // Check if we need to resort the Twitter messages
-        if ( $this->twitData['enabled'] && count($this->twitData['messages']) > 0 ) {
-            $needResort = true;
-            
-            foreach ( $this->twitData['messages'] as $message ) {
-                if ( empty($message['text']) ) {
-                    continue;
-                }
-                // Extract the timestamp, with passion
-                $unix_time = strtotime($message['created_at']);
-            
-                $fake_record = array();
-                $fake_record['sort_key'] = $unix_time;
-                $fake_record['ID'] = create_guid();
-                $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('Y-m-d H:i:s',$unix_time));
-                $fake_record['NAME'] = $message['user']['name'].'</b>';
-                if ( !empty($message['text']) ) {
-                    $fake_record['NAME'] .= ' '.$message['text'];
-                }
-                $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
-                $fake_record['IMAGE_URL'] = $message['user']['profile_image_url'];
-            
-            
-                $resortQueue[] = $fake_record;
-            }
+        require_once('include/externalAPI/ExternalAPIFactory.php');
+        $twitter = ExternalAPIFactory::loadAPI('Twitter');
+        if ( $twitter !== FALSE ) {
+            $replies = $twitter->getLatestUpdates(time(),15);
+            array_splice($resortQueue, count($resortQueue), 0, $replies);
         }
+        
 
         // If we need to resort, get to work!
         if ( true ) {
             foreach ( $this->lvs->data['data'] as $normalMessage ) {
                 list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
                 list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
-
+                
                 $unix_timestamp = strtotime($db_date.' '.$db_time);
                 
                 $normalMessage['sort_key'] = $unix_timestamp;
@@ -443,10 +417,10 @@ var $selectedCategories = array();
                 
                 $resortQueue[] = $normalMessage;
             }
-
+            
             usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
-
-            // echo('<pre> ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
+            
+            //echo('<pre>IKEA ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
             
             foreach ( $resortQueue as $key=>&$item ) {
                 if ( empty($item['IMAGE_URL']) ) {
@@ -455,7 +429,7 @@ var $selectedCategories = array();
                         $user = loadBean('Users');
                         $user->retrieve($item['ASSIGNED_USER_ID']);
                         if ( !empty($user->picture) ) {
-                            $item['IMAGE_URL'] = 'cache/upload/'.$user->picture;
+                            $item['IMAGE_URL'] = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
                         }
                     }
                 }
@@ -745,9 +719,6 @@ EOQ;
             $linkTypes[$key] = translate('LBL_LINK_TYPE_'.$value,'SugarFeed');
         }
 		$ss->assign('link_types', $linkTypes);
-        $ss->assign('fb', $this->fb);
-        $ss->assign('fbData', $this->fbData);
-        $ss->assign('twitData', $this->twitData);
 		return $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/UserPostForm.tpl');
 	
 	}
@@ -764,15 +735,4 @@ EOQ;
             return true;
         }
     }
-
-    function enableTwitter() {
-        $_SESSION['feed_twitter_enabled'] = true;
-        header('Location: index.php?module=Home&action=index');
-    }
-
-    function disableTwitter() {
-        $_SESSION['feed_twitter_enabled'] = false;
-        header('Location: index.php?module=Home&action=index');
-    }
-
 }

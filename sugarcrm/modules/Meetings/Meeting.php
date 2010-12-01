@@ -48,6 +48,7 @@ class Meeting extends SugarBean {
 	var $name;
 	var $location;
 	var $status;
+	var $type;
 	var $date_start;
 	var $time_start;
 	var $date_end;
@@ -170,11 +171,52 @@ class Meeting extends SugarBean {
             $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
             $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
         }
+
+        // Do any external API saving
+        // Clear out the old external API stuff if we have changed types
+        if (isset($this->fetched_row) && $this->fetched_row['type'] != $this->type ) {
+            $this->join_url = '';
+            $this->host_url = '';
+            $this->external_id = '';
+            $this->creator = '';
+        }
+
+        if (!empty($this->type) && $this->type != 'SugarCRM' ) {
+            require_once('include/externalAPI/ExternalAPIFactory.php');
+            $api = ExternalAPIFactory::loadAPI($this->type);           
+        }
+
+        if ( isset($api) && is_a($api,'WebMeeting') ) {
+            // Make sure the API initialized and it supports Web Meetings
+            $response = $api->scheduleMeeting($this);
+            if ( $response['success'] == TRUE ) {
+                // Need to send out notifications
+                if ( $api->canInvite ) {
+                    $notifyList = $this->get_notification_recipients();
+                    foreach($notifyList as $person) {
+                        $api->inviteAttendee($bean,$person,$check_notify);
+                    }
+                    
+                    // Don't double-send if the WebMeeting API sends invites
+                    if ( $api->sendsInvites ) {
+                        $check_notify = false;
+                    }
+                }
+            } else {
+                if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
+                $_SESSION['user_error_message'][] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
+            }
+            
+            $api->logoff();
+        }
+
 		$return_id = parent::save($check_notify);
 
 		if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
 		}
+
+        
 
 		return $return_id;
 	}
@@ -400,7 +442,22 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-
+		
+		if($this->assigned_user_id == $GLOBALS['current_user']->id){
+			$join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" alt="'.translate($this->module_dir,'LBL_HOST_EXT_MEETING').'"');
+            $meeting_fields['OBJECT_IMAGE_ICON'] = 'start_meeting_inline';
+			$meeting_fields['DISPLAYED_URL'] = $this->host_url;
+		}else{
+			$join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" alt="'.translate($this->module_dir,'LBL_JOIN_EXT_MEETING').'"');
+            $meeting_fields['OBJECT_IMAGE_ICON'] = 'join_meeting_inline';
+			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
+		}
+		
+		$meeting_fields['JOIN_MEETING']  = '';
+		if(!empty($meeting_fields['DISPLAYED_URL'])){
+			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . $join_icon . '</a>';
+		}
+	
 		return $meeting_fields;
 	}
 
@@ -429,10 +486,15 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
+		$xtpl->assign("MEETING_TYPE",(isset($meeting->type)? $app_list_strings['meeting_type_dom'][$meeting->type]:""));
 		$xtpl->assign("MEETING_STARTDATE", $timedate->to_display_date_time($meeting->date_start,true,true,$notifyUser)." ".$prefDate['userGmt']);
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
+        if ( !empty($meeting->join_url) ) {
+            $xtpl->assign('MEETING_URL', $meeting->join_url);
+            $xtpl->parse('Meeting.Meeting_External_API');
+        }
 
 		return $xtpl;
 	}
@@ -632,5 +694,19 @@ class Meeting extends SugarBean {
 
 	    parent::afterImportSave();
 	}
+
 } // end class def
+
+// External API integration, for the dropdown list of what external API's are available
+function getMeetingsExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
+    
+    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
+    
+    return $apiList;
+    
+}
+
 ?>

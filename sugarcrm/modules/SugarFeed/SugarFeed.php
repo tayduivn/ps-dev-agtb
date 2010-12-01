@@ -394,7 +394,7 @@ class SugarFeed extends Basic {
                 $user = loadBean('Users');
                 $user->retrieve($reply->created_by);
                 if ( !empty($user->picture) ) {
-                    $image_url = 'cache/upload/'.$user->picture;
+                    $image_url = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
                 }
             }
             $replyHTML .= '<div style="float: left; margin-right: 3px;"><img src="'.$image_url.'" height=50></div> ';
