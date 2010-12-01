@@ -86,6 +86,26 @@ require_once 'SugarTestMergeUtilities.php';
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
+
+    protected function assertPostConditions() {
+        if(!empty($_REQUEST)) {
+            foreach(array_keys($_REQUEST) as $k) {
+		        unset($_REQUEST[$k]);
+		    }
+        }
+
+        if(!empty($_POST)) {
+            foreach(array_keys($_POST) as $k) {
+		        unset($_POST[$k]);
+		    }
+        }
+
+        if(!empty($_GET)) {
+            foreach(array_keys($_GET) as $k) {
+		        unset($_GET[$k]);
+		    }
+        }
+    }
 }
 
 // define output testcase subclass
@@ -95,6 +115,26 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
 
     protected $_notRegex;
     protected $_outputCheck;
+
+    protected function assertPostConditions() {
+        if(!empty($_REQUEST)) {
+            foreach(array_keys($_REQUEST) as $k) {
+		        unset($_REQUEST[$k]);
+		    }
+        }
+
+        if(!empty($_POST)) {
+            foreach(array_keys($_POST) as $k) {
+		        unset($_POST[$k]);
+		    }
+        }
+
+        if(!empty($_GET)) {
+            foreach(array_keys($_GET) as $k) {
+		        unset($_GET[$k]);
+		    }
+        }
+    }
 
     protected function NotRegexCallback($output)
     {
@@ -116,7 +156,7 @@ class Sugar_PHPUnit_Framework_OutputTestCase extends PHPUnit_Extensions_OutputTe
 
     protected function runTest()
     {
-        $testResult = parent::runTest();
+		$testResult = parent::runTest();
         if($this->_outputCheck) {
             $this->assertTrue(call_user_func($this->_outputCheck, $this->output));
         }

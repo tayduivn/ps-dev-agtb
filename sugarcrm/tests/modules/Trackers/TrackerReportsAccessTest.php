@@ -1,6 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
+class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_OutputTestCase {
 
 	var $non_admin_user;
     var $current_user;
@@ -54,12 +54,12 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_TestCase {
 
     	$saved_report_seed = new SavedReport();
 	    $saved_report_seed->disable_row_level_security = true;
-	    $query = "SELECT id FROM saved_reports WHERE module = 'TrackerSessions'";
+	    $query = "SELECT id FROM saved_reports WHERE module = 'TrackerSessions' AND deleted=0";
 	    $results = $GLOBALS['db']->query($query);
 
     	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
-		      	$id = $row['id'];
-                $GLOBALS['_REQUEST']['id'] = $id;
+        	    $id = $row['id'];
+                $_REQUEST['id'] = $id;
 		    	require('modules/Reports/ReportCriteriaResults.php');
 		    	$this->assertTrue(checkSavedReportACL($args['reporter'], $args));
 		}

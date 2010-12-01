@@ -16,8 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
  *
@@ -30,12 +30,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 class ReportSchedule{
-	
+
 var $table_name='report_schedules';
 var $db;
 function ReportSchedule(){
 	$this->db = DBManagerFactory::getInstance();
-	
+
 }
 
 
@@ -58,39 +58,39 @@ function save_schedule($id, $user_id, $report_id, $date_start, $interval, $activ
 		    $date_start = gmdate($timedate->get_db_date_time_format() );
 
         $next_run_date = $this->getNextRunDate($date_start, $interval);
-        
-	    if(strlen(trim($origDateStart))==0) 
+
+	    if(strlen(trim($origDateStart))==0)
 	        $date_start_str = " NULL ";
-	    else 
+	    else
 	        $date_start_str = " '$origDateStart' ";
-	    
-		$query = "INSERT INTO $this->table_name (id, user_id, report_id, date_start,next_run, time_interval, active, schedule_type) VALUES ('$id', '$user_id', '$report_id', $date_start_str , '$next_run_date', '$interval', '$active', '$schedule_type')";	
+
+		$query = "INSERT INTO $this->table_name (id, user_id, report_id, date_start,next_run, time_interval, active, schedule_type) VALUES ('$id', '$user_id', '$report_id', $date_start_str , '$next_run_date', '$interval', '$active', '$schedule_type')";
 	}
 	else
 	{
 	    if(strlen(trim($origDateStart))==0)
 	       $date_start_str = " date_start = NULL, ";
-	    else 
+	    else
 	       $date_start_str = " date_start = '$origDateStart', ";
-	    
+
 		$query = "UPDATE $this->table_name  SET time_interval=$interval, ".$date_start_str." active=$active, schedule_type='".$schedule_type."'";
 		if(!empty($date_start) && $active)
 		{
-		    $next_run_date = $this->getNextRunDate($date_start, $interval);            
-			$query .= ", next_run='$next_run_date'";		
+		    $next_run_date = $this->getNextRunDate($date_start, $interval);
+			$query .= ", next_run='$next_run_date'";
 		}
 		$query .= " WHERE id='$id'";
 	}
-	$this->db->query($query, true, "error saving schedule");	
-	
+	$this->db->query($query, true, "error saving schedule");
+
 	return $id;
-}	
+}
 
 function getNextRunDate($date_start,$interval)
 {
     global $timedate;
 	$time = time();
-	
+
     $date_start = strtotime($date_start . ' GMT');
     if( $date_start <= $time )
     {
@@ -110,7 +110,7 @@ function get_users_schedule($id=''){
 		}
 		$return_array = array();
 		$query = "SELECT * FROM $this->table_name WHERE user_id='$id'";
-		$results = $this->db->query($query); 
+		$results = $this->db->query($query);
 		while($row = $this->db->fetchByAssoc($results)){
 			$return_array[$row['report_id']] = $row;
 		}
@@ -123,7 +123,7 @@ function get_report_schedule_for_user($report_id, $user_id=''){
 			$user_id = $current_user->id;
 		}
 	$query = "SELECT * FROM $this->table_name WHERE report_id='$report_id' AND user_id='$user_id' AND deleted=0";
-	$results = $this->db->query($query); 
+	$results = $this->db->query($query);
 	$row = $this->db->fetchByAssoc($results);
 	return $row;
 }
@@ -141,7 +141,7 @@ function get_report_schedule($report_id){
 function get_reports_to_email($user_id= '', $schedule_type="pro"){
 	$where = '';
 	if(!empty($user_id)){
-		$where = "AND user_id='$user_id'";	
+		$where = "AND user_id='$user_id'";
 	}
 	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
 	$query = "SELECT report_schedules.* FROM $this->table_name \n".
@@ -154,20 +154,20 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 			"$this->table_name.schedule_type='".$schedule_type."' AND\n".
 			"users.status='Active' AND users.deleted='0'".
 			"ORDER BY $this->table_name.next_run ASC";
-	
+
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
 			$return_array[$row['report_id']] = $row;
 	}
 	return $return_array;
-		
+
 }
 
 function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 	$where = '';
 	if(!empty($user_id)){
-		$where = "AND user_id='$user_id'";	
+		$where = "AND user_id='$user_id'";
 	}
 	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
 	$query = "SELECT report_schedules.* FROM $this->table_name \n".
@@ -186,19 +186,19 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 			$return_array[$row['report_id']] = $row;
 	}
 	return $return_array;
-		
+
 }
 
 function update_next_run_time($schedule_id, $next_run, $interval){
-		$last_run = strtotime($next_run);
+		$last_run = strtotime($next_run)+date('Z');
 		$time = time();
 		while($last_run <= $time){
-			$last_run += $interval;	
+			$last_run += $interval;
 		}
-		$next_run = date($GLOBALS['timedate']->get_db_date_time_format(), $last_run);
+		$next_run = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $last_run);
 		$query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
 		$this->db->query($query);
-			
+
 }
 }
 ?>

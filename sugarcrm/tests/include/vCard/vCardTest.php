@@ -20,6 +20,7 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**
