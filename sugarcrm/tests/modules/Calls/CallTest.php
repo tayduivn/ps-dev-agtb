@@ -19,6 +19,7 @@ class CallTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->callid}'");
             $GLOBALS['db']->query("DELETE FROM vcals WHERE user_id='{$GLOBALS['current_user']->id}'");
         }
+        unset( $GLOBALS['current_language']);
     }
 
     public static function tearDownAfterClass()
