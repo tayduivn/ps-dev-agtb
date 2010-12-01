@@ -620,9 +620,8 @@ class SugarBean
             return;
         
         foreach ($this->field_defs as $field => $value) {
-            if( (isset($value['default']) || !empty($value['display_default'])) 
-                    && !empty($this->$field)
-                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default'])) 
+            if( !empty($this->$field)
+                  && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
                     ) {
                 $this->$field = null;
             }
@@ -2010,10 +2009,6 @@ function save_relationship_changes($is_update, $exclude=array())
 	function check_date_relationships_load()
 	{
 		global $disable_date_format;
-		if(!empty($disable_date_format))
-		{
-			return;
-		}
 		global $timedate;
 		if (empty($timedate))
 			$timedate=new TimeDate();
@@ -2028,15 +2023,15 @@ function save_relationship_changes($is_update, $exclude=array())
 			if(!isset($this->processed_dates_times[$field]))
 			{
 				$this->processed_dates_times[$field] = '1';
-
+				if(empty($this->$field)) continue; 
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
-					if(!empty($this->$field))
-					{
+					$this->$field = from_db_convert($this->$field, 'datetime');
+					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
-				}
-				elseif(!empty($this->$field) && isset($this->field_name_map[$field]['type']))
+				} 
+				elseif(isset($this->field_name_map[$field]['type'])) 
 				{
 					$type = $this->field_name_map[$field]['type'];
 
@@ -2059,14 +2054,18 @@ function save_relationship_changes($is_update, $exclude=array())
 							if(!empty($this->$rel_field))
 							{
 								$this->$rel_field=from_db_convert($this->$rel_field, 'time');
-								$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
-								$this->$field = $timedate->to_display_date($mergetime);
-								$this->$rel_field = $timedate->to_display_time($mergetime);
+								if(empty($disable_date_format)) {
+									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
+									$this->$field = $timedate->to_display_date($mergetime);
+									$this->$rel_field = $timedate->to_display_time($mergetime);
+								}
 							}
 						}
 						else
 						{
-							$this->$field = $timedate->to_display_date($this->$field, false);
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date($this->$field, false);
+							}
 						}
 					} elseif($type == 'datetime' || $type == 'datetimecombo')
 					{
@@ -2076,7 +2075,10 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						else
 						{
-							$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							$this->$field = from_db_convert($this->$field, 'datetime');
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							}
 						}
 					} elseif($type == 'time')
 					{
@@ -2086,12 +2088,12 @@ function save_relationship_changes($is_update, $exclude=array())
 						} else
 						{
 							//$this->$field = from_db_convert($this->$field, 'time');
-							if(empty($this->field_name_map[$field]['rel_field']))
+							if(empty($this->field_name_map[$field]['rel_field']) && empty($disable_date_format))
 							{
 								$this->$field = $timedate->to_display_time($this->$field,true, false);
 							}
 						}
-					} elseif($type == 'encrypt'){
+					} elseif($type == 'encrypt' && empty($disable_date_format)){
 						$this->$field = $this->decrypt_after_retrieve($this->$field);
 					}
 				}
@@ -3460,7 +3462,7 @@ function save_relationship_changes($is_update, $exclude=array())
 				$ret_array['from'] .= " LEFT JOIN ";
 			}
 
-		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
+		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.assigned_user_id='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
 		}
 		//END SUGARCRM flav=pro ONLY
         $where_auto = '1=1';

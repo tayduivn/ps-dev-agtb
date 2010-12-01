@@ -731,7 +731,6 @@ class ConnectorUtils
                       $iconFilePath = empty($iconFilePath) ? 'themes/default/images/MoreDetail.png' : $iconFilePath;
             
                       $code = '<img id="dswidget_img" border="0" src="' . $iconFilePath .'" alt="' . $shown_sources[0] .'" onmouseover="show_' . $shown_sources[0] . '(event);">';
-                      $code .= "<link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css'>"; 
                       $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>";
                       $code .= $formatter->getDetailViewFormat();
                       $code .= $formatter_code;
@@ -769,7 +768,6 @@ class ConnectorUtils
                           $code = '<img id="dswidget_img" border="0" src="' . $singleIcon . '" alt="connectors_popups" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';	
                       }
                       $code .= "{overlib_includes}\n";
-                      $code .= "<link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css'>\n"; 
                       $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>\n";
                       $code .= "<script type='text/javascript'>\n";
                       $code .= "function showConnectorMenu2() {literal} { {/literal}\n";	 		  

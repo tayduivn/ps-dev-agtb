@@ -4614,6 +4614,19 @@ function upgradeUserPreferences() {
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
 
+    // Need to repair the RC1 instances that have incorrect GUIDS
+    $deleteRows = array();      
+    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
+        if ($row['id'] != $expectedId) {
+            $deleteRows[] = $row['id'];
+        }
+    }
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");    
+    // End Repair
+        
+    
     $active_users = array();
     $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
@@ -4648,6 +4661,81 @@ function migrate_sugar_favorite_reports(){
     }
 }
 // END SUGARCRM flav=pro ONLY 
+
+function add_custom_modules_favorites_search(){
+    $module_directories = scandir('modules');
+
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
+
+		$matches = array();
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
+
+		$full_module_dir = "modules/{$module_dir}/";
+		$read_searchdefs_from = "{$full_module_dir}/metadata/searchdefs.php";
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
+
+		// Studio can possibly override this file, so we check for a custom version of it
+		if(file_exists("custom/{$full_module_dir}/metadata/searchdefs.php")){
+			$read_searchdefs_from = "custom/{$full_module_dir}/metadata/searchdefs.php";
+		}
+
+		if(file_exists($read_searchdefs_from) && file_exists($read_SearchFields_from)){
+			$found_sf1 = false;
+			$found_sf2 = false;
+			require($read_searchdefs_from);
+			foreach($searchdefs[$module_dir]['layout']['basic_search'] as $sf_array){
+				if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+					$found_sf1 = true;
+				}
+			}
+
+			require($read_SearchFields_from);
+			if(isset($searchFields[$module_dir]['favorites_only'])){
+				$found_sf2 = true;
+			}
+
+			if(!$found_sf1 && !$found_sf2){
+				$searchdefs[$module_dir]['layout']['basic_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchdefs[$module_dir]['layout']['advanced_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchFields[$module_dir]['favorites_only'] = array(
+					'query_type'=>'format',
+					'operator' => 'subquery',
+					'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+								WHERE sugarfavorites.deleted=0
+									and sugarfavorites.module = \''.$module_dir.'\'
+									and sugarfavorites.assigned_user_id = \'{0}\'',
+					'db_field'=>array('id')
+				);
+
+				if(!is_dir("custom/{$full_module_dir}/metadata")){
+					mkdir_recursive("custom/{$full_module_dir}/metadata");
+				}
+				$success_sf1 = write_array_to_file('searchdefs', $searchdefs, "custom/{$full_module_dir}/metadata/searchdefs.php");
+				$success_sf2 = write_array_to_file('searchFields', $searchFields, "{$full_module_dir}/metadata/SearchFields.php");
+
+				if(!$success_sf1){
+					logThis("add_custom_modules_favorites_search failed for searchdefs.php for {$module_dir}");
+				}
+				if(!$success_sf2){
+					logThis("add_custom_modules_favorites_search failed for SearchFields.php for {$module_dir}");
+				}
+				if($success_sf1 && $success_sf2){
+					logThis("add_custom_modules_favorites_search successfully updated searchdefs and searchFields for {$module_dir}");
+				}
+			}
+		}
+	}
+}
+
 
 /**
  * upgradeModulesForTeamsets

@@ -419,6 +419,10 @@ $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
 logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
 migrate_sugar_favorite_reports();
 logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+
+logThis("Begin: Update custom module built using module builder to add favorites", $path);
+add_custom_modules_favorites_search();
+logThis("Complete: Update custom module built using module builder to add favorites", $path);
 //END SUGARCRM flav=pro ONLY 
 
 if($origVersion < '550' || $ce_to_pro_ent) {	

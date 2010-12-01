@@ -38,6 +38,12 @@ ALTER TABLE cases ADD CONSTRAINT case_number UNIQUE (case_number, system_id);
 
  ALTER TABLE emails ADD team_id nvarchar(36)  NULL ,team_set_id nvarchar(36)  NULL ;
 
+DROP INDEX idx_message_id on emails;
+
+ALTER TABLE emails ALTER COLUMN message_id nvarchar(255) NULL;
+
+CREATE INDEX idx_message_id on emails (message_id);
+
  ALTER TABLE meetings ADD team_id nvarchar(36)  NULL, team_set_id  nvarchar(36)  NULL ;
 
  ALTER TABLE tasks ADD team_id nvarchar(36)  NULL ,team_set_id nvarchar(36)  NULL ;
@@ -331,7 +337,7 @@ CREATE TABLE kbdocuments_views_ratings (id nvarchar(36)  NOT NULL ,date_modified
 CREATE TABLE users_holidays (id nvarchar(36)  NOT NULL ,user_id nvarchar(36)  NULL ,holiday_id nvarchar(36)  NULL ,date_modified datetime  NULL ,deleted bit  DEFAULT '0' NOT NULL  ) ALTER TABLE users_holidays ADD CONSTRAINT pk_users_holidays PRIMARY KEY (id) create index idx_user_holi_user on users_holidays ( user_id ) create index idx_user_holi_holi on users_holidays ( holiday_id ) create index users_quotes_alt on users_holidays ( user_id, holiday_id );
 
 
-CREATE TABLE report_cache (id nvarchar(36)  NOT NULL ,assigned_user_id nvarchar(36)  NOT NULL ,contents ntext  NULL ,report_options ntext  NULL ,deleted nvarchar(1) NOT NULL ,date_entered datetime  NOT NULL ,date_modified datetime  NOT NULL  ) ALTER TABLE report_cache ADD CONSTRAINT pk_report_cache PRIMARY KEY (id, assigned_user_id, deleted);
+CREATE TABLE report_cache (id nvarchar(36)  NOT NULL ,assigned_user_id nvarchar(36)  NOT NULL ,contents ntext  NULL ,report_options ntext  NULL ,deleted nvarchar(1) NULL ,date_entered datetime  NOT NULL ,date_modified datetime  NOT NULL  ) ALTER TABLE report_cache ADD CONSTRAINT pk_report_cache PRIMARY KEY (id, assigned_user_id);
 
 
 CREATE TABLE dataset_layouts (id nvarchar(36)  NOT NULL ,deleted bit  DEFAULT '0' NOT NULL ,date_entered datetime  NOT NULL ,date_modified datetime  NOT NULL ,modified_user_id nvarchar(36)  NULL ,created_by nvarchar(36)  NULL ,parent_value nvarchar(50)  NULL ,layout_type nvarchar(25)  NOT NULL ,parent_id nvarchar(36)  NULL ,list_order_x int  NULL ,list_order_z int  NULL ,row_header_id nvarchar(36)  NULL ,hide_column nvarchar(3)  NULL  ) ALTER TABLE dataset_layouts ADD CONSTRAINT pk_dataset_layouts PRIMARY KEY (id) create index idx_datasetlayout on dataset_layouts ( parent_value, deleted );

@@ -55,7 +55,12 @@ if(!empty($config['base_dir'])){
 			echo "Build Stopped.  You entered an invalid file name: ".$config['base_dir']  .'/' . $config['file'];
 		}
 	}elseif(!empty($config['dir'])){
-		$config['dir'] = realpath($config['base_dir'] .'/' .$config['dir']);
+		if (file_exists($config['dir']))
+		{
+			$config['dir'] = realpath($config['dir']);
+		} else {
+            $config['dir'] = realpath($config['base_dir'] .'/' .$config['dir']);
+        }
 		$config['dir'] = str_replace($config['base_dir'],'', $config['dir']);
 		if(is_dir($config['base_dir'] .'/' . $config['dir'])){
 			$rome->setStartPath($config['base_dir']);

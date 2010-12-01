@@ -97,7 +97,7 @@ input[type=checkbox],input[type=radio]
 }
 ul li 
 {
-	list-style-type: none; 
+	list-style-type: disc; 
 	margin-left: 6px; 
 	margin-bottom: 2px;
 }
@@ -5352,6 +5352,7 @@ color: #0B578F;
 }
 #SpotResults ul li{
 	margin-left:0px;
+	list-style-type:none;
 }
 
 #SpotResults li a
@@ -5515,16 +5516,4 @@ margin-left: 5px;
 
 .acceptMeeting {
 white-space: nowrap;
-}
-
-/* override tinyMCE content box */
-body.mceContentBody {
-	margin: 0px;
-	font-family: Arial,Verdana,Helvetica,sans-serif;
-	list-style-type: none; 
-	margin-left: 6px; 
-	margin-bottom: 2px;	
-	margin-top: 2px;
-    margin-right: 0;
-	background:none repeat scroll 0 0 #FFFFFF;
 }

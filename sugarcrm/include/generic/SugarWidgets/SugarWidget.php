@@ -64,6 +64,22 @@ class SugarWidget
 	public function setWidgetId($id='') {
 		$this->widget_id = $id;
 	}		
+	
+   /**
+    * getTruncatedColumnAlias
+    * This function ensures that a column alias is no more than 28 characters.  Should the column_name
+    * argument exceed 28 charcters, it creates an alias using the first 22 characters of the column_name
+    * plus an md5 of the first 6 characters of the lowercased column_name value.
+    *
+    */
+    protected function getTruncatedColumnAlias($column_name)
+    {
+	  	if(empty($column_name) || !is_string($column_name) || strlen($column_name) < 28)
+	  	{
+	  	   return $column_name;
+	  	}
+	    return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));  	
+    }	
 }
 
 ?>

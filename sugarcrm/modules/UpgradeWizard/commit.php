@@ -28,12 +28,13 @@ if(!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright(C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: commit.php 57723 2010-08-11 21:39:08Z kjing $
+ * $Id: commit.php 58188 2010-09-16 03:20:33Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
 require_once('include/SugarLogger/SugarLogger.php');	
+
 $trackerManager = TrackerManager::getInstance();	
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
@@ -47,7 +48,6 @@ if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);
 }
 //END SUGARCRM flav=pro ONLY
-
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
 

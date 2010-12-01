@@ -101,9 +101,9 @@ class SugarFavorites extends Basic
 	    )
 	{
 	    if ( empty($user) )
-	        $where = " sugarfavorites.modified_user_id = '{$GLOBALS['current_user']->id}' ";
+	        $where = " sugarfavorites.assigned_user_id = '{$GLOBALS['current_user']->id}' ";
 	    else
-	        $where = " sugarfavorites.modified_user_id = '{$user->id}' ";
+	        $where = " sugarfavorites.assigned_user_id = '{$user->id}' ";
 	    
         if ( !empty($module) )
             if ( is_array($module) )

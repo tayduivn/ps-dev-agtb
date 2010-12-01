@@ -1,3 +1,13 @@
+/*
+
+Modification information for LGPL compliance
+
+r58354 - 2010-09-29 14:39:04 -0700 (Wed, 29 Sep 2010) - kjing - Author: Majed Itani <mitani@mitani.local>
+     fixes issues where language pack calendars were not compatible
+
+
+*/
+
 // ** I18N
 
 // Calendar EN language

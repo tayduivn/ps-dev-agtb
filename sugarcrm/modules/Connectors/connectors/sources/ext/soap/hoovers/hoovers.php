@@ -51,10 +51,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		$clientKey = !empty($properties['hoovers_api_key']) ? $properties['hoovers_api_key'] : base64_decode(get_hoovers_api_key());
             //END ENCODE
             	 		
-	 		/*
-	 		$this->_client = new nusoapclient($properties['hoovers_endpoint'], true);
-            $this->_client->setHeaders("<API-KEY xmlns='http://webservice.hoovers.com'>{$clientKey}</API-KEY>");
-            */
+	 		
+	 		$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
+            $this->_client->setHeaders("<API-KEY xmlns='http://applications.dnb.com/webservice/schema/'>{$clientKey}</API-KEY>");
+            //BEGIN SUGARCRM flav=int ONLY
+            /*
 	 		if (!class_exists('SoapClient') || !class_exists('SoapHeader') ) {
 	 			require_once('include/connectors/utils/ConnectorUtils.php');
 				$connector_language = ConnectorUtils::getConnectorStrings('ext_soap_hoovers');
@@ -66,7 +67,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             );
             $headers[] = new SoapHeader('http://webservice.hoovers.com', 'API-KEY', $clientKey);
             $this->_client->__setSoapHeaders($headers);
-            
+            */
+            //END SUGARCRM flav=int ONLY
             
  		}catch(Exception $ex){
  		 	$GLOBALS['log']->error($ex);
@@ -81,8 +83,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		
 		if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE) || ((mktime() - filemtime(HOOVERS_LOOKUP_MAPPING_FILE)) > 2592000)) {
 	 		try {
-	 		  //$result = $this->_client->call('GetAdvancedSearchLookups', array('parameters'=>array()), $namespace='http://webservice.hoovers.com');
-	 		  $result = $this->_client->__soapCall('GetAdvancedSearchLookups', array('parameters'=>array()), NULL);
+	 		  $result = $this->_client->call('GetAdvancedSearchLookups', array('parameters'=>array()), $namespace='http://applications.dnb.com/webservice/schema/');
+	 		  //BEGIN SUGARCRM flav=int ONLY
+	 		  //$result = $this->_client->__soapCall('GetAdvancedSearchLookups', array('parameters'=>array()), NULL);
+	 		  //END SUGARCRM flav=int ONLY
 	 		  
 	 		  if(empty($result)) {
 	 		  	 return;
@@ -105,6 +109,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			  }
 			  
 			  $mapping = array();
+			  if(isset($countries['UNITED STATES']))
+			  {
+			  	 $countries['USA'] = $countries['UNITED STATES'];
+			  }
+			  
 			  $mapping['countries'] = $countries;
 			  $mapping['states'] = $states;
 			  
@@ -281,11 +290,63 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	    if(!empty($result['full-description']))
         {
         	$data['description'] = $result['full-description'];
-        }        
-       
-        return $data;
+        }      
+          
+       return $data;
  	}
  	
+ 	
+ 	/**
+ 	 * createPayloadOverride
+ 	 */
+ 	private function createPayloadOverride($function, $args)
+ 	{
+ 		$payload = '';
+ 		
+ 		if($function == 'AdvancedCompanySearch')
+ 		{
+ 		  $payload  = '<AdvancedCompanySearchRequest xmlns="http://applications.dnb.com/webservice/schema/"><bal>';
+ 		  $payload .= '<sortDirection>Ascending</sortDirection>';
+ 		  if(isset($args[0]['bal']['location']))
+ 		  {
+ 		  	 $location = '';
+		 	 foreach($args[0]['bal']['location'] as $key=>$value)
+		 	 {
+		 	 	$value = trim($value);
+		 	 	if($value == '')
+		 	 	{
+		 	 	   continue;	
+		 	 	}
+		 	 	
+		 	 	//Safety check for countryId search
+		 	 	if($key == 'countryId' && !is_int($value))
+		 	 	{
+		 	 	   continue;
+		 	 	}
+		 	 	
+			 	$location .= "<{$key}>";
+			 	$location .= htmlentities($value);
+			 	$location .= "</{$key}>";
+		 	 }
+		 	 
+		 	 if(!empty($location))
+		 	 {
+ 		  	 	$payload .= '<location>' . $location . '</location>';
+		 	 }
+ 		  }
+ 		  
+ 		  if(isset($args[0]['bal']['specialtyCriteria']['companyName']) && trim($args[0]['bal']['specialtyCriteria']['companyName']) != '')
+ 		  {
+ 		  	 $payload .= '<specialtyCriteria><companyName>' . htmlentities($args[0]['bal']['specialtyCriteria']['companyName']) . '</companyName></specialtyCriteria>';
+ 		  }
+ 		  
+ 		  $payload .= '</bal></AdvancedCompanySearchRequest>';
+ 		  
+ 		  $GLOBALS['log']->info('Hoovers Payload:' . $payload);
+ 		}
+ 		
+ 		return $payload;
+ 	}
  	
  	/**
  	 * __call
@@ -298,23 +359,36 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   return $result;
  		}
  		
-  		if (empty($this->_client) || !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
+ 		//BEGIN SUGARCRM flav=int ONLY
+ 		/*
+	 	if (empty($this->_client) || !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
  			require_once('include/connectors/utils/ConnectorUtils.php');
 			$connector_language = ConnectorUtils::getConnectorStrings('ext_soap_hoovers');
  		    throw new Exception($connector_language['ERROR_MISSING_SOAP_LIBRARIES']);
 	 	}
+ 		*/
+ 		//END SUGARCRM flav=int ONLY
+ 		
+ 		//Now create the payloadOverride variable and set it on the client
+ 		$this->_client->payloadOverride = $this->createPayloadOverride($function, $args);
  		
  		try {
- 			//$result = $this->_client->call($function, array('parameters'=>$args[0]), $namespace='http://webservice.hoovers.com');
-	 		$result = $this->_client->__soapCall($function, array('parameters'=>$args[0]), NULL);
-	
- 			//if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->response)) {
-	 		if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->__getLastResponse())) {
+ 			$result = $this->_client->call($function, array($function.'Request'=>$args[0]), $namespace='http://applications.dnb.com/webservice/schema/');
+	 		//BEGIN SUGARCRM flav=int ONLY
+ 			//$result = $this->_client->__soapCall($function, array('parameters'=>$args[0]), NULL);
+	        //END SUGARCRM flav=int ONLY
  			
+ 			if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->response)) {
+	 		//BEGIN SUGARCRM flav=int ONLY
+ 			//if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->__getLastResponse())) {
+ 			//END SUGARCRM flav=int ONLY
+ 				
 	 		   $errorCode = 'Unknown';
-	 		   //if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->response, $matches)) {
-	 		   if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->__getLastResponse(), $matches)) {
-	 		   
+	 		   if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->response, $matches)) {
+	 		   //BEGIN SUGARCRM flav=int ONLY
+	 		   //if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->__getLastResponse(), $matches)) {
+	 		   //END SUGARCRM flav=int ONLY
+	 		   	
 	 		   	  $errorCode = $matches[1];
 	 		   }
 	 	       $errorMessage = string_format($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], array(get_class($this), $errorCode));

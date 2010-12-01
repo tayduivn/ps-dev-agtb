@@ -88,7 +88,7 @@ function gridInit() {
 						width: widths[1], 
 						sortable: true, 
 						fixed: true,
-						resizeable: false,
+						resizeable: true,
 						formatter: repliedIcon,
 						key: 'status'
 					},

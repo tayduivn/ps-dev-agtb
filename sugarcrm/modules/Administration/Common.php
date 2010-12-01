@@ -31,22 +31,11 @@ require_once('include/utils/array_utils.php');
  */
 function create_include_lang_dir()
 {
-   $continue = true;
+   
+	if(!is_dir("custom/include/language"))
+	   return sugar_mkdir("custom/include/language", null, true);
 
-   if(!is_dir('custom/include'))
-   {
-      $continue = sugar_mkdir('custom/include');
-   }
-
-   if($continue)
-   {
-      if(!is_dir("custom/include/language"))
-      {
-         $continue = sugar_mkdir("custom/include/language");
-      }
-   }
-
-   return $continue;
+   return true;
 }
 
 /**
@@ -56,30 +45,11 @@ function create_include_lang_dir()
  */
 function create_module_lang_dir($module)
 {
-   $continue = true;
-
-   if(!is_dir('custom/modules'))
-   {
-      $continue = sugar_mkdir('custom/modules');
-   }
-
-   if($continue)
-   {
-      if(!is_dir("custom/modules/$module"))
-      {
-         $continue = sugar_mkdir("custom/modules/$module");
-      }
-   }
-
-   if($continue)
-   {
-      if(!is_dir("custom/modules/$module/language"))
-      {
-         $continue = sugar_mkdir("custom/modules/$module/language");
-      }
-   }
-
-   return $continue;
+   
+	if(!is_dir("custom/modules/$module/language"))
+       return sugar_mkdir("custom/modules/$module/language", null, true);
+       
+   return true;
 }
 
 /**
@@ -179,7 +149,7 @@ function create_field_label($module, $language, $key, $value, $overwrite=false)
       if($dir_exists)
       {
          $filename = "$dirname/$language.lang.php";
-         	if(is_file($filename)){
+         	if(is_file($filename) && filesize($filename) > 0){
         	 	$handle = sugar_fopen($filename, 'rb');
 				$old_contents = fread($handle, filesize($filename));
 				fclose($handle);
@@ -348,12 +318,10 @@ function return_custom_app_list_strings_file_contents($language, $custom_filenam
 	$filename = "custom/include/language/$language.lang.php";
 	if(!empty($custom_filename))
 		$filename = $custom_filename;
-	$handle = @sugar_fopen($filename, 'rt');
-
-	if($handle && filesize($filename) > 0 )
+	
+	if (is_file($filename))
 	{
-		$contents = fread($handle, filesize($filename));
-		fclose($handle);
+		$contents = file_get_contents($filename);
 	}
 
 	return $contents;

@@ -265,9 +265,9 @@ li.yuimenuitem-disabled {
     display:none;	
 }
 
-.yui-dt table tr th {
+/* .yui-dt table tr th {
 	padding: 2px 5px !important;
-}
+}*/
 
 div #rollover {
     white-space: normal;

@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: SugarWidgetReportField.php 58268 2010-09-23 00:26:45Z kjing $
+// $Id: SugarWidgetReportField.php 58357 2010-09-29 23:22:03Z kjing $
 
 require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 
@@ -319,32 +319,25 @@ class SugarWidgetReportField extends SugarWidgetField
                 array_push($alias_arr,$layout_def['name']);
         }
 
-				global $used_aliases, $alias_map;
+		global $used_aliases, $alias_map;
 
-        		$alias = strtolower(implode("_",$alias_arr));
-        		
-        		//Ensure that alias is no longer than 28 characters since some databases have problems with
-        		//aliases that exceed a certain character length
-        		if(strlen($alias) > 28)
-        		{
-        		  $short_alias = substr($alias,0,22) . substr(md5($alias), 0, 6);
-        		} else {
-        		  $short_alias = $alias;
-        		}
+        $alias = strtolower(implode("_",$alias_arr));
+        
+        $short_alias = $this->getTruncatedColumnAlias($alias);
 
-				if ( empty($used_aliases[$short_alias]))
-				{
-					$alias_map[$alias] = $short_alias;
-				    $used_aliases[$short_alias] = 1;
-          			return $short_alias;
-				} else if ( ! empty($alias_map[$alias]) )
-				{
-					return $alias_map[$alias];
-				} else {
-					$alias_map[$alias] = $short_alias.'_'.$used_aliases[$short_alias];
-				  $used_aliases[$short_alias]++;
-					return $alias_map[$alias];
-				}
+		if ( empty($used_aliases[$short_alias]))
+		{
+			$alias_map[$alias] = $short_alias;
+		    $used_aliases[$short_alias] = 1;
+          	return $short_alias;
+		} else if ( ! empty($alias_map[$alias]) )
+		{
+			return $alias_map[$alias];
+		} else {
+			$alias_map[$alias] = $short_alias.'_'.$used_aliases[$short_alias];
+		  $used_aliases[$short_alias]++;
+			return $alias_map[$alias];
+		}
  }
 
  function queryFilterEmpty(&$layout_def)

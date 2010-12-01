@@ -56,7 +56,7 @@ class SugarTinyMCE {
 		'language' => 'en',
 	    'plugins' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality',
 		'elements'	=> '',
-        'extended_valid_elements' => 'style,hr[class|width|size|noshade]',
+        'extended_valid_elements' => 'style,hr[class|width|size|noshade],@[class|style]',
         'content_css' => 'include/javascript/tiny_mce/themes/advanced/skins/default/content.css',
 
 	);
@@ -87,7 +87,6 @@ class SugarTinyMCE {
 		$config['theme_advanced_buttons1'] = $this->buttonConfigs['default']['buttonConfig']; 
 		$config['theme_advanced_buttons2'] = $this->buttonConfigs['default']['buttonConfig2']; 
 		$config['theme_advanced_buttons3'] = $this->buttonConfigs['default']['buttonConfig3']; 
-		$config['content_css'] = SugarThemeRegistry::current()->getCSSURL('style.css');
 		$jsConfig = $json->encode($config);
 		
 		$instantiateCall = '';

@@ -87,6 +87,7 @@ class ViewEditConvertLayout extends SugarView {
 
         // assign fields and layout
         $smarty->assign ( 'available_fields', $parser->getAvailableFields () ) ;
+        $smarty->assign ('calc_field_list', json_encode($parser->getCalculatedFields()));
         $smarty->assign ( 'layout', $parser->getLayout () ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         $smarty->assign ( 'view', $this->editLayout ) ;
