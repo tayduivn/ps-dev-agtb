@@ -167,8 +167,7 @@ class Meeting extends SugarBean {
 		}*/
 
         if (empty($this->status) ) {
-            $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
-            $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
+            $this->status = $this->getDefaultStatus();
         }
 		$return_id = parent::save($check_notify);
 
@@ -401,7 +400,7 @@ class Meeting extends SugarBean {
 			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
-	
+
 			// Get the contact name.
 			$row = $this->db->fetchByAssoc($result);
 
@@ -410,7 +409,7 @@ class Meeting extends SugarBean {
 				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
 			}
 		}
-		
+
         $meeting_fields['CONTACT_ID'] = $this->contact_id;
         $meeting_fields['CONTACT_NAME'] = $this->contact_name;
 
@@ -644,5 +643,19 @@ class Meeting extends SugarBean {
 
 	    parent::afterImportSave();
 	}
+
+    public function getDefaultStatus()
+    {
+         $def = $this->field_defs['status'];
+         if (isset($def['default'])) {
+             return $def['default'];
+         } else {
+            $app = return_app_list_strings_language($GLOBALS['current_language']);
+            if (isset($def['options']) && isset($app[$def['options']])) {
+                $keys = array_keys($app[$def['options']]);
+                return $keys[0];
+            }
+        }
+        return '';
+    }
 } // end class def
-?>

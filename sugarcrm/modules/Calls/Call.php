@@ -164,18 +164,7 @@ class Call extends SugarBean
 			}
 		}
         if (empty($this->status) ) {
-            global $sugar_config;
-            if(isset($sugar_config['default_call_status'])) {
-                $this->status = $sugar_config['default_call_status'];
-            } else {
-                $app = return_app_list_strings_language($GLOBALS['current_language']);
-                if(isset($this->field_defs['status']['options']) && isset($app[$this->field_defs['status']['options']])) {
-                    $keys = array_keys($app[$this->field_defs['status']['options']]);
-                    $this->status = $keys[0];
-                } else {
-                    $this->status = 'Planned';
-                }
-            }
+            $this->status = $this->getDefaultStatus();
         }
 		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
 		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
@@ -706,6 +695,18 @@ class Call extends SugarBean
 		parent::save_relationship_changes($is_update, $exclude);
 	}
 
+    public function getDefaultStatus()
+    {
+         $def = $this->field_defs['status'];
+         if (isset($def['default'])) {
+             return $def['default'];
+         } else {
+            $app = return_app_list_strings_language($GLOBALS['current_language']);
+            if (isset($def['options']) && isset($app[$def['options']])) {
+                $keys = array_keys($app[$def['options']]);
+                return $keys[0];
+            }
+        }
+        return '';
+    }
 }
-
-?>
