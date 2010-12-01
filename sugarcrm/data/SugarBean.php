@@ -4245,7 +4245,8 @@ function save_relationship_changes($is_update, $exclude=array())
             }
             $bean->fill_in_additional_list_fields();
             $bean->call_custom_logic("process_record");
-
+            $bean->fetched_row = $row;
+            
             $list[] = $bean;
         }
         //}
@@ -4853,6 +4854,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             return null;
         }
+        $this->fetched_row = $row;
         $this->fromArray($row);
         $this->fill_in_additional_detail_fields();
         return $this;
