@@ -568,8 +568,19 @@ function return_name($row, $first_column, $last_column)
 function get_languages()
 {
 	global $sugar_config;
+	$lang = $sugar_config['languages'];
+	foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
+	    unset($lang[$disable]);
+	}
+	return $lang;
+}
+
+function get_all_languages()
+{
+	global $sugar_config;
 	return $sugar_config['languages'];
 }
+
 
 function get_language_display($key)
 {
@@ -785,7 +796,7 @@ function getUserArrayFromFullName($args, $hide_portal_users = false) {
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
 	if ( $hide_portal_users ) {
-	    $query .= " portal_only=0 AND "; 
+	    $query .= " portal_only=0 AND ";
 	}
 	$query .= $inClause;
 	$query .= " ORDER BY last_name ASC";

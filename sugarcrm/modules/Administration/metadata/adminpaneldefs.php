@@ -165,6 +165,7 @@ $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LB
 $admin_option_defs['Administration']['connector_settings']=array('icon_Connectors','LBL_CONNECTOR_SETTINGS','LBL_CONNECTOR_SETTINGS_DESC','./index.php?module=Connectors&action=ConnectorSettings');
 //END SUGARCRM flav=sales ONLY
 $admin_option_defs['Administration']['global_search']=array('icon_SearchForm','LBL_GLOBAL_SEARCH_SETTINGS','LBL_GLOBAL_SEARCH_SETTINGS_DESC','./index.php?module=Administration&action=GlobalSearchSettings');
+$admin_option_defs['Administration']['languages']= array('Currencies','LBL_MANAGE_LANGUAGES','LBL_LANGUAGES','./index.php?module=Administration&action=Languages&view=default');
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
 
@@ -265,8 +266,8 @@ $access = get_admin_modules_for_user($current_user);
 foreach ($admin_group_header as $key=>$values) {
 	$module_index = array_keys($values[3]);  //get the actual links..
 	foreach ($module_index as $mod_key=>$mod_val) {
-		if (is_admin($current_user) || 
-			in_array($mod_val, $access) || 
+		if (is_admin($current_user) ||
+			in_array($mod_val, $access) ||
 		    $mod_val=='studio'||
 		    ($mod_val=='Forecasts' && in_array('ForecastSchedule', $access)) ||
 		    ($mod_val =='any')
@@ -277,7 +278,7 @@ foreach ($admin_group_header as $key=>$values) {
                 if(displayStudioForCurrentUser() == false) {
                     unset($values[3]['studio']);
                 }
-		   	
+
 		   	   //BEGIN SUGARCRM PRO ONLY
                 if(displayWorkflowForCurrentUser() == false) {
                     unset($values[3]['any']['workflow_management']);
@@ -295,15 +296,15 @@ foreach ($admin_group_header as $key=>$values) {
                 if(!in_array('Campaigns', $access)&& isset($values[3]['Campaigns'])){
                     unset($values[3]['Campaigns']);
                 }
-                
+
                 //END SUGARCRM PRO ONLY
                 //////////////////
-		   	                        	
+
         } else {
         	//hide the link
         	unset($admin_group_header[$key][3][$mod_val]);
         }
-               
+
 	}
 }
 ?>
