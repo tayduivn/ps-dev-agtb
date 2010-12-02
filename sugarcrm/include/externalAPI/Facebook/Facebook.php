@@ -26,6 +26,7 @@ require_once('include/externalAPI/Base/WebFeed.php');
 
 
 class Facebook extends ExternalAPIBase implements WebFeed {
+    // It's not the normal oauth, but it works close enough.
     public $authMethod = 'oauth';
     public $useAuth = true;
     public $requireAuth = true;
@@ -33,49 +34,107 @@ class Facebook extends ExternalAPIBase implements WebFeed {
     public $needsUrl = false;
 
 
-	protected $oauthReq = "https://api.twitter.com/oauth/request_token";
-    protected $oauthAuth = 'https://api.twitter.com/oauth/authorize';
-    protected $oauthAccess = 'https://api.twitter.com/oauth/access_token';
     protected $oauthParams = array(
     	'signatureMethod' => 'HMAC-SHA1',
-        'consumerKey' => "ZjoUiIbIeJJT7ONo7JcuAg",
+        'consumerKey' => "141380979217659",
     // FIXME: encode?
-        'consumerSecret' => "GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0",
+        'consumerSecret' => "93b0ed5908a2b23c3e17a2cc2a22cd77",
     );
 
     public function checkLogin($eapmBean = null)
     {
-        parent::checkLogin($eapmBean);
+        $reply = parent::checkLogin($eapmBean);
+        
+        if ( !$reply['success'] ) {
+            return $reply;
+        }
+
+        $this->setupFacebookLib();
+        $GLOBALS['log']->fatal('Checking login.');
+
+
+        if ( empty($this->eapmBean->oauth_secret) ) {
+            // We must be saving, try re-authing
+            $GLOBALS['log']->fatal('We must be saving.');
+            if ( !empty($_REQUEST['session']) ) {
+                $_REQUEST['session'] = str_replace('&quot;','"',$_REQUEST['session']);
+                $GLOBALS['log']->fatal('Have a session from facebook: '.$_REQUEST['session']);
+                
+                $fbSession = $this->fb->getSession();
+                if ( !empty($fbSession) ) {
+                    $GLOBALS['log']->fatal('Have a VALID session from facebook:'.print_r($fbSession,true));
+                    // Put a string in here so we can tell when it resets it.
+                    $this->eapmBean->oauth_secret = 'SECRET';
+                    $this->eapmBean->api_data = base64_encode(json_encode(array('fbSession'=>$fbSession)));
+                    $this->eapmBean->validated = 1;
+                    $this->eapmBean->save();
+                    return array('success'=>true);
+                } else {
+                    // FIXME: Translate
+                    $GLOBALS['log']->fatal('Have an INVALID session from facebook:'.print_r($fbSession,true));
+                    return array('success'=>false,'errorMessage'=>'No authentication.');
+                }
+            } else {
+                $callback_url = $GLOBALS['sugar_config']['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
+                $loginUrl = $this->fb->getLoginUrl(array('next'=>$callback_url,'cancel'=>$callback_url));
+                $GLOBALS['log']->fatal('IKEA: Shipping the user to here: '.$loginUrl);
+                SugarApplication::redirect($loginUrl);
+                return array('success'=>false);
+            }
+        }
+        
+        return $reply;
     }
+
+    public function loadEAPM($eapmBean)
+    {
+        parent::loadEAPM($eapmBean);
+
+        if ( !empty($eapmBean->api_data) ) {
+            $api_data = json_decode(base64_decode($eapmBean->api_data),true);
+            if ( isset($api_data['fbSession']) ) {
+                $this->fbSession = $api_data['fbSession'];
+            }
+        }
+    }
+
 
 	public function getLatestUpdates($maxTime, $maxEntries)
     {
         $td = $GLOBALS['timedate'];
 
-        $twitter_json_url = 'http://api.twitter.com/1/statuses/friends_timeline.json';
-        $reply = $this->makeRequest('GET', $twitter_json_url,array('count'=>$maxEntries));
-        
-        if ( !$reply['success'] ) {
+        try {
+            $this->setupFacebookLib();
+            $fbMessages = $this->fb->api('/me/home?limit='.$maxEntries);
+        } catch ( Exception $e ) {
+            $GLOBALS['log']->error('Facebook Error: '.$e->getMessage());
+            return FALSE;
+        }
+
+        if ( !isset($fbMessages['data'][0]) ) {
             return FALSE;
         }
 
         $messages = array();
-        foreach ( $reply['responseJSON'] as $message ) {
-            if ( empty($message['text']) ) {
+        foreach ( $fbMessages['data'] as $message ) {
+            if ( empty($message['message']) ) {
                 continue;
             }
-            $unix_time = strtotime($message['created_at']);
+            $unix_time = strtotime($message['created_time']);
 
             $fake_record = array();
             $fake_record['sort_key'] = $unix_time;
             $fake_record['ID'] = create_guid();
             $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('Y-m-d H:i:s',$unix_time));
-            $fake_record['NAME'] = $message['user']['name'].'</b>';
-            if ( !empty($message['text']) ) {
-                $fake_record['NAME'] .= ' '.$message['text'];
+            $fake_record['NAME'] = $message['from']['name'].'</b>';
+            if ( !empty($message['message']) ) {
+                $fake_record['NAME'] .= ' '.$message['message'];
+            }
+            if ( !empty($message['picture'])) {
+                $fake_record['NAME'] .= '<br><img src="'.$message['picture'].'" height=50>';
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
-            $fake_record['IMAGE_URL'] = $message['user']['profile_image_url'];
+            $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'].'/picture';
             
             $messages[] = $fake_record;
         }
@@ -84,9 +143,28 @@ class Facebook extends ExternalAPIBase implements WebFeed {
         return $messages;
     }
 
+    public function getOauthRequestURL()
+    {
+        $this->setupFacebookLib();
+        
+    }
     
 
     // Internal functions
+    protected function setupFacebookLib()
+    {
+        $this->fb = new FacebookLib(array(
+                                        'appId' => $this->oauthParams['consumerKey'], 
+                                        'secret' => $this->oauthParams['consumerSecret'],
+                                        'cookie' => false,
+                                        ));
+        try {
+            if ( isset($this->fbSession) ) {
+                $this->fb->setSession($this->fbSession,false);
+            }
+        } catch ( Exception $e ) {}
+    }
+
     protected function makeRequest($requestMethod, $url, $urlParams = null, $postData = null )
     {
         $headers = array(
@@ -112,5 +190,5 @@ class Facebook extends ExternalAPIBase implements WebFeed {
         }
 
         return array('success'=>TRUE, 'responseJSON'=>$response);
-    }    
+    }
 }

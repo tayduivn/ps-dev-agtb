@@ -366,14 +366,14 @@ class SugarFeed extends Basic {
         $data['NAME'] .= '<div class="byLineBox"><span class="byLineLeft">';
 		$data['NAME'] .= $this->getTimeLapse($data['DATE_ENTERED']) . '&nbsp;</span><div class="byLineRight"><a id="sugarFeedReplyLink'.$data['ID'].'" href="#" onclick=\'SugarFeed.buildReplyForm("'.$data['ID'].'", "{this.id}", this); return false;\'>'.$GLOBALS['app_strings']['LBL_EMAIL_REPLY'].'</a>' .$delete. '</div></div>';
 
-        $data['NAME'] .= $this->fetchReplies($data['ID']);
+        $data['NAME'] .= $this->fetchReplies($data);
 		return  $data ;
 	}
 	
-    function fetchReplies($id) {
+    function fetchReplies($data) {
         $seedBean = new SugarFeed;
 
-        $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$id."'");
+        $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$data['ID']."'");
         
         if ( count($replies['list']) < 1 ) {
             return '';

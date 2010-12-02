@@ -20,11 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/externalAPI/Base/ExternalAPIBase.php');
+require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebFeed.php');
 
 
-class Twitter extends ExternalAPIBase implements WebFeed {
+class Twitter extends OAuthPluginBase implements WebFeed {
     public $authMethod = 'oauth';
     public $useAuth = true;
     public $requireAuth = true;
@@ -42,11 +42,6 @@ class Twitter extends ExternalAPIBase implements WebFeed {
         'consumerSecret' => "GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0",
     );
 
-    public function checkLogin($eapmBean = null)
-    {
-        parent::checkLogin($eapmBean);
-    }
-
 	public function getLatestUpdates($maxTime, $maxEntries)
     {
         $td = $GLOBALS['timedate'];
@@ -55,6 +50,7 @@ class Twitter extends ExternalAPIBase implements WebFeed {
         $reply = $this->makeRequest('GET', $twitter_json_url,array('count'=>$maxEntries));
         
         if ( !$reply['success'] ) {
+            $GLOBALS['log']->fatal('IKEA: Twitter failed, reply said: '.print_r($reply,true));
             return FALSE;
         }
 
@@ -111,5 +107,5 @@ class Twitter extends ExternalAPIBase implements WebFeed {
         }
 
         return array('success'=>TRUE, 'responseJSON'=>$response);
-    }    
+    }
 }

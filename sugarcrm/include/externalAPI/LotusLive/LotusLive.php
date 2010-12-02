@@ -21,12 +21,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/externalAPI/Base/ExternalAPIBase.php');
+require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 
 
-class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
+class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
 
     protected $dateFormat = 'm/d/Y H:i:s';
 //    protected $urlExtension = '/envq/Production/';
@@ -73,24 +73,29 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
 
     public function checkLogin($eapmBean = null)
     {
-        parent::checkLogin($eapmBean);
+        $reply = parent::checkLogin($eapmBean);
+        if ( !$reply['success'] ) {
+            return $reply;
+        }
         $reply = $this->makeRequest('GetSubscriberId/OAuth');
-
-        if ( $reply['success'] == TRUE ) {
-            $reply2 = $this->makeRequest('GetMeeting/OAuth');
-            if ( $reply2['success'] == TRUE ) {
-
-                $apiData = array(
-                    'meetingID'=>$reply2['responseJSON']['feed']['entry']['meetingID'],
-                    'hostURL'=>$reply2['responseJSON']['feed']['entry']['hostURL'],
-                    'joinURL'=>$reply2['responseJSON']['feed']['entry']['joinURL'],
-                    'subscriberID'=>$reply['responseJSON']['subscriber_id'],
-                );
-                $GLOBALS['log']->fatal('IKEA (api_data): '.print_r($apiData,true));
-                $this->authData->api_data = base64_encode(json_encode($apiData));
-            }
+        if ( ! $reply['success'] ) {
+            return $reply;
         }
 
+        $reply2 = $this->makeRequest('GetMeeting/OAuth');
+        if ( ! $reply2['success'] ) {
+            return $reply2;
+        }
+
+        $apiData = array(
+            'meetingID'=>$reply2['responseJSON']['feed']['entry']['meetingID'],
+            'hostURL'=>$reply2['responseJSON']['feed']['entry']['hostURL'],
+            'joinURL'=>$reply2['responseJSON']['feed']['entry']['joinURL'],
+            'subscriberID'=>$reply['responseJSON']['subscriber_id'],
+            );
+        $GLOBALS['log']->fatal('IKEA (api_data): '.print_r($apiData,true));
+        $this->eapmBean->api_data = base64_encode(json_encode($apiData));
+        
         return $reply;
     }
 
@@ -287,8 +292,8 @@ class LotusLive extends ExternalAPIBase implements WebMeeting,WebDocument {
         $urlParams['ciPassword'] = 'changeIt!';
         $urlParams['csKey'] = $this->oauthParams['consumerKey'];
         $urlParams['csSecret'] = $this->oauthParams['consumerSecret'];
-        $urlParams['oAuthKey'] = $this->authData->oauth_token;
-        $urlParams['oAuthSecret'] = $this->authData->oauth_secret;
+        $urlParams['oAuthKey'] = $this->oauth_token;
+        $urlParams['oAuthSecret'] = $this->oauth_secret;
 
         $url = 'https://' . $this->url . $requestMethod . '?';
         foreach($urlParams as $key => $value ) {

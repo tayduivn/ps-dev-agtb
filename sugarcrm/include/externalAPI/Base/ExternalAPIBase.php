@@ -3,7 +3,7 @@
 require_once ('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once ('include/externalAPI/Base/ExternalOAuthAPIPlugin.php');
 
-abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlugin
+abstract class ExternalAPIBase implements ExternalAPIPlugin
 {
     public $account_name;
     public $account_password;
@@ -24,13 +24,10 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
     public function loadEAPM($eapmBean)
     {
         // FIXME: check if the bean is validated, if not, refuse it?
-        $this->authData = $eapmBean;
+        $this->eapmBean = $eapmBean;
         if ($this->authMethod == 'password') {
             $this->account_name = $eapmBean->name;
             $this->account_password = $eapmBean->password;
-        } else if ( $this->authMethod == 'oauth') {
-            $this->oauth_token = $eapmBean->oauth_token;
-            $this->oauth_secret = $eapmBean->oauth_secret;
         }
         return true;
     }
@@ -45,18 +42,8 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
         if(!empty($eapmBean)) {
             $this->loadEAPM($eapmBean);
         }
-        $this->checkOauthLogin();
-    }
-
-    protected function checkOauthLogin()
-    {
-        if(empty($this->authData)) return;
-
-        if($this->authMethod == 'oauth') {
-            if(empty($this->authData->oauth_token) || empty($this->authData->oauth_secret)) {
-                $this->authData->oauthLogin($this);
-            }
-        }
+        
+        return array('success' => true);
     }
 
     protected function getValue($value)
@@ -65,67 +52,6 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin, ExternalOAuthAPIPlu
             return $this->$value;
         }
         return null;
-    }
-
-    public function getOauthParams()
-    {
-        return $this->getValue("oauthParams");
-    }
-
-    public function getOauthRequestURL()
-    {
-        return $this->getValue("oauthReq");
-    }
-
-    public function getOauthAuthURL()
-    {
-        return $this->getValue("oauthAuth");
-    }
-
-    public function getOauthAccessURL()
-    {
-        return $this->getValue("oauthAccess");
-    }
-
-    /**
-     * Get OAuth client
-     * @return SugarOauth
-     */
-    public function getOauth()
-    {
-        $oauth = new SugarOAuth($this->oauthParams['consumerKey'], $this->oauthParams['consumerSecret'], $this->getOauthParams());
-        
-        if ( isset($this->oauth_token) && !empty($this->oauth_token) ) {
-            $oauth->setToken($this->oauth_token, $this->oauth_secret);
-        }
-        
-        return $oauth;
-    }
-
-    protected function encodeParams($params = array())
-    {
-		if(empty($params)) {
-            return '';
-        }
-
-        // Encode _everything_
-		$keys = rawurlencode(array_keys($params));
-		$values = rawurlencode(array_values($params));
-
-		// Combine the parameters
-		$params = array_combine($keys, $values);
-
-        // Sort it for the signature
-		uksort($params, 'strcmp');
-
-        $paramString = '';
-
-		// Build the parameter string
-		foreach($params as $key => $value) {
-            $paramString .= $key.'='.str_replace('%25', '%', $value).'&';
-        }
-
-		return rtrim('&', $paramString);        
     }
 
     public function logOff()

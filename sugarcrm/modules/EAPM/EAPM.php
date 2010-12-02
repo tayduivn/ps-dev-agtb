@@ -77,16 +77,6 @@ class EAPM extends Basic {
        $eapmBean = new EAPM();
        $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application, 'active' => 1, 'validated' => 1));
 
-       /*
-        $results = $GLOBALS['db']->query("SELECT * FROM eapm WHERE assigned_user_id = '{$GLOBALS['current_user']->id}' AND application='$application' AND deleted = 0");
-        $row = $GLOBALS['db']->fetchByAssoc($results);
-        if(isset($row['password'])){
-        	require_once("include/utils/encryption_utils.php");
-        	$row['password'] = blowfishDecode(blowfishGetKey('encrypt_field'),$row['password']);;
-        }
-        return $row;
-       */
-
        if(isset($eapmBean->password)){
            require_once("include/utils/encryption_utils.php");
            $eapmBean->password = blowfishDecode(blowfishGetKey('encrypt_field'),$eapmBean->password);;
@@ -120,27 +110,12 @@ class EAPM extends Basic {
        return parent::save($check_notify);
    }
 
-//   function save($check_notify = FALSE) {
-//       // Now time to test if the login info they typed in actually works.
-//       $api = ExternalAPIFactory::loadAPI($this->application,true);
-//       $reply = $api->checkLogin($this);
-//
-//       if ( !$reply['success'] ) {
-//           // FIXME: Translate
-//           $_SESSION['administrator_error'] = 'Error during login: '.$reply['errorMessage'];
-//           return;
-//       }
-//
-//       $id = parent::save($check_notify);
-//
-//   }
-
    function validated()
    {
        if(empty($this->id)) {
            return false;
        }
-        // FIXME: use save?
+        // Don't use save, it will attempt to revalidate
        $adata = $GLOBALS['db']->quote($this->api_data);
        $GLOBALS['db']->query("UPDATE eapm SET validated=1,api_data='$adata'  WHERE id = '{$this->id}' AND deleted = 0");
        if($this->active && !empty($this->application)) {
@@ -149,54 +124,6 @@ class EAPM extends Basic {
            $GLOBALS['db']->query($sql,true);
        }
    }
-
-   public function getHttpClient(ExternalOAuthAPIPlugin $api)
-   {
-       if($api->authMethod == 'oauth') {
-           $oauth = $api->getOauth();
-           $oauth->setToken($this->oauth_token, $this->oauth_secret);
-           return $oauth->getClient();
-       }
-       return false;
-   }
-
-   public function oauthLogin(ExternalOAuthAPIPlugin $api)
-   {
-        global $sugar_config;
-        $oauth = $api->getOauth();
-        if(isset($_SESSION['eapm_oauth_secret']) && isset($_SESSION['eapm_oauth_token']) && isset($_REQUEST['oauth_token']) && isset($_REQUEST['oauth_verifier'])) {
-            $stage = 1;
-        } else {
-            $stage = 0;
-        }
-        if($stage == 0) {
-            $oauthReq = $api->getOauthRequestURL();
-            $callback_url = $sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->id;
-            $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
-            $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
-            $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
-            // FIXME: error checking here
-            $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
-            $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
-            $authReq = $api->getOauthAuthURL();
-            SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
-        } else {
-            $accReq = $api->getOauthAccessURL();
-            $oauth->setToken($_SESSION['eapm_oauth_token'],$_SESSION['eapm_oauth_secret']);
-            $GLOBALS['log']->debug("OAuth access token: {$accReq}");
-            $access_token_info = $oauth->getAccessToken($accReq);
-            $GLOBALS['log']->debug("OAuth token: ".var_export($access_token_info, true));
-            // FIXME: error checking here
-            $this->oauth_token = $access_token_info['oauth_token'];
-            $this->oauth_secret = $access_token_info['oauth_token_secret'];
-            $oauth->setToken($this->oauth_token, $this->oauth_secret);
-            $this->validated = 1;
-            $this->save();
-            unset($_SESSION['eapm_oauth_token']);
-            unset($_SESSION['eapm_oauth_secret']);
-            return true;
-        }
-	}
 
 	protected function fillInName()
 	{

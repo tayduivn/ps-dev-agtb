@@ -22,7 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
-require_once('include/facebook.php');
 
 class SugarFeedDashlet extends DashletGeneric { 
 var $displayRows = 15;
@@ -87,6 +86,7 @@ var $selectedCategories = array();
 			}
 		}
 
+/*
         // Need to un-safe this string, facebook passes raw JSON data back.
         if ( !empty($_REQUEST['session']) ) {
             $_REQUEST['session'] = str_replace('&quot;','"',$_REQUEST['session']);
@@ -129,7 +129,6 @@ var $selectedCategories = array();
         } else {
             $this->fbData['loginUrl'] = $this->fb->getLoginUrl(array('req_params'=>'read_stream'));
         }
-
         
         // All hands to the twitter!
         if ( isset($_SESSION['feed_twitter_enabled']) && $_SESSION['feed_twitter_enabled'] ) {
@@ -145,6 +144,7 @@ var $selectedCategories = array();
             
             $this->twitData['messages'] = array();
         }
+*/
 
         $this->seedBean = new SugarFeed();
     }
@@ -364,81 +364,60 @@ var $selectedCategories = array();
         $td = $GLOBALS['timedate'];
         $needResort = false;
         $resortQueue = array();
-        // Check if we need to re-sort the FB messages
-        if ( isset($this->fbData['lastMessages']['data'][0]) ) {
-            // We need to re-sort
-            $needResort = true;
-            
-            // Put the FB messages in the resort queue.
-            foreach ( $this->fbData['lastMessages']['data'] as $message ) {
-                if ( empty($message['message']) ) {
-                    continue;
-                }
-                // Extract the timestamp, with passion
-                $unix_time = strtotime($message['created_time']);
 
-                $fake_record = array();
-                $fake_record['sort_key'] = $unix_time;
-                $fake_record['ID'] = create_guid();
-                $fake_record['DATE_ENTERED'] = $td->to_display_date_time(gmdate('Y-m-d H:i:s',$unix_time));
-                $fake_record['NAME'] = $message['from']['name'].'</b>';
-                if ( !empty($message['message']) ) {
-                    $fake_record['NAME'] .= ' '.$message['message'];
-                }
-                if ( !empty($message['picture'])) {
-                    $fake_record['NAME'] .= '<br><img src="'.$message['picture'].'" height=50>';
-                }
-                $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
-                $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'].'/picture';
-
-
-                $resortQueue[] = $fake_record;
+        require_once('include/externalAPI/ExternalAPIFactory.php');
+        $facebook = ExternalAPIFactory::loadAPI('Facebook');
+        if ( $facebook !== FALSE ) {
+            $messages = $facebook->getLatestUpdates(time(),15);
+            if ( count($messages) > 0 ) {
+                array_splice($resortQueue, count($resortQueue), 0, $messages);
             }
         }
-        
-        require_once('include/externalAPI/ExternalAPIFactory.php');
+
         $twitter = ExternalAPIFactory::loadAPI('Twitter');
         if ( $twitter !== FALSE ) {
-            $replies = $twitter->getLatestUpdates(time(),15);
-            array_splice($resortQueue, count($resortQueue), 0, $replies);
+            $messages = $twitter->getLatestUpdates(time(),15);
+            if ( count($messages) > 0 ) {
+                array_splice($resortQueue, count($resortQueue), 0, $messages);
+            }
         }
         
 
         // If we need to resort, get to work!
-        if ( true ) {
-            foreach ( $this->lvs->data['data'] as $normalMessage ) {
-                list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
-                list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
-                
-                $unix_timestamp = strtotime($db_date.' '.$db_time);
-                
-                $normalMessage['sort_key'] = $unix_timestamp;
-                $normalMessage['NAME'] = '</b>'.$normalMessage['NAME'];
-                
-                $resortQueue[] = $normalMessage;
-            }
+        foreach ( $this->lvs->data['data'] as $normalMessage ) {
+            list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
+            list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
             
-            usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
+            $unix_timestamp = strtotime($db_date.' '.$db_time);
             
-            //echo('<pre>IKEA ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
+            $normalMessage['sort_key'] = $unix_timestamp;
+            $normalMessage['NAME'] = '</b>'.$normalMessage['NAME'];
             
-            foreach ( $resortQueue as $key=>&$item ) {
-                if ( empty($item['IMAGE_URL']) ) {
-                    $item['IMAGE_URL'] = 'include/images/blank.gif';
-                    if ( isset($item['ASSIGNED_USER_ID']) ) {
-                        $user = loadBean('Users');
-                        $user->retrieve($item['ASSIGNED_USER_ID']);
-                        if ( !empty($user->picture) ) {
-                            $item['IMAGE_URL'] = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
-                        }
-                    }
-                }
-                $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
-            }
-            
-            $this->lvs->data['data'] = $resortQueue;
+            $resortQueue[] = $normalMessage;
         }
         
+        usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
+        
+        //echo('<pre>IKEA ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
+        
+        foreach ( $resortQueue as $key=>&$item ) {
+            if ( empty($item['NAME']) ) {
+                continue;
+            }
+            if ( empty($item['IMAGE_URL']) ) {
+                $item['IMAGE_URL'] = 'include/images/blank.gif';
+                if ( isset($item['ASSIGNED_USER_ID']) ) {
+                    $user = loadBean('Users');
+                    $user->retrieve($item['ASSIGNED_USER_ID']);
+                    if ( !empty($user->picture) ) {
+                        $item['IMAGE_URL'] = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
+                    }
+                }
+            }
+            $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
+        }
+        
+        $this->lvs->data['data'] = $resortQueue;
     }
 	
 	  function deleteUserFeed() {
