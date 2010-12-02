@@ -1,7 +1,7 @@
 <project>
     <shortName>sugarcrm</shortName>
     <fullName>SugarCRM on FastStack</fullName>
-    <version>6.1.0RC3</version>
+    <version>6.1.1</version>
     <installerFilename>${product_shortname}-CE-${product_version}-${platform_name}-installer.${platform_exec_suffix}</installerFilename>
     <licenseFile>license.txt</licenseFile>
     <wrapLicenseFileText>1</wrapLicenseFileText>
@@ -10,7 +10,7 @@
     <logoImage>images/sugarcrm_logo_transparent_200x36.gif</logoImage>
     <splashImage>images/sugarsplash.png</splashImage>
     <allowLanguageSelection>0</allowLanguageSelection>
-    <outputDirectory>/home/build/sugarbuild-BitRock-6.1.0RC3/zip</outputDirectory>
+    <outputDirectory>/home/build/sugarbuild-BitRock-6.1.1/zip</outputDirectory>
     <projectSchemaVersion>1.2</projectSchemaVersion>
     <saveRelativePaths>1</saveRelativePaths>
     <startMenuGroupName>${product_fullname}</startMenuGroupName>
@@ -1140,6 +1140,7 @@ This process may take several minutes to complete.</explanation>
     'setup_db_drop_tables' => 0,
     'setup_db_create_database' => 1,
     'demoData' => '${demoData}',
+    'setup_site_admin_user_name' => 'admin',
     'setup_site_admin_password' => '${sugarpassword}',
     'setup_db_create_sugarsales_user' => 0,
     'setup_db_admin_user_name' => 'root',
@@ -1182,6 +1183,7 @@ This process may take several minutes to complete.</explanation>
     'setup_db_database_name' => 'sugarcrm',
     'setup_db_drop_tables' => 0,
     'setup_db_create_database' => 1,
+    'setup_site_admin_user_name' => 'admin',
     'setup_site_admin_password' => '${sugarpassword}',
     'setup_db_create_sugarsales_user' => 0,
     'setup_db_admin_user_name' => 'root',

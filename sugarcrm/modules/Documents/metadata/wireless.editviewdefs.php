@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise Subscription
  * Agreement ("License") which can be viewed at

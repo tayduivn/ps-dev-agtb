@@ -28,10 +28,6 @@ require_once('service/core/SugarWebServiceImpl.php');
 
 class SugarWebServiceImplv2_1 extends SugarWebServiceImpl {
 
-	public function __construct(){
-    	parent::__construct();
-    }
-    
 //BEGIN SUGARCRM flav=pro ONLY
 
 /**
