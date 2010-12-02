@@ -146,9 +146,18 @@ abstract class DashletGenericChart extends Dashlet
         $ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
         $ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
         $ss->assign('chartStringsXML', $chartStringsXML);
-                
-        $str = $ss->fetch('include/Dashlets/DashletGenericChartScript.tpl');     
-        return $str;
+        
+		//custom chart code
+		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
+			require_once('custom/include/SugarCharts/chartEngine.php');
+			$customEngine = new chartEngine();
+			$customEngine->chartId = $this->id;
+			$customEngine->xmlFile = $xmlFile;
+			return $customEngine->getDashletScript();
+		} else {
+			$str = $ss->fetch('include/Dashlets/DashletGenericChartScript.tpl');
+			return $str;
+		}
     }
     
     /**

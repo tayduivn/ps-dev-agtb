@@ -273,7 +273,12 @@ SUGAR.mySugar = function() {
                 								   scriptResponse['chartsArray'][chart]['colorScheme'],
 												   scriptResponse['chartsArray'][chart]['langFile']);
                 }
-                
+                			
+                //custom chart code
+				if(typeof scriptResponse['customChartsArray'] != "undefined") {
+					SUGAR.mySugar.customCharts.addToCustomChartsJson(scriptResponse['customChartsArray'],pageNum);
+				}
+				
                 if(YAHOO.util.DDM.mode == 1) {
                     for(var wp = 0; wp < scriptResponse['numCols']; wp++) {
                         SUGAR.mySugar.homepage_dd[counter++] = new ygDDListBoundary('page_'+pageNum+'_hidden' + wp);
@@ -304,6 +309,12 @@ SUGAR.mySugar = function() {
 					SUGAR.util.evalScript(scriptResponse['dashletCtrl']);			
 				}
                 SUGAR.mySugar.loadSugarCharts();
+                
+                //custom chart code
+				if(typeof scriptResponse['customChartsArray'] != "undefined") {
+					SUGAR.mySugar.customCharts.loadCustomCharts(pageNum);
+				}
+                
 				SUGAR.mySugar.loading.hide();                                                  
 				document.getElementById('loading_c').style.display = 'none';
             }
@@ -628,13 +639,19 @@ SUGAR.mySugar = function() {
 				var processChartScript = function(scriptData){
 					SUGAR.util.evalScript(scriptData.responseText);
 
-					SUGAR.mySugar.loadSugarChart(charts[activeTab][id]['name'], 
-												 charts[activeTab][id]['xmlFile'], 
-												 charts[activeTab][id]['width'], 
-												 charts[activeTab][id]['height'],
-												 charts[activeTab][id]['styleSheet'],
-												 charts[activeTab][id]['colorScheme'],
-												 charts[activeTab][id]['langFile']);
+					//custom chart code
+					if(customChart) {
+						SUGAR.mySugar.customCharts.loadCustomCharts(activeTab);
+					} else {
+						SUGAR.mySugar.loadSugarChart(charts[activeTab][id]['name'], 
+													 charts[activeTab][id]['xmlFile'], 
+													 charts[activeTab][id]['width'], 
+													 charts[activeTab][id]['height'],
+													 charts[activeTab][id]['styleSheet'],
+													 charts[activeTab][id]['colorScheme'],
+													 charts[activeTab][id]['langFile']);
+					}
+					
 				}
 				if(typeof(is_chart_dashlet)=='undefined'){
 					is_chart_dashlet = false;

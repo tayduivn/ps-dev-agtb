@@ -12,7 +12,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 
 require_once('include/SugarCharts/SugarChart.php');
-
+if(is_file('custom/include/SugarCharts/chartEngine.php')) {
+	require_once('custom/include/SugarCharts/chartEngine.php');
+}
 class SugarChartReports extends SugarChart {
 	
 	private $processed_report_keys = array();
@@ -201,7 +203,26 @@ class SugarChartReports extends SugarChart {
 		
 		$this->ss->assign("resize", $resize);
 		$this->ss->assign("app_strings", $app_strings);				
-		return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+		
+		//custom chart code
+		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
+			require_once('custom/include/SugarCharts/chartEngine.php');
+			$customEngine = new chartEngine();
+			$customEngine->chartId = $name;
+			$customEngine->height = $height;
+			$customEngine->width = $width;
+			$customEngine->xmlFile = $xmlFile;
+			$customEngine->chartType = $this->chart_properties['type'];
+			
+			if($customEngine->isSupported($this->chart_properties['type'])) {
+				return $customEngine->display();
+			} else {
+				return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+			}
+		
+		} else {
+			return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+		}
 	}
 	
 } // end class def

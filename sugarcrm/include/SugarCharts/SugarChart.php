@@ -9,7 +9,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
-
+if(is_file('custom/include/SugarCharts/chartEngine.php')) {
+	require_once('custom/include/SugarCharts/chartEngine.php');
+}
 class SugarChart {
 
 	private $db;
@@ -727,7 +729,27 @@ class SugarChart {
 		
 		$this->ss->assign("resize", $resize);
 		$this->ss->assign("app_strings", $app_strings);				
-		return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+		
+		//custom chart code
+		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
+			require_once('custom/include/SugarCharts/chartEngine.php');
+			$customEngine = new chartEngine();
+			$customEngine->chartId = $name;
+			$customEngine->height = $height;
+			$customEngine->width = $width;
+			$customEngine->xmlFile = $xmlFile;
+			$customEngine->chartType = $this->chart_properties['type'];
+			
+			if($customEngine->isSupported($this->chart_properties['type'])) {
+				return $customEngine->display();
+				//return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+			} else {
+				return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+			}
+		
+		} else {
+			return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+		}
 	}
 
 
