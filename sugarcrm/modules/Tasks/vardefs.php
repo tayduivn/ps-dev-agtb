@@ -41,6 +41,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'options' => 'task_status_dom',
     'len' => 100,
     'required' => 'true',
+    'default' => 'Not Started',
   ),
   'date_due_flag' =>
   array (

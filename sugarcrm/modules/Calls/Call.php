@@ -161,8 +161,7 @@ class Call extends SugarBean
 			}
 		}
         if (empty($this->status) ) {
-            $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
-            $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
+            $this->status = $this->getDefaultStatus();
         }
 		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
 		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
@@ -687,6 +686,18 @@ class Call extends SugarBean
 		parent::save_relationship_changes($is_update, $exclude);
 	}
 
+    public function getDefaultStatus()
+    {
+         $def = $this->field_defs['status'];
+         if (isset($def['default'])) {
+             return $def['default'];
+         } else {
+            $app = return_app_list_strings_language($GLOBALS['current_language']);
+            if (isset($def['options']) && isset($app[$def['options']])) {
+                $keys = array_keys($app[$def['options']]);
+                return $keys[0];
+            }
+        }
+        return '';
+    }
 }
-
-?>

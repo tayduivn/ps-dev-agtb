@@ -676,7 +676,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 	var isInQuotes 		= false;		// am i currently reading in a string
 	var isPrevCharBK 	= false;		// is my previous character a backslash
 
-	for ( var i = 0 ; i <= length ; i++ ) {
+	if (length > 0) { for ( var i = 0 ; i <= length ; i++ ) {
 		// store the last character read
 		lastCharRead = currChar;
 
@@ -733,7 +733,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 
 		// construct the next argument
 		argument += currChar;
-	}
+	}}
 
 	// now check to make sure all the quotes opened were closed
 	if ( isInQuotes )	throw ("Syntax Error (Unterminated String Literal)");
@@ -804,21 +804,32 @@ SUGAR.util.DateUtils = {
  	 * Converts a date string to a new format.
  	 * If no new format is passed in, the date is returned as a Unix timestamp.
  	 * If no old format is passed in, the old format is guessed.
- 	 * @param {Object} date String representing a date.
- 	 * @param {Object} newFormat Optional: Format date should be returned in.
- 	 * @param {Object} oldFormat Optional: Current format of the date string.
+ 	 * @param {String} date String representing a date.
+ 	 * @param {String} oldFormat Optional: Current format of the date string.
  	 */
-	convert : function(date, newFormat, oldFormat) {
+	parse : function(date, oldFormat) {
+		if (oldFormat == "user")
+		{
+			if (SUGAR.expressions.userPrefs && SUGAR.expressions.userPrefs.datef) {
+				oldFormat = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;
+			} else {
+				oldFormat = SUGAR.util.DateUtils.guessFormat(date);
+			}
+		}
 		if (oldFormat == null || oldFormat == "") {
 			oldFormat = SUGAR.util.DateUtils.guessFormat(date);
 		}
 		if (oldFormat == false) {
+			//Check if date is a timestamp
+			if (/^\d+$/.test(date))
+				return new Date(date);
+			//Otherwise give up
 			return false;
 		}
 		var jsDate = new Date("Jan 1, 1970 00:00:00");
 		var part = "";
-		var dateRemain = date;
-		oldFormat = oldFormat + " "; // Trailing space to read as last separator.
+		var dateRemain = YAHOO.lang.trim(date);
+		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
 		for (var c in oldFormat) {
 			c = oldFormat[c];
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
@@ -835,9 +846,9 @@ SUGAR.util.DateUtils = {
 						jsDate.setYear(v); break;
 					case 'h':
 						//Read time, assume minutes are at end of date string (we do not accept seconds)
-						var timeformat = oldFormat.substring(oldFormat.length - 5);
-						if (timeformat.toLowerCase == "i a " || timeformat.toLowerCase == c + "ia ") {
-							if (dateRemain.substring(dateRemain.length - 3).toLowerCase == 'pm') {
+						var timeformat = oldFormat.substring(oldFormat.length - 4);
+						if (timeformat.toLowerCase() == "i a " || timeformat.toLowerCase() == c + "ia ") {
+							if (dateRemain.substring(dateRemain.length - 2).toLowerCase() == 'pm') {
 								v = v * 1;
 								if (v < 12) {
 									v += 12;
@@ -856,7 +867,7 @@ SUGAR.util.DateUtils = {
 				part = c;
 			}
 		}
-		return jsDate.toString();
+		return jsDate;
 	},
 	guessFormat: function(date) {
 		if (typeof date != "string")

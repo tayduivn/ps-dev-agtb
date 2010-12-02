@@ -125,6 +125,11 @@ class ViewEditFormula extends SugarView
  				case "enum":
 					$fieldArray[] = array($fieldName, 'string');
  					break;
+                case "date":
+                case "datetime":
+                case "datetimecombo":
+					$fieldArray[] = array($fieldName, 'date');
+ 					break;
  				default:
  					//Do Nothing
  					break;

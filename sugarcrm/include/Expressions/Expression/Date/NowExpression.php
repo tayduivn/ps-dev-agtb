@@ -18,22 +18,19 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
+require_once('include/Expressions/Expression/Date/DateExpression.php');
 
 /**
- * <b>dayofweek(Date d)</b><br>
- * Returns the day of week that <i>d</i> falls on.<br/>
- * Sun = 0, Mon = 1, ... , Sat = 6
- */
-class DayOfWeekExpression extends NumericExpression
+ * <b>now()</b><br>
+ * Returns a date object representing todays date and the current time.
+ **/
+class NowExpression extends DateExpression
 {
 	/**
 	 * Returns the entire enumeration bare.
 	 */
-	function evaluate() {
-		$params = $this->getParameters()->evaluate();
-		$time = strtotime($params);
-		return date("w", $time);
+	function evaluate() {		
+		return date($this->internalDateFormat);
 	}
 
 
@@ -42,8 +39,9 @@ class DayOfWeekExpression extends NumericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var time = this.getParameters().evaluate();
-			return new Date(time).getDay();
+		  var d = new Date();
+		  d.setSeconds(0);
+		  return d;
 EOQ;
 	}
 
@@ -52,14 +50,14 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "dayofweek";
+		return "now";
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 1;
+		return 0;
 	}
 
 	/**

@@ -173,7 +173,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
         //kbrill bug #13884
         //$begin = $timedate->to_display_date_time($begin);
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), true, $this->assigned_user);
-        
+
         $begin_parts = explode(' ', $begin);
 
         $be = $begin_parts[0] . ' 00:00:00';
@@ -222,13 +222,13 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 	}
 	function queryFilterTP_today(& $layout_def) {
 		global $timedate, $current_user;
-        
+
         $begin_timestamp = time();
 		$begin = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $begin_timestamp); // get GMT today
 		//kbrill bug #13884
         //$begin = $timedate->to_display_date_time($begin); // convert and handle offset to user's 'display' today
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), true, $this->assigned_user);
-        
+
         $begin_parts = explode(' ', $begin);
 
         $be = $begin_parts[0] . ' 00:00:00';
@@ -282,7 +282,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
         //kbrill bug #13884
         //$begin = $timedate->to_display_date_time($begin);
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), true, $this->assigned_user);
-        
+
         $begin_parts = explode(' ', $begin);
 
         $be = $begin_parts[0] . ' 00:00:00';
@@ -342,7 +342,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
         //kbrill bug #13884
         //$begin = $timedate->to_display_date_time($begin,true,true,$this->assigned_user);
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), false, $this->assigned_user);
-        
+
         if ($time=='start') {
             $begin_parts = explode(' ', $begin);
             $be = $begin_parts[0] . ' 00:00:00';
@@ -630,7 +630,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
             $time=false;
         }
         return $time;
-    
+
     }
     function displayList($layout_def) {
         global $timedate;
@@ -658,7 +658,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 	function & displayListday(& $layout_def) {
 		return parent:: displayListPlain($layout_def);
 	}
-	
+
 	function & displayListyear(& $layout_def) {
 		global $app_list_strings;
         //if ($this->reporter->db->dbType == 'oci8' || $this->reporter->db->dbType == 'mssql') {
@@ -707,7 +707,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 		}elseif($this->reporter->db->dbType == 'mssql') {
             //return "LEFT(".$this->_get_column_select($layout_def).", 6) \n";
             return "LEFT(CONVERT (varchar(20), ". $this->_get_column_select($layout_def). ", 121),7) \n";
-            
+
         }else {
 			return "LEFT(".$this->_get_column_select($layout_def).", 7) \n";
 		}
@@ -721,12 +721,12 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 		}elseif($this->reporter->db->dbType == 'mssql') {
             //return "LEFT(".$this->_get_column_select($layout_def).", 6) \n";
         	return "LEFT(CONVERT (varchar(20), ". $this->_get_column_select($layout_def). ",121),10)".$this->_get_column_alias($layout_def)." \n";
-            
+
         }else {
 			return "LEFT(".$this->_get_column_select($layout_def).", 10)".$this->_get_column_alias($layout_def)." \n";
 		}
 	}
-		
+
 	function queryGroupByDay($layout_def) {
 		if ($this->reporter->db->dbType == 'oci8') {
 //BEGIN SUGARCRM flav=ent ONLY
@@ -735,12 +735,12 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 		}elseif($this->reporter->db->dbType == 'mssql') {
             //return "LEFT(".$this->_get_column_select($layout_def).", 6) \n";
             return "LEFT(CONVERT (varchar(20), ". $this->_get_column_select($layout_def). ", 121),10) \n";
-            
+
         }else {
 			return "LEFT(".$this->_get_column_select($layout_def).", 10) \n";
 		}
 	}
-	
+
 
 	function querySelectyear(& $layout_def) {
 		if ($this->reporter->db->dbType == 'oci8') {
@@ -750,7 +750,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 		}elseif($this->reporter->db->dbType == 'mssql') {
             //return "LEFT( ".$this->_get_column_select($layout_def).",5 ) ".$this->_get_column_alias($layout_def)." \n";
             return "LEFT(CONVERT (varchar(20), ". $this->_get_column_select($layout_def). ",121),4) ".$this->_get_column_alias($layout_def)." \n";
-            
+
         } else {
 			return "LEFT( ".$this->_get_column_select($layout_def).",4 ) ".$this->_get_column_alias($layout_def)." \n";
 		}
@@ -786,7 +786,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 		{
 			//return "LEFT(".$this->_get_column_select($layout_def).", 4) +  '-' + convert(varchar(20), DatePart(q," . $this->_get_column_select($layout_def).") ) ".$this->_get_column_alias($layout_def)."\n";
             return "LEFT(CONVERT (varchar(20), ". $this->_get_column_select($layout_def). ",121),4)+  '-' + convert(varchar(20), DatePart(q," . $this->_get_column_select($layout_def).") ) ".$this->_get_column_alias($layout_def)."\n";
-			
+
 		}
 
 
@@ -854,5 +854,3 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
         return $str;
     }
 }
-?>
-

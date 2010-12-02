@@ -252,7 +252,7 @@ function template_cal_tabs($args) {
 	/////////////////////////////////
 	function template_calendar($args) {
 		global $timedate;
-		if(isset($args['size']) && $args['size'] = 'small') {
+		if(isset($args['size']) && $args['size'] == 'small') {
 			$args['calendar']->show_activities = false;
 			$args['calendar']->show_week_on_month_view = false;
 		}
