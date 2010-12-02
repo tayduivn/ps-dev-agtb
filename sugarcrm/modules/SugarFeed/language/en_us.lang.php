@@ -93,7 +93,5 @@ $mod_strings = array (
   
   'LBL_SELECT' => 'Select',  
   'LBL_POST' => 'Post', 
-
-  'LBL_USERFEED_CREATED' => 'User Feed',
 );
 ?>

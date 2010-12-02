@@ -198,77 +198,6 @@ var $selectedCategories = array();
             }
 			if(!empty($where)) { $where .= ' AND '; }
 			$where .= $module_limiter;
-			
-			$table_joins_array = array();
-			$uf_where = array();
-			foreach($this->userfilters as $uf_module => $uf_meta){
-			    // Skip modules that aren't selected for the query
-    		    if(!in_array($uf_module, $this->selectedCategories)){
-    		        continue;
-    		    }
-			    foreach($uf_meta as $uf_field => $uf_field_meta){
-    		        $field_index = "{$uf_module}_{$uf_field}";
-    		        if($uf_field_meta['enabled'] && !empty($this->$field_index)){
-		                $seed = SugarModule::get($uf_module)->loadBean();
-		                $field_def = $seed->field_defs[$uf_field];
-			            $table_name = $seed->table_name;
-			            switch($field_def['type']){
-			                case 'enum':
-                			    $null_check = '';
-                			    if(in_array('', $this->$field_index)){
-                			        $null_check .= "OR {$table_name}.{$uf_field} IS NULL";
-                			    }
-                			    else{
-                			        $null_check .= "AND {$table_name}.{$uf_field} IS NOT NULL";
-                			    }
-                			    $where_in_clause = "('".implode("', '", $this->$field_index)."')";
-                			    if(!in_array($table_name, $table_joins_array)){
-                                    $lvsParams['custom_from'] .= " LEFT JOIN {$table_name} ON sugarfeed.related_module = '{$uf_module}' AND sugarfeed.related_id = {$table_name}.id AND {$table_name}.deleted = 0 ";
-                                    $table_joins_array[] = $table_name;
-                			    }
-                                $uf_where[$uf_module][$uf_field] = " ( sugarfeed.related_module = '{$uf_module}' AND ( ({$table_name}.{$uf_field} in {$where_in_clause}) {$null_check} ) ) ";
-			                    break;
-			                case 'int':
-			                    break;
-			                case 'float':
-			                    break;
-			                case 'varchar':
-			                    break;
-			                case 'date':
-			                    break;
-			                default:
-			                    echo "Sugar Feeds Dashlet can't handle {$field_def['type']}. Sorry!";
-			                    die();
-			                    break;
-			            }
-    		        }
-    		    }
-    		}
-    		
-    		// Take the data from the above block and process
-    		if(!empty($uf_where)){
-    		    $additional_where .= "( ";
-    		    foreach($uf_where as $filter_module => $filter_field_arr){
-    		        $first_iteration = false;
-    		        foreach($filter_field_arr as $filter_field => $query_component){
-    		            $additional_where .= $query_component;
-    		            $additional_where .= " AND ";
-    		        }
-    		        $additional_where = substr($additional_where, 0, -5);
-    		        $additional_where .= " OR ";
-    		    }
-    		    $additional_where = substr($additional_where, 0, -4);
-    		    $additional_where .= ") ";
-    		}
-    		
-    		if(!empty($this->userfeed_created)){
-    		    if(!empty($additional_where)){
-    		        $additional_where = $additional_where." OR ";
-    		    }
-			    $userfeed_created_in = "('".implode("', '", $this->userfeed_created)."')";
-                $where = " ( {$where} ) AND ( {$additional_where} ( sugarfeed.related_module = 'UserFeed' AND sugarfeed.created_by in {$userfeed_created_in} ) ) ";
-            }
-    		
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
                               array('name', 
                                     'description', 
@@ -435,43 +364,7 @@ var $selectedCategories = array();
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
         $ss->assign('id', $this->id);
-        
-        //Sugar Feed User Filtering
-        $user_filter_data = array();
-        $div_list_js = '';
-		foreach($this->userfilters as $uf_module => $uf_meta){
-		    foreach($uf_meta as $uf_field => $uf_field_meta){
-		        $field_index = "{$uf_module}_{$uf_field}";
-		        if($uf_field_meta['enabled']){
-		            $seed = SugarModule::get($uf_module)->loadBean();
-		            $field_def = $seed->field_defs[$uf_field];
-		            $user_filter_data[$field_index]['index'] = $field_index;
-		            $user_filter_data[$field_index]['label'] = translate('LBL_MODULE_NAME', $uf_module)." ".translate($field_def['vname'], $uf_module);
-		            $user_filter_data[$field_index]['value'] = !empty($this->$field_index) ? $this->$field_index : '';
-		            $user_filter_data[$field_index]['type']  = $field_def['type'];
-        		    if(!in_array($uf_module, $this->selectedCategories)){
-		                $user_filter_data[$field_index]['div_display']  = 'none';
-        		    }
-        		    else{
-		                $user_filter_data[$field_index]['div_display']  = 'block';
-        		    }
-		            if($field_def['type'] == 'enum'){
-    		            $user_filter_data[$field_index]['options'] = $GLOBALS['app_list_strings'][$field_def['options']];
-		            }
-		            else if($field_def['type'] == 'date'){
-		                
-		            }
-		            $div_list_js .= "div_list['{$field_index}'] = '{$field_index}';\n";
-		        }
-		    }
-		}
-		$ss->assign('div_list_values', $div_list_js);
-		$ss->assign('user_filter_data', $user_filter_data);
-		
-        $ss->assign('lbl_userfeed_created', translate('LBL_USERFEED_CREATED', 'SugarFeed'));
-        $ss->assign('userfeed_created_options', get_user_array(false));
-        $ss->assign('selected_userfeed_created', $this->userfeed_created);
-		
+
         return  $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/Options.tpl');
     }  
 	
@@ -493,14 +386,6 @@ var $selectedCategories = array();
 		}
         $options['rows'] = $rows;
 		$options['categories'] = $_REQUEST['categories'];
-        //BEGIN Sugar Feed Users Filtering
-		foreach($this->userfilters as $uf_module => $uf_meta){
-		    foreach($uf_meta as $uf_field => $uf_field_meta){
-		        $field_index = "{$uf_module}_{$uf_field}";
-		        $options[$field_index] = $_REQUEST[$field_index];
-		    }
-		}
-		$options['userfeed_created'] = $_REQUEST['userfeed_created'];
 		foreach($options['categories'] as $cat){
 			if($cat == 'ALL'){
 				unset($options['categories']);
