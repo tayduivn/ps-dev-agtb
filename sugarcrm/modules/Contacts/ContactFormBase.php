@@ -131,7 +131,7 @@ function buildTableForm($rows, $mod=''){
 		unset($_POST['return_action']);
 	}
 		
-   $form .= getPostToForm('/emailAddress(PrimaryFlag|OptOutFlag|InvalidFlag)?[0-9]*?$/', true);
+   $form .= getPostToForm();
 	
 	if(isset($rows[0])){
 		foreach ($rows[0] as $key=>$value){

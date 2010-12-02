@@ -238,6 +238,13 @@ if(!$ce_to_pro_ent) {
 }
 //END SUGARCRM flav=pro ONLY
 
+//Upgrade connectors
+if(function_exists('upgrade_connectors'))
+{
+   upgrade_connectors($path);
+}
+
+
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
