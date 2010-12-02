@@ -129,7 +129,7 @@ $viewdefs['Accounts']['ConvertLead'] = array(
     ),
 );
 $viewdefs['Opportunities']['ConvertLead'] = array(
-    'copyData' => false,
+    'copyData' => true,
     'required' => false,
     'templateMeta' => array(
         'form'=>array(

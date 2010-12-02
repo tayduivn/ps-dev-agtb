@@ -146,8 +146,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'double',
     'disable_num_format' => true,
     'audited'=>true,
-    'comment' => 'Formatted amount of the opportunity',
-    'studio'=>false,
+    'comment' => 'Formatted amount of the opportunity'
   ),
   'currency_id' =>
   array (

@@ -117,7 +117,14 @@ class MySugar{
 		    
 		    // add to beginning of the array
 		    array_unshift($pages[$_REQUEST['activeTab']]['columns'][0]['dashlets'], $guid); 
-			    
+			
+			//check to see whether the preference is too large to store 
+			if($current_user->isPreferenceSizeTooLarge($this->type)){
+				//user preference is too large, do not attempt to store.  echo error string and return.  This will be processed by mySugar.js
+				echo 'userpref_error';
+				return false;
+			}
+			//store preference and echo guid
 		    $current_user->setPreference('dashlets', $dashlets, 0, $this->type);
 		        
 		    echo $guid;
@@ -569,7 +576,15 @@ EOJS;
 		$newPage['numColumns'] = $_REQUEST['numCols'];
 		
 		array_push($pages,$newPage);
-		
+
+			
+		//check to see whether the preference is too large to store 
+		if($current_user->isPreferenceSizeTooLarge($this->type)){
+			//user preference is too large, do not attempt to store.  echo error string and return.  This will be processed by mySugar.js
+			echo 'userpref_error';
+			return false;
+		}
+		//store preference and echo guid		
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 		
 		$newPagesPref = $current_user->getPreference('pages', $this->type);
