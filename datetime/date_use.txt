@@ -1,54 +1,14 @@
 ./modules/Meetings/MeetingFormBase.php:$default_date_start = $timedate->to_display_date(date('Y-m-d'),false);
 ./modules/Meetings/MeetingFormBase.php:$default_time_start = $timedate->to_display_time((date('H:i')), true, false);
 ./modules/Meetings/MeetingFormBase.php:$time_ampm = $timedate->AMPMMenu($prefix,date('H:i'));
-
-
-
 ./modules/ModuleBuilder/MB/MBPackage.php:        $date = date('Y_m_d_His');
 ./modules/ModuleBuilder/MB/MBPackage.php:        $date = date('Y_m_d_His');
 ./modules/ModuleBuilder/MB/MBPackage.php:        $date = date('Y_m_d_His');
-
-
-/modules/Products/Product.php:		$expired = date('Y-m-d', strtotime($support_expired));
-./modules/Products/Product.php:		$coming_due = date('Y-m-d', strtotime($support_coming_due));
 ./modules/Project/Convert.php:$focus->fetched_row['date_entered'] = date($GLOBALS['timedate']->dbDayFormat);
-./modules/Project/Convert.php:$focus->fetched_row['date_modified'] = date($GLOBALS['timedate']->dbDayFormat);
-./modules/Project/Dashboard.php:$today = date($GLOBALS['timedate']->dbDayFormat, time());
-./modules/Project/Dashboard.php:$nextWeek = date($GLOBALS['timedate']->dbDayFormat, time() + (7 * 24 * 60 * 60));
-./modules/Project/EditGridView.php:	$query .= " ) and deleted=0 and holiday_date between '". $timedate->to_db_date($focus->estimated_start_date, false) ."' and '". $timedate->to_db_date($focus->estimated_end_date, false) ."'";
-./modules/Project/EditGridView.php:$today = date($GLOBALS['timedate']->dbDayFormat, time());
-./modules/Project/EditGridView.php:$nextWeek = date($GLOBALS['timedate']->dbDayFormat, time() + (7 * 24 * 60 * 60));
-./modules/Project/EditGridView.php:        "' AND (project_task.date_start BETWEEN '". $timedate->to_db_date($_REQUEST['view_filter_date_start'], false) .
-./modules/Project/EditGridView.php:        "' AND '". $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false)."' OR project_task.date_finish BETWEEN '".
-./modules/Project/EditGridView.php:        $timedate->to_db_date($_REQUEST['view_filter_date_start'], false) ."' AND '" . $timedate->to_db_date($_REQUEST['view_filter_date_finish'], false).
-./modules/Project/Export.php:$mpx .= "30," . $focus->name . ",,,Standard," . $timedate->to_db_date($focus->estimated_start_date, false) .",,0," . date($GLOBALS['timedate']->dbDayFormat) .",,$0.00,$0.00,$0.00,0h,0h,0h,0%,0d,0d,0d,0%,,,,,0d,0d\n";
-./modules/Project/layouts/ProjectGrid_PDF.php:$grid[4]['VALUE'] = $locale->translateCharset(date("m/d/Y", time()), 'UTF-8', $locale->getExportCharset());
-./modules/Project/ResourceReport.php:        " AND (project_task.date_start BETWEEN '". $timedate->to_db_date($_REQUEST['date_start'], false) .
-./modules/Project/ResourceReport.php:        "' AND '". $timedate->to_db_date($_REQUEST['date_finish'], false)."' OR project_task.date_finish BETWEEN '".
-./modules/Project/ResourceReport.php:        $timedate->to_db_date($_REQUEST['date_start'], false) ."' AND '" . $timedate->to_db_date($_REQUEST['date_finish'], false).
-./modules/Project/ResourceReport.php:    $query .= " and holiday_date between '". $timedate->to_db_date($_REQUEST['date_start'], false) ."' and '". $timedate->to_db_date($_REQUEST['date_finish'], false) ."'".
-./modules/Project/ResourceReport.php:    $query .= " and holiday_date between '". $timedate->to_db_date($_REQUEST['date_start'], false) ."' and '". $timedate->to_db_date($_REQUEST['date_finish'], false) ."'".
-./modules/Project/ResourceReport.php:        $holidayDate = date($timedate->to_db_date($holiday->holiday_date, false));
-./modules/Project/ResourceReport.php:        $holidays[$i]['holidayDate'] = $timedate->to_display_date($holidayDate, false, false);
-./modules/Project/ResourceReport.php:    $dateRangeStart = date($timedate->to_db_date($_REQUEST['date_start'], false));
-./modules/Project/ResourceReport.php:    $dateRangeFinish = date($timedate->to_db_date($_REQUEST['date_finish'], false));
-./modules/Project/ResourceReport.php:        $dateRangeArray[$timedate->to_display_date($dateStart, false, false)] = 0;
-./modules/Project/ResourceReport.php:        $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
+./modules/Project/Convert.php:$focus->fetched_row['date_modified'] = date($GLOBALS['timedate']->dbDayFormat);./modules/Project/Export.php:$mpx .= "30," . $focus->name . ",,,Standard," . $timedate->to_db_date($focus->estimated_start_date, false) .",,0," . date($GLOBALS['timedate']->dbDayFormat) .",,$0.00,$0.00,$0.00,0h,0h,0h,0%,0d,0d,0d,0%,,,,,0d,0d\n";
 ./modules/Project/ResourceReport.php:        while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0)
-./modules/Project/ResourceReport.php:            $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
-./modules/Project/ResourceReport.php:        $dateStart = date($timedate->to_db_date($projectTask->date_start, false));
-./modules/Project/ResourceReport.php:        $dateFinish = date($timedate->to_db_date($projectTask->date_finish, false));
 ./modules/Project/ResourceReport.php:            $displayDate = $timedate->to_display_date($dateStart, false, false);
-./modules/Project/ResourceReport.php:            $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
-./modules/Project/ResourceReport.php:            while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0 || isset($isHoliday[$dateStart])) {
-./modules/Project/ResourceReport.php:                $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
-./modules/Project/sugarpdf/sugarpdf.projectgrid.php:        $grid[4]['VALUE']['value'] = date("m/d/Y", time());
-./modules/ProjectTask/MyProjectTasks.php:$today = date($GLOBALS['timedate']->dbDayFormat);
-./modules/ProjectTask/ProjectTask.php:		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
-./modules/ProjectTask/ProjectTask.php:		//$date_due = $timedate->to_db_date($task_fields['DATE_DUE'],false);
-./modules/ProspectLists/Duplicate.php:			$iquery .= "VALUES ("."'".create_guid()."',"."'".$focus->id."',"."'".$row['related_id']."',"."'".$row['related_type']."',"."'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."')";
-./modules/Queues/Queue.php:					'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."',
-./modules/Queues/Queue.php:					'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."',
+./modules/Project/ResourceReport.php:            while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0 || isset($isHoliday[$dateStart])
 ./modules/Queues/Seed.php:			VALUES ('1', 0, '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '1', '1', 'Global', 'Active', '1', 'Global','roundRobin', '1')";
 ./modules/Queues/Seed.php:				'".date($GLOBALS['timedate']->get_db_date_time_format())."',
 ./modules/Queues/Seed.php:				'".date($GLOBALS['timedate']->get_db_date_time_format())."',
@@ -57,37 +17,25 @@
 ./modules/Queues/Seed.php:				'".date($GLOBALS['timedate']->get_db_date_time_format())."',
 ./modules/Queues/Seed.php:				'".date($GLOBALS['timedate']->get_db_date_time_format())."',
 ./modules/Queues/Seed.php:			VALUES ('".$guid."', 0, '".date($GLOBALS['timedate']->get_db_date_time_format())."', '".date($GLOBALS['timedate']->get_db_date_time_format())."', '".$aAllQueues['id']."', '1')";
-./modules/Quotes/EmailPDF.php:	$email_object->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
-./modules/Quotes/layouts/Invoice.php:$quote[1]['VALUE'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, time()), false);
-./modules/Quotes/layouts/Standard.php:$quote[1]['VALUE'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, time()), false);
 ./modules/Quotes/QuoteFormBase.php:$cal_dateformat = parse_calendardate($app_strings['NTC_DATE_FORMAT']);
-./modules/Quotes/QuoteFormBase.php:$default_date_start = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat),false);
-./modules/Quotes/sugarpdf/sugarpdf.invoice.php:        $quote[1]['VALUE']['value'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, time()), false);
-./modules/Quotes/sugarpdf/sugarpdf.standard.php:        $quote[1]['VALUE']['value'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, $userCurrentTime), false);
-./modules/Quotes/views/view.sugarpdf.php:        $email_object->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
 ./modules/ReportMaker/process_scheduled.php:		$filenamestamp .= '_'.date(translate('LBL_CSV_TIMESTAMP', 'Reports'), time());
-./modules/Reports/schedule/ReportSchedule.php:		    $date_start = gmdate($timedate->get_db_date_time_format() );
-./modules/Reports/schedule/ReportSchedule.php:    return gmdate($timedate->get_db_date_time_format(), $date_start);
-./modules/Reports/schedule/ReportSchedule.php:	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
-./modules/Reports/schedule/ReportSchedule.php:		$next_run = date($GLOBALS['timedate']->get_db_date_time_format(), $last_run);
-./modules/Reports/schedule/save_schedule.php:  		$date_start = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
 ./modules/Reports/sugarpdf/sugarpdf.reports.php:            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], date("Y-m-d H:m:s"));
 ./modules/Reports/sugarpdf/sugarpdf.reports.php:            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, date("Y-m-d H:m:s"));
-./modules/Reports/templates/templates_export.php:header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
-./modules/Reports/templates/templates_ezpdf.php:	$print_date = date("m/d/Y", time());
 ./modules/Reports/templates/templates_ezpdf.php:	$filenamestamp .= '_'.date(translate('LBL_PDF_TIMESTAMP', 'Reports'), time());
 ./modules/Reports/templates/templates_tcpdf.php:    $filenamestamp .= '_'.date(translate('LBL_PDF_TIMESTAMP', 'Reports'), time());
 ./modules/Schedulers/_AddJobsHere.php:	$backupFile	= 'backup-pruneDatabase-GMT0_'.gmdate('Y_m_d-H_i_s', strtotime('now')).'.php';
 ./modules/Schedulers/_AddJobsHere.php:	    $timeStamp = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),time()+(86400 * -$prune_interval))."'" ,"datetime");
 ./modules/Schedulers/_AddJobsHere.php:	$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-6 hours"))."'" ,"datetime");
-./modules/Schedulers/EditView.php:	$date_start = date($prefDate['date'], strtotime('2005-01-01'));
-./modules/Schedulers/jobs/SecurityAudit.php:		echo "Starting at: ".date('H:i:s')."<br>";
-./modules/Schedulers/jobs/SecurityAudit.php:		$startTime = mktime();
 ./modules/Schedulers/jobs/SecurityAudit.php:		echo "Starting at: ".date('H:i:s', $startTime)."<br>";
 ./modules/Schedulers/jobs/SecurityAudit.php:		echo "<br>totalTime: ".date('H:i:s', (mktime() - $startTime))."<br>";
-./modules/Schedulers/JobThread.php:	$job->runtime = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now'));
 ./modules/Schedulers/Scheduler.php:		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
-./modules/Schedulers/Scheduler.php:		$now = strtotime(gmdate('Y-m-d H:i:s', strtotime('now'))); // this garbage to make sure we're getting comprable data to the DB output
+
+
+
+
+
+
+
 ./modules/Schedulers/Scheduler.php:		$now = gmdate('Y-m-d H:i', strtotime('now'));
 ./modules/Schedulers/Scheduler.php:		$today	= getdate(gmmktime());
 ./modules/Schedulers/Scheduler.php:			$startMon = date('m', strtotime($focus->date_time_start));

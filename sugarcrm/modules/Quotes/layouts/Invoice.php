@@ -92,7 +92,7 @@ $quote[1]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_DATE'];
 $quote[2]['TITLE'] = $mod_strings['LBL_PURCHASE_ORDER_NUM'];
 $quote[3]['TITLE'] = $mod_strings['LBL_PAYMENT_TERMS'];
 $quote[0]['VALUE'] = format_number_display($focus->quote_num,$focus->system_id);
-$quote[1]['VALUE'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, time()), false);
+$quote[1]['VALUE'] = $timedate->asUserDate($timedate->getNow());
 $quote[2]['VALUE'] = $focus->purchase_order_num;
 $quote[3]['VALUE'] = $focus->payment_terms;
 

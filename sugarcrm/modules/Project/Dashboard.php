@@ -61,8 +61,8 @@ $sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $projectBean = new Project();
 $projects = array();
 
-$today = date($GLOBALS['timedate']->dbDayFormat, time());
-$nextWeek = date($GLOBALS['timedate']->dbDayFormat, time() + (7 * 24 * 60 * 60));
+$today = $timedate->nowDbDate();
+$nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
 
 $query = "SELECT * FROM project WHERE project.assigned_user_id='".$current_user->id."' AND project.estimated_end_date >= '".
         $today."' AND project.is_template=0 AND project.deleted=0 order by project.estimated_end_date ASC";

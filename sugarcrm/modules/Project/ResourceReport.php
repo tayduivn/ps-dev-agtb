@@ -148,8 +148,8 @@ if (!empty($_REQUEST['resource'])) {
         $holiday = new Holiday();
         $holiday->id = $row['id'];
         $holiday->retrieve();
-        $holidayDate = date($timedate->to_db_date($holiday->holiday_date, false)); 
-        $holidays[$i]['holidayDate'] = $timedate->to_display_date($holidayDate, false, false);
+        $holidayDate = $timedate->to_db_date($holiday->holiday_date); 
+        $holidays[$i]['holidayDate'] = $timedate->asUserDate($timedate->fromString($holidayDate));
         $holidays[$i]['projectName'] = $row['project_name'];
         $isHoliday[$holidayDate] = true;
         $row = $holidayBean->db->fetchByAssoc($result);    
@@ -159,21 +159,21 @@ if (!empty($_REQUEST['resource'])) {
     // Daily Report //////////////////////
     $workDayHours = 8;
     
-    $dateRangeStart = date($timedate->to_db_date($_REQUEST['date_start'], false));
-    $dateRangeFinish = date($timedate->to_db_date($_REQUEST['date_finish'], false));
+    $dateRangeStart = $timedate->to_db_date($_REQUEST['date_start']);
+    $dateRangeFinish =$timedate->to_db_date($_REQUEST['date_finish']);
     $dateStart = $dateRangeStart;
     
     while (strtotime($dateStart) <= strtotime($dateRangeFinish)) {
-        $dateRangeArray[$timedate->to_display_date($dateStart, false, false)] = 0;  
-        $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
+        $dateRangeArray[$timedate->asUserDate($timedate->fromString($dateStart))] = 0;  
+        $dateStart = $timedate->asDbdate($timedate->fromString($dateStart)->get('+1 day'));
         while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0)
-            $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
+            $dateStart = $timedate->asDbdate($timedate->fromString($dateStart)->get('+1 day'));
     }
 
     foreach($projectTasks as $projectTask) {
         $duration = $projectTask->duration;
-        $dateStart = date($timedate->to_db_date($projectTask->date_start, false)); 
-        $dateFinish = date($timedate->to_db_date($projectTask->date_finish, false)); 
+        $dateStart = $timedate->asDbDate($timedate->fromTimeStamp($projectTask->date_start)); 
+        $dateFinish =$timedate->asDbDate($timedate->fromTimeStamp($projectTask->date_finish)); 
         
         if ($projectTask->duration_unit == "Days") {
             $duration = $duration * $workDayHours; 
@@ -196,9 +196,9 @@ if (!empty($_REQUEST['resource'])) {
             if (!isset($isHoliday[$dateStart])){
 	            $remainingDuration -= $workDayHours;
             }
-            $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
+            $dateStart = $timedate->asDbdate($timedate->fromString($dateStart)->get('+1 day'));
             while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0 || isset($isHoliday[$dateStart])) {
-                $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
+                $dateStart = $timedate->asDbdate($timedate->fromString($dateStart)->get('+1 day'));
             }          
         }
     }

@@ -161,7 +161,7 @@ class Scheduler extends SugarBean {
 		$GLOBALS['log']->debug('-----> Scheduler flushing dead jobs');
 
 		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
-		$now = strtotime(gmdate('Y-m-d H:i:s', strtotime('now'))); // this garbage to make sure we're getting comprable data to the DB output
+		$now = TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow()); // this garbage to make sure we're getting comprable data to the DB output
 
 		$q = "	SELECT s.id, s.name FROM schedulers s WHERE s.deleted=0 AND s.status = 'In Progress'";
 		$r = $this->db->query($q);
