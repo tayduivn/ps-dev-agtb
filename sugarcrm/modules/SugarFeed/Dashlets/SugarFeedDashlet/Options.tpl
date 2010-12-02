@@ -55,27 +55,7 @@
 <tr>
     <td valign='top' nowrap class='dataLabel'>{$categoriesLBL}</td>
     <td valign='top' class='dataField'>
-    	{html_options id='categories' name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6 onchange="updateDivDisplay(this);"}
-    </td>
-</tr>
-{foreach from=$user_filter_data key=index item=filter_data}
-<tr id='div_{$filter_data.index}' style='display:{$filter_data.div_display}'>
-    <td valign='top' nowrap class='dataLabel'>{$filter_data.label}</td>
-    <td valign='top' class='dataField'>
-  {if $filter_data.type == 'enum'}
-	{capture name='msname'}{$filter_data.index}[]{/capture}
-    {html_options name=$smarty.capture.msname options=$filter_data.options selected=$filter_data.value multiple=true size=6}
-  {elseif $filter_data.type == 'int' or $filter_data.type == 'float' or $filter_data.type == 'double'}
-  {else}
-    {$filter_data.type}
-  {/if}
-    </td>
-</tr>
-{/foreach}
-<tr id='div_userfeed_created' style='display:block'>
-    <td valign='top' nowrap class='dataLabel'>{$lbl_userfeed_created}</td>
-    <td valign='top' class='dataField'>
-    	{html_options name='userfeed_created[]' options=$userfeed_created_options selected=$selected_userfeed_created multiple=true size=4}
+    	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
     </td>
 </tr>
 <tr>
@@ -86,55 +66,3 @@
 </table>
 </form>
 </div>
-{literal}
-<script type="text/javascript">
-var allselected = [];
-var div_list = new Array();
-{/literal}
-{$div_list_values}
-{literal}
-function updateDivDisplay(multiSelectObj){
-    for(var i = 0; i < multiSelectObj.options.length; i++){
-        if(multiSelectObj.options[i].text == 'User Feed'){
-        	if(multiSelectObj.options[i].selected != allselected[i]){
-                allselected[i] = multiSelectObj.options[i].selected;
-                theElement = document.getElementById('div_userfeed_created');
-                if(theElement != null){
-                    if(allselected[i]){
-                        theElement.style.display = 'block';
-                    }
-                    else{
-                        theElement.style.display = 'none';
-                    }
-                }
-        	}
-        }
-        else if(multiSelectObj.options[i].selected != allselected[i]){
-            allselected[i] = multiSelectObj.options[i].selected;
-            
-            if(allselected[i]){
-                for(var div in div_list){
-                    if(div.substring(0, multiSelectObj.options[i].text.length) == multiSelectObj.options[i].text){
-                        theElement = document.getElementById('div_' + div);
-                        if(theElement != null){
-                            theElement.style.display = 'block';
-                        }
-                    }
-                }
-            }
-            else{
-                for(var div in div_list){
-                    if(div.substring(0, multiSelectObj.options[i].text.length) == multiSelectObj.options[i].text){
-                        theElement = document.getElementById('div_' + div);
-                        if(theElement != null){
-                            theElement.style.display = 'none';
-                        }
-                    }
-                }
-            }
-        }
-    } 
-}
-updateDivDisplay(document.getElementById('categories'));
-</script>
-{/literal}
