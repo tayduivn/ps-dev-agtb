@@ -104,9 +104,12 @@ class ViewEditFormula extends SugarView
  		foreach($fieldDef as $fieldName => $def) {
  			if ($fieldName == 'deleted' || empty($def['type']))
  				continue;
+ 			if (isset($def['studio']) && ($def['studio'] == false || $def['studio'] == "false"))
+ 			    continue;
  			switch($def['type']) {
  				case "int":
  				case "float":
+ 				case "decimal":
  				case "currency":
  					$fieldArray[] = array($fieldName, 'number');
  					break;

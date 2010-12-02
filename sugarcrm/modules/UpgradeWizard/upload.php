@@ -132,7 +132,7 @@ switch($run) {
 				if(copy($tempFile , $target_path)){
 					logThis('copying manifest.php to final destination.');
 					copy($manifest_file, $target_manifest);
-					$out .= "{$base_filename} {$mod_strings['LBL_UW_FILE_UPLOADED']}.<br>\n";
+					$out .= "<b>{$base_filename} {$mod_strings['LBL_UW_FILE_UPLOADED']}.</b><br>\n";
 				} else {
 					logThis('ERROR: cannot copy manifest.php to final destination.');
 					$out .= "<b><span class='error'>{$mod_strings['ERR_UW_UPLOAD_ERR']}</span></b><br />";
@@ -223,6 +223,22 @@ if(isset($_SESSION['install_file']) && !empty($_SESSION['install_file']) && is_f
 if($stop == false) set_upgrade_progress('upload','done');
 $frozen = $out;
 
+if(!$stop){
+    if(!empty($GLOBALS['top_message'])){
+        $GLOBALS['top_message'] .= "<br />";
+    }
+    else{
+        $GLOBALS['top_message'] = '';
+    }
+    $GLOBALS['top_message'] .= "<b>{$mod_strings['LBL_UPLOAD_SUCCESS']}</b>";
+}
+else if(!$frozen){
+    $GLOBALS['top_message'] .= "<br />";
+}
+else{
+    $GLOBALS['top_message'] = "<b>{$frozen}</b>";
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	UPLOAD FORM
 $form = '';
@@ -238,7 +254,7 @@ $form =<<<eoq
 	<table width="450" border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td>
-				{$mod_strings['LBL_UPLOAD_UPGRADE']}
+				{$mod_strings['LBL_SELECT_FILE']}
 				<input type="file" onchange="uploadCheck();" name="upgrade_zip" id="upgrade_zip" size="40" />
 			</td>
 			<td valign="bottom">&nbsp;
@@ -246,7 +262,7 @@ $form =<<<eoq
 						{$disabled}
 						disabled="disabled"
 						value="{$mod_strings['LBL_UW_TITLE_UPLOAD']}"
-						onClick="uploadCheck();upgradeP('uploadingUpgardePackage');document.the_form.upgrade_zip_escaped.value = escape( document.the_form.upgrade_zip.value );document.the_form.submit();" />
+						onClick="uploadCheck();upgradeP('uploadingUpgradePackage', false);document.the_form.upgrade_zip_escaped.value = escape( document.the_form.upgrade_zip.value );document.the_form.submit();" />
 				<input type=hidden name="upgrade_zip_escaped" value="" />
 			</td>
 		</tr>
@@ -345,7 +361,7 @@ $form5 =<<<eoq5
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'></p>
         </td></tr>
      </table>
  </div>
@@ -360,8 +376,8 @@ $uwMain = $form2.$form3.$form5;
 
 $showBack		= true;
 $showCancel		= true;
-$showRecheck	= true;
-$showNext		= ($stop) ? false : true;
+$showRecheck	= false;
+$showNext		= true;
 
 $stepBack		= $_REQUEST['step'] - 1;
 $stepNext		= $_REQUEST['step'] + 1;

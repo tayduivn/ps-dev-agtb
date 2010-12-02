@@ -39,6 +39,15 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 </script>
 <script type='text/javascript' src='{sugar_getjspath file='modules/Users/PasswordRequirementBox.js'}'></script>
 {$ERROR_STRING}
+<!-- This is here for the external API forms -->
+<form name="DetailView" id="DetailView" method="POST" action="index.php">
+	<input type="hidden" name="record" id="record" value="{$ID}">
+	<input type="hidden" name="module" value="Users">
+	<input type="hidden" name="return_module" value="Users">
+	<input type="hidden" name="return_id" value="{$ID}">
+	<input type="hidden" name="return_action" value="EditView">
+</form>
+
 <form name="EditView" enctype="multipart/form-data" id="EditView" method="POST" action="index.php">
 	<input type="hidden" name="display_tabs_def">
 	<input type="hidden" name="hide_tabs_def">
@@ -60,6 +69,9 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="is_current_admin" id="is_current_admin" value='{$IS_ADMIN}' >
 	<input type="hidden" name="edit_self" id="edit_self" value='{$EDIT_SELF}' >
 	<input type="hidden" name="required_email_address" id="required_email_address" value='{$REQUIRED_EMAIL_ADDRESS}' >
+<!-- //BEGIN SUGARCRM flav=sales ONLY -->
+	{$ut_hidden}
+<!-- //END SUGARCRM flav!=sales ONLY -->
 	<div id="popup_window"></div>
 						
 <script type="text/javascript">
@@ -71,6 +83,15 @@ SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
 
 EditView_tabs.on('contentReady', function(e){
 {/literal}
+{literal}
+    EditView_tabs.addTab( new YAHOO.widget.Tab({
+        label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
+        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
+        content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
+        cacheData: true
+    }));
+    EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
+{/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
@@ -80,7 +101,7 @@ EditView_tabs.on('contentReady', function(e){
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-    EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
+    EditView_tabs.getTab(5).getElementsByTagName('a')[0].id = 'tab6';
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY
@@ -286,6 +307,7 @@ EditView_tabs.on('contentReady', function(e){
                                     </select>
                                 </td>
                             </tr>
+                            <!--//END SUGARCRM flav!=sales ONLY -->
                             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                             <tr id="mail_smtpserver_tr">
                                 <td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_EMAIL_PROVIDER}</span></td>
@@ -312,7 +334,6 @@ EditView_tabs.on('contentReady', function(e){
                                 <td width="33%" >&nbsp;</td>
                             </tr>
                             {/if}
-                            <!--//END SUGARCRM flav!=sales ONLY -->
                         </table>
             </div>
         </div>
@@ -532,9 +553,9 @@ EditView_tabs.on('contentReady', function(e){
                 <tr>
                     <th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_LAYOUT_OPTIONS}</h4></th>
                 </tr>
-							<tr>	
+							<tr id="use_group_tabs_row" style="display: {$DISPLAY_GROUP_TAB};">	
                                 <td scope="row"><span>{$MOD.LBL_USE_GROUP_TABS}:</span>&nbsp;{sugar_help text=$MOD.LBL_NAVIGATION_PARADIGM_DESCRIPTION }</td>
-                                <td colspan="3"><input type="checkbox" name="use_group_tabs" {$USE_GROUP_TABS} tabindex='12'></td>
+                                <td colspan="3"><input name="use_group_tabs" type="hidden" value="m"><input id="use_group_tabs" type="checkbox" name="use_group_tabs" {$USE_GROUP_TABS} tabindex='12' value="gm"></td>
                             </tr>
                             <tr>
                                 <td colspan="4">
@@ -609,27 +630,24 @@ EditView_tabs.on('contentReady', function(e){
                             <!-- END: currency -->
                             <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
-                        {if ($IS_ADMIN)} 
                         <tr>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {if ($IS_ADMIN)} 
                             <td scope="row"><slot>{$MOD.LBL_PROMPT_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_PROMPT_TIMEZONE_TEXT }</td>
                             <td ><slot><input type="checkbox" tabindex='14'class="checkbox" name="ut" value="0" {$PROMPTTZ}></slot></td>
-                            <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
-                            <td ><slot>
-                                <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
-                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
-                                    onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
-                            </slot></td></tr>
                         {else}
-                            <tr>
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td scope="row"><slot></td>
                             <td ><slot></slot></td>
+                        <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
+                        {/if}
+                        <!--  //END SUGARCRM flav!=sales ONLY -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
                             <td ><slot>
                                 <input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                             </slot></td></tr>
-                        {/if}
                         {capture name=SMARTY_LOCALE_NAME_FORMAT_DESC}&nbsp;{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}<br />{$MOD.LBL_LOCALE_NAME_FORMAT_DESC_2}{/capture}
                         <tr>
                             <td  scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}:&nbsp;{sugar_help text=$smarty.capture.SMARTY_LOCALE_NAME_FORMAT_DESC }</td>
@@ -880,6 +898,12 @@ YAHOO.util.Event.onContentReady('user_theme_picker',function()
     {
         document.getElementById('themePreview').src =
             "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
+        if (typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
+            themeGroupList[document.getElementById('user_theme_picker').value] ) {
+            document.getElementById('use_group_tabs_row').style.display = '';
+        } else {
+            document.getElementById('use_group_tabs_row').style.display = 'none';
+        }
     }
 });
 {/literal}
@@ -908,6 +932,8 @@ document.getElementById('email_link_type').onchange();
 {$getNumberJs}
 {$confirmReassignJs}
 {$currencySymbolJs}
+themeGroupList = {$themeGroupListJSON};
+
 setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
 setSigDigits();
 
@@ -915,6 +941,7 @@ setSigDigits();
 
 </form>
 
+<!--//END SUGARCRM flav!=sales ONLY -->
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
         <form>
@@ -940,4 +967,3 @@ setSigDigits();
 		</form>
 	</div>
 </div>
-<!--//END SUGARCRM flav!=sales ONLY -->

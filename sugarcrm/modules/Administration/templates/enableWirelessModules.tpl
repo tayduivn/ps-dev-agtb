@@ -75,6 +75,9 @@
 	</div>
 	
 	<table border="0" cellspacing="1" cellpadding="1">
+	   <tr>
+	       <td colspan="2">{sugar_translate module='Configurator' label='LBL_MOBILE_MOD_REPORTS_RESTRICTION'}</td>
+	   </tr>
 		<tr>
 			<td>
 				<input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="SUGAR.saveMobileSettings();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">

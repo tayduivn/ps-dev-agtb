@@ -30,6 +30,7 @@ class SugarTestUserUtilities
         $user->default_team = '1'; //Set Default Team to Global
         //END SUGARCRM flav=pro ONLY
         $user->save();
+        $user->fill_in_additional_detail_fields();
         self::$_createdUsers[] = $user;
         return $user;
     }

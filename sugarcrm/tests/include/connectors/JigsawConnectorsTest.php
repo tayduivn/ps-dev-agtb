@@ -13,7 +13,9 @@ class JigsawConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 
     
     function setUp() {
-    	
+		$this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
+  	    return;
+  	        	
 		if(!file_exists('modules/Connectors/connectors/sources/ext/soap/jigsaw/config.php')) {
 		    $this->markTestSkipped("Skipping... Jigsaw service is unavailable.");
 		    return;

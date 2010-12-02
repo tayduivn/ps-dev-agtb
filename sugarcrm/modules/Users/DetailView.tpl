@@ -39,6 +39,15 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 {literal}
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
+{literal}
+    user_detailview_tabs.addTab( new YAHOO.widget.Tab({
+        label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
+        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
+        content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
+        cacheData: true
+    }));
+    user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
+{/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
@@ -48,7 +57,7 @@ user_detailview_tabs.on('contentReady', function(e){
         content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
         cacheData: true
     }));
-    user_detailview_tabs.getTab(3).getElementsByTagName('a')[0].id = 'tab4';
+    user_detailview_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
 {/literal}
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY
@@ -89,11 +98,11 @@ user_detailview_tabs.on('contentReady', function(e){
     <ul class="yui-nav">
         <li class="selected"><a id="tab1" href="#tab1"><em>{$MOD.LBL_USER_INFORMATION}</em></a></li>
         <li {if $IS_GROUP_OR_PORTAL == 1}style="display: none;"{/if}><a id="tab2" href="#tab2"><em>{$MOD.LBL_ADVANCED}</em></a></li>
-        //BEGIN SUGARCRM flav=!sales ONLY
+        {* //BEGIN SUGARCRM flav!=sales ONLY *}
         {if $SHOW_ROLES}
         <li><a id="tab3" href="#tab3"><em>{$MOD.LBL_USER_ACCESS}</em></a></li>
         {/if}
-        //END SUGARCRM flav=!sales ONLY
+        {* //END SUGARCRM flav!=sales ONLY *}
     </ul>            
     <div class="yui-content">
         <div>

@@ -1,4 +1,45 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r57813 - 2010-08-19 10:34:44 -0700 (Thu, 19 Aug 2010) - kjing - Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 39085 - When loading the opposite search panel via ajax on the ListViews, call the index action instead of the ListView action to avoid touching pre-MVC code by accident.
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r53409 - 2010-01-03 19:31:15 -0800 (Sun, 03 Jan 2010) - roger - merge -r50376:HEAD from fuji_newtag_tmp
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r47904 - 2009-06-02 11:54:10 -0700 (Tue, 02 Jun 2009) - jenny - Adding changes that were made to the earlier version of this file to support jpg images.
+
+r47900 - 2009-06-02 11:26:55 -0700 (Tue, 02 Jun 2009) - jenny - Updating with changes from bsoufflet.
+
+r46662 - 2009-04-29 10:48:07 -0700 (Wed, 29 Apr 2009) - jenny - Invoking native jpg image support which isnt' automatically there.
+
+r46617 - 2009-04-28 16:08:45 -0700 (Tue, 28 Apr 2009) - jenny - Fixing a bug in TCPDF that checks to see if the GD library is installed.
+
+r46451 - 2009-04-23 16:57:40 -0700 (Thu, 23 Apr 2009) - jenny - tcpdf initial checkin.
+
+
+*/
+
+
 //============================================================+
 // File name   : tcpdf.php
 // Begin       : 2002-08-03
@@ -12347,19 +12388,21 @@ if (!class_exists('TCPDF', false)) {
 					break;
 				}
 				case 'tcpdf': {
-					// NOT HTML: used to call TCPDF methods
-					if (isset($tag['attribute']['method'])) {
-						$tcpdf_method = $tag['attribute']['method'];
-						if (method_exists($this, $tcpdf_method)) {
-							if (isset($tag['attribute']['params']) AND (!empty($tag['attribute']['params']))) {
-								eval('$params = array('.$tag['attribute']['params'].');');
-								call_user_func_array(array($this, $tcpdf_method), $params);
-							} else {
-								$this->$tcpdf_method();
-							}
-							$this->newline = true;
-						}
-					}
+					if (defined('K_TCPDF_CALLS_IN_HTML') AND (K_TCPDF_CALLS_IN_HTML === true)) {
+						 // Special tag used to call TCPDF methods
+                        if (isset($tag['attribute']['method'])) {
+                            $tcpdf_method = $tag['attribute']['method'];
+                            if (method_exists($this, $tcpdf_method)) {
+                                if (isset($tag['attribute']['params']) AND (!empty($tag['attribute']['params']))) {
+                                    $params = unserialize(urldecode($tag['attribute']['params']));
+                                    call_user_func_array(array($this, $tcpdf_method), $params);
+                                } else {
+                                    $this->$tcpdf_method();
+                                }
+                                $this->newline = true;
+                            }
+                        }
+                    }
 				}
 				default: {
 					break;

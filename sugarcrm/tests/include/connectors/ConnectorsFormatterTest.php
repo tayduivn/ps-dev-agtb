@@ -16,6 +16,11 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
     	$this->original_modules_sources = $modules_sources;
     	$this->original_searchdefs = ConnectorUtils::getSearchDefs();        	  	
+
+   		if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter/twitter.php')) {
+   		   copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/twitter', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup');
+    	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/twitter');
+   		}     	
     	
    		if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/linkedin/linkedin.php')) {
    		   copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/linkedin', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/linkedin_backup');
@@ -34,21 +39,23 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
         VardefManager::loadVardef('Accounts', 'Account');
         require_once('cache/modules/Accounts/Accountvardefs.php');
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];
-    	$this->displayParams = array('sources'=>array('ext_rest_linkedin'));
+    	$this->displayParams = array('sources'=>array('ext_rest_linkedin','ext_rest_twitter'));
     	$this->tabindex = 0;
     	require_once('include/Sugar_Smarty.php');
     	$this->ss = new Sugar_Smarty();
     	$this->ss->assign('parentFieldArray', $this->parentFieldArray);
     	$this->ss->assign('vardef', $this->vardef);
     	$this->ss->assign('displayParams', $this->displayParams);
+        $this->ss->left_delimiter = '{{';
+        $this->ss->right_delimiter = '}}';    	
     	
     	//Setup the mapping to guarantee that we have hover fields for the Accounts module
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
     	$_REQUEST['modify'] = true;
     	$_REQUEST['action'] = 'SaveModifyMapping';
-		$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:addrcountry=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:addrcity=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:recname=name,ext_soap_hoovers:Accounts:addrstateprov=billing_address_state,ext_rest_linkedin:Accounts:name=name';
-    	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers,ext_rest_linkedin';
+    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:companyname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
+    	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter';
     	
     	$controller = new ConnectorsController();
     	$controller->action_SaveModifyMapping();  
@@ -58,6 +65,11 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     }
     
     function tearDown() {   	
+
+        if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter_backup/twitter.php')) {
+    	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/twitter');
+    	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/twitter_backup');
+        }      	
     	
         if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/linkedin_backup/linkedin.php')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/rest/linkedin_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/linkedin');
@@ -73,11 +85,7 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
         write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
     }
     
-    function test_hover_link_for_accounts() { 	
-    	if(true) {
-		   $this->markTestSkipped("Skipping... cannot run this test in framework.");
-		}
-    	
+    function test_hover_link_for_accounts() {
     	$enabled_sources = ConnectorUtils::getModuleConnectors('Accounts');
     	$hover_sources = array();
     	$displayParams = array();
@@ -149,7 +157,7 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	    	
     	//Now call the code that will add the mapping fields
     	$_REQUEST['display_values'] = "ext_soap_hoovers:Accounts,ext_rest_linkedin:Accounts";
-    	$_REQUEST['display_sources'] = "ext_soap_hoovers,ext_rest_linkedin";
+    	$_REQUEST['display_sources'] = "ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter";
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
@@ -166,7 +174,8 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
 		  	  	  	  switch(strtolower($name)) {
 		  	  	  	  	case "account_name": 
 							 $this->assertTrue(!empty($field['displayParams']['enableConnectors']));
-							 $this->assertTrue($field['displayParams']['connectors'][0] == 'ext_rest_linkedin');		  	  	  	  		
+							 $this->assertTrue(in_array('ext_rest_linkedin', $field['displayParams']['connectors']));
+							 $this->assertTrue(in_array('ext_rest_twitter', $field['displayParams']['connectors']));		  	  	  	  		
 		  	  	  	  	break;
 		  	  	  	  }
 		  	  	  } //foreach

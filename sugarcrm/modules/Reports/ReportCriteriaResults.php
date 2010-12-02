@@ -212,7 +212,7 @@ control($args);
 
 $params = array();
 if(empty($_REQUEST['favorite']))
-	$params[] = "<a href='index.php?module=Reports&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
+	$params[] = "";
 else 
     $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
 $star = '';

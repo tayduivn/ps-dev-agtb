@@ -42,8 +42,8 @@ $searchFields['Reports'] =
 			'operator' => 'subquery',
 			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
 			                    WHERE sugarfavorites.deleted=0
-			                        and sugarfavorites.module = "Reports"
-			                        and sugarfavorites.assigned_user_id = "{0}"',
+			                        and sugarfavorites.module = \'Reports\'
+			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
 		//END SUGARCRM flav=pro ONLY
 	);

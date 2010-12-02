@@ -19,7 +19,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['Note'] = array('table' => 'notes', 
+$dictionary['Note'] = array(
+    //BEGIN SUGARCRM flav=pro ONLY
+    'favorites'=>true,
+    //END SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=following ONLY
+    'followable' => true,
+    //END SUGARCRM flav=following ONLY
+    'table' => 'notes',
 	'unified_search' => true,
 	'comment' => 'Notes and Attachments'
                                ,'fields' => array (
@@ -60,7 +67,7 @@ $dictionary['Note'] = array('table' => 'notes',
 	    'reportable'=>true,
 	    'comment' => 'User who last modified record',
 	  ),
-	  'modified_by_name' => 
+	  'modified_by_name' =>
 	  array (
 	    'name' => 'modified_by_name',
     'vname' => 'LBL_MODIFIED_BY',
@@ -72,8 +79,8 @@ $dictionary['Note'] = array('table' => 'notes',
 	    'id_name' => 'modified_user_id',
 	    'module'=>'Users',
 	    'link'=>'modified_user_link',
-	    'duplicate_merge'=>'disabled' 
-	  ),  
+	    'duplicate_merge'=>'disabled'
+	  ),
 	  'created_by' =>
 	  array (
 	    'name' => 'created_by',
@@ -86,7 +93,7 @@ $dictionary['Note'] = array('table' => 'notes',
 	    'dbType' => 'id',
     'comment' => 'User who created record'
 	  ),
-	  	'created_by_name' => 
+	  	'created_by_name' =>
 	  array (
 	    'name' => 'created_by_name',
 		'vname' => 'LBL_CREATED_BY',
@@ -113,16 +120,6 @@ $dictionary['Note'] = array('table' => 'notes',
     'importable' => 'required',
     'required' => true,
   ),
-  'filename' =>
-  array (
-    'name' => 'filename',
-    'vname' => 'LBL_FILENAME',
-    'type' => 'varchar',
-    'len' => '255',
-    'reportable'=>true,
-    'comment' => 'File name associated with the note (attachment)',
-    'importable' => false,
-  ),
   'file_mime_type' =>
   array (
     'name' => 'file_mime_type',
@@ -131,6 +128,42 @@ $dictionary['Note'] = array('table' => 'notes',
     'len' => '100',
     'comment' => 'Attachment MIME type',
     'importable' => false,
+  ),
+  'doc_id' =>
+  array (
+  	'name' => 'doc_id',
+  	'vname' => 'LBL_DOC_ID',
+  	'type' => 'varchar',
+  	'len' => '100',
+  	'comment' => 'Document ID from documents web server provider',
+  	'importable' => false,
+  ),
+  'doc_type' =>
+  array (
+  	'name' => 'doc_type',
+  	'vname' => 'LBL_DOC_TYPE',
+  	'type' => 'enum',
+  	'function' => 'getNotesExternalApiDropDown',
+  	'len' => '100',
+  	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+  ),
+'doc_url' =>
+  array (
+  	'name' => 'doc_url',
+  	'vname' => 'LBL_DOC_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider',
+  	'importable' => false,
+  ),
+'doc_direct_url' =>
+  array (
+  	'name' => 'doc_direct_url',
+  	'vname' => 'LBL_DOC_DIRECT_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider for direct download',
+  	'importable' => false,
   ),
   'file_url'=>
   array(
@@ -146,6 +179,20 @@ $dictionary['Note'] = array('table' => 'notes',
   	'comment' => 'Path to file (can be URL)',
     'importable' => false,
   	),
+  'filename' =>
+  array (
+    'name' => 'filename',
+    'vname' => 'LBL_FILENAME',
+    'type' => 'file',
+    'len' => '255',
+    'reportable'=>true,
+    'comment' => 'File name associated with the note (attachment)',
+    'importable' => false,
+    // Special file-only options
+    // This one allows the use of external api's to store files to.
+    'allowEapm'=>true,
+    'docType' => 'doc_type',
+  ),
   'parent_type'=>
   array(
   	'name'=>'parent_type',

@@ -54,7 +54,7 @@
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_KEY}</td>
-      <td width="30%" >{LICENSE_KEY}</td>
+      <td width="30%" >{LICENSE_KEY}<div class="error">{LICENSE_VALIDATION_NOTICE}</div></td>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_EXPIRE_DATE} {CALENDAR_DATEFORMAT}</td>
@@ -105,7 +105,10 @@
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_KEY}</td>
-      <td width="30%" ><input name='license_key' tabindex='3' size='25' maxlength='128' type="text" value="{LICENSE_KEY}"></td>
+      <td width="30%" >
+      <input name='license_key' tabindex='3' size='25' maxlength='128' type="text" value="{LICENSE_KEY}">
+      <div class='error'>{LICENSE_VALIDATION_NOTICE}</div>
+      </td>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_EXPIRE_DATE}</td>
@@ -149,7 +152,7 @@
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 <tr><td>
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr><th align="left" scope="row" colspan="4"><h4>{MOD.LBL_LICENSE_VALIDATION} <span class='error'>{LICENSE_VALIDATION_NOTICE}</span></h4></th>
+    <tr><th align="left" scope="row" colspan="4"><h4>{MOD.LBL_LICENSE_VALIDATION}</h4></th>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_VALIDATION_KEY}</td>

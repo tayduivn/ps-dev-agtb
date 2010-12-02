@@ -177,7 +177,7 @@ function make_sugar_config(&$sugar_config)
 	'default_subpanel_links' => empty($subpanel_links) ? false : $subpanel_links,
 	'default_swap_last_viewed' => empty($swap_last_viewed) ? false : $swap_last_viewed,
 	'default_swap_shortcuts' => empty($swap_shortcuts) ? false : $swap_shortcuts,
-	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'm' : $navigation_paradigm,
+	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
 	'js_lang_version' => 1,
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -359,7 +359,7 @@ function get_sugar_config_defaults() {
 	'default_subpanel_links' => false,
 	'default_swap_last_viewed' => false,
 	'default_swap_shortcuts' => false,
-	'default_navigation_paradigm' => 'm',
+	'default_navigation_paradigm' => 'gm',
 	'admin_access_control' => false,
   	'use_common_ml_dir'	=> false,
   	'common_ml_dir' => '',
@@ -1402,7 +1402,11 @@ function microtime_diff($a, $b) {
 }
 
 // check if Studio is displayed.
-function displayStudioForCurrentUser(){
+function displayStudioForCurrentUser()
+{
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
@@ -1427,8 +1431,12 @@ function displayStudioForCurrentUser(){
 
 }
 
-function displayWorkflowForCurrentUser(){
+function displayWorkflowForCurrentUser()
+{
     //BEGIN SUGARCRM flav=pro ONLY
+    if ( is_admin($GLOBALS['current_user']) ) {
+        return true;
+    }
     if (isset($_SESSION['display_workflow_for_user'])) {
         return $_SESSION['display_workflow_for_user'];
     }
@@ -1959,7 +1967,7 @@ function clean_xss($str, $cleanImg=true) {
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror";
 
 	$attribute_regex	= "#<[^/>][^>]+({$jsEvents}\w+)[^=>]*=[^>]*>#sim";
-	$javascript_regex	= '@<[^/>][^>]+(expression|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
+	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
 	$css_url			= "#url\(.*\.\w+\)#";
 
@@ -3685,9 +3693,12 @@ if(file_exists('custom/include/custom_utils.php')){
  */
 function setPhpIniSettings() {
 	// zlib module
-	if(function_exists('gzclose') && headers_sent() == false) {
+	// Bug 37579 - Comment out force enabling zlib.output_compression, since it can cause problems on certain hosts
+	/*
+    if(function_exists('gzclose') && headers_sent() == false) {
 		ini_set('zlib.output_compression', 1);
 	}
+	*/
 	// mbstring module
 	//nsingh: breaks zip/unzip functionality. Commenting out 4/23/08
 

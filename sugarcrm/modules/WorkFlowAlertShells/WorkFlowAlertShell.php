@@ -178,9 +178,19 @@ class WorkFlowAlertShell extends SugarBean {
 		{
 			$ProcessView = new ProcessView($this->get_workflow_object(), $comp);
 			$ProcessView->local_strings = $workflow_alert_module;
+			$alert_prev_text = $ProcessView->get_prev_text("AlertsCreateStep1", $comp->user_type);
+			if ($alert_prev_text === false){
+				if (empty($this->hasError))
+				{
+	                $this->hasError = true;
+	                echo '<p class="error"><b>' . translate('LBL_ALERT_ERRORS') . '</b></p>';
+	            }
+	            $alert_prev_text = '<span class="error">' . translate('LBL_ALERT_ERROR') . '</span>';
+			}
 			$table_html .= "<tr><td>";
-			$table_html .= "<li>".$ProcessView->get_prev_text("AlertsCreateStep1", $comp->user_type);
+			$table_html .= "<li>$alert_prev_text</li>".
 			$table_html .= "</td></tr>";
+		    
 		}
 		$table_html .= "</table>";
 		//end - rsmith

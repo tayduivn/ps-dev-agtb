@@ -50,7 +50,6 @@ class Configurator {
 	}
 
 	function populateFromPost() {
-		echo "in populateFromPost\n";
 		$sugarConfig = SugarConfig::getInstance();
 		foreach ($_POST as $key => $value) {
 			if (isset ($this->config[$key]) || in_array($key, $this->allow_undefined)) {
@@ -80,7 +79,8 @@ class Configurator {
 		
 		// To remember checkbox state
       if (!$this->useAuthenticationClass && !$fromParseLoggerSettings) {
-      	if ($overrideArray['authenticationClass'] == 'SAMLAuthenticate') {
+         if (isset($overrideArray['authenticationClass']) && 
+            $overrideArray['authenticationClass'] == 'SAMLAuthenticate') {
       	  unset($overrideArray['authenticationClass']);	
       	}
       }

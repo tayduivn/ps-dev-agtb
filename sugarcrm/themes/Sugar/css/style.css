@@ -97,7 +97,7 @@ input[type=checkbox],input[type=radio]
 }
 ul li 
 {
-	list-style-type: none; 
+	list-style-type: disc; 
 	margin-left: 6px; 
 	margin-bottom: 2px;
 }
@@ -570,7 +570,7 @@ div.moduleTitle
 .moduleTitle img
 {
     margin-right: 0px;
-    margin-top: 5px;
+    margin-top: -4px;
     border: 0;
 }
 .moduleTitle h2
@@ -600,7 +600,7 @@ line-height: 16px;
 {
     display: block;
     float: right;
-    margin-top: 0;
+    margin-top: 6px;
 }
 
 .moduleTitle span.utils a img
@@ -2711,8 +2711,7 @@ embed
 	.dashletPanelMenu .bd {
 	overflow:hidden;
 		background:none; 
-		border-left: 0;
-		border-right: 0;
+		border: 0;
 		position: relative;
 		padding: 0 22px;
 	}
@@ -3112,6 +3111,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 #moduleList
 {
     height: 45px;
+	min-width: 1030px;
 }
 
 #subModuleList
@@ -3522,7 +3522,6 @@ span.id-ff.multiple button.button.lastChild{
 {
     background-image : url(../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png);
     background-repeat: repeat-x;
-
 	padding-left: 20px;
 }
 
@@ -3568,6 +3567,28 @@ border: none;
 
 #moduleList.yuimenubarnav .yuimenubaritem {
 border: none;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group img  {
+position: relative;
+left: 0px;
+}
+
+#moduleList.yuimenubar .moduleTabGroupMenu {
+float: right;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group {
+color: #999;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group img.folder  {
+margin-right:8px;
+top: -2px;
+}
+#moduleList.yuimenubar .yuimenuitemlabel.group img.arrow  {
+margin-left:8px;
+top: -2px;
 }
 
 #moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
@@ -3650,7 +3671,7 @@ border-radius: 4px;
 white-space: normal;
 }
 
-#moduleList #More.dashletPanelMenu .yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel, #More.dashletPanelMenu a.yuimenuitemlabel:link, #More.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #More.dashletPanelMenu  .yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel, li.current #More.dashletPanelMenu  a.yuimenuitemlabel:link,#moduleList #Group.dashletPanelMenu .yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel, #Group.dashletPanelMenu a.yuimenuitemlabel:link, #Group.dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel, li.current #Group.dashletPanelMenu  a.yuimenuitemlabel:link{ 
+#moduleList .more .dashletPanelMenu .yuimenuitemlabel , .more .dashletPanelMenu a.yuimenuitemlabel, .more .dashletPanelMenu a.yuimenuitemlabel:link, .more .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .more .dashletPanelMenu  .yuimenuitemlabel, li.current .more .dashletPanelMenu  a.yuimenuitemlabel, li.current .more .dashletPanelMenu  a.yuimenuitemlabel:link,#moduleList .moduleTabGroupMenu .dashletPanelMenu .yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:link, .moduleTabGroupMenu .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current #Group.dashletPanelMenu  .yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel, li.current .moduleTabGroupMenu .dashletPanelMenu  a.yuimenuitemlabel:link{ 
 font-size: 16px;
 font-weight: bold;
 }
@@ -3660,7 +3681,7 @@ background-color: #355b7e;
 color: #fff;
 }
 
-#moduleList #More.dashletPanelMenu a.yuimenuitemlabel:hover {
+#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover {
 background-color: #355b7e;
 color: #fff;
 }
@@ -3683,14 +3704,14 @@ background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.pn
 background:none\9;  /*ie hack */
 }
 
-#moduleList #More.dashletPanelMenu,#moduleList #Group.dashletPanelMenu  {
+#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu  {
 width: 257px;
 padding: 0 18px 0 18px\9;  /*ie hack */
 background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png) repeat;
 background:none\9;  /*ie hack */
 }
 
-#moduleList #Group.dashletPanelMenu{
+#moduleList .moduleTabGroupMenu .dashletPanelMenu {
 margin-left: -20px;
 }
 
@@ -3703,7 +3724,7 @@ left: -18px\9; /*ie hack */
 background:url(../../../../index.php?entryPoint=getImage&imageName=dp-bd-top-menu.png) no-repeat\9; /*ie hack */
 }
 
-#moduleList #More.dashletPanelMenu .bd, #moduleList #Group.dashletPanelMenu .bd  {
+#moduleList .more .dashletPanelMenu .bd, #moduleList .moduleTabGroupMenu .dashletPanelMenu .bd  {
 width: 235px;
 }
 
@@ -3795,7 +3816,7 @@ width:2px;
 z-index:2;
 }
 
-#moduleList #moduleTabExtraMenu .yuimenubaritemlabel-selected { 
+#moduleList .moduleTabExtraMenu .yuimenubaritemlabel-selected { 
 border-right: 1px solid #ccc;
 }
 
@@ -3810,16 +3831,16 @@ background-position: 0 .5em;
 border-left: 1px solid transparent;
 }
 
-#moduleList #moduleTabExtraMenu
+#moduleList .moduleTabExtraMenu, #moduleList .moduleTabGroupMenu
 {
 height: 31px;
 }
 
-#moduleTabExtraMenu .yuimenuitemlabel.more {
+.moduleTabExtraMenu .yuimenuitemlabel.more {
 border-right: 1px solid #ccc;
 }
 
-#moduleList #moduleTabExtraMenu .yuimenuitemlabel.more em
+#moduleList .moduleTabExtraMenu .yuimenuitemlabel.more em
 {
     overflow:hidden;
     text-indent:-9999px;
@@ -3836,7 +3857,7 @@ border-right: 1px solid #ccc;
 	height: 31px;
 }
 
-#moduleList #moduleTabGroup .yuimenuitemlabel.group em
+#moduleList .themeTabGroupMenu .yuimenuitemlabel.group em
 {
     overflow:hidden;
     text-indent:-9999px;
@@ -3848,7 +3869,7 @@ border-right: 1px solid #ccc;
 
 }
 
-#moduleList #moduleTabExtraMenu  .yuimenuitemlabel.more.yuimenubaritemlabel-selected em {
+#moduleList .moduleTabExtraMenu  .yuimenuitemlabel.more.yuimenubaritemlabel-selected em {
 
 }
 
@@ -4576,7 +4597,11 @@ border: 0px none;
 }
 
 .yui-navset.detailview_tabs.yui-navset-top{
-height: auto;
+    height: auto;
+}
+
+.detailview_tabs {
+	position: static;
 }
 
 .yui-navset li em {
@@ -4615,6 +4640,7 @@ margin: 0 4px 0 0;
 
 .yuimenuitem-hassubmenu > a{
     background-image: url(../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png);
+	background-position:right -87px;
 }
 
  .yui-navset .yui-nav li a,.yui-navset-top .yui-nav li a, .yui-navset-bottom .yui-nav li a,
@@ -5270,10 +5296,16 @@ visibility:visible
 .dcview table, .dcview div, .dcview a{
 font-size:75%;
 }
-.star {float:right}
+.star {
+	float:right;
+	zoom: 1;
+	display: inline;
+	*float: none;
+	*width: 18px;
+}
 .moduleTitle .star 
 {
-    margin-top:0px;
+    margin-top:4px;
     padding-right:5px;
 }
 
@@ -5281,7 +5313,7 @@ li div.star {float:none;}
 .star div {background-image:url('../../../../index.php?entryPoint=getImage&imageName=star-sheet.png');width:18px;height:18px;float:left;}
 .star div.on {background-position:0px 0px}
 .star div.off {background-position:0px -18px}
-.star div:hover {cursor:pointer;}
+.star div:hover {cursor:pointer;background-position:0px 0px;}
 
 .follow {float:left}
 li div.follow {float:none;}
@@ -5318,6 +5350,7 @@ color: #0B578F;
 }
 #SpotResults ul li{
 	margin-left:0px;
+	list-style-type:none;
 }
 
 #SpotResults li a
@@ -5341,6 +5374,39 @@ color: #0B578F;
 	height: 26px;
 }
 
+table.dcListView th,table.dcListView td {
+	text-align: left;
+	color: #666;
+	padding: 5px 10px;
+}
+
+table.dcListView th {
+	background-color:#EBEBED;
+}
+
+
+table.dcListView th a.listViewThLinkS1 {
+color:#666666;
+text-decoration: none;
+}
+
+table.dcListView th a.listViewThLinkS1:hover {
+text-decoration: underline;
+}
+
+table.dcListView td {
+	border-bottom: 1px solid #eee;
+	white-space: nowrap;
+}
+
+table.dcSearch {
+	margin-bottom: 10px;	
+}
+
+.dcSubmit {
+margin-left:10px;	
+}
+		
 #sugar_spot_search_div {
 	background: url(../../../../index.php?entryPoint=getImage&imageName=dcMenuSearchBox.png) no-repeat top left;
 	height: 26px;
@@ -5439,4 +5505,13 @@ margin-left: 5px;
 #basic_search_link
 {
     margin-left:5px !important;
+}
+
+#detailpanel_1 table.olBgClass, #detailpanel_1 table.olBgClass table {
+    *width: auto !important;   
+}
+
+
+.acceptMeeting {
+white-space: nowrap;
 }

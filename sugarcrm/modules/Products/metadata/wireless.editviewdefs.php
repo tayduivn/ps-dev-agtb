@@ -39,11 +39,6 @@ $viewdefs['Products']['EditView'] = array(
 		array (
     		'name',
   		),
-//BEGIN SUGARCRM flav=pro ONLY
-	  	array (
-	    	'team_name',
-  		),
-//END SUGARCRM flav=pro ONLY
 	)
 
 );

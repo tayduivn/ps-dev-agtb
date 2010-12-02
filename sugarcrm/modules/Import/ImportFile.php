@@ -125,6 +125,12 @@ class ImportFile
         $this->_deleteFile = $deleteFile;
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
+
+        // Bug 39494 - Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
+        $bomCheck = fread($this->_fp, 3); 
+        if($bomCheck != pack("CCC",0xef,0xbb,0xbf)) {
+            rewind($this->_fp);
+        }
     }
     
     /**

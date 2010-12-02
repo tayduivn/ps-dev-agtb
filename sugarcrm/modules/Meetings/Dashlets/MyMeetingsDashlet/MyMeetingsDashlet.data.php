@@ -32,6 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $current_user;
 
 $dashletData['MyMeetingsDashlet']['searchFields'] = array('name'             => array('default' => ''),
+                                                          'status'           => array('default' => array('Planned')),
                                                           'date_start'       => array('default' => ''),
                                                           'date_entered'     => array('default' => ''),
                                                           //BEGIN SUGARCRM flav=pro ONLY
@@ -45,6 +46,11 @@ $dashletData['MyMeetingsDashlet']['columns'] = array('set_complete' => array('wi
                                                                              'default'  => true,
                                                                              'sortable' => false,
                                                                              'related_fields' => array('status')),
+													'join_meeting' => array('width'    => '1', 
+                                                                             'label'    => 'LBL_LIST_JOIN_MEETING',
+                                                                             'default'  => true,
+                                                                             'sortable' => false,
+                                                                             'related_fields' => array('join_url', 'host_url')),
                                                    'name' => array('width'   => '40', 
                                                                    'label'   => 'LBL_SUBJECT',
                                                                    'link'    => true,

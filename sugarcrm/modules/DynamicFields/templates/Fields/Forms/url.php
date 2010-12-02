@@ -41,7 +41,7 @@ function get_body(&$ss, $vardef){
 		$fieldOptions[$id] = $def['name'];
 	}
 	$ss->assign('fieldOpts', $fieldOptions);
-    $link_target = !empty($vardef['link_target']) ? $vardef['link_target'] : '_blank';
+    $link_target = !empty($vardef['link_target']) ? $vardef['link_target'] : '_self';
     $ss->assign('TARGET_OPTIONS', get_select_options_with_id($app_list_strings['link_target_dom'], $link_target));
     $ss->assign('LINK_TARGET', $link_target);
     $ss->assign('LINK_TARGET_LABEL', $app_list_strings['link_target_dom'][$link_target]);

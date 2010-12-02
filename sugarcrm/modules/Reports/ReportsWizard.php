@@ -33,17 +33,21 @@ require_once('modules/Reports/config.php');
 require_once('modules/Reports/Report.php');
 require_once('modules/Reports/templates/templates_reports.php');
 
+$is_owner =  true;
+global $current_user;
+if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
+       $is_owner = false;
+}
 
-if(!(ACLController::checkAccess('Reports', 'edit')))
+if(!(ACLController::checkAccess('Reports', 'edit', $is_owner)))
 {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
 }
-global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $current_user, $app_strings, $sugar_config, $sugar_version;
+global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $app_strings, $sugar_config, $sugar_version;
 
 $params = array();
-$params[] = "<a href='index.php?module=Reports&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
-$params[] = $mod_strings['LBL_CREATE_CUSTOM_REPORT'];
+$params[] = "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_CREATE_CUSTOM_REPORT'];
 echo getClassicModuleTitle("Reports", $params, true);
 
 $ACLAllowedModules = getACLAllowedModules();

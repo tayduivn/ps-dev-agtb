@@ -264,7 +264,7 @@ function get_name_value($field,$value){
 }
 
 function get_user_module_list($user){
-	global $app_list_strings, $current_language;
+	global $app_list_strings, $current_language, $beanList, $beanFiles;
 
 	$app_list_strings = return_app_list_strings_language($current_language);
 	$modules = query_module_access_list($user);
@@ -293,6 +293,16 @@ function get_user_module_list($user){
 			$modules[$key] = '';
 		} // else
 	} // foreach		
+	
+	//Remove all modules that don't have a beanFiles entry associated with it
+	foreach($modules as $module_name=>$module)
+	{
+		$class_name = $beanList[$module_name];
+		if(empty($beanFiles[$class_name]))
+		{
+		   unset($modules[$module_name]);   
+		}
+	}	
 	
 	return $modules;
 
@@ -964,7 +974,7 @@ function add_create_account(&$seed)
 		    	$seed->load_relationship('accounts');
 		}
 
-		if($seed->account_name = '' && isset($temp->account_id)){
+		if($seed->account_name == '' && isset($temp->account_id)){
 			$seed->accounts->delete($seed->id, $temp->account_id);
 			return;
 		}
@@ -1041,24 +1051,33 @@ function check_for_duplicate_contacts(&$seed){
 				if(!empty($trimmed_last) && strcmp($trimmed_last, $contact->last_name) == 0){
 					if(!empty($trimmed_email) && strcmp($trimmed_email, $contact->email1) == 0){
 						if(!empty($trimmed_email)){
-							if(strcmp($trimmed_email, $contact->email1) == 0)
-								return $contact->id;
-						}else
+							if(strcmp($trimmed_email, $contact->email1) == 0){
+								//bug: 39234 - check if the account names are the same
+								//if the incoming contact's account_name is empty OR it is not empty and is the same
+								//as an existing contact's account name, then find the match.
+								$contact->load_relationship('accounts');
+								if(empty($seed->account_name) || strcmp($seed->account_name, $contact->account_name) == 0){
+									$GLOBALS['log']->info('End: SoapHelperWebServices->check_for_duplicate_contacts - duplicte found ' . $contact->id);
+									return $contact->id;
+								}
+							}
+						}else{
 							return $contact->id;
+						}
 					}
 				}
 			}
 			return null;
 		}
 	}else{
-	    $query = "contacts.last_name = '$trimmed_last'";
-        $query .= " AND contacts.first_name = '$trimmed_first'";
+	    $query = "contacts.last_name = '".$seed->db->quote($trimmed_last,false)."'";
+        $query .= " AND contacts.first_name = '".$seed->db->quote($trimmed_first,false)."'";
         $contacts = $seed->get_list('', $query);
         if (count($contacts) == 0){
             return null;
         }else{
             foreach($contacts['list'] as $contact){
-                if (empty($contact->email1)){
+            	if (empty($contact->email1)){
                     return $contact->id;
                 }
             }

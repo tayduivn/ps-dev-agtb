@@ -44,7 +44,7 @@ $dictionary['report_cache'] = array(
 			'name'		=> 'deleted',
 			'type'		=> 'varchar',
 			'len'		=> 1,
-			'required'	=> false,
+			'required'	=> true,
 		),
 		'date_entered' => array (
 			'name' => 'date_entered',

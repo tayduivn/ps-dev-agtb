@@ -1,3 +1,36 @@
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r56972 - 2010-06-15 19:49:32 -0700 (Tue, 15 Jun 2010) - sadek - Bug 37984: Workaround for a Google chrome bug. Still works in other browsers, and now in chrome too. See http://code.google.com/p/chromium/issues/detail?id=38641
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r47729 - 2009-05-29 14:12:28 -0700 (Fri, 29 May 2009) - dwheeler - 30560: Fixed a bug in calendar.js where it referenced the depreciated IE variable document.body.scrollTop which has been replaced by document.documentElement.scrollTop in IE7.
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r40171 - 2008-09-30 15:25:06 -0700 (Tue, 30 Sep 2008) - rob - Adds a shortcut to some old code that was working around a bug in very old browsers (NN4, IE5), left it alone for IE (so it would catch IE5)
+FIXED: 25076, 25249, 25150
+
+r26391 - 2007-09-04 18:50:23 -0700 (Tue, 04 Sep 2007) - dwheeler - Bug 14707:
+Modified datetime field JSCalendar to be compatible with the YUI overlay panel.
+
+r24533 - 2007-07-23 01:35:36 -0700 (Mon, 23 Jul 2007) - clee - Added fixes for IE javascript errors where calendar selection causes other form fields to be disabled/readonly.
+
+
+*/
+
 /*  Copyright Mihai Bazon, 2002, 2003  |  http://dynarch.com/mishoo/
  * ------------------------------------------------------------------
  *

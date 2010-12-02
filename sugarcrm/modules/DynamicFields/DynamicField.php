@@ -450,6 +450,8 @@ class DynamicField {
         $sql = $widget->get_db_delete_alter_table( $this->bean->table_name . "_cstm" ) ;
         if (! empty( $sql ) )
             $GLOBALS['db']->query( $sql );
+        
+        $this->removeVardefExtension($widget);
         VardefManager::clearVardef();
         VardefManager::refreshVardefs($this->module, $object_name);
 
@@ -600,12 +602,14 @@ class DynamicField {
     
     protected function writeVardefExtension($bean_name, $field, $def_override)
     {
+    	//Hack for the broken cases module
+    	$vBean = $bean_name == "aCase" ? "Case" : $bean_name;
     	$file_loc = "$this->base_path/sugarfield_{$field->name}.php";
         
 		$out =  "<?php\n // created: " . date('Y-m-d H:i:s') . "\n";
         foreach ($def_override as $property => $val) 
         {
-        	$out .= override_value_to_string_recursive(array($bean_name, "fields", $field->name, $property), "dictionary", $val) . "\n";
+        	$out .= override_value_to_string_recursive(array($vBean, "fields", $field->name, $property), "dictionary", $val) . "\n";
         }
         
         $out .= "\n ?>";
@@ -624,6 +628,17 @@ class DynamicField {
 	        return false ;
 	    }
     }
+    
+    protected function removeVardefExtension($field)
+    {
+    	$file_loc = "$this->base_path/sugarfield_{$field->name}.php";
+    	
+    	if (is_file($file_loc))
+    	{
+    		unlink($file_loc);
+    	}
+    }
+    
 
     /**
      * DEPRECIATED: Use addFieldObject instead.

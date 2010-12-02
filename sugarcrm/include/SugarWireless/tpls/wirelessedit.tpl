@@ -47,7 +47,7 @@
 			{if !empty($DETAIL.customCode)}
 				{eval var=$DETAIL.customCode}
             {else}
-			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams='' typeOverride=$DETAIL.type formName=$form_name}
+			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams=$DETAIL.displayParams typeOverride=$DETAIL.type formName=$form_name}
             {/if}
         {/if}
 		</td>

@@ -48,15 +48,19 @@ class ReadOnlyAction extends AbstractAction{
 			exec: function()
 			{
 				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
+				if (!el)
+				    return;
 				var val = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
 				if (val == SUGAR.expressions.Expression.TRUE) {
 					el.readOnly = true;
 					YAHOO.util.Dom.setStyle(el, 'background-color', '#EEE');
-					YAHOO.util.Dom.setStyle(el, 'color', '#22');
+					if (!SUGAR.isIE)
+					   YAHOO.util.Dom.setStyle(el, 'color', '#22');
 				} else if (val == SUGAR.expressions.Expression.FALSE){
 					el.readOnly = false;
 					YAHOO.util.Dom.setStyle(el, 'background-color', '');
-                    YAHOO.util.Dom.setStyle(el, 'color', '');
+					if (!SUGAR.isIE)
+                        YAHOO.util.Dom.setStyle(el, 'color', '');
 				}
 			} 
 		});";

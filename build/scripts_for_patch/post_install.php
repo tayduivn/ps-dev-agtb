@@ -251,6 +251,11 @@ function genericFunctions(){
 	    _logThis("Applying .htaccess update security fix.", $path);
         include_once("modules/Administration/UpgradeAccess.php");
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+    ////    CLEAR SUGARLOGIC CACHE
+	_logThis("Rebuilding SugarLogic Cache", $path);
+	clear_SugarLogic_cache();
 
 	///////////////////////////////////////////////////////////////////////////
 	////	PRO/ENT ONLY FINAL TOUCHES
@@ -301,8 +306,9 @@ function genericFunctions(){
     }
     //Rebuild roles
      _logThis("Rebuilding Roles", $path);
-	 add_EZ_PDF();     
-
+	 if($sugar_version < '5.5.0') {
+	     add_EZ_PDF();
+     }    
      ob_start();
      rebuild_roles();
      ob_end_clean();
@@ -401,8 +407,30 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY 
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
+	  
+	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
+	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
+    if(file_exists('modules/Administration/SaveTabs.php'))
+        unlink('modules/Administration/SaveTabs.php');
+	// End Bug 40044 //////////////////
 	
-	upgradeGroupInboundEmailAccounts();
+    // Bug 40119 - JennyG - The location of this file changed since 60RC.  So we need to remove it for
+    // old instances that have this file.
+    if(file_exists('include/Expressions/Expression/Enum/IndexValueExpression.php'))
+        unlink('include/Expressions/Expression/Enum/IndexValueExpression.php');
+    // End Bug 40119///////////////////
+               
+    // Bug 40382 - JennyG - This file was removed in 6.0.
+    if(file_exists('modules/Leads/ConvertLead.php'))
+        unlink('modules/Leads/ConvertLead.php');
+    // End Bug 40382///////////////////
+             
+    // Bug 40458 - JennyG - This file was removed in 6.1. and we need to remove it for upgraded instances.
+    if(file_exists('modules/Reports/add_schedule.php'))
+        unlink('modules/Reports/add_schedule.php');
+    // End Bug 40458///////////////////
+
+    upgradeGroupInboundEmailAccounts();
 	//BEGIN SUGARCRM flav=pro ONLY
         if($origVersion < '600') {
 	   _logThis("Start of check to see if Jigsaw connector should be disabled", $path);
@@ -444,6 +472,27 @@ function post_install() {
 	}		
         //END SUGARCRM flav=pro ONLY
 
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	//add language pack config information to config.php
+   	if(is_file('install/lang.config.php')){
+		global $sugar_config;
+		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
+		require_once('install/lang.config.php');
+
+		foreach($config['languages'] as $k=>$v){
+			$sugar_config['languages'][$k] = $v;
+		}
+		
+		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
+	    }else{
+			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
+		}		
+    }else{
+    	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
+    }
+	//END SUGARCRM flav=pro ONLY		
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
@@ -545,8 +594,9 @@ function hide_iframes_and_feeds_modules() {
 	$remove_iframes = false;
 	$remove_feeds = false;
 	
-	//Check if we should remove iframes.  Use the count of entries in iframes table
-	if(!$GLOBALS['db']->tableExists('iframes')) {
+	//Check if we should remove iframes.  If the table does not exist or the directory
+	//does not exist then we set remove_iframes to true
+	if(!$GLOBALS['db']->tableExists('iframes') || !file_exists('modules/iFrames')) {
 		$remove_iframes = true;
 	} else {
 		$result = $GLOBALS['db']->query('SELECT count(id) as total from iframes');
@@ -563,25 +613,34 @@ function hide_iframes_and_feeds_modules() {
 	$controller = new TabController();
 	$tabs = $controller->get_tabs_system();
 	
-	//If the Feeds tab is hidden then remove it
-	if(!$GLOBALS['db']->tableExists('feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
+	//If the feeds table does not exists or if the directory does not exist or if it is hidden in 
+	//system tabs then set remove_feeds to true
+	if(!$GLOBALS['db']->tableExists('feeds') || !file_exists('modules/Feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
 	   $remove_feeds = true;
 	}
 	
 	if($remove_feeds) {
 	   //Remove the modules/Feeds files
-	   if(is_dir('modules/Feeds')) {
-	   _logThis('Removing the Feeds files', $path);
-	   rmdir_recursive('modules/Feeds');
+	   if(is_dir('modules/Feeds')) 
+	   {
+	      _logThis('Removing the Feeds files', $path);
+	      rmdir_recursive('modules/Feeds');
 	   }
 		
-		   //Drop the table
-	   if($GLOBALS['db']->tableExists('feeds')) {
+	   if(file_exists('custom/Extension/application/Ext/Include/Feeds.php'))
+	   {
+	      _logThis('Removing custom/Extension/application/Ext/Include/Feeds.php ', $path);
+	      unlink('custom/Extension/application/Ext/Include/Feeds.php');	   	
+	   }
+	   
+	   //Drop the table
+	   if($GLOBALS['db']->tableExists('feeds')) 
+	   {
 		   _logThis('Removing the Feeds table', $path);
 		   $GLOBALS['db']->dropTableName('feeds');
 	   }
 	} else {
-	   if(file_exists('modules/Feeds')) {
+	   if(file_exists('modules/Feeds') && $GLOBALS['db']->tableExists('feeds')) {
 		   _logThis('Writing Feed.php module to custom/Extension/application/Ext/Include', $path);
 		   write_to_modules_ext_php('Feed', 'Feeds', 'modules/Feeds/Feed.php', true);
 	   }
@@ -589,18 +648,27 @@ function hide_iframes_and_feeds_modules() {
 	
 	if($remove_iframes) {
 		//Remove the module/iFrames files
-		if(is_dir('modules/iFrames')) {
-		_logThis('Removing the iFrames files', $path);
-		rmdir_recursive('modules/iFrames');
+		if(is_dir('modules/iFrames')) 
+		{
+		   _logThis('Removing the iFrames files', $path);
+		   rmdir_recursive('modules/iFrames');
 		}
 		
+		if(file_exists('custom/Extension/application/Ext/Include/iFrames.php'))
+	    {
+	       _logThis('Removing custom/Extension/application/Ext/Include/iFrames.php ', $path);
+	       unlink('custom/Extension/application/Ext/Include/iFrames.php');	   	
+	    }		
+		
 		//Drop the table
-		if($GLOBALS['db']->tableExists('iframes')) {
+		if($GLOBALS['db']->tableExists('iframes')) 
+		{
 		   _logThis('Removing the iframes table', $path);
 		   $GLOBALS['db']->dropTableName('iframes');
 		}
+
 	} else {
-	   if(file_exists('modules/iFrames')) {
+	   if(file_exists('modules/iFrames') && $GLOBALS['db']->tableExists('iframes')) {
 		  _logThis('Writing iFrame.php module to custom/Extension/application/Ext/Include', $path);
 		  write_to_modules_ext_php('iFrame', 'iFrames', 'modules/iFrames/iFrame.php', true);
 	   }

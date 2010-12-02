@@ -59,8 +59,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=ReportMaker&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
-$params[] = $focus->get_summary_text();
+$params[] = "<span class='pointer'>&raquo;</span>".$focus->get_summary_text();
 echo getClassicModuleTitle("ReportMaker", $params, true);
 
 $GLOBALS['log']->info("ReportMaker detail view");

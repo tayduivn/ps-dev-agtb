@@ -44,7 +44,12 @@ $subpanel_layout = array(
 			'widget_class' => 'SubPanelIcon',
  		 	'width' => '2%',
  		 	'image2'=>'attachment',
- 		 	'image2_url_field'=>'file_url'
+ 		 	'image2_url_field'=> array(
+				'id_field' => 'id',
+				'filename_field' => 'filename',
+				'doc_type' => 'doc_type',
+				'doc_id' => 'doc_id',
+			),
 		),
 		'name'=>array(
 			 'vname' => 'LBL_LIST_SUBJECT',
@@ -95,6 +100,7 @@ $subpanel_layout = array(
 			'widget_class' => 'SubPanelDetailViewLink',
 		 	'target_record_key' => 'assigned_user_id',
 			'target_module' => 'Employees',
+			'width' => '10%',			
 		),
 		'assigned_user_owner' => array (
 			 'force_exists'=>true, //this will create a fake field since this field is not defined
@@ -120,6 +126,12 @@ $subpanel_layout = array(
 		'filename'=>array(
 			'usage'=>'query_only'
 			),
+		'doc_id'=>array(
+			'usage'=>'query_only'
+			),
+		'doc_type'=>array(
+			'usage'=>'query_only'
+			),		
 
 	),
 );

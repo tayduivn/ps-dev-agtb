@@ -33,7 +33,7 @@
 //// php.exe -f silentUpgrade.php [Path to Upgrade Package zip] [Path to Log file] [Path to Instance]
 //// See below the Usage for more details.
 /////////////////////////////////////////////////////////////////////////////////////////
-
+ini_set('memory_limit',-1);
 ///////////////////////////////////////////////////////////////////////////////
 ////	UTILITIES THAT MUST BE LOCAL :(
 function prepSystemForUpgradeSilent() {
@@ -320,7 +320,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
         } else {
             echo "*******************************************************************************\n";
             echo "*** ERROR: 3rd parameter must be a valid directory.  Tried to cd to [ {$argv[3]} ].\n";
-            die();
+            exit(1);
         }
     }
 
@@ -335,7 +335,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "*** ERROR: Missing required parameters.  Received ".count($argv)." argument(s), require 7.\n";
             echo $usage_dce;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
         // this is an instance
         if(!is_dir($argv[1])) { // valid directory . template path?
@@ -343,7 +343,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "*** ERROR: First argument must be a full path to the template. Got [ {$argv[1]} ].\n";
             echo $usage_dce;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
     }
     else if(is_file("{$cwd}/include/entryPoint.php")) {
@@ -355,21 +355,21 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "*** ERROR: First argument must be a full path to the patch file. Got [ {$argv[1]} ].\n";
             echo $usage_regular;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
         if(count($argv) < 5) {
             echo "*******************************************************************************\n";
             echo "*** ERROR: Missing required parameters.  Received ".count($argv)." argument(s), require 5.\n";
             echo $usage_regular;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
     }
     else {
         //this should be a regular sugar install
         echo "*******************************************************************************\n";
         echo "*** ERROR: Tried to execute in a non-SugarCRM root directory.\n";
-        die();      
+        exit(1);      
     }
 
     if(isset($argv[7]) && file_exists($argv[7].'SugarTemplateUtilties.php')){
@@ -415,7 +415,8 @@ function threeWayMerge(){
 
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
-	die('This utility may only be run from the command line or command prompt.');
+	fwrite(STDERR,'This utility may only be run from the command line or command prompt.');
+	exit(1);
 }
 //Clean_string cleans out any file  passed in as a parameter
 $_SERVER['PHP_SELF'] = 'silentUpgrade.php';
@@ -526,7 +527,7 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 
 	ini_set('error_reporting',1);
 	require_once('include/entryPoint.php');
-	
+	require_once('include/SugarLogger/SugarLogger.php');
 	require_once('include/utils/zip_utils.php');
 	
 	
@@ -578,7 +579,7 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 	   }
 	   else{
 	   	echo "FAILURE: Not an admin user in users table. Please provide an admin user\n";
-		die();
+		exit(1);
 	   }
 	}
 	else {
@@ -586,7 +587,7 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 		echo "*** ERROR: 4th parameter must be a valid admin user.\n";
 		echo $usage;
 		echo "FAILURE\n";
-		die();
+		exit(1);
 	}
 
 
@@ -606,11 +607,20 @@ $install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/"
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
-
+if(is_dir($unzip_dir.'/scripts'))
+{
+	rmdir_recursive($unzip_dir.'/scripts');
+}
+if(is_file($unzip_dir.'/manifest.php'))
+{
+	rmdir_recursive($unzip_dir.'/manifest.php');
+}
 mkdir_recursive($unzip_dir);
 if(!is_dir($unzip_dir)) {
-	die("\n{$unzip_dir} is not an available directory\nFAILURE\n");
+	fwrite(STDERR,"\n{$unzip_dir} is not an available directory\nFAILURE\n");
+	exit(1);
 }
+
 unzip($argv[1], $unzip_dir);
 // mimic standard UW by copy patch zip to appropriate dir
 copy($argv[1], $install_file);
@@ -658,18 +668,21 @@ if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php")) {
 	// provides $manifest array
 	include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 	if(!isset($manifest)) {
-		die("\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+		fwrite(STDERR,"\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+	    exit(1);
 	} else {
 		copy("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php", "{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/{$zip_from_dir}-manifest.php");
 
 		$error = validate_manifest($manifest);
 		if(!empty($error)) {
 			$error = strip_tags(br2nl($error));
-			die("\n{$error}\n\nFAILURE\n");
+			fwrite(STDERR,"\n{$error}\n\nFAILURE\n");
+			exit(1);
 		}
 	}
 } else {
-	die("\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+	fwrite(STDERR,"\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+	exit(1);
 }
 
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
@@ -711,14 +724,14 @@ foreach($parserFiles as $file) {
 
 	if(!file_exists($targetFile))
 	 {
-		logThis('Copying file to destination: ' . $targetFile);
+		logThis('Copying file to destination: ' . $targetFile, $path);
 		if(!copy($srcFile, $targetFile)) {
-			logThis('*** ERROR: could not copy file: ' . $targetFile);
+			logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
 		} else {
 			$copiedFiles[] = $targetFile;
 		}
 	} else {
-		logThis('Skipping file: ' . $targetFile);
+		logThis('Skipping file: ' . $targetFile, $path);
 		//$skippedFiles[] = $targetFile;
 	}
    }
@@ -735,10 +748,11 @@ foreach($parserFiles as $file) {
 /*
 $errors = preflightCheck();
 if((count($errors) == 1)) { // only diffs
-	logThis('file preflight check passed successfully.');
+	logThis('file preflight check passed successfully.', $path);
 }
 else{
-	die("\nThe user doesn't have sufficient permissions to write to database'.\n\n");
+	fwrite(STDERR,"\nThe user doesn't have sufficient permissions to write to database'.\n\n");
+	exit(1);
 }
 */
 //If version less than 500 then look for modules to be upgraded
@@ -1055,16 +1069,6 @@ if(function_exists('deleteCache')){
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-////	TAKE OUT TRASH
-
-if(empty($errors)) {
-	set_upgrade_progress('end','in_progress','unlinkingfiles','in_progress');
-	logThis('Taking out the trash, unlinking temp files.', $path);
-	unlinkTempFiles(true);
-	set_upgrade_progress('end','in_progress','unlinkingfiles','done');
-}
-
-///////////////////////////////////////////////////////////////////////////////
 ////	HANDLE REMINDERS
 if(empty($errors)) {
 	commitHandleReminders($skippedFiles, $path);
@@ -1167,17 +1171,6 @@ if(isset($_SESSION['upgrade_from_flavor'])){
         
 
 }
-
-// clear out the theme cache
-if(!class_exists('SugarThemeRegistry')){
-    require_once('include/SugarTheme/SugarTheme.php');
-}
-
-
-// re-minify the JS source files
-$_REQUEST['root_directory'] = getcwd();
-$_REQUEST['js_rebuild_concat'] = 'rebuild';
-require_once('jssource/minify.php');
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){

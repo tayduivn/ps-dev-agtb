@@ -354,6 +354,7 @@ $mod_strings = array(
 'LBL_EDIT_PORTAL'=>'Edit Portal for ',
 'LBL_EDIT_FIELDS'=>'Edit Fields',
 'LBL_EDITVIEW'=>'EditView',
+'LBL_CONVERTLEAD' => 'Convert Lead',
 'LBL_FILLER'=>'(filler)',
 'LBL_FIELDS'=>'Fields',
 'LBL_FAILED_TO_SAVE' => 'Failed To Save',
@@ -410,9 +411,16 @@ $mod_strings = array(
 'LBL_BTN_ADD_DEPENDENCY'=>'Add Dependency',
 'LBL_BTN_EDIT_FORMULA'=>'Edit Formula',
 'LBL_DEPENDENCY' => 'Dependency',
-'LBL_CALCULATED' => 'Calculated',
+'LBL_CALCULATED' => 'Calculated Value',
 'LBL_READ_ONLY' => 'Read Only',
 'LBL_FORMULA' => 'Formula',
+'LBL_FORMULA_BUILDER' => 'Formula Builder',
+'LBL_NO_FIELDS' => 'No Fields Found',
+'LBL_NO_FUNCS' => 'No Functions Found',
+'LBL_SEARCH_FUNCS' => 'Search Functions...',
+'LBL_SEARCH_FIELDS' => 'Search Fields...',
+'LBL_FORMULA' => 'Formula',
+'LBL_DYNAMIC_VALUES_CHECKBOX' => 'Dependent',
 //END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS
@@ -541,12 +549,15 @@ $mod_strings = array(
 'ERROR_MINIMUM_FIELDS' => 'The layout must contain at least one field',
 'ERROR_GENERIC_TITLE' => 'An error has occured',
 'ERROR_REQUIRED_FIELDS' => 'Are you sure you wish to continue? The following required fields are missing from the layout:  ',
-
+'ERROR_ARE_YOU_SURE' => 'Are you sure you wish to continue?',
 
 //BEGIN SUGARCRM flav=pro ONLY
+'ERROR_CALCULATED_MOBILE_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Mobile Edit View:',
+'ERROR_CALCULATED_PORTAL_FIELDS' => 'The following field(s) have calculated values which will not be re-calculated in real time in the SugarCRM Portal Edit View:',
 
 //SUGAR PORTAL
 'LBL_PORTAL'=>'Portal',
+'LBL_PORTAL_LAYOUTS'=>'Portal Layouts',
 'LBL_SYNCP_WELCOME'=>'Please enter the URL of the portal instance you wish to update.',
 'LBL_SP_UPLOADSTYLE'=>'Select a style sheet to upload from your computer.<br> The style sheet will be implemented in the Sugar Portal the next time you perform a sync.',
 'LBL_SP_UPLOADED'=> 'Uploaded',
@@ -683,6 +694,14 @@ $mod_strings = array(
 . '<br><b>In Filter</b>: The field will appear in the Merge Duplicates feature, and will also be available in the Find Duplicates feature.<br><b>Filter Only</b>: The field will not appear in the Merge Duplicates feature, but will be available in the Find Duplicates feature.<br><b>Default Selected Filter</b>: The field will be used for a filter condition by default in the Find Duplicates page, and will also appear in the Merge Duplicates feature.'
 //END SUGARCRM flav=pro ONLY
 ,
+//BEGIN SUGARCRM flav=pro ONLY
+'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br>" 
+   . "Fields using formulas will not be calculated in real-time in " 
+   //BEGIN SUGARCRM flav=ent ONLY
+   . "the Sugar Self-Service Portal or " 
+   //END SUGARCRM flav=ent ONLY
+   . "Mobile EditView layouts.",
+//END SUGARCRM flav=pro ONLY
 
 //Revert Module labels
 'LBL_RESET' => 'Reset',
@@ -719,8 +738,8 @@ $mod_strings = array(
                 'iframe' => 'IFrame',
                 //BEGIN SUGARCRM flav!=com ONLY
                 'image' => 'Image',
-                //END SUGARCRM flav!=com ONLY
                 'encrypt'=>'Encrypt',
+                //END SUGARCRM flav!=com ONLY
                 'datetimecombo' =>'Datetime',
 				'decimal'=>'Decimal',
 ),

@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /********************************************************************************* 
- * $Id: SugarBean.php 57513 2010-07-16 21:07:48Z kjing $
+ * $Id: SugarBean.php 58121 2010-09-09 18:35:17Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
  * be overloaded with module-specific methods and variables particular to the
@@ -620,9 +620,8 @@ class SugarBean
             return;
         
         foreach ($this->field_defs as $field => $value) {
-            if( (isset($value['default']) || !empty($value['display_default'])) 
-                    && !empty($this->$field)
-                    && (($this->$field == $value['default']) || ($this->$field == $value['display_default'])) 
+            if( !empty($this->$field)
+                  && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
                     ) {
                 $this->$field = null;
             }
@@ -1262,7 +1261,7 @@ class SugarBean
 			if((strpos($type, 'char') !== false ||
 				strpos($type, 'text') !== false ||
 				$type == 'enum') &&
-				isset($this->$key)
+                !empty($this->$key)
 			) {
 				$str = from_html($this->$key);
 				// Julian's XSS cleaner
@@ -1270,8 +1269,9 @@ class SugarBean
 
 				if(is_array($potentials) && !empty($potentials)) {
 					foreach($potentials as $bad) {
-						$this->$key = to_html(str_replace($bad, "", $str));
+                        $str = str_replace($bad, "", $str);
 					}
+                    $this->$key = to_html($str);
 				}
 			}
 		}
@@ -2009,10 +2009,6 @@ function save_relationship_changes($is_update, $exclude=array())
 	function check_date_relationships_load()
 	{
 		global $disable_date_format;
-		if(!empty($disable_date_format))
-		{
-			return;
-		}
 		global $timedate;
 		if (empty($timedate))
 			$timedate=new TimeDate();
@@ -2027,15 +2023,15 @@ function save_relationship_changes($is_update, $exclude=array())
 			if(!isset($this->processed_dates_times[$field]))
 			{
 				$this->processed_dates_times[$field] = '1';
-
+				if(empty($this->$field)) continue; 
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
-					if(!empty($this->$field))
-					{
+					$this->$field = from_db_convert($this->$field, 'datetime');
+					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
-				}
-				elseif(!empty($this->$field) && isset($this->field_name_map[$field]['type']))
+				} 
+				elseif(isset($this->field_name_map[$field]['type'])) 
 				{
 					$type = $this->field_name_map[$field]['type'];
 
@@ -2058,14 +2054,18 @@ function save_relationship_changes($is_update, $exclude=array())
 							if(!empty($this->$rel_field))
 							{
 								$this->$rel_field=from_db_convert($this->$rel_field, 'time');
-								$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
-								$this->$field = $timedate->to_display_date($mergetime);
-								$this->$rel_field = $timedate->to_display_time($mergetime);
+								if(empty($disable_date_format)) {
+									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
+									$this->$field = $timedate->to_display_date($mergetime);
+									$this->$rel_field = $timedate->to_display_time($mergetime);
+								}
 							}
 						}
 						else
 						{
-							$this->$field = $timedate->to_display_date($this->$field, false);
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date($this->$field, false);
+							}
 						}
 					} elseif($type == 'datetime' || $type == 'datetimecombo')
 					{
@@ -2075,7 +2075,10 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						else
 						{
-							$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							$this->$field = from_db_convert($this->$field, 'datetime');
+							if(empty($disable_date_format)) {
+								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
+							}
 						}
 					} elseif($type == 'time')
 					{
@@ -2085,12 +2088,12 @@ function save_relationship_changes($is_update, $exclude=array())
 						} else
 						{
 							//$this->$field = from_db_convert($this->$field, 'time');
-							if(empty($this->field_name_map[$field]['rel_field']))
+							if(empty($this->field_name_map[$field]['rel_field']) && empty($disable_date_format))
 							{
 								$this->$field = $timedate->to_display_time($this->$field,true, false);
 							}
 						}
-					} elseif($type == 'encrypt'){
+					} elseif($type == 'encrypt' && empty($disable_date_format)){
 						$this->$field = $this->decrypt_after_retrieve($this->$field);
 					}
 				}
@@ -2557,24 +2560,37 @@ function save_relationship_changes($is_update, $exclude=array())
 						{
 							$list_column[0] = $bean_queried->table_name .".".$list_column[0] ;
 						}
+						if (empty($bean_queried->field_defs[$list_column_name]['table']) && $source=='custom_fields')
+						{
+						    $list_column[0] = $bean_queried->table_name ."_cstm.".$list_column[0] ;
+						}
 						$value = implode($list_column,' ');
+						// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
+						if ( $this->db->dbType == 'mssql' 
+						     && $source != 'non-db'
+                            && in_array(
+                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                array('ntext','text','image')
+                                )
+                            ) {
+                        $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
+                        }
+						// Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
+						if ( $this->db->dbType == 'oci8' 
+						     && $source != 'non-db'
+                            && in_array(
+                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                array('clob')
+                                )
+                            ) {
+                        $value = "TO_CHAR({$list_column[0]}) {$list_column[1]}";
+                        }
 					}
 					else
 					{
 						$GLOBALS['log']->debug("process_order_by: ($list_column[0]) does not have a vardef entry.");
 					}
 				}
-			}
-			// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
-			if ( $this->db->dbType == 'mssql' 
-			        && isset($bean_queried->field_defs[$list_column[0]])
-			        && in_array(
-			            $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column[0]])),
-			            array('ntext','text','image')
-			            )
-			        ) {
-		        $list_column = explode(' ',trim($value));
-		        $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
 			}
 			$elements[$key]=$value;
 		}
@@ -3446,7 +3462,7 @@ function save_relationship_changes($is_update, $exclude=array())
 				$ret_array['from'] .= " LEFT JOIN ";
 			}
 
-		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
+		$ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.assigned_user_id='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
 		}
 		//END SUGARCRM flav=pro ONLY
         $where_auto = '1=1';
@@ -5092,12 +5108,12 @@ function save_relationship_changes($is_update, $exclude=array())
 		if($return_handler==true)
 		{
 			$rel_handler = new RelationshipHandler($this->db, $this->$target_base);
-			$rel_handler->base_bean = & $this;
+            $rel_handler->base_bean = $this;
 		}
 		else
 		{
 			$this->rel_handler = new RelationshipHandler($this->db, $this->$target_base);
-			$this->base_bean = & $this;
+            $this->base_bean = $this;
 		}
 
 		return $rel_handler;
@@ -5227,6 +5243,11 @@ function save_relationship_changes($is_update, $exclude=array())
 
 	}
 	//END SUGARCRM flav=pro ONLY
+	/**
+	 * Check whether the user has access to a particular view for the current bean/module
+	 * @param $view string required, the view to determine access for i.e. DetailView, ListView...
+	 * @param $is_owner bool optional, this is part of the ACL check if the current user is an owner they will receive different access
+	 */
     function ACLAccess($view,$is_owner='not_set')
     {
     	global $current_user;

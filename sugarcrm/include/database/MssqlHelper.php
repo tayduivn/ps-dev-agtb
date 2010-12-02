@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: MssqlHelper.php 56786 2010-06-02 18:29:56Z jenny $
+* $Id: MssqlHelper.php 58175 2010-09-14 19:52:39Z kjing $
 * Description: This file handles the Data base functionality for the application specific
 * to Mssql database. It is called by the DBManager class to generate various sql statements.
 *
@@ -75,6 +75,7 @@ class MssqlHelper extends DBHelper
             'id'       => 'varchar(36)',
             'url'=>'varchar',
             'encrypt'=>'varchar',
+            'file'     => 'varchar',
             );
         
         return $map[$type];
@@ -468,6 +469,27 @@ EOSQL;
             else
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name}  FOREIGN KEY ({$fields}) REFERENCES {$foreignTable}({$foreignfields})";
             break;
+        case 'fulltext':
+            if ($this->full_text_indexing_enabled() && $drop)
+                $sql = "DROP FULLTEXT INDEX ON {$table}";
+            elseif ($this->full_text_indexing_enabled()) {
+                $catalog_name="sugar_fts_catalog";
+                if ( isset($index['catalog_name']) && $index['catalog_name'] != 'default')
+                    $catalog_name = $index['catalog_name'];
+
+                $language = "Language 1033";
+                if (isset($index['language']) && !empty($index['language']))
+                    $language = "Language " . $index['language'];
+                
+                $key_index = $index['key_index'];
+
+                $change_tracking = "auto";
+                if (isset($index['change_tracking']) && !empty($index['change_tracking']))
+                    $change_tracking = $index['change_tracking'];
+                
+                $columns[] = " CREATE FULLTEXT INDEX ON $table ($fields $language) KEY INDEX $key_index ON $catalog_name WITH CHANGE_TRACKING $change_tracking" ;
+            }
+            break;
         }
         return $sql;
     }
@@ -677,6 +699,12 @@ EOQ;
 	        $colType = $this->getColumnType($type, $name, $table);
 	    	if(stristr($colType, 'decimal')){
 				$fieldDef['len'] = isset($fieldDef['len'])? min($fieldDef['len'],38) : 38;
+			}
+			//bug: 39690 float(8) is interpreted as real and this generates a diff when doing repair
+			if(stristr($colType, 'float')){
+				if(isset($fieldDef['len']) && $fieldDef['len'] == 8){
+					unset($fieldDef['len']);
+				}
 			}
 		}
 		

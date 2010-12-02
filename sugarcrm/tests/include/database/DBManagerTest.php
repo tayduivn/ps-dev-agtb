@@ -1115,73 +1115,83 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->dropTableName($tablename);
     }
     
-    public function testCompareVarDefs()
+    public function providerCompareVardefs()
     {
-        $this->assertTrue($this->_db->compareVarDefs(
+        $returnArray = array(
+            array(
                 array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                    ),
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                )
-            ));
-        
-        $this->assertFalse($this->_db->compareVarDefs(
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
-                    'type' => 'char',
-                        'len' => '255',
-                        ),
-                    ),
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                )
-            ));
-        
-        $this->assertFalse($this->_db->compareVarDefs(
-                array(
-                    'foo' => array (
                     'name' => 'foo',
-                        'type' => 'char',
-                        'len' => '255',
-                        ),
-                    ),
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'len' => '255',
-                        ),
-                )
-            ));
-        
-        $this->assertFalse($this->_db->compareVarDefs(
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
-                        'len' => '255',
-                        ),
-                    ),
-                array(
-                    'foo' => array (
-                        'name' => 'foo',
                     'type' => 'varchar',
-                        'len' => '255',
-                        ),
-                )
-            ));
+                    'len' => '255',
+                    ),
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                true),
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'char',
+                    'len' => '255',
+                    ),
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                false),
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'char',
+                    'len' => '255',
+                    ),
+                array(
+                    'name' => 'foo',
+                    'len' => '255',
+                ),
+                false),
+            array(
+                array(
+                    'name' => 'foo',
+                    'len' => '255',
+                    ),
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                true),
+            array(
+                array(
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                array(
+                    'name' => 'FOO',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ), 
+                true),
+            );
+        
+        return $returnArray;
+    }
+    
+    /**
+     * @dataProvider providerCompareVarDefs
+     */
+    public function testCompareVarDefs($fieldDef1,$fieldDef2,$expectedResult)
+    {
+        if ( $expectedResult ) {
+            $this->assertTrue($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
+        }
+        else {
+            $this->assertFalse($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
+        }
     }
     
     public function providerConvert()
@@ -1361,10 +1371,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-      * @group bug33283
-      * @dataProvider providerConvert
+     * @group bug33283
+     * @dataProvider providerConvert
      */
-     public function testConvert(
+    public function testConvert(
          array $parameters,
          $result
         )

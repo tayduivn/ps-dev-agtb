@@ -60,6 +60,17 @@ function process_action_update(&$focus, $action_array){
 
 
 		if(empty($action_array['basic_ext'][$field])){
+			//if we have a relate field, make sure the related record still exists.
+			if ($focus->field_defs[$field]['type'] == "relate")
+			{
+				$relBean = get_module_info($focus->field_defs[$field]['module']);
+				$relBean->retrieve($new_value);
+				if (empty($relBean->id))
+				{
+					$GLOBALS['log']->fatal("workflow attempting to set relate field $field to invalid id: $new_value");
+					continue;
+				}
+			}
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
 			execute_special_logic($field, $focus);
 		}

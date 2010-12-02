@@ -29,7 +29,9 @@
 
 // $Id: enum.tpl 35784 2008-05-20 21:31:40Z dwheeler $
 *}
-{if $vardef.type != 'enum'}
+{if $vardef.type != 'enum' && $vardef.type != 'address' && $vardef.type != 'date' && $vardef.type != 'datetimecombo'
+ && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
+ && $vardef.type != 'url' && $vardef.type != 'parent'}
 //BEGIN SUGARCRM flav=een ONLY
 {*<tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
@@ -43,17 +45,30 @@
     </td>
 </tr>*}
 //END SUGARCRM flav=een ONLY
-<tr><td class='mbLBL'>Calculated:</td>
-    <td><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
-        {if !empty($vardef.calculated)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
+<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
+    <td style="line-height:1em"><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
+        {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+		{if $hideLevel > 5}<input type="hidden" name="calculated" value="{$vardef.calculated}">{/if}
+		<img id="calcToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
+		<script>
+			if (!ModuleBuilder.cfToolTip)
+			     ModuleBuilder.cfToolTip = new YAHOO.widget.Tooltip("cfToolTip", {ldelim}
+				    context:"calcToolTipIcon", text:SUGAR.language.get("ModuleBuilder", "LBL_POPHELP_CALCULATED")
+				 {rdelim});
+		    else
+			    ModuleBuilder.cfToolTip.cfg.setProperty("context", "calcToolTipIcon");
+			ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})
+		</script>
     </td>
 </tr>
-<tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}><td class='mbLBL'>Formula:</td> 
-    <td><input id="formula" type="text" name="formula" value="{$vardef.formula|escape:'html'}" maxlength=255 />
-          <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}" 
-            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)"/> 
+<tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>
+	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_FORMULA"}:</td> 
+    <td><input id="formula" type="text" name="formula" value="{$vardef.formula}" maxlength=255 readonly="1" 
+	       style="background-color:#eee"/>
+	    <input type="button" class="button"  name="editFormula" style="margin-top: -2px" 
+		      value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
+            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('formula').value)" />
     </td>
 </tr>
 //BEGIN SUGARCRM flav=een ONLY
@@ -62,8 +77,7 @@
         {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
     </td>
 </tr>
-//END SUGARCRM flav=een ONLY
-{else}
+{elseif $vardef.type == 'enum'}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DYNAMIC_VALUES_CHECKBOX"}:</td>
 	<td>
@@ -78,4 +92,5 @@
 		<input type='hidden' name='visibility_grid' id='visibility_grid' value='{$visiblity_grid}'>
 	</td>
 </tr>
+//END SUGARCRM flav=een ONLY
 {/if}

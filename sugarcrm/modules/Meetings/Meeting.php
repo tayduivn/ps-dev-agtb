@@ -48,6 +48,7 @@ class Meeting extends SugarBean {
 	var $name;
 	var $location;
 	var $status;
+	var $type;
 	var $date_start;
 	var $time_start;
 	var $date_end;
@@ -111,12 +112,12 @@ class Meeting extends SugarBean {
 			$this->field_name_map[$field['name']] = $field;
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;	
+		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
-		}		
+		}
 		//END SUGARCRM flav=pro ONLY
 //		$this->fill_in_additional_detail_fields();
 	}
@@ -139,22 +140,11 @@ class Meeting extends SugarBean {
 
 		if(isset($this->date_start)
 			&& isset($this->duration_hours)
-			&& isset($this->duration_minutes))
-		{
-			$date_start_in_db_fmt=$this->date_start;
-			$date_start_array=explode(" ",trim($date_start_in_db_fmt));
-			$date_time_start =DateTimeUtil::get_time_start($date_start_array[0],$date_start_array[1]);
-
-			$date_start_timestamp=mktime($date_time_start->hour,$date_time_start->min,$date_time_start->sec,$date_time_start->month,$date_time_start->day,$date_time_start->year);
-			$date_start_timestamp+= (( $this->duration_hours * 3600 )+ ($this->duration_minutes * 60));
-
-			$this->date_end=date ($timedate->get_date_time_format(true, $current_user),$date_start_timestamp);
-			// Need to convert it to the db date right here so that we don't miss the time calculation
-			$this->date_end = $timedate->to_db_date($this->date_end);
-			if(empty($disable_date_format)){
-				$this->date_end = $timedate->swap_formats($this->date_end, $timedate->dbDayFormat, $timedate->get_date_format());
-           	}
-        }
+			&& isset($this->duration_minutes)) {
+    			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
+    			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
+    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
+		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
 		if(empty($_REQUEST['send_invites'])) {
@@ -181,18 +171,59 @@ class Meeting extends SugarBean {
             $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
             $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
         }
+
+        // Do any external API saving
+        // Clear out the old external API stuff if we have changed types
+        if (isset($this->fetched_row) && $this->fetched_row['type'] != $this->type ) {
+            $this->join_url = '';
+            $this->host_url = '';
+            $this->external_id = '';
+            $this->creator = '';
+        }
+
+        if (!empty($this->type) && $this->type != 'SugarCRM' ) {
+            require_once('include/externalAPI/ExternalAPIFactory.php');
+            $api = ExternalAPIFactory::loadAPI($this->type);           
+        }
+
+        if ( isset($api) && is_a($api,'WebMeeting') ) {
+            // Make sure the API initialized and it supports Web Meetings
+            $response = $api->scheduleMeeting($this);
+            if ( $response['success'] == TRUE ) {
+                // Need to send out notifications
+                if ( $api->canInvite ) {
+                    $notifyList = $this->get_notification_recipients();
+                    foreach($notifyList as $person) {
+                        $api->inviteAttendee($bean,$person,$check_notify);
+                    }
+                    
+                    // Don't double-send if the WebMeeting API sends invites
+                    if ( $api->sendsInvites ) {
+                        $check_notify = false;
+                    }
+                }
+            } else {
+                if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
+                $_SESSION['user_error_message'][] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
+            }
+            
+            $api->logoff();
+        }
+
 		$return_id = parent::save($check_notify);
 
 		if($this->update_vcal) {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
+        
+
 		return $return_id;
 	}
 
 	// this is for calendar
 	function mark_deleted($id) {
-		
+
 		global $current_user;
 
 		parent::mark_deleted($id);
@@ -273,7 +304,7 @@ class Meeting extends SugarBean {
 			$query  = "SELECT first_name, last_name FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in additional detail fields: ");
-	
+
 			// Get the contact name.
 			$row = $this->db->fetchByAssoc($result);
 			$GLOBALS['log']->info("additional call fields $query");
@@ -387,9 +418,9 @@ class Meeting extends SugarBean {
 			$meeting_fields['PARENT_MODULE'] = $this->parent_type;
 		if($this->status == "Planned") {
 			//cn: added this if() to deal with sequential Closes in Meetings.	this is a hack to a hack(formbase.php->handleRedirect)
-			if(empty($action))  
-			     $action = "index"; 
-			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$currentModule\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
+			if(empty($action))
+			     $action = "index";
+            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Meetings')." border='0'")."</a>";
 		}
 		global $timedate;
@@ -411,7 +442,22 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-
+		
+		if($this->assigned_user_id == $GLOBALS['current_user']->id){
+			$join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" alt="'.translate($this->module_dir,'LBL_HOST_EXT_MEETING').'"');
+            $meeting_fields['OBJECT_IMAGE_ICON'] = 'start_meeting_inline';
+			$meeting_fields['DISPLAYED_URL'] = $this->host_url;
+		}else{
+			$join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" alt="'.translate($this->module_dir,'LBL_JOIN_EXT_MEETING').'"');
+            $meeting_fields['OBJECT_IMAGE_ICON'] = 'join_meeting_inline';
+			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
+		}
+		
+		$meeting_fields['JOIN_MEETING']  = '';
+		if(!empty($meeting_fields['DISPLAYED_URL'])){
+			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . $join_icon . '</a>';
+		}
+	
 		return $meeting_fields;
 	}
 
@@ -440,10 +486,15 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
+		$xtpl->assign("MEETING_TYPE",(isset($meeting->type)? $app_list_strings['meeting_type_dom'][$meeting->type]:""));
 		$xtpl->assign("MEETING_STARTDATE", $timedate->to_display_date_time($meeting->date_start,true,true,$notifyUser)." ".$prefDate['userGmt']);
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
 		$xtpl->assign("MEETING_DESCRIPTION", $meeting->description);
+        if ( !empty($meeting->join_url) ) {
+            $xtpl->assign('MEETING_URL', $meeting->join_url);
+            $xtpl->parse('Meeting.Meeting_External_API');
+        }
 
 		return $xtpl;
 	}
@@ -502,7 +553,7 @@ class Meeting extends SugarBean {
 			$data_values = array('accept_status'=>$status);
 			$this->set_relationship($this->rel_users_table, $relate_values, true, true,$data_values);
 			global $current_user;
-			
+
 			if($this->update_vcal)
 			{
 				vCal::cache_sugar_vcal($user);
@@ -527,7 +578,7 @@ class Meeting extends SugarBean {
 		if($this->special_notification) {
 			return parent::get_notification_recipients();
 		}
-		
+
 		$list = array();
 		if(!is_array($this->contacts_arr)) {
 			$this->contacts_arr =	array();
@@ -635,8 +686,22 @@ class Meeting extends SugarBean {
 	        if ( !$this->leads->relationship_exists('leads',array('id'=>$this->parent_id)) )
 	            $this->leads->add($this->parent_id);
 	    }
-	    
+
 	    parent::afterImportSave();
 	}
+
 } // end class def
+
+// External API integration, for the dropdown list of what external API's are available
+function getMeetingsExternalApiDropDown() {
+    require_once('include/externalAPI/ExternalAPIFactory.php');
+    
+    $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
+    
+    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
+    
+    return $apiList;
+    
+}
+
 ?>

@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: EditView.php 57474 2010-07-15 07:31:59Z kjing $
+ * $Id: EditView.php 57829 2010-08-19 23:26:17Z kjing $
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc.
  * All Rights Reserved.
@@ -125,11 +125,10 @@ if (isset($buttons)) $sugar_smarty->assign("BUTTONS", $buttons);
 
 echo "\n<p>\n";
 $params = array();
-$params[] = "<a href='index.php?module=Users&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 if(empty($focus->id)){
-	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
+	$params[] = "<span class='pointer'>&raquo;</span>".$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
-	$params[] = "<a href='index.php?module=Users&action=DetailView&record={$focus->id}'>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name)."</a>";
+	$params[] = "<span class='pointer'>&raquo;</span><a href='index.php?module=Users&action=DetailView&record={$focus->id}'>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name)."</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
 echo getClassicModuleTitle("Users", $params, true);
@@ -192,12 +191,13 @@ $sugar_smarty->assign('ADDRESS_STATE', $focus->address_state);
 $sugar_smarty->assign('ADDRESS_POSTALCODE', $focus->address_postalcode);
 $sugar_smarty->assign('ADDRESS_COUNTRY', $focus->address_country);
 $sugar_smarty->assign('DESCRIPTION', $focus->description);
-$sugar_smarty->assign('EXPORT_DELIMITER', getDelimiter());
+$sugar_smarty->assign('EXPORT_DELIMITER', $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
 //BEGIN SUGARCRM flav=pro ONLY
-
-$pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-$sugar_smarty->assign("REGEX",$pwd_regex);
+if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
+    $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
+    $sugar_smarty->assign("REGEX",$pwd_regex);     
+}
 //END SUGARCRM flav=pro ONLY
 
 if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
@@ -374,6 +374,9 @@ if(empty($userTZ) && !$focus->is_group && !$focus->portal_only)
 
 if(!$focus->getPreference('ut')) {
 	$sugar_smarty->assign('PROMPTTZ', ' checked');
+	//BEGIN SUGARCRM flav=sales ONLY
+	$sugar_smarty->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
+	//END SUGARCRM flav=sales ONLY
 }
 
 $timezoneOptions = '';
@@ -454,7 +457,7 @@ $sugar_smarty->assign('getNameJs', $locale->getNameJs());
 $useGroupTabs = $current_user->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'm';
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
     }
     $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
 }
@@ -489,6 +492,30 @@ $sugar_smarty->assign("SHOW_THEMES",count(SugarThemeRegistry::availableThemes())
 $sugar_smarty->assign("USER_THEME_COLOR", $focus->getPreference('user_theme_color'));
 $sugar_smarty->assign("USER_THEME_FONT", $focus->getPreference('user_theme_font'));
 $sugar_smarty->assign("USER_THEME", $user_theme);
+
+// Build a list of themes that support group modules
+$sugar_smarty->assign("DISPLAY_GROUP_TAB", 'none');
+
+$selectedTheme = $user_theme;
+if(!isset($user_theme)) {
+    $selectedTheme = $GLOBALS['sugar_config']['default_theme'];
+}
+
+$themeList = SugarThemeRegistry::availableThemes();
+$themeGroupList = array();
+
+foreach ( $themeList as $themeId => $themeName ) {
+    $currThemeObj = SugarThemeRegistry::get($themeId);
+    if ( isset($currThemeObj->group_tabs) && $currThemeObj->group_tabs == 1 ) {
+        $themeGroupList[$themeId] = true;
+        if ( $themeId == $selectedTheme ) {
+            $sugar_smarty->assign("DISPLAY_GROUP_TAB", '');
+        }
+    } else {
+        $themeGroupList[$themeId] = false;
+    }
+}
+$sugar_smarty->assign("themeGroupListJSON",json_encode($themeGroupList));
 
 $sugar_smarty->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $focus->getPreference('mail_sendtype')));
 $reminder_time = $focus->getPreference('reminder_time');
@@ -626,7 +653,7 @@ if ( $usertype == 'GROUP' ) {
 }
 
 $configurator = new Configurator();
-if ( ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
+if ( isset($configurator->config['passwordsetting']) && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
         && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' )
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','1');
 else
@@ -679,7 +706,12 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
             $mail_smtppass = $userOverrideOE->mail_smtppass;
         }
 
-        $hide_if_can_use_default = empty($systemOutboundEmail->mail_smtpserver) ? true : false;
+        if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
+            $hide_if_can_use_default = true;
+        }
+        else{
+            $hide_if_can_use_default = false;
+        }
     }
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
     $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);

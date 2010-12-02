@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  * The contents of this file are subject to the SugarCRM Enterprise Subscription
  * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
@@ -26,6 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/Generic/GenericExpression.php');
+/**
+ * <b>valueAt(Number index, Enum values)</b><br>
+ * Returns the value at position <i>index</i> in the collection <i>values</i>.<br/>
+ * ex: <i>valueAt(1, enum("a", "b", "c") = "b"</i>
+ */
 class IndexValueExpression extends GenericExpression
 {
 	/**

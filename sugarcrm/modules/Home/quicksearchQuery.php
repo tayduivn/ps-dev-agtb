@@ -173,11 +173,7 @@ class quicksearchQuery {
                         $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
                     }
                 }
-                //Match name field for People
-             	if ($list_return[$i] instanceof Person) {
-                	$list_return[$i]->_create_proper_name_field();
-                }
-               
+                
                 //BEGIN SUGARCRM flav=pro ONLY
                 if($list_return[$i] instanceof Team){
                 	$list_return[$i]->name = Team::getDisplayName($list_return[$i]->name, $list_return[$i]->name_2);
@@ -342,6 +338,21 @@ class quicksearchQuery {
         return $json->encodeReal($list_arr);
     }
     //END SUGARCRM flav=pro ONLY
+
+    function externalApi($data) {
+        require_once('include/externalAPI/ExternalAPIFactory.php');
+        
+        $api = ExternalAPIFactory::loadAPI($data['api']);
+
+    	$json = getJSONobj();
+
+        $listArray['fields'] = $api->searchDoc($_REQUEST['query']);
+        $listArray['totalCount'] = count($listArray['fields']);
+        
+        $listJson = $json->encodeReal($listArray);
+        
+        return $listJson;
+    }
 }
 
 $json = getJSONobj();

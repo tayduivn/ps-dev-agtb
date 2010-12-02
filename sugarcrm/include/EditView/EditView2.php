@@ -70,21 +70,23 @@ class EditView
      * @param $id The record id to retrieve and populate data for
      * @param $metadataFile String value of file location to use in overriding default metadata file
      * @param tpl String value of file location to use in overriding default Smarty template
+     * @param createFocus bool value to tell whether to create a new bean if we do not have one with an id, this is used from ConvertLead
      *
      */
-    function setup(
-        $module, 
-        $focus = null,
-        $metadataFile = null, 
-        $tpl = 'include/EditView/EditView.tpl'
-        ) 
+    function setup($module, $focus = null, $metadataFile = null, $tpl = 'include/EditView/EditView.tpl', $createFocus = true) 
     {
         $this->th = new TemplateHandler();
         $this->th->ss =& $this->ss;
         $this->tpl = $tpl;
         $this->module = $module;
         $this->focus = $focus;
-        $this->createFocus();
+        
+        //this logic checks if the focus has an id and if it does not then it will create a new instance of the focus bean
+        //but in convert lead we do not want to create a new instance and do not want to populate id.
+        if($createFocus)
+        {
+        	$this->createFocus();
+        }
         if(empty($GLOBALS['sugar_config']['showDetailData'])) {
         	$this->showDetailData = false;
         }
@@ -183,7 +185,10 @@ class EditView
 		    	foreach($p as $row=>$rowDef) {
 		            foreach($rowDef as $col => $colDef) {
 		                $field = (is_array($p[$row][$col])) ? $p[$row][$col]['name'] : $p[$row][$col];
-		                if((!empty($this->focus->field_defs[$field]) && !empty($this->focus->field_defs[$field]['required'])) || !empty($p[$row][$col]['displayParams']['required'])){
+		                if((!empty($this->focus->field_defs[$field]) 
+		                        && !empty($this->focus->field_defs[$field]['required'])) 
+		                    || ( !empty($p[$row][$col]['displayParams']['required']) 
+		                        && ( isset($this->focus->field_defs[$field]) ? $this->focus->field_defs[$field]['required'] !== false : false ) ) ) {
 		                	$reqCol++;
 		                	if($reqCol == $this->defs['templateMeta']['maxColumns']) {
 		                		$reqCol = -1;

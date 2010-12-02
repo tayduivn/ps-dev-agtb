@@ -728,10 +728,9 @@ class ConnectorUtils
                   $formatter_code = $formatter->getDetailViewFormat();
                   if(!empty($formatter_code)) {
                       $iconFilePath = $formatter->getIconFilePath();
-                      $iconFilePath = empty($iconFilePath) ? 'themes/default/images/icon_Connectors.gif' : $iconFilePath;
+                      $iconFilePath = empty($iconFilePath) ? 'themes/default/images/MoreDetail.png' : $iconFilePath;
             
                       $code = '<img id="dswidget_img" border="0" src="' . $iconFilePath .'" alt="' . $shown_sources[0] .'" onmouseover="show_' . $shown_sources[0] . '(event);">';
-                      $code .= "<link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css'>"; 
                       $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>";
                       $code .= $formatter->getDetailViewFormat();
                       $code .= $formatter_code;
@@ -762,14 +761,13 @@ class ConnectorUtils
                   if(!empty($formatterCode)) {
                       if($sourcesDisplayed > 1) {
                       	$dswidget_img = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
-                        $code = '<img id="dswidget_img" src="'.$dswidget_img.'" width="8" height="7" border="0" alt="connectors_popups" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
+                        $code = '<img id="dswidget_img" src="'.$dswidget_img.'" width="11" height="7" border="0" alt="connectors_popups" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
                       } else {
-                       	  $dswidget_img = SugarThemeRegistry::current()->getImageURL('icon_Connectors.gif');
+                       	  $dswidget_img = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
                           $singleIcon = empty($singleIcon) ? $dswidget_img : $singleIcon;
                           $code = '<img id="dswidget_img" border="0" src="' . $singleIcon . '" alt="connectors_popups" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';	
                       }
                       $code .= "{overlib_includes}\n";
-                      $code .= "<link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css'>\n"; 
                       $code .= "<script type='text/javascript' src='{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}'></script>\n";
                       $code .= "<script type='text/javascript'>\n";
                       $code .= "function showConnectorMenu2() {literal} { {/literal}\n";	 		  

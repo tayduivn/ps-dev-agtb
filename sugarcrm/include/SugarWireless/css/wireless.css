@@ -150,3 +150,6 @@ div.sec .odd a, div.sec .even a {
 table,tr,td {
     background: transparent;
 }
+input[readonly] {
+	background-color:#DDD;
+}
