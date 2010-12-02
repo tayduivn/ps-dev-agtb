@@ -49,7 +49,7 @@ li.active a img.deletePageImg {
 {/literal}
 
 <!-- begin includes for overlib -->
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
 <!-- end includes for overlib -->
 
@@ -67,7 +67,7 @@ var moduleName = '{$module}';
 document.body.setAttribute("class", "yui-skin-sam");
 </script>
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
 <script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
 <script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>

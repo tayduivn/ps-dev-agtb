@@ -43,8 +43,8 @@ $error_txt = '';
 
 // check IIS and FastCGI
 $server_software = $_SERVER["SERVER_SOFTWARE"];
-if ((strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false) 
-    && php_sapi_name() == 'cgi-fcgi' 
+if ((strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false)
+    && php_sapi_name() == 'cgi-fcgi'
     && ini_get('fastcgi.logging') != '0')
 {
     installLog($mod_strings['ERR_CHECKSYS_FASTCGI_LOGGING']);
@@ -95,7 +95,7 @@ if(strpos($server_software,'Microsoft-IIS') !== false)
           </tr>';
     }
 }
-        
+
 // PHP VERSION
 $php_version = constant('PHP_VERSION');
 $check_php_version_result = check_php_version($php_version);
@@ -254,7 +254,8 @@ if(!make_writable('./data') || !make_writable('./data/upload')) {
     $cache_files[] = '/cache/pdf';
     $cache_files[] = '/cache/upload';
     $cache_files[] = '/cache/xml';
-	$filelist = '';
+    $cache_files[] = '/cache/include/javascript';
+    $filelist = '';
 
 	foreach($cache_files as $c_file)
 	{

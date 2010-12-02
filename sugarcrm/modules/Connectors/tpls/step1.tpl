@@ -27,9 +27,9 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Connectors/Connector.js'}"></script>
-<script type='text/javascript' src="{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}">
+<script type='text/javascript' src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}">
 <script type="text/javascript" src="{sugar_getjspath file='modules/Connectors/tpls/modify_mapping.js'}"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 

@@ -1078,7 +1078,7 @@ style="display: none"
 var current_db_type = '<?php echo $reporter->db->dbType;?>';
 </script>
 <script type="text/javascript" src="cache/modules/modules_def_<?php echo $current_language; ?>_<?php echo md5($current_user->id) ?>.js"></script>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
                                                                                                        

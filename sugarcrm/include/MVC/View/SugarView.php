@@ -610,13 +610,13 @@ class SugarView
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
         echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-        if (!is_file("include/javascript/sugar_grp1.js")) {
+        if (!is_file("cache/include/javascript/sugar_grp1.js")) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
             ConcatenateFiles(".");
         }
-        echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
-        echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
+        echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
+        echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
         //BEGIN SUGARCRM flav=pro ONLY
         if (!is_file("cache/Expressions/functions_cache.js")) {
             $GLOBALS['updateSilent'] = true;
@@ -670,14 +670,14 @@ EOHTML;
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
             echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-            if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
+            if (!is_file("cache/include/javascript/sugar_grp1.js") || !is_file("cache/include/javascript/sugar_grp1_yui.js")) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
-            echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
-            echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
-            echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
+            echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
+            echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
+            echo '<script type="text/javascript" src="' . getJSPath('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2) . '.js') . '"></script>';
 
             // cn: bug 12274 - prepare secret guid for asynchronous calls
             if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {

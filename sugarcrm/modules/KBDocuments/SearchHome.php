@@ -39,7 +39,7 @@ $focus = new KBDocument();
 
 echo get_module_title("KBDocuments", "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'], true);
 
-$path = getJSPath('include/javascript/sugar_grp_overlib.js');
+$path = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
 echo "
 <script type='text/javascript' src='$path'></script>
 <div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000; max-width: 400px;'></div> ";

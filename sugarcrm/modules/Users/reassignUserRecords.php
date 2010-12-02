@@ -526,7 +526,7 @@ if(!empty($quicksearch_js)){
 }
 //END SUGARCRM flav=pro ONLY
 ?>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
 <script type="text/javascript">
 
 function clearCurrentRecords()

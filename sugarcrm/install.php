@@ -100,12 +100,12 @@ function getSupportedInstallLanguages(){
 	if(file_exists('install/lang.config.php')){
 		include('install/lang.config.php');
 		if(!empty($config['languages'])){
-			
+
 			foreach($config['languages'] as $k=>$v){
 				if(file_exists('install/language/' . $k . '.lang.php')){
-					$supportedLanguages[$k] = $v;	
-				}	
-			}	
+					$supportedLanguages[$k] = $v;
+				}
+			}
 		}
 	}
 	return $supportedLanguages;
@@ -636,6 +636,7 @@ EOQ;
         make_writable('./cache/pdf');
         make_writable('./cache/upload');
         make_writable('./cache/xml');
+        make_writable('./cache/include/javascript');
 
         // check whether we're getting this request from a command line tool
         // we want to output brief messages if we're outputting to a command line tool

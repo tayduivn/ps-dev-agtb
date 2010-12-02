@@ -30,8 +30,8 @@
 <link rel="stylesheet" type="text/css" href="modules/Emails/EmailUI.css" />
 {include file="modules/Emails/templates/_baseJsVars.tpl"}
 <script type="text/javascript" src='{sugar_getjspath file='include/javascript/tiny_mce/tiny_mce.js'}'></script>
-<script type="text/javascript" src='{sugar_getjspath file='include/javascript/sugar_grp_emails.js'}'></script>
-<script type="text/javascript" src='{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}'></script>
+<script type="text/javascript" src='{sugar_getjspath file='cache/include/javascript/sugar_grp_emails.js'}'></script>
+<script type="text/javascript" src='{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}'></script>
 
 <script type="text/javascript" language="Javascript">
 

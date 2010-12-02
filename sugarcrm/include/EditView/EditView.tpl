@@ -224,7 +224,7 @@ class="yui-navset"
 </div></div>
 {{include file=$footerTpl}}
 {{if $useTabs}}
-<script type="text/javascript" src="include/javascript/sugar_grp_yui_widgets.js"></script>
+<script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
 <script type="text/javascript">
 var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{$form_name}}_tabs.selectTab(0);

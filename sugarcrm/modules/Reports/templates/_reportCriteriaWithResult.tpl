@@ -35,7 +35,7 @@
 	{/if}
 {/if}
 {$form_header}
-<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
+<script type='text/javascript' src='cache/include/javascript/sugar_grp_overlib.js'></script>
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
@@ -303,7 +303,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 var current_db_type = '{$reporter_db_dbType}';
 </script>
 <script type="text/javascript" src="{$cache_path}modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
                                                                                                        

@@ -81,7 +81,7 @@
 
 <script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" language="javascript" src="modules/Campaigns/wizard.js"></script>
-<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
+<script type='text/javascript' src='cache/include/javascript/sugar_grp_overlib.js'></script>
 <div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 
 {$WIZ_JAVASCRIPT}

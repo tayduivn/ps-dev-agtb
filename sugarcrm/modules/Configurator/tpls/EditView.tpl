@@ -30,7 +30,7 @@
 // $Id: EditView.tpl 54689 2010-02-21 02:43:22Z jmertic $
 
 *}
-<script type='text/javascript' src='{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}'></script>
+<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
 <form name="ConfigureSettings" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (add_checks(document.ConfigureSettings) && check_form('ConfigureSettings'));">
 <input type='hidden' name='action' value='SaveConfig'/>
 <input type='hidden' name='module' value='Configurator'/>

@@ -1323,7 +1323,7 @@ function getUserVariable($localVarName, $varName) {
 
         static $overlib_included;
         if(!$overlib_included) {
-            echo '<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+            echo '<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
                 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>';
             $overlib_included = true;
         }

@@ -34,7 +34,7 @@
 {$STYLESHEET}
 
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_3.js"}'></script>
-<script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_grp1_yui.js"}'></script>
+<script type="text/javascript" src='{sugar_getjspath file="cache/include/javascript/sugar_grp1_yui.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="jscalendar/calendar.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="jscalendar/lang/calendar-$CALENDAR_LANG.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="jscalendar/calendar-setup_3.js"}'></script>

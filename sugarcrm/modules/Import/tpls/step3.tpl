@@ -37,7 +37,7 @@ textarea { width: 20em }
 -->
 </style>
 {/literal}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 {$MODULE_TITLE}
 <form enctype="multipart/form-data" real_id="importstep3" id="importstep3" name="importstep3" method="POST" action="index.php">
