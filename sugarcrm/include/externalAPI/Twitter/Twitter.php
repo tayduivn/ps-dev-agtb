@@ -30,6 +30,7 @@ class Twitter extends OAuthPluginBase implements WebFeed {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
+    public $supportedModules = array('SugarFeed');
 
 
 	protected $oauthReq = "https://api.twitter.com/oauth/request_token";
@@ -51,7 +52,7 @@ class Twitter extends OAuthPluginBase implements WebFeed {
         
         if ( !$reply['success'] ) {
             $GLOBALS['log']->fatal('IKEA: Twitter failed, reply said: '.print_r($reply,true));
-            return FALSE;
+            return $reply;
         }
 
         $messages = array();
@@ -76,7 +77,7 @@ class Twitter extends OAuthPluginBase implements WebFeed {
         }
         
 
-        return $messages;
+        return array('success'=>TRUE,'messages'=>$messages);
     }
 
     

@@ -20,7 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/externalAPI/Facebook/FacebookLib.php');
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebFeed.php');
 
@@ -32,6 +31,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
+    public $supportedModules = array('SugarFeed');
 
 
     protected $oauthParams = array(
@@ -49,7 +49,11 @@ class Facebook extends ExternalAPIBase implements WebFeed {
             return $reply;
         }
 
-        $this->setupFacebookLib();
+        if ( ! $this->setupFacebookLib() ) {
+            // FIXME: Translate
+            return array('success'=>FALSE,'errorMessage'=>'Facebook does not have the required libraries.');
+        }
+        
         $GLOBALS['log']->fatal('Checking login.');
 
 
@@ -104,15 +108,18 @@ class Facebook extends ExternalAPIBase implements WebFeed {
         $td = $GLOBALS['timedate'];
 
         try {
-            $this->setupFacebookLib();
+            if ( ! $this->setupFacebookLib() ) {
+                // FIXME: Translate
+                return array('success'=>FALSE,'errorMessage'=>'Facebook does not have the required libraries.');
+            }
             $fbMessages = $this->fb->api('/me/home?limit='.$maxEntries);
         } catch ( Exception $e ) {
             $GLOBALS['log']->error('Facebook Error: '.$e->getMessage());
-            return FALSE;
+            return array('success'=>FALSE,'errorMessage'=>'Facebook returned the error: '.$e->getMessage());
         }
 
         if ( !isset($fbMessages['data'][0]) ) {
-            return FALSE;
+            return array('success'=>TRUE,'messages'=>array());
         }
 
         $messages = array();
@@ -140,19 +147,18 @@ class Facebook extends ExternalAPIBase implements WebFeed {
         }
         
 
-        return $messages;
+        return array('success'=>TRUE,'messages'=>$messages);
     }
-
-    public function getOauthRequestURL()
-    {
-        $this->setupFacebookLib();
-        
-    }
-    
 
     // Internal functions
     protected function setupFacebookLib()
     {
+        try {
+            // This will throw exceptions if either the curl or json libraries aren't available.
+            require_once('include/externalAPI/Facebook/FacebookLib.php');
+
+        } catch ( Exception $e ) { return false; }
+
         $this->fb = new FacebookLib(array(
                                         'appId' => $this->oauthParams['consumerKey'], 
                                         'secret' => $this->oauthParams['consumerSecret'],
@@ -163,32 +169,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
                 $this->fb->setSession($this->fbSession,false);
             }
         } catch ( Exception $e ) {}
-    }
 
-    protected function makeRequest($requestMethod, $url, $urlParams = null, $postData = null )
-    {
-        $headers = array(
-            "User-Agent: SugarCRM",
-            "Content-Type: application/x-www-form-urlencoded",
-            "Content-Length: ".strlen($postData),
-            );
-
-        $oauth = $this->getOauth();
-        
-        $rawResponse = $oauth->fetch($url, $urlParams, $requestMethod, $headers);
-
-        if ( empty($rawResponse) ) {
-            return array('success'=>FALSE,'errorMessage'=>'No response from server');            
-        }
-        $response = json_decode($rawResponse,true);
-        if ( empty($response) ) {
-            return array('success'=>FALSE,'errorMessage'=>'Invalid response');
-        }
-        
-        if ( isset($response['error']) ) {
-            return array('success'=>FALSE,'errorMessage'=>$response['error']);
-        }
-
-        return array('success'=>TRUE, 'responseJSON'=>$response);
+        return true;
     }
 }
