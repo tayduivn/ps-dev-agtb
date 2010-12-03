@@ -14194,6 +14194,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           dimArray = node.getData('dimArray'),
           valueArray = node.getData('valueArray'),
           valuelabelsArray = node.getData('valuelabelsArray'),
+          gaugeTarget = node.getData('gaugeTarget'),
           nodeIteration = node.getData('nodeIteration'),
           nodeLength = node.getData('nodeLength'),
           colorArray = node.getData('colorMono'),
@@ -14218,7 +14219,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
       var xpos = config.sliceOffset * Math.cos((begin + end) /2);
       var ypos = config.sliceOffset * Math.sin((begin + end) /2);
 
-      if (colorArray && dimArray && stringArray) {
+      if (colorArray && dimArray && stringArray && gaugeTarget != 0) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           var dimi = dimArray[i], colori = colorArray[i % colorLength];
           if(dimi <= 0) continue;
@@ -14477,7 +14478,7 @@ $jit.GaugeChart = new Class({
 	ctx.fillStyle = style.needleColor;
 	var segments = 180/target;
 	needleAngle = gaugePosition * segments;
-	ctx.translate(0, gaugeCenter-5);
+	ctx.translate(0, gaugeCenter);
 	ctx.save();
 	ctx.rotate(needleAngle * Math.PI / 180);  
 	ctx.beginPath();
@@ -14540,12 +14541,19 @@ $jit.GaugeChart = new Class({
 	ctx.strokeStyle = style.borderColor;
 	ctx.lineWidth = 5;
 	ctx.lineCap = "round";
+		for(var i=0, total = 0, l=values.length; i<l; i++) {
+			var val = values[i];
+			if(val.label != 'GaugePosition') {
+			total += (parseInt(val.values) || 0);
+			}
+		}
+		
 		for(var i=0, acum = 0, l=values.length; i<l-1; i++) {
 			var val = values[i];
 			if(val.label != 'GaugePosition') {
 			acum += (parseInt(val.values) || 0);
 
-			   var segments = 180/values.length;
+			   var segments = 180/total;
 			angle = acum * segments;
 
 			  //alert(angle);
@@ -14601,7 +14609,8 @@ $jit.GaugeChart = new Class({
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
-	ctx.fillText(subtitle.text, -radius, subtitle.size + subtitle.offset);
+	ctx.moveTo(0,0);
+	ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset);
   },
   
   loadJSON: function(json) {
@@ -14642,6 +14651,7 @@ $jit.GaugeChart = new Class({
 			  '$stringArray': name,
 			  '$gradient': gradient,
 			  '$config': config,
+			  '$gaugeTarget': props['gaugeTarget'],
 			  '$angularWidth': $.reduce(valArray, function(x,y){return x+y;})
 			},
 			'children': []
@@ -14675,9 +14685,11 @@ $jit.GaugeChart = new Class({
       });
     }
 	
-	this.renderTicks(json.values);
 	this.renderPositionLabel(gaugePositionLabel);
-	this.renderNeedle(gaugePosition,props['gaugeTarget']);
+	if (props['gaugeTarget'] != 0) {
+		this.renderTicks(json.values);
+		this.renderNeedle(gaugePosition,props['gaugeTarget']);
+	}
 	this.renderSubtitle();
 
   },

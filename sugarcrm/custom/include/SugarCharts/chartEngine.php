@@ -423,7 +423,7 @@ class chartEngine {
 				
 				//$groupcontent .= $this->tab("'labels': [\n".$subgroupTitlesStr,2);
 				//$groupcontent .= $this->tab("],\n",2);			
-				$val = $this->tab($subgroupValues[1] - $subgroupValues[0],3)."\n";
+				$val = ((int)$subgroupValues[1] == (int)$subgroupValues[0]) ? $this->tab($subgroupValues[1],3)."\n" : $this->tab($subgroupValues[1] - $subgroupValues[0],3)."\n";
 				
 				$groupcontent .= $this->tab("'values': [\n".$val,2);
 				$groupcontent .= $this->tab("],\n",2);
