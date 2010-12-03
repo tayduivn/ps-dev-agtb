@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
+require_once('include/externalAPI/ExternalAPIFactory.php');    
 
 class SugarFeedDashlet extends DashletGeneric { 
 var $displayRows = 15;
@@ -58,6 +59,14 @@ var $selectedCategories = array();
                 $this->categories[$module] = $app_list_strings['moduleList'][$module];
             }
         }
+
+        // Need to add the external api's here
+        $apiList = ExternalAPIFactory::getModuleDropDown('SugarFeed');
+        if ( !is_array($apiList) ) { $apiList = array(); }
+        foreach ( $apiList as $apiObj => $apiName ) {
+            $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
+        }
+        
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
@@ -234,7 +243,6 @@ var $selectedCategories = array();
         $needResort = false;
         $resortQueue = array();
 
-        require_once('include/externalAPI/ExternalAPIFactory.php');
         $facebook = ExternalAPIFactory::loadAPI('Facebook');
         if ( $facebook !== FALSE ) {
             $messages = $facebook->getLatestUpdates(time(),15);
@@ -354,6 +362,7 @@ var $selectedCategories = array();
         $ss = new Sugar_Smarty();
         $ss->assign('titleLBL', translate('LBL_TITLE', 'SugarFeed'));
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
+		$ss->assign('externalWarningLBL', translate('LBL_EXTERNAL_WARNING', 'SugarFeed'));
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
         $ss->assign('title', $this->title);

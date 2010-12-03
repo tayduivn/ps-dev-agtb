@@ -169,7 +169,6 @@ class Facebook extends ExternalAPIBase implements WebFeed {
                 $this->fb->setSession($this->fbSession,false);
             }
         } catch ( Exception $e ) {}
-
         return true;
     }
 }

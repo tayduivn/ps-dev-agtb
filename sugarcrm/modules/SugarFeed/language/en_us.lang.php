@@ -93,5 +93,7 @@ $mod_strings = array (
   
   'LBL_SELECT' => 'Select',  
   'LBL_POST' => 'Post', 
+  'LBL_EXTERNAL_PREFIX' => 'External: ',
+  'LBL_EXTERNAL_WARNING' => 'Items labeled "external" require an <a href="?module=EAPM">external account</a>.',
 );
 ?>

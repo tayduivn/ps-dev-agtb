@@ -365,7 +365,7 @@ class RepairAndClear
     public function clearExternalAPICache() 
 	{
         global $mod_strings, $sugar_config;
-        if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARPDFFONT']}</h3>";
+        if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_EXT_API']}</h3>";
         require_once('include/externalAPI/ExternalAPIFactory.php');
         ExternalAPIFactory::clearCache();
     }
