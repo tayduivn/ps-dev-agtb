@@ -179,7 +179,7 @@ class chartEngine {
 				return array("width"=>($this->width * 2), "height"=>$this->height);
 			}
 		} else {
-			return array("width"=>$this->width, "height"=>$this->height);
+			return array("width"=>"100%", "height"=>$this->height);
 		}
 	}
 	

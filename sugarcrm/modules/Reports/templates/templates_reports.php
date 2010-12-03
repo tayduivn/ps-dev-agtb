@@ -787,7 +787,9 @@ function reportResults(&$reporter, &$args) {
 		showHideChartButton.value = \"{$mod_strings['LBL_REPORT_SHOW_CHART']}\";
 	} // else
 } </script>";
+	echo "<div class='reportChartContainer'>";
 	 template_chart($reporter, $reportChartDivStyle);
+	 echo "</div>";
 	} // if
 
 	print $contents;

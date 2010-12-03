@@ -11754,13 +11754,19 @@ $jit.BarChart = new Class({
 
           - (config.showLabels && (config.Label.size + config.labelOffset)),
         dim1 = horz? 'height':'width',
-        dim2 = horz? 'width':'height';
+        dim2 = horz? 'width':'height',
+        grouped = config.type.split(':')[0] == 'grouped';
+        
 		var maxTickValue = Math.ceil(maxValue*.1)*10;
 		if(maxTickValue == maxValue) {
 			var length = maxTickValue.toString().length;
 			maxTickValue = maxTickValue + parseInt(pad(1,length));
 		}
-		fixedDim = fixedDim > 100? 100 : fixedDim;
+		if(grouped && !horz) {
+			fixedDim = fixedDim > 100? 100 : fixedDim;
+		} else {
+			fixedDim = fixedDim > 50? 50 : fixedDim;
+		}
 		
     this.st.graph.eachNode(function(n) {
       var acum = 0, animateValue = [];
