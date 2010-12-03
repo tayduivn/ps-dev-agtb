@@ -29,7 +29,6 @@ var $displayRows = 15;
 
 var $categories;
 
-var $userfilters;
 var $userfeed_created;
 
 var $selectedCategories = array();
@@ -37,8 +36,6 @@ var $selectedCategories = array();
     function SugarFeedDashlet($id, $def = null) {
 		global $current_user, $app_strings, $app_list_strings;
 		
-        require('modules/SugarFeed/Dashlets/SugarFeedDashlet/metadata/userfilters.php');
-        $this->userfilters = $userfilters;
 		require('modules/SugarFeed/metadata/dashletviewdefs.php');
 		$this->myItemsOnly = false;
         parent::DashletGeneric($id, $def);
@@ -71,15 +68,6 @@ var $selectedCategories = array();
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
 		if(!empty($def['categories']))$this->selectedCategories = $def['categories'];
-		//Sugar Feed User Filtering
-		foreach($this->userfilters as $uf_module => $uf_meta){
-		    foreach($uf_meta as $uf_field => $uf_field_meta){
-		        $field_index = "{$uf_module}_{$uf_field}";
-		        if($uf_field_meta['enabled'] && !empty($def[$field_index])){
-		            $this->$field_index = $def[$field_index];
-		        }
-		    }
-		}
 		if(!empty($def['userfeed_created'])) $this->userfeed_created = $def['userfeed_created'];
 		
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];

@@ -80,7 +80,6 @@ if(typeof SugarFeed == 'undefined') { // since the dashlet can be included multi
                }
 
                // Move the reply form up over here
-               console.log('SugarFeedReplyForm_'+id);
                var formElem = document.getElementById('SugarFeedReplyForm_'+id);
                formElem.parentElement.removeChild(formElem);
                blockElem.appendChild(formElem);
