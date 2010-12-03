@@ -32,6 +32,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
+    public $supportedModules = array('SugarFeed');
 
 
     protected $oauthParams = array(
@@ -143,13 +144,6 @@ class Facebook extends ExternalAPIBase implements WebFeed {
         return $messages;
     }
 
-    public function getOauthRequestURL()
-    {
-        $this->setupFacebookLib();
-        
-    }
-    
-
     // Internal functions
     protected function setupFacebookLib()
     {
@@ -163,32 +157,5 @@ class Facebook extends ExternalAPIBase implements WebFeed {
                 $this->fb->setSession($this->fbSession,false);
             }
         } catch ( Exception $e ) {}
-    }
-
-    protected function makeRequest($requestMethod, $url, $urlParams = null, $postData = null )
-    {
-        $headers = array(
-            "User-Agent: SugarCRM",
-            "Content-Type: application/x-www-form-urlencoded",
-            "Content-Length: ".strlen($postData),
-            );
-
-        $oauth = $this->getOauth();
-        
-        $rawResponse = $oauth->fetch($url, $urlParams, $requestMethod, $headers);
-
-        if ( empty($rawResponse) ) {
-            return array('success'=>FALSE,'errorMessage'=>'No response from server');            
-        }
-        $response = json_decode($rawResponse,true);
-        if ( empty($response) ) {
-            return array('success'=>FALSE,'errorMessage'=>'Invalid response');
-        }
-        
-        if ( isset($response['error']) ) {
-            return array('success'=>FALSE,'errorMessage'=>$response['error']);
-        }
-
-        return array('success'=>TRUE, 'responseJSON'=>$response);
     }
 }

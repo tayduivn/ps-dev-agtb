@@ -30,6 +30,7 @@ class Twitter extends OAuthPluginBase implements WebFeed {
     public $requireAuth = true;
     protected $authData;
     public $needsUrl = false;
+    public $supportedModules = array('SugarFeed');
 
 
 	protected $oauthReq = "https://api.twitter.com/oauth/request_token";
