@@ -236,13 +236,13 @@ var $selectedCategories = array();
         $resortQueue = array();
         $feedErrors = array();
 
-        $GLOBALS['log']->fatal("IKEA: <pre>".print_r($this->lvs->data,true)."</pre>");
+        $fetchRecordCount = $this->displayRows + $this->lvs->data['pageData']['offsets']['current'];
 
         foreach ( $external_modules as $apiName ) {
             $api = ExternalAPIFactory::loadAPI($apiName);
             if ( $api !== FALSE ) {
                 // FIXME: Actually calculate the oldest sugar feed we can see, once we get an API that supports this sort of filter.
-                $reply = $api->getLatestUpdates(0,15);
+                $reply = $api->getLatestUpdates(0,$fetchRecordCount);
                 if ( $reply['success'] && count($reply['messages']) > 0 ) {
                     array_splice($resortQueue, count($resortQueue), 0, $reply['messages']);
                 } else if ( !$reply['success'] ) {
@@ -270,8 +270,13 @@ var $selectedCategories = array();
         
         usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
         
-        //echo('<pre>IKEA ResortQueue:<br>'.print_r($resortQueue,true).'</pre>');
-        
+        // Trim it down to the necessary number of records
+        $numRecords = count($resortQueue);
+        $numRecords = $numRecords - $this->lvs->data['pageData']['offsets']['current'];
+        $numRecords = min($this->displayRows,$numRecords);
+
+        $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
+
         foreach ( $resortQueue as $key=>&$item ) {
             if ( empty($item['NAME']) ) {
                 continue;
