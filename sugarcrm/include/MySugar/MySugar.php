@@ -796,6 +796,12 @@ EOJS;
 		$scriptResponse['newDashletsToReg'] = $dashletIds;
 		$scriptResponse['numCols'] = sizeof($pages[$selectedPage]['columns']);
 		$scriptResponse['chartsArray'] = $chartsArray;
+		//custom chart code
+		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
+			require_once('custom/include/SugarCharts/chartEngine.php');
+			$customChart = new chartEngine;
+			$scriptResponse['customChartsArray'] = $customChart->chartArray($chartsArray);
+		}
 		$scriptResponse['trackerScript'] = $trackerScript . (strpos($trackerScriptArray,',') ? (substr($trackerScriptArray, 0, strlen($trackerScriptArray)-1) . ']; </script>') : $trackerScriptArray . ']; </script>');
 		$scriptResponse['toggleHeaderToolsetScript'] = "<script>".$toggleHeaderToolsetScript."</script>";
 

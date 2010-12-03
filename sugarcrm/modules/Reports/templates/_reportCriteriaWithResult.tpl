@@ -35,6 +35,11 @@
 	{/if}
 {/if}
 {$form_header}
+
+{if $customChart}
+{$customChartResources}
+{/if}
+
 <script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">

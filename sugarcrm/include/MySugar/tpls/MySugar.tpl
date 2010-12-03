@@ -74,6 +74,11 @@ document.body.setAttribute("class", "yui-skin-sam");
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/swfobject.js'}"></script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 
+{if $customChart}
+{$customChartResources}
+{$customMySugarChartResources}
+{/if}
+
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {$form_header}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" id="tabListContainerTable">
@@ -299,6 +304,11 @@ SUGAR.mySugar.init = function () {
 	//END SUGARCRM flav=pro ONLY
 
 	SUGAR.mySugar.loadSugarCharts();
+	{/literal}
+	{if $customChart}
+	SUGAR.mySugar.customCharts.loadCustomCharts(activePage);
+	{/if}
+	{literal}
 }
 
 </script>

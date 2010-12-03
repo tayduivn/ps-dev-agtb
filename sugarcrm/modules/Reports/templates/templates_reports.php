@@ -264,7 +264,14 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$smarty->assign('reportDetailsTableStyle', $reportDetailsTableStyle);
     $smarty->assign('cache_path', $GLOBALS['sugar_config']['cache_dir']);
 	template_reports_request_vars_js($smarty, $reporter,$args);
-	
+	//custom chart code
+	if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
+		require_once('custom/include/SugarCharts/chartEngine.php');
+		$customChart = new chartEngine();
+		$resources = $customChart->getChartResources();
+		$smarty->assign('customChartResources', $resources);
+		$smarty->assign('customChart', true);
+	}
 	echo $smarty->fetch("modules/Reports/templates/_reportCriteriaWithResult.tpl");
 	
 	reportResults($reporter, $args);	
