@@ -29,8 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $mod_strings = array (
 	'ERR_DELETE_RECORD' => 'A record number must be specified to delete the meeting.',
-	
-	'LBL_ACCEPT_THIS'=>'Accept?',  
+
+	'LBL_ACCEPT_THIS'=>'Accept?',
 	'LBL_ADD_BUTTON'=> 'Add',
 	'LBL_ADD_INVITEE' => 'Add Invitees',
 	'LBL_COLON' => ':',
@@ -40,7 +40,6 @@ $mod_strings = array (
 	'LBL_DATE_END'=>'Date End',
 	'LBL_DATE_TIME' => 'Start Date & Time:',
 	'LBL_DATE' => 'Start Date:',
-	'LBL_DEFAULT_STATUS' => 'Planned',
 	'LBL_DEFAULT_SUBPANEL_TITLE' => 'Meetings',
 	'LBL_DEL'=> 'Del',
 	'LBL_DESCRIPTION_INFORMATION' => 'Description Information',
@@ -93,13 +92,13 @@ $mod_strings = array (
 	'LBL_SUBJECT' => 'Subject:',
 	'LBL_TIME' => 'Start Time:',
 	'LBL_USERS_SUBPANEL_TITLE' => 'Users',
-	'LBL_ACTIVITIES_REPORTS' => 'Activities Report',    
-	
+	'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
+
 	'LNK_MEETING_LIST'=>'View Meetings',
 	'LNK_NEW_APPOINTMENT' => 'Create Appointment',
 	'LNK_NEW_MEETING'=>'Schedule Meeting',
 	'LNK_IMPORT_MEETINGS' => 'Import Meetings',
-	
+
 	'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this invitee from the meeting?',
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',

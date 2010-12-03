@@ -87,7 +87,9 @@ class DBManagerFactory
             //END SUGARCRM flav=ent ONLY
             $my_db_manager = 'MysqlManager';
             if( $config['db_type'] == "mysql" ) {
-                if (function_exists('mysqli_connect')) {
+                if ((!isset($sugar_config['mysqli_disabled'])
+                            || $sugar_config['mysqli_disabled'] == false) 
+                    && function_exists('mysqli_connect')) {
                     $my_db_manager = 'MysqliManager';
                 }
             }
