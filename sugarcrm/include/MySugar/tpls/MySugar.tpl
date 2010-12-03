@@ -76,6 +76,7 @@ document.body.setAttribute("class", "yui-skin-sam");
 
 {if $customChart}
 {$customChartResources}
+{$customMySugarChartResources}
 {/if}
 
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->

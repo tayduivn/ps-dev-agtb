@@ -23,6 +23,12 @@ class chartEngine {
 		';
 	}
 	
+	function getMySugarChartResources() {
+		return '
+		<script language="javascript" type="text/javascript" src="'.getJSPath('custom/include/SugarCharts/js/customMySugarCharts.js').'"></script>
+		';
+	}
+	
 	function tab($str, $depth){
 		return str_repeat("\t", $depth) . $str;	
 	}

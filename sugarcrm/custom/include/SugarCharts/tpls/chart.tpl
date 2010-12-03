@@ -16,9 +16,7 @@
 	{rdelim}
 	
 	function loadChartForReports() {ldelim}
-
-	
-		SUGAR.mySugar.customCharts.loadCustomChart('{$chartId}','{$filename}',css,chartConfig);
+		loadCustomChart('{$chartId}','{$filename}',css,chartConfig);
 	{rdelim}
 </script>
 
