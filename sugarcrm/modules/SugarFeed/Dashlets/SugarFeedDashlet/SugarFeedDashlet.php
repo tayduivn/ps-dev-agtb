@@ -67,7 +67,7 @@ var $selectedCategories = array();
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
-		if(!empty($def['categories']))$this->selectedCategories = $def['categories'];
+		if(!empty($def['categories'])){$this->selectedCategories = $def['categories'];} else { $this->selectedCategories = array_keys($this->categories); }
 		if(!empty($def['userfeed_created'])) $this->userfeed_created = $def['userfeed_created'];
 		
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
@@ -495,7 +495,7 @@ EOQ;
 	function getPostForm(){
         global $current_user;
 
-        if ( empty($this->categories['UserFeed']) ) {
+        if ( !in_array('UserFeed',$this->selectedCategories)) {
             // The user feed system isn't enabled, don't let them post notes
             return '';
         }
