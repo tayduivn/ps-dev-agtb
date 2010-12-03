@@ -38,6 +38,9 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
+				  background: true,
+				  colorStop1: 'rgba(255,255,255,.8)',
+				  colorStop2: 'rgba(255,255,255,0)',
 				  //horizontal or vertical barcharts
 				  orientation: chartConfig["orientation"],
 				  hoveredColor: false,
@@ -186,6 +189,9 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
+				  background: true,
+				  colorStop1: 'rgba(255,255,255,.8)',
+				  colorStop2: 'rgba(255,255,255,0)',	
 				  labelType: properties['labels'],
 				  hoveredColor: false,
 				  //offsets
@@ -295,6 +301,9 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
+				  background: true,
+				  colorStop1: 'rgba(255,255,255,.8)',
+				  colorStop2: 'rgba(255,255,255,0)',	
 				  //orientation setting should not be changed
 				  orientation: "vertical",
 				  hoveredColor: false,
@@ -439,6 +448,9 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
+				  background: true,
+				  colorStop1: 'rgba(255,255,255,.8)',
+				  colorStop2: 'rgba(255,255,255,0)',
 				  labelType: properties['labels'],
 				  hoveredColor: false,
 				  Subtitle: {
@@ -454,7 +466,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  gaugeStyle: {
 					backgroundColor: '#aaaaaa',
 					borderColor: '#999999',
-					needleColor: 'rgba(255,0,0,80)',
+					needleColor: 'rgba(255,0,0,.8)',
 					borderSize: 4,
 					positionFontSize: 24,
 					positionOffset: 2

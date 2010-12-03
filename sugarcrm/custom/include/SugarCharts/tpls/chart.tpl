@@ -10,25 +10,23 @@
 	{/foreach}
 	if (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') {ldelim}
 		// no op
-		loadChartForReports();
+		loadCustomChartForReports();
 	{rdelim} else {ldelim}
 		SUGAR.mySugar.customCharts.addToCustomChartsArray('{$chartId}','{$filename}',css,chartConfig,activePage);
 	{rdelim}
 	
-	function loadChartForReports() {ldelim}
+	function loadCustomChartForReports() {ldelim}
+
+	
 		loadCustomChart('{$chartId}','{$filename}',css,chartConfig);
 	{rdelim}
 </script>
 
-
-
-    <div id="{$chartId}" class="chartCanvas" style="width: {$width}; height: {$height}px;"></div>    
-	
-	
-	<div id="legend{$chartId}" class="legend">
-
-	</div>
-
+<div class="chartContainer">
+    <div id="{$chartId}" class="chartCanvas" style="width: {$width}; height: {$height}px;"></div>  
+	<div id="legend{$chartId}" class="legend"></div>
+</div>
+<div class="clear"></div>
 {else}
 
 {$nodata}

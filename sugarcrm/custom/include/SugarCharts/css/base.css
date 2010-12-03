@@ -1,4 +1,9 @@
-
+.chartContainer {
+	float: left;
+	margin:auto;
+	width: 100%
+	}
+	
 .chartCanvas {
     position:relative;
     margin:auto;

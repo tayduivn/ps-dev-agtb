@@ -1190,7 +1190,9 @@ Options.Canvas = {
     height: false,
     useCanvas: false,
     withLabels: true,
-    background: false
+    background: false,
+    colorStop1: 'rgba(255,255,255,1)',
+    colorStop2: 'rgba(255,255,255,0)'
 };
 
 /*
@@ -3246,6 +3248,33 @@ var Canvas;
   });
 })();
 
+  Canvas.Background.Fade = new Class({
+    initialize: function(viz, options) {
+      this.viz = viz;
+      this.config = $.merge({
+        idSuffix: '-bkcanvas',
+        CanvasStyles: {},
+        offset: 0
+      }, options);
+    },
+    resize: function(width, height, base) {
+      this.plot(base);
+    },
+    plot: function(base) {
+      var canvas = base.canvas,
+          ctx = base.getCtx(),
+          conf = this.config,
+          styles = conf.CanvasStyles,
+          size = base.getSize();
+		   // Create gradients
+		  var lingrad = ctx.createLinearGradient(-size.width/2,-size.height/2,-size.width/2,size.height/2);
+		  lingrad.addColorStop(0, conf.colorStop1);
+		  lingrad.addColorStop(1, conf.colorStop2);
+		  ctx.fillStyle = lingrad;
+		  ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+    }
+  });
+})();
 
 /*
  * File: Polar.js
@@ -8388,7 +8417,9 @@ $jit.ST= (function() {
             } else {
               if(canvasConfig.background) {
                 canvasConfig.background = $.merge({
-                  type: 'Circles'
+                  type: 'Fade',
+                  colorStop1: this.config.colorStop1,
+                  colorStop2: this.config.colorStop2
                 }, canvasConfig.background);
               }
               this.canvas = new Canvas(this, canvasConfig);
@@ -11158,6 +11189,9 @@ $jit.BarChart = new Class({
     var st = new $jit.ST({
       injectInto: config.injectInto,
       orientation: horz? 'left' : 'bottom',
+      background: config.background,
+      colorStop1: config.colorStop1,
+      colorStop2: config.colorStop2,
       levelDistance: 0,
       siblingOffset: config.barsOffset,
       subtreeOffset: 0,
@@ -12012,6 +12046,9 @@ $jit.FunnelChart = new Class({
     var st = new $jit.ST({
       injectInto: config.injectInto,
       orientation: horz? 'left' : 'bottom',
+      background: config.background,
+      colorStop1: config.colorStop1,
+      colorStop2: config.colorStop2,
       levelDistance: 0,
       siblingOffset: config.segmentOffset,
       subtreeOffset: 0,
@@ -12846,7 +12883,9 @@ $jit.Sunburst = new Class({
     } else {
       if(canvasConfig.background) {
         canvasConfig.background = $.merge({
-          type: 'Circles'
+          type: 'Fade',
+          colorStop1: this.config.colorStop1,
+          colorStop2: this.config.colorStop2
         }, canvasConfig.background);
       }
       this.canvas = new Canvas(this, canvasConfig);
@@ -13801,6 +13840,9 @@ $jit.PieChart = new Class({
     var sb = new $jit.Sunburst({
       injectInto: config.injectInto,
       useCanvas: config.useCanvas,
+      background: config.background,
+      colorStop1: config.colorStop1,
+      colorStop2: config.colorStop2,
       withLabels: config.Label.type != 'Native',
       Label: {
         type: config.Label.type
@@ -14375,6 +14417,9 @@ $jit.GaugeChart = new Class({
     var sb = new $jit.Sunburst({
       injectInto: config.injectInto,
       useCanvas: config.useCanvas,
+      background: config.background,
+      colorStop1: config.colorStop1,
+      colorStop2: config.colorStop2,
       withLabels: config.Label.type != 'Native',
       Label: {
         type: config.Label.type
