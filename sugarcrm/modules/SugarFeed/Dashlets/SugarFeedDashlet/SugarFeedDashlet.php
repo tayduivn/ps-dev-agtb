@@ -58,9 +58,9 @@ var $selectedCategories = array();
         }
 
         // Need to add the external api's here
-        $apiList = ExternalAPIFactory::getModuleDropDown('SugarFeed');
-        if ( !is_array($apiList) ) { $apiList = array(); }
-        foreach ( $apiList as $apiObj => $apiName ) {
+        $this->externalAPIList = ExternalAPIFactory::getModuleDropDown('SugarFeed',true);
+        if ( !is_array($this->externalAPIList) ) { $this->externalAPIList = array(); }
+        foreach ( $this->externalAPIList as $apiObj => $apiName ) {
             $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
         }
         
@@ -127,6 +127,7 @@ var $selectedCategories = array();
             $mod_list = array_flip($this->selectedCategories);//27949, here the key of $this->selectedCategories is not module name, the value is module name, so array_flip it.
         }
 
+        $external_modules = array();
         $admin_modules = array();
         $owner_modules = array();
         $regular_modules = array();
@@ -136,6 +137,9 @@ var $selectedCategories = array();
 				$regular_modules[] = 'UserFeed';
 				continue;
 			}
+            if ( in_array($module,$this->externalAPIList) ) {
+                $external_modules[] = $module;
+            }
 			if (ACLAction::getUserAccessLevel($current_user->id,$module,'view') <= ACL_ALLOW_NONE ) {
 				// Not enough access to view any records, don't add it to any lists
 				continue;
@@ -230,23 +234,26 @@ var $selectedCategories = array();
         $td = $GLOBALS['timedate'];
         $needResort = false;
         $resortQueue = array();
+        $feedErrors = array();
 
-        $facebook = ExternalAPIFactory::loadAPI('Facebook');
-        if ( $facebook !== FALSE ) {
-            $messages = $facebook->getLatestUpdates(time(),15);
-            if ( count($messages) > 0 ) {
-                array_splice($resortQueue, count($resortQueue), 0, $messages);
-            }
-        }
+        $GLOBALS['log']->fatal("IKEA: <pre>".print_r($this->lvs->data,true)."</pre>");
 
-        $twitter = ExternalAPIFactory::loadAPI('Twitter');
-        if ( $twitter !== FALSE ) {
-            $messages = $twitter->getLatestUpdates(time(),15);
-            if ( count($messages) > 0 ) {
-                array_splice($resortQueue, count($resortQueue), 0, $messages);
+        foreach ( $external_modules as $apiName ) {
+            $api = ExternalAPIFactory::loadAPI($apiName);
+            if ( $api !== FALSE ) {
+                // FIXME: Actually calculate the oldest sugar feed we can see, once we get an API that supports this sort of filter.
+                $reply = $api->getLatestUpdates(0,15);
+                if ( $reply['success'] && count($reply['messages']) > 0 ) {
+                    array_splice($resortQueue, count($resortQueue), 0, $reply['messages']);
+                } else if ( !$reply['success'] ) {
+                    $feedErrors[] = $reply['errorMessage'];
+                }
             }
         }
         
+        if ( count($feedErrors) > 0 ) {
+            $this->lvs->ss->assign('feedErrors',$feedErrors);
+        }
 
         // If we need to resort, get to work!
         foreach ( $this->lvs->data['data'] as $normalMessage ) {
