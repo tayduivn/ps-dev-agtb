@@ -665,6 +665,13 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->writeWorkingFile () ;
+        
+    	if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->writeWorkingFile () ;
+	        }
+        }
     }
 
     function action_saveAndPublishLayout ()
@@ -686,6 +693,13 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
+        
+        if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->handleSave () ;
+	        }
+        }
     }
 
     function action_manageBackups ()
@@ -800,6 +814,29 @@ class ModuleBuilderController extends SugarController
     {
         $this->view = 'history' ;
     }
+
+    /**
+     * Copy the viewdefs from the EditView into the DetailView and save them in the previewFile. This will enable us to
+     * see the changes, but not have actually saved them to the working file.  Only make this work on the DetailView.
+     * @return void
+     */
+    public function action_copyFromView()
+    {
+        if(MB_DETAILVIEW == $_REQUEST [ 'view' ] || MB_QUICKCREATE == $_REQUEST [ 'view' ]){
+            $fromParser = ParserFactory::getParser ( MB_EDITVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+            $panels = $fromParser->convertFromCanonicalForm ( $fromParser->_viewdefs [ 'panels' ] , $fromParser->_fielddefs ) ;
+           
+            $toParser = ParserFactory::getParser ( $_REQUEST [ 'view' ], $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+            $toParser->_viewdefs [ 'panels' ] = $panels;
+            $toParser->_fielddefs = $fromParser->_fielddefs;
+            //$toParser->writeWorkingFile(false);
+
+            //try to save to the previe file instead of saving to the working file.
+            $previewFileName = $toParser->getImplementation()->getFileName (  $_REQUEST [ 'view' ], $_REQUEST [ 'view_module' ], MB_HISTORYMETADATALOCATION ) ;
+            $toParser->getImplementation()->saveToFile ( $previewFileName, array ( GridLayoutMetaDataParser::$variableMap [ $toParser->_view ] => $toParser->_viewdefs ) ) ;
+        }
+    }
+    
 
     function resetmodule()
     {

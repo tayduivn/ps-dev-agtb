@@ -439,6 +439,19 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.state.popup_window.render(document.body);
 			}
 		},
+        copyFromView: function(module, layout){
+            ModuleBuilder.history.params = {
+				module: 'ModuleBuilder',
+				action: 'copyFromView',
+				view_package: ModuleBuilder.MBpackage,
+				view_module: module,
+				view: layout
+			}
+			ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
+				ModuleBuilder.getContent(ModuleBuilder.contentURL);
+                ModuleBuilder.state.isDirty = true;
+			});
+        },
 		//AJAX Navigation Functions
 		navigate : function(url) {
 			//Check if we are just registering the url
