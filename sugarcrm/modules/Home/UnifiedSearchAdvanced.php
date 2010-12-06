@@ -59,18 +59,27 @@ class UnifiedSearchAdvanced {
 		
 		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
 
+		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		{
+		   $this->createUnifiedSearchModulesDisplay();
+		}
+		
+		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
+		
 		global $mod_strings, $modListHeader, $app_list_strings, $current_user, $app_strings, $beanList;
 		$users_modules = $current_user->getPreference('globalSearch', 'search');
 
-		if(empty($users_modules)) { // preferences are empty, select all
+		// preferences are empty, select all
+		if(empty($users_modules)) {			
 			$users_modules = array();
-			foreach($unified_search_modules as $module=>$data) {
-				if (!empty($data['default']) ) {
+			foreach($unified_search_modules_display as $module=>$data) {
+				if (!empty($data['visible']) ) {
                     $users_modules[$module] = $beanList[$module];
                 }
 			}
 			$current_user->setPreference('globalSearch', $users_modules, 0, 'search');
 		}
+		
 		$sugar_smarty = new Sugar_Smarty();
 
 		$modules_to_search = array();
@@ -94,13 +103,6 @@ class UnifiedSearchAdvanced {
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('USE_SEARCH_GIF', 0);
 		$sugar_smarty->assign('LBL_SEARCH_BUTTON_LABEL', $app_strings['LBL_SEARCH_BUTTON_LABEL']);
-
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
-		{
-		   $this->createUnifiedSearchModulesDisplay();
-		}
-		
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 		
 		$json_enabled = array();
 		$json_disabled = array();
@@ -108,8 +110,9 @@ class UnifiedSearchAdvanced {
 		//Now add the rest of the modules that are searchable via Global Search settings
 		foreach($unified_search_modules_display as $module=>$data)
 		{
-			if(!isset($modules_to_search[$module]) && $data['visible'] && ACLController::checkAccess($module, 'list', true)){
-			   $modules_to_search[$module]['checked'] = false;
+			if(!isset($modules_to_search[$module]) && $data['visible'] && ACLController::checkAccess($module, 'list', true))
+			{
+			   $modules_to_search[$module]['checked'] = false;     
 			} else if (isset($modules_to_search[$module]) && !$data['visible']) {
 			   unset($modules_to_search[$module]);
 			}
@@ -119,13 +122,13 @@ class UnifiedSearchAdvanced {
 		foreach($modules_to_search as $module=>$data)
 		{
 			$label = isset($app_list_strings['moduleList'][$module]) ? $app_list_strings['moduleList'][$module] : $module;
-			if($data['checked'])
+			if(!empty($data['checked']))
 			{
 				$json_enabled[] = array("module" => $module, 'label' => $label);
 			} else {
 				$json_disabled[] = array("module" => $module, 'label' => $label);
 			}	
-		}			
+		}
 		
 		$sugar_smarty->assign('enabled_modules', json_encode($json_enabled));
 		$sugar_smarty->assign('disabled_modules', json_encode($json_disabled));			
@@ -169,16 +172,20 @@ class UnifiedSearchAdvanced {
 			$current_user->setPreference('showGSDiv', isset($_REQUEST['showGSDiv']) ? $_REQUEST['showGSDiv'] : 'no', 0, 'search');
 			$current_user->setPreference('globalSearch', $modules_to_search, 0, 'search'); // save selections to user preference
 		} else {
-			$users_modules = $current_user->getPreference('globalSearch', 'search');			
-			if(isset($users_modules)) { // use user's previous selections
+			$users_modules = $current_user->getPreference('globalSearch', 'search');
+			$modules_to_search = array();
+						
+			if(!empty($users_modules)) { 
+				// use user's previous selections
 			    foreach ( $users_modules as $key => $value ) {
 			        if ( isset($unified_search_modules[$key]) ) {
 			            $modules_to_search[$key] = $value;
 			        }
 			    }
-			} else { // select all the modules (ie first time user has used global search)
+			} else { 
+				// select all the modules (ie first time user has used global search)
 				foreach($unified_search_modules as $module=>$data) {
-				    if ( !empty($data['default']) ) {
+				    if (!empty($data['default']) ) {
 				        $modules_to_search[$module] = $beanList[$module];
 				    }
 				}
@@ -662,10 +669,10 @@ class UnifiedSearchAdvanced {
 	
 	/**
 	 * createUnifiedSearchModulesDisplay
-	 * Private method to create the unified_search_modules_display.php file
+	 * method to create the unified_search_modules_display.php file
 	 * 
 	 */
-	private function createUnifiedSearchModulesDisplay()
+	function createUnifiedSearchModulesDisplay()
 	{
 		//Make directory if it doesn't exist
 		if(!file_exists('cache/modules'))

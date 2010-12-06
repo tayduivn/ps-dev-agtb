@@ -100,8 +100,6 @@ EOHTML;
 			$str.= '</ul>';
 		}
 		
-		
-		
 		if($foundData)
 		{
 			$str = <<<EOHTML
@@ -113,7 +111,13 @@ EOHTML;
 			<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$query_encoded}'">{$GLOBALS['app_strings']['LBL_EMAIL_SHOW_READ']}</button>
 EOHTML;
 		} else {
-			$str .= $GLOBALS['app_strings']['LBL_EMAIL_SEARCH_NO_RESULTS'] . '</div>';
+			$str .= $GLOBALS['app_strings']['LBL_EMAIL_SEARCH_NO_RESULTS'];
+			$str .= <<<EOHTML
+			</div>
+			<p>
+			<button onclick="document.location.href='index.php?module=Home&action=UnifiedSearch&search_form=false&advanced=false&query_string={$query_encoded}'">{$GLOBALS['app_strings']['LBL_EMAIL_SHOW_READ']}</button>
+EOHTML;
+
 		}
 		
 		return $str;
