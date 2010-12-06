@@ -671,7 +671,7 @@ $mod_strings = array(
 
 'LBL_DEPLOY_IN_PROGRESS' => 'Deploying Package',
 'LBL_JS_VALIDATE_NAME'=>'Name - Must be alphanumeric with no spaces and starting with a letter',
-'LBL_JS_VALIDATE_PACKAGE_NAME'=>'Name - Already used in an existing package',
+'LBL_JS_VALIDATE_PACKAGE_NAME'=>'Package Name already exists',
 'LBL_JS_VALIDATE_KEY'=>'Key - Must be alphanumeric',
 'LBL_JS_VALIDATE_LABEL'=>'Please enter a label that will be used as the Display Name for this module',
 'LBL_JS_VALIDATE_TYPE'=>'Please select the type of module you wish to build from the list above',

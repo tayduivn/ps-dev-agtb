@@ -132,7 +132,7 @@ function getAllowedReportModules(&$local_modListHeader) {
 
 	global $beanFiles;
 	
-    $exemptModules = array('Dashboard','Reports');
+    $exemptModules = array('ProspectLists','Reports');
     
 	foreach($report_modules as $module=>$class_name) {
 		if(!isset($beanFiles[$class_name]) || in_array($module, $exemptModules)) {
