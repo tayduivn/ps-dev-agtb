@@ -19,8 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['Meeting'] = array('table' => 'meetings', 
-	'unified_search' => true,
+$dictionary['Meeting'] = array('table' => 'meetings',
+	'unified_search' => true, 'unified_search_default_enabled' => true,
 	'comment' => 'Meeting activities'
                                ,'fields' => array (
   'name' =>
@@ -86,7 +86,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'date',
+    'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date meeting ends'
   ),
@@ -107,7 +107,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'enum',
     'len' => 100,
     'options' => 'meeting_status_dom',
-    'comment' => 'Meeting status (ex: Planned, Held, Not held)'
+    'comment' => 'Meeting status (ex: Planned, Held, Not held)',
+    'default' => 'Planned',
   ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>
@@ -284,7 +285,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
        array('name' =>'idx_mtg_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_meet_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
        array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id', 'status', 'deleted')),
-      
+
                                                    )
 //This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,

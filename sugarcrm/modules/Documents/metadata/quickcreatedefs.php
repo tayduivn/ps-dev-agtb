@@ -89,8 +89,8 @@ $viewdefs['Documents']['QuickCreate'] = array(
     
     //BEGIN SUGARCRM flav=pro ONLY
     array (
+      array('name'=>'assigned_user_name',),
       array('name'=>'team_name','displayParams'=>array('required'=>true)),
-     
     ),
     //END SUGARCRM flav=pro ONLY
 

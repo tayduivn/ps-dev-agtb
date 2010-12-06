@@ -95,11 +95,7 @@ $viewdefs['Documents']['DetailView'] = array(
 	    ),
 	    //END SUGARCRM flav!=sales ONLY
 
-		//BEGIN SUGARCRM flav=pro ONLY
-	    array (
-	      'team_name'
-	    ),
-	    //END SUGARCRM flav=pro ONLY
+		
         
       ),
       'LBL_REVISIONS_PANEL' => 
@@ -108,6 +104,18 @@ $viewdefs['Documents']['DetailView'] = array(
           0 => 'last_rev_created_name',
           1 => 'last_rev_create_date',
         ),
+      ),
+      'LBL_PANEL_ASSIGNMENT' =>
+      array (
+	    array (
+	      array (
+            'name' => 'assigned_user_name',
+            'label' => 'LBL_ASSIGNED_TO_NAME',
+          ),
+          //BEGIN SUGARCRM flav=pro ONLY
+          'team_name'
+          //END SUGARCRM flav=pro ONLY
+	    ),
       ),
     )
    

@@ -147,7 +147,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
 	if ( field == null || field.tagName == null) 	return null;
 
-	// special select case for IE6
+	// special select case for IE6 and dropdowns
 	if ( field.tagName.toLowerCase() == "select" ) {
 		if(field.selectedIndex == -1) {
 			return null;
@@ -155,11 +155,18 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
 			return field.options[field.selectedIndex].value;
 		}
 	}
-	
+
+	//checkboxes need to return a boolean value
 	if(field.tagName.toLowerCase() == "input" && field.type.toLowerCase() == "checkbox") {
-			return field.checked?SUGAR.expressions.Expression.TRUE:SUGAR.expressions.Expression.FALSE;
+		return field.checked?SUGAR.expressions.Expression.TRUE:SUGAR.expressions.Expression.FALSE;
 	}
-	
+
+	//Special case for dates
+	if (field.className && (field.className == "DateTimeCombo" || field.className == "Date")){
+		return SUGAR.util.DateUtils.parse(field.value);
+	}
+
+
 	if (field.value !== null && typeof(field.value) != "undefined")
 		return field.value;
 	
@@ -206,7 +213,10 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 		var img = Dom.get("img_" + field.id);
 		img.src = value;
 		img.style.visibility = "";
-	} 
+	}
+	else if (field.type == "checkbox") {
+		field.checked = value == SUGAR.expressions.Expression.TRUE;
+	}
 	else {
 		field.value = value;
 	}
@@ -300,13 +310,17 @@ SUGAR.forms.DefaultExpressionParser = new SUGAR.expressions.ExpressionParser();
  */
 SUGAR.forms.evalVariableExpression = function(expression, varmap)
 {
+	var ts = SUGAR.expressions.userPrefs.num_grp_sep;
+    var ds = SUGAR.expressions.userPrefs.dec_sep;
+    var numRegex = new RegExp("^(\\-)?[0-9\\" + ts + "]+(\\"+ ds + "[0-9]+)?$")
 	// perform range replaces
 	expression = SUGAR.forms._performRangeReplace(expression);
 
 	// internal function for replacing all which is to circumvent
 	// not using a regex
 	this.replaceAll = function(haystack, needle, rpl) {
-		var str = haystack;
+		if (needle == rpl) return haystack;
+        var str = haystack;
 		while ( str.indexOf(needle) > -1 ) {
 			str = str.replace(needle, rpl);
 		}
@@ -337,21 +351,32 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 		if (value == null)
 			throw "Unable to find field: " + v;
 		
-		value = value.replace(/\n/g, "");
 		var regex = new RegExp("\\$" + v, "g");
 
-		if ((/^(\s*)$/).exec(value) != null || value === "") {
-			expression = expression.replace(regex, '""');
-		}
-		// test if value is a number or boolean
-		else if ( (/^(\-)?[0-9,]+(\.[0-9]+)?$/).exec(value) != null) {
-			value = this.replaceAll(value, ",", "");
+		if (typeof(value) == "string")
+		{
+			value = value.replace(/\n/g, "");
+			if ((/^(\s*)$/).exec(value) != null || value === "") {
+				expression = expression.replace(regex, '""');
+			}
+			// test if value is a number or boolean
+			else if ( (numRegex.exec(value) != null)) {
+				value = this.replaceAll(value, ts, "");
+				value = this.replaceAll(value, ds, ".");
+				expression = expression.replace(regex, value);
+			}
+			// assume string
+			else {
+				expression = expression.replace(regex, '"' + value + '"');
+			}
+		} else if (typeof(value) == "object" && value.getTime) {
+			//This is probably a date object that we must convert to a string first.
+			value = "date(" + value.getTime() + ")";
 			expression = expression.replace(regex, value);
 		}
-		// assume string
-		else {
-			expression = expression.replace(regex, '"' + value + '"');
-		}
+
+
+
 	}
 
 	return SUGAR.forms.DefaultExpressionParser.evaluate(expression);
@@ -564,16 +589,7 @@ SUGAR.forms.Trigger = function(variables, condition) {
 SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	var handler = SUGAR.forms.AssignmentHandler;
 	if ( ! (this.variables instanceof Array) ) {
-		var el = handler.getElement(this.variables);
-		if (!el) return;
-		
-		if (el.type && el.type.toUpperCase() == "CHECKBOX")
-		{
-			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
-		} else {
-			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
-		}
-		return;
+		this.variables = [this.variables];
 	}
 	for ( var i = 0; i < this.variables.length; i++){
 		var el = handler.getElement(this.variables[i]);

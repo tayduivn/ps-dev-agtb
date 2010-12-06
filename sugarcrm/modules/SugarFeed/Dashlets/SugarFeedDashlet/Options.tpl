@@ -41,20 +41,32 @@
 <input type='hidden' name='configure' value='true'>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="edit view" align="center">
 <tr>
-    <td valign='top' nowrap class='dataLabel'>{$titleLBL}</td>
-    <td valign='top' class='dataField'>
+    <td scope='row'>{$titleLBL}</td>
+    <td>
     	<input class="text" name="title" size='20' maxlength='80' value='{$title}'>
     </td>
 </tr>
+{if $isRefreshable}
 <tr>
-    <td valign='top' nowrap class='dataLabel'>{$rowsLBL}</td>
-    <td valign='top' class='dataField'>
+    <td scope='row'>
+        {$autoRefresh}
+    </td>
+    <td>
+        <select name='autoRefresh'>
+            {html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
+        </select>
+    </td>
+</tr>
+{/if}
+<tr>
+    <td scope='row'>{$rowsLBL}</td>
+    <td>
     	<input class="text" name="rows" size='3' value='{$rows}'>
     </td>
 </tr>
 <tr>
-    <td valign='top' nowrap class='dataLabel'>{$categoriesLBL}</td>
-    <td valign='top' class='dataField'>
+    <td scope='row'>{$categoriesLBL}</td>
+    <td>
     	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
     </td>
 </tr>

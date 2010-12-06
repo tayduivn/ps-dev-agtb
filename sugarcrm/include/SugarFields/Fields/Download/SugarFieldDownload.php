@@ -10,7 +10,7 @@ class SugarFieldDownload extends SugarFieldBase {
       
         $vardef['value'] = urlencode(basename($vardef['value']));
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch('include/SugarFields/Fields/Download/DetailView.tpl');
+        return $this->fetch($this->findTemplate('DetailView.tpl'));
     }
 }
 ?>

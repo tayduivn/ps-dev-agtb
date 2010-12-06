@@ -371,6 +371,7 @@ function checkSchema($execute=false,$return=false,$checkThisRel){
 	if(file_exists($dbscan_file)) {
 		unlink($dbscan_file);
 	}
+    global $mod_strings;
 	if(!file_exists($dbscan_file)) {
 		if(function_exists('sugar_fopen')){
 			$fp = @sugar_fopen($dbscan_file, 'w+'); // attempts to create file
@@ -385,7 +386,7 @@ function checkSchema($execute=false,$return=false,$checkThisRel){
 	}
 
 	if(@fwrite($fp, $db_scan) === false) {
-			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
+			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log');
 			die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
 	 }
 }

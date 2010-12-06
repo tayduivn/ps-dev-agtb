@@ -543,6 +543,8 @@ class SugarChart {
 						if($this->is_currency) {
 						  $sub_amount = $this->formatNumber($this->convertCurrency($new_data[$groupByKey][$i]['total']));
 						  $sub_amount_formatted = $this->currency_symbol . $sub_amount . 'K';
+						  //bug: 38877 - do not format the amount for the value as it breaks the chart
+						  $sub_amount = $this->convertCurrency($new_data[$groupByKey][$i]['total']);
 						} else {
 						  $sub_amount = $new_data[$groupByKey][$i]['total'];
 						  $sub_amount_formatted = $sub_amount;

@@ -52,12 +52,14 @@ foreach($focus->required_fields as $field) {
 		$focus->$field = $value;
 	}
 }
-$focus->email_password = $_REQUEST['email_password'];
+if(!empty($_REQUEST['email_password'])) {
+    $focus->email_password = $_REQUEST['email_password'];
+}
 $focus->protocol = $_REQUEST['protocol'];
 
 if( isset($_REQUEST['is_create_case']) && $_REQUEST['is_create_case'] == 'on' )
     $focus->mailbox_type = 'createcase';
-else 
+else
 {
     if( empty($focus->mailbox_type) || $focus->mailbox_type == 'createcase' )
         $focus->mailbox_type = 'pick';
@@ -104,13 +106,13 @@ $stored_options['reply_to_addr'] = trim($_REQUEST['reply_to_addr']);
 $stored_options['only_since'] = $onlySince;
 $stored_options['filter_domain'] = $_REQUEST['filter_domain'];
 $stored_options['email_num_autoreplies_24_hours'] = $_REQUEST['email_num_autoreplies_24_hours'];
-$stored_options['allow_outbound_group_usage'] = isset($_REQUEST['allow_outbound_group_usage']) ? true : false; 
+$stored_options['allow_outbound_group_usage'] = isset($_REQUEST['allow_outbound_group_usage']) ? true : false;
 
 if (!$focus->isPop3Protocol()) {
 	$stored_options['trashFolder'] = (isset($_REQUEST['trashFolder']) ? trim($_REQUEST['trashFolder']) : "");
 	$stored_options['sentFolder'] = (isset($_REQUEST['sentFolder']) ? trim($_REQUEST['sentFolder']) : "");
 } // if
-if ( $focus->isMailBoxTypeCreateCase() || ($focus->mailbox_type == 'createcase' && empty($_REQUEST['id']) ) ) 
+if ( $focus->isMailBoxTypeCreateCase() || ($focus->mailbox_type == 'createcase' && empty($_REQUEST['id']) ) )
 {
 	$stored_options['distrib_method'] = (isset($_REQUEST['distrib_method'])) ? $_REQUEST['distrib_method'] : "";
 	$stored_options['create_case_email_template'] = (isset($_REQUEST['create_case_template_id'])) ? $_REQUEST['create_case_template_id'] : "";
@@ -154,13 +156,13 @@ foreach($focus->field_defs as $field=>$def) {
 
 if( isset($_REQUEST['is_auto_import']) && $_REQUEST['is_auto_import'] == 'on' )
 {
-    if( empty($focus->groupfolder_id) ) 
-    {    
+    if( empty($focus->groupfolder_id) )
+    {
         $groupFolderId = $focus->createAutoImportSugarFolder();
         $focus->groupfolder_id = $groupFolderId;
     }
 }
-else 
+else
 {
     $focus->groupfolder_id = "";
     //If the user is turning the auto-import feature off then remove all previous subscriptions.
@@ -175,11 +177,11 @@ else
     }
 }
 
-if (!empty($focus->groupfolder_id)) 
+if (!empty($focus->groupfolder_id))
 {
-	if ($_REQUEST['leaveMessagesOnMailServer'] == "1") 
+	if ($_REQUEST['leaveMessagesOnMailServer'] == "1")
 		$stored_options['leaveMessagesOnMailServer'] = 1;
-	else 
+	else
 		$stored_options['leaveMessagesOnMailServer'] = 0;
 }
 
@@ -210,16 +212,16 @@ if( empty($_REQUEST['id']) && empty($focus->groupfolder_id) )
 
 //Sync any changes within the IE account that need to be synced with the Sugar Folder.
 //Need to do this post save so the correct team/teamset id is generated correctly.
-$monitor_fields = array('name', 'status', 
+$monitor_fields = array('name', 'status',
                         //BEGIN SUGARCRM flav=pro ONLY
                         'team_id','team_set_id'
                         //END SUGARCRM flav=pro ONLY
-                        ); 
+                        );
 
 //Only sync IE accounts with a group folder.  Need to sync new records as team set assignment is processed
-//after save.                      
-if( !empty($focus->groupfolder_id) )    
-{                   
+//after save.
+if( !empty($focus->groupfolder_id) )
+{
     foreach ($monitor_fields as $singleField)
     {
         //Check if the value is being changed during save.
@@ -255,7 +257,7 @@ $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
 header("Location: index.php?module=$return_module&action=$return_action&record=$return_id$edit$error");
 
- 
+
 /**
  * Certain updates to the IE account need to be reflected in the related SugarFolder since they are
  * created automatically.  Only valid for IE accounts with auto import turned on.
@@ -264,25 +266,25 @@ header("Location: index.php?module=$return_module&action=$return_action&record=$
  * @param SugarBean $focus The InboundEmail bean being saved.
  */
 function syncSugarFoldersWithBeanChanges($fieldName, $focus)
-{  
+{
     $f = new SugarFolder();
     $f->retrieve($focus->groupfolder_id);
-    
+
     switch ($fieldName)
     {
         case 'name':
         case 'team_id':
         case 'team_set_id':
-            $f->$fieldName = $focus->$fieldName; 
+            $f->$fieldName = $focus->$fieldName;
             $f->save();
             break;
-                
+
         case 'status':
             if($focus->status == 'Inactive')
                 $f->clearSubscriptionsForFolder($focus->groupfolder_id);
             else if($focus->mailbox_type != 'bounce' )
                 $f->addSubscriptionsToGroupFolder();
             break;
-    } 
+    }
 }
 

@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: preflight.php 51719 2009-10-22 17:18:00Z mitani $
+ * $Id: preflight.php 58178 2010-09-15 00:30:38Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
@@ -278,6 +278,12 @@ $diffs ='';
 	// aw: BUG 10161: check flavor conversion sql files
 	$sqlFile = ''; // cn: bug
 	if($current_version == $targetVersion) {
+		
+		if(preg_match('/(.*?)([^0])$/', $current_version, $matches))
+		{
+			$current_version = $matches[1].'0';
+		}
+	
 		switch($manifest['name']){
 			case 'SugarCE to SugarPro':
 				$sqlFile = $current_version.'_ce_to_pro_'.$db->dbType;

@@ -346,7 +346,7 @@ class RepairAndClear
 	}
 
 	/**
-	 * Remove the cache/modules/unified_search_modules.php
+	 * Remove the cached unified_search_modules.php and unified_search_modules_display.php files
 	 */
     public function clearSearchCache() {
         global $mod_strings, $sugar_config;
@@ -359,7 +359,11 @@ class RepairAndClear
         if(file_exists($src_file)) {
             unlink( "$src_file" );
         }
-        
+
+        $src_file = $search_dir . 'modules/unified_search_modules_display.php';
+        if(file_exists($src_file)) {
+            unlink( "$src_file" );
+        }        
     }
 	//BEGIN SUGARCRM flav=pro ONLY
     public function clearPDFFontCache() 

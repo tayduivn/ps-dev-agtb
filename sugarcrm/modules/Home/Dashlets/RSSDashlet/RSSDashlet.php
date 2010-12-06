@@ -57,6 +57,8 @@ class RSSDashlet extends Dashlet
         else
             $this->title = $this->dashletStrings['LBL_TITLE'];
         
+        if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
+        
         parent::Dashlet($id); // call parent constructor
          
         $this->isConfigurable = true; // dashlet is configurable
@@ -97,6 +99,12 @@ class RSSDashlet extends Dashlet
         $ss->assign('height', $this->height);
         $ss->assign('url', $this->url);
         $ss->assign('id', $this->id);
+        if($this->isAutoRefreshable()) {
+       		$ss->assign('isRefreshable', true);
+			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
+			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
+			$ss->assign('autoRefreshSelect', $this->autoRefresh);
+		}
         
         return parent::displayOptions() . $ss->fetch('modules/Home/Dashlets/RSSDashlet/RSSDashletOptions.tpl');
     }  
@@ -115,7 +123,8 @@ class RSSDashlet extends Dashlet
         $options['title'] = $req['title'];
         $options['url'] = $req['url'];
         $options['height'] = $req['height'];
-         
+        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
+        
         return $options;
     }
     

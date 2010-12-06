@@ -142,7 +142,7 @@ class Meeting extends SugarBean {
 			&& isset($this->duration_minutes)) {
     			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
     			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
+    			$this->date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
@@ -167,8 +167,7 @@ class Meeting extends SugarBean {
 		}*/
 
         if (empty($this->status) ) {
-            $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
-            $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
+            $this->status = $this->getDefaultStatus();
         }
 		$return_id = parent::save($check_notify);
 
@@ -394,6 +393,23 @@ class Meeting extends SugarBean {
 			$meeting_fields['DATE_START'] = "<font class='futureTask'>".$meeting_fields['DATE_START']."</font>";
 		}
 		$this->fill_in_additional_detail_fields();
+
+		//make sure we grab the localized version of the contact name, if a contact is provided
+		if (!empty($this->contact_id)) {
+			global $locale;
+			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
+			$query .= "WHERE id='$this->contact_id' AND deleted=0";
+			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
+
+			// Get the contact name.
+			$row = $this->db->fetchByAssoc($result);
+
+			if($row != null)
+			{
+				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
+			}
+		}
+
         $meeting_fields['CONTACT_ID'] = $this->contact_id;
         $meeting_fields['CONTACT_NAME'] = $this->contact_name;
 
@@ -627,5 +643,19 @@ class Meeting extends SugarBean {
 
 	    parent::afterImportSave();
 	}
+
+    public function getDefaultStatus()
+    {
+         $def = $this->field_defs['status'];
+         if (isset($def['default'])) {
+             return $def['default'];
+         } else {
+            $app = return_app_list_strings_language($GLOBALS['current_language']);
+            if (isset($def['options']) && isset($app[$def['options']])) {
+                $keys = array_keys($app[$def['options']]);
+                return $keys[0];
+            }
+        }
+        return '';
+    }
 } // end class def
-?>

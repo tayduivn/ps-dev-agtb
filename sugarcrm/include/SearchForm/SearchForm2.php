@@ -403,7 +403,7 @@ require_once('include/EditView/EditView2.php');
      * @param bool $addAllBeanFields true to process at all bean fields
      */
     function populateFromArray(&$array, $switchVar = null, $addAllBeanFields = true) {
-	
+
        if((!empty($array['searchFormTab']) || !empty($switchVar)) && !empty($this->searchFields)) {
 			$arrayKeys = array_keys($array);
             $searchFieldsKeys = array_keys($this->searchFields);
@@ -430,29 +430,29 @@ require_once('include/EditView/EditView2.php');
                             }
                         }
                     }
-
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    if(isset($array['team_name_advanced_new_on_update'])){
-                    	require_once('include/SugarFields/SugarFieldHandler.php');
-						$sfh = new SugarFieldHandler();
-                    	$sf = $sfh->getSugarField('Teamset', true);
-                    	$this->searchFields['team_set_id'] = $sf->getTeamSetIdSearchField('team_name_advanced');
-
-                        if(isset($array["primary_team_name_advanced_collection"])) {
-                    	   $this->searchFields['team_id'] = $sf->getTeamIdSearchField("primary_team_name_advanced_collection");
-                	    }
-                    }
-                    //END SUGARCRM flav=pro ONLY
                 }
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                if(isset($array['team_name_advanced_new_on_update'])){
+                   	require_once('include/SugarFields/SugarFieldHandler.php');
+					$sfh = new SugarFieldHandler();
+                   	$sf = $sfh->getSugarField('Teamset', true);
+                   	$this->searchFields['team_set_id'] = $sf->getTeamSetIdSearchField('team_name_advanced');
+
+                    if(isset($array["primary_team_name_advanced_collection"])) {
+                   	   $this->searchFields['team_id'] = $sf->getTeamIdSearchField("primary_team_name_advanced_collection");
+              	    }
+                }
+                //END SUGARCRM flav=pro ONLY
             }else{
 
             	$fromMergeRecords = isset($array['merge_module']);
 
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;           /*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-                    if(isset($array[$long_name]) && ( $array[$long_name] !== '' 
-						|| (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool' 
-							&& ($array[$long_name]=='0' || $array[$long_name]=='1'))) ) 
+                    if(isset($array[$long_name]) && ( $array[$long_name] !== ''
+						|| (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool'
+							&& ($array[$long_name]=='0' || $array[$long_name]=='1'))) )
 					{ //advanced*/
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
@@ -463,7 +463,7 @@ require_once('include/EditView/EditView2.php');
                         if(empty($this->fieldDefs[$long_name]['value'])) $this->fieldDefs[$long_name]['value'] = $array[$name];
                     }
                 }
-   
+
                 if((empty($array['massupdate']) || $array['massupdate'] == 'false') && $addAllBeanFields) {
                     foreach($this->seed->field_name_map as $key => $params) {
                     	if($key != 'assigned_user_name' && $key != 'modified_by_name')
@@ -483,21 +483,20 @@ require_once('include/EditView/EditView2.php');
                             }
                         }
                     }
-             
-
-                    //BEGIN SUGARCRM flav=pro ONLY
-                	if(isset($array['team_name_advanced_new_on_update'])){
-                    	require_once('include/SugarFields/SugarFieldHandler.php');
-						$sfh = new SugarFieldHandler();
-                    	$sf = $sfh->getSugarField('Teamset', true);
-                    	$teamSearchType = ( isset( $array['team_name_advanced_type'] ) && $array['team_name_advanced_type'] == 'exact' ) ? 'exact' : 'any';
-                    	$this->searchFields['team_set_id'] = $sf->getTeamSetIdSearchField('team_name_advanced', $teamSearchType, array(), $array);
-                    	if(isset($array["primary_team_name_advanced_collection"])) {
-                    	   $this->searchFields['team_id'] = $sf->getTeamIdSearchField("primary_team_name_advanced_collection", 'any', array(), $array);
-                	    }
-                    }
-                    //END SUGARCRM flav=pro ONLY
                 }
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                if(isset($array['team_name_advanced_new_on_update'])){
+                   	require_once('include/SugarFields/SugarFieldHandler.php');
+					$sfh = new SugarFieldHandler();
+                   	$sf = $sfh->getSugarField('Teamset', true);
+                   	$teamSearchType = ( isset( $array['team_name_advanced_type'] ) && $array['team_name_advanced_type'] == 'exact' ) ? 'exact' : 'any';
+                   	$this->searchFields['team_set_id'] = $sf->getTeamSetIdSearchField('team_name_advanced', $teamSearchType, array(), $array);
+                   	if(isset($array["primary_team_name_advanced_collection"])) {
+                   	   $this->searchFields['team_id'] = $sf->getTeamIdSearchField("primary_team_name_advanced_collection", 'any', array(), $array);
+                    }
+                }
+                //END SUGARCRM flav=pro ONLY
             }
         }
 
@@ -539,6 +538,7 @@ require_once('include/EditView/EditView2.php');
         		unset($this->searchFields['team_name']);
         	}
         }
+
         //END SUGARCRM flav=pro ONLY
         foreach($this->searchFields as $field=>$parms) {
 			$customField = false;
@@ -581,7 +581,7 @@ require_once('include/EditView/EditView2.php');
             elseif($type == 'html' && $customField) {
                 continue;
             }
-            
+
             if(isset($parms['value']) && $parms['value'] != "") {
 
                 $operator = 'like';
@@ -649,7 +649,7 @@ require_once('include/EditView/EditView2.php');
 
                 $where = '';
                 $itr = 0;
-                
+
                 if($field_value != '') {
 
                     $this->searchColumns [ strtoupper($field) ] = $field ;
@@ -668,6 +668,8 @@ require_once('include/EditView/EditView2.php');
                         				//Best Guess for table name
                         				$db_field = strtolower($link['module']) . '.' . $db_field;
                         			}
+
+
                         	}
                         	else if ($type == 'parent') {
                         		if (!empty($this->searchFields['parent_type'])) {
@@ -768,7 +770,7 @@ require_once('include/EditView/EditView2.php');
                             }
                         }
                         //END SUGARCRM flav=pro ONLY
-                        
+
 		                //BEGIN SUGARCRM flav=ent ONLY
                         if($GLOBALS['db']->dbType == 'oci8' && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
                               $db_field = 'upper(' . $db_field . ")";
@@ -826,15 +828,15 @@ require_once('include/EditView/EditView2.php');
                                 	if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'UnifiedSearch'){
                                 		$UnifiedSearch = true;
                                 	}
+
                                 	//check to see if this is a universal search, AND the field name is "last_name"
 									if($UnifiedSearch && strpos($db_field, 'last_name') !== false){
 										//split the string value, and the db field name
 										$string = explode(' ', $field_value);
 										$column_name =  explode('.', $db_field);
-
 										//when a search is done with a space, we concatenate and search against the full name.
 										if(count($string)>1){
-										    //add where clause agains concatenated fields
+										    //add where clause against concatenated fields
 											$where .= $GLOBALS['db']->concat($column_name[0],array('first_name','last_name')) . " LIKE '{$field_value}%'";
 										    $where .= ' OR ' . $GLOBALS['db']->concat($column_name[0],array('last_name','first_name')) . " LIKE '{$field_value}%'";
 										}else{
@@ -842,7 +844,28 @@ require_once('include/EditView/EditView2.php');
 											$where .=  $db_field . " like '".$field_value.$like_char."'";
 										}
 
-									}else{
+									}else {
+
+										//Check if this is a first_name, last_name search
+										if(isset($this->seed->field_name_map) && isset($this->seed->field_name_map[$db_field]))
+										{
+											$vardefEntry = $this->seed->field_name_map[$db_field];
+											if(!empty($vardefEntry['db_concat_fields']) && in_array('first_name', $vardefEntry['db_concat_fields']) && in_array('last_name', $vardefEntry['db_concat_fields']))
+					                    	{
+					                    	   	  if(!empty($GLOBALS['app_list_strings']['salutation_dom']) && is_array($GLOBALS['app_list_strings']['salutation_dom']))
+					                    	   	  {
+					                    	   	  	 foreach($GLOBALS['app_list_strings']['salutation_dom'] as $salutation)
+					                    	   	  	 {
+					                    	   	  	 	if(!empty($salutation) && strpos($field_value, $salutation) == 0)
+					                    	   	  	 	{
+					                    	   	  	 	   $field_value = trim(substr($field_value, strlen($salutation)));
+					                    	   	  	 	   break;
+					                    	   	  	 	}
+					                    	   	  	 }
+					                    	   	  }
+					                    	}
+										}
+
 										//field is not last name or this is not from global unified search, so do normal where clause
 										$where .=  $db_field . " like '".$field_value.$like_char."'";
 									}
@@ -896,7 +919,7 @@ require_once('include/EditView/EditView2.php');
                 }
             }
         }
-        
+
         return $where_clauses;
     }
  }

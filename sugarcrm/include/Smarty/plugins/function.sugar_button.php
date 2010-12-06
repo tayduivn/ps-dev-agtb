@@ -99,7 +99,7 @@ function smarty_function_sugar_button($params, &$smarty)
 			break;
 
 			case "FIND_DUPLICATES":
-			return '{if $bean->aclAccess("edit")}<input title="{$APP.LBL_DUP_MERGE}" accessKey="M" class="button" onclick="this.form.return_module.value=\'' . $module . '\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'Step1\'; this.form.module.value=\'MergeRecords\';" type="submit" name="Merge" value="{$APP.LBL_DUP_MERGE}">{/if} ';
+			return '{if $bean->aclAccess("edit") && $bean->aclAccess("delete")}<input title="{$APP.LBL_DUP_MERGE}" accessKey="M" class="button" onclick="this.form.return_module.value=\'' . $module . '\'; this.form.return_action.value=\'DetailView\'; this.form.return_id.value=\'{$id}\'; this.form.action.value=\'Step1\'; this.form.module.value=\'MergeRecords\';" type="submit" name="Merge" value="{$APP.LBL_DUP_MERGE}">{/if} ';
 			break;
 
 			case "SAVE":
@@ -159,15 +159,18 @@ function smarty_function_sugar_button($params, &$smarty)
 				require_once('include/connectors/utils/ConnectorUtils.php');
 				require_once('include/connectors/sources/SourceFactory.php');
 				$modules_sources = ConnectorUtils::getDisplayConfig();
-				foreach($modules_sources as $mod=>$entry) {
-				    if($mod == $module && !empty($entry)) {
-				    	foreach($entry as $source_id) {
-				    		$source = SourceFactory::getSource($source_id);
-				    		if($source->isEnabledInWizard()) {
-				    			return '<input title="{$APP.LBL_MERGE_CONNECTORS}" accessKey="{$APP.LBL_MERGE_CONNECTORS_BUTTON_KEY}" type="button" class="button" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector" value="{$APP.LBL_MERGE_CONNECTORS}">';
-				    		}
-				    	}
-				    }
+				if(!is_null($modules_sources) && !empty($modules_sources))
+				{
+					foreach($modules_sources as $mod=>$entry) {
+					    if($mod == $module && !empty($entry)) {
+					    	foreach($entry as $source_id) {
+					    		$source = SourceFactory::getSource($source_id);
+					    		if($source->isEnabledInWizard()) {
+					    			return '<input title="{$APP.LBL_MERGE_CONNECTORS}" accessKey="{$APP.LBL_MERGE_CONNECTORS_BUTTON_KEY}" type="button" class="button" onClick="document.location=\'index.php?module=Connectors&action=Step1&record={$fields.id.value}&merge_module={$module}\'" name="merge_connector" value="{$APP.LBL_MERGE_CONNECTORS}">';
+					    		}
+					    	}
+					    }
+					}
 				}
 				return '';
 

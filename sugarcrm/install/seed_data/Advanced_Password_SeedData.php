@@ -47,7 +47,7 @@ Here is your account username and temporary password:
 Username : $contact_user_user_name
 Password : $contact_user_user_hash
 
-'.$GLOBALS['sugar_config']['site_url'].'/index.php
+$config_site_url
 
 After you log in using the above password, you may be required to reset the password to one of your own choice.';
 $name = 'System-generated password email';

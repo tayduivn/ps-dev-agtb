@@ -214,5 +214,6 @@ $mod_strings = array (
 	'LBL_ASSIGNED_TO_ID'=>'Assigned User:',
 	'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
 	'LBL_QUOTE_INFORMATION' => 'Quote Overview',
+	'LBL_LIST_MY_QUOTES' => 'My Quotes',
 );
 ?>

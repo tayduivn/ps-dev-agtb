@@ -28,5 +28,5 @@
 *}
 {{$vardef.value}}
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{{sugarvar_connector view='DetailView'}}
 {{/if}}

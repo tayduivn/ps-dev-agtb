@@ -157,8 +157,7 @@ $layout_defs['Accounts'] = array(
 			'add_subpanel_data' => 'opportunity_id',
 			'title_key' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
 			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
+				array('widget_class' => 'SubPanelTopButtonQuickCreate')
 			),
 		),
 //BEGIN SUGARCRM flav!=sales ONLY
@@ -275,6 +274,15 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect'),
 			),
 		),
+        'campaigns' => array(
+			'order' => 70,
+			'module' => 'CampaignLog',
+			'sort_order' => 'desc',
+			'sort_by' => 'activity_date',
+			'get_subpanel_data'=>'campaigns',
+			'subpanel_name' => 'ForTargets',
+			'title_key' => 'LBL_CAMPAIGNS',	
+		),		
         //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 70,

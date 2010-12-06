@@ -347,13 +347,19 @@ class ProductTemplate extends SugarBean {
 	    }
 	    
 		$this->tax_class_name = (!empty($this->tax_class) && !empty($app_list_strings['tax_class_dom'][$this->tax_class])) ? $app_list_strings['tax_class_dom'][$this->tax_class] : ""; 
-		$this->get_manufacturer();
-		$this->get_type();
-		$this->get_category();
+		//$this->get_manufacturer();
+		//$this->get_type();
+		//$this->get_category();
 		
 	}
 
-
+    /**
+     * This method has been deprecated.
+     * 
+     * 
+     * @deprecated 6.2.0 - Oct 12, 2010
+     * 
+     */
 	function get_manufacturer(){
 		$query = "SELECT m1.name from $this->rel_manufacturers m1, $this->table_name p1 where m1.id = p1.manufacturer_id and p1.id = '$this->id' and p1.deleted=0 and m1.deleted=0";
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
@@ -371,6 +377,11 @@ class ProductTemplate extends SugarBean {
 		}
 	}
 
+	/**
+	 * This method has been deprecated.
+	 * 
+	 * @deprecated 6.2.0 - Oct 12, 2010
+	 */
 	function get_type(){
 		$query = "SELECT t1.name from $this->rel_types t1, $this->table_name p1 where t1.id = p1.type_id and p1.id = '$this->id' and p1.deleted=0 and t1.deleted=0";
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
@@ -388,6 +399,11 @@ class ProductTemplate extends SugarBean {
 		}
 	}
 
+	/**
+	 * This method has been deprecated
+	 * 
+	 * @deprecated 6.2.0 - Oct 12, 2010
+	 */
 	function get_category(){
 		$query = "SELECT t1.name from $this->rel_categories t1, $this->table_name p1 where t1.id = p1.category_id and p1.id = '$this->id' and p1.deleted=0 and t1.deleted=0";
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");

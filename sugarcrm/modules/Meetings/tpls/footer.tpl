@@ -37,6 +37,53 @@ function fill_invitees() {
 		SugarWidgetScheduler.fill_invitees(document.EditView);
 	} 
 }
+
+//stop the form submit
+YAHOO.util.Event.on("EditView", "submit", function(ev) {
+  YAHOO.util.Event.stopEvent(ev);
+  promptForRelatedInvite();
+});
+function promptForRelatedInvite(){
+	var oldParentId = '{/literal}{$fields.parent_id.value}{literal}';
+	//no need to ask if the parent_id field is empty
+	if(document.getElementById('parent_id').value != "" && (document.getElementById('parent_type').value == "Contacts" || document.getElementById('parent_type').value == "Leads") && oldParentId != document.getElementById('parent_id').value){
+		var confirmDeletePopup = new YAHOO.widget.SimpleDialog("Confirm ", 
+				{
+                width: "400px",
+                draggable: true,
+                constraintoviewport: true,
+                modal: true,
+                fixedcenter: true,
+                text: SUGAR.language.get('Meetings', 'LBL_INVITE_PROMPT'),
+                bodyStyle: "padding:5px",
+                buttons: [{
+                        text: "{/literal}{$APP.LBL_EMAIL_YES}{literal}",
+                        handler: handleYes,
+                        isDefault:true
+                }, {
+                        text: "{/literal}{$APP.LBL_EMAIL_NO}{literal}",
+                        handler: handleNo
+                }]
+	     });
+	     confirmDeletePopup.setHeader(SUGAR.language.get('Meetings', 'LBL_INVITE_HEADER'));
+	    confirmDeletePopup.render(document.body);
+	}else{
+		document.EditView.submit();
+	}
+	
+}
+
+var handleYes = function() {
+       this.hide();
+       document.getElementById('invite_parent_id').value = true;
+       document.EditView.submit();
+    };
+
+    var handleNo = function() {
+         this.hide();
+         document.getElementById('invite_parent_id').value = false;
+         document.EditView.submit();
+     };
 {/literal}
 
 var root_div = document.getElementById('scheduler');

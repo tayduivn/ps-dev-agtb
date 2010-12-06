@@ -1,5 +1,4 @@
-Mango/master is for 6.1.0 (before 6.1.0 released, and synced back to svn: http://svn1.sjc.sugarcrm.pvt/sugarcrm/branches/Mango)
-
+Mango/pineapple is for 6.2.0
 
 Before 6.1.0 released:
 

@@ -175,7 +175,9 @@ class forecast_charts {
 		$return .= '<div align="center">';
 		$return .= '<div id="forecast_chart_container" style="width:' . $width . ';">';
 		$sugarChart = new SugarChart();
-		$sugarChart->is_currency = true;
+		//bug: 40457 - was: $sugarChart->is_currency = true;, but changed to below since we already convert the values
+		//above into the proper currency. Because this was set to true it was converting twice.
+		$sugarChart->is_currency = false;
 		$sugarChart->setData($data);
 		$sugarChart->setProperties($current_module_strings['LBL_CHART_TITLE'], '', 'group by chart');
 

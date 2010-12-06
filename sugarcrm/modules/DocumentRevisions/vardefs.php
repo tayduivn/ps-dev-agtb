@@ -167,7 +167,8 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
 ),
 
 'indices' => array (
-       array('name' =>'documentrevisionspk', 'type' =>'primary', 'fields'=>array('id'))
-)
+       array('name' =>'documentrevisionspk', 'type' =>'primary', 'fields'=>array('id')),
+       array('name' =>'documentrevision_mimetype', 'type' =>'index', 'fields'=>array('file_mime_type')),
+       )
 );
 ?>

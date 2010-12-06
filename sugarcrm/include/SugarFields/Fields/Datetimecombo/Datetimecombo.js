@@ -197,6 +197,14 @@ Datetimecombo.prototype.update = function() {
 		newdate = '';
 	}
 	document.getElementById(this.fieldname).value = newdate;
+	//Check for onchange actions and fire them
+	var listeners = YAHOO.util.Event.getListeners(this.fieldname, 'change');
+	if (listeners != null) {
+		for (var i = 0; i < listeners.length; i++) {
+			var l = listeners[i];
+			l.fn(null, l.obj);
+		}
+	}
 
     if(this.showCheckbox) {	
          flag = this.fieldname + '_flag';

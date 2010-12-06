@@ -147,7 +147,7 @@ $admin_option_defs['Administration']['enable_wireless_modules']=array('icon_Admi
 //$admin_option_defs['module_loader'] = array('ModuleLoader','LBL_MODULE_LOADER_TITLE','LBL_MODULE_LOADER','./index.php?module=Administration&action=UpgradeWizard&view=module');
 //END SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav=ent && flav!=dce ONLY
-$admin_option_defs['Administration']['offline_client']= array('OfflineClient','LBL_MANAGE_OFFLINE_CLIENT','LBL_OFFLINE_CLIENT','./index.php?module=Administration&action=ListViewOfflineClient');
+$admin_option_defs['Administration']['offline_client']= array('OfflineClient','LBL_MANAGE_OFFLINE_CLIENT','LBL_OFFLINE_CLIENT','./index.php?module=Administration&action=ViewOfflineClients');
 //END SUGARCRM flav=ent && flav!=dce ONLY
 
 
@@ -164,6 +164,7 @@ $admin_option_defs['Administration']['locale']= array('Currencies','LBL_MANAGE_L
 $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LBL_SUGARFEED_SETTINGS','LBL_SUGARFEED_SETTINGS_DESC','./index.php?module=SugarFeed&action=AdminSettings');
 $admin_option_defs['Administration']['connector_settings']=array('icon_Connectors','LBL_CONNECTOR_SETTINGS','LBL_CONNECTOR_SETTINGS_DESC','./index.php?module=Connectors&action=ConnectorSettings');
 //END SUGARCRM flav=sales ONLY
+$admin_option_defs['Administration']['global_search']=array('icon_SearchForm','LBL_GLOBAL_SEARCH_SETTINGS','LBL_GLOBAL_SEARCH_SETTINGS_DESC','./index.php?module=Administration&action=GlobalSearchSettings');
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
 
@@ -186,7 +187,7 @@ $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL
 $admin_option_defs=array();
 $admin_option_defs['studio']['studio']= array('Studio','LBL_STUDIO','LBL_STUDIO_DESC','./index.php?module=ModuleBuilder&action=index&type=studio');
 //BEGIN SUGARCRM flav!=sales ONLY
-if(isset($GLOBSALS['beanFiles']['iFrame'])) {
+if(isset($GLOBALS['beanFiles']['iFrame'])) {
 	$admin_option_defs['Administration']['portal']= array('iFrames','LBL_IFRAME','DESC_IFRAME','./index.php?module=iFrames&action=index');
 }
 //END SUGARCRM flav!=sales ONLY

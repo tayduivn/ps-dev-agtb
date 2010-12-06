@@ -28,12 +28,23 @@
  */
 *}
 
+
+{if $disable_layout}
+<span class='required'>
+{sugar_translate label="LBL_SYNC_TO_DETAILVIEW_NOTICE" module="ModuleBuilder"}
+</span>
+{/if}
 <table id='layoutEditorButtons' cellspacing='2'>
     <tr>
     {$buttons}
 	{if empty($disable_tabs)}
 	<td><input type="checkbox" {if $displayAsTabs}checked="true"{/if} id="tabsCheckbox" onclick="document.forms.prepareForSave.panels_as_tabs.value=this.checked">
 	   {sugar_translate label="LBL_TAB_PANELS" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_TAB_PANELS_HELP}
+	</input></td>
+	{/if}
+	{if ! $fromModuleBuilder && $view == 'editview'}
+	<td><input type="checkbox" {if $syncDetailEditViews}checked="true"{/if} id="syncCheckbox" onclick="document.forms.prepareForSave.sync_detail_and_edit.value=this.checked">
+	   {sugar_translate label="LBL_SYNC_TO_DETAILVIEW" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_SYNC_TO_DETAILVIEW_HELP}
 	</input></td>
 	{/if}
     </tr>
@@ -175,6 +186,7 @@
 <input type='hidden' name='view_module' value='{$view_module}'>
 <input type='hidden' name='view' value='{$view}'>
 <input type='hidden' name="panels_as_tabs" value='{$displayAsTabs}'>
+<input type='hidden' name="sync_detail_and_edit" value='{$syncDetailEditViews}'>
 <!-- BEGIN SUGARCRM flav=ent ONLY -->
 {if $fromPortal}
     <input type='hidden' name='PORTAL' value='1'>
@@ -188,9 +200,11 @@
 </form>
 <script>
 {literal}
+
 //BEGIN SUGARCRM flav=pro ONLY
 Studio2.calcFieldList = {/literal}{$calc_field_list}{literal};
 //END SUGARCRM flav=pro ONLY
+
 
 var editPanelProperties = function (panelId, view) {
     panelId = "" + panelId;
@@ -199,14 +213,14 @@ var editPanelProperties = function (panelId, view) {
     //BEGIN SUGARCRM flav=een ONLY
 	var value_dep = document.getElementById('le_paneldep_' + panelId).innerHTML;
     //END SUGARCRM flav=een ONLY
-	var params = "module=ModuleBuilder&action=editProperty&view_module=" + ModuleBuilder.module 
-	            + (ModuleBuilder.package ?  "&view_package=" + ModuleBuilder.package : "")
-                + "&view=" + view + "&id_label=le_panelname_" + panelId + "&name_label=label_" + key_label.toUpperCase()
+	var params = "module=ModuleBuilder&action=editProperty&view_module=" + encodeURIComponent(ModuleBuilder.module) 
+	            + (ModuleBuilder.package ?  "&view_package=" + encodeURIComponent(ModuleBuilder.package) : "")
+                + "&view=" + encodeURIComponent(view) + "&id_label=le_panelname_" + encodeURIComponent(panelId) + "&name_label=label_" + encodeURIComponent(key_label.toUpperCase())
 				//BEGIN SUGARCRM flav=een ONLY
-                + "&title_dep=" + SUGAR.language.get("ModuleBuilder", "LBL_DEPENDENCY") + "&name_dep=" + "dep_" + key_label.toUpperCase() 
-                + "&id_dep=le_paneldep_" + key_label + "&value_dep=" + value_dep + "&expression_dep=true"
+                + "&title_dep=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_DEPENDENCY")) + "&name_dep=" + "dep_" + encodeURIComponent(key_label.toUpperCase()) 
+                + "&id_dep=le_paneldep_" + encodeURIComponent(key_label) + "&value_dep=" + encodeURIComponent(value_dep) + "&expression_dep=true"
                 //END SUGARCRM flav=een ONLY
-                + "&title_label=" + SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE") + "&value_label=" + value_label;
+                + "&title_label=" + encodeURIComponent(SUGAR.language.get("ModuleBuilder", "LBL_LABEL_TITLE")) + "&value_label=" + encodeURIComponent(value_label);
     ModuleBuilder.getContent(params);
 }; 
 {/literal}
@@ -215,12 +229,12 @@ var editFieldProperties = function (idCount, label) {ldelim}
 	var value_tabindex = document.getElementById('le_tabindex_' + idCount).innerHTML.replace(/^\s+|\s+$/g,'');
 	ModuleBuilder.getContent(
 	  	'module=ModuleBuilder&action=editProperty'
-	  + '&view_module={$view_module}' + '{if $fromModuleBuilder}&view_package={$view_package}{/if}'
-	  +	'&view={$view}&id_label=le_label_' + idCount 
-	  + '&name_label=label_' + label + '&title_label={sugar_translate label="LBL_LABEL_TITLE" module="ModuleBuilder"}' 
-	  + '&value_label=' + value_label + '&id_tabindex=le_tabindex_' + idCount 
+	  + '&view_module={$view_module|escape:'url'}' + '{if $fromModuleBuilder}&view_package={$view_package}{/if}'
+	  +	'&view={$view|escape:'url'}&id_label=le_label_' + encodeURIComponent(idCount) 
+	  + '&name_label=label_' + encodeURIComponent(label) + '&title_label={sugar_translate label="LBL_LABEL_TITLE" module="ModuleBuilder"}' 
+	  + '&value_label=' + encodeURIComponent(value_label) + '&id_tabindex=le_tabindex_' + encodeURIComponent(idCount) 
 	  + '&title_tabindex={sugar_translate label="LBL_TAB_ORDER" module="ModuleBuilder"}' 
-	  + '&name_tabindex=tabindex&value_tabindex=' + value_tabindex );
+	  + '&name_tabindex=tabindex&value_tabindex=' + encodeURIComponent(value_tabindex) );
 	
 {rdelim}
 

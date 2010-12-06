@@ -215,10 +215,13 @@ class ModuleInstaller{
 				$rac = new RepairAndClear();
 				$rac->repairAndClearAll($selectedActions, $installed_modules,true, false);
 				$this->rebuild_relationships();
-				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
-
 				UpdateSystemTabs('Add',$tab_modules);
-
+				
+				//clear the unified_search_module.php file 
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile(); 
+	            				
+				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
 			die("No \$installdefs Defined In $this->base_dir/manifest.php");
 		}
@@ -328,7 +331,9 @@ class ModuleInstaller{
 				//if it's not a sugar file then we remove it otherwise we can't restor it
 				if(!$this->ms->sugarFileExists($to)){
 					$GLOBALS['log']->debug('ModuleInstaller[uninstall_new_file] deleting file ' . $to);
-					unlink($to);
+					if(file_exists($to)) {
+					    unlink($to);
+					}
 				}else{
 					$GLOBALS['log']->fatal('ModuleInstaller[uninstall_new_file] Could not remove file ' . $to . ' as no backup file was found to restore to');
 				}
@@ -1252,6 +1257,10 @@ class ModuleInstaller{
 
 				UpdateSystemTabs('Restore',$installed_modules);
 
+	            //clear the unified_search_module.php file 
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();     				
+				
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
 					update_progress_bar('install', $total_steps, $total_steps);
@@ -1293,12 +1302,12 @@ class ModuleInstaller{
 
 	function rebuild_dashletcontainers(){
             $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-			$this->merge_files('Ext/DashletContainer/Containers', 'dcactions.ext.php');
+			$this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php');
 	}
 
 	function rebuild_modules(){
             $this->log(translate('LBL_MI_REBUILDING') . " Modules...");
-			$this->merge_files('Ext/Include', 'modules.ext.php', '', true);
+			$this->merge_files('Ext/Include/', 'modules.ext.php', '', true);
 	}
 
 	function rebuild_administration(){
@@ -1620,6 +1629,7 @@ private function dir_get_files($path, $base_path){
 private function dir_file_count($path){
 	//if its a file then it has at least 1 file in the directory
 	if(is_file($path)) return 1;
+	if(!is_dir($path)) return 0;
 	$d = dir($path);
 	$count = 0;
 	while ($e = $d->read()){
@@ -1988,7 +1998,7 @@ private function dir_file_count($path){
                         $path ='custom/Extension/' . $relationship['module']. '/Ext/Layoutdefs';
                     }
 				}
-                
+
 				if(!empty($relationship['module_layoutdefs']) && file_exists($path . '/'. $this->id_name . '.php')){
 					mkdir_recursive($path . '/'.DISABLED_PATH, true);
 					rename( $path . '/'. $this->id_name . '.php', $path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php');

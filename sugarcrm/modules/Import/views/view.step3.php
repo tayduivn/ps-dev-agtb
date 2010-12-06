@@ -101,20 +101,12 @@ class ImportViewStep3 extends SugarView
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $app_list_strings, $locale;
-        $this->ss->assign("MOD", $mod_strings);
-        $this->ss->assign("APP", $app_strings);
+        
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] =  
             ( empty($sugar_config['import_max_records_per_file']) 
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
-        
-        // load the bean for the import module
-        $focus = loadImportBean($_REQUEST['import_module']);
-        if ( !$focus ) {
-            showImportError($mod_strings['LBL_ERROR_IMPORTS_NOT_SET_UP'],$_REQUEST['import_module']);
-            return;
-        }
         
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
@@ -145,14 +137,24 @@ class ImportViewStep3 extends SugarView
             // based upon the where the records are coming from 
             // and what module we are importing into
             $classname = 'ImportMap' . ucfirst($_REQUEST['source']);
-            require("modules/Import/{$classname}.php");
-            $mapping_file = new $classname;
-            if (isset($mapping_file->delimiter)) 
-                $_REQUEST['custom_delimiter'] = $mapping_file->delimiter;
-            if (isset($mapping_file->enclosure)) 
-                $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
-            $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
-            $field_map = $mapping_file->getMapping($_REQUEST['import_module']);
+            if ( file_exists("modules/Import/{$classname}.php") )
+                require_once("modules/Import/{$classname}.php");
+            elseif ( file_exists("custom/modules/Import/{$classname}.php") )
+                require_once("custom/modules/Import/{$classname}.php");
+            else {
+                require_once("custom/modules/Import/ImportMapOther.php");
+                $classname = 'ImportMapOther';
+                $_REQUEST['source'] = 'other';
+            }
+            if ( class_exists($classname) ) {
+                $mapping_file = new $classname;
+                if (isset($mapping_file->delimiter)) 
+                    $_REQUEST['custom_delimiter'] = $mapping_file->delimiter;
+                if (isset($mapping_file->enclosure)) 
+                    $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
+                $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
+                $field_map = $mapping_file->getMapping($_REQUEST['import_module']);
+            }
         }
         
         $this->ss->assign("CUSTOM_DELIMITER",
@@ -164,11 +166,11 @@ class ImportViewStep3 extends SugarView
         $uploadFile = new UploadFile('userfile');
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
         {
-            $uploadFile->final_move('IMPORT_'.$focus->object_name.'_'.$current_user->id);
-            $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$focus->object_name.'_'.$current_user->id);
+            $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
+            $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
         else {
-            showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
             return;
         }
         
@@ -190,7 +192,7 @@ class ImportViewStep3 extends SugarView
             );
         
         if ( !$importFile->fileExists() ) {
-            showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
             return;
         }
         
@@ -198,14 +200,17 @@ class ImportViewStep3 extends SugarView
         $rows = array();
         $system_charset = $locale->default_export_charset;
         $user_charset = $locale->getExportCharset();
-        $other_charsets = 'UTF-8, UTF-7, ASCII, EUC-JP,SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
+        $other_charsets = 'UTF-8, UTF-7, ASCII, CP1252, EUC-JP, SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
+        $detectable_charsets = "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}";
+        // Bug 26824 - mb_detect_encoding() thinks CP1252 is IS0-8859-1, so use that instead in the encoding list passed to the function
+        $detectable_charsets = str_replace('CP1252','ISO-8859-1',$detectable_charsets);
         $charset_for_import = $user_charset; //We will set the default import charset option by user's preference.
         $able_to_detect = function_exists('mb_detect_encoding');
         for ( $i = 0; $i < 3; $i++ ) {
             $rows[$i] = $importFile->getNextRow();
             if(!empty($rows[$i]) && $able_to_detect) {
                 foreach($rows[$i] as & $temp_value) {
-                    $current_charset = mb_detect_encoding($temp_value, "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}");
+                    $current_charset = mb_detect_encoding($temp_value, $detectable_charsets);
                     if(!empty($current_charset) && $current_charset != "UTF-8") {
                         $temp_value = $locale->translateCharset($temp_value, $current_charset);// we will use utf-8 for displaying the data on the page.
                         $charset_for_import = $current_charset;
@@ -229,7 +234,7 @@ class ImportViewStep3 extends SugarView
         }
         
         if ($isempty || $rows[(int)$has_header] == false) {
-            showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2');
             return;
         }
         
@@ -281,19 +286,19 @@ class ImportViewStep3 extends SugarView
             }
         
             // build string of options
-            $fields  = $focus->get_importable_fields();
+            $fields  = $this->bean->get_importable_fields();
             $options = array();
             $defaultField = '';
             foreach ( $fields as $fieldname => $properties ) {
                 // get field name
                 if (!empty ($properties['vname']))
-					$displayname = str_replace(":","",translate($properties['vname'] ,$focus->module_dir));
+					$displayname = str_replace(":","",translate($properties['vname'] ,$this->bean->module_dir));
                 else
-					$displayname = str_replace(":","",translate($properties['name'] ,$focus->module_dir));
+					$displayname = str_replace(":","",translate($properties['name'] ,$this->bean->module_dir));
                 // see if this is required
                 $req_mark  = "";
                 $req_class = "";
-                if ( array_key_exists($fieldname, $focus->get_import_required_fields()) ) {
+                if ( array_key_exists($fieldname, $this->bean->get_import_required_fields()) ) {
                     $req_mark  = ' ' . $app_strings['LBL_REQUIRED_SYMBOL'];
                     $req_class = ' class="required" ';
                 }
@@ -352,19 +357,19 @@ class ImportViewStep3 extends SugarView
         if ( count($default_values) > 0 ) {
             foreach ( $default_values as $field_name => $default_value ) {
                 // build string of options
-                $fields  = $focus->get_importable_fields();
+                $fields  = $this->bean->get_importable_fields();
                 $options = array();
                 $defaultField = '';
                 foreach ( $fields as $fieldname => $properties ) {
                     // get field name
                     if (!empty ($properties['vname']))
-                        $displayname = str_replace(":","",translate($properties['vname'] ,$focus->module_dir));
+                        $displayname = str_replace(":","",translate($properties['vname'] ,$this->bean->module_dir));
                     else
-                        $displayname = str_replace(":","",translate($properties['name'] ,$focus->module_dir));
+                        $displayname = str_replace(":","",translate($properties['name'] ,$this->bean->module_dir));
                     // see if this is required
                     $req_mark  = "";
                     $req_class = "";
-                    if ( array_key_exists($fieldname, $focus->get_import_required_fields()) ) {
+                    if ( array_key_exists($fieldname, $this->bean->get_import_required_fields()) ) {
                         $req_mark  = ' ' . $app_strings['LBL_REQUIRED_SYMBOL'];
                         $req_class = ' class="required" ';
                     }
@@ -512,7 +517,7 @@ eoq;
         
         $chooser_array = array();
         $chooser_array[0] = array();
-        $idc = new ImportDuplicateCheck($focus);
+        $idc = new ImportDuplicateCheck($this->bean);
         $chooser_array[1] = $idc->getDuplicateCheckIndexes();
         
         $chooser = new TemplateGroupChooser();
@@ -525,9 +530,9 @@ eoq;
         $this->ss->assign("TAB_CHOOSER", $chooser->display());
         
         // show notes
-        if ( $focus instanceof Person )
+        if ( $this->bean instanceof Person )
             $module_key = "LBL_CONTACTS_NOTE_";
-        elseif ( $focus instanceof Company )
+        elseif ( $this->bean instanceof Company )
             $module_key = "LBL_ACCOUNTS_NOTE_";
         else
             $module_key = "LBL_".strtoupper($_REQUEST['import_module'])."_NOTE_";
@@ -540,12 +545,12 @@ eoq;
         
         // get list of required fields
         $required = array();
-        foreach ( array_keys($focus->get_import_required_fields()) as $name ) {
-            $properties = $focus->getFieldDefinition($name);
+        foreach ( array_keys($this->bean->get_import_required_fields()) as $name ) {
+            $properties = $this->bean->getFieldDefinition($name);
             if (!empty ($properties['vname']))
-                $required[$name] = str_replace(":","",translate($properties['vname'] ,$focus->module_dir));
+                $required[$name] = str_replace(":","",translate($properties['vname'] ,$this->bean->module_dir));
             else
-                $required[$name] = str_replace(":","",translate($properties['name'] ,$focus->module_dir));
+                $required[$name] = str_replace(":","",translate($properties['name'] ,$this->bean->module_dir));
         }
         // include anything needed for quicksearch to work
         require_once("include/TemplateHandler/TemplateHandler.php");
@@ -557,9 +562,38 @@ eoq;
     }
     
     /**
-     * Returns JS used in this view
+     * Displays the Smarty template for an error
+     *
+     * @param string $message error message to show
+     * @param string $module what module we were importing into
+     * @param string $action what page we should go back to
      */
-    private function _getJS($required)
+    protected function _showImportError(
+        $message, 
+        $module,
+        $action = 'Step1'
+        )
+    {
+        $ss = new Sugar_Smarty();
+        
+        $ss->assign("MESSAGE",$message);
+        $ss->assign("ACTION",$action);
+        $ss->assign("IMPORT_MODULE",$module);
+        $ss->assign("MOD", $GLOBALS['mod_strings']);
+        $ss->assign("SOURCE","");
+        if ( isset($_REQUEST['source']) )
+            $ss->assign("SOURCE", $_REQUEST['source']);
+        
+        echo $ss->fetch('modules/Import/tpls/error.tpl');
+    }
+    
+    /**
+     * Returns JS used in this view
+     *
+     * @param  array $required fields that are required for the import
+     * @return string HTML output with JS code
+     */
+    protected function _getJS($required)
     {
         global $mod_strings;
         

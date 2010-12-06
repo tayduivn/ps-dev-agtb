@@ -137,6 +137,7 @@ class MysqliManager extends MysqlManager
 		//BEGIN SUGARCRM flav=pro ONLY
         $this->addDistinctClause($sql);
 		//END SUGARCRM flav=pro ONLY
+        
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
@@ -174,7 +175,7 @@ class MysqliManager extends MysqlManager
 		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
         if($autofree)
             $this->lastResult[] =& $result;
-
+        
         return $result;
     }
 

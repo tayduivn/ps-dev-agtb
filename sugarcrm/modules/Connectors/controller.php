@@ -351,6 +351,9 @@ class ConnectorsController extends SugarController {
 			$connector_keys = array_keys($connectors);
 			
 			$modules_sources = ConnectorUtils::getDisplayConfig();
+			if ( !is_array($modules_sources) ) {
+			    $modules_sources = (array) $modules_sources;
+			}
 			
 			$sources = array();
 			$values = array();
@@ -684,6 +687,7 @@ class ConnectorsController extends SugarController {
 	    $source->init();
 	    
 	    global $mod_strings;
+
 	    try {
 		    if($source->isRequiredConfigFieldsForButtonSet() && $source->test()) {
 		      echo $mod_strings['LBL_TEST_SOURCE_SUCCESS'];

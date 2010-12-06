@@ -18,14 +18,14 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Date/DateExpression.php');
+require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 
 /**
  * <b>dayofweek(Date d)</b><br>
  * Returns the day of week that <i>d</i> falls on.<br/>
  * Sun = 0, Mon = 1, ... , Sat = 6
  */
-class DayOfWeekExpression extends DateExpression
+class DayOfWeekExpression extends NumericExpression
 {
 	/**
 	 * Returns the entire enumeration bare.

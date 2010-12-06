@@ -109,9 +109,19 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	'manufacturer_name' =>
 	array (
 		'name' => 'manufacturer_name',
-		'type' => 'varchar',
-		'vname' =>'LBL_MANUFACTURER',
-		'source'=>'non-db'
+	    'rname'=> 'name',
+	    'id_name'=> 'manufacturer_id',
+		'type' => 'relate',
+		'vname' =>'LBL_MANUFACTURER_NAME',
+	    'join_name' => 'manufacturers',
+	    'link' => 'manufacturer_link',
+	    'table' => 'manufacturers',
+	    'isnull' => 'true',
+		'source'=>'non-db',
+		'module' => 'Manufacturers',
+	    'dbType' => 'varchar',
+	    'len' => '255'
+	    
 	),
 	'category_id' =>
 	array (
@@ -138,7 +148,6 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	'dbType' => 'varchar',
 	'len' => '255',
 	'source' => 'non-db',
-	//'unified_search' => true,
   ),
   'type_name' =>
   array (
@@ -155,7 +164,6 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	'dbType' => 'varchar',
 	'len' => '255',
 	'source' => 'non-db',
-	//'unified_search' => true,
 	'importable' => 'true',
     'studio' => false,
   ),
@@ -260,7 +268,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'javascript'=>'onchange="ConvertItems(this.options[selectedIndex].value);"',
         'required'=>false,
 		'reportable'=>false,
-		'importable' => 'false',
+		'importable' => 'true',
 		'comment' => 'Currency of the product'
 	),
   'currency_symbol' =>
@@ -277,7 +285,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'type' => 'varchar',
 		'required'=>false,
 		'reportable'=>false,
-		'importable' => 'true',
+		'importable' => 'false',
 		'comment' => 'Currency of the product'
 	),
 	'status' =>
@@ -455,6 +463,17 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	    'bean_name'=>'ProductType',
 	    'source'=>'non-db',
     ),
+    'manufacturer_link' =>
+    array (
+        'name' => 'manufacturer_link',
+        'type' => 'link',
+        'relationship' => 'product_templates_manufacturers',
+        'vname' => 'LBL_MANUFACTURERS',
+        'link_type' => 'one',
+        'module' => 'Manufacturers',
+        'bean_name' => 'Manufacturer',
+        'source' => 'non-db',
+    ),
 
 )
 ,
@@ -469,6 +488,11 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
     array('lhs_module'=> 'ProductTypes', 'lhs_table'=> 'product_types', 'lhs_key' => 'id',
     'rhs_module'=> 'ProductTemplates', 'rhs_table'=> 'product_templates', 'rhs_key' => 'type_id',
     'relationship_type'=>'one-to-many'),
+    
+    'product_templates_manufacturers' =>
+    array('lhs_module' => 'Manufacturers', 'lhs_table'=> 'manufacturers', 'lhs_key' => 'id', 
+    'rhs_module' => 'ProductTemplates', 'rhs_table' => 'product_templates', 'rhs_key' => 'manufacturer_id',
+    'relationship_type' => 'one-to-many'),
 
 	'product_templates_modified_user' =>
 	array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',

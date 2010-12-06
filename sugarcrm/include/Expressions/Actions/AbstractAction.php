@@ -25,6 +25,7 @@ require_once("include/Expressions/Expression/AbstractExpression.php");
 
 abstract class AbstractAction {
 	protected $targetField = array();
+    protected $params = array();
 	
 	/**
 	 * Actions are expressions which modify data or layouts.
@@ -70,7 +71,7 @@ abstract class AbstractAction {
 	function getDefinition() {
 		return array(	
 			"action" => $this->getActionName(), 
-	        "params" => var_export($this->params, true)
+	        "params" => $this->params,
 	    );
 	}
 	

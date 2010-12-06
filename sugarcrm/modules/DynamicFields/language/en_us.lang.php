@@ -88,6 +88,7 @@ $mod_strings = array (
     'LBL_REPORTABLE'=>'Reportable',
     'ERR_RESERVED_FIELD_NAME' => "Reserved Keyword",
 	'ERR_SELECT_FIELD_TYPE' => 'Please Select a Field Type',
+	'ERR_FIELD_NAME_ALREADY_EXISTS' => 'Field Name already exists',
     'LBL_BTN_ADD' => 'Add',
     'LBL_BTN_EDIT' => 'Edit',
     'LBL_GENERATE_URL' => 'Generate URL',
@@ -101,6 +102,7 @@ $mod_strings = array (
     'LBL_IMAGE_WIDTH' => 'Width',
     'LBL_IMAGE_HEIGHT' => 'Height',
     'LBL_IMAGE_BORDER' => 'Border',
+	'COLUMN_TITLE_VALIDATE_US_FORMAT' => 'U.S. Format',
 
 );
 

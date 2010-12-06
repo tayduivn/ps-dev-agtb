@@ -145,6 +145,7 @@ YAHOO.util.Event.addListener(addListenerFields,"keydown", function(e){
 		YAHOO.util.Event.stopEvent(e);
 	}
 });
+
 </script>
 {/literal}
 </div>

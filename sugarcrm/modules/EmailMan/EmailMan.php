@@ -337,7 +337,7 @@ class EmailMan extends SugarBean{
      */
     function create_ref_email($marketing_id,$subject,$body_text,$body_html,$campagin_name,$from_address,$sender_id,$notes,$macro_nv,$newmessage) {
 
-       global $mod_Strings;
+       global $mod_strings;
        $upd_ref_email=false;
        if ($newmessage or empty($this->ref_email->id)) {
            $this->ref_email = new Email();
@@ -464,7 +464,7 @@ class EmailMan extends SugarBean{
     */
     function create_indiv_email($module,$mail) {
 
-        global $locale;
+        global $mod_strings;
         $email = new Email();
         //BEGIN SUGARCRM flav=pro ONLY
         $email->team_id = 1;

@@ -363,7 +363,7 @@ class Contact extends Person {
 			if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
-                                contacts.*,email_addresses.email_address email1,
+                                contacts.*,email_addresses.email_address email_address,
                                 accounts.name as account_name,
                                 users.user_name as assigned_user_name ";
 //BEGIN SUGARCRM flav=pro ONLY

@@ -35,9 +35,6 @@ $app_list_strings = array (
   'moduleList' =>
   array (
     'Home' => 'Home',
-	//BEGIN SUGARCRM flav!=sales ONLY
-    'Dashboard' => 'Dashboard',
-	//END SUGARCRM flav!=sales ONLY
     'Contacts' => 'Contacts',
     'Accounts' => 'Accounts',
     'Opportunities' => 'Opportunities',
@@ -96,7 +93,7 @@ $app_list_strings = array (
     'Notifications'=>'Notifications',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=ent ONLY
-    'ReportMaker' => ' Enterprise Reports',
+    'ReportMaker' => 'Advanced Reports',
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
 //END SUGARCRM flav=ent ONLY
@@ -1455,10 +1452,10 @@ $app_list_strings = array (
     'advance' => 'Move dropdown forwards by ',
   ),
   'wflow_record_type_dom' =>
-        array (
-    'All' => 'New and Existing Records',
+   array (
+    'All' => 'New and Updated Records',
     'New' => 'New Records Only',
-    'Update' => 'Existing Records Only',
+    'Update' => 'Updated Records Only',
   ),
   'wflow_rel_type_dom' =>
         array (
@@ -1785,6 +1782,24 @@ $app_list_strings = array (
         '_blank' => 'New Window',
         '_self' => 'Same Window',
     ),
+    'dashlet_auto_refresh_options' => 
+    array (
+        '-1' 	=> 'Do not auto-refresh',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
+	'dashlet_auto_refresh_options_admin' => 
+    array (
+        '-1' 	=> 'Never',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
 );
 
 $app_strings = array (
@@ -1846,7 +1861,7 @@ $app_strings = array (
     'LBL_ROUTING_TO_ADDRESS'                => 'to address',
     'LBL_ROUTING_WITH_TEMPLATE'             => 'with template',
 
-	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'You currently have values in your form for the Phone and Address fields. To overwrite these values with the phone/address of the Acccount that you selected, click "OK". To keep the current values, click "Cancel".',
+	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'The Contact currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
 	'LBL_DROP_HERE' => '[Drop Here]',
     'LBL_EMAIL_ACCOUNTS_EDIT'               => 'Edit',
     'LBL_EMAIL_ACCOUNTS_GMAIL_DEFAULTS'     => 'Prefill Gmail&#153; Defaults',
@@ -2089,6 +2104,7 @@ $app_strings = array (
     'LBL_EMAIL_OPTIONS'                     => 'Options',
     'LBL_EMAIL_QUICK_COMPOSE'				=> 'Quick Compose',
     'LBL_EMAIL_OPT_OUT'                     => 'Opted Out',
+    'LBL_EMAIL_OPT_OUT_AND_INVALID'         => 'Opted Out and Invalid',
     'LBL_EMAIL_PAGE_AFTER'                  => 'of {0}',
     'LBL_EMAIL_PAGE_BEFORE'                 => 'Page',
     'LBL_EMAIL_PERFORMING_TASK'             => 'Performing Task',
@@ -2694,15 +2710,15 @@ $app_strings = array (
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected record(s)?',
-    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record. Are you sure you want to delete it?',
-    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records. Are you sure you want to delete them?\n",	
+    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record or system settings. Are you sure you want to delete it?',
+    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records or system settings. Are you sure you want to delete them?\n",	
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
     'NTC_DELETE_SELECTED_RECORDS' =>' selected record(s)?',
     'NTC_LOGIN_MESSAGE' => 'Please enter your user name and password.',
     'NTC_NO_ITEMS_DISPLAY' => 'none',
-    'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship?',
+    'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship? Only the relationship will be removed. The record will not be deleted.',
     'NTC_REQUIRED' => 'Indicates required field',
     'NTC_SUPPORT_SUGARCRM' => 'Support the SugarCRM open source project with a donation through PayPal - it\'s fast, free and secure!',
     'NTC_TIME_FORMAT' => '(24:00)',
@@ -2762,7 +2778,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_TIME' => 'Time: ',
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
-    'MSG_JS_ALERT_MTG_REMINDER_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
+    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -2987,8 +3004,9 @@ $app_strings = array (
     'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
     
     //cma
-    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'Sorry, you cannot delete the global team. Aborting',
-    'LBL_MASSUPDATE_DELETE_PRIVATE_TEAMS'=>'Sorry, you cannot delete private team(s). Aborting',
+    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
+    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team cannot be deleted unless the user [{0}] is deleted.',
+    
     //martin #25548
     'LBL_NO_FLASH_PLAYER' => 'You either have Abobe Flash turned off or are using an older version of the Adobe Flash Player. To get the latest version of the Flash Player, <a href="http://www.adobe.com/go/getflashplayer/">click here</a>.',
 	//Collection Field
@@ -3023,6 +3041,14 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
+    
+    //SugarFieldPhone labels
+    'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter a numeric U.S. phone number, including area code.',
+    
+    //File write error label
+    'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
+    
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

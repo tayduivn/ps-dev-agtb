@@ -24,6 +24,7 @@ require_once("include/Expressions/Expression/Parser/Parser.php");
 require_once("include/Expressions/Actions/ActionFactory.php");
 
 class DependencyManager {
+    static $default_trigger = "true";
 	
 	/**
 	 * Returns a new Dependency that will power the provided calculated field.
@@ -32,7 +33,7 @@ class DependencyManager {
 	 * @param Boolean $includeReadOnly
 	 * @return array<Dependency>
 	 */
-	static function getCalculatedFieldDependencies($fields, $includeReadOnly = true) {
+	public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true) {
 		
 		$deps = array();
 		require_once("include/Expressions/Actions/SetValueAction.php");
@@ -173,8 +174,13 @@ class DependencyManager {
         return $dep;
     }
 	
-	static function getDependenciesForView($viewdef)
+	public static function getDependenciesForView($viewdef, $view = "", $module = "")
     {
+        global $currentModule;
+
+        if (empty($module) )
+            $module = $currentModule;
+
         $deps = array();
         if (isset($viewdef['templateMeta']) && !empty($viewdef['templateMeta']['panelDependencies'])){
             foreach (($viewdef['templateMeta']['panelDependencies']) as $id => $expr)
@@ -182,7 +188,74 @@ class DependencyManager {
                 $deps[] = self::getPanelDependency(strtoupper($id), $expr);
             }
         }
+        if ($view == "EditView")
+        {
+            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit'));
+        }
         return $deps;
+    }
+
+    public static function getModuleDependenciesForAction($module, $action)
+    {
+        $meta = self::getModuleDependencyMetadata($module);
+        $deps = array();
+        foreach ($meta as $key => $def)
+        {
+            $hooks = empty($def['hooks']) ? array("all") : $def['hooks'];
+            if (!is_array($hooks)) $hooks = array($hooks);
+            if(in_array('all', $hooks) || in_array($action, $hooks))
+            {
+                $triggerExp = empty($def['trigger']) ? self::$default_trigger : $def['trigger'];
+                $triggerFields = empty($def['triggerFields']) ?
+                        Parser::getFieldsFromExpression ($triggerExp) :
+                        $def['triggerFields'];
+                $actions = empty($def['actions']) || !is_array($def['actions']) ? array() : $def['actions'];
+                $notActions = empty($def['notActions']) || !is_array($def['notActions']) ? array() : $def['notActions'];
+                $dep = new Dependency("{$module}_{$key}");
+                $dep->setTrigger(new Trigger($triggerExp, $triggerFields));
+                foreach($actions as $aDef)
+                {
+                    $dep->addAction(
+                        ActionFactory::getNewAction($aDef['name'], $aDef['params']));
+                }
+                foreach($notActions as $aDef)
+                {
+                    $dep->addFalseAction(
+                        ActionFactory::getNewAction($aDef['name'], $aDef['params']));
+                }
+                $dep->setFireOnLoad(!isset($def['onload']) || $def['onload'] !== false);
+                $deps[] = $dep;
+            }
+        }
+        return $deps;
+    }
+
+    private static function getModuleDependencyMetadata($module)
+    {
+        $cacheLoc = create_cache_directory("modules/$module/dependencies.php");
+        //If the cache file exists, use it.
+        if(empty($GLOBALS['sugar_config']['developerMode']) && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
+            include($cacheLoc);
+        }
+        //Otherwise load all the def locations and create the cache file.
+        else {
+            $dependencies = array($module => array());
+            $location = "modules/$module/metadata/dependencydefs.php";
+            foreach(array(
+                $location,
+                "custom/{$location}",
+                "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
+            {
+                if(is_file($loc)) {
+                    include $loc;
+                }
+            }
+            $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"
+                 . override_value_to_string('dependencies', $module, $dependencies[$module]);
+            file_put_contents($cacheLoc, $out);
+        }
+
+        return $dependencies[$module];
     }
 	
 	static function getDependenciesForFields($fields) {
@@ -190,5 +263,21 @@ class DependencyManager {
 						   self::getDependentFieldDependencies($fields),
 						   self::getDropDownDependencies($fields));
 	}
+
+    /**
+     * @static
+     * @param  $user User, user to return SugarLogic variables for
+     * @return void
+     */
+    public static function getJSUserVariables($user)
+    {
+        return "SUGAR.expressions.userPrefs = " . json_encode(array(
+            "num_grp_sep" => $user->getPreference("num_grp_sep"),
+            "dec_sep" => $user->getPreference("dec_sep"),
+            "datef" => $user->getPreference("datef"),
+            "timef" => $user->getPreference("timef"),
+            "default_locale_name_format" => $user->getPreference("default_locale_name_format"),
+        )) . ";\n";
+    }
 }
 ?>

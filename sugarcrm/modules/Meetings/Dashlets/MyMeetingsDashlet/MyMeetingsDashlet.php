@@ -116,8 +116,9 @@ class MyMeetingsDashlet extends DashletGeneric {
             $this->lvs->data['data'][$rowNum]['DURATION'] .= $mod_strings['LBL_MINSS_ABBREV'];
             if (!empty($this->lvs->data['data'][$rowNum]['STATUS']) && $this->lvs->data['data'][$rowNum]['STATUS'] == $app_list_strings['meeting_status_dom']['Planned'])
             {
-                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == '' ||
-                    $this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
+                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
+					//if no status has been set, then do not show accept options
+				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
                 {
                     $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" class=\"acceptMeeting\"><a title=\"".
                         $app_list_strings['dom_meeting_accept_options']['accept'].
@@ -156,7 +157,9 @@ class MyMeetingsDashlet extends DashletGeneric {
                                      'myItems' => translate('LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY', 'Meetings'),
                                      'displayRows' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_DISPLAY_ROWS'],
                                      'title' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_TITLE'],
-                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL']));
+                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'],
+                                     'autoRefresh' => $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH'],
+                                     ));
         return $this->configureSS->fetch($this->configureTpl);
     }
         

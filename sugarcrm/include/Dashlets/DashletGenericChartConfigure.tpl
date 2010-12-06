@@ -51,6 +51,18 @@
             <input type='text' name='dashletTitle' value='{$dashletTitle}'>
         </td>
 	</tr>
+	{if $isRefreshable}
+    <tr>
+	    <td scope='row'>
+		    {$autoRefresh}
+        </td>
+        <td colspan='3'>
+            <select name='autoRefresh'>
+				{html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
+           	</select>
+        </td>
+	</tr>
+    {/if}
     <tr>
     {foreach name=searchIteration from=$searchFields key=name item=params}
         <td scope='row' valign='top'>

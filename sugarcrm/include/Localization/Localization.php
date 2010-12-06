@@ -389,6 +389,11 @@ class Localization {
 		$precision = $this->getPrecedentPreference('default_currency_significant_digits', $user);
 		return $precision;
 	}
+	
+	function getCurrencySymbol($user=null) {
+		$dec = $this->getPrecedentPreference('default_currency_symbol', $user);
+		return $dec;
+	}
 
 	/**
 	 * returns a number formatted by user preference or system default
@@ -404,12 +409,12 @@ class Localization {
 		$dec			= $this->getDecimalSeparator($user);
 		$thou			= $this->getNumberGroupingSeparator($user);
 		$precision		= $this->getPrecision($user);
-		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol() : $currencySymbol;
-
+		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol($user) : $currencySymbol;
+		
 		$exNum = explode($dec, $number);
 		// handle grouping
 		if(is_array($exNum) && count($exNum) > 0) {
-			if(strlen($exNum) > 3) {
+			if(strlen($exNum[0]) > 3) {
 				$offset = strlen($exNum[0]) % 3;
 				if($offset > 0) {
 					for($i=0; $i<$offset; $i++) {
@@ -571,6 +576,19 @@ eoq;
 		$names['s'] = (empty($salutation)	&& $salutation	!= 0) ? '' : $salutation;
 		$names['t'] = (empty($title)		&& $title		!= 0) ? '' : $title;
 
+		//Bug: 39936 - if all of the inputs are empty, then don't try to format the name.
+		$allEmpty = true;
+		foreach($names as $key => $val){
+			if(!empty($val)){
+				$allEmpty = false;
+				break;
+			}
+		}
+		if($allEmpty){
+			return $returnEmptyStringIfEmpty ? '' : ' ';
+		}
+		//end Bug: 39936
+		
 		if(empty($format)) {
 			$this->localeNameFormat = $this->getLocaleFormatMacro($user);
 		} else {

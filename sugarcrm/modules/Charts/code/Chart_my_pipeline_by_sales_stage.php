@@ -411,7 +411,7 @@ echo get_validate_chart_js();
 			$GLOBALS['log']->debug($current_user->getPreference('mypbss_date_start'));
 		}
 		else {
-			$date_start = date($timedate->get_date_format(), time());
+			$date_start = date($GLOBALS['timedate']->get_date_format(), time());
 		}
 		$user_date_end = $current_user->getPreference('mypbss_date_end');
 		

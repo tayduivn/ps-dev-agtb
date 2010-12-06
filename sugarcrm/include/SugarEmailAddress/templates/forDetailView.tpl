@@ -31,7 +31,7 @@
 				{foreach from=$emailAddresses item=address}
 				<tr>
 					<td style="border:none;">
-						{if $address.key === 'opt_out'}
+						{if $address.key === 'opt_out' || $address.key === 'invalid' || $address.key === 'opt_out_invalid'}
 							<span style="text-decoration: line-through;">
 						{elseif $address.key === 'primary'}
 							<b>
@@ -48,7 +48,9 @@
 						{elseif $address.key === 'opt_out'}
 							</span>&nbsp;<i class='error'>({$app_strings.LBL_EMAIL_OPT_OUT})</i>
 						{elseif $address.key === 'invalid'}
-							<i>({$app_strings.LBL_EMAIL_INVALID})</i>
+							</span>&nbsp;<i>({$app_strings.LBL_EMAIL_INVALID})</i>
+						{elseif $address.key === 'opt_out_invalid'}
+						    </span>&nbsp;<i class='error'>({$app_strings.LBL_EMAIL_OPT_OUT_AND_INVALID})</i>
 						{/if}
 					</td>
 				</tr>

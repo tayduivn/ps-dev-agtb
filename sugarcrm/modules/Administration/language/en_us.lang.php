@@ -169,7 +169,7 @@ $mod_strings = array (
     'LBL_CLEAR_PDF_FONT_CACHE_TITLE'=>'Clear PDF Font File Cache',
     'LBL_CLEAR_PDF_FONT_CACHE_DESC'=>'Removes cached file used to store PDF fonts data',
     'LBL_CONFIG_CHECK' =>'Config Check',
-    'LBL_CONFIG_TABS'=>'Select Module Tabs and Subpanels',
+    'LBL_CONFIG_TABS'=>'Display Module Tabs and Subpanels',
 	'LBL_CONFIG_TABS_DESC'=>'Drag and Drop the names of the modules below to set tabs or subpanels to be displayed or to be hidden.',
 	'LBL_CONFIG_TABS_ALLOW_USERS_HIDE_TABS_HELP'=>'Select this option to allow users to choose which module tabs they can view. When selected, users will be able to choose which module tabs are visible by managing the tabs within their User Settings.',
 	'LBL_CONFIGURATOR_DESC'=>'Set up Config.php',
@@ -283,6 +283,8 @@ $mod_strings = array (
     'LBL_FORECAST_TITLE'=> 'Forecast',
     'LBL_FORECAST_DESC'=> 'Define time periods for the Forecasts module. These time periods display in the Time Periods drop-down menus in the Forecasts Module.',
     //END SUGARCRM flav!=sales ONLY
+    'LBL_GLOBAL_SEARCH_SETTINGS' => 'Global Search',
+	'LBL_GLOBAL_SEARCH_SETTINGS_DESC' => 'Configure the global search options for the system.',
     'LBL_GLOBAL_TEAM_DESC' => 'Globally Visible',
     'LBL_GLOBAL_TEAM_SELECT' => 'A default global team was not found. Please select a team from this list.',
     'LBL_GLOBAL_TEAM' => 'Rebuild access to global team.',
@@ -1050,6 +1052,8 @@ $mod_strings = array (
 	'LBL_SAVING' => 'Saving...',
 	'LBL_ACTIVE_THEMES' => 'Enabled Themes',
 	'LBL_DISABLED_THEMES' => 'Disabled Themes',
+	'DEFAULT_THEME'=> 'Default theme',
+	'LBL_DEFAULT_THEME_IS_DISABLED' => 'The Default Theme you have chosen is disabled. Click "OK" to continue saving the theme changes or "Cancel" to pick a different default theme.',
 
 
 	//language changed
@@ -1097,7 +1101,7 @@ $mod_strings = array (
 
 	'Relationships' => 'Relationship',
 	'Releases'       => 'Release',
-	'ReportMaker'  => 'ReportMaker',
+	'ReportMaker'  => 'Advanced Reports',
 	'Reports_1'      => 'SavedReport',
 	'Roles'  => 'Role',
 	'Schedulers'  => 'Scheduler',
@@ -1127,5 +1131,7 @@ $mod_strings = array (
    'LBL_SAML_CERT' => 'X509 Certificate',
    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
    'LBL_SAML_LOGIN_URL' => 'Login URL',
-   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL'
+   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
+   'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search',
+   'LBL_SELECT_MODULES' => 'Select Modules',
 	);

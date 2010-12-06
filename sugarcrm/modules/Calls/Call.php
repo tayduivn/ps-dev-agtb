@@ -142,7 +142,7 @@ class Call extends SugarBean
         	isset($this->duration_minutes) ) {
     			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
     			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
+    			$this->date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
         }
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
@@ -164,8 +164,7 @@ class Call extends SugarBean
 			}
 		}
         if (empty($this->status) ) {
-            $mod_strings = return_module_language($GLOBALS['current_language'], $this->module_dir);
-            $this->status = $mod_strings['LBL_DEFAULT_STATUS'];
+            $this->status = $this->getDefaultStatus();
         }
 		/*nsingh 7/3/08  commenting out as bug #20814 is invalid
 		if($current_user->getPreference('reminder_time')!= -1 &&  isset($_POST['reminder_checked']) && isset($_POST['reminder_time']) && $_POST['reminder_checked']==0  && $_POST['reminder_time']==-1){
@@ -429,7 +428,7 @@ class Call extends SugarBean
 			if(empty($action))
 			    $action = "index";
 
-            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";  
+            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
 			$call_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Calls')." border='0'")."</a>";
 		}
 		global $timedate;
@@ -445,6 +444,23 @@ class Call extends SugarBean
 			$call_fields['DATE_START'] = "<font class='futureTask'>".$call_fields['DATE_START']."</font>";
 		}
 		$this->fill_in_additional_detail_fields();
+
+		//make sure we grab the localized version of the contact name, if a contact is provided
+		if (!empty($this->contact_id)) {
+			global $locale;
+			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
+			$query .= "WHERE id='$this->contact_id' AND deleted=0";
+			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
+
+			// Get the contact name.
+			$row = $this->db->fetchByAssoc($result);
+
+			if($row != null)
+			{
+				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
+			}
+		}
+
         $call_fields['CONTACT_ID'] = $this->contact_id;
         $call_fields['CONTACT_NAME'] = $this->contact_name;
 
@@ -679,6 +695,18 @@ class Call extends SugarBean
 		parent::save_relationship_changes($is_update, $exclude);
 	}
 
+    public function getDefaultStatus()
+    {
+         $def = $this->field_defs['status'];
+         if (isset($def['default'])) {
+             return $def['default'];
+         } else {
+            $app = return_app_list_strings_language($GLOBALS['current_language']);
+            if (isset($def['options']) && isset($app[$def['options']])) {
+                $keys = array_keys($app[$def['options']]);
+                return $keys[0];
+            }
+        }
+        return '';
+    }
 }
-
-?>

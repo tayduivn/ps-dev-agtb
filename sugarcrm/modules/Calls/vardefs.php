@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activity representing a phone call',
-                               'unified_search' => true,'fields' => array (
+                               'unified_search' => true, 'unified_search_default_enabled' => true, 'fields' => array (
 
   'name' =>
   array (
@@ -71,7 +71,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'date',
+    'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date is which call is scheduled to (or did) end'
   ),
@@ -111,6 +111,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'The status of the call (Held, Not Held, etc.)',
 	'required' => true,
 	'importable' => 'required',
+    'default' => 'Planned',
   ),
   'direction' =>
   array (

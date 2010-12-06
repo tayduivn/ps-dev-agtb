@@ -40,7 +40,8 @@ class MBLanguage{
 			$this->generateAppStrings();
 		}
 		
-		function loadStrings($file){
+		function loadStrings($file)
+        {
             $module = strtoupper($this->name);
             $object_name = strtoupper($this->key_name);
             $_object_name = strtolower($this->name);		
@@ -63,7 +64,7 @@ class MBLanguage{
 		}
 		
 	function loadAppListStrings($file){
-			
+            global 	$app_list_strings;
 			if(!file_exists($file))return;
 			//we may not need this when loading in the app strings, but there is no harm
 			//in setting it.

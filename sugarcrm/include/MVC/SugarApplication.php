@@ -159,7 +159,6 @@ class SugarApplication
 	
 	function ACLFilter(){
 		ACLController :: filterModuleList($GLOBALS['moduleList']);
-		ACLController :: filterModuleList($GLOBALS['modInvisListActivities']);
 	}
 	
 	/**
@@ -185,9 +184,13 @@ class SugarApplication
 		{
 		   if(is_array($val)) 
 		   {
-		       foreach ($val as $k => $v) 
+		       foreach ($val as $k => $v)
 		       {
-		           $GLOBALS['request_string'] .= urlencode($key).'[]='.urlencode($v).'&';
+                           //If an array, then skip the urlencoding. This should be handled with stringify instead.
+                           if(is_array($v))
+                                continue;
+
+                           $GLOBALS['request_string'] .= urlencode($key).'['.$k.']='.urlencode($v).'&';
 		       }
 		   } 
 		   else 
@@ -289,17 +292,17 @@ class SugarApplication
 			return;
 		}	
 
+		// Bug 20916 - Special case for check ACL access rights for Subpanel QuickCreates
+		if(isset($_POST['action']) && $_POST['action'] == 'SubpanelCreates') {
+            $actual_module = $_POST['target_module'];
+            if(!empty($GLOBALS['modListHeader']) && !in_array($actual_module,$GLOBALS['modListHeader'])) {
+                $this->controller->hasAccess = false;
+            }
+            return;
+        }
+		
 		if(!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader']))
 			$GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
-			
-		if(in_array($this->controller->module, $GLOBALS['modInvisList']) &&
-			((in_array('Activities', $GLOBALS['moduleList'])              &&	
-			in_array('Calendar',$GLOBALS['moduleList']))                 &&	
-			in_array($this->controller->module, $GLOBALS['modInvisListActivities']))
-			){
-				$this->controller->hasAccess = false;
-				return;
-		}
 	}
 	
 	/**

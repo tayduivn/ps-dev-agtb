@@ -26,7 +26,8 @@ $searchFields['Documents'] =
         'subcategory_id'=> array('query_type'=>'default', 'options' => 'document_subcategory_dom', 'template_var' => 'SUBCATEGORY_OPTIONS'),
 		'active_date'=> array('query_type'=>'default'),
 		'exp_date'=> array('query_type'=>'default'),
-		//BEGIN SUGARCRM flav=pro ONLY
+		'assigned_user_id'=> array('query_type'=>'default'),
+        //BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',
 			'operator' => 'subquery',

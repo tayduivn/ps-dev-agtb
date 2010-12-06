@@ -41,6 +41,7 @@ array (
           2 => '<input type="hidden" name="user_invitees">',
           3 => '<input type="hidden" name="lead_invitees">',
           4 => '<input type="hidden" name="contact_invitees">',
+          5 => '<input type="hidden" id="invite_parent_id" name="invite_parent_id" value="false">',
         ),
         'buttons' => 
         array (

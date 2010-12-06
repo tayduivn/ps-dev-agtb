@@ -56,14 +56,14 @@ class Expression extends SugarBean {
 
 	//construction
 	var $name;
-	
-	
+
+
 	var $lhs_type;
 	var $lhs_field;
 	var $lhs_module;
 	var $lhs_value;
 
-	var $lhs_group_type;		
+	var $lhs_group_type;
 	var $operator;
 	var $rhs_group_type;
 
@@ -71,33 +71,33 @@ class Expression extends SugarBean {
 	var $rhs_field;
 	var $rhs_module;
 	var $rhs_value;
-	
+
 	var $parent_id;
 	var $exp_type;
 	var $exp_order;
 
 	var $parent_exp_id;
 	var $parent_exp_side;
-	
+
 	var $parent_type = "filter";
-	
+
 	var $ext1;
 	var $ext2;
 	var $ext3;
-	
+
 	var $return_prefix;
-	
+
 	//used for the selector popups
 	var $show_field = false;			//show the block for selecting field
 	var $seed_object;
-	
-	
+
+
 	///for display text
 	var $target_bean;
 	var $display_array;
-	
-	
-	
+
+
+
 	var $selector_popup_fields = Array(
 	"lhs_module"
 	,"lhs_field"
@@ -107,11 +107,11 @@ class Expression extends SugarBean {
 	,"operator"
 	);
 
-	
+
 	var $table_name = "expressions";
 	var $module_dir = "Expressions";
 	var $object_name = "Expression";
-	
+
 	var $new_schema = true;
 
 	var $column_fields = Array("id"
@@ -120,13 +120,13 @@ class Expression extends SugarBean {
 		,"date_modified"
 		,"modified_user_id"
 		,"created_by"
-		
+
 		,"lhs_type"
 		,"lhs_field"
 		,"lhs_module"
 		,"lhs_value"
 
-		,"lhs_group_type"		
+		,"lhs_group_type"
 		,"operator"
 		,"rhs_group_type"
 
@@ -208,29 +208,14 @@ class Expression extends SugarBean {
 	}
 	
 
-	function get_list_view_data(){
 
-		global $app_strings, $mod_strings;
-		global $app_list_strings;
-
-		global $current_user;
-		
-		return $temp_array;
-			
-			
-	
-	}
-	
-	function clear_deleted($id){
-
-	
-	//end function clear_deleted
+	function get_list_view_data()
+    {
 	}
 	
 
-
-	function build_generic_where_clause ($the_query_string) {
-
+	function clear_deleted($id)
+    {
 	}
 	
 

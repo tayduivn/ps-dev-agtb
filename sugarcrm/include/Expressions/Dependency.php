@@ -25,11 +25,11 @@ require_once("include/Expressions/Actions/VisibilityAction.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 
 class Dependency {
-	private $trigger;
-	private $actions = array();
-	private $falseActions = array();
-	private $id = "";
-	private $fireOnLoad = false;
+	protected $trigger;
+	protected $actions = array();
+	protected $falseActions = array();
+	protected $id = "";
+	protected $fireOnLoad = false;
 	
 	function Dependency($id) {
 		$this->id = $id;
@@ -161,7 +161,7 @@ class Dependency {
 	 * @param boolean $useFalse
 	 */
 	private function fireActions(&$target, $useFalse = false) {
-		$action;
+		$action = "";
 		try {
 			$actions = $this->actions;
 			if ($useFalse)

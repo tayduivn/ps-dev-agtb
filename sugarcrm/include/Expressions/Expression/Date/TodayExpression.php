@@ -43,7 +43,7 @@ class TodayExpression extends DateExpression
 		  d.setHours(0);
 		  d.setMinutes(0);
 		  d.setSeconds(0);
-		  return d.toString();
+		  return d;
 EOQ;
 	}
 

@@ -1049,7 +1049,7 @@ EOQ;
 
 
 	function get_my_teams($return_obj = FALSE) {
-		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
+		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2, rel.implicit_assign FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
 		$result = $this->db->query($query, false, "Error retrieving user ID: ");
 		$out = Array ();
 
@@ -1061,7 +1061,8 @@ EOQ;
 		while ($row = $this->db->fetchByAssoc($result)) {
 			if ($return_obj) {
 				$out[$x] = new Team();
-				$out[$x ++]->retrieve($row['team_id']);
+				$out[$x]->retrieve($row['team_id']);
+				$out[$x++]->implicit_assign = $row['implicit_assign'];
 			} else {
 				$out[$row['team_id']] = Team::getDisplayName($row['name'], $row['name_2']);
 			}

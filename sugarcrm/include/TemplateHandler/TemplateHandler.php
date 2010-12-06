@@ -393,14 +393,17 @@ class TemplateHandler {
                             $sqs_objects[$name] = $qsd->getQSTeam();
                             //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
-                            if($field['name'] == 'reports_to_name')
+                            if($field['name'] == 'reports_to_name') {
                                 $sqs_objects[$name] = $qsd->getQSUser('reports_to_name','reports_to_id');
+                            }
+                            // Bug 34643 - Default what the options should be for the assigned_user_name field
+                            //             and then pass thru the fields to be used in the fielddefs.
+                            elseif($field['name'] == 'assigned_user_name') {
+                                $sqs_objects[$name] = $qsd->getQSUser('assigned_user_name','assigned_user_id');
+                            }
                             else {
-                                if ($view == "ConvertLead")
-								    $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
-								else
-								    $sqs_objects[$name] = $qsd->getQSUser();
-							}
+                                $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
+                            }
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->getQSCampaigns();
@@ -477,10 +480,12 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
+        $js .= DependencyManager::getJSUserVariables($GLOBALS['current_user']);
+
 
         $dependencies = array_merge(
            DependencyManager::getDependenciesForFields($fieldDefs),
-           DependencyManager::getDependenciesForView($viewDefs)
+           DependencyManager::getDependenciesForView($viewDefs, $view)
         );
 
         foreach($dependencies as $dep) {

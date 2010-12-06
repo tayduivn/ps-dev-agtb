@@ -44,15 +44,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	
  	public function init() 
  	{
- 		parent::init();
+ 		parent::init();		
+ 	}
+ 	
+ 	
+ 	private function setUp()
+ 	{
  		try{
 	 		$properties = $this->getProperties();
 	 		//BEGIN ENCODE
 	 		$clientKey = !empty($properties['hoovers_api_key']) ? $properties['hoovers_api_key'] : base64_decode(get_hoovers_api_key());
             //END ENCODE
             	 		
-	 		
-	 		$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
+			$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
             $this->_client->setHeaders("<API-KEY xmlns='http://applications.dnb.com/webservice/schema/'>{$clientKey}</API-KEY>");
             //BEGIN SUGARCRM flav=int ONLY
             /*
@@ -132,7 +136,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	    }	
 
  	    require(HOOVERS_LOOKUP_MAPPING_FILE);
- 	    $this->_lookupMap = $lookup_mapping; 		
+ 	    $this->_lookupMap = $lookup_mapping;  		
  	}
  	
  	/**
@@ -144,6 +148,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @return $result Array of results based on the search results from the given arguments
  	 */
  	public function getList($args=array(), $module=null) {
+ 		$this->setUp();
  		//Call the soap method (AdvancedCompanySearch)
  		//$args['bal']['orderBy'] = 'IndustryName';
 		$args['bal']['sortDirection'] = 'Ascending';
@@ -184,7 +189,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @param $module String value of the module we are mapping input arguments from
  	 * @return $result Array of result based on the search results from the given arguments
  	 */
- 	public function getItem($args=array(), $module=null) { 		
+ 	public function getItem($args=array(), $module=null) {
+ 		$this->setUp(); 		
  		$result = $this->GetCompanyDetail($args);
 
  		if(empty($result) || empty($result['return'])) {
@@ -359,7 +365,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   return $result;
  		}
  		
- 		//BEGIN SUGARCRM flav=int ONLY
+		//BEGIN SUGARCRM flav=int ONLY
  		/*
 	 	if (empty($this->_client) || !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
  			require_once('include/connectors/utils/ConnectorUtils.php');

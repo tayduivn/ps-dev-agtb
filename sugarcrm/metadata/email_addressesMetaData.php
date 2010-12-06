@@ -179,7 +179,7 @@ $dictionary['email_addr_bean_rel'] = array(
 		array(
 			'name'			=> 'bean_module',
 			'type'			=> 'varchar',
-			'len'			=> 25,
+			'len'			=> 100,
 			'required'		=> true,
 		),
 		array(

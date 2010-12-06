@@ -28,7 +28,7 @@
 *}
 {{include file=$headerTpl}}
 {sugar_include include=$includes}
-<div id="{{$module}}_detailview_tabs" 
+<div id="{{$module}}_detailview_tabs"
 {{if $useTabs}}
 class="yui-navset detailview_tabs"
 {{/if}}
@@ -57,25 +57,31 @@ class="yui-navset detailview_tabs"
 {{if !is_array($panel)}}
     {sugar_include type='php' file='{{$panel}}'}
 {{else}}
-	
+
 	{{if !empty($label) && !is_int($label) && $label != 'DEFAULT' && !$useTabs}}
 	<h4>{sugar_translate label='{{$label}}' module='{{$module}}'}</h4>
 	{{/if}}
 	{{* Print out the table data *}}
 	<table id='detailpanel_{{$smarty.foreach.section.iteration}}' cellspacing='{$gridline}'>
-	
 
-	
+
+
 	{{foreach name=rowIteration from=$panel key=row item=rowData}}
+	{counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
+	{capture name="tr" assign="tableRow"}
 	<tr>
 		{{assign var='columnsInRow' value=$rowData|@count}}
 		{{assign var='columnsUsed' value=0}}
 	    {{foreach name=colIteration from=$rowData key=col item=colData}}
+	    {{if !empty($colData.field.hideIf)}}
+	    	{if !({{$colData.field.hideIf}}) }
+	    {{/if}}
 	    {{* //BEGIN SUGARCRM flav=pro ONLY*}}
 	    {{if !empty($colData.field.name)}}
 			{if $fields.{{$colData.field.name}}.acl > 0}
 		{{/if}}
 		{{* //END SUGARCRM flav=pro ONLY*}}
+			{counter name="fieldsUsed"}
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="row">
 				{{if isset($colData.field.customLabel)}}
 			       {{$colData.field.customLabel}}
@@ -101,7 +107,7 @@ class="yui-navset detailview_tabs"
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}}>
 				{{if $colData.field.customCode || $colData.field.assign}}
 					{counter name="panelFieldCount"}
-					{{sugar_evalcolumn var=$colData.field colData=$colData}}	
+					{{sugar_evalcolumn var=$colData.field colData=$colData}}
 				{{elseif $fields[$colData.field.name] && !empty($colData.field.fields) }}
 				    {{foreach from=$colData.field.fields item=subField}}
 				        {{if $fields[$subField]}}
@@ -111,7 +117,7 @@ class="yui-navset detailview_tabs"
 				        	{counter name="panelFieldCount"}
 				            {{$subField}}
 				        {{/if}}
-				    {{/foreach}}					    		
+				    {{/foreach}}
 				{{elseif $fields[$colData.field.name]}}
 					{counter name="panelFieldCount"}
 					{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type}}
@@ -120,13 +126,23 @@ class="yui-navset detailview_tabs"
 		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{else}
-			
+
 			<td scope="row">&nbsp;</td><td>&nbsp;</td>
 			{/if}
 		{{/if}}
 		{{* //END SUGARCRM flav=pro ONLY*}}
+	    {{if !empty($colData.field.hideIf)}}
+			{else}
+
+			<td scope="row">&nbsp;</td><td>&nbsp;</td>
+			{/if}
+	    {{/if}}
 		{{/foreach}}
 	</tr>
+	{/capture}
+	{if $fieldsUsed > 0 }
+	{$tableRow}
+	{/if}
 	{{/foreach}}
 	</table>
 {{/if}}
@@ -143,5 +159,5 @@ class="yui-navset detailview_tabs"
 <script type="text/javascript">
 var {{$module}}_detailview_tabs = new YAHOO.widget.TabView("{{$module}}_detailview_tabs");
 {{$module}}_detailview_tabs.selectTab(0);
-</script> 
+</script>
 {{/if}}

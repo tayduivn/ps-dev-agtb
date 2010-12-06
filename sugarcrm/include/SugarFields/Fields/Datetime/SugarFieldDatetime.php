@@ -32,10 +32,10 @@ class SugarFieldDatetime extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         //jchi , bug #24557 , 10/31/2008
         if(isset($vardef['name']) && ($vardef['name'] == 'date_entered' || $vardef['name'] == 'date_modified')){
-        	return $this->fetch('include/SugarFields/Fields/Base/DetailView.tpl');
+        	return $this->fetch($this->findTemplate('DetailView'));
         }
         //end
-        return $this->fetch('include/SugarFields/Fields/Datetime/EditView.tpl');
+        return $this->fetch($this->findTemplate('EditView'));
     }
     
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
@@ -65,7 +65,7 @@ class SugarFieldDatetime extends SugarFieldBase {
     	$this->ss->assign('use_meridian', $use_24_hours);
     	
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
-    	return $this->fetch('include/SugarFields/Fields/Datetime/WirelessEditView.tpl');
+    	return $this->fetch($this->findTemplate('WirelessEditView'));
     }   
     //END SUGARCRM flav=pro || flav=sales ONLY
 
@@ -77,6 +77,42 @@ class SugarFieldDatetime extends SugarFieldBase {
 
         $offset = strlen(trim($inputData[$prefix.$field])) < 11 ? false : true;
 	    $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);    	
+    }
+    
+    /**
+     * @see SugarFieldBase::importSanitize()
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        global $timedate;
+        
+        $format = $settings->dateformat . ' ' . $settings->timeformat;
+        
+        if ( !$timedate->check_matching_format($value, $format) ) {
+            // see if adding a valid time at the end makes it work
+            list($dateformat,$timeformat) = explode(' ',$format);
+            $value .= ' ' . date($timeformat,0);
+            if ( !$timedate->check_matching_format($value, $format) ) {
+                return false;
+            }
+        }
+        
+        if ( !$settings->isValidTimeDate($value, $format) )
+            return false;
+        
+        $value = $timedate->swap_formats(
+            $value, $format, $timedate->get_date_time_format());
+        $value = $timedate->handle_offset(
+            $value, $timedate->get_date_time_format(), false, $GLOBALS['current_user'], $settings->timezone);
+        $value = $timedate->swap_formats(
+            $value, $timedate->get_date_time_format(), $timedate->get_db_date_time_format() );
+        
+        return $value;
     }
 }
 ?>

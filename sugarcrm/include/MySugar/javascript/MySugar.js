@@ -630,7 +630,7 @@ SUGAR.mySugar = function() {
 
 		 		ajaxStatus.hideStatus();
 				if(data) {		
-					SUGAR.mySugar.currentDashlet.innerHTML = data.responseText;				
+					SUGAR.mySugar.currentDashlet.innerHTML = data.responseText;			
 				}
 
 				SUGAR.util.evalScript(data.responseText);
@@ -667,7 +667,7 @@ SUGAR.mySugar = function() {
 			
 			SUGAR.mySugar.currentDashlet = document.getElementById('dashlet_entire_' + id);
 			var cObj = YAHOO.util.Connect.asyncRequest('GET', url,
-												  {success: fillInDashlet, failure: fillInDashlet}, null);
+			                    {success: fillInDashlet, failure: fillInDashlet}, null); 
 			return false;
 		},
 		

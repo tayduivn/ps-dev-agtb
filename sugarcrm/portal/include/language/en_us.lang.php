@@ -885,10 +885,10 @@ $app_list_strings = array (
     'advance' => 'Move dropdown forwards by ',
   ), 
   'wflow_record_type_dom' =>
-        array (
-    'All' => 'New and Existing Records',    
+  array (
+    'All' => 'New and Updated Records',
     'New' => 'New Records Only',
-    'Update' => 'Existing Records Only',
+    'Update' => 'Updated Records Only',
   ),
   'wflow_rel_type_dom' =>
   		array (

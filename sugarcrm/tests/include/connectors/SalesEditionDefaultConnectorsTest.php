@@ -77,55 +77,12 @@ class SalesEditionConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     function test_default_connectors() {
         require('modules/Connectors/InstallDefaultConnectors.php');
         $this->assertTrue(file_exists('custom/modules/connectors/metadata/display_config.php'), "Assert custom/modules/connectors/metadata/display_config.php file created.");
-        $this->assertTrue(file_exists('custom/modules/connectors/metadata/connectors.php'), "Assert custom/modules/connectors/metadata/connectors.php file created.");
-        $this->assertTrue(file_exists('custom/modules/Accounts/metadata/detailviewdefs.php'), "Assert custom/modules/Accounts/metadata/detailviewdefs.php file created.");
-        $this->assertTrue(file_exists('custom/modules/Contacts/metadata/detailviewdefs.php'), "Assert custom/modules/Contacts/metadata/detailviewdefs.php file created.");
-        
+        $this->assertTrue(file_exists('custom/modules/connectors/metadata/connectors.php'), "Assert custom/modules/connectors/metadata/connectors.php file created.");        
         require('custom/modules/connectors/metadata/connectors.php');
         require('custom/modules/connectors/metadata/display_config.php');
         
-        $this->assertEquals(count($default_connectors), 3, "Assert that there are three connectors enabled.");
+        $this->assertEquals(count($default_connectors), 2, "Assert that there are two connectors enabled.");
         $this->assertEquals(count($default_modules_sources), 2, "Assert that there are two modules (Accounts, Contacts) enabled.");
-        
-        /*
-        require('custom/modules/Accounts/metadata/detailviewdefs.php');
-        $this->assertTrue(in_array('CONNECTOR', $viewdefs['Accounts']['DetailView']['templateMeta']['form']['buttons']), "Assert that the Get Data button is added to Accounts detailviewdefs.php file.");
-        
-        $accounts_hover_link_set = false;
-        
-        foreach($viewdefs['Accounts']['DetailView']['panels'] as $panels) {
-        	foreach($panels as $panel) {
-        		foreach($panel as $row=>$col) {
-        		    if(is_array($col) && $col['name'] == 'name') {
-        		       if(isset($col['displayParams']) && count($col['displayParams']['connectors']) == 2) {
-                       	  $accounts_hover_link_set = true;  	
-        		       }
-        		    }
-        		}
-        	}
-        }
-        
-        $this->assertTrue($accounts_hover_link_set, "Assert that the Accounts hover link is properly set.");
-        
-        require('custom/modules/Contacts/metadata/detailviewdefs.php');
-        $this->assertTrue(in_array('CONNECTOR', $viewdefs['Contacts']['DetailView']['templateMeta']['form']['buttons']), "Assert that the Get Data button is added to Contacts detailviewdefs.php file.");
-        
-        $contacts_hover_link_set = false;
-        
-        foreach($viewdefs['Contacts']['DetailView']['panels'] as $panels) {
-           foreach($panels as $panel) {
-        		foreach($panel as $row=>$col) {
-        		    if(is_array($col) && $col['name'] == 'full_name') {
-        		       if(isset($col['displayParams']) && count($col['displayParams']['connectors']) == 2) {
-                       	  $contacts_hover_link_set = true;  	
-        		       }
-        		    }
-        		}
-        	}        	
-        }        
-               
-        $this->assertTrue($contacts_hover_link_set, "Assert that the Contacts hover link is properly set.");
-        */ 
     }
     
 }  

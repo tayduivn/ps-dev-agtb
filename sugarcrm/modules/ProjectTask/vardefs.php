@@ -64,7 +64,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
         'project_task_id' => array(
             'name' => 'project_task_id',
             'vname' => 'LBL_PROJECT_TASK_ID',
-            'required' => true,
+            'required' => false,
             'type' => 'int',
             'reportable' => false,
 

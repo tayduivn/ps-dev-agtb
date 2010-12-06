@@ -239,13 +239,8 @@ function clearCompanyLogo(){
 
 function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
-	if(strpos($server_software,'Microsoft-IIS') !== false)
+	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
-		if($sugar_version < '5.5.0'){
-		    _logThis("Rebuild web.config.", $path);
-		    include_once("modules/Administration/UpgradeIISAccess.php");
-		}
-	} else {
 		///////////////////////////////////////////////////////////////////////////
         ////    FILESYSTEM SECURITY FIX (Bug 9365)
 	    _logThis("Applying .htaccess update security fix.", $path);
@@ -276,42 +271,6 @@ function genericFunctions(){
 	////	REBUILD DASHLETS
 	_logThis("Rebuilding Dashlets", $path);
 	rebuild_dashlets();
-
-    //BEGIN SUGARCRM flav=pro ONLY 
-    ///////////////////////////////////////////////////////////////////////////
-    ////    REBUILD TEAMS, REWORK IMPLICIT TEAM RELATIONSHIP
-    _logThis("Rebuilding Teams", $path);
-    rebuild_teams();
-    //END SUGARCRM flav=pro ONLY 
-
-  	global $sugar_version;
-    if($sugar_version < '5.5.0') {
-        _logThis("Begin Upgrade LDAP authentication", $path);
-        upgrade_LDAP();
-        _logThis("End Upgrade LDAP authentication", $path);
-        
-        _logThis("BEGIN CLEAR COMPANY LOGO", $path);
-        clearCompanyLogo();
-        _logThis("END CLEAR COMPANY LOGO", $path);
-        
-        _logThis("BEGIN CLEAR IMAGES IN THEME SUGAR", $path);
-        clearSugarImages();
-        _logThis("END CLEAR IMAGES IN THEME SUGAR", $path);
-    } 
-    
-	if($sugar_version < '5.5.1') {
-    	_logThis("Begin Clear all English inline help files", $path);
-    	clearHelpFiles();
-    	_logThis("End all English inline help files", $path);
-    }
-    //Rebuild roles
-     _logThis("Rebuilding Roles", $path);
-	 if($sugar_version < '5.5.0') {
-	     add_EZ_PDF();
-     }    
-     ob_start();
-     rebuild_roles();
-     ob_end_clean();
 }
 
 function status_post_install_action($action){
@@ -349,37 +308,7 @@ function post_install() {
 	$new_sugar_version = getUpgradeVersion();
 	$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
 	$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
-
-	if($origVersion < '550') {
-        require('include/utils/autoloader.php');
-        spl_autoload_register(array('SugarAutoLoader', 'autoload'));
-        hide_subpanels_if_tabs_are_hidden();
-	}    
 	
-	if($origVersion < '551') {
-		_logThis('Upgrade outbound email setting', $path);
-        upgradeOutboundSetting();
-	}
-	
-	if($origVersion < '600' && !isset($_SERVER['HTTP_USER_AGENT'])) {
-	   _logThis('Check to hide iFrames and Feeds modules', $path);
-	   hide_iframes_and_feeds_modules();
-	}	
-				
-	if($origVersion < '550' && ($sugar_config['dbconfig']['db_type'] == 'mssql')) {
-		dropColumnConstraintForMSSQL("outbound_email", "mail_smtpssl");
-		$GLOBALS['db']->query("ALTER TABLE outbound_email alter column mail_smtpssl int NULL");
-		
-		dropColumnConstraintForMSSQL("outbound_email", "mail_sendtype");
-		$GLOBALS['db']->query("alter table outbound_email  add default 'smtp' for mail_sendtype;");
-	} // if	
-	
-    //Upgrade multienum data if the version was less than 5.2.0k
-    if ($sugar_version < '5.2.0k') {
-        _logThis("Upgrading multienum data", $path);
-        require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-        upgrade_multienum_data();   
-    }
     $post_action = status_post_install_action('sql_query');
 	if($post_action != null){
 	   if($post_action != 'done'){
@@ -431,48 +360,7 @@ function post_install() {
     // End Bug 40458///////////////////
 
     upgradeGroupInboundEmailAccounts();
-	//BEGIN SUGARCRM flav=pro ONLY
-        if($origVersion < '600') {
-	   _logThis("Start of check to see if Jigsaw connector should be disabled", $path);
-	   require_once('include/connectors/utils/ConnectorUtils.php');
-	   if(!ConnectorUtils::isSourceEnabled('ext_soap_jigsaw')) {
-	   	  _logThis("Jigsaw connector is not being used, remove it", $path);
-	   	  ConnectorUtils::uninstallSource('ext_soap_jigsaw');
-	   	  if(file_exists('modules/Connectors/connectors/filters/ext/soap/jigsaw')) {
-	   	     rmdir_recursive('modules/Connectors/connectors/filters/ext/soap/jigsaw');
-	   	  }
-	   	  
-	   	  if(file_exists('modules/Connectors/connectors/formatters/ext/soap/jigsaw')) {
-	   	     rmdir_recursive('modules/Connectors/connectors/formatters/ext/soap/jigsaw');
-	   	  }
-	   	  
-	   	  if(file_exists('modules/Connectors/connectors/sources/ext/soap/jigsaw')) {
-	   	     rmdir_recursive('modules/Connectors/connectors/sources/ext/soap/jigsaw');
-	   	  }
-	   	  
-	   	  if(file_exists('custom/modules/Connectors')) {
-		   	  ConnectorUtils::uninstallSource('ext_soap_jigsaw');
-		   	  if(file_exists('custom/modules/Connectors/metadata/connectors.php')) {
-			   	  require('custom/modules/Connectors/metadata/connectors.php');
-			   	  if(is_array($connectors) && isset($connectors['ext_soap_jigsaw'])) {
-				   	  unset($connectors['ext_soap_jigsaw']);
-				   	  if(!write_array_to_file('connectors', $connectors, 'custom/modules/Connectors/metadata/connectors.php')) {
-			   			_logThis("Could not remove Jigsaw connector from custom/modules/Connectors/metadata/connectors.php", $path);
-					  }	else {
-					  	_logThis("Removed Jigsaw connector from custom/modules/Connectors/metadata/connectors.php", $path);
-					  }
-			   	  } 	  
-		   	  }
-	   	  }
-	   	  
-	   } else {
-	   	  _logThis("Jigsaw connector is being used, do not remove it", $path);
-	   }
-	   _logThis("End of check to see if Jigsaw connector should be disabled", $path);
-	}		
-        //END SUGARCRM flav=pro ONLY
-
-	
+    	
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){

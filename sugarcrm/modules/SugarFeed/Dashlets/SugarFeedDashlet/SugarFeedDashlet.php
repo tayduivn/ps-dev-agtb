@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/Dashlets/DashletGeneric.php');
 
 
-class SugarFeedDashlet extends DashletGeneric { 
+class SugarFeedDashlet extends DashletGeneric {
 var $displayRows = 15;
 
 var $categories;
@@ -78,7 +78,7 @@ var $selectedCategories = array();
 		}
         $this->seedBean = new SugarFeed();
     }
-	
+
 	function process($lvsParams = array()) {
         global $current_user;
 
@@ -107,11 +107,11 @@ var $selectedCategories = array();
         $this->lvs->displayColumns = $displayColumns;
 
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
-   
+
         $lvsParams['overrideOrder'] = true;
         $lvsParams['orderBy'] = 'date_entered';
         $lvsParams['sortOrder'] = 'DESC';
-                
+
         // Get the real module list
         if (empty($this->selectedCategories)){
             $mod_list = $this->categories;
@@ -151,7 +151,7 @@ var $selectedCategories = array();
             $where = '';
             if(!empty($whereArray)){
                 $where = '(' . implode(') AND (', $whereArray) . ')';
-            }            
+            }
 
 			$module_limiter = " sugarfeed.related_module in ('" . implode("','", $regular_modules) . "')";
 
@@ -162,7 +162,7 @@ var $selectedCategories = array();
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
+                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON tj.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY
@@ -186,22 +186,22 @@ var $selectedCategories = array();
 			if(!empty($where)) { $where .= ' AND '; }
 			$where .= $module_limiter;
 
-            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
-                              array('name', 
-                                    'description', 
-                                    'date_entered', 
-                                    'created_by', 
+            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows,
+                              array('name',
+                                    'description',
+                                    'date_entered',
+                                    'created_by',
 //BEGIN SUGARCRM flav=pro ONLY
-                                    'team_id', 
-                                    'team_name', 
-                                    'team_count', 
+                                    'team_id',
+                                    'team_name',
+                                    'team_count',
 //END SUGARCRM flav=pro ONLY
-                                    'link_url', 
+                                    'link_url',
                                     'link_type'));
 
             foreach($this->lvs->data['data'] as $row => $data) {
                 $this->lvs->data['data'][$row]['CREATED_BY'] = get_assigned_user_name($data['CREATED_BY']);
-                $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",$this->lvs->data['data'][$row]['CREATED_BY'],$data['NAME']);
+                $this->lvs->data['data'][$row]['FEED'] = str_replace("{this.CREATED_BY}",$this->lvs->data['data'][$row]['CREATED_BY'],$data['NAME']);
             }
 
             // assign a baseURL w/ the action set as DisplayDashlet
@@ -217,12 +217,12 @@ var $selectedCategories = array();
 
         }
     }
-	
+
 	  function deleteUserFeed() {
     	if(!empty($_REQUEST['record'])) {
 			$feed = new SugarFeed();
 			$feed->retrieve($_REQUEST['record']);
-			if(is_admin($GLOBALS['current_user']) || $feed->created_by == $GLOBALS['current_user']->id){ 
+			if(is_admin($GLOBALS['current_user']) || $feed->created_by == $GLOBALS['current_user']->id){
             	$feed->mark_deleted($_REQUEST['record']);
 
 			}
@@ -237,7 +237,7 @@ var $selectedCategories = array();
 			$team_id = $_REQUEST['team_id'];
 			$team_set_id = $team_id; //For now, but if we allow for multiple team selection then we'll have to change this
 //END SUGARCRM flav=pro ONLY
-            SugarFeed::pushFeed($text, 'UserFeed', $GLOBALS['current_user']->id, 
+            SugarFeed::pushFeed($text, 'UserFeed', $GLOBALS['current_user']->id,
 //BEGIN SUGARCRM flav=pro ONLY
                                 $team_id,
 //END SUGARCRM flav=pro ONLY
@@ -248,7 +248,7 @@ var $selectedCategories = array();
 //END SUGARCRM flav=pro ONLY
                                 );
         }
-       
+
     }
 	  function displayOptions() {
         global $app_strings;
@@ -265,37 +265,46 @@ var $selectedCategories = array();
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
         $ss->assign('id', $this->id);
+        if($this->isAutoRefreshable()) {
+       		$ss->assign('isRefreshable', true);
+			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
+			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
+			$ss->assign('autoRefreshSelect', $this->autoRefresh);
+		}
 
         return  $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/Options.tpl');
-    }  
-	
+    }
+
 	/**
 	 * creats the values
-	 * @return 
+	 * @return
 	 * @param $req Object
 	 */
 	  function saveOptions($req) {
         global $sugar_config, $timedate, $current_user, $theme;
         $options = array();
-        $options['title'] = $_REQUEST['title'];
+        $options['title'] = $req['title'];
 		$rows = intval($_REQUEST['rows']);
         if($rows <= 0) {
-            $rows = 15;         
+            $rows = 15;
         }
 		if($rows > 100){
 			$rows = 100;
 		}
+        if ( isset($req['autoRefresh']) ) 
+            $options['autoRefresh'] = $req['autoRefresh'];
         $options['rows'] = $rows;
-		$options['categories'] = $_REQUEST['categories'];
+		$options['categories'] = $req['categories'];
 		foreach($options['categories'] as $cat){
 			if($cat == 'ALL'){
 				unset($options['categories']);
 			}
 		}
+		
         return $options;
     }
-	
-      
+
+
       function sugarFeedDisplayScript() {
           // Forces the quicksearch to reload anytime the dashlet gets refreshed
           return '<script type="text/javascript">
@@ -303,7 +312,7 @@ enableQS(false);
 </script>';
       }
 	/**
-	 * 
+	 *
 	 * @return javascript including QuickSearch for SugarFeeds
 	 */
 	 function displayScript() {
@@ -313,7 +322,7 @@ enableQS(false);
         $ss->assign('saving', translate('LBL_SAVING', 'SugarFeed'));
         $ss->assign('saved', translate('LBL_SAVED', 'SugarFeed'));
         $ss->assign('id', $this->id);
-        
+
         $str = $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/SugarFeedScript.tpl');
 		//BEGIN SUGARCRM flav=pro ONLY
 		$qsd = new QuickSearchDefaults();
@@ -337,37 +346,37 @@ EOQ;
 		//END SUGARCRM flav=pro ONLY
         return $str; // return parent::display for title and such
     }
-	
+
 	/**
-	 * 
+	 *
 	 * @return the fully rendered dashlet
 	 */
 	function display(){
-		
+
 		$listview = parent::display();
 		$GLOBALS['current_sugarfeed'] = $this;
-		$listview = preg_replace_callback('/\{([^\}]+)\.([^\}]+)\}/', create_function(
+		$listview = preg_replace_callback('/\{([^\^ }]+)\.([^\}]+)\}/', create_function(
             '$matches',
             'if($matches[1] == "this"){$var = $matches[2]; return $GLOBALS[\'current_sugarfeed\']->$var;}else{return translate($matches[2], $matches[1]);}'
         ),$listview);
 		$listview = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $listview);
-        
+
 		return $listview.'</div>';
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @return the title and the user post form
 	 * @param $text Object
 	 */
 	function getHeader($text='') {
-		return parent::getHeader($text) . $this->getPostForm().$this->getDisabledWarning().$this->sugarFeedDisplayScript().'<div class="sugarFeedDashlet">';	
+		return parent::getHeader($text) . $this->getPostForm().$this->getDisabledWarning().$this->sugarFeedDisplayScript().'<div class="sugarFeedDashlet">';
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @return a warning message if the sugar feed system is not enabled currently
 	 */
 	function getDisabledWarning(){
@@ -381,7 +390,7 @@ EOQ;
     }
 
 	/**
-	 * 
+	 *
 	 * @return the form for users posting custom messages to the feed stream
 	 */
 	function getPostForm(){
@@ -425,12 +434,12 @@ EOQ;
         }
 		$ss->assign('link_types', $linkTypes);
 		return $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/UserPostForm.tpl');
-	
+
 	}
-    
+
     // This is called from the include/MySugar/DashletsDialog/DashletsDialog.php and determines if we should display the SugarFeed dashlet as an option or not
     static function shouldDisplay() {
-        
+
         $admin = new Administration();
         $admin->retrieveSettings();
 

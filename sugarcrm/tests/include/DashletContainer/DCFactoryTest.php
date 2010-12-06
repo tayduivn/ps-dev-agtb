@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro || flav=sales ONLY
 require_once 'include/DashletContainer/DCFactory.php';
 
 class DCFactoryTest extends Sugar_PHPUnit_Framework_TestCase

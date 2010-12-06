@@ -1,4 +1,5 @@
 <?php 
+//FILE SUGARCRM flav=pro ONLY
 class Bug18732Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	function testCurrencyLabel(){

@@ -87,7 +87,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 
 		VardefManager::clearVardef();
 		$repairedTables = array();
-		
+
 		foreach ($beanFiles as $bean => $file) {
 			if(file_exists($file)){
 				require_once ($file);
@@ -99,7 +99,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 				}
 			}
 		}
-		
+
 		$olddictionary = $dictionary;
 
 		unset ($dictionary);
@@ -108,20 +108,21 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 		foreach ($dictionary as $meta) {
 			$tablename = $meta['table'];
 			if (isset($repairedTables[$tablename])) continue;
-			
+
 			$fielddefs = $meta['fields'];
 			$indices = $meta['indices'];
-			$sql .= $db->repairTableParams($tablename, $fielddefs, $indices, $execute);
+			$engine = isset($meta['engine'])?$meta['engine']:null;
+			$sql .= $db->repairTableParams($tablename, $fielddefs, $indices, $execute, $engine);
 			$repairedTables[$tablename] = true;
 		}
 
 		$dictionary = $olddictionary;
 
-		
+
 
 		if (empty ($_REQUEST['repair_silent'])) {
 			echo "<script type=\"text/javascript\">document.getElementById('rdloading').style.display = \"none\";</script>";
-			
+
 			if (isset ($sql) && !empty ($sql)) {
 
 				$qry_str = "";
@@ -144,5 +145,5 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 	}
 
 } else {
-	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }

@@ -61,6 +61,11 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
 	            $trackerManager->saveMonitor($monitor, true, true);	            
 	        }	
 		}
+		
+		if ( isset($GLOBALS['sugar_config']['history_max_viewed']) ) {
+		    $this->_old_history_max_viewed = $GLOBALS['sugar_config']['history_max_viewed'];
+		}
+		$GLOBALS['sugar_config']['history_max_viewed'] = 50;
     } 
 
     public function tearDown()
@@ -73,8 +78,9 @@ class Bug40019_Test extends Sugar_PHPUnit_Framework_TestCase
     	{
     	   $GLOBALS['current_user'] = $this->saved_current_user;
     	}
-    	
-    	
+    	if ( isset($this->_old_history_max_viewed) ) {
+		    $GLOBALS['sugar_config']['history_max_viewed'] = $this->_old_history_max_viewed;
+		}
     }
     
     public function testBreadCrumbStack()

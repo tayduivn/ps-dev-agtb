@@ -25,6 +25,8 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
     public function setup()
     {
 		global $current_user;	
+		
+		$current_user = SugarTestUserUtilities::createAnonymousUser();
 		//for the purpose of this test, we need to create some records with fake campaign and prospect list data, 
 		//however we do need to create some targets for the prospect list
 
@@ -123,8 +125,8 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['db']->query('DELETE FROM campaign_log WHERE campaign_id = \''.$this->campaign_id.'\' ');
 		$GLOBALS['db']->query('DELETE FROM campaign_tracker WHERE id = \''.$this->campaign_tracker->id.'\' ');
 		unset($this->campaign_tracker);
-        unset($this->campaign_log );
-
+        unset($this->campaign_log );SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
     }
 	
 

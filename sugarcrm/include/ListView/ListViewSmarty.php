@@ -106,7 +106,12 @@ class ListViewSmarty extends ListViewDisplay{
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
         //END SUGARCRM flav=pro ONLY
         if($this->overlib) $this->ss->assign('overlib', true);
-		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current']));
+        // Bug 24677 - Correct the page total amount on the last page of listviews
+        $pageTotal = $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current'];
+        if ( $this->data['pageData']['offsets']['next'] < 0 ) {
+            $pageTotal = $this->data['pageData']['offsets']['total'] - $this->data['pageData']['offsets']['current'];
+        }
+		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
 		
 		if($this->show_action_dropdown)
 		{
@@ -114,7 +119,7 @@ class ListViewSmarty extends ListViewDisplay{
 		}
 		
 		$this->ss->assign('quickViewLinks', $this->quickViewLinks);
-		
+
 		// handle save checks and stuff
 		if($this->multiSelect) {
 		
@@ -129,8 +134,10 @@ class ListViewSmarty extends ListViewDisplay{
 		}
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// include button for Adding to Target List if in one of four applicable modules
-		if ( isset ( $_REQUEST['module']) && in_array ( $_REQUEST['module'] , array ( 'Contacts','Prospects','Leads','Accounts' )))
+		if ( isset ( $_REQUEST['module']) && in_array ( $_REQUEST['module'] , array ( 'Contacts','Prospects','Leads','Accounts' ))
+		&& ACLController::checkAccess('ProspectLists','edit',true)) {
 			$this->ss->assign( 'targetLink', $this->buildTargetList() ) ;
+		}
 		//END SUGARCRM flav!=sales ONLY
 		$this->processArrows($data['pageData']['ordering']);
 		$this->ss->assign('prerow', $this->multiSelect);
@@ -187,7 +194,7 @@ class ListViewSmarty extends ListViewDisplay{
         $this->ss->assign('data', $this->data['data']);
 		$this->data['pageData']['offsets']['lastOffsetOnPage'] = $this->data['pageData']['offsets']['current'] + count($this->data['data']);
 		$this->ss->assign('pageData', $this->data['pageData']);
-	
+
         $navStrings = array('next' => $app_strings['LNK_LIST_NEXT'],
                             'previous' => $app_strings['LNK_LIST_PREVIOUS'],
                             'end' => $app_strings['LNK_LIST_END'],

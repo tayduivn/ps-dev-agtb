@@ -100,24 +100,10 @@ function template_cal_tabs(& $args) {
 					if(!empty($act->sugar_bean->$field['name']))
 						$fields[strtoupper($field['name'])] = $act->sugar_bean->$field['name'];
 			}
-			if($act->sugar_bean->ACLAccess('DetailView') && file_exists('modules/' . $act->sugar_bean->module_dir . '/metadata/additionalDetails.php')) {
-				require_once('modules/' . $act->sugar_bean->module_dir . '/metadata/additionalDetails.php');
-				$ad_function = 'additionalDetails' . $act->sugar_bean->object_name;
-				$results = $ad_function($fields);
-				$results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
-
-				if(trim($results['string']) == '') $results['string'] = $app_strings['LBL_NONE'];
-			}
-
-			$extra = "onmouseover=\"return overlib('" .
-					str_replace(array("\rn", "\r", "\n"), array('','','<br />'), $results['string'])
-					. "', CAPTION, '{$app_strings['LBL_ADDITIONAL_DETAILS']}"
-					. "', DELAY, 200, STICKY, MOUSEOFF, 1000, WIDTH, "
-					.(empty($results['width']) ? '300' : $results['width'])
-					. ", CLOSETEXT, '<img border=0  style=\'margin-left:2px; margin-right: 2px;\' src=".SugarThemeRegistry::current()->getImageURL('close.gif').">', "
-					. "CLOSETITLE, '{$app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE']}', CLOSECLICK, FGCLASS, 'olFgClass', "
-					. "CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\" "
-					. "onmouseout=\"return nd(1000);\" ";
+			
+			$extra = "id=\"adspan_{$act->sugar_bean->id}\" "
+					. "onmouseover=\"return SUGAR.util.getAdditionalDetails( '{$act->sugar_bean->module_dir}','{$act->sugar_bean->id}', 'adspan_{$act->sugar_bean->id}');\" "
+					. "onmouseout=\"return SUGAR.util.clearAdditionalDetailsCall()\" onmouseout=\"return nd(1000);\" ";
 
 
 			$count ++;
@@ -223,7 +209,7 @@ function template_cal_tabs(& $args) {
 				}
 			} else if($act->sugar_bean->object_name == 'Task') {
 				echo "<td>".
-					SugarThemeRegistry::current()->getImage('Tasks','alt="'.$act->sugar_bean->status.': '.$act->sugar_bean->name.'"');
+					SugarThemeRegistry::current()->getImage('Tasks','alt="'.$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"');
 				echo "</td>";
 
 				if(empty($act->sugar_bean->name)) {
@@ -234,7 +220,7 @@ function template_cal_tabs(& $args) {
 					echo "<td width=\"100%\">
 						<a href=\"index.php?module=Tasks&action=DetailView&record=".
 						$act->sugar_bean->id."\">".
-						$act->sugar_bean->status.': '.$act->sugar_bean->name."<br>(".
+						$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name."<br>(".
 						$timedate->getTimePart($act->sugar_bean->date_due).")</a></td></tr>";
 				}
 			}
@@ -266,7 +252,7 @@ function template_cal_tabs(& $args) {
 	/////////////////////////////////
 	function template_calendar(& $args) {
 		global $timedate;
-		if(isset($args['size']) && $args['size'] = 'small') {
+		if(isset($args['size']) && $args['size'] == 'small') {
 			$args['calendar']->show_activities = false;
 			$args['calendar']->show_week_on_month_view = false;
 		}
@@ -694,9 +680,6 @@ function template_calendar_month(& $args) {
 	}
 ?>
 <tr class="monthCalBodyTH">
-<?php if($args['calendar']->show_week_on_month_view ) { ?>
-<th width="1%" scope='row'><?php echo $mod_strings['LBL_WEEK']; ?></th>
-<?php } ?>
 <?php
 
 
@@ -724,9 +707,6 @@ function template_calendar_month(& $args) {
 	for($i = 0; $i < $rows; $i ++) {
 ?>
 <tr class="<?php echo $height_class; ?>">
-<?php if($args['calendar']->show_week_on_month_view ) { ?>
-<td scope='row'><a href="index.php?module=Calendar&action=index&view=week&<?php echo $args['calendar']->slice_hash[$args['calendar']->slices_arr[$count]]->start_time->get_date_str(); ?>"><?php echo $args['calendar']->slice_hash[$args['calendar']->slices_arr[$count + 1]]->start_time->week; ?></a></td>
-<?php } ?>
 <?php
 
 		for($j = 0; $j < 7; $j ++) {

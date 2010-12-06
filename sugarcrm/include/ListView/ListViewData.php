@@ -137,7 +137,7 @@ class ListViewData {
                 $blockVariables[] = 'Home2_'.strtoupper($bean).'_ORDER_BY';
             }
             $blockVariables[] = 'Home2_CASE_ORDER_BY';
-
+            // Added mostly for the unit test runners, which may not have these superglobals defined
             $params = array();
             if ( isset($_POST) && is_array($_POST) ) {
                 $params = array_merge($params,$_POST);
@@ -146,7 +146,7 @@ class ListViewData {
                 $params = array_merge($params,$_GET);
             }
             foreach($params as $name=>$value) {
-                if(!in_array($name, $blockVariables)){ 
+                if(!in_array($name, $blockVariables)){
 					if(is_array($value)) {
 						foreach($value as $v) {
                             $base_url .= $name.urlencode('[]').'='.urlencode($v) . '&';
@@ -394,10 +394,7 @@ class ListViewData {
 
 			$pageData = array();
 
-			$additionalDetailsAllow = $this->additionalDetails && $this->seed->ACLAccess('DetailView') && (file_exists('modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $this->seed->module_dir . '/metadata/additionalDetails.php'));
-            if($additionalDetailsAllow) $pageData['additionalDetails'] = array();
-			$additionalDetailsEdit = $this->seed->ACLAccess('EditView');
-            reset($rows);
+			reset($rows);
 			while($row = current($rows)){
                 $temp = clone $seed;
 			    $dataIndex = count($data);
@@ -418,7 +415,11 @@ class ListViewData {
 			    	ACLField::listFilter($data[$dataIndex],$temp->module_dir,$GLOBALS['current_user']->id, $temp->isOwner($GLOBALS['current_user']->id));
 				}
 				//END SUGARCRM flav=pro ONLY
-			    if($additionalDetailsAllow) {
+			    $pageData['rowAccess'][$dataIndex] = array('view' => $temp->ACLAccess('DetailView'), 'edit' => $temp->ACLAccess('EditView'));
+			    $additionalDetailsAllow = $this->additionalDetails && $temp->ACLAccess('DetailView') && (file_exists('modules/' . $temp->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $temp->module_dir . '/metadata/additionalDetails.php'));
+			    //if($additionalDetailsAllow) $pageData['additionalDetails'] = array();
+			    $additionalDetailsEdit = $temp->ACLAccess('EditView');
+				if($additionalDetailsAllow) {
                     if($this->additionalDetailsAjax) {
 					   $ar = $this->getAdditionalDetailsAjax($data[$dataIndex]['ID']);
                     }

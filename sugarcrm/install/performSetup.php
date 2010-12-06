@@ -533,15 +533,7 @@ $defaultTrackerRoles = array(
      )
 );
 addDefaultRoles($defaultTrackerRoles);
-$queryTrackerRole = "SELECT id FROM acl_roles where name='Tracker'";
-$result = $db->query($queryTrackerRole);
-$trackerRoleId = $db->fetchByAssoc($result);
-if(isset($trackerRoleId['id']) && !empty($trackerRoleId['id'])) {
-   
-   $role1= new ACLRole();
-   $role1->retrieve($trackerRoleId['id']);
-   $role1->set_relationship('acl_roles_users', array('role_id'=>$role1->id ,'user_id'=>1), false);
-}
+
 // Adding MLA Roles
 require_once('modules/ACLRoles/SeedRoles.php');
 create_default_roles();
@@ -599,7 +591,9 @@ enableSugarFeeds();
         ini_set('default_socket_timeout', 360);
         echo '<b>Installing Offline Client</b>';
         require_once("include/utils/disc_client_utils.php");
-        echo convert_disc_client();
+        $oc_result = convert_disc_client();
+	installLog($oc_result);
+	echo $oc_result;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -720,22 +714,32 @@ FP;
     //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Leads';
     //END SUGARCRM flav!=sales ONLY
-    $enabled_tabs[] = 'Activities';
+    $enabled_tabs[] = 'Calendar';
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     $enabled_tabs[] = 'Reports';
     //END SUGARCRM flav=pro || flav=sales ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
+    $enabled_tabs[] = 'Quotes';
+    //END SUGARCRM flav=pro ONLY
     $enabled_tabs[] = 'Documents';
     $enabled_tabs[] = 'Emails';
     //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Campaigns';
     //END SUGARCRM flav!=sales ONLY
+    $enabled_tabs[] = 'Calls';
+    $enabled_tabs[] = 'Meetings';
+    $enabled_tabs[] = 'Tasks';
+    $enabled_tabs[] = 'Notes';
     //BEGIN SUGARCRM flav=pro ONLY
-    $enabled_tabs[] = 'Quotes';
     $enabled_tabs[] = 'Forecasts';
     //END SUGARCRM flav=pro ONLY
 	//BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Cases';
 	//END SUGARCRM flav!=sales ONLY
+    //BEGIN SUGARCRM flav!=sales ONLY
+    $enabled_tabs[] = 'Prospects';
+    $enabled_tabs[] = 'ProspectLists';
+    //END SUGARCRM flav!=sales ONLY
     //END SUGARCRM flav!=dce ONLY
     
     //BEGIN SUGARCRM flav=dce ONLY

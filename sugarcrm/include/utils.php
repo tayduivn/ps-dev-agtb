@@ -26,7 +26,6 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 require_once('include/SugarObjects/SugarConfig.php');
-require_once('include/utils/external_cache.php');
 require_once('include/utils/security_utils.php');
 
 
@@ -179,6 +178,7 @@ function make_sugar_config(&$sugar_config)
 	'default_swap_last_viewed' => empty($swap_last_viewed) ? false : $swap_last_viewed,
 	'default_swap_shortcuts' => empty($swap_shortcuts) ? false : $swap_shortcuts,
 	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
+    'default_call_status' => 'Planned',
 	'js_lang_version' => 1,
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
@@ -195,7 +195,6 @@ function make_sugar_config(&$sugar_config)
 	    'systexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
-
 	 //BEGIN SUGARCRM flav=pro ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
 	    'minpwdlength' => '',
@@ -225,7 +224,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationtime' => '',
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
-		) : $passwordsetting
+		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
 	);
 }
@@ -765,7 +764,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
  * @param args string where clause entry
  * @return array Array of Users' details that match passed criteria
  */
-function getUserArrayFromFullName($args) {
+function getUserArrayFromFullName($args, $hide_portal_users = false) {
 	global $locale;
 	$db = DBManagerFactory::getInstance();
 
@@ -788,6 +787,9 @@ function getUserArrayFromFullName($args) {
 	}
 
 	$query  = "SELECT id, first_name, last_name, user_name FROM users WHERE status='Active' AND deleted=0 AND ";
+	if ( $hide_portal_users ) {
+	    $query .= " portal_only=0 AND ";
+	}
 	$query .= $inClause;
 	$query .= " ORDER BY last_name ASC";
 
@@ -1583,8 +1585,10 @@ function is_admin_for_module($user,$module) {
     if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
-    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module]['module']))||
-    	(isset($actions[$module]['module']) && ($actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
+    $focus = SugarModule::get($module)->loadBean();
+    $key = $focus->acltype;
+    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key]))||
+    	(isset($actions[$module][$key]) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
     }
@@ -2478,7 +2482,12 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
+		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
+		//BEGIN SUGARCRM flav=pro ONLY
+		// Bug 36162 - We need to confirm that the user is a member of the team of the item.
+		$focus->add_team_security_where_clause($query);
+		//END SUGARCRM flav=pro ONLY
+		$query .= "where ";
 		if ( $where != '')
 		{
 			$query .= $where." AND ";
@@ -2752,7 +2761,6 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-//BEGIN SUGARCRM flav=int || flav=sales ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2762,7 +2770,6 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
-//END SUGARCRM flav=int || flav=sales ONLY
 }
 
 /**
@@ -3826,6 +3833,7 @@ function getTrackerSubstring($name) {
 	static $max_tracker_item_length;
 
 	//Trim the name
+	$name = html_entity_decode($name, ENT_QUOTES, 'UTF-8');
 	$strlen = function_exists('mb_strlen') ? mb_strlen($name) : strlen($name);
 
 	global $sugar_config;

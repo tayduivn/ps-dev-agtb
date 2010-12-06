@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: DBManager.php 56825 2010-06-04 00:09:04Z smalyshev $
+* $Id: DBManager.php 56151 2010-04-28 21:02:22Z jmertic $
 * Description: This file handles the Data base functionality for the application.
 * It acts as the DB abstraction layer for the application. It depends on helper classes
 * which generate the necessary SQL. This sql is then passed to PEAR DB classes.
@@ -792,6 +792,9 @@ abstract class DBManager
         $sql .=	"/* INDEXES */\n";
         $correctedIndexs = array();
         foreach ($indices as $value) {
+            if (isset($value['source']) && $value['source'] != 'db')
+                continue;
+            
             $name = $value['name'];
 
 			//Don't attempt to fix the same index twice in one pass;
@@ -1641,7 +1644,12 @@ abstract class DBManager
     {
         $GLOBALS['log']->info("Get One: . |$sql|");
         $this->checkConnection();
-        $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        if(!($this instanceof MysqlManager) || stripos($sql, ' LIMIT ') === false) {
+            $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        } else {
+            // backward compatibility with queries having LIMIT
+            $queryresult = $this->query($sql, $dieOnError, $msg);
+        }
         if (!$queryresult)
             return false;
 

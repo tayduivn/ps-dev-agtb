@@ -75,7 +75,7 @@ SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
 EditView_tabs.on('contentReady', function(e){
 {/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
-{if $EDIT_SELF}
+{if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_DOWNLOADS}{literal}',

@@ -28,12 +28,13 @@ if(!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright(C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: commit.php 57723 2010-08-11 21:39:08Z kjing $
+ * $Id: commit.php 58188 2010-09-16 03:20:33Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
 require_once('include/SugarLogger/SugarLogger.php');	
+
 $trackerManager = TrackerManager::getInstance();	
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
@@ -46,7 +47,6 @@ $monitor3 = $trackerManager->getMonitor('tracker_sessions');
 if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);
 }
-//END SUGARCRM flav=pro ONLY
 
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
@@ -320,14 +320,6 @@ $uwMain = $upgrade_directories_not_found;
        if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
 			logThis('Performing UWrebuild()...');
 			UWrebuild();
-
-		    global $sugar_version;
-		    $origVersion = substr(preg_replace("/[^0-9]/", "", $_SESSION['current_db_version']),0,3);
-
-		    if($origVersion < '600') {
-				_logThis('Check to hide iFrames and Feeds modules', $path);
-				hide_iframes_and_feeds_modules();
-			}
 			logThis('UWrebuild() done.');
        }
 

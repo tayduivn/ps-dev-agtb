@@ -33,7 +33,7 @@ class SugarFeed extends Basic {
 	var $object_name = 'SugarFeed';
 	var $table_name = 'sugarfeed';
 	var $importable = false;
-	
+
 		var $id;
 		var $name;
 		var $date_entered;
@@ -55,48 +55,48 @@ class SugarFeed extends Basic {
 		var $assigned_user_name;
 		var $assigned_user_link;
 
-	function SugarFeed(){	
+	function SugarFeed(){
 		parent::Basic();
 	}
-	
+
     static function activateModuleFeed( $module, $updateDB = true ) {
-        if ( $module != 'UserFeed' ) { 
-            // UserFeed is a fake module, used for the user postings to the feed 
+        if ( $module != 'UserFeed' ) {
+            // UserFeed is a fake module, used for the user postings to the feed
             // Don't try to load up any classes for it
             $fileList = SugarFeed::getModuleFeedFiles($module);
-            
+
             foreach ( $fileList as $fileName ) {
                 $feedClass = substr(basename($fileName),0,-4);
-                
+
                 require_once($fileName);
                 $tmpClass = new $feedClass();
                 $tmpClass->installHook($fileName,$feedClass);
             }
         }
         if ( $updateDB == true ) {
-            
+
             $admin = new Administration();
             $admin->saveSetting('sugarfeed','module_'.$admin->db->quote($module),'1');
         }
     }
 
     static function disableModuleFeed( $module, $updateDB = true ) {
-        if ( $module != 'UserFeed' ) { 
-            // UserFeed is a fake module, used for the user postings to the feed 
+        if ( $module != 'UserFeed' ) {
+            // UserFeed is a fake module, used for the user postings to the feed
             // Don't try to load up any classes for it
             $fileList = SugarFeed::getModuleFeedFiles($module);
-            
+
             foreach ( $fileList as $fileName ) {
                 $feedClass = substr(basename($fileName),0,-4);
-                
+
                 require_once($fileName);
                 $tmpClass = new $feedClass();
-                $tmpClass->removeHook($fileName,$feedClass);            
+                $tmpClass->removeHook($fileName,$feedClass);
             }
         }
 
         if ( $updateDB == true ) {
-            
+
             $admin = new Administration();
             $admin->saveSetting('sugarfeed','module_'.$admin->db->quote($module),'0');
         }
@@ -118,7 +118,7 @@ class SugarFeed extends Basic {
 
     static function getModuleFeedFiles( $module ) {
         $baseDirList = array('modules/'.$module.'/SugarFeeds/', 'custom/modules/'.$module.'/SugarFeeds/');
-        
+
         // We store the files in a list sorted by the filename so you can override a default feed by
         // putting your replacement feed in the custom directory with the same filename
         $fileList = array();
@@ -155,7 +155,7 @@ class SugarFeed extends Basic {
         }
 
         // Gotta go looking for it
-        
+
         $admin = new Administration();
         $admin->retrieveSettings();
 
@@ -213,14 +213,14 @@ class SugarFeed extends Basic {
     /**
      * pushFeed2
      * This method is a wrapper to pushFeed
-     * 
+     *
      * @param $text String value of the feed's description
      * @param $bean The SugarBean that is triggering the feed
      * @param $link_type boolean value indicating whether or not feed is a link type
      * @param $link_url String value of the URL (for link types only)
      */
     static function pushFeed2($text, $bean, $link_type=false, $link_url=false) {
-            self::pushFeed($text, $bean->module_dir, $bean->id 
+            self::pushFeed($text, $bean->module_dir, $bean->id
 //BEGIN SUGARCRM flav=pro ONLY
                                 ,$bean->team_id
 //END SUGARCRM flav=pro ONLY
@@ -232,13 +232,13 @@ class SugarFeed extends Basic {
 //END SUGARCRM flav=pro ONLY
             );
     }
-    
+
 	static function pushFeed($text, $module, $id,
 		//BEGIN SUGARCRM flav=pro ONLY
 		$team_id,
 		//END SUGARCRM flav=pro ONLY
-		$record_assigned_user_id=false, 	
-		$link_type=false, 
+		$record_assigned_user_id=false,
+		$link_type=false,
 		$link_url=false
 		//BEGIN SUGARCRM flav=pro ONLY
 		,$team_set_id=''
@@ -311,16 +311,16 @@ class SugarFeed extends Basic {
                 }
             }
         }
-     
+
         sugar_cache_put('SugarFeedLinkType',$linkTypeList);
         if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed') ) { mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed'); }
         $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/linkTypeCache.php','w');
         fwrite($fd,'<'."?php\n\n".'$linkTypeList = '.var_export($linkTypeList,true).';');
         fclose($fd);
-   
+
         return $linkTypeList;
     }
-	
+
     static function getLinkClass( $linkName ) {
         $linkTypeList = SugarFeed::getLinkTypes();
 
@@ -337,7 +337,7 @@ class SugarFeed extends Basic {
         }
 
         $linkClassName = 'FeedLinkHandler'.$linkName;
-        
+
         $linkClass = new $linkClassName();
 
         return($linkClass);
@@ -372,7 +372,7 @@ class SugarFeed extends Basic {
 		$data['NAME'] .= '&nbsp;</span><div class="byLineRight"> '.  $this->getTimeLapse($data['DATE_ENTERED']) . ' &nbsp;' .$delete. '</div></div>';
 		return  $data ;
 	}
-	
+
 	function getTimeLapse($startDate)
 	{
 		$startDate = $GLOBALS['timedate']->to_db($startDate);
@@ -395,7 +395,7 @@ class SugarFeed extends Basic {
 			return $result;
 		}else if($weeks > 1){
 			$result .= $weeks . ' '.translate('LBL_TIME_WEEKS','SugarFeed').' ';
-			if($days > 0) { 
+			if($days > 0) {
                 $result .= $days . ' '.translate('LBL_TIME_DAYS','SugarFeed').' ';
             }
 		}else{
@@ -418,19 +418,19 @@ class SugarFeed extends Basic {
                     }
 				}
 				if($hours == 0 && $minutes == 0) {
-                    if($seconds == 1 ) { 
+                    if($seconds == 1 ) {
                         $result = $seconds . ' ' . translate('LBL_TIME_SECOND','SugarFeed');
-                    } else { 
-                        $result = $seconds . ' ' . translate('LBL_TIME_SECONDS','SugarFeed'); 
+                    } else {
+                        $result = $seconds . ' ' . translate('LBL_TIME_SECONDS','SugarFeed');
                     }
                 }
 			}
 		}
 		return $result . ' ' . translate('LBL_TIME_AGO','SugarFeed');
 
-		
-	
-    } 
+
+
+    }
 
 }
 ?>

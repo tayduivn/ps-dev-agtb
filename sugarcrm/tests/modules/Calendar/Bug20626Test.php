@@ -4,7 +4,7 @@ require_once 'modules/Calendar/Calendar.php';
 require_once 'modules/Meetings/Meeting.php';
 
 /**
- * @group bug20626
+ * @ticket 20626
  */
 class Bug20626Test extends Sugar_PHPUnit_Framework_TestCase
 {

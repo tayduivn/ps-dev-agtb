@@ -61,7 +61,6 @@ Calendar._SMN = new Array
 // tooltips
 if(Calendar._TT == undefined) Calendar._TT = {};
 
-
 Calendar._TT["ABOUT"] =
 "DHTML Datum/Zeit Selector\n" +
 "(c) dynarch.com 2002-2003\n" + // don't translate this this ;-)

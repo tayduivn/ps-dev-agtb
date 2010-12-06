@@ -274,6 +274,12 @@ function addToValidateMoreThan(formname, name, type, required, msg, min) {
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'more';
     validate[formname][validate[formname].length - 1][minIndex] = min;
 }
+
+function addToValidateUSAPhone(formname, name, type, required, msg) {
+	addToValidate(formname, name, type, required, msg);
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'usa_phone';
+}
+
 function removeFromValidate(formname, name) {
 	for(i = 0; i < validate[formname].length; i++){
 		if(validate[formname][i][nameIndex] == name){
@@ -459,6 +465,8 @@ function getDateObject(dtStr) {
     if(typeof(dtar[1])!='undefined' && isTime(dtar[1])) {//if it is a timedate, we should make date1 to have time value
         var t1 = dtar[1].replace(/am/i,' AM');
         var t1 = t1.replace(/pm/i,' PM');
+        //bug #37977: where time format 23.00 causes java script error
+        t1=t1.replace(/\./, ':');
         date1 = new Date(Date.parse(mh+'/'+dy+ '/'+yr+' '+t1));
     }
     else
@@ -610,7 +618,14 @@ function add_error_style(formname, input, txt, flash) {
 	if ( txt.substring(txt.length-1) == ':' )
 	    txt = txt.substring(0,txt.length-1)
 	
-	if(inputHandle.parentNode.innerHTML.search(txt) == -1) {
+	// Bug 28249 - To help avoid duplicate messages for an element, strip off extra messages and
+	// match on the field name itself
+	requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
+    invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
+    nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
+    matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
+	
+	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
         errorTextNode.innerHTML = '<br />' + txt;
@@ -895,6 +910,7 @@ function validate_form(formname, startsWith){
 										date1 = trim(form[validate[formname][i][nameIndex]].value);
 
 										if(trim(date1).length != 0 && !isBefore(date1,date2)){
+										
 											isError = true;
 											//jc:#12287 - adding translation for the is not before message
 											add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + "(" + date1 + ") " + SUGAR.language.get('app_strings', 'MSG_IS_NOT_BEFORE') + ' ' +date2);
@@ -968,6 +984,22 @@ function validate_form(formname, startsWith){
 							   //Fake an error so form does not submit
 							   isError = true;
 							}
+							break;
+							case 'usa_phone':
+								var nodes = YAHOO.util.Selector.query('input[name=' + validate[formname][i][nameIndex] + ']', form);
+								for(el in nodes)
+								{
+									if(typeof nodes[el].type != 'undefined' && nodes[el].type == 'text')
+									{
+									    phone = trim(nodes[el].value);
+										if(phone.length != 0 && !/^[+]?[1]?[- .]?[\(]?[2-9]\d{2}[\)]?[- .]?[\d]{3}[- .]?[\d]{4}$/.test(phone))
+									    {
+									       isError = true;
+									       add_error_style(formname, nodes[el], invalidTxt + " " +	validate[formname][i][msgIndex]);
+									    }
+									    break;
+									}
+								}
 							break;
 							}
 						}
@@ -1604,7 +1636,7 @@ function onUnloadEditView(theForm) {
 	
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' ) {
+    if ( typeof editViewSnapshots == 'undefined' || typeof theForm == 'undefined' || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
         // No snapshots, move along
         return;
     }
@@ -1650,7 +1682,7 @@ function onUnloadEditView(theForm) {
 
 function disableOnUnloadEditView(theForm) {
     // If you don't pass anything in, it disables all checking
-    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
+    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
         window.onbeforeunload = null;
         editViewSnapshots = null;
         
@@ -2388,7 +2420,7 @@ function formatNumber(n, num_grp_sep, dec_sep, round, precision) {
   }
 
   regex = /(\d+)(\d{3})/;
-  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].replace(regex, '$1' + num_grp_sep + '$2');
+  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].toString().replace(regex, '$1' + num_grp_sep + '$2');
   return n[0] + (n.length > 1 && n[1] != '' ? dec_sep + n[1] : '');
 }
 

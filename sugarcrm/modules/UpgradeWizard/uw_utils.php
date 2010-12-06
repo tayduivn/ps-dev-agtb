@@ -160,7 +160,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile, $path);
+			//logThis('Copying file to destination: ' . $targetFile, $path);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
@@ -168,7 +168,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile, $path);
+			//logThis('Skipping file: ' . $targetFile, $path);
 			$skippedFiles[] = $targetFile;
 		}
 	}
@@ -248,12 +248,12 @@ function copyRecursiveBetweenDirectories($from,$to){
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
 					} else {
-						logThis('Copied file: ' . $targetFile);
+						//logThis('Copied file: ' . $targetFile);
 						//$copiedFiles[] = $targetFile;
 					}
 
@@ -325,7 +325,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -333,7 +333,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						$copiedFiles[] = $targetFile;
 					}
 				} else {
-					logThis('Skipping file: ' . $targetFile);
+					//logThis('Skipping file: ' . $targetFile);
 					$skippedFiles[] = $targetFile;
 				}
 			  }
@@ -2567,7 +2567,7 @@ $uwMain = $upgrade_directories_not_found;
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile);
+			//logThis('Copying file to destination: ' . $targetFile);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -2575,7 +2575,7 @@ $uwMain = $upgrade_directories_not_found;
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile);
+			//logThis('Skipping file: ' . $targetFile);
 			//$skippedFiles[] = $targetFile;
 		}
 	   }
@@ -3164,7 +3164,7 @@ function unlinkTempFiles() {
 		rsort($files);
 		foreach($files as $file) {
 			if(!is_dir($file)) {
-				logThis('unlinking ['.$file.']', $path);
+				//logThis('unlinking ['.$file.']', $path);
 				@unlink($file);
 			}
 		}
@@ -3172,7 +3172,7 @@ function unlinkTempFiles() {
 		$files = findAllFiles($tempDir, array(), true);
 		foreach($files as $dir) {
 			if(is_dir($dir)) {
-				logThis('removing dir ['.$dir.']', $path);
+				//logThis('removing dir ['.$dir.']', $path);
 				@rmdir($dir);
 			}
 		}
@@ -3287,15 +3287,13 @@ function resetUwSession() {
 function UWrebuild() {
 	global $db;
 	global $path;
-
+	/*
+	//CCL - Comment this block out, it is called in end.php
 	logThis('Rebuilding everything...', $path);
-//	require_once('ModuleInstall/ModuleInstaller.php');
-//	$mi = new ModuleInstaller();
-//	$mi->rebuild_all(true);
 	require_once('modules/Administration/QuickRepairAndRebuild.php');
 	$randc = new RepairAndClear();
     $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
-
+    */
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
 	logThis('Registering rebuild record: '.$query, $path);
@@ -3635,7 +3633,7 @@ function deletePackageOnCancel(){
     // delete file in upgrades/patch
     $delete_me = urldecode( $_SESSION['install_file'] );
     if(@unlink($delete_me)) {
-    	logThis('unlinking: '.$delete_me);
+    	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
     } else {
     	logThis('ERROR: could not delete ['.$delete_me.']');
@@ -4192,22 +4190,6 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 		}
 	}
 }
-function createTable(){
-	if($sugar_config['dbconfig']['db_type'] == 'oci8'){
-		$query= "select table_name from user_tables where table_name=strtoupper(trim($qarr[2]))";
-		$result = $db->query($query);
-		$row = $db->fetchByAssociation($result);
-		if($row['table_name'] != null){
-			//already exists
-		}
-		else{
-			//create table
-			$query= $completeLine;
-			$db->query($query);
-		}
-	}
-}
-
 
 function repairDBForUpgrade($execute=false,$path=''){
 
@@ -4671,7 +4653,7 @@ function add_custom_modules_favorites_search(){
 		}
 
 		$matches = array();
-		preg_match('/^[a-z0-9]{1,5}_[a-z0-9]+$/i' , $module_dir, $matches);
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9_]+$/i' , $module_dir, $matches);
 
 		// Make sure the module was created by module builder
 		if(empty($matches)){
@@ -4929,12 +4911,8 @@ function upgradeModulesForTeam() {
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
 
     //Update team_set_id
-	if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_or_ent) {
-	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
-	}
-
-	//Update default_team
 	if($ce_to_pro_or_ent) {
+	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
 	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
 
@@ -5403,4 +5381,237 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
+	
+	/**
+	 * upgradeDateTimeFields
+	 * 
+	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
+	 * which prevents you from performing timezone offset calculations once the data has been saved.
+	 * 
+	 */
+	function upgradeDateTimeFields(){
+		//bug: 39757
+		$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+		$GLOBALS['db']->query($meetingsSql);
+		
+		$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+		$GLOBALS['db']->query($callsSql);
+	}
+	
+	
+/**
+ * merge_config_si_settings
+ * This method checks for the presence of a config_si.php file and, if found, merges the configuration
+ * settings from the config_si.php file into config.php.  If a config_si_location parameter value is not
+ * supplied it will attempt to discover the config_si.php file location from where the executing script
+ * was invoked.
+ * 
+ * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
+ * @param config_location String optional value to config.php file location
+ * @param config_si_location String optional value to config_si.php file location
+ * @return boolean value indicating whether or not a merge was attempted with config_si.php file
+ */
+function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='')
+{	
+	if(!empty($config_location) && !file_exists($config_location))
+	{
+		if($write_to_upgrade_log)
+		{
+	       _logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+		}
+	    return false;
+	} else if(empty($config_location)) {
+		global $argv;
+		//We are assuming this is from the silentUpgrade scripts so argv[3] will point to SugarCRM install location
+		if(isset($argv[3]) && is_dir($argv[3]))
+		{
+			$config_location = $argv[3] . DIRECTORY_SEPARATOR . 'config.php';
+		} 
+	}
+	
+	//If config_location is still empty or if the file cannot be found, skip merging
+	if(empty($config_location) || !file_exists($config_location))
+	{
+	   if($write_to_upgrade_log)
+	   {		
+	   	  _logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
+	   }
+	   return false;
+	} else {
+	   if($write_to_upgrade_log)
+	   {	
+	      _logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
+	   }
+	   
+	   include($config_location);
+	   if(empty($sugar_config))
+	   {
+	   	  if($write_to_upgrade_log)
+		  {
+	   	     _logThis('config.php contents are empty.  Skip merging.', $path);
+		  }
+	   	  return false;
+	   }   
+	}
+	
+	if(!empty($config_si_location) && !file_exists($config_si_location))
+	{
+		if($write_to_upgrade_log)
+		{
+	       _logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+		}
+	    return false;
+	} else if(empty($config_si_location)) {
+		if(isset($argv[0]) && is_file($argv[0]))
+		{
+			$php_file = $argv[0];
+			$p_info = pathinfo($php_file);
+			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : ''; 
+			$config_si_location = $php_dir . 'config_si.php';
+		} 
+	}
+	
+	//If config_si_location is still empty or if the file cannot be found, skip merging
+	if(empty($config_si_location) || !file_exists($config_si_location))
+	{
+	   if($write_to_upgrade_log)
+	   {
+	      _logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
+	   }
+	   return false;
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      _logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
+	   }
+	   
+	   include($config_si_location);
+	   if(empty($sugar_config_si))
+	   {
+	      if($write_to_upgrade_log)
+		  {
+	   	     _logThis('config_si.php contents are empty.  Skip merging.', $path);
+		  }
+	   	  return false;
+	   }
+	}
+	
+	//Now perform the merge operation
+	$modified = false;
+	foreach($sugar_config_si as $key=>$value)
+	{
+		if(!preg_match('/^setup_/', $key) && !isset($sugar_config[$key]))
+		{
+		   if($write_to_upgrade_log)
+		   {
+		      _logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
+		   }
+		   $sugar_config[$key] = $value;
+		   $modified = true;
+		}
+	}
+	
+	if($modified)
+	{
+		if($write_to_upgrade_log)
+		{
+	       _logThis('Update config.php file with new values', $path);
+		}
+		
+	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
+	       if($write_to_upgrade_log)
+		   {
+	    	  _logThis('*** ERROR: could not write to config.php', $path);
+		   }
+		   return false;
+		}
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      _logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	   }
+	   return false;
+	}
+	
+	if($write_to_upgrade_log)
+	{
+	   _logThis('End merge_config_si_settings', $path);
+	}
+	return true;
+}
+	
+
+/**
+ * upgrade_connectors
+ * This function handles support for upgrading connectors, in particular the Hoovers connector
+ * that needs the wsdl and endpoint modifications in the config.php file as well as the search 
+ * term change (from bal.specialtyCriteria.companyKeyword to bal.specialtyCriteria.companyName).
+ * @param $path String variable for the log path
+ */
+function upgrade_connectors($path='') 
+{
+		logThis('Begin upgrade_connectors', $path);
+		
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
+		if(file_exists($filePath))
+		{
+		   logThis("{$filePath} file", $path);	
+		   require($filePath);
+		   if(!is_null($config))
+		   {
+		   	  $modified = false;
+		   	  if(isset($config['properties']['hoovers_endpoint']))
+		   	  {
+		   	  	 $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
+		   	  	 $modified = true;
+		   	  }
+		   	  
+		   	  if(isset($config['properties']['hoovers_wsdl']))
+		   	  {
+		   	  	 $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
+		   	     $modified = true;
+		   	  }
+		   	  
+		   	  if($modified)
+		   	  {
+		   	      if(!write_array_to_file('config', $config, $filePath)) {
+		             logThis("Could not write new configuration to {$filePath} file", $path);	
+		          } else {
+		          	 logThis('Modified file successfully with new configuration entries', $path);
+		          }
+		   	  }
+		   }
+		}
+
+		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
+	    if(file_exists($filePath))
+		{
+		   logThis("Modifying {$filePath} file", $path);	
+		   require($filePath);		  
+		   $fileContents = file_get_contents($filePath);
+		   $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
+		   file_put_contents($filePath, $out);		   
+		}
+		
+		logThis('End upgrade_connectors', $path);
+}
+
+
+/**
+ * add_unified_search_to_custom_modules_vardefs
+ * 
+ * This method calls the repair code to remove the unified_search_modules.php fiel
+ * 
+ */
+function add_unified_search_to_custom_modules_vardefs()
+{
+	if(file_exists('cache/modules/unified_search_modules.php'))
+	{
+	   unlink('cache/modules/unified_search_modules.php');
+	}
+
+}
+
 ?>

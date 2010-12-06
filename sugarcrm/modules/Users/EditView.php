@@ -27,6 +27,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+
+
 $sugar_smarty = new Sugar_Smarty();
 require_once('include/export_utils.php');
 require_once('modules/Configurator/Configurator.php');
@@ -235,6 +237,9 @@ if( $focus->getPreference('use_real_names') == 'on' || ( empty($focus->id) && is
 if($focus->getPreference('no_opps') == 'on') {
     $sugar_smarty->assign('NO_OPPS', 'CHECKED');
 }
+
+
+
 
 //BEGIN SUGARCRM flav=pro ONLY
 // REASSIGNMENT SCRIPT CODE
@@ -642,7 +647,7 @@ else
     $sugar_smarty->assign('REQUIRED_PASSWORD','0');
 
 // If my account page or portal only user or regular user without system generated password or a duplicate user
-if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
+if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || $usertype == 'ADMIN' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
    $sugar_smarty->assign('CHANGE_PWD', '1');
 else
    $sugar_smarty->assign('CHANGE_PWD', '0');
@@ -671,14 +676,24 @@ else{
 
 $sugar_smarty->assign('IS_FOCUS_ADMIN', is_admin($focus));
 
-$disable_download_tab = !isset($sugar_config['disable_download_tab']) ? false : $sugar_config['disable_download_tab'];
-
-if($edit_self && !$disable_download_tab) {
+if($edit_self) {
 	$sugar_smarty->assign('EDIT_SELF','1');
 }
 if($admin_edit_self) {
 	$sugar_smarty->assign('ADMIN_EDIT_SELF','1');
 }
+
+
+if (isset($sugar_config['show_download_tab']))
+{
+	$enable_download_tab = $sugar_config['show_download_tab'];
+}else{
+	
+	$enable_download_tab = true;
+}	
+
+$sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
+	
 
 
 /////////////////////////////////////////////

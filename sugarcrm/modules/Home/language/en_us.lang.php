@@ -238,7 +238,6 @@ $mod_strings = array (
   'LBL_DASHLET_OPT_HEIGHT' => 'Dashlet Height (in pixels)',
   'LBL_DASHLET_SUGAR_NEWS' => 'Sugar News',
   'LBL_DASHLET_DISCOVER_SUGAR_PRO' => 'Discover Sugar',
-
 );
 
 
