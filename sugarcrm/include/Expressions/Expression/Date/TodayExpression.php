@@ -29,8 +29,10 @@ class TodayExpression extends DateExpression
 	/**
 	 * Returns the entire enumeration bare.
 	 */
-	function evaluate() {		
-		return date($this->internalDateFormat);
+	function evaluate() {
+        $d = new DateTime();
+        $d->setTime(0,0,0);
+		return $d;
 	}
 
 

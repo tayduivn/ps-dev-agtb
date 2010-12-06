@@ -215,29 +215,36 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 	}
 
 	// check if it's an instance of type or a generic that could map to any (unknown type)
-	var isInstance = variable instanceof c || variable instanceof see.TYPE_MAP.generic;
+	if  (variable instanceof c || variable instanceof see.TYPE_MAP.generic || type == see.GENERIC_TYPE)
+        return true;
 
 	// now check for generics
 	switch(type) {
 		case see.STRING_TYPE:
-			return ( isInstance || typeof(variable) == 'string' || typeof(variable) == 'number' || variable instanceof 				see.TYPE_MAP[see.NUMERIC_TYPE]);
+			return (typeof(variable) == 'string' || typeof(variable) == 'number'
+                || variable instanceof see.TYPE_MAP[see.NUMERIC_TYPE]);
 			break;
 		case see.NUMERIC_TYPE:
-			return ( isInstance || typeof(variable) == 'number' );
+			return (typeof(variable) == 'number' );
 			break;
 		case see.BOOLEAN_TYPE:
 			if ( variable instanceof see ) {
 				variable = variable.evaluate();
 			}
-			return ( isInstance || variable == see.TRUE || variable == see.FALSE );
+			return ( variable == see.TRUE || variable == see.FALSE );
 			break;
-		case see.GENERIC_TYPE:
-			return true;
-			break;
+        case see.DATE_TYPE:
+        case see.TIME_TYPE:
+            if ( variable instanceof see ) {
+				variable = variable.evaluate();
+			}
+            if (typeof(variable) == 'string' && SUGAR.util.DateUtils.guessFormat(variable))
+                return true;
+            break;
 	}
 
-	// just return whether it is an instance or not
-	return isInstance;
+	// If its not an instane and we can't map the value to a type, return false.
+	return false;
 };
 
 /** ABSTRACT METHODS **/
@@ -808,7 +815,9 @@ SUGAR.util.DateUtils = {
  	 * @param {String} oldFormat Optional: Current format of the date string.
  	 */
 	parse : function(date, oldFormat) {
-		if (oldFormat == "user")
+        if (date instanceof Date)
+            return date;
+        if (oldFormat == "user")
 		{
 			if (SUGAR.expressions.userPrefs && SUGAR.expressions.userPrefs.datef) {
 				oldFormat = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;

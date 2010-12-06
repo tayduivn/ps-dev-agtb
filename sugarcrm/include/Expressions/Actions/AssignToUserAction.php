@@ -27,7 +27,7 @@
  ********************************************************************************/
 require_once("include/Expressions/Actions/AbstractAction.php");
 
-class AssignToAction extends AbstractAction{
+class AssignToUserAction extends AbstractAction{
 	protected $expression =  "";
 
 	function AssignToAction($params) {
@@ -41,7 +41,7 @@ class AssignToAction extends AbstractAction{
 	 */
 	static function getJavascriptClass() {
 		return  "
-		SUGAR.forms.AssignToAction = function(valExpr) {
+		SUGAR.forms.AssignToUserAction = function(valExpr) {
 			this.expr = valExpr;
 			this.target = 'assigned_user_name';
 			this.dataSource = new YAHOO.util.DataSource('index.php?', {
@@ -55,7 +55,7 @@ class AssignToAction extends AbstractAction{
         		connMethodPost: true
             });
 		};
-		SUGAR.util.extend(SUGAR.forms.AssignToAction, SUGAR.forms.AbstractAction, {
+		SUGAR.util.extend(SUGAR.forms.AssignToUserAction, SUGAR.forms.AbstractAction, {
 			exec : function()
 			{
 				var userName = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
@@ -91,7 +91,7 @@ class AssignToAction extends AbstractAction{
 	 * @return string javascript.
 	 */
 	function getJavascriptFire() {
-		return  "new SUGAR.forms.AssignToAction('{$this->expression}')";
+		return  "new SUGAR.forms.AssignToUserAction('{$this->expression}')";
 	}
 
 
