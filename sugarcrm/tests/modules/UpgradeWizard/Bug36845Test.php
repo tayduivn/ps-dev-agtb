@@ -6,7 +6,7 @@ var $has_custom_unified_search_modules_display = false;
 var $has_custom_unified_search_modules = false;	
 var $module_dir = 'modules/clabc_Bug36845Test';
 var $module = 'clabc_Bug36845Test';
-
+/*
 public function setUp() 
 {
 	if(file_exists('cache/modules/unified_search_modules.php'))
@@ -126,7 +126,7 @@ public function tearDown()
 	   rmdir_recursive($this->module_dir);
 	}
 }
-
+*/
 public function test_update_custom_vardefs()
 {
 	$this->markTestSkipped('Marked as skipped');
