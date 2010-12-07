@@ -353,7 +353,10 @@ class DashletGeneric extends Dashlet {
 
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default
-        if(empty($lvdOrderBy['orderBy'])) {
+        if(!empty($lvsParams['orderBy']) && !empty($lvsParams['sortOrder'])){
+            $lvsParams['overrideOrder'] = true;
+        }
+        else if(empty($lvdOrderBy['orderBy'])) {
             foreach($displayColumns as $colName => $colParams) {
                 if(!empty($colParams['defaultOrderColumn'])) {
                     $lvsParams['overrideOrder'] = true;

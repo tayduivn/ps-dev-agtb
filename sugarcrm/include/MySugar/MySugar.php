@@ -141,6 +141,21 @@ class MySugar{
 		    $id = $_REQUEST['id'];
 		    $dashlets = $current_user->getPreference('dashlets', $this->type);
 		    
+		    $sortOrder = '';
+		    $orderBy = '';
+		    foreach($_REQUEST as $k => $v){
+		        if($k == 'lvso'){
+		            $sortOrder = $v;
+		        }
+		        else if(preg_match('/Home2_.*?_ORDER_BY/', $k)){
+		            $orderBy = $v;
+		        }
+		    }
+		    if(!empty($sortOrder) && !empty($orderBy)){
+		        $dashlets[$id]['sort_options'] = array('sortOrder' => $sortOrder, 'orderBy' => $orderBy);
+		        $current_user->setPreference('dashlets', $dashlets, 0, $this->type);
+		    }
+		    
 		    require_once($dashlets[$id]['fileLocation']);
 		    $dashlet = new $dashlets[$id]['className']($id, (isset($dashlets[$id]['options']) ? $dashlets[$id]['options'] : array()));
 		    if(!empty($_REQUEST['configure']) && $_REQUEST['configure']) { // save settings
@@ -152,7 +167,11 @@ class MySugar{
 		        echo $dashlet->getTitle('') . $mod_strings['LBL_RELOAD_PAGE'];
 		    }
 		    else {
-		        $dashlet->process();
+		        $lvsParams = array();
+		        if(!empty($dashlets[$id]['sort_options'])){
+		            $lvsParams = $dashlets[$id]['sort_options'];
+                }
+		        $dashlet->process($lvsParams);
 		        $contents =  $dashlet->display();
                 // Many dashlets expect to be able to initialize in the display() function, so we have to create the header second
                 echo $dashlet->getHeader();
