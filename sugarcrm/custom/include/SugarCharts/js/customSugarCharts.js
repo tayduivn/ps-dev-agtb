@@ -461,8 +461,6 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  },
 				  //offsets
 				  offset: 0,
-				  sliceOffset: 0,
-				  labelOffset: 30,
 				  gaugeStyle: {
 					backgroundColor: '#aaaaaa',
 					borderColor: '#999999',

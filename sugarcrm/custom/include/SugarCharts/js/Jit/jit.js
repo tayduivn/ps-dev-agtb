@@ -3246,8 +3246,6 @@ var Canvas;
       //TODO(nico): print labels too!
     }
   });
-})();
-
   Canvas.Background.Fade = new Class({
     initialize: function(viz, options) {
       this.viz = viz;
@@ -3272,9 +3270,11 @@ var Canvas;
 		  lingrad.addColorStop(1, conf.colorStop2);
 		  ctx.fillStyle = lingrad;
 		  ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+      //TODO(nico): print labels too!
     }
   });
 })();
+
 
 /*
  * File: Polar.js
@@ -10670,10 +10670,11 @@ $jit.ST.Plot.NodeTypes.implement({
               linear = ctx.createLinearGradient(x, y - acum - dimArray[i]/2, 
                   x + width, y - acum- dimArray[i]/2);
             }
-            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; }));
-            linear.addColorStop(0, color);
-            linear.addColorStop(1, colorArray[i % colorLength]);
+            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; });
+            var color2 = $.hexToRgb(colorArray[i % colorLength]);
+            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(1, 'rgba('+color2+',.8)');
             ctx.fillStyle = linear;
           }
           if(horz) {
@@ -10711,7 +10712,7 @@ $jit.ST.Plot.NodeTypes.implement({
 			}
           if(aggregates(node.name, valAcum)) {
             if(horz) {
-              ctx.textAlign = 'right';
+              ctx.textAlign = 'left';
               ctx.fillText(acumValueLabel, x + acum + config.labelOffset + label.size, y + height/2);
             } else {
               ctx.textAlign = 'center';
@@ -10829,10 +10830,11 @@ $jit.ST.Plot.NodeTypes.implement({
               linear = ctx.createLinearGradient(x + fixedDim * i, y, 
                   x + fixedDim * i, y - dimArray[i]/2);
             }
-            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v){ v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; }));
-            linear.addColorStop(0, color);
-            linear.addColorStop(1, colorArray[i % colorLength]);
+            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; });
+            var color2 = $.hexToRgb(colorArray[i % colorLength]);
+            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(1, 'rgba('+color2+',.8)');
             ctx.fillStyle = linear;
           }
           if(horz) {
@@ -11005,10 +11007,11 @@ $jit.ST.Plot.NodeTypes.implement({
               linear = ctx.createLinearGradient(x + fixedDim * i, y, 
                   x + fixedDim * i, y - dimArray[i]/2);
             }
-            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; }));
-            linear.addColorStop(0, color);
-            linear.addColorStop(1, colorArray[i % colorLength]);
+            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; });
+            var color2 = $.hexToRgb(colorArray[i % colorLength]);
+            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(1, 'rgba('+color2+',.8)');
             ctx.fillStyle = linear;
           }
           if(horz) {
@@ -11757,6 +11760,7 @@ $jit.BarChart = new Class({
         dim2 = horz? 'width':'height',
         grouped = config.type.split(':')[0] == 'grouped';
         
+        
 		var maxTickValue = Math.ceil(maxValue*.1)*10;
 		if(maxTickValue == maxValue) {
 			var length = maxTickValue.toString().length;
@@ -11864,18 +11868,12 @@ $jit.ST.Plot.NodeTypes.implement({
       	ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
 		  var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
           var bottomWidth = minWidth + ((acum) * ratio);  
-         
-        
-       
-			  if(label.type == 'Native') {
-			       if(showLabels(node.name, valAcum, node)) {
-			       	  mV = ctx.measureText(stringArray[i]);
-		              mVL = ctx.measureText(valuelabelArray[i]);
-		              ctx.fillRect((-bottomWidth/2) - mVL.width - config.labelOffset , y - acum, bottomWidth + mVL.width + mV.width + (config.labelOffset*2), 1);
-
-			       }
-		       }
-
+			  
+       if(showLabels(node.name, valAcum, node)) {
+       	  mV = ctx.measureText(stringArray[i]);
+             mVL = ctx.measureText(valuelabelArray[i]);
+             ctx.fillRect((-bottomWidth/2) - mVL.width - config.labelOffset , y - acum, bottomWidth + mVL.width + mV.width + (config.labelOffset*2), 1);
+       }
 
 		acum += (dimArray[i] || 0);
           valAcum += (valueArray[i] || 0);
@@ -11891,7 +11889,6 @@ $jit.ST.Plot.NodeTypes.implement({
 
           var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
           var bottomWidth = minWidth + ((acum) * ratio);
-          
           
 
           if(gradient) {
@@ -12052,10 +12049,10 @@ $jit.FunnelChart = new Class({
     var st = new $jit.ST({
       injectInto: config.injectInto,
       orientation: horz? 'left' : 'bottom',
+      levelDistance: 0,
       background: config.background,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
-      levelDistance: 0,
       siblingOffset: config.segmentOffset,
       subtreeOffset: 0,
       withLabels: config.Label.type != 'Native',      
@@ -12110,93 +12107,90 @@ $jit.FunnelChart = new Class({
       onCreateLabel: function(domElement, node) {
         var labelConf = config.Label,
             valueArray = node.getData('valueArray'),
-            acum = $.reduce(valueArray, function(x, y) { return x + y; }, 0);
+            idArray = node.getData('idArray'),
+            valuelabelArray = node.getData('valuelabelArray'),
+            stringArray = node.getData('stringArray');
+            size = st.canvas.getSize()
+            prefix = $.time();
+ 		
+ 		for(var i=0, l=valueArray.length; i<l; i++) {
         var nlbs = {
           wrapper: document.createElement('div'),
-          aggregate: document.createElement('div'),
+          valueLabel: document.createElement('div'),
           label: document.createElement('div')
         };
         var wrapper = nlbs.wrapper,
             label = nlbs.label,
-            aggregate = nlbs.aggregate,
+            valueLabel = nlbs.valueLabel,
             wrapperStyle = wrapper.style,
             labelStyle = label.style,
-            aggregateStyle = aggregate.style;
+            valueLabelStyle = valueLabel.style;
         //store node labels
-        nodeLabels[node.id] = nlbs;
+        nodeLabels[idArray[i]] = nlbs;
         //append labels
         wrapper.appendChild(label);
-        wrapper.appendChild(aggregate);
-        if(!config.showLabels(node.name, acum, node)) {
-          labelStyle.display = 'none';
-        }
-        if(!config.showAggregates(node.name, acum, node)) {
-          aggregateStyle.display = 'none';
-        }
+        wrapper.appendChild(valueLabel);
+
         wrapperStyle.position = 'relative';
         wrapperStyle.overflow = 'visible';
         wrapperStyle.fontSize = labelConf.size + 'px';
         wrapperStyle.fontFamily = labelConf.family;
         wrapperStyle.color = labelConf.color;
         wrapperStyle.textAlign = 'center';
-        aggregateStyle.position = labelStyle.position = 'absolute';
+        wrapperStyle.width = size.width + 'px';
+        valueLabelStyle.position = labelStyle.position = 'absolute';
+        valueLabelStyle.left = labelStyle.left =  '0px';
+		valueLabelStyle.width = (size.width/3) + 'px';
+		valueLabelStyle.textAlign = 'right';
+        label.innerHTML = stringArray[i];
+        valueLabel.innerHTML = valuelabelArray[i];
+        domElement.id = prefix+'funnel';
+        domElement.style.width = size.width + 'px';
         
-        domElement.style.width = node.getData('width') + 'px';
-        domElement.style.height = node.getData('height') + 'px';
-        aggregateStyle.left = labelStyle.left =  '0px';
+ 		domElement.appendChild(wrapper);
+ 		}
 
-        label.innerHTML = node.name;
-        
-        domElement.appendChild(wrapper);
       },
       onPlaceLabel: function(domElement, node) {
-        if(!nodeLabels[node.id]) return;
-        var labels = nodeLabels[node.id],
+
+            var dimArray = node.getData('dimArray'),
+            idArray = node.getData('idArray'),
+            valueArray = node.getData('valueArray'),
+            valuelabelArray = node.getData('valuelabelArray'),
+            stringArray = node.getData('stringArray');
+            size = st.canvas.getSize(),
+            pos = node.pos.getc(true),
+             domElement.style.left = "0px",
+             domElement.style.top = "0px",
+             minWidth = node.getData('width') * .25,
+             ratio = .65,
+             pos = node.pos.getc(true),
+             labelConf = config.Label;
+             
+             
+		for(var i=0, l=valueArray.length, acum = 0; i<l; i++) {
+
+        var labels = nodeLabels[idArray[i]],
             wrapperStyle = labels.wrapper.style,
             labelStyle = labels.label.style,
-            aggregateStyle = labels.aggregate.style,
-            grouped = config.type.split(':')[0] == 'grouped',
-            horz = config.orientation == 'horizontal',
-            dimArray = node.getData('dimArray'),
-            valArray = node.getData('valueArray'),
-            width = (grouped && horz)? Math.max.apply(null, dimArray) : node.getData('width'),
-            height = (grouped && !horz)? Math.max.apply(null, dimArray) : node.getData('height'),
+            valueLabelStyle = labels.valueLabel.style;
+		var bottomWidth = minWidth + (acum * ratio); 
+		
             font = parseInt(wrapperStyle.fontSize, 10),
             domStyle = domElement.style;
-            
-        
-        if(dimArray && valArray) {
-          wrapperStyle.width = aggregateStyle.width = labelStyle.width = domElement.style.width = width + 'px';
-          for(var i=0, l=valArray.length, acum=0; i<l; i++) {
-            if(dimArray[i] > 0) {
-              acum+= valArray[i];
-            }
-          }
-          if(config.showLabels(node.name, acum, node)) {
-            labelStyle.display = '';
-          } else {
-            labelStyle.display = 'none';
-          }
-          if(config.showAggregates(node.name, acum, node)) {
-            aggregateStyle.display = '';
-          } else {
-            aggregateStyle.display = 'none';
-          }
-          if(config.orientation == 'horizontal') {
-            aggregateStyle.textAlign = 'right';
-            labelStyle.textAlign = 'left';
-            labelStyle.textIndex = aggregateStyle.textIndent = config.labelOffset + 'px';
-            aggregateStyle.top = labelStyle.top = (height-font)/2 + 'px';
-            domElement.style.height = wrapperStyle.height = height + 'px';
-          } else {
-            aggregateStyle.top = (-font - config.labelOffset) + 'px';
-            labelStyle.top = (config.labelOffset + height) + 'px';
-            domElement.style.top = parseInt(domElement.style.top, 10) - height + 'px';
-            domElement.style.height = wrapperStyle.height = height + 'px';
-          }
-          labels.aggregate.innerHTML = acum;
-        }
+           
+       		
+       
+			wrapperStyle.top = (pos.y + size.height/2) - acum - labelConf.size + "px";
+            valueLabelStyle.left = (size.width/2) - (bottomWidth/2) - config.labelOffset - (size.width/3) + 'px';
+            labelStyle.left =  (size.width/2) + (bottomWidth/2) + config.labelOffset + 'px';;
+
+			acum += (dimArray[i] || 0);
+
+		}
+
       }
+
     });
 
     var size = st.canvas.getSize(),
@@ -12263,6 +12257,7 @@ $jit.FunnelChart = new Class({
 		colorLength = color.length,
 		nameLength = name.length;
 
+    var idArray = new Array();
     var valArray = new Array();
     var valuelabelArray = new Array();
     var linkArray = new Array();
@@ -12270,6 +12265,7 @@ $jit.FunnelChart = new Class({
     
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
       var val = values[i];
+      idArray[i] = $.splat(prefix + val.label);
       valArray[i] = $.splat(val.values);
       valuelabelArray[i] = $.splat(val.valuelabels);
       linkArray[i] = $.splat(val.links);
@@ -12288,6 +12284,7 @@ $jit.FunnelChart = new Class({
         
         'data': {
           'value': valArray,
+          '$idArray': idArray,
           '$linkArray': linkArray,
           '$titleArray': titleArray,
           '$valueArray': valArray,
@@ -13846,10 +13843,10 @@ $jit.PieChart = new Class({
     var sb = new $jit.Sunburst({
       injectInto: config.injectInto,
       useCanvas: config.useCanvas,
+      withLabels: config.Label.type != 'Native',
       background: config.background,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
-      withLabels: config.Label.type != 'Native',
       Label: {
         type: config.Label.type
       },
@@ -13903,7 +13900,12 @@ $jit.PieChart = new Class({
           style.fontFamily = labelConf.family;
           style.color = labelConf.color;
           style.textAlign = 'center';
-          domElement.innerHTML = node.name;
+          if(config.labelType == 'name') {
+          	domElement.innerHTML = node.name;
+          } else {
+          	domElement.innerHTML = (node.data.valuelabel != undefined) ? node.data.valuelabel : "";
+          }
+          domElement.style.width = '400px';
         }
       },
       onPlaceLabel: function(domElement, node) {
@@ -13915,7 +13917,7 @@ $jit.PieChart = new Class({
             begin = theta - span,
             end = theta + span,
             polar = new Polar;
-      
+
         var showLabels = config.showLabels,
             resizeLabels = config.resizeLabels,
             label = config.Label;
@@ -13936,7 +13938,7 @@ $jit.PieChart = new Class({
             x: Math.round(pos.x + radius.width / 2),
             y: Math.round(pos.y + radius.height / 2)
           };
-          domElement.style.left = labelPos.x + 'px';
+          domElement.style.left = (labelPos.x - 200) + 'px';
           domElement.style.top = labelPos.y + 'px';
         }
       }
@@ -14264,8 +14266,8 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           resizeLabels = config.resizeLabels,
           label = config.Label;
 
-      var xpos = config.sliceOffset * Math.cos((begin + end) /2);
-      var ypos = config.sliceOffset * Math.sin((begin + end) /2);
+      var xpos = Math.cos((begin + end) /2);
+      var ypos = Math.sin((begin + end) /2);
 
       if (colorArray && dimArray && stringArray && gaugeTarget != 0) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
@@ -14273,8 +14275,8 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           if(dimi <= 0) continue;
           ctx.fillStyle = ctx.strokeStyle = colori;
           if(gradient && dimi) {
-            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
-                xpos, ypos, acum + dimi + config.sliceOffset);
+            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum,
+                xpos, ypos, acum + dimi);
             var colorRgb = $.hexToRgb(colori), 
                 ans = $.map(colorRgb, function(i) { return (i * 0.8) >> 0; }),
                 endColor = $.rgbToHex(ans);
@@ -14285,7 +14287,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
             ctx.fillStyle = radialGradient;
           }
           
-          polar.rho = acum + config.sliceOffset;
+          polar.rho = acum;
           polar.theta = begin;
           var p1coord = polar.getc(true);
           polar.theta = end;
@@ -14304,10 +14306,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 		  
 
           acum += (dimi || 0);
-          valAcum += (valueArray[i] || 0);
-		  
-
-		  
+          valAcum += (valueArray[i] || 0);		  
         }
 		
 		if(showLabels && label.type == 'Native') {
@@ -14319,15 +14318,15 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 			  ctx.textBaseline = 'bottom';
 			  ctx.textAlign = 'center';
 
-			  polar.rho = (acum + config.sliceOffset) * .65;
+			  polar.rho = acum * .65;
 			  polar.theta = begin;
 			  var cart = polar.getc(true);
 			  
 			  //changes y pos of first label
 			  if(nodeIteration == 1) {
-				textY = cart.y - (label.size/2) + (acum + config.sliceOffset)/2;
+				textY = cart.y - (label.size/2) + acum /2;
 			  } else {
-				textY = cart.y + (acum + config.sliceOffset)/2;
+				textY = cart.y + acum/2;
 			  }
 			  
 			  if(config.labelType == 'name') {
@@ -14341,16 +14340,14 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 				polar.theta = end;
 				var cart = polar.getc(true);
 				if(config.labelType == 'name') {
-					ctx.fillText(node.name, cart.x, cart.x, cart.y - (label.size/2) + (acum + config.sliceOffset)/2);
+					ctx.fillText(node.name, cart.x, cart.x, cart.y - (label.size/2) + acum/2);
 				} else {
-					ctx.fillText(valuelabelsArray[1], cart.x, cart.y - (label.size/2) + (acum + config.sliceOffset)/2);
+					ctx.fillText(valuelabelsArray[1], cart.x, cart.y - (label.size/2) + acum/2);
 				}
 				
 			  }
 			  ctx.restore();
-		  }
-		  
-
+		}
 
       }
       },
@@ -14364,7 +14361,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 		var yOffset = pos.y - (ld/2);
 		var xOffset = pos.x;
         var rho = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-        if(rho <=parseInt(ld * d + config.sliceOffset)) {
+        if(rho <=parseInt(ld * d)) {
           var dimArray = node.getData('dimArray');
           for(var i=0,l=dimArray.length,acum=config.sliceOffset; i<l; i++) {
 			var dimi = dimArray[i];
@@ -14423,10 +14420,10 @@ $jit.GaugeChart = new Class({
     var sb = new $jit.Sunburst({
       injectInto: config.injectInto,
       useCanvas: config.useCanvas,
+      withLabels: config.Label.type != 'Native',
       background: config.background,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
-      withLabels: config.Label.type != 'Native',
       Label: {
         type: config.Label.type
       },
@@ -14462,7 +14459,108 @@ $jit.GaugeChart = new Class({
           var elem = eventInfo.getContains();
           config.Events.onClick(elem, eventInfo, evt);
         }
-}
+	},
+      onCreateLabel: function(domElement, node) {
+        var labelConf = config.Label;
+        if(config.showLabels) {
+          var style = domElement.style;
+          style.fontSize = labelConf.size + 'px';
+          style.fontFamily = labelConf.family;
+          style.color = labelConf.color;
+          style.textAlign = 'center';
+          valuelabelsArray = node.getData('valuelabelsArray'),
+          nodeIteration = node.getData('nodeIteration'),
+          nodeLength = node.getData('nodeLength'),
+          canvas = sb.canvas,
+          prefix = $.time();
+          
+          if(config.labelType == 'name') {
+          	domElement.innerHTML = node.name;
+          } else {
+          	domElement.innerHTML = (valuelabelsArray[0] != undefined) ? valuelabelsArray[0] : "";
+          }
+          
+          domElement.style.width = '400px';
+          
+          //adds final label
+		  if(nodeIteration == nodeLength && nodeLength != 0) {
+		  idLabel = canvas.id + "-label";
+		  container = document.getElementById(idLabel);
+		  finalLabel = document.createElement('div');
+		  finalLabelStyle = finalLabel.style;
+		  finalLabel.id = prefix + "finalLabel";
+		  finalLabelStyle.position = "absolute";
+		  finalLabelStyle.width = "400px";
+		  finalLabelStyle.left = "0px";
+		  container.appendChild(finalLabel);
+			if(config.labelType == 'name') {
+				finalLabel.innerHTML = node.name;
+			} else {
+				finalLabel.innerHTML = (valuelabelsArray[1] != undefined) ? valuelabelsArray[1] : "";
+			}
+			
+		  }
+        }
+      },
+      onPlaceLabel: function(domElement, node) {
+        if(!config.showLabels) return;
+        var pos = node.pos.getp(true),
+            dimArray = node.getData('dimArray'),
+            nodeIteration = node.getData('nodeIteration'),
+            nodeLength = node.getData('nodeLength'),
+            span = node.getData('span') / 2,
+            theta = node.pos.theta,
+            begin = ((theta - span)/2)+Math.PI,
+            end = ((theta + span)/2)+Math.PI,
+            polar = new Polar;
+
+        var showLabels = config.showLabels,
+            resizeLabels = config.resizeLabels,
+            label = config.Label,
+            radiusOffset = sb.config.levelDistance;
+
+        if (dimArray) {
+          for (var i=0, l=dimArray.length, acum=0; i<l; i++) {
+            acum += dimArray[i];
+          }
+          var scale = resizeLabels? node.getData('normalizedDim') : 1,
+              fontSize = (label.size * scale) >> 0;
+          fontSize = fontSize < +resizeLabels? +resizeLabels : fontSize;
+          domElement.style.fontSize = fontSize + 'px';
+          polar.rho = acum * .65;
+          polar.theta = begin;
+          var pos = polar.getc(true);
+          var radius = that.canvas.getSize();
+          var labelPos = {
+            x: Math.round(pos.x + radius.width / 2),
+            y: Math.round(pos.y + (radius.height / 2) + radiusOffset/2)
+          };
+          
+
+          
+          domElement.style.left = (labelPos.x - 200) + 'px';
+          domElement.style.top = labelPos.y + 'px';
+          
+          //reposition first label
+          if(nodeIteration == 1) {
+          	 domElement.style.top = labelPos.y - label.size + 'px';
+          }
+          
+          
+          //position final label
+	        if(nodeIteration == nodeLength && nodeLength != 0) {
+			polar.theta = end;
+			var final = polar.getc(true);
+			var finalPos = {
+					x: Math.round(final.x + radius.width / 2),
+           			y: Math.round(final.y + (radius.height / 2) + radiusOffset/2)
+				};
+			finalLabel.style.left = (finalPos.x - 200) + "px";
+			finalLabel.style.top = finalPos.y - label.size + "px";
+		    }
+          
+        }
+      }
    
     });
     this.sb = sb;
@@ -14485,7 +14583,6 @@ $jit.GaugeChart = new Class({
 	startAngle = (Math.PI/180)*1,
 	endAngle = (Math.PI/180)*179;
 	
-
 
 	//background border
 	ctx.fillStyle = style.borderColor;	
@@ -14598,7 +14695,7 @@ $jit.GaugeChart = new Class({
 			total += (parseInt(val.values) || 0);
 			}
 		}
-		
+	
 		for(var i=0, acum = 0, l=values.length; i<l-1; i++) {
 			var val = values[i];
 			if(val.label != 'GaugePosition') {
@@ -14607,7 +14704,7 @@ $jit.GaugeChart = new Class({
 			   var segments = 180/total;
 			angle = acum * segments;
 
-			  //alert(angle);
+			  //alert(acum);
 				 ctx.save();
 				 ctx.translate(0, gaugeCenter);
 				 ctx.beginPath();
@@ -14632,19 +14729,32 @@ $jit.GaugeChart = new Class({
 		gaugeCenter = (radius/2);
 		ctx.textBaseline = 'middle';
 		ctx.textAlign = 'center';
-		ctx.font = label.style + ' ' + style.positionFontSize + 'px ' + label.family;
+		ctx.font = style.positionFontSize + 'px ' + label.family;
 		ctx.fillStyle = "#ffffff";
 		ctx.lineWidth = 2;
 		var m = ctx.measureText(position),
 		width = m.width + 40;
 		height = style.positionFontSize + 10,
-		cornerRadius = 8;
-		
+		cornerRadius = 8,
+		idLabel = canvas.id + "-label";
+		container = document.getElementById(idLabel);
 		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"fill");
 		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"stroke");
-
-		ctx.fillStyle = label.color;
-		ctx.fillText(position, 0, (height/2) + style.positionOffset);
+		if(label.type == 'Native') {
+			ctx.fillStyle = label.color;
+			ctx.fillText(position, 0, (height/2) + style.positionOffset);
+		} else {
+			var labelDiv =  document.createElement('div');
+			labelDivStyle = labelDiv.style;
+			labelDivStyle.color =  label.color;
+			labelDivStyle.fontSize =  style.positionFontSize + "px";
+			labelDivStyle.position = "absolute";
+			labelDivStyle.width = width + "px";
+			labelDivStyle.left = (size.width/2) - (width/2) + "px";
+			labelDivStyle.top = (size.height/2) + style.positionOffset + "px";
+			labelDiv.innerHTML = position;
+			container.appendChild(labelDiv);
+		}
 	
     },
     
@@ -14661,7 +14771,7 @@ $jit.GaugeChart = new Class({
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	ctx.moveTo(0,0);
-	ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset);
+	ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset); 
   },
   
   loadJSON: function(json) {
@@ -14736,11 +14846,13 @@ $jit.GaugeChart = new Class({
       });
     }
 	
+
 	this.renderPositionLabel(gaugePositionLabel);
 	if (props['gaugeTarget'] != 0) {
 		this.renderTicks(json.values);
 		this.renderNeedle(gaugePosition,props['gaugeTarget']);
 	}
+	
 	this.renderSubtitle();
 
   },

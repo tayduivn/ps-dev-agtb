@@ -29,11 +29,7 @@ var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUB
 <table cellpadding="0" align="center" width="100%" cellspacing="0" border="0">
 	<tr>
 		<td align="center">
-		<div class="dashletPanelMenu" style="width: 460px;">
-		<div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
-		<div class="bd">
-		<div class="ml"></div>
-		<div class="bd-center">
+		<div class="loginBoxShadow" style="width: 460px;">
 			<div class="loginBox">
 			<table cellpadding="0" cellspacing="0" border="0" align="center">
 				<tr>
@@ -161,10 +157,7 @@ var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUB
 				</tr>
 			</table>
 			</div>
-			</div>
-			<div class="mr"></div>
-			</div>
-<div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>
+
 </div>
 		</td>
 	</tr>
