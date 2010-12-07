@@ -409,7 +409,7 @@ class OracleManager extends DBManager
         $execute = true)
     {
         $matches = array();
-        preg_match("/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is",$sql, $matches);
+        preg_match('/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is',$sql, $matches);
         $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
         if ($start ==0 && !empty($matches[3])) {
             $sql = 'SELECT /*+ FIRST_ROWS('. $count . ') */ * FROM (' . $matches[1]. $matches[2]. $matches[3] . ') MSI WHERE ROWNUM <= '.$count;

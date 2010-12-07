@@ -129,7 +129,6 @@ EOQ;
 
     public function test_update_custom_vardefs()
     {
-        $this->markTestSkipped('Marked as skipped');
         $this->assertTrue(file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we have a SearchFields.php file');
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
         require_once('modules/UpgradeWizard/uw_utils.php');
@@ -146,7 +145,6 @@ EOQ;
     
     public function test_update_custom_vardefs_without_searchfields()
     {
-        $this->markTestSkipped('Marked as skipped');
         unlink("{$this->module_dir}/metadata/SearchFields.php");
         $this->assertTrue(!file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we have a SearchFields.php file');
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
@@ -164,7 +162,6 @@ EOQ;
     
     public function test_create_unified_search_modules_display()
     {
-        $this->markTestSkipped('Marked as skipped');
         if(file_exists('cache/modules/unified_search_modules_display.php'))
         {
             unlink('cache/modules/unified_search_modules_display.php');
