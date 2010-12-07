@@ -447,7 +447,7 @@ installLog("Begin DB Check Process *************");
                 // check oracle minimum version requirement
                 if( $conn = @ociplogon($_SESSION['setup_db_sugarsales_user'], $_SESSION['setup_db_sugarsales_password'], $_SESSION['setup_db_database_name']) ){
                     $the_count = 0;
-                    $query = "SELECT COUNT(*) AS the_count FROM product_component_version WHERE product LIKE '%Oracle9i%' OR product LIKE '%Oracle Database 10g%'";
+                    $query = "SELECT COUNT(*) AS the_count FROM product_component_version WHERE product LIKE '%Oracle9i%' OR product LIKE '%Oracle Database 10g%' OR product LIKE '%11%'";
 
                     $stmt = ociparse( $conn, $query );
                     ociexecute( $stmt, OCI_DEFAULT );

@@ -1584,7 +1584,12 @@ function is_admin_for_module($user,$module) {
     //END SUGARCRM flav=pro ONLY
     $actions = ACLAction::getUserActions($user->id);
     $focus = SugarModule::get($module)->loadBean();
-    $key = $focus->acltype;
+    if ( $focus instanceOf SugarBean ) {
+        $key = $focus->acltype;
+    }
+    else {
+        $key = 'module';
+    }
     if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key]))||
     	(isset($actions[$module][$key]) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
