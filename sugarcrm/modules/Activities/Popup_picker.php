@@ -74,15 +74,37 @@ class Popup_Picker
         global $currentModule;
         global $odd_bg;
         global $even_bg;
-        global $focus_tasks_list;
-        global $focus_meetings_list;
-        global $focus_calls_list;
-        global $focus_emails_list;
 
         global $timedate;
 
 
         $history_list = array();
+
+		if(!empty($_REQUEST['record'])) {
+   			$result = $focus->retrieve($_REQUEST['record']);
+    		if($result == null)
+    		{
+    			sugar_die($app_strings['ERROR_NO_RECORD']);
+    		}
+		}
+
+		$activitiesRels = array('tasks' => 'Task', 'meetings' => 'Meeting', 'calls' => 'Call', 'emails' => 'Email', 'notes' => 'Note');
+		//Setup the arrays to store the linked records.
+		foreach($activitiesRels as $relMod => $beanName) {
+	    	$varname = "focus_" . $relMod . "_list";
+	        $$varname = array();
+	    }
+		foreach($focus->get_linked_fields() as $field => $def) {
+			if ($focus->load_relationship($field)) {
+				$relTable = $focus->$field->getRelatedTableName();
+	        	if (in_array($relTable, array_keys($activitiesRels)))
+        		{
+        			$varname = "focus_" . $relTable . "_list";
+        			$$varname = sugarArrayMerge($$varname, $focus->get_linked_beans($field,$activitiesRels[$relTable]));
+        		}
+
+			}
+		}
 
 		foreach ($focus_tasks_list as $task) {
 			$sort_date_time='';
@@ -168,7 +190,7 @@ class Popup_Picker
 		} // end Meetings
 
 		foreach ($focus_calls_list as $call) {
-			if ($call->status != "Planned") {		
+			if ($call->status != "Planned") {
 				$history_list[] = array('name' => $call->name,
 									 'id' => $call->id,
 									 'type' => "Call",
