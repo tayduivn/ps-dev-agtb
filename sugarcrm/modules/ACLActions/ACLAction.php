@@ -347,9 +347,8 @@ class ACLAction  extends SugarBean{
     * @param BOOLEAN OPTIONAL $is_owner if the object is owned by the user you are checking access for
     */
     function userHasAccess($user_id, $category, $action,$type='module', $is_owner = false){
-        $userFocus = new User;
-        $userFocus->retrieve($user_id);
-        if(is_admin_for_module($userFocus,$category)&& !isset($_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'])){
+       global $current_user;
+       if(is_admin_for_module($current_user,$category)&& !isset($_SESSION['ACL'][$user_id][$category][$type][$action]['aclaccess'])){
         return true;
         }
         //check if we don't have it set in the cache if not lets reload the cache
