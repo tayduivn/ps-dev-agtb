@@ -29,6 +29,7 @@ class Bug34547Test extends Sugar_PHPUnit_Framework_TestCase
         if(!$this->_has_mysqli_disabled) {
            unset($GLOBALS['sugar_config']['mysqli_disabled']);
         }
+        unset($GLOBALS['dbinstances']);
     }
         
     public function testMysqliDisabledInGetInstance() 
@@ -38,5 +39,3 @@ class Bug34547Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
-
-?>
