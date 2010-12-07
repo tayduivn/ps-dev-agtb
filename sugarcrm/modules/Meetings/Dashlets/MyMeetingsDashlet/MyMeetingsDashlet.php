@@ -63,17 +63,13 @@ class MyMeetingsDashlet extends DashletGeneric {
         //END SUGARCRM flav=pro ONLY
     }
     
-    function process() {
+    function process($lvsParams = array()) {
         global $current_language, $app_list_strings, $current_user;        
         $mod_strings = return_module_language($current_language, 'Meetings');
         
         if($this->myItemsOnly) { // handle myitems only differently
 			$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
-            $lvsParams = array(
-                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ',
-                           );
-        } else {
-            $lvsParams = array();
+            $lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ';
         }
         $this->myItemsOnly = false; 
 		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
