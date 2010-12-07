@@ -950,5 +950,49 @@ SUGAR.util.DateUtils = {
 		}
 
 		return dateFormat;
-	}
+	},
+
+    formatDate : function(date, format)
+    {
+        if (!format && SUGAR.expressions.userPrefs.datef && SUGAR.expressions.userPrefs.timef) {
+            format = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;
+        }
+        var out = "";
+        for (var c in format) {
+			c = format[c];
+			switch (c) {
+                case 'm':
+                    out += date.getMonth() + 1; break;
+                case 'd':
+                    out += date.getDate(); break;
+                case 'Y':
+                    out += date.getFullYear(); break;
+                case 'h':
+                    var h = date.getHours();
+                    h = h > 12 ? h - 12 : h;
+                    out += h;
+                    break;
+                case 'H':
+                    out += date.getHours(); break;
+                case 'i':
+                    var m = date.getMinutes();
+                    out += m < 10 ? "0" + m : m; break;
+                case 'a':
+                    if (date.getHours() < 12)
+                        out += "am";
+                    else
+                        out += "pm";
+                    break;
+                case 'A':
+                    if (date.getHours() < 12)
+                        out += "AM";
+                    else
+                        out += "PM";
+                    break;
+                default :
+                    out += c;
+            }
+		}
+        return out;
+    }
  }

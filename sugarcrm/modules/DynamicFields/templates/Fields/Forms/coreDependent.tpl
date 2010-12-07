@@ -29,7 +29,8 @@
 
 // $Id: enum.tpl 35784 2008-05-20 21:31:40Z dwheeler $
 *}
-{if $vardef.type != 'enum' && $vardef.type != 'address' && $vardef.type != 'date' && $vardef.type != 'datetimecombo'
+{* && $vardef.type != 'date' && $vardef.type != 'datetimecombo' *}
+{if $vardef.type != 'enum' && $vardef.type != 'address'
  && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
  && $vardef.type != 'url' && $vardef.type != 'parent'}
 //BEGIN SUGARCRM flav=een ONLY
