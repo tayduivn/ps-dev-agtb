@@ -71,5 +71,22 @@ abstract class DateExpression extends AbstractExpression
 		 }
 		return $date;
 	}
+
+    /**
+     * @static
+     * @param  String $date
+     * @return DateTime, returns the DateTime object representing the string passed in
+     * or false if the string could not be converted to a valid date.
+     */
+    public static function parse($date)
+    {
+        if ($date instanceof DateTime)
+            return $date;
+
+        if (is_string($date))
+            return new DateTime($date);
+
+        return false;
+    }
 }
 ?>

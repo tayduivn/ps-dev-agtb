@@ -296,7 +296,7 @@ class SugarModule
     
         if ( isset($beanList[$this->_moduleName]) ) {
             $bean = $beanList[$this->_moduleName];
-            if (isset($beanFiles[$bean])) {
+            if (isset($beanFiles[$bean]) && sugar_is_file($beanFiles[$bean])) {
                 require_once($beanFiles[$bean]);
                 $focus = new $bean;
             }

@@ -217,6 +217,10 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	else if (field.type == "checkbox") {
 		field.checked = value == SUGAR.expressions.Expression.TRUE;
 	}
+    else if(value instanceof Date)
+    {
+        field.value = SUGAR.util.DateUtils.formatDate(value);
+    }
 	else {
 		field.value = value;
 	}
