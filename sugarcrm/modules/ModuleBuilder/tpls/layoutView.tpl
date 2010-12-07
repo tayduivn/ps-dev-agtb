@@ -262,4 +262,7 @@ if (typeof new Array().indexOf == "undefined") {
 {/literal}
 ModuleBuilder.module = "{$view_module}";
 ModuleBuilder.package={if $fromModuleBuilder}"{$view_package}"{else}false{/if};
+
+
+ModuleBuilder.disablePopupPrompt = {if $syncDetailEditViews}{$syncDetailEditViews}{else}false{/if};
 </script>
