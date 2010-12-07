@@ -225,7 +225,7 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
                 || variable instanceof see.TYPE_MAP[see.NUMERIC_TYPE]);
 			break;
 		case see.NUMERIC_TYPE:
-			return (typeof(variable) == 'number' );
+			return (typeof(variable) == 'number' || SUGAR.expressions.isNumeric(variable));
 			break;
 		case see.BOOLEAN_TYPE:
 			if ( variable instanceof see ) {
@@ -800,7 +800,39 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 
 	// neither
 	return null;
-}
+};
+
+SUGAR.expressions.isNumeric = function(str) {
+    if(typeof(str) != 'number' && typeof(str) != 'string')
+        return false;
+    var SE = SUGAR.expressions;
+    var numRegex = new RegExp("^(\\-)?[0-9\\,]+(\\.[0-9]+)?$");
+    str = SE.unFormatNumber(str);
+    return numRegex.exec(str) != null;
+
+};
+
+SUGAR.expressions.unFormatNumber = function(num) {
+    var SE = SUGAR.expressions;
+    var ts = "," , ds= ".";
+    if (SE.userPrefs) {
+        ts = SE.userPrefs.num_grp_sep;
+        ds = SE.userPrefs.dec_sep;
+    };
+    num = SE.replaceAll(num, ts, "");
+    num = SE.replaceAll(num, ds, ".");
+
+    return num;
+};
+
+SUGAR.expressions.replaceAll = function(haystack, needle, rpl) {
+    if (needle == rpl || haystack == "" || needle == "") return haystack;
+    var str = haystack;
+    while ( str.indexOf(needle) > -1 ) {
+        str = str.replace(needle, rpl);
+    }
+    return str;
+};
 
 /**
  * 
