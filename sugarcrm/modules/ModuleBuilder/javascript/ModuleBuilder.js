@@ -440,17 +440,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 		},
         copyFromView: function(module, layout){
-            ModuleBuilder.history.params = {
-				module: 'ModuleBuilder',
-				action: 'copyFromView',
-				view_package: ModuleBuilder.MBpackage,
-				view_module: module,
-				view: layout
-			}
-			ModuleBuilder.asyncRequest(ModuleBuilder.history.params, function(){
-				ModuleBuilder.getContent(ModuleBuilder.contentURL);
-                ModuleBuilder.state.isDirty = true;
-			});
+            ModuleBuilder.getContent(ModuleBuilder.contentURL+"&copyFromEditView=true");
+            ModuleBuilder.state.isDirty = true;
         },
 		//AJAX Navigation Functions
 		navigate : function(url) {
