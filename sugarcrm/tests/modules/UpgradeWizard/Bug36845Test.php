@@ -28,7 +28,7 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
         
         mkdir_recursive($this->module_dir . '/metadata');
         
-    $the_string = <<<EOQ
+        $the_string = <<<EOQ
 <?php
 \$module_name = "{$this->module}";
 \$searchFields[\$module_name] = 
@@ -63,13 +63,13 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
 ?>
 EOQ;
     
-    $fp = sugar_fopen($this->module_dir . '/metadata/SearchFields.php', "w");
-    fwrite( $fp, $the_string );
-    fclose( $fp );	
-        
-    $table_name = strtolower($this->module);
-    $the_string = <<<EOQ
-    <?php
+        $fp = sugar_fopen($this->module_dir . '/metadata/SearchFields.php', "w");
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+            
+        $table_name = strtolower($this->module);
+        $the_string = <<<EOQ
+<?php
 \$dictionary["{$this->module}"] = array(
     'table'=>"{$table_name}",
     'audited'=>true,
@@ -86,15 +86,26 @@ VardefManager::createVardef("{$this->module}","{$this->module}", array('basic','
 ?>
 EOQ;
     
-    $fp = sugar_fopen($this->module_dir . '/vardefs.php', "w");
-    fwrite( $fp, $the_string );
-    fclose( $fp );
-    
-    
-    global $beanFiles, $beanList;
-    $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
-    $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
-    
+        $fp = sugar_fopen($this->module_dir . '/vardefs.php', "w");
+        fwrite( $fp, $the_string );
+        fclose( $fp );
+        
+        $the_string = <<<EOQ
+<?php
+class clabc_Bug36845Test extends Basic
+{
+}
+?>
+EOQ;
+
+        $fp = sugar_fopen($this->module_dir . '/clabc_Bug36845Test.php', "w");
+        fwrite( $fp, $the_string );
+        fclose( $fp );
+        
+        global $beanFiles, $beanList;
+        $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
+        $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
+
     }
     
     public function tearDown()
