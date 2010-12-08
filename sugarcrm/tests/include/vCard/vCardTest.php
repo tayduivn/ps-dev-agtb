@@ -54,13 +54,6 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Hans Müster',$bean->first_name.' '.$bean->last_name);
     }
 
-
-    public function checkExportCard($vcard)
-    {
-        var_dump($vcard);
-        return true;
-    }
-
     public function vCardNames()
     {
         return array(
@@ -95,6 +88,22 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
 class vCardMockModule extends Person
 {
     public static $_savedObjects = array();
+    
+    public $first_name;
+    public $last_name;
+    public $salutation;
+    public $phone_fax;
+    public $phone_home;
+    public $phone_mobile;
+    public $phone_work;
+    public $email1;
+    public $primary_address_street;
+    public $primary_address_city;
+    public $primary_address_state;
+    public $primary_address_postalcode;
+    public $primary_address_country;
+    public $department;
+    public $title;
 
     public function save()
     {

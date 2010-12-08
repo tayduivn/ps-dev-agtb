@@ -47,9 +47,8 @@
 		<td colspan='8' nowrap>
 			<input id='searchFieldMain' class='searchField' type='text' size='80' name='query_string' value='{$query_string}'>
 		    <input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}" onclick="SUGAR.saveGlobalSearchSettings();">&nbsp;
-			{$MOD.LBL_SELECT_MODULES}&nbsp;
-			<a class='tabFormAdvLink' href='javascript:toggleInlineSearch()'>
-			{if $SHOWGSDIV == 'yes'}
+			<a href='javascript:toggleInlineSearch()' style='color: #005A9B; text-decoration:none; font-weight: bold;'>{$MOD.LBL_SELECT_MODULES}&nbsp;
+            {if $SHOWGSDIV == 'yes'}
 			<img src='{sugar_getimagepath file="basic_search.gif"}' id='up_down_img' border=0>
 			{else}
 			<img src='{sugar_getimagepath file="advanced_search.gif"}' id='up_down_img' border=0>
@@ -63,6 +62,11 @@
 		<td colspan='8' nowrap'>
 		<div id='inlineGlobalSearch' class='add_table'>
 		<table id="GlobalSearchSettings" class="GlobalSearchSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
+		    <tr>
+		    	<td colspan="2">
+		    	{sugar_translate label="LBL_SELECT_MODULES_TITLE" module="Administration"}
+		    	</td>
+		    </tr>
 		    <tr>
 				<td width='1%'>
 					<div id="enabled_div"></div>	
@@ -84,6 +88,8 @@ function toggleInlineSearch()
 {
     if (document.getElementById('inlineGlobalSearch').style.display == 'none')
     {
+		SUGAR.globalSearchEnabledTable.render();
+		SUGAR.globalSearchDisabledTable.render();    
         document.getElementById('showGSDiv').value = 'yes'		
         document.getElementById('inlineGlobalSearch').style.display = '';
 {/literal}	
@@ -95,67 +101,68 @@ function toggleInlineSearch()
 {literal}			
         document.getElementById('showGSDiv').value = 'no';		
         document.getElementById('inlineGlobalSearch').style.display = 'none';		
-    }
+    }    
 }
 {/literal}
 
-(function(){ldelim}
-	var get = YAHOO.util.Dom.get;
-	var enabled_modules = {$enabled_modules};
-	var disabled_modules = {$disabled_modules};
-	var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
-	var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
-	{literal}
-	
-	SUGAR.globalSearchEnabledTable = new YAHOO.SUGAR.DragDropTable(
-		"enabled_div",
-		[{key:"label",  label: lblEnabled, width: 200, sortable: false},
-		 {key:"module", label: lblEnabled, hidden:true}],
-		new YAHOO.util.LocalDataSource(enabled_modules, {
-			responseSchema: {fields : [{key : "module"}, {key : "label"}]}
-		}),  
-		{height: "200px"}
-	);
-	
-	SUGAR.globalSearchDisabledTable = new YAHOO.SUGAR.DragDropTable(
-		"disabled_div",
-		[{key:"label",  label: lblDisabled, width: 200, sortable: false},
-		 {key:"module", label: lblDisabled, hidden:true}],
-		new YAHOO.util.LocalDataSource(disabled_modules, {
-			responseSchema: {fields : [{key : "module"}, {key : "label"}]}
-		}),
-		{height: "200px"}
-	);
-	
-	SUGAR.globalSearchEnabledTable.disableEmptyRows = true;
-	SUGAR.globalSearchDisabledTable.disableEmptyRows = true;
-	SUGAR.globalSearchEnabledTable.addRow({module: "", label: ""});
-	SUGAR.globalSearchDisabledTable.addRow({module: "", label: ""});
-	SUGAR.globalSearchEnabledTable.render();
-	SUGAR.globalSearchDisabledTable.render();
 
-	SUGAR.saveGlobalSearchSettings = function()
-	{
-		var enabledTable = SUGAR.globalSearchEnabledTable;
-		var modules = "";
-		for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
-			var data = enabledTable.getRecord(i).getData();
-			if (data.module && data.module != '')
-			    modules += "," + data.module;
-		}
-		modules = modules == "" ? modules : modules.substr(1);
-		document.forms['UnifiedSearchAdvancedMain'].elements['search_modules'].value = modules;
+var get = YAHOO.util.Dom.get;
+var enabled_modules = {$enabled_modules};
+var disabled_modules = {$disabled_modules};
+var lblEnabled = '{sugar_translate label="LBL_ACTIVE_MODULES" module="Administration"}';
+var lblDisabled = '{sugar_translate label="LBL_DISABLED_MODULES" module="Administration"}';
+{literal}
+
+SUGAR.globalSearchEnabledTable = new YAHOO.SUGAR.DragDropTable(
+	"enabled_div",
+	[{key:"label",  label: lblEnabled, width: 200, sortable: false},
+	 {key:"module", label: lblEnabled, hidden:true}],
+	new YAHOO.util.LocalDataSource(enabled_modules, {
+		responseSchema: {fields : [{key : "module"}, {key : "label"}]}
+	}),  
+	{height: "200px"}
+);
+
+SUGAR.globalSearchDisabledTable = new YAHOO.SUGAR.DragDropTable(
+	"disabled_div",
+	[{key:"label",  label: lblDisabled, width: 200, sortable: false},
+	 {key:"module", label: lblDisabled, hidden:true}],
+	new YAHOO.util.LocalDataSource(disabled_modules, {
+		responseSchema: {fields : [{key : "module"}, {key : "label"}]}
+	}),
+	{height: "200px"}
+);
+
+SUGAR.globalSearchEnabledTable.disableEmptyRows = true;
+SUGAR.globalSearchDisabledTable.disableEmptyRows = true;
+SUGAR.globalSearchEnabledTable.addRow({module: "", label: ""});
+SUGAR.globalSearchDisabledTable.addRow({module: "", label: ""});
+SUGAR.globalSearchEnabledTable.render();
+SUGAR.globalSearchDisabledTable.render();
+
+SUGAR.saveGlobalSearchSettings = function()
+{
+	var enabledTable = SUGAR.globalSearchEnabledTable;
+	var modules = "";
+	for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
+		var data = enabledTable.getRecord(i).getData();
+		if (data.module && data.module != '')
+		    modules += "," + data.module;
 	}
-})();
+	modules = modules == "" ? modules : modules.substr(1);
+	document.forms['UnifiedSearchAdvancedMain'].elements['search_modules'].value = modules;
+}
 {/literal}
 
 var handleHideShow = function()
 {ldelim}
+
 {if $SHOWGSDIV == 'yes'}
 	document.getElementById("inlineGlobalSearch").style.display="";
 {else}
 	document.getElementById("inlineGlobalSearch").style.display="none";
 {/if}	
+
 {rdelim};
 
 YAHOO.util.Event.onDOMReady(handleHideShow); 

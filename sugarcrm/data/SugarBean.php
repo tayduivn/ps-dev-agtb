@@ -5296,7 +5296,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function ACLAccess($view,$is_owner='not_set')
     {
         global $current_user;
-        if(is_admin($current_user))return true;
+        if(is_admin($current_user)||is_admin_for_module($current_user,$this->getACLCategory()))return true;
         $not_set = false;
         if($is_owner == 'not_set')
         {

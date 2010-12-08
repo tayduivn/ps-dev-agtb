@@ -78,7 +78,16 @@ class SetValueAction extends AbstractAction{
 		$expr = Parser::replaceVariables($this->expression, $target);
 		$result = Parser::evaluate($expr)->evaluate();
 		$field = $this->targetField;
-		$target->$field = $result;
+        if ($result instanceof DateTime)
+        {
+            $td = new TimeDate();
+            $target->$field = $result->format($td->get_db_date_time_format());
+        }
+        else
+        {
+            $target->$field = $result;
+        }
+
 	}
 	
 	/**

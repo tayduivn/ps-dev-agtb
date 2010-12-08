@@ -665,6 +665,13 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->writeWorkingFile () ;
+        
+    	if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->writeWorkingFile () ;
+	        }
+        }
     }
 
     function action_saveAndPublishLayout ()
@@ -686,6 +693,13 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
+        
+        if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->handleSave () ;
+	        }
+        }
     }
 
     function action_manageBackups ()
@@ -800,7 +814,7 @@ class ModuleBuilderController extends SugarController
     {
         $this->view = 'history' ;
     }
-
+    
     function resetmodule()
     {
     	$this->view = 'resetmodule';

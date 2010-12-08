@@ -28,12 +28,23 @@
  */
 *}
 
+
+{if $disable_layout}
+<span class='required'>
+{sugar_translate label="LBL_SYNC_TO_DETAILVIEW_NOTICE" module="ModuleBuilder"}
+</span>
+{/if}
 <table id='layoutEditorButtons' cellspacing='2'>
     <tr>
     {$buttons}
 	{if empty($disable_tabs)}
 	<td><input type="checkbox" {if $displayAsTabs}checked="true"{/if} id="tabsCheckbox" onclick="document.forms.prepareForSave.panels_as_tabs.value=this.checked">
 	   {sugar_translate label="LBL_TAB_PANELS" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_TAB_PANELS_HELP}
+	</input></td>
+	{/if}
+	{if ! $fromModuleBuilder && $view == 'editview'}
+	<td><input type="checkbox" {if $syncDetailEditViews}checked="true"{/if} id="syncCheckbox" onclick="document.forms.prepareForSave.sync_detail_and_edit.value=this.checked">
+	   {sugar_translate label="LBL_SYNC_TO_DETAILVIEW" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_SYNC_TO_DETAILVIEW_HELP}
 	</input></td>
 	{/if}
     </tr>
@@ -175,6 +186,7 @@
 <input type='hidden' name='view_module' value='{$view_module}'>
 <input type='hidden' name='view' value='{$view}'>
 <input type='hidden' name="panels_as_tabs" value='{$displayAsTabs}'>
+<input type='hidden' name="sync_detail_and_edit" value='{$syncDetailEditViews}'>
 <!-- BEGIN SUGARCRM flav=ent ONLY -->
 {if $fromPortal}
     <input type='hidden' name='PORTAL' value='1'>
@@ -250,4 +262,7 @@ if (typeof new Array().indexOf == "undefined") {
 {/literal}
 ModuleBuilder.module = "{$view_module}";
 ModuleBuilder.package={if $fromModuleBuilder}"{$view_package}"{else}false{/if};
+
+
+ModuleBuilder.disablePopupPrompt = {if $syncDetailEditViews}{$syncDetailEditViews}{else}false{/if};
 </script>

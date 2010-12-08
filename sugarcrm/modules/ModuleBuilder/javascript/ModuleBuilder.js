@@ -413,32 +413,43 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.getContent(ModuleBuilder.state.intended_view.url, ModuleBuilder.state.intended_view.successCall);
 			},
 			popup: function(){
-				ModuleBuilder.state.popup_window = new YAHOO.widget.SimpleDialog("confirmUnsaved", {
-					width: "400px",
-					draggable: true,
-					constraintoviewport: true,
-					modal: true,
-					fixedcenter: true,
-					text: SUGAR.language.get('ModuleBuilder', 'LBL_CONFIRM_DONT_SAVE'),
-					bodyStyle: "padding:5px",
-					buttons: [{
-						text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_DONT_SAVE'),
-						handler: ModuleBuilder.state.onDontSaveClick
-					}, {
-						text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_CANCEL'),
-						isDefault:true,
-						handler: function(){
-							ModuleBuilder.state.popup_window.hide()
-						}
-					},{
-						text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_SAVE_CHANGES'),
-						handler: ModuleBuilder.state.onSaveClick
-					}]
-				});
-				ModuleBuilder.state.popup_window.setHeader(SUGAR.language.get('ModuleBuilder', 'LBL_CONFIRM_DONT_SAVE_TITLE'));
-				ModuleBuilder.state.popup_window.render(document.body);
+                ModuleBuilder.state.popup_window = new YAHOO.widget.SimpleDialog("confirmUnsaved", {
+                 width: "400px",
+                 draggable: true,
+                 constraintoviewport: true,
+                 modal: true,
+                 fixedcenter: true,
+                 text: SUGAR.language.get('ModuleBuilder', 'LBL_CONFIRM_DONT_SAVE'),
+                 bodyStyle: "padding:5px",
+                 buttons: [{
+                    text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_DONT_SAVE'),
+                    handler: ModuleBuilder.state.onDontSaveClick
+                 }, {
+                    text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_CANCEL'),
+                    isDefault:true,
+                    handler: function(){
+                        ModuleBuilder.state.popup_window.hide()
+                    }
+                 },{
+                    text: SUGAR.language.get('ModuleBuilder', 'LBL_BTN_SAVE_CHANGES'),
+                    handler: ModuleBuilder.state.onSaveClick
+                    }]
+                });
+                ModuleBuilder.state.popup_window.setHeader(SUGAR.language.get('ModuleBuilder', 'LBL_CONFIRM_DONT_SAVE_TITLE'));
+                if(ModuleBuilder.disablePopupPrompt != 1){
+                    ModuleBuilder.state.popup_window.render(document.body);
+                }else{
+                    ModuleBuilder.state.onDontSaveClick();
+                }
 			}
 		},
+        copyFromView: function(module, layout){
+            var url = ModuleBuilder.contentURL;
+            ModuleBuilder.getContent(url+"&copyFromEditView=true");
+             ModuleBuilder.contentURL = url;
+            ModuleBuilder.state.intended_view.url = url;
+            ModuleBuilder.state.isDirty = true;
+        },
 		//AJAX Navigation Functions
 		navigate : function(url) {
 			//Check if we are just registering the url

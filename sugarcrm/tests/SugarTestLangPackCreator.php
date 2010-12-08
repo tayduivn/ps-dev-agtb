@@ -95,6 +95,7 @@ class SugarTestLangPackCreator
                 foreach ( $strings as $key => $value )
                     $mod_strings[$key] = $value;
                 sugar_cache_put($cache_key, $mod_strings);
+                $GLOBALS['mod_strings'] = $mod_strings;
             }
         }
     }

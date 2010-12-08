@@ -30,7 +30,6 @@ array (
         'hidden' => 
         array (
           0 => '<input type="hidden" name="isSaveAndNew" value="false">',
-          1 => '<input type="hidden" id="invite_parent_id" name="invite_parent_id" value="false">',
         ),
         'buttons' => 
         array (
