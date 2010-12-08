@@ -142,7 +142,7 @@
             <img id="company_logo_image" src='{$company_logo}' height="40" width="212">
         </td>
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
-		{if !empty($config.show_download_tab)}
+		{if !isset($config.show_download_tab) || !empty($config.show_download_tab)}
 			{assign var='show_download_tab_checked' value='CHECKED'}
 		{else}
 			{assign var='show_download_tab_checked' value=''}

@@ -21,18 +21,25 @@
 require_once('include/Expressions/Expression/Date/DateExpression.php');
 
 /**
- * <b>today()</b><br>
- * Returns a date object representing todays date.
+ * <b>addDays($date, $days)</b><br>
+ * Returns a date object moved forward or backwards by <i>$days</i> days.<br/>
+ * ex: <i>addDays(date("1/1/2010"), 5)</i> = "1/6/2010"
  **/
-class TodayExpression extends DateExpression
+class AddDaysExpression extends DateExpression
 {
 	/**
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-        $d = new DateTime();
-        $d->setTime(0,0,0);
-		return $d;
+        $params = $this->getParameters();
+
+        $date = DateExpression::parse($params[0]->evaluate());
+        $days = $params[1]->evaluate();
+        
+        if ($days < 0)
+           return $date->modify("-$days day");
+        
+        return $date->modify("+$days day");
 	}
 
 
@@ -41,11 +48,15 @@ class TodayExpression extends DateExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		  var d = new Date();
-		  d.setHours(0);
-		  d.setMinutes(0);
-		  d.setSeconds(0);
-		  return d;
+		    var params = this.getParameters();
+			var date = SUGAR.util.DateUtils.parse(params[0].evaluate());
+			var days = params[1].evaluate();
+
+		    //Clone the object to prevent possible issues with other operations on this variable.
+		    var d = new Date(date);
+		    d.setDate(d.getDate() + days);
+
+		    return d;
 EOQ;
 	}
 
@@ -54,14 +65,18 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "today";
+		return "addDays";
+	}
+
+    function getParameterTypes() {
+		return array("date", "number");
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 0;
+		return 2;
 	}
 
 	/**

@@ -19,6 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
+require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 
 /**
@@ -33,8 +34,8 @@ class isAfterExpression extends BooleanExpression {
 	function evaluate() {
 		$params = $this->getParameters();
 
-		$a = $params[0]->evaluate();
-		$b = $params[1]->evaluate();
+		$a = DateExpression::parse($params[0]->evaluate());
+		$b = DateExpression::parse($params[1]->evaluate());
 
 		if ( $a > $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;
@@ -46,8 +47,9 @@ class isAfterExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters();
-			var a = params[0].evaluate();
-			var b = params[1].evaluate();
+			var a = SUGAR.util.DateUtils.parse(params[0].evaluate());
+			var b = SUGAR.util.DateUtils.parse(params[1].evaluate());
+
 			if ( a > b )	return SUGAR.expressions.Expression.TRUE;
 			return SUGAR.expressions.Expression.FALSE;
 EOQ;

@@ -32,6 +32,7 @@ class TrackerReportsAccessTest extends Sugar_PHPUnit_Framework_OutputTestCase {
         $GLOBALS['current_user'] = $this->current_user;
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['mod_strings']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
     }

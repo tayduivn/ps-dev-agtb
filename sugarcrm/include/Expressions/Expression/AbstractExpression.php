@@ -202,25 +202,32 @@ abstract class AbstractExpression
 		if ( !isset($class) )		return false;
 
 		// check if it's an instance of type
-		$isInstance = $variable instanceof $class;
+		if($variable instanceof $class);
+            return true;
 
 		// now check for generics
 		switch($type) {
 			case AbstractExpression::$STRING_TYPE:
-				return ( $isInstance || is_string($variable) || is_numeric($variable) 
+				return (is_string($variable) || is_numeric($variable)
 				    || $variable instanceof AbstractExpression::$TYPE_MAP[AbstractExpression::$NUMERIC_TYPE]);
 				break;
 			case AbstractExpression::$NUMERIC_TYPE:
-				return ( $isInstance || is_numeric($variable) );
+				return (is_numeric($variable) );
 				break;
 			case AbstractExpression::$BOOLEAN_TYPE:
 				if ( $variable instanceof Expression )	$variable = $variable->evaluate();
-				return ( $isInstance ||$variable == AbstractExpression::$TRUE || $variable == AbstractExpression::$FALSE );
+				return ($variable == AbstractExpression::$TRUE || $variable == AbstractExpression::$FALSE );
+				break;
+            case AbstractExpression::$DATE_TYPE:
+            case AbstractExpression::$TIME_TYPE:
+                if ( $variable instanceof Expression )	$variable = $variable->evaluate();
+				echo "$variable<br/>";
+                return ((is_string($variable) && new DateTime($variable) !== false));
 				break;
 		}
 
 		// just return whether it is an instance or not
-		return $isInstance;
+		return false;
 	}
 
 	/**

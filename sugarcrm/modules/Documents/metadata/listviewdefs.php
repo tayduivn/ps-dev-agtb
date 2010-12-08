@@ -121,6 +121,11 @@ $listViewDefs['Documents'] = array(
     array (
       0 => 'modified_user_id',
     ),
+  ),
+  'DATE_ENTERED' => array (
+    'width' => '10%',
+    'label' => 'LBL_DATE_ENTERED',
+    'default' => true,
   )
 );
 ?>

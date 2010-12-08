@@ -10,14 +10,13 @@ class Bug25820_Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_trackerReporter = new TrackerReporterBug25820Mock();
-		$this->langpack = new SugarTestLangPackCreator();
     }
     
     public function testGetTranslatedModuleNameInModuleList() 
     {
-        
-        $this->langpack->setAppListString('moduleList',array('Contacts'=>'cat'));
-        $this->langpack->save();
+        $langpack = new SugarTestLangPackCreator();
+        $langpack->setAppListString('moduleList',array('Contacts'=>'cat'));
+        $langpack->save();
         $this->assertEquals(
             $this->_trackerReporter->getGetTranslatedModuleName('Contacts'),
             'cat'
@@ -26,8 +25,9 @@ class Bug25820_Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetTranslatedModuleNameInModStrings() 
     {
-        $this->langpack->setModString('LBL_MODULE_NAME','stringname','Administration');
-        $this->langpack->save();
+        $langpack = new SugarTestLangPackCreator();
+        $langpack->setModString('LBL_MODULE_NAME','stringname','Administration');
+        $langpack->save();
         
         $this->assertEquals(
             $this->_trackerReporter->getGetTranslatedModuleName('Administration'),
@@ -37,8 +37,9 @@ class Bug25820_Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetTranslatedModuleNameModuleBuilder() 
     {
-        $this->langpack->setModString('LBL_MODULEBUILDER','stringname','ModuleBuilder');
-        $this->langpack->save();
+        $langpack = new SugarTestLangPackCreator();
+        $langpack->setModString('LBL_MODULEBUILDER','stringname','ModuleBuilder');
+        $langpack->save();
         
         $this->assertEquals(
             $this->_trackerReporter->getGetTranslatedModuleName('ModuleBuilder'),

@@ -51,5 +51,3 @@ class UpgradeSavedSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($contents['id_team_name_advanced_collection_0'], 'East', "Check that id_team_name_advanced_collection_0 has value of 'East'");  	
     }
 }
-
-?>

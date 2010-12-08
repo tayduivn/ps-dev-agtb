@@ -1132,6 +1132,7 @@ $mod_strings = array (
    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
    'LBL_SAML_LOGIN_URL' => 'Login URL',
    'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
-   'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search',
-   'LBL_SELECT_MODULES' => 'Select Modules',
+   'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
+   'LBL_SELECT_MODULES' => 'Advanced',
+   'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order.',
 	);
