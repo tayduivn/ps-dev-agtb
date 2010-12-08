@@ -28,7 +28,7 @@ class Bug20626Test extends Sugar_PHPUnit_Framework_TestCase
         global $timedate,$sugar_config,$DO_USER_TIME_OFFSET , $current_user;
 
         $DO_USER_TIME_OFFSET = true;
-        $timedate = TimeDate2::getInstance();
+        $timedate = TimeDate::getInstance();
 
         $meeting = new Meeting();
         $format = $current_user->getUserDateTimePreferences();

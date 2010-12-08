@@ -40,7 +40,7 @@ $db =& $focus->db;
 $qGlobal = "INSERT INTO queues 
 			(id, deleted, date_entered, date_modified, modified_user_id, 
 			created_by, name, status, owner_id, queue_type, workflows, team_id)
-			VALUES ('1', 0, '".TimeDate2::getInstance()->nowDb()."', '".TimeDate2::getInstance()->nowDb()."', '1', '1', 'Global', 'Active', '1', 'Global','roundRobin', '1')";
+			VALUES ('1', 0, '".TimeDate::getInstance()->nowDb()."', '".TimeDate::getInstance()->nowDb()."', '1', '1', 'Global', 'Active', '1', 'Global','roundRobin', '1')";
 $rGlobal = $db->query($qGlobal);
 
 $res = $focus->db->query('SELECT id,first_name,last_name FROM users');

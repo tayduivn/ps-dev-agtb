@@ -10,7 +10,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs = new ImportFieldSanitize();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['timedate'] = TimeDate2::getInstance();
+        $GLOBALS['timedate'] = TimeDate::getInstance();
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
@@ -22,7 +22,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanList']);
-        $GLOBALS['timedate'] = TimeDate2::getInstance();
+        $GLOBALS['timedate'] = TimeDate::getInstance();
     }
 
 	public function testValidBool()

@@ -699,7 +699,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
      private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
      {
         $trackerManager = TrackerManager::getInstance();
-        $timeStamp = TimeDate2::getInstance()->nowDb();
+        $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());

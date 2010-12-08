@@ -233,7 +233,7 @@ function processReports(){
         return false;
         
         //get current time
-        $now = TimeDate2::getInstance()->nowDb();
+        $now = TimeDate::getInstance()->nowDb();
         $stim = strtotime($now);
 
         //compare the days
@@ -385,7 +385,7 @@ function processReports(){
     
     function  getNumOfActiveUsers($id, $db){
             //get current time
-            $now = TimeDate2::getInstance()->nowDb();
+            $now = TimeDate::getInstance()->nowDb();
             $stim = strtotime($now);
             $wtim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-7,   gmdate("Y",$stim));
             //convert back into date format

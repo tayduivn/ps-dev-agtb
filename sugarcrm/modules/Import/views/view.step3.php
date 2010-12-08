@@ -431,10 +431,10 @@ class ImportViewStep3 extends SugarView
         // get list of valid timezones
         $userTZ = $current_user->getPreference('timezone');
         if(empty($userTZ))
-            $userTZ = TimeDate2::userTimezone();
+            $userTZ = TimeDate::userTimezone();
 
         $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
-        $this->ss->assign('TIMEZONEOPTIONS', TimeDate2::getTimezoneList());
+        $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
         // get currency preference
         require_once('modules/Currencies/ListCurrency.php');

@@ -83,7 +83,7 @@ function  hasPasswordExpired($username){
 	        case '1':
 		    	global $timedate;
 		    	if ($current_user->pwd_last_changed == ''){
-		    		$current_user->pwd_last_changed= TimeDate2::getInstance()->nowDb();
+		    		$current_user->pwd_last_changed= TimeDate::getInstance()->nowDb();
 		    		$current_user->save();
 		    		}
 		    		
@@ -91,7 +91,7 @@ function  hasPasswordExpired($username){
 			    $stim = strtotime($current_user->pwd_last_changed);
 			    //add day to timestamp
 			    $expiretime = gmdate("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+$expireday,   date("Y",$stim)));
-			    $timenow = TimeDate2::getInstance()->nowDb();
+			    $timenow = TimeDate::getInstance()->nowDb();
 			    
 			    if ($timenow < $expiretime)
 			    	return false;

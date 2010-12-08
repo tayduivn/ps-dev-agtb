@@ -65,7 +65,7 @@ header("Content-type: application/octet-stream; charset=".$locale->getExportChar
 header("Content-Disposition: attachment; filename={$_REQUEST['module']}.csv");
 header("Content-transfer-encoding: binary");
 header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-header( "Last-Modified: " . TimeDate2::httpTime() );
+header( "Last-Modified: " . TimeDate::httpTime() );
 header( "Cache-Control: post-check=0, pre-check=0", false );
 header("Content-Length: ".strlen($content));
 

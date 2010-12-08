@@ -374,8 +374,8 @@ class Queue extends SugarBean {
 				VALUES (
 					'".create_guid()."',
 					0,
-					'".TimeDate2::getInstance()->nowDb()."',
-					'".TimeDate2::getInstance()->nowDb()."',
+					'".TimeDate::getInstance()->nowDb()."',
+					'".TimeDate::getInstance()->nowDb()."',
 					'".$this->id."',
 					'".$beanDir."',
 					'".$beanId."')"; 

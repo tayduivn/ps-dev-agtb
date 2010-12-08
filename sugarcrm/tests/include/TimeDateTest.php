@@ -4,7 +4,7 @@ require_once 'include/TimeDate.php';
 class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var TimeDate2
+	 * @var TimeDate
 	 */
 	protected $time_date;
 
@@ -17,7 +17,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$this->time_date = new TimeDate2();
+		$this->time_date = new TimeDate();
 		$this->_noUserCache();
 	}
 
@@ -84,7 +84,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 			$GLOBALS['current_user']->setPreference('timef', $timef);
 			$GLOBALS['current_user']->setPreference('timezone', $tz);
 			// new object to avoid TZ caching
-			$this->time_date = TimeDate2::getInstance();
+			$this->time_date = TimeDate::getInstance();
 			$this->_noUserCache();
 	}
 
@@ -740,7 +740,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($display, $amdate,
 				"Bad min result for {$date} format {$tf}");
 	}
-	
+
 	public function providerSplitDateTime()
 	{
 	    return array(
@@ -749,7 +749,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	        array("10-04-2010 2:00","10-04-2010","2:00"),
 	        );
 	}
-	
+
 	/**
 	 * @dataProvider providerSplitDateTime
 	 */

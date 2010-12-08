@@ -121,7 +121,7 @@ if(is_admin($current_user) || isset($from_sync_client)){
 		   		header("Content-Disposition: attachment; filename=expandSugarDB.sql");
 				header("Content-Type: text/sql; charset={$app_strings['LBL_CHARSET']}");
 				header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-				header( "Last-Modified: " . TimeDate2::httpTime() );
+				header( "Last-Modified: " . TimeDate::httpTime() );
 				header( "Cache-Control: post-check=0, pre-check=0", false );
 				header("Content-Length: ".strlen($theAlterQueries));
 		   		echo $theAlterQueries;

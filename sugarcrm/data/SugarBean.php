@@ -2037,7 +2037,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		global $disable_date_format;
 		global $timedate;
 		if (empty($timedate))
-			$timedate=TimeDate2::getInstance();
+			$timedate=TimeDate::getInstance();
 
 		if(empty($this->field_defs))
 		{

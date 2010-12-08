@@ -1004,7 +1004,7 @@ $server->register(
  * @return String -- The current date/time 'Y-m-d H:i:s'
  */
 function get_gmt_time(){
-	return TimeDate2::getInstance()->nowDb();
+	return TimeDate::getInstance()->nowDb();
 }
 
 $server->register(

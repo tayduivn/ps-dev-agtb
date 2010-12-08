@@ -49,7 +49,7 @@ class MyForecastingChartDashlet extends DashletGenericChart
         
         return $this->getTitle('<div align="center"></div>') . 
             '<div align="center"><script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js') . '"></script>' . 
-            $forecasting_chart->forecast_history($GLOBALS['current_user'],TimeDate2::getInstance()->nowDb(),'Direct',5,true,$this->id) . '</div><br />'
+            $forecasting_chart->forecast_history($GLOBALS['current_user'],TimeDate::getInstance()->nowDb(),'Direct',5,true,$this->id) . '</div><br />'
 			. $this->processAutoRefresh();
     }  
 

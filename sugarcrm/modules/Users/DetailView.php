@@ -347,7 +347,7 @@ $sugar_smarty->assign("DATEFORMAT", $sugar_config['date_formats'][$timedate->get
 $sugar_smarty->assign("TIMEFORMAT", $sugar_config['time_formats'][$timedate->get_time_format()]);
 
 $userTZ = $focus->getPreference('timezone');
-$sugar_smarty->assign("TIMEZONE", TimeDate2::tzName($userTZ));
+$sugar_smarty->assign("TIMEZONE", TimeDate::tzName($userTZ));
 $datef = $focus->getPreference('datef');
 $timef = $focus->getPreference('timef');
 

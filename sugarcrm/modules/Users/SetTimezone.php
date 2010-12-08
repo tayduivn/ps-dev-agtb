@@ -59,7 +59,7 @@ if ( isset($_SESSION['isMobile']) ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 if(isset($_REQUEST['userOffset'])) { // ajax call to lookup timezone
-    echo 'userTimezone = "' . TimeDate2::guessTimezone($_REQUEST['userOffset']) . '";';
+    echo 'userTimezone = "' . TimeDate::guessTimezone($_REQUEST['userOffset']) . '";';
     die();
 }
 $admin = new Administration();
@@ -71,12 +71,12 @@ $sugar_smarty->assign('APP', $app_strings);
 global $current_user;
 $selectedZone = $current_user->getPreference('timezone');
 if(empty($selectedZone) && !empty($_REQUEST['gmto'])) {
-	$selectedZone = TimeDate2::guessTimezone(-1 * $_REQUEST['gmto']);
+	$selectedZone = TimeDate::guessTimezone(-1 * $_REQUEST['gmto']);
 }
 if(empty($selectedZone)) {
-    $selectedZone = TimeDate2::guessTimezone();
+    $selectedZone = TimeDate::guessTimezone();
 }
 $sugar_smarty->assign('TIMEZONE_CURRENT', $selectedZone);
-$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate2::getTimezoneList());
+$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
 $sugar_smarty->display('modules/Users/SetTimezone.tpl');

@@ -319,15 +319,15 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 		$resultData = array();
 		$resultData['versions'] = array();
 
-		$license->saveSetting('license', 'last_connection_fail', TimeDate2::getInstance()->nowDb());
+		$license->saveSetting('license', 'last_connection_fail', TimeDate::getInstance()->nowDb());
 		$license->saveSetting('license', 'last_validation', 'no_connection');
 
 		if( empty($license->settings['license_last_validation_success']) && empty($license->settings['license_last_validation_fail']) && empty($license->settings['license_vk_end_date'])){
-			$license->saveSetting('license', 'vk_end_date', TimeDate2::getInstance()->nowDb());
+			$license->saveSetting('license', 'vk_end_date', TimeDate::getInstance()->nowDb());
 
 			$license->saveSetting('license', 'validation_key', base64_encode(serialize(array('verified'=>false))));
 		}
-		$_SESSION['COULD_NOT_CONNECT'] =TimeDate2::getInstance()->nowDb();
+		$_SESSION['COULD_NOT_CONNECT'] =TimeDate::getInstance()->nowDb();
 
 	}
 	if(!empty($resultData['versions'])){
@@ -525,7 +525,7 @@ function checkDownloadKey($data){
 
 			$GLOBALS['license']->saveSetting('license', 'expire_date', '2000-10-10');
 			$GLOBALS['license']->saveSetting('license', 'validation_notice', 'invalid');
-			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate2::getInstance()->nowDb());
+			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate::getInstance()->nowDb());
 			return 'Invalid Download Key';
 		}
 		if($data == 'expired' || $data == 'closed'){
@@ -534,11 +534,11 @@ function checkDownloadKey($data){
 			if($data == 'closed'){
 				$GLOBALS['license']->saveSetting('license', 'users', 1);
 			}
-			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate2::getInstance()->nowDb());
+			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate::getInstance()->nowDb());
 			return 'Expired Download Key';
 		}else if($data == 'invalid validation key'){
 			$GLOBALS['license']->saveSetting('license', 'validation_notice', 'Invalid Validation Key File - please make sure you uploaded the right file');
-			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate2::getInstance()->nowDb());
+			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate::getInstance()->nowDb());
 			return 'Invalid Validation Key';
 
 		}
@@ -555,7 +555,7 @@ function checkDownloadKey($data){
 	$GLOBALS['license']->saveSetting('license', 'validation_key', $data['license_validation_key']);
 	$GLOBALS['license']->saveSetting('license', 'vk_end_date', $data['license_vk_end_date']);
 	$GLOBALS['license']->saveSetting('license', 'expire_date', $data['license_expire_date']);
-	$GLOBALS['license']->saveSetting('license', 'last_validation_success', TimeDate2::getInstance()->nowDb());
+	$GLOBALS['license']->saveSetting('license', 'last_validation_success', TimeDate::getInstance()->nowDb());
 	$GLOBALS['license']->saveSetting('license', 'validation_notice', '');
 	$GLOBALS['license']->saveSetting('license', 'enforce_portal_user_limit', isset($data['enforce_portal_user_limit']) ? '1' : '0');
 
