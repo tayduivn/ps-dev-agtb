@@ -450,7 +450,19 @@ class CalendarActivity
 		else
 		{
             $this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
-		    $this->end_time = $this->start_time->get("+{$this->sugar_bean->duration_hours} hours {$this->sugar_bean->duration_minutes} minutes");
+			if ( empty($this->start_time))
+			{
+			    return null;
+			}
+			$hours = $this->sugar_bean->duration_hours;
+			if(empty($hours)) {
+			    $hours = 0;
+			}
+			$mins = $this->sugar_bean->duration_minutes;
+			if(empty($mins)) {
+			    $mins = 0;
+			}
+			$this->end_time = $this->start_time->get("+$hours hours $mins minutes");
 		}
         // Convert it back to database time so we can properly manage it for getting the proper start and end dates
 		$timedate->tzGMT($this->start_time);

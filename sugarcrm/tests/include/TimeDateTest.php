@@ -154,6 +154,9 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 		$tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
 		$this->_setPrefs($df, $tf, $tz);
+		if(strpos($display, ' ') === false) {
+		    $display = $this->time_date->expandDate($display, "$df $tf");
+		}
 		$this->assertEquals(
 			$this->_timeOnly($db),
 			$this->time_date->to_db_time($display, true),
@@ -539,34 +542,6 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['current_user']->setPreference('timef',$old_time);
 	}
 
-	public function providerGetDateFromRules()
-	{
-		return array(
-	        array('2009',10,1,0,7200,"2009-10-04 02:00:00"),
-	        array('2009',4,1,0,7200,"2009-04-05 02:00:00"),
-	        array('2010',3,24,5,7200,"2010-03-26 02:00:00"),
-	        array('2010',9,12,0,7200,"2010-09-12 02:00:00"),
-	        );
-	}
-
-	/**
-	 * @dataProvider providerGetDateFromRules
-	 */
-	public function testGetDateFromRules(
-	    $year,
-	    $startMonth,
-	    $startDate,
-	    $weekday,
-	    $startTime,
-	    $returnValue
-	    )
-	{
-		$this->assertEquals(
-	        $this->time_date->getDateFromRules($year, $startMonth, $startDate, $weekday, $startTime),
-	        $returnValue
-	        );
-	}
-
 	/**
 	 * tests for check_matching_format
 	 * @dataProvider dateTestSet
@@ -709,7 +684,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->_setPrefs('m/d/Y', '', $tz);
         $date_arr = explode("-", $date);
         $date = $date_arr[1].'/'.$date_arr[2].'/'.$date_arr[0];
-        $dates = $this->time_date->getDayStartEndGMT($date, '');
+        $dates = $this->time_date->getDayStartEndGMT($date);
 		$this->assertEquals($start, $dates["start"],
 				"Bad min result for {$date} tz {$tz}");
 		$this->assertEquals($end, $dates["end"],
@@ -761,5 +736,24 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    $this->assertEquals($date,$this->time_date->getDatePart($datetime));
 	    $this->assertEquals($time,$this->time_date->getTimePart($datetime));
+	}
+
+	public function testNoCache()
+	{
+        $this->_setPrefs("Y-m-d", "H:i:s", "GMT");
+	    $now1 = $this->time_date->now();
+	    sleep(2);
+	    $now2 = $this->time_date->now();
+	    $this->assertNotEquals($now1, $now2, "now() should produce different result when not cached");
+	}
+
+	public function testCache()
+	{
+        $this->_setPrefs("Y-m-d", "H:i:s", "GMT");
+	    $this->time_date->allow_cache = true;
+	    $now1 = $this->time_date->now();
+	    sleep(2);
+	    $now2 = $this->time_date->now();
+	    $this->assertEquals($now1, $now2, "now() should produce same result when cached");
 	}
 }

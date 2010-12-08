@@ -1,7 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
-include 'SugarDateTime.php';
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -26,7 +24,10 @@ require_once 'include/SugarDateTime.php';
 /**
   *
   * New Time & Date handling class
-  *
+  * Migration notes:
+  * - to_db_time() requires either full datetime or time, won't work with just date
+  * 	The reason is that it's not possible to know if short string has only date or only time,
+  *     and it makes more sense to assume time for the time conversion function.
   */
 class TimeDate
 {
@@ -813,7 +814,8 @@ class TimeDate
         $format = $this->get_date_time_format();
         $tz = $convert_tz ? $this->_getUserTZ() : self::$gmtTimezone;
         if($convert_tz && strpos($date, ' ') === false) {
-            // we need TZ adjustment but have no date, assume today
+            // we need TZ adjustment but have short string, expand it to full one
+            // FIXME: if the string is short, should we assume date or time?
             $date = $this->expandTime($date, $format, $tz);
         }
         return $this->_convert($date,
@@ -1280,6 +1282,7 @@ class TimeDate
      * Note: date is assumed to be in target format already
      * @param string $date
      * @param string $format Target format
+     * @return string
      */
     public function expandDate($date, $format)
     {

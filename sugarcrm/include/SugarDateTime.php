@@ -31,7 +31,7 @@ class SugarDateTime extends DateTime
 	/**
 	 * @var DateTimeZone
 	 */
-	protected $_gmt;
+	protected static $_gmt;
 
     /**
      * Calendar strings
