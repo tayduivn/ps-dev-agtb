@@ -85,13 +85,6 @@ array (
     'default' => true,
 	'related_fields' =>  array ( 'created_by' ),
   ),
-  'DATE_ENTERED' => 
-  array (
-    'type' => 'datetime',
-    'label' => 'LBL_DATE_ENTERED',
-    'width' => '10%',
-    'default' => false,
-  ),
   'DATE_MODIFIED' => 
   array (
     'width' => '20%',
@@ -106,5 +99,12 @@ array (
     'default' => false
   ),        
   //END SUGARCRM flav=pro ONLY
+  'DATE_ENTERED' => 
+  array (
+    'type' => 'datetime',
+    'label' => 'LBL_DATE_ENTERED',
+    'width' => '10%',
+    'default' => true,
+  ),  
 );
 ?>
