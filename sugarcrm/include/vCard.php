@@ -135,7 +135,7 @@ class vCard
 		header("Content-Disposition: attachment; filename={$this->name}.vcf");
 		header("Content-Type: text/x-vcard; charset=".$locale->getExportCharset());
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-		header("Last-Modified: " . TimeDate2::httpTime() );
+		header("Last-Modified: " . TimeDate::httpTime() );
 		header("Cache-Control: max-age=0");
 		header("Pragma: public");
 		header("Content-Length: ".strlen($content));

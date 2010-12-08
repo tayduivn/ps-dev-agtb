@@ -4246,7 +4246,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $bean->fill_in_additional_list_fields();
             $bean->call_custom_logic("process_record");
             $bean->fetched_row = $row;
-            
+
             $list[] = $bean;
         }
         //}
@@ -4259,9 +4259,9 @@ function save_relationship_changes($is_update, $exclude=array())
     * This leverages get_summary_text() which is object specific.
     *
     * Internal function, do not override.
-    * @param $user_id - String value of the user that is viewing the record.
-    * @param $current_module - String value of the module being processed.
-    * @param $current_view - String value of the current view
+    * @param string $user_id - String value of the user that is viewing the record.
+    * @param string $current_module - String value of the module being processed.
+    * @param string $current_view - String value of the current view
 	*/
 	function track_view($user_id, $current_module, $current_view='')
 	{
@@ -5779,5 +5779,5 @@ function save_relationship_changes($is_update, $exclude=array())
 	public function create_export_query($order_by, $where)
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
-	}	
+	}
 }

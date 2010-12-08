@@ -3345,7 +3345,7 @@ function is_writable_windows($file) {
  */
 function lookupTimezone($userOffset = 0)
 {
-    return TimeDate2::guessTimezone($userOffset);
+    return TimeDate::guessTimezone($userOffset);
 }
 
 function convert_module_to_singular($module_array){
@@ -4025,7 +4025,7 @@ function createGroupUser($name) {
 	$group->is_group	= 1;
 	$group->deleted		= 0;
 	$group->status		= 'Active'; // cn: bug 6711
-	$group->setPreference('timezone', TimeDate2::userTimezone());
+	$group->setPreference('timezone', TimeDate::userTimezone());
 	$group->save();
 
 	return $group->id;

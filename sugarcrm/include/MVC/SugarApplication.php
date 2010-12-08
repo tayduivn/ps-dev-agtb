@@ -759,7 +759,7 @@ EOQ;
                 // We are creating a new session
                 // Don't set the session as active until we have made sure it checks out.
                 $monitor->setValue('active', 0);
-				$monitor->setValue('date_start', TimeDate2::getInstance()->nowDb());
+				$monitor->setValue('date_start', TimeDate::getInstance()->nowDb());
 		        $monitor->setValue('round_trips', 1);
 		    }
         }
@@ -771,7 +771,7 @@ EOQ;
 
 	    $trackerManager = TrackerManager::getInstance();
 		if($monitor = $trackerManager->getMonitor('tracker_sessions')){
-			$monitor->setValue('date_end', TimeDate2::getInstance()->nowDb());
+			$monitor->setValue('date_end', TimeDate::getInstance()->nowDb());
 			$seconds = strtotime($monitor->date_end) - strtotime($monitor->date_start);
 			$monitor->setValue('seconds', $seconds);
 			$monitor->setValue('active', 0);

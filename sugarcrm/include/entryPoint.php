@@ -120,7 +120,7 @@ require_once('include/dir_inc.php');
 
 require_once('include/Localization/Localization.php');
 require_once('include/javascript/jsAlerts.php');
-require_once('include/TimeDate2.php');
+require_once('include/TimeDate.php');
 require_once('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
 
 require('include/utils/autoloader.php');
@@ -176,7 +176,7 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();
 $locale = new Localization();

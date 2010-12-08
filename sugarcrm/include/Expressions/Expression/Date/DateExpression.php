@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/AbstractExpression.php');
-require_once('include/TimeDate2.php');
+require_once('include/TimeDate.php');
 abstract class DateExpression extends AbstractExpression
 {
 	protected $internalDateFormat = "Y-m-d";
@@ -34,14 +34,14 @@ abstract class DateExpression extends AbstractExpression
 	}
 
 	protected function convertToGMT($unixTime) {
-		$TD = TimeDate2::getInstance();
+		$TD = TimeDate::getInstance();
 		$time = date($TD->get_date_time_format(), $unixTime);
 		$time = $TD->to_db($time);
 		return strtotime($time);
 	}
 
 	protected function convertToUserZone($unixTime) {
-		$TD = TimeDate2::getInstance();
+		$TD = TimeDate::getInstance();
 		$time = date($this->internalDateFormat, $unixTime);
 		return $TD->to_display_date($time);
 	}
@@ -52,7 +52,7 @@ abstract class DateExpression extends AbstractExpression
 	 * @param int $unixTime (should be in GMT Time zone)
 	 */
 	protected function toDisplayTime($unixTime) {
-		$TD = TimeDate2::getInstance();
+		$TD = TimeDate::getInstance();
 		if ($this->includeTime)
 		{
 			return  date($TD->get_date_format() . " " . $TD->get_time_format(), $unixTime);
@@ -61,7 +61,7 @@ abstract class DateExpression extends AbstractExpression
 	}
 
 	protected function convertFromUserFormat($date) {
-		$TD = TimeDate2::getInstance();
+		$TD = TimeDate::getInstance();
 		if (strrchr(trim($date), ' ')) {
 			$this->includeTime = true;
 			$date = $TD->swap_formats($date, $TD->get_date_time_format(), $this->internalDateTimeFormat);

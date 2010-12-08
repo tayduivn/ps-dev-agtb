@@ -292,7 +292,7 @@ abstract class DBManager
         }
 
         if($monitor = $trackerManager->getMonitor('tracker_queries')){
-        	$monitor->setValue('date_modified', TimeDate2::getInstance()->nowDb());
+        	$monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
         	$monitor->setValue('text', $query);
         	$monitor->setValue('sec_total', $this->query_time);
 

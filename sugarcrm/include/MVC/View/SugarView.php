@@ -145,7 +145,7 @@ class SugarView
 
 
         $trackerManager = TrackerManager::getInstance();
-        $timeStamp = TimeDate2::getInstance()->nowDb();
+        $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){
             //BEGIN SUGARCRM flav=pro ONLY
             $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
@@ -867,7 +867,7 @@ EOHTML;
 
         if(!$trackerManager->isPaused())
         {
-	        $timeStamp = TimeDate2::getInstance()->nowDb();
+	        $timeStamp = TimeDate::getInstance()->nowDb();
 	        //Track to tracker_perf
 	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
 		        $monitor2->setValue('server_response_time', $this->responseTime);
