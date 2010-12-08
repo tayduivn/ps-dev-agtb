@@ -10,6 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 require_once('include/SugarPHPMailer.php');
+require_once 'include/upload_file.php';
 
 class Email extends SugarBean {
 	/* SugarBean schema */
@@ -677,6 +678,9 @@ class Email extends SugarBean {
 		if(!empty($request['documents'])) {
 			$exDocs = explode("::", $request['documents']);
 
+
+
+
 			foreach($exDocs as $docId) {
 				$docId = trim($docId);
 				if(!empty($docId)) {
@@ -1039,6 +1043,8 @@ class Email extends SugarBean {
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
 	{
+	    global $sugar_config;
+
 	    $tmpNote = new Note();
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
@@ -1995,10 +2001,91 @@ class Email extends SugarBean {
 		$mail->AltBody = $plainText;
 		$this->description = $plainText;
 
-		$mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
+		$fileBasePath = "{$sugar_config['cache_dir']}images/";
+		$filePatternSearch = "{$sugar_config['cache_dir']}";
+		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		$filePatternSearch = $filePatternSearch . "images\/";
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
+		{  //cache/images
+			$matches = array();
+			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
+			foreach($matches[0] as $match) {
+				$filename = str_replace($fileBasePath, '', $match);
+				$filename = urldecode(substr($filename, 0, -1));
+				$cid = $filename;
+				$file_location = clean_path(getcwd()."/{$sugar_config['cache_dir']}images/{$filename}");
+				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+
+				if(file_exists($file_location)) {
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+				}
+			}
+
+			//replace references to cache with cid tag
+			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
+			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
+			// remove bad img line from outbound email
+			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
+			$mail->Body = preg_replace($regex, '', $mail->Body);
+		}
+		$fileBasePath = "{$sugar_config['upload_dir']}";
+		$filePatternSearch = "{$sugar_config['upload_dir']}";
+		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
+		{
+			$matches = array();
+			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
+			foreach($matches[0] as $match) {
+				$filename = str_replace($fileBasePath, '', $match);
+				$filename = urldecode(substr($filename, 0, -1));
+				$cid = $filename;
+				$file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$filename}");
+				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+
+				if(file_exists($file_location)) {
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+				}
+			}
+
+			//replace references to cache with cid tag
+			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
+			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
+
+			// remove bad img line from outbound email
+			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
+			$mail->Body = preg_replace($regex, '', $mail->Body);
+		}
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
+		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im";
+        $embededImageMatches = array();
+        preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
+
+        foreach ($embededImageMatches as $singleMatch )
+        {
+            $fullMatch = $singleMatch[0];
+            $noteId = $singleMatch[1];
+            $cid = $noteId;
+            $filename = $noteId;
+
+            //Retrieve note for mimetype
+            $tmpNote = new Note();
+            $tmpNote->retrieve($noteId);
+            //Replace the src part of img tag with new cid tag
+            $cidRegex = "/src=\"([^\"]*)\"/im";
+            $replaceMatch = preg_replace($cidRegex, "src=\"cid:$noteId\"", $fullMatch);
+
+            //Replace the body, old tag for new tag
+            $mail->Body = str_replace($fullMatch, $replaceMatch, $mail->Body);
+
+            //Attach the file
+            $file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$noteId}");
+
+            if(file_exists($file_location))
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
+        }
+        //End Replace
+
 
 		$mail->Body = from_html($mail->Body);
 	}
@@ -2681,9 +2768,8 @@ class Email extends SugarBean {
 		      }
         }
 
-        $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
-        $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
-
+        $isDateFromSearchSet = !empty($_REQUEST['dateFrom']);
+        $isdateToSearchSet = !empty($_REQUEST['dateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
         //Hanlde date from and to seperately
@@ -2692,7 +2778,7 @@ class Email extends SugarBean {
             $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
 
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
 
             $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND
@@ -2700,7 +2786,7 @@ class Email extends SugarBean {
         }
         elseif ($isdateToSearchSet)
         {
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent <= $dbFormatDateTo ";
         }

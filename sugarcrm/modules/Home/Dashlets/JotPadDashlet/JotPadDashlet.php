@@ -146,7 +146,7 @@ class JotPadDashlet extends Dashlet {
             $optionsArray = $this->loadOptions();
 //            _pp($_REQUEST['savedText']);
             $optionsArray['savedText']=$json->decode(html_entity_decode($_REQUEST['savedText']));
-            $optionsArray['savedText']=SugarCleaner::cleanHtml(nl2br($optionsArray['savedText']['jsonObject']), false);
+            $optionsArray['savedText']=SugarCleaner::cleanHtml(nl2br($optionsArray['savedText']), false);
             $this->storeOptions($optionsArray);
 
         }
