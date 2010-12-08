@@ -10,8 +10,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 require_once('include/SugarPHPMailer.php');
-require_once('include/Pear/HTML_Safe/Safe.php');
-require_once 'include/upload_file.php';
 
 class Email extends SugarBean {
 	/* SugarBean schema */
@@ -131,9 +129,6 @@ class Email extends SugarBean {
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY
 
-		$this->safe = new HTML_Safe();
-		$this->safe->whiteProtocols[] = "cid";
-		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
 
 		$this->imagePrefix = rtrim($GLOBALS['sugar_config']['site_url'], "/")."/cache/images/";
@@ -1044,6 +1039,8 @@ class Email extends SugarBean {
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
 	{
+	    global $sugar_config;
+
 	    $tmpNote = new Note();
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
@@ -1186,10 +1183,10 @@ class Email extends SugarBean {
 
 		if($ret) {
 			$ret->retrieveEmailText();
+		    $ret->raw_source = SugarCleaner::cleanHtml($ret->raw_source, false);
+			$ret->description = SugarCleaner::cleanHtml(to_html($ret->description), false);
+            $ret->description_html = SugarCleaner::cleanHtml($ret->description_html, false);
 			$ret->retrieveEmailAddresses();
-			$ret->raw_source = to_html($ret->safeText(from_html($ret->raw_source)));
-			$ret->description = to_html($ret->safeText(from_html($ret->description)));
-			$ret->description_html = $ret->safeText($ret->description_html);
 
 			$ret->date_start = '';
 			$ret->time_start = '';
@@ -1402,46 +1399,6 @@ class Email extends SugarBean {
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
 
 		return $out;
-	}
-
-
-
-	///////////////////////////////////////////////////////////////////////////
-	////	LEGACY CODE
-	/**
-	 * Safes description text (both HTML and Plain Text) for display
-	 * @param string str The text to safe
-	 * @return string Safed text
-	 */
-	function safeText($str)
-	{
-        if(empty($str)) return $str;
-
-        if(!strchr($str, "<")) {
-            return $str;
-        }
-    	// Safe_HTML
-    	$this->safe->clear();
-    	$ret = $this->safe->parse($str);
-
-		// Julian's XSS cleaner
-		$potentials = clean_xss($ret, false);
-
-		if(is_array($potentials) && !empty($potentials)) {
-			//_ppl($potentials);
-			foreach($potentials as $bad) {
-				$ret = str_replace($bad, "", $ret);
-			}
-		}
-
-		// clean <HTML> and <BODY> tags
-		$html = '#<\\\\\?HTML[\w =\'\"\&]*>#sim';
-		$body = '#<\\\\\?BODY[\w =\'\"\&]*>#sim';
-
-		$ret = preg_replace($html, "", $ret);
-		$ret = preg_replace($body, "", $ret);
-
-		return $ret;
 	}
 
 	/**
@@ -2020,7 +1977,6 @@ class Email extends SugarBean {
 
 		return $mail;
 	}
-
 
 	/**
 	 * Retrieve function from handlebody() to unit test easily
