@@ -10850,7 +10850,9 @@ $jit.ST.Plot.NodeTypes.implement({
           valAcum += (valueArray[i] || 0);
 		  ctx.fillStyle = ctx.strokeStyle = label.color;
           ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
-		  if(aggregates(node.name, valAcum)) {
+          
+          
+		  if(aggregates(node.name, valAcum) && label.type == 'Native') {
 				if(valuelabelArray[i]) {
 					acumValueLabel = valuelabelArray[i];
 				} else {
@@ -11025,25 +11027,28 @@ $jit.ST.Plot.NodeTypes.implement({
           }
           acum += (dimArray[i] || 0);
           valAcum += (valueArray[i] || 0);
-		  	 ctx.fillStyle = ctx.strokeStyle = label.color;
-			 ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
-			 if(aggregates(node.name, valAcum)) {
-				if(valuelabelArray[i]) {
-					acumValueLabel = valuelabelArray[i];
-				  } else {
-					acumValueLabel = valueArray[i];
-				  }
-				 if(horz) {
-				 if(stringArray.length < 9) {
-					  ctx.textAlign = 'right';
-					  ctx.fillText(acumValueLabel, x + Math.max.apply(null, dimArray) - config.labelOffset, y + height/2);
-				  }
-				} else {
-				  ctx.textAlign = 'center';
-
-				  ctx.fillText(acumValueLabel, x + width/2, y - Math.max.apply(null, dimArray) - label.size/2 - config.labelOffset);
+	          
+	      if(label.type == 'Native') {
+			  	 ctx.fillStyle = ctx.strokeStyle = label.color;
+				 ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
+				 if(aggregates(node.name, valAcum)) {
+					if(valuelabelArray[i]) {
+						acumValueLabel = valuelabelArray[i];
+					  } else {
+						acumValueLabel = valueArray[i];
+					  }
+					 if(horz) {
+					 if(stringArray.length < 9) {
+						  ctx.textAlign = 'right';
+						  ctx.fillText(acumValueLabel, x + Math.max.apply(null, dimArray) - config.labelOffset, y + height/2);
+					  }
+					} else {
+					  ctx.textAlign = 'center';
+	
+					  ctx.fillText(acumValueLabel, x + width/2, y - Math.max.apply(null, dimArray) - label.size/2 - config.labelOffset);
+					}
 				}
-			}
+	        }
         }
         if(border) {
           ctx.save();
@@ -11250,12 +11255,15 @@ $jit.BarChart = new Class({
       onCreateLabel: function(domElement, node) {
         var labelConf = config.Label,
             valueArray = node.getData('valueArray'),
-            acum = $.reduce(valueArray, function(x, y) { return x + y; }, 0);
+            acum = $.reduce(valueArray, function(x, y) { return x + y; }, 0),
+            grouped = config.type.split(':')[0] == 'grouped',
+            horz = config.orientation == 'horizontal';
         var nlbs = {
           wrapper: document.createElement('div'),
           aggregate: document.createElement('div'),
           label: document.createElement('div')
         };
+        
         var wrapper = nlbs.wrapper,
             label = nlbs.label,
             aggregate = nlbs.aggregate,
@@ -11283,9 +11291,10 @@ $jit.BarChart = new Class({
         
         domElement.style.width = node.getData('width') + 'px';
         domElement.style.height = node.getData('height') + 'px';
-        aggregateStyle.left = labelStyle.left =  '0px';
-
-        label.innerHTML = node.name;
+        aggregateStyle.left = "0px";
+        labelStyle.left =  config.labelOffset + 'px';
+        labelStyle.whiteSpace =  "nowrap";
+		label.innerHTML = node.name;       
         
         domElement.appendChild(wrapper);
       },
@@ -11299,14 +11308,20 @@ $jit.BarChart = new Class({
             horz = config.orientation == 'horizontal',
             dimArray = node.getData('dimArray'),
             valArray = node.getData('valueArray'),
+            valueLength = valArray.length;
+            valuelabelArray = node.getData('valuelabelArray'),
+            stringArray = node.getData('stringArray'),
             width = (grouped && horz)? Math.max.apply(null, dimArray) : node.getData('width'),
             height = (grouped && !horz)? Math.max.apply(null, dimArray) : node.getData('height'),
             font = parseInt(wrapperStyle.fontSize, 10),
-            domStyle = domElement.style;
+            domStyle = domElement.style,
+            fixedDim = (horz? height : width) / valueLength;
             
         
         if(dimArray && valArray) {
           wrapperStyle.width = aggregateStyle.width = labelStyle.width = domElement.style.width = width + 'px';
+          
+          aggregateStyle.width = width  - config.labelOffset + "px";
           for(var i=0, l=valArray.length, acum=0; i<l; i++) {
             if(dimArray[i] > 0) {
               acum+= valArray[i];
@@ -11333,8 +11348,43 @@ $jit.BarChart = new Class({
             labelStyle.top = (config.labelOffset + height) + 'px';
             domElement.style.top = parseInt(domElement.style.top, 10) - height + 'px';
             domElement.style.height = wrapperStyle.height = height + 'px';
+            if(stringArray.length > 8) {
+            	labels.label.className = "rotatedLabelReverse";
+            	labelStyle.textAlign = "left";
+            	labelStyle.top = config.labelOffset + height + width/2 + "px";
+            }
           }
-          labels.aggregate.innerHTML = acum;
+          
+          if(horz) {
+	          if(stringArray.length > 8) {
+	          	labels.label.innerHTML = labels.label.innerHTML + ": " + acum;
+	          	labels.aggregate.innerHTML = "";
+	          } else {
+	          	labels.aggregate.innerHTML = acum;
+	          }
+          } else {
+          	
+          		if(grouped) {
+          			maxValue = Math.max.apply(null,dimArray);
+          			for (var i=0, l=valArray.length, acum=0, valAcum=0; i<l; i++) {
+          				valueLabelDim = 50;
+          				valueLabel = document.createElement('div');
+          				valueLabel.innerHTML =  valuelabelArray[i];
+          				valueLabel.class = "rotatedLabel";
+          				valueLabel.className = "rotatedLabel";
+          				valueLabel.style.position = "absolute";
+						valueLabel.style.textAlign = "left";
+						valueLabel.style.verticalAlign = "middle";
+          				valueLabel.style.height = valueLabelDim + "px";
+          				valueLabel.style.width = valueLabelDim + "px";
+          				valueLabel.style.top =  (maxValue - dimArray[i]) - valueLabelDim - config.labelOffset + "px";
+          				valueLabel.style.left = (fixedDim * i) + "px";
+          				labels.wrapper.appendChild(valueLabel);
+          			}
+          		} else {
+          			labels.aggregate.innerHTML = acum;
+          		}
+          }
         }
       }
     });
@@ -11418,6 +11468,12 @@ $jit.BarChart = new Class({
 
 	ctx.textAlign = 'center';
 	ctx.textBaseline = 'middle';
+	
+	idLabel = canvas.id + "-label";
+	labelDim = 100;
+	container = document.getElementById(idLabel);
+		  
+		  
 	if(horz) {
 		var axis = -(size.width/2)+margin.left+config.labelOffset+label.size,
 		grid = size.width-(margin.left+config.labelOffset+label.size+margin.right),
@@ -11427,9 +11483,11 @@ $jit.BarChart = new Class({
 		while(axis<=grid) {
 			ctx.fillStyle = ticks.color;
 			ctx.fillRect(Math.round(axis), -(size.height/2)+margin.top+(title.text? title.size+title.offset:0), 1, size.height-margin.bottom-margin.top-config.labelOffset-label.size-(title.text? title.size+title.offset:0)-(subtitle.text? subtitle.size+subtitle.offset:0));
-			ctx.fillStyle = label.color;            
-            ctx.fillText(labelValue, Math.round(axis), (size.height/2)-margin.bottom);
-
+			ctx.fillStyle = label.color;
+			
+			if(label.type == 'Native' && config.showLabels) {            
+           	 ctx.fillText(labelValue, Math.round(axis), (size.height/2)-margin.bottom);
+			}
 			axis += segmentLength;
 			labelValue += labelIncrement;
 		}
@@ -11437,20 +11495,40 @@ $jit.BarChart = new Class({
 	} else {
 	
 		var axis = (size.height/2)-(margin.bottom+config.labelOffset+label.size+(subtitle.text? subtitle.size+subtitle.offset:0)),
+		htmlOrigin = size.height - (margin.bottom+config.labelOffset+label.size+(subtitle.text? subtitle.size+subtitle.offset:0)),
 		grid = -size.height+(margin.bottom+config.labelOffset+label.size+margin.top+(title.text? title.size+title.offset:0)+(subtitle.text? subtitle.size+subtitle.offset:0)),
 		segmentLength = grid/ticks.segments;
 		ctx.fillStyle = ticks.color;
 		ctx.fillRect(-(size.width/2)+margin.left+config.labelOffset+label.size-1, -(size.height/2)+margin.top+(title.text? title.size+title.offset:0),1,size.height-margin.top-margin.bottom-label.size-config.labelOffset-(title.text? title.size+title.offset:0)-(subtitle.text? subtitle.size+subtitle.offset:0));
-		 
+
 		while(axis>=grid) {
 			ctx.save();
 			ctx.translate(-(size.width/2)+margin.left, Math.round(axis));
 			ctx.rotate(Math.PI / 2);
 			ctx.fillStyle = label.color;
-			ctx.fillText(labelValue, 0, 0);
+			if(config.showLabels) {
+				if(label.type == 'Native') { 
+					ctx.fillText(labelValue, 0, 0);
+				} else {
+					//html labels on y axis
+					labelDiv = document.createElement('div');
+					labelDiv.innerHTML = labelValue;
+					labelDiv.className = "rotatedLabel";
+					labelDiv.class = "rotatedLabel";
+					labelDiv.style.top = (htmlOrigin - (labelDim/2)) + "px";
+					labelDiv.style.left = margin.left + "px";
+					labelDiv.style.width = labelDim + "px";
+					labelDiv.style.height = labelDim + "px";
+					labelDiv.style.textAlign = "center";
+					labelDiv.style.verticalAlign = "middle";
+					labelDiv.style.position = "absolute";
+					container.appendChild(labelDiv);
+				}
+			}
 			ctx.restore();
 			ctx.fillStyle = ticks.color;
 			ctx.fillRect(-(size.width/2)+margin.left+config.labelOffset+label.size, Math.round(axis), size.width-margin.right-margin.left-config.labelOffset-label.size,1 );
+			htmlOrigin += segmentLength;
 			axis += segmentLength;
 			labelValue += labelIncrement;
 		}

@@ -88,7 +88,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  //labels style
 				  Label: {
 					type: labelType, //Native or HTML
-					size: 10,
+					size: 12,
 					family: css["font-family"],
 					color: css["color"],
 					colorAlt: "#ffffff"
@@ -213,7 +213,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  //label styling
 				  Label: {
 					type: labelType, //Native or HTML
-					size: 10,
+					size: 12,
 					family: css["font-family"],
 					color: css["color"]
 				  },
@@ -347,7 +347,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 				  //labels style
 				  Label: {
 					type: labelType, //Native or HTML
-					size: 10,
+					size: 12,
 					family: css["font-family"],
 					color: css["color"],
 					colorAlt: "#ffffff"
