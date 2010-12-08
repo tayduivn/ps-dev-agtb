@@ -258,6 +258,29 @@ class MssqlManager extends DBManager
             $result = @mssql_query($sql, $this->database);
         }
 
+        if (!$result) {
+            //BEGIN SUGARCRM flav=int ONLY
+            _pp($sql);
+            display_stack_trace();
+            //END SUGARCRM flav=int ONLY
+
+            // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
+            // 				  and difficult to reproduce error. The message is only a warning, and does
+            //				  not affect the functionality of the query
+            $sqlmsg = mssql_get_last_message();
+            $sqlpos = strpos($sqlmsg, 'Changed database context to');
+
+            if($dieOnError)
+                if ($sqlpos !== false)
+                    // if sqlmsg has 'Changed database context to', just log it
+                    $GLOBALS['log']->debug(mssql_get_last_message() . ": " . $sql );
+                else
+                    sugar_die('SQL Error : ' . mssql_get_last_message());
+            else
+                echo 'SQL Error : ' . mssql_get_last_message();
+
+            $GLOBALS['log']->fatal(mssql_get_last_message() . ": " . $sql );
+        }
         $this->lastmysqlrow = -1;
 
         $this->query_time = microtime(true) - $this->query_time;
