@@ -444,7 +444,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 		},
         copyFromView: function(module, layout){
-            ModuleBuilder.getContent(ModuleBuilder.contentURL+"&copyFromEditView=true");
+            var url = ModuleBuilder.contentURL;
+            ModuleBuilder.getContent(url+"&copyFromEditView=true");
+             ModuleBuilder.contentURL = url;
+            ModuleBuilder.state.intended_view.url = url;
             ModuleBuilder.state.isDirty = true;
         },
 		//AJAX Navigation Functions
