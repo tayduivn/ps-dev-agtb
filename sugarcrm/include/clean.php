@@ -24,7 +24,6 @@ class SugarCleaner
         if(!is_dir($sugar_config['cache_dir']."/htmlclean")) {
             mkdir($sugar_config['cache_dir']."/htmlclean", 0755);
         }
-        $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
         $config->set('Cache.SerializerPath', $sugar_config['cache_dir']."/htmlclean");
         $config->set('URI.Base', $sugar_config['site_url']);
         $config->set('CSS.Proprietary', true);
