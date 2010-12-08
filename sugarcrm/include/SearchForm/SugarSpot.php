@@ -56,7 +56,12 @@ class SugarSpot
 <small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining more)</small>
 EOHTML;
 			}
-			$str.= "<div>$m $more</div>";
+			
+			$modDisplayString = $m;
+			if(isset($GLOBALS['app_list_strings']['moduleList'][$m]))
+			    $modDisplayString = $GLOBALS['app_list_strings']['moduleList'][$m];
+			
+			$str.= "<div>{$modDisplayString} $more</div>";
 			$str.= '<ul>';
 			foreach($data['data'] as $row){
 				$name = '';
