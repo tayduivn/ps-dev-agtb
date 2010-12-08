@@ -34,10 +34,10 @@
 <script type="text/javascript" src="include/javascript/sugar_grp_yui_widgets.js"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
-<div id="content">
+<div class='moduleTitle'>
 <table style="width:100%">
 <tr><td>
-{$MOD.LBL_SELECT_MODULES_TITLE}
+{sugar_translate label="LBL_SELECT_MODULES_TITLE" module="Administration"}
 </td></tr>
 </table>
 </div>
@@ -55,9 +55,8 @@
 		<td colspan='8' nowrap>
 			<input id='searchFieldMain' class='searchField' type='text' size='80' name='query_string' value='{$query_string}'>
 		    <input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}" onclick="SUGAR.saveGlobalSearchSettings();">&nbsp;
-			{$MOD.LBL_SELECT_MODULES}&nbsp;
-			<a class='tabFormAdvLink' href='javascript:toggleInlineSearch()'>
-			{if $SHOWGSDIV == 'yes'}
+			<a class='tabFormAdvLink' href='javascript:toggleInlineSearch()'>{$MOD.LBL_SELECT_MODULES}&nbsp;
+            {if $SHOWGSDIV == 'yes'}
 			<img src='{sugar_getimagepath file="basic_search.gif"}' id='up_down_img' border=0>
 			{else}
 			<img src='{sugar_getimagepath file="advanced_search.gif"}' id='up_down_img' border=0>
