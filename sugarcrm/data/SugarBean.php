@@ -1294,16 +1294,7 @@ class SugarBean
                 $type == 'enum') &&
                 !empty($this->$key)
             ) {
-                $str = from_html($this->$key);
-                // Julian's XSS cleaner
-                $potentials = clean_xss($str, false);
-
-                if(is_array($potentials) && !empty($potentials)) {
-                    foreach($potentials as $bad) {
-                        $str = str_replace($bad, "", $str);
-                    }
-                    $this->$key = to_html($str);
-                }
+                $this->$key = SugarCleaner::cleanHtml($this->$key);
             }
         }
     }

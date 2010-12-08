@@ -30,7 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('include/OutboundEmail/OutboundEmail.php');
-require_once('include/Pear/HTML_Safe/Safe.php');
 
 function this_callback($str) {
 	foreach($str as $match) {
@@ -172,8 +171,6 @@ class InboundEmail extends SugarBean {
 			imap_timeout(3, 60);
 		}
 
-		$this->safe = new HTML_Safe();
-		$this->safe->clear();
 		$this->smarty = new Sugar_Smarty();
 		$this->overview = new Overview();
 	}
@@ -796,8 +793,7 @@ class InboundEmail extends SugarBean {
 						break;
 
 						default:
-							$overview->$colDef['name'] = from_html($overview->$colDef['name']);
-							$overview->$colDef['name'] = $this->cleanContent($overview->$colDef['name']);
+							$overview->$colDef['name'] = SugarCleaner::cleanHtml(from_html($overview->$colDef['name']), false);
 							$values .= "'".$this->db->helper->escape_quote($overview->$colDef['name'])."'";
 						break;
 					}
@@ -3202,13 +3198,10 @@ class InboundEmail extends SugarBean {
 		$msgPart = $this->customGetMessageText($msgPart);
 		/* cn: bug 9176 - htmlEntitites hide XSS attacks.
 		 * decode to pass refreshed HTML to HTML_Safe */
-		if ($type == 'PLAIN')
-		    return $this->cleanXssContent(to_html($msgPart));
-		else
-		{
-            $safedMsgPart = $this->cleanContent($msgPart);
-	   	    return str_replace("<img />", '', $safedMsgPart);
+		if($type == 'PLAIN') {
+		    return SugarCleaner::cleanHtml(to_html($msgPart), false);
 		}
+        return SugarCleaner::cleanHtml($msgPart, false);
 	}
 
 	/**
@@ -3700,23 +3693,11 @@ class InboundEmail extends SugarBean {
 
 		// generate compound messageId
 		$this->compoundMessageId = trim($message_id).trim($deliveredTo);
-		// if the length > 255 then md5 it so that the data will be of smaller length
-		if (strlen($this->compoundMessageId) > 255) {
-			$this->compoundMessageId = md5($this->compoundMessageId);
-		} // if
-
 		if (empty($this->compoundMessageId)) {
 			$GLOBALS['log']->error('Inbound Email found a message without a header and message_id');
 			return false;
 		} // if
-
-		$potentials = clean_xss($this->compoundMessageId, false);
-
-		if(is_array($potentials) && !empty($potentials)) {
-			foreach($potentials as $bad) {
-				$this->compoundMessageId = str_replace($bad, "", $this->compoundMessageId);
-			}
-		}
+		$this->compoundMessageId = md5($this->compoundMessageId);
 
 		$query = 'SELECT count(emails.id) AS c FROM emails WHERE emails.message_id = \''.$this->compoundMessageId.'\' and emails.deleted = 0';
 		$r = $this->db->query($query, true);
@@ -3749,33 +3730,7 @@ class InboundEmail extends SugarBean {
 		return $ret;
 	}
 
-	/**
-	 * Cleans content for XSS and other types of attack vectors
-	 * @param string str String to clean
-	 * @return string
-	 */
-	function cleanContent($str) {
-		// Safe_HTML
-		$this->safe->clear();
-		$str = $this->safe->parse($str);
-		return $this->cleanXssContent($str);
-	}
 
-	/**
-	 * Cleans content for XSS
-	 * @param string str String to clean
-	 * @return string
-	 */
-	function cleanXssContent($str) {
-
-		$potentials = clean_xss($str, false);
-		if(is_array($potentials) && !empty($potentials)) {
-			foreach($potentials as $bad) {
-				$str = str_replace($bad, "", $str);
-			}
-		}
-		return $str;
-	}
 	/**
 	 * Calculates the appropriate display date/time sent for an email.
 	 * @param string headerDate The date sent of email in MIME header format
@@ -5411,7 +5366,7 @@ eoq;
 	 */
 	function getTempFilename($nameOnly=false) {
 
-        $str = md5($this->compoundMessageId);
+        $str = $this->compoundMessageId;
 
 		if(!$nameOnly) {
 			$str = $str.$this->attachmentCount;

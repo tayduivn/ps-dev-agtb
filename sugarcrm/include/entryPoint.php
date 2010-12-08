@@ -106,6 +106,7 @@ require_once 'include/SugarObjects/SugarConfig.php';
 ///////////////////////////////////////////////////////////////////////////////
 ////	DATA SECURITY MEASURES
 require_once('include/utils.php');
+require_once('include/clean.php');
 clean_special_arguments();
 clean_incoming_data();
 ////	END DATA SECURITY MEASURES
