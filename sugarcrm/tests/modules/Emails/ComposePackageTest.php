@@ -39,7 +39,7 @@ class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        
+        unset($GLOBALS['mod_strings']);
         unset($GLOBALS['beanList']);
 		unset($GLOBALS['beanFiles']);
 		

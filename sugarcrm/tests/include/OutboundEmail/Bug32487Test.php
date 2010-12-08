@@ -37,7 +37,7 @@ class Bug32487Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         
         $GLOBALS['db']->query("DELETE FROM inbound_email WHERE id= '{$this->ib->id}'");
-        
+        unset($GLOBALS['mod_strings']);
         unset($this->ib);
     }
     
