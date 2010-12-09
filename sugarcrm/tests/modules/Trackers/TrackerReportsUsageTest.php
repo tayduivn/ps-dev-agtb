@@ -73,7 +73,9 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
         $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'" ,"datetime");
-        $count = $GLOBALS['db']->getRowCount($GLOBALS['db']->query($query));
+        $result = $GLOBALS['db']->query($query);
+        $count = 0;
+        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
         $this->assertEquals($count,1);
     }
     
@@ -81,7 +83,9 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
         $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 week")) ."'" ,"datetime");
-        $count = $GLOBALS['db']->getRowCount($GLOBALS['db']->query($query));
+        $result = $GLOBALS['db']->query($query);
+        $count = 0;
+        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
         $this->assertEquals($count,2);
     }
     
@@ -89,7 +93,9 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
         $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 month")) ."'" ,"datetime");
-        $count = $GLOBALS['db']->getRowCount($GLOBALS['db']->query($query));
+        $result = $GLOBALS['db']->query($query);
+        $count = 0;
+        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
         $this->assertEquals($count,3);   	
     }
 }

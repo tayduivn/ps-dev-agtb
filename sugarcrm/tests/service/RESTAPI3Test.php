@@ -108,7 +108,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                             'max'     => $maxResults,
                             'user'    => $this->_user->id)
                         );
-                              
+                    
         $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[0]['id'],'Accounts') );  
         $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[1]['id'],'Accounts') ); 
         $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[2]['id'],'Contacts') ); 
@@ -672,7 +672,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
          $session = $result['id'];
 
          $testModule = 'Accounts';
-         $testModuleID = uniqid();
+         $testModuleID = create_guid();
 
          $this->_createTrackerEntry($testModule,$testModuleID);
 

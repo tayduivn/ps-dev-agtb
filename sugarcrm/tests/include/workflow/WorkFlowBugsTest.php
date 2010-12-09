@@ -63,30 +63,30 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         VALUES ('43406320-49b6-6503-0074-4c73532a4325', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'Bug', 'Accounts', 1, 'Normal', 'alerts_actions', 'All', 1)";
         $GLOBALS['db']->query($sql);
 
-        $sql = "INSERT INTO workflow_actionshells(id, deleted, date_entered, date_modified, modified_uesr_id, created_by, action_type, parent_id, rel_module_type)
+        $sql = "INSERT INTO workflow_actionshells(id, deleted, date_entered, date_modified, modified_user_id, created_by, action_type, parent_id, rel_module_type)
         VALUES ('abc28c1d-e47a-bb56-d1e3-4c72d75d8c9b', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'update', '436cfc81-1926-5ba6-cfec-4c72d7b861c4', 'all')";
         $GLOBALS['db']->query($sql);
 
-        $sql = "INSERT INTO workflow_actionshells(id, deleted, date_entered, date_modified, modified_uesr_id, created_by, action_type, parent_id, rel_module_type)
+        $sql = "INSERT INTO workflow_actionshells(id, deleted, date_entered, date_modified, modified_user_id, created_by, action_type, parent_id, rel_module_type)
         VALUES ('db7b84f8-6892-8ab2-7855-4c73549a48a1', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'update', '43406320-49b6-6503-0074-4c73532a4325', 'all')";
         $GLOBALS['db']->query($sql);
 
-        $sql = "INSERT INTO workflow_actions(id, deleted, date_entered, date_modified, modified_uesr_id, created_by, field, value, set_type, parent_id)
+        $sql = "INSERT INTO workflow_actions(id, deleted, date_entered, date_modified, modified_user_id, created_by, field, value, set_type, parent_id)
         VALUES ('b158427e-fa71-1727-4306-4c72d7034409', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'description', 'Hey Man!', 'Basic', 'abc28c1d-e47a-bb56-d1e3-4c72d75d8c9b')";
         $GLOBALS['db']->query($sql);
 
-        $sql = "INSERT INTO workflow_actions(id, deleted, date_entered, date_modified, modified_uesr_id, created_by, field, value, set_type, parent_id)
+        $sql = "INSERT INTO workflow_actions(id, deleted, date_entered, date_modified, modified_user_id, created_by, field, value, set_type, parent_id)
         VALUES ('e48c9998-a394-4a13-1a52-4c7354b17f06', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'team_id', '1', 'Basic', 'db7b84f8-6892-8ab2-7855-4c73549a48a1')";
         $GLOBALS['db']->query($sql);
 
-        $sql = "INSERT INTO workflow_triggershells(id, deleted, date_entered, date_modified, modified_uesr_id, type, frame_type, parent_id, show_past, rel_module_type)
+        $sql = "INSERT INTO workflow_triggershells(id, deleted, date_entered, date_modified, modified_user_id, created_by, type, frame_type, parent_id, show_past, rel_module_type)
         VALUES ('153c738b-3674-3db7-314e-4c72d7ea4eb9', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'trigger_record_change', 'Primary', '436cfc81-1926-5ba6-cfec-4c72d7b861c4', 0, 'any')";
         $GLOBALS['db']->query($sql);
 
-        $sql = "INSERT INTO workflow_triggershells(id, deleted, date_entered, date_modified, modified_uesr_id, created_by, field, type, frame_type, eval, parent_id, show_past, rel_module_type)
-        VALUES ('88809b43-e3fb-17fc-c311-4c735359cebe', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'name', 'compare_specific', Primary', ' ( !(\$focus->fetched_row[\'name\'] ==  \'Sugar\' )) && (isset(\$focus->name) && \$focus->name ==  \'Sugar\')' '43406320-49b6-6503-0074-4c73532a4325', 0, 'any')";
-        $GLOBALS['db']->query($sql);
-
+        $sql = "INSERT INTO workflow_triggershells(id, deleted, date_entered, date_modified, modified_user_id, created_by, field, type, frame_type, eval, parent_id, show_past, rel_module_type)
+        VALUES ('88809b43-e3fb-17fc-c311-4c735359cebe', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'name', 'compare_specific', 'Primary', '( !(\$focus->fetched_row[''name''] ==  ''Sugar'' )) && (isset(\$focus->name) && \$focus->name ==  ''Sugar'')', '43406320-49b6-6503-0074-4c73532a4325', 0, 'any')";
+        $GLOBALS['db']->query($sql);           
+        
     	$this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $this->test_team2 = SugarTestTeamUtilities::createAnonymousTeam();
 

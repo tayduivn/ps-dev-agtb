@@ -8,10 +8,10 @@ class Bug23934Test extends Sugar_PHPUnit_Framework_TestCase
 	private $_reportId = "ad832c9b-59be-bf94-9b8d-4cdab4d3f1e8";
    	public function setUp() 
     {
-		$query = "INSERT INTO `report_maker` VALUES('1', '1', '{$this->_reportId}', 0, '2010-11-10 15:05:52', '2010-11-10 15:05:52', '1', '1', '6 month Sales Pipeline Report', '6 month Sales Pipeline Report', 'center', 'Opportunities over the next 6 months broken down by month and type', 0);";
+		$query = "INSERT INTO report_maker VALUES('1', '1', '{$this->_reportId}', 0, '2010-11-10 15:05:52', '2010-11-10 15:05:52', '1', '1', '6 month Sales Pipeline Report', '6 month Sales Pipeline Report', 'center', 'Opportunities over the next 6 months broken down by month and type', 0)";
 		$GLOBALS['db']->query($query);
 		
-		$query2 = "INSERT INTO `report_schedules` VALUES('728f6b40-2f41-01c6-6e13-4cdac466c862', '1', '{$this->_reportId}', '2010-11-09 18:00:00', '2010-11-11 10:00:00', 1, 3600, NULL, 'ent', 0);";
+		$query2 = "INSERT INTO report_schedules VALUES('728f6b40-2f41-01c6-6e13-4cdac466c862', '1', '{$this->_reportId}', '2010-11-09 18:00:00', '2010-11-11 10:00:00', 1, 3600, NULL, 'ent', 0)";
 		$GLOBALS['db']->query($query2);
     }
 

@@ -30,7 +30,7 @@ class Bug40263Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $this->note->mark_deleted($this->note->id);
-        $this->note->db->query('DELETE FROM notes WHERE id="' . $this->note->id . '";');
+        $this->note->db->query("DELETE FROM notes WHERE id='{$this->note->id}'");
 	}
 
 	public function testGetListViewQueryCreatedBy()

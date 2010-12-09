@@ -1741,7 +1741,7 @@ abstract class DBManager
      * @param  resource $result
      * @param  int      $rowNum optional, specify a certain row to return
      * @param  bool     $encode optional, true if we want html encode the resulting array
-     * @return array
+     * @return array    returns false if there are no more rows available to fetch
      */
     abstract public function fetchByAssoc(
         &$result,

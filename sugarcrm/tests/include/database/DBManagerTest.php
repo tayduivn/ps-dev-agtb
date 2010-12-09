@@ -1360,7 +1360,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     ),
                 array(
                     array('foo','CONCAT'),
-                    "CONCAT(foo)"
+                    "foo"
                     ),
                 array(
                     array('foo','CONCAT',array(),array(1,2,3)),
@@ -1416,7 +1416,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                  );
          if ( $this->_db instanceOf OracleManager )
              $this->assertEquals($ret,
-                 "TRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,'')))"
+                 "TRIM(CONCAT(CONCAT(CONCAT(NVL(foo.col1,''),' '), CONCAT(NVL(foo.col2,''),' ')), CONCAT(NVL(foo.col3,''),' ')))"
                  );
      }
 
