@@ -134,7 +134,7 @@ class SqlsrvManager extends MssqlManager
                     "Database" => $configOptions['db_name'],
                     "CharacterSet" => "UTF-8",
                     "ReturnDatesAsStrings" => true,
-                    "MultipleActiveResultSets" => false,
+                    "MultipleActiveResultSets" => true,
                     )
                 )
             or sugar_die("Could not connect to server ".$configOptions['db_host_name'].
@@ -205,14 +205,10 @@ class SqlsrvManager extends MssqlManager
     {
 		global $app_strings;
 		
-		// Flag if there are odd number of single quotes
-        if ((substr_count($sql, "'") & 1))
-            $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");
-
-        $sql = $this->_appendN($sql);
+		$sql = $this->_appendN($sql);
         
         $this->countQuery($sql);
-        $GLOBALS['log']->fatal('Query:' . $sql);
+        $GLOBALS['log']->debug('Query:' . $sql);
         $this->checkConnection();
         $this->query_time = microtime(true);
 		
@@ -229,12 +225,8 @@ class SqlsrvManager extends MssqlManager
         else {
             $result = @sqlsrv_query($this->database, $sql);
         }
-		// the sqlsrv driver will sometimes return false from sqlsrv_query()
-        // on delete queries, so we'll also check to see if we get an error
-        // message as well.
-        // see this forum post for more info
-        // http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=3685918&SiteID=1
-        if (!$result && ( $this->_getLastErrorMessages() != '' ) ) {
+		
+        if (!$result) {
             // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
             // 				  and difficult to reproduce error. The message is only a warning, and does
             //				  not affect the functionality of the query
@@ -263,25 +255,14 @@ class SqlsrvManager extends MssqlManager
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 		
         //BEGIN SUGARCRM flav=pro ONLY
-        if($this->dump_slow_queries($sql) && parent::$trackSlowQuery) {
+        if($this->dump_slow_queries($sql)) {
             $this->track_slow_queries($sql);
         }
         //END SUGARCRM flav=pro ONLY
         
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
         
-        // fetch all the returned rows into an the resultsCache
-        if ( is_resource($result) ) {
-			$i = 0;
-			while ( $row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC) )
-				$this->_resultsCache[$this->_lastResultsCacheKey][$i++] = $row;
-			
-			sqlsrv_free_stmt($result);
-			
-			return $this->_lastResultsCacheKey++;
-		}
-		else
-			return $result;
+        return $result;
     }
     
 	/**
@@ -294,10 +275,12 @@ class SqlsrvManager extends MssqlManager
 	{
         $field_array = array();
 
-        if ( !is_int($result) || !isset($this->_resultsCache[$result]) )
+        if ( !$result ) {
         	return false;
+        }
         
-        foreach ( $this->_resultsCache[$result][0] as $key => $value ) {
+        foreach ( sqlsrv_field_metadata($result) as $fieldMetadata ) {
+            $key = $fieldMetadata['Name'];
             if($make_lower_case==true)
                 $key = strtolower($key);
 
@@ -316,26 +299,11 @@ class SqlsrvManager extends MssqlManager
         $encode = true
         )
     {
-        static $last_returned_result = array();
-		
-        if ( !is_int($result) || !isset($this->_resultsCache[$result]) )
-        	return false;
-        
-        if ( !isset($last_returned_result[$result]) )
-            $last_returned_result[$result] = 0;
-        
-        if ( !isset($this->_resultsCache[$result][$last_returned_result[$result]]) ) {
-            $this->_resultsCache[$result] = null;
-            unset($this->_resultsCache[$result]);
+        if (!$result) {
             return false;
         }
         
-        $row = $this->_resultsCache[$result][$last_returned_result[$result]];
-        if ( $last_returned_result[$result] >= count($this->_resultsCache[$result]) ) {
-            $this->_resultsCache[$result] = null;
-            unset($this->_resultsCache[$result]);
-        }
-        $last_returned_result[$result]++;
+        $row = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
         //MSSQL returns a space " " when a varchar column is empty ("") and not null.
         //We need to iterate through the returned row array and strip empty spaces
         if(!empty($row)){
@@ -348,9 +316,10 @@ class SqlsrvManager extends MssqlManager
             }
         }
 
-        if($encode && $this->encode&& is_array($row))
+        if($encode && $this->encode&& is_array($row)) {
             return array_map('to_html', $row);
-        
+        }
+
         return $row;
 	}
 
@@ -363,21 +332,6 @@ class SqlsrvManager extends MssqlManager
     {
         return $this->getOne('SELECT @@ROWCOUNT');
 	}
-    
-	/**
-     * Have this function always return true, since the result is already freed
-     *
-     * @see DBManager::freeResult()
-     */
-    protected function freeResult(
-        $result = false
-        )
-    {
-    	if ( is_int($result) && isset($this->_resultsCache[$result]) )
-			unset($this->_resultsCache[$result]);
-		
-    	return true;
-    }
     
     /**
      * Emulates old mssql_get_last_message() behavior, giving us any error messages from the previous

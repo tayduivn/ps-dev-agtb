@@ -19,6 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Actions/AbstractAction.php");
+require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 class SetValueAction extends AbstractAction{
 	protected $expression =  "";
@@ -81,6 +82,7 @@ class SetValueAction extends AbstractAction{
         if ($result instanceof DateTime)
         {
             $td = new TimeDate();
+            $result = DateExpression::roundTime($result->setTimeZone(new DateTimeZone("UTC")));
             $target->$field = $result->format($td->get_db_date_time_format());
         }
         else

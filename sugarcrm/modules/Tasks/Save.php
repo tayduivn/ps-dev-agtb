@@ -111,6 +111,10 @@ if(isset($_REQUEST['inbound_email_id']) && !empty($_REQUEST['inbound_email_id'])
 ////	END INBOUND EMAIL HANDLING
 ///////////////////////////////////////////////////////////////////////////////	
 
+// Check for both relate_id and parent_id, and prevent overriding of parent_id
+if (!empty($_REQUEST['relate_id']) && !empty($_REQUEST['parent_id'])) {
+	$_REQUEST['relate_id'] = false;
+}
 
 // avoid undefined index
 if (!isset($GLOBALS['check_notify'])) {

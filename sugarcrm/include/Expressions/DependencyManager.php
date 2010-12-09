@@ -271,11 +271,14 @@ class DependencyManager {
      */
     public static function getJSUserVariables($user)
     {
+        $ts = new TimeDate();
+        $tz = $ts->getUserTimeZone($user);
         return "SUGAR.expressions.userPrefs = " . json_encode(array(
             "num_grp_sep" => $user->getPreference("num_grp_sep"),
             "dec_sep" => $user->getPreference("dec_sep"),
             "datef" => $user->getPreference("datef"),
             "timef" => $user->getPreference("timef"),
+            "gmt_offset" => $tz['gmtOffset'],
             "default_locale_name_format" => $user->getPreference("default_locale_name_format"),
         )) . ";\n";
     }

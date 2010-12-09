@@ -1,3 +1,5 @@
+
+
 <?php
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -41,7 +43,6 @@ class ReadOnlyAction extends AbstractAction{
 		}
 
 		SUGAR.util.extend(SUGAR.forms.ReadOnlyAction, SUGAR.forms.AbstractAction, {
-
 			/**
 			 * Triggers the style dependencies.
 			 */
@@ -50,20 +51,50 @@ class ReadOnlyAction extends AbstractAction{
 				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if (!el)
 				    return;
-				var property = el.type == 'checkbox' ? 'disabled' : 'readonly';
+				
 				var val = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
-				if (val == SUGAR.expressions.Expression.TRUE) {
-					el[property] = true;
-					YAHOO.util.Dom.setStyle(el, 'background-color', '#EEE');
-					if (!SUGAR.isIE)
-					   YAHOO.util.Dom.setStyle(el, 'color', '#22');
-				} else if (val == SUGAR.expressions.Expression.FALSE){
-					el[property] = false;
-					YAHOO.util.Dom.setStyle(el, 'background-color', '');
-					if (!SUGAR.isIE)
-                        YAHOO.util.Dom.setStyle(el, 'color', '');
-				}
-			} 
+				var set = val == SUGAR.expressions.Expression.TRUE;
+				this.setReadOnly(el, set);
+				this.setDateField(el, set);
+			},
+			
+			setReadOnly: function(el, set)
+			{
+			    var D = YAHOO.util.Dom;
+			    var property = el.type == 'checkbox' || 'select' ? 'disabled' : 'readonly';
+			    el[property] = set;
+			    if (set)
+			    {
+                    D.setStyle(el, 'background-color', '#EEE');
+                    if (!SUGAR.isIE)
+                       D.setStyle(el, 'color', '#22');
+                } else 
+                {
+                    D.setStyle(el, 'background-color', '');
+                        if (!SUGAR.isIE)
+                            D.setStyle(el, 'color', '');
+                }
+			},
+
+		    setDateField: function(el, set)
+		    {
+                var D = YAHOO.util.Dom, id = el.id, trig = D.get(id + '_trigger');
+                if(!trig) return;
+                var fields = [
+                    D.get(id + '_date'),
+                    D.get(id + '_minutes'),
+                    D.get(id + '_meridiem'),
+                    D.get(id + '_hours')];
+
+                for (var i in fields)
+                    if (fields[i] && fields[i].id)
+                        this.setReadOnly(fields[i], set);
+
+                if (set)
+                    D.setStyle(trig, 'display', 'none');
+                else
+                    D.setStyle(trig, 'display', '');
+		    }
 		});";
 	}
 
