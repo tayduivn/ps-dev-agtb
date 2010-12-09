@@ -62,12 +62,6 @@ $subpanel_layout = array(
 		 	'module' => $module_name,
 	 		'width' => '4%',
 		),
-		'remove_button'=>array(
-			'widget_class' => 'SubPanelRemoveButton',
-		 	'module' => $module_name,
-			'width' => '5%',
-            'refresh_page' => 1, // Putting subpanels elsewhere on the page doesn't work great with the subpanel js. Reload the whole page
-		),
 	),
 );
 
