@@ -5468,6 +5468,12 @@ padding: 2px;
 border: 0px;
 margin-top: 7px;
 }
+.dashletPanel.dc .hd button {
+    vertical-align: top;
+    margin-top: 8px;
+    margin-right: 6px;
+}
+
 
 .dashletPanel.dc .bd .bd-center {
 	padding-top: 15px;

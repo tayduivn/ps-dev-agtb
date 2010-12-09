@@ -117,7 +117,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
      	Y.get('#dcboxbody').setStyle('display','none');
      	Y.get('#dcboxbody').setStyle('width', '950px;');
     }
-    function setBody(data, depth, parentid,type,title){
+    function setBody(data, depth, parentid,type,title,extraButton){
 			if(typeof(data.html) == 'undefined')data = {html:data};
 			//Check for the login page, meaning we have been logged out.
 			if (SUGAR.util.isLoginPage(data.html))
@@ -150,7 +150,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			    if(typeof type  !=  'undefined')
 			        content +=	'<span>' + type + '</span>';
 			    
-			content += '<div class="close"><a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent">' + data.html + '</div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div>';
+		    content += '<div class="close">';
+            if ( extraButton != null ) {
+                content += extraButton
+            }
+            content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent">' + data.html + '</div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div>';
     		overlay.set('bodyContent', content);
     		
     		//DCMenu.all('#dcboxbody .view').replaceClass('view', 'dcview');
@@ -312,7 +316,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	
   
    
-    DCMenu.loadView = function(type,url, depth, parentid, title){
+    DCMenu.loadView = function(type,url, depth, parentid, title, extraButton){
+        if ( extraButton == undefined ) { extraButton = null; }
         var id = Y.io(url, {
              method: 'POST',
              //XDR Listeners
@@ -322,7 +327,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             		 try{
                      	jData = Y.JSON.parse(data.responseText);
                      	//saveView(type, requests[id].url,jData);
-                     	setBody(jData, requests[id].depth, requests[id].parentid,title);
+                     	 setBody(jData, requests[id].depth, requests[id].parentid,title, extraButton);
                      	 var head =Y.Node.get('head')
                      	for(i in jData['scripts']){
                     	 var script = document.createElement('script');
@@ -332,7 +337,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	SUGAR.util.evalScript(jData.html);
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
-            			setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+            			setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title, extraButton);
             		 	SUGAR.util.evalScript(data.responseText);
             		 	setTimeout("enableQS();", 1000);
             		 }
@@ -346,7 +351,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                  }
  		    }
          });
-         requests[id.id] = {type:type, url:url, parentid:parentid, depth:depth}; 	
+        requests[id.id] = {type:type, url:url, parentid:parentid, depth:depth, extraButton:extraButton}; 	
     }
     
     var loadView = Y.loadView;

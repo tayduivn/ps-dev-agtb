@@ -1,5 +1,5 @@
 LotusLive helps you collaborate seamlessly across companies with online services including:
-<ul style="list-style-type: disc !important; border-left: 0px;">
+<ul style="list-style-type: disc !important; border-left: 0px; padding-left: 0px; padding-top: 10px;">
 <li style="list-style-type: disc !important;">Web meetings</li>
 <li style="list-style-type: disc !important;">File sharing</li>
 <li style="list-style-type: disc !important;">Chat</li>
@@ -9,8 +9,8 @@ LotusLive helps you collaborate seamlessly across companies with online services
 <br>
 Register your LotusLive account to access LotusLive web meetings and files in Sugar.
 <br>
-<button onclick="document.location='index.php?module=EAPM&action=EditView&application=LotusLive'" style="padding: 2px;">Register</button>
+<button onclick="document.location='index.php?module=EAPM&action=EditView&application=LotusLive'" style="padding:2px; margin:8px;">Register</button>
 <br>&nbsp;<br>
 Not yet a LotusLive member? Sign up to get a trial account.
 <br>
-<button onclick="document.location='https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage'" style="padding: 2px;">Free Trial</button>
+<button onclick="document.location='https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage'" style="padding:2px; margin:8px;">Free Trial</button>

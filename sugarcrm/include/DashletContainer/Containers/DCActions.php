@@ -50,11 +50,11 @@ if ( !is_array($dynamicDCActions) ) {
     $dynamicDCActions = array();
 }
 
-if ( true && is_object($api) ) {
+if ( true || is_object($api) ) {
     $dynamicDCActions['LotusLiveMeetings'] = array(
         'module' => 'Meetings',
         'label' => translate('LBL_VIEW_LOTUS_LIVE_MEETINGS','EAPM'),
-        'action'=>'DCMenu.hostMeetingUrl=\''.$lotusLiveUrl.'\'; DCMenu.loadView(\''.translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM') . $llNowButton .'\',\'index.php?module=Meetings&action=listbytype&type=LotusLive\');',
+        'action'=> "DCMenu.hostMeetingUrl='".$lotusLiveUrl."'; DCMenu.loadView('".translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM')."','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'".$llNowButton."');",
         'icon'=> SugarThemeRegistry::current()->getImageURL("icon_LotusMeetings_bar_32.png"),
         );
     
