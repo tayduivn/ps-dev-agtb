@@ -26,7 +26,7 @@ function EAPMEditStart(userIsAdmin) {
     
     apiElem.onchange = EAPMChange;
 
-    EAPMChange();
+    setTimeout(EAPMChange,100);
     
     if ( !userIsAdmin ) {
         // Disable the assigned user picker for non-admins

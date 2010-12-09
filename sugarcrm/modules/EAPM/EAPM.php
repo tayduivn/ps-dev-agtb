@@ -128,9 +128,9 @@ class EAPM extends Basic {
 	protected function fillInName()
 	{
         if ( !empty($this->application) ) {
-            $apiList = ExternalAPIFactory::loadFullAPIList();
+            $apiList = ExternalAPIFactory::loadFullAPIList(true);
         }
-	    if(empty($this->name) && !empty($apiList) && isset($apiList[$this->application]) && $apiList[$this->application]['authMethod'] == "oauth") {
+	    if(!empty($apiList) && isset($apiList[$this->application]) && $apiList[$this->application]['authMethod'] == "oauth") {
 	        $this->name = sprintf(translate('LBL_OAUTH_NAME', $this->module_dir), $this->application);
 	    }
 	}
