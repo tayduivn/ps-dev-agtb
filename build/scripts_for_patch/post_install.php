@@ -380,7 +380,15 @@ function post_install() {
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
-	//END SUGARCRM flav=pro ONLY		
+	//END SUGARCRM flav=pro ONLY	
+
+    //Remove jssource/src_files directory if it still exists
+    if(file_exists('jssource/src_files'))
+    {
+       _logThis('Remove jssource/src_files directory');
+       rmdir_recursive('jssource/src_files');
+       _logThis('Finished removing jssource/src_files directory');	
+    }
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
