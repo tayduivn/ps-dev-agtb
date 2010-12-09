@@ -38,10 +38,11 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
     public $docSearch = true;
 	protected $meetingID;
     protected $joinURL;
-	protected $hostURL = "https://apps.test.lotuslive.com/meetings/host";
-	protected $oauthReq = "https://apps.test.lotuslive.com/manage/oauth/getRequestToken";
-    protected $oauthAuth = 'https://apps.test.lotuslive.com/manage/oauth/authorizeToken';
-    protected $oauthAccess = 'https://apps.test.lotuslive.com/manage/oauth/getAccessToken';
+    protected $baseURL = 'https://apps.test.lotuslive.com/';
+    public $hostURL;
+    protected $oauthReq;
+    protected $oauthAuth;
+    protected $oauthAccess;
     protected $oauthParams = array(
     	'signatureMethod' => 'PLAINTEXT',
         'consumerKey' => "test_app",
@@ -54,6 +55,15 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
     public $needsUrl = false;
     // public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','company'=>'LBL_SHARE_COMPANY','public'=>'LBL_SHARE_PUBLIC');
     public $sharingOptions = null;
+
+    function __construct() {
+        $this->hostURL = $this->baseURL.'meetings/host';
+        $this->oauthReq = $this->baseURL.'manage/oauth/getRequestToken';
+        $this->oauthAuth = $this->baseURL.'manage/oauth/authorizeToken';
+        $this->oauthAccess = $this->baseURL.'manage/oauth/getAccessToken';
+
+        // return parent::__construct();
+    }
 
 
     public function loadEAPM($eapmBean)
@@ -202,9 +212,9 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
         }
         $bean->doc_id = $result['responseJSON']['FileId'];
 
-        $bean->doc_direct_url = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
+        $bean->doc_direct_url = $this->baseURL.'files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
 
-        $bean->doc_url = 'https://apps.test.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
+        $bean->doc_url = $this->baseURL.'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
 
         // Refresh the document cache
         $this->loadDocCache(true);
@@ -245,9 +255,9 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
             $result['id'] = $remoteFile['file_id'];
             $result['name'] = $remoteFile['file_name'];
             $result['date_modified'] = preg_replace('/^([^T]*)T([^.]*)\....Z$/','\1 \2',$remoteFile['date_modified']);
-            $result['direct_url'] = 'https://apps.test.lotuslive.com/files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$remoteFile['file_id'].'/stream/'.$remoteFile['file_id'];
+            $result['direct_url'] = $this->baseURL.'files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$remoteFile['file_id'].'/stream/'.$remoteFile['file_id'];
 
-            $result['url'] = 'https://apps.test.lotuslive.com/files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$remoteFile['file_id'];
+            $result['url'] = $this->baseURL.'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$remoteFile['file_id'];
 
             $results[] = $result;
         }
@@ -312,9 +322,7 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
             "Content-Length: ".strlen($data),
             );
 
-        $GLOBALS['log']->fatal("IKEA: Sent ($url), $data, ".print_r($headers,true));
         $rawResponse = $this->postData($url, $data, $headers);
-        $GLOBALS['log']->fatal("IKEA: Got $rawResponse");
 
         $reply = array();
         $reply['responseRAW'] = $rawResponse;

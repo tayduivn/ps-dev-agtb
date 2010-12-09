@@ -71,4 +71,11 @@ $mod_strings = array (
   'LBL_VALIDATED' => 'Access validated',
   'LBL_ACTIVE' => 'Active',
   'LBL_OAUTH_NAME' => 'OAuth for %s',
+
+  // Various strings used throughout the external account modules
+  'LBL_MEET_NOW_BUTTON' => 'Meet Now',
+  'LBL_VIEW_LOTUS_LIVE_MEETINGS' => 'View LotusLive Meetings',
+  'LBL_TITLE_LOTUS_LIVE_MEETINGS' => 'LotusLive Meetings',
+  'LBL_VIEW_LOTUS_LIVE_DOCUMENTS' => 'View LotusLive Documents',
+  'LBL_TITLE_LOTUS_LIVE_DOCUMENTS' => 'LotusLive Documents',
 );

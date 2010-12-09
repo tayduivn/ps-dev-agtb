@@ -306,7 +306,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
     
     DCMenu.hostMeeting = function(){
-        window.open('https://apps.lotuslive.com/meetings/host', 'hostmeeting');
+        window.open(DCMenu.hostMeetingUrl, 'hostmeeting');
     }
 
 	

@@ -81,8 +81,8 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
         $GLOBALS['log']->fatal("Where: ".$url);
-        $GLOBALS['log']->fatal("Headers:\n".print_r($headers,true));
-        $GLOBALS['log']->fatal("Postfields:\n".print_r($postfields,true));
+        // $GLOBALS['log']->fatal("Headers:\n".print_r($headers,true));
+        // $GLOBALS['log']->fatal("Postfields:\n".print_r($postfields,true));
         $rawResponse = curl_exec($ch);
         $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
 
