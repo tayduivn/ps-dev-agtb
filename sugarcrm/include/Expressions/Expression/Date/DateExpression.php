@@ -83,10 +83,37 @@ abstract class DateExpression extends AbstractExpression
         if ($date instanceof DateTime)
             return $date;
 
+        //Assume that string dates are all in UTC
         if (is_string($date))
-            return new DateTime($date);
+            return new DateTime($date, new DateTimeZone("UTC"));
 
         return false;
+    }
+
+    public static function roundTime($date)
+    {
+        if (!($date instanceof DateTime))
+            return false;
+
+        $min = $date->format("i");
+        $offset = 0;
+        if ($min < 16){
+            $offset = 15 - $min;
+        } else if ($min < 31)
+        {
+            $offset = 30 - $min;
+        }
+        else if ($min < 46)
+        {
+            $offset = 45 - $min;
+        }
+        else if ($min < 46)
+        {
+            $offset = 60 - $min;
+        }
+        $date->modify("+$offset minutes");
+        
+        return $date;
     }
 }
 ?>

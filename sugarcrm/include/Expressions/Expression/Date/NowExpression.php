@@ -29,8 +29,9 @@ class NowExpression extends DateExpression
 	/**
 	 * Returns the entire enumeration bare.
 	 */
-	function evaluate() {		
-		return date($this->internalDateFormat);
+	function evaluate() {
+        global $current_user;
+		return new DateTime("now", new DateTimeZone($current_user->getPreference('timezone')));
 	}
 
 
@@ -39,7 +40,7 @@ class NowExpression extends DateExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		  var d = new Date();
+		  var d = SUGAR.util.DateUtils.getUserTime();
 		  d.setSeconds(0);
 		  return d;
 EOQ;

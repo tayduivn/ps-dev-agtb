@@ -984,10 +984,13 @@ SUGAR.util.DateUtils = {
 		return dateFormat;
 	},
 
-    formatDate : function(date, format)
+    formatDate : function(date, useTime, format)
     {
         if (!format && SUGAR.expressions.userPrefs.datef && SUGAR.expressions.userPrefs.timef) {
-            format = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;
+            if (useTime)
+				format = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;
+			else
+				format = SUGAR.expressions.userPrefs.datef;
         }
         var out = "";
         for (var c in format) {
@@ -999,13 +1002,11 @@ SUGAR.util.DateUtils = {
                     out += date.getDate(); break;
                 case 'Y':
                     out += date.getFullYear(); break;
+				case 'H':
                 case 'h':
-                    var h = date.getHours();
-                    h = h > 12 ? h - 12 : h;
-                    out += h;
-                    break;
-                case 'H':
-                    out += date.getHours(); break;
+					var h = date.getHours();
+                    if(c == "h") h = h > 12 ? h - 12 : h;
+                    out += h < 10 ? "0" + h : h; break;
                 case 'i':
                     var m = date.getMinutes();
                     out += m < 10 ? "0" + m : m; break;
@@ -1026,5 +1027,32 @@ SUGAR.util.DateUtils = {
             }
 		}
         return out;
-    }
+    },
+	roundTime: function(date)
+	{
+		var min = date.getMinutes();
+
+		if (min < 16) { min = 15; }
+		else if (min < 31) { min = 30; }
+		else if (min < 46) { min = 45; }
+		else { min = 0; date.setHours(date.getHours() + 1)}
+
+		date.setMinutes(min);
+
+		return date;
+	},
+	getUserTime: function()
+	{
+		var date = new Date();
+		if (typeof(SUGAR.expressions.userPrefs.gmt_offset) != "undefined")
+		{
+			//Sugars TZ offset is negative compared with JS's offset, so adding is really subtracting;
+			var offset = SUGAR.expressions.userPrefs.gmt_offset;
+			date.setMinutes(date.getMinutes() + (date.getTimezoneOffset() + offset));
+		}
+
+		console.log(date.getMinutes());
+
+		return date;
+	}
  }
