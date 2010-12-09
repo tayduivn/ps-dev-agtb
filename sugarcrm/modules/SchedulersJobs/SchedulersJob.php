@@ -130,7 +130,7 @@ class SchedulersJob extends SugarBean {
 
 		// get proper user
 		$user = (empty($user)) ? $this->user : $user;
-		$dbTime = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($time));
+		$dbTime = $timedate->nowDb();
 
 		$ret = $timedate->to_display_date_time($dbTime, true, true, $user);
 		return $ret;
@@ -164,7 +164,7 @@ class SchedulersJob extends SugarBean {
 		$GLOBALS['log']->debug('----->SchedulersJob updating Job Status and finishing Job execution.');
 		$this->scheduler->retrieve($this->scheduler->id);
 		$this->scheduler->last_run = $this->handleDateFormat('now');
-		if($this->scheduler->last_run == gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('Jan 01 2000 00:00:00'))) {
+		if($this->scheduler->last_run == $timedate->asDb($timedate->fromString('Jan 01 2000 00:00:00'))) {
 			$this->scheduler->last_run = $this->handleDateFormat('now');
 			$GLOBALS['log']->fatal('Scheduler applying bogus date for "Last Run": '.$this->scheduler->last_run);
 		}

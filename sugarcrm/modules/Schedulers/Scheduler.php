@@ -161,7 +161,7 @@ class Scheduler extends SugarBean {
 		$GLOBALS['log']->debug('-----> Scheduler flushing dead jobs');
 
 		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
-		$now = TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow()); // this garbage to make sure we're getting comprable data to the DB output
+		$now = $timedate->getNow()->ts; // this garbage to make sure we're getting comprable data to the DB output
 
 		$q = "	SELECT s.id, s.name FROM schedulers s WHERE s.deleted=0 AND s.status = 'In Progress'";
 		$r = $this->db->query($q);
@@ -210,7 +210,7 @@ class Scheduler extends SugarBean {
 			return false;
 		}
 
-		$now = gmdate('Y-m-d H:i', strtotime('now'));
+		$now = TimeDate2::getInstance()->getNow();
 		$validTimes = $this->deriveDBDateTimes($this);
 		//_pp('now: '.$now); _pp($validTimes);
 
@@ -365,7 +365,7 @@ class Scheduler extends SugarBean {
 		$dates	= $ints[2];
 		$hrs	= $ints[1];
 		$mins	= $ints[0];
-		$today	= getdate(gmmktime());
+		$today	= getdate(TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow()));
 
 		// derive day part
 		if($days == '*') {
@@ -613,13 +613,13 @@ class Scheduler extends SugarBean {
 		if(!empty($focus->date_time_end)) { // do the same for date_time_end if not empty
 			$dateTimeEnd = $focus->date_time_end;
 		} else {
-			$dateTimeEnd = gmdate('Y-m-d H:i:s', strtotime('+1 day'));
+			$dateTimeEnd = TimeDate2::getInstance()->asDb(TimeDate2::getInstance()->getNow()+get('+1 day'));
 //			$dateTimeEnd = '2020-12-31 23:59:59'; // if empty, set it to something ridiculous
 		}
 		$timeEndTs = strtotime($dateTimeEnd.' UTC'); // GMT end timestamp if necessary
 		$timeEndTs++;
 		/*_pp('hours:'); _pp($hrName);_pp('mins:'); _pp($minName);*/
-		$nowTs = mktime();
+		$nowTs = TimeDate2::getInstance()->asUserTs($timedate->getNow());
 
 //		_pp('currentHour: '. $currentHour);
 //		_pp('timeStartTs: '.date('r',$timeStartTs));
@@ -638,9 +638,9 @@ class Scheduler extends SugarBean {
 			$hourSeen++;
 			foreach($minName as $kMin=>$min) {
 				if($hourSeen == 25) {
-					$theDate = date('Y-m-d', strtotime('+1 day'));
+					$theDate = TimeDate2::getInstance()->asDbDate(TimeDate2::getInstance()->getNow()->get('+1 day'));
 				} else {
-					$theDate = date('Y-m-d');
+					$theDate = TimeDate2::getInstance()->nowDbDate();
 				}
 
 				$tsGmt = strtotime($theDate.' '.str_pad($hr,2,'0',STR_PAD_LEFT).":".str_pad($min,2,'0',STR_PAD_LEFT).":00"); // this is LOCAL
@@ -869,7 +869,7 @@ class Scheduler extends SugarBean {
 	 * soft-deletes all job logs older than 24 hours
 	 */
 	function cleanJobLog() {
-		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert('\''.gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('-24 hours')).'\'', 'datetime').'');
+		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert('\''.TimeDate2::getInstance()->nowDb(), strtotime('-24 hours')).'\'', 'datetime').'');
 	}
 
 	/**

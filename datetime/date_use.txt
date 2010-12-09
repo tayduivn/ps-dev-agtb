@@ -29,15 +29,7 @@
 ./modules/Schedulers/jobs/SecurityAudit.php:		echo "Starting at: ".date('H:i:s', $startTime)."<br>";
 ./modules/Schedulers/jobs/SecurityAudit.php:		echo "<br>totalTime: ".date('H:i:s', (mktime() - $startTime))."<br>";
 ./modules/Schedulers/Scheduler.php:		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
-
-
-
-
-
-
-
 ./modules/Schedulers/Scheduler.php:		$now = gmdate('Y-m-d H:i', strtotime('now'));
-./modules/Schedulers/Scheduler.php:		$today	= getdate(gmmktime());
 ./modules/Schedulers/Scheduler.php:			$startMon = date('m', strtotime($focus->date_time_start));
 ./modules/Schedulers/Scheduler.php:			$startDate = date('d', strtotime($focus->date_time_start));
 ./modules/Schedulers/Scheduler.php:		//$currentHour = gmdate('G');
@@ -45,74 +37,32 @@
 ./modules/Schedulers/Scheduler.php:		//$currentMin = date('i');
 ./modules/Schedulers/Scheduler.php:		$currentMin = date('i', strtotime($this->date_time_start));
 ./modules/Schedulers/Scheduler.php:			$startMin = date('i',strtotime($focus->date_time_start));
-./modules/Schedulers/Scheduler.php:			$dateTimeEnd = gmdate('Y-m-d H:i:s', strtotime('+1 day'));
-./modules/Schedulers/Scheduler.php:		$nowTs = mktime();
-./modules/Schedulers/Scheduler.php://		_pp('timeStartTs: '.date('r',$timeStartTs));
-./modules/Schedulers/Scheduler.php://		_pp('timeFromTs: '.date('r',$timeFromTs));
-./modules/Schedulers/Scheduler.php://		_pp('timeEndTs: '.date('r',$timeEndTs));
-./modules/Schedulers/Scheduler.php://		_pp('timeToTs: '.date('r',$timeToTs));
-./modules/Schedulers/Scheduler.php://		_pp('mktime: '.date('r',mktime()));
-./modules/Schedulers/Scheduler.php://		_pp('timeLastRun: '.date('r',$lastRunTs));
-./modules/Schedulers/Scheduler.php:					$theDate = date('Y-m-d', strtotime('+1 day'));
-./modules/Schedulers/Scheduler.php:					$theDate = date('Y-m-d');
 ./modules/Schedulers/Scheduler.php:                                    $validJobTime[] = gmdate('Y-m-d H:i', $tsGmt);
-./modules/Schedulers/Scheduler.php:                                //_pp('Job Time is NOT smaller that DateTimeEnd: '.date('Y-m-d H:i:s',$tsGmt) .'<='. $dateTimeEnd); //_pp( $tsGmt .'<='. $timeEndTs );
-./modules/Schedulers/Scheduler.php:					//_pp('Job Time is NOT Bigger than DateTimeStart: '.date('Y-m-d H:i',$tsGmt) .'>='. $dateTimeStart);
-./modules/Schedulers/Scheduler.php:				$validJobTime[] = gmdate('Y-m-d H:i', strtotime('now'));
-./modules/Schedulers/Scheduler.php:                $now = gmdate('Y-m-d H:i', strtotime('now'));
+./modules/Schedulers/Scheduler.php:				$validJobTime[] = gmdate('Y-m-d H:i', strtotime('now'));./modules/Schedulers/Scheduler.php:                $now = gmdate('Y-m-d H:i', strtotime('now'));
 ./modules/Schedulers/Scheduler.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
 ./modules/Schedulers/Scheduler.php:					return date('jS', strtotime('December '.$value));
 ./modules/Schedulers/Scheduler.php:				return date('F', strtotime('2005-'.$value.'-01'));
-./modules/Schedulers/Scheduler.php:		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert('\''.gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('-24 hours')).'\'', 'datetime').'');
-./modules/Schedulers/SchedulerDaemon.php:		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.date('Y-m-d H:i:s',strtotime('now')) );
-./modules/Schedulers/SchedulerDaemon.php:		$GLOBALS['log']->debug('----->sleepTil: '.date('H:i:s', $sleepTil).' :: timerstarted at '.date('H:i:s',strtotime('now')));
-./modules/Schedulers/SchedulerDaemon.php:			if(date('H:i:s', strtotime('now')) == '00:00:01') { // refresh at Midnight local time
-./modules/Schedulers/SchedulerDaemon.php:					$this->sendAdminAlert('Daemon lost contact with the Monitor at GMT: '.gmdate('Y-m-d H:i:s', strtotime('now')));
-./modules/Schedulers/SchedulerDaemon.php:		$fireTimeMinus = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now -1 min'));
-./modules/Schedulers/SchedulerDaemon.php:		$fireTimePlus = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now +1 min'));
-./modules/Schedulers/SchedulerDaemon.php:		$today	= getdate(gmmktime());
+./modules/Schedulers/SchedulerDaemon.php:			if(date('H:i:s', strtotime('now')) == '00:00:01') { ./modules/Schedulers/SchedulerDaemon.php:					$this->sendAdminAlert('Daemon lost contact with the Monitor at GMT: '.gmdate('Y-m-d H:i:s', strtotime('now')));
+./modules/Schedulers/SchedulerDaemon.php:		
 ./modules/Schedulers/SchedulerDaemon.php:			$startMon = date(strtotime('m',$focus->date_time_start));
 ./modules/Schedulers/SchedulerDaemon.php:			$startDate = date('d', strtotime($focus->date_time_start));
 ./modules/Schedulers/SchedulerDaemon.php:		//$startHour = date('G', strtotime($focus->date_time_start));
+
 ./modules/Schedulers/SchedulerDaemon.php:		//$currentHour = ($startHour < 1) ? 23 : date('G', strtotime($focus->date_time_start));
 ./modules/Schedulers/SchedulerDaemon.php:		$currentHour = date('G');
 ./modules/Schedulers/SchedulerDaemon.php:		$currentMin = date('i');
-./modules/Schedulers/SchedulerDaemon.php:			$startMin = date('i',strtotime($focus->date_time_start));
-./modules/Schedulers/SchedulerDaemon.php:			$dateTimeEnd = date('Y-m-d H:i:s', strtotime('+1 day'));
-./modules/Schedulers/SchedulerDaemon.php:		$nowTs = mktime();
-./modules/Schedulers/SchedulerDaemon.php:					$theDate = date('Y-m-d', strtotime('+1 day'));
-./modules/Schedulers/SchedulerDaemon.php:					$theDate = date('Y-m-d');
-./modules/Schedulers/SchedulerDaemon.php:										$validJobTime[] = gmdate('Y-m-d H:i:s', $tsGmt);
-./modules/Schedulers/SchedulerDaemon.php:										//_pp("Job Qualified for: ".date('Y-m-d H:i:s', $tsGmt));
-./modules/Schedulers/SchedulerDaemon.php:									//_pp('Job Time is NOT larger than NOW'); _pp(date('Y-m-d H:i:s', $nowTs));
-./modules/Schedulers/SchedulerDaemon.php:							//_pp('Job Time is NOT smaller that DateTimeEnd: '.date('Y-m-d H:i:s',$tsGmt) .'<='. $dateTimeEnd); _pp( $tsGmt .'<='. $timeEndTs );
-./modules/Schedulers/SchedulerDaemon.php:					//_pp('Job Time is NOT Bigger than DateTimeStart: '.date('Y-m-d H:i',$tsGmt) .'>='. $dateTimeStart);
-./modules/Schedulers/SchedulerDaemon.php:						".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').",
-./modules/Schedulers/SchedulerDaemon.php:						".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').",
-./modules/Schedulers/SchedulerDaemon.php:				"AND date_time_start < ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'",'datetime')." " .
-./modules/Schedulers/SchedulerDaemon.php:				"AND (date_time_end > ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'",'datetime')." OR date_time_end IS NULL)";
-./modules/Schedulers/SchedulerMonitor.php:		$this->uptimeScheduler = mktime();
-./modules/Schedulers/SchedulerMonitor.php:		$pingAt = mktime() + 10;
-./modules/Schedulers/SchedulerMonitor.php:				if($pingAt <= mktime()) {
-./modules/Schedulers/SchedulerMonitor.php:					$pingAt = mktime() + 10;// every 10 secs
-./modules/Schedulers/SchedulerMonitor.php:				$this->sendAdminAlert('Monitor lost contact with the Daemon at GMT: '.gmdate('Y-m-d H:i:s', strtotime('now')));
-./modules/Schedulers/SchedulerMonitor.php:							$msg .= mktime() - $this->uptimeScheduler."secs\n";
-./modules/Schedulers/SchedulerOLD.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
+./modules/Schedulers/SchedulerDaemon.php:			$startMin = date('i',strtotime($focus->date_time_start));./modules/Schedulers/SchedulerOLD.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
 ./modules/Schedulers/SchedulerOLD.php:					return date('jS', strtotime('December '.$value));
 ./modules/Schedulers/SchedulerOLD.php:				return date('F', '2005-'.$value.'-01');
-./modules/SchedulersJobs/SchedulersJob.php:		$dbTime = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($time));
-./modules/SchedulersJobs/SchedulersJob.php:		if($this->scheduler->last_run == gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('Jan 01 2000 00:00:00'))) {
-./modules/SchedulersJobs/SchedulersJobOLD.php:		$qRun = 'UPDATE schedulers s SET s.last_run = '.db_convert('\''.gmdate($GLOBALS['timedate']->get_db_date_time_format(),strtotime('now')).'\'', 'datetime').' WHERE s.id = \''.$job_id.'\'';
-./modules/SchedulersJobs/SchedulersJobOLD.php:		$GLOBALS['log']->debug('----->Firing off Job ('.$job.') at '.date('Y-m-d H:i:s') .' USING TIMEOUT OF: '.$timeout);
-./modules/SchedulersJobs/SchedulersJobOLD.php:			$GLOBALS['log']->debug('----->Firing was successful: ('.$job.') at '.date('Y-m-d H:i:s'));
-./modules/SchedulersJobs/SchedulersJobOLD.php:			$GLOBALS['log']->fatal('Job errored: ('.$job.') at '.date('Y-m-d H:i:s'));
-./modules/SugarFeed/SugarFeed.php:		$end = gmdate('Y-m-d H:i:s');
 ./modules/SugarFeed/SugarFeed.php:    	$start_time = gmmktime($start[4],$start[5], $start[6], $start[2], $start[3], $start[1] );
-./modules/SugarFeed/SugarFeedFlush.php:        $currDate = $td->get_gmt_db_date();
 ./modules/SugarFeed/SugarFeedFlush.php:            $flushBefore = gmdate($td->dbDayFormat,gmmktime(0,0,0,gmdate('m'),gmdate('d')-14,gmdate('Y')));
-./modules/Sync/syncconnect.php:                                $gmdate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-./modules/Tasks/MyTasks.php:$today = gmdate($GLOBALS['timedate']->get_db_date_time_format());
 ./modules/Tasks/MyTasks.php:$tomorrow = gmdate($GLOBALS['timedate']->get_db_date_time_format(),gmmktime($time[0],$time[1],$time[2],$date[1],($date[2]+1),$date[0]));
+
+
+
+
+
+
 ./modules/Tasks/Task.php:		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
 ./modules/Tasks/Task.php:        $task_fields['DATE_DUE'] = $timedate->to_display_date($dbtime);
 ./modules/Tasks/Task.php:        $dd = $timedate->to_db_date($date_due, false);

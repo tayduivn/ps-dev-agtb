@@ -131,7 +131,7 @@ class History
         // because so unlikely in normal use we handle this the naive way by waiting a second so our naming scheme doesn't get overelaborated
         $retries = 0 ;
         
-        $time = strtotime(TimeDate2::getInstance()->httpTime());
+        $time = TimeDate2::getInstance()->getNow();
         while ( (file_exists ( $this->_previewFilename . "_" . $time ) && $retries < 5) )
         
         {

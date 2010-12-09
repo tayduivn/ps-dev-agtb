@@ -65,11 +65,11 @@ $code = $teamSetField->getClassicView($focus->field_defs);
 $xtpl->assign("TEAM_SET_FIELD", $code);
 
 if(!isset($focus->date_start)) {
-		$xtpl->assign('DATE_START', $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat)));
-} else $xtpl->assign('DATE_START', $focus->date_start);
+		$xtpl->assign('DATE_START', $timedate->nowDate();
+	} else $xtpl->assign('DATE_START', $focus->date_start);
 if(!isset($focus->date_start)) {
-		$xtpl->assign('DATE_END', $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, time() + 86400 * 7)));
-} else$xtpl->assign('DATE_END', $focus->date_end);
+		$xtpl->assign('DATE_END', $timedate->toUser($timedate->getNow()->get('+1 week')));
+	} else $xtpl->assign('DATE_END', $focus->date_end);
 $xtpl->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 $xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($mod_strings['dom_status'], $focus->status));
 $xtpl->parse("main.pro");

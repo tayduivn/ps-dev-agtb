@@ -91,7 +91,7 @@ function getNextRunDate($date_start,$interval)
     global $timedate;
 	$time = time();
 	
-    $date_start = strtotime($date_start . ' GMT');
+    $date_start = $timedate->fromDb($date_start)->ts;
     if( $date_start <= $time )
     {
         while($date_start <= $time)
@@ -100,7 +100,7 @@ function getNextRunDate($date_start,$interval)
     else
         $date_start += $interval;
 
-    return $timedate->asDb($date_start);
+    return $timedate->fromTimestamp($date_start)->asDb();
 }
 
 function get_users_schedule($id=''){

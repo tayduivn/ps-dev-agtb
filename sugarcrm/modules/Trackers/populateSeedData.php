@@ -155,7 +155,8 @@ function populate_tracker_queries() {
 function randomTimestamp() {
    $now = strtotime(date('D M Y'));
    $lastYear = strtotime('01 February 2008');
-   return gmdate("Y-m-d H:i:s", rand($lastYear, $now));
+   return $timedate->asDb($timedate->fromTimestamp(rand($lastYear, $now)));
+    
 }
 
 function getSessionId() {

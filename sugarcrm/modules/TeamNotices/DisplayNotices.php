@@ -44,7 +44,7 @@ global $theme;
 $xtpl=new XTemplate ('modules/TeamNotices/DisplayNotices.html');
 $ListView = new ListView();
 $ListView->initNewXTemplate( 'modules/TeamNotices/DisplayNotices.html',$mod_strings);
-$today = db_convert("'".gmdate($GLOBALS['timedate']->dbDayFormat)."'", 'date');
+$today = db_convert("'".$timedate->nowDbDate()."'", 'date');
 
 $ListView->setHeaderTitle(translate('LBL_NOTICES', 'TeamNotices'));
 $ListView->setQuery($focus->table_name.".date_start <= $today and ".$focus->table_name.".date_end >= $today and ".$focus->table_name.'.status=\'Visible\'', "", "date_start", "TEAMNOTICE");

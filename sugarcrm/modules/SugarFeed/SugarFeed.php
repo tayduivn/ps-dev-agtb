@@ -378,7 +378,7 @@ class SugarFeed extends Basic {
 		$startDate = $GLOBALS['timedate']->to_db($startDate);
 		$start = array();
    		preg_match('/(\d+)\-(\d+)\-(\d+) (\d+)\:(\d+)\:(\d+)/', $startDate, $start);
-		$end = gmdate('Y-m-d H:i:s');
+		$end = $timedate->nowDb(); 
     	$start_time = gmmktime($start[4],$start[5], $start[6], $start[2], $start[3], $start[1] );
 		$seconds = time()- $start_time;
 		$minutes =   $seconds/60;

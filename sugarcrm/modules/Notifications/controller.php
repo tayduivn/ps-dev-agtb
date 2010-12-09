@@ -41,7 +41,7 @@ class NotificationsController extends SugarController
 	   
 	    $thirtySecondsAgoFormatted = $timedate->getNow()->get("30 seconds ago")->asDb();
 
-	    $now = nowDb();
+	    $now = $timedate->nowDb();
 
 	    $lastNotiticationCheck = !empty($_SESSION['lastNotificationCheck']) ? $_SESSION['lastNotificationCheck'] : $thirtySecondsAgoFormatted;
 	    
