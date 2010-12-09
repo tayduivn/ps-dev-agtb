@@ -117,7 +117,6 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 			</th>
 			{counter name="colCounter"}
 		{/foreach}
-		<th scope='col' nowrap="nowrap" width='1%'>&nbsp;</th>
 	</tr>
 	
 	
@@ -168,7 +167,6 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 				{/strip}
 				{counter name="colCounter"}
 			{/foreach}
-			<td align='right'>{$pageData.additionalDetails.$id}</td>
 	    	</tr>
 	{foreachelse}
 	<tr height='20' class='{$rowColor[0]}S1'>
