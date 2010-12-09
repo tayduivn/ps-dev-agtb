@@ -19,7 +19,7 @@ class SilentUpgradeSessionVarsTest extends Sugar_PHPUnit_Framework_TestCase
     	
     	require_once('modules/UpgradeWizard/uw_utils.php');
     	
-    	$varsCacheFileName = "{$GLOBALS['sugar_config']['cache_dir']}/modules/UpgradeWizard/silentUpgradeCache.php";
+    	$varsCacheFileName = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
         
     	$loaded = loadSilentUpgradeVars();
     	$this->assertTrue($loaded, "Could not load the silent upgrade vars");
