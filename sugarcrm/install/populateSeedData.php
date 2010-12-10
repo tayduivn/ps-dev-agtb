@@ -556,7 +556,7 @@ for($i=0; $i<$number_leads; $i++)
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
 $timedate = TimeDate::getInstance();
-$now = $timedate->now();
+$now = $timedate->getNow();
 $timedate->tzUser($now); // use local TZ to calculate dates
 $timeperiods=array();
 $timeperiod = new TimePeriod();
