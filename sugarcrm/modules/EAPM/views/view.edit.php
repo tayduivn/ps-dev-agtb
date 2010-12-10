@@ -33,6 +33,43 @@ require_once('include/MVC/View/views/view.edit.php');
 
 class EAPMViewEdit extends ViewEdit {
 
+    protected function _getModuleTab()
+    {
+        return 'Users';
+    }
+
+    /**
+	 * @see SugarView::_getModuleTitleParams()
+	 */
+	protected function _getModuleTitleParams()
+	{
+	    global $mod_strings;
+
+        $returnAction = 'DetailView';
+        $returnModule = 'Users';
+        $returnName = $GLOBALS['current_user']->full_name;
+        if(!empty($_REQUEST['return_action']) && !empty($_REQUEST['return_module'])){
+            if('Users' == $_REQUEST['return_module']){
+                if('EditView' == $_REQUEST['return_action']){
+                    $returnAction = 'EditView';
+                }
+                if(!empty($_REQUEST['return_name'])){
+                    $returnName = $_REQUEST['return_name'];
+                }
+            }
+        }
+        $iconPath = $this->getModuleTitleIconPath($this->module);
+    	return array(
+           "<a href='index.php?module=Users&action=index'><img src='{$iconPath}' alt='Users' title='Users' align='absmiddle'></a>",
+    	   "<a href='index.php?module={$returnModule}&action={$returnAction}'>".translate('LBL_MODULE_NAME','Users')."</a>",
+    	  $returnName,
+    	   );
+    }
+
+    protected function getModuleTitleIconPath($module) {
+        return parent::getModuleTitleIconPath('Users');
+    }
+    
  	function display() {
         if($GLOBALS['current_user']->is_admin || empty($this->bean) || empty($this->bean->id) || $this->bean->isOwner($GLOBALS['current_user']->id)){
  			parent::display();
