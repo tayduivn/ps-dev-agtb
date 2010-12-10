@@ -35,8 +35,10 @@ class IsValidDateExpression extends BooleanExpression {
 
         $td = new TimeDate();
         $format = trim($td->get_db_date_format()) . " ";
-        //echo "$format<br/>";
-        $format = trim($GLOBALS['current_user']->getPreference("datef")) . " ";
+        $userFormat = trim($GLOBALS['current_user']->getPreference("datef")) . " ";
+        if (!empty($userFormat))
+            $format = $userFormat;
+        
         $dtStr = $this->getParameters()->evaluate();
         $part = "";
         if (!is_string($dtStr))
@@ -59,20 +61,20 @@ class IsValidDateExpression extends BooleanExpression {
                 switch ($part) {
 					case 'm':
 						if (!($v > 0 && $v < 13)) {
-                            die("bad month $v");return AbstractExpression::$FALSE;
+                            return AbstractExpression::$FALSE;
                         }
                         $m = $v;
                         break;
 					case 'd':
 						if(!($v > 0 && $v < 32)) {
-                            die("bad day $v");return AbstractExpression::$FALSE;
+                            return AbstractExpression::$FALSE;
                         }
                         $d = $v;
                         break;
 					case 'Y':
                     case 'y':
 						if(!($v > 0)) {
-                            die("bad year $v");return AbstractExpression::$FALSE;
+                            return AbstractExpression::$FALSE;
                         }
                         $y = $v;
                     break;
@@ -83,42 +85,12 @@ class IsValidDateExpression extends BooleanExpression {
 			}
 		}
         if (empty($m) || empty($d) || empty($y)) {
-            die("something was missing");
             return  AbstractExpression::$FALSE;
         } else {
             echo "month:$m, day:$d, year:$y<br/>";
         }
 
-
         return AbstractExpression::$TRUE;
-
-/*
-	    foreach ( $date_reg_positions as $key => $index )
-	    {
-	        if($key == 'm') {
-	           $m = $dateParts[$index];
-	        } else if($key == 'd') {
-	           $d = $dateParts[$index];
-	        } else {
-	           $y = $dateParts[$index];
-	        }
-	    }
-	   // _pp("Y = $y, m=$m, d=$d");
-
-	    // reject negative years
-	    if ($y < 1)
-	        return AbstractExpression::$FALSE;
-	    // reject month less than 1 and greater than 12
-	    if ($m > 12 || $m < 1)
-	        return AbstractExpression::$FALSE;
-
-	    // Check that date is real
-	    $dd = cal_days_in_month(CAL_GREGORIAN, $m, $y);
-	    
-	    // reject days less than 1 or days not in month (e.g. February 30th)
-	    if ($d < 1 || $d > $dd)
-	        return AbstractExpression::$FALSE;
-		return AbstractExpression::$TRUE;*/
 	}
 
 	/**
