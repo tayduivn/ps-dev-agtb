@@ -228,11 +228,13 @@ class UnifiedSearchAdvanced {
                 $lv->lvd->additionalDetails = false;
                 $mod_strings = return_module_language($current_language, $seed->module_dir);
                 
+                //retrieve the original list view defs and store for processing in case of custom layout changes
+                require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+				$orig_listViewDefs = $listViewDefs;
+				
                 if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
                 {
                     require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-                }else{
-                    require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
                 }
                 
                 if ( !isset($listViewDefs) || !isset($listViewDefs[$seed->module_dir]) )
@@ -244,20 +246,17 @@ class UnifiedSearchAdvanced {
                 $innerJoins = array();
                 foreach ( $unified_search_modules[ $moduleName ]['fields'] as $field=>$def )
                 {
-                    $listViewCheckField = strtoupper($field);
-                    if ( empty($listViewDefs[$seed->module_dir][$listViewCheckField]['default']) ) {
-                        // Bug 40032 - Add special case for field EMAIL; check for matching column 
-                        //             EMAIL1 in the listviewdefs as an alternate column.
-                        if ( $listViewCheckField == 'EMAIL' 
-                                && !empty($listViewDefs[$seed->module_dir]['EMAIL1']['default']) ) {
-                            // we've found the alternate matching column
-                        } 
-                        /*
-                        else {
-                            continue;
-                        }
-                        */
-                    }
+                	$listViewCheckField = strtoupper($field);
+                	//check to see if the field is in listview defs
+					if ( empty($listViewDefs[$seed->module_dir][$listViewCheckField]['default']) ) {
+						//check to see if field is in original list view defs (in case we are using custom layout defs)
+						if (!empty($orig_listViewDefs[$seed->module_dir][$listViewCheckField]['default']) ) {
+							//if we are here then the layout has been customized, but the field is still needed for query creation
+							$listViewDefs[$seed->module_dir][$listViewCheckField] = $orig_listViewDefs[$seed->module_dir][$listViewCheckField];
+						}
+
+					}
+                    
                     //bug: 34125 we might want to try to use the LEFT JOIN operator instead of the INNER JOIN in the case we are
                     //joining against a field that has not been populated.
                     if(!empty($def['innerjoin']) )
