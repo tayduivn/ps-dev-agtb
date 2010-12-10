@@ -66,7 +66,7 @@ $viewdefs['Accounts']['DetailView'] = array(
           array (
             'name' => 'phone_fax',
             'comment' => 'The fax phone number of this company',
-            'label' => 'LBL_PHONE_FAX',
+            'label' => 'LBL_FAX',
           ),
         ),
 
