@@ -106,7 +106,7 @@ class MysqlManager extends DBManager
         if (mysql_errno($this->getDatabase())) {
             if ($this->dieOnError || $dieOnError){
                 $GLOBALS['log']->fatal("MySQL error ".mysql_errno($this->database).": ".mysql_error($this->database));
-                sugar_die ($msg."MySQL error ".mysql_errno($this->database).": ".mysql_error($this->database));
+                sugar_die ($userMsg.$GLOBALS['app_strings']['ERR_DB_FAIL']);
             }
             else {
                 $this->last_error = $msg."MySQL error ".mysql_errno($this->database).": ".mysql_error($this->database);
@@ -421,9 +421,11 @@ class MysqlManager extends DBManager
                     $configOptions['db_host_name'],
                     $configOptions['db_user_name'],
                     $configOptions['db_password']
-                    )
-                or sugar_die("Could not connect to server ".$configOptions['db_host_name']." as ".
-                    $configOptions['db_user_name'].".".mysql_error());
+                    );
+            if(empty($this->database)) {
+                $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name']." as ".$configOptions['db_user_name'].":".mysql_error());
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            }
             // Do not pass connection information because we have not connected yet
             if($this->database  && $sugar_config['dbconfigoption']['persistent'] == true){
                 $_SESSION['administrator_error'] = "<b>Severe Performance Degradation: Persistent Database Connections "
@@ -431,8 +433,10 @@ class MysqlManager extends DBManager
                     . "in your config.php file</b>";
             }
         }
-        @mysql_select_db($configOptions['db_name'])
-            or sugar_die( "Unable to select database: " . mysql_error($this->database));
+        if(!@mysql_select_db($configOptions['db_name'])) {
+            $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysql_error($this->database));
+            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+        }
 
         // cn: using direct calls to prevent this from spamming the Logs
         $charset = "SET CHARACTER SET utf8";

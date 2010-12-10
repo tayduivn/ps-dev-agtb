@@ -83,24 +83,24 @@ class SqlsrvManager extends MssqlManager
         'free_result' => 'sqlsrv_free_stmt',
         'close'       => 'sqlsrv_close',
         );
-	
+
 	/**
      * cache of the results sets as they are fetched
      */
     protected $_resultsCache;
-    
+
     /**
      * cache of the results sets as they are fetched
      */
     protected $_lastResultsCacheKey = 0;
-    
-    
+
+
     public function __construct()
     {
     	parent::__construct();
     	$this->_resultsCache = new ArrayObject;
     }
-    
+
 	/**
      * @see DBManager::connect()
      */
@@ -136,13 +136,10 @@ class SqlsrvManager extends MssqlManager
                     "ReturnDatesAsStrings" => true,
                     "MultipleActiveResultSets" => true,
                     )
-                )
-            or sugar_die("Could not connect to server ".$configOptions['db_host_name'].
-                " as ".$configOptions['db_user_name'].".");
-
-        //make sure connection exists
-        if(!$this->database){
-            sugar_die("Unable to establish connection");
+                );
+        if(empty($this->database)) {
+            $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name']." as ".$configOptions['db_user_name'].".");
+            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
         }
 
         if($this->checkError('Could Not Connect:', $dieOnError))
@@ -204,14 +201,14 @@ class SqlsrvManager extends MssqlManager
         )
     {
 		global $app_strings;
-		
+
 		$sql = $this->_appendN($sql);
-        
+
         $this->countQuery($sql);
         $GLOBALS['log']->debug('Query:' . $sql);
         $this->checkConnection();
         $this->query_time = microtime(true);
-		
+
 		if ($suppress) {
             //BEGIN SUGARCRM flav=ent ONLY
             //suppress flag is when you are using CSQL and make a bad query.
@@ -225,16 +222,16 @@ class SqlsrvManager extends MssqlManager
         else {
             $result = @sqlsrv_query($this->database, $sql);
         }
-		
+
         if (!$result) {
             // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
             // 				  and difficult to reproduce error. The message is only a warning, and does
             //				  not affect the functionality of the query
-            
+
             $sqlmsg = $this->_getLastErrorMessages();
             $sqlpos = strpos($sqlmsg, 'Changed database context to');
 			$sqlpos2 = strpos($sqlmsg, 'Warning:');
-            
+
 			if ($sqlpos !== false || $sqlpos2 !== false)		// if sqlmsg has 'Changed database context to', just log it
 				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
 			else {
@@ -253,18 +250,18 @@ class SqlsrvManager extends MssqlManager
 
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
-		
+
         //BEGIN SUGARCRM flav=pro ONLY
         if($this->dump_slow_queries($sql)) {
             $this->track_slow_queries($sql);
         }
         //END SUGARCRM flav=pro ONLY
-        
+
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
-        
+
         return $result;
     }
-    
+
 	/**
      * @see DBManager::getFieldsArray()
      */
@@ -278,7 +275,7 @@ class SqlsrvManager extends MssqlManager
         if ( !$result ) {
         	return false;
         }
-        
+
         foreach ( sqlsrv_field_metadata($result) as $fieldMetadata ) {
             $key = $fieldMetadata['Name'];
             if($make_lower_case==true)
@@ -302,7 +299,7 @@ class SqlsrvManager extends MssqlManager
         if (!$result) {
             return false;
         }
-        
+
         $row = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
         //MSSQL returns a space " " when a varchar column is empty ("") and not null.
         //We need to iterate through the returned row array and strip empty spaces
@@ -332,7 +329,7 @@ class SqlsrvManager extends MssqlManager
     {
         return $this->getOne('SELECT @@ROWCOUNT');
 	}
-    
+
     /**
      * Emulates old mssql_get_last_message() behavior, giving us any error messages from the previous
      * function call
@@ -342,42 +339,42 @@ class SqlsrvManager extends MssqlManager
     private function _getLastErrorMessages()
     {
         $message = '';
-        
-        if ( ($errors = sqlsrv_errors()) != null) 
-            foreach ( $errors as $error ) 
+
+        if ( ($errors = sqlsrv_errors()) != null)
+            foreach ( $errors as $error )
                 $message .= $error['message'] . '. ';
-        
+
         return $message;
     }
-    
+
     /**
      * @see DBManager::convert()
      */
     public function convert(
-        $string, 
-        $type, 
+        $string,
+        $type,
         array $additional_parameters = array(),
         array $additional_parameters_oracle_only = array()
         )
     {
         if ( $type == 'datetime')
-            return "CONVERT(varchar(25)," . $string . ",120)";	
+            return "CONVERT(varchar(25)," . $string . ",120)";
         else
             return parent::convert($string, $type, $additional_parameters, $additional_parameters_oracle_only);
     }
-    
+
     /**
      * This is a utility function to prepend the "N" character in front of SQL values that are
      * surrounded by single quotes.
-     * 
+     *
      * @param  $sql string SQL statement
      * @return string SQL statement with single quote values prepended with "N" character for nvarchar columns
      */
     private function _appendN(
        $sql
-       ) 
+       )
     {
-        // If there are no single quotes, don't bother, will just assume there is no character data 
+        // If there are no single quotes, don't bother, will just assume there is no character data
         if (strpos($sql, "'") === false)
             return $sql;
 
@@ -385,7 +382,7 @@ class SqlsrvManager extends MssqlManager
         if ((substr_count($sql, "'") & 1)) {
             $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");
             return $sql;
-        } 
+        }
 
         //The only location of three subsequent ' will be at the begning or end of a value.
         $sql = preg_replace('/(?<!\')(\'{3})(?!\')/', "'<@#@#@PAIR@#@#@>", $sql);
@@ -429,7 +426,7 @@ class SqlsrvManager extends MssqlManager
 
         return $sql;
     }
-    
+
 	/**
      * Compares two vardefs. Overriding 39098  due to bug: 39098 . IN 6.0 we changed the id columns to dbType = 'id'
      * for example emails_beans.  In 554 the field email_id was nvarchar but in 6.0 since it id dbType = 'id' we would want to alter
@@ -448,4 +445,4 @@ class SqlsrvManager extends MssqlManager
         }
         return parent::compareVarDefs($fielddef1, $fielddef2);
     }
-}   
+}
