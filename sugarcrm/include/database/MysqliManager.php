@@ -228,6 +228,9 @@ class MysqliManager extends MysqlManager
         }
 
         $row = mysqli_fetch_assoc($result);
+        if ( is_null($row) ) {
+            return false;
+        }
 
         if ($encode && $this->encode && is_array($row))
             return array_map('to_html', $row);
