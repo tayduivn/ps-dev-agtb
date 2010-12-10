@@ -3153,6 +3153,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 foreach($filter as $field)
                 {
                     $field = strtolower($field);
+                    //remove out id field so we don't duplicate it
+                    if ( $field == 'id' && !empty($filter) ) {
+                        continue;
+                    }
                     if(isset($this->field_defs[$field]))
                     {
                         $fields[$field]= $this->field_defs[$field];

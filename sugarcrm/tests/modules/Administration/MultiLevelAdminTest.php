@@ -9,6 +9,10 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     public function setup()
     {
         $this->_role_id = null;
+        $beanList = $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
     }
     
     public function tearDown()
@@ -21,6 +25,9 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         
         if ( isset($GLOBALS['current_user']) )
             unset($GLOBALS['current_user']);
+        
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
     
     public function testAdminUserIsAdminForTheGivenModule()

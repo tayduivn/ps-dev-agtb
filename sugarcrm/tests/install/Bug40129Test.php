@@ -100,6 +100,9 @@ public function tearDown() {
 	   }
 	   unlink($this->current_working_dir . DIRECTORY_SEPARATOR . 'config_si.php.bug40129');
 	}
+	else {
+	    unlink($this->current_working_dir . DIRECTORY_SEPARATOR . 'config_si.php');
+	}
 
 }
 	

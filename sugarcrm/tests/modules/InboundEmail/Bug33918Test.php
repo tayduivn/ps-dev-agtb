@@ -15,14 +15,14 @@ class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
     {
-        global $current_user, $currentModule;
-
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->_user->default_team=$this->_team->id;
         $this->_team->add_user_to_team($this->_user->id);
 		$this->_user->save();
 		$this->_ie = new InboundEmail();
+		
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
     public function tearDown()

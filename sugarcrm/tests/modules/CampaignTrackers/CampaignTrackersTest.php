@@ -30,7 +30,7 @@ class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
 		
 		//create campaign tracker
 		$ct = new CampaignTracker();
-		$ct->tracker_name ='Campaign Tracker Test  ' . time();
+		$ct->tracker_name ='CampaignTrackerTest' . time();
 		$ct->tracker_url = 'sugarcrm.com';
 		$ct->campaign_id = $this->campaign->id;
 		$ct->save();
@@ -47,7 +47,7 @@ class CampaignTrackersTest extends Sugar_PHPUnit_Framework_TestCase
 
 		//delete the campaign and campaign tracker
 		$GLOBALS['db']->query('DELETE FROM campaign_log WHERE campaign_id = \''.$this->campaign->id.'\' ');
-		$GLOBALS['db']->query('DELETE FROM campaign_tracker WHERE id = \''.$this->campaign_tracker->id.'\' ');
+		$GLOBALS['db']->query('DELETE FROM campaign_trkrs WHERE id = \''.$this->campaign_tracker->id.'\' ');
 		unset($this->campaign_tracker);
         unset($this->campaign_log );
         unset($current_user);

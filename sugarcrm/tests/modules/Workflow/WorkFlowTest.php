@@ -33,9 +33,10 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testCreate_new_list_query()
     {
-        $query = $this->wf->create_new_list_query("name", 'workflow.name like "' . $this->testWFName . '%"');
+        $query = $this->wf->create_new_list_query("name", "workflow.name like '{$this->testWFName}%'");
         $result = $this->wf->db->query($query);
-        $count = $this->wf->db->getRowCount($result);
+        $count = 0;
+        while ( $row = $this->wf->db->fetchByAssoc($result) ) $count++;
         $this->assertEquals(1, $count);
     }
 

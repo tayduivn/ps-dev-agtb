@@ -145,7 +145,7 @@ class SOAPAPI3Test extends SOAPTestCase
     public function testGetLastViewed()
     {
          $testModule = 'Accounts';
-         $testModuleID = uniqid();
+         $testModuleID = create_guid();
 
          $this->_createTrackerEntry($testModule,$testModuleID);
 

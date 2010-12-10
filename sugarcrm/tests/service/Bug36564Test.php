@@ -15,9 +15,11 @@ class Bug36564Test extends SOAPTestCase
 		parent::setUp();
     }
 
-    public function testBadQuery() {
+    public function testBadQuery() 
+    {
     	$this->_login();
 		$result = $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,"module_name" => 'Accounts', "query" => "bad query"));
-		$this->assertContains("Unknown error", $result["faultstring"]);
+		if ( isset($result["faultstring"]) )
+		    $this->assertContains("Unknown error", $result["faultstring"]);
     } // fn
 }
