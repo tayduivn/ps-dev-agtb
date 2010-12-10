@@ -40,7 +40,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
 $json_config = new json_config();
 
 
-global $app_strings;$theme;
+global $app_strings, $theme;
 global $app_list_strings;
 global $mod_strings;
 global $current_user;
@@ -307,7 +307,7 @@ $xtpl->assign("EXP_DATE",$focus->exp_date);
 
 if (isset($focus->status_id)){
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], $focus->status_id));
-	
+
 }
 else{
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], ''));
@@ -328,7 +328,7 @@ $xtpl->assign("DEFAULT_TEAM_NAME", $current_user->default_team_name);
 $xtpl->assign("DEFAULT_TEAM_ID", $current_user->default_team);
 
 if (!empty($focus->kbdoc_approver_id)) {
-	
+
 	$user = new User();
 	$user->retrieve($focus->kbdoc_approver_id,true);
 	$xtpl->assign("KBDOC_APPROVER_NAME", $user->name);

@@ -337,7 +337,7 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField {
 	 	global $current_user;
         global $timedate;
 
-        $begin = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $begin = TimeDate::getInstance()->nowDb();
         //kbrill bug #13884
        	//$begin = $timedate->to_display_date_time($begin,true,true,$this->assigned_user);
 		$begin = $timedate->handle_offset($begin, $timedate->get_db_date_time_format(), false, $this->assigned_user);

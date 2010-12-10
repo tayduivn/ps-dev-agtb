@@ -145,7 +145,7 @@ class SugarView
 
 
         $trackerManager = TrackerManager::getInstance();
-        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){
             //BEGIN SUGARCRM flav=pro ONLY
             $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
@@ -601,7 +601,7 @@ class SugarView
 
     protected function _displayLoginJS()
     {
-        global $sugar_config;
+        global $sugar_config, $timedate;
 
         if(isset($this->bean->module_dir)){
             echo "<script>var module_sugar_grp1 = '{$this->bean->module_dir}';</script>";
@@ -609,7 +609,7 @@ class SugarView
         if(isset($_REQUEST['action'])){
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
-        echo '<script>jscal_today = ' . (1000*strtotime($GLOBALS['timedate']->handle_offset(gmdate($GLOBALS['timedate']->get_db_date_time_format()), $GLOBALS['timedate']->get_db_date_time_format()))) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+        echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file("include/javascript/sugar_grp1.js")) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
@@ -643,7 +643,7 @@ EOQ;
      */
     protected function _displayJavascript()
     {
-        global $locale, $sugar_config;
+        global $locale, $sugar_config, $timedate;
 
 
         //BEGIN SUGARCRM flav=int ONLY
@@ -669,7 +669,7 @@ EOHTML;
             if(isset($_REQUEST['action'])){
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
-            echo '<script>jscal_today = ' . (1000*strtotime($GLOBALS['timedate']->handle_offset(gmdate($GLOBALS['timedate']->get_db_date_time_format()), $GLOBALS['timedate']->get_db_date_time_format()))) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+            echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
             if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -867,7 +867,7 @@ EOHTML;
 
         if(!$trackerManager->isPaused())
         {
-	        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	        $timeStamp = TimeDate::getInstance()->nowDb();
 	        //Track to tracker_perf
 	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
 		        $monitor2->setValue('server_response_time', $this->responseTime);

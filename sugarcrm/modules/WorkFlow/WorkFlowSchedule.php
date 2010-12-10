@@ -30,13 +30,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: WorkFlowSchedule.php 56268 2010-05-05 16:49:49Z clee $
  * Description:
  ********************************************************************************/
-
-
-
-
-
-
 require_once('include/workflow/workflow_utils.php');
+require_once('include/workflow/action_utils.php');
 
 // WorkFlowSchedule is used to process workflow time cron objects
 class WorkFlowSchedule extends SugarBean {
@@ -216,74 +211,35 @@ class WorkFlowSchedule extends SugarBean {
     }
 
 
-    function set_time_interval(& $bean_object, $time_array, $update = false){
+    function set_time_interval($bean_object, $time_array, $update = false){
 
-        if($update == false && $time_array['time_int_type']=="normal"){
-
-        //take current date and add the time interval
-
-        $this->date_expired = $this->get_expiry_date($bean_object, $time_array['time_int'], false, $time_array['target_field']);
-
-        //end if update is false, then create a new time expiry
+        if($update == false && $time_array['time_int_type']=="normal") {
+            //take current date and add the time interval
+            $this->date_expired = get_expiry_date("datetime", $time_array['time_int'], false);
+            //end if update is false, then create a new time expiry
         }
-
 
         if($update == true || $time_array['time_int_type']=="datetime"){
-
-        //convert date_expired into time stamp and add time_interval
-        $this->date_expired = $this->get_expiry_date($bean_object, $time_array['time_int'], true, $time_array['target_field']);
-
-        //end if update is true, then just update existing expiry
+            //convert date_expired into time stamp and add time_interval
+            $this->date_expired = $this->get_expiry_date($bean_object, $time_array['time_int'], true, $time_array['target_field']);
+            //end if update is true, then just update existing expiry
         }
-
-
-
     //end function set_time_interval
     }
 
 
-    function get_expiry_date(& $bean_object, $time_interval, $is_update = false, $target_field="none"){
-        global $timedate;
-        global $disable_date_format;
-
+    function get_expiry_date($bean_object, $time_interval, $is_update = false, $target_field="none")
+    {
         if($is_update == false){
-            $target_stamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-            //$target_stamp = $timedate->to_display_date_time($target_stamp, true);
+            $target_stamp = TimeDate::getInstance()->nowDb();
         } else {
-
             if($target_field=="none"){
-
-                $target_stamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-                //$target_stamp = $timedate->to_display_date_time($target_stamp, true);
+                $target_stamp = TimeDate::getInstance()->nowDb();
             } else {
                 $target_stamp = $bean_object->$target_field;
-                //$target_stamp = $timedate->to_display_date_time($bean_object->$target_field, true);
             }
-
         }
-
-        //convert stamp and add interval
-        $current_unix_stamp = strtotime($target_stamp);
-        $new_unix_stamp = $time_interval + $current_unix_stamp;
-
-        //if($is_update == true){
-        //	$new_unix_stamp = $new_unix_stamp + 3600;
-        //}
-
-        $newtimestamp = date($GLOBALS['timedate']->get_db_date_time_format(), $new_unix_stamp);
-
-        //test using expected close date via this.
-
-        if(empty($disable_date_format)) {
-            $final_stamp = $timedate->to_display_date_time($newtimestamp, true);
-        }
-        else {
-            $final_stamp = $newtimestamp;
-        }
-
-        return $final_stamp;
-
-    //end function get_expiry_date
+        return get_expiry_date("datetime", $time_interval, $is_update, $target_stamp);
     }
 
 function process_scheduled(){
@@ -297,7 +253,7 @@ function process_scheduled(){
         require('include/modules.php');
     }
 
-    $current_stamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+    $current_stamp = TimeDate::getInstance()->nowDb();
 
     $query = "	SELECT *
                 FROM $this->table_name

@@ -176,7 +176,7 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
-$timedate = new TimeDate();
+$timedate = TimeDate::getInstance();
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();
 $locale = new Localization();

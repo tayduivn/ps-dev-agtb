@@ -165,7 +165,7 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         $email_object->assigned_user_id = $current_user->id;
         //Save the email object
         global $timedate;
-        $email_object->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $email_object->date_start = $timedate->now();
         $email_object->save(FALSE);
         $email_id = $email_object->id;
 

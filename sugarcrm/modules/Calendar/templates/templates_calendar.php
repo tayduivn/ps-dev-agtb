@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // template
 /////////////////////////////////
 global $timedate;
-function template_cal_tabs(& $args) {
+function template_cal_tabs($args) {
 	global $mod_strings, $sugar_version, $sugar_config;
 	$tabs = array('day', 'week', 'month', 'year', 'shared');
 
@@ -64,7 +64,7 @@ function template_cal_tabs(& $args) {
 	/////////////////////////////////
 	// template
 	/////////////////////////////////
-	function template_cal_month_slice(& $args) {
+	function template_cal_month_slice($args) {
 ?>
 <?php
 
@@ -86,7 +86,7 @@ function template_cal_tabs(& $args) {
 	/////////////////////////////////
 	// template
 	/////////////////////////////////
-	function template_echo_slice_activities(& $args) {
+	function template_echo_slice_activities($args) {
 		global $app_list_strings, $current_user, $app_strings;
 
 		$count = 0;
@@ -150,7 +150,7 @@ function template_cal_tabs(& $args) {
 		}
 	}
 
-	function template_echo_slice_activities_shared(& $args) {
+	function template_echo_slice_activities_shared($args) {
 		global $app_list_strings;
 
 		global $shared_user, $timedate;
@@ -171,7 +171,7 @@ function template_cal_tabs(& $args) {
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">";
-					echo $timedate->getTimePart($act->sugar_bean->date_start); 
+					echo $timedate->getTimePart($act->sugar_bean->date_start);
 					echo "</td></tr>";
 				} else {
 					echo "<td width=\"100%\">
@@ -188,7 +188,7 @@ function template_cal_tabs(& $args) {
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">".
-						$timedate->getTimePart($act->sugar_bean->date_start); 
+						$timedate->getTimePart($act->sugar_bean->date_start);
 					echo "</td></tr>";
 				} else {
 					echo "<td width=\"100%\">
@@ -197,7 +197,7 @@ function template_cal_tabs(& $args) {
 						$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].":".
 						$act->sugar_bean->name."<br>(".
 						$timedate->getTimePart($act->sugar_bean->date_start).")</a>";
-						
+
 					// MEETING INTEGRATION
 					if($act->sugar_bean->hasIntegratedMeeting()) {
 						$out .= $act->sugar_bean->miIcon;
@@ -214,7 +214,7 @@ function template_cal_tabs(& $args) {
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">".
-						$timedate->getTimePart($act->sugar_bean->date_due); 
+						$timedate->getTimePart($act->sugar_bean->date_due);
 					echo "</td></tr>";
 				} else {
 					echo "<td width=\"100%\">
@@ -231,7 +231,7 @@ function template_cal_tabs(& $args) {
 	/////////////////////////////////
 	// template
 	/////////////////////////////////
-	function template_cal_day_slice(& $args) {
+	function template_cal_day_slice($args) {
 		/*
 			echo "cale:".$args['calendar']->view;
 			echo "cal1:".$args['calendar']->date_time->month;
@@ -250,7 +250,7 @@ function template_cal_tabs(& $args) {
 	/////////////////////////////////
 	// template
 	/////////////////////////////////
-	function template_calendar(& $args) {
+	function template_calendar($args) {
 		global $timedate;
 		if(isset($args['size']) && $args['size'] == 'small') {
 			$args['calendar']->show_activities = false;
@@ -459,7 +459,7 @@ function template_cal_tabs(& $args) {
 		{
 		?>
 		<a style="text-decoration: none;"
-			href="index.php?module=Calendar&action=index&view=month&<?php echo $args['calendar']->date_time->get_date_str();?>">
+			href="index.php?module=Calendar&action=index&view=month<?php echo $args['calendar']->date_time->get_date_str();?>">
 <?php
 
 	}
@@ -538,7 +538,7 @@ function template_cal_tabs(& $args) {
 
 }
 
-function template_calendar_vertical(& $args) {
+function template_calendar_vertical($args) {
 ?>
   <table id="daily_cal_table" border="0" cellpadding="0" cellspacing="1" width="100%">
   <?php
@@ -564,7 +564,7 @@ function template_calendar_vertical(& $args) {
 
 }
 
-function template_calendar_horizontal(& $args) {
+function template_calendar_horizontal($args) {
 	echo "<table id=\"daily_cal_table\" border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"100%\"><tr>";
 
 	// need to change these values after we find out what activities
@@ -582,7 +582,7 @@ function template_calendar_horizontal(& $args) {
 	echo "</tr></table>";
 }
 
-function template_cal_vertical_slice(& $args) {
+function template_cal_vertical_slice($args) {
 	global $timedate;
 ?>
 <th width="1%" id="bodytime">
@@ -604,7 +604,7 @@ function template_cal_vertical_slice(& $args) {
 
 }
 
-function template_cal_horizontal_slice(& $args) {
+function template_cal_horizontal_slice($args) {
 	echo "<td width=\"14%\" id=\"bodyItem\" scope='row' valign=\"top\">";
 
 	if($args['show_link'] == 'on') {
@@ -618,7 +618,7 @@ function template_cal_horizontal_slice(& $args) {
 	echo "</td>";
 }
 
-function template_calendar_year(& $args) {
+function template_calendar_year($args) {
 	$count = 0;
 ?>
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
@@ -658,7 +658,7 @@ function template_calendar_year(& $args) {
 
 }
 
-function template_calendar_month(& $args) {
+function template_calendar_month($args) {
 	global $mod_strings;
 ?>
 
@@ -730,26 +730,16 @@ function template_calendar_month(& $args) {
 
 }
 
-function get_current_day(& $args) {
+function get_current_day($args) {
 	global $timedate;
-	static $user_today_timestamp = null;
-
-	// adjust for user's TZ
-	if(!isset($user_today_timestamp)) {
-	    $gmt_today = $timedate->get_gmt_db_datetime();
-	    $user_today = $timedate->handle_offset($gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
-		preg_match_all('/\d*/', $user_today, $matches);
-		$matches = $matches[0];
-		$user_today_timestamp = mktime($matches[6], $matches[8], '0', $matches[2], $matches[4], $matches[0]);
-	}
-
 	$slice = $args['slice'];
-	if($slice->start_time->get_mysql_date() == date($GLOBALS['timedate']->get_db_date_time_format(), $user_today_timestamp)) {
+	if($slice->start_time->get_mysql_date() == $timedate->nowDbDate()) {
 		return true;
 	}
+	return false;
 }
 
-function template_echo_daily_view_hour(& $args) {
+function template_echo_daily_view_hour($args) {
 
 	$slice = $args['slice'];
 	$hour = $slice->start_time->get_hour();
@@ -757,7 +747,7 @@ function template_echo_daily_view_hour(& $args) {
 
 }
 
-function template_echo_daily_view_24_hour(& $args) {
+function template_echo_daily_view_24_hour($args) {
 
 	$slice = $args['slice'];
 	$hour = $slice->start_time->get_24_hour();
@@ -765,16 +755,16 @@ function template_echo_daily_view_24_hour(& $args) {
 
 }
 
-function template_echo_slice_date(& $args) {
+function template_echo_slice_date($args) {
 	global $mod_strings;
     global $timedate;
 	$slice = $args['slice'];
 
 	if($slice->view != 'hour') {
 		if($slice->start_time->get_day_of_week_short() == 'Sun' || $slice->start_time->get_day_of_week_short() == 'Sat') {
-			echo "<a href=\"index.php?module=Calendar&action=index&view=".$slice->get_view()."&".$slice->start_time->get_date_str()."\" ";
+			echo "<a href=\"index.php?module=Calendar&action=index&view=".$slice->get_view().$slice->start_time->get_date_str()."\" ";
 		} else {
-			echo "<a href=\"index.php?module=Calendar&action=index&view=".$slice->get_view()."&".$slice->start_time->get_date_str()."\" ";
+			echo "<a href=\"index.php?module=Calendar&action=index&view=".$slice->get_view().$slice->start_time->get_date_str()."\" ";
 		}
 	}
 
@@ -814,7 +804,7 @@ function template_echo_slice_date(& $args) {
 	echo "</a>";
 }
 
-function template_echo_slice_date_nolink(& $args) {
+function template_echo_slice_date_nolink($args) {
 	global $mod_strings;
 	$slice = $args['slice'];
 	echo $slice->start_time->get_day_of_week_short();
@@ -894,20 +884,20 @@ function template_echo_date_info($view, $date_time) {
 				}
 }
 
-function template_get_next_calendar(& $args) {
+function template_get_next_calendar($args) {
 
 	global $mod_strings;
 ?>
-<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?>&<?php echo $args['calendar']->get_next_date_str(); ?>"><?php echo $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)]; ?>&nbsp;<?php echo SugarThemeRegistry::current()->getImage('calendar_next','alt="'. $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)].'" align="absmiddle" border="0"'); ?></a>
+<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?><?php echo $args['calendar']->get_next_date_str(); ?>"><?php echo $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)]; ?>&nbsp;<?php echo SugarThemeRegistry::current()->getImage('calendar_next','alt="'. $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)].'" align="absmiddle" border="0"'); ?></a>
 <?php
 
 }
 
-function template_get_previous_calendar(& $args) {
+function template_get_previous_calendar($args) {
 	global $mod_strings;
 
 ?>
-<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?>&<?php echo $args['calendar']->get_previous_date_str(); ?>"><?php echo SugarThemeRegistry::current()->getImage('calendar_previous','alt="'. $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)].'" align="absmiddle" border="0"'); ?>&nbsp;&nbsp;<?php echo $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)]; ?></a>
+<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?><?php echo $args['calendar']->get_previous_date_str(); ?>"><?php echo SugarThemeRegistry::current()->getImage('calendar_previous','alt="'. $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)].'" align="absmiddle" border="0"'); ?>&nbsp;&nbsp;<?php echo $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)]; ?></a>
 <?php
 
 }

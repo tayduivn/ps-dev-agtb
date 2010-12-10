@@ -517,7 +517,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
         echo $json->encode(array('status' => 'success',
                                  'get' => ''));
    	 	$trackerManager = TrackerManager::getInstance();
-        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){ 
 	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());

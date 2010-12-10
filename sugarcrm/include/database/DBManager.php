@@ -203,7 +203,7 @@ abstract class DBManager
                 if ( function_exists('sqlsrv_connect')
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' ))
                     $my_db_helper = 'SqlsrvHelper';
-                elseif (is_freetds() 
+                elseif (is_freetds()
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' ))
                     $my_db_helper = 'FreeTDSHelper';
                 else
@@ -292,7 +292,7 @@ abstract class DBManager
         }
 
         if($monitor = $trackerManager->getMonitor('tracker_queries')){
-        	$monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        	$monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
         	$monitor->setValue('text', $query);
         	$monitor->setValue('sec_total', $this->query_time);
 

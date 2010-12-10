@@ -963,8 +963,7 @@ eoq;
 		$this->folder->has_child = 0;
 		$this->folder->created_by = $current_user->id;
 		$this->folder->modified_by = $current_user->id;
-		$this->folder->date_created = date($GLOBALS['timedate']->get_db_date_time_format(), gmmktime());
-		$this->folder->date_modified = date($GLOBALS['timedate']->get_db_date_time_format(), gmmktime());
+		$this->folder->date_modified = $this->folder->date_created = TimeDate::getInstance()->nowDb();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->folder->team_id = $current_user->getPrivateTeamID();
 		//END SUGARCRM flav=pro ONLY
@@ -2139,7 +2138,7 @@ function getSingleMessage($ie) {
 			$out = $ie->displayOneEmail($_REQUEST['uid'], $_REQUEST['mbox']);
 			// modify the out object to store date in GMT format on the local cache file
 			$dateTimeInUserFormat = $out['meta']['email']['date_start'];
-			$out['meta']['email']['date_start'] = $timedate->to_db_date($dateTimeInUserFormat) . " " . $timedate->to_db_time($dateTimeInUserFormat);
+			$out['meta']['email']['date_start'] = $timedate->to_db($dateTimeInUserFormat);
 			if ($status == 'error') {
 				$writeToCacheFile = false;
 			}

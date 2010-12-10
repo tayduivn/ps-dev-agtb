@@ -47,7 +47,7 @@ require_once('include/entryPoint.php');
     $_REQUEST['js_rebuild_concat'] = 'rebuild';
     require_once('jssource/minify.php');
 
-$timedate = new TimeDate();
+$timedate = TimeDate::getInstance();
 // cn: set php.ini settings at entry points
 setPhpIniSettings();
 $locale = new Localization();
@@ -388,7 +388,7 @@ if($next_clicked) {
       case 'license.php':
                 $_SESSION['setup_license_accept']   = get_boolean_from_request('setup_license_accept');
                 $_SESSION['license_submitted']      = true;
-                
+
 
            // eventually default all vars here, with overrides from config.php
             if(is_readable('config.php')) {
@@ -421,10 +421,8 @@ if($next_clicked) {
             if(empty($_SESSION['setup_license_key'])){
                 $_SESSION['setup_license_key']  = '';
             }
-                $_SESSION['setup_license_key_users'] = 50;
-                $nextYear = time() + (7 * 24 * 60 * 60 * 4 * 12);
-                $_SESSION['setup_license_key_expire_date'] = date($timedate->get_date_format(), $nextYear);
-
+            $_SESSION['setup_license_key_users'] = 50;
+            $_SESSION['setup_license_key_expire_date'] = $timedate->asDbDate($timedate->getNow()->modify("+1 year"));
             //END SUGARCRM flav=int ONLY
 
             break;
@@ -566,7 +564,7 @@ switch($the_file) {
         // check to see if installer has been disabled
         if(is_readable('config.php') && (filesize('config.php') > 0)) {
             include_once('config.php');
-			
+
             if(!isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == true) {
                 $the_file = 'installDisabled.php';
 				$disabled_title = $mod_strings['LBL_DISABLED_DESCRIPTION'];

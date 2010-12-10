@@ -28,18 +28,16 @@ class SugarFeedFlush {
         $admin = new Administration();
         $admin->retrieveSettings();
 
-        $td = new TimeDate();
-        
-        $currDate = $td->get_gmt_db_date();
+        $timedate = TimeDate::getInstance();
+
+        $currDate = $timedate->nowDbDate();
         if ( $admin->settings['sugarfeed_flushdate'] != $currDate ) {
-            
-            
-            if ( isset($GLOBALS['db']) ) { $db = $GLOBALS['db']; }
+            global $db;
             if ( ! isset($db) ) { $db = DBManagerFactory::getInstance(); }
 
             $tmpTime = time();
             $tmpSF = new SugarFeed();
-            $flushBefore = gmdate($td->dbDayFormat,gmmktime(0,0,0,gmdate('m'),gmdate('d')-14,gmdate('Y')));
+            $flushBefore = $timedate->asDbDate($timedate->getNow()->modify("-14 days")->setTime(0,0));
             $db->query("DELETE FROM ".$tmpSF->table_name." WHERE date_entered < '".$db->quote($flushBefore)."'");
             $admin->saveSetting('sugarfeed','flushdate',$currDate);
             // Flush the cache

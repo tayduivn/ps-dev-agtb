@@ -298,7 +298,7 @@ function addDefaultModuleRoles($defaultRoles = array()) {
 					$row=$GLOBALS['db']->fetchByAssoc($result);
 					if ($row == null) {
 	                	$guid = create_guid();
-	                	$currdate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	                	$currdate = TimeDate::getInstance()->nowDb();
 	                	$query= "INSERT INTO acl_actions (id,date_entered,date_modified,modified_user_id,name,category,acltype,aclaccess,deleted ) VALUES ('$guid','$currdate','$currdate','1','$name','$category','$roleName','$access_override','0')";
 						$GLOBALS['db']->query($query);
 						if($GLOBALS['db']->checkError()){

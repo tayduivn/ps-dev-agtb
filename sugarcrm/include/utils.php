@@ -1822,7 +1822,7 @@ function array_csort() {
  * Contributor(s): ______________________________________..
  */
 function parse_calendardate($local_format) {
-	preg_match("/\(?([^-]{1})[^-]*-([^-]{1})[^-]*-([^-]{1})[^-]*\)/", $local_format, $matches);
+	preg_match('/\(?([^-]{1})[^-]*-([^-]{1})[^-]*-([^-]{1})[^-]*\)/', $local_format, $matches);
 	$calendar_format = "%" . $matches[1] . "-%" . $matches[2] . "-%" . $matches[3];
 	return str_replace(array("y", "ￄ1�7", "a", "j"), array("Y", "Y", "Y", "d"), $calendar_format);
 }
@@ -3350,30 +3350,9 @@ function is_writable_windows($file) {
 /**
  * best guesses Timezone based on webserver's TZ settings
  */
-function lookupTimezone($userOffset = 0){
-	require_once('include/timezone/timezones.php');
-
-	$defaultZones= array('America/New_York'=>1, 'America/Los_Angeles'=>1,'America/Chicago'=>1, 'America/Denver'=>1,'America/Anchorage'=>1, 'America/Phoenix'=>1, 'Europe/Amsterdam'=>1,'Europe/Athens'=>1,'Europe/London'=>1, 'Australia/Sydney'=>1, 'Australia/Perth'=>1);
-	global $timezones;
-	$serverOffset = date('Z');
-	if(date('I')) {
-		$serverOffset -= 3600;
-	}
-	if(!is_int($userOffset)) {
-		return '';
-	}
-	$gmtOffset = $serverOffset/60 + $userOffset * 60;
-	$selectedZone = ' ';
-	foreach($timezones as $zoneName=>$zone) {
-
-		if($zone['gmtOffset'] == $gmtOffset) {
-			$selectedZone = $zoneName;
-		}
-		if(!empty($defaultZones[$selectedZone]) ) {
-			return $selectedZone;
-		}
-	}
-	return $selectedZone;
+function lookupTimezone($userOffset = 0)
+{
+    return TimeDate::guessTimezone($userOffset);
 }
 
 function convert_module_to_singular($module_array){
@@ -4053,8 +4032,7 @@ function createGroupUser($name) {
 	$group->is_group	= 1;
 	$group->deleted		= 0;
 	$group->status		= 'Active'; // cn: bug 6711
-	$timezone = lookupTimezone();
-	$group->setPreference('timezone', $timezone);
+	$group->setPreference('timezone', TimeDate::userTimezone());
 	$group->save();
 
 	return $group->id;

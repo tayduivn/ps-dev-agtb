@@ -32,36 +32,36 @@ abstract class DateExpression extends AbstractExpression
 	function getParameterTypes() {
 		return AbstractExpression::$DATE_TYPE;
 	}
-	
+
 	protected function convertToGMT($unixTime) {
-		$TD = new TimeDate();
+		$TD = TimeDate::getInstance();
 		$time = date($TD->get_date_time_format(), $unixTime);
 		$time = $TD->to_db($time);
 		return strtotime($time);
 	}
-	
+
 	protected function convertToUserZone($unixTime) {
-		$TD = new TimeDate();
+		$TD = TimeDate::getInstance();
 		$time = date($this->internalDateFormat, $unixTime);
 		return $TD->to_display_date($time);
 	}
-	
+
 	/**
-	 * returns the users display date format. 
+	 * returns the users display date format.
 	 *
 	 * @param int $unixTime (should be in GMT Time zone)
 	 */
 	protected function toDisplayTime($unixTime) {
-		$TD = new TimeDate();
+		$TD = TimeDate::getInstance();
 		if ($this->includeTime)
 		{
 			return  date($TD->get_date_format() . " " . $TD->get_time_format(), $unixTime);
 		}
 		return date($TD->get_date_format(), $unixTime);
 	}
-	
+
 	protected function convertFromUserFormat($date) {
-		$TD = new TimeDate();
+		$TD = TimeDate::getInstance();
 		if (strrchr(trim($date), ' ')) {
 			$this->includeTime = true;
 			$date = $TD->swap_formats($date, $TD->get_date_time_format(), $this->internalDateTimeFormat);

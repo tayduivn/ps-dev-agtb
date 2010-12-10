@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/Dashlets/DashletGenericChart.php');
 
-class MyTeamModulesUsedChartDashlet extends DashletGenericChart 
+class MyTeamModulesUsedChartDashlet extends DashletGenericChart
 {
     /**
      * @see Dashlet::$isConfigurable
@@ -49,25 +49,25 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
     public function display() 
     {
         global $db;
-        
+
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['my_team_modules_used_last_30_days'];
-        
+
         require_once('include/SugarCharts/SugarChart.php');
         $sugarChart = new SugarChart();
         $sugarChart->forceHideDataGroupLink = true;
         $sugarChart->setProperties('', $chartDef['chartUnits'], $chartDef['chartType']);
         $sugarChart->group_by = $chartDef['groupBy'];
-        $sugarChart->url_params = array();		
-		
+        $sugarChart->url_params = array();
+
         $result = $db->query($this->constructQuery());
         $dataset = array();
         while(($row = $db->fetchByAssoc($result)))
             $dataset[] = array('user_name'=>$row['user_name'], 'module_name'=>$row['module_name'], 'total'=>$row['count']);
 
         $sugarChart->setData($dataset);
-        
-        $xmlFile = $sugarChart->getXMLFileName($this->id);        	
+
+        $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
@@ -89,7 +89,7 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
     {
 		return "SELECT l1.user_name, tracker.module_name, count(*) count " .
                     "FROM tracker INNER JOIN users l1 ON l1.id = tracker.user_id and l1.deleted = 0 " .
-                    "WHERE tracker.deleted = 0 AND tracker.date_modified > ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 30 days"))."'" ,"datetime")." " .	    
+                    "WHERE tracker.deleted = 0 AND tracker.date_modified > ".db_convert("'".$timedate->getNow()->modify("-30 days")->asDb()."'" ,"datetime")." " .
                         "AND tracker.user_id in (Select id from users where reports_to_id = '{$GLOBALS['current_user']->id}') " .
                     "GROUP BY l1.user_name, tracker.module_name " .
                     "ORDER BY l1.user_name ASC";

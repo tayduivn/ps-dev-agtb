@@ -18,7 +18,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('module_name', 'Contacts');
         $monitor->setValue('item_id', '10909d69-2b55-094d-ba89-47b23d3121dd');
         $monitor->setValue('item_summary', 'Foo');
-        $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()), strtotime("-1 day")+5000);
+        $monitor->setValue('date_modified', TimeDate::getInstance()->nowDb(), strtotime("-1 day")+5000);
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);

@@ -309,7 +309,6 @@ class InboundEmail extends SugarBean {
 		//if($this->protocol == 'pop3') {
 		//$raw = $app_strings['LBL_EMAIL_VIEW_UNSUPPORTED'];
 		//} else {
-			$raw;
 			if (empty($this->id)) {
 				$q = "SELECT raw_source FROM emails_text WHERE email_id = '{$uid}'";
 				$r = $this->db->query($q);
@@ -573,7 +572,6 @@ class InboundEmail extends SugarBean {
 						break;
 
 						case "senddate":
-							//$overview->date = strtotime(date('r', strtotime($v)));
 							$overview->date = $v;
 						break;
 
@@ -656,7 +654,6 @@ class InboundEmail extends SugarBean {
 					break;
 
 					case "senddate":
-						//$overview->date = strtotime(date('r', strtotime($v)));
 						$overview->date = $v;
 					break;
 
@@ -786,9 +783,9 @@ class InboundEmail extends SugarBean {
 						break;
 
 						case "senddate":
-							$conv=$this->getUnixHeaderDate($overview->date);
+							$conv=$timedate->fromString($overview->date);
 							if (!empty($conv)) {
-								$values .= "'" . date($timedate->get_db_date_time_format(), $conv) ."'";
+								$values .= "'" . $conv->asDb() ."'";
 							} else {
 								$values .= "NULL";
 							}
@@ -1773,7 +1770,7 @@ class InboundEmail extends SugarBean {
 
 			if(file_exists($file)) {
 				if(!unlink($file)) {
-					$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ] to [ {$newFile} ]");
+					$GLOBALS['log']->debug("INBOUNDEMAIL: Could not delete [ {$file} ]");
 				}
 			}
 		}
@@ -2002,14 +1999,14 @@ class InboundEmail extends SugarBean {
 
 		if(imap_createmailbox($this->conn, imap_utf7_encode($connectString))) {
 			imap_subscribe($this->conn, imap_utf7_encode($connectString));
-			$status = imap_status($this->conn, str_replace("{$delimiter}{$name}","",$connectString));
+			$status = imap_status($this->conn, str_replace("{$delimiter}{$name}","",$connectString), SA_ALL);
         	$this->mailbox = $this->mailbox . "," . $newFolder;
         	$this->save();
         	$sessionFoldersString  = $this->getSessionInboundFoldersString($this->server_url, $this->email_user, $this->port, $this->protocol);
         	$sessionFoldersString = $sessionFoldersString . "," . $newFolder;
 			$this->setSessionInboundFoldersString($this->server_url, $this->email_user, $this->port, $this->protocol, $sessionFoldersString);
 
-			echo $status;
+			echo json_encode($status);
 			return true;
 		} else {
 			echo "NOOP: could not create folder";
@@ -2047,8 +2044,6 @@ class InboundEmail extends SugarBean {
 		global $app_strings;
 		global $timedate;
 
-		$dateFrom = $timedate->to_db_date($dateFrom, false);
-		$dateTo = $timedate->to_db_date($dateTo, false);
 		$beans = array();
 		$bean = new InboundEmail();
 		$bean->retrieve($ieId);
@@ -2063,8 +2058,8 @@ class InboundEmail extends SugarBean {
 		$criteria .= (!empty($from)) ? ' FROM "'.$from.'"' : "";
 		$criteria .= (!empty($to)) ? ' FROM "'.$to.'"' : "";
 		$criteria .= (!empty($body)) ? ' TEXT "'.$body.'"' : "";
-		$criteria .= (!empty($dateFrom)) ? ' SINCE "'.date('d-M-Y', strtotime($dateFrom)).'"' : "";
-		$criteria .= (!empty($dateTo)) ? ' BEFORE "'.date('d-M-Y', strtotime($dateTo)).'"' : "";
+		$criteria .= (!empty($dateFrom)) ? ' SINCE "'.$timedate->fromString($dateFrom)->format('d-M-Y').'"' : "";
+		$criteria .= (!empty($dateTo)) ? ' BEFORE "'.$timedate->fromString($dateTo)->format('d-M-Y').'"' : "";
 		//$criteria .= (!empty($from)) ? ' FROM "'.$from.'"' : "";
 
 		$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
@@ -2121,7 +2116,7 @@ class InboundEmail extends SugarBean {
 								break;
 
 								case "senddate":
-									$overview->date = date('r', strtotime($v));
+									$overview->date = $timedate->fromString($v)->format('r');
 								break;
 
 								default:
@@ -2693,8 +2688,8 @@ class InboundEmail extends SugarBean {
 					}
 				}
 
-				$replyToName = (!empty($storedOptions['reply_to_name']))? from_html($storedOptions['reply_to_name']) :$fromName ;
-				$replyToAddr = (!empty($storedOptions['reply_to_addr'])) ? $storedOptions['reply_to_addr'] : $fromAddress;
+				$replyToName = (!empty($storedOptions['reply_to_name']))? from_html($storedOptions['reply_to_name']) :$from_name ;
+				$replyToAddr = (!empty($storedOptions['reply_to_addr'])) ? $storedOptions['reply_to_addr'] : $from_addr;
 
 				if(!empty($email->reply_to_email)) {
 					$to[0]['email'] = $email->reply_to_email;
@@ -3997,7 +3992,7 @@ class InboundEmail extends SugarBean {
 			// delete local cache
 			$r = $this->db->query($q);
 
-			$this->email->date_sent = date('Y-m-d H:i:s');
+			$this->email->date_sent = $timedate->nowDb();
 			return false;
 			//return "Message deleted from server.";
 		}
@@ -4032,9 +4027,9 @@ class InboundEmail extends SugarBean {
 			$tPref = $current_user->getUserDateTimePreferences();
 			////	END USER PREP
 			///////////////////////////////////////////////////////////////////
-
-			$unixHeaderDate = $this->getUnixHeaderDate($header->date);
-
+            if(!empty($header->date)) {
+			    $unixHeaderDate = $timedate->fromString($header->date);
+            }
 			///////////////////////////////////////////////////////////////////
 			////	HANDLE EMAIL ATTACHEMENTS OR HTML TEXT
 			////	Inline images require that I-E handle attachments before body text
@@ -4072,11 +4067,10 @@ class InboundEmail extends SugarBean {
 			global $db;
 			//bug #33929 added quoteForEmail() to replace single quote
 			$email->name			= $this->handleMimeHeaderDecode($header->subject);
-			$unixHeaderDate = (!empty($unixHeaderDate)) ? date($timedate->get_db_date_time_format(), $unixHeaderDate) : "";
-			$email->date_start = (!empty($unixHeaderDate)) ? $timedate->to_display_date($unixHeaderDate) : "";
-			$email->time_start = (!empty($unixHeaderDate)) ? $timedate->to_display_time($unixHeaderDate) : "";
+			$email->date_start = (!empty($unixHeaderDate)) ? $timedate->asUserDate($unixHeaderDate) : "";
+			$email->time_start = (!empty($unixHeaderDate)) ? $timedate->asUserTime($unixHeaderDate) : "";
 			$email->type = 'inbound';
-			$email->date_created = (!empty($unixHeaderDate)) ? $timedate->to_display_date_time($unixHeaderDate) : "";
+			$email->date_created = (!empty($unixHeaderDate)) ? $timedate->asUser($unixHeaderDate) : "";
 			$email->status = 'unread'; // this is used in Contacts' Emails SubPanel
 			if(!empty($header->toaddress)) {
 				$email->to_name	 = $this->handleMimeHeaderDecode($header->toaddress);
@@ -4420,7 +4414,7 @@ class InboundEmail extends SugarBean {
 		$ooto = array("Out of the Office", "Out of Office");
 
 		foreach($ooto as $str) {
-			if(preg_replace('/'.$str.'/i', $subject)) {
+			if(preg_match('/'.$str.'/i', $subject)) {
 				$GLOBALS['log']->debug('Autoreply cancelled - found "Out of Office" type of subject.');
 				return false;
 			}
@@ -4435,11 +4429,12 @@ class InboundEmail extends SugarBean {
 	 * @param string addr Address of auto-replied target
 	 */
 	function setAutoreplyStatus($addr) {
+	    $timedate = TimeDate::getInstance();
 		$this->db->query(	'INSERT INTO inbound_email_autoreply (id, deleted, date_entered, date_modified, autoreplied_to, ie_id) VALUES (
 							\''.create_guid().'\',
 							0,
-							\''.gmdate('Y-m-d H:i:s', strtotime('now')).'\',
-							\''.gmdate('Y-m-d H:i:s', strtotime('now')).'\',
+							\''.$timedate->nowDb().'\',
+							\''.$timedate->nowDb().'\',
 							\''.$addr.'\',
 		                    \''.$this->id.'\') ', true);
 	}
@@ -4453,8 +4448,9 @@ class InboundEmail extends SugarBean {
 	 */
 	function getAutoreplyStatus($from) {
 		global $sugar_config;
+        $timedate = TimeDate::getInstance();
 
-		$q_clean = 'UPDATE inbound_email_autoreply SET deleted = 1 WHERE date_entered < \''.gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now -24 hours')).'\'';
+		$q_clean = 'UPDATE inbound_email_autoreply SET deleted = 1 WHERE date_entered < \''.$timedate->getNow()->modify("-24 hours")->asDb().'\'';
 		$r_clean = $this->db->query($q_clean, true);
 
 		$q = 'SELECT count(*) AS c FROM inbound_email_autoreply WHERE deleted = 0 AND autoreplied_to = \''.$from.'\' AND ie_id = \''.$this->id.'\'';
@@ -5579,9 +5575,9 @@ eoq;
 			$GLOBALS['log']->info("INBOUNDEMAIL: Using cache file for setEmailForDisplay()");
 
 			include($cache); // profides $cacheFile
+            /** @var $cacheFile array */
 
-
-			$metaOut = unserialize($cacheFile['out']);
+            $metaOut = unserialize($cacheFile['out']);
 			$meta = $metaOut['meta']['email'];
 			$email = new Email();
 
@@ -5980,11 +5976,9 @@ eoq;
 			//_pp("count post-sort: ".count($revSorts));
 			$sorts[$sort] = $revSorts;
 		}
-
+        $timedate = TimeDate::getInstance();
 		foreach($sorts[$sort] as $k2 => $overview2) {
-			$conv = $this->getUnixHeaderDate($arr[$k2]->date);
-			$arr[$k2]->date = date('Y-m-d H:i:s', $conv);
-			$arr[$k2]->date = $arr[$k2]->date;
+		    $arr[$k2]->date = $timedate->fromString($arr[$k2]->date)->asDb();
 			$retArr[] = $arr[$k2];
 		}
 		//_pp("final count: ".count($retArr));
@@ -6004,7 +5998,7 @@ eoq;
 
 		// cache
 		if($this->validCacheExists($this->mailbox)) {
-			$ret = $eui->getCacheValue($this->mailbox);
+			$ret = $this->getCacheValue($this->mailbox);
 
 			$updates = array();
 
