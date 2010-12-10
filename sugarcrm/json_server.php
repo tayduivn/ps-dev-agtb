@@ -484,11 +484,7 @@ function getUserConfigJSON() {
  $user_arr['fields']['first_name'] = $current_user->first_name;
  $user_arr['fields']['last_name'] = $current_user->last_name;
  $user_arr['fields']['email'] = $current_user->email1;
- $userTz = $timedate->getUserTimeZone();
- $dstRange = $timedate->getDSTRange(date('Y'), $userTz);
- $user_arr['fields']['dst_start'] = $dstRange['start'];
- $user_arr['fields']['dst_end'] = $dstRange['end'];
- $user_arr['fields']['gmt_offset'] = $userTz['gmtOffset'];
+ $user_arr['fields']['gmt_offset'] = $timedate->getUserUTCOffset();
  $str = "\n".$global_registry_var_name.".current_user = ".$json->encode($user_arr, true).";\n";
 return $str;
 

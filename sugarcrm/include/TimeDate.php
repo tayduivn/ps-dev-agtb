@@ -231,9 +231,12 @@ class TimeDate
 
         try {
             $usertimezone = $user->getPreference('timezone');
+            if(empty($usertimezone)) {
+                return self::$gmtTimezone;
+            }
             $tz = new DateTimeZone($usertimezone);
         } catch (Exception $e) {
-            $GLOBALS['log']->fatal('TIMEZONE:NOT DEFINED-' . $usertimezone);
+            $GLOBALS['log']->fatal('Unknown timezone: ' . $usertimezone);
             return self::$gmtTimezone;
         }
 
@@ -921,7 +924,7 @@ class TimeDate
             return $this->time_separator;
         }
         $date = $this->_convert("00:11:22", self::DB_TIME_FORMAT, null, $this->get_time_format(), null);
-        if (preg_match('/\d(.+)11/', $date, $matches)) {
+        if (preg_match('/\d+(.+?)11/', $date, $matches)) {
             $sep = $matches[1];
         } else {
             $sep = ':';
@@ -1138,6 +1141,20 @@ class TimeDate
     {
         $tz = $this->_getUserTZ($user);
         return array("gmtOffset" => $tz->getOffset($this->now) / 60);
+    }
+
+    /**
+     * Returns the offset from user's timezone to GMT
+     * @param User $user
+     * @param DateTime $time When the offset is taken, default is now
+     * @return int
+     */
+    public function getUserUTCOffset(User $user = null, DateTime $time = null)
+    {
+        if(empty($time)) {
+            $time = $this->now;
+        }
+        return $this->_getUserTZ($user)->getOffset($time) / 60;
     }
 
     /**
