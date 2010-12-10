@@ -3,17 +3,28 @@
 class Bug40989 extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $contact;
-    
-    public function setUp()
+
+	public static function setUpBeforeClass()
+	{
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+
+	public static function tearDownAfterClass()
+	{
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+	}
+
+	public function setUp()
     {
         $this->contact = SugarTestContactUtilities::createContact();
 	}
-	
+
 	public function tearDown()
 	{
 	    SugarTestContactUtilities::removeAllCreatedContacts();
 	}
-	
+
 
     /*
      * @group bug40989
@@ -32,7 +43,7 @@ class Bug40989 extends Sugar_PHPUnit_Framework_TestCase
 	$loadedContact->disable_row_level_security = true;
 	$contactList = $loadedContact->get_full_list();
 
-	$exampleContact = array_pop($contactList);	
+	$exampleContact = array_pop($contactList);
 
 	$this->assertNotNull($exampleContact->fetched_row['last_name']);
     }
