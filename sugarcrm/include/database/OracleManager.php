@@ -146,7 +146,7 @@ class OracleManager extends DBManager
             $error = $err['code']."-".$err['message'];
             if($this->dieOnError || $dieOnError){
                 $GLOBALS['log']->fatal("$msg: Oracle error: $error");
-                sugar_die ($userMsg."Oracle error: $error");
+                sugar_die($userMsg.$GLOBALS['app_strings']['ERR_DB_FAIL']);
             }else{
                 $this->last_error = $userMsg."Oracle error: $error";
                 $GLOBALS['log']->error("$msg: ORACLE error: $error");
@@ -911,7 +911,8 @@ class OracleManager extends DBManager
                 	if ($err != false) {
 			            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
                 	}
-                	sugar_die("Could not connect to server ".$this->dbName." as ".$this->userName.".");
+                	$GLOBALS['log']->fatal("Could not connect to server ".$this->dbName." as ".$this->userName.".");
+                	sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
                 }
                 if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                     $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your config.php file</B>";
