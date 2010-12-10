@@ -1,5 +1,3 @@
-
-
 <?php
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -24,12 +22,12 @@ require_once("include/Expressions/Actions/AbstractAction.php");
 
 class ReadOnlyAction extends AbstractAction{
 	protected $expression =  "";
-	
+
 	function ReadOnlyAction($params) {
 		$this->targetField = $params['target'];
 		$this->expression = $params['value'];
 	}
-	
+
 /**
 	 * Returns the javascript class equavalent to this php class
 	 *
@@ -51,13 +49,13 @@ class ReadOnlyAction extends AbstractAction{
 				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if (!el)
 				    return;
-				
+
 				var val = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
 				var set = val == SUGAR.expressions.Expression.TRUE;
 				this.setReadOnly(el, set);
 				this.setDateField(el, set);
 			},
-			
+
 			setReadOnly: function(el, set)
 			{
 			    var D = YAHOO.util.Dom;
@@ -68,7 +66,7 @@ class ReadOnlyAction extends AbstractAction{
                     D.setStyle(el, 'background-color', '#EEE');
                     if (!SUGAR.isIE)
                        D.setStyle(el, 'color', '#22');
-                } else 
+                } else
                 {
                     D.setStyle(el, 'background-color', '');
                         if (!SUGAR.isIE)
@@ -99,14 +97,14 @@ class ReadOnlyAction extends AbstractAction{
 	}
 
 	/**
-	 * Returns the javascript code to generate this actions equivalent. 
+	 * Returns the javascript code to generate this actions equivalent.
 	 *
 	 * @return string javascript.
 	 */
 	function getJavascriptFire() {
 		return "new SUGAR.forms.ReadOnlyAction('{$this->targetField}','{$this->expression}')";
 	}
-	
+
 	/**
 	 * Applies the Action to the target.
 	 *
@@ -115,9 +113,9 @@ class ReadOnlyAction extends AbstractAction{
 	function fire(&$target) {
 		//This is a no-op under PHP
 	}
-	
+
 	static function getActionName() {
 		return "ReadOnly";
 	}
-	
+
 }
