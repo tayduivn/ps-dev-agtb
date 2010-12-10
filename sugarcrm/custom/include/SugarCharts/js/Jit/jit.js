@@ -10643,11 +10643,12 @@ $jit.ST.Plot.NodeTypes.implement({
           x = algnPos.x, y = algnPos.y,
           dimArray = node.getData('dimArray'),
           valueArray = node.getData('valueArray'),
+          stringArray = node.getData('stringArray'),
           linkArray = node.getData('linkArray'),
           gvl = node.getData('gvl'),
           colorArray = node.getData('colorArray'),
           colorLength = colorArray.length,
-          stringArray = node.getData('stringArray');
+          nodeCount = node.getData('nodeCount');
       var ctx = canvas.getCtx(),
           opt = {},
           border = node.getData('border'),
@@ -10712,8 +10713,10 @@ $jit.ST.Plot.NodeTypes.implement({
 			}
           if(aggregates(node.name, valAcum)) {
             if(horz) {
-              ctx.textAlign = 'left';
-              ctx.fillText(acumValueLabel, x + acum + config.labelOffset + label.size, y + height/2);
+            	if(nodeCount < 9) {
+              		ctx.textAlign = 'left';
+              		ctx.fillText(acumValueLabel, x + acum + config.labelOffset + label.size, y + height/2);
+            	}
             } else {
               ctx.textAlign = 'center';
               ctx.fillText(acumValueLabel, x + width/2, y - height - config.labelOffset - label.size);
@@ -10721,10 +10724,17 @@ $jit.ST.Plot.NodeTypes.implement({
           }
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
-              ctx.textAlign = 'center';
+  			  if(nodeCount > 8) {
+              ctx.textAlign = 'left';
+              ctx.translate(x + config.labelOffset, y + height/2);
+              ctx.rotate(0 * Math.PI / 180);
+              ctx.fillText(node.name + ": " + acumValueLabel, 0, 0);
+  			  } else {
+  			  ctx.textAlign = 'center';
               ctx.translate(x - config.labelOffset - label.size/2, y + height/2);
               ctx.rotate(Math.PI / 2);
-              ctx.fillText(node.name, 0, 0);
+              ctx.fillText(node.name, 0, 0);  			  }
+
             } else {
               ctx.textAlign = 'center';
               ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
@@ -11308,6 +11318,7 @@ $jit.BarChart = new Class({
             horz = config.orientation == 'horizontal',
             dimArray = node.getData('dimArray'),
             valArray = node.getData('valueArray'),
+            nodeCount = node.getData('nodeCount'),
             valueLength = valArray.length;
             valuelabelArray = node.getData('valuelabelArray'),
             stringArray = node.getData('stringArray'),
@@ -11356,7 +11367,7 @@ $jit.BarChart = new Class({
           }
           
           if(horz) {
-	          if(stringArray.length > 8) {
+	          if(stringArray.length > 8 || nodeCount > 9) {
 	          	labels.label.innerHTML = labels.label.innerHTML + ": " + acum;
 	          	labels.aggregate.innerHTML = "";
 	          } else {
@@ -11573,7 +11584,6 @@ $jit.BarChart = new Class({
 		colorLength = color.length,
 		nameLength = name.length;
 
-    
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
       var val = values[i];
       var valArray = $.splat(values[i].values);
@@ -11595,6 +11605,7 @@ $jit.BarChart = new Class({
           '$colorArray': color,
           '$colorMono': $.splat(color[i % colorLength]),
           '$stringArray': name,
+          '$nodeCount': values.length,
           '$gradient': gradient,
           '$config': config
         },

@@ -165,7 +165,7 @@ class chartEngine {
 			return array("orientation" => "vertical", "barType" => "basic", "tip" => "label","chartType" => "barChart");
 		} elseif ($chartType == "horizontal group by chart") {
 			return array("orientation" => "horizontal", "barType" => "stacked", "tip" => "name","chartType" => "barChart");
-		} elseif ($chartType == "horizontal bar chart") {
+		} elseif ($chartType == "horizontal bar chart" || "horizontal") {
 			return array("orientation" => "horizontal","barType" => "basic","tip" => "label","chartType" => "barChart");
 		} else {
 			return array("orientation" => "vertical","barType" => "stacked","tip" => "name","chartType" => "barChart");
@@ -328,7 +328,7 @@ class chartEngine {
 		$groupcontent .= $this->tab("],\n",2);
 		if($group->label) {
 			$groupcontent .= $this->tab("'valuelabels': [\n",2);
-			$groupcontent .= $this->tab("{$group->label}\n",3);
+			$groupcontent .= $this->tab("'{$group->label}'\n",3);
 			$groupcontent .= $this->tab("],\n",2);
 		}
 		$groupcontent .= $this->tab("'links': [\n",2);
