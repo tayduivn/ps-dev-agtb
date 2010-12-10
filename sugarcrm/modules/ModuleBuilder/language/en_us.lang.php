@@ -399,7 +399,7 @@ $mod_strings = array(
 'LBL_DROPDOWN_ITEM_LABEL' => 'Display Label',
 'LBL_SYNC_TO_DETAILVIEW' => 'Sync to DetailView',
 'LBL_SYNC_TO_DETAILVIEW_HELP' => 'Select this option to sync this EditView layout with the corresponding DetailView layout. Fields and field placement in the EditView<br>will be sync\'d and saved to the DetailView automatically upon clicking Save or Save & Deploy in the EditView. <br>Layout changes will not be able to be made in the DetailView.',
-'LBL_SYNC_TO_DETAILVIEW_NOTICE' => 'This DetailView is sync\'d with the corresponding EditView.<br> Fields and field placement in this DetailView reflect the fields and field placement in the EditView.<br> Changes to the DetailView cannot be saved or deployed within this page. <br>Make changes or un-sync the layouts in the EditView. ',
+'LBL_SYNC_TO_DETAILVIEW_NOTICE' => 'This DetailView is sync\'d with the corresponding EditView.<br> Fields and field placement in this DetailView reflect the fields and field placement in the EditView.<br> Changes to the DetailView cannot be saved or deployed within this page. Make changes or un-sync the layouts in the EditView. ',
 'LBL_COPY_FROM_EDITVIEW' => 'Copy from EditView',
 
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
