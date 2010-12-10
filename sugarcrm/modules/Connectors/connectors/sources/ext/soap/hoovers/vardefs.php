@@ -41,10 +41,10 @@ $dictionary['ext_soap_hoovers'] = array(
 	    'hidden' => true,
 	    'comment' => 'Unique identifier for records'
 	),
-    'companyname'=> array(
-	    'name' => 'companyname',
+    'recname'=> array(
+	    'name' => 'recname',
 		'input' => 'bal.specialtyCriteria.companyName',
-		'output' => 'companyname',
+		'output' => 'recname',
 	    'vname' => 'LBL_NAME',
 	    'type' => 'varchar',
 	    'search' => true,

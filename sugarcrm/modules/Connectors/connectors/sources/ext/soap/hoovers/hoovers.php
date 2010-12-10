@@ -213,7 +213,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		
  	    $data = array();
         $data['id'] = $args['uniqueId'];
-        $data['companyname'] = $result['name'];
+        $data['recname'] = $result['name'];
         $data['duns'] = $args['uniqueId'];
         $data['parent_duns'] = $result['ultimateParentDuns'];
         $data['address1'] = !empty($result['locations']['location']['address1']) ? $result['locations']['location']['address1'] : '';
@@ -403,6 +403,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		} catch (Exception $ex) {
  		 	$GLOBALS['log']->error($ex);
   		}
+
  		return $this->obj2array($result);
  	}
  	
@@ -417,12 +418,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @return $result Formatted results 
  	 */
  	private function parseListResults($result){
+ 		
  		if($result['return']['companies']['hits'] == 1) {
  		   $single = array();
  		   $data = $result['return']['companies']['hit']['companyResults'];
  		   $id = $data['duns'];
  		   $data['id'] = $id;
- 		   $single[$id] = $data;
+ 		   $single[$id] = $this->formatListResult($data);
  		   return $single;
  		} else if($result['return']['companies']['hits'] > 1) {
  		   $multiple = array();
@@ -431,7 +433,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   	  $data = $result['companyResults'];
 			  $id = $data['duns'];
  		   	  $data['id'] = $id;
- 		   	  $multiple[$id] = $data;
+ 		   	  $multiple[$id] = $this->formatListResult($data);
  		   }
  		   return $multiple;
  		} else {
@@ -439,6 +441,34 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		}
  	}
 	
+        
+   /**
+    * formatListResult
+    * This is a private helper function to ensure that list results are correctly matched to the vardef
+    * key entries
+    *
+    * @param Array data entry for list result from parseListResult function
+    * @return Array formatted data entry with the correct vardef keys
+    */
+   private function formatListResult(&$data)
+   {
+   	   static $format_mapping = array('companyName'=>'recname','address1'=>'addrstreet1','address2'=>'addrstreet2',
+                                      'city'=>'addrcity','country'=>'addrcountry','stateOrProvince'=>'addrstateprov','sales'=>'finsales');
+
+
+       foreach($format_mapping as $f_key=>$f_out)
+       {
+           if(isset($data[$f_key]))
+           {
+              $data[$f_out] = $data[$f_key];
+              unset($data[$f_key]);
+           }
+       }
+
+       return $data;
+   }
+ 	
+ 	
 	/**
 	 * test
 	 * This method is called from the administration components to make a live test
@@ -448,7 +478,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 */
  	public function test() {
 	    $item = $this->getItem(array('uniqueId' => '2205698'), 'Leads');
-	    return !empty($item['companyname']) && (preg_match('/^Gannett/i', $item['companyname'])); 
+	    return !empty($item['recname']) && (preg_match('/^Gannett/i', $item['recname'])); 
 	}
 	
 	

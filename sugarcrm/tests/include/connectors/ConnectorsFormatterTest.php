@@ -54,7 +54,7 @@ class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
     	$_REQUEST['from_unit_test'] = true;
     	$_REQUEST['modify'] = true;
     	$_REQUEST['action'] = 'SaveModifyMapping';
-    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:companyname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
+    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:recname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
     	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_twitter';
     	
     	$controller = new ConnectorsController();

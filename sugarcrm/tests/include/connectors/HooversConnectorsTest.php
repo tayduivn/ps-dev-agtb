@@ -46,7 +46,7 @@ class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     	//Create mapping entry for Accounts
     	$_REQUEST['action'] = 'SaveModifyMapping';
     	$_REQUEST['source1'] = 'ext_soap_hoovers';
-    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:companyname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
+    	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:recname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
     	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers';
     	$_REQUEST['reset_to_default'] = '';    	
     	$controller->action_SaveModifyMapping();
