@@ -880,10 +880,13 @@ SUGAR.util.DateUtils = {
 				dateRemain = dateRemain.substring(i+1);
 				switch (part) {
 					case 'm':
+						if (!(v > 0 && v < 13)) return false;
 						jsDate.setMonth(v - 1); break;
 					case 'd':
+						if(!(v > 0 && v < 32)) return false;
 						jsDate.setDate(v); break;
 					case 'Y':
+						if(!(v > 0)) return false;
 						jsDate.setYear(v); break;
 					case 'h':
 						//Read time, assume minutes are at end of date string (we do not accept seconds)
