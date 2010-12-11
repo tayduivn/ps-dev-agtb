@@ -1077,15 +1077,15 @@ function handleSugarConfig() {
         $bottle[] = $mod_strings['ERR_PERFORM_CONFIG_PHP_4'];
     }
 
-    
+
     //Now merge the config_si.php settings into config.php
     if(file_exists('config.php') && file_exists('config_si.php'))
     {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
-    }    
-    
-    
+    }
+
+
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
@@ -2313,7 +2313,9 @@ function create_time($hr=null,$min=null,$sec=null)
     if ($hr==null) $hr=mt_rand(6,19);
     if ($min==null) $min=(mt_rand(0,3)*15);
     if ($sec==null) $sec=0;
-    return $timedate->asDbTime($date->setDate(2007, 10, 7)->setTime($hr, $min, $sec));
+    $date->setDate(2007, 10, 7);
+    $date->setTime($hr, $min, $sec);
+    return $timedate->asDbTime($date);
 }
 
 function create_past_date()
