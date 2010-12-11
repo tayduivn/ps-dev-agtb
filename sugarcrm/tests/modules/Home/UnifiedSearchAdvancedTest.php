@@ -9,11 +9,12 @@ require_once 'include/utils/layout_utils.php';
 class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     protected $_contact = null;
-
+    private $_hasUnifiedSearchModulesConfig = false;
+    private $_hasUnifiedSearchModulesDisplay = false;
+    
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
         $unid = uniqid();
         $contact = new Contact();
         $contact->id = 'l_'.$unid;
@@ -22,12 +23,43 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $contact->new_with_id = true;
         $contact->save();
         $this->_contact = $contact;
+        
+        if(file_exists('cache/modules/unified_search_modules.php'))
+        {
+        	$this->_hasUnifiedSearchModulesConfig = true;
+        	copy('cache/modules/unified_search_modules.php', 'cache/modules/unified_search_modules.php.bak');
+        	unlink('cache/modules/unified_search_modules.php');
+        }
+
+        if(file_exists('cache/modules/unified_search_modules_display.php'))
+        {
+        	$this->_hasUnifiedSearchModulesConfigDisplay = true;
+        	copy('cache/modules/unified_search_modules_display.php', 'cache/modules/unified_search_modules_display.php.bak');
+        	unlink('cache/modules/unified_search_modules_display.php');
+        }        
+        
 	}
 
 	public function tearDown()
 	{
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact->id}'");
         unset($this->_contact);
+        
+        if($this->_hasUnifiedSearchModulesConfig)
+        {
+        	copy('cache/modules/unified_search_modules.php.bak', 'cache/modules/unified_search_modules.php');
+        	unlink('cache/modules/unified_search_modules.php.bak');
+        } else {
+        	unlink('cache/modules/unified_search_modules.php');
+        }
+        
+        if($this->_hasUnifiedSearchModulesConfigDisplay)
+        {
+        	copy('cache/modules/unified_search_modules_display.php.bak', 'cache/modules/unified_search_modules_display.php');
+        	unlink('cache/modules/unified_search_modules_display.php.bak');
+        } else {
+        	unlink('cache/modules/unified_search_modules_display.php');
+        }
 	}
 
 	public function testSearchByFirstName()
