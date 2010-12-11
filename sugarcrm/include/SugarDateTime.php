@@ -81,13 +81,27 @@ class SugarDateTime extends DateTime
 		}
 		if(function_exists("strptime")) {
     		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
+    		// for a reason unknown to modern science, %P doesn't work in strptime
+    		$str_format = str_replace("%P", "%p", $str_format);
     		// TODO: better way to not risk locale stuff problems?
     		$data = strptime($time, $str_format);
     		if(empty($data)) {
 		        $GLOBALS['log']->error("Cannot parse $time for format $format");
     		    return null;
     		}
-    		$data = $data + self::$data_init; // fill in missing parts
+    		if($data["tm_year"] == 0) {
+    		    unset($data["tm_year"]);
+    		}
+    		if($data["tm_mday"] == 0) {
+    		    unset($data["tm_mday"]);
+    		}
+    		if(isset($data["tm_year"])) {
+    		    $data["tm_year"] += 1900;
+    		}
+    		if(isset($data["tm_mon"])) {
+    		    $data["tm_mon"]++;
+    		}
+    		$data += self::$data_init; // fill in missing parts
 		} else {
 		    // Windows, etc. might not have strptime - we'd have to work harder here
             $data = $res->_strptime($time, $format);
@@ -96,7 +110,9 @@ class SugarDateTime extends DateTime
 		    $GLOBALS['log']->error("Cannot parse $time for format $format");
 		    return null;
 		}
-    	$res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"]);
+		if(isset($data["tm_year"])) {
+     	    $res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"]);
+		}
     	$res->setTime($data["tm_hour"], $data["tm_min"], $data["tm_sec"]);
 		return $res;
 	}
@@ -390,9 +406,6 @@ class SugarDateTime extends DateTime
     );
 
     protected static $data_init = array(
-        "tm_year" => 1970,
-        "tm_mon" => 1,
-        "tm_mday" => 1,
         "tm_hour" => 0,
         "tm_min" => 0,
         "tm_sec" => 0,
@@ -453,7 +466,7 @@ class SugarDateTime extends DateTime
         if ( isset($regexp['positions']['a']) && !empty($dateparts[$regexp['positions']['a']])) {
             $ampm = $dateparts[$regexp['positions']['a']];
             if($ampm == 'pm') {
-                $data["tm_hour"] += 12;
+                if($data["tm_hour"] != 12) $data["tm_hour"] += 12;
             } else if($ampm == 'am') {
                 if($data["tm_hour"] == 12) {
                     // 12:00am is 00:00
@@ -467,7 +480,7 @@ class SugarDateTime extends DateTime
         if ( isset($regexp['positions']['A']) && !empty($dateparts[$regexp['positions']['A']])) {
             $ampm = $dateparts[$regexp['positions']['A']];
             if($ampm == 'PM') {
-                $data["tm_hour"] += 12;
+                if($data["tm_hour"] != 12) $data["tm_hour"] += 12;
             } else if($ampm == 'AM') {
                 if($data["tm_hour"] == 12) {
                     // 12:00am is 00:00
@@ -499,9 +512,9 @@ class SugarDateTime extends DateTime
      * @see DateTime::setTime()
      * @return SugarDateTime
      */
-    public function setTime($hour, $minute)
+    public function setTime($hour, $minute, $sec = 0)
     {
-        parent::setTime($hour, $minute);
+        parent::setTime($hour, $minute, $sec);
         return $this;
     }
 

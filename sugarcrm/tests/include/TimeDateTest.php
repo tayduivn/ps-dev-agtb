@@ -53,7 +53,9 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
     		array("db" => '2005-10-25 22:00:00', "df" => 'd/m/Y', "tf" => "ha",		'tz' => 'America/Los_Angeles', 		"display" => '25/10/2005 03pm', 	"dbdate" => "2005-10-25 15:00:00"),
     		array("db" => '2005-10-25 10:00:00', "df" => 'd/m/Y', "tf" => "h",		'tz' => 'America/Los_Angeles', 		"display" => '25/10/2005 03', 		"dbdate" => "2005-10-25 03:00:00"),
     		array("db" => '2005-10-25 20:00:00', "df" => 'd/m/Y', "tf" => "H",		'tz' => 'America/Los_Angeles', 		"display" => '25/10/2005 13', 		"dbdate" => "2005-10-25 13:00:00"),
-    	);
+    		array("db" => '2005-10-25 07:00:00', "df" => 'd/m/Y', "tf" => "ha",		'tz' => 'America/Los_Angeles', 		"display" => '25/10/2005 12am', 	"dbdate" => "2005-10-25 00:00:00"),
+    		array("db" => '2005-10-25 19:00:00', "df" => 'd/m/Y', "tf" => "ha",		'tz' => 'America/Los_Angeles', 		"display" => '25/10/2005 12pm', 	"dbdate" => "2005-10-25 12:00:00"),
+    		);
 	}
 
 	public function timetestSet()
