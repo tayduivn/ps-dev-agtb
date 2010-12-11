@@ -83,6 +83,10 @@ class SugarDateTime extends DateTime
     		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
     		// TODO: better way to not risk locale stuff problems?
     		$data = strptime($time, $str_format);
+    		if(empty($data)) {
+		        $GLOBALS['log']->error("Cannot parse $time for format $format");
+    		    return null;
+    		}
     		$data = $data + self::$data_init; // fill in missing parts
 		} else {
 		    // Windows, etc. might not have strptime - we'd have to work harder here
