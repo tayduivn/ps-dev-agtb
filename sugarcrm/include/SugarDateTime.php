@@ -528,4 +528,11 @@ class SugarDateTime extends DateTime
         parent::modify($modify);
         return $this;
     }
+
+    public function setTimezone (DateTimeZone $timezone)
+    {
+        parent::setTimezone($timezone);
+        return $this;
+    }
+
 }
