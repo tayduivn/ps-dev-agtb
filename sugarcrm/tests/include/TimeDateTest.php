@@ -603,7 +603,10 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testGetGMT()
 	{
-		$gmt = $this->time_date->get_gmt_db_datetime();
+		if (is_windows()) {
+            $this->markTestSkipped('Skipping on Windows');
+        }
+        $gmt = $this->time_date->get_gmt_db_datetime();
 		$dt = strptime($gmt, "%Y-%m-%d %H:%M:%S");
 		$this->assertEquals($dt['tm_year']+1900, gmdate("Y"));
 		$this->assertEquals($dt['tm_mon']+1, gmdate("m"));

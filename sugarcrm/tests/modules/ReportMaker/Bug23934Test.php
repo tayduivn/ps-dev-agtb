@@ -1,5 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro ONLY 
+// FILE SUGARCRM flav=ent ONLY 
 
 require_once('modules/Reports/schedule/ReportSchedule.php');
 

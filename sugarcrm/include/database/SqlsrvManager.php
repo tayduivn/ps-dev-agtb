@@ -161,8 +161,10 @@ class SqlsrvManager extends MssqlManager
 
         $sqlmsg = $this->_getLastErrorMessages();
         $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        if ( $sqlpos !== false )
-            $sqlmsg = '';  // empty out sqlmsg if its 'Changed database context to'
+        $sqlpos2 = strpos($sqlmsg, 'Warning:');
+        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false )
+            $sqlmsg = '';  // empty out sqlmsg if its something we will ignor
         else {
             global $app_strings;
             //ERR_MSSQL_DB_CONTEXT: localized version of 'Changed database context to' message
@@ -230,9 +232,9 @@ class SqlsrvManager extends MssqlManager
 
             $sqlmsg = $this->_getLastErrorMessages();
             $sqlpos = strpos($sqlmsg, 'Changed database context to');
-			$sqlpos2 = strpos($sqlmsg, 'Warning:');
-
-			if ($sqlpos !== false || $sqlpos2 !== false)		// if sqlmsg has 'Changed database context to', just log it
+			$sqlpos2 = strpos($sqlmsg, 'Warning:');$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+            
+			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
 				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
 			else {
 				//BEGIN SUGARCRM flav=int ONLY
@@ -301,20 +303,28 @@ class SqlsrvManager extends MssqlManager
         }
 
         $row = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
-        //MSSQL returns a space " " when a varchar column is empty ("") and not null.
-        //We need to iterate through the returned row array and strip empty spaces
-        if(!empty($row)){
-            foreach($row as $key => $column) {
-                //notice we only strip if one space is returned.  we do not want to strip
-                //strings with intentional spaces (" foo ")
-                if (!empty($column) && $column ==" ") {
-                    $row[$key] = '';
-                }
-            }
+        if (empty($row)) {
+            return false;
         }
-
-        if($encode && $this->encode&& is_array($row)) {
-            return array_map('to_html', $row);
+        
+        foreach($row as $key => $column) {
+            // MSSQL returns a space " " when a varchar column is empty ("") and not null.
+            // We need to strip empty spaces
+            // notice we only strip if one space is returned.  we do not want to strip
+            // strings with intentional spaces (" foo ")
+            if (!empty($column) && $column ==" ") {
+                $row[$key] = '';
+            }
+            // Strip off the extra .000 off of datetime fields
+            $matches = array();
+            preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).[0-9]{3}$/',$column,$matches);
+            if ( !empty($matches) && !empty($matches[1]) ) {
+                $row[$key] = $matches[1];
+            }
+            // HTML encode if needed
+            if($encode && $this->encode) {
+                $row[$key] = to_html($row[$key]);
+            }    
         }
 
         return $row;

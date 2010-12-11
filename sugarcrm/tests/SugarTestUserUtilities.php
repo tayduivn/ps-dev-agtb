@@ -53,7 +53,8 @@ class SugarTestUserUtilities
     {
         $user_ids = array();
         foreach (self::$_createdUsers as $user)
-            $user_ids[] = $user->id;
+            if ( is_object($user) && $user instanceOf User )
+                $user_ids[] = $user->id;
         
         return $user_ids;
     }
