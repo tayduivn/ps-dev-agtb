@@ -46,7 +46,7 @@ class TimeDate
      * Regexp for matching format elements
      * @var array
      */
-    protected $format_to_regexp = array(
+    protected static $format_to_regexp = array(
     	'a' => '[ap]m',
     	'A' => '[AP]M',
     	'd' => '[0-9]{1,2}',
@@ -1097,16 +1097,15 @@ class TimeDate
      * @param string $format
      * @return string Regular expression string
      */
-    public function get_regular_expression($format)
+    public static function get_regular_expression($format)
     {
         $newFormat = '';
         $regPositions = array();
         $ignoreNextChar = false;
         $count = 1;
-        $format_characters = str_split($format, 1);
-        foreach ($format_characters as $char) {
-            if (! $ignoreNextChar && isset($this->format_to_regexp[$char])) {
-                $newFormat .= '(' . $this->format_to_regexp[$char] . ')';
+        foreach (str_split($format) as $char) {
+            if (! $ignoreNextChar && isset(self::$format_to_regexp[$char])) {
+                $newFormat .= '(' . self::$format_to_regexp[$char] . ')';
                 $regPositions[$char] = $count;
                 $count ++;
             } else {

@@ -1,5 +1,4 @@
 <?php
-
 class SugarDateTime extends DateTime
 {
 	protected $formats = array(
@@ -52,6 +51,9 @@ class SugarDateTime extends DateTime
 	 */
 	public static function createFromFormat($format, $time, DateTimeZone $timezone = null)
 	{
+	    if(empty($time) || empty($format)) {
+	        return false;
+	    }
 		if(is_callable(array("DateTime", "createFromFormat"))) {
 			// 5.3, hurray!
 			if(!empty($timezone)) {
@@ -66,28 +68,32 @@ class SugarDateTime extends DateTime
 		if(!$d) {
 			return false;
 		}
-		$sd = new self();
-		return $sd->setTimestamp($d->getTimestamp())->setTimezone($d->getTimezone());
+		$sd = new self("@".$d->getTimestamp());
+		$sd->setTimezone($d->getTimezone());
+		return $sd;
 	}
 
-	protected static function _createFromFormat($format, $time, DateTimeZone $timezone)
+	protected static function _createFromFormat($format, $time, DateTimeZone $timezone = null)
 	{
 		$res = new self();
-		$res->setTimezone($timezone);
-		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
-		// TODO: better way to not risk locale stuff problems?
-		$data = strptime($str_format, $time);
-		if(empty($data["tm_year"])) {
-		    $data["tm_year"] = 1970;
+		if(!empty($timezone)) {
+		    $res->setTimezone($timezone);
 		}
-		if(empty($data["tm_mon"])) {
-		    $data["tm_mon"] = 1;
+		if(function_exists("strptime")) {
+    		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
+    		// TODO: better way to not risk locale stuff problems?
+    		$data = strptime($str_format, $time);
+    		$data = $data + self::$data_init; // fill in missing parts
+		} else {
+		    // Windows, etc. might not have strptime - we'd have to work harder here
+            $data = $res->_strptime($format, $time);
 		}
-		if(empty($data["tm_mday"])) {
-		    $data["tm_mday"] = 1;
+		if(empty($data)) {
+		    $GLOBALS['log']->error("Cannot parse $time for format $format");
+		    return null;
 		}
-		$res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"]);
-	    $res->setTime($data["tm_hour"], $data["tm_min"], $data["tm_sec"]);
+    	$res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"]);
+    	$res->setTime($data["tm_hour"], $data["tm_min"], $data["tm_sec"]);
 		return $res;
 	}
 
@@ -155,7 +161,8 @@ class SugarDateTime extends DateTime
 		if($name == "setTimestamp") {
 			$sec = (int)$args[0];
 			$sd = new self("@$sec");
-			return $sd->setTimezone($this->getTimezone());
+			$sd->setTimezone($this->getTimezone());
+			return $sd;
 		}
 
 		// getters
@@ -170,6 +177,7 @@ class SugarDateTime extends DateTime
 				return $this->__get($var);
 			}
 		}
+		$GLOBALS['log']->fatal("SugarDateTime: unknowm method $name called");
 		sugar_die("SugarDateTime: unknowm method $name called");
 		return false;
 	}
@@ -368,4 +376,107 @@ class SugarDateTime extends DateTime
 	{
 	    return $this->format('r');
 	}
+
+    protected static $parts_match = array(
+            'Y' => 'tm_year',
+            'm' => 'tm_mon',
+            'n' => 'tm_mon',
+            'd' => 'tm_mday',
+            'H' => 'tm_hour',
+            'h' => 'tm_hour',
+            'i' => 'tm_min',
+            's' => 'tm_sec',
+    );
+
+    protected static $data_init = array(
+        "tm_year" => 1970,
+        "tm_mon" => 1,
+        "tm_mday" => 1,
+        "tm_hour" => 0,
+        "tm_min" => 0,
+        "tm_sec" => 0,
+    );
+
+    protected static $strptime_short_mon, $strptime_long_mon;
+	/**
+     * DateTime homebrew parser
+     *
+     * Since some OSes and PHP versions (please upgrade to 5.3!) do not support built-in parsing functions,
+     * we have to restort to this ugliness.
+     *
+     * @param string $format
+     * @param string $time
+     * @return array Parsed parts
+     */
+    function _strptime($format, $time)
+    {
+       $data = self::$data_init;
+       if(empty(self::$strptime_short_mon)) {
+           self::$strptime_short_mon = array_flip($this->_getStrings('dom_cal_month'));
+           unset(self::$strptime_short_mon[""]);
+       }
+       if(empty(self::$strptime_long_mon)) {
+           self::$strptime_long_mon = array_flip($this->_getStrings('dom_cal_month_long'));
+           unset(self::$strptime_long_mon[""]);
+       }
+
+        $regexp = TimeDate::get_regular_expression($format);
+        if(!preg_match('@'.$regexp['format'].'@', $time, $dateparts)) {
+            return false;
+        }
+
+        foreach(self::$parts_match as $part => $datapart) {
+            if (isset($regexp['positions'][$part]) && isset($dateparts[$regexp['positions'][$part]])) {
+                $data[$datapart] = (int)$dateparts[$regexp['positions'][$part]];
+            }
+        }
+        // now process non-numeric ones
+        if ( isset($regexp['positions']['F']) && !empty($dateparts[$regexp['positions']['F']])) {
+                       // FIXME: locale?
+            $mon = $dateparts[$regexp['positions']['F']];
+            if(isset(self::$sugar_strptime_long_mon[$mon])) {
+                $data["tm_mon"] = self::$sugar_strptime_long_mon[$mon];
+            } else {
+                return false;
+            }
+        }
+        if ( isset($regexp['positions']['M']) && !empty($dateparts[$regexp['positions']['M']])) {
+                       // FIXME: locale?
+            $mon = $dateparts[$regexp['positions']['M']];
+            if(isset(self::$sugar_strptime_short_mon[$mon])) {
+                $data["tm_mon"] = self::$sugar_strptime_short_mon[$mon];
+            } else {
+                return false;
+            }
+        }
+        if ( isset($regexp['positions']['a']) && !empty($dateparts[$regexp['positions']['a']])) {
+            $ampm = $dateparts[$regexp['positions']['a']];
+            if($ampm == 'pm') {
+                $data["tm_hour"] += 12;
+            } else if($ampm == 'am') {
+                if($data["tm_hour"] == 12) {
+                    // 12:00am is 00:00
+                    $data["tm_hour"] = 0;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if ( isset($regexp['positions']['A']) && !empty($dateparts[$regexp['positions']['A']])) {
+            $ampm = $dateparts[$regexp['positions']['A']];
+            if($ampm == 'PM') {
+                $data["tm_hour"] += 12;
+            } else if($ampm == 'AM') {
+                if($data["tm_hour"] == 12) {
+                    // 12:00am is 00:00
+                    $data["tm_hour"] = 0;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return $data;
+    }
 }
