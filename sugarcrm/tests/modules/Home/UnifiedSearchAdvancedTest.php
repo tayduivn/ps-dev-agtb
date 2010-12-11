@@ -86,5 +86,25 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 		$usa->search();
 		$this->expectOutputRegex("/{$this->_contact->first_name}/");
     }
+    
+    public function testUserPreferencesSearch()
+    {
+		global $mod_strings, $modListHeader, $app_strings, $beanList, $beanFiles;
+		require('config.php');
+		require('include/modules.php');
+  	
+    	$usa = new UnifiedSearchAdvanced();
+    	$_REQUEST['enabled_modules'] = 'Accounts,Contacts';
+    	$usa->saveGlobalSearchSettings();
+    	
+    	$_REQUEST = array();
+		$_REQUEST['query_string'] = $this->_contact->first_name.' '.$this->_contact->last_name;
+    	$_REQUEST['module'] = 'Home';      	
+    	$usa->search();
+    	global $current_user;
+    	$modules = $current_user->getPreference('globalSearch', 'search');
+    	$this->assertEquals(count($modules), 2, 'Assert that there are two modules in the user preferences as defined from the global search');
+    	$this->assertTrue(isset($modules['Accounts']) && isset($modules['Contacts']), 'Assert that the Accounts and Contacts modules have been added');    	
+    }
 }
 
