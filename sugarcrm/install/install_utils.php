@@ -2313,9 +2313,7 @@ function create_time($hr=null,$min=null,$sec=null)
     if ($hr==null) $hr=mt_rand(6,19);
     if ($min==null) $min=(mt_rand(0,3)*15);
     if ($sec==null) $sec=0;
-    $date->setDate(2007, 10, 7);
-    $date->setTime($hr, $min, $sec);
-    return $timedate->asDbTime($date);
+    return $timedate->asDbTime($date->setDate(2007, 10, 7)->setTime($hr, $min, $sec));
 }
 
 function create_past_date()

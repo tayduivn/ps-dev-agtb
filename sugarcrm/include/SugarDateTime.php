@@ -209,8 +209,7 @@ class SugarDateTime extends DateTime
 	function get_day_end_time()
 	{
 		$newdate = clone $this;
-		$newdate->setTime(23, 59, 59);
-		return $newdate;
+		return $newdate->setTime(23, 59, 59);
 	}
 
 	function get_day_by_index_this_week($day_index)
@@ -233,9 +232,7 @@ class SugarDateTime extends DateTime
 	function get_day_by_index_this_month($day_index)
 	{
 		$newdate = clone $this;
-		$newdate->setDate($this->year, $this->month, $day_index+1);
-		$newdate->setTime(0, 0);
-		return $newdate;
+		return $newdate->setDate($this->year, $this->month, $day_index+1)->setTime(0, 0);
 	}
 
 	/**
@@ -478,5 +475,40 @@ class SugarDateTime extends DateTime
         }
 
         return $data;
+    }
+
+    // 5.2 compatibility - 5.2 functions don't return $this, let's help them
+
+    /**
+     * (non-PHPdoc)
+     * @see DateTime::setDate()
+     * @return SugarDateTime
+     */
+    public function setDate ($year, $month, $day)
+    {
+        parent::setDate($year, $month, $day);
+        return $this;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see DateTime::setTime()
+     * @return SugarDateTime
+     */
+    public function setTime($hour, $minute)
+    {
+        parent::setTime($hour, $minute);
+        return $this;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see DateTime::modify()
+     * @return SugarDateTime
+     */
+    public function modify($modify)
+    {
+        parent::modify($modify);
+        return $this;
     }
 }

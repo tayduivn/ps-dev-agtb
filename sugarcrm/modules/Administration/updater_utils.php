@@ -88,7 +88,7 @@ function getSystemInfo($send_usage_info=true){
 		if(!empty($row)) {
 			$info['registered_users'] = $row['count'];
 		}
-		$lastMonth = db_convert("'". $timedate->getNow()->get("-30 days")->asDb(false) . "'", 'datetime');
+		$lastMonth = db_convert("'". $timedate->getNow()->modify("-30 days")->asDb(false) . "'", 'datetime');
 		if( !$send_usage_info){
 			$info['users_active_30_days'] = -1;
 		}
