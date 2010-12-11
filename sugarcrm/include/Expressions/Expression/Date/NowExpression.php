@@ -23,7 +23,7 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
 /**
  * <b>now()</b><br>
  * Returns a date object representing todays date and the current time.
- **/
+ */
 class NowExpression extends DateExpression
 {
 	/**
