@@ -82,11 +82,11 @@ class SugarDateTime extends DateTime
 		if(function_exists("strptime")) {
     		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
     		// TODO: better way to not risk locale stuff problems?
-    		$data = strptime($str_format, $time);
+    		$data = strptime($time, $str_format);
     		$data = $data + self::$data_init; // fill in missing parts
 		} else {
 		    // Windows, etc. might not have strptime - we'd have to work harder here
-            $data = $res->_strptime($format, $time);
+            $data = $res->_strptime($time, $format);
 		}
 		if(empty($data)) {
 		    $GLOBALS['log']->error("Cannot parse $time for format $format");
@@ -405,7 +405,7 @@ class SugarDateTime extends DateTime
      * @param string $time
      * @return array Parsed parts
      */
-    function _strptime($format, $time)
+    function _strptime($time, $format)
     {
        $data = self::$data_init;
        if(empty(self::$strptime_short_mon)) {
