@@ -24,7 +24,18 @@ require_once("include/Expressions/Expression/Parser/Parser.php");
 class validDateTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-	/**
+	public static function setUpBeforeClass()
+	{
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+
+	public static function tearDownAfterClass()
+	{
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+	}
+
+    /**
      * @group bug39037
      */
 	public function testValidDate()
@@ -37,7 +48,7 @@ class validDateTest extends Sugar_PHPUnit_Framework_TestCase
         	$this->assertTrue(false, "Parser threw exception: {$e->getMessage()}");
         }
     }
-    
+
     public function testInvalidString()
 	{
         try {

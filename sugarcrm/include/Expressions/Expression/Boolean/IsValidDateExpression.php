@@ -33,12 +33,12 @@ class IsValidDateExpression extends BooleanExpression {
 	function evaluate() {
         global $current_user;
 
-        $td = new TimeDate();
+        $td = TimeDate::getInstance();
         $format = trim($td->get_db_date_format()) . " ";
         $userFormat = trim($GLOBALS['current_user']->getPreference("datef")) . " ";
         if (!empty($userFormat))
             $format = $userFormat;
-        
+
         $dtStr = $this->getParameters()->evaluate();
         $part = "";
         if (!is_string($dtStr))
