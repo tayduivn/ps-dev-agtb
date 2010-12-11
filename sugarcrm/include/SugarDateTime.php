@@ -77,8 +77,17 @@ class SugarDateTime extends DateTime
 		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
 		// TODO: better way to not risk locale stuff problems?
 		$data = strptime($str_format, $time);
-		$res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"])
-			->setTime($data["tm_hour"], $data["tm_min"], $data["tm_sec"]);
+		if(empty($data["tm_year"])) {
+		    $data["tm_year"] = 1970;
+		}
+		if(empty($data["tm_mon"])) {
+		    $data["tm_mon"] = 1;
+		}
+		if(empty($data["tm_mday"])) {
+		    $data["tm_mday"] = 1;
+		}
+		$res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"]);
+	    $res->setTime($data["tm_hour"], $data["tm_min"], $data["tm_sec"]);
 		return $res;
 	}
 
