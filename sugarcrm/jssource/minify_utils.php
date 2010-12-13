@@ -89,7 +89,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             foreach($fg as $loc=>$trgt){
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
-                $trgt = $from_path.'/'.$trgt;
+                $trgt = $from_path.'/'.sugar_cached($trgt);
 
                 //check to see that source file exists, that it is a file, and is readable
                 if(file_exists($loc) && is_file($loc)  && is_readable($loc)){

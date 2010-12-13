@@ -53,13 +53,13 @@ else {
 	        die($mod_strings['LBL_NO_ACCESS']);
 	    } // if
     } // if
-	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"
+	$local_location = (isset($_REQUEST['isTempFile'])) ? sugar_cached("modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}")
 		 : $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
 
-	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {			
-	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];	    
+	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
+	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
     }
-    
+
 	if(!file_exists( $local_location ) || strpos($local_location, "..")) {
 		die($app_strings['ERR_INVALID_FILE_REFERENCE']);
 	}
@@ -77,7 +77,7 @@ else {
             //END SUGARCRM flav=pro ONLY
 			$query .= "WHERE document_revisions.id = '" . $_REQUEST['id'] ."'";
 		} elseif($file_type == 'kbdocuments') {
-				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbdocument_revisions ON document_revisions.id = kbdocument_revisions.document_revision_id INNER JOIN kbdocuments ON kbdocument_revisions.kbdocument_id = kbdocuments.id ";	 
+				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbdocument_revisions ON document_revisions.id = kbdocument_revisions.document_revision_id INNER JOIN kbdocuments ON kbdocument_revisions.kbdocument_id = kbdocuments.id ";
             //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);
@@ -122,9 +122,9 @@ else {
 			$download_location = $local_location;
 			$name = $_REQUEST['tempName'];
 		}
-		
+
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT']))
-		{	
+		{
 			$name = urlencode($name);
 			$name = str_replace("+", "_", $name);
 		}

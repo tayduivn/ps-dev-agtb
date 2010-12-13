@@ -628,15 +628,15 @@ EOQ;
         make_writable('./data/upload');
 
         // cache dir
-        make_writable('./cache/custom_fields');
-        make_writable('./cache/dyn_lay');
-        make_writable('./cache/images');
-        make_writable('./cache/import');
-        make_writable('./cache/layout');
-        make_writable('./cache/pdf');
-        make_writable('./cache/upload');
-        make_writable('./cache/xml');
-        make_writable('./cache/include/javascript');
+        make_writable(sugar_cached('custom_fields'));
+        make_writable(sugar_cached('dyn_lay'));
+        make_writable(sugar_cached('images'));
+        make_writable(sugar_cached('import'));
+        make_writable(sugar_cached('layout'));
+        make_writable(sugar_cached('pdf'));
+        make_writable(sugar_cached('upload'));
+        make_writable(sugar_cached('xml'));
+        make_writable(sugar_cached('include/javascript'));
 
         // check whether we're getting this request from a command line tool
         // we want to output brief messages if we're outputting to a command line tool

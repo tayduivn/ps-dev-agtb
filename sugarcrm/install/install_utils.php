@@ -205,8 +205,8 @@ function commitPatch($unlink = false, $type = 'patch'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(getcwd()."/cache/upload/upgrades")) {
-            $files = findAllFiles(getcwd()."/cache/upload/upgrades/$type", $files);
+    if(is_dir(getcwd()."/".sugar_cached("upload/upgrades"))) {
+            $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades/$type"), $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
@@ -274,8 +274,8 @@ function commitModules($unlink = false, $type = 'module'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(getcwd()."/cache/upload/upgrades")) {
-            $files = findAllFiles(getcwd()."/cache/upload/upgrades/$type", $files);
+    if(is_dir(getcwd()."/".sugar_cached("upload/upgrades"))) {
+            $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades/$type"), $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
@@ -459,7 +459,7 @@ function getInstalledLangPacks($showButtons=true) {
                 <td width='15%' ></td>
             </tr>\n";
     $files = array();
-    $files = findAllFiles(getcwd()."/cache/upload/upgrades", $files);
+    $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades"), $files);
 
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])){
         if(count($_SESSION['INSTALLED_LANG_PACKS'] > 0)) {
@@ -1897,7 +1897,7 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
     $files = array();
 
     // duh, new installs won't have the upgrade folders
-   if(!is_dir(getcwd()."/cache/upload/upgrades")) {
+   if(!is_dir(getcwd()."/".sugar_cached("upload/upgrades"))) {
 	    mkdir_recursive( "$base_upgrade_dir");
 	}
 	$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
@@ -1905,7 +1905,7 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
 		mkdir_recursive( "$base_upgrade_dir/$subdir" );
 	}
 
-    $files = findAllFiles(getcwd()."/cache/upload/upgrades", $files);
+    $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades"), $files);
     $hidden_input = '';
     unset($_SESSION['hidden_input']);
 
@@ -2327,7 +2327,7 @@ function post_install_modules(){
         foreach($modules_to_install as $module_to_install){
             if(is_file($module_to_install)){
                 $pm->performSetup($module_to_install, 'module', false);
-                $file_to_install = 'cache/upload/upgrades/module/'.basename($module_to_install);
+                $file_to_install = sugar_cached('upload/upgrades/module/').basename($module_to_install);
                 $_REQUEST['install_file'] = $file_to_install;
                 $pm->performInstall($file_to_install);
             }

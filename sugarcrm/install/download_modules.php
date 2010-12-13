@@ -31,7 +31,7 @@ if( !isset( $install_script ) || !$install_script ){
 ///////////////////////////////////////////////////////////////////////////////
 ////    PREFILL $sugar_config VARS
 if(empty($sugar_config['upload_dir'])) {
-    $sugar_config['upload_dir'] = 'cache/upload/';
+    $sugar_config['upload_dir'] = $sugar_config['cache_dir'].'upload/';
 }
 if(empty($sugar_config['upload_maxsize'])) {
     $sugar_config['upload_maxsize'] = 8192000;

@@ -2769,9 +2769,6 @@ $uwMain = $upgrade_directories_not_found;
 	}
 	$upgradeFiles = findAllFiles(clean_path("$unzip_dir/$zip_from_dir"), array());
 	$cache_html_files= array();
-	if(is_dir("{$GLOBALS['sugar_config']['cache_dir']}layout")){
-	 //$cache_html_files = findAllFilesRelative( "cache/layout", array());
-	}
 
 	// get md5 sums
 	$md5_string = array();
@@ -3157,15 +3154,10 @@ function unlinkTempFiles() {
 
 	logThis('at unlinkTempFiles()');
 	$tempDir='';
-	$sugar_config['upload_dir']='cache/upload/';
-	//if(isset($sugar_config['upload_dir']) && $sugar_config['upload_dir'] != null && $sugar_config['upload_dir']=='cache/upload/'){
-		$tempDir = clean_path(getcwd().'/'.$sugar_config['upload_dir'].'upgrades/temp');
-/*	}
-	else{
-		$uploadDir = getcwd()."/".'cache/upload/';
-		$tempDir = clean_path(getcwd().'/'.$uploadDir.'upgrades/temp');
-	}*/
-	if(file_exists($tempDir) && is_dir($tempDir)){
+	$sugar_config['upload_dir']=sugar_cached('upload/');
+    $tempDir = clean_path(getcwd().'/'.$sugar_config['upload_dir'].'upgrades/temp');
+
+    if(file_exists($tempDir) && is_dir($tempDir)){
 		$files = findAllFiles($tempDir, array(), false);
 		rsort($files);
 		foreach($files as $file) {
@@ -5206,7 +5198,7 @@ function upgradeModulesForTeam() {
 
 
 	function update_iframe_dashlets(){
-		require_once('cache/dashlets/dashlets.php');
+		require_once(sugar_cached('dashlets/dashlets.php'));
 
 		$db = DBManagerFactory::getInstance();
 		$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";
@@ -5405,22 +5397,22 @@ function upgradeModulesForTeam() {
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 		$GLOBALS['db']->query($callsSql);
 	}
-	
-	
+
+
 /**
  * merge_config_si_settings
  * This method checks for the presence of a config_si.php file and, if found, merges the configuration
  * settings from the config_si.php file into config.php.  If a config_si_location parameter value is not
  * supplied it will attempt to discover the config_si.php file location from where the executing script
  * was invoked.
- * 
+ *
  * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
  * @param config_location String optional value to config.php file location
  * @param config_si_location String optional value to config_si.php file location
  * @return boolean value indicating whether or not a merge was attempted with config_si.php file
  */
 function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='')
-{	
+{
 	if(!empty($config_location) && !file_exists($config_location))
 	{
 		if($write_to_upgrade_log)
@@ -5434,23 +5426,23 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		if(isset($argv[3]) && is_dir($argv[3]))
 		{
 			$config_location = $argv[3] . DIRECTORY_SEPARATOR . 'config.php';
-		} 
+		}
 	}
-	
+
 	//If config_location is still empty or if the file cannot be found, skip merging
 	if(empty($config_location) || !file_exists($config_location))
 	{
 	   if($write_to_upgrade_log)
-	   {		
+	   {
 	   	  _logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
 	   }
 	   return false;
 	} else {
 	   if($write_to_upgrade_log)
-	   {	
+	   {
 	      _logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
 	   }
-	   
+
 	   include($config_location);
 	   if(empty($sugar_config))
 	   {
@@ -5459,9 +5451,9 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   	     _logThis('config.php contents are empty.  Skip merging.', $path);
 		  }
 	   	  return false;
-	   }   
+	   }
 	}
-	
+
 	if(!empty($config_si_location) && !file_exists($config_si_location))
 	{
 		if($write_to_upgrade_log)
@@ -5474,11 +5466,11 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		{
 			$php_file = $argv[0];
 			$p_info = pathinfo($php_file);
-			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : ''; 
+			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : '';
 			$config_si_location = $php_dir . 'config_si.php';
-		} 
+		}
 	}
-	
+
 	//If config_si_location is still empty or if the file cannot be found, skip merging
 	if(empty($config_si_location) || !file_exists($config_si_location))
 	{
@@ -5492,7 +5484,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   {
 	      _logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
 	   }
-	   
+
 	   include($config_si_location);
 	   if(empty($sugar_config_si))
 	   {
@@ -5503,7 +5495,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   	  return false;
 	   }
 	}
-	
+
 	//Now perform the merge operation
 	$modified = false;
 	foreach($sugar_config_si as $key=>$value)
@@ -5518,14 +5510,14 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		   $modified = true;
 		}
 	}
-	
+
 	if($modified)
 	{
 		if($write_to_upgrade_log)
 		{
 	       _logThis('Update config.php file with new values', $path);
 		}
-		
+
 	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
 	       if($write_to_upgrade_log)
 		   {
@@ -5540,7 +5532,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   }
 	   return false;
 	}
-	
+
 	if($write_to_upgrade_log)
 	{
 	   _logThis('End merge_config_si_settings', $path);
@@ -5548,8 +5540,12 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	return true;
 }
 
+
 /**
  * upgrade_connectors
+ * This function handles support for upgrading connectors, in particular the Hoovers connector
+ * that needs the wsdl and endpoint modifications in the config.php file as well as the search
+ * term change (from bal.specialtyCriteria.companyKeyword to bal.specialtyCriteria.companyName).
  * @param $path String variable for the log path
  */
 function upgrade_connectors($path='') {
@@ -5688,15 +5684,15 @@ function getSilentUpgradeVar($var){
 
 /**
  * add_unified_search_to_custom_modules_vardefs
- * 
+ *
  * This method calls the repair code to remove the unified_search_modules.php fiel
- * 
+ *
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-	if(file_exists('cache/modules/unified_search_modules.php'))
+	if(file_exists($cachefile = sugar_cached('cache/modules/unified_search_modules.php')))
 	{
-	   unlink('cache/modules/unified_search_modules.php');
+	   unlink($cachefile);
 	}
 
 }

@@ -115,16 +115,16 @@ class Administration extends SugarBean {
         //BEGIN SUGARCRM flav=ent ONLY
         $this->retrieveSettings(false, true);
         if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
-            if(file_exists('cache/modules/Contacts/EditView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
+            if(file_exists($cachefile = sugar_cached('modules/Contacts/EditView.tpl'))) {
+                unlink($cachefile);
             }
 
-            if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
+            if(file_exists($cachefile = sugar_cached('modules/Contacts/DetailView.tpl'))) {
+                unlink($cachefile);
             }
 
-            if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
-            unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
+            if(file_exists($cachefile = sugar_cached('modules/Contacts/form_EmailQCView_Contacts.tpl'))) {
+                unlink($cachefile);
             }
         }
         //END SUGARCRM flav!=ent ONLY
@@ -132,16 +132,16 @@ class Administration extends SugarBean {
         //BEGIN SUGARCRM flav=ent ONLY
         $this->retrieveSettings(false, true);
         if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
-            if(file_exists('cache/modules/Contacts/EditView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
+            if(file_exists($cachefile = sugar_cached('modules/Contacts/EditView.tpl'))) {
+                unlink($cachefile);
             }
 
-            if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
+            if(file_exists($cachefile = sugar_cached('modules/Contacts/DetailView.tpl'))) {
+                unlink($cachefile);
             }
 
-            if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
-            unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
+            if(file_exists($cachefile = sugar_cached('modules/Contacts/form_EmailQCView_Contacts.tpl'))) {
+                unlink($cachefile);
             }
         }
         //END SUGARCRM flav!=ent ONLY

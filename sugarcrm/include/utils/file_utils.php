@@ -124,7 +124,7 @@ function write_encoded_file( $soap_result, $write_to_dir, $write_to_file="" )
     // this function dies when encountering an error -- use with caution!
     // the path/file is returned upon success
 
-    
+
 
     if( $write_to_file == "" )
     {
@@ -317,12 +317,26 @@ function fileToHash($file){
 		$_SESSION['file2Hash'][$hash] = $file;
 		return $hash;
 	}
-	
+
 function hashToFile($hash){
 		if(!empty($_SESSION['file2Hash'][$hash])){
 			return $_SESSION['file2Hash'][$hash];
 		}
 		return false;
 }
-	
-?>
+
+/**
+ * Get filename in cache directory
+ * @param string $file
+ */
+function sugar_cached($file)
+{
+    static $cdir = null;
+    if(empty($cdir)) {
+        $cdir = trim($GLOBALS['sugar_config']['cache_dir'], '/\\')."/";
+    }
+    if(empty($cdir)) {
+        $cdir = "cache/";
+    }
+    return "$cdir/$file";
+}

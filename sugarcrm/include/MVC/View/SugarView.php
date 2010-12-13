@@ -610,22 +610,22 @@ class SugarView
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
         echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-        if (!is_file("cache/include/javascript/sugar_grp1.js")) {
+        if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
             ConcatenateFiles(".");
         }
-        echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
-        echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
+        echo '<script type="text/javascript" src="cache/include/javascript/sugar_grp1_yui.js"></script>';
+        echo '<script type="text/javascript" src="cache/include/javascript/sugar_grp1.js"></script>';
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!is_file("cache/Expressions/functions_cache.js")) {
+        if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
         }
         if(inDeveloperMode())
-            echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache_debug.js') . '"></script>';
+            echo '<script type="text/javascript" src="cache/Expressions/functions_cache_debug.js"></script>';
         else
-            echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache.js') . '"></script>';
+            echo '<script type="text/javascript" src="cache/Expressions/functions_cache.js"></script>';
         //END SUGARCRM flav=pro ONLY
         echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
         echo <<<EOQ
@@ -670,13 +670,13 @@ EOHTML;
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
             echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-            if (!is_file("cache/include/javascript/sugar_grp1.js") || !is_file("cache/include/javascript/sugar_grp1_yui.js")) {
+            if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js"))) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
-            echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
-            echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
+            echo '<script type="text/javascript" src="cache/include/javascript/sugar_grp1_yui.js"></script>';
+            echo '<script type="text/javascript" src="cache/include/javascript/sugar_grp1.js"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2) . '.js') . '"></script>';
 
             // cn: bug 12274 - prepare secret guid for asynchronous calls
@@ -687,21 +687,21 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo $GLOBALS['timedate']->get_javascript_validation();
-            if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
+            if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
-            echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
-            if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+            echo '<script type="text/javascript" src="cache/jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+            if (!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
                 jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
             }
-            echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+            echo '<script type="text/javascript" src="cache/jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
             echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
             //BEGIN SUGARCRM flav=pro ONLY
-            if (!is_file("cache/Expressions/functions_cache.js")) {
+            if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
                 $GLOBALS['updateSilent'] = true;
                 include("include/Expressions/updatecache.php");
             }
@@ -869,7 +869,7 @@ EOHTML;
         {
 	        $timeStamp = TimeDate::getInstance()->nowDb();
 	        //Track to tracker_perf
-	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
+	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){
 		        $monitor2->setValue('server_response_time', $this->responseTime);
 		        $dbManager = &DBManagerFactory::getInstance();
 		        $monitor2->db_round_trips = $dbManager->getQueryCount();
@@ -880,7 +880,7 @@ EOHTML;
 		            $monitor2->setValue('memory_usage', memory_get_usage());
 		        }
 			}
-		    
+
 			// Track to tracker_sessions
 		    if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
 		        $monitor3->setValue('date_end', $timeStamp);
@@ -1202,33 +1202,33 @@ EOHTML;
     {
     	global $current_user;
     	global $app_strings;
-    	
+
     	if(!empty($GLOBALS['app_list_strings']['moduleList'][$this->module]))
     		$firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
     	else
     		$firstParam = $this->module;
-    	
+
     	$iconPath = $this->getModuleTitleIconPath($this->module);
-    	if($this->action == "ListView" || $this->action == "index") 
+    	if($this->action == "ListView" || $this->action == "index")
     	{
     	    if (!empty($iconPath) && !$bTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'>" 
-				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+				return "<a href='index.php?module={$this->module}&action=index'>"
+				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>"
 				     . "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
 			} else {
 				return $firstParam;
 			}
-    	} else 
+    	} else
     	{
 		    if (!empty($iconPath) && !$bTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'>" 
+				return "<a href='index.php?module={$this->module}&action=index'>"
 				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
 			} else {
 				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
 			}
     	}
     }
-    
+
     protected function getModuleTitleIconPath($module) {
     	$iconPath = "";
     	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))

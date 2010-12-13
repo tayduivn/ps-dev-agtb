@@ -4660,4 +4660,4 @@ function sugar_microtime()
 	$unique_id = $now[1].str_replace('.', '', $now[0]);
 	return $unique_id;
 }
-?>
+

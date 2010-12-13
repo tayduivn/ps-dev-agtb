@@ -154,5 +154,3 @@
             'modules/Emails/javascript/complexLayout.js' => 'cache/include/javascript/sugar_grp_quickcomp.js',
             ),
         );
-
-?>

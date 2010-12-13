@@ -22,9 +22,9 @@ class Parser {
 	/**
 	 * Evaluates an expression.
 	 *
-	 * @param string	the expression to evaluate
      *
-	 */
+	 * @param string	the expression to evaluate
+     */
 	static function evaluate($expr, $context = false)
 	{
 		if ($context)
@@ -42,32 +42,32 @@ class Parser {
 
 
 		// VALIDATE: expression format
-		if ( ! preg_match('/^[a-zA-Z0-9_-]+\(.*\)$/', $expr) ) {
 			throw new Exception("Attempted to evaluate expression with an invalid format: $expr");
+			return;
 			return;
 		}
 
 		// EXTRACT: Function
 		$open_paren_loc = strpos($expr, '(');
-
-		// if no open-paren '(' found
 		if ( $open_paren_loc < 0 )	{
+            throw new Exception("Attempted to evaluate expression with a Syntax Error (No opening paranthesis found): $expr");
+            return;
             throw new Exception("Attempted to evaluate expression with a Syntax Error (No opening paranthesis found): $expr");
             return;
         }
 
 		// get the function
 		$func   = substr( $expr , 0 ,  $open_paren_loc);
-		
+
 		// handle if function is not valid
 		if(empty($FUNCTION_MAP)) {
-			if (!file_exists('cache/Expressions/functionmap.php')) {
+		    $cachefile = sugar_cached('Expressions/functionmap.php');
+			if (!file_exists($cachefile)) {
 				$GLOBALS['updateSilent'] = true;
 				include("include/Expressions/updatecache.php");
 			}
-			require_once( "cache/Expressions/functionmap.php" );
+			require_once $cachefile;
 		}
-			
 
 		if ( !isset($FUNCTION_MAP[$func]) )	{
             throw new Exception("Attempted to evaluate expression with an invalid function '$func': $expr");
@@ -93,14 +93,14 @@ class Parser {
 		for ( $i = 0 ; $i <= $length ; $i++ ) {
 			// store the last character read
 			$lastCharRead = $char;
-
-			// the last parameter
-			if ( $i == $length ) {
                 if ($argument != "") {
 				    $subExp = Parser::evaluate($argument);
                     $subExp->context = $context;
                     $args[] = $subExp;
                 }
+			if ( $i == $length ) {
+                if ($argument != "")
+				    $args[] = Parser::evaluate($argument);
 				break;
 			}
 
@@ -121,9 +121,9 @@ class Parser {
 			if ( $char == '"' && !$isPrevCharBK && $level == 0 )
 			{
 				// if i am ending a quote, then make sure nothing follows
-				if ( $isInQuotes ) {
-					// only spaces may follow the end of a string
-					$temp = substr($params, $i+1, strpos($params, ",", $i) - $i - 1 );
+					if ( !preg_match( '/^(\s*|\s*\))$/', $temp ) ) {
+			            throw new Exception("Syntax Error:Improperly Terminated String '$temp' in formula: $expr");
+			            return;
 					if ( !preg_match( '/^(\s*|\s*\))$/', $temp ) ) {
 			            throw new Exception("Syntax Error:Improperly Terminated String '$temp' in formula: $expr");
 			            return;
@@ -140,12 +140,12 @@ class Parser {
 			} else if ( $char == ')' ) {
 				$level--;
 			}
-
-			// argument splitting
-			else if ( $char == ',' && $level == 0 ) {
 				$subExp = Parser::evaluate($argument);
                 $subExp->context = $context;
                 $args[] = $subExp;
+			// argument splitting
+			else if ( $char == ',' && $level == 0 ) {
+				$args[] = Parser::evaluate($argument);
 				$argument = "";
 				continue;
 			}
@@ -153,27 +153,27 @@ class Parser {
 			// construct the next argument
 			$argument .= $char;
 		}
-
-
-		// now check to make sure all the parantheses opened were closed
 		if ( $level != 0 )	{
             throw new Exception("Syntax Error (Incorrectly Matched Parantheses) in formula: $expr");
             return;
-        }
-
-		// now check to make sure all the quotes opened were closed
+		if ( $level != 0 )	{
+            throw new Exception("Syntax Error (Incorrectly Matched Parantheses) in formula: $expr");
+            return;
+		if ( $isInQuotes )	if ( $level != 0 ) {
+            throw new Exception("Syntax Error (Unterminated String Literal) in formula: $expr");
+            return;
 		if ( $isInQuotes )	if ( $level != 0 ) {
             throw new Exception("Syntax Error (Unterminated String Literal) in formula: $expr");
             return;
         }
-
-		// require and return the appropriate expression object
-		require_once( $FUNCTION_MAP[$func]['src'] );
         $expObject = new $FUNCTION_MAP[$func]['class']($args);
         if ($context) {
             $expObject->context = $context;
         }
 		return $expObject;
+		// require and return the appropriate expression object
+		require_once( $FUNCTION_MAP[$func]['src'] );
+		return new $FUNCTION_MAP[$func]['class']($args);
 	}
 
 	/**
@@ -182,14 +182,14 @@ class Parser {
 	 */
 	static function toConstant($expr) {
 		require_once( "include/Expressions/Expression/Numeric/ConstantExpression.php");
-			
+
 		// a raw numeric constant
 		if ( preg_match('/^(\-)?[0-9]+(\.[0-9]+)?$/', $expr) ) {
 			return new ConstantExpression($expr);
-		}
-
-		// a pre defined numeric constant
 		require( "include/Expressions/Expression/Numeric/constants.php");
+		if (isset($NUMERIC_CONSTANTS[$expr]))
+		{
+			return new ConstantExpression($NUMERIC_CONSTANTS[$expr]);
 		if (isset($NUMERIC_CONSTANTS[$expr]))
 		{
 			return new ConstantExpression($NUMERIC_CONSTANTS[$expr]);
@@ -216,20 +216,20 @@ class Parser {
 		}
 
 		// a date
-		if ( preg_match('/^(0[0-9]|1[0-2])\/([0-2][0-9]|3[0-1])\/[0-3][0-9]{3,3}$/', $expr) ) {
+			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			$day   = floatval(substr($expr, 0, 2));
-			$month = floatval(substr($expr, 3, 2));
-			$year  = floatval(substr($expr, 6, 4));
+			//return new DefineDateExpression(array($day, $month, $year));
 			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			require_once('include/Expressions/Expression/Date/DefineDateExpression.php');
+			//echo "Date found $month, $day, $year";
 			//return new DefineDateExpression(array($day, $month, $year));
 			return new DefineDateExpression(new StringLiteralExpression( $expr ));
 		}
 
 		// a time
-		if ( preg_match('/^([0-1][0-9]|2[0-4]):[0-5][0-9]:[0-5][0-9]$/', $expr) ) {
+			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			$hour   = floatval(substr($expr, 0, 2));
-			$minute = floatval(substr($expr, 3, 2));
+			//return new DefineTimeExpression(array($hour, $minute, $second));
 			$second = floatval(substr($expr, 6, 2));
 			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			require_once('include/Expressions/Expression/Time/DefineTimeExpression.php');
@@ -240,10 +240,6 @@ class Parser {
 		// neither
 		return null;
 	}
-
-	/**
-	 * Throws a custom exception with a predefined prefix and message.
-	 */
 	static function throwException($function, $type, $message) {
 		throw new Exception("$function : $type ($message)");
 	}

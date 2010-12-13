@@ -63,7 +63,7 @@ $uploadDir='';
 $uploadHta='';
 
 if (empty($GLOBALS['sugar_config']['upload_dir'])) {
-    $GLOBALS['sugar_config']['upload_dir']='cache/upload/';
+    $GLOBALS['sugar_config']['upload_dir']=sugar_cached('upload/');
 }
 $uploadDir = getcwd()."/".$sugar_config['upload_dir'];
 if(file_exists($uploadDir)){
