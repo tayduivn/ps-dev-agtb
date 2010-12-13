@@ -1962,7 +1962,9 @@ abstract class DBManager
             			break;
             		case '&':
             			$filename = $data[$dataIndex++];
-				        $query .= sugar_file_get_contents($filename);
+				        $handle = sugar_fopen($filename, "rb");
+				        $query .= fread($handle, filesize($filename));
+				        fclose($handle);
             			break;
             		case '!':
             			$query .= $data[$dataIndex++];
