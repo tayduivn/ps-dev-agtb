@@ -75,26 +75,30 @@
 		
 		<labelColor>style</labelColor>		
 		<chartElementColors>
-			<color>0xFF0000</color>
-			<color>0x00FF00</color>
-			<color>0x0000FF</color>
-			<color>0xFF6600</color>
-			<color>0x42FF8E</color>
-			<color>0x6600FF</color>
-			<color>0xFFFF00</color>
-			<color>0x00FFFF</color>
-			<color>0xFF00FF</color>
-			<color>0x66FF00</color>
-			<color>0x0066FF</color>
-			<color>0xFF0066</color>
-			<color>0xCC0000</color>
-			<color>0x00CC00</color>
-			<color>0x0000CC</color>
-			<color>0xCC6600</color>
-			<color>0x00CC66</color>
-			<color>0x6600CC</color>
-			<color>0xCCCC00</color>
-			<color>0x00CCCC</color>
+			<color>0xab4343</color>
+			<color>0x43abab</color>
+			<color>0xab7743</color>
+			<color>0x4377ab</color>
+			<color>0xabab43</color>
+			<color>0x4343ab</color>
+			<color>0x77ab43</color>
+			<color>0x7743ab</color>
+			<color>0x43ab43</color>
+			<color>0xab43ab</color>
+			<color>0x43ab77</color>
+			<color>0xab4377</color>
+			<color>0xab6543</color>
+			<color>0x4388ab</color>
+			<color>0xab8843</color>
+			<color>0x4365ab</color>
+			<color>0x88ab43</color>
+			<color>0x6543ab</color>
+			<color>0x65ab43</color>
+			<color>0x8843ab</color>
+			<color>0x43ab65</color>
+			<color>0xab4388</color>
+			<color>0x43ab88</color>
+			<color>0xab4365</color>
 		</chartElementColors>
 		
 		<fadedEdges>off</fadedEdges>

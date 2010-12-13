@@ -10672,9 +10672,9 @@ $jit.ST.Plot.NodeTypes.implement({
                   x + width, y - acum- dimArray[i]/2);
             }
             var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; });
+                function(v) { (v * 0.9); return v >> 0; });
             var color2 = $.hexToRgb(colorArray[i % colorLength]);
-            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(0, 'rgba('+color+',.6)');
             linear.addColorStop(1, 'rgba('+color2+',.8)');
             ctx.fillStyle = linear;
           }
@@ -10841,9 +10841,9 @@ $jit.ST.Plot.NodeTypes.implement({
                   x + fixedDim * i, y - dimArray[i]/2);
             }
             var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; });
+                function(v) { (v * 0.9); return v >> 0; });
             var color2 = $.hexToRgb(colorArray[i % colorLength]);
-            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(0, 'rgba('+color+',.6)');
             linear.addColorStop(1, 'rgba('+color2+',.8)');
             ctx.fillStyle = linear;
           }
@@ -11020,9 +11020,9 @@ $jit.ST.Plot.NodeTypes.implement({
                   x + fixedDim * i, y - dimArray[i]/2);
             }
             var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { v =(v == 0) ? 75: v; v = (v*1.5 > 255)? 255: v*1.5; return v >> 0; });
+                function(v) { (v * 0.9); return v >> 0; });
             var color2 = $.hexToRgb(colorArray[i % colorLength]);
-            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(0, 'rgba('+color+',.6)');
             linear.addColorStop(1, 'rgba('+color2+',.8)');
             ctx.fillStyle = linear;
           }
@@ -11975,7 +11975,7 @@ $jit.ST.Plot.NodeTypes.implement({
       	//funnel segments and labels
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
-
+		  var colori = colorArray[i % colorLength];
           var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
           var bottomWidth = minWidth + ((acum) * ratio);
           
@@ -11983,12 +11983,12 @@ $jit.ST.Plot.NodeTypes.implement({
           if(gradient) {
             var linear;
               linear = ctx.createLinearGradient(-topWidth/2, y - acum - dimArray[i]/2, topWidth/2, y - acum- dimArray[i]/2);
-
-            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { return (v * 0.8) >> 0; }));
-            linear.addColorStop(0, color);
-            linear.addColorStop(0.5, colorArray[i % colorLength]);
-            linear.addColorStop(1, color);
+			var colorRgb = $.hexToRgb(colori);
+            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { return (v * 0.8) >> 0; });
+            linear.addColorStop(0, 'rgba('+color+',.8)');
+            linear.addColorStop(0.5,  'rgba('+colorRgb+',.8)');
+            linear.addColorStop(1, 'rgba('+color+',.8)');
             ctx.fillStyle = linear;
           }
           
@@ -13800,12 +13800,12 @@ $jit.Sunburst.Plot.NodeTypes.implement({
             var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
                 xpos, ypos, acum + dimi + config.sliceOffset);
             var colorRgb = $.hexToRgb(colori), 
-                ans = $.map(colorRgb, function(i) { return (i * 0.8) >> 0; }),
-                endColor = $.rgbToHex(ans);
+                ans = $.map(colorRgb, function(i) { return (i * 0.9) >> 0; }),
+                endColor = ans;
 
-            radialGradient.addColorStop(0, colori);
-            radialGradient.addColorStop(0.5, colori);
-            radialGradient.addColorStop(1, endColor);
+            radialGradient.addColorStop(0, 'rgba('+colorRgb+',.8)');
+            radialGradient.addColorStop(0.5, 'rgba('+colorRgb+',.8)');
+            radialGradient.addColorStop(1, 'rgba('+endColor+',.8)');
             ctx.fillStyle = radialGradient;
           }
           
@@ -14370,9 +14370,9 @@ $jit.Sunburst.Plot.NodeTypes.implement({
                 ans = $.map(colorRgb, function(i) { return (i * 0.8) >> 0; }),
                 endColor = $.rgbToHex(ans);
 
-            radialGradient.addColorStop(0, colori);
-            radialGradient.addColorStop(0.5, colori);
-            radialGradient.addColorStop(1, endColor);
+            radialGradient.addColorStop(0, 'rgba('+colorRgb+',.8)');
+            radialGradient.addColorStop(0.5,  'rgba('+colorRgb+',.8)');
+            radialGradient.addColorStop(1,  'rgba('+ans+',.8)');
             ctx.fillStyle = radialGradient;
           }
           
