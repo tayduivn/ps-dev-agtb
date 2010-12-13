@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,6 +22,9 @@
 require_once("include/Expressions/Expression/AbstractExpression.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 
+/**
+ * @outputBuffering enabled
+ */   
 class validDateTest extends Sugar_PHPUnit_Framework_TestCase
 {
 

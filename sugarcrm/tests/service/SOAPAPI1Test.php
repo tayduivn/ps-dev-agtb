@@ -19,6 +19,11 @@ class SOAPAPI1Test extends SOAPTestCase
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 		parent::setUp();
+		$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
         $this->_setupTestContact();
         $this->_meeting = SugarTestMeetingUtilities::createMeeting();
     }
@@ -37,6 +42,8 @@ class SOAPAPI1Test extends SOAPTestCase
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
          SugarTestMeetingUtilities::removeMeetingContacts();
         $this->_meeting = null;
+		unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
     }
 
 	/**

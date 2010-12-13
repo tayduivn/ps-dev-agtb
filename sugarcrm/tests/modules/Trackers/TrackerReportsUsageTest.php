@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 require_once('modules/Trackers/TrackerManager.php');
 
 class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase

@@ -190,7 +190,7 @@ class Bug40247Test extends Sugar_PHPUnit_Framework_TestCase
         }
         
         $this->assertFalse($twitter_hover_link_set, "Assert that the Twitter hover link is not set for Accounts.");
-        $this->assertFalse($liknedin_hover_link_set, "Assert that the LinkedIn hover link is not set for Accounts.");
+        $this->assertTrue($linkedin_hover_link_set, "Assert that the LinkedIn hover link is set for Accounts.");
     	
     }
     //END SUGARCRM flav=com ONLY

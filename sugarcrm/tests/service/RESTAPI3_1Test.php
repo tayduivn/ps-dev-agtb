@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 require_once('service/v3/SugarWebServiceUtilv3.php');
 require_once('tests/service/APIv3Helper.php');
 
@@ -178,7 +178,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue( isset($results['Contacts']['LBL_NAME']) );
         $this->assertTrue( isset($results['Leads']['LBL_ID']) );
     }
-    
+    //BEGIN SUGARCRM flav=pro ONLY
     public function testGetQuotesPDFContents()
     {
         $result = $this->_login();
@@ -197,6 +197,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertTrue( !empty($results['file_contents']) );          
     }
+    //END SUGARCRM flav=pro ONLY
      /**
      * Test the available modules returned from the login call to make sure they are correct.
      *

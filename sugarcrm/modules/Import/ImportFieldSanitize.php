@@ -260,6 +260,8 @@ class ImportFieldSanitize
         $reg = $timedate->get_regular_expression($format);
         preg_match('@'.$reg['format'].'@', $value, $dateparts);
 
+        if ( empty($dateparts) )
+            return false;
         if ( isset($reg['positions']['a'])
                 && !in_array($dateparts[$reg['positions']['a']], array('am','pm')) )
             return false;
