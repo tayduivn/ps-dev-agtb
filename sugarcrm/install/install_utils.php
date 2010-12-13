@@ -900,6 +900,18 @@ function handleDbCreateDatabase() {
  */
 function handleLog4Php() {
     return;
+/*    global $setup_site_log_dir;
+    global $setup_site_log_file;
+
+    if(is_writable("log4php.properties") && ($fh = @ sugar_fopen("log4php.properties", "r+"))) {
+        $props = fread($fh, filesize("log4php.properties"));
+        $props = preg_replace('/(log4php.appender.A2.File=).*\n/', "$1" . $setup_site_log_dir . "/" . $setup_site_log_file . "\n", $props);
+        rewind( $fh );
+        fwrite( $fh, $props );
+        ftruncate( $fh, ftell($fh) );
+        fclose( $fh );
+    }
+    */
 }
 
 function installLog($entry) {
@@ -2190,7 +2202,9 @@ function getLicenseContents($filename)
 {
 	$license_file = '';
     if(file_exists($filename) && filesize($filename) >0){
-	    $license_file = file_get_contents($filename);
+	    $fh = sugar_fopen( $filename, 'r' ) or die( "License file not found!" );
+	    $license_file = fread( $fh, filesize( $filename ) );
+	    fclose( $fh );
     }
     return $license_file;
 }

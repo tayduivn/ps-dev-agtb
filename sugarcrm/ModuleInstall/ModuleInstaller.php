@@ -1400,14 +1400,18 @@ class ModuleInstaller{
 						     if (substr($entry, 0, 9) == '_override') {
 						    	$override[] = $entry;
 						    } else {
-							    $file = file_get_contents($module_install . '/' . $entry);
+							    $fp = sugar_fopen($module_install . '/' . $entry, 'r');
+							    $file = fread($fp , filesize($module_install . '/' . $entry));
 							    $GLOBALS['log']->debug(get_class($this)."->merge_files(): found {$module_install}{$entry}") ;
+							    fclose($fp);
 							    $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 						    }
 						}
 					}
 					foreach ($override as $entry) {
-                        $file = file_get_contents($module_install . '/' . $entry);
+						$fp = sugar_fopen($module_install . '/' . $entry, 'r');
+                        $file = fread($fp , filesize($module_install . '/' . $entry));
+                        fclose($fp);
                         $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 					}
 				}
@@ -1442,7 +1446,9 @@ class ModuleInstaller{
 								if((empty($filter) || substr_count($entry, $filter) > 0) && is_file($module_install.'/'.$entry)
 								  && $entry != '.' && $entry != '..' && strtolower(substr($entry, -4)) == ".php")
 								{
-									$file = file_get_contents($module_install . '/' . $entry);
+									$fp = sugar_fopen($module_install . '/' . $entry, 'r');
+									$file = fread($fp , filesize($module_install . '/' . $entry));
+									fclose($fp);
 									$extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 								}
 						}
