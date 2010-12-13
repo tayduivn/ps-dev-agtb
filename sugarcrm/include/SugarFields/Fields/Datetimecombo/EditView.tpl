@@ -36,8 +36,8 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr valign="middle">
 <td nowrap>
-<input autocomplete="off" type="text" id="{{$idname}}_date" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}" size="11" maxlength="10" title='{{$vardef.help}}' tabindex="{{$tabindex}}" onchange="combo_{{$idname}}.update(); {{if isset($displayParams.updateCallback)}}{{$displayParams.updateCallback}}{{/if}}">
-<img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}" id="{{$idname}}_trigger" align="absmiddle">&nbsp;
+<input autocomplete="off" type="text" id="{{$idname}}_date" name="{{$idname}}_date" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}" size="11" maxlength="10" title='{{$vardef.help}}' tabindex="{{$tabindex}}" onchange="combo_{{$idname}}.update(); {{if isset($displayParams.updateCallback)}}{{$displayParams.updateCallback}}{{/if}}">
+<img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}" id="{{$idname}}_trigger" name="{{$idname}}_trigger" align="absmiddle">&nbsp;
 {{if empty($displayParams.splitDateTime)}}
 </td>
 <td nowrap>
@@ -87,14 +87,9 @@ addToValidate('{$form_name}',"{{$idname}}_date",'date',false,"{{$idname}}");
 addToValidateBinaryDependency('{$form_name}',"{{$idname}}_hours", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_HOURS}" ,"{{$idname}}_date");
 addToValidateBinaryDependency('{$form_name}', "{{$idname}}_minutes", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MINUTES}" ,"{{$idname}}_date");
 addToValidateBinaryDependency('{$form_name}', "{{$idname}}_meridiem", 'alpha', false, "{$APP.ERR_MISSING_REQUIRED_FIELDS} {$APP.LBL_MERIDIEM}","{{$idname}}_date");
-</script>
 
-<script type="text/javascript">
-function update_{{$idname}}_available() {ldelim}
-      YAHOO.util.Event.onAvailable("{{$idname}}_date", this.handleOnAvailable, this); 
-{rdelim}
-
-update_{{$idname}}_available.prototype.handleOnAvailable = function(me) {ldelim}
+YAHOO.util.Event.onDOMReady(function()
+{ldelim}
 
 	Calendar.setup ({ldelim}
 	onClose : update_{{$idname}},
@@ -109,7 +104,6 @@ update_{{$idname}}_available.prototype.handleOnAvailable = function(me) {ldelim}
 	
 	//Call update for first time to round hours and minute values
 	combo_{{$idname}}.update();
-{rdelim}
 
-var obj_{{$idname}} = new update_{{$idname}}_available(); 
+{rdelim}); 
 </script>

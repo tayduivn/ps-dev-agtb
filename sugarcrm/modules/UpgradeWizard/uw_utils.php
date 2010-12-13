@@ -840,7 +840,7 @@ eoq;
 		$disabled = "DISABLED";
 	}
 
-	
+
 
 	if(empty($cleanUpgradeContent)){
 	    $ready .= "<tr><td colspan='7'><i>None</i></td>\n";
@@ -2815,7 +2815,7 @@ $uwMain = $upgrade_directories_not_found;
 				}
 				$filesize = filesize($destFile);
 				if($filesize > 0) {
-					$fileContents = fread($fp, $filesize);
+					$fileContents = stream_get_contents($fp);
 					$targetMd5 = md5($fileContents);
 				}
 			} else {
@@ -3701,7 +3701,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
     }
 	if(file_exists($sqlScript)) {
 		$fp = fopen($sqlScript, 'r');
-		$contents = fread($fp, filesize($sqlScript));
+		$contents = stream_get_contents($fp);
 	    $anyScriptChanges =$contents;
 	    $resumeAfterFound = false;
 		if(rewind($fp)) {
@@ -4128,7 +4128,7 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 	$db = & DBManagerFactory::getInstance();
 	if(is_file($sqlScript)) {
 		$fp = fopen($sqlScript, 'r');
-		$contents = fread($fp, filesize($sqlScript));
+		$contents = stream_get_contents($fp);
 	    $anyScriptChanges =$contents;
 		if(rewind($fp)) {
 			$completeLine = '';
@@ -4592,12 +4592,12 @@ function upgradeUserPreferences() {
 	//END SUGARCRM flav=pro ONLY
 }
 
-// BEGIN SUGARCRM flav=pro ONLY 
+// BEGIN SUGARCRM flav=pro ONLY
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
 
     // Need to repair the RC1 instances that have incorrect GUIDS
-    $deleteRows = array();      
+    $deleteRows = array();
     $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
         $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
@@ -4605,16 +4605,16 @@ function migrate_sugar_favorite_reports(){
             $deleteRows[] = $row['id'];
         }
     }
-    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");    
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");
     // End Repair
-        
-    
+
+
     $active_users = array();
     $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
     while($row = $GLOBALS['db']->fetchByAssoc($res)){
         $active_users[] = $row['id'];
     }
-    
+
     foreach($active_users as $user_id){
         $user = new User();
         $user->retrieve($user_id);
@@ -4635,14 +4635,14 @@ function migrate_sugar_favorite_reports(){
                 $fav->assigned_user_id = $user->id;
                 $fav->created_by = $user->id;
                 $fav->modified_user_id = $user->id;
-                
+
                 $fav->deleted = 0;
                 $fav->save();
             }
         }
     }
 }
-// END SUGARCRM flav=pro ONLY 
+// END SUGARCRM flav=pro ONLY
 
 function add_custom_modules_favorites_search(){
     $module_directories = scandir('modules');
@@ -5381,20 +5381,20 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
-	
+
 	/**
 	 * upgradeDateTimeFields
-	 * 
+	 *
 	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
 	 * which prevents you from performing timezone offset calculations once the data has been saved.
-	 * 
+	 *
 	 */
 	function upgradeDateTimeFields(){
 		//bug: 39757
 		$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
 		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
 		$GLOBALS['db']->query($meetingsSql);
-		
+
 		$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 		$GLOBALS['db']->query($callsSql);
