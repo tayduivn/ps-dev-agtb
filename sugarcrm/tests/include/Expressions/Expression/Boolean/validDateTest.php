@@ -30,13 +30,20 @@ class validDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public static function setUpBeforeClass()
 	{
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	    $beanList = array();
+	    $beanFiles = array();
+	    require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
 	public static function tearDownAfterClass()
 	{
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+	    unset($GLOBALS['current_user']);
+	    unset($GLOBALS['beanList']);
+	    unset($GLOBALS['beanFiles']);
 	}
 
     /**
