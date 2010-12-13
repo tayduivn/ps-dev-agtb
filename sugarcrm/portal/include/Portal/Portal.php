@@ -311,7 +311,7 @@ class Portal {
                	       } //if
                } //foreach
             }
-            
+
             foreach($result['module_fields'] as $key=>$field) {
                        if($field['type'] == 'assigned_user_name') {
                        	  $result['module_fields'][$key]['type'] = 'text';
@@ -319,7 +319,7 @@ class Portal {
                        	  $result['module_fields'][$key]['required'] = 0;
                        }
             }
-            
+
             write_array_to_file("moduleFields['$module']", $result, $cacheDir . 'moduleFields.php');
         }
 
@@ -349,9 +349,7 @@ class Portal {
     }
 
     function setAttachmentToNote($noteId, $fileLocation, $filename) {
-        $fh = fopen($fileLocation, "r");
-        $contents = fread($fh, filesize($fileLocation));
-        fclose($fh);
+        $contents = file_get_contents($fileLocation);
 
         $this->checkPortalStatus('portal_set_note_attachment');
         $result = $this->soapClientProxy->portal_set_note_attachment($this->soapSession, array('id' => $noteId, 'filename' => $filename, 'file' => base64_encode($contents)));
@@ -439,7 +437,7 @@ class Portal {
                     $GLOBALS['log']->fatal($result['error']);
                     header('Location: resourceError.php?module=' . $_REQUEST['module'] . '&msg='.urlencode($result['error']['description']));
                     die();
-                    break;                    
+                    break;
                 default:
                     $this->soapError = $result['error'];
                 break;

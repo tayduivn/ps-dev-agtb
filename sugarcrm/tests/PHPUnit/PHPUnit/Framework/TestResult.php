@@ -54,7 +54,7 @@ require_once 'PHP/Timer.php';
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.3
+ * @version    Release: 3.5.5
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -261,7 +261,7 @@ class PHPUnit_Framework_TestResult implements Countable
             $this->errors[] = new PHPUnit_Framework_TestFailure($test, $e);
             $notifyMethod   = 'addError';
 
-            if ($this->stopOnError) {
+            if ($this->stopOnError || $this->stopOnFailure) {
                 $this->stop();
             }
         }
@@ -309,7 +309,7 @@ class PHPUnit_Framework_TestResult implements Countable
             $this->failures[] = new PHPUnit_Framework_TestFailure($test, $e);
             $notifyMethod     = 'addFailure';
 
-            if ($this->stopOnFailure || $this->stopOnError) {
+            if ($this->stopOnFailure) {
                 $this->stop();
             }
         }

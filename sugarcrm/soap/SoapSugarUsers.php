@@ -1753,13 +1753,9 @@ function get_document_revision($session,$id)
     $dr->retrieve($id);
     if(!empty($dr->filename)){
         $filename = $sugar_config['upload_dir']."/".$dr->id;
-        $handle = sugar_fopen($filename, "r");
-        $contents = fread($handle, filesize($filename));
-        fclose($handle);
-        $contents = base64_encode($contents);
-
-        $fh = sugar_fopen($sugar_config['upload_dir']."/rogerrsmith.doc", 'w');
-        fwrite($fh, base64_decode($contents));
+        $contents = base64_encode(sugar_file_get_contents($filename));
+//        $fh = sugar_fopen($sugar_config['upload_dir']."/rogerrsmith.doc", 'w');
+//        fwrite($fh, base64_decode($contents));
         return array('document_revision'=>array('id' => $dr->id, 'document_name' => $dr->document_name, 'revision' => $dr->revision, 'filename' => $dr->filename, 'file' => $contents), 'error'=>$error->get_soap_array());
     }else{
         $error->set_error('no_records');

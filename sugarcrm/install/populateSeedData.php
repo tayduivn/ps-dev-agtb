@@ -559,6 +559,7 @@ $timedate = TimeDate::getInstance();
 $now = $timedate->getNow();
 $timedate->tzUser($now); // use local TZ to calculate dates
 $timeperiods=array();
+$arr_today = getdate();
 $timeperiod = new TimePeriod();
 $timeperiod->name = "Year ".$arr_today['year'];
 $timeperiod->start_date = $timedate->asUserDate($now->get_day_begin(1, 1));
