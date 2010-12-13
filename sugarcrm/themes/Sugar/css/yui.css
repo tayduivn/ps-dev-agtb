@@ -456,23 +456,25 @@ p#clear {
 }
 
  .yui-calendar .calnavleft {
+	background: url("../../../../include/javascript/yui/build/assets/skins/sam/sprite.png") repeat scroll 0 -450px transparent;
     width: 25px;
     height: 15px;
     top: 0;
     bottom: 0;
     left: -10px;
     margin-left: .4em;
-    cursor: pointer;
+    cursor: pointer;    
 }
 
  .yui-calendar .calnavright {
+	background: url("../../../../include/javascript/yui/build/assets/skins/sam/sprite.png") repeat scroll 0 -500px transparent; 
     width: 25px;
     height: 15px;
     top: 0;
     bottom: 0;
     right: -10px;
     margin-right: .4em;
-    cursor: pointer;
+    cursor: pointer;    
 }
 
  .yui-calendar .calweekdayrow {
