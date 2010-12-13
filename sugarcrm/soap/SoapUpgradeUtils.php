@@ -133,9 +133,19 @@ function get_encoded_file( $session, $filename ){
 
     }
 
+	$md5 = md5_file( $filename );
+
+
+
     // read file
-    $contents = sugar_file_get_contents($filename);
-	$md5 = md5( $contents );
+
+    $fh = sugar_fopen( $filename, "rb" );
+
+    $contents = fread( $fh, filesize( $filename ) );
+
+    fclose( $fh );
+
+
 
     // encode data
 
@@ -173,16 +183,16 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
     if( !validate_authenticated( $session ) ){
         $the_error = "Invalid session";
     }
-
+    
     require("install/data/disc_client.php");
     $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
     $temp_file  = tempnam( $temp_dir, "sug" );
-    write_encoded_file($md5file, $temp_dir, $temp_file );
-
+    write_encoded_file($md5file, $temp_dir, $temp_file );	
+    
    $ignore = false;
     //generate md5 files on server
     require_once( $temp_file );
-    $server_files       = array();  // used later for removing unneeded local files
+    $server_files       = array();  // used later for removing unneeded local files 
     $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
     $archive = new PclZip($zip_file.".zip");
     if(!$is_md5_sync){
@@ -199,13 +209,13 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
                 $value = $src_file;
                 if($client_file_list != null && isset($client_file_list[$key])){
                     //we have found a file out of sync
-                    $archive->add($key);
+                    $archive->add($key);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->add($key);
+                $archive->add($key);    
                }
             }
    		}
@@ -225,21 +235,21 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
                 if($client_file_list != null && isset($client_file_list[$key])){
                   if($value != $client_file_list[$key]){
                     //we have found a file out of sync
-                    $archive->add($key);
+                    $archive->add($key);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   }
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->add($key);
+                $archive->add($key);    
                }
             }
-    	}
+    	}	
     }
-
+   	
   		//at this point we have a set of files that have been changed both on the client
-  		//as well as on the server, but there is the possibility that the client copy could have
+  		//as well as on the server, but there is the possibility that the client copy could have 
   		//changed and the server copy has not.  Here we will account for this.
 		if(isset($client_file_list)){
 			foreach($client_file_list as $key=>$value){
@@ -255,8 +265,10 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
 			}
 		}
 
-    $contents = sugar_file_get_contents( $archive->zipname );
-
+   	$fh = sugar_fopen($archive->zipname, "rb" );
+    $contents = fread( $fh, filesize( $archive->zipname ) );
+	fclose( $fh );
+	
     // encode data
     $data = base64_encode( $contents );
 	unlink($archive->zipname);
@@ -321,7 +333,7 @@ $server->register(
 /*
  * Obtain an array of upgrades that have been performed on the server but have not yet been
  * been performed on the client
- *
+ * 
  * @param session			current session for authenticated user
  * @param client_upgrade_history	an array of upgrde history items
  * 									which will be used in deducing which items need
@@ -334,13 +346,13 @@ function get_required_upgrades($session, $client_upgrade_history, $client_versio
     global $sugar_config;
     $error = new SoapError();
 		if(!validate_authenticated($session)){
-		$error->set_error('invalid_login');
-		return array('upgrade_history_list' => array(), 'error' => $error->get_soap_array());
+		$error->set_error('invalid_login');	
+		return array('upgrade_history_list' => array(), 'error' => $error->get_soap_array()); 
 	}
 
 	global $current_user;
-
-
+    
+    
     $upgrade_history = new UpgradeHistory();
     $installeds = $upgrade_history->getAllOrderBy('date_entered ASC');
     $history = array();
@@ -370,7 +382,7 @@ function get_required_upgrades($session, $client_upgrade_history, $client_versio
             }
         }
 	}
-	return array('upgrade_history_list' => $history, 'error' => $error->get_soap_array());
+	return array('upgrade_history_list' => $history, 'error' => $error->get_soap_array()); 
 }
 
 
@@ -402,9 +414,9 @@ function get_disc_client_file_list( $session ){
 
     global $sugar_config;
 
+    
 
-
-
+    
 
 
 
@@ -474,15 +486,15 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
     if( !validate_authenticated( $session ) ){
         $the_error = "Invalid session";
     }
-
+    
     require("install/data/disc_client.php");
     $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
     $temp_file  = tempnam( $temp_dir, "sug" );
-    write_encoded_file($md5file, $temp_dir, $temp_file );
+    write_encoded_file($md5file, $temp_dir, $temp_file );	
    $ignore = false;
     //generate md5 files on server
     require_once( $temp_file );
-    $server_files       = array();  // used later for removing unneeded local files
+    $server_files       = array();  // used later for removing unneeded local files 
     $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
     $archive = new PclZip($zip_file.".zip");
     $root_files = array();
@@ -511,24 +523,24 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
                 $value = $src_file;
                 if($client_file_list != null && isset($client_file_list[$key])){
                     //we have found a file out of sync
-                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                }
             }
    		}
     }else{
-
+   		
    		if(is_dir("portal"))
    			$root_files  = findAllFiles( "portal", array());
     	if(is_dir("custom/portal"))
     		$custom_files  = findAllFiles( "custom/portal", array());
     	$all_src_files = array_merge($root_files, $custom_files);
-
+    	
     	foreach( $all_src_files as $src_file ){
             $ignore = false;
             preg_match('/.*portal\//', $src_file, $matches);
@@ -548,21 +560,23 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
                 if($client_file_list != null && isset($client_file_list[$key])){
                   if($value != $client_file_list[$key]){
                     //we have found a file out of sync
-                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   }
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                }
             }
-    	}
+    	}	
     }
 
-    $contents = sugar_file_get_contents( $archive->zipname );
-
+   	$fh = sugar_fopen($archive->zipname, "rb" );
+    $contents = fread( $fh, filesize( $archive->zipname ) );
+	fclose( $fh );
+	
     // encode data
     $data = base64_encode( $contents );
 	unlink($archive->zipname);

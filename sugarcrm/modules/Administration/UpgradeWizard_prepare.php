@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 // $Id: UpgradeWizard_prepare.php 55665 2010-03-29 23:55:22Z dwheeler $
-
+ 
 
 require_once('modules/Administration/UpgradeWizardCommon.php');
 
@@ -46,7 +46,7 @@ if( !isset($_REQUEST['mode']) || ($_REQUEST['mode'] == "") ){
 }
 
 $unzip_dir      = mk_temp_dir( $base_tmp_upgrade_dir );
-$install_file   = hashToFile($_REQUEST['install_file']);
+$install_file   = hashToFile($_REQUEST['install_file']);  
 $hidden_fields = "";
 $new_lang_name = "";
 $new_lang_desc = "";
@@ -235,11 +235,15 @@ else {
 }
 echo '<br>';
 if($require_license){
-    $contents = sugar_file_get_contents($license_file);
+	$fh = sugar_fopen($license_file, 'r');
+	$contents = fread($fh, filesize($license_file));
+	fclose($fh);
 	$readme_contents = '';
 	if($found_readme){
 		if(file_exists($readme_file) && filesize($readme_file) > 0){
-			$readme_contents = file_get_contents($readme_file);
+			$fh = sugar_fopen($readme_file, 'r');
+			$readme_contents = fread($fh, filesize($readme_file));
+			fclose($fh);
 		}elseif(!empty($manifest['readme'])){
 			$readme_contents = $manifest['readme'];
 		}
@@ -267,14 +271,14 @@ if($require_license){
 	<td align="left" valign="top" colspan=2>
 	<textarea cols="100" rows="8" readonly>{$contents}</textarea>
 	</td>
-
+	 
 	</tr>
 	<tr>
 	<td align="left" valign="top" colspan=2>
 	<input type='radio' id='radio_license_agreement_accept' name='radio_license_agreement' value='accept'>{$mod_strings['LBL_ACCEPT']}&nbsp;
 	<input type='radio' id='radio_license_agreement_reject' name='radio_license_agreement' value='reject' checked>{$mod_strings['LBL_DENY']}
 	</td>
-
+	 
 	</tr></table>
 	</div>
 	<div id='readme_div' style='display: none;'>
@@ -291,7 +295,7 @@ if($require_license){
 	<td align="left" valign="top" colspan=2>
 	<textarea cols="100" rows="8" readonly>{$readme_contents}</textarea>
         </td>
-
+       
     </tr>
 </table>
 </div>
@@ -332,10 +336,10 @@ switch( $mode ){
 }
 
 
-?>
+?> 
 <input type=submit value="<?php echo $mod_strings['LBL_ML_COMMIT'];?>" class="button" />
 <input type=button value="<?php echo $mod_strings['LBL_ML_CANCEL'];?>" class="button" onClick="location.href='index.php?module=Administration&action=UpgradeWizard&view=module';"/>
-
+    
 <?php
 
 if($remove_tables == 'prompt' && $mode == 'Uninstall'){
@@ -374,7 +378,7 @@ if( $show_files == true ){
 
 
 	global $theme;
-
+	
 	echo '<br/><br/>';
 
     echo '<div style="text-align: left; cursor: hand; cursor: pointer; text-decoration: underline;'.(($mode == 'Enable' || $mode == 'Disable')?'display:none;':'').'" onclick=\'this.style.display="none"; toggleDisplay("more");\'id="all_text">
@@ -405,14 +409,14 @@ if( $show_files == true ){
 				//$checked = "";
 			}
 			//BEGIN SUGARCRM flav=int ONLY
-			/*
+			/* 
 			 //4.0 feature
 			 else{
 			 $highlight_start    = "<font color=red>";
 			 $highlight_end      = "</font>";
 			 }
 			 */
-			 //END SUGARCRM flav=int ONLY
+			 //END SUGARCRM flav=int ONLY 
 			if( $checked != "" && $disabled != "" ){    // need to put a hidden field
 				print( "<input name=\"copy_$count\" type=\"hidden\" value=\"" . $the_file . "\">\n" );
 			}
@@ -448,9 +452,9 @@ if($mode == "Disable" || $mode == "Enable"){
 			echo 'if(document.getElementById("radio_overwrite_files") != null && document.getElementById("radio_do_not_overwrite_files") != null){
                 			var overwrite = false;
                 			if(document.getElementById("radio_overwrite_files").checked){
-                   			 overwrite = true
-                			}
-            			}
+                   			 overwrite = true   
+                			}   
+            			}    
         				return true;';
 		}else{
 			echo 'return true;';
@@ -487,24 +491,24 @@ echo '<script>' .
             if(document.getElementById("radio_license_agreement_reject") != null && document.getElementById("radio_license_agreement_accept") != null){
                 var accept = false;
                 if(document.getElementById("radio_license_agreement_accept").checked){
-                    accept = true
+                    accept = true   
                 }
                 if(!accept){
                     //do not allow the form to submit
                     alert("'.$mod_strings['ERR_UW_ACCEPT_LICENSE'].'");
-                    return false;
-                }
-            }
+                    return false;   
+                }    
+            }    
         }
         return true;
     }
-    var keys = [ "license","readme"];
-    function selectTabCSS(key){
+    var keys = [ "license","readme"]; 
+    function selectTabCSS(key){ 
             	for( var i=0; i<keys.length;i++)
               	{
                 	var liclass = "";
                 	var linkclass = "";
-
+            
                 	if ( key == keys[i])
                 	{
                     	var liclass = "active";
@@ -519,7 +523,7 @@ echo '<script>' .
                 tabPreviousKey = key;
             }
       </script>';
-
+    
     $fileHash = fileToHash($install_file );
 ?>
     <?php print( $hidden_fields ); ?>
@@ -528,7 +532,7 @@ echo '<script>' .
     <input type=hidden name="install_file"  value="<?php echo $fileHash; ?>" />
     <input type=hidden name="unzip_dir"     value="<?php echo $unzip_dir; ?>" />
     <input type=hidden name="zip_from_dir"  value="<?php echo $zip_from_dir; ?>" />
-    <input type=hidden name="zip_to_dir"    value="<?php echo $zip_to_dir; ?>" />
+    <input type=hidden name="zip_to_dir"    value="<?php echo $zip_to_dir; ?>" /> 
 </form>
 
 <?php
