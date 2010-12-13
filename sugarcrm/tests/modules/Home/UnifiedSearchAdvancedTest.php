@@ -33,7 +33,7 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
         if(file_exists('cache/modules/unified_search_modules_display.php'))
         {
-        	$this->_hasUnifiedSearchModulesConfigDisplay = true;
+        	$this->_hasUnifiedSearchModulesDisplay = true;
         	copy('cache/modules/unified_search_modules_display.php', 'cache/modules/unified_search_modules_display.php.bak');
         	unlink('cache/modules/unified_search_modules_display.php');
         }        
@@ -53,7 +53,7 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         	unlink('cache/modules/unified_search_modules.php');
         }
         
-        if($this->_hasUnifiedSearchModulesConfigDisplay)
+        if($this->_hasUnifiedSearchModulesDisplay)
         {
         	copy('cache/modules/unified_search_modules_display.php.bak', 'cache/modules/unified_search_modules_display.php');
         	unlink('cache/modules/unified_search_modules_display.php.bak');
