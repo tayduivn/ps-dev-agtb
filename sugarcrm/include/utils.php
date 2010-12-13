@@ -2260,14 +2260,28 @@ function getWebPath($relative_path){
 	return $relative_path;
 }
 
-function getJSPath($relative_path, $additional_attrs=''){
-	if(defined('TEMPLATE_URL'))$relative_path = SugarTemplateUtilities::getWebPath($relative_path);
-	if(empty($GLOBALS['sugar_config']['js_custom_version']))$GLOBALS['sugar_config']['js_custom_version'] = 1;
+function getVersionedPath($path, $additional_attrs='')
+{
+	if(empty($GLOBALS['sugar_config']['js_custom_version'])) $GLOBALS['sugar_config']['js_custom_version'] = 1;
 	$js_version_key = isset($GLOBALS['js_version_key'])?$GLOBALS['js_version_key']:'';
-	$path = $relative_path . '?s=' . $js_version_key . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] ;
-	if ( inDeveloperMode() ) $path .= '&developerMode='.mt_rand();
-	if(!empty($additonal_attrs)) $path .= '&' . $additional_attrs;
-	return $path;
+	$dev = inDeveloperMode() ? mt_rand():'';
+	if(is_array($additional_attrs)) {
+	    $additional_attrs = join("|",$additional_attrs);
+	}
+	// cutting 2 last chars here because since md5 is 32 chars, it's always ==
+	$str = substr(base64_encode(md5("$js_version_key|{$GLOBALS['sugar_config']['js_custom_version']}|$dev|$additional_attrs", true)), 0, -2);
+	return $path . "?v=$str";
+}
+
+function getVersionedScript($path, $additional_attrs='')
+{
+    return '<script type="text/javascript" src="'.getVersionedPath($path, $additional_attrs).'"></script>';
+}
+
+function getJSPath($relative_path, $additional_attrs='')
+{
+	if(defined('TEMPLATE_URL'))$relative_path = SugarTemplateUtilities::getWebPath($relative_path);
+	return getVersionedPath($relative_path).(!empty($additional_attrs)?"&$additional_attrs":"");
 }
 
 function getSWFPath($relative_path, $additional_params=''){

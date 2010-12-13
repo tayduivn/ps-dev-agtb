@@ -40,7 +40,7 @@ function clean_path( $path )
 function create_cache_directory($file)
 {
     $paths = explode('/',$file);
-    $dir = str_replace('/','',$GLOBALS['sugar_config']['cache_dir']);
+    $dir = trim($GLOBALS['sugar_config']['cache_dir'], '/\\');
     if(!file_exists($dir))
     {
         sugar_mkdir($dir, 0775);
@@ -338,5 +338,5 @@ function sugar_cached($file)
     if(empty($cdir)) {
         $cdir = "cache/";
     }
-    return "$cdir/$file";
+    return $cdir.$file;
 }

@@ -40,8 +40,8 @@ class MySugar{
 
     function checkDashletDisplay () {
 
-		if((!in_array($this->type, $GLOBALS['moduleList']) 
-				&& !in_array($this->type, $GLOBALS['modInvisList'])) 
+		if((!in_array($this->type, $GLOBALS['moduleList'])
+				&& !in_array($this->type, $GLOBALS['modInvisList']))
 				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
 		}
@@ -60,13 +60,13 @@ class MySugar{
     }
 
 	function addDashlet(){
-		if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
+		if(!is_file($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
             require_once('include/Dashlets/DashletCacheBuilder.php');
 
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}
-		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+		require_once $cachedfile;
 
 		global $current_user;
 
@@ -649,13 +649,13 @@ EOJS;
 		global $app_strings, $theme;
 
 		// build dashlet cache file if not found
-		if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
+		if(!is_file($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
 		    require_once('include/Dashlets/DashletCacheBuilder.php');
 
 		    $dc = new DashletCacheBuilder();
 		    $dc->buildCache();
 		}
-		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+		require_once $cachedfile;
 
 		$pages = $current_user->getPreference('pages', $this->type);
 		$dashlets = $current_user->getPreference('dashlets', $this->type);
