@@ -198,7 +198,7 @@ $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordset
 //BEGIN SUGARCRM flav=pro ONLY
 if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
     $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-    $sugar_smarty->assign("REGEX",$pwd_regex);     
+    $sugar_smarty->assign("REGEX",$pwd_regex);
 }
 //END SUGARCRM flav=pro ONLY
 
@@ -366,16 +366,13 @@ $sugar_smarty->assign('PDF_FONT_SIZE_DATA',PDF_FONT_SIZE_DATA);
 if(empty($focus->id)) { // remove default timezone for new users(set later)
     $focus->user_preferences['timezone'] = '';
 }
-require_once('include/timezone/timezones.php');
-global $timezones;
 
-$userTZ = $focus->getPreference('timezone');
+//$userTZ = $focus->getPreference('timezone');
+
 if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
-	$focus->setPreference('timezone', date('T'));
+	$userTZ = TimeDate::guessTimezone();
+	$focus->setPreference('timezone', $userTZ);
 }
-
-if(empty($userTZ) && !$focus->is_group && !$focus->portal_only)
-	$userTZ = lookupTimezone();
 
 if(!$focus->getPreference('ut')) {
 	$sugar_smarty->assign('PROMPTTZ', ' checked');
@@ -383,20 +380,8 @@ if(!$focus->getPreference('ut')) {
 	$sugar_smarty->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
 	//END SUGARCRM flav=sales ONLY
 }
-
-$timezoneOptions = '';
-ksort($timezones);
-foreach($timezones as $key => $value) {
-	$selected =($userTZ == $key) ? ' SELECTED="true"' : '';
-	$dst = !empty($value['dstOffset']) ? '(+DST)' : '';
-	$gmtOffset =($value['gmtOffset'] / 60);
-
-	if(!strstr($gmtOffset,'-')) {
-		$gmtOffset = '+'.$gmtOffset;
-	}
-  $timezoneOptions .= "<option value='$key'".$selected.">".str_replace(array('_','North'), array(' ', 'N.'),translate('timezone_dom','',$key)). "(GMT".$gmtOffset.") ".$dst."</option>";
-}
-$sugar_smarty->assign('TIMEZONEOPTIONS', $timezoneOptions);
+$sugar_smarty->assign('TIMEZONE_CURRENT', $userTZ);
+$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
 //// Numbers and Currency display
 require_once('modules/Currencies/ListCurrency.php');

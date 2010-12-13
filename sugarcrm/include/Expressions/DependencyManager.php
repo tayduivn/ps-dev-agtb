@@ -25,7 +25,7 @@ require_once("include/Expressions/Actions/ActionFactory.php");
 
 class DependencyManager {
     static $default_trigger = "true";
-	
+
 	/**
 	 * Returns a new Dependency that will power the provided calculated field.
 	 *
@@ -34,7 +34,7 @@ class DependencyManager {
 	 * @return array<Dependency>
 	 */
 	public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true) {
-		
+
 		$deps = array();
 		require_once("include/Expressions/Actions/SetValueAction.php");
 		foreach($fields as $field => $def) {
@@ -42,7 +42,7 @@ class DependencyManager {
 		    	$triggerFields = Parser::getFieldsFromExpression($def['formula']);
 		    	$dep = new Dependency($field);
 		    	$dep->setTrigger(new Trigger('true', $triggerFields));
-		    	
+
 		    	$dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field, 'value' => $def['formula'])));
 
 		    	if (isset($def['enforced']) && $def['enforced'] == true) {
@@ -52,24 +52,24 @@ class DependencyManager {
 		    			$readOnlyDep = new Dependency("readOnly$field");
 		    			$readOnlyDep->setFireOnLoad(true);
 		    			$readOnlyDep->setTrigger(new Trigger('true', array()));
-		    			$readOnlyDep->addAction(ActionFactory::getNewAction('ReadOnly', 
-		    					array('target' => $field, 
+		    			$readOnlyDep->addAction(ActionFactory::getNewAction('ReadOnly',
+		    					array('target' => $field,
 		    						  'value' => 'true')));
-				    			
+
 				    	$deps[] = $readOnlyDep;
 		    		}
 		    	}
-		    	
+
 		    	$deps[] = $dep;
 		    }
 	    }
-	    
+
 	    return $deps;
 	}
-	
+
 	static function getDependentFieldDependencies($fields) {
 		$deps = array();
-		
+
 		foreach($fields as $field => $def) {
 			if ( isset ( $def [ 'dependency' ] ) )
     		{
@@ -88,7 +88,7 @@ class DependencyManager {
     					$triggerFields = Parser::getFieldsFromExpression ( $depdef [ 'trigger' ] ) ;
     				}
     				$dep->setTrigger ( new Trigger ( 'true' , $triggerFields ) ) ;
-    				$dep->addAction ( ActionFactory::getNewAction('SetVisibility', 
+    				$dep->addAction ( ActionFactory::getNewAction('SetVisibility',
     					array( 'target' => $field , 'value' => $depdef [ 'action' ]))) ;
     				$dep->setFireOnLoad(true);
 					$deps[] = $dep;
@@ -97,11 +97,11 @@ class DependencyManager {
 		}
 		return $deps;
 	}
-	
+
 	static function getDropDownDependencies($fields) {
 		$deps = array();
 		global $app_list_strings;
-		
+
 		foreach($fields as $field => $def) {
 			if ( $def['type'] == "enum" && isset ( $def [ 'visibility_grid' ] ) )
     		{
@@ -111,7 +111,7 @@ class DependencyManager {
 
     			$trigger_list_id = $fields[$grid [ 'trigger' ]]['options'];
     			$trigger_values = $app_list_strings[$trigger_list_id];
-    			
+
     			$options = $app_list_strings[$def['options']];
     			$result_labels = array();
     			$result_keys = array();
@@ -133,24 +133,24 @@ class DependencyManager {
     					$result_labels[] = 'enum("")';
     				}
     			}
-    			
+
     			$keys = 'enum(' . implode(',', $result_keys) . ')';
     			$labels = 'enum(' . implode(',', $result_labels) . ')';
     			//If the trigger key doesn't appear in the child list, hide the child field.
-    			$keys_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ] 
-    					    . ', getDD("' . $trigger_list_id . '")), -1), enum(""), ' 
-    						. 'valueAt(indexOf($' . $grid [ 'trigger' ] 
+    			$keys_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ]
+    					    . ', getDD("' . $trigger_list_id . '")), -1), enum(""), '
+    						. 'valueAt(indexOf($' . $grid [ 'trigger' ]
     						. ',getDD("' . $trigger_list_id . '")),' . $keys . '))';
-    			$labels_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ] 
-    						. ', getDD("' . $trigger_list_id . '")), -1), enum(""), '  
-    			 			. 'valueAt(indexOf($' . $grid [ 'trigger' ] 
+    			$labels_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ]
+    						. ', getDD("' . $trigger_list_id . '")), -1), enum(""), '
+    			 			. 'valueAt(indexOf($' . $grid [ 'trigger' ]
     						. ',getDD("' . $trigger_list_id . '")),' . $labels . '))';
     			$dep = new Dependency ( $field . "DDD");
     			$dep -> setTrigger( new Trigger ('true', $grid['trigger']));
     			$dep -> addAction (
     				ActionFactory::getNewAction('SetOptions', array(
     					'target' => $field,
-    					'keys' => $keys_expression, 
+    					'keys' => $keys_expression,
     					'labels' => $labels_expression)));
     			$dep->setFireOnLoad(true);
     			$deps[] = $dep;
@@ -158,7 +158,7 @@ class DependencyManager {
 		}
 		return $deps;
 	}
-	
+
 	static function getPanelDependency($panel_id, $dep_expression)
     {
         $dep = new Dependency ( $panel_id . "_visibility");
@@ -170,10 +170,10 @@ class DependencyManager {
             ))
         );
         $dep->setFireOnLoad(true);
-        
+
         return $dep;
     }
-	
+
 	public static function getDependenciesForView($viewdef, $view = "", $module = "")
     {
         global $currentModule;
@@ -257,7 +257,7 @@ class DependencyManager {
 
         return $dependencies[$module];
     }
-	
+
 	static function getDependenciesForFields($fields) {
 		return array_merge(self::getCalculatedFieldDependencies($fields),
 						   self::getDependentFieldDependencies($fields),
@@ -271,11 +271,13 @@ class DependencyManager {
      */
     public static function getJSUserVariables($user)
     {
+        $ts = TimeDate::getInstance();
         return "SUGAR.expressions.userPrefs = " . json_encode(array(
             "num_grp_sep" => $user->getPreference("num_grp_sep"),
             "dec_sep" => $user->getPreference("dec_sep"),
             "datef" => $user->getPreference("datef"),
             "timef" => $user->getPreference("timef"),
+            "gmt_offset" => $ts->getUserUTCOffset(),
             "default_locale_name_format" => $user->getPreference("default_locale_name_format"),
         )) . ";\n";
     }

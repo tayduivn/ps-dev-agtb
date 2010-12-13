@@ -46,13 +46,15 @@ class SugarTestUserUtilities
             $GLOBALS['db']->query('DELETE FROM team_memberships WHERE user_id IN (\'' . implode("', '", $user_ids) . '\')');
             //END SUGARCRM flav=pro ONLY
         }
+        self::$_createdUsers = array();
     }
     
     public static function getCreatedUserIds() 
     {
         $user_ids = array();
         foreach (self::$_createdUsers as $user)
-            $user_ids[] = $user->id;
+            if ( is_object($user) && $user instanceOf User )
+                $user_ids[] = $user->id;
         
         return $user_ids;
     }

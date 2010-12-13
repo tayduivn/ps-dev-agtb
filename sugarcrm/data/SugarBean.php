@@ -240,12 +240,12 @@ class SugarBean
      * Set to true if the bean is being dealt with in a workflow
      */
     var $in_workflow = false;
-    
+
     /**
-     *  
-     * By default it will be true but if any module is to be kept non visible 
+     *
+     * By default it will be true but if any module is to be kept non visible
      * to tracker, then its value needs to be overriden in that particular module to false.
-     * 
+     *
      */
     var $tracker_visibility = true;
 
@@ -1327,14 +1327,14 @@ class SugarBean
             $isUpdate = false;
         }
 
-        if ( $this->new_with_id == true )
-        {
-            $isUpdate = false;
-        }
-        if(empty($this->date_modified) || $this->update_date_modified)
-        {
-            $this->date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-        }
+		if ( $this->new_with_id == true )
+		{
+			$isUpdate = false;
+		}
+		if(empty($this->date_modified) || $this->update_date_modified)
+		{
+			$this->date_modified = $GLOBALS['timedate']->nowDb();
+		}
 
         $this->_checkOptimisticLocking($action, $isUpdate);
 
@@ -2037,7 +2037,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		global $disable_date_format;
 		global $timedate;
 		if (empty($timedate))
-			$timedate=new TimeDate();
+			$timedate=TimeDate::getInstance();
 
 		if(empty($this->field_defs))
 		{
@@ -2049,15 +2049,15 @@ function save_relationship_changes($is_update, $exclude=array())
 			if(!isset($this->processed_dates_times[$field]))
 			{
 				$this->processed_dates_times[$field] = '1';
-				if(empty($this->$field)) continue; 
+				if(empty($this->$field)) continue;
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
 					$this->$field = from_db_convert($this->$field, 'datetime');
 					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
-				} 
-				elseif(isset($this->field_name_map[$field]['type'])) 
+				}
+				elseif(isset($this->field_name_map[$field]['type']))
 				{
 					$type = $this->field_name_map[$field]['type'];
 
@@ -2205,7 +2205,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'time':
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
-                        $this->$field = $timedate->to_db_time($timedate->to_display_date(gmdate('Y-m-d')).' '.$this->$field);
+                        $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
                         $reformatted = true;
                     }
                     break;
@@ -3153,6 +3153,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 foreach($filter as $field)
                 {
                     $field = strtolower($field);
+                    //remove out id field so we don't duplicate it
+                    if ( $field == 'id' && !empty($filter) ) {
+                        continue;
+                    }
                     if(isset($this->field_defs[$field]))
                     {
                         $fields[$field]= $this->field_defs[$field];
@@ -4246,7 +4250,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $bean->fill_in_additional_list_fields();
             $bean->call_custom_logic("process_record");
             $bean->fetched_row = $row;
-            
+
             $list[] = $bean;
         }
         //}
@@ -4259,28 +4263,28 @@ function save_relationship_changes($is_update, $exclude=array())
     * This leverages get_summary_text() which is object specific.
     *
     * Internal function, do not override.
-    * @param $user_id - String value of the user that is viewing the record.
-    * @param $current_module - String value of the module being processed.
-    * @param $current_view - String value of the current view
-    */
-    function track_view($user_id, $current_module, $current_view='')
-    {
-        $trackerManager = TrackerManager::getInstance();
-        if($monitor = $trackerManager->getMonitor('tracker')){
-            //BEGIN SUGARCRM flav=pro ONLY
-            $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
-            //END SUGARCRM flav=pro ONLY
-            $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
-            $monitor->setValue('user_id', $user_id);
-            $monitor->setValue('module_name', $current_module);
-            $monitor->setValue('action', $current_view);
-            $monitor->setValue('item_id', $this->id);
-            $monitor->setValue('item_summary', $this->get_summary_text());
-            $monitor->setValue('visible' , $this->tracker_visibility);
-            $trackerManager->saveMonitor($monitor);
-        }
-    }
-    
+    * @param string $user_id - String value of the user that is viewing the record.
+    * @param string $current_module - String value of the module being processed.
+    * @param string $current_view - String value of the current view
+	*/
+	function track_view($user_id, $current_module, $current_view='')
+	{
+	    $trackerManager = TrackerManager::getInstance();
+		if($monitor = $trackerManager->getMonitor('tracker')){
+			//BEGIN SUGARCRM flav=pro ONLY
+	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
+			//END SUGARCRM flav=pro ONLY
+	        $monitor->setValue('date_modified', $GLOBALS['timedate']->nowDb());
+	        $monitor->setValue('user_id', $user_id);
+	        $monitor->setValue('module_name', $current_module);
+	        $monitor->setValue('action', $current_view);
+	        $monitor->setValue('item_id', $this->id);
+	        $monitor->setValue('item_summary', $this->get_summary_text());
+	        $monitor->setValue('visible', $this->tracker_visibility);
+	        $trackerManager->saveMonitor($monitor);
+		}
+	}
+
     /**
      * Returns the summary text that should show up in the recent history list for this object.
      *
@@ -4440,20 +4444,20 @@ function save_relationship_changes($is_update, $exclude=array())
      * This function should be overridden in each module.  It marks an item as deleted.
      *
      * If it is not overridden, then marking this type of item is not allowed
-    */
-    function mark_deleted($id)
-    {
-        global $current_user;
-        $date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-        if(isset($_SESSION['show_deleted']))
-        {
-            $this->mark_undeleted($id);
-        }
-        else
-        {
-            // call the custom business logic
-            $custom_logic_arguments['id'] = $id;
-            $this->call_custom_logic("before_delete", $custom_logic_arguments);
+	 */
+	function mark_deleted($id)
+	{
+		global $current_user;
+		$date_modified = $GLOBALS['timedate']->nowDb();
+		if(isset($_SESSION['show_deleted']))
+		{
+			$this->mark_undeleted($id);
+		}
+		else
+		{
+			// call the custom business logic
+			$custom_logic_arguments['id'] = $id;
+			$this->call_custom_logic("before_delete", $custom_logic_arguments);
 
             if ( isset($this->field_defs['modified_user_id']) ) {
                 if (!empty($current_user)) {
@@ -4487,9 +4491,9 @@ function save_relationship_changes($is_update, $exclude=array())
         $custom_logic_arguments['id'] = $id;
         $this->call_custom_logic("before_restore", $custom_logic_arguments);
 
-        $date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-        $query = "UPDATE $this->table_name set deleted=0 , date_modified = '$date_modified' where id='$id'";
-        $this->db->query($query, true,"Error marking record undeleted: ");
+		$date_modified = $GLOBALS['timedate']->nowDb();
+		$query = "UPDATE $this->table_name set deleted=0 , date_modified = '$date_modified' where id='$id'";
+		$this->db->query($query, true,"Error marking record undeleted: ");
 
         // call the custom business logic
         $this->call_custom_logic("after_restore", $custom_logic_arguments);
@@ -4968,7 +4972,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $table_alias = $this->table_name;
         }
 
-        if ( ( !is_admin($current_user) || $force_admin ) &&
+        if ( ( (!is_admin($current_user) && !is_admin_for_module($current_user,$this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
@@ -5053,8 +5057,8 @@ function save_relationship_changes($is_update, $exclude=array())
     {
         $where = '';
 
-        // make sure there is a date modified
-        $date_modified = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime');
+		// make sure there is a date modified
+		$date_modified = $this->db->convert("'".$GLOBALS['timedate']->nowDb()."'", 'datetime');
 
         $row=null;
         if($check_duplicates)
@@ -5779,5 +5783,5 @@ function save_relationship_changes($is_update, $exclude=array())
 	public function create_export_query($order_by, $where)
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
-	}	
+	}
 }

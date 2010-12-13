@@ -96,11 +96,7 @@ class json_config {
 		$user_arr['fields']['last_name'] = $current_user->last_name;
 		$user_arr['fields']['full_name'] = $current_user->full_name;
 		$user_arr['fields']['email'] = $current_user->email1;
-		$userTz = $timedate->getUserTimeZone();
-		$dstRange = $timedate->getDSTRange(date('Y'), $userTz);
-		$user_arr['fields']['dst_start'] = $dstRange['start'];
-		$user_arr['fields']['dst_end'] = $dstRange['end'];
-		$user_arr['fields']['gmt_offset'] = $userTz['gmtOffset'];
+		$user_arr['fields']['gmt_offset'] = $timedate->getUserUTCOffset();
 		$user_arr['fields']['date_time_format'] = $current_user->getUserDateTimePreferences();
 		$str = "\n".$this->global_registry_var_name.".current_user = ".$json->encode($user_arr).";\n";
 		return $str;

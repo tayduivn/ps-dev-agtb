@@ -29,7 +29,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $beanIds = array();
         for ( $i = 0; $i < $num; $i++ ) {
             $bean = new Contact();
-            $bean->id = "$i-test" . date("YmdHis");
+            $bean->id = "$i-test" . mt_rand();
             $bean->last_name = "foobar";
             $this->_db->insert($bean);
             $beanIds[] = $bean->id;
@@ -96,8 +96,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInsert()
     {
         $bean = new Contact();
-        $bean->last_name = 'foobar' . date("YmdHis");
-        $bean->id   = 'test' . date("YmdHis");
+        $bean->last_name = 'foobar' . mt_rand();
+        $bean->id   = 'test' . mt_rand();
         $this->_db->insert($bean);
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
@@ -111,13 +111,13 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpdate()
     {
         $bean = new Contact();
-        $bean->last_name = 'foobar' . date("YmdHis");
-        $bean->id   = 'test' . date("YmdHis");
+        $bean->last_name = 'foobar' . mt_rand();
+        $bean->id   = 'test' . mt_rand();
         $this->_db->insert($bean);
         $id = $bean->id;
 
         $bean = new Contact();
-        $bean->last_name = 'newfoobar' . date("YmdHis");
+        $bean->last_name = 'newfoobar' . mt_rand();
         $this->_db->update($bean,array('id'=>$id));
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$id}'");
@@ -131,8 +131,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDelete()
     {
         $bean = new Contact();
-        $bean->last_name = 'foobar' . date("YmdHis");
-        $bean->id   = 'test' . date("YmdHis");
+        $bean->last_name = 'foobar' . mt_rand();
+        $bean->id   = 'test' . mt_rand();
         $this->_db->insert($bean);
         $id = $bean->id;
 
@@ -149,8 +149,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRetrieve()
     {
         $bean = new Contact();
-        $bean->last_name = 'foobar' . date("YmdHis");
-        $bean->id   = 'test' . date("YmdHis");
+        $bean->last_name = 'foobar' . mt_rand();
+        $bean->id   = 'test' . mt_rand();
         $this->_db->insert($bean);
         $id = $bean->id;
 
@@ -174,7 +174,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCreateTableParams()
     {
-        $tablename = 'test' . date("YmdHis");
+        $tablename = 'test' . mt_rand();
         $this->_db->createTableParams($tablename,
             array(
                 'foo' => array (
@@ -208,7 +208,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareFieldInTables()
     {
-        $tablename1 = 'test1_' . date("YmdHis");
+        $tablename1 = 'test1_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -219,7 +219,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        $tablename2 = 'test2_' . date("YmdHis");
+        $tablename2 = 'test2_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -242,7 +242,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareFieldInTablesNotInTable1()
     {
-        $tablename1 = 'test3_' . date("YmdHis");
+        $tablename1 = 'test3_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foobar' => array (
@@ -253,7 +253,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        $tablename2 = 'test4_' . date("YmdHis");
+        $tablename2 = 'test4_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -275,7 +275,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareFieldInTablesNotInTable2()
     {
-        $tablename1 = 'test5_' . date("YmdHis");
+        $tablename1 = 'test5_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -286,7 +286,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        $tablename2 = 'test6_' . date("YmdHis");
+        $tablename2 = 'test6_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foobar' => array (
@@ -309,7 +309,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareFieldInTablesFieldsDoNotMatch()
     {
-        $tablename1 = 'test7_' . date("YmdHis");
+        $tablename1 = 'test7_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -320,7 +320,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        $tablename2 = 'test8_' . date("YmdHis");
+        $tablename2 = 'test8_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -346,7 +346,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->_db->dbType == 'oci8')
             $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
         //END SUGARCRM flav=ent ONLY
-        $tablename1 = 'test9_' . date("YmdHis");
+        $tablename1 = 'test9_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -363,7 +363,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test10_' . date("YmdHis");
+        $tablename2 = 'test10_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -392,7 +392,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareIndexInTablesNotInTable1()
     {
-        $tablename1 = 'test11_' . date("YmdHis");
+        $tablename1 = 'test11_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -409,7 +409,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test12_' . date("YmdHis");
+        $tablename2 = 'test12_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -438,7 +438,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareIndexInTablesNotInTable2()
     {
-        $tablename1 = 'test13_' . date("YmdHis");
+        $tablename1 = 'test13_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -455,7 +455,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test14_' . date("YmdHis");
+        $tablename2 = 'test14_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -488,7 +488,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->_db->dbType == 'oci8')
             $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
         //END SUGARCRM flav=ent ONLY
-        $tablename1 = 'test15_' . date("YmdHis");
+        $tablename1 = 'test15_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -505,7 +505,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test16_' . date("YmdHis");
+        $tablename2 = 'test16_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -543,7 +543,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->_db->dbType == 'oci8')
             $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
         //END SUGARCRM flav=ent ONLY
-        $tablename1 = 'test17_' . date("YmdHis");
+        $tablename1 = 'test17_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -560,7 +560,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test18_' . date("YmdHis");
+        $tablename2 = 'test18_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -611,7 +611,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->_db->dbType == 'oci8')
             $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
         //END SUGARCRM flav=ent ONLY
-        $tablename1 = 'test19_' . date("YmdHis");
+        $tablename1 = 'test19_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -628,7 +628,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test20_' . date("YmdHis");
+        $tablename2 = 'test20_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -692,7 +692,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if ($this->_db->dbType == 'oci8')
             $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
         //END SUGARCRM flav=ent ONLY
-        $tablename1 = 'test21_' . date("YmdHis");
+        $tablename1 = 'test21_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -714,7 +714,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     )
                 )
             );
-        $tablename2 = 'test22_' . date("YmdHis");
+        $tablename2 = 'test22_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -776,7 +776,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAddColumn()
     {
-        $tablename1 = 'test23_' . date("YmdHis");
+        $tablename1 = 'test23_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -792,7 +792,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        $tablename2 = 'test24_' . date("YmdHis");
+        $tablename2 = 'test24_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -831,7 +831,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAlterColumn()
     {
-        $tablename1 = 'test25_' . date("YmdHis");
+        $tablename1 = 'test25_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
                 'foo' => array (
@@ -848,7 +848,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        $tablename2 = 'test26_' . date("YmdHis");
+        $tablename2 = 'test26_' . mt_rand();
         $this->_db->createTableParams($tablename2,
             array(
                 'foo' => array (
@@ -897,7 +897,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDropTableName()
     {
-        $tablename = 'test' . date("YmdHis");
+        $tablename = 'test' . mt_rand();
         $this->_db->createTableParams($tablename,
             array(
                 'foo' => array (
@@ -1078,7 +1078,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetTablesArray()
     {
-        $tablename = 'test' . date("YmdHis");
+        $tablename = 'test' . mt_rand();
         $this->_db->createTableParams($tablename,
             array(
                 'foo' => array (
@@ -1104,7 +1104,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testTableExists()
     {
-        $tablename = 'test' . date("YmdHis");
+        $tablename = 'test' . mt_rand();
         $this->_db->createTableParams($tablename,
             array(
                 'foo' => array (
@@ -1360,7 +1360,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     ),
                 array(
                     array('foo','CONCAT'),
-                    "CONCAT(foo)"
+                    "foo"
                     ),
                 array(
                     array('foo','CONCAT',array(),array(1,2,3)),
@@ -1412,11 +1412,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                  );
          if ( $this->_db instanceOf MssqlManager )
              $this->assertEquals($ret,
-                 "LTRIM(RTRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))))"
+                 "LTRIM(RTRIM(ISNULL(foo.col1,'') + ' ' + ISNULL(foo.col2,'') + ' ' + ISNULL(foo.col3,'')))"
                  );
          if ( $this->_db instanceOf OracleManager )
              $this->assertEquals($ret,
-                 "TRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,'')))"
+                 "TRIM(CONCAT(CONCAT(CONCAT(NVL(foo.col1,''),' '), CONCAT(NVL(foo.col2,''),' ')), CONCAT(NVL(foo.col3,''),' ')))"
                  );
      }
 

@@ -1,5 +1,5 @@
 <?php
- //FILE SUGARCRM flav=een ONLY
+ //FILE SUGARCRM flav=pro ONLY
 /************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -28,91 +28,84 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
  */
 class IsValidDateExpression extends BooleanExpression {
 	/**
-	 * Returns itself when evaluating.
+	 * Returns true if a passed in date string (in User format) is valid
 	 */
 	function evaluate() {
-		$dtStr = $this->getParameters()->evaluate();
-		$date_reg_positions = array( 'Y'=>1 ,'m'=>2,'d'=>3 );
-		$date_reg_format    = '/(^[0-9]{4})[-\/.]([0-9]{1,2})[-\/.]([0-9]{1,2})$/';
-		if(strlen($dtStr) == 0) return AbstractExpression::$TRUE;
-	    // Check that we have numbers
-		$dateParts = array();
-	    if(!preg_match($date_reg_format, $dtStr, $dateParts))
-		{
-		 	return AbstractExpression::$FALSE;
+        global $current_user;
+
+        $td = TimeDate::getInstance();
+        $format = trim($td->get_db_date_format()) . " ";
+        $userFormat = trim($GLOBALS['current_user']->getPreference("datef")) . " ";
+        if (!empty($userFormat))
+            $format = $userFormat;
+
+        $dtStr = $this->getParameters()->evaluate();
+        $part = "";
+        if (!is_string($dtStr))
+            return AbstractExpression::$FALSE;;
+        $dateRemain = trim($dtStr);
+
+        $m = "";
+        $d = "";
+        $y = "";
+
+        for ($j = 0; $j < strlen($format); $j++) {
+			$c = $format[$j];
+			if ($c == ':' || $c == '/' || $c == '-' || $c == '.' || $c == " " || $c == 'a' || $c == "A") {
+				$i = strpos($dateRemain, $c);
+				if ($i === false)
+                    $i = strlen($dateRemain);
+				$v = substr($dateRemain, 0, $i);
+				$dateRemain = substr($dateRemain, $i+1);
+				//check the date parts, ignore Time for now
+                switch ($part) {
+					case 'm':
+						if (!($v > 0 && $v < 13)) {
+                            return AbstractExpression::$FALSE;
+                        }
+                        $m = $v;
+                        break;
+					case 'd':
+						if(!($v > 0 && $v < 32)) {
+                            return AbstractExpression::$FALSE;
+                        }
+                        $d = $v;
+                        break;
+					case 'Y':
+                    case 'y':
+						if(!($v > 0)) {
+                            return AbstractExpression::$FALSE;
+                        }
+                        $y = $v;
+                    break;
+				}
+				$part = "";
+			} else {
+				$part = $c;
+			}
 		}
-	    $m = '';
-	    $d = '';
-	    $y = '';
-	    
-	   //preg_match( $date_reg_format, $dtStr, $dateParts);
+        if (empty($m) || empty($d) || empty($y)) {
+            return  AbstractExpression::$FALSE;
+        } else {
+            echo "month:$m, day:$d, year:$y<br/>";
+        }
 
-	    foreach ( $date_reg_positions as $key => $index )
-	    {
-	        if($key == 'm') {
-	           $m = $dateParts[$index];
-	        } else if($key == 'd') {
-	           $d = $dateParts[$index];
-	        } else {
-	           $y = $dateParts[$index];
-	        }
-	    }
-	   // _pp("Y = $y, m=$m, d=$d");
-
-	    // reject negative years
-	    if ($y < 1)
-	        return AbstractExpression::$FALSE;
-	    // reject month less than 1 and greater than 12
-	    if ($m > 12 || $m < 1)
-	        return AbstractExpression::$FALSE;
-
-	    // Check that date is real
-	    $dd = cal_days_in_month(CAL_GREGORIAN, $m, $y);
-	    
-	    // reject days less than 1 or days not in month (e.g. February 30th)
-	    if ($d < 1 || $d > $dd)
-	        return AbstractExpression::$FALSE;
-		return AbstractExpression::$TRUE;
+        return AbstractExpression::$TRUE;
 	}
 
 	/**
-	 * Returns the JS Equivalent of the evaluate function.
+	 * Returns true is a passed in date string (in user format) is valid.
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
 		var dtStr = this.getParameters().evaluate();
-		var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
-		var date_reg_format = '(^[0-9]{4})[-/.]([0-9]{1,2})[-/.]([0-9]{1,2})$';
-		if(dtStr.length == 0) return SUGAR.expressions.Expression.TRUE;
-	    // Check that we have numbers
-		var myregexp = new RegExp(date_reg_format)
-		if(!myregexp.test(dtStr))	return SUGAR.expressions.Expression.FALSE;
-	    var m = '';
-	    var d = '';
-	    var y = '';
-	    var dateParts = dtStr.match(date_reg_format);
-	    for(key in date_reg_positions) {
-	        index = date_reg_positions[key];
-	        if(key == 'm') {
-	           m = dateParts[index];
-	        } else if(key == 'd') {
-	           d = dateParts[index];
-	        } else {
-	           y = dateParts[index];
-	        }
-	    }
-	    // Check that date is real
-	    var dd = new Date(y,m,0);
-	    // reject negative years
-	    if (y < 1)
-	        return SUGAR.expressions.Expression.FALSE;
-	    // reject month less than 1 and greater than 12
-	    if (m > 12 || m < 1)
-	        return SUGAR.expressions.Expression.FALSE;
-	    // reject days less than 1 or days not in month (e.g. February 30th)
-	    if (d < 1 || d > dd.getDate())
-	        return SUGAR.expressions.Expression.FALSE;
-		return SUGAR.expressions.Expression.TRUE;
+        var format = "Y-m-d";
+        if (SUGAR.expressions.userPrefs)
+            format = SUGAR.expressions.userPrefs.datef;
+        var date = SUGAR.util.DateUtils.parse(dtStr, format);
+        if(date != false && date != "Invalid Date")
+		    return SUGAR.expressions.Expression.TRUE;
+		return SUGAR.expressions.Expression.FALSE;
 EOQ;
 	}
 

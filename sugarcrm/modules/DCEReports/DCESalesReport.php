@@ -233,7 +233,7 @@ function processReports(){
         return false;
         
         //get current time
-        $now = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $now = TimeDate::getInstance()->nowDb();
         $stim = strtotime($now);
 
         //compare the days
@@ -332,7 +332,7 @@ function processReports(){
                     $emailObj->description_html =null;
                     $emailObj->from_addr = $mail->From;
                     $emailObj->parent_type = 'DCEReport';
-                    $emailObj->date_sent =$timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+                    $emailObj->date_sent =$timedate->now();
                     $emailObj->modified_user_id = '1';                               
                     $emailObj->created_by = '1';
                     $emailObj->status='sent';
@@ -385,7 +385,7 @@ function processReports(){
     
     function  getNumOfActiveUsers($id, $db){
             //get current time
-            $now = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+            $now = TimeDate::getInstance()->nowDb();
             $stim = strtotime($now);
             $wtim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-7,   gmdate("Y",$stim));
             //convert back into date format

@@ -166,10 +166,12 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     //BEGIN SUGARCRM flav=ent ONLY
     public function testGetAutoIncrementSQL()
     {
-        if( $this->_db->dbType == 'oci8') {
-            $sql = $this->_helper->getAutoIncrementSQL('cases', 'case_number');
-            $this->assertRegExp("/" . getSequenceName('cases', 'case_number') . "\.nextval/i",$sql);
+        if( $this->_db->dbType != 'oci8') {
+            $this->markTestSkipped('Only applies to Oracle');
         }
+        
+        $sql = $this->_helper->getAutoIncrementSQL('cases', 'case_number');
+        $this->assertRegExp("/cases_case_number_seq\.nextval/i",$sql);
     }
     //END SUGARCRM flav=ent ONLY
     //BEGIN SUGARCRM flav!=sales ONLY
@@ -235,7 +237,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             );
         //BEGIN SUGARCRM flav=ent ONLY
         if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i",$sql);
+            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*\(\s*foo\s*\)/i",$sql);
         else
         //END SUGARCRM flav=ent ONLY
             $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*foo/i",$sql);
@@ -249,7 +251,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             );
         //BEGIN SUGARCRM flav=ent ONLY
         if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i",$sql);
+            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*\(\s*foo\s*\)/i",$sql);
         else
         //END SUGARCRM flav=ent ONLY
             $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*foo/i",$sql);

@@ -669,7 +669,8 @@ class ModuleBuilderController extends SugarController
     	if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
-	        	$parser2->writeWorkingFile () ;
+	        	$parser2->setUseTabs($parser->getUseTabs());
+                $parser2->writeWorkingFile () ;
 	        }
         }
     }
@@ -697,7 +698,8 @@ class ModuleBuilderController extends SugarController
         if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
-	        	$parser2->handleSave () ;
+	        	$parser2->setUseTabs($parser->getUseTabs());
+                $parser2->handleSave () ;
 	        }
         }
     }

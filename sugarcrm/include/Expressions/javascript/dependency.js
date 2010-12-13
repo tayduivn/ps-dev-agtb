@@ -194,21 +194,22 @@ SUGAR.forms.AssignmentHandler.getElement = function(variable) {
  */
 SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 {
+	var AH = SUGAR.forms.AssignmentHandler, Dom = YAHOO.util.Dom;
 	if (typeof flash == "undefined")
 		flash = true;
 	// retrieve the variable
-	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
+	var field = AH.getElement(variable);
 	
 	if ( field == null )	
 		return null;
 
 	// now check if this field is locked
-	if ( SUGAR.forms.AssignmentHandler.LOCKS[variable] != null ) {
+	if ( AH.LOCKS[variable] != null ) {
 		throw ("Circular Reference Detected");
 	}
 
 	//Detect field types and add error handling.
-	if (YAHOO.util.Dom.hasClass(field, "imageUploader"))
+	if (Dom.hasClass(field, "imageUploader"))
 	{
 		var img = Dom.get("img_" + field.id);
 		img.src = value;
@@ -219,18 +220,23 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	}
     else if(value instanceof Date)
     {
-        field.value = SUGAR.util.DateUtils.formatDate(value);
+        if (Dom.hasClass(field, "date_input"))
+			field.value = SUGAR.util.DateUtils.formatDate(value);
+		else if (Dom.hasClass(field, "DateTimeCombo"))
+			AH.setDateTimeField(field, value);
+		else
+			field.value = SUGAR.util.DateUtils.formatDate(value, true);
     }
 	else {
 		field.value = value;
 	}
 	
 	// animate
-	if ( SUGAR.forms.AssignmentHandler.ANIMATE && flash)
+	if ( AH.ANIMATE && flash)
 		SUGAR.forms.FlashField(field);
 
 	// lock this variable
-	SUGAR.forms.AssignmentHandler.LOCKS[variable] = true;
+	AH.LOCKS[variable] = true;
 
 	// fire onchange
 	var listeners = YAHOO.util.Event.getListeners(field, 'change');
@@ -242,7 +248,51 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	}
 
 	// unlock this variable
-	SUGAR.forms.AssignmentHandler.LOCKS[variable] = null;
+	AH.LOCKS[variable] = null;
+}
+
+SUGAR.forms.AssignmentHandler.setDateTimeField = function(field, value)
+{
+	var Dom = YAHOO.util.Dom,
+		SDU = SUGAR.util.DateUtils,
+		AH = SUGAR.forms.AssignmentHandler,
+		id = field.id,
+	    date = Dom.get(id + "_date"),
+		hours = Dom.get(id + "_hours"),
+		min = Dom.get(id + "_minutes"),
+		mer = Dom.get(id + "_meridiem");
+
+	value = SDU.roundTime(value);
+	date.value = SDU.formatDate(value);
+	if (mer){
+		//set AM/PM field
+		var h = SDU.formatDate(value, true, "h");
+		var m = SDU.formatDate(value, true, "i");
+		var a = SUGAR.expressions.userPrefs.timef.indexOf("A") != -1 ?
+				SDU.formatDate(value, true, "A") : SDU.formatDate(value, true, "a");
+		AH.setSelectedOption(hours, h);
+		AH.setSelectedOption(min, m);
+		AH.setSelectedOption(mer, a);
+	} else {
+		//24 Hour time
+		var h = SDU.formatDate(value, true, "H");
+		var m = SDU.formatDate(value, true, "i");
+		AH.setSelectedOption(hours, h);
+		AH.setSelectedOption(min, m);
+	}
+}
+
+SUGAR.forms.AssignmentHandler.setSelectedOption = function(field, value)
+{
+	for (var i = 0; i < field.options.length; i++)
+	{
+		if (field.options[i].value == value)
+		{
+			field.options[i].selected = true;
+			break;
+		}
+	}
+	return;
 }
 
 SUGAR.forms.AssignmentHandler.showError = function(variable, error)

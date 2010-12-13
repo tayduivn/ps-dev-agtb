@@ -48,13 +48,13 @@ class ImportFieldSanitize
     public $num_grp_sep;
     public $dec_sep;
     public $default_locale_name_format;
-    
+
     /**
      * array of modules/users_last_import ids pairs that are created in this class
      * needs to be reset after the row is imported
      */
     public static $createdBeans = array();
-    
+
     /**
      * true if we will create related beans during the sanitize process
      */
@@ -97,7 +97,7 @@ class ImportFieldSanitize
         
         return $value;
     }
-    
+
     /**
      * Validate date fields
      *
@@ -113,21 +113,21 @@ class ImportFieldSanitize
         )
     {
         global $timedate;
-        
+
         $format = $this->dateformat;
-        
-        if ( !$timedate->check_matching_format($value, $format) ) 
+
+        if ( !$timedate->check_matching_format($value, $format) )
             return false;
-        
+
         if ( !$this->isValidTimeDate($value, $format) )
             return false;
-        
+
         $value = $timedate->swap_formats(
             $value, $format, $timedate->get_date_format());
-        
+
         return $value;
     }
-    
+
     /**
      * Validate email fields
      *
@@ -144,10 +144,10 @@ class ImportFieldSanitize
         if ( !empty($value) && !preg_match('/^\w+(?:[\'.\-+]\w+)*@\w+(?:[.\-]\w+)*(?:[.]\w{2,})+$/',$value) ) {
             return false;
         }
-        
+
         return $value;
     }
-    
+
     /**
      * Validate sync_to_outlook field
      *
@@ -163,23 +163,23 @@ class ImportFieldSanitize
         )
     {
         static $focus_user;
-        
+
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_user instanceof User) ) {
-            
+
             $focus_user = new User();
         }
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         static $focus_team;
-        
+
         // cache this object since we'll be reusing it a bunch
         if ( !($focus_team instanceof Team) ) {
-            
+
             $focus_team = new Team();
         }
         //END SUGARCRM flav=pro ONLY
-        
+
         if ( !empty($value) && strtolower($value) != "all" ) {
             $theList   = explode(",",$value);
             $isValid   = true;
@@ -204,10 +204,10 @@ class ImportFieldSanitize
                 return false;
             }
         }
-        
+
         return $value;
     }
-    
+
     /**
      * Validate time fields
      *
@@ -219,29 +219,29 @@ class ImportFieldSanitize
     public function time(
         $value,
         $vardef,
-        &$focus
+        $focus
         )
     {
         global $timedate;
-        
+
         $format = $this->timeformat;
-        
-        if ( !$timedate->check_matching_format($value, $format) ) 
+
+        if ( !$timedate->check_matching_format($value, $format) )
             return false;
-        
+
         if ( !$this->isValidTimeDate($value, $format) )
             return false;
-        
+
         $value = $timedate->swap_formats(
             $value, $format, $timedate->get_time_format());
         $value = $timedate->handle_offset(
             $value, $timedate->get_time_format(), false, $GLOBALS['current_user'], $this->timezone);
         $value = $timedate->handle_offset(
             $value, $timedate->get_time_format(), true);
-        
+
         return $value;
     }
-    
+
     /**
      * Added to handle Bug 24104, to make sure the date/time value is correct ( i.e. 20/20/2008 doesn't work )
      *
@@ -255,51 +255,53 @@ class ImportFieldSanitize
         )
     {
         global $timedate;
-        
+
         $dateparts = array();
         $reg = $timedate->get_regular_expression($format);
         preg_match('@'.$reg['format'].'@', $value, $dateparts);
-        
-        if ( isset($reg['positions']['a']) 
+
+        if ( empty($dateparts) )
+            return false;
+        if ( isset($reg['positions']['a'])
                 && !in_array($dateparts[$reg['positions']['a']], array('am','pm')) )
             return false;
-        if ( isset($reg['positions']['A']) 
+        if ( isset($reg['positions']['A'])
                 && !in_array($dateparts[$reg['positions']['A']], array('AM','PM')) )
             return false;
         if ( isset($reg['positions']['h']) && (
-                !is_numeric($dateparts[$reg['positions']['h']]) 
+                !is_numeric($dateparts[$reg['positions']['h']])
                 || $dateparts[$reg['positions']['h']] < 1
                 || $dateparts[$reg['positions']['h']] > 12 ) )
             return false;
         if ( isset($reg['positions']['H']) && (
-                !is_numeric($dateparts[$reg['positions']['H']]) 
+                !is_numeric($dateparts[$reg['positions']['H']])
                 || $dateparts[$reg['positions']['H']] < 0
                 || $dateparts[$reg['positions']['H']] > 23 ) )
             return false;
         if ( isset($reg['positions']['i']) && (
-                !is_numeric($dateparts[$reg['positions']['i']]) 
+                !is_numeric($dateparts[$reg['positions']['i']])
                 || $dateparts[$reg['positions']['i']] < 0
                 || $dateparts[$reg['positions']['i']] > 59 ) )
             return false;
         if ( isset($reg['positions']['s']) && (
-                !is_numeric($dateparts[$reg['positions']['s']]) 
+                !is_numeric($dateparts[$reg['positions']['s']])
                 || $dateparts[$reg['positions']['s']] < 0
                 || $dateparts[$reg['positions']['s']] > 59 ) )
             return false;
         if ( isset($reg['positions']['d']) && (
-                !is_numeric($dateparts[$reg['positions']['d']]) 
+                !is_numeric($dateparts[$reg['positions']['d']])
                 || $dateparts[$reg['positions']['d']] < 1
                 || $dateparts[$reg['positions']['d']] > 31 ) )
             return false;
         if ( isset($reg['positions']['m']) && (
-                !is_numeric($dateparts[$reg['positions']['m']]) 
+                !is_numeric($dateparts[$reg['positions']['m']])
                 || $dateparts[$reg['positions']['m']] < 1
                 || $dateparts[$reg['positions']['m']] > 12 ) )
             return false;
         if ( isset($reg['positions']['Y']) &&
                 !is_numeric($dateparts[$reg['positions']['Y']]) )
             return false;
-        
+
         return true;
     }
 

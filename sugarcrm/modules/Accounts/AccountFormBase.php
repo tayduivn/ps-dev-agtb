@@ -181,9 +181,9 @@ function buildTableForm($rows, $mod='Accounts'){
 		$form .= "<input type='hidden' name='selectedAccount' id='selectedAccount' value=''><input title='${app_strings['LBL_SAVE_BUTTON_TITLE']}' accessKey='${app_strings['LBL_SAVE_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='Save';\" type='submit' name='button' value='  ${app_strings['LBL_SAVE_BUTTON_LABEL']}  '>\n";
 	    
         if (!empty($_REQUEST['return_module']) && !empty($_REQUEST['return_action']) && !empty($_REQUEST['return_id']))
-            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value=".$_REQUEST['return_module'].";this.form.action.value=".$_REQUEST['return_action'].";this.form.record.value=".$_REQUEST['return_id']."'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
+            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value='".$_REQUEST['return_module']."';this.form.action.value='".$_REQUEST['return_action']."';this.form.record.value='".$_REQUEST['return_id']."'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
         else if (!empty($_POST['return_module']) && !empty($_POST['return_action']))
-            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value=".$_POST['return_module'].";this.form.action.value=". $_POST['return_action'].";'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
+            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value='".$_POST['return_module']."';this.form.action.value='". $_POST['return_action'].";'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
         else
             $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='ListView';\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
 	} else {
@@ -517,7 +517,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
         echo $json->encode(array('status' => 'success',
                                  'get' => ''));
    	 	$trackerManager = TrackerManager::getInstance();
-        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $timeStamp = TimeDate::getInstance()->nowDb();
         if($monitor = $trackerManager->getMonitor('tracker')){ 
 	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());

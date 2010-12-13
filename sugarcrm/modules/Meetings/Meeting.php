@@ -132,7 +132,6 @@ class Meeting extends SugarBean {
 	// save date_end by calculating user input
 	// this is for calendar
 	function save($check_notify = FALSE) {
-		require_once('modules/Calendar/DateTimeUtil.php');
 		global $timedate;
 		global $current_user;
 		global $disable_date_format;
@@ -140,9 +139,7 @@ class Meeting extends SugarBean {
 		if(isset($this->date_start)
 			&& isset($this->duration_hours)
 			&& isset($this->duration_minutes)) {
-    			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
-    			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-    			$this->date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $date_time_end->ts);
+			    $this->date_end = $timedate->fromDb($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
@@ -331,9 +328,9 @@ class Meeting extends SugarBean {
 
         //setting default date and time
 		if (is_null($this->date_start))
-			$this->date_start = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			$this->date_start = $timedate->now();
 		if (is_null($this->time_start))
-			$this->time_start = $timedate->to_display_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()), true);
+			$this->time_start = $timedate->to_display_time(TimeDate::getInstance()->nowDb(), true);
 		if (is_null($this->duration_hours)) {
 			$this->duration_hours = "0";
 		}

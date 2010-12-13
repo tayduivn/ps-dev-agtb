@@ -110,7 +110,7 @@ class MysqliManager extends MysqlManager
         if (mysqli_errno($this->getDatabase())){
             if($this->dieOnError || $dieOnError){
                 $GLOBALS['log']->fatal("$msg: MySQL error ".mysqli_errno($this->database).": ".mysqli_error($this->database));
-                sugar_die ($userMsg."MySQL error ".mysqli_errno($this->database).": ".mysqli_error($this->database));
+                sugar_die ($userMsg.$GLOBALS['app_strings']['ERR_DB_FAIL']);
             }
             else{
                 $this->last_error = $userMsg."MySQL error ".mysqli_errno($this->database).": ".mysqli_error($this->database);
@@ -137,7 +137,7 @@ class MysqliManager extends MysqlManager
 		//BEGIN SUGARCRM flav=pro ONLY
         $this->addDistinctClause($sql);
 		//END SUGARCRM flav=pro ONLY
-        
+
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
@@ -175,7 +175,7 @@ class MysqliManager extends MysqlManager
 		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
         if($autofree)
             $this->lastResult[] =& $result;
-        
+
         return $result;
     }
 
@@ -228,6 +228,9 @@ class MysqliManager extends MysqlManager
         }
 
         $row = mysqli_fetch_assoc($result);
+        if ( is_null($row) ) {
+            return false;
+        }
 
         if ($encode && $this->encode && is_array($row))
             return array_map('to_html', $row);
@@ -281,11 +284,16 @@ class MysqliManager extends MysqlManager
 	        	$dbport=substr($configOptions['db_host_name'],$pos+1);
 	        }
 
-        	$this->database = mysqli_connect($dbhost,$configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'],$dbport)
-                or sugar_die("Could not connect to server ".$dbhost." as ".$configOptions['db_user_name'].". port " .$dbport . ". " . mysqli_connect_error());
+        	$this->database = mysqli_connect($dbhost,$configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'],$dbport);
+        	if(empty($this->database)) {
+        	    $GLOBALS['log']->fatal("Could not connect to DB server ".$dbhost." as ".$configOptions['db_user_name'].". port " .$dbport . ": " . mysqli_connect_error());
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+        	}
         }
-        @mysqli_select_db($this->database,$configOptions['db_name'])
-            or sugar_die( "Unable to select database: " . mysqli_connect_error());
+        if(!@mysqli_select_db($this->database,$configOptions['db_name'])) {
+            $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysqli_connect_error());
+            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+        }
 
         // cn: using direct calls to prevent this from spamming the Logs
         mysqli_query($this->database,"SET CHARACTER SET utf8"); // no quotes around "[charset]"

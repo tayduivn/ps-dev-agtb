@@ -85,8 +85,6 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 //Aquire the enterprise report to be sent				
 	$report_object = new ReportMaker();			
 	$report_object->retrieve($schedule_info['report_id']);			
-
-	$module_for_lang = $report_object->module;
 	$mod_strings = return_module_language($language, 'Reports');
 	
 	
@@ -159,8 +157,8 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 		$body .= " $name";
 	}
 	$body .= ",\n\n";
-	$body .= 	$mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO']. $saved_report->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
-				 . $reporter->report_def['report_name'] . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
+	$body .= 	$mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO']. $report_object->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
+				 . $report_object->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
 	$mail->Body = $body;
 
 	if($address == '')

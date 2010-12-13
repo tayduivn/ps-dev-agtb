@@ -40,7 +40,9 @@ class ImportableFieldsTest extends Sugar_PHPUnit_Framework_TestCase
             'float_field' => array('name' => 'float_field', 'vname' => 'LBL_FLOAT_FIELD', 'type' => 'float', 'precision' => 2, ),
             'date_field' => array('name' => 'date_field', 'vname' => 'LBL_DATE_FIELD', 'type' => 'date', ),
             'time_field' => array('name' => 'time_field', 'vname' => 'LBL_TIME_FIELD', 'type' => 'time', 'importable' => 'false', ),
+            //BEGIN SUGARCRM flav!=com ONLY
             'image_field' => array('name' => 'image_field', 'vname' => 'LBL_IMAGE_FIELD', 'type' => 'image', ),
+            //END SUGARCRM flav!=com ONLY
             'datetime_field' => array('name' => 'datetime_field', 'vname' => 'LBL_DATETIME_FIELD', 'type' => 'datetime', ),
             'link_field1' => array('name' => 'link_field1', 'type' => 'link', ),
             'link_field2' => array('name' => 'link_field1', 'type' => 'link', 'importable' => true, ),

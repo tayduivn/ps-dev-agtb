@@ -145,7 +145,7 @@ class SOAPAPI3Test extends SOAPTestCase
     public function testGetLastViewed()
     {
          $testModule = 'Accounts';
-         $testModuleID = uniqid();
+         $testModuleID = create_guid();
 
          $this->_createTrackerEntry($testModule,$testModuleID);
 
@@ -168,7 +168,7 @@ class SOAPAPI3Test extends SOAPTestCase
      private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
      {
         $trackerManager = TrackerManager::getInstance();
-        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());

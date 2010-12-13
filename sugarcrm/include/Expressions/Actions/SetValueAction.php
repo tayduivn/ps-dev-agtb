@@ -19,6 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Actions/AbstractAction.php");
+require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 class SetValueAction extends AbstractAction{
 	protected $expression =  "";
@@ -77,17 +78,24 @@ class SetValueAction extends AbstractAction{
 	function fire(&$target) {
 		$expr = Parser::replaceVariables($this->expression, $target);
 		$result = Parser::evaluate($expr)->evaluate();
-		$field = $this->targetField;
+        $field = $this->targetField;
+        $def = array();
+        if (!empty($target->field_defs[$field]))
+            $def  = $target->field_defs[$field];
         if ($result instanceof DateTime)
         {
             $td = new TimeDate();
+            $result = DateExpression::roundTime($result->setTimeZone(new DateTimeZone("UTC")));
             $target->$field = $result->format($td->get_db_date_time_format());
         }
-        else
+        else if (isset($def['type']) && $def['type'] == "bool")
+        {
+            $target->$field = $result === true || $result === AbstractExpression::$TRUE;
+        }
+        else 
         {
             $target->$field = $result;
         }
-
 	}
 	
 	/**

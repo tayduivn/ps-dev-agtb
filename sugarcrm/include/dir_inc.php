@@ -233,6 +233,5 @@ function findAllTouchedFiles( $the_dir, $the_array, $date_modified, $filter=''){
         	}
         }
     }
-    return( $the_array );
+    return $the_array;
 }
-?>

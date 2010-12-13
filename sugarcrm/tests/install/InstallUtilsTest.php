@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 require_once('install/install_utils.php');
 
 class InstallUtilsTest extends Sugar_PHPUnit_Framework_TestCase

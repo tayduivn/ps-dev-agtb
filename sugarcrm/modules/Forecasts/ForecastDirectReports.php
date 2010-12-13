@@ -34,21 +34,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // User is used to store customer information.
 class ForecastDirectReports extends SugarBean {
 
-    var $user_id;
-    var $reports_to_id;
-    var $id;
-    var $timeperiod_id;
-    var $opp_count;
-    var $opp_weigh_value;
-    var $opp_commit_value;
-    var $user_name;
-    var $ref_user_id;
-    var $ref_timeperiod_id;
-    var $forecast_type;
+	var $user_id;
+	var $reports_to_id;
+	var $id;
+	var $timeperiod_id;
+	var $opp_count;
+	var $opp_weigh_value;
+	var $opp_commit_value;
+	var $user_name;
+	var $ref_user_id;
+	var $ref_timeperiod_id;
+	var $forecast_type;
 
-    var $likely_case;
-    var $total_likely_case;
-    var $total_likely_case_number;
+	var $likely_case;
+	var $total_likely_case;
+	var $total_likely_case_number;
     var $total_wk_likely_case_number;
 
     var $best_case;
@@ -139,9 +139,7 @@ class ForecastDirectReports extends SugarBean {
     //if the user is a sales person select the direct forecasts.
     //select the most recent forcast based on the date committed.
     function get_forecasts() {
-
         global $timedate;
-        if (empty($timedate)) $timedate=new TimeDate();
 
         $comm1 = new Common();
         $comm1->set_current_user($this->id);

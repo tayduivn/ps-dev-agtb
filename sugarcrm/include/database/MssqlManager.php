@@ -131,10 +131,12 @@ class MssqlManager extends DBManager
                     $connect_param ,
                     $configOptions['db_user_name'],
                     $configOptions['db_password']
-                    )
-                or sugar_die("Could not connect to server ".$configOptions['db_host_name'].
+                    );
+            if(!$this->database){
+                $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name'].
                     " as ".$configOptions['db_user_name'].".");
-
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            }
             if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
@@ -143,7 +145,7 @@ class MssqlManager extends DBManager
         }
         //make sure connection exists
         if(!$this->database){
-            sugar_die("Unable to establish connection");
+            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
         }
 
         //select database
@@ -163,7 +165,8 @@ class MssqlManager extends DBManager
 				}
 			}
 			if(!$connected){
-				sugar_die("Unable to select database");
+			    $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}");
+				sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
 			}
          }
 
@@ -193,9 +196,11 @@ class MssqlManager extends DBManager
             return true;
 
         $sqlmsg = mssql_get_last_message();
+        
         $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        $sqlpos2 = strpos($sqlmsg, 'Caution: Changing any part of an object name could break scripts and stored procedures.');
-        if ( $sqlpos !== false || $sqlpos2 !== false )
+        $sqlpos2 = strpos($sqlmsg, 'Warning:');
+        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false )
             $sqlmsg = '';  // empty out sqlmsg if its either of the two error messages described above
         else {
         	global $app_strings;
@@ -258,6 +263,34 @@ class MssqlManager extends DBManager
             $result = @mssql_query($sql, $this->database);
         }
 
+        if (!$result) {
+            //BEGIN SUGARCRM flav=int ONLY
+            _pp($sql);
+            display_stack_trace();
+            //END SUGARCRM flav=int ONLY
+
+            // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
+            // 				  and difficult to reproduce error. The message is only a warning, and does
+            //				  not affect the functionality of the query
+            $sqlmsg = mssql_get_last_message();
+            $sqlpos = strpos($sqlmsg, 'Changed database context to');
+			$sqlpos2 = strpos($sqlmsg, 'Warning:');
+			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+            
+			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
+				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
+			else {
+				//BEGIN SUGARCRM flav=int ONLY
+				_pp($sql);
+				display_stack_trace();
+				//END SUGARCRM flav=int ONLY
+				$GLOBALS['log']->fatal($sqlmsg . ": " . $sql );
+				if($dieOnError)
+					sugar_die('SQL Error : ' . $sqlmsg);
+				else
+					echo 'SQL Error : ' . $sqlmsg;
+			}
+        }
         $this->lastmysqlrow = -1;
 
         $this->query_time = microtime(true) - $this->query_time;
@@ -966,12 +999,12 @@ class MssqlManager extends DBManager
         $table_descriptions[$tablename] = array();
 
         $sql = sprintf( "SELECT COLUMN_NAME AS Field
-				, DATA_TYPE + CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL " .
-							"THEN '(' + RTRIM(CAST(CHARACTER_MAXIMUM_LENGTH AS CHAR)) + ')' " .
-							"ELSE '' END as 'Type'
+				, DATA_TYPE + CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL
+                        THEN '(' + RTRIM(CAST(CHARACTER_MAXIMUM_LENGTH AS CHAR)) + ')' 
+						ELSE '' END as 'Type'
 				, CHARACTER_MAXIMUM_LENGTH
 				, IS_NULLABLE AS 'Null'
-				, CASE WHEN COLUMN_DEFAULT LIKE '((0))' THEN \"('0')\" ELSE COLUMN_DEFAULT END as 'Default'
+				, CASE WHEN COLUMN_DEFAULT LIKE '((0))' THEN '(''0'')' ELSE COLUMN_DEFAULT END as 'Default'
 			FROM INFORMATION_SCHEMA.COLUMNS
 			WHERE TABLE_NAME = '%s'",
 			$tablename

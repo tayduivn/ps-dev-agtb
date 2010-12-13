@@ -32,8 +32,8 @@
 {{/if}}
 
 {assign var=date_value value={{sugarvar key='value' string=true}} }
-<input class="date_input" autocomplete="off" type="text" name="{{$idname}}" id="{{$idname}}" value="{$date_value}" title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' {{if !$vardef.enforced}}size="11" maxlength="10"{{/if}} >
-{{if !$displayParams.hiddeCalendar && !$vardef.enforced}}
+<input class="date_input" autocomplete="off" type="text" name="{{$idname}}" id="{{$idname}}" value="{$date_value}" title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' size="11" maxlength="10" >
+{{if !$displayParams.hiddeCalendar}}
 <img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}" id="{{$idname}}_trigger" align="absmiddle" />
 {{/if}}
 {{if $displayParams.showFormats}}
