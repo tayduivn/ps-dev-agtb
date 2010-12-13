@@ -37,12 +37,16 @@ function unzip( $zip_archive, $zip_dir)
 function unzip_file( $zip_archive, $archive_file, $zip_dir)
 {
     if( !is_dir( $zip_dir ) ){
-        die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
+        if (!defined('SUGAR_PHPUNIT_RUNNER'))
+            die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
+        return false;
     }
     $zip = new ZipArchive;
     $res = $zip->open($zip_archive);
     if($res !== true) {
-        die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+        if (!defined('SUGAR_PHPUNIT_RUNNER'))
+            die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+        return false;
     }
 
     if($archive_file !== null) {
@@ -51,7 +55,9 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
         $res = $zip->extractTo($zip_dir);
     }
     if($res !== true) {
-        die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+        if (!defined('SUGAR_PHPUNIT_RUNNER'))
+            die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+        return false;
     }
     return true;
 }
@@ -59,7 +65,9 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
 function zip_dir( $zip_dir, $zip_archive )
 {
     if( !is_dir( $zip_dir ) ){
-        die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
+        if (!defined('SUGAR_PHPUNIT_RUNNER'))
+            die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
+        return false;
     }
     $zip = new ZipArchive();
     $zip->open($zip_archive, ZIPARCHIVE::OVERWRITE);
