@@ -183,9 +183,8 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
     //generate md5 files on server
     require_once( $temp_file );
     $server_files       = array();  // used later for removing unneeded local files
-    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session).".zip";
-    $archive = new ZipArchive();
-    $archive->open($zip_file, ZipArchive::OVERWRITE);
+    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
+    $archive = new PclZip($zip_file.".zip");
     if(!$is_md5_sync){
     	$all_src_files  = findAllTouchedFiles( ".", array(), $last_sync);
     	foreach( $all_src_files as $src_file ){
@@ -200,13 +199,13 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
                 $value = $src_file;
                 if($client_file_list != null && isset($client_file_list[$key])){
                     //we have found a file out of sync
-                    $archive->addFile($key);
+                    $archive->add($key);
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->addFile($key);
+                $archive->add($key);
                }
             }
    		}
@@ -226,14 +225,14 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
                 if($client_file_list != null && isset($client_file_list[$key])){
                   if($value != $client_file_list[$key]){
                     //we have found a file out of sync
-                    $archive->addFile($key);
+                    $archive->add($key);
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   }
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->addFile($key);
+                $archive->add($key);
                }
             }
     	}
@@ -251,16 +250,16 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
 					}
 				}
 				if(!$ignore && file_exists($key)){
-					$archive->addFile($key);
+					$archive->add($key);
 				}
 			}
 		}
-    $archive->close();
-    $contents = sugar_file_get_contents( $zip_file);
+
+    $contents = sugar_file_get_contents( $archive->zipname );
 
     // encode data
     $data = base64_encode( $contents );
-	unlink($zip_file);
+	unlink($archive->zipname);
 
     return(array('result'=>$data, 'error'=>$error->get_soap_array()));
 }

@@ -329,7 +329,11 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
     	fwrite($fh, base64_decode($result['result']));
 		fclose($fh);
 
-		unzip($zip_file, ".", true);
+    	$archive = new PclZip($zip_file);
+    	if( $archive->extract( PCLZIP_OPT_PATH, ".",
+    					   PCLZIP_OPT_REPLACE_NEWER) == 0 ){
+        	die( "Error: " . $archive->errorInfo(true) );
+    	}
     }
 
     if(file_exists($zip_file)){
