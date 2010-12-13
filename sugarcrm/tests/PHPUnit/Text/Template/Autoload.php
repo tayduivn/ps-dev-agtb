@@ -1,8 +1,8 @@
 <?php
 /**
- * PHPUnit
+ * Text_Template
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sebastian@phpunit.de>.
+ * Copyright (c) 2009-2010, Sebastian Bergmann <sb@sebastian-bergmann.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,28 +34,32 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package    PHPUnit
- * @subpackage Framework
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
+ * @category   Text
+ * @package    Template
+ * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
+ * @copyright  2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @link       http://www.phpunit.de/
- * @since      File available since Release 3.1.0
+ * @link       http://github.com/sebastianbergmann/php-text-template
+ * @since      File available since Release 1.1.0
  */
 
-/**
- * Extension to PHPUnit_Framework_AssertionFailedError to mark the special
- * case of a skipped test suite.
- *
- * @package    PHPUnit
- * @subpackage Framework
- * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
- * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.5
- * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.1.0
- */
-class PHPUnit_Framework_SkippedTestSuiteError extends PHPUnit_Framework_AssertionFailedError implements PHPUnit_Framework_SkippedTest
-{
+function text_template_autoload($class) {
+    static $classes = NULL;
+    static $path = NULL;
+
+    if ($classes === NULL) {
+        $classes = array(
+          'text_template' => '/Template.php'
+        );
+
+        $path = dirname(dirname(__FILE__));
+    }
+
+    $cn = strtolower($class);
+
+    if (isset($classes[$cn])) {
+        require $path . $classes[$cn];
+    }
 }
+
+spl_autoload_register('text_template_autoload');

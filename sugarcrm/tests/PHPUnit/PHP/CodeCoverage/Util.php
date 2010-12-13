@@ -57,7 +57,7 @@ require_once 'PHP/Token/Stream/CachingFactory.php';
  * @author     Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @copyright  2009-2010 Sebastian Bergmann <sb@sebastian-bergmann.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 1.0.0
+ * @version    Release: 1.0.2
  * @link       http://github.com/sebastianbergmann/php-code-coverage
  * @since      Class available since Release 1.0.0
  */
@@ -268,7 +268,7 @@ class PHP_CodeCoverage_Util
 
             $ignore = FALSE;
             $stop   = FALSE;
-            $tokens = PHP_Token_Stream_CachingFactory::get($filename);
+            $tokens = PHP_Token_Stream_CachingFactory::get($filename)->tokens();
 
             foreach ($tokens as $token) {
                 switch (get_class($token)) {
