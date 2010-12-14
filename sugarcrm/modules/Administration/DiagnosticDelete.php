@@ -49,7 +49,7 @@ if(empty($_REQUEST['file']) || empty($_REQUEST['guid']))
 else
 {
     // Make sure the guid and file are valid file names for security purposes
-    clean_string($_REQUEST['guid'], "FILE");
+    clean_string($_REQUEST['guid'], "ALPHANUM");
     clean_string($_REQUEST['file'], "FILE");
     
 	//Making sure someone doesn't pass a variable name as a false reference
