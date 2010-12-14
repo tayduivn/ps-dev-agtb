@@ -1029,6 +1029,11 @@ class SugarThemeRegistry
         // set some of the expected globals
         $GLOBALS['barChartColors'] = self::current()->barChartColors;
         $GLOBALS['pieChartColors'] = self::current()->pieChartColors;
+        
+        if(!headers_sent())
+        {
+            setcookie('sugar_user_theme', $themeName, time() + 31536000); // expires in a year
+        }
     }
     
     /**
