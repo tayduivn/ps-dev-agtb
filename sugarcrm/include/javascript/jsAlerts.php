@@ -197,7 +197,8 @@ EOQ;
 				SELECT calls.id, name, reminder_time, description, date_start 
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id 
 				WHERE calls_users.user_id ='".$current_user->id."' 
-					AND calls.reminder_time != -1 
+				    AND calls_users.accept_status != 'decline'	
+				    AND calls.reminder_time != -1 
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'
 				and date_start >= '".$dateTimeNow."'"; 
@@ -213,7 +214,8 @@ EOQ;
 				SELECT calls.id, name, reminder_time, description, date_start
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id 
 				WHERE calls_users.user_id ='".$current_user->id."' 
-					AND calls.reminder_time != -1
+                    AND calls_users.accept_status != 'decline'  				
+				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'" .
 				"AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')	";
@@ -230,7 +232,8 @@ EOQ;
 				SELECT calls.id, name, reminder_time, CAST(description AS varchar(8000)), date_start
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id 
 				WHERE calls_users.user_id ='".$current_user->id."' 
-					AND calls.reminder_time != -1 
+                    AND calls_users.accept_status != 'decline'  				
+				    AND calls.reminder_time != -1 
 					AND calls_users.deleted != 1 
 					AND calls.status != 'Held'
 					AND date_start  >= '".$dateTimeNow."'"; 
