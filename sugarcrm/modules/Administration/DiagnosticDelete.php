@@ -37,14 +37,17 @@ echo getClassicModuleTitle(
         true
         );
 
-
-if(!isset($_REQUEST['file']) || !isset($_REQUEST['guid']))
+if(empty($_REQUEST['file']) || empty($_REQUEST['guid']))
 {
 	echo $mod_strings['LBL_DIAGNOSTIC_DELETE_ERROR'];
 }
 else
 {
-	//Making sure someone doesn't pass a variable name as a false reference
+    // Sanity checking on request parameters using clean_string($str, "FILE")
+    clean_string($_REQUEST['guid'], "FILE");
+    clean_string($_REQUEST['file'], "FILE");
+    
+    //Making sure someone doesn't pass a variable name as a false reference
 	//  to delete a file
 	if(strcmp(substr($_REQUEST['file'], 0, 10), "diagnostic") != 0)
 	{
