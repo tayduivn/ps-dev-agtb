@@ -42,10 +42,12 @@ class SugarFieldBool extends SugarFieldBase {
     public function getEmailTemplateValue($inputField, $vardef, $displayParams = array(), $tabindex = 0){
         global $app_list_strings;
         // This does not return a smarty section, instead it returns a direct value
-        if ( $inputField == 'bool_true' || $inputField == true ) {
+        if ( $inputField == 'bool_true' || $inputField === true ) { // Note: true must be absolute true
             return $app_list_strings['checkbox_dom']['1'];
-        } else {
+        } else if ( $inputField == 'bool_false' || $inputField === false){ // Note: false must be absolute false
             return $app_list_strings['checkbox_dom']['2'];
+        } else { // otherwise we return blank display
+            return '';
         }
     }
 
