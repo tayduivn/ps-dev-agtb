@@ -333,10 +333,10 @@ function sugar_cached($file)
 {
     static $cdir = null;
     if(empty($cdir)) {
-        $cdir = trim($GLOBALS['sugar_config']['cache_dir'], '/\\')."/";
+        $cdir = trim($GLOBALS['sugar_config']['cache_dir'], '/\\');
     }
     if(empty($cdir)) {
-        $cdir = "cache/";
+        $cdir = "cache";
     }
-    return $cdir.$file;
+    return "$cdir/$file";
 }
