@@ -36,6 +36,7 @@ class validDateTest extends Sugar_PHPUnit_Framework_TestCase
 	    $GLOBALS['beanList'] = $beanList;
 	    $GLOBALS['beanFiles'] = $beanFiles;
 	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->setPreference("datef", "m/d/Y");
 	}
 
 	public static function tearDownAfterClass()
