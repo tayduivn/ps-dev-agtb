@@ -31,6 +31,7 @@ Calendar.setup = function (params) {
                     draggable:false,
                     close:true
                 });
+                
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));
                 dialog.setBody('<div id="' + showButton + '_div"></div>');
                 dialog.render(document.body);
@@ -81,6 +82,25 @@ Calendar.setup = function (params) {
                 calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos);
                 calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos);
                 calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos);
+                
+                //Configure the month and days label with localization support where defined
+                if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
+                {
+                	if(SUGAR.language.languages['app_list_strings']['dom_cal_month_long'].length == 13)
+                	{
+                	   SUGAR.language.languages['app_list_strings']['dom_cal_month_long'].shift();
+                	}
+                	calendar.cfg.setProperty('MONTHS_LONG', SUGAR.language.languages['app_list_strings']['dom_cal_month_long']);
+                }
+                
+                if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_day_short'] != 'undefined')
+                {
+                	if(SUGAR.language.languages['app_list_strings']['dom_cal_day_short'].length == 8)
+                	{
+                	   SUGAR.language.languages['app_list_strings']['dom_cal_day_short'].shift();
+                	}                	
+                	calendar.cfg.setProperty('WEEKDAYS_SHORT', SUGAR.language.languages['app_list_strings']['dom_cal_day_short']);
+                }
                 
                 calendar.render();
                 
