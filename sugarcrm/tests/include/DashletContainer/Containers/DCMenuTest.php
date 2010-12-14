@@ -3,7 +3,7 @@
 require_once 'include/DashletContainer/Containers/DCAbstract.php';
 require_once 'include/DashletContainer/Containers/DCMenu.php';
 
-class DCFactoryTest extends Sugar_PHPUnit_Framework_TestCase
+class DCMenuTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testGetMenuItem()
     {
