@@ -32,8 +32,8 @@ if(!isset($_REQUEST['file']))
 {
 	die('Did not receive a filename to download');
 }
-
-$filesize = filesize(getcwd()."/{$GLOBALS['sugar_config']['cache_dir']}diagnostic/".$_REQUEST['file'].".zip");
+// FIXME: security problem!
+$filesize = filesize(sugar_cached("diagnostic/").$_REQUEST['file'].".zip");
 
 header('Content-type: application/zip');
 header("Pragma: public");
@@ -44,7 +44,7 @@ header("Content-Disposition: attachment; filename=".$_REQUEST['file'].".zip");
 header("Content-Transfer-Encoding: binary");
 header("Content-Length: $filesize");
 
-readfile(getcwd().'/'.$GLOBALS['sugar_config']['cache_dir'].'diagnostic/'.$_REQUEST['file'].'.zip');
+readfile(sugar_cached("diagnostic/").$_REQUEST['file'].'.zip');
 
 
 ?>

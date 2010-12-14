@@ -395,7 +395,7 @@ function preflightCheckJsonDiffFiles($persistence) {
 
 	// file preflight checks
 	logThis('verifying md5 checksums for files...');
-	$cache_html_files = findAllFilesRelative( "{$GLOBALS['sugar_config']['cache_dir']}layout", array());
+	$cache_html_files = findAllFilesRelative(sugar_cached("layout"), array());
 
 	foreach($persistence['upgrade_files'] as $file) {
 		if(strpos($file, '.md5'))

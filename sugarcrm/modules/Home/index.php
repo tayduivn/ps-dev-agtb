@@ -39,13 +39,13 @@ global $current_user, $sugar_version, $sugar_config, $beanFiles;
 require_once('include/MySugar/MySugar.php');
 
 // build dashlet cache file if not found
-if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
+if(!is_file($cachefile = sugar_cached('dashlets/dashlets.php'))) {
     require_once('include/Dashlets/DashletCacheBuilder.php');
 
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 }
-require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+require_once $cachefile;
 
 require('modules/Home/dashlets.php');
 

@@ -254,7 +254,8 @@ class VardefManager{
 		if(empty($GLOBALS['dictionary'][$object]) || $refresh){
 			//if the consumer has demanded a refresh or the cache/modules... file
 			//does not exist, then we should do out and try to reload things
-			if($refresh || !file_exists($cachedfile = sugar_cached('modules/'). $module . '/' . $object . 'vardefs.php')){
+			$cachedfile = sugar_cached('modules/'). $module . '/' . $object . 'vardefs.php';
+			if($refresh || !file_exists($cachedfile)){
 				VardefManager::refreshVardefs($module, $object);
 			}
 

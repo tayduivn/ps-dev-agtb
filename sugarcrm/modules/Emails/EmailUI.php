@@ -49,7 +49,7 @@ class EmailUI {
 
 		$this->smarty = new Sugar_Smarty();
 		$this->folder = new SugarFolder();
-		$this->userCacheDir = "{$sugar_config['cache_dir']}modules/Emails/{$current_user->id}";
+		$this->userCacheDir = sugar_cached("modules/Emails/{$current_user->id}");
 		$this->db = DBManagerFactory::getInstance();
 	}
 
@@ -1110,7 +1110,7 @@ eoq;
 			foreach($personals as $k => $personalAccount) {
 				if(in_array($personalAccount->id, $showFolders)) {
 					// check for cache value
-					$cacheRoot = "{$sugar_config['cache_dir']}modules/Emails/{$personalAccount->id}";
+					$cacheRoot = sugar_cached("modules/Emails/{$personalAccount->id}");
 					$this->preflightEmailCache($cacheRoot);
 
 					if($this->validCacheFileExists($personalAccount->id, 'folders', "folders.php")) {
@@ -1150,7 +1150,7 @@ eoq;
 		foreach($beans as $k => $groupAccount) {
 			if(in_array($groupAccount->id, $showFolders)) {
 				// check for cache value
-				$cacheRoot = "{$sugar_config['cache_dir']}modules/Emails/{$groupAccount->id}";
+				$cacheRoot = sugar_cached("modules/Emails/{$groupAccount->id}");
 				$this->preflightEmailCache($cacheRoot);
 				//$groupAccount->connectMailserver();
 
@@ -1311,9 +1311,9 @@ eoq;
 		if ($ie->isPop3Protocol()) {
 			// get the UIDL from database;
 			$cachedUIDL = md5($uid);
-			$cache = "{$sugar_config['cache_dir']}modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$cachedUIDL}.php";
+			$cache = sugar_cached("modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$cachedUIDL}.php");
 		} else {
-			$cache = "{$sugar_config['cache_dir']}modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$uid}.php";
+			$cache = sugar_cached("modules/Emails/{$ie->id}/messages/{$ie->mailbox}{$uid}.php");
 		}
 		if(file_exists($cache)) {
 			include($cache); // profides $cacheFile
@@ -1325,8 +1325,6 @@ eoq;
 				$this->parseAttachmentInfo($actualAttachmentInfo, $attachmentHtmlData);
 				if (sizeof($actualAttachmentInfo) > 0) {
 					foreach($actualAttachmentInfo as $key => $value) {
-						$attachmentid;
-						$fileName;
 						$datasplit = explode("&", $value);
 						$attachmentIdArray = explode("=", $datasplit[0]);
 						$attachmentid = $attachmentIdArray[1];
@@ -1337,7 +1335,7 @@ eoq;
 						//$destination = clean_path("{$this->userCacheDir}/{$guid}{$fileName}");
 						$destination = clean_path("{$this->userCacheDir}/{$guid}");
 
-						$attachmentFilePath = "{$sugar_config['cache_dir']}modules/Emails/{$ie->id}/attachments/{$attachmentid}";
+						$attachmentFilePath = sugar_cached("modules/Emails/{$ie->id}/attachments/{$attachmentid}");
 						copy($attachmentFilePath, $destination);
 						$ret['attachments'][$guid] = array();
 						$ret['attachments'][$guid]['id'] = $guid . $fileName;
@@ -1478,13 +1476,11 @@ eoq;
 		}
 
 		//Get the module language for javascript
-	    if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $_REQUEST['qc_module'] . '/' . $GLOBALS['current_language'] . '.js')) {
+	    if(!is_file(sugar_cached('jsLanguage/') . $_REQUEST['qc_module'] . '/' . $GLOBALS['current_language'] . '.js')) {
             require_once('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache($_REQUEST['qc_module'], $GLOBALS['current_language']);
         }
-		$jsLanguage = '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/'
-		            . $_REQUEST['qc_module'] . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c='
-		            . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+		$jsLanguage = getVersionedScript("jsLanguage/{$_REQUEST['qc_module']}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
 
 		//BEGIN SUGARCRM flav=ent ONLY
 		if($focus->object_name == 'Contact') {
@@ -1494,31 +1490,9 @@ eoq;
 	    	if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
 			   unset($EditView->sectionPanels[strtoupper('lbl_portal_information')]);
 			} else {
+			   $jsLanguage .= getVersionedScript("modules/Contacts/Contact.js");
+			   $jsLanguage .= getVersionedScript("modules/Contacts/QuickCreateEmailContact.js");
 			   $jsLanguage .= <<<EOQ
-			    <script src="modules/Contacts/Contact.js"></script>
-			    <script src="modules/Contacts/QuickCreateEmailContact.js"></script>
-			    <script language="javascript">
-				   addToValidateComparison('form_EmailQCView_Contacts', 'portal_password', 'varchar', false, SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD') + SUGAR.language.get('Contacts', 'LBL_PORTAL_PASSWORD'), 'portal_password1');
-		           addToValidateVerified('form_EmailQCView_Contacts', 'portal_name_verified', 'bool', false, SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'));
-		           YAHOO.util.Event.on('portal_name', 'blur', validatePortalName);
-				   YAHOO.util.Event.on('portal_name', 'keydown', handleKeyDown);
-			    </script>
-EOQ;
-			}
-		}
-		//END SUGARCRM flav=ent ONLY
-
-		//BEGIN SUGARCRM flav=ent ONLY
-		if($focus->object_name == 'Contact') {
-			$admin = new Administration();
-			$admin->retrieveSettings();
-
-	    	if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
-			   unset($EditView->sectionPanels[strtoupper('lbl_portal_information')]);
-			} else {
-			   $jsLanguage .= <<<EOQ
-			    <script src="modules/Contacts/Contact.js"></script>
-			    <script src="modules/Contacts/QuickCreateEmailContact.js"></script>
 			    <script language="javascript">
 				   addToValidateComparison('form_EmailQCView_Contacts', 'portal_password', 'varchar', false, SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD') + SUGAR.language.get('Contacts', 'LBL_PORTAL_PASSWORD'), 'portal_password1');
 		           addToValidateVerified('form_EmailQCView_Contacts', 'portal_name_verified', 'bool', false, SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'));
@@ -2088,7 +2062,7 @@ function getLastRobin($ie) {
 
 function setLastRobin($ie, $lastRobin) {
     global $sugar_config;
-    $cacheFolderPath = clean_path("{$sugar_config['cache_dir']}modules/Emails/{$ie->id}/folders");
+    $cacheFolderPath = sugar_cached("modules/Emails/{$ie->id}/folders");
     if (!file_exists($cacheFolderPath)) {
     	mkdir_recursive($cacheFolderPath);
     }
@@ -2703,7 +2677,7 @@ eoq;
 
 	function clearInboundAccountCache($ieId) {
 		global $sugar_config;
-		$cacheRoot = getcwd()."/{$sugar_config['cache_dir']}modules/Emails/{$ieId}";
+		$cacheRoot = sugar_cached("modules/Emails/{$ieId}");
 		$files = findAllFiles($cacheRoot."/messages/", array());
 		foreach($files as $file) {
 			unlink($file);
@@ -3056,7 +3030,7 @@ eoq;
 			$refreshOffset = $this->cacheTimeouts[$type]; // use defaults
 		}
 
-		$cacheFilePath = getcwd()."/{$sugar_config['cache_dir']}modules/Emails/{$ieId}/{$type}/{$file}";
+		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
 		if(file_exists($cacheFilePath)) {
 			return true;
 		}
@@ -3075,7 +3049,7 @@ eoq;
 	function getCacheValue($ieId, $type, $file, $key) {
 		global $sugar_config;
 
-		$cacheFilePath = "{$sugar_config['cache_dir']}modules/Emails/{$ieId}/{$type}/{$file}";
+		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3103,7 +3077,7 @@ eoq;
 	function getCacheTimestamp($ieId, $type, $file) {
 		global $sugar_config;
 
-		$cacheFilePath = "{$sugar_config['cache_dir']}modules/Emails/{$ieId}/{$type}/{$file}";
+		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3128,7 +3102,7 @@ eoq;
 	function setCacheTimestamp($ieId, $type, $file) {
 		global $sugar_config;
 
-		$cacheFilePath = "{$sugar_config['cache_dir']}modules/Emails/{$ieId}/{$type}/{$file}";
+		$cacheFilePath = sugar_cached("modules/Emails/{$ieId}/{$type}/{$file}");
 		$cacheFile = array();
 
 		if(file_exists($cacheFilePath)) {
@@ -3154,7 +3128,7 @@ eoq;
 	function writeCacheFile($key, $var, $ieId, $type, $file) {
 		global $sugar_config;
 
-		$the_file = clean_path("{$sugar_config['cache_dir']}/modules/Emails/{$ieId}/{$type}/{$file}");
+		$the_file = sugar_cached("/modules/Emails/{$ieId}/{$type}/{$file}");
 		$timestamp = strtotime('now');
 		$array = array();
 		$array['timestamp'] = $timestamp;

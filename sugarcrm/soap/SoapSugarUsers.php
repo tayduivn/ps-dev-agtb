@@ -1491,7 +1491,7 @@ function get_mailmerge_document($session, $file_name, $fields)
         return array('result'=>'', 'error'=>$error->get_soap_array());
     }
     $html = '';
-    $file_name = $GLOBALS['sugar_config']['cache_dir'].'MergedDocuments/'.$file_name;
+    $file_name = sugar_cached('MergedDocuments/').$file_name;
 
     $master_fields = array();
     $related_fields = array();
@@ -1616,7 +1616,7 @@ function get_mailmerge_document2($session, $file_name, $fields)
         return array('result'=>'', 'error'=>$error->get_soap_array());
     }
     $html = '';
-    $file_name = $GLOBALS['sugar_config']['cache_dir'].'MergedDocuments/'.$file_name;
+    $file_name = sugar_cached('MergedDocuments/').$file_name;
 
     $master_fields = array();
     $related_fields = array();

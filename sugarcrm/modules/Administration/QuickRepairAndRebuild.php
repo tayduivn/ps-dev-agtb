@@ -232,7 +232,7 @@ class RepairAndClear
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARSMARTY']}</h3>";
-		$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'smarty/templates_c', '.tpl.php');
+		$this->_clearCache(sugar_cached('smarty/templates_c'), '.tpl.php');
 	}
 	public function clearXMLfiles()
 	{
@@ -258,7 +258,7 @@ class RepairAndClear
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARDASHLET']}</h3>";
-		$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'dashlets', '.php');
+		$this->_clearCache(sugar_cached('dashlets'), '.php');
 	}
     public function clearThemeCache()
     {
@@ -280,10 +280,10 @@ class RepairAndClear
 		if(!in_array( translate('LBL_ALL_MODULES'),$this->module_list) && !empty($this->module_list))
 		{
 			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules/'.$this->_getModuleNamePlural($module_name_singular), '.tpl');
+				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), '.tpl');
 		}
 		else
-			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules', '.tpl');
+			$this->_clearCache(sugar_cached('modules/'), '.tpl');
 	}
 	public function clearVardefs()
 	{
@@ -292,10 +292,10 @@ class RepairAndClear
 		if(!empty($this->module_list) && is_array($this->module_list) && !in_array( translate('LBL_ALL_MODULES'),$this->module_list))
 		{
 			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules/'.$this->_getModuleNamePlural($module_name_singular), 'vardefs.php');
+				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), 'vardefs.php');
 		}
 		else
-			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules', 'vardefs.php');
+			$this->_clearCache(sugar_cached('modules/'), 'vardefs.php');
 	}
 	public function clearJsFiles()
 	{
@@ -305,11 +305,11 @@ class RepairAndClear
 		if(!in_array( translate('LBL_ALL_MODULES'),$this->module_list) && !empty($this->module_list))
 		{
 			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules/'.$this->_getModuleNamePlural($module_name_singular), '.js');
+				$this->_clearCache(sugar_cached('modules/').$this->_getModuleNamePlural($module_name_singular), '.js');
 		}
 
 		else
-			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules', '.js');
+			$this->_clearCache(sugar_cached('modules/'), '.js');
 
 	}
 	public function clearJsLangFiles()
@@ -319,10 +319,10 @@ class RepairAndClear
 		if(!in_array(translate('LBL_ALL_MODULES'),$this->module_list ) && !empty($this->module_list))
 		{
 			foreach($this->module_list as $module_name_singular )
-				$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'jsLanguage/'.$this->_getModuleNamePlural($module_name_singular), '.js');
+				$this->_clearCache(sugar_cached('jsLanguage/').$this->_getModuleNamePlural($module_name_singular), '.js');
 		}
 		else
-			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'jsLanguage', '.js');
+			$this->_clearCache(sugar_cached('jsLanguage'), '.js');
 	}
 	/**
 	 * Remove the language cache files from cache/modules/<module>/language

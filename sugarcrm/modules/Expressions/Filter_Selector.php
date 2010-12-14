@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -37,7 +37,7 @@ global $theme;
 require_once('include/utils/expression_utils.php');
 
 require_once('include/ListView/ProcessView.php');
-require_once('modules/WorkFlowTriggerShells/MetaArray.php');	
+require_once('modules/WorkFlowTriggerShells/MetaArray.php');
 
 global $current_user;
 global $mod_strings;
@@ -49,20 +49,20 @@ global $selector_meta_array;
 
 
 	$exp_object = new Expression();
-	
 
-	
+
+
 	if(isset($_REQUEST['record']) && $_REQUEST['record']!='') {
   		  $exp_object->retrieve($_REQUEST['record']);
 	//end expression object
 	}
-			
+
 	foreach($exp_object->selector_popup_fields as $field){
 		if(isset($_REQUEST[$field])){
 			$exp_object->$field = $_REQUEST[$field];
 		}
-	}	
-	
+	}
+
 	////HANDLE META ARRAY FIELDS
 	if(isset($_REQUEST['exp_meta_type']) && $_REQUEST['exp_meta_type']!='') {
   		  $exp_meta_array = $selector_meta_array[$_REQUEST['exp_meta_type']];
@@ -71,8 +71,8 @@ global $selector_meta_array;
 	} else {
 		sugar_die("You need a meta filter name to access this popup");
 	}
-	
-	
+
+
 
 
 $xtpl=new XTemplate ('modules/Expressions/Filter_Selector.html');
@@ -80,11 +80,11 @@ $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign("RETURN_PREFIX", $exp_object->return_prefix);
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
-if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
+if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
     require_once('include/language/jsLanguage.php');
     jsLanguage::createAppStringsCache($GLOBALS['current_language']);
 }
-$javascript_language_files = '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+$javascript_language_files = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
 $xtpl->assign("JAVASCRIPT_LANGUAGE_FILES", $javascript_language_files);
 
 insert_popup_header($theme);
@@ -107,53 +107,53 @@ if(isset($exp_meta_array['select_field']) && $exp_meta_array['select_field']===t
 	$temp_module = get_module_info($exp_object->lhs_module);
 	$temp_module->call_vardef_handler("normal_trigger");
 	$temp_module->vardef_handler->start_none = true;
-	$field_array = $temp_module->vardef_handler->get_vardef_array();  
+	$field_array = $temp_module->vardef_handler->get_vardef_array();
 	asort($field_array);
-	
+
 	$field_select = get_select_options_with_id($field_array, $exp_object->lhs_field);
 	$xtpl->assign('FIELD_SELECT', $field_select);
 
 	$selector_onchange = "onchange=\"update_filter_select()\";";
 	$xtpl->assign('SELECTOR_ONCHANGE', $selector_onchange);
-	
+
 	$xtpl->assign('LHS_MODULE', $exp_object->lhs_module);
 	$xtpl->assign('ID', $exp_object->id);
 	$xtpl->assign('SHOW_FIELD', $exp_object->show_field);
 
-	
+
 	$xtpl->parse("field_selector");
-	$xtpl->out("field_selector");	
-	
-//end if field selector is true	
+	$xtpl->out("field_selector");
+
+//end if field selector is true
 } else {
 
 	$form_name = "FieldViewNonSelector";
 	$xtpl->assign('LHS_FIELD', $exp_object->lhs_field);
-	
+
 	if(isset($_REQUEST['rhs_value']) && $_REQUEST['rhs_value']!='') {
   		  $exp_object->rhs_value = $_REQUEST['rhs_value'];
 	//end expression object
 	}
-	
+
 	if(isset($_REQUEST['time_type']) && $_REQUEST['lhs_field']!='') {
   		  $exp_object->lhs_field = $_REQUEST['lhs_field'];
 	//end expression object
-	}	
+	}
 
-	
+
 	$xtpl->parse("non_field_selector");
 	$xtpl->out("non_field_selector");
 
-	
+
 //end else field selector is false
-}	
+}
 
 
 
 if($exp_object->lhs_field != ""){
 
 	$filter_array = $exp_object->build_field_filter($exp_object->lhs_module, $exp_object->lhs_field, $exp_meta_array['enum_multi']);
-	
+
 	$xtpl->assign('VALUE', $filter_array['value_select']['display']);
 	$xtpl->assign('OPERATOR_JAVASCRIPT', $filter_array['operator']['jscript']);
 	$xtpl->assign("OPERATOR", $filter_array['operator']['display']);
@@ -161,21 +161,21 @@ if($exp_object->lhs_field != ""){
 	$xtpl->assign('FIELD_TYPE', $filter_array['type']);
 	$xtpl->assign('REAL_FIELD_TYPE', $filter_array['real_type']);
 	$xtpl->assign('FIELD_NAME', $filter_array['name']);
-	
+
 
 ///////////SHOW TIME COMPONENTS if the workflow is of type "Time"
-	if($exp_meta_array['time_type']===true){ 	
+	if($exp_meta_array['time_type']===true){
 
 		$xtpl->assign('TIME_INTERVAL', $filter_array['time_select']['display']);
-		
-		
+
+
 //end if to show time components
-}	
-	
+}
+
 	$xtpl->assign('FORM_NAME', $form_name);
 	$xtpl->parse("main");
 	$xtpl->out("main");
-	
+
 	//rsmith
 	$temp_module = get_module_info($exp_object->lhs_module);
 	$field = $exp_object->lhs_field;
@@ -201,6 +201,6 @@ if($exp_object->lhs_field != ""){
 	}
 	echo $js;
 	//rsmith
-}	
-	
+}
+
 ?>

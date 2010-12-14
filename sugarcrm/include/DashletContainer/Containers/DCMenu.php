@@ -113,12 +113,12 @@ EOQ;
 		$build = urlencode($GLOBALS['sugar_build']);
 		$sugarsurvey = "http://survey-js.sugarcrm.com/SugarSurvey/index.php?do=jssurvey&version={$version}&build={$build}&flavor={$flavor}";
 		//END SUGARCRM flav=sugarsurvey ONLY
-		$html = getVersionedPath('include/DashletContainer/Containers/DCMenu.js');
+		$html = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
 		// TODO: Come back and make a SugarFields grouping file for all of these
-		$html .= getVersionedPath('include/SugarFields/Fields/Collection/SugarFieldCollection.js');
-		$html .= getVersionedPath('include/SugarFields/Fields/Teamset/Teamset.js');
-		$html .= getVersionedPath('include/JSON.js');
-		$html .= getVersionedPath('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
+		$html .= getVersionedScript('include/SugarFields/Fields/Collection/SugarFieldCollection.js');
+		$html .= getVersionedScript('include/SugarFields/Fields/Teamset/Teamset.js');
+		$html .= getVersionedScript('include/JSON.js');
+		$html .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
 		$html .= <<<EOQ
 		<script>
 

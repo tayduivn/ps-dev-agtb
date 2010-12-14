@@ -29,34 +29,34 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
 	public function preDisplay()
     {
         if(!is_admin($GLOBALS['current_user']))
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
     }
-    
+
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
-	    
+
     	return array(
     	   "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
     	   $mod_strings['LBL_PDFMODULE_NAME']
     	   );
     }
-    
+
 	/**
 	 * @see SugarView::display()
 	 */
 	public function display()
 	{
 	    global $mod_strings, $app_strings, $app_list_strings;
-	    
+
         require_once("modules/Configurator/metadata/SugarpdfSettingsdefs.php");
         if(file_exists('custom/modules/Configurator/metadata/SugarpdfSettingsdefs.php')){
             require_once('custom/modules/Configurator/metadata/SugarpdfSettingsdefs.php');
         }
-        
+
         if(!empty($_POST['save'])){
             // Save the logos
             $error=$this->checkUploadImage();
@@ -71,16 +71,17 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
                 }
                 if(!empty($_POST["sugarpdf_pdf_class"]) && $_POST["sugarpdf_pdf_class"] != PDF_CLASS){
                     // clear the cache for quotes detailview in order to switch the pdf class.
-                    if(is_file($GLOBALS['sugar_config']['cache_dir'].'modules/Quotes/DetailView.tpl'))
-                        unlink($GLOBALS['sugar_config']['cache_dir'].'modules/Quotes/DetailView.tpl');
+                    if(is_file($cachedfile = sugar_cached('modules/Quotes/DetailView.tpl'))) {
+                        unlink($cachedfile);
+                    }
                 }
                 $focus->saveConfig();
                 header('Location: index.php?module=Administration&action=index');
             }
         }
-        
+
         if(!empty($_POST['restore'])){
-            $focus = new Administration();    
+            $focus = new Administration();
             foreach($_POST as $key => $val) {
                 $prefix = $focus->get_config_prefix($key);
                 if(in_array($prefix[0], $focus->config_categories)) {
@@ -93,18 +94,18 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
             }
             header('Location: index.php?module=Configurator&action=SugarpdfSettings');
         }
-        
+
         echo getClassicModuleTitle(
-                "Administration", 
+                "Administration",
                 array(
                     "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                    $mod_strings['LBL_PDFMODULE_NAME'],
-                   ), 
+                   ),
                 true
                 );
-        
+
         $pdf_class = array("TCPDF"=>"TCPDF","EZPDF"=>"EZPDF");
-        
+
         $this->ss->assign('APP_LIST', $app_list_strings);
         $this->ss->assign("JAVASCRIPT",get_set_focus_js());
         $this->ss->assign("SugarpdfSettings", $SugarpdfSettings);
@@ -116,7 +117,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
             $this->ss->assign("selected_pdf_class", PDF_CLASS);
         }
         $this->ss->assign("pdf_class", $pdf_class);
-        
+
         if(!empty($error)){
             $this->ss->assign("error", $mod_strings[$error]);
         }
@@ -125,9 +126,9 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
         }
         else
             $this->ss->assign("GD_WARNING", 0);
-        
+
         $this->ss->display('modules/Configurator/tpls/SugarpdfSettings.tpl');
-        
+
         require_once("include/javascript/javascript.php");
         $javascript = new javascript();
         $javascript->setFormName("ConfigureSugarpdfSettings");
@@ -135,10 +136,10 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
             if(isset($v["required"]) && $v["required"] == true)
                 $javascript->addFieldGeneric($k, "varchar", $v['label'], TRUE, "");
         }
-        
+
         echo $javascript->getScript();
     }
-    
+
     private function checkUploadImage()
     {
         $error="";

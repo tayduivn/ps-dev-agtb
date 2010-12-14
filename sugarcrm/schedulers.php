@@ -31,7 +31,7 @@ require_once('modules/Campaigns/utils.php');
 $GLOBALS['log']->debug('launching job:');
 //END SUGARCRM flav=int ONLY
 
-$cachePath = $GLOBALS['sugar_config']['cache_dir'].'modules/Schedulers';
+$cachePath = sugar_cached('modules/Schedulers');
 $pid = 'pid';
 if(!is_dir($cachePath)) {
 	mkdir_recursive($cachePath);

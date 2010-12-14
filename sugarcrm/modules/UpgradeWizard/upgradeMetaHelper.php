@@ -78,7 +78,7 @@ class UpgradeMetaHelper{
 	 * @return $return_array Two-dimensional Array of [module][modified file(s) Array]
 	 */
 		function getModifiedModules() {
-		
+
 		$md5_string = array();
 		if(file_exists(clean_path(getcwd().'/files.md5'))){
 			require(clean_path(getcwd().'/files.md5'));
@@ -153,7 +153,7 @@ function saveMatchingFilesQueries($currStep,$value){
 }
 
 function getAllCustomizedModulesBeyondStudio() {
-	
+
 	require_once('modules/UpgradeWizard/uw_utils.php');
 	$md5_string = array();
 	if(file_exists(clean_path(getcwd().'/files.md5'))){
@@ -218,7 +218,7 @@ function getAllCustomizedModulesBeyondStudio() {
  * modules. Show the list in the preflight check UI.
  */
 function getAllCustomizedModules() {
-		
+
 		require_once('files.md5');
 
 	    $return_array = array();
@@ -357,8 +357,8 @@ function getAllCustomizedModules() {
 						   mkdir('custom/modules/'.$module_name.'/metadata/', 0755);
 						}
 
-						if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'.$module_name)) {
-						   rmdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/'.$module_name);
+						if(file_exists(sugar_cached('modules/').$module_name)) {
+						   rmdir_recursive(sugar_cached('modules/').$module_name);
 						}
 
 						copy($newFile, 'custom/modules/'.$module_name.'/metadata/'.$lowerCaseView.'defs.php');

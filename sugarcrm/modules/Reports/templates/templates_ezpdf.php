@@ -209,20 +209,20 @@ function template_handle_pdf(&$reporter, $stream = true) {
 		       		checkMissingField($reporter, $reporter->focus, $dis_col, $stream);
 		       	} else {
 		        	$rel_modules =  explode(':',$dis_col['table_key']);
-			       	unset($rel_modules[0]);       	 
+			       	unset($rel_modules[0]);
 			       	$rel_handler = $reporter->focus->call_relationship_handler("module_dir", true);
 			        $rel_handler->set_rel_vardef_fields($rel_modules[1]);
 			        $rel_handler->build_info(false);
 			        unset($rel_modules[1]);
-			        
-			       	foreach($rel_modules as $rel_module){        
+
+			       	foreach($rel_modules as $rel_module){
 				        $rel_handler = $rel_handler->rel1_bean->call_relationship_handler("module_dir", true);
 				        $rel_handler->set_rel_vardef_fields($rel_module);
 			            $rel_handler->build_info(false);
 			       	}
 			       	checkMissingField($reporter, $rel_handler->rel1_bean, $dis_col, $stream);
 		       	}
-	       }      
+	       }
        }
     }
 
@@ -475,18 +475,18 @@ function postprocess_pdf(&$pdf,$reportname,$stream) {
 	$filename = str_replace($cr, '_', $reportname.$filenamestamp.'.pdf');
 	if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT'])) {
 		$filename = urlencode($filename);
-	} 
+	}
 	$stream_options =	array(	'Content-Disposition' => $filename,
 								'compress'            => 1,
 						);
 	if($stream) {
 		$pdf->ezStream($stream_options);
 	} else {
-		$fp = sugar_fopen($GLOBALS['sugar_config']['cache_dir'].'pdf/'.$filename,'w');
+		$fp = sugar_fopen(sugar_cached('pdf/').$filename,'w');
 		fwrite($fp, $pdf->output());
 		fclose($fp);
 
-		return $GLOBALS['sugar_config']['cache_dir'].'pdf/'.$filename;
+		return sugar_cached('pdf/').$filename;
 	}
 
 	return $filename;

@@ -351,7 +351,7 @@ if( $show_files == true ){
 	$new_studio_mod_files = array();
 	$new_sugar_mod_files = array();
 
-	$cache_html_files = findAllFilesRelative( "{$GLOBALS['sugar_config']['cache_dir']}layout", array());
+	$cache_html_files = findAllFilesRelative( sugar_cached("layout"), array());
 
 	foreach($new_files as $the_file) {
 		if(substr(strtolower($the_file), -5, 5) == '.html' && in_array($the_file, $cache_html_files))

@@ -1111,7 +1111,7 @@ function return_module_language($language, $module, $refresh=false) {
 
 	// Bug 21559 - So we can get all the strings defined in the template, refresh
 	// the vardefs file if the cached language file doesn't exist.
-    if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/language/'.$language.'.lang.php')
+    if(!file_exists(sugar_cached('modules/'). $module . '/language/'.$language.'.lang.php')
 			&& !empty($GLOBALS['beanList'][$module])){
 		$object = $GLOBALS['beanList'][$module];
 		//BEGIN SUGARCRM flav!=sales ONLY
@@ -2264,7 +2264,13 @@ function getVersionedPath($path, $additional_attrs='')
 {
 	if(empty($GLOBALS['sugar_config']['js_custom_version'])) $GLOBALS['sugar_config']['js_custom_version'] = 1;
 	$js_version_key = isset($GLOBALS['js_version_key'])?$GLOBALS['js_version_key']:'';
-	$dev = inDeveloperMode() ? mt_rand():'';
+	if(inDeveloperMode()) {
+	    static $rand;
+	    if(empty($rand)) $rand = mt_rand();
+	    $dev = $rand;
+	} else {
+	    $dev = '';
+	}
 	if(is_array($additional_attrs)) {
 	    $additional_attrs = join("|",$additional_attrs);
 	}

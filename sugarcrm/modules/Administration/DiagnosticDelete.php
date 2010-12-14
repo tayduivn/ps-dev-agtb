@@ -33,11 +33,11 @@ if (!is_admin($GLOBALS['current_user'])) {
 }
 
 echo getClassicModuleTitle(
-        "Administration", 
+        "Administration",
         array(
             "<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",
            translate('LBL_DIAGNOSTIC_TITLE')
-           ), 
+           ),
         true
         );
 
@@ -58,11 +58,12 @@ else
 	{
 		die($mod_strings['LBL_DIAGNOSTIC_DELETE_DIE']);
 	}
+// FIXME: security problem!
 
-	if(file_exists("{$GLOBALS['sugar_config']['cache_dir']}diagnostic/".$_REQUEST['guid']."/".$_REQUEST['file'].".zip"))
+	if(file_exists($cachedfile = sugar_cached("diagnostic/".$_REQUEST['guid']."/".$_REQUEST['file'].".zip")))
 	{
-  	  unlink("{$GLOBALS['sugar_config']['cache_dir']}diagnostic/".$_REQUEST['guid']."/".$_REQUEST['file'].".zip");
-  	  rmdir("{$GLOBALS['sugar_config']['cache_dir']}diagnostic/".$_REQUEST['guid']);
+  	  unlink($cachedfile);
+  	  rmdir(dirname($cachedfile));
 	  echo $mod_strings['LBL_DIAGNOSTIC_DELETED']."<br><br>";
 	}
 	else

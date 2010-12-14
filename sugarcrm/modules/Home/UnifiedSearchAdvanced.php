@@ -47,17 +47,19 @@ class UnifiedSearchAdvanced {
                 $this->query_string = $query_string;
             }
         }
+        $this->cache_search = sugar_cached('modules/unified_search_modules.php');
+        $this->cache_display = sugar_cached('modules/unified_search_modules_display.php');
     }
 
 	function getDropDownDiv($tpl = 'modules/Home/UnifiedSearchAdvanced.tpl') {
 		global $app_list_strings, $app_strings;
 
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
+		if(!file_exists($this->cache_search))
 		{
 			$this->buildCache();
 		}
 
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+		include($this->cache_search);
 
 		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
 		{
@@ -145,12 +147,12 @@ class UnifiedSearchAdvanced {
 	}
 
 	function search() {
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
+		if(!file_exists($this->cache_search))
 		{
 			$this->buildCache();
 		}
 
-		include $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php';
+		include $this->cache_search;
 		require_once 'include/ListView/ListViewSmarty.php';
 
 		global $modListHeader, $beanList, $beanFiles, $current_language, $app_strings, $current_user, $mod_strings;
@@ -194,11 +196,11 @@ class UnifiedSearchAdvanced {
 		}
 
 
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists($this->cache_display))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
+		include($this->cache_display);
 		foreach($modules_to_search as $module=>$data)
 		{
 			if(isset($unified_search_modules_display[$module]['visible']) && !$unified_search_modules_display[$module]['visible'])
@@ -432,7 +434,7 @@ class UnifiedSearchAdvanced {
 		}
 
 		ksort($supported_modules);
-		write_array_to_file('unified_search_modules', $supported_modules, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+		write_array_to_file('unified_search_modules', $supported_modules, $this->cache_search);
 	}
 
 
@@ -443,12 +445,12 @@ class UnifiedSearchAdvanced {
 	{
 		global $mod_strings, $app_strings, $app_list_strings;
 
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists($this->cache_display))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
+		include($this->cache_display);
 
 		$sugar_smarty = new Sugar_Smarty();
 		$sugar_smarty->assign('APP', $app_strings);
@@ -469,12 +471,12 @@ class UnifiedSearchAdvanced {
 		}
 
 		//If the file doesn't exist
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
+		if(!file_exists($this->cache_search))
 		{
 			$this->buildCache();
 		}
 
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+		include($this->cache_search);
 
 		//Now add any new modules that may have since been added to unified_search_modules.php
 		foreach($unified_search_modules as $module=>$data)
@@ -520,14 +522,14 @@ class UnifiedSearchAdvanced {
 		}
 
 		//If the file doesn't exist
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
+		if(!file_exists($this->cache_search))
 		{
-			include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+			include($this->cache_search);
 			$this->buildCache();
 			return isset($unified_search_modules[$module]) ? true : false;
 		}
 
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+		include($this->cache_search);
 
 		//If modules is already in list, unset it and rebuild
 		if(isset($unified_search_modules[$module]))
@@ -619,7 +621,7 @@ class UnifiedSearchAdvanced {
 		 	return false;
 		 }
 
-		 return write_array_to_file('unified_search_modules', $unified_search_modules, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+		 return write_array_to_file('unified_search_modules', $unified_search_modules, $this->cache_search);
 	}
 
 	/**
@@ -630,12 +632,12 @@ class UnifiedSearchAdvanced {
 	 */
 	function saveGlobalSearchSettings()
 	{
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists($this->cache_display))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
+		include($this->cache_display);
 
 		if(isset($_REQUEST['enabled_modules']))
 		{
@@ -661,10 +663,10 @@ class UnifiedSearchAdvanced {
 
 	public static function unlinkUnifiedSearchModulesFile() {
 		//clear the unified_search_module.php file
-    	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
+    	if(file_exists($this->cache_search))
     	{
-    		$GLOBALS['log']->info("unlink {$GLOBALS['sugar_config']['cache_dir']}modules/unified_search_modules.php file");
-    		unlink($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+    		$GLOBALS['log']->info("unlink {$this->cache_search} file");
+    		unlink($this->cache_search);
     	}
 	}
 
@@ -718,11 +720,11 @@ class UnifiedSearchAdvanced {
 		   return false;
 		}
 
-	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, $this->cache_display))
 	    {
 	    	//Log error message and throw Exception
 	    	global $app_strings;
-	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'));
+	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array($this->cache_display));
 	    	$GLOBALS['log']->error($msg);
 	    	throw new Exception($msg);
 	    }

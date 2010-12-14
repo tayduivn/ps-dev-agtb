@@ -158,8 +158,9 @@ class InboundEmail extends SugarBean {
 	 * Sole constructor
 	 */
 	function InboundEmail() {
-	    $this->InboundEmailCachePath = $GLOBALS['sugar_config']['cache_dir'].'modules/InboundEmail';
-		parent::SugarBean();
+	    $this->InboundEmailCachePath = sugar_cached('modules/InboundEmail');
+	    $this->EmailCachePath = sugar_cached('modules/Emails');
+	    parent::SugarBean();
 		if(function_exists("imap_timeout")) {
 			/*
 			 * 1: Open
@@ -489,7 +490,7 @@ class InboundEmail extends SugarBean {
 		foreach($cacheUIDLs as $msgNo => $msgId) {
 			if (!in_array($msgId, $UIDLs)) {
 				$md5msgIds = md5($msgId);
-				$file = "{$sugar_config['cache_dir']}modules/Emails/{$this->id}/messages/INBOX{$md5msgIds}.PHP";
+				$file = "{$this->EmailCachePath}/{$this->id}/messages/INBOX{$md5msgIds}.PHP";
 				$GLOBALS['log']->debug("INBOUNDEMAIL: deleting file [ {$file} ] ");
 				if(file_exists($file)) {
 					if(!unlink($file)) {
@@ -1007,7 +1008,7 @@ class InboundEmail extends SugarBean {
 		$cacheDataExists = false;
 		$diff = array();
 		$results = array();
-		$cacheFilePath = clean_path("{$sugar_config['cache_dir']}modules/Emails/{$this->id}/folders/MsgNOToUIDLData.php");
+		$cacheFilePath = clean_path("{$this->EmailCachePath}/{$this->id}/folders/MsgNOToUIDLData.php");
 		if(file_exists($cacheFilePath)) {
 			$cacheDataExists = true;
 			if($fh = @fopen($cacheFilePath, "rb")) {
@@ -1048,7 +1049,7 @@ class InboundEmail extends SugarBean {
 				$diff = array_diff_assoc($UIDLs, $cacheUIDLs);
 				$diff = $this->pop3_shiftCache($diff, $cacheUIDLs);
 				require_once('modules/Emails/EmailUI.php');
-				EmailUI::preflightEmailCache("{$sugar_config['cache_dir']}modules/Emails/{$this->id}");
+				EmailUI::preflightEmailCache("{$this->EmailCachePath}/{$this->id}");
 
 				if (count($diff)> 50) {
                 	$newDiff = array_slice($diff, 50, count($diff), true);
@@ -1416,7 +1417,7 @@ class InboundEmail extends SugarBean {
 
         if ($ret['status'] == 'done') {
         	//Remove the cached search if we are done with this mailbox
-        	$cacheFilePath = clean_path("{$sugar_config['cache_dir']}modules/Emails/{$this->id}/folders/SearchData.php");
+        	$cacheFilePath = clean_path("{$this->EmailCachePath}/{$this->id}/folders/SearchData.php");
             unlink($cacheFilePath);
 	        /**
 	         * To handle the use case where an external client is also connected, deleting emails, we need to clear our
@@ -1450,7 +1451,7 @@ class InboundEmail extends SugarBean {
     	$cacheDataExists = false;
         $diff = array();
         $results = array();
-        $cacheFolderPath = clean_path("{$sugar_config['cache_dir']}modules/Emails/{$this->id}/folders");
+        $cacheFolderPath = clean_path("{$this->EmailCachePath}/{$this->id}/folders");
         if (!file_exists($cacheFolderPath)) {
         	mkdir_recursive($cacheFolderPath);
         }
@@ -1766,7 +1767,7 @@ class InboundEmail extends SugarBean {
 		$uids = $this->email->et->_cleanUIDList($uids);
 
 		foreach($uids as $uid) {
-			$file = "{$sugar_config['cache_dir']}modules/Emails/{$this->id}/messages/{$fromFolder}{$uid}.php";
+			$file = "{$this->EmailCachePath}/{$this->id}/messages/{$fromFolder}{$uid}.php";
 
 			if(file_exists($file)) {
 				if(!unlink($file)) {
@@ -1882,7 +1883,7 @@ class InboundEmail extends SugarBean {
 
 					if(!empty($uid)) {
 						$file = "{$this->mailbox}{$uid}.php";
-						$cacheFile = clean_path("{$sugar_config['cache_dir']}/modules/Emails/{$this->id}/messages/{$file}");
+						$cacheFile = clean_path("{$this->EmailCachePath}/{$this->id}/messages/{$file}");
 
 						if(!file_exists($cacheFile)) {
 							$GLOBALS['log']->info("INBOUNDEMAIL: Prefetching email [ {$file} ]");
@@ -1949,7 +1950,7 @@ class InboundEmail extends SugarBean {
 		$connectString = $this->getConnectString('', $mbox);
 		//Remove Folder cache
 		global $sugar_config;
-		unlink("{$sugar_config['cache_dir']}modules/Emails/{$this->id}/folders/folders.php");
+		unlink("{$this->EmailCachePath}/{$this->id}/folders/folders.php");
 
 		if(imap_unsubscribe($this->conn, imap_utf7_encode($connectString))) {
 			if(imap_deletemailbox($this->conn, $connectString)) {
@@ -1985,7 +1986,7 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
         //Remove Folder cache
         global $sugar_config;
-        //unlink("{$sugar_config['cache_dir']}modules/Emails/{$this->id}/folders/folders.php");
+        //unlink("{$this->EmailCachePath}/{$this->id}/folders/folders.php");
 
         //$mboxImap = $this->getImapMboxFromSugarProprietary($mbox);
         $delimiter = $this->get_stored_options('folderDelimiter');
@@ -3164,7 +3165,7 @@ class InboundEmail extends SugarBean {
 							// deal with inline image
 							if(count($this->inlineImages > 0)) {
 								$imageName = array_shift($this->inlineImages);
-								$newImagePath = "class='image' src='{$sugar_config['site_url']}/{$sugar_config['cache_dir']}/images/{$imageName}'";
+								$newImagePath = "class='image' src='{$sugar_config['site_url']}/cache/images/{$imageName}'";
 								$preImagePath = 'src="cid:'.substr($structure->parts[$bcArryKey]->id, 1, -1).'"';
 								$msgPartRaw = str_replace($preImagePath, $newImagePath, $msgPartRaw);
 							}
@@ -3584,7 +3585,7 @@ class InboundEmail extends SugarBean {
 
 		// decide where to place the file temporarily
 		$uploadDir = $sugar_config['upload_dir']; // typically "cache/uploads/"
-		$uploadDir = ($forDisplay) ? "{$sugar_config['cache_dir']}modules/Emails/{$this->id}/attachments/" : $uploadDir;
+		$uploadDir = ($forDisplay) ? "{$this->EmailCachePath}/{$this->id}/attachments/" : $uploadDir;
 
 		// decide what name to save file as
 		$fileName = $attach->id;
@@ -3607,7 +3608,7 @@ class InboundEmail extends SugarBean {
 				if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
 					|| ($part->type == 5)) {
 					if(copy($uploadDir.$fileName,
-						"{$sugar_config['cache_dir']}/images/{$fileName}.".strtolower($part->subtype))) {
+						sugar_cached("images/{$fileName}.").strtolower($part->subtype))) {
 						$this->inlineImages[] = $attach->id.".".strtolower($part->subtype);
 					}
 				}
@@ -5104,7 +5105,7 @@ eoq;
 		//foreach($personals as $k => $personalAccount) {
 		//	if(in_array($personalAccount->id, $showFolders)) {
 //				// check for cache value
-//				$cacheRoot = getcwd()."/{$sugar_config['cache_dir']}modules/Emails/{$personalAccount->id}";
+//				$cacheRoot = getcwd()."/{$this->EmailCachePath}/{$personalAccount->id}";
 //
 //				// on new account creation, this is not created yet
 //				if(!file_exists($cacheRoot)) {
@@ -5566,9 +5567,9 @@ eoq;
 		if ($this->isPop3Protocol()) {
 			// get the UIDL from database;
 			$cachedUIDL = md5($uid);
-			$cache = "{$sugar_config['cache_dir']}modules/Emails/{$this->id}/messages/{$this->mailbox}{$cachedUIDL}.php";
+			$cache = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$cachedUIDL}.php";
 		} else {
-			$cache = "{$sugar_config['cache_dir']}modules/Emails/{$this->id}/messages/{$this->mailbox}{$uid}.php";
+			$cache = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$uid}.php";
 		}
 
 		if(file_exists($cache) && !$forceRefresh) {
@@ -5690,7 +5691,7 @@ eoq;
 			if ($this->isPop3Protocol()) {
 				$uid = md5($uid);
 			} // if
-			$msgCacheFile = "{$sugar_config['cache_dir']}modules/Emails/{$this->id}/messages/{$this->mailbox}{$uid}.php";
+			$msgCacheFile = "{$this->EmailCachePath}/{$this->id}/messages/{$this->mailbox}{$uid}.php";
 			if(file_exists($msgCacheFile)) {
 				if(!unlink($msgCacheFile)) {
 					$GLOBALS['log']->error("***ERROR: InboundEmail could not delete the cache file [ {$msgCacheFile} ]");

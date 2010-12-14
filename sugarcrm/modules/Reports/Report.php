@@ -811,7 +811,7 @@ print "<BR>";
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
 
         if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
-                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {          		
+                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {
                 global $mod_strings;
 
 	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
@@ -1546,14 +1546,14 @@ print "<BR>";
 							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
 								$temp_field_alias  = substr($field,$has_space+1);
 								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-								
+
 								if($loopCount > 0)
 								{
 								    $field_list_name_array[$currCount] .= ", ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
 								} else {
 									$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
 								}
-								
+
 								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
 								{
 									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
@@ -1565,11 +1565,11 @@ print "<BR>";
 								    $field_list_name_array[$currCount] .= ", " . $field;
 								} else {
 									$field_list_name_array[$currCount] = $field;
-								}								
-								
+								}
+
 							}
 					    } //if($has_space)
-					    
+
 					    $loopCount++;
 				} //foreach
 			}
@@ -2290,15 +2290,15 @@ print "<BR>";
 	function cache_modules_def_js()
 	{
 		global $current_language, $current_user;
-		if (!isset($_SESSION['reports_cache']) || !file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js'))
+		$filename = sugar_cached('modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js');
+		if (!isset($_SESSION['reports_cache']) || !file_exists($filename))
 		{
 			require_once('modules/Reports/templates/templates_modules_def_js.php');
 			ob_start();
 			template_module_defs_js($args);
 
 			$contents = ob_get_clean();
-			$filename = $GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js';
-			if (is_writable($GLOBALS['sugar_config']['cache_dir'].'modules/'))
+			if (is_writable(dirname($filename)))
 			{
 				$fp =sugar_fopen($filename,'w+');
 				fwrite($fp,$contents);
