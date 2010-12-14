@@ -56,7 +56,7 @@ class SugarSpot
 <small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining more)</small>
 EOHTML;
 			}
-			$str.= "<div>$m $more</div>";
+			$str.= "<div>{$GLOBALS['app_list_strings']['moduleList'][$m]} $more</div>";
 			$str.= '<ul>';
 			foreach($data['data'] as $row){
 				$name = '';
@@ -161,7 +161,7 @@ EOHTML;
 		require_once 'include/SearchForm/SearchForm2.php' ;
 		$where = '';
 		
-		$searchEmail = preg_match("/^([^\%]|\%)*@([^\%]|\%)*$/", $query);
+		$searchEmail = preg_match('/^([^\%]|\%)*@([^\%]|\%)*$/', $query);
 		
 		foreach($modules as $moduleName){ 
 			if (empty($primary_module)) $primary_module=$moduleName;
