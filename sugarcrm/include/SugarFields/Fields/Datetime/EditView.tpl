@@ -43,6 +43,7 @@
 <script type="text/javascript">
 Calendar.setup ({ldelim}
 inputField : "{{$idname}}",
+ifFormat : "{$CALENDAR_FORMAT}",
 daFormat : "{$CALENDAR_FORMAT}",
 button : "{{$idname}}_trigger",
 singleClick : true,

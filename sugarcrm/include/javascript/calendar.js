@@ -46,7 +46,13 @@ Calendar.setup = function (params) {
                 
                 // Hide Calendar if we click anywhere in the document other than the calendar
                 Event.on(document, "click", function(e) {
-                    var el = Event.getTarget(e);
+                	
+                    if(!dialog)
+                    {
+                       return;	
+                    }                	
+                	
+                    var el = Event.getTarget(e);                   
                     var dialogEl = dialog.element;
                     if (el != dialogEl && !Dom.isAncestor(dialogEl, el) && el != Dom.get(showButton) && !Dom.isAncestor(Dom.get(showButton), el)) {
                         dialog.hide();
