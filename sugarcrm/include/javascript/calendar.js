@@ -6,14 +6,15 @@ Calendar.setup = function (params) {
 
     YAHOO.util.Event.onDOMReady(function(){
     	
-        var Event = YAHOO.util.Event,
-            Dom = YAHOO.util.Dom,
-            dialog,
-            calendar;
-
-        var showBtn = Dom.get(params.button);
-
-        Event.on(showBtn, "click", function() {
+        var Event = YAHOO.util.Event;
+        var Dom = YAHOO.util.Dom;
+        var dialog;
+        var calendar;
+        var showButton = params.button ? params.button : params.buttonObj;
+        var userDateFormat = params.ifFormat ? params.ifFormat : params.daFormat;
+        var inputField = params.inputField ? params.inputField : params.inputFieldObj;
+        
+        Event.on(Dom.get(showButton), "click", function() {
 
             if (!dialog) {
         
@@ -25,13 +26,13 @@ Calendar.setup = function (params) {
 
                 dialog = new YAHOO.widget.Dialog("container", {
                     visible:false,
-                    context:[params.button, "tl", "bl"],
+                    context:[showButton, "tl", "bl"],
                     buttons:[ {text:SUGAR.language.get('app_strings', 'LBL_CLOSE_BUTTON_LABEL'), handler: closeHandler}],
                     draggable:false,
                     close:true
                 });
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));
-                dialog.setBody('<div id="' + params.button + '_div"></div>');
+                dialog.setBody('<div id="' + showButton + '_div"></div>');
                 dialog.render(document.body);
 
                 dialog.showEvent.subscribe(function() {
@@ -47,7 +48,7 @@ Calendar.setup = function (params) {
                 Event.on(document, "click", function(e) {
                     var el = Event.getTarget(e);
                     var dialogEl = dialog.element;
-                    if (el != dialogEl && !Dom.isAncestor(dialogEl, el) && el != showBtn && !Dom.isAncestor(showBtn, el)) {
+                    if (el != dialogEl && !Dom.isAncestor(dialogEl, el) && el != Dom.get(showButton) && !Dom.isAncestor(Dom.get(showButton), el)) {
                         dialog.hide();
                         calendar = null;
                         dialog = null;
@@ -58,14 +59,14 @@ Calendar.setup = function (params) {
             // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
             if (!calendar) {
 
-                var dateFormat = params.ifFormat.substr(0,10);
+                var dateFormat = userDateFormat.substr(0,10);
                 var date_field_delimiter = /([-/\.//])/.exec(dateFormat)[0];
                 dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
                 var monthPos = dateFormat.search(/m/) + 1;
                 var dayPos = dateFormat.search(/d/) + 1;
                 var yearPos = dateFormat.search(/Y/) + 1;        	
             	
-                calendar = new YAHOO.widget.Calendar(params.button + '_div', {
+                calendar = new YAHOO.widget.Calendar(showButton + '_div', {
                     iframe:false,          // Turn iframe off, since container has iframe support.
                     hide_blank_weeks:true  // Enable, to demonstrate how we handle changing height, using changeContent
                 });
@@ -81,7 +82,7 @@ Calendar.setup = function (params) {
                     if (calendar.getSelectedDates().length > 0) {
 
                         var selDate = calendar.getSelectedDates()[0];
-                        var dateFormat = params.ifFormat.substr(0,10);
+                        var dateFormat = userDateFormat.substr(0,10);
                         var delim = /([-/\.//])/.exec(dateFormat)[0];
                         dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
                         var monthPos = dateFormat.search(/m/);
@@ -99,9 +100,9 @@ Calendar.setup = function (params) {
                         	selDate += delim + dateArray[x];
                         }
                        
-                        Dom.get(params.inputField).value =  selDate.substr(1);
+                        Dom.get(inputField).value =  selDate.substr(1);
                     } else {
-                        Dom.get(params.inputField).value = "";
+                        Dom.get(inputField).value = "";
                     }
                     dialog.hide();
                 });
@@ -114,15 +115,15 @@ Calendar.setup = function (params) {
             }
             
             var seldate = calendar.getSelectedDates();
-            if (Dom.get(params.inputField).value.length > 0) {
-            	calendar.cfg.setProperty("selected", Dom.get(params.inputField).value);
-                var dateFormat = params.ifFormat.substr(0,10);
+            if (Dom.get(inputField).value.length > 0) {
+            	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
+                var dateFormat = userDateFormat.substr(0,10);
                 var delim = /([-/\.//])/.exec(dateFormat)[0];
                 dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
                 var monthPos = dateFormat.search(/m/);
                 var dayPos = dateFormat.search(/d/);
                 var yearPos = dateFormat.search(/Y/);
-                seldate = Dom.get(params.inputField).value.split(delim);       	
+                seldate = Dom.get(inputField).value.split(delim);       	
             	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
             	calendar.render();
             } else if (seldate.length > 0) {
