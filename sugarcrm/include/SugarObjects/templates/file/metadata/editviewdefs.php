@@ -39,12 +39,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                                             array('label' => '10', 'field' => '30')
                                             ),
 'javascript' =>
-	'<script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-	<script type="text/javascript" src="include/jsolait/init.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-	<script type="text/javascript" src="include/jsolait/lib/urllib.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-	<script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
-	<script type="text/javascript" src="include/javascript/jsclass_async.js"></script>
-	<script type="text/javascript" src="modules/Documents/documents.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>',
+	'{sugar_getscript file="include/javascript/popup_parent_helper.js"}
+	{sugar_getscript file="include/jsolait/init.js"}
+	{sugar_getscript file="include/jsolait/lib/urllib.js"}
+	{sugar_getscript file="include/javascript/jsclass_base.js"}
+	{sugar_getscript file="include/javascript/jsclass_async.js"}
+	{sugar_getscript file="modules/Documents/documents.js"}',
 ),
  'panels' =>array (
   'default' =>

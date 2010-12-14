@@ -39,12 +39,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                                             array('label' => '10', 'field' => '30')
                                             ),
 'javascript' =>
-	'<script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-	<script type="text/javascript" src="include/jsolait/init.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-	<script type="text/javascript" src="include/jsolait/lib/urllib.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-	<script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
-	<script type="text/javascript" src="include/javascript/jsclass_async.js"></script>
-	<script type="text/javascript" src="modules/Documents/documents.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>',
+	'{sugar_getscript file="include/javascript/popup_parent_helper.js"}
+	{sugar_getscript file="include/jsolait/init.js"}
+	{sugar_getscript file="include/jsolait/lib/urllib.js"}
+	{sugar_getscript file="include/javascript/jsclass_base.js"}
+	{sugar_getscript file="include/javascript/jsclass_async.js"}
+	{sugar_getscript file="modules/Documents/documents.js"}',
 ),
  'panels' =>array (
   'default' =>
@@ -53,7 +53,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
       'document_name',
       'assigned_user_name',
 	),
-	
+
     array (
       array('name'=>'uploadfile',
             'customCode' => '{if $fields.id.value!=""}
@@ -64,16 +64,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             		  		<input name="uploadfile" type = {$type} size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
             'displayParams'=>array('required'=>true),
             ),
-	//BEGIN SUGARCRM flav=pro ONLY 
+	//BEGIN SUGARCRM flav=pro ONLY
       array('name'=>'team_name','displayParams'=>array('required'=>true)),
-      //END SUGARCRM flav=pro ONLY 
+      //END SUGARCRM flav=pro ONLY
 	),
 
     array (
        'category_id',
        'subcategory_id',
     ),
-    
+
     array (
       array('name'=>'description', 'displayParams'=>array('rows'=>10, 'cols'=>120)),
     ),

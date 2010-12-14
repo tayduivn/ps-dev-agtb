@@ -98,7 +98,7 @@ class XTemplate {
 /*
 	xtemplate class 0.2.4-3
 	html generation with templates - fast & easy
-	copyright (c) 2000 barnabás debreceni [cranx@users.sourceforge.net]
+	copyright (c) 2000 barnabï¿½s debreceni [cranx@users.sourceforge.net]
 	code optimization by Ivar Smolin <okul@linux.ee> 14-march-2001
 	latest stable & CVS version always available @ http://sourceforge.net/projects/xtpl
 
@@ -183,7 +183,7 @@ function append ($varname, $name,$val="") {
 	}
    if(is_array($this->VARS[$varname])){
        $this->VARS[$varname][$name] = $val;
-    }       
+    }
 }
 
 /***[ parse ]***************************************************************/
@@ -193,10 +193,11 @@ function append ($varname, $name,$val="") {
 
 function parse ($bname) {
 	global $sugar_version, $sugar_config;
-	
+
 	$this->assign('SUGAR_VERSION', $GLOBALS['js_version_key']);
 	$this->assign('JS_CUSTOM_VERSION', $sugar_config['js_custom_version']);
-	
+    $this->assign('VERSION_MARK', getVersionedPath(''));
+
 	if(empty($this->blocks[$bname]))
 		return;
 
@@ -267,7 +268,7 @@ function parse ($bname) {
 	// reset sub-blocks
 	if ($this->AUTORESET && (!empty($this->sub_blocks[$bname]))) {
 		reset($this->sub_blocks[$bname]);
-		foreach ($this->sub_blocks[$bname] as $v) 
+		foreach ($this->sub_blocks[$bname] as $v)
 			$this->reset($v);
 	}
 }
@@ -339,14 +340,14 @@ function text($bname) {
 
 function out ($bname) {
 	global $focus;
-	
+
 	if(isset($focus)){
 		global $action;
-		
+
 		if($focus && is_subclass_of($focus, 'SugarBean') && !$focus->ACLAccess($action)){
-			
+
 			ACLController::displayNoAccess(true);
-		
+
 			sugar_die('');
 			return;
 	}}

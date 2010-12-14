@@ -29,44 +29,44 @@ $viewdefs['Documents']['EditView'] = array(
     'templateMeta' => array('form' => array('enctype'=>'multipart/form-data',
                                             'hidden'=>array('<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">',
                                             				'<input type="hidden" name="contract_id" value="{$smarty.request.contract_id}">'),
-                            			    ),       
-                            'maxColumns' => '2', 
+                            			    ),
+                            'maxColumns' => '2',
                             'widths' => array(
-                                            array('label' => '10', 'field' => '30'), 
+                                            array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
                                             ),
-'javascript' => '<script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/jsolait/init.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/jsolait/lib/urllib.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
-<script type="text/javascript" src="include/javascript/jsclass_async.js"></script>
-<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}"></script>
-<script type="text/javascript" src="modules/Documents/documents.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>',
+'javascript' => '{sugar_getscript file="include/javascript/popup_parent_helper.js"}
+{sugar_getscript file="include/jsolait/init.js"}
+{sugar_getscript file="include/jsolait/lib/urllib.js"}
+{sugar_getscript file="include/javascript/jsclass_base.js"}
+{sugar_getscript file="include/javascript/jsclass_async.js"}
+{sugar_getscript file="include/JSON.js"}
+{sugar_getscript file="modules/Documents/documents.js"}',
 ),
  'panels' =>array (
-  'lbl_document_information' => 
+  'lbl_document_information' =>
   array (
-    
+
     array (
       array(
-      		'name'=>'uploadfile', 
+      		'name'=>'uploadfile',
             'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="{$FILE_OR_HIDDEN}" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
       ),
       array (
             'name' => 'status_id',
             'label' => 'LBL_DOC_STATUS',
-      ),          
+      ),
     ),
-    
+
     array (
       'document_name',
-    
+
       array('name'=>'revision',
             'customCode' => '<input name="revision" type="text" value="{$fields.revision.value}" {$DISABLED}>'
            ),
-      
+
     ),
-    
+
     array (
 	    array (
 	      'name' => 'template_type',
@@ -77,22 +77,22 @@ $viewdefs['Documents']['EditView'] = array(
 	      'label' => 'LBL_DET_IS_TEMPLATE',
 	    ),
     ),
-    
+
     array (
       array('name'=>'active_date'),
        'category_id',
 
-    ),    
-    
+    ),
+
     array (
       'exp_date',
       'subcategory_id',
     ),
-    
+
     array (
       array('name'=>'description'),
     ),
-    
+
     //BEGIN SUGARCRM flav!=sales ONLY
     array (
       array('name'=>'related_doc_name',
@@ -104,7 +104,7 @@ $viewdefs['Documents']['EditView'] = array(
            ),
     ),
     //END SUGARCRM flav!=sales ONLY
-    
+
     ),
   'LBL_PANEL_ASSIGNMENT' =>
   array (

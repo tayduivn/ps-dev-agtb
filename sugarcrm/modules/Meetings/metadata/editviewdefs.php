@@ -18,27 +18,27 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs ['Meetings'] = 
+$viewdefs ['Meetings'] =
 array (
-  'EditView' => 
+  'EditView' =>
   array (
-    'templateMeta' => 
+    'templateMeta' =>
     array (
       'maxColumns' => '2',
-      'form' => 
+      'form' =>
       array (
-        'hidden' => 
+        'hidden' =>
         array (
           0 => '<input type="hidden" name="isSaveAndNew" value="false">',
         ),
-        'buttons' => 
+        'buttons' =>
         array (
-          0 => 
+          0 =>
           array (
 			'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="fill_invitees();document.forms[0].action.value=\'Save\'; document.forms[0].return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.forms[0].return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
 		  ),
           1 => 'CANCEL',
-          2 => 
+          2 =>
           array (
              'customCode' => '<input title="{$MOD.LBL_SEND_BUTTON_TITLE}" class="button" onclick="document.forms[0].send_invites.value=\'1\';fill_invitees();document.forms[0].action.value=\'Save\';document.forms[0].return_action.value=\'EditView\';document.forms[0].return_module.value=\'{$smarty.request.return_module}\'; formSubmitCheck();"type="button" name="button" value="{$MOD.LBL_SEND_BUTTON_LABEL}">',
 		  ),
@@ -50,42 +50,42 @@ array (
         'headerTpl' => 'modules/Meetings/tpls/header.tpl',
         'footerTpl' => 'modules/Meetings/tpls/footer.tpl',
       ),
-      'widths' => 
+      'widths' =>
       array (
-        0 => 
+        0 =>
         array (
           'label' => '10',
           'field' => '30',
         ),
-        1 => 
+        1 =>
         array (
           'label' => '10',
           'field' => '30',
         ),
       ),
-      'javascript' => '<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/jsolait/init.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/jsolait/lib/urllib.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+      'javascript' => '{sugar_getscript file="include/JSON.js"}
+{sugar_getscript file="include/jsolait/init.js"}
+{sugar_getscript file="include/jsolait/lib/urllib.js"}
 <script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
-<script type="text/javascript" src="include/javascript/jsclass_base.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/javascript/jsclass_async.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="modules/Meetings/jsclass_scheduler.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+{sugar_getscript file="include/javascript/jsclass_base.js"}
+{sugar_getscript file="include/javascript/jsclass_async.js"}
+{sugar_getscript file="modules/Meetings/jsclass_scheduler.js"}
 <script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim} 
 function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration()){ldelim}document.forms[0].submit();{rdelim}{rdelim}</script>',
       'useTabs' => false,
     ),
-    'panels' => 
+    'panels' =>
     array (
-      'lbl_meeting_information' => 
+      'lbl_meeting_information' =>
       array (
         array (
           array (
             'name' => 'name',
-            
+
           ),
           array (
             'name' => 'status',
-            'fields' => 
+            'fields' =>
             array (
               array (
                 'name' => 'status',
@@ -97,19 +97,19 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration
           array (
             'name' => 'date_start',
             'type' => 'datetimecombo',
-            'displayParams' => 
+            'displayParams' =>
             array (
-              
+
               'updateCallback' => 'SugarWidgetScheduler.update_time();',
             ),
           ),
-          1 => 
+          1 =>
           array (
             'name' => 'parent_name',
             'label' => 'LBL_LIST_RELATED_TO',
           ),
         ),
-        2 => 
+        2 =>
         array (
           array (
             'name' => 'duration_hours',
@@ -137,16 +137,16 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration
           ),
         ),
       ),
-      'LBL_PANEL_ASSIGNMENT' => 
+      'LBL_PANEL_ASSIGNMENT' =>
       array (
         array (
           array (
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO_NAME',
           ),
-	      //BEGIN SUGARCRM flav=pro ONLY      
+	      //BEGIN SUGARCRM flav=pro ONLY
 	      'team_name',
-	      //END SUGARCRM flav=pro ONLY 
+	      //END SUGARCRM flav=pro ONLY
         ),
       ),
     ),
