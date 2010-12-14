@@ -280,7 +280,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     array (
       'name' => 'campaign_accounts',
       'type' => 'link',
-      'vname' => 'LBL_CAMPAIGN_ACCOUNT',
+      'vname' => 'LBL_CAMPAIGNS',
       'relationship' => 'campaign_accounts',
       'source' => 'non-db',
   ),  
