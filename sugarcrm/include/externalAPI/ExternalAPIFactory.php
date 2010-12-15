@@ -28,7 +28,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  **/
 class ExternalAPIFactory{
 
-    public static function loadFullAPIList($forceRebuild=true) {
+    public static $disabledApiFileName = 'custom/include/externalAPI.disabled.php';
+
+
+    public static function loadFullAPIList($forceRebuild=true, $ignoreDisabled = false) {
         if ( isset($GLOBALS['sugar_config']['developer_mode']) && $GLOBALS['sugar_config']['developer_mode'] ) {
             static $beenHereBefore = false;
             if ( !$beenHereBefore ) {
@@ -63,6 +66,18 @@ class ExternalAPIFactory{
                 if ( file_exists($dir.'/'.$apiName.'_cstm.php') ) {
                     $apiFullList[$apiName]['className'] = $apiName.'_cstm';
                     $apiFullList[$apiName]['file_cstm'] = $dir.'/'.$apiName.'_cstm.php';
+                }
+            }
+        }
+
+        if(!$ignoreDisabled){
+            //now that we have the full list, go through the disabled apis and remove them from the fullList
+            if (file_exists(self::$disabledApiFileName)) {
+                require(self::$disabledApiFileName);
+                foreach($disabledAPIList as $disabledAPI){
+                    if(!empty($apiFullList[$disabledAPI])){
+                        unset($apiFullList[$disabledAPI]);
+                    }
                 }
             }
         }

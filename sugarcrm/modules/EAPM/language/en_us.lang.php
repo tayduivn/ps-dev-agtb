@@ -71,6 +71,8 @@ $mod_strings = array (
   'LBL_VALIDATED' => 'Access validated',
   'LBL_ACTIVE' => 'Active',
   'LBL_OAUTH_NAME' => 'OAuth for %s',
+  'LBL_SUGAR_USER_NAME' => 'Sugar User',
+  'LBL_DISPLAY_PROPERTIES' => 'Display Properties',
 
   // Various strings used throughout the external account modules
   'LBL_MEET_NOW_BUTTON' => 'Meet Now',
