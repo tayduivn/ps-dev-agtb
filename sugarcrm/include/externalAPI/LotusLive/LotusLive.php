@@ -199,7 +199,7 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
 //                              array('collectionid'=>$this->collectionId,
 //                                    'fileid'=>$bean->id));
 
-        $result = $this->makeRequest('FileUpload/OAuth',file_get_contents($fileToUpload),
+        $result = $this->makeRequest('FileUpload/OAuth',base64_encode(file_get_contents($fileToUpload)),
                                      array('filename' => $docName,
 //                                           'mimetype' => $mimeType,
                                            'mimetype' => 'application/octet-stream',
