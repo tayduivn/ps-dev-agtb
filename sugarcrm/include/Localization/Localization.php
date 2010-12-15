@@ -61,8 +61,8 @@ class Localization {
 		);
 	var $localeNameFormat;
 	var $localeNameFormatDefault;
-	var $default_export_charset = 'CP1252'; // not camel hump to match sugar_config's
-	var $default_email_charset = 'ISO-8859-1';
+	var $default_export_charset = 'UTF-8';
+	var $default_email_charset = 'UTF-8';
 	var $currencies = array(); // array loaded with current currencies
 
 
@@ -160,13 +160,13 @@ class Localization {
         if ( !is_array($load) ) {
             $q = "SELECT id, name, symbol, conversion_rate FROM currencies WHERE status = 'Active' and deleted = 0";
             $r = $db->query($q);
-            
+
             while($a = $db->fetchByAssoc($r)) {
                 $load = array();
                 $load['name'] = $a['name'];
                 $load['symbol'] = $a['symbol'];
                 $load['conversion_rate'] = $a['conversion_rate'];
-                
+
                 $this->currencies[$a['id']] = $load;
             }
             sugar_cache_put('currency_list',$this->currencies);
@@ -389,7 +389,7 @@ class Localization {
 		$precision = $this->getPrecedentPreference('default_currency_significant_digits', $user);
 		return $precision;
 	}
-	
+
 	function getCurrencySymbol($user=null) {
 		$dec = $this->getPrecedentPreference('default_currency_symbol', $user);
 		return $dec;
@@ -410,7 +410,7 @@ class Localization {
 		$thou			= $this->getNumberGroupingSeparator($user);
 		$precision		= $this->getPrecision($user);
 		$symbol			= empty($currencySymbol) ? $this->getCurrencySymbol($user) : $currencySymbol;
-		
+
 		$exNum = explode($dec, $number);
 		// handle grouping
 		if(is_array($exNum) && count($exNum) > 0) {
@@ -552,13 +552,13 @@ eoq;
 	 * sfl is "Salutation FirstName LastName", "l, f s" is "LastName[comma][space]FirstName[space]Salutation"
 	 * @param object user object
 	 * @param bool returnEmptyStringIfEmpty true if we should return back an empty string rather than a single space
-	 * when the formatted name would be blank             
+	 * when the formatted name would be blank
 	 * @return string formattedName
 	 */
 	function getLocaleFormattedName($firstName, $lastName, $salutationKey='', $title='', $format="", $user=null, $returnEmptyStringIfEmpty = false) {
 		global $current_user;
 		global $app_list_strings;
-		
+
 		if ( $user == null ) {
 		    $user = $current_user;
 		}
@@ -588,7 +588,7 @@ eoq;
 			return $returnEmptyStringIfEmpty ? '' : ' ';
 		}
 		//end Bug: 39936
-		
+
 		if(empty($format)) {
 			$this->localeNameFormat = $this->getLocaleFormatMacro($user);
 		} else {
@@ -658,8 +658,8 @@ eoq;
 	}
 	////	END NAME DISPLAY FORMATTING CODE
 	///////////////////////////////////////////////////////////////////////////
-    
-    /** 
+
+    /**
      * Attempts to detect the charset used in the string
      *
      * @param  $str string
@@ -671,7 +671,7 @@ eoq;
     {
         if ( function_exists('mb_convert_encoding') )
             return mb_detect_encoding($str,'ASCII,JIS,UTF-8,EUC-JP,SJIS,ISO-8859-1');
-        
+
         return false;
     }
 } // end class def
