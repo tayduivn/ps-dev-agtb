@@ -11,15 +11,15 @@ Calendar.setup = function (params) {
         var dialog;
         var calendar;
         var showButton = params.button ? params.button : params.buttonObj;
-        var userDateFormat = params.ifFormat ? params.ifFormat : params.daFormat;
+        var userDateFormat = params.ifFormat ? params.ifFormat : (params.daFormat ? params.daFormat : "m/d/Y");
         var inputField = params.inputField ? params.inputField : params.inputFieldObj;
         var dateFormat = userDateFormat.substr(0,10);
-        var pattern = new RegExp("/([\\-\\.\\/])/");
-        var date_field_delimiter = pattern.exec(dateFormat)[0];
+        var date_field_delimiter = /([\\-\\.\\/])/.exec(dateFormat)[0];
         dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
-        var monthPos = dateFormat.search(/m/) + 1;
-        var dayPos = dateFormat.search(/d/) + 1;
-        var yearPos = dateFormat.search(/Y/) + 1;         
+        
+        var monthPos = dateFormat.search(/m/);
+        var dayPos = dateFormat.search(/d/);
+        var yearPos = dateFormat.search(/Y/);         
         
         Event.on(Dom.get(showButton), "click", function() {
 
@@ -74,14 +74,14 @@ Calendar.setup = function (params) {
             if (!calendar) {
             	
                 calendar = new YAHOO.widget.Calendar(showButton + '_div', {
-                    iframe:false,          // Turn iframe off, since container has iframe support.
-                    hide_blank_weeks:true  // Enable, to demonstrate how we handle changing height, using changeContent
+                    iframe:false,
+                    hide_blank_weeks:true  
                 });
-                
+                      
                 calendar.cfg.setProperty('DATE_FIELD_DELIMITER', date_field_delimiter);
-                calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos);
-                calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos);
-                calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos);
+                calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos+1);
+                calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos+1);
+                calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos+1);
                 
                 //Configure the month and days label with localization support where defined
                 if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
@@ -137,7 +137,7 @@ Calendar.setup = function (params) {
             if (Dom.get(inputField).value.length > 0) {
             	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
                 seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
-            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
+            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos-1]);
             	calendar.render();
             } else if (seldate.length > 0) {
                 // Set the pagedate to show the selected date if it exists
