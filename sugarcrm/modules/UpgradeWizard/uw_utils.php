@@ -676,6 +676,12 @@ function upgradeUWFiles($file) {
 	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"))) {
 		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"), $allFiles);
 	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
+		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	}
 
 	/*
 	 * /home/chris/workspace/maint450/cache/upload/upgrades/temp/DlNnqP/
@@ -835,7 +841,7 @@ function getValidPatchName($returnFull = true) {
 	        		<input type=hidden name="install_file" value="{$cleanUpgradeContent}" />
 	        		<input type=submit value="{$mod_strings['LBL_BUTTON_DELETE']}" />
 				</form>
-			</td></table>\n
+			</td></table>
 eoq;
 		$disabled = "DISABLED";
 	}
@@ -1239,7 +1245,7 @@ function updateQuickCreateDefs(){
 						//replace 'EditView' with 'QuickCreate'
 						$fp = fopen($quickcreatedefs,'w');
 						foreach($file as &$line){
-							if(preg_match("/^\s*'EditView'\s*=>\s*$/", $line) > 0){
+							if(preg_match('/^\s*\'EditView\'\s*=>\s*$/', $line) > 0){
 								$line = "'QuickCreate' =>\n";
 							}
 							fwrite($fp, $line);
@@ -3876,7 +3882,7 @@ function initialize_session_vars(){
 		  			//set session variables
 		  			$_SESSION[$key]=$val;
 		  			//set varibales
-					"$".$key=$val;
+					'$'.$key=$val;
 	  			}
 	  		}
 	  	}
@@ -5614,4 +5620,51 @@ function add_unified_search_to_custom_modules_vardefs()
 
 }
 
-?>
+/**
+ * change from using the older SugarCache in 6.1 and below to the new one in 6.2
+ */
+function upgradeSugarCache($file)
+{
+	global $sugar_config;
+	// file = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
+
+	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
+
+	unzip($file, $cacheUploadUpgradesTemp);
+
+	if(!file_exists(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"))) {
+		logThis("*** ERROR: no manifest file detected while bootstraping upgrade wizard files!");
+		return;
+	} else {
+		include(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"));
+	}
+
+	$allFiles = array();
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
+		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	}
+	$cwd = clean_path(getcwd());
+
+	foreach($allFiles as $k => $file) {
+		$file = clean_path($file);
+		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+       if(!is_dir(dirname($destFile))) {
+			mkdir_recursive(dirname($destFile)); // make sure the directory exists
+		}
+		if ( stristr($file,'uw_main.tpl') )
+            logThis('Skipping "'.$file.'" - file copy will during commit step.');
+        else {
+            logThis('updating UpgradeWizard code: '.$destFile);
+            copy_recursive($file, $destFile);
+        }
+	}
+	logThis ('is sugar_file_util there '.file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php")));
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php"))) {
+		$file = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php");
+		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+        copy($file,$destFile);
+	}
+}

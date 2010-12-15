@@ -136,7 +136,7 @@ if (version_compare(phpversion(),'5.2.0') >=0) {
     if(substr($sugar_version,0,1) >= 5){
     	updateQuickCreateDefs();
 	}
-
+	upgradeSugarCache($_SESSION['install_file']);
 
 	if((count($errors) == 1)) { // only diffs
 		logThis('file preflight check passed successfully.');
