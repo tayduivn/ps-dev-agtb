@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -18,44 +18,26 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-
-class ExpressionEngineController extends SugarController
+require_once('include/Expressions/Expression/AbstractExpression.php');
+abstract class RelateExpression extends AbstractExpression
 {
-	var $action_remap = array ( ) ;
-	
-	function ExpressionEngineController() {
-		$this->view = 'editFormula';
+	/**
+	 * Parameters May be anything
+	 */
+	function getParameterTypes() {
+		return array(AbstractExpression::$ENUM_TYPE, AbstractExpression::$STRING_TYPE, AbstractExpression::$BOOLEAN_TYPE,
+					 AbstractExpression::$DATE_TYPE, AbstractExpression::$NUMERIC_TYPE,  AbstractExpression::$GENERIC_TYPE);
 	}
-	
-	function action_editFormula ()
-    {
-     	$this->view = 'editFormula';  
-    }
-    
-	function action_index ()
-    {
-     	$this->view = 'index';  
-    }
-    
-	function action_cfTest ()
-    {
-     	$this->view = 'cfTest';  
-    }
-    
-	function action_list ()
-    {
-     	$this->view = 'index';  
-    }
 
-    function action_relFields ()
-    {
-     	$this->view = 'relFields';  
-    }
-    
-    function action_functionDetail() {
-    	$this->view = 'functionDetail'; 
-    }
+	/**
+	 * Returns the JS Equivalent of the evaluate function.
+	 */
+	static function getJSEvaluate() {
+		return <<<EOQ
+			var params = this.getParameters();
+			return params;
+EOQ;
+	}
 }
+
 ?>

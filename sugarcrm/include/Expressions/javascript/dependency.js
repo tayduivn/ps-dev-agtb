@@ -78,13 +78,19 @@ SUGAR.forms.AssignmentHandler.LOCKS = {};
  * @STATIC
  * Register a variable with the handler.
  */
-SUGAR.forms.AssignmentHandler.register = function(variable) {
+SUGAR.forms.AssignmentHandler.register = function(variable, view) {
+	var AH = SUGAR.forms.AssignmentHandler;
+	if (!view) view = AH.lastView;
+
+	if (typeof(AH.VARIABLE_MAP[view]) == "undefined")
+		AH.VARIABLE_MAP[view] = {};
+	
 	if ( variable instanceof Array ) {
 		for ( var i = 0; i < variable.length; i++ ) {
-			SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable[i]] = document.getElementById(variable[i]);
+			AH.VARIABLE_MAP[view][variable[i]] = document.getElementById(variable[i]);
 		}
 	} else {
-		SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable] = document.getElementById(variable);
+		AH.VARIABLE_MAP[view][variable] = document.getElementById(variable);
 	}
 }
 
@@ -94,13 +100,16 @@ SUGAR.forms.AssignmentHandler.register = function(variable) {
  * Register form fields with the handler.
  */
 SUGAR.forms.AssignmentHandler.registerFields = function(flds) {
+	var AH = SUGAR.forms.AssignmentHandler;
 	if ( typeof(flds) != 'object' ) return;
 	var form = document.forms[flds.form];
 	var names = flds.fields;
+	if (typeof(AH.VARIABLE_MAP[flds.form]) == "undefined")
+		AH.VARIABLE_MAP[flds.form] = {};
 	if ( typeof(form) == 'undefined' ) return;
 	for ( var i = 0; i < names.length; i++ ) {
 		var el = form[names[i]];
-		if ( el != null )	SUGAR.forms.AssignmentHandler.VARIABLE_MAP[el.id] = el;
+		if ( el != null )	AH.VARIABLE_MAP[flds.form][el.id] = el;
 	}
 }
 
@@ -109,24 +118,33 @@ SUGAR.forms.AssignmentHandler.registerFields = function(flds) {
  * Register all the fields in a form
  */
 SUGAR.forms.AssignmentHandler.registerForm = function(f) {
+	var AH = SUGAR.forms.AssignmentHandler;
 	var form = document.forms[f];
+	if (typeof(AH.VARIABLE_MAP[f]) == "undefined")
+		AH.VARIABLE_MAP[f] = {};
 	if ( typeof(form) == 'undefined' ) return;
 	for ( var i = 0; i < form.length; i++ ) {
 		var el = form[i];
 		if ( el != null && el.value != null && el.id != null && el.id != "")
-			SUGAR.forms.AssignmentHandler.VARIABLE_MAP[el.id] = el;
+			AH.VARIABLE_MAP[f][el.id] = el;
+		else if ( el != null && el.value && el.type=="hidden")
+			AH.VARIABLE_MAP[f][el.name] = el;
 	}
 }
 
 SUGAR.forms.AssignmentHandler.registerView = function(view, startEl) {
 	var Dom = YAHOO.util.Dom;
+	var AH = SUGAR.forms.AssignmentHandler;
+	AH.lastView = view;
+	if (typeof(AH.VARIABLE_MAP[view]) == "undefined")
+		AH.VARIABLE_MAP[view] = {};
 	if (Dom.get(view) != null && Dom.get(view).tagName == "FORM") {
-		return SUGAR.forms.AssignmentHandler.registerForm(view);
+		return AH.registerForm(view);
 	}
 	var nodes = YAHOO.util.Selector.query("." + view + ".view [id]", startEl);
 	for (var i in nodes) {
 		if (nodes[i].id != "")
-			SUGAR.forms.AssignmentHandler.VARIABLE_MAP[nodes[i].id] = nodes[i];
+			AH.VARIABLE_MAP[view][nodes[i].id] = nodes[i];
 	}
 }
 
@@ -178,9 +196,11 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
  * @STATIC
  * Retrieve the element behind a variable.
  */
-SUGAR.forms.AssignmentHandler.getElement = function(variable) {
+SUGAR.forms.AssignmentHandler.getElement = function(variable, view) {
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
+
 	// retrieve the variable
-	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
+	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[view][variable];
 		
 	if ( field == null )	
 		field = YAHOO.util.Dom.get(variable);
@@ -362,8 +382,9 @@ SUGAR.forms.DefaultExpressionParser = new SUGAR.expressions.ExpressionParser();
  * @STATIC
  * Parses expressions given a variable map.<br>
  */
-SUGAR.forms.evalVariableExpression = function(expression, varmap)
+SUGAR.forms.evalVariableExpression = function(expression, varmap, view)
 {
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 	var SE = SUGAR.expressions;
 	// perform range replaces
 	expression = SUGAR.forms._performRangeReplace(expression);
@@ -374,7 +395,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 	if ( typeof(varmap) == 'undefined' )
 	{
 		varmap = new Array();
-		for ( v in handler.VARIABLE_MAP) {
+		for ( v in handler.VARIABLE_MAP[view]) {
 			if (v != "") {
 				varmap[varmap.length] = v;
 			}

@@ -53,6 +53,7 @@ SUGAR.expressions.Expression.DATE_TYPE 	 	= "date";
 SUGAR.expressions.Expression.TIME_TYPE 	 	= "time";
 SUGAR.expressions.Expression.BOOLEAN_TYPE 	= "boolean";
 SUGAR.expressions.Expression.ENUM_TYPE 	 	= "enum";
+SUGAR.expressions.Expression.RELATE_TYPE	= "relate";
 SUGAR.expressions.Expression.GENERIC_TYPE  	= "generic";
 
 /**
@@ -241,6 +242,9 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
             if (typeof(variable) == 'string' && SUGAR.util.DateUtils.guessFormat(variable))
                 return true;
             break;
+		case see.RELATE_TYPE:
+			return true;
+			break;
 	}
 
 	// If its not an instane and we can't map the value to a type, return false.
@@ -387,6 +391,19 @@ SUGAR.util.extend(SUGAR.TimeExpression, SUGAR.expressions.Expression, {
 	}
 });
 
+/** GENERIC TYPE EXPRESSIONS **/
+SUGAR.RelateExpression = function(params) {
+
+};
+SUGAR.util.extend(SUGAR.RelateExpression, SUGAR.expressions.Expression, {
+	/**
+	 * All parameters have to be a number by default.
+	 */
+	getParameterTypes: function() {
+		return SUGAR.expressions.Expression.GENERIC_TYPE;
+	}
+});
+
 
 
 
@@ -401,6 +418,7 @@ SUGAR.expressions.Expression.TYPE_MAP	= {
 		"time" 		: SUGAR.TimeExpression,
 		"boolean" 	: SUGAR.BooleanExpression,
 		"enum" 		: SUGAR.EnumExpression,
+		"relate" 	: SUGAR.RelateExpression,
 		"generic" 	: SUGAR.GenericExpression
 };
 

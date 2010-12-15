@@ -1307,7 +1307,7 @@ function http_fetch_sync(url,post_data) {
 	
 	var args = {"responseText" : global_xmlhttp.responseText,
 				"responseXML" : global_xmlhttp.responseXML,
-				"request_id" : request_id};
+				"request_id" : typeof(request_id) != "undefined" ? request_id : 0};
 	return args;
 
 }

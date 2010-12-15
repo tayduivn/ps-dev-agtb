@@ -30,6 +30,7 @@ abstract class AbstractExpression
 	public static $TIME_TYPE 	 = "time";
 	public static $BOOLEAN_TYPE  = "boolean";
 	public static $ENUM_TYPE 	 = "enum";
+    public static $RELATE_TYPE   = "relate";
 	public static $GENERIC_TYPE  = "generic";
 
 	// booleans
@@ -44,6 +45,7 @@ abstract class AbstractExpression
 											"time" 		=> "TimeExpression",
 											"boolean" 	=> "BooleanExpression",
 											"enum" 		=> "EnumExpression",
+                                            "relate"	=> "RelateExpression",
 											"generic" 	=> "AbstractExpression",
 										);
 
@@ -191,10 +193,6 @@ abstract class AbstractExpression
 	function isProperType($variable, $type) {
 		if ( is_array($type) )	return false;
 
-		/*echo "isProperType $type<br>";
-		print_r($variable);
-		echo "done<br>";*/
-
 		// retrieve the class
 		$class = AbstractExpression::$TYPE_MAP[$type];
 
@@ -221,8 +219,7 @@ abstract class AbstractExpression
             case AbstractExpression::$DATE_TYPE:
             case AbstractExpression::$TIME_TYPE:
                 if ( $variable instanceof Expression )	$variable = $variable->evaluate();
-				echo "$variable<br/>";
-                return ((is_string($variable) && new DateTime($variable) !== false));
+				return ((is_string($variable) && new DateTime($variable) !== false));
 				break;
 		}
 
