@@ -38,7 +38,11 @@ $viewdefs[$module_name]['EditView'] = array(
  'panels' =>array (
   'default' =>
   array (
-    array('application', 'active',
+    array(
+        array(
+            'name' => 'application',
+            'displayParams'=>array('required'=>true)
+        ), 'active',
     ),
     array (
       'name',

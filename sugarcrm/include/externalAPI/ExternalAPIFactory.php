@@ -205,12 +205,15 @@ class ExternalAPIFactory{
         return $apiFinalList;
     }
 
-    public static function getModuleDropDown($moduleName, $ignoreAuth = false) {
+    public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false) {
         global $app_strings;
 
         $apiList = self::listAPI($moduleName,$ignoreAuth);
 
         $apiDropdown = array();
+        if($addEmptyEntry){
+            $apiDropdown[''] = '';
+        }
 
         foreach ( $apiList as $apiName => $ignore ) {
             $translateKey = 'LBL_EXTAPI_'.strtoupper($apiName);

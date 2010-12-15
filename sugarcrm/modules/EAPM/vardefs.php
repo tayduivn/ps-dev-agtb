@@ -66,7 +66,6 @@ $dictionary['EAPM'] = array(
   ),
   'application' =>
   array (
-    'required' => false,
     'name' => 'application',
     'vname' => 'LBL_APPLICATION',
     'type' => 'enum',
