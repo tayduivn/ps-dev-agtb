@@ -183,7 +183,12 @@ function enableQS(noReload){
                     //of sugar_3.js when building the alert message contents.
                     if(qsFields[qsField].name == 'account_name')
                     {
-                       search.setFields = function(data, filter) {
+                      
+                       //C.L. Bug 36106 no-op function for clearFields (do not clear out values)
+                       search.clearFields = function() {};
+                    	
+                       search.setFields = function(data, filter) 
+                       {
                     	    var label_str = '';
 	                		var label_data_str = '';
 	                		var current_label_data_str = '';
