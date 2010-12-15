@@ -1861,7 +1861,7 @@ $app_strings = array (
     'LBL_ROUTING_TO_ADDRESS'                => 'to address',
     'LBL_ROUTING_WITH_TEMPLATE'             => 'with template',
 
-	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'The Contact currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
+	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
 	'LBL_DROP_HERE' => '[Drop Here]',
     'LBL_EMAIL_ACCOUNTS_EDIT'               => 'Edit',
     'LBL_EMAIL_ACCOUNTS_GMAIL_DEFAULTS'     => 'Prefill Gmail&#153; Defaults',
