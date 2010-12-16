@@ -53,7 +53,7 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
 																		 'default' => false),
                                                       'template_type' => array('width' => '8',
                                                                          'label' => 'LBL_TEMPLATE_TYPE',
-																		 'default' => true), 
+																		 'default' => true),
                                                       'is_template' => array('width' => '8',
                                                                          'label' => 'LBL_IS_TEMPLATE',
 																		 'default' => false), 
