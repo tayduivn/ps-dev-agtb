@@ -26,7 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <script type="text/javascript" src='{{sugar_getjspath file="cache/include/externalAPI.cache.js"}}'></script>
+{{/if}}
 <script type="text/javascript" src='{{sugar_getjspath file="include/SugarFields/Fields/File/SugarFieldFile.js"}}'></script>
 {{capture name=idName assign=idName}}{{sugarvar key='name'}}{{/capture}}
 {{if !empty($displayParams.idName)}}
@@ -144,6 +146,6 @@ document.getElementById("{{$vardef.docType}}").disabled = true;
 
 enableQS(false);
 </script>
-{/if}
 {{/if}}
+{/if}
 </span>

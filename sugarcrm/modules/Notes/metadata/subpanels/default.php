@@ -49,8 +49,6 @@ $subpanel_layout = array(
  		 	'image2_url_field'=> array(
 				'id_field' => 'id',
 				'filename_field' => 'filename',
-				'doc_type' => 'doc_type',
-				'doc_id' => 'doc_id',
 			),
 		),
         'name'=>array(
@@ -89,12 +87,6 @@ $subpanel_layout = array(
 		'filename'=>array(
 			'usage'=>'query_only'
 			),
-				'doc_id'=>array(
-			'usage'=>'query_only'
-			),
-		'doc_type'=>array(
-			'usage'=>'query_only'
-			),	
 	),
 );
 

@@ -57,8 +57,7 @@ function deleteAttachmentCallBack(text)
                         array('name'=>'name', 'displayParams'=>array('size'=>60)),''
                     ),
 					array ( 
-					    '0' => 'doc_type',
-						'1' => 'filename',
+						'filename',
 	      				//BEGIN SUGARCRM flav=pro ONLY
 					    array('name'=>'portal_flag',
 					          'displayParams'=>array('required'=>false),

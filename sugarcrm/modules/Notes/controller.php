@@ -36,48 +36,6 @@
   
  class NotesController extends SugarController
 {
-/*
-	
-	function action_save(){
-		require_once('include/upload_file.php');
-		$GLOBALS['log']->debug('PERFORMING NOTES SAVE');
-		$upload_file = new UploadFile('uploadfile');
-		$do_final_move = 0;
-		if (isset($_FILES['uploadfile']) && $upload_file->confirm_upload())
-		{
-       		if (!empty($this->bean->id) && !empty($_REQUEST['old_filename']) )
-        	{
-       	         $upload_file->unlink_file($this->bean->id,$_REQUEST['old_filename']);
-       	 	}
-
-	        $this->bean->filename = $upload_file->get_stored_file_name();
-	        $this->bean->file_mime_type = $upload_file->mime_type;
-
-       	 $do_final_move = 1;
-		}
-		else if ( isset( $_REQUEST['old_filename']))
-		{
-	       	 $this->bean->filename = $_REQUEST['old_filename'];
-		}
-		
-		 if ( !empty( $_REQUEST['filename']) &&  !empty( $_REQUEST['doc_id']))
-		{
-
-	       	 $this->bean->filename = $_REQUEST['filename'];
-		}
-		$this->bean->save();
-		if ($do_final_move)
-		{
-       		 $upload_file->final_move($this->bean->id);
-       		 $upload_file->upload_doc($this->bean, $this->bean->id, $this->bean->doc_type, $this->bean->filename, $this->bean->mime_type);
-		}
-		else if ( ! empty($_REQUEST['old_id']))
-		{
-       	 	$upload_file->duplicate_file($_REQUEST['old_id'], $this->bean->id, $this->bean->filename);
-		}
-	}
-	
-*/
 	function action_editview(){
 		$this->view = 'edit';
 		$GLOBALS['view'] = $this->view;

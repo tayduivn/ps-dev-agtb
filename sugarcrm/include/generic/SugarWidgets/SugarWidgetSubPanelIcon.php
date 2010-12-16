@@ -116,7 +116,6 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 				and !empty($layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])]) ){
 					
 					$key=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['id_field'])];
-					$doc_id = $layout_def['fields'][strtoupper($layout_def['image2_url_field']['doc_id'])];
 					if(empty($doc_url)){
 						$file=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])];
 						//$filepath=UploadFile :: get_url(from_html($file), $key);	

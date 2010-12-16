@@ -129,42 +129,6 @@ $dictionary['Note'] = array(
     'comment' => 'Attachment MIME type',
     'importable' => false,
   ),
-  'doc_id' =>
-  array (
-  	'name' => 'doc_id',
-  	'vname' => 'LBL_DOC_ID',
-  	'type' => 'varchar',
-  	'len' => '100',
-  	'comment' => 'Document ID from documents web server provider',
-  	'importable' => false,
-  ),
-  'doc_type' =>
-  array (
-  	'name' => 'doc_type',
-  	'vname' => 'LBL_DOC_TYPE',
-  	'type' => 'enum',
-  	'function' => 'getNotesExternalApiDropDown',
-  	'len' => '100',
-  	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
-  ),
-'doc_url' =>
-  array (
-  	'name' => 'doc_url',
-  	'vname' => 'LBL_DOC_URL',
-  	'type' => 'varchar',
-  	'len' => '255',
-  	'comment' => 'Document URL from documents web server provider',
-  	'importable' => false,
-  ),
-'doc_direct_url' =>
-  array (
-  	'name' => 'doc_direct_url',
-  	'vname' => 'LBL_DOC_DIRECT_URL',
-  	'type' => 'varchar',
-  	'len' => '255',
-  	'comment' => 'Document URL from documents web server provider for direct download',
-  	'importable' => false,
-  ),
   'file_url'=>
   array(
   	'name'=>'file_url',
@@ -188,10 +152,6 @@ $dictionary['Note'] = array(
     'reportable'=>true,
     'comment' => 'File name associated with the note (attachment)',
     'importable' => false,
-    // Special file-only options
-    // This one allows the use of external api's to store files to.
-    'allowEapm'=>true,
-    'docType' => 'doc_type',
   ),
   'parent_type'=>
   array(

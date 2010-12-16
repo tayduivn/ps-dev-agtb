@@ -70,14 +70,9 @@ array (
          
         array (
            
-          '0' => array (
+          array (
             'name' => 'filename',
-          ),
-          
-          '1' => array(
-          	'name' => 'doc_type',
-            'label' => 'LBL_DOC_TYPE',
-          ),
+          ),          
         ),
          
         array (

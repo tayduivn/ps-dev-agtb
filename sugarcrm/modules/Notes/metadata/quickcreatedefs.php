@@ -77,8 +77,7 @@ array (
         ),
          
         array (
-           '0' => 'doc_type',
-           '1' => 'filename',
+           'filename',
         ),
          
         array (

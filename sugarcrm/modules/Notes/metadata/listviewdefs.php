@@ -65,13 +65,6 @@ array (
     ),
   ),
   
-  'DOC_TYPE' =>
-  array(
-	'width' => '5%', 
-  	'label' => 'LBL_DOC_TYPE',
-    'link' => false,
- 	'default' => true,
-  ), 
   'FILENAME' => 
   array (
     'width' => '20%',
@@ -82,8 +75,6 @@ array (
     array (
       0 => 'file_url',
       1 => 'id',
-      2 => 'doc_id',
-      3 => 'doc_type',
     ),
     'displayParams' =>
     array(
