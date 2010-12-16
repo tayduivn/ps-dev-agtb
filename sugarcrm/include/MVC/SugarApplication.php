@@ -631,9 +631,14 @@ class SugarApplication
         $theme = $GLOBALS['current_user']->getPreference('user_theme');
         
         if (is_null($theme)) {
-			$theme = !empty($_SESSION['authenticated_user_theme'])
-                ? $_SESSION['authenticated_user_theme']
-                : $GLOBALS['sugar_config']['default_theme'];
+            $theme = $GLOBALS['sugar_config']['default_theme'];
+            if(!empty($_SESSION['authenticated_user_theme'])){
+                $theme = $_SESSION['authenticated_user_theme'];
+            }
+            else if(!empty($_COOKIE['sugar_user_theme'])){
+                $theme = $_COOKIE['sugar_user_theme'];
+            }
+            
 			if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '') {
 				$_SESSION['theme_changed'] = false;
 			}
