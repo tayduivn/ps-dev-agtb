@@ -50,7 +50,7 @@ class SugarAuthenticate{
 	 */
 	function loginAuthenticate($username, $password){
 		global $mod_strings;
-		session_unregister('login_error');
+		//unset($_SESSION['login_error']);
 		if ($this->userAuthenticate->loadUserOnLogin($username, $password)) {
 
 			return $this->postLoginAuthenticate();
@@ -77,10 +77,10 @@ class SugarAuthenticate{
 		require_once ('modules/Administration/updater_utils.php');
 
 		//just do a little house cleaning here
-		session_unregister('login_password');
-		session_unregister('login_error');
-		session_unregister('login_user_name');
-		session_unregister('ACL');
+		unset($_SESSION['login_password']);
+		unset($_SESSION['login_error']);
+		unset($_SESSION['login_user_name']);
+		unset($_SESSION['ACL']);
 
 		//set the server unique key
 		if (isset ($sugar_config['unique_key']))$_SESSION['unique_key'] = $sugar_config['unique_key'];

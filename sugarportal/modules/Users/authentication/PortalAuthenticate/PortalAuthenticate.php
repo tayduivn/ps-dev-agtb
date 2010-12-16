@@ -73,10 +73,10 @@ class PortalAuthenticate {
         //THIS SECTION IS TO ENSURE VERSIONS ARE UPTODATE
 
         //just do a little house cleaning here
-        session_unregister('login_password');
-        session_unregister('login_error');
-        session_unregister('login_user_name');
-        session_unregister('ACL');
+        unset($_SESSION['login_password']);
+        unset($_SESSION['login_error']);
+        unset($_SESSION['login_user_name']);
+        unset($_SESSION['ACL']);
 
         //set the server unique key
         if (isset ($sugar_config['unique_key']))$_SESSION['unique_key'] = $sugar_config['unique_key'];
