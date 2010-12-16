@@ -1128,5 +1128,7 @@ $mod_strings = array (
    'LBL_SAML_CERT' => 'X509 Certificate',
    'LBL_SAML_CERT_DESC' => 'Enter X509 Certificate',
    'LBL_SAML_LOGIN_URL' => 'Login URL',
-   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL'
+   'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
+   'LBL_EAPM_SETTINGS' => 'External Accounts',
+   'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
 	);
