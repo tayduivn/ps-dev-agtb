@@ -45,15 +45,15 @@ $viewdefs[$module_name]['EditView'] = array(
         ), 'active',
     ),
     array (
-      'name',
-       array('name'=>'password', 'type'=>'password'),
+        array('name' => 'name', 'displayParams' => array('required' => true) ),
+        array('name'=>'password', 'type'=>'password', 'displayParams' => array('required' => true) ),
     ),
     array (
-      'url',
-      'assigned_user_name',
-   ),
+        array('name' => 'url', 'displayParams' => array('required' => true) ),
+        'assigned_user_name',
+    ),
     array (
-      'description',
+        'description',
     ),
   ),
 

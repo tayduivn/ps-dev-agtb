@@ -31,7 +31,7 @@ $dictionary['EAPM'] = array(
 	'fields'=>array (
   'password' =>
   array (
-    'required' => false,
+    'required' => true,
     'name' => 'password',
     'vname' => 'LBL_PASSWORD',
     'type' => 'encrypt',
@@ -49,7 +49,7 @@ $dictionary['EAPM'] = array(
   ),
   'url' =>
   array (
-    'required' => false,
+    'required' => true,
     'name' => 'url',
     'vname' => 'LBL_URL',
     'type' => 'varchar',
@@ -66,6 +66,7 @@ $dictionary['EAPM'] = array(
   ),
   'application' =>
   array (
+    'required' => true,
     'name' => 'application',
     'vname' => 'LBL_APPLICATION',
     'type' => 'enum',

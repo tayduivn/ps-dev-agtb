@@ -52,7 +52,7 @@ class ExternalAPIFactory{
 
         $baseDirList = array('include/externalAPI/','custom/include/externalAPI');
         foreach ( $baseDirList as $baseDir ) {
-            $dirList = glob($baseDir.'*',GLOB_NOSORT|GLOB_ONLYDIR);
+            $dirList = glob($baseDir.'*',GLOB_ONLYDIR);
             foreach($dirList as $dir) {
                 if ( $dir == $baseDir.'.' || $dir == $baseDir.'..' || $dir == $baseDir.'Base' ) {
                     continue;

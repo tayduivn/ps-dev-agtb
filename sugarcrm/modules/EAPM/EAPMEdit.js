@@ -13,17 +13,35 @@ function EAPMChange() {
     var apiOpts = SUGAR.eapm[apiName];
 
     var urlObj = new SUGAR.forms.VisibilityAction('url',(apiOpts.needsUrl==true), EAPMFormName);
+    EAPMSetFieldRequired('url',(apiOpts.needsUrl == true));
+
     var userObj = new SUGAR.forms.VisibilityAction('name',(apiOpts.authMethod=='password'), EAPMFormName);
+    EAPMSetFieldRequired('name',(apiOpts.authMethod == 'password'));
+
     var passObj = new SUGAR.forms.VisibilityAction('password',(apiOpts.authMethod=='password'), EAPMFormName);
+    EAPMSetFieldRequired('password',(apiOpts.authMethod == 'password'));
 
     urlObj.exec();
     userObj.exec();
     passObj.exec();
 }
 
+function EAPMSetFieldRequired(fieldName, isRequired) {
+    var formname = 'EditView';
+    for(var i = 0; i < validate[formname].length; i++){
+		if(validate[formname][i][0] == fieldName){
+            validate[formname][i][2] = isRequired;
+		}
+    }
+}
+
 function EAPMEditStart(userIsAdmin) {
     var apiElem = document.getElementById('application');
-    
+
+    EAPM_url_validate = null;
+    EAPM_name_validate = null;
+    EAPM_password_validate = null;
+
     apiElem.onchange = EAPMChange;
 
     setTimeout(EAPMChange,100);
