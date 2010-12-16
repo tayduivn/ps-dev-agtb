@@ -39,7 +39,7 @@ class EAPMViewDetail extends ViewDetail {
 
         $returnAction = 'DetailView';
         $returnModule = 'Users';
-        $returnId = '';
+        $returnId = $GLOBALS['current_user']->id;
         $returnName = $GLOBALS['current_user']->full_name;
         if(!empty($_REQUEST['return_action']) && !empty($_REQUEST['return_module'])){
             if('Users' == $_REQUEST['return_module']){
@@ -49,16 +49,17 @@ class EAPMViewDetail extends ViewDetail {
                 if(!empty($_REQUEST['return_name'])){
                     $returnName = $_REQUEST['return_name'];
                 }
+                if(!empty($_REQUEST['user_id'])){
+                    $returnId = $_REQUEST['user_id'];
+                }
             }
         }
-        if(!empty($_REQUEST['user_id'])){
-            $returnId = $_REQUEST['user_id'];
-        }
+
 
         $iconPath = $this->getModuleTitleIconPath($this->module);
     	$params = array(
            "<a href='index.php?module=Users&action=index'><img src='{$iconPath}' alt='Users' title='Users' align='absmiddle'></a>",
-    	   "<a href='index.php?module={$returnModule}&action={$returnAction}&record={$returnId}'>".$returnName."</a>",
+    	   "<a href='index.php?module={$returnModule}&action=EditView&record={$returnId}'>".$returnName."</a>",
     	   );
         if($returnAction == 'EditView'){
             $params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
