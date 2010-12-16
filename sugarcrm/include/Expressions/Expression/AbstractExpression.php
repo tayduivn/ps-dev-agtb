@@ -112,7 +112,7 @@ abstract class AbstractExpression
 		// retrieve the operation name for throwing exceptions
 		$op_name = call_user_func(array(get_class($this), "getOperationName"));
 
-		/* parameter and type validation */
+        /* parameter and type validation */
 
 		// make sure count is a number
 		if ( !is_numeric($count) )	throw new Exception($op_name . ": Number of paramters required must be a number");
@@ -146,11 +146,10 @@ abstract class AbstractExpression
 
 		// we require multiple but params only has 1
 		if ( $count > 1 && !is_array($params) )
-			throw new Exception($op_name . ": Requires exactly $count parameter(s)");
-
+            throw new Exception($op_name . ": Requires exactly $count parameter(s), only one passed in");
 		// we require only 1 and params has multiple
 		if ( $count == 1 && is_array($params) )
-			throw new Exception($op_name . ": Requires exactly $count parameter(s)");
+			throw new Exception($op_name . ": Requires exactly $count parameter(s), more than one passed in");
 
 		// check parameter count
 		if ( $count != AbstractExpression::$INFINITY && sizeof($params) != $count )
@@ -197,7 +196,8 @@ abstract class AbstractExpression
 		$class = AbstractExpression::$TYPE_MAP[$type];
 
 		// check if type is empty
-		if ( !isset($class) )		return false;
+		if ( !isset($class) )
+            return false;
 
 		// check if it's an instance of type
 		if($variable instanceof $class);
@@ -221,6 +221,8 @@ abstract class AbstractExpression
                 if ( $variable instanceof Expression )	$variable = $variable->evaluate();
 				return ((is_string($variable) && new DateTime($variable) !== false));
 				break;
+            case AbstractExpression::$RELATE_TYPE:
+                return true; 
 		}
 
 		// just return whether it is an instance or not

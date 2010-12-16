@@ -76,8 +76,7 @@ class SetValueAction extends AbstractAction{
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
-		$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
+        $result = Parser::evaluate($this->expression, $target)->evaluate();
         $field = $this->targetField;
         $def = array();
         if (!empty($target->field_defs[$field]))

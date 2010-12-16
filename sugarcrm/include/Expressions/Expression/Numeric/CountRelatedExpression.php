@@ -19,29 +19,26 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Generic/GenericExpression.php');
+require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 /**
- * <b>related(Relate <i>link</i>, String <i>field</i>)</b><br>
- * Returns the value of <i>field</i> in the related module <i>link</i><br/>
- * ex: <i>related($accounts, "industry")</i>
+ * <b>count(Relate <i>link</i>)</b><br>
+ * Returns the number of records related to this record by <i>link</i><br/>
+ * ex: <i>count($contacts)</i> in Accounts would return the <br/>
+ * number of contacts related to this account.
  */
-class RelatedFieldExpression extends GenericExpression
+class CountRelatedExpression extends NumericExpression
 {
 	/**
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$params = $this->getParameters();
+		$linkField = $this->getParameters()->evaluate();
 		//This should be of relate type, which means an array of SugarBean objects
-        $linkField = $params[0]->evaluate();
-        $relfield = $params[1]->evaluate();
-
-
-        if (empty($linkField) || !isset($linkField[0]->$relfield)) {
-            return "";
+        if (!is_array($linkField)) {
+            return false;
         }
 
-        return $linkField[0]->$relfield;
+        return count($linkField);
 	}
 
 	/**
@@ -49,9 +46,7 @@ class RelatedFieldExpression extends GenericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		    var params = this.getParameters();
-			var linkField = params[0].evaluate();
-			var relField = params[1].evaluate();
+		    var linkField = this.getParameters().evaluate();
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
@@ -67,8 +62,8 @@ class RelatedFieldExpression extends GenericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"related",
-                    params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
+                    function:"count",
+                    params: YAHOO.lang.JSON.stringify(['\$' + linkField])
                 });
                 //The response should the be the JSON encoded value of the related field
                 return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);
@@ -89,21 +84,21 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return array("related");
+		return array("count");
 	}
 
 	/**
 	 * The first parameter is a number and the second is the list.
 	 */
 	function getParameterTypes() {
-		return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
+		return array(AbstractExpression::$RELATE_TYPE);
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 2;
+		return 1;
 	}
 
 	/**

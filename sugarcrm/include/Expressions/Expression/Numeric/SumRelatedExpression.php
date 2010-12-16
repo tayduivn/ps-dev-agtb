@@ -19,13 +19,14 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Generic/GenericExpression.php');
+require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 /**
- * <b>related(Relate <i>link</i>, String <i>field</i>)</b><br>
- * Returns the value of <i>field</i> in the related module <i>link</i><br/>
- * ex: <i>related($accounts, "industry")</i>
+ * <b>rollup(Relate <i>link</i>, String <i>field</i>)</b><br>
+ * Returns the sum of the values of <i>field</i> in records related by <i>link</i><br/>
+ * ex: <i>rollup($opportunities, "amount")</i> in Accounts would return the <br/>
+ * sum of all the Opportunities related to this Account.
  */
-class RelatedFieldExpression extends GenericExpression
+class SumRelatedExpression extends NumericExpression
 {
 	/**
 	 * Returns the entire enumeration bare.
@@ -36,12 +37,18 @@ class RelatedFieldExpression extends GenericExpression
         $linkField = $params[0]->evaluate();
         $relfield = $params[1]->evaluate();
 
+		$ret = 0;
 
-        if (empty($linkField) || !isset($linkField[0]->$relfield)) {
-            return "";
+		if (!is_array($linkField) || empty($linkField))
+            return $ret;
+
+        foreach($linkField as $bean)
+        {
+            if (!empty($bean->$relfield))
+                $ret += $bean->$relfield;
         }
 
-        return $linkField[0]->$relfield;
+        return $ret;
 	}
 
 	/**
@@ -67,7 +74,7 @@ class RelatedFieldExpression extends GenericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"related",
+                    function:"rollup",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field
@@ -89,7 +96,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return array("related");
+		return array("rollup");
 	}
 
 	/**

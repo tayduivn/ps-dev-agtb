@@ -68,6 +68,12 @@ SUGAR.forms.AssignmentHandler.VARIABLE_MAP = {};
 
 /**
  * @STATIC
+ * This array contains a list of valid relationship links for this module
+ */
+SUGAR.forms.AssignmentHandler.LINKS = {};
+
+/**
+ * @STATIC
  * This array contains the list of locked variables. (For Detection of Circular References)
  */
 SUGAR.forms.AssignmentHandler.LOCKS = {};
@@ -161,8 +167,14 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
  * @STATIC
  * Retrieve the value of a variable.
  */
-SUGAR.forms.AssignmentHandler.getValue = function(variable) {
-	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
+SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
+
+	//Relate fields are only string on the client side, so return the variable name back.
+	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
+		return variable;
+
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
 
 	// special select case for IE6 and dropdowns

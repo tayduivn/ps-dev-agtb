@@ -23,10 +23,14 @@ class Parser {
 	 * Evaluates an expression.
 	 *
 	 * @param string	the expression to evaluate
+     *
 	 */
-	static function evaluate($expr)
+	static function evaluate($expr, $context = false)
 	{
-		// the function map
+		if ($context)
+            $expr = self::replaceVariables($expr, $context);
+
+        // the function map
 		static $FUNCTION_MAP = array();
 
 		// trim spaces, left and right
@@ -92,8 +96,11 @@ class Parser {
 
 			// the last parameter
 			if ( $i == $length ) {
-                if ($argument != "")
-				    $args[] = Parser::evaluate($argument);
+                if ($argument != "") {
+				    $subExp = Parser::evaluate($argument);
+                    $subExp->context = $context;
+                    $args[] = $subExp;
+                }
 				break;
 			}
 
@@ -136,7 +143,9 @@ class Parser {
 
 			// argument splitting
 			else if ( $char == ',' && $level == 0 ) {
-				$args[] = Parser::evaluate($argument);
+				$subExp = Parser::evaluate($argument);
+                $subExp->context = $context;
+                $args[] = $subExp;
 				$argument = "";
 				continue;
 			}
@@ -160,7 +169,11 @@ class Parser {
 
 		// require and return the appropriate expression object
 		require_once( $FUNCTION_MAP[$func]['src'] );
-		return new $FUNCTION_MAP[$func]['class']($args);
+        $expObject = new $FUNCTION_MAP[$func]['class']($args);
+        if ($context) {
+            $expObject->context = $context;
+        }
+		return $expObject;
 	}
 
 	/**
@@ -209,7 +222,6 @@ class Parser {
 			$year  = floatval(substr($expr, 6, 4));
 			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			require_once('include/Expressions/Expression/Date/DefineDateExpression.php');
-			//echo "Date found $month, $day, $year";
 			//return new DefineDateExpression(array($day, $month, $year));
 			return new DefineDateExpression(new StringLiteralExpression( $expr ));
 		}
@@ -243,13 +255,14 @@ class Parser {
 	 * @param Array/SugarBean $target
 	 */
 	static function replaceVariables($expr, $target) {
-		$variables = Parser::getFieldsFromExpression($expr);
+		$target->load_relationships();
+        $variables = Parser::getFieldsFromExpression($expr);
 		$ret = $expr;
 		foreach($variables as $field) {
 			if (is_array($target)) 
 			{
 				if (isset($target[$field])) {
-					$val = Parser::getFormatedValue($target[$field]);
+					$val = Parser::getFormatedValue($target[$field], $field);
 					$ret = str_replace("$$field", $val, $ret);
 				} else {
 				    throw new Exception("Unknown variable $$field in formula: $expr");
@@ -257,8 +270,14 @@ class Parser {
 				}
 			} else 
 			{
-				if (isset ($target->$field)) {
-					$val = Parser::getFormatedValue($target->$field);
+				//Special case for link fields
+                if (isset($target->field_defs[$field]) && $target->field_defs[$field]['type'] == "link")
+                {
+                    $val = "link(\"$field\")";
+                    $ret = str_replace("$$field", $val, $ret);
+                }
+                else if (isset ($target->$field)) {
+                    $val = Parser::getFormatedValue($target->$field, $field);
 					$ret = str_replace("$$field", $val, $ret);	
 				} else  {
 					throw new Exception("Unknown variable $$field in formula: $expr");
@@ -269,7 +288,7 @@ class Parser {
 		return $ret;
 	}
 	
-	private static function getFormatedValue($val) {
+	private static function getFormatedValue($val, $fieldName) {
 		//Boolean values
 		if ($val === true) {
 			return AbstractExpression::$TRUE;	

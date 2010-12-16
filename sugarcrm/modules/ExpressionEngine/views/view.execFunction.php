@@ -18,49 +18,39 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-
-class ExpressionEngineController extends SugarController
+require_once('include/MVC/View/views/view.ajax.php');
+require_once('include/Expressions/Expression/Parser/Parser.php');
+class ViewExecFunction extends ViewAjax
 {
-	var $action_remap = array ( ) ;
-	
-	function ExpressionEngineController() {
-		$this->view = 'editFormula';
-	}
-	
-	function action_editFormula ()
-    {
-     	$this->view = 'editFormula';  
-    }
-    
-	function action_index ()
-    {
-     	$this->view = 'index';  
-    }
-    
-	function action_cfTest ()
-    {
-     	$this->view = 'cfTest';  
-    }
-    
-	function action_list ()
-    {
-     	$this->view = 'index';  
+    var $vars = array("tmodule", "id", "params", "function");
+
+    function __construct(){
+        parent::ViewAjax();
+        foreach($this->vars as $var)
+        {
+            if (empty($_REQUEST[$var]))
+                sugar_die("Required paramter $var not set in ViewRelFields");
+            $this->$var = $_REQUEST[$var];
+        }
+
     }
 
-    function action_relFields ()
-    {
-     	$this->view = 'relFields';  
-    }
+ 	function display() {
+        //First load the primary bean
+        $focus = $this->getBean($this->tmodule);
+        $focus->retrieve($this->id);
 
-    function action_execFunction ()
-    {
-     	$this->view = 'execFunction';  
-    }
+        $params = implode(",", json_decode(html_entity_decode($this->params)));
+        $result = Parser::evaluate("{$this->function}($params)", $focus)->evaluate();
+        echo json_encode($result);
+     }
 
-    function action_functionDetail() {
-    	$this->view = 'functionDetail'; 
+    function getBean($module)
+    {
+       global $beanList;
+       if (empty($beanList[$module]))
+           sugar_die("No bean for module $module");
+       $bean = $beanList[$module];
+       return new $bean();
     }
 }
-?>
