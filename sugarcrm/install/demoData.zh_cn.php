@@ -1,4 +1,4 @@
-<?php
+ nb//<?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -814,8 +814,8 @@ $sugar_demodata['project_seed_data']['audit'] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => '和股东进行沟通',
-	'date_start' => '2007/11/1',
-	'date_finish' => '2007/11/8',
+	'date_start' => '2010-11-1',
+	'date_finish' => '2010-11-8',
 	'description' => '与马东和刘伟单独会面',
 	'duration' => '6',
 	'duration_unit' => 'Days',
@@ -824,8 +824,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => '创建计划草案',
-	'date_start' => '2007/11/5',
-	'date_finish' => '2007/11/20',
+	'date_start' => '2010-11-5',
+	'date_finish' => '2010-11-20',
 	'description' => '与马东和刘伟单独会面',
 	'duration' => '12',
 	'duration_unit' => 'Days',
@@ -834,8 +834,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => '外勤工作收集数据',
-	'date_start' => '2007/11/5',
-	'date_finish' => '2007/11/13',
+	'date_start' => '2010-11-5',
+	'date_finish' => '2010-11-13',
 	'description' => '我们需要获得股东的支持',
 	'duration' => '17',
 	'duration_unit' => 'Days',
@@ -844,8 +844,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => '创建计划草案',
-	'date_start' => '2007/11/12',
-	'date_finish' => '2007/11/19',
+	'date_start' => '2010-11-12',
+	'date_finish' => '2010-11-19',
 	'description' => 'Schedule the meeting with the head of business units to solicit help.',
 	'duration' => '6',
 	'duration_unit' => 'Days',
@@ -854,13 +854,57 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => '收集会议资料',
-	'date_start' => '2007/11/20',
-	'date_finish' => '2007/11/20',
+	'date_start' => '2010-11-20',
+	'date_finish' => '2010-11-20',
 	'description' => '收集组织会议资料并归档',
 	'duration' => '1',
 	'duration_unit' => 'Days',
 	'percent_complete' => 0,
 );
 
+//BEGIN Quotes demo data
+$sugar_demodata['quotes_seed_data']['quotes'][0] = array(
+	'name' => 'Computers for [account name]',
+	'quote_stage' => 'Draft',
+	'date_quote_expected_closed' => '04/30/2012',
+    'description' => '',
+    'purcahse_order_num' => '6011842',
+    'payment_terms' => 'Net 30',
+
+    'bundle_data' => array(
+		0 => array (
+		    'bundle_name' => 'Computers',
+		    'bundle_stage' => 'Draft',
+		    'comment' => 'TK Desktop Computers',
+		    'products' => array (
+				1 => array('name'=>'TK 1000 Desktop', 'quantity'=>'1'),
+				2 => array('name'=>'TK m30 Desktop', 'quantity'=>'2'),
+			),
+		),
+	),
+);
+
+
+$sugar_demodata['quotes_seed_data']['quotes'][1] = array(
+	'name' => 'Mirrors for [account name]',
+	'quote_stage' => 'Negotiation',
+	'date_quote_expected_closed' => '04/30/2012',
+    'description' => '',
+ 	'purcahse_order_num' => '3940021',
+    'payment_terms' => 'Net 15',
+         
+
+    'bundle_data' => array(
+		0 => array (
+		    'bundle_name' => 'Mirrors',
+		    'bundle_stage' => 'Draft',
+		    'comment' => 'Reflective Mirrors',
+		    'products' => array (
+				1 => array('name'=>'Reflective Mirror Widget', 'quantity'=>'2'),
+			),
+		),
+	),
+);
+//END Quotes demo data
 
 ?>

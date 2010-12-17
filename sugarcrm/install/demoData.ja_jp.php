@@ -488,10 +488,11 @@ $sugar_demodata['project_seed_data']['audit'] = array(
 	'priority' => 'medium',
 );
 
+
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Communicate to stakeholders',
-	'date_start' => '2007/11/1',
-	'date_finish' => '2007/11/8',
+	'name' => 'Communicate with internal stakeholders',
+	'date_start' => '2010-11-1',
+	'date_finish' => '2010-11-8',
 	'description' => 'Schedule individual meetings with Will, Max, and Sarah.',
 	'duration' => '6',
 	'duration_unit' => 'Days',
@@ -500,29 +501,29 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Create draft of the plan',
-	'date_start' => '2007/11/5',
-	'date_finish' => '2007/11/20',
-	'description' => 'Schedule individual meetings with Will, Max, and Sarah.',
+	'date_start' => '2010-11-5',
+	'date_finish' => '2010-11-20',
+	'description' => 'Start new plan document, including all of the information from the initial discussion meetings.',
 	'duration' => '12',
 	'duration_unit' => 'Days',
 	'percent_complete' => 38,
 );
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Field work for collecting data.',
-	'date_start' => '2007/11/5',
-	'date_finish' => '2007/11/13',
-	'description' => 'We need to get approval from all stakeholders on the plan',
+	'name' => 'Perform field studies to collect data',
+	'date_start' => '2010-11-5',
+	'date_finish' => '2010-11-13',
+	'description' => 'Obtain approval from all stakeholders of the plan.',
 	'duration' => '17',
 	'duration_unit' => 'Days',
 	'percent_complete' => 75,
 );
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Create draft of the plan',
-	'date_start' => '2007/11/12',
-	'date_finish' => '2007/11/19',
-	'description' => 'Schedule the meeting with the head of business units to solicit help.',
+	'name' => 'Update draft of the plan',
+	'date_start' => '2010-11-12',
+	'date_finish' => '2010-11-19',
+	'description' => 'Schedule a meeting with the heads of the business units to review the plan.',
 	'duration' => '6',
 	'duration_unit' => 'Days',
 	'percent_complete' => 0,
@@ -530,12 +531,57 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Gather data from meetings',
-	'date_start' => '2007/11/20',
-	'date_finish' => '2007/11/20',
-	'description' => 'Need to organize the data and put it in the right spreadsheet.',
+	'date_start' => '2010-11-20',
+	'date_finish' => '2010-11-20',
+	'description' => 'Need to organize the data and create charts to represent the data.',
 	'duration' => '1',
 	'duration_unit' => 'Days',
 	'percent_complete' => 0,
 );
+
+//BEGIN Quotes demo data
+$sugar_demodata['quotes_seed_data']['quotes'][0] = array(
+	'name' => 'Computers for [account name]',
+	'quote_stage' => 'Draft',
+	'date_quote_expected_closed' => '04/30/2012',
+    'description' => '',
+    'purcahse_order_num' => '6011842',
+    'payment_terms' => 'Net 30',
+
+    'bundle_data' => array(
+		0 => array (
+		    'bundle_name' => 'Computers',
+		    'bundle_stage' => 'Draft',
+		    'comment' => 'TK Desktop Computers',
+		    'products' => array (
+				1 => array('name'=>'TK 1000 Desktop', 'quantity'=>'1'),
+				2 => array('name'=>'TK m30 Desktop', 'quantity'=>'2'),
+			),
+		),
+	),
+);
+
+
+$sugar_demodata['quotes_seed_data']['quotes'][1] = array(
+	'name' => 'Mirrors for [account name]',
+	'quote_stage' => 'Negotiation',
+	'date_quote_expected_closed' => '04/30/2012',
+    'description' => '',
+ 	'purcahse_order_num' => '3940021',
+    'payment_terms' => 'Net 15',
+         
+
+    'bundle_data' => array(
+		0 => array (
+		    'bundle_name' => 'Mirrors',
+		    'bundle_stage' => 'Draft',
+		    'comment' => 'Reflective Mirrors',
+		    'products' => array (
+				1 => array('name'=>'Reflective Mirror Widget', 'quantity'=>'2'),
+			),
+		),
+	),
+);
+//END Quotes demo data
 
 ?>
