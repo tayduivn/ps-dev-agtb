@@ -13,7 +13,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $system_config = new Administration();
         $system_config->retrieveSettings();
         $GLOBALS['system_config'] = $system_config;
-        $this->_app = new SugarApplication();
+        $this->_app = new SugarApplicationMock();
         if ( isset($_SESSION['authenticated_user_theme']) )
             unset($_SESSION['authenticated_user_theme']);
     }
@@ -174,4 +174,114 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertNotEmpty($GLOBALS['app_list_strings'], "App List Strings is not empty.");
     	$this->assertNotEmpty($GLOBALS['mod_strings'], "Mod Strings is not empty.");
     }
+    
+    public function testCheckHTTPRefererReturnsTrueIfRefererNotSet()
+    {
+        $_SERVER['HTTP_REFERER'] = '';
+        $_SERVER['SERVER_NAME'] = 'dog';
+        $this->_app->controller->action = 'index';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+    }
+    
+    /**
+     * @ticket 39691
+     */
+    public function testCheckHTTPRefererReturnsTrueIfRefererIsLocalhost()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://localhost';
+        $_SERVER['SERVER_NAME'] = 'localhost';
+        $this->_app->controller->action = 'poo';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        
+        $_SERVER['HTTP_REFERER'] = 'http://127.0.0.1';
+        $_SERVER['SERVER_NAME'] = 'localhost';
+        $this->_app->controller->action = 'poo';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        
+        $_SERVER['HTTP_REFERER'] = 'http://localhost';
+        $_SERVER['SERVER_NAME'] = '127.0.0.1';
+        $this->_app->controller->action = 'poo';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        
+        $_SERVER['HTTP_REFERER'] = 'http://127.0.0.1';
+        $_SERVER['SERVER_NAME'] = '127.0.0.1';
+        $this->_app->controller->action = 'poo';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+    }
+    
+    public function testCheckHTTPRefererReturnsTrueIfRefererIsServerName()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://dog';
+        $_SERVER['SERVER_NAME'] = 'dog';
+        $this->_app->controller->action = 'index';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+    }
+    
+    public function testCheckHTTPRefererReturnsTrueIfRefererIsInWhitelist()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://dog';
+        $_SERVER['SERVER_NAME'] = 'cat';
+        $this->_app->controller->action = 'index';
+        
+        if ( !empty($GLOBALS['sugar_config']['http_referer']['list']) ) {
+            $prevRefererList = $GLOBALS['sugar_config']['http_referer']['list'];
+        }
+        $GLOBALS['sugar_config']['http_referer']['list'][] = 'http://dog';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        
+        if ( isset($prevRefererList) ) {
+            $GLOBALS['sugar_config']['http_referer']['list'] = $prevRefererList;
+        }
+    }
+    
+    public function testCheckHTTPRefererReturnsFalseIfRefererIsNotInWhitelist()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://dog';
+        $_SERVER['SERVER_NAME'] = 'cat';
+        $this->_app->controller->action = 'poo';
+        
+        $this->assertFalse($this->_app->checkHTTPReferer());
+    }
+    
+    public function testCheckHTTPRefererReturnsTrueIfRefererIsNotInWhitelistButActionIs()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://dog';
+        $_SERVER['SERVER_NAME'] = 'cat';
+        $this->_app->controller->action = 'index';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+    }
+    
+    public function testCheckHTTPRefererReturnsTrueIfRefererIsNotInWhitelistButActionIsInConfig()
+    {
+        $_SERVER['HTTP_REFERER'] = 'http://dog';
+        $_SERVER['SERVER_NAME'] = 'cat';
+        $this->_app->controller->action = 'poo';
+        
+        if ( !empty($GLOBALS['sugar_config']['http_referer']['actions']) ) {
+            $prevRefererList = $GLOBALS['sugar_config']['http_referer']['actions'];
+        }
+        $GLOBALS['sugar_config']['http_referer']['actions'][] = 'poo';
+        
+        $this->assertTrue($this->_app->checkHTTPReferer());
+        
+        if ( isset($prevRefererList) ) {
+            $GLOBALS['sugar_config']['http_referer']['actions'] = $prevRefererList;
+        }
+    }
+}
+
+class SugarApplicationMock extends SugarApplication
+{
+    public function checkHTTPReferer()
+	{
+	    return parent::checkHTTPReferer(false);
+	}
 }
