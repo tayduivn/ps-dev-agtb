@@ -90,13 +90,16 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
         {strip}
           <td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
             {if $col == 'NAME' || $params.bold}<b>{/if}
-            {if $params.link && !empty($rowData.URL) }
-              <a href="{$rowData.URL}" target="_new">
+            {if $params.link && !empty($rowData.DIRECT_URL) }
+              <a href="{$rowData.DIRECT_URL}" target="_new">
             {/if}
             {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
             {if empty($rowData.$col)}&nbsp;{/if}
-            {if $params.link && !empty($rowData.URL) }
+            {if $params.link && !empty($rowData.DIRECT_URL) }
               </a>
+            {/if}
+            {if $params.link && !empty($rowData.URL) }
+              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file="LotusLive_image_inline.png"}"></a>
             {/if}
             {if $col == 'NAME' || $params.bold}</b>{/if}
           </td>
