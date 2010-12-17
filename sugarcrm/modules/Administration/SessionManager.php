@@ -181,6 +181,7 @@ class SessionManager extends SugarBean {
         }
         $GLOBALS['log']->debug("System Session Timeout: ".$session_timeout);
 
+        global $timedate;
         $now = $timedate->getNow();
         return $timedate->asDb($now->get("-{$session_timeout} seconds"));
     }
