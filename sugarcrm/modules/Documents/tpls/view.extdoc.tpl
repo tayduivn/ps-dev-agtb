@@ -99,7 +99,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
               </a>
             {/if}
             {if $params.link && !empty($rowData.URL) }
-              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file="LotusLive_image_inline.png"}"></a>
+              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file="LotusLive_image_inline.png"}" border="0"></a>
             {/if}
             {if $col == 'NAME' || $params.bold}</b>{/if}
           </td>

@@ -149,9 +149,9 @@ $mod_strings = array (
     'LBL_CREATED_USER' => 'Created User',
     'LBL_THEREVISIONS_SUBPANEL_TITLE' => 'Reversions',
     'LBL_DOCUMENT_INFORMATION' => 'Document Overview',
-	'LBL_DOC_ID' => 'Document Server ID',
-	'LBL_DOC_TYPE' => 'Document Server',
-	'LBL_DOC_URL' => 'Document Server URL',
+	'LBL_DOC_ID' => 'Document Source ID',
+	'LBL_DOC_TYPE' => 'Source',
+	'LBL_DOC_URL' => 'Document Source URL',
 	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
 
     // Links around the world
