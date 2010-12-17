@@ -675,7 +675,7 @@ class UnifiedSearchAdvanced {
 	 * method to create the unified_search_modules_display.php file
 	 * 
 	 */
-	function createUnifiedSearchModulesDisplay()
+	public function createUnifiedSearchModulesDisplay()
 	{
 		//Make directory if it doesn't exist
 		if(!file_exists($cachedir = sugar_cached('modules')))
