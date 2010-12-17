@@ -137,7 +137,7 @@ Calendar.setup = function (params) {
             if (Dom.get(inputField).value.length > 0) {
             	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
                 seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
-            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos-1]);
+            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
             	calendar.render();
             } else if (seldate.length > 0) {
                 // Set the pagedate to show the selected date if it exists
