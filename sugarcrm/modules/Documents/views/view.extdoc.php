@@ -60,7 +60,7 @@ class DocumentsViewExtdoc extends SugarView
 
         $api = ExternalAPIFactory::loadAPI($apiName);
 
-        $searchDataLower = $api->searchDoc($file_search);
+        $searchDataLower = $api->searchDoc($file_search,true);
 
 
         // In order to emulate the list views for the SugarFields, I need to uppercase all of the key names.

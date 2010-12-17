@@ -133,7 +133,7 @@ class Google extends ExternalAPIBase implements WebDocument {
 	function shareDoc($documentId, $emails){
 
 	}
-    function searchDoc($keywords){
+    function searchDoc($keywords, $flushDocCache = false){
 		$this->getClient();
 
         if ( empty($keywords) ) {

@@ -273,8 +273,8 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
         return $results;
     }
 
-    public function searchDoc($keywords){
-        $docList = $this->loadDocCache();
+    public function searchDoc($keywords,$flushDocCache=false){
+        $docList = $this->loadDocCache($flushDocCache);
 
         $results = array();
         

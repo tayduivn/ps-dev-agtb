@@ -120,4 +120,19 @@ class EAPMController extends SugarController
         }
         $this->view = 'displayproperties';
     }
+
+    protected function action_FlushFileCache() 
+    {
+        $api = ExternalAPIFactory::loadAPI($_REQUEST['api']);
+        if ( $api == false ) {
+            echo 'FAILED';
+            return;
+        }
+
+        if ( method_exists($api,'loadDocCache') ) {
+            $api->loadDocCache(true);
+        }
+        
+        echo 'SUCCESS';
+    }
 }

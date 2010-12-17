@@ -62,11 +62,17 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                      && typeof(SUGAR.eapm[dropdownValue].docSearch) != 'undefined'
                      && SUGAR.eapm[dropdownValue].docSearch ) {
                     docShowHideElem.style.display = '';
+                    
+                    // Start a refresh of the document cache in the background. Thanks AJAX!
+                    YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=flushFileCache&to_pdf=1&api='+dropdownValue,{});
+
+
                 } else {
                     docShowHideElem.style.display = 'none';
                 }
                 // Update the quick search
                 sqs_objects[formName+"_"+elemBaseName+"_remoteName"].api = dropdownValue;
+
                 
                 // Now time to see if we can select security options
                 var secLevelBoxElem = document.getElementById(elemBaseName + '_securityLevelBox');
