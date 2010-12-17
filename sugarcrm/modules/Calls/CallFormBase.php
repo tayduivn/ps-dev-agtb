@@ -228,6 +228,13 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	   ACLController::displayNoAccess(true);
 	   sugar_cleanup(true);
 	}
+
+	//add assigned user if this is the first time bean is saved
+  if(empty($focus->id) && $_POST['assigned_user_id'] !== $current_user->id){
+    $_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
+    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
+  }
+
     if(isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true'){
         $focus->save(true);
         $return_id = $focus->id;
