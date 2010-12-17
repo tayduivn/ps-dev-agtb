@@ -21703,8 +21703,8 @@ $sugar_demodata['project_seed_data']['audit'] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Communicate with internal stakeholders',
-	'date_start' => '2010/11/1',
-	'date_finish' => '2010/11/8',
+	'date_start' => '2010-11-1',
+	'date_finish' => '2010-11-8',
 	'description' => 'Schedule individual meetings with Will, Max, and Sarah.',
 	'duration' => '6',
 	'duration_unit' => 'Days',
@@ -21713,8 +21713,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Create draft of the plan',
-	'date_start' => '2010/11/5',
-	'date_finish' => '2010/11/20',
+	'date_start' => '2010-11-5',
+	'date_finish' => '2010-11-20',
 	'description' => 'Start new plan document, including all of the information from the initial discussion meetings.',
 	'duration' => '12',
 	'duration_unit' => 'Days',
@@ -21723,8 +21723,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Perform field studies to collect data',
-	'date_start' => '2010/11/5',
-	'date_finish' => '2010/11/13',
+	'date_start' => '2010-11-5',
+	'date_finish' => '2010-11-13',
 	'description' => 'Obtain approval from all stakeholders of the plan.',
 	'duration' => '17',
 	'duration_unit' => 'Days',
@@ -21733,8 +21733,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Update draft of the plan',
-	'date_start' => '2010/11/12',
-	'date_finish' => '2010/11/19',
+	'date_start' => '2010-11-12',
+	'date_finish' => '2010-11-19',
 	'description' => 'Schedule a meeting with the heads of the business units to review the plan.',
 	'duration' => '6',
 	'duration_unit' => 'Days',
@@ -21743,8 +21743,8 @@ $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 
 $sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
 	'name' => 'Gather data from meetings',
-	'date_start' => '2010/11/20',
-	'date_finish' => '2010/11/20',
+	'date_start' => '2010-11-20',
+	'date_finish' => '2010-11-20',
 	'description' => 'Need to organize the data and create charts to represent the data.',
 	'duration' => '1',
 	'duration_unit' => 'Days',
