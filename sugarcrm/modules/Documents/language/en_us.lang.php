@@ -153,6 +153,13 @@ $mod_strings = array (
 	'LBL_DOC_TYPE' => 'Document Server',
 	'LBL_DOC_URL' => 'Document Server URL',
 	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
+
+    // Links around the world
+    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Accounts',
+    'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
+    'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
+    'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
+    'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
 );
 
 

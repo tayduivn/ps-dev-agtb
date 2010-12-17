@@ -221,6 +221,47 @@ $dictionary['Document'] = array('table' => 'documents'
     'source' => 'non-db',
     'vname' => 'LBL_LEADS',
   ),
+  // Links around the world
+  'accounts'=>
+   array (
+       'name' => 'accounts',
+       'type' => 'link',
+       'relationship' => 'documents_accounts',
+       'source' => 'non-db',
+       'vname' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
+   ),
+  'contacts'=>
+   array (
+       'name' => 'contacts',
+       'type' => 'link',
+       'relationship' => 'documents_contacts',
+       'source' => 'non-db',
+       'vname' => 'LBL_CONTACTS_SUBPANEL_TITLE',
+   ),
+  'opportunities'=>
+   array (
+       'name' => 'opportunities',
+       'type' => 'link',
+       'relationship' => 'documents_opportunities',
+       'source' => 'non-db',
+       'vname' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+   ),
+  'cases'=>
+   array (
+       'name' => 'cases',
+       'type' => 'link',
+       'relationship' => 'documents_cases',
+       'source' => 'non-db',
+       'vname' => 'LBL_CASES_SUBPANEL_TITLE',
+   ),
+  'bugs'=>
+   array (
+       'name' => 'bugs',
+       'type' => 'link',
+       'relationship' => 'documents_bugs',
+       'source' => 'non-db',
+       'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
+   ),
 
   'related_doc_id' =>
   array (

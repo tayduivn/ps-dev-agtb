@@ -293,6 +293,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'source'=>'non-db',
 		'vname'=>'LBL_EMAILS',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_opportunities',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
 //BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
   array (

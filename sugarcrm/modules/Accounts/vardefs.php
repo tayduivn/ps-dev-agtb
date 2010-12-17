@@ -169,6 +169,14 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'source'=>'non-db',
     'vname'=>'LBL_EMAILS',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_accounts',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
   'bugs' =>
   array (
     'name' => 'bugs',
