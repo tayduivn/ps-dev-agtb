@@ -712,7 +712,6 @@ EOHTML;
         // if this is the style.css file, prepend the base.css and calendar-win2k-cold-1.css 
         // files before the theme styles
         if ( $cssFileName == 'style.css' && !isset($this->parentTheme) ) {
-            $cssFileContents = file_get_contents('jscalendar/calendar-win2k-cold-1.css') . $cssFileContents;
             if ( inDeveloperMode() )
                 $cssFileContents = file_get_contents('include/javascript/yui/build/base/base.css') . $cssFileContents;
             else
