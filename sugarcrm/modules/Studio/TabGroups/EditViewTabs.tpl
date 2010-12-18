@@ -34,12 +34,12 @@
 {overlib_includes}
 {literal}
 <br />
-<script type="text/javascript" src="modules/Studio/JSTransaction.js" ></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/JSTransaction.js'}" ></script>
 <script>
 	var jstransaction = new JSTransaction();
 </script>
-<script src="{sugar_getjspath file='modules/Studio/studiotabgroups.js'}"></script>
-<script src="{sugar_getjspath file='modules/Studio/ygDDListStudio.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studiotabgroups.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/ygDDListStudio.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studiodd.js'}" ></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studio.js'}" ></script>
 <style type='text/css'>

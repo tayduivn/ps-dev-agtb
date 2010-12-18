@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/charts/Charts.php');
 
 require_once('modules/Forecasts/Common.php');
-        
+
 
 class forecast_charts {
     /**
@@ -46,7 +46,7 @@ class forecast_charts {
         //currency files..
         $currency = new Currency();
         $currency->retrieve($current_user->getPreference('currency'));
-        
+
         $cache_file_name=$sugar_config['tmp_dir'].'/'.$current_user->getUserPrivGuid().$user->id.$forecast_type.".xml";
         $forecast = new Forecast();
         $data=array();
@@ -59,26 +59,26 @@ class forecast_charts {
         $query.=" and is_fiscal_year=0 ";
         $query.=" and deleted=0 ";
         $query.=" order by t.end_date desc";
-        
+
         $result=$forecast->db->limitQuery($query, 0, $no_of_timeperiods);
         $max=0;
         $min=-1;
-       
+
         while (($row=$forecast->db->fetchByAssoc($result)) != null) {
             //for each time period find the quota amount.
-          
+
             $quota_query = "select * from quotas ";
             $quota_query.= " where user_id='$user_id' ";
             $quota_query.= " and timeperiod_id='{$row['id']}' ";
             $quota_query.= " and quota_type='$forecast_type' ";
             $quota_query.= " and deleted=0";
-            
+
             $labels[$row['id']]=$row['name'];
-            
+
             $quota_label = $current_module_strings['LBL_GRAPH_QUOTA_LEGEND'];
-			$forecast_label = $current_module_strings['LBL_GRAPH_COMMIT_LEGEND'];            
+			$forecast_label = $current_module_strings['LBL_GRAPH_COMMIT_LEGEND'];
 			$closed_label = $current_module_strings['LBL_GRAPH_OPPS_LEGEND'];
-			
+
             //get quota
             $q_result=$forecast->db->query($quota_query);
             $quota=$forecast->db->fetchByAssoc($q_result);
@@ -88,19 +88,19 @@ class forecast_charts {
             } else  {
 				$data[$row['name']][$quota_label]=0;
             }
-            //compare for max value.                
+            //compare for max value.
             if ($data[$row['name']][$quota_label] > $max) {
                 $max=$data[$row['name']][$quota_label];
             }
             if ($min==-1 or $data[$row['name']][$quota_label] < $min) {
                 $min=$data[$row['name']][$quota_label];
             }
-       
+
             $labels[$row['id'].'quota']=sprintf($current_module_strings['LBL_GRAPH_QUOTA_ALTTEXT'],$row['name']);
             $labels['LEGEND']['quota']['ID']='quota';
             $labels['LEGEND']['quota']['NAME']=$current_module_strings['LBL_GRAPH_QUOTA_LEGEND'];
             $labels['LEGEND']['quota']['COLOR']=generate_graphcolor('quota',1);
-            
+
             //get amount forecasted by the user. only the most recent forecasted amount will be considered
             //this forecasted amount may or maynot have been used by the user's manager
             $forecast_query ="select * from forecasts ";
@@ -109,7 +109,7 @@ class forecast_charts {
             $forecast_query.=" and forecast_type='$forecast_type'";
             $forecast_query.=" and deleted=0";
             $forecast_query.=" order by date_entered desc";
-          
+
             $q_result=$forecast->db->query($forecast_query);
             $fcst=$forecast->db->fetchByAssoc($q_result);
             if (!empty($fcst['likely_case'])) {
@@ -129,25 +129,25 @@ class forecast_charts {
             $labels['LEGEND']['forecast']['ID']='forecast';
             $labels['LEGEND']['forecast']['NAME']=$current_module_strings['LBL_GRAPH_COMMIT_LEGEND'];
             $labels['LEGEND']['forecast']['COLOR']=generate_graphcolor('forecast',2);
-            
-            //get opportunities closed within this timne period. 
+
+            //get opportunities closed within this timne period.
             //expected close date should not be empty and should fall with timeperiod start and end date.
             //Closed Won
             $common = new Common();
             $common->retrieve_downline($user_id);
-            $my_downline = implode('\',\'', $common->my_downline);            
-                      
+            $my_downline = implode('\',\'', $common->my_downline);
+
             $opp_query  = "select sum(" . db_convert("amount_usdollar","IFNULL",array(0))." * (" .db_convert("probability","IFNULL",array(0)). "/100)) total_value";
             $opp_query .= " from opportunities";
             $opp_query .= " where assigned_user_id IN ('$user_id', '$my_downline')";
             $opp_query .= " and sales_stage='Closed Won'";
             $opp_query .= " and deleted=0";
             $opp_query .= " and date_closed >= ". db_convert("'".$row['start_date']."'","datetime")." and date_closed <= ". db_convert( "'".$row['end_date']."'","datetime");
-            
+
             $opp_result=$forecast->db->query($opp_query);
             $opp_data=$forecast->db->fetchByAssoc($opp_result);
             if (!empty($opp_data['total_value'])) {
-                $data[$row['name']][$closed_label]= $currency->convertFromDollar($opp_data['total_value'],0);                
+                $data[$row['name']][$closed_label]= $currency->convertFromDollar($opp_data['total_value'],0);
             } else {
                 $data[$row['name']][$closed_label]=0;
             }
@@ -165,10 +165,10 @@ class forecast_charts {
         }
 
 		require_once('include/SugarCharts/SugarChart.php');
-		
+
 		$width = ($is_dashlet) ? '100%' : '720px';
-		
-		$return = '<script type="text/javascript" src="include/javascript/swfobject.js"></script>';
+
+		$return = getVersionedScript("include/javascript/swfobject.js");
 		if (!$is_dashlet){
 			$return .= '<br />';
 		}
@@ -193,7 +193,7 @@ class forecast_charts {
 		}
 		$return .= '</div>';
 		$return .= '</div>';
-     
+
 		if (!$is_dashlet){
 	        $table_rows="";
 	        $oddRow=true;
@@ -210,15 +210,15 @@ class forecast_charts {
 	                $BG_COLOR =  $even_bg;
 	            }
 	            $oddRow = !$oddRow;
-	        
+
 	            $table_rows.="<tr height=20>";
 	            $table_rows.="<td valign=TOP class='{$ROW_COLOR}S1' bgcolor='{$BG_COLOR}'>" . $timeperiod . "</td>";
 	            $table_rows.="<td valign=TOP class='{$ROW_COLOR}S1' bgcolor='{$BG_COLOR}'>" . $currency->symbol . $values[$quota_label]. "</td>";
 	            $table_rows.="<td valign=TOP class='{$ROW_COLOR}S1' bgcolor='{$BG_COLOR}'>" . $currency->symbol . $values[$forecast_label]. "</td>";
 	            $table_rows.="<td valign=TOP class='{$ROW_COLOR}S1' bgcolor='{$BG_COLOR}'>" . $currency->symbol . $values[$closed_label]. "</td>";
 	            $table_rows.="</tr>";
-	        }            
-	
+	        }
+
 	        $return .= SugarThemeRegistry::current()->getCSS();
 	        $return .= <<<EOQ
 	        <BR/>
@@ -228,7 +228,7 @@ class forecast_charts {
 	            <td scope="col" width="25%"  NOWRAP>{$current_module_strings['LBL_TIMEPERIOD_NAME']}</td>
 	            <td scope="col" width="25%"  NOWRAP>{$current_module_strings['LBL_GRAPH_QUOTA_LEGEND']}</td>
 	            <td scope="col" width="25%"  NOWRAP>{$current_module_strings['LBL_GRAPH_COMMIT_LEGEND']}</td>
-	            <td scope="col" width="25%"  NOWRAP>{$current_module_strings['LBL_GRAPH_OPPS_LEGEND']}</td>        
+	            <td scope="col" width="25%"  NOWRAP>{$current_module_strings['LBL_GRAPH_OPPS_LEGEND']}</td>
 	        </tr>
 	        $table_rows
 	        </table>
@@ -236,8 +236,8 @@ class forecast_charts {
 </div>
 EOQ;
 		}
-        return $return;        
-        
+        return $return;
+
     }
 }// end charts class
 ?>

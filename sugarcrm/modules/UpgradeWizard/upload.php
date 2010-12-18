@@ -285,6 +285,7 @@ if(class_exists("PackageManagerDisplay")) {
 if($form2 == null){
 	$form2 = $form;
 }
+$json = getVersionedScript('include/JSON.js');
 $form3 =<<<eoq2
 <br>
 
@@ -301,7 +302,7 @@ $form3 =<<<eoq2
 	</table>
 </td></tr>
 </table>
-<script type="text/javascript" language="Javascript" src="include/JSON.js"></script>
+{$json}
 <script>
  function fileBrowseLoaded(){
  	//alert(document.the_form.upgrade_zip.value.length);

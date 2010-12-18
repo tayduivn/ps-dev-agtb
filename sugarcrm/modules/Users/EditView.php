@@ -169,7 +169,7 @@ $code = $sfimage->getUserEditView('fields', $focus->field_defs['picture'], $disp
 $sugar_smarty->assign('PICTURE_FILE_CODE', $code);
 //END SUGARCRM flav!=com ONLY
 
-$sugar_smarty->assign('JAVASCRIPT',user_get_validate_record_js().user_get_chooser_js().user_get_confsettings_js().'<script type="text/javascript" language="Javascript" src="modules/Users/User.js"></script>');
+$sugar_smarty->assign('JAVASCRIPT',user_get_validate_record_js().user_get_chooser_js().user_get_confsettings_js().getVersionedScript("modules/Users/User.js"));
 $sugar_smarty->assign('PRINT_URL', 'index.php?'.$GLOBALS['request_string']);
 $sugar_smarty->assign('ID', $focus->id);
 
