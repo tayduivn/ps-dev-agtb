@@ -10,7 +10,7 @@
  * Smarty {sugar_getscript} function plugin
  *
  * Type:     function<br>
- * Name:     sugar_include<br>
+ * Name:     sugar_getscript<br>
  * Purpose:  Creates script tag for filename with caching string
  *
  * @param array

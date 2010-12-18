@@ -136,22 +136,22 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 				$button .= '<input type="hidden" name="' . $key . '" value="' . $value . '" />' . "\n";
 			}
 		}
-		$button .='<script type="text/javascript" src="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"></script>'."\n";
-		$button .='<script type="text/javascript" src="include/jsolait/init.js"></script>'."\n";
-		$button .='<script type="text/javascript" src="include/javascript/jsclass_base.js"></script>'."\n";
-		$button .='<script type="text/javascript" src="include/javascript/jsclass_async.js"></script>'."\n";
-		$button .='<script type="text/javascript" src="modules/Meetings/jsclass_scheduler.js"></script>'."\n";
-		
+		$button .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js')."\n";
+		$button .= getVersionedScript('include/jsolait/init.js')."\n";
+		$button .= getVersionedScript('include/javascript/jsclass_base.js')."\n";
+		$button .= getVersionedScript('include/javascript/jsclass_async.js')."\n";
+		$button .= getVersionedScript('modules/Meetings/jsclass_scheduler.js')."\n";
+
 		return $button;
 	}
-	
+
 	function display($defines, $additionalFormFields = null)
 	{
 	    $focus = new Meeting;
 		if ( !$focus->ACLAccess('EditView') ) {
 		    return '';
 	    }
-		
+
 		return parent::display($defines, $additionalFormFields);
 	}
 }

@@ -29,7 +29,7 @@
 // $Id: PasswordManager.tpl 37436 2009-06-01 01:14:03Z Faissah $
 //FILE SUGARCRM flav!=sales ONLY
 *}
-<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
+<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
 <form name="ConfigurePasswordSettings" method="POST" action="index.php" >
 <input type='hidden' name='action' value='PasswordManager'/>
 <input type='hidden' name='module' value='Administration'/>
@@ -37,7 +37,7 @@
 <span class='error'>{$error.main}</span>
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
 	<tr>
-	
+
 		<td style="padding-bottom: 2px;" >
 			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');"  name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" >
 			&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" >
@@ -72,7 +72,7 @@
 							</tr>
 							<tr>
 								<td  scope="row">
-									{$MOD.LBL_PASSWORD_ONE_UPPER_CASE}: 
+									{$MOD.LBL_PASSWORD_ONE_UPPER_CASE}:
 								</td>
 								{if ($config.passwordsetting.oneupper ) == '1'}
 									{assign var='oneupper_checked' value='CHECKED'}
@@ -98,7 +98,7 @@
 							</tr>
 							<tr>
 								<td  scope="row">
-									{$MOD.LBL_PASSWORD_ONE_NUMBER}: 
+									{$MOD.LBL_PASSWORD_ONE_NUMBER}:
 								</td>
 								{if ($config.passwordsetting.onenumber ) == '1'}
 									{assign var='onenumber_checked' value='CHECKED'}
@@ -155,7 +155,7 @@
                            </tr>
 						</table>
 						<!--//END SUGARCRM flav=pro ONLY -->
-			
+
 						<table id="sysGeneratedId" name="sysGeneratedName" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 							<tr>
 								<th align="left" scope="row" colspan="4">
@@ -214,7 +214,7 @@
 			                                            </td>
 			    										<td  width='30%'>
 															<input type="radio"  name="passwordsetting_systexpiration" id="required_sys_pwd_exp_time" value='1' {$systexptime} onclick="form.passwordsetting_systexpirationlogin.value='';">
-															{$MOD.LBL_PASSWORD_EXP_IN} 
+															{$MOD.LBL_PASSWORD_EXP_IN}
 															{assign var='sdays' value=''}
 															{assign var='sweeks' value=''}
 															{assign var='smonths' value=''}
@@ -236,14 +236,14 @@
 														</td>
 														<td colspan='2' width='40%'>
 															<input type="radio" name="passwordsetting_systexpiration"  id="required_sys_pwd_exp_login" value='2' {$systexplogin} onclick="form.passwordsetting_systexpirationtime.value='';">
-															{$MOD.LBL_PASSWORD_EXP_AFTER} 
+															{$MOD.LBL_PASSWORD_EXP_AFTER}
 															<input type='text' maxlength="3" and style="width:2em"  name='passwordsetting_systexpirationlogin' value="{$config.passwordsetting.systexpirationlogin}">
 															{$MOD.LBL_PASSWORD_LOGINS}
 														</td>
 													</tr>
 												</table>
 											</td>
-										</tr>	
+										</tr>
 									</table>
 
 						<table id="userResetPassId" name="userResetPassName" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
@@ -277,7 +277,7 @@
 											<td colspan="3">
 												<table width="100%" border="0" cellspacing="0" cellpadding="0" id="forgot_password_table">
 													<tr>
-												        
+
 											    		{assign var='linkexptime' value=''}
 			                                                {assign var='linkexpnone' value=''}
 			                                            {if ($config.passwordsetting.linkexpiration) == '0'}
@@ -317,7 +317,7 @@
 													</tr>
 												</table>
 											</td>
-										</tr>	
+										</tr>
 										<tr>
 										{if !empty($settings.captcha_on) || !($VALID_PUBLIC_KEY)}
 											{assign var='captcha_checked' value='CHECKED'}
@@ -338,7 +338,7 @@
 														<td width="40%" ><input type="text" name="captcha_public_key" id="captcha_public_key" size="45"  value="{$settings.captcha_public_key}" tabindex='1' onblur="this.value=this.value.replace(/^\s+/,'').replace(/\s+$/,'')"></td>
 														<td width="10%" scope="row">{$MOD.LBL_PRIVATE_KEY}<span class="required">*</span></td>
 														<td width="40%" ><input type="text" name="captcha_private_key" size="45"  value="{$settings.captcha_private_key}" tabindex='1' onblur="this.value=this.value.replace(/^\s+/,'').replace(/\s+$/,'')"></td>
-													</tr>													
+													</tr>
 													</table>
 												</div>
 											</td>
@@ -349,7 +349,7 @@
 									</table>
 
 
-					
+
 
 						<table id="emailTemplatesId" name="emailTemplatesName" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 							<tr>
@@ -417,7 +417,7 @@
 		                                            </td>
 		    										<td width='30%'>
 														<input type="radio" name="passwordsetting_userexpiration" id="required_user_pwd_exp_time" value='1' {$userexptime} onclick="form.passwordsetting_userexpirationlogin.value='';">
-														{$MOD.LBL_PASSWORD_EXP_IN} 
+														{$MOD.LBL_PASSWORD_EXP_IN}
 														{assign var='udays' value=''}
 														{assign var='uweeks' value=''}
 														{assign var='umonths' value=''}
@@ -439,7 +439,7 @@
 													</td>
 													<td colspan='2 width='40%'>
 														<input type="radio" name="passwordsetting_userexpiration" id="required_user_pwd_exp_login" value='2' {$userexplogin} onclick="form.passwordsetting_userexpirationtime.value='';">
-														{$MOD.LBL_PASSWORD_EXP_AFTER} 
+														{$MOD.LBL_PASSWORD_EXP_AFTER}
 														<input type='text' maxlength="3" and style="width:2em" name='passwordsetting_userexpirationlogin' value="{$config.passwordsetting.userexpirationlogin}">
 														{$MOD.LBL_PASSWORD_LOGINS}
 													</td>
@@ -466,7 +466,7 @@
 	                                            <td  width='30%'>
 	                                                <input type="radio" name="passwordsetting_lockoutexpiration" value='0' {$lockoutnone} onclick="form.passwordsetting_lockoutexpirationtime.value='';form.passwordsetting_lockoutexpirationlogin.value=''; document.getElementById('dione').style.display='none';">
 	                                               {$MOD.LBL_UW_NONE}
-	
+
 	                                            </td>
 												<td width='30%'>
 	                                                <input type="radio" id="required_lockout_exp_login" name="passwordsetting_lockoutexpiration" value='1' {$lockouttypelogin} onclick="document.getElementById('dione').style.display='';">
@@ -560,12 +560,12 @@
 																{assign var='ldap_group_checked' value=''}
 																{assign var='ldap_group_display' value='none'}
 															{/if}
-																<input name="ldap_group_checkbox" class="checkbox" type="checkbox" {$ldap_group_checked} onclick='toggleDisplay("ldap_group")'> 
+																<input name="ldap_group_checkbox" class="checkbox" type="checkbox" {$ldap_group_checked} onclick='toggleDisplay("ldap_group")'>
 															</td>
 															<td valign='middle' nowrap></td>
 															<td align="left"  valign='middle'></td>
 														</tr>
-														<tr>	
+														<tr>
 															<td></td>
 															<td colspan='3'>
 																<span id='ldap_group' style='display:{$ldap_group_display}'>
@@ -642,7 +642,7 @@
 									</td>
 								</tr>
 							</table>
-							
+
 						             <!-- start SAML -->
 						   {if !empty($config.authenticationClass) && $config.authenticationClass === 'SAMLAuthenticate'}
                            {assign var='saml_enabled_checked' value='CHECKED'}
@@ -651,7 +651,7 @@
                            {assign var='saml_enabled_checked' value=''}
                            {assign var='saml_display' value='none'}
                      {/if}
-        
+
                      <table id = 'saml_table' width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
                         <tr>
                            <td>
@@ -663,10 +663,10 @@
                                     <td width="25%" scope="row" valign='middle'>
                                        {$MOD.LBL_SAML_ENABLE}{sugar_help text=$MOD.LBL_SAML_HELP_TXT}
                                     </td><td valign='middle'>
-                                    
-                                    <input name="authenticationClass" id="system_saml_enabled" class="checkbox"  
-                                       value="SAMLAuthenticate" type="checkbox" 
-                                       {if $saml_enabled_checked}checked="1"{/if} 
+
+                                    <input name="authenticationClass" id="system_saml_enabled" class="checkbox"
+                                       value="SAMLAuthenticate" type="checkbox"
+                                       {if $saml_enabled_checked}checked="1"{/if}
                                        onclick='toggleDisplay("saml_display");enableDisablePasswordTable("system_saml_enabled");'>
                                     </td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                  <tr>
@@ -675,22 +675,22 @@
                                             <tr>
                                              <td scope="row" valign='middle' nowrap>{$MOD.LBL_SAML_LOGIN_URL} {sugar_help text=$MOD.LBL_SAML_LOGIN_URL_DESC}</td>
                                              <td align="left"  valign='middle'><input name="SAML_loginurl" size='35' type="text" value="{$config.SAML_loginurl}"></td>
-                                             
+
                                           </tr>
                                           <tr>
                                              <td width='25%' scope="row" valign='top' nowrap>{$MOD.LBL_SAML_CERT} {sugar_help text=$MOD.LBL_SAML_CERT_DESC}</td>{$settings.proxy_host}
                                              <td width='25%' align="left"  valign='top'><textarea style='height:200px;width:600px' name="SAML_X509Cert" >{$config.SAML_X509Cert}</textarea></td>
-                                             
+
                                           </tr>
-                                        
-                                          
+
+
                      </table>
- 
-                  
+
+
                </td>
             </tr>
          </table>
-         <!-- end SAML -->	
+         <!-- end SAML -->
 					</td>
 				</tr>
 			</table>
@@ -727,11 +727,11 @@ function addcheck(form){{/literal}
 	removeFromValidate('ConfigurePasswordSettings','passwordsetting_minpwdlength');
 	addToValidateLessThan('ConfigurePasswordSettings', 'passwordsetting_minpwdlength', 'int', false,"{$MOD.LBL_PASSWORD_MINIMUM_LENGTH}",document.getElementById('passwordsetting_maxpwdlength').value,"{$MOD.LBL_PASSWORD_MAXIMUM_LENGTH}");
 	//END SUGARCRM flav=pro ONLY
-	
+
 	if(document.getElementById('forgotpassword_checkbox').checked){literal}{{/literal}
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_linkexpirationtime', 'int', form.required_link_exp_time.checked,"{$MOD.ERR_PASSWORD_LINK_EXPIRE_TIME} ");
 	{literal}}{/literal}
-	
+
 	if(document.getElementById('SystemGeneratedPassword_checkbox').checked){literal}{{/literal}
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_systexpirationtime', 'int', form.required_sys_pwd_exp_time.checked,"{$MOD.ERR_PASSWORD_EXPIRE_TIME}" );
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_systexpirationlogin', 'int', form.required_sys_pwd_exp_login.checked,"{$MOD.ERR_PASSWORD_EXPIRE_LOGIN}" );
@@ -744,7 +744,7 @@ function addcheck(form){{/literal}
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_lockoutexpirationlogin', 'int', form.required_lockout_exp_login.checked,"{$MOD.ERR_PASSWORD_LOCKOUT_LOGIN}" );
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_lockoutexpirationtime', 'int', form.required_lockout_exp_login.checked,"{$MOD.ERR_PASSWORD_LOCKOUT_TIME}" );
 	addToValidateMoreThan('ConfigurePasswordSettings', 'passwordsetting_minpwdlength', 'int', false,"{$MOD.LBL_PASSWORD_MINIMUM_LENGTH}",'0');
-	
+
 	var number_of_requirements=0;
 	if (document.getElementById('passwordsetting_onespecial').checked)
 		number_of_requirements++;
@@ -756,11 +756,11 @@ function addcheck(form){{/literal}
 		number_of_requirements++;
 	if(document.getElementById('passwordsetting_maxpwdlength').value != '')
 		addToValidateMoreThan('ConfigurePasswordSettings', 'passwordsetting_maxpwdlength', 'int', false,"{$MOD.LBL_PASSWORD_MAXIMUM_LENGTH}",number_of_requirements);
-	
+
 	if (document.getElementById('customregex').value!='')
 		addToValidate('ConfigurePasswordSettings', 'passwordsetting_regexcomment','alpha','true',"{$MOD.ERR_EMPTY_REGEX_DESCRIPTION}");
 	//END SUGARCRM flav=pro ONLY
-		
+
 {literal}	}
 
 
@@ -801,7 +801,7 @@ function enableDisablePasswordTable(checkbox_id) {
 		document.getElementById("loginLockoutId").style.display = "";
 		document.getElementById(other).style.display = "";
 		//END SUGARCRM flav=pro ONLY
-		
+
 	}
 } // if
 
@@ -891,11 +891,11 @@ function toggleDisplay_2(id){
 	if(this.document.getElementById(id).style.display=='none'){
 		this.document.getElementById(id).style.display='';
 		this.document.getElementById(id+"_lbl").innerHTML='{/literal}{$MOD.LBL_HIDE_ADVANCED_OPTIONS}{literal}';
-		this.document.getElementById("regex_config_display_img").src = '{/literal}{sugar_getimagepath file="basic_search.gif"}{literal}';		
+		this.document.getElementById("regex_config_display_img").src = '{/literal}{sugar_getimagepath file="basic_search.gif"}{literal}';
 	}else{
 		this.document.getElementById(id).style.display='none'
 		this.document.getElementById(id+"_lbl").innerHTML='{/literal}{$MOD.LBL_SHOW_ADVANCED_OPTIONS}{literal}';
-		this.document.getElementById("regex_config_display_img").src = '{/literal}{sugar_getimagepath file="advanced_search.gif"}{literal}';	
+		this.document.getElementById("regex_config_display_img").src = '{/literal}{sugar_getimagepath file="advanced_search.gif"}{literal}';
 	}
 }
 

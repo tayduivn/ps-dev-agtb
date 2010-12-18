@@ -1138,7 +1138,7 @@ EOQ;
 		});
 		</script>
 EOQ;
-
+        $dtscript = getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
 		$html = <<<EOQ
 		<td scope="row" width="20%">$displayname</td>
 		<td class='dataField' width="30%"><input onblur="parseDate(this, '$cal_dateformat')" type="text" name='$varname' size="12" id='{$varname}_date' maxlength='10' value="">
@@ -1147,7 +1147,7 @@ EOQ;
 		<span id="{$varname}_time_section"></span>
 		</td>
 		<input type="hidden" id="{$varname}" name="{$varname}">
-		<script type="text/javascript" src="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"></script>
+		$dtscript
 		<script type="text/javascript">
 		var combo_{$varname} = new Datetimecombo(" ", "$varname", "$userformat", '','','',1);
 		//Render the remaining widget fields
@@ -1284,7 +1284,7 @@ EOQ;
             $searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl');
         }
 	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
-	   can have fields named 'module' etc. which may break the query */ 
+	   can have fields named 'module' etc. which may break the query */
         $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false); // see bug 31271
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
