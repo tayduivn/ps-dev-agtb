@@ -204,7 +204,6 @@ class PopupSmarty extends ListViewSmarty{
 		$this->th->ss->assign('customFields', $this->customFieldDefs);
 		$this->th->ss->assign('numCols', NUM_COLS);
 		$this->th->ss->assign('massUpdateData', $this->massUpdateData);
-		$this->th->ss->assign('jsCustomVersion', $GLOBALS['sugar_config']['js_custom_version']);
 		$this->th->ss->assign('sugarVersion', $GLOBALS['sugar_version']);
         $this->th->ss->assign('should_process', $this->should_process);
 

@@ -673,12 +673,12 @@ if (isset($sugar_config['show_download_tab']))
 {
 	$enable_download_tab = $sugar_config['show_download_tab'];
 }else{
-	
+
 	$enable_download_tab = true;
-}	
+}
 
 $sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
-	
+
 
 
 /////////////////////////////////////////////
@@ -808,7 +808,7 @@ $chooser->args['right_name'] = 'hide_tabs';
 
 $chooser->args['left_label'] =  $mod_strings['LBL_DISPLAY_TABS'];
 $chooser->args['right_label'] =  $mod_strings['LBL_HIDE_TABS'];
-$chooser->args['title'] =  $mod_strings['LBL_EDIT_TABS'].' <img border="0" src="themes/default/images/helpInline.gif" onmouseover="return overlib(\'Choose which tabs are displayed.\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\', WIDTH, -1, NOFOLLOW, \'ol_nofollow\' );" onmouseout="return nd();"/>';
+$chooser->args['title'] =  $mod_strings['LBL_EDIT_TABS'].' <img border="0" src="'.SugarThemeRegistry::current()->getImageURL('helpInline.gif').'" onmouseover="return overlib(\'Choose which tabs are displayed.\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\', WIDTH, -1, NOFOLLOW, \'ol_nofollow\' );" onmouseout="return nd();"/>';
 $sugar_smarty->assign('TAB_CHOOSER', $chooser->display());
 $sugar_smarty->assign('CHOOSER_SCRIPT','set_chooser();');
 $sugar_smarty->assign('CHOOSE_WHICH', $mod_strings['LBL_CHOOSE_WHICH']);

@@ -679,7 +679,6 @@ $sugar_smarty->assign('currentLanguage', $GLOBALS['current_language']);
 $sugar_smarty->assign('serverUniqueKey', $GLOBALS['server_unique_key']);
 $sugar_smarty->assign('imagePath', $GLOBALS['image_path']);
 
-$sugar_smarty->assign('jsCustomVersion', $sugar_config['js_custom_version']);
 $sugar_smarty->assign('maxCount', empty($sugar_config['max_dashlets_homepage']) ? 15 : $sugar_config['max_dashlets_homepage']);
 $sugar_smarty->assign('dashletCount', $count);
 $sugar_smarty->assign('dashletIds', '["' . implode('","', $dashletIds) . '"]');

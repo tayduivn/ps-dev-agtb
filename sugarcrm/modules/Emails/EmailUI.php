@@ -1480,7 +1480,7 @@ eoq;
             require_once('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache($_REQUEST['qc_module'], $GLOBALS['current_language']);
         }
-		$jsLanguage = getVersionedScript("jsLanguage/{$_REQUEST['qc_module']}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
+		$jsLanguage = getVersionedScript("cache/jsLanguage/{$_REQUEST['qc_module']}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
 
 		//BEGIN SUGARCRM flav=ent ONLY
 		if($focus->object_name == 'Contact') {
@@ -1509,7 +1509,7 @@ EOQ;
 		$EditView->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
 		$meta = array();
 		$meta['html'] = $jsLanguage . $EditView->display(false, true);
-		$meta['html'] = str_replace("src='include/SugarEmailAddress/SugarEmailAddress.js?s={$GLOBALS['js_version_key']}&c={$GLOBALS['sugar_config']['js_custom_version']}'", '', $meta['html']);
+		$meta['html'] = str_replace("src='".getVersionedPath('include/SugarEmailAddress/SugarEmailAddress.js')."'", '', $meta['html']);
 		$meta['emailAddress'] = $emailAddress;
 
 		$mod_strings = return_module_language($current_language, 'Emails');

@@ -33,18 +33,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 if(empty($GLOBALS['sugar_smarty']))$GLOBALS['sugar_smarty'] = new Sugar_Smarty();
 class SugarTab{
-    
+
     function SugarTab($type='singletabmenu'){
         $this->type = $type;
-        
+
     }
-    
+
     function setup($mainTabs, $otherTabs=array(), $subTabs=array(), $selected_group='All'){
         global $sugar_version, $sugar_config, $current_user;
-        
+
         $max_tabs = $current_user->getPreference('max_tabs');
         if(!isset($max_tabs) || $max_tabs <= 0) $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
-        
+
         $moreTabs = array_slice($mainTabs,$max_tabs);
         /* If the current tab is in the 'More' menu, move it into the visible menu. */
         if(!empty($moreTabs[$selected_group]))
@@ -53,28 +53,28 @@ class SugarTab{
             unset($mainTabs[$selected_group]);
             array_splice($mainTabs, $max_tabs-1, 0, $temp);
         }
-        
+
         $GLOBALS['sugar_smarty']->assign('showLinks', 'false');
         $GLOBALS['sugar_smarty']->assign('sugartabs', array_slice($mainTabs, 0, $max_tabs));
         $GLOBALS['sugar_smarty']->assign('moreMenu', array_slice($mainTabs, $max_tabs));
         $GLOBALS['sugar_smarty']->assign('othertabs', $otherTabs);
         $GLOBALS['sugar_smarty']->assign('startSubPanel', $selected_group);
-        $GLOBALS['sugar_smarty']->assign('sugarVersionJsStr', "?s=$sugar_version&c={$sugar_config['js_custom_version']}");
+        $GLOBALS['sugar_smarty']->assign('sugarVersionJsStr', getVersionedPath(''));
         if(!empty($mainTabs))
         {
             $mtak = array_keys($mainTabs);
             $GLOBALS['sugar_smarty']->assign('moreTab', $mainTabs[$mtak[min(count($mtak)-1, $max_tabs-1)]]['label']);
         }
     }
-    
+
     function fetch(){
         return $GLOBALS['sugar_smarty']->fetch('include/SubPanel/tpls/' . $this->type . '.tpl');
     }
     function display(){
        $GLOBALS['sugar_smarty']->display('include/SubPanel/tpls/' . $this->type . '.tpl');
     }
-    
-    
+
+
 }
 
 

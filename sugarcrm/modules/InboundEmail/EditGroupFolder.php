@@ -56,7 +56,6 @@ $smarty = new Sugar_Smarty();
 $smarty->assign('mod_strings', $mod_strings);
 $smarty->assign('app_strings', $app_strings);
 $smarty->assign('theme', $theme);
-$smarty->assign('jsCustomVersion', $sugar_config['js_custom_version']);
 $smarty->assign('sugar_version', $sugar_version);
 $smarty->assign('GRIDLINE', $gridline);
 $smarty->assign('MODULE', 'InboundEmail');

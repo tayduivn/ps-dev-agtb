@@ -36,9 +36,9 @@ require_once('include/MVC/View/SugarView.php');
 
 require_once('modules/Import/ImportCacheFiles.php');
 
-                
-class ImportViewLast extends SugarView 
-{	
+
+class ImportViewLast extends SugarView
+{
     /**
      * @see SugarView::getMenu()
      */
@@ -47,25 +47,25 @@ class ImportViewLast extends SugarView
         )
     {
         global $mod_strings, $current_language;
-        
+
         if ( empty($module) )
             $module = $_REQUEST['import_module'];
-        
+
         $old_mod_strings = $mod_strings;
         $mod_strings = return_module_language($current_language, $module);
         $returnMenu = parent::getMenu($module);
         $mod_strings = $old_mod_strings;
-        
+
         return $returnMenu;
     }
-    
+
  	/**
      * @see SugarView::_getModuleTab()
      */
  	protected function _getModuleTab()
     {
         global $app_list_strings, $moduleTabMap;
-        
+
  		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
         if ( !empty($_REQUEST['module_tab']) )
             return $_REQUEST['module_tab'];
@@ -77,39 +77,39 @@ class ImportViewLast extends SugarView
         else
             return $_REQUEST['import_module'];
  	}
- 	
+
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
-	    
+
     	return array(
            "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$_REQUEST['import_module'].'_32.png')."' alt='".$_REQUEST['import_module']."' title='".$_REQUEST['import_module']."' align='absmiddle'></a>",
     	   "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>",
     	   $mod_strings['LBL_RESULTS'],
     	   );
     }
-    
- 	/** 
+
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $current_language;
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         // lookup this module's $mod_strings to get the correct module name
-        $module_mod_strings = 
+        $module_mod_strings =
             return_module_language($current_language, $_REQUEST['import_module']);
         $this->ss->assign("MODULENAME",$module_mod_strings['LBL_MODULE_NAME']);
-        
+
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
-        
+
         // read status file to get totals for records imported, errors, and duplicates
         $count        = 0;
         $errorCount   = 0;
@@ -125,7 +125,7 @@ class ImportViewLast extends SugarView
             $updatedCount  += (int) $row[4];
         }
         fclose($fp);
-        
+
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
@@ -133,19 +133,19 @@ class ImportViewLast extends SugarView
         $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
         $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsFileName());
         $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" ) {
-            $this->ss->assign("PROSPECTLISTBUTTON", 
+            $this->ss->assign("PROSPECTLISTBUTTON",
                 $this->_addToProspectListButton());
         }
         else {
             $this->ss->assign("PROSPECTLISTBUTTON","");
         }
         //END SUGARCRM flav!=sales ONLY
-        
+
         $this->ss->display('modules/Import/tpls/last.tpl');
-        
+
         foreach ( UsersLastImport::getBeansByImport($_REQUEST['import_module']) as $beanname ) {
             // load bean
             if ( !( $this->bean instanceof $beanname ) ) {
@@ -154,7 +154,7 @@ class ImportViewLast extends SugarView
             // build listview to show imported records
             require_once('include/ListView/ListViewFacade.php');
             $lvf = new ListViewFacade($this->bean, $this->bean->module_dir, 0);
-        
+
             $params = array();
             if(!empty($_REQUEST['orderBy'])) {
                 $params['orderBy'] = $_REQUEST['orderBy'];
@@ -164,18 +164,18 @@ class ImportViewLast extends SugarView
             $beanname = ($this->bean->object_name == 'Case' ? 'aCase' : $this->bean->object_name);
             // add users_last_import joins so we only show records done in this import
             $params['custom_from']  = ', users_last_import';
-            $params['custom_where'] = " AND users_last_import.assigned_user_id = '{$GLOBALS['current_user']->id}' 
-                AND users_last_import.bean_type = '{$beanname}' 
-                AND users_last_import.bean_id = {$this->bean->table_name}.id 
-                AND users_last_import.deleted = 0 
+            $params['custom_where'] = " AND users_last_import.assigned_user_id = '{$GLOBALS['current_user']->id}'
+                AND users_last_import.bean_type = '{$beanname}'
+                AND users_last_import.bean_id = {$this->bean->table_name}.id
+                AND users_last_import.deleted = 0
                 AND {$this->bean->table_name}.deleted = 0";
-            $where = " {$this->bean->table_name}.id IN ( 
+            $where = " {$this->bean->table_name}.id IN (
                         SELECT users_last_import.bean_id
                             FROM users_last_import
-                            WHERE users_last_import.assigned_user_id = '{$GLOBALS['current_user']->id}' 
-                                AND users_last_import.bean_type = '{$beanname}' 
+                            WHERE users_last_import.assigned_user_id = '{$GLOBALS['current_user']->id}'
+                                AND users_last_import.bean_type = '{$beanname}'
                                 AND users_last_import.deleted = 0 )";
-                
+
             $lbl_last_imported = $mod_strings['LBL_LAST_IMPORTED'];
             $lvf->lv->mergeduplicates = false;
             $lvf->lv->showMassupdateFields = false;
@@ -215,10 +215,10 @@ EOJAVASCRIPT;
      *
      * @return string html code to display button
      */
-    private function _addToProspectListButton() 
+    private function _addToProspectListButton()
     {
         global $app_strings, $sugar_version, $sugar_config, $current_user;
-        
+
         $query = "SELECT distinct
 				prospects.id,
 				prospects.assigned_user_id,
@@ -232,8 +232,8 @@ EOJAVASCRIPT;
                                 LEFT JOIN users
                                 ON prospects.assigned_user_id=users.id
 				LEFT JOIN email_addr_bean_rel on prospects.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Prospect' and email_addr_bean_rel.primary_address=1 and email_addr_bean_rel.deleted=0
-				LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id 
-										
+				LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id
+
 				WHERE
 				users_last_import.assigned_user_id=
 					'{$current_user->id}'
@@ -242,7 +242,7 @@ EOJAVASCRIPT;
 				AND users_last_import.deleted=0
 				AND prospects.deleted=0
 			";
-        
+
         $popup_request_data = array(
             'call_back_function' => 'set_return_and_save_background',
             'form_name' => 'DetailView',
@@ -261,23 +261,23 @@ EOJAVASCRIPT;
                 'child_id'=>'id',
                 'link_attribute'=>'prospects',
                 'link_type'=>'default',	 //polymorphic or default
-            )				
+            )
         );
-    
+
         $popup_request_data['passthru_data']['query'] = urlencode($query);
-    
+
         $json = getJSONobj();
-        $encoded_popup_request_data = $json->encode($popup_request_data);	
-    
+        $encoded_popup_request_data = $json->encode($popup_request_data);
+        $script = getVersionedScript('include/SubPanel/SubPanelTiles.js');
         return <<<EOHTML
-<script type="text/javascript" src="include/SubPanel/SubPanelTiles.js?s={$sugar_version}&c={$sugar_config['js_custom_version']}"></script>
+$script
 <input align=right" type="button" name="select_button" id="select_button" class="button"
      title="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      accesskey="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY']}"
      value="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      onclick='open_popup("ProspectLists",600,400,"",true,true,$encoded_popup_request_data,"Single","true");' />
 EOHTML;
-    
+
     }
     //END SUGARCRM flav!=sales ONLY
 }
