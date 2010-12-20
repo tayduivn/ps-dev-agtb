@@ -259,7 +259,7 @@ if(!make_writable('./data') || !make_writable('./data/upload')) {
 
 	foreach($cache_files as $c_file)
 	{
-		$dirname = "/".sugar_cached($c_file);
+		$dirname = sugar_cached($c_file);
 		$ok = false;
 		if ((is_dir($dirname)) || @sugar_mkdir($dirname,0555)) // set permissions to restrictive - use make_writable to change in a standard way to the required permissions
 		{
@@ -267,7 +267,7 @@ if(!make_writable('./data') || !make_writable('./data/upload')) {
 		}
 		if (!$ok)
 		{
-			$filelist .= '<br>'.getcwd().$dirname;
+			$filelist .= '<br>'.getcwd()."/$dirname";
 
 		}
 	}
@@ -285,7 +285,7 @@ if(!make_writable('./data') || !make_writable('./data/upload')) {
         	<td colspan="2"><b>'.$mod_strings['LBL_CHECKSYS_FIX_FILES'].'</b>'.$filelist. '</td>
 		</tr>';
 	}else{
-     installLog("/cache directory and subdirectory check passed");
+     installLog("cache directory and subdirectory check passed");
     }
 
 

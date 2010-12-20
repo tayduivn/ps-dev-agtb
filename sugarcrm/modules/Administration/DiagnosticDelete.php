@@ -51,14 +51,13 @@ else
     // Make sure the guid and file are valid file names for security purposes
     clean_string($_REQUEST['guid'], "ALPHANUM");
     clean_string($_REQUEST['file'], "FILE");
-    
+
 	//Making sure someone doesn't pass a variable name as a false reference
 	//  to delete a file
 	if(strcmp(substr($_REQUEST['file'], 0, 10), "diagnostic") != 0)
 	{
 		die($mod_strings['LBL_DIAGNOSTIC_DELETE_DIE']);
 	}
-// FIXME: security problem!
 
 	if(file_exists($cachedfile = sugar_cached("diagnostic/".$_REQUEST['guid']."/".$_REQUEST['file'].".zip")))
 	{

@@ -35,7 +35,6 @@ if(isset($_REQUEST['root_directory'])){
             //for each item in array, concatenate the source files
             foreach($grp_array as $grp){
                 foreach($grp as $original =>$concat){
-                    $concat = sugar_cached($concat);
                     //make sure both files are still valid
                     if(is_file($original)  &&  is_file($concat)){
                         //if individual file has been modifed date later than modified date of

@@ -678,7 +678,7 @@ EOHTML;
             }
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
-            echo getVersionedScript('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2) . '.js');
+            echo getVersionedScript('include/javascript/calendar.js');
 
             // cn: bug 12274 - prepare secret guid for asynchronous calls
             if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {
@@ -711,7 +711,6 @@ EOHTML;
             else
                 echo getVersionedScript('cache/Expressions/functions_cache.js');
             //END SUGARCRM flav=pro ONLY
-            echo "<script type=\"text/javascript\">SUGAR.themes.image_server='$image_server';</script>";
         }
 
         if (isset($_REQUEST['popup']) && !empty($_REQUEST['popup'])) {
