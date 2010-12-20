@@ -227,9 +227,9 @@ EOHTML;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
 			$where = "";
-			if (count($where_clauses) > 0 ){ 
-				$where = '('. implode(' ) OR ( ', $where_clauses) . ')';
-			}
+	 		if (count($where_clauses) > 0){
+                $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
+            }
 			
 			$lvd = new ListViewData();
 			$lvd->additionalDetails = false;
