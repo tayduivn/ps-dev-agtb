@@ -33,15 +33,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-
-
-
-
-
-
-
-
-
 ////////////////////Maybe move to seperate function////////////////////
 include_once('modules/WorkFlowTriggerShells/MetaArray.php');
 ///////////////////////////////////////////////////////////////////////
@@ -68,9 +59,6 @@ if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 
-
-
-
 ////////////////////////////////////////////////////////
 // Start the output
 ////////////////////////////////////////////////////////
@@ -87,12 +75,6 @@ if(isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
                 jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
         }
         $javascript_language_files .= getVersionedScript("cache/jsLanguage/{$this->module}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-        if(!is_file(sugar_cached('jsLanguage/WorkFlow/') . $GLOBALS['current_language'] . '.js')) {
-            require_once('include/language/jsLanguage.php');
-            jsLanguage::createModuleStringsCache('WorkFlow', $GLOBALS['current_language']);
-        }
-        $javascript_language_files .= getVersionedScript("cache/jsLanguage/WorkFlow/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-
 
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return() {\n";
