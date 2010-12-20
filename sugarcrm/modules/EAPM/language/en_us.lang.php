@@ -70,7 +70,7 @@ $mod_strings = array (
   'LBL_AUTH_ERROR' => 'Error during login: %s',
   'LBL_VALIDATED' => 'Access validated',
   'LBL_ACTIVE' => 'Active',
-  'LBL_OAUTH_NAME' => 'OAuth for %s',
+  'LBL_OAUTH_NAME' => '%s',
   'LBL_SUGAR_USER_NAME' => 'Sugar User',
   'LBL_DISPLAY_PROPERTIES' => 'Display Properties',
 
