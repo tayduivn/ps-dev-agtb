@@ -537,7 +537,6 @@ require_once('include/EditView/EditView2.php');
         global $timedate;
 
         $this->searchColumns = array () ;
-
         $values = $this->searchFields;
 
         $where_clauses = array();
@@ -1019,7 +1018,7 @@ require_once('include/EditView/EditView2.php');
                         		} 
                         		//BEGIN SUGARCRM flav=ENT ONLY
                         		else {
-									$where .= $db_field . " BETWEEN sysdate AND (sysdate + interval '7' day) ";
+									$where .= $db_field . " BETWEEN sysdate AND (sysdate + interval '7' day)";
                         		}
 								//END SUGARCRM flav=ENT ONLY
 								//END SUGARCRM flav=PRO ONLY                        		
@@ -1047,7 +1046,7 @@ require_once('include/EditView/EditView2.php');
 					            } 
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql'){
-					                $where .= "LEFT(" . $db_field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					                $where .= "LEFT(" . $db_field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else {
@@ -1063,7 +1062,7 @@ require_once('include/EditView/EditView2.php');
 					            } 
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql'){
-					                $where .= "LEFT (" . $db_field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					                $where .= "LEFT (" . $db_field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else {
@@ -1111,7 +1110,7 @@ require_once('include/EditView/EditView2.php');
 					            }
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
-					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            }
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else{
@@ -1127,7 +1126,7 @@ require_once('include/EditView/EditView2.php');
 					            }
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
-					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE()))) ";
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE())))";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else {
@@ -1142,7 +1141,7 @@ require_once('include/EditView/EditView2.php');
 					            }
 								//BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
-					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE()))) ";
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE())))";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else { 
