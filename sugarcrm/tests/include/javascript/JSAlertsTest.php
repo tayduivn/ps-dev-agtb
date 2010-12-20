@@ -11,25 +11,27 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->beans = array();
         $this->old_user = $current_user;
         $current_user = $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
     
     public function tearDown()
     {
-    	global $current_user;
-        foreach($this->beans as $bean)
-        {
+        foreach($this->beans as $bean) {
             $bean->mark_deleted($bean->id);
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $current_user = $this->old_user;
+
+		unset($GLOBALS['app_list_strings']);
+		unset($GLOBALS['current_user']);
+		unset($GLOBALS['app_strings']);
     }
 
     protected function createNewMeeting()
     {
         $m = new Meeting();
         $m->name = "40541TestMeeting";
-        $m->date_start = date("Y-m-d H:i:s", time() + 30000);
+        $m->date_start = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time() + 3000);
         $m->duration_hours = 0;
         $m->duration_minutes = 15;
         $m->reminder_time = 60;

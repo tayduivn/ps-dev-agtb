@@ -4,26 +4,29 @@ require_once('include/connectors/ConnectorFactory.php');
 require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/formatters/FormatterFactory.php');
 
-class Bug40631Test extends Sugar_PHPUnit_Framework_TestCase {
-
-var $has_original_metadata_custom_directory;	
-var $has_original_hoovers_custom_directory;
-
-public function setUp() 
+/**
+ * @outputBuffering enabled
+ */
+class Bug40631Test extends Sugar_PHPUnit_Framework_TestCase 
 {
-	if(is_dir('custom/modules/Connectors/connectors/sources/ext/soap/hoovers'))
-	{
-	   $this->has_original_hoovers_custom_directory = true;
-	   //backup directory
-	   mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak');
-	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak');
-	} else {
-	   mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
-	}
-	
-//Now create the test files with the pre 3.3 version
-//1) Create hoovers_custom_functions.php
-$the_string = <<<EOQ
+    private $has_original_metadata_custom_directory;	
+    private $has_original_hoovers_custom_directory;
+    
+    public function setUp() 
+    {
+        if(is_dir('custom/modules/Connectors/connectors/sources/ext/soap/hoovers'))
+        {
+           $this->has_original_hoovers_custom_directory = true;
+           //backup directory
+           mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak');
+           copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak');
+        } else {
+           mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
+        }
+        
+        //Now create the test files with the pre 3.3 version
+        //1) Create hoovers_custom_functions.php
+        $the_string = <<<EOQ
 <?php
 
 /**
@@ -109,12 +112,12 @@ function get_hoovers_employees(\$bean, \$out_field, \$value) {
 ?>
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers_custom_functions.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//2) Create listviewdefs.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers_custom_functions.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //2) Create listviewdefs.php
+        $the_string = <<<EOQ
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
@@ -145,12 +148,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ?>
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/listviewdefs.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//3) Create mapping.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/listviewdefs.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //3) Create mapping.php
+        $the_string = <<<EOQ
 <?php
 // created: 2010-11-10 10:12:43
 \$mapping = array (
@@ -189,12 +192,12 @@ $the_string = <<<EOQ
 
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/mapping.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//4) Create vardefs.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/mapping.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //4) Create vardefs.php
+        $the_string = <<<EOQ
 <?php
 
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
@@ -331,13 +334,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ?>
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//Create config.php
-//5) Create config.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //Create config.php
+        //5) Create config.php
+        $the_string = <<<EOQ
 <?php
 \$config['name'] = 'Hoovers&#169;';
 \$config['order'] = 2;
@@ -347,24 +350,24 @@ $the_string = <<<EOQ
 ?>
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-
-if(is_dir('custom/modules/Connectors/metadata'))
-{
-   $this->has_original_metadata_custom_directory = true;
-   //backup directory
-   mkdir_recursive('custom/modules/Connectors/metadata_bak');
-   copy_recursive('custom/modules/Connectors/metadata', 'custom/modules/Connectors/metadata_bak');
-} else {
-   mkdir_recursive('custom/modules/Connectors/metadata');
-}	
-
-
-//1) Create mergeviewdefs.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        
+        if(is_dir('custom/modules/Connectors/metadata'))
+        {
+           $this->has_original_metadata_custom_directory = true;
+           //backup directory
+           mkdir_recursive('custom/modules/Connectors/metadata_bak');
+           copy_recursive('custom/modules/Connectors/metadata', 'custom/modules/Connectors/metadata_bak');
+        } else {
+           mkdir_recursive('custom/modules/Connectors/metadata');
+        }	
+        
+        
+        //1) Create mergeviewdefs.php
+        $the_string = <<<EOQ
 <?php
 \$viewdefs = array(
   'Connector'=> array('MergeView'=> 
@@ -386,12 +389,12 @@ $the_string = <<<EOQ
 
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/metadata/mergeviewdefs.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//2) Create searchdefs.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/metadata/mergeviewdefs.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //2) Create searchdefs.php
+        $the_string = <<<EOQ
 <?php
 \$searchdefs = array (
   /*
@@ -447,12 +450,12 @@ $the_string = <<<EOQ
 
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/metadata/searchdefs.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//3) Create connectors.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/metadata/searchdefs.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //3) Create connectors.php
+        $the_string = <<<EOQ
 
 <?php
 // created: 2010-10-01 11:49:49
@@ -532,12 +535,12 @@ $the_string = <<<EOQ
 
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/metadata/connectors.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
-
-//4) display_config.php
-$the_string = <<<EOQ
+        $fp = sugar_fopen('custom/modules/Connectors/metadata/connectors.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
+        
+        //4) display_config.php
+        $the_string = <<<EOQ
 <?php
 // created: 2010-07-19 12:56:38
 \$modules_sources = array (
@@ -566,92 +569,89 @@ $the_string = <<<EOQ
 
 EOQ;
 
-$fp = sugar_fopen('custom/modules/Connectors/metadata/display_config.php', "w" );
-fwrite( $fp, $the_string );
-fclose( $fp );	
+        $fp = sugar_fopen('custom/modules/Connectors/metadata/display_config.php', "w" );
+        fwrite( $fp, $the_string );
+        fclose( $fp );	
 
-}
-
-public function tearDown() 
-{
-	if($this->has_original_hoovers_custom_directory)
-	{
-	   //Remove custom directory
-	   rmdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
-	   //Re-create custom directory
-	   mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
-	   //Copy original contents back in
-	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak', 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
-	   //Remove the backup directory
-	   rmdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak');
-	} else {
-	   //Remove the custom directory
-	   rmdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
-	}
-	
-	if($this->has_original_metadata_custom_directory)
-	{
-	   //Remove custom directory
-	   rmdir_recursive('custom/modules/Connectors/metadata');
-	   //Re-create custom directory
-	   mkdir_recursive('custom/modules/Connectors/metadata');
-	   //Copy original contents back in
-	   copy_recursive('custom/modules/Connectors/metadata_bak', 'custom/modules/Connectors/metadata');
-	   //Remove the backup directory
-	   rmdir_recursive('custom/modules/Connectors/metadata_bak');
-	} else {
-	   //Remove the custom directory
-	   rmdir_recursive('custom/modules/Connectors/metadata');
-	}	
-}
-
-
-public function testHooversCustomizationUpgrade()
-{
-    $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers_custom_functions.php'));
-    $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/listviewdefs.php'));
-    $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/mapping.php'));
-    $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php'));
-    $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php'));    
-    $this->assertTrue(file_exists('custom/modules/Connectors/metadata/mergeviewdefs.php'));
-    $this->assertTrue(file_exists('custom/modules/Connectors/metadata/searchdefs.php'));    
-    $this->assertTrue(file_exists('custom/modules/Connectors/metadata/display_config.php'));
-    $this->assertTrue(file_exists('custom/modules/Connectors/metadata/connectors.php'));  
-
-    //Alright now let's call the code to upgrade the config
-    require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
-    $old_config = $config;
-    $config = null;
+    }
     
-    require_once('modules/UpgradeWizard/uw_utils.php');
-    upgrade_connectors('sugarcrm.log');
+    public function tearDown() 
+    {
+        if($this->has_original_hoovers_custom_directory)
+        {
+           //Remove custom directory
+           rmdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
+           //Re-create custom directory
+           mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
+           //Copy original contents back in
+           copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak', 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
+           //Remove the backup directory
+           rmdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers_bak');
+        } else {
+           //Remove the custom directory
+           rmdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
+        }
+        
+        if($this->has_original_metadata_custom_directory)
+        {
+           //Remove custom directory
+           rmdir_recursive('custom/modules/Connectors/metadata');
+           //Re-create custom directory
+           mkdir_recursive('custom/modules/Connectors/metadata');
+           //Copy original contents back in
+           copy_recursive('custom/modules/Connectors/metadata_bak', 'custom/modules/Connectors/metadata');
+           //Remove the backup directory
+           rmdir_recursive('custom/modules/Connectors/metadata_bak');
+        } else {
+           //Remove the custom directory
+           rmdir_recursive('custom/modules/Connectors/metadata');
+        }	
+    }
     
-    //Check that config.php was modified correctly
-    require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
-    $this->assertNotEquals($old_config['properties']['hoovers_endpoint'], $config['properties']['hoovers_endpoint'], 'Assert that endpoint value has changed');
-    $this->assertNotEquals($old_config['properties']['hoovers_wsdl'], $config['properties']['hoovers_wsdl'], 'Assert that wsdl value has changed');
-    $this->assertEquals('http://hapi.hoovers.com/HooversAPI-33', $config['properties']['hoovers_endpoint'], 'Assert that endpoint is http://hapi.hoovers.com/HooversAPI-33');
-    $this->assertEquals('http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl', $config['properties']['hoovers_wsdl'], 'Assert that endpoint is http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl');
     
-    //Check that vardefs.php was modified correctly
-    require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php');
-    $this->assertEquals('bal.specialtyCriteria.companyName', $dictionary['ext_soap_hoovers']['fields']['recname']['input'], "Assert that the input key for recname entry was changed to 'bal.specialtyCriteria.companyName'");
+    public function testHooversCustomizationUpgrade()
+    {
+        $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers_custom_functions.php'));
+        $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/listviewdefs.php'));
+        $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/mapping.php'));
+        $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php'));
+        $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php'));    
+        $this->assertTrue(file_exists('custom/modules/Connectors/metadata/mergeviewdefs.php'));
+        $this->assertTrue(file_exists('custom/modules/Connectors/metadata/searchdefs.php'));    
+        $this->assertTrue(file_exists('custom/modules/Connectors/metadata/display_config.php'));
+        $this->assertTrue(file_exists('custom/modules/Connectors/metadata/connectors.php'));  
     
-    $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
-    $account = new Account();
-    $account = $source_instance->fillBean(array('id'=>'2205698'), 'Accounts', $account);
-    $this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
-
-
-    $account = new Account();
-    $accounts = array();
-    $accounts = $source_instance->fillBeans(array('name' => 'Gannett'), 'Accounts', $accounts);
-    foreach($accounts as $count=>$account) {
-    		$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that a bean has been filled with account name like Gannett");
-    		break;
+        //Alright now let's call the code to upgrade the config
+        require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
+        $old_config = $config;
+        $config = null;
+        
+        require_once('modules/UpgradeWizard/uw_utils.php');
+        upgrade_connectors('sugarcrm.log');
+        
+        //Check that config.php was modified correctly
+        require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
+        $this->assertNotEquals($old_config['properties']['hoovers_endpoint'], $config['properties']['hoovers_endpoint'], 'Assert that endpoint value has changed');
+        $this->assertNotEquals($old_config['properties']['hoovers_wsdl'], $config['properties']['hoovers_wsdl'], 'Assert that wsdl value has changed');
+        $this->assertEquals('http://hapi.hoovers.com/HooversAPI-33', $config['properties']['hoovers_endpoint'], 'Assert that endpoint is http://hapi.hoovers.com/HooversAPI-33');
+        $this->assertEquals('http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl', $config['properties']['hoovers_wsdl'], 'Assert that endpoint is http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl');
+        
+        //Check that vardefs.php was modified correctly
+        require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php');
+        $this->assertEquals('bal.specialtyCriteria.companyName', $dictionary['ext_soap_hoovers']['fields']['recname']['input'], "Assert that the input key for recname entry was changed to 'bal.specialtyCriteria.companyName'");
+        
+        $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
+        $account = new Account();
+        $account = $source_instance->fillBean(array('id'=>'2205698'), 'Accounts', $account);
+        $this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
+    
+    
+        $account = new Account();
+        $accounts = array();
+        $accounts = $source_instance->fillBeans(array('name' => 'Gannett'), 'Accounts', $accounts);
+        foreach($accounts as $count=>$account) {
+                $this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that a bean has been filled with account name like Gannett");
+                break;
+        }
     }
 }
-
-}
-
-?>

@@ -43,11 +43,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	} 	
  	
  	public function init() 
- 		parent::init();		
- 	}
- 	
- 	
- 	private function setUp()
  	{
  		parent::init();
  		try{
@@ -55,7 +50,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		//BEGIN ENCODE
 	 		$clientKey = !empty($properties['hoovers_api_key']) ? $properties['hoovers_api_key'] : base64_decode(get_hoovers_api_key());
             //END ENCODE
-			$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
+            	 		
+	 		
 	 		$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
             $this->_client->setHeaders("<API-KEY xmlns='http://applications.dnb.com/webservice/schema/'>{$clientKey}</API-KEY>");
             //BEGIN SUGARCRM flav=int ONLY
@@ -135,7 +131,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		}
  	    }	
 
- 	    $this->_lookupMap = $lookup_mapping;  		
+ 	    require(HOOVERS_LOOKUP_MAPPING_FILE);
  	    $this->_lookupMap = $lookup_mapping; 		
  	}
  	
@@ -147,9 +143,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @param $module String value of the module we are mapping input arguments from
  	 * @return $result Array of results based on the search results from the given arguments
  	 */
- 		$this->setUp();
+ 	public function getList($args=array(), $module=null) {
  		//Call the soap method (AdvancedCompanySearch)
- 		//$args['bal']['orderBy'] = 'IndustryName';
  		//$args['bal']['orderBy'] = 'IndustryName';
 		$args['bal']['sortDirection'] = 'Ascending';
 		
@@ -174,7 +169,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		   $replace = array(" and ", "");
 		   $args['bal']['specialtyCriteria']['companyName'] = str_ireplace($search, $replace, $args['bal']['specialtyCriteria']['companyName']);
         }
- 		//Return results after parsing using parseListResults
+        
  		$result = $this->AdvancedCompanySearch($args);
  		//Return results after parsing using parseListResults
 		return !empty($result) ? $this->parseListResults($result) : array();
@@ -187,8 +182,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * 
  	 * @param $args Array of input/search parameters
  	 * @param $module String value of the module we are mapping input arguments from
- 	public function getItem($args=array(), $module=null) {
- 		$this->setUp(); 		
+ 	 * @return $result Array of result based on the search results from the given arguments
  	 */
  	public function getItem($args=array(), $module=null) { 		
  		$result = $this->GetCompanyDetail($args);
@@ -372,7 +366,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		$result = array();
  		if(empty($args) || !is_array($args) || empty($args[0])) {
  		   return $result;
-		//BEGIN SUGARCRM flav=int ONLY
+ 		}
  		
  		//BEGIN SUGARCRM flav=int ONLY
  		/*
@@ -383,7 +377,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 	}
  		*/
  		//END SUGARCRM flav=int ONLY
- 		$this->_client->payloadOverride = $this->createPayloadOverride($function, $args);
+ 		
  		//Now create the payloadOverride variable and set it on the client
  		$this->_client->payloadOverride = $this->createPayloadOverride($function, $args);
  		
@@ -410,7 +404,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		   throw new Exception($errorMessage); 		
 	 		}
  		} catch (Exception $ex) {
-
  		 	$GLOBALS['log']->error($ex);
   		}
  		return $this->obj2array($result);
@@ -423,20 +416,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * There are subtle differences when one company result is returned versus multiple
  	 * company results.
  	 * 
+ 	 * @param $result Array of results in list format
+ 	 * @return $result Formatted results 
  	 */
  	private function parseListResults($result){
- 		
  		if($result['return']['companies']['hits'] == 1) {
  		   $single = array();
  		   $data = $result['return']['companies']['hit']['companyResults'];
+ 		   $id = $data['duns'];
  		   $data['id'] = $id;
- 		   $single[$id] = $this->formatListResult($data);
+ 		   $single[$id] = $this->formatListResult(data);
  		   return $single;
  		} else if($result['return']['companies']['hits'] > 1) {
  		   $multiple = array();
- 		   
- 		   foreach($result['return']['companies']['hit'] as $result) {
- 		   	  $data = $result['companyResults'];
  		   
  		   foreach($result['return']['companies']['hit'] as $result) {
  		   	  $data = $result['companyResults'];
@@ -447,42 +439,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   return $multiple;
  		} else {
  		   return '';
-        
-   /**
-    * formatListResult
-    * This is a private helper function to ensure that list results are correctly matched to the vardef
-    * key entries
-    *
-    * @param Array data entry for list result from parseListResult function
-    * @return Array formatted data entry with the correct vardef keys
-    */
-   private function formatListResult(&$data)
-   {
-   	   static $format_mapping = array('companyName'=>'recname','address1'=>'addrstreet1','address2'=>'addrstreet2',
-                                      'city'=>'addrcity','country'=>'addrcountry','stateOrProvince'=>'addrstateprov','sales'=>'finsales');
-
-
-       foreach($format_mapping as $f_key=>$f_out)
-       {
-           if(isset($data[$f_key]))
-           {
-              $data[$f_out] = $data[$f_key];
-              unset($data[$f_key]);
-           }
-       }
-
-       return $data;
-   }
+ 		}
+ 	}
+	
  	
+ 	/**
+ 	 * formatListResult
+ 	 * This is a private helper function to ensure that list results are correctly matched to the vardef
+ 	 * key entries
+ 	 * 
+ 	 * @param Array data entry for list result from parseListResult function
+ 	 * @return Array formatted data entry with the correct vardef keys
+ 	 */
+ 	private function formatListResult(&$data)
+ 	{
+ 		static $format_mapping = array('companyName'=>'recname','address1'=>'addrstreet1','address2'=>'addrstreet2',
+ 		                               'city'=>'addrcity','country'=>'addrcountry','stateOrProvince'=>'addrstateprov','sales'=>'finsales');
  	
+ 		//BEGIN SUGARCRM flav=int ONLY
+ 		//$GLOBALS['log']->fatal($data);
+ 		//END SUGARCRM flav=int ONLY
+ 		
+ 		foreach($format_mapping as $f_key=>$f_out)
+ 		{
+ 			if(isset($data[$f_key]))
+ 			{
+ 			   $data[$f_out] = $data[$f_key];
+ 			   unset($data[$f_key]);
+ 			}
+ 		}
+ 		
  		return $data;
  	}
  	
 	/**
 	 * test
 	 * This method is called from the administration components to make a live test
-	 */
- 	public function test() {
+	 * call to see if the configuration and connections are available
+	 * 
 	 * @return boolean result of the test call false if failed, true otherwise
 	 */
  	public function test() {
@@ -521,3 +515,4 @@ function get_hoovers_api_key() {
 //END ENCODE
  
 ?>
+

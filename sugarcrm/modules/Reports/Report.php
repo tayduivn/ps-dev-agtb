@@ -2149,7 +2149,6 @@ print "<BR>";
 			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
 				$display = currency_format_number($display, $params);
         	
-			}
 /*
             if (isset($display_column['type']) && $display_column['type'] == 'bool') {
             	if (isset($display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])])) {
