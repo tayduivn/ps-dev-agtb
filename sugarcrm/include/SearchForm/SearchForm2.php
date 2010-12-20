@@ -449,10 +449,9 @@ require_once('include/EditView/EditView2.php');
             	$fromMergeRecords = isset($array['merge_module']);
 
                 foreach($this->searchFields as $name => $params) {
-					$long_name = $name.'_'.$SearchName;           /*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-                    if(isset($array[$long_name]) && ( $array[$long_name] !== ''
-						|| (isset($this->fieldDefs[$long_name]) && $this->fieldDefs[$long_name]['type'] == 'bool'
-							&& ($array[$long_name]=='0' || $array[$long_name]=='1'))) )
+					$long_name = $name.'_'.$SearchName;           
+					/*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
+					if(isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
 					{ //advanced*/
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
@@ -462,6 +461,21 @@ require_once('include/EditView/EditView2.php');
                         $this->searchFields[$name]['value'] = $array[$name];
                         if(empty($this->fieldDefs[$long_name]['value'])) $this->fieldDefs[$long_name]['value'] = $array[$name];
                     }
+                    
+                    if(!empty($params['enable_range_search']) && isset($this->searchFields[$name]['value']))
+					{
+						if(preg_match('/^range_(.*?)$/', $long_name, $match) && isset($array[$match[1].'_range_choice']))
+						{
+							$this->searchFields[$name]['operator'] = $array[$match[1].'_range_choice'];
+						}
+					}
+
+					if(!empty($params['is_date_field']) && isset($this->searchFields[$name]['value']))
+					{
+						global $timedate;
+						$date_value = $timedate->to_db_date($this->searchFields[$name]['value']);
+						$this->searchFields[$name]['value'] = $date_value == '' ? $this->searchFields[$name]['value'] : $date_value;
+					}                    
                 }
 
                 if((empty($array['massupdate']) || $array['massupdate'] == 'false') && $addAllBeanFields) {
@@ -547,6 +561,40 @@ require_once('include/EditView/EditView2.php');
             // a generic search form validation mechanism.
             $type = (!empty($this->seed->field_name_map[$field]['type']))?$this->seed->field_name_map[$field]['type']:'';
 
+			if(!empty($parms['enable_range_search']))
+			{
+				if(empty($type))
+				{					
+					if(preg_match('/^start_range_(.*?)$/', $field, $match))
+					{
+						$real_field = $match[1];
+						$start_field = 'start_range_' . $real_field;
+						$end_field = 'end_range_' . $real_field;
+
+						if(isset($this->searchFields[$start_field]['value']) && isset($this->searchFields[$end_field]['value']))
+						{								
+							$this->searchFields[$real_field]['value'] = $this->searchFields[$start_field]['value'] . '<>' . $this->searchFields[$end_field]['value'];
+							$this->searchFields[$real_field]['operator'] = 'between';
+							$parms['value'] = $this->searchFields[$real_field]['value'];
+							$parms['operator'] = 'between';
+							$field = $real_field;
+							unset($this->searchFields[$end_field]['value']);
+						}
+					} else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
+						$real_field = $match[1];
+						$this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
+						$this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];
+						$params['value'] = $this->searchFields[$field]['value'];
+						$params['operator'] = $this->searchFields[$field]['operator'];
+						unset($this->searchFields[$field]['value']);
+						$field = $real_field;
+					} else {
+        			    //Skip this range search field, it is the end field THIS IS NEEDED or the end range date will break the query
+		            	continue;
+					}
+				}
+			}
+            
         	if(!empty($this->seed->field_name_map[$field]['source'])
         		&& ($this->seed->field_name_map[$field]['source'] == 'custom_fields' ||
         			//Non-db custom fields, such as custom relates
@@ -735,30 +783,54 @@ require_once('include/EditView/EditView2.php');
                             $field_value = $dates["start"] . "<>" . $dates["end"];
                             $operator = 'between';
                         }
-                        if($type == 'decimal' || $type == 'float' || $type == 'currency') {
-                            require_once('modules/Currencies/Currency.php');
+                        
+                    	if($type == 'decimal' || $type == 'float' || $type == 'currency' || (!empty($parms['enable_range_search']) && empty($parms['is_date_field']))) {
+							require_once('modules/Currencies/Currency.php');
 
-                            $field_value = unformat_number($field_value);
-                            if ( $type == 'currency' && stripos($field,'_usdollar')!==FALSE ) {
-                                // It's a US Dollar field, we need to do some conversions from the user's local currency
-                                $currency_id = $GLOBALS['current_user']->getPreference('currency');
-                                if ( empty($currency_id) ) {
-                                    $currency_id = -99;
-                                }
-                                if ( $currency_id != -99 ) {
-                                    $currency = new Currency();
-                                    $currency->retrieve($currency_id);
-                                    $field_value = $currency->convertToDollar($field_value);
-                                }
-                            }
+							//we need to handle formatting either a single value or 2 values in case the 'between' search option is set
+							//start by splitting the string if the between operator exists
+							$fieldARR = explode('<>', $field_value);	
+							//set the first pass through boolean
+							$first_between = true;
+	
+							foreach($fieldARR as $fk => $fv){
+								//reset the field value, it will be rebuild in the foreach loop below
+								$tmpfield_value = unformat_number($fv);
+		
+								if ( $type == 'currency' && stripos($field,'_usdollar')!==FALSE ) {
+									// It's a US Dollar field, we need to do some conversions from the user's local currency
+									$currency_id = $GLOBALS['current_user']->getPreference('currency');
+									if ( empty($currency_id) ) {
+										$currency_id = -99;
+									}
+									if ( $currency_id != -99 ) {
+										$currency = new Currency();
+										$currency->retrieve($currency_id);
+										$field_value = $currency->convertToDollar($tmpfield_value);
+									}
+								}
 
-                            // Databases can't really search for floating point numbers, because they can't be accurately described in binary,
-                            // So we have to fuzz out the match a little bit
-                            $top = $field_value + 0.01;
-                            $bottom = $field_value - 0.01;
-                            $field_value = $bottom . "<>" . $top;
-                            $operator = 'between';
-                        }
+								//recreate the field value
+								if($first_between){
+									//set the field value with the new formatted temp value
+									$field_value = $tmpfield_value;
+								}else{
+									//this is a between query, so append the between operator and add the second formatted temp value
+									$field_value .= '<>'.$tmpfield_value;
+								}
+								//set the first pass through variable to false
+								$first_between = false;								
+							}
+								
+							// Databases can't really search for floating point numbers, because they can't be accurately described in binary,
+							// So we have to fuzz out the math a little bit
+							if(!empty($parms['enable_range_search']) && ($parms['operator']!='equals' ||  $parms['operator']!='between')){
+								//do not add between clause if this is a range search, it will be handled below
+							} else {
+								$field_value = ($field_value - 0.01) . "<>" . ($field_value + 0.01);
+								$operator = 'between';
+							}										
+						}
 
                         //BEGIN SUGARCRM flav=pro ONLY
                         if ( preg_match("/favorites_only.*/", $field) ) {
@@ -905,6 +977,180 @@ require_once('include/EditView/EditView2.php');
                             case 'innerjoin':
                                 $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";
                                 break;
+							case 'not_equal':
+								$where .= $db_field . " != '". $field_value . "'";
+								break;
+							case 'greater_than':
+								$where .= $db_field . " > '". $field_value . "'";
+								break;
+							case 'greater_than_equals':
+								$where .= $db_field . " >= '". $field_value . "'";
+								break;
+							case 'less_than':
+								$where .= $db_field . " < '". $field_value . "'";
+								break;
+							case 'less_than_equals':
+								$where .= $db_field . " <= '". $field_value . "'";
+								break;
+							case 'last_7_days':
+								if($GLOBALS['db']->dbType == 'mysql')
+								{
+									$where .= "LEFT(" . $db_field . ",10) BETWEEN LEFT((current_date - interval '7' day),10) AND LEFT(current_date,10)";	
+								} 
+								//BEGIN SUGARCRM flav=PRO ONLY
+								elseif ($GLOBALS['db']->dbType == 'mssql') {
+									$where .= "DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) <= 7 and DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) >= 0";
+								} 
+								//BEGIN SUGARCRM flav=ENT ONLY
+								else {
+									$where .= $db_field . " BETWEEN (sysdate - interval '7' day) AND sysdate";
+								}
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY
+								break;
+							case 'next_7_days':	
+								if($GLOBALS['db']->dbType == 'mysql')
+								{
+									$where .= "LEFT(" . $db_field . ",10)  BETWEEN LEFT(current_date,10) AND LEFT((current_date + interval '7' day),10)";	
+                        		} 
+                        		//BEGIN SUGARCRM flav=PRO ONLY
+                        		elseif ($GLOBALS['db']->dbType == 'mssql') {
+									$where .= "DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) <= 7 and DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) >= 0";
+                        		} 
+                        		//BEGIN SUGARCRM flav=ENT ONLY
+                        		else {
+									$where .= $db_field . " BETWEEN sysdate AND (sysdate + interval '7' day) ";
+                        		}
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY                        		
+								break;
+							case 'next_month':
+					            if ($GLOBALS['db']->dbType  == 'mysql') 
+					            {
+					            	$where .= "LEFT(" . $db_field . ",7) = LEFT( (current_date  + interval '1' month),7)";
+					            } 
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
+									$where .= "(LEFT( ".$db_field.",4) = LEFT( (DATEADD(mm,1,GETDATE())),4)) and (DATEPART(yy, DATEADD(mm,1,GETDATE())) = DATEPART(yy, DATEADD(mm,1,".$db_field.")))";
+					            } 
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else {
+					                $where .= "TRUNC(" . $db_field . ",'MONTH') = TRUNC(add_months(sysdate,+1),'MONTH')";
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY 					            
+								break;
+					        case 'last_month':
+					            if ($GLOBALS['db']->dbType == 'mysql')
+					            {
+					                $where .= "LEFT(" . $db_field . ",7) = LEFT( (current_date  - interval '1' month),7)";
+					            } 
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					                $where .= "LEFT(" . $db_field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					            } 
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else {
+					            	$where .= "TRUNC(" . $db_field . ",'MONTH') = TRUNC(add_months(sysdate,-'1'),'MONTH')";  
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY 					            
+								break;
+					        case 'this_month':
+					            if ($GLOBALS['db']->dbType == 'mysql')
+					            {
+					                $where .= "LEFT(" . $db_field . ",7) = LEFT( current_date,7)";
+					            } 
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					                $where .= "LEFT (" . $db_field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					            } 
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else {
+					            	$where .= "TRUNC(" . $db_field . ",'MONTH') = TRUNC((sysdate),'MONTH')";
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY
+								break;					
+					        case 'last_30_days':
+					            if ($GLOBALS['db']->dbType == 'mysql')
+					            {
+					                $where .= "LEFT(" . $db_field . ",10) BETWEEN LEFT((current_date - interval '30' day),10) AND LEFT(current_date,10)";
+					            } 
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					                $where .= "DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) <= 30 and DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) >= 0";
+					            }
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else{
+					            	$where .= $db_field . " BETWEEN (sysdate - interval '30' day) AND sysdate";
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY
+								break; 					
+					        case 'next_30_days':
+					            if ($GLOBALS['db']->dbType == 'mysql')
+					            {
+					            	$where .= $db_field  . " BETWEEN (current_date) AND (current_date + interval '1' month)";
+					            }
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					                $where .= "DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) <= 30 and DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) >= 0";
+					            } 
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else {
+					                $where .= $db_field  . " BETWEEN (sysdate) AND (sysdate + interval '1' month)";
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY
+								break; 								
+					        case 'this_year':
+					            if ($GLOBALS['db']->dbType == 'mysql')
+					            {
+					                $where .= "LEFT(" . $db_field . ",4) = EXTRACT(YEAR FROM ( current_date ))";
+					            }
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					            }
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else{
+					            	$where .= "TRUNC(" . $db_field . ",'YEAR') = TRUNC( sysdate,'YEAR')";    
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY 
+								break;								            
+					        case 'last_year':
+					            if ($GLOBALS['db']->dbType == 'mysql')
+					            {
+					            	$where .= "LEFT(" . $db_field . ",4) = EXTRACT(YEAR FROM ( current_date  - interval '1' year))";
+					            }
+					            //BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE()))) ";
+					            } 
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else {
+					                $where .= "TRUNC(" . $db_field . ",'YEAR') = TRUNC(add_months(sysdate,-12),'YEAR')";
+					            }
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY
+								break; 					
+					        case 'next_year':
+					            if ($GLOBALS['db']->dbType == 'mysql') {
+					                $where .= "LEFT(" . $db_field . ",4) = EXTRACT(YEAR FROM ( current_date  + interval '1' year))";
+					            }
+								//BEGIN SUGARCRM flav=PRO ONLY
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE()))) ";
+					            } 
+					            //BEGIN SUGARCRM flav=ENT ONLY
+					            else { 
+					                $where .= "TRUNC(" . $db_field . ",'YEAR') = TRUNC(add_months(sysdate,+12),'YEAR')";
+					            } 
+								//END SUGARCRM flav=ENT ONLY
+								//END SUGARCRM flav=PRO ONLY 
+								break;								    
                         }
                     }
                 }
@@ -923,5 +1169,4 @@ require_once('include/EditView/EditView2.php');
         return $where_clauses;
     }
  }
-
 ?>

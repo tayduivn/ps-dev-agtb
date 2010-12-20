@@ -1,5 +1,6 @@
-Calendar = function() {
-	
+if(typeof Calendar == 'undefined')
+{
+Calendar = function() {}
 }
 
 Calendar.setup = function (params) {

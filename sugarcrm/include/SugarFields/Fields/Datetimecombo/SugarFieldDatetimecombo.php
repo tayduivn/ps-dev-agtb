@@ -33,6 +33,24 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     }
 	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+    	
+    	 if($this->isRangeSearchView($vardef)) {
+           $displayParams['showMinutesDropdown'] = false;
+           $displayParams['showHoursDropdown'] = false;	
+           $displayParams['showNoneCheckbox'] = false;	
+           $displayParams['showFormats'] = false;
+	       global $timedate, $current_language;
+	       $displayParams['dateFormat'] = $timedate->get_cal_date_format();
+	       $displayParams['timeFormat'] = $timedate->get_user_time_format();           
+           $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+           $id = isset($displayParams['idName']) ? $displayParams['idName'] : $vardef['name'];
+           $this->ss->assign('id_range', "range_{$id}");
+           $this->ss->assign('id_range_start', "start_range_{$id}");
+           $this->ss->assign('id_range_end', "end_range_{$id}");
+           $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
+        }    	
+    	
     	// Create Smarty variables for the Calendar picker widget
         if(!isset($displayParams['showMinutesDropdown'])) {
            $displayParams['showMinutesDropdown'] = false;	
