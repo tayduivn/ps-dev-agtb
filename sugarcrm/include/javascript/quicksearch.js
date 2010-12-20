@@ -181,7 +181,7 @@ function enableQS(noReload){
                     //C.L. Bug 36575: In event of account_name quicksearch, check to see if we need to warn user
                     //that address fields may change.  This code has similarities to code block in set_return method
                     //of sugar_3.js when building the alert message contents.
-                    if(/account_name$/.exec(qsFields[qsField].name))
+                    if(/^(billing_|shipping_)?account_name$/.exec(qsFields[qsField].name))
                     {
                       
                        //C.L. Bug 36106 no-op function for clearFields (do not clear out values)
