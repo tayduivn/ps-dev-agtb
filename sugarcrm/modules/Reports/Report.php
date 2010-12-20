@@ -2140,15 +2140,17 @@ print "<BR>";
 
             	if (isset($display_column['fields'][$field_name]))
             		$display = $display_column['fields'][$field_name];
-
-					global $locale;
-				    $params = array();
-				    $params['currency_id'] = $locale->getPrecedentPreference('currency');
-			    	$params['convert'] = true;
-			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-				    $display = currency_format_number($display, $params);
-        	}
-
+            	}
+            		
+				global $locale;				   
+				$params = array();
+				$params['currency_id'] = $locale->getPrecedentPreference('currency');
+			    $params['convert'] = true;
+			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+				$display = currency_format_number($display, $params);
+        	
+			}
+/*
             if (isset($display_column['type']) && $display_column['type'] == 'bool') {
             	if (isset($display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])])) {
             		$display = $display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])];
@@ -2159,7 +2161,7 @@ print "<BR>";
             		} // else
             	} // if
             }
-
+*/
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
                 $display = $this->layout_manager->widgetDisplay($display_column);
             }
@@ -2170,8 +2172,8 @@ print "<BR>";
 
             	if (array_key_exists($field_name, $display_column['fields'])) {
             		$displayData = $display_column['fields'][$field_name];
-            		if (empty($displayData) && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
-            			$display = "";
+                    if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum'  || $display_column['type'] == 'enum' && $displayData != '0')) {
+            		  $display = "";
             		}
             		if ($display_column['type'] == 'int') {
             			$display = $displayData;

@@ -187,7 +187,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'source'=>'non-db',
     'len' => 36,
     'importable' => 'false',
-    'studio' => array('required' => false, 'listview'=>true),
+    'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
   ),
   'account' =>
   array (

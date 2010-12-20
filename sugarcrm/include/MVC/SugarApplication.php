@@ -322,6 +322,22 @@ class SugarApplication
 	}
 
 	/**
+	 * Load only bare minimum of language that can be done before user init and MVC stuff
+	 */
+	static function preLoadLanguages()
+	{
+		if(!empty($_SESSION['authenticated_user_language'])) {
+			$GLOBALS['current_language'] = $_SESSION['authenticated_user_language'];
+		}
+		else {
+			$GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
+		}
+		$GLOBALS['log']->debug('current_language is: '.$GLOBALS['current_language']);
+		//set module and application string arrays based upon selected language
+		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+	}
+
+	/**
 	 * Load application wide languages as well as module based languages so they are accessible
 	 * from the module.
 	 */

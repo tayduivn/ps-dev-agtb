@@ -156,6 +156,8 @@ function build_installer($FLAVOR, $PLATFORM, $OUTPUT){
         $lpr->output( "+--->  Copying base files $BASE_BITROCK_DIR/$PLATFORM/ to $BASE_BUILD_DIR/$TMP_DIR/$PLATFORM/$FLAVOR" );
         system("svn export -q --force http://svn1.sjc.sugarcrm.pvt/faststack/base/$PLATFORM $BASE_BUILD_DIR/$TMP_DIR/$PLATFORM/$FLAVOR");
       }
+      //copy new logo image
+      system("cp -f /home/build/new_logo/*  $BASE_BUILD_DIR/$TMP_DIR/$PLATFORM/$FLAVOR/images/");
       $lpr->output( "+--->  Finished copying base files" );
     // Copying correct sugarcrm version
       $lpr->output( "+--->  Copying sugarcrm"); 

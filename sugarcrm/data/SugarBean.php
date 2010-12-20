@@ -52,32 +52,32 @@ class SugarBean
      */
     var $db;
 
-    /**
-    * When createing a bean, you can specify a value in the id column as
-    * long as that value is unique.  During save, if the system finds an
-    * id, it assumes it is an update.  Setting new_with_id to true will
-    * make sure the system performs an insert instead of an update.
-    *
-    * @var BOOL -- default false
-    */
-    var $new_with_id = false;
+	/**
+	 * When createing a bean, you can specify a value in the id column as
+	 * long as that value is unique.  During save, if the system finds an
+	 * id, it assumes it is an update.  Setting new_with_id to true will
+	 * make sure the system performs an insert instead of an update.
+	 *
+	 * @var BOOL -- default false
+	 */
+	var $new_with_id = false;
 
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-    * Pro Only -- When all data of a specifiy module is publically available,
-    * row level security can be turned off.  This should only be used for modules
-    * that do not need row level security.
-    *
-    * @var BOOL -- default false
-    */
-    var $disable_row_level_security =false;
-    //END SUGARCRM flav=pro ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
+	/**
+	 * Pro Only -- When all data of a specifiy module is publically available,
+	 * row level security can be turned off.  This should only be used for modules
+	 * that do not need row level security.
+	 *
+	 * @var BOOL -- default false
+	 */
+	var $disable_row_level_security =false;
+	//END SUGARCRM flav=pro ONLY
 
-    /**
-    * Disble vardefs.  This should be set to true only for beans that do not have varders.  Tracker is an example
-    *
-    * @var BOOL -- default false
-    */
+	/**
+	 * Disble vardefs.  This should be set to true only for beans that do not have varders.  Tracker is an example
+	 *
+	 * @var BOOL -- default false
+	 */
     var $disable_vardefs = false;
 
 
@@ -89,20 +89,20 @@ class SugarBean
      */
     var $new_assigned_user_name;
 
-    /**
-    * An array of booleans.  This array is cleared out when data is loaded.
-    * As date/times are converted, a "1" is placed under the key, the field is converted.
-    *
-    * @var Array of booleans
-    */
-    var $processed_dates_times = array();
+	/**
+	 * An array of booleans.  This array is cleared out when data is loaded.
+	 * As date/times are converted, a "1" is placed under the key, the field is converted.
+	 *
+	 * @var Array of booleans
+	 */
+	var $processed_dates_times = array();
 
-    /**
-    * Whether to process date/time fields for storage in the database in GMT
-    *
-    * @var BOOL
-    */
-    var $process_save_dates =true;
+	/**
+	 * Whether to process date/time fields for storage in the database in GMT
+	 *
+	 * @var BOOL
+	 */
+	var $process_save_dates =true;
 
     /**
      * This signals to the bean that it is being saved in a mass mode.
@@ -113,28 +113,28 @@ class SugarBean
      */
     var $save_from_post = true;
 
-    /**
-    * When running a query on related items using the method: retrieve_by_string_fields
-    * this value will be set to true if more than one item matches the search criteria.
-    *
-    * @var BOOL
-    */
-    var $duplicates_found = false;
+	/**
+	 * When running a query on related items using the method: retrieve_by_string_fields
+	 * this value will be set to true if more than one item matches the search criteria.
+	 *
+	 * @var BOOL
+	 */
+	var $duplicates_found = false;
 
-    /**
-    * The DBManager instance that was used to load this bean and should be used for
-    * future database interactions.
-    *
-    * @var DBManager
-    */
-    var $dbManager;
+	/**
+	 * The DBManager instance that was used to load this bean and should be used for
+	 * future database interactions.
+	 *
+	 * @var DBManager
+	 */
+	var $dbManager;
 
-    /**
-    * true if this bean has been deleted, false otherwise.
-    *
-    * @var BOOL
-    */
-    var $deleted = 0;
+	/**
+	 * true if this bean has been deleted, false otherwise.
+	 *
+	 * @var BOOL
+	 */
+	var $deleted = 0;
 
     /**
      * Should the date modified column of the bean be updated during save?
@@ -253,6 +253,11 @@ class SugarBean
      * Used to pass inner join string to ListView Data.
      */
     var $listview_inner_join = array();
+    
+    /**
+     * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
+     */
+    var $in_import = false;
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -3318,11 +3323,25 @@ function save_relationship_changes($is_update, $exclude=array())
                     $rel_module = $this->$data['link']->getRelatedModuleName();
                     $table_joined = !empty($joined_tables[$params['join_table_alias']]) || (!empty($joined_tables[$params['join_table_link_alias']]) && isset($data['link_type']) && $data['link_type'] == 'relationship_info');
 
-                    if($join['type'] == 'many-to-many')
-                    {
-                        if(empty($ret_array['secondary_select']))
-                        {
-                            $ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
+					//if rnanme is set to 'name', and bean files exist, then check if field should be a concatenated name
+					global $beanFiles, $beanList;
+					if($data['rname'] && !empty($beanFiles[$beanList[$rel_module]])) {
+
+						//create an instance of the related bean
+						require_once($beanFiles[$beanList[$rel_module]]);
+						$rel_mod = new $beanList[$rel_module]();
+						//if bean has first and last name fields, then name should be concatenated
+						if(isset($rel_mod->field_name_map['first_name']) && isset($rel_mod->field_name_map['last_name'])){
+								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
+						}
+					}
+					
+					
+    				if($join['type'] == 'many-to-many')
+    				{
+    					if(empty($ret_array['secondary_select']))
+    					{
+    						$ret_array['secondary_select'] = " SELECT $this->table_name.id ref_id  ";
 
                             if(!empty($beanFiles[$beanList[$rel_module]]) && $join_primary)
                             {

@@ -47,6 +47,7 @@ $error_defs = array(
 //END SUGARCRM flav!=sales ONLY
 'password_expired'     => array('number'=>1008, 'name'=> 'Password Expired', 'description'=>'Your password has expired. Please provide a new password.'),
 'lockout_reached'     => array('number'=>1009, 'name'=> 'Password Expired', 'description'=>'You have been locked out of the Sugar application and cannot log in using existing password. Please contact your Administrator.'),
+'ldap_error' => array('number'=>1012, 'name'=> 'LDAP Authentication Failed', 'description'=>'LDAP Authentication failed but supplied password was already encrypted.'),
 //BEGIN SUGARCRM flav=dce ONLY
 'DCE_record_not_found' => array('number'=>101, 'name'=>'Instance or contact record not found', 'description'=>'impossible to retrieve one of the record.'),
 'DCE_action_dce_get_key_failure' => array('number'=>102, 'name'=>'action_dce_get_key() failure', 'description'=>'Undefined failure of action_dce_get_key().'),

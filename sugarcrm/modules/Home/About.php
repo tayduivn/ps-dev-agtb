@@ -221,7 +221,6 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_NUSOAP']; ?> (<a href="http://dietrich.ganx4.com/nusoap" target="_blank">http://dietrich.ganx4.com/nusoap</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSCALENDAR']; ?> (<a href="http://www.dynarch.com/mishoo/calendar.epl" target="_blank">http://www.dynarch.com/mishoo/calendar.epl</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_PHPPDF']; ?> (<a href="http://ros.co.nz/pdf/" target="_blank">http://ros.co.nz/pdf/</a>)
-<LI><?php echo $mod_strings['LBL_SOURCE_PNGBEHAVIOR']; ?> (<a href="http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html" target="_blank">http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSONPHP']; ?> (<a href="http://mike.teczno.com/json.html" target="_blank">http://mike.teczno.com/json.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSON']; ?> (<a href="http://www.json.org/js.html" target="_blank">http://www.json.org/js.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_HTTP_WEBDAV_SERVER']; ?> (<a href="http://pear.php.net/package/HTTP_WebDAV_Server" target="_blank">http://pear.php.net/package/HTTP_WebDAV_Server</a>)</LI>
@@ -247,7 +246,7 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 	echo "<P><h3>". $type . "</h3></p>";
 	echo "<ul style=\"margin-bottom: 20px; padding-left: 0px;\">";
 		foreach($details as $key => $value) {
-			echo "<li>".$value['name']." - ".$value['description']." (".$value['website'].")</li>";
+			echo "<li><b>".$value['name']."</b> by ".$value['author']." (<a href='http://{$value['website']}' target='_blank'>".$value['website']."</a>)</li>";
 		}
 	echo "</ul>";
 }?>

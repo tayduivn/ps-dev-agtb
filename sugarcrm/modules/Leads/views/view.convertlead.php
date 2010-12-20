@@ -58,6 +58,25 @@ class ViewConvertLead extends SugarView
         
     	global $beanList;
     	
+    	// get the EditView defs to check if opportunity_name exists, for a check below for populating data
+    	$opportunityNameInLayout = false;
+    	$editviewFile = 'modules/Leads/metadata/editviewdefs.php';
+        $this->medataDataFile = $editviewFile;
+        if (file_exists("custom/{$editviewFile}"))
+        {
+            $this->medataDataFile = "custom/{$editviewFile}";
+        }
+    	include($this->medataDataFile);
+    	foreach($viewdefs['Leads']['EditView']['panels'] as $panel_index => $section){
+    	    foreach($section as $row_array){
+    	        foreach($row_array as $cell){
+        	        if(isset($cell['name']) && $cell['name'] == 'opportunity_name'){
+        	            $opportunityNameInLayout = true;
+        	        }
+    	        }
+    	    }
+    	}
+    	
         $this->medataDataFile = $this->fileName;
         if (file_exists("custom/$this->fileName"))
         {
@@ -95,7 +114,6 @@ class ViewConvertLead extends SugarView
             $focus->fill_in_additional_detail_fields();
             foreach($focus->field_defs as $field => $def)
             {
-            	
             	if(isset($vdef[$ev->view]['copyData']) && $vdef[$ev->view]['copyData'])
                 {
 	                if ($module == "Accounts" && $field == 'name')
@@ -106,6 +124,9 @@ class ViewConvertLead extends SugarView
 	                {
 	                    $focus->amount = unformat_number($this->focus->opportunity_amount);
 	                } 
+                    else if ($module == "Opportunities" && $field == 'name' && $opportunityNameInLayout) {
+                        $focus->name = $this->focus->opportunity_name;
+                    }
 	                else if ($field == "id")
                     {
 						//If it is not a contact, don't copy the ID from the lead
