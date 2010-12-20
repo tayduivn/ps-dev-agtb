@@ -33,17 +33,17 @@ $GLOBALS['ignore_files'] = array(
 						'NumericExpression.php',
 						'StringExpression.php',
 						'TimeExpression.php',
+						'DateExpression.php',
 						'BooleanExpression.php',
 						'FalseExpression.php',
-                        'RelateExpression.php',
-						'FalseExpression.php',
 						'GenericExpression.php',
+						'RelateExpression.php',
 						'AbstractAction.php',
-					);
+						'ActionFactory.php',
+);
 
 
-{
-	//Check if the directory exists
+function recursiveParse($dir, $silent = false)
 {
 	//Check if the directory exists
 	if ( !is_dir($dir) )	return;
@@ -85,7 +85,7 @@ $GLOBALS['ignore_files'] = array(
 			continue;
 		}
 
-		$entry = str_replace(".php", "", $entry);
+		// now require this Expression file
 		require_once($dir . "/" . $entry);
 		$entry = str_replace(".php", "", $entry);
 		$js_code     = call_user_func(array($entry, "getJSEvaluate"));
@@ -96,7 +96,8 @@ $GLOBALS['ignore_files'] = array(
 		if ( empty($op_name) )	{
 			if ($silent === false) {
 				echo "<i>EMPTY OPERATION NAME $entry</i><br>";
-			}			continue;
+			}
+			continue;
 		}
 		if (!is_array($op_name))
 		  $op_name = array($op_name);
@@ -185,7 +186,7 @@ EOQ;
 		echo "</ul>";
 	}
 
-
+    return array("function_map" => $contents, "javascript"=>$js_contents);
 }
 
 $silent = isset($GLOBALS['updateSilent']) ? $GLOBALS['updateSilent'] : false;
@@ -198,7 +199,7 @@ if (is_dir("custom/include/Expressions/Expression")) {
 	$contents["javascript"]   .= $customContents["javascript"];
 }
 
-$contents["javascript"] .= ActionFactory::buildActionCache($silent);
+//Parse Actions into the cached javascript.
 require_once("include/Expressions/Actions/ActionFactory.php");
 $contents["javascript"] .= ActionFactory::buildActionCache($silent);
 
