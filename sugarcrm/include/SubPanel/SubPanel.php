@@ -289,8 +289,16 @@ class SubPanel
   		
   		//bugfix: load looks for moduleName/metadata/subpanels, not moduleName/subpanels
   		$path = 'custom/modules/'. $panel->_instance_properties['module'] . '/metadata/subpanels';
-  		$filename = $panel->parent_bean->object_name . $panel->_instance_properties['subpanel_name'] ;
-  		$extname = '_override'.$panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
+  		
+  		//bug# 40171: "Custom subpanels not working as expected" 
+  		//each custom subpanel needs to have a unique custom def file
+  		$filename = $panel->parent_bean->object_name . $panel->_instance_properties['get_subpanel_data'] ;
+  		$oldName = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName.php"))
+  			unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName.php");
+  		$extname = '_override'.$filename;
+  		//end of bug# 40171
+  		
   		mkdir_recursive($path, true);
   		write_array_to_file( $name, $override,$path.'/' . $filename .'.php');
   		
