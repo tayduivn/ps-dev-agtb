@@ -63,7 +63,7 @@ class RepairCustomFieldsTest extends Sugar_PHPUnit_Framework_TestCase
         if ( isset($this->field) && ( $this->field instanceOf TemplateField ) ) {
             $this->field->delete ( $this->df ) ;
         }
-        if ($this->db->tableExists($this->table_name)) {
+        if ( isset($this->db) && ( $this->db instanceOf DBManager ) && $this->db->tableExists($this->table_name) ) {
             $this->db->dropTableName($this->table_name);
         }
     }
