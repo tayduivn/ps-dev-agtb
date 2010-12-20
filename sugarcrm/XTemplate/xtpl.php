@@ -3,6 +3,7 @@
 /*
 
 Modification information for LGPL compliance
+Stas 2010-12-20 Added 'VERSION_MARK' to templates
 
 r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
 
@@ -10,7 +11,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -98,7 +99,7 @@ class XTemplate {
 /*
 	xtemplate class 0.2.4-3
 	html generation with templates - fast & easy
-	copyright (c) 2000 barnab�s debreceni [cranx@users.sourceforge.net]
+	copyright (c) 2000 barnabás debreceni [cranx@users.sourceforge.net]
 	code optimization by Ivar Smolin <okul@linux.ee> 14-march-2001
 	latest stable & CVS version always available @ http://sourceforge.net/projects/xtpl
 
