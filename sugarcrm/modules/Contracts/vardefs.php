@@ -143,14 +143,16 @@ $dictionary['Contract'] = array(
 			'type' => 'date',
 			'validation' => array('type' => 'isbefore', 'compareto' => 'end_date', 'blank' => true),
 			'audited' => true,
-			'comment' => 'The effective date of the contract'
+			'comment' => 'The effective date of the contract',
+		    'enable_range_search' => '1',
 		),
 		'end_date' => array (
 			'name' => 'end_date',
 			'vname' => 'LBL_END_DATE',
 			'type' => 'date',
 			'audited' => true,
-			'comment' => 'The date in which the contract is no longer effective'
+			'comment' => 'The date in which the contract is no longer effective',
+		    'enable_range_search' => '1',
 		),
 
 		'currency_id' => array (
@@ -206,13 +208,15 @@ $dictionary['Contract'] = array(
 			'name' => 'customer_signed_date',
 			'vname' => 'LBL_CUSTOMER_SIGNED_DATE',
 			'type' => 'date',
-			'comment' => 'Date in which the ultimate customer signed the contract'
+			'comment' => 'Date in which the ultimate customer signed the contract',
+		    'enable_range_search' => '1',
 		),
 		'company_signed_date' => array (
 			'name' => 'company_signed_date',
 			'vname' => 'LBL_COMPANY_SIGNED_DATE',
 			'type' => 'date',
-			'comment' => 'Date in which the company using Sugar signed the contract'
+			'comment' => 'Date in which the company using Sugar signed the contract',
+		    'enable_range_search' => '1',
 		),
 		'contract_term' => array (
 			'name' => 'contract_term',

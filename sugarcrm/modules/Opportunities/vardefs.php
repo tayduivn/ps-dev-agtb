@@ -197,6 +197,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'comment' => 'Expected or actual date the oppportunity will close',
 	'importable' => 'required',
     'required' => true,
+    'enable_range_search' => '1',
   ),
   'next_step' =>
   array (
