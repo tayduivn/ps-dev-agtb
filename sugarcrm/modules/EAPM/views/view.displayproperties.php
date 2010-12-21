@@ -34,8 +34,8 @@ class ViewDisplayProperties extends SugarView
 	    global $mod_strings;
         $iconPath = $this->getModuleTitleIconPath($this->module);
     	return array(
-           "<a href='index.php?module=EAPM&action=displayproperties'>".$mod_strings['LBL_MODULE_TITLE']."</a>",
-    	   $mod_strings['LBL_DISPLAY_PROPERTIES']
+           "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
+    	   $mod_strings['LBL_MODULE_TITLE']
     	   );
     }
 
