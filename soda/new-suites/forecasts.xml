@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/forecast/module_lib/setup-forecast.xml" />
+	<script fileset="{@global.scriptsdir}/modules/forecast" />
+	<script
+		file="{@global.scriptsdir}/modules/forecast/module_lib/cleanup-forecast.xml" />
+</soda>
+

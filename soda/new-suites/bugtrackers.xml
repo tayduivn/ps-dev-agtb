@@ -1,0 +1,8 @@
+<soda>        
+	<script
+		file="{@global.scriptsdir}/modules/bugtracker/module_lib/setup-bugtracker.xml" />
+	<script fileset="{@global.scriptsdir}/modules/bugtracker" />
+	<script 
+		file="{@global.scriptsdir}/modules/bugtracker/module_lib/cleanup-bugtracker.xml" />
+</soda>
+

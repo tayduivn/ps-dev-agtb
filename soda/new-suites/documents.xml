@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/documents/module_lib/setup-documents.xml" />
+	<script fileset="{@global.scriptsdir}/modules/documents" />
+	<script
+		file="{@global.scriptsdir}/modules/documents/module_lib/cleanup-documents.xml" />
+</soda>
+

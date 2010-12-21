@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/employees/module_lib/setup-employees.xml" />
+	<script fileset="{@global.scriptsdir}/modules/employees" />
+	<script
+		file="{@global.scriptsdir}/modules/employees/module_lib/cleanup-employees.xml" />
+</soda>
+

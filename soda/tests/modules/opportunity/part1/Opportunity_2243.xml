@@ -1,0 +1,22 @@
+<soda>
+    <puts text='----Opportunity_2243.xml----Opportunity DetailView: Verify that opportunity detail view is displayed by clicking the opportunity name in opportunity list view.----Start!'/>
+
+    <link id='moduleTab_Opportunities'/>
+    <browser assert='Opportunities'/>
+
+    <button id='search_form_clear'/>
+    <form id='search_form'>
+        <textfield id='name_basic' set='{@pre_opp_name}'/>
+    </form>
+    <button id='search_form_submit'/>
+
+    <table class='list view'>
+        <browser assert='{@pre_opp_name}'/>
+        <link text='{@pre_opp_name}'/>
+    </table>
+    <browser assert='Opportunities'/>
+    <browser assert='{@pre_opp_name}'/>
+
+    <!--Run Delete XML-->
+    <puts text='---Opportunity_2243.xml---Finished!'/>
+</soda>

@@ -1,0 +1,8 @@
+<soda>
+	<script 
+		file="{@global.scriptsdir}/modules/knowledgebase/module_lib/setup-knowledgebase.xml" />
+	<script fileset="{@global.scriptsdir}/modules/knowledgebase" />
+	<script 
+		file="{@global.scriptsdir}/modules/knowledgebase/module_lib/cleanup-knowledgebase.xml" />
+</soda>
+
