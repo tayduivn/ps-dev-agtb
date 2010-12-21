@@ -51,4 +51,13 @@
 	{/if}
 	</td>
 </tr>
+{if $range_search_option_enabled}
+<tr>	
+    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_ENABLE_RANGE_SEARCH"}:</td>
+    <td>
+        <input type='checkbox' name='enable_range_search' value=1 {if !empty($vardef.enable_range_search) }checked{/if} {if $hideLevel > 5}disabled{/if} />
+        {if $hideLevel > 5}<input type='hidden' name='enable_range_search' value='{$vardef.enable_range_search}'>{/if}
+    </td>	
+</tr>
+{/if}
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}

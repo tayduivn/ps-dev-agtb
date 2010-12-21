@@ -1,7 +1,8 @@
-<!--
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Enterprise End User
- * License Agreement ("License") which can be viewed at
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
+ * Agreement ("License") which can be viewed at
  * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
@@ -23,11 +24,8 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
--->
-<html>
-<body>
-<p>keep me</p>
-</body>
-</html>
+
+define('EXTERNAL_CACHE_NULL_VALUE', "SUGAR_CACHE_NULL_ZZ");
+require_once 'include/SugarCache/SugarCache.php';

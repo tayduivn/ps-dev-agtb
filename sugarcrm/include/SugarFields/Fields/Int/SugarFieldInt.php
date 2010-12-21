@@ -50,7 +50,14 @@ class SugarFieldInt extends SugarFieldBase
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         // Use the basic field type for searches, no need to format/unformat everything... for now
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        
+        if($this->isRangeSearchView($vardef)) {
+           $id = isset($displayParams['idName']) ? $displayParams['idName'] : $vardef['name'];
+           $this->ss->assign('id_range', "range_{$id}");
+           $this->ss->assign('id_range_start', "start_range_{$id}");
+           $this->ss->assign('id_range_end', "end_range_{$id}");
+           $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           return $this->fetch('include/SugarFields/Fields/Int/RangeSearchForm.tpl');
+        }        
     
     	return $this->fetch($this->findTemplate('SearchForm'));
     }  

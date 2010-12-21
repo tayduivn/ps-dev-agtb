@@ -258,7 +258,7 @@ class DependencyManager {
         return $dependencies[$module];
     }
 
-	static function getDependenciesForFields($fields) {
+	static function getDependenciesForFields($fields, $view = "") {
 		return array_merge(self::getCalculatedFieldDependencies($fields),
 						   self::getDependentFieldDependencies($fields),
 						   self::getDropDownDependencies($fields));
@@ -267,7 +267,7 @@ class DependencyManager {
     /**
      * @static
      * @param  $user User, user to return SugarLogic variables for
-     * @return void
+     * @return string
      */
     public static function getJSUserVariables($user)
     {
@@ -280,6 +280,53 @@ class DependencyManager {
             "gmt_offset" => $ts->getUserUTCOffset(),
             "default_locale_name_format" => $user->getPreference("default_locale_name_format"),
         )) . ";\n";
+    }
+
+    /**
+     * @static returns the javascript for the link variables of this view.
+     * @param  $fields array, field_defs for this view
+     * @param  $view string, name of view (form name)
+     * @return string
+     */
+     public static function getLinkFields($fields, $view)
+    {
+        $links = array();
+        foreach($fields as $name => $def)
+        {
+            if ($def['type'] == 'link' && self::validLinkField($def))
+            {
+                $links[$name] = $def['relationship'];
+            }
+        }
+        return "SUGAR.forms.AssignmentHandler.LINKS['$view'] = " . json_encode($links) . "\n";
+    }
+
+    /**
+     * @static
+     * @param  $def array, Link field definition.
+     * @return bool true if field is valid.
+     */
+    protected static function validLinkField($def)
+    {
+        global $dictionary;
+        $invalidModules = array("Emails" => true, "Teams" => true);
+
+        if (empty($def['relationship'])) {
+            return false; //Not a good link field
+        }
+
+        $relName = $def['relationship'];
+        $rel = new Relationship();
+        if ($rel->retrieve_by_name($relName) === false) {
+            return false; //Unable to find a relationship definition
+        }
+
+        if(!empty($invalidModules[$rel->lhs_module]) || !empty($invalidModules[$rel->rhs_module])) {
+            return false; //Invalid module
+        }
+
+        //Otherwise this link looks ok
+        return true;
     }
 }
 ?>

@@ -347,7 +347,7 @@ else if (!empty($_REQUEST['id'])) {
 	else {
 		$sugar_smarty->assign('record', $_REQUEST['id']);
 
-		$sugar_smarty->assign('save_report_as', htmlentities($saved_report_seed->name, ENT_QUOTES));
+		$sugar_smarty->assign('save_report_as', html_entity_decode($saved_report_seed->name, ENT_QUOTES));
 		$assigned_user_html_def = array(
 			'parent_id'=>'assigned_user_id',
 			'parent_id_value'=>$saved_report_seed->assigned_user_id,

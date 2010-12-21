@@ -378,4 +378,15 @@ class SugarFieldBase {
         
         return $value;
     }
+    
+    /**
+     * isRangeSearchView
+     * This method helps determine whether or not to display the range search view code for the sugar field
+     * @param array $vardef entry representing the sugar field's definition
+     * @return boolean true if range search view should be displayed, false otherwise
+     */
+    protected function isRangeSearchView($vardef)
+    {
+     	return !empty($vardef['enable_range_search']) && !empty($_REQUEST['action']) && $_REQUEST['action']!='Popup';
+    }    
 }

@@ -276,7 +276,9 @@ class UnifiedSearchAdvanced {
                  * Use searchForm2->generateSearchWhere() to create the search query, as it can generate SQL for the full set of comparisons required
                  * generateSearchWhere() expects to find the search conditions for a field in the 'value' parameter of the searchFields entry for that field
                  */
-                require_once 'include/SearchForm/SearchForm2.php' ;
+                require_once $beanFiles[$beanName] ;
+                $seed = new $beanName();
+				 require_once 'include/SearchForm/SearchForm2.php' ;
                 $searchForm = new SearchForm ( $seed, $moduleName ) ;
                 
                 $searchForm->setup (array ( $moduleName => array() ) , $unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;

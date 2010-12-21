@@ -45,7 +45,19 @@
 		SUGAR.mySugar.addToChartsArray('{$chartName}', '{$chartXMLFile}', '{$width}', '{$height}', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}');
 	{rdelim}
 	
+	var loadDone=0;
 	function loadChartForReports() {ldelim}
-		loadChartSWF('{$chartName}', '{$chartXMLFile}', '{$width}', '{$height}', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}');
+		//only allow 5 tries
+		if (loadDone > 5) 
+			return;
+		if(typeof(loadChartSWF) == 'function'){ldelim}
+			//if the function exists, call the function and set the flag
+			loadChartSWF('{$chartName}', '{$chartXMLFile}', '{$width}', '{$height}', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}');
+			loadDone = 8;
+		{rdelim}else{ldelim}
+			//the function has not been loaded yet, so increaste the count and call the current function again
+			loadDone = loadDone+1;
+			setTimeout("loadChartForReports()",500);
+		{rdelim}		
 	{rdelim}
 </script>

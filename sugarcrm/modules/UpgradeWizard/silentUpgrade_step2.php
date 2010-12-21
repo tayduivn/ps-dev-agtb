@@ -410,15 +410,22 @@ logThis('database repaired', $path);
 
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
-$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
+$origVersion = getSilentUpgradeVar('origVersion');
+if(!$origVersion){
+    global $silent_upgrade_vars_loaded;
+    logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
+}
 
 //BEGIN SUGARCRM flav=pro ONLY 
 // If going from pre 610 to 610+, migrate the report favorites
 // At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
 // so that we can check against that in 6.1.1. 
-logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
-migrate_sugar_favorite_reports();
-logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+if($origVersion < '610'){
+    logThis("Since origVersion is {$origVersion}, which is before 6.1.0, we migrate reports favorites", $path);
+    logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+    migrate_sugar_favorite_reports();
+    logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+}
 
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
@@ -485,6 +492,7 @@ if(empty($errors)) {
 	set_upgrade_progress('end','in_progress','unlinkingfiles','in_progress');
 	logThis('Taking out the trash, unlinking temp files.', $path);
 	unlinkTempFiles(true);
+	removeSilentUpgradeVarsCache();
 	logThis('Taking out the trash, done.', $path);
 }
 

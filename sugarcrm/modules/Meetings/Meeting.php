@@ -616,9 +616,14 @@ class Meeting extends SugarBean {
 	function save_relationship_changes($is_update) {
 		$exclude = array();
 	    if(empty($this->in_workflow)) {
-            $exclude = array('contact_id', 'user_id', 'assigned_user_id');
+           if(empty($this->in_import)){//if a meeting is being imported then contact_id  should not be excluded 
+	    	$exclude = array('contact_id', 'user_id', 'assigned_user_id');
+           }
+           else{
+           	$exclude = array('user_id', 'assigned_user_id');
+           }
         }
-		parent::save_relationship_changes($is_update, $exclude);
+       parent::save_relationship_changes($is_update, $exclude);
 	}
 
 

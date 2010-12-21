@@ -147,6 +147,16 @@ class ListViewDisplay {
 	            	}
 	        }//fi == 'html'
 
+            //Bug 40511, make sure relate fields have the correct module defined
+            if ($this->displayColumns[$columnName]['type'] == "relate" && !empty($seedDef['link']))
+            {
+                $link = $seedDef['link'];
+                if (!empty($this->lvd->seed->field_defs[$link]) && !empty($this->lvd->seed->field_defs[$seedDef['link']]['module']))
+                {
+                    $this->displayColumns[$columnName]['module'] = $this->lvd->seed->field_defs[$seedDef['link']]['module'];
+                }
+            }
+
 			if (!empty($seedDef['sort_on'])) {
 		    	$this->displayColumns[$columnName]['orderBy'] = $seedDef['sort_on'];
 		    }

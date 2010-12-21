@@ -232,8 +232,8 @@ class SqlsrvManager extends MssqlManager
 
             $sqlmsg = $this->_getLastErrorMessages();
             $sqlpos = strpos($sqlmsg, 'Changed database context to');
-			$sqlpos2 = strpos($sqlmsg, 'Warning:');$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-            
+			$sqlpos2 = strpos($sqlmsg, 'Warning:');
+			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
 			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
 				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
 			else {

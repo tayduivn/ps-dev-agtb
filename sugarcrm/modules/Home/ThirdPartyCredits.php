@@ -23,6 +23,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //NOTE: Under the License referenced above, you are required to leave in all copyright statements in both
 //the code and end-user application.
 //FILE SUGARCRM flav=pro ONLY
+
+
+
 $credits = array(
 	'Language Packs' => array(
 		'bg_BG' => array (
@@ -31,11 +34,24 @@ $credits = array(
             'description' => 'Bulgarian Language Pack by CreaSoft',
             'website' => 'www.creasoft.biz',
         ),
+        'da_DK'=> array(
+        	'name'=>'Danish Language Pack', 
+        	'author'=>'20twenty',
+        	'description' => 'Danish Language Pack by 20twenty',
+            'website' => 'www.20twenty.dk',
+        	
+        ),
         'de_DE' => array (
             'name' => 'German Language Pack',
             'author' => 'Kinamu',
             'description' => 'German Language Pack by Kinamu',
             'website' => 'www.kinamu.com',
+       	),
+       	'es_ES' => array (
+            'name' => 'Spanish Language Pack',
+            'author' => 'Agensys',
+            'description' => 'Spanish Language Pack by Agensys',
+            'website' => 'www.agensystech.com',
        	),
         'fr_FR' => array (
             'name' => 'French Language Pack',
@@ -43,11 +59,23 @@ $credits = array(
             'description' => 'French Language Pack by Synolia',
             'website' => 'www.synolia.com',
         ),
+        'hu_HU' => array (
+            'name' => 'Hungarian Language Pack',
+            'author' => 'Infoteka',
+            'description' => 'Hungarian Language Pack by Infoteka',
+            'website' => 'www.infoteka.hu',
+        ),
         'it_it' => array (
             'name' => 'Italian Language Pack',
             'author' => 'OpenSymbol',
             'description' => 'Italian Language Pack by OpenSymbol',
             'website' => 'www.opensymbol.it',
+        ),
+        'nl_NL' => array (
+            'name' => 'Dutch Language Pack',
+            'author' => 'BrixCRM',
+            'description' => 'Dutch Language Pack by BrixCRM',
+            'website' => 'www.brixcrm.nl',
         ),
         
         'pt_PT' => array (
@@ -55,6 +83,13 @@ $credits = array(
             'author' => 'DRI',
             'description' => 'Portuguese Language Pack by DRI',
             'website' => 'www.dri.pt',
+        ),
+        
+         'ro_RO' => array (
+            'name' => 'Romanian Language Pack',
+            'author' => 'Mycroft System',
+            'description' => 'Romanian Language Pack by Mycroft System',
+            'website' => 'www.mycroft-system.com',
         ),
        
          'ru_RU' => array (
@@ -64,16 +99,19 @@ $credits = array(
             'website' => 'www.richlodesolutions.com',
         ),
         
+       
+        
         ),
-	/*
+	
 	'Modules' => array(
-		'module_id' => array (
-			'name' => 'Module Name',
-			'author' => 'Author',
-			'description' => 'Description',
-			'website' => 'www.website.com',
+		'Twitter Connector' => array (
+			'name' => 'Twitter Connector',
+			'author' => 'Synolia',
+			'description' => 'Twitter Connector by Synolia',
+			'website' => 'www.synolia.com',
 		),
 	),
+	/*
 	'Themes' => array(
 		'theme_id' => array (
 			'name' => 'Theme Name',

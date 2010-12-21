@@ -37,6 +37,7 @@ $GLOBALS['ignore_files'] = array(
 						'BooleanExpression.php',
 						'FalseExpression.php',
 						'GenericExpression.php',
+                        'RelateExpression.php',
 						'AbstractAction.php',
 						'ActionFactory.php',
 					);

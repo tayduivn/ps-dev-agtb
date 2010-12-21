@@ -69,6 +69,19 @@ class SugarFieldDatetime extends SugarFieldBase {
     }   
     //END SUGARCRM flav=pro || flav=sales ONLY
 
+    function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+        if($this->isRangeSearchView($vardef)) {
+           $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+           $id = isset($displayParams['idName']) ? $displayParams['idName'] : $vardef['name'];
+           $this->ss->assign('id_range', "range_{$id}");
+           $this->ss->assign('id_range_start', "start_range_{$id}");
+           $this->ss->assign('id_range_end', "end_range_{$id}");
+           $this->ss->assign('id_range_choice', "{$id}_range_choice");        
+           return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
+        }   
+    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');    
+    }    
+    
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {

@@ -420,14 +420,24 @@ function clean_save_data(& $target_module, $action_array){
 		}
 		$date->modify("+$time_interval seconds");
 
-		if($stamp_type=="date"){
-			$final_stamp = $timedate->asUserDate($date, true);
-		}
-		if($stamp_type=="time"){
-			$final_stamp = $timedate->asUserTime($date, true);
-		}
-		if($stamp_type=="datetime" || $stamp_type=="datetimecombo" ){
-			$final_stamp = $GLOBALS['disable_date_format']?$timedate->asDb($date):$timedate->asUser($date);
+		//convert stamp and add interval
+		$current_unix_stamp = strtotime($target_stamp);
+		$new_unix_stamp = $time_interval + $current_unix_stamp;
+
+		$newtimestamp = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $new_unix_stamp);
+
+		if(!empty($disable_date_format)){
+			if($stamp_type=="date"){
+				$final_stamp = $timedate->to_display_date($newtimestamp, true);
+			}
+			if($stamp_type=="time"){
+				$final_stamp = $timedate->to_display_time($newtimestamp, true);
+			}
+			if($stamp_type=="datetime" || $stamp_type=="datetimecombo" ){
+				$final_stamp = $timedate->to_display_date_time($newtimestamp, true);
+			}
+		}else{
+			$final_stamp = $newtimestamp;
 		}
 
 		return $final_stamp;

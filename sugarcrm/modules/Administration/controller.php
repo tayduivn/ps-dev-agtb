@@ -35,9 +35,9 @@ class AdministrationController extends SugarController
         require_once('include/SubPanel/SubPanelDefinitions.php');
         require_once('modules/MySettings/TabController.php');
         
-        global $current_user;
+        global $current_user, $app_strings;
         
-        if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
+        if (!is_admin($current_user)) sugar_die($app_strings['ERR_NOT_ADMIN']);
         
         // handle the tabs listing
         $toDecode = html_entity_decode  ($_REQUEST['enabled_tabs'], ENT_QUOTES);
@@ -65,7 +65,7 @@ class AdministrationController extends SugarController
         global $app_strings;
         global $current_user;
         
-        if (!is_admin($current_user)) sugar_die("Unauthorized access to administration.");
+        if (!is_admin($current_user)) sugar_die($app_strings['ERR_NOT_ADMIN']);
         
         require_once('modules/Configurator/Configurator.php');
         $configurator = new Configurator();
@@ -117,6 +117,13 @@ class AdministrationController extends SugarController
      */
     public function action_saveglobalsearchsettings()
     {
+		 global $current_user, $app_strings;
+		 
+		 if (!is_admin($current_user)) 
+		 {
+		     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);	
+		 }
+		 
     	 try {
 	    	 require_once('modules/Home/UnifiedSearchAdvanced.php');
 	    	 $unifiedSearchAdvanced = new UnifiedSearchAdvanced();

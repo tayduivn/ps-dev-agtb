@@ -2408,7 +2408,7 @@ class Email extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 		//if ($this->parent_type == 'Contacts') {
 			$query  = "SELECT contacts.first_name, contacts.last_name, contacts.phone_work, contacts.id, contacts.assigned_user_id contact_name_owner, 'Contacts' contact_name_mod FROM contacts, emails_beans ";
-			$query .= "WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id  AND emails_beans.deleted=0 AND contacts.deleted=0";
+			$query .= "WHERE emails_beans.email_id='$this->id' AND emails_beans.bean_id=contacts.id AND emails_beans.bean_module = 'Contacts' AND emails_beans.deleted=0 AND contacts.deleted=0";
 			if(!empty($this->parent_id)){
 				$query .= " AND contacts.id= '".$this->parent_id."' ";
 			}else if(!empty($_REQUEST['record'])){

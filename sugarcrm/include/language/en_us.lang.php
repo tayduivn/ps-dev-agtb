@@ -1861,7 +1861,7 @@ $app_strings = array (
     'LBL_ROUTING_TO_ADDRESS'                => 'to address',
     'LBL_ROUTING_WITH_TEMPLATE'             => 'with template',
 
-	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'The Contact currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
+	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
 	'LBL_DROP_HERE' => '[Drop Here]',
     'LBL_EMAIL_ACCOUNTS_EDIT'               => 'Edit',
     'LBL_EMAIL_ACCOUNTS_GMAIL_DEFAULTS'     => 'Prefill Gmail&#153; Defaults',
@@ -2781,7 +2781,10 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
-    'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
+	'ERROR_USER_PREFS' => "WARNING: Not all of your data could be saved because your data limit has been reached.",
+	'ERROR_USER_PREFS_DASH' => "WARNING: The Sugar dashlet could not be added because your data limit has been reached.",
+	'ERROR_USER_PREFS_TAB' => "WARNING: The Home Page could not be added because your data limit has been reached.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -3051,6 +3054,28 @@ $app_strings = array (
     //File write error label
     'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
 
+    'LBL_AND' => 'And',
+    'LBL_BEFORE' => 'Before',
+    'LBL_AFTER' => 'After',
+    'LBL_ON' => 'On',
+    'LBL_NOT_ON' => 'Not On',
+    'LBL_BETWEEN' => 'Is Between',
+	'LBL_LAST_7_DAYS'=>'Last 7 Days',
+	'LBL_NEXT_7_DAYS'=>'Next 7 Days',
+	'LBL_LAST_MONTH'=>'Last Month',
+	'LBL_NEXT_MONTH'=>'Next Month',
+    'LBL_THIS_MONTH'=>'This Month',
+    'LBL_LAST_30_DAYS'=>'Last 30 Days',
+    'LBL_NEXT_30_DAYS'=>'Next 30 Days',    
+	'LBL_LAST_YEAR'=>'Last Year',
+    'LBL_THIS_YEAR'=>'This Year',
+	'LBL_NEXT_YEAR'=>'Next Year',
+    'LBL_EQUAL'=>'Equals',
+	'LBL_NOT_EQUAL'=>'Does Not Equal',
+	'LBL_GREATER_THAN'=>'Greater Than',
+	'LBL_GREATER_THAN_OR_EQUAL'=>'Greater Than or Equal To',
+	'LBL_LESS_THAN'=>'Less Than',
+	'LBL_LESS_THAN_OR_EQUAL' => 'Less Than or Equal To',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

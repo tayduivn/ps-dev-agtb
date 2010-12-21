@@ -44,19 +44,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	
  	public function init() 
  	{
- 		parent::init();		
- 	}
- 	
- 	
- 	private function setUp()
- 	{
+ 		parent::init();
  		try{
 	 		$properties = $this->getProperties();
 	 		//BEGIN ENCODE
 	 		$clientKey = !empty($properties['hoovers_api_key']) ? $properties['hoovers_api_key'] : base64_decode(get_hoovers_api_key());
             //END ENCODE
             	 		
-			$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
+	 		
+	 		$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
             $this->_client->setHeaders("<API-KEY xmlns='http://applications.dnb.com/webservice/schema/'>{$clientKey}</API-KEY>");
             //BEGIN SUGARCRM flav=int ONLY
             /*
@@ -136,7 +132,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	    }	
 
  	    require(HOOVERS_LOOKUP_MAPPING_FILE);
- 	    $this->_lookupMap = $lookup_mapping;  		
+ 	    $this->_lookupMap = $lookup_mapping; 		
  	}
  	
  	/**
@@ -148,7 +144,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @return $result Array of results based on the search results from the given arguments
  	 */
  	public function getList($args=array(), $module=null) {
- 		$this->setUp();
  		//Call the soap method (AdvancedCompanySearch)
  		//$args['bal']['orderBy'] = 'IndustryName';
 		$args['bal']['sortDirection'] = 'Ascending';
@@ -189,8 +184,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @param $module String value of the module we are mapping input arguments from
  	 * @return $result Array of result based on the search results from the given arguments
  	 */
- 	public function getItem($args=array(), $module=null) {
- 		$this->setUp(); 		
+ 	public function getItem($args=array(), $module=null) { 		
  		$result = $this->GetCompanyDetail($args);
 
  		if(empty($result) || empty($result['return'])) {
@@ -198,6 +192,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		}
  		
  		$result = $result['return'];
+ 		$GLOBALS['log']->debug(var_export($result, true));
+ 		
  		if(isset($result['keyNumbers'][0])) {
  		   $result['keyNumbers'] = $result['keyNumbers'][0];	
  		}
@@ -216,10 +212,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $data['recname'] = $result['name'];
         $data['duns'] = $args['uniqueId'];
         $data['parent_duns'] = $result['ultimateParentDuns'];
-        $data['address1'] = !empty($result['locations']['location']['address1']) ? $result['locations']['location']['address1'] : '';
-        $data['address2'] = !empty($result['locations']['location']['address2']) ? $result['locations']['location']['address2'] : '';
-        $data['city'] = !empty($result['locations']['location']['city']) ? $result['locations']['location']['city'] : '';
-        $data['stateorprovince'] = !empty($result['locations']['location']['state']) ? $result['locations']['location']['state'] : '';
+        
+        //Compensate for multiple location entries
+        if(!empty($result['locations']['location']) && !empty($result['locations']['location'][0]))
+        {
+           $result['locations']['location'] = $result['locations']['location'][0];	
+        }
+        
+        $data['addrstreet1'] = !empty($result['locations']['location']['address1']) ? $result['locations']['location']['address1'] : '';
+        $data['addrstreet2'] = !empty($result['locations']['location']['address2']) ? $result['locations']['location']['address2'] : '';
+        $data['addrcity'] = !empty($result['locations']['location']['city']) ? $result['locations']['location']['city'] : '';
+        $data['addrstateprov'] = !empty($result['locations']['location']['state']) ? $result['locations']['location']['state'] : '';
         
         
         if(!empty($data['addrstateprov']) && isset($states[$data['addrstateprov']])) {
@@ -228,7 +231,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         
         $data['addrcountry'] = !empty($result['locations']['location']['country']) ? $result['locations']['location']['country'] : '';
         if(!empty($data['addrcountry']) && isset($countries[$data['addrcountry']])) {
-           $data['country'] = $countries[$data['addrcountry']];
+           $data['addrcountry'] = $countries[$data['addrcountry']];
         }
         
         $data['addrzip'] = !empty($result['locations']['location']['zip']) ? $result['locations']['location']['zip'] : '';
@@ -277,14 +280,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         	   {
         	   		if(!empty($keyFinancialData['sales'])) 
         	   		{
-        	   			$data['sales'] = $keyFinancialData['sales'];
+        	   			$data['finsales'] = $keyFinancialData['sales'];
         	   			break;
         	   		}
         	   }
         	} else {
 	        	$keyNumbers = $result['keyNumbersHistory']['annualKeyNumbersHistory']['keyNumbers'];
-	        	$data['sales'] = !empty($keyNumbers['sales']) ? $keyNumbers['sales'] : '';        
-	        	$data['employees'] = !empty($keyNumbers['sales']['employeesTotal']) ? $keyNumbers['employeesTotal'] : '';
+	        	$data['finsales'] = !empty($keyNumbers['sales']) ? $keyNumbers['sales'] : '';        
+	        	$data['employees'] = !empty($keyNumbers['employeesTotal']) ? $keyNumbers['employeesTotal'] : '';
 	        }
         } 		
         
@@ -365,7 +368,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   return $result;
  		}
  		
-		//BEGIN SUGARCRM flav=int ONLY
+ 		//BEGIN SUGARCRM flav=int ONLY
  		/*
 	 	if (empty($this->_client) || !class_exists('SoapClient') || !class_exists('SoapHeader') ) {
  			require_once('include/connectors/utils/ConnectorUtils.php');
@@ -403,7 +406,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		} catch (Exception $ex) {
  		 	$GLOBALS['log']->error($ex);
   		}
-
  		return $this->obj2array($result);
  	}
  	
@@ -418,13 +420,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	 * @return $result Formatted results 
  	 */
  	private function parseListResults($result){
- 		
  		if($result['return']['companies']['hits'] == 1) {
  		   $single = array();
  		   $data = $result['return']['companies']['hit']['companyResults'];
  		   $id = $data['duns'];
  		   $data['id'] = $id;
- 		   $single[$id] = $this->formatListResult($data);
+ 		   $single[$id] = $this->formatListResult(data);
  		   return $single;
  		} else if($result['return']['companies']['hits'] > 1) {
  		   $multiple = array();
@@ -441,33 +442,35 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		}
  	}
 	
-        
-   /**
-    * formatListResult
-    * This is a private helper function to ensure that list results are correctly matched to the vardef
-    * key entries
-    *
-    * @param Array data entry for list result from parseListResult function
-    * @return Array formatted data entry with the correct vardef keys
-    */
-   private function formatListResult(&$data)
-   {
-   	   static $format_mapping = array('companyName'=>'recname','address1'=>'addrstreet1','address2'=>'addrstreet2',
-                                      'city'=>'addrcity','country'=>'addrcountry','stateOrProvince'=>'addrstateprov','sales'=>'finsales');
-
-
-       foreach($format_mapping as $f_key=>$f_out)
-       {
-           if(isset($data[$f_key]))
-           {
-              $data[$f_out] = $data[$f_key];
-              unset($data[$f_key]);
-           }
-       }
-
-       return $data;
-   }
  	
+ 	/**
+ 	 * formatListResult
+ 	 * This is a private helper function to ensure that list results are correctly matched to the vardef
+ 	 * key entries
+ 	 * 
+ 	 * @param Array data entry for list result from parseListResult function
+ 	 * @return Array formatted data entry with the correct vardef keys
+ 	 */
+ 	private function formatListResult(&$data)
+ 	{
+ 		static $format_mapping = array('companyName'=>'recname','address1'=>'addrstreet1','address2'=>'addrstreet2',
+ 		                               'city'=>'addrcity','country'=>'addrcountry','stateOrProvince'=>'addrstateprov','sales'=>'finsales');
+ 	
+ 		//BEGIN SUGARCRM flav=int ONLY
+ 		//$GLOBALS['log']->fatal($data);
+ 		//END SUGARCRM flav=int ONLY
+ 		
+ 		foreach($format_mapping as $f_key=>$f_out)
+ 		{
+ 			if(isset($data[$f_key]))
+ 			{
+ 			   $data[$f_out] = $data[$f_key];
+ 			   unset($data[$f_key]);
+ 			}
+ 		}
+ 		
+ 		return $data;
+ 	}
  	
 	/**
 	 * test
@@ -512,3 +515,4 @@ function get_hoovers_api_key() {
 //END ENCODE
  
 ?>
+

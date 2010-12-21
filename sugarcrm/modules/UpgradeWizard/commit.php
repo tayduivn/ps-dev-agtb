@@ -47,7 +47,7 @@ $monitor3 = $trackerManager->getMonitor('tracker_sessions');
 if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);
 }
-
+//END SUGARCRM flav=pro ONLY
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
 

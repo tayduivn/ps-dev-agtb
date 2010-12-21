@@ -204,29 +204,37 @@ eoq;
         $mail_smtpuser = "";
         $mail_smtppass = "";
         $hide_if_can_use_default = true;
+        $mail_smtpauth_req=true;
         if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
-        {
+        {	
+        
+        	$mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
             $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
             if($userOverrideOE != null) {
                 $mail_smtpuser = $userOverrideOE->mail_smtpuser;
                 $mail_smtppass = $userOverrideOE->mail_smtppass;
             }
-            if(empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) || empty($systemOutboundEmail->mail_smtppass)){
+            if(!$mail_smtpauth_req && 
+                (empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
+                 || empty($systemOutboundEmail->mail_smtppass)))
+           {
                 $hide_if_can_use_default = true;
             }
             else{
                 $hide_if_can_use_default = false;
             }
         }
+       
         $this->ss->assign("mail_smtpdisplay", $mail_smtpdisplay);
         $this->ss->assign("mail_smtpuser", $mail_smtpuser);
         $this->ss->assign("mail_smtppass", $mail_smtppass);
         $this->ss->assign('mail_smtpserver',$mail_smtpserver);
+        $this->ss->assign("mail_smtpauth_req", $mail_smtpauth_req);
         $this->ss->assign('MAIL_SMTPPORT',$mail_smtpport);
         $this->ss->assign('MAIL_SMTPSSL',$mail_smtpssl);
 
         $this->ss->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default);
-
+       
 		$this->ss->display('modules/Users/tpls/wizard.tpl');
 	}
 }

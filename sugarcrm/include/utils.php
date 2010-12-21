@@ -2999,6 +2999,7 @@ function sugar_cleanup($exit = false) {
 	set_include_path(realpath(dirname(__FILE__) . '/..') . PATH_SEPARATOR . get_include_path());
 	chdir(realpath(dirname(__FILE__) . '/..'));
 	global $sugar_config;
+	require_once('include/utils/LogicHook.php');
 	LogicHook::initialize();
 	$GLOBALS['logic_hook']->call_custom_logic('', 'server_round_trip');
 
@@ -3023,6 +3024,25 @@ function sugar_cleanup($exit = false) {
 	        $GLOBALS['current_user']->savePreferencesToDB();
 	}
 
+	//check to see if this is not an ajax call AND the user preference error flag is set
+	if( 
+		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
+		
+	){
+		global $app_strings;
+		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
+		$err_mess = $app_strings['ERROR_USER_PREFS'];
+		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
+		echo " 
+		<script>
+			ajaxStatus.flashStatus('$err_mess',7000);
+		</script>";				
+		
+	}	
+	
 	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
@@ -4048,6 +4068,11 @@ function createGroupUser($name) {
 function _getIcon($iconFileName)
 {
     $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconPath) )
+        $iconPath = SugarThemeRegistry::current()->getImageURL(
+            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
+    //Next try removing the icon prefix
     if ( empty($iconPath) )
         $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 

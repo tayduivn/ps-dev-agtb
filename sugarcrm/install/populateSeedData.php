@@ -22,34 +22,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: populateSeedData.php 56343 2010-05-10 21:18:10Z jenny $
 
-
-
-
-require_once('include/language/en_us.lang.php');
-
+// load the correct demo data and main application language file depending upon the installer language selected; if
+// it's not found fall back on en_us
+if(file_exists("include/language/{$current_language}.lang.php")){
+    require_once("include/language/{$current_language}.lang.php");
+}
+else {
+    require_once("include/language/en_us.lang.php");
+}
 require_once('install/UserDemoData.php');
 require_once('install/TeamDemoData.php');
-require_once('install/seed_data/basicSeedData.php');
-if(isset($sugar_config['i18n_test']) && $sugar_config['i18n_test'] == true)
-	require_once('modules/Contacts/contactSeedData_jp.php');
-else
-	require_once('modules/Contacts/contactSeedData.php');
-//BEGIN SUGARCRM flav=pro ONLY
-//bug 28138
+
 global $sugar_demodata;
-// mssql is broken for mbcs
-if( ($_SESSION['setup_db_type'] == 'mssql') && ($_SESSION['demoData'] != 'en_us')){
-	require_once("install/demoData.en_us.php");
-}else{
-    //END SUGARCRM flav=pro ONLY
-    if(file_exists("install/demoData.$_SESSION[demoData].php")){
-	   require_once("install/demoData.$_SESSION[demoData].php");
-    }else{
-	   require_once("install/demoData.en_us.php");
-    }
-//BEGIN SUGARCRM flav=pro ONLY
+if(file_exists("install/demoData.{$current_language}.php")){
+   require_once("install/demoData.{$current_language}.php");
 }
-//END SUGARCRM flav=pro ONLY
+else {
+   require_once("install/demoData.en_us.php");
+}
+
 $last_name_count = count($sugar_demodata['last_name_array']);
 $first_name_count = count($sugar_demodata['first_name_array']);
 $company_name_count = count($sugar_demodata['company_name_array']);
@@ -912,15 +903,7 @@ $project->priority = $sugar_demodata['project_seed_data']['audit']['priority'];
 $project->team_id = 1;
 //END SUGARCRM flav=pro ONLY
 $audit_plan_id = $project->save();
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Gather data from meetings',
-	'date_start' => '2007/11/20',
-	'date_finish' => '2007/11/20',
-	'description' => 'Need to organize the data and put it in the right spreadsheet.',
-	'duration' => '1',
-	'duration_unit' => 'Days',
-	'percent_complete' => 0,
-);
+
 foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 	$project_task = new ProjectTask();
 	$project_task->assigned_user_id = 1;
@@ -928,12 +911,8 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 	$project_task->team_id = 1;
 	//END SUGARCRM flav=pro ONLY
 	$project_task->name = $v['name'];
-	list($year, $month, $day) = $v['date_start'];
-	$project_task->date_start = create_date($year, $month, $day);
-	//$project_task->time_start = create_time(8,0,0);
-	list($year, $month, $day) = $v['date_start'];
-	$project_task->date_finish = create_date($year, $month, $day);
-	//$project_task->time_finish = create_time(8,0,0);
+	$project_task->date_start = $v['date_start'];
+	$project_task->date_finish = $v['date_finish'];
 	$project_task->project_id = $audit_plan_id;
 	$project_task->project_task_id = '1';
 	$project_task->description = $v['description'];

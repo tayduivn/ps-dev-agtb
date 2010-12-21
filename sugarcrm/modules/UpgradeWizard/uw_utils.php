@@ -676,6 +676,12 @@ function upgradeUWFiles($file) {
 	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"))) {
 		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"), $allFiles);
 	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
+		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	}
 
 	/*
 	 * /home/chris/workspace/maint450/cache/upload/upgrades/temp/DlNnqP/
@@ -835,7 +841,7 @@ function getValidPatchName($returnFull = true) {
 	        		<input type=hidden name="install_file" value="{$cleanUpgradeContent}" />
 	        		<input type=submit value="{$mod_strings['LBL_BUTTON_DELETE']}" />
 				</form>
-			</td></table>\n
+			</td></table>
 eoq;
 		$disabled = "DISABLED";
 	}
@@ -1239,7 +1245,7 @@ function updateQuickCreateDefs(){
 						//replace 'EditView' with 'QuickCreate'
 						$fp = fopen($quickcreatedefs,'w');
 						foreach($file as &$line){
-							if(preg_match("/^\s*'EditView'\s*=>\s*$/", $line) > 0){
+							if(preg_match('/^\s*\'EditView\'\s*=>\s*$/', $line) > 0){
 								$line = "'QuickCreate' =>\n";
 							}
 							fwrite($fp, $line);
@@ -3876,7 +3882,7 @@ function initialize_session_vars(){
 		  			//set session variables
 		  			$_SESSION[$key]=$val;
 		  			//set varibales
-					"$".$key=$val;
+					'$'.$key=$val;
 	  			}
 	  		}
 	  	}
@@ -5541,61 +5547,142 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	}
 	return true;
 }
-	
 
 /**
  * upgrade_connectors
- * This function handles support for upgrading connectors, in particular the Hoovers connector
- * that needs the wsdl and endpoint modifications in the config.php file as well as the search 
- * term change (from bal.specialtyCriteria.companyKeyword to bal.specialtyCriteria.companyName).
  * @param $path String variable for the log path
  */
-function upgrade_connectors($path='') 
-{
-		logThis('Begin upgrade_connectors', $path);
-		
-		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
-		if(file_exists($filePath))
-		{
-		   logThis("{$filePath} file", $path);	
-		   require($filePath);
-		   if(!is_null($config))
-		   {
-		   	  $modified = false;
-		   	  if(isset($config['properties']['hoovers_endpoint']))
-		   	  {
-		   	  	 $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
-		   	  	 $modified = true;
-		   	  }
-		   	  
-		   	  if(isset($config['properties']['hoovers_wsdl']))
-		   	  {
-		   	  	 $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
-		   	     $modified = true;
-		   	  }
-		   	  
-		   	  if($modified)
-		   	  {
-		   	      if(!write_array_to_file('config', $config, $filePath)) {
-		             logThis("Could not write new configuration to {$filePath} file", $path);	
-		          } else {
-		          	 logThis('Modified file successfully with new configuration entries', $path);
-		          }
-		   	  }
-		   }
-		}
+function upgrade_connectors($path='') {
+    logThis('Begin upgrade_connectors', $path);
+    
+    $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
+    if(file_exists($filePath))
+    {
+       logThis("{$filePath} file", $path);	
+       require($filePath);
+       if(!is_null($config))
+       {
+          $modified = false;
+          if(isset($config['properties']['hoovers_endpoint']))
+          {
+             $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
+             $modified = true;
+          }
+          
+          if(isset($config['properties']['hoovers_wsdl']))
+          {
+             $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
+             $modified = true;
+          }
+          
+          if($modified)
+          {
+              if(!write_array_to_file('config', $config, $filePath)) {
+                 logThis("Could not write new configuration to {$filePath} file", $path);	
+              } else {
+                 logThis('Modified file successfully with new configuration entries', $path);
+              }
+          }
+       }
+    }
 
-		$filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
-	    if(file_exists($filePath))
-		{
-		   logThis("Modifying {$filePath} file", $path);	
-		   require($filePath);		  
-		   $fileContents = file_get_contents($filePath);
-		   $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
-		   file_put_contents($filePath, $out);		   
-		}
-		
-		logThis('End upgrade_connectors', $path);
+    $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
+    if(file_exists($filePath))
+    {
+       logThis("Modifying {$filePath} file", $path);	
+       require($filePath);		  
+       $fileContents = file_get_contents($filePath);
+       $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
+       file_put_contents($filePath, $out);		   
+    }
+    
+    logThis('End upgrade_connectors', $path);
+}
+
+
+function removeSilentUpgradeVarsCache(){
+    global $silent_upgrade_vars_loaded;
+
+    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+
+    if(file_exists($cacheFile)){
+        unlink($cacheFile);
+    }
+
+    $silent_upgrade_vars_loaded = array(); // Set to empty to reset it
+
+    return true;
+}
+
+function loadSilentUpgradeVars(){
+    global $silent_upgrade_vars_loaded;
+
+    if(empty($silent_upgrade_vars_loaded)){
+        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
+        // We have no pre existing vars
+        if(!file_exists($cacheFile)){
+            // Set the vars array so it's loaded
+            $silent_upgrade_vars_loaded = array('vars' => array());
+        }
+        else{
+            require_once($cacheFile);
+            $silent_upgrade_vars_loaded = $silent_upgrade_vars_cache;
+        }
+    }
+
+    return true;
+}
+
+function writeSilentUpgradeVars(){
+    global $silent_upgrade_vars_loaded;
+
+    if(empty($silent_upgrade_vars_loaded)){
+        return false; // You should have set some values before trying to write the silent upgrade vars
+    }
+
+    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+
+    require_once('include/dir_inc.php');
+    if(!mkdir_recursive($cacheFileDir)){
+        return false;
+    }
+    require_once('include/utils/file_utils.php');
+    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
+        global $path;
+        logThis("WARNING: writeSilentUpgradeVars could not write to {$cacheFile}", $path);
+        return false;
+    }
+
+    return true;
+}
+
+function setSilentUpgradeVar($var, $value){
+    if(!loadSilentUpgradeVars()){
+        return false;
+    }
+
+    global $silent_upgrade_vars_loaded;
+
+    $silent_upgrade_vars_loaded['vars'][$var] = $value;
+
+    return true;
+}
+
+function getSilentUpgradeVar($var){
+    if(!loadSilentUpgradeVars()){
+        return false;
+    }
+
+    global $silent_upgrade_vars_loaded;
+
+    if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
+        return null;
+    }
+    else{
+        return $silent_upgrade_vars_loaded['vars'][$var];
+    }
 }
 
 
@@ -5614,4 +5701,52 @@ function add_unified_search_to_custom_modules_vardefs()
 
 }
 
-?>
+/**
+ * change from using the older SugarCache in 6.1 and below to the new one in 6.2
+ */
+function upgradeSugarCache($file)
+{
+	global $sugar_config;
+	// file = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
+
+	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
+
+	unzip($file, $cacheUploadUpgradesTemp);
+
+	if(!file_exists(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"))) {
+		logThis("*** ERROR: no manifest file detected while bootstraping upgrade wizard files!");
+		return;
+	} else {
+		include(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"));
+	}
+
+	$allFiles = array();
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
+		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	}
+	$cwd = clean_path(getcwd());
+
+	foreach($allFiles as $k => $file) {
+		$file = clean_path($file);
+		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+       if(!is_dir(dirname($destFile))) {
+			mkdir_recursive(dirname($destFile)); // make sure the directory exists
+		}
+		if ( stristr($file,'uw_main.tpl') )
+            logThis('Skipping "'.$file.'" - file copy will during commit step.');
+        else {
+            logThis('updating UpgradeWizard code: '.$destFile);
+            copy_recursive($file, $destFile);
+        }
+	}
+	logThis ('is sugar_file_util there '.file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php")));
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php"))) {
+		$file = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php");
+		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+        copy($file,$destFile);
+	}
+}
+

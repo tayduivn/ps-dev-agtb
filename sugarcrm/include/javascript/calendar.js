@@ -1,6 +1,5 @@
-Calendar = function() {
-	
-}
+
+Calendar = function() {}
 
 Calendar.setup = function (params) {
 
@@ -11,8 +10,15 @@ Calendar.setup = function (params) {
         var dialog;
         var calendar;
         var showButton = params.button ? params.button : params.buttonObj;
-        var userDateFormat = params.ifFormat ? params.ifFormat : params.daFormat;
+        var userDateFormat = params.ifFormat ? params.ifFormat : (params.daFormat ? params.daFormat : "m/d/Y");
         var inputField = params.inputField ? params.inputField : params.inputFieldObj;
+        var dateFormat = userDateFormat.substr(0,10);
+        var date_field_delimiter = /([\\-\\.\\/])/.exec(dateFormat)[0];
+        dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
+        
+        var monthPos = dateFormat.search(/m/);
+        var dayPos = dateFormat.search(/d/);
+        var yearPos = dateFormat.search(/Y/);         
         
         Event.on(Dom.get(showButton), "click", function() {
 
@@ -65,23 +71,16 @@ Calendar.setup = function (params) {
 
             // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
             if (!calendar) {
-
-                var dateFormat = userDateFormat.substr(0,10);
-                var date_field_delimiter = /([-/\.//])/.exec(dateFormat)[0];
-                dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
-                var monthPos = dateFormat.search(/m/) + 1;
-                var dayPos = dateFormat.search(/d/) + 1;
-                var yearPos = dateFormat.search(/Y/) + 1;        	
             	
                 calendar = new YAHOO.widget.Calendar(showButton + '_div', {
-                    iframe:false,          // Turn iframe off, since container has iframe support.
-                    hide_blank_weeks:true  // Enable, to demonstrate how we handle changing height, using changeContent
+                    iframe:false,
+                    hide_blank_weeks:true  
                 });
-                
+                      
                 calendar.cfg.setProperty('DATE_FIELD_DELIMITER', date_field_delimiter);
-                calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos);
-                calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos);
-                calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos);
+                calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos+1);
+                calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos+1);
+                calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos+1);
                 
                 //Configure the month and days label with localization support where defined
                 if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
@@ -108,13 +107,6 @@ Calendar.setup = function (params) {
                     if (calendar.getSelectedDates().length > 0) {
 
                         var selDate = calendar.getSelectedDates()[0];
-                        var dateFormat = userDateFormat.substr(0,10);
-                        var delim = /([-/\.//])/.exec(dateFormat)[0];
-                        dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
-                        var monthPos = dateFormat.search(/m/);
-                        var dayPos = dateFormat.search(/d/);
-                        var yearPos = dateFormat.search(/Y/);
-
                         var dateArray = new Array();
                         dateArray[monthPos] = selDate.getMonth() + 1; //Add one for month value
                         dateArray[dayPos] = selDate.getDate();
@@ -123,7 +115,7 @@ Calendar.setup = function (params) {
                         selDate = '';
                         for(x in dateArray)
                         {
-                        	selDate += delim + dateArray[x];
+                        	selDate += date_field_delimiter + dateArray[x];
                         }
                        
                         Dom.get(inputField).value =  selDate.substr(1);
@@ -143,13 +135,7 @@ Calendar.setup = function (params) {
             var seldate = calendar.getSelectedDates();
             if (Dom.get(inputField).value.length > 0) {
             	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
-                var dateFormat = userDateFormat.substr(0,10);
-                var delim = /([-/\.//])/.exec(dateFormat)[0];
-                dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
-                var monthPos = dateFormat.search(/m/);
-                var dayPos = dateFormat.search(/d/);
-                var yearPos = dateFormat.search(/Y/);
-                seldate = Dom.get(inputField).value.split(delim);       	
+                seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
             	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
             	calendar.render();
             } else if (seldate.length > 0) {

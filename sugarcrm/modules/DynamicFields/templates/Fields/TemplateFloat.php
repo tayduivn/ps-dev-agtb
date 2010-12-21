@@ -26,8 +26,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * governing these rights and limitations under the License.  Portions created
 * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
 ********************************************************************************/
+require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
-class TemplateFloat extends TemplateText{
+class TemplateFloat extends TemplateRange
+{
 	var $type = 'float';
 	var $default = null;
 	var $default_value = null;
@@ -35,6 +37,7 @@ class TemplateFloat extends TemplateText{
 	var $precision = '8';
 	
 	function TemplateFloat(){
+		parent::__construct();
 		$this->vardef_map['precision']='ext1';
 		//$this->vardef_map['precision']='precision';
 	}
