@@ -1284,6 +1284,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 	background-color: transparent;
 }
 
+.search_form .sumbitButtons {
+	padding-left: 10px !important;
+}
+
+.search_form .helpIcon {
+	text-align: right;
+}
+
 /* sitemap */
 
 #sitemap
@@ -4511,6 +4519,11 @@ margin-top: 1px\9;
 background:url(../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=dashlet-tab-bg-bottom.png) repeat-x;
 }
 
+
+#dashletCtrlsTD {
+text-align: right;
+}
+
 #addPage {
 height: 30px;
 margin-top: 2px;
@@ -5400,6 +5413,12 @@ color: #0B578F;
 	margin:0 10px 0 0px;
 }
 
+#notificationsDivider {
+ 	float: left; 
+ 	margin-right: 10px;
+ 	margin-left: 15px;
+ 	}
+ 	
 .dashletPanel .dccontent {
 	border: 1px solid #aaa;
 	padding: 10px;

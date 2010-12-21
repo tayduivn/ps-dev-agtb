@@ -115,7 +115,7 @@ document.body.setAttribute("class", "yui-skin-sam");
 
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {if !$lock_homepage}
-<td nowrap align="right">
+<td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
             <a href="javascript:void(0)" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
 			<img src='{sugar_getimagepath file="info-add.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>

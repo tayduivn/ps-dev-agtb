@@ -61,6 +61,12 @@ class SugarTheme
     protected $description;
     
     /**
+     * Defines which parent files to not include
+     *
+     * @var string
+     */
+    protected $ignoreParentFiles;
+    /**
      * Theme directory name
      *
      * @var string
@@ -363,6 +369,7 @@ class SugarTheme
             'barChartColors',
             'pieChartColors',
             'group_tabs',
+            'ignoreParentFiles',
             );
     }
     
@@ -759,7 +766,7 @@ EOHTML;
         
         if (isset($this->parentTheme) 
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
-                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '')
+                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '' && !in_array($jsFileName,$this->ignoreParentFiles))
             $jsFileContents .= file_get_contents($filename);
         else {
             if (sugar_is_file($this->getDefaultJSPath().'/'.$jsFileName))

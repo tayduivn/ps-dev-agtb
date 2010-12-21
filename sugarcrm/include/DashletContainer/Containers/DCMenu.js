@@ -25,6 +25,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     var overlays = [];
     var overlayDepth = 0;
     var menuFunctions = {};
+    var isRTL = (typeof(rtl) != "undefined") ? true : false;
     function getOverlay(depth){
     		if(!depth)depth = 0;
     		if(typeof overlays[depth] == 'undefined'){
@@ -123,7 +124,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
-    		
+
     		var style = 'position:fixed';
     		if(parentid){
     			overlay.set("align", {node:"#" + parentid, points:[Y.WidgetPositionExt.TL, Y.WidgetPositionExt.BL]});
@@ -150,6 +151,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		overlay.set('bodyContent', content);
     		
     		//DCMenu.all('#dcboxbody .view').replaceClass('view', 'dcview');
+    		
     		overlay.show();
     		return overlay;
     }
@@ -304,9 +306,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	SUGAR.util.evalScript(jData.html);
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
-            			setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+            			overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+            			var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
+			    		var dcboxbody = Y.get('#dcboxbody');
+						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
+						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
+			
+						if(isRTL) {
+							overlay.set('x',dcmenuSugarCubeX - dcboxbodyWidth);
+						}
+			
             		 	SUGAR.util.evalScript(data.responseText);
             		 	setTimeout("enableQS();", 1000);
+
             		 }
                     
                      
@@ -326,7 +338,17 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quicklist', notificationsListDisplay );
 	}
 	notificationsListDisplay = function(id, data){
-		setBody(data.responseText, 0, 'dcmenuSugarCube');	
+		overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');	
+        var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
+   		var dcboxbody = Y.get('#dcboxbody');
+		var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
+		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
+		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
+
+		if(isRTL) {
+			overlay.set('x',(dcmenuSugarCubeX + dcmenuSugarCubeWidth) - dcboxbodyWidth);
+		}
+
 	}
 	DCMenu.viewMiniNotification = function(id) {
 	    quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quickView&record='+id, notificationDisplay );
