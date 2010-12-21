@@ -9,6 +9,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $hasExistingCustomSearchFields = false;
     var $searchForm;
+    var $originalDbType;
  
     public function setUp()
     {	
@@ -57,11 +58,13 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	        )
 		);		
 		
+		$this->originalDbType = $GLOBALS['db']->dbType;
     }
     
     public function tearDown()
     {		
-
+		$GLOBALS['db']->dbType = $this->originalDbType;
+		
     	if(!$this->hasExistingCustomSearchFields)
 		{
 		   unlink('custom/modules/Opportunities/metadata/SearchFields.php');
