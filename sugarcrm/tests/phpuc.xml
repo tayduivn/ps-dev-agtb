@@ -32,7 +32,6 @@
             <directory suffix=".php">./themes</directory>
             <directory suffix=".php">./XTemplate</directory>
             <file>./config.php</file>
-            <file>./config_override.php</file>
         </blacklist>
     </filter>
 </phpunit>
