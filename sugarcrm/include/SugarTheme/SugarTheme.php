@@ -65,7 +65,7 @@ class SugarTheme
      *
      * @var string
      */
-    protected $ignoreParentFiles;
+    protected $ignoreParentFiles = array();
     /**
      * Theme directory name
      *
