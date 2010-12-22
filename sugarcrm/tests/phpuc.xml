@@ -78,7 +78,6 @@
             <directory suffix=".php">jssource</directory>
             <directory suffix=".php">log4php</directory>
             <directory suffix=".php">metadata</directory>
-            <directory suffix=".php">tests</directory>
             <directory suffix=".php">themes</directory>
             <directory suffix=".php">XTemplate</directory>
             <file>config.php</file>
