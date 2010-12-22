@@ -2391,6 +2391,7 @@ $app_strings = array (
     'LBL_CLOSE_AND_CREATE_BUTTON_LABEL' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_TITLE' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_KEY' => 'C',
+    'LBL_OPEN_ITEMS' => 'Open Items:',    
     'LBL_COMPOSE_EMAIL_BUTTON_KEY' => 'L',
     'LBL_COMPOSE_EMAIL_BUTTON_LABEL' => 'Compose Email',
     'LBL_COMPOSE_EMAIL_BUTTON_TITLE' => 'Compose Email [Alt+L]',
