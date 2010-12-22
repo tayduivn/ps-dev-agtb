@@ -193,6 +193,12 @@ var Url = {
  
 }
 
+Array.prototype.sum = function() {
+  return (! this.length) ? 0 : this.slice(1).sum() +
+      ((typeof this[0] == 'number') ? this[0] : 0);
+};
+
+
 $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
   ctx.beginPath();
   ctx.moveTo(x,y+radius);
@@ -10807,6 +10813,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
               'valuelabel': node.getData('valuelabelArray')[i],
+			  'percentage': ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1),
 			  'link': url,
               'label': node.name
             };
@@ -10820,6 +10827,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
+			  'percentage': ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1),
               'link': url,
               'label': node.name
             };
@@ -10985,6 +10993,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
               'title': node.getData('titleArray')[i],
+			  'percentage': ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1),
               'link': url,
               'label': node.name
             };
@@ -10998,6 +11007,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
               'title': node.getData('titleArray')[i],
+			  'percentage': ((node.getData('valueArray')[i]/node.getData('barTotalValue')) * 100).toFixed(1),
               'link': url,
               'label': node.name
             };
@@ -11172,6 +11182,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
+			  'percentage': ((node.getData('valueArray')[i]/node.getData('groupTotalValue')) * 100).toFixed(1),
               'link': url,
               'label': node.name
             };
@@ -11184,6 +11195,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
+			  'percentage': ((node.getData('valueArray')[i]/node.getData('groupTotalValue')) * 100).toFixed(1),
               'link': url,
               'label': node.name
             };
@@ -11611,6 +11623,12 @@ $jit.BarChart = new Class({
         that = this,
 		colorLength = color.length,
 		nameLength = name.length;
+        groupTotalValue = 0;
+    for(var i=0, values=json.values, l=values.length; i<l; i++) {
+    	var val = values[i];
+      	var valArray = $.splat(val.values);
+      	groupTotalValue += parseInt(valArray.sum());
+    }
 
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
       var val = values[i];
@@ -11618,6 +11636,7 @@ $jit.BarChart = new Class({
       var valuelabelArray = $.splat(values[i].valuelabels);
       var linkArray = $.splat(values[i].links);
       var titleArray = $.splat(values[i].titles);
+      var barTotalValue = valArray.sum();
       var acum = 0;
       ch.push({
         'id': prefix + val.label,
@@ -11633,6 +11652,8 @@ $jit.BarChart = new Class({
           '$colorArray': color,
           '$colorMono': $.splat(color[i % colorLength]),
           '$stringArray': name,
+          '$barTotalValue': barTotalValue,
+          '$groupTotalValue': groupTotalValue,
           '$nodeCount': values.length,
           '$gradient': gradient,
           '$config': config
@@ -12114,6 +12135,7 @@ $jit.ST.Plot.NodeTypes.implement({
               'name': node.getData('stringArray')[i],
               'color': node.getData('colorArray')[i],
               'value': node.getData('valueArray')[i],
+              'percentage': node.getData('percentageArray')[i],
 			  'valuelabel': node.getData('valuelabelArray')[i],
               'link': url,
               'label': node.name
@@ -12372,13 +12394,22 @@ $jit.FunnelChart = new Class({
         horz = config.orientation == 'horizontal',
         that = this,
 		colorLength = color.length,
-		nameLength = name.length;
+		nameLength = name.length,
+		totalValue = 0;
 
+    for(var i=0, values=json.values, l=values.length; i<l; i++) {
+    	var val = values[i];
+      	var valArray = $.splat(val.values);
+      	totalValue += parseInt(valArray.sum());
+    }
+    
+    
     var idArray = new Array();
     var valArray = new Array();
     var valuelabelArray = new Array();
     var linkArray = new Array();
     var titleArray = new Array();
+    var percentageArray = new Array();
     
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
       var val = values[i];
@@ -12387,14 +12418,20 @@ $jit.FunnelChart = new Class({
       valuelabelArray[i] = $.splat(val.valuelabels);
       linkArray[i] = $.splat(val.links);
       titleArray[i] = $.splat(val.titles);
+      percentageArray[i] = (($.splat(val.values).sum()/totalValue) * 100).toFixed(1);
       var acum = 0;
     }
     
+    
+
     valArray.reverse();
     valuelabelArray.reverse();
     linkArray.reverse();
     titleArray.reverse();
+    percentageArray.reverse();
     
+     
+     
       ch.push({
         'id': prefix + val.label,
         'name': val.label,
@@ -12411,6 +12448,7 @@ $jit.FunnelChart = new Class({
           '$stringArray': name.reverse(),
           '$gradient': gradient,
           '$config': config,
+          '$percentageArray' : percentageArray,
           '$canvas': canvas,
           '$st': st
         },
@@ -13904,6 +13942,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
         var rho = Math.sqrt(pos.x * pos.x + pos.y * pos.y);
         var ld = this.config.levelDistance, d = node._depth;
         var config = node.getData('config');
+
         if(rho <=ld * d + config.sliceOffset) {
           var dimArray = node.getData('dimArray');
           for(var i=0,l=dimArray.length,acum=config.sliceOffset; i<l; i++) {
@@ -13915,6 +13954,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
                 link: url,
                 color: node.getData('colorArray')[i],
                 value: node.getData('valueArray')[i],
+                percentage: node.getData('percentage'),
                 valuelabel: node.getData('valuelabelsArray')[i],
                 label: node.name
               };
@@ -14097,12 +14137,22 @@ $jit.PieChart = new Class({
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
-    
+        totalValue = 0;
+    for(var i=0, values=json.values, l=values.length; i<l; i++) {
+    	var val = values[i];
+      	var valArray = $.splat(val.values);
+      	totalValue += parseInt(valArray.sum());
+    }
+
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
       var val = values[i];
       var valArray = $.splat(val.values);
+ 	  var percentage = (valArray.sum()/totalValue) * 100;
+
       var linkArray = $.splat(val.links);
       var valuelabelsArray = $.splat(val.valuelabels);
+      
+ 
       ch.push({
         'id': prefix + val.label,
         'name': val.label,
@@ -14117,6 +14167,7 @@ $jit.PieChart = new Class({
           '$stringArray': name,
           '$gradient': gradient,
           '$config': config,
+          '$percentage': percentage.toFixed(1),
           '$angularWidth': $.reduce(valArray, function(x,y){return x+y;})
         },
         'children': []

@@ -137,7 +137,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 					  } else {
 						value = "elem.value";
 					  }
-					  eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + drillDown");
+					  eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
 					}
 				  }
 				});
@@ -261,7 +261,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 					  } else {
 						value = "elem.value";
 					  }
-					   eval("tip.innerHTML = '<b>' + elem.label + '</b>: ' + "+ value +" + drillDown");
+					   eval("tip.innerHTML = '<b>' + elem.label + '</b>: ' + "+ value +" + ' - ' + elem.percentage + '%' + drillDown");
 					}
 				  }
 				});
@@ -396,7 +396,7 @@ function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
 					  } else {
 						value = "elem.value";
 					  }
-					  eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + drillDown");
+					  eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+"  + ' - ' + elem.percentage + '%' +  drillDown");
 					}
 				  }
 				});
