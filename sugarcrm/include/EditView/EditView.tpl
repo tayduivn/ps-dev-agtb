@@ -115,6 +115,20 @@ class="yui-navset"
 			     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required && $fields[$colData.field.name].required !== false)}}
 			    <span class="required">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
 			{{/if}}
+            {{if isset($colData.field.popupHelp) || isset($fields[$colData.field.name]) && isset($fields[$colData.field.name].popupHelp) }}
+              {{if isset($colData.field.popupHelp) }}
+                {capture name="popupText" assign="popupText"}
+                {sugar_translate label="{{$colData.field.popupHelp}}" module='{{$module}}'}
+                {/capture}
+              {{elseif isset($fields[$colData.field.name].popupHelp)}}
+                {capture name="popupText" assign="popupText"}
+                {sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}
+                {/capture}
+              {{/if}}
+              {overlib_includes}
+              {sugar_help text=$popupText WIDTH=400}
+            {{/if}}
+          
 		</td>
 		{{/if}}
 
