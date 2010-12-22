@@ -12,7 +12,7 @@ Calendar.setup = function (params) {
         var userDateFormat = params.ifFormat ? params.ifFormat : (params.daFormat ? params.daFormat : "m/d/Y");
         var inputField = params.inputField ? params.inputField : params.inputFieldObj;
         var dateFormat = userDateFormat.substr(0,10);
-        var date_field_delimiter = /([\\-\\.\\/])/.exec(dateFormat)[0];
+        var date_field_delimiter = /([-.\\/])/.exec(dateFormat)[0];
         dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
         
         var monthPos = dateFormat.search(/m/);
