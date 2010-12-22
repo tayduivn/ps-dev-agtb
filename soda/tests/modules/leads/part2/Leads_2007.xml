@@ -19,6 +19,8 @@
 		<button value="Convert Lead" />
 		<checkbox name="newMeetings" set="true" />
 		<textfield name="Meetingsname" set="{@Leads_2007.Appointmentsname}" />
+		<select id="Meetingsdate_start_hours" set="{@Leads_2007.Appointmentstime_start_hour}" />
+		<select id="Meetingsdate_start_minutes" set="{@Leads_2007.Appointmentstime_start_minute}" />
 		<textfield name="Meetingsdescription" set="{@Leads_2007.Appointmentsdescription}" />
 		<button value="Save" />
 		<!--verify-->
