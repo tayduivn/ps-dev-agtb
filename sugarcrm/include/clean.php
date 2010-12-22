@@ -24,12 +24,33 @@ class SugarCleaner
         if(!is_dir($sugar_config['cache_dir']."/htmlclean")) {
             mkdir($sugar_config['cache_dir']."/htmlclean", 0755);
         }
+        $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
         $config->set('Cache.SerializerPath', $sugar_config['cache_dir']."/htmlclean");
         $config->set('URI.Base', $sugar_config['site_url']);
         $config->set('CSS.Proprietary', true);
         $config->set('HTML.TidyLevel', 'light');
         $config->set('HTML.ForbiddenElements', array('body' => true, 'html' => true));
-        $uri = $config->getDefinition('URI');
+        $config->set('Attr.EnableID', true);
+/*
+   "applet"
+   "base"
+   "embed"
+   "form"
+   "frame"
+   "frameset"
+   "iframe"
+   "import"
+   "layer"
+   "link"
+   "object"
+   "style"
+   "xmp"
+ */
+        $config->set('HTML.SafeObject', true);
+        $config->set('HTML.SafeEmbed', true);
+        $config->set('Output.FlashCompat', true);
+        $config->set('Filter.Custom',  array( new HTMLPurifier_Filter_SafeIframe() ));
+        //? $uri = $config->getDefinition('URI');
         //? Add IMG SRC filtering? $uri->addFilter(new SugarURIFilter(), $config);
 
         $this->purifier = new HTMLPurifier($config);
@@ -105,5 +126,24 @@ class SugarURIFilter extends HTMLPurifier_URIFilter
             }
         }
         return false;
+    }
+}
+
+class HTMLPurifier_Filter_SafeIframe extends HTMLPurifier_Filter
+{
+
+    public $name = 'SafeIframe';
+
+    public function preFilter($html, $config, $context) {
+        return preg_replace("/iframe/", "img", $html);
+    }
+
+    public function postFilter($html, $config, $context) {
+       $post_regex = '#<img ([^>]+)>#';
+        return preg_replace_callback($post_regex, array($this, 'postFilterCallback'), $html);
+    }
+
+    protected function postFilterCallback($matches) {
+        return '<iframe '.$matches[1].'></iframe>';
     }
 }
