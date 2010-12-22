@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/contracts/module_lib/setup-contracts.xml" />
+	<script fileset="{@global.scriptsdir}/modules/contracts" />
+	<script
+		file="{@global.scriptsdir}/modules/contracts/module_lib/cleanup-contracts.xml" />
+</soda>
+

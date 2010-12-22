@@ -196,11 +196,27 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	   sugar_cleanup(true);
 	}
 
-	//add assigned user if this is the first time bean is saved
-  if(empty($focus->id) && $_POST['assigned_user_id'] !== $current_user->id){
-    $_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
-    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
-  }	
+	//add assigned user and current user if this is the first time bean is saved
+  	if(empty($focus->id) && !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] !='Meetings' && !empty($_REQUEST['return_action']) && $_REQUEST['return_action'] !='DetailView'){
+		//if return action is set to detail view and return module to meeting, then this is from the long form, do not add the assigned user (only the current user) 
+		//The current user is already added to UI and we want to give the current user the option of opting out of meeting.
+  		$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
+    	$_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
+  	}elseif (empty($focus->id) ){
+	  	//this is not from long form so add assigned and current user automatically as there is no invitee list UI.  
+	  	//This call could be through an ajax call from subpanels or shortcut bar
+	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
+	  	
+	  	//add current user if the assigned to user is different than current user.
+	  	if($current_user->id != $_POST['assigned_user_id']){
+	  		$_POST['user_invitees'] .= ','.$current_user->id.', ';
+	  	}
+	  	
+	  	//remove any double comma's introduced during appending
+	    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
+  	}
+  	
+  
 	if(isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true'){
         $focus->save(true);
         $return_id = $focus->id;
