@@ -3777,16 +3777,16 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
                                     }
                                 }
 		                        $db->query($query);
+		                        if($db->checkError()){
+		                            //put in the array to use later on
+		                            $_SESSION['sqlSkippedQueries'][] = $query;
+		                        }
 						        if(!empty($tableName))
                                 {
                                     $db->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
                                 }
 		                        $progQuery[$forStepQuery]=$query;
 		                        post_install_progress($progQuery,$action='set');
-		                        if($db->checkError()){
-		                            //put in the array to use later on
-		                            $_SESSION['sqlSkippedQueries'][] = $query;
-		                        }
 	                        }
 	                   	$completeLine = '';
 					}
