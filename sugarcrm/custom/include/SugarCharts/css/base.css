@@ -37,6 +37,11 @@
 	width: 100%
 	}
 	
+.chartContainer .scrollBars {
+	overflow: auto;
+	max-height: 600px;	
+}
+
 .chartCanvas {
     position:relative;
     margin:auto;

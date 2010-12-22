@@ -52,7 +52,9 @@
 </script>
 
 <div class="chartContainer">
+	<div id="sb{$chartId}" class="scrollBars">
     <div id="{$chartId}" class="chartCanvas" style="width: {$width}; height: {$height}px;"></div>  
+    </div>
 	<div id="legend{$chartId}" class="legend"></div>
 </div>
 <div class="clear"></div>

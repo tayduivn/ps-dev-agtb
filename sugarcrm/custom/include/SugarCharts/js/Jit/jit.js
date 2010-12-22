@@ -2920,6 +2920,13 @@ var Canvas;
           that.getPos(true); //update canvas position
         }, 500);
       });
+      sb = document.getElementById('sb'+id);
+      $.addEvent(sb, 'scroll', function() {
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+          that.getPos(true); //update canvas position
+        }, 500);
+      });
     },
     /*
       Method: getCtx
@@ -11085,14 +11092,8 @@ $jit.ST.Plot.NodeTypes.implement({
 					  } else {
 						acumValueLabel = valueArray[i];
 					  }
-					 if(horz) {
-					 if(stringArray.length < 9) {
-						  ctx.textAlign = 'right';
-						  ctx.fillText(acumValueLabel, x + Math.max.apply(null, dimArray) - config.labelOffset, y + height/2);
-					  }
-					} else {
+					 if(!horz) {
 					  ctx.textAlign = 'center';
-	
 					  ctx.fillText(acumValueLabel, x + width/2, y - Math.max.apply(null, dimArray) - label.size/2 - config.labelOffset);
 					}
 				}
@@ -11117,17 +11118,12 @@ $jit.ST.Plot.NodeTypes.implement({
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
               
-			  if(stringArray.length > 8) {
+
 				ctx.textAlign = 'left';
 				ctx.translate(x + 10, y + height/2);
 				ctx.fillStyle = label.color;
 				ctx.fillText(node.name + ": " + valAcum, 0, 0);
-			  } else {
-			    ctx.textAlign = 'center';
-				ctx.translate(x - config.labelOffset - label.size/2, y + height/2);
-				ctx.rotate(Math.PI / 2);
-				ctx.fillText(node.name, 0, 0);
-			  }
+
             } else {
               
 			  if(stringArray.length > 8) {
@@ -11150,14 +11146,15 @@ $jit.ST.Plot.NodeTypes.implement({
       var pos = node.pos.getc(true), 
           width = node.getData('width'),
           height = node.getData('height'),
+          config = node.getData('config'),
           algnPos = this.getAlignedPos(pos, width, height),
-          x = algnPos.x, y = algnPos.y,
+          x = algnPos.x, y = algnPos.y ,
           dimArray = node.getData('dimArray'),
           len = dimArray.length,
-          config = node.getData('config'),
           rx = mpos.x - x,
           horz = config.orientation == 'horizontal',
           fixedDim = (horz? height : width) / len;
+
       //bounding box check
       if(horz) {
         if(mpos.x < x || mpos.x > x + width
@@ -11407,12 +11404,10 @@ $jit.BarChart = new Class({
           }
           
           if(horz) {
-	          if(stringArray.length > 8 || nodeCount > 9) {
+
 	          	labels.label.innerHTML = labels.label.innerHTML + ": " + acum;
 	          	labels.aggregate.innerHTML = "";
-	          } else {
-	          	labels.aggregate.innerHTML = acum;
-	          }
+
           } else {
           	
           		if(grouped) {
