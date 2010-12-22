@@ -24,6 +24,7 @@
             <directory suffix=".php">../service</directory>
             <directory suffix=".php">../soap</directory>
             <exclude>
+                <directory suffix=".php">../include/Expressions/metadata</directory>
                 <directory suffix=".php">../include/fonts</directory>
                 <directory suffix=".php">../include/HTTP_WebDAV_Server</directory>
                 <directory suffix=".php">../include/language</directory>
