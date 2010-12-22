@@ -40,7 +40,7 @@
 			<textfield id="shipping_address_state" set="{@account_record.shipping_address_state}" />
 			<textfield id="shipping_address_postalcode" set="{@account_record.shipping_address_postalcode}" />
 			<textfield id="shipping_address_country" set="{@account_record.shipping_address_country}" />
-			<textfield id="Accounts0emailAddress0" set="{@account_record.emailAddress0}" />
+			<textfield id="Accounts0emailAddress0" set="{@account_record.emailAddress0}{@stamp}" />
 			<textfield id="description" set="{@account_record.description}" />
 			<textfield id="description" set="{@account_record.description}" />
 			<button value="Save" />

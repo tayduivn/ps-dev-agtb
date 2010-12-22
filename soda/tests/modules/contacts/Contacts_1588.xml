@@ -84,7 +84,7 @@
 	<div id="closeActivityDialog">
 		<button text="OK" />
 	</div>
-	<wait timeout="20" />
+	<wait timeout="45" />
 	<div id="list_subpanel_activities">
 		<span class="pageNumbers" assert="(0 - 0 of 0)" />
 	</div>
@@ -106,7 +106,9 @@
 		<span class="pageNumbers" assert="(1 - 1 of 1)" />
 	</div>
 
-	<!--Save the subpanel task id & name-->
+	<!--Remove records-->
 	<script file="{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Task_Delete_Lib.xml" />
+
 	<puts text="Test: Contacts_1588.xml finished." />
 </soda>
