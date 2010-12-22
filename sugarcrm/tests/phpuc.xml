@@ -32,9 +32,7 @@
                 <directory suffix=".php">../include/pclzip</directory>
                 <directory suffix=".php">../include/phpmailer</directory>
                 <directory suffix=".php">../include/reCaptcha</directory>
-                <directory suffix=".php">../include/Smarty/internals</directory>
-                <file>../include/Smarty/Smarty.class.php</file>
-                <file>../include/Smarty/Smarty_Compiler.class.php</file>
+                <directory suffix=".php">../include/Smarty</directory>
                 <directory suffix=".php">../include/SugarObjects/implements/assignable</directory>
                 <directory suffix=".php">../include/SugarObjects/implements/team_security</directory>
                 <directory suffix=".php">../include/SugarObjects/templates/basic/Dashlets/</directory>
