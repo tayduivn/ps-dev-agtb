@@ -1,0 +1,37 @@
+<soda>
+	<!--
+		Studio_ModifiedByName_Label
+	-->
+	<puts text="Test: Studio_8287.xml starting" />
+
+	<!-- Navigate to Studio -->
+	<link text="Admin" />
+	<link text="Studio" assertPage="false" />
+	<link text="Accounts" class="studiolink" assertPage="false" />
+	<link text="Labels" class="studiolink" assertPage="false" />
+
+	<!-- Verify modified by name label -->
+	<csv file="{@global.scriptsdir}/csvs/studio/Studio_8287.csv" var="Studio_8287" />
+	<wait timeout="3" />
+	<table class="mbLBL">
+		<row index="41">
+			<cell index="2">
+				<textfield index="1" assert="{@Studio_8287.label_name}" />
+			</cell>
+		</row>
+	</table>
+
+
+
+	<link text="Admin" />
+	<link text="Studio" assertPage="false" />
+	<link text="Accounts" class="studiolink" assertPage="false" />
+	<link text="Layouts" class="studiolink" assertPage="false" />
+	<link text="EditView" class="studiolink" assertPage="false" />
+
+	<div id="toolbox">
+		<browser assert="{@Studio_8287.label_name}" />
+	</div>
+
+	<puts text="Test: Studio_8287.xml finished." />
+</soda>
