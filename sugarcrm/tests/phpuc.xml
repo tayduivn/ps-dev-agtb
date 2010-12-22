@@ -81,9 +81,6 @@
             <directory suffix=".php">tests</directory>
             <directory suffix=".php">themes</directory>
             <directory suffix=".php">XTemplate</directory>
-            <exclude>
-                <directory suffix=".php">tests/tests</directory>
-            </exclude>
             <file>config.php</file>
         </blacklist>
     </filter>
