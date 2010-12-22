@@ -21,49 +21,24 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+
 require_once 'include/utils.php';
 
 class XssTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $email_xss;
-
-    public function setUp()
-    {
-        global $sugar_config;
-        if(isset($sugar_config['email_xss']))
-        {
-            $this->email_xss = $sugar_config['email_xss'];
-            $sugar_config['email_xss'] = '';
-        }
-    }
-
-    public function tearDown()
-    {
-        if(!empty($this->email_xss))
-        {
-            global $sugar_config;
-            $sugar_config['email_xss'] = $this->email_xss;
-        }
-    }
-
     public function xssData()
     {
         return array(
             array("some data", "some data"),
 
             array("test <a href=\"http://www.digitalbrandexpressions.com\">link</a>", "test <a href=\"http://www.digitalbrandexpressions.com\">link</a>"),
-            array("some data<script>alert('xss!')</script>", "some dataalert('xss!')"),
-            array("some data<script src=\" http://localhost/xss.js\"></script>", "some data"),
-            array("some data<applet></applet><script src=\" http://localhost/xss.js\"></script>", "some data"),
-            array('some data before<img alt="<script>" src="http://www.symbolset.org/images/peace-sign-2.jpg"; onload="alert(35)" width="1" height="1"/>some data after', 'some data before<img alt="<script>" src="http://www.symbolset.org/images/peace-sign-2.jpg";  width="1" height="1"/>some data after'),
-            array('some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; onload="alert(35)" width="1" height="1"/>some data after', 'some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg";  width="1" height="1"/>some data after'),
-            array('some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; width="1" height="1"/>some data after', 'some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; width="1" height="1"/>some data after'),
-            array('<div style="font-family:Calibri;">Roger Smith</div>', '<div style="font-family:Calibri;">Roger Smith</div>'),
-            array('some data before<img onmouseover onload onmouseover=\'alert(8)\' src="http://www.docspopuli.org/images/Symbol.jpg";\'/>some data after', 'some data before<img onmouseover onload  src="http://www.docspopuli.org/images/Symbol.jpg";\'/>some data after'),
+            array("some data<script>alert('xss!')</script>", "some data<>alert('xss!')</>"),
+            array("some data<script src=\" http://localhost/xss.js\"></script>", "some data< src=\" http://localhost/xss.js\"></>"),
+            array("some data<applet></applet><script src=\" http://localhost/xss.js\"></script>", "some data<></>< src=\" http://localhost/xss.js\"></>"),
             );
     }
 
-    protected function clean($str) {
+    protected function clean_old($str) {
         $potentials = clean_xss($str, false);
         if(is_array($potentials) && !empty($potentials)) {
              foreach($potentials as $bad) {
@@ -73,6 +48,9 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
         return $str;
     }
 
+    protected function clean($str) {
+        return SugarCleaner::cleanHtml($str, false);
+    }
     /**
      * @dataProvider xssData
      */
@@ -87,8 +65,8 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
     public function testXssFilterBean($before, $after)
     {
         $bean = new EmailTemplate();
-		$bean->body_html = to_html($before);
         $bean->cleanBean();
         $this->assertEquals(to_html($after), $bean->body_html);
     }
+}
 }
