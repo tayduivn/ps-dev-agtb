@@ -191,3 +191,22 @@ class HTMLPurifier_Filter_Xmp extends HTMLPurifier_Filter
         return preg_replace("#<(/)?xmp>#i", "<\\1pre>", $html);
     }
 }
+
+class HTMLPurifier_Filter_SafeIframe extends HTMLPurifier_Filter
+{
+
+    public $name = 'SafeIframe';
+
+    public function preFilter($html, $config, $context) {
+        return preg_replace("/iframe/", "img", $html);
+    }
+
+    public function postFilter($html, $config, $context) {
+       $post_regex = '#<img ([^>]+)>#';
+        return preg_replace_callback($post_regex, array($this, 'postFilterCallback'), $html);
+    }
+
+    protected function postFilterCallback($matches) {
+        return '<iframe '.$matches[1].'></iframe>';
+    }
+}
