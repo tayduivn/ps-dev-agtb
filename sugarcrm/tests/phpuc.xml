@@ -65,9 +65,9 @@
                 <directory suffix=".php">include/timezone</directory>
                 <file>include/globalControlLinks.php</file>
                 <file>include/JSON.php</file>
-                <directory suffix=".php">include/data</directory>
-                <directory suffix=".php">include/language</directory>
-                <directory suffix=".php">include/seed_data</directory>
+                <directory suffix=".php">install/data</directory>
+                <directory suffix=".php">install/language</directory>
+                <directory suffix=".php">install/seed_data</directory>
             </exclude>
         </whitelist>
         <blacklist>
@@ -81,9 +81,6 @@
             <directory suffix=".php">tests</directory>
             <directory suffix=".php">themes</directory>
             <directory suffix=".php">XTemplate</directory>
-            <exclude>
-                <directory suffix=".php">tests/tests</directory>
-            </exclude>
             <file>config.php</file>
         </blacklist>
     </filter>
