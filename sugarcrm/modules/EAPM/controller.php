@@ -34,6 +34,16 @@ class EAPMController extends SugarController
      */
     protected $api;
 
+    var $admin_actions = array('displayproperties', 'listview', 'index');
+
+
+	public function process() {
+		if(!is_admin($GLOBALS['current_user']) && in_array(strtolower($this->action), $this->admin_actions)) {
+			$this->hasAccess = false;
+		}
+		parent::process();
+	}
+
     protected function failed($error)
     {
         if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
@@ -65,6 +75,9 @@ class EAPMController extends SugarController
             } else {
                 $this->bean->validated();
             }
+        }
+        if($this->return_module == 'Users'){
+            $this->return_action = 'EditView';
         }
         return parent::post_save();
     }

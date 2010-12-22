@@ -32,7 +32,15 @@ $viewdefs[$module_name]['EditView'] = array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
                                             ),
-                            'form' => array('footerTpl'=>'modules/EAPM/tpls/EditViewFooter.tpl',),
+                            'form' => array(
+                                'buttons' =>
+                                array (
+                                  0 => 'SAVE',
+                                  array (
+                                    'customCode' => '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=EditView&module=Users&record={$return_id}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">',
+                                  ),
+                                ),
+                                'footerTpl'=>'modules/EAPM/tpls/EditViewFooter.tpl',),
                                             ),
 
  'panels' =>array (

@@ -25,6 +25,8 @@ require_once('include/MVC/View/views/view.detail.php');
 
 class EAPMViewDetail extends ViewDetail {
 
+    private $_returnId;
+
     protected function _getModuleTab()
     {
         return 'Users';
@@ -55,6 +57,7 @@ class EAPMViewDetail extends ViewDetail {
             }
         }
 
+        $this->_returnId = $returnId;
 
         $iconPath = $this->getModuleTitleIconPath($this->module);
     	$params = array(
@@ -72,6 +75,7 @@ class EAPMViewDetail extends ViewDetail {
     }
 
  	function display(){
+        $this->ss->assign('return_id', $this->_returnId);
         if($GLOBALS['current_user']->is_admin || empty($this->bean) || empty($this->bean->id) || $this->bean->isOwner($GLOBALS['current_user']->id)){
  			parent::display();
         } else {
