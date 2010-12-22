@@ -1948,6 +1948,7 @@ function getDefaultXssTags() {
 
 /**
  * Detects typical XSS attack patterns
+ * @deprecated
  * @param string str String to search for XSS attack vectors
  * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
  * @return array Array of matches, empty on clean string

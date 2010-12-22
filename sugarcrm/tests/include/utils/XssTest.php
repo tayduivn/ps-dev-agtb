@@ -15,7 +15,7 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
             );
     }
 
-    protected function clean($str) {
+    protected function clean_old($str) {
         $potentials = clean_xss($str, false);
         if(is_array($potentials) && !empty($potentials)) {
              foreach($potentials as $bad) {
@@ -25,6 +25,9 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
         return $str;
     }
 
+    protected function clean($str) {
+        return SugarCleaner::cleanHtml($str, false);
+    }
     /**
      * @dataProvider xssData
      */
