@@ -3189,8 +3189,7 @@ class InboundEmail extends SugarBean {
 		} // end else clause
 
 		$msgPart = $this->customGetMessageText($msgPart);
-		/* cn: bug 9176 - htmlEntitites hide XSS attacks.
-		 * decode to pass refreshed HTML to HTML_Safe */
+		/* cn: bug 9176 - htmlEntitites hide XSS attacks. */
 		if($type == 'PLAIN') {
 		    return SugarCleaner::cleanHtml(to_html($msgPart), false);
 		}
