@@ -1,5 +1,5 @@
 <soda>
-    	<csv file='scripts/sugarcrm/csvs/quote/Quote_2527.csv' var='Quote_2527'>
+    	<csv file='{@global.scriptsdir}/csvs/quote/Quote_2527.csv' var='Quote_2527'>
         <puts text='----Quote_2527.xml----Edit Task for Quote_Verify that the data of existing task for an existing quote can be modified when using "edit"function.----Start!----'/>            
         <link id='moduleTab_Quotes'/>
         <browser assert='Quotes'/>
