@@ -17,12 +17,8 @@
         <whitelist>
             <directory suffix=".php">../data</directory>
             <directory suffix=".php">../include</directory>
-            <directory suffix=".php">../install</directory>
+            <file>../install/install_utils.php</file>
             <directory suffix=".php">../ModuleInstall</directory>
-            <directory suffix=".php">../modules</directory>
-            <directory suffix=".php">../portal</directory>
-            <directory suffix=".php">../service</directory>
-            <directory suffix=".php">../soap</directory>
             <exclude>
                 <directory suffix=".php">../include/Expressions/metadata</directory>
                 <directory suffix=".php">../include/Expressions/javascript</directory>
@@ -66,11 +62,10 @@
                 <file>../include/SugarTheme/getImage.php</file>
                 <directory suffix=".php">../include/tcpdf</directory>
                 <directory suffix=".php">../include/timezone</directory>
+                <file>../include/entryPoint.php</file>
                 <file>../include/globalControlLinks.php</file>
                 <file>../include/JSON.php</file>
-                <directory suffix=".php">../install/data</directory>
-                <directory suffix=".php">../install/language</directory>
-                <directory suffix=".php">../install/seed_data</directory>
+                <file>../include/modules.php</file>
             </exclude>
         </whitelist>
         <blacklist>
@@ -81,6 +76,7 @@
             <directory suffix=".php">../jssource</directory>
             <directory suffix=".php">../log4php</directory>
             <directory suffix=".php">../metadata</directory>
+            <directory suffix=".php">../portal</directory>
             <directory suffix=".php">../tests</directory>
             <directory suffix=".php">../themes</directory>
             <directory suffix=".php">../XTemplate</directory>
