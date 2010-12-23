@@ -50,6 +50,7 @@ $dashletData['MyMeetingsDashlet']['columns'] = array('set_complete' => array('wi
                                                                              'label'    => 'LBL_LIST_JOIN_MEETING',
                                                                              'default'  => true,
                                                                              'sortable' => false,
+                                                                             'noHeader' => true,
                                                                              'related_fields' => array('host_url')),
                                                    'name' => array('width'   => '40', 
                                                                    'label'   => 'LBL_SUBJECT',

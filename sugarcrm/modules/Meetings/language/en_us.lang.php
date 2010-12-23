@@ -110,7 +110,7 @@ $mod_strings = array (
     'LBL_MODIFIED_USER' => 'Modified User',
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
     'LBL_MEETING_INFORMATION' => 'Meeting Overview',
-	'LBL_LIST_JOIN_MEETING' => ' ',
+	'LBL_LIST_JOIN_MEETING' => 'Join Meeting',
 	'LBL_JOIN_EXT_MEETING' => 'Join Meeting',
 	'LBL_HOST_EXT_MEETING' => 'Start Meeting',
 

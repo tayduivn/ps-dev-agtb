@@ -44,7 +44,6 @@ $subpanel_layout = array(
  		 	'width' => '2%',
 			'image2'=>'__VARIABLE',
  		 	'image2_ext_url_field'=>'displayed_url',
-            'attachment_image_only'=>true,
 		),
 		'close_button'=>array(
 			'widget_class' => 'SubPanelCloseButton',

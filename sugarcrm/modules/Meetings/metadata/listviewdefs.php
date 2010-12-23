@@ -41,6 +41,7 @@ array (
     'default' => true,
     'related_fields' => 
     array('join_url', 'host_url'),
+    'noHeader' => true,
   ),
   'NAME' => 
   array (
