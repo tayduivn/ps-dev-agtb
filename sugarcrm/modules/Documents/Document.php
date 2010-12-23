@@ -160,8 +160,8 @@ class Document extends SugarBean {
 		
 		$mod_strings = return_module_language($current_language, 'Documents');
 
-		$query = "SELECT filename,revision,file_ext FROM document_revisions WHERE id='$this->document_revision_id'";
-
+		$query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date, document_revisions.filename AS filename, document_revisions.revision AS revision, document_revisions.file_ext AS file_ext FROM users, document_revisions WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";
+        $GLOBALS['log']->fatal("IKEA: query: $query");
 		$result = $this->db->query($query);
 		$row = $this->db->fetchByAssoc($result);
 
@@ -199,9 +199,6 @@ class Document extends SugarBean {
 		}
 		
 		//get last_rev_by user name.
-		$query = "SELECT first_name,last_name, document_revisions.date_entered as rev_date FROM users, document_revisions WHERE users.id = document_revisions.created_by and document_revisions.id = '$this->document_revision_id'";
-		$result = $this->db->query($query, true, "Eror fetching user name: ");
-		$row = $this->db->fetchByAssoc($result);
 		if (!empty ($row)) {
 			$this->last_rev_created_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 
@@ -258,6 +255,11 @@ class Document extends SugarBean {
 		$app_list_strings = return_app_list_strings_language($current_language);
 
 		$document_fields = $this->get_list_view_array();
+
+        $this->fill_in_additional_list_fields();
+
+
+		$document_fields['FILENAME'] = $this->filename;
 		$document_fields['FILE_URL'] = $this->file_url;
 		$document_fields['FILE_URL_NOIMAGE'] = $this->file_url_noimage;
 		$document_fields['LAST_REV_CREATED_BY'] = $this->last_rev_created_name;
