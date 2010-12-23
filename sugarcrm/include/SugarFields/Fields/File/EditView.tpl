@@ -143,8 +143,17 @@ if(typeof QSProcessedFieldsArray != 'undefined') {ldelim}
 {if $showRemove && strlen("{{$vardef.docType}}") > 0 }
 document.getElementById("{{$vardef.docType}}").disabled = true;
 {/if}
-
 enableQS(false);
+</script>
+{{/if}}
+{else}
+{* No change possible *}
+I'm here.
+{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
+<script type="text/javascript">
+YAHOO.util.Event.onDOMReady(function() {ldelim}
+document.getElementById("{{$vardef.docType}}").disabled = true;
+{rdelim});
 </script>
 {{/if}}
 {/if}
