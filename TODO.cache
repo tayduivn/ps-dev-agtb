@@ -1,0 +1,4 @@
+- Move uploads to separate directory
+- Move inline images to uploads
+- Make emails store cid: not full URL
+
