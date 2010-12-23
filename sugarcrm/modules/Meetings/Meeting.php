@@ -444,11 +444,11 @@ class Meeting extends SugarBean {
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
 		
 		if($this->assigned_user_id == $GLOBALS['current_user']->id){
-			$join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" title="'.translate($this->module_dir,'LBL_HOST_EXT_MEETING').'"');
+			$join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"');
             $meeting_fields['OBJECT_IMAGE_ICON'] = 'start_meeting_inline';
 			$meeting_fields['DISPLAYED_URL'] = $this->host_url;
 		}else{
-			$join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" title="'.translate($this->module_dir,'LBL_JOIN_EXT_MEETING').'"');
+			$join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" title="'.translate('LBL_JOIN_EXT_MEETING',$this->module_dir).'"');
             $meeting_fields['OBJECT_IMAGE_ICON'] = 'join_meeting_inline';
 			$meeting_fields['DISPLAYED_URL'] = $this->join_url;
 		}
