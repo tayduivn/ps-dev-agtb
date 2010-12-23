@@ -48,7 +48,7 @@ list-style-type: square;
 <!-- //END SUGARCRM flav=dev ONLY
 <!-- //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 <IMG src="include/images/sugar_md_express.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY		
+<!-- //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 <!-- //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 <IMG src="include/images/sugar_md_open.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!--//END SUGARCRM flav=com && lic!=sub ONLY
@@ -83,7 +83,7 @@ echo "<P>Copyright ".$app_strings['LBL_SUGAR_COPYRIGHT_SUB']."</P>";
 $viewLicenseText = $mod_strings['LBL_VIEWLICENSE_COM'];
 
 //END SUGARCRM flav=com  && dep=os ONLY
- 
+
 //BEGIN SUGARCRM flav=int ONLY
 
 $viewLicenseText = "";
@@ -100,7 +100,7 @@ echo $viewLicenseText;
 $imgTagString = '<img style="margin-top: 2px" border="0" width="106" height="23" src="include/images/poweredby_sugarcrm.png" alt="Powered By SugarCRM">';
 
 //END SUGARCRM flav=com  && dep=os ONLY
- 
+
   //BEGIN SUGARCRM lic=sub ONLY
 
 $imgTagString = '<P><A href="http://www.sugarcrm.com" target="_blank"> <img style="margin-top: 2px" border="0" width="106" height="23" src="include/images/poweredby_sugarcrm.png" alt="Powered By SugarCRM"></A>';
@@ -116,7 +116,7 @@ echo $imgTagString;
 $additionalTerm = $mod_strings['LBL_ADD_TERM_COM'];
 
 //END SUGARCRM flav=com  && dep=os ONLY
- 
+
 //BEGIN SUGARCRM flav=int ONLY
 
 $additionalTerm = "";
@@ -238,6 +238,7 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_TINYMCE']; ?> (<a href="http://wiki.moxiecode.com/index.php/TinyMCE:Index" target="_blank">http://wiki.moxiecode.com/index.php/TinyMCE:Index</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_TCPDF']; ?> (<a href="http://www.tcpdf.org/" target="_blank">http://www.tcpdf.org/</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_RECAPTCHA']; ?> (<a href="http://recaptcha.net/" target="_blank">http://recaptcha.net/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_HTMLPURIFIER']; ?> (<a href="http://htmlpurifier.org/" target="_blank">http://htmlpurifier.org/</a>)</LI>
 </ul>
 
 //BEGIN SUGARCRM flav=PRO ONLY

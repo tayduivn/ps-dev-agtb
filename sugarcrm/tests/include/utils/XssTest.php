@@ -9,9 +9,9 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
             array("some data", "some data"),
 
             array("test <a href=\"http://www.digitalbrandexpressions.com\">link</a>", "test <a href=\"http://www.digitalbrandexpressions.com\">link</a>"),
-            array("some data<script>alert('xss!')</script>", "some data<>alert('xss!')</>"),
-            array("some data<script src=\" http://localhost/xss.js\"></script>", "some data< src=\" http://localhost/xss.js\"></>"),
-            array("some data<applet></applet><script src=\" http://localhost/xss.js\"></script>", "some data<></>< src=\" http://localhost/xss.js\"></>"),
+            array("some data<script>alert('xss!')</script>", "some data"),
+            array("some data<script src=\" http://localhost/xss.js\"></script>", "some data"),
+            array("some data<applet></applet><script src=\" http://localhost/xss.js\"></script>", "some data"),
             );
     }
 

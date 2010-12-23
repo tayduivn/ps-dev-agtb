@@ -172,7 +172,7 @@ $mod_strings = array (
   'LBL_ADD_TERM_COM' => '<P>The interactive user interfaces in modified source and object code versions of this program must display Appropriate Legal Notices, as required under Section 5 of the GNU Affero General Public License version 3. In accordance with Section 7(b) of the GNU General Public License version 3, these Appropriate Legal Notices must retain the display of the &quot;Powered by SugarCRM&quot; logo. If the display of the logo is not reasonably feasible for technical reasons, the Appropriate Legal Notices must display the words &quot;Powered by SugarCRM&quot;.</P>',
 
 //END SUGARCRM flav=com  && dep=os ONLY
- 
+
   'LBL_SUGAR_COMMUNITY_EDITION' => 'Sugar Community Edition',
   'LBL_SUGAR_PROFESSIONAL' => "Sugar Professional",
   'LBL_SUGAR_ENTERPRISE' => "Sugar Enterprise",
@@ -221,8 +221,9 @@ $mod_strings = array (
   'LBL_SOURCE_SWFOBJECT' => 'SWFObject - Javascript Flash Player detection and embed script.',
   'LBL_SOURCE_TINYMCE' => 'TinyMCE - A WYSIWYG editor control for web browsers that enables the user to edit HTML contents',
   'LBL_SOURCE_EXT' => 'Ext - A client-side JavaScript framework for building web applications.',
-  'LBL_SOURCE_RECAPTCHA' => 'reCAPTCHA - A free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.', 
+  'LBL_SOURCE_RECAPTCHA' => 'reCAPTCHA - A free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.',
   'LBL_SOURCE_TCPDF' => 'TCPDF - A PHP class for generating PDF documents.',
+  'LBL_SOURCE_HTMLPURIFIER' => 'HTML Purifier - A standards-compliant HTML filtering library.',
 
 //BEGIN SUGARCRM flav=dce ONLY
   'LNK_NEW_DCEINSTANCE' => 'Create Instance',
