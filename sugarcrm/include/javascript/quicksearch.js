@@ -214,12 +214,15 @@ function enableQS(noReload){
 	                	       }
 	                    	}
 
-	        			    if(label_data_str != label_str && current_label_data_str != label_str){
-	       			        	if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
+	        			    if(label_data_str != label_str && current_label_data_str != label_str) {    	
+	        			    	//Special case for shipping_account_name
+	        			    	do_not_copy = Dom.get('shipping_checkbox') && (typeof copy_values_from_billing != 'undefined') ? copy_values_from_billing() : false;
+	        			    	
+	       			        	if(do_not_copy || !confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
 	       						{
-	       			        		this.updateFields(data,filter); 
+	       			        		this.updateFields(data,/account_id/); 
 	       						} else {
-	       							this.updateFields(data,/account_id/);
+	       							this.updateFields(data,filter);
 	       						}
 	        			    } else {
 		                        this.updateFields(data,filter); 	        			    	
