@@ -92,7 +92,7 @@ array (
         array (
             array(
                 'name'=>'host_url',
-                'customCode'=>'{if !empty($fields.join_url.value)}{if $current_user->id == $fields.assigned_user_id.value}<a href="{$fields.host_url.value}"><img src="{sugar_getimagepath file="start_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_HOST_EXT_MEETING}"></a>{/if} <a href="{$fields.join_url.value}"><img src="{sugar_getimagepath file="join_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_JOIN_EXT_MEETING}"></a></a>{/if}',
+                'customCode'=>'{if !empty($fields.join_url.value)}{if $current_user->id == $fields.assigned_user_id.value}<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id={$fields.id.value}&host_meeting=1"><img src="{sugar_getimagepath file="start_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_HOST_EXT_MEETING}"></a>{/if} <a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id={$fields.id.value}"><img src="{sugar_getimagepath file="join_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_JOIN_EXT_MEETING}"></a></a>{/if}',
                 'customLabel'=>'{if !empty($fields.join_url.value)}{$MOD.LBL_URL}:{/if}',
             ),           
             array(
