@@ -30,7 +30,8 @@ class SugarCleaner
         $config->set('CSS.Proprietary', true);
         $config->set('HTML.TidyLevel', 'light');
         $config->set('HTML.ForbiddenElements', array('body' => true, 'html' => true));
-        $config->set('Attr.EnableID', true);
+        $config->set('AutoFormat.RemoveEmpty', false);
+
 /*
    "applet"
    "base"
@@ -46,14 +47,64 @@ class SugarCleaner
    "style"
    "xmp"
  */
+        // for style
+        $config->set('Filter.ExtractStyleBlocks', true);
+        // for object
         $config->set('HTML.SafeObject', true);
+        // for embed
         $config->set('HTML.SafeEmbed', true);
         $config->set('Output.FlashCompat', true);
-        $config->set('Filter.Custom',  array( new HTMLPurifier_Filter_SafeIframe() ));
+        // for iframe and xmp
+        $config->set('Filter.Custom',  array(new HTMLPurifier_Filter_Xmp()));
+        // for link
+        $config->set('HTML.DefinitionID', 'enduser-customize.html tutorial');
+        $config->set('HTML.DefinitionRev', 2);
+        $config->set('Cache.DefinitionImpl', null); // remove this later!
+        $def = $config->getHTMLDefinition(true);
+        $form = $def->addElement(
+  			'link',   // name
+  			'Flow',  // content set
+  			'Empty', // allowed children
+  			'Core', // attribute collection
+             array( // attributes
+        		'href*' => 'URI',
+        		'rel' => 'Enum#stylesheet', // only stylesheets supported here
+        		'type' => 'Enum#text/css' // only CSS supported here
+			)
+        );
+        $iframe = $def->addElement(
+  			'iframe',   // name
+  			'Flow',  // content set
+  			'Optional: #PCDATA | Flow | Block', // allowed children
+  			'Core', // attribute collection
+             array( // attributes
+        		'src*' => 'URI',
+                'frameborder' => 'Enum#0,1',
+                'marginwidth' =>  'Pixels',
+                'marginheight' =>  'Pixels',
+                'scrolling' => 'Enum#|yes,no,auto',
+             	'align' => 'Enum#top,middle,bottom,left,right,center',
+                'height' => 'Length',
+                'width' => 'Length',
+             )
+        );
+        $iframe->excludes=array('iframe');
         //? $uri = $config->getDefinition('URI');
         //? Add IMG SRC filtering? $uri->addFilter(new SugarURIFilter(), $config);
 
         $this->purifier = new HTMLPurifier($config);
+    }
+
+    /**
+     * Get cleaner instance
+     * @return SugarCleaner
+     */
+    public static function getInstance()
+    {
+        if(empty(self::$instance)) {
+            self::$instance = new self;
+        }
+        return self::$instance;
     }
 
     /**
@@ -66,9 +117,6 @@ class SugarCleaner
     {
         if(empty($html)) return '';
 
-        if(empty(self::$instance)) {
-            self::$instance = new self;
-        }
         if($encoded) {
             $html = from_html($html);
         }
@@ -76,7 +124,12 @@ class SugarCleaner
             /* if it only has "safe" chars, don't bother */
             $cleanhtml = $html;
         } else {
-            $cleanhtml = self::$instance->purifier->purify($html);
+            $purifier = self::getInstance()->purifier;
+            $cleanhtml = $purifier->purify($html);
+            $styles = $purifier->context->get('StyleBlocks');
+            if(count($styles) > 0) {
+                $cleanhtml = "<style>".join("</style><style>", $styles)."</style>".$cleanhtml;
+            }
         }
         if($encoded) {
             $cleanhtml = to_html($cleanhtml);
@@ -129,21 +182,12 @@ class SugarURIFilter extends HTMLPurifier_URIFilter
     }
 }
 
-class HTMLPurifier_Filter_SafeIframe extends HTMLPurifier_Filter
+class HTMLPurifier_Filter_Xmp extends HTMLPurifier_Filter
 {
 
-    public $name = 'SafeIframe';
+    public $name = 'Xmp';
 
     public function preFilter($html, $config, $context) {
-        return preg_replace("/iframe/", "img", $html);
-    }
-
-    public function postFilter($html, $config, $context) {
-       $post_regex = '#<img ([^>]+)>#';
-        return preg_replace_callback($post_regex, array($this, 'postFilterCallback'), $html);
-    }
-
-    protected function postFilterCallback($matches) {
-        return '<iframe '.$matches[1].'></iframe>';
+        return preg_replace("#<(/)?xmp>#i", "<\\1pre>", $html);
     }
 }
