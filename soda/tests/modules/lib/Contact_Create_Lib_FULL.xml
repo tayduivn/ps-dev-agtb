@@ -42,7 +42,7 @@
 				set="{@contact_record.assistant}"/> <textfield id="assistant_phone"
 				set="{@contact_record.assistant_phone}"/
 			-->
-			<textfield id="Contacts0emailAddress0" set="{@contact_record.emailAddress0}{@stamp}" />
+			<textfield id="Contacts0emailAddress0" set="{@stamp}{@contact_record.emailAddress0}" />
 			<textfield id="description" set="{@contact_record.description}" />
 			<textfield id="description" set="{@contact_record.description}" />
 			<select id="lead_source" set="{@contact_record.lead_source}" />
