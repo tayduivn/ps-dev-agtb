@@ -86,7 +86,6 @@ class SumRelatedExpression extends NumericExpression
 
 			}
 
-			console.log("fell through");
 			return "";
 EOQ;
 	}

@@ -79,7 +79,6 @@ class RelatedFieldExpression extends GenericExpression
 
 			}
 
-			console.log("fell through");
 			return "";
 EOQ;
 	}

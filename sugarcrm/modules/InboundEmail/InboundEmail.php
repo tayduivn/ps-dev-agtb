@@ -3162,7 +3162,7 @@ class InboundEmail extends SugarBean {
 						    $msgPartRaw .= $this->getMessageTextFromSingleMimePart($msgNo,$bcTrail,$structure);
 						 else {
 							// deal with inline image
-							if(count($this->inlineImages > 0)) {
+							if(count($this->inlineImages) > 0) {
 								$imageName = array_shift($this->inlineImages);
 								$newImagePath = "class='image' src='{$sugar_config['site_url']}/{$sugar_config['cache_dir']}/images/{$imageName}'";
 								$preImagePath = 'src="cid:'.substr($structure->parts[$bcArryKey]->id, 1, -1).'"';
@@ -3617,6 +3617,10 @@ class InboundEmail extends SugarBean {
 		} else {
 			// binary is in cache already, just prep necessary metadata
 			$this->tempAttachment[$fileName] = urldecode($attach->filename);
+			if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
+					|| ($part->type == 5)) {
+                $this->inlineImages[] = $attach->id.".".strtolower($part->subtype);
+			}
 		}
 	}
 

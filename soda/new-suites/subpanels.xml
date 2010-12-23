@@ -1,0 +1,5 @@
+<soda>
+	<script file="{@global.scriptsdir}/modules/subpanels/module_lib/setup-subpanels.xml" />
+	<script fileset="{@global.scriptsdir}/modules/subpanels" />
+	<script file="{@global.scriptsdir}/modules/subpanels/module_lib/cleanup-subpanels.xml" />
+</soda>

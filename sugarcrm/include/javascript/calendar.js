@@ -1,5 +1,4 @@
-
-Calendar = function() {}
+Calendar = function() {};
 
 Calendar.setup = function (params) {
 
@@ -13,7 +12,7 @@ Calendar.setup = function (params) {
         var userDateFormat = params.ifFormat ? params.ifFormat : (params.daFormat ? params.daFormat : "m/d/Y");
         var inputField = params.inputField ? params.inputField : params.inputFieldObj;
         var dateFormat = userDateFormat.substr(0,10);
-        var date_field_delimiter = /([\\-\\.\\/])/.exec(dateFormat)[0];
+        var date_field_delimiter = /([-.\\/])/.exec(dateFormat)[0];
         dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
         
         var monthPos = dateFormat.search(/m/);
@@ -76,7 +75,7 @@ Calendar.setup = function (params) {
                     iframe:false,
                     hide_blank_weeks:true  
                 });
-                      
+                
                 calendar.cfg.setProperty('DATE_FIELD_DELIMITER', date_field_delimiter);
                 calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos+1);
                 calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos+1);
@@ -101,8 +100,6 @@ Calendar.setup = function (params) {
                 	calendar.cfg.setProperty('WEEKDAYS_SHORT', SUGAR.language.languages['app_list_strings']['dom_cal_day_short']);
                 }
                 
-                calendar.render();
-                
                 calendar.selectEvent.subscribe(function() {
                     if (calendar.getSelectedDates().length > 0) {
 
@@ -119,6 +116,11 @@ Calendar.setup = function (params) {
                         }
                        
                         Dom.get(inputField).value =  selDate.substr(1);
+                        
+                        if(params.comboObject)
+                        {
+                           params.comboObject.update();
+                        }
                     } else {
                         Dom.get(inputField).value = "";
                     }
@@ -130,6 +132,7 @@ Calendar.setup = function (params) {
                     // container to redraw the underlay (for IE6/Safari2)
                     dialog.fireEvent("changeContent");
                 });
+               
             }
             
             var seldate = calendar.getSelectedDates();
@@ -137,17 +140,16 @@ Calendar.setup = function (params) {
             	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
                 seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
             	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
-            	calendar.render();
             } else if (seldate.length > 0) {
                 // Set the pagedate to show the selected date if it exists
                 calendar.cfg.setProperty("selected", seldate[0]);
                 var month = seldate[0].getMonth() + 1;
                 var year = seldate[0].getFullYear();
-                calendar.cfg.setProperty("pagedate", month + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + year);
-                calendar.render();            	
+                calendar.cfg.setProperty("pagedate", month + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + year);         	
             }      
 
+            calendar.render();
             dialog.show();
         });
     });	
-}
+};

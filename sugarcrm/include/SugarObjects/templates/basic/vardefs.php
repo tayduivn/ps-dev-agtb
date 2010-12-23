@@ -60,6 +60,7 @@ $vardefs = array(
 	    'type' => 'datetime',
 	    'group'=>'created_by_name',
 	    'comment' => 'Date record created',
+	    'enable_range_search' => '1',
 	  ),
 	  'date_modified' =>
 	  array (
@@ -68,6 +69,7 @@ $vardefs = array(
 	    'type' => 'datetime',
 	    'group'=>'modified_by_name',
 	    'comment' => 'Date record last modified',
+	    'enable_range_search' => '1',
 	  ),
 		'modified_user_id' =>
 	  array (

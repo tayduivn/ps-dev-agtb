@@ -135,8 +135,8 @@ $vardefs = array(
 		    'type' => 'date',
 		    'audited'=>true,
 		    'required' => true,
-		    'comment' => 'Expected or actual date the sale will close'
-
+		    'comment' => 'Expected or actual date the sale will close',
+		    'enable_range_search' => '1',
 		  ),
 		  'next_step' =>
 		  array (

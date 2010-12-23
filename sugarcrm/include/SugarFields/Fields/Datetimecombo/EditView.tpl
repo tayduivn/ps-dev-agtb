@@ -99,7 +99,8 @@ YAHOO.util.Event.onDOMReady(function()
 	button : "{{$idname}}_trigger",
 	singleClick : true,
 	step : 1,
-	weekNumbers:false
+	weekNumbers: false,
+	comboObject: combo_{{$idname}}
 	{rdelim});
 	
 	//Call update for first time to round hours and minute values

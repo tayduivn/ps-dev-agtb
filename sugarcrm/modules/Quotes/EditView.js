@@ -63,17 +63,25 @@ function set_billing_return(popup_reply_data)
 	}
 }
 
+function copy_values_from_billing()
+{
+	var shipping_checkbox = parent.document.getElementById('shipping_checkbox');
+	return shipping_checkbox ? shipping_checkbox.checked : false;	
+}
+
 function set_shipping_return(popup_reply_data)
 {
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
 	var override_values = true;
 	
-	if(!confirm_address_update(popup_reply_data))
+	//Do not override values if address fields are being copied from billing address or
+	//if the user chooses cancel when prompted to override values
+	if(copy_values_from_billing() || !confirm_address_update(popup_reply_data))
 	{
 	   override_values = false;
 	} 	
-	
+
 	for (var the_key in name_to_value_array)
 	{
 		if(the_key == 'toJSON')
@@ -99,7 +107,7 @@ function confirm_address_update(popup_reply_data)
 	var name_to_value_array = popup_reply_data.name_to_value_array;
 	var label_data_str = '';
 	var current_label_data_str = '';
-	
+
 	for (var the_key in name_to_value_array)
 	{
 		if(the_key == 'toJSON')

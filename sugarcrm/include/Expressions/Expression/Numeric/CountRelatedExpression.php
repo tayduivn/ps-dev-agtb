@@ -74,7 +74,6 @@ class CountRelatedExpression extends NumericExpression
 
 			}
 
-			console.log("fell through");
 			return "";
 EOQ;
 	}

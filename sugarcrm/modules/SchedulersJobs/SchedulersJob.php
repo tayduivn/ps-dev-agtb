@@ -197,7 +197,7 @@ class SchedulersJob extends SugarBean {
 		    if($urlparts['scheme'] == 'https'){
 				$urlparts['port'] = 443;
 			} else {
-				$urlparts['port'] = $_SERVER['SERVER_PORT'];
+				$urlparts['port'] = 80;
 			}
 		}
 		curl_setopt($ch, CURLOPT_PORT, $urlparts['port']); // set port as reported by Server
@@ -216,9 +216,9 @@ class SchedulersJob extends SugarBean {
 									//starttransfer_time,redirect_time
 		curl_close($ch);
 
-		if($cInfo['http_code'] < 400) {
+		if($result !== FALSE && $cInfo['http_code'] < 400) {
 			$GLOBALS['log']->debug('----->Firing was successful: ('.$job.') at '.$this->handleDateFormat('now'));
-			$GLOBALS['log']->debug('----->WTIH RESULT: '.strip_tags($result).' AND '.strip_tags(print_r($cInfo)));
+			$GLOBALS['log']->debug('----->WTIH RESULT: '.strip_tags($result).' AND '.strip_tags(print_r($cInfo, true)));
 			return true;
 		} else {
 			$GLOBALS['log']->fatal('Job errored: ('.$job.') at '.$this->handleDateFormat('now'));

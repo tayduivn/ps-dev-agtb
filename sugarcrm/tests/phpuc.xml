@@ -14,24 +14,73 @@
         </testsuite>
     </testsuites>
     <filter>
+        <whitelist>
+            <directory suffix=".php">../data</directory>
+            <directory suffix=".php">../include</directory>
+            <file>../install/install_utils.php</file>
+            <directory suffix=".php">../ModuleInstall</directory>
+            <exclude>
+                <directory suffix=".php">../include/Expressions/metadata</directory>
+                <directory suffix=".php">../include/Expressions/javascript</directory>
+                <file>../include/Expressions/index.php</file>
+                <file>../include/Expressions/updatecache.php</file>
+                <directory suffix=".php">../include/fonts</directory>
+                <directory suffix=".php">../include/HTTP_WebDAV_Server</directory>
+                <directory suffix=".php">../include/language</directory>
+                <directory suffix=".php">../include/nusoap</directory>
+                <directory suffix=".php">../include/Pear</directory>
+                <directory suffix=".php">../include/pclzip</directory>
+                <directory suffix=".php">../include/phpmailer</directory>
+                <directory suffix=".php">../include/reCaptcha</directory>
+                <directory suffix=".php">../include/Smarty</directory>
+                <directory suffix=".php">../include/SugarObjects/implements/assignable</directory>
+                <directory suffix=".php">../include/SugarObjects/implements/team_security</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/basic/Dashlets/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/basic/language/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/basic/metadata/</directory>
+                <file>../include/SugarObjects/templates/basic/vardefs.php</file>
+                <directory suffix=".php">../include/SugarObjects/templates/company/language/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/company/metadata/</directory>
+                <file>../include/SugarObjects/templates/company/config.php</file>
+                <file>../include/SugarObjects/templates/company/vardefs.php</file>
+                <directory suffix=".php">../include/SugarObjects/templates/file/language/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/file/metadata/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/file/views/</directory>
+                <file>../include/SugarObjects/templates/views/vardefs.php</file>
+                <directory suffix=".php">../include/SugarObjects/templates/issue/language/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/issue/metadata/</directory>
+                <file>../include/SugarObjects/templates/issue/config.php</file>
+                <file>../include/SugarObjects/templates/issue/vardefs.php</file>
+                <directory suffix=".php">../include/SugarObjects/templates/person/language/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/person/metadata/</directory>
+                <file>../include/SugarObjects/templates/person/config.php</file>
+                <file>../include/SugarObjects/templates/person/vardefs.php</file>
+                <directory suffix=".php">../include/SugarObjects/templates/sale/language/</directory>
+                <directory suffix=".php">../include/SugarObjects/templates/sale/metadata/</directory>
+                <file>../include/SugarObjects/templates/sale/config.php</file>
+                <file>../include/SugarObjects/templates/sale/vardefs.php</file>
+                <file>../include/SugarTheme/getImage.php</file>
+                <directory suffix=".php">../include/tcpdf</directory>
+                <directory suffix=".php">../include/timezone</directory>
+                <file>../include/entryPoint.php</file>
+                <file>../include/globalControlLinks.php</file>
+                <file>../include/JSON.php</file>
+                <file>../include/modules.php</file>
+            </exclude>
+        </whitelist>
         <blacklist>
-            <directory suffix=".php">./cache</directory>
-            <directory suffix=".php">./custom</directory>
-            <directory suffix=".php">./examples</directory>
-            <directory suffix=".php">./include/nusoap</directory>
-            <directory suffix=".php">./include/phpmailer</directory>
-            <directory suffix=".php">./include/tcpdf</directory>
-            <directory suffix=".php">./include/Smarty/internals</directory>
-            <file>./include/Smarty/Smarty.class.php</file>
-            <file>./include/Smarty/Smarty_Compiler.class.php</file>
-            <directory suffix=".php">./jscalendar</directory>
-            <directory suffix=".php">./jssource</directory>
-            <directory suffix=".php">./log4php</directory>
-            <directory suffix=".php">./metadata</directory>
-            <directory suffix=".php">./test</directory>
-            <directory suffix=".php">./themes</directory>
-            <directory suffix=".php">./XTemplate</directory>
-            <file>./config.php</file>
+            <directory suffix=".php">../cache</directory>
+            <directory suffix=".php">../custom</directory>
+            <directory suffix=".php">../examples</directory>
+            <directory suffix=".php">../jscalendar</directory>
+            <directory suffix=".php">../jssource</directory>
+            <directory suffix=".php">../log4php</directory>
+            <directory suffix=".php">../metadata</directory>
+            <directory suffix=".php">../portal</directory>
+            <directory suffix=".php">../tests</directory>
+            <directory suffix=".php">../themes</directory>
+            <directory suffix=".php">../XTemplate</directory>
+            <file>../config.php</file>
         </blacklist>
     </filter>
 </phpunit>
