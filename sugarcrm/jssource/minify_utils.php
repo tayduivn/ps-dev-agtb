@@ -43,17 +43,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         }
       //add prefix to key if it was passed in
       $compress_exempt_files = array(
-            $prefix.'cache'                         => 'cache',
-            $prefix.'include/javascript/tiny_mce'   => 'include/javascript/tiny_mce',
-            $prefix.'include/javascript/yui'        => 'include/javascript/yui',
-            $prefix.'include/javascript/yui-old'    => 'include/javascript/yui-old',
-            $prefix.'include/javascript/ext-1.1.1'  => 'include/javascript/ext-1.1.1',
-            $prefix.'include/javascript/ext-2.0'    => 'include/javascript/ext-2.0',
-            $prefix.'include/javascript/tiny_mce'   => 'include/javascript/tiny_mce',
-            $prefix.'jscalendar/lang'               => 'jscalendar/lang',
-            $prefix.'modules/Emails'                => 'modules/Emails',
-            $prefix.'jssource'                      => 'jssource',
-            $prefix.'modules/ModuleBuilder'			=> 'modules/ModuleBuilder',
+            $prefix.sugar_cached('')                => true,
+            $prefix.'include/javascript/tiny_mce'   => true,
+            $prefix.'include/javascript/yui'        => true,
+            $prefix.'include/javascript/yui-old'    => true,
+            $prefix.'include/javascript/ext-1.1.1'  => true,
+            $prefix.'include/javascript/ext-2.0'    => true,
+            $prefix.'include/javascript/tiny_mce'   => true,
+            $prefix.'jscalendar/lang'               => true,
+            $prefix.'modules/Emails'                => true,
+            $prefix.'jssource'                      => true,
+            $prefix.'modules/ModuleBuilder'			=> true,
         );
 
         return $compress_exempt_files;
@@ -89,7 +89,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             foreach($fg as $loc=>$trgt){
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
-                $trgt = $from_path.'/'.$trgt;
+                $trgt = sugar_cached($trgt);
 
                 //check to see that source file exists, that it is a file, and is readable
                 if(file_exists($loc) && is_file($loc)  && is_readable($loc)){
@@ -381,9 +381,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @to_path root directory where processing should take place, this gets filled in dynamically
      */
     function BackUpAndCompressScriptFiles($from_path,$to_path = '', $backup = true){
-
+            $GLOBALS['log']->debug("Backup And Compress: $from_path => $to_path");
             //check to see if provided paths are legit
-            if (!file_exists("$from_path"))
+            if (!file_exists($from_path))
             {
                 //log error
                 echo "The from directory, $from_path Does Not Exist<p>\n";
@@ -394,7 +394,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
             if(empty($to_path)){
                 $to_path = $from_path;
-            }elseif (!file_exists("$to_path"))
+            }elseif (!file_exists($to_path))
             {
                 //log error
                 echo "The to directory, $to_path Does Not Exist<p>\n";
