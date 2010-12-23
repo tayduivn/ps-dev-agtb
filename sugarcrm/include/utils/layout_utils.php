@@ -282,7 +282,7 @@ EOHTML;
     echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
     echo <<<EOHTML
 </head>
-<body style="margin: 10px">
+<body class="popupBody">
 EOHTML;
 }
 

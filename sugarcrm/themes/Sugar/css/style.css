@@ -39,6 +39,11 @@ body
 	margin: 0px;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
 }
+
+body.popupBody {
+	margin: 10px;
+}
+
 fieldset, table, pre 
 {
     margin-bottom:0;
@@ -1244,6 +1249,10 @@ div.indent_right {
 
 .search_form .view.advanced {
 	background:url(../../../../index.php?entryPoint=getImage&imageName=search-advanced-bg.png) repeat-x top center #ccc; 
+}
+
+.search_form .view.advanced .help {
+text-align: left;	
 }
 
 .search_form .view a {
@@ -4172,6 +4181,13 @@ a.tabFormAdvLink:link, a.tabFormAdvLink:visited
 }
 
 /* calendar styles */
+
+
+table#calendarModule > tbody > tr > td:first-child {
+	padding-right: 10px;
+	padding-top: 2px;
+}
+
 #daily_cal_table_outside {
 box-shadow: #ccc 0px 0px 10px;
 -moz-box-shadow: #ccc 0px 0px 10px;
