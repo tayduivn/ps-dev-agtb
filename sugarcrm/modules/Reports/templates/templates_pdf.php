@@ -1,7 +1,5 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-require_once('include/pdf/class.ezpdf.php');
-require_once('modules/Reports/Report.php');
 
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -29,13 +27,13 @@ require_once('modules/Reports/Report.php');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+require_once('modules/Reports/Report.php');
 require_once("include/Sugarpdf/sugarpdf_config.php");
 if ( !headers_sent() ) {
     ini_set('zlib.output_compression', 'Off');
 }
-if(PDF_CLASS == "TCPDF"){
-    require_once('modules/Reports/templates/templates_tcpdf.php');
-}else{
+if(PDF_CLASS == "EZPDF" && file_exists('modules/Reports/templates/templates_ezpdf.php')){
     require_once('modules/Reports/templates/templates_ezpdf.php');
+}else{
+    require_once('modules/Reports/templates/templates_tcpdf.php');
 }
