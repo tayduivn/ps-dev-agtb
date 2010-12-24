@@ -679,16 +679,17 @@ EOHTML;
         }
 
         $cssFileContents = '';
+        $defaultFileName = $this->getDefaultCSSPath().'/'.$cssFileName;
         $fullFileName = $this->getCSSPath().'/'.$cssFileName;
         if (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
                 && ($filename = SugarThemeRegistry::get($this->parentTheme)->getCSSURL($cssFileName,false)) != '')
             $cssFileContents .= file_get_contents($filename);
         else {
-            if (sugar_is_file($fullFileName))
-                $cssFileContents .= file_get_contents($fullFileName);
-            if (sugar_is_file('custom/'.$fullFileName))
-                $cssFileContents .= file_get_contents('custom/'.$fullFileName);
+            if (sugar_is_file($defaultFileName))
+                $cssFileContents .= file_get_contents($defaultFileName);
+            if (sugar_is_file('custom/'.$defaultFileName))
+                $cssFileContents .= file_get_contents('custom/'.$defaultFileName);
         }
         if (sugar_is_file($fullFileName)) {
             $cssFileContents .= file_get_contents($fullFileName);
@@ -697,7 +698,7 @@ EOHTML;
             $cssFileContents .= file_get_contents('custom/'.$fullFileName);
         }
         if (empty($cssFileContents)) {
-            $GLOBALS['log']->warn("CSS File $fullFileName not found");
+            $GLOBALS['log']->warn("CSS File $cssFileName not found");
             return false;
         }
 
@@ -752,28 +753,29 @@ EOHTML;
         }
 
         $jsFileContents = '';
-        $fullFileName = $this->getDefaultJSPath().'/'.$jsFileName;
+        $fullFileName = $this->getJSPath().'/'.$jsFileName;
+        $defaultFileName = $this->getDefaultJSPath().'/'.$jsFileName;
         if (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
                 && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '')
             $jsFileContents .= file_get_contents($filename);
         else {
-            if (sugar_is_file($this->getDefaultJSPath().'/'.$jsFileName))
-                $jsFileContents .= file_get_contents($this->getDefaultJSPath().'/'.$jsFileName);
-            if (sugar_is_file('custom/'.$this->getDefaultJSPath().'/'.$jsFileName))
-                $jsFileContents .= file_get_contents('custom/'.$this->getDefaultJSPath().'/'.$jsFileName);
+            if (sugar_is_file($defaultFileName))
+                $jsFileContents .= file_get_contents($defaultFileName);
+            if (sugar_is_file('custom/'.$defaultFileName))
+                $jsFileContents .= file_get_contents('custom/'.$defaultFileName);
         }
-        if (sugar_is_file($this->getJSPath().'/'.$jsFileName))
-            $jsFileContents .= file_get_contents($this->getJSPath().'/'.$jsFileName);
-        if (sugar_is_file('custom/'.$this->getJSPath().'/'.$jsFileName))
-            $jsFileContents .= file_get_contents('custom/'.$this->getJSPath().'/'.$jsFileName);
+        if (sugar_is_file($fullFileName))
+            $jsFileContents .= file_get_contents($fullFileName);
+        if (sugar_is_file('custom/'.$fullFileName))
+            $jsFileContents .= file_get_contents('custom/'.$fullFileName);
         if (empty($jsFileContents)) {
             $GLOBALS['log']->warn("Javascript File $jsFileName not found");
             return false;
         }
 
         // create the cached file location
-        $jsFilePath = create_cache_directory($this->getJSPath()."/$jsFileName");
+        $jsFilePath = create_cache_directory($fullFileName);
 
         // minify the js
         if ( !inDeveloperMode() && !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
@@ -784,10 +786,10 @@ EOHTML;
         // now write the js to cache
         sugar_file_put_contents($jsFilePath,$jsFileContents);
 
-        $this->_jsCache[$jsFileName] = $jsFilePath;
+        $this->_jsCache[$jsFileName] = $fullFileName;
 
         if ( $returnURL )
-            return getJSPath("cache/".$this->getJSPath()."/$jsFileName");
+            return getJSPath("cache/".$fullFileName);
 
         return sugar_cached($jsFilePath);
     }
