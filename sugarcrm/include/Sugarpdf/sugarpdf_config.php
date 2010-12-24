@@ -267,8 +267,9 @@ define("PDF_ENCODING_TABLE_LIST", $sugarpdf_default["PDF_ENCODING_TABLE_LIST"]);
  */
 define("PDF_ENCODING_TABLE_LABEL_LIST", $sugarpdf_default["PDF_ENCODING_TABLE_LABEL_LIST"]);
 
-
-define("K_TCPDF_EXTERNAL_CONFIG", true);
+if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
+    define("K_TCPDF_EXTERNAL_CONFIG", true);
+}
 
 /**
  * Function to define a sugarpdf seeting from the admin application settings (config table).
