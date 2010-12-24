@@ -37,6 +37,7 @@
 		</div>
 	</div>
 	<button value="Save" />
+	<wait timeout="3" />
 
 	<div id="list_subpanel_users">
 		<link text="qauser" exist="true" click="false" />
