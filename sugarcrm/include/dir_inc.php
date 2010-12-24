@@ -66,9 +66,15 @@ function mkdir_recursive($path, $check_is_parent_dir = false) {
 	$thePath = '';
 	$dirStructure = explode("/", $path);
 	$status = true;
+	$base = getcwd();
+	if($dirStructure[0] == '') {
+	    // global path
+        $base = '';
+        array_shift($dirStructure);
+	}
 	foreach($dirStructure as $dirPath) {
 		$thePath .= '/'.$dirPath;
-		$mkPath = getcwd().'/'.$thePath;
+		$mkPath = $base.'/'.$thePath;
 
 		if(!is_dir($mkPath )) {
 			$status = $status & sugar_mkdir($mkPath);

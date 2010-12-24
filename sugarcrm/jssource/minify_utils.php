@@ -126,9 +126,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                         //       Javascript files insted of displaying the minified versions.
                         if ($trgt_handle === false) {
                             $target_directory = dirname($trgt);
-                            $base_name = realpath(dirname(__FILE__) . '/..') . '/';
-                            $target_directory = substr($target_directory, strlen($base_name));
-                            sugar_die("please make sure {$target_directory} is writable\n");
+                            $base = dirname($target_directory);
+                            while(!is_dir($base) && !empty($base) && $base != dirname($base)) {
+                                $base = dirname($base);
+                            }
+                            sugar_die("Creating $target_directory failed: please make sure {$base} is writable\n");
                         }
 
                 }
