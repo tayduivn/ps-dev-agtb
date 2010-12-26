@@ -23,6 +23,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/array_utils.php');
 require_once('include/utils/sugar_file_utils.php');
 
+/**
+ * Convert all \ to / in path, remove multiple '/'s and '/./'
+ * @param string $path
+ * @return string
+ */
 function clean_path( $path )
 {
     // clean directory/file path with a functional equivalent
