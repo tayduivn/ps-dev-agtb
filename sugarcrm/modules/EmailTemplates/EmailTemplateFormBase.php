@@ -31,8 +31,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class EmailTemplateFormBase {
 
 	function getFormBody($prefix, $mod='',$formname='', $size='30') {
-		
-		
+
+
 		global $mod_strings;
 
 		$temp_strings = $mod_strings;
@@ -114,10 +114,10 @@ EOQ;
 
 
 	function handleSave($prefix,$redirect=true, $useRequired=false) {
-		
-		
-		
-		
+
+
+
+
 		require_once('include/formbase.php');
 		require_once('include/upload_file.php');
 		global $upload_maxsize, $upload_dir;
@@ -156,12 +156,12 @@ EOQ;
 				$filename = urldecode(substr($filenameUndecoded, 0, -1));
 				$filenameUndecoded = str_replace("\"", '', $filenameUndecoded);
 				$cid = $filename;
-				$file_location = clean_path(getcwd()."/{$sugar_config['cache_dir']}images/{$filename}");
+				$file_location = clean_path(sugar_cached("images/{$filename}"));
 				$mime_type = strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
 
 				if(file_exists($file_location)) {
 					$id = create_guid();
-					$newFileLocation = "{$sugar_config['upload_dir']}{$id}";					
+					$newFileLocation = "{$sugar_config['upload_dir']}{$id}";
 					if(!copy($file_location, $newFileLocation)) {
 						$GLOBALS['log']->debug("EMAIL Template could not copy attachment to {$sugar_config['upload_dir']} [ {$newFileLocation} ]");
 					} else {
@@ -188,7 +188,7 @@ EOQ;
 		////	ADDING NEW ATTACHMENTS
 
 		$max_files_upload = count($_FILES);
-				
+
 		if(!empty($focus->id)) {
 			$note = new Note();
 			$where = "notes.parent_id='{$focus->id}'";
@@ -223,11 +223,11 @@ EOQ;
 			    $note->new_with_id = TRUE;
 			    $GLOBALS['log']->debug("Image {$file['name']} has already been processed.");
             }
-            
+
 			$i=preg_replace("/email_attachment(.+)/",'$1',$key);
 			$upload_file = new UploadFile($key);
 
-			
+
 			if(isset($_FILES[$key]) && $upload_file->confirm_upload() && preg_match("/^email_attachment/",$key)) {
 				$note->filename = $upload_file->get_stored_file_name();
 				$note->file = $upload_file;
@@ -249,13 +249,13 @@ EOQ;
 		}
 
 		$focus->saved_attachments = array();
-		foreach($focus->attachments as $note) 
+		foreach($focus->attachments as $note)
 		{
-			if( !empty($note->id) && $note->new_with_id === FALSE) 
+			if( !empty($note->id) && $note->new_with_id === FALSE)
 			{
-				if(empty($_REQUEST['old_id'])) 
+				if(empty($_REQUEST['old_id']))
 					array_push($focus->saved_attachments, $note); // to support duplication of email templates
-				else 
+				else
 				{
 					// we're duplicating a template with attachments
 					// dupe the file, create a new note, assign the note to the new template
@@ -265,7 +265,7 @@ EOQ;
 					$newNote->parent_id = $focus->id;
 					$newNote->new_with_id = true;
 					$newNote->date_modified = '';
-					$newNote->date_entered = '';					
+					$newNote->date_entered = '';
 					$newNoteId = $newNote->save();
 
 					$dupeFile = new UploadFile('duplicate');
@@ -279,10 +279,10 @@ EOQ;
 			$note_id = $note->save();
 			array_push($focus->saved_attachments, $note);
 			$note->id = $note_id;
-			
+
 			if($note->new_with_id === FALSE)
     			$note->file->final_move($note->id);
-    	    else 
+    	    else
     	       $GLOBALS['log']->debug("Not performing final move for note id {$note->id} as it has already been processed");
 		}
 

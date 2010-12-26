@@ -5096,43 +5096,7 @@ eoq;
 	 */
 	function cleanOutCache() {
 		$GLOBALS['log']->debug("INBOUNDEMAIL: at cleanOutCache()");
-		//global $current_user;
-		//global $sugar_config;
-
-		//$showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
-		//$personals = $this->retrieveAllByGroupId($current_user->id, true);
-
-		//foreach($personals as $k => $personalAccount) {
-		//	if(in_array($personalAccount->id, $showFolders)) {
-//				// check for cache value
-//				$cacheRoot = getcwd()."/{$this->EmailCachePath}/{$personalAccount->id}";
-//
-//				// on new account creation, this is not created yet
-//				if(!file_exists($cacheRoot)) {
-//					require_once("modules/Emails/EmailUI.php");
-//					$et = new EmailUI();
-//					$et->preflightEmailCache($cacheRoot);
-//					$et->preflightUserCache();
-//					continue; // no need to find files, there are none.
-//				}
-//
-//				// destroy overviews, keep messages
-//				$cacheFiles = findAllFiles($cacheRoot."/folders/", array());
-//
-//				foreach($cacheFiles as $cFile) {
-//					if(preg_match("/imapFetchOverview/", $cFile)) {
-//						_ppl("***InboundEmail deleting cache file [ {$cFile} ]");
-//						$GLOBALS['log']->debug("***InboundEmail deleting cache file [ {$cFile} ]");
-//						if(!unlink($cFile)) {
-//							$GLOBALS['log']->error("*** ERROR: InboundEmail could not delete cache file [ {$cFile} ]");
-//						}
-//					}
-//				}
-
-				// delete the tables
-				$this->deleteCache();
-			//}
-		//}
+		$this->deleteCache();
 	}
 
 	/**

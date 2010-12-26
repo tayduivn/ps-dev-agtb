@@ -205,14 +205,14 @@ function commitPatch($unlink = false, $type = 'patch'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(getcwd()."/".sugar_cached("upload/upgrades"))) {
-            $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades/$type"), $files);
+    if(is_dir(sugar_cached("upload/upgrades"))) {
+            $files = findAllFiles(sugar_cached("upload/upgrades/$type"), $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
 
             foreach($files as $file) {
-                if(!preg_match("#.*\.zip\$#", $file)) {
+                if(!preg_match('#.*\.zip\$#', $file)) {
                     continue;
                 }
                 // handle manifest.php
@@ -274,14 +274,14 @@ function commitModules($unlink = false, $type = 'module'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(getcwd()."/".sugar_cached("upload/upgrades"))) {
-            $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades/$type"), $files);
+    if(is_dir(sugar_cached("upload/upgrades"))) {
+            $files = findAllFiles(sugar_cached("upload/upgrades/$type"), $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
 
             foreach($files as $file) {
-                if(!preg_match("#.*\.zip\$#", $file)) {
+                if(!preg_match('#.*\.zip\$', $file)) {
                     continue;
                 }
                 $lic_name = 'accept_lic_'.str_replace('.', '_', urlencode(basename($file)));
@@ -459,7 +459,7 @@ function getInstalledLangPacks($showButtons=true) {
                 <td width='15%' ></td>
             </tr>\n";
     $files = array();
-    $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades"), $files);
+    $files = findAllFiles(sugar_cached("upload/upgrades"), $files);
 
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])){
         if(count($_SESSION['INSTALLED_LANG_PACKS'] > 0)) {
@@ -1897,7 +1897,7 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
     $files = array();
 
     // duh, new installs won't have the upgrade folders
-   if(!is_dir(getcwd()."/".sugar_cached("upload/upgrades"))) {
+   if(!is_dir(sugar_cached("upload/upgrades"))) {
 	    mkdir_recursive( "$base_upgrade_dir");
 	}
 	$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
@@ -1905,7 +1905,7 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
 		mkdir_recursive( "$base_upgrade_dir/$subdir" );
 	}
 
-    $files = findAllFiles(getcwd()."/".sugar_cached("upload/upgrades"), $files);
+    $files = findAllFiles(sugar_cached("upload/upgrades"), $files);
     $hidden_input = '';
     unset($_SESSION['hidden_input']);
 

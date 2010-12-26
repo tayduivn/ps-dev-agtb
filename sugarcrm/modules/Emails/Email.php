@@ -1613,7 +1613,7 @@ class Email extends SugarBean {
 
 			//// get the email to see if we're dealing with a dupe
 			//// what crappy coding
-			preg_match("/[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i",$v, $match);
+			preg_match('/[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i',$v, $match);
 
 			if(!empty($match[0]) && !in_array(trim($match[0]), $knownEmails)) {
 				$knownEmails[] = $match[0];
@@ -2033,8 +2033,8 @@ class Email extends SugarBean {
 
 		$fileBasePath = sugar_cached("images/");
 		$filePatternSearch = "{$sugar_config['cache_dir']}";
-		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
-		$filePatternSearch = $filePatternSearch . "images\/";
+		$filePatternSearch = str_replace("/", '\/', $filePatternSearch);
+		$filePatternSearch = $filePatternSearch . 'images\/';
 		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
 		{  //cache/images
 			$matches = array();
@@ -2043,7 +2043,7 @@ class Email extends SugarBean {
 				$filename = str_replace($fileBasePath, '', $match);
 				$filename = urldecode(substr($filename, 0, -1));
 				$cid = $filename;
-				$file_location = clean_path(getcwd()."/".sugar_cached("images/{$filename}"));
+				$file_location = sugar_cached("images/$filename");
 				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
 
 				if(file_exists($file_location)) {
@@ -2087,7 +2087,7 @@ class Email extends SugarBean {
 		}
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im";
+		$noteImgRegex = '/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im';
         $embededImageMatches = array();
         preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
 
