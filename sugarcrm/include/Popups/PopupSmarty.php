@@ -415,7 +415,9 @@ class PopupSmarty extends ListViewSmarty{
 	{
 		$where = '';
 		$where_clauses = $this->searchForm->generateSearchWhere(true, $this->seed->module_dir);
-		if (count($where_clauses) > 0 )$where= implode(' and ', $where_clauses);
+		if (count($where_clauses) > 0){
+            $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
+        }
         
         // Need to include the default whereStatement
 		if(!empty($this->_popupMeta['whereStatement'])){
