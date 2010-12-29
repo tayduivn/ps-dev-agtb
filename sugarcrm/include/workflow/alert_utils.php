@@ -728,7 +728,7 @@ function parse_target_body($target_body, $base_module){
 
 function reconstruct_target_body(& $focus, $target_body, $component_array, $notify_user_id="", $notify_user_object=null){
 	global $beanList;
-
+	
 	$replace_array = Array();
 
 	foreach($component_array as $module_name => $module_array){
@@ -811,8 +811,7 @@ function reconstruct_target_body(& $focus, $target_body, $component_array, $noti
 				} else {
 					$rel_module_present = false;
 				}
-
-
+				
 				foreach($module_array as $field => $field_array){
 
 					if($rel_module_present == true){
