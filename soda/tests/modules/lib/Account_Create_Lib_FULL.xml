@@ -54,6 +54,7 @@
 		</form>
 
 		<var var="pre_account_name" set="{@account_record.name} {@user.name} {@stamp}" />
+		<var var="pre_account_email" set="{@stamp}{@account_record.emailAddress0}" />
 	</csv>
 
 	<puts text="Lib: Account_Create_Lib.xml finished." />
