@@ -31,6 +31,12 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);       
         return $this->fetch('include/SugarFields/Fields/Datetimecombo/EditView.tpl');
     }
+    
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) 
+    {
+        $displayParams['showFormats'] = true;
+        return $this->getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
 	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	// Create Smarty variables for the Calendar picker widget

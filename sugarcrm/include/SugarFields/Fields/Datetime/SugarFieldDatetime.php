@@ -38,6 +38,18 @@ class SugarFieldDatetime extends SugarFieldBase {
         return $this->fetch('include/SugarFields/Fields/Datetime/EditView.tpl');
     }
     
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) 
+    {
+        $displayParams['showMinutesDropdown'] = false;	
+        $displayParams['showHoursDropdown'] = false;	
+        $displayParams['showNoneCheckbox'] = false;	
+        $displayParams['showFormats'] = true;	
+        $displayParams['hiddeCalendar'] = false;   
+        
+        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+        return $this->fetch($this->findTemplate('EditView'));
+    }
+    
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	global $timedate;
