@@ -270,8 +270,8 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 		require_once ('modules/Sync/file_config.php');
         global $file_sync_info;
 		if(!isset($file_sync_info['last_local_sync']) && !isset($file_sync_info['last_server_sync'])){
-			$last_local_sync = $timedate->get_gmt_db_datetime();
-    		$last_server_sync = $timedate->get_gmt_db_datetime();
+			$last_local_sync = $timedate->nowDb();
+    		$last_server_sync = $timedate->nowDb();
     		$is_first_sync = true;
 		}else{
 			$last_local_sync = $file_sync_info['last_local_sync'];
@@ -280,12 +280,13 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 		}
     }
     else{
-    	$last_local_sync = $timedate->get_gmt_db_datetime();
-    	$last_server_sync = $timedate->get_gmt_db_datetime();
+    	$last_local_sync = $timedate->nowDb();
+    	$last_server_sync = $timedate->nowDb();
     	$is_first_sync = true;
     }
 
-    $temp_file  = tempnam(getcwd()."/".$sugar_config['tmp_dir'], "sug" );
+    $tempdir = create_cache_directory("disc_client");
+    $temp_file  = tempnam($tempdir, "sug" );
     $file_list = array();
     if(!$is_first_sync){
     	$all_src_files  = findAllTouchedFiles( ".", array(), $last_local_sync);
@@ -319,11 +320,11 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 
     // encode data
     $data = base64_encode($contents);
-   $md5file  = array('filename'=>$temp_file, 'md5'=>$md5, 'data'=>$data, 'error' => null);
+    $md5file  = array('filename'=>$temp_file, 'md5'=>$md5, 'data'=>$data, 'error' => null);
     $result = $soapclient->call('get_encoded_zip_file', array( 'session'=>$session, 'md5file'=>$md5file, 'last_sync' => $last_server_sync, 'is_md5_sync' => $is_first_sync));
 
     //3) at this point we could have the zip file
-    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], "zip" ).'.zip';
+    $zip_file = tempnam($tempdir, "zip" ).'.zip';
     if(isset($result['result']) && !empty($result['result'])){
     	$fh = sugar_fopen($zip_file, 'w');
     	fwrite($fh, base64_decode($result['result']));
@@ -335,7 +336,7 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
     if(file_exists($zip_file)){
         unlink($zip_file);
     }
-	$file_sync_info['last_local_sync'] = $timedate->get_gmt_db_datetime();
+	$file_sync_info['last_local_sync'] = $timedate->nowDb();
 	$server_time = $soapclient->call('get_gmt_time', array ());
 	$file_sync_info['last_server_sync'] = $server_time;
 	$file_sync_info['is_first_sync'] = $is_first_sync;
@@ -371,7 +372,9 @@ function get_required_upgrades($soapclient, $session){
 
     $result = $soapclient->call('get_required_upgrades', array('session'=>$session, 'client_upgrade_history' => $history, 'client_version' => $sugar_version));
 
-    $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
+    $tempdir_parent = create_cache_directory("disc_client");
+    $temp_dir = tempnam($tempdir_parent, "sug");
+    sugar_mkdir($temp_dir, 0775);
 
     $upgrade_installed = false;
 
@@ -426,34 +429,23 @@ function get_required_upgrades($soapclient, $session){
     return $upgrade_installed;
 }
 
-function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempts = 0){
+function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempts = 0)
+{
 	$max_attempts = 3;
     global $sugar_config;
 
-
-
     // files might be big
-
     ini_set( "memory_limit", "-1" );
-
-
-
     $return_str  = "";
 
-
-
-    $temp_dir = mk_temp_dir( getcwd() . '/' . $sugar_config['tmp_dir'], "sug" );
-
-    if( !is_dir( $temp_dir ) ){
-
+    $tempdir_parent = create_cache_directory("disc_client");
+    $temp_dir = tempnam($tempdir_parent, "sug");
+    sugar_mkdir($temp_dir, 0775);
+    if( !is_dir( $temp_dir ) ) {
         die( "Could not create a temp dir." );
-
     }
 
-
-
     // get pattern file
-
     $result = $soapclient->call( 'get_encoded_file', array( 'session'=>$session, 'filename'=>"install/data/disc_client.php" ) );
 
     if( !empty($soapclient->error_str)){

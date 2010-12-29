@@ -1010,7 +1010,6 @@ function handleSugarConfig() {
     $sugar_config['session_dir']                    = $setup_site_session_path;
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
-    $sugar_config['tmp_dir']                        = $cache_dir.'xml/';
     $sugar_config['upload_dir']                 = $cache_dir.'upload/';
     $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
 //BEGIN SUGARCRM flav=com ONLY
