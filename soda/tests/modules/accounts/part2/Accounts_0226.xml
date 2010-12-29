@@ -66,27 +66,7 @@
 		<link text="{@pre_account_name}" />
 	</table>
 
-	<!--Go opp subpanel & click "select"-->
-	<browser assert="{@pre_account_name}" />
-	<button id="accounts_opportunities_select_button" />
-	<browser assert="Opportunity Search" />
-
-	<textfield id="name_advanced" set="{@pre_opp_subpanel_name}" />
-	<button value="Search" />
-
-	<!--click the checkbox-->
-	<table class="list view">
-		<checkbox name="mass[]" click="true" />
-	</table>
-	<button value="Select" />
-
-	<wait />
-	<div id="list_subpanel_opportunities">
-		<table class="list view">
-			<link text="{@pre_opp_subpanel_name}" click="false" />
-		</table>
-	</div>
-
+	
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />

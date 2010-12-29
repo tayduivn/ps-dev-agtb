@@ -243,4 +243,39 @@
 		<modulename>workflow</modulename>
 	</block>
 
+    <block>
+		<testfile>Accounts_0068</testfile>
+		<bugnumber>34670</bugnumber>
+		<reason>accounts_opportunities_select_button has been removed</reason>
+		<modulename>Accounts</modulename>
+	</block>
+
+    <block>
+		<testfile>Accounts_0070</testfile>
+		<bugnumber>34670</bugnumber>
+		<reason>accounts_opportunities_select_button has been removed</reason>
+		<modulename>Accounts</modulename>
+	</block>
+
+    <block>
+		<testfile>Accounts_0224</testfile>
+		<bugnumber>34670</bugnumber>
+		<reason>accounts_opportunities_select_button has been removed</reason>
+		<modulename>Accounts</modulename>
+	</block>
+
+    <block>
+		<testfile>Accounts_0225</testfile>
+		<bugnumber>34670</bugnumber>
+		<reason>accounts_opportunities_select_button has been removed</reason>
+		<modulename>Accounts</modulename>
+	</block>
+
+    <block>
+		<testfile>Accounts_0255</testfile>
+		<bugnumber>34670</bugnumber>
+		<reason>accounts_opportunities_select_button has been removed</reason>
+		<modulename>Accounts</modulename>
+	</block>
+
 </soda>
