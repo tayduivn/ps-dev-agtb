@@ -30,7 +30,7 @@
 {{if !empty($displayParams.idName)}}
     {{assign var=idname value=$displayParams.idName}}
 {{/if}}
-
+<span class="dateTime">
 {assign var=date_value value={{sugarvar key='value' string=true}} }
 <input class="date_input" autocomplete="off" type="text" name="{{$idname}}" id="{{$idname}}" value="{$date_value}" title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' size="11" maxlength="10" >
 {{if !$displayParams.hiddeCalendar}}
@@ -39,6 +39,7 @@
 {{if $displayParams.showFormats}}
 &nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
 {{/if}}
+</span>
 {{if !$displayParams.hiddeCalendar}}
 <script type="text/javascript">
 Calendar.setup ({ldelim}

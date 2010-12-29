@@ -53,6 +53,15 @@ border-radius-topleft: 6px;
 
 .list tr.oddListRowS1 td,.list tr.evenListRowS1 td{    text-align: right;}
 
+input.phone {
+text-align: right;	
+}
+.list tr.oddListRowS1 td.phone,.list tr.evenListRowS1 td.phone,
+.detail tr td.phone, input.phone, .olBgClass .phone, table.dateTime, span.dateTime, div.duration
+{
+	direction: ltr;
+}
+
 .search_form .view{    padding-right:10px !important;
 }
 
