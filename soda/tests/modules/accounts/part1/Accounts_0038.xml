@@ -69,7 +69,7 @@
 	</div>
 	<wait />
 	<!--Goto the Note Module to search the record-->
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Calendar" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Calendar&amp;action=index" click="false" />
 	</div>
