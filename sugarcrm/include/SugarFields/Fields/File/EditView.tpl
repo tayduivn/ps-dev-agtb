@@ -72,7 +72,7 @@
 {capture name=imageNameCapture assign=imageName}
 {$fields.{{$vardef.docType}}.value}_image_inline.png
 {/capture}
-<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file=$imageName}"></a>
+<a href="{$fields.{{$vardef.docUrl}}.value}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file=$imageName}" border="0"></a>
 {/if}
 {{/if}}
 {if !$noChange}
