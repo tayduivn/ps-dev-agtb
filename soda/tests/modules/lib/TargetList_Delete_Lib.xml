@@ -2,8 +2,8 @@
 	<puts text="Lib: TargetList_Delete_Lib.xml starting." />
 
 	<!-- Nav to campaigns module. -->
-	<link href="index.php?module=Campaigns&amp;action=index" />
-	<browser assert="Campaigns" />
+	<link href="index.php?module=ProspectLists&amp;action=index" />
+	<browser assert="Target Lists" />
 
 	<link text="View Target Lists" />
 	

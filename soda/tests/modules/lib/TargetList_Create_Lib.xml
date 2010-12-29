@@ -2,9 +2,9 @@
 	<puts text="Lib: TargetList_Create_Lib.xml starting." />
 	<csv file="{@global.scriptsdir}/csvs/campaigns/CampaignAssertText.csv" var="campaign" />
 
-	<link href="index.php?module=Campaigns&amp;action=index" />
+	<link href="index.php?module=ProspectLists&amp;action=index" />
 	<div class="moduleTitle">
-		<link href="index.php?module=Campaigns&amp;action=index" click="false" />
+		<link href="index.php?module=ProspectLists&amp;action=index" click="false" />
 	</div>
 
 	<csv file="{@global.scriptsdir}/modules/lib/TargetList_Create_Lib.csv" 
