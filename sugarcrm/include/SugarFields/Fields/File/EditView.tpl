@@ -148,7 +148,6 @@ enableQS(false);
 {{/if}}
 {else}
 {* No change possible *}
-I'm here.
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <script type="text/javascript">
 YAHOO.util.Event.onDOMReady(function() {ldelim}
