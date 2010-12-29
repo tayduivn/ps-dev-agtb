@@ -34,11 +34,11 @@ if($json->decode(html_entity_decode($_REQUEST['forQuotes']))){
     $returnArray['forQuotes']="company";
 }
 if(isset($_FILES['file_1'])){
-    $uploadTmpDir=$sugar_config['tmp_dir'].'tmp_logo_'.$returnArray['forQuotes'].'_upload';
+    $uploadTmpDir=$sugar_config['upload_dir'].'tmp_logo_'.$returnArray['forQuotes'].'_upload';
     $file_name = $uploadTmpDir .'/'. basename($_FILES['file_1']['name']);
     if(file_exists($uploadTmpDir))
        rmdir_recursive($uploadTmpDir);
-    
+
     mkdir_recursive( $uploadTmpDir,null,true );
     if (!empty($_FILES['file_1']['error'])){
         rmdir_recursive($uploadTmpDir);

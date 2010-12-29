@@ -292,20 +292,19 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 	}
 }
 
-function get_cache_file_name(& $reporter) {
+function get_cache_file_name($reporter) {
     global $current_user, $sugar_config;
 
-    $xml_cache_dir = $sugar_config['tmp_dir'];
+    $xml_cache_dir = sugar_cached("xml/");
     if ($reporter->is_saved_report == true) {
         $filename = $xml_cache_dir . $reporter->saved_report_id . '_saved_chart.xml';
-    }
-    else {
+    } else {
         $filename = $xml_cache_dir . $current_user->id . '_' . time() . '_curr_user_chart.xml';
-}
+    }
 
-    if ( !is_dir(dirname($filename)) )
-        create_cache_directory(str_ireplace($GLOBALS['sugar_config']['cache_dir'],"",$filename));
+    if ( !is_dir(dirname($filename)) ) {
+        create_cache_directory("xml");
+    }
 
     return $filename;
 }
-?>

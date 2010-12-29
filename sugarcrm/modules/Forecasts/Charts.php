@@ -47,7 +47,7 @@ class forecast_charts {
         $currency = new Currency();
         $currency->retrieve($current_user->getPreference('currency'));
 
-        $cache_file_name=$sugar_config['tmp_dir'].'/'.$current_user->getUserPrivGuid().$user->id.$forecast_type.".xml";
+        $cache_file_name = sugar_cached("xml/").$current_user->getUserPrivGuid().$user->id.$forecast_type.".xml";
         $forecast = new Forecast();
         $data=array();
         $d = array();

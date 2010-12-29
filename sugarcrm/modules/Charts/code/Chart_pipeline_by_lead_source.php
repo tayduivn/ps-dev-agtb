@@ -133,7 +133,7 @@ $id_md5 = substr(md5($current_user->id),0,9);
 $seps				= array("-", "/");
 $dates				= array(date($GLOBALS['timedate']->dbDayFormat), $GLOBALS['timedate']->dbDayFormat);
 $dateFileNameSafe	= str_replace($seps, "_", $dates);
-$cache_file_name	= $current_user->getUserPrivGuid()."_pipeline_by_lead_source_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
+$cache_file_name	= sugar_cached("xml/").$current_user->getUserPrivGuid()."_pipeline_by_lead_source_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
 
 $GLOBALS['log']->debug("cache file name is: $cache_file_name");
 global $currentModule,$action;
@@ -169,12 +169,12 @@ global $app_strings;
 </p>
 <?php
 // draw table
-echo "<p align='center'>".$this->gen_xml($datax, $ids, $sugar_config['tmp_dir'].$cache_file_name, $refresh,$current_module_strings)."</p>";
+echo "<p align='center'>".$this->gen_xml($datax, $ids, $cache_file_name, $refresh,$current_module_strings)."</p>";
 echo "<P align='center'><span class='chartFootnote'>".$current_module_strings['LBL_LEAD_SOURCE_FORM_DESC']."</span></P>";
 
-	if (file_exists($sugar_config['tmp_dir'].$cache_file_name)) {
+	if (file_exists($cache_file_name)) {
 global $timedate;
-		$file_date = $timedate->asUser($timedate->fromTimestamp(filemtime($sugar_config['tmp_dir'].$cache_file_name)));
+		$file_date = $timedate->asUser($timedate->fromTimestamp(filemtime($cache_file_name)));
 	}
 	else {
 		$file_date = '';

@@ -64,14 +64,14 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_NEWSLETTER'].": ".$focus->name, true);
 } else{
     echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->name, true);
-}    
-    
+}
+
     $GLOBALS['log']->info("Campaign detail view");
-    
+
     $xtpl=new XTemplate ('modules/Campaigns/TrackDetailView.html');
     $xtpl->assign("MOD", $mod_strings);
     $xtpl->assign("APP", $app_strings);
-    
+
     $xtpl->assign("GRIDLINE", $gridline);
     $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
     $xtpl->assign("ID", $focus->id);
@@ -81,29 +81,29 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     $xtpl->assign("TYPE", $app_list_strings['campaign_type_dom'][$focus->campaign_type]);
     $xtpl->assign("START_DATE", $focus->start_date);
     $xtpl->assign("END_DATE", $focus->end_date);
-    
+
     $xtpl->assign("BUDGET", $focus->budget);
     $xtpl->assign("ACTUAL_COST", $focus->actual_cost);
     $xtpl->assign("EXPECTED_COST", $focus->expected_cost);
     $xtpl->assign("EXPECTED_REVENUE", $focus->expected_revenue);
-    
-    
+
+
     $xtpl->assign("OBJECTIVE", nl2br($focus->objective));
     $xtpl->assign("CONTENT", nl2br($focus->content));
     $xtpl->assign("DATE_MODIFIED", $focus->date_modified);
     $xtpl->assign("DATE_ENTERED", $focus->date_entered);
-    
+
     $xtpl->assign("CREATED_BY", $focus->created_by_name);
     $xtpl->assign("MODIFIED_BY", $focus->modified_by_name);
     $xtpl->assign("TRACKER_URL", $sugar_config['site_url'] . '/campaign_tracker.php?track=' . $focus->tracker_key);
     $xtpl->assign("TRACKER_COUNT", intval($focus->tracker_count));
     $xtpl->assign("TRACKER_TEXT", $focus->tracker_text);
     $xtpl->assign("REFER_URL", $focus->refer_url);
-    
+
     if(isset($focus->campaign_type) && $focus->campaign_type == "Email" || $focus->campaign_type == "NewsLetter") {
         $xtpl->assign("TRACK_DELETE_BUTTON","<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" accessKey=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_KEY']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
     }
-    
+
     	$currency  = new Currency();
     if(isset($focus->currency_id) && !empty($focus->currency_id))
     {
@@ -112,20 +112,20 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     		$xtpl->assign("CURRENCY", $currency->iso4217 .' '.$currency->symbol );
     	}else $xtpl->assign("CURRENCY", $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol() );
     }else{
-    
+
     	$xtpl->assign("CURRENCY", $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol() );
-    
+
     }
     global $current_user;
     if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-    
+
     	$xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$_REQUEST['record']. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>");
     }
-    
+
     $detailView->processListNavigation($xtpl, "CAMPAIGN", $offset, $focus->is_AuditEnabled());
     // adding custom fields:
     require_once('modules/DynamicFields/templates/Files/DetailView.php');
-    
+
     //BEGIN SUGARCRM flav=pro ONLY
     $xtpl->assign("TEAM_NAME", $focus->team_name);
     $xtpl->parse("main.pro");
@@ -135,14 +135,14 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     $selected_marketing_id = '';
     if(isset($focus->campaign_type)){
         //we need to build the dropdown of related marketing values
-        $options_str = "<select onchange= \"this.form.module.value='Campaigns';this.form.action.value='TrackDetailView'; submit()\" name='mkt_id'>";        
+        $options_str = "<select onchange= \"this.form.module.value='Campaigns';this.form.action.value='TrackDetailView'; submit()\" name='mkt_id'>";
         $latest_marketing_id = '';
         if(isset($_REQUEST['mkt_id'])) $selected_marketing_id = $_REQUEST['mkt_id'];
-        
+
         $options_str .= '<option value="all">--None--</option>';
         //query for all email marketing records related to this campaign
         $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
-        
+
         //build string with value(s) retrieved
         $result =$focus->db->query($latest_marketing_query);
         if ($row = $focus->db->fetchByAssoc($result)){
@@ -151,7 +151,7 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
             if($focus->campaign_type == 'NewsLetter') {
             	$latest_marketing_id = $row['id'];
             }
-            
+
             //fill in first option value
             $options_str .= '<option value="'. $row['id'] .'"';
             // if the marketing id is same as selected marketing id, set this option to render as "selected"
@@ -161,7 +161,7 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
             }elseif(empty($selected_marketing_id) && $focus->campaign_type == 'NewsLetter'){
                 $options_str .=' selected>'. $row['name'] .'</option>';
             // if the marketing is not empty, but not same as selected marketing id, then..
-            //.. do not set this option to render as "selected"            
+            //.. do not set this option to render as "selected"
             }else{
                 $options_str .='>'. $row['name'] .'</option>';
             }
@@ -175,10 +175,10 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
                 $options_str .=' selected>'. $row['name'] .'</option>';
             }else{
                 $options_str .=' >'. $row['name'] .'</option>';
-            }    
+            }
          }
          $options_str .="</select>";
-        //populate the dropdown    
+        //populate the dropdown
         $xtpl->assign("FILTER_LABEL", $mod_strings['LBL_FILTER_CHART_BY']);
         $xtpl->assign("MKT_DROP_DOWN",$options_str);
     }
@@ -191,13 +191,13 @@ $cache_file_name_roi    = $current_user->getUserPrivGuid()."_campaign_response_b
 $chart= new campaign_charts();
 
     //if marketing id has been selected, then set "latest_marketing_id" to the selected value
-    //latest marketing id will be passed in to filter the charts and subpanels 
- 
+    //latest marketing id will be passed in to filter the charts and subpanels
+
     if(!empty($selected_marketing_id)){$latest_marketing_id = $selected_marketing_id;}
     if(empty($latest_marketing_id) ||  $latest_marketing_id === 'all'){
-        $xtpl->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,$sugar_config['tmp_dir'].$cache_file_name,true));        
-    }else{         
-        $xtpl->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,$sugar_config['tmp_dir'].$cache_file_name,true,$latest_marketing_id));        
+        $xtpl->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,sugar_cached("xml/").$cache_file_name,true));
+    }else{
+        $xtpl->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,sugar_cached("xml/").$cache_file_name,true,$latest_marketing_id));
     }
 
 //end chart
@@ -215,39 +215,39 @@ $subpanel = new SubPanelTiles($focus, 'Campaigns');
         //get array of layout defs
         $layoutDefsArr= $subpanel->subpanel_definitions->layout_defs;
 
-        //iterate through layout defs for processing of subpanels.  If a marketing Id is specified, then we need to... 
+        //iterate through layout defs for processing of subpanels.  If a marketing Id is specified, then we need to...
         //.. filter the subpanels by it so they match the chart rendered in code above.
         foreach($layoutDefsArr as $subpanels_name => $subpanels){
 
-            //process each subpanel definition 
+            //process each subpanel definition
              foreach($subpanels as $subpane_key => $subpane){
-    
-                    //see if "function_parameters" key exists in subpanel properties array 
-                      if (isset($subpane['function_parameters'])){        
+
+                    //see if "function_parameters" key exists in subpanel properties array
+                      if (isset($subpane['function_parameters'])){
                           //if a function_parameters property key exists, then process further
                           $functionParamsArr = $subpane['function_parameters'];//$panelProperty;
 
-                            //Check the array of function parameters and see if 
+                            //Check the array of function parameters and see if
                             //one exists for market value id.
                             if (isset($functionParamsArr['EMAIL_MARKETING_ID_VALUE'])){
                                 //We found the property, lets fill in the marketing id value...
                                 //.. into the subpanel object, using the keys of the array that..
                                 //.. we used to get to thi property
-                                $subpanel->subpanel_definitions->layout_defs[$subpanels_name][$subpane_key]['function_parameters']['EMAIL_MARKETING_ID_VALUE'] = $latest_marketing_id;                                
+                                $subpanel->subpanel_definitions->layout_defs[$subpanels_name][$subpane_key]['function_parameters']['EMAIL_MARKETING_ID_VALUE'] = $latest_marketing_id;
                             }
                         }//end if (isset($subpane['function_parameters'])){
             }//end foreach($subpanels as $subpane_key => $subpane){
-         
+
         }//_pp($subpanel->subpanel_definitions->layout_defs);
     }//end else
 
 $alltabs=$subpanel->subpanel_definitions->get_available_tabs();
 if (!empty($alltabs)) {
-        
+
     foreach ($alltabs as $name) {
         if ($name == 'prospectlists' || $name=='emailmarketing' || $name == 'tracked_urls') {
-            $subpanel->subpanel_definitions->exclude_tab($name);            
-        }   
+            $subpanel->subpanel_definitions->exclude_tab($name);
+        }
     }
 }
 echo $subpanel->display();

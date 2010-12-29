@@ -2404,3 +2404,13 @@ function enableSugarFeeds()
 
     check_logic_hook_file('Users','after_login', array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php', 'SugarFeedFlush', 'flushStaleEntries'));
 }
+
+function create_writable_dir($dirname)
+{
+    if ((is_dir($dirname)) || @sugar_mkdir($dirname,0555)) {
+        $ok = make_writable($dirname);
+    }
+    if(empty($ok)) {
+        installLog("ERROR: Cannot create writable dir $dirname");
+    }
+}

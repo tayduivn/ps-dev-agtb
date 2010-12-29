@@ -574,14 +574,14 @@ EOJS;
 
 		array_push($pages,$newPage);
 
-			
-		//check to see whether the preference is too large to store 
+
+		//check to see whether the preference is too large to store
 		if($current_user->isPreferenceSizeTooLarge($this->type)){
 			//user preference is too large, do not attempt to store.  echo error string and return.  This will be processed by mySugar.js
 			echo 'userpref_error';
 			return false;
 		}
-		//store preference and echo guid		
+		//store preference and echo guid
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
 		$newPagesPref = $current_user->getPreference('pages', $this->type);
@@ -684,7 +684,7 @@ EOJS;
 	    $chartStyleCSS = SugarThemeRegistry::current()->getCSSURL('chart.css');
 	    $chartColorsXML = SugarThemeRegistry::current()->getImageURL('sugarColors.xml');
 
-	    $chartStringsXML = $sugar_config['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
+	    $chartStringsXML = sugar_cached("xml/").'chart_strings.' . $current_language .'.lang.xml';
         if (!file_exists($chartStringsXML)) {
 			require_once('include/SugarCharts/SugarChart.php');
 			$chart = new SugarChart;
@@ -722,7 +722,7 @@ EOJS;
 
 							$chartsArray[$id] = array();
 							$chartsArray[$id]['id'] = $id;
-							$chartsArray[$id]['xmlFile'] = $sugar_config['tmp_dir'] . $dashlets[$id]['reportId'] . '_saved_chart.xml';
+							$chartsArray[$id]['xmlFile'] = sugar_cached("xml/") . $dashlets[$id]['reportId'] . '_saved_chart.xml';
 							$chartsArray[$id]['width'] = '100%';
 							$chartsArray[$id]['height'] = '480';
 							$chartsArray[$id]['styleSheet'] = $chartStyleCSS;
