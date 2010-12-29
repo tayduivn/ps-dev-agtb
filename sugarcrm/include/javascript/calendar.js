@@ -104,18 +104,36 @@ Calendar.setup = function (params) {
                     if (calendar.getSelectedDates().length > 0) {
 
                         var selDate = calendar.getSelectedDates()[0];
-                        var dateArray = new Array();
-                        dateArray[monthPos] = selDate.getMonth() + 1; //Add one for month value
-                        dateArray[dayPos] = selDate.getDate();
-                        dateArray[yearPos] = selDate.getFullYear();
+                        var monthVal = selDate.getMonth() + 1; //Add one for month value
+                        var dateVal = selDate.getDate();
+                        var yearVal = selDate.getFullYear();
                         
                         selDate = '';
-                        for(x in dateArray)
-                        {
-                        	selDate += date_field_delimiter + dateArray[x];
+                        if(monthPos == 0) {
+                          selDate = monthVal;
+                        } else if(dayPos == 0) {
+                          selDate = dateVal;
+                        } else {
+                          selDate = yearVal;
                         }
-                       
-                        Dom.get(inputField).value =  selDate.substr(1);
+                        
+                        if(monthPos == 1) {
+                          selDate += date_field_delimiter + monthVal;
+                        } else if(dayPos == 1) {
+                          selDate += date_field_delimiter + dateVal;
+                        } else {
+                          selDate += date_field_delimiter + yearVal;
+                        }
+                        
+                        if(monthPos == 2) {
+                          selDate += date_field_delimiter + monthVal;
+                        } else if(dayPos == 2) {
+                          selDate += date_field_delimiter + dateVal;                       	
+                        } else {
+                          selDate += date_field_delimiter + yearVal;
+                        }
+
+                        Dom.get(inputField).value =  selDate;
                         
                         if(params.comboObject)
                         {

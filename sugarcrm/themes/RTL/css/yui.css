@@ -1238,6 +1238,7 @@ p#clear {
 
  .yui-dialog .ft .button-group {
     display: block;
+    clear: both;
     text-align: right;
 }
 
