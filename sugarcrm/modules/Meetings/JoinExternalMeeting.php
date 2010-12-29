@@ -37,7 +37,7 @@ $row = $db->fetchByAssoc($ret);
 $meetingBean = loadBean('Meetings');
 $meetingBean->retrieve($_REQUEST['meeting_id']);
 
-if ( isset($row['id']) ) {
+if ( isset($row['id']) || $meetingBean->assigned_user_id == $GLOBALS['current_user']->id) {
     // Everything looks good, send them on their way.
     if ( $_REQUEST['host_meeting'] == '1' ) {
         SugarApplication::redirect($meetingBean->host_url);
