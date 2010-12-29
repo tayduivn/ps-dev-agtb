@@ -125,7 +125,7 @@
 		</table>
 
 		<browser
-			url="{@global.url}?module=Administration&amp;action=SaveTabs&amp;enabled_tabs=%5B%22Home%22%2C%22Products%22%2C%22Bugs%22%2C%22KBDocuments%22%2C%22Contracts%22%2C%22Project%22%2C%22Accounts%22%2C%22Contacts%22%2C%22Opportunities%22%2C%22Leads%22%2C%22Notes%22%2C%22Meetings%22%2C%22Calls%22%2C%22Tasks%22%2C%22Calendar%22%2C%22Reports%22%2C%22Documents%22%2C%22Emails%22%2C%22Campaigns%22%2C%22Quotes%22%2C%22Forecasts%22%2C%22Cases%22%5D" />
+			url="{@global.url}?module=Administration&amp;action=SaveTabs&amp;enabled_tabs=%5B%22Home%22%2C%22Products%22%2C%22Bugs%22%2C%22KBDocuments%22%2C%22Contracts%22%2C%22Project%22%2C%22Accounts%22%2C%22Contacts%22%2C%22Opportunities%22%2C%22Leads%22%2C%22Notes%22%2C%22Meetings%22%2C%22Calls%22%2C%22Tasks%22%2C%22Calendar%22%2C%22Prospects%22%2C%22ProspectLists%22%2C%22Reports%22%2C%22Documents%22%2C%22Emails%22%2C%22Campaigns%22%2C%22Quotes%22%2C%22Forecasts%22%2C%22Cases%22%5D" />
 
 		<!--
 			Turn off auto-generated passwords: Note: This is currently disabled until
