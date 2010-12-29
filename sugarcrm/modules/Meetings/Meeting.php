@@ -442,8 +442,9 @@ class Meeting extends SugarBean {
 		$meeting_fields['PARENT_NAME'] = $this->parent_name;
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
-		
-        if(!empty($this->host_url)) {
+
+        $oneHourAgo = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time()-3600);
+        if(!empty($this->host_url) && $date_db	>= $oneHourAgo) {
             if($this->assigned_user_id == $GLOBALS['current_user']->id){
                 $join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"');
                 $meeting_fields['OBJECT_IMAGE_ICON'] = 'start_meeting_inline';
