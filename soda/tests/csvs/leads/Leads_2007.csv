@@ -1,2 +1,2 @@
-Appointmentsname,Appointmentsjscal_field,Appointmentstime_start,Appointmentsdescription
-meeting2007,11/11/2010,16:00,Appointmentsdescription
+Appointmentsname,Appointmentsjscal_field,Appointmentstime_start_hour,Appointmentstime_start_minute,Appointmentsdescription
+meeting2007,2010-12-12,16,00,Appointmentsdescription

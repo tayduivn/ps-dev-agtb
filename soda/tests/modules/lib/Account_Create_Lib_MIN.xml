@@ -16,5 +16,6 @@
 		<browser assert="{@account_record.name} {@user.name} {@stamp}" />
 	</csv>
 	<var var="pre_account_name" set="{@account_record.name} {@user.name} {@stamp}" />
+	<var var="pre_account_email" set="{@stamp}{@account_record.emailAddress0}" />
 	<puts text="Lib: Account_Create_Lib_MIN.xml finished." />
 </soda>
