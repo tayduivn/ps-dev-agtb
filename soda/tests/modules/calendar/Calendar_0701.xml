@@ -37,7 +37,7 @@
     
 	<div id="list_subpanel_users">
 		<link text="qauser" exist="true" click="false" />
-		<browser assert="(1 - 1 of 1)" />
+		<browser assert="(1 - 2 of 2)" />
 	</div>
 
 	<!--Delete the meeting record/-->
