@@ -104,7 +104,7 @@ class="yui-navset detailview_tabs"
 				   &nbsp;
 				{{/if}}
 			</td>
-			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}}>
+			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}} {if preg_match('/PHONE/', {{$fields[$colData.field.name].vname}})}class="phone"{/if}>
 				{{if $colData.field.customCode || $colData.field.assign}}
 					{counter name="panelFieldCount"}
 					{{sugar_evalcolumn var=$colData.field colData=$colData}}
