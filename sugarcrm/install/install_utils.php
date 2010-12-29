@@ -1417,7 +1417,7 @@ function make_writable($file)
             // add user writable permission
             $new_fileperms = $original_fileperms | 0x0080;
             @sugar_chmod($file, $new_fileperms);
-
+            clearstatcache();
             if(is_writable($file))
             {
                 $ret_val = true;
@@ -1427,7 +1427,7 @@ function make_writable($file)
                 // add group writable permission
                 $new_fileperms = $original_fileperms | 0x0010;
                 @chmod($file, $new_fileperms);
-
+                clearstatcache();
                 if(is_writable($file))
                 {
                     $ret_val = true;
@@ -1437,7 +1437,7 @@ function make_writable($file)
                     // add world writable permission
                     $new_fileperms = $original_fileperms | 0x0002;
                     @chmod($file, $new_fileperms);
-
+                    clearstatcache();
                     if(is_writable($file))
                     {
                         $ret_val = true;
@@ -1747,7 +1747,7 @@ function pullSilentInstallVarsIntoSession() {
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
-                     'export_delimiter');
+                     'export_delimiter', 'cache_dir');
     copyFromArray($sugar_config_si, $needles, $derived);
     $all_config_vars = array_merge( $config_subset, $sugar_config_si, $derived );
 
