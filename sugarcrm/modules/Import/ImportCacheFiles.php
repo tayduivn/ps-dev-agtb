@@ -34,9 +34,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 class ImportCacheFiles
 {
+    /**
+     * Get import directory name
+     * @return string
+     */
+    public static function getImportDir()
+    {
+        return $sugar_config['upload_dir']."import";
+    }
+
     /**
      * Returns the filename for a temporary file
      *
@@ -48,16 +57,17 @@ class ImportCacheFiles
         )
     {
         global $sugar_config, $current_user;
-        
-        if( !is_dir($sugar_config['import_dir']) )
-            create_cache_directory(preg_replace('/^cache\//','',$sugar_config['import_dir']));
-        
-        if( !is_writable($sugar_config['import_dir']) )
+        $importdir = self::getImportDir();
+        if( !is_dir($importdir)) {
+            sugar_mkdir($importdir, 0775, true);
+        }
+
+        if( !is_writable($importdir) )
             return false;
-        
-        return "{$sugar_config['import_dir']}{$type}_{$current_user->id}.csv";        
+
+        return "$importdir/{$type}_{$current_user->id}.csv";
     }
-    
+
     /**
      * Returns the duplicates filename
      *
@@ -67,7 +77,7 @@ class ImportCacheFiles
     {
         return self::_createFileName("dupes");
     }
-    
+
     /**
      * Returns the error filename
      *
@@ -77,7 +87,7 @@ class ImportCacheFiles
     {
         return self::_createFileName("error");
     }
-    
+
     /**
      * Returns the error records filename
      *
@@ -87,7 +97,7 @@ class ImportCacheFiles
     {
         return self::_createFileName("errorrecords");
     }
-    
+
     /**
      * Returns the status filename
      *
@@ -97,19 +107,19 @@ class ImportCacheFiles
     {
         return self::_createFileName("status");
     }
-    
+
     /**
-     * Clears out all cache files in the $sugar_config['import_dir'] directory
+     * Clears out all cache files in the import directory
      */
     public static function clearCacheFiles()
     {
         global $sugar_config;
-        
-        if ( is_dir($sugar_config['import_dir']) ) {
-            $files = dir($sugar_config['import_dir']);
+        $importdir = self::getImportDir();
+        if ( is_dir($importdir) ) {
+            $files = dir($importdir);
             while (false !== ($file = $files->read())) {
                 if ( !is_dir($file) && stristr($file,'.csv') )
-                    unlink($sugar_config['import_dir'].$file);
+                    unlink("$importdir/$file");
             }
         }
     }

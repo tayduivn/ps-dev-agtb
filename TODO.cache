@@ -1,5 +1,3 @@
-- Fix tmp_dir to allow absolute paths
-- Fix import_dir to allow absolute paths
 - Fix upload_dir to allow absolute paths
 - Move uploads to separate directory
 - Move inline images to uploads

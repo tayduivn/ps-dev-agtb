@@ -989,7 +989,6 @@ function handleSugarConfig() {
     $sugar_config['default_email_client']           = 'sugar';
     $sugar_config['default_email_editor']           = 'html';
     $sugar_config['host_name']                      = $setup_site_host_name;
-    $sugar_config['import_dir']                 = $cache_dir.'import/';
     $sugar_config['js_custom_version']              = '';
     $sugar_config['use_real_names']                 = true;
     $sugar_config['log_dir']                        = $setup_site_log_dir;
@@ -1010,7 +1009,8 @@ function handleSugarConfig() {
     $sugar_config['session_dir']                    = $setup_site_session_path;
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
-    $sugar_config['upload_dir']                 = $cache_dir.'upload/';
+    $sugar_config['upload_dir']                     = $cache_dir.'upload/';
+    $sugar_config['import_dir']                     = $sugar_config['upload_dir'] .'import/';
     $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
 //BEGIN SUGARCRM flav=com ONLY
     if( isset($_SESSION['setup_site_sugarbeet_anonymous_stats']) ){
