@@ -5,6 +5,9 @@ require_once 'include/dir_inc.php';
 class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_themeDef;
+    /**
+     * @var SugarTheme
+     */
     private $_themeObject;
     private $_themeDefChild;
     private $_themeObjectChild;
@@ -53,11 +56,11 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_themeObject->getCSSURL("style.css");
         $themename = $this->_themeObject->__toString();
-        $pathname = sugar_cached("themes/{$themename}/css/style.css");
+        $pathname = "themes/{$themename}/css/style.css";
 
         // test if it's in the local cache
         $this->assertTrue(isset($this->_themeObject->_cssCache['style.css']));
-        $this->assertEquals($this->_themeObject->_cssCache['style.css'],$pathname);
+        $this->assertEquals($pathname, $this->_themeObject->_cssCache['style.css']);
 
         // destroy object
         $this->_themeObject->__destruct();
@@ -69,7 +72,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
 
         // should still be in local cache
         $this->assertTrue(isset($this->_themeObject->_cssCache['style.css']));
-        $this->assertEquals($this->_themeObject->_cssCache['style.css'],$pathname);
+        $this->assertEquals($pathname, $this->_themeObject->_cssCache['style.css']);
 
         // now, let's tell the theme we want to clear the cache on destroy
         $this->_themeObject->clearCache();

@@ -757,9 +757,9 @@ EOHTML;
         $defaultFileName = $this->getDefaultJSPath().'/'.$jsFileName;
         if (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
-                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '')
-            $jsFileContents .= file_get_contents($filename);
-        else {
+                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '') {
+           $jsFileContents .= file_get_contents($filename);
+       } else {
             if (sugar_is_file($defaultFileName))
                 $jsFileContents .= file_get_contents($defaultFileName);
             if (sugar_is_file('custom/'.$defaultFileName))
@@ -781,6 +781,7 @@ EOHTML;
         if ( !inDeveloperMode() && !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
             $jsFileContents = JSMin::minify($jsFileContents);
             $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
+            $fullFileName = str_replace('.js','-min.js',$fullFileName);
         }
 
         // now write the js to cache
@@ -791,7 +792,7 @@ EOHTML;
         if ( $returnURL )
             return getJSPath("cache/".$fullFileName);
 
-        return sugar_cached($jsFilePath);
+        return sugar_cached($fullFileName);
     }
 
     /**
