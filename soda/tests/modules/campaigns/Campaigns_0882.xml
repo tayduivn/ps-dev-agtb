@@ -9,13 +9,6 @@
 	</div>
 
 	<div id="Campaigns">
-		<link text="View Target Lists" />
-	</div>
-	<div class="moduleTitle">
-		<link href="index.php?module=ProspectLists&amp;action=index" click="false" />
-	</div>
-
-	<div id="Campaigns">
 		<link text="View Campaigns" />
 	</div>
 	<div class="moduleTitle">
