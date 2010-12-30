@@ -47,13 +47,11 @@
 		<link href="index.php?module=Bugs&amp;action=index" click="false" />
 	</div>
 
-	<!-- Reset to basic search form. -->
+	<!-- Saved search delete implicitly reverts to basic search. -->
 	<button id="ss_delete" alert="true" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Bugs&amp;action=index" click="false" />
 	</div>
-
-	<link text="Basic Search" />
 	<wait timeout="1" />
 	<button id="search_form_submit" />
 
