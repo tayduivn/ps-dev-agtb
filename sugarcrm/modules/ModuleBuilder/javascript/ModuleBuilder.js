@@ -355,6 +355,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		state: {
 			isDirty: false,
 			saving: false,
+            hideFailedMesage: false,
 			intended_view: {
 				url: null,
 				successCall: null
@@ -620,7 +621,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			document.location.href = 'index.php?module=ModuleBuilder&action=index&type=' + type;
 		},
 		failed: function(o){
-			ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_FAILED_DATA'), 2000);
+            if(!ModuleBuilder.state.hideFailedMesage){
+                ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_FAILED_DATA'), 2000);
+            }
 		},
 		//Wizard Functions
 		buttonDown: function(button, name, list){
@@ -848,6 +851,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			);
 			
 			ModuleBuilder.failed = function(){};
+            ModuleBuilder.state.hideFailedMesage = true;
 			//Reload the page
 			window.setTimeout("window.location.assign(window.location.href.split('#')[0])", 2000);
 			
