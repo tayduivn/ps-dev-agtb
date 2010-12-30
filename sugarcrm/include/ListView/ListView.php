@@ -521,7 +521,7 @@ function setDisplayHeaderAndFooter($bool) {
 }
 
 
-function getOrderBy($varName,$defaultOrderBy='', $force_sortorder='') {
+function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     $sortBy = $this->getSessionVariable($varName, "ORDER_BY") ;
 
     if(empty($sortBy)) {
@@ -536,7 +536,7 @@ function getOrderBy($varName,$defaultOrderBy='', $force_sortorder='') {
     if($sortBy == 'amount_usdollar') {
         $sortBy = 'amount_usdollar*1';
     }
-
+    
     $desc = $this->getSessionVariable($varName, $sortBy."S");
 
     if(empty($desc))
@@ -891,18 +891,22 @@ function getUserVariable($localVarName, $varName) {
             }
         }
 
-
-        if(isset($subpanel_def->_instance_properties['sort_by']))
+        if (isset($subpanel_def->_instance_properties['sort_by'])) {
             $this->query_orderby = $subpanel_def->_instance_properties['sort_by'];
-        else
+        } else {
             $this->query_orderby = 'id';
-
+        }
+		
         $this->getOrderBy($html_var,$this->query_orderby, $this->sort_order);
 
         $_SESSION['last_sub' .$this->subpanel_module. '_order'] = $this->sort_order;
         $_SESSION['last_sub' .$this->subpanel_module. '_url'] = $this->getBaseURL($html_var);
 
-
+		// Bug 8139 - Add special case for people type modules sorting on 'name'
+		if (in_array($subpanel_def->_instance_properties['module'], array('Contacts')) && $this->sortby == 'name') {
+			$this->sortby = 'last_name';
+		}
+	    
         if(!empty($this->response)){
             $response =& $this->response;
             echo 'cached';
