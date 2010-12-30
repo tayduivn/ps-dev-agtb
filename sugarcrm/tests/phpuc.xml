@@ -39,6 +39,7 @@
                 <directory suffix=".php">../include/phpmailer</directory>
                 <file>../include/Popups/Popup_picker.php</file>
                 <directory suffix=".php">../include/reCaptcha</directory>
+                <file>../include/SearchForm/SearchForm.php</file>
                 <directory suffix=".php">../include/Smarty</directory>
                 <file>../include/SubPanel/SubPanelViewer.php</file>
                 <directory suffix=".php">../include/SugarObjects/implements/assignable</directory>
