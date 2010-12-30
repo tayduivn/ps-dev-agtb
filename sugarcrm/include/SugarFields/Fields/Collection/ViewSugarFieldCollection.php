@@ -103,7 +103,6 @@ class ViewSugarFieldCollection{
             }
         }
         else{
-            display_stack_trace();
             die("the relationship is not a many-to-many");
         }
     }

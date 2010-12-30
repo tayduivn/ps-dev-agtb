@@ -43,6 +43,7 @@
                 <file>../include/SearchForm/SearchForm.php</file>
                 <directory suffix=".php">../include/Smarty</directory>
                 <file>../include/SubPanel/SubPanelViewer.php</file>
+                <file>../include/SugarFields/Fields/Collection/view.sugarfieldcollection.php</file>
                 <directory suffix=".php">../include/SugarObjects/implements/assignable</directory>
                 <directory suffix=".php">../include/SugarObjects/implements/team_security</directory>
                 <directory suffix=".php">../include/SugarObjects/templates/basic/Dashlets/</directory>
