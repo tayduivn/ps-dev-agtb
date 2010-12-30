@@ -40,6 +40,7 @@
                 <file>../include/Popups/Popup_picker.php</file>
                 <directory suffix=".php">../include/reCaptcha</directory>
                 <directory suffix=".php">../include/Smarty</directory>
+                <file>../include/SubPanel/SubPanelViewer.php</file>
                 <directory suffix=".php">../include/SugarObjects/implements/assignable</directory>
                 <directory suffix=".php">../include/SugarObjects/implements/team_security</directory>
                 <directory suffix=".php">../include/SugarObjects/templates/basic/Dashlets/</directory>
