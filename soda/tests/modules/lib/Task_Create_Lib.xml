@@ -2,7 +2,7 @@
 	<puts text="Lib: Task_Create_Lib.xml starting." />
 
 	<timestamp />
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Tasks" />
 	<wait timeout="3" />
 	<link text="Create Task" />
 	<wait timeout="3" />

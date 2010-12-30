@@ -3,8 +3,8 @@
     
          
          <!--create note record-->
-         <link id='moduleTab_Activities'/>
-	 <browser assert="Task List"/>
+         <link id='moduleTab_Notes'/>
+	 <browser assert="Notes"/>
          <link text='Create Note or Add Attachment'/>
 
          <csv file="{@global.scriptsdir}/modules/lib/Note_Create_Lib.csv" var="note_record_0489">

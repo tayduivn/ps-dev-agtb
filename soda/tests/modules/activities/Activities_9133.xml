@@ -6,8 +6,8 @@
 	<puts text="Test: Activities_9133.xml starting." />
 
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Tasks" />
+	<browser assert="Tasks" />
 	<link text="Create Task" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Task_Create_Lib.csv" var="task_record">

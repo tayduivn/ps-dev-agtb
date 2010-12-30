@@ -20,7 +20,7 @@
 	<button id="saveBtn" />
 
 
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Meetings" />
 
 	<link text="Schedule Meeting" />
 	<textfield id="name" set="Rescheduled Meeting" />

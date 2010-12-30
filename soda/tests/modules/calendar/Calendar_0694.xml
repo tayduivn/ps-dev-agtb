@@ -4,11 +4,8 @@
 	<csv file="{@global.scriptsdir}/csvs/calendar/CalendarAssertText.csv" var="calendar" />
 	<timestamp />
 
-	<link id="moduleTab_Activities" />
-
-	<div id="Activities">
-		<link text="Schedule Meeting" />
-	</div>
+	<link id="moduleTab_Meetings" />
+    <link text="Schedule Meeting" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.csv" var="meeting_record">
 		<textfield id="name" set="{@meeting_record.name} {@user.name} {@stamp}" />

@@ -1,10 +1,7 @@
 <soda>
 	<puts text="Test: Activities_10062 starting." />
 	
-	<link id="moduleTab_Activities" />
-	<div class="moduleTitle">
-		<link href="index.php?module=Calendar&amp;action=index" click="false" />
-	</div>
+	<link id="moduleTab_Notes" />
 	<link text="Create Note or Add Attachment" />
 
 	<csv file="{@global.scriptsdir}/csvs/activities/Activities_10062.csv" var="note_record">

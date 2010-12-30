@@ -7,7 +7,7 @@
 	<script file="{@global.scriptsdir}/modules/lib/Task_Create_Lib.xml" />
 
 	<!--Go to Calendar -->
-        <link id="moduleTab_Activities" />
+        <link id="moduleTab_Calendar" />
 	<link text="View Calendar" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Calendar&amp;action=index" click="false" />

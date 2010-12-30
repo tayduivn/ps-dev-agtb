@@ -23,7 +23,7 @@
         </div>
         <button value='Save'/>
         <!--schedule meeting-->
-        <link id='moduleTab_Activities'/>
+        <link id='moduleTab_Calls'/>
         <link text='Log Call'/>
         <form id='EditView'>
             <textfield name='name' set='{@User7980.subject}'/>

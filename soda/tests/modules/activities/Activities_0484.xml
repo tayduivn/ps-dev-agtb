@@ -1,8 +1,8 @@
 <soda>
         <puts text='-------------Activities_0484:Search Task_Verify that search conditions can be cleared.-------------'/>
         
-        <link id='moduleTab_Activities'/>
-	<browser assert="Task List"/>
+        <link id='moduleTab_Tasks'/>
+	<browser assert="Tasks"/>
         <link text='View Tasks'/>
 
         <button id="search_form_clear"/>

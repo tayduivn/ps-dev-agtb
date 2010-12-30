@@ -4,7 +4,7 @@
 	<csv file="{@global.scriptsdir}/csvs/calendar/CalendarAssertText.csv" var="calendar" />
 	<timestamp />
 
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Calendar" />
 	<link text="09:00" />
 
 	<table id="daily_cal_table">

@@ -8,8 +8,8 @@
 	<!--create task record-->
 	<script file="{@global.scriptsdir}/modules/lib/Call_Create_Lib.xml" />
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Calls" />
+	<browser assert="Calls" />
 	<link text="View Calls" />
 	<button id="search_form_clear" />
 	<textfield id="name_basic" set="{@pre_call_name}" />
@@ -20,7 +20,7 @@
 
 	<browser assert="{@pre_call_name}" />
 	<link text="Print" click="false" />
-	<link id="moduleTab_Activities" alert="true" />
+	<link id="moduleTab_Calls" alert="true" />
 	<!--delete task record-->
 	<script file="{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml" />
 	<puts text="Test: Activities_0732.xml finisheds" />

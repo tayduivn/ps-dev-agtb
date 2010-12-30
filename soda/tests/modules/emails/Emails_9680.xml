@@ -41,7 +41,7 @@
 	</table>
 	
 	<!--check note record-->
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Notes" />
 	<link text="View Notes" />
 	<div id="Notesbasic_searchSearchForm" >
     <textfield id="name_basic" set="Contacts.csv" />

@@ -1,7 +1,7 @@
 <soda>
 	<puts text="Lib: Call_Create_Lib.xml starting." />
 	<timestamp />
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Calls" />
 	<link text="Log Call" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Call_Create_Lib.csv" var="call_record">

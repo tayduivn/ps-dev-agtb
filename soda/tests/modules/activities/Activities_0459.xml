@@ -4,8 +4,8 @@
     <!--create call record-->
     <script file='{@global.scriptsdir}/modules/lib/Call_Create_Lib.xml'/>
 
-    <link id='moduleTab_Activities'/>
-    <browser assert="Activities"/>
+    <link id='moduleTab_Calls'/>
+    <browser assert="Calls"/>
     <link text="View Calls" />
     <button id="search_form_clear"/>
     <textfield id='name_basic' set='{@pre_call_name}'/>

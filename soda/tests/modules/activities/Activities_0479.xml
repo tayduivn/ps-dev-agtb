@@ -4,8 +4,8 @@
         <!--Create a account record-->
         <script file='{@global.scriptsdir}/modules/lib/Task_Create_Lib.xml'/>
         
-        <link id='moduleTab_Activities'/>
-	<browser assert="Task List"/>
+        <link id='moduleTab_Tasks'/>
+	<browser assert="Tasks"/>
         <link text='View Tasks'/>
         
         <button id="search_form_clear"/>

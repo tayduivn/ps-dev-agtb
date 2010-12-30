@@ -4,9 +4,8 @@
         <!--create call record-->
         <script file='{@global.scriptsdir}/modules/lib/Note_Create_Lib.xml'/>    
         
-        <link id='moduleTab_Activities'/>
-	<browser assert="Task List"/>
-        <link text='View Notes'/>
+        <link id='moduleTab_Notes'/>
+	    <browser assert="Notes"/>
         
         <button id="search_form_clear"/>
         <textfield id='name_basic' set='{@pre_note_name}'/>

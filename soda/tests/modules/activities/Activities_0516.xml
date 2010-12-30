@@ -7,8 +7,8 @@
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
 
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Notes" />
+	<browser assert="Notes" />
 	<link text="Create Note or Add Attachment" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Note_Create_Lib.csv" var="note_record_0790">
@@ -37,7 +37,7 @@
 		<wait timeout="5" />
 		<browser assert="{@note_record_0790.name}" />
 	</csv>
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Meetings" />
 	<link text="View Meetings" />
 
 	<button id="search_form_clear" />

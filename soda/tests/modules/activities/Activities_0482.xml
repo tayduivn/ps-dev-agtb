@@ -6,8 +6,8 @@
         
         
         <!--Create another task record-->
-        <link id='moduleTab_Activities'/>
-	<browser assert="Task List"/>
+        <link id='moduleTab_Tasks'/>
+	<browser assert="Tasks"/>
         <link text='Create Task'/>
         <csv file="{@global.scriptsdir}/modules/lib/Task_Create_Lib.csv" var="activity_record_0482">
                 <textfield id='name' set='{@activity_record_0482.name} {@user.name} {@stamp}'/>
@@ -20,8 +20,8 @@
         <wait timeout='5'/>
         
         <!--search-->
-        <link id='moduleTab_Activities'/>
-	<browser assert="Task List"/>
+        <link id='moduleTab_Tasks'/>
+	<browser assert="Tasks"/>
         <link text='View Tasks'/>
 
         <button id="search_form_clear"/>
@@ -32,8 +32,8 @@
         </table>
         
         <!--search-->
-        <link id='moduleTab_Activities'/>
-	<browser assert="Task List"/>
+        <link id='moduleTab_Tasks'/>
+	<browser assert="Tasks"/>
         <link text='View Tasks'/>
         <button id="search_form_clear"/>
         <button id="search_form_submit"/>        

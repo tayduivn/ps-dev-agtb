@@ -11,8 +11,8 @@
 	<var var="second_note" set="{@pre_note_name}" />
 	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Notes" />
+	<browser assert="Notes" />
 	<link text="View Notes" />
 
 	<button id="search_form_clear" />
@@ -31,8 +31,8 @@
 	<button id="update_button" alert="true" />
 	<wait timeout="3" />
 	<!--first note record-->
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Notes" />
+	<browser assert="Notes" />
 	<link text="View Notes" />
 
 	<textfield id="name_basic" set="{@first_note}" />

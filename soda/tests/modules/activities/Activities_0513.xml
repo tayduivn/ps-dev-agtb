@@ -5,8 +5,8 @@
 	-->
 	<puts text="Test: Activities_0513.xml starting" />
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Meetings" />
+	<browser assert="Meetings" />
 	<link text="Schedule Meeting" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.csv" var="meeting_record_0513">

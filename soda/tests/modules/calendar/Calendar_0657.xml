@@ -3,7 +3,7 @@
 	<puts text="Test: Calendar_0657.xml starting." />
 	<csv file="{@global.scriptsdir}/csvs/calendar/CalendarAssertText.csv" var="calendar" />
 
-        <link id="moduleTab_Activities" />
+        <link id="moduleTab_Calendar" />
 	<link text="View Calendar" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Calendar&amp;action=index" click="false" />

@@ -3,7 +3,7 @@
 	<puts text="Test: Calendar_0665.xml starting." />
 	<csv file="{@global.scriptsdir}/csvs/calendar/CalendarAssertText.csv" var="calendar" />
 
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Calls" />
 	
 	<link text="View Calls" />
 	<div class="moduleTitle">

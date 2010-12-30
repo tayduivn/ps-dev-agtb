@@ -6,8 +6,8 @@
 	<script file="{@global.scriptsdir}/modules/lib/Contact_Create_Lib.xml" />
 	<timestamp />
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Tasks" />
+	<browser assert="Tasks" />
 	<link text="Create Task" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Task_Create_Lib.csv" var="activitiy_record_0499">
@@ -58,8 +58,8 @@
 
 
 	<!--Search the record-->
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Tasks" />
+	<browser assert="Tasks" />
 	<link text="View Tasks" />
 	<wait timeout="3" />
 	<button id="search_form_clear" />

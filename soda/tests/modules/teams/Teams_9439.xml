@@ -4,7 +4,7 @@
 	<timestamp />
 
 	<!--Go to modules that can edit team info-->        
-	<link id="moduleTab_Activities" />
+	<link id="moduleTab_Calendar" />
 	<div id="content">
 		<browser assert="Calendar" />
 	</div>

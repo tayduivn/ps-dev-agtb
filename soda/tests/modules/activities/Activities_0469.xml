@@ -3,8 +3,8 @@
 	<puts text="Test: Activities_0469.xml starting" />
 
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Notes" />
+	<browser assert="Notes" />
 	<link text="View Notes" />
 
 	<link text="Advanced Search" />

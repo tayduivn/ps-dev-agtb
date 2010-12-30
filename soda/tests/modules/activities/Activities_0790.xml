@@ -6,8 +6,8 @@
 	<script file="{@global.scriptsdir}/modules/lib/Call_Create_Lib.xml" />
 
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
+	<link id="moduleTab_Notes" />
+	<browser assert="Notes" />
 	<link text="Create Note or Add Attachment" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Note_Create_Lib.csv" var="note_record_0790">
@@ -34,8 +34,8 @@
 
 		<browser assert="{@note_record_0790.name}" />
 	</csv>
-	<link id="moduleTab_Activities" />
-	<link text="View Calls" />
+	<link id="moduleTab_Calls" />
+	<link text="Calls" />
 
 	<button id="search_form_clear" />
 	<textfield id="name_basic" set="{@pre_call_name}" />

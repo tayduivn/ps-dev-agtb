@@ -2,8 +2,8 @@
          <puts text='------------Activities_0498:Create Note_Verify that No Due Date and No Start Date dropdown list are not displayed in the sub-panel of task list view.----'/>    
          
          
-         <link id='moduleTab_Activities'/>
-	 <browser assert="Task List"/>
+         <link id='moduleTab_Notes'/>
+	 <browser assert="Notes"/>
          <link text='View Notes'/>
          
          <link id="actions_link" />
