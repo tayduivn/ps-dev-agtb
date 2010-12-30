@@ -21,6 +21,7 @@
             <directory suffix=".php">../ModuleInstall</directory>
             <exclude>
                 <directory suffix=".php">../include/controller</directory>
+                <file>../include/EditView/EditView.php</file>
                 <directory suffix=".php">../include/Expressions/metadata</directory>
                 <directory suffix=".php">../include/Expressions/javascript</directory>
                 <file>../include/Expressions/index.php</file>
