@@ -72,6 +72,11 @@ if($focus->status == 'draft') {
 	//die();
 }
 
+// ACL Access Check
+if (!$focus->ACLAccess('DetailView')){
+	ACLController::displayNoAccess(true);
+	sugar_cleanup(true);
+}
 
 //needed when creating a new email with default values passed in
 if (isset($_REQUEST['contact_name']) && is_null($focus->contact_name)) {
@@ -110,6 +115,7 @@ if (!empty($focus->status)) {
 } elseif (!empty($_REQUEST['type'])) {
 	$email_type = $_REQUEST['type'];
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	OUTPUT
