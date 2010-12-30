@@ -20,17 +20,24 @@
             <file>../install/install_utils.php</file>
             <directory suffix=".php">../ModuleInstall</directory>
             <exclude>
+                <directory suffix=".php">../include/controller</directory>
                 <directory suffix=".php">../include/Expressions/metadata</directory>
                 <directory suffix=".php">../include/Expressions/javascript</directory>
                 <file>../include/Expressions/index.php</file>
                 <file>../include/Expressions/updatecache.php</file>
                 <directory suffix=".php">../include/fonts</directory>
+                <file>../include/generic/DeleteRelationship.php</file>
+                <file>../include/generic/Save2.php</file>
                 <directory suffix=".php">../include/HTTP_WebDAV_Server</directory>
+                <directory suffix=".php">../include/images</directory>
+                <directory suffix=".php">../include/javascript</directory>
+                <directory suffix=".php">../include/jsolait</directory>
                 <directory suffix=".php">../include/language</directory>
                 <directory suffix=".php">../include/nusoap</directory>
                 <directory suffix=".php">../include/Pear</directory>
                 <directory suffix=".php">../include/pclzip</directory>
                 <directory suffix=".php">../include/phpmailer</directory>
+                <file>../include/Popups/Popup_picker.php</file>
                 <directory suffix=".php">../include/reCaptcha</directory>
                 <directory suffix=".php">../include/Smarty</directory>
                 <directory suffix=".php">../include/SugarObjects/implements/assignable</directory>
@@ -60,6 +67,8 @@
                 <file>../include/SugarObjects/templates/sale/config.php</file>
                 <file>../include/SugarObjects/templates/sale/vardefs.php</file>
                 <file>../include/SugarTheme/getImage.php</file>
+                <file>../include/Sugarpdf/sugarpdf_config.php</file>
+                <file>../include/Sugarpdf/sugarpdf_default.php</file>
                 <directory suffix=".php">../include/tcpdf</directory>
                 <directory suffix=".php">../include/timezone</directory>
                 <file>../include/entryPoint.php</file>
