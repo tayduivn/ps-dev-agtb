@@ -294,11 +294,16 @@ class TimeDate
      * Get user time format.
      * @todo add caching
      *
-     * @param [User] $user user object, current user if not specified
+     * @param User $user user object, current user if not specified
      * @return string
      */
-    public function get_time_format(User $user = null)
+    public function get_time_format(/*User*/ $user = null)
     {
+        if(is_bool($user) || func_num_args() > 1) {
+            // BC dance - old signature was boolean, User
+            $GLOBALS['log']->fatal('TimeDate::get_time_format(): Deprecated API used, please update you code - get_time_format() now has one argument of type User');
+            $user = func_get_arg(1);
+        }
         $user = $this->_getUser($user);
 
         if (empty($user)) {
