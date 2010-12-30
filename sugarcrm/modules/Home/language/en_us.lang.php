@@ -224,6 +224,7 @@ $mod_strings = array (
   'LBL_SOURCE_EXT' => 'Ext - A client-side JavaScript framework for building web applications.',
   'LBL_SOURCE_RECAPTCHA' => 'reCAPTCHA - A free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.', 
   'LBL_SOURCE_TCPDF' => 'TCPDF - A PHP class for generating PDF documents.',
+  'LBL_SOURCE_CSSMIN' => 'CssMin - A css parser and minifier.',
 
 //BEGIN SUGARCRM flav=dce ONLY
   'LNK_NEW_DCEINSTANCE' => 'Create Instance',
