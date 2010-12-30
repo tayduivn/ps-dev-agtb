@@ -20,7 +20,7 @@
 	<link text="{@pre_case_name}" />
 
 	<!--create a Call-->
-	<csv file="scripts/sugarcrm/csvs/cases/Case_1292.csv" var="Case_1292">
+	<csv file="{@global.scriptsdir}/csvs/cases/Case_1292.csv" var="Case_1292">
 		<form id="formformCalls">
 			<button name="Activities_create_button" />
 		</form>
