@@ -140,7 +140,7 @@ class InboundEmail extends SugarBean {
 												'user'			=> 'user',
 												'port'			=> 'port',
 											);
-	var $imageTypes					= array("JPG", "JPEG", "GIF");
+	var $imageTypes					= array("JPG", "JPEG", "GIF", "PNG");
 	var $inlineImages					= array();  // temporary space to store ID of inlined images
 	var $defaultEmailNumAutoreplies24Hours = 10;
 	var $maxEmailNumAutoreplies24Hours = 10;
@@ -153,6 +153,8 @@ class InboundEmail extends SugarBean {
 	var $ssl;
 	var $protocol;
 	var $keyForUsersDefaultIEAccount = 'defaultIEAccount';
+	// prefix to use when importing inlinge images in emails
+	public $imagePrefix;
 
 	/**
 	 * Sole constructor
@@ -174,9 +176,12 @@ class InboundEmail extends SugarBean {
 		}
 
 		$this->safe = new HTML_Safe();
+		$this->safe->whiteProtocols[] = "cid";
 		$this->safe->clear();
+
 		$this->smarty = new Sugar_Smarty();
 		$this->overview = new Overview();
+		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";
 	}
 
 	/**
@@ -3163,10 +3168,11 @@ class InboundEmail extends SugarBean {
 						    $msgPartRaw .= $this->getMessageTextFromSingleMimePart($msgNo,$bcTrail,$structure);
 						 else {
 							// deal with inline image
-							if(count($this->inlineImages > 0)) {
-								$imageName = array_shift($this->inlineImages);
-								$newImagePath = "class='image' src='{$sugar_config['site_url']}/cache/images/{$imageName}'";
-								$preImagePath = 'src="cid:'.substr($structure->parts[$bcArryKey]->id, 1, -1).'"';
+							$partid = substr($structure->parts[$bcArryKey]->id, 1, -1);
+							if(isset($this->inlineImages[$partid])) {
+								$imageName = $this->inlineImages[$partid];
+								$newImagePath = "class=\"image\" src=\"{$this->imagePrefix}{$imageName}\"";
+								$preImagePath = "src=\"cid:$partid\"";
 								$msgPartRaw = str_replace($preImagePath, $newImagePath, $msgPartRaw);
 							}
 						}
@@ -3609,7 +3615,8 @@ class InboundEmail extends SugarBean {
 					|| ($part->type == 5)) {
 					if(copy($uploadDir.$fileName,
 						sugar_cached("images/{$fileName}.").strtolower($part->subtype))) {
-						$this->inlineImages[] = $attach->id.".".strtolower($part->subtype);
+						$id = substr($part->id, 1, -1); //strip <> around
+						$this->inlineImages[$id] = $attach->id.".".strtolower($part->subtype);
 					}
 				}
 			} else {
@@ -4098,9 +4105,15 @@ class InboundEmail extends SugarBean {
 
 			$email->message_id		= $this->compoundMessageId; // filled by importDupeCheck();
 
+			$oldPrefix = $this->imagePrefix;
+			if(!$forDisplay) {
+				// Store CIDs in imported messages, convert on display
+				$this->imagePrefix = "cid:";
+			}
 			// handle multi-part email bodies
 			$email->description_html= $this->getMessageText($msgNo, 'HTML', $structure, $fullHeader,$clean_email); // runs through handleTranserEncoding() already
 			$email->description	= $this->getMessageText($msgNo, 'PLAIN', $structure, $fullHeader,$clean_email); // runs through handleTranserEncoding() already
+			$this->imagePrefix = $oldPrefix;
 
 			// empty() check for body content
 			if(empty($email->description)) {
@@ -5680,6 +5693,7 @@ eoq;
 		global $sugar_smarty;
 		global $theme;
 		global $current_user;
+		global $sugar_config;
 
 		$fetchedAttributes = array(
 			'name',
@@ -5745,7 +5759,7 @@ eoq;
 		$attachments = '';
 		if ($mbox == "sugar::Emails") {
 
-			$q = "SELECT id, filename FROM notes WHERE parent_id = '{$uid}' AND deleted = 0";
+			$q = "SELECT id, filename, file_mime_type FROM notes WHERE parent_id = '{$uid}' AND deleted = 0";
 			$r = $this->db->query($q);
 			$i = 0;
 			while($a = $this->db->fetchByAssoc($r)) {
@@ -5762,7 +5776,15 @@ eoq;
 							</td>
 						</tr>
 EOQ;
-
+				list($type, $subtype) = explode('/', $a['file_mime_type']);
+				if(!empty($this->email->description_html) && strtolower($type) == 'image') {
+					$this->email->description_html = preg_replace("#class=\"image\" src=\"cid:{$a['id']}\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$a['id']}.\\1\"", $this->email->description_html);
+					// ensure the image is in the cache
+					$imgfilename = sugar_cached("images/")."{$a['id']}.".strtolower($subtype);
+					if(!file_exists($imgfilename) && file_exists($sugar_config['upload_dir'].$a['id'])) {
+						copy($sugar_config['upload_dir'].$a['id'], $imgfilename);
+					}
+				}
 		    } // while
 
 
