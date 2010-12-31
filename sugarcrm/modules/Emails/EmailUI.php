@@ -1625,10 +1625,8 @@ EOQ;
 		$html = trim(from_html($focus->description_html));
 		if(empty($html)) {
 			$smarty->assign('SHOW_PLAINTEXT', 'true');
-			$description = nl2br($focus->description);
 		} else {
 			$smarty->assign('SHOW_PLAINTEXT', 'false');
-			$description = from_html($focus->description_html);
 		}
 
 		//if not empty or set to test (from test campaigns)
@@ -1658,8 +1656,6 @@ EOQ;
 		$smarty->assign('BCC', nl2br($focus->bcc_addrs));
 		$smarty->assign('CREATED_BY', $focus->created_by_name);
 		$smarty->assign('MODIFIED_BY', $focus->modified_by_name);
-		$smarty->assign('DESCRIPTION', nl2br($focus->description));
-		$smarty->assign('DESCRIPTION_HTML', from_html($focus->description_html));
 		$smarty->assign('DATE_SENT', $focus->date_entered);
 		$smarty->assign('EMAIL_NAME', 'RE: '.$focus->name);
 		$smarty->assign("TAG", $focus->listviewACLHelper());
@@ -1706,7 +1702,10 @@ EOQ;
 			$the_note = $notes_list[$i];
 			//$attachments .= "<a href=\"".UploadFile::get_url($the_note->filename,$the_note->id)."\" target=\"_blank\">".$the_note->name.$the_note->description ."</a><br>";
 			$attachments .= "<a href=\"index.php?entryPoint=download&id=".$the_note->id."&type=Notes\">".$the_note->name."</a><br />";
+			$focus->cid2Link($the_note->id, $the_note->file_mime_type);
 		}
+		$smarty->assign('DESCRIPTION', nl2br($focus->description));
+		$smarty->assign('DESCRIPTION_HTML', from_html($focus->description_html));
 		$smarty->assign("ATTACHMENTS", $attachments);
 		///////////////////////////////////////////////////////////////////////////////
 		////    SUBPANELS

@@ -287,7 +287,7 @@ eoq;
 		//Handle legacy attachments
         $fileBasePath = "{$sugar_config['upload_dir']}";
 		$filePatternSearch = "{$sugar_config['upload_dir']}";
-		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		$filePatternSearch = str_replace("/", '\/', $filePatternSearch);
 		if(strpos($this->Body, "\"{$fileBasePath}")) {
 			$matches = array();
 			preg_match_all("/{$filePatternSearch}.+?\"/i", $this->Body, $matches);
@@ -306,7 +306,7 @@ eoq;
 		}
 
 		//Handle secure embeded images.
-		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download(\&amp;|\&)id=([^\&]*)[^>]*>/im";
+		$noteImgRegex = '/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download(\&amp;|\&)id=([^\&]*)[^>]*>/im';
         $embededImageMatches = array();
         preg_match_all($noteImgRegex, $this->Body, $embededImageMatches,PREG_SET_ORDER);
 

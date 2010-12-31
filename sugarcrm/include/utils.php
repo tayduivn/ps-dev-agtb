@@ -2276,6 +2276,8 @@ function getVersionedPath($path, $additional_attrs='')
 	}
 	// cutting 2 last chars here because since md5 is 32 chars, it's always ==
 	$str = substr(base64_encode(md5("$js_version_key|{$GLOBALS['sugar_config']['js_custom_version']}|$dev|$additional_attrs", true)), 0, -2);
+	// remove / - it confuses some parsers
+	$str = str_replace('/', '-', $str);
 	return $path . "?v=$str";
 }
 
@@ -3045,24 +3047,24 @@ function sugar_cleanup($exit = false) {
 	}
 
 	//check to see if this is not an ajax call AND the user preference error flag is set
-	if( 
+	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
-		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
-		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
-		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
-		
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
+
 	){
 		global $app_strings;
 		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
 		$err_mess = $app_strings['ERROR_USER_PREFS'];
 		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
-		echo " 
+		echo "
 		<script>
 			ajaxStatus.flashStatus('$err_mess',7000);
-		</script>";				
-		
-	}	
-	
+		</script>";
+
+	}
+
 	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();

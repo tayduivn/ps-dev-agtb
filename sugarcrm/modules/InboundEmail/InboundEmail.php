@@ -3806,7 +3806,7 @@ class InboundEmail extends SugarBean {
 				if(strpos($headerDate, '-') || strpos($headerDate, '+')) {
 					// cn: bug make sure last 5 chars are [+|-]nnnn
 					if(strpos($headerDate, "(")) {
-						$headerDate = preg_replace("/\([\w]+\)/i", "", $headerDate);
+						$headerDate = preg_replace('/\([\w]+\)/i', "", $headerDate);
 						$headerDate = trim($headerDate);
 					}
 
@@ -5776,15 +5776,7 @@ eoq;
 							</td>
 						</tr>
 EOQ;
-				list($type, $subtype) = explode('/', $a['file_mime_type']);
-				if(!empty($this->email->description_html) && strtolower($type) == 'image') {
-					$this->email->description_html = preg_replace("#class=\"image\" src=\"cid:{$a['id']}\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$a['id']}.\\1\"", $this->email->description_html);
-					// ensure the image is in the cache
-					$imgfilename = sugar_cached("images/")."{$a['id']}.".strtolower($subtype);
-					if(!file_exists($imgfilename) && file_exists($sugar_config['upload_dir'].$a['id'])) {
-						copy($sugar_config['upload_dir'].$a['id'], $imgfilename);
-					}
-				}
+				$this->email->cid2Link($a['id'], $a['file_mime_type']);
 		    } // while
 
 

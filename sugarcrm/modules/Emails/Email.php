@@ -115,8 +115,8 @@ class Email extends SugarBean {
 
 	/* public */
 	var $et;		// EmailUI object
-
-
+	// prefix to use when importing inlinge images in emails
+	public $imagePrefix;
 
 	/**
 	 * sole constructor
@@ -131,6 +131,7 @@ class Email extends SugarBean {
 		$this->safe = new HTML_Safe();
 		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
+		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";
 	}
 
 	function email2init() {
@@ -3196,6 +3197,26 @@ eoq;
                 }
         }
 
-
+        /**
+         * Convert reference to inline image (stored as Note) to URL link
+         * Enter description here ...
+         * @param string $note ID of the note
+         * @param string $ext type of the note
+         */
+        public function cid2Link($noteId, $noteType)
+        {
+            global $sugar_config;
+            if(empty($this->description_html)) return;
+			list($type, $subtype) = explode('/', $noteType);
+			if(strtolower($type) != 'image') {
+			    return;
+			}
+		    $this->description_html = preg_replace("#class=\"image\" src=\"cid:$noteId\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"", $this->description_html);
+	        // ensure the image is in the cache
+			$imgfilename = sugar_cached("images/")."$noteId.".strtolower($subtype);
+			if(!file_exists($imgfilename) && file_exists($sugar_config['upload_dir'].$noteId)) {
+				copy($sugar_config['upload_dir'].$noteId, $imgfilename);
+			}
+        }
 
 } // end class def
