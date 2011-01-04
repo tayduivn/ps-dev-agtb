@@ -169,3 +169,12 @@ text-align: left;
     text-align: right !important;
 }
 
+#dashletsDialog_c table td 
+{
+text-align: right;
+}
+
+.yui-dialog .container-close {
+    left: 6px;
+    right: auto;
+}

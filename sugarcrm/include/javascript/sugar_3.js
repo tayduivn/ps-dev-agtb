@@ -3698,7 +3698,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-
+	
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 600 
+	width = (width == 600) ? 800 : width;
+	height = (width == 400) ? 600 : height;
+	
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
