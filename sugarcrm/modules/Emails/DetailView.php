@@ -226,10 +226,10 @@ if (!empty($focus->parent_type) && $focus->parent_type !='test') {
     $xtpl->assign('PARENT_TYPE', $app_list_strings['record_type_display'][$focus->parent_type] . ':');
 }
 
-$to_addr = !empty($focus->to_addrs_names) ? htmlentities($focus->to_addrs_names) : nl2br($focus->to_addrs);
-$from_addr = !empty($focus->from_addr_name) ? htmlentities($focus->from_addr_name) : nl2br($focus->from_addr);
-$cc_addr = !empty($focus->cc_addrs_names) ? htmlentities($focus->cc_addrs_names) : nl2br($focus->cc_addrs);
-$bcc_addr = !empty($focus->bcc_addrs_names) ? htmlentities($focus->bcc_addrs_names) : nl2br($focus->bcc_addrs);
+$to_addr = !empty($focus->to_addrs_names) ? htmlspecialchars($focus->to_addrs_names, ENT_COMPAT, 'UTF-8') : nl2br($focus->to_addrs);
+$from_addr = !empty($focus->from_addr_name) ? htmlspecialchars($focus->from_addr_name, ENT_COMPAT, 'UTF-8') : nl2br($focus->from_addr);
+$cc_addr = !empty($focus->cc_addrs_names) ? htmlspecialchars($focus->cc_addrs_names, ENT_COMPAT, 'UTF-8') : nl2br($focus->cc_addrs);
+$bcc_addr = !empty($focus->bcc_addrs_names) ? htmlspecialchars($focus->bcc_addrs_names, ENT_COMPAT, 'UTF-8') : nl2br($focus->bcc_addrs);
 
 $xtpl->assign('MOD', $mod_strings);
 $xtpl->assign('APP', $app_strings);
