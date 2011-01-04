@@ -8,6 +8,7 @@
 	<div class="moduleTitle">
 		<link href="index.php?module=Accounts&amp;action=index" click="false" />
 	</div>
+	<wait timeout="3" />
 	<link text="/Advanced Search/" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0001.csv" var="account_record_0013">
 		<textfield id="name_advanced" set="{@pre_account_name}" />
@@ -28,12 +29,16 @@
 		<link text="{@pre_account_name}" />
 	</table>
 	<wait timeout="3" />
-	<browser assert="{@pre_account_name}" />
+	<div class="moduleTitle">
+		<link href="index.php?module=Accounts&amp;action=index" click="false" />
+		<browser assert="{@pre_account_name}" />
+	</div>
 
 	<link id="moduleTab_Accounts" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Accounts&amp;action=index" click="false" />
 	</div>
+	<wait timeout="3" />
 	<link text="/Basic Search/" required="false" timeout="2" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
