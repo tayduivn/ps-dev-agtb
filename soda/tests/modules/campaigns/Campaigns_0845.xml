@@ -3,10 +3,10 @@
 	<puts text="Test: Campaigns_0845.xml starting." />
 	<csv file="{@global.scriptsdir}/csvs/campaigns/CampaignAssertText.csv" var="campaign" />
 
-	<link id="moduleTab_Campaigns" />
-	<div class="moduleTitle">
-		<link href="index.php?module=Campaigns&amp;action=index" click="false" />
-	</div>
+	<link id="moduleTab_Prospects" />
+    <div class="moduleTitle">
+        <link href="index.php?module=Prospects&amp;action=index" click="false" />
+    </div>
 
 	<link text="Create Target" />
 	<div class="moduleTitle">

@@ -5,7 +5,7 @@
 
 	<!--Create a campaign record-->
 	<script file="{@global.scriptsdir}/modules/lib/TargetList_Create_Lib.xml" />
-        <link id="moduleTab_Campaigns" />
+        <link id="moduleTab_ProspectLists" />
 	<link text="View Target Lists" />
 	<form id="MassUpdate">
 		<browser assert="{@user.name}" />
