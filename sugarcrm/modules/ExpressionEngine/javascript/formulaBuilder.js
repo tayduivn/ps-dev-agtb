@@ -63,7 +63,8 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 	{
 		if(typeof(vMap[t.name]) == "undefined")
 			throw ("Unknown field: " + t.name);
-		t.returnType = vMap[t.name];
+		else
+			t.returnType = vMap[t.name];
 	}
 	if (t.type == "function")
 	{
@@ -84,6 +85,7 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 			throw (t.name + ": No known return type!");
 	}
 }
+
 SUGAR.expressions.validateReturnTypes = function(t)
 {
 	if (t.type == "function")
@@ -231,7 +233,20 @@ SUGAR.expressions.GridToolTip = {
 	{
 		el.innerHTML = "$" + data;
 	};
-	var fieldDS = new YAHOO.util.LocalDataSource(fieldsArray, {
+	var visibleFields = [];
+	var fieldsJSON =  [];
+	var j = 0;
+	for(var i in fieldsArray)
+	{
+		//Hide relate(link) fields from the user, but allow them to be used.
+		if(fieldsArray[i][1] != "relate") {
+			visibleFields[j] = fieldsArray[i];
+			fieldsJSON[j] = {name: fieldsArray[i][0], type: fieldsArray[i][1]};
+			j++;
+		}
+	}
+
+	var fieldDS = new YAHOO.util.LocalDataSource(visibleFields, {
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 		responseSchema: {
 		   resultsList : "relationships",
@@ -263,11 +278,8 @@ SUGAR.expressions.GridToolTip = {
 		fieldsGrid.sortColumn(fieldsGrid.sortedColumn.column, fieldsGrid.sortedColumn.dir);
 		fieldsGrid.render();
     }
-	var fieldsJSON =  [];
-	for(var i in fieldsArray)
-	{
-		fieldsJSON[i] = {name: fieldsArray[i][0], type: fieldsArray[i][1]};
-	}
+
+
 	Dom.get("formulaFieldsSearch").onkeyup = function() {
 		if (this.value == '') {
 			fieldsGrid.initializeTable();
@@ -313,6 +325,8 @@ SUGAR.expressions.GridToolTip = {
 			case "stddev":
 			case "charAt":
 			case "formatName":
+			case "rollup":
+			case "count":
 				continue;
 				break;
 			}

@@ -87,7 +87,7 @@ class Dependency {
 	/**
 	 * Returns the javascript equivalent of this dependency.
 	 */
-	function getJavascript() {
+	function getJavascript($form = "EditView") {
 		if (empty($this->actions)) return "";
 		
 		$js = "var {$this->id}dep = new SUGAR.forms.Dependency(" . 
@@ -112,9 +112,12 @@ class Dependency {
 		$js .= "]";
 		if ($this->fireOnLoad) {
 			$js .= ",true";
-		}
+		} else {
+            $js .= ",false";
+        }
 		
-		$js .= ");\n";
+		$js .= ",'$form');\n";
+
 		return $js;
 	}
 	

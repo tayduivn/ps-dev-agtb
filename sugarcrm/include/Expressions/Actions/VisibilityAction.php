@@ -41,7 +41,6 @@ class VisibilityAction extends AbstractAction{
 		SUGAR.forms.VisibilityAction = function(target, expr, view)
 		{
 			this.target = target;
-			this.expr	= 'cond(' + expr + ', \"visible\", \"hidden\")';
 			this.expr	= 'cond(' + expr + ', \"\", \"none\")';
 			this.view = view;
 		}
@@ -54,10 +53,12 @@ class VisibilityAction extends AbstractAction{
 			/**
 			 * Triggers the style dependencies.
 			 */
-			exec: function()
+			exec: function(context)
 			{
-				try {
-					var visibility = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
+				if (typeof(context) == 'undefined')
+                    context = this.context;
+                try {
+					var visibility = this.evalExpression(this.expr, context);
 					var target = SUGAR.forms.AssignmentHandler.getElement(this.target);
 					if (target != null) {
 						var inputTD = target.parentNode;
