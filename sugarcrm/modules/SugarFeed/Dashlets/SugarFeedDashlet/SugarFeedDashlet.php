@@ -38,6 +38,10 @@ var $categories;
 
 var $selectedCategories = array();
 
+//BEGIN SUGARCRM flav=pro ONLY
+var $myFavoritesOnly = false;
+//END SUGARCRM flav=pro ONLY
+
     function SugarFeedDashlet($id, $def = null) {
 		global $current_user, $app_strings, $app_list_strings;
 		require('modules/SugarFeed/metadata/dashletviewdefs.php');
@@ -64,6 +68,9 @@ var $selectedCategories = array();
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
 		if(!empty($def['categories']))$this->selectedCategories = $def['categories'];
+//BEGIN SUGARCRM flav=pro ONLY
+        if(!empty($def['myFavoritesOnly']))$this->myFavoritesOnly = $def['myFavoritesOnly'];
+//END SUGARCRM flav=pro ONLY
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
 		$catCount = count($this->categories);
@@ -184,6 +191,19 @@ var $selectedCategories = array();
 				$module_limiter .= ")";
             }
 			if(!empty($where)) { $where .= ' AND '; }
+
+//BEGIN SUGARCRM flav=pro ONLY
+            if ($this->myFavoritesOnly) {
+                require_once('modules/SugarFavorites/SugarFavorites.php');
+                $user_favorites_module = new SugarFavorites();
+
+                if (!isset($lvsParams['custom_from'])) {
+                    $lvsParams['custom_from'] = '';
+                }
+                $lvsParams['custom_from'] = ' INNER JOIN ' . $user_favorites_module->table_name . ' ON (' . $user_favorites_module->table_name . '.record_id = sugarfeed.related_id AND ' . $user_favorites_module->table_name . '.module = sugarfeed.related_module AND ' . $user_favorites_module->table_name . '.assigned_user_id = "' . $current_user->id . '") ' . $lvsParams['custom_from'];
+            }
+//END SUGARCRM flav=pro ONLY
+
 			$where .= $module_limiter;
 
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows,
@@ -257,6 +277,9 @@ var $selectedCategories = array();
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
+//BEGIN SUGARCRM flav=pro ONLY
+        $ss->assign('myFavoritesOnlyLBL', translate('LBL_MY_FAVORITES_ONLY', 'SugarFeed'));
+//END SUGARCRM flav=pro ONLY
         $ss->assign('title', $this->title);
 		$ss->assign('categories', $this->categories);
         if ( empty($this->selectedCategories) ) {
@@ -264,6 +287,10 @@ var $selectedCategories = array();
         }
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
+//BEGIN SUGARCRM flav=pro ONLY
+        $ss->assign('myFavoritesOnly', $this->myFavoritesOnly);
+//END SUGARCRM flav=pro ONLY
+
         $ss->assign('id', $this->id);
         if($this->isAutoRefreshable()) {
        		$ss->assign('isRefreshable', true);
@@ -300,7 +327,16 @@ var $selectedCategories = array();
 				unset($options['categories']);
 			}
 		}
-		
+
+//BEGIN SUGARCRM flav=pro ONLY		
+        if(!empty($req['myFavoritesOnly'])) {
+            $options['myFavoritesOnly'] = $req['myFavoritesOnly'];
+        }
+        else {
+           $options['myFavoritesOnly'] = false;
+        }
+//END SUGARCRM flav=pro ONLY
+
         return $options;
     }
 
@@ -396,7 +432,11 @@ EOQ;
 	function getPostForm(){
         global $current_user;
 
-        if ( empty($this->categories['UserFeed']) ) {
+        if ( empty($this->categories['UserFeed']) 
+//BEGIN SUGARCRM flav=pro ONLY
+             || $this->myFavoritesOnly
+//END SUGARCRM flav=pro ONLY
+			) {
             // The user feed system isn't enabled, don't let them post notes
             return '';
         }

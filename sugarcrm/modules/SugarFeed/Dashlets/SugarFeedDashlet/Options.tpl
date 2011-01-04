@@ -70,6 +70,14 @@
     	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
     </td>
 </tr>
+{* //BEGIN SUGARCRM flav=pro ONLY*}
+<tr>
+    <td valign='top' nowrap class='dataLabel'>{$myFavoritesOnlyLBL}</td>
+    <td valign='top' class='dataField'>
+        <input type='checkbox' {if $myFavoritesOnly == 'true'}checked{/if} name='myFavoritesOnly' value='true'>
+    </td>
+</tr>
+{* //END SUGARCRM flav=pro ONLY*}
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
