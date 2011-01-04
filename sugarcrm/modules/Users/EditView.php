@@ -340,7 +340,7 @@ $sugar_smarty->assign('DATEOPTIONS', $dateOptions);
 global $focus_user;
 $focus_user = $focus;
 define('SUGARPDF_USE_FOCUS', true);
-include('include/Sugarpdf/sugarpdf_config.php');
+include_once('include/Sugarpdf/sugarpdf_config.php');
 $sugar_smarty->assign('PDF_CLASS',PDF_CLASS);
 $sugar_smarty->assign('PDF_UNIT',PDF_UNIT);
 $sugar_smarty->assign('PDF_PAGE_FORMAT_LIST',get_select_options_with_id(array_combine(explode(",",PDF_PAGE_FORMAT_LIST), explode(",",PDF_PAGE_FORMAT_LIST)), PDF_PAGE_FORMAT));
@@ -461,7 +461,7 @@ if(isset($user_max_tabs) && $user_max_tabs > 0) {
 } else {
     $sugar_smarty->assign("MAX_TAB", $GLOBALS['sugar_config']['default_max_tabs']);
 }
-$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, 10));
+$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, (!empty($GLOBALS['sugar_config']['default_max_tabs']) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $user_subpanel_tabs = $focus->getPreference('subpanel_tabs');
