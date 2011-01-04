@@ -19,34 +19,89 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
+require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
- * <b>count(Relate <i>link</i>)</b><br>
- * Returns the number of records related to this record by <i>link</i><br/>
- * ex: <i>count($contacts)</i> in Accounts would return the <br/>
- * number of contacts related to this account.
+ * <b>related(Relate <i>link</i>, String <i>field</i>)</b><br>
+ * Returns the value of <i>field</i> in the related module <i>link</i><br/>
+ * ex: <i>related($accounts, "industry")</i>
  */
-class CountRelatedExpression extends NumericExpression
+class SugarFieldExpression extends GenericExpression
 {
-	/**
+
+    function __construct($varName){
+        $this->varName = $varName;
+    }
+    /**
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$linkField = $this->getParameters()->evaluate();
-        //This should be of relate type, which means an array of SugarBean objects
-        if (!is_array($linkField)) {
-            return false;
+		if (empty($this->varName))
+            return "";
+        $fieldName = $this->varName;
+
+        if (!isset($this->context))
+        {
+            //If we don't have a context provided, we have to guess. This can be a large performanc hit.
+            $this->setContext();
         }
 
-        return count($linkField);
+        if (empty($this->context->field_defs[$fieldName]))
+            throw new Exception("Unable to find field {$fieldName}");
+
+        $def = $this->context->field_defs[$fieldName];
+
+        if ($def['type'] == "link")
+            return $this->getLinkField($fieldName);
+        else
+            return $this->context->$fieldName;
 	}
+
+    protected function setContext()
+    {
+        $module = $_REQUEST['module'];
+        $id = $_REQUEST['record'];
+        $focus = $this->getBean($module);
+        $focus->retrieve($id);
+        $this->context = $focus;
+    }
+
+    protected function getBean($module)
+    {
+       global $beanList;
+       if (empty($beanList[$module]))
+           throw new Exception("No bean for module $module");
+       $bean = $beanList[$module];
+       return new $bean();
+    }
+
+    protected function getLinkField($fieldName)
+    {
+        if(!$this->context->load_relationship($fieldName))
+            throw new Exception("Unable to load relationship $fieldName");
+
+        if(empty($this->context->$fieldName))
+            throw new Exception("Relationship $fieldName was not set");
+
+
+
+        $rmodule = $this->context->$fieldName->getRelatedModuleName();
+
+        //now we need a seed of the related module to load.
+        $seed = $this->getBean($rmodule);
+
+        return $this->context->$fieldName->getBeans($seed);
+    }
+
+
 
 	/**
 	 * Returns the JS Equivalent of the evaluate function.
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		    var linkField = this.getParameters().evaluate();
+		    var params = this.getParameters();
+			var linkField = params[0].evaluate();
+			var relField = params[1].evaluate();
 
 			if (typeof(linkField) == "string" && linkField != "")
 			{
@@ -62,8 +117,8 @@ class CountRelatedExpression extends NumericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"count",
-                    params: YAHOO.lang.JSON.stringify(['\$' + linkField])
+                    function:"related",
+                    params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field
                 return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);
@@ -74,6 +129,7 @@ class CountRelatedExpression extends NumericExpression
 
 			}
 
+			console.log("fell through");
 			return "";
 EOQ;
 	}
@@ -83,21 +139,21 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return array("count");
+		return array("sugar");
 	}
 
 	/**
 	 * The first parameter is a number and the second is the list.
 	 */
 	function getParameterTypes() {
-		return array(AbstractExpression::$RELATE_TYPE);
+		return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 1;
+		return 2;
 	}
 
 	/**

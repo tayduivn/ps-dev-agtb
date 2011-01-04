@@ -56,9 +56,11 @@ class AssignToUserAction extends AbstractAction{
             });
 		};
 		SUGAR.util.extend(SUGAR.forms.AssignToUserAction, SUGAR.forms.AbstractAction, {
-			exec : function()
+			exec : function(context)
 			{
-				var userName = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
+				if (typeof(context) == 'undefined')
+                    context = this.context;
+				var userName = this.evalExpression(this.expr, context);
 				var params = SUGAR.util.paramsToUrl({
                     to_pdf: 'true',
                     module: 'Home',

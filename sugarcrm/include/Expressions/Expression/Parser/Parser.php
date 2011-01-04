@@ -27,10 +27,7 @@ class Parser {
 	 */
 	static function evaluate($expr, $context = false)
 	{
-		if ($context)
-            $expr = self::replaceVariables($expr, $context);
-
-        // the function map
+		// the function map
 		static $FUNCTION_MAP = array();
 
 		// trim spaces, left and right
@@ -40,9 +37,16 @@ class Parser {
 		$const = Parser::toConstant($expr);
 		if ( isset($const) )	return $const;
 
+        if (preg_match('/^\$[a-zA-Z0-9_\-]+$/', $expr))
+        {
+            require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
+            $var = substr($expr, 1);
+            return new SugarFieldExpression($var);
+        }
+
 
 		// VALIDATE: expression format
-		if ( ! preg_match('/^[a-zA-Z0-9_-]+\(.*\)$/', $expr) ) {
+		if ( ! preg_match('/^[a-zA-Z0-9_\-$]+\(.*\)$/', $expr) ) {
 			throw new Exception("Attempted to evaluate expression with an invalid format: $expr");
 			return;
 		}
@@ -89,6 +93,7 @@ class Parser {
 		$justReadString	= false;		// did i just read in a string
 		$isInQuotes 	= false;		// am i currently reading in a string
 		$isPrevCharBK 	= false;		// is my previous character a backslash
+        $isInVariable 	= false;		// is my previous character a backslash
 
 		for ( $i = 0 ; $i <= $length ; $i++ ) {
 			// store the last character read
@@ -97,7 +102,7 @@ class Parser {
 			// the last parameter
 			if ( $i == $length ) {
                 if ($argument != "") {
-				    $subExp = Parser::evaluate($argument);
+				    $subExp = Parser::evaluate($argument, $context);
                     $subExp->context = $context;
                     $args[] = $subExp;
                 }
@@ -105,8 +110,7 @@ class Parser {
 			}
 
 			// set isprevcharbk
-			if ( $lastCharRead == '\\' )		$isPrevCharBK = true;
-			else								$isPrevCharBK = false;
+			$isPrevCharBK = $lastCharRead == '\\';
 
 			// get the charAt index $i
 			$char = $params{$i};
@@ -134,16 +138,22 @@ class Parser {
 				$isInQuotes = !$isInQuotes;
 			}
 
+            if( $char == '$' && !$isInQuotes && !$isPrevCharBK)
+            {
+                if($isInVariable) {
+                    throw new Exception ("Syntax Error: Invalid variable name in formula: $expr");
+                }
+            }
+
 			// check parantheses open/close
 			if ( $char == '(' ) {
 				$level++;
 			} else if ( $char == ')' ) {
 				$level--;
 			}
-
 			// argument splitting
 			else if ( $char == ',' && $level == 0 ) {
-				$subExp = Parser::evaluate($argument);
+				$subExp = Parser::evaluate($argument, $context);
                 $subExp->context = $context;
                 $args[] = $subExp;
 				$argument = "";
@@ -265,8 +275,9 @@ class Parser {
 					$val = Parser::getFormatedValue($target[$field], $field);
 					$ret = str_replace("$$field", $val, $ret);
 				} else {
-				    throw new Exception("Unknown variable $$field in formula: $expr");
-                    return;
+				    continue;
+                    //throw new Exception("Unknown variable $$field in formula: $expr");
+                    //return;
 				}
 			} else 
 			{
@@ -280,8 +291,9 @@ class Parser {
                     $val = Parser::getFormatedValue($target->$field, $field);
 					$ret = str_replace("$$field", $val, $ret);	
 				} else  {
-					throw new Exception("Unknown variable $$field in formula: $expr");
-                    return;
+					continue;
+                   // throw new Exception("Unknown variable $$field in formula: $expr");
+                   // return;
 				}
 			}
 		}
