@@ -130,7 +130,10 @@ class ViewEditFormula extends SugarView
                 case "datetimecombo":
 					$fieldArray[] = array($fieldName, 'date');
  					break;
- 				default:
+ 				case "link":
+					$fieldArray[] = array($fieldName, 'relate');
+ 					break;
+                 default:
  					//Do Nothing
  					break;
  			}

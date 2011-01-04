@@ -51,10 +51,12 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
     /**
      * Triggers the style dependencies.
      */
-    exec: function()
+    exec: function(context)
     {
+        if (typeof(context) == 'undefined')
+		    context = this.context;
         var el = SUGAR.forms.AssignmentHandler.getElement(this.variable);
-        this.required = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
+        this.required = this.evalExpression(this.expr, context);
 
         if ( typeof(SUGAR.forms.FormValidator) != 'undefined' )
             SUGAR.forms.FormValidator.setRequired(el.form.name, el.name, this.required);
