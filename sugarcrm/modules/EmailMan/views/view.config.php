@@ -67,6 +67,7 @@ class ViewConfig extends SugarView
         global $app_list_strings;
         global $app_strings;
         global $current_user;
+        global $sugar_config;
         
         
         echo $this->getModuleTitle();
