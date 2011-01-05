@@ -74,7 +74,7 @@ EOQ;
                 'value' => 'strlen($name)'
             )
         );
-        $this->assertType("SetValueAction", $sva);
+        $this->assertInstanceOf("SetValueAction", $sva);
     }
     
     public function testLoadCustomAction()
@@ -83,7 +83,7 @@ EOQ;
         $this->createCustomAction();
         ActionFactory::buildActionCache(true);
         $customAction = ActionFactory::getNewAction('testCustomAction', array());
-        $this->assertType("TestCustomAction", $customAction);
+        $this->assertInstanceOf("TestCustomAction", $customAction);
         $this->removeCustomAction();
         ActionFactory::buildActionCache(true);
     }
