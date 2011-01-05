@@ -43,7 +43,7 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->assertType('User', $user);
+        $this->assertInstanceOf('User', $user);
 
         $after_snapshot = $this->_takeUserDBSnapshot();
         $this->assertNotEquals($this->_before_snapshot, $after_snapshot, 
