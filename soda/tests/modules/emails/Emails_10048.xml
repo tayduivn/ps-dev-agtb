@@ -29,7 +29,7 @@
 	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
 	<link id="moduleTab_Accounts" />
 	
-	<link text="{@account_record.emailAddress0}" />
+	<link text="{@pre_account_email}" />
 	<wait timeout="10" />
 	<select id="addressFrom0" assert=" - Group" />
 		

@@ -29,7 +29,7 @@
 	<script file="{@global.scriptsdir}/modules/lib/Contact_Create_Lib.xml" />
 	<link id="moduleTab_Contacts" />
 	
-	<link text="{@contact_record.emailAddress0}" />
+	<link text="{@pre_contact_email}" />
 	<wait timeout="15" />
 	<select id="addressFrom0" assert=" - Group" />
 	
