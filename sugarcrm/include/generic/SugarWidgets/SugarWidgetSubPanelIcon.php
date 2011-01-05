@@ -86,13 +86,18 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 		$icon_img_html = SugarThemeRegistry::current()->getImage( $module . '', 'border="0" alt="' . $app_list_strings['moduleList'][$module] . '"');
 		if (!empty($layout_def['attachment_image_only']) && $layout_def['attachment_image_only'] == true) {
 			$ret="";
-		}else { 
-			$ret= '<a href="index.php?module=' . $module
-				. '&action=' . $action
-				. '&record=' . $record
-				. '" >' . "$icon_img_html</a>";
+		} else {
+			// Bug 28877 - Sub Panel Icon ACL Issue
+			if(!empty($record) &&
+				($layout_def[$action] && !$layout_def['owner_module'] 
+				||  $layout_def[$action] && !ACLController::moduleSupportsACL($layout_def['owner_module']) 
+				|| ACLController::checkAccess($layout_def['owner_module'], 'view', $layout_def['owner_id'] == $current_user->id))){
+				$ret = '<a href="index.php?module=' . $module . '&action=' . $action . '&record=' . $record	. '" >' . $icon_img_html . "</a>";
+			} else {
+				$ret = $icon_img_html;
+			}
 		}
-//if requested, add attachement icon.
+		//if requested, add attachement icon.
 		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
 			if (is_array($layout_def['image2_url_field'])) {
 				$filepath="";
