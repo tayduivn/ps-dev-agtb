@@ -20,7 +20,7 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-        
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['sugar_config']['default_max_tabs'] = $this->_max_tabs_test;
     }
 
@@ -33,6 +33,8 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         }
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
+        unset($GLOBALS['current_user']);
+        SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     public function testUsingDefaultMaxTabsForOptionsValues() 

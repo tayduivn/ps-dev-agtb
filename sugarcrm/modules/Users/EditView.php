@@ -49,9 +49,9 @@ $is_current_admin=is_admin($current_user)
 //END SUGARCRM flav=sales ONLY
                 ||is_admin_for_module($GLOBALS['current_user'],'Users');
 $is_super_admin = is_admin($current_user);
-if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
 
 if(isset($_REQUEST['record'])) {
+    if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
     $focus->retrieve($_REQUEST['record']);
 }
 
