@@ -192,6 +192,7 @@ function enableQS(noReload){
                     	    var label_str = '';
 	                		var label_data_str = '';
 	                		var current_label_data_str = '';
+	                		var label_data_hash = new Array();
 	                    	
 	                    	for(var i in this.fields) {
 	                    		for (var key in this.qs_obj.field_list) {
@@ -204,8 +205,15 @@ function enableQS(noReload){
 	                	        	    var displayValue = data[i].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 		   	        					var data_label =  document.getElementById(this.qs_obj.populate_list[key]+'_label').innerHTML.replace(/\n/gi,'');
 			        					label_str += data_label + ' \n';
-			        					label_data_str += data_label  + ' ' + displayValue + '\n';
+			        					label_and_data = data_label  + ' ' + displayValue + '\n';
 	                	        	   
+			        					//Append to current_label_data_str only if the label and data are unique
+			        					if(!label_data_hash[label_and_data])
+			        					{
+			        						label_data_str += label_and_data;
+			        						label_data_hash[label_and_data] = true;
+			        					}			        					
+			        					
 			        					if(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]])
 			        					{
 			        						current_label_data_str += data_label + ' ' + document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value + '\n';
