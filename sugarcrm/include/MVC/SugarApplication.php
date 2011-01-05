@@ -644,6 +644,11 @@ class SugarApplication
 			}
 		}
 		   
+        if(!is_null($theme) && !headers_sent())
+        {
+            setcookie('sugar_user_theme', $theme, time() + 31536000); // expires in a year
+        }
+		
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
         $GLOBALS['image_path'] = SugarThemeRegistry::current()->getImagePath().'/';
