@@ -37,23 +37,34 @@ $row = $db->fetchByAssoc($ret);
 $meetingBean = loadBean('Meetings');
 $meetingBean->retrieve($_REQUEST['meeting_id']);
 
-if ( isset($row['id']) || $meetingBean->assigned_user_id == $GLOBALS['current_user']->id) {
-    // Everything looks good, send them on their way.
-    if ( $_REQUEST['host_meeting'] == '1' ) {
+if ( $_REQUEST['host_meeting'] == '1' ) {
+    if($meetingBean->assigned_user_id == $GLOBALS['current_user']->id || is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Meetings')){
         SugarApplication::redirect($meetingBean->host_url);
-    } else {
-        SugarApplication::redirect($meetingBean->join_url);
-    }
-} else {
-    // They weren't invited, don't let them in for tea and cake.
-    // The cake is a lie anyways.
-    $tplFile = 'modules/Meetings/tpls/extMeetingNotInvited.tpl';
-    if ( file_exists('custom/'.$tplFile) ) {
-        $tplFile = 'custom/'.$tplFile;
-    }
+    }else{
+        //since they are now the owner of the meeting nor an Admin they cannot start the meeting.
+        $tplFile = 'modules/Meetings/tpls/extMeetingNoStart.tpl';
+        if ( file_exists('custom/'.$tplFile) ) {
+            $tplFile = 'custom/'.$tplFile;
+        }
 
-    $ss = new Sugar_Smarty();
-    $ss->assign('current_user',$current_user);
-    $ss->assign('bean',$meetingBean->toArray());
-    $ss->display($tplFile);
+        $ss = new Sugar_Smarty();
+        $ss->assign('current_user',$current_user);
+        $ss->assign('bean',$meetingBean->toArray());
+        $ss->display($tplFile);
+    }
+}else{
+    if(isset($row['id']) || $meetingBean->assigned_user_id == $GLOBALS['current_user']->id || is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Meetings')){
+      SugarApplication::redirect($meetingBean->join_url);
+    }else{
+        //if the user is not invited or the owner of the meeting or an admin then they cannot join the meeting.
+        $tplFile = 'modules/Meetings/tpls/extMeetingNotInvited.tpl';
+        if ( file_exists('custom/'.$tplFile) ) {
+            $tplFile = 'custom/'.$tplFile;
+        }
+
+        $ss = new Sugar_Smarty();
+        $ss->assign('current_user',$current_user);
+        $ss->assign('bean',$meetingBean->toArray());
+        $ss->display($tplFile);
+    }
 }

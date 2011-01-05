@@ -119,5 +119,10 @@ $mod_strings = array (
     'LBL_EXTNOT_MAIN' => 'You cannot join this meeting because you are not listed on the invite list. Please request the creator of this meeting to add you to the invite list in order to join this meeting.',
     'LBL_EXTNOT_RECORD_LINK' => 'Go to the Meeting record',
     'LBL_EXTNOT_GO_BACK' => 'Go back to the previous record',
+
+    //cannot start messages
+    'LBL_EXTNOSTART_HEADER' => 'Error: Cannot Start Meeting',
+    'LBL_EXTNOSTART_MAIN' => 'You cannot start this meeting because you are not an Administrator or the owner of the meeting.',
+
 );
 ?>
