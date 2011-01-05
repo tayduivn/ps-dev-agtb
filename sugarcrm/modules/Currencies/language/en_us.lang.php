@@ -60,6 +60,7 @@ $mod_strings = array (
     'Active' => 'Active',
     'Inactive' => 'Inactive',
   ),
+  'LBL_CREATED_BY' => 'Created By',
 );
 
 
