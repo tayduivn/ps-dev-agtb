@@ -680,8 +680,11 @@ $mod_strings = array(
 'LBL_JS_VALIDATE_REL_LABEL'=>'Label - please add a label that will be displayed above the subpanel',
 
 //CONFIRM
-'LBL_CONFIRM_FIELD_DELETE'=>"Deleting this custom field will delete both the custom field and all the data related to the custom field in the database. The field will be no longer appear in any module layouts, and will no longer be available for Reports."
-		. "\\n\\nThe change in Reports will be seen after logging out and logging back in, and any reports containing the field will need to be updated in order to be able to be run."
+'LBL_CONFIRM_FIELD_DELETE'=>"Deleting this custom field will delete both the custom field and all the data related to the custom field in the database. The field will be no longer appear in any module layouts."
+//BEGIN SUGARCRM flav=pro ONLY
+        . " If the field is involved in a formula to calculate values for any fields, the formula will no longer work."
+		. "\\n\\nThe field will no longer be available to use in Reports; this change will be in effect after logging out and logging back in to the application. Any reports containing the field will need to be updated in order to be able to be run."
+//END SUGARCRM flav=pro only
 		. "\\n\\nDo you wish to continue?",
 'LBL_CONFIRM_RELATIONSHIP_DELETE'=>'Are you sure you wish to delete this relationship?',
 'LBL_CONFIRM_RELATIONSHIP_DEPLOY'=>'This will make this relationship permanent. Are you sure you wish to deploy this relationship?',
