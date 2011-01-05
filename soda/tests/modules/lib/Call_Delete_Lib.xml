@@ -1,6 +1,6 @@
 <soda>
 	<puts text="Lib: Call_Delete_Lib.xml starting." />
-	<link href="index.php?module=Activities&amp;action=index" />
+	<link href="index.php?module=Calls&amp;action=index" />
 	<link text="View Calls" />
 	<button name="clear" />
 	<button id="search_form_submit" />
