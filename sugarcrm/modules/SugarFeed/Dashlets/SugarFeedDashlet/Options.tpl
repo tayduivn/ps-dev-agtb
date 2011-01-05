@@ -72,8 +72,8 @@
 </tr>
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 <tr>
-    <td valign='top' nowrap class='dataLabel'>{$myFavoritesOnlyLBL}</td>
-    <td valign='top' class='dataField'>
+    <td scope='row'>{$myFavoritesOnlyLBL}</td>
+    <td>
         <input type='checkbox' {if $myFavoritesOnly == 'true'}checked{/if} name='myFavoritesOnly' value='true'>
     </td>
 </tr>
