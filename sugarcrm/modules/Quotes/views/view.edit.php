@@ -295,7 +295,7 @@ class QuotesViewEdit extends ViewEdit
 							    ."', '".js_escape(br2nl($line_item->description))."', '"
 							    . $line_item->type_id ."','"
 							    . $line_item->discount_amount_usdollar."',".($line_item->discount_select?1:0)
-							    . ",'". $line_item->status."');\n";
+							    . ",0, '". $line_item->status."');\n";
 
 						} //foreach
 						if(empty($product_list)){
