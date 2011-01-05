@@ -62,7 +62,7 @@ class CountRelatedExpression extends NumericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"count",
+                    "function":"count",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField])
                 });
                 //The response should the be the JSON encoded value of the related field

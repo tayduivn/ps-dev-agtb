@@ -117,7 +117,7 @@ class SugarFieldExpression extends GenericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"related",
+                    "function":"related",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field
