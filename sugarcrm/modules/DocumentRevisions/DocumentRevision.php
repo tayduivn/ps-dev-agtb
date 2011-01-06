@@ -37,6 +37,10 @@ class DocumentRevision extends SugarBean {
 
 	var $id;
 	var $document_id;
+    var $doc_id;
+    var $doc_type;
+    var $doc_url;
+    var $doc_direct_url;
 	var $date_entered;
 	var $created_by;
 	var $filename;
