@@ -153,6 +153,7 @@ class MysqlHelper extends DBHelper
             'id'       => 'char(36)',
            'url'=>'varchar',
            'encrypt'=>'varchar',
+           'file'      => 'varchar',
             );
 
         return $map[$type];

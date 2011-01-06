@@ -56,6 +56,7 @@ function deleteAttachmentCallBack(text)
 	    			array (
                         array('name'=>'name', 'displayParams'=>array('size'=>60)),''
                     ),
+<<<<<<< HEAD
 					array (
 						array (
 	        				'name' => 'filename',
@@ -68,6 +69,10 @@ function deleteAttachmentCallBack(text)
 											 <input type=\'button\' class=\'button\' value=\'{$APP.LBL_REMOVE}\' onclick=\'ajaxStatus.showStatus(SUGAR.language.get("Notes", "LBL_REMOVING_ATTACHMENT"));this.form.deleteAttachment.value=1;this.form.action.value="EditView";SUGAR.dashlets.postForm(this.form, deleteAttachmentCallBack);this.form.deleteAttachment.value=0;this.form.action.value="";\' >
 											 </span>',
 	      				),
+=======
+					array ( 
+						'filename',
+>>>>>>> lotus
 	      				//BEGIN SUGARCRM flav=pro ONLY
 					    array('name'=>'portal_flag',
 					          'displayParams'=>array('required'=>false),

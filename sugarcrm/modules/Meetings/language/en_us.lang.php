@@ -89,6 +89,11 @@ $mod_strings = array (
 	'LBL_SEND_BUTTON_LABEL'=>'Send Invites',
 	'LBL_SEND_BUTTON_TITLE'=>'Send Invites [Alt+I]',
 	'LBL_STATUS' => 'Status:',
+   'LBL_TYPE' => 'Meeting Type',
+   'LBL_PASSWORD' => 'Meeting Password',
+   'LBL_URL' => 'Meeting URL',
+   'LBL_CREATOR' => 'Meeting Creator',
+   'LBL_EXTERNALID' => 'External app ID',
 	'LBL_SUBJECT' => 'Subject:',
 	'LBL_TIME' => 'Start Time:',
 	'LBL_USERS_SUBPANEL_TITLE' => 'Users',
@@ -104,5 +109,19 @@ $mod_strings = array (
     'LBL_MODIFIED_USER' => 'Modified User',
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
     'LBL_MEETING_INFORMATION' => 'Meeting Overview',
+	'LBL_LIST_JOIN_MEETING' => 'Join Meeting',
+	'LBL_JOIN_EXT_MEETING' => 'Join Meeting',
+	'LBL_HOST_EXT_MEETING' => 'Start Meeting',
+
+    // You are not invited to the meeting messages
+    'LBL_EXTNOT_HEADER' => 'Error: Not Invited',
+    'LBL_EXTNOT_MAIN' => 'You cannot join this meeting because you are not listed on the invite list. Please request the creator of this meeting to add you to the invite list in order to join this meeting.',
+    'LBL_EXTNOT_RECORD_LINK' => 'Go to the Meeting record',
+    'LBL_EXTNOT_GO_BACK' => 'Go back to the previous record',
+
+    //cannot start messages
+    'LBL_EXTNOSTART_HEADER' => 'Error: Cannot Start Meeting',
+    'LBL_EXTNOSTART_MAIN' => 'You cannot start this meeting because you are not an Administrator or the owner of the meeting.',
+
 );
 ?>

@@ -630,6 +630,14 @@ $dictionary['User'] = array(
             'side' => 'right',
             'vname' => 'LBL_HOLIDAYS',
         ) ,
+       'eapm' =>
+		  array (
+		    'name' => 'eapm',
+		    'type' => 'link',
+		    'relationship' => 'eapm_assigned_user',
+		    'vname' => 'LBL_ASSIGNED_TO_USER',
+		    'source'=>'non-db',
+		  ),
         //BEGIN SUGARCRM flav=dce ONLY
         'dceinstance_role_fields' => array(
             'name' => 'dceinstance_role_fields',

@@ -71,6 +71,11 @@
     </td>
 </tr>
 <tr>
+  <td align="right" colspan="2">
+    {$externalWarningLBL}
+  </td>
+</tr>
+<tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
    	</td>

@@ -99,6 +99,7 @@ $app_list_strings = array (
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
+    'EAPM' => 'External Accounts',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -181,7 +182,7 @@ $app_list_strings = array (
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow',
-
+    'EAPM' => 'External Account',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
 	'SugarFavorites'=>'SugarFavorites'
@@ -396,6 +397,23 @@ $app_list_strings = array (
     'Held' => 'Held',
     'Not Held' => 'Not Held',
   ),
+  'extapi_meeting_password' =>
+  array (
+      'WebEx' => 'WebEx',
+  ),
+  'meeting_type_dom' =>
+   array (
+      'Other' => 'Other',
+      'WebEx' => 'WebEx',
+      'GoToMeeting' => 'GoToMeeting'
+   ),
+   'doc_type_dom' =>
+   array (
+   	'Sugar' => 'Sugar',
+    'Google' => 'Google',
+    'Box.net' => 'Box.net',
+   	'LotusLive' => 'LotusLive',
+   ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (
@@ -2319,8 +2337,12 @@ $app_strings = array (
     'ERR_ADDRESS_KEY_NOT_SPECIFIED' => 'Please specify \'key\' index in displayParams attribute for the Meta-Data definition',
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
+<<<<<<< HEAD
+    'ERR_EXTERNAL_API_SAVE_FAIL' => 'Error during external API save',
+=======
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
+>>>>>>> origin/master
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
@@ -2712,8 +2734,13 @@ $app_strings = array (
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected record(s)?',
+<<<<<<< HEAD
     'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record or system settings. Are you sure you want to delete it?',
     'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records or system settings. Are you sure you want to delete them?\n",
+=======
+    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record. Are you sure you want to delete it?',
+    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records. Are you sure you want to delete them?\n",
+>>>>>>> lotus
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
@@ -3046,6 +3073,7 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
+<<<<<<< HEAD
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
 
     //SugarFieldPhone labels
@@ -3076,6 +3104,17 @@ $app_strings = array (
 	'LBL_GREATER_THAN_OR_EQUAL'=>'Greater Than or Equal To',
 	'LBL_LESS_THAN'=>'Less Than',
 	'LBL_LESS_THAN_OR_EQUAL' => 'Less Than or Equal To',
+=======
+
+    // File fields
+    'LBL_UPLOAD_FROM_COMPUTER' => 'Upload From Your Computer',
+    'LBL_SEARCH_EXTERNAL_API' => 'Search External Source',
+    'LBL_EXTERNAL_SECURITY_LEVEL' => 'Security',
+    'LBL_SHARE_PRIVATE' => 'Private',
+    'LBL_SHARE_COMPANY' => 'Company',
+    'LBL_SHARE_LINKABLE' => 'Linkable',
+    'LBL_SHARE_PUBLIC' => 'Public',
+>>>>>>> lotus
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
@@ -3810,5 +3849,16 @@ $app_list_strings['kbdocument_status_dom'] = array (
   );
 
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
-
-?>
+  $app_list_strings['eapm_list']= array(
+  	'SugarCRM'=>'SugarCRM',
+  	'webex'=>'WebEx',
+  	'gotomeeting'=>'GoToMeeting',
+  	'lotuslive'=>'LotusLive',
+  	'google' => 'Google Document',
+    'box' => 'Box.net',
+  );
+  $app_list_strings['LBL_API_TYPE_ENUM'] = array(
+    'password' => 'Username/Password',
+    'oauth' => 'OAuth',
+    );
+  ?>

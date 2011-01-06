@@ -100,18 +100,44 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 				$ret = $icon_img_html;
 			}
 		}
+<<<<<<< HEAD
 		//if requested, add attachement icon.
 		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])) {
 			$filepath="";
+=======
+
+		if(!empty($layout_def['image2']) &&  !empty($layout_def['image2_ext_url_field'])){
+ 
+			if (!empty($layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])])) {
+				$link_url  = $layout_def['fields'][strtoupper($layout_def['image2_ext_url_field'])];						
+			}
+
+            $imagePath = '';
+            if ( $layout_def['image2'] == '__VARIABLE' ) {
+                if ( !empty($layout_def['fields'][$key.'_ICON']) ) {
+                    $imagePath = $layout_def['fields'][$key.'_ICON'];
+                }
+            } else {
+                $imagePath = $layout_def['image2'];
+            }
+ 
+            if ( !empty($imagePath) ) {
+                $icon_img_html = SugarThemeRegistry::current()->getImage( $imagePath . '', 'border="0" alt="' . $imagePath . '"');
+                $ret.= (empty($link_url)) ? '' : '<a href="' . $link_url. '" TARGET = "_blank">' . "$icon_img_html</a>";	
+            }
+        }
+//if requested, add attachement icon.
+		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
+>>>>>>> lotus
 			if (is_array($layout_def['image2_url_field'])) {
 				//Generate file url.
 				if (!empty($layout_def['fields'][strtoupper($layout_def['image2_url_field']['id_field'])])
 				and !empty($layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])]) ) {
 					
 					$key=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['id_field'])];
-					$file=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])];
-					//$filepath=UploadFile :: get_url(from_html($file), $key);	
-					$filepath="index.php?entryPoint=download&id=".$key."&type=".$layout_def['module'];
+                    $file=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])];
+                    //$filepath=UploadFile :: get_url(from_html($file), $key);	
+                    $filepath="index.php?entryPoint=download&id=".$key."&type=".$layout_def['module'];
 				}
 			} else {
 				if (!empty($layout_def['fields'][strtoupper($layout_def['image2_url_field'])])) {

@@ -1650,6 +1650,10 @@ function initEditView(theForm) {
     }
 
     // console.log('DEBUG: Adding checks for '+theForm.id);
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
     

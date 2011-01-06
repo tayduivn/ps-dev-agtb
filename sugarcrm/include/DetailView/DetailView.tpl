@@ -86,23 +86,26 @@ class="yui-navset detailview_tabs"
 				{{if isset($colData.field.customLabel)}}
 			       {{$colData.field.customLabel}}
 				{{elseif isset($colData.field.label) && strpos($colData.field.label, '$')}}
-				   {capture name="label" assign="label"}
-				   {{$colData.field.label}}
-				   {/capture}
+				   {capture name="label" assign="label"}{{$colData.field.label}}{/capture}
 			       {$label|strip_semicolon}:
 				{{elseif isset($colData.field.label)}}
-				   {capture name="label" assign="label"}
-				   {sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
-				   {/capture}
+				   {capture name="label" assign="label"}{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}{/capture}
 			       {$label|strip_semicolon}:
 				{{elseif isset($fields[$colData.field.name])}}
-				   {capture name="label" assign="label"}
-				   {sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
-				   {/capture}
+				   {capture name="label" assign="label"}{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}{/capture}
 			       {$label|strip_semicolon}:
 				{{else}}
 				   &nbsp;
 				{{/if}}
+                {{if isset($colData.field.popupHelp) || isset($fields[$colData.field.name]) && isset($fields[$colData.field.name].popupHelp) }}
+                   {{if isset($colData.field.popupHelp) }}
+                     {capture name="popupText" assign="popupText"}{sugar_translate label="{{$colData.field.popupHelp}}" module='{{$module}}'}{/capture}
+                   {{elseif isset($fields[$colData.field.name].popupHelp)}}
+                     {capture name="popupText" assign="popupText"}{sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}{/capture}
+                   {{/if}}
+                   {overlib_includes}
+                   {sugar_help text=$popupText WIDTH=400}
+                {{/if}}
 			</td>
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}} {{if isset($fields[$colData.field.name].type) && $fields[$colData.field.name].type == 'phone'}}class="phone"{{/if}}>
 			
