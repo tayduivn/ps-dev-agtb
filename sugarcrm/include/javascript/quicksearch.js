@@ -177,7 +177,6 @@ function enableQS(noReload){
 	                    }
                     });
 
-<<<<<<< HEAD
                     //C.L. Bug 36575: In event of account_name quicksearch, check to see if we need to warn user
                     //that address fields may change.  This code has similarities to code block in set_return method
                     //of sugar_3.js when building the alert message contents.
@@ -238,9 +237,6 @@ function enableQS(noReload){
                        };
                     }
                     
-                    
-=======
->>>>>>> lotus
                     
                     //fill in the data fields on selection
                     search.itemSelectEvent.subscribe(function(e, args){

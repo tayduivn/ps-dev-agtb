@@ -26,14 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<<<<<<< HEAD
-<a href="index.php?entryPoint=download&id={$fields.{{$displayParams.id}}.value}&type={$module}" class="tabDetailViewDFLink">{$fields.{{$displayParams.link}}.value}</a>
-{{if !empty($displayParams.enableConnectors)}}
-{if !empty($fields.{{$displayParams.link}}.value)}
-{{sugarvar_connector view='DetailView'}}
-{/if}
-{{/if}}
-=======
 <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={{$vardef.linkModule}}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
 {{if isset($vardef) && isset($vardef.allowEapm) && $vardef.allowEapm}}
 {if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'SugarCRM' && !empty($fields.{{$vardef.docUrl}}.value) }
@@ -46,4 +38,3 @@
 {{if !empty($displayParams.enableConnectors)}}
 {{sugarvar_connector view='DetailView'}}
 {{/if}}
->>>>>>> lotus

@@ -339,7 +339,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	SUGAR.util.evalScript(jData.html);
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
-<<<<<<< HEAD
+
             			overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
             			var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
 			    		var dcboxbody = Y.get('#dcboxbody');
@@ -349,10 +349,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 						if(isRTL) {
 							overlay.set('x',dcmenuSugarCubeX - dcboxbodyWidth);
 						}
-			
-=======
-            			setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title, extraButton);
->>>>>>> lotus
+
             		 	SUGAR.util.evalScript(data.responseText);
             		 	setTimeout("enableQS();", 1000);
 
