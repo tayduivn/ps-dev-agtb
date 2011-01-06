@@ -160,7 +160,7 @@ class EAPM extends Basic {
      * @return void
      */
     public function delete_user_accounts($user_id){
-        $sql = "UPDATE {$this->table_name} SET deleted = 1, active = 0 WHERE assigned_user_id = '{$user_id}'";
+        $sql = "DELETE FROM {$this->table_name} WHERE assigned_user_id = '{$user_id}'";
         $GLOBALS['db']->query($sql,true);
     }
 }
