@@ -58,7 +58,15 @@
 		{
 	       	 $this->bean->filename = $_REQUEST['old_filename'];
 		}
-		$this->bean->save();
+		
+		$check_notify = false;
+		if(!empty($_POST['assigned_user_id']) &&
+		    (empty($this->bean->fetched_row) || $this->bean->fetched_row['assigned_user_id'] != $_POST['assigned_user_id']) &&
+		    ($_POST['assigned_user_id'] != $GLOBALS['current_user']->id)){
+		        $check_notify = true;
+		}
+	    $this->bean->save($check_notify);
+	    
 		if ($do_final_move)
 		{
        		 $upload_file->final_move($this->bean->id);
