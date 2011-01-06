@@ -112,7 +112,7 @@
 		        var savePressed = false;
 		        if(event) {
 		           var elm = document.activeElement || event.explicitOriginalTarget;
-		           if(typeof elm.type != 'undefined' && /submit|button/.test(elm.type.toLowerCase())) {
+		           if(typeof elm.type != 'undefined' && !(/_email_widget_add/.test(elm.id.toLowerCase())) && /submit|button/.test(elm.type.toLowerCase())) {
 			          savePressed = true;
 		           }
 		        }
