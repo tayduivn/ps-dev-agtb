@@ -35,7 +35,7 @@
 		<table class="edit view">
 			<textfield id="account_name" exist="true" />
 		</table>
-		<button id="Opportunities_subpanel_cancel_button" />
+		<button id="Opportunities_subpanel_cancel_button" alert="true" />
 	</div>
 	<wait timeout="3" />
 

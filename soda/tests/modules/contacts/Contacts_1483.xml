@@ -33,7 +33,7 @@
 			<button value="Save" />
 		</form>
 	</csv>
-	<wait timeout="15" />
+	<wait timeout="25" />
 
 	<!-- Verify the creation of the Note/Attachment -->
 	<div id="list_subpanel_history">

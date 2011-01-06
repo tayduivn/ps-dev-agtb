@@ -28,7 +28,7 @@
 		<select id="data_parent_type0" assert="Contact" />
 		<textfield id="data_parent_name0" assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
 		<textfield id="addressTO0"
-			assert="{@pre_contact_first_name} {@pre_contact_last_name} &lt;{@contact_record.emailAddress0}&gt;" />
+			assert="{@pre_contact_first_name} {@pre_contact_last_name} &lt;{@pre_contact_email}&gt;" />
 	</table>
 
 	<csv file="{@global.scriptsdir}/csvs/emails/Email_9768.csv" var="email_record_9768">
