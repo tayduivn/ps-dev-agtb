@@ -82,7 +82,7 @@
 {if !$noChange}
 <span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<h4>{$APP.LBL_UPLOAD_FROM_COMPUTER}</h4>
+<h4><input type="radio" name="{{$idName}}_uploadType" value="upload" id="{{$idName}}_rad_upload" checked> {$APP.LBL_UPLOAD_FROM_COMPUTER}</h4>
 {{/if}}
 <input type="hidden" name="{{$idName}}_escaped">
 <input id="{{$idName}}_file" name="{{$idName}}_file" 
@@ -100,7 +100,7 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:inline;">
-<br><h4>{$APP.LBL_SEARCH_EXTERNAL_API}</h4>
+<br><h4><input type="radio" name="{{$idName}}_uploadType" value="search" id="{{$idName}}_rad_search"> {$APP.LBL_SEARCH_EXTERNAL_API}</h4>
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -109,7 +109,6 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 {{else}}
     maxlength="255"
 {{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
-<input type="button" value="{$APP.LBL_SELECT_BUTTON_LABEL}" onclick="DCMenu.loadView('External Documents','index.php?module=Documents&action=extdoc&type='+ this.form.{{$vardef.docType}}.value +'&form_id='+ this.form.id);">
 </span>
 <div style="display: none;" id="{{$idName}}_securityLevelBox">
   <b>{$APP.LBL_EXTERNAL_SECURITY_LEVEL}: </b>
@@ -130,8 +129,8 @@ sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
 "method":"externalApi",
 "api":"",
 "modules":["EAPM"],
-"field_list":["name", "id", "url", "direct_url"],
-"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$vardef.docDirectUrl}}"],
+"field_list":["name", "id", "url", "direct_url", "id"],
+"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$vardef.docDirectUrl}}", "{{$idName}}"],
 "required_list":["name"],
 "conditions":[],
 "no_match_text":"No Match"

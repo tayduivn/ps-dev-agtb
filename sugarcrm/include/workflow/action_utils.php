@@ -57,8 +57,6 @@ function process_workflow_actions(& $focus, $action_array){
 function process_action_update(&$focus, $action_array){
 
 	foreach($action_array['basic'] as $field => $new_value){
-
-
 		if(empty($action_array['basic_ext'][$field])){
 			//if we have a relate field, make sure the related record still exists.
 			if ($focus->field_defs[$field]['type'] == "relate")

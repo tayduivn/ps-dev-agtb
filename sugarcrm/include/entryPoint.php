@@ -147,7 +147,7 @@ require_once('modules/Users/authentication/AuthenticationController.php');
 require_once('include/utils/LogicHook.php');
 require_once('include/SugarTheme/SugarTheme.php');
 require_once('include/MVC/SugarModule.php');
-//require_once('include/MVC/SugarApplication.php');
+require_once('include/MVC/SugarApplication.php');
 require('modules/Currencies/Currency.php');
 //
 //SugarApplication::startSession();
@@ -176,6 +176,7 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
+SugarApplication::preLoadLanguages();
 $timedate = new TimeDate();
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();

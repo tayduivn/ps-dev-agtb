@@ -490,6 +490,26 @@ function isValidEmail(emailStr) {
 	if(!lastChar.match(/[^\.]/i)) {
 		return false;
 	}
+	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+	//first character of local part of an email address
+	//should not be a period i.e. '.' 
+	
+	var firstLocalChar=emailStr.charAt(0);
+	if(firstLocalChar.match(/\./)){
+		return false;
+	} 
+	
+	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+	//last character of local part of an email address
+	//should not be a period i.e. '.' 
+	
+	var pos=emailStr.lastIndexOf("@");
+	var localPart = emailStr.substr(0, pos);
+	var lastLocalChar=localPart.charAt(localPart.length - 1);
+	if(lastLocalChar.match(/\./)){
+		return false;
+	}
+	
 	
 	var reg = /@.*?;/g;
 	while ((results = reg.exec(emailStr)) != null) {
@@ -508,12 +528,15 @@ function isValidEmail(emailStr) {
 	// mfh: bug 15010 - more practical implementation of RFC 2822 from http://www.regular-expressions.info/email.html, modifed to accept CAPITAL LETTERS
 	//if(!/[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?/.test(emailStr))
 	//	return false
-	var emailArr = emailStr.split(/::;::/);
+	
+	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+	//allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
+    var emailArr = emailStr.split(/::;::/);
 	for (var i = 0; i < emailArr.length; i++) {
 		emailAddress = emailArr[i];
 		if (trim(emailAddress) != '') {
-			if(!/^\s*[\w.%+\-&'\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
-			   !/^.*<[A-Z0-9._%+\-&']+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
+			if(!/^\s*[\w.%+\-&'#!\$\*=\?\^_`\{\}~\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
+			   !/^.*<[A-Z0-9._%+\-&'#!\$\*=\?\^_`\{\}~]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
 	
 			   return false;
 			} // if

@@ -100,9 +100,13 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
                 //Repair Custom Fields
                 if (($focus instanceOf SugarBean) && $focus->hasCustomFields() && !isset($repairedTables[$focus->table_name . '_cstm'])) {
 				    $df = new DynamicField($focus->module_dir);
-                    $df->bean = $focus;
-                    $sql .= $df->repairCustomFields($execute);
-				    $repairedTables[$focus->table_name . '_cstm'] = true;
+                    //Need to check if the method exists as during upgrade an old version of Dynamic Fields may be loaded.
+                    if (method_exists($df, "repairCustomFields"))
+                    {
+                        $df->bean = $focus;
+                        $sql .= $df->repairCustomFields($execute);
+                        $repairedTables[$focus->table_name . '_cstm'] = true;
+                    }
 				}
 			}
 		}

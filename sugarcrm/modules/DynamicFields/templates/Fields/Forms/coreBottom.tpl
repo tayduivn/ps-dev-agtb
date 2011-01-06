@@ -44,7 +44,7 @@
 <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_REPORTABLE"}:</td>
 <td>
 	<input type="checkbox" name="reportableCheckbox" value="1" {if !empty($vardef.reportable)}CHECKED{/if} {if $hideLevel > 5}disabled{/if} 
-	onClick="document.getElementById('reportable').value=this.checked"/>
+	onClick="if(this.checked) document.getElementById('reportable').value=1; else document.getElementById('reportable').value=0;"/>
 	<input type="hidden" name="reportable" id="reportable" value="{$vardef.reportable}">
 </td>
 </tr>

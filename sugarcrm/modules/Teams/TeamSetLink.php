@@ -224,6 +224,14 @@ class TeamSetLink extends Link {
 	public function isSaved(){
 		return $this->_saved;
 	}
+	
+	/**
+	 * We use this method in action_utils when setting the team_id, so we can ensure that the proper team logic is re-run.
+	 * @param BOOL $saved
+	 */
+	public function setSaved($saved){ 
+		$this->_saved = $saved;
+	}
 		
 	/**
 	 * Append the given teams to the list of teams already on the bean

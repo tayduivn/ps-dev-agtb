@@ -1,0 +1,20 @@
+<soda>
+        <puts text='---------Activities_0281:Account Detail - Activities sub-panel - Remove Relationship---------------'/>
+    
+        <!--create call record-->
+        <script file='{@global.scriptsdir}/modules/accounts/part2/Accounts_0214.xml'/>    
+                
+        <!--Go its detail view-->
+        <browser assert="{@pre_account_name}"/>    
+        <div id='list_subpanel_activities'>
+            <table class="list view">
+                <link text="{@pre_activity_call_subpanel_name}" click="false"/>
+            </table>
+            <link class="listViewTdToolsS1" index="2" alert="true"/>
+        </div>
+        
+        <!--Delete the record-->
+        <script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
+        <script file='{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml'/>
+        <puts text='---------Activities_0281 is Finished!---------------'/>
+</soda>

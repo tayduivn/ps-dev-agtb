@@ -69,7 +69,6 @@ class SugarFieldFile extends SugarFieldBase {
 		if (isset($_FILES[$prefix . $field . '_file']) && $upload_file->confirm_upload())
 		{
     		$bean->$field = $upload_file->get_stored_file_name();
-            $GLOBALS['log']->fatal("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
     		$bean->file_mime_type = $upload_file->mime_type;
 			$bean->file_ext = $upload_file->file_ext;
 			$move=true;
