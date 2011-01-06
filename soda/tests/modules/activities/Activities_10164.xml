@@ -2,7 +2,7 @@
 	<puts text="Test: Activities_10064 starting." />
 	
 	<link id="moduleTab_Notes" />
-	<link text="Create Note or Add Attachment" />
+	<link text="Create Note or Attachment" />
 
 	<csv file="{@global.scriptsdir}/csvs/activities/Activities_10062.csv" var="note_record">
 		<textfield id="name" set="{@note_record.name}" />

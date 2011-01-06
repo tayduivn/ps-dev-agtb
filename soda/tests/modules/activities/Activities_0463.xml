@@ -7,7 +7,7 @@
         
         <link id='moduleTab_Tasks'/>
 	<browser assert="Tasks"/>
-        <link text='Create Note or Add Attachment'/>
+        <link text='Create Note or Attachment'/>
         <csv file="{@global.scriptsdir}/modules/lib/Note_Create_Lib.csv" var="activity_record_0463">
             <textfield id='name' set='{@activity_record_0463.name} {@user.name} {@stamp}'/>
             <textfield id='description' set='{@activity_record_0463.description}'/>
