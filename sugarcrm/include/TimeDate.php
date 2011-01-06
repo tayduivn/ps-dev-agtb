@@ -171,7 +171,9 @@ class TimeDate
                 } catch(Exception $e) {
                     $tz = "UTC"; // guess failed, switch to UTC
                 }
-                $GLOBALS['log']->fatal("Configuration variable date.timezone is not set, guessed timezone $tz. Please set date.timezone=\"$tz\" in php.ini!");
+                if(isset($GLOBALS['log'])) {
+                    $GLOBALS['log']->fatal("Configuration variable date.timezone is not set, guessed timezone $tz. Please set date.timezone=\"$tz\" in php.ini!");
+                }
                 date_default_timezone_set($tz);
             }
             self::$timedate = new self;
