@@ -136,6 +136,7 @@ function enableQS(noReload){
                     	sqs : sqs,
 						animSpeed : 0.25,
                     	qs_obj: qs_obj,
+                    	inputElement: qsFields[qsField],
                     	//YUI requires the data, even POST, to be URL encoded
                     	generateRequest : function(sQuery) {
 	                    	var out = SUGAR.util.paramsToUrl({
@@ -222,13 +223,27 @@ function enableQS(noReload){
 	                    	}
 
 	        			    if(label_data_str != label_str && current_label_data_str != label_str) {    	
-	        			    	//Special case for shipping_account_name
-	        			    	do_not_copy = Dom.get('shipping_checkbox') && (typeof copy_values_from_billing != 'undefined') ? copy_values_from_billing() : false;
 	        			    	
-	       			        	if(do_not_copy || !confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
+	        			    	module_key = (typeof document.forms[form_id].elements['module'] != 'undefined') ? document.forms[form_id].elements['module'].value : 'app_strings';
+	        			    	warning_label = SUGAR.language.translate(module_key, 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str;       			    	
+	        			    		        			    	
+	       			        	if(!confirm(warning_label))
 	       						{
 	       			        		this.updateFields(data,/account_id/); 
 	       						} else {
+	       							
+	       							if(Dom.get('shipping_checkbox')) 
+	       							{
+	       							  if(this.inputElement.id == 'shipping_account_name')
+	       							  {
+	       							      filter = Dom.get('shipping_checkbox').checked ? /(account_id|office)/ : filter;
+	       							  } else if(this.inputElement.id == 'billing_account_name') {
+	       								  filter = Dom.get('shipping_checkbox').checked ? filter : /(account_id|office|billing)/;
+	       							  }
+	       							} else if(Dom.get('alt_checkbox')) {
+	       							  filter = Dom.get('alt_checkbox').checked ? filter : /^alt/;
+	       							}
+	       							
 	       							this.updateFields(data,filter);
 	       						}
 	        			    } else {
