@@ -2,7 +2,7 @@
 	<puts text="Test: Accounts_0013.xml starting." />
 
 	<!--Create a account record-->
-	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib_FULL.xml" />
 
 	<link id="moduleTab_Accounts" />
 	<div class="moduleTitle">
