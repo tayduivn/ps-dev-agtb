@@ -100,11 +100,6 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 				$ret = $icon_img_html;
 			}
 		}
-<<<<<<< HEAD
-		//if requested, add attachement icon.
-		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])) {
-			$filepath="";
-=======
 
 		if(!empty($layout_def['image2']) &&  !empty($layout_def['image2_ext_url_field'])){
  
@@ -128,7 +123,7 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
         }
 //if requested, add attachement icon.
 		if(!empty($layout_def['image2']) && !empty($layout_def['image2_url_field'])){
->>>>>>> lotus
+
 			if (is_array($layout_def['image2_url_field'])) {
 				//Generate file url.
 				if (!empty($layout_def['fields'][strtoupper($layout_def['image2_url_field']['id_field'])])

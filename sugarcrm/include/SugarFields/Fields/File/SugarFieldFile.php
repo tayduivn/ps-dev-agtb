@@ -22,18 +22,7 @@ class SugarFieldFile extends SugarFieldBase {
         } else {
             $vardef['allowEapm'] = false;
         }
-        
-<<<<<<< HEAD
-        if(!isset($displayParams['id'])) {
-           $error = $app_strings['ERR_SMARTY_MISSING_DISPLAY_PARAMS'] . 'id';
-           $GLOBALS['log']->error($error);	
-           $this->ss->trigger_error($error);
-           return;
-        }        
 
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch($this->findTemplate('DetailView'));
-=======
         // Override the default module
         if ( isset($vardef['linkModuleOverride']) ) {
             $vardef['linkModule'] = $vardef['linkModuleOverride'];
@@ -55,7 +44,6 @@ class SugarFieldFile extends SugarFieldBase {
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         $this->fillInOptions($vardef,$displayParams);
         return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
->>>>>>> lotus
     }
     
 	function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {

@@ -717,7 +717,6 @@ class Meeting extends SugarBean {
 	    parent::afterImportSave();
 	}
 
-<<<<<<< HEAD
     public function getDefaultStatus()
     {
          $def = $this->field_defs['status'];
@@ -733,8 +732,6 @@ class Meeting extends SugarBean {
         return '';
     }
 } // end class def
-=======
-} // end class def
 
 // External API integration, for the dropdown list of what external API's are available
 function getMeetingsExternalApiDropDown() {
@@ -749,4 +746,3 @@ function getMeetingsExternalApiDropDown() {
 }
 
 ?>
->>>>>>> lotus

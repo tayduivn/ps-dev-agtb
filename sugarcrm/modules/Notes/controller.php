@@ -36,8 +36,6 @@
   
  class NotesController extends SugarController
 {
-<<<<<<< HEAD
-	
 	function action_save(){
 		require_once('include/upload_file.php');
 		// Check for both relate_id and parent_id, and prevent overriding of parent_id
@@ -82,9 +80,7 @@
 		}
 	}
 	
-=======
->>>>>>> lotus
-	function action_editview(){
+    function action_editview(){
 		$this->view = 'edit';
 		$GLOBALS['view'] = $this->view;
 		if(!empty($_REQUEST['deleteAttachment'])){

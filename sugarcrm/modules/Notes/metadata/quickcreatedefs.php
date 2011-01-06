@@ -62,18 +62,6 @@ array (
            'contact_name',
            'parent_name',
         ),
-<<<<<<< HEAD
-         array (
-            array ('name' => 'assigned_user_name','label' => 'LBL_ASSIGNED_TO'),
-            //BEGIN SUGARCRM flav=pro ONLY
-            array (
-              'name' => 'team_name',
-            ),
-            //END SUGARCRM flav=pro ONLY
-        ),
-=======
-        
->>>>>>> lotus
         array (
            
           array (

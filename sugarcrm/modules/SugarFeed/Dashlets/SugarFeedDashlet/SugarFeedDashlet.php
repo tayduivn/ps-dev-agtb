@@ -118,12 +118,9 @@ var $selectedCategories = array();
         $lvsParams['overrideOrder'] = true;
         $lvsParams['orderBy'] = 'date_entered';
         $lvsParams['sortOrder'] = 'DESC';
-<<<<<<< HEAD
-
-=======
         $lvsParams['custom_from'] = '';
         
->>>>>>> lotus
+
         // Get the real module list
         if (empty($this->selectedCategories)){
             $mod_list = $this->categories;
@@ -167,15 +164,12 @@ var $selectedCategories = array();
             $where = '';
             if(!empty($whereArray)){
                 $where = '(' . implode(') AND (', $whereArray) . ')';
-<<<<<<< HEAD
-            }
 
-=======
             }            
             
             $additional_where = '';
             
->>>>>>> lotus
+
 			$module_limiter = " sugarfeed.related_module in ('" . implode("','", $regular_modules) . "')";
 
             if ( count($owner_modules) > 0
@@ -185,11 +179,9 @@ var $selectedCategories = array();
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-<<<<<<< HEAD
-                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON tj.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
-=======
+
                 $lvsParams['custom_from'] .= ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
->>>>>>> lotus
+
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY
@@ -212,20 +204,13 @@ var $selectedCategories = array();
             }
 			if(!empty($where)) { $where .= ' AND '; }
 			$where .= $module_limiter;
-<<<<<<< HEAD
 
-            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows,
-                              array('name',
-                                    'description',
-                                    'date_entered',
-                                    'created_by',
-=======
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
                               array('name', 
                                     'description', 
                                     'date_entered', 
                                     'created_by', 
->>>>>>> lotus
+
 //BEGIN SUGARCRM flav=pro ONLY
                                     'team_id',
                                     'team_name',
@@ -237,12 +222,9 @@ var $selectedCategories = array();
             $GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
 
             foreach($this->lvs->data['data'] as $row => $data) {
-<<<<<<< HEAD
-                $this->lvs->data['data'][$row]['CREATED_BY'] = get_assigned_user_name($data['CREATED_BY']);
-                $this->lvs->data['data'][$row]['FEED'] = str_replace("{this.CREATED_BY}",$this->lvs->data['data'][$row]['CREATED_BY'],$data['NAME']);
-=======
+
                 $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['ASSIGNED_USER_ID']),$data['NAME']);
->>>>>>> lotus
+
             }
 
             // assign a baseURL w/ the action set as DisplayDashlet

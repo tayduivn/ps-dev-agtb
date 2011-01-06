@@ -131,13 +131,5 @@ $listViewDefs['Documents'] = array(
       0 => 'modified_user_id',
     ),
   ),
-<<<<<<< HEAD
-  'DATE_ENTERED' => array (
-    'width' => '10%',
-    'label' => 'LBL_DATE_ENTERED',
-    'default' => true,
-  )
-=======
->>>>>>> lotus
 );
 ?>
