@@ -51,40 +51,24 @@ $viewdefs['Documents']['QuickCreate'] = array(
   array (
     
     array (
-
+      'doc_type',            
+      'status_id',
+    ),
+    array (
       array('name'=>'filename', 
             'displayParams'=>array('required'=>true),
             ),
-      'doc_type',            
     ),
     
     array (
       'document_name',
-      array('name'=>'revision',
-            'customCode' => '<input name="revision" type="text" value="{$fields.revision.value}">'
-           ),    
+      'revision'
     ),    
-    
-    array (
-        array (
-          'name' => 'template_type',
-          'label' => 'LBL_DET_TEMPLATE_TYPE',
-        ),
-    	array (
-          'name' => 'is_template',
-          'label' => 'LBL_DET_IS_TEMPLATE',
-        ),
-    ),
     
     array (
        array('name'=>'active_date','displayParams'=>array('required'=>true)),
        'category_id',
     ),
-    
-    array (
-      'exp_date',
-      'subcategory_id',
-    ),    
     
     //BEGIN SUGARCRM flav=pro ONLY
     array (

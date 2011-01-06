@@ -167,6 +167,7 @@ $dictionary['Document'] = array('table' => 'documents'
     'source'=>'non-db',
     'importable' => 'required',
 	'required' => true,
+    'default' => '1',
   ),
 
   'last_rev_created_name' =>
