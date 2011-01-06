@@ -116,8 +116,8 @@ $mod_strings = array (
 
     // You are not invited to the meeting messages
     'LBL_EXTNOT_HEADER' => 'Error: Not Invited',
-    'LBL_EXTNOT_MAIN' => 'You cannot join this meeting because you are not listed on the invite list. Please request the creator of this meeting to add you to the invite list in order to join this meeting.',
-    'LBL_EXTNOT_RECORD_LINK' => 'Go to the Meeting record',
+    'LBL_EXTNOT_MAIN' => 'You are not able to join this meeting because you are not an Invitee.',
+    'LBL_EXTNOT_RECORD_LINK' => 'View Meeting',
     'LBL_EXTNOT_GO_BACK' => 'Go back to the previous record',
 
     //cannot start messages

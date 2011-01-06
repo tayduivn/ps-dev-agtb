@@ -458,7 +458,7 @@ class Meeting extends SugarBean {
 		
 		$meeting_fields['JOIN_MEETING']  = '';
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
-			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" TARGET = "_blank">' . $join_icon . '</a>';
+			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" >' . $join_icon . '</a>';
 		}
 	
 		return $meeting_fields;
