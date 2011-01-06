@@ -570,9 +570,11 @@ function get_languages()
 {
 	global $sugar_config;
 	$lang = $sugar_config['languages'];
-	foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
-	    unset($lang[$disable]);
-	}
+    if(!empty($sugar_config['disabled_languages'])){
+        foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
+            unset($lang[$disable]);
+        }
+    }
 	return $lang;
 }
 

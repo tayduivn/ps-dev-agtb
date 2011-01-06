@@ -3491,12 +3491,18 @@ SUGAR.language = function() {
         },
 
         get: function(module, str) {
-            if(typeof SUGAR.language.languages[module] == 'undefined'
-            || typeof SUGAR.language.languages[module][str] == 'undefined')
+            if(typeof SUGAR.language.languages[module] == 'undefined' || typeof SUGAR.language.languages[module][str] == 'undefined')
+            {
                 return 'undefined';
-
+            }
             return SUGAR.language.languages[module][str];
-        }
+        },
+        
+        translate: function(module, str)
+        {
+            text = this.get(module, str);
+            return text != 'undefined' ? text : this.get('app_strings', str);  	
+        },
     };
 }();
 
