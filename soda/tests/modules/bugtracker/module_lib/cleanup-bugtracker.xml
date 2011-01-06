@@ -1,0 +1,12 @@
+<soda>
+	<!-- Delete releases. -->
+	<link text="Admin" />
+	<link text="Releases" />
+	<browser assert="Releases: Home" />
+	
+	<link text="del" alert="true" />
+	<link text="del" alert="true" />
+	<link text="del" alert="true" />
+	<link text="del" exists="false" />
+</soda>
+

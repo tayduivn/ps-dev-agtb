@@ -325,7 +325,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 
 //BEGIN SUGARCRM flav!=sales ONLY
   'products' => array(
-      'name' => 'contracts',
+      'name' => 'products',
       'type' => 'link',
       'relationship' => 'products_accounts',
       'source' => 'non-db',

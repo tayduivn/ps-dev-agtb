@@ -64,6 +64,7 @@ class TrackerSessionsDatabaseStore implements Store {
        //END SUGARCRM flav=pro ONLY
        if ( !isset($monitor->round_trips) ) $monitor->round_trips = 0;
        if ( !isset($monitor->active) ) $monitor->active = 1;
+       if ( !isset($monitor->seconds) ) $monitor->seconds = 0;
        if($monitor->round_trips == 1) {
 		  $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
 		  $GLOBALS['db']->query($query);

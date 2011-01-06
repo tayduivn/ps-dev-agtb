@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/users/module_lib/setup-users.xml" />
+	<script fileset="{@global.scriptsdir}/modules/users" />
+	<script
+		file="{@global.scriptsdir}/modules/users/module_lib/cleanup-users.xml" />
+</soda>
+

@@ -300,22 +300,9 @@ SUGAR.forms.DefaultExpressionParser = new SUGAR.expressions.ExpressionParser();
  */
 SUGAR.forms.evalVariableExpression = function(expression, varmap)
 {
-	var ts = SUGAR.expressions.userPrefs.num_grp_sep;
-    var ds = SUGAR.expressions.userPrefs.dec_sep;
-    var numRegex = new RegExp("^(\\-)?[0-9\\" + ts + "]+(\\"+ ds + "[0-9]+)?$")
+	var SE = SUGAR.expressions;
 	// perform range replaces
 	expression = SUGAR.forms._performRangeReplace(expression);
-
-	// internal function for replacing all which is to circumvent
-	// not using a regex
-	this.replaceAll = function(haystack, needle, rpl) {
-		if (needle == rpl) return haystack;
-        var str = haystack;
-		while ( str.indexOf(needle) > -1 ) {
-			str = str.replace(needle, rpl);
-		}
-		return str;
-	}
 
 	var handler = SUGAR.forms.AssignmentHandler;
 
@@ -330,7 +317,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 		}
 	}
 
-	if ( expression == SUGAR.expressions.Expression.TRUE || expression == SUGAR.expressions.Expression.FALSE )
+	if ( expression == SE.Expression.TRUE || expression == SE.Expression.FALSE )
 		return SUGAR.forms.DefaultExpressionParser.evaluate(expression);
 
 	var vars = SUGAR.forms.getFieldsFromExpression(expression);
@@ -348,10 +335,8 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 			expression = expression.replace(regex, '""');
 		}
 		// test if value is a number or boolean
-		else if ( (numRegex.exec(value) != null)) {
-			value = this.replaceAll(value, ts, "");
-            value = this.replaceAll(value, ds, ".");
-			expression = expression.replace(regex, value);
+		else if ( SE.isNumeric(value) ) {
+            expression = expression.replace(regex, SE.unFormatNumber(value));
 		}
 		// assume string
 		else {
