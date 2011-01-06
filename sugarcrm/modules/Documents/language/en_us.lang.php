@@ -154,7 +154,7 @@ $mod_strings = array (
 	'LBL_DOC_ID' => 'Document Source ID',
 	'LBL_DOC_TYPE' => 'Source',
 	'LBL_LIST_DOC_TYPE' => 'Source',
-    'LBL_DOC_TYPE_POPUP' => 'Select a source to which this document will be uploaded and from which it will be available.',
+    'LBL_DOC_TYPE_POPUP' => 'Select a source to which this document will be uploaded<br> and from which it will be available.',
 	'LBL_DOC_URL' => 'Document Source URL',
 	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
 
