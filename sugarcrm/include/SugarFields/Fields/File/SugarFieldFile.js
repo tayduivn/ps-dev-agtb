@@ -54,8 +54,23 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             }
         },
         setupEapiShowHide: function(elemBaseName,docTypeName,formName) {
+            var radioChangeFunc = function() { 
+                var showElem = '';
+                var hideElem = '';
+                if(document.getElementById(elemBaseName + "_rad_upload").checked) { 
+                    showElem = elemBaseName + "_file"; 
+                    hideElem = elemBaseName + "_remoteName";
+                } else {
+                    hideElem = elemBaseName + "_file"; 
+                    showElem = elemBaseName + "_remoteName";
+                }
+                document.getElementById(showElem).style.display='';
+                document.getElementById(hideElem).style.display='none';
+            };
+
             var showHideFunc = function() {
                 var docShowHideElem = document.getElementById(elemBaseName + "_externalApiSelector");
+                var radioElemUpload = document.getElementById(elemBaseName + "_rad_upload");
                 var dropdownValue = document.getElementById(docTypeName).value;
                 if ( typeof(SUGAR.eapm) != 'undefined' 
                      && typeof(SUGAR.eapm[dropdownValue]) != 'undefined' 
@@ -66,9 +81,11 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                     // Start a refresh of the document cache in the background. Thanks AJAX!
                     YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=flushFileCache&to_pdf=1&api='+dropdownValue,{});
 
-
+                    radioElemUpload.disabled = false;
                 } else {
                     docShowHideElem.style.display = 'none';
+                    radioElemUpload.checked = true;
+                    radioElemUpload.disabled = true;
                 }
                 // Update the quick search
                 sqs_objects[formName+"_"+elemBaseName+"_remoteName"].api = dropdownValue;
@@ -80,7 +97,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 
                 secLevelElem.options.length = 0;
                 
-                if ( SUGAR.eapm[dropdownValue].sharingOptions ) {
+                if ( SUGAR.eapm[dropdownValue] && SUGAR.eapm[dropdownValue].sharingOptions ) {
                     var opts = SUGAR.eapm[dropdownValue].sharingOptions;
                     var i = 0;
 
@@ -93,9 +110,14 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 } else {
                     secLevelBoxElem.style.display='none';
                 }
+
+                radioChangeFunc();
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 
+
+            document.getElementById(elemBaseName + '_rad_upload').onchange = radioChangeFunc;
+            document.getElementById(elemBaseName + '_rad_search').onchange = radioChangeFunc;
             showHideFunc();
         }
     }
