@@ -163,6 +163,17 @@ class TimeDate
     public static function getInstance()
     {
         if(empty(self::$timedate)) {
+            if(ini_get('date.timezone') == '') {
+                // Remove warning about default timezone
+                date_default_timezone_set(@date('e'));
+                try {
+                    $tz = self::guessTimezone();
+                } catch(Exception $e) {
+                    $tz = "UTC"; // guess failed, switch to UTC
+                }
+                $GLOBALS['log']->fatal("Configuration variable date.timezone is not set, guessed timezone $tz. Please set date.timezone=\"$tz\" in php.ini!");
+                date_default_timezone_set($tz);
+            }
             self::$timedate = new self;
         }
         return self::$timedate;
@@ -1377,13 +1388,13 @@ class TimeDate
 	    	'Australia/Sydney', 'Australia/Perth');
 
 	    $now = new DateTime();
-    	if($userOffset == 0) {
-    	     array_unshift($defaultZones, date('T'));
+	    if($userOffset == 0) {
+    	     array_unshift($defaultZones, date('e'));
     	     $gmtOffset = date('Z');
     	} else {
     	    $gmtOffset = $userOffset * 60;
     	}
-	    foreach($defaultZones as $zoneName) {
+    	foreach($defaultZones as $zoneName) {
 	        $tz = new DateTimeZone($zoneName);
 	        if($tz->getOffset($now) == $gmtOffset) {
                 return $tz->getName();
