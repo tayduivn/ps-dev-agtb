@@ -362,8 +362,9 @@ class ImportFieldSanitize
             $enum_list = explode(",",$value);
         }
         // parse to see if all the values given are valid
-        foreach ( $enum_list as $enum_value ) {
-        	if ( $this->enum($enum_value,$vardef) === false ) {
+        foreach ( $enum_list as $key => $enum_value ) {
+            $enum_list[$key] = $enum_value = trim($enum_value);
+            if ( $this->enum($enum_value,$vardef) === false ) {
                 return false;
             }
         }

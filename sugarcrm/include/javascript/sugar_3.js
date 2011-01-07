@@ -68,7 +68,7 @@ if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
     	SUGAR.Studio= {};
     	SUGAR.contextMenu= {};
 
-
+    	SUGAR.config= {};
 /**
  * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
