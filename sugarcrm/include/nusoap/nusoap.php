@@ -22,7 +22,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -45,11 +45,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -425,10 +425,10 @@ class nusoap_base {
 	 * control of the xml content
 	 * @var string
 	 * @access public
-	 * 
+	 *
 	 */
-	var $payloadOverride;	
-	
+	var $payloadOverride;
+
 	/**
 	* constructor
 	*
@@ -1083,7 +1083,10 @@ class nusoap_base {
 	 * @access public
 	 */
     function varDump($data) {
-		ob_start();
+        if ($this->debugLevel <= 0) {
+            return '';
+        }
+        ob_start();
 		var_dump($data);
 		$ret_val = ob_get_contents();
 		ob_end_clean();
@@ -1228,7 +1231,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -1251,11 +1254,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -1516,7 +1519,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -1539,11 +1542,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -2367,7 +2370,9 @@ class nusoap_xmlschema extends nusoap_base  {
 	* @access   private
 	*/
 	function xdebug($string){
-		$this->debug('<' . $this->schemaTargetNamespace . '> '.$string);
+	    if($this->debugLevel > 0) {
+		    $this->debug('<' . $this->schemaTargetNamespace . '> '.$string);
+	    }
 	}
 
     /**
@@ -2692,7 +2697,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -2715,11 +2720,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -2997,7 +3002,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -3020,11 +3025,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -4502,7 +4507,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -4525,11 +4530,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -5839,7 +5844,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -5862,11 +5867,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -7975,7 +7980,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -7998,11 +8003,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -8816,7 +8821,7 @@ r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" s
 
 r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
@@ -8839,11 +8844,11 @@ r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trun
 
 r42645 - 2008-12-18 13:41:08 -0800 (Thu, 18 Dec 2008) - awu - merging maint_5_2_0 rev41336:HEAD to trunk
 
-r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs 
+r41647 - 2008-11-11 17:44:30 -0800 (Tue, 11 Nov 2008) - majed - Fixes a few bugs
 
 r41596 - 2008-11-10 19:20:04 -0800 (Mon, 10 Nov 2008) - Samir Gandhi - modified to set $method in the code
 
-r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes 
+r41558 - 2008-11-10 14:35:34 -0800 (Mon, 10 Nov 2008) - majed - changes nusoap to allow for registering classes
 
 r39619 - 2008-09-09 13:41:34 -0700 (Tue, 09 Sep 2008) - jmertic - Bug 24827 - Remove all instances where we return a new object and assign it by reference, since this is deprecated in PHP 5 and emits E_DEPRECATED errors in PHP 5.3.
 Touched:
@@ -9309,10 +9314,10 @@ class nusoap_client extends nusoap_base  {
 				}
 			}
 		}
-		
-		// check for payload override		
-		$payload = !empty($this->payloadOverride) ? $this->payloadOverride : $payload;		
-		
+
+		// check for payload override
+		$payload = !empty($this->payloadOverride) ? $this->payloadOverride : $payload;
+
 		// serialize envelope
 		$soapmsg = $this->serializeEnvelope($payload,$this->requestHeaders,$usedNamespaces,$style,$use,$encodingStyle);
 		$this->debug("endpoint=$this->endpoint, soapAction=$soapAction, namespace=$namespace, style=$style, use=$use, encodingStyle=$encodingStyle");
