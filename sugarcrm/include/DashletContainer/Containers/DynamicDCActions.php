@@ -36,7 +36,7 @@ if ( !isset($dynamicDCActions) || !is_array($dynamicDCActions) ) {
     $dynamicDCActions = array();
 }
 
-if ( true || is_object($api) ) {
+if ( is_object(ExternalAPIFactory::loadAPI('LotusLive',true)) ) {
     $dynamicDCActions['LotusLiveMeetings'] = array(
         'module' => 'Meetings',
         'label' => translate('LBL_VIEW_LOTUS_LIVE_MEETINGS','EAPM'),
