@@ -995,11 +995,9 @@ class Link {
 		$indices=Link::_get_link_table_definition($table_name,'indices');
 		if (!empty($indices)) {
 			foreach ($indices as $index) {
-				foreach ($index as $key=>$value) {
-					if ($key=='type' && $value=='alternate_key') {
-						return $index['fields'];
-					}
-				}
+                if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {
+                    return $index['fields'];
+                }
 			}
 		}
 		$relationships=Link::_get_link_table_definition($table_name,'relationships');

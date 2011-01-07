@@ -70,6 +70,7 @@ $dictionary["documents_accounts"] = array (
       'fields' => 
       array (
         0 => 'account_id',
+        1 => 'document_id',
       ),
     ),
     2 => 
@@ -79,6 +80,7 @@ $dictionary["documents_accounts"] = array (
       'fields' => 
       array (
         0 => 'document_id',
+        1 => 'account_id',
       ),
     ),
   ),

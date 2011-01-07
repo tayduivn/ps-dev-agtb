@@ -27,7 +27,7 @@
  ********************************************************************************/
 *}
 <a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$displayParams.module}{$vardef.displayParams.module}" class="tabDetailViewDFLink">{sugar_fetch object=$parentFieldArray key=$col}</a>
-{if isset($vardef.allowEapm) && $vardef.allowEapm && isset($parentFieldArray.DOC_TYPE) && isset($parentFieldArray.DOC_URL) }
+{if isset($vardef.allowEapm) && $vardef.allowEapm && isset($parentFieldArray.DOC_TYPE) && !empty($parentFieldArray.DOC_URL) }
 {capture name=imageNameCapture assign=imageName}
 {sugar_fetch object=$parentFieldArray key=DOC_TYPE}_image_inline.png
 {/capture}

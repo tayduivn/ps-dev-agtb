@@ -101,6 +101,9 @@ $subpanel_layout = array(
 		'document_revision_id'=>array(
 			'usage'=>'query_only'
 		),
+		'doc_url'=>array(
+			'usage'=>'query_only'
+		),
 	),
 );
 ?>
