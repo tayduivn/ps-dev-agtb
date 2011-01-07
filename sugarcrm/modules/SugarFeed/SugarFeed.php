@@ -352,8 +352,9 @@ class SugarFeed extends Basic {
 			$data['NAME'] = '';
 			return $data;
 		}
-		if(is_admin($GLOBALS['current_user']) || $data['CREATED_BY'] == $GLOBALS['current_user']->id)
-		$delete = SugarThemeRegistry::current()->getImage('delete_inline', 'width="12" height="12" border="0" align="absmiddle" style="vertical-align: bottom;" onclick=\'SugarFeed.deleteFeed("'. $data['ID'] . '", "{this.id}")\'');
+		if(is_admin($GLOBALS['current_user']) || (isset($data['CREATED_BY']) && $data['CREATED_BY'] == $GLOBALS['current_user']->id) ) {
+            $delete = ' - <a id="sugarFeedDeleteLink'.$data['ID'].'" href="#" onclick=\'SugarFeed.deleteFeed("'. $data['ID'] . '", "{this.id}"); return false;\'>'. $GLOBALS['app_strings']['LBL_DELETE_BUTTON_LABEL'].'</a>';
+        }
 		$data['NAME'] .= $data['DESCRIPTION'];
 		$data['NAME'] =  '<div style="padding:3px">' . html_entity_decode($data['NAME']);
 		if(!empty($data['LINK_URL'])){
@@ -363,17 +364,50 @@ class SugarFeed extends Basic {
             }
 		}
         $data['NAME'] .= '<div class="byLineBox"><span class="byLineLeft">';
-		//BEGIN SUGARCRM flav=pro ONLY
-		$data['NAME'] .= '<b>'. translate('LBL_TEAM') . '</b>&nbsp;';
-        require_once('include/SugarFields/SugarFieldHandler.php');
-        $sfh = new SugarFieldHandler();
-        $data['NAME'] .= $sfh->displaySmarty($data, array('type'=>'Teamset','name'=>'TEAM_NAME'), 'ListView', array('col'=>'TEAM_NAME'));
-		//END SUGARCRM flav=pro ONLY
-		$data['NAME'] .= '&nbsp;</span><div class="byLineRight"> '.  $this->getTimeLapse($data['DATE_ENTERED']) . ' &nbsp;' .$delete. '</div></div>';
+		$data['NAME'] .= $this->getTimeLapse($data['DATE_ENTERED']) . '&nbsp;</span><div class="byLineRight"><a id="sugarFeedReplyLink'.$data['ID'].'" href="#" onclick=\'SugarFeed.buildReplyForm("'.$data['ID'].'", "{this.id}", this); return false;\'>'.$GLOBALS['app_strings']['LBL_EMAIL_REPLY'].'</a>' .$delete. '</div></div>';
+
+        $data['NAME'] .= $this->fetchReplies($data);
 		return  $data ;
 	}
+	
+    function fetchReplies($data) {
+        $seedBean = new SugarFeed;
 
-	function getTimeLapse($startDate)
+        $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$data['ID']."'");
+        
+        if ( count($replies['list']) < 1 ) {
+            return '';
+        }
+
+
+        $replyHTML = '<div class="clear"></div><blockquote>';
+
+        foreach ( $replies['list'] as $reply ) {
+            // Setup the delete link
+            $delete = '';
+            if(is_admin($GLOBALS['current_user']) || $data['CREATED_BY'] == $GLOBALS['current_user']->id) {
+                $delete = '<a id="sugarFieldDeleteLink'.$reply->id.'" href="#" onclick=\'SugarFeed.deleteFeed("'. $reply->id . '", "{this.id}"); return false;\'>'. $GLOBALS['app_strings']['LBL_DELETE_BUTTON_LABEL'].'</a>';
+            }
+
+            $image_url = 'include/images/blank.gif';
+            if ( isset($reply->created_by) ) {
+                $user = loadBean('Users');
+                $user->retrieve($reply->created_by);
+                if ( !empty($user->picture) ) {
+                    $image_url = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
+                }
+            }
+            $replyHTML .= '<div style="float: left; margin-right: 3px;"><img src="'.$image_url.'" height=50></div> ';
+            $replyHTML .= html_entity_decode($reply->name).'<br>';
+            $replyHTML .= '<div class="byLineBox"><span class="byLineLeft">'. $this->getTimeLapse($reply->date_entered) . '&nbsp;</span><div class="byLineRight">  &nbsp;' .$delete. '</div></div><div class="clear"></div>';
+        }
+
+        $replyHTML .= '</blockquote>';
+        return $replyHTML;
+        
+    }
+
+	static function getTimeLapse($startDate)
 	{
 		$startDate = $GLOBALS['timedate']->to_db($startDate);
 		$start = array();

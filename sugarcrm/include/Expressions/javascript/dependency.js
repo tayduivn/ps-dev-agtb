@@ -604,35 +604,6 @@ SUGAR.forms.getFieldsFromExpression = function(expression)
 	return matches;
 }
 
-
-
-
-/**
- * @STATIC
- * Creates a new trigger with the given variables, condition, dependencies, and a flag
- * which indicates whether or not to execute this trigger when the window loads.
- */
-SUGAR.forms.createTrigger = function(variables, condition, triggeronload)
-{
-	var trigger = new SUGAR.forms.Trigger(variables, condition);
-	if ( triggeronload ) {
-		var empty = false;
-		for (var i in variables)
-		{
-			if (SUGAR.forms.AssignmentHandler.getValue(variables[i]) == "")
-				empty = true;
-		}
-		if (!empty)
-			YAHOO.util.Event.addListener(window, "load", SUGAR.forms.Trigger.trigger, trigger);
-	}
-
-	return trigger;
-}
-
-
-
-
-
 /**
  * A dependency is an object representation of a variable being dependent
  * on other variables. For example A being the sum of B and C where A is
@@ -653,15 +624,9 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, fo
 	trigger.setContext(this.context);
 	this.trigger = trigger;
 	if (testOnLoad) {
-		var vars = trigger.variables;
-		var empty = false;
-		for (var i in vars)
-		{
-			if (AH.getValue(vars[i]) == "")
-				empty = true;
-		}
-		if (!empty)
+		try {
 			SUGAR.forms.Trigger.fire("", trigger);
+		}catch (e) {}
 	}
 }
 

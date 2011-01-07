@@ -66,8 +66,9 @@ class VisibilityAction extends AbstractAction{
 							if (e.tagName == 'TD') return true;
 							return false;
 						});					
+                        var oldVisibility = labelTD.style.display;
 						labelTD.style.display = inputTD.style.display = visibility;
-						if (visibility == '' && this.view == 'EditView')
+						if (visibility == '' && this.view == 'EditView' && visibility != oldVisibility)
 							SUGAR.forms.FlashField(target);
 					}
 				} catch (e) {if (console && console.log) console.log(e);}

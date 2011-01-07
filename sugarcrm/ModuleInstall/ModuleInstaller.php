@@ -1289,6 +1289,14 @@ class ModuleInstaller{
 			$this->merge_files('Ext/Vardefs/', 'vardefs.ext.php');
 			sugar_cache_reset();
 	}
+    //BEGIN SUGARCRM flav=pro ONLY
+    function rebuild_dependencies(){
+            $this->log(translate('LBL_MI_REBUILDING') . " Dependencies...");
+			$this->merge_files('Ext/Dependencies/', 'deps.ext.php');
+			sugar_cache_reset();
+	}
+    //END SUGARCRM flav=pro ONLY
+
 	function rebuild_layoutdefs(){
             $this->log(translate('LBL_MI_REBUILDING') . " Layoutdefs...");
 			$this->merge_files('Ext/Layoutdefs/', 'layoutdefs.ext.php');
@@ -1362,6 +1370,9 @@ class ModuleInstaller{
 
 		$this->rebuild_languages($sugar_config['languages']);
 		$this->rebuild_vardefs();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->rebuild_dependencies();
+        //END SUGARCRM flav=pro ONLY
 		$this->rebuild_layoutdefs();
 		$this->rebuild_menus();
 		$this->rebuild_dashletcontainers();

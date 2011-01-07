@@ -88,6 +88,7 @@ $mod_strings = array (
 	'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
 	'LBL_PANEL_DETAILS' => 'Details',
 	'LBL_NOTE_INFORMATION' => 'Note Overview',
+	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
 );
 
 ?>

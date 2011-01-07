@@ -202,7 +202,8 @@ class DependencyManager {
         foreach ($meta as $key => $def)
         {
             $hooks = empty($def['hooks']) ? array("all") : $def['hooks'];
-            if (!is_array($hooks)) $hooks = array($hooks);
+            if (!is_array($hooks))
+                $hooks = array($hooks);
             if(in_array('all', $hooks) || in_array($action, $hooks))
             {
                 $triggerExp = empty($def['trigger']) ? self::$default_trigger : $def['trigger'];
@@ -220,7 +221,7 @@ class DependencyManager {
                 }
                 foreach($notActions as $aDef)
                 {
-                    $dep->addFalseAction(
+                    $dep->addFalseAction(   
                         ActionFactory::getNewAction($aDef['name'], $aDef['params']));
                 }
                 $dep->setFireOnLoad(!isset($def['onload']) || $def['onload'] !== false);

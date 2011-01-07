@@ -2101,12 +2101,13 @@ print "<BR>";
 				}
 
 				if (isset($display_column['group_function'])) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
-                }
-                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
+                }          
+              
+                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
 
 				if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {

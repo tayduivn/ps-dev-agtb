@@ -1650,6 +1650,10 @@ function initEditView(theForm) {
     }
 
     // console.log('DEBUG: Adding checks for '+theForm.id);
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
     
@@ -3487,12 +3491,18 @@ SUGAR.language = function() {
         },
 
         get: function(module, str) {
-            if(typeof SUGAR.language.languages[module] == 'undefined'
-            || typeof SUGAR.language.languages[module][str] == 'undefined')
+            if(typeof SUGAR.language.languages[module] == 'undefined' || typeof SUGAR.language.languages[module][str] == 'undefined')
+            {
                 return 'undefined';
-
+            }
             return SUGAR.language.languages[module][str];
-        }
+        },
+        
+        translate: function(module, str)
+        {
+            text = this.get(module, str);
+            return text != 'undefined' ? text : this.get('app_strings', str);  	
+        },
     };
 }();
 

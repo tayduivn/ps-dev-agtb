@@ -677,7 +677,7 @@ class SugarApplication
 	protected function checkHTTPReferer($dieIfInvalid = true)
 	{
 		global $sugar_config;
-		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView');
+		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView','oauth');
 		// Bug 39691 - Make sure localhost and 127.0.0.1 are always valid HTTP referers
 		$whiteListReferers = array('127.0.0.1','localhost');
 		if(!empty($_SERVER['SERVER_ADDR']))$whiteListReferers[]  = $_SERVER['SERVER_ADDR'];

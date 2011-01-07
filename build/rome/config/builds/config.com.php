@@ -120,6 +120,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/themes/Retro'=>1,
 'sugarcrm/themes/RipCurl'=>1,
 'sugarcrm/themes/RipCurlorg'=>1,
+'sugarcrm/themes/RTL'=>1,
 'sugarcrm/themes/Shred'=>1,
 'sugarcrm/themes/Sugar'=>1,
 'sugarcrm/themes/Sugar2006'=>1,

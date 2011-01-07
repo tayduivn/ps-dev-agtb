@@ -2373,8 +2373,6 @@ border-radius: 0px 0px 6px 6px;
 .sugarFeedDashlet
 {
 	overflow:auto;
-	max-height:375px;
-	height:expression(this.scrollHeight>375?'375px':'auto');
 }
 
 .sugarFeedDashlet td.list th, .sugarFeedDashlet td.list td[scope=col]
@@ -5405,6 +5403,39 @@ color: #0B578F;
 	height: 26px;
 }
 
+table.dcListView th,table.dcListView td {
+	text-align: left;
+	color: #666;
+	padding: 5px 10px;
+}
+
+table.dcListView th {
+	background-color:#EBEBED;
+}
+
+
+table.dcListView th a.listViewThLinkS1 {
+color:#666666;
+text-decoration: none;
+}
+
+table.dcListView th a.listViewThLinkS1:hover {
+text-decoration: underline;
+}
+
+table.dcListView td {
+	border-bottom: 1px solid #eee;
+	white-space: nowrap;
+}
+
+table.dcSearch {
+	margin-bottom: 10px;	
+}
+
+.dcSubmit {
+margin-left:10px;	
+}
+		
 #sugar_spot_search_div {
 	background: url(../../../../index.php?entryPoint=getImage&imageName=dcMenuSearchBox.png) no-repeat top left;
 	height: 26px;
@@ -5472,6 +5503,12 @@ padding: 2px;
 border: 0px;
 margin-top: 7px;
 }
+.dashletPanel.dc .hd button {
+    vertical-align: top;
+    margin-top: 8px;
+    margin-right: 6px;
+}
+
 
 .dashletPanel.dc .bd .bd-center {
 	padding-top: 15px;

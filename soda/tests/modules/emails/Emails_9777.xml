@@ -27,7 +27,7 @@
 	<!--verify-->
 	<table id="composeHeaderTable0">
 		<textfield id="addressTO0"
-			assert="{@pre_contact_first_name} {@pre_contact_last_name} &lt;{@contact_record.emailAddress0}&gt;" />
+			assert="{@pre_contact_first_name} {@pre_contact_last_name} &lt;{@pre_contact_email}&gt;" />
 		<select id="data_parent_type0" assert="Contacts" />
 		<textfield id="data_parent_name0" assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
 	</table>

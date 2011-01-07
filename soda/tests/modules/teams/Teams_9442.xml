@@ -10,7 +10,7 @@
 	</div>
 
 	<div id="Activities">
-		<link text="Create Note or Add Attachment" />
+		<link text="Create Note or Attachment" />
 	</div>
 	<browser assert="Notes" />
 

@@ -21,7 +21,7 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Generic/GenericExpression.php');
 /**
- * <b>related(Relate <i>link</i>, String <i>field</i>)</b><br>
+ * <b>related(Relationship <i>link</i>, String <i>field</i>)</b><br>
  * Returns the value of <i>field</i> in the related module <i>link</i><br/>
  * ex: <i>related($accounts, "industry")</i>
  */
@@ -67,7 +67,7 @@ class RelatedFieldExpression extends GenericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"related",
+                    "function":"related",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field

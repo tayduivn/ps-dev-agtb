@@ -139,41 +139,6 @@
 	</block>
 	
 	<block>
-		<testfile>Emails_10048</testfile>
-		<bugnumber>-1</bugnumber>
-		<reason>wait for lib file change</reason>
-		<modulename>emails</modulename>
-	</block>
-	
-	<block>
-		<testfile>Emails_10049</testfile>
-		<bugnumber>-1</bugnumber>
-		<reason>wait for lib file change</reason>
-		<modulename>emails</modulename>
-	</block>
-	
-	<block>
-		<testfile>Emails_9768</testfile>
-		<bugnumber>-1</bugnumber>
-		<reason>wait for lib file change</reason>
-		<modulename>emails</modulename>
-	</block>
-	
-	<block>
-		<testfile>Emails_9769</testfile>
-		<bugnumber>-1</bugnumber>
-		<reason>wait for lib file change</reason>
-		<modulename>emails</modulename>
-	</block>
-	
-	<block>
-		<testfile>Emails_9777</testfile>
-		<bugnumber>-1</bugnumber>
-		<reason>wait for lib file change</reason>
-		<modulename>emails</modulename>
-	</block>
-	
-	<block>
 		<testfile>Opportunity_2311</testfile>
 		<bugnumber>-1</bugnumber>
 		<reason>contract sub panle not shown default</reason>

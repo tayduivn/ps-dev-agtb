@@ -569,8 +569,21 @@ function return_name($row, $first_column, $last_column)
 function get_languages()
 {
 	global $sugar_config;
+	$lang = $sugar_config['languages'];
+    if(!empty($sugar_config['disabled_languages'])){
+        foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
+            unset($lang[$disable]);
+        }
+    }
+	return $lang;
+}
+
+function get_all_languages()
+{
+	global $sugar_config;
 	return $sugar_config['languages'];
 }
+
 
 function get_language_display($key)
 {

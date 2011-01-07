@@ -24,7 +24,7 @@
 		<browser assert="Campaign Search" />
 		<textfield id="name_advanced" set="{@Campaign_Name}" />
 		<button value="Search" />
-
+		<wait timeout="3" />
 		<link text="{@Campaign_Name}" />
 
 		<textfield id="refered_by" set="{@Leads_1892.refered_by}" />
@@ -55,10 +55,12 @@
 		<textfield id="description" set="{@Leads_1892.description}" />
 		<button value="Cancel" alert="true" />
 
+		<wait timeout="3" />
 		<browser assert="Leads" />
 		<button id="search_form_clear" />
 		<textfield id="search_name_basic" set="{@Leads_1892.last_name}{@stamp}" />
 		<button id="search_form_submit" />
+		<wait timeout="3" />
 		<link
 			text="{@Leads_1892.salutation} {@Leads_1892.last_name} {@Leads_1892.last_name}{@stamp}"
 			click="false" exist="false" />

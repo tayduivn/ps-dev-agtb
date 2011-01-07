@@ -1,7 +1,7 @@
 <soda>
 	<puts text="Meeting_Create_Lib: Starting" />
 	<timestamp />
-	<link href="index.php?module=Activities&amp;action=index" />
+	<link href="index.php?module=Meetings&amp;action=index" />
 	<link text="Schedule Meeting" />
 	<csv file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.csv" var="meeting_record">
 		<textfield id="name" set="{@meeting_record.name} {@user.name} {@stamp}" />

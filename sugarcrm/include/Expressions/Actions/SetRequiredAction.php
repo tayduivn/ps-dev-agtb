@@ -49,7 +49,7 @@ SUGAR.forms.SetRequiredAction = function(variable, expr, label) {
 SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
 
     /**
-     * Triggers the style dependencies.
+     * Triggers the required dependencies.
      */
     exec: function(context)
     {
@@ -63,20 +63,26 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
 
 
         if (this._el_lbl != null) {
-            if ( (this.required == true  || this.required == 'true')) {
-            var node = document.createElement(\"span\");
-            node.innerHTML = \"<font color='red'>*</font>\";
-            node.className = \"req\";
-            this._el_lbl.appendChild(node);
-	            addToValidate('EditView', this.variable, 'text', true, this.variable);
-        } else {
             var p = this._el_lbl;
-            if ( p != null ) {
-                var els = YAHOO.util.Dom.getElementsBy( function(e) { return e.className == 'req'; }, \"span\", p)
-                if ( els != null )  p.removeChild(els[0]);
+            var els = YAHOO.util.Dom.getElementsBy( function(e) { return e.className == 'req'; }, \"span\", p)
+            var reqSpan = false;
+            if ( els != null && els[0] != null)
+                reqSpan = els[0];
+
+            if ( (this.required == true  || this.required == 'true')) {
+                if (!reqSpan) {
+                    var node = document.createElement(\"span\");
+                    node.innerHTML = \"<font color='red'>*</font>\";
+                    node.className = \"req\";
+                    this._el_lbl.appendChild(node);
+                    addToValidate('EditView', this.variable, 'text', true, this.variable);
+                }
+            } else {
+                if ( p != null  && reqSpan != false) {
+                    p.removeChild(reqSpan);
+                }
+                removeFromValidate('EditView', this.variable);
             }
-	            removeFromValidate('EditView', this.variable);
-	        }
         }
     } 
 });";

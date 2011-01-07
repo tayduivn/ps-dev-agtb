@@ -580,6 +580,14 @@ class SugarView
         $ss->display($headerTpl);
 
         $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+        
+        if ( isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message']) ) {
+            foreach ( $_SESSION['user_error_message'] as $error_message ) {
+                echo('<p class="error">' . $error_message.'</p>');
+            }
+            unset($_SESSION['user_error_message']);
+        }
+        
     }
     /**
      * If the view is classic then this method will include the file and
