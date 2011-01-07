@@ -2059,9 +2059,9 @@ class Email extends SugarBean {
 			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
 			$mail->Body = preg_replace($regex, '', $mail->Body);
 		}
-		$fileBasePath = "{$sugar_config['upload_dir']}";
-		$filePatternSearch = "{$sugar_config['upload_dir']}";
-		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		$fileBasePath = $sugar_config['upload_dir'];
+		$filePatternSearch = $sugar_config['upload_dir'];
+		$filePatternSearch = str_replace("/", '\/', $filePatternSearch);
 		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
 		{
 			$matches = array();
@@ -2070,7 +2070,7 @@ class Email extends SugarBean {
 				$filename = str_replace($fileBasePath, '', $match);
 				$filename = urldecode(substr($filename, 0, -1));
 				$cid = $filename;
-				$file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$filename}");
+				$file_location = clean_path("{$sugar_config['upload_dir']}$filename");
 				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
 
 				if(file_exists($file_location)) {

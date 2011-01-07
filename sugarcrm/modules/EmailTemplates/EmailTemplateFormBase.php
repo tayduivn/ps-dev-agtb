@@ -120,7 +120,7 @@ EOQ;
 
 		require_once('include/formbase.php');
 		require_once('include/upload_file.php');
-		global $upload_maxsize, $upload_dir;
+		global $upload_maxsize;
 		global $mod_strings;
 		global $sugar_config;
 

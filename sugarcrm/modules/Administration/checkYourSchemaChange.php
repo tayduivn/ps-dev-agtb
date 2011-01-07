@@ -499,10 +499,8 @@ function checkSchema($execute=false,$return=false){
 		$db_scan .= "****************************************************************************************************"."\n";
 	}
 
-	$cwd = getcwd();
-
-	mkdir_recursive(clean_path("{$cwd}/{$GLOBALS['sugar_config']['upload_dir']}dbscan"));
-	$dbscan_dir =clean_path("{$cwd}/{$GLOBALS['sugar_config']['upload_dir']}dbscan");
+	mkdir_recursive(clean_path("{$GLOBALS['sugar_config']['upload_dir']}dbscan"));
+	$dbscan_dir =clean_path("{$GLOBALS['sugar_config']['upload_dir']}dbscan");
 	$dbscan_file =$dbscan_dir.'/schema_inconsistencies.txt';
 	//$fk_schema_file =$schema_dir.'/fkschema.sql';
 	if(file_exists($dbscan_file)) {

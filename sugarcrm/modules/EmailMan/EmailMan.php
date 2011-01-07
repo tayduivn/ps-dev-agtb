@@ -404,7 +404,7 @@ class EmailMan extends SugarBean{
                         }
                     } elseif($note->object_name == 'DocumentRevision') { // from Documents
                         $filename = $note->id.$note->filename;
-                        $file_location = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].$filename;
+                        $file_location = $GLOBALS['sugar_config']['upload_dir'].$filename;
                         $mime_type = $note->file_mime_type;
                     }
 

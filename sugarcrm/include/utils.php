@@ -83,7 +83,7 @@ function make_sugar_config(&$sugar_config)
 	global $passwordsetting;
 
 	// assumes the following variables must be set:
-	// $dbconfig, $dbconfigoption, $cache_dir, $import_dir, $session_dir, $site_URL, $tmp_dir, $upload_dir
+	// $dbconfig, $dbconfigoption, $cache_dir,  $session_dir, $site_URL, $upload_dir
 
 	$sugar_config = array (
 	'admin_export_only' => empty($admin_export_only) ? false : $admin_export_only,

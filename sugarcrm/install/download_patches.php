@@ -63,7 +63,7 @@ if(isset($_REQUEST['languagePackAction']) && !empty($_REQUEST['languagePackActio
         if(isset($_REQUEST['release_id']) && $_REQUEST['release_id'] != ""){
             require_once('ModuleInstall/PackageManager/PackageManager.php');
             $pm = new PackageManager();
-            $tempFile = $pm->download('3', '3', $_REQUEST['release_id'], getcwd().'/'.$sugar_config['upload_dir']);
+            $tempFile = $pm->download('3', '3', $_REQUEST['release_id'], $sugar_config['upload_dir']);
             $perform = true;
             //$base_filename = urldecode($tempFile);
         }else{

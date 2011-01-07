@@ -62,7 +62,7 @@ switch($run) {
             if(!empty($_SESSION['ML_PATCHES'])){
             	$release_map = $_SESSION['ML_PATCHES'][$_REQUEST['release_id']];
             	if(!empty($release_map)){
-            		$tempFile = $pm->download($release_map['category_id'], $release_map['package_id'], $_REQUEST['release_id'], getcwd().'/'.$sugar_config['upload_dir']);
+            		$tempFile = $pm->download($release_map['category_id'], $release_map['package_id'], $_REQUEST['release_id'], $sugar_config['upload_dir']);
             		$perform = true;
 					if($release_map['type'] != 'patch'){
 						$pm->performSetup($tempFile, $release_map['type'], false);
@@ -82,12 +82,12 @@ switch($run) {
 				$out = "<b><span class='error'>{$mod_strings['ERR_UW_PHP_FILE_ERRORS'][$_FILES['upgrade_zip']['error']]}</span></b><br />";
 			}
 		} else {
-			if(!move_uploaded_file($_FILES['upgrade_zip']['tmp_name'], getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'])) {
+			if(!move_uploaded_file($_FILES['upgrade_zip']['tmp_name'], $sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'])) {
 				logThis('ERROR: could not move temporary file to final destination!');
 				unlinkTempFiles();
 				$out = "<b><span class='error'>{$mod_strings['ERR_UW_NOT_VALID_UPLOAD']}</span></b><br />";
 			} else {
-				$tempFile = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
+				$tempFile = $sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
 				logThis('File uploaded to '.$tempFile);
                 $base_filename = urldecode( $_REQUEST['upgrade_zip_escaped'] );
                 $perform = true;
@@ -185,7 +185,7 @@ switch($run) {
         $fileS = explode('/', $delete_me);
         $c = count($fileS);
         $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-        $deleteUpload = getcwd().'/'.$sugar_config['upload_dir'].$fileName;
+        $deleteUpload = $sugar_config['upload_dir'].$fileName;
         logThis('Trying to delete '.$deleteUpload);
         if(!@unlink($deleteUpload)) {
         	logThis('ERROR: could not delete: ['.$deleteUpload.']');

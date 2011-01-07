@@ -295,7 +295,7 @@ eoq;
 				$filename = str_replace($fileBasePath, '', $match);
 				$filename = urldecode(substr($filename, 0, -1));
 				$cid = $filename;
-				$file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$filename}");
+				$file_location = clean_path("{$sugar_config['upload_dir']}{$filename}");
 				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
 				if(file_exists($file_location)) {
 					$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
@@ -328,7 +328,7 @@ eoq;
             $this->Body = str_replace($fullMatch, $replaceMatch, $this->Body);
 
             //Attach the file
-            $file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$noteId}");
+            $file_location = clean_path("{$sugar_config['upload_dir']}{$noteId}");
 
             if(file_exists($file_location))
 					$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
@@ -352,7 +352,7 @@ eoq;
 					}
 				} elseif($note->object_name == 'DocumentRevision') { // from Documents
 					$filename = $note->id.$note->filename;
-					$file_location = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].$filename;
+					$file_location = $GLOBALS['sugar_config']['upload_dir'].$filename;
 					$mime_type = $note->file_mime_type;
 				}
 

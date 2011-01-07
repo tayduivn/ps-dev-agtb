@@ -126,7 +126,7 @@ class UpgradeMetaHelper{
 	}
 
 function saveMatchingFilesQueries($currStep,$value){
-	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
 	if(!is_dir($upgrade_progress_dir)){
 		mkdir($upgrade_progress_dir);
 	}

@@ -648,7 +648,6 @@ function deleteChance(){
  */
 function upgradeUWFiles($file) {
 	global $sugar_config;
-	// file = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
 
 	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
 
@@ -3158,7 +3157,7 @@ function unlinkTempFiles() {
 	logThis('at unlinkTempFiles()');
 	$tempDir='';
 	$sugar_config['upload_dir']=sugar_cached('upload/');
-    $tempDir = clean_path(getcwd().'/'.$sugar_config['upload_dir'].'upgrades/temp');
+    $tempDir = clean_path($sugar_config['upload_dir'].'upgrades/temp');
 
     if(file_exists($tempDir) && is_dir($tempDir)){
 		$files = findAllFiles($tempDir, array(), false);
@@ -3645,7 +3644,7 @@ function deletePackageOnCancel(){
     $fileS = explode('/', $delete_me);
     $c = count($fileS);
     $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-    $deleteUpload = getcwd().'/'.$sugar_config['upload_dir'].$fileName;
+    $deleteUpload = $sugar_config['upload_dir'].$fileName;
     logThis('Trying to delete '.$deleteUpload);
     if(!@unlink($deleteUpload)) {
     	logThis('ERROR: could not delete: ['.$deleteUpload.']');
@@ -3808,7 +3807,7 @@ function getAlterTable($query){
 
 function set_upgrade_vars(){
 	logThis('setting session variables...');
-	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
 	if(!is_dir($upgrade_progress_dir)){
 		mkdir_recursive($upgrade_progress_dir);
 	}
@@ -3864,7 +3863,7 @@ function set_upgrade_vars(){
 }
 
 function initialize_session_vars(){
-  $upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+  $upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
   $upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
   if(file_exists($upgrade_progress_file)){
   	include($upgrade_progress_file);
@@ -3888,7 +3887,7 @@ function initialize_session_vars(){
 //track the upgrade progress on each step
 function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubState=''){
 
-	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
 	if(!is_dir($upgrade_progress_dir)){
 		mkdir_recursive($upgrade_progress_dir);
 	}
@@ -3966,10 +3965,9 @@ function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubS
 }
 
 function get_upgrade_progress(){
-	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
 	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 	$currState = '';
-	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 
 	if(file_exists($upgrade_progress_file)){
 		include($upgrade_progress_file);
@@ -4024,7 +4022,6 @@ function didThisStepRunBefore($step,$SubStep=''){
 	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
 	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 	$currState = '';
-	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 	$stepRan = false;
 	if(file_exists($upgrade_progress_file)){
 		include($upgrade_progress_file);
@@ -5553,11 +5550,11 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
  */
 function upgrade_connectors($path='') {
     logThis('Begin upgrade_connectors', $path);
-    
+
     $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
     if(file_exists($filePath))
     {
-       logThis("{$filePath} file", $path);	
+       logThis("{$filePath} file", $path);
        require($filePath);
        if(!is_null($config))
        {
@@ -5567,17 +5564,17 @@ function upgrade_connectors($path='') {
              $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
              $modified = true;
           }
-          
+
           if(isset($config['properties']['hoovers_wsdl']))
           {
              $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
              $modified = true;
           }
-          
+
           if($modified)
           {
               if(!write_array_to_file('config', $config, $filePath)) {
-                 logThis("Could not write new configuration to {$filePath} file", $path);	
+                 logThis("Could not write new configuration to {$filePath} file", $path);
               } else {
                  logThis('Modified file successfully with new configuration entries', $path);
               }
@@ -5588,13 +5585,13 @@ function upgrade_connectors($path='') {
     $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
     if(file_exists($filePath))
     {
-       logThis("Modifying {$filePath} file", $path);	
-       require($filePath);		  
+       logThis("Modifying {$filePath} file", $path);
+       require($filePath);
        $fileContents = file_get_contents($filePath);
        $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
-       file_put_contents($filePath, $out);		   
+       file_put_contents($filePath, $out);
     }
-    
+
     logThis('End upgrade_connectors', $path);
 }
 
@@ -5706,8 +5703,6 @@ function add_unified_search_to_custom_modules_vardefs()
 function upgradeSugarCache($file)
 {
 	global $sugar_config;
-	// file = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
-
 	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
 
 	unzip($file, $cacheUploadUpgradesTemp);

@@ -404,41 +404,6 @@ class KBDocument extends SugarBean {
     }
 
      //function is called statically.
-    function get_kbdoc_attachments_for_email($kbdoc_id){
-
-		if (empty($kbdoc_id)) return null;
-
-		global $sugar_config,$app_strings;
-
-		$docrevs = array();
-		$query="select id,filename from document_revisions where id in(select document_revision_id from kbdocument_revisions where kbdocument_id='$kbdoc_id' and deleted=0) and file_mime_type is not null and deleted=0";
-		$result=$GLOBALS['db']->query($query);
-        $i=0;
-        $atts=null;
-		if (!empty($result)) {
-			 while(true){
-
-			 	$row = $GLOBALS['db']->fetchByAssoc($result, -1, false);
-			 	if (empty($row)) {
-			 		break;
-			 	}
-				$doc_rev_id = $row['id'];
-				$filename =  $row['filename'];
-				$full_file_path = $sugar_config['site_url'].'/'.$sugar_config['upload_dir'].'/'.$doc_rev_id.$filename;
-				if($i >0){
-					$atts .= "<br/>";
-				}
-				$atts .= "
-						<input name='kb_attachment[]' value=$doc_rev_id type='hidden'>
-					    <input name='temp_remove_kb_attachment[]' value=$doc_rev_id type='checkbox'> rem&nbsp;&nbsp;
-					    <a href=$full_file_path>$filename</a>";
-              	$i++;
-              }
-		}
-		return $atts;
-	}
-
-     //function is called statically.
     function get_kbdoc_attachments_for_newemail($kbdoc_id){
 		if (empty($kbdoc_id)) return null;
 

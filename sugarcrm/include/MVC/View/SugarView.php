@@ -661,6 +661,7 @@ EOQ;
 EOHTML;
             $js_vars = array(
                 "sugar_cache_dir" => "cache/",
+            // FIXME: assumes uploads are under cache dir
                 "sugar_upload_dir" => "cache/uploads/",
                 );
 

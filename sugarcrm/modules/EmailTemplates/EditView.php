@@ -317,7 +317,6 @@ if(true) {
 	    }
 	}
 	$attJs  = '<script type="text/javascript">';
-	$attJs .= 'var file_path = "'.$sugar_config['site_url'].'/'.$sugar_config['upload_dir'].'";';
 	$attJs .= 'var lnk_remove = "'.$app_strings['LNK_REMOVE'].'";';
 	$attJs .= '</script>';
 	$xtpl->assign('ATTACHMENTS', $attachments);

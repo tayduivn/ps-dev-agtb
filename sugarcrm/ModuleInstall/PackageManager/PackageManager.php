@@ -500,7 +500,7 @@ require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
     function unlinkTempFiles() {
         global $sugar_config;
         @unlink($_FILES['upgrade_zip']['tmp_name']);
-        @unlink(getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name']);
+        @unlink($sugar_config['upload_dir'].$_FILES['upgrade_zip']['name']);
     }
 
     function performInstall($file, $silent=true){

@@ -33,13 +33,12 @@
 ////	UTILITIES THAT MUST BE LOCAL :(
 function prepSystemForUpgradeSilent() {
 	global $subdirs;
-	global $cwd;
 	global $sugar_config;
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-		if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
-	    	mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		if(!is_dir(clean_path("{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
+	    	mkdir_recursive(clean_path("{$sugar_config['upload_dir']}upgrades/{$subdir}"));
 		}
 	}
 }
@@ -188,8 +187,8 @@ if(isset($current_user) && $current_user->user_name == null){
 ////	UPGRADE PREP
 prepSystemForUpgradeSilent();
 
-$unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp");
-$install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
+$unzip_dir = clean_path("{$sugar_config['upload_dir']}upgrades/temp/su_temp");
+$install_file = clean_path("{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
 mkdir_recursive($unzip_dir);
 if(!is_dir($unzip_dir)) {
 	die("\nFAILURE\n");
@@ -202,7 +201,7 @@ copy($argv[1], $install_file);
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	UPGRADE UPGRADEWIZARD
-$zipBasePath = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/{$zip_from_dir}");
+$zipBasePath = clean_path("{$sugar_config['upload_dir']}upgrades/temp/su_temp/{$zip_from_dir}");
 $uwFiles = findAllFiles(clean_path("{$zipBasePath}/modules/UpgradeWizard"), array());
 $destFiles = array();
 
@@ -232,13 +231,13 @@ if($configOptions['db_type'] == 'mysql'){
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	MAKE SURE PATCH IS COMPATIBLE
-if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php")) {
+if(is_file("{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php")) {
 	// provides $manifest array
-	include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php");
+	include("{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php");
 	if(!isset($manifest)) {
 		die("\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
 	} else {
-		copy("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php", "{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/{$zip_from_dir}-manifest.php");
+		copy("{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php", "{$sugar_config['upload_dir']}upgrades/patch/{$zip_from_dir}-manifest.php");
 
 		$error = validate_manifest($manifest);
 		if(!empty($error)) {

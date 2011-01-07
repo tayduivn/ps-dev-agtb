@@ -557,7 +557,7 @@ $change_parent_button = '<input type="button" name="button" tabindex="2" class="
     		}
     		open_popup(document.EditView.parent_type.value,600,400,"&tree=ProductsProd",true,false,' .$encoded_popup_request_data.');
 		}</script>';
-	
+
 $xtpl->assign("CHANGE_PARENT_BUTTON", $change_parent_button);
 
 $button_attr = '';
@@ -664,7 +664,6 @@ if(!empty($focus->id) || (!empty($_REQUEST['record']) && $_REQUEST['type'] == 'f
 }
 
 $attJs  = '<script type="text/javascript">';
-$attJs .= 'var file_path = "'.$sugar_config['site_url'].'/'.$sugar_config['upload_dir'].'";';
 $attJs .= 'var lnk_remove = "'.$app_strings['LNK_REMOVE'].'";';
 $attJs .= '</script>';
 $xtpl->assign('ATTACHMENTS', $attachments);

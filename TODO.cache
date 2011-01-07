@@ -1,5 +1,4 @@
-- Fix upload_dir to allow absolute paths
 - Move uploads to separate directory
 - Move inline images to uploads
-- Make emails store cid: not full URL
-
+- clean up setDocumentToCampaignTemplate in Email.js and its relation to uploads dir
+- what is data/upload? Merge with uploads

@@ -2016,11 +2016,11 @@ function unlinkTempFiles($manifest, $zipFile) {
     if(!empty($zipFile)) {
         //@unlink($zipFile);
         $tmpZipFile = substr($zipFile, strpos($zipFile, 'langpack/') + 9, strlen($zipFile));
-        @unlink(getcwd()."/".$sugar_config['upload_dir'].$tmpZipFile);
+        @unlink($sugar_config['upload_dir'].$tmpZipFile);
     }
 
-    rmdir_recursive(getcwd()."/".$sugar_config['upload_dir']."upgrades/temp");
-    sugar_mkdir(getcwd()."/".$sugar_config['upload_dir']."upgrades/temp");
+    rmdir_recursive($sugar_config['upload_dir']."upgrades/temp");
+    sugar_mkdir($sugar_config['upload_dir']."upgrades/temp");
 }
 }
 
@@ -2036,7 +2036,7 @@ function langPackUnpack($unpack_type = 'langpack', $full_file = '') {
         $base_filename = preg_replace( "#\\\\#", "/", $base_filename );
         $base_filename = basename( $base_filename );
     }else{
-        $tempFile = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['language_pack']['name'];
+        $tempFile = $sugar_config['upload_dir'].$_FILES['language_pack']['name'];
         $base_filename = $_FILES['language_pack']['name'];
     }
     $manifest_file = extractManifest($tempFile, $base_tmp_upgrade_dir);
@@ -2046,9 +2046,9 @@ function langPackUnpack($unpack_type = 'langpack', $full_file = '') {
     if(is_file($manifest_file)) {
 
         if($unpack_type == 'module' && is_file($license_file)){
-            copy($license_file, getcwd().'/'.$sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-license.txt");
+            copy($license_file, $sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-license.txt");
         }
-        copy($manifest_file, getcwd().'/'.$sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-manifest.php");
+        copy($manifest_file, $sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-manifest.php");
 
         require_once( $manifest_file );
         validate_manifest( $manifest );
