@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $themedef = array(
     'name'  => "RTL",
     'description' => "RTL",
+    'directionality' => 'rtl',
     'parentTheme' => 'Sugar',
     'ignoreParentFiles' => array('style.js'),
     'version' => array(

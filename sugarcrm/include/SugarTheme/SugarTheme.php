@@ -66,6 +66,13 @@ class SugarTheme
      * @var string
      */
     protected $ignoreParentFiles = array();
+    
+    /**
+     * Defines which parent files to not include
+     *
+     * @var string
+     */
+    protected $directionality = 'ltr';
     /**
      * Theme directory name
      *
@@ -361,6 +368,7 @@ class SugarTheme
         return array(
             'name',
             'description',
+            'directionality',
             'dirName',
             'parentTheme',
             'version',

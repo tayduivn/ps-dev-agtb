@@ -25,7 +25,8 @@ div#content{    direction: rtl;}
 
 div.moduleTitle{    direction: rtl;}
 
-.moduleTitle h2{    float: right;}
+.moduleTitle h2, h2{    float: right;
+    direction: ltr;}
 
 .moduleTitle span.utils{    float: left;}
 
@@ -92,7 +93,13 @@ span.id-ff.multiple button.button.firstChild{	-moz-border-radius: 4px;	border-
 #moduleList.yuimenubar li.currentTabRight + li  .yuimenuitemlabel {border-right: 1px solid transparent;
 border-left: 0px;}
 
-.list tr.pagination td table td a:link,.list tr.pagination td table td a:visited,.reportGroupByDataChildTablelistViewThS1 a:link,.reportGroupByDataChildTablelistViewThS1 a:visited,.list tr th,.list tr th a:link,.list tr th a:visited,.list tr td[scope=col],.list tr td[scope=col] a:link,.list tr td[scope=col] a:visited,.list tr.pagination td table td span.pageNumbers{	direction: rtl;}
+.list tr.pagination td table td a:link,.list tr.pagination td table td a:visited,.reportGroupByDataChildTablelistViewThS1 a:link,.reportGroupByDataChildTablelistViewThS1 a:visited,.list tr th,.list tr th a:link,.list tr th a:visited,.list tr td[scope=col],.list tr td[scope=col] a:link,.list tr td[scope=col] a:visited{	direction: rtl;}
+
+.list tr.pagination td table td span.pageNumbers, .pageNumbers
+{
+direction: ltr;	
+}
+
 
 .list.view  tr:last-child td:first-child ,.list.view  tr:last-child th:first-child{	 padding-right: 10px !important;}
 
@@ -107,6 +114,10 @@ border-left: 0px;}
 #dashletCtrlsTD {text-align: left;}
 
 .edit.view > tr:last-child > td:first-child,.detail.view tr:last-child > td:first-child {-moz-border-radius: 0px 0px 6px 0px;border-radius: 0px 0px 6px 0px;-webkit-border-bottom-right-radius: 6px;}.edit.view > tr:last-child td:last-child ,.detail.view tr:last-child td:last-child{-moz-border-radius: 0px 0px 0px 6px;border-radius: 0px 0px 0px 6px;-webkit-border-bottom-left-radius: 6px;}
+
+.edit.view h4:first-child, .detail.view h4:first-child {
+text-align: right;
+}
 
 .yui-navset.detailview_tabs .view tr:first-child td:first-child {-moz-border-radius: 0px 6px 0px 0px;border-radius: 0px 6px 0px 0px;-webkit-border-top-right-radius: 6px;}.yui-navset.detailview_tabs .view tr:first-child td:last-child {-moz-border-radius: 6px 0px 0px 0px;border-radius: 6px 0px 0px 0px;-webkit-border-top-left-radius: 6px;}
 
@@ -178,3 +189,13 @@ text-align: right;
     left: 6px;
     right: auto;
 }
+
+.yui-module .hd, .yui-panel .hd, .yui-panel .bd 
+{
+direction: rtl;
+}
+.mceEditor.defaultSkin, .mceContentBody {
+direction: rtl;	
+}
+
+
