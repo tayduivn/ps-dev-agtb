@@ -801,7 +801,12 @@ function toggleTaxSelect(doc, count, hideselect){
 			document.getElementById('product_count').value = count;
 		}	
 
-	function addRow(id, quantity, product_template_id, product_name, cost_price, list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, bundle_name,bundle_shipping,product_description, type_id,discount_amount,discount_select, deal_calc, product_status){
+	function addRow(id, quantity, product_template_id, product_name, cost_price, 
+					list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, 
+					tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, 
+					bundle_name,bundle_shipping,product_description, type_id,discount_amount,
+					discount_select, deal_calc, product_status)
+	{
 		    
 			if(!table_exists(table_id)){
 				table_id = addTable(table_id, bundle_stage, bundle_name, bundle_shipping);

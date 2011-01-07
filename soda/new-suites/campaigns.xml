@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/campaigns/module_lib/setup-campaigns.xml" />
+	<script fileset="{@global.scriptsdir}/modules/campaigns" />
+	<script
+		file="{@global.scriptsdir}/modules/campaigns/module_lib/cleanup-campaigns.xml" />
+</soda>
+
