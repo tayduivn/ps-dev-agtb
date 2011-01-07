@@ -76,6 +76,8 @@ require_once 'SugarTestTeamUtilities.php';
 require_once 'SugarTestContactUtilities.php';
 require_once 'SugarTestEmailUtilities.php';
 require_once 'SugarTestCampaignUtilities.php';
+require_once 'SugarTestLeadUtilities.php';
+require_once 'SugarTestStudioUtilities.php';
 require_once 'SugarTestMeetingUtilities.php';
 require_once 'SugarTestAccountUtilities.php';
 require_once 'SugarTestTrackerUtility.php';

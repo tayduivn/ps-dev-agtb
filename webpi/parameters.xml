@@ -29,7 +29,7 @@
   <!-- NOTE - When we support multiple databases, we need a way to get this
        parameter populated without prompting the user a second time -->
   <parameter name="setup_db_type" description="Default to mysql - as this is the only one supported" 
-        defaultValue="mysql" tags="Hidden">
+        defaultValue="'setup_db_type' => 'mysql'," tags="Hidden">
     <parameterEntry type="TextFile" scope="\\config_si.php$" match="'setup_db_type'\s*=>\s*'[^']*'\s*," />
   </parameter>
   <!-- ACL Section -->

@@ -1,0 +1,9 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/cases/module_lib/setup-cases.xml" />
+	<script fileset="{@global.scriptsdir}/modules/cases/part1" />
+	<script fileset="{@global.scriptsdir}/modules/cases/part2" />
+	<script
+		file="{@global.scriptsdir}/modules/cases/module_lib/cleanup-cases.xml" />
+</soda>
+

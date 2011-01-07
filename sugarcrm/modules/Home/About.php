@@ -221,7 +221,6 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_NUSOAP']; ?> (<a href="http://dietrich.ganx4.com/nusoap" target="_blank">http://dietrich.ganx4.com/nusoap</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSCALENDAR']; ?> (<a href="http://www.dynarch.com/mishoo/calendar.epl" target="_blank">http://www.dynarch.com/mishoo/calendar.epl</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_PHPPDF']; ?> (<a href="http://ros.co.nz/pdf/" target="_blank">http://ros.co.nz/pdf/</a>)
-<LI><?php echo $mod_strings['LBL_SOURCE_PNGBEHAVIOR']; ?> (<a href="http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html" target="_blank">http://webfx.eae.net/dhtml/pngbehavior/pngbehavior.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSONPHP']; ?> (<a href="http://mike.teczno.com/json.html" target="_blank">http://mike.teczno.com/json.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_JSON']; ?> (<a href="http://www.json.org/js.html" target="_blank">http://www.json.org/js.html</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_HTTP_WEBDAV_SERVER']; ?> (<a href="http://pear.php.net/package/HTTP_WebDAV_Server" target="_blank">http://pear.php.net/package/HTTP_WebDAV_Server</a>)</LI>
@@ -240,6 +239,9 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_TINYMCE']; ?> (<a href="http://wiki.moxiecode.com/index.php/TinyMCE:Index" target="_blank">http://wiki.moxiecode.com/index.php/TinyMCE:Index</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_TCPDF']; ?> (<a href="http://www.tcpdf.org/" target="_blank">http://www.tcpdf.org/</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_RECAPTCHA']; ?> (<a href="http://recaptcha.net/" target="_blank">http://recaptcha.net/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_CSSMIN']; ?> (<a href="http://code.google.com/p/cssmin/" target="_blank">http://code.google.com/p/cssmin/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_PHPSAML']; ?> (<a href="https://github.com/onelogin/php-saml" target="_blank">https://github.com/onelogin/php-saml/</a>)</LI>
+
 </ul>
 
 //BEGIN SUGARCRM flav=PRO ONLY

@@ -54,7 +54,7 @@ EOQ;
 		global $sugar_config;
 
 		if (empty($current_user->id)) {
-			return;
+            return;
 		}
 			
 		// cn: get a boundary limiter
@@ -70,6 +70,7 @@ EOQ;
 				SELECT meetings.id, name,reminder_time, description,location, date_start, assigned_user_id
 				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id 
 				WHERE meetings_users.user_id ='".$current_user->id."' 
+					AND meetings_users.accept_status != 'decline'
 					AND meetings.reminder_time != -1
 					AND meetings_users.deleted != 1
 					AND meetings.status != 'Held'
@@ -89,6 +90,7 @@ EOQ;
 				SELECT meetings.id, name,reminder_time, description,location, date_start,  assigned_user_id
 				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id 
 				WHERE meetings_users.user_id ='".$current_user->id."' 
+					AND meetings_users.accept_status != 'decline'
 					AND meetings.reminder_time != -1
 					AND meetings_users.deleted != 1
 					AND meetings.status != 'Held'". 
@@ -105,6 +107,7 @@ EOQ;
 				SELECT meetings.id, name,reminder_time, CAST(description AS varchar(8000)),location, date_start, assigned_user_id 
 				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id 
 				WHERE meetings_users.user_id ='".$current_user->id."' 
+					AND meetings_users.accept_status != 'decline'
 					AND meetings.reminder_time != -1
 					AND meetings_users.deleted != 1
 					AND meetings.status != 'Held'
@@ -194,7 +197,8 @@ EOQ;
 				SELECT calls.id, name, reminder_time, description, date_start 
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id 
 				WHERE calls_users.user_id ='".$current_user->id."' 
-					AND calls.reminder_time != -1 
+				    AND calls_users.accept_status != 'decline'	
+				    AND calls.reminder_time != -1 
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'
 				and date_start >= '".$dateTimeNow."'"; 
@@ -210,7 +214,8 @@ EOQ;
 				SELECT calls.id, name, reminder_time, description, date_start
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id 
 				WHERE calls_users.user_id ='".$current_user->id."' 
-					AND calls.reminder_time != -1
+                    AND calls_users.accept_status != 'decline'  				
+				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'" .
 				"AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')	";
@@ -227,7 +232,8 @@ EOQ;
 				SELECT calls.id, name, reminder_time, CAST(description AS varchar(8000)), date_start
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id 
 				WHERE calls_users.user_id ='".$current_user->id."' 
-					AND calls.reminder_time != -1 
+                    AND calls_users.accept_status != 'decline'  				
+				    AND calls.reminder_time != -1 
 					AND calls_users.deleted != 1 
 					AND calls.status != 'Held'
 					AND date_start  >= '".$dateTimeNow."'"; 

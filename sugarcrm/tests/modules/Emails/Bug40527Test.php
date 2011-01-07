@@ -36,4 +36,8 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(empty($this->email->contact_id), "There should be no contact associated with the Email");
     }
 }
+<<<<<<< HEAD
 ?>
+=======
+?>
+>>>>>>> master

@@ -41,10 +41,10 @@ $dictionary['ext_soap_hoovers'] = array(
 	    'hidden' => true,
 	    'comment' => 'Unique identifier for records'
 	),
-    'companyname'=> array(
-	    'name' => 'companyname',
+    'recname'=> array(
+	    'name' => 'recname',
 		'input' => 'bal.specialtyCriteria.companyName',
-		'output' => 'companyname',
+		'output' => 'recname',
 	    'vname' => 'LBL_NAME',
 	    'type' => 'varchar',
 	    'search' => true,
@@ -70,28 +70,29 @@ $dictionary['ext_soap_hoovers'] = array(
     	'required' => true,
     	'hidden' => true,
     ),
-   'city' => array (
-	    'name' => 'city',
+   'addrcity' => array (
+	    'name' => 'addrcity',
    		'input' => 'bal.location.city',
+        'output' => 'addrcity',
 	    'vname' => 'LBL_CITY',
 	    'type' => 'varchar',
 	    'search' => true,
 	    'comment' => 'The city address for the company', 
    ),
-   'address1' => array(
-        'name' => 'address1',
+   'addrstreet1' => array(
+        'name' => 'addrstreet1',
         'vname' => 'LBL_ADDRESS_STREET1',
         'type' => 'varchar',
         'comment' => 'street address',
    ),
-   'address2' => array(
-        'name' => 'address2',
+   'addrstreet2' => array(
+        'name' => 'addrstreet2',
         'vname' => 'LBL_ADDRESS_STREET2',
         'type' => 'varchar',
         'comment' => 'street address (continued)',   
    ),
-   'stateorprovince' => array(
-        'name' => 'stateorprovince',
+   'addrstateprov' => array(
+        'name' => 'addrstateprov',
    		'input' => 'bal.location.globalState',
         'vname' => 'LBL_STATE',
         'type' => 'varchar',
@@ -99,8 +100,8 @@ $dictionary['ext_soap_hoovers'] = array(
         'options' => 'addrstateprov_dom',
         'comment' => 'The state address for the company',
    ),
-   'country' => array(
-        'name' => 'country',
+   'addrcountry' => array(
+        'name' => 'addrcountry',
         'input' => 'bal.location.countryId',
         'vname' => 'LBL_COUNTRY',
         'type' => 'varchar',
@@ -115,9 +116,9 @@ $dictionary['ext_soap_hoovers'] = array(
         'search' => true,
         'comment' => 'The postal code address for the company',
    ),
-   'sales' => array(
-        'name' => 'sales',
-        'vname' => 'LBL_SALES',
+   'finsales' => array(
+        'name' => 'finsales',
+        'vname' => 'LBL_FINSALES',
         'type' => 'decimal',
         'comment' => 'Annual sales (in millions)',
    ),

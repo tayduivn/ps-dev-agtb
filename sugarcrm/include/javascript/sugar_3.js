@@ -3978,11 +3978,19 @@ SUGAR.util.isTouchScreen = function()
 
 SUGAR.util.isLoginPage = function(content) 
 {
+	//skip if this is packageManager screen
+	if(SUGAR.util.isPackageManager()) {return false;}
 	var loginPageStart = "<!DOCTYPE";
 	if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html>") != -1  && content.indexOf("login_module") != -1) {
 		window.location.href = window.location.protocol + window.location.pathname;
 		return true;
 	}
+}
+
+SUGAR.util.isPackageManager=function(){
+	if(typeof(document.the_form) !='undefined' && typeof(document.the_form.language_pack_escaped) !='undefined'){
+		return true;
+	}else{return false;}
 }
 
 SUGAR.util.ajaxCallInProgress = function(){

@@ -73,8 +73,10 @@ class FreeTDSManager extends MssqlManager
                 if ($sqlpos !== false)
                     // if sqlmsg has 'Changed database context to', just log it
                     $GLOBALS['log']->debug(mssql_get_last_message() . ": " . $sql );
-                else
-                    sugar_die('SQL Error : ' . mssql_get_last_message());
+                else {
+                    $GLOBALS['log']->fatal('SQL Error : ' . mssql_get_last_message());
+                    sugar_die($GLOBALS['app_strings']['ERR_DB_FAIL']);
+                }
             else
                 echo 'SQL Error : ' . mssql_get_last_message();
 

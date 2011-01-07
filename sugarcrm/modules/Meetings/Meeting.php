@@ -603,9 +603,20 @@ class Meeting extends SugarBean {
 	function save_relationship_changes($is_update) {
 		$exclude = array();
 	    if(empty($this->in_workflow)) {
-            $exclude = array('contact_id', 'user_id', 'assigned_user_id');
+           if(empty($this->in_import)){//if a meeting is being imported then contact_id  should not be excluded 
+           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise 
+           //add assigned_user_id to exclude list and let the logic from MeetingFormBase determine whether assigned user id gets added to the relationship
+           	if(!empty($GLOBALS['soap_server_object'])){
+           		$exclude = array('contact_id', 'user_id');
+           	}else{   	
+	    		$exclude = array('contact_id', 'user_id','assigned_user_id');
+           	}
+           }
+           else{
+           	$exclude = array('user_id');
+           }
         }
-		parent::save_relationship_changes($is_update, $exclude);
+       parent::save_relationship_changes($is_update, $exclude);
 	}
 
 

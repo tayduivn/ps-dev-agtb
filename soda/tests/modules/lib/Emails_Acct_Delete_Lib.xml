@@ -1,0 +1,26 @@
+﻿<soda>
+	<!-- Delete mail account in Emails module -->
+	<puts text="Lib: Emails_Acct_Delete_Lib.xml starting." />
+	<!--Nav to emails module-->
+	<link id="moduleTab_Emails" />
+	<button id="settingsButton" />
+	<wait timeout="15" />
+	<div id="settingsDialog_c" >
+	  <link text="Mail Accounts" />
+	</div>
+	<wait timeout="15" />
+	<browser assert="Mail Account" />
+	<browser
+		assert="Set up Mail Accounts to view incoming emails from your email accounts" />
+  <wait timeout="15" />
+	<div id="inboundAccountsTable">
+		<image
+			src="index.php?entryPoint=getImage&amp;themeName=Sugar&amp;imageName=delete_inline.gif"
+			click="true" alert="true" />
+	</div>
+	<wait timeout="5" />
+	<div id="settingsDialog">
+		<link text="Close" />
+	</div>
+	<puts text="Lib: Emails_Acct_Delete_Lib.xml finished." />
+</soda> 

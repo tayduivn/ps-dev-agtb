@@ -131,10 +131,12 @@ class MssqlManager extends DBManager
                     $connect_param ,
                     $configOptions['db_user_name'],
                     $configOptions['db_password']
-                    )
-                or sugar_die("Could not connect to server ".$configOptions['db_host_name'].
+                    );
+            if(!$this->database){
+                $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name'].
                     " as ".$configOptions['db_user_name'].".");
-
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            }
             if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
@@ -143,7 +145,7 @@ class MssqlManager extends DBManager
         }
         //make sure connection exists
         if(!$this->database){
-            sugar_die("Unable to establish connection");
+            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
         }
 
         //select database
@@ -163,7 +165,8 @@ class MssqlManager extends DBManager
 				}
 			}
 			if(!$connected){
-				sugar_die("Unable to select database");
+			    $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}");
+				sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
 			}
          }
 

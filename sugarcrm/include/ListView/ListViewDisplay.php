@@ -193,7 +193,7 @@ class ListViewDisplay {
 	        }//fi == 'html'
 
             //Bug 40511, make sure relate fields have the correct module defined
-            if ($this->displayColumns[$columnName]['type'] == "relate" && !empty($seedDef['link']))
+            if ($this->displayColumns[$columnName]['type'] == "relate" && !empty($seedDef['link']) && empty( $this->displayColumns[$columnName]['module']))
             {
                 $link = $seedDef['link'];
                 if (!empty($this->lvd->seed->field_defs[$link]) && !empty($this->lvd->seed->field_defs[$seedDef['link']]['module']))

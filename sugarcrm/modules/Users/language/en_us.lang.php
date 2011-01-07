@@ -53,6 +53,11 @@ $mod_strings = array (
 	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Click OK to delete the User record.',
 //END SUGARCRM flav=sales ONLY
+//BEGIN SUGARCRM flav=com ONLY
+    'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted.<br/><br/>'.
+                                                  'Click OK to delete the User record.',
+//END SUGARCRM flav=com ONLY
+
 	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',

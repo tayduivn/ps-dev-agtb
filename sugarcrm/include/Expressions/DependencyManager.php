@@ -196,16 +196,18 @@ class DependencyManager {
      * @param  $user User, user to return SugarLogic variables for
      * @return void
      */
-    public static function getJSUserVariables($user)
+    public static function getJSUserVariables($user, $wrap = false)
     {
-        //echo "<pre>" . print_r($_SESSION[$user->user_name . '_PREFERENCES']['global'], true) . "</pre>";
-        return "SUGAR.expressions.userPrefs = " . json_encode(array(
+        $ret = "SUGAR.expressions.userPrefs = " . json_encode(array(
             "num_grp_sep" => $user->getPreference("num_grp_sep"),
             "dec_sep" => $user->getPreference("dec_sep"),
             "datef" => $user->getPreference("datef"),
             "timef" => $user->getPreference("timef"),
             "default_locale_name_format" => $user->getPreference("default_locale_name_format"),
         )) . ";\n";
+        if ($wrap)
+            $ret = "<script type=text/javascript>\n$ret</script>";
+        return $ret;
     }
 }
 ?>

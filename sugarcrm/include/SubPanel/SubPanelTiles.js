@@ -405,14 +405,10 @@ SUGAR.subpanelUtils = function() {
 		// We require the subpanel name to refresh the subpanel contents and to close the subpanel after the save. However, the code the generates the button
 		// doesn't have access to the subpanel name, only the module name. Hence this rather long-winded mechanism.
 		inlineSave: function(theForm, buttonName) {
-		    if (SUGAR.subpanelUtils.inlineSaveInProgress) return false;
-			SUGAR.subpanelUtils.inlineSaveInProgress = true;
-            ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
+			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 			var success = function(data) {
 				var element = document.getElementById(buttonName);
-				if (!element)
-                    return;
-                do {
+				do {
 					element = element.parentNode;
 				} while ( element.className != 'quickcreate' && element.parentNode ) ;
 				
@@ -436,17 +432,16 @@ SUGAR.subpanelUtils = function() {
 						showSubPanel(subpanel, null, true);
 						ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'));
 						window.setTimeout('ajaxStatus.hideStatus()', 1000);
-						if(reloadpage) window.location.reload(false);
+	                    if(reloadpage) window.location.reload(false);
 					}
 				}
-				SUGAR.subpanelUtils.inlineSaveInProgress = false;
 			}
-			// reload page if we are setting status to Held
-			var reloadpage = false;
-			if ((buttonName == 'Meetings_subpanel_save_button' || buttonName == 'Calls_subpanel_save_button' ) && document.getElementById(theForm).status[document.getElementById(theForm).status.selectedIndex].value == 'Held') {
-				reloadpage = true;
-			}
-			YAHOO.util.Connect.setForm(theForm, true, true); 			
+            // reload page if we are setting status to Held
+            var reloadpage = false;
+            if ((buttonName == 'Meetings_subpanel_save_button' || buttonName == 'Calls_subpanel_save_button' ) && document.getElementById(theForm).status[document.getElementById(theForm).status.selectedIndex].value == 'Held') {
+                reloadpage = true;
+            }
+            YAHOO.util.Connect.setForm(theForm, true, true); 			
 			var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success, upload:success});					  
 			return false;
 		},
@@ -469,7 +464,7 @@ SUGAR.subpanelUtils = function() {
 					SUGAR.util.evalScript(data.responseText);
 				}
 				subpanelLocked[theDiv] = false;
-				setTimeout("enableQS(false)",500);
+                setTimeout("enableQS(false)",500);
 				ajaxStatus.hideStatus();
 				
 			}
@@ -487,9 +482,9 @@ SUGAR.subpanelUtils = function() {
 		
 		cancelCreate: function(buttonName) {
 			var element = document.getElementById(buttonName);
-			
-			var theForm = element.form;
-			var confirmMsg = onUnloadEditView(theForm);
+            
+            var theForm = element.form;
+            var confirmMsg = onUnloadEditView(theForm);
 
 			do {
 				element = element.parentNode;
@@ -498,15 +493,15 @@ SUGAR.subpanelUtils = function() {
 			var theDiv = element.id.substr(0,element.id.length-7);
 
 			if (typeof(subpanelContents[theDiv]) == 'undefined')
-				return false;
+                return false;
 			
-			if ( confirmMsg != null ) {
-				if ( !confirm(confirmMsg) ) {
-					return false;
-				} else {
-					disableOnUnloadEditView(theForm);
-				}
-			}
+            if ( confirmMsg != null ) {
+                if ( !confirm(confirmMsg) ) {
+                    return false;
+                } else {
+                    disableOnUnloadEditView(theForm);
+                }
+            }
 
 			subpanelContents[theDiv]['newDiv'].parentNode.removeChild(subpanelContents[theDiv]['newDiv']);
 			subpanelContents[theDiv]['list'].style.display = '';
@@ -538,12 +533,12 @@ SUGAR.subpanelUtils = function() {
 		/* loadSubpanels:
 		/* construct set of needed subpanels */
 		/* if we have not yet loaded this subpanel group, */
-		/*	 set loadedGroups[group] */
-		/*	 for each subpanel in subpanelGroups[group] */
-		/*		 if document.getElementById('whole_subpanel_'+subpanel) doesn't exist */
-		/*		 then add subpanel to set of needed subpanels */
-		/*	 if we need to load any subpanels, send a request for them */
-		/*		  with updateSubpanels as the callback. */
+		/*     set loadedGroups[group] */
+		/*     for each subpanel in subpanelGroups[group] */
+		/*         if document.getElementById('whole_subpanel_'+subpanel) doesn't exist */
+		/*         then add subpanel to set of needed subpanels */
+		/*     if we need to load any subpanels, send a request for them */
+		/*	      with updateSubpanels as the callback. */
 		/* otherwise call updateSubpanels */
 		/* call setGroupCookie */
 		
@@ -577,9 +572,9 @@ SUGAR.subpanelUtils = function() {
 		
 		/* updateSubpanels:
 		/* for each child node of subpanel_list */
-		/*	 let subpanel name be id.match(/whole_subpanel_(\w*)/) */
-		/*	 if the subpanel name is in the list of subpanels for the current group, show it */
-		/*	 otherwise hide it */
+		/*     let subpanel name be id.match(/whole_subpanel_(\w*)/) */
+		/*     if the subpanel name is in the list of subpanels for the current group, show it */
+		/*     otherwise hide it */
 		/* swap nodes to suit user's order */
 		/* call updateSubpanelTabs */
 		
@@ -591,7 +586,7 @@ SUGAR.subpanelUtils = function() {
 				}
 			}
 			for(group_sp in SUGAR.subpanelUtils.subpanelGroups[group]){
-				if ( typeof(SUGAR.subpanelUtils.subpanelGroups[group][group_sp]) != 'string' ) continue;
+                if ( typeof(SUGAR.subpanelUtils.subpanelGroups[group][group_sp]) != 'string' ) continue;
 				var cur = document.getElementById('whole_subpanel_'+SUGAR.subpanelUtils.subpanelGroups[group][group_sp]);
 				cur.style.display = 'block';
 				/* use YDD swapNodes this and first, second, etc. */

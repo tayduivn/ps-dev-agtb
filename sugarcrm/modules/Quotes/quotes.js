@@ -419,7 +419,7 @@ function toggleTaxSelect(doc, count, hideselect){
 				inputEl.type = 'button';
 				inputEl.tableId = id;
 				inputEl.onclick = function(){
-						addRow("","","","",0,0,"","","","","","","", this.tableId, '', '', '', '', '','0','');
+						addRow("","","","",0,0,"","","","","","","", this.tableId, '', '', '', '', '','0','','', '');
 				}
 				inputEl.name = addRowName;
 				inputEl.value = addRowValue;
@@ -801,7 +801,12 @@ function toggleTaxSelect(doc, count, hideselect){
 			document.getElementById('product_count').value = count;
 		}	
 
-	function addRow(id, quantity, product_template_id, product_name, cost_price, list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, bundle_name,bundle_shipping,product_description, type_id,discount_amount,discount_select,deal_calc){
+	function addRow(id, quantity, product_template_id, product_name, cost_price, 
+					list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, 
+					tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, 
+					bundle_name,bundle_shipping,product_description, type_id,discount_amount,
+					discount_select, deal_calc, product_status)
+	{
 		    
 			if(!table_exists(table_id)){
 				table_id = addTable(table_id, bundle_stage, bundle_name, bundle_shipping);
@@ -813,6 +818,7 @@ function toggleTaxSelect(doc, count, hideselect){
 			else unit_price = discount_price;	
 			if (discount_select == '') discount_select = false;
 			if (deal_calc == '') deal_calc=0;		
+			if(product_status == '') product_status = default_product_status;
 			var form = document.getElementById('EditView')
 			var table = document.getElementById(table_id);
 			var row = table.insertRow(table.rows.length );
@@ -893,7 +899,7 @@ function toggleTaxSelect(doc, count, hideselect){
 			textEl.setAttribute('type', 'hidden')
 			textEl.setAttribute('name',  "status[" + count + "]" );
 			textEl.setAttribute('id', "status[" + count + "]" );
-			textEl.setAttribute('value', default_product_status);
+			textEl.setAttribute('value', product_status);
 			item_list_MSI["status[" + count + "]"] = textEl;
 			form.appendChild(textEl);
 			

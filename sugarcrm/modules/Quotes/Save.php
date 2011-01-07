@@ -33,15 +33,20 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 $focus = new Quote();
 $focus = populateFromPost('', $focus);
+
+if(!$focus->ACLAccess('Save')){
+	ACLController::displayNoAccess(true);
+	sugar_cleanup(true);
+}
+
 //we have to commit the teams here in order to obtain the team_set_id for use with products and product bundles.
 if(empty($focus->teams)){
 	$focus->load_relationship('teams');
 }
 $focus->teams->save();
-if(!$focus->ACLAccess('Save')){
-	ACLController::displayNoAccess(true);
-	sugar_cleanup(true);
-}
+//bug: 35297 - set the teams to have not been saved, so workflow can update if necessary
+$focus->teams->setSaved(false);
+
 if (!empty($_POST['assigned_user_id']) && ($focus->assigned_user_id != $_POST['assigned_user_id']) && ($_POST['assigned_user_id'] != $current_user->id)) {
 	$check_notify = TRUE;
 }
@@ -212,8 +217,8 @@ if(empty($focus->id)) {
 		$product->quote_id=$focus->id;
         $product->account_id=$focus->billing_account_id;  //<--------------
         $product->contact_id=$focus->billing_contact_id;
-		$product->status=$focus->quote_type;
-		if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
+		//SM: removed as per Bug 15305 $product->status=$focus->quote_type;
+		// if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
     		$product->save();
     		$pb->set_productbundle_product_relationship($product->id,$_POST['parent_group_position'][$i], $product_bundels[$_REQUEST['parent_group'][$i]] );
 		}
