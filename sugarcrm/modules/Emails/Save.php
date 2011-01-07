@@ -22,7 +22,7 @@ if(!isset($prefix)) {
 	$prefix = '';
 }
 if(isset($_POST[$prefix.'meridiem']) && !empty($_POST[$prefix.'meridiem'])) {
-	$_POST[$prefix.'time_start'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_start'], $timedate->get_time_format(true), $_POST[$prefix.'meridiem']);
+	$_POST[$prefix.'time_start'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_start'], $timedate->get_time_format(), $_POST[$prefix.'meridiem']);
 }
 //retrieve the record
 if(isset($_POST['record']) && !empty($_POST['record'])) {

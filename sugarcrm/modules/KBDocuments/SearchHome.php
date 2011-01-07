@@ -37,7 +37,7 @@ global $mod_strings, $app_strings;
 
 $focus = new KBDocument();
 
-echo get_module_title("KBDocuments", "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'], true);
+echo getClassicModuleTitle("KBDocuments", array($app_strings['LBL_SEARCH']), true);
 
 echo getVersionedScript('cache/include/javascript/sugar_grp_overlib.js').
 "<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000; max-width: 400px;'></div> ";

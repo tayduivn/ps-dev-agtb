@@ -37,10 +37,10 @@ $GLOBALS['ignore_files'] = array(
 						'BooleanExpression.php',
 						'FalseExpression.php',
 						'GenericExpression.php',
-						'RelateExpression.php',
+                        'RelateExpression.php',
 						'AbstractAction.php',
 						'ActionFactory.php',
-);
+					);
 
 
 function recursiveParse($dir, $silent = false)
@@ -49,7 +49,7 @@ function recursiveParse($dir, $silent = false)
 	if ( !is_dir($dir) )	return;
 	$directory = opendir($dir);
 	if ( !$directory )	return;
-
+	
 	// First get a list of all the files in this directory.
 	$entries = array();
 	while( $entry = readdir($directory) )
@@ -92,6 +92,7 @@ function recursiveParse($dir, $silent = false)
 		$param_count = call_user_func(array($entry, "getParamCount"));
 		$op_name     = call_user_func(array($entry, "getOperationName"));
 		$types 		 = call_user_func(array($entry, "getParameterTypes"));
+
 
 		if ( empty($op_name) )	{
 			if ($silent === false) {
@@ -168,11 +169,11 @@ $js_contents .= "});\n\n";
 		foreach ($op_name as $alias)
 		{
 	        //echo the entry
-			if ($silent === false)
+			if ($silent === false) 
 			{
 				echo "<li>($alias) $entry<br>";
 			}
-
+	
 			$contents .= <<<EOQ
 			'$alias' => array(
 						'class'	=>	'$entry',
@@ -181,12 +182,12 @@ $js_contents .= "});\n\n";
 EOQ;
 		}
 	}
-	if ($silent === false)
+	if ($silent === false) 
 	{
 		echo "</ul>";
 	}
 
-    return array("function_map" => $contents, "javascript"=>$js_contents);
+	return array("function_map" => $contents, "javascript"=>$js_contents);
 }
 
 $silent = isset($GLOBALS['updateSilent']) ? $GLOBALS['updateSilent'] : false;
@@ -209,10 +210,11 @@ $new_contents .= $contents["function_map"];
 $new_contents .= ");\n";
 $new_contents .= "?>";
 
+
 create_cache_directory("Expressions/functionmap.php");
 
 // now write the new contents to functionmap.php
-$fh = fopen(sugar_cached("Expressions/functionmap.php"), 'w');
+$fh = fopen("cache/Expressions/functionmap.php", 'w');
 fwrite($fh, $new_contents);
 fclose($fh);
 
@@ -220,7 +222,7 @@ fclose($fh);
 // write the functions cache file
 $cache_contents = $contents["javascript"];
 
-require_once(sugar_cached('Expressions/functionmap.php'));
+require_once('cache/Expressions/functionmap.php');
 
 $cache_contents .= <<<EOQ
 /**
@@ -230,10 +232,11 @@ $cache_contents .= <<<EOQ
 SUGAR.FunctionMap = {
 
 EOQ;
-
-foreach ( $FUNCTION_MAP as $key=>$value ) {
-	$entry = $FUNCTION_MAP[$key]['class'];
-	$cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+if ( isset($FUNCTION_MAP) && is_array($FUNCTION_MAP) ) {
+    foreach ( $FUNCTION_MAP as $key=>$value ) {
+        $entry = $FUNCTION_MAP[$key]['class'];
+        $cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+    }
 }
 $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
@@ -249,15 +252,19 @@ $cache_contents .= <<<EOQ
 SUGAR.NumericConstants = {
 
 EOQ;
-foreach ( $NUMERIC_CONSTANTS as $key=>$value )
-	$cache_contents .= "\t'$key'\t:\t$value,";
+if ( isset($NUMERIC_CONSTANTS) && is_array($NUMERIC_CONSTANTS) ) {
+    foreach ( $NUMERIC_CONSTANTS as $key=>$value ) {
+        $cache_contents .= "\t'$key'\t:\t$value,";
+    }
+}
 $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 create_cache_directory("Expressions/functions_cache_debug.js");
-file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
+file_put_contents("cache/Expressions/functions_cache_debug.js", $cache_contents);
+
 
 require_once("jssource/minify_utils.php");
-CompressFiles(sugar_cached('Expressions/functions_cache_debug.js'), sugar_cached('Expressions/functions_cache.js'));
+CompressFiles('cache/Expressions/functions_cache_debug.js', 'cache/Expressions/functions_cache.js');
 if (!$silent) echo "complete.";
 ?>

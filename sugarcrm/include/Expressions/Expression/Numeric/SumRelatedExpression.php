@@ -74,7 +74,7 @@ class SumRelatedExpression extends NumericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"rollup",
+                    "function":"rollup",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field
@@ -86,7 +86,6 @@ class SumRelatedExpression extends NumericExpression
 
 			}
 
-			console.log("fell through");
 			return "";
 EOQ;
 	}

@@ -46,12 +46,11 @@ $viewdefs['Documents']['EditView'] = array(
  'panels' =>array (
   'lbl_document_information' =>
   array (
-
     array (
-      array(
-      		'name'=>'uploadfile',
-            'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="{$FILE_OR_HIDDEN}" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
-      ),
+      'doc_type',
+    ),
+    array (
+      'filename',
       array (
             'name' => 'status_id',
             'label' => 'LBL_DOC_STATUS',

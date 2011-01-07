@@ -115,7 +115,9 @@
 	                    <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
 	                {/if}
 	           {else}
-	           		{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
+                    {if !isset($params.noHeader) || $params.noHeader == false} 
+	           		  {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
+                    {/if}
 	           {/if}
 			   </div>
             </th>

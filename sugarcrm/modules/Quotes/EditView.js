@@ -36,6 +36,7 @@ function set_billing_return(popup_reply_data)
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
 	var override_values = true;
+	var override_shipping = YAHOO.util.Dom.get('shipping_checkbox') && YAHOO.util.Dom.get('shipping_checkbox').checked ? true : false;
 	
 	if(!confirm_address_update(popup_reply_data))
 	{
@@ -44,7 +45,7 @@ function set_billing_return(popup_reply_data)
 	
 	for (var the_key in name_to_value_array)
 	{
-		if(the_key == 'toJSON')
+		if(the_key == 'toJSON' || (!override_shipping && the_key.match(/shipping/)))
 		{
 			continue;
 		} else {
@@ -63,17 +64,24 @@ function set_billing_return(popup_reply_data)
 	}
 }
 
+function copy_values_from_billing()
+{
+	var shipping_checkbox = YAHOO.util.Dom.get('shipping_checkbox');
+	return shipping_checkbox.checked;	
+}
+
 function set_shipping_return(popup_reply_data)
 {
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
 	var override_values = true;
 	
-	if(!confirm_address_update(popup_reply_data))
-	{
+	//Do not override values if address fields are being copied from billing address or
+	//if the user chooses cancel when prompted to override values
+	if(copy_values_from_billing() || !confirm_address_update(popup_reply_data)) {
 	   override_values = false;
 	} 	
-	
+
 	for (var the_key in name_to_value_array)
 	{
 		if(the_key == 'toJSON')
@@ -98,7 +106,9 @@ function confirm_address_update(popup_reply_data)
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
 	var label_data_str = '';
+	var label_str = '';
 	var current_label_data_str = '';
+	var label_data_hash = new Array();
 	
 	for (var the_key in name_to_value_array)
 	{
@@ -109,18 +119,26 @@ function confirm_address_update(popup_reply_data)
 		
 		var displayValue = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');			
 
-		if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account/)) {
+		if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account_id/)) {
 			var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'');
 			label_data_str += data_label  + ' ' + displayValue + '\n';
 			if(window.document.forms[form_name].elements[the_key]) {
-				current_label_data_str += data_label + ' ' + window.document.forms[form_name].elements[the_key].value +'\n';				
+				label_str += data_label + ' \n';
+				label_and_data = data_label + ' ' + window.document.forms[form_name].elements[the_key].value +'\n';				
+				
+				//Append to current_label_data_str only if the label and data are unique
+				if(!label_data_hash[label_and_data])
+				{
+					current_label_data_str += label_and_data;
+					label_data_hash[label_and_data] = true;
+				}
 			}
 		}			
-	}	
-	
-	if(label_data_str != current_label_data_str)
+	}
+
+	if(label_data_str != label_str && current_label_data_str != label_str)
 	{
-		return confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str);
+		return confirm(SUGAR.language.translate('Quotes', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str);
 	} 		
 
 	return true;
@@ -200,8 +218,11 @@ function set_after_sqs(sqs_object, sqs_object_id) {
 }
 
 function set_shipping_account_name(sqs_object_id) {
-	document.getElementById('shipping_account_id').value = document.getElementById('billing_account_id').value;
-	document.getElementById('shipping_account_name').value = document.getElementById('billing_account_name').value;
+	if(document.getElementById('shipping_account_id').value == '' || (YAHOO.util.Dom.get('shipping_checkbox') && YAHOO.util.Dom.get('shipping_checkbox').checked))
+	{
+		document.getElementById('shipping_account_id').value = document.getElementById('billing_account_id').value;
+		document.getElementById('shipping_account_name').value = document.getElementById('billing_account_name').value;
+	}
 }
 
 

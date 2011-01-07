@@ -3625,6 +3625,10 @@ class InboundEmail extends SugarBean {
 		} else {
 			// binary is in cache already, just prep necessary metadata
 			$this->tempAttachment[$fileName] = urldecode($attach->filename);
+			if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
+					|| ($part->type == 5)) {
+                $this->inlineImages[] = $attach->id.".".strtolower($part->subtype);
+			}
 		}
 	}
 

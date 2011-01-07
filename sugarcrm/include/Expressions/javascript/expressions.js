@@ -653,7 +653,7 @@ SUGAR.expressions.ExpressionParser.prototype.getType = function(variable) {
  * Evaluate a given string expression and return an Expression
  * object.
  */
-SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
+SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 {
 	// make sure it is only parsing strings
 	if ( typeof(expr) != 'string' )	throw "ExpressionParser requires a string expression.";
@@ -665,6 +665,14 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 	var fixed = this.toConstant(expr);
 	if ( fixed != null && typeof(fixed) != 'undefined' )
 		return fixed;
+
+	//Check if the expression is just a variable
+	if (expr.match(/^\$\w+$/))
+	{
+		if (typeof (context) == "undefined")
+			throw ("Syntax Error: variable " + expr + " without context");
+		return context.getValue(expr.substring(1));
+	}
 
 	// VALIDATE: expression format
 	if ((/^[\w\-]+\(.*\)$/).exec(expr) == null) {
@@ -700,6 +708,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 	var justReadString	= false;		// did i just read in a string
 	var isInQuotes 		= false;		// am i currently reading in a string
 	var isPrevCharBK 	= false;		// is my previous character a backslash
+	var isInVar 		= false;		// am i currently reading a variable name
 
 	if (length > 0) { for ( var i = 0 ; i <= length ; i++ ) {
 		// store the last character read
@@ -707,7 +716,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 
 		// the last parameter
 		if ( i == length ) {
-			args[args.length] = this.evaluate(argument);
+			args[args.length] = this.evaluate(argument, context);
 			break;
 		}
 
@@ -723,6 +732,9 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 			continue;
 		}
 
+		if (isInVar && (currChar == " " || currChar == "," ))
+			isInVar = false;
+		
 		// check for quotes
 		if ( currChar == '"' && !isPrevCharBK && level == 0 )
 		{
@@ -742,6 +754,15 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 			isInQuotes = !isInQuotes;
 		}
 
+		if( currChar == '$' && !isPrevCharBK && !isInQuotes && level == 0)
+		{
+			if (isInVar)
+				throw (func + ": Syntax Error (unexpeted '$' in  '" + argument + "')");
+			else {
+				isInVar = true;
+			}
+		}
+
 		// check parantheses open/close
 		if ( currChar == '(' ) {
 			level++;
@@ -751,7 +772,7 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 
 		// argument splitting
 		else if ( currChar == ',' && level == 0 ) {
-			args[args.length] = this.evaluate(argument);
+			args[args.length] = this.evaluate(argument, context);
 			argument = "";
 			continue;
 		}
@@ -819,6 +840,25 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	// neither
 	return null;
 };
+
+/**
+ * An expression context is used to retrieve variables when evaluating expressions.
+ * the default class only returns the empty string.
+ */
+SUGAR.expressions.ExpressionContext = function()
+{
+	//No opp, this is just an API
+}
+
+SUGAR.expressions.ExpressionContext.prototype.getValue = function(varname)
+{
+	return "";
+}
+
+SUGAR.expressions.ExpressionContext.prototype.setValue = function(varname, value)
+{
+	return "";
+}
 
 SUGAR.expressions.isNumeric = function(str) {
     if(typeof(str) != 'number' && typeof(str) != 'string')

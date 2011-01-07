@@ -99,6 +99,8 @@ class Opportunity extends SugarBean {
 
 	var $relationship_fields = Array('task_id'=>'tasks', 'note_id'=>'notes', 'account_id'=>'accounts',
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails', 'project_id'=>'project',
+									// Bug 38529 & 40938
+									'currency_id' => 'currencies',
 									//BEGIN SUGARCRM flav=pro ONLY
 									'quote_id'=>'quotes',
 									//END SUGARCRM flav=pro ONLY
@@ -402,8 +404,8 @@ $query .= 			"LEFT JOIN users
 				$this->load_relationship('accounts');							
 				$this->accounts->delete($this->id,$this->rel_fields_before_value['account_id']);		    					    		    				
 		}
-
-		parent::save_relationship_changes($is_update);
+		// Bug 38529 & 40938 - exclude currency_id
+		parent::save_relationship_changes($is_update, array('currency_id'));
 		
 		if (!empty($this->contact_id)) {
 			$this->set_opportunity_contact_relationship($this->contact_id);

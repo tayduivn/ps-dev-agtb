@@ -61,6 +61,19 @@ class SugarTheme
     protected $description;
 
     /**
+     * Defines which parent files to not include
+     *
+     * @var string
+     */
+    protected $ignoreParentFiles = array();
+    
+    /**
+     * Defines which parent files to not include
+     *
+     * @var string
+     */
+    protected $directionality = 'ltr';
+    /**
      * Theme directory name
      *
      * @var string
@@ -355,6 +368,7 @@ class SugarTheme
         return array(
             'name',
             'description',
+            'directionality',
             'dirName',
             'parentTheme',
             'version',
@@ -363,6 +377,7 @@ class SugarTheme
             'barChartColors',
             'pieChartColors',
             'group_tabs',
+            'ignoreParentFiles',
             );
     }
 

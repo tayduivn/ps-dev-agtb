@@ -20,26 +20,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id$
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
-
+require_once('include/externalAPI/ExternalAPIFactory.php');    
 
 class SugarFeedDashlet extends DashletGeneric {
 var $displayRows = 15;
 
 var $categories;
 
+var $userfeed_created;
+
 var $selectedCategories = array();
+
+//BEGIN SUGARCRM flav=pro ONLY
+var $myFavoritesOnly = false;
+//END SUGARCRM flav=pro ONLY
 
     function SugarFeedDashlet($id, $def = null) {
 		global $current_user, $app_strings, $app_list_strings;
+		
 		require('modules/SugarFeed/metadata/dashletviewdefs.php');
 		$this->myItemsOnly = false;
         parent::DashletGeneric($id, $def);
@@ -47,7 +47,7 @@ var $selectedCategories = array();
 		$this->isConfigurable = true;
 		$this->hasScript = true;
         // Add in some default categories.
-        $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
+        // $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
         // Need to get the rest of the active SugarFeed modules
         $module_list = SugarFeed::getActiveFeedModules();
         // Translate the category names
@@ -61,9 +61,21 @@ var $selectedCategories = array();
             }
         }
 
+        // Need to add the external api's here
+        $this->externalAPIList = ExternalAPIFactory::getModuleDropDown('SugarFeed',true);
+        if ( !is_array($this->externalAPIList) ) { $this->externalAPIList = array(); }
+        foreach ( $this->externalAPIList as $apiObj => $apiName ) {
+            $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
+        }
+        
+
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
 		if(!empty($def['categories']))$this->selectedCategories = $def['categories'];
+		if(!empty($def['userfeed_created'])) $this->userfeed_created = $def['userfeed_created'];
+//BEGIN SUGARCRM flav=pro ONLY
+        if(!empty($def['myFavoritesOnly']))$this->myFavoritesOnly = $def['myFavoritesOnly'];
+//END SUGARCRM flav=pro ONLY
         $this->searchFields = $dashletData['SugarFeedDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFeedDashlet']['columns'];
 		$catCount = count($this->categories);
@@ -76,6 +88,7 @@ var $selectedCategories = array();
 				unset($this->selectedCategories[0]);
 			}
 		}
+
         $this->seedBean = new SugarFeed();
     }
 
@@ -111,6 +124,8 @@ var $selectedCategories = array();
         $lvsParams['overrideOrder'] = true;
         $lvsParams['orderBy'] = 'date_entered';
         $lvsParams['sortOrder'] = 'DESC';
+        $lvsParams['custom_from'] = '';
+        
 
         // Get the real module list
         if (empty($this->selectedCategories)){
@@ -119,6 +134,7 @@ var $selectedCategories = array();
             $mod_list = array_flip($this->selectedCategories);//27949, here the key of $this->selectedCategories is not module name, the value is module name, so array_flip it.
         }
 
+        $external_modules = array();
         $admin_modules = array();
         $owner_modules = array();
         $regular_modules = array();
@@ -128,6 +144,9 @@ var $selectedCategories = array();
 				$regular_modules[] = 'UserFeed';
 				continue;
 			}
+            if ( in_array($module,$this->externalAPIList) ) {
+                $external_modules[] = $module;
+            }
 			if (ACLAction::getUserAccessLevel($current_user->id,$module,'view') <= ACL_ALLOW_NONE ) {
 				// Not enough access to view any records, don't add it to any lists
 				continue;
@@ -144,14 +163,18 @@ var $selectedCategories = array();
                 $regular_modules[] = $module;
             }
         }
-
+        
         if(!empty($this->displayTpl))
         {
         	//MFH BUG #14296
             $where = '';
             if(!empty($whereArray)){
                 $where = '(' . implode(') AND (', $whereArray) . ')';
-            }
+
+            }            
+            
+            $additional_where = '';
+            
 
 			$module_limiter = " sugarfeed.related_module in ('" . implode("','", $regular_modules) . "')";
 
@@ -162,7 +185,9 @@ var $selectedCategories = array();
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON tj.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
+
+                $lvsParams['custom_from'] .= ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
+
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY
@@ -184,13 +209,27 @@ var $selectedCategories = array();
 				$module_limiter .= ")";
             }
 			if(!empty($where)) { $where .= ' AND '; }
+
+//BEGIN SUGARCRM flav=pro ONLY
+            if ($this->myFavoritesOnly) {
+                require_once('modules/SugarFavorites/SugarFavorites.php');
+                $user_favorites_module = new SugarFavorites();
+
+                if (!isset($lvsParams['custom_from'])) {
+                    $lvsParams['custom_from'] = '';
+                }
+                $lvsParams['custom_from'] = ' INNER JOIN ' . $user_favorites_module->table_name . ' ON (' . $user_favorites_module->table_name . '.record_id = sugarfeed.related_id AND ' . $user_favorites_module->table_name . '.module = sugarfeed.related_module AND ' . $user_favorites_module->table_name . '.assigned_user_id = "' . $current_user->id . '") ' . $lvsParams['custom_from'];
+            }
+//END SUGARCRM flav=pro ONLY
+
 			$where .= $module_limiter;
 
-            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows,
-                              array('name',
-                                    'description',
-                                    'date_entered',
-                                    'created_by',
+            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
+                              array('name', 
+                                    'description', 
+                                    'date_entered', 
+                                    'created_by', 
+
 //BEGIN SUGARCRM flav=pro ONLY
                                     'team_id',
                                     'team_name',
@@ -198,10 +237,13 @@ var $selectedCategories = array();
 //END SUGARCRM flav=pro ONLY
                                     'link_url',
                                     'link_type'));
+            
+            $GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
 
             foreach($this->lvs->data['data'] as $row => $data) {
-                $this->lvs->data['data'][$row]['CREATED_BY'] = get_assigned_user_name($data['CREATED_BY']);
-                $this->lvs->data['data'][$row]['FEED'] = str_replace("{this.CREATED_BY}",$this->lvs->data['data'][$row]['CREATED_BY'],$data['NAME']);
+
+                $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['ASSIGNED_USER_ID']),$data['NAME']);
+
             }
 
             // assign a baseURL w/ the action set as DisplayDashlet
@@ -215,7 +257,75 @@ var $selectedCategories = array();
 
             $this->lvs->ss->assign('dashletId', $this->id);
 
+            
         }
+
+        $td = $GLOBALS['timedate'];
+        $needResort = false;
+        $resortQueue = array();
+        $feedErrors = array();
+
+        $fetchRecordCount = $this->displayRows + $this->lvs->data['pageData']['offsets']['current'];
+
+        foreach ( $external_modules as $apiName ) {
+            $api = ExternalAPIFactory::loadAPI($apiName);
+            if ( $api !== FALSE ) {
+                // FIXME: Actually calculate the oldest sugar feed we can see, once we get an API that supports this sort of filter.
+                $reply = $api->getLatestUpdates(0,$fetchRecordCount);
+                if ( $reply['success'] && count($reply['messages']) > 0 ) {
+                    array_splice($resortQueue, count($resortQueue), 0, $reply['messages']);
+                } else if ( !$reply['success'] ) {
+                    $feedErrors[] = $reply['errorMessage'];
+                }
+            }
+        }
+        
+        if ( count($feedErrors) > 0 ) {
+            $this->lvs->ss->assign('feedErrors',$feedErrors);
+        }
+
+        // If we need to resort, get to work!
+        foreach ( $this->lvs->data['data'] as $normalMessage ) {
+            list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
+            list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
+            
+            $unix_timestamp = strtotime($db_date.' '.$db_time);
+            
+            $normalMessage['sort_key'] = $unix_timestamp;
+            $normalMessage['NAME'] = '</b>'.$normalMessage['NAME'];
+            
+            $resortQueue[] = $normalMessage;
+        }
+        
+        usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
+        
+        // Trim it down to the necessary number of records
+        $numRecords = count($resortQueue);
+        $numRecords = $numRecords - $this->lvs->data['pageData']['offsets']['current'];
+        $numRecords = min($this->displayRows,$numRecords);
+
+        $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
+        //rss: 01/07/2011 - do not display image for now
+        /*
+        foreach ( $resortQueue as $key=>&$item ) {
+            if ( empty($item['NAME']) ) {
+                continue;
+            }
+            if ( empty($item['IMAGE_URL']) ) {
+                $item['IMAGE_URL'] = 'include/images/blank.gif';
+                if ( isset($item['ASSIGNED_USER_ID']) ) {
+                    $user = loadBean('Users');
+                    $user->retrieve($item['ASSIGNED_USER_ID']);
+                    if ( !empty($user->picture) ) {
+                        $item['IMAGE_URL'] = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
+                    }
+                }
+            }
+            $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
+        }
+         */
+        
+        $this->lvs->data['data'] = $resortQueue;
     }
 
 	  function deleteUserFeed() {
@@ -250,20 +360,56 @@ var $selectedCategories = array();
         }
 
     }
+
+	 function pushUserFeedReply( ) {
+         if(!empty($_REQUEST['text'])&&!empty($_REQUEST['parentFeed'])) {
+			$text = htmlspecialchars($_REQUEST['text']);
+			//allow for bold and italic user tags
+			$text = preg_replace('/&amp;lt;(\/*[bi])&amp;gt;/i','<$1>', $text);
+//BEGIN SUGARCRM flav=pro ONLY
+            // Fetch the parent, use the same team id's
+            $parentFeed = new SugarFeed();
+            $parentFeed->retrieve($_REQUEST['parentFeed']);
+			$team_id = $parentFeed->team_id;
+			$team_set_id = $team_id; //For now, but if we allow for multiple team selection then we'll have to change this
+//END SUGARCRM flav=pro ONLY
+            SugarFeed::pushFeed($text, 'SugarFeed', $_REQUEST['parentFeed'], 
+//BEGIN SUGARCRM flav=pro ONLY
+                                $team_id,
+//END SUGARCRM flav=pro ONLY
+								$GLOBALS['current_user']->id,
+                                '', ''
+//BEGIN SUGARCRM flav=pro ONLY
+                                ,$team_set_id
+//END SUGARCRM flav=pro ONLY
+                                );
+        }
+       
+    }
+
 	  function displayOptions() {
         global $app_strings;
+        global $app_list_strings;
         $ss = new Sugar_Smarty();
         $ss->assign('titleLBL', translate('LBL_TITLE', 'SugarFeed'));
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
+		$ss->assign('externalWarningLBL', translate('LBL_EXTERNAL_WARNING', 'SugarFeed'));
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
+//BEGIN SUGARCRM flav=pro ONLY
+        $ss->assign('myFavoritesOnlyLBL', translate('LBL_MY_FAVORITES_ONLY', 'SugarFeed'));
+//END SUGARCRM flav=pro ONLY
         $ss->assign('title', $this->title);
 		$ss->assign('categories', $this->categories);
         if ( empty($this->selectedCategories) ) {
-            $this->selectedCategories['ALL'] = 'ALL';
+            $this->selectedCategories = SugarFeed::getActiveFeedModules();
         }
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
+//BEGIN SUGARCRM flav=pro ONLY
+        $ss->assign('myFavoritesOnly', $this->myFavoritesOnly);
+//END SUGARCRM flav=pro ONLY
+
         $ss->assign('id', $this->id);
         if($this->isAutoRefreshable()) {
        		$ss->assign('isRefreshable', true);
@@ -300,7 +446,16 @@ var $selectedCategories = array();
 				unset($options['categories']);
 			}
 		}
-		
+
+//BEGIN SUGARCRM flav=pro ONLY		
+        if(!empty($req['myFavoritesOnly'])) {
+            $options['myFavoritesOnly'] = $req['myFavoritesOnly'];
+        }
+        else {
+           $options['myFavoritesOnly'] = false;
+        }
+//END SUGARCRM flav=pro ONLY
+
         return $options;
     }
 
@@ -396,7 +551,11 @@ EOQ;
 	function getPostForm(){
         global $current_user;
 
-        if ( empty($this->categories['UserFeed']) ) {
+        if ( !in_array('UserFeed',$this->selectedCategories) 
+//BEGIN SUGARCRM flav=pro ONLY
+             || $this->myFavoritesOnly
+//END SUGARCRM flav=pro ONLY
+			) {
             // The user feed system isn't enabled, don't let them post notes
             return '';
         }

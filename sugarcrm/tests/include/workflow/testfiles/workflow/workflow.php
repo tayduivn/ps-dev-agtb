@@ -7,6 +7,7 @@ include_once("include/workflow/trigger_utils.php");
 //BEGIN WFLOW PLUGINS
 include_once("include/workflow/custom_utils.php");
 //END WFLOW PLUGINS
+if ( !class_exists('Accounts_workflow') ) {
 	class Accounts_workflow {
 	function process_wflow_triggers(& $focus){
 		include("custom/modules/Accounts/workflow/triggers_array.php");
@@ -70,5 +71,5 @@ include_once("include/workflow/custom_utils.php");
 	
 	//end class
 	}
-
+}
 ?>

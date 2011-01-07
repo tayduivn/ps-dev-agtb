@@ -41,23 +41,27 @@ class SetValueAction extends AbstractAction{
 			this.target = target;
 		};
 		SUGAR.util.extend(SUGAR.forms.SetValueAction, SUGAR.forms.AbstractAction, {
-			exec : function()
+			exec : function(context)
 			{
+				if (typeof(context) == 'undefined')
+				    context = this.context;
+
 				try {
 				//BEGIN SUGARCRM flav=een ONLY
 				SUGAR.forms.AssignmentHandler.clearError(this.target);    
 				//END SUGARCRM flav=een ONLY
-				SUGAR.forms.AssignmentHandler.assign(this.target, SUGAR.forms.evalVariableExpression(this.expr).evaluate());
-	            } catch (e) {
+				    var val = this.evalExpression(this.expr, context);
+				    context.setValue(this.target, val);
+				} catch (e) {
 	                //BEGIN SUGARCRM flav=een ONLY
 			        SUGAR.forms.AssignmentHandler.showError(this.target, e + '');
 		            //END SUGARCRM flav=een ONLY
-			        SUGAR.forms.AssignmentHandler.assign(this.target, '');
-			       
-			    }        
+			        context.setValue(this.target, '');
+			    }
 	       }
 		});";
 	}
+
 
 	/**
 	 * Returns the javascript code to generate this actions equivalent. 
@@ -65,8 +69,9 @@ class SetValueAction extends AbstractAction{
 	 * @return string javascript.
 	 */
 	function getJavascriptFire() {
-		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','{$this->expression}')";
+		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','" . addslashes($this->expression) . "')";
 	}
+
 	
 	
 	

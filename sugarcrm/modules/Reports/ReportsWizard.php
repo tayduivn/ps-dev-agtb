@@ -47,7 +47,7 @@ if(!(ACLController::checkAccess('Reports', 'edit', $is_owner)))
 global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $app_strings, $sugar_config, $sugar_version;
 
 $params = array();
-$params[] = "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_CREATE_CUSTOM_REPORT'];
+$params[] = $mod_strings['LBL_CREATE_CUSTOM_REPORT'];
 echo getClassicModuleTitle("Reports", $params, true);
 
 $ACLAllowedModules = getACLAllowedModules();

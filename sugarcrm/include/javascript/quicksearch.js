@@ -42,7 +42,7 @@ function enableQS(noReload){
     	if(typeof sqs_objects == 'undefined') {
     	   return;
     	}
-    	
+        
     	var Dom = YAHOO.util.Dom;
     	
     	//Get all the fields where sqsEnabled is an attribue, these should be the input text fields for quicksearch
@@ -73,7 +73,6 @@ function enableQS(noReload){
         	   		continue;
         	   	}
         	}
-        	
         	//Track if this field has already been processed.  The way the enableQS function is called
         	//is a bit problematic in that it lends itself to a lot of duplicate processing
         	if(QSProcessedFieldsArray[qs_index_id]) {
@@ -137,6 +136,7 @@ function enableQS(noReload){
                     	sqs : sqs,
 						animSpeed : 0.25,
                     	qs_obj: qs_obj,
+                    	inputElement: qsFields[qsField],
                     	//YUI requires the data, even POST, to be URL encoded
                     	generateRequest : function(sQuery) {
 	                    	var out = SUGAR.util.paramsToUrl({
@@ -192,6 +192,7 @@ function enableQS(noReload){
                     	    var label_str = '';
 	                		var label_data_str = '';
 	                		var current_label_data_str = '';
+	                		var label_data_hash = new Array();
 	                    	
 	                    	for(var i in this.fields) {
 	                    		for (var key in this.qs_obj.field_list) {
@@ -204,8 +205,15 @@ function enableQS(noReload){
 	                	        	    var displayValue = data[i].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 		   	        					var data_label =  document.getElementById(this.qs_obj.populate_list[key]+'_label').innerHTML.replace(/\n/gi,'');
 			        					label_str += data_label + ' \n';
-			        					label_data_str += data_label  + ' ' + displayValue + '\n';
+			        					label_and_data = data_label  + ' ' + displayValue + '\n';
 	                	        	   
+			        					//Append to current_label_data_str only if the label and data are unique
+			        					if(!label_data_hash[label_and_data])
+			        					{
+			        						label_data_str += label_and_data;
+			        						label_data_hash[label_and_data] = true;
+			        					}			        					
+			        					
 			        					if(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]])
 			        					{
 			        						current_label_data_str += data_label + ' ' + document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value + '\n';
@@ -214,19 +222,35 @@ function enableQS(noReload){
 	                	       }
 	                    	}
 
-	        			    if(label_data_str != label_str && current_label_data_str != label_str){
-	       			        	if(confirm(SUGAR.language.get('app_strings', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str))
+	        			    if(label_data_str != label_str && current_label_data_str != label_str) {    	
+	        			    	
+	        			    	module_key = (typeof document.forms[form_id].elements['module'] != 'undefined') ? document.forms[form_id].elements['module'].value : 'app_strings';
+	        			    	warning_label = SUGAR.language.translate(module_key, 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str;       			    	
+	        			    		        			    	
+	       			        	if(!confirm(warning_label))
 	       						{
-	       			        		this.updateFields(data,filter); 
+	       			        		this.updateFields(data,/account_id/); 
 	       						} else {
-	       							this.updateFields(data,/account_id/);
+	       							
+	       							if(Dom.get('shipping_checkbox')) 
+	       							{
+	       							  if(this.inputElement.id == 'shipping_account_name')
+	       							  {
+	       							      filter = Dom.get('shipping_checkbox').checked ? /(account_id|office)/ : filter;
+	       							  } else if(this.inputElement.id == 'billing_account_name') {
+	       								  filter = Dom.get('shipping_checkbox').checked ? filter : /(account_id|office|billing)/;
+	       							  }
+	       							} else if(Dom.get('alt_checkbox')) {
+	       							  filter = Dom.get('alt_checkbox').checked ? filter : /^alt/;
+	       							}
+	       							
+	       							this.updateFields(data,filter);
 	       						}
 	        			    } else {
 		                        this.updateFields(data,filter); 	        			    	
 	        			    }
                        };
                     }
-                    
                     
                     
                     //fill in the data fields on selection

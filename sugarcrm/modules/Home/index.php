@@ -707,7 +707,7 @@ $sugar_smarty->assign('lblNumberOfColumns', $GLOBALS['app_strings']['LBL_NUMBER_
 $sugar_smarty->assign('lbl1Column', $GLOBALS['app_strings']['LBL_1_COLUMN']);
 $sugar_smarty->assign('lbl2Column', $GLOBALS['app_strings']['LBL_2_COLUMN']);
 $sugar_smarty->assign('lbl3Column', $GLOBALS['app_strings']['LBL_3_COLUMN']);
-$sugar_smarty->assign('form_header', get_module_title("Home","", true));
+$sugar_smarty->assign('form_header', get_module_title("Home","", false));
 //END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));

@@ -152,8 +152,8 @@ EOQ;
 		<div id='dcmenutop'></div>
 		<div id='dcmenu' class='dcmenu dcmenuFloat'>
 		{$notificationsHTML}
-		<div class="dcmenuDivider" style="float: left; margin-left: 15px;"></div>
-
+		<div class="dcmenuDivider" id="notificationsDivider"></div>
+		
 		<div id="dcmenuContainer">
 		<ul id="dcmenuitems">
 

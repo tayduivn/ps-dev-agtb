@@ -44,13 +44,15 @@ class ReadOnlyAction extends AbstractAction{
 			/**
 			 * Triggers the style dependencies.
 			 */
-			exec: function()
+			exec: function(context)
 			{
+				if (typeof(context) == 'undefined') context = this.context;
+				
 				var el = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if (!el)
 				    return;
 
-				var val = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
+				var val = this.evalExpression(this.expr, context);
 				var set = val == SUGAR.expressions.Expression.TRUE;
 				this.setReadOnly(el, set);
 				this.setDateField(el, set);

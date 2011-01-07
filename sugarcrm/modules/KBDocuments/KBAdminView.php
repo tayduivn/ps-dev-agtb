@@ -47,7 +47,7 @@ if(!is_admin($current_user) && !is_admin_for_module($current_user,'KBDocuments')
 }
 
 $params = array();
-$params[] = "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_KNOWLEDGE_BASE_ADMIN'];
+$params[] = $mod_strings['LBL_KNOWLEDGE_BASE_ADMIN'];
 
 echo getClassicModuleTitle("KBDocuments", $params, true);
 

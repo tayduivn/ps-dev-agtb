@@ -88,7 +88,9 @@ require_once 'SugarTestMergeUtilities.php';
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
-
+    
+    protected $useOutputBuffering = true;
+    
     protected function assertPostConditions() {
         if(!empty($_REQUEST)) {
             foreach(array_keys($_REQUEST) as $k) {

@@ -580,6 +580,14 @@ class SugarView
         $ss->display($headerTpl);
 
         $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+        
+        if ( isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message']) ) {
+            foreach ( $_SESSION['user_error_message'] as $error_message ) {
+                echo('<p class="error">' . $error_message.'</p>');
+            }
+            unset($_SESSION['user_error_message']);
+        }
+        
     }
     /**
      * If the view is classic then this method will include the file and
@@ -1080,35 +1088,30 @@ EOHTML;
         $params = $this->_getModuleTitleParams();
         $count = count($params);
         $index = 0;
-
+        
+		if(SugarThemeRegistry::current()->directionality == "rtl") {
+			$params = array_reverse($params);
+		}
+	
         foreach($params as $parm){
             $index++;
             $theTitle .= $parm;
             if($index < $count){
-                $theTitle .= "<span class='pointer'>&raquo;</span>";
+                $theTitle .= $this->getBreadCrumbSymbol();
             }
         }
         $theTitle .= "</h2>\n";
 
         if ($show_help) {
             $theTitle .= "<span class='utils'>";
-            if (isset($this->action) && $this->action != "EditView") {
-                $printImageURL = SugarThemeRegistry::current()->getImageURL('print.gif');
-                $theTitle .= <<<EOHTML
-<a href="javascript:void window.open('index.php?{$GLOBALS['request_string']}','printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')" class='utilsLink'>
-<img src="{$printImageURL}" alt="{$GLOBALS['app_strings']['LNK_PRINT']}"></a>
-<a href="javascript:void window.open('index.php?{$GLOBALS['request_string']}','printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')" class='utilsLink'>
-{$GLOBALS['app_strings']['LNK_PRINT']}
-</a>
-EOHTML;
-            }
-            $helpImageURL = SugarThemeRegistry::current()->getImageURL('help.gif');
+
+            $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
             $theTitle .= <<<EOHTML
 &nbsp;
-<a href="index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugar_version}&edition={$sugar_flavor}&lang={$current_language}&help_module={$module}&help_action={$this->action}&key={$server_unique_key}" class="utilsLink" target="_blank">
-<img src='{$helpImageURL}' alt='{$GLOBALS['app_strings']['LNK_HELP']}'></a>
-<a href="index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugar_version}&edition={$sugar_flavor}&lang={$current_language}&help_module={$module}&help_action={$this->action}&key={$server_unique_key}" class="utilsLink" target="_blank">
-{$GLOBALS['app_strings']['LNK_HELP']}
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;
         }
@@ -1214,9 +1217,15 @@ EOHTML;
     	if($this->action == "ListView" || $this->action == "index")
     	{
     	    if (!empty($iconPath) && !$bTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'>"
-				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>"
-				     . "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
+    	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
+					return "<a href='index.php?module={$this->module}&action=index'>"
+					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
+    	    	} else {
+    	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
+    	    			 . "<a href='index.php?module={$this->module}&action=index'>"
+					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";	
+    	    	}
 			} else {
 				return $firstParam;
 			}
@@ -1261,5 +1270,19 @@ EOHTML;
             $browserTitle = strip_tags($value) . ' &raquo; ' . $browserTitle;
 
         return $browserTitle;
+    }
+    
+     /**
+     * Returns the correct breadcrumb symbol according to theme's directionality setting
+     * 
+     *
+     * @return string
+     */
+    public function getBreadCrumbSymbol() {
+    	if(SugarThemeRegistry::current()->directionality == "ltr") {
+        	return "<span class='pointer'>&raquo;</span>";
+        } else {
+        	return "<span class='pointer'>&laquo;</span>";
+        }
     }
 }

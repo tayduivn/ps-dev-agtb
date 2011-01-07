@@ -163,6 +163,19 @@ class TimeDate
     public static function getInstance()
     {
         if(empty(self::$timedate)) {
+            if(ini_get('date.timezone') == '') {
+                // Remove warning about default timezone
+                date_default_timezone_set(@date('e'));
+                try {
+                    $tz = self::guessTimezone();
+                } catch(Exception $e) {
+                    $tz = "UTC"; // guess failed, switch to UTC
+                }
+                if(isset($GLOBALS['log'])) {
+                    $GLOBALS['log']->fatal("Configuration variable date.timezone is not set, guessed timezone $tz. Please set date.timezone=\"$tz\" in php.ini!");
+                }
+                date_default_timezone_set($tz);
+            }
             self::$timedate = new self;
         }
         return self::$timedate;
@@ -294,11 +307,20 @@ class TimeDate
      * Get user time format.
      * @todo add caching
      *
-     * @param [User] $user user object, current user if not specified
+     * @param User $user user object, current user if not specified
      * @return string
      */
-    public function get_time_format(User $user = null)
+    public function get_time_format(/*User*/ $user = null)
     {
+        if(is_bool($user) || func_num_args() > 1) {
+            // BC dance - old signature was boolean, User
+            $GLOBALS['log']->fatal('TimeDate::get_time_format(): Deprecated API used, please update you code - get_time_format() now has one argument of type User');
+            if(func_num_args() > 1) {
+                $user = func_get_arg(1);
+            } else {
+                $user = null;
+            }
+        }
         $user = $this->_getUser($user);
 
         if (empty($user)) {
@@ -1368,13 +1390,13 @@ class TimeDate
 	    	'Australia/Sydney', 'Australia/Perth');
 
 	    $now = new DateTime();
-    	if($userOffset == 0) {
-    	     array_unshift($defaultZones, date('T'));
+	    if($userOffset == 0) {
+    	     array_unshift($defaultZones, date('e'));
     	     $gmtOffset = date('Z');
     	} else {
     	    $gmtOffset = $userOffset * 60;
     	}
-	    foreach($defaultZones as $zoneName) {
+    	foreach($defaultZones as $zoneName) {
 	        $tz = new DateTimeZone($zoneName);
 	        if($tz->getOffset($now) == $gmtOffset) {
                 return $tz->getName();

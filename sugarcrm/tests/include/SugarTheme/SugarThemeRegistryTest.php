@@ -27,7 +27,7 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $object = SugarThemeRegistry::get($this->_themeName);
         
-        $this->assertType('SugarTheme',$object);
+        $this->assertInstanceOf('SugarTheme',$object);
         $this->assertEquals($object->__toString(),$this->_themeName);
     }
     
@@ -35,7 +35,7 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarThemeRegistry::set($this->_themeName);
         
-        $this->assertType('SugarTheme',SugarThemeRegistry::current());
+        $this->assertInstanceOf('SugarTheme',SugarThemeRegistry::current());
         $this->assertEquals(SugarThemeRegistry::current()->__toString(),$this->_themeName);
     }
     

@@ -32,8 +32,7 @@
 {{/if}}
 
 {{assign var=flag_field value=$vardef.name|cat:_flag}}
-
-<table border="0" cellpadding="0" cellspacing="0">
+<table border="0" cellpadding="0" cellspacing="0" class="dateTime">
 <tr valign="middle">
 <td nowrap>
 <input autocomplete="off" type="text" id="{{$idname}}_date" name="{{$idname}}_date" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}" size="11" maxlength="10" title='{{$vardef.help}}' tabindex="{{$tabindex}}" onchange="combo_{{$idname}}.update(); {{if isset($displayParams.updateCallback)}}{{$displayParams.updateCallback}}{{/if}}">
@@ -99,7 +98,8 @@ YAHOO.util.Event.onDOMReady(function()
 	button : "{{$idname}}_trigger",
 	singleClick : true,
 	step : 1,
-	weekNumbers:false
+	weekNumbers: false,
+	comboObject: combo_{{$idname}}
 	{rdelim});
 
 	//Call update for first time to round hours and minute values

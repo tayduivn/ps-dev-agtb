@@ -1,0 +1,7 @@
+<soda>
+   <script
+   	file="{@global.scriptsdir}/modules/admin/module_lib/setup-admin.xml" />
+   <script fileset="{@global.scriptsdir}/modules/admin" />
+   <script
+   	file="{@global.scriptsdir}/modules/admin/module_lib/cleanup-admin.xml" />
+</soda>

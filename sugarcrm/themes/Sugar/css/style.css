@@ -39,6 +39,11 @@ body
 	margin: 0px;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
 }
+
+body.popupBody {
+	margin: 10px;
+}
+
 fieldset, table, pre 
 {
     margin-bottom:0;
@@ -1246,6 +1251,10 @@ div.indent_right {
 	background:url(../../../../index.php?entryPoint=getImage&imageName=search-advanced-bg.png) repeat-x top center #ccc; 
 }
 
+.search_form .view.advanced .help {
+text-align: left;	
+}
+
 .search_form .view a {
 	color: #005a9b;
 	font-size: 12px;
@@ -1282,6 +1291,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 .search_form  .edit tr td[scope="row"] {
 	background-color: transparent;
+}
+
+.search_form .sumbitButtons {
+	padding-left: 10px !important;
+}
+
+.search_form .helpIcon {
+	text-align: right;
 }
 
 /* sitemap */
@@ -2356,8 +2373,6 @@ border-radius: 0px 0px 6px 6px;
 .sugarFeedDashlet
 {
 	overflow:auto;
-	max-height:375px;
-	height:expression(this.scrollHeight>375?'375px':'auto');
 }
 
 .sugarFeedDashlet td.list th, .sugarFeedDashlet td.list td[scope=col]
@@ -4164,6 +4179,13 @@ a.tabFormAdvLink:link, a.tabFormAdvLink:visited
 }
 
 /* calendar styles */
+
+
+table#calendarModule > tbody > tr > td:first-child {
+	padding-right: 10px;
+	padding-top: 2px;
+}
+
 #daily_cal_table_outside {
 box-shadow: #ccc 0px 0px 10px;
 -moz-box-shadow: #ccc 0px 0px 10px;
@@ -4509,6 +4531,11 @@ margin-top: 1px\9;
 
 #tabListContainerTD {
 background:url(../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=dashlet-tab-bg-bottom.png) repeat-x;
+}
+
+
+#dashletCtrlsTD {
+text-align: right;
 }
 
 #addPage {
@@ -5376,6 +5403,39 @@ color: #0B578F;
 	height: 26px;
 }
 
+table.dcListView th,table.dcListView td {
+	text-align: left;
+	color: #666;
+	padding: 5px 10px;
+}
+
+table.dcListView th {
+	background-color:#EBEBED;
+}
+
+
+table.dcListView th a.listViewThLinkS1 {
+color:#666666;
+text-decoration: none;
+}
+
+table.dcListView th a.listViewThLinkS1:hover {
+text-decoration: underline;
+}
+
+table.dcListView td {
+	border-bottom: 1px solid #eee;
+	white-space: nowrap;
+}
+
+table.dcSearch {
+	margin-bottom: 10px;	
+}
+
+.dcSubmit {
+margin-left:10px;	
+}
+		
 #sugar_spot_search_div {
 	background: url(../../../../index.php?entryPoint=getImage&imageName=dcMenuSearchBox.png) no-repeat top left;
 	height: 26px;
@@ -5400,6 +5460,12 @@ color: #0B578F;
 	margin:0 10px 0 0px;
 }
 
+#notificationsDivider {
+ 	float: left; 
+ 	margin-right: 10px;
+ 	margin-left: 15px;
+ 	}
+ 	
 .dashletPanel .dccontent {
 	border: 1px solid #aaa;
 	padding: 10px;
@@ -5437,6 +5503,12 @@ padding: 2px;
 border: 0px;
 margin-top: 7px;
 }
+.dashletPanel.dc .hd button {
+    vertical-align: top;
+    margin-top: 8px;
+    margin-right: 6px;
+}
+
 
 .dashletPanel.dc .bd .bd-center {
 	padding-top: 15px;

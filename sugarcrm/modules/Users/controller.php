@@ -67,6 +67,11 @@ class UsersController extends SugarController
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
+
+            $eapm = loadBean('EAPM');
+            $eapm->delete_user_accounts($_REQUEST['record']);
+            $GLOBALS['log']->info("Removing user's External Accounts");
+            
             //BEGIN SUGARCRM flav=PRO ONLY
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");

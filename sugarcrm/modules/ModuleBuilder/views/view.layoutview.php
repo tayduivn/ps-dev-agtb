@@ -110,7 +110,7 @@ class ViewLayoutView extends ViewEdit
         {
             $smarty->assign ( 'layouttitle', translate ( 'LBL_CURRENT_LAYOUT', 'ModuleBuilder' ) ) ;
 
-            if($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE){
+            if($this->editLayout == MB_DETAILVIEW){
 		        $parser2 = ParserFactory::getParser(MB_EDITVIEW,$this->editModule,$this->package);
 		        $disableLayout = $parser2->getSyncDetailEditViews();
                 if(!empty($_REQUEST['copyFromEditView'])){

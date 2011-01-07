@@ -75,6 +75,7 @@ class MssqlHelper extends DBHelper
             'id'       => 'varchar(36)',
             'url'=>'varchar',
             'encrypt'=>'varchar',
+            'file'     => 'varchar',
             );
         
         return $map[$type];

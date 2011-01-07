@@ -1,0 +1,8 @@
+<soda>   
+   <script
+   	file="{@global.scriptsdir}/modules/leads/module_lib/setup-leads.xml" />
+   <script fileset="{@global.scriptsdir}/modules/leads" />
+   <script
+   	file="{@global.scriptsdir}/modules/leads/module_lib/cleanup-leads.xml" />
+</soda>
+

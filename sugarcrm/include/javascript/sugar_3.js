@@ -1650,6 +1650,10 @@ function initEditView(theForm) {
     }
 
     // console.log('DEBUG: Adding checks for '+theForm.id);
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
     
@@ -3487,12 +3491,18 @@ SUGAR.language = function() {
         },
 
         get: function(module, str) {
-            if(typeof SUGAR.language.languages[module] == 'undefined'
-            || typeof SUGAR.language.languages[module][str] == 'undefined')
+            if(typeof SUGAR.language.languages[module] == 'undefined' || typeof SUGAR.language.languages[module][str] == 'undefined')
+            {
                 return 'undefined';
-
+            }
             return SUGAR.language.languages[module][str];
-        }
+        },
+        
+        translate: function(module, str)
+        {
+            text = this.get(module, str);
+            return text != 'undefined' ? text : this.get('app_strings', str);  	
+        },
     };
 }();
 
@@ -3698,7 +3708,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-
+	
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
+	width = (width == 600) ? 800 : width;
+	height = (width == 400) ? 800 : height;
+	
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name

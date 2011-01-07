@@ -33,7 +33,7 @@ class CountRelatedExpression extends NumericExpression
 	 */
 	function evaluate() {
 		$linkField = $this->getParameters()->evaluate();
-		//This should be of relate type, which means an array of SugarBean objects
+        //This should be of relate type, which means an array of SugarBean objects
         if (!is_array($linkField)) {
             return false;
         }
@@ -62,7 +62,7 @@ class CountRelatedExpression extends NumericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    function:"count",
+                    "function":"count",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField])
                 });
                 //The response should the be the JSON encoded value of the related field
@@ -74,7 +74,6 @@ class CountRelatedExpression extends NumericExpression
 
 			}
 
-			console.log("fell through");
 			return "";
 EOQ;
 	}

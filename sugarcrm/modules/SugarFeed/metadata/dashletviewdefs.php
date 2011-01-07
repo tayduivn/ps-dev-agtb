@@ -38,10 +38,10 @@ $dashletData['SugarFeedDashlet']['searchFields'] = array('date_entered'     => a
                                                           //END SUGARCRM flav=pro ONLY
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name',
                                                                                       'default' => $current_user->name));
-$dashletData['SugarFeedDashlet']['columns'] =  array(   'feed' => array('width'   => '40',
+$dashletData['SugarFeedDashlet']['columns'] =  array(   'name' => array('width'   => '40',
                                                                       'label'   => '',
                                                                       'link'    => false,
 																	  'sortable'=>false,
-                                                                      'default' => true),
+                                                                      'default' => true), 
 
                                                );

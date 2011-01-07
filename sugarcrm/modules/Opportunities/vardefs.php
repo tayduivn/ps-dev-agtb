@@ -197,6 +197,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'comment' => 'Expected or actual date the oppportunity will close',
 	'importable' => 'required',
     'required' => true,
+    'enable_range_search' => '1',
   ),
   'next_step' =>
   array (
@@ -292,6 +293,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'relationship' => 'emails_opportunities_rel',/* reldef in emails */
     'source'=>'non-db',
 		'vname'=>'LBL_EMAILS',
+  ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_opportunities',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
   ),
 //BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>

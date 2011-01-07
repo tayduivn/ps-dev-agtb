@@ -514,13 +514,14 @@ require_once('include/EditView/EditView2.php');
             }
         }
 
+
        if ( is_array($this->searchFields) ) {
            foreach ( $this->searchFields as $fieldName => $field ) {
                if ( !empty($field['value']) && is_string($field['value']) ) {
                    $this->searchFields[$fieldName]['value'] = trim($field['value']);
                }
            }
-       }
+       } 
     }
 
     /**
@@ -537,7 +538,6 @@ require_once('include/EditView/EditView2.php');
         global $timedate;
 
         $this->searchColumns = array () ;
-
         $values = $this->searchFields;
 
         $where_clauses = array();
@@ -552,8 +552,8 @@ require_once('include/EditView/EditView2.php');
         		unset($this->searchFields['team_name']);
         	}
         }
-
         //END SUGARCRM flav=pro ONLY
+        
         foreach($this->searchFields as $field=>$parms) {
 			$customField = false;
             // Jenny - Bug 7462: We need a type check here to avoid database errors
@@ -630,8 +630,9 @@ require_once('include/EditView/EditView2.php');
                 continue;
             }
 
-            if(isset($parms['value']) && $parms['value'] != "") {
-
+            
+            if(isset($parms['value']) && $parms['value'] != "") {        	
+            	
                 $operator = 'like';
                 if(!empty($parms['operator'])) {
                     $operator = $parms['operator'];
@@ -672,8 +673,7 @@ require_once('include/EditView/EditView2.php');
 	                    }
                     }
 
-                }
-                else {
+                } else {
                     $field_value = $GLOBALS['db']->quote($parms['value']);
                 }
 
@@ -682,19 +682,29 @@ require_once('include/EditView/EditView2.php');
                     $parms['db_field'] = array($field);
                 }
 
-                if(isset($parms['my_items']) and $parms['my_items'] == true) {
-                   if( $parms['value'] == false ) { //do not include where clause for custom fields with checkboxes that are unchecked
-
+                //This if-else block handles the shortcut checkbox selections for "My Items" and "Closed Only"
+                if(!empty($parms['my_items'])) {
+                    if( $parms['value'] == false ) { 
 						continue;
-					}
-					else{ //my items is checked.
+					} else { 
+						//my items is checked.
 						global $current_user;
 	                    $field_value = $GLOBALS['db']->quote($current_user->id);
 						$operator = '=' ;
 					}
-//                    $operator = ($parms['value'] == '1') ? '=' : '!=';
-                }
-
+                } else if(!empty($parms['closed_values']) && is_array($parms['closed_values'])) {
+                    if( $parms['value'] == false ) { 
+						continue;
+					} else { 
+						$field_value = '';
+						foreach($parms['closed_values'] as $closed_value)
+						{
+							$field_value .= ",'" . $GLOBALS['db']->quote($closed_value) . "'";
+						}
+	                    $field_value = substr($field_value, 1);
+					}                	
+                }                     
+                
                 $where = '';
                 $itr = 0;
 
@@ -943,8 +953,11 @@ require_once('include/EditView/EditView2.php');
 									}
                                 }
                                 break;
+                            case 'not in':    
+                                $where .= $db_field . ' not in ('.$field_value.')';
+                                break;
                             case 'in':
-                                $where .=  $db_field . " in (".$field_value.')';
+                                $where .=  $db_field . ' in ('.$field_value.')';
                                 break;
                             case '=':
                                 if($type == 'bool' && $field_value == 0) {
@@ -1019,7 +1032,7 @@ require_once('include/EditView/EditView2.php');
                         		} 
                         		//BEGIN SUGARCRM flav=ENT ONLY
                         		else {
-									$where .= $db_field . " BETWEEN sysdate AND (sysdate + interval '7' day) ";
+									$where .= $db_field . " BETWEEN sysdate AND (sysdate + interval '7' day)";
                         		}
 								//END SUGARCRM flav=ENT ONLY
 								//END SUGARCRM flav=PRO ONLY                        		
@@ -1047,7 +1060,7 @@ require_once('include/EditView/EditView2.php');
 					            } 
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql'){
-					                $where .= "LEFT(" . $db_field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					                $where .= "LEFT(" . $db_field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else {
@@ -1063,7 +1076,7 @@ require_once('include/EditView/EditView2.php');
 					            } 
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql'){
-					                $where .= "LEFT (" . $db_field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					                $where .= "LEFT (" . $db_field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else {
@@ -1111,7 +1124,7 @@ require_once('include/EditView/EditView2.php');
 					            }
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
-					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE()) ";
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            }
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else{
@@ -1127,7 +1140,7 @@ require_once('include/EditView/EditView2.php');
 					            }
 					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
-					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE()))) ";
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE())))";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else {
@@ -1142,7 +1155,7 @@ require_once('include/EditView/EditView2.php');
 					            }
 								//BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
-					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE()))) ";
+					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE())))";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
 					            else { 

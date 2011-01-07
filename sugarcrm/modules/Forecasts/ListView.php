@@ -96,8 +96,7 @@ else
 
 $seedForecast = new Forecast();
 
-$middleText = "<span class='pointer'>&raquo;</span>{$mod_strings['LBL_FORECAST_HISTORY_TITLE']}";
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $middleText, true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_FORECAST_HISTORY_TITLE']), true);
 //echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_FORECAST_HISTORY_TITLE'], true);
 
 //START:processing the search form.

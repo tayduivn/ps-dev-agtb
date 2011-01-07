@@ -376,9 +376,10 @@ class DashletGeneric extends Dashlet {
             ACLField::listFilter($this->lvs->displayColumns,$this->seedBean->module_dir, $GLOBALS['current_user']->id ,true);
         }
         //END SUGARCRM flav=pro ONLY
-        
+
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default
+        $nameRelatedFields = array();
         if(empty($lvdOrderBy['orderBy'])) {
             foreach($displayColumns as $colName => $colParams) {
                 if(!empty($colParams['defaultOrderColumn'])) {
@@ -388,7 +389,13 @@ class DashletGeneric extends Dashlet {
                 }
             }
         }
-
+		// Check for 'last_name' column sorting with related fields (last_name, first_name)
+		// See ListViewData.php for actual sorting change.
+		if ($lvdOrderBy['orderBy'] == 'last_name' && !empty($displayColumns['NAME']) && !empty($displayColumns['NAME']['related_fields']) && 
+			in_array('last_name', $displayColumns['NAME']['related_fields']) &&
+			in_array('first_name', $displayColumns['NAME']['related_fields'])) {
+				$lvsParams['overrideLastNameOrder'] = true;
+		}
 
         if(!empty($this->displayTpl))
         {
@@ -396,7 +403,7 @@ class DashletGeneric extends Dashlet {
             $where = '';
             if(!empty($whereArray)){
                 $where = '(' . implode(') AND (', $whereArray) . ')';
-            }            
+            }
             $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows/*, $filterFields*/);
             if(in_array('CREATED_BY', array_keys($displayColumns))) { // handle the created by field
                 foreach($this->lvs->data['data'] as $row => $data) {

@@ -269,33 +269,40 @@ class ListViewData {
         // Bug 22740 - Tweak this check to strip off the table name off the order by parameter.
         // Samir Gandhi : Do not remove the report_cache.date_modified condition as the report list view is broken
         $orderby = $order['orderBy'];
-        if (strpos($order['orderBy'],'.') && ($order['orderBy'] != "report_cache.date_modified"))
+        if (strpos($order['orderBy'],'.') && ($order['orderBy'] != "report_cache.date_modified")) {
             $orderby = substr($order['orderBy'],strpos($order['orderBy'],'.')+1);
-        if($orderby != 'date_entered' && !in_array($orderby, array_keys($filter_fields))){
+        }
+        if ($orderby != 'date_entered' && !in_array($orderby, array_keys($filter_fields))) {
         	$order['orderBy'] = '';
         	$order['sortOrder'] = '';
         }
 
-		if(empty($order['orderBy'])) {
+		if (empty($order['orderBy'])) {
             $orderBy = '';
-        }
-		else {
+        } else {
             $orderBy = $order['orderBy'] . ' ' . $order['sortOrder'];
             //wdong, Bug 25476, fix the sorting problem of Oracle.
             if (isset($params['custom_order_by_override']['ori_code']) && $order['orderBy'] == $params['custom_order_by_override']['ori_code'])
                 $orderBy = $params['custom_order_by_override']['custom_code'] . ' ' . $order['sortOrder'];
         }
-
-        if(empty($params['skipOrderSave'])) // don't save preferences if told so
+        
+        if (empty($params['skipOrderSave'])) { // don't save preferences if told so
             $current_user->setPreference('listviewOrder', $order, 0, $this->var_name); // save preference
+        }
         //BEGIN SUGARCRM flav=pro ONLY
-        if($seed->isFavoritesEnabled()){
+        if ($seed->isFavoritesEnabled()) {
             $params['favorites'] = !empty($_REQUEST['my_favorites'])?2:1;
 		}
 		//END SUGARCRM flav=pro ONLY
+		
+		// If $params tells us to override for the special last_name, first_name sorting
+		if (!empty($params['overrideLastNameOrder']) && $order['orderBy'] == 'last_name') {
+			$orderBy = 'last_name '.$order['sortOrder'].', first_name '.$order['sortOrder'];
+		}
+		
 		$ret_array = $seed->create_new_list_query($orderBy, $where, $filter_fields, $params, 0, '', true, $seed, true);
         $ret_array['inner_join'] = '';
-        if(!empty($this->seed->listview_inner_join)) {
+        if (!empty($this->seed->listview_inner_join)) {
             $ret_array['inner_join'] = ' ' . implode(' ', $this->seed->listview_inner_join) . ' ';
         }
 

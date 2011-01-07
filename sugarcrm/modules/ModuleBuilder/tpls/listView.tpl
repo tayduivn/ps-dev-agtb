@@ -89,7 +89,7 @@ studiotabs.reset();
             {/if}
             </td>
             <td></td>
-            <td align="right">
+            <td align="right" class="editIcon">
                 <img src="{sugar_getimagepath file='edit_inline.gif'}" style="cursor: pointer;"
 				onclick="var value_label = document.getElementById('subslot{$modCounter}label').innerHTML.replace(/^\s+|\s+$/g,''); 
 				    {if !($view|substr:-6 == "search") }
@@ -113,7 +113,7 @@ studiotabs.reset();
             </tr>
             <tr class='fieldValue'>
                 {if empty($hideKeys)}<td>[{$key}]</td>{/if}
-                <td align="right" colspan="2">
+                <td align="right" colspan="2" class="percentage">
 					{if $view|substr:-6 == "search" }
 					<span style="display:none" id='subslot{$modCounter}width'>{$value.width}</span>	<span style="display:none">%</span>
 					{else}
