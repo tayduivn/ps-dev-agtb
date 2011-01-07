@@ -162,7 +162,8 @@ EOHTML;
 function get_module_title(
     $module, 
     $module_title, 
-    $show_create
+    $show_create,
+    $count=0
     )
 {
     global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
@@ -181,9 +182,13 @@ function get_module_title(
     if (!empty($iconPath)) {
     	if (SugarThemeRegistry::current()->directionality == "ltr") {
 	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
-	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>".$module_title;	
+	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
+	        $the_title .= ($count >= 1) ? SugarView::getBreadCrumbSymbol() : "";
+	        $the_title .=  $module_title;	
     	} else {
-    		$the_title .= $module_title."<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
+    		$the_title .= $module_title;
+    		$the_title .= ($count > 1) ? SugarView::getBreadCrumbSymbol() : "";
+    		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
 	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
     	}
     } else {
@@ -255,11 +260,11 @@ function getClassicModuleTitle(
 	foreach($params as $parm){
 		$index++;
 	   	$module_title .= $parm;
-	   	if($index < $count || $count == 1){
+	   	if($index < $count || ($count == 1 && SugarThemeRegistry::current()->directionality == "rtl")){
 	    	$module_title .= SugarView::getBreadCrumbSymbol();
 	    }
 	}
-	return get_module_title($module, $module_title, $show_help, true);
+	return get_module_title($module, $module_title, $show_help, $count);
 }
 
 /**

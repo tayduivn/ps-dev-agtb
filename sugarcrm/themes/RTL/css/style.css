@@ -34,6 +34,10 @@ div.moduleTitle{    direction: rtl;}
 
 table.actionsContainer table td {text-align: left;direction: ltr;}
 
+table.actionsContainer td:last-child {
+text-align: left;
+}
+
 .list tr.pagination td table td:first-child {text-align: right;
 -moz-border-radius-bottomright: 6px;
 -moz-border-radius-topright: 6px;
