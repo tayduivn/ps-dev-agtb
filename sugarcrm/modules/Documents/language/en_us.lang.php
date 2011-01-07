@@ -66,6 +66,7 @@ $mod_strings = array (
 	'LBL_FILE_EXTENSION'  => 'File Extension',
 	'LBL_LAST_REV_MIME_TYPE' => 'Last revision MIME type',
 	'LBL_CAT_OR_SUBCAT_UNSPEC'=>'Unspecified',
+    'LBL_HOMEPAGE_TITLE' => 'My Documents',
 	//quick search
 	'LBL_NEW_FORM_TITLE' => 'New Document',
 	//document edit and detail view
