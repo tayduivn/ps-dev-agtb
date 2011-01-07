@@ -1,5 +1,5 @@
 <soda>
-	<puts text="Lib: Account_Create_Lib.xml starting." />
+	<puts text="Lib: Account_Create_Lib_FULL.xml starting." />
 	<timestamp />
 	<link id="moduleTab_Accounts" />
 	<wait condition="true">
@@ -57,5 +57,5 @@
 		<var var="pre_account_email" set="{@stamp}{@account_record.emailAddress0}" />
 	</csv>
 
-	<puts text="Lib: Account_Create_Lib.xml finished." />
+	<puts text="Lib: Account_Create_Lib_FULL.xml finished." />
 </soda>
