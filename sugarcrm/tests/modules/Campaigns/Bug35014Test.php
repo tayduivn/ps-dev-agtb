@@ -6,6 +6,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $campaign = SugarTestCampaignUtilities::createCampaign();
         $this->campaign_id = $campaign->id;
 	}
@@ -13,6 +14,8 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
     }
     
     public function testLeadCaptureResponse()
@@ -60,7 +63,7 @@ class Bug35014Test extends Sugar_PHPUnit_Framework_TestCase
         $query_string_array = explode("&", $query_string);
         
         $post_compare_array = array();
-        $skipKeys = array('module', 'action', 'entryPoint');
+        $skipKeys = array('module', 'action', 'entryPoint', 'client_id_address');
         foreach($query_string_array as $key_val)
         {
             $key_val_array = explode("=", $key_val);

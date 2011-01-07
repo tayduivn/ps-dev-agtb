@@ -243,7 +243,7 @@ class Sugarpdf extends TCPDF
     */
     public function SetFont($family, $style='', $size=0, $fontfile='') {
         
-        if(empty($fontfile)){
+        if(empty($fontfile) && defined('K_PATH_CUSTOM_FONTS')){
             // This will force addFont to search the custom directory for font before the OOB directory
             $fontfile = K_PATH_CUSTOM_FONTS."phantomFile.phantom";
         }

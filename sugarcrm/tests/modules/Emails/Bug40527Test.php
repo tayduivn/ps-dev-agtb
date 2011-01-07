@@ -10,6 +10,7 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact('SDizzle');
         $this->account = SugarTestAccountUtilities::createAccount('SDizzle');
         
@@ -25,6 +26,8 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestEmailUtilities::removeAllCreatedEmails();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
     }
     
     public function testContactRelationship()
@@ -36,8 +39,3 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(empty($this->email->contact_id), "There should be no contact associated with the Email");
     }
 }
-<<<<<<< HEAD
-?>
-=======
-?>
->>>>>>> master

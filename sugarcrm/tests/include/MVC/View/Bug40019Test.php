@@ -20,14 +20,18 @@ class Bug40019Test extends Sugar_PHPUnit_Framework_TestCase
 	        $account[$i] = SugarTestAccountUtilities::createAccount();
             SugarTestTrackerUtility::insertTrackerEntry($account[$i], 'detailview');
 	    }
+	    
+	    $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 	}
 	
 	public function tearDown() 
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestContactUtilities::removeAllCreatedContacts();
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestTrackerUtility::removeAllTrackerEntries();
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+	    SugarTestContactUtilities::removeAllCreatedContacts();
+	    SugarTestAccountUtilities::removeAllCreatedAccounts();
+	    SugarTestTrackerUtility::removeAllTrackerEntries();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['app_strings']);
 	}
 	
 	// Currently, getBreadCrumbList in BreadCrumbStack.php limits you to 10

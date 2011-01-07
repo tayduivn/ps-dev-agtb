@@ -853,7 +853,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
             }
 
             //strip quotes for easier processing
-            $include_stripped = stripQuotes($spec_SearchVars['searchText_include'],$dbType);
+            $include_stripped = stripQuotesKB($spec_SearchVars['searchText_include'],$dbType);
             $include_quote_token = $include_stripped['quote_token'];
             $include_srch_str_raw = $include_stripped['search_string_raw'];
         }
@@ -926,7 +926,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
             $xclude_str = str_replace('-', ' ',$spec_SearchVars['searchText_exclude']);
 
             //strip out any words enclosed in quotes, for easy processing
-            $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'],$dbType);
+            $exclude_stripped = stripQuotesKB($spec_SearchVars['searchText_exclude'],$dbType);
             $exclude_quote_token = $exclude_stripped['quote_token'];
             $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
 
@@ -1049,7 +1049,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                 }
 
                 //replace words in quotes qith tokens
-                $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'], $dbType);
+                $exclude_stripped = stripQuotesKB($spec_SearchVars['searchText_exclude'], $dbType);
                 $exclude_quote_token = $exclude_stripped['quote_token'];
                 $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
 
@@ -1545,7 +1545,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      * @param $srch_str_raw string to be processed for quoted words
      * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
      */
-    function stripQuotes($srch_str_raw, $dbType){
+    function stripQuotesKB($srch_str_raw, $dbType){
             //lets look for paired quotes and tokenize them
             $quote_token = array();
             $first_quote = 0;
