@@ -14,6 +14,8 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp() 
     {
+    	$this->testWFName = "WFUnitTest" . mt_rand(); 
+    	$this->testAccName = "WFTestAccount" . mt_rand(); 
     	$this->wf = new WorkFlow();
     	$this->wf->name = $this->testWFName;
     	$this->wf->base_module = "Accounts";
@@ -33,7 +35,6 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testCreate_new_list_query() 
     {
         $query = $this->wf->create_new_list_query("name", 'workflow.name like "' . $this->testWFName . '%"');
-        echo ($query . "\n");
         $result = $this->wf->db->query($query);
         $count = $this->wf->db->getRowCount($result);
         $this->assertEquals(1, $count);
