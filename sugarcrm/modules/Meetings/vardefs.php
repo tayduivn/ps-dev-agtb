@@ -66,7 +66,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_URL',
     'type' => 'varchar',
     'len' => '200',
-    'comment' => 'Join URL'
+    'comment' => 'Join URL',
+    'studio' => false,
   ),
   'host_url' =>
   array (
@@ -74,7 +75,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_URL',
     'type' => 'varchar',
     'len' => '400',
-    'comment' => 'Host URL'
+    'comment' => 'Host URL',
+    'studio' => false,
   ),
   'displayed_url' =>
   array (
@@ -82,7 +84,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_URL',
     'type' => 'url',
     'len' => '400',
-    'comment' => 'Meeting URL'
+    'comment' => 'Meeting URL',
   ),
   'creator' =>
   array (
@@ -90,7 +92,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_CREATOR',
     'type' => 'varchar',
     'len' => '50',
-    'comment' => 'Meeting creator'
+    'comment' => 'Meeting creator',
+    'studio' => false,
   ),
   'external_id' =>
   array (
@@ -98,7 +101,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_EXTERNALID',
     'type' => 'varchar',
     'len' => '50',
-    'comment' => 'Meeting ID for external app API'
+    'comment' => 'Meeting ID for external app API',
+    'studio' => false,
    ),
   'duration_hours' =>
   array (
