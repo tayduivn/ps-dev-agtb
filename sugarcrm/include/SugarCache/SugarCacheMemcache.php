@@ -57,7 +57,7 @@ class SugarCacheMemcache extends SugarCacheAbstract
     {
         if ( !($this->_memcache instanceOf Memcache) ) {
             $this->_memcache = new Memcache();
-            if ( !$this->_memcache->connect($this->_host,$this->_port) ) {
+            if ( !@$this->_memcache->connect($this->_host,$this->_port) ) {
                 return false;
             }
         }

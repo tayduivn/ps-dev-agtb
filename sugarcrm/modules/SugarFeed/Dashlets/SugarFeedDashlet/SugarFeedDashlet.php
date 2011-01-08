@@ -305,7 +305,8 @@ var $myFavoritesOnly = false;
         $numRecords = min($this->displayRows,$numRecords);
 
         $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
-
+        //rss: 01/07/2011 - do not display image for now
+        /*
         foreach ( $resortQueue as $key=>&$item ) {
             if ( empty($item['NAME']) ) {
                 continue;
@@ -322,6 +323,7 @@ var $myFavoritesOnly = false;
             }
             $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
         }
+         */
         
         $this->lvs->data['data'] = $resortQueue;
     }
