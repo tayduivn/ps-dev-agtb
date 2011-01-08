@@ -621,6 +621,14 @@ require_once('include/EditView/EditView2.php');
 	                            }
 	                            $field_value .= "'" . $GLOBALS['db']->quote($val) . "'";
 	                        }
+                                // Bug 41209: adding a new operator "isnull" here
+                                // to handle the case when blank is selected from dropdown.
+                                // In that case, $val is empty.
+                                // When $val is empty, we need to use "IS NULL",
+                                // as "in (null)" won't work
+                                else if ($operator=='in') {
+                                    $operator = 'isnull';
+                                }
 	                    }
                     }
 
@@ -650,7 +658,7 @@ require_once('include/EditView/EditView2.php');
                 $where = '';
                 $itr = 0;
                 
-                if($field_value != '') {
+                if($field_value != '' || $operator=='isnull') {
 
                     $this->searchColumns [ strtoupper($field) ] = $field ;
 
@@ -881,6 +889,11 @@ require_once('include/EditView/EditView2.php');
                                 break;
                             case 'innerjoin':
                                 $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";
+                                break;
+                            case 'isnull':
+                                $where .= $db_field . ' IS NULL'; 
+                                if ($field_value != '')
+                                    $where .=  ' OR ' . $db_field . " in (".$field_value.')';
                                 break;
                         }
                     }
