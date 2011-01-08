@@ -2777,6 +2777,7 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
+	//BEGIN SUGARCRM flav=int ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2786,6 +2787,7 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
+	//END SUGARCRM flav=int ONLY
 }
 
 /**
