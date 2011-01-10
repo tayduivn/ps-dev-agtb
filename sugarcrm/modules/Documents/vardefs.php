@@ -51,6 +51,7 @@ $dictionary['Document'] = array('table' => 'documents'
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
     'popupHelp' => 'LBL_DOC_TYPE_POPUP',
+    'massupdate' => false,
   ),
 'doc_url' =>
   array (
@@ -60,6 +61,7 @@ $dictionary['Document'] = array('table' => 'documents'
   	'len' => '255',
   	'comment' => 'Document URL from documents web server provider',
   	'importable' => false,
+    'massupdate' => false,
   ),
 'doc_direct_url' =>
   array (
@@ -69,6 +71,7 @@ $dictionary['Document'] = array('table' => 'documents'
   	'len' => '255',
   	'comment' => 'Document URL from documents web server provider for direct download',
   	'importable' => false,
+    'massupdate' => false,
   ),
 
   'filename' =>
