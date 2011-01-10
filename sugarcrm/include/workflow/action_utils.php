@@ -69,6 +69,11 @@ function process_action_update($focus, $action_array){
 					continue;
 				}
 			}
+            if (!empty($focus->field_defs[$field]['calculated']))
+            {
+                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                continue;
+            }
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
 			execute_special_logic($field, $focus);
 		}

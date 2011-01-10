@@ -112,8 +112,6 @@ class ProcessView {
         $target_meta_array = $process_dictionary[$step]['elements'][$target_element];
 
         $prev_display_text = "";
-        
-        //echo "<pre>"; print_r($target_meta_array); echo "</pre>";
 
         foreach($target_meta_array['bottom']['options'] as $key => $option_array){
 
@@ -768,7 +766,7 @@ class ProcessView {
      * @return an array containing the relevant data for use in UI
      * @access public
      */
-    function get_action_shell_display_text($action_shell)
+    function get_action_shell_display_text($action_shell, $get_all_fields = true)
     {
 
         $action_processed = false;
@@ -815,14 +813,51 @@ class ProcessView {
         }
         //END WFLOW PLUGINS
 
+
+
         //Using VarDef Handler Object to obtain filtered array
+
         $temp_module->call_vardef_handler($meta_filter);
         $field_array = $temp_module->vardef_handler->get_vardef_array();
 
         $field_count = 0;
         $result_array = array();
-        foreach($field_array as $key => $value){
 
+        $actions = $action_shell->get_actions($action_shell->id);
+        $action_fields = array();
+        foreach($actions as $action)
+        {
+            if (!empty($action->field))
+            {
+                //Check if the actions field is still valid (was not deleted or changed)
+                if (empty($field_array[$action->field]))
+                {
+                    //invalid field
+                    $result_array[]  = array(
+                        "ACTION_VALUE" => "", "ACTION_ACTION_ID" => "", "ACTION_SET_TYPE" => "",
+                        "ACTION_ADV_TYPE" => "", "START_DISPLAY" => "",  "FIELD_NUM" => $field_count,
+                        "FIELD_VALUE" => $action->field, "FIELD_VALUE" => $action->field,
+                        "ACTION_DISPLAY_TEXT" => false, "ACTION_ADV_VALUE" => "",
+                        "ACTION_EXT1" => "", "ACTION_EXT2" => "", "ACTION_EXT3" => "",
+                    );
+                    if (!$get_all_fields)
+                        ++ $field_count;
+                    continue;
+                }
+                $action_fields[$action->field] = $action->field;
+            }
+        }
+        /* We should NOT be itterating over every field in the module per actionshell,
+         * calling multiple queries per field just to throw out the results.
+         * We should start with the list of actions and the fields they provide
+         * if we are not attempting to add a new action. (when $get_all_fields is false)
+         */
+        if (!$get_all_fields)
+        {
+            $field_array = $action_fields;
+        }
+
+        foreach($field_array as $key => $value){
             //check to see if this record exists already
             if(!empty($action_shell->id) && $action_shell->id!=""){
                  
@@ -866,7 +901,6 @@ class ProcessView {
                 $act_ext2 = "";
                 $act_ext3 = "";
             }
-
             $sub_array = array();
             $sub_array["ACTION_VALUE"] = $act_action_value;
             $sub_array["ACTION_ACTION_ID"] = $act_id;
