@@ -164,9 +164,9 @@ if(!empty($_REQUEST['special_action']) && $_REQUEST['special_action'] == "refres
 	$form->assign("SPECIAL_JAVASCRIPT", $special_javascript);
 }	
 if(!empty($_REQUEST['frame_type']) && $_REQUEST['frame_type']=="Secondary"){
-			echo get_module_title($mod_strings['LBL_FILTER_FORM_TITLE'], $mod_strings['LBL_FILTER_FORM_TITLE'], false);
+			echo getClassicModuleTitle($mod_strings['LBL_FILTER_FORM_TITLE'], array($mod_strings['LBL_FILTER_FORM_TITLE'],$mod_strings['LBL_FILTER_FORM_TITLE']), false);
 		} else {
-			echo get_module_title($mod_strings['LBL_TRIGGER_FORM_TITLE'], $mod_strings['LBL_TRIGGER_FORM_TITLE'], false);
+			echo getClassicModuleTitle($mod_strings['LBL_TRIGGER_FORM_TITLE'], array($mod_strings['LBL_TRIGGER_FORM_TITLE'],$mod_strings['LBL_TRIGGER_FORM_TITLE']), false);
 		}		
 $form->parse("main");
 $form->out("main");

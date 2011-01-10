@@ -46,7 +46,7 @@ insert_popup_header();
 
 $GLOBALS['log']->info("Project Resource Report view");
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_RESOURCE_REPORT'], false);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_RESOURCE_REPORT']), false);
 
 $sugar_smarty = new Sugar_Smarty();
 ///

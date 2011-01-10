@@ -48,12 +48,11 @@ if(!empty($_REQUEST['record']))
 }
 
 if ($focus->is_template){
-	echo get_module_title($mod_strings['LBL_MODULE_NAME'],
-						  $mod_strings['LBL_PROJECT_TEMPLATE'] . ': ' . $focus->name, true);
+	echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'],
+						 array($mod_strings['LBL_PROJECT_TEMPLATE'] . ': ' . $focus->name), true);
 }
 else{
-	echo get_module_title($mod_strings['LBL_MODULE_NAME'],
-						  $mod_strings['LBL_MODULE_NAME'] . ': ' . $focus->name, true);
+	echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
 
 }
 

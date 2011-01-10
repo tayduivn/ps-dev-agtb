@@ -61,9 +61,9 @@ if (isset($_REQUEST['offset']) or isset($_REQUEST['record'])) {
 //    include ('modules/Campaigns/NewsLetterTrackDetailView.php');
 
 if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
-    echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_NEWSLETTER'].": ".$focus->name, true);
+    echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_NEWSLETTER'],$focus->name), true);
 } else{
-    echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->name, true);
+    echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
 }    
     
     $GLOBALS['log']->info("Campaign detail view");

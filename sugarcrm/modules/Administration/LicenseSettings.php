@@ -97,7 +97,7 @@ $xtpl->assign("RETURN_ACTION", "index");
 
 $xtpl->assign("MODULE", $currentModule);
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
-$xtpl->assign("HEADER", get_module_title("Administration", "{MOD.LBL_MANAGE_LICENSE}", true));
+$xtpl->assign("HEADER", getClassicModuleTitle("Administration", array("{MOD.LBL_MANAGE_LICENSE}"), true));
 
 if(!empty($focus->settings['license_users']))$xtpl->assign("LICENSE_USERS",          $focus->settings['license_users']);
 if(!empty($focus->settings['license_expire_date'])) $xtpl->assign("LICENSE_EXPIRE_DATE",    $timedate->to_display_date( $focus->settings['license_expire_date'], false) );

@@ -33,7 +33,7 @@ $error_msg = '';
 
 global $current_language;
 $mod_strings = return_module_language($current_language, 'Accounts');
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$mod_strings['LBL_SAVE_ACCOUNT'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_SAVE_ACCOUNT']), true);
 $xtpl=new XTemplate ('modules/Accounts/ShowDuplicates.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);

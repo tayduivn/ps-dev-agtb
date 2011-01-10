@@ -59,7 +59,7 @@ class DCEInstancesViewDCEUpgradeStep1 extends ViewList
 	public function listViewPrepare()
 	{
         $this->options['show_title']=false;
-        echo get_module_title($GLOBALS['mod_strings']['LBL_MODULE_NAME'], $GLOBALS['mod_strings']['LBL_MODULE_NAME']." ".$GLOBALS['mod_strings']['LBL_DCEUPGRADE_STEP_1_TITLE'], false); 
+        echo getClassicModuleTitle($GLOBALS['mod_strings']['LBL_MODULE_NAME'], array($GLOBALS['mod_strings']['LBL_MODULE_NAME']." ".$GLOBALS['mod_strings']['LBL_DCEUPGRADE_STEP_1_TITLE']), false); 
         
         parent::listViewPrepare();
         $this->lv->delete=false;

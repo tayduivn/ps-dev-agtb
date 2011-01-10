@@ -75,7 +75,7 @@ if (isset($_REQUEST['account_name']) && is_null($focus->parent_name)) {
 if (isset($_REQUEST['account_id']) && is_null($focus->parent_id)) {
 	$focus->parent_id = $_REQUEST['account_id'];
 }
-echo get_module_title($mod_strings['LBL_MODULE_ID'], $mod_strings['LBL_ALERT_TEMPLATES'].": ".$focus->name, true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LBL_ALERT_TEMPLATES'],$focus->name), true);
 
 $GLOBALS['log']->info("EmailTemplate detail view");
 

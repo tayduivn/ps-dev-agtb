@@ -62,7 +62,7 @@ if(!$focus->campaign_type == "NewsLetter"){
 } else{
 	
 */
-    echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->name, true);
+    echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
     
     $GLOBALS['log']->info("Campaign detail view");
     

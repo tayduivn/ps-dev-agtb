@@ -46,7 +46,7 @@ global $theme;
 
 $GLOBALS['log']->info("Project Dashboard view");
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MY_PROJECTS_DASHBOARD'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_MY_PROJECTS_DASHBOARD']), true);
 
 $sugar_smarty = new Sugar_Smarty();
 ///

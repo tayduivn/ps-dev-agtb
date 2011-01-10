@@ -46,7 +46,7 @@ if (!isset($_REQUEST['export_report']) || $_REQUEST['export_report'] != '1') {
 	
 	global $theme,$mod_strings,$current_user,$timedate;
 	if (!isset($_REQUEST['to_pdf']) || $_REQUEST['to_pdf'] != '1')
-		echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_ACTIVITIES_REPORTS'], false);
+		echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_ACTIVITIES_REPORTS']), false);
 			
 	global $app_list_strings;
 	$parent_types = $app_list_strings['parent_type_display'];

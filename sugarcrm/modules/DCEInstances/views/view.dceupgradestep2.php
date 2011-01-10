@@ -81,9 +81,9 @@ class DCEInstancesViewDCEUpgradestep2 extends SugarView
         }
 
         $this->ss->assign("MODULE_TITLE", 
-            get_module_title(
+            getClassicModuleTitle(
                 $mod_strings['LBL_MODULE_NAME'], 
-                $mod_strings['LBL_MODULE_NAME']." ".$mod_strings['LBL_DCEUPGRADE_STEP_2_TITLE'], 
+                array($mod_strings['LBL_MODULE_NAME']." ".$mod_strings['LBL_DCEUPGRADE_STEP_2_TITLE']), 
                 false
                 )
             );

@@ -326,7 +326,7 @@ if(!empty($_POST['upgrade'])){
 
 
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_APPLY_DST_FIX'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_APPLY_DST_FIX']), true);
 
 if(empty($disabled)){
 ?>

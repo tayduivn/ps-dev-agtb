@@ -133,7 +133,7 @@ class RepairAndClear
 		if (is_admin($current_user) || is_admin_for_any_module($current_user))
 		{
 			$export = false;
-    		if($this->show_output) echo get_module_title($mod_strings['LBL_REPAIR_DATABASE'], $mod_strings['LBL_REPAIR_DATABASE'], true);
+    		if($this->show_output) echo getClassicModuleTitle($mod_strings['LBL_REPAIR_DATABASE'], array($mod_strings['LBL_REPAIR_DATABASE']), true);
             if($this->show_output) echo "<h1 id=\"rdloading\">{$mod_strings['LBL_REPAIR_DATABASE_PROCESSING']}</h1>";
             ob_flush();
 	    	$sql = '';

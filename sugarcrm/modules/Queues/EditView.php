@@ -180,7 +180,7 @@ $xtpl->assign('RETURN_MODULE', 'Queues');
 $xtpl->assign('RETURN_ID', $focus->id);
 $xtpl->assign('RETURN_ACTION', 'DetailView');
 // module specific
-$xtpl->assign('MODULE_TITLE', get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->name, true));
+$xtpl->assign('MODULE_TITLE', getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true));
 $xtpl->assign('ID', $focus->id);
 $xtpl->assign('NAME', $focus->name);
 $xtpl->assign('STATUS', $status);

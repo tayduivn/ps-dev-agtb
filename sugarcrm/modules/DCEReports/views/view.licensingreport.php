@@ -48,9 +48,9 @@ class DCEReportsViewLicensingReport extends SugarView
     public function display(){
         global $mod_strings, $app_list_strings, $app_strings, $current_user;
         $this->ss->assign("MODULE_TITLE", 
-            get_module_title(
+            getClassicModuleTitle(
                 $mod_strings['LBL_MODULE_NAME'], 
-                $mod_strings['LBL_MODULE_NAME']." : ".$mod_strings['LBL_LICENSING_REPORT'], 
+                array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_LICENSING_REPORT']), 
                 false
                 )
             );

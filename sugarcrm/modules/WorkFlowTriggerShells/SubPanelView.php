@@ -56,7 +56,6 @@ $the_title .= "<tr><td><table width='100%' cellpadding='0' cellspacing='0' borde
 $the_title .= "<tr><td valign='top'><h3>".$current_module_strings['LBL_MODULE_SECTION_TITLE'].":</h3></td>\n";
 $the_title .= "</tr></table>\n";
 echo $the_title;
-//echo get_module_title($mod_strings['LBL_MODULE_NAME'], $current_module_strings['LBL_MODULE_SECTION_TITLE'], false);
 $button  = "<form  action='index.php' method='post' name='form' id='form'>\n";
 $button .= "<input type='hidden' name='module' value='WorkFlowTriggerShells'>\n";
 $button .= "<input type='hidden' name='workflow_id' value='$focus->id'>\n<input type='hidden' name='trigger_name' value='$focus->name'>\n";
