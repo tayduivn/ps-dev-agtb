@@ -263,7 +263,7 @@ class Team extends SugarBean
 		{
 			$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name));
 			$GLOBALS['log']->fatal($msg);
-			die($msg);	
+            SugarApplication::appendErrorMessage($msg);
 		}
 
 		// Delete all team memberships for this team_id.

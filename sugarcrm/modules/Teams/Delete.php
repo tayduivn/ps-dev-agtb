@@ -47,7 +47,9 @@ if($focus->has_records_in_modules()) {
 	if($focus->id == $focus->global_team) {
 		$msg = $GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
 		$GLOBALS['log']->fatal($msg);
-		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id.'&message=LBL_MASSUPDATE_DELETE_GLOBAL_TEAM');
+        $error_message = $app_strings['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
+         SugarApplication::appendErrorMessage($error_message);
+		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id);
 		return;
 	}
 	
@@ -58,7 +60,11 @@ if($focus->has_records_in_modules()) {
 	{
 		$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name));
 		$GLOBALS['log']->fatal($msg);
-		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id.'&message=LBL_MASSUPDATE_DELETE_USER_EXISTS');
+        $user = new User();
+	    $user->retrieve($focus->associated_user_id);
+	    $error_message = string_format($app_strings['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name));
+        SugarApplication::appendErrorMessage($error_message);
+		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id);
 		return;
 	}
 

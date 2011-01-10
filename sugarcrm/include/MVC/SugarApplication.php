@@ -807,6 +807,28 @@ class SugarApplication
 		exit();
 	}
 
+    /**
+	 * Redirect to another URL
+	 *
+	 * @access	public
+	 * @param	string	$url	The URL to redirect to
+	 */
+ 	public static function appendErrorMessage($error_message)
+	{
+		$_SESSION['user_error_message'][] = $error_message;
+	}
+
+    public static function getErrorMessages()
+	{
+		if (isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message']) ) {
+            $msgs = $_SESSION['user_error_message'];
+            unset($_SESSION['user_error_message']);
+            return $msgs;
+        }else{
+            return array();
+        }
+	}
+
 	/**
 	 * Wrapper for the PHP setcookie() function, to handle cases where headers have
 	 * already been sent
