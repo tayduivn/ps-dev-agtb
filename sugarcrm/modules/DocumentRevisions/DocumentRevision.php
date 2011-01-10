@@ -104,10 +104,12 @@ class DocumentRevision extends SugarBean {
 
 	function save($check_notify = false){	
 		$saveRet = parent::save($check_notify);
-        
-		//update documents table. (not through save, because it causes a loop)
-		$query = "UPDATE documents set document_revision_id='".$this->db->quote($this->id)."', doc_type='".$this->db->quote($this->doc_type)."', doc_url='".$this->db->quote($this->doc_url)."', doc_direct_url='".$this->db->quote($this->doc_direct_url)."', doc_id='".$this->db->quote($this->doc_id)."' where id = '".$this->db->quote($_REQUEST['return_id'])."'";	
-		$this->db->query($query,true);
+
+        if(!empty($_REQUEST['return_id'])){
+		    //update documents table. (not through save, because it causes a loop)
+		    $query = "UPDATE documents set document_revision_id='".$this->db->quote($this->id)."', doc_type='".$this->db->quote($this->doc_type)."', doc_url='".$this->db->quote($this->doc_url)."', doc_direct_url='".$this->db->quote($this->doc_direct_url)."', doc_id='".$this->db->quote($this->doc_id)."' where id = '".$this->db->quote($_REQUEST['return_id'])."'";
+		    $this->db->query($query,true);
+        }
 
         return $saveRet;
 	}
