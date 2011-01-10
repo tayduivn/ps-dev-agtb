@@ -71,7 +71,7 @@ class MeetingsViewListbytype extends ViewList {
  	function processSearchForm(){
  		// $type = 'LotusLiveDirect';
  		$type = 'LotusLive';
- 		$where =  " meetings.type = '$type' AND meetings.date_start > UTC_TIMESTAMP() - 7200 AND ( meetings.assigned_user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' OR exists ( SELECT id FROM meetings_users WHERE meeting_id = meetings.id AND user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' AND deleted = 0 ) ) ";
+ 		$where =  " meetings.type = '$type' AND meetings.status != 'Held' AND meetings.status != 'Not Held' AND meetings.date_start > UTC_TIMESTAMP() - 7200 AND ( meetings.assigned_user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' OR exists ( SELECT id FROM meetings_users WHERE meeting_id = meetings.id AND user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' AND deleted = 0 ) ) ";
 
         if ( isset($_REQUEST['name_basic']) ) {
             $name_search = trim($_REQUEST['name_basic']);
