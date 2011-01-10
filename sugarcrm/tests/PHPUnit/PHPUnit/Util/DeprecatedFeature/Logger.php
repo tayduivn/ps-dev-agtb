@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
+ * Copyright (c) 2002-2010, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,27 +36,84 @@
  *
  * @package    PHPUnit
  * @subpackage Framework
+ * @author     Ralph Schindler <ralph.schindler@zend.com>
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 2.0.0
+ * @since      File available since Release 3.5.7
  */
 
 /**
- * A Listener for test progress.
+ * Test Listener that tracks the usage of deprecated features.
  *
  * @package    PHPUnit
  * @subpackage Framework
+ * @author     Ralph Schindler <ralph.schindler@zend.com>
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version    Release: 3.5.7
  * @link       http://www.phpunit.de/
- * @since      Interface available since Release 2.0.0
+ * @since      Class available since Release 3.5.7
  */
-interface PHPUnit_Framework_TestListener
+class PHPUnit_Util_DeprecatedFeature_Logger implements PHPUnit_Framework_TestListener
 {
+    /**
+     * @var PHPUnit_Framework_TestCase
+     */
+    protected static $currentTest = NULL;
+
+    /**
+     * This is the publically accessible API for notifying the system that a
+     * deprecated feature has been used.
+     *
+     * If it is run via a TestRunner and the test extends
+     * PHPUnit_Framework_TestCase, then this will inject the result into the
+     * test runner for display, if not, it will throw the notice to STDERR.
+     *
+     * @param string $message
+     * @param int|bool $backtraceDepth
+     */
+    public static function log($message, $backtraceDepth = 2)
+    {
+        if ($backtraceDepth !== FALSE) {
+            $trace = debug_backtrace(FALSE);
+
+            if (is_int($backtraceDepth)) {
+                $traceItem = $trace[$backtraceDepth];
+            }
+
+            if (!isset($traceItem['file'])) {
+                $reflectionClass   = new ReflectionClass($traceItem['class']);
+                $traceItem['file'] = $reflectionClass->getFileName();
+            }
+
+            if (!isset($traceItem['line']) &&
+                 isset($traceItem['class']) &&
+                 isset($traceItem['function'])) {
+                if (!isset($reflectionClass)) {
+                    $reflectionClass = new ReflectionClass($traceItem['class']);
+                }
+
+                $method = $reflectionClass->getMethod($traceItem['function']);
+                $traceItem['line'] = '(between ' . $method->getStartLine() .
+                                     ' and ' . $method->getEndLine() . ')';
+            }
+        }
+
+        $deprecatedFeature = new PHPUnit_Util_DeprecatedFeature(
+          $message, $traceItem
+        );
+
+        if (self::$currentTest instanceof PHPUnit_Framework_TestCase) {
+            $result = self::$currentTest->getTestResultObject();
+            $result->addDeprecatedFeature($deprecatedFeature);
+        } else {
+            file_put_contents('php://stderr', $deprecatedFeature);
+        }
+    }
+
     /**
      * An error occurred.
      *
@@ -64,7 +121,9 @@ interface PHPUnit_Framework_TestListener
      * @param  Exception              $e
      * @param  float                  $time
      */
-    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time);
+    public function addError(PHPUnit_Framework_Test $test, Exception $e, $time)
+    {
+    }
 
     /**
      * A failure occurred.
@@ -73,7 +132,9 @@ interface PHPUnit_Framework_TestListener
      * @param  PHPUnit_Framework_AssertionFailedError $e
      * @param  float                                  $time
      */
-    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time);
+    public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time)
+    {
+    }
 
     /**
      * Incomplete test.
@@ -82,7 +143,9 @@ interface PHPUnit_Framework_TestListener
      * @param  Exception              $e
      * @param  float                  $time
      */
-    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time);
+    public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    {
+    }
 
     /**
      * Skipped test.
@@ -92,7 +155,9 @@ interface PHPUnit_Framework_TestListener
      * @param  float                  $time
      * @since  Method available since Release 3.0.0
      */
-    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time);
+    public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time)
+    {
+    }
 
     /**
      * A test suite started.
@@ -100,7 +165,9 @@ interface PHPUnit_Framework_TestListener
      * @param  PHPUnit_Framework_TestSuite $suite
      * @since  Method available since Release 2.2.0
      */
-    public function startTestSuite(PHPUnit_Framework_TestSuite $suite);
+    public function startTestSuite(PHPUnit_Framework_TestSuite $suite)
+    {
+    }
 
     /**
      * A test suite ended.
@@ -108,14 +175,19 @@ interface PHPUnit_Framework_TestListener
      * @param  PHPUnit_Framework_TestSuite $suite
      * @since  Method available since Release 2.2.0
      */
-    public function endTestSuite(PHPUnit_Framework_TestSuite $suite);
+    public function endTestSuite(PHPUnit_Framework_TestSuite $suite)
+    {
+    }
 
     /**
      * A test started.
      *
      * @param  PHPUnit_Framework_Test $test
      */
-    public function startTest(PHPUnit_Framework_Test $test);
+    public function startTest(PHPUnit_Framework_Test $test)
+    {
+        self::$currentTest = $test;
+    }
 
     /**
      * A test ended.
@@ -123,5 +195,8 @@ interface PHPUnit_Framework_TestListener
      * @param  PHPUnit_Framework_Test $test
      * @param  float                  $time
      */
-    public function endTest(PHPUnit_Framework_Test $test, $time);
+    public function endTest(PHPUnit_Framework_Test $test, $time)
+    {
+        self::$currentTest = NULL;
+    }
 }
