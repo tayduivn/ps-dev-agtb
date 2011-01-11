@@ -2,7 +2,7 @@
 	<puts text="Test: Accounts_0013.xml starting." />
 
 	<!--Create a account record-->
-	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib_FULL.xml" />
 
 	<link id="moduleTab_Accounts" />
 	<div class="moduleTitle">
@@ -21,7 +21,7 @@
 
 		<textfield id="phone_advanced" set="{@account_record_0013.phone_office}" />
 
-		<textfield id="email_advanced" set="{@account_record_0013.emailAddress0}" />
+		<textfield id="email_advanced" set="{@pre_account_email}" />
 	</csv>
 	<button id="search_form_submit" />
 	<wait timeout="5" />
