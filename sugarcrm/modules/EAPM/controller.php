@@ -103,38 +103,7 @@ class EAPMController extends SugarController
         }
     }
 
-    protected function action_listview()
-    {
-        $this->view = 'displayproperties';
-    }
-
-    protected function action_SaveDisplayProperties()
-    {
-        //write out a custom file
-        $fileName = ExternalAPIFactory::$disabledApiFileName;
-        if(isset($_REQUEST['disabled_apis'])){
-            $disabledApis = array();
-
-            foreach(explode (',', $_REQUEST['disabled_apis'] ) as $api)
-            {
-                $disabledApis[] = $api;
-            }
-
-            if(!empty($disabledApis)){
-                if(!write_array_to_file("disabledAPIList", $disabledApis, $fileName)){
-                    //Log error message and throw Exception
-                    global $app_strings;
-                    $msg = string_format($app_strings['ERR_FILE_WRITE'], array($fileName));
-                    $GLOBALS['log']->error($msg);
-                    throw new Exception($msg);
-                }
-                ExternalAPIFactory::clearCache();
-    	    }     
-        }
-        $this->view = 'displayproperties';
-    }
-
-    protected function action_FlushFileCache() 
+    protected function action_FlushFileCache()
     {
         $api = ExternalAPIFactory::loadAPI($_REQUEST['api']);
         if ( $api == false ) {
@@ -145,7 +114,7 @@ class EAPMController extends SugarController
         if ( method_exists($api,'loadDocCache') ) {
             $api->loadDocCache(true);
         }
-        
+
         echo 'SUCCESS';
     }
 }

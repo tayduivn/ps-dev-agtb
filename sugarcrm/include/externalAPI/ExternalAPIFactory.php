@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/connectors/ConnectorUtils.php');
+require_once('include/connectors/utils/ConnectorUtils.php');
 /**
  * Provides a factory to list, discover and create external API calls
  *
@@ -63,7 +63,7 @@ class ExternalAPIFactory
                 $beenHereBefore = true;
             }
         }
-        if ( file_exists('cache/include/externalAPI.cache.php') && !$forceRebuild) {
+        if (!$forceRebuild && file_exists('cache/include/externalAPI.cache.php') ) {
             // Already have a cache file built, no need to rebuild
             require('cache/include/externalAPI.cache.php');
 
