@@ -252,9 +252,9 @@ class ExternalAPIFactory
         }
 
         foreach ( $apiList as $apiName => $ignore ) {
-            $translateKey = 'LBL_EXTAPI_'.strtoupper($apiName);
-            if ( !empty($app_strings[$translateKey]) ) {
-                $apiDropdown[$apiName] = $app_strings[$translateKey];
+            $translateKey = strtolower($apiName);
+            if ( !empty($app_strings['eapm_list'][$translateKey]) ) {
+                $apiDropdown[$apiName] = $app_strings['eapm_list'][$translateKey];
             } else {
                 $apiDropdown[$apiName] = $apiName;
             }
