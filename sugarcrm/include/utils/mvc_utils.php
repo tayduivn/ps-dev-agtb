@@ -216,7 +216,7 @@ if(!function_exists('amsi')){
 				$q = $q | $k['s'];
 			}
 			if($k['s'] == 2){
-				if($sugar_flavor == 'CE'){
+				if($sugar_flavor == 'CE' || $sugar_flavor == 'COM'){
 					$m = $k['a'];
 				}else{
 					$m = $k['b'];
@@ -237,7 +237,7 @@ if(!function_exists('amsi')){
 			fclose($fp);
 			check_now(true);
 			if($_REQUEST['action']== 'Authenticate' ){
-					if($sugar_flavor == 'CE'){
+					if($sugar_flavor == 'CE' || $sugar_flavor == 'COM'){
 					$notice = ' This copy of the SugarCRM customer relationship management program appears to have legal notices or author attributions modified or removed in violation of the GNU Affero General Public License version 3. Please contact SugarCRM Inc. to correct this problem.';
 					}else{
 					$notice = 'This copy of the SugarCRM customer relationship management program appears to have legal notices or author attributions modified or removed in violation of the SugarCRM Subscription Agreement. Please contact SugarCRM Inc. to correct this problem.';
@@ -290,7 +290,7 @@ if(!function_exists('mvclog')){
 		global $authLevel;
 		$authLevel = $level;
 			$fs = array ();
-			$fs[] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'JmNvcHk7IDIwMDQtMjAxMSBTdWdhckNSTSBJbmMuIFRoZSBQcm9ncmFtIGlzIHByb3ZpZGVkIEFTIElTLCB3aXRob3V0IHdhcnJhbnR5LiAgTGljZW5zZWQgdW5kZXIgPGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+QUdQTHYzPC9hPi48YnI+VGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSA8YnI+PGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+IEdOVSBBZmZlcm8gR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDM8L2E+IGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLCBpbmNsdWRpbmcgdGhlIGFkZGl0aW9uYWwgcGVybWlzc2lvbiBzZXQgZm9ydGggaW4gdGhlIHNvdXJjZSBjb2RlIGhlYWRlci48YnI+', 'i' => '1', 'b' => 'JmNvcHk7IDIwMDQtMjAxMCA8YSBocmVmPSJodHRwOi8vd3d3LnN1Z2FyY3JtLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIGNsYXNzPSJjb3B5UmlnaHRMaW5rIj5TdWdhckNSTSBJbmMuPC9hPiBBbGwgUmlnaHRzIFJlc2VydmVkLg==', 'c'=>$case, 'l'=>$level, 's'=>2);
+			$fs[] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'JmNvcHk7IDIwMDQtMjAxMSBTdWdhckNSTSBJbmMuIFRoZSBQcm9ncmFtIGlzIHByb3ZpZGVkIEFTIElTLCB3aXRob3V0IHdhcnJhbnR5LiAgTGljZW5zZWQgdW5kZXIgPGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+QUdQTHYzPC9hPi48YnI+VGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSA8YnI+PGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+IEdOVSBBZmZlcm8gR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDM8L2E+IGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLCBpbmNsdWRpbmcgdGhlIGFkZGl0aW9uYWwgcGVybWlzc2lvbiBzZXQgZm9ydGggaW4gdGhlIHNvdXJjZSBjb2RlIGhlYWRlci48YnI+', 'i' => '1', 'b' => 'JmNvcHk7IDIwMDQtMjAxMSA8YSBocmVmPSJodHRwOi8vd3d3LnN1Z2FyY3JtLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIGNsYXNzPSJjb3B5UmlnaHRMaW5rIj5TdWdhckNSTSBJbmMuPC9hPiBBbGwgUmlnaHRzIFJlc2VydmVkLg==', 'c'=>$case, 'l'=>$level, 's'=>2);
 			$fs[] = array ('g' => 'aW5jbHVkZS9pbWFnZXMvcG93ZXJlZGJ5X3N1Z2FyY3JtLnBuZw==', 'm' => 'f3ad3d8f733c7326a8affbdc94a2e707', 'a' => '', 'i' => 0 ,'c'=>$case, 'l'=>$level, 's'=>1);
 			$fs[] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'PGltZyBzdHlsZT0nbWFyZ2luLXRvcDogMnB4JyBib3JkZXI9JzAnIHdpZHRoPScxMDYnIGhlaWdodD0nMjMnIHNyYz0naW5jbHVkZS9pbWFnZXMvcG93ZXJlZGJ5X3N1Z2FyY3JtLnBuZycgYWx0PSdQb3dlcmVkIEJ5IFN1Z2FyQ1JNJz4=', 'i' => '1', 'b' => 'PEEgaHJlZj0naHR0cDovL3d3dy5zdWdhcmZvcmdlLm9yZycgdGFyZ2V0PSdfYmxhbmsnPjxpbWcgc3R5bGU9J21hcmdpbi10b3A6IDJweCcgYm9yZGVyPScwJyB3aWR0aD0nMTA2JyBoZWlnaHQ9JzIzJyBzcmM9J2luY2x1ZGUvaW1hZ2VzL3Bvd2VyZWRieV9zdWdhcmNybS5wbmcnIGFsdD0nUG93ZXJlZCBCeSBTdWdhckNSTSc+PC9hPg==', 'c'=>$case, 'l'=>$level, 's'=>1);
 			amsi($fs);
