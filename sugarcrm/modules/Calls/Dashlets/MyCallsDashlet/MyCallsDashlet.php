@@ -69,11 +69,15 @@ class MyCallsDashlet extends DashletGeneric {
         $mod_strings = return_module_language($current_language, 'Calls');
 		
         if($this->myItemsOnly) { // handle myitems only differently
-            $lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\') ';
+            $lvsParams = array(
+            			   'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\') ',
+                           );
         } else {
         	//join with meeting_users table to process related users                 
             $this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
-        	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ';
+        	$lvsParams = array(
+            			   'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ',
+                           );
         }
         $this->myItemsOnly = false; 
 		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
