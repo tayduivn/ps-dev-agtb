@@ -28,6 +28,7 @@
 			<link text="Close" click="true" />
 		</div>
 	</csv>
+	<wait timeout="5" />
 	<!--verify the email-->
 	<div id="list_subpanel_history">
 		<span class="pageNumbers" assert="(0 - 0 of 0)" />
