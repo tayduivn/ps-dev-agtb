@@ -31,7 +31,9 @@
     </div>
     <div class="clear"></div>
 </div>
-
+<div id="bottomLinks">
+{$BOTTOMLINKS}
+</div>
 <div id="footer">
     {$STATISTICS}
     <div id="copyright">

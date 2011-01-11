@@ -752,6 +752,34 @@ EOHTML;
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
         $ss->assign('MOD',return_module_language($GLOBALS['current_language'], 'Users'));
 
+		$bottomLinkList = array();
+		 if (isset($this->action) && $this->action != "EditView") {
+			 $bottomLinkList['print'] =
+			array($app_strings['LNK_PRINT'] => 'javascript:void window.open(\'index.php?'.$GLOBALS['request_string'].'\',\'printwin\',\'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1\')');
+			 
+		}
+		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => '#top');
+		
+		$bottomLinksStr = "";
+		foreach($bottomLinkList as $key => $value) {
+			foreach($value as $text => $link) {
+				   $href = $link;
+				   if(substr($link, 0, 11) == "javascript:") {
+                       $onclick = " onclick=\"".substr($link,11)."\"";
+                       $href = "#";
+                   } else {
+                   		$onclick = "";
+                   	}
+                $imageURL = SugarThemeRegistry::current()->getImageURL($key.'.gif');
+				$bottomLinksStr .= "<a href=\"{$href}\"";
+				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
+				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'></a>";
+				$bottomLinksStr .= " <a href=\"{$href}\" class=\"bottomLink\"";
+				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
+				$bottomLinksStr .= ">".$text."</a>";
+			}
+		}
+		$ss->assign("BOTTOMLINKS",$bottomLinksStr);
         if (SugarConfig::getInstance()->get('calculate_response_time', false))
             $ss->assign('STATISTICS',$this->_getStatistics());
 

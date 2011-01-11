@@ -1156,6 +1156,23 @@ div.indent_right {
     margin-left: 2px;
 }
 
+#bottomLinks {
+	padding: 0 25px;
+	float: right;	
+}
+
+#bottomLinks a {
+}
+
+#bottomLinks a.bottomLink {
+}
+
+#bottomLinks img {
+	border: 0px;
+	margin-bottom: -3px;
+	margin-left: 5px;
+}
+
 /* Footer styles */
 #footer 
 {

@@ -2723,6 +2723,7 @@ $app_strings = array (
     'LNK_LOAD_SIGNED'=>'Sign',
     'LNK_LOAD_SIGNED_TOOLTIP'=>'Replace with signed document',
     'LNK_PRINT' => 'Print',
+    'LNK_BACKTOTOP' => 'Back to top',
     'LNK_REMOVE' => 'rem',
     'LNK_RESUME' => 'Resume',
     'LNK_VIEW_CHANGE_LOG' => 'View Change Log',
