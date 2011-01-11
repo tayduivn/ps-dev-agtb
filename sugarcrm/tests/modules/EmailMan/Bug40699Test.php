@@ -69,8 +69,7 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 		$params = array();
 		$params['massupdate'] = 1;
 		
-		global $locale;
-		$contact_name_expected =  $locale->getLocaleFormattedName($this->testContact->first_name, $this->testContact->last_name, '');
+		$contact_name_expected = $this->testContact->first_name . ' ' . $this->testContact->last_name;
 		
 		$data = $emailMan->get_list_view_data();
         $this->assertEquals($data['RECIPIENT_NAME'], $contact_name_expected, 'Assert that contact name was correctly set');
