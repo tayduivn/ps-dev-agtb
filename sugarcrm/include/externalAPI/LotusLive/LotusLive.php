@@ -102,7 +102,7 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
             'joinURL'=>$reply2['responseJSON']['feed']['entry']['joinURL'],
             'subscriberID'=>$reply['responseJSON']['subscriber_id'],
             );
-        $GLOBALS['log']->fatal('IKEA (api_data): '.print_r($apiData,true));
+        $GLOBALS['log']->debug('IKEA (api_data): '.print_r($apiData,true));
         $this->eapmBean->api_data = base64_encode(json_encode($apiData));
 
         return $reply;
@@ -342,7 +342,7 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
             // FIXME: Translate
             $reply['errorMessage'] = 'No response from the server.';
         } else {
-            $GLOBALS['log']->fatal("Decoded:\n".print_r($response,true));
+            $GLOBALS['log']->debug("Decoded:\n".print_r($response,true));
             $reply['responseJSON'] = $response;
 
             if ( strtoupper($reply['responseJSON']['status']) == 'OK' ) {

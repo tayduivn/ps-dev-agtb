@@ -62,9 +62,9 @@ class ConnectorUtils
      * Check if external accounts are enabled for this connector
      * @param string $id
      */
-    public static function eapmEnabled($id)
+    public static function eapmEnabled($id, $refresh = false)
     {
-        $data = self::getConnector($id);
+        $data = self::getConnector($id, $refresh);
         if(!$data || !isset($data["eapm"])) {
             // TODO: if we don't know this connector, should we decide it's enabled or disabled?
             return true;
