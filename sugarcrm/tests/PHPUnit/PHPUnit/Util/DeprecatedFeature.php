@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
+ * Copyright (c) 2002-2010, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,32 +35,69 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  * @package    PHPUnit
- * @subpackage Framework_Error
+ * @subpackage Framework
+ * @author     Ralph Schindler <ralph.schindler@zend.com>
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.3.0
+ * @since      File available since Release 3.5.7
  */
 
 /**
- * Wrapper for PHP notices.
- * You can disable notice-to-exception conversion by setting
- *
- * <code>
- * PHPUnit_Framework_Error_Notice::$enabled = FALSE;
- * </code>
+ * Class to hold the information about a deprecated feature that was used
  *
  * @package    PHPUnit
- * @subpackage Framework_Error
+ * @subpackage Framework
+ * @author     Ralph Schindler <ralph.schindler@zend.com>
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version    Release: 3.5.7
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.3.0
+ * @since      Interface available since Release 3.5.7
  */
-class PHPUnit_Framework_Error_Notice extends PHPUnit_Framework_Error
+class PHPUnit_Util_DeprecatedFeature
 {
-    public static $enabled = TRUE;
+    /**
+     * @var array
+     */
+    protected $traceInfo = array();
+
+    /**
+     * @var string
+     */
+    protected $message = NULL;
+
+    /**
+     * @param  string $message
+     * @param  array  $traceInfo
+     */
+    public function __construct($message, array $traceInfo = array())
+    {
+        $this->message   = $message;
+        $this->traceInfo = $traceInfo;
+    }
+
+    /**
+     * Build a string representation of the deprecated feature that was raised
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $string = '';
+
+        if (isset($this->traceInfo['file'])) {
+            $string .= $this->traceInfo['file'];
+
+            if (isset($this->traceInfo['line'])) {
+                $string .= ':' . $this->traceInfo['line'] . ' - ';
+            }
+        }
+
+        $string .= $this->message;
+
+        return $string;
+    }
 }

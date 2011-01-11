@@ -123,7 +123,7 @@ if (!empty($focus->status)) {
 echo "\n<p>\n";
 $GLOBALS['log']->info("Email detail view");
 if ($email_type == 'archived') {
-	echo getClassicModuleTitle('Emails', array$mod_strings['LBL_ARCHIVED_EMAIL'],$focus->name), true);
+	echo getClassicModuleTitle('Emails', array($mod_strings['LBL_ARCHIVED_EMAIL'],$focus->name), true);
 	$xtpl=new XTemplate ('modules/Emails/DetailView.html');
 } else {
 	$xtpl=new XTemplate ('modules/Emails/DetailViewSent.html');

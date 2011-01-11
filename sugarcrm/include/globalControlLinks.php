@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 global $app_strings, $current_user;
-global $sugar_config, $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $module, $action;
+global $sugar_config, $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
 
  if(!isset($global_control_links)){
  	$global_control_links = array();
@@ -66,7 +66,7 @@ $global_control_links['training'] = array(
  );
 //END SUGARCRM flav!=sales ONLY
 $global_control_links['help'] = array(
-    'linkinfo' => array($app_strings['LNK_HELP'] => ' javascript:void window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$sugar_version.'&edition='.$sugar_flavor.'&lang='.$current_language.'&help_module='.$module.'&help_action='.$action.'&key='.$server_unique_key.'\')'),
+    'linkinfo' => array($app_strings['LNK_HELP'] => ' javascript:void window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$sugar_version.'&edition='.$sugar_flavor.'&lang='.$current_language.'&help_module='.$GLOBALS['module'].'&help_action='.$action.'&key='.$server_unique_key.'\')'),
     'submenu' => ''
  );
 

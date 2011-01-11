@@ -567,7 +567,7 @@ include_once('include/workflow/expression_utils.php');
 function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, $ext1=null, $for_action_display=false){
 	global $app_list_strings, $current_user;
 
-	if($temp_module->field_defs[$field]['type']=="relate"){
+    if($temp_module->field_defs[$field]['type']=="relate"){
 		//echo $field;
         //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && $for_action_display) {
@@ -586,10 +586,17 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 			$target_type = $temp_module->field_defs[$field]['dbType'];
 		else
 			return $field_value;
-	} else {
+	}
+    else if (isset($temp_module->field_defs[$field]['calculated'])
+            && $temp_module->field_defs[$field]['calculated'])
+    {
+        //Cannot set the value of calculated fields. 
+        return false;
+    }
+    else {
 		$target_type = $temp_module->field_defs[$field]['type'];
 	}
-	
+
 
 	//Land of the "one offs"
 	//This is for meetings and calls, the reminder time
@@ -716,7 +723,7 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
     $GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");
     $field_value = $sugarField->getEmailTemplateValue($field_value,$temp_module->field_defs[$field]);
     $GLOBALS['log']->debug("after: $field_value");
-
+    
 	return $field_value;
 
 //end get_display_text

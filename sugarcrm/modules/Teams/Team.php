@@ -261,9 +261,9 @@ class Team extends SugarBean
 		$user->retrieve($this->associated_user_id);
 		if($this->private == 1 && (!empty($user->id) && $user->deleted != 1))
 		{
-			$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->user_name));
+			$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->full_name));
 			$GLOBALS['log']->fatal($msg);
-			die($msg);	
+            SugarApplication::appendErrorMessage($msg);
 		}
 
 		// Delete all team memberships for this team_id.
