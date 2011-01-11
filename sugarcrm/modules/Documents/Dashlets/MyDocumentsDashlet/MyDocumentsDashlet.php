@@ -45,6 +45,16 @@ class MyDocumentsDashlet extends DashletGeneric {
 
         $this->seedBean = new Document();        
     }
+
+    function displayOptions() {
+        $this->processDisplayOptions();
+        require_once('modules/Documents/Document.php');
+        $this->currentSearchFields['doc_type']['input'] = '<select name="doc_type">'
+	                                              . get_select_options_with_id(getDocumentsExternalApiDropDown(), (empty($this->filters['doc_type']) ? '' : $this->filters['doc_type']))
+	                                              . '</select>';
+        $this->configureSS->assign('searchFields', $this->currentSearchFields);
+        return $this->configureSS->fetch($this->configureTpl);
+    }
 }
 
 ?>
