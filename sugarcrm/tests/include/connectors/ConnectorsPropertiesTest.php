@@ -7,6 +7,7 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
 
     var $original_modules_sources;
 	var $original_searchdefs;
+	public static $drop_lookup_mapping = false;
 
 	public static function setUpBeforeClass() {
         // this is so that Hoovers connector won't SOAP for the huge lookup file
