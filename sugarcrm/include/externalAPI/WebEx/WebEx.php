@@ -11,6 +11,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
     public $authMethod = 'password';
+    public $connector = "ext_eapm_webex";
 
     public $canInvite = true;
     public $sendsInvites = true;

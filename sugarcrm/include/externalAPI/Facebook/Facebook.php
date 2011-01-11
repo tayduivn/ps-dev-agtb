@@ -32,7 +32,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
     protected $authData;
     public $needsUrl = false;
     public $supportedModules = array('SugarFeed');
-
+    public $connector = "ext_eapm_facebook";
 
     protected $oauthParams = array(
     	'signatureMethod' => 'HMAC-SHA1',
@@ -44,7 +44,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
     public function checkLogin($eapmBean = null)
     {
         $reply = parent::checkLogin($eapmBean);
-        
+
         if ( !$reply['success'] ) {
             return $reply;
         }
@@ -53,7 +53,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
             // FIXME: Translate
             return array('success'=>FALSE,'errorMessage'=>'Facebook does not have the required libraries.');
         }
-        
+
         $GLOBALS['log']->fatal('Checking login.');
 
 
@@ -63,7 +63,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
             if ( !empty($_REQUEST['session']) ) {
                 $_REQUEST['session'] = str_replace('&quot;','"',$_REQUEST['session']);
                 $GLOBALS['log']->fatal('Have a session from facebook: '.$_REQUEST['session']);
-                
+
                 $fbSession = $this->fb->getSession();
                 if ( !empty($fbSession) ) {
                     $GLOBALS['log']->fatal('Have a VALID session from facebook:'.print_r($fbSession,true));
@@ -86,7 +86,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
                 return array('success'=>false);
             }
         }
-        
+
         return $reply;
     }
 
@@ -142,10 +142,10 @@ class Facebook extends ExternalAPIBase implements WebFeed {
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
             $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'].'/picture';
-            
+
             $messages[] = $fake_record;
         }
-        
+
 
         return array('success'=>TRUE,'messages'=>$messages);
     }
@@ -160,7 +160,7 @@ class Facebook extends ExternalAPIBase implements WebFeed {
         } catch ( Exception $e ) { return false; }
 
         $this->fb = new FacebookLib(array(
-                                        'appId' => $this->oauthParams['consumerKey'], 
+                                        'appId' => $this->oauthParams['consumerKey'],
                                         'secret' => $this->oauthParams['consumerSecret'],
                                         'cookie' => false,
                                         ));

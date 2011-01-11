@@ -13,6 +13,7 @@ class GoToMeeting extends ExternalAPIBase implements WebMeeting {
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
     public $authMethod = 'password';
+    public $connector = "ext_eapm_gotomeeting";
 
     public $canInvite = false;
     public $sendsInvites = false;

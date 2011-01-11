@@ -31,7 +31,7 @@ class Twitter extends OAuthPluginBase implements WebFeed {
     protected $authData;
     public $needsUrl = false;
     public $supportedModules = array('SugarFeed');
-
+    public $connector = "ext_rest_twitter";
 
 	protected $oauthReq = "https://api.twitter.com/oauth/request_token";
     protected $oauthAuth = 'https://api.twitter.com/oauth/authorize';
@@ -49,7 +49,7 @@ class Twitter extends OAuthPluginBase implements WebFeed {
 
         $twitter_json_url = 'http://api.twitter.com/1/statuses/friends_timeline.json';
         $reply = $this->makeRequest('GET', $twitter_json_url,array('count'=>$maxEntries));
-        
+
         if ( !$reply['success'] ) {
             $GLOBALS['log']->fatal('IKEA: Twitter failed, reply said: '.print_r($reply,true));
             return $reply;
@@ -72,15 +72,15 @@ class Twitter extends OAuthPluginBase implements WebFeed {
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
             $fake_record['IMAGE_URL'] = $message['user']['profile_image_url'];
-            
+
             $messages[] = $fake_record;
         }
-        
+
 
         return array('success'=>TRUE,'messages'=>$messages);
     }
 
-    
+
 
     // Internal functions
     protected function makeRequest($requestMethod, $url, $urlParams = null, $postData = null )
@@ -92,17 +92,17 @@ class Twitter extends OAuthPluginBase implements WebFeed {
             );
 
         $oauth = $this->getOauth();
-        
+
         $rawResponse = $oauth->fetch($url, $urlParams, $requestMethod, $headers);
 
         if ( empty($rawResponse) ) {
-            return array('success'=>FALSE,'errorMessage'=>'No response from server');            
+            return array('success'=>FALSE,'errorMessage'=>'No response from server');
         }
         $response = json_decode($rawResponse,true);
         if ( empty($response) ) {
             return array('success'=>FALSE,'errorMessage'=>'Invalid response');
         }
-        
+
         if ( isset($response['error']) ) {
             return array('success'=>FALSE,'errorMessage'=>$response['error']);
         }

@@ -8,6 +8,8 @@ require_once('Zend/Gdata/ClientLogin.php');
 class Google extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
     public $authMethod = 'password';
+    public $connector = "ext_eapm_google";
+
     protected $scope = "https://docs.google.com/feeds/ http://docs.google.com/feeds/";
     protected $oauthReq ="https://www.google.com/accounts/OAuthGetRequestToken";
     protected $oauthAuth ="https://www.google.com/accounts/OAuthAuthorizeToken";
