@@ -16,7 +16,7 @@
 			set="{@Lead_New_Record.first_name} {@user.name} {@stamp}" />
 		<textfield id="last_name" set="{@Lead_New_Record.last_name}" />
 
-		<textfield id="Leads0emailAddress0" set="{@Lead_New_Record.emailAddress0}" />
+		<textfield id="Leads0emailAddress0" set="{@stamp}{@Lead_New_Record.emailAddress0}" />
 
 		<textfield id="description" set="{@Lead_New_Record.description}" />
 		<button value="Save" />

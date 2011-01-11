@@ -15,7 +15,7 @@
 	<div id="list_subpanel_activities">
 		<button value="Compose Email" />
 	</div>
-
+	<wait timeout="5" />
 	<table id="composeHeaderTable0">
 		<textfield id="emailSubject0" set="Testing Accounts_0217.xml" />
 		<textfield id="emailSubject0" set="Testing Accounts_0217.xml" />

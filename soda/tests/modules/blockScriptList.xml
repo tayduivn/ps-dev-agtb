@@ -50,6 +50,13 @@
 	</block>
 	
 	<block>
+		<testfile>Cases_10040</testfile>
+		<bugnumber>-1</bugnumber>
+		<reason>Debugging</reason>
+		<modulename>Cases</modulename>
+	</block>
+
+	<block>
 		<testfile>Cases_10058</testfile>
 		<bugnumber>-1</bugnumber>
 		<reason>Debugging</reason>
