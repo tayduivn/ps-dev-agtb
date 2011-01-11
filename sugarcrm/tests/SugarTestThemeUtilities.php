@@ -62,7 +62,7 @@ class SugarTestThemeUtilities
         $themedef .= "'name'  => '$themename',";
         $themedef .= "'dirName'  => '$themename',";
         $themedef .= "'description' => '$themename',";
-        $themedef .= "'version' => array('regex_matches' => array('5.5.1')),";
+        $themedef .= "'version' => array('exact_matches' => array('5.5.1')),";
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php",$themedef);
         

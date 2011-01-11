@@ -23,6 +23,7 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['sugar_config']['default_max_tabs'] = $this->_max_tabs_test;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     public function tearDown() 
@@ -36,6 +37,7 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['beanList']);
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['app_strings']);
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
