@@ -3,7 +3,11 @@ require_once('include/externalAPI/Base/ExternalAPIBase.php');
 
 class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin {
     public $authMethod = 'oauth';
-    
+
+    /**
+     * Load data from EAPM bean
+     * @see ExternalAPIBase::loadEAPM()
+     */
     public function loadEAPM($eapmBean)
     {
         if ( !parent::loadEAPM($eapmBean) ) { return false; }
@@ -25,11 +29,11 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         if ( !$reply['success'] ) {
             return $reply;
         }
-        
+
         if ( $this->checkOauthLogin() ) {
             return array('success' => true);
         }
-    }    
+    }
 
     protected function checkOauthLogin()
     {
@@ -42,7 +46,19 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
 
     public function getOauthParams()
     {
-        return $this->getValue("oauthParams");
+        $connector = $this->getConnector();
+        $params = array();
+        if(!empty($connector)) {
+            $cons_key = $connector->getProperty('oauth_consumer_key');
+            if(!empty($cons_key)) {
+                $params['consumerKey'] = $cons_key;
+            }
+            $cons_secret = $connector->getProperty('oauth_consumer_secret');
+            if(!empty($cons_secret)) {
+                $params['consumerSecret'] = $cons_secret;
+            }
+        }
+        return array_merge($this->getValue("oauthParams"), $params);
     }
 
     public function getOauthRequestURL()
@@ -67,11 +83,11 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
     public function getOauth()
     {
         $oauth = new SugarOAuth($this->oauthParams['consumerKey'], $this->oauthParams['consumerSecret'], $this->getOauthParams());
-        
+
         if ( isset($this->oauth_token) && !empty($this->oauth_token) ) {
             $oauth->setToken($this->oauth_token, $this->oauth_secret);
         }
-        
+
         return $oauth;
     }
 
@@ -117,5 +133,5 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
 	}
 
 
-    
+
 }

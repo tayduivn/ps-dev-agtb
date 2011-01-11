@@ -38,9 +38,6 @@ class Twitter extends OAuthPluginBase implements WebFeed {
     protected $oauthAccess = 'https://api.twitter.com/oauth/access_token';
     protected $oauthParams = array(
     	'signatureMethod' => 'HMAC-SHA1',
-        'consumerKey' => "ZjoUiIbIeJJT7ONo7JcuAg",
-    // FIXME: encode?
-        'consumerSecret' => "GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0",
     );
 
 	public function getLatestUpdates($maxTime, $maxEntries)

@@ -33,6 +33,9 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
    }
 
     public function loadEAPM($eapmBean) {
+        if(empty($eapmBean->url)) {
+            $eapmBean->url = $this->getConnectorParam('url');
+        }
         $this->account_url = $eapmBean->url.$this->urlExtension;
         parent::loadEAPM($eapmBean);
     }
@@ -295,14 +298,14 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
                   $reply['success'] = TRUE;
                   $reply['errorMessage'] = '';
               } else {
-                  $GLOBALS['log']->fatal("Status:\n".print_r($status,true));
+                  $GLOBALS['log']->debug("Status:\n".print_r($status,true));
                   $reply['success'] = FALSE;
                   // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
                   $reply['errorMessage'] = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:reason')->item(0)->nodeValue;
               }
           }
       }
-      $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
+      $GLOBALS['log']->debug("Parsed Reply:\n".print_r($reply,true));
       return $reply;
    }
 }

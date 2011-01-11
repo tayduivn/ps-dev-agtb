@@ -34,8 +34,7 @@ class EAPMController extends SugarController
      */
     protected $api;
 
-    var $admin_actions = array('displayproperties', 'listview', 'index');
-
+    var $admin_actions = array('listview', 'index');
 
 	public function process() {
 		if(!is_admin($GLOBALS['current_user']) && in_array(strtolower($this->action), $this->admin_actions)) {

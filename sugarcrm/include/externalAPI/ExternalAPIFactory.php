@@ -159,7 +159,7 @@ class ExternalAPIFactory
      * This will hand back an initialized class for the requested external API, it will also load in the external API password information into the bean.
      * @param string $apiName The name of the requested API ( known API's can be listed by the listAPI() call )
      * @param bool $apiName Ignore authentication requirements (optional)
-     * @return API class
+     * @return ExternalAPIBase API plugin
      */
     public static function loadAPI($apiName, $ignoreAuth=false)
     {

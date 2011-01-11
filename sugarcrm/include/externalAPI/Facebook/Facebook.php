@@ -36,9 +36,6 @@ class Facebook extends ExternalAPIBase implements WebFeed {
 
     protected $oauthParams = array(
     	'signatureMethod' => 'HMAC-SHA1',
-        'consumerKey' => "141380979217659",
-    // FIXME: encode?
-        'consumerSecret' => "93b0ed5908a2b23c3e17a2cc2a22cd77",
     );
 
     public function checkLogin($eapmBean = null)
