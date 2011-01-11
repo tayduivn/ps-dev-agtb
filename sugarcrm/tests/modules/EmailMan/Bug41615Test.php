@@ -23,3 +23,5 @@ class Bug41615Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertContains('ORDER BY emailman.date_entered', $query, 'Assert that the ORDER BY clause includes the table name'); 
     }
 }
+
+?>
