@@ -150,6 +150,72 @@ EOHTML;
 }
 
 /**
+ * Wrapper function for the get_module_title function, which is mostly used for pre-MVC modules.
+ * 
+ * @deprecated use SugarView::getModuleTitle() for MVC modules, or getClassicModuleTitle() for non-MVC modules
+ *
+ * @param  $module       string  to next to the title.  Typically used for form buttons.
+ * @param  $module_title string  to display as the module title
+ * @param  $show_help    boolean which determines if the print and help links are shown.
+ * @return string HTML
+ */
+function get_module_title(
+    $module, 
+    $module_title, 
+    $show_create,
+    $count=0
+    )
+{
+    global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
+    global $app_strings;
+    
+    $the_title = "<div class='moduleTitle'>\n<h2>";
+    $module = preg_replace("/ /","",$module);
+    $iconPath = "";
+    if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
+    {
+    	$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
+    } else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
+    {
+        $iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
+    }
+    if (!empty($iconPath)) {
+    	if (SugarThemeRegistry::current()->directionality == "ltr") {
+	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
+	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
+	        $the_title .= ($count >= 1) ? SugarView::getBreadCrumbSymbol() : "";
+	        $the_title .=  $module_title;	
+    	} else {
+    		$the_title .= $module_title;
+    		$the_title .= ($count > 1) ? SugarView::getBreadCrumbSymbol() : "";
+    		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
+	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
+    	}
+    } else {
+		$the_title .= $module_title;
+	}
+    $the_title .= "</h2>\n";
+    
+    if ($show_create) {
+        $the_title .= "<span class='utils'>";
+        $createRecordURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+        $the_title .= <<<EOHTML
+&nbsp;
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<img src='{$createRecordURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
+</a>
+EOHTML;
+
+        $the_title .= '</span>';
+    }
+    
+    $the_title .= "</div>\n";
+    return $the_title;
+}
+
+/**
  * Handles displaying the header for classic view modules
  *
  * @param  $module      string  to next to the title.  Typically used for form buttons.
