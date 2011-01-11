@@ -256,6 +256,10 @@ class ConnectorUtils
           if(!file_exists($src3)) {
              mkdir_recursive($src3);
           }
+          if(file_exists($src4)) {
+              require($src4);
+              $sources = array_merge($sources, $connectors);
+          }
 
           if(!self::saveConnectors($sources, $src4)) {
              return array();
