@@ -7,17 +7,25 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	var $testAccount;
 	var $testContact;
+	var $currentUser;
 	
 	public function setUp()
 	{
 	   $this->testAccount = SugarTestAccountUtilities::createAccount();
-	   $this->testContact = SugarTestContactUtilities::createContact();	
+	   $this->testContact = SugarTestContactUtilities::createContact();
+	   global $current_user;
+	   $this->currentUser = $current_user;
+	   $user = new User();
+	   $user->retrieve('1');
+	   $current_user = $user;
 	}
 	
 	public function tearDown()
 	{
 	   SugarTestAccountUtilities::removeAllCreatedAccounts();
 	   SugarTestContactUtilities::removeAllCreatedContacts();
+	   global $current_user;
+	   $current_user = $this->currentUser;
 	}
 	
 	public function testGetListViewDataForAccounts()
@@ -61,7 +69,7 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 		$params = array();
 		$params['massupdate'] = 1;
 		
-		global $locale, $current_user;
+		global $locale;
 		$contact_name_expected =  $locale->getLocaleFormattedName($this->testContact->first_name, $this->testContact->last_name, '');
 		
 		$data = $emailMan->get_list_view_data();
