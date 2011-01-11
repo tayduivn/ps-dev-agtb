@@ -130,7 +130,7 @@ SUGAR.expressions.validateReturnTypes = function(t)
 		}
 	}
 };
-SUGAR.expressions.validateCurrExpression = function(silent) {
+SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 	try {
 		var varTypeMap = {};
 		for (var i = 0; i < fieldsArray.length; i++){
@@ -140,6 +140,14 @@ SUGAR.expressions.validateCurrExpression = function(silent) {
 		var tokens = new SUGAR.expressions.ExpressionParser().tokenize(expression);
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
+		if (matchType && matchType != tokens.returnType)
+		{
+			Msg.show({
+                title: "Validation Failed",
+                msg: "The formula must be of type " + matchType
+            });
+			return false;
+		}
 		
 		if (typeof (silent) == 'undefined' || !silent) 
 			Msg.show({msg: "Validation Sucessfull"});
@@ -159,9 +167,9 @@ SUGAR.expressions.validateCurrExpression = function(silent) {
 		return false;
 	}
 }
-SUGAR.expressions.saveCurrentExpression = function(target)
+SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
-	if (!SUGAR.expressions.validateCurrExpression(true))
+	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
 		return false;
 	if (YAHOO.lang.isString(target))
 		target = Dom.get(target);
