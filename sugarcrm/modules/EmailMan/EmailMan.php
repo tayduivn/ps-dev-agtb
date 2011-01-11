@@ -259,25 +259,36 @@ class EmailMan extends SugarBean{
 	}
 
     function get_list_view_data()
-    {   global $locale, $current_user;
+    {   
+    	global $locale, $current_user;
         $temp_array = parent::get_list_view_array();
 
-            $query="select first_name, last_name from ". strtolower($temp_array['RELATED_TYPE']) ." where id ='".$temp_array['RELATED_ID']."'";
-
+        $related_type = $temp_array['RELATED_TYPE'];
+        $related_id = $temp_array['RELATED_ID'];
+        $is_person = SugarModule::get($related_type)->moduleImplements('Person');
+        
+        if($is_person)
+        {
+            $query = "SELECT first_name, last_name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
+        } else {
+            $query = "SELECT name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
+        }
+        
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
 
-        if ($row) {
-            $full_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '');
-            $temp_array['RECIPIENT_NAME']=$full_name;
+        if($row) 
+        {      
+        	$temp_array['RECIPIENT_NAME'] = $is_person ? $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '') : $row['name'];
         }
 
-      //also store the recipient_email address
-        $query = "select addr.email_address from email_addresses addr,email_addr_bean_rel eb where eb.deleted=0 and addr.id=eb.email_address_id and bean_id ='". $temp_array['RELATED_ID']."' and primary_address = '1'";
+        //also store the recipient_email address
+        $query = "SELECT addr.email_address FROM email_addresses addr,email_addr_bean_rel eb WHERE eb.deleted=0 AND addr.id=eb.email_address_id AND bean_id ='". $related_id ."' AND primary_address = '1'";
 
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
-        if ($row) {
+        if ($row) 
+        {
             $temp_array['RECIPIENT_EMAIL']=$row['email_address'];
         }
 
