@@ -41,7 +41,7 @@ function check_for_relationship($relationships, $module){
 function retrieve_relationships_properties($module_1, $module_2, $relationship_name = ""){
 	
 	$rs = new Relationship();
-	$query =  "SELECT * FROM $rs->table_name WHERE ((lhs_module = '$module_1' AND rhs_module='$module_2') OR (lhs_module = '$module_2' AND rhs_module='$module_1')) AND join_table IS NOT NULL AND join_table != ''";
+	$query =  "SELECT * FROM $rs->table_name WHERE ((lhs_module = '$module_1' AND rhs_module='$module_2') OR (lhs_module = '$module_2' AND rhs_module='$module_1'))";
 	if(!empty($relationship_name) && isset($relationship_name)){
 		$query .= " AND relationship_name = '$relationship_name'";
 	}

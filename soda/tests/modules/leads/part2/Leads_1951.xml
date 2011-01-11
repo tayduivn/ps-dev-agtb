@@ -36,7 +36,7 @@
 		<link text="{@Leads_1951.team_name}" />
 		<button value="Cancel" alert="true" />
 	</csv>
-	<wait timeout="5" />
+	<wait timeout="10" />
 	<!--verify the note-->
 	<div id="list_subpanel_history">
 		<span class="pageNumbers" assert="(0 - 0 of 0)" />
