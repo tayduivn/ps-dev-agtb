@@ -38,6 +38,11 @@
 {assign var="id" value={{$displayParams.idName}} }
 {{/if}}
 
+{if isset($smarty.request.{{$id_range_choice}})}
+{assign var="starting_choice" value=$smarty.request.{{$id_range_choice}}}
+{else}
+{assign var="starting_choice" value="equals"}
+{/if}
 
 <script type='text/javascript'>
 function {$id}_range_change(val) 
@@ -58,21 +63,15 @@ function {$id}_range_change(val)
 </script>
 
 <span style="white-space:nowrap !important;">
-<select id="{$id}_range_choice" name="{$id}_range_choice" style="width:125px !important;" onchange="{$id}_range_change(this.value);">
-<option value="equals">{$APP.LBL_EQUAL}</option>
-<option value="not_equal">{$APP.LBL_NOT_EQUAL}</option>
-<option value="greater_than">{$APP.LBL_GREATER_THAN}</option>
-<option value="greater_than_equals">{$APP.LBL_GREATER_THAN_OR_EQUAL}</option>
-<option value="less_than">{$APP.LBL_LESS_THAN}</option>
-<option value="less_than_equals">{$APP.LBL_LESS_THAN_OR_EQUAL}</option>
-<option value="between">{$APP.LBL_BETWEEN}</option>
+<select id="{$id}_range_choice" name="{$id}_range_choice" style="width:190px !important;" onchange="{$id}_range_change(this.value);">
+{html_options options={{sugarvar key='options' string=true}} selected=$starting_choice}
 </select>
-<div id="{$id}_range_div" style="display:'';">
+<div id="{$id}_range_div" style="{if $starting_choice=='between'}display:none;{else}display:'';{/if}">
 <input type='text' name='range_{$id}' id='range_{$id}' style='width:75px !important;' size='{{$displayParams.size|default:20}}' 
     {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{/if}} 
     value='{$smarty.request.{{$id_range}} }' title='{{$vardef.help}}' tabindex='{{$tabindex}}' {{$displayParams.field}}>
 </div>
-<div id="{$id}_between_range_div" style="display:none;">
+<div id="{$id}_between_range_div" style="{if $starting_choice=='between'}display:'';{else}display:none;{/if}">
 <input type='text' name='start_range_{$id}' 
     id='start_range_{$id}' style='width:75px !important;' size='{{$displayParams.size|default:10}}' 
     {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{/if}} 
@@ -84,20 +83,3 @@ function {$id}_range_change(val)
     value='{$smarty.request.{{$id_range_end}} }' tabindex='{{$tabindex}}'>    
 </div> 
 </span>
-
-{if isset($smarty.request.{{$id_range_choice}}) }
-<script type='text/javascript'>
-YAHOO.util.Event.onDOMReady(function() {ldelim}
-{$id}_range_change("{$smarty.request.{{$id_range_choice}} }");
-var select = document.getElementById("{$id}_range_choice");
-for(var m = 0; m < select.options.length; m++) 
-{ldelim}
-	if(select.options[m].value == "{$smarty.request.{{$id_range_choice}} }")
-	{ldelim}
-		select.options[m].selected = true;
-		break;
-	{rdelim}
-{rdelim}
-{rdelim});
-</script>
-{/if}

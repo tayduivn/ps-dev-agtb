@@ -1818,6 +1818,34 @@ $app_list_strings = array (
         '300' 	=> 'Every 5 minutes',
         '600' 	=> 'Every 10 minutes',
 		),
+	'date_range_search_dom' =>
+	array(
+		'equals' => 'Equals',
+		'not_equal' => 'Not On',
+		'greater_than' => 'After',
+		'less_than' => 'Before',
+		'last_7_days' => 'Last 7 Days',
+		'next_7_days' => 'Next 7 Days',
+		'last_30_days' => 'Last 30 Days',
+		'next_30_days' => 'Next 30 Days',
+		'last_month' => 'Last Month',
+		'this_month' => 'This Month',
+		'next_month' => 'Next Month',
+		'last_year' => 'Last Year',
+		'this_year' => 'This Year',
+		'next_year' => 'Next Year',
+		'between' => 'Is Between',
+	),
+	'numeric_range_search_dom' =>
+	array(
+		'equals' => 'Equals',
+		'not_equal' => 'Does Not Equal',
+		'greater_than' => 'Greater Than',
+		'greater_than_equals' => 'Greater Than Or Equal To',
+		'less_than' => 'Less Than',
+		'less_than_equals' => 'Less Than Or Equal To',
+		'between' => 'Is Between',
+	),
 );
 
 $app_strings = array (
@@ -3078,26 +3106,6 @@ $app_strings = array (
 
     'LBL_AND' => 'And',
     'LBL_BEFORE' => 'Before',
-    'LBL_AFTER' => 'After',
-    'LBL_ON' => 'On',
-    'LBL_NOT_ON' => 'Not On',
-    'LBL_BETWEEN' => 'Is Between',
-	'LBL_LAST_7_DAYS'=>'Last 7 Days',
-	'LBL_NEXT_7_DAYS'=>'Next 7 Days',
-	'LBL_LAST_MONTH'=>'Last Month',
-	'LBL_NEXT_MONTH'=>'Next Month',
-    'LBL_THIS_MONTH'=>'This Month',
-    'LBL_LAST_30_DAYS'=>'Last 30 Days',
-    'LBL_NEXT_30_DAYS'=>'Next 30 Days',    
-	'LBL_LAST_YEAR'=>'Last Year',
-    'LBL_THIS_YEAR'=>'This Year',
-	'LBL_NEXT_YEAR'=>'Next Year',
-    'LBL_EQUAL'=>'Equals',
-	'LBL_NOT_EQUAL'=>'Does Not Equal',
-	'LBL_GREATER_THAN'=>'Greater Than',
-	'LBL_GREATER_THAN_OR_EQUAL'=>'Greater Than or Equal To',
-	'LBL_LESS_THAN'=>'Less Than',
-	'LBL_LESS_THAN_OR_EQUAL' => 'Less Than or Equal To',
 
     // File fields
     'LBL_UPLOAD_FROM_COMPUTER' => 'Upload From Your Computer',

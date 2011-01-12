@@ -145,6 +145,7 @@ $dictionary['Contract'] = array(
 			'audited' => true,
 			'comment' => 'The effective date of the contract',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		),
 		'end_date' => array (
 			'name' => 'end_date',
@@ -153,6 +154,7 @@ $dictionary['Contract'] = array(
 			'audited' => true,
 			'comment' => 'The date in which the contract is no longer effective',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		),
 
 		'currency_id' => array (
@@ -210,6 +212,7 @@ $dictionary['Contract'] = array(
 			'type' => 'date',
 			'comment' => 'Date in which the ultimate customer signed the contract',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		),
 		'company_signed_date' => array (
 			'name' => 'company_signed_date',
@@ -217,6 +220,7 @@ $dictionary['Contract'] = array(
 			'type' => 'date',
 			'comment' => 'Date in which the company using Sugar signed the contract',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		),
 		'contract_term' => array (
 			'name' => 'contract_term',
