@@ -47,9 +47,10 @@ var $myFavoritesOnly = false;
 		$this->isConfigurable = true;
 		$this->hasScript = true;
         // Add in some default categories.
-        // $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
+        $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
         // Need to get the rest of the active SugarFeed modules
         $module_list = SugarFeed::getActiveFeedModules();
+        
         // Translate the category names
         if ( ! is_array($module_list) ) { $module_list = array(); }
         foreach ( $module_list as $module ) {
@@ -238,7 +239,7 @@ var $myFavoritesOnly = false;
                                     'link_url',
                                     'link_type'));
             
-            $GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
+            //$GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
 
             foreach($this->lvs->data['data'] as $row => $data) {
 
@@ -305,8 +306,7 @@ var $myFavoritesOnly = false;
         $numRecords = min($this->displayRows,$numRecords);
 
         $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
-        //rss: 01/07/2011 - do not display image for now
-        /*
+
         foreach ( $resortQueue as $key=>&$item ) {
             if ( empty($item['NAME']) ) {
                 continue;
@@ -323,7 +323,6 @@ var $myFavoritesOnly = false;
             }
             $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
         }
-         */
         
         $this->lvs->data['data'] = $resortQueue;
     }
@@ -402,7 +401,7 @@ var $myFavoritesOnly = false;
         $ss->assign('title', $this->title);
 		$ss->assign('categories', $this->categories);
         if ( empty($this->selectedCategories) ) {
-            $this->selectedCategories = SugarFeed::getActiveFeedModules();
+            $this->selectedCategories['ALL'] = 'ALL';
         }
 		$ss->assign('selectedCategories', $this->selectedCategories);
         $ss->assign('rows', $this->displayRows);
@@ -551,7 +550,7 @@ EOQ;
 	function getPostForm(){
         global $current_user;
 
-        if ( !in_array('UserFeed',$this->selectedCategories) 
+        if ( (!empty($this->selectedCategories) && !in_array('UserFeed',$this->selectedCategories))
 //BEGIN SUGARCRM flav=pro ONLY
              || $this->myFavoritesOnly
 //END SUGARCRM flav=pro ONLY
