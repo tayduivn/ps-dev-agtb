@@ -3,7 +3,7 @@
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class WebEx extends ExternalAPIBase implements WebMeeting {
+class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
 
     protected $dateFormat = 'm/d/Y H:i:s';
     protected $urlExtension = '/WBXService/XMLService';

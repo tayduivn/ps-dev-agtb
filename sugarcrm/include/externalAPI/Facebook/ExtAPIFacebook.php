@@ -24,7 +24,7 @@ require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebFeed.php');
 
 
-class Facebook extends ExternalAPIBase implements WebFeed {
+class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
     // It's not the normal oauth, but it works close enough.
     public $authMethod = 'oauth';
     public $useAuth = true;

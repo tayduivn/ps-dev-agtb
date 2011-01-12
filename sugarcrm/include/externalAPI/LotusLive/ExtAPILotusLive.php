@@ -26,7 +26,7 @@ require_once('include/externalAPI/Base/WebMeeting.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 
 
-class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
+class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
 
     protected $dateFormat = 'm/d/Y H:i:s';
 //    protected $urlExtension = '/envq/Production/';
