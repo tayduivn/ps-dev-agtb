@@ -76,12 +76,13 @@ $listViewDefs['Reports'] = array(
         'width' => '15', 
         'label' => 'LBL_REPORT_LAST_RUN_DATE',
         'default' => true,
-        'orderBy' => 'report_cache.date_modified',
         'sortable' => true,
         'related_fields' => array('active', 'report_cache.date_modified'),
     ),
     'DATE_ENTERED' => array(
         'width' => '5',
+        'orderBy' => 'saved_reports.date_entered',
+        'sortOrder' => 'desc',
         'label' => 'LBL_DATE_ENTERED',
         'default' => true),
 

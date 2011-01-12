@@ -179,7 +179,7 @@ class Meeting extends SugarBean {
 
         if (!empty($this->type) && $this->type != 'SugarCRM' ) {
             require_once('include/externalAPI/ExternalAPIFactory.php');
-            $api = ExternalAPIFactory::loadAPI($this->type);           
+            $api = ExternalAPIFactory::loadAPI($this->type);
         }
 
         if ( isset($api) && is_a($api,'WebMeeting') ) {
@@ -192,7 +192,7 @@ class Meeting extends SugarBean {
                     foreach($notifyList as $person) {
                         $api->inviteAttendee($this,$person,$check_notify);
                     }
-                    
+
                     // Don't double-send if the WebMeeting API sends invites
                     if ( $api->sendsInvites ) {
                         $check_notify = false;
@@ -202,7 +202,7 @@ class Meeting extends SugarBean {
                 if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
                 $_SESSION['user_error_message'][] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
             }
-            
+
             $api->logoff();
         }
 
@@ -212,7 +212,7 @@ class Meeting extends SugarBean {
 			vCal::cache_sugar_vcal($current_user);
 		}
 
-        
+
 
 		return $return_id;
 	}
@@ -468,12 +468,12 @@ class Meeting extends SugarBean {
                 $meeting_fields['DISPLAYED_URL'] = 'index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=0';
             }
         }
-		
+
 		$meeting_fields['JOIN_MEETING']  = '';
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
 			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
 		}
-	
+
 		return $meeting_fields;
 	}
 
@@ -502,7 +502,15 @@ class Meeting extends SugarBean {
 		$xtpl->assign("MEETING_TO", $meeting->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("MEETING_SUBJECT", trim($meeting->name));
 		$xtpl->assign("MEETING_STATUS",(isset($meeting->status)? $app_list_strings['meeting_status_dom'][$meeting->status]:""));
-		$xtpl->assign("MEETING_TYPE",(isset($meeting->type)? $app_list_strings['meeting_type_dom'][$meeting->type]:""));
+		$typekey = strtolower($meeting->type);
+		if(isset($meeting->type)) {
+		    if(!empty($app_list_strings['eapm_list'][$typekey])) {
+    		    $typestring = $app_list_strings['eapm_list'][$typekey];
+	    	} else {
+		        $typestring = $app_list_strings['meeting_type_dom'][$meeting->type];
+		    }
+		}
+		$xtpl->assign("MEETING_TYPE", isset($meeting->type)? $typestring:"");
 		$xtpl->assign("MEETING_STARTDATE", $timedate->to_display_date_time($meeting->date_start,true,true,$notifyUser)." ".$prefDate['userGmt']);
 		$xtpl->assign("MEETING_HOURS", $meeting->duration_hours);
 		$xtpl->assign("MEETING_MINUTES", $meeting->duration_minutes);
@@ -681,12 +689,12 @@ class Meeting extends SugarBean {
 	function save_relationship_changes($is_update) {
 		$exclude = array();
 	    if(empty($this->in_workflow)) {
-           if(empty($this->in_import)){//if a meeting is being imported then contact_id  should not be excluded 
-           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise 
+           if(empty($this->in_import)){//if a meeting is being imported then contact_id  should not be excluded
+           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise
            //add assigned_user_id to exclude list and let the logic from MeetingFormBase determine whether assigned user id gets added to the relationship
            	if(!empty($GLOBALS['soap_server_object'])){
            		$exclude = array('contact_id', 'user_id');
-           	}else{   	
+           	}else{
 	    		$exclude = array('contact_id', 'user_id','assigned_user_id');
            	}
            }
@@ -736,13 +744,13 @@ class Meeting extends SugarBean {
 // External API integration, for the dropdown list of what external API's are available
 function getMeetingsExternalApiDropDown() {
     require_once('include/externalAPI/ExternalAPIFactory.php');
-    
+
     $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
-    
+
     $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
-    
+
     return $apiList;
-    
+
 }
 
 ?>

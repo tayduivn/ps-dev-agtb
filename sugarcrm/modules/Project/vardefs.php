@@ -51,6 +51,7 @@ $dictionary['Project'] = array(
 			'type' => 'datetime',
 			'comment' => 'Date record created',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		),
 		'date_modified' => array(
 			'name' => 'date_modified',
@@ -58,6 +59,7 @@ $dictionary['Project'] = array(
 			'type' => 'datetime',
 			'comment' => 'Date record last modified',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		),
 		'assigned_user_id' => array(
 			'name' => 'assigned_user_id',

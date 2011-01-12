@@ -21,16 +21,40 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/connectors/utils/ConnectorUtils.php');
 /**
  * Provides a factory to list, discover and create external API calls
  *
  * Main features are to list available external API's by supported features, modules and which ones have access for the user.
  **/
-class ExternalAPIFactory{
+class ExternalAPIFactory
+{
+    /**
+     * Filter the list of APIs, removing disabled ones
+     * @param array $apiFullList
+     * @return array Filtered list
+     */
+    public static function filterAPIList($apiFullList)
+    {
+        $filteredList = array();
+        foreach($apiFullList as $name => $data) {
+            if(isset($data['connector'])) {
+                if(ConnectorUtils::eapmEnabled($data['connector'])) {
+                    $filteredList[$name] = $data;
+                }
+            } else {
+                $filteredList[$name] = $data;
+            }
+        }
+        return $filteredList;
+    }
 
-    public static $disabledApiFileName = 'custom/include/externalAPI.disabled.php';
-
-
+    /**
+     * Get the list of available APIs
+     * @param bool $forceRebuild
+     * @param bool $ignoreDisabled Should we ignore disabled status?
+     * @return array
+     */
     public static function loadFullAPIList($forceRebuild=true, $ignoreDisabled = false) {
         if ( isset($GLOBALS['sugar_config']['developer_mode']) && $GLOBALS['sugar_config']['developer_mode'] ) {
             static $beenHereBefore = false;
@@ -39,11 +63,11 @@ class ExternalAPIFactory{
                 $beenHereBefore = true;
             }
         }
-        if ( file_exists('cache/include/externalAPI.cache.php') && !$forceRebuild ) {
+        if (!$forceRebuild && file_exists('cache/include/externalAPI.cache.php') ) {
             // Already have a cache file built, no need to rebuild
             require('cache/include/externalAPI.cache.php');
 
-            return $fullAPIList;
+            return $ignoreDisabled?$fullAPIList:self::filterAPIList($fullAPIList);
         }
 
         $apiFullList = array();
@@ -70,19 +94,7 @@ class ExternalAPIFactory{
             }
         }
 
-        if(!$ignoreDisabled){
-            //now that we have the full list, go through the disabled apis and remove them from the fullList
-            if (file_exists(self::$disabledApiFileName)) {
-                require(self::$disabledApiFileName);
-                foreach($disabledAPIList as $disabledAPI){
-                    if(!empty($apiFullList[$disabledAPI])){
-                        unset($apiFullList[$disabledAPI]);
-                    }
-                }
-            }
-        }
-
-        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions');
+        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions','connector');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {
@@ -100,7 +112,7 @@ class ExternalAPIFactory{
             if ( isset($apiClass->supportMeetingPassword) && $apiClass->supportMeetingPassword == true ) {
                 $meetingPasswordList[$apiName] = $apiName;
             }
-            
+
         }
 
         create_cache_directory('/include/');
@@ -127,10 +139,12 @@ class ExternalAPIFactory{
             }
         }
 
-        return($apiFullList);
+        return $ignoreDisabled?$apiFullList:self::filterAPIList($apiFullList);
     }
 
-
+	/**
+ 	* Clear API cache file
+ 	*/
     public static function clearCache() {
         if ( file_exists('cache/include/externalAPI.cache.php') ) {
             unlink('cache/include/externalAPI.cache.php');
@@ -145,7 +159,7 @@ class ExternalAPIFactory{
      * This will hand back an initialized class for the requested external API, it will also load in the external API password information into the bean.
      * @param string $apiName The name of the requested API ( known API's can be listed by the listAPI() call )
      * @param bool $apiName Ignore authentication requirements (optional)
-     * @return API class
+     * @return ExternalAPIBase API plugin
      */
     public static function loadAPI($apiName, $ignoreAuth=false)
     {
@@ -220,7 +234,14 @@ class ExternalAPIFactory{
         return $apiFinalList;
     }
 
-    public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false) {
+    /**
+     * Get the array of API names available for cetain module
+     * @param string $moduleName
+     * @param bool $ignoreAuth Ignore if we have authentication details or not
+     * @param bool $addEmptyEntry Add empty entry?
+     */
+    public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false)
+    {
         global $app_strings;
 
         $apiList = self::listAPI($moduleName,$ignoreAuth);
@@ -231,9 +252,9 @@ class ExternalAPIFactory{
         }
 
         foreach ( $apiList as $apiName => $ignore ) {
-            $translateKey = 'LBL_EXTAPI_'.strtoupper($apiName);
-            if ( !empty($app_strings[$translateKey]) ) {
-                $apiDropdown[$apiName] = $app_strings[$translateKey];
+            $translateKey = strtolower($apiName);
+            if ( !empty($app_strings['eapm_list'][$translateKey]) ) {
+                $apiDropdown[$apiName] = $app_strings['eapm_list'][$translateKey];
             } else {
                 $apiDropdown[$apiName] = $apiName;
             }

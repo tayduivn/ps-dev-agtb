@@ -149,7 +149,7 @@
 		window.document.close_popup = close_popup;
 		//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
 		width = (width == 600) ? 800 : width;
-		height = (width == 400) ? 800 : height;
+		height = (height == 400) ? 800 : height;
 		// launch the popup
 		URL = 'index.php?'
 			+ 'module=' + module_name

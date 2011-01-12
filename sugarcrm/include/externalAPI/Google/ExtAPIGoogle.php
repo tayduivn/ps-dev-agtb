@@ -8,6 +8,8 @@ require_once('Zend/Gdata/ClientLogin.php');
 class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
     public $authMethod = 'password';
+    public $connector = "ext_eapm_google";
+
     protected $scope = "https://docs.google.com/feeds/ http://docs.google.com/feeds/";
     protected $oauthReq ="https://www.google.com/accounts/OAuthGetRequestToken";
     protected $oauthAuth ="https://www.google.com/accounts/OAuthAuthorizeToken";
@@ -47,8 +49,8 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
-            // $GLOBALS['log']->fatal("IKEA REQ: ".var_export($this->httpClient->getLastRequest(), true));
-            // $GLOBALS['log']->fatal("IKEA RES: ".var_export($this->httpClient->getLastResponse(), true));
+            // $GLOBALS['log']->debug("IKEA REQ: ".var_export($this->httpClient->getLastRequest(), true));
+            // $GLOBALS['log']->debug("IKEA RES: ".var_export($this->httpClient->getLastResponse(), true));
         }
 
         return $reply;
@@ -102,7 +104,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     	if($this->authMethod == "password") {
     	    // FIXME: can't we just use the httpClient? It should add auth automatically
     		$sessionToken = $this->httpClient->getClientLoginToken();
-    		$GLOBALS['log']->fatal('Session Token: '.$sessionToken);
+    		$GLOBALS['log']->debug('Session Token: '.$sessionToken);
     		$url = $document->content->getSrc();
 	    	//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
     		$opts = array(
@@ -117,7 +119,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     		if ($url != null) {
     		    $url =  $url . "&exportFormat=$format";
     		}
-    		$GLOBALS['log']->fatal('Google Doc URL: '.$url);
+    		$GLOBALS['log']->debug('Google Doc URL: '.$url);
     		echo file_get_contents($url, false, stream_context_create($opts));
     	} else {
     	    echo $this->httpClient->setUri($url)->request('GET')->getBody();

@@ -39,6 +39,7 @@ class TemplateRange extends TemplateText
 	function __construct()
 	{
 		$this->vardef_map['enable_range_search'] = 'enable_range_search';
+		$this->vardef_map['options'] = 'options';
 	}	
 	
 	
@@ -55,6 +56,9 @@ class TemplateRange extends TemplateText
 		//If we are enabling range search, make sure we add the start and end range fields
 		if (!empty($this->enable_range_search))
 		{
+			//If range search is enabled, set the options attribute for the dropdown choice selections
+			$this->options = ($this->type == 'date' || $this->type == 'datetimecombo' || $this->type == 'datetime') ? 'date_range_search_dom' : 'numeric_range_search_dom'; 
+			
 			if(isset($_REQUEST['view_module']))
 			{
 				$module = $_REQUEST['view_module'];
@@ -180,7 +184,8 @@ class TemplateRange extends TemplateText
 		$vardef = parent::get_field_def();
     	if(!empty($this->enable_range_search))
     	{
-		   $vardef['enable_range_search'] = $this->enable_range_search;		   
+		   $vardef['enable_range_search'] = $this->enable_range_search;
+		   $vardef['options'] = ($this->type == 'date' || $this->type == 'datetimecombo' || $this->type == 'datetime') ? 'date_range_search_dom' : 'numeric_range_search_dom'; 
 		}		
 		return $vardef;
     }
@@ -266,5 +271,7 @@ class TemplateRange extends TemplateText
 			
 		}   	
     }
+    
+     
 }
 ?>

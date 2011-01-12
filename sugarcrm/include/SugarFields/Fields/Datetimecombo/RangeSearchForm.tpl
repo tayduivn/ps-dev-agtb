@@ -32,25 +32,19 @@
 {assign var="id" value={{$displayParams.idName}} }
 {{/if}}
 
+{if isset($smarty.request.{{$id_range_choice}})}
+{assign var="starting_choice" value=$smarty.request.{{$id_range_choice}}}
+{else}
+{assign var="starting_choice" value="equals"}
+{/if}
+
 <div style="white-space:nowrap !important;">
 <select id="{$id}_range_choice" name="{$id}_range_choice" style="width:125px !important;" onchange="{$id}_range_change(this.value);">
-<option value="equals">{$APP.LBL_ON}</option>
-<option value="not_equal">{$APP.LBL_NOT_ON}</option>
-<option value="greater_than">{$APP.LBL_AFTER}</option>
-<option value="less_than">{$APP.LBL_BEFORE}</option>
-<option value="last_7_days">{$APP.LBL_LAST_7_DAYS}</option>
-<option value="next_7_days">{$APP.LBL_NEXT_7_DAYS}</option>
-<option value="last_30_days">{$APP.LBL_LAST_30_DAYS}</option>
-<option value="next_30_days">{$APP.LBL_NEXT_30_DAYS}</option>
-<option value="last_month">{$APP.LBL_LAST_MONTH}</option>
-<option value="this_month">{$APP.LBL_THIS_MONTH}</option>
-<option value="next_month">{$APP.LBL_NEXT_MONTH}</option>
-<option value="last_year">{$APP.LBL_LAST_YEAR}</option>
-<option value="this_year">{$APP.LBL_THIS_YEAR}</option>
-<option value="next_year">{$APP.LBL_NEXT_YEAR}</option>
-<option value="between">{$APP.LBL_BETWEEN}</option>
+{html_options options={{sugarvar key='options' string=true}} selected=$starting_choice}
 </select>
-<div id="{$id}_range_div" style="white-space:nowrap !important, display:'';">
+</div>
+
+<div id="{$id}_range_div" style="{if preg_match('/^\[/', $smarty.request.{{$id_range}})  || $starting_choice == 'between'}display:none{else}display:''{/if};">
 <input autocomplete="off" type="text" name="range_{$id}" id="range_{$id}" value='{$smarty.request.{{$id_range}} }' title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' size="11" maxlength="10" style="width:100px !important;">
 {{if !$displayParams.hiddeCalendar}}
 <img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}" id="{$id}_trigger" align="absmiddle"/>
@@ -74,7 +68,7 @@ weekNumbers:false
 {{/if}}    
 </div>
 
-<div id="{$id}_between_range_div" style="display:none;">
+<div id="{$id}_between_range_div" style="{if $starting_choice=='between'}display:'';{else}display:none;{/if}">
 {assign var=date_value value={{sugarvar key='value' string=true}} }
 <input autocomplete="off" type="text" name="start_range_{$id}" id="start_range_{$id}" value='{$smarty.request.{{$id_range_start}} }' title='{{$vardef.help}}' {{$displayParams.field}} tabindex='{{$tabindex}}' size="11" style="width:100px !important;" maxlength="10">
 {{if !$displayParams.hiddeCalendar}}
@@ -121,7 +115,6 @@ weekNumbers:false
 </script>
 {{/if}} 
 </div>
-</div>
 
 
 <script type='text/javascript'>
@@ -160,21 +153,6 @@ if(document.getElementById('search_form_clear'))
 {ldelim}
 YAHOO.util.Event.addListener('search_form_clear', 'click', {$id}_range_reset);
 {rdelim}
-
-{if isset($smarty.request.{{$id_range_choice}}) }
-
-{$id}_range_change("{$smarty.request.{{$id_range_choice}} }");
-var select = document.getElementById("{$id}_range_choice");
-for(var m = 0; m < select.options.length; m++) 
-{ldelim}
-	if(select.options[m].value == "{$smarty.request.{{$id_range_choice}} }")
-	{ldelim}
-		select.options[m].selected = true;
-		break;
-	{rdelim}
-{rdelim}
-
-{/if}
 
 {rdelim});
 </script>
