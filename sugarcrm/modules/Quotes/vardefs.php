@@ -96,6 +96,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'importable' => 'required',
     'required'=>true,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'original_po_date' =>
   array (
@@ -103,6 +104,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'vname' => 'LBL_ORIGINAL_PO_DATE',
     'type' => 'date',
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'payment_terms' =>
   array (
@@ -120,6 +122,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'date',
     'reportable'=>false,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'date_order_shipped' =>
   array (
@@ -129,6 +132,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'date',
     'reportable' => false,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'order_stage' =>
   array (

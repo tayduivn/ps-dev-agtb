@@ -137,6 +137,7 @@ $vardefs = array(
 		    'required' => true,
 		    'comment' => 'Expected or actual date the sale will close',
 		    'enable_range_search' => '1',
+		    'options' => 'date_range_search_dom',
 		  ),
 		  'next_step' =>
 		  array (

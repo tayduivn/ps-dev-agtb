@@ -155,9 +155,13 @@ Calendar.setup = function (params) {
             
             var seldate = calendar.getSelectedDates();
             if (Dom.get(inputField).value.length > 0) {
-            	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
-                seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
-            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
+            	val = new Date(Dom.get(inputField).value);
+            	if(!isNaN(val.getTime()))
+            	{
+	            	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
+	                seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
+	            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
+	            }
             } else if (seldate.length > 0) {
                 // Set the pagedate to show the selected date if it exists
                 calendar.cfg.setProperty("selected", seldate[0]);
