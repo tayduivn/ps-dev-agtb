@@ -23,7 +23,7 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 /**
  * <b>isInList(Generic item, List list)</b><br/>
  * Returns true if item is contained within the list. <br/>
- * <i>isInList(3, craeteList(2, 3, 4, 5))</i> = false
+ * <i>isInList(3, createList(2, 3, "red", "blue"))</i> = true
  */
 class IsInEnumExpression extends BooleanExpression {
 	/**
