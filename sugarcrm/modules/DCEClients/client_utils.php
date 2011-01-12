@@ -615,7 +615,7 @@ function getUpgradeVars($db, $action, $inst){
 
     function returnTimeRanges(){
          //change time into timestamp
-        $now = gmdate("Y-m-d H:i:s");
+        $now = $timedate->nowDb();
         $stim = strtotime($now);
         //remove a day from timestamp 
         $ytim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-1,   gmdate("Y",$stim));

@@ -814,7 +814,7 @@ EOQ;
         $user_hash = strtolower(md5($new_password));
         $this->setPreference('loginexpiration','0');
         //set new password
-        $now=date("Y-m-d H:i:s");
+        $now = TimeDate2::getInstance()->nowDb();
 		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';

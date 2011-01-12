@@ -775,7 +775,7 @@ class TimeDate2
      * @param string $date
      * @return string Datetime in DB format
      */
-    public function to_db($date)
+    public function ($date)
     {
         return $this->_convert($date,
             $this->get_date_time_format(), $this->_getUserTZ(),
