@@ -18,25 +18,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/*********************************************************************************
-* Description:
-* Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
-* Reserved. Contributor(s): contact@synolia.com - www.synolia.com
-* *******************************************************************************/
+require_once('include/connectors/sources/default/source.php');
 
-$config = array (
-  'name' => 'Twitter&#169;',
-  'eapm' => array(
-    'enabled' => true,
-  ),
-  'order' => 5,
-  'properties' => array (
-      'company_url' => 'http://widgets.twimg.com/j/2/widget.js',
-      'oauth_consumer_key' => 'ZjoUiIbIeJJT7ONo7JcuAg',
-      'oauth_consumer_secret' => 'GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0',
-      ),
-);
-?>
+class ext_eapm_lotuslive extends source {
+	protected $_enable_in_wizard = false;
+	protected $_enable_in_hover = false;
+	protected $_has_testing_enabled = false;
+
+	public function getItem($args=array(), $module=null){}
+	public function getList($args=array(), $module=null) {}
+}

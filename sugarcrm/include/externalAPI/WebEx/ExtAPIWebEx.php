@@ -11,6 +11,7 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
     public $authMethod = 'password';
+    public $connector = "ext_eapm_webex";
 
     public $canInvite = true;
     public $sendsInvites = true;
@@ -32,6 +33,9 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
    }
 
     public function loadEAPM($eapmBean) {
+        if(empty($eapmBean->url)) {
+            $eapmBean->url = $this->getConnectorParam('url');
+        }
         $this->account_url = $eapmBean->url.$this->urlExtension;
         parent::loadEAPM($eapmBean);
     }
@@ -97,21 +101,21 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
                 $xp = new DOMXPath($reply['responseXML']);
                 // Only get the external ID when I create a new meeting.
                 $bean->external_id = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:meetingkey')->item(0)->nodeValue;
-                $GLOBALS['log']->fatal('External ID: '.print_r($bean->external_id,true));
+                $GLOBALS['log']->debug('External ID: '.print_r($bean->external_id,true));
             }
 
             // Figure out the join url
             $join_reply = $this->joinMeeting($bean,$GLOBALS['current_user']->full_name);
             $xp = new DOMXPath($join_reply['responseXML']);
             $bean->join_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:joinMeetingURL')->item(0)->nodeValue;
-            $GLOBALS['log']->fatal('Join URL: '.print_r($bean->join_url,true));
+            $GLOBALS['log']->debug('Join URL: '.print_r($bean->join_url,true));
 
 
             // Figure out the host url
             $host_reply = $this->hostMeeting($bean);
             $xp = new DOMXPath($host_reply['responseXML']);
             $bean->host_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:hostMeetingURL')->item(0)->nodeValue;
-            $GLOBALS['log']->fatal('Host URL: '.print_r($bean->host_url,true));
+            $GLOBALS['log']->debug('Host URL: '.print_r($bean->host_url,true));
 
             $bean->creator = $this->account_name;
         } else {
@@ -281,7 +285,7 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
           $responseXML->strictErrorChecking = false;
           $responseXML->loadXML($response);
           if ( !is_object($responseXML) ) {
-              $GLOBALS['log']->fatal("XML ERRORS:\n".print_r(libxml_get_errors(),true));
+              $GLOBALS['log']->error("XML ERRORS:\n".print_r(libxml_get_errors(),true));
               // Looks like the XML processing didn't go so well.
               $reply['success'] = FALSE;
               // FIXME: Translate
@@ -295,14 +299,14 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
                   $reply['success'] = TRUE;
                   $reply['errorMessage'] = '';
               } else {
-                  $GLOBALS['log']->fatal("Status:\n".print_r($status,true));
+                  $GLOBALS['log']->debug("Status:\n".print_r($status,true));
                   $reply['success'] = FALSE;
                   // $reply['errorMessage'] = (string)$responseXML->header->response->reason;
                   $reply['errorMessage'] = (string)$xpath->query('/serv:message/serv:header/serv:response/serv:reason')->item(0)->nodeValue;
               }
           }
       }
-      $GLOBALS['log']->fatal("Parsed Reply:\n".print_r($reply,true));
+      $GLOBALS['log']->debug("Parsed Reply:\n".print_r($reply,true));
       return $reply;
    }
 }

@@ -31,7 +31,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $connector_strings = array (
     'LBL_NAME' => 'Twitter Username',
     'LBL_ID' => 'Twitter Username',
-	'company_url' => 'URL',    
+	'company_url' => 'URL',
+    'oauth_consumer_key' => 'OAuth Consumer Key',
+    'oauth_consumer_secret' => 'OAuth Consumer Secret',
 );
 
 ?>

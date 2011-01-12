@@ -21,22 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/*********************************************************************************
-* Description:
-* Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
-* Reserved. Contributor(s): contact@synolia.com - www.synolia.com
-* *******************************************************************************/
-
-$config = array (
-  'name' => 'Twitter&#169;',
-  'eapm' => array(
-    'enabled' => true,
-  ),
-  'order' => 5,
-  'properties' => array (
-      'company_url' => 'http://widgets.twimg.com/j/2/widget.js',
-      'oauth_consumer_key' => 'ZjoUiIbIeJJT7ONo7JcuAg',
-      'oauth_consumer_secret' => 'GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0',
-      ),
+$connector_strings = array (
+    'url' => 'URL',
 );
-?>
+
