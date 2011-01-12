@@ -11,11 +11,16 @@ class ConnectorsEnableDisableTest extends Sugar_PHPUnit_Framework_TestCase {
 	static $drop_lookup_mapping = false;
 
 	public static function setUpBeforeClass() {
-        // this is so that Hoovers connector won't SOAP for the huge lookup file
-	    if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
+    	SourceFactory::getSource('ext_soap_hoovers', false);
+	    // this is so that Hoovers connector won't SOAP for the huge lookup file
+        if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
+	         mkdir_recursive(dirname(HOOVERS_LOOKUP_MAPPING_FILE));
 	         copy(dirname(__FILE__)."/lookup_mapping_stub", HOOVERS_LOOKUP_MAPPING_FILE);
 	         self::$drop_lookup_mapping = true;
 	     }
+        if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
+    	   ConnectorUtils::getDisplayConfig();
+    	}
 	}
 
 	public static function tearDownAfterClass()
@@ -26,9 +31,6 @@ class ConnectorsEnableDisableTest extends Sugar_PHPUnit_Framework_TestCase {
 	}
 
     function setUp() {
-        if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
-    	   ConnectorUtils::getDisplayConfig();
-    	}
     	require(CONNECTOR_DISPLAY_CONFIG_FILE);
     	$this->original_modules_sources = $modules_sources;
 
@@ -92,7 +94,6 @@ class ConnectorsEnableDisableTest extends Sugar_PHPUnit_Framework_TestCase {
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
-
     	$controller->action_SaveModifyDisplay();
     	ConnectorUtils::getConnectors(true);
         $this->assertFalse(ConnectorUtils::eapmEnabled('ext_rest_twitter'), "Failed to disable Twitter");
