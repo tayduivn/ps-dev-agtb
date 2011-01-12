@@ -85,6 +85,7 @@ $invite_xml = <<<INV
    <body>
       <bodyContent xsi:type=
           "java:com.webex.service.binding.attendee.CreateMeetingAttendee">
+          <role>ATTENDEE</role>
      </bodyContent>
    </body>
 </message>

@@ -194,7 +194,7 @@ class Meeting extends SugarBean {
                 if ( $api->canInvite ) {
                     $notifyList = $this->get_notification_recipients();
                     foreach($notifyList as $person) {
-                        $api->inviteAttendee($bean,$person,$check_notify);
+                        $api->inviteAttendee($this,$person,$check_notify);
                     }
                     
                     // Don't double-send if the WebMeeting API sends invites
