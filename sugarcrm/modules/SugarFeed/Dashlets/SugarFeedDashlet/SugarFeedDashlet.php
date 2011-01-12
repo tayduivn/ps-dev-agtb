@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/Dashlets/DashletGeneric.php');
-require_once('include/externalAPI/ExternalAPIFactory.php');    
+require_once('include/externalAPI/ExternalAPIFactory.php');
 
 class SugarFeedDashlet extends DashletGeneric {
 var $displayRows = 15;
@@ -39,7 +39,7 @@ var $myFavoritesOnly = false;
 
     function SugarFeedDashlet($id, $def = null) {
 		global $current_user, $app_strings, $app_list_strings;
-		
+
 		require('modules/SugarFeed/metadata/dashletviewdefs.php');
 		$this->myItemsOnly = false;
         parent::DashletGeneric($id, $def);
@@ -68,7 +68,7 @@ var $myFavoritesOnly = false;
         foreach ( $this->externalAPIList as $apiObj => $apiName ) {
             $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
         }
-        
+
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFeed');
 		if(!empty($def['rows']))$this->displayRows = $def['rows'];
@@ -126,7 +126,7 @@ var $myFavoritesOnly = false;
         $lvsParams['orderBy'] = 'date_entered';
         $lvsParams['sortOrder'] = 'DESC';
         $lvsParams['custom_from'] = '';
-        
+
 
         // Get the real module list
         if (empty($this->selectedCategories)){
@@ -164,7 +164,7 @@ var $myFavoritesOnly = false;
                 $regular_modules[] = $module;
             }
         }
-        
+
         if(!empty($this->displayTpl))
         {
         	//MFH BUG #14296
@@ -172,10 +172,10 @@ var $myFavoritesOnly = false;
             if(!empty($whereArray)){
                 $where = '(' . implode(') AND (', $whereArray) . ')';
 
-            }            
-            
+            }
+
             $additional_where = '';
-            
+
 
 			$module_limiter = " sugarfeed.related_module in ('" . implode("','", $regular_modules) . "')";
 
@@ -225,11 +225,11 @@ var $myFavoritesOnly = false;
 
 			$where .= $module_limiter;
 
-            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows, 
-                              array('name', 
-                                    'description', 
-                                    'date_entered', 
-                                    'created_by', 
+            $this->lvs->setup($this->seedBean, $this->displayTpl, $where , $lvsParams, 0, $this->displayRows,
+                              array('name',
+                                    'description',
+                                    'date_entered',
+                                    'created_by',
 
 //BEGIN SUGARCRM flav=pro ONLY
                                     'team_id',
@@ -238,7 +238,7 @@ var $myFavoritesOnly = false;
 //END SUGARCRM flav=pro ONLY
                                     'link_url',
                                     'link_type'));
-            
+
             //$GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
 
             foreach($this->lvs->data['data'] as $row => $data) {
@@ -258,7 +258,7 @@ var $myFavoritesOnly = false;
 
             $this->lvs->ss->assign('dashletId', $this->id);
 
-            
+
         }
 
         $td = $GLOBALS['timedate'];
@@ -280,7 +280,7 @@ var $myFavoritesOnly = false;
                 }
             }
         }
-        
+
         if ( count($feedErrors) > 0 ) {
             $this->lvs->ss->assign('feedErrors',$feedErrors);
         }
@@ -289,17 +289,17 @@ var $myFavoritesOnly = false;
         foreach ( $this->lvs->data['data'] as $normalMessage ) {
             list($user_date,$user_time) = explode(' ',$normalMessage['DATE_ENTERED']);
             list($db_date,$db_time) = $td->to_db_date_time($user_date,$user_time);
-            
+
             $unix_timestamp = strtotime($db_date.' '.$db_time);
-            
+
             $normalMessage['sort_key'] = $unix_timestamp;
             $normalMessage['NAME'] = '</b>'.$normalMessage['NAME'];
-            
+
             $resortQueue[] = $normalMessage;
         }
-        
+
         usort($resortQueue,create_function('$a,$b','return $a["sort_key"]<$b["sort_key"];'));
-        
+
         // Trim it down to the necessary number of records
         $numRecords = count($resortQueue);
         $numRecords = $numRecords - $this->lvs->data['pageData']['offsets']['current'];
@@ -372,7 +372,7 @@ var $myFavoritesOnly = false;
 			$team_id = $parentFeed->team_id;
 			$team_set_id = $team_id; //For now, but if we allow for multiple team selection then we'll have to change this
 //END SUGARCRM flav=pro ONLY
-            SugarFeed::pushFeed($text, 'SugarFeed', $_REQUEST['parentFeed'], 
+            SugarFeed::pushFeed($text, 'SugarFeed', $_REQUEST['parentFeed'],
 //BEGIN SUGARCRM flav=pro ONLY
                                 $team_id,
 //END SUGARCRM flav=pro ONLY
@@ -383,7 +383,7 @@ var $myFavoritesOnly = false;
 //END SUGARCRM flav=pro ONLY
                                 );
         }
-       
+
     }
 
 	  function displayOptions() {
@@ -436,7 +436,7 @@ var $myFavoritesOnly = false;
 		if($rows > 100){
 			$rows = 100;
 		}
-        if ( isset($req['autoRefresh']) ) 
+        if ( isset($req['autoRefresh']) )
             $options['autoRefresh'] = $req['autoRefresh'];
         $options['rows'] = $rows;
 		$options['categories'] = $req['categories'];
@@ -446,7 +446,7 @@ var $myFavoritesOnly = false;
 			}
 		}
 
-//BEGIN SUGARCRM flav=pro ONLY		
+//BEGIN SUGARCRM flav=pro ONLY
         if(!empty($req['myFavoritesOnly'])) {
             $options['myFavoritesOnly'] = $req['myFavoritesOnly'];
         }

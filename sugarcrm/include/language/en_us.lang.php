@@ -404,15 +404,7 @@ $app_list_strings = array (
   'meeting_type_dom' =>
    array (
       'Other' => 'Other',
-      'WebEx' => 'WebEx',
-      'GoToMeeting' => 'GoToMeeting'
-   ),
-   'doc_type_dom' =>
-   array (
-   	'Sugar' => 'Sugar',
-    'Google' => 'Google',
-    'Box.net' => 'Box.net',
-   	'LotusLive' => 'LotusLive',
+      'SugarCRM' => 'SugarCRM',
    ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
@@ -2409,7 +2401,7 @@ $app_strings = array (
     'LBL_CLOSE_AND_CREATE_BUTTON_LABEL' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_TITLE' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_KEY' => 'C',
-    'LBL_OPEN_ITEMS' => 'Open Items:',    
+    'LBL_OPEN_ITEMS' => 'Open Items:',
     'LBL_COMPOSE_EMAIL_BUTTON_KEY' => 'L',
     'LBL_COMPOSE_EMAIL_BUTTON_LABEL' => 'Compose Email',
     'LBL_COMPOSE_EMAIL_BUTTON_TITLE' => 'Compose Email [Alt+L]',
@@ -3088,7 +3080,7 @@ $app_strings = array (
 	'LBL_NEXT_MONTH'=>'Next Month',
     'LBL_THIS_MONTH'=>'This Month',
     'LBL_LAST_30_DAYS'=>'Last 30 Days',
-    'LBL_NEXT_30_DAYS'=>'Next 30 Days',    
+    'LBL_NEXT_30_DAYS'=>'Next 30 Days',
 	'LBL_LAST_YEAR'=>'Last Year',
     'LBL_THIS_YEAR'=>'This Year',
 	'LBL_NEXT_YEAR'=>'Next Year',
@@ -3843,11 +3835,12 @@ $app_list_strings['kbdocument_status_dom'] = array (
 
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
   $app_list_strings['eapm_list']= array(
-  	'SugarCRM'=>'SugarCRM',
-  	'webex'=>'WebEx',
+    'facebook' => 'Facebook',
+  	'google' => 'Google',
   	'gotomeeting'=>'GoToMeeting',
   	'lotuslive'=>'LotusLive',
-  	'google' => 'Google Document',
+    'twitter'=>'Twitter',
+    'webex'=>'WebEx',
     'box' => 'Box.net',
   );
   $app_list_strings['LBL_API_TYPE_ENUM'] = array(

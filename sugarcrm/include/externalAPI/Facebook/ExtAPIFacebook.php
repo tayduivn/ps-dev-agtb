@@ -32,19 +32,16 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
     protected $authData;
     public $needsUrl = false;
     public $supportedModules = array('SugarFeed');
-
+    public $connector = "ext_eapm_facebook";
 
     protected $oauthParams = array(
     	'signatureMethod' => 'HMAC-SHA1',
-        'consumerKey' => "141380979217659",
-    // FIXME: encode?
-        'consumerSecret' => "93b0ed5908a2b23c3e17a2cc2a22cd77",
     );
 
     public function checkLogin($eapmBean = null)
     {
         $reply = parent::checkLogin($eapmBean);
-        
+
         if ( !$reply['success'] ) {
             return $reply;
         }
@@ -53,20 +50,20 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
             // FIXME: Translate
             return array('success'=>FALSE,'errorMessage'=>'Facebook does not have the required libraries.');
         }
-        
-        $GLOBALS['log']->fatal('Checking login.');
+
+        $GLOBALS['log']->debug('Checking login.');
 
 
         if ( empty($this->eapmBean->oauth_secret) ) {
             // We must be saving, try re-authing
-            $GLOBALS['log']->fatal('We must be saving.');
+            $GLOBALS['log']->debug('We must be saving.');
             if ( !empty($_REQUEST['session']) ) {
                 $_REQUEST['session'] = str_replace('&quot;','"',$_REQUEST['session']);
-                $GLOBALS['log']->fatal('Have a session from facebook: '.$_REQUEST['session']);
-                
+                $GLOBALS['log']->debug('Have a session from facebook: '.$_REQUEST['session']);
+
                 $fbSession = $this->fb->getSession();
                 if ( !empty($fbSession) ) {
-                    $GLOBALS['log']->fatal('Have a VALID session from facebook:'.print_r($fbSession,true));
+                    $GLOBALS['log']->debug('Have a VALID session from facebook:'.print_r($fbSession,true));
                     // Put a string in here so we can tell when it resets it.
                     $this->eapmBean->oauth_secret = 'SECRET';
                     $this->eapmBean->api_data = base64_encode(json_encode(array('fbSession'=>$fbSession)));
@@ -75,18 +72,18 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
                     return array('success'=>true);
                 } else {
                     // FIXME: Translate
-                    $GLOBALS['log']->fatal('Have an INVALID session from facebook:'.print_r($fbSession,true));
+                    $GLOBALS['log']->error('Have an INVALID session from facebook:'.print_r($fbSession,true));
                     return array('success'=>false,'errorMessage'=>'No authentication.');
                 }
             } else {
                 $callback_url = $GLOBALS['sugar_config']['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
                 $loginUrl = $this->fb->getLoginUrl(array('next'=>$callback_url,'cancel'=>$callback_url));
-                $GLOBALS['log']->fatal('IKEA: Shipping the user to here: '.$loginUrl);
+                $GLOBALS['log']->debug('IKEA: Shipping the user to here: '.$loginUrl);
                 SugarApplication::redirect($loginUrl);
                 return array('success'=>false);
             }
         }
-        
+
         return $reply;
     }
 
@@ -142,10 +139,10 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
             $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'].'/picture';
-            
+
             $messages[] = $fake_record;
         }
-        
+
 
         return array('success'=>TRUE,'messages'=>$messages);
     }
@@ -160,7 +157,7 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
         } catch ( Exception $e ) { return false; }
 
         $this->fb = new FacebookLib(array(
-                                        'appId' => $this->oauthParams['consumerKey'], 
+                                        'appId' => $this->oauthParams['consumerKey'],
                                         'secret' => $this->oauthParams['consumerSecret'],
                                         'cookie' => false,
                                         ));

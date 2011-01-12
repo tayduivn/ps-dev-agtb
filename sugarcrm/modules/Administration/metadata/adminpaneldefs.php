@@ -135,7 +135,6 @@ $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LB
 
 // Connector Integration
 $admin_option_defs['Administration']['connector_settings']=array('icon_Connectors','LBL_CONNECTOR_SETTINGS','LBL_CONNECTOR_SETTINGS_DESC','./index.php?module=Connectors&action=ConnectorSettings');
-$admin_option_defs['Administration']['eapm_settings']=array('icon_Connectors','LBL_EAPM_SETTINGS','LBL_EAPM_SETTINGS_DESC','./index.php?module=EAPM&action=displayproperties');
 
 //BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['sugarpdf']= array('icon_AdminPDF','LBL_SUGARPDF_SETTINGS','LBL_SUGARPDF_SETTINGS_DESC','./index.php?module=Configurator&action=SugarpdfSettings');

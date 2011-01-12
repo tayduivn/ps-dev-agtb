@@ -2,6 +2,7 @@
 
 require_once ('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once ('include/externalAPI/Base/ExternalOAuthAPIPlugin.php');
+require_once('include/connectors/sources/SourceFactory.php');
 
 abstract class ExternalAPIBase implements ExternalAPIPlugin
 {
@@ -46,7 +47,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if ( !isset($this->eapmBean) ) {
             return array('success' => false);
         }
-        
+
         return array('success' => true);
     }
 
@@ -55,8 +56,8 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if ( !isset($this->eapmBean) ) {
             return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
         }
-        
-        return array('success' => true);        
+
+        return array('success' => true);
     }
 
     protected function getValue($value)
@@ -73,6 +74,10 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         return true;
     }
 
+    /**
+     * Does API support this method?
+     * @see ExternalAPIPlugin::supports()
+     */
     public function supports($method = '')
 	{
         return $method==$this->authMethod;
@@ -83,7 +88,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if ( ( is_array($postfields) && count($postfields) == 0 ) || 
+        if ( ( is_array($postfields) && count($postfields) == 0 ) ||
              empty($postfields) ) {
             curl_setopt($ch, CURLOPT_POST, false);
         } else {
@@ -93,12 +98,39 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
-        $GLOBALS['log']->fatal("Where: ".$url);
-        // $GLOBALS['log']->fatal("Headers:\n".print_r($headers,true));
-        // $GLOBALS['log']->fatal("Postfields:\n".print_r($postfields,true));
+        $GLOBALS['log']->debug("Where: ".$url);
+        // $GLOBALS['log']->debug("Headers:\n".print_r($headers,true));
+        // $GLOBALS['log']->debug("Postfields:\n".print_r($postfields,true));
         $rawResponse = curl_exec($ch);
-        $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
+        $GLOBALS['log']->debug("Got:\n".print_r($rawResponse,true));
 
         return $rawResponse;
+	}
+
+	/**
+	 * Get connector for this API
+	 * @return source|null
+	 */
+	public function getConnector()
+	{
+	    if(isset($this->connector)) {
+	        if(empty($this->connector_source)) {
+	            $this->connector_source = SourceFactory::getSource($this->connector, false);
+	        }
+	        return $this->connector_source;
+	    }
+	    return null;
+	}
+
+	/**
+	 * Get parameter from source
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getConnectorParam($name)
+	{
+        $connector =  $this->getConnector();
+        if(empty($connector)) return null;
+        return $connector->getProperty($name);
 	}
 }

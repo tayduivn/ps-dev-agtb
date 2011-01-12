@@ -65,7 +65,7 @@ class EAPMViewEdit extends ViewEdit {
             }
         }
         $this->_returnId = $returnId;
-        
+
         $iconPath = $this->getModuleTitleIconPath($this->module);
     	$params = array(
            "<a href='index.php?module=Users&action=index'><img src='{$iconPath}' alt='Users' title='Users' align='absmiddle'></a>",
@@ -73,14 +73,14 @@ class EAPMViewEdit extends ViewEdit {
     	   );
 
         $params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
- 
+
         return $params;
     }
 
     protected function getModuleTitleIconPath($module) {
         return parent::getModuleTitleIconPath('Users');
     }
-    
+
  	function display() {
         $this->ss->assign('return_id', $this->_returnId);
 
