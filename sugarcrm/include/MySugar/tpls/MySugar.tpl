@@ -45,6 +45,10 @@ li.active a img.deletePageImg {
    display: inline !important;
    margin-bottom: 2px;
 }
+
+div.moduleTitle {
+height: 10px;
+	}
 </style>
 {/literal}
 
