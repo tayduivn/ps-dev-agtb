@@ -717,6 +717,9 @@ EOHTML;
                 echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache_debug.js') . '"></script>';
             else
                 echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache.js') . '"></script>';
+
+            require_once("include/Expressions/DependencyManager.php");
+            echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
             //END SUGARCRM flav=pro ONLY
         }
 

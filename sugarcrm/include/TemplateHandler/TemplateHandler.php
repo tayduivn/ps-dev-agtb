@@ -484,7 +484,6 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
-        $js .= DependencyManager::getJSUserVariables($GLOBALS['current_user']);
         $js .= DependencyManager::getLinkFields($fieldDefs, $view);
 
 
