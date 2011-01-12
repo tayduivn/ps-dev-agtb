@@ -37,9 +37,11 @@ class cssparser {
     if(count($codes) > 0) {
       foreach($codes as $code) {
         $code = trim($code);
-        list($codekey, $codevalue) = explode(":",$code,2);
-        if(strlen($codekey) > 0) {
-          $this->css[$key][trim($codekey)] = trim($codevalue);
+        if(!empty($code)) {
+	        list($codekey, $codevalue) = explode(":",$code,2);
+	        if(strlen($codekey) > 0) {
+	          $this->css[$key][trim($codekey)] = trim($codevalue);
+	        }
         }
       }
     }
@@ -128,16 +130,18 @@ class cssparser {
     $parts = explode("}",$str);
     if(count($parts) > 0) {
       foreach($parts as $part) {
-        list($keystr,$codestr) = explode("{",$part);
-        $keys = explode(",",trim($keystr));
-        if(count($keys) > 0) {
-          foreach($keys as $key) {
-            if(strlen($key) > 0) {
-              $key = str_replace("\n", "", $key);
-              $key = str_replace("\\", "", $key);
-              $this->Add($key, trim($codestr));
-            }
-          }
+      	if(!empty($part)) {
+	        list($keystr,$codestr) = explode("{",$part);
+	        $keys = explode(",",trim($keystr));
+	        if(count($keys) > 0) {
+	          foreach($keys as $key) {
+	            if(strlen($key) > 0) {
+	              $key = str_replace("\n", "", $key);
+	              $key = str_replace("\\", "", $key);
+	              $this->Add($key, trim($codestr));
+	            }
+	          }
+	       }
         }
       }
     }
