@@ -61,11 +61,11 @@ class ExternalAPIFactory{
                 $apiName = str_replace($baseDir,'',$dir);
                 if ( file_exists($dir.'/ExtAPI'.$apiName.'.php') ) {
                     $apiFullList[$apiName]['className'] = 'ExtAPI'.$apiName;
-                    $apiFullList[$apiName]['file'] = $dir.'/'.$apiName.'.php';
+                    $apiFullList[$apiName]['file'] = $dir.'/'.$apiFullList[$apiName]['className'].'.php';
                 }
                 if ( file_exists($dir.'/ExtAPI'.$apiName.'_cstm.php') ) {
                     $apiFullList[$apiName]['className'] = 'ExtAPI'.$apiName.'_cstm';
-                    $apiFullList[$apiName]['file_cstm'] = $dir.'/'.$apiName.'_cstm.php';
+                    $apiFullList[$apiName]['file_cstm'] = $dir.'/'.$apiFullList[$apiName]['className'].'.php';
                 }
             }
         }
