@@ -140,12 +140,12 @@ class DocumentRevision extends SugarBean {
 		
 		parent::fill_in_additional_detail_fields();
 
-        if ( empty($this->id) && !empty($_REQUEST['return_id']) ) {
+        if ( empty($this->id) && isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id']) ) {
             $this->document_id = $_REQUEST['return_id'];
         }
 		
 		//find the document name and current version.
-		$query = "SELECT document_name, revision, document_revision_id FROM documents, document_revisions where documents.id = '$this->document_id' AND document_revisions.id = documents.document_revision_id";
+		$query = "SELECT document_name, revision, document_revision_id FROM documents, document_revisions where documents.id = '".$this->db->quote($this->document_id)."' AND document_revisions.id = documents.document_revision_id";
 		$result = $this->db->query($query,true,"Error fetching document details...:");
 		$row = $this->db->fetchByAssoc($result);
 		if ($row != null) {

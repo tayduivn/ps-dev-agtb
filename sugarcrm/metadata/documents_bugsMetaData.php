@@ -70,6 +70,7 @@ $dictionary["documents_bugs"] = array (
       'fields' => 
       array (
         0 => 'bug_id',
+        1 => 'document_id',
       ),
     ),
     2 => 
@@ -79,6 +80,7 @@ $dictionary["documents_bugs"] = array (
       'fields' => 
       array (
         0 => 'document_id',
+        1 => 'bug_id',
       ),
     ),
   ),

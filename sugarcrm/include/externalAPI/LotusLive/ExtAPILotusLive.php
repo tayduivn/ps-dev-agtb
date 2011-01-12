@@ -26,7 +26,7 @@ require_once('include/externalAPI/Base/WebMeeting.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 
 
-class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
+class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
 
     protected $dateFormat = 'm/d/Y H:i:s';
 //    protected $urlExtension = '/envq/Production/';
@@ -81,6 +81,19 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
         }
     }
 
+    public function quickCheckLogin()
+    {
+        $reply = parent::quickCheckLogin();
+        if ( !$reply['success'] ) {
+            return $reply;
+        }
+        $reply = $this->makeRequest('GetSubscriberId/OAuth');
+        if ( ! $reply['success'] ) {
+            return $reply;
+        } 
+        return array('success' => true);
+    }
+
     public function checkLogin($eapmBean = null)
     {
         $reply = parent::checkLogin($eapmBean);
@@ -103,7 +116,6 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
             'joinURL'=>$reply2['responseJSON']['feed']['entry']['joinURL'],
             'subscriberID'=>$reply['responseJSON']['subscriber_id'],
             );
-        $GLOBALS['log']->fatal('IKEA (api_data): '.print_r($apiData,true));
         $this->eapmBean->api_data = base64_encode(json_encode($apiData));
         
         return $reply;
@@ -328,15 +340,7 @@ class LotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
         $reply['responseRAW'] = $rawResponse;
         $reply['responseJSON'] = null;
 
-        // IKEA: Ugly hack (for GetSubscriberId)
-        // $rawResponse = preg_replace('/^{ {([^}]*)},{([^}]*)} }$/','{\1,\2}',$rawResponse);
-
         $response = json_decode($rawResponse,true);
-
-        // IKEA: Ugly hack #2 (for GetFileList)
-        // if( isset($response['GetFileList']) ) {
-        //     $response = $response['GetFileList'];
-        //}
 
         if ( empty($rawResponse) || !is_array($response) ) {
             $reply['success'] = FALSE;

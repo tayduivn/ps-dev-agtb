@@ -1,4 +1,4 @@
-{*
+    {*
 
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -145,7 +145,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 				<td>{$rowData.star}</td>
 			{/if}
 			{if !empty($quickViewLinks)}
-			<td width='2%' nowrap>{if $pageData.access.edit}<a title='{$editLinkString}' href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)" onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)"><img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>{/if}</td>
+			<td width='2%' nowrap>{if $pageData.access.edit}<a title='{$editLinkString}' href="index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index"><img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>{/if}</td>
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=col item=params}
@@ -153,11 +153,11 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 				<td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
 					{if $col == 'NAME' || $params.bold}<b>{/if}
 				    {if $params.link && !$params.customCode}
-						<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}', '{$rowData[$params.id]|default:$rowData.ID}', 'd', {$offset}, this)"  onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}', '{$rowData[$params.id]|default:$rowData.ID}', 'd', {$offset}, this)">
-						{/if}
-					{if $params.customCode} 
+						<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='index.php?action={$params.action|default:'DetailView'}&module={if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}'>
+					{/if}
+					{if $params.customCode}
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
-					{else}	
+					{else}
                        {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
 					{/if}
 					{if empty($rowData.$col) && empty($params.customCode)}&nbsp;{/if}

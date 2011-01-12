@@ -31,6 +31,21 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         }
     }    
 
+    public function quickCheckLogin()
+    {
+        $reply = parent::quickCheckLogin();
+        
+        if ( !$reply['success'] ) {
+            return $reply;
+        }
+        
+        if ( !empty($this->oauth_token) && !empty($this->oauth_secret) ) {
+            return array('success'=>true);
+        } else {
+            return array('success'=>false,'errorMessage'=>translate('LBL_ERR_NO_TOKEN','EAPM'));
+        }
+    }
+
     protected function checkOauthLogin()
     {
         if ( empty($this->oauth_token) || empty($this->oauth_secret) ) {
@@ -87,6 +102,11 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         if($stage == 0) {
             $oauthReq = $this->getOauthRequestURL();
             $callback_url = $sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
+            // This is a tweak so that we can automatically close windows if requested by the external account system
+            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+                $callback_url .= '&closeWhenDone=1';
+            }
+
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));

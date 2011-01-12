@@ -38,9 +38,13 @@ $dashletData['MyDocumentsDashlet']['searchFields'] = array('date_entered'    => 
                                                           //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
                                                           //END SUGARCRM flav=pro ONLY
+
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name,
 																					  'label' => 'LBL_ASSIGNED_TO'));
+
+
+
 $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array('width'   => '40', 
                                                                       'label'   => 'LBL_NAME',
                                                                       'link'    => true,
