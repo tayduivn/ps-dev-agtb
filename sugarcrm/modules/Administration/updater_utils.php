@@ -583,7 +583,7 @@ function setSystemState($state){
 
 				if(!is_admin($current_user) && !($_REQUEST['module'] == 'Users' && ( $_REQUEST['action'] == 'Logout' || $_REQUEST['action'] == 'Login'))){
 
-					header('Location: index.php?module=Users&action=Logout');
+					SugarApplication::redirect('index.php?module=Users&action=Logout');
 
 				}else if(
 				is_admin($current_user) &&
@@ -594,7 +594,7 @@ function setSystemState($state){
 				||  ($_REQUEST['module'] == 'Configurator')
 				))){
 
-					header('Location: index.php?action=LicenseSettings&module=Administration');
+					SugarApplication::redirect('index.php?action=LicenseSettings&module=Administration');
 
 					sugar_cleanup(true);
 				}
