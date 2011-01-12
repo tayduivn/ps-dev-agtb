@@ -42,8 +42,21 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if(!empty($eapmBean)) {
             $this->loadEAPM($eapmBean);
         }
+
+        if ( !isset($this->eapmBean) ) {
+            return array('success' => false);
+        }
         
         return array('success' => true);
+    }
+
+    public function quickCheckLogin()
+    {
+        if ( !isset($this->eapmBean) ) {
+            return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
+        }
+        
+        return array('success' => true);        
     }
 
     protected function getValue($value)

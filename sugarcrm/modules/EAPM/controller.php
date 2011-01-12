@@ -98,6 +98,12 @@ class EAPMController extends SugarController
             return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
         } else {
             $this->bean->validated();
+            // This is a tweak so that we can automatically close windows if requested by the external account system
+            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+                echo('<script type="text/javascript">window.close();</script>');
+                return;
+            }            
+
             // redirect to detail view, as in save
             return parent::post_save();
         }

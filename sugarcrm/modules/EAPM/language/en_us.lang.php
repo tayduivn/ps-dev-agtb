@@ -74,6 +74,11 @@ $mod_strings = array (
   'LBL_SUGAR_USER_NAME' => 'Sugar User',
   'LBL_DISPLAY_PROPERTIES' => 'Display Properties',
 
+  'LBL_ERR_NO_AUTHINFO' => 'There is no authentication information for this account.',
+  'LBL_ERR_NO_TOKEN' => 'There are no valid login tokens for this account.',
+  
+  'LBL_ERR_FAILED_QUICKCHECK' => ' failed the login test, is it okay to open a new window and validate your external login?',
+
   // Various strings used throughout the external account modules
   'LBL_MEET_NOW_BUTTON' => 'Meet Now',
   'LBL_VIEW_LOTUS_LIVE_MEETINGS' => 'View Upcoming LotusLive&trade; Meetings',
