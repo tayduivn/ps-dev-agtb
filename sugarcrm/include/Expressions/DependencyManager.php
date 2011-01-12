@@ -71,7 +71,7 @@ class DependencyManager {
 		$deps = array();
 
 		foreach($fields as $field => $def) {
-			if ( isset ( $def [ 'dependency' ] ) )
+			if ( !empty ( $def [ 'dependency' ] ) )
     		{
     			// normalize the dependency definition
     			if ( ! is_array ( $def [ 'dependency' ] ) )
@@ -81,7 +81,7 @@ class DependencyManager {
     			}
 				foreach ( $def [ 'dependency' ]  as $depdef)
 				{
-    				$dep = new Dependency ( $field ) ;
+    				$dep = new Dependency ( "{$field}_vis" ) ;
     				if (is_array($depdef [ 'trigger' ])) {
     					$triggerFields = $depdef [ 'trigger' ];
     				} else {
@@ -192,6 +192,10 @@ class DependencyManager {
         {
             $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit'));
         }
+        else
+        {
+            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'view'));
+        }
         return $deps;
     }
 
@@ -260,9 +264,16 @@ class DependencyManager {
     }
 
 	static function getDependenciesForFields($fields, $view = "") {
-		return array_merge(self::getCalculatedFieldDependencies($fields),
-						   self::getDependentFieldDependencies($fields),
-						   self::getDropDownDependencies($fields));
+		if ($view == "DetailView")
+        {
+            return self::getDependentFieldDependencies($fields);
+        } else
+        {
+            return array_merge(
+                self::getCalculatedFieldDependencies($fields),
+				self::getDependentFieldDependencies($fields),
+				self::getDropDownDependencies($fields));
+        }
 	}
 
     /**

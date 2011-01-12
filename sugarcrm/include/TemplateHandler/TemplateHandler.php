@@ -214,6 +214,10 @@ class TemplateHandler {
             $mod = $beanList[$module];
             if($mod == 'aCase')
                 $mod = 'Case';
+            $defs = $dictionary[$mod]['fields'];
+            $contents .= "{literal}\n";
+            $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view);
+            $contents .= "{/literal}\n";
         }//if
 		//END SUGARCRM flav=pro ONLY
 
@@ -485,12 +489,13 @@ class TemplateHandler {
 
 
         $dependencies = array_merge(
-           DependencyManager::getDependenciesForFields($fieldDefs),
+           DependencyManager::getDependenciesForFields($fieldDefs, $view),
            DependencyManager::getDependenciesForView($viewDefs, $view)
         );
 
+        
         foreach($dependencies as $dep) {
-            $js .= $dep->getJavascript();
+            $js .= $dep->getJavascript($view);
         }
 
         $js .= "</script>";
