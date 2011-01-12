@@ -208,21 +208,17 @@ function enableQS(noReload){
 			        					label_and_data = data_label  + ' ' + displayValue + '\n';
 	                	        	   
 			        					//Append to current_label_data_str only if the label and data are unique
-			        					if(!label_data_hash[label_and_data])
+			        					if(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]] && !label_data_hash[label_and_data])
 			        					{
 			        						label_data_str += label_and_data;
 			        						label_data_hash[label_and_data] = true;
+				        					current_label_data_str += data_label + ' ' + document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value + '\n';
 			        					}			        					
-			        					
-			        					if(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]])
-			        					{
-			        						current_label_data_str += data_label + ' ' + document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value + '\n';
-			        					}
 	                	           }
 	                	       }
 	                    	}
 
-	        			    if(label_data_str != label_str && current_label_data_str != label_str) {    	
+	        			    if(label_and_data != label_str && current_label_data_str != label_data_str) {    	
 	        			    	
 	        			    	module_key = (typeof document.forms[form_id].elements['module'] != 'undefined') ? document.forms[form_id].elements['module'].value : 'app_strings';
 	        			    	warning_label = SUGAR.language.translate(module_key, 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str;       			    	
@@ -236,14 +232,16 @@ function enableQS(noReload){
 	       							{
 	       							  if(this.inputElement.id == 'shipping_account_name')
 	       							  {
-	       							      filter = Dom.get('shipping_checkbox').checked ? /(account_id|office)/ : filter;
+	       								  //If the copy address checkbox is checked, update account and office_phone
+	       							      filter = Dom.get('shipping_checkbox').checked ? /(account_id|office_phone)/ : filter;
 	       							  } else if(this.inputElement.id == 'billing_account_name') {
-	       								  filter = Dom.get('shipping_checkbox').checked ? filter : /(account_id|office|billing)/;
+	       								  //If the copy address is checked, update account, office phone and billing addresses
+	       								  filter = Dom.get('shipping_checkbox').checked ? filter : /(account_id|office_phone|billing)/;
 	       							  }
 	       							} else if(Dom.get('alt_checkbox')) {
-	       							  filter = Dom.get('alt_checkbox').checked ? filter : /^alt/;
+	       							  filter = Dom.get('alt_checkbox').checked ? filter : /^(?!alt)/;
 	       							}
-	       							
+	       						
 	       							this.updateFields(data,filter);
 	       						}
 	        			    } else {

@@ -116,12 +116,13 @@ function confirm_address_update(popup_reply_data)
 		{
 			continue;
 		}
-		
-		var displayValue = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');			
 
-		if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account_id/)) {
+		if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account_(id|name)/)) {
+			
+			var displayValue = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 			var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'');
-			label_data_str += data_label  + ' ' + displayValue + '\n';
+			
+			
 			if(window.document.forms[form_name].elements[the_key]) {
 				label_str += data_label + ' \n';
 				label_and_data = data_label + ' ' + window.document.forms[form_name].elements[the_key].value +'\n';				
@@ -129,6 +130,7 @@ function confirm_address_update(popup_reply_data)
 				//Append to current_label_data_str only if the label and data are unique
 				if(!label_data_hash[label_and_data])
 				{
+					label_data_str += data_label  + ' ' + displayValue + '\n';
 					current_label_data_str += label_and_data;
 					label_data_hash[label_and_data] = true;
 				}
@@ -136,7 +138,7 @@ function confirm_address_update(popup_reply_data)
 		}			
 	}
 
-	if(label_data_str != label_str && current_label_data_str != label_str)
+	if(label_and_data != label_str && current_label_data_str != label_data_str)
 	{
 		return confirm(SUGAR.language.translate('Quotes', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str);
 	} 		
