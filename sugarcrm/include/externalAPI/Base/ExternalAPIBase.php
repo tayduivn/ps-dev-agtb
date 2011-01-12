@@ -47,7 +47,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if ( !isset($this->eapmBean) ) {
             return array('success' => false);
         }
-        
+
         return array('success' => true);
     }
 
@@ -56,8 +56,8 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if ( !isset($this->eapmBean) ) {
             return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
         }
-        
-        return array('success' => true);        
+
+        return array('success' => true);
     }
 
     protected function getValue($value)
@@ -129,6 +129,8 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
 	 */
 	public function getConnectorParam($name)
 	{
-        return $this->getConnector()->getProperty($name);
+        $connector =  $this->getConnector();
+        if(empty($connector)) return null;
+        return $connector->getProperty($name);
 	}
 }
