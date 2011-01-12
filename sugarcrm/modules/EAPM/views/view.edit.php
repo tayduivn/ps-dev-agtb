@@ -83,8 +83,13 @@ class EAPMViewEdit extends ViewEdit {
     
  	function display() {
         $this->ss->assign('return_id', $this->_returnId);
+
         if($GLOBALS['current_user']->is_admin || empty($this->bean) || empty($this->bean->id) || $this->bean->isOwner($GLOBALS['current_user']->id)){
- 			parent::display();
+            if(!empty($this->bean) && empty($this->bean->id) && $this->_returnId != $GLOBALS['current_user']->id){
+                $this->bean->assigned_user_id = $this->_returnId;
+            }
+
+            parent::display();
         } else {
         	ACLController::displayNoAccess();
         }

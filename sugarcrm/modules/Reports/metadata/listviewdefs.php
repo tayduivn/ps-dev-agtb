@@ -46,10 +46,6 @@ $listViewDefs['Reports'] = array(
         'orderBy' => 'report_type',
         'related_fields' => array('report_type'),
     ),
-    'DATE_ENTERED' => array(
-        'width' => '5', 
-        'label' => 'LBL_DATE_ENTERED',
-        'default' => true),
     //BEGIN SUGARCRM flav=pro ONLY
     'TEAM_NAME' => array(
         'width' => '2', 
@@ -83,7 +79,11 @@ $listViewDefs['Reports'] = array(
         'orderBy' => 'report_cache.date_modified',
         'sortable' => true,
         'related_fields' => array('active', 'report_cache.date_modified'),
-    ),      
+    ),
+    'DATE_ENTERED' => array(
+        'width' => '5',
+        'label' => 'LBL_DATE_ENTERED',
+        'default' => true),
 
 /*    'IS_PUBLISHED' => array(
         'width' => '2',

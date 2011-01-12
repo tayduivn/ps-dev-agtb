@@ -64,6 +64,10 @@ class ViewEditFormula extends SugarView
 		{
 			$smarty->assign("target", $_REQUEST['targetField']);
 		}
+        if (isset($_REQUEST['returnType']))
+		{
+			$smarty->assign("returnType", $_REQUEST['returnType']);
+		}
 		//Assign any requested Javascript event actions
 		foreach(array('onSave', 'onLoad', 'onClose') as $e) {
 			if (!empty($_REQUEST[$e]))

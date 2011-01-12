@@ -3,7 +3,7 @@
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class GoToMeeting extends ExternalAPIBase implements WebMeeting {
+class ExtAPIGoToMeeting extends ExternalAPIBase implements WebMeeting {
 
     private $login_key;
 

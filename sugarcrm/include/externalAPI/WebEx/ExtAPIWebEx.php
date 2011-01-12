@@ -3,7 +3,7 @@
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 
-class WebEx extends ExternalAPIBase implements WebMeeting {
+class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
 
     protected $dateFormat = 'm/d/Y H:i:s';
     protected $urlExtension = '/WBXService/XMLService';
@@ -101,14 +101,14 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
             }
 
             // Figure out the join url
-            $join_reply = $this->joinMeeting($bean->external_id);
+            $join_reply = $this->joinMeeting($bean,$GLOBALS['current_user']->full_name);
             $xp = new DOMXPath($join_reply['responseXML']);
             $bean->join_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:joinMeetingURL')->item(0)->nodeValue;
             $GLOBALS['log']->fatal('Join URL: '.print_r($bean->join_url,true));
 
 
             // Figure out the host url
-            $host_reply = $this->hostMeeting($bean->external_id);
+            $host_reply = $this->hostMeeting($bean);
             $xp = new DOMXPath($host_reply['responseXML']);
             $bean->host_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:hostMeetingURL')->item(0)->nodeValue;
             $GLOBALS['log']->fatal('Host URL: '.print_r($bean->host_url,true));
@@ -188,7 +188,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
       $body = $doc->body->bodyContent;
       $person = $body->addChild('person', '');
       $person->addChild('name', $attendee->name);
-      $person->addChild('email', $attendee->email);
+      $person->addChild('email', $attendee->email1);
       $body->addChild('sessionKey', $bean->external_id);
       $body->addChild('emailInvitations', $sendInvites?'true':'false');
       return $this->postMessage($doc);
@@ -262,6 +262,7 @@ class WebEx extends ExternalAPIBase implements WebMeeting {
          "Content-Length: ".$content_length,
       );
 
+      $GLOBALS['log']->fatal('SENT: '.$xml);
       $response = $this->postData('https://' . $this->account_url, $xml, $headers);
       // $reply is an associative array that formats the basic information in a way that
       // callers can get most of the data out without having to understand any underlying formats.

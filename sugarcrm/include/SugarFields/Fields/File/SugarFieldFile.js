@@ -53,6 +53,16 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
 	            }
             }
         },
+        checkEapiLogin: function(res) {
+            var failedLogins = JSON.parse(res.responseText);
+            if ( failedLogins.length == 0 ) { return; }
+
+            for ( var idx in failedLogins ) {
+                if(confirm(failedLogins[idx].label)) {
+                    window.open(failedLogins[idx].checkURL,'EAPM_CHECK_'+idx);
+                }
+            }
+        },
         setupEapiShowHide: function(elemBaseName,docTypeName,formName) {
             var radioChangeFunc = function() { 
                 var showElem = '';
@@ -80,6 +90,9 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                     
                     // Start a refresh of the document cache in the background. Thanks AJAX!
                     YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=flushFileCache&to_pdf=1&api='+dropdownValue,{});
+                    
+                    // Double check to make sure their login is valid
+                    YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=CheckLogins&to_pdf=1&api='+dropdownValue,{success:SUGAR.field.file.checkEapiLogin});
 
                     radioElemUpload.disabled = false;
                 } else {

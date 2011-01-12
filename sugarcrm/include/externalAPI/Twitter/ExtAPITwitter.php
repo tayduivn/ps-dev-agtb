@@ -24,7 +24,7 @@ require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebFeed.php');
 
 
-class Twitter extends OAuthPluginBase implements WebFeed {
+class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
     public $authMethod = 'oauth';
     public $useAuth = true;
     public $requireAuth = true;

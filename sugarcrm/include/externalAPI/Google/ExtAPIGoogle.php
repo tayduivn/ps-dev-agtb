@@ -5,7 +5,7 @@ require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/Docs/Query.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
-class Google extends ExternalAPIBase implements WebDocument {
+class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     public $supportedModules = array('Documents', 'Notes');
     public $authMethod = 'password';
     protected $scope = "https://docs.google.com/feeds/ http://docs.google.com/feeds/";

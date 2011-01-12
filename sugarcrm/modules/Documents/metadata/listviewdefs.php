@@ -111,14 +111,14 @@ $listViewDefs['Documents'] = array(
     'label' => 'LBL_LIST_EXP_DATE',
     'default' => true,
   ),
-  'ASSIGNED_USER_NAME' => 
+  'ASSIGNED_USER_NAME' =>
   array(
-    'width' => '10', 
+    'width' => '10',
     'label' => 'LBL_LIST_ASSIGNED_USER',
     'module' => 'Employees',
     'id' => 'ASSIGNED_USER_ID',
     'default' => true),
-  'MODIFIED_BY_NAME' => 
+  'MODIFIED_BY_NAME' =>
   array (
     'width' => '10%',
     'label' => 'LBL_MODIFIED_USER',
@@ -126,10 +126,15 @@ $listViewDefs['Documents'] = array(
     'id' => 'USERS_ID',
     'default' => false,
     'sortable' => false,
-    'related_fields' => 
+    'related_fields' =>
     array (
       0 => 'modified_user_id',
     ),
-  ),
+    ),
+  'DATE_ENTERED' => array (
+    'width' => '10%',
+    'label' => 'LBL_DATE_ENTERED',
+    'default' => true,
+  )
 );
 ?>
