@@ -22,6 +22,7 @@
 	<!--create Call-->
 	<div id="list_subpanel_activities">
 		<button value="  Log Call  " />
+		<wait timeout="3" />
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1366.csv" var="Case_1366">

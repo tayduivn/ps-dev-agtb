@@ -147,7 +147,7 @@ SUGAR.forms.AssignmentHandler.registerView = function(view, startEl) {
 	if (Dom.get(view) != null && Dom.get(view).tagName == "FORM") {
 		return AH.registerForm(view);
 	}
-	var nodes = YAHOO.util.Selector.query("." + view + ".view [id]", startEl);
+	var nodes = YAHOO.util.Selector.query("span.sugar_field", startEl);
 	for (var i in nodes) {
 		if (nodes[i].id != "")
 			AH.VARIABLE_MAP[view][nodes[i].id] = nodes[i];
@@ -200,7 +200,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	if (field.value !== null && typeof(field.value) != "undefined")
 		return field.value;
 	
-	return field.innerHTML;
+	return YAHOO.lang.trim(field.innerText);
 }
 
 
@@ -417,9 +417,11 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 				return toConst('"' + value + '"');
 			}
 		} else if (typeof(value) == "object" && value.getTime) {
-			//This is probably a date object that we must convert to a string first.
-			//value = "date(" + value.getTime() + ")";
-			//expression = expression.replace(regex, value);
+			//This is probably a date object that we must convert to an expression
+			var d = new SUGAR.DateExpression("");
+			d.evaluate = function(){return this.value};
+			d.value = value;
+			return d;
 		}
 
 

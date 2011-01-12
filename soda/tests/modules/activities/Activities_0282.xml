@@ -34,7 +34,7 @@
 		<textfield id="name" set="schedule_call_0281" />
 		<button id="Calls_subpanel_save_button" />
 	</div>
-	<wait timeout="5" />
+	<wait timeout="10" />
 
 	<!--Delete the "scheduled call" and then cancel the action-->
 	<browser assert="{@pre_account_name}" />
