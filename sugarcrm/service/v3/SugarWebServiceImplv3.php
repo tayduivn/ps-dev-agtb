@@ -195,7 +195,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_module_layout($session, $a_module_names, $a_type, $a_view,$md5 = FALSE){
-    	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
+    	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout');
     
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
