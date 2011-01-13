@@ -21,45 +21,46 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $default_connectors = array (
-  'ext_rest_linkedin' => 
+  'ext_rest_linkedin' =>
   array (
     'id' => 'ext_rest_linkedin',
     'name' => 'LinkedIn&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/rest/linkedin',
-    'modules' => 
-    array ( 
+    'modules' =>
+    array (
     ),
-  ), 
-//BEGIN SUGARCRM flav!=com ONLY   
-  'ext_soap_hoovers' => 
+  ),
+//BEGIN SUGARCRM flav!=com ONLY
+  'ext_soap_hoovers' =>
   array (
     'id' => 'ext_soap_hoovers',
     'name' => 'Hoovers&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/soap/hoovers',
-    'modules' => 
+    'modules' =>
     array (
       0 => 'Accounts',
     ),
   ),
-//END SUGARCRM flav!=com ONLY  
+//END SUGARCRM flav!=com ONLY
 //BEGIN SUGARCRM flav=pro ONLY
-  'ext_rest_twitter' => 
+  'ext_rest_twitter' =>
   array (
     'id' => 'ext_rest_twitter',
     'name' => 'Twitter&#169;',
     'enabled' => true,
+    'eapm' => array('enabled' => true),
     'directory' => 'modules/Connectors/connectors/sources/ext/rest/twitter',
-    'modules' => 
+    'modules' =>
     array (
       0 => 'Accounts',
       1 => 'Contacts',
       2 => 'Leads',
       3 => 'Prospects',
     ),
-  ),       
-//END SUGARCRM flav=pro ONLY  
+  ),
+//END SUGARCRM flav=pro ONLY
 
 );
 
@@ -72,54 +73,54 @@ if(file_exists('custom/modules/Connectors/metadata/connectors.php')){
         $connector_id = $connector_array['id'];
         $previous_connectors[$connector_id] = $connector_id;
     }
-} 
+}
 
 $default_modules_sources = array (
-  'Accounts' => 
+  'Accounts' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
     //BEGIN SUGARCRM flav!=com ONLY
     'ext_soap_hoovers' => 'ext_soap_hoovers',
     //END SUGARCRM flav!=com ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-     'ext_rest_twitter' => 'ext_rest_twitter',   
+     'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
   ),
-  'Contacts' => 
+  'Contacts' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
     //BEGIN SUGARCRM flav=pro ONLY
-     'ext_rest_twitter' => 'ext_rest_twitter',   
+     'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
   ),
-   
+
   'Leads' =>
   array (
-     //BEGIN SUGARCRM flav!=sales ONLY 
+     //BEGIN SUGARCRM flav!=sales ONLY
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-     //END SUGARCRM flav!=sales ONLY 
+     //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-     'ext_rest_twitter' => 'ext_rest_twitter',   
+     'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
   ),
   'Prospects' =>
   array (
-    //BEGIN SUGARCRM flav!=sales ONLY 
+    //BEGIN SUGARCRM flav!=sales ONLY
     'ext_rest_linkedin' => 'ext_rest_linkedin',
-     //END SUGARCRM flav!=sales ONLY 
-     
+     //END SUGARCRM flav!=sales ONLY
+
     //BEGIN SUGARCRM flav=pro ONLY
-     'ext_rest_twitter' => 'ext_rest_twitter',   
+     'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
   ),
-    
+
 );
 
 // Merge in old modules the customer added instead of overriding it completely with defaults
 // If they have customized their connectors modules
 if(file_exists('custom/modules/Connectors/metadata/display_config.php')){
     require('custom/modules/Connectors/metadata/display_config.php');
-    
+
     // Remove the default settings from being copied over since they already existed
     foreach($default_modules_sources as $module => $sources){
         foreach($sources as $source_key => $source){
@@ -130,7 +131,7 @@ if(file_exists('custom/modules/Connectors/metadata/display_config.php')){
             }
         }
     }
-    
+
     // Merge in the new connector default settings with the current settings
     if ( isset($modules_sources) && is_array($modules_sources) ) {
         foreach($modules_sources as $module => $sources){
@@ -151,7 +152,7 @@ if(!file_exists('custom/modules/Connectors/metadata')) {
 
 if(!write_array_to_file('connectors', $default_connectors, 'custom/modules/Connectors/metadata/connectors.php')) {
    $GLOBALS['log']->fatal('Cannot write file custom/modules/Connectors/metadata/connectors.php');
-}	
+}
 
 if(!write_array_to_file('modules_sources', $default_modules_sources, 'custom/modules/Connectors/metadata/display_config.php')) {
    $GLOBALS['log']->fatal('Cannot write file custom/modules/Connectors/metadata/display_config.php');
@@ -160,7 +161,7 @@ if(!write_array_to_file('modules_sources', $default_modules_sources, 'custom/mod
 /*
 require_once('include/connectors/utils/ConnectorUtils.php');
 if(!ConnectorUtils::updateMetaDataFiles()) {
-   $GLOBALS['log']->fatal('Cannot update metadata files for connectors');	
+   $GLOBALS['log']->fatal('Cannot update metadata files for connectors');
 }
 */
 

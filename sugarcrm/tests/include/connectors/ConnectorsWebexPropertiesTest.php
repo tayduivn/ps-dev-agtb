@@ -1,15 +1,11 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-require_once('include/connectors/utils/ConnectorUtils.php');
-require_once('include/connectors/ConnectorsTestUtility.php');
+require_once('include/connectors/ConnectorsTestCase.php');
 
-class ConnectorsWebexPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
+class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase {
 
 	function setUp() {
-        if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
-    	   ConnectorUtils::getDisplayConfig();
-    	}
-
+        parent::setUp();
     	if(file_exists('custom/modules/Connectors/connectors/sources/ext/eapm/webex/config.php')) {
     	   mkdir_recursive('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex');
     	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/eapm/webex', 'custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex');
@@ -19,6 +15,7 @@ class ConnectorsWebexPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
+        parent::tearDown();
         if(file_exists('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex', 'custom/modules/Connectors/connectors/sources/ext/eapm/webex');
            ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/connectors/sources/ext/eapm/webex');
