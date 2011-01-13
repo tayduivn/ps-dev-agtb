@@ -162,17 +162,15 @@ class MyMeetingsDashlet extends DashletGeneric {
                                      ));
 		
         require_once('modules/Meetings/Meeting.php');
-        
         $types = getMeetingsExternalApiDropDown();
-        array_unshift($types, "");
-        $this->currentSearchFields['type']['input'] = '<select name="type">'
-	                                              . get_select_options_with_id($types, (empty($this->filters['type']) ? '' : $this->filters['type']))
-	                                              . '</select>';
+        $this->currentSearchFields['type']['input'] = '<select size="3" multiple="true" name="type[]">'
+                                     . get_select_options_with_id($types, (empty($this->filters['type']) ? '' : $this->filters['type']))
+                                     . '</select>';
         $this->configureSS->assign('searchFields', $this->currentSearchFields);
 		
         return $this->configureSS->fetch($this->configureTpl);
     }
-        
+    
     function saveStatus()
     {
        
