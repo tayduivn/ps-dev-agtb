@@ -181,7 +181,7 @@ class Meeting extends SugarBean {
             $this->creator = '';
         }
 
-        if (!empty($this->type) && $this->type != 'SugarCRM' ) {
+        if (!empty($this->type) && $this->type != 'Sugar' ) {
             require_once('include/externalAPI/ExternalAPIFactory.php');
             $api = ExternalAPIFactory::loadAPI($this->type);           
         }
@@ -711,9 +711,11 @@ function getMeetingsExternalApiDropDown() {
     require_once('include/externalAPI/ExternalAPIFactory.php');
     
     $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
-    
-    $apiList = array_merge(array('SugarCRM'=>'SugarCRM'),$apiList);
-    
+
+
+    $apiList = array_merge(array('Sugar'=>'Sugar'),$apiList);
+
+
     return $apiList;
     
 }
