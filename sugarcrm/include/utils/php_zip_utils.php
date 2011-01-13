@@ -70,7 +70,7 @@ function zip_dir( $zip_dir, $zip_archive )
         return false;
     }
     $zip = new ZipArchive();
-    $zip->open($zip_archive, ZIPARCHIVE::OVERWRITE);
+    $zip->open($zip_archive, ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE);
     $path = realpath($zip_dir);
     $chop = strlen($path)+1;
     $dir = new RecursiveDirectoryIterator($path);
