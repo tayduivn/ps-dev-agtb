@@ -51,7 +51,7 @@ class EmailAddressTest extends Sugar_PHPUnit_Framework_TestCase
 	    $this->emailaddress->opt_out = '1';
 	    $this->emailaddress->save();
 	    
-	    $this->assertNotEmpty($this->emailaddress->id);
+	    $this->assertTrue(!empty($this->emailaddress->id));
 	    $this->assertEquals(
 	        $this->emailaddress->id,
 	        $GLOBALS['db']->getOne("SELECT id FROM email_addresses WHERE id = '{$this->emailaddress->id}' AND email_address = '{$this->testEmailAddressString}' and opt_out = '1'"),
