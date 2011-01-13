@@ -38,7 +38,7 @@ $dashletData['MyMeetingsDashlet']['searchFields'] = array('name'             => 
                                                           //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
                                                           //END SUGARCRM flav=pro ONLY
-                                                          'type'  => array('default' => array('SugarCRM')),
+                                                          'type'  => array('default' => array('Sugar')),
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name,
 																					  'label'   => 'LBL_ASSIGNED_TO'),);
