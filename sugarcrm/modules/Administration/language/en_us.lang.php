@@ -1058,7 +1058,8 @@ $mod_strings = array (
 	'LBL_DISABLED_THEMES' => 'Disabled Themes',
 	'DEFAULT_THEME'=> 'Default theme',
 	'LBL_DEFAULT_THEME_IS_DISABLED' => 'The Default Theme you have chosen is disabled. Click "OK" to continue saving the theme changes or "Cancel" to pick a different default theme.',
-
+	'LBL_ENABLED_LANGS' => 'Enabled Languages',
+	'LBL_DISABLED_LANGS' => 'Disabled Languages',
 
 	//language changed
 	'LBL_CURRENT_LANGUAGE_CHANGE' => 'Your current language is changed to ',
