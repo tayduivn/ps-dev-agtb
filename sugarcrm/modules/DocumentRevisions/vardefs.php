@@ -108,6 +108,7 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'name' => 'filename',
     'vname' => 'LBL_FILENAME',
     'type' => 'file',
+  	'dbType' => 'varchar',
     'required'=>true,
     'len' => '255',
     'allowEapm' => true,
