@@ -74,6 +74,7 @@ require_once 'SugarTestThemeUtilities.php';
 require_once 'SugarTestTeamUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestContactUtilities.php';
+require_once 'SugarTestCallUtilities.php';
 require_once 'SugarTestEmailUtilities.php';
 require_once 'SugarTestCampaignUtilities.php';
 require_once 'SugarTestLeadUtilities.php';
