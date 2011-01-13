@@ -96,7 +96,9 @@ class Document extends SugarBean {
 
 	function save($check_notify = false) {
 		
-		if (empty($this->doc_type)) $this->doc_type = 'Sugar';
+		if (empty($this->doc_type)) {
+			$this->doc_type = 'Sugar';
+		}
 		
         if (!empty($_FILES['filename_file']))
         {
