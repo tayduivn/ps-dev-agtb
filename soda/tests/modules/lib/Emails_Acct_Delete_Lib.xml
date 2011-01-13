@@ -4,7 +4,7 @@
 	<!--Nav to emails module-->
 	<link id="moduleTab_Emails" />
 	<button id="settingsButton" />
-	<wait timeout="15" />
+	<wait timeout="25" />
 	<div id="settingsDialog_c" >
 	  <link text="Mail Accounts" />
 	</div>

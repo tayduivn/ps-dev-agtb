@@ -5,13 +5,13 @@
 	<!--Nav to emails module-->
 	<link id="moduleTab_Emails" />
 	<button id="composeButton" />
-	<wait timeout="1" />
+	<wait timeout="5" />
 
 	<!--click "attachment"-->
 	<table id="composeHeaderTable1">
 		<button index="3" />
 	</table>
-	<wait timeout="1" />
+	<wait timeout="5" />
 
 	<!--attach a file from localhost-->
 	<button name="add_file_button" />
@@ -48,7 +48,7 @@
     <button id="search_form_submit" />
 	</div>
 	<table class="list view" >
-	  <wait timeout="2" />
+	  <wait timeout="5" />
 	  <link text="Contacts.csv" />
 	</table>
 	<div id="Notes_detailview_tabs" >

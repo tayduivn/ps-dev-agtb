@@ -438,7 +438,7 @@ if(!$skipFooters) {
 	// the code and end-user application.
 	echo "<tr><td align='center' class='copyRight'>";
 	
-	echo ('&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />');
+	echo ('&copy; 2004-2011 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />');
 
 	// Under the Sugar Public License referenced above, you are required to leave in all copyright statements in both
 	// the code and end-user application as well as the the powered by image. You can not change the url or the image below  .

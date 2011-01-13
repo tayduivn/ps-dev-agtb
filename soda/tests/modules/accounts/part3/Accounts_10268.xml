@@ -37,7 +37,7 @@
 	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
 	<var var="account1_name" set="{@pre_account_name}" />
 	
-	<sugarwait />
+	<wait timeout="10" />
 	
 	<!-- select button -->
 	<button id="accounts_contacts_select_button" />
@@ -73,7 +73,8 @@
 	<link text="{@account1_name}" />
 
 	<!-- we should only see one of the 
-		created contacts if pagination is saved... -->
+		created contacts if pagination is saved...
+-->
 	<browser assert="{@contact1_full_name}" />
 	<browser assertnot="{@contact4_full_name}" />
 	

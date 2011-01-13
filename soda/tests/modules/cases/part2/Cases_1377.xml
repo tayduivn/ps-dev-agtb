@@ -22,6 +22,7 @@
 	<!--create Note-->
 	<div id="list_subpanel_history">
 		<button value="  Create Note or Attachment  " />
+		<wait timeout="3" />
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1377.csv" var="Case_1377">
