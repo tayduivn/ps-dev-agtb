@@ -31,6 +31,11 @@ class SugarView
      */
     var $errors = array();
     /**
+     * Set to true if you do not want to display errors from SugarView::displayErrors(); instead they will be returned
+     */
+    var $suppressDisplayErrors = false;
+    
+    /**
      * Options for what UI elements to hide/show/
      */
     var $options = array('show_header' => true, 'show_title' => true, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => true, 'show_javascript' => true, 'view_print' => false,);
@@ -105,8 +110,17 @@ class SugarView
      */
     public function displayErrors()
     {
+        $errors = '';
+        
         foreach($this->errors as $error) {
-            echo '<span class="error">' . $error . '</span><br>';
+            $errors .= '<span class="error">' . $error . '</span><br>';
+        }
+        
+        if ( !$this->suppressDisplayErrors ) {
+            echo $errors;
+        }
+        else {
+            return $errors;
         }
     }
 
@@ -1154,8 +1168,8 @@ EOHTML;
      *
      * @return string File location of the metadata file.
      */
-    public function getMetaDataFile(){
-
+    public function getMetaDataFile()
+    {
         $metadataFile = null;
         $foundViewDefs = false;
         $viewDef = strtolower($this->type) . 'viewdefs';
@@ -1290,7 +1304,7 @@ EOHTML;
     public function getBrowserTitle()
     {
         global $app_strings;
-
+        
         $browserTitle = $app_strings['LBL_BROWSER_TITLE'];
         if ( $this->module == 'Users' && ($this->action == 'SetTimezone' || $this->action == 'Login') )
             return $browserTitle;
@@ -1301,16 +1315,17 @@ EOHTML;
         return $browserTitle;
     }
     
-     /**
+    /**
      * Returns the correct breadcrumb symbol according to theme's directionality setting
-     * 
      *
      * @return string
      */
-    public function getBreadCrumbSymbol() {
+    public function getBreadCrumbSymbol() 
+    {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
         	return "<span class='pointer'>&raquo;</span>";
-        } else {
+        } 
+        else {
         	return "<span class='pointer'>&laquo;</span>";
         }
     }
