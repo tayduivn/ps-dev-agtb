@@ -65,7 +65,7 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
         foreach($results as $ur){
             $next_run = $ur['next_run'];
         }
-	    $this->rs->update_next_run_time($id,$next_run,$results[$reportID]['time_interval'] );
+	    $this->rs->update_next_run_time($id,$next_run,$results[0]['time_interval'] );
 	    
 	    //Get the update
 	    $expectedRunDate = gmdate($timedate->get_db_date_time_format(), $start_ts + $interval);

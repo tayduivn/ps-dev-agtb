@@ -12,6 +12,12 @@ class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
     {
 		 global $current_user, $currentModule ;
 		 
+		 $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        
 		 //make sure we have a current user
 		 if(empty($current_user) || empty($current_user->id)){
 		 	$usr = new User();
@@ -57,7 +63,8 @@ class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['db']->query('DELETE FROM quotes_accounts WHERE account_id = \''.$this->account->id.'\' ');
 		unset($this->account);
         unset($this->quote);
-
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
 	
 
