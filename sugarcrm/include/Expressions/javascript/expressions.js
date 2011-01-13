@@ -535,7 +535,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	// EXTRACT: Function
 	var open_paren_loc = expr.indexOf('(');
 	if (open_paren_loc < 1)
-		throw (expr + ": Syntax Error");
+		throw (expr + ": Syntax Error, no open parentheses found");
 
 	// get the function
 	var func = expr.substring(0, open_paren_loc);
