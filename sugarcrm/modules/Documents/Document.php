@@ -50,6 +50,7 @@ class Document extends SugarBean {
 	var $exp_date;
 	var $document_revision_id;
 	var $filename;
+	var $doc_type;
 
 	var $img_name;
 	var $img_name_bare;
@@ -94,6 +95,9 @@ class Document extends SugarBean {
 	}
 
 	function save($check_notify = false) {
+		
+		if (empty($this->doc_type)) $this->doc_type = 'Sugar';
+		
         if (!empty($_FILES['filename_file']))
         {
             if (empty($this->id)) { 
