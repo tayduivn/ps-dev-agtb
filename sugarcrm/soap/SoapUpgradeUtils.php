@@ -22,10 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 set_time_limit(360);
-require_once('include/pclzip/pclzip.lib.php');
-
 require_once('include/utils/zip_utils.php');
-
 $server->wsdl->addComplexType(
 
     'encoded_file',
@@ -185,7 +182,7 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
     $server_files       = array();  // used later for removing unneeded local files
     $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session).".zip";
     $archive = new ZipArchive();
-    $archive->open($zip_file, ZipArchive::OVERWRITE);
+    $archive->open($zip_file, ZipArchive::OVERWRITE|ZipArchive::CREATE);
     if(!$is_md5_sync){
     	$all_src_files  = findAllTouchedFiles( ".", array(), $last_sync);
     	foreach( $all_src_files as $src_file ){
@@ -485,7 +482,8 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
     require_once( $temp_file );
     $server_files       = array();  // used later for removing unneeded local files
     $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
-    $archive = new PclZip($zip_file.".zip");
+    $archive = new ZipArchive();
+    $archive->open($zip_file.".zip", ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE);
     $root_files = array();
     $custom_files = array();
     if(!$is_md5_sync){
@@ -503,22 +501,24 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
         	}
             if(!$ignore){
                 //we have to strip off portal or custom/portal before the src file to look it up
-				preg_match('/.*portal\//', $src_file, $matches);
-				$path_to_remove = '';
-				if(count($matches) == 1)
-					$path_to_remove = $matches[0];
+				preg_match('|.*portal/|', $src_file, $matches);
+				if(count($matches) == 1) {
+					$zipname = substr($src_file, strlen($mathes[0]));
+				} else {
+				    $zipname = $src_file;
+				}
                 $key = str_replace('custom/portal/', '', $src_file);
                 $key = str_replace('portal/', '', $key);
                 $value = $src_file;
                 if($client_file_list != null && isset($client_file_list[$key])){
                     //we have found a file out of sync
-                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                    $archive->addFile($src_file, $zipname);
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                $archive->addFile($src_file, $zipname);
                }
             }
    		}
@@ -533,9 +533,12 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
     	foreach( $all_src_files as $src_file ){
             $ignore = false;
             preg_match('/.*portal\//', $src_file, $matches);
-			$path_to_remove = '';
-			if(count($matches) == 1)$path_to_remove = $matches[0];
-    		foreach($disc_client_ignore as $ignore_pattern ){
+			if(count($matches) == 1) {
+				$zipname = substr($src_file, strlen($mathes[0]));
+			} else {
+			    $zipname = $src_file;
+			}
+            foreach($disc_client_ignore as $ignore_pattern ){
             	if(preg_match( "#" . $ignore_pattern . "#", $src_file ) ){
                 	$ignore = true;
             	}
@@ -549,14 +552,14 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
                 if($client_file_list != null && isset($client_file_list[$key])){
                   if($value != $client_file_list[$key]){
                     //we have found a file out of sync
-                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                    $archive->addFile($src_file, $zipname);
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   }
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);
+                $archive->addFile($src_file, $zipname);
                }
             }
     	}
