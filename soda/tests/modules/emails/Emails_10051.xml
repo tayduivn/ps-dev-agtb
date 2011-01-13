@@ -33,7 +33,7 @@
 	
 	
 	
-	<link text="{@Lead_New_Record.emailAddress0}" />
+	<link text="{@pre_lead_email}" />
 	<wait timeout="10" />
 	<select id="addressFrom0" noninclude=" - Group" />
 	
