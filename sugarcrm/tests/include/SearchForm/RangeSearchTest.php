@@ -46,7 +46,6 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	        'start_range_date_closed' => array
 	        (
 	            'query_type' => 'default',
-	            'range_operator' => 'between',
 	            'enable_range_search' => 1,
 	            'is_date_field' => 1,
 	        ),

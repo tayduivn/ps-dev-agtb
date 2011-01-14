@@ -170,6 +170,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'required'=>true,
     'unified_search' => true,
     'disable_num_format' => true,
+  	'enable_range_search' => true,
+  	'options' => 'numeric_range_search_dom',
   ),
   'subtotal' =>
   array (
@@ -281,6 +283,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'currency',
     'len' => '26,6',
     'audited'=>true,
+  	'enable_range_search' => true,
+  	'options' => 'numeric_range_search_dom',
   ),
   'billing_address_street' =>
   array (
