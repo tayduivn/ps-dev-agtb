@@ -32,7 +32,7 @@ global $current_user;
 $dashletData['MyDocumentsDashlet']['searchFields'] = array('date_entered'    => array('default' => ''),
                                                           'document_name'    => array('default' => ''),
                                                           'category_id'      => array('default' => ''),
- 														  'doc_type'  => array('default' => 'SugarCRM'),
+ 														  'doc_type'  => array('default' => 'Sugar'),
  														  'status_id'     => array('default' => ''),
  														  'active_date'      => array('default' => ''),
                                                           //BEGIN SUGARCRM flav=pro ONLY
