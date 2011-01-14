@@ -174,6 +174,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                 self::$helperObject->trackView($seed, 'detailview');                
             }
         }
+        
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
         return array('entry_list'=>$output_list, 'relationship_list' => $linkoutput_list);
     }

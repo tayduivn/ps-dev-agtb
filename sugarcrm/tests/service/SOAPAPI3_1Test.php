@@ -138,8 +138,7 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     	$result = $this->_getEntryForContact();
     	if (empty($this->_soapClient->faultcode)) {
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
-    			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call") &&
-    			($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')) {
+    			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call")) {
     			
     			$this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],1,"testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
     		} // else
@@ -234,7 +233,7 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     public function _getEntryForContact() {
     	global $soap_version_test_contactId;
 		$this->_login();
-		$result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>$soap_version_test_contactId,'select_fields'=>array('last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'), 'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))));		$GLOBALS['log']->fatal("_getEntryForContact" . " " . $soap_version_test_contactId);
+		$result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>$soap_version_test_contactId,'select_fields'=>array('last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'), 'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address')))));
 		return $result;
     }
         
