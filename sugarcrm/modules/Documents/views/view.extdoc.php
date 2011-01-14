@@ -60,6 +60,16 @@ class DocumentsViewExtdoc extends SugarView
 
         $api = ExternalAPIFactory::loadAPI($apiName);
 
+        $quickCheck = $api->quickCheckLogin();
+        if ( ! $quickCheck['success'] ) {
+            $errorMessage = 'LotusLive' . translate('LBL_ERR_FAILED_QUICKCHECK','EAPM');
+            $errorMessage .= '<br><button onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();">'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'</button> ';
+            $errorMessage .= '<button onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=Save&record='.$api->eapmBean->id.'\',\'EAPM_CHECK_LOTUSLIVE\');">'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'</button>';
+            
+            echo $errorMessage;
+            return;
+        }
+
         $searchDataLower = $api->searchDoc($file_search,true);
 
 

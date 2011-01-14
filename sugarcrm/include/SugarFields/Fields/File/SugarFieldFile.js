@@ -60,6 +60,9 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             for ( var idx in failedLogins ) {
                 if(confirm(failedLogins[idx].label)) {
                     window.open(failedLogins[idx].checkURL,'EAPM_CHECK_'+idx);
+                } else {
+                    document.getElementById(res.argument.docTypeName).value = 'SugarCRM';
+                    document.getElementById(res.argument.docTypeName).onchange();
                 }
             }
         },
@@ -94,7 +97,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                     
 
                     // Double check to make sure their login is valid
-                    YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=CheckLogins&to_pdf=1&api='+dropdownValue,{success:SUGAR.field.file.checkEapiLogin});
+                    YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=CheckLogins&to_pdf=1&api='+dropdownValue,{success:SUGAR.field.file.checkEapiLogin,argument:{'elemBaseName':elemBaseName,'docTypeName':docTypeName}});
 
                     // Start a refresh of the document cache in the background. Thanks AJAX!
                     YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=flushFileCache&to_pdf=1&api='+dropdownValue,{});
