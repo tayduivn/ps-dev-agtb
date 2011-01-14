@@ -104,9 +104,10 @@ class DocumentRevision extends SugarBean {
 
 	function save($check_notify = false){	
 		$saveRet = parent::save($check_notify);
+
         
 		//update documents table. (not through save, because it causes a loop)
-		$query = "UPDATE documents set document_revision_id='".$this->db->quote($this->id)."', doc_type='".$this->db->quote($this->doc_type)."', doc_url='".$this->db->quote($this->doc_url)."', doc_direct_url='".$this->db->quote($this->doc_direct_url)."', doc_id='".$this->db->quote($this->doc_id)."' where id = '".$this->db->quote($_REQUEST['return_id'])."'";	
+		$query = "UPDATE documents set document_revision_id='".$this->db->quote($this->id)."', doc_type='".$this->db->quote($this->doc_type)."', doc_url='".$this->db->quote($this->doc_url)."', doc_direct_url='".$this->db->quote($this->doc_direct_url)."', doc_id='".$this->db->quote($this->doc_id)."' where id = '".$this->db->quote($this->document_id)."'";	
 		$this->db->query($query,true);
 
         return $saveRet;
@@ -138,7 +139,7 @@ class DocumentRevision extends SugarBean {
 		
 		parent::fill_in_additional_detail_fields();
 
-        if ( empty($this->id) && isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id']) ) {
+        if ( empty($this->id) && empty($this->document_id) && isset($_REQUEST['return_id']) && !empty($_REQUEST['return_id']) ) {
             $this->document_id = $_REQUEST['return_id'];
         }
 		
@@ -171,9 +172,6 @@ class DocumentRevision extends SugarBean {
 		$localLabels = return_module_language($current_language, 'DocumentRevisions');
 		
 		// prep - get source Document
-		if(!class_exists('Documents')) {
-			
-		}
 		$document = new Document();
 		
 		// use passed revision ID

@@ -66,18 +66,19 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
         setupEapiShowHide: function(elemBaseName,docTypeName,formName) {
             var externalSearchToggle = function() {
                 var moreElem = document.getElementById(elemBaseName + "_more");
-                if ( moreElem.style.display != 'none' && document.getElementById(elemBaseName + '_externalApiSelector').style.display == 'inline' ) {
-                    // We're not hiding the "more" element, so we clicked on the "more" element
-                    moreElem.style.display = 'none';
-                    document.getElementById(elemBaseName + '_less').style.display = '';
-                    document.getElementById(elemBaseName + '_remoteName').style.display = '';
-                    document.getElementById(elemBaseName + '_file').disabled = true;
-                } else {
-                    // We're hiding the "more" element, so we clicked on the "less" element
+                var hideMore = (moreElem.style.display == 'none');
+                if ( hideMore ) {
+                    // We're hiding the "more" element, so we clicked on the "less" element and want to hide stuff
                     moreElem.style.display = '';
                     document.getElementById(elemBaseName + '_less').style.display = 'none';
                     document.getElementById(elemBaseName + '_remoteName').style.display = 'none';
                     document.getElementById(elemBaseName + '_file').disabled = false;
+                } else {
+                    // We're not hiding the "more" element, so we clicked on the "more" element and want to show stuff
+                    moreElem.style.display = 'none';
+                    document.getElementById(elemBaseName + '_less').style.display = '';
+                    document.getElementById(elemBaseName + '_remoteName').style.display = '';
+                    document.getElementById(elemBaseName + '_file').disabled = true;
                 }
             }
 
@@ -99,6 +100,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                     YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=flushFileCache&to_pdf=1&api='+dropdownValue,{});
                 } else {
                     docShowHideElem.style.display = 'none';
+                    document.getElementById(elemBaseName + '_file').disabled = false;
                 }
                 // Update the quick search
                 sqs_objects[formName+"_"+elemBaseName+"_remoteName"].api = dropdownValue;
@@ -123,9 +125,6 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 } else {
                     secLevelBoxElem.style.display='none';
                 }
-
-                externalSearchToggle();
-
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 

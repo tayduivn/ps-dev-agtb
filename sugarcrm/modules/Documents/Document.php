@@ -101,8 +101,20 @@ class Document extends SugarBean {
                 $this->id = create_guid();
                 $this->new_with_id = true;
             }
+
+            if ( isset($_REQUEST) && isset($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] == true && isset($_REQUEST['filename_old_doctype']) ) {
+                $this->doc_type = $_REQUEST['filename_old_doctype'];
+                $isDuplicate = true;
+            } else {
+                $isDuplicate = false;
+            }
+
             $Revision = new DocumentRevision();
             //save revision.
+            $Revision->in_workflow = true;
+            $Revision->not_use_rel_in_req = true;
+            $Revision->new_rel_id = $this->id;
+            $Revision->new_rel_relname = 'Documents';
             $Revision->change_log = translate('DEF_CREATE_LOG','Documents');
             $Revision->revision = $this->revision;
             $Revision->document_id = $this->id;
@@ -118,6 +130,12 @@ class Document extends SugarBean {
             //Move file saved during populatefrompost to match the revision id rather than document id
             if (!empty($_FILES['filename_file'])) {
                 rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+            } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'SugarCRM' ) ) {
+                // Looks like we need to duplicate a file, this is tricky
+                $oldDocument = new Document();
+                $oldDocument->retrieve($_REQUEST['duplicateId']);
+                $GLOBALS['log']->debug('Attempting to copy from '.UploadFile :: get_url($this->filename, $oldDocument->document_revision_id).' to '.UploadFile :: get_url($this->filename, $Revision->id));
+                copy(UploadFile :: get_url($this->filename, $oldDocument->document_revision_id), UploadFile :: get_url($this->filename, $Revision->id));
             }
             //update document with latest revision id
             $this->process_save_dates=false; //make sure that conversion does not happen again.

@@ -96,7 +96,7 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<span id="{{$idName}}_externalApiSelector" style="display:inline;">
+<span id="{{$idName}}_externalApiSelector" style="display:none;">
 <br><h4>
 <span id="{{$idName}}_more">{sugar_image name="advanced_search" width="8px" height="8px"}</span>
 <span id="{{$idName}}_less" style="display: none;">{sugar_image name="basic_search" width="8px" height="8px"}</span>
@@ -108,7 +108,7 @@ onchange="document.getElementById('{{$idName}}').value='something'"
     maxlength="{{$displayParams.maxlength}}"
 {{else}}
     maxlength="255"
-{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
+{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}" style="display: none;">
 </span>
 <div style="display: none;" id="{{$idName}}_securityLevelBox">
   <b>{$APP.LBL_EXTERNAL_SECURITY_LEVEL}: </b>
