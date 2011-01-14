@@ -151,7 +151,8 @@ class TemplateHandler {
             $javascript->setFormName($view);
 
             $javascript->setSugarBean($sugarbean);
-            $javascript->addAllFields('', null,true);
+            if ($view != "ConvertLead")
+                $javascript->addAllFields('', null,true);
 
             $validatedFields = array();
             //BEGIN SUGARCRM flav=pro ONLY
