@@ -55,9 +55,10 @@
 		<textfield id="description" set="{@Leads_1892.description}" />
 		<button value="Cancel" alert="true" />
 
-		<wait timeout="3" />
+		<wait timeout="6" />
 		<browser assert="Leads" />
 		<button id="search_form_clear" />
+		<wait timeout="3" />
 		<textfield id="search_name_basic" set="{@Leads_1892.last_name}{@stamp}" />
 		<button id="search_form_submit" />
 		<wait timeout="3" />
