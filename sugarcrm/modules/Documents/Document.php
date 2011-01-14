@@ -94,8 +94,9 @@ class Document extends SugarBean {
 	}
 
 	function save($check_notify = false) {
-        if (!empty($_FILES['filename_file']))
-        {
+		
+        if (empty($this->id) || $this->new_with_id)
+		{
             if (empty($this->id)) { 
                 $this->id = create_guid();
                 $this->new_with_id = true;
@@ -115,14 +116,14 @@ class Document extends SugarBean {
             $Revision->save();
 			
             //Move file saved during populatefrompost to match the revision id rather than document id
-            rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+            if (!empty($_FILES['filename_file'])) {
+                rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+            }
             //update document with latest revision id
             $this->process_save_dates=false; //make sure that conversion does not happen again.
             $this->document_revision_id = $Revision->id;	
-        }
-		
-        if (empty($this->id) || $this->new_with_id)
-		{
+
+
             //set relationship field values if contract_id is passed (via subpanel create)
             if (!empty($_POST['contract_id'])) {
                 $save_revision['document_revision_id']=$this->document_revision_id;	
