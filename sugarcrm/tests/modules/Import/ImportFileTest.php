@@ -65,6 +65,12 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(array("foo10","foo11"),$row);
         $row = $importFile->getNextRow();
         $this->assertEquals(array("foo20","foo21"),$row);
+        
+        $file2 = SugarTestImportUtilities::createFileWithEOL(1, 1);
+        $importFile2 = new ImportFile($file2,',','"');
+        $row = $importFile2->getNextRow();
+        // both \r\n and \n should be properly replaced with PHP_EOL
+        $this->assertEquals(array("start0".PHP_EOL."0".PHP_EOL."end"), $row);
     }
     
     public function testLoadEmptyFile()
