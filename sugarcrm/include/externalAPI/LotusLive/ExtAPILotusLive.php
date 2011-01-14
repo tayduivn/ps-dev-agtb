@@ -64,7 +64,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $this->oauthAuth = $this->baseURL.'manage/oauth/authorizeToken';
         $this->oauthAccess = $this->baseURL.'manage/oauth/getAccessToken';
 
-        // return parent::__construct();
+        parent::__construct();
     }
 
 
@@ -92,7 +92,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $reply = $this->makeRequest('GetSubscriberId/OAuth');
         if ( ! $reply['success'] ) {
             return $reply;
-        } 
+        }
         return array('success' => true);
     }
 
