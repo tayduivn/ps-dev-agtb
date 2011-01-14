@@ -746,7 +746,6 @@ function getMeetingsExternalApiDropDown() {
     require_once('include/externalAPI/ExternalAPIFactory.php');
 
     $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
-
     $apiList = array_merge(array('Sugar'=>'Sugar'),$apiList);
 
     return $apiList;

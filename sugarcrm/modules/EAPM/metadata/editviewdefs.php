@@ -58,7 +58,7 @@ $viewdefs[$module_name]['EditView'] = array(
     ),
     array (
         array('name' => 'url', 'displayParams' => array('required' => true) ),
-        'assigned_user_name',
+        array('name' => 'assigned_user_name','type' => 'readonly'),
     ),
     array (
         'description',
