@@ -1251,6 +1251,75 @@ function handle_set_relationship($set_relationship_value)
     	$key = array_search(strtolower($module2),$mod->relationship_fields);
     	if(!$key) {
     	    $key = Relationship::retrieve_by_modules($module1, $module2, $GLOBALS['db']);
+    	    
+            // BEGIN SnapLogic fix for bug 32064
+            if ($module1 == "Quotes" && $module2 == "ProductBundles") {
+                // Alternative solution is perhaps to 
+                // do whatever Sugar does when the same
+                // request is received from the web:
+                $pb_cls = $beanList[$module2]; 
+                $pb = new $pb_cls();
+                $pb->retrieve($module2_id);
+                
+                // Check if this relationship already exists
+                $query = "SELECT count(*) AS count FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND bundle_id = '{$module2_id}' AND deleted = '0'";
+                $result = $GLOBALS['db']->query($query, true, "Error checking for previously existing relationship between quote and product_bundle");
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+                if(isset($row['count']) && $row['count'] > 0){
+                    return $error->get_soap_array();
+                }
+                
+                $query = "SELECT MAX(bundle_index)+1 AS idx FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND deleted='0'";
+                $result = $GLOBALS['db']->query($query, true, "Error getting bundle_index");
+                $GLOBALS['log']->debug("*********** Getting max bundle_index");
+                $GLOBALS['log']->debug($query);
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+                
+                $idx = 0;
+                if ($row) {
+                    $idx = $row['idx'];
+                }
+                
+                $pb->set_productbundle_quote_relationship($module1_id,$module2_id,$idx);
+                $pb->save();
+                return $error->get_soap_array();
+
+            } else if ($module1 == "ProductBundles" && $module2 == "Products") {
+                // And, well, similar things apply in this case
+                $pb_cls = $beanList[$module1];
+                $pb = new $pb_cls();
+                $pb->retrieve($module1_id);
+
+                // Check if this relationship already exists
+                $query = "SELECT count(*) AS count FROM product_bundle_product WHERE bundle_id = '{$module1_id}' AND product_id = '{$module2_id}' AND deleted = '0'";
+                $result = $GLOBALS['db']->query($query, true, "Error checking for previously existing relationship between quote and product_bundle");
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+                if(isset($row['count']) && $row['count'] > 0){
+                    return $error->get_soap_array();
+                }
+                
+                $query = "SELECT MAX(product_index)+1 AS idx FROM product_bundle_product WHERE bundle_id='{$module1_id}'";
+                $result = $GLOBALS['db']->query($query, true, "Error getting bundle_index");
+                $GLOBALS['log']->debug("*********** Getting max bundle_index");
+                $GLOBALS['log']->debug($query);
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+
+                $idx = 0;
+                if ($row) {
+                    $idx = $row['idx'];
+                }
+                $pb->set_productbundle_product_relationship($module2_id,$idx,$module1_id);
+                $pb->save();
+
+                $prod_cls = $beanList[$module2];
+                $prod = new $prod_cls();
+                $prod->retrieve($module2_id);
+                $prod->quote_id = $pb->quote_id;
+                $prod->save();
+                return $error->get_soap_array();
+            }
+            // END SnapLogic fix for bug 32064
+            
     		if (!empty($key)) {
     			$mod->load_relationship($key);
     			$mod->$key->add($module2_id);
