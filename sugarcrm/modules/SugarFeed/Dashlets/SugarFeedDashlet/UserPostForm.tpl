@@ -34,7 +34,7 @@
   <table border=0 cellspacing=0 cellpadding=2>
     <tr>
       <td nowrap="nowrap"><span id='more_img_{$id}'>{$more_img}</span><span id='less_img_{$id}' style="display:none;">{$less_img}</span> <b>{$user_name}</b>&nbsp;</td>
-      <td style="padding-right: 5px;"><input id="text" name="text" type="text" size='25' maxlength='100' value="{$LBL_IS} " /></td>
+      <td style="padding-right: 5px;"><input id="text" name="text" type="text" size='25' maxlength='100' value="" /></td>
       <td nowrap="nowrap">
       <input type="button" value="{$LBL_POST}" class="button" style="vertical-align:top" onclick="SugarFeed.pushUserFeed('{$id}');"></td>
     </tr>
@@ -67,7 +67,7 @@
  <table border=0 cellspacing=0 cellpadding=2>
     <tr>
       <td nowrap="nowrap"><b>{$user_name}</b>&nbsp;</td>
-      <td style="padding-right: 5px;"><input id="text" name="text" type="text" size='25' maxlength='100' value="{$LBL_IS} " /></td>
+      <td style="padding-right: 5px;"><input id="text" name="text" type="text" size='25' maxlength='100' value="" /></td>
       <td nowrap="nowrap">
       <input type="button" value="{$LBL_POST}" class="button" style="vertical-align:top" onclick="SugarFeed.replyToFeed('{$id}');"></td>
     </tr>

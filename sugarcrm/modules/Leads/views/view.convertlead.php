@@ -430,7 +430,7 @@ class ViewConvertLead extends SugarView
                 if(empty($module_name)) {
                     $module_name = translate($beanName);
                 }
-                echo "<li>" . translate("LBL_CREATED_NEW") . $module_name . " -
+                echo "<li>" . translate("LBL_CREATED_NEW") . ' ' . $module_name . " -
                     <a href='index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}'>
                        {$bean->get_summary_text()}
                     </a></li>";

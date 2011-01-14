@@ -48,6 +48,7 @@
 		<var var="pre_lead_salutation" set="{@Lead_New_Record.salutation}" />
 		<var var="pre_lead_first_name" set="{@Lead_New_Record.first_name} {@user.name} {@stamp}" />
 		<var var="pre_lead_last_name" set="{@Lead_New_Record.last_name}" />
+		<var var="pre_lead_email" set="{@stamp}{@Lead_New_Record.emailAddress0}" />
 	</csv>
 	<puts text="Lib: Lead_Create_Lib.xml finished." />
 </soda>

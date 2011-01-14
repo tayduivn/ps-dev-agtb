@@ -1,50 +1,9 @@
 <?php
-require_once('include/connectors/ConnectorFactory.php');
-require_once('include/connectors/sources/SourceFactory.php');
-require_once('include/connectors/utils/ConnectorUtils.php');
+//FILE SUGARCRM flav=pro ONLY
+require_once('include/connectors/ConnectorsTestCase.php');
 
-class ConnectorsEnableDisableTest extends Sugar_PHPUnit_Framework_TestCase {
-
-    public $original_modules_sources;
-	public $original_searchdefs;
-	public $original_connectors;
-	static $drop_lookup_mapping = false;
-
-	public static function setUpBeforeClass() {
-        // this is so that Hoovers connector won't SOAP for the huge lookup file
-	    if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
-	         copy(dirname(__FILE__)."/lookup_mapping_stub", HOOVERS_LOOKUP_MAPPING_FILE);
-	         self::$drop_lookup_mapping = true;
-	     }
-	}
-
-	public static function tearDownAfterClass()
-	{
-	    if(self::$drop_lookup_mapping) {
-	        @unlink(HOOVERS_LOOKUP_MAPPING_FILE);
-	    }
-	}
-
-    function setUp() {
-        if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
-    	   ConnectorUtils::getDisplayConfig();
-    	}
-    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_modules_sources = $modules_sources;
-
-    	//Remove the current file and rebuild with default
-    	unlink(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_searchdefs = ConnectorUtils::getSearchDefs();
-
-    	$this->original_connectors = ConnectorUtils::getConnectors();
-    }
-
-    function tearDown() {
-    	write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
-        write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
-        ConnectorUtils::saveConnectors($this->original_connectors);
-    }
-
+class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
+{
     function test_enable_all() {
     	require_once('modules/Connectors/controller.php');
     	require_once('include/MVC/Controller/SugarController.php');
@@ -92,7 +51,6 @@ class ConnectorsEnableDisableTest extends Sugar_PHPUnit_Framework_TestCase {
     	$_REQUEST['action'] = 'SaveModifyDisplay';
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
-
     	$controller->action_SaveModifyDisplay();
     	ConnectorUtils::getConnectors(true);
         $this->assertFalse(ConnectorUtils::eapmEnabled('ext_rest_twitter'), "Failed to disable Twitter");

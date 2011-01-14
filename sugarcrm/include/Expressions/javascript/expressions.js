@@ -535,7 +535,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	// EXTRACT: Function
 	var open_paren_loc = expr.indexOf('(');
 	if (open_paren_loc < 1)
-		throw (expr + ": Syntax Error");
+		throw (expr + ": Syntax Error, no open parentheses found");
 
 	// get the function
 	var func = expr.substring(0, open_paren_loc);
@@ -929,8 +929,8 @@ SUGAR.util.DateUtils = {
 		var part = "";
 		var dateRemain = YAHOO.lang.trim(date);
 		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
-		for (var c in oldFormat) {
-			c = oldFormat[c];
+		for (var j = 0; j < oldFormat.length; j++) {
+			var c = oldFormat[j];
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
 				var i = dateRemain.indexOf(c);
 				if (i == -1) i = dateRemain.length;

@@ -47,6 +47,9 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     protected $oauthAccess;
     protected $oauthParams = array(
     	'signatureMethod' => 'PLAINTEXT',
+        'consumerKey' => "test_app",
+    // FIXME: encode?
+        'consumerSecret' => "87323at4aj6y8e9a0pa92w",
     );
 
     public $canInvite = false;
@@ -61,7 +64,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $this->oauthAuth = $this->baseURL.'manage/oauth/authorizeToken';
         $this->oauthAccess = $this->baseURL.'manage/oauth/getAccessToken';
 
-        // return parent::__construct();
+        parent::__construct();
     }
 
 
@@ -89,7 +92,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $reply = $this->makeRequest('GetSubscriberId/OAuth');
         if ( ! $reply['success'] ) {
             return $reply;
-        } 
+        }
         return array('success' => true);
     }
 
@@ -334,7 +337,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             );
 
         $rawResponse = $this->postData($url, $data, $headers);
-
+        
         $reply = array();
         $reply['responseRAW'] = $rawResponse;
         $reply['responseJSON'] = null;

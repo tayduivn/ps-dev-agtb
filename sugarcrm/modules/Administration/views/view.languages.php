@@ -64,7 +64,12 @@ class ViewLanguages extends SugarView
         global $app_list_strings;
         global $app_strings;
         global $sugar_config;
-        $disabled_list = array_flip(explode(',', $sugar_config['disabled_languages']));
+        
+        $disabled = array();
+        $disabled_list = array();
+        if ( isset($sugar_config['disabled_languages']) && is_array($sugar_config['disabled_languages']) ) {
+            $disabled_list = array_flip(explode(',', $sugar_config['disabled_languages']));
+        }
         foreach ($sugar_config['languages'] as $key=>$value)
         {
             if(isset($disabled_list[$key])) {

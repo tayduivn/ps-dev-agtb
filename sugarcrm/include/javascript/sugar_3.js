@@ -275,10 +275,12 @@ function addToValidateMoreThan(formname, name, type, required, msg, min) {
     validate[formname][validate[formname].length - 1][minIndex] = min;
 }
 
+//BEGIN SUGARCRM flav=int ONLY
 function addToValidateUSAPhone(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'usa_phone';
 }
+//END SUGARCRM flav=int ONLY
 
 function removeFromValidate(formname, name) {
 	for(i = 0; i < validate[formname].length; i++){
@@ -1008,6 +1010,7 @@ function validate_form(formname, startsWith){
 							   isError = true;
 							}
 							break;
+							//BEGIN SUGARCRM flav=int ONLY
 							case 'usa_phone':
 								var nodes = YAHOO.util.Selector.query('input[name=' + validate[formname][i][nameIndex] + ']', form);
 								for(el in nodes)
@@ -1024,6 +1027,7 @@ function validate_form(formname, startsWith){
 									}
 								}
 							break;
+							//END SUGARCRM flav=int ONLY
 							}
 						}
 					}

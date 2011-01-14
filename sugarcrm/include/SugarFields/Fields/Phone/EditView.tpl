@@ -39,8 +39,10 @@
 
 <input type='text' name='{{$idname}}' id='{{$idname}}' size='{{$displayParams.size|default:30}}' {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{elseif isset($vardef.len)}}maxlength='{{$vardef.len}}'{{/if}} value='{$value}' title='{{$vardef.help}}' tabindex='{{$tabindex}}' class="phone" {{$displayParams.field}}>
 
+{{* //BEGIN SUGARCRM flav=int ONLY*}}
 {{if !empty($vardef.validate_usa_format)}}
 <script type="text/javascript">
 addToValidateUSAPhone("{$form_name}", "{{$idname}}", 'usa_phone', {{if !empty($vardef.required)}}true{{else}}false{{/if}}, SUGAR.language.get('app_strings', 'LBL_INVALID_USA_PHONE_FORMAT'));
 </script>
 {{/if}}
+{{* //END SUGARCRM flav=int ONLY*}}

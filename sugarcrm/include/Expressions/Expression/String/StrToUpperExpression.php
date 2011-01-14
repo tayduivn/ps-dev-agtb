@@ -20,7 +20,7 @@
  ********************************************************************************/
 require_once("include/Expressions/Expression/String/StringExpression.php");
 /**
- * <b>strToUpper(String s)</b><br/>
+ * <b>strToUpper(String s)</b><br/> 
  * Returns <i>s</i> converted to upper case.<br/>
  * ex: <em>strToLower("Hello World")</em> = "HELLO WORLD"
  */
@@ -40,7 +40,7 @@ class StrToUpperExpression extends StringExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var string = this.getParameters().evaluate() ;
+			var string = this.getParameters().evaluate() + "" ;
 			return string.toUpperCase();
 EOQ;
 	}

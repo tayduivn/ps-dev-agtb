@@ -67,7 +67,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'varchar',
     'len' => '200',
     'comment' => 'Join URL',
-    'studio' => false,
+    'studio' => 'false',
+    'reportable' => false,
   ),
   'host_url' =>
   array (
@@ -76,7 +77,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'varchar',
     'len' => '400',
     'comment' => 'Host URL',
-    'studio' => false,
+    'studio' => 'false',
+    'reportable' => false,
   ),
   'displayed_url' =>
   array (
@@ -93,7 +95,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting creator',
-    'studio' => false,
+    'studio' => 'false',
   ),
   'external_id' =>
   array (
@@ -102,7 +104,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting ID for external app API',
-    'studio' => false,
+    'studio' => 'false',
    ),
   'duration_hours' =>
   array (

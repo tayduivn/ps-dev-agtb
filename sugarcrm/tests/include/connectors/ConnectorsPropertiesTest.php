@@ -1,40 +1,11 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-require_once('include/connectors/utils/ConnectorUtils.php');
-require_once('include/connectors/ConnectorsTestUtility.php');
+require_once('include/connectors/ConnectorsTestCase.php');
 
-class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
-
-    var $original_modules_sources;
-	var $original_searchdefs;
-	public static $drop_lookup_mapping = false;
-
-	public static function setUpBeforeClass() {
-        // this is so that Hoovers connector won't SOAP for the huge lookup file
-	    if(!file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
-	         copy(dirname(__FILE__)."/lookup_mapping_stub", HOOVERS_LOOKUP_MAPPING_FILE);
-	         self::$drop_lookup_mapping = true;
-	     }
-	}
-
-	public static function tearDownAfterClass()
-	{
-	    if(self::$drop_lookup_mapping) {
-	        @unlink(HOOVERS_LOOKUP_MAPPING_FILE);
-	    }
-	}
-
+class ConnectorsPropertiesTest extends Sugar_Connectors_TestCase
+{
 	function setUp() {
-        if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
-    	   ConnectorUtils::getDisplayConfig();
-    	}
-    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_modules_sources = $modules_sources;
-
-    	//Remove the current file and rebuild with default
-    	unlink(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_searchdefs = ConnectorUtils::getSearchDefs();
-
+        parent::setUp();
     	if(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php')) {
     	   mkdir_recursive('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');
     	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');
@@ -44,8 +15,7 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
     }
 
     function tearDown() {
-    	write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
-        write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
+        parent::tearDown();
         if(file_exists('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
            ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');
