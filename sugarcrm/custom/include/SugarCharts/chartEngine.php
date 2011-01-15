@@ -278,7 +278,7 @@ class chartEngine {
 			$subgroupValueLabels = array();
 			$subgroupLinks = array();
 			foreach($group->subgroups->group as $subgroups) {
-				$subgroupValues[] = $this->tab($subgroups->value,3);
+				$subgroupValues[] = $this->tab(($subgroups->value == "NULL") ? 0 : $subgroups->value,3);
 				$subgroupValueLabels[] = $this->tab("'".$subgroups->label."'",3);
 				$subgroupLinks[] = $this->tab("'".$subgroups->link."'",3);
 			}
@@ -314,7 +314,7 @@ class chartEngine {
 			$subgroupLinks = array();
 			$subgroupTitles = array();
 			foreach($group->subgroups->group as $subgroups) {
-				$subgroupValues[] = $this->tab($subgroups->value,3);
+				$subgroupValues[] = $this->tab(($subgroups->value == "NULL") ? 0 : $subgroups->value,3);
 				$subgroupValueLabels[] = $this->tab("'".$subgroups->label."'",3);
 				$subgroupLinks[] = $this->tab("'".$subgroups->link."'",3);
 				$subgroupTitles[] = $this->tab("'".$subgroups->title."'",3);
@@ -353,7 +353,7 @@ class chartEngine {
 		$groupcontent .= $this->tab("'{$group->title}'\n",3);
 		$groupcontent .= $this->tab("],\n",2);
 		$groupcontent .= $this->tab("'values': [\n",2);
-		$groupcontent .= $this->tab("{$group->value}\n",3);
+		$groupcontent .= $this->tab(($group->value == "NULL") ? 0 : $group->value."\n",3);
 		$groupcontent .= $this->tab("],\n",2);
 		if($group->label) {
 			$groupcontent .= $this->tab("'valuelabels': [\n",2);
@@ -498,7 +498,8 @@ class chartEngine {
 		$content = $this->tab("'color': [\n",1);
 		$colorArr = array();
 		$xml = $this->getConfigProperties();
-		foreach($xml->chartElementColors->color as $color) {
+		$colors = ($this->chartType == "gauge chart") ? $xml->gaugeChartElementColors->color : $xml->chartElementColors->color;
+		foreach($colors as $color) {
 			$colorArr[] = $this->tab("'".str_replace("0x","#",$color)."'",2);
 		}
 		$content .= join(",\n",$colorArr)."\n";
@@ -583,8 +584,8 @@ class chartEngine {
 		$content = mb_convert_encoding($content, 'UTF-8','UTF-16LE' );
 		$pattern[] = '/\<link\>([a-zA-Z0-9#?&%.;\[\]\/=+_-\s]+)\<\/link\>/e';
 		$replacement[] = "'<link>'.urlencode(\"$1\").'</link>'";
-		$pattern[] = '/NULL/e';
-		$replacement[] = "";
+//		$pattern[] = '/NULL/e';
+//		$replacement[] = "";
 		return preg_replace($pattern,$replacement, $content);
 	}
 

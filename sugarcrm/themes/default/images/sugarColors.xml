@@ -78,23 +78,23 @@
 			<color>0x990000</color>
 			<color>0x009900</color>
 			<color>0x000099</color>
-			<color>0xE55C00</color>
-			<color>0xe5bf00</color>
-			<color>0x7300e5</color>
-			<color>0x006ce6</color>
-			<color>0x4D0000</color>
+			<color>0xe65c00</color>
+			<color>0xe6bf00</color>
+			<color>0x7300e6</color>
+			<color>0x006ce6</color>		
+			<color>0x9fba09</color>		
 			<color>0x004d00</color>
 			<color>0x00004D</color>
-			<color>0x4c1f00</color>
-			<color>0x4d4000</color>
-			<color>0x26004c</color>
-			<color>0x00244d</color>
+			<color>0xe49e52</color>
+			<color>0xf0679a</color>
+			<color>0x7b93e3</color>
+			<color>0x009f92</color>
 			<color>0x99DD3D</color>
 			<color>0x3D993D</color>
 			<color>0x3D3D99</color>
 			<color>0x99623d</color>
 			<color>0x998a3d</color>
-			<color>0x6b3d99</color>
+			<color>0x992767</color>
 			<color>0x3d6899</color>
 			<color>0xCC0000</color>
 			<color>0x00CC00</color>
@@ -104,6 +104,13 @@
 			<color>0x6600cc</color>
 			<color>0x005fcc</color>
 		</chartElementColors>
+		<gaugeChartElementColors>
+			<color>0xcc0000</color>
+			<color>0x990000</color>
+			<color>0xe65c00</color>	
+			<color>0xe6bf00</color>	
+			<color>0x009900</color>	
+		</gaugeChartElementColors>
 		
 		<fadedEdges>off</fadedEdges>
 		

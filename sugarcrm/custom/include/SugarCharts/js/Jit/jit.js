@@ -10712,11 +10712,11 @@ $jit.ST.Plot.NodeTypes.implement({
               linear = ctx.createLinearGradient(x, y - acum - dimArray[i]/2, 
                   x + width, y - acum- dimArray[i]/2);
             }
-            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { (v * 0.9); return v >> 0; });
-            var color2 = $.hexToRgb(colorArray[i % colorLength]);
-            linear.addColorStop(0, 'rgba('+color+',.6)');
-            linear.addColorStop(1, 'rgba('+color2+',.8)');
+            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { return (v * 0.6) >> 0; }));
+            linear.addColorStop(0, color);
+            linear.addColorStop(0.5, colorArray[i % colorLength]);
+            linear.addColorStop(1, color);
             ctx.fillStyle = linear;
           }
           if(horz) {
@@ -10766,8 +10766,22 @@ $jit.ST.Plot.NodeTypes.implement({
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
   			  if(nodeCount > 8) {
-              ctx.textAlign = 'left';
-              ctx.translate(x + config.labelOffset, y + height/2);
+
+                //background box
+				inset = 10;
+				ctx.textAlign = 'left';
+				ctx.translate(x + inset, y + height/2);
+				boxHeight = label.size+6;
+				boxX = -inset/2;
+				boxY = -boxHeight/2;
+				ctx.fillStyle = "rgba(255,255,255,.6)";
+				mtxt = ctx.measureText(node.name + ": " + acumValueLabel);
+				cornerRadius = 4;	
+				boxWidth = mtxt.width+10;
+				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				
+			  ctx.fillStyle = label.color;
               ctx.rotate(0 * Math.PI / 180);
               ctx.fillText(node.name + ": " + acumValueLabel, 0, 0);
   			  } else {
@@ -10877,17 +10891,17 @@ $jit.ST.Plot.NodeTypes.implement({
           if(gradient) {
             var linear;
             if(horz) {
-              linear = ctx.createLinearGradient(x, y + fixedDim * i, 
-                  x + dimArray[i], y + fixedDim * i);
+              linear = ctx.createLinearGradient(x + dimArray[i]/2, y + fixedDim * i, 
+                  x + dimArray[i]/2, y + fixedDim * (i + 1));
             } else {
-              linear = ctx.createLinearGradient(x + fixedDim * i, y, 
-                  x + fixedDim * i, y - dimArray[i]/2);
+              linear = ctx.createLinearGradient(x + fixedDim * i, y - dimArray[i]/2, 
+                  x + fixedDim * (i + 1), y - dimArray[i]/2);
             }
-            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { (v * 0.9); return v >> 0; });
-            var color2 = $.hexToRgb(colorArray[i % colorLength]);
-            linear.addColorStop(0, 'rgba('+color+',.6)');
-            linear.addColorStop(1, 'rgba('+color2+',.8)');
+            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { return (v * 0.6) >> 0; }));
+            linear.addColorStop(0, color);
+            linear.addColorStop(0.5, colorArray[i % colorLength]);
+            linear.addColorStop(1, color);
             ctx.fillStyle = linear;
           }
           if(horz) {
@@ -11058,17 +11072,17 @@ $jit.ST.Plot.NodeTypes.implement({
           if(gradient) {
             var linear;
             if(horz) {
-              linear = ctx.createLinearGradient(x, y + fixedDim * i, 
-                  x + dimArray[i], y + fixedDim * i);
+              linear = ctx.createLinearGradient(x + dimArray[i]/2, y + fixedDim * i, 
+                  x + dimArray[i]/2, y + fixedDim * (i + 1));
             } else {
-              linear = ctx.createLinearGradient(x + fixedDim * i, y, 
-                  x + fixedDim * i, y - dimArray[i]/2);
+              linear = ctx.createLinearGradient(x + fixedDim * i, y - dimArray[i]/2, 
+                  x + fixedDim * (i + 1), y - dimArray[i]/2);
             }
-            var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { (v * 0.9); return v >> 0; });
-            var color2 = $.hexToRgb(colorArray[i % colorLength]);
-            linear.addColorStop(0, 'rgba('+color+',.6)');
-            linear.addColorStop(1, 'rgba('+color2+',.8)');
+            var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
+                function(v) { return (v * 0.6) >> 0; }));
+            linear.addColorStop(0, color);
+            linear.addColorStop(0.5, colorArray[i % colorLength]);
+            linear.addColorStop(1, color);
             ctx.fillStyle = linear;
           }
           if(horz) {
@@ -11118,9 +11132,21 @@ $jit.ST.Plot.NodeTypes.implement({
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
               
-
+              	//background box
+				inset = 10;
 				ctx.textAlign = 'left';
-				ctx.translate(x + 10, y + height/2);
+				ctx.translate(x + inset, y + height/2);
+				boxHeight = label.size+6;
+				boxX = -inset/2;
+				boxY = -boxHeight/2;
+				ctx.fillStyle = "rgba(255,255,255,.6)";
+				mtxt = ctx.measureText(node.name + ": " + valAcum);
+				cornerRadius = 4;	
+				boxWidth = mtxt.width+10;
+				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+		
+				
 				ctx.fillStyle = label.color;
 				ctx.fillText(node.name + ": " + valAcum, 0, 0);
 
@@ -11990,6 +12016,7 @@ $jit.ST.Plot.NodeTypes.implement({
           showLabels = config.showLabels,
           label = config.Label,
           size = canvas.getSize(),
+          labelOffset = config.labelOffset + 10;
           minWidth =  width * .25;
           ratio = .65;
 
@@ -11999,13 +12026,31 @@ $jit.ST.Plot.NodeTypes.implement({
       	// horizontal lines
       	for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
       	ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
+      	  var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
+		  var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
 		  var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
           var bottomWidth = minWidth + ((acum) * ratio);  
-			  
+          var bottomWidthLabel = minWidth + ((acum + labelOffsetHeight) * ratio);  
+		  var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
+		  var labelOffsetLeft = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mVL.width + 20 : 0) : 0;
+		      
        if(showLabels(node.name, valAcum, node)) {
-       	  mV = ctx.measureText(stringArray[i]);
+       	     mV = ctx.measureText(stringArray[i]);
              mVL = ctx.measureText(valuelabelArray[i]);
-             ctx.fillRect((-bottomWidth/2) - mVL.width - config.labelOffset , y - acum, bottomWidth + mVL.width + mV.width + (config.labelOffset*2), 1);
+//             ctx.fillRect((-bottomWidth/2) - mVL.width - config.labelOffset , y - acum, bottomWidth + mVL.width + mV.width + (config.labelOffset*2), 1);
+
+			//right lines
+			ctx.beginPath();
+			ctx.moveTo(bottomWidth/2,y - acum); //
+			ctx.lineTo(bottomWidthLabel/2 + (labelOffset-10),y - acum - labelOffsetHeight);  // top right
+			ctx.lineTo(bottomWidthLabel/2 + (labelOffset) + labelOffsetRight + mV.width,y - acum - labelOffsetHeight);  // bottom right
+			ctx.stroke();
+			//left lines
+			ctx.beginPath();
+			ctx.moveTo(-bottomWidth/2,y - acum); //
+			ctx.lineTo(-bottomWidthLabel/2 - (labelOffset-10),y - acum - labelOffsetHeight);  // top right
+			ctx.lineTo(-bottomWidthLabel/2 - (labelOffset) - labelOffsetLeft -mVL.width,y - acum - labelOffsetHeight);  // bottom right
+			ctx.stroke();
        }
 
 		acum += (dimArray[i] || 0);
@@ -12019,9 +12064,17 @@ $jit.ST.Plot.NodeTypes.implement({
       	//funnel segments and labels
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
-		  var colori = colorArray[i % colorLength];
+		  	  var colori = colorArray[i % colorLength];
+		      var mV = ctx.measureText(stringArray[i]);
+              var mVL = ctx.measureText(valuelabelArray[i]);
+		      var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
+		      var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
+		      var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
+		      var labelOffsetLeft = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mVL.width + 20 : 0) : 0;
+		      
           var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
           var bottomWidth = minWidth + ((acum) * ratio);
+          var bottomWidthLabel = minWidth + ((acum + labelOffsetHeight) * ratio);
           
 
           if(gradient) {
@@ -12029,10 +12082,10 @@ $jit.ST.Plot.NodeTypes.implement({
               linear = ctx.createLinearGradient(-topWidth/2, y - acum - dimArray[i]/2, topWidth/2, y - acum- dimArray[i]/2);
 			var colorRgb = $.hexToRgb(colori);
             var color = $.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { return (v * 0.8) >> 0; });
-            linear.addColorStop(0, 'rgba('+color+',.8)');
-            linear.addColorStop(0.5,  'rgba('+colorRgb+',.8)');
-            linear.addColorStop(1, 'rgba('+color+',.8)');
+                function(v) { return (v * .5) >> 0; });
+            linear.addColorStop(0, 'rgba('+color+',1)');
+            linear.addColorStop(0.5,  'rgba('+colorRgb+',1)');
+            linear.addColorStop(1, 'rgba('+color+',1)');
             ctx.fillStyle = linear;
           }
           
@@ -12070,10 +12123,11 @@ $jit.ST.Plot.NodeTypes.implement({
 
           if(showLabels(node.name, valAcum, node)) {
 
+		      
               ctx.textAlign = 'left';
-              ctx.fillText(stringArray[i],(bottomWidth/2) + config.labelOffset, y - acum - label.size/2);
+              ctx.fillText(stringArray[i],(bottomWidthLabel/2) + labelOffset + labelOffsetRight, y - acum - labelOffsetHeight - label.size/2);
               ctx.textAlign = 'right';
-              ctx.fillText(valuelabelArray[i],(-bottomWidth/2) - config.labelOffset, y - acum - label.size/2);
+              ctx.fillText(valuelabelArray[i],(-bottomWidthLabel/2) - labelOffset - labelOffsetLeft, y - acum - labelOffsetHeight - label.size/2);
 	      }
           ctx.restore();
         }
@@ -12371,6 +12425,40 @@ $jit.FunnelChart = new Class({
 	ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
   },
   
+  
+  renderDropShadow: function() {
+  	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	horz = config.orientation == 'horizontal',
+	label = config.Label,
+	title = config.Title,
+	shadowThickness = 4,
+	subtitle = config.Subtitle,
+	ctx = canvas.getCtx(),
+	minwidth = (size.width/8) * .25,
+	marginHeight = (title.text? title.size + title.offset : 0) + (subtitle.text? subtitle.size + subtitle.offset : 0) + margin.top + margin.bottom,
+	topMargin = (title.text? title.size + title.offset : 0)  + margin.top,
+    height = size[horz? 'width':'height'] - (horz? marginWidth:marginHeight) 
+          - (config.showLabels && (config.Label.size + config.labelOffset)),
+    ratio = .65,
+	topWidth = minwidth + ((height + (shadowThickness*4)) * ratio);
+	topY = (-size.height/2) + topMargin - shadowThickness;
+	bottomY = (-size.height/2) + topMargin + height + shadowThickness;
+	bottomWidth = minwidth + shadowThickness;
+	ctx.beginPath();
+	ctx.fillStyle = "rgba(0,0,0,.2)";
+	ctx.moveTo(0,topY);
+	ctx.lineTo(-topWidth/2,topY); //top left
+	ctx.lineTo(-bottomWidth/2,bottomY);  // bottom left
+	ctx.lineTo(bottomWidth/2,bottomY);  // bottom right
+	ctx.lineTo(topWidth/2,topY);  // top right
+	ctx.closePath(); 
+	ctx.fill();
+			
+			
+  },
 
   loadJSON: function(json) {
     if(this.busy) return;
@@ -12470,6 +12558,7 @@ $jit.FunnelChart = new Class({
 	if(!animate && subtitle.text) {
 		this.renderSubtitle();
 	}
+	this.renderDropShadow();
     st.compute();
     st.select(st.root);
     if(animate) {
@@ -13857,18 +13946,6 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           var dimi = dimArray[i], colori = colorArray[i % colorLength];
           if(dimi <= 0) continue;
           ctx.fillStyle = ctx.strokeStyle = colori;
-          if(gradient && dimi) {
-            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
-                xpos, ypos, acum + dimi + config.sliceOffset);
-            var colorRgb = $.hexToRgb(colori), 
-                ans = $.map(colorRgb, function(i) { return (i * 0.9) >> 0; }),
-                endColor = ans;
-
-            radialGradient.addColorStop(0, 'rgba('+colorRgb+',.8)');
-            radialGradient.addColorStop(0.5, 'rgba('+colorRgb+',.8)');
-            radialGradient.addColorStop(1, 'rgba('+endColor+',.8)');
-            ctx.fillStyle = radialGradient;
-          }
           
           polar.rho = acum + config.sliceOffset;
           polar.theta = begin;
@@ -13879,9 +13956,32 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           var p3coord = polar.getc(true);
           polar.theta = begin;
           var p4coord = polar.getc(true);
-
+          
+          //drop shadow
           ctx.beginPath();
+          ctx.fillStyle = "rgba(0,0,0,.2)";
+          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
+          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
+          ctx.fill();
+          
+          if(gradient && dimi) {
+            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
+                xpos, ypos, acum + dimi + config.sliceOffset);
+            var colorRgb = $.hexToRgb(colori), 
+                ans = $.map(colorRgb, function(i) { return (i * 0.6) >> 0; }),
+                endColor = ans;
+
+            radialGradient.addColorStop(0, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(0.1, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(0.4, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(1, 'rgba('+endColor+',1)');
+            ctx.fillStyle = radialGradient;
+          }
+          
+
+          
           //fixing FF arc method + fill
+          ctx.beginPath();
           ctx.arc(xpos, ypos, acum + .01, begin, end, false);
           ctx.arc(xpos, ypos, acum + dimi + .01, end, begin, true);
           ctx.fill();
@@ -14438,15 +14538,16 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           if(dimi <= 0) continue;
           ctx.fillStyle = ctx.strokeStyle = colori;
           if(gradient && dimi) {
-            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum,
-                xpos, ypos, acum + dimi);
+            var radialGradient = ctx.createRadialGradient(xpos, (ypos + dimi/2), acum,
+                xpos, (ypos + dimi/2), acum + dimi);
             var colorRgb = $.hexToRgb(colori), 
-                ans = $.map(colorRgb, function(i) { return (i * 0.8) >> 0; }),
+                ans = $.map(colorRgb, function(i) { return (i * .8) >> 0; }),
                 endColor = $.rgbToHex(ans);
 
-            radialGradient.addColorStop(0, 'rgba('+colorRgb+',.8)');
-            radialGradient.addColorStop(0.5,  'rgba('+colorRgb+',.8)');
-            radialGradient.addColorStop(1,  'rgba('+ans+',.8)');
+            radialGradient.addColorStop(0, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(0.1, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(0.85, 'rgba('+colorRgb+',1)');
+            radialGradient.addColorStop(1,  'rgba('+ans+',1)');
             ctx.fillStyle = radialGradient;
           }
           
