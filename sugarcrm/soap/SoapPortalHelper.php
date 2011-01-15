@@ -297,17 +297,20 @@ function get_contacts_from_account($account_id, $orderBy = '')
 
 function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = ""){
 
-		$list = array();
-		//bail if the in is empty
-		if($in == '()')return $list;
-		//BEGIN SUGARCRM flav=pro ONLY
 		$template->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
 
-		return $template->build_related_list_where('',$template, $where, $in, $order_by, $limit, $row_offset);
+		$q = '';
+		//if $in is empty then pass in a query to get the list of related list
+		if(empty($in)  || $in =='()' || $in =="('')"){
+			$in = '';
+			//build the query to pass into the template list function
+			$q = 'select id from '.$template->table_name.' where deleted = 0 and '.$where;
+			$GLOBALS['log']->fatal('query from get_related_list:: is '.$q);		
+		}
+		
+		return $template->build_related_list_where($q, $template, $where, $in, $order_by, $limit, $row_offset);
 
-
-}
+	}
 
 function build_relationship_tree($contact){
 	global $sugar_config;
@@ -467,8 +470,10 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
     }
     if($module_name == 'Cases'){
         if(!isset($_SESSION['viewable'][$module_name])){
-            get_cases_in_contacts(get_contacts_in());
-            get_cases_in_accounts(get_accounts_in());
+			$c =get_contacts_in();
+			$a = get_accounts_in();
+           if(!empty($c)) {get_cases_in_contacts($c);}
+           if(!empty($a)) { get_cases_in_accounts($a);}
         }
          
         $sugar = new aCase();
