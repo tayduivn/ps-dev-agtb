@@ -60,27 +60,34 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             for ( var idx in failedLogins ) {
                 if(confirm(failedLogins[idx].label)) {
                     window.open(failedLogins[idx].checkURL,'EAPM_CHECK_'+idx);
+                } else {
+                    document.getElementById(res.argument.docTypeName).value = 'SugarCRM';
+                    document.getElementById(res.argument.docTypeName).onchange();
                 }
             }
         },
         setupEapiShowHide: function(elemBaseName,docTypeName,formName) {
-            var radioChangeFunc = function() { 
-                var showElem = '';
-                var hideElem = '';
-                if(document.getElementById(elemBaseName + "_rad_upload").checked) { 
-                    showElem = elemBaseName + "_file"; 
-                    hideElem = elemBaseName + "_remoteName";
+            var externalSearchToggle = function() {
+                var moreElem = document.getElementById(elemBaseName + "_more");
+                var hideMore = (moreElem.style.display == 'none');
+                if ( hideMore ) {
+                    // We're hiding the "more" element, so we clicked on the "less" element and want to hide stuff
+                    moreElem.style.display = '';
+                    document.getElementById(elemBaseName + '_less').style.display = 'none';
+                    document.getElementById(elemBaseName + '_remoteName').style.display = 'none';
+                    document.getElementById(elemBaseName + '_file').disabled = false;
                 } else {
-                    hideElem = elemBaseName + "_file"; 
-                    showElem = elemBaseName + "_remoteName";
+                    // We're not hiding the "more" element, so we clicked on the "more" element and want to show stuff
+                    moreElem.style.display = 'none';
+                    document.getElementById(elemBaseName + '_less').style.display = '';
+                    document.getElementById(elemBaseName + '_remoteName').style.display = '';
+                    document.getElementById(elemBaseName + '_file').disabled = true;
                 }
-                document.getElementById(showElem).style.display='';
-                document.getElementById(hideElem).style.display='none';
-            };
+            }
 
             var showHideFunc = function() {
                 var docShowHideElem = document.getElementById(elemBaseName + "_externalApiSelector");
-                var radioElemUpload = document.getElementById(elemBaseName + "_rad_upload");
+                
                 var dropdownValue = document.getElementById(docTypeName).value;
                 if ( typeof(SUGAR.eapm) != 'undefined' 
                      && typeof(SUGAR.eapm[dropdownValue]) != 'undefined' 
@@ -88,17 +95,15 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                      && SUGAR.eapm[dropdownValue].docSearch ) {
                     docShowHideElem.style.display = '';
                     
+
+                    // Double check to make sure their login is valid
+                    YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=CheckLogins&to_pdf=1&api='+dropdownValue,{success:SUGAR.field.file.checkEapiLogin,argument:{'elemBaseName':elemBaseName,'docTypeName':docTypeName}});
+
                     // Start a refresh of the document cache in the background. Thanks AJAX!
                     YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=flushFileCache&to_pdf=1&api='+dropdownValue,{});
-                    
-                    // Double check to make sure their login is valid
-                    YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=EAPM&action=CheckLogins&to_pdf=1&api='+dropdownValue,{success:SUGAR.field.file.checkEapiLogin});
-
-                    radioElemUpload.disabled = false;
                 } else {
                     docShowHideElem.style.display = 'none';
-                    radioElemUpload.checked = true;
-                    radioElemUpload.disabled = true;
+                    document.getElementById(elemBaseName + '_file').disabled = false;
                 }
                 // Update the quick search
                 sqs_objects[formName+"_"+elemBaseName+"_remoteName"].api = dropdownValue;
@@ -123,14 +128,11 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 } else {
                     secLevelBoxElem.style.display='none';
                 }
-
-                radioChangeFunc();
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 
-
-            document.getElementById(elemBaseName + '_rad_upload').onchange = radioChangeFunc;
-            document.getElementById(elemBaseName + '_rad_search').onchange = radioChangeFunc;
+            document.getElementById(elemBaseName + '_more').onclick = externalSearchToggle;
+            document.getElementById(elemBaseName + '_less').onclick = externalSearchToggle;
             showHideFunc();
         }
     }
