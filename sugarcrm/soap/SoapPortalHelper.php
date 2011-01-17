@@ -44,7 +44,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
 function get_bugs_in_contacts($in, $orderBy = '', $where='')
 	{
 		//bail if the in is empty
-		if($in == '()')return;
+		if(empty($in)  || $in =='()' || $in =="('')")return;
 		// First, get the list of IDs.
 		
 		//BEGIN SUGARCRM flav=com ONLY
@@ -70,7 +70,7 @@ function get_bugs_in_contacts($in, $orderBy = '', $where='')
 function get_bugs_in_accounts($in, $orderBy = '', $where='')
 	{
 		//bail if the in is empty
-		if($in == '()')return;
+		if(empty($in)  || $in =='()' || $in =="('')")return;
 		// First, get the list of IDs.
 		
 		//BEGIN SUGARCRM flav=com ONLY
@@ -101,7 +101,7 @@ Cases
 function get_cases_in_contacts($in, $orderBy = '')
 	{
 		//bail if the in is empty
-		if($in == '()')return;
+		if(empty($in)  || $in =='()' || $in =="('')")return;
 		// First, get the list of IDs.
 
 		//BEGIN SUGARCRM flav=com ONLY
@@ -130,7 +130,7 @@ function get_cases_in_accounts($in, $orderBy = '')
 			return;
 		}
 		//bail if the in is empty
-		if($in == '()')return;
+		if(empty($in)  || $in =='()' || $in =="('')")return;
 		// First, get the list of IDs.
 		//BEGIN SUGARCRM flav=com ONLY
 		$query = "SELECT id  from cases where account_id IN $in AND deleted=0";
@@ -162,7 +162,7 @@ NOTES
 function get_notes_in_contacts($in, $orderBy = '')
 	{
 		//bail if the in is empty
-		if($in == '()')return;
+		if(empty($in)  || $in =='()' || $in =="('')")return;
 		// First, get the list of IDs.
 		$query = "SELECT id from notes where contact_id IN $in AND deleted=0 AND portal_flag=1";
 		if(!empty($orderBy)){
@@ -183,7 +183,7 @@ function get_notes_in_contacts($in, $orderBy = '')
 function get_notes_in_module($in, $module, $orderBy = '')
 	{
 		//bail if the in is empty
-		if($in == '()')return;
+		if(empty($in)  || $in =='()' || $in =="('')")return;
 		// First, get the list of IDs.
 		$query = "SELECT id from notes where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
 		if(!empty($orderBy)){
@@ -221,7 +221,7 @@ function get_notes_in_module($in, $module, $orderBy = '')
         }
         
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
 
         // First, get the list of IDs.
 		if ($module == 'KBDocuments' || $module == 'DocumentRevisions') {
@@ -305,7 +305,6 @@ function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $l
 			$in = '';
 			//build the query to pass into the template list function
 			$q = 'select id from '.$template->table_name.' where deleted = 0 and '.$where;
-			$GLOBALS['log']->fatal('query from get_related_list:: is '.$q);		
 		}
 		
 		return $template->build_related_list_where($q, $template, $where, $in, $order_by, $limit, $row_offset);
