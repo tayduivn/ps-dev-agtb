@@ -83,6 +83,7 @@ SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
 
 EditView_tabs.on('contentReady', function(e){
 {/literal}
+{if $ID}
 {literal}
     EditView_tabs.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
@@ -92,6 +93,7 @@ EditView_tabs.on('contentReady', function(e){
     }));
     EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
 {/literal}
+{/if}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
 {if $EDIT_SELF}
 {literal}
