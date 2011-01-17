@@ -62,7 +62,7 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
                                                                          'label' => 'LBL_ACTIVE_DATE',
 																		 'default' => true),
 													  'doc_type' => array('width' => '8',
-                                                                         'label' => 'LBL_TEMPLATE_TYPE',
+                                                                         'label' => 'LBL_DOC_TYPE',
 																		 'default' => false), 
 													  'exp_date' => array('width' => '8',
                                                                          'label' => 'LBL_EXPIRATION_DATE',
