@@ -677,7 +677,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 	// VALIDATE: expression format
 	if ((/^[\w\-]+\(.*\)$/).exec(expr) == null) {
 		throw ("Syntax Error (Expression Format Incorrect '" + expr + "' )");
-		debugger; 
 	}
 
 	// EXTRACT: Function
@@ -798,9 +797,11 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
  * string can be converted to a constant.
  */
 SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
+
 	// a raw numeric constant
-	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(expr) != null ) {
-		return new SUGAR.ConstantExpression( parseFloat(expr) );
+	var asNum = SUGAR.expressions.unFormatNumber(expr);
+	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
+		return new SUGAR.ConstantExpression( parseFloat(asNum) );
 	}
 
 	// a pre defined numeric constant
@@ -1111,9 +1112,6 @@ SUGAR.util.DateUtils = {
 			var offset = SUGAR.expressions.userPrefs.gmt_offset;
 			date.setMinutes(date.getMinutes() + (date.getTimezoneOffset() + offset));
 		}
-
-		console.log(date.getMinutes());
-
 		return date;
 	}
  }

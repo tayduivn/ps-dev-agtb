@@ -68,7 +68,7 @@ function unzip_file( $zip_archive, $archive_file, $to_dir, $forceOverwrite = fal
         return false;
     }
 
-    $archive = new PclZip( "$zip_archive" );
+    $archive = new PclZip($zip_archive);
     if ( $forceOverwrite ) {
         if( $archive->extract(  PCLZIP_OPT_BY_NAME, $archive_file,
                                 PCLZIP_OPT_PATH,    $to_dir,
@@ -89,12 +89,33 @@ function unzip_file( $zip_archive, $archive_file, $to_dir, $forceOverwrite = fal
 }
 
 function zip_dir( $zip_dir, $zip_archive ){
-    $archive    = new PclZip( "$zip_archive" );
-    $v_list     = $archive->create( "$zip_dir" );
+    $archive    = new PclZip( $zip_archive );
+    $v_list     = $archive->create( $zip_dir );
     if( $v_list == 0 ){
         if (!defined('SUGAR_PHPUNIT_RUNNER'))
             die( "Error: " . $archive->errorInfo(true) );
         return false;
     }
 }
+
+/**
+ * Zip list of files, optionally stripping prefix
+ * @param string $zip_file
+ * @param array $file_list
+ * @param string $prefix Regular expression for the prefix to strip
+ */
+function zip_files_list($zip_file, $file_list, $prefix = '')
+{
+    $archive    = new PclZip( $zip_file );
+    foreach($file_list as $file) {
+        if(!empty($prefix) && preg_match($prefix, $file, $matches) > 0) {
+            $remove_path = $matches[0];
+            $archive->add($file, PCLZIP_OPT_REMOVE_PATH, $prefix);
+        } else {
+            $archive->add($file);
+        }
+    }
+    return true;
 }
+
+} // if (ZipArchive exists)
