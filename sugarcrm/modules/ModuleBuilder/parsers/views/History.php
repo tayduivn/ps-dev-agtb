@@ -131,12 +131,12 @@ class History
         // because so unlikely in normal use we handle this the naive way by waiting a second so our naming scheme doesn't get overelaborated
         $retries = 0 ;
         
-        $time = TimeDate2::getInstance()->getNow();
+        $time = TimeDate::getInstance()->getNow();
         while ( (file_exists ( $this->_previewFilename . "_" . $time ) && $retries < 5) )
         
         {
             sleep ( 1 ) ;
-            $time = strtotime(TimeDate2::getInstance()->httpTime());
+            $time = strtotime(TimeDate::getInstance()->httpTime());
             $retries ++ ;
         }
         // now we have a unique filename, copy the file into the history

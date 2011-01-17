@@ -96,7 +96,7 @@ class SchedulerMonitor extends Scheduler {
 		}
 		global $sugar_config;
 		$GLOBALS['log']->debug('----->Monitor starting Scheduler thread');
-		$this->uptimeScheduler = TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow());
+		$this->uptimeScheduler = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow());
 		$job = new Job();
 		$job->object_assigned_name = 'SchedulerDaemon';
 		
@@ -160,13 +160,13 @@ class SchedulerMonitor extends Scheduler {
 		$buf = '';
 		$ack = "ack\n";
 		
-		$pingAt = TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow())->get('+10 seconds'));
+		$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds'));
 		
 		while($this->stop == false) {
 			
 			if(!$this->shutdown) { // if we manually shutdown the service, don't try to ping
 				if($pingAt <= mktime()) { 
-					$pingAt = TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow())->get('+10 seconds'));
+					$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds'));
 ;// every 10 secs
 					$this->checkCount++;
 					$GLOBALS['log']->debug('----->Monitor pinging SD :: next ping at: '.$pingAt);
@@ -190,7 +190,7 @@ class SchedulerMonitor extends Scheduler {
 				}
 			} else {
 				$GLOBALS['log']->debug('Monitor FAILURE lost contact with Daemon! Sending admin alert email.');
-				$this->sendAdminAlert('Monitor lost contact with the Daemon at GMT: '.TimeDate2::getInstance()->nowDb());
+				$this->sendAdminAlert('Monitor lost contact with the Daemon at GMT: '.TimeDate::getInstance()->nowDb());
 			}
 
 			if(($socketInbound = @socket_accept($this->socket)) < 0) { // we hold here until input arrives
@@ -295,7 +295,7 @@ class SchedulerMonitor extends Scheduler {
 							$GLOBALS['log']->debug('----->Monitor got STATUS');
 							$msg = "\nSchedulerMonitor received STATUS command.\nDaemon status:\n";
 							$msg .= "UPTIME: ";
-							$msg .= TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow()) - $this->uptimeScheduler."secs\n";
+							$msg .= TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow()) - $this->uptimeScheduler."secs\n";
 							usleep(100);
 							socket_write($socketInbound, $msg, strlen($msg));  // output feedback to admin
 							usleep(100);

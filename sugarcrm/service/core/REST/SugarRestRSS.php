@@ -45,7 +45,7 @@ class SugarRestRSS extends SugarRest{
 	} // fn
 
 	function generateResponseHeader($count){
-		$date = TimeDate2::httpTime();
+		$date = TimeDate::httpTime();
 echo'<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
@@ -83,7 +83,7 @@ foreach($item['name_value_list'] as $k=>$v){
 }
 echo "]]></description>\n";
 if(!empty($item['name_value_list']['date_modified'])){
-	$date = TimeDate2::httpTime(TimeDate2::getInstance()->fromDb($item['name_value_list']['date_modified'])->getTimestamp());
+	$date = TimeDate::httpTime(TimeDate::getInstance()->fromDb($item['name_value_list']['date_modified'])->getTimestamp());
 	echo "<pubDate>$date</pubDate>";
 }
 

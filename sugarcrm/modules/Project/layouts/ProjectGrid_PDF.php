@@ -106,7 +106,7 @@ if ($_REQUEST['selected_view'] == '10')
 if ($_REQUEST['selected_view'] == '11')
     $grid[3]['VALUE'] = $mod_strings['LBL_FILTER_MY_UPCOMING_TASKS']. $locale->translateCharset(" ".$_REQUEST['view_filter_resource'], 'UTF-8', $locale->getExportCharset());
 
-$grid[4]['VALUE'] = $locale->translateCharset(TimeDate2::getInstance()->nowDate(), 'UTF-8', $locale->getExportCharset());
+$grid[4]['VALUE'] = $locale->translateCharset(TimeDate::getInstance()->nowDate(), 'UTF-8', $locale->getExportCharset());
 
 
 $options['showLines'] = 0;

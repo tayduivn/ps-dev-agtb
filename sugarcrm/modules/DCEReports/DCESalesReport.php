@@ -232,7 +232,7 @@ function processReports(){
         return false;
         
         //get current time
-        $now = TimeDate2::getInstance()->nowDb();
+        $now = TimeDate::getInstance()->nowDb();
         $stim = strtotime($now);
 
         //compare the days
@@ -384,11 +384,11 @@ function processReports(){
     
     function  getNumOfActiveUsers($id, $db){
             //get current time
-            $now = TimeDate2::getInstance()->nowDb();
+            $now = TimeDate::getInstance()->nowDb();
             $stim = strtotime($now);
             $wtim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-7,   gmdate("Y",$stim));
             //convert back into date format
-            $sevenDaysAgo = gmdate("Y-m-d ",$wtim);
+            $sevenDaysAgo = $timedate->asDb($timedate->getNow()->get("-1 week"));
 
            $dceRprtQry  =  "Select max(num_of_users) num_of_users from dcereports where instance_id = '$id' ";
            $dceRprtQry .=  " and date_entered >= '$sevenDaysAgo' order by date_entered desc";

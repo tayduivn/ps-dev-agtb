@@ -370,7 +370,7 @@ if(empty($focus->id)) { // remove default timezone for new users(set later)
 //$userTZ = $focus->getPreference('timezone');
 
 if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
-	$userTZ = TimeDate2::guessTimezone();
+	$userTZ = TimeDate::guessTimezone();
 	$focus->setPreference('timezone', $userTZ);
 }
 
@@ -381,7 +381,7 @@ if(!$focus->getPreference('ut')) {
 	//END SUGARCRM flav=sales ONLY
 }
 $sugar_smarty->assign('TIMEZONE_CURRENT', $userTZ);
-$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate2::getTimezoneList());
+$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
 //// Numbers and Currency display
 require_once('modules/Currencies/ListCurrency.php');

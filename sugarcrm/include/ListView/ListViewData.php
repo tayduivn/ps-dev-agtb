@@ -73,7 +73,7 @@ class ListViewData {
 				        $monitor->setValue('item_summary', "lvso=".$direction."&".$this->var_order_by."=".$_REQUEST[$this->var_order_by]);
 				        $monitor->setValue('action', 'listview');
 						$monitor->setValue('user_id', $GLOBALS['current_user']->id);
-						$monitor->setValue('date_modified', TimeDate2::getInstance()->nowDb());
+						$monitor->setValue('date_modified', TimeDate::getInstance()->nowDb());
 				        $monitor->save();
 					}
     			}

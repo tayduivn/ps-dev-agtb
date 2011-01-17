@@ -1,11 +1,11 @@
 <?php
-require_once 'include/TimeDate2.php';
+require_once 'include/TimeDate.php';
 require_once 'modules/Users/User.php';
 
 class TDTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	/**
-	 * @var TimeDate2
+	 * @var TimeDate
 	 */
 	protected $time_date;
 	
@@ -39,7 +39,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testModuleBuilder_parser_views_History(){
 
 		$time =strtotime ( gmdate ( 'r' ) ) ;
-		$newTime = strtotime(TimeDate2::getInstance()->httpTime());		
+		$newTime = strtotime(TimeDate::getInstance()->httpTime());		
 
 
 		$this->assertEquals($time, $newTime);
@@ -51,7 +51,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 		
 		
 		global $timedate;
-		$ts = strtotime(TimeDate2::getInstance()->httpTime());
+		$ts = strtotime(TimeDate::getInstance()->httpTime());
 		
 		$dbDate = gmdate ( $timedate->get_db_date_time_format (), $ts ) ;	
 		$newDbDate = $timedate->fromTimestamp($ts)->asDb();
@@ -116,7 +116,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 	
 		$grid = date("m/d/Y", time());;
 	
-		$newGrid = TimeDate2::getInstance()->nowDate();
+		$newGrid = TimeDate::getInstance()->nowDate();
 	
 
 		$this->assertEquals($grid, $newGrid);
@@ -233,20 +233,20 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 
 		$date = date("Y-m-d H:m:s");
 
-		$newDate = TimeDate2::getInstance()->asDb(TimeDate2::getInstance()->getNow());
+		$newDate = TimeDate::getInstance()->asDb(TimeDate::getInstance()->getNow());
 		
 		//_pp($date);
 
 		//_pp($newDate);
 	}	
 
-//TimeDate2::httpTime() == gmdate("D, d M Y H:i:s")
+//TimeDate::httpTime() == gmdate("D, d M Y H:i:s")
 
 
 	public function testReportsTemplates(){
 
 		$print_date = date("m/d/Y", time());
-		$newPrintDate = TimeDate2::getInstance()->nowDate();
+		$newPrintDate = TimeDate::getInstance()->nowDate();
 		
 		$this->assertEquals($print_date, $newPrintDate);
 	}
@@ -291,7 +291,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 
 		
 		$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now'));
-		$newTime = TimeDate2::getInstance()->nowDb();
+		$newTime = TimeDate::getInstance()->nowDb();
 
 		//$this->assertEquals($time, $newTime);
 
@@ -302,7 +302,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 
 		
 		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005);
-		$newLowerLimit = TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->fromString(2005-01-01));
+		$newLowerLimit = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->fromString(2005-01-01));
 		//_pp($lowerLimit);
 		//_pp($newLowerLimit);
 
@@ -313,7 +313,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 		
 		$now = gmdate('Y-m-d H:i', strtotime('now'));
 		
-		//$time = TimeDate2::getInstance()->fromDbFormat(TimeDate2::getInstance()->getNow(),DB_DATE_FORMAT);
+		//$time = TimeDate::getInstance()->fromDbFormat(TimeDate::getInstance()->getNow(),DB_DATE_FORMAT);
 
 		//_pp($now);
 		//_pp($time);
@@ -324,7 +324,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 
 
 		$today  = getdate(gmmktime());
-		$newToday = getdate(TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow()));
+		$newToday = getdate(TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow()));
 
 		//$this->assertEquals($today, $newToday);
 		
@@ -347,7 +347,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testScheduler3(){
 
 		$theDate = date('Y-m-d', strtotime('+1 day')); 
-		$newDate = TimeDate2::getInstance()->asDbDate(TimeDate2::getInstance()->getNow()->get('+1 day'));
+		$newDate = TimeDate::getInstance()->asDbDate(TimeDate::getInstance()->getNow()->get('+1 day'));
 	
 
 		$this->assertEquals($theDate, $newDate);
@@ -356,7 +356,7 @@ class TDTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testScheduler4(){
 
 		$theDate = date('Y-m-d');
-		$newDate = TimeDate2::getInstance()->nowDbDate();
+		$newDate = TimeDate::getInstance()->nowDbDate();
 	
 		$this->assertEquals($theDate, $newDate);	
 	}

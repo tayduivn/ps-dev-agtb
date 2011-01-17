@@ -463,8 +463,8 @@ function getUserJSON() {
 
 
 function getUserConfigJSON() {
- require_once('include/TimeDate2.php');
- $timedate = TimeDate2::getInstance();
+ require_once('include/TimeDate.php');
+ $timedate = TimeDate::getInstance();
  global $current_user,$global_registry_var_name,$json,$sugar_config;
 
  if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '')

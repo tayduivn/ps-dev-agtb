@@ -74,7 +74,7 @@ class SugarDateTime extends DateTime
 	{
 		$res = new self();
 		$res->setTimezone($timezone);
-		$str_format = str_replace(array_keys(TimeDate2::$format_to_str), array_values(TimeDate2::$format_to_str), $format);
+		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
 		// TODO: better way to not risk locale stuff problems?
 		$data = strptime($str_format, $time);
 		$res->setDate($data["tm_year"], $data["tm_mon"], $data["tm_mday"])
@@ -242,7 +242,7 @@ class SugarDateTime extends DateTime
 	 */
 	function get_mysql_date()
 	{
-		return $this->format(TimeDate2::DB_DATE_FORMAT);
+		return $this->format(TimeDate::DB_DATE_FORMAT);
 	}
 
 	/**
@@ -343,7 +343,7 @@ class SugarDateTime extends DateTime
             }
             $this->setTimezone(self::$_gmt);
         }
-        return $this->format(TimeDate2::DB_DATETIME_FORMAT);
+        return $this->format(TimeDate::DB_DATETIME_FORMAT);
 	}
 
 	/**

@@ -119,7 +119,7 @@ function populate_tracker_sessions() {
 		    $monitor3->setValue('date_start', $row['date_start']);
 	    	$monitor3->setValue('round_trips', $row['round_trips'] + 1);
 	    } else {
-			$monitor3->setValue('date_start', TimeDate2::getInstance()->nowDb());
+			$monitor3->setValue('date_start', TimeDate::getInstance()->nowDb());
 	        $monitor3->setValue('round_trips', 1);		    	
 	    }
 	    //$monitor3->setValue('date_end', $monitor3->date_start);

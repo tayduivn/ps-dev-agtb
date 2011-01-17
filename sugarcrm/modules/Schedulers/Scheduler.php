@@ -210,7 +210,7 @@ class Scheduler extends SugarBean {
 			return false;
 		}
 
-		$now = TimeDate2::getInstance()->getNow();
+		$now = TimeDate::getInstance()->getNow();
 		$validTimes = $this->deriveDBDateTimes($this);
 		//_pp('now: '.$now); _pp($validTimes);
 
@@ -365,7 +365,7 @@ class Scheduler extends SugarBean {
 		$dates	= $ints[2];
 		$hrs	= $ints[1];
 		$mins	= $ints[0];
-		$today	= getdate(TimeDate2::getInstance()->asUserTs(TimeDate2::getInstance()->getNow()));
+		$today	= getdate(TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow()));
 
 		// derive day part
 		if($days == '*') {
@@ -534,7 +534,7 @@ class Scheduler extends SugarBean {
 		//_pp($hrName);
 		// derive minutes
 		//$currentMin = date('i');
-		$currentMin = date('i', strtotime($this->date_time_start));
+		$currentMin = $timedate->getNow()->minute;
 		if(substr($currentMin, 0, 1) == '0') {
 			$currentMin = substr($currentMin, 1, 1);
 		}
@@ -613,13 +613,13 @@ class Scheduler extends SugarBean {
 		if(!empty($focus->date_time_end)) { // do the same for date_time_end if not empty
 			$dateTimeEnd = $focus->date_time_end;
 		} else {
-			$dateTimeEnd = TimeDate2::getInstance()->asDb(TimeDate2::getInstance()->getNow()+get('+1 day'));
+			$dateTimeEnd = TimeDate::getInstance()->asDb(TimeDate::getInstance()->getNow()+get('+1 day'));
 //			$dateTimeEnd = '2020-12-31 23:59:59'; // if empty, set it to something ridiculous
 		}
 		$timeEndTs = strtotime($dateTimeEnd.' UTC'); // GMT end timestamp if necessary
 		$timeEndTs++;
 		/*_pp('hours:'); _pp($hrName);_pp('mins:'); _pp($minName);*/
-		$nowTs = TimeDate2::getInstance()->asUserTs($timedate->getNow());
+		$nowTs = TimeDate::getInstance()->asUserTs($timedate->getNow());
 
 //		_pp('currentHour: '. $currentHour);
 //		_pp('timeStartTs: '.date('r',$timeStartTs));
@@ -638,9 +638,9 @@ class Scheduler extends SugarBean {
 			$hourSeen++;
 			foreach($minName as $kMin=>$min) {
 				if($hourSeen == 25) {
-					$theDate = TimeDate2::getInstance()->asDbDate(TimeDate2::getInstance()->getNow()->get('+1 day'));
+					$theDate = TimeDate::getInstance()->asDbDate(TimeDate::getInstance()->getNow()->get('+1 day'));
 				} else {
-					$theDate = TimeDate2::getInstance()->nowDbDate();
+					$theDate = TimeDate::getInstance()->nowDbDate();
 				}
 
 				$tsGmt = strtotime($theDate.' '.str_pad($hr,2,'0',STR_PAD_LEFT).":".str_pad($min,2,'0',STR_PAD_LEFT).":00"); // this is LOCAL
@@ -650,7 +650,7 @@ class Scheduler extends SugarBean {
                         if($tsGmt > $lastRunTs) { // start from last run, last run should not be included
                             if( $tsGmt <= $timeEndTs ) { // this is taken care of by the initial query - start is less than the date spec'd by admin
                                 if( $tsGmt <= $timeToTs ) { // start is less than the time_to
-                                    $validJobTime[] = gmdate('Y-m-d H:i', $tsGmt);
+                                    $validJobTime[] = $timedate->asDb($timedate->fromTimedstamp($tsGmt));
                                 } else {
                                     //_pp('Job Time is NOT smaller that TimeTO: '.$tsGmt .'<='. $timeToTs);	
                                 }
@@ -675,12 +675,12 @@ class Scheduler extends SugarBean {
 		if($focus->catch_up == 1) {
 			if($focus->last_run == null) {
 				// always "catch-up"
-				$validJobTime[] = gmdate('Y-m-d H:i', strtotime('now'));
+				$validJobTime[] = $timedate->nowDb();
 			} else {
 				// determine what the interval in min/hours is
 				// see if last_run is in it
 				// if not, add NOW
-                $now = gmdate('Y-m-d H:i', strtotime('now'));
+                $now = $timedate->nowDb();
 				if(!empty($validJobTime) && ($focus->last_run < $validJobTime[0]) && ($now > $validJobTime[0])) {
 				// cn: empty() bug 5914; 
 				//if(!empty) should be checked, becasue if a scheduler is defined to run every day 4pm, then after 4pm, and it runs as 4pm, the $validJobTime will be empty, and it should not catch up
@@ -869,7 +869,7 @@ class Scheduler extends SugarBean {
 	 * soft-deletes all job logs older than 24 hours
 	 */
 	function cleanJobLog() {
-		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert('\''.TimeDate2::getInstance()->nowDb(), strtotime('-24 hours')).'\'', 'datetime').'');
+		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert('\''.TimeDate::getInstance()->nowDb(), strtotime('-24 hours')).'\'', 'datetime'.'');
 	}
 
 	/**

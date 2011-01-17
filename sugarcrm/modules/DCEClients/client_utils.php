@@ -616,11 +616,9 @@ function getUpgradeVars($db, $action, $inst){
     function returnTimeRanges(){
          //change time into timestamp
         $now = $timedate->nowDb();
-        $stim = strtotime($now);
-        //remove a day from timestamp 
-        $ytim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-1,   gmdate("Y",$stim));
+        
         //convert back into date format
-        $yesterday = gmdate("Y-m-d ",$ytim);
+        $yesterday = $timedate->getNow()->get('-1 day')->asDb();
 
         //create the 24 hour ranges
         $hour['range1']['start'] = $yesterday.'0:00:00';

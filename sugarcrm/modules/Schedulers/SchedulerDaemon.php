@@ -169,7 +169,7 @@ class SchedulerDaemon extends Scheduler {
 					$sleepTil = strtotime('+'.$this->sleepInterval.'secs');
 				} else {
 					$GLOBALS['log']->debug('Daemon FAILURE lost contact with Monitor! Sending admin alert email.');
-					$this->sendAdminAlert('Daemon lost contact with the Monitor at GMT: '.gmdate('Y-m-d H:i:s', strtotime('now')));
+					$this->sendAdminAlert('Daemon lost contact with the Monitor at GMT: '.$timedate->nowDb());
 				}
 			}
 				
@@ -489,7 +489,7 @@ class SchedulerDaemon extends Scheduler {
 		// derive hours part
 		//$startHour = date('G', strtotime($focus->date_time_start));
 		//$currentHour = ($startHour < 1) ? 23 : date('G', strtotime($focus->date_time_start));
-		$currentHour = date('G');
+		$currentHour = $timedate->getNow()->hour;
 		if($hrs == '*') {
 			$GLOBALS['log']->debug('got * hours');
 			for($i=0;$i<=24; $i++) {
@@ -532,7 +532,7 @@ class SchedulerDaemon extends Scheduler {
 			}
 		}
 		// derive minutes
-		$currentMin = date('i');
+		$currentMin = $timedate->getNow()->minute;
 		if(substr($currentMin, 0, 1) == '0') {
 			$currentMin = substr($currentMin, 1, 1);
 		}
@@ -695,8 +695,8 @@ class SchedulerDaemon extends Scheduler {
 						VALUES (
 						'".$guid."',
 						0, 
-						".db_convert("'".TimeDate2::getInstance()->nowDb()."'", 'datetime').",
-						".db_convert("'".TimeDate2::getInstance()->nowDb()."'", 'datetime').",
+						".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').",
+						".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').",
 						'".$jobsArr['ids'][$k]."',
 						".db_convert("'".$time."'", 'datetime').",
 						'ready'
@@ -753,8 +753,8 @@ class SchedulerDaemon extends Scheduler {
 				"FROM schedulers " .
 				"WHERE deleted=0 " .
 				"AND status = 'Active' " .
-				"AND date_time_start < ".db_convert("'".TimeDate2::getInstance()->nowDb()."'",'datetime')." " .
-				"AND (date_time_end > ".db_convert("'".TimeDate2::getInstance()->nowDb()."'",'datetime')." OR date_time_end IS NULL)";
+				"AND date_time_start < ".db_convert("'".TimeDate::getInstance()->nowDb()."'",'datetime')." " .
+				"AND (date_time_end > ".db_convert("'".TimeDate::getInstance()->nowDb()."'",'datetime')." OR date_time_end IS NULL)";
 				
 		$result	= $this->db->query($query);
 		$rows=0;

@@ -36,7 +36,7 @@ require_once('sugar_version.php');
 require_once('include/utils.php');
 require_once('install/install_utils.php');
 require_once('install/install_defaults.php');
-require_once('include/TimeDate2.php');
+require_once('include/TimeDate.php');
 require_once('include/Localization/Localization.php');
 require_once('include/SugarTheme/SugarTheme.php');
 require_once('include/utils/LogicHook.php');
@@ -47,7 +47,7 @@ require_once('include/entryPoint.php');
     $_REQUEST['js_rebuild_concat'] = 'rebuild';
     require_once('jssource/minify.php');
 
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 // cn: set php.ini settings at entry points
 setPhpIniSettings();
 $locale = new Localization();

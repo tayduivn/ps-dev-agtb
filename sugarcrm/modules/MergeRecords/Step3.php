@@ -38,7 +38,7 @@ if (!defined('sugarEntry') || !sugarEntry)
 
 
 require_once ('include/JSON.php');
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 global $app_strings;
 global $mod_strings;
 global $app_list_strings;

@@ -63,9 +63,9 @@ $ntc_time_format = '('.$timedate->get_user_time_format().')';
 	$user_id = $current_user->id;
 $default_status = $app_list_strings['meeting_status_default'];
 $default_parent_type= $app_list_strings['record_type_default_key'];
-$default_date_start = $timedate->to_display_date(date('Y-m-d'),false);
-$default_time_start = $timedate->to_display_time((date('H:i')), true, false);
-$time_ampm = $timedate->AMPMMenu($prefix,date('H:i'));
+$default_date_start = $timedate->nowDbDate();
+$default_time_start = $timedate->nowDbTime();
+$time_ampm = $timedate->AMPMMenu($prefix, $timedate->nowDbTime());
 			// Unimplemented until jscalendar language files are fixed
 			// $cal_lang =(empty($cal_codes[$current_language])) ? $cal_codes[$default_language] : $cal_codes[$current_language];
 $jsCalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');

@@ -205,7 +205,7 @@ elseif(isset($_REQUEST['parent_type']) && !empty($_REQUEST['parent_type'])
 // If came from email archiving edit view, this would have been set from form input.
 if (!isset($focus->date_start))
 {
-    $timedate = TimeDate2::getInstance();
+    $timedate = TimeDate::getInstance();
 	list($focus->date_start,  $focus->time_start) = $timedate->split_date_time($timedate->now());
 }
 

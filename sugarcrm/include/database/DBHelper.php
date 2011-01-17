@@ -1045,7 +1045,7 @@ abstract class DBHelper
 			$values['before_value_string']=$bean->dbManager->getHelper()->massageValue($changes['before'], $fieldDefs['before_value_string']);
 			$values['after_value_string']=$bean->dbManager->getHelper()->massageValue($changes['after'], $fieldDefs['after_value_string']);
 		}
-		$values['date_created']=$bean->dbManager->getHelper()->massageValue(TimeDate2::getInstance()->nowDb(), $fieldDefs['date_created'] );
+		$values['date_created']=$bean->dbManager->getHelper()->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
 		$values['created_by']=$bean->dbManager->getHelper()->massageValue($current_user->id, $fieldDefs['created_by']);
 
 		$sql .= "(".implode(",", array_keys($values)).") ";

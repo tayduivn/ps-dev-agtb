@@ -187,7 +187,7 @@ class DCEReportsController extends SugarController{
         header("Content-Disposition: attachment; filename=licensingReport.csv");
         header("Content-transfer-encoding: binary");
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-        header("Last-Modified: " . $timedate->nowDb() . " GMT" );
+        header("Last-Modified: " . $timedate->httpTime() . " GMT" );
         header("Cache-Control: post-check=0, pre-check=0", false );
         header("Content-Length: ".strlen($content));
         

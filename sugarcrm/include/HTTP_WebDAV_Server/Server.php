@@ -636,7 +636,7 @@ class HTTP_WebDAV_Server
                             break;
                         case "getlastmodified":
                             echo "     <D:getlastmodified ns0:dt=\"dateTime.rfc1123\">"
-                                . TimeDate2::httptime($prop['val'])
+                                . TimeDate::httptime($prop['val'])
                                 . "</D:getlastmodified>\n";
                             break;
                         case "resourcetype":
@@ -808,7 +808,7 @@ class HTTP_WebDAV_Server
                 header("Content-type: $options[mimetype]");
 
                 if (isset($options['mtime'])) {
-                    header("Last-modified: ".TimeDate2::httpTime());
+                    header("Last-modified: ".TimeDate::httpTime());
                 }
 
                 if (isset($options['stream'])) {

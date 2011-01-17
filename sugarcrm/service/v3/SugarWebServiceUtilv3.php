@@ -434,7 +434,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
     function generateUpcomingActivitiesWhereClause($seed,$meta)
     {
         $query = array();
-        $query_date = TimeDate2::getInstance()->nowDb();
+        $query_date = TimeDate::getInstance()->nowDb();
         $query[] = " {$seed->table_name}.{$meta['date_field']} > '$query_date'"; //Add date filter
         $query[] = "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}' "; //Add assigned user filter
         if(is_array($meta['status_field']))

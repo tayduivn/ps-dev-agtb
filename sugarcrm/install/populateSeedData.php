@@ -71,7 +71,7 @@ if(empty($app_list_strings)) {
  */
 mt_srand(93285903);
 $db = DBManagerFactory::getInstance();
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 // Set the max time to one hour (helps Windows load the seed data)
 ini_set("max_execution_time", "3600");
 // ensure we have enough memory
@@ -555,7 +555,7 @@ for($i=0; $i<$number_leads; $i++)
 //create timeperiods - pro only
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 $now = $timedate->getNow();
 $timedate->tzUser($now); // use local TZ to calculate dates
 $timeperiods=array();

@@ -247,7 +247,7 @@ class DCEInstance extends DCEInstance_sugar {
             return false;
         }
         // license start date plus $duration days
-        return TimeDate2::fromDbFormat($lic_start, $timedate->get_db_date_format())->modify("+{$lic_duration} days")->asDbDate();
+        return TimeDate::fromDbFormat($lic_start, $timedate->get_db_date_format())->modify("+{$lic_duration} days")->asDbDate();
     }
 
 }

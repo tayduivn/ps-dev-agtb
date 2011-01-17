@@ -231,10 +231,10 @@ class WorkFlowSchedule extends SugarBean {
     function get_expiry_date($bean_object, $time_interval, $is_update = false, $target_field="none")
     {
         if($is_update == false){
-            $target_stamp = TimeDate2::getInstance()->nowDb();
+            $target_stamp = TimeDate::getInstance()->nowDb();
         } else {
             if($target_field=="none"){
-                $target_stamp = TimeDate2::getInstance()->nowDb();
+                $target_stamp = TimeDate::getInstance()->nowDb();
             } else {
                 $target_stamp = $bean_object->$target_field;
             }
@@ -253,7 +253,7 @@ function process_scheduled(){
         require('include/modules.php');
     }
 
-    $current_stamp = TimeDate2::getInstance()->nowDb();
+    $current_stamp = TimeDate::getInstance()->nowDb();
 
     $query = "	SELECT *
                 FROM $this->table_name

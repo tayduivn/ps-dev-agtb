@@ -62,7 +62,7 @@ if(!empty( $_REQUEST['exportKey']) ){
 	header("Content-Disposition: attachment; filename=sugarkey.lic");
 	header("Content-Type: text/plain; charset={$app_strings['LBL_CHARSET']}");
 	header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-	header( "Last-Modified: " . TimeDate2::httpTime() );
+	header( "Last-Modified: " . TimeDate::httpTime() );
 	header("Cache-Control: max-age=0");
 	header("Pragma: public");
 	header("Content-Length: ".strlen($content));

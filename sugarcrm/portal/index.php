@@ -58,7 +58,7 @@ $portal = new Portal();
 $portal->loadSoapClient();
 
 require_once ('sugar_version.php'); // provides $sugar_version, $sugar_db_version, $sugar_flavor
-require_once ('include/TimeDate2.php');
+require_once ('include/TimeDate.php');
 require_once ('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList
 require_once ('log4php/LoggerManager.php');
 require_once ('modules/Users/authentication/AuthenticationController.php');
@@ -85,7 +85,7 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 
 // Emails uses the REQUEST_URI later to construct dynamic URLs.
 // IIS does not pass this field to prevent an error, if it is not set, we will assign it to ''.

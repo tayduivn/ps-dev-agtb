@@ -62,7 +62,7 @@ if (isset($_REQUEST['campaign_id']) && !empty($_REQUEST['campaign_id'])) {
 }
 
 $db = DBManagerFactory::getInstance();
-$timedate = TimeDate2::getInstance();
+$timedate = TimeDate::getInstance();
 $emailman = new EmailMan();
 
     if($test){
@@ -87,7 +87,7 @@ $emailman = new EmailMan();
         //2. were never processed or last attempt was 24 hours ago
         $select_query =" SELECT *";
         $select_query.=" FROM $emailman->table_name";
-        $select_query.=" WHERE send_date_time <= ". db_convert("'".TimeDate2::getInstance()->nowDb()."'" ,"datetime");
+        $select_query.=" WHERE send_date_time <= ". db_convert("'".TimeDate::getInstance()->nowDb()."'" ,"datetime");
         $select_query.=" AND (in_queue ='0' OR ( in_queue ='1' AND in_queue_date <= " .db_convert("'". $timedate->fromString("-1 day")->asDb() ."'" ,"datetime")."))";
 
         if (!empty($campaign_id)) {

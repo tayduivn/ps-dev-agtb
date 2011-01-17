@@ -477,7 +477,7 @@ function clear_sync_session(){
 }
 
 function sync_users($soapclient, $session, $clean = false, $is_conversion = false){
-    $timedate = TimeDate2::getInstance();
+    $timedate = TimeDate::getInstance();
     global $current_user;
 	$last_sync = '1980-07-09 12:00:00';
 	$user_id  = $soapclient->call('get_user_id',array('session'=>$session));

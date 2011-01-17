@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once ('include/TimeDate2.php');
+require_once ('include/TimeDate.php');
 // try to use the user's theme if we can figure it out
 if ( isset($_REQUEST['themeName']) )
     SugarThemeRegistry::set($_REQUEST['themeName']);
@@ -65,8 +65,8 @@ if (($ifmod || $iftag) && ($ifmod !== false && $iftag !== false)) {
     header($_SERVER["SERVER_PROTOCOL"].' 304 Not Modified');
     die;
 }
-header('Expires: ' . TimeDate2::httpTime(time() + 86400));
-header("Last-Modified: ".TimeDate2::httpTime($last_modified_time));
+header('Expires: ' . TimeDate::httpTime(time() + 86400));
+header("Last-Modified: ".TimeDate::httpTime($last_modified_time));
 
 // now send the content
 if ( substr($filename,-3) == 'gif' )

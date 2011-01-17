@@ -963,7 +963,7 @@ eoq;
 		$this->folder->has_child = 0;
 		$this->folder->created_by = $current_user->id;
 		$this->folder->modified_by = $current_user->id;
-		$this->folder->date_modified = $this->folder->date_created = TimeDate2::getInstance()->nowDb();
+		$this->folder->date_modified = $this->folder->date_created = TimeDate::getInstance()->nowDb();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->folder->team_id = $current_user->getPrivateTeamID();
 		//END SUGARCRM flav=pro ONLY

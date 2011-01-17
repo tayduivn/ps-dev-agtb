@@ -164,7 +164,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 $data['campaign_id']="'" . $row['campaign_id'] . "'";
                 $data['target_tracker_key']="'" . $identifier . "'";
                 $data['activity_type']="'" .  $activity . "'";
-                $data['activity_date']="'" . TimeDate2::getInstance()->nowDb() . "'";
+                $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
                 $data['hits']=1;
                 if (!empty($clicked_url_key)) {
                     $data['related_id']="'".$clicked_url_key."'";
@@ -223,7 +223,7 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
                 $data['target_id']="'" .  $row['target_id'] . "'";
                 $data['target_type']="'" .  $row['target_type'] . "'";
                 $data['activity_type']="'" .  $activity . "'";
-                $data['activity_date']="'" . TimeDate2::getInstance()->nowDb() . "'";
+                $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
                 $data['list_id']="'" .  $row['list_id'] . "'";
                 $data['marketing_id']="'" .  $row['marketing_id'] . "'";
                 $data['hits']=1;
@@ -870,7 +870,7 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
         $data['target_id']="'" .  $pl_row['related_id'] . "'";
         $data['target_type']="'" .  $pl_row['related_type'] . "'";
         $data['activity_type']="'targeted'";
-        $data['activity_date']="'" . TimeDate2::getInstance()->nowDb() . "'";
+        $data['activity_date']="'" . TimeDate::getInstance()->nowDb() . "'";
         $data['list_id']="'" .  $pl_row['prospect_list_id'] . "'";
         $data['hits']=1;
         
@@ -896,16 +896,16 @@ function write_mail_merge_log_entry($campaign_id,$pl_row) {
 
 			if ($focus->db->dbType=='oci8') {
 			//BEGIN SUGARCRM flav=ent ONLY
-				$current_date="TO_DATE('".TimeDate2::getInstance()->nowDb()."','YYYY-MM-DD HH24:MI:SS')";
+				$current_date="TO_DATE('".TimeDate::getInstance()->nowDb()."','YYYY-MM-DD HH24:MI:SS')";
 				$guid = "SYS_GUID()";
 			//END SUGARCRM flav=ent ONLY
 			} 
 			else if ($focus->db->dbType=='mssql') {
-				$current_date= "'".TimeDate2::getInstance()->nowDb()."'";
+				$current_date= "'".TimeDate::getInstance()->nowDb()."'";
 				$guid = "NEWID()";
 			}
 			else {
-				$current_date= "'".TimeDate2::getInstance()->nowDb()."'";
+				$current_date= "'".TimeDate::getInstance()->nowDb()."'";
 				$guid = "UUID()";
 			}
 

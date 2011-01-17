@@ -38,12 +38,12 @@ global $app_list_strings;
 global $current_language, $current_user;
 $current_module_strings = return_module_language($current_language, 'Tasks');
 
-$today = TimeDate2::getInstance()->nowDb();
+$today = TimeDate::getInstance()->nowDb();
 // Break down the date, add a day, and print it back out again
 list($date_tmp,$time_tmp) = explode(' ',$today);
 $date = explode('-',$date_tmp);
 $time = explode(':',$time_tmp);
-$tomorrow = gmdate($GLOBALS['timedate']->get_db_date_time_format(),gmmktime($time[0],$time[1],$time[2],$date[1],($date[2]+1),$date[0]));
+$tomorrow = TimeDate::getInstance()->getNow()->get('+1 day')->asDb();
 
 $ListView = new ListView();
 $seedTasks = new Task();

@@ -81,7 +81,7 @@ require_once('include/formbase.php');
 
  	$result=$focus->db->query($query);
 	while (($row=$focus->db->fetchByAssoc($result)) != null) {
-			$del_query =" update email_marketing_prospect_lists set email_marketing_prospect_lists.deleted=1, email_marketing_prospect_lists.date_modified=".$focus->db->convert("'".TimeDate2::getInstance()->nowDb()."'",'datetime');
+			$del_query =" update email_marketing_prospect_lists set email_marketing_prospect_lists.deleted=1, email_marketing_prospect_lists.date_modified=".$focus->db->convert("'".TimeDate::getInstance()->nowDb()."'",'datetime');
  			$del_query.=" WHERE  email_marketing_prospect_lists.id='{$row['id']}'";
 		 	$focus->db->query($del_query);
 	}

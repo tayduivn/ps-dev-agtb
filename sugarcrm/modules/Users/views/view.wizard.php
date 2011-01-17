@@ -119,7 +119,7 @@ class ViewWizard extends SugarView
 
         $userTZ = $current_user->getPreference('timezone');
         if(empty($userTZ) && !$current_user->is_group && !$current_user->portal_only) {
-            $userTZ = TimeDate2::guessTimezone();
+            $userTZ = TimeDate::guessTimezone();
             $current_user->setPreference('timezone', $userTZ);
         }
 
@@ -128,7 +128,7 @@ class ViewWizard extends SugarView
         }
 
         $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
-        $this->ss->assign('TIMEZONEOPTIONS', TimeDate2::getTimezoneList());
+        $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
         //// Numbers and Currency display
         require_once('modules/Currencies/ListCurrency.php');

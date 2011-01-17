@@ -54,7 +54,7 @@ class Common {
 	  	$this->db = DBManagerFactory::getInstance();
 	  }
 
-	  $this->timedate = TimeDate2::getInstance();
+	  $this->timedate = TimeDate::getInstance();
 	}
 
 	function get_timeperiod_start_end_date($timeperiod_id) {

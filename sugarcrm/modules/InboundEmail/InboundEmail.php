@@ -4429,7 +4429,7 @@ class InboundEmail extends SugarBean {
 	 * @param string addr Address of auto-replied target
 	 */
 	function setAutoreplyStatus($addr) {
-	    $timedate = TimeDate2::getInstance();
+	    $timedate = TimeDate::getInstance();
 		$this->db->query(	'INSERT INTO inbound_email_autoreply (id, deleted, date_entered, date_modified, autoreplied_to, ie_id) VALUES (
 							\''.create_guid().'\',
 							0,
@@ -4448,7 +4448,7 @@ class InboundEmail extends SugarBean {
 	 */
 	function getAutoreplyStatus($from) {
 		global $sugar_config;
-        $timedate = TimeDate2::getInstance();
+        $timedate = TimeDate::getInstance();
 
 		$q_clean = 'UPDATE inbound_email_autoreply SET deleted = 1 WHERE date_entered < \''.$timedate->getNow()->modify("-24 hours")->asDb().'\'';
 		$r_clean = $this->db->query($q_clean, true);
@@ -5976,7 +5976,7 @@ eoq;
 			//_pp("count post-sort: ".count($revSorts));
 			$sorts[$sort] = $revSorts;
 		}
-        $timedate = TimeDate2::getInstance();
+        $timedate = TimeDate::getInstance();
 		foreach($sorts[$sort] as $k2 => $overview2) {
 		    $arr[$k2]->date = $timedate->fromString($arr[$k2]->date)->asDb();
 			$retArr[] = $arr[$k2];

@@ -163,7 +163,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
 	global $timedate;
 	$guid=create_guid();
 	$url=$GLOBALS['sugar_config']['site_url']."/index.php?entryPoint=Changenewpassword&guid=$guid";
-	$time_now=TimeDate2::getInstance()->nowDb();
+	$time_now=TimeDate::getInstance()->nowDb();
 	//$q2="UPDATE `users_password_link` SET `deleted` = '1' WHERE `username` = '".$_POST['username']."'";
 	//$usr->db->query($q2);
 	$q = "INSERT INTO users_password_link (id, username, date_generated) VALUES('".$guid."','".$_POST['username']."',' ".$time_now."' ) ";
@@ -202,9 +202,9 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
     $body = str_replace('$config_site_url',$sugar_config['site_url'], $body);
     
     $htmlBody = str_replace('$contact_user_user_name', $usr->user_name, $htmlBody);
-    $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate2::getInstance()->nowDb(), $htmlBody);
+    $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
     $body = str_replace('$contact_user_user_name', $usr->user_name, $body);
-    $body = str_replace('$contact_user_pwd_last_changed', TimeDate2::getInstance()->nowDb(), $body);
+    $body = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
     $emailTemp->body_html = $htmlBody;
     $emailTemp->body = $body;
     require_once('include/SugarPHPMailer.php');
@@ -269,7 +269,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
         $emailObj->description_html =null;
         $emailObj->from_addr = $mail->From;
         $emailObj->parent_type = 'User';
-        $emailObj->date_sent =TimeDate2::getInstance()->nowDb();
+        $emailObj->date_sent =TimeDate::getInstance()->nowDb();
         $emailObj->modified_user_id = '1';
         $emailObj->created_by = '1';
         $emailObj->status='sent';
@@ -282,7 +282,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
 		$usr->setPreference('loginfailed','0');
 		$usr->savePreferencesToDB();
 	        //set new password
-	        $now=TimeDate2::getInstance()->nowDb();
+	        $now=TimeDate::getInstance()->nowDb();
 	        $query = "UPDATE $usr->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$usr->id'";
 	        $usr->db->query($query, true, "Error setting new password for $usr->user_name: ");
         	echo $password;

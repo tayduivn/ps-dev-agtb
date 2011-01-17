@@ -455,7 +455,7 @@ function postprocess_pdf(&$pdf,$reportname,$stream) {
 	$pdf->saveState();
 
 	$pdf->y = 42;
-	$print_date = TimeDate2::getInstance()->nowDate();
+	$print_date = TimeDate::getInstance()->nowDate();
 	$fOptions['justification'] = 'left';
 	$date_time_footer = $print_date;
 	$pdf->ezText($date_time_footer, 10, $fOptions);

@@ -46,7 +46,7 @@ if(!empty($_REQUEST['job_id'])) {
 	$this->db->query($qLastRun);
 	
 	$job = new Job();
-	$job->runtime = TimeDate2::getInstance()->nowDb();
+	$job->runtime = TimeDate::getInstance()->nowDb();
 	if($job->startJob($job_id)) {
 		$GLOBALS['log']->info('----->Job [ '.$job_id.' ] was fired successfully');
 	} else {

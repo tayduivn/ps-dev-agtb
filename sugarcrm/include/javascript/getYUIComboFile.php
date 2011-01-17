@@ -77,6 +77,6 @@ $etag = '"'.md5($allpath).'"';
 header("Cache-Control: private");
 header("Pragma: dummy=bogus");
 header("Etag: $etag");
-header('Expires: ' . TimeDate2::httpTime());
+header('Expires: ' . TimeDate::httpTime());
 header("Content-Type: $contentType");
 echo ($out);

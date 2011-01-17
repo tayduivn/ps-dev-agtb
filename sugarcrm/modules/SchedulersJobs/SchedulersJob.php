@@ -126,7 +126,7 @@ class SchedulersJob extends SugarBean {
 	 * @return string formatted time.
 	 */
 	function handleDateFormat($time, $user=null) {
-		$timedate = TimeDate2::getInstance();
+		$timedate = TimeDate::getInstance();
 
 		// get proper user
 		$user = (empty($user)) ? $this->user : $user;

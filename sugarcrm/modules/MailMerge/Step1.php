@@ -228,7 +228,7 @@ function getDocumentRevisions()
 {			
 	$document = new Document();
 
-	$currentDate = TimeDate2::getInstance()->nowDb();
+	$currentDate = TimeDate::getInstance()->nowDb();
 	if ($document->db->dbType=="mysql") {
 		$empty_date=db_convert("'0000-00-00'", 'datetime');
 	}

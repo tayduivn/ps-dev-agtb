@@ -223,7 +223,7 @@ if(!empty($_REQUEST['confirmed']) && $_REQUEST['confirmed'] == true) {
 	$timezoneOptions = '';
 	ksort($timezones);
 	if(!isset($defaultServerZone)){
-		$defaultServerZone = TimeDate2::guessTimezone(0);
+		$defaultServerZone = TimeDate::guessTimezone(0);
 	}
 	foreach($timezones as $key => $value) {
 		if(!empty($value['dstOffset'])) {
