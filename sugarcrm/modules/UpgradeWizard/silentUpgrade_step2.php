@@ -466,12 +466,12 @@ if($ce_to_pro_ent) {
 
 //bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 if($origVersion < '620'){
-	upgradeDateTimeFields();
+	upgradeDateTimeFields($path);
 }
 
 //bug: 37214 - merge config_si.php settings if available
 logThis('Begin merge_config_si_settings', $path);
-merge_config_si_settings(true);
+merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
 //bug: 36845 - ability to provide global search support for custom modules

@@ -5336,7 +5336,7 @@ function upgradeModulesForTeam() {
 		foreach( $allHelpFiles as $the_file ){
 	        if( is_file( $the_file ) ){
 	            unlink( $the_file );
-	            _logThis("Deleted file: $the_file", $path);
+	            logThis("Deleted file: $the_file", $path);
 	        }
 	    }
 	}
@@ -5395,7 +5395,7 @@ function upgradeModulesForTeam() {
 	 * which prevents you from performing timezone offset calculations once the data has been saved.
 	 *
 	 */
-	function upgradeDateTimeFields(){
+	function upgradeDateTimeFields($path){
 		//bug: 39757
 		$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
 		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
@@ -5417,15 +5417,16 @@ function upgradeModulesForTeam() {
  * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
  * @param config_location String optional value to config.php file location
  * @param config_si_location String optional value to config_si.php file location
+ * @param path String file of the location of log file to write to
  * @return boolean value indicating whether or not a merge was attempted with config_si.php file
  */
-function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='')
+function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='', $path='')
 {	
 	if(!empty($config_location) && !file_exists($config_location))
 	{
 		if($write_to_upgrade_log)
 		{
-	       _logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+	       logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
 		}
 	    return false;
 	} else if(empty($config_location)) {
@@ -5442,13 +5443,13 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 	   if($write_to_upgrade_log)
 	   {		
-	   	  _logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
+	   	  logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
 	   }
 	   return false;
 	} else {
 	   if($write_to_upgrade_log)
 	   {	
-	      _logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
+	      logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
 	   }
 	   
 	   include($config_location);
@@ -5456,7 +5457,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   {
 	   	  if($write_to_upgrade_log)
 		  {
-	   	     _logThis('config.php contents are empty.  Skip merging.', $path);
+	   	     logThis('config.php contents are empty.  Skip merging.', $path);
 		  }
 	   	  return false;
 	   }   
@@ -5466,7 +5467,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 		if($write_to_upgrade_log)
 		{
-	       _logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+	       logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
 		}
 	    return false;
 	} else if(empty($config_si_location)) {
@@ -5484,13 +5485,13 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
+	      logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
 	   }
 	   return false;
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
+	      logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
 	   }
 	   
 	   include($config_si_location);
@@ -5498,7 +5499,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   {
 	      if($write_to_upgrade_log)
 		  {
-	   	     _logThis('config_si.php contents are empty.  Skip merging.', $path);
+	   	     logThis('config_si.php contents are empty.  Skip merging.', $path);
 		  }
 	   	  return false;
 	   }
@@ -5512,7 +5513,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		{
 		   if($write_to_upgrade_log)
 		   {
-		      _logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
+		      logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
 		   }
 		   $sugar_config[$key] = $value;
 		   $modified = true;
@@ -5523,27 +5524,27 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 		if($write_to_upgrade_log)
 		{
-	       _logThis('Update config.php file with new values', $path);
+	       logThis('Update config.php file with new values', $path);
 		}
 		
 	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
 	       if($write_to_upgrade_log)
 		   {
-	    	  _logThis('*** ERROR: could not write to config.php', $path);
+	    	  logThis('*** ERROR: could not write to config.php', $path);
 		   }
 		   return false;
 		}
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
 	   }
 	   return false;
 	}
 	
 	if($write_to_upgrade_log)
 	{
-	   _logThis('End merge_config_si_settings', $path);
+	   logThis('End merge_config_si_settings', $path);
 	}
 	return true;
 }
