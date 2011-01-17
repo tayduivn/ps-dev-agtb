@@ -1111,9 +1111,6 @@ SUGAR.util.DateUtils = {
 			var offset = SUGAR.expressions.userPrefs.gmt_offset;
 			date.setMinutes(date.getMinutes() + (date.getTimezoneOffset() + offset));
 		}
-
-		console.log(date.getMinutes());
-
 		return date;
 	}
  }
