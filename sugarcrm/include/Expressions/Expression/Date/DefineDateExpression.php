@@ -30,7 +30,6 @@ class DefineDateExpression extends DateExpression
 	 * Get the date from date expression, understands all strftime() formats
 	 */
 	function evaluate() {
-		$this->includeTime = true;
 		$params = $this->getParameters()->evaluate();
 		return DateExpression::parse($params);
 	}

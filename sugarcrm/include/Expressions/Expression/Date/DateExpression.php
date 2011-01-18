@@ -22,10 +22,6 @@ require_once('include/Expressions/Expression/AbstractExpression.php');
 require_once('include/TimeDate.php');
 abstract class DateExpression extends AbstractExpression
 {
-	protected $internalDateFormat = "Y-m-d";
-	protected $internalDateTimeFormat = "Y-m-d H:i:s";
-	protected $includeTime = false;
-
 	/**
 	 * All parameters have to be a string.
 	 */
