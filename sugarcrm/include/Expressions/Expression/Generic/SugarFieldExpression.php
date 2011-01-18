@@ -50,10 +50,22 @@ class SugarFieldExpression extends GenericExpression
 
         $def = $this->context->field_defs[$fieldName];
 
-        if ($def['type'] == "link")
-            return $this->getLinkField($fieldName);
-        else
-            return $this->context->$fieldName;
+        switch($def['type']) {
+            case 'link':
+                return $this->getLinkField($fieldName);
+            case 'datetime':
+            case 'datetimecombo':
+                $date = TimeDate::fromDb($this->context->$fieldName);
+                TimeDate::getInstance()->tzUser($date);
+                return $date;
+            case 'date':
+                $date = TimeDate::fromDbDate($this->context->$fieldName);
+                TimeDate::getInstance()->tzUser($date);
+                return $date;
+            case 'time':
+                return TimeDate::fromUserTime(TimeDate::getInstance()->to_display_time($this->context->$fieldName));
+        }
+        return $this->context->$fieldName;
 	}
 
     protected function setContext()

@@ -27,18 +27,12 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
 class DefineDateExpression extends DateExpression
 {
 	/**
-	 * Returns the entire enumeration bare.
+	 * Get the date from date expression, understands all strftime() formats
 	 */
-	function evaluate() {		
+	function evaluate() {
 		$this->includeTime = true;
 		$params = $this->getParameters()->evaluate();
-		//$params = $this->convertFromUserFormat($params);
-		$time = strtotime($params);
-
-		if ( $time == false ) {
-			throw new Exception("Incorrect date format");
-		}
-		return date($this->internalDateTimeFormat, $time);
+		return DateExpression::parse($params);
 	}
 
 

@@ -30,8 +30,7 @@ class NowExpression extends DateExpression
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-        global $current_user;
-		return new DateTime("now", new DateTimeZone($current_user->getPreference('timezone')));
+		return TimeDate::getInstance()->getNow(true);
 	}
 
 

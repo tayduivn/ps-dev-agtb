@@ -369,12 +369,12 @@ class SugarFeed extends Basic {
         $data['NAME'] .= $this->fetchReplies($data);
 		return  $data ;
 	}
-	
+
     function fetchReplies($data) {
         $seedBean = new SugarFeed;
 
         $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$data['ID']."'");
-        
+
         if ( count($replies['list']) < 1 ) {
             return '';
         }
@@ -404,17 +404,12 @@ class SugarFeed extends Basic {
 
         $replyHTML .= '</blockquote>';
         return $replyHTML;
-        
+
     }
 
 	static function getTimeLapse($startDate)
 	{
-		$startDate = $GLOBALS['timedate']->to_db($startDate);
-		$start = array();
-   		preg_match('/(\d+)\-(\d+)\-(\d+) (\d+)\:(\d+)\:(\d+)/', $startDate, $start);
-		$end = gmdate('Y-m-d H:i:s');
-    	$start_time = gmmktime($start[4],$start[5], $start[6], $start[2], $start[3], $start[1] );
-		$seconds = time()- $start_time;
+		$seconds = $GLOBALS['timedate']->getNow()->ts - $GLOBALS['timedate']->fromUser($startDate)->ts;
 		$minutes =   $seconds/60;
 		$seconds = $seconds % 60;
 		$hours = floor( $minutes / 60);
@@ -461,10 +456,6 @@ class SugarFeed extends Basic {
 			}
 		}
 		return $result . ' ' . translate('LBL_TIME_AGO','SugarFeed');
-
-
-
     }
 
 }
-?>
