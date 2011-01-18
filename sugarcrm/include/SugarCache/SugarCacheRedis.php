@@ -48,9 +48,6 @@ class SugarCacheRedis extends SugarCacheAbstract
     public function __construct()
     {
         parent::__construct();
-        
-        $this->_host = SugarConfig::getInstance()->get('external_cache.redis.host', $this->_host);
-        $this->_port = SugarConfig::getInstance()->get('external_cache.redis.port', $this->_port);
     }
     
     /**
@@ -58,6 +55,9 @@ class SugarCacheRedis extends SugarCacheAbstract
      */
     protected function _getRedisObject()
     {
+        $this->_host = SugarConfig::getInstance()->get('external_cache.redis.host', $this->_host);
+        $this->_port = SugarConfig::getInstance()->get('external_cache.redis.port', $this->_port);
+        
         try {
             if ( !($this->_redis instanceOf Redis) ) {
                 $this->_redis = new Redis();
