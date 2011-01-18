@@ -9,6 +9,7 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	    $GLOBALS['current_user']->is_admin = '1';
+	    $GLOBALS['current_user']->save();
 	}
 	
 	public function tearDown()
