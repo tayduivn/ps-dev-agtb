@@ -37,6 +37,10 @@ class isAfterExpression extends BooleanExpression {
 		$a = DateExpression::parse($params[0]->evaluate());
 		$b = DateExpression::parse($params[1]->evaluate());
 
+		if(empty($a) || empty($b)) {
+		    return false;
+		}
+
 		if ( $a > $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;
 	}
