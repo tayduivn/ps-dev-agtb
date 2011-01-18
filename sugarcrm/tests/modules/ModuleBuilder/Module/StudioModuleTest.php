@@ -4,29 +4,27 @@ require_once("modules/ModuleBuilder/Module/StudioModule.php");
 
 class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	var $orig_list_strings = false;
 	public function setUp()
     {
-        $app_list_strings = array();
-        if (isset($GLOBALS['app_list_strings']))
-            $this->orig_list_strings = $GLOBALS['app_list_strings'];
-        include "include/language/en_us.lang.php";
-        $GLOBALS['app_list_strings'] = $app_list_strings;
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
     }
     
     public function tearDown() 
     {
-       if($this->orig_list_strings)
-       {
-           $GLOBALS['app_list_strings'] = $this->orig_list_strings;
-       } else
-       {
-           unset($GLOBALS['app_list_strings']);
-       }
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['app_list_strings']);
     }
 
-    //Bug 39407
+    /**
+     * @ticket 39407
+     */
     public function testRemoveFieldFromLayoutsDocumentsException()
     {
     	$SM = new StudioModule("Documents");
@@ -38,5 +36,4 @@ class StudioModuleTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertTrue(false, "Studio module threw exception :" . $e->getMessage());
         }
     }
-    
 }
