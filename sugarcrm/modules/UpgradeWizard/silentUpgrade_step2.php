@@ -160,6 +160,13 @@ function verifyArguments($argv,$usage_regular){
 ////	END UTILITIES THAT MUST BE LOCAL :(
 ///////////////////////////////////////////////////////////////////////////////
 
+function rebuildRelations($pre_path = '')
+{
+	$_REQUEST['silent'] = true;
+	include($pre_path.'modules/Administration/RebuildRelationship.php');
+	$_REQUEST['upgradeWizard'] = true;
+	include($pre_path.'modules/ACL/install_actions.php');
+}
 
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -414,6 +421,9 @@ foreach ($dictionary as $meta) {
 
 logThis('database repaired', $path);  	
 
+logThis('Start rebuild relationships.', $path);
+@rebuildRelations();
+logThis('End rebuild relationships.', $path);
 
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');

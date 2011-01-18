@@ -136,14 +136,6 @@ function checkResourceSettings(){
 }
 
 
-//rebuild all relationships...
-function rebuildRelations($pre_path = ''){
-	$_REQUEST['silent'] = true;
-	include($pre_path.'modules/Administration/RebuildRelationship.php');
-	 $_REQUEST['upgradeWizard'] = true;
-	 include($pre_path.'modules/ACL/install_actions.php');
-}
-
 function createMissingRels(){
 	$relForObjects = array('leads'=>'Leads','campaigns'=>'Campaigns','prospects'=>'Prospects');
 	foreach($relForObjects as $relObjName=>$relModName){
@@ -1029,12 +1021,9 @@ if(!didThisStepRunBefore('commit')){
 	else if(isset($_REQUEST['silent']) && $_REQUEST['silent'] != true){
 		$_REQUEST['silent'] = true;
 	}
-	 
-	logThis('Start rebuild relationships.', $path);
-	 	@rebuildRelations();
-	logThis('End rebuild relationships.', $path);
+	
 	 //logThis('Checking for leads_assigned_user relationship and if not found then create.', $path);
-		@createMissingRels();
+	@createMissingRels();
 	 //logThis('Checked for leads_assigned_user relationship.', $path);
 	ob_end_clean();	
 	//// run fix on dropdown lists that may have been incorrectly named
