@@ -739,8 +739,9 @@ EOHTML;
                 $cssFileContents = cssmin::minify($cssFileContents);
             }
             // now write the css to cache
-            sugar_file_put_contents($cssFilePath,$cssFileContents);
+
         }
+         sugar_file_put_contents($cssFilePath,$cssFileContents);
         
         $this->_cssCache[$cssFileName] = $cssFilePath;
         
@@ -801,8 +802,9 @@ EOHTML;
                 $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
             }
             // now write the js to cache
-            sugar_file_put_contents($jsFilePath,$jsFileContents);
+
         }
+        sugar_file_put_contents($jsFilePath,$jsFileContents);
 
         $this->_jsCache[$jsFileName] = $jsFilePath;
         
