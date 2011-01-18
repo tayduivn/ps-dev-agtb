@@ -36,7 +36,10 @@ class MyCallsDashlet extends DashletGeneric {
     function MyCallsDashlet($id, $def = null) {
         global $current_user, $app_strings;
 		require('modules/Calls/Dashlets/MyCallsDashlet/MyCallsDashlet.data.php');
-		
+
+		//check to see if the dashlet defs are empty, if so then set the 'myItemsOnly' to false as we want to see all the meetings by default.
+		if(empty($def))  $def['myItemsOnly'] = FALSE;
+				
         parent::DashletGeneric($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_CALLS', 'Calls');
@@ -61,19 +64,19 @@ class MyCallsDashlet extends DashletGeneric {
     }
     
     
-    function process() {
+    function process($lvsParams = array()) {
         global $current_language, $app_list_strings, $current_user;            
         $mod_strings = return_module_language($current_language, 'Calls');
-        
-        if($this->myItemsOnly) { // handle myitems only differently
-        	$this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
-	    	
-            $lvsParams = array(
-                           'custom_where' => ' AND  c_u.user_id = \'' . $current_user->id . '\' and c_u.deleted = 0 ',
-                           );
+
+        // handle myitems only differently --  set the custom query to ONLY show assigned meetings
+        if($this->myItemsOnly) {
+        	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\') ';
         } else {
-            $lvsParams = array();
+        	//join with meeting_users table to process related users                 
+            $this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
+        	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ';
         }
+        
         $this->myItemsOnly = false; 
 		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
 		//so we need to make sure date entered is also set so the sort can work with the group by
@@ -89,7 +92,7 @@ class MyCallsDashlet extends DashletGeneric {
         
 
        if(!empty($keys)){ 
-            $query = "SELECT call_id, accept_status FROM calls_users WHERE user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
+            $query = "SELECT call_id, accept_status FROM calls_users WHERE deleted = 0 user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
             $result = $GLOBALS['db']->query($query);
             
             while($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -114,6 +117,7 @@ class MyCallsDashlet extends DashletGeneric {
             {
                 if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
 					//if no status has been set, then do not show accept options
+					$this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" ></div>";
 				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')                
                 {
                     $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\"><a title=\"".$app_list_strings['dom_meeting_accept_options']['accept'].

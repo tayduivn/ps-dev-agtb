@@ -3847,9 +3847,9 @@ SUGAR.reports = function() {
 	        oACDS.queryMatchContains = true; 
 	        var oAutoComp = new YAHOO.widget.AutoComplete("dt_input","dt_ac_container", oACDS);
 	        oAutoComp.doBeforeLoadData = function( sQuery , oResponse , oPayload ) {
-	        	myDataTable.initializeTable();
-	        	myDataTable.addRows(oResponse.results);
-	        	myDataTable.render();
+	        	SUGAR.reports.myDataTable.initializeTable();
+	        	SUGAR.reports.myDataTable.addRows(oResponse.results);
+	        	SUGAR.reports.myDataTable.render();
 	        }
 	        myDataTable.render();
 	        dtBodyOffsetHeight = 0;

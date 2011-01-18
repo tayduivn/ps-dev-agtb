@@ -1209,6 +1209,8 @@ SE.contextMenus = {
 
 
         var count = 0;
+        
+        
         if(type == 'read' || type == 'deleted') {
             // mark read
             for(var j=0; j<rows.length; j++) {
@@ -1217,7 +1219,8 @@ SE.contextMenus = {
                     SE.grid.getRecord(rows[j]).setData("seen", "1");
                 }
             }
-
+           //bug# 40257 - adding if condition to check the ieId (Id of a sugar mail box) , which would be null for search email results
+            if(ieId){
             var node = SE.folders.getNodeFromIeIdAndMailbox(ieId, folder);
             var unseenCount = node.data.unseen;
             if (isNaN(unseenCount)) {
@@ -1227,6 +1230,7 @@ SE.contextMenus = {
             node.data.unseen = finalCount;
 
             SE.accounts.renderTree();
+            }
         } else if(type == 'unread') {
             // mark unread
             for(var j=0; j<rows.length; j++) {

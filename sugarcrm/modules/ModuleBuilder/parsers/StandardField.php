@@ -59,6 +59,8 @@ class StandardField extends DynamicField
      */
     function addFieldObject(&$field){
         global $dictionary, $beanList;
+        
+        
         if (empty($beanList[$this->module]))
             return false;
 
@@ -67,6 +69,7 @@ class StandardField extends DynamicField
     	$vBean = $bean_name == "aCase" ? "Case" : $bean_name;
 
         if (empty($dictionary[$vBean]) || empty($dictionary[$vBean]["fields"][$field->name]))
+
             return false;
 
         $currdef = $dictionary[$vBean]["fields"][$field->name];

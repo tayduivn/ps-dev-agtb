@@ -127,6 +127,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 				$first_iteration = true;
 				$get_and_post = array_merge($_GET, $_POST);
 				foreach($get_and_post as $param => $value) {
+
 					if($param == 'redirect_url' || $param == 'submit')
 						continue;
 					
