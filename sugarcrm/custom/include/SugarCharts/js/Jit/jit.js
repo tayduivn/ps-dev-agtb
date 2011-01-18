@@ -10699,12 +10699,32 @@ $jit.ST.Plot.NodeTypes.implement({
           aggregates = config.showAggregates,
           showLabels = config.showLabels,
           label = config.Label;
+          
+          
+      if (colorArray && dimArray && stringArray) {
+        for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
+        	acum += (dimArray[i] || 0);
+        }
+      }
       
+       //drop shadow 
+       shadowThickness = 2;
+       ctx.fillStyle = "rgba(0,0,0,.2)";
+          if(horz) {
+            ctx.fillRect(x, y - shadowThickness, acum + shadowThickness, height + (shadowThickness*2));
+          } else {
+            ctx.fillRect(x - shadowThickness, y, width + (shadowThickness*2), acum + shadowThickness);
+          }
+       
+       
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
           if(gradient) {
             var linear;
+            
+
+          
             if(horz) {
               linear = ctx.createLinearGradient(x + acum + dimArray[i]/2, y, 
                   x + acum + dimArray[i]/2, y + height);
@@ -10768,6 +10788,7 @@ $jit.ST.Plot.NodeTypes.implement({
   			  if(nodeCount > 8) {
 
                 //background box
+                ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
 				inset = 10;
 				ctx.textAlign = 'left';
 				ctx.translate(x + inset, y + height/2);
@@ -10781,6 +10802,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
 				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				
+			  
 			  ctx.fillStyle = label.color;
               ctx.rotate(0 * Math.PI / 180);
               ctx.fillText(node.name + ": " + acumValueLabel, 0, 0);
@@ -10885,6 +10907,49 @@ $jit.ST.Plot.NodeTypes.implement({
           label = config.Label,
           fixedDim = (horz? height : width) / valueLength;
       
+      //drop shadow
+      
+       maxValue = Math.max.apply(null, dimArray);
+	   shadowThickness = 2;
+	   ctx.fillStyle = "rgba(0,0,0,.2)";
+      if (colorArray && dimArray && stringArray) {
+		
+
+        for (var i=0, l=valueLength, acum=0, valAcum=0; i<l; i++) {
+        	nextBar = (dimArray[i+1]) ? dimArray[i+1] : false;
+        	prevBar = (dimArray[i-1]) ? dimArray[i-1] : false;
+        	if(horz) {
+				     		
+        	} else {
+        		
+        		if(i == 0) {
+	        		if(nextBar && nextBar > dimArray[i]) {
+	        			ctx.fillRect((x - shadowThickness) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim, dimArray[i]+ shadowThickness);   
+	        		} else if (nextBar && nextBar < dimArray[i]){
+	        			ctx.fillRect((x - shadowThickness) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness*2, dimArray[i]+ shadowThickness);
+	        		} else {
+	        			ctx.fillRect((x - shadowThickness) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness, dimArray[i]+ shadowThickness);
+	        		}
+        		} else if (i> 0 && i<l-1) {
+        			if(nextBar && nextBar > dimArray[i]) {
+	        			ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim, dimArray[i]+ shadowThickness);   
+	        		} else if (nextBar && nextBar < dimArray[i]){
+	        			ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness*2, dimArray[i]+ shadowThickness);
+	        		} else {
+	        			ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness, dimArray[i]+ shadowThickness);
+	        		}
+        		} else if (i == l-1) {
+        			
+        				ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness*2, dimArray[i]+ shadowThickness);
+        			}
+        		
+        		
+        	}
+        }
+
+      }	
+			
+      
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=valueLength, acum=0, valAcum=0; i<l; i++) {
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
@@ -10930,18 +10995,27 @@ $jit.ST.Plot.NodeTypes.implement({
 				  ctx.fillText(acumValueLabel, x + Math.max.apply(null, dimArray) - config.labelOffset, y + height/2);
 				} else {
 				  
-				  dim = ctx.measureText(valuelabelArray[i]);
-				  if(dim.width >= fixedDim-10) {
+				  	ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
 					ctx.save();
 					ctx.textAlign = 'left';
-					ctx.translate(x + config.labelOffset + label.size + i*fixedDim, y -config.labelOffset);
+					//background box              	
+					inset = 10;
+					ctx.translate(x + config.labelOffset + label.size + i*fixedDim, y -config.labelOffset - inset);
+					boxHeight = label.size+6;
+					boxX = -inset/2;
+					boxY = -boxHeight/2;
+					ctx.fillStyle = "rgba(255,255,255,.6)";
+					mtxt = ctx.measureText(acumValueLabel);
+					cornerRadius = 4;	
+					boxWidth = mtxt.width+10;
 					ctx.rotate(270* Math.PI / 180);
+					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					
+					ctx.fillStyle = ctx.strokeStyle = label.color;
 					ctx.fillText(acumValueLabel, 0,0);
 					ctx.restore();
-				  } else {
-				  ctx.textAlign = 'center';
-					ctx.fillText(acumValueLabel, x + config.labelOffset + label.size + i*fixedDim, y - dimArray[i] - label.size/2 - config.labelOffset);
-				  }
+
 				}
 			}
         }
@@ -11078,8 +11152,17 @@ $jit.ST.Plot.NodeTypes.implement({
               linear = ctx.createLinearGradient(x + fixedDim * i, y - dimArray[i]/2, 
                   x + fixedDim * (i + 1), y - dimArray[i]/2);
             }
+            //drop shadow 
+          shadowThickness = 2;
+          ctx.fillStyle = "rgba(0,0,0,.2)";
+          if(horz) {
+            ctx.fillRect(x, y + fixedDim * i - (shadowThickness), dimArray[i] + shadowThickness, fixedDim + (shadowThickness*2));
+          } else {
+            ctx.fillRect(x + fixedDim * i - (shadowThickness), y - dimArray[i] - shadowThickness, fixedDim + (shadowThickness*2), dimArray[i] + shadowThickness);
+          }
+          
             var color = $.rgbToHex($.map($.hexToRgb(colorArray[i % colorLength].slice(1)), 
-                function(v) { return (v * 0.6) >> 0; }));
+                function(v) { return (v * 0.8) >> 0; }));
             linear.addColorStop(0, color);
             linear.addColorStop(0.5, colorArray[i % colorLength]);
             linear.addColorStop(1, color);
@@ -11127,7 +11210,7 @@ $jit.ST.Plot.NodeTypes.implement({
         if(label.type == 'Native') {
           ctx.save();
           ctx.fillStyle = ctx.strokeStyle = label.color;
-          ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
+          ctx.font = "bold" + ' ' + label.size + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
@@ -12026,17 +12109,19 @@ $jit.ST.Plot.NodeTypes.implement({
       	// horizontal lines
       	for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
       	ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
-      	  var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
-		  var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
-		  var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
-          var bottomWidth = minWidth + ((acum) * ratio);  
-          var bottomWidthLabel = minWidth + ((acum + labelOffsetHeight) * ratio);  
-		  var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
-		  var labelOffsetLeft = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mVL.width + 20 : 0) : 0;
+
 		      
        if(showLabels(node.name, valAcum, node)) {
+       		 ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
        	     mV = ctx.measureText(stringArray[i]);
              mVL = ctx.measureText(valuelabelArray[i]);
+          	 var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
+		 	 var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
+		  	 var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
+          	 var bottomWidth = minWidth + ((acum) * ratio);  
+         	 var bottomWidthLabel = minWidth + ((acum + labelOffsetHeight) * ratio);  
+		 	 var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
+		 	 var labelOffsetLeft = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mVL.width + 20 : 0) : 0;
 //             ctx.fillRect((-bottomWidth/2) - mVL.width - config.labelOffset , y - acum, bottomWidth + mVL.width + mV.width + (config.labelOffset*2), 1);
 
 			//right lines
