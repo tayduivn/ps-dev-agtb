@@ -733,13 +733,14 @@ EOHTML;
                 $cssFileContents = file_get_contents('include/javascript/yui/build/base/base-min.css') . $cssFileContents;
         }
         
-        // minify the css
-        if ( !inDeveloperMode() && !sugar_is_file($cssFilePath) ) {
-            $cssFileContents = cssmin::minify($cssFileContents);
+        if ( !sugar_is_file($cssFilePath) ) {
+            // minify the css
+            if ( !inDeveloperMode() ) {
+                $cssFileContents = cssmin::minify($cssFileContents);
+            }
+            // now write the css to cache
+            sugar_file_put_contents($cssFilePath,$cssFileContents);
         }
-        
-        // now write the css to cache
-        sugar_file_put_contents($cssFilePath,$cssFileContents);
         
         $this->_cssCache[$cssFileName] = $cssFilePath;
         
@@ -793,14 +794,15 @@ EOHTML;
         // create the cached file location
         $jsFilePath = create_cache_directory($this->getJSPath()."/$jsFileName");
         
-        // minify the js
-        if ( !inDeveloperMode() && !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
-            $jsFileContents = JSMin::minify($jsFileContents);
-            $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
+        if ( !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
+            // minify the js
+            if ( !inDeveloperMode() ) {
+                $jsFileContents = JSMin::minify($jsFileContents);
+                $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
+            }
+            // now write the js to cache
+            sugar_file_put_contents($jsFilePath,$jsFileContents);
         }
-        
-        // now write the js to cache
-        sugar_file_put_contents($jsFilePath,$jsFileContents);
 
         $this->_jsCache[$jsFileName] = $jsFilePath;
         
