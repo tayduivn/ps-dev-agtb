@@ -41,7 +41,10 @@ abstract class DateExpression extends AbstractExpression
             return $date;
 
         if (is_string($date)) {
-            $date = TimeDate::fromString($date);
+            $date = TimeDate::fromUser($date);
+            if(!$date) {
+                $date = TimeDate::fromString($date);
+            }
             if(!$date) {
                 return false;
             }
