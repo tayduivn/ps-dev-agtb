@@ -3438,6 +3438,13 @@ function save_relationship_changes($is_update, $exclude=array())
 						$where = preg_replace('/'.$data['name'].'/', $db_field, $where);
 					}else{
 						$where = preg_replace('/(^|[\s(])' . $data['name'] . '/', '${1}' . $params['join_table_alias'] . '.'.$data['rname'], $where);
+                        /**
+                         * Bug #39988 - Added the line below. create_export_query_relate_link_patch() in export_utils.php                         
+                         *    generates a where clause that works for stock modules. They all have a                         
+                         *    custom create_export_query function on the bean. However, the Basic() object calls this                         
+                         *    function for it's export_query. So, we have to handle the where clause that comes in.
+                         */
+						$where = preg_replace('/(^|[\s(])join_' . $data['name'] . '/', '${1}' . $params['join_table_alias'], $where);
 					}
     				if(!$table_joined)
     				{
@@ -3737,7 +3744,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     			$temp->check_date_relationships_load();
     			$temp->fill_in_additional_list_fields();
-				$temp->custom_fields->fill_relationships();
+				if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
 				$temp->call_custom_logic("process_record");
 
     			$list[] = $temp;
@@ -4296,7 +4303,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name))
             $this->team_name = get_assigned_team_name($this->team_id);
 		//END SUGARCRM flav=pro ONLY
-		if(!empty($this->field_defs['created_by']))
+		if(!empty($this->field_defs['created_by']) && !empty($this->created_by))
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		if(!empty($this->field_defs['modified_user_id']) && !empty($this->modified_user_id))
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);

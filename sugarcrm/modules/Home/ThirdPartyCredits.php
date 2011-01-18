@@ -49,9 +49,9 @@ $credits = array(
        	),
        	'es_ES' => array (
             'name' => 'Spanish Language Pack',
-            'author' => 'Agensys',
-            'description' => 'Spanish Language Pack by Agensys',
-            'website' => 'www.agensystech.com',
+            'author' => 'RedK',
+            'description' => 'Spanish Language Pack by RedK',
+            'website' => 'www.redk.net',
        	),
         'fr_FR' => array (
             'name' => 'French Language Pack',

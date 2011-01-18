@@ -271,11 +271,11 @@ class vCard
                         $GLOBALS['log']->debug('I found a company name');
 						if(!empty($value)){
                             $GLOBALS['log']->debug('I found a company name (fer real)');
-                            if ( is_a($contact,"Contact") || is_a($contact,"Lead") ) {
+                            $full_company_name = trim($values[0]);
+                            if ( is_a($contact,"Contact") ) {
                                 $GLOBALS['log']->debug('And Im dealing with a person!');
                                 $accountBean = loadBean('Accounts');
                                 // It's a contact, we better try and match up an account
-                                $full_company_name = trim($values[0]);
                                 // Do we have a full company name match?
                                 $result = $accountBean->retrieve_by_string_fields(array('name' => $full_company_name, 'deleted' => 0));
                                 if ( ! isset($result->id) ) {
@@ -307,7 +307,10 @@ class vCard
                                     $contact->account_name = $result->name;
                                 }
                                 $contact->department = $values[1];
-                            } else {
+                            } else if ( is_a($contact,"Lead") ){
+                                $contact->account_name = $full_company_name;
+                            }
+                            else {
 								$contact->department = $value;
                             }
 						}
@@ -326,7 +329,7 @@ class vCard
 			
 		}
         
-        if ( empty($contact->account_id) && !empty($contact->account_name) ) {
+        if ( is_a($contact, "Contact") && empty($contact->account_id) && !empty($contact->account_name) ) {
             $GLOBALS['log']->debug("Look ma! I'm creating a new account: ".$contact->account_name);
             // We need to create a new account
             $accountBean = loadBean('Accounts');

@@ -482,6 +482,9 @@ function postprocess_pdf(&$pdf,$reportname,$stream) {
 	if($stream) {
 		$pdf->ezStream($stream_options);
 	} else {
+	    if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'pdf')){
+	        sugar_mkdir($GLOBALS['sugar_config']['cache_dir'].'pdf');
+	    }
 		$fp = sugar_fopen($GLOBALS['sugar_config']['cache_dir'].'pdf/'.$filename,'w');
 		fwrite($fp, $pdf->output());
 		fclose($fp);

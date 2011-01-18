@@ -156,6 +156,8 @@ class ImportViewStep4 extends SugarView
                     continue;
                 }
                 
+                //DETERMINE WHETHER OR NOT $fieldDef['name'] IS DATE_MODIFIED AND SET A VAR, USE DOWN BELOW
+                
                 // translate strings
                 global $locale;
                 if(empty($locale)) {
@@ -484,8 +486,15 @@ class ImportViewStep4 extends SugarView
                     $focus->team_id = $current_user->default_team;
                 }
                 //END SUGARCRM flav=pro ONLY
-                if ( !empty($focus->date_modified) )
+                /*
+                 * Bug 34854: Added all conditions besides the empty check on date modified. Currently, if
+                 * we do an update to a record, it doesn't update the date_modified value.
+                 */
+                if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) || 
+                     ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $focus->fetched_row['date_modified'] )
+                   )
                     $focus->update_date_modified = false;
+
                 $focus->optimistic_lock = false;
                 if ( $focus->object_name == "Contacts" && isset($focus->sync_contact) ) {
                     //copy the potential sync list to another varible

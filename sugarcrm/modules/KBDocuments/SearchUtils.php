@@ -383,7 +383,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $date_filter = str_replace("kbdocuments", "k", $date_filter);
         $date_filter = "($date_filter OR k.exp_date IS NULL)";
         $query = "select distinct(k.id) as doc_id, k.kbdocument_name as doc_name from kbdocuments k
-                 INNER join kbdocuments_kbtags kt on kt.kbdocument_id = k.id AND kt.deleted = 0"; 
+                 INNER join kbdocuments_kbtags kt on kt.kbdocument_id = k.id AND kt.deleted = 0";
        //BEGIN SUGARCRM flav=ent ONLY
        $query .= " AND k.is_external_article = 1";
        //END SUGARCRM flav=ent ONLY
@@ -655,10 +655,11 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      *
      * This method sets up array for use with quicksearch framework.  Populates values for kb author
      */
-    function getQSAuthor() {
+    function getQSAuthor($form = 'EditView') {
         global $app_strings;
 
-        $qsUser = array(  'method' => 'get_user_array', // special method
+        $qsUser = array('form' => $form,
+                        'method' => 'get_user_array', // special method
                         'field_list' => array('user_name', 'id'),
                         'populate_list' => array('kbarticle_author_name', 'kbarticle_author_id'),
                         'conditions' => array(array('name'=>'user_name','op'=>'like_custom','end'=>'%','value'=>'')),
@@ -672,11 +673,11 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      *
      * This method sets up array for use with quicksearch framework.  Populates values for kb approver
      */
-    function getQSApprover() {
+    function getQSApprover($form = 'EditView') {
         global $app_strings;
 
-        $qsUser = array('form' => 'EditView',
-        				'method' => 'get_user_array', // special method
+        $qsUser = array('form' => $form,
+                        'method' => 'get_user_array', // special method
                         'field_list' => array('user_name', 'id'),
                         'populate_list' => array('kbdoc_approver_name', 'kbdoc_approver_id'),
                         'required_list' => array('kbdoc_approver_id'),
@@ -684,19 +685,20 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                         'limit' => '30','no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
         return $qsUser;        
     }
-    function getQSTags() {
+    function getQSTags($form = 'EditView') {
 		global $app_strings;
 
-		$qsTags = array('method' => 'query',
-		                   	'modules'=> array('KBTags'),
-		                   	'group' => 'or',
-			    			'field_list' => array('tag_name','id'),
-							'populate_list' => array('tag_name'),
-							'conditions' => array(array('name'=>'tag_name','op'=>'like_custom','end'=>'%','value'=>''),
+		$qsTags = array('form' => $form,
+		                'method' => 'query',
+		                'modules'=> array('KBTags'),
+		                'group' => 'or',
+		                'field_list' => array('tag_name','id'),
+		                'populate_list' => array('tag_name'),
+		                'conditions' => array(array('name'=>'tag_name','op'=>'like_custom','end'=>'%','value'=>''),
 							                       array('name'=>'tag_name','op'=>'like_custom','begin'=>'(','end'=>'%','value'=>'')),
-							'order' => 'tag_name',
-							'limit' => '30',
-                        	'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
+		                'order' => 'tag_name',
+		                'limit' => '30',
+		                'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
 		return $qsTags;
 	}
 
@@ -851,7 +853,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
             }
 
             //strip quotes for easier processing
-            $include_stripped = stripQuotes($spec_SearchVars['searchText_include'],$dbType);
+            $include_stripped = stripQuotesKB($spec_SearchVars['searchText_include'],$dbType);
             $include_quote_token = $include_stripped['quote_token'];
             $include_srch_str_raw = $include_stripped['search_string_raw'];
         }
@@ -924,7 +926,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
             $xclude_str = str_replace('-', ' ',$spec_SearchVars['searchText_exclude']);
 
             //strip out any words enclosed in quotes, for easy processing
-            $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'],$dbType);
+            $exclude_stripped = stripQuotesKB($spec_SearchVars['searchText_exclude'],$dbType);
             $exclude_quote_token = $exclude_stripped['quote_token'];
             $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
 
@@ -1047,7 +1049,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                 }
 
                 //replace words in quotes qith tokens
-                $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'], $dbType);
+                $exclude_stripped = stripQuotesKB($spec_SearchVars['searchText_exclude'], $dbType);
                 $exclude_quote_token = $exclude_stripped['quote_token'];
                 $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
 
@@ -1543,7 +1545,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      * @param $srch_str_raw string to be processed for quoted words
      * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
      */
-    function stripQuotes($srch_str_raw, $dbType){
+    function stripQuotesKB($srch_str_raw, $dbType){
             //lets look for paired quotes and tokenize them
             $quote_token = array();
             $first_quote = 0;
@@ -2088,7 +2090,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
 
         //Begin Setup
 		$searchVars = array();
-		
+
         //BEGIN SUGARCRM flav=ent ONLY
 		$searchVars['is_external_article'] = array('operator'=>'=','filter'=>1);
         //END SUGARCRM flav=ent ONLY
