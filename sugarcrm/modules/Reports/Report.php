@@ -107,7 +107,7 @@ class Report
   var $chart_total_header_row = array();
   var $jtcount = 0;
 
-	function Report($report_def_str='', $filters_def_str='', $panels_def_str='') {
+	function Report($report_def_str='', $filters_def_str='', $panels_def_str='', $skipCacheJSBuild = false) {
 		global $current_user, $current_language, $app_list_strings;
 		if(!isset($current_user) || empty($current_user)) {
 
@@ -116,7 +116,7 @@ class Report
 		}
 
 		//Scheduled reports don't have $_REQUEST.
-		if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
+		if (!$skipCacheJSBuild &&(!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
 			Report::cache_modules_def_js();
 		}
 
