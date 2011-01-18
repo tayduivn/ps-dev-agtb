@@ -44,7 +44,9 @@
                 <directory suffix=".php">./include/reCaptcha</directory>
                 <file>./include/SearchForm/SearchForm.php</file>
                 <directory suffix=".php">./include/Smarty</directory>
+                <directory suffix=".php">./include/SubPanel/tpls</directory>
                 <file>./include/SubPanel/SubPanelViewer.php</file>
+                <file>./include/SubPanel/SugarTab.php</file>
                 <directory suffix=".php">./include/SugarDependentDropdown/metadata</directory>
                 <file>./include/SugarFields/Fields/Collection/view.sugarfieldcollection.php</file>
                 <directory suffix=".php">./include/SugarObjects/implements/assignable</directory>
@@ -79,6 +81,7 @@
                 <file>./include/Sugarpdf/sugarpdf_default.php</file>
                 <directory suffix=".php">./include/tcpdf</directory>
                 <directory suffix=".php">./include/timezone</directory>
+                <directory suffix=".php">./include/VarDefHandler/SugarTabs</directory>
                 <file>./include/VarDefHandler/listvardefoverride.php</file>
                 <file>./include/VarDefHandler/vardef_meta_arrays.php</file>
                 <file>./include/entryPoint.php</file>
