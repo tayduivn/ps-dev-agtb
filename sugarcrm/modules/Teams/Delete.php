@@ -65,22 +65,8 @@ if($focus->has_records_in_modules()) {
 		return;
 	}
 
-	// Delete all team memberships for this team_id.
-	$query = "delete from team_memberships where team_id='{$focus->id}'";
-	$GLOBALS['db']->query($query,true,"Error deleting memberships while deleting team: ");
-
-	// Delete the team record itself.
-	$query = "delete from teams where id='{$focus->id}'";
-	$GLOBALS['db']->query($query,true,"Error deleting team: ");
-	
-	require_once('modules/Teams/TeamSetManager.php');
-	TeamSetManager::flushBackendCache();
-	//clean up any team sets that use this team id
-	TeamSetManager::removeTeamFromSets($focus->id);
-		   
-    // Take the item off the recently viewed lists
-    $tracker = new Tracker();
-    $tracker->makeInvisibleForAll($focus->id);$focus->mark_deleted();
-    header("Location: index.php?module=Teams&action=index");
+	//Call mark_deleted function
+	$focus->mark_deleted();
+	header("Location: index.php?module=Teams&action=index");	
 }
 ?>

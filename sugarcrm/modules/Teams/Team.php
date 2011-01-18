@@ -239,10 +239,7 @@ class Team extends SugarBean
 	}
 
 	function mark_deleted() {
-		$this->delete_team();	
-		// Take the item off the recently viewed lists
-		$tracker = new Tracker();
-		$tracker->makeInvisibleForAll($this->id);			
+		$this->delete_team();			
 	}
 	
 	/**
@@ -266,18 +263,22 @@ class Team extends SugarBean
             SugarApplication::appendErrorMessage($msg);
 		}
 
-		// Delete all team memberships for this team_id.
-		$query = "delete from team_memberships where team_id='{$this->id}'";
+		// Update team_memberships table and set deleted = 1
+		$query = "UPDATE team_memberships SET deleted = 1 WHERE team_id='{$this->id}'";
 		$this->db->query($query,true,"Error deleting memberships while deleting team: ");
 
-		// Delete the team record itself.
-		$query = "delete from teams where id='{$this->id}'";
+		// Update teams and set deleted = 1
+		$query = "UPDATE teams SET deleted = 1 WHERE id='{$this->id}'";
 		$this->db->query($query,true,"Error deleting team: ");
 		
 		require_once('modules/Teams/TeamSetManager.php');
 		TeamSetManager::flushBackendCache();
 		//clean up any team sets that use this team id
 		TeamSetManager::removeTeamFromSets($this->id);
+		
+	    // Take the item off the recently viewed lists
+	    $tracker = new Tracker();
+	    $tracker->makeInvisibleForAll($this->id);	
 	}
 
 	/**
