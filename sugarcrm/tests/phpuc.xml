@@ -60,7 +60,7 @@
                 <directory suffix=".php">./include/SugarObjects/templates/file/language/</directory>
                 <directory suffix=".php">./include/SugarObjects/templates/file/metadata/</directory>
                 <directory suffix=".php">./include/SugarObjects/templates/file/views/</directory>
-                <file>./include/SugarObjects/templates/views/vardefs.php</file>
+                <file>./include/SugarObjects/templates/file/vardefs.php</file>
                 <directory suffix=".php">./include/SugarObjects/templates/issue/language/</directory>
                 <directory suffix=".php">./include/SugarObjects/templates/issue/metadata/</directory>
                 <file>./include/SugarObjects/templates/issue/config.php</file>
