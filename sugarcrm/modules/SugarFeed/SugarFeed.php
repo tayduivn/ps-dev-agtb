@@ -398,7 +398,7 @@ class SugarFeed extends Basic {
                 }
             }
             $replyHTML .= '<div style="float: left; margin-right: 3px;"><img src="'.$image_url.'" height=50></div> ';
-            $replyHTML .= html_entity_decode($reply->name).'<br>';
+            $replyHTML .= str_replace("{this.CREATED_BY}",get_assigned_user_name($reply->created_by),html_entity_decode($reply->name)).'<br>';
             $replyHTML .= '<div class="byLineBox"><span class="byLineLeft">'. $this->getTimeLapse($reply->date_entered) . '&nbsp;</span><div class="byLineRight">  &nbsp;' .$delete. '</div></div><div class="clear"></div>';
         }
 
