@@ -377,11 +377,18 @@ foreach ($beanFiles as $bean => $file) {
 		}
 
 		if (($focus instanceOf SugarBean)) {
-			$sql = $db->repairTable($focus, true);
-			if(!empty($sql)) {
-	   		   logThis($sql, $path);
-	   		   $repairedTables[$focus->table_name] = true;
+			if(!isset($repairedTables[$focus->table_name])) 
+			{
+				$sql = $GLOBALS['db']->repairTable($focus, true);
+				logThis('Running sql:' . $sql, $path);
+				$repairedTables[$focus->table_name] = true;
 			}
+			
+			//Check to see if we need to create the audit table
+		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
+               logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
+		       $focus->create_audit_table();
+            }
 		}
 	}
 }
