@@ -51,7 +51,7 @@ class Bug38100Test extends SOAPTestCase
     	$helperResult = $helperObject->get_report_value($savedReport, array());
     	$this->_login();
 		$result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
-		var_dump($result);die();
+
 		$this->assertTrue(!empty($result['field_list']));
 		$this->assertTrue(!empty($result['entry_list']));
     } // fn

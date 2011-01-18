@@ -81,6 +81,9 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->_view->ss->get_template_vars('APP'),$GLOBALS['app_strings']);
     }
     
+    /**
+     * @outputBuffering enabled
+     */
     public function testDisplayErrors()
     {
         $this->_view->errors = array('error1','error2');
@@ -92,6 +95,9 @@ class SugarViewTest extends Sugar_PHPUnit_Framework_TestCase
             );
     }
     
+    /**
+     * @outputBuffering enabled
+     */
     public function testDisplayErrorsDoNotSupressOutput()
     {
         $this->_view->errors = array('error1','error2');

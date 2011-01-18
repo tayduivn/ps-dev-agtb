@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry'))define('sugarEntry', true);
+ if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,26 +21,15 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  ********************************************************************************/
 
-require_once('service/v3_1/registry.php');
-
-class registry_v3_2 extends registry_v3_1 {
-	
-	/**
-	 * This method registers all the functions on the service class
-	 *
-	 */
-	protected function registerFunction() 
-	{
-		$GLOBALS['log']->info('Begin: registry->registerFunction');
-		parent::registerFunction();
-	}
-	
-	/**
-	 * This method registers all the complex types
-	 *
-	 */
-	protected function registerTypes() 
-	{
-	    parent::registerTypes();
-	}
-}
+/**
+ * This is a rest entry point for rest version 4
+ */
+chdir('../..');
+require_once('SugarWebServiceImplv4.php');
+$webservice_class = 'SugarRestService';
+$webservice_path = 'service/core/SugarRestService.php';
+$webservice_impl_class = 'SugarWebServiceImplv4';
+$registry_class = 'registry';
+$location = '/service/v4/rest.php';
+$registry_path = 'service/v4/registry.php';
+require_once('service/core/webservice.php');
