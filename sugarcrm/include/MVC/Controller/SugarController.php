@@ -191,7 +191,8 @@ class SugarController{
 	/**
 	 * Given a record id load the bean. This bean is accessible from any sub controllers.
 	 */
-	public function loadBean(){
+	public function loadBean()
+	{
 		if(!empty($GLOBALS['beanList'][$this->module])){
 			$class = $GLOBALS['beanList'][$this->module];
 			if(!empty($GLOBALS['beanFiles'][$class])){
