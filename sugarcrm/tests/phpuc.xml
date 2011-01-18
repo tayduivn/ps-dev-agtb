@@ -88,6 +88,7 @@
                 <file>./include/globalControlLinks.php</file>
                 <file>./include/JSON.php</file>
                 <file>./include/modules.php</file>
+                <file>./include/SugarPDF.php</file>
             </exclude>
         </whitelist>
         <blacklist>
