@@ -2,10 +2,8 @@
     backupGlobals="false"
     backupStaticAttributes="false">
     <testsuite name="All Sugar Tests">
-        <directory>./tests/build</directory>
         <directory>./tests/data</directory>
         <directory>./tests/include</directory>
-        <directory>./tests/install</directory>
         <directory>./tests/modules</directory>
         <directory>./tests/ModuleInstall</directory>
         <directory>./tests/service</directory>
