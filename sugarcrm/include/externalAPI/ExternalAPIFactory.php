@@ -221,7 +221,7 @@ class ExternalAPIFactory{
     }
 
     public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false) {
-        global $app_strings;
+        global $app_list_strings;
 
         $apiList = self::listAPI($moduleName,$ignoreAuth);
 
@@ -231,9 +231,8 @@ class ExternalAPIFactory{
         }
 
         foreach ( $apiList as $apiName => $ignore ) {
-            $translateKey = 'LBL_EXTAPI_'.strtoupper($apiName);
-            if ( !empty($app_strings[$translateKey]) ) {
-                $apiDropdown[$apiName] = $app_strings[$translateKey];
+            if ( !empty($app_list_strings['eapm_list'][$apiName]) ) {
+                $apiDropdown[$apiName] = $app_list_strings['eapm_list'][$apiName];
             } else {
                 $apiDropdown[$apiName] = $apiName;
             }

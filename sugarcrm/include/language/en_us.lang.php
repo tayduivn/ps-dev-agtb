@@ -3050,7 +3050,7 @@ $app_strings = array (
 
     // File fields
     'LBL_UPLOAD_FROM_COMPUTER' => 'Upload From Your Computer',
-    'LBL_SEARCH_EXTERNAL_API' => 'File On External Source',
+    'LBL_SEARCH_EXTERNAL_API' => 'File on External Source',
     'LBL_EXTERNAL_SECURITY_LEVEL' => 'Security',
     'LBL_SHARE_PRIVATE' => 'Private',
     'LBL_SHARE_COMPANY' => 'Company',
@@ -3791,12 +3791,12 @@ $app_list_strings['kbdocument_status_dom'] = array (
 
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
   $app_list_strings['eapm_list']= array(
-  	'SugarCRM'=>'SugarCRM',
-  	'webex'=>'WebEx',
-  	'gotomeeting'=>'GoToMeeting',
-  	'lotuslive'=>'LotusLive',
-  	'google' => 'Google Document',
-    'box' => 'Box.net',
+  	'Sugar'=>'Sugar',
+  	'WebEx'=>'WebEx',
+  	'GoToMeeting'=>'GoToMeeting',
+  	'LotusLive'=>'LotusLive',
+  	'Google' => 'Google Document',
+    'Box' => 'Box.net',
   );
   $app_list_strings['LBL_API_TYPE_ENUM'] = array(
     'password' => 'Username/Password',

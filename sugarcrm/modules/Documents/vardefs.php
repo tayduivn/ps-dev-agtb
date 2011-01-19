@@ -52,6 +52,7 @@ $dictionary['Document'] = array('table' => 'documents'
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
     'popupHelp' => 'LBL_DOC_TYPE_POPUP',
     'massupdate' => false,
+    'options' => 'eapm_list',
   ),
 'doc_url' =>
   array (
