@@ -75,7 +75,16 @@ class EAPM extends Basic {
        global $current_user;
 
        $eapmBean = new EAPM();
-       $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application, 'active' => 1, 'validated' => 1));
+
+       if ( isset($_SESSION['EAPM'][$application]) ) {
+           $eapmBean->fromArray($_SESSION['EAPM'][$application]);
+       } else {
+           $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application, 'active' => 1, 'validated' => 1));
+           
+           if ( $eapmBean != null ) {
+               $_SESSION['EAPM'][$application] = $eapmBean->toArray();
+           }
+       }
 
        if(isset($eapmBean->password)){
            require_once("include/utils/encryption_utils.php");
@@ -107,7 +116,24 @@ class EAPM extends Basic {
        if ( !is_admin($GLOBALS['current_user']) ) {
            $this->assigned_user_id = $GLOBALS['current_user']->id;
        }
-       return parent::save($check_notify);
+       $parentRet = parent::save($check_notify);
+
+       // Nuke the EAPM cache for this record
+       if ( isset($_SESSION['EAPM'][$this->application]) ) {
+           unset($_SESSION['EAPM'][$this->application]);
+       }
+
+       return $parentRet;
+   }
+
+   function mark_deleted($id)
+   {
+       // Nuke the EAPM cache for this record
+       if ( isset($_SESSION['EAPM'][$this->application]) ) {
+           unset($_SESSION['EAPM'][$this->application]);
+       }
+       
+       return parent::mark_deleted($id);
    }
 
    function validated()
@@ -123,6 +149,12 @@ class EAPM extends Basic {
            $sql = "UPDATE eapm SET active=0 WHERE application = '{$this->application}' AND id != '{$this->id}' AND active=1 AND deleted = 0 AND assigned_user_id = '{$this->assigned_user_id}'";
            $GLOBALS['db']->query($sql,true);
        }
+
+       // Nuke the EAPM cache for this record
+       if ( isset($_SESSION['EAPM'][$this->application]) ) {
+           unset($_SESSION['EAPM'][$this->application]);
+       }
+
    }
 
 	protected function fillInName()
