@@ -274,15 +274,7 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            // load stored theme cache from sugar cache if it's there
-            if ( (string) SugarCache::instance() != 'memory' ) {
-                $this->_jsCache       = sugar_cache_retrieve('theme_'.$this->dirName.'_jsCache');
-                $this->_cssCache      = sugar_cache_retrieve('theme_'.$this->dirName.'_cssCache');
-                $this->_imageCache    = sugar_cache_retrieve('theme_'.$this->dirName.'_imageCache');
-                $this->_templateCache = sugar_cache_retrieve('theme_'.$this->dirName.'_templateCache');
-            }
-            // otherwise, see if we serialized them to a file
-            elseif ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
+            if ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
                 $caches = unserialize(file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
                 if ( isset($caches['jsCache']) )
                     $this->_jsCache       = $caches['jsCache'];
@@ -316,29 +308,10 @@ class SugarTheme
         if ( $this->_clearCacheOnDestroy ) {
             if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
                 unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
-            if ( (string) SugarCache::instance() != 'memory' ) {
-                sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
-                sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
-                sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
-                sugar_cache_clear('theme_'.$this->dirName.'_templateCache');
-            }
         }
         elseif ( !inDeveloperMode() ) {
-            // push our cache into the sugar cache
-            if ( (string) SugarCache::instance() != 'memory' ) {
-                // only update the caches if they have been changed in this request
-                if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_jsCache',$this->_jsCache);
-                if ( count($this->_cssCache) != $this->_initialCacheSize['cssCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_cssCache',$this->_cssCache);
-                if ( count($this->_imageCache) != $this->_initialCacheSize['imageCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_imageCache',$this->_imageCache);
-                if ( count($this->_templateCache) != $this->_initialCacheSize['templateCache'] )
-                    sugar_cache_put('theme_'.$this->dirName.'_templateCache',$this->_templateCache);
-            }
-            // fallback in case there is no useful external caching available
             // only update the caches if they have been changed in this request
-            elseif ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] 
+            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] 
                     || count($this->_cssCache) != $this->_initialCacheSize['cssCache']
                     || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
                     || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
@@ -356,14 +329,6 @@ class SugarTheme
                     );
                 
             }
-        }
-        // clear out the cache if we are in developerMode 
-        // ( so it will be freshly rebuilt for the next load )
-        else {
-            sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_templateCache');
         }
     }
     
@@ -779,15 +744,13 @@ EOHTML;
                 $cssFileContents = file_get_contents('include/javascript/yui/build/base/base-min.css') . $cssFileContents;
         }
         
-        if ( !sugar_is_file($cssFilePath) ) {
-            // minify the css
-            if ( !inDeveloperMode() ) {
-                $cssFileContents = cssmin::minify($cssFileContents);
-            }
-            // now write the css to cache
-
+        // minify the css
+        if ( !inDeveloperMode() && !sugar_is_file($cssFilePath) ) {
+            $cssFileContents = cssmin::minify($cssFileContents);
         }
-         sugar_file_put_contents($cssFilePath,$cssFileContents);
+        
+        // now write the css to cache
+        sugar_file_put_contents($cssFilePath,$cssFileContents);
         
         $this->_cssCache[$cssFileName] = $cssFilePath;
         
@@ -841,15 +804,13 @@ EOHTML;
         // create the cached file location
         $jsFilePath = create_cache_directory($this->getJSPath()."/$jsFileName");
         
-        if ( !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
-            // minify the js
-            if ( !inDeveloperMode() ) {
-                $jsFileContents = JSMin::minify($jsFileContents);
-                $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
-            }
-            // now write the js to cache
-
+        // minify the js
+        if ( !inDeveloperMode()&& !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
+            $jsFileContents = JSMin::minify($jsFileContents);
+            $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
         }
+        
+        // now write the js to cache
         sugar_file_put_contents($jsFilePath,$jsFileContents);
 
         $this->_jsCache[$jsFileName] = $jsFilePath;
