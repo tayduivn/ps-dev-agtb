@@ -10919,7 +10919,9 @@ $jit.ST.Plot.NodeTypes.implement({
         	nextBar = (dimArray[i+1]) ? dimArray[i+1] : false;
         	prevBar = (dimArray[i-1]) ? dimArray[i-1] : false;
         	if(horz) {
-				     		
+				    
+        		ctx.fillRect(x , y - shadowThickness + (fixedDim * i), dimArray[i]+ shadowThickness, fixedDim + shadowThickness*2);
+        		 		
         	} else {
         		
         		if(i == 0) {
@@ -10939,9 +10941,8 @@ $jit.ST.Plot.NodeTypes.implement({
 	        			ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness, dimArray[i]+ shadowThickness);
 	        		}
         		} else if (i == l-1) {
-        			
-        				ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness*2, dimArray[i]+ shadowThickness);
-        			}
+        			ctx.fillRect((x - ((prevBar < dimArray[i]) ? shadowThickness : 0)) + fixedDim * i, y - dimArray[i] - shadowThickness, fixedDim + shadowThickness*2, dimArray[i]+ shadowThickness);
+        		}
         		
         		
         	}
@@ -10983,7 +10984,7 @@ $jit.ST.Plot.NodeTypes.implement({
 		  ctx.fillStyle = ctx.strokeStyle = label.color;
           ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
           
-          
+          inset = 10;
 		  if(aggregates(node.name, valAcum) && label.type == 'Native') {
 				if(valuelabelArray[i]) {
 					acumValueLabel = valuelabelArray[i];
@@ -10991,17 +10992,35 @@ $jit.ST.Plot.NodeTypes.implement({
 					acumValueLabel = valueArray[i];
 				}
 			   if(horz) {
-				  ctx.textAlign = 'right';
-				  ctx.fillText(acumValueLabel, x + Math.max.apply(null, dimArray) - config.labelOffset, y + height/2);
+			   	  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+				  ctx.textAlign = 'left';
+				  ctx.textBaseline = 'top';
+				  ctx.fillStyle = "rgba(255,255,255,.6)";
+				  mtxt = ctx.measureText(acumValueLabel);
+				  //background box 
+			      boxHeight = label.size+6;
+				  boxX = x + inset/2;
+				  boxY = y + i*fixedDim + (fixedDim/2) - boxHeight/2;
+				  cornerRadius = 4;	
+				  boxWidth = mtxt.width+10;
+				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				  
+				  ctx.fillStyle = ctx.strokeStyle = label.color;
+				  ctx.fillText(acumValueLabel, x + inset, y + i*fixedDim + (fixedDim/2) - (label.size/2));
+				  
+
+					
+					
 				} else {
 				  
 				  	ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
 					ctx.save();
 					ctx.textAlign = 'left';
 					//background box              	
-					inset = 10;
-					ctx.translate(x + config.labelOffset + label.size + i*fixedDim, y -config.labelOffset - inset);
 					boxHeight = label.size+6;
+					ctx.translate(x + i*fixedDim + (fixedDim/2), y -config.labelOffset - inset);
+					
 					boxX = -inset/2;
 					boxY = -boxHeight/2;
 					ctx.fillStyle = "rgba(255,255,255,.6)";
@@ -12008,11 +12027,9 @@ $jit.BarChart = new Class({
 			var length = maxTickValue.toString().length;
 			maxTickValue = maxTickValue + parseInt(pad(1,length));
 		}
-		if(grouped && !horz) {
-			fixedDim = fixedDim > 100? 100 : fixedDim;
-		} else {
-			fixedDim = fixedDim > 50? 50 : fixedDim;
-		}
+
+		fixedDim = fixedDim > 100? 100 : fixedDim;
+
 		
     this.st.graph.eachNode(function(n) {
       var acum = 0, animateValue = [];
@@ -12020,7 +12037,13 @@ $jit.BarChart = new Class({
         acum += +v;
         animateValue.push(0);
       });
+      
+      if(grouped) {
+      	fixedDim = animateValue.length * 25;
+      }
       n.setData(dim1, fixedDim);
+      
+      
       if(animate) {
         n.setData(dim2, acum * height / maxValue, 'end');
         n.setData('dimArray', $.map(n.getData('valueArray'), function(n) { 
