@@ -26,7 +26,7 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
  * ex: <i>rollup($opportunities, "amount")</i> in Accounts would return the <br/>
  * sum of all the Opportunities related to this Account.
  */
-class SumRelatedExpression extends NumericExpression
+class AverageRelatedExpression extends NumericExpression
 {
 	/**
 	 * Returns the entire enumeration bare.
@@ -42,13 +42,14 @@ class SumRelatedExpression extends NumericExpression
 		if (!is_array($linkField) || empty($linkField))
             return $ret;
 
+
         foreach($linkField as $bean)
         {
             if (!empty($bean->$relfield))
                 $ret += $bean->$relfield;
         }
 
-        return $ret;
+        return $ret / count($linkField);
 	}
 
 	/**
@@ -74,7 +75,7 @@ class SumRelatedExpression extends NumericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    "function":"rollupSum",
+                    "function":"rollupAve",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field
@@ -95,7 +96,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return array("rollupSum");
+		return array("rollupAve");
 	}
 
 	/**
