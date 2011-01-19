@@ -1038,44 +1038,40 @@ EOHTML;
         if ( empty($module) )
             $module = $this->module;
 
-        $module_menu = sugar_cache_retrieve("{$current_user->id}_{$module}_module_menu_{$current_language}");
-        if ( !is_array($module_menu) ) {
-            $final_module_menu = array();
+        $final_module_menu = array();
 
-            if (file_exists('modules/' . $module . '/Menu.php')) {
-                $GLOBALS['module_menu'] = $module_menu = array();
-                require('modules/' . $module . '/Menu.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
-            }
-            if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
-                $GLOBALS['module_menu'] = $module_menu = array();
-                require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
-            }
-            if (!file_exists('modules/' . $module . '/Menu.php')
-                    && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')
-                    && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
-                $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
-                    $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
-                $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
-                    $module, $module);
-                if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
-                    if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
-                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
-                            $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
-                    else
-                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
-                            $app_strings['LBL_IMPORT'], "Import", $module);
-            }
-            if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
-                $GLOBALS['module_menu'] = $module_menu = array();
-                require('custom/application/Ext/Menus/menu.ext.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
-            }
-            $module_menu = $final_module_menu;
-            sugar_cache_put("{$current_user->id}_{$module}_module_menu_{$current_language}",$module_menu);
+        if (file_exists('modules/' . $module . '/Menu.php')) {
+            $GLOBALS['module_menu'] = $module_menu = array();
+            require('modules/' . $module . '/Menu.php');
+            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
-
+        if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
+            $GLOBALS['module_menu'] = $module_menu = array();
+            require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
+            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+        }
+        if (!file_exists('modules/' . $module . '/Menu.php')
+                && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')
+                && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
+            $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
+                $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
+            $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
+                $module, $module);
+            if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
+                if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
+                    $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
+                        $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
+                else
+                    $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
+                        $app_strings['LBL_IMPORT'], "Import", $module);
+        }
+        if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
+            $GLOBALS['module_menu'] = $module_menu = array();
+            require('custom/application/Ext/Menus/menu.ext.php');
+            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+        }
+        $module_menu = $final_module_menu;
+        
         return $module_menu;
     }
 
