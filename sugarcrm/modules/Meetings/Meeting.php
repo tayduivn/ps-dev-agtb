@@ -713,7 +713,7 @@ function getMeetingsExternalApiDropDown() {
     $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
 
 
-    $apiList = array_merge(array('Sugar'=>'Sugar'),$apiList);
+    $apiList = array_merge(array('Sugar'=>$GLOBALS['app_list_strings']['eapm_list']['Sugar']),$apiList);
 
 
     return $apiList;
