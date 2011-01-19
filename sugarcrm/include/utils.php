@@ -343,7 +343,7 @@ function get_sugar_config_defaults() {
 	'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
 	'upload_maxsize' => 3000000,
 	'import_max_execution_time' => 3600,
-	'use_php_code_json' => returnPhpJsonStatus(),
+//	'use_php_code_json' => returnPhpJsonStatus(),
 	'verify_client_ip' => true,
 	'js_custom_version' => '',
 	'js_lang_version' => 1,
@@ -3040,24 +3040,24 @@ function sugar_cleanup($exit = false) {
 	}
 
 	//check to see if this is not an ajax call AND the user preference error flag is set
-	if( 
+	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
-		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
-		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
-		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
-		
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
+
 	){
 		global $app_strings;
 		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
 		$err_mess = $app_strings['ERROR_USER_PREFS'];
 		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
-		echo " 
+		echo "
 		<script>
 			ajaxStatus.flashStatus('$err_mess',7000);
-		</script>";				
-		
-	}	
-	
+		</script>";
+
+	}
+
 	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
@@ -3821,16 +3821,9 @@ function sugarArrayMergeRecursive($gimp, $dom) {
  * @return bool True if NOT found or WRONG version
  */
 function returnPhpJsonStatus() {
-	$goodVersions = array('1.1.1',);
-
 	if(function_exists('json_encode')) {
 		$phpInfo = getPhpInfo(8);
-
-		if(!in_array($phpInfo['json']['json version'], $goodVersions)) {
-			return true; // bad version found
-		} else {
-			return false; // all requirements met
-		}
+        return version_compare($phpInfo['json']['json version'], '1.1.1', '<');
 	}
 	return true; // not found
 }
