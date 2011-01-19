@@ -138,7 +138,7 @@ else {
 			$doQuery = false;
 		}
 
-            $GLOBALS['log']->fatal('IKEA, QUERY: '.$query);
+            $GLOBALS['log']->debug('IKEA, QUERY: '.$query);
 		if($doQuery && isset($query)) {
 			$rs = $GLOBALS['db']->query($query);
 			$row = $GLOBALS['db']->fetchByAssoc($rs);
