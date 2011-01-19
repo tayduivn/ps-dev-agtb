@@ -417,7 +417,7 @@ function trimTracker()
 		   continue;
 		}
 
-	    $timeStamp = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),time()+(86400 * -$prune_interval))."'" ,"datetime");
+	    $timeStamp = db_convert("'". TimeDate::getInstance()->getNow()->get("+"+$prune_interval+" days")."'" ,"datetime");
 		if($tableName == 'tracker_sessions') {
 		   $query = "DELETE FROM $tableName WHERE date_end < $timeStamp";
 		} else {

@@ -82,8 +82,8 @@ class SugarAuthenticate{
 			        $logout_time=$usr->getPreference('logout_time');
 			        }
 				$stim = strtotime($logout_time);
-				$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+($res['lockoutexpirationtime']*$res['lockoutexpirationtype']), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));
-			    // Test if the user is still locked out and return a error message
+			    $expiretime = TimeDate::getInstance()->fromTimestamp($stim)->get("+"+$res['lockoutexpirationtime']*$res['lockoutexpirationtype']+" minutes")->asDb();
+				// Test if the user is still locked out and return a error message
 			    if (TimeDate::getInstance()->nowDb() < $expiretime){
 			    	$usr->setPreference('lockout','1');
 			        $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];

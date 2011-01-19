@@ -272,8 +272,8 @@ class Task extends SugarBean {
 			$dbtime = $timedate->to_db($task_fields['DATE_START']);
 		}
 		
-        $task_fields['TIME_DUE'] = $timedate->to_display_time($dbtime);
-        $task_fields['DATE_DUE'] = $timedate->to_display_date($dbtime);
+        $task_fields['TIME_DUE'] = $timedate->asUser($timedate->fromDb($dbtime));
+        $task_fields['DATE_DUE'] = $timedate->asUser($timedate->fromDb($dbtime));
 		
 
         $date_due = $task_fields['DATE_DUE'];

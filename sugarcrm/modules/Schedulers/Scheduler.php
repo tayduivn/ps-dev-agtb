@@ -412,7 +412,7 @@ class Scheduler extends SugarBean {
 			$GLOBALS['log']->debug('----->got * months');
 		} elseif(strstr($mons, '*/')) {
 			$mult = str_replace('*/','',$mons);
-			$startMon = date('m', strtotime($focus->date_time_start));
+			$startMon = $timedate->fromDb(date_time_start)->month;
 			$startFrom = ($startMon % $mult);
 
 			for($i=$startFrom;$i<=12;$i+$mult) {
@@ -456,7 +456,7 @@ class Scheduler extends SugarBean {
 			$GLOBALS['log']->debug('----->got * dates');
 		} elseif(strstr($dates, '*/')) {
 			$mult = str_replace('*/','',$dates);
-			$startDate = date('d', strtotime($focus->date_time_start));
+			$startDate = $timedate->fromDb($focus->date_time_start)->day;
 			$startFrom = ($startDate % $mult);
 
 			for($i=$startFrom; $i<=31; $i+$mult) {
@@ -549,7 +549,7 @@ class Scheduler extends SugarBean {
 			}
 		} elseif(strstr($mins,'*/')) {
 			$mult = str_replace('*/','',$mins);
-			$startMin = date('i',strtotime($focus->date_time_start));
+			$startMin = $timedate->fromDb($focus->date_time_start)->minute;
 			$startFrom = ($startMin % $mult);
 			for($i=$startFrom; $i<=59; $i) {
 				if(($currentMin + $i) > 59) {

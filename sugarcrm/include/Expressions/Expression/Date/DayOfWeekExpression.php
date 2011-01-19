@@ -33,7 +33,7 @@ class DayOfWeekExpression extends DateExpression
 	function evaluate() {
 		$params = $this->getParameters()->evaluate();
 		$time = strtotime($params);
-		return date("w", $time);
+		return TimeDate::getInstance()->fromTimestamp($time)->day;
 	}
 
 

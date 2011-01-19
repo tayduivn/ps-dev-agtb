@@ -1137,7 +1137,7 @@ function logThis($entry, $path='') {
 			}
 		}
 
-		$line = date('r').' [UpgradeWizard] - '.$entry."\n";
+		$line =TimeDate::getInstance()->httpTime().' [UpgradeWizard] - '.$entry."\n";
 
 		if(@fwrite($fp, $line) === false) {
 			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);

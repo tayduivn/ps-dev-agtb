@@ -1,80 +1,22 @@
-
 ./modules/Project/ResourceReport.php:        while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0)
-
 ./modules/Project/ResourceReport.php:            while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0 || isset($isHoliday[$dateStart])
-
-./modules/Schedulers/_AddJobsHere.php:	    $timeStamp = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),time()+(86400 * -$prune_interval))."'" ,"datetime");
-
-
 ./modules/Schedulers/Scheduler.php:		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
-
-./modules/Schedulers/Scheduler.php:			$startMon = date('m', strtotime($focus->date_time_start));
-./modules/Schedulers/Scheduler.php:			$startDate = date('d', strtotime($focus->date_time_start));
-
-
-
-./modules/Schedulers/Scheduler.php:			$startMin = date('i',strtotime($focus->date_time_start));
-.
 ./modules/Schedulers/Scheduler.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
 ./modules/Schedulers/Scheduler.php:					return date('jS', strtotime('December '.$value));
 ./modules/Schedulers/Scheduler.php:				return date('F', strtotime('2005-'.$value.'-01'));
-./modules/Schedulers/SchedulerDaemon.php:			if(date('H:i:s', strtotime('now')) == '00:00:01') { 
-		
-./modules/Schedulers/SchedulerDaemon.php:			$startMon = date(strtotime('m',$focus->date_time_start));
-./modules/Schedulers/SchedulerDaemon.php:			$startDate = date('d', strtotime($focus->date_time_start));
-
-
-./modules/Schedulers/SchedulerDaemon.php:			$startMin = date('i',strtotime($focus->date_time_start));
 ./modules/Schedulers/SchedulerOLD.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
 ./modules/Schedulers/SchedulerOLD.php:					return date('jS', strtotime('December '.$value));
 ./modules/Schedulers/SchedulerOLD.php:				return date('F', '2005-'.$value.'-01');
 ./modules/SugarFeed/SugarFeed.php:    	$start_time = gmmktime($start[4],$start[5], $start[6], $start[2], $start[3], $start[1] );
-./modules/SugarFeed/SugarFeedFlush.php:            $flushBefore = gmdate($td->dbDayFormat,gmmktime(0,0,0,gmdate('m'),gmdate('d')-14,gmdate('Y')));
-
-./modules/Tasks/Task.php:        $task_fields['DATE_DUE'] = $timedate->to_display_date($dbtime);
 ./modules/Tasks/Task.php:        $dd = $timedate->to_db_date($date_due, false);
-
-
-./modules/Trackers/populateSeedData.php:	    $date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($monitor3->date_start) + $monitor3->seconds);
-./modules/Trackers/populateSeedData.php:   $now = strtotime(date('D M Y'));
-./modules/Trackers/populateSeedData.php:   return gmdate("Y-m-d H:i:s", rand($lastYear, $now));
-./modules/UpgradeWizard/uw_utils.php:		$line = date('r').' [UpgradeWizard] - '.$entry."\n";
 ./modules/UserPreferences/UserPreference.php:			$equinox = date('I');
 ./modules/UserPreferences/UserPreference.php:			$serverHourGmt = date('Z') / 60 / 60;
-./modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php:				$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+($res['lockoutexpirationtime']*$res['lockoutexpirationtype']), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));./modules/Users/Changenewpassword.php:	    	$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+$delay, date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));
 ./modules/Users/EditView.php:	$focus->setPreference('timezone', date('T'));
-./modules/Users/password_utils.php:			    $expiretime = gmdate("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+$expireday,   date("Y",$stim)));
-
 ./portal/include/utils.php:	$serverOffset = date('Z');
 ./portal/include/utils.php:	if(date('I')) {
 ./schedulers.php:	write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
 ./schedulers.php:	write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
-./schedulers.php:			$job->runtime = gmdate('Y-m-d H:i:s', strtotime('now'));
 ./include/Expressions/Expression/Date/DateExpression.php:       $time = date($TD->get_date_time_format(), $unixTime);
-./include/Expressions/Expression/Date/DayOfWeekExpression.php:      return date("w", $time);
 ./include/Expressions/Expression/Date/DefineDateExpression.php:     return date($this->internalDateTimeFormat, $time);
-./include/Expressions/Expression/Date/MonthOfYearExpression.php:        return date("m", $time);
 ./data/SugarBean.php:                            $timeValue = ($value['display_default'] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($value['display_default']) ;
 ./include/generic/SugarWidgets/SugarWidgetFielddate.php:function get_db_date($days,$time) { $curr_timestamp=mktime($time_parts[0],$time_parts[1],0,$date_parts[1], $date_parts[2],$date_parts[0]);
-./modules/DCEActions/dceActionUtils.php:        $ytim = mktime(date("H",$stim)-5, date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim));
-.
-./modules/DCEInstances/DCEInstance.php:                    $tim = mktime(date("H",$stim)+$exp_hours, date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim));
-./modules/DCEInstances/DCEInstance.php:        $tim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+$lic_duration_d,   date("Y",$stim));
-
-
-
-./modules/DCEReports/DCESalesReport.php:                $atim = mktime(date("H",$arr['last_used']), date("i",$arr['last_used']), date("s",$arr['last_used']), date("m",$arr['last_used']), date("d",$arr['last_used']),   date("Y",$arr['last_used']));
-./modules/DCEReports/DCESalesReport.php:                    $atim = mktime((int)date("H",$stim),(int)date("i",$stim),(int)date("s",$stim),(int)date("m",$stim), (int)date("d",$stim), (int)date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:                    $atim = mktime((int)date("H",$stim),(int)date("i",$stim),(int)date("s",$stim),(int)date("m",$stim), (int)date("d",$stim), (int)date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:                    $atim = mktime((int)date("H",$stim),(int)date("i",$stim),(int)date("s",$stim),(int)date("m",$stim), (int)date("d",$stim), (int)date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:                    $atim = mktime((int)date("H",$stim),(int)date("i",$stim),(int)date("s",$stim),(int)date("m",$stim), (int)date("d",$stim), (int)date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:                    $atim = mktime((int)date("H",$stim),(int)date("i",$stim),(int)date("s",$stim),(int)date("m",$stim), (int)date("d",$stim), (int)date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)-30,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)-7,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+30,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+31,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim2 = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+90,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)-7,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $atim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+7,   date("Y",$stim));
-./modules/DCEReports/DCESalesReport.php:            $wtim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-7,   gmdate("Y",$stim));
-

@@ -90,7 +90,7 @@ function  hasPasswordExpired($username){
 		        $expireday = $res[$type.'expirationtype']*$res[$type.'expirationtime'];
 			    $stim = strtotime($current_user->pwd_last_changed);
 			    //add day to timestamp
-			    $expiretime = gmdate("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+$expireday,   date("Y",$stim)));
+			    $expiretime = $timedate->fromTimestamp($stim)->get("+"+$expireday+" days")->asDb();
 			    $timenow = TimeDate::getInstance()->nowDb();
 			    
 			    if ($timenow < $expiretime)

@@ -127,15 +127,15 @@ class SchedulerDaemon extends Scheduler {
 	 */
 	function watch() {
 		$GLOBALS['log']->debug('----->SchedulerDaemon Object running as user: ('.$this->runAsUserName.')');
-		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.$timedate->nowDb()) );
+		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.$timedate->nowDb());
 
 		$sleepTil = strtotime('now +'.$this->sleepInterval.'secs');
-		$GLOBALS['log']->debug('----->sleepTil: '.date('H:i:s', $sleepTil).' :: timerstarted at '.date('H:i:s',strtotime('now')));
+		$GLOBALS['log']->debug('----->sleepTil: '.$timedate->asDbTime($timetime->fromTimestamp($sleepTil)).' :: timerstarted at '.$timedate->nowDbTime());
 		
 		while($this->stop == false) {
 			usleep(250); // sleep 0.25 secs
 			
-			if(date('H:i:s', strtotime('now')) == '00:00:01') { // refresh at Midnight local time
+			if($timedate->nowDbTime() == '00:00:01') { // refresh at Midnight local time
 				$GLOBALS['log']->fatal('----->Daemon refreshing job queue.');
 				$this->dropSchedules();
 				$this->insertSchedules();	
@@ -403,7 +403,7 @@ class SchedulerDaemon extends Scheduler {
 			$GLOBALS['log']->debug('got * months');
 		} elseif(strstr($mons, '*/')) {
 			$mult = str_replace('*/','',$mons);
-			$startMon = date(strtotime('m',$focus->date_time_start));
+			$startMon = $timedate->fromTimestamp($focus->date_time_start)->month;
 			$startFrom = ($startMon % $mult);
 
 			for($i=$startFrom;$i<=12;$i+$mult) {
@@ -447,7 +447,7 @@ class SchedulerDaemon extends Scheduler {
 			$GLOBALS['log']->debug('got * dates');
 		} elseif(strstr($dates, '*/')) {
 			$mult = str_replace('*/','',$dates);
-			$startDate = date('d', strtotime($focus->date_time_start));
+			$startDate = $timedate->fromTimestamp($focus->date_time_start)->day;
 			$startFrom = ($startDate % $mult);
 
 			for($i=$startFrom; $i<=31; $i+$mult) {
@@ -547,7 +547,7 @@ class SchedulerDaemon extends Scheduler {
 			}
 		} elseif(strstr($mins,'*/')) {
 			$mult = str_replace('*/','',$mins);
-			$startMin = date('i',strtotime($focus->date_time_start));
+			$startMin = $timedate->fromTimestmp($focus->date_time_start)->minute;
 			$startFrom = ($startMin % $mult);
 			
 			for($i=$startFrom; $i<=59; $i+$mult) {

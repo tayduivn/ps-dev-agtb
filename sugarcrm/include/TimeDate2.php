@@ -35,8 +35,7 @@ class TimeDate2
     // little optimization
 	const DB_DATETIME_FORMAT = 'Y-m-d H:i:s';
 	const RFC2616_FORMAT = 'D, d M Y H:i:s \G\M\T';
-
-    // Standard DB date/time formats
+	// Standard DB date/time formats
     // they are constant, vars are for compatibility
 	public $dbDayFormat = self::DB_DATE_FORMAT;
     public $dbTimeFormat = self::DB_TIME_FORMAT;

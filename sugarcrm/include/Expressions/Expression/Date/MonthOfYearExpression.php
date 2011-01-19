@@ -31,8 +31,7 @@ class MonthOfYearExpression extends DateExpression
 	 */
 	function evaluate() {
 		$params = $this->getParameters()->evaluate();
-		$time = strtotime($params);
-		return date("m", $time);
+		return TimeDate::getInstance()->fromString($params)->month;
 	}
 
 

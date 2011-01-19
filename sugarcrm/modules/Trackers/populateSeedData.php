@@ -125,8 +125,8 @@ function populate_tracker_sessions() {
 	    //$monitor3->setValue('date_end', $monitor3->date_start);
 	    
 	    $monitor3->setValue('seconds', rand(2, 25000));
-	    $date_end = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($monitor3->date_start) + $monitor3->seconds);
-		$monitor3->setValue('date_end', $date_end);
+		$date_end = $timedate->fromDb($monitor3->date_start)->get("+"+$monitor3->seconds+" seconds");
+	    $monitor3->setValue('date_end', $date_end);
 	    $monitor3->setValue('active', 0);		
 	}
 }
@@ -153,7 +153,7 @@ function populate_tracker_queries() {
 //END SUGARCRM flav=pro ONLY
 
 function randomTimestamp() {
-   $now = strtotime(date('D M Y'));
+   $now = TimeDate::getInstance()->getNow()-ts;
    $lastYear = strtotime('01 February 2008');
    return $timedate->asDb($timedate->fromTimestamp(rand($lastYear, $now)));
     
