@@ -71,10 +71,6 @@ class MyCallsDashlet extends DashletGeneric {
         // handle myitems only differently --  set the custom query to ONLY show assigned meetings
         if($this->myItemsOnly) {
         	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\') ';
-        } else {
-        	//join with meeting_users table to process related users                 
-            $this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
-        	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ';
         }
         
         $this->myItemsOnly = false; 
@@ -92,7 +88,7 @@ class MyCallsDashlet extends DashletGeneric {
         
 
        if(!empty($keys)){ 
-            $query = "SELECT call_id, accept_status FROM calls_users WHERE deleted = 0 user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
+            $query = "SELECT call_id, accept_status FROM calls_users WHERE deleted = 0 and user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
             $result = $GLOBALS['db']->query($query);
             
             while($row = $GLOBALS['db']->fetchByAssoc($result)) {

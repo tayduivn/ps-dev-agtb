@@ -73,12 +73,6 @@ class MyMeetingsDashlet extends DashletGeneric {
         // handle myitems only differently --  set the custom query to ONLY show assigned meetings
         if($this->myItemsOnly) {  
             $lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' ) ';
-        } else {
-        	//join with meeting_users table to process related users
-       		$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
-        	
-        	//set the custom query to include assigned meetings            
-        	$lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ';
         }
         
         $this->myItemsOnly = false; 
