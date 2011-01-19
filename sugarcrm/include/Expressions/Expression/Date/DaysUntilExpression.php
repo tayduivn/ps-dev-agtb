@@ -34,7 +34,7 @@ class DaysUntilExpression extends NumericExpression
         if(!$params) {
             return false;
         }
-		return $params->diff(TimeDate::getInstance()->getNow())->d;
+        $diff = ceil(($params->ts - TimeDate::getInstance()->getNow()->ts)/86400);
 	}
 
 
