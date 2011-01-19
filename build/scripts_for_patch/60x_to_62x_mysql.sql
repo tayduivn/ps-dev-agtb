@@ -1,6 +1,6 @@
---ALTER TABLE `email_addr_bean_rel` MODIFY COLUMN `bean_module` varchar(100) NULL;
+ALTER TABLE `email_addr_bean_rel` MODIFY COLUMN `bean_module` varchar(100) NULL;
 
---ALTER TABLE `emails_beans` MODIFY COLUMN `bean_module` varchar(100) NULL;
+ALTER TABLE `emails_beans` MODIFY COLUMN `bean_module` varchar(100) NULL;
 
 ALTER TABLE accounts_audit
     ADD INDEX idx_accounts_primary (id);
@@ -18,7 +18,6 @@ ALTER TABLE opportunities_audit
     ADD INDEX idx_opportunities_primary (id);
 ALTER TABLE project_task_audit
     ADD INDEX idx_project_task_primary (id);
-
 
 -- //BEGIN SUGARCRM flav=pro ONLY
 ALTER TABLE contracts_audit
