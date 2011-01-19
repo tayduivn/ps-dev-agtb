@@ -98,7 +98,7 @@ class JSON
 {
     // cn: bug 12274 - the below defend against CSRF (see desc for whitepaper)
     var $prescript = "while(1);/*";
-    var $postscript = "*/"; 
+    var $postscript = "*/";
 
     /**
      * Specifies whether caching should be used
@@ -107,7 +107,7 @@ class JSON
      * @access private
      */
     var $_use_cache = true;
-    
+
    /**
     * constructs a new JSON instance
     *
@@ -216,39 +216,19 @@ class JSON
         // ignoring UTF-32 for now, sorry
         return '';
     }
-    
-    
+
+
     /**
      * Wrapper for original "encode()" method - allows the creation of a security envelope
      * @param mixed var Variable to be JSON encoded
      * @param bool addSecurityEnvelope Default false
      */
     function encode($var, $addSecurityEnvelope=false) {
-        $use_cache_on_at_start = $this->_use_cache;
-        if ($this->_use_cache) {
-            $cache_key = 'JSON_encode_' . ((is_array($var) || is_object($var)) ? md5(serialize($var)) : $var)
-                         . ($addSecurityEnvelope ? 'env' : '');
-
-            // Use the global cache
-            if($cache_value = sugar_cache_retrieve($cache_key)) {
-                return $cache_value;
-            }
-        }
-
-        $this->_use_cache = false;
         $encoded_var = $this->encodeReal($var);
-        if ($use_cache_on_at_start === true) {
-            $this->_use_cache = true;
-        }
-
-        // cn: bug 12274 - the below defend against CSRF (see desc for whitepaper)
         if($addSecurityEnvelope) {
             $encoded_var = $this->prescript . $encoded_var . $this->postscript;
         }
 
-        if ($this->_use_cache) {
-            sugar_cache_put($cache_key, $encoded_var);
-        }
         return $encoded_var;
     }
 
@@ -261,13 +241,13 @@ class JSON
     *                           to be in ASCII or UTF-8 format!
     *
     * @return   mixed   JSON string representation of input var or an error if a problem occurs
-    * @access   private 
+    * @access   private
     */
     function encodeReal($var) {
         global $sugar_config;
 
         // cn: fork to feel for JSON-PHP module
-        if($sugar_config['use_php_code_json'] == false && function_exists('json_decode')) {
+        if(empty($sugar_config['use_php_code_json']) && function_exists('json_encode')) {
             $value = json_encode($var);
             return $value;
         }
@@ -527,10 +507,10 @@ class JSON
                 $GLOBALS['log']->fatal("*** SECURITY: received asynchronous call with invalid ['asychronous_key'] value.  Possible CSRF attack.");
                 return '';
             }
-            
+
             return $meta['jsonObject'];
         }
-        
+
         return $this->decodeReal($str);
     }
 
@@ -551,11 +531,9 @@ class JSON
         // cn: feeler for JSON-PHP module
         /**
          * SECURITY: bug 12274 - CSRF attack potential via JSON
-         * compiled JSON-PHP is now deprecated for use
          */
-        if(false) {
-        //if(function_exists('json_decode') && $sugar_config['use_php_code_json'] == false) {
-            //return json_decode($str, true);
+        if(function_exists('json_decode') && empty($sugar_config['use_php_code_json'])) {
+            return json_decode($str, true);
         } else {
 
             $str = $this->reduce_string($str);

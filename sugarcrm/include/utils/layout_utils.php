@@ -266,8 +266,8 @@ function getClassicModuleTitle(
 	foreach($params as $parm){
 		$index++;
 	   	$module_title .= $parm;
-	   	if($index < $count || ($count == 1 && SugarThemeRegistry::current()->directionality == "rtl")){
-	    	$module_title .= (!empty($iconPath) && $index == 1) ? SugarView::getBreadCrumbSymbol() : "";
+	   	if($index < $count){
+	    	$module_title .= ( $index == 1) ? SugarView::getBreadCrumbSymbol() : "";
 	    }
 	}
 
@@ -279,7 +279,7 @@ function getClassicModuleTitle(
 	        $the_title .= $module_title;
     	} else {
     		$the_title .= $module_title;
-    		$the_title .= ($count > 1) ? SugarView::getBreadCrumbSymbol() : "";
+    		$the_title .= SugarView::getBreadCrumbSymbol();
     		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
 	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
     	}

@@ -343,7 +343,7 @@ function get_sugar_config_defaults() {
 	'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
 	'upload_maxsize' => 3000000,
 	'import_max_execution_time' => 3600,
-	'use_php_code_json' => returnPhpJsonStatus(),
+//	'use_php_code_json' => returnPhpJsonStatus(),
 	'verify_client_ip' => true,
 	'js_custom_version' => '',
 	'js_lang_version' => 1,
@@ -909,16 +909,18 @@ function return_app_list_strings_language($language) {
 	    $en_app_list_strings = $app_list_strings;
 	}
 
-	if(file_exists("include/language/$language.lang.php")) {
-	include("include/language/$language.lang.php");
+	if($language != 'en_us') {
+    	if(file_exists("include/language/$language.lang.php")) {
+    	    include("include/language/$language.lang.php");
+    	}
 	}
 
 	if(file_exists("include/language/$language.lang.override.php")) {
-		include("include/language/$language.lang.override.php");
-	}
+    	include("include/language/$language.lang.override.php");
+    }
 
-	if(file_exists("include/language/$language.lang.php.override")) {
-		include("include/language/$language.lang.php.override");
+    if(file_exists("include/language/$language.lang.php.override")) {
+    	include("include/language/$language.lang.php.override");
 	}
 
 	// cn: bug 6048 - merge en_us with requested language
@@ -1025,10 +1027,9 @@ function return_application_language($language) {
 		include("custom/include/language/en_us.lang.php");
 	}
 	$en_app_strings = array();
-	if($language_used != $default_language)
-	$en_app_strings = $app_strings;
+	if($language_used != $default_language)  $en_app_strings = $app_strings;
 
-	if(!empty($language)) {
+	if(!empty($language) && $language != 'en_us') {
 		include("include/language/$language.lang.php");
 	}
 
@@ -1112,6 +1113,14 @@ function return_module_language($language, $module, $refresh=false) {
 		return array();
 	}
 
+	$cache_key = "mod_strings_lang.".$language.$module;
+	// Check for cached value
+	$cache_entry = sugar_cache_retrieve($cache_key);
+	if(!empty($cache_entry))
+	{
+		return $cache_entry;
+	}
+
 	// Store the current mod strings for later
 	$temp_mod_strings = $mod_strings;
 	$loaded_mod_strings = array();
@@ -1158,6 +1167,7 @@ function return_module_language($language, $module, $refresh=false) {
 	else
 		$mod_strings = $temp_mod_strings;
 
+    sugar_cache_put($cache_key, $return_value);
 	return $return_value;
 }
 
@@ -3040,24 +3050,24 @@ function sugar_cleanup($exit = false) {
 	}
 
 	//check to see if this is not an ajax call AND the user preference error flag is set
-	if( 
+	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
-		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
-		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
-		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
-		
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
+
 	){
 		global $app_strings;
 		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
 		$err_mess = $app_strings['ERROR_USER_PREFS'];
 		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
-		echo " 
+		echo "
 		<script>
 			ajaxStatus.flashStatus('$err_mess',7000);
-		</script>";				
-		
-	}	
-	
+		</script>";
+
+	}
+
 	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
@@ -3821,16 +3831,9 @@ function sugarArrayMergeRecursive($gimp, $dom) {
  * @return bool True if NOT found or WRONG version
  */
 function returnPhpJsonStatus() {
-	$goodVersions = array('1.1.1',);
-
 	if(function_exists('json_encode')) {
 		$phpInfo = getPhpInfo(8);
-
-		if(!in_array($phpInfo['json']['json version'], $goodVersions)) {
-			return true; // bad version found
-		} else {
-			return false; // all requirements met
-		}
+        return version_compare($phpInfo['json']['json version'], '1.1.1', '<');
 	}
 	return true; // not found
 }

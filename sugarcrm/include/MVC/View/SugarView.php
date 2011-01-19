@@ -34,7 +34,7 @@ class SugarView
      * Set to true if you do not want to display errors from SugarView::displayErrors(); instead they will be returned
      */
     var $suppressDisplayErrors = false;
-    
+
     /**
      * Options for what UI elements to hide/show/
      */
@@ -111,11 +111,11 @@ class SugarView
     public function displayErrors()
     {
         $errors = '';
-        
+
         foreach($this->errors as $error) {
             $errors .= '<span class="error">' . $error . '</span><br>';
         }
-        
+
         if ( !$this->suppressDisplayErrors ) {
             echo $errors;
         }
@@ -601,7 +601,7 @@ class SugarView
                 echo('<p class="error">' . $error_message.'</p>');
             }
         }
-        
+
     }
     /**
      * If the view is classic then this method will include the file and
@@ -773,10 +773,10 @@ EOHTML;
 		 if (isset($this->action) && $this->action != "EditView") {
 			 $bottomLinkList['print'] =
 			array($app_strings['LNK_PRINT'] => 'javascript:void window.open(\'index.php?'.$GLOBALS['request_string'].'\',\'printwin\',\'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1\')');
-			 
+
 		}
 		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => '#top');
-		
+
 		$bottomLinksStr = "";
 		foreach($bottomLinkList as $key => $value) {
 			foreach($value as $text => $link) {
@@ -922,7 +922,7 @@ EOHTML;
         {
 	        $timeStamp = TimeDate::getInstance()->nowDb();
 	        //Track to tracker_perf
-	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){ 
+	        if($monitor2 = $trackerManager->getMonitor('tracker_perf')){
 		        $monitor2->setValue('server_response_time', $this->responseTime);
 		        $dbManager = &DBManagerFactory::getInstance();
 		        $monitor2->db_round_trips = $dbManager->getQueryCount();
@@ -933,7 +933,7 @@ EOHTML;
 		            $monitor2->setValue('memory_usage', memory_get_usage());
 		        }
 			}
-		    
+
 			// Track to tracker_sessions
 		    if($monitor3 = $trackerManager->getMonitor('tracker_sessions')){
 		        $monitor3->setValue('date_end', $timeStamp);
@@ -975,16 +975,7 @@ EOHTML;
         $deltaTime = $endTime - $GLOBALS['startTime'];
         $this->responseTime = number_format(round($deltaTime, 2), 2);
         // Print out the resources used in constructing the page.
-        $included_files = get_included_files();
-        // take all of the included files and make a list that does not allow for duplicates based on case
-        // I believe the full get_include_files result set appears to have one entry for each file in real
-        // case, and one entry in all lower case.
-        $list_of_files_case_insensitive = array();
-        foreach($included_files as $key => $name) {
-            // preserve the first capitalization encountered.
-            $list_of_files_case_insensitive[mb_strtolower($name) ] = $name;
-        }
-        $this->fileResources = sizeof($list_of_files_case_insensitive);
+        $this->fileResources = count(get_included_files());
     }
 
     private function _getStatistics()
@@ -1131,11 +1122,11 @@ EOHTML;
         $params = $this->_getModuleTitleParams();
         $count = count($params);
         $index = 0;
-        
+
 		if(SugarThemeRegistry::current()->directionality == "rtl") {
 			$params = array_reverse($params);
 		}
-	
+
         foreach($params as $parm){
             $index++;
             $theTitle .= $parm;
@@ -1250,39 +1241,39 @@ EOHTML;
     {
     	global $current_user;
     	global $app_strings;
-    	
+
     	if(!empty($GLOBALS['app_list_strings']['moduleList'][$this->module]))
     		$firstParam = $GLOBALS['app_list_strings']['moduleList'][$this->module];
     	else
     		$firstParam = $this->module;
 
     	$iconPath = $this->getModuleTitleIconPath($this->module);
-    	if($this->action == "ListView" || $this->action == "index") 
+    	if($this->action == "ListView" || $this->action == "index")
     	{
     	    if (!empty($iconPath) && !$bTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
 					return "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>"
 					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
     	    	} else {
     	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
     	    			 . "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";	
+					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
     	    	}
 			} else {
 				return $firstParam;
 			}
-    	} else 
+    	} else
     	{
 		    if (!empty($iconPath) && !$bTitle) {
-				return "<a href='index.php?module={$this->module}&action=index'>" 
+				return "<a href='index.php?module={$this->module}&action=index'>"
 				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
 			} else {
 				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
 			}
     	}
     }
-    
+
     protected function getModuleTitleIconPath($module) {
     	$iconPath = "";
     	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
@@ -1304,7 +1295,7 @@ EOHTML;
     public function getBrowserTitle()
     {
         global $app_strings;
-        
+
         $browserTitle = $app_strings['LBL_BROWSER_TITLE'];
         if ( $this->module == 'Users' && ($this->action == 'SetTimezone' || $this->action == 'Login') )
             return $browserTitle;
@@ -1314,17 +1305,17 @@ EOHTML;
 
         return $browserTitle;
     }
-    
+
     /**
      * Returns the correct breadcrumb symbol according to theme's directionality setting
      *
      * @return string
      */
-    public function getBreadCrumbSymbol() 
+    public function getBreadCrumbSymbol()
     {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
         	return "<span class='pointer'>&raquo;</span>";
-        } 
+        }
         else {
         	return "<span class='pointer'>&laquo;</span>";
         }

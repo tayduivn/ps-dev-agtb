@@ -41,7 +41,7 @@ class SugarFieldExpression extends GenericExpression
 
         if (!isset($this->context))
         {
-            //If we don't have a context provided, we have to guess. This can be a large performanc hit.
+            //If we don't have a context provided, we have to guess. This can be a large performance hit.
             $this->setContext();
         }
 
