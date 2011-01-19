@@ -627,7 +627,7 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, fo
 	this.trigger = trigger;
 	if (testOnLoad) {
 		try {
-			SUGAR.forms.Trigger.fire("", trigger);
+			SUGAR.forms.Trigger.fire.call(trigger, "", trigger);
 		}catch (e) {}
 	}
 }
@@ -708,9 +708,9 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 		if (!el) continue;
 		if (el.type && el.type.toUpperCase() == "CHECKBOX")
 		{
-			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this, this);
 		} else {
-			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this, this);
 		}
 	}
 }

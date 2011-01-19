@@ -237,6 +237,7 @@ class DependencyManager {
 
     private static function getModuleDependencyMetadata($module)
     {
+        /* //Disable caching for now
         $cacheLoc = create_cache_directory("modules/$module/dependencies.php");
         //If the cache file exists, use it.
         if(empty($GLOBALS['sugar_config']['developerMode']) && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
@@ -244,21 +245,23 @@ class DependencyManager {
         }
         //Otherwise load all the def locations and create the cache file.
         else {
-            $dependencies = array($module => array());
-            $location = "modules/$module/metadata/dependencydefs.php";
-            foreach(array(
-                $location,
-                "custom/{$location}",
-                "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
-            {
-                if(is_file($loc)) {
-                    include $loc;
-                }
+        */
+        $dependencies = array($module => array());
+        $location = "modules/$module/metadata/dependencydefs.php";
+        foreach(array(
+            $location,
+            "custom/{$location}",
+            "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
+        {
+            if(is_file($loc)) {
+                include $loc;
             }
+        }
+        /*  //More disabled cache code
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"
                  . override_value_to_string('dependencies', $module, $dependencies[$module]);
             file_put_contents($cacheLoc, $out);
-        }
+        }*/
 
         return $dependencies[$module];
     }
