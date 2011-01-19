@@ -909,16 +909,18 @@ function return_app_list_strings_language($language) {
 	    $en_app_list_strings = $app_list_strings;
 	}
 
-	if(file_exists("include/language/$language.lang.php")) {
-	include("include/language/$language.lang.php");
+	if($language != 'en_us') {
+    	if(file_exists("include/language/$language.lang.php")) {
+    	    include("include/language/$language.lang.php");
+    	}
 	}
 
 	if(file_exists("include/language/$language.lang.override.php")) {
-		include("include/language/$language.lang.override.php");
-	}
+    	include("include/language/$language.lang.override.php");
+    }
 
-	if(file_exists("include/language/$language.lang.php.override")) {
-		include("include/language/$language.lang.php.override");
+    if(file_exists("include/language/$language.lang.php.override")) {
+    	include("include/language/$language.lang.php.override");
 	}
 
 	// cn: bug 6048 - merge en_us with requested language
@@ -1025,10 +1027,9 @@ function return_application_language($language) {
 		include("custom/include/language/en_us.lang.php");
 	}
 	$en_app_strings = array();
-	if($language_used != $default_language)
-	$en_app_strings = $app_strings;
+	if($language_used != $default_language)  $en_app_strings = $app_strings;
 
-	if(!empty($language)) {
+	if(!empty($language) && $language != 'en_us') {
 		include("include/language/$language.lang.php");
 	}
 
@@ -1112,6 +1113,14 @@ function return_module_language($language, $module, $refresh=false) {
 		return array();
 	}
 
+	$cache_key = "mod_strings_lang.".$language.$module;
+	// Check for cached value
+	$cache_entry = sugar_cache_retrieve($cache_key);
+	if(!empty($cache_entry))
+	{
+		return $cache_entry;
+	}
+
 	// Store the current mod strings for later
 	$temp_mod_strings = $mod_strings;
 	$loaded_mod_strings = array();
@@ -1158,6 +1167,7 @@ function return_module_language($language, $module, $refresh=false) {
 	else
 		$mod_strings = $temp_mod_strings;
 
+    sugar_cache_put($cache_key, $return_value);
 	return $return_value;
 }
 
