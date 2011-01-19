@@ -312,7 +312,7 @@ var $myFavoritesOnly = false;
                 continue;
             }
             if ( empty($item['IMAGE_URL']) ) {
-                $item['IMAGE_URL'] = 'include/images/blank.gif';
+                $item['IMAGE_URL'] = 'include/images/default_user_feed_picture.png';
                 if ( isset($item['ASSIGNED_USER_ID']) ) {
                     $user = loadBean('Users');
                     $user->retrieve($item['ASSIGNED_USER_ID']);
