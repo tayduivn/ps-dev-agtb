@@ -1,4 +1,3 @@
-
 <?php
 /************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -49,21 +48,36 @@ class SugarFieldExpression extends GenericExpression
             throw new Exception("Unable to find field {$fieldName}");
 
         $def = $this->context->field_defs[$fieldName];
-
+        $timedate = TimeDate::getInstance();
         switch($def['type']) {
             case 'link':
                 return $this->getLinkField($fieldName);
             case 'datetime':
             case 'datetimecombo':
-                $date = TimeDate::fromDb($this->context->$fieldName);
-                TimeDate::getInstance()->tzUser($date);
+                if(empty($this->context->$fieldName)) {
+                    return false;
+                }
+                $date = $timedate->fromDb($this->context->$fieldName);
+                if(empty($date)) {
+                    return false;
+                }
+                $timedate->tzUser($date);
                 return $date;
             case 'date':
-                $date = TimeDate::fromDbDate($this->context->$fieldName);
-                TimeDate::getInstance()->tzUser($date);
+                if(empty($this->context->$fieldName)) {
+                    return false;
+                }
+                $date = $timedate->fromDbDate($this->context->$fieldName);
+                if(empty($date)) {
+                    return false;
+                }
+                $timedate->tzUser($date);
                 return $date;
             case 'time':
-                return TimeDate::fromUserTime(TimeDate::getInstance()->to_display_time($this->context->$fieldName));
+                if(empty($this->context->$fieldName)) {
+                    return false;
+                }
+                return $timedate->fromUserTime($timedate->to_display_time($this->context->$fieldName));
         }
         return $this->context->$fieldName;
 	}

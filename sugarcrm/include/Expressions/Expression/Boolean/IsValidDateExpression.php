@@ -38,7 +38,7 @@ class IsValidDateExpression extends BooleanExpression {
             return AbstractExpression::$FALSE;
         }
         try {
-            $date = TimeDate::fromUser($dtStr);
+            $date = TimeDate::getInstance()->fromUser($dtStr);
             if(!empty($date)) {
                 return AbstractExpression::$TRUE;
             }

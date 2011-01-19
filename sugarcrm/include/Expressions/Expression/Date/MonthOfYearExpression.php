@@ -30,7 +30,7 @@ class MonthOfYearExpression extends NumericExpression
 	 * Return current month
 	 */
 	function evaluate() {
-		$params = DateTime::parse($this->getParameters()->evaluate());
+		$params = DateExpression::parse($this->getParameters()->evaluate());
         if(!$params) {
             return false;
         }

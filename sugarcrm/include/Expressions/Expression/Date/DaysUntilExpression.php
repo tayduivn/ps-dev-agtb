@@ -85,5 +85,3 @@ EOQ;
 	function toString() {
 	}
 }
-
-?>
