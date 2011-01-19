@@ -156,6 +156,9 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
 
         } catch ( Exception $e ) { return false; }
 
+        if(empty($this->oauthParams['consumerKey']) || empty($this->oauthParams['consumerSecret'])){
+            $this->loadConnectorProperties();
+        }
         $this->fb = new FacebookLib(array(
                                         'appId' => $this->oauthParams['consumerKey'],
                                         'secret' => $this->oauthParams['consumerSecret'],
@@ -167,5 +170,19 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
             }
         } catch ( Exception $e ) {}
         return true;
+    }
+
+    protected function loadConnectorProperties(){
+        $connector = $this->getConnector();
+        if(!empty($connector)) {
+            $cons_key = $connector->getProperty('oauth_consumer_key');
+            if(!empty($cons_key)) {
+                $this->oauthParams['consumerKey'] = $cons_key;
+            }
+            $cons_secret = $connector->getProperty('oauth_consumer_secret');
+            if(!empty($cons_secret)) {
+                $this->oauthParams['consumerSecret'] = $cons_secret;
+            }
+        }
     }
 }

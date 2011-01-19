@@ -82,7 +82,7 @@ Calendar.setup = function (params) {
                 calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos+1);
                 
                 //Configure the month and days label with localization support where defined
-                if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
+                if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined' && SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
                 {
                 	if(SUGAR.language.languages['app_list_strings']['dom_cal_month_long'].length == 13)
                 	{
@@ -91,7 +91,7 @@ Calendar.setup = function (params) {
                 	calendar.cfg.setProperty('MONTHS_LONG', SUGAR.language.languages['app_list_strings']['dom_cal_month_long']);
                 }
                 
-                if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_day_short'] != 'undefined')
+                if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined'  && typeof SUGAR.language.languages['app_list_strings']['dom_cal_day_short'] != 'undefined')
                 {
                 	if(SUGAR.language.languages['app_list_strings']['dom_cal_day_short'].length == 8)
                 	{

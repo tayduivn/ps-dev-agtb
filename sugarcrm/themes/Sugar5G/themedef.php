@@ -32,7 +32,7 @@ $themedef = array(
     'description' => "Default theme from Sugar 5 with Group Tabs enabled",
 	'parentTheme' => 'Sugar5',
     'version' => array(
-        'regex_matches' => array('6\.1\.*'),
+        'regex_matches' => array('6\.[1-9]\.*'),
         ),
     'group_tabs' => true,
     );

@@ -794,7 +794,7 @@ abstract class DBManager
         foreach ($indices as $value) {
             if (isset($value['source']) && $value['source'] != 'db')
                 continue;
-            
+
             $name = $value['name'];
 
 			//Don't attempt to fix the same index twice in one pass;
@@ -1520,7 +1520,7 @@ abstract class DBManager
         $sql
         )
     {
-		if (++self::$queryCount > self::$queryLimit
+		if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
             &&(empty($GLOBALS['current_user']) || !is_admin($GLOBALS['current_user']))) {
 		   require_once('include/resource/ResourceManager.php');
 		   $resourceManager = ResourceManager::getInstance();

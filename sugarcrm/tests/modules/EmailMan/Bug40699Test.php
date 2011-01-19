@@ -5,33 +5,26 @@ require_once 'SugarTestAccountUtilities.php';
 
 class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	var $testAccount;
-	var $testContact;
-	var $currentUser;
-	
 	public function setUp()
 	{
-	   $this->testAccount = SugarTestAccountUtilities::createAccount();
-	   $this->testContact = SugarTestContactUtilities::createContact();
-	   global $current_user;
-	   $this->currentUser = $current_user;
-	   $user = new User();
-	   $user->retrieve('1');
-	   $current_user = $user;
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	    $GLOBALS['current_user']->is_admin = '1';
+	    $GLOBALS['current_user']->save();
 	}
 	
 	public function tearDown()
 	{
-	   SugarTestAccountUtilities::removeAllCreatedAccounts();
-	   SugarTestContactUtilities::removeAllCreatedContacts();
-	   global $current_user;
-	   $current_user = $this->currentUser;
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
 	}
 	
 	public function testGetListViewDataForAccounts()
 	{
+		$testAccount = SugarTestAccountUtilities::createAccount();
+		
 		$emailMan = new EmailMan();
-		$emailMan->related_id = $this->testAccount->id;
+		$emailMan->related_id = $testAccount->id;
 		$emailMan->related_type = 'Accounts';
 		
 		$filter = array();
@@ -47,14 +40,16 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 		$params['massupdate'] = 1;
 		
 		$data = $emailMan->get_list_view_data();
-        $this->assertEquals($data['RECIPIENT_NAME'], $this->testAccount->name, 'Assert that account name was correctly set');
+		$this->assertEquals($data['RECIPIENT_NAME'], $testAccount->name, 'Assert that account name was correctly set');
     }
     
 
 	public function testGetListViewDataForContacts()
 	{
+	    $testContact = SugarTestContactUtilities::createContact();
+	    
 		$emailMan = new EmailMan();
-		$emailMan->related_id = $this->testContact->id;
+		$emailMan->related_id = $testContact->id;
 		$emailMan->related_type = 'Contacts';
 		
 		$filter = array();
@@ -69,11 +64,9 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 		$params = array();
 		$params['massupdate'] = 1;
 		
-		$contact_name_expected = $this->testContact->first_name . ' ' . $this->testContact->last_name;
+		$contact_name_expected = $testContact->first_name . ' ' . $testContact->last_name;
 		
 		$data = $emailMan->get_list_view_data();
-        $this->assertEquals($data['RECIPIENT_NAME'], $contact_name_expected, 'Assert that contact name was correctly set');
+		$this->assertEquals($data['RECIPIENT_NAME'], $contact_name_expected, 'Assert that contact name was correctly set');
     }    
 }
-
-?>

@@ -198,12 +198,6 @@ if(!function_exists('mb_strlen')) {
 if(!class_exists('ZipArchive')) {
     $zipStatus = "<b><span class=stop>{$mod_strings['ERR_CHECKSYS_ZIP']}</font></b>";
     installLog("ERROR:: {$mod_strings['ERR_CHECKSYS_ZIP']}");
-    $error_found = true;
-    $error_txt .= '
-      <tr>
-        <td><strong>'.$mod_strings['LBL_CHECKSYS_ZIP'].'</strong></td>
-        <td class="error">'.$zipStatus.'</td>
-      </tr>';
 }else{
     installLog("ZIP Support Found");
 }

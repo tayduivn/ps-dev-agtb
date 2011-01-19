@@ -19,10 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('service/v3_1/SugarWebServiceUtilv3_1.php');
-class SugarWebServiceUtilv3_2 extends SugarWebServiceUtilv3_1
-{
 
-    function get_module_view_defs($module_name, $type, $view){
+class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
+{
+    function get_module_view_defs($module_name, $type, $view)
+    {
         require_once('include/MVC/View/SugarView.php');
         $metadataFile = null;
         $results = array();
@@ -94,5 +95,4 @@ class SugarWebServiceUtilv3_2 extends SugarWebServiceUtilv3_1
         
         return $results;
     }
-
 }

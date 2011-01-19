@@ -28,12 +28,14 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 class DayOfWeekExpression extends NumericExpression
 {
 	/**
-	 * Returns the entire enumeration bare.
+	 * Returns day of week for the date.
 	 */
 	function evaluate() {
-		$params = $this->getParameters()->evaluate();
-		$time = strtotime($params);
-		return date("w", $time);
+		$params = DateExpression::parse($this->getParameters()->evaluate());
+        if(!$params) {
+            return false;
+        }
+		return $params->day_of_week;
 	}
 
 

@@ -57,10 +57,20 @@ foreach ($beanFiles as $bean => $file) {
 		require_once ($file);
 		unset($GLOBALS['dictionary'][$bean]);
 		$focus = new $bean ();
-		if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
-			$sql = $GLOBALS['db']->repairTable($focus, true);
-			logThis('Running sql:' . $sql, $path);
-			$repairedTables[$focus->table_name] = true;
+		if (($focus instanceOf SugarBean))
+		{
+			if(!isset($repairedTables[$focus->table_name])) 
+			{
+				$sql = $GLOBALS['db']->repairTable($focus, true);
+				logThis('Running sql:' . $sql, $path);
+				$repairedTables[$focus->table_name] = true;
+			}
+			
+			//Check to see if we need to create the audit table
+		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
+		       logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
+               $focus->create_audit_table();
+            }
 		}
 	}
 }

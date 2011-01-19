@@ -86,7 +86,7 @@ class TemplateRange extends TemplateText
                    	   $searchFields[$module][$field_name_range]['is_date_field'] = true;
                     }
                 	
-                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'range_operator'=>'between', 'enable_range_search'=>true);
+                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'enable_range_search'=>true);
                     if($isDateField)
                     {
                    	   $searchFields[$module][$field_name_start]['is_date_field'] = true;
@@ -249,7 +249,7 @@ class TemplateRange extends TemplateText
                    	   $searchFields[$module][$field_name_range]['is_date_field'] = true;
                     }
                 	
-                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'range_operator'=>'between', 'enable_range_search'=>true);
+                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'enable_range_search'=>true);
                     if($isDateField)
                     {
                    	   $searchFields[$module][$field_name_start]['is_date_field'] = true;

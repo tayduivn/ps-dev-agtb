@@ -84,3 +84,24 @@ function zip_dir( $zip_dir, $zip_archive )
         }
     }
 }
+
+/**
+ * Zip list of files, optionally stripping prefix
+ * @param string $zip_file
+ * @param array $file_list
+ * @param string $prefix Regular expression for the prefix to strip
+ */
+function zip_files_list($zip_file, $file_list, $prefix = '')
+{
+    $archive    = new ZipArchive();
+    $archive->open(ZipArchive::CREATE|ZipArchive::OVERWRITE);
+    foreach($file_list as $file) {
+        if(!empty($prefix) && preg_match($prefix, $file, $matches) > 0) {
+            $zipname = substr($file, strlen($matches[0]));
+        } else {
+            $zipname = $file;
+        }
+        $archive->addFile($file, $zipname);
+    }
+    return true;
+}

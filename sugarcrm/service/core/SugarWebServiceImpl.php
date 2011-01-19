@@ -1196,7 +1196,7 @@ function get_report_entries($session, $ids, $select_fields ){
 	$class_name = $beanList[$module_name];
 	require_once($beanFiles[$class_name]);
 
-	$temp = new $class_name();
+	$temp = new $class_name('','','',true);
 	foreach($ids as $id) {
 		$seed = @clone($temp);
 		$seed->retrieve($id);

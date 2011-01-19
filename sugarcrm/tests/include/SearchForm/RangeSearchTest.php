@@ -46,7 +46,6 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	        'start_range_date_closed' => array
 	        (
 	            'query_type' => 'default',
-	            'range_operator' => 'between',
 	            'enable_range_search' => 1,
 	            'is_date_field' => 1,
 	        ),
@@ -55,7 +54,21 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	            'query_type' => 'default',
 	            'enable_range_search' => 1,
 	            'is_date_field' => 1,
-	        )
+	        ),
+       		'range_amount' => array 
+	        (
+	        	'query_type' => 'default', 
+	        	'enable_range_search' => true
+	        ),
+	   		'start_range_amount' => array 
+	        (
+	        	'query_type' => 'default',
+	        	'enable_range_search' => true
+	        ),
+       		'end_range_amount' => array (
+       			'query_type' => 'default',
+       			'enable_range_search' => true
+	        ),
 		);		
 		
 		$this->originalDbType = $GLOBALS['db']->dbType;
@@ -94,6 +107,61 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$where_clauses = $this->searchForm->generateSearchWhere();		
 		$this->assertEquals($where_clauses[0], 'LEFT(opportunities.date_closed,4) = EXTRACT(YEAR FROM ( current_date  + interval \'1\' year))');
     } 
+    
+    public function testRangeNumberSearches()
+    {
+    	$GLOBALS['db']->dbType = 'mysql';
+    	unset($this->searchForm->searchFields['range_date_closed']);
+		$this->searchForm->searchFields['range_amount'] = array (
+	            'query_type' => 'default',
+	            'enable_range_search' => 1,
+	            'value' => '10000',
+	            'operator' => 'greater_than',
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$this->assertEquals($where_clauses[0], "opportunities.amount > '10000'");
+
+		$this->searchForm->searchFields['range_amount'] = array (
+	            'query_type' => 'default',
+	            'enable_range_search' => 1,
+	            'value' => '10000',
+	            'operator' => 'less_than',
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$this->assertEquals($where_clauses[0], "opportunities.amount < '10000'"); 	
+
+		$this->searchForm->searchFields['range_amount'] = array (
+	            'query_type' => 'default',
+	            'enable_range_search' => 1,
+	            'value' => '10000',
+	            'operator' => 'greater_than_equals',
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$this->assertEquals($where_clauses[0], "opportunities.amount >= '10000'");
+
+		$this->searchForm->searchFields['range_amount'] = array (
+	            'query_type' => 'default',
+	            'enable_range_search' => 1,
+	            'value' => '10000',
+	            'operator' => 'less_than_equals',
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$this->assertEquals($where_clauses[0], "opportunities.amount <= '10000'"); 		
+		
+		$this->searchForm->searchFields['range_amount'] = array (
+	            'query_type' => 'default',
+	            'enable_range_search' => 1,
+	            'value' => '10000',
+	            'operator' => 'not_equals',
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$this->assertEquals($where_clauses[0], "opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01'"); 		
+    }
     
     public function testRangeSearchMssql()
     {

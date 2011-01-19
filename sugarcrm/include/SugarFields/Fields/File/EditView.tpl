@@ -81,9 +81,6 @@
 </span>
 {if !$noChange}
 <span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
-{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<h4><input type="radio" name="{{$idName}}_uploadType" value="upload" id="{{$idName}}_rad_upload" checked> {$APP.LBL_UPLOAD_FROM_COMPUTER}</h4>
-{{/if}}
 <input type="hidden" name="{{$idName}}_escaped">
 <input id="{{$idName}}_file" name="{{$idName}}_file" 
 type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}" 
@@ -99,8 +96,11 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<span id="{{$idName}}_externalApiSelector" style="display:inline;">
-<br><h4><input type="radio" name="{{$idName}}_uploadType" value="search" id="{{$idName}}_rad_search"> {$APP.LBL_SEARCH_EXTERNAL_API}</h4>
+<span id="{{$idName}}_externalApiSelector" style="display:none;">
+<br><h4>
+<span id="{{$idName}}_more">{sugar_image name="advanced_search" width="8px" height="8px"}</span>
+<span id="{{$idName}}_less" style="display: none;">{sugar_image name="basic_search" width="8px" height="8px"}</span>
+{$APP.LBL_SEARCH_EXTERNAL_API}</h4>
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -108,7 +108,7 @@ onchange="document.getElementById('{{$idName}}').value='something'"
     maxlength="{{$displayParams.maxlength}}"
 {{else}}
     maxlength="255"
-{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
+{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}" style="display: none;">
 </span>
 <div style="display: none;" id="{{$idName}}_securityLevelBox">
   <b>{$APP.LBL_EXTERNAL_SECURITY_LEVEL}: </b>

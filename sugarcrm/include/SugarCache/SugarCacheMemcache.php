@@ -45,9 +45,6 @@ class SugarCacheMemcache extends SugarCacheAbstract
     public function __construct()
     {
         parent::__construct();
-        
-        $this->_host = SugarConfig::getInstance()->get('external_cache.memcache.host', $this->_host);
-        $this->_port = SugarConfig::getInstance()->get('external_cache.memcache.port', $this->_port);
     }
     
     /**
@@ -57,6 +54,8 @@ class SugarCacheMemcache extends SugarCacheAbstract
     {
         if ( !($this->_memcache instanceOf Memcache) ) {
             $this->_memcache = new Memcache();
+            $this->_host = SugarConfig::getInstance()->get('external_cache.memcache.host', $this->_host);
+            $this->_port = SugarConfig::getInstance()->get('external_cache.memcache.port', $this->_port);
             if ( !@$this->_memcache->connect($this->_host,$this->_port) ) {
                 return false;
             }

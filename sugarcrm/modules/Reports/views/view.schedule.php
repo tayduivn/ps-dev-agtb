@@ -72,6 +72,15 @@ class ViewSchedule extends SugarView
         	if(isset($_REQUEST['schedule_type']) && $_REQUEST['schedule_type']!="")
             	$smarty->assign('SCHEDULE_TYPE',$_REQUEST['schedule_type']);
         }
+        
+       
+        $smarty->assign('CACHE_DIR', $GLOBALS['sugar_config']['cache_dir']);
+        $smarty->assign('CURRENT_LANGUAGE', $GLOBALS['current_language']);
+        $smarty->assign('JS_VERSION',  $GLOBALS['js_version_key']);
+        $smarty->assign('JS_CUSTOM_VERSION', $GLOBALS['sugar_config']['js_custom_version']);
+        $smarty->assign('JS_LANGUAGE_VERSION',  $GLOBALS['sugar_config']['js_lang_version']);
+
+        //$this->_displayJavascript();
         $html = $smarty->fetch('modules/Reports/tpls/AddSchedule.tpl');
         echo $html ;
     }
