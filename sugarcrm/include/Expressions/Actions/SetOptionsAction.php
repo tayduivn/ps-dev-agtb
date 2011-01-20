@@ -48,7 +48,7 @@ class SetOptionsAction extends AbstractAction{
 			exec: function(context) {
 			    if (typeof(context) == 'undefined')
                     context = this.context;
-				var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[this.target];
+				var field = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if ( field == null )	return null;		
 				
 				var keys = this.evalExpression(this.keyExpr, context);
