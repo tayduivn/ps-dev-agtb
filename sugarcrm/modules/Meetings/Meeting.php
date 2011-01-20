@@ -182,6 +182,10 @@ class Meeting extends SugarBean {
             $api = ExternalAPIFactory::loadAPI($this->type);
         }
 
+        if (empty($this->type)) {
+			$this->type = 'Sugar';
+		}
+
         if ( isset($api) && is_a($api,'WebMeeting') ) {
             // Make sure the API initialized and it supports Web Meetings
             $response = $api->scheduleMeeting($this);
