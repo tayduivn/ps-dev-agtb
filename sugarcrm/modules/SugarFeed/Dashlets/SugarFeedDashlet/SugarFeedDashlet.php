@@ -365,7 +365,7 @@ var $selectedCategories = array();
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
         //BEGIN SUGARCRM flav=int ONLY
 		$ss->assign('externalWarningLBL', translate('LBL_EXTERNAL_WARNING', 'SugarFeed'));
-        //BEGIN SUGARCRM flav=int ONLY
+        //END SUGARCRM flav=int ONLY
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
         $ss->assign('title', $this->title);
