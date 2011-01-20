@@ -3462,7 +3462,7 @@ class InboundEmail extends SugarBean {
 				    $attach = $this->getNoteBeanForAttachment($emailId);
 
 					$fname = $this->handleEncodedFilename($part->parameters[0]->value);
-					$attach->name = empty($fname) ? "no_name" : $fname;
+					$attach->filename = $attach->name = empty($fname) ? "no_name" : $fname;
 					$attach->file_mime_type = 'image/'.$part->subtype;
 				}
 			} elseif($part->ifdisposition) {
@@ -6157,6 +6157,10 @@ eoq;
 		global $timedate;
 		global $current_user;
 		global $sugar_config;
+
+		if(empty($ret['retArr'])) {
+		    return array();
+		}
 
 		$tPref = $current_user->getUserDateTimePreferences();
 
