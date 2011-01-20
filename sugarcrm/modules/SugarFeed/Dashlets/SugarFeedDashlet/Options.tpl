@@ -58,11 +58,13 @@
     	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
     </td>
 </tr>
+{* //BEGIN SUGARCRM flav=int ONLY *}
 <tr>
   <td align="right" colspan="2">
     {$externalWarningLBL}
   </td>
 </tr>
+ {* //END SUGARCRM flav=int ONLY *}
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
