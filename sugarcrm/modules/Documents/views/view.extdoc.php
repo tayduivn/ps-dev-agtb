@@ -93,7 +93,7 @@ class DocumentsViewExtdoc extends SugarView
                 'link' => true,
                 ),
             'DATE_MODIFIED' => array(
-                'label' => 'LBL_DATE_MODIFIED',
+                'label' => 'LBL_DATE',
                 'type' => 'date',
                 ),
         );
