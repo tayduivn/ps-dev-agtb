@@ -92,19 +92,6 @@ $listViewDefs['Documents'] = array(
       0 => 'document_revision_id',
     ),
   ),
-  'CREATED_BY_NAME' => 
-  array (
-    'width' => '2%',
-    'label' => 'LBL_LIST_LAST_REV_CREATOR',
-    'default' => true,
-    'sortable' => false,
-  ),
-  'ACTIVE_DATE' => 
-  array (
-    'width' => '10%',
-    'label' => 'LBL_LIST_ACTIVE_DATE',
-    'default' => true,
-  ),
   'EXP_DATE' => 
   array (
     'width' => '10%',
