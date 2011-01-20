@@ -85,24 +85,24 @@ class SugarFieldFile extends SugarFieldBase {
         }
 
 		if ($move) {
-            $GLOBALS['log']->fatal("IKEA: Moving the file ({$bean->filename})");
+            $GLOBALS['log']->debug("IKEA: Moving the file ({$bean->filename})");
 			$upload_file->final_move($bean->id);
             $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $upload_file->mime_type);
         } else if ( ! empty($old_id) ) {
             // It's a duplicate, I think
-            $GLOBALS['log']->fatal("IKEA: It's a duplicate old id ($old_id) / isDuplicate ({$params['isDuplicate']})");
+            $GLOBALS['log']->debug("IKEA: It's a duplicate old id ($old_id) / isDuplicate ({$params['isDuplicate']})");
 
             if ( empty($params[$prefix . $vardef['docUrl'] ]) ) {
-                $GLOBALS['log']->fatal("IKEA: It's a locally stored file, ($prefix{$vardef['docUrl']}) is empty");
+                $GLOBALS['log']->debug("IKEA: It's a locally stored file, ($prefix{$vardef['docUrl']}) is empty");
                 $upload_file->duplicate_file($old_id, $bean->id, $bean->$field);
             } else {
-                $GLOBALS['log']->fatal("IKEA: It's a remotely stored file, lets copy manually");
+                $GLOBALS['log']->debug("IKEA: It's a remotely stored file, lets copy manually");
                 $docType = $vardef['docType'];
                 $bean->$docType = $params[$prefix . $field . '_old_doctype'];
             }
 		} else if ( !empty($params[$prefix . $field . '_remoteName']) ) {
             // We ain't moving, we might need to do some remote linking
-            $GLOBALS['log']->fatal("IKEA: Remotely linking the file");
+            $GLOBALS['log']->debug("IKEA: Remotely linking the file");
             $displayParams = array();
             $this->fillInOptions($vardef,$displayParams);
             
@@ -111,11 +111,11 @@ class SugarFieldFile extends SugarFieldBase {
                  && isset($params[$prefix . $vardef['docType']]) 
                  && ! empty($params[$prefix . $vardef['docType']])
                 ) {
-                $GLOBALS['log']->fatal("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
+                $GLOBALS['log']->debug("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
                 $bean->$field = $params[$prefix . $field . '_remoteName'];
             }
         } else {
-            $GLOBALS['log']->fatal("IKEA: Not doing a thing");
+            $GLOBALS['log']->debug("IKEA: Not doing a thing");
         }
         
         if ( empty($bean->$field) ) {

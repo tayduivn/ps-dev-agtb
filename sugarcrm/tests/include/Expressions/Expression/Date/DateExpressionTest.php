@@ -131,10 +131,10 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testDaysUntil()
 	{
 	    $task = new Task();
-	    $task->date_due = gmdate('Y-m-d H:i:s', time()+86400*5);
+	    $task->date_due = gmdate('Y-m-d H:i:s', time()+86400*5);;
         $expr = 'daysUntil($date_due)';
         $result = Parser::evaluate($expr, $task)->evaluate();
-        $this->assertEquals($result, 5);
+        $this->assertEquals(5, $result);
 	}
 
 	public function testBeforeAfter()

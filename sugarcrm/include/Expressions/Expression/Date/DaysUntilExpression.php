@@ -34,7 +34,17 @@ class DaysUntilExpression extends NumericExpression
         if(!$params) {
             return false;
         }
-		return $params->diff(TimeDate::getInstance()->getNow())->d;
+        $now = TimeDate::getInstance()->getNow();
+        $tsdiff = $params->ts - $now->ts;
+        $diff = (int)floor($tsdiff/86400);
+        $extrasec = $tsdiff%86400;
+        if($extrasec != 0) {
+            $extra = $params->get(sprintf("%+d seconds", $extrasec));
+            if($extra->day_of_year != $params->day_of_year) {
+                $diff++;
+            }
+        }
+        return $diff;
 	}
 
 
