@@ -125,7 +125,7 @@ function {$id}_range_change(val)
      document.getElementById("range_{$id}").value = '';  
      document.getElementById("{$id}_range_div").style.display = 'none';
      document.getElementById("{$id}_between_range_div").style.display = ''; 
-  {rdelim} else if (val == 'equals' || val == 'not_equal' || val == 'greater_than' || val == 'less_than') {ldelim}
+  {rdelim} else if (val == '=' || val == 'not_equal' || val == 'greater_than' || val == 'less_than') {ldelim}
      if((/^\[.*\]$/).test(document.getElementById("range_{$id}").value))
      {ldelim}
      	document.getElementById("range_{$id}").value = '';
