@@ -239,7 +239,7 @@ var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{/if}}
 <script type="text/javascript">
 YAHOO.util.Event.onContentReady("{{$form_name}}",
-    function () {ldelim} console.log("IKEA"); initEditView(document.forms.{{$form_name}}) {rdelim});
+    function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim});
 //window.setTimeout(, 100);
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};
 </script>
