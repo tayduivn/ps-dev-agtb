@@ -10,7 +10,7 @@ $config = array (
   ),
   'order' => 14,
   'properties' => array (
-      'oauth_consumer_key' => 'test_app',
-      'oauth_consumer_secret' => '87323at4aj6y8e9a0pa92w',
+      'oauth_consumer_key' => '95d6df6a53ef6ae65a9ec14dc8716d25',
+      'oauth_consumer_secret' => '7e38abfb6b7bd7ae9250d61af33ed438',
   ),
 );
