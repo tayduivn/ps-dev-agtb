@@ -1,10 +1,15 @@
 <soda>
-         <puts text='------------Activities_0495:Create Note_Verify that the attachment is displayed in the pop-up window when clicking clicking the attachment name in Notes detail view.---'/>
+         <puts text='Test: Activities_0495 starting.' />
+		 <!--
+			Create Note_Verify that the attachment is displayed in 
+			the pop-up window when clicking clicking the attachment
+			name in Notes detail view.
+		-->
     
          <script file='{@global.scriptsdir}/modules/activities/Activities_0489.xml'/>     
          
          <link id='moduleTab_Notes'/>
-	 <browser assert="Notes/>
+	 <browser assert="Notes" />
          <link text='View Notes'/>
 
          <button id='search_form_clear'/>
@@ -20,5 +25,5 @@
          </div>
         
          <script file='{@global.scriptsdir}/modules/lib/Note_Delete_Lib.xml'/>                               
-         <puts text='------------Activities_0495 is Finished!------------'/>
+         <puts text='Test: Activities_0495 finished.' />
 </soda>
