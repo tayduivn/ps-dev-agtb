@@ -1667,7 +1667,7 @@ function onUnloadEditView(theForm) {
 	
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' || typeof theForm == 'undefined' || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+    if ( typeof editViewSnapshots == 'undefined' ) { 
         // No snapshots, move along
         return;
     }
@@ -1692,7 +1692,7 @@ function onUnloadEditView(theForm) {
         }
     } else {
         // Just need to check a single form for changes
-		if ( editViewSnapshots == null  || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
             return;
         }
 
