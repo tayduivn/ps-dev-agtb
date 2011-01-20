@@ -34,8 +34,18 @@ class JSON
     {
         return json_encode($string);
     }
+
+    public static function encodeReal($string)
+    {
+        return json_encode($string);
+    }
     
     public static function decode($string)
+    {
+        return json_decode($string,true);
+    }
+
+    public static function decodeReal($string)
     {
         return json_decode($string,true);
     }
