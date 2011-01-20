@@ -239,9 +239,8 @@ class ExternalAPIFactory
      * @param bool $ignoreAuth Ignore if we have authentication details or not
      * @param bool $addEmptyEntry Add empty entry?
      */
-    public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false)
-    {
-        global $app_strings;
+     public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false) {
+        global $app_list_strings;
 
         $apiList = self::listAPI($moduleName,$ignoreAuth);
 
@@ -251,9 +250,9 @@ class ExternalAPIFactory
         }
 
         foreach ( $apiList as $apiName => $ignore ) {
-            $translateKey = strtolower($apiName);
-            if ( !empty($app_strings['eapm_list'][$translateKey]) ) {
-                $apiDropdown[$apiName] = $app_strings['eapm_list'][$translateKey];
+
+            if ( !empty($app_list_strings['eapm_list'][$apiName]) ) {
+                $apiDropdown[$apiName] = $app_list_strings['eapm_list'][$apiName];
             } else {
                 $apiDropdown[$apiName] = $apiName;
             }

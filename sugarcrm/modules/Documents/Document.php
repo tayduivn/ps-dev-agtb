@@ -135,7 +135,7 @@ class Document extends SugarBean {
             //Move file saved during populatefrompost to match the revision id rather than document id
             if (!empty($_FILES['filename_file'])) {
                 rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
-            } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'SugarCRM' ) ) {
+            } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'Sugar' ) ) {
                 // Looks like we need to duplicate a file, this is tricky
                 $oldDocument = new Document();
                 $oldDocument->retrieve($_REQUEST['duplicateId']);

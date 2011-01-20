@@ -68,7 +68,7 @@
   <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={{$vardef.linkModule}}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-{if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'SugarCRM' && !empty($fields.{{$vardef.docUrl}}.value) }
+{if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'Sugar' && !empty($fields.{{$vardef.docUrl}}.value) }
 {capture name=imageNameCapture assign=imageName}
 {$fields.{{$vardef.docType}}.value}_image_inline.png
 {/capture}
@@ -97,7 +97,7 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <span id="{{$idName}}_externalApiSelector" style="display:none;">
-<br><h4>
+<br><h4 id="{{$idName}}_externalApiLabel">
 <span id="{{$idName}}_more">{sugar_image name="advanced_search" width="8px" height="8px"}</span>
 <span id="{{$idName}}_less" style="display: none;">{sugar_image name="basic_search" width="8px" height="8px"}</span>
 {$APP.LBL_SEARCH_EXTERNAL_API}</h4>

@@ -392,7 +392,7 @@ var $myFavoritesOnly = false;
         $ss = new Sugar_Smarty();
         $ss->assign('titleLBL', translate('LBL_TITLE', 'SugarFeed'));
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
-		$ss->assign('externalWarningLBL', translate('LBL_EXTERNAL_WARNING', 'SugarFeed'));
+        $ss->assign('externalWarningLBL', translate('LBL_EXTERNAL_WARNING', 'SugarFeed'));
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
 //BEGIN SUGARCRM flav=pro ONLY

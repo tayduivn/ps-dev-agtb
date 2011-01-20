@@ -49,7 +49,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                     document.getElementById(elemBaseName).value = '';
 	            } else {
 		            document.getElementById(elemBaseName+'_new').style.display = 'none';
-		            ajaxStatus.flashStatus(SUGAR.language.get('Notes', 'ERR_REMOVING_ATTACHMENT'), 2000); 
+		            ajaxStatus.flashStatus(SUGAR.language.get('Notes', 'ERR_REMOVING_ATTACHMENT'), 2000);
 	            }
             }
         },
@@ -61,7 +61,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 if(confirm(failedLogins[idx].label)) {
                     window.open(failedLogins[idx].checkURL,'EAPM_CHECK_'+idx);
                 } else {
-                    document.getElementById(res.argument.docTypeName).value = 'SugarCRM';
+                    document.getElementById(res.argument.docTypeName).value = 'Sugar';
                     document.getElementById(res.argument.docTypeName).onchange();
                 }
             }
@@ -131,8 +131,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 
-            document.getElementById(elemBaseName + '_more').onclick = externalSearchToggle;
-            document.getElementById(elemBaseName + '_less').onclick = externalSearchToggle;
+            document.getElementById(elemBaseName + '_externalApiLabel').onclick = externalSearchToggle;
             showHideFunc();
         }
     }
