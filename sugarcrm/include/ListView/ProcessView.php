@@ -49,7 +49,7 @@ class ProcessView {
 
     $no_count is if the individual elements all have unique names and we
     dont need to add a number to the end of each item like user_5 or user_6
-        
+
     This is specific to the bottom build right now
     */
 
@@ -85,11 +85,11 @@ class ProcessView {
             } else {
                 //do not display this option
             }
-                
-                
-                
+
+
+
             ++$element_count;
-                
+
             //end foreach
         }
         $this->top_block = $this->xtpl->text("top");
@@ -108,7 +108,7 @@ class ProcessView {
 
         global $process_dictionary;
         global $local_string;
-            
+
         $target_meta_array = $process_dictionary[$step]['elements'][$target_element];
 
         $prev_display_text = "";
@@ -148,7 +148,7 @@ class ProcessView {
         global $process_dictionary;
         global $local_string;
 
-            
+
         $target_meta_array = $process_dictionary[$step]['elements'][$target_element];
 
         if(!empty($target_meta_array['bottom']['related']['count']) &&
@@ -156,9 +156,9 @@ class ProcessView {
             //Then there is a need for an advanced related block
 
             $adv_related_array = array();
-                
 
-                
+
+
             //Build Relationships
             $rel_handler = $this->workflow_object->call_relationship_handler("base_module", true);
 
@@ -174,7 +174,7 @@ class ProcessView {
                 //use rel2
                 $target_rel2_field = $target_meta_array['bottom']['related']['rel2_field'];
                 $target_rel2_type = $target_rel2_field."_type";
-                    
+
                 if($this->target_bean->$target_rel2_field!=""){
                     $rel_handler->set_rel_vardef_fields($this->target_bean->$target_rel1_field, $this->target_bean->$target_rel2_field);
                     $rel_handler->build_info(true);
@@ -208,14 +208,14 @@ class ProcessView {
                 $start_script .= "hide_target('top_rel2'); \n";
                 $start_script .= "hide_target('lang_rel2'); \n";
             }
-                
+
 
 
 
             $this->xtpl->assign("START_SCRIPT", $start_script);
             $this->xtpl->parse("adv_related");
             $adv_related_array['block'] = $this->xtpl->text("adv_related");
-                
+
             return $adv_related_array;
 
             //end if there is a need for an advanced block
@@ -267,7 +267,7 @@ class ProcessView {
             $this->xtpl->parse("top");
             //end if we are not hiding this
         }
-            
+
         //end function build_top_block
     }
 
@@ -296,7 +296,7 @@ class ProcessView {
         $option_count = 0;
 
         foreach($bottom_array['options'] as $key => $option_array){
-                
+
             if($option_array['text_type']=="static"){
                 $display_text .= translate_label($option_array['vname'])."&nbsp;";
             }
@@ -317,9 +317,9 @@ class ProcessView {
                 }
                 //end if text_type is dynamic
             }
-                
+
             ++$option_count;
-                
+
             //end foreach display_text loop
         }
 
@@ -332,23 +332,23 @@ class ProcessView {
 
         //Add address information - For Recipient/Invitee Processing
         if(!empty($this->step) && $this->step=="AlertsCreateStep1"){
-                
+
             //Should we show the address_type?
             if(!empty($bottom_array['show_address_type']) && $bottom_array['show_address_type']==true){
-                    
+
                 global $app_list_strings;
                 global $mod_strings;
                 $this->xtpl->assign("ADDRESS_TYPE", $this->target_bean->address_type);
                 $address_type_dom = $this->target_bean->get_address_type_dom();
                 $this->xtpl->assign("ADDRESS_TYPE_DOM", $address_type_dom);
-                    
+
                 $this->xtpl->assign("ADDRESS_TYPE_TARGET",$app_list_strings[$address_type_dom][$this->target_bean->address_type]);
                 $this->xtpl->assign("LBL_ADDRESS_TYPE", $mod_strings['LBL_ADDRESS_TYPE']);
                 $this->xtpl->parse("bottom.address_type");
 
                 //end if show_address_type is true;
             }
-                
+
         }
         //End address information - For Recipient/Invitee Processing
 
@@ -399,7 +399,7 @@ class ProcessView {
                 }
             }
         }
-            
+
         //now check if the element is on the workflow
         $exclusion_array = array();
         if(isset($meta_exclusion_array) && !empty($meta_exclusion_array)){
@@ -534,7 +534,7 @@ class ProcessView {
             //this is selected so translate the value
             $href_inner_text = $this->translate_element($option_array);
         } else {
-                
+
             $href_inner_text = translate_label($option_array['vname'])."&nbsp;";
         }
 
@@ -548,9 +548,9 @@ class ProcessView {
     function get_input_element($option_count, $option_array){
 
         if($option_array['type']=="dropdown"){
-                
+
             $expression_object = new Expression();
-                
+
             $select_options = $expression_object->get_selector_array("dom_array", $this->target_bean->$option_array['value'], $option_array['dom_name'], false);
             return "<select id='".$option_array['value']."' name='".$option_array['value']."' tabindex='1'>".$select_options."</select>";
         }
@@ -614,7 +614,7 @@ class ProcessView {
          TYPES:
          normal_field     ---     uses the base module as the language file.  Just
          translate the field using the vardef.
-                
+
          relrel_module     ---        uses the related module, either 1 or 2 deep.
 
 
@@ -624,7 +624,7 @@ class ProcessView {
          examples: user name, team name, role etc.
 
          module            ---        name of module, so translate
-             
+
          */
 
         if($type=="normal_field"){
@@ -632,9 +632,9 @@ class ProcessView {
         }
 
         if($type=="relrel_module"){
-                
+
             $rel_handler = $this->workflow_object->call_relationship_handler("base_module", true);
-                
+
             if($target_element2!=""){
                 //rel2 is present
                 $rel_handler->set_rel_vardef_fields($target_element, $target_element2);
@@ -663,9 +663,9 @@ class ProcessView {
 
         if($type=="special_exp"){
             $expression_object = new Expression();
-                
+
             $text_array = $expression_object->get_selector_array($exp_type, "", $dom_name, true);
-                
+
             if (empty($text_array[$target_element])) {
                 return false;
             }
@@ -675,7 +675,7 @@ class ProcessView {
         }
 
         if($type=="module"){
-                
+
             if(!empty($app_list_strings['moduleListSingular'][$target_element])){
                 return $app_list_strings['moduleListSingular'][$target_element];
             }
@@ -687,7 +687,7 @@ class ProcessView {
                 //module not present so just use target_element value
                 return $target_element;
             }
-                
+
         }
 
 
@@ -699,14 +699,14 @@ class ProcessView {
         global $local_string;
 
         $target_array = $app_list_strings['wflow_rel_type_dom'];
-            
+
 
         if($type=="rel1"){
             $target_array['all'] = $target_array['all']." ".$rel1_array['plabel'];
             //removed because it is Ambiguous
             //$target_array['first'] = $target_array['first']." ".$rel1_array['slabel'];
             $target_array['filter'] = $target_array['filter']." ".$rel1_array['plabel'];
-                
+
             //end if type is rel1
         }
 
@@ -715,7 +715,7 @@ class ProcessView {
             ////removed because it is Ambiguous
             //$target_array['first'] = $target_array['first']." ".$rel1_array['slabel'].$GLOBALS['mod_strings']['LBL__S']." ".$rel2_array['slabel'];
             $target_array['filter'] = $target_array['filter']." ".$rel1_array['slabel'].$local_string['LBL__S']." ".$rel2_array['plabel'];
-                
+
             //end if type is rel1
         }
 
@@ -860,7 +860,7 @@ class ProcessView {
         foreach($field_array as $key => $value){
             //check to see if this record exists already
             if(!empty($action_shell->id) && $action_shell->id!=""){
-                 
+
                 $action_id = $action_shell->get_action_id($key);
                 if($action_id!==false){
                     $action_object = new WorkFlowAction();
@@ -910,12 +910,12 @@ class ProcessView {
             $sub_array["FIELD_NUM"] = $field_count;
             $sub_array["FIELD_VALUE"] = $key;
             $sub_array["FIELD_NAME"] = $value;
-            $sub_array["ACTION_DISPLAY_TEXT"] = get_display_text($temp_module, $key, $act_action_value, $act_adv_type, $act_ext1, true);
+            $sub_array["ACTION_DISPLAY_TEXT"] = get_display_text($temp_module, $key, $act_action_value, $act_adv_type, $act_ext1, array('for_action_display' => true));
             $sub_array["ACTION_ADV_VALUE"] = $act_adv_value;
             $sub_array["ACTION_EXT1"] = $act_ext1;
             $sub_array["ACTION_EXT2"] = $act_ext2;
             $sub_array["ACTION_EXT3"] = $act_ext3;
-                
+
             $result_array[] = $sub_array;
 
             ++ $field_count;
@@ -942,10 +942,10 @@ class ProcessView {
         {
             $future_object->retrieve($future_id);
             $display_array = $future_object->get_display_array($temp_module);
-                
+
             if($this->workflow_object->type=="Time")
             {
-                    
+
                 if($future_object->exp_type=="datetime" || $future_object->exp_type=="date" || $future_object->exp_type=="datetimecombo")
                 {
                     if($future_object->operator=="More Than")
@@ -991,7 +991,7 @@ class ProcessView {
             if(isset($filter1_id) && $filter1_id!="")
             {
                 $filter1_object->retrieve($filter1_id);
-                //Check if a relate object id is 
+                //Check if a relate object id is
                 if ($filter1_object->exp_type == 'relate')
                 {
                 	$wfseed = get_module_info($filter1_object->lhs_module);
@@ -1003,7 +1003,7 @@ class ProcessView {
                 		return '<span class="error">'. translate("LBL_TRIGGER_ERROR") . '</span>';
                 	}
                 }
-                
+
                 //$target_module = $focus->target_module;
                 if($trigger_shell->type != "compare_count")
                 {
@@ -1017,7 +1017,7 @@ class ProcessView {
             }
             else
             {
-                    
+
                 if($trigger_shell->type == "trigger_record_change")
                 {
                     $filter_expression_text = $tmp_mod_strings['LBL_ANY_FIELD'];

@@ -6,29 +6,29 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldDatetime extends SugarFieldBase {
 
-    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {        
-       
+    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+
         // Create Smarty variables for the Calendar picker widget
         if(!isset($displayParams['showMinutesDropdown'])) {
-           $displayParams['showMinutesDropdown'] = false;	
+           $displayParams['showMinutesDropdown'] = false;
         }
-        
+
         if(!isset($displayParams['showHoursDropdown'])) {
-           $displayParams['showHoursDropdown'] = false;	
+           $displayParams['showHoursDropdown'] = false;
         }
-        
+
         if(!isset($displayParams['showNoneCheckbox'])) {
-           $displayParams['showNoneCheckbox'] = false;	
+           $displayParams['showNoneCheckbox'] = false;
         }
-        
+
         if(!isset($displayParams['showFormats'])) {
-           $displayParams['showFormats'] = false;	
+           $displayParams['showFormats'] = false;
         }
-        
+
         if(!isset($displayParams['hiddeCalendar'])) {
-           $displayParams['hiddeCalendar'] = false;   
-        } 
-       
+           $displayParams['hiddeCalendar'] = false;
+        }
+
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         //jchi , bug #24557 , 10/31/2008
         if(isset($vardef['name']) && ($vardef['name'] == 'date_entered' || $vardef['name'] == 'date_modified')){
@@ -37,7 +37,7 @@ class SugarFieldDatetime extends SugarFieldBase {
         //end
         return $this->fetch($this->findTemplate('EditView'));
     }
-    
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	global $timedate;
@@ -63,10 +63,10 @@ class SugarFieldDatetime extends SugarFieldBase {
     	$use_24_hours = stripos($datetime_prefs['time'], 'a') ? false : true;
     	$this->ss->assign('time_start', $time_start);
     	$this->ss->assign('use_meridian', $use_24_hours);
-    	
+
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
     	return $this->fetch($this->findTemplate('WirelessEditView'));
-    }   
+    }
     //END SUGARCRM flav=pro || flav=sales ONLY
 
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -77,22 +77,32 @@ class SugarFieldDatetime extends SugarFieldBase {
            $this->ss->assign('id_range', "range_{$id}");
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
-           $this->ss->assign('id_range_choice', "{$id}_range_choice");        
+           $this->ss->assign('id_range_choice', "{$id}_range_choice");
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
-        }   
-    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');    
-    }    
-    
-    public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
+        }
+    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
+    }
+
+    public function getEmailTemplateValue($inputField, $vardef, $context = null){
+        // This does not return a smarty section, instead it returns a direct value
+        if(isset($context['notify_user'])) {
+            $user = $context['notify_user'];
+        } else {
+            $user = $GLOBALS['current_user'];
+        }
+        return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
+    }
+
+    public function save($bean, $inputData, $field, $def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
             return;
         }
 
         $offset = strlen(trim($inputData[$prefix.$field])) < 11 ? false : true;
-	    $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);    	
+	    $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);
     }
-    
+
     /**
      * @see SugarFieldBase::importSanitize()
      */
@@ -104,9 +114,9 @@ class SugarFieldDatetime extends SugarFieldBase {
         )
     {
         global $timedate;
-        
+
         $format = $settings->dateformat . ' ' . $settings->timeformat;
-        
+
         if ( !$timedate->check_matching_format($value, $format) ) {
             // see if adding a valid time at the end makes it work
             list($dateformat,$timeformat) = explode(' ',$format);
@@ -115,17 +125,17 @@ class SugarFieldDatetime extends SugarFieldBase {
                 return false;
             }
         }
-        
+
         if ( !$settings->isValidTimeDate($value, $format) )
             return false;
-        
+
         $value = $timedate->swap_formats(
             $value, $format, $timedate->get_date_time_format());
         $value = $timedate->handle_offset(
             $value, $timedate->get_date_time_format(), false, $GLOBALS['current_user'], $settings->timezone);
         $value = $timedate->swap_formats(
             $value, $timedate->get_date_time_format(), $timedate->get_db_date_time_format() );
-        
+
         return $value;
     }
 }
