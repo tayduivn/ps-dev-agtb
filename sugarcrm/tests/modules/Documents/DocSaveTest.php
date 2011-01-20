@@ -33,5 +33,13 @@ class DocSaveTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertEquals($this->doc->doc_type, 'Sugar');
 	}
 
+    function testDocTypeSaveDefaultInDb() {
+        $query = "SELECT * FROM documents WHERE id = '{$this->doc->id}'";
+        $result = $GLOBALS['db']->query($query);
+    	while($row = $GLOBALS['db']->fetchByAssoc($result))
+		// Assert doc type default is 'Sugar'
+    	$this->assertEquals($row['doc_type'], 'Sugar');
+	}
+
 }
 ?>
