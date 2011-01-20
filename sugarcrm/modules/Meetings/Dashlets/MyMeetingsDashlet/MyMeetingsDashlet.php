@@ -70,14 +70,12 @@ class MyMeetingsDashlet extends DashletGeneric {
         global $current_language, $app_list_strings, $current_user;        
         $mod_strings = return_module_language($current_language, 'Meetings');
         
-        // handle myitems only differently --  set the custom query to ONLY show assigned meetings
+        // handle myitems only differently --  set the custom query to show assigned meetings and invitee meetings
         if($this->myItemsOnly) {  
-            $lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' ) ';
-        } else {
-        	//join with meeting_users table to process related users
+           	//join with meeting_users table to process related users
        		$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
         	
-        	//set the custom query to include assigned meetings            
+        	//set the custom query to retrieve invitees AND assigned meetings            
         	$lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ';
         }
         

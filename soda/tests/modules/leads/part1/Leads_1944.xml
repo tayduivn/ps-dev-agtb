@@ -30,7 +30,7 @@
 			<button index="1" alert="true" />
 		</table>
 	</csv>
-	<wait timeout="10" />
+	<wait timeout="25" />
 	<!--verify the email-->
 	<div id="list_subpanel_history">
 		<table class="list view">

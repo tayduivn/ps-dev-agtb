@@ -489,9 +489,12 @@ class ImportViewStep4 extends SugarView
                 /*
                  * Bug 34854: Added all conditions besides the empty check on date modified. Currently, if
                  * we do an update to a record, it doesn't update the date_modified value.
+                 * Hack note: I'm doing a to_display and back to_db on the fetched row to make sure that any truncating that happens
+                 * when $focus->date_modified goes to_display and back to_db also happens on the fetched db value. Otherwise,
+                 * in some cases we truncate the seconds on one and not the other, and the comparison fails when it should pass
                  */
-                if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) || 
-                     ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $focus->fetched_row['date_modified'] )
+                if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
+                     ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
                    )
                     $focus->update_date_modified = false;
 

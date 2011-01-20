@@ -68,12 +68,12 @@ class MyCallsDashlet extends DashletGeneric {
         global $current_language, $app_list_strings, $current_user;            
         $mod_strings = return_module_language($current_language, 'Calls');
 
-        // handle myitems only differently --  set the custom query to ONLY show assigned meetings
-        if($this->myItemsOnly) {
-        	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\') ';
-        } else {
-        	//join with meeting_users table to process related users                 
-            $this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
+        // handle myitems only differently --  set the custom query to show assigned meetings and invitee meetings
+        if($this->myItemsOnly) {        	
+        	//join with meeting_users table to process related users
+       		$this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
+        	
+        	//set the custom query to include assigned meetings            
         	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\') ';
         }
         
@@ -92,7 +92,7 @@ class MyCallsDashlet extends DashletGeneric {
         
 
        if(!empty($keys)){ 
-            $query = "SELECT call_id, accept_status FROM calls_users WHERE deleted = 0 user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
+            $query = "SELECT call_id, accept_status FROM calls_users WHERE deleted = 0 and user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
             $result = $GLOBALS['db']->query($query);
             
             while($row = $GLOBALS['db']->fetchByAssoc($result)) {

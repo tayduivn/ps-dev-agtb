@@ -25,6 +25,7 @@
 	<button value="  Next Step >  " />
 	<checkbox name="massall" set="true" />
 	<button value="  Perform Merge  " />
+	<wait timeout="3" />
 	<csv file="{@global.scriptsdir}/csvs/leads/Leads_2017.csv" var="Leads_2017">
 		<textfield id="first_name" set="{@Leads_2017.first_name}" />
 		<textfield id="last_name" set="{@Leads_2017.last_name}" />
