@@ -10,7 +10,8 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
     private $hasExistingCustomSearchFields = false;
     var $searchForm;
     var $originalDbType;
- 
+    var $smartyTestFile;
+    
     public function setUp()
     {	
 		if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php'))
@@ -88,6 +89,11 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		   unlink('custom/modules/Opportunities/metadata/SearchFields.php.bak');
 		}
 
+		if(file_exists($this->smartyTestFile))
+		{
+			unlink($this->smartyTestFile);
+		}
+		
     }
     
     public function testRangeSearchMysql()
@@ -200,5 +206,88 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($where_clauses[0], 'TRUNC(opportunities.date_closed,\'YEAR\') = TRUNC(add_months(sysdate,+12),\'YEAR\')');
 		
     } 
+    
+    
+    /**
+     * testRangeSearchWithSavedReportValues
+     * This test attempts to simulate testing what would happen should a saved report be invoked against
+     * a range search field
+     * 
+     */
+    public function testRangeSearchWithSavedReportValues()
+    {
+    	require_once('include/SugarFields/Fields/Datetime/SugarFieldDatetime.php');
+    	$parentFieldArray = 'fields';
+    	
+    	$vardef = array();
+    	$vardef['name'] = 'date_closed_advanced';
+    	$vardef['vname'] = 'LBL_DATE_CLOSED';
+    	
+		$opportunity = new Opportunity();
+		$vardef = $opportunity->field_defs['date_closed'];
+		$vardef['name'] = 'date_closed_advanced';
+		$vardef['options'] = array
+        (
+            '=' => 'Equals',
+            'not_equal' => 'Not On',
+            'greater_than' => ' After',
+            'less_than' => ' Before',
+            'last_7_days' => ' Last 7 Days',
+            'next_7_days' => ' Next 7 Days',
+            'last_30_days' => ' Last 30 Days',
+            'next_30_days' => ' Next 30 Days',
+            'last_month' => ' Last Month',
+            'this_month' => ' This Month',
+            'next_month' => ' Next Month',
+            'last_year' => ' Last Year',
+            'this_year' => ' This Year',
+            'next_year' => ' Next Year',
+            'between' => ' Is Between',
+        );
+		
+		
+		$displayParams = array('labelSpan'=>'', 'fieldSpan'=>'');
+		$tabindex = '';
+
+		$sugarFieldDatetime = new SugarFieldDatetime('Datetime');
+		
+		$_REQUEST['action'] = 'SearchForm';
+		$html = $sugarFieldDatetime->getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+		
+		//Write this widget's contents to a file
+		$this->smartyTestFile = 'tests/include/SearchForm/RangeSearchTest.tpl';
+        $handle = sugar_fopen($this->smartyTestFile, 'wb');
+        fwrite($handle, $html);
+        
+        //Check that the template exists before we proceed with further tests
+        $this->assertTrue(file_exists($this->smartyTestFile));
+        
+        //Stuff Smarty variables
+        $vardef['value'] = '';
+        $fields = array();
+        $fields['date_closed_advanced'] = $vardef;
+        
+        //Create Smarty instance
+    	require_once('include/Sugar_Smarty.php');
+    	$ss = new Sugar_Smarty();
+    	
+    	//Assign Smarty variables
+    	$ss->assign('fields', $fields);
+    	$ss->assign('APP', $GLOBALS['app_strings']);
+    	$ss->assign('CALENDAR_FORMAT', 'm-d-Y');
+    	
+    	//Simulate the request with saved report value
+    	$_REQUEST['date_closed_advanced'] = '07-03-2009';
+    	
+		$output = $ss->fetch($this->smartyTestFile);
+        $this->assertRegExp("/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-03\-2009\'/", $output);
+        
+    	//Simulate the request with range search value
+    	$_REQUEST['range_date_closed_advanced'] = '07-04-2009';
+    	
+		$output = $ss->fetch($this->smartyTestFile);
+        $this->assertRegExp("/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-04\-2009\'/", $output);        
+    } 
+   
 }
 ?>
