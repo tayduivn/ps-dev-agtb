@@ -1,17 +1,22 @@
 <soda>
-         <puts text='------------Activities_0498:Create Note_Verify that No Due Date and No Start Date dropdown list are not displayed in the sub-panel of task list view.----'/>    
+        <puts text='Test: Activities_0498 starting.' />
+		<!--
+			Create Note_Verify that No Due Date and No Start Date
+			dropdown list are not displayed in the sub-panel of task
+			list view.
+		-->    
          
          
-         <link id='moduleTab_Notes'/>
-	 <browser assert="Notes"/>
-         <link text='View Notes'/>
+        <link id='moduleTab_Notes'/>
+		<browser assert="Notes"/>
+        <link text='View Notes'/>
          
-         <link id="actions_link" />
-         <link text="Mass Update" />
+        <link id="actions_link" />
+        <link text="Mass Update" />
    
-         <browser assert='No Due Date' exist='false'/>
-         <browser assert='No Start Date' exist='false'/>
+        <browser assertnot='No Due Date' />
+        <browser assertnot='No Start Date' />
          
                                     
-         <puts text='------------Activities_0498 is Finished!------------'/>
+        <puts text='Test: Activities_0498 finished.' />
 </soda>
