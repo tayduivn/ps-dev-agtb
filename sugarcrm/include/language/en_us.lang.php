@@ -1812,7 +1812,7 @@ $app_list_strings = array (
 		),
 	'date_range_search_dom' =>
 	array(
-		'equals' => 'Equals',
+		'=' => 'Equals',
 		'not_equal' => 'Not On',
 		'greater_than' => 'After',
 		'less_than' => 'Before',
@@ -1830,7 +1830,7 @@ $app_list_strings = array (
 	),
 	'numeric_range_search_dom' =>
 	array(
-		'equals' => 'Equals',
+		'=' => 'Equals',
 		'not_equal' => 'Does Not Equal',
 		'greater_than' => 'Greater Than',
 		'greater_than_equals' => 'Greater Than Or Equal To',

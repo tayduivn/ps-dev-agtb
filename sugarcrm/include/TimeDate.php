@@ -711,7 +711,7 @@ class TimeDate
      * TZ conversion is controlled by parameter
      *
      * @param string $date Original date in DB format
-     * @param bool $meridiem
+     * @param bool $meridiem Ignored for BC
      * @param bool $convert_tz Perform TZ conversion?
      * @param User $user User owning the conversion formats
      * @return string Date in display format

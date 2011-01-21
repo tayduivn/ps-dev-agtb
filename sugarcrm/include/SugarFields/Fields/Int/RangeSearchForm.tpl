@@ -69,7 +69,7 @@ function {$id}_range_change(val)
 <div id="{$id}_range_div" style="{if $starting_choice=='between'}display:none;{else}display:'';{/if}">
 <input type='text' name='range_{$id}' id='range_{$id}' style='width:75px !important;' size='{{$displayParams.size|default:20}}' 
     {{if isset($displayParams.maxlength)}}maxlength='{{$displayParams.maxlength}}'{{/if}} 
-    value='{$smarty.request.{{$id_range}} }' title='{{$vardef.help}}' tabindex='{{$tabindex}}' {{$displayParams.field}}>
+    value='{if empty($smarty.request.{{$id_range}}) && !empty($smarty.request.{{$original_id}})}{$smarty.request.{{$original_id}}}{else}{$smarty.request.{{$id_range}}}{/if}' tabindex='{{$tabindex}}' {{$displayParams.field}}>
 </div>
 <div id="{$id}_between_range_div" style="{if $starting_choice=='between'}display:'';{else}display:none;{/if}">
 <input type='text' name='start_range_{$id}' 
