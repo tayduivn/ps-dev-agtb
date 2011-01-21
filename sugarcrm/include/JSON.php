@@ -30,23 +30,59 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class JSON
 {
-    public static function encode($string)
+    /**
+     * JSON encode a string
+     *
+     * @param string $string
+     * @param bool $addSecurityEnvelope defaults to false
+     * @return string 
+     */
+    public static function encode($string, $addSecurityEnvelope = false)
     {
-        return json_encode($string);
+        $encodedString = json_encode($string);
+        
+        if($addSecurityEnvelope) {
+            $encodedString = "while(1);/*" . $encodedString . "*/";
+        }
+        
+        return $encodedString;
     }
 
+    /**
+     * JSON decode a string
+     *
+     * @param string $string
+     * @param bool $examineEnvelope Default false, true to extract and verify envelope
+     * @return string 
+     */
+    public static function decode($string, $examineEnvelope=false)
+    {
+        if ($examineEnvelope) {
+            $meta = json_decode($string,true);
+            if($meta['asychronous_key'] != $_SESSION['asychronous_key']) {
+                $GLOBALS['log']->fatal("*** SECURITY: received asynchronous call with invalid ['asychronous_key'] value. Possible CSRF attack.");
+                return '';
+            }
+            
+            return $meta['jsonObject'];
+        }
+        
+        return json_decode($string,true);
+    }
+
+    /**
+     * @deprecated use JSON::encode() instead
+     */
     public static function encodeReal($string)
     {
-        return json_encode($string);
+        return self::encode($string);
     }
     
-    public static function decode($string)
-    {
-        return json_decode($string,true);
-    }
-
+    /**
+     * @deprecated use JSON::decode() instead
+     */
     public static function decodeReal($string)
     {
-        return json_decode($string,true);
+        return self::decode($string);
     }
 }
