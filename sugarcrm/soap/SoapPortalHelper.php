@@ -296,8 +296,9 @@ function get_contacts_from_account($account_id, $orderBy = '')
 	}
 
 function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = ""){
-
+		//BEGIN SUGARCRM flav=pro ONLY
 		$template->disable_row_level_security = true;
+		//END SUGARCRM flav=pro ONLY
 
 		$q = '';
 		//if $in is empty then pass in a query to get the list of related list
