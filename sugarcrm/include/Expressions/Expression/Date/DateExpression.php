@@ -40,6 +40,7 @@ abstract class DateExpression extends AbstractExpression
         if ($date instanceof DateTime)
             return $date;
 
+        //String dates must be in User format.
         if (is_string($date)) {
             $timedate = TimeDate::getInstance();
             $split = $timedate->split_date_time($date);
@@ -50,14 +51,15 @@ abstract class DateExpression extends AbstractExpression
                 // just date, no time
                 $resdate = $timedate->fromUserDate($date);
             }
-            if(!$resdate) {
+            /*if(!$resdate) {
                 $resdate = $timedate->fromString($date);
-            }
+            }*/
             if(!$resdate) {
-                return false;
+                throw new Exception("attempt to convert invalid value to date: $date");
             }
             return $resdate;
         }
+        throw new Exception("attempt to convert invalid value to date: $date");
         return false;
     }
 
