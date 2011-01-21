@@ -1,0 +1,8 @@
+<soda>
+	<script
+		file="{@global.scriptsdir}/modules/currencies/module_lib/setup-currencies.xml" />
+	<script fileset="{@global.scriptsdir}/modules/currencies" />
+	<script
+		file="{@global.scriptsdir}/modules/currencies/module_lib/cleanup-currencies.xml" />
+</soda>
+

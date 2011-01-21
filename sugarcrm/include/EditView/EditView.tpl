@@ -105,14 +105,10 @@ class="yui-navset"
 			{{if isset($colData.field.customLabel)}}
 			   {{$colData.field.customLabel}}
 			{{elseif isset($colData.field.label)}}
-			   {capture name="label" assign="label"}
-			   {sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
-			   {/capture}
+			   {capture name="label" assign="label"}{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}{/capture}
 			   {$label|strip_semicolon}:
 			{{elseif isset($fields[$colData.field.name])}}
-			   {capture name="label" assign="label"}
-			   {sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
-			   {/capture}
+			   {capture name="label" assign="label"}{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}{/capture}
 			   {$label|strip_semicolon}:
 			{{/if}}
 			{{* Show the required symbol if field is required, but override not set.  Or show if override is set *}}
@@ -120,6 +116,16 @@ class="yui-navset"
 				     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required)}}
 			    <span class="required">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
 			{{/if}}
+            {{if isset($colData.field.popupHelp) || isset($fields[$colData.field.name]) && isset($fields[$colData.field.name].popupHelp) }}
+              {{if isset($colData.field.popupHelp) }}
+                {capture name="popupText" assign="popupText"}{sugar_translate label="{{$colData.field.popupHelp}}" module='{{$module}}'}{/capture}
+              {{elseif isset($fields[$colData.field.name].popupHelp)}}
+                {capture name="popupText" assign="popupText"}{sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}{/capture}
+              {{/if}}
+              {capture name="overlibStuff" assign="overlibStuff"}{overlib_includes}{/capture}
+              {sugar_help text=$popupText WIDTH=-1}
+            {{/if}}
+          
 		</td>
 		{{/if}}
 		{counter name="fieldsUsed"}
@@ -223,6 +229,7 @@ class="yui-navset"
 {{/foreach}}
 </div></div>
 {{include file=$footerTpl}}
+{$overlibStuff}
 {{if $useTabs}}
 <script type="text/javascript" src="include/javascript/sugar_grp_yui_widgets.js"></script>
 <script type="text/javascript">
@@ -231,7 +238,7 @@ var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 </script>
 {{/if}}
 <script type="text/javascript">
-YAHOO.util.Event.onContentReady("form_QuickCreate_Accounts",
+YAHOO.util.Event.onContentReady("{{$form_name}}",
     function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim});
 //window.setTimeout(, 100);
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};

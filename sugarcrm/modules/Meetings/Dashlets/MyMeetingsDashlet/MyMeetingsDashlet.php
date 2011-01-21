@@ -70,7 +70,7 @@ class MyMeetingsDashlet extends DashletGeneric {
         if($this->myItemsOnly) { // handle myitems only differently
 			$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
             $lvsParams = array(
-                           'custom_where' => ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ',
+                           'custom_where' => ' AND  m_u.user_id = \'' . $current_user->id . '\' and m_u.deleted=0 ',
                            );
         } else {
             $lvsParams = array();
@@ -157,12 +157,21 @@ class MyMeetingsDashlet extends DashletGeneric {
                                      'myItems' => translate('LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY', 'Meetings'),
                                      'displayRows' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_DISPLAY_ROWS'],
                                      'title' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_TITLE'],
+
                                      'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'],
                                      'autoRefresh' => $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH'],
                                      ));
+		
+        require_once('modules/Meetings/Meeting.php');
+        $types = getMeetingsExternalApiDropDown();
+        $this->currentSearchFields['type']['input'] = '<select size="3" multiple="true" name="type[]">'
+                                     . get_select_options_with_id($types, (empty($this->filters['type']) ? '' : $this->filters['type']))
+                                     . '</select>';
+        $this->configureSS->assign('searchFields', $this->currentSearchFields);
+		
         return $this->configureSS->fetch($this->configureTpl);
     }
-        
+    
     function saveStatus()
     {
        

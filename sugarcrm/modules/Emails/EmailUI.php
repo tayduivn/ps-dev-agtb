@@ -1639,11 +1639,11 @@ EOQ;
 		$title = "";
 		$offset		= 0;
 		if($focus->type == 'out') {
-			$title = get_module_title('Emails', $mod_strings['LBL_SENT_MODULE_NAME'].": ".$focus->name, true);
+			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_SENT_MODULE_NAME'],$focus->name), true);
 		} elseif ($focus->type == 'draft') {
-			$title = get_module_title('Emails', $mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'].": ".$focus->name, true);
+			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'],$focus->name), true);
 		} elseif($focus->type == 'inbound') {
-			$title = get_module_title('Emails', $mod_strings['LBL_INBOUND_TITLE'].": ".$focus->name, true);
+			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_INBOUND_TITLE'],$focus->name), true);
 		}
 		$smarty->assign("emailTitle", $title);
 

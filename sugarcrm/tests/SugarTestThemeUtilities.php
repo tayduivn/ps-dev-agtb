@@ -62,7 +62,7 @@ class SugarTestThemeUtilities
         $themedef .= "'name'  => '$themename',";
         $themedef .= "'dirName'  => '$themename',";
         $themedef .= "'description' => '$themename',";
-        $themedef .= "'version' => array('regex_matches' => array('5.5.1')),";
+        $themedef .= "'version' => array('exact_matches' => array('5.5.1')),";
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php",$themedef);
         
@@ -125,6 +125,39 @@ class SugarTestThemeUtilities
         $themedef .= "'dirName' => '$themename',";
         $themedef .= "'parentTheme' => '".$parentTheme."',";
         $themedef .= "'description' => '$themename',";
+        $themedef .= "'version' => array('regex_matches' => array('.*')),";
+        $themedef .= ");";
+        sugar_file_put_contents("themes/$themename/themedef.php",$themedef);
+        
+        self::$_createdThemes[] = $themename;
+        
+        SugarThemeRegistry::buildRegistry();        
+        
+        return $themename;
+    }
+    
+    public static function createAnonymousRTLTheme() 
+    {
+        $themename = 'TestTheme'.mt_rand();
+        
+        sugar_mkdir("themes/$themename/images",null,true);
+        sugar_mkdir("themes/$themename/css",null,true);
+        sugar_mkdir("themes/$themename/js",null,true);
+        sugar_mkdir("themes/$themename/tpls",null,true);
+        
+        sugar_file_put_contents("themes/$themename/css/style.css","h2 { display: inline; }");
+        sugar_file_put_contents("themes/$themename/css/yui.css",".yui { display: inline; }");
+        sugar_file_put_contents("themes/$themename/js/style.js",'var dog = "cat";');
+        sugar_touch("themes/$themename/images/Accounts.gif");
+        sugar_touch("themes/$themename/images/fonts.big.icon.gif");
+        sugar_touch("themes/$themename/tpls/header.tpl");
+        
+        $themedef = "<?php\n";
+        $themedef .= "\$themedef = array(\n";
+        $themedef .= "'name'  => '$themename',";
+        $themedef .= "'dirName'  => '$themename',";
+        $themedef .= "'description' => '$themename',";
+        $themedef .= "'directionality' => 'rtl',";
         $themedef .= "'version' => array('regex_matches' => array('.*')),";
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php",$themedef);

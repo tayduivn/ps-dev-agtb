@@ -33,19 +33,18 @@
 {if $vardef.type != 'enum' && $vardef.type != 'address'
  && $vardef.type != 'html' && $vardef.type != 'multienum' && $vardef.type != 'radioenum' && $vardef.type != 'relate'
  && $vardef.type != 'url' && $vardef.type != 'parent'}
-//BEGIN SUGARCRM flav=een ONLY
-{*<tr><td class='mbLBL'>Dependent:</td>
+<tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
     </td>
 </tr>
 <tr id='visFormulaRow' {if empty($vardef.dependency)}style="display:none"{/if}><td class='mbLBL'>Visible If:</td> 
-    <td><input id="dependency" type="text" name="dependency" value="{$vardef.dependency|escape:'html'}" maxlength="255" />
+    <td><input id="dependency" type="text" name="dependency" value="{$vardef.dependency|escape:'html'}" readonly="1"
+	       style="background-color:#eee"/>
           <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}" 
-            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('dependency').value, 'dependency')"/> 
+            onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('dependency').value, 'dependency', 'boolean')"/>
     </td>
-</tr>*}
-//END SUGARCRM flav=een ONLY
+</tr>
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_CALCULATED"}:</td>
     <td style="line-height:1em"><input type="checkbox" name="calculated" id="calculated" value="1" onclick ="ModuleBuilder.toggleCF()"
         {if !empty($vardef.calculated) && !empty($vardef.formula)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>

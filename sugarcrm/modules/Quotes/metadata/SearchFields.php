@@ -40,5 +40,39 @@ $searchFields['Quotes'] =
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
 		//END SUGARCRM flav=pro ONLY
+		'open_only' => array(
+			'query_type'=>'default',
+			'db_field'=>array('quote_stage'),
+			'operator'=>'not in',
+			'closed_values' => array('Closed Lost', 'Closed Accepted', 'Closed Dead'),
+			'type'=>'bool',
+		),
+		//Range Search Support 
+	   'range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+	   'start_range_date_entered' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),
+	   'end_range_date_entered' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+	   'range_date_modified' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+	   'start_range_date_modified' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),
+       'end_range_date_modified' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),	
+       'range_date_quote_expected_closed' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+       'start_range_date_quote_expected_closed' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),
+       'end_range_date_quote_expected_closed' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+       'range_date_quote_closed' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+       'start_range_date_quote_closed' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),
+       'end_range_date_quote_closed' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+       'range_date_order_shipped' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+       'start_range_date_order_shipped' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),
+       'end_range_date_order_shipped' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),		
+       'range_original_po_date' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+       'start_range_original_po_date' => array ('query_type' => 'default',  'enable_range_search' => true, 'is_date_field' => true),
+       'end_range_original_po_date' => array ('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),	
+
+       'range_total_usdollar' => array ('query_type' => 'default', 'enable_range_search' => true),
+	   'start_range_total_usdollar' => array ('query_type' => 'default',  'enable_range_search' => true),
+       'end_range_total_usdollar' => array ('query_type' => 'default', 'enable_range_search' => true),
+       'range_quote_num' => array ('query_type' => 'default', 'enable_range_search' => true),
+	   'start_range_quote_num' => array ('query_type' => 'default',  'enable_range_search' => true),
+       'end_range_quote_num' => array ('query_type' => 'default', 'enable_range_search' => true),				
+		//Range Search Support 				
 	);
 ?>

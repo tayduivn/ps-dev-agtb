@@ -45,12 +45,14 @@ class SetOptionsAction extends AbstractAction{
 		};
 				
 		SUGAR.util.extend(SUGAR.forms.SetOptionsAction, SUGAR.forms.AbstractAction, {
-			exec: function() {
-				var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[this.target];
+			exec: function(context) {
+			    if (typeof(context) == 'undefined')
+                    context = this.context;
+				var field = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if ( field == null )	return null;		
 				
-				var keys = SUGAR.forms.evalVariableExpression(this.keyExpr).evaluate();
-				var labels = SUGAR.forms.evalVariableExpression(this.labelExpr).evaluate();
+				var keys = this.evalExpression(this.keyExpr, context);
+				var labels = this.evalExpression(this.labelExpr, context);
 				var selected = '';
 				
 				if (keys instanceof Array && field.options != null) 
@@ -105,6 +107,7 @@ class SetOptionsAction extends AbstractAction{
 					//Hide fields with empty lists
 					var empty =  field.options.length == 1 && field.value == '';
 					var visAction = new SUGAR.forms.VisibilityAction(this.target, empty ? 'false' : 'true', '');
+					visAction.setContext(context);
 					visAction.exec();
 					
 					if ( SUGAR.forms.AssignmentHandler.ANIMATE && !empty)

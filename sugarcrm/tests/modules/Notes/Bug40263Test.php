@@ -55,7 +55,7 @@ class Bug40263Test extends Sugar_PHPUnit_Framework_TestCase
 		$lvd->displayColumns = $displayColumns;
 		$fields = $lvd->setupFilterFields();
     	$query = $this->note->create_new_list_query('', 'id="' . $this->note->id . '"', $fields);
-    	$regex = "/select.*jt\d.user_name created_by_name.*LEFT JOIN\s*users jt\d ON\s*jt\d\.id\s*=\s*notes.created_by.*/si";
+    	$regex = "/select.* created_by_name.*LEFT JOIN\s*users jt\d ON\s*jt\d\.id\s*=\s*notes.created_by.*/si";
     	return $this->assertRegExp($regex, $query, "Unable to find the created user in the notes list view query: $query");
     }
 	

@@ -76,7 +76,7 @@ class Scheduler extends SugarBean {
 		parent::SugarBean();
 
 		if($init) {
-			
+
 			$user = new User();
 			$user->retrieve('1'); // Scheduler jobs run as Admin
 			$this->user = $user;
@@ -101,16 +101,16 @@ class Scheduler extends SugarBean {
 		$exJob = explode('::', $this->job);
 		if(is_array($exJob)) {
 			// instantiate a new SchedulersJob object and prep it
-			
-			
+
+
 			$trackerManager = TrackerManager::getInstance();
-			$trackerManager->pause();			
+			$trackerManager->pause();
 			$job				= new SchedulersJob();
 			$job->scheduler_id	= $this->id;
 			$job->scheduler		=& $this;
 			$job->execute_time	= $job->handleDateFormat('now');
 			$jobId = $job->save();
-			$trackerManager->unPause();			
+			$trackerManager->unPause();
 			$job->retrieve($jobId);
 
 			if($exJob[0] == 'function') {
@@ -161,7 +161,7 @@ class Scheduler extends SugarBean {
 		$GLOBALS['log']->debug('-----> Scheduler flushing dead jobs');
 
 		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
-		$now = strtotime(gmdate('Y-m-d H:i:s', strtotime('now'))); // this garbage to make sure we're getting comprable data to the DB output
+		$now = TimeDate::getInstance()->getNow()->ts; // current timestamp
 
 		$q = "	SELECT s.id, s.name FROM schedulers s WHERE s.deleted=0 AND s.status = 'In Progress'";
 		$r = $this->db->query($q);
@@ -210,7 +210,7 @@ class Scheduler extends SugarBean {
 			return false;
 		}
 
-		$now = gmdate('Y-m-d H:i', strtotime('now'));
+		$now = TimeDate::getInstance()->nowDb();
 		$validTimes = $this->deriveDBDateTimes($this);
 		//_pp('now: '.$now); _pp($validTimes);
 
@@ -652,7 +652,7 @@ class Scheduler extends SugarBean {
                                 if( $tsGmt <= $timeToTs ) { // start is less than the time_to
                                     $validJobTime[] = gmdate('Y-m-d H:i', $tsGmt);
                                 } else {
-                                    //_pp('Job Time is NOT smaller that TimeTO: '.$tsGmt .'<='. $timeToTs);	
+                                    //_pp('Job Time is NOT smaller that TimeTO: '.$tsGmt .'<='. $timeToTs);
                                 }
                             } else {
                                 //_pp('Job Time is NOT smaller that DateTimeEnd: '.date('Y-m-d H:i:s',$tsGmt) .'<='. $dateTimeEnd); //_pp( $tsGmt .'<='. $timeEndTs );
@@ -682,7 +682,7 @@ class Scheduler extends SugarBean {
 				// if not, add NOW
                 $now = gmdate('Y-m-d H:i', strtotime('now'));
 				if(!empty($validJobTime) && ($focus->last_run < $validJobTime[0]) && ($now > $validJobTime[0])) {
-				// cn: empty() bug 5914; 
+				// cn: empty() bug 5914;
 				//if(!empty) should be checked, becasue if a scheduler is defined to run every day 4pm, then after 4pm, and it runs as 4pm, the $validJobTime will be empty, and it should not catch up
 				//if $focus->last_run is the the day before yesterday,  it should run yesterday and tomorrow,  but it hadn't run yesterday, then it should catch up today. But today is already filtered out when doing date check before. The catch up will not work on this occasion. If the scheduler runs at least one time on each day, I think this bug can be avoided.
 					$validJobTime[] = $now;

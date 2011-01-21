@@ -75,6 +75,8 @@
 {* //BEGIN SUGARCRM flav=een ONLY *}
 {include file="modules/DynamicFields/templates/Fields/Forms/coreCalculated.tpl"}
 {* //END SUGARCRM flav=een ONLY *}
+
+{{* //BEGIN SUGARCRM flav=int ONLY*}}
 <tr>
 <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_VALIDATE_US_FORMAT"}:</td>
 <td>
@@ -91,4 +93,7 @@
 </script>
 </td>
 </tr>
+{{* //END SUGARCRM flav=int ONLY*}}
+
+
 {include file="modules/DynamicFields/templates/Fields/Forms/coreBottom.tpl"}

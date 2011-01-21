@@ -109,19 +109,21 @@ class ViewLayoutView extends ViewEdit
         } else
         {
             $smarty->assign ( 'layouttitle', translate ( 'LBL_CURRENT_LAYOUT', 'ModuleBuilder' ) ) ;
+
+            if($this->editLayout == MB_DETAILVIEW){
+		        $parser2 = ParserFactory::getParser(MB_EDITVIEW,$this->editModule,$this->package);
+		        $disableLayout = $parser2->getSyncDetailEditViews();
+                if(!empty($_REQUEST['copyFromEditView'])){
+                    $editViewPanels = $parser2->convertFromCanonicalForm ( $parser2->_viewdefs [ 'panels' ] , $parser2->_fielddefs ) ;
+                    $parser->_viewdefs [ 'panels' ] = $editViewPanels;
+                    $parser->_fielddefs = $parser2->_fielddefs;
+                    $parser->setUseTabs($parser2->getUseTabs());
+                }
+		    }
+
             if (! $this->fromModuleBuilder)
             {
-	            if($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE){
-		        	 $parser2 = ParserFactory::getParser(MB_EDITVIEW,$this->editModule,$this->package);
-		        	 $disableLayout = $parser2->getSyncDetailEditViews();
-                     if(!empty($_REQUEST['copyFromEditView'])){
-                        $editViewPanels = $parser2->convertFromCanonicalForm ( $parser2->_viewdefs [ 'panels' ] , $parser2->_fielddefs ) ;
-                        $parser->_viewdefs [ 'panels' ] = $editViewPanels;
-                        $parser->_fielddefs = $parser2->_fielddefs;
-                        $parser->setUseTabs($parser2->getUseTabs());
-                     }
-		        }
-                $buttons [] = array ( 
+	            $buttons [] = array (
                     'id' => 'saveBtn' , 
                     'text' => translate ( 'LBL_BTN_SAVE' ) , 
                     'actionScript' => "onclick='if(Studio2.checkGridLayout(\"{$this->editLayout}\")) Studio2.handleSave();'",
@@ -146,31 +148,36 @@ class ViewLayoutView extends ViewEdit
 	                'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
                 	'disabled' => $disableLayout, 
                 ) ;
-                if($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE){
-                    $buttons [] = array (
-                        'id' => 'copyFromEditView' ,
-                        'text' => translate ( 'LBL_COPY_FROM_EDITVIEW' ) ,
-                        'actionScript' => "onclick='ModuleBuilder.copyFromView(\"{$this->editModule}\", \"{$this->editLayout}\")'",
-                        'disabled' => $disableLayout,
-                    ) ;
-                }
             } else
             {
                 $buttons [] = array ( 
                     'id' => 'saveBtn' , 
                     'text' => $GLOBALS [ 'mod_strings' ] [ 'LBL_BTN_SAVE' ] , 
-                    'actionScript' => "onclick='if(Studio2.checkGridLayout(\"{$this->editLayout}\")) Studio2.handlePublish();'" 
+                    'actionScript' => "onclick='if(Studio2.checkGridLayout(\"{$this->editLayout}\")) Studio2.handlePublish();'",
+                    'disabled' => $disableLayout,
                 ) ;
                 $buttons [] = array ( 'id' => 'spacer' , 'width' => '33px' ) ;
                 $buttons [] = array (
                     'id' => 'historyBtn' , 
                     'text' => translate ( 'LBL_HISTORY' ) , 
-                    'actionScript' => "onclick='ModuleBuilder.history.browse(\"{$this->editModule}\", \"{$this->editLayout}\")'" 
+                    'actionScript' => "onclick='ModuleBuilder.history.browse(\"{$this->editModule}\", \"{$this->editLayout}\")'",
+                    'disabled' => $disableLayout, 
                 ) ;
                 $buttons [] = array ( 
                     'id' => 'historyDefault' , 
                     'text' => translate ( 'LBL_RESTORE_DEFAULT' ) , 
-                    'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'" 
+                    'actionScript' => "onclick='ModuleBuilder.history.revert(\"{$this->editModule}\", \"{$this->editLayout}\", \"{$history->getLast()}\", \"\")'",
+                    'disabled' => $disableLayout, 
+                ) ;
+            }
+
+
+            if($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE){
+                $buttons [] = array (
+                'id' => 'copyFromEditView' ,
+                'text' => translate ( 'LBL_COPY_FROM_EDITVIEW' ) ,
+                'actionScript' => "onclick='ModuleBuilder.copyFromView(\"{$this->editModule}\", \"{$this->editLayout}\")'",
+                'disabled' => $disableLayout,
                 ) ;
             }
         }

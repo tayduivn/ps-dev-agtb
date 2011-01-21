@@ -88,7 +88,7 @@ class SugarTestLangPackCreator
         
         if ( isset($this->_strings['mod_strings']) ) {
             foreach ( $this->_strings['mod_strings'] as $module => $strings ) {
-                $cache_key = "LanguageManager.$module.$language";
+                $cache_key = "mod_strings_lang.".$language.$module;;
                 $mod_strings = sugar_cache_retrieve($cache_key);
                 if ( empty($mod_strings) )
                     $mod_strings = return_module_language($language, $module);
@@ -120,7 +120,7 @@ class SugarTestLangPackCreator
         
         if ( isset($this->_strings['mod_strings']) ) {
             foreach ( $this->_strings['mod_strings'] as $module => $strings ) {
-                $cache_key = "LanguageManager.$module.$language";
+                $cache_key = "mod_strings_lang.".$language.$module;;
                 sugar_cache_clear($cache_key);
             }
         }

@@ -101,9 +101,9 @@ if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])){
 
 $params = array();
 if(empty($focus->id)){
-	$params[] = "<span class='pointer'>&raquo;</span>".$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
+	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
-	$params[] = "<span class='pointer'>&raquo;</span>"."<a href='index.php?module=KBDocuments&action=DetailView&record={$focus->id}'>{$focus->kbdocument_name}</a>";
+	$params[] = "<a href='index.php?module=KBDocuments&action=DetailView&record={$focus->id}'>{$focus->kbdocument_name}</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
 echo getClassicModuleTitle("KBDocuments", $params, true);

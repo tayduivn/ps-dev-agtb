@@ -107,7 +107,7 @@ class Report
   var $chart_total_header_row = array();
   var $jtcount = 0;
 
-	function Report($report_def_str='', $filters_def_str='', $panels_def_str='') {
+	function Report($report_def_str='', $filters_def_str='', $panels_def_str='', $skipCacheJSBuild = false) {
 		global $current_user, $current_language, $app_list_strings;
 		if(!isset($current_user) || empty($current_user)) {
 
@@ -116,7 +116,7 @@ class Report
 		}
 
 		//Scheduled reports don't have $_REQUEST.
-		if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
+		if (!$skipCacheJSBuild &&(!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
 			Report::cache_modules_def_js();
 		}
 
@@ -2041,7 +2041,7 @@ print "<BR>";
 		else {
 			$db_row = $this->db->fetchByAssoc($this->$result_field_name);
 		}
-
+		
 		if ( $db_row == 0 || sizeof($db_row) == 0 ) {
 			return 0;
 		}
@@ -2092,7 +2092,8 @@ print "<BR>";
             else {
                 $this->layout_manager->setAttribute('context', 'List');
             }
-			if ($display_column['type']!='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) {
+
+			if ($display_column['type'] !='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) {
 				$pos = $display_column['table_key'];
 				$module_name = '';
 				if($pos) {
@@ -2100,12 +2101,13 @@ print "<BR>";
 				}
 
 				if (isset($display_column['group_function'])) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
-                }
-                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                    $field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
+                }          
+              
+                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
 
 				if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
@@ -2126,52 +2128,43 @@ print "<BR>";
 				}else {
             	   $display = $this->layout_manager->widgetDisplay($display_column);
 				}
-        	}
-            else {
+
+			} else {
 				if (isset($display_column['group_function'])) {
-            		$field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']),0,28);
+            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
+                }          
+              
+                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-            		$field_name = substr(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']),0,28);
-                }
-
-
+                
             	if (isset($display_column['fields'][$field_name]))
+            	{
             		$display = $display_column['fields'][$field_name];
-
-					global $locale;
-				    $params = array();
-				    $params['currency_id'] = $locale->getPrecedentPreference('currency');
-			    	$params['convert'] = true;
-			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-				    $display = currency_format_number($display, $params);
-        	}
-
-            if (isset($display_column['type']) && $display_column['type'] == 'bool') {
-            	if (isset($display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])])) {
-            		$display = $display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])];
-            		if ($display) {
-            			$display = "True";
-            		} else {
-            			$display = "False";
-            		} // else
-            	} // if
+            	}
+            	
+				global $locale;				   
+				$params = array();
+				$params['currency_id'] = $locale->getPrecedentPreference('currency');
+			    $params['convert'] = true;
+			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+			    $display = currency_format_number($display, $params);          	
             }
-
+            		
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
                 $display = $this->layout_manager->widgetDisplay($display_column);
             }
-
+            
             if (isset($display_column['type'])) {
 
             	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
 
             	if (array_key_exists($field_name, $display_column['fields'])) {
             		$displayData = $display_column['fields'][$field_name];
-            		if (empty($displayData) && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
-            			$display = "";
+                    if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum'  || $display_column['type'] == 'enum' && $displayData != '0')) {
+            		  $display = "";
             		}
             		if ($display_column['type'] == 'int') {
             			$display = $displayData;
@@ -2182,16 +2175,6 @@ print "<BR>";
             //  for charts
             if($column_field_name == 'summary_columns' && $this->do_chart) {
                 $raw_display = preg_replace('/^\$/','',$display);
-               /*
-                if ($type == 'currency') {
-					require_once('modules/Currencies/Currency.php');
-					global $locale;
-				    $params = array();
-				    $params['currency_id'] = $locale->getPrecedentPreference('currency');
-			    	$params['convert'] = true;
-			    	$params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-				    $raw_display = currency_format_number($raw_display, $params);
-            	}*/
                 $cell_arr = array('val'=>$raw_display,'key'=>$display_column['column_key']);
                 array_push($chart_cells,$cell_arr);
             }

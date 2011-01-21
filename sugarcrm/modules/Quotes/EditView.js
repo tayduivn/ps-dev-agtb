@@ -35,32 +35,115 @@ function set_billing_return(popup_reply_data)
 {
 	var form_name = popup_reply_data.form_name;
 	var name_to_value_array = popup_reply_data.name_to_value_array;
+	var override_values = true;
+	var override_shipping = YAHOO.util.Dom.get('shipping_checkbox') && YAHOO.util.Dom.get('shipping_checkbox').checked ? true : false;
 	
+	if(!confirm_address_update(popup_reply_data))
+	{
+	   override_values = false;
+	} 	
+	
+	for (var the_key in name_to_value_array)
+	{
+		if(the_key == 'toJSON' || (!override_shipping && the_key.match(/shipping/)))
+		{
+			continue;
+		} else {
+			var val = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+			if(the_key == 'billing_account_id')
+			{
+				window.document.forms[form_name].elements[the_key].value = val;
+				window.document.forms[form_name].elements['shipping_account_id'].value = val;
+			} else if(the_key == 'billing_account_name') {
+				window.document.forms[form_name].elements[the_key].value = val;
+				window.document.forms[form_name].elements['shipping_account_name'].value = val;
+			} else if(override_values) {
+				window.document.forms[form_name].elements[the_key].value = val;
+			}
+		}
+	}
+}
+
+function copy_values_from_billing()
+{
+	var shipping_checkbox = YAHOO.util.Dom.get('shipping_checkbox');
+	return shipping_checkbox.checked;	
+}
+
+function set_shipping_return(popup_reply_data)
+{
+	var form_name = popup_reply_data.form_name;
+	var name_to_value_array = popup_reply_data.name_to_value_array;
+	var override_values = true;
+	
+	//Do not override values if address fields are being copied from billing address or
+	//if the user chooses cancel when prompted to override values
+	if(copy_values_from_billing() || !confirm_address_update(popup_reply_data)) {
+	   override_values = false;
+	} 	
+
+	for (var the_key in name_to_value_array)
+	{
+		if(the_key == 'toJSON')
+		{
+			continue;
+		} else {	
+			var val = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+			if(the_key == 'shipping_account_id')
+			{
+				window.document.forms[form_name].elements[the_key].value = val;
+			} else if(the_key == 'shipping_account_name') {
+				window.document.forms[form_name].elements[the_key].value = val;
+			} else if(override_values) {
+				window.document.forms[form_name].elements[the_key].value = val;
+			}
+		}
+	}
+}
+
+function confirm_address_update(popup_reply_data)
+{
+	var form_name = popup_reply_data.form_name;
+	var name_to_value_array = popup_reply_data.name_to_value_array;
+	var label_data_str = '';
+	var label_str = '';
+	var current_label_data_str = '';
+	var label_data_hash = new Array();
 	
 	for (var the_key in name_to_value_array)
 	{
 		if(the_key == 'toJSON')
 		{
-			/* just ignore */
+			continue;
 		}
-		else
-		{
-			if(the_key == 'billing_account_id')
-			{
-				window.document.forms[form_name].elements[the_key].value = name_to_value_array[the_key];
-				window.document.forms[form_name].elements['shipping_account_id'].value = name_to_value_array[the_key];
+
+		if(window.document.forms[form_name] && document.getElementById(the_key+'_label') && !the_key.match(/account_(id|name)/)) {
+			
+			var displayValue = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+			var data_label = document.getElementById(the_key+'_label').innerHTML.replace(/\n/gi,'');
+	
+			if(window.document.forms[form_name].elements[the_key]) {
+				
+				label_and_data = data_label + ' ' + window.document.forms[form_name].elements[the_key].value;				
+				
+				//Append to current_label_data_str only if the label and data are unique
+				if(!label_data_hash[data_label])
+				{
+					label_str += data_label + ' \n';
+					label_data_str += data_label  + ' ' + displayValue + '\n';
+					current_label_data_str += label_and_data + '\n';
+					label_data_hash[data_label] = true;
+				}
 			}
-			if(the_key == 'billing_account_name')
-			{
-				window.document.forms[form_name].elements[the_key].value = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-				window.document.forms[form_name].elements['shipping_account_name'].value = name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-			}
-			else
-			{
-				window.document.forms[form_name].elements[the_key].value = name_to_value_array[the_key];
-			}
-		}
+		}			
 	}
+	
+	if(label_str != current_label_data_str && current_label_data_str != label_data_str)
+	{
+		return confirm(SUGAR.language.translate('Quotes', 'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM') + '\n\n' + label_data_str);
+	} 		
+
+	return true;
 }
 
 function insert_thousands_separator(num, sep_char)
@@ -137,8 +220,11 @@ function set_after_sqs(sqs_object, sqs_object_id) {
 }
 
 function set_shipping_account_name(sqs_object_id) {
-	document.getElementById('shipping_account_id').value = document.getElementById('billing_account_id').value;
-	document.getElementById('shipping_account_name').value = document.getElementById('billing_account_name').value;
+	if(document.getElementById('shipping_account_id').value == '' || (YAHOO.util.Dom.get('shipping_checkbox') && YAHOO.util.Dom.get('shipping_checkbox').checked))
+	{
+		document.getElementById('shipping_account_id').value = document.getElementById('billing_account_id').value;
+		document.getElementById('shipping_account_name').value = document.getElementById('billing_account_name').value;
+	}
 }
 
 

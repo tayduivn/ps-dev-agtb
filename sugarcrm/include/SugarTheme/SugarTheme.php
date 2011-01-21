@@ -61,6 +61,19 @@ class SugarTheme
     protected $description;
     
     /**
+     * Defines which parent files to not include
+     *
+     * @var string
+     */
+    protected $ignoreParentFiles = array();
+    
+    /**
+     * Defines which parent files to not include
+     *
+     * @var string
+     */
+    protected $directionality = 'ltr';
+    /**
      * Theme directory name
      *
      * @var string
@@ -261,11 +274,17 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            // load stored theme cache from sugar cache
-            $this->_jsCache       = sugar_cache_retrieve('theme_'.$this->dirName.'_jsCache');
-            $this->_cssCache      = sugar_cache_retrieve('theme_'.$this->dirName.'_cssCache');
-            $this->_imageCache    = sugar_cache_retrieve('theme_'.$this->dirName.'_imageCache');
-            $this->_templateCache = sugar_cache_retrieve('theme_'.$this->dirName.'_templateCache');
+            if ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
+                $caches = unserialize(file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
+                if ( isset($caches['jsCache']) )
+                    $this->_jsCache       = $caches['jsCache'];
+                if ( isset($caches['cssCache']) )
+                    $this->_cssCache      = $caches['cssCache'];
+                if ( isset($caches['imageCache']) )
+                    $this->_imageCache    = $caches['imageCache'];
+                if ( isset($caches['templateCache']) )
+                    $this->_templateCache = $caches['templateCache'];
+            }
         }
         $this->_initialCacheSize = array(
             'jsCache'       => count($this->_jsCache),
@@ -286,25 +305,30 @@ class SugarTheme
         chdir(realpath(dirname(__FILE__) . '/../..'));
         
         // clear out the cache on destroy if we are asked to
-        if ( !inDeveloperMode() && !$this->_clearCacheOnDestroy ) {
-            // push our cache into the sugar cache
-            // only update the caches if they have been changed in this request
-            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_jsCache',$this->_jsCache);
-            if ( count($this->_cssCache) != $this->_initialCacheSize['cssCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_cssCache',$this->_cssCache);
-            if ( count($this->_imageCache) != $this->_initialCacheSize['imageCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_imageCache',$this->_imageCache);
-            if ( count($this->_templateCache) != $this->_initialCacheSize['templateCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_templateCache',$this->_templateCache);
+        if ( $this->_clearCacheOnDestroy ) {
+            if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
+                unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
         }
-        // clear out the cache if we are in developerMode 
-        // ( so it will be freshly rebuilt for the next load )
-        else {
-            sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_templateCache');
+        elseif ( !inDeveloperMode() ) {
+            // only update the caches if they have been changed in this request
+            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] 
+                    || count($this->_cssCache) != $this->_initialCacheSize['cssCache']
+                    || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
+                    || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
+                ) {
+                sugar_file_put_contents(
+                    create_cache_directory($this->getFilePath().'/pathCache.php'),
+                    serialize(
+                        array(
+                            'jsCache'       => $this->_jsCache,
+                            'cssCache'      => $this->_cssCache,
+                            'imageCache'    => $this->_imageCache,
+                            'templateCache' => $this->_templateCache,
+                            )
+                        )
+                    );
+                
+            }
         }
     }
     
@@ -355,6 +379,7 @@ class SugarTheme
         return array(
             'name',
             'description',
+            'directionality',
             'dirName',
             'parentTheme',
             'version',
@@ -363,6 +388,7 @@ class SugarTheme
             'barChartColors',
             'pieChartColors',
             'group_tabs',
+            'ignoreParentFiles',
             );
     }
     
@@ -674,7 +700,7 @@ EOHTML;
         $addJSPath = true
         )
     {
-        if ( isset($this->_cssCache[$cssFileName]) && sugar_is_file($this->_cssCache[$cssFileName]) ) {
+        if ( isset($this->_cssCache[$cssFileName])) {
             if ( $addJSPath )
                 return getJSPath($this->_cssCache[$cssFileName]);
             else
@@ -712,7 +738,6 @@ EOHTML;
         // if this is the style.css file, prepend the base.css and calendar-win2k-cold-1.css 
         // files before the theme styles
         if ( $cssFileName == 'style.css' && !isset($this->parentTheme) ) {
-            $cssFileContents = file_get_contents('jscalendar/calendar-win2k-cold-1.css') . $cssFileContents;
             if ( inDeveloperMode() )
                 $cssFileContents = file_get_contents('include/javascript/yui/build/base/base.css') . $cssFileContents;
             else
@@ -748,7 +773,7 @@ EOHTML;
         $addJSPath = true
         )
     {
-        if ( isset($this->_jsCache[$jsFileName]) && sugar_is_file($this->_jsCache[$jsFileName]) ) {
+        if ( isset($this->_jsCache[$jsFileName])) {
             if ( $addJSPath )
                 return getJSPath($this->_jsCache[$jsFileName]);
             else
@@ -759,7 +784,7 @@ EOHTML;
         
         if (isset($this->parentTheme) 
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
-                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '')
+                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '' && !in_array($jsFileName,$this->ignoreParentFiles))
             $jsFileContents .= file_get_contents($filename);
         else {
             if (sugar_is_file($this->getDefaultJSPath().'/'.$jsFileName))
@@ -780,7 +805,7 @@ EOHTML;
         $jsFilePath = create_cache_directory($this->getJSPath()."/$jsFileName");
         
         // minify the js
-        if ( !inDeveloperMode() && !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
+        if ( !inDeveloperMode()&& !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
             $jsFileContents = JSMin::minify($jsFileContents);
             $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
         }
@@ -937,6 +962,7 @@ class SugarThemeRegistry
     /**
      * Returns the current theme object
      *
+     * @return SugarTheme object
      */
     public static function current()
     {
@@ -944,6 +970,23 @@ class SugarThemeRegistry
             self::buildRegistry();
         
         return self::$_themes[self::$_currentTheme];
+    }
+    
+    /**
+     * Returns the default theme object
+     *
+     * @return SugarTheme object
+     */
+    public static function getDefault()
+    {
+        if ( !isset(self::$_currentTheme) )
+            self::buildRegistry();
+        
+        if ( isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) ) {
+            return self::get($GLOBALS['sugar_config']['default_theme']);
+        }
+            
+        return self::get(array_pop(array_keys(self::availableThemes())));
     }
     
     /**
@@ -1029,7 +1072,7 @@ class SugarThemeRegistry
         }
         
         // default to setting the default theme as the current theme
-        if ( !self::set($GLOBALS['sugar_config']['default_theme']) ) {
+        if ( !isset($GLOBALS['sugar_config']['default_theme']) || !self::set($GLOBALS['sugar_config']['default_theme']) ) {
             if ( count(self::availableThemes()) == 0 )
                 sugar_die('No valid themes are found on this instance');
             else

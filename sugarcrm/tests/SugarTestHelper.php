@@ -76,6 +76,8 @@ require_once 'SugarTestThemeUtilities.php';
 require_once 'SugarTestTeamUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestContactUtilities.php';
+require_once 'SugarTestLeadUtilities.php';
+require_once 'SugarTestStudioUtilities.php';
 require_once 'SugarTestMeetingUtilities.php';
 require_once 'SugarTestAccountUtilities.php';
 require_once 'SugarTestTrackerUtility.php';
@@ -86,7 +88,9 @@ require_once 'SugarTestMergeUtilities.php';
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
-
+    
+    protected $useOutputBuffering = true;
+    
     protected function assertPostConditions() {
         if(!empty($_REQUEST)) {
             foreach(array_keys($_REQUEST) as $k) {

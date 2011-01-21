@@ -37,7 +37,7 @@ global $mod_strings, $app_strings;
 
 $focus = new KBDocument();
 
-echo get_module_title("KBDocuments", "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'], true);
+echo getClassicModuleTitle("KBDocuments", array($app_strings['LBL_SEARCH']), true);
 
 $path = getJSPath('include/javascript/sugar_grp_overlib.js');
 echo "

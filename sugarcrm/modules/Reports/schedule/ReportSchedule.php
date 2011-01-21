@@ -190,15 +190,18 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 }
 
 function update_next_run_time($schedule_id, $next_run, $interval){
-		$last_run = strtotime($next_run)+date('Z');
-		$time = time();
-		while($last_run <= $time){
-			$last_run += $interval;
-		}
-		$next_run = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $last_run);
-		$query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
-		$this->db->query($query);
+    $next_run .= " GMT"; // Append GMT to the value from the database to ensure it is converted correctly in strtotime
+    $last_run = strtotime($next_run);
+    $time = time();
 
+    while($last_run <= $time){
+        $last_run += $interval;
+    }
+
+    $next_run = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $last_run); //GMT for database
+    $query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
+    $this->db->query($query);
+			
 }
 }
 ?>

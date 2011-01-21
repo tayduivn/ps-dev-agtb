@@ -439,7 +439,7 @@ class CalendarActivity
 
 		if ($sugar_bean->object_name == 'Task')
 		{
-		    $this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
+		    $this->start_time = $timedate->fromUser($this->sugar_bean->date_due);
 			if ( empty($this->start_time))
 			{
 				return null;
@@ -491,8 +491,11 @@ class CalendarActivity
         $start_day = $start->asDb();
         $end_day = $end->asDb();
 
-		$where = "($field_date >= '$start_day' AND $field_date < '$end_day'";
-
+		$where = "($field_date >= '{$start_day}' AND $field_date < '{$end_day}'";
+        if($rel_table != '') {
+            $where .= " AND $rel_table.accept_status != 'decline'";
+        }
+		
 		$where .= ")";
 		return $where;
 	}

@@ -293,7 +293,7 @@ color:#689800;
 color: #00ad15;
 }
 
-a.utilsLink:link, a.utilsLink:visited {
+a.utilsLink:link, a.utilsLink:visited, #bottomLinks a {
 color:#689800;
 }
 

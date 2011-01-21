@@ -136,6 +136,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'duplicate_merge'=>'disabled',
     'importable' => 'required',
     'required' => true,
+  	'options' => 'numeric_range_search_dom',
+    'enable_range_search' => '1',
   ),
   'amount_usdollar' =>
   array (
@@ -197,6 +199,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'comment' => 'Expected or actual date the oppportunity will close',
 	'importable' => 'required',
     'required' => true,
+    'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'next_step' =>
   array (
@@ -237,7 +241,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'link',
     'relationship' => 'accounts_opportunities',
     'source'=>'non-db',
-		'link_type'=>'one',
+    'link_type'=>'one',
     'module'=>'Accounts',
     'bean_name'=>'Account',
 		'vname'=>'LBL_ACCOUNTS',
@@ -292,6 +296,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'relationship' => 'emails_opportunities_rel',/* reldef in emails */
     'source'=>'non-db',
 		'vname'=>'LBL_EMAILS',
+  ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_opportunities',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
   ),
 //BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
@@ -360,8 +372,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'type' => 'link',
 	'vname' => 'LBL_CONTRACTS',
 	'relationship' => 'contracts_opportunities',
-	'link_type' => 'one',
+	//'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
 	'source' => 'non-db',
+    
   ),
  //END SUGARCRM flav=pro ONLY
 ),

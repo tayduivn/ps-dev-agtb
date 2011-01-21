@@ -68,6 +68,12 @@ SUGAR.forms.AssignmentHandler.VARIABLE_MAP = {};
 
 /**
  * @STATIC
+ * This array contains a list of valid relationship links for this module
+ */
+SUGAR.forms.AssignmentHandler.LINKS = {};
+
+/**
+ * @STATIC
  * This array contains the list of locked variables. (For Detection of Circular References)
  */
 SUGAR.forms.AssignmentHandler.LOCKS = {};
@@ -78,13 +84,19 @@ SUGAR.forms.AssignmentHandler.LOCKS = {};
  * @STATIC
  * Register a variable with the handler.
  */
-SUGAR.forms.AssignmentHandler.register = function(variable) {
+SUGAR.forms.AssignmentHandler.register = function(variable, view) {
+	var AH = SUGAR.forms.AssignmentHandler;
+	if (!view) view = AH.lastView;
+
+	if (typeof(AH.VARIABLE_MAP[view]) == "undefined")
+		AH.VARIABLE_MAP[view] = {};
+	
 	if ( variable instanceof Array ) {
 		for ( var i = 0; i < variable.length; i++ ) {
-			SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable[i]] = document.getElementById(variable[i]);
+			AH.VARIABLE_MAP[view][variable[i]] = document.getElementById(variable[i]);
 		}
 	} else {
-		SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable] = document.getElementById(variable);
+		AH.VARIABLE_MAP[view][variable] = document.getElementById(variable);
 	}
 }
 
@@ -94,13 +106,16 @@ SUGAR.forms.AssignmentHandler.register = function(variable) {
  * Register form fields with the handler.
  */
 SUGAR.forms.AssignmentHandler.registerFields = function(flds) {
+	var AH = SUGAR.forms.AssignmentHandler;
 	if ( typeof(flds) != 'object' ) return;
 	var form = document.forms[flds.form];
 	var names = flds.fields;
+	if (typeof(AH.VARIABLE_MAP[flds.form]) == "undefined")
+		AH.VARIABLE_MAP[flds.form] = {};
 	if ( typeof(form) == 'undefined' ) return;
 	for ( var i = 0; i < names.length; i++ ) {
 		var el = form[names[i]];
-		if ( el != null )	SUGAR.forms.AssignmentHandler.VARIABLE_MAP[el.id] = el;
+		if ( el != null )	AH.VARIABLE_MAP[flds.form][el.id] = el;
 	}
 }
 
@@ -109,24 +124,33 @@ SUGAR.forms.AssignmentHandler.registerFields = function(flds) {
  * Register all the fields in a form
  */
 SUGAR.forms.AssignmentHandler.registerForm = function(f) {
+	var AH = SUGAR.forms.AssignmentHandler;
 	var form = document.forms[f];
+	if (typeof(AH.VARIABLE_MAP[f]) == "undefined")
+		AH.VARIABLE_MAP[f] = {};
 	if ( typeof(form) == 'undefined' ) return;
 	for ( var i = 0; i < form.length; i++ ) {
 		var el = form[i];
 		if ( el != null && el.value != null && el.id != null && el.id != "")
-			SUGAR.forms.AssignmentHandler.VARIABLE_MAP[el.id] = el;
+			AH.VARIABLE_MAP[f][el.id] = el;
+		else if ( el != null && el.value && el.type=="hidden")
+			AH.VARIABLE_MAP[f][el.name] = el;
 	}
 }
 
 SUGAR.forms.AssignmentHandler.registerView = function(view, startEl) {
 	var Dom = YAHOO.util.Dom;
+	var AH = SUGAR.forms.AssignmentHandler;
+	AH.lastView = view;
+	if (typeof(AH.VARIABLE_MAP[view]) == "undefined")
+		AH.VARIABLE_MAP[view] = {};
 	if (Dom.get(view) != null && Dom.get(view).tagName == "FORM") {
-		return SUGAR.forms.AssignmentHandler.registerForm(view);
+		return AH.registerForm(view);
 	}
-	var nodes = YAHOO.util.Selector.query("." + view + ".view [id]", startEl);
+	var nodes = YAHOO.util.Selector.query("span.sugar_field", startEl);
 	for (var i in nodes) {
 		if (nodes[i].id != "")
-			SUGAR.forms.AssignmentHandler.VARIABLE_MAP[nodes[i].id] = nodes[i];
+			AH.VARIABLE_MAP[view][nodes[i].id] = nodes[i];
 	}
 }
 
@@ -143,8 +167,14 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
  * @STATIC
  * Retrieve the value of a variable.
  */
-SUGAR.forms.AssignmentHandler.getValue = function(variable) {
-	var field = SUGAR.forms.AssignmentHandler.getElement(variable);
+SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
+
+	//Relate fields are only string on the client side, so return the variable name back.
+	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
+		return variable;
+
+	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
 
 	// special select case for IE6 and dropdowns
@@ -170,7 +200,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
 	if (field.value !== null && typeof(field.value) != "undefined")
 		return field.value;
 	
-	return field.innerHTML;
+	return YAHOO.lang.trim(field.innerText);
 }
 
 
@@ -178,9 +208,11 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable) {
  * @STATIC
  * Retrieve the element behind a variable.
  */
-SUGAR.forms.AssignmentHandler.getElement = function(variable) {
+SUGAR.forms.AssignmentHandler.getElement = function(variable, view) {
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
+
 	// retrieve the variable
-	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[variable];
+	var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[view][variable];
 		
 	if ( field == null )	
 		field = YAHOO.util.Dom.get(variable);
@@ -348,8 +380,58 @@ SUGAR.forms.AssignmentHandler.setStyle = function(variable, styles)
 	}
 }
 
+SUGAR.forms.FormExpressionContext = function(formName)
+{
+	var AH = SUGAR.forms.AssignmentHandler;
+	this.formName = formName;
+	if (typeof(AH.VARIABLE_MAP[formName]) == "undefined")
+		AH.registerView(formName);
+}
+
+SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.ExpressionContext, {
+	getValue: function(varname)
+	{
+		var SE = SUGAR.expressions, toConst = SE.ExpressionParser.prototype.toConstant;
+
+		var value = "";
+
+		//Relate fields are only string on the client side, so return the variable name back.
+		if(SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname])
+			value = varname;
+		else
+			value = SUGAR.forms.AssignmentHandler.getValue(varname, this.formName);
+
+		if (typeof(value) == "string")
+		{
+			value = value.replace(/\n/g, "");
+			if ((/^(\s*)$/).exec(value) != null || value === "")
+            {
+				return toConst('""')
+			}
+            // test if value is a number or boolean
+            else if ( SE.isNumeric(value) ) {
+				return toConst(value);
+		    }
+			// assume string
+			else {
+				return toConst('"' + value + '"');
+			}
+		} else if (typeof(value) == "object" && value.getTime) {
+			//This is probably a date object that we must convert to an expression
+			var d = new SUGAR.DateExpression("");
+			d.evaluate = function(){return this.value};
+			d.value = value;
+			return d;
+		}
 
 
+		return toConst('""');
+	},
+	setValue: function(varname, value)
+	{
+		SUGAR.forms.AssignmentHandler.assign(varname, value, true);
+	}
+});
 
 
 /**
@@ -362,8 +444,11 @@ SUGAR.forms.DefaultExpressionParser = new SUGAR.expressions.ExpressionParser();
  * @STATIC
  * Parses expressions given a variable map.<br>
  */
-SUGAR.forms.evalVariableExpression = function(expression, varmap)
+SUGAR.forms.evalVariableExpression = function(expression, varmap, view)
 {
+	return SUGAR.forms.DefaultExpressionParser.evaluate(expression, new SUGAR.forms.FormExpressionContext(view));
+
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 	var SE = SUGAR.expressions;
 	// perform range replaces
 	expression = SUGAR.forms._performRangeReplace(expression);
@@ -374,7 +459,7 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 	if ( typeof(varmap) == 'undefined' )
 	{
 		varmap = new Array();
-		for ( v in handler.VARIABLE_MAP) {
+		for ( v in handler.VARIABLE_MAP[view]) {
 			if (v != "") {
 				varmap[varmap.length] = v;
 			}
@@ -382,15 +467,17 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap)
 	}
 
 	if ( expression == SE.Expression.TRUE || expression == SE.Expression.FALSE )
-		return SUGAR.forms.DefaultExpressionParser.evaluate(expression);
+
 
 	var vars = SUGAR.forms.getFieldsFromExpression(expression);
 	for (var i in vars)
 	{
 		var v = vars[i];
 		var value = handler.getValue(v);
-		if (value == null)
-			throw "Unable to find field: " + v;
+		if (value == null) {
+			continue;
+			//throw "Unable to find field: " + v;
+		}
 		
 		var regex = new RegExp("\\$" + v, "g");
 
@@ -519,56 +606,29 @@ SUGAR.forms.getFieldsFromExpression = function(expression)
 	return matches;
 }
 
-
-
-
-/**
- * @STATIC
- * Creates a new trigger with the given variables, condition, dependencies, and a flag
- * which indicates whether or not to execute this trigger when the window loads.
- */
-SUGAR.forms.createTrigger = function(variables, condition, triggeronload)
-{
-	var trigger = new SUGAR.forms.Trigger(variables, condition);
-	if ( triggeronload ) {
-		var empty = false;
-		for (var i in variables)
-		{
-			if (SUGAR.forms.AssignmentHandler.getValue(variables[i]) == "")
-				empty = true;
-		}
-		if (!empty)
-			YAHOO.util.Event.addListener(window, "load", SUGAR.forms.Trigger.trigger, trigger);
-	}
-
-	return trigger;
-}
-
-
-
-
-
 /**
  * A dependency is an object representation of a variable being dependent
  * on other variables. For example A being the sum of B and C where A is
  * 'dependent' on B and C.
  */
-SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad)
+SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, form)
 {
+	var AH = SUGAR.forms.AssignmentHandler;
+	if (typeof(form) != "string")
+		if (AH.lastView)
+			form = AH.lastView;
+		else
+			form = "EditView";
 	this.actions = actions;
 	this.falseActions = falseActions;
+	this.context = new SUGAR.forms.FormExpressionContext(form);
 	trigger.setDependency(this);
+	trigger.setContext(this.context);
 	this.trigger = trigger;
 	if (testOnLoad) {
-		var vars = trigger.variables;
-		var empty = false;
-		for (var i in vars)
-		{
-			if (SUGAR.forms.AssignmentHandler.getValue(vars[i]) == "")
-				empty = true;
-		}
-		if (!empty)
-			SUGAR.forms.Trigger.fire("", trigger);
+		try {
+			SUGAR.forms.Trigger.fire.call(trigger, "", trigger);
+		}catch (e) {}
 	}
 }
 
@@ -584,12 +644,15 @@ SUGAR.forms.Dependency.prototype.fire = function(undo)
 			actions = this.falseActions;
 		
 		if (actions instanceof SUGAR.forms.AbstractAction) {
+			actions.setContext(this.context);
 			actions.exec();
 		} else {
 			for (var i in actions) {
 				var action = actions[i];
-				if (typeof action.exec == "function")
+				if (typeof action.exec == "function") {
+					action.setContext(this.context);
 					action.exec();
+				}
 			}
 		}
 	} catch (e) {
@@ -608,6 +671,16 @@ SUGAR.forms.AbstractAction = function(target) {
 SUGAR.forms.AbstractAction.prototype.exec = function()
 {
 	
+}
+
+SUGAR.forms.AbstractAction.prototype.setContext = function(context)
+{
+	this.context = context;
+}
+
+SUGAR.forms.AbstractAction.prototype.evalExpression = function(exp, context)
+{
+	return SUGAR.forms.DefaultExpressionParser.evaluate(exp, context).evaluate();
 }
 
 /**
@@ -635,9 +708,9 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 		if (!el) continue;
 		if (el.type && el.type.toUpperCase() == "CHECKBOX")
 		{
-			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this, this);
 		} else {
-			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this, this);
 		}
 	}
 }
@@ -648,6 +721,11 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
  */
 SUGAR.forms.Trigger.prototype.setDependency = function(dep) {
 	this.dependency = dep;
+}
+
+SUGAR.forms.Trigger.prototype.setContext = function(context)
+{
+	this.context = context;
 }
 
 /**
@@ -662,7 +740,7 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	var eval;
 	var val;
 	try {
-		eval = SUGAR.forms.evalVariableExpression(obj.condition);
+		eval = SUGAR.forms.DefaultExpressionParser.evaluate(obj.condition, this.context);
 	} catch (e) {
 		if (!SUGAR.isIE && console && console.log){ 
 			console.log('ERROR:' + e + "; in Condition: " + obj.condition);

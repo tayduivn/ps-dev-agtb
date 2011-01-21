@@ -71,7 +71,7 @@ class DependencyManager {
 		$deps = array();
 
 		foreach($fields as $field => $def) {
-			if ( isset ( $def [ 'dependency' ] ) )
+			if ( !empty ( $def [ 'dependency' ] ) )
     		{
     			// normalize the dependency definition
     			if ( ! is_array ( $def [ 'dependency' ] ) )
@@ -81,7 +81,7 @@ class DependencyManager {
     			}
 				foreach ( $def [ 'dependency' ]  as $depdef)
 				{
-    				$dep = new Dependency ( $field ) ;
+    				$dep = new Dependency ( "{$field}_vis" ) ;
     				if (is_array($depdef [ 'trigger' ])) {
     					$triggerFields = $depdef [ 'trigger' ];
     				} else {
@@ -192,6 +192,10 @@ class DependencyManager {
         {
             $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit'));
         }
+        else
+        {
+            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'view'));
+        }
         return $deps;
     }
 
@@ -202,7 +206,8 @@ class DependencyManager {
         foreach ($meta as $key => $def)
         {
             $hooks = empty($def['hooks']) ? array("all") : $def['hooks'];
-            if (!is_array($hooks)) $hooks = array($hooks);
+            if (!is_array($hooks))
+                $hooks = array($hooks);
             if(in_array('all', $hooks) || in_array($action, $hooks))
             {
                 $triggerExp = empty($def['trigger']) ? self::$default_trigger : $def['trigger'];
@@ -220,7 +225,7 @@ class DependencyManager {
                 }
                 foreach($notActions as $aDef)
                 {
-                    $dep->addFalseAction(
+                    $dep->addFalseAction(   
                         ActionFactory::getNewAction($aDef['name'], $aDef['params']));
                 }
                 $dep->setFireOnLoad(!isset($def['onload']) || $def['onload'] !== false);
@@ -232,6 +237,7 @@ class DependencyManager {
 
     private static function getModuleDependencyMetadata($module)
     {
+        /* //Disable caching for now
         $cacheLoc = create_cache_directory("modules/$module/dependencies.php");
         //If the cache file exists, use it.
         if(empty($GLOBALS['sugar_config']['developerMode']) && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
@@ -239,35 +245,44 @@ class DependencyManager {
         }
         //Otherwise load all the def locations and create the cache file.
         else {
-            $dependencies = array($module => array());
-            $location = "modules/$module/metadata/dependencydefs.php";
-            foreach(array(
-                $location,
-                "custom/{$location}",
-                "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
-            {
-                if(is_file($loc)) {
-                    include $loc;
-                }
+        */
+        $dependencies = array($module => array());
+        $location = "modules/$module/metadata/dependencydefs.php";
+        foreach(array(
+            $location,
+            "custom/{$location}",
+            "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
+        {
+            if(is_file($loc)) {
+                include $loc;
             }
+        }
+        /*  //More disabled cache code
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"
                  . override_value_to_string('dependencies', $module, $dependencies[$module]);
             file_put_contents($cacheLoc, $out);
-        }
+        }*/
 
         return $dependencies[$module];
     }
 
-	static function getDependenciesForFields($fields) {
-		return array_merge(self::getCalculatedFieldDependencies($fields),
-						   self::getDependentFieldDependencies($fields),
-						   self::getDropDownDependencies($fields));
+	static function getDependenciesForFields($fields, $view = "") {
+		if ($view == "DetailView")
+        {
+            return self::getDependentFieldDependencies($fields);
+        } else
+        {
+            return array_merge(
+                self::getCalculatedFieldDependencies($fields),
+				self::getDependentFieldDependencies($fields),
+				self::getDropDownDependencies($fields));
+        }
 	}
 
     /**
      * @static
      * @param  $user User, user to return SugarLogic variables for
-     * @return void
+     * @return string
      */
     public static function getJSUserVariables($user)
     {
@@ -280,6 +295,53 @@ class DependencyManager {
             "gmt_offset" => $ts->getUserUTCOffset(),
             "default_locale_name_format" => $user->getPreference("default_locale_name_format"),
         )) . ";\n";
+    }
+
+    /**
+     * @static returns the javascript for the link variables of this view.
+     * @param  $fields array, field_defs for this view
+     * @param  $view string, name of view (form name)
+     * @return string
+     */
+     public static function getLinkFields($fields, $view)
+    {
+        $links = array();
+        foreach($fields as $name => $def)
+        {
+            if ($def['type'] == 'link' && self::validLinkField($def))
+            {
+                $links[$name] = $def['relationship'];
+            }
+        }
+        return "SUGAR.forms.AssignmentHandler.LINKS['$view'] = " . json_encode($links) . "\n";
+    }
+
+    /**
+     * @static
+     * @param  $def array, Link field definition.
+     * @return bool true if field is valid.
+     */
+    protected static function validLinkField($def)
+    {
+        global $dictionary;
+        $invalidModules = array("Emails" => true, "Teams" => true);
+
+        if (empty($def['relationship'])) {
+            return false; //Not a good link field
+        }
+
+        $relName = $def['relationship'];
+        $rel = new Relationship();
+        if ($rel->retrieve_by_name($relName) === false) {
+            return false; //Unable to find a relationship definition
+        }
+
+        if(!empty($invalidModules[$rel->lhs_module]) || !empty($invalidModules[$rel->rhs_module])) {
+            return false; //Invalid module
+        }
+
+        //Otherwise this link looks ok
+        return true;
     }
 }
 ?>

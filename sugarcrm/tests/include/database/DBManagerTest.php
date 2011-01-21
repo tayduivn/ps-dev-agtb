@@ -56,14 +56,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetDatabase()
     {
         if ( $this->_db instanceOf MysqliManager )
-            $this->assertType('Mysqli',$this->_db->getDatabase());
+            $this->assertInstanceOf('Mysqli',$this->_db->getDatabase());
         else
             $this->assertTrue(is_resource($this->_db->getDatabase()));
     }
 
     public function testGetHelper()
     {
-        $this->assertType('DBHelper',$this->_db->getHelper());
+        $this->assertInstanceOf('DBHelper',$this->_db->getHelper());
     }
 
     public function testCheckError()
@@ -88,7 +88,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_db->checkConnection();
         if ( $this->_db instanceOf MysqliManager )
-            $this->assertType('Mysqli',$this->_db->getDatabase());
+            $this->assertInstanceOf('Mysqli',$this->_db->getDatabase());
         else
             $this->assertTrue(is_resource($this->_db->getDatabase()));
     }
@@ -963,7 +963,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $result = $this->_db->query("SELECT id From contacts where last_name = 'foobar'");
         if ( $this->_db instanceOf MysqliManager )
-            $this->assertType('Mysqli_result',$result);
+            $this->assertInstanceOf('Mysqli_result',$result);
         else
             $this->assertTrue(is_resource($result));
 
@@ -979,7 +979,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['module'] = 'contacts';
         $result = $this->_db->limitQuery("SELECT id From contacts where last_name = 'foobar'",1,3);
         if ( $this->_db instanceOf MysqliManager )
-            $this->assertType('Mysqli_result',$result);
+            $this->assertInstanceOf('Mysqli_result',$result);
         else
             $this->assertTrue(is_resource($result));
 

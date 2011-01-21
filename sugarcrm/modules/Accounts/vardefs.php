@@ -169,6 +169,14 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'source'=>'non-db',
     'vname'=>'LBL_EMAILS',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_accounts',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
   'bugs' =>
   array (
     'name' => 'bugs',
@@ -280,7 +288,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     array (
       'name' => 'campaign_accounts',
       'type' => 'link',
-      'vname' => 'LBL_CAMPAIGN_ACCOUNT',
+      'vname' => 'LBL_CAMPAIGNS',
       'relationship' => 'campaign_accounts',
       'source' => 'non-db',
   ),  
@@ -326,7 +334,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 
 //BEGIN SUGARCRM flav!=sales ONLY
   'products' => array(
-      'name' => 'contracts',
+      'name' => 'products',
       'type' => 'link',
       'relationship' => 'products_accounts',
       'source' => 'non-db',

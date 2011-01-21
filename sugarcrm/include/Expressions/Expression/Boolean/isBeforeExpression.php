@@ -33,8 +33,12 @@ class isBeforeExpression extends BooleanExpression {
 	function evaluate() {
 		$params = $this->getParameters();
 
-		$a = $params[0]->evaluate();
-		$b = $params[1]->evaluate();
+		$a = DateExpression::parse($params[0]->evaluate());
+		$b = DateExpression::parse($params[1]->evaluate());
+
+		if(empty($a) || empty($b)) {
+		    return false;
+		}
 
 		if ( $a < $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;

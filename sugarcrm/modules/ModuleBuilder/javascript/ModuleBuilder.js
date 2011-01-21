@@ -355,6 +355,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		state: {
 			isDirty: false,
 			saving: false,
+            hideFailedMesage: false,
 			intended_view: {
 				url: null,
 				successCall: null
@@ -620,7 +621,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			document.location.href = 'index.php?module=ModuleBuilder&action=index&type=' + type;
 		},
 		failed: function(o){
-			ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_FAILED_DATA'), 2000);
+            if(!ModuleBuilder.state.hideFailedMesage){
+                ajaxStatus.flashStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_FAILED_DATA'), 2000);
+            }
 		},
 		//Wizard Functions
 		buttonDown: function(button, name, list){
@@ -848,6 +851,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			);
 			
 			ModuleBuilder.failed = function(){};
+            ModuleBuilder.state.hideFailedMesage = true;
 			//Reload the page
 			window.setTimeout("window.location.assign(window.location.href.split('#')[0])", 2000);
 			
@@ -1046,16 +1050,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			return false;
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
-		,moduleLoadFormula: function(formula, targetId){
+		,moduleLoadFormula: function(formula, targetId, returnType){
             if (!targetId)
                 targetId = "formula";
-            
-            var saveFunc = "function(expr){Ext.getDom('"+ targetId + "').value = expr;";
-            if (targetId instanceof Array) {
-                saveFunc = "function(expr){var targets=" + Ext.encode(targetId) + ";for(t in targets){Ext.getDom(targets[t]).value = expr;}";
-            }
-            saveFunc += "Ext.getCmp('formulaBuilderWindow').close();}";
-            
+            if(!returnType)
+				returnType = "";
+
             if (!ModuleBuilder.formulaEditorWindow)
             	ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
 					width: 512,
@@ -1067,12 +1067,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
 			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
-			win.setBody("test");
+			win.setBody("loading...");
 			win.render(document.body);
 			win.params = {
                 module:"ExpressionEngine",
                 action:"editFormula",
                 targetField: targetId,
+				returnType: returnType,
                 loadExt:false,
                 embed: true,
                 targetModule:ModuleBuilder.module,

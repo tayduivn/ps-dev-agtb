@@ -70,7 +70,7 @@ if(isset($_REQUEST['reset_homepage'])){
 }
 
 $params = array();
-$params[] = "<span class='pointer'>&raquo;</span>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
+$params[] = $locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
 echo getClassicModuleTitle("Users", $params, true);
 
 global $app_list_strings;

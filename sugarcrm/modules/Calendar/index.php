@@ -29,7 +29,7 @@ if(!ACLController::checkAccess('Calendar', 'list', true)){
 	ACLController::displayNoAccess(true);
 }
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_MODULE_ACTION'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_ACTION']), true);
 
 if ( empty($_REQUEST['view']))
 {
@@ -98,9 +98,9 @@ function toggleDisplay(id){
 }
 		//  End -->
 	</script>
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" id="calendarModule">
 <tr>
-<td valign=top width="70%" style="padding-right: 10px; padding-top: 2px;">
+<td valign=top width="70%">
 <?php template_calendar($args); ?>
 </td>
 <?php if ($_REQUEST['view'] == 'day') { ?>

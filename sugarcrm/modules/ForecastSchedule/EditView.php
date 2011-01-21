@@ -52,7 +52,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == '1') {
 }
 
 
-echo get_module_title($mod_strings['LBL_FS_MODULE_NAME'], $mod_strings['LBL_FS_MODULE_NAME'].": ".$_REQUEST['timeperiod_name'], true);
+echo getClassicModuleTitle($mod_strings['LBL_FS_MODULE_NAME'], array($mod_strings['LBL_FS_MODULE_NAME'],$_REQUEST['timeperiod_name']), true);
 
 
 $GLOBALS['log']->info("Forecast Schedule Edit view");

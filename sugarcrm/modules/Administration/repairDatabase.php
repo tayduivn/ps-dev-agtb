@@ -78,7 +78,7 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 
 		if (!$export && empty ($_REQUEST['repair_silent'])) {
 			if ( empty($hideModuleMenu) )
-		        echo get_module_title($mod_strings['LBL_REPAIR_DATABASE'], $mod_strings['LBL_REPAIR_DATABASE'], true);
+		        echo getClassicModuleTitle($mod_strings['LBL_REPAIR_DATABASE'], array($mod_strings['LBL_REPAIR_DATABASE']), true);
 			echo "<h1 id=\"rdloading\">{$mod_strings['LBL_REPAIR_DATABASE_PROCESSING']}</h1>";
 			ob_flush();
 		}
@@ -96,6 +96,17 @@ if (is_admin($current_user) || isset ($from_sync_client) || is_admin_for_any_mod
 				if (($focus instanceOf SugarBean) && !isset($repairedTables[$focus->table_name])) {
 				    $sql .= $db->repairTable($focus, $execute);
 				    $repairedTables[$focus->table_name] = true;
+				}
+                //Repair Custom Fields
+                if (($focus instanceOf SugarBean) && $focus->hasCustomFields() && !isset($repairedTables[$focus->table_name . '_cstm'])) {
+				    $df = new DynamicField($focus->module_dir);
+                    //Need to check if the method exists as during upgrade an old version of Dynamic Fields may be loaded.
+                    if (method_exists($df, "repairCustomFields"))
+                    {
+                        $df->bean = $focus;
+                        $sql .= $df->repairCustomFields($execute);
+                        $repairedTables[$focus->table_name . '_cstm'] = true;
+                    }
 				}
 			}
 		}

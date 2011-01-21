@@ -95,12 +95,16 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'reportable'=>true,
     'importable' => 'required',
     'required'=>true,
+    'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'original_po_date' =>
   array (
     'name' => 'original_po_date',
     'vname' => 'LBL_ORIGINAL_PO_DATE',
     'type' => 'date',
+    'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'payment_terms' =>
   array (
@@ -117,6 +121,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'vname' => 'LBL_DATE_QUOTE_CLOSED',
     'type' => 'date',
     'reportable'=>false,
+    'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'date_order_shipped' =>
   array (
@@ -125,6 +131,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'vname' => 'LBL_LIST_DATE_QUOTE_CLOSED',
     'type' => 'date',
     'reportable' => false,
+    'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'order_stage' =>
   array (
@@ -162,6 +170,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'required'=>true,
     'unified_search' => true,
     'disable_num_format' => true,
+  	'enable_range_search' => true,
+  	'options' => 'numeric_range_search_dom',
   ),
   'subtotal' =>
   array (
@@ -273,6 +283,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'currency',
     'len' => '26,6',
     'audited'=>true,
+  	'enable_range_search' => true,
+  	'options' => 'numeric_range_search_dom',
   ),
   'billing_address_street' =>
   array (
@@ -375,7 +387,6 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 		'link'=>'shipping_accounts',
 		'module'=>'Accounts',
 		'source'=>'non-db',
-        'join_name'=>'jt1',
 		),
  'shipping_account_id' =>
  	array(

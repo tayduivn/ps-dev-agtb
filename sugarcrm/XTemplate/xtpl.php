@@ -1,5 +1,98 @@
 <?php
 
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r36874 - 2008-06-19 12:09:05 -0700 (Thu, 19 Jun 2008) - roger - bug 22568: use md5 of unique key and version for js key.
+
+r32524 - 2008-03-06 15:51:02 -0800 (Thu, 06 Mar 2008) - dwong - Fix incorrect encoding on source code caused by IDE, e.g.
+utils.php r3048
+InboundEmail.php r17199
+header.php r13729
+
+r30876 - 2008-01-09 19:01:57 -0800 (Wed, 09 Jan 2008) - majed - initial check in for instances
+
+r29571 - 2007-11-13 10:49:09 -0800 (Tue, 13 Nov 2007) - eddy - Bug 17113
+Added check for array element prior to accessing it.
+XTemplate/xtpl.php
+
+r26822 - 2007-09-18 10:20:27 -0700 (Tue, 18 Sep 2007) - tswicegood - Refactor a bunch of the loops and such.
+This code doesn't have a future in Sugar, but there are some legacy
+areas that still rely on it.  Refactoring these few areas cuts its impact
+on Sugar's main page by 40% (6.14% to 3.72%).
+
+r26819 - 2007-09-18 10:07:01 -0700 (Tue, 18 Sep 2007) - tswicegood - Reduces this execution time relatively by 25%
+
+r25238 - 2007-08-07 15:40:32 -0700 (Tue, 07 Aug 2007) - dwheeler - Bug 14129. Removed field from vardefs as it is no longer used, and should not be visible from mass update.
+
+r18355 - 2006-12-05 17:00:55 -0800 (Tue, 05 Dec 2006) - jenny - Bug 10292 - checking to see if we actually have an array before setting the array values.
+
+r13627 - 2006-05-31 11:01:53 -0700 (Wed, 31 May 2006) - majed - name change
+
+r12024 - 2006-03-09 23:42:27 -0800 (Thu, 09 Mar 2006) - majed - fixes bugs 4449 5050 4063 4976 4770
+
+r11291 - 2006-01-22 10:41:45 -0800 (Sun, 22 Jan 2006) - andrew - Removed the 'Log' CVS keyword.
+
+r10797 - 2005-12-21 18:10:38 -0800 (Wed, 21 Dec 2005) - wayne - sugar_version and js_custom_version xtpl assignment now in xtpl.php
+
+r9351 - 2005-11-15 15:39:37 -0800 (Tue, 15 Nov 2005) - andrew - Added another check for the $focus that needs to be in for PHP 5.0.3.
+
+r9270 - 2005-11-11 15:08:19 -0800 (Fri, 11 Nov 2005) - majed - Adds support for emails email marketing and email templates
+
+r8555 - 2005-10-19 12:26:13 -0700 (Wed, 19 Oct 2005) - majed - adds initial acl support
+
+r8508 - 2005-10-17 17:23:04 -0700 (Mon, 17 Oct 2005) - majed - adds initial acl support
+
+r5820 - 2005-06-21 14:22:24 -0700 (Tue, 21 Jun 2005) - majed - fixes issues with nusoap and with custom fields
+
+r4920 - 2005-04-29 00:38:19 -0700 (Fri, 29 Apr 2005) - jacob - Preventing conversion of array to string.
+
+r4743 - 2005-04-27 00:57:27 -0700 (Wed, 27 Apr 2005) - jacob - Adding support for "parsing" sections that do not exist in HTML.  This provides backwards compatibility for old HTML files with new PHP files.
+
+r2016 - 2004-12-28 15:19:29 -0800 (Tue, 28 Dec 2004) - majed - added a function to scan through a block checking for a given variable
+
+r1228 - 2004-10-20 02:09:09 -0700 (Wed, 20 Oct 2004) - lam - update
+
+r1211 - 2004-10-19 21:55:03 -0700 (Tue, 19 Oct 2004) - lam - update
+
+r730 - 2004-09-09 20:14:02 -0700 (Thu, 09 Sep 2004) - sugarjacob - Cleaning up blanks
+
+r462 - 2004-08-25 17:43:37 -0700 (Wed, 25 Aug 2004) - sugarmsi - added an exists method to check if a block exists in a template
+
+r397 - 2004-08-08 02:28:36 -0700 (Sun, 08 Aug 2004) - sugarjacob - Fix: XTemplate changed to use <?php script declarations
+
+r297 - 2004-07-31 15:13:23 -0700 (Sat, 31 Jul 2004) - sugarjacob - Removing default setting of template language arrays.
+
+r295 - 2004-07-31 14:37:38 -0700 (Sat, 31 Jul 2004) - sugarjacob - Adding code to automatically assign the language strings to every template created.
+
+r268 - 2004-07-16 01:21:57 -0700 (Fri, 16 Jul 2004) - sugarjacob - Changing the XTemplate replacement mechanism to allow for '$' in the text being substituted.
+
+r80 - 2004-06-11 16:39:47 -0700 (Fri, 11 Jun 2004) - sugarjacob - Fixing issue with a variable not being an array in some cases.
+
+r78 - 2004-06-11 16:34:17 -0700 (Fri, 11 Jun 2004) - sugarjacob - Removing errors or notices about invalid indexs.
+
+r3 - 2004-05-26 22:30:56 -0700 (Wed, 26 May 2004) - sugarjacob - Moving project to SourceForge.
+
+
+*/
+
+
+
 class XTemplate {
 
 /*

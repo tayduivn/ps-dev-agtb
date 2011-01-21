@@ -160,6 +160,13 @@ function verifyArguments($argv,$usage_regular){
 ////	END UTILITIES THAT MUST BE LOCAL :(
 ///////////////////////////////////////////////////////////////////////////////
 
+function rebuildRelations($pre_path = '')
+{
+	$_REQUEST['silent'] = true;
+	include($pre_path.'modules/Administration/RebuildRelationship.php');
+	$_REQUEST['upgradeWizard'] = true;
+	include($pre_path.'modules/ACL/install_actions.php');
+}
 
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -377,11 +384,18 @@ foreach ($beanFiles as $bean => $file) {
 		}
 
 		if (($focus instanceOf SugarBean)) {
-			$sql = $db->repairTable($focus, true);
-			if(!empty($sql)) {
-	   		   logThis($sql, $path);
-	   		   $repairedTables[$focus->table_name] = true;
+			if(!isset($repairedTables[$focus->table_name])) 
+			{
+				$sql = $GLOBALS['db']->repairTable($focus, true);
+				logThis('Running sql:' . $sql, $path);
+				$repairedTables[$focus->table_name] = true;
 			}
+			
+			//Check to see if we need to create the audit table
+		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
+               logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
+		       $focus->create_audit_table();
+            }
 		}
 	}
 }
@@ -407,18 +421,28 @@ foreach ($dictionary as $meta) {
 
 logThis('database repaired', $path);  	
 
+logThis('Start rebuild relationships.', $path);
+@rebuildRelations();
+logThis('End rebuild relationships.', $path);
 
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
-$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
+$origVersion = getSilentUpgradeVar('origVersion');
+if(!$origVersion){
+    global $silent_upgrade_vars_loaded;
+    logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
+}
 
 //BEGIN SUGARCRM flav=pro ONLY 
 // If going from pre 610 to 610+, migrate the report favorites
 // At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
 // so that we can check against that in 6.1.1. 
-logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
-migrate_sugar_favorite_reports();
-logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+if($origVersion < '610'){
+    logThis("Since origVersion is {$origVersion}, which is before 6.1.0, we migrate reports favorites", $path);
+    logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+    migrate_sugar_favorite_reports();
+    logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
+}
 
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
@@ -459,12 +483,12 @@ if($ce_to_pro_ent) {
 
 //bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 if($origVersion < '620'){
-	upgradeDateTimeFields();
+	upgradeDateTimeFields($path);
 }
 
 //bug: 37214 - merge config_si.php settings if available
 logThis('Begin merge_config_si_settings', $path);
-merge_config_si_settings(true);
+merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
 //bug: 36845 - ability to provide global search support for custom modules
@@ -485,6 +509,7 @@ if(empty($errors)) {
 	set_upgrade_progress('end','in_progress','unlinkingfiles','in_progress');
 	logThis('Taking out the trash, unlinking temp files.', $path);
 	unlinkTempFiles(true);
+	removeSilentUpgradeVarsCache();
 	logThis('Taking out the trash, done.', $path);
 }
 

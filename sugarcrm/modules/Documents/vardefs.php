@@ -36,6 +36,48 @@ $dictionary['Document'] = array('table' => 'documents',
   ),
   'name'=>
   array('name'=>'name', 'vname' => 'LBL_NAME', 'source'=>'non-db', 'type'=>'varchar'),
+'doc_id' =>
+  array (
+  	'name' => 'doc_id',
+  	'vname' => 'LBL_DOC_ID',
+  	'type' => 'varchar',
+  	'len' => '100',
+  	'comment' => 'Document ID from documents web server provider',
+  	'importable' => false,
+  ),
+  'doc_type' =>
+  array (
+  	'name' => 'doc_type',
+  	'vname' => 'LBL_DOC_TYPE',
+  	'type' => 'enum',
+    'function' => 'getDocumentsExternalApiDropDown',
+  	'len' => '100',
+  	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+    'popupHelp' => 'LBL_DOC_TYPE_POPUP',
+    'massupdate' => false,
+    'options' => 'eapm_list',
+  ),
+'doc_url' =>
+  array (
+  	'name' => 'doc_url',
+  	'vname' => 'LBL_DOC_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider',
+  	'importable' => false,
+    'massupdate' => false,
+  ),
+'doc_direct_url' =>
+  array (
+  	'name' => 'doc_direct_url',
+  	'vname' => 'LBL_DOC_DIRECT_URL',
+  	'type' => 'varchar',
+  	'len' => '255',
+  	'comment' => 'Document URL from documents web server provider for direct download',
+  	'importable' => false,
+    'massupdate' => false,
+  ),
+
   'filename' =>
   array (
      'name' => 'filename',
@@ -44,17 +86,11 @@ $dictionary['Document'] = array('table' => 'documents',
      'source' => 'non-db',
      'comment' => 'The filename of the document attachment',
 	 'required' => true,
+     'noChange' => true,
+     'allowEapm' => true,
+     'fileId' => 'document_revision_id',
+     'docType' => 'doc_type',
   ),
-
-  'uploadfile' =>
-  array (
-     'name'=>'uploadfile',
-     'required' => true,
-     'vname' => 'LBL_FILENAME',
-     'type' => 'file',
-     'source' => 'non-db',
-  ),
-
 'active_date' =>
   array (
     'name' => 'active_date',
@@ -138,6 +174,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'source'=>'non-db',
     'importable' => 'required',
 	'required' => true,
+    'default' => '1',
   ),
 
   'last_rev_created_name' =>
@@ -194,6 +231,47 @@ $dictionary['Document'] = array('table' => 'documents',
     'source' => 'non-db',
     'vname' => 'LBL_LEADS',
   ),
+  // Links around the world
+  'accounts'=>
+   array (
+       'name' => 'accounts',
+       'type' => 'link',
+       'relationship' => 'documents_accounts',
+       'source' => 'non-db',
+       'vname' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
+   ),
+  'contacts'=>
+   array (
+       'name' => 'contacts',
+       'type' => 'link',
+       'relationship' => 'documents_contacts',
+       'source' => 'non-db',
+       'vname' => 'LBL_CONTACTS_SUBPANEL_TITLE',
+   ),
+  'opportunities'=>
+   array (
+       'name' => 'opportunities',
+       'type' => 'link',
+       'relationship' => 'documents_opportunities',
+       'source' => 'non-db',
+       'vname' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+   ),
+  'cases'=>
+   array (
+       'name' => 'cases',
+       'type' => 'link',
+       'relationship' => 'documents_cases',
+       'source' => 'non-db',
+       'vname' => 'LBL_CASES_SUBPANEL_TITLE',
+   ),
+  'bugs'=>
+   array (
+       'name' => 'bugs',
+       'type' => 'link',
+       'relationship' => 'documents_bugs',
+       'source' => 'non-db',
+       'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
+   ),
 
   'related_doc_id' =>
   array (

@@ -45,8 +45,12 @@ class MySugar{
 				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
 		}
-		elseif (ACLController::moduleSupportsACL($this->type) && !ACLController::checkAccess($this->type,'list',true)) {
-			$displayDashlet = false;
+		elseif (ACLController::moduleSupportsACL($this->type) ) {
+		    $bean = SugarModule::get($this->type)->loadBean();
+		    if ( !ACLController::checkAccess($this->type,'list',true,$bean->acltype)) {
+		        $displayDashlet = false;
+		    }
+		    $displayDashlet = true;
 		}
 		else{
 			$displayDashlet = true;
@@ -570,6 +574,14 @@ EOJS;
 
 		array_push($pages,$newPage);
 
+			
+		//check to see whether the preference is too large to store 
+		if($current_user->isPreferenceSizeTooLarge($this->type)){
+			//user preference is too large, do not attempt to store.  echo error string and return.  This will be processed by mySugar.js
+			echo 'userpref_error';
+			return false;
+		}
+		//store preference and echo guid		
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
 		$newPagesPref = $current_user->getPreference('pages', $this->type);

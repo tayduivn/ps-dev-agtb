@@ -275,10 +275,12 @@ function addToValidateMoreThan(formname, name, type, required, msg, min) {
     validate[formname][validate[formname].length - 1][minIndex] = min;
 }
 
+//BEGIN SUGARCRM flav=int ONLY
 function addToValidateUSAPhone(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'usa_phone';
 }
+//END SUGARCRM flav=int ONLY
 
 function removeFromValidate(formname, name) {
 	for(i = 0; i < validate[formname].length; i++){
@@ -498,6 +500,26 @@ function isValidEmail(emailStr) {
 	if(!lastChar.match(/[^\.]/i)) {
 		return false;
 	}
+	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+	//first character of local part of an email address
+	//should not be a period i.e. '.' 
+	
+	var firstLocalChar=emailStr.charAt(0);
+	if(firstLocalChar.match(/\./)){
+		return false;
+	} 
+	
+	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+	//last character of local part of an email address
+	//should not be a period i.e. '.' 
+	
+	var pos=emailStr.lastIndexOf("@");
+	var localPart = emailStr.substr(0, pos);
+	var lastLocalChar=localPart.charAt(localPart.length - 1);
+	if(lastLocalChar.match(/\./)){
+		return false;
+	}
+	
 	
 	var reg = /@.*?;/g;
 	while ((results = reg.exec(emailStr)) != null) {
@@ -516,12 +538,15 @@ function isValidEmail(emailStr) {
 	// mfh: bug 15010 - more practical implementation of RFC 2822 from http://www.regular-expressions.info/email.html, modifed to accept CAPITAL LETTERS
 	//if(!/[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?/.test(emailStr))
 	//	return false
-	var emailArr = emailStr.split(/::;::/);
+	
+	//bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+	//allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
+    var emailArr = emailStr.split(/::;::/);
 	for (var i = 0; i < emailArr.length; i++) {
 		emailAddress = emailArr[i];
 		if (trim(emailAddress) != '') {
-			if(!/^\s*[\w.%+\-&'\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
-			   !/^.*<[A-Z0-9._%+\-&']+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
+			if(!/^\s*[\w.%+\-&'#!\$\*=\?\^_`\{\}~\/]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}\s*$/i.test(emailAddress) &&
+			   !/^.*<[A-Z0-9._%+\-&'#!\$\*=\?\^_`\{\}~]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[\w-]{2,}>\s*$/i.test(emailAddress)) {
 	
 			   return false;
 			} // if
@@ -985,6 +1010,7 @@ function validate_form(formname, startsWith){
 							   isError = true;
 							}
 							break;
+							//BEGIN SUGARCRM flav=int ONLY
 							case 'usa_phone':
 								var nodes = YAHOO.util.Selector.query('input[name=' + validate[formname][i][nameIndex] + ']', form);
 								for(el in nodes)
@@ -1001,6 +1027,7 @@ function validate_form(formname, startsWith){
 									}
 								}
 							break;
+							//END SUGARCRM flav=int ONLY
 							}
 						}
 					}
@@ -1307,7 +1334,7 @@ function http_fetch_sync(url,post_data) {
 	
 	var args = {"responseText" : global_xmlhttp.responseText,
 				"responseXML" : global_xmlhttp.responseXML,
-				"request_id" : request_id};
+				"request_id" : typeof(request_id) != "undefined" ? request_id : 0};
 	return args;
 
 }
@@ -1627,6 +1654,10 @@ function initEditView(theForm) {
     }
 
     // console.log('DEBUG: Adding checks for '+theForm.id);
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
     
@@ -1636,7 +1667,7 @@ function onUnloadEditView(theForm) {
 	
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' || typeof theForm == 'undefined' || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+    if ( typeof editViewSnapshots == 'undefined' ) { 
         // No snapshots, move along
         return;
     }
@@ -1661,7 +1692,7 @@ function onUnloadEditView(theForm) {
         }
     } else {
         // Just need to check a single form for changes
-		if ( editViewSnapshots == null  || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
             return;
         }
 
@@ -3464,12 +3495,18 @@ SUGAR.language = function() {
         },
 
         get: function(module, str) {
-            if(typeof SUGAR.language.languages[module] == 'undefined'
-            || typeof SUGAR.language.languages[module][str] == 'undefined')
+            if(typeof SUGAR.language.languages[module] == 'undefined' || typeof SUGAR.language.languages[module][str] == 'undefined')
+            {
                 return 'undefined';
-
+            }
             return SUGAR.language.languages[module][str];
-        }
+        },
+        
+        translate: function(module, str)
+        {
+            text = this.get(module, str);
+            return text != 'undefined' ? text : this.get('app_strings', str);  	
+        },
     };
 }();
 
@@ -3675,7 +3712,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-
+	
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
+	width = (width == 600) ? 800 : width;
+	height = (height == 400) ? 800 : height;
+	
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -3987,11 +4028,19 @@ SUGAR.util.isTouchScreen = function()
 
 SUGAR.util.isLoginPage = function(content) 
 {
+	//skip if this is packageManager screen
+	if(SUGAR.util.isPackageManager()) {return false;}
 	var loginPageStart = "<!DOCTYPE";
 	if (content.substr(0, loginPageStart.length) == loginPageStart && content.indexOf("<html>") != -1  && content.indexOf("login_module") != -1) {
 		window.location.href = window.location.protocol + window.location.pathname;
 		return true;
 	}
+}
+
+SUGAR.util.isPackageManager=function(){
+	if(typeof(document.the_form) !='undefined' && typeof(document.the_form.language_pack_escaped) !='undefined'){
+		return true;
+	}else{return false;}
 }
 
 SUGAR.util.ajaxCallInProgress = function(){

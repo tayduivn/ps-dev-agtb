@@ -34,19 +34,19 @@ $listViewDefs['ext_soap_hoovers'] = array(
 	'recname' => array(
 		'width' => '20', 
 		), 
-	'city' => array(
+	'addrcity' => array(
 		'width' => '15', 
 		),
-	'stateorprovince' => array(
+	'addrstateprov' => array(
 		'width' => '15', 
 		),
-	'country' => array(
+	'addrcountry' => array(
 		'width' => '10', 
 		),
 	'hqphone' => array(
 		'width' => '15',
 		),
-	'sales' => array(
+	'finsales' => array(
         'width' => '10',
 		),
 		

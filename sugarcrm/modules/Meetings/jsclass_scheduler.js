@@ -406,13 +406,14 @@ SugarWidgetSchedulerAttendees.prototype.display = function() {
 	if(typeof (GLOBAL_REGISTRY) == 'undefined') {
 		return;
 	}
-	// CCL - Comment out default of current user
-	// grab current user (as event-coordinator)
-	/*
-	if(typeof (GLOBAL_REGISTRY.focus.users_arr) == 'undefined' || GLOBAL_REGISTRY.focus.users_arr.length == 0) {
+
+	//set the current user (as event-coordinator) so that they can be added to invitee list 
+	//only IF the first removed flag has not been set AND this is a new record
+	if((typeof (GLOBAL_REGISTRY.focus.users_arr) == 'undefined' || GLOBAL_REGISTRY.focus.users_arr.length == 0)
+      && document.EditView.record.value =='' && typeof(GLOBAL_REGISTRY.FIRST_REMOVE)=='undefined') {
 		GLOBAL_REGISTRY.focus.users_arr = [ GLOBAL_REGISTRY.current_user ];
 	}
-	*/
+	
 	if(typeof GLOBAL_REGISTRY.focus.users_arr_hash == 'undefined') {
 		GLOBAL_REGISTRY.focus.users_arr_hash = new Object();
 	}
@@ -523,6 +524,8 @@ SugarWidgetScheduleRow.deleteRow = function(bean_id) {
 		if(GLOBAL_REGISTRY.focus.users_arr[i]['fields']['id']==bean_id) {
 			delete GLOBAL_REGISTRY.focus.users_arr_hash[GLOBAL_REGISTRY.focus.users_arr[i]['fields']['id']];
 			GLOBAL_REGISTRY.focus.users_arr.splice(i,1);
+	     	//set first remove flag to true for processing in display() function
+			GLOBAL_REGISTRY.FIRST_REMOVE = true;
 			GLOBAL_REGISTRY.container.root_widget.display();
 		}
 	}

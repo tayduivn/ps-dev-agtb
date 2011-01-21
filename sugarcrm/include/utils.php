@@ -345,7 +345,7 @@ function get_sugar_config_defaults() {
 	'asp', 'cfm', 'js', 'vbs', 'html', 'htm' ),
 	'upload_maxsize' => 3000000,
 	'import_max_execution_time' => 3600,
-	'use_php_code_json' => returnPhpJsonStatus(),
+//	'use_php_code_json' => returnPhpJsonStatus(),
 	'verify_client_ip' => true,
 	'js_custom_version' => '',
 	'js_lang_version' => 1,
@@ -571,8 +571,21 @@ function return_name($row, $first_column, $last_column)
 function get_languages()
 {
 	global $sugar_config;
+	$lang = $sugar_config['languages'];
+    if(!empty($sugar_config['disabled_languages'])){
+        foreach(explode(',', $sugar_config['disabled_languages']) as $disable) {
+            unset($lang[$disable]);
+        }
+    }
+	return $lang;
+}
+
+function get_all_languages()
+{
+	global $sugar_config;
 	return $sugar_config['languages'];
 }
+
 
 function get_language_display($key)
 {
@@ -898,16 +911,18 @@ function return_app_list_strings_language($language) {
 	    $en_app_list_strings = $app_list_strings;
 	}
 
-	if(file_exists("include/language/$language.lang.php")) {
-	include("include/language/$language.lang.php");
+	if($language != 'en_us') {
+    	if(file_exists("include/language/$language.lang.php")) {
+    	    include("include/language/$language.lang.php");
+    	}
 	}
 
 	if(file_exists("include/language/$language.lang.override.php")) {
-		include("include/language/$language.lang.override.php");
-	}
+    	include("include/language/$language.lang.override.php");
+    }
 
-	if(file_exists("include/language/$language.lang.php.override")) {
-		include("include/language/$language.lang.php.override");
+    if(file_exists("include/language/$language.lang.php.override")) {
+    	include("include/language/$language.lang.php.override");
 	}
 
 	// cn: bug 6048 - merge en_us with requested language
@@ -1014,10 +1029,9 @@ function return_application_language($language) {
 		include("custom/include/language/en_us.lang.php");
 	}
 	$en_app_strings = array();
-	if($language_used != $default_language)
-	$en_app_strings = $app_strings;
+	if($language_used != $default_language)  $en_app_strings = $app_strings;
 
-	if(!empty($language)) {
+	if(!empty($language) && $language != 'en_us') {
 		include("include/language/$language.lang.php");
 	}
 
@@ -1101,6 +1115,14 @@ function return_module_language($language, $module, $refresh=false) {
 		return array();
 	}
 
+	$cache_key = "mod_strings_lang.".$language.$module;
+	// Check for cached value
+	$cache_entry = sugar_cache_retrieve($cache_key);
+	if(!empty($cache_entry))
+	{
+		return $cache_entry;
+	}
+
 	// Store the current mod strings for later
 	$temp_mod_strings = $mod_strings;
 	$loaded_mod_strings = array();
@@ -1147,6 +1169,7 @@ function return_module_language($language, $module, $refresh=false) {
 	else
 		$mod_strings = $temp_mod_strings;
 
+    sugar_cache_put($cache_key, $return_value);
 	return $return_value;
 }
 
@@ -2766,6 +2789,7 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
+	//BEGIN SUGARCRM flav=int ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2775,6 +2799,7 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
+	//END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3001,6 +3026,7 @@ function sugar_cleanup($exit = false) {
 	set_include_path(realpath(dirname(__FILE__) . '/..') . PATH_SEPARATOR . get_include_path());
 	chdir(realpath(dirname(__FILE__) . '/..'));
 	global $sugar_config;
+	require_once('include/utils/LogicHook.php');
 	LogicHook::initialize();
 	$GLOBALS['logic_hook']->call_custom_logic('', 'server_round_trip');
 
@@ -3023,6 +3049,25 @@ function sugar_cleanup($exit = false) {
 	if(!empty($GLOBALS['savePreferencesToDB']) && $GLOBALS['savePreferencesToDB']) {
 	    if ( isset($GLOBALS['current_user']) && $GLOBALS['current_user'] instanceOf User )
 	        $GLOBALS['current_user']->savePreferencesToDB();
+	}
+
+	//check to see if this is not an ajax call AND the user preference error flag is set
+	if(
+		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
+
+	){
+		global $app_strings;
+		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
+		$err_mess = $app_strings['ERROR_USER_PREFS'];
+		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
+		echo "
+		<script>
+			ajaxStatus.flashStatus('$err_mess',7000);
+		</script>";
+
 	}
 
 	pre_login_check();
@@ -3788,16 +3833,9 @@ function sugarArrayMergeRecursive($gimp, $dom) {
  * @return bool True if NOT found or WRONG version
  */
 function returnPhpJsonStatus() {
-	$goodVersions = array('1.1.1',);
-
 	if(function_exists('json_encode')) {
 		$phpInfo = getPhpInfo(8);
-
-		if(!in_array($phpInfo['json']['json version'], $goodVersions)) {
-			return true; // bad version found
-		} else {
-			return false; // all requirements met
-		}
+        return version_compare($phpInfo['json']['json version'], '1.1.1', '<');
 	}
 	return true; // not found
 }
@@ -4050,6 +4088,11 @@ function createGroupUser($name) {
 function _getIcon($iconFileName)
 {
     $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconPath) )
+        $iconPath = SugarThemeRegistry::current()->getImageURL(
+            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
+    //Next try removing the icon prefix
     if ( empty($iconPath) )
         $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 

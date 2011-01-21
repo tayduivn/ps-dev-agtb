@@ -136,14 +136,6 @@ function checkResourceSettings(){
 }
 
 
-//rebuild all relationships...
-function rebuildRelations($pre_path = ''){
-	$_REQUEST['silent'] = true;
-	include($pre_path.'modules/Administration/RebuildRelationship.php');
-	 $_REQUEST['upgradeWizard'] = true;
-	 include($pre_path.'modules/ACL/install_actions.php');
-}
-
 function createMissingRels(){
 	$relForObjects = array('leads'=>'Leads','campaigns'=>'Campaigns','prospects'=>'Prospects');
 	foreach($relForObjects as $relObjName=>$relModName){
@@ -639,6 +631,7 @@ foreach($uwFiles as $uwFile) {
 	copy($uwFile, $destFile);
 }
 require_once('modules/UpgradeWizard/uw_utils.php'); // must upgrade UW first
+removeSilentUpgradeVarsCache(); // Clear the silent upgrade vars - Note: Any calls to these functions within this file are removed here
 logThis("*** SILENT UPGRADE INITIATED.", $path);
 logThis("*** UpgradeWizard Upgraded  ", $path);
 
@@ -687,7 +680,7 @@ if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php")) {
 
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
 $_SESSION['upgrade_from_flavor'] = $manifest['name'];	
-	
+
 global $sugar_config;
 global $sugar_version;
 global $sugar_flavor;
@@ -834,6 +827,15 @@ if(!didThisStepRunBefore('commit')){
 	$new_sugar_version = getUpgradeVersion();
     $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
     $destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
+    $siv_varset_1 = setSilentUpgradeVar('origVersion', $origVersion);
+    $siv_varset_2 = setSilentUpgradeVar('destVersion', $destVersion);
+    $siv_write    = writeSilentUpgradeVars();
+    if(!$siv_varset_1 || !$siv_varset_2 || !$siv_write){
+        logThis("Error with silent upgrade variables: origVersion write success is ({$siv_varset_1}) ".
+        		"-- destVersion write success is ({$siv_varset_2}) -- ".
+        		"writeSilentUpgradeVars success is ({$siv_write}) -- ".
+        		"path to cache dir is ({$GLOBALS['sugar_config']['cache_dir']})", $path);
+    }
      require_once('modules/DynamicFields/templates/Fields/TemplateText.php');
 	///////////////////////////////////////////////////////////////////////////////
     ///    RELOAD NEW DEFINITIONS
@@ -1019,12 +1021,9 @@ if(!didThisStepRunBefore('commit')){
 	else if(isset($_REQUEST['silent']) && $_REQUEST['silent'] != true){
 		$_REQUEST['silent'] = true;
 	}
-	 
-	logThis('Start rebuild relationships.', $path);
-	 	@rebuildRelations();
-	logThis('End rebuild relationships.', $path);
+	
 	 //logThis('Checking for leads_assigned_user relationship and if not found then create.', $path);
-		@createMissingRels();
+	@createMissingRels();
 	 //logThis('Checked for leads_assigned_user relationship.', $path);
 	ob_end_clean();	
 	//// run fix on dropdown lists that may have been incorrectly named

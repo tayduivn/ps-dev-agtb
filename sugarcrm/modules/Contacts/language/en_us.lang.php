@@ -201,6 +201,7 @@ $mod_strings = array (
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
 	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',
 	'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
+    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	//END SUGARCRM flav=pro ONLY
 	'LBL_COPY_ADDRESS_CHECKED' => 'Copy Address to Checked Contacts',
 	//BEGIN SUGARCRM flav!=sales ONLY

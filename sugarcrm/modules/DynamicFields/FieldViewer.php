@@ -36,6 +36,9 @@ class FieldViewer{
 		$this->ss->assign('vardef', $vardef);
 		$this->ss->assign('MOD', $mod);
 		$this->ss->assign('APP', $GLOBALS['app_strings']);
+		//Only display range search option if in Studio, not ModuleBuilder
+		$this->ss->assign('range_search_option_enabled', empty($_REQUEST['view_package']));
+		
 		$GLOBALS['log']->debug('FieldViewer.php->getLayout() = '.$vardef['type']);
 		switch($vardef['type']){
 			case 'address':
@@ -52,6 +55,7 @@ class FieldViewer{
 			    require_once('modules/DynamicFields/templates/Fields/Forms/date.php');
 				return get_body($this->ss, $vardef);
 			case 'datetimecombo':
+			case 'datetime':
 			    require_once('modules/DynamicFields/templates/Fields/Forms/datetimecombo.php');
 				return get_body($this->ss, $vardef);
 			case 'enum':

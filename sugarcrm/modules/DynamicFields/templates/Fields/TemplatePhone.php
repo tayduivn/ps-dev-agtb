@@ -39,7 +39,9 @@ class TemplatePhone extends TemplateText{
      */
     function __construct()
 	{
+		//BEGIN SUGARCRM flav=int ONLY
 		$this->vardef_map['validate_usa_format'] = 'validate_usa_format';
+		//END SUGARCRM flav=int ONLY
 	}	
 	
 	/**
@@ -53,10 +55,12 @@ class TemplatePhone extends TemplateText{
 		$def = parent::get_field_def();
 		$def['dbType'] = 'varchar';
 		
+		//BEGIN SUGARCRM flav=int ONLY
     	if(!empty($this->validate_usa_format))
     	{
 		   $def['validate_usa_format'] = $this->validate_usa_format;
 		}
+		//END SUGARCRM flav=int ONLY
 		return $def;	
 	}
 }

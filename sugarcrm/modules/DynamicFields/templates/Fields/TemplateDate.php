@@ -27,12 +27,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class TemplateDate extends TemplateText{
+require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
+
+class TemplateDate extends TemplateRange
+{
 	var $type = 'date';
 	var $len = '';
 	var $dateStrings;
 
 function __construct() {
+	parent::__construct();
 	global $app_strings;
 	$this->dateStrings = array(
 			$app_strings['LBL_NONE']=>'',

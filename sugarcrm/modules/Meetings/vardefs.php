@@ -51,6 +51,61 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting location'
   ),
+  'password' =>
+  array (
+    'name' => 'password',
+    'vname' => 'LBL_PASSWORD',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting password',
+    'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
+  ),
+  'join_url' =>
+  array (
+    'name' => 'join_url',
+    'vname' => 'LBL_URL',
+    'type' => 'varchar',
+    'len' => '200',
+    'comment' => 'Join URL',
+    'studio' => 'false',
+    'reportable' => false,
+  ),
+  'host_url' =>
+  array (
+    'name' => 'host_url',
+    'vname' => 'LBL_URL',
+    'type' => 'varchar',
+    'len' => '400',
+    'comment' => 'Host URL',
+    'studio' => 'false',
+    'reportable' => false,
+  ),
+  'displayed_url' =>
+  array (
+    'name' => 'displayed_url',
+    'vname' => 'LBL_URL',
+    'type' => 'url',
+    'len' => '400',
+    'comment' => 'Meeting URL',
+  ),
+  'creator' =>
+  array (
+    'name' => 'creator',
+    'vname' => 'LBL_CREATOR',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting creator',
+    'studio' => 'false',
+  ),
+  'external_id' =>
+  array (
+    'name' => 'external_id',
+    'vname' => 'LBL_EXTERNALID',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting ID for external app API',
+    'studio' => 'false',
+   ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',
@@ -80,6 +135,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Date of start of meeting',
     'importable' => 'required',
     'required' => true,
+    'enable_range_search' => '1',
   ),
 
   'date_end' =>
@@ -88,7 +144,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_DATE_END',
     'type' => 'datetime',
     'massupdate'=>false,
-    'comment' => 'Date meeting ends'
+    'comment' => 'Date meeting ends',
+    'enable_range_search' => '1',
   ),
   'parent_type' =>
   array (
@@ -110,6 +167,16 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Meeting status (ex: Planned, Held, Not held)',
     'default' => 'Planned',
   ),
+  'type' =>
+   array (
+     'name' => 'type',
+     'vname' => 'LBL_TYPE',
+     'type' => 'enum',
+     'len' => 255,
+     'function' => 'getMeetingsExternalApiDropDown',
+     'comment' => 'Meeting type (ex: WebEx, Other)',
+     'options' => 'eapm_list',
+   ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>
   array (

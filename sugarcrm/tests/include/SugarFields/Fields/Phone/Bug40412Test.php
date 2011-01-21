@@ -1,4 +1,5 @@
 <?php 
+//FILE SUGARCRM flav=int ONLY
 require_once('include/SugarFields/Fields/Phone/SugarFieldPhone.php');
 
 class Bug40412Test extends Sugar_PHPUnit_Framework_TestCase

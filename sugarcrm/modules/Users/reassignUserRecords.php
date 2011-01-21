@@ -70,6 +70,7 @@ if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){
 		"Dashboard",
 		"SavedSearch",
 		"UserPreference",
+	    "SugarFavorites",
 	);
 
 	if(isset($_GET['clear']) && $_GET['clear'] == 'true'){

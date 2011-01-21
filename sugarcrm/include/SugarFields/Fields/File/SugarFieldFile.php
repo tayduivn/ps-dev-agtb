@@ -5,56 +5,130 @@
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldFile extends SugarFieldBase {
-   
-	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-
-        global $app_strings;
-        if(!isset($displayParams['link'])) {
-           $error = $app_strings['ERR_SMARTY_MISSING_DISPLAY_PARAMS'] . 'link';
-           $GLOBALS['log']->error($error);	
-           $this->ss->trigger_error($error);
-           return;
+    private function fillInOptions(&$vardef,&$displayParams) {
+        if ( isset($vardef['allowEapm']) && $vardef['allowEapm'] == true ) {
+            if ( empty($vardef['docType']) ) {
+                $vardef['docType'] = 'doc_type';
+            }
+            if ( empty($vardef['docId']) ) {
+                $vardef['docId'] = 'doc_id';
+            }
+            if ( empty($vardef['docUrl']) ) {
+                $vardef['docUrl'] = 'doc_url';
+            }
+            if ( empty($vardef['docDirectUrl']) ) {
+                $vardef['docDirectUrl'] = 'doc_direct_url';
+            }
+        } else {
+            $vardef['allowEapm'] = false;
         }
-        
-        if(!isset($displayParams['id'])) {
-           $error = $app_strings['ERR_SMARTY_MISSING_DISPLAY_PARAMS'] . 'id';
-           $GLOBALS['log']->error($error);	
-           $this->ss->trigger_error($error);
-           return;
-        }        
 
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch($this->findTemplate('DetailView'));
+        // Override the default module
+        if ( isset($vardef['linkModuleOverride']) ) {
+            $vardef['linkModule'] = $vardef['linkModuleOverride'];
+        } else {
+            $vardef['linkModule'] = '{$module}';
+        }
+
+        // This is needed because these aren't always filled out in the edit/detailview defs
+        if ( !isset($vardef['fileId']) ) {
+            if ( isset($displayParams['id']) ) {
+                $vardef['fileId'] = $displayParams['id'];
+            } else {
+                $vardef['fileId'] = 'id';
+            }
+        }
+    }
+
+
+	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+        $this->fillInOptions($vardef,$displayParams);
+        return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
     
-	public function save(&$bean, $params, $field, $properties, $prefix = ''){
+	function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+        $this->fillInOptions($vardef,$displayParams);
+        return parent::getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+    
+	public function save(&$bean, $params, $field, $vardef, $prefix = ''){
+        $fakeDisplayParams = array();
+        $this->fillInOptions($vardef,$fakeDisplayParams);
+
 		require_once('include/upload_file.php');
-		$upload_file = new UploadFile($prefix . $field);
+		$upload_file = new UploadFile($prefix . $field . '_file');
 
 		//remove file
-		if (isset($_REQUEST['remove_file_' . $field]) && $_REQUEST['remove_file_' . $field] == 1)
+		if (isset($_REQUEST['remove_file_' . $field]) && $params['remove_file_' . $field] == 1)
 		{
 			$upload_file->unlink_file($bean->$field);
 			$bean->$field="";
 		}
 		
 		$move=false;
-		if (isset($_FILES[$prefix . $field]) && $upload_file->confirm_upload())
+		if (isset($_FILES[$prefix . $field . '_file']) && $upload_file->confirm_upload())
 		{
     		$bean->$field = $upload_file->get_stored_file_name();
     		$bean->file_mime_type = $upload_file->mime_type;
 			$bean->file_ext = $upload_file->file_ext;
 			$move=true;
 		}
- 		
+
+        if (isset($params['isDuplicate']) && $params['isDuplicate'] == true && $params['isDuplicate'] != 'false' ) {
+            // It's a duplicate
+            $old_id = $params['relate_id'];
+        }
+
+        if (empty($bean->id)) { 
+            $bean->id = create_guid();
+            $bean->new_with_id = true;
+        }
+
 		if ($move) {
-			if (empty($bean->id)) { 
-				$bean->id = create_guid();
-				$bean->new_with_id = true;
-			}
-        
+            $GLOBALS['log']->debug("IKEA: Moving the file ({$bean->filename})");
 			$upload_file->final_move($bean->id);
-		}
+            $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $upload_file->mime_type);
+        } else if ( ! empty($old_id) ) {
+            // It's a duplicate, I think
+            $GLOBALS['log']->debug("IKEA: It's a duplicate old id ($old_id) / isDuplicate ({$params['isDuplicate']})");
+
+            if ( empty($params[$prefix . $vardef['docUrl'] ]) ) {
+                $GLOBALS['log']->debug("IKEA: It's a locally stored file, ($prefix{$vardef['docUrl']}) is empty");
+                $upload_file->duplicate_file($old_id, $bean->id, $bean->$field);
+            } else {
+                $GLOBALS['log']->debug("IKEA: It's a remotely stored file, lets copy manually");
+                $docType = $vardef['docType'];
+                $bean->$docType = $params[$prefix . $field . '_old_doctype'];
+            }
+		} else if ( !empty($params[$prefix . $field . '_remoteName']) ) {
+            // We ain't moving, we might need to do some remote linking
+            $GLOBALS['log']->debug("IKEA: Remotely linking the file");
+            $displayParams = array();
+            $this->fillInOptions($vardef,$displayParams);
+            
+            if ( isset($params[$prefix . $vardef['docId']])
+                 && ! empty($params[$prefix . $vardef['docId']])
+                 && isset($params[$prefix . $vardef['docType']]) 
+                 && ! empty($params[$prefix . $vardef['docType']])
+                ) {
+                $GLOBALS['log']->debug("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
+                $bean->$field = $params[$prefix . $field . '_remoteName'];
+            }
+        } else {
+            $GLOBALS['log']->debug("IKEA: Not doing a thing");
+        }
+        
+        if ( empty($bean->$field) ) {
+            $GLOBALS['log']->fatal("The $field is empty, clearing out the lot");
+            // Looks like we are emptying this out
+            $clearFields = array('docId', 'docType', 'docUrl', 'docDirectUrl');
+            foreach ( $clearFields as $clearMe ) {
+                if ( ! isset($vardef[$clearMe]) ) {
+                    continue;
+                }
+                $clearField = $vardef[$clearMe];
+                $bean->$clearField = '';
+            }
+        }
 	}
 }
-?>

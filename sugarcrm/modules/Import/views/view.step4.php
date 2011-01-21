@@ -488,8 +488,11 @@ class ImportViewStep4 extends SugarView
                 } else if($focus->object_name == "User" && !empty($current_user) && $focus->is_admin && !is_admin($current_user) && is_admin_for_module($current_user, 'Users')) {
                 	sugar_die($GLOBALS['mod_strings']['ERR_IMPORT_SYSTEM_ADMININSTRATOR']);
                 }
+                //bug# 40260 setting it true as the module in focus is involved in an import
+                $focus->in_import=true;
                 // call any logic needed for the module preSave
                 $focus->beforeImportSave();
+                
                 
                 $focus->save(false);
                 

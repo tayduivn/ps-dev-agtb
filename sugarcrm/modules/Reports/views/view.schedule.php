@@ -37,7 +37,7 @@ class ViewSchedule extends SugarView
         $smarty = new Sugar_Smarty();
         $smarty->assign('MOD',$mod_strings);
         $smarty->assign('APP',$app_strings);
-        $smarty->assign('PAGE_TITLE',get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_SCHEDULE_EMAIL'],''));
+        $smarty->assign('PAGE_TITLE',getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_SCHEDULE_EMAIL']),''));
         $smarty->assign('STYLESHEET',SugarThemeRegistry::current()->getCSS());
         $smarty->assign("CALENDAR_LANG", substr($GLOBALS['current_language'], 0, 2) ) ;
         $smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
@@ -72,6 +72,15 @@ class ViewSchedule extends SugarView
         	if(isset($_REQUEST['schedule_type']) && $_REQUEST['schedule_type']!="")
             	$smarty->assign('SCHEDULE_TYPE',$_REQUEST['schedule_type']);
         }
+        
+       
+        $smarty->assign('CACHE_DIR', $GLOBALS['sugar_config']['cache_dir']);
+        $smarty->assign('CURRENT_LANGUAGE', $GLOBALS['current_language']);
+        $smarty->assign('JS_VERSION',  $GLOBALS['js_version_key']);
+        $smarty->assign('JS_CUSTOM_VERSION', $GLOBALS['sugar_config']['js_custom_version']);
+        $smarty->assign('JS_LANGUAGE_VERSION',  $GLOBALS['sugar_config']['js_lang_version']);
+
+        //$this->_displayJavascript();
         $html = $smarty->fetch('modules/Reports/tpls/AddSchedule.tpl');
         echo $html ;
     }

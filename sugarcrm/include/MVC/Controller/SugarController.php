@@ -7,7 +7,7 @@ require_once('include/MVC/View/SugarView.php');
 
 class SugarController{
 	/**
-	 * remap actions in here 
+	 * remap actions in here
 	 * e.g. make all detail views go to edit views
 	 * $action_remap = array('detailview'=>'editview');
 	 */
@@ -19,7 +19,7 @@ class SugarController{
 	/**
 	 * The name of the target module.
 	 */
-	public $target_module = null;	
+	public $target_module = null;
 	/**
 	 * The name of the current action.
 	 */
@@ -41,7 +41,7 @@ class SugarController{
 	 */
 	public $return_id = null;
 	/**
-	 * If the action was remapped it will be set to do_action and then we will just 
+	 * If the action was remapped it will be set to do_action and then we will just
 	 * use do_action for the actual action to perform.
 	 */
 	protected $do_action = 'index';
@@ -61,13 +61,13 @@ class SugarController{
 	 * this array will hold the mappings between a key and an object for use within the view.
 	 */
 	public $view_object_map = array();
-	
+
 	/**
-	 * This array holds the methods that handleAction() will invoke, in sequence. 
+	 * This array holds the methods that handleAction() will invoke, in sequence.
 	 */
 	protected $tasks = array(
-					   'pre_action', 
-					   'do_action', 
+					   'pre_action',
+					   'do_action',
 					   'post_action'
 					   );
 	/**
@@ -85,7 +85,7 @@ class SugarController{
 						'remapAction',
 						'handle_action',
 						'handleActionMaps',
-					);				
+					);
 	/**
 	 * Whether or not the action has been handled by $process_tasks
 	 *
@@ -106,23 +106,23 @@ class SugarController{
 	 * Map an action directly to a view. This will be loaded from action_view_map.php
 	 */
 	protected $action_view_map = array();
-	
+
 	/**
-	 * This can be set from the application to tell us whether we have authorization to 
+	 * This can be set from the application to tell us whether we have authorization to
 	 * process the action. If this is set we will default to the noaccess view.
 	 */
 	public $hasAccess = true;
-	
+
 	/**
 	 * Map case sensitive filenames to action.  This is used for linux/unix systems
 	 * where filenames are case sensitive
 	 */
 	public static $action_case_file = array(
-										'editview'=>'EditView', 
-										'detailview'=>'DetailView', 
+										'editview'=>'EditView',
+										'detailview'=>'DetailView',
 										'listview'=>'ListView'
 									  );
-	
+
 	/**
 	 * Constructor. This ie meant tot load up the module, action, record as well
 	 * as the mapping arrays.
@@ -141,10 +141,10 @@ class SugarController{
 		//set the module
 		if(!empty($module))
 			$this->setModule($module);
-			
+
 		if(!empty($_REQUEST['target_module']) && $_REQUEST['target_module'] != 'undefined') {
 			$this->target_module = $_REQUEST['target_module'];
-		}				
+		}
 		//set properties on the controller from the $_REQUEST
 		$this->loadPropertiesFromRequest();
 		//load the mapping files
@@ -158,7 +158,7 @@ class SugarController{
 	public function setModule($module){
 		$this->module = $module;
 	}
-	
+
 	/**
 	 * Set properties on the Controller from the $_REQUEST
 	 *
@@ -177,7 +177,7 @@ class SugarController{
 		if(!empty($_REQUEST['return_id']))
 			$this->return_id = $_REQUEST['return_id'];
 	}
-	
+
 	/**
 	 * Load map files for use within the Controller
 	 *
@@ -191,7 +191,8 @@ class SugarController{
 	/**
 	 * Given a record id load the bean. This bean is accessible from any sub controllers.
 	 */
-	public function loadBean(){
+	public function loadBean()
+	{
 		if(!empty($GLOBALS['beanList'][$this->module])){
 			$class = $GLOBALS['beanList'][$this->module];
 			if(!empty($GLOBALS['beanFiles'][$class])){
@@ -205,7 +206,7 @@ class SugarController{
 			}
 		}
 	}
-	
+
 	/**
 	 * Generic load method to load mapping arrays.
 	 */
@@ -213,40 +214,40 @@ class SugarController{
 		$$var = sugar_cache_retrieve("CONTROLLER_". $var . "_".$this->module);
 		if(!$$var){
 			if($merge && !empty($this->$var)){
-				$$var = $this->$var;	
+				$$var = $this->$var;
 			}else{
 				$$var = array();
 			}
-			if(file_exists('include/MVC/Controller/'. $var . '.php')){		
+			if(file_exists('include/MVC/Controller/'. $var . '.php')){
 				require('include/MVC/Controller/'. $var . '.php');
 			}
-			if(file_exists('modules/'.$this->module.'/'. $var . '.php')){		
+			if(file_exists('modules/'.$this->module.'/'. $var . '.php')){
 				require('modules/'.$this->module.'/'. $var . '.php');
 			}
-			if(file_exists('custom/modules/'.$this->module.'/'. $var . '.php')){		
+			if(file_exists('custom/modules/'.$this->module.'/'. $var . '.php')){
 				require('custom/modules/'.$this->module.'/'. $var . '.php');
 			}
-			if(file_exists('custom/include/MVC/Controller/'. $var . '.php')){		
+			if(file_exists('custom/include/MVC/Controller/'. $var . '.php')){
 				require('custom/include/MVC/Controller/'. $var . '.php');
 			}
-			
+
 			sugar_cache_put("CONTROLLER_". $var . "_".$this->module, $$var);
 		}
 		$this->$var = $$var;
 	}
-			
+
 	/**
 	 * This method is called from SugarApplication->execute and it will bootstrap the entire controller process
 	 */
 	final public function execute(){
-		$this->process();        
+		$this->process();
 		if(!empty($this->view)){
 			$this->processView();
 		}elseif(!empty($this->redirect_url)){
 			$this->redirect();
 		}
 	}
-	
+
 	/**
 	 * Display the appropriate view.
 	 */
@@ -262,7 +263,7 @@ class SugarController{
 		}
 		$view->process();
 	}
-	
+
 	/**
 	 * Meant to be overridden by a subclass and allows for specific functionality to be
 	 * injected prior to the process() method being called.
@@ -272,40 +273,40 @@ class SugarController{
 
 	/**
 	 * if we have a function to support the action use it otherwise use the default action
-	 * 
+	 *
 	 * 1) check for file
 	 * 2) check for action
 	 */
 	public function process(){
 		$GLOBALS['action'] = $this->action;
 		$GLOBALS['module'] = $this->module;
-		
+
 		//check to ensure we have access to the module.
 		if($this->hasAccess){
 			$this->do_action = $this->action;
-			
+
 			$file = self::getActionFilename($this->do_action);
 
 			$this->loadBean();
-			
+
 			$processed = false;
 			foreach($this->process_tasks as $process){
 				$this->$process();
 				if($this->_processed)
 					break;
 			}
-	
+
 			$this->redirect();
 		}else{
 			$this->no_access();
 		}
 	}
-		
+
 	/**
 	 * This method is called from the process method. I could also be called within an action_* method.
 	 * It allows a developer to override any one of these methods contained within,
 	 * or if the developer so chooses they can override the entire action_* method.
-	 * 
+	 *
 	 * @return true if any one of the pre_, do_, or post_ methods have been defined,
 	 * false otherwise.  This is important b/c if none of these methods exists, then we will run the
 	 * action_default() method.
@@ -317,7 +318,7 @@ class SugarController{
 		}
 		$this->_processed = $processed;
 	}
-		
+
 	/**
 	 * Perform an action prior to the specified action.
 	 * This can be overridde in a sub-class
@@ -331,9 +332,9 @@ class SugarController{
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Perform the specified action. 
+	 * Perform the specified action.
 	 * This can be overridde in a sub-class
 	 */
 	private function do_action(){
@@ -345,7 +346,7 @@ class SugarController{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Perform an action after to the specified action has occurred.
 	 * This can be overridde in a sub-class
@@ -359,25 +360,25 @@ class SugarController{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * If there is no action found then display an error to the user.
 	 */
 	protected function no_action(){
 		sugar_die($GLOBALS['app_strings']['LBL_NO_ACTION']);
 	}
-	
+
 	/**
 	 * The default action handler for instances where we do not have access to process.
 	 */
 	protected function no_access(){
 		$this->view = 'noaccess';
 	}
-	
+
 	///////////////////////////////////////////////
 	/////// HELPER FUNCTIONS
 	///////////////////////////////////////////////
-	
+
 	/**
 	 * Determine if a given function exists on the objects
 	 * @param function - the function to check
@@ -386,27 +387,27 @@ class SugarController{
 	protected function hasFunction($function){
 		return method_exists($this, $function);
 	}
-	
-	
+
+
 	/**
 	 * Set the url to which we will want to redirect
-	 * 
+	 *
 	 * @param string url - the url to which we will want to redirect
 	 */
 	protected function set_redirect($url){
 		$this->redirect_url = $url;
 	}
-	
+
 	/**
 	 * Perform redirection based on the redirect_url
-	 * 
+	 *
 	 */
 	protected function redirect(){
-	
+
 		if(!empty($this->redirect_url))
 			SugarApplication::redirect($this->redirect_url);
 	}
-	
+
 	////////////////////////////////////////////////////////
 	////// DEFAULT ACTIONS
 	///////////////////////////////////////////////////////
@@ -414,11 +415,11 @@ class SugarController{
 	/*
 	 * Save a bean
 	 */
-	 
+
 	/**
 	 * Do some processing before saving the bean to the database.
 	 */
-	public function pre_save(){	
+	public function pre_save(){
 		if(!empty($_POST['assigned_user_id']) && $_POST['assigned_user_id'] != $this->bean->assigned_user_id && $_POST['assigned_user_id'] != $GLOBALS['current_user']->id && empty($GLOBALS['sugar_config']['exclude_notifications'][$this->bean->module_dir])){
 			$this->bean->notify_on_save = true;
 		}
@@ -428,25 +429,25 @@ class SugarController{
 		foreach($this->bean->field_defs as $field => $properties) {
 			$type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
 		    $sf = $sfh->getSugarField(ucfirst($type), true);
-            if($sf != null){
-                $sf->save($this->bean, $_POST, $field, $properties);
-            }
 			if(isset($_POST[$field])) {
 				if(is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
 					if(empty($_POST[$field][0])) {
 						unset($_POST[$field][0]);
 					}
 					$_POST[$field] = encodeMultienumValue($_POST[$field]);
-				}	
+				}
 				$this->bean->$field = $_POST[$field];
 			} else if(!empty($properties['isMultiSelect']) && !isset($_POST[$field]) && isset($_POST[$field . '_multiselect'])) {
 				$this->bean->$field = '';
 			}
+            if($sf != null){
+                $sf->save($this->bean, $_POST, $field, $properties);
+            }
 		}
-        
+
 		foreach($this->bean->relationship_fields as $field=>$link){
 			if(!empty($_POST[$field])){
-				$this->bean->$field = $_POST[$field];	
+				$this->bean->$field = $_POST[$field];
 			}
 		}
 		if(!$this->bean->ACLAccess('save')){
@@ -455,14 +456,14 @@ class SugarController{
 		}
 		$this->bean->unformat_all_fields();
 	}
-	
+
 	/**
 	 * Perform the actual save
 	 */
 	public function action_save(){
 		$this->bean->save(!empty($this->bean->notify_on_save));
 	}
-	
+
 	/**
 	 * Specify what happens after the save has occurred.
 	 */
@@ -470,11 +471,11 @@ class SugarController{
 		$module = (!empty($this->return_module) ? $this->return_module : $this->module);
 		$action = (!empty($this->return_action) ? $this->return_action : 'DetailView');
 		$id = (!empty($this->return_id) ? $this->return_id : $this->bean->id);
-		
+
 		$url = "index.php?module=".$module."&action=".$action."&record=".$id;
 		$this->set_redirect($url);
 	}
-	
+
 	/*
 	 * Delete a bean
 	 */
@@ -490,12 +491,12 @@ class SugarController{
 				ACLController::displayNoAccess(true);
 				sugar_cleanup(true);
 			}
-			$this->bean->mark_deleted($_REQUEST['record']);	
+			$this->bean->mark_deleted($_REQUEST['record']);
 		}else{
 			sugar_die("A record number must be specified to delete");
 		}
 	}
-	
+
 	/**
 	 * Specify what happens after the deletion has occurred.
 	 */
@@ -503,8 +504,8 @@ class SugarController{
 		$return_module = isset($_REQUEST['return_module']) ?
 			$_REQUEST['return_module'] :
 			$GLOBALS['sugar_config']['default_module'];
-		$return_action = isset($_REQUEST['return_action']) ? 
-			$_REQUEST['return_action'] : 
+		$return_action = isset($_REQUEST['return_action']) ?
+			$_REQUEST['return_action'] :
 			$GLOBALS['sugar_config']['default_action'];
 		$return_id = isset($_REQUEST['return_id']) ?
 			$_REQUEST['return_id'] :
@@ -524,6 +525,8 @@ class SugarController{
 			}
 
             set_time_limit(0);//I'm wondering if we will set it never goes timeout here.
+            // until we have more efficient way of handling MU, we have to disable the limit
+            $GLOBALS['db']->setQueryLimit(0);
             require_once("include/MassUpdate.php");
             require_once('modules/MySettings/StoreQuery.php');
             $seed = loadBean($_REQUEST['module']);
@@ -556,8 +559,8 @@ class SugarController{
 		$return_module = isset($_REQUEST['return_module']) ?
 			$_REQUEST['return_module'] :
 			$GLOBALS['sugar_config']['default_module'];
-		$return_action = isset($_REQUEST['return_action']) ? 
-			$_REQUEST['return_action'] : 
+		$return_action = isset($_REQUEST['return_action']) ?
+			$_REQUEST['return_action'] :
 			$GLOBALS['sugar_config']['default_action'];
 		$url = "index.php?module=".$return_module."&action=".$return_action;
 		if($return_module == 'Emails'){//specificly for My Achieves
@@ -574,21 +577,21 @@ class SugarController{
 		$this->view_object_map['bean'] = $this->bean;
 		$this->view = 'list';
 	}
-		
+
 /*
-	
-	//THIS IS HANDLED IN ACTION_REMAP WHERE INDEX IS SET TO LISTVIEW 
+
+	//THIS IS HANDLED IN ACTION_REMAP WHERE INDEX IS SET TO LISTVIEW
 	function action_index(){
 	}
 */
-	
+
 	/**
 	 * Action to handle when using a file as was done in previous versions of Sugar.
 	 */
 	protected function action_default(){
 		$this->view = 'classic';
 	}
-	
+
 	/**
 	 * this method id used within a Dashlet when performing an ajax call
 	 */
@@ -599,57 +602,57 @@ class SugarController{
 		    $dashletDefs = $GLOBALS['current_user']->getPreference('dashlets', 'Home'); // load user's dashlets config
 		    if(!empty($dashletDefs[$id])) {
 		        require_once($dashletDefs[$id]['fileLocation']);
-		    
+
 		        $dashlet = new $dashletDefs[$id]['className']($id, (isset($dashletDefs[$id]['options']) ? $dashletDefs[$id]['options'] : array()));
 
-		        if(method_exists($dashlet, $requestedMethod) || method_exists($dashlet, '__call')) { 
-		            echo $dashlet->$requestedMethod();    
-		        } 
+		        if(method_exists($dashlet, $requestedMethod) || method_exists($dashlet, '__call')) {
+		            echo $dashlet->$requestedMethod();
+		        }
 		        else {
 		            echo 'no method';
 		        }
 		    }
 		}
 	}
-	
+
 	/**
 	 * this method is used within a Dashlet when the options configuration is posted
 	 */
 	protected function action_configuredashlet(){
 		global $current_user, $mod_strings;
-		
+
 		if(!empty($_REQUEST['id'])) {
 		    $id = $_REQUEST['id'];
 		    $dashletDefs = $current_user->getPreference('dashlets', $_REQUEST['module']); // load user's dashlets config
 		    require_once($dashletDefs[$id]['fileLocation']);
-		
+
 		    $dashlet = new $dashletDefs[$id]['className']($id, (isset($dashletDefs[$id]['options']) ? $dashletDefs[$id]['options'] : array()));
 		    if(!empty($_REQUEST['configure']) && $_REQUEST['configure']) { // save settings
 		        $dashletDefs[$id]['options'] = $dashlet->saveOptions($_REQUEST);
-		        $current_user->setPreference('dashlets', $dashletDefs, 0, $_REQUEST['module']);    
-		    } 
+		        $current_user->setPreference('dashlets', $dashletDefs, 0, $_REQUEST['module']);
+		    }
 		    else { // display options
 		        $json = getJSONobj();
 		        return 'result = ' . $json->encode((array('header' => $dashlet->title . ' : ' . $mod_strings['LBL_OPTIONS'],
 		                                                 'body'  => $dashlet->displayOptions())));
-		
+
 		    }
 		}
 		else {
 		    return '0';
-		}	
+		}
 	}
-	
+
 	/**
 	 * getActionFilename
 	 */
 	public static function getActionFilename($action) {
 	   if(isset(self::$action_case_file[$action])) {
 	   	  return self::$action_case_file[$action];
-	   }	
+	   }
 	   return $action;
 	}
-	
+
 	/********************************************************************/
 	// 				PROCESS TASKS
 	/********************************************************************/
@@ -664,7 +667,7 @@ class SugarController{
 	private function blockFileAccess(){
 		//check if the we have enabled file_access_control and if so then check the mappings on the request;
 		if(!empty($GLOBALS['sugar_config']['admin_access_control']) && $GLOBALS['sugar_config']['admin_access_control']){
-			$this->loadMapping('file_access_control_map');	
+			$this->loadMapping('file_access_control_map');
 			//since we have this turned on, check the mapping file
 			$module = strtolower($this->module);
 			$action = strtolower($this->do_action);
@@ -697,7 +700,7 @@ class SugarController{
 		}else
 			$this->_processed = false;
 	}
-	
+
 	/**
 	 * This code is part of the entry points reworking. We have consolidated all
 	 * entry points to go through index.php. Now in order to bring up an entry point
@@ -718,7 +721,7 @@ class SugarController{
 			}
 		}
 	}
-    
+
     /**
      * Checks to see if the requested entry point requires auth
      *
@@ -728,13 +731,13 @@ class SugarController{
     public function checkEntryPointRequiresAuth($entryPoint)
     {
         $this->loadMapping('entry_point_registry');
-        
+
         if ( isset($this->entry_point_registry[$entryPoint]['auth'])
                 && !$this->entry_point_registry[$entryPoint]['auth'] )
             return false;
         return true;
     }
-	
+
 	/**
 	 * Meant to handle old views e.g. DetailView.php.
 	 *
@@ -752,7 +755,7 @@ class SugarController{
 	    if ( $action == 'index' ) {
 	        $action = 'list';
 	    }
-		
+
 		if ((file_exists('modules/' . $this->module . '/'. $file . '.php')
                 && !file_exists('modules/' . $this->module . '/views/view.'. $action . '.php'))
             || (file_exists('custom/modules/' . $this->module . '/'. $file . '.php')
@@ -766,9 +769,9 @@ class SugarController{
 			$this->_processed = true;
 		}
 	}
-	
+
 	/**
-	 * If the action has been remapped to a different action as defined in 
+	 * If the action has been remapped to a different action as defined in
 	 * action_file_map.php or action_view_map.php load those maps here.
 	 *
 	 */
@@ -785,7 +788,7 @@ class SugarController{
 		}else
 			$this->no_action();
 	}
-	
+
 	/**
 	 * Actually remap the action if required.
 	 *
@@ -796,10 +799,10 @@ class SugarController{
 			$this->do_action = $this->action;
 		}
 	}
-    
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     /**
-	 * Remap the action to the wireless equivalent if the module supports it and 
+	 * Remap the action to the wireless equivalent if the module supports it and
 	 * the user is on a mobile device. Also, map wireless actions to normal ones if the
 	 * user is not using a wireless device.
 	 */

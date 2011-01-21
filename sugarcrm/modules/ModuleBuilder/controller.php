@@ -666,7 +666,7 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
         $parser->writeWorkingFile () ;
         
-    	if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
+    	if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
 	        	$parser2->setUseTabs($parser->getUseTabs());
@@ -695,7 +695,7 @@ class ModuleBuilderController extends SugarController
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
         
-        if(!empty($_REQUEST [ 'sync_detail_and_edit' ])){
+        if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
 	        	$parser2->setUseTabs($parser->getUseTabs());

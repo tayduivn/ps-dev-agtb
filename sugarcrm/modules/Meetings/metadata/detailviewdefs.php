@@ -87,6 +87,20 @@ array (
           'location',
         ),
         array (
+          'type',
+        ),
+        array (
+            array(
+                'name'=>'host_url',
+                'customCode'=>'{if !empty($fields.join_url.value)}{if $current_user->id == $fields.assigned_user_id.value}<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id={$fields.id.value}&host_meeting=1" target="_blank"><img src="{sugar_getimagepath file="start_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_HOST_EXT_MEETING}"></a>{/if} <a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id={$fields.id.value}" target="_blank"><img src="{sugar_getimagepath file="join_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_JOIN_EXT_MEETING}"></a></a>{/if}',
+                'customLabel'=>'{if !empty($fields.join_url.value)}{$MOD.LBL_URL}:{/if}',
+            ),           
+            array(
+                'name'=>'password',
+                'customLabel'=>'{if !empty($fields.password.value)}{$MOD.LBL_PASSWORD}:{/if}',
+            ),
+        ),
+        array (
           array (
             'name' => 'reminder_checked',
             'fields' => 
@@ -112,6 +126,7 @@ array (
             'label' => 'LBL_DATE_MODIFIED',
             'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
           ),
+
         ),
         array (
 		  //BEGIN SUGARCRM flav=pro ONLY

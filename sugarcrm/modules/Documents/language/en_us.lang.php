@@ -66,13 +66,16 @@ $mod_strings = array (
 	'LBL_FILE_EXTENSION'  => 'File Extension',
 	'LBL_LAST_REV_MIME_TYPE' => 'Last revision MIME type',
 	'LBL_CAT_OR_SUBCAT_UNSPEC'=>'Unspecified',
+    'LBL_HOMEPAGE_TITLE' => 'My Documents',
 	//quick search
 	'LBL_NEW_FORM_TITLE' => 'New Document',
 	//document edit and detail view
 	'LBL_DOC_NAME' => 'Document Name:',
 	'LBL_FILENAME' => 'File Name:',
+	'LBL_LIST_FILENAME' => 'File Name',
 	'LBL_DOC_VERSION' => 'Revision:',
 	'LBL_CATEGORY_VALUE' => 'Category:',
+	'LBL_LIST_CATEGORY' => 'Category',
 	'LBL_SUBCATEGORY_VALUE'=> 'Sub Category:',
 	'LBL_DOC_STATUS'=> 'Status:',
 	'LBL_LAST_REV_CREATOR' => 'Revision Created By:',
@@ -149,6 +152,19 @@ $mod_strings = array (
     'LBL_CREATED_USER' => 'Created User',
     'LBL_THEREVISIONS_SUBPANEL_TITLE' => 'Reversions',
     'LBL_DOCUMENT_INFORMATION' => 'Document Overview',
+	'LBL_DOC_ID' => 'Document Source ID',
+	'LBL_DOC_TYPE' => 'Source',
+	'LBL_LIST_DOC_TYPE' => 'Source',
+    'LBL_DOC_TYPE_POPUP' => 'Select a source to which this document will be uploaded<br> and from which it will be available.',
+	'LBL_DOC_URL' => 'Document Source URL',
+	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
+
+    // Links around the world
+    'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Accounts',
+    'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
+    'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
+    'LBL_CASES_SUBPANEL_TITLE' => 'Cases',
+    'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
 );
 
 

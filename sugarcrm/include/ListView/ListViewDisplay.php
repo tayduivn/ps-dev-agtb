@@ -63,7 +63,11 @@ class ListViewDisplay {
 	}
 	function shouldProcess($moduleDir){
 		if(!empty($GLOBALS['sugar_config']['save_query']) && $GLOBALS['sugar_config']['save_query'] == 'populate_only'){
-		    if(empty($GLOBALS['displayListView']) && (!empty($_REQUEST['clear_query']) || $_REQUEST['module'] == $moduleDir && ((empty($_REQUEST['query']) || $_REQUEST['query'] == 'MSI' )&& (empty($_SESSION['last_search_mod']) || $_SESSION['last_search_mod'] != $moduleDir ) ))){
+		    if(empty($GLOBALS['displayListView']) 
+		            && (!empty($_REQUEST['clear_query']) 
+		                || $_REQUEST['module'] == $moduleDir 
+		                    && ((empty($_REQUEST['query']) || $_REQUEST['query'] == 'MSI' )
+		                        && (empty($_SESSION['last_search_mod']) || $_SESSION['last_search_mod'] != $moduleDir ) ))){
 				$_SESSION['last_search_mod'] = $_REQUEST['module'] ;
 				$this->should_process = false;
 				return false;
@@ -146,6 +150,16 @@ class ListViewDisplay {
 	                 	}
 	            	}
 	        }//fi == 'html'
+
+            //Bug 40511, make sure relate fields have the correct module defined
+            if ($this->displayColumns[$columnName]['type'] == "relate" && !empty($seedDef['link']) && empty( $this->displayColumns[$columnName]['module']))
+            {
+                $link = $seedDef['link'];
+                if (!empty($this->lvd->seed->field_defs[$link]) && !empty($this->lvd->seed->field_defs[$seedDef['link']]['module']))
+                {
+                    $this->displayColumns[$columnName]['module'] = $this->lvd->seed->field_defs[$seedDef['link']]['module'];
+                }
+            }
 
 			if (!empty($seedDef['sort_on'])) {
 		    	$this->displayColumns[$columnName]['orderBy'] = $seedDef['sort_on'];
@@ -234,13 +248,18 @@ class ListViewDisplay {
 	 * Display the listview
 	 * @return string ListView contents
 	 */
-	function display() {
-		if(!$this->should_process) return '';
+	public function display() 
+	{
+		if (!$this->should_process) {
+		    return '';
+		}
+		
 		$str = '';
-		if($this->multiSelect == true && $this->show_mass_update_form)
+		if ($this->multiSelect == true && $this->show_mass_update_form) {
 			$str = $this->mass->getDisplayMassUpdateForm(true, $this->multi_select_popup).$this->mass->getMassUpdateFormHeader($this->multi_select_popup);
-
-        return $str;
+		}
+        
+		return $str;
 	}
 	/**
 	 * Display the select link
@@ -358,7 +377,7 @@ EOHTML;
 	{
 		global $app_strings;
 
-		return "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_form(true, '{$_REQUEST['module']}', 'index.php?entryPoint=export','{$app_strings['LBL_LISTVIEW_NO_SELECTED']}')\">{$app_strings['LBL_EXPORT']}</a>";
+		return "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_form(true, '{$this->seed->module_dir}', 'index.php?entryPoint=export','{$app_strings['LBL_LISTVIEW_NO_SELECTED']}')\">{$app_strings['LBL_EXPORT']}</a>";
 	}
 
 	/**
@@ -411,7 +430,7 @@ EOHTML;
 
 		if($client == 'sugar')
 			$script = "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
-					'onclick="return sListView.send_form_for_emails(true, \''."Emails".'\', \'index.php?module=Emails&action=Compose&ListView=true\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\', \''.$_REQUEST['module'].'\', \''.$totalCount.'\', \''.$app_strings['LBL_LISTVIEW_LESS_THAN_TEN_SELECT'].'\')">' .
+					'onclick="return sListView.send_form_for_emails(true, \''."Emails".'\', \'index.php?module=Emails&action=Compose&ListView=true\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\', \''.$this->seed->module_dir.'\', \''.$totalCount.'\', \''.$app_strings['LBL_LISTVIEW_LESS_THAN_TEN_SELECT'].'\')">' .
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 		else
 			$script = "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
@@ -439,7 +458,7 @@ EOHTML;
 	function buildSelectedObjectsSpan($echo = true, $total=0) {
 		global $app_strings;
 
-		$selectedObjectSpan = "{$app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' id='selectCountTop' readonly name='selectCount[]' value='{$total}' />";
+		$selectedObjectSpan = "<div style='display: inline-block;'>{$app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' id='selectCountTop' readonly name='selectCount[]' value='{$total}' /></div>";
 
         return $selectedObjectSpan;
 	}
@@ -459,7 +478,7 @@ EOHTML;
         $return_string.= isset($_REQUEST['action']) ? "&return_action={$_REQUEST['action']}" : "";
         $return_string.= isset($_REQUEST['record']) ? "&return_id={$_REQUEST['record']}" : "";
         //need delete and edit access.
-		if (!(ACLController::checkAccess( $_REQUEST['module'], 'edit', true)) or !(ACLController::checkAccess( $_REQUEST['module'], 'delete', true))) {
+		if (!(ACLController::checkAccess($this->seed->module_dir, 'edit', true)) or !(ACLController::checkAccess($this->seed->module_dir, 'delete', true))) {
 			return '';
 		}
 
@@ -477,17 +496,19 @@ EOHTML;
 	 *
 	 * @return string HTML
 	 */
-	protected function buildMergeLink()
+	protected function buildMergeLink(array $modules_array = null)
 	{
-        require_once('modules/MailMerge/modules_array.php');
+        if ( empty($modules_array) ) {
+            require('modules/MailMerge/modules_array.php');
+        }
         global $current_user, $app_strings;
 
         $admin = new Administration();
         $admin->retrieveSettings('system');
         $user_merge = $current_user->getPreference('mailmerge_on');
-       	$module_dir = (!empty($this->seed->module_dir) ? $this->seed->module_dir : '');
+        $module_dir = (!empty($this->seed->module_dir) ? $this->seed->module_dir : '');
         $str = '';
-
+        
         if ($user_merge == 'on' && isset($admin->settings['system_mailmerge_on']) && $admin->settings['system_mailmerge_on'] && !empty($modules_array[$module_dir])) {
             $str = "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
 					'onclick="if (document.MassUpdate.select_entire_list.value==1){document.location.href=\'index.php?action=index&module=MailMerge&entire=true\'} else {return sListView.send_form(true, \'MailMerge\',\'index.php\',\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\');}">' .
@@ -523,7 +544,7 @@ EOHTML;
 			if ( !form.module ) {
 			    var input = document.createElement('input');
 			    input.setAttribute ( 'name' , 'module' );
-			    input.setAttribute ( 'value' , '{$_REQUEST['module']}' );
+			    input.setAttribute ( 'value' , '{$this->seed->module_dir}' );
 			    input.setAttribute ( 'type' , 'hidden' );
 			    form.appendChild ( input ) ;
 			    var input = document.createElement('input');
@@ -580,7 +601,8 @@ EOF;
 	 * Display the bottom of the ListView (ie MassUpdate
 	 * @return string contents
 	 */
-	function displayEnd() {
+	public function displayEnd() 
+	{
 		$str = '';
 		if($this->show_mass_update_form) {
 			$str .= $this->mass->getMassUpdateForm(true);
@@ -594,7 +616,8 @@ EOF;
      * Display the multi select data box etc.
      * @return string contents
      */
-	function getMultiSelectData() {
+	public function getMultiSelectData() 
+	{
 		$str = "<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n";
 
 		$massUpdateRun = isset($_REQUEST['massupdate']) && $_REQUEST['massupdate'] == 'true';
@@ -604,7 +627,8 @@ EOF;
 		$str .= "<textarea style='display: none' name='uid'>{$uids}</textarea>\n" .
 				"<input type='hidden' name='select_entire_list' value='{$select_entire_list}'>\n".
 				"<input type='hidden' name='{$this->moduleString}' value='0'>\n";
-		return $str;
+		
+        return $str;
 	}
 
 }

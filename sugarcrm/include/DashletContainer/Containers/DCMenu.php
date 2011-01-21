@@ -152,7 +152,7 @@ EOQ;
 		<div id='dcmenutop'></div>
 		<div id='dcmenu' class='dcmenu dcmenuFloat'>
 		{$notificationsHTML}
-		<div class="dcmenuDivider" style="float: left; margin-left: 15px;"></div>
+		<div class="dcmenuDivider" id="notificationsDivider"></div>
 		
 		<div id="dcmenuContainer">
 		<ul id="dcmenuitems">
@@ -177,6 +177,16 @@ EOQ;
 			   $html .= $this->getMenuItem($action);	
 			}
 		}
+
+		$dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
+		if (is_file('custom/' . $dyn_actions_path)) {
+		    include('custom/' . $dyn_actions_path);
+		} else if ( is_file($dyn_actions_path) ) {
+		    include($dyn_actions_path); 
+        }
+		if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php')) {
+			include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
+        }
 		
 		foreach($dynamicDCActions as $def){
 			$html .= $this->getDynamicMenuItem($def);

@@ -450,6 +450,7 @@ p#clear {
 }
 
  .yui-calendar .calnavleft {
+	background: url("../../../../include/javascript/yui/build/assets/skins/sam/sprite.png") repeat scroll 0 -450px transparent; 
     width: 25px;
     height: 15px;
     top: 0;
@@ -457,9 +458,11 @@ p#clear {
     left: -10px;
     margin-left: .4em;
     cursor: pointer;
+    background: transparent url(layout_sprite.png) no-repeat 0 -450px;    
 }
 
  .yui-calendar .calnavright {
+	background: url("../../../../include/javascript/yui/build/assets/skins/sam/sprite.png") repeat scroll 0 -500px transparent; 
     width: 25px;
     height: 15px;
     top: 0;
@@ -467,6 +470,7 @@ p#clear {
     right: -10px;
     margin-right: .4em;
     cursor: pointer;
+    background: transparent url(layout_sprite.png) no-repeat 0 -500px; 
 }
 
  .yui-calendar .calweekdayrow {
@@ -1230,6 +1234,7 @@ p#clear {
 
  .yui-dialog .ft .button-group {
     display: block;
+    clear: both;
     text-align: right;
 }
 

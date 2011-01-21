@@ -64,6 +64,9 @@ $mod_strings = array (
   'LBL_DONE'=>'Done',
   'LBL_TITLE'=>'Title',
   'LBL_ROWS'=>'Rows',
+//BEGIN SUGARCRM flav=pro ONLY
+  'LBL_MY_FAVORITES_ONLY'=>'Only My Favorites',
+//END SUGARCRM flav=pro ONLY
   'LBL_CATEGORIES'=>'Modules',
   'LBL_TIME_LAST_WEEK'=>'Last Week',
   'LBL_TIME_WEEKS'    =>'Weeks',
@@ -93,5 +96,7 @@ $mod_strings = array (
   
   'LBL_SELECT' => 'Select',  
   'LBL_POST' => 'Post', 
+  'LBL_EXTERNAL_PREFIX' => 'External: ',
+  'LBL_EXTERNAL_WARNING' => 'Items labeled "external" require an <a href="?module=EAPM">external account</a>.',
 );
 ?>

@@ -89,7 +89,7 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
     {
 		return "SELECT l1.user_name, tracker.module_name, count(*) count " .
                     "FROM tracker INNER JOIN users l1 ON l1.id = tracker.user_id and l1.deleted = 0 " .
-                    "WHERE tracker.deleted = 0 AND tracker.date_modified > ".db_convert("'".$timedate->getNow()->modify("-30 days")->asDb()."'" ,"datetime")." " .
+                    "WHERE tracker.deleted = 0 AND tracker.date_modified > ".db_convert("'".$GLOBALS['timedate']->getNow()->modify("-30 days")->asDb()."'" ,"datetime")." " .
                         "AND tracker.user_id in (Select id from users where reports_to_id = '{$GLOBALS['current_user']->id}') " .
                     "GROUP BY l1.user_name, tracker.module_name " .
                     "ORDER BY l1.user_name ASC";

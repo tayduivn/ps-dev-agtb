@@ -1,0 +1,2 @@
+name,description,custom_query
+mysql_sql_sentence,used in Mysql DB,select * from accounts

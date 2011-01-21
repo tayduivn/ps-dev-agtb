@@ -1,0 +1,8 @@
+<soda>
+   <script 
+      file="{@global.scriptsdir}/modules/activities/setup-activities.xml" />
+   <script fileset="{@global.scriptsdir}/modules/activities"/>
+   <script 
+      file="{@global.scriptsdir}/modules/activities/cleanup-activities.xml" />
+</soda>
+

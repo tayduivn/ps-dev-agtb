@@ -79,7 +79,7 @@ $xtpl->assign("ID", $focus->id);
 $xtpl->assign("CONTACT",$contactName = Array("NAME" => $focus->contact_name, "ID" => $focus->contact_id));
 $xtpl->assign("DCEINSTANCE",$instName = Array("NAME" => $focus->dceinstance_name, "ID" => $focus->instance_id));
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_CONTACT_DCEINST_FORM_TITLE']." ".$contactName['NAME'] . " - ". $instName['NAME'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_CONTACT_DCEINST_FORM_TITLE']." ".$contactName['NAME'] . " - ". $instName['NAME']), true);
 
 $xtpl->assign("CONTACT_ROLE_OPTIONS", get_select_options_with_id($app_list_strings['dceinstance_contact_relationship_type_dom'], $focus->contact_role));
 

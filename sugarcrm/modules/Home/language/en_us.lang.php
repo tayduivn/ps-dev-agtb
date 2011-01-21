@@ -205,7 +205,6 @@ $mod_strings = array (
   'LBL_SOURCE_NUSOAP' => 'NuSOAP - A set of PHP classes that allow developers to create and consume web services created by NuSphere Corporation and Dietrich Ayala',
   'LBL_SOURCE_JSCALENDAR' => 'JS Calendar - A calendar for entering dates created by Mihai Bazon',
   'LBL_SOURCE_PHPPDF' => 'PHP PDF - A library for creating PDF documents created by Wayne Munro',
-  'LBL_SOURCE_PNGBEHAVIOR' => 'PNG Behavior - Adds support for PNG graphic format to Internet Explorer.',
   'LBL_SOURCE_JSONPHP' => 'JSON.php - A PHP script to convert to and from JSON data format by Michal Migurski.',
   'LBL_SOURCE_JSON' => 'JSON.js - A JSON parser and JSON stringifier in JavaScript.',
   'LBL_SOURCE_HTTP_WEBDAV_SERVER' => 'HTTP_WebDAV_Server - A WebDAV Server Implementation in PHP.',
@@ -225,6 +224,8 @@ $mod_strings = array (
   'LBL_SOURCE_EXT' => 'Ext - A client-side JavaScript framework for building web applications.',
   'LBL_SOURCE_RECAPTCHA' => 'reCAPTCHA - A free CAPTCHA service that helps to digitize books, newspapers and old time radio shows.', 
   'LBL_SOURCE_TCPDF' => 'TCPDF - A PHP class for generating PDF documents.',
+  'LBL_SOURCE_CSSMIN' => 'CssMin - A css parser and minifier.',
+  'LBL_SOURCE_PHPSAML' => 'PHP-SAML - A simple SAML toolkit for PHP.',
 
 //BEGIN SUGARCRM flav=dce ONLY
   'LNK_NEW_DCEINSTANCE' => 'Create Instance',

@@ -252,9 +252,9 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("STEP4_TITLE",
-            strip_tags(str_replace("\n","",get_module_title(
+            strip_tags(str_replace("\n","",getClassicModuleTitle(
                 $mod_strings['LBL_MODULE_NAME'],
-                $mod_strings['LBL_MODULE_NAME']." ".$mod_strings['LBL_STEP_4_TITLE'],
+                array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_STEP_4_TITLE']),
                 false
                 )))
             );

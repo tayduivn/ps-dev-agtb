@@ -44,7 +44,7 @@ $mod_strings = array (
 
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
-    'LBL_DELETE_USER_CONFIRM'           => '"When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
+    'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Deleting a User record cannot be undone.',
 	'LBL_DELETE_GROUP_CONFIRM'          => 'Are you sure you want to delete this Group User? Click OK to delete the User record.<br/>After clicking OK, you will be given the ability to reassign records assigned to the Group User to another user.',
 	'LBL_DELETE_PORTAL_CONFIRM'         => 'Are you sure you want to delete this Portal API User? Click OK to delete the User record.',
@@ -53,6 +53,11 @@ $mod_strings = array (
 	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Click OK to delete the User record.',
 //END SUGARCRM flav=sales ONLY
+//BEGIN SUGARCRM flav=com ONLY
+    'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted.<br/><br/>'.
+                                                  'Click OK to delete the User record.',
+//END SUGARCRM flav=com ONLY
+
 	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',
@@ -601,8 +606,6 @@ $mod_strings = array (
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
 <tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a href="http://kb.sugarcrm.com/" target="_blank"><b>Knowledge Base</b></a><br>Tips from SugarCRM Support for performing common tasks and processes in Sugar</td></tr>
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/wiki.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/wiki" target="_blank"><b>Wiki</b></a><br>Tips and answers from the Sugar Community for commonly asked questions</td></tr>
-<tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
 <tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b>Forums</b></a><br>Forums dedicated to the Sugar Community to discuss topics of interest with each other and with SugarCRM Developers</td></tr>
 </table>',
     'LBL_WIZARD_PERSONALINFO' => 'Your Information',
@@ -611,7 +614,7 @@ $mod_strings = array (
     'LBL_WIZARD_PERSONALINFO_DESC' => 'Provide information about yourself. The information you provide about yourself will be visible to other Sugar users.<br />Fields marked with <span class="required">*</span> are required.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify your time zone and how you would like dates, currencies and names to appear in Sugar.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for the default outbound email server.',
-
+	'LBL_EAPM_SUBPANEL_TITLE' => 'External Accounts',
 ); // END STRINGS DEFS
 
 ?>

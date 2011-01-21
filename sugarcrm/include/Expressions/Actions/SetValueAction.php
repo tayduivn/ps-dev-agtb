@@ -23,12 +23,12 @@ require_once("include/Expressions/Expression/Date/DateExpression.php");
 
 class SetValueAction extends AbstractAction{
 	protected $expression =  "";
-	
+
 	function SetValueAction($params) {
 		$this->targetField = $params['target'];
 		$this->expression = $params['value'];
 	}
-	
+
 	/**
 	 * Returns the javascript class equavalent to this php class
 	 *
@@ -41,75 +41,79 @@ class SetValueAction extends AbstractAction{
 			this.target = target;
 		};
 		SUGAR.util.extend(SUGAR.forms.SetValueAction, SUGAR.forms.AbstractAction, {
-			exec : function()
+			exec : function(context)
 			{
+				if (typeof(context) == 'undefined')
+				    context = this.context;
+
 				try {
 				//BEGIN SUGARCRM flav=een ONLY
-				SUGAR.forms.AssignmentHandler.clearError(this.target);    
+				SUGAR.forms.AssignmentHandler.clearError(this.target);
 				//END SUGARCRM flav=een ONLY
-				SUGAR.forms.AssignmentHandler.assign(this.target, SUGAR.forms.evalVariableExpression(this.expr).evaluate());
-	            } catch (e) {
+				    var val = this.evalExpression(this.expr, context);
+				    context.setValue(this.target, val);
+				} catch (e) {
 	                //BEGIN SUGARCRM flav=een ONLY
 			        SUGAR.forms.AssignmentHandler.showError(this.target, e + '');
 		            //END SUGARCRM flav=een ONLY
-			        SUGAR.forms.AssignmentHandler.assign(this.target, '');
-			       
-			    }        
+			        context.setValue(this.target, '');
+			    }
 	       }
 		});";
 	}
 
+
 	/**
-	 * Returns the javascript code to generate this actions equivalent. 
+	 * Returns the javascript code to generate this actions equivalent.
 	 *
 	 * @return string javascript.
 	 */
 	function getJavascriptFire() {
-		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','{$this->expression}')";
+		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','" . addslashes($this->expression) . "')";
 	}
-	
-	
-	
+
+
+
+
 	/**
 	 * Applies the Action to the target.
 	 *
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
-		$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
+        $result = Parser::evaluate($this->expression, $target)->evaluate();
         $field = $this->targetField;
         $def = array();
         if (!empty($target->field_defs[$field]))
             $def  = $target->field_defs[$field];
         if ($result instanceof DateTime)
         {
-            $td = new TimeDate();
-            $result = DateExpression::roundTime($result->setTimeZone(new DateTimeZone("UTC")));
-            $target->$field = $result->format($td->get_db_date_time_format());
+            $td = TimeDate::getInstance();
+            $result = DateExpression::roundTime($result);
+            $target->$field = $td->asDb($result);
         }
         else if (isset($def['type']) && $def['type'] == "bool")
         {
             $target->$field = $result === true || $result === AbstractExpression::$TRUE;
         }
-        else 
+        else
         {
             $target->$field = $result;
         }
 	}
-	
+
 	/**
 	 * Returns the definition of this action in array format.
 	 *
 	 */
 	function getDefinition() {
-		return array(	
-			"action" => $this->getActionName(), 
-	        "target" => $this->targetField, 
+		return array(
+			"action" => $this->getActionName(),
+	        "target" => $this->targetField,
 	        "value" => $this->expression,
 	    );
 	}
-	
+
 	static function getActionName() {
 		return "SetValue";
 	}

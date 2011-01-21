@@ -66,7 +66,7 @@ if(is_admin($current_user) || isset($from_sync_client)){
 		}
 
 		if(!$export && empty($_REQUEST['repair_silent'])){
-			echo get_module_title($mod_strings['LBL_EXPAND_DATABASE_COLUMNS'], $mod_strings['LBL_EXPAND_DATABASE_COLUMNS'].':'.$_REQUEST['do_action'], true);
+			echo getClassicModuleTitle($mod_strings['LBL_EXPAND_DATABASE_COLUMNS'], array($mod_strings['LBL_EXPAND_DATABASE_COLUMNS'],$_REQUEST['do_action']), true);
 		}
 
         $alter_queries = array();

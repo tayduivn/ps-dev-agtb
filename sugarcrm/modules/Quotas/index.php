@@ -44,10 +44,10 @@ global $sugar_config;
 
 $focus = new Quota();
 $currency = new ListCurrency();
-
-$middleText = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_FORECASTS_NAME']}</a><span class='pointer'>&raquo;</span>{$mod_strings['LBL_MODULE_NAME']}";
-echo get_module_title($focus->module_dir, $middleText, true);
-//echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_TITLE'], true); 
+$params = array();
+$params[] = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_FORECASTS_NAME']}</a>";
+$params[] = $mod_strings['LBL_MODULE_NAME'];
+echo getClassicModuleTitle($focus->module_dir, $params, true);
 
 /* Set initial booleans for the module */
 $is_edit = false;

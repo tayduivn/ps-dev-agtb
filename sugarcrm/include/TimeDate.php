@@ -163,6 +163,19 @@ class TimeDate
     public static function getInstance()
     {
         if(empty(self::$timedate)) {
+            if(ini_get('date.timezone') == '') {
+                // Remove warning about default timezone
+                date_default_timezone_set(@date('e'));
+                try {
+                    $tz = self::guessTimezone();
+                } catch(Exception $e) {
+                    $tz = "UTC"; // guess failed, switch to UTC
+                }
+                if(isset($GLOBALS['log'])) {
+                    $GLOBALS['log']->fatal("Configuration variable date.timezone is not set, guessed timezone $tz. Please set date.timezone=\"$tz\" in php.ini!");
+                }
+                date_default_timezone_set($tz);
+            }
             self::$timedate = new self;
         }
         return self::$timedate;
@@ -294,11 +307,20 @@ class TimeDate
      * Get user time format.
      * @todo add caching
      *
-     * @param [User] $user user object, current user if not specified
+     * @param User $user user object, current user if not specified
      * @return string
      */
-    public function get_time_format(User $user = null)
+    public function get_time_format(/*User*/ $user = null)
     {
+        if(is_bool($user) || func_num_args() > 1) {
+            // BC dance - old signature was boolean, User
+            $GLOBALS['log']->fatal('TimeDate::get_time_format(): Deprecated API used, please update you code - get_time_format() now has one argument of type User');
+            if(func_num_args() > 1) {
+                $user = func_get_arg(1);
+            } else {
+                $user = null;
+            }
+        }
         $user = $this->_getUser($user);
 
         if (empty($user)) {
@@ -487,9 +509,25 @@ class TimeDate
     public function fromDb($date)
     {
         try {
-            return SugarDateTime::createFromFormat($this->get_db_date_time_format(), $date, self::$gmtTimezone);
+            return SugarDateTime::createFromFormat(self::DB_DATETIME_FORMAT, $date, self::$gmtTimezone);
         } catch (Exception $e) {
             $GLOBALS['log']->error("fromDb: Conversion of $date from DB format failed: {$e->getMessage()}");
+            return null;
+        }
+    }
+
+    /**
+     * Get DateTime from DB date string
+     *
+     * @param string $date
+     * @return SugarDateTime
+     */
+    public function fromDbDate($date)
+    {
+        try {
+            return SugarDateTime::createFromFormat(self::DB_DATE_FORMAT, $date, self::$gmtTimezone);
+        } catch (Exception $e) {
+            $GLOBALS['log']->error("fromDbDate: Conversion of $date from DB format failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -543,6 +581,26 @@ class TimeDate
         } catch (Exception $e) {
             $uf = $this->get_time_format($user);
             $GLOBALS['log']->error("fromUserTime: Conversion of $date from user format $uf failed: {$e->getMessage()}");
+            return null;
+        }
+    }
+
+    /**
+     * Get DateTime from user date string
+	 * Usually for calendar-related functions like holidays
+     * Note: by default does not convert tz!
+     * @param string $date
+     * @param bool $convert_tz perform TZ converson?
+     * @param User $user
+     * @return SugarDateTime
+     */
+    public function fromUserDate($date, $convert_tz = false, User $user = null)
+    {
+        try {
+            return SugarDateTime::createFromFormat($this->get_date_format($user), $date, $convert_tz?$this->_getUserTZ($user):self::$gmtTimezone);
+        } catch (Exception $e) {
+            $uf = $this->get_date_format($user);
+            $GLOBALS['log']->error("fromUserDate: Conversion of $date from user format $uf failed: {$e->getMessage()}");
             return null;
         }
     }
@@ -653,7 +711,7 @@ class TimeDate
      * TZ conversion is controlled by parameter
      *
      * @param string $date Original date in DB format
-     * @param bool $meridiem
+     * @param bool $meridiem Ignored for BC
      * @param bool $convert_tz Perform TZ conversion?
      * @param User $user User owning the conversion formats
      * @return string Date in display format
@@ -793,7 +851,7 @@ class TimeDate
      * TZ conversion depends on parameter. If false, only format conversion is performed.
      *
      * @param string $date Local date
-     * @param bool $use_offset Should time and TZ be taken into account?
+     * @param bool $convert_tz Should time and TZ be taken into account?
      * @return string Date in DB format
      */
     public function to_db_date($date, $convert_tz = true)
@@ -1368,13 +1426,13 @@ class TimeDate
 	    	'Australia/Sydney', 'Australia/Perth');
 
 	    $now = new DateTime();
-    	if($userOffset == 0) {
-    	     array_unshift($defaultZones, date('T'));
+	    if($userOffset == 0) {
+    	     array_unshift($defaultZones, date('e'));
     	     $gmtOffset = date('Z');
     	} else {
     	    $gmtOffset = $userOffset * 60;
     	}
-	    foreach($defaultZones as $zoneName) {
+    	foreach($defaultZones as $zoneName) {
 	        $tz = new DateTimeZone($zoneName);
 	        if($tz->getOffset($now) == $gmtOffset) {
                 return $tz->getName();

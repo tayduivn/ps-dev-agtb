@@ -22,7 +22,7 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 
 /**
  * <b>daysUntil(Date d)</b><br>
- * Returns number of days from now until the specified date. 
+ * Returns number of days from now until the specified date.
  */
 class DaysUntilExpression extends NumericExpression
 {
@@ -30,10 +30,21 @@ class DaysUntilExpression extends NumericExpression
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$params = $this->getParameters()->evaluate();
-		$time = strtotime($params);
-		$days = ceil(($time - time()) / 86400);
-		return $days;
+		$params = DateExpression::parse($this->getParameters()->evaluate());
+        if(!$params) {
+            return false;
+        }
+        $now = TimeDate::getInstance()->getNow();
+        $tsdiff = $params->ts - $now->ts;
+        $diff = (int)floor($tsdiff/86400);
+        $extrasec = $tsdiff%86400;
+        if($extrasec != 0) {
+            $extra = $params->get(sprintf("%+d seconds", $extrasec));
+            if($extra->day_of_year != $params->day_of_year) {
+                $diff++;
+            }
+        }
+        return $diff;
 	}
 
 
@@ -55,7 +66,7 @@ class DaysUntilExpression extends NumericExpression
 EOQ;
 	}
 
-	
+
 	/**
 	 * Returns the opreation name that this Expression should be
 	 * called by.
@@ -63,9 +74,9 @@ EOQ;
 	static function getOperationName() {
 		return "daysUntil";
 	}
-	
+
 	/**
-	 * All parameters have to be a string.
+	 * All parameters have to be a date.
 	 */
 	function getParameterTypes() {
 		return array(AbstractExpression::$DATE_TYPE);
@@ -84,5 +95,3 @@ EOQ;
 	function toString() {
 	}
 }
-
-?>
