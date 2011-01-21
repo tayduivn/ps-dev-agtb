@@ -5,6 +5,7 @@
 	<div class="moduleTitle">
 		<link href="index.php?module=Accounts&amp;action=index" click="false" />
 	</div>
+	<wait timeout="3" />
 	<link text="/Advanced Search/" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0001.csv" var="account_record_0015">
 		<textfield id="name_advanced" set="{@account_record_0015.name}" />
@@ -27,7 +28,7 @@
 	<select name="account_type_advanced[]" assert="/^$/" />
 	<textfield id="phone_advanced" assert="/^$/" />
 	<textfield id="email_advanced" assert="/^$/" />
-	
+
 	<link id="moduleTab_Accounts" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Accounts&amp;action=index" click="false" />
@@ -35,6 +36,6 @@
 	<link text="/Basic Search/" required="false" timeout="2" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
-	
+
 	<puts text="Test: Accounts_0015.xml finished." />
 </soda>
