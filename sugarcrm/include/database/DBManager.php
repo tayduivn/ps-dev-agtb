@@ -684,7 +684,7 @@ abstract class DBManager
         $execute = true,
         $engine = null
         )
-    {
+    { 
         global $table_descriptions;
 
 		//jc: had a bug when running the repair if the tablename is blank the repair will
@@ -787,7 +787,7 @@ abstract class DBManager
                 $take_action = true;
             }
         }
-
+        
         // do index comparisions
         $sql .=	"/* INDEXES */\n";
         $correctedIndexs = array();
@@ -846,15 +846,15 @@ abstract class DBManager
 				$correctedIndexs[$name] = true;
             }
         }
-
+        
         return ($take_action === true) ? $sql : "";
     }
 
     /**
      * Compares two vardefs
      *
-     * @param  array  $fielddef1
-     * @param  array  $fielddef2
+     * @param  array  $fielddef1 This is from the database
+     * @param  array  $fielddef2 This is from the vardef
      * @return bool   true if they match, false if they don't
      */
     public function compareVarDefs(
@@ -868,6 +868,11 @@ abstract class DBManager
             if ( isset($fielddef2[$key]) && $fielddef1[$key] == $fielddef2[$key] )
                 continue;
             return false;
+        }
+        
+        if(isset($fielddef2['default']) && !isset($fielddef1['default']))
+        {
+           return false;
         }
 
         return true;

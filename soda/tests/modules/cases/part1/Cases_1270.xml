@@ -26,15 +26,15 @@
 
 	<!--create a note-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1270.csv" var="Case_1270">
-		<form id="formformNotes">
+		
 			<button name="History_create_button" />
-		</form>
+		
 
 		<!--set data-->
-		<form id="form_SubpanelQuickCreate_Notes">
-			<button id="btn_contact_name" />
-			<wait timeout="5" />
-		</form>
+		
+		<button id="btn_contact_name" />
+		<wait timeout="5" />
+		<browser assert="Contact Search" />
 
 		<textfield id="first_name_advanced" set="{@contact_record_firstname}" />
 		<textfield id="last_name_advanced" set="{@contact_record_lastname}" />
@@ -53,7 +53,7 @@
 		<form id="form_SubpanelQuickCreate_Notes">
 			<textfield id="name" set="{@Case_1270.name} {@user.name} {@stamp}" />
 			<textfield id="description" set="{@Case_1270.description}" />
-			<filefield name="uploadfile" set="{@global.scriptsdir}/export/Accounts.csv" />
+			<filefield id="filename_file" set="{@global.scriptsdir}/export/Accounts.csv" />
 			<button id="Notes_subpanel_save_button" />
 		</form>
 
