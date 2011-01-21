@@ -6,6 +6,7 @@
         <link id='moduleTab_Quotes'/>
         <browser assert='Quotes'/>
         <form id='search_form'>
+		<link id='basic_search_link' required='false' />
             <button id='search_form_clear'/>
             <textfield id='name_basic' set='{@pre_Quote_name}'/>
             <button id='search_form_submit'/>
