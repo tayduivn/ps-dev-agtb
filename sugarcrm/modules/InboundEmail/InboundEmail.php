@@ -3428,8 +3428,16 @@ class InboundEmail extends SugarBean {
 			4 => 'audio',
 			5 => 'image',
 			6 => 'video',
-			7 => 'other',
 	);
+
+	public function getMimeType($type, $subtype)
+	{
+		if(isset($this->imap_types[$type])) {
+			return $this->imap_types[$type]."/$subtype";
+		} else {
+			return "other/$subtype";
+		}
+	}
 
 	/**
 	 * Takes the "parts" attribute of the object that imap_fetchbody() method
@@ -3441,9 +3449,19 @@ class InboundEmail extends SugarBean {
 	 * @param array $breadcrumb Default 0, build up of the parts mapping
 	 * @param bool $forDisplay Default false
 	 */
-	function saveAttachments(&$msgNo, &$parts, &$emailId, $breadcrumb='0', $forDisplay) {
+	function saveAttachments($msgNo, $parts, $emailId, $breadcrumb='0', $forDisplay) {
 		global $sugar_config;
-
+		/*
+			Primary body types for a part of a mail structure (imap_fetchstructure returned object)
+			0 => text
+			1 => multipart
+			2 => message
+			3 => application
+			4 => audio
+			5 => image
+			6 => video
+			7 => other
+		*/
 		foreach($parts as $k => $part) {
 			$thisBc = $k+1;
 			if($breadcrumb != '0') {
@@ -3455,16 +3473,6 @@ class InboundEmail extends SugarBean {
 			if(isset($part->parts) && !empty($part->parts) && !( isset($part->subtype) && strtolower($part->subtype) == 'rfc822')  ) {
 				$this->saveAttachments($msgNo, $part->parts, $emailId, $thisBc, $forDisplay);
 				continue;
-			} elseif($part->type == 5 && !$part->ifdisposition) {
-				// Outlook inline attachments are type 5 (image) without a disposition
-				if($part->ifparameters) {
-
-				    $attach = $this->getNoteBeanForAttachment($emailId);
-
-					$fname = $this->handleEncodedFilename($part->parameters[0]->value);
-					$attach->filename = $attach->name = empty($fname) ? "no_name" : $fname;
-					$attach->file_mime_type = 'image/'.$part->subtype;
-				}
 			} elseif($part->ifdisposition) {
 				// we will take either 'attachments' or 'inline'
 				if(strtolower($part->disposition) == 'attachment' || ((strtolower($part->disposition) == 'inline') && $part->type != 0)) {
@@ -3481,28 +3489,34 @@ class InboundEmail extends SugarBean {
 						continue;
 					}
 
-					if(isset($this->imap_types[$part->type])) {
-					    $attach->file_mime_type = $this->imap_types[$part->type].'/'.$part->subtype;
-					}
+					// deal with the MIME types email has
+					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
 				} // end if disposition type 'attachment'
 			}// end ifdisposition
 			//Retrieve contents of subtype rfc8822
-			elseif ($part->type == 2 && isset($part->subtype) && strtolower($part->subtype) == 'rfc822' ) {
+			elseif ($part->type == 2 && isset($part->subtype) && strtolower($part->subtype) == 'rfc822' )
+			{
 			    $tmp_eml =  imap_fetchbody($this->conn, $msgNo, $thisBc);
 			    $attach = $this->getNoteBeanForAttachment($emailId);
 			    $attach->file_mime_type = 'messsage/rfc822';
 			    $attach->description = $tmp_eml;
 			    $attach->filename = 'bounce.eml';
-			}
-			// for some weird servers that don't return disposition headers
-			elseif($part->type > 2 && $part->ifparameters) {
-			    $name = $this->handleEncodedFilename($this->retrieveAttachmentNameFromStructure($part->parameters));
-			    if(empty($name)) continue;
+			} elseif(!$part->ifdisposition && $part->type != 1 && $part->type != 2 && $thisBc != '1') {
+        		// No disposition here, but some IMAP servers lie about disposition headers, try to find the truth
+				// Also Outlook puts inline attachments as type 5 (image) without a disposition
+				if($part->ifparameters) {
+                    foreach($part->parameters as $param) {
+                        if(strtolower($param->attribute) == "name" || strtolower($param->attribute) == "filename") {
+                            $fname = $this->handleEncodedFilename($param->value);
+                            break;
+                        }
+                    }
+                    if(empty($fname)) continue;
+					// we assume that named parts are attachments too
+                    $attach = $this->getNoteBeanForAttachment($emailId);
 
-			    $attach = $this->getNoteBeanForAttachment($emailId);
-			    $attach->name = $attach->filename = $name;
-				if(isset($this->imap_types[$part->type])) {
-				    $attach->file_mime_type = $this->imap_types[$part->type].'/'.$part->subtype;
+					$attach->filename = $attach->name = $fname;
+					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
 				}
 			}
 
