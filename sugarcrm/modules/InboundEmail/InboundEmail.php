@@ -117,15 +117,6 @@ class InboundEmail extends SugarBean {
 												4 => 'QUOTED-PRINTABLE',
 												5 => 'OTHER'
 											);
-	public $imap_types = array(
-		0 => 'text',
-		1 => 'multipart',
-		2 => 'message',
-		3 => 'application',
-		4 => 'audio',
-		5 => 'image',
-		6 => 'video',
-	);
 	// object attributes
 	var $safe; // place holder for HTML_Safe class
 	var $compoundMessageId; // concatenation of messageID and deliveredToEmail
@@ -3430,10 +3421,31 @@ class InboundEmail extends SugarBean {
 		return (strtolower($encoding) == 'utf-8') ? $name : mb_convert_encoding($name, 'UTF-8', $encoding);
 	}
 
+	/*
+		Primary body types for a part of a mail structure (imap_fetchstructure returned object)
+		0 => text
+		1 => multipart
+		2 => message
+		3 => application
+		4 => audio
+		5 => image
+		6 => video
+		7 => other
+	*/
+	public $imap_types = array(
+		0 => 'text',
+		1 => 'multipart',
+		2 => 'message',
+		3 => 'application',
+		4 => 'audio',
+		5 => 'image',
+		6 => 'video',
+	);
+
 	public function getMimeType($type, $subtype)
 	{
-		if(isset($this->imapTypes[$type])) {
-			return $this->imapTypes[$type]."/$subtype";
+		if(isset($this->imap_types[$type])) {
+			return $this->imap_types[$type]."/$subtype";
 		} else {
 			return "other/$subtype";
 		}
@@ -3452,17 +3464,7 @@ class InboundEmail extends SugarBean {
 	 */
 	function saveAttachments($msgNo, $parts, $emailId, $breadcrumb='0', $forDisplay) {
 		global $sugar_config;
-		/*
-			Primary body types for a part of a mail structure (imap_fetchstructure returned object)
-			0 => text
-			1 => multipart
-			2 => message
-			3 => application
-			4 => audio
-			5 => image
-			6 => video
-			7 => other
-		*/
+
 		foreach($parts as $k => $part) {
 			$thisBc = $k+1;
 			if($breadcrumb != '0') {
@@ -3525,11 +3527,11 @@ class InboundEmail extends SugarBean {
                             $fname = $this->handleEncodedFilename($param->value);
                         }
                     }
-                    if(!isset($fname)) return;
+                    if(!isset($fname)) continue;
 					// we assume that named parts are attachments too
                     $attach = $this->getNoteBeanForAttachment($emailId);
 
-					$attach->filename = $attach->name = empty($fname) ? "no_name" : $fname;
+					$attach->filename = $attach->name = $fname;
 					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
 
 					$attach->safeAttachmentName();
