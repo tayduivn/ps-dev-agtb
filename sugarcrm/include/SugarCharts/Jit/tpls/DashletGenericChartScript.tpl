@@ -27,8 +27,8 @@
  ********************************************************************************/
 *}
 
-{if !$nodata}
-<script type="text/javascript">
+<script>
+	var customChart = true;
 	var css = new Array();
 	var chartConfig = new Array();
 	{foreach from=$css key=selector item=property}
@@ -37,28 +37,6 @@
 	{foreach from=$config key=name item=value}
 	chartConfig["{$name}"] = '{$value}';
 	{/foreach}
-	if (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') {ldelim}
-		// no op
-		loadCustomChartForReports();
-	{rdelim} else {ldelim}
-		SUGAR.mySugar.customCharts.addToCustomChartsArray('{$chartId}','{$filename}',css,chartConfig,activePage);
-	{rdelim}
 	
-	function loadCustomChartForReports() {ldelim}
-
-	
-		loadCustomChart('{$chartId}','{$filename}',css,chartConfig);
-	{rdelim}
+    SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartId}','{$filename}',css,chartConfig,activePage);
 </script>
-
-<div class="chartContainer">
-	<div id="sb{$chartId}" class="scrollBars">
-    <div id="{$chartId}" class="chartCanvas" style="width: {$width}; height: {$height}px;"></div>  
-    </div>
-	<div id="legend{$chartId}" class="legend"></div>
-</div>
-<div class="clear"></div>
-{else}
-
-{$nodata}
-{/if}

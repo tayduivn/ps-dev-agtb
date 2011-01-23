@@ -36,9 +36,8 @@
 {/if}
 {$form_header}
 
-{if $customChart}
-{$customChartResources}
-{/if}
+{$chartResources}
+
 
 <script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">

@@ -27,7 +27,7 @@
 
 // $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
-function loadCustomChart (chartId,jsonFilename,css,chartConfig) {
+function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 
 				var labelType, useGradients, nativeTextSupport, animate;
 				(function() {

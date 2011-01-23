@@ -26,10 +26,16 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<style type="text/css">
+.reportChartContainer {ldelim}
+width:	{$width};
+	{rdelim}
+</style>
+
 <div id="{$chartName}_div" style="width:{$width};height:{$height}px;z-index:80;{$style}" class="chartDiv">
- 	<object type="application/x-shockwave-flash" data="include/SugarCharts/swf/chart.swf?inputFile={$chartXMLFile}&swfLocation=include/SugarCharts/swf/&inputColorScheme={$chartColorsXML}&inputStyleSheet={$chartStyleCSS}&inputLanguage={$chartStringsXML}" width="100%" height="100%">
+ 	<object type="application/x-shockwave-flash" data="include/SugarCharts/SugarFlash/swf/chart.swf?inputFile={$chartXMLFile}&swfLocation=include/SugarCharts/SugarFlash/swf/&inputColorScheme={$chartColorsXML}&inputStyleSheet={$chartStyleCSS}&inputLanguage={$chartStringsXML}" width="100%" height="100%">
 		<param name="allowScriptAccess" value="sameDomain"/>
-		<param name="movie" value="include/SugarCharts/swf/chart.swf?inputFile={$chartXMLFile}&swfLocation=include/SugarCharts/swf/&inputColorScheme={$chartColorsXML}&inputStyleSheet={$chartStyleCSS}&inputLanguage={$chartStringsXML}"/>
+		<param name="movie" value="include/SugarCharts/SugarFlash/swf/chart.swf?inputFile={$chartXMLFile}&swfLocation=include/SugarCharts/SugarFlash/swf/&inputColorScheme={$chartColorsXML}&inputStyleSheet={$chartStyleCSS}&inputLanguage={$chartStringsXML}"/>
 		<param name="menu" value="false"/>
 		<param name="quality" value="high"/>
 		<param name="wmode" value="transparent" />
@@ -42,7 +48,7 @@
 		// no op
 		loadChartForReports();
 	{rdelim} else {ldelim}
-		SUGAR.mySugar.addToChartsArray('{$chartName}', '{$chartXMLFile}', '{$width}', '{$height}', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}');
+		SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartName}', '{$chartXMLFile}', '{$width}', '{$height}', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}',activePage);
 	{rdelim}
 	
 	var loadDone=0;

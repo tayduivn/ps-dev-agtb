@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
@@ -11,19 +10,113 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 
-require_once('include/SugarCharts/SugarChart.php');
-if(is_file('custom/include/SugarCharts/chartEngine.php')) {
-	require_once('custom/include/SugarCharts/chartEngine.php');
-}
-class SugarChartReports extends SugarChart {
+require_once("include/SugarCharts/SugarChart.php");
+
+class SugarFlash extends SugarChart {
+
+	
+	public function __construct() {
+		parent::__construct();
+	}
+	
+	function isSupported($chartType) {
+		$charts = array(
+			"stacked group by chart",
+			"group by chart",
+			"bar chart",
+			"horizontal group by chart",
+			"horizontal",
+			"horizontal bar chart",
+			"pie chart",
+			"gauge chart",
+			"funnel chart 3D"
+		);
+		
+		if(in_array($chartType,$charts)) {
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
+	
+	function getChartResources() {
+		return 
+		'<script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js') . '"></script>
+		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/SugarFlash/js/sugarCharts.js').'"></script>
+		';
+	}
+	
+	
+	function getMySugarChartResources() {
+		return '
+		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/SugarFlash/js/mySugarCharts.js').'"></script>
+		';
+	}
+	
+	/**
+     * wrapper function to return the html code containing the chart in a div
+	 * 
+     * @param 	string $name 	name of the div
+	 *			string $xmlFile	location of the XML file
+	 *			string $style	optional additional styles for the div
+     * @return	string returns the html code through smarty
+     */					
+	function display($name, $xmlFile, $width='320', $height='480', $resize=false){
+							
+							
+		parent::display($name, $xmlFile, $width, $height, $resize);				
+		$this->ss->assign("chartName", $name);
+		$this->ss->assign("chartXMLFile", $xmlFile);
+		$this->ss->assign("chartStringsXML", $this->chartStringsXML);
+		
+		// chart styles and color definitions
+		$this->ss->assign("chartStyleCSS", SugarThemeRegistry::current()->getCSSURL('chart.css'));
+		$this->ss->assign("chartColorsXML", SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
+		
+		$this->ss->assign("width", $width);
+		$this->ss->assign("height", $height);
+		
+		$this->ss->assign("resize", $resize);
+		$this->ss->assign("app_strings", $this->app_strings);
+						
+		return $this->ss->fetch('include/SugarCharts/SugarFlash/tpls/chart.tpl');
+		
+	}
+
+	function getDashletScript($id,$xmlFile="") {
+		
+		
+		global $sugar_config, $current_user, $current_language;
+		$this->id = $id;
+		$xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
+		$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml'; 
+		
+		$this->ss->assign('chartName', $this->id);
+        $this->ss->assign('chartXMLFile', $xmlFile);    
+
+        $this->ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
+        $this->ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
+        $this->ss->assign('chartStringsXML', $chartStringsXML);
+        
+        
+		return $this->ss->fetch('include/SugarCharts/SugarFlash/tpls/DashletGenericChartScript.tpl');
+	}
+
+} // end class def
+
+
+
+class SugarFlashReports extends SugarFlash {
 	
 	private $processed_report_keys = array();
 	
-	public function __construct() {
-		parent::__construct();		
+	function __construct() {
+		parent::__construct();
 	}
-
-	function calculateReportGroupTotal($dataset){
+	
+		function calculateReportGroupTotal($dataset){
 		$total = 0;				
 		foreach ($dataset as $value){
 			$total += $value['numerical_value'];
@@ -181,17 +274,11 @@ class SugarChartReports extends SugarChart {
 	function display($name, $xmlFile, $width='320', $height='480', $reportChartDivStyle, $resize=false){
 		
 		
-		// generate strings for chart if it does not exist
-		global $current_language, $theme, $sugar_config,$app_strings;
+		parent::display($name, $xmlFile, $width, $height, $resize);			
 		
-		$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
-		if (!file_exists($chartStringsXML)){
-			$this->generateChartStrings($chartStringsXML);
-		}
-							
 		$this->ss->assign("chartName", $name);
 		$this->ss->assign("chartXMLFile", $xmlFile);
-		$this->ss->assign("chartStringsXML", $chartStringsXML);
+		$this->ss->assign("chartStringsXML", $this->chartStringsXML);
 		$this->ss->assign("style", $reportChartDivStyle);
 		
 		// chart styles and color definitions
@@ -202,27 +289,12 @@ class SugarChartReports extends SugarChart {
 		$this->ss->assign("height", $height);
 		
 		$this->ss->assign("resize", $resize);
-		$this->ss->assign("app_strings", $app_strings);				
+		$this->ss->assign("app_strings", $this->app_strings);	
 		
-		//custom chart code
-		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
-			require_once('custom/include/SugarCharts/chartEngine.php');
-			$customEngine = new chartEngine();
-			$customEngine->chartId = $name;
-			$customEngine->height = $height;
-			$customEngine->width = $width;
-			$customEngine->xmlFile = $xmlFile;
-			$customEngine->chartType = $this->chart_properties['type'];
-			
-			if($customEngine->isSupported($this->chart_properties['type'])) {
-				return $customEngine->display();
-			} else {
-				return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
-			}
 		
-		} else {
-			return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
-		}
+		
+		return $this->ss->fetch('include/SugarCharts/SugarFlash/tpls/chart.tpl');	
 	}
-	
-} // end class def
+}
+
+?>

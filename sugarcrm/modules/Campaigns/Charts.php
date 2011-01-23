@@ -27,8 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 
-require_once('include/SugarCharts/SugarChart.php');
-require_once('include/SugarCharts/SugarChartReports.php');
+require_once('include/SugarCharts/SugarChartFactory.php');
 
 
 class campaign_charts {
@@ -42,7 +41,7 @@ class campaign_charts {
 	
 	function campaign_response_by_activity_type($datay= array(),$targets=array(),$campaign_id, $cache_file_name='a_file', $refresh=false, $marketing_id='') {
 		global $app_strings, $mod_strings, $charset, $lang, $barChartColors,$app_list_strings;
-		$sugarChart = new SugarChartReports();
+		$sugarChart = SugarChartFactory::getInstance('','Reports');
 		$xmlFile = $sugarChart->getXMLFileName($campaign_id);
 		
 		if (!file_exists($xmlFile) || $refresh == true) {
@@ -121,10 +120,10 @@ class campaign_charts {
 						$alttext=$targets[$outcome].': '.$mod_strings['LBL_TARGETED'].' '.$targeted[$outcome]. ', '.$mod_strings['LBL_TOTAL_TARGETED'].' '. $total_targeted. ".";
                         }
 						if ($key != 'targeted'){
-							$hits =  (is_array($leadSourceArr[$key][$outcome]) && is_array($leadSourceArr[$key][$outcome]['hits'])) ? array_sum($leadSourceArr[$key][$outcome]['hits']) : 0;
+							$hits =  (isset($leadSourceArr[$key][$outcome]) && is_array($leadSourceArr[$key][$outcome]) && is_array($leadSourceArr[$key][$outcome]['hits'])) ? array_sum($leadSourceArr[$key][$outcome]['hits']) : 0;
 							$alttext.=" $translation ".$hits;
 						}
-						$count = (is_array($leadSourceArr[$key][$outcome]) && is_array($leadSourceArr[$key][$outcome]['total'])) ? array_sum($leadSourceArr[$key][$outcome]['total']) : 0;
+						$count = (isset($leadSourceArr[$key][$outcome]) && is_array($leadSourceArr[$key][$outcome]) && is_array($leadSourceArr[$key][$outcome]['total'])) ? array_sum($leadSourceArr[$key][$outcome]['total']) : 0;
 						$camp_data[$translation][$outcome] = 
 							array(
 							"numerical_value" => $count,
@@ -152,7 +151,7 @@ class campaign_charts {
 		}
 		
 		$width = '100%';
-		$return = '<script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js' ) . '"></script>';
+		$return = '';
 		$return .= $sugarChart->display($campaign_id, $xmlFile, $width, '480',"");
 		
 		return $return;
@@ -259,7 +258,7 @@ class campaign_charts {
 		
 		$width = ($is_dashlet) ? '100%' : '720px';
 		
-		$return = '<script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js' ) . '"></script>';
+		$return = '';
 		if (!$is_dashlet){
 			$return .= '<br />';
 		}		
@@ -275,7 +274,7 @@ class campaign_charts {
         }
 
 		
-		$sugarChart = new SugarChart();
+		$sugarChart = SugarChartFactory::getInstance();
 		$sugarChart->is_currency = true;
         $sugarChart->currency_symbol = $currency_symbol; 
 

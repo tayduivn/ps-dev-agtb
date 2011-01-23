@@ -27,10 +27,9 @@
  ********************************************************************************/
 *}
 <!-- BEGIN: main -->
-{if $customChart}
-{$customChartResources}
-{$customMySugarChartResources}
-{/if}
+
+{$chartResources}
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 <td>
@@ -133,6 +132,6 @@
 -->
 </table>
 </p>
-<div align=center>{$MY_CHART_ROI}</div>
+<div align=center class="reportChartContainer">{$MY_CHART_ROI}</div>
 
 <!-- END: main -->

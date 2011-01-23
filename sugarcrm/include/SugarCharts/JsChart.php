@@ -1,3 +1,4 @@
+
 <?php
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
@@ -28,9 +29,10 @@
 
 // $Id$
 
-require("custom/include/SugarCharts/cssParser.php");
+require_once("include/SugarCharts/cssParser.php");
+require_once("include/SugarCharts/SugarChart.php");
 
-class chartEngine {
+class JsChart extends SugarChart {
 	protected $ss;
 	var $xmlFile;
 	var $jsonFilename;
@@ -40,26 +42,7 @@ class chartEngine {
 	var $chartType;
 
 	function __construct() {
-		$this->ss = new Sugar_Smarty();
-	}
-	
-	function getChartResources() {
-		return '
-		<link type="text/css" href="'.getJSPath('custom/include/SugarCharts/css/base.css').'" rel="stylesheet" />
-		<!--[if IE]><script language="javascript" type="text/javascript" src="'.getJSPath('custom/include/SugarCharts/js/Jit/Extras/excanvas.js').'"></script><![endif]-->
-		<script language="javascript" type="text/javascript" src="'.getJSPath('custom/include/SugarCharts/js/Jit/jit.js').'"></script>
-		<script language="javascript" type="text/javascript" src="'.getJSPath('custom/include/SugarCharts/js/customSugarCharts.js').'"></script>
-		';
-	}
-	
-	function getMySugarChartResources() {
-		return '
-		<script language="javascript" type="text/javascript" src="'.getJSPath('custom/include/SugarCharts/js/customMySugarCharts.js').'"></script>
-		';
-	}
-	
-	function tab($str, $depth){
-		return str_repeat("\t", $depth) . $str;	
+		parent::__construct();
 	}
 	
 	function isSupported($chartType) {
@@ -82,8 +65,16 @@ class chartEngine {
 		}
 		
 	}
-	function display() {
+	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
 	
+	
+		$this->chartId = $name;
+		$this->height = $height;
+		$this->width = $width;
+		$this->xmlFile = $xmlFile;
+		$this->chartType = $this->chart_properties['type'];
+			
+			
 		$style = array();
 		$chartConfig = array();
 		$xmlStr = $this->processXML($this->xmlFile);
@@ -107,14 +98,28 @@ class chartEngine {
 		}
 		$this->ss->assign("config", $chartConfig);
 		if($json == "No Data") {
-			$this->ss->assign("nodata", "No Data");
+			$this->ss->assign("error", "No Data");
 		}
+		
+		if(!$this->isSupported($this->chartType)) {
+			$this->ss->assign("error", "Unsupported Chart Type");
+		}
+		
+		
+		$file = "";
 
-		return $this->ss->fetch('custom/include/SugarCharts/tpls/chart.tpl');	
+		return $this->ss->fetch($file);	
 	}
 	
 
-	function getDashletScript() {
+	function getDashletScript($id,$xmlFile="") {
+		
+		global $sugar_config, $current_user, $current_language;
+		$this->id = $id;
+		$this->chartId = $id;
+		$this->xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
+		
+		
 		$style = array();
 		$chartConfig = array();
 		$this->ss->assign("chartId", $this->chartId);
@@ -131,9 +136,9 @@ class chartEngine {
 		}
 		$this->ss->assign("config", $chartConfig);
 		
-		return $this->ss->fetch('custom/include/SugarCharts/tpls/DashletGenericChartScript.tpl');
+		$file = "";
+		return $this->ss->fetch($file);
 	}
-	
 	
 	function chartArray($chartsArray) {
 		

@@ -10713,7 +10713,7 @@ $jit.ST.Plot.NodeTypes.implement({
           if(horz) {
             ctx.fillRect(x, y - shadowThickness, acum + shadowThickness, height + (shadowThickness*2));
           } else {
-            ctx.fillRect(x - shadowThickness, y, width + (shadowThickness*2), acum + shadowThickness);
+            ctx.fillRect(x - shadowThickness, y - acum - shadowThickness, width + (shadowThickness*2), acum + shadowThickness);
           }
        
        
@@ -11572,7 +11572,7 @@ $jit.BarChart = new Class({
       st.config.offsetX = size.width/2 - margin.left
         - (config.showLabels && (config.labelOffset + config.Label.size));    
 	  if(config.Ticks.enable)	{
-		st.config.offsetY = ((margin.bottom+config.Label.size+config.labelOffset) - margin.top - (title.text? title.size+title.offset:0) - (subtitle.text? subtitle.size+subtitle.offset:0))/2;
+		st.config.offsetY = ((margin.bottom+config.Label.size+config.labelOffset+(subtitle.text? subtitle.size+subtitle.offset:0)) - (margin.top + (title.text? title.size+title.offset:0))) /2;
 	  } else {
 		st.config.offsetY = (margin.bottom - margin.top - (title.text? title.size+title.offset:0) - (subtitle.text? subtitle.size+subtitle.offset:0))/2;
 	  }
@@ -11653,14 +11653,15 @@ $jit.BarChart = new Class({
 		grid = size.width-(margin.left+config.labelOffset+label.size+margin.right),
 		segmentLength = grid/ticks.segments;
 		ctx.fillStyle = ticks.color;
-		ctx.fillRect(axis, (size.height/2)-margin.bottom-config.labelOffset-label.size,size.width-margin.left-margin.right-label.size-config.labelOffset,1);
+		ctx.fillRect(axis, (size.height/2)-margin.bottom-config.labelOffset-label.size - (subtitle.text? subtitle.size+subtitle.offset:0),size.width-margin.left-margin.right-label.size-config.labelOffset,1);
 		while(axis<=grid) {
 			ctx.fillStyle = ticks.color;
-			ctx.fillRect(Math.round(axis), -(size.height/2)+margin.top+(title.text? title.size+title.offset:0), 1, size.height-margin.bottom-margin.top-config.labelOffset-label.size-(title.text? title.size+title.offset:0)-(subtitle.text? subtitle.size+subtitle.offset:0));
+			lineHeight = size.height-margin.bottom-margin.top-config.labelOffset-label.size-(title.text? title.size+title.offset:0)-(subtitle.text? subtitle.size+subtitle.offset:0);
+			ctx.fillRect(Math.round(axis), -(size.height/2)+margin.top+(title.text? title.size+title.offset:0), 1, lineHeight);
 			ctx.fillStyle = label.color;
 			
 			if(label.type == 'Native' && config.showLabels) {            
-           	 ctx.fillText(labelValue, Math.round(axis), (size.height/2)-margin.bottom);
+           	 ctx.fillText(labelValue, Math.round(axis), -(size.height/2)+margin.top+(title.text? title.size+title.offset:0)+config.labelOffset+lineHeight+label.size);
 			}
 			axis += segmentLength;
 			labelValue += labelIncrement;
@@ -12020,6 +12021,7 @@ $jit.BarChart = new Class({
         dim1 = horz? 'height':'width',
         dim2 = horz? 'width':'height',
         grouped = config.type.split(':')[0] == 'grouped';
+        basic = config.type.split(':')[0] == 'basic';
         
         
 		var maxTickValue = Math.ceil(maxValue*.1)*10;
@@ -12028,7 +12030,7 @@ $jit.BarChart = new Class({
 			maxTickValue = maxTickValue + parseInt(pad(1,length));
 		}
 
-		fixedDim = fixedDim > 100? 100 : fixedDim;
+		fixedDim = fixedDim > 100? (basic) ? 50 : 100 : fixedDim;
 
 		
     this.st.graph.eachNode(function(n) {

@@ -23,10 +23,9 @@
  ********************************************************************************/
 *}
 <!-- BEGIN: main -->
-{if $customChart}
-{$customChartResources}
-{$customMySugarChartResources}
-{/if}
+{$chartResources}
+
+
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 <td>
@@ -126,9 +125,7 @@
 			<td width="20%">&nbsp;</td>			
 		</tr>
 		<tr>
-			<td width="10%" >&nbsp;</td>			
-			<td><p align=center>{$MY_CHART}</p></td>
-			<td width="20%">&nbsp;</td>						
+			<td colspan="3"><div class="reportChartContainer">{$MY_CHART}</div></td>				
 		</tr>
 	</table>
 </form>

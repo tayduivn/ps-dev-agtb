@@ -139,30 +139,11 @@ abstract class DashletGenericChart extends Dashlet
      */
     public function displayScript() 
     {
-    	global $sugar_config, $current_user, $current_language;
-		
-		$xmlFile = $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml';
-		$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';    
-    	
-    	$ss = new Sugar_Smarty();
-        $ss->assign('chartName', $this->id);
-        $ss->assign('chartXMLFile', $xmlFile);    
 
-        $ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
-        $ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
-        $ss->assign('chartStringsXML', $chartStringsXML);
-        
-		//custom chart code
-		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
-			require_once('custom/include/SugarCharts/chartEngine.php');
-			$customEngine = new chartEngine();
-			$customEngine->chartId = $this->id;
-			$customEngine->xmlFile = $xmlFile;
-			return $customEngine->getDashletScript();
-		} else {
-			$str = $ss->fetch('include/Dashlets/DashletGenericChartScript.tpl');
-			return $str;
-		}
+		require_once('include/SugarCharts/SugarChartFactory.php');
+		$sugarChart = SugarChartFactory::getInstance();
+		return $sugarChart->getDashletScript($this->id);
+
     }
     
     /**

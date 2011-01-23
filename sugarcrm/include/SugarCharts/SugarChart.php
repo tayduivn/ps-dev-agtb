@@ -1,17 +1,32 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to
- * *******************************************************************************/
-/*********************************************************************************
- * $Id$
- * Description:
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
- * Reserved. Contributor(s): ______________________________________..
- *********************************************************************************/
-if(is_file('custom/include/SugarCharts/chartEngine.php')) {
-	require_once('custom/include/SugarCharts/chartEngine.php');
-}
+/**
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ */
+
 class SugarChart {
 
 	private $db;
@@ -713,48 +728,32 @@ class SugarChart {
 		// generate strings for chart if it does not exist
 		global $current_language, $theme, $sugar_config,$app_strings;
 		
-		$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
-		if (!file_exists($chartStringsXML)){
-			$this->generateChartStrings($chartStringsXML);
+		$this->app_strings = $app_strings;
+		$this->chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
+		if (!file_exists($this->chartStringsXML)){
+			$this->generateChartStrings($this->chartStringsXML);
 		}
-							
-		$this->ss->assign("chartName", $name);
-		$this->ss->assign("chartXMLFile", $xmlFile);
-		$this->ss->assign("chartStringsXML", $chartStringsXML);
-		
-		// chart styles and color definitions
-		$this->ss->assign("chartStyleCSS", SugarThemeRegistry::current()->getCSSURL('chart.css'));
-		$this->ss->assign("chartColorsXML", SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
-		
-		$this->ss->assign("width", $width);
-		$this->ss->assign("height", $height);
-		
-		$this->ss->assign("resize", $resize);
-		$this->ss->assign("app_strings", $app_strings);				
-		
-		//custom chart code
-		if($GLOBALS['sugar_config']['customCharts'] && is_file('custom/include/SugarCharts/chartEngine.php')) {
-			require_once('custom/include/SugarCharts/chartEngine.php');
-			$customEngine = new chartEngine();
-			$customEngine->chartId = $name;
-			$customEngine->height = $height;
-			$customEngine->width = $width;
-			$customEngine->xmlFile = $xmlFile;
-			$customEngine->chartType = $this->chart_properties['type'];
-			
-			if($customEngine->isSupported($this->chart_properties['type'])) {
-				return $customEngine->display();
-				//return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
-			} else {
-				return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
-			}
-		
-		} else {
-			return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
-		}
+				
+		$templateFile = "";			
+		return $templateFile;
 	}
 
-
+	function getDashletScript($id,$xmlFile="") {
+		
+	$xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
+	$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml'; 
+	
+	$ss->assign('chartName', $id);
+    $ss->assign('chartXMLFile', $xmlFile);
+    $ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
+    $ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
+    $ss->assign('chartLangFile', $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $GLOBALS['current_language'] .'.lang.xml');
+ 	        
+		$templateFile = "";
+		return $templateFile;
+	}
+	
+	
   /**
          This function is used for localize all the characters in the Chart. And it can also sort all the dom_values by the sequence defined in the dom, but this may produce a lot of extra empty data in the xml file, when the chart is sorted by two key cols.
          If the data quantity is large, it maybe a little slow.
@@ -852,5 +851,28 @@ class SugarChart {
         }
         return $data;
     }
+    
+    function getChartResources() {
+		
+		$resources = "";
+		return $resources;
+	}
+	
+	function getMySugarChartResources() {
+		
+		$mySugarRources = "";
+		return $mySugarResources;
+	}
+	
+	/**
+     * wrapper function to return chart array after any additional processing
+	 * 
+     * @param 	array $chartsArray 	array of chart config items that need processing
+     * @return	array $chartArray after it has been process
+     */
+	function chartArray($chartsArray) {
+
+		return $chartsArray;
+	}
 
 } // end class def

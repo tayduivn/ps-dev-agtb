@@ -1,5 +1,3 @@
-{*
-
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -27,10 +25,52 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id$
+// $Id: customMySugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
-*}
+SUGAR.mySugar.sugarCharts = function() {
 
-<script>
-    SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartName}', '{$chartXMLFile}', '100%', '480', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartLangFile}');
-</script>
+var activeTab = activePage;
+var charts = new Object();
+
+	return {
+		loadSugarCharts: function(activeTab) {
+			for (id in charts[activeTab]){
+				if(id != 'undefined'){
+				//alert(charts[activeTab][id]['chartType']);
+					loadSugarChart(
+											 charts[activeTab][id]['chartId'], 
+											 charts[activeTab][id]['jsonFilename'],
+											 charts[activeTab][id]['css'],
+											 charts[activeTab][id]['chartConfig']
+											 );
+				}
+			}
+		},
+
+		addToChartsArrayJson: function(json,activeTab) {
+			for (id in json) {
+					if(json[id]['supported'] == "true") {
+						SUGAR.mySugar.sugarCharts.addToChartsArray(
+												 json[id]['chartId'], 
+ 												 json[id]['filename'],
+												 json[id]['css'],
+												 json[id]['chartConfig'],
+												 activeTab);
+					}
+				}
+		},
+		addToChartsArray: function(chartId,jsonFilename,css,chartConfig,activeTab) {
+			
+			if (charts[activeTab] == null){
+				charts[activeTab] = new Object();
+			}
+			charts[activeTab][chartId] = new Object();
+			charts[activeTab][chartId]['chartId'] = chartId;
+			charts[activeTab][chartId]['jsonFilename'] = jsonFilename;	
+			charts[activeTab][chartId]['css'] = css;	
+			charts[activeTab][chartId]['chartConfig'] = chartConfig;		
+	
+		}
+		
+	}
+}();

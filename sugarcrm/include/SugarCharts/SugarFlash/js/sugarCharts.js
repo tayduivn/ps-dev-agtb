@@ -25,52 +25,9 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: customMySugarCharts.js 2010-12-01 23:11:36Z lhuynh $
+// $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
-SUGAR.mySugar.customCharts = function() {
+function loadSugarChart (name, xmlFile, width, height, styleSheet, colorScheme, langFile) {
 
-var activeTab = activePage;
-var charts = new Object();
-
-	return {
-		loadCustomCharts: function(activeTab) {
-			for (id in charts[activeTab]){
-				if(id != 'undefined'){
-				//alert(charts[activeTab][id]['chartType']);
-					loadCustomChart(
-											 charts[activeTab][id]['chartId'], 
-											 charts[activeTab][id]['jsonFilename'],
-											 charts[activeTab][id]['css'],
-											 charts[activeTab][id]['chartConfig']
-											 );
-				}
-			}
-		},
-
-		addToCustomChartsJson: function(json,activeTab) {
-			for (id in json) {
-					if(json[id]['supported'] == "true") {
-						SUGAR.mySugar.customCharts.addToCustomChartsArray(
-												 json[id]['chartId'], 
- 												 json[id]['filename'],
-												 json[id]['css'],
-												 json[id]['chartConfig'],
-												 activeTab);
-					}
-				}
-		},
-		addToCustomChartsArray: function(chartId,jsonFilename,css,chartConfig,activeTab) {
-			
-			if (charts[activeTab] == null){
-				charts[activeTab] = new Object();
-			}
-			charts[activeTab][chartId] = new Object();
-			charts[activeTab][chartId]['chartId'] = chartId;
-			charts[activeTab][chartId]['jsonFilename'] = jsonFilename;	
-			charts[activeTab][chartId]['css'] = css;	
-			charts[activeTab][chartId]['chartConfig'] = chartConfig;		
-	
+			loadChartSWF(name, xmlFile, width, height, styleSheet, colorScheme, langFile);
 		}
-		
-	}
-}();
