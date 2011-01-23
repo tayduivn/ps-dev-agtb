@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $listViewDefs['Documents'] = array(
   'DOCUMENT_NAME' => 
   array (
-    'width' => '30%',
+    'width' => '20%',
     'label' => 'LBL_NAME',
     'link' => true,
     'default' => true,
@@ -62,13 +62,13 @@ $listViewDefs['Documents'] = array(
   ),
   'CATEGORY_ID' => 
   array (
-    'width' => '40%',
+    'width' => '10%',
     'label' => 'LBL_LIST_CATEGORY',
     'default' => true,
   ),
   'SUBCATEGORY_ID' => 
   array (
-    'width' => '40%',
+    'width' => '15%',
     'label' => 'LBL_LIST_SUBCATEGORY',
     'default' => true,
   ),

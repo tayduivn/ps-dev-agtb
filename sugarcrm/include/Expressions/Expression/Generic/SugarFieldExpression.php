@@ -19,11 +19,8 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/Expressions/Expression/Generic/GenericExpression.php');
-/**
- * <b>related(Relate <i>link</i>, String <i>field</i>)</b><br>
- * Returns the value of <i>field</i> in the related module <i>link</i><br/>
- * ex: <i>related($accounts, "industry")</i>
- */
+
+
 class SugarFieldExpression extends GenericExpression
 {
 
@@ -55,27 +52,27 @@ class SugarFieldExpression extends GenericExpression
             case 'datetime':
             case 'datetimecombo':
                 if(empty($this->context->$fieldName)) {
-                    return false;
+                    throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 $date = $timedate->fromDb($this->context->$fieldName);
                 if(empty($date)) {
-                    return false;
+                     throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
                 $timedate->tzUser($date);
                 return $date;
             case 'date':
                 if(empty($this->context->$fieldName)) {
-                    return false;
+                     throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 $date = $timedate->fromDbDate($this->context->$fieldName);
                 if(empty($date)) {
-                    return false;
+                    throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
                 $timedate->tzUser($date);
                 return $date;
             case 'time':
                 if(empty($this->context->$fieldName)) {
-                    return false;
+                     throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 return $timedate->fromUserTime($timedate->to_display_time($this->context->$fieldName));
         }
@@ -125,38 +122,8 @@ class SugarFieldExpression extends GenericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-		    var params = this.getParameters();
-			var linkField = params[0].evaluate();
-			var relField = params[1].evaluate();
-
-			if (typeof(linkField) == "string" && linkField != "")
-			{
-                //We just have a field name, assume its the name of a link field
-                //and the parent module is the current module.
-                //Try and get the current module and record ID
-                var module = SUGAR.forms.AssignmentHandler.getValue("module");
-                var record = SUGAR.forms.AssignmentHandler.getValue("record");
-                if (!module || !record)
-                    return "";
-                var url = "index.php?" + SUGAR.util.paramsToUrl({
-                    module:"ExpressionEngine",
-                    action:"execFunction",
-                    id: record,
-                    tmodule:module,
-                    "function":"related",
-                    params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
-                });
-                //The response should the be the JSON encoded value of the related field
-                return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);
-			} else if (typeof(rel) == "object") {
-			    //Assume we have a Link object that we can delve into.
-			    //This is mostly used for n level dives through relationships.
-			    //This should probably be avoided on edit views due to performance issues.
-
-			}
-
-			console.log("fell through");
-			return "";
+		    var varName = this.getParameters().evaluate();
+			return SUGAR.forms.AssignmentHandler.getValue(varName);
 EOQ;
 	}
 
@@ -165,21 +132,21 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return array("sugar");
+		return array("sugarField");
 	}
 
 	/**
 	 * The first parameter is a number and the second is the list.
 	 */
 	function getParameterTypes() {
-		return array(AbstractExpression::$RELATE_TYPE, AbstractExpression::$STRING_TYPE);
+		return array(AbstractExpression::$STRING_TYPE);
 	}
 
 	/**
 	 * Returns the maximum number of parameters needed.
 	 */
 	static function getParamCount() {
-		return 2;
+		return 1;
 	}
 
 	/**

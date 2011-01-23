@@ -98,16 +98,6 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	    $this->assertInstanceOf("DateTime", $result);
 	    $this->assertEquals($timedate->asUserDate($timedate->fromUserDate('3/18/2011')), $timedate->asUserDate($result));
 
-	    $task->name = 'today';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $this->assertEquals($timedate->asUserDate($timedate->getNow(true)), $timedate->asUserDate($result));
-
-	    $task->name = 'tomorrow';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $this->assertEquals($timedate->asUserDate($timedate->getNow(true)->get("+1 day")), $timedate->asUserDate($result));
-
 	}
 
 	public function testNow()
@@ -190,17 +180,28 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	    $task = new Task();
         $task->name = 'Chuck Norris';
 	    $expr = 'date($name)';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertFalse($result);
-
+        try {
+            $result = Parser::evaluate($expr, $task)->evaluate();
+	        $this->assertTrue(false, "Incorrecty converted '{$task->name }' to date $result");
+        } catch (Exception $e){
+            $this->assertContains("invalid value to date", $e->getMessage());
+        }
         $task->date_due = 'Chuck Norris';
 	    $expr = 'addDays($date_due, 3)';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertFalse($result);
+	    try {
+            $result = Parser::evaluate($expr, $task)->evaluate();
+	        $this->assertTrue(false, "Incorrecty converted '{$task->date_due }' to date $result");
+        } catch (Exception $e){
+            $this->assertContains("invalid value to date", $e->getMessage());
+        }
 
 	    $expr = 'addDays($date_start, 3)'; // not setting the value
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertFalse($result);
+	    try {
+            $result = Parser::evaluate($expr, $task)->evaluate();
+	        $this->assertTrue(false, "Incorrecty converted empty string to date $result");
+        } catch (Exception $e){
+            $this->assertContains("attempt to get date from empty field", $e->getMessage());
+        }
 	}
 
 	/**
