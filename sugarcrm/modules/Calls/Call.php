@@ -476,7 +476,8 @@ class Call extends SugarBean
 		global $timedate;
 
 		// Assumes $call dates are in user format
-		$xOffset = $timedate->asUser($timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start)), $call->current_notify_user);
+		$calldate = $timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start)), $call->current_notify_user);
+		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->userTimezoneSuffix($calldate, $call->current_notify_user);
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
@@ -491,7 +492,7 @@ class Call extends SugarBean
 
 		$xtpl->assign("CALL_TO", $call->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("CALL_SUBJECT", $call->name);
-		$xtpl->assign("CALL_STARTDATE", $xOffset . " " . (!empty($app_list_strings['dom_timezones_extra'][$prefDate['userGmtOffset']]) ? $app_list_strings['dom_timezones_extra'][$prefDate['userGmtOffset']] : $prefDate['userGmt']));
+		$xtpl->assign("CALL_STARTDATE", $xOffset);
 		$xtpl->assign("CALL_HOURS", $call->duration_hours);
 		$xtpl->assign("CALL_MINUTES", $call->duration_minutes);
 		$xtpl->assign("CALL_STATUS", ((isset($call->status))?$app_list_strings['call_status_dom'][$call->status] : ""));

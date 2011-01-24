@@ -1396,12 +1396,15 @@ class TimeDate
 	}
 
 	/**
-	 * Get the name of the timezone for current user
+	 * Get the name of the timezone for the user
+	 * @param User $user User, default - current user
 	 * @return string
 	 */
-	public static function userTimezone()
+	public static function userTimezone(User $user = null)
 	{
-	    $user = $GLOBALS['current_user'];
+	    if(empty($user)) {
+    	    $user = $GLOBALS['current_user'];
+	    }
 	    if(empty($user)) {
 	        return '';
 	    }
@@ -1449,7 +1452,28 @@ class TimeDate
 	}
 
 	/**
+	 * Get the description of the user timezone for specific date
+	 * Like: PST(+08:00)
+	 * We need the date because it can be DST or non-DST
+	 * Note it's different from TZ name in tzName() that relates to current date
+	 * @param User $user User, default - current user
+	 * @return string
+	 */
+	public static function userTimezoneSuffix(DateTime $date, User $user = null)
+	{
+	    if(empty($user)) {
+    	    $user = $GLOBALS['current_user'];
+	    }
+	    if(empty($user)) {
+	        return '';
+	    }
+	    $this->tzUser($date, $user);
+	    return $date->format('T(P)');
+	}
+
+	/**
 	 * Get display name for a certain timezone
+	 * Note: it uses current date for GMT offset, so it may be not suitable for displaying generic dates
 	 * @param string|DateTimeZone $name TZ name
 	 * @return string
 	 */
