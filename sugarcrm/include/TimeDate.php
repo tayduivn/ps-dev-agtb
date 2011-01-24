@@ -1074,7 +1074,7 @@ class TimeDate
      * @param	$format	     string		destination format value as passed to PHP's date() funtion
      * @param	$to		     boolean
      * @param	$user	     object		user object from which Timezone and DST
-     * @param	$usetimezone string		timezone name as it appears in timezones.php
+     * @param	$usetimezone string		timezone name
      * values will be derived
      * @return 	 string		date formatted and adjusted for TZ and DST
      */
