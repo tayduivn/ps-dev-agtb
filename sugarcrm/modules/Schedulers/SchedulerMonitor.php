@@ -96,7 +96,7 @@ class SchedulerMonitor extends Scheduler {
 		}
 		global $sugar_config;
 		$GLOBALS['log']->debug('----->Monitor starting Scheduler thread');
-		$this->uptimeScheduler = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow());
+		$this->uptimeScheduler = TimeDate::getInstance()->getNow()->ts;
 		$job = new Job();
 		$job->object_assigned_name = 'SchedulerDaemon';
 		
@@ -160,13 +160,13 @@ class SchedulerMonitor extends Scheduler {
 		$buf = '';
 		$ack = "ack\n";
 		
-		$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds');
+		$pingAt = TimeDate::getInstance()->getNow()->get('+10 seconds')->ts;
 		
 		while($this->stop == false) {
 			
 			if(!$this->shutdown) { // if we manually shutdown the service, don't try to ping
 				if($pingAt <= mktime()) { 
-					$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds');
+					$pingAt = TimeDate::getInstance()->getNow()->get('+10 seconds')->ts;
 // every 10 secs
 					$this->checkCount++;
 					$GLOBALS['log']->debug('----->Monitor pinging SD :: next ping at: '.$pingAt);
@@ -295,7 +295,7 @@ class SchedulerMonitor extends Scheduler {
 							$GLOBALS['log']->debug('----->Monitor got STATUS');
 							$msg = "\nSchedulerMonitor received STATUS command.\nDaemon status:\n";
 							$msg .= "UPTIME: ";
-							$msg .= TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow()) - $this->uptimeScheduler."secs\n";
+							$msg .= TimeDate::getInstance()->getNow()->ts - $this->uptimeScheduler."secs\n";
 							usleep(100);
 							socket_write($socketInbound, $msg, strlen($msg));  // output feedback to admin
 							usleep(100);
