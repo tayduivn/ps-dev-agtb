@@ -172,8 +172,8 @@ if (!empty($_REQUEST['resource'])) {
 
     foreach($projectTasks as $projectTask) {
         $duration = $projectTask->duration;
-        $dateStart = $timedate->asDbDate($timedate->fromTimeStamp($projectTask->date_start)); 
-        $dateFinish =$timedate->asDbDate($timedate->fromTimeStamp($projectTask->date_finish)); 
+        $dateStart = $timedate->asDbDate($timedate->fromString($projectTask->date_start)); 
+        $dateFinish =$timedate->asDbDate($timedate->fromString($projectTask->date_finish)); 
         
         if ($projectTask->duration_unit == "Days") {
             $duration = $duration * $workDayHours; 

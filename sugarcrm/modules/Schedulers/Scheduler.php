@@ -365,7 +365,7 @@ class Scheduler extends SugarBean {
 		$dates	= $ints[2];
 		$hrs	= $ints[1];
 		$mins	= $ints[0];
-		$today	= getdate(TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow()));
+		$today	= getdate(TimeDate::getInstance()->getNow()->ts);
 
 		// derive day part
 		if($days == '*') {
@@ -613,13 +613,13 @@ class Scheduler extends SugarBean {
 		if(!empty($focus->date_time_end)) { // do the same for date_time_end if not empty
 			$dateTimeEnd = $focus->date_time_end;
 		} else {
-			$dateTimeEnd = TimeDate::getInstance()->asDb(TimeDate::getInstance()->getNow()+get('+1 day'));
+			$dateTimeEnd = $timedate->getNow()+get('+1 day')->asDb();
 //			$dateTimeEnd = '2020-12-31 23:59:59'; // if empty, set it to something ridiculous
 		}
 		$timeEndTs = strtotime($dateTimeEnd.' UTC'); // GMT end timestamp if necessary
 		$timeEndTs++;
 		/*_pp('hours:'); _pp($hrName);_pp('mins:'); _pp($minName);*/
-		$nowTs = TimeDate::getInstance()->asUserTs($timedate->getNow());
+		$nowTs = $timedate->getNow()->ts;
 
 //		_pp('currentHour: '. $currentHour);
 //		_pp('timeStartTs: '.date('r',$timeStartTs));

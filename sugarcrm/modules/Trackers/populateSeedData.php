@@ -153,7 +153,7 @@ function populate_tracker_queries() {
 //END SUGARCRM flav=pro ONLY
 
 function randomTimestamp() {
-   $now = TimeDate::getInstance()->getNow()-ts;
+   $now = TimeDate::getInstance()->getNow()->ts;
    $lastYear = strtotime('01 February 2008');
    return $timedate->asDb($timedate->fromTimestamp(rand($lastYear, $now)));
     

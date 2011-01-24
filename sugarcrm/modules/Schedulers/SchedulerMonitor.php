@@ -160,14 +160,14 @@ class SchedulerMonitor extends Scheduler {
 		$buf = '';
 		$ack = "ack\n";
 		
-		$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds'));
+		$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds');
 		
 		while($this->stop == false) {
 			
 			if(!$this->shutdown) { // if we manually shutdown the service, don't try to ping
 				if($pingAt <= mktime()) { 
-					$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds'));
-;// every 10 secs
+					$pingAt = TimeDate::getInstance()->asUserTs(TimeDate::getInstance()->getNow())->get('+10 seconds');
+// every 10 secs
 					$this->checkCount++;
 					$GLOBALS['log']->debug('----->Monitor pinging SD :: next ping at: '.$pingAt);
 

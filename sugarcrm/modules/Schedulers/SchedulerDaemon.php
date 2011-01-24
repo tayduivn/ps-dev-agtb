@@ -288,10 +288,7 @@ class SchedulerDaemon extends Scheduler {
 		}
 		
 		$fireTimeMinus = $timedate->asDb($timedate->getNow()->get('-1 minute'));
-		
-	
 		$fireTimePlus = $timedate->asDb($timedate->getNow()->get('+1 minute'));
-
 
 		// collapse list of schedulers where "catch_up" is 0 and status is "ready" (not "in progress, completed, etc.");
 		if($sugar_config['dbconfig']['db_type'] == 'oci8') {
@@ -355,7 +352,7 @@ class SchedulerDaemon extends Scheduler {
 		$dates	= $ints[2];
 		$hrs	= $ints[1];
 		$mins	= $ints[0];
-		$today	= getdate($timedate->asUserTs($timedate->getNow()));
+		$today	= getdate($timedate->getNow()->ts);
 
 		
 		// derive day part
@@ -614,13 +611,13 @@ class SchedulerDaemon extends Scheduler {
 			$dte2 = $timedate->to_db_date_time($dte[0],$dte[1]);
 			$dateTimeEnd = $dte2[0]." ".$dte2[1];
 		} else {
-			$dateTimeEnd = $timedate->asDb($timedate->getNow()->get('+1 day'));
+			$dateTimeEnd = $timedate->getNow()->get('+1 day')->asDb();
 //			$dateTimeEnd = '2020-12-31 23:59:59'; // if empty, set it to something ridiculous
 		}
 		$timeEndTs = strtotime($dateTimeEnd); // GMT end timestamp if necessary
 		$timeEndTs++;
 		/*_pp('hours:'); _pp($hrName);_pp('mins:'); _pp($minName);*/
-		$nowTs = $timedate->asUserTs($timedate->getNow());
+		$nowTs = $timedate->getNow()->ts;
 
 //		_pp('currentHour: '. $currentHour);
 //		_pp('timeStartTs: '.date('r',$timeStartTs));
@@ -652,7 +649,7 @@ class SchedulerDaemon extends Scheduler {
 							if( $tsGmt <= $timeToTs ) { // start is less than the time_to
 								if( $tsGmt >= $nowTs ) { // we only want to add jobs that are in the future
 									if( $tsGmt > $lastRunTs ) { //TODO figure if this is better than the above check
-										$validJobTime[] = $timedate->asDb($tsGmt); //_pp("Job Qualified for: ".date('Y-m-d H:i:s', $tsGmt));
+										$validJobTime[] = $timedate->fromTimestamp($tsGmt)->asDb(); //_pp("Job Qualified for: ".date('Y-m-d H:i:s', $tsGmt));
 									} else {
 										//_pp('Job Time is NOT greater than Last Run');
 									}

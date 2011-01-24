@@ -119,7 +119,7 @@ function processReports(){
                 $templInfo = getVersionEdition($arr['dcetemplate_id'],$db);
                 $arr['last_used'] = getLastAccess($arr['inst_id'], $db, $mod_strings);
                 $arr['last_used'] = strtotime($arr['last_used']);
-				$atim = DateTime2::getInstance()->asUserTs(DateTime2::getInstance()->fromString($arr['last_used']));
+				$atim = TimeDate::getInstance()->fromString($arr['last_used'])->ts;
                  if(dateCheck($atim, $mode)){
                         $arr['expires'] = $arr['license_expire_date'];
                         $arr['version'] = $templInfo['sugar_version'].' '.$templInfo['sugar_edition'];
