@@ -43,6 +43,7 @@ class Document extends SugarBean {
 	var $date_entered;
 	var $date_modified;
 	var $modified_user_id;
+    var $assigned_user_id;
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	//END SUGARCRM flav=pro ONLY
@@ -95,7 +96,6 @@ class Document extends SugarBean {
 	}
 
 	function save($check_notify = false) {
-		
 		if (empty($this->doc_type)) {
 			$this->doc_type = 'Sugar';
 		}
