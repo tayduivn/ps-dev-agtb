@@ -4896,6 +4896,17 @@ input, select, textarea, button
 	border: 1px solid #98C6EA;
 }
 
+.reportChartContainer {
+	-moz-border-radius:0px 0px 6px 6px;
+	border-radius:0px 0px 6px 6px;
+	-webkit-border-radius:0px 0px 6px 6px;
+	-moz-box-shadow:0 0 10px #CCCCCC;
+	box-shadow:0 0 10px #CCCCCC;
+	-webkit-box-shadow:0 0 10px #CCCCCC;
+	border: 1px solid #98C6EA;
+	margin-bottom: 20px;
+	}
+
 /* for all views */
 .view tr, .view td, .view h4, .view div
 {

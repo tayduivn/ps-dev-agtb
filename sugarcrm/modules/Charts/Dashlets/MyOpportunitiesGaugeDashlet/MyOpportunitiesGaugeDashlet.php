@@ -60,8 +60,8 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
         require('modules/Charts/chartdefs.php');
         $chartDef = $chartDefs['opportunities_this_quarter'];
 		
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->setProperties('', translate('LBL_NUMBER_OF_OPPS', 'Charts'), $chartDef['chartType']);
         $sugarChart->base_url = $chartDef['base_url'];
         $sugarChart->group_by = $chartDef['groupBy'];

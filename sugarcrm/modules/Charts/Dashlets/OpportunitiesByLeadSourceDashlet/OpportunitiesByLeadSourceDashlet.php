@@ -74,8 +74,8 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['pipeline_by_lead_source'];
         
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->is_currency = true; 
         $currency_symbol = $sugar_config['default_currency_symbol'];
         if ($current_user->getPreference('currency')){
@@ -97,7 +97,7 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
 		$sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
 		return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();
     }  
     
     /**

@@ -685,10 +685,13 @@ EOJS;
 	    $chartColorsXML = SugarThemeRegistry::current()->getImageURL('sugarColors.xml');
 
 	    $chartStringsXML = $sugar_config['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
+	    
+	    require_once('include/SugarCharts/SugarChartFactory.php');
+		$sugarChart = SugarChartFactory::getInstance();
+			
+			
         if (!file_exists($chartStringsXML)) {
-			require_once('include/SugarCharts/SugarChart.php');
-			$chart = new SugarChart;
-            $chart->generateChartStrings($chartStringsXML);
+            $sugarChart->generateChartStrings($chartStringsXML);
 		}
 
 		$selectedPage = $_REQUEST['pageId'];
@@ -735,8 +738,7 @@ EOJS;
 							if (in_array($dashlets[$id]['className'], $predefinedChartsList)){
 								$chartsArray[$id] = array();
 								$chartsArray[$id]['id'] = $id;
-								require_once('include/SugarCharts/SugarChart.php');
-								$chartsArray[$id]['xmlFile'] = SugarChart::getXMLFileName($id);
+								$chartsArray[$id]['xmlFile'] = $sugarChart->getXMLFileName($id);
 								$chartsArray[$id]['width'] = '100%';
 								$chartsArray[$id]['height'] = '480';
 								$chartsArray[$id]['styleSheet'] = $chartStyleCSS;
@@ -807,7 +809,8 @@ EOJS;
 		$scriptResponse['dashletScript'] = $dashletScript;
 		$scriptResponse['newDashletsToReg'] = $dashletIds;
 		$scriptResponse['numCols'] = sizeof($pages[$selectedPage]['columns']);
-		$scriptResponse['chartsArray'] = $chartsArray;
+		//custom chart code
+		$scriptResponse['chartsArray'] = $sugarChart->chartArray($chartsArray);
 		$scriptResponse['trackerScript'] = $trackerScript . (strpos($trackerScriptArray,',') ? (substr($trackerScriptArray, 0, strlen($trackerScriptArray)-1) . ']; </script>') : $trackerScriptArray . ']; </script>');
 		$scriptResponse['toggleHeaderToolsetScript'] = "<script>".$toggleHeaderToolsetScript."</script>";
 

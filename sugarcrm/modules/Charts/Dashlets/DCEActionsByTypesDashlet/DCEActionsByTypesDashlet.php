@@ -50,8 +50,8 @@ class DCEActionsByTypesDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['dceactions_by_types'];
 		
-        require_once('include/SugarCharts/SugarChart.php');
-		$sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+		$sugarChart = SugarChartFactory::getInstance();
 		$sugarChart->is_currency = false;
 		$sugarChart->setProperties('', $chartDef['chartUnits'], $chartDef['chartType']);
 		$sugarChart->base_url = $chartDef['base_url'];
@@ -63,7 +63,7 @@ class DCEActionsByTypesDashlet extends DashletGenericChart
 		$sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
 		$returnStr = $sugarChart->display($this->id, $xmlFile, '100%', '480', false);
-        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div><br />'. $this->processAutoRefresh();
+        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div>'. $this->processAutoRefresh();
 	}
     
     private function getDataFromQueries()
