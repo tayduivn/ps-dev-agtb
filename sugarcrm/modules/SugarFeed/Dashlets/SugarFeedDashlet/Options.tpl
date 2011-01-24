@@ -67,7 +67,9 @@
 <tr>
     <td scope='row'>{$categoriesLBL}</td>
     <td>
-    	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
+        <select name='categories[]' multiple=true size=6 onchange='getMultiple(this);'>
+    	{html_options options=$categories selected=$selectedCategories}
+    	</select>
     </td>
 </tr>
 {* //BEGIN SUGARCRM flav=pro ONLY*}
@@ -80,7 +82,8 @@
 {* //END SUGARCRM flav=pro ONLY*}
 <tr>
   <td align="right" colspan="2">
-    {$externalWarningLBL}
+    <div id='externalApiDiv'>
+    </div>
   </td>
 </tr>
 <tr>
@@ -89,5 +92,29 @@
    	</td>
 </tr>
 </table>
+<script language='javascript'>
+var externalApiList = {$externalApiList};
+{literal}
+
+
+function getMultiple(ob){
+    var selected = new Array();
+    for (var i = 0; i < ob.options.length; i++){
+        if (ob.options[ i ].selected){
+            selected.push(ob.options[ i ].value);
+        }
+    }
+    var buttonHtml = '';
+    for (var i = 0; i < selected.length; i++){
+        for (var j = 0; j < externalApiList.length; j++){
+            if(selected[i] == externalApiList[j]){
+                buttonHtml += '<a href="javascript:window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
+            }
+        }
+    }
+    document.getElementById('externalApiDiv').innerHTML = buttonHtml;
+}
+</script>
+{/literal}
 </form>
 </div>
