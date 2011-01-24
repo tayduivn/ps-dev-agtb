@@ -26,7 +26,7 @@ public function setUp()
 
 public function tearDown()
 {
-	if($this->db->dbType == 'mysql' || $this->db->dbType == 'mysqli')
+	if($this->db->dbType == 'mysql')
     {	
     	$sql = "ALTER TABLE meetings ALTER COLUMN status SET DEFAULT 'Planned'";
     	$sql2 = "ALTER TABLE calls ALTER COLUMN status SET DEFAULT 'Planned'";
@@ -50,10 +50,12 @@ public function testRepairTableParams()
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertRegExp('/ALTER TABLE meetings\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i', $result);
 	    
+	    /*
 	    $bean = new Call();
 	    $result = $this->getRepairTableParamsResult($bean);
 	    $this->assertTrue(!empty($result));
 	    $this->assertRegExp('/ALTER TABLE calls\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i', $result);
+	    */
 	    
 	    $bean = new Task();
 	    $result = $this->getRepairTableParamsResult($bean);

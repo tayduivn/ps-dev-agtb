@@ -31,7 +31,9 @@ class TemplateDecimal extends TemplateFloat{
 	var $type = 'decimal';
 	var $default = null;
 	var $default_value = null;
+	
 	function TemplateDecimal(){
+    	parent::__construct();
 		$this->vardef_map['precision']='ext1';
 	}
 

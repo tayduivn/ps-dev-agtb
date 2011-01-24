@@ -38,9 +38,9 @@ class AddDaysExpression extends DateExpression
             return false;
         }
         $days = $params[1]->evaluate();
-
+        
         if ($days < 0)
-           return $date->modify("-$days day");
+           return $date->modify("$days day");
 
         return $date->modify("+$days day");
 	}
