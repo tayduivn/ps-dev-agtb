@@ -54,33 +54,24 @@ class SugarChartFactory
         	$chartEngine = $sugar_config['chartEngine'];
         }
         
-        switch($chartEngine) {
-        	case "Jit": 
-        	require_once('include/SugarCharts/Jit/Jit.php');
-        	
-        	if(empty($module)) {
-        		$chartEngine = new Jit();
-        	} else {
-        		$className = "Jit".$module;
-        		$chartEngine = new $className();
-        	}
-        	break;
-        	
-        	case "SugarFlash":
-        	require_once('include/SugarCharts/SugarFlash/SugarFlash.php');
-        	if(empty($module)) {
-        		$chartEngine = new SugarFlash();
-        	} else {
-        		$className = "SugarFlash".$module;
-        		$chartEngine = new $className();
-        	}
-        	
-        	break;
-        	
+        $file = "include/SugarCharts/".$chartEngine."/".$chartEngine.$module.".php";
+        
+        if(file_exists('custom/' . $file))
+        {
+          require_once('custom/' . $file);
+        } else if(file_exists($file)) {
+          require_once($file);
+        } else {
+            
+            $error = "Could not find ".$file;
+            $GLOBALS['log']->fatal($error);
+            echo $error;
+            die();
         }
         
-        
-            return $chartEngine;
+        $className = $chartEngine.$module;
+        return new $className();
+
     }
                 
 }
