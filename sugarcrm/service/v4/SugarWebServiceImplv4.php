@@ -32,7 +32,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
     public function __construct()
     {
-        self::$helperObject = new SugarWebServiceUtilv3_2();
+        self::$helperObject = new SugarWebServiceUtilv4();
     }
     
     	
