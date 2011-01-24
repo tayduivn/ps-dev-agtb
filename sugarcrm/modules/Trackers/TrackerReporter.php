@@ -141,7 +141,7 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$sessionTimeout = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-20 minutes"))."'" ,"datetime");
+			$sessionTimeout = db_convert("'".$timedate->nowDb(), strtotime("-20 minutes"))."'" ,"datetime");
 		
 		$result = $this->execute($this->setup('ShowActiveUsers', array($sessionTimeout)));
 	    $data = array();
@@ -161,7 +161,7 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$sessionTimeout = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-20 minutes"))."'" ,"datetime");
+			$sessionTimeout = db_convert("'".$timedate->getNow(), strtotime("-20 minutes"))."'" ,"datetime");
 		return $this->execute($this->setup('ShowLoggedInUserCount', array($sessionTimeout)));
 	}
 	
@@ -234,7 +234,7 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$timeSpan = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 1 week"))."'" ,"datetime");
+			$timeSpan = db_convert("'".$timedate->nowDb(), strtotime("- 1 week"))."'" ,"datetime");
 		
 		$args = array($user, $timeSpan);
 		
@@ -291,7 +291,7 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$timeSpan = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 1 week"))."'" ,"datetime");
+			$timeSpan = db_convert("'".$timedate->nowDb(), strtotime("- 1 week"))."'" ,"datetime");
 		$args = array($user, $timeSpan);
 		$result = $this->execute($this->setup('ShowMyCumulativeLoggedInTime', $args));
 	    $data = array();
@@ -315,7 +315,7 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$timeSpan = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 1 week"))."'" ,"datetime");
+			$timeSpan = db_convert("'".$timedate->nowDb(), strtotime("- 1 week"))."'" ,"datetime");
 		$args = array($timeSpan);
 		$result = $this->execute($this->setup('ShowUsersCumulativeLoggedInTime', $args));
 		$data = array();

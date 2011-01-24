@@ -94,12 +94,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         //clean_stale_actions($db);
 
         //get the time for 5 hours ago
-        $now = date($GLOBALS['timedate']->get_db_date_time_format());
+        $now = $timedate->nowDb();
         $stim = strtotime($now);
         //remove a day from timestamp 
         $ytim = mktime(date("H",$stim)-5, date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim));
         //convert back into date format
-        $staletime = date($GLOBALS['timedate']->get_db_date_time_format()." ",$ytim);
+        $staletime = $timedate->to_db($ytim);
                
         //grab all the actions of type started that are 5 hours old or more
         $getActionQry = "select id, status, type   from dceactions where status = 'started' and deleted = 0 and date_started < '$staletime'";

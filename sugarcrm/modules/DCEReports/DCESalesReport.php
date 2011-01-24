@@ -119,8 +119,7 @@ function processReports(){
                 $templInfo = getVersionEdition($arr['dcetemplate_id'],$db);
                 $arr['last_used'] = getLastAccess($arr['inst_id'], $db, $mod_strings);
                 $arr['last_used'] = strtotime($arr['last_used']);
-                $atim = mktime(date("H",$arr['last_used']), date("i",$arr['last_used']), date("s",$arr['last_used']), date("m",$arr['last_used']), date("d",$arr['last_used']),   date("Y",$arr['last_used']));
-
+				$atim = TimeDate::getInstance()->fromString($arr['last_used'])->ts;
                  if(dateCheck($atim, $mode)){
                         $arr['expires'] = $arr['license_expire_date'];
                         $arr['version'] = $templInfo['sugar_version'].' '.$templInfo['sugar_edition'];
@@ -389,7 +388,7 @@ function processReports(){
             $stim = strtotime($now);
             $wtim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-7,   gmdate("Y",$stim));
             //convert back into date format
-            $sevenDaysAgo = gmdate("Y-m-d ",$wtim);
+            $sevenDaysAgo = $timedate->asDb($timedate->getNow()->get("-1 week"));
 
            $dceRprtQry  =  "Select max(num_of_users) num_of_users from dcereports where instance_id = '$id' ";
            $dceRprtQry .=  " and date_entered >= '$sevenDaysAgo' order by date_entered desc";

@@ -627,7 +627,7 @@ function get_server_info(){
 	}
 
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_server_info');
-	return array('flavor' => $sugar_flavor, 'version' => $sugar_version, 'gmt_time' => gmdate('Y-m-d H:i:s'));
+	return array('flavor' => $sugar_flavor, 'version' => $sugar_version, 'gmt_time' => TimeDate::getInstance()->nowDb());
 } // fn
 
 /**

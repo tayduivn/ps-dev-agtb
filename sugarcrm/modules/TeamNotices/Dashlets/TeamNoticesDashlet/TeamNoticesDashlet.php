@@ -53,7 +53,7 @@ class TeamNoticesDashlet extends Dashlet
         
         $focus = new TeamNotice();
         
-        $today = db_convert("'".gmdate($GLOBALS['timedate']->dbDayFormat)."'", 'date');
+        $today = db_convert("'".TimeDate::getInstance()->nowDbDate();."'", 'date');
         $query = $focus->create_new_list_query("date_start",$focus->table_name.".date_start <= $today and ".$focus->table_name.".date_end >= $today and ".$focus->table_name.'.status=\'Visible\'');
         
         if ( $result = $focus->db->query($query) ) 

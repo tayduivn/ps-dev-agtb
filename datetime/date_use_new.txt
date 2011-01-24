@@ -1,0 +1,22 @@
+./modules/Project/ResourceReport.php:        while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0)
+./modules/Project/ResourceReport.php:            while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0 || isset($isHoliday[$dateStart])
+./modules/Schedulers/Scheduler.php:		$lowerLimit = mktime(0, 0, 0, 1, 1, 2005); // jan 01, 2005, GMT-0
+./modules/Schedulers/Scheduler.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
+./modules/Schedulers/Scheduler.php:					return date('jS', strtotime('December '.$value));
+./modules/Schedulers/Scheduler.php:				return date('F', strtotime('2005-'.$value.'-01'));
+./modules/Schedulers/SchedulerOLD.php:					return date($datef['time'], strtotime($value.':'.str_pad($mins, 2, '0', STR_PAD_LEFT)));
+./modules/Schedulers/SchedulerOLD.php:					return date('jS', strtotime('December '.$value));
+./modules/Schedulers/SchedulerOLD.php:				return date('F', '2005-'.$value.'-01');
+./modules/SugarFeed/SugarFeed.php:    	$start_time = gmmktime($start[4],$start[5], $start[6], $start[2], $start[3], $start[1] );
+./modules/Tasks/Task.php:        $dd = $timedate->to_db_date($date_due, false);
+./modules/UserPreferences/UserPreference.php:			$equinox = date('I');
+./modules/UserPreferences/UserPreference.php:			$serverHourGmt = date('Z') / 60 / 60;
+./modules/Users/EditView.php:	$focus->setPreference('timezone', date('T'));
+./portal/include/utils.php:	$serverOffset = date('Z');
+./portal/include/utils.php:	if(date('I')) {
+./schedulers.php:	write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
+./schedulers.php:	write_array_to_file('timestamp', array(strtotime(date('H:i'))) , $cachePath.'/'.$pid);
+./include/Expressions/Expression/Date/DateExpression.php:       $time = date($TD->get_date_time_format(), $unixTime);
+./include/Expressions/Expression/Date/DefineDateExpression.php:     return date($this->internalDateTimeFormat, $time);
+./data/SugarBean.php:                            $timeValue = ($value['display_default'] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($value['display_default']) ;
+./include/generic/SugarWidgets/SugarWidgetFielddate.php:function get_db_date($days,$time) { $curr_timestamp=mktime($time_parts[0],$time_parts[1],0,$date_parts[1], $date_parts[2],$date_parts[0]);

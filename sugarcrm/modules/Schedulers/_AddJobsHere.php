@@ -417,7 +417,7 @@ function trimTracker()
 		   continue;
 		}
 
-	    $timeStamp = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),time()+(86400 * -$prune_interval))."'" ,"datetime");
+	    $timeStamp = db_convert("'". TimeDate::getInstance()->getNow()->get("+"+$prune_interval+" days")."'" ,"datetime");
 		if($tableName == 'tracker_sessions') {
 		   $query = "DELETE FROM $tableName WHERE date_end < $timeStamp";
 		} else {
@@ -515,7 +515,7 @@ function updateTrackerSessions() {
 	$db = DBManagerFactory::getInstance();
     require_once('include/utils/db_utils.php');
 	//Update tracker_sessions to set active flag to false
-	$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-6 hours"))."'" ,"datetime");
+	$sessionTimeout = db_convert("'".$timedate->getNow()->get("-6 hours")->asDb()."'" ,"datetime");
 	$query = "UPDATE tracker_sessions set active = 0 where date_end < $sessionTimeout";
 	$GLOBALS['log']->info("----->Scheduler is about to update tracker_sessions table by running the query $query");
 	$db->query($query);
