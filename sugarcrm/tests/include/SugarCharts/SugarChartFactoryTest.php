@@ -5,9 +5,21 @@ class SugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase {
 
 var $engine;
 
+	public static function setUpBeforeClass()
+	{
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+
+	public static function tearDownAfterClass()
+	{
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+	}
+
+
 public function setUp()
 {
-	global $sugar_config;
+    global $sugar_config;
 	if(!empty($sugar_config['chartEngine']))
 	{
 		$this->engine = $sugar_config['chartEngine'];
