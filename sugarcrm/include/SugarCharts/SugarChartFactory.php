@@ -35,7 +35,8 @@ class SugarChartFactory
 	 * Returns a reference to the ChartEngine object for instance $chartEngine, or the default 
      * instance if one is not specified
      *
-     * @param  string $chartEngine optional, name of the chart engine
+     * @param string $chartEngine optional, name of the chart engine from $sugar_config['chartEngine']
+     * @param string $module optional, name of module extension for chart engine (see JitReports or SugarFlashReports)
      * @return object ChartEngine instance 
      */
 	public static function getInstance(
@@ -62,11 +63,9 @@ class SugarChartFactory
         } else if(file_exists($file)) {
           require_once($file);
         } else {
-            
-            $error = "Could not find ".$file;
-            $GLOBALS['log']->fatal($error);
-            echo $error;
-            die();
+           global $app_strings;
+           $GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], $file));
+           die();
         }
         
         $className = $chartEngine.$module;

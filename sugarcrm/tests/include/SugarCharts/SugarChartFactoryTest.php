@@ -3,6 +3,26 @@ require_once('include/SugarCharts/SugarChartFactory.php');
 
 class SugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase {
 
+var $engine;	
+	
+public function setUp()
+{
+	global $sugar_config;
+	if(!empty($sugar_config['chartEngine']))
+	{
+		$this->engine = $sugar_config['chartEngine'];
+	}
+}
+
+public function tearDown()
+{
+	if(!empty($this->engine))
+	{
+		global $sugar_config;
+		$sugar_config['chartEngine'] = $this->engine;
+	}
+}
+	
 public function testChartFactoryDefault()
 {
 	$sugarChart = SugarChartFactory::getInstance();
@@ -31,6 +51,16 @@ public function testChartFactoryFlash()
 	$name = get_class($sugarChart);
 	$this->assertEquals('SugarFlashReports', $name, 'Assert chart engine is SugarFlashReports');		
 }
+
+public function testConfigChartFactory()
+{
+ 	global $sugar_config;
+ 	$sugar_config['chartEngine'] = 'SugarFlash';
+	$sugarChart = SugarChartFactory::getInstance();
+	$name = get_class($sugarChart);
+	$this->assertEquals('SugarFlash', $name, 'Assert chart engine set in global sugar_config is correct'); 	
+}
+
 
 
 }

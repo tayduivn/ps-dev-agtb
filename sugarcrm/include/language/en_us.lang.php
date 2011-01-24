@@ -3095,7 +3095,8 @@ $app_strings = array (
 
     //File write error label
     'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
-
+	'ERR_FILE_NOT_FOUND' => 'Error: Could not load file {0}.  Please check system and web server permissions.',
+    
     'LBL_AND' => 'And',
     'LBL_BEFORE' => 'Before',
 
