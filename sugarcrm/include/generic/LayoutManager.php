@@ -220,6 +220,13 @@ class LayoutManager
 				case 'assigned_user_id':
 					$widget_def['widget_class'] = 'Fielduser_name';
 					break;
+					//bug 39170
+					case 'created_by':
+					$widget_def['widget_class'] = 'Fielduser_name';
+					break;
+					case 'modified_user_id':
+					$widget_def['widget_class'] = 'Fielduser_name';
+					break;
 				//BEGIN SUGARCRM flav=pro ONLY
 				case 'team_id':
 					$widget_def['widget_class'] = 'Fieldteam_name';

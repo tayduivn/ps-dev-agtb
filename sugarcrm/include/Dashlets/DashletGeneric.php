@@ -204,6 +204,8 @@ class DashletGeneric extends Dashlet {
                 $widgetDef = $this->seedBean->field_defs[$name];
                 if($widgetDef['type'] == 'enum') $widgetDef['remove_blank'] = true; // remove the blank option for the dropdown
 				if($widgetDef['name'] == 'assigned_user_name') $widgetDef['name'] = 'assigned_user_id';
+				if($widgetDef['name'] == 'created_by_name') $widgetDef['name'] = 'created_by';//bug 39170
+				if($widgetDef['name'] == 'modified_by_name') $widgetDef['name'] = 'modified_user_id';//bug 39170
                 $widgetDef['input_name0'] = empty($this->filters[$name]) ? '' : $this->filters[$name];
                 $currentSearchFields[$name]['label'] = !empty($params['label']) ? translate($params['label'], $this->seedBean->module_dir) : translate($widgetDef['vname'], $this->seedBean->module_dir);
                 $currentSearchFields[$name]['input'] = $this->layoutManager->widgetDisplayInput($widgetDef, true, (empty($this->filters[$name]) ? '' : $this->filters[$name]));
