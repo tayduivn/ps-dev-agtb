@@ -90,7 +90,7 @@ function getNextRunDate($date_start,$interval)
 {
     global $timedate;
 	$time = time();
-	
+
     $date_start = $timedate->fromDb($date_start)->ts;
     if( $date_start <= $time )
     {
@@ -190,7 +190,8 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 }
 
 function update_next_run_time($schedule_id, $next_run, $interval){
-		$last_run = strtotime($next_run);
+        global $timedate;
+		$last_run = $timedate->fromDb($next_run)->ts;
 		$time = time();
 		while($last_run <= $time){
 			$last_run += $interval;
@@ -198,7 +199,7 @@ function update_next_run_time($schedule_id, $next_run, $interval){
 		$next_run = $timedate->fromTimestamp($last_run)->asDb();
 		$query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
 		$this->db->query($query);
-			
+
 }
 }
 ?>
