@@ -110,6 +110,7 @@ class EAPMController extends SugarController
 
     protected function pre_QuickSave(){
         $this->bean->application = $_REQUEST['application'];
+        $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
         $this->pre_save();
     }
     

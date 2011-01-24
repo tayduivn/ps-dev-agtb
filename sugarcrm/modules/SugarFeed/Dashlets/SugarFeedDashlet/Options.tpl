@@ -111,13 +111,13 @@ function getMultiple(ob){
     var buttonHtml = '';
     if(showAll){
         for (var j = 0; j < externalApiList.length; j++){
-            buttonHtml += '<a href="javascript:window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
+            buttonHtml += '<a href="#" onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
         }
     }else{
         for (var i = 0; i < selected.length; i++){
             for (var j = 0; j < externalApiList.length; j++){
                 if(selected[i] == externalApiList[j]){
-                    buttonHtml += '<a href="javascript:window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
+                    buttonHtml += '<a href="#" onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
                 }
             }
         }
