@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
 * $Id: SugarCharFactory.php 53116 2011-01-19 01:24:37Z lhuynh $
 * Description: This file generates the appropriate manager for the database
-* 
+*
 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
 * All Rights Reserved.
 * Contributor(s): ______________________________________..
@@ -31,13 +31,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarChartFactory
 {
-    /** 
-	 * Returns a reference to the ChartEngine object for instance $chartEngine, or the default 
+    /**
+	 * Returns a reference to the ChartEngine object for instance $chartEngine, or the default
      * instance if one is not specified
      *
      * @param string $chartEngine optional, name of the chart engine from $sugar_config['chartEngine']
      * @param string $module optional, name of module extension for chart engine (see JitReports or SugarFlashReports)
-     * @return object ChartEngine instance 
+     * @return object ChartEngine instance
      */
 	public static function getInstance(
         $chartEngine = '',
@@ -50,13 +50,13 @@ class SugarChartFactory
         if(empty($sugar_config['chartEngine'])){
         	$sugar_config['chartEngine'] = 'Jit';
         }
-        
+
         if(empty($chartEngine)){
         	$chartEngine = $sugar_config['chartEngine'];
         }
-        
+
         $file = "include/SugarCharts/".$chartEngine."/".$chartEngine.$module.".php";
-        
+
         if(file_exists('custom/' . $file))
         {
           require_once('custom/' . $file);
@@ -64,15 +64,15 @@ class SugarChartFactory
           require_once($file);
         } else {
            global $app_strings;
-           $GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], $file));
+           $GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
            die();
         }
-        
+
         $className = $chartEngine.$module;
         return new $className();
 
     }
-                
+
 }
 
 ?>
