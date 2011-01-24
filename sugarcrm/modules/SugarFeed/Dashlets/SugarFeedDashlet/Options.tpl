@@ -103,7 +103,7 @@ function getMultiple(ob){
     for (var i = 0; i < ob.options.length; i++){
         if (ob.options[ i ].selected){
             selected.push(ob.options[ i ].value);
-            if(ob.options[ i ].value == 'All'){
+            if(ob.options[ i ].value == 'ALL'){
                 showAll = true;
             }
         }
