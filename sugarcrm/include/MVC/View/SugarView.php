@@ -609,7 +609,7 @@ class SugarView
         if(isset($_REQUEST['action'])){
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
-        echo '<script>jscal_today = ' . (1000*$timedate->getNow()->ts) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+        echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file("include/javascript/sugar_grp1.js")) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
@@ -669,7 +669,7 @@ EOHTML;
             if(isset($_REQUEST['action'])){
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
-            echo '<script>jscal_today = ' . (1000*$timedate->getNow()->ts) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+            echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
             if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
