@@ -1,10 +1,10 @@
-<?php 
+<?php
 require_once('include/SugarCharts/SugarChartFactory.php');
 
 class SugarChartFactoryTest extends Sugar_PHPUnit_Framework_TestCase {
 
-var $engine;	
-	
+var $engine;
+
 public function setUp()
 {
 	global $sugar_config;
@@ -22,14 +22,14 @@ public function tearDown()
 		$sugar_config['chartEngine'] = $this->engine;
 	}
 }
-	
+
 public function testChartFactoryDefault()
 {
 	$sugarChart = SugarChartFactory::getInstance();
 	$name = get_class($sugarChart);
 	$this->assertEquals('Jit', $name, 'Assert chart engine defaults to Jit');
-}	
-	
+}
+
 public function testChartFactoryJit()
 {
 	$sugarChart = SugarChartFactory::getInstance('Jit');
@@ -38,7 +38,7 @@ public function testChartFactoryJit()
 
 	$sugarChart = SugarChartFactory::getInstance('Jit', 'Reports');
 	$name = get_class($sugarChart);
-	$this->assertEquals('JitReports', $name, 'Assert chart engine is JitReport');	
+	$this->assertEquals('JitReports', $name, 'Assert chart engine is JitReport');
 }
 
 public function testChartFactoryFlash()
@@ -49,7 +49,7 @@ public function testChartFactoryFlash()
 
 	$sugarChart = SugarChartFactory::getInstance('SugarFlash', 'Reports');
 	$name = get_class($sugarChart);
-	$this->assertEquals('SugarFlashReports', $name, 'Assert chart engine is SugarFlashReports');		
+	$this->assertEquals('SugarFlashReports', $name, 'Assert chart engine is SugarFlashReports');
 }
 
 public function testConfigChartFactory()
@@ -58,12 +58,6 @@ public function testConfigChartFactory()
  	$sugar_config['chartEngine'] = 'SugarFlash';
 	$sugarChart = SugarChartFactory::getInstance();
 	$name = get_class($sugarChart);
-	$this->assertEquals('SugarFlash', $name, 'Assert chart engine set in global sugar_config is correct'); 	
+	$this->assertEquals('SugarFlash', $name, 'Assert chart engine set in global sugar_config is correct');
 }
-
-
-
 }
-
-?>
-
