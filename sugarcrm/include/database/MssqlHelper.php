@@ -157,8 +157,8 @@ class MssqlHelper extends DBHelper
           		$indices = $this->get_indices($tablename);
                 foreach ( $indices as $index ) {
                     if ( in_array($def['name'],$index['fields']) ) {
-                        $sql  .= $this->add_drop_constraint($tablename,$index,true).' ';
-                        $sql2 .= $this->add_drop_constraint($tablename,$index,false).' ';
+                        $sql  .= ' ' . $this->add_drop_constraint($tablename,$index,true).' ';
+                        $sql2 .= ' ' . $this->add_drop_constraint($tablename,$index,false).' ';
                     }
                 }
             
