@@ -281,7 +281,6 @@ class TimeDate
      */
     public function get_date_format(User $user = null)
     {
-
         $user = $this->_getUser($user);
 
         if (empty($user)) {
@@ -1075,9 +1074,7 @@ class TimeDate
 	 */
 	public static function userTimezone(User $user = null)
 	{
-	    if(empty($user)) {
-    	    $user = $GLOBALS['current_user'];
-	    }
+	    $user = $this->_getUser($user);
 	    if(empty($user)) {
 	        return '';
 	    }
@@ -1134,9 +1131,7 @@ class TimeDate
 	 */
 	public static function userTimezoneSuffix(DateTime $date, User $user = null)
 	{
-	    if(empty($user)) {
-    	    $user = $GLOBALS['current_user'];
-	    }
+	    $user = $this->_getUser($user);
 	    if(empty($user)) {
 	        return '';
 	    }
@@ -1288,7 +1283,7 @@ class TimeDate
      * Returns the offset from user's timezone to GMT
      * @param User $user
      * @param DateTime $time When the offset is taken, default is now
-     * @return int
+     * @return int Offset in minutes
      */
     public function getUserUTCOffset(User $user = null, DateTime $time = null)
     {
@@ -1298,7 +1293,36 @@ class TimeDate
         return $this->_getUserTZ($user)->getOffset($time) / 60;
     }
 
-	/********************* OLD functions, should not be used publicly anymore ****************/
+    /**
+     * Create regexp from datetime format
+     * @param string $format
+     * @return string Regular expression string
+     */
+    public static function get_regular_expression($format)
+    {
+        $newFormat = '';
+        $regPositions = array();
+        $ignoreNextChar = false;
+        $count = 1;
+        foreach (str_split($format) as $char) {
+            if (! $ignoreNextChar && isset(self::$format_to_regexp[$char])) {
+                $newFormat .= '(' . self::$format_to_regexp[$char] . ')';
+                $regPositions[$char] = $count;
+                $count ++;
+            } else {
+                $ignoreNextChar = false;
+                $newFormat .= $char;
+
+            }
+            if ($char == "\\") {
+                $ignoreNextChar = true;
+            }
+        }
+
+        return array('format' => $newFormat, 'positions' => $regPositions);
+    }
+
+    /********************* OLD functions, should not be used publicly anymore ****************/
     /**
      * Merge time without am/pm with am/pm string
      * @TODO find better way to do this!
@@ -1418,36 +1442,6 @@ class TimeDate
 
     /**
      * @deprecated for public use
-     * Create regexp from datetime format
-     * @param string $format
-     * @return string Regular expression string
-     */
-    public static function get_regular_expression($format)
-    {
-        $newFormat = '';
-        $regPositions = array();
-        $ignoreNextChar = false;
-        $count = 1;
-        foreach (str_split($format) as $char) {
-            if (! $ignoreNextChar && isset(self::$format_to_regexp[$char])) {
-                $newFormat .= '(' . self::$format_to_regexp[$char] . ')';
-                $regPositions[$char] = $count;
-                $count ++;
-            } else {
-                $ignoreNextChar = false;
-                $newFormat .= $char;
-
-            }
-            if ($char == "\\") {
-                $ignoreNextChar = true;
-            }
-        }
-
-        return array('format' => $newFormat, 'positions' => $regPositions);
-    }
-
-    /**
-     * @deprecated for public use
 	 * assumes that olddatetime is in Y-m-d H:i:s format
 	 */
     function convert_to_gmt_datetime($olddatetime)
@@ -1492,51 +1486,14 @@ class TimeDate
     }
 
 /****************** GUI stuff that really shouldn't be here, will be moved ************/
-    /*
-	 * @todo This should return the raw text to be included within a <script> tag.
-	 *	   Having this display it's own <script> keeps it from being able to be embedded
-	 *	   in another Javascript file to allow for better caching
-	 */
-    /*
-	 * TODO: Move to separate utility class
-	 */
     /**
      * Get Javascript variables setup for user date format validation
-     * @deprecated
+     * @deprecated moved to SugarView
      * @return string JS code
      */
     function get_javascript_validation()
     {
-        $cal_date_format = $this->get_cal_date_format();
-        $timereg = $this->get_regular_expression($this->get_time_format());
-        $datereg = $this->get_regular_expression($this->get_date_format());
-        $date_pos = '';
-        foreach ($datereg['positions'] as $type => $pos) {
-            if (empty($date_pos)) {
-                $date_pos .= "'$type': $pos";
-            } else {
-                $date_pos .= ",'$type': $pos";
-            }
-
-        }
-
-        $time_separator = $this->timeSeparator();
-        $hour_offset = $this->adjustmentForUserTimeZone() * - 60;
-
-        // Add in the number formatting styles here as well, we have been handling this with individual modules.
-        require_once ('modules/Currencies/Currency.php');
-        list ($num_grp_sep, $dec_sep) = get_number_seperators();
-
-        $the_script = "<script type=\"text/javascript\">\n" . "\tvar time_reg_format = '" .
-             $timereg['format'] . "';\n" . "\tvar date_reg_format = '" .
-             $datereg['format'] . "';\n" . "\tvar date_reg_positions = { $date_pos };\n" .
-             "\tvar time_separator = '$time_separator';\n" .
-             "\tvar cal_date_format = '$cal_date_format';\n" .
-             "\tvar time_offset = $hour_offset;\n" . "\tvar num_grp_sep = '$num_grp_sep';\n" .
-             "\tvar dec_sep = '$dec_sep';\n" . "</script>";
-
-        return $the_script;
-
+        return SugarView::getJavascriptValidation();
     }
 
     /**
@@ -1549,6 +1506,7 @@ class TimeDate
      * @todo There is hardcoded HTML in here that does not allow for localization
      * of the AM/PM am/pm Strings in this drop down menu.  Also, perhaps
      * change to the substr_count function calls to strpos
+     * TODO: Remove after full switch to fields
      * @deprecated
      * @param string $prefix Prefix for SELECT
      * @param string $date Date in display format
@@ -1580,7 +1538,7 @@ class TimeDate
     }
 
     /**
-     * TODO: REMOVE?
+     * TODO: Remove after full switch to fields
      */
     function get_user_date_format()
     {
@@ -1588,7 +1546,7 @@ class TimeDate
     }
 
     /**
-     * TODO: REMOVE?
+     * TODO: Remove after full switch to fields
      * @deprecated
      * @return string
      */
