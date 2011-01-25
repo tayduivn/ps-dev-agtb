@@ -250,59 +250,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         return array('success'=>TRUE);
     }
 
-    public function uploadDocDirect($bean, $fileToUpload, $docName, $mimeType)
-    {
-        $client = $this->getOauth()->getClient();
-        $client->setHeaders('Accept-Encoding', 'identity');
-
-        $url = $this->baseURL."files/basic/cmis/repository/p!{$this->subscriberID}/folderc/snx:files!{$this->subscriberID}";
-        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
-        $rawResponse = $client->setUri($url)
-            ->setRawData(file_get_contents($fileToUpload), "application/octet-stream")
-            ->setHeaders("slug", $docName)
-            ->request("POST");
-        $reply = array('rawResponse' => $rawResponse->getBody());
-        if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
-            $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
-            return;
-        }
-        
-        $xml = new DOMDocument();
-        $xml->preserveWhiteSpace = false;
-        $xml->strictErrorChecking = false;
-        $xml->loadXML($reply['rawResponse']);
-        if ( !is_object($xml) ) {
-            $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
-            return;
-        }
-
-        $xp = new DOMXPath($xml);
-        $url = $xp->query('//atom:entry/atom:link[attribute::rel="alternate"]');
-        $directUrl = $xp->query('//atom:entry/atom:link[attribute::rel="edit-media"]');
-        $id = $xp->query('//atom:entry/cmisra:pathSegment');
-
-        if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
-            $reply['success'] = false;
-            // FIXME: Translate
-            $reply['errorMessage'] = 'Bad response from the server';
-            return;            
-        }
-        $bean->doc_url = $url->item(0)->getAttribute("href");
-        $bean->doc_direct_url = $directUrl->item(0)->getAttribute("href");
-        $bean->doc_id = $id->item(0)->textContent;
-
-        // Refresh the document cache
-        $this->loadDocCache(true);
-
-        return array('success'=>TRUE);
-    }
-
-
-
     public function uploadDoc($bean, $fileToUpload, $docName, $mimeType) {
         $result = $this->makeRequest('FileUpload/OAuth',base64_encode(file_get_contents($fileToUpload)),
                                      array('filename' => $docName,
