@@ -325,8 +325,7 @@ class ListViewDisplay {
 		    $menuItems .= $this->buildMergeDuplicatesLink();
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// add to target list
-		if ( isset($_REQUEST['module']) && in_array($_REQUEST['module'],array('Contacts','Prospects','Leads','Accounts'))
-		&& ACLController::checkAccess('ProspectLists','edit',true)) {
+		if ( $this->targetList && ACLController::checkAccess('ProspectLists','edit',true) )
 		    $menuItems .= $this->buildTargetList();
 		}
 		//END SUGARCRM flav!=sales ONLY
