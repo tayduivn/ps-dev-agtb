@@ -43,6 +43,7 @@ class ListViewSmarty extends ListViewDisplay{
     var $delete = true;
     var $select = true;
     var $mailMerge = true;
+    var $email = true;
 	var $multiSelect = true;
 	var $overlib = true;
 	var $quickViewLinks = true;

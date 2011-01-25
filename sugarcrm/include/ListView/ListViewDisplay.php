@@ -305,9 +305,7 @@ class ListViewDisplay {
 		if ( ACLController::checkAccess($this->seed->module_dir,'delete',true) && $this->delete )
 			$menuItems .= $this->buildDeleteLink();
 		// compose email
-        if ( isset($_REQUEST['module']) && $_REQUEST['module'] != 'Users' && $_REQUEST['module'] != 'Employees' &&
-            ( SugarModule::get($_REQUEST['module'])->moduleImplements('Company')
-                || SugarModule::get($_REQUEST['module'])->moduleImplements('Person') ) )
+        if ( $this->email )
 			$menuItems .= $this->buildComposeEmailLink($this->data['pageData']['offsets']['total']);
 		// mass update
 		$mass = new MassUpdate();
