@@ -183,15 +183,11 @@ EOQ;
 				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'
-				and date_start >= '".$dateTimeNow."'";
-
-			if($dateMax == $todayGMT) {
-				$selectCalls .= " AND date_start <= '".$dateTimeMax."'";
-			}
+				    AND date_start >= '$dateTimeNow'
+				    AND date_start <= '$dateTimeMax'";
 		}elseif ($db->dbType == 'oci8')
 		{
 			//BEGIN SUGARCRM flav=ent ONLY
-			//assuming oracle, since we only support 2 databases.
 			$selectCalls = "
 				SELECT calls.id, name, reminder_time, description, date_start
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id
@@ -199,16 +195,11 @@ EOQ;
                     AND calls_users.accept_status != 'decline'
 				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
-					AND calls.status != 'Held'" .
-				"AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')	";
-
-			// if we're looking at bridging into the next day as
-			if($dateMax == $todayGMT) {
-				$selectCalls .=" AND date_start <= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')	";
-			}
+					AND calls.status != 'Held'
+					AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')
+					AND date_start <= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')";
 			//END SUGARCRM flav=ent ONLY
-		}elseif ($db->dbType == 'mssql')
-		{
+		}elseif ($db->dbType == 'mssql') {
 
 			$selectCalls = "
 				SELECT calls.id, name, reminder_time, CAST(description AS varchar(8000)), date_start
@@ -218,13 +209,9 @@ EOQ;
 				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'
-					AND date_start  >= '".$dateTimeNow."'";
-
-			if($dateMax == $todayGMT) {
-				$selectCalls .= " AND date_start  <= '".$dateTimeMax."'";
-			}
+				    AND date_start >= '$dateTimeNow'
+				    AND date_start <= '$dateTimeMax'";
 		}
-
 
 		global $db;
 		$result = $db->query($selectCalls);
