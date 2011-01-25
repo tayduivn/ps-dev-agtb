@@ -44,7 +44,7 @@ class ReportCache {
 	public function delete() {
 	    global $timedate;
 		if(!empty($this->id)) {
-			$q = "UPDATE report_cache SET deleted = '1', date_modified = '{$timedate->convert_to_gmt_datetime('now')}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assign_user_id}'";
+			$q = "UPDATE report_cache SET deleted = '1', date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assign_user_id}'";
 			$r = $this->db->query($q);
 			return true;
 		} // if
@@ -61,9 +61,9 @@ class ReportCache {
 
 		if($this->new_with_id == true) {
 			$q = "INSERT INTO report_cache(id, assigned_user_id, contents, date_entered, date_modified, deleted)".
-				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($this->contents)}', '{$timedate->convert_to_gmt_datetime('now')}', '{$timedate->convert_to_gmt_datetime('now')}', '0')";
+				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($this->contents)}', '{$timedate->nowDb()}', '{$timedate->nowDb()}', '0')";
 		} else {
-			$q = "UPDATE report_cache SET contents = '{$this->db->quote($this->contents)}', date_modified = '{$timedate->convert_to_gmt_datetime('now')}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
+			$q = "UPDATE report_cache SET contents = '{$this->db->quote($this->contents)}', date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
 		} // if
 
 		$this->db->query($q, true);
@@ -80,7 +80,7 @@ class ReportCache {
 
 		global $current_user, $timedate;
 
-		$q = "UPDATE report_cache SET date_modified = '{$timedate->convert_to_gmt_datetime('now')}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
+		$q = "UPDATE report_cache SET date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
 
 		$this->db->query($q, true);
 		return true;
@@ -105,7 +105,7 @@ class ReportCache {
 		$reportOptionsEncodedData = $global_json->encode($this->report_options_array);
 		if($this->new_with_id == true) {
 			$q = "INSERT INTO report_cache(id, assigned_user_id, report_options, date_entered, date_modified, deleted)".
-				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($reportOptionsEncodedData)}', '{$timedate->convert_to_gmt_datetime('now')}', '{$timedate->convert_to_gmt_datetime('now')}', '0')";
+				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($reportOptionsEncodedData)}', '{$timedate->nowDb()}', '{$timedate->nowDb()}', '0')";
 		} else {
 		$q = "UPDATE report_cache SET report_options = '{$this->db->quote($reportOptionsEncodedData)}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
 		}

@@ -1284,7 +1284,21 @@ class TimeDate
 	    return $time;
 	}
 
-    /********************* OLD functions, should not be used publicly anymore ****************/
+    /**
+     * Returns the offset from user's timezone to GMT
+     * @param User $user
+     * @param DateTime $time When the offset is taken, default is now
+     * @return int
+     */
+    public function getUserUTCOffset(User $user = null, DateTime $time = null)
+    {
+        if(empty($time)) {
+            $time = $this->now;
+        }
+        return $this->_getUserTZ($user)->getOffset($time) / 60;
+    }
+
+	/********************* OLD functions, should not be used publicly anymore ****************/
     /**
      * Merge time without am/pm with am/pm string
      * @TODO find better way to do this!
@@ -1451,20 +1465,6 @@ class TimeDate
     {
         $tz = $this->_getUserTZ($user);
         return array("gmtOffset" => $tz->getOffset($this->now) / 60);
-    }
-
-    /**
-     * Returns the offset from user's timezone to GMT
-     * @param User $user
-     * @param DateTime $time When the offset is taken, default is now
-     * @return int
-     */
-    public function getUserUTCOffset(User $user = null, DateTime $time = null)
-    {
-        if(empty($time)) {
-            $time = $this->now;
-        }
-        return $this->_getUserTZ($user)->getOffset($time) / 60;
     }
 
     /**
