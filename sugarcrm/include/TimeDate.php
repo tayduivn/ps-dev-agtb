@@ -1024,17 +1024,271 @@ class TimeDate
         return $result;
     }
 
-    public function addInterval($date, $interval)
+    /**
+     * Expand date format by adding midnight to it
+     * Note: date is assumed to be in target format already
+     * @param string $date
+     * @param string $format Target format
+     * @return string
+     */
+    public function expandDate($date, $format)
     {
-		$ndate = clone $date;
-		$ndate->add(new DateInterval($interval));
-		return $ndate;
+        $formats = $this->split_date_time($format);
+        if(isset($formats[1])) {
+            return $this->merge_date_time($date, $this->_get_midnight($formats[1]));
+        }
+        return $date;
     }
 
     /**
+     * Expand time format by adding today to it
+     * Note: time is assumed to be in target format already
+     * @param string $date
+     * @param string $format Target format
+     * @param DateTimeZone $tz
+     */
+    public function expandTime($date, $format, $tz)
+    {
+        $formats = $this->split_date_time($format);
+        if(isset($formats[1])) {
+            $now = clone $this->getNow();
+            $now->setTimezone($tz);
+            return $this->merge_date_time($now->format($formats[0]), $date);
+        }
+        return $date;
+    }
+
+    /**
+	 * Get midnight (start of the day) in local time format
+	 *
+	 * @return Time string
+	 */
+	function get_default_midnight()
+	{
+        return $this->_get_midnight($this->get_time_format());
+	}
+
+	/**
+	 * Get the name of the timezone for the user
+	 * @param User $user User, default - current user
+	 * @return string
+	 */
+	public static function userTimezone(User $user = null)
+	{
+	    if(empty($user)) {
+    	    $user = $GLOBALS['current_user'];
+	    }
+	    if(empty($user)) {
+	        return '';
+	    }
+	    $tz = self::getInstance()->_getUserTZ($user);
+	    if($tz) {
+	        return $tz->getName();
+	    }
+	    return '';
+	}
+
+	/**
+	 * Guess the timezone for the current user
+	 * @return string
+	 */
+	public static function guessTimezone($userOffset = 0)
+	{
+	    if(!is_numeric($userOffset)) {
+		    return '';
+	    }
+	    $defaultZones= array('America/New_York', 'America/Los_Angeles','America/Chicago', 'America/Denver',
+	    	'America/Anchorage', 'America/Phoenix', 'Europe/Amsterdam','Europe/Athens','Europe/London',
+	    	'Australia/Sydney', 'Australia/Perth');
+
+	    $now = new DateTime();
+	    if($userOffset == 0) {
+    	     array_unshift($defaultZones, date('e'));
+    	     $gmtOffset = date('Z');
+    	} else {
+    	    $gmtOffset = $userOffset * 60;
+    	}
+    	foreach($defaultZones as $zoneName) {
+	        $tz = new DateTimeZone($zoneName);
+	        if($tz->getOffset($now) == $gmtOffset) {
+                return $tz->getName();
+	        }
+	    }
+    	// try all zones
+	    foreach(timezone_identifiers_list() as $zoneName) {
+	        $tz = new DateTimeZone($zoneName);
+	        if($tz->getOffset($now) == $gmtOffset) {
+                return $tz->getName();
+	        }
+	    }
+	    return null;
+	}
+
+	/**
+	 * Get the description of the user timezone for specific date
+	 * Like: PST(+08:00)
+	 * We need the date because it can be DST or non-DST
+	 * Note it's different from TZ name in tzName() that relates to current date
+	 * @param User $user User, default - current user
+	 * @return string
+	 */
+	public static function userTimezoneSuffix(DateTime $date, User $user = null)
+	{
+	    if(empty($user)) {
+    	    $user = $GLOBALS['current_user'];
+	    }
+	    if(empty($user)) {
+	        return '';
+	    }
+	    $this->tzUser($date, $user);
+	    return $date->format('T(P)');
+	}
+
+	/**
+	 * Get display name for a certain timezone
+	 * Note: it uses current date for GMT offset, so it may be not suitable for displaying generic dates
+	 * @param string|DateTimeZone $name TZ name
+	 * @return string
+	 */
+	public static function tzName($name)
+	{
+	    if(empty($name)) {
+	        return '';
+	    }
+	    if($name instanceof DateTimeZone) {
+	        $tz = $name;
+	    } else {
+            $tz = timezone_open($name);
+	    }
+        if(!$tz) {
+            return "???";
+        }
+        $now = new DateTime("now", $tz);
+        $off = $now->getOffset();
+        $translated = translate('timezone_dom','',$name);
+        if(is_string($translated) && !empty($translated)) {
+            $name = $translated;
+        }
+        return sprintf("%s (GMT%+2d:%02d)%s", str_replace('_',' ', $name), $off/3600, (abs($off)/60)%60, "");//$now->format('I')==1?"(+DST)":"");
+	}
+
+	/**
+	 * Get list of all timezones in the system
+	 * @return array
+	 */
+	public static function getTimezoneList()
+	{
+        $now = new DateTime();
+        $zones = array();
+	    foreach(timezone_identifiers_list() as $zoneName) {
+            $tz = new DateTimeZone($zoneName);
+	        $zones[$zoneName] = $tz->getOffset($now);
+	    }
+	    asort($zones);
+	    foreach($zones as $name => $offset) {
+	        $res_zones[$name] = self::tzName($name);
+	    }
+	    return $res_zones;
+	}
+
+	/**
+	 * Print timestamp in RFC2616 format:
+	 * @return string
+	 */
+	public static function httpTime($ts = null)
+	{
+	    if($ts === null) {
+	        $ts = time();
+	    }
+	    return gmdate(self::RFC2616_FORMAT, $ts);
+	}
+
+	/**
+	 * Create datetime object from calendar array
+	 * @param array $time
+	 * @return SugarDateTime
+	 */
+	public function fromTimeArray($time)
+	{
+		if (! isset( $time) || count($time) == 0 )
+		{
+			return $this->nowDb();
+		}
+		elseif ( isset( $time['ts']))
+		{
+			return $this->fromTimestamp($time['ts']);
+		}
+		elseif ( isset( $time['date_str']))
+		{
+		    return $this->fromDb($time['date_str']);
+		}
+		else
+		{
+    		$hour = 0;
+    		$min = 0;
+    		$sec = 0;
+    		$now = $this->getNow(true);
+    		$day = $now->day;
+    		$month = $now->month;
+    		$year = $now->year;
+		    if (isset($time['sec']))
+			{
+        			$sec = $time['sec'];
+			}
+			if (isset($time['min']))
+			{
+        			$min = $time['min'];
+			}
+			if (isset($time['hour']))
+			{
+        			$hour = $time['hour'];
+			}
+			if (isset($time['day']))
+			{
+        			$day = $time['day'];
+			}
+			if (isset($time['month']))
+			{
+        			$month = $time['month'];
+			}
+			if (isset($time['year']) && $time['year'] >= 1970)
+			{
+        			$year = $time['year'];
+			}
+			return $now->setDate($year, $month, $day)->setTime($hour, $min, $sec)->setTimeZone(self::$gmtTimezone);
+		}
+        return null;
+	}
+
+	/**
+	 * Returns the date portion of a datetime string
+	 *
+	 * @param string $datetime
+	 * @return string
+	 */
+	public function getDatePart($datetime)
+	{
+	    list($date, $time) = $this->split_date_time($datetime);
+	    return $date;
+	}
+
+	/**
+	 * Returns the time portion of a datetime string
+	 *
+	 * @param string $datetime
+	 * @return string
+	 */
+	public function getTimePart($datetime)
+	{
+	    list($date, $time) = $this->split_date_time($datetime);
+	    return $time;
+	}
+
+    /********************* OLD functions, should not be used publicly anymore ****************/
+    /**
      * Merge time without am/pm with am/pm string
      * @TODO find better way to do this!
-     *
+     * @deprecated for public use
      * @param string $date
      * @param string $format User time format
      * @param string $mer
@@ -1052,7 +1306,6 @@ class TimeDate
         return str_replace('@~@', $mer, $newDate);
     }
 
-    /********************* OLD functions, should not be used publicly anymore ****************/
     /**
      * @deprecated for public use
      * Convert date from one format to another
@@ -1351,263 +1604,4 @@ class TimeDate
         return '23:00'; //default
     }
 
-    /**
-     * Expand date format by adding midnight to it
-     * Note: date is assumed to be in target format already
-     * @param string $date
-     * @param string $format Target format
-     * @return string
-     */
-    public function expandDate($date, $format)
-    {
-        $formats = $this->split_date_time($format);
-        if(isset($formats[1])) {
-            return $this->merge_date_time($date, $this->_get_midnight($formats[1]));
-        }
-        return $date;
-    }
-
-    /**
-     * Expand time format by adding today to it
-     * Note: time is assumed to be in target format already
-     * @param string $date
-     * @param string $format Target format
-     * @param DateTimeZone $tz
-     */
-    public function expandTime($date, $format, $tz)
-    {
-        $formats = $this->split_date_time($format);
-        if(isset($formats[1])) {
-            $now = clone $this->getNow();
-            $now->setTimezone($tz);
-            return $this->merge_date_time($now->format($formats[0]), $date);
-        }
-        return $date;
-    }
-
-    /**
-	 * Get midnight (start of the day) in local time format
-	 *
-	 * @return Time string
-	 */
-	function get_default_midnight()
-	{
-        return $this->_get_midnight($this->get_time_format());
-	}
-
-	/**
-	 * Get the name of the timezone for the user
-	 * @param User $user User, default - current user
-	 * @return string
-	 */
-	public static function userTimezone(User $user = null)
-	{
-	    if(empty($user)) {
-    	    $user = $GLOBALS['current_user'];
-	    }
-	    if(empty($user)) {
-	        return '';
-	    }
-	    $tz = self::getInstance()->_getUserTZ($user);
-	    if($tz) {
-	        return $tz->getName();
-	    }
-	    return '';
-	}
-
-	/**
-	 * Guess the timezone for the current user
-	 * @return string
-	 */
-	public static function guessTimezone($userOffset = 0)
-	{
-	    if(!is_numeric($userOffset)) {
-		    return '';
-	    }
-	    $defaultZones= array('America/New_York', 'America/Los_Angeles','America/Chicago', 'America/Denver',
-	    	'America/Anchorage', 'America/Phoenix', 'Europe/Amsterdam','Europe/Athens','Europe/London',
-	    	'Australia/Sydney', 'Australia/Perth');
-
-	    $now = new DateTime();
-	    if($userOffset == 0) {
-    	     array_unshift($defaultZones, date('e'));
-    	     $gmtOffset = date('Z');
-    	} else {
-    	    $gmtOffset = $userOffset * 60;
-    	}
-    	foreach($defaultZones as $zoneName) {
-	        $tz = new DateTimeZone($zoneName);
-	        if($tz->getOffset($now) == $gmtOffset) {
-                return $tz->getName();
-	        }
-	    }
-    	// try all zones
-	    foreach(timezone_identifiers_list() as $zoneName) {
-	        $tz = new DateTimeZone($zoneName);
-	        if($tz->getOffset($now) == $gmtOffset) {
-                return $tz->getName();
-	        }
-	    }
-	    return null;
-	}
-
-	/**
-	 * Get the description of the user timezone for specific date
-	 * Like: PST(+08:00)
-	 * We need the date because it can be DST or non-DST
-	 * Note it's different from TZ name in tzName() that relates to current date
-	 * @param User $user User, default - current user
-	 * @return string
-	 */
-	public static function userTimezoneSuffix(DateTime $date, User $user = null)
-	{
-	    if(empty($user)) {
-    	    $user = $GLOBALS['current_user'];
-	    }
-	    if(empty($user)) {
-	        return '';
-	    }
-	    $this->tzUser($date, $user);
-	    return $date->format('T(P)');
-	}
-
-	/**
-	 * Get display name for a certain timezone
-	 * Note: it uses current date for GMT offset, so it may be not suitable for displaying generic dates
-	 * @param string|DateTimeZone $name TZ name
-	 * @return string
-	 */
-	public static function tzName($name)
-	{
-	    if(empty($name)) {
-	        return '';
-	    }
-	    if($name instanceof DateTimeZone) {
-	        $tz = $name;
-	    } else {
-            $tz = timezone_open($name);
-	    }
-        if(!$tz) {
-            return "???";
-        }
-        $now = new DateTime("now", $tz);
-        $off = $now->getOffset();
-        $translated = translate('timezone_dom','',$name);
-        if(is_string($translated) && !empty($translated)) {
-            $name = $translated;
-        }
-        return sprintf("%s (GMT%+2d:%02d)%s", str_replace('_',' ', $name), $off/3600, (abs($off)/60)%60, "");//$now->format('I')==1?"(+DST)":"");
-	}
-
-	/**
-	 * Get list of all timezones in the system
-	 * @return array
-	 */
-	public static function getTimezoneList()
-	{
-        $now = new DateTime();
-        $zones = array();
-	    foreach(timezone_identifiers_list() as $zoneName) {
-            $tz = new DateTimeZone($zoneName);
-	        $zones[$zoneName] = $tz->getOffset($now);
-	    }
-	    asort($zones);
-	    foreach($zones as $name => $offset) {
-	        $res_zones[$name] = self::tzName($name);
-	    }
-	    return $res_zones;
-	}
-
-	/**
-	 * Print timestamp in RFC2616 format:
-	 * @return string
-	 */
-	public static function httpTime($ts = null)
-	{
-	    if($ts === null) {
-	        $ts = time();
-	    }
-	    return gmdate(self::RFC2616_FORMAT, $ts);
-	}
-
-	/**
-	 * Create datetime object from calendar array
-	 * @param array $time
-	 * @return SugarDateTime
-	 */
-	public function fromTimeArray($time)
-	{
-		if (! isset( $time) || count($time) == 0 )
-		{
-			return $this->nowDb();
-		}
-		elseif ( isset( $time['ts']))
-		{
-			return $this->fromTimestamp($time['ts']);
-		}
-		elseif ( isset( $time['date_str']))
-		{
-		    return $this->fromDb($time['date_str']);
-		}
-		else
-		{
-    		$hour = 0;
-    		$min = 0;
-    		$sec = 0;
-    		$now = $this->getNow(true);
-    		$day = $now->day;
-    		$month = $now->month;
-    		$year = $now->year;
-		    if (isset($time['sec']))
-			{
-        			$sec = $time['sec'];
-			}
-			if (isset($time['min']))
-			{
-        			$min = $time['min'];
-			}
-			if (isset($time['hour']))
-			{
-        			$hour = $time['hour'];
-			}
-			if (isset($time['day']))
-			{
-        			$day = $time['day'];
-			}
-			if (isset($time['month']))
-			{
-        			$month = $time['month'];
-			}
-			if (isset($time['year']) && $time['year'] >= 1970)
-			{
-        			$year = $time['year'];
-			}
-			return $now->setDate($year, $month, $day)->setTime($hour, $min, $sec)->setTimeZone(self::$gmtTimezone);
-		}
-        return null;
-	}
-
-	/**
-	 * Returns the date portion of a datetime string
-	 *
-	 * @param string $datetime
-	 * @return string
-	 */
-	public function getDatePart($datetime)
-	{
-	    list($date, $time) = $this->split_date_time($datetime);
-	    return $date;
-	}
-
-	/**
-	 * Returns the time portion of a datetime string
-	 *
-	 * @param string $datetime
-	 * @return string
-	 */
-	public function getTimePart($datetime)
-	{
-	    list($date, $time) = $this->split_date_time($datetime);
-	    return $time;
-	}
 }
