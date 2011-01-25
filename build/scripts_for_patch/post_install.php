@@ -337,6 +337,12 @@ function post_install() {
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
 	  
+	//Set the chart engine
+	if ($origVersion < '620') {
+		_logThis('Set chartEngine in config.php to SugarFlash', $path);
+		$sugar_config['chartEngine'] = 'SugarFlash';
+	}
+	
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
     if(file_exists('modules/Administration/SaveTabs.php'))
