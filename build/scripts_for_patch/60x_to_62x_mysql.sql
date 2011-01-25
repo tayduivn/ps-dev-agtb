@@ -32,3 +32,7 @@ ALTER TABLE quotes_audit
 ALTER TABLE team_sets_teams
     ADD PRIMARY KEY (id);
 -- //END SUGARCRM flav=pro ONLY
+
+ALTER TABLE meetings ALTER COLUMN status SET DEFAULT 'Planned';
+ALTER TABLE calls ALTER COLUMN status SET DEFAULT 'Planned';
+ALTER TABLE tasks ALTER COLUMN status SET DEFAULT 'Not Started';

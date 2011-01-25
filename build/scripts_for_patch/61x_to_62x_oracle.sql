@@ -13,3 +13,9 @@ UPDATE emails_beans SET bean_module2 = bean_module;
 ALTER TABLE emails_beans DROP COLUMN bean_module;
 
 ALTER TABLE emails_beans RENAME COLUMN bean_module2 TO bean_module;
+
+ALTER TABLE meetings MODIFY status DEFAULT 'Planned';
+
+ALTER TABLE calls MODIFY status DEFAULT 'Planned';
+
+ALTER TABLE tasks MODIFY status DEFAULT 'Not Planned';
