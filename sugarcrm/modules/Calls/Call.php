@@ -476,7 +476,7 @@ class Call extends SugarBean
 		global $timedate;
 
 		// Assumes $call dates are in user format
-		$calldate = $timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start)), $call->current_notify_user);
+		$calldate = $timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start));
 		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->userTimezoneSuffix($calldate, $call->current_notify_user);
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
