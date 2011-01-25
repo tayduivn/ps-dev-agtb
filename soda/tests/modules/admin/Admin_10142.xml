@@ -15,7 +15,7 @@
 		Results:
 			A warning message show that ' syntax error(expression format incorrect xx)
 	-->
-	<puts text="Text: Admin_10142.xml Starting." />
+	<puts text="Test: Admin_10142.xml Starting." />
 	
 	<link text="Admin" />
 	<link text="Studio" />
@@ -33,8 +33,8 @@
 	<textfield id="field_name_id" set="somenum" />
 	<button name="editFormula" />
 	
-	<textarea id="formulaInput" 
-		set="abs(0a(" />
+	<wait timeout="3" />
+	<textarea id="formulaInput" set="abs(0a(" />
 	<wait timeout="6" />
 
 	<button id="fomulaSaveButton" />
