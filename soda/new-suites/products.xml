@@ -1,12 +1,10 @@
 <soda>
-	<script
-		file="{@global.scriptsdir}/modules/product/module_lib/setup-product.xml" />
-	<script fileset="{@global.scriptsdir}/modules/manufacturer/" />
-	<script fileset="{@global.scriptsdir}/modules/productcatalog/" />
-	<script fileset="{@global.scriptsdir}/modules/productcategory/" />
-	<script fileset="{@global.scriptsdir}/modules/producttype/" />
-	<script fileset="{@global.scriptsdir}/modules/product/" />
-	<script
-		file="{@global.scriptsdir}/modules/product/module_lib/cleanup-product.xml" />
+	<script file="tests/modules/product/module_lib/setup-product.xml" />
+	<script fileset="tests/modules/manufacturer/" />
+	<script fileset="tests/modules/productcatalog/" />
+	<script fileset="tests/modules/productcategory/" />
+	<script fileset="tests/modules/producttype/" />
+	<script fileset="tests/modules/product/" />
+	<script file="tests/modules/product/module_lib/cleanup-product.xml" />
 </soda>
 
