@@ -212,8 +212,6 @@ var $selectedCategories = array();
                                     'link_url', 
                                     'link_type'));
             
-            $GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
-
             foreach($this->lvs->data['data'] as $row => $data) {
                 $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['ASSIGNED_USER_ID']),$data['NAME']);
             }

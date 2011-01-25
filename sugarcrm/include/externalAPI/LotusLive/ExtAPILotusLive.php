@@ -388,7 +388,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             // FIXME: Translate
             $reply['errorMessage'] = 'No response from the server.';
         } else {
-            $GLOBALS['log']->fatal("Decoded:\n".print_r($response,true));
+            $GLOBALS['log']->debug("Decoded:\n".print_r($response,true));
             $reply['responseJSON'] = $response;
 
             if ( strtoupper($reply['responseJSON']['status']) == 'OK' ) {
