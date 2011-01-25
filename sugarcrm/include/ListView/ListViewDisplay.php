@@ -327,7 +327,6 @@ class ListViewDisplay {
 		// add to target list
 		if ( $this->targetList && ACLController::checkAccess('ProspectLists','edit',true) )
 		    $menuItems .= $this->buildTargetList();
-		}
 		//END SUGARCRM flav!=sales ONLY
 		// export
 		if ( ACLController::checkAccess($this->seed->module_dir,'export',true) && $this->export )
