@@ -47,11 +47,11 @@ function ExtAPILotusLiveGetCredentials() {
     );
 // For Production
 /*
-    return array('ciUrl' => 'eval-cloud2.castiron.com/envq/Production/',
+    return array('ciUrl' => 'provide.castiron.com/envq/Production/',
                  'ciUser' => 'admin@LL_SugarCRM',
                  'ciPassword' => 'changeIt!',
-                 'consumerKey' => '',
-                 'consumerSecret' => '',
+                 'consumerKey' => '9399cf0ce6e4ca4d30d56a76b21da89',
+                 'consumerSecret' => '7704b27829c5715445e14637415b67c1',
                  'baseUrl' => 'https://apps.lotuslive.com',
     );
 */
@@ -91,8 +91,8 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
         'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
 // Production
-        'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
-        'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
+//        'consumerKey' => '9399cf0ce6e4ca4d30d56a76b21da89',
+//        'consumerSecret' => '7704b27829c5715445e14637415b67c1',
 
     );
 
@@ -250,13 +250,60 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         return array('success'=>TRUE);
     }
 
+    public function uploadDocDirect($bean, $fileToUpload, $docName, $mimeType)
+    {
+        $client = $this->getOauth()->getClient();
+        $client->setHeaders('Accept-Encoding', 'identity');
+
+        $url = $this->baseURL."files/basic/cmis/repository/p!{$this->subscriberID}/folderc/snx:files!{$this->subscriberID}";
+        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
+        $rawResponse = $client->setUri($url)
+            ->setRawData(file_get_contents($fileToUpload), "application/octet-stream")
+            ->setHeaders("slug", $docName)
+            ->request("POST");
+        $reply = array('rawResponse' => $rawResponse->getBody());
+        if(!$rawResponse->isSuccessful() || empty($reply['rawResponse'])) {
+            $reply['success'] = false;
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server: '.$rawResponse->getMessage();
+            return;
+        }
+        
+        $xml = new DOMDocument();
+        $xml->preserveWhiteSpace = false;
+        $xml->strictErrorChecking = false;
+        $xml->loadXML($reply['rawResponse']);
+        if ( !is_object($xml) ) {
+            $reply['success'] = false;
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server: '.print_r(libxml_get_errors(),true);
+            return;
+        }
+
+        $xp = new DOMXPath($xml);
+        $url = $xp->query('//atom:entry/atom:link[attribute::rel="alternate"]');
+        $directUrl = $xp->query('//atom:entry/atom:link[attribute::rel="edit-media"]');
+        $id = $xp->query('//atom:entry/cmisra:pathSegment');
+
+        if ( !is_object($url) || !is_object($directUrl) || !is_object($id) ) {
+            $reply['success'] = false;
+            // FIXME: Translate
+            $reply['errorMessage'] = 'Bad response from the server';
+            return;            
+        }
+        $bean->doc_url = $url->item(0)->getAttribute("href");
+        $bean->doc_direct_url = $directUrl->item(0)->getAttribute("href");
+        $bean->doc_id = $id->item(0)->textContent;
+
+        // Refresh the document cache
+        $this->loadDocCache(true);
+
+        return array('success'=>TRUE);
+    }
+
+
 
     public function uploadDoc($bean, $fileToUpload, $docName, $mimeType) {
-        // FIXME: don't try uploading a file yet.
-//        $result = $this->makeRequest('uploadfile',array('file'=>'@'.$fileToUpload),
-//                              array('collectionid'=>$this->collectionId,
-//                                    'fileid'=>$bean->id));
-
         $result = $this->makeRequest('FileUpload/OAuth',base64_encode(file_get_contents($fileToUpload)),
                                      array('filename' => $docName,
 //                                           'mimetype' => $mimeType,
@@ -264,7 +311,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
                                            'subscriberid' => $this->subscriberID,
                                          ));
 
-        // die('IKEA uploading file: '.$fileToUpload.': <pre>'.print_r($result,true));
         if ( $result['success'] != TRUE ) {
             return $result;
         }
