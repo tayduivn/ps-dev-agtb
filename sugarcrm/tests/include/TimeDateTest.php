@@ -605,16 +605,16 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testGetGMT()
 	{
-		if (is_windows()) {
-            $this->markTestSkipped('Skipping on Windows');
+		if (is_windows() || !function_exists("strptime")) {
+            $this->markTestSkipped('Skipping on Windows, no strptime');
         }
-        $gmt = $this->time_date->get_gmt_db_datetime();
+        $gmt = $this->time_date->nowDb();
 		$dt = strptime($gmt, "%Y-%m-%d %H:%M:%S");
 		$this->assertEquals($dt['tm_year']+1900, gmdate("Y"));
 		$this->assertEquals($dt['tm_mon']+1, gmdate("m"));
 		$this->assertEquals($dt['tm_mday'], gmdate("d"));
 
-		$gmt = $this->time_date->get_gmt_db_date();
+		$gmt = $this->time_date->nowDb();
 		$dt = strptime($gmt, "%Y-%m-%d");
 		$this->assertEquals($dt['tm_year']+1900, gmdate("Y"));
 		$this->assertEquals($dt['tm_mon']+1, gmdate("m"));
@@ -628,7 +628,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals(gmdate($this->time_date->merge_date_time($this->time_date->get_db_date_format(),
 																		$this->time_date->get_db_time_format())),
-			 $this->time_date->get_gmt_db_datetime());
+			 $this->time_date->nowDb());
 	}
 
 	public function testGetCalFormats()

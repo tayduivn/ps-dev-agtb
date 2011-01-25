@@ -1239,6 +1239,8 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
+    
+	require_once('install/UserDemoData.php');
 
     //Create default admin user
     $user = new User();
@@ -1254,6 +1256,7 @@ function create_default_users(){
     //$user->user_password = $user->encrypt_password($setup_site_admin_password);
     $user->user_hash = strtolower(md5($setup_site_admin_password));
     $user->email = '';
+    $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
 
     // echo 'Creating RSS Feeds';

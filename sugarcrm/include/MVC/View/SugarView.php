@@ -661,6 +661,42 @@ EOQ;
     }
 
     /**
+     * Get JS validation code for views
+     */
+    public static function getJavascriptValidation()
+    {
+        global $timedate;
+        $cal_date_format = $timedate->get_cal_date_format();
+        $timereg = $timedate->get_regular_expression($timedate->get_time_format());
+        $datereg = $timedate->get_regular_expression($timedate->get_date_format());
+        $date_pos = '';
+        foreach ($datereg['positions'] as $type => $pos) {
+            if (empty($date_pos)) {
+                $date_pos .= "'$type': $pos";
+            } else {
+                $date_pos .= ",'$type': $pos";
+            }
+        }
+
+        $time_separator = $timedate->timeSeparator();
+        $hour_offset = $timedate->getUserUTCOffset() * 60;
+
+        // Add in the number formatting styles here as well, we have been handling this with individual modules.
+        require_once ('modules/Currencies/Currency.php');
+        list ($num_grp_sep, $dec_sep) = get_number_seperators();
+
+        $the_script = "<script type=\"text/javascript\">\n" . "\tvar time_reg_format = '" .
+             $timereg['format'] . "';\n" . "\tvar date_reg_format = '" .
+             $datereg['format'] . "';\n" . "\tvar date_reg_positions = { $date_pos };\n" .
+             "\tvar time_separator = '$time_separator';\n" .
+             "\tvar cal_date_format = '$cal_date_format';\n" .
+             "\tvar time_offset = $hour_offset;\n" . "\tvar num_grp_sep = '$num_grp_sep';\n" .
+             "\tvar dec_sep = '$dec_sep';\n" . "</script>";
+
+        return $the_script;
+    }
+
+    /**
      * Called from process(). This method will display the correct javascript.
      */
     protected function _displayJavascript()
@@ -708,7 +744,7 @@ EOHTML;
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
-            echo $GLOBALS['timedate']->get_javascript_validation();
+            echo self::getJavascriptValidation();
             if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
@@ -1071,7 +1107,7 @@ EOHTML;
             $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
         $module_menu = $final_module_menu;
-        
+
         return $module_menu;
     }
 
