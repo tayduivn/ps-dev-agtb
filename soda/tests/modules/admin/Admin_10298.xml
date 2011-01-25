@@ -30,6 +30,7 @@
 	<checkbox id="calculated" set="true" />
 	<button name="editFormula" />
 	
+	<wait timeout="3" />
 	<textarea id="formulaInput" set="strToUpper($billing_address_city)" />
 	
 	<button id="fomulaSaveButton" />

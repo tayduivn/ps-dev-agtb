@@ -16,7 +16,7 @@
 		Results:
 			A warning message show that 'Requires exactly x parameter'
 	-->
-	<puts text="Text: Admin_10141.xml Starting." />
+	<puts text="Test: Admin_10141.xml Starting." />
 	
 	<link text="Admin" />
 	<link text="Studio" />
@@ -34,8 +34,8 @@
 	<textfield id="field_name_id" set="somenum" />
 	<button name="editFormula" />
 	
-	<textarea id="formulaInput" 
-		set="abs(0,3,2)" />
+	<wait timeout="3" />
+	<textarea id="formulaInput" set="abs(0,3,2)" />
 	<wait timeout="6" />
 
 	<button id="fomulaSaveButton" />
