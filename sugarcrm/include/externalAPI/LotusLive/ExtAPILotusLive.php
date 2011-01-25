@@ -63,7 +63,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 
     protected $dateFormat = 'm/d/Y H:i:s';
 //    protected $urlExtension = '/envq/Production/';
-    protected $url = 'eval-cloud2.castiron.com/envq/Production/';
+    protected $url = 'provide.castiron.com/envq/Production/';
 
     public $authMethod = 'oauth';
     public $supportedModules = array('Meetings','Notes', 'Documents');
@@ -73,12 +73,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 
 	protected $meetingID;
     protected $joinURL;
-// Test site
-//    protected $baseURL = 'https://apps.test.lotuslive.com/';
-// Stage
-    protected $baseURL = 'https://apps.stage.lotuslive.com/';
-// Production
-//    protected $baseURL = 'https://apps.lotuslive.com/';
+    protected $baseURL = 'https://apps.lotuslive.com/';
 
     public $hostURL;
     protected $oauthReq;
@@ -86,17 +81,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     protected $oauthAccess;
     protected $oauthParams = array(
     	'signatureMethod' => 'PLAINTEXT',
-// Test site
-//        'consumerKey' => "test_app",
-//        'consumerSecret' => "87323at4aj6y8e9a0pa92w",
-    /*
-// Stage
-        'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
-        'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
-// Production
-        'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
-        'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
-*/
     );
 
     public $canInvite = false;

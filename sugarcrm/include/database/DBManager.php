@@ -870,11 +870,6 @@ abstract class DBManager
             return false;
         }
         
-        if(isset($fielddef2['default']) && !isset($fielddef1['default']))
-        {
-           return false;
-        }
-
         return true;
     }
 

@@ -28,3 +28,9 @@ create index idx_products_primary on products_audit (id);
 create index idx_quotes_primary on quotes_audit (id);
 
 ALTER TABLE team_sets_teams ADD PRIMARY KEY (id);
+
+ALTER TABLE meetings MODIFY status DEFAULT 'Planned';
+
+ALTER TABLE calls MODIFY status DEFAULT 'Planned';
+
+ALTER TABLE tasks MODIFY status DEFAULT 'Not Planned';
