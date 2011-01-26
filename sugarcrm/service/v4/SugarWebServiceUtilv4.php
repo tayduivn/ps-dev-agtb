@@ -221,7 +221,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
     }
     
    /**
-	 * Parse wireless detailview metadata and add ACL values.
+	 * Parse wireless editview metadata and add ACL values.
 	 *
 	 * @param String $module_name
 	 * @param array $metadata
@@ -261,6 +261,18 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    
 	    $results['panels'] = $aclRows;
 	    return $results;
+	}
+	
+	/**
+	 * Parse wireless detailview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessDetail($module_name, $metadata)
+	{
+	    return self::metdataAclParserWirelessEdit($module_name, $metadata);
 	}
     
 }
