@@ -252,6 +252,13 @@ if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_searc
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
+require_once('modules/UpgradeWizard/uw_utils.php');
+if($_SESSION['current_db_version'] < '620')
+{
+	upgradeDateTimeFields($path);
+	upgradeDocumentTypeFields($path);
+}
+
 //Update the license
 logThis('Start Updating the license ', $path);
 ob_start();

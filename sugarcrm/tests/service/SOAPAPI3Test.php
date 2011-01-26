@@ -141,7 +141,7 @@ class SOAPAPI3Test extends SOAPTestCase
 
          $this->_removeUpcomingActivities();
     }
-    //BEGIN SUGARCRM flav=pro ONLY 
+    //BEGIN SUGARCRM flav=pro ONLY
     public function testGetLastViewed()
     {
          $testModule = 'Accounts';
@@ -164,7 +164,7 @@ class SOAPAPI3Test extends SOAPTestCase
 
          $this->assertTrue($found, "Unable to get last viewed modules");
      }
-     
+
      private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
      {
         $trackerManager = TrackerManager::getInstance();
@@ -267,7 +267,7 @@ class SOAPAPI3Test extends SOAPTestCase
     public function _setEntryForContact() {
 		$this->_login();
 		global $timedate;
-		$current_date = $timedate->convert_to_gmt_datetime('now');
+		$current_date = $timedate->nowDb();
         $time = mt_rand();
     	$first_name = 'SugarContactFirst' . $time;
     	$last_name = 'SugarContactLast';
@@ -289,7 +289,7 @@ class SOAPAPI3Test extends SOAPTestCase
     	global $soap_version_test_accountId;
 		$this->_login();
 		global $timedate;
-		$current_date = $timedate->convert_to_gmt_datetime('now');
+		$current_date = $timedate->nowDb();
         $time = mt_rand();
     	$name = 'SugarAccount' . $time;
         $email1 = 'account@'. $time. 'sugar.com';
@@ -304,7 +304,7 @@ class SOAPAPI3Test extends SOAPTestCase
     	global $soap_version_test_accountId, $soap_version_test_opportunityId;
 		$this->_login();
 		global $timedate;
-		$date_closed = $timedate->convert_to_gmt_datetime(strtotime('+1 week'));
+		$date_closed = $timedate->getNow()->get("+1 week")->asDb();
         $time = mt_rand();
     	$name = 'SugarOpportunity' . $time;
     	$account_id = $soap_version_test_accountId;

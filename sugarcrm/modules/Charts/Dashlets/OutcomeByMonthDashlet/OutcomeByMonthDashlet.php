@@ -89,8 +89,8 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['outcome_by_month'];
 
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->setProperties('',
             translate('LBL_OPP_SIZE', 'Charts') . ' ' . $currency_symbol . '1' .translate('LBL_OPP_THOUSANDS', 'Charts'),
             $chartDef['chartType']);
@@ -104,7 +104,7 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();
 	}
 
     /**

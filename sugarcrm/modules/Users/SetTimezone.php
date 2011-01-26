@@ -30,11 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('include/JSON.php');
-require_once('include/timezone/timezones.php');
-
 require_once('modules/Users/Forms.php');
-
-
 
 global $app_strings;
 global $app_list_strings;
@@ -60,7 +56,7 @@ if ( isset($_SESSION['isMobile']) ) {
 
 if(isset($_REQUEST['userOffset'])) { // ajax call to lookup timezone
     echo 'userTimezone = "' . TimeDate::guessTimezone($_REQUEST['userOffset']) . '";';
-    die();
+    exit();
 }
 $admin = new Administration();
 $admin->retrieveSettings();

@@ -157,7 +157,6 @@ class MyMeetingsDashlet extends DashletGeneric {
                                      'myItems' => translate('LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY', 'Meetings'),
                                      'displayRows' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_DISPLAY_ROWS'],
                                      'title' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_TITLE'],
-
                                      'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'],
                                      'autoRefresh' => $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH'],
                                      ));

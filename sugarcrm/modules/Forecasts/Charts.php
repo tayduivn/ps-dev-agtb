@@ -25,12 +25,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 
-
-
-require_once('include/charts/Charts.php');
-
 require_once('modules/Forecasts/Common.php');
-        
+require_once('include/SugarCharts/SugarChartFactory.php');
 
 class forecast_charts {
     /**
@@ -42,6 +38,8 @@ class forecast_charts {
     function forecast_history($user,$timeperiod_date,$forecast_type='Direct', $no_of_timeperiods=5, $is_dashlet=false, $dashlet_id='') {
         $user_id=$user->id;
         global $sugar_config,$current_language, $current_user;
+        $sugarChart = SugarChartFactory::getInstance();
+        
         $current_module_strings = return_module_language($current_language, 'Forecasts');
         //currency files..
         $currency = new Currency();
@@ -99,7 +97,7 @@ class forecast_charts {
             $labels[$row['id'].'quota']=sprintf($current_module_strings['LBL_GRAPH_QUOTA_ALTTEXT'],$row['name']);
             $labels['LEGEND']['quota']['ID']='quota';
             $labels['LEGEND']['quota']['NAME']=$current_module_strings['LBL_GRAPH_QUOTA_LEGEND'];
-            $labels['LEGEND']['quota']['COLOR']=generate_graphcolor('quota',1);
+//            $labels['LEGEND']['quota']['COLOR']=generate_graphcolor('quota',1);
             
             //get amount forecasted by the user. only the most recent forecasted amount will be considered
             //this forecasted amount may or maynot have been used by the user's manager
@@ -128,7 +126,7 @@ class forecast_charts {
             $labels[$row['id'].'forecast']=sprintf($current_module_strings['LBL_GRAPH_COMMIT_ALTTEXT'],$row['name']);
             $labels['LEGEND']['forecast']['ID']='forecast';
             $labels['LEGEND']['forecast']['NAME']=$current_module_strings['LBL_GRAPH_COMMIT_LEGEND'];
-            $labels['LEGEND']['forecast']['COLOR']=generate_graphcolor('forecast',2);
+//            $labels['LEGEND']['forecast']['COLOR']=generate_graphcolor('forecast',2);
             
             //get opportunities closed within this timne period. 
             //expected close date should not be empty and should fall with timeperiod start and end date.
@@ -161,20 +159,20 @@ class forecast_charts {
             $labels[$row['id'].'closed']=sprintf($current_module_strings['LBL_GRAPH_OPPS_ALTTEXT'],$row['name']);
             $labels['LEGEND']['closed']['ID']='closed';
             $labels['LEGEND']['closed']['NAME']=$current_module_strings['LBL_GRAPH_OPPS_LEGEND'];
-            $labels['LEGEND']['closed']['COLOR']=generate_graphcolor('closed',3);
+//            $labels['LEGEND']['closed']['COLOR']=generate_graphcolor('closed',3);
         }
 
-		require_once('include/SugarCharts/SugarChart.php');
+		
 		
 		$width = ($is_dashlet) ? '100%' : '720px';
 		
-		$return = '<script type="text/javascript" src="include/javascript/swfobject.js"></script>';
+		$return = '';
 		if (!$is_dashlet){
 			$return .= '<br />';
 		}
 		$return .= '<div align="center">';
 		$return .= '<div id="forecast_chart_container" style="width:' . $width . ';">';
-		$sugarChart = new SugarChart();
+		
 		//bug: 40457 - was: $sugarChart->is_currency = true;, but changed to below since we already convert the values
 		//above into the proper currency. Because this was set to true it was converting twice.
 		$sugarChart->is_currency = false;

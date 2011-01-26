@@ -424,8 +424,8 @@ class Meeting extends SugarBean {
 			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Meetings')." border='0'")."</a>";
 		}
 		global $timedate;
-		$today = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
-		$nextday = gmdate($GLOBALS['timedate']->dbDayFormat, time() + 3600*24);
+		$today = $timedate->nowDb();
+		$nextday = $timedate->asDbDate($timedate->getNow()->get("+1 day")); 
 		$mergeTime = $meeting_fields['DATE_START']; //$timedate->merge_date_time($meeting_fields['DATE_START'], $meeting_fields['TIME_START']);
 		$date_db = $timedate->to_db($mergeTime);
 		if($date_db	< $today	) {

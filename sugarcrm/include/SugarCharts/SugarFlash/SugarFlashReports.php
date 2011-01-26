@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to
@@ -11,17 +10,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 
-require_once('include/SugarCharts/SugarChart.php');
+require_once("include/SugarCharts/SugarFlash/SugarFlash.php");
 
-class SugarChartReports extends SugarChart {
+class SugarFlashReports extends SugarFlash {
 	
 	private $processed_report_keys = array();
 	
-	public function __construct() {
-		parent::__construct();		
+	function __construct() {
+		parent::__construct();
 	}
-
-	function calculateReportGroupTotal($dataset){
+	
+		function calculateReportGroupTotal($dataset){
 		$total = 0;				
 		foreach ($dataset as $value){
 			$total += $value['numerical_value'];
@@ -179,17 +178,11 @@ class SugarChartReports extends SugarChart {
 	function display($name, $xmlFile, $width='320', $height='480', $reportChartDivStyle, $resize=false){
 		
 		
-		// generate strings for chart if it does not exist
-		global $current_language, $theme, $sugar_config,$app_strings;
+		parent::display($name, $xmlFile, $width, $height, $resize);			
 		
-		$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
-		if (!file_exists($chartStringsXML)){
-			$this->generateChartStrings($chartStringsXML);
-		}
-							
 		$this->ss->assign("chartName", $name);
 		$this->ss->assign("chartXMLFile", $xmlFile);
-		$this->ss->assign("chartStringsXML", $chartStringsXML);
+		$this->ss->assign("chartStringsXML", $this->chartStringsXML);
 		$this->ss->assign("style", $reportChartDivStyle);
 		
 		// chart styles and color definitions
@@ -200,8 +193,12 @@ class SugarChartReports extends SugarChart {
 		$this->ss->assign("height", $height);
 		
 		$this->ss->assign("resize", $resize);
-		$this->ss->assign("app_strings", $app_strings);				
-		return $this->ss->fetch('include/SugarCharts/tpls/chart.tpl');
+		$this->ss->assign("app_strings", $this->app_strings);	
+		
+		
+		
+		return $this->ss->fetch('include/SugarCharts/SugarFlash/tpls/chart.tpl');	
 	}
-	
-} // end class def
+}
+
+?>

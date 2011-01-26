@@ -714,6 +714,13 @@ $sugar_smarty->assign('form_header', getClassicModuleTitle("Home",array(), false
 $sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));
 $sugar_smarty->assign('app', $GLOBALS['app_strings']);
 $sugar_smarty->assign('module', 'Home');
+//custom chart code
+require_once('include/SugarCharts/SugarChartFactory.php');
+$sugarChart = SugarChartFactory::getInstance();
+$resources = $sugarChart->getChartResources();
+$mySugarResources = $sugarChart->getMySugarChartResources();
+$sugar_smarty->assign('chartResources', $resources);
+$sugar_smarty->assign('mySugarChartResources', $mySugarResources);
 echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
 
 ?>

@@ -325,7 +325,7 @@ else if(!isset($_GET['execute'])){
 		$q_select = "select id";
 		$q_update = "update ";
 		$q_set = " set assigned_user_id = '{$_POST['touser']}', ".
-			      "date_modified = '".date("Y-m-d H:i:s")."', ".
+			      "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
 		

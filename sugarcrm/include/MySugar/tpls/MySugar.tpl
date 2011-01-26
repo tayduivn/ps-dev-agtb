@@ -75,8 +75,12 @@ document.body.setAttribute("class", "yui-skin-sam");
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
 <script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
 <script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/swfobject.js'}"></script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
+
+
+{$chartResources}
+{$mySugarChartResources}
+
 
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {$form_header}
@@ -299,10 +303,11 @@ SUGAR.mySugar.init = function () {
 	{if $default}
 //	SUGAR.mySugar.renderFirstLoadDialog();
 	{/if}
-	{literal}
-	//END SUGARCRM flav=pro ONLY
 
-	SUGAR.mySugar.loadSugarCharts();
+	//END SUGARCRM flav=pro ONLY
+	SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
+
+	{literal}
 }
 
 </script>

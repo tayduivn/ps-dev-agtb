@@ -67,7 +67,9 @@
 <tr>
     <td scope='row'>{$categoriesLBL}</td>
     <td>
-    	{html_options name='categories[]' options=$categories selected=$selectedCategories multiple=true size=6}
+        <select name='categories[]' multiple=true size=6 onchange='getMultiple(this);' id='categories_{$id}'>
+    	{html_options options=$categories selected=$selectedCategories}
+    	</select>
     </td>
 </tr>
 {* //BEGIN SUGARCRM flav=pro ONLY*}
@@ -80,14 +82,60 @@
 {* //END SUGARCRM flav=pro ONLY*}
 <tr>
   <td align="right" colspan="2">
-    {$externalWarningLBL}
+    <div id='externalApiDiv'>
+    </div>
   </td>
 </tr>
 <tr>
     <td align="right" colspan="2">
-        <input type='submit' class='button' value='{$saveLBL}'>
+        <input type='submit' class='button' value='{$saveLBL}' id='save_{$id}'>
    	</td>
 </tr>
 </table>
+<script language='javascript'>
+var externalApiList = {$externalApiList};
+{literal}
+
+
+function getMultiple(ob){
+    var showAll = false;
+    var selected = new Array();
+    for (var i = 0; i < ob.options.length; i++){
+        if (ob.options[ i ].selected){
+            selected.push(ob.options[ i ].value);
+            if(ob.options[ i ].value == 'ALL'){
+                showAll = true;
+            }
+        }
+    }
+    var buttonHtml = '';
+    var saveButton = document.getElementById('{/literal}save_{$id}{literal}');
+    saveButton.disabled = false;
+    if(showAll){
+        for (var j = 0; j < externalApiList.length; j++){
+            buttonHtml += '<a href="#" onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
+            saveButton.disabled = true;
+        }
+    }else{
+        for (var i = 0; i < selected.length; i++){
+            for (var j = 0; j < externalApiList.length; j++){
+                if(selected[i] == externalApiList[j]){
+                    buttonHtml += '<a href="#" onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
+                    saveButton.disabled = true;
+                }
+            }
+        }
+    }
+    document.getElementById('externalApiDiv').innerHTML = buttonHtml;
+}
+
+function initExternalOptions(){
+    var ob = document.getElementById('{/literal}categories_{$id}{literal}');
+    getMultiple(ob);
+}
+
+YAHOO.util.Event.onDOMReady(initExternalOptions);
+</script>
+{/literal}
 </form>
 </div>

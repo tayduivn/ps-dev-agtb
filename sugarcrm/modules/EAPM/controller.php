@@ -108,6 +108,20 @@ class EAPMController extends SugarController
         }
     }
 
+    protected function pre_QuickSave(){
+        $this->bean->application = $_REQUEST['application'];
+        $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->pre_save();
+    }
+    
+	public function action_QuickSave(){
+		$this->action_save();
+	}
+
+    protected function post_QuickSave(){
+        $this->post_save();
+    }
+
     protected function action_FlushFileCache()
     {
         $api = ExternalAPIFactory::loadAPI($_REQUEST['api']);

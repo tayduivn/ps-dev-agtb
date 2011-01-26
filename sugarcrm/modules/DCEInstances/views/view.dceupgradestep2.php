@@ -100,7 +100,7 @@ class DCEInstancesViewDCEUpgradestep2 extends SugarView
         if(isset($_REQUEST['return_id']))$this->ss->assign("RETURN_ID", $_REQUEST['return_id']);
 //For date Time Combo
         global $timedate;
- 	    $this->ss->assign('DEFAULT_DATE', $timedate->to_display_date_time(gmdate($timedate->get_date_time_format())));
+ 	    $this->ss->assign('DEFAULT_DATE', $timedate->now());
         $this->ss->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
         $this->ss->assign('USER_DATEFORMAT', $timedate->get_user_date_format());
         $time_format = $timedate->get_user_time_format();

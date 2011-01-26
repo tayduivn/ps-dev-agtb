@@ -481,9 +481,13 @@ if($ce_to_pro_ent) {
     }  
 }
 
-//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
+
 if($origVersion < '620'){
+	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 	upgradeDateTimeFields($path);
+	
+	//upgrade the documents and meetings for lotus support
+	upgradeDocumentTypeFields($path);
 }
 
 //bug: 37214 - merge config_si.php settings if available

@@ -95,4 +95,122 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         
         return $results;
     }
+    
+    /**
+     * Equivalent of get_list function within SugarBean but allows the possibility to pass in an indicator
+     * if the list should filter for favorites.  Should eventually update the SugarBean function as well.
+     *
+     */
+    function get_data_list($seed, $order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $favorites = false, $singleSelect=false)
+	{
+		$GLOBALS['log']->debug("get_list:  order_by = '$order_by' and where = '$where' and limit = '$limit'");
+		if(isset($_SESSION['show_deleted']))
+		{
+			$show_deleted = 1;
+		}
+		$order_by=$seed->process_order_by($order_by, null);
+
+		if($seed->bean_implements('ACL') && ACLController::requireOwner($seed->module_dir, 'list') )
+		{
+			global $current_user;
+			$owner_where = $seed->getOwnerWhere($current_user->id);
+			if(!empty($owner_where)){
+				if(empty($where)){
+					$where = $owner_where;
+				}else{
+					$where .= ' AND '.  $owner_where;
+				}
+			}
+		}
+		$params = array();
+		if($favorites === TRUE )
+		  $params['favorites'] = true;
+
+		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted,'',false,null,$singleSelect);
+		return $seed->process_list_query($query, $row_offset, $limit, $max, $where);
+	}
+	
+	/**
+     * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
+     *
+     * @param array $availModules An array of all the modules the user already has access to.
+     * @return array Modules enalbed for mobile view.
+     */
+    function get_visible_mobile_modules($availModules)
+    {
+        global $app_list_strings;
+
+        $enabled_modules = array();
+        $availModulesKey = array_flip($availModules);
+        foreach ( array ( '','custom/') as $prefix)
+        {
+        	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
+        		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
+        }
+
+        foreach ( $wireless_module_registry as $e => $def )
+        {
+        	if( isset($availModulesKey[$e]) )
+        	{
+                $label = !empty( $app_list_strings['moduleList'][$e] ) ? $app_list_strings['moduleList'][$e] : '';
+        	    $acl = self::checkModuleRoleAccess($e);
+        	    $fav = self::is_favorites_enabled($label);
+        	    $enabled_modules[] = array('module_key' => $e,'module_label' => $label, 'favorite_enabled' => $fav, 'acls' => $acl);
+        	}
+        }
+
+        return $enabled_modules;
+    }
+    
+    /**
+     * Examine the application to determine which modules have been enabled..
+     *
+     * @param array $availModules An array of all the modules the user already has access to.
+     * @return array Modules enabled within the application.
+     */
+    function get_visible_modules($availModules)
+    {
+        global $app_list_strings;
+
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
+        $enabled_modules= array();
+        $availModulesKey = array_flip($availModules);
+        foreach ($tabs[0] as $key=>$value)
+        {
+            if( isset($availModulesKey[$key]) )
+            {
+                $label = !empty( $app_list_strings['moduleList'][$key] ) ? $app_list_strings['moduleList'][$key] : '';
+        	    $acl = self::checkModuleRoleAccess($key);
+        	    $fav = self::is_favorites_enabled($label);
+        	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label, 'favorite_enabled' => $fav, 'acls' => $acl);
+            }
+        }
+
+        return $enabled_modules;
+    }
+    
+    /**
+     * Return a boolean indicating if the bean name is favorites enabled.
+     *
+     * @param string The module name
+     * @return bool true indicating bean is favorites enabled
+     */
+    function is_favorites_enabled($module_name)
+    {
+        global $beanList, $beanFiles;
+        
+        $fav = FALSE;
+        //BEGIN SUGARCRM flav=pro ONLY
+        $class_name = $beanList[$module_name];
+        if( file_exists($beanFiles[$class_name]) )
+        {
+            require_once($beanFiles[$class_name]);
+            $mod = new $class_name();
+            $fav = $mod->isFavoritesEnabled();
+        }
+        //END SUGARCRM flav=pro ONLY
+        return $fav;
+    }
 }

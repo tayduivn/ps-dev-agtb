@@ -38,7 +38,7 @@
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/calendar.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_grp1.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"}'></script>
-<script type="text/javascript" src="{$CACHE_DIR}/jsLanguage/{$CURRENT_LANGUAGE}.js?s={$JS_VERSION}&c={$JS_CUSTON_VERSION}&j={$JS_LANGUAGE_VERSION}"></script>
+<script type="text/javascript" src="{$CACHE_DIR}jsLanguage/{$CURRENT_LANGUAGE}.js?s={$JS_VERSION}&c={$JS_CUSTON_VERSION}&j={$JS_LANGUAGE_VERSION}"></script>
 </head>
 <body class='tabForm'>
 <form action='index.php' name='add_schedule' method='POST'>

@@ -75,8 +75,8 @@ $sugar_smarty->assign('NAME', $focus->name);
 // awu: Bug 11820 - date entered was not conforming to correct date in Oracle
 $focus->fetched_row['estimated_start_date'] = $focus->estimated_start_date;
 $focus->fetched_row['estimated_end_date'] = $focus->estimated_end_date;
-$focus->fetched_row['date_entered'] = date($GLOBALS['timedate']->dbDayFormat);
-$focus->fetched_row['date_modified'] = date($GLOBALS['timedate']->dbDayFormat);
+$focus->fetched_row['date_entered'] = $timedate->nowDbDate();
+$focus->fetched_row['date_modified'] = $timedate->nowDbDate();
 
 // populate form with project's data
 $sugar_smarty->assign('PROJECT_FORM', $focus->fetched_row);

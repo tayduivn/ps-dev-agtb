@@ -87,7 +87,7 @@ chdir(realpath(dirname(__FILE__)));
         if(!empty($row)){
             $startDate = $row['start_date'];
         }    
-        $currDate = gmdate('Y-m-d H:i:s');
+        $currDate = TimeDate::getInstance()->nowDb();
     
         //compare start date with current time in a loop
         while(!empty($row) && ($startDate > $currDate)){
@@ -674,7 +674,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     //check to see if db has been dumped before
     if(file_exists("'$inst_path/dump.sql'")){
         //file has been dumped before, so rename   
-        rename("'$inst_path/dump.sql'",  "'".$inst_path.'/dump.sql'.date('Y-m-d H:i:s')."'" );
+        rename("'$inst_path/dump.sql'",  "'".$inst_path.'/dump.sql'.TimeDate::getInstance()->nowDb()."'" );
     }
 
     //dump db

@@ -132,11 +132,11 @@ class History
         $retries = 0 ;
 
         $now = TimeDate::getInstance()->getNow();
-        $time = $now->format('r');
+        $time = $now->format('c');
         while ( (file_exists ( $this->_previewFilename . "_" . $time ) && $retries < 5) )
         {
             $now->modify("+1 second");
-            $time = $now->format('r');
+            $time = $now->format('c');
             $retries ++ ;
         }
         // now we have a unique filename, copy the file into the history

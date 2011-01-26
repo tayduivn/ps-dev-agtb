@@ -879,32 +879,6 @@ $app_list_strings = array (
   array (
     'SMTP' => 'SMTP',
   ),
-  'dom_timezones' => array('-12'=>'(GMT - 12) International Date Line West',
-                            '-11'=>'(GMT - 11) Midway Island, Samoa',
-                            '-10'=>'(GMT - 10) Hawaii',
-                            '-9'=>'(GMT - 9) Alaska',
-                            '-8'=>'(GMT - 8) San Francisco',
-                            '-7'=>'(GMT - 7) Phoenix',
-                            '-6'=>'(GMT - 6) Saskatchewan',
-                            '-5'=>'(GMT - 5) New York',
-                            '-4'=>'(GMT - 4) Santiago',
-                            '-3'=>'(GMT - 3) Buenos Aires',
-                            '-2'=>'(GMT - 2) Mid-Atlantic',
-                            '-1'=>'(GMT - 1) Azores',
-                            '0'=>'(GMT)',
-                            '1'=>'(GMT + 1) Madrid',
-                            '2'=>'(GMT + 2) Athens',
-                            '3'=>'(GMT + 3) Moscow',
-                            '4'=>'(GMT + 4) Kabul',
-                            '5'=>'(GMT + 5) Ekaterinburg',
-                            '6'=>'(GMT + 6) Astana',
-                            '7'=>'(GMT + 7) Bangkok',
-                            '8'=>'(GMT + 8) Perth',
-                            '9'=>'(GMT + 9) Seol',
-                            '10'=>'(GMT + 10) Brisbane',
-                            '11'=>'(GMT + 11) Solomone Is.',
-                            '12'=>'(GMT + 12) Auckland',
-                            ),
       'dom_cal_month_long'=>array(
                 '0'=>"",
                 '1'=>"January",
@@ -1478,34 +1452,6 @@ $app_list_strings = array (
     'all' => 'all related',
     'any' => 'any related',
         ),
-    //I added the PST, CST, MST, EST denotations here
-  'dom_timezones_extra' => array('-12'=>'(GMT-12) International Date Line West',
-                            '-11'=>'(GMT-11) Midway Island, Samoa',
-                            '-10'=>'(GMT-10) Hawaii',
-                            '-9'=>'(GMT-9) Alaska',
-                            '-8'=>'(GMT-8) (PST)',
-                            '-7'=>'(GMT-7) (MST)',
-                            '-6'=>'(GMT-6) (CST)',
-                            '-5'=>'(GMT-5) (EST)',
-                            '-4'=>'(GMT-4) Santiago',
-                            '-3'=>'(GMT-3) Buenos Aires',
-                            '-2'=>'(GMT-2) Mid-Atlantic',
-                            '-1'=>'(GMT-1) Azores',
-                            '0'=>'(GMT)',
-                            '1'=>'(GMT+1) Madrid',
-                            '2'=>'(GMT+2) Athens',
-                            '3'=>'(GMT+3) Moscow',
-                            '4'=>'(GMT+4) Kabul',
-                            '5'=>'(GMT+5) Ekaterinburg',
-                            '6'=>'(GMT+6) Astana',
-                            '7'=>'(GMT+7) Bangkok',
-                            '8'=>'(GMT+8) Perth',
-                            '9'=>'(GMT+9) Seol',
-                            '10'=>'(GMT+10) Brisbane',
-                            '11'=>'(GMT+11) Solomone Is.',
-                            '12'=>'(GMT+12) Auckland',
-                            ),
-
         'wflow_fire_order_dom' => array('alerts_actions'=>'Alerts then Actions',
                                     'actions_alerts'=>'Actions then Alerts'),
 
@@ -3095,6 +3041,7 @@ $app_strings = array (
 
     //File write error label
     'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
+	'ERR_FILE_NOT_FOUND' => 'Error: Could not load file {0}.  Please check system and web server permissions.',
 
     'LBL_AND' => 'And',
     'LBL_BEFORE' => 'Before',
@@ -3108,6 +3055,12 @@ $app_strings = array (
     'LBL_SHARE_LINKABLE' => 'Linkable',
     'LBL_SHARE_PUBLIC' => 'Public',
 
+    
+    // Web Services REST RSS
+    'LBL_RSS_FEED' => 'RSS Feed',
+    'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
+    'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
+    'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

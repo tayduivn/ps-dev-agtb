@@ -497,7 +497,7 @@ function sync_users($soapclient, $session, $clean = false, $is_conversion = fals
 
 	}
 
-	$start_time = $timedate->get_gmt_db_datetime();
+	$start_time = $timedate->nowDb();
 
 			$GLOBALS['sugar_config']['disable_team_sanity_check'] = true;
 			//rrs: bug 27579. This works fine for most installs, but we had a customer in switzerland and the quotes where being

@@ -66,7 +66,7 @@ var $myFavoritesOnly = false;
         $this->externalAPIList = ExternalAPIFactory::getModuleDropDown('SugarFeed',true);
         if ( !is_array($this->externalAPIList) ) { $this->externalAPIList = array(); }
         foreach ( $this->externalAPIList as $apiObj => $apiName ) {
-            $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
+            $this->categories[$apiObj] = $apiName;
         }
 
 
@@ -238,9 +238,7 @@ var $myFavoritesOnly = false;
 //END SUGARCRM flav=pro ONLY
                                     'link_url',
                                     'link_type'));
-
-            //$GLOBALS['log']->fatal('LVS DATA: '.print_r($this->lvs->data['data'],true));
-
+            
             foreach($this->lvs->data['data'] as $row => $data) {
 
                 $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['ASSIGNED_USER_ID']),$data['NAME']);
@@ -392,7 +390,6 @@ var $myFavoritesOnly = false;
         $ss = new Sugar_Smarty();
         $ss->assign('titleLBL', translate('LBL_TITLE', 'SugarFeed'));
 		$ss->assign('categoriesLBL', translate('LBL_CATEGORIES', 'SugarFeed'));
-        $ss->assign('externalWarningLBL', translate('LBL_EXTERNAL_WARNING', 'SugarFeed'));
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
 //BEGIN SUGARCRM flav=pro ONLY
@@ -408,7 +405,15 @@ var $myFavoritesOnly = false;
 //BEGIN SUGARCRM flav=pro ONLY
         $ss->assign('myFavoritesOnly', $this->myFavoritesOnly);
 //END SUGARCRM flav=pro ONLY
-
+        $externalApis = array();
+        foreach ( $this->externalAPIList as $apiObj => $apiName ) {
+            //only show external APis that the user has not created
+            if ( ! EAPM::getLoginInfo($apiName) ) {
+                $externalApis[] = $apiObj;
+            }
+        }
+        $ss->assign('externalApiList', JSON::encode($externalApis));
+        $ss->assign('authenticateLBL', translate('LBL_AUTHENTICATE', 'SugarFeed'));
         $ss->assign('id', $this->id);
         if($this->isAutoRefreshable()) {
        		$ss->assign('isRefreshable', true);

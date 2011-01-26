@@ -71,8 +71,8 @@ class CampaignROIChartDashlet extends DashletGenericChart
             $GLOBALS['app_list_strings']['roi_type_dom'],
             $this->campaign_id[0],null,true,true,true,$this->id);
         
-		$returnStr = '<script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js') . '"></script>' . $chartStr;
+		$returnStr = $chartStr;
 		
-        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div><br />'. $this->processAutoRefresh();
+        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div>'. $this->processAutoRefresh();
     }
 }

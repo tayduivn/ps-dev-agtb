@@ -56,6 +56,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'popupHelp' => 'LBL_DOC_TYPE_POPUP',
     'massupdate' => false,
     'options' => 'eapm_list',
+    'default'	=> 'Sugar',
   ),
 'doc_url' =>
   array (
