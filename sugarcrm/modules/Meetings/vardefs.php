@@ -176,6 +176,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
      'function' => 'getMeetingsExternalApiDropDown',
      'comment' => 'Meeting type (ex: WebEx, Other)',
      'options' => 'eapm_list',
+     'default'	=> 'Sugar',
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>
