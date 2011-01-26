@@ -97,5 +97,19 @@ class registry_v4 extends registry_v3_1 {
 		    ),
 			'tns:link_value'
 		);
+		
+		$this->serviceClass->registerType(
+		    'module_list_entry',
+			'complexType',
+		   	 'struct',
+		   	 'all',
+		  	  '',
+				array(
+					'module_key'=>array('name'=>'module_key', 'type'=>'xsd:string'),
+					'module_label'=>array('name'=>'module_label', 'type'=>'xsd:string'),
+					'favorite_enabled'=>array('name'=>'favorite_enabled', 'type'=>'xsd:boolean'),
+					'acls'=>array('name'=>'acls', 'type'=>'tns:acl_list'),
+				)
+		);
 	}
 }
