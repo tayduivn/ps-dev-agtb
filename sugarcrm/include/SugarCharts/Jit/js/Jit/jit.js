@@ -15125,15 +15125,18 @@ $jit.GaugeChart = new Class({
 		cornerRadius = 8,
 		idLabel = canvas.id + "-label";
 		container = document.getElementById(idLabel);
-		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"fill");
-		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"stroke");
 		if(label.type == 'Native') {
 			var m = ctx.measureText(position),
 			width = m.width + 40;
+		} else {
+			var width = 10;
+		}
+		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"fill");
+		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"stroke");
+		if(label.type == 'Native') {
 			ctx.fillStyle = label.color;
 			ctx.fillText(position, 0, (height/2) + style.positionOffset);
 		} else {
-			var width = 10;
 			var labelDiv =  document.createElement('div');
 			labelDivStyle = labelDiv.style;
 			labelDivStyle.color =  label.color;

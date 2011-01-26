@@ -65,6 +65,11 @@ class JsChart extends SugarChart {
 		}
 		
 	}
+	
+	function tab($str, $depth){
+		return str_repeat("\t", $depth) . $str;	
+	}
+	
 	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
 	
 	
@@ -442,7 +447,8 @@ class JsChart extends SugarChart {
 			$groupcontent = $this->tab("{\n",1);
 			$groupcontent .= $this->tab("'label': '{$group->title}',\n",2);
 			$groupcontent .= $this->tab("'gvalue': '{$group->value}',\n",2);
-			$groupcontent .= $this->tab("'gvaluelabel': '{$group->label}',\n",2);
+			$finalComma = ($group->title != "GaugePosition") ? "," : "";
+			$groupcontent .= $this->tab("'gvaluelabel': '{$group->label}'{$finalComma}\n",2);
 			$subgroupTitles = array();
 			$subgroupValues = array();
 			$subgroupValueLabels = array();
