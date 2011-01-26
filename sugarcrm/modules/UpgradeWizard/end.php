@@ -44,14 +44,14 @@ if($unzip_dir == null ) {
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);
 //Use Repair and rebuild to update the database.
-global $dictionary, $beanFiles; 
+global $dictionary, $beanFiles;
 require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
 
 $repairedTables = array();
-		
+
 foreach ($beanFiles as $bean => $file) {
 	if(file_exists($file)){
 		require_once ($file);
@@ -59,13 +59,13 @@ foreach ($beanFiles as $bean => $file) {
 		$focus = new $bean ();
 		if (($focus instanceOf SugarBean))
 		{
-			if(!isset($repairedTables[$focus->table_name])) 
+			if(!isset($repairedTables[$focus->table_name]))
 			{
 				$sql = $GLOBALS['db']->repairTable($focus, true);
 				logThis('Running sql:' . $sql, $path);
 				$repairedTables[$focus->table_name] = true;
 			}
-			
+
 			//Check to see if we need to create the audit table
 		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
 		       logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
@@ -74,7 +74,7 @@ foreach ($beanFiles as $bean => $file) {
 		}
 	}
 }
-		
+
 $olddictionary = $dictionary;
 
 unset ($dictionary);
@@ -97,31 +97,31 @@ $ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_
 
 //BEGIN SUGARCRM flav=pro ONLY
 // Run this code if we are upgrading from pre-550 version or if we are doing a CE to PRO/ENT conversion
-if($ce_to_pro_ent) 
+if($ce_to_pro_ent)
 {
     logThis(" Start Building private teams", $path);
 	upgradeModulesForTeam();
-	logThis(" Finish Building private teams", $path);  
-	
+	logThis(" Finish Building private teams", $path);
+
 	logThis(" Start modules/Administration/upgradeTeams.php", $path);
 	ob_start();
-	include('modules/Administration/upgradeTeams.php'); 
+	include('modules/Administration/upgradeTeams.php');
 	ob_end_clean();
 	logThis(" Finish modules/Administration/upgradeTeams.php", $path);
-	
+
 	logThis(" Start Building the team_set and team_sets_teams", $path);
 	upgradeModulesForTeamsets();
-    logThis(" Finish Building the team_set and team_sets_teams", $path);  
-    
+    logThis(" Finish Building the team_set and team_sets_teams", $path);
+
     logThis("Starting to rebuild team_set_id for folders table", $path);
 	upgradeFolderSubscriptionsTeamSetId();
-    logThis("Finished rebuilding team_set_id for folders table", $path);  
-    
+    logThis("Finished rebuilding team_set_id for folders table", $path);
+
     if($sugar_config['dbconfig']['db_type'] == 'mssql') {
         if(check_FTS()){
             $GLOBALS['db']->wakeupFTS();
         }
-    }       
+    }
 }
 //END SUGARCRM flav=pro ONLY
 
@@ -171,9 +171,9 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 		//END SUGARCRM flav=pro ONLY
 		logThis("Upgrading multienum data", $path);
         require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-        upgrade_multienum_data();	
+        upgrade_multienum_data();
 	 }
-	 
+
 
 	 //keeping separate. making easily visible and readable
 	 if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
@@ -212,7 +212,7 @@ if(file_exists('modules/Configurator/Configurator.php')){
 }
 //unset the logger previously instantiated
 if(file_exists('include/SugarLogger/LoggerManager.php')){
-	
+
 	unset($GLOBALS['log']);
 	$GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 }
@@ -262,7 +262,7 @@ if($_SESSION['current_db_version'] < '620')
 //Update the license
 logThis('Start Updating the license ', $path);
 ob_start();
-   
+
    check_now(get_sugarbeat());
 ob_end_clean();
 logThis('End Updating the license ', $path);
@@ -278,7 +278,7 @@ $_SESSION['upgrade_complete'] = true;
 
 //add the clean vardefs here
 if(!class_exists('VardefManager')){
-	
+
 }
 VardefManager::clearVardef();
 
@@ -365,5 +365,5 @@ $stepCancel	= 0;
 $stepRecheck	= 0;
 
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] = ($stop) ? 'failed' : 'success';
-
-?>
+unset($_SESSION['current_db_version']);
+unset($_SESSION['target_db_version']);
