@@ -4,7 +4,12 @@
 	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
 
 	<!--Create a case record-->
+	<!-- Below is TEMPORARY -->
+	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib_8225.xml" />
+	<!--
+	This is the old value:
 	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.xml" />
+	-->
 	<var var="case_record" set="{@pre_case_name}" />
 
 	<!--go to the case-->
