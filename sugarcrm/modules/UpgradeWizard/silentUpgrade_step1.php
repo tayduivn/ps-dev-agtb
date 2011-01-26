@@ -609,6 +609,7 @@ if(is_file($unzip_dir.'/manifest.php'))
 }
 mkdir_recursive($unzip_dir);
 if(!is_dir($unzip_dir)) {
+	echo "\n{$unzip_dir} is not an available directory\nFAILURE\n";
 	fwrite(STDERR,"\n{$unzip_dir} is not an available directory\nFAILURE\n");
 	exit(1);
 }
