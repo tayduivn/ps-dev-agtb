@@ -670,7 +670,7 @@ class Link {
 				}
 		}
         $GLOBALS['log']->debug("Relationship type = {$this->_relationship->relationship_type}");
-	    foreach($keys as $key) {
+        foreach($keys as $key) {
 
 			//fetch the related record using the key and update.
 			if ($this->_relationship->relationship_type=='one-to-one' or $this->_relationship->relationship_type == 'one-to-many') {
@@ -934,14 +934,38 @@ class Link {
 			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
 			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
 		}
-		$this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
+
+        if (empty($this->_bean->id)) {
+            $this->_bean->retrieve($id);//!$bean_is_lhs || empty($related_id) ? $id : $related_id);
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $linkField = VardefManager::getLinkFieldForRelationship(
+            $this->_bean->module_dir, $this->_bean->object_name, $this->_relationship_name
+        );
+        //Resave records with calculated relate fields to update those fields
+        if (!empty($this->_bean->id) && empty($this->_bean->deleted)
+                && VardefManager::modHasCalcFieldsWithLink($this->_bean->module_dir, $this->_bean->object_name, $linkField['name'])) {
+            $this->_bean->save();
+        }
+        //END SUGARCRM flav=pro ONLY
+        $this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
 		//NOW THE REVERSE WAY SINCE A RELATIONSHIP TAKES TWO
 		global $beanList;
 		if ( isset($beanList[$custom_logic_arguments['related_module']]) ) {
             $class = $beanList[$custom_logic_arguments['related_module']];
             if ( !empty($class) ) {
                 $rbean = new $class();
-                $rbean->id = $id;
+                $rbean->retrieve(empty($related_id) ? $id : $related_id);
+                //BEGIN SUGARCRM flav=pro ONLY
+                $linkField = VardefManager::getLinkFieldForRelationship(
+                    $custom_logic_arguments['related_module'], $class, $this->_relationship_name
+                );
+                //Resave records with calculated relate fields to update those fields
+                if (!empty($rbean->id) && empty($rbean->deleted)
+                        && VardefManager::modHasCalcFieldsWithLink($custom_logic_arguments['related_module'], $class, $linkField['name'])) {
+                    $rbean->save();
+                }
+                //END SUGARCRM flav=pro ONLY
                 $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);
             }
         }

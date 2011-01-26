@@ -538,8 +538,9 @@ function commitHandleReminders($skippedFiles, $path='') {
 		}
 
 		//MFH #13468
-		$nowDate = $timedate->nowDbDate();
-		$nowTime = $timedate->asDbTime($timedate->getNow());
+		/// Not using new TimeDate stuff here because it needs to be compatible with 6.0
+		$nowDate = gmdate('Y-m-d');
+		$nowTime = gmdate('H:i:s');
 		$nowDateTime = $nowDate . ' ' . $nowTime;
 
 		if($_REQUEST['addTaskReminder'] == 'remind') {
@@ -1143,7 +1144,7 @@ function logThis($entry, $path='') {
 			}
 		}
 
-		$line =TimeDate::getInstance()->httpTime().' [UpgradeWizard] - '.$entry."\n";
+		$line = gmdate('c').' [UpgradeWizard] - '.$entry."\n";
 
 		if(@fwrite($fp, $line) === false) {
 			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
@@ -3307,7 +3308,7 @@ function UWrebuild() {
 
 	// insert a new database row to show the rebuild extensions is done
 	$id = create_guid();
-	$gmdate = TimeDate::getInstance()->nowDb();
+	$gmdate = gmdate('Y-m-d H:i:s');
 	$date_entered = db_convert("'$gmdate'", 'datetime');
 	$query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
 		. "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
@@ -5405,15 +5406,15 @@ function upgradeModulesForTeam() {
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 		$GLOBALS['db']->query($callsSql);
 	}
-	
-	
+
+
 /**
  * merge_config_si_settings
  * This method checks for the presence of a config_si.php file and, if found, merges the configuration
  * settings from the config_si.php file into config.php.  If a config_si_location parameter value is not
  * supplied it will attempt to discover the config_si.php file location from where the executing script
  * was invoked.
- * 
+ *
  * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
  * @param config_location String optional value to config.php file location
  * @param config_si_location String optional value to config_si.php file location
@@ -5421,7 +5422,7 @@ function upgradeModulesForTeam() {
  * @return boolean value indicating whether or not a merge was attempted with config_si.php file
  */
 function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='', $path='')
-{	
+{
 	if(!empty($config_location) && !file_exists($config_location))
 	{
 		if($write_to_upgrade_log)
@@ -5435,23 +5436,23 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		if(isset($argv[3]) && is_dir($argv[3]))
 		{
 			$config_location = $argv[3] . DIRECTORY_SEPARATOR . 'config.php';
-		} 
+		}
 	}
-	
+
 	//If config_location is still empty or if the file cannot be found, skip merging
 	if(empty($config_location) || !file_exists($config_location))
 	{
 	   if($write_to_upgrade_log)
-	   {		
+	   {
 	   	  logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
 	   }
 	   return false;
 	} else {
 	   if($write_to_upgrade_log)
-	   {	
+	   {
 	      logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
 	   }
-	   
+
 	   include($config_location);
 	   if(empty($sugar_config))
 	   {
@@ -5460,9 +5461,9 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   	     logThis('config.php contents are empty.  Skip merging.', $path);
 		  }
 	   	  return false;
-	   }   
+	   }
 	}
-	
+
 	if(!empty($config_si_location) && !file_exists($config_si_location))
 	{
 		if($write_to_upgrade_log)
@@ -5475,11 +5476,11 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		{
 			$php_file = $argv[0];
 			$p_info = pathinfo($php_file);
-			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : ''; 
+			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : '';
 			$config_si_location = $php_dir . 'config_si.php';
-		} 
+		}
 	}
-	
+
 	//If config_si_location is still empty or if the file cannot be found, skip merging
 	if(empty($config_si_location) || !file_exists($config_si_location))
 	{
@@ -5493,7 +5494,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   {
 	      logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
 	   }
-	   
+
 	   include($config_si_location);
 	   if(empty($sugar_config_si))
 	   {
@@ -5504,7 +5505,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   	  return false;
 	   }
 	}
-	
+
 	//Now perform the merge operation
 	$modified = false;
 	foreach($sugar_config_si as $key=>$value)
@@ -5519,14 +5520,14 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		   $modified = true;
 		}
 	}
-	
+
 	if($modified)
 	{
 		if($write_to_upgrade_log)
 		{
 	       logThis('Update config.php file with new values', $path);
 		}
-		
+
 	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
 	       if($write_to_upgrade_log)
 		   {
@@ -5541,7 +5542,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   }
 	   return false;
 	}
-	
+
 	if($write_to_upgrade_log)
 	{
 	   logThis('End merge_config_si_settings', $path);
@@ -5555,11 +5556,11 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
  */
 function upgrade_connectors($path='') {
     logThis('Begin upgrade_connectors', $path);
-    
+
     $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
     if(file_exists($filePath))
     {
-       logThis("{$filePath} file", $path);	
+       logThis("{$filePath} file", $path);
        require($filePath);
        if(!is_null($config))
        {
@@ -5569,17 +5570,17 @@ function upgrade_connectors($path='') {
              $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
              $modified = true;
           }
-          
+
           if(isset($config['properties']['hoovers_wsdl']))
           {
              $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
              $modified = true;
           }
-          
+
           if($modified)
           {
               if(!write_array_to_file('config', $config, $filePath)) {
-                 logThis("Could not write new configuration to {$filePath} file", $path);	
+                 logThis("Could not write new configuration to {$filePath} file", $path);
               } else {
                  logThis('Modified file successfully with new configuration entries', $path);
               }
@@ -5590,13 +5591,13 @@ function upgrade_connectors($path='') {
     $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
     if(file_exists($filePath))
     {
-       logThis("Modifying {$filePath} file", $path);	
-       require($filePath);		  
+       logThis("Modifying {$filePath} file", $path);
+       require($filePath);
        $fileContents = file_get_contents($filePath);
        $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
-       file_put_contents($filePath, $out);		   
+       file_put_contents($filePath, $out);
     }
-    
+
     logThis('End upgrade_connectors', $path);
 }
 
@@ -5689,9 +5690,9 @@ function getSilentUpgradeVar($var){
 
 /**
  * add_unified_search_to_custom_modules_vardefs
- * 
+ *
  * This method calls the repair code to remove the unified_search_modules.php fiel
- * 
+ *
  */
 function add_unified_search_to_custom_modules_vardefs()
 {

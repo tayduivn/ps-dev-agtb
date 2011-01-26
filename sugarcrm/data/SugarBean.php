@@ -1664,10 +1664,18 @@ class SugarBean
             }
         }
 
-        // let subclasses save related field changes
-        $this->save_relationship_changes($isUpdate);
-
         //BEGIN SUGARCRM flav=pro ONLY
+        //Prevent cascading saves
+        if (empty($GLOBALS['updating_relationships']))
+        {
+        //END SUGARCRM flav=pro ONLY
+
+            // let subclasses save related field changes
+            $this->save_relationship_changes($isUpdate);
+        //BEGIN SUGARCRM flav=pro ONLY
+            $this->updateRelatedCalcFields();
+        }
+
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1699,6 +1707,54 @@ class SugarBean
                 $dep->fire($this);
             }
         }
+    }
+
+    function updateRelatedCalcFields()
+    {
+        if (empty($this->id))
+            return;
+        global $dictionary, $updating_relationships;
+        if ($updating_relationships)
+        {
+            return;
+        }
+        if (!isset($GLOBALS['related_calc_records_saved']))
+            $GLOBALS['related_calc_records_saved'] = array();
+        $updating_relationships = true;
+        if (!empty($dictionary[$this->object_name]['related_calc_fields']))
+        {
+            $links = $dictionary[$this->object_name]['related_calc_fields'];
+            foreach($links as $lname)
+            {
+                if (empty($this->$lname))
+                {
+                    $this->load_relationship($lname);
+                }
+                $rmodule = $this->$lname->getRelatedModuleName();
+                $beans = array();
+                if(isset($this->$lname->beans))
+                    $beans = $this->$lname->beans;
+                else
+                {
+                    //now we need a seed of the related module to load.
+                    global $beanList;
+                    if (empty($beanList[$rmodule]))
+                       continue;
+                    $bName = $beanList[$rmodule];
+                    $seed = new $bName();
+
+                    $beans = $this->$lname->getBeans($seed);
+                    $this->$lname->beans = $beans;
+                }
+                foreach($beans as $rBean)
+                {
+                    if (empty($rBean->deleted)) {
+                        $rBean->save();
+                    }
+                }
+            }
+        }
+        $updating_relationships = false;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -4488,6 +4544,7 @@ function save_relationship_changes($is_update, $exclude=array())
             } else
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
             $this->db->query($query, true,"Error marking record deleted: ");
+            $this->deleted = 1;
             $this->mark_relationships_deleted($id);
 
             // Take the item off the recently viewed lists
@@ -5237,6 +5294,14 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
+            //BEGIN SUGARCRM flav=pro ONLY
+            //Fire dependency manager dependencies here for some custom logic types.
+            if (empty($GLOBALS['updating_relationships']) &&
+                    ($event == "after_relationship_add" || $event == "after_relationship_delete"))
+            {
+                $this->updateRelatedCalcFields();
+            }
+            //END SUGARCRM flav=pro ONLY
         }
     }
 
