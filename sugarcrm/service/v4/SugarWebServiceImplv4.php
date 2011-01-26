@@ -82,7 +82,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      * @param string $assigned_user_id	- a user id to filter all records by, leave empty to exclude the filter
      * @param string[] $select_fields   - An array of fields to return.  If empty the default return fields will be from the active list view defs.
      * @param bool $unified_search_only - A boolean indicating if we should only search against those modules participating in the unified search.  
-     * @param bool $favorites           - A boolean indicating if we should only search against records marked as favorites..  
+     * @param bool $favorites           - A boolean indicating if we should only search against records marked as favorites.  
      * @return Array return_search_result 	- Array('Accounts' => array(array('name' => 'first_name', 'value' => 'John', 'name' => 'last_name', 'value' => 'Do')))
      * @exception 'SoapFault' -- The SOAP error, if any
      */
