@@ -118,7 +118,7 @@ $db->query ( $query ) ;
 
 // insert a new database row to show the rebuild relationships is done
 $id = create_guid () ;
-$gmdate = TimeDate::getInstance()->nowDb();
+$gmdate = gmdate('Y-m-d H:i:s');
 $date_entered = db_convert ( "'$gmdate'", 'datetime' ) ;
 $query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) ' . "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Relationships', '4.0.0', '4.0.0')" ;
 $log->info ( $query ) ;

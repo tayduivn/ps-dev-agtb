@@ -1144,7 +1144,7 @@ function logThis($entry, $path='') {
 			}
 		}
 
-		$line = gmdate('c').' [UpgradeWizard] - '.$entry."\n";
+		$line = date('r').' [UpgradeWizard] - '.$entry."\n";
 
 		if(@fwrite($fp, $line) === false) {
 			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
@@ -5407,7 +5407,7 @@ function upgradeModulesForTeam() {
 			$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
 			$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
 		}
-		
+
 		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
 		$db->query($meetingsSql);
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
