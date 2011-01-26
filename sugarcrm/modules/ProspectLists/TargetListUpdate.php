@@ -62,6 +62,7 @@ foreach($focus->get_linked_fields() as $field => $def) {
     if ($focus->load_relationship($field)) {
         if ( $focus->$field->getRelatedModuleName() == 'ProspectLists' ) {
             $relationship = $field;
+            break;
         }
     }
 }
