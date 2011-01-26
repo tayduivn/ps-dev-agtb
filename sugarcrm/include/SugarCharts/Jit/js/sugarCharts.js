@@ -39,7 +39,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
 				  //I'm setting this based on the fact that ExCanvas provides text support for IE
 				  //and that as of today iPhone/iPad current text support is lame
-				  labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
+				  labelType = (nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
 				  nativeTextSupport = labelType == 'Native';
 				  useGradients = nativeCanvasSupport;
 				  animate = !(iStuff || !nativeCanvasSupport);
