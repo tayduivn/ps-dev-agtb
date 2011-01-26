@@ -252,7 +252,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	            if($seed->bean_implements('ACL'))
 	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']); 
 	            else
-	                $aclField['acl'] = 99;
+	                $aclField['acl'] = ACL_FIELD_DEFAULT;
 	            
 	            $aclRow[] = $aclField;
 	        }
