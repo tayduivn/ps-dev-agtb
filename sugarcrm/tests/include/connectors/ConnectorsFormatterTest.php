@@ -58,7 +58,7 @@ fclose( $fp );
    		//Setup the neccessary Smarty configurations
     	$this->parentFieldArray = 'fields';
     	require_once('include/SugarObjects/VardefManager.php');
-        VardefManager::loadVardef('Accounts', 'Account');
+        VardefManager::loadVardef('Accounts', 'Account', true);
         require_once('cache/modules/Accounts/Accountvardefs.php');
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];
     	$this->displayParams = array('sources'=>array('ext_rest_linkedin','ext_rest_twitter'));

@@ -4,7 +4,8 @@
 	<timestamp />
 
 	<!-- Create an account record. -->
-	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
+	<!-- below is a temporary setting -->
+	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib_8225.xml" />
 
 	<link id="moduleTab_Cases" />
 

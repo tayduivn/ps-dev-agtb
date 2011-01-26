@@ -66,7 +66,7 @@ var $myFavoritesOnly = false;
         $this->externalAPIList = ExternalAPIFactory::getModuleDropDown('SugarFeed',true);
         if ( !is_array($this->externalAPIList) ) { $this->externalAPIList = array(); }
         foreach ( $this->externalAPIList as $apiObj => $apiName ) {
-            $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
+            $this->categories[$apiObj] = $apiName;
         }
 
 
@@ -319,7 +319,7 @@ var $myFavoritesOnly = false;
                     }
                 }
             }
-            $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px;"><img src="'.$item['IMAGE_URL'].'" height=50></div> '.$item['NAME'];
+            $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><img src="'.$item['IMAGE_URL'].'" style="max-width: 50px; max-height: 50px;"></div> '.$item['NAME'];
         }
         
         $this->lvs->data['data'] = $resortQueue;

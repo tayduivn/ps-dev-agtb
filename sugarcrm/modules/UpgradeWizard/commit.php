@@ -33,16 +33,16 @@ if(!defined('sugarEntry') || !sugarEntry)
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
-require_once('include/SugarLogger/SugarLogger.php');	
+require_once('include/SugarLogger/SugarLogger.php');
 
-$trackerManager = TrackerManager::getInstance();	
+$trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
 
 //BEGIN SUGARCRM flav=pro ONLY
 //bug: 38017 - SugarView is not yet pulled out of memory and to avoid putting a check-in there for every call, will just
 //put in here for one call
-$timeStamp = TimeDate::getInstance()->nowDb();
+$timeStamp = gmdate('Y-m-d H:i:s');
 $monitor3 = $trackerManager->getMonitor('tracker_sessions');
 if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);
@@ -642,7 +642,7 @@ foreach($_SESSION['sugarMergeRunResults'] as $mergeModule => $mergeModuleFileLis
         $skipLayouts = false;
     }
 }
-$stepNext = $skipLayouts ? $_REQUEST['step'] + 2 : $_REQUEST['step'] + 1; 
+$stepNext = $skipLayouts ? $_REQUEST['step'] + 2 : $_REQUEST['step'] + 1;
 $stepCancel = -1;
 $stepRecheck = $_REQUEST['step'];
 

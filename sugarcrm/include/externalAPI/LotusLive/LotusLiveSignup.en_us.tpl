@@ -13,4 +13,4 @@ Register your LotusLive&trade; account to access LotusLive&trade; web meetings a
 <br>&nbsp;<br>
 Not yet a LotusLive&trade; member? Sign up to get a trial account.
 <br>
-<button onclick="window.open('https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage');" style="padding:2px; margin:8px;">Free Trial</button>
+<button onclick="window.open('https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage-sugarcrm');" style="padding:2px; margin:8px;">Free Trial</button>
