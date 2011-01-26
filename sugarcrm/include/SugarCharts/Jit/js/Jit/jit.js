@@ -2920,6 +2920,12 @@ var Canvas;
           that.getPos(true); //update canvas position
         }, 500);
       });
+      $.addEvent(window, 'click', function() {
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+          that.getPos(true); //update canvas position
+        }, 500);
+      });
       sb = document.getElementById('sb'+id);
       $.addEvent(sb, 'scroll', function() {
         clearTimeout(timer);
