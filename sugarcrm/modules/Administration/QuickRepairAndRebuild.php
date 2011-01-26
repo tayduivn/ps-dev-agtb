@@ -134,8 +134,10 @@ class RepairAndClear
 		{
 			$export = false;
     		if($this->show_output) echo getClassicModuleTitle($mod_strings['LBL_REPAIR_DATABASE'], array($mod_strings['LBL_REPAIR_DATABASE']), true);
-            if($this->show_output) echo "<h1 id=\"rdloading\">{$mod_strings['LBL_REPAIR_DATABASE_PROCESSING']}</h1>";
-            ob_flush();
+            if($this->show_output) {
+                echo "<h1 id=\"rdloading\">{$mod_strings['LBL_REPAIR_DATABASE_PROCESSING']}</h1>";
+                ob_flush();
+            }
 	    	$sql = '';
 			if($this->module_list && !in_array($mod_strings['LBL_ALL_MODULES'],$this->module_list))
 			{

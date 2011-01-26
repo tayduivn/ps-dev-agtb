@@ -99,20 +99,25 @@ class SugarFieldExpression extends GenericExpression
 
     protected function getLinkField($fieldName)
     {
-        if(!$this->context->load_relationship($fieldName))
+        if (empty($this->context->$fieldName) && !$this->context->load_relationship($fieldName))
             throw new Exception("Unable to load relationship $fieldName");
 
         if(empty($this->context->$fieldName))
             throw new Exception("Relationship $fieldName was not set");
 
-
+        if (isset($this->context->$fieldName->beans))
+            return $this->context->$fieldName->beans;
 
         $rmodule = $this->context->$fieldName->getRelatedModuleName();
 
         //now we need a seed of the related module to load.
         $seed = $this->getBean($rmodule);
 
-        return $this->context->$fieldName->getBeans($seed);
+        $beans = $this->context->$fieldName->getBeans($seed);
+
+        $this->context->$fieldName->beans = $beans;
+
+        return $beans;
     }
 
 
