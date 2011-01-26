@@ -3055,6 +3055,12 @@ $app_strings = array (
     'LBL_SHARE_LINKABLE' => 'Linkable',
     'LBL_SHARE_PUBLIC' => 'Public',
 
+    
+    // Web Services REST RSS
+    'LBL_RSS_FEED' => 'RSS Feed',
+    'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
+    'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
+    'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

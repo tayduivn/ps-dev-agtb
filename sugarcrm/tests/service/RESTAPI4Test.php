@@ -123,6 +123,55 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
+     * Test search by module with favorites flag enabled.
+     *
+     */
+    public function testSearchByModuleWithFavorites()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+
+        $account = new Account();
+        $account->id = uniqid();
+        $account->new_with_id = TRUE;
+        $account->name = "Unit Test Fav " . $account->id;
+        $account->save();
+        $this->_markBeanAsFavorite($session, "Accounts", $account->id);
+        
+        //Negative test.
+        $account2 = new Account();
+        $account2->id = uniqid();
+        $account2->new_with_id = TRUE;
+        $account2->name = "Unit Test Fav " . $account->id;
+        $account2->save();
+        
+        $searchModules = array('Accounts');
+        $searchString = "Unit Test Fav ";
+        $offSet = 0;
+        $maxResults = 10;
+
+        $results = $this->_makeRESTCall('search_by_module',
+                        array(
+                            'session' => $session,
+                            'search'  => $searchString,
+                            'modules' => $searchModules,
+                            'offset'  => $offSet,
+                            'max'     => $maxResults,
+                            'user'    => '',
+                            'select_field' => array(),
+                            'unified_only' => true,
+                            'favorites' => true,                            
+                            )
+                        );
+        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
+        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'Unit Test %' ");
+        $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
+        $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
+    }
+    
+    
+    /**
      * Private helper function to mark a bean as a favorite item.
      *
      * @param string $session
