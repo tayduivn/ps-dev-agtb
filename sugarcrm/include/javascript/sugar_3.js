@@ -3506,8 +3506,8 @@ SUGAR.language = function() {
         {
             text = this.get(module, str);
             return text != 'undefined' ? text : this.get('app_strings', str);  	
-        },
-    };
+        }
+    }
 }();
 
 SUGAR.contextMenu = function() {
