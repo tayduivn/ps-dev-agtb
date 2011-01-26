@@ -42,7 +42,7 @@ class SugarWidgetFieldDateTimecombo extends SugarWidgetFieldDateTime {
 
 		//BEGIN SUGARCRM flav=ent ONLY 
 		if ($this->reporter->db->dbType == 'oci8') {
-			return $this->_get_column_select($layout_def).">=TO_DATE('".$this->reporter->db->quote($ontime)."','YYYY-MM-DD hh24:mi:ss')  \n";
+			return $this->_get_column_select($layout_def)."=TO_DATE('".$this->reporter->db->quote($ontime)."','YYYY-MM-DD hh24:mi:ss')  \n";
 		} else {
 			//END SUGARCRM flav=ent ONLY 
 			return $this->_get_column_select($layout_def)."='".$this->reporter->db->quote($ontime)."' \n";

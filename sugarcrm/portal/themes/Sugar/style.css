@@ -1347,18 +1347,3 @@ font-weight: bold;
 		MARGIN-BOTTOM: 5px;
 		border-top: 1px solid #ddd;
 		}
-/*
- * Ext JS Library 2.0
- * Copyright(c) 2006-2007, Ext JS, LLC.
- * licensing@extjs.com
- * 
- * http://extjs.com/license
- */
-.loading-indicator{font-size:11px;background-image:url(../../../include/javascript/yui/build/assets/skins/sam/wait.gif);background-repeat:no-repeat;background-position:left;padding-left:20px;line-height:16px;margin:3px;}
-.x-sqs-list{border:1px solid #d0d0d0;background:#d0d0d0;zoom:1;overflow:hidden;}
-.x-sqs-list-inner{overflow:auto;background:white;position:relative;zoom:1;overflow-x:hidden;}
-.x-sqs-list-item{font:normal 12px tahoma,arial,helvetica,sans-serif;padding:1px;border:1px solid #fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.x-sqs-list .x-sqs-selected{border:1px dotted #f6f6f6!important;background:#d0d0d0;cursor:pointer;}
-/*
-* END Ext JS Library 2.0
-*/

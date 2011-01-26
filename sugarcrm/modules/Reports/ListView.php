@@ -208,8 +208,8 @@ if(!empty($_REQUEST['favorite'])) { // handle favorite requests
         'saved_reports.id IN ( 
             SELECT sugarfavorites.record_id FROM sugarfavorites 
                 WHERE sugarfavorites.deleted=0 
-                    and sugarfavorites.module = "Reports" 
-                    and sugarfavorites.assigned_user_id = "'.$GLOBALS['current_user']->id.'")');
+                    and sugarfavorites.module = \'Reports\' 
+                    and sugarfavorites.assigned_user_id = \''.$GLOBALS['current_user']->id.'\')');
 }
 $displayColumns = array();
 if(!empty($_REQUEST['displayColumns'])) {
