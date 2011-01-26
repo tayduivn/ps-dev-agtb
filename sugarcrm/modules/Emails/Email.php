@@ -934,11 +934,16 @@ class Email extends SugarBean {
 	/**
 	 * Generates a comma sperated name and addresses to be used in compose email screen for contacts or leads
 	 * from listview
+	 *
+	 * @param $module string module name
+	 * @param $idsArray array of record ids to get the email address for
+	 * @return string comma delimited list of email addresses
 	 */
-	function getNamePlusEmailAddressesForCompose($table, $idsArray) {
+	public function getNamePlusEmailAddressesForCompose($module, $idsArray) 
+	{
 		global $locale;
 		global $db;
-		$table = strtolower($table);
+		$table = SugarModule::get($module)->loadBean()->table_name;
 		$returndata = array();
 		$idsString = "";
 		foreach($idsArray as $id) {
@@ -949,9 +954,14 @@ class Email extends SugarBean {
 		} // foreach
 		$where = "({$table}.deleted = 0 AND {$table}.id in ({$idsString}))";
 
-		$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
-		if ($table == 'accounts') {
-			$selectColumn = "{$table}.name";
+		if ($module == 'Users' || $module == 'Employees') {
+			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.title";
+		}
+		elseif (SugarModule::get($module)->moduleImplements('Person')) {
+			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
+		}
+		else {
+		    $selectColumn = "{$table}.name";
 		}
 		$query = "SELECT {$table}.id, {$selectColumn}, eabr.primary_address, ea.email_address";
 		$query .= " FROM {$table} ";
@@ -965,11 +975,16 @@ class Email extends SugarBean {
 
 		while($a = $this->db->fetchByAssoc($r)) {
 			if (!isset($returndata[$a['id']])) {
-				if ($table == 'accounts') {
-					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
-				} else {
+				if ($module == 'Users' || $module == 'Employees') {
+				    $full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], '', $a['title']));
+					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
+				} 
+				elseif (SugarModule::get($module)->moduleImplements('Person')) {
 					$full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], $a['salutation'], $a['title']));
 					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
+				}
+				else {
+					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
 				} // else
 			}
 		}

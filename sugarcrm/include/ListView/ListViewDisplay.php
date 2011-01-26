@@ -305,9 +305,7 @@ class ListViewDisplay {
 		if ( ACLController::checkAccess($this->seed->module_dir,'delete',true) && $this->delete )
 			$menuItems .= $this->buildDeleteLink();
 		// compose email
-        if ( isset($_REQUEST['module']) && $_REQUEST['module'] != 'Users' && $_REQUEST['module'] != 'Employees' &&
-            ( SugarModule::get($_REQUEST['module'])->moduleImplements('Company')
-                || SugarModule::get($_REQUEST['module'])->moduleImplements('Person') ) )
+        if ( $this->email )
 			$menuItems .= $this->buildComposeEmailLink($this->data['pageData']['offsets']['total']);
 		// mass update
 		$mass = new MassUpdate();
@@ -327,10 +325,8 @@ class ListViewDisplay {
 		    $menuItems .= $this->buildMergeDuplicatesLink();
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// add to target list
-		if ( isset($_REQUEST['module']) && in_array($_REQUEST['module'],array('Contacts','Prospects','Leads','Accounts'))
-		&& ACLController::checkAccess('ProspectLists','edit',true)) {
+		if ( $this->targetList && ACLController::checkAccess('ProspectLists','edit',true) )
 		    $menuItems .= $this->buildTargetList();
-		}
 		//END SUGARCRM flav!=sales ONLY
 		// export
 		if ( ACLController::checkAccess($this->seed->module_dir,'export',true) && $this->export )

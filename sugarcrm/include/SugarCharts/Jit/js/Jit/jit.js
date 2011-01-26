@@ -11600,7 +11600,9 @@ $jit.BarChart = new Class({
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
-	ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	}
   },  
   
   renderSubtitle: function() {
@@ -11614,7 +11616,9 @@ $jit.BarChart = new Class({
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
-	ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+	if(label.type == 'Native') {
+		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+	}
   },
   
   renderTicks: function() {
@@ -12135,7 +12139,7 @@ $jit.ST.Plot.NodeTypes.implement({
       	for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
       	ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
 
-		      
+	if(label.type == 'Native') {      
        if(showLabels(node.name, valAcum, node)) {
        		 ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
        	     mV = ctx.measureText(stringArray[i]);
@@ -12162,6 +12166,7 @@ $jit.ST.Plot.NodeTypes.implement({
 			ctx.lineTo(-bottomWidthLabel/2 - (labelOffset) - labelOffsetLeft -mVL.width,y - acum - labelOffsetHeight);  // bottom right
 			ctx.stroke();
        }
+	}
 
 		acum += (dimArray[i] || 0);
           valAcum += (valueArray[i] || 0);
@@ -12175,8 +12180,13 @@ $jit.ST.Plot.NodeTypes.implement({
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
 		  	  var colori = colorArray[i % colorLength];
-		      var mV = ctx.measureText(stringArray[i]);
-              var mVL = ctx.measureText(valuelabelArray[i]);
+		  	  if(label.type == 'Native') { 
+			      var mV = ctx.measureText(stringArray[i]);
+	              var mVL = ctx.measureText(valuelabelArray[i]);
+		  	  } else {
+		  	  	  var mV = 10;
+	              var mVL = 10;	
+		  	  }
 		      var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
 		      var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
 		      var labelOffsetRight = (previousElementHeight < label.size && i > 0) ? ((i%2!=0 && dimArray[i] < label.size) ? mV.width + 20 : 0) : 0;
@@ -12518,7 +12528,9 @@ $jit.FunnelChart = new Class({
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
-	ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	}
   },  
   
   renderSubtitle: function() {
@@ -12532,7 +12544,9 @@ $jit.FunnelChart = new Class({
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
-	ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+	if(label.type == 'Native') {
+		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+	}
   },
   
   
@@ -14067,27 +14081,28 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           polar.theta = begin;
           var p4coord = polar.getc(true);
           
-          //drop shadow
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(0,0,0,.2)";
-          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
-          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
-          ctx.fill();
-          
-          if(gradient && dimi) {
-            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
-                xpos, ypos, acum + dimi + config.sliceOffset);
-            var colorRgb = $.hexToRgb(colori), 
-                ans = $.map(colorRgb, function(i) { return (i * 0.6) >> 0; }),
-                endColor = ans;
-
-            radialGradient.addColorStop(0, 'rgba('+colorRgb+',1)');
-            radialGradient.addColorStop(0.1, 'rgba('+colorRgb+',1)');
-            radialGradient.addColorStop(0.4, 'rgba('+colorRgb+',1)');
-            radialGradient.addColorStop(1, 'rgba('+endColor+',1)');
-            ctx.fillStyle = radialGradient;
+          if(label.type == 'Native') {
+	          //drop shadow
+	          ctx.beginPath();
+	          ctx.fillStyle = "rgba(0,0,0,.2)";
+	          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
+	          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
+	          ctx.fill();
+	          
+	          if(gradient && dimi) {
+	            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,
+	                xpos, ypos, acum + dimi + config.sliceOffset);
+	            var colorRgb = $.hexToRgb(colori), 
+	                ans = $.map(colorRgb, function(i) { return (i * 0.6) >> 0; }),
+	                endColor = ans;
+	
+	            radialGradient.addColorStop(0, 'rgba('+colorRgb+',1)');
+	            radialGradient.addColorStop(0.1, 'rgba('+colorRgb+',1)');
+	            radialGradient.addColorStop(0.4, 'rgba('+colorRgb+',1)');
+	            radialGradient.addColorStop(1, 'rgba('+endColor+',1)');
+	            ctx.fillStyle = radialGradient;
+	          }
           }
-          
 
           
           //fixing FF arc method + fill
@@ -15106,8 +15121,6 @@ $jit.GaugeChart = new Class({
 		ctx.font = style.positionFontSize + 'px ' + label.family;
 		ctx.fillStyle = "#ffffff";
 		ctx.lineWidth = 2;
-		var m = ctx.measureText(position),
-		width = m.width + 40;
 		height = style.positionFontSize + 10,
 		cornerRadius = 8,
 		idLabel = canvas.id + "-label";
@@ -15115,9 +15128,12 @@ $jit.GaugeChart = new Class({
 		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"fill");
 		$.roundedRect(ctx,-width/2,0,width,height,cornerRadius,"stroke");
 		if(label.type == 'Native') {
+			var m = ctx.measureText(position),
+			width = m.width + 40;
 			ctx.fillStyle = label.color;
 			ctx.fillText(position, 0, (height/2) + style.positionOffset);
 		} else {
+			var width = 10;
 			var labelDiv =  document.createElement('div');
 			labelDivStyle = labelDiv.style;
 			labelDivStyle.color =  label.color;
@@ -15145,7 +15161,9 @@ $jit.GaugeChart = new Class({
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	ctx.moveTo(0,0);
-	ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset); 
+	if(label.type == 'Native') {
+		ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset); 
+	}
   },
   
   loadJSON: function(json) {
