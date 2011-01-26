@@ -5398,13 +5398,20 @@ function upgradeModulesForTeam() {
 	 */
 	function upgradeDateTimeFields($path){
 		//bug: 39757
-		$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		global $db;
+		if($db->dbType == 'mssql')
+		{
+			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+		} else {
+			$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+			$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		}
+		
 		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$GLOBALS['db']->query($meetingsSql);
-
-		$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		$db->query($meetingsSql);
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$GLOBALS['db']->query($callsSql);
+		$db->query($callsSql);
 	}
 
 
