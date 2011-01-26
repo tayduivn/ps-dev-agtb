@@ -5413,6 +5413,25 @@ function upgradeModulesForTeam() {
 		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 		$db->query($callsSql);
 	}
+	
+	
+	
+	/**
+	 * upgradeDocumentTypeFields
+	 *
+	 */
+	function upgradeDocumentTypeFields($path){
+		//bug: 39757
+		global $db;
+
+		$documentsSql = "UPDATE documents SET doc_type = 'Sugar' WHERE doc_type IS NULL";
+		$meetingsSql = "UPDATE meetings SET type = 'Sugar' WHERE type IS NULL";
+
+		logThis('upgradeDocumentTypeFields Documents SQL:' . $documentsSql, $path);
+		$db->query($documentsSql);
+		logThis('upgradeDocumentTypeFields Meetings SQL:' . $meetingsSql, $path);
+		$db->query($meetingsSql);
+	}	
 
 
 /**
