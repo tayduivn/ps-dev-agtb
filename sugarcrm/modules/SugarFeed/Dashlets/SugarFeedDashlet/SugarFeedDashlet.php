@@ -66,7 +66,7 @@ var $myFavoritesOnly = false;
         $this->externalAPIList = ExternalAPIFactory::getModuleDropDown('SugarFeed',true);
         if ( !is_array($this->externalAPIList) ) { $this->externalAPIList = array(); }
         foreach ( $this->externalAPIList as $apiObj => $apiName ) {
-            $this->categories[$apiObj] = translate('LBL_EXTERNAL_PREFIX', 'SugarFeed').$apiName;
+            $this->categories[$apiObj] = $apiName;
         }
 
 
