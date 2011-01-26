@@ -191,4 +191,28 @@ class SOAPAPI4Test extends SOAPTestCase
             );
     }
     
+    /**
+     * Test get avaiable modules call
+     *
+     */
+    function testGetAvailableModules()
+    {
+        global $beanList, $beanFiles;
+        $this->_login();
+        $soap_data = array('session' => $this->_sessionId,'filter' => 'mobile');
+        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        
+        foreach ( $result['modules'] as $tmpModEntry)
+        {
+            $tmpModEntry['module_key'];
+            $this->assertTrue( isset($tmpModEntry['acls']) );
+            $this->assertTrue( isset($tmpModEntry['module_key']) );
+
+            $class_name = $beanList[$tmpModEntry['module_label']];
+            require_once($beanFiles[$class_name]);
+            $mod = new $class_name();
+            $this->assertEquals( $mod->isFavoritesEnabled(), $tmpModEntry['favorite_enabled']);
+        }
+    }
+    
 }
