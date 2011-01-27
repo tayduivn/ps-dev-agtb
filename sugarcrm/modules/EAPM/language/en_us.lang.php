@@ -85,4 +85,6 @@ $mod_strings = array (
   'LBL_TITLE_LOTUS_LIVE_MEETINGS' => 'Upcoming LotusLive&trade; Meetings',
   'LBL_VIEW_LOTUS_LIVE_DOCUMENTS' => 'View LotusLive&trade; Documents',
   'LBL_TITLE_LOTUS_LIVE_DOCUMENTS' => 'LotusLive&trade; Documents',
+  'LBL_REAUTHENTICATE_LABEL' => 'Reauthenticate',
+  'LBL_REAUTHENTICATE_KEY' => 'a',
 );

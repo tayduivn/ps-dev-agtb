@@ -133,6 +133,19 @@ class EAPMController extends SugarController
         $this->post_save();
     }
 
+    protected function pre_Reauthenticate(){
+        $this->bean->active = 1;
+        $this->pre_save();
+    }
+
+    protected function action_Reauthenticate(){
+        $this->action_save();
+    }
+
+    protected function post_Reauthenticate(){
+        $this->post_save();
+    }
+
     protected function action_FlushFileCache()
     {
         $api = ExternalAPIFactory::loadAPI($_REQUEST['api']);
