@@ -65,6 +65,29 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
     }
 
     /**
+     * Convert modules list to Web services result
+     *
+     * @param array $list List of module candidates (only keys are used)
+     * @param array $availModules List of module availability from Session
+     */
+    public function getModulesFromList($list, $availModules)
+    {
+        global $app_list_strings;
+        $enabled_modules = array();
+        $availModulesKey = array_flip($availModules);
+        foreach ($list as $key=>$value)
+        {
+            if( isset($availModulesKey[$key]) )
+            {
+                $label = !empty( $app_list_strings['moduleList'][$key] ) ? $app_list_strings['moduleList'][$key] : '';
+        	    $acl = self::checkModuleRoleAccess($key);
+        	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label, 'acls' => $acl);
+            }
+        }
+        return $enabled_modules;
+    }
+
+    /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
      * @param array $availModules An array of all the modules the user already has access to.
@@ -72,27 +95,12 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      */
     function get_visible_mobile_modules($availModules)
     {
-        global $app_list_strings;
-
-        $enabled_modules = array();
-        $availModulesKey = array_flip($availModules);
         foreach ( array ( '','custom/') as $prefix)
         {
         	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
         		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
         }
-
-        foreach ( $wireless_module_registry as $e => $def )
-        {
-        	if( isset($availModulesKey[$e]) )
-        	{
-                $label = !empty( $app_list_strings['moduleList'][$e] ) ? $app_list_strings['moduleList'][$e] : '';
-        	    $acl = self::checkModuleRoleAccess($e);
-        	    $enabled_modules[] = array('module_key' => $e,'module_label' => $label, 'acls' => $acl);
-        	}
-        }
-
-        return $enabled_modules;
+        return $this->getModulesFromList($wireless_module_registry, $availModules);
     }
 
     /**
@@ -103,24 +111,10 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      */
     function get_visible_modules($availModules)
     {
-        global $app_list_strings;
-
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
         $tabs = $controller->get_tabs_system();
-        $enabled_modules= array();
-        $availModulesKey = array_flip($availModules);
-        foreach ($tabs[0] as $key=>$value)
-        {
-            if( isset($availModulesKey[$key]) )
-            {
-                $label = !empty( $app_list_strings['moduleList'][$key] ) ? $app_list_strings['moduleList'][$key] : '';
-        	    $acl = self::checkModuleRoleAccess($key);
-        	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label, 'acls' => $acl);
-            }
-        }
-
-        return $enabled_modules;
+        return $this->getModulesFromList($tabs[0], $availModules);
     }
 
     /**
@@ -232,10 +226,10 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 				if( isset($var['required']) && ($var['required'] || $var['required'] == 'true' ) ){
 					$required = 1;
 				}
-				
+
 				if($var['type'] == 'bool')
 				    $var['options'] = 'checkbox_dom';
-				    
+
 				if(isset($var['options'])){
 					$options_dom = translate($var['options'], $value->module_dir);
 					if(!is_array($options_dom)) $options_dom = array();
@@ -443,7 +437,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted,'',false,null,$singleSelect);
 		return $seed->process_list_query($query, $row_offset, $limit, $max, $where);
 	}
-	
+
     /**
      * Add ACL values to metadata files.
      *
@@ -458,10 +452,10 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    $functionName = "metdataAclParser" . ucfirst($view_type) . ucfirst($view);
 	    if( method_exists($this, $functionName) )
 	       return $this->$functionName($module_name, $metadata);
-	    else 
+	    else
 	       return $metadata;
 	}
-	
+
 	/**
 	 * Parse wireless listview metadata and add ACL values.
 	 *
@@ -483,13 +477,13 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	            $entry['acl'] = $this->getFieldLevelACLValue($seed->module_dir, strtolower($field_name));
 	        else
 	            $entry['acl'] = 99;
-	            
+
 	        $results[$field_name] = $entry;
 	    }
-	    
+
 	    return $results;
 	}
-	
+
 	/**
 	 * Parse wireless detailview metadata and add ACL values.
 	 *
@@ -503,7 +497,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    $class_name = $beanList[$module_name];
 	    require_once($beanFiles[$class_name]);
 	    $seed = new $class_name();
-	    
+
 	    $results = array();
 	    $results['templateMeta'] = $metadata['templateMeta'];
 	    $aclRows = array();
@@ -516,19 +510,19 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	            $aclField = array();
 	            if( is_string($field) )
 	                $aclField['name'] = $field;
-	            else 
+	            else
 	                $aclField = $field;
-	            
+
 	            if($seed->bean_implements('ACL'))
-	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']); 
+	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']);
 	            else
 	                $aclField['acl'] = 99;
-	            
+
 	            $aclRow[] = $aclField;
 	        }
 	        $aclRows[] = $aclRow;
 	    }
-	    
+
 	    $results['panels'] = $aclRows;
 	    return $results;
 	}
@@ -542,17 +536,17 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	 * @return int
 	 */
 	function getFieldLevelACLValue($module, $field, $current_user = null)
-	{   
+	{
 	    if($current_user == null)
 	       $current_user = $GLOBALS['current_user'];
-	       
+
 	    if( is_admin($current_user) )
 	         return 99;
-	       
+
 	    if(!isset($_SESSION['ACL'][$current_user->id][$module]['fields'][$field])){
-			 return 99;	
+			 return 99;
 		}
-		
+
 		return $_SESSION['ACL'][$current_user->id][$module]['fields'][$field];
 	}
 }
