@@ -109,9 +109,20 @@ class EAPMController extends SugarController
     }
 
     protected function pre_QuickSave(){
-        $this->bean->application = $_REQUEST['application'];
-        $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->pre_save();
+        if(!empty($_REQUEST['application'])){
+            $eapmBean = EAPM::getLoginInfo($_REQUEST['application'],true);
+            if (!$eapmBean) {
+                $this->bean->application = $_REQUEST['application'];
+                $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
+            }else{
+                $this->bean = $eapmBean;
+                $this->bean->active = 1;
+            }
+            $this->pre_save();
+                    
+        }else{
+            sugar_die("Please pass an application name.");
+        }
     }
     
 	public function action_QuickSave(){
