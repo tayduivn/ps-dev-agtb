@@ -36,10 +36,10 @@ class GetNamePlusEmailAddressesForComposeTest extends Sugar_PHPUnit_Framework_Te
 	    $account3 = SugarTestAccountUtilities::createAccount();
         
 	    $email = new Email;
-	    $this->assertEquals(
-	        "{$account1->name} <{$account1->email1}>,{$account2->name} <{$account2->email1}>,{$account3->name} <{$account3->email1}>",
-	        $email->getNamePlusEmailAddressesForCompose('Accounts',array($account1->id,$account2->id,$account3->id))
-	        );
+	    $addressString = $email->getNamePlusEmailAddressesForCompose('Accounts',array($account1->id,$account2->id,$account3->id));
+	    $this->assertContains("{$account1->name} <{$account1->email1}>",$addressString);
+	    $this->assertContains("{$account2->name} <{$account2->email1}>",$addressString);
+	    $this->assertContains("{$account3->name} <{$account3->email1}>",$addressString);
 	    
 	    SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
