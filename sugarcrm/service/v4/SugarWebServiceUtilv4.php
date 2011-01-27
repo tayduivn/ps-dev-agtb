@@ -298,7 +298,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	        else
 	            $entry['acl'] = 99;
 	            
-	        $results[$field_name] = $entry;
+	        $results[] = $entry;
 	    }
 	    
 	    return $results;
