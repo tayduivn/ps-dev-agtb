@@ -452,6 +452,12 @@ class DashletGeneric extends Dashlet {
         $options['filters'] = array();
         foreach($this->searchFields as $name=>$params) {
             $widgetDef = $this->seedBean->field_defs[$name];
+            if($widgetDef['name']=='created_by_name' && $req['created_by']){ //bug39170 
+           	    $widgetDef['name'] = 'created_by';
+            }
+            if($widgetDef['name']=='modified_by_name' && $req['modified_user_id']){ //bug39170 
+           	    $widgetDef['name'] = 'modified_user_id';
+            }
             if($widgetDef['type'] == 'datetimecombo' || $widgetDef['type'] == 'datetime' || $widgetDef['type'] == 'date') { // special case datetime types
                 $options['filters'][$widgetDef['name']] = array();
                 if(!empty($req['type_' . $widgetDef['name']])) { // save the type of date filter
