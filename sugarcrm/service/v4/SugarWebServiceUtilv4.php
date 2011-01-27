@@ -275,4 +275,32 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    return self::metdataAclParserWirelessEdit($module_name, $metadata);
 	}
     
+    /**
+	 * Parse wireless listview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessList($module_name, $metadata)
+	{
+	    global  $beanList, $beanFiles;
+	    $class_name = $beanList[$module_name];
+	    require_once($beanFiles[$class_name]);
+	    $seed = new $class_name();
+
+	    $results = array();
+	    foreach ($metadata as $entry)
+	    {
+	        $field_name = $entry['name'];
+	        if($seed->bean_implements('ACL'))
+	            $entry['acl'] = $this->getFieldLevelACLValue($seed->module_dir, strtolower($field_name));
+	        else
+	            $entry['acl'] = 99;
+	            
+	        $results[$field_name] = $entry;
+	    }
+	    
+	    return $results;
+	}
 }
