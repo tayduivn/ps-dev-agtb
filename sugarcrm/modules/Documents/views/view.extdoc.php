@@ -51,20 +51,30 @@ class DocumentsViewExtdoc extends SugarView
         // $apiName = 'LotusLiveDirect';
         $apiName = 'LotusLive';
 
-        if ( ! EAPM::getLoginInfo($apiName) ) {
+        // Need to manually attempt to fetch the EAPM record, we don't want to give them the signup screen when they just have a deactivated account.
+        
+        if ( !$eapmBean = EAPM::getLoginInfo($apiName,true) ) {
             $smarty = new Sugar_Smarty();
             echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
             return;
         }
 
 
-        $api = ExternalAPIFactory::loadAPI($apiName);
+        $api = ExternalAPIFactory::loadAPI($apiName,true);
+        $api->loadEAPM($eapmBean);
 
         $quickCheck = $api->quickCheckLogin();
         if ( ! $quickCheck['success'] ) {
             $errorMessage = 'LotusLive' . translate('LBL_ERR_FAILED_QUICKCHECK','EAPM');
-            $errorMessage .= '<br><button onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();">'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'</button> ';
-            $errorMessage .= '<button onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=Save&record='.$api->eapmBean->id.'\',\'EAPM_CHECK_LOTUSLIVE\');">'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'</button>';
+            $errorMessage .= '<form method="POST" target="_EAPM_CHECK" action="index.php">';
+            $errorMessage .= '<input type="hidden" name="module" value="EAPM">';
+            $errorMessage .= '<input type="hidden" name="action" value="Save">';
+            $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
+            $errorMessage .= '<input type="hidden" name="active" value="1">';
+            $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
+            
+            $errorMessage .= '<br><button onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;">'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'</button> ';
+            $errorMessage .= '<input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">';
             
             echo $errorMessage;
             return;

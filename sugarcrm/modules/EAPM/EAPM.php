@@ -70,19 +70,34 @@ class EAPM extends Basic {
 		return false;
 }
 
-   static function getLoginInfo($application)
+   static function getLoginInfo($application, $includeInactive = false)
    {
        global $current_user;
 
        $eapmBean = new EAPM();
 
-       if ( isset($_SESSION['EAPM'][$application]) ) {
-           $eapmBean->fromArray($_SESSION['EAPM'][$application]);
+       if ( isset($_SESSION['EAPM'][$application]) && !$includeInactive ) {
+           if ( is_array($_SESSION['EAPM'][$application]) ) {
+               $eapmBean->fromArray($_SESSION['EAPM'][$application]);
+           } else {
+               return null;
+           }
        } else {
-           $eapmBean = $eapmBean->retrieve_by_string_fields(array('assigned_user_id'=>$current_user->id, 'application'=>$application, 'active' => 1, 'validated' => 1));
+           $queryArray = array('assigned_user_id'=>$current_user->id, 'application'=>$application );
+           if ( !$includeInactive ) {
+               $queryArray['validated'] = 1;
+               $queryArray['active'] = 1;
+           }
+           $eapmBean = $eapmBean->retrieve_by_string_fields($queryArray);
            
-           if ( $eapmBean != null ) {
-               $_SESSION['EAPM'][$application] = $eapmBean->toArray();
+           // Don't cache the include inactive results
+           if ( !$includeInactive ) {
+               if ( $eapmBean != null ) {
+                   $_SESSION['EAPM'][$application] = $eapmBean->toArray();
+               } else {
+                   $_SESSION['EAPM'][$application] = '';
+                   return null;
+               }
            }
        }
 
