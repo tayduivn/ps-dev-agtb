@@ -5396,22 +5396,28 @@ function upgradeModulesForTeam() {
 	 * which prevents you from performing timezone offset calculations once the data has been saved.
 	 *
 	 */
-	function upgradeDateTimeFields($path){
+		function upgradeDateTimeFields($path){
 		//bug: 39757
 		global $db;
-		if($db->dbType == 'mssql')
+		if($db->dbType == 'mysql')
 		{
+			$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+			$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";	
+		} else if($dbType == 'mssql') {
 			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
 			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
-		} else {
-			$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
-			$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		} else if ($db->dbType == 'oci8') {
+			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
 		}
-
-		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$db->query($meetingsSql);
-		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$db->query($callsSql);
+		
+		if(isset($meetingsSql) && isset($callsSql))
+		{
+			logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+			$db->query($meetingsSql);
+			logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+			$db->query($callsSql);
+		}
 	}
 	
 	
