@@ -80,7 +80,7 @@ class DashletTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $dashlet = new Dashlet('unit_test_run');
         
-        $this->assertEquals('',$dashlet->getTitle('foo'));
+        $this->assertEmpty($dashlet->getTitle('foo'));
     }
     
     public function testGetHeaderIfHomePageIsNotLocked()
@@ -172,7 +172,7 @@ class DashletTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $dashlet = new Dashlet('unit_test_run');
         
-        $this->assertEquals('',$dashlet->display('foo'));
+        $this->assertEmpty($dashlet->display('foo'));
     }
     
     public function testHasAccessReturnsTrue()

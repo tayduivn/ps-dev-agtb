@@ -45,8 +45,9 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
 	{
-	    $GLOBALS['db']->query("DELETE FROM {$this->aclField->table_name} WHERE id = '{$this->aclField->id}'"); 
-	    $GLOBALS['db']->query("DELETE FROM {$this->aclRole->table_name} WHERE id = '{$this->aclRole->id}'"); 
+	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
+	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' )");
+	    $GLOBALS['db']->query("DELETE FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}'");
 	    
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
@@ -54,6 +55,8 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
 	    unset($GLOBALS['disable_date_format']);
+	    unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
 
     protected function _makeRESTCall($method,$parameters)

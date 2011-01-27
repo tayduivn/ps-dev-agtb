@@ -23,7 +23,8 @@ class ViewRelFields extends ViewAjax
 {
     var $vars = array("tmodule", "id", "field", "rel_field");
 
-    function __construct(){
+    function __construct()
+    {
         parent::ViewAjax();
         foreach($this->vars as $var)
         {

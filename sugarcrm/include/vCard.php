@@ -26,10 +26,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class vCard
 {
-	var $properties = array();
-	var $name = 'no_name';
+	protected $properties = array();
+	
+	protected $name = 'no_name';
 
-	function clear(){
+	public function clear()
+	{
 		$this->properties = array();
 	}
 

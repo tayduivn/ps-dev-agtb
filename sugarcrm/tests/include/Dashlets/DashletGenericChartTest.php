@@ -32,6 +32,49 @@ class DashletGenericChartTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals('foobar',$focus2->user_name);
     }
+    
+    public function testDisplay()
+    {
+        $dashlet = $this->getMock('DashletGenericChartTestMock',
+                                    array('processAutoRefresh'),
+                                    array('unit_test_run')
+                                    );
+        $dashlet->expects($this->any())
+                ->method('processAutoRefresh')
+                ->will($this->returnValue('successautorefresh'));
+                
+        $this->assertEquals('successautorefresh',$dashlet->display());
+    }
+    
+    public function testSetRefreshIconIfRefreshable()
+    {
+        $dashlet = new DashletGenericChartTestMock('unit_test_run');
+        $dashlet->isRefreshable = true;
+        
+        $this->assertContains('SUGAR.mySugar.retrieveDashlet(\'unit_test_run\',\'predefined_chart\');',$dashlet->setRefreshIcon());
+    }
+    
+    public function testSetRefreshIconIfNotRefreshable()
+    {
+        $dashlet = new DashletGenericChartTestMock('unit_test_run');
+        $dashlet->isRefreshable = false;
+        
+        $this->assertNotContains('SUGAR.mySugar.retrieveDashlet(\'unit_test_run\',\'predefined_chart\');',$dashlet->setRefreshIcon());
+    }
+    
+    public function testConstructQueryReturnsNothing()
+    {
+        $dashlet = new DashletGenericChartTestMock('unit_test_run');
+        
+        $this->assertEmpty($dashlet->constructQuery());
+    }
+    
+    public function testConstructGroupByReturnsNothing()
+    {
+        $dashlet = new DashletGenericChartTestMock('unit_test_run');
+        
+        $this->assertEquals(array(),$dashlet->constructGroupBy());
+    }
 }
 
 class DashletGenericChartTestMock extends DashletGenericChart
@@ -46,5 +89,15 @@ class DashletGenericChartTestMock extends DashletGenericChart
     public function getSeedBean()
     {
         return parent::getSeedBean();
+    }
+    
+    public function constructQuery()
+    {
+        return parent::constructQuery();
+    }
+    
+    public function constructGroupBy()
+    {
+        return parent::constructGroupBy();
     }
 }

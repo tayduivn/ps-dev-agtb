@@ -74,7 +74,7 @@ class Dashlet
      *
      * @param $id
      */
-    public function __construct($id) 
+    public function Dashlet($id) 
     {
         $this->id = $id;
     }
