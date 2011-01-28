@@ -118,7 +118,7 @@ function getMultiple(ob){
             if(!authenticatedExternalApiList[externalApiList[j]])
             {
 	            buttonHtml += '<div id="' + externalApiList[j] + '_div" style="visibility:;"><a href="#" onclick="window.open(\'index.php?module=EAPM&callbackFunction=hideExternalDiv&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a></div>';
-	            saveButton.disabled = true;
+	            //saveButton.disabled = true;
             }
         }
     }else{
@@ -128,7 +128,7 @@ function getMultiple(ob){
                 if(selected[i] == externalApiList[j] && !authenticatedExternalApiList[externalApiList[j]]) 
                 {
                     buttonHtml += '<div id="' + externalApiList[j] + '_div" style="visibility:";><a href="#" onclick="window.open(\'index.php?module=EAPM&callbackFunction=hideExternalDiv&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a></div>';
-                    saveButton.disabled = true;
+                    //saveButton.disabled = true;
                 }
             }
         }
@@ -149,7 +149,7 @@ function hideExternalDiv(id)
 		YAHOO.util.Dom.get(id + '_div').style.visibility = 'hidden';
 		authenticatedExternalApiList[id] = true;
 		saveButton = YAHOO.util.Dom.get('save_{/literal}{$id}{literal}');	
-		saveButton.disabled = false;
+		//saveButton.disabled = false;
 	}
 }
 
