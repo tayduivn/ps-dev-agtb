@@ -5403,7 +5403,7 @@ function upgradeModulesForTeam() {
 		{
 			$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
 			$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";	
-		} else if($dbType == 'mssql') {
+		} else if($db->dbType == 'mssql') {
 			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
 			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
 		} else if ($db->dbType == 'oci8') {
