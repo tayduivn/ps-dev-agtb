@@ -53,11 +53,7 @@
 					</tr>
 				</table>
 			</div>
-            <div>
-                <span onclick="hideShowMoreOptions();" id='more_options_img' name='more_options_img' ><a href='#'  class="tabFormAdvLink"><img src='{sugar_getimagepath file='advanced_search.gif'}' id='up_down_img2'>&nbsp;{$MOD.LBL_SHOW_OPTIONS}</a></span>
-            </div>
-
-			<div id='more_options_div' name='more_options_div' style='display: none'>
+            
 				<table width="100%" border="0" cellspacing="0" cellpadding="0">
 					<tr>
 				        <td colspan='4'>&nbsp;</td>
