@@ -26,7 +26,7 @@
 		<form id="EditView">
 			<timestamp />
 			<textfield name="document_name" set="{@doc_record_7982.document_name} {@user.name} {@stamp}" /> 
-			<filefield name="uploadfile" set="{@global.scriptsdir}_60\Modules\Lib\{@doc_record_7982.attach_path}" />
+			<filefield id="filename_file" set="{@global.scriptsdir}_60\Modules\Lib\{@doc_record_7982.attach_path}" />
 			<textfield name="revision" set="{@doc_record_7982.revision}" /> 
 			<select id="category_id" set="{@doc_record_7982.category}" />
 			<select id="template_type" set="{@doc_record_7982.template_type}" />

@@ -25,7 +25,7 @@
 		<form id="form_SubpanelQuickCreate_Notes">
 			<textfield id="name" set="{@history_record_0054.name} {@user.name} {@stamp}" />
 			<textfield id="description" set="{@history_record_0054.description}" />
-			<filefield name="uploadfile" set="{@history_record_0054.uploadfile}" />
+			<filefield id="filename_file" set="{@history_record_0054.uploadfile}" />
 		</form>
 
 		<!--teams select-->

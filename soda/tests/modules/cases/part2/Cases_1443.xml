@@ -69,7 +69,7 @@
 		<button id="edit_button" />
 		<button value="Remove" />
 		<textfield id="description" set="{@Case_1443.description}" />
-		<filefield name="uploadfile" set="{@global.scriptsdir}/export/Contacts.csv" />
+		<filefield id="filename_file" set="{@global.scriptsdir}/export/Contacts.csv" />
 		<button value="Save" />
 		<browser assert="Contacts.csv" />
 	</csv>	
