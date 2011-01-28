@@ -87,4 +87,5 @@ $mod_strings = array (
   'LBL_TITLE_LOTUS_LIVE_DOCUMENTS' => 'LotusLive&trade; Documents',
   'LBL_REAUTHENTICATE_LABEL' => 'Reauthenticate',
   'LBL_REAUTHENTICATE_KEY' => 'a',
+  'LBL_APPLICATION_FOUND_NOTICE' => 'An account for this application already exists.  We have just reinstated your previous account.',
 );

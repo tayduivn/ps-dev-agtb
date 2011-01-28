@@ -59,9 +59,12 @@ class EAPMController extends SugarController
         if(empty($this->api)) {
             return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
         }
-        $eapmBean = EAPM::getLoginInfo($this->bean->application,true);
-        if($eapmBean){
-            $this->bean->id = $eapmBean->id;
+        if(empty($this->bean->id)){
+            $eapmBean = EAPM::getLoginInfo($this->bean->application,true);
+            if($eapmBean){
+                SugarApplication::appendErrorMessage(translate('LBL_APPLICATION_FOUND_NOTICE', $this->bean->module_dir));
+                $this->bean->id = $eapmBean->id;
+            }
         }
         $this->bean->validated = false;
         $this->bean->save_cleanup();
