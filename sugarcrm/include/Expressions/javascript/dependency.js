@@ -627,7 +627,11 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, fo
 	this.trigger = trigger;
 	if (testOnLoad) {
 		try {
-			SUGAR.forms.Trigger.fire.call(trigger, "", trigger);
+			var args = new Array();
+			args[0] = trigger;
+			args[1] = "";
+			args[2] = trigger;
+			YAHOO.util.Event.onDOMReady(SUGAR.forms.Trigger.fire.call, args);
 		}catch (e) {}
 	}
 }
