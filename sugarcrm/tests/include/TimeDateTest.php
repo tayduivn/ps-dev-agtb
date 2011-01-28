@@ -780,4 +780,16 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	    $this->assertEquals($date,$this->time_date->getDatePart($datetime));
 	    $this->assertEquals($time,$this->time_date->getTimePart($datetime));
 	}
+
+	/**
+     * @group bug41434
+     */
+	public function testHandleOffsetWithSpecialFormat()
+	{
+        $format = 'd/m/Y H:i';
+        $this->_setPrefs('d/m/Y', 'H:i', 'America/Los_Angeles');
+        $date = '23/12/2010 05:00';
+        $new_date = $this->time_date->handle_offset($date, $format, false, $GLOBALS['current_user']);
+        $this->assertEquals('23/12/2010 13:00', $new_date, 'handl_offset did not convert datetime properly.');
+	}
 }
