@@ -35,9 +35,9 @@
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}:</td>
 	<td>
 	{if $hideLevel < 5}
-		{html_options name='default' options=$default_values selected=$vardef.display_default}
+		{html_options id='default' name='default' options=$default_values selected=$vardef.display_default}
 	{else}
-		<input type='hidden' name='default' value='$vardef.display_default'>{$vardef.display_default}
+		<input type='hidden' id='default' name='default' value='$vardef.display_default'>{$vardef.display_default}
 	{/if}
 	</td>
 </tr>

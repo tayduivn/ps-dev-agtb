@@ -130,3 +130,7 @@ div.bodywrapper{padding: 4px 4px 4px 4px}
 #mblayout .yui-dt-scrollable .yui-dt-hd {
     position: static;
 }
+
+input[disabled], select[disabled]{
+    background-color: #EEE;
+}
