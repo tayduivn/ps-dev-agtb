@@ -26,7 +26,7 @@
 		<radio id="primary_team_name_collection_0" set="true" />
 		<form id="EditView">
 			<textfield id="document_name" set="{@teams_9433.doc_name} {@user.name} {@stamp}" />
-			<filefield name="uploadfile" set="{@global.scriptsdir}/csvs/teams/Teams_9433.csv" /> 
+			<filefield id="filename_file" set="{@global.scriptsdir}/csvs/teams/Teams_9433.csv" /> 
 			<textfield name="revision" set="{@teams_9433.revision}" />
 			<textfield id="active_date" set="{@teams_9433.pub_date}" />
 		</form>

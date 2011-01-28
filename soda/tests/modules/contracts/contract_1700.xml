@@ -24,7 +24,7 @@
 	 <form id='EditView'>
             <timestamp/>
             <textfield name='document_name' set='{@Doc_New_Record.document_name} {@user.name} {@stamp}'/> 
-            <filefield name='uploadfile' set='scripts\SugarCRM\Modules\Lib\{@Doc_New_Record.attach_path}'/>
+            <filefield id="filename_file" set='scripts\SugarCRM\Modules\Lib\{@Doc_New_Record.attach_path}'/>
             <textfield name='revision' set='{@Doc_New_Record.revision}'/> 
             <select id='category_id' set='{@Doc_New_Record.category}'/>
             <select id='template_type' set='{@Doc_New_Record.template_type}'/>

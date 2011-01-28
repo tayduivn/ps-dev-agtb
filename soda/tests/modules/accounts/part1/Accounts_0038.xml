@@ -30,7 +30,7 @@
 			<textfield id="name" set="{@history_record_0036.name} {@user.name} {@stamp}" />
 			<wait timeout="10" />
 			<textfield id="description" set="{@history_record_0036.description}" />
-			<filefield name="uploadfile" set="{@history_record_0036.uploadfile}" />
+			<filefield id="filename_file" set="{@history_record_0036.uploadfile}" />
 		</form>
 
 		<!--teams select-->
