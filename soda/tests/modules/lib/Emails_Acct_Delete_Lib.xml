@@ -3,13 +3,14 @@
 	<puts text="Lib: Emails_Acct_Delete_Lib.xml starting." />
 	<!--Nav to emails module-->
 	<link id="moduleTab_Emails" />
+	<wait timeout="10" />
 	<button id="settingsButton" />
 	<wait timeout="25" />
-	<div id="settingsDialog_c" >
-	  <link text="Mail Accounts" />
-	</div>
+	<browser assert="Mail Accounts" />
+	<link text="Mail Accounts" />
+	
 	<wait timeout="15" />
-	<browser assert="Mail Account" />
+	
 	<browser
 		assert="Set up Mail Accounts to view incoming emails from your email accounts" />
   <wait timeout="15" />

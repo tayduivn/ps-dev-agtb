@@ -4,6 +4,7 @@
 
 	<!--Nav to emails module-->
 	<link id="moduleTab_Emails" />
+	<wait timeout="10" />
 	<button id="composeButton" />
 	<wait timeout="5" />
 

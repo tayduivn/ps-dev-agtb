@@ -29,7 +29,9 @@
 	<browser assert="EmailInComing" />
 	
 	<link id="moduleTab_Emails" />
+	<wait timeout=10" />
 	<button id="composeButton" />
+	<wait timeout="10" />
 	<select id="addressFrom1" assert=" - Group" />
 	
 	<link href='index.php?module=Administration&amp;action=index' />
