@@ -275,7 +275,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	if (listeners != null) {
 		for (var i = 0; i < listeners.length; i++) {
 			var l = listeners[i];
-			l.fn(null, l.obj);
+			l.fn.call(l.scope ? l.scope : this, l.obj);
 		}
 	}
 
@@ -627,11 +627,7 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, fo
 	this.trigger = trigger;
 	if (testOnLoad) {
 		try {
-			var args = new Array();
-			args[0] = trigger;
-			args[1] = "";
-			args[2] = trigger;
-			YAHOO.util.Event.onDOMReady(SUGAR.forms.Trigger.fire.call, args);
+			YAHOO.util.Event.onDOMReady(SUGAR.forms.Trigger.fire, trigger, true);
 		}catch (e) {}
 	}
 }
@@ -712,9 +708,9 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 		if (!el) continue;
 		if (el.type && el.type.toUpperCase() == "CHECKBOX")
 		{
-			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this, this);
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this, true);
 		} else {
-			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this, this);
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this, true);
 		}
 	}
 }
@@ -738,16 +734,16 @@ SUGAR.forms.Trigger.prototype.setContext = function(context)
  * is triggered. If the condition is true, then it triggers
  * all the dependencies.
  */
-SUGAR.forms.Trigger.fire = function(e, obj)
+SUGAR.forms.Trigger.fire = function()
 {
 	// eval the condition
 	var eval;
 	var val;
 	try {
-		eval = SUGAR.forms.DefaultExpressionParser.evaluate(obj.condition, this.context);
+		eval = SUGAR.forms.DefaultExpressionParser.evaluate(this.condition, this.context);
 	} catch (e) {
 		if (!SUGAR.isIE && console && console.log){ 
-			console.log('ERROR:' + e + "; in Condition: " + obj.condition);
+			console.log('ERROR:' + e + "; in Condition: " + this.condition);
 		}
 	}
 
@@ -758,14 +754,14 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	// if the condition is met
 	if ( val == SUGAR.expressions.Expression.TRUE ) {
 		// single dependency
-		if (obj.dependency instanceof SUGAR.forms.Dependency ) {
-			obj.dependency.fire(false);
+		if (this.dependency instanceof SUGAR.forms.Dependency ) {
+			this.dependency.fire(false);
 			return;
 		}
 	} else if ( val == SUGAR.expressions.Expression.FALSE ) {
 		// single dependency
-		if (obj.dependency instanceof SUGAR.forms.Dependency ) {
-			obj.dependency.fire(true);
+		if (this.dependency instanceof SUGAR.forms.Dependency ) {
+			this.dependency.fire(true);
 			return;
 		}
 	}
