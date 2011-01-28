@@ -671,6 +671,15 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 	'vname'=>'LBL_BILLING_ACCOUNT_NAME',
 	'source'=>'non-db',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_quotes',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
+
 //BEGIN SUGARCRM flav=pro ONLY
   'contracts' => array (
 	'name' => 'contracts',

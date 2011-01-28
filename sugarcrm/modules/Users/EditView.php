@@ -367,7 +367,7 @@ if(empty($focus->id)) { // remove default timezone for new users(set later)
     $focus->user_preferences['timezone'] = '';
 }
 
-//$userTZ = $focus->getPreference('timezone');
+$userTZ = $focus->getPreference('timezone');
 
 if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
 	$userTZ = TimeDate::guessTimezone();

@@ -121,12 +121,12 @@ class RepairAndClear
         $hideModuleMenu = true;
 		include_once('modules/Administration/repairDatabase.php');
 	}
-	
+
 	public function repairDatabaseSelectModules()
 	{
 		global $current_user, $mod_strings, $dictionary;
 		set_time_limit(3600);
-		
+
 		include('include/modules.php'); //bug 15661
 		$db = DBManagerFactory::getInstance();
 
@@ -153,20 +153,20 @@ class RepairAndClear
 						require_once($beanFiles[$bean_name]);
 						$GLOBALS['reload_vardefs'] = true;
 						$focus = new $bean_name ();
-						#30273  
+						#30273
 						if($focus->disable_vardefs == false) {
 							include('modules/' . $focus->module_dir . '/vardefs.php');
-	
-	
+
+
 							if($this->show_output)
 								print_r("<p>" .$mod_strings['LBL_REPAIR_DB_FOR'].' '. $bean_name . "</p>");
 							$sql .= $db->repairTable($focus, $this->execute);
 						}
 					}
 				}
-				
+
 				$GLOBALS['sugar_config']['developerMode'] = $dm;
-				
+
 		        if ($this->show_output) echo "<script type=\"text/javascript\">document.getElementById('rdloading').style.display = \"none\";</script>";
 	    		if (isset ($sql) && !empty ($sql))
 	    		{
@@ -194,9 +194,9 @@ class RepairAndClear
 		}
 		else {
 			sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
-		} 
+		}
 	}
-	
+
 	public function rebuildExtensions()
 	{
 		global $mod_strings;
@@ -205,31 +205,31 @@ class RepairAndClear
 		require_once('ModuleInstall/ModuleInstaller.php');
 		$mi = new ModuleInstaller();
 		$mi->rebuild_all(!$this->show_output);
-		
+
 		// Remove the "Rebuild Extensions" red text message on admin logins
-	
+
         if($this->show_output) echo $mod_strings['LBL_REBUILD_REL_UPD_WARNING'];
-		       
+
         // clear the database row if it exists (just to be sure)
         $query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
         $GLOBALS['log']->info($query);
         $GLOBALS['db']->query($query);
-        
+
         // insert a new database row to show the rebuild extensions is done
         $id = create_guid();
-        $gmdate = TimeDate::getInstance()->nowDb();
+        $gmdate = gmdate('Y-m-d H:i:s');
         $date_entered = db_convert("'$gmdate'", 'datetime');
         $query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
-            . "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')"; 
+            . "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
         $GLOBALS['log']->info($query);
         $GLOBALS['db']->query($query);
-        
+
         // unset the session variable so it is not picked up in DisplayWarnings.php
         if(isset($_SESSION['rebuild_extensions'])) {
             unset($_SESSION['rebuild_extensions']);
         }
 	}
-	
+
 	//Cache Clear Methods
 	public function clearSmarty()
 	{
@@ -242,15 +242,15 @@ class RepairAndClear
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_XMLFILES']}</h3>";
 		$this->_clearCache($GLOBALS['sugar_config']['tmp_dir'], '.xml');
-		
+
 		include('modules/Versions/ExpectedVersions.php');
-		
+
         global $expect_versions;
-        
+
         if (isset($expect_versions['Chart Data Cache'])) {
             $version = new Version();
             $version->retrieve_by_string_fields(array('name'=>'Chart Data Cache'));
-        
+
             $version->name = $expect_versions['Chart Data Cache']['name'];
             $version->file_version = $expect_versions['Chart Data Cache']['file_version'];
             $version->db_version = $expect_versions['Chart Data Cache']['db_version'];
@@ -273,10 +273,10 @@ class RepairAndClear
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARSUGARFEEDCACHE']}</h3>";
-        
+
         SugarFeed::flushBackendCache();
 	}
-	public function clearTpls() 
+	public function clearTpls()
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARTEMPLATE']}</h3>";
@@ -288,7 +288,7 @@ class RepairAndClear
 		else
 			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules', '.tpl');
 	}
-	public function clearVardefs() 
+	public function clearVardefs()
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARVADEFS']}</h3>";
@@ -300,7 +300,7 @@ class RepairAndClear
 		else
 			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules', 'vardefs.php');
 	}
-	public function clearJsFiles() 
+	public function clearJsFiles()
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARJS']}</h3>";
@@ -315,7 +315,7 @@ class RepairAndClear
 			$this->_clearCache($GLOBALS['sugar_config']['cache_dir'].'modules', '.js');
 
 	}
-	public function clearJsLangFiles() 
+	public function clearJsLangFiles()
 	{
 		global $mod_strings;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARJSLANG']}</h3>";
@@ -330,10 +330,10 @@ class RepairAndClear
 	/**
 	 * Remove the language cache files from cache/modules/<module>/language
 	 */
-	public function clearLanguageCache() 
+	public function clearLanguageCache()
 	{
 		global $mod_strings;
-		
+
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARLANG']}</h3>";
 		//clear cache using the list $module_list_from_cache
 		if ( !empty($this->module_list) && is_array($this->module_list) ) {
@@ -366,9 +366,9 @@ class RepairAndClear
         $src_file = $search_dir . 'modules/unified_search_modules_display.php';
         if(file_exists($src_file)) {
             unlink( "$src_file" );
-        }        
+        }
     }
-    public function clearExternalAPICache() 
+    public function clearExternalAPICache()
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_EXT_API']}</h3>";
@@ -376,7 +376,7 @@ class RepairAndClear
         ExternalAPIFactory::clearCache();
     }
 	//BEGIN SUGARCRM flav=pro ONLY
-    public function clearPDFFontCache() 
+    public function clearPDFFontCache()
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARPDFFONT']}</h3>";
@@ -385,7 +385,7 @@ class RepairAndClear
         $fontManager->clearCachedFile();
     }
     //END SUGARCRM flav=pro ONLY
-    
+
 	//////////////////////////////////////////////////////////////
 	/////REPAIR AUDIT TABLES
 	public function rebuildAuditTables()
@@ -416,11 +416,11 @@ class RepairAndClear
 	private function _rebuildAuditTablesHelper($focus)
 	{
 		global $mod_strings;
-		
+
 		// skip if not a SugarBean object
 		if ( !($focus instanceOf SugarBean) )
 		    return;
-		
+
 		if ($focus->is_AuditEnabled()) {
 			if (!$focus->db->tableExists($focus->get_audit_table_name())) {
 				if($this->show_output) echo $mod_strings['LBL_QR_CREATING_TABLE']." ".$focus->get_audit_table_name().' '.$mod_strings['LBL_FOR'].' '. $focus->object_name.'.<br/>';
@@ -442,7 +442,7 @@ class RepairAndClear
 	///////////////////////////////////////////////////////////////
 	//// Recursively unlink all files of the given $extension in the given $thedir.
 	//
-	private function _clearCache($thedir, $extension) 
+	private function _clearCache($thedir, $extension)
 	{
         if ($current = @opendir($thedir)) {
             while (false !== ($children = readdir($current))) {

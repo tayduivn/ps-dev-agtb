@@ -94,6 +94,7 @@
 </table>
 <script language='javascript'>
 var externalApiList = {$externalApiList};
+var authenticatedExternalApiList = new Array();
 {literal}
 
 
@@ -112,15 +113,21 @@ function getMultiple(ob){
     var saveButton = document.getElementById('{/literal}save_{$id}{literal}');
     saveButton.disabled = false;
     if(showAll){
-        for (var j = 0; j < externalApiList.length; j++){
-            buttonHtml += '<a href="#" onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
-            saveButton.disabled = true;
+        for (var j = 0; j < externalApiList.length; j++) 
+        {
+            if(!authenticatedExternalApiList[externalApiList[j]])
+            {
+	            buttonHtml += '<div id="' + externalApiList[j] + '_div" style="visibility:;"><a href="#" onclick="window.open(\'index.php?module=EAPM&callbackFunction=hideExternalDiv&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a></div>';
+	            saveButton.disabled = true;
+            }
         }
     }else{
         for (var i = 0; i < selected.length; i++){
-            for (var j = 0; j < externalApiList.length; j++){
-                if(selected[i] == externalApiList[j]){
-                    buttonHtml += '<a href="#" onclick="window.open(\'index.php?module=EAPM&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a><br\>';
+            for (var j = 0; j < externalApiList.length; j++)
+            {
+                if(selected[i] == externalApiList[j] && !authenticatedExternalApiList[externalApiList[j]]) 
+                {
+                    buttonHtml += '<div id="' + externalApiList[j] + '_div" style="visibility:";><a href="#" onclick="window.open(\'index.php?module=EAPM&callbackFunction=hideExternalDiv&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a></div>';
                     saveButton.disabled = true;
                 }
             }
@@ -132,6 +139,18 @@ function getMultiple(ob){
 function initExternalOptions(){
     var ob = document.getElementById('{/literal}categories_{$id}{literal}');
     getMultiple(ob);
+}
+
+function hideExternalDiv(id)
+{
+    //Hide the div for the external API link, set the authenticated Array list to true
+    if(YAHOO.util.Dom.get(id + '_div'))
+    {
+		YAHOO.util.Dom.get(id + '_div').style.visibility = 'hidden';
+		authenticatedExternalApiList[id] = true;
+		saveButton = YAHOO.util.Dom.get('save_{/literal}{$id}{literal}');	
+		saveButton.disabled = false;
+	}
 }
 
 YAHOO.util.Event.onDOMReady(initExternalOptions);

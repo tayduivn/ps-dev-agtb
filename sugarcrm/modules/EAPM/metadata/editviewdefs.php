@@ -58,7 +58,10 @@ $viewdefs[$module_name]['EditView'] = array(
     ),
     array (
         array('name' => 'url', 'displayParams' => array('required' => true) ),
-        array('name' => 'assigned_user_name', 'type'=>'readonly'),
+        array('name' => 'assigned_user_name',
+              'type' => 'readonly',
+              'customCode'=>'{$fields.assigned_user_name.value}<input name="assigned_user_id" type="hidden" value="{$fields.assigned_user_id.value}" autocomplete="off">',
+            ),
     ),
     array (
         'description',

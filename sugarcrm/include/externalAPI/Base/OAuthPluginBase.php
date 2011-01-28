@@ -128,9 +128,24 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
                 $callback_url .= '&closeWhenDone=1';
             }
 
+            //Pass back the callbackFunction to call on the window.opener object
+            if (!empty($_REQUEST['callbackFunction']))
+            {
+            	$callback_url .= '&callbackFunction=' . $_REQUEST['callbackFunction'];
+            }
+            
+            //Pass back the id of the application that triggered this oauth login
+            if (!empty($_REQUEST['application']))
+            {
+            	$callback_url .= '&application=' . $_REQUEST['application'];
+            }
+            
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
+            
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
+            
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
+            
             // FIXME: error checking here
             $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
             $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];

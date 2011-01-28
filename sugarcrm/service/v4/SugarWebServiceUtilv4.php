@@ -22,28 +22,31 @@ require_once('service/v3_1/SugarWebServiceUtilv3_1.php');
 
 class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 {
-    function get_module_view_defs($module_name, $type, $view)
+    function get_module_view_defs($moduleName, $type, $view)
     {
         require_once('include/MVC/View/SugarView.php');
         $metadataFile = null;
         $results = array();
+        if( empty($moduleName) )
+            return $results;
+   
         $view = strtolower($view);
         switch (strtolower($type)){
             case 'wireless':
                 if( $view == 'list'){
                     require_once('include/SugarWireless/SugarWirelessListView.php');
-                    $GLOBALS['module'] = $module_name; //WirelessView keys off global variable not instance variable...
+                    $GLOBALS['module'] = $moduleName; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
                     $results = self::formatWirelessListViewResultsToArray($results);
                     
                 }
                 elseif ($view == 'subpanel')
-                    $results = $this->get_subpanel_defs($module_name, $type);
+                    $results = $this->get_subpanel_defs($moduleName, $type);
                 else{
                     require_once('include/SugarWireless/SugarWirelessView.php');
                     $v = new SugarWirelessView();
-                    $v->module = $module_name;
+                    $v->module = $moduleName;
                     $fullView = ucfirst($view) . 'View';
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
@@ -56,22 +59,25 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
             case 'default':
             default:
                 if ($view == 'subpanel')
-                    $results = $this->get_subpanel_defs($module_name, $type);
+                    $results = $this->get_subpanel_defs($moduleName, $type);
                 else
                 {
                     $v = new SugarView(null,array());
-                    $v->module = $module_name;
+                    $v->module = $moduleName;
                     $v->type = $view;
                     $fullView = ucfirst($view) . 'View';
                     $metadataFile = $v->getMetaDataFile();
                     require_once($metadataFile);
                     if($view == 'list')
-                        $results = $listViewDefs[$module_name];
+                        $results = $listViewDefs[$moduleName];
                     else
-                        $results = $viewdefs[$module_name][$fullView];
+                        $results = $viewdefs[$moduleName][$fullView];
                 }
         }
-
+        
+        //Add field level acls.
+        $results = $this->addFieldLevelACLs($moduleName,$type, $view, $results);
+        
         return $results;
     }
     
@@ -213,4 +219,88 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         //END SUGARCRM flav=pro ONLY
         return $fav;
     }
+    
+   /**
+	 * Parse wireless editview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessEdit($module_name, $metadata)
+	{
+	    global  $beanList, $beanFiles;
+	    $class_name = $beanList[$module_name];
+	    require_once($beanFiles[$class_name]);
+	    $seed = new $class_name();
+	    
+	    $results = array();
+	    $results['templateMeta'] = $metadata['templateMeta'];
+	    $aclRows = array();
+	    //Wireless metadata only has a single panel definition.
+	    foreach ($metadata['panels'] as $row)
+	    {
+	        $aclRow = array();
+	        foreach ($row as $field)
+	        {
+	            $aclField = array();
+	            if( is_string($field) )
+	                $aclField['name'] = $field;
+	            else 
+	                $aclField = $field;
+	            
+	            if($seed->bean_implements('ACL'))
+	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']); 
+	            else
+	                $aclField['acl'] = ACL_FIELD_DEFAULT;
+	            
+	            $aclRow[] = $aclField;
+	        }
+	        $aclRows[] = $aclRow;
+	    }
+	    
+	    $results['panels'] = $aclRows;
+	    return $results;
+	}
+	
+	/**
+	 * Parse wireless detailview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessDetail($module_name, $metadata)
+	{
+	    return self::metdataAclParserWirelessEdit($module_name, $metadata);
+	}
+    
+    /**
+	 * Parse wireless listview metadata and add ACL values.
+	 *
+	 * @param String $module_name
+	 * @param array $metadata
+	 * @return array Metadata with acls added
+	 */
+	function metdataAclParserWirelessList($module_name, $metadata)
+	{
+	    global  $beanList, $beanFiles;
+	    $class_name = $beanList[$module_name];
+	    require_once($beanFiles[$class_name]);
+	    $seed = new $class_name();
+
+	    $results = array();
+	    foreach ($metadata as $entry)
+	    {
+	        $field_name = $entry['name'];
+	        if($seed->bean_implements('ACL'))
+	            $entry['acl'] = $this->getFieldLevelACLValue($seed->module_dir, strtolower($field_name));
+	        else
+	            $entry['acl'] = 99;
+	            
+	        $results[] = $entry;
+	    }
+	    
+	    return $results;
+	}
 }

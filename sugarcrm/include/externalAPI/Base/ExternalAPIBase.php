@@ -57,6 +57,10 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
             return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
         }
 
+        if ( $this->eapmBean->active==0 || $this->eapmBean->validated==0 ) {
+            return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
+        }
+
         return array('success' => true);
     }
 

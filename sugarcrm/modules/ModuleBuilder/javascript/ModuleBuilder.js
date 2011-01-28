@@ -1105,17 +1105,35 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var reportable = Dom.get('reportable');
             var importable = Dom.get('importable');
             var duplicate  = Dom.get('duplicate_merge');
+			//Getting the default value field is tricky as it can have multiple different ID's
+			var defaultVal = false;
+			for(var i in {'default':"", 'int_default':"", 'default[]':""})
+				if (Dom.get(i)){defaultVal = Dom.get(i); break;}
+
             var disable = enable ? true : "";
             if (reportable) reportable.disabled = disable;
             if(enable)
             {
-            	if (duplicate)ModuleBuilder.setSelectedOption(duplicate, '0');
+            	if (duplicate)ModuleBuilder.setSelectedOption(duplicate, '0')
+
             	if (importable)ModuleBuilder.setSelectedOption(importable, 'false');
             }
             if (importable)importable.disabled = disable;
             if (duplicate)duplicate.disabled = disable;
+			this.toggleDateTimeDefalutEnabled(disable);
+			if (defaultVal) defaultVal.disabled = disable;
             Dom.get("enforced").value = enable;
         },
+		toggleDateTimeDefalutEnabled : function(disable)
+		{
+			if (Dom.get("defaultDate_date"))
+			{
+				Dom.get("defaultDate_date").disabled = disable;
+				Dom.get("defaultTime_hours").disabled = disable;
+				Dom.get("defaultTime_minutes").disabled = disable;
+				Dom.get("defaultTime_meridiem").disabled = disable;
+			}
+		},
         toggleDF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('dependent').checked;
@@ -1123,7 +1141,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var display = enable ? "" : "none";
             Dom.setStyle('visFormulaRow', 'display', display);
             Dom.get('dependency').disabled = !enable;
-            Dom.get('dependent').value = enable;
+			Dom.get('dependent').value = enable;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

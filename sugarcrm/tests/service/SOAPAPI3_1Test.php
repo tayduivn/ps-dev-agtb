@@ -95,8 +95,32 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($actual['acls']));
     }
 
-   public function testGetEntryList()
-   {
+    /**
+     * Test get avaiable modules call
+     *
+     */
+    function testGetAllAvailableModules()
+    {
+        $this->_login();
+        $soap_data = array('session' => $this->_sessionId);
+
+        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $actual = $result['modules'][0];
+        $this->assertArrayHasKey("module_key", $actual);
+        $this->assertArrayHasKey("module_label", $actual);
+        $this->assertArrayHasKey("acls", $actual);
+
+        $soap_data = array('session' => $this->_sessionId, 'filter' => 'all');
+
+        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $actual = $result['modules'][0];
+        $this->assertArrayHasKey("module_key", $actual);
+        $this->assertArrayHasKey("module_label", $actual);
+        $this->assertArrayHasKey("acls", $actual);
+    }
+
+    public function testGetEntryList()
+    {
 
        $account_name = 'UNIT_TEST ' . uniqid();
        $account_id = uniqid();
@@ -337,4 +361,3 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
        unset($GLOBALS['current_user']);
     }
 }
-?>

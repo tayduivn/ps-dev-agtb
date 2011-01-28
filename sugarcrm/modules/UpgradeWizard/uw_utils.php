@@ -1144,7 +1144,7 @@ function logThis($entry, $path='') {
 			}
 		}
 
-		$line = gmdate('c').' [UpgradeWizard] - '.$entry."\n";
+		$line = date('r').' [UpgradeWizard] - '.$entry."\n";
 
 		if(@fwrite($fp, $line) === false) {
 			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
@@ -5395,23 +5395,37 @@ function upgradeModulesForTeam() {
 	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
 	 * which prevents you from performing timezone offset calculations once the data has been saved.
 	 *
+	 * @param path String location to log file, empty by default
 	 */
-	function upgradeDateTimeFields($path){
+	function upgradeDateTimeFields($path=''){
 		//bug: 39757
 		global $db;
-		if($db->dbType == 'mssql')
+		if($db->dbType == 'mysql')
 		{
+			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";	
+		} else if($db->dbType == 'mssql') {
 			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
 			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
-		} else {
-			$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
-			$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
+		} else if ($db->dbType == 'oci8') {
+			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
 		}
 		
-		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$db->query($meetingsSql);
-		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$db->query($callsSql);
+		if(isset($meetingsSql) && isset($callsSql))
+		{
+			if(!empty($path))
+			{
+				logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+			}
+			$db->query($meetingsSql);
+			
+			if(!empty($path))
+			{
+				logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+			}
+			$db->query($callsSql);
+		}
 	}
 	
 	

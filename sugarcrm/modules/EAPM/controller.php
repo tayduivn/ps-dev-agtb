@@ -98,8 +98,9 @@ class EAPMController extends SugarController
         } else {
             $this->bean->validated();
             // This is a tweak so that we can automatically close windows if requested by the external account system
-            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
-                echo('<script type="text/javascript">window.close();</script>');
+            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {   	
+            	$js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
+            	echo($js);
                 return;
             }            
 
@@ -109,9 +110,20 @@ class EAPMController extends SugarController
     }
 
     protected function pre_QuickSave(){
-        $this->bean->application = $_REQUEST['application'];
-        $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->pre_save();
+        if(!empty($_REQUEST['application'])){
+            $eapmBean = EAPM::getLoginInfo($_REQUEST['application'],true);
+            if (!$eapmBean) {
+                $this->bean->application = $_REQUEST['application'];
+                $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
+            }else{
+                $this->bean = $eapmBean;
+                $this->bean->active = 1;
+            }
+            $this->pre_save();
+                    
+        }else{
+            sugar_die("Please pass an application name.");
+        }
     }
     
 	public function action_QuickSave(){
@@ -119,6 +131,19 @@ class EAPMController extends SugarController
 	}
 
     protected function post_QuickSave(){
+        $this->post_save();
+    }
+
+    protected function pre_Reauthenticate(){
+        $this->bean->active = 1;
+        $this->pre_save();
+    }
+
+    protected function action_Reauthenticate(){
+        $this->action_save();
+    }
+
+    protected function post_Reauthenticate(){
         $this->post_save();
     }
 

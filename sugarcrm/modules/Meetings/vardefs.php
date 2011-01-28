@@ -87,6 +87,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'url',
     'len' => '400',
     'comment' => 'Meeting URL',
+    'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
   ),
   'creator' =>
   array (

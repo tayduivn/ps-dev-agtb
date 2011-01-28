@@ -389,7 +389,7 @@ class SugarFeed extends Basic {
                 $delete = '<a id="sugarFieldDeleteLink'.$reply->id.'" href="#" onclick=\'SugarFeed.deleteFeed("'. $reply->id . '", "{this.id}"); return false;\'>'. $GLOBALS['app_strings']['LBL_DELETE_BUTTON_LABEL'].'</a>';
             }
 
-            $image_url = 'include/images/blank.gif';
+            $image_url = 'include/images/default_user_feed_picture.png';
             if ( isset($reply->created_by) ) {
                 $user = loadBean('Users');
                 $user->retrieve($reply->created_by);
@@ -397,7 +397,7 @@ class SugarFeed extends Basic {
                     $image_url = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
                 }
             }
-            $replyHTML .= '<div style="float: left; margin-right: 3px;"><img src="'.$image_url.'" height=50></div> ';
+            $replyHTML .= '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><img src="'.$image_url.'" style="max-width: 50px; max-height: 50px;"></div> ';
             $replyHTML .= str_replace("{this.CREATED_BY}",get_assigned_user_name($reply->created_by),html_entity_decode($reply->name)).'<br>';
             $replyHTML .= '<div class="byLineBox"><span class="byLineLeft">'. $this->getTimeLapse($reply->date_entered) . '&nbsp;</span><div class="byLineRight">  &nbsp;' .$delete. '</div></div><div class="clear"></div>';
         }

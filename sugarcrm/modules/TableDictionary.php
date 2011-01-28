@@ -142,6 +142,8 @@ include("metadata/documents_contactsMetaData.php");
 include("metadata/documents_opportunitiesMetaData.php");
 include("metadata/documents_casesMetaData.php");
 include("metadata/documents_bugsMetaData.php");
+include("metadata/documents_productsMetaData.php");
+include("metadata/documents_quotesMetaData.php");
 
 
 if(file_exists('custom/application/Ext/TableDictionary/tabledictionary.ext.php')){

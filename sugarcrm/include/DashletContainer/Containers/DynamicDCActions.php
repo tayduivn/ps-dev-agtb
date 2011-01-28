@@ -19,7 +19,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version']) && $_SESSION['current_db_version'] != $_SESSION['target_db_version'])
+{
+    // check if we are in upgrade. If yes, skip EAPM for now, until the DB is upgraded
+    $lotusLiveUrl = '';
+    $llNowButton = '';
+    return;
+}
 require_once('include/externalAPI/ExternalAPIFactory.php');
 $api = ExternalAPIFactory::loadAPI('LotusLive');
 if ( is_object($api) ) {
@@ -43,7 +49,7 @@ if ( is_object(ExternalAPIFactory::loadAPI('LotusLive',true)) ) {
         'action'=> "DCMenu.hostMeetingUrl='".$lotusLiveUrl."'; DCMenu.loadView('".translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM')."','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'".$llNowButton."');",
         'icon'=> SugarThemeRegistry::current()->getImageURL("icon_LotusMeetings_bar_32.png"),
         );
-    
+
     $dynamicDCActions['LotusLiveDocuments'] = array(
 		'module' => 'Documents',
 		'label' => translate('LBL_VIEW_LOTUS_LIVE_DOCUMENTS','EAPM'),

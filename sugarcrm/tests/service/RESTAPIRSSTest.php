@@ -8,6 +8,7 @@ class RESTAPIRSSTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_user->status = 'Active';
         $this->_user->is_admin = 1;
@@ -18,6 +19,8 @@ class RESTAPIRSSTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
     
     protected function _makeRESTCall($method,$parameters,$response_type = 'JSON',$api = 'v3_1')

@@ -43,7 +43,7 @@
 		formWithPrecision = new addToValidatePrecision('popup_form_id', 'default', 'precision');
 		</script>
 	{else}
-		<input type='hidden' name='default' value='{$vardef.default}'>{$vardef.default}
+		<input type='hidden' name='default' id='default' value='{$vardef.default}'>{$vardef.default}
 	{/if}
 	</td>
 </tr>

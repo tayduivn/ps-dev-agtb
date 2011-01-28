@@ -409,6 +409,20 @@ class Meeting extends SugarBean {
 		} elseif (is_null($this->parent_type)) {
 			$this->parent_type = $app_list_strings['record_type_default_key'];
 		}
+
+        // Fill in the meeting url for external account types
+        if ( !empty($this->id) && !empty($this->type) && $this->type != 'Sugar' && !empty($this->join_url) ) {
+            // It's an external meeting
+            global $mod_strings;
+            
+            $meetingLink = '';
+            if ($GLOBALS['current_user']->id == $this->assigned_user_id ) {
+                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_HOST_EXT_MEETING'].'"></a>';
+            }
+            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_JOIN_EXT_MEETING'].'"></a>';
+            
+            $this->displayed_url = $meetingLink;
+        }
 	}
 
 	function get_list_view_data() {

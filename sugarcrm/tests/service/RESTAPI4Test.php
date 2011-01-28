@@ -7,11 +7,14 @@ require_once('tests/service/APIv3Helper.php');
 class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_user;
-
+    protected $_admin_user;
     protected $_lastRawResponse;
 
     private static $helperObject;
-
+    
+    protected $aclRole;
+    protected $aclField;
+    
     public function setUp()
     {
         //Reload langauge strings
@@ -20,22 +23,40 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_user->status = 'Active';
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        
+        $this->_admin_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->_admin_user->status = 'Active';
+        $this->_admin_user->is_admin = 1;
+        $this->_admin_user->save();
         $GLOBALS['current_user'] = $this->_user;
 
         self::$helperObject = new APIv3Helper();
+        
+        //Disable access to the website field.
+        $this->aclRole = new ACLRole();
+        $this->aclRole->name = "Unit Test";
+        $this->aclRole->save();
+        $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
+        
+        $this->aclField = new ACLField();
+        $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
+        $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
     }
 
     public function tearDown()
 	{
+	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
+	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' )");
+	    $GLOBALS['db']->query("DELETE FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}'");
+	    
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
 	    unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
 	    unset($GLOBALS['disable_date_format']);
+	    unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
 
     protected function _makeRESTCall($method,$parameters)
@@ -72,14 +93,16 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         return "Error in web services call. Response was: {$this->_lastRawResponse}";
     }
 
-    protected function _login()
+    protected function _login($user = null)
     {
+        if($user == null)
+            $user = $this->_user;
         return $this->_makeRESTCall('login',
             array(
                 'user_auth' =>
                     array(
-                        'user_name' => $this->_user->user_name,
-                        'password' => $this->_user->user_hash,
+                        'user_name' => $user->user_name,
+                        'password' => $user->user_hash,
                         'version' => '.01',
                         ),
                 'application_name' => 'SugarTestRunner',
@@ -94,7 +117,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetModuleFavoriteList()
     {
-        $result = $this->_login();
+        $result = $this->_login($this->_admin_user);
         $session = $result['id'];
 
         $account = new Account();
@@ -128,11 +151,13 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSearchByModuleWithFavorites()
     {
-        $result = $this->_login();
+        $result = $this->_login($this->_admin_user);
         $session = $result['id'];
 
         $account = new Account();
         $account->id = uniqid();
+        $account->assigned_user_id = $this->_user->id;
+        $account->team_id = 1;
         $account->new_with_id = TRUE;
         $account->name = "Unit Test Fav " . $account->id;
         $account->save();
@@ -143,6 +168,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $account2->id = uniqid();
         $account2->new_with_id = TRUE;
         $account2->name = "Unit Test Fav " . $account->id;
+        $account->assigned_user_id = $this->_user->id;
         $account2->save();
         
         $searchModules = array('Accounts');
@@ -157,7 +183,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                             'modules' => $searchModules,
                             'offset'  => $offSet,
                             'max'     => $maxResults,
-                            'user'    => '',
+                            'user'    => $this->_user->id,
                             'select_field' => array(),
                             'unified_only' => true,
                             'favorites' => true,                            
@@ -168,8 +194,96 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'Unit Test %' ");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
+    }    
+    
+    function _aclEditViewFieldProvider()
+    {
+        return array(       
+
+            array('Accounts','wireless','edit', array( 'name'=> 99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null ) ), 
+            array('Contacts','wireless','edit', array('first_name'=> 99, 'last_name'=> 99 ) ),            
+            array('Reports','wireless','edit', array('name'=> 99)),
+            
+            array('Accounts','wireless','detail', array('name'=>99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null )),            
+            array('Contacts','wireless','detail', array('first_name'=> 99, 'last_name'=> 99 )),
+            array('Reports','wireless','detail', array('name'=> 99)),
+
+
+            );
     }
     
+    /**
+     * @dataProvider _aclEditViewFieldProvider
+     */
+    public function testMetadataEditViewFieldLevelACLS($module, $view_type, $view, $expected_fields)
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+
+        $results = $this->_makeRESTCall('get_module_layout',
+        array(
+            'session' => $session,
+            'module' => array($module),
+            'type' => array($view_type),
+            'view' => array($view))
+        );
+
+        if($view == 'list')
+            $fields = $results[$module][$view_type][$view];
+        else
+            $fields = $results[$module][$view_type][$view]['panels'];
+            
+        foreach ($fields as $field_row)
+        {
+            foreach ($field_row as $field_def)
+            {
+                if( isset($expected_fields[$field_def['name']]) )
+                {
+                    $this->assertEquals($expected_fields[$field_def['name']], $field_def['acl'] );
+                    break;
+                }
+            }
+        }
+    }
+    
+    
+    
+    function _aclListViewFieldProvider()
+    {
+        return array(       
+            array('Accounts','wireless', array('name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 )),
+            array('Contacts','wireless', array('name' => 99,  'title' => 99 )),
+            array('Reports','wireless', array('name' => 99 ) )
+            
+            );
+    }
+    
+    /**
+     * @dataProvider _aclListViewFieldProvider
+     */
+    public function testMetadataListViewFieldLevelACLS($module, $view_type, $expected_fields)
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        $results = $this->_makeRESTCall('get_module_layout',
+        array(
+            'session' => $session,
+            'module' => array($module),
+            'type' => array($view_type),
+            'view' => array('list') )
+        );
+
+        $fields = $results[$module][$view_type]['list'];
+  
+        foreach ($fields as $field_row)
+        {
+            $tmpName = strtolower($field_row['name']);
+            if( isset($expected_fields[$tmpName]) )
+            {
+                $this->assertEquals($expected_fields[$tmpName], $field_row['acl'] );
+            }
+        }
+    }
     
     /**
      * Private helper function to mark a bean as a favorite item.
