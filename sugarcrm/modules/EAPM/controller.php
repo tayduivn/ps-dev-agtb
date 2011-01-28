@@ -98,8 +98,9 @@ class EAPMController extends SugarController
         } else {
             $this->bean->validated();
             // This is a tweak so that we can automatically close windows if requested by the external account system
-            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
-                echo('<script type="text/javascript">window.close();</script>');
+            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {   	
+            	$js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
+            	echo($js);
                 return;
             }            
 
