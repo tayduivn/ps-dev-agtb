@@ -17,7 +17,7 @@
 			click="true" alert="true" />
 		<browser assertnot="{@EmailOutGoing.mail_name}" />
 	</div>
-	<wait timeout="2" />
+	<wait timeout="3" />
 	<div id="settingsDialog">
 		<link text="Close" />
 	</div>

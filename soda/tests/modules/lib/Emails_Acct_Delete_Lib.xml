@@ -5,7 +5,7 @@
 	<link id="moduleTab_Emails" />
 	<wait timeout="10" />
 	<button id="settingsButton" />
-	<wait timeout="25" />
+	<wait timeout="20" />
 	<browser assert="Mail Accounts" />
 	<link text="Mail Accounts" />
 	
