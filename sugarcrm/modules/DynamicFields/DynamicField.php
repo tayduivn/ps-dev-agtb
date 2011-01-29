@@ -387,7 +387,7 @@ class DynamicField {
                     }
                     if(($field['type'] == 'date' || $field['type'] == 'datetimecombo') && (empty($this->bean->$name )|| $this->bean->$name == '1900-01-01')){
                         $quote = '';
-                        $this->bean->$name = NULL;
+                        $this->bean->$name = "NULL";
                     }
                     if($isUpdate){
                         if($first){
@@ -419,10 +419,7 @@ class DynamicField {
                         $GLOBALS['db']->query($queryInsert);
                 }
             }
-
         }
-
-
 
     }
     /**

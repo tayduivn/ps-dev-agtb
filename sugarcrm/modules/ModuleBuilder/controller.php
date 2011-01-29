@@ -344,7 +344,7 @@ class ModuleBuilderController extends SugarController
     {
         require_once ('modules/DynamicFields/FieldCases.php') ;
         $field = get_widget ( $_REQUEST [ 'type' ] ) ;
-        $_REQUEST [ 'name' ] = trim ( $_POST [ 'name' ] ) ;
+        $_REQUEST [ 'name' ] = trim ( $_REQUEST [ 'name' ] ) ;
 
         $field->populateFromPost () ;
 
@@ -547,7 +547,7 @@ class ModuleBuilderController extends SugarController
     function action_DeleteField ()
     {
         require_once ('modules/DynamicFields/FieldCases.php') ;
-        $field = get_widget ( $_POST [ 'type' ] ) ;
+        $field = get_widget ( $_REQUEST [ 'type' ] ) ;
         $field->name = $_REQUEST [ 'name' ] ;
         if (!isset ( $_REQUEST [ 'view_package' ] ))
         {
