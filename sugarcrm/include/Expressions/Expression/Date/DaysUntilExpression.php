@@ -53,7 +53,7 @@ class DaysUntilExpression extends NumericExpression
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var then = this.getParameters().evaluate();
+			var then = SUGAR.util.DateUtils.parse(this.getParameters().evaluate());
 			var now = new Date();
 			then.setHours(0);
 			then.setMinutes(0);
