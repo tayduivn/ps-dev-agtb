@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $config['builds']['pro']['flav'] = array('pro');
-$config['builds']['pro']['languages']= array('bg_BG','da_DK', 'de_DE','es_ES', 'fr_FR','hu_HU', 'it_it','ja_JP','nl_NL', 'pt_PT','ro_RO','ru_RU', 'zh_CN' );
+$config['builds']['pro']['languages']= array('bg_BG','da_DK', 'de_DE','es_ES', 'fr_FR','hu_HU', 'it_it', 'lt_LT','ja_JP','nb_NO', 'nl_NL', 'pt_PT','ro_RO','ru_RU','sv_SE','tr_TR',  'zh_CN' );
 $config['builds']['pro']['lic'] = array('sub');
 $config['blackList']['pro'] = array(
 'sugarcrm/build'=>1,

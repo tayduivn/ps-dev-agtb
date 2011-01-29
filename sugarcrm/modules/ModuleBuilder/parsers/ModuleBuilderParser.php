@@ -101,7 +101,7 @@ class ModuleBuilderParser
 	        if(file_exists($file))
 	            unlink($file);
 	        
-	        sugar_mkdir(dirname($file), null, true);
+	        mkdir_recursive ( dirname ( $file ) ) ;
 	        $GLOBALS['log']->debug("ModuleBuilderParser->_writeFile(): file=".$file);
             $useVariables = (count($variables)>0);
             if( $fh = @sugar_fopen( $file, 'w' ) )

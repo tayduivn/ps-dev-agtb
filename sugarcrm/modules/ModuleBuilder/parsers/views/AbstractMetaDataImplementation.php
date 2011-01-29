@@ -222,7 +222,7 @@ abstract class AbstractMetaDataImplementation
 	    if(file_exists($filename))
 	        unlink($filename);
 	    
-	    sugar_mkdir(dirname($filename), null, true);
+	    mkdir_recursive ( dirname ( $filename ) ) ;
 
 		$useVariables = (count ( $this->_variables ) > 0) && $useVariables ; // only makes sense to do the variable replace if we have variables to replace...
 
