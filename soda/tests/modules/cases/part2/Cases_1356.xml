@@ -1,7 +1,13 @@
 <soda>
-	<!-- Schedule Meeting_Verify that scheduled meeting cannot be created for case when entering non-existing data (such as entering non-existing data in "Team" field) for the "Schedule Meeting" function -->
+   <!-- Schedule Meeting_Verify that scheduled meeting cannot be created for 
+      case when entering non-existing data 
+      (such as entering non-existing data in "Team" field) for the 
+      "Schedule Meeting" function 
+   -->
+
 	<puts text="Test: Cases_1356.xml starting." />
-	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+   <csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" 
+      var="cases" />
 	<timestamp />
 
 	<!--Create a case record-->
@@ -21,7 +27,7 @@
 
 	<!--create a Meeting-->
 	<div id="list_subpanel_activities">
-		<button value="  Schedule Meeting  " />
+		<button name="Activities_create_button" />
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1356.csv" var="Case_1356">
@@ -35,6 +41,5 @@
 
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
-
 	<puts text="Test: Cases_1356.xml finished." />
 </soda>

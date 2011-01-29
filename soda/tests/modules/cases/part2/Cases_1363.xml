@@ -1,7 +1,11 @@
 <soda>
-	<!-- Edit Scheduled Meeting_Verify that modification of schedule meeting for case can be canceled in "Meetings" detail view -->
+   <!-- Edit Scheduled Meeting_Verify that modification of schedule meeting 
+      for case can be canceled in "Meetings" detail view 
+   -->
+
 	<puts text="Test: Cases_1363.xml starting." />
-	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+   <csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" 
+      var="cases" />
 
 	<!--Create a case record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.xml" />
@@ -20,7 +24,7 @@
 
 	<!--create a Meeting-->
 	<div id="list_subpanel_activities">
-		<button value="  Schedule Meeting  " />
+		<button name="Activities_create_button" />
 	</div>
 
 	<timestamp />
@@ -51,6 +55,5 @@
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
-
 	<puts text="Test: Cases_1363.xml finished." />
 </soda>

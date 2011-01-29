@@ -2,6 +2,7 @@
 	<puts text="Lib: Emails_OutGoing_Delete_Lib.xml starting." />
 	<!--Nav to emails module-->
 	<link id="moduleTab_Emails" />
+	<wait timeout="10" />
 	<button id="settingsButton" />
 	<wait timeout="10" />
 	<link text="Mail Accounts" />
@@ -16,7 +17,7 @@
 			click="true" alert="true" />
 		<browser assertnot="{@EmailOutGoing.mail_name}" />
 	</div>
-	<wait timeout="2" />
+	<wait timeout="3" />
 	<div id="settingsDialog">
 		<link text="Close" />
 	</div>

@@ -1,5 +1,8 @@
 <soda>
-	<!-- Edit Task_Verify that the information of a task for case can be modified when using "Edit" function in "Activities" sub-panel -->
+   <!-- Edit Task_Verify that the information of a task for case can be modified 
+      when using "Edit" function in "Activities" sub-panel 
+   -->
+
 	<puts text="Test: Cases_1350.xml starting." />
 	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
 	<timestamp />
@@ -25,9 +28,9 @@
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1350.csv" var="Case_1350">
-		<form id="form_SubpanelQuickCreate_Tasks">
+		<div id="form_SubpanelQuickCreate_Tasks_tabs">
 			<textfield id="name" set="{@Case_1350.name} {@user.name} {@stamp}" />
-		</form>
+		</div>
 		<button id="Tasks_subpanel_save_button" />
 
 		<!--modify the Task-->
@@ -35,7 +38,6 @@
 			<table class="list view">
 				<link text="{@Case_1350.name} {@user.name} {@stamp}" click="false" />
 			</table>
-
 			<link class="listViewTdToolsS1" index="1" />
 		</div>
 
@@ -51,7 +53,6 @@
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Task_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
-
 	<puts text="Test: Cases_1350.xml finished." />
 </soda>
             
