@@ -28,12 +28,15 @@
 	<!--create a Meeting-->
 	<div id="list_subpanel_activities">
 		<button name="Activities_create_button" />
+      <wait timeout="3" />
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1356.csv" var="Case_1356">
-		<textfield id="name" set="{@Case_1356.name} {@user.name} {@stamp}" />
-		<textfield id="team_name_collection_0" set=" " />
-		<button id="Meetings_subpanel_save_button" />
+      <div id="DEFAULT">
+	   	<textfield id="name" set="{@Case_1356.name} {@user.name} {@stamp}" />
+         <textfield id="team_name_collection_0" set=" " />
+      </div>
+      <button id="Meetings_subpanel_save_button" />
 		<browser assert="No Primary Team specified" />
 	</csv>
 	

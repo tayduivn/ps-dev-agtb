@@ -25,8 +25,8 @@
 	<!--create a Meeting-->
 	<div id="list_subpanel_activities">
 		<button name="Activities_create_button" />
+      <wait timeout="3" />
 	</div>
-
 	<timestamp />
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1363.csv" var="Case_1363">
