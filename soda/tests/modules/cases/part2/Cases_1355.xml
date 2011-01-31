@@ -23,23 +23,25 @@
 
 	<!--create a Meeting-->
    <div id="list_subpanel_activities">
-		<button name="Activities_create_button" />
+      <button value="  Schedule Meeting  " />
+      <wait timeout="10" />
 	</div>
 
 	<timestamp />
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1355.csv" var="Case_1355">
-		<textfield id="name" set="{@Case_1355.name} {@user.name} {@stamp}" />
-		<textfield id="location" set="{@Case_1355.location}" />
-		<textfield id="description" set="{@Case_1355.description}" />
-		<select id="status" set="{@Case_1355.status}" />
-		<textfield id="date_start_date" set="{@Case_1355.date_start_date}" />
-		<select id="date_start_hours" set="{@Case_1355.date_start_hours}" />
-		<select id="date_start_minutes" set="{@Case_1355.date_start_minutes}" />
-		<textfield name="duration_hours" set="{@Case_1355.duration_hours}" />
-		<select name="duration_minutes" set="{@Case_1355.duration_minutes}" />
-		<checkbox name="reminder_checked" set="{@Case_1355.reminder_checked}" />
-
+      <div id="DEFAULT">
+         <textfield id="location" set="{@Case_1355.location}" />
+         <textfield id="description" set="{@Case_1355.description}" />
+         <select id="status" set="{@Case_1355.status}" />
+         <textfield id="date_start_date" set="{@Case_1355.date_start_date}" />
+         <select id="date_start_hours" set="{@Case_1355.date_start_hours}" />
+         <select id="date_start_minutes" set="{@Case_1355.date_start_minutes}" />
+         <textfield name="duration_hours" set="{@Case_1355.duration_hours}" />
+         <select name="duration_minutes" set="{@Case_1355.duration_minutes}" />
+         <checkbox name="reminder_checked" set="{@Case_1355.reminder_checked}" />
+         <textfield id="name" set="{@Case_1355.name} {@user.name} {@stamp}" />
+      </div>
 		<!--user select-->
 		<button id="btn_assigned_user_name" />
 		<browser assert="User Search" />                        
