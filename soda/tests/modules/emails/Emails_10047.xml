@@ -29,7 +29,7 @@
 	<browser assert="EmailInComing" />
 	
 	<link id="moduleTab_Emails" />
-	<wait timeout=15" />
+	<wait timeout="15" />
 	<button id="composeButton" />
 	<wait timeout="10" />
 	<select id="addressFrom1" assert=" - Group" />
