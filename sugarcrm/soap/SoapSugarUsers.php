@@ -333,7 +333,7 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
     if($using_cp){
         $response = $seed->retrieveTargetList($query, $select_fields, $offset,-1,-1,$deleted);
     }else{
-	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted,true);
+	   $response = $seed->get_list($order_by, $query, $offset,-1,-1,$deleted);
     }
 	$list = $response['list'];
 
