@@ -29,6 +29,8 @@ require_once('include/connectors/utils/ConnectorUtils.php');
  **/
 class ExternalAPIFactory
 {
+    public static $disabledApiFileName = 'custom/include/externalAPI.disabled.php';
+    
     /**
      * Filter the list of APIs, removing disabled ones
      * @param array $apiFullList
@@ -90,6 +92,18 @@ class ExternalAPIFactory
                 if ( file_exists($dir.'/ExtAPI'.$apiName.'_cstm.php') ) {
                     $apiFullList[$apiName]['className'] = 'ExtAPI'.$apiName.'_cstm';
                     $apiFullList[$apiName]['file_cstm'] = $dir.'/'.$apiFullList[$apiName]['className'].'.php';
+                }
+            }
+        }
+
+        if(!$ignoreDisabled){
+            //now that we have the full list, go through the disabled apis and remove them from the fullList
+            if (file_exists(self::$disabledApiFileName)) {
+                require(self::$disabledApiFileName);
+                foreach($disabledAPIList as $disabledAPI){
+                    if(!empty($apiFullList[$disabledAPI])){
+                        unset($apiFullList[$disabledAPI]);
+                    }
                 }
             }
         }

@@ -658,7 +658,7 @@ function get_user_id($session){
  *                  'link_fields' -- Array - The vardef information on the link fields
  * @exception 'SoapFault' -- The SOAP error, if any
  */
-function get_module_fields($session, $module_name, $fields){
+function get_module_fields($session, $module_name, $fields = array()){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields');
 	global  $beanList, $beanFiles;
 	$error = new SoapError();

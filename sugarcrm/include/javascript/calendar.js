@@ -101,11 +101,23 @@ Calendar.setup = function (params) {
                 }
                 
                 calendar.selectEvent.subscribe(function() {
-                    if (calendar.getSelectedDates().length > 0) {
+                    var input = Dom.get(inputField);
+					if (calendar.getSelectedDates().length > 0) {
 
                         var selDate = calendar.getSelectedDates()[0];
                         var monthVal = selDate.getMonth() + 1; //Add one for month value
+                        if(monthVal < 10)
+                        {
+                           monthVal = '0' + monthVal;	
+                        }
+                        
                         var dateVal = selDate.getDate();
+                        
+                        if(dateVal < 10)
+                        {
+                           dateVal = '0' + dateVal;	
+                        }
+                        
                         var yearVal = selDate.getFullYear();
                         
                         selDate = '';
@@ -133,16 +145,25 @@ Calendar.setup = function (params) {
                           selDate += date_field_delimiter + yearVal;
                         }
 
-                        Dom.get(inputField).value =  selDate;
+                        input.value = selDate;
                         
                         if(params.comboObject)
                         {
                            params.comboObject.update();
                         }
                     } else {
-                        Dom.get(inputField).value = "";
+                        input.value = "";
                     }
+
                     dialog.hide();
+					//Fire any on-change events for this input field
+					var listeners = YAHOO.util.Event.getListeners(input, 'change');
+					if (listeners != null) {
+						for (var i = 0; i < listeners.length; i++) {
+							var l = listeners[i];
+							l.fn.call(l.scope ? l.scope : this, l.obj);
+						}
+					}
                 });
 
                 calendar.renderEvent.subscribe(function() {

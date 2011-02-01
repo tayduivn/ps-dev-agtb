@@ -5414,16 +5414,10 @@ function upgradeModulesForTeam() {
 		
 		if(isset($meetingsSql) && isset($callsSql))
 		{
-			if(!empty($path))
-			{
-				logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-			}
+			logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
 			$db->query($meetingsSql);
 			
-			if(!empty($path))
-			{
-				logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-			}
+			logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 			$db->query($callsSql);
 		}
 	}

@@ -13,7 +13,9 @@ function setUp()
 	
 	
 	$this->original_current_user = $current_user;
-	$current_user->retrieve('1');
+	$user = new User();
+	$user->retrieve('1');
+	$current_user = $user;
 	
 	if($db->dbType != 'mysql')
 	{

@@ -34,7 +34,7 @@ class EAPMController extends SugarController
      */
     protected $api;
 
-    var $admin_actions = array('listview', 'index');
+    var $admin_actions = array('displayproperties', 'listview', 'index');
 
 	public function process() {
 		if(!is_admin($GLOBALS['current_user']) && in_array(strtolower($this->action), $this->admin_actions)) {
@@ -58,6 +58,13 @@ class EAPMController extends SugarController
         $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
         if(empty($this->api)) {
             return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
+        }
+        if(empty($this->bean->id)){
+            $eapmBean = EAPM::getLoginInfo($this->bean->application,true);
+            if($eapmBean){
+                SugarApplication::appendErrorMessage(translate('LBL_APPLICATION_FOUND_NOTICE', $this->bean->module_dir));
+                $this->bean->id = $eapmBean->id;
+            }
         }
         $this->bean->validated = false;
         $this->bean->save_cleanup();
@@ -145,6 +152,37 @@ class EAPMController extends SugarController
 
     protected function post_Reauthenticate(){
         $this->post_save();
+    }
+
+    protected function action_listview()
+    {
+        $this->view = 'displayproperties';
+    }
+
+    protected function action_SaveDisplayProperties()
+    {
+        //write out a custom file
+        $fileName = ExternalAPIFactory::$disabledApiFileName;
+        if(isset($_REQUEST['disabled_apis'])){
+            $disabledApis = array();
+
+            foreach(explode (',', $_REQUEST['disabled_apis'] ) as $api)
+            {
+                $disabledApis[] = $api;
+            }
+
+            if(!empty($disabledApis)){
+                if(!write_array_to_file("disabledAPIList", $disabledApis, $fileName)){
+                    //Log error message and throw Exception
+                    global $app_strings;
+                    $msg = string_format($app_strings['ERR_FILE_WRITE'], array($fileName));
+                    $GLOBALS['log']->error($msg);
+                    throw new Exception($msg);
+                }
+                ExternalAPIFactory::clearCache();
+    	    }
+        }
+        $this->view = 'displayproperties';
     }
 
     protected function action_FlushFileCache()

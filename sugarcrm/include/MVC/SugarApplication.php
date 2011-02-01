@@ -815,6 +815,9 @@ class SugarApplication
 	 */
  	public static function appendErrorMessage($error_message)
 	{
+        if (empty($_SESSION['user_error_message']) || !is_array($_SESSION['user_error_message'])){
+            $_SESSION['user_error_message'] = array();
+        }
 		$_SESSION['user_error_message'][] = $error_message;
 	}
 

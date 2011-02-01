@@ -29,7 +29,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         $results = array();
         if( empty($moduleName) )
             return $results;
-   
+
         $view = strtolower($view);
         switch (strtolower($type)){
             case 'wireless':
@@ -39,7 +39,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
                     $results = self::formatWirelessListViewResultsToArray($results);
-                    
+
                 }
                 elseif ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($moduleName, $type);
@@ -74,15 +74,15 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                         $results = $viewdefs[$moduleName][$fullView];
                 }
         }
-        
+
         //Add field level acls.
         $results = $this->addFieldLevelACLs($moduleName,$type, $view, $results);
-        
+
         return $results;
     }
-    
+
     /**
-     * Format the results for wirless list view metadata from an associative array to a 
+     * Format the results for wirless list view metadata from an associative array to a
      * numerically indexed array.  This conversion will ensure that consumers of the metadata
      * can eval the json response and iterative over the results with the order of the fields
      * preserved.
@@ -98,10 +98,10 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
             $defs['name'] = $key;
             $results[] = $defs;
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Equivalent of get_list function within SugarBean but allows the possibility to pass in an indicator
      * if the list should filter for favorites.  Should eventually update the SugarBean function as well.
@@ -135,68 +135,31 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		$query = $seed->create_new_list_query($order_by, $where,array(),$params, $show_deleted,'',false,null,$singleSelect);
 		return $seed->process_list_query($query, $row_offset, $limit, $max, $where);
 	}
-	
+
 	/**
-     * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
+     * Convert modules list to Web services result
      *
-     * @param array $availModules An array of all the modules the user already has access to.
-     * @return array Modules enalbed for mobile view.
+     * @param array $list List of module candidates (only keys are used)
+     * @param array $availModules List of module availability from Session
      */
-    function get_visible_mobile_modules($availModules)
+    public function getModulesFromList($list, $availModules)
     {
         global $app_list_strings;
-
         $enabled_modules = array();
         $availModulesKey = array_flip($availModules);
-        foreach ( array ( '','custom/') as $prefix)
-        {
-        	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
-        		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
-        }
-
-        foreach ( $wireless_module_registry as $e => $def )
-        {
-        	if( isset($availModulesKey[$e]) )
-        	{
-                $label = !empty( $app_list_strings['moduleList'][$e] ) ? $app_list_strings['moduleList'][$e] : '';
-        	    $acl = self::checkModuleRoleAccess($e);
-        	    $fav = self::is_favorites_enabled($label);
-        	    $enabled_modules[] = array('module_key' => $e,'module_label' => $label, 'favorite_enabled' => $fav, 'acls' => $acl);
-        	}
-        }
-
-        return $enabled_modules;
-    }
-    
-    /**
-     * Examine the application to determine which modules have been enabled..
-     *
-     * @param array $availModules An array of all the modules the user already has access to.
-     * @return array Modules enabled within the application.
-     */
-    function get_visible_modules($availModules)
-    {
-        global $app_list_strings;
-
-        require_once("modules/MySettings/TabController.php");
-        $controller = new TabController();
-        $tabs = $controller->get_tabs_system();
-        $enabled_modules= array();
-        $availModulesKey = array_flip($availModules);
-        foreach ($tabs[0] as $key=>$value)
+        foreach ($list as $key=>$value)
         {
             if( isset($availModulesKey[$key]) )
             {
                 $label = !empty( $app_list_strings['moduleList'][$key] ) ? $app_list_strings['moduleList'][$key] : '';
-        	    $acl = self::checkModuleRoleAccess($key);
-        	    $fav = self::is_favorites_enabled($label);
+        	    $acl = $this->checkModuleRoleAccess($key);
+        	    $fav = $this->is_favorites_enabled($label);
         	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label, 'favorite_enabled' => $fav, 'acls' => $acl);
             }
         }
-
         return $enabled_modules;
     }
-    
+
     /**
      * Return a boolean indicating if the bean name is favorites enabled.
      *
@@ -206,7 +169,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
     function is_favorites_enabled($module_name)
     {
         global $beanList, $beanFiles;
-        
+
         $fav = FALSE;
         //BEGIN SUGARCRM flav=pro ONLY
         $class_name = $beanList[$module_name];
@@ -219,7 +182,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         //END SUGARCRM flav=pro ONLY
         return $fav;
     }
-    
+
    /**
 	 * Parse wireless editview metadata and add ACL values.
 	 *
@@ -233,7 +196,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    $class_name = $beanList[$module_name];
 	    require_once($beanFiles[$class_name]);
 	    $seed = new $class_name();
-	    
+
 	    $results = array();
 	    $results['templateMeta'] = $metadata['templateMeta'];
 	    $aclRows = array();
@@ -246,23 +209,23 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	            $aclField = array();
 	            if( is_string($field) )
 	                $aclField['name'] = $field;
-	            else 
+	            else
 	                $aclField = $field;
-	            
+
 	            if($seed->bean_implements('ACL'))
-	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']); 
+	                $aclField['acl'] = $this->getFieldLevelACLValue($seed->module_dir, $aclField['name']);
 	            else
 	                $aclField['acl'] = ACL_FIELD_DEFAULT;
-	            
+
 	            $aclRow[] = $aclField;
 	        }
 	        $aclRows[] = $aclRow;
 	    }
-	    
+
 	    $results['panels'] = $aclRows;
 	    return $results;
 	}
-	
+
 	/**
 	 * Parse wireless detailview metadata and add ACL values.
 	 *
@@ -274,7 +237,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	{
 	    return self::metdataAclParserWirelessEdit($module_name, $metadata);
 	}
-    
+
     /**
 	 * Parse wireless listview metadata and add ACL values.
 	 *
@@ -297,10 +260,10 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	            $entry['acl'] = $this->getFieldLevelACLValue($seed->module_dir, strtolower($field_name));
 	        else
 	            $entry['acl'] = 99;
-	            
+
 	        $results[] = $entry;
 	    }
-	    
+
 	    return $results;
 	}
 }
