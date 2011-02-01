@@ -22,10 +22,13 @@
 	<!--create Call-->
 	<div id="list_subpanel_activities">
 		<button value="  Log Call  " />
+      <wait timeout="3" />
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1369.csv" var="Case_1369">
-		<textfield id="name" set="{@Case_1369.name} {@user.name} {@stamp}" />
+      <div id="DEFAULT">
+   		<textfield id="name" set="{@Case_1369.name} {@user.name} {@stamp}" />
+      </div>
 		<button id="Calls_subpanel_save_button" />
 	</csv>
 

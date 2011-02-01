@@ -38,9 +38,6 @@ class MyMeetingsDashlet extends DashletGeneric {
         global $current_user, $app_strings;
 		require('modules/Meetings/Dashlets/MyMeetingsDashlet/MyMeetingsDashlet.data.php');
 
-		//check to see if the dashlet defs are empty, if so then set the 'myItemsOnly' to false as we want to see all the meetings by default.
-		if(empty($def))  $def['myItemsOnly'] = FALSE;
-		
         parent::DashletGeneric($id, $def);
         
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_MEETINGS', 'Meetings');
