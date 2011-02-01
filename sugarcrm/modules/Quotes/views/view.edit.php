@@ -183,17 +183,12 @@ class QuotesViewEdit extends ViewEdit
 		$this->ss->assign('ASSIGNED_USER_NAME', $this->bean->assigned_user_name);
 		$this->ss->assign('ASSIGNED_USER_ID', $this->bean->assigned_user_id );
 
-		if(empty($this->bean->id)) {
+		if(!empty($this->bean->calc_grand_total) && $this->bean->calc_grand_total == 1){
 			$this->ss->assign('CALC_GRAND_TOTAL_CHECKED', 'checked');
-			$this->ss->assign('SHOW_LINE_NUMS_CHECKED', 'checked');
-		} else {
-			if(!empty($this->bean->calc_grand_total) && $this->bean->calc_grand_total == 1){
-				$this->ss->assign('CALC_GRAND_TOTAL_CHECKED', 'checked');
-			}
+		}
 
-			if(!empty($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
-				$this->ss->assign('SHOW_LINE_NUMS_CHECKED', 'checked');
-			}
+		if(!empty($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
+			$this->ss->assign('SHOW_LINE_NUMS_CHECKED', 'checked');
 		}
 
 		// Set Currency values and currency javascript
