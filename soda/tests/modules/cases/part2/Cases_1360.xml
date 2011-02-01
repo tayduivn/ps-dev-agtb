@@ -24,8 +24,8 @@
 
 	<!--create a Meeting-->
    <div id="list_subpanel_activities">
-		<button name="Activities_create_button" />
-      <wait timeout="6" />
+      <button value="  Schedule Meeting  " />
+      <wait timeout="3" />
 	</div>
 	<timestamp />
 
