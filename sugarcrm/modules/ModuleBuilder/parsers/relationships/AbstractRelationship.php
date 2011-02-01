@@ -252,7 +252,7 @@ class AbstractRelationship
     protected function getSubpanelDefinition ($relationshipName , $sourceModule , $subpanelName, $titleKeyName = '', $source = "")
     {
         if (empty($source)) 
-        	$source = $relationshipName;
+        	$source = $this->getValidDBName($relationshipName);
     	$subpanelDefinition = array ( ) ;
         $subpanelDefinition [ 'order' ] = 100 ;
         $subpanelDefinition [ 'module' ] = $sourceModule ;
@@ -285,7 +285,7 @@ class AbstractRelationship
     {
         $vardef = array ( ) ;
 
-        $vardef [ 'name' ] = $relationshipName ;
+        $vardef [ 'name' ] = $this->getValidDBName($relationshipName) ;
         $vardef [ 'type' ] = 'link' ;
         $vardef [ 'relationship' ] = $relationshipName ;
         $vardef [ 'source' ] = 'non-db' ;
@@ -334,7 +334,7 @@ class AbstractRelationship
     protected function getRelateFieldDefinition ($sourceModule , $relationshipName , $vnameLabel='')
     {
         $vardef = array ( ) ;
-        $vardef [ 'name' ] = $relationshipName . "_name" ; // must end in _name for the QuickSearch code in TemplateHandler->createQuickSearchCode
+        $vardef [ 'name' ] = $this->getValidDBName($relationshipName . "_name") ; // must end in _name for the QuickSearch code in TemplateHandler->createQuickSearchCode
         $vardef [ 'type' ] = 'relate' ;
 
         $vardef [ 'source' ] = 'non-db' ;
@@ -350,7 +350,7 @@ class AbstractRelationship
         $vardef [ 'id_name' ] = $this->getIDName( $sourceModule ) ;
         
         // link cannot match id_name otherwise the $bean->$id_name value set from the POST is overwritten by the Link object created by this 'link' entry
-        $vardef [ 'link' ] = $relationshipName ; // the name of the link field that points to the relationship - required for the save to function
+        $vardef [ 'link' ] = $this->getValidDBName($relationshipName) ; // the name of the link field that points to the relationship - required for the save to function
         $vardef [ 'table' ] = $this->getTablename( $sourceModule ) ;
         $vardef [ 'module' ] = $sourceModule ;
         
