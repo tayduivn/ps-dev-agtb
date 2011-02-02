@@ -4645,9 +4645,11 @@ function save_relationship_changes($is_update, $exclude=array())
     	}
     	if(empty($ids))
     	{
-    		$ids = '(';
+    		$ids = "('')";
+    	}else{
+    		$ids .= ')';
     	}
-    	$ids .= ')';
+    	
     	return array('list'=>$idList, 'in'=>$ids);
     }
 
