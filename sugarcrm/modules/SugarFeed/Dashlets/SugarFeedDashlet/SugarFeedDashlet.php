@@ -46,6 +46,13 @@ var $myFavoritesOnly = false;
 		$this->myItemsOnly = false;
 		$this->isConfigurable = true;
 		$this->hasScript = true;
+		$pattern = array();
+		$pattern[] = "/-/";
+		$pattern[] = "/[0-9]/";
+		$replacements = array();
+		$replacements[] = '';
+		$replacements[] = '';
+		$this->idjs = preg_replace($pattern,$replacements,$this->id);
         // Add in some default categories.
         $this->categories['ALL'] = translate('LBL_ALL','SugarFeed');
         // Need to get the rest of the active SugarFeed modules
@@ -476,11 +483,11 @@ enableQS(false);
 	 */
 	 function displayScript() {
 	 	require_once('include/QuickSearchDefaults.php');
-
         $ss = new Sugar_Smarty();
         $ss->assign('saving', translate('LBL_SAVING', 'SugarFeed'));
         $ss->assign('saved', translate('LBL_SAVED', 'SugarFeed'));
         $ss->assign('id', $this->id);
+        $ss->assign('idjs', $this->idjs);
 
         $str = $ss->fetch('modules/SugarFeed/Dashlets/SugarFeedDashlet/SugarFeedScript.tpl');
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -520,7 +527,7 @@ EOQ;
         ),$listview);
 		$listview = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $listview);
 
-		return $listview.'</div>';
+		return $listview.'</div></div>';
 	}
 
 
@@ -530,7 +537,7 @@ EOQ;
 	 * @param $text Object
 	 */
 	function getHeader($text='') {
-		return parent::getHeader($text) . $this->getPostForm().$this->getDisabledWarning().$this->sugarFeedDisplayScript().'<div class="sugarFeedDashlet">';
+		return parent::getHeader($text) . $this->getPostForm().$this->getDisabledWarning().$this->sugarFeedDisplayScript().'<div class="sugarFeedDashlet"><div id="contentScroller'.$this->idjs.'">';
 	}
 
 

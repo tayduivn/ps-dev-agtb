@@ -8,7 +8,7 @@ require_once('tests/service/APIv3Helper.php');
 class SOAPAPI4Test extends SOAPTestCase
 {
     private static $helperObject;
-    
+
     /**
      * Create test user
      *
@@ -20,18 +20,18 @@ class SOAPAPI4Test extends SOAPTestCase
 		parent::setUp();
 		self::$helperObject = new APIv3Helper();
     }
-    
+
     public function tearDown()
     {
     	SugarTestContactUtilities::removeAllCreatedContacts();
 
 		parent::tearDown();
     }
-    
+
     public function testGetEntryList()
     {
         $contact = SugarTestContactUtilities::createContact();
-        
+
         $this->_login();
         $result = $this->_soapClient->call(
             'get_entry_list',
@@ -47,15 +47,15 @@ class SOAPAPI4Test extends SOAPTestCase
                 'deleted' => 0,
                 'favorites' => false,
                 )
-            );		
+            );
 
         $this->assertEquals(
             $contact->email1,
             $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value']
             );
     }
-    
-    
+
+
     public function testGetEntryListWithFavorites()
     {
         $contact = SugarTestContactUtilities::createContact();
@@ -63,7 +63,7 @@ class SOAPAPI4Test extends SOAPTestCase
         $sf->module = 'Contacts';
         $sf->record_id = $contact->id;
         $sf->save(FALSE);
-        
+
         $this->_login();
         $result = $this->_soapClient->call(
             'get_entry_list',
@@ -79,14 +79,14 @@ class SOAPAPI4Test extends SOAPTestCase
                 'deleted' => 0,
                 'favorites' => true,
                 )
-            );		
-		
+            );
+
         $this->assertEquals(
             $contact->email1,
             $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value']
             );
     }
-    
+
 
     public function testSearchByModule()
     {
@@ -122,7 +122,7 @@ class SOAPAPI4Test extends SOAPTestCase
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
     }
-    
+
     public function testSearchByModuleWithFavorites()
     {
         $this->_login();
@@ -133,12 +133,12 @@ class SOAPAPI4Test extends SOAPTestCase
         $sf->module = 'Accounts';
         $sf->record_id = $seedData[0]['id'];
         $sf->save(FALSE);
-        
+
         $sf = new SugarFavorites();
         $sf->module = 'Contacts';
         $sf->record_id = $seedData[2]['id'];
         $sf->save(FALSE);
-        
+
         $returnFields = array('name','id','deleted');
         $searchModules = array('Accounts','Contacts','Opportunities');
         $searchString = "UNIT TEST";
@@ -167,12 +167,12 @@ class SOAPAPI4Test extends SOAPTestCase
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
     }
-    
+
 
     public function testGetEntries()
     {
         $contact = SugarTestContactUtilities::createContact();
-        
+
         $this->_login();
         $result = $this->_soapClient->call(
             'get_entries',
@@ -183,37 +183,62 @@ class SOAPAPI4Test extends SOAPTestCase
                 'select_fields' => array('last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'),
                 'link_name_to_fields_array' => array(array('name' =>  'email_addresses', 'value' => array('id', 'email_address', 'opt_out', 'primary_address'))),
                 )
-            );		
-		
+            );
+
         $this->assertEquals(
             $contact->email1,
             $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value']
             );
     }
-    
+
+    /**
+     * Test get avaiable modules call
+     *
+     */
+    function testGetAllAvailableModules()
+    {
+        $this->_login();
+        $soap_data = array('session' => $this->_sessionId);
+
+        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $actual = $result['modules'][0];
+        $this->assertArrayHasKey("module_key", $actual);
+        $this->assertArrayHasKey("module_label", $actual);
+        $this->assertArrayHasKey("acls", $actual);
+        $this->assertArrayHasKey("favorite_enabled", $actual);
+
+        $soap_data = array('session' => $this->_sessionId, 'filter' => 'all');
+
+        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $actual = $result['modules'][0];
+        $this->assertArrayHasKey("module_key", $actual);
+        $this->assertArrayHasKey("module_label", $actual);
+        $this->assertArrayHasKey("acls", $actual);
+        $this->assertArrayHasKey("favorite_enabled", $actual);
+    }
+
     /**
      * Test get avaiable modules call
      *
      */
     function testGetAvailableModules()
     {
-        $this->markTestSkipped('');
         global $beanList, $beanFiles;
         $this->_login();
         $soap_data = array('session' => $this->_sessionId,'filter' => 'mobile');
         $result = $this->_soapClient->call('get_available_modules', $soap_data);
-        
+
         foreach ( $result['modules'] as $tmpModEntry)
         {
             $tmpModEntry['module_key'];
             $this->assertTrue( isset($tmpModEntry['acls']) );
             $this->assertTrue( isset($tmpModEntry['module_key']) );
 
-            $class_name = $beanList[$tmpModEntry['module_label']];
+            $class_name = $beanList[$tmpModEntry['module_key']];
             require_once($beanFiles[$class_name]);
             $mod = new $class_name();
             $this->assertEquals( $mod->isFavoritesEnabled(), $tmpModEntry['favorite_enabled']);
         }
     }
-    
+
 }

@@ -106,7 +106,18 @@ Calendar.setup = function (params) {
 
                         var selDate = calendar.getSelectedDates()[0];
                         var monthVal = selDate.getMonth() + 1; //Add one for month value
+                        if(monthVal < 10)
+                        {
+                           monthVal = '0' + monthVal;	
+                        }
+                        
                         var dateVal = selDate.getDate();
+                        
+                        if(dateVal < 10)
+                        {
+                           dateVal = '0' + dateVal;	
+                        }
+                        
                         var yearVal = selDate.getFullYear();
                         
                         selDate = '';
@@ -137,7 +148,6 @@ Calendar.setup = function (params) {
                         input.value = selDate;
                         
                         if(params.comboObject)
-
                         {
                            params.comboObject.update();
                         }

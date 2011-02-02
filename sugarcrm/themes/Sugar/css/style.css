@@ -2391,6 +2391,8 @@ border-radius: 0px 0px 6px 6px;
 
 .sugarFeedDashlet
 {
+	position: relative;
+	z-index:1;
 	overflow:auto;
     max-height:375px;
 	height:expression(this.scrollHeight>375?'375px':'auto');
