@@ -81,8 +81,8 @@ text-align: left;
     font-size:11px;
     font-family: Arial, Helvetica, sans-serif;
     padding:7px;
-	-moz-border-raduis: 6px;
-	-webkit-border-raduis: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
 	border-radius: 6px;
 
 }

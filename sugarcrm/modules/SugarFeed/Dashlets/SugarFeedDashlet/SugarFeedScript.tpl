@@ -97,9 +97,17 @@ if(typeof SugarFeed == 'undefined') { // since the dashlet can be included multi
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php', 
 								  {success: SugarFeed.saved, failure: SugarFeed.saved, argument: id}, postData);
                
+            },
+            loaded: function(id) {
+            	var scrollConent;
+            	scrollContent = new iScroll('contentScroller' + id);
             }
 	    };
 	}();
+}
+
+if(SUGAR.util.isTouchScreen()) {
+	document.addEventListener('DOMContentLoaded', function(){SugarFeed.loaded('{/literal}{$idjs}{literal}')}, false);	
 }
 </script>
 {/literal}
