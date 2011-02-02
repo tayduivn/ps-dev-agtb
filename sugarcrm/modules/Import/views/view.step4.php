@@ -353,7 +353,7 @@ class ImportViewStep4 extends SugarView
                         break;
                     default:
                         $fieldtype = $fieldDef['type'];
-                        $returnValue = $ifs->$fieldtype($rowValue, $fieldDef);
+                        $returnValue = $ifs->$fieldtype($rowValue, $fieldDef, $focus);
                         // try the default value on fail
                         if ( !$returnValue && !empty($defaultRowValue) )
                             $returnValue = $ifs->$fieldtype(
