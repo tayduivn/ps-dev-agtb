@@ -476,8 +476,8 @@ class Call extends SugarBean
 		global $timedate;
 
 		// Assumes $call dates are in user format
-		$calldate = $timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start));
-		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->userTimezoneSuffix($calldate, $call->current_notify_user);
+		$calldate = $timedate->fromDb($call->date_start);
+		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->tzUser($calldate, $call->current_notify_user)->format('T(P)');
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
