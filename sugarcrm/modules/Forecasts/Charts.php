@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Forecasts/Common.php');
 require_once('include/SugarCharts/SugarChartFactory.php');
 
-class forecast_charts {
+class forecast_charts extends SugarView {
     /**
      * @param string user_id Display forecast history for this user.
      * @param datetime timeperiod_date timperiod that ecompasses this date will be the starting point for the historical data.
@@ -169,6 +169,8 @@ class forecast_charts {
 		$return = '';
 		if (!$is_dashlet){
 			$return .= '<br />';
+			$return .= SugarView::renderJavascript();
+			$return .= $sugarChart->getChartResources();
 		}
 		$return .= '<div align="center">';
 		$return .= '<div id="forecast_chart_container" style="width:' . $width . ';">';
@@ -177,6 +179,7 @@ class forecast_charts {
 		//above into the proper currency. Because this was set to true it was converting twice.
 		$sugarChart->is_currency = false;
 		$sugarChart->setData($data);
+		
 		$sugarChart->setProperties($current_module_strings['LBL_CHART_TITLE'], '', 'group by chart');
 
     	if (!$is_dashlet){
