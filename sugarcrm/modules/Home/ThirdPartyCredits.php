@@ -71,6 +71,18 @@ $credits = array(
             'description' => 'Italian Language Pack by OpenSymbol',
             'website' => 'www.opensymbol.it',
         ),
+         'lt_LT' => array (
+            'name' => 'Lithuanian Language Pack',
+            'author' => 'OptimusCRM',
+            'description' => 'Lithuanian Language Pack by OptimusCRM',
+            'website' => 'www.optimuscrm.lt',
+        ),
+        'nb_No' => array (
+            'name' => 'Norwegian Language Pack',
+            'author' => 'Redpill Linpro',
+            'description' => 'Norwegian Language Pack by Redpill Linpro',
+            'website' => 'www.redpill-linpro.se',
+        ),
         'nl_NL' => array (
             'name' => 'Dutch Language Pack',
             'author' => 'BrixCRM',
@@ -97,6 +109,18 @@ $credits = array(
             'author' => 'Richlode Solutions',
             'description' => 'Russian Language Pack by Richlode Solutions',
             'website' => 'www.richlodesolutions.com',
+        ),
+        'sv_SE' => array (
+            'name' => 'Swedish Language Pack',
+            'author' => 'Transagile AB',
+            'description' => 'Swedish Language Pack by Transagile',
+            'website' => 'www.transagile.com',
+        ),
+        'tr_TR' => array (
+            'name' => 'Turkish Language Pack',
+            'author' => 'Ultima',
+            'description' => 'Turkish Language Pack by Ultima',
+            'website' => 'ultima.com.tr',
         ),
         
        
