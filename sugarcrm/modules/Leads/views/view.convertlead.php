@@ -519,6 +519,7 @@ class ViewConvertLead extends SugarView
             $newActivity->$rel->add($bean->id);
             $newActivity->parent_id = $bean->id;
 	        $newActivity->parent_type = $bean->module_dir;
+	        $newActivity->update_date_modified = false; //bug 41747 
 	        $newActivity->save();
 	        if ($newActivity->module_dir == "Notes" && $newActivity->filename) {
 	        	UploadFile::duplicate_file($activity->id, $newActivity->id,  $newActivity->filename);
