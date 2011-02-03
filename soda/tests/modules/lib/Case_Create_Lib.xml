@@ -14,7 +14,7 @@
 		var="case_record">
 		<textfield id="name" set="{@case_record.name} {@user.name} {@stamp}" />
 		<textfield id="account_name" set="{@pre_account_name}" />
-		<wait timeout="7" />
+		<wait timeout="12" />
 		<textfield id="name" click="true" />
 		<wait timeout="5" />
 		<button value="Save" />
