@@ -62,6 +62,8 @@ function document_set_return(popup_reply_data)
  	var query = new Array();
  	var query = {"module":"DocumentRevisions","field_list":['id','revision','date_entered'],"conditions":conditions,"order":'date_entered desc'};
     
+ 	console.log(query);
+ 	
     //make the call call synchronous for now...
     //todo: convert to async, test on mozilla..
     result = global_rpcClient.call_method('query',query,true);
@@ -88,20 +90,20 @@ RevisionListHandler.prototype.display = function(result) {
 
 
 function setvalue(source) {
+
 	src = new String(source.value);
 	target=new String(source.form.document_name.value);
 
-	if (target.length == 0) {
+	if (target.length == 0) 
+	{
 		lastindex=src.lastIndexOf("/");
 		if (lastindex == -1) {
 			lastindex=src.lastIndexOf("\\");
 		} 
 		if (lastindex == -1) {
 			source.form.document_name.value=src;
-			source.form.escaped_document_name.value = src;
 		} else {
 			source.form.document_name.value=src.substr(++lastindex, src.length);
-			source.form.escaped_document_name.value = src.substr(lastindex, src.length);
 		}	
 	}			
 }
