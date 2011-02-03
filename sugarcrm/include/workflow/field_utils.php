@@ -571,21 +571,25 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
 		//echo $field;
         //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && !empty($context['for_action_display'])) {
-            $assigned_user = loadBean('Users');
-            $assigned_user->retrieve($field_value);
-            if (empty($assigned_user->id))
-                return false;
-            if($current_user->getPreference('use_real_names') == 'on'){
-                return $assigned_user->full_name;
+            if($adv_type != 'exist_user') {
+	            $assigned_user = loadBean('Users');
+    	        $assigned_user->retrieve($field_value);
+        	    if (empty($assigned_user->id))
+            	    return false;
+	            if($current_user->getPreference('use_real_names') == 'on'){
+    	            return $assigned_user->full_name;
+                else {
+                    return $assigned_user->user_name;
+                }
+            } else {
+                $target_type = "assigned_user_name";
             }
-            else {
-                return $assigned_user->user_name;
-            }
+        } else {
+    		if(!empty($temp_module->field_defs[$field]['dbType']))
+    			$target_type = $temp_module->field_defs[$field]['dbType'];
+    		else
+    			return $field_value;
         }
-		if(!empty($temp_module->field_defs[$field]['dbType']))
-			$target_type = $temp_module->field_defs[$field]['dbType'];
-		else
-			return $field_value;
 	}
     else if (isset($temp_module->field_defs[$field]['calculated'])
             && $temp_module->field_defs[$field]['calculated'])
