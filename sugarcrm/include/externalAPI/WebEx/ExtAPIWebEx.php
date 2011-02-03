@@ -36,12 +36,21 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
         if(empty($eapmBean->url)) {
             $eapmBean->url = $this->getConnectorParam('url');
         }
+        if ( !empty($eapmBean->url) ) {
+            $eapmBean->url = $this->fixUrl($eapmBean->url);
+        }
         $this->account_url = $eapmBean->url.$this->urlExtension;
         parent::loadEAPM($eapmBean);
     }
 
     public function checkLogin($eapmBean = null) {
-        parent::checkLogin($eapmBean);
+        if ( !empty($eapmBean->url) ) {
+            $eapmBean->url = $this->fixUrl($eapmBean->url);
+        }
+        $reply = parent::checkLogin($eapmBean);
+        if ( ! $reply['success'] ) {
+            return $reply;
+        }
         $doc = new SimpleXMLElement($this->getuser_xml);
         $this->addAuthenticationInfo($doc);
 
@@ -50,6 +59,12 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
         $reply = $this->postMessage($doc);
 
         return $reply;
+    }
+
+    protected function fixUrl($url) {
+        // The rest of the code expects us to not have a http:// or a https:// at the start
+        $outUrl = preg_replace(',^http(s)?://,i','',$url);
+        return $outUrl;
     }
 
 	/**
@@ -266,7 +281,7 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
          "Content-Length: ".$content_length,
       );
 
-      $GLOBALS['log']->fatal('SENT: '.$xml);
+      $GLOBALS['log']->debug('Sent To WebEx: '.$xml);
       $response = $this->postData('https://' . $this->account_url, $xml, $headers);
       // $reply is an associative array that formats the basic information in a way that
       // callers can get most of the data out without having to understand any underlying formats.

@@ -11738,6 +11738,23 @@ $jit.BarChart = new Class({
 	}
   },
   
+  renderScrollNote: function() {
+  	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	label = config.Label,
+	note = config.ScrollNote;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	title = config.Title;
+	ctx.textAlign = 'center';
+	ctx.font = label.style + ' bold ' +' ' + note.size + 'px ' + label.family;
+	if(label.type == 'Native') {
+		ctx.fillText(note.text, 0, -size.height/2+margin.top+title.size);
+	}
+  },  
+  
   renderTicks: function() {
 
 	var canvas = this.canvas,
@@ -11868,6 +11885,7 @@ $jit.BarChart = new Class({
         animate = config.animate,
         ticks = config.Ticks,
         title = config.Title,
+        note = config.ScrollNote,
         subtitle = config.Subtitle,
         horz = config.orientation == 'horizontal',
         that = this,
@@ -11927,6 +11945,9 @@ $jit.BarChart = new Class({
 	
 	if(!animate && ticks.enable) {
 		this.renderTicks();
+	}
+	if(!animate && note.text) {
+		this.renderScrollNote();
 	}
 	if(!animate && title.text) {
 		this.renderTitle();

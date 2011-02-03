@@ -105,6 +105,10 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					right: 20,
 					bottom: marginBottom
 				  },
+				  ScrollNote: {
+				  	text: (chartConfig["scroll"] && SUGAR.util.isTouchScreen()) ? "Use two fingers to scroll" : "",
+				  	size: 12
+				  },
 				  Events: {
 					enable: true,
 					onClick: function(node) {  

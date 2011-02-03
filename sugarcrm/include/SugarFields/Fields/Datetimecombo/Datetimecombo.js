@@ -62,11 +62,8 @@ function Datetimecombo (datetime, field, timeformat, tabindex, showCheckbox, che
     	parts = datetime.split(' ');
         this.hrs = parseInt(parts[1].substring(0,2), 10);
         this.mins = parseInt(parts[1].substring(3,5), 10);    	
-    } else {
-      	this.hrs = 0;
-      	this.mins = 0;
     }
-   
+    
     //A safety scan to make sure hrs and minutes are formatted correctly
 	if (this.mins > 0 && this.mins < 15) {
 		this.mins = 15;
