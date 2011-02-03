@@ -36,10 +36,8 @@ class DocumentsViewQuickcreate extends ViewQuickcreate
      */
     public function display()
     {
-    	global $timedate;
     	$datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
-		$date_start = date($datetime_prefs['date']);
-		$_REQUEST['active_date'] = $date_start;
+		$_REQUEST['active_date'] = gmdate($datetime_prefs['date']);
 		parent::display();
     } 
 }
