@@ -85,5 +85,20 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
                                                       'team_name' => array('width'   => '15', 
                                                                            'label'   => 'LBL_LIST_TEAM'),
                                                       //END SUGARCRM flav=pro ONLY
+                                                      'FILENAME' => array (
+                                                                    'width' => '20%',
+                                                                    'label' => 'LBL_FILENAME',
+                                                                    'link' => true,
+                                                                    'default' => false,
+                                                                    'bold' => false,
+                                                                    'displayParams' => array ( 'module' => 'Documents', ),
+                                                                    'related_fields' =>
+                                                                    array (
+                                                                        0 => 'document_revision_id',
+                                                                        1 => 'doc_id',
+                                                                        2 => 'doc_type',
+                                                                        3 => 'doc_url',
+                                                                    ),
+                                                                  ),
                                                );
 ?>
