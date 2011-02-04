@@ -52,8 +52,6 @@ class TemplateRange extends TemplateText
 	 */
 	function populateFromPost() {
 		parent::populateFromPost();
-		//$GLOBALS['log']->fatal('enable_range_search='.$this->enable_range_search);
-		$GLOBALS['log']->fatal(var_export($_REQUEST, true));
 		//If we are enabling range search, make sure we add the start and end range fields
 		if (!empty($this->enable_range_search))
 		{
