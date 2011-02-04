@@ -50,7 +50,10 @@ $viewdefs['Documents']['EditView'] = array(
       'doc_type',
     ),
     array (
-      'filename',
+      array(
+      		'name' => 'filename',
+            'displayParams' => array('onchangeSetFileNameTo' => 'document_name'),
+      ),
       array (
             'name' => 'status_id',
             'label' => 'LBL_DOC_STATUS',

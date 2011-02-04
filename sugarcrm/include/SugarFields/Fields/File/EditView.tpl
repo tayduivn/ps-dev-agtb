@@ -159,7 +159,7 @@ document.getElementById("{{$vardef.docType}}").disabled = true;
 
 {/if}
 
-{{if !empty($vardef.onchangeSetFileNameTo) }}
+{{if !empty($displayParams.onchangeSetFileNameTo) }}
 <script type="text/javascript">
 
 var {{$idName}}_setFileName = function()
@@ -168,7 +168,7 @@ var {{$idName}}_setFileName = function()
     var dom = YAHOO.util.Dom;
 {/literal}    
     sourceElement = "{{$idName}}_file";
-    targetElement = "{{$vardef.onchangeSetFileNameTo}}";
+    targetElement = "{{$displayParams.onchangeSetFileNameTo}}";
 	src = new String(dom.get(sourceElement).value);
 	target = new String(dom.get(targetElement).value);
 {literal}
@@ -189,7 +189,7 @@ var {{$idName}}_setFileName = function()
 
 YAHOO.util.Event.onDOMReady(function() 
 {ldelim}
-if(document.getElementById("{{$vardef.onchangeSetFileNameTo}}"))
+if(document.getElementById("{{$displayParams.onchangeSetFileNameTo}}"))
 {ldelim}
 YAHOO.util.Event.addListener('{{$idName}}_file', 'change', {{$idName}}_setFileName);
 {rdelim}
