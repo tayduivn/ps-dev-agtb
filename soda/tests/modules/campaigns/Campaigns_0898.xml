@@ -39,7 +39,7 @@
 	<link text="Layout Options" />
 	<div id="Campaignsadvanced_searchSearchForm">
 		<select name="campaign_type_advanced[]" set="{@Campaign0898.type}" />
-		<textfield name="end_date_advanced" set="{@Campaign0898.end_date}" />
+		<textfield name="range_end_date_advanced" set="{@Campaign0898.end_date}" />
 	</div>
 	<button id="search_form_submit" />
 	<form id="MassUpdate">

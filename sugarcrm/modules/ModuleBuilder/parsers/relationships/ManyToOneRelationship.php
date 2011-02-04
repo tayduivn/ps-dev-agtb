@@ -97,7 +97,7 @@ class ManyToOneRelationship extends AbstractRelationship
         if ($this->relationship_only)
             return array () ;
  
-        return array( $this->lhs_module => $this->relationship_name . "_name" ) ; // this must match the name of the relate field from buildVardefs
+        return array( $this->lhs_module => $this->getValidDBName($this->relationship_name . "_name") ) ; // this must match the name of the relate field from buildVardefs
     }
        
     /*

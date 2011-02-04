@@ -37,6 +37,9 @@
 	{foreach from=$config key=name item=value}
 	chartConfig["{$name}"] = '{$value}';
 	{/foreach}
+	{if $height > 480}
+	chartConfig["scroll"] = true;
+	{/if}
 	if (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') {ldelim}
 		// no op
 		loadCustomChartForReports();

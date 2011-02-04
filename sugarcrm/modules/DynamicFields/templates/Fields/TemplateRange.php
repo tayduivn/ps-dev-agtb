@@ -52,7 +52,6 @@ class TemplateRange extends TemplateText
 	 */
 	function populateFromPost() {
 		parent::populateFromPost();
-		
 		//If we are enabling range search, make sure we add the start and end range fields
 		if (!empty($this->enable_range_search))
 		{
@@ -186,6 +185,8 @@ class TemplateRange extends TemplateText
     	{
 		   $vardef['enable_range_search'] = $this->enable_range_search;
 		   $vardef['options'] = ($this->type == 'date' || $this->type == 'datetimecombo' || $this->type == 'datetime') ? 'date_range_search_dom' : 'numeric_range_search_dom'; 
+		} else {
+		   $vardef['enable_range_search'] = false;
 		}		
 		return $vardef;
     }

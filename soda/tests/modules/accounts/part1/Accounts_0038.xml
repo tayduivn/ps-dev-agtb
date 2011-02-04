@@ -73,6 +73,7 @@
 	<div class="moduleTitle">
 		<link href="index.php?module=Calendar&amp;action=index" click="false" />
 	</div>
+	<wait timeout="5" />
 	<link text="View Notes" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Notes&amp;action=index" click="false" />

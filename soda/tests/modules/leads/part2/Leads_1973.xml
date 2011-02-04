@@ -19,15 +19,18 @@
 	<!-- Edit the record via the "edit" button -->
 	<table class="list view">
 		<browser
-			assert="{@Lead_New_Record.first_name} {@user.name} {@stamp} {@Lead_New_Record.last_name}" />
+			assert="{@Lead_New_Record.salutation} {@Lead_New_Record.first_name} {@user.name} {@stamp} {@Lead_New_Record.last_name}" />
 	</table>
 
-	<span id="adspan_{@pre_lead_id}" jscriptevent="onmouseover" exists="true" />
-
-	<wait timeout="3" />
-	<div id="overDiv">
-		<image index="1" click="true" />
-	</div>
+	
+	<table class="list view">
+		<row class="oddListRowS1">
+			<cell index="3">
+				<link index="1" />
+			</cell>
+		</row>
+	</table>
+	
 	<wait timeout="3" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Leads&amp;action=index" click="false" />

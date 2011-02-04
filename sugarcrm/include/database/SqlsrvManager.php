@@ -145,6 +145,8 @@ class SqlsrvManager extends MssqlManager
         if($this->checkError('Could Not Connect:', $dieOnError))
             $GLOBALS['log']->info("connected to db");
 
+        sqlsrv_query($this->database, 'SET DATEFORMAT mdy');
+        
         $GLOBALS['log']->info("Connect:".$this->database);
     }
 

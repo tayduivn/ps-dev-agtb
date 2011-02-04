@@ -54,6 +54,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 		
 	 		$this->_client = new nusoapclient($properties['hoovers_wsdl'], true);
             $this->_client->setHeaders("<API-KEY xmlns='http://applications.dnb.com/webservice/schema/'>{$clientKey}</API-KEY>");
+            
+            $error = $this->_client->getError();
+            if ( $error !== false ) {
+                throw new Exception($error);
+            }
             //BEGIN SUGARCRM flav=int ONLY
             /*
 	 		if (!class_exists('SoapClient') || !class_exists('SoapHeader') ) {

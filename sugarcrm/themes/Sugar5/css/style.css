@@ -1930,6 +1930,11 @@ padding-left: 3px;
 	background: #fff;
 }
 
+#dashletCtrls
+{
+    float: right;
+}
+
 ul#dashletCategories li a:link, ul#dashletCategories li a:visited
 {
 	color: #444;

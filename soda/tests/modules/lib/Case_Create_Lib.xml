@@ -14,9 +14,9 @@
 		var="case_record">
 		<textfield id="name" set="{@case_record.name} {@user.name} {@stamp}" />
 		<textfield id="account_name" set="{@pre_account_name}" />
-		<wait timeout="3" />
+		<wait timeout="12" />
 		<textfield id="name" click="true" />
-		<wait timeout="2" />
+		<wait timeout="5" />
 		<button value="Save" />
 		<div class="moduleTitle">
 			<link href="index.php?module=Cases&amp;action=index" click="false" />

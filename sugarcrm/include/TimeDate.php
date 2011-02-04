@@ -977,16 +977,24 @@ class TimeDate
      */
     public function timeSeparator()
     {
-        if (! empty($this->time_separator)) {
-            return $this->time_separator;
+        if (empty($this->time_separator)) {
+            $this->time_separator = $this->timeSeparatorFormat($this->get_time_format());
         }
-        $date = $this->_convert("00:11:22", self::DB_TIME_FORMAT, null, $this->get_time_format(), null);
+        return $this->time_separator;
+    }
+
+    /**
+     * Find out format's time separator
+     * @param string $timeformat Time format
+     */
+    public function timeSeparatorFormat($timeformat)
+    {
+        $date = $this->_convert("00:11:22", self::DB_TIME_FORMAT, null, $timeformat, null);
         if (preg_match('/\d+(.+?)11/', $date, $matches)) {
             $sep = $matches[1];
         } else {
             $sep = ':';
         }
-        $this->time_separator = $sep;
         return $sep;
     }
 
