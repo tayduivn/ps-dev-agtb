@@ -1,13 +1,12 @@
 ﻿<soda>
 	<!--
-		Detail View Opportunity_Verify that the detail view page of different
-		opportunities can be navigated directly through paging control link in detail
-		view.
+		Detail View Opportunity_Verify that the list in the sub-panel "Contracts" of
+		"Opportunity" detail view can be paginated.
 	-->
 	<puts text="Test: Opportunity_2399.xml starting" />
 
 	<script file="{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml" />
-	
+
 	<!--set the 2 record on per-->
 	<wait timeout="3" />
 	<link text="Admin" />
@@ -46,7 +45,7 @@
 	</table>
 	<button value="Select" />
 	<wait timeout="3" />
-	
+
 	<!--verify list_subpanel_contracts-->
 	<div id="list_subpanel_contracts">
 		<table class="list view">
