@@ -33,7 +33,7 @@
 
 
 <div style='width:100%'>
-<form name='configure_{$id}' action="index.php" method="post" onSubmit='return SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.uncoverPage);'>
+<form name='configure_{$id}' action="index.php" method="post">
 <input type='hidden' name='id' value='{$id}'>
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='action' value='ConfigureDashlet'>
@@ -88,7 +88,7 @@
 </tr>
 <tr>
     <td align="right" colspan="2">
-        <input type='submit' class='button' value='{$saveLBL}' id='save_{$id}'>
+        <input type='button' class='button' value='{$saveLBL}' id='save_{$id}' onclick='promptAuthentication(); if(SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.uncoverPage)) this.form.submit();'>
    	</td>
 </tr>
 </table>
@@ -110,15 +110,12 @@ function getMultiple(ob){
         }
     }
     var buttonHtml = '';
-    var saveButton = document.getElementById('{/literal}save_{$id}{literal}');
-    saveButton.disabled = false;
     if(showAll){
         for (var j = 0; j < externalApiList.length; j++) 
         {
             if(!authenticatedExternalApiList[externalApiList[j]])
             {
 	            buttonHtml += '<div id="' + externalApiList[j] + '_div" style="visibility:;"><a href="#" onclick="window.open(\'index.php?module=EAPM&callbackFunction=hideExternalDiv&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a></div>';
-	            //saveButton.disabled = true;
             }
         }
     }else{
@@ -128,7 +125,6 @@ function getMultiple(ob){
                 if(selected[i] == externalApiList[j] && !authenticatedExternalApiList[externalApiList[j]]) 
                 {
                     buttonHtml += '<div id="' + externalApiList[j] + '_div" style="visibility:";><a href="#" onclick="window.open(\'index.php?module=EAPM&callbackFunction=hideExternalDiv&closeWhenDone=1&action=QuickSave&application='+externalApiList[j]+'\',\'EAPM\');">{/literal}{$authenticateLBL}{literal} '+externalApiList[j]+'</a></div>';
-                    //saveButton.disabled = true;
                 }
             }
         }
@@ -148,8 +144,25 @@ function hideExternalDiv(id)
     {
 		YAHOO.util.Dom.get(id + '_div').style.visibility = 'hidden';
 		authenticatedExternalApiList[id] = true;
-		saveButton = YAHOO.util.Dom.get('save_{/literal}{$id}{literal}');	
-		//saveButton.disabled = false;
+	}
+}
+
+function promptAuthentication()
+{
+    //This is how we know that not all external API links were authenticated
+	if(authenticatedExternalApiList.length < externalApiList.length)
+	{
+{/literal}	
+		if(!confirm("{$autenticationPendingLBL}")) 
+{literal}		
+		{
+		    //Cancel form submission here
+		    e = event ? event : window.event;
+		    if (e.preventDefault) e.preventDefault();
+		    e.returnValue = false;
+		    e.cancelBubble = true;
+		    if (e.stopPropagation) e.stopPropagation();
+		}
 	}
 }
 

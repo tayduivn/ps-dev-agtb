@@ -99,5 +99,6 @@ $mod_strings = array (
   'LBL_EXTERNAL_PREFIX' => 'External: ',
   'LBL_EXTERNAL_WARNING' => 'Items labeled "external" require an <a href="?module=EAPM">external account</a>.',
   'LBL_AUTHENTICATE' => 'Authenticate',
+  'LBL_AUTHENTICATION_PENDING' => 'There are external accounts that have not been authenticated for feeds.  Click \'Cancel\' to authenticate or \'Ok\' to save and proceed.',
 );
 ?>
