@@ -139,6 +139,12 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
             {
             	$callback_url .= '&application=' . $_REQUEST['application'];
             }
+
+            //Pass back the id of the application that triggered this oauth login
+            if (!empty($_REQUEST['refreshParentWindow']))
+            {
+            	$callback_url .= '&refreshParentWindow=' . $_REQUEST['refreshParentWindow'];
+            }
             
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             

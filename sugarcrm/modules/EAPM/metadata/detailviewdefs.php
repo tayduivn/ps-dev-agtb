@@ -41,7 +41,7 @@ $viewdefs[$module_name]['DetailView'] = array(
                                     'customCode' => '{if $bean->aclAccess("delete")}<input title="{$APP.LBL_DELETE_BUTTON_TITLE}" accessKey="{$APP.LBL_DELETE_BUTTON_KEY}" class="button" onclick="this.form.return_module.value=\'Users\'; this.form.return_action.value=\'EditView\'; this.form.return_id.value=\'{$return_id}\'; this.form.action.value=\'Delete\'; return confirm(\'{$APP.NTC_DELETE_CONFIRMATION}\');" type="submit" name="Delete" value="{$APP.LBL_DELETE_BUTTON_LABEL}">{/if}',
                                   ),
                                   3 => 'AUDIT',
-                                  array('customCode'=>'<input title="{$MOD.LBL_REAUTHENTICATE_LABEL}" accessKey="{$MOD.LBL_REAUTHENTICATE_KEY}" class="button" onclick="this.form.action.value=\'Reauthenticate\';" type="submit" name="button" value="{$MOD.LBL_REAUTHENTICATE_LABEL}">'),
+                                  array('customCode'=>'<input title="{$MOD.LBL_REAUTHENTICATE_LABEL}" accessKey="{$MOD.LBL_REAUTHENTICATE_KEY}" class="button" onclick="window.open(\'index.php?module=EAPM&action=Reauthenticate&record={$fields.id.value}&closeWhenDone=1&refreshParentWindow=1\',\'EAPM\');" type="button" name="button" value="{$MOD.LBL_REAUTHENTICATE_LABEL}">'),
                                 ),
                                 'footerTpl'=>'modules/EAPM/tpls/DetailViewFooter.tpl',),
                         ),
