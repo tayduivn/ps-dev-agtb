@@ -21,6 +21,7 @@
 	<browser assert="Task List" />
 	<link text="View Tasks" />
 	<link text="/Basic Search/" required="false" />
+	<wait timeout="3" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
 
