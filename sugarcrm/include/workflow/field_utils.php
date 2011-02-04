@@ -574,14 +574,15 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
             if($adv_type != 'exist_user') {
 	            $assigned_user = loadBean('Users');
     	        $assigned_user->retrieve($field_value);
-        	    if (empty($assigned_user->id))
+        	    if (empty($assigned_user->id)) {
             	    return false;
+        	    }
 	            if($current_user->getPreference('use_real_names') == 'on'){
     	            return $assigned_user->full_name;
-                else {
+	            } else {
                     return $assigned_user->user_name;
                 }
-            } else {
+	        } else {
                 $target_type = "assigned_user_name";
             }
         } else {
