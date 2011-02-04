@@ -91,7 +91,7 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}}
-onchange="setvalue(this); document.getElementById('{{$idName}}').value='something'"
+onchange="document.getElementById('{{$idName}}').value='something'"
 {{$displayParams.field}}>
 
 
@@ -147,12 +147,54 @@ enableQS(false);
 {{/if}}
 {else}
 {* No change possible *}
+
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <script type="text/javascript">
-YAHOO.util.Event.onDOMReady(function() {ldelim}
+YAHOO.util.Event.onDOMReady(function() 
+{ldelim}
 document.getElementById("{{$vardef.docType}}").disabled = true;
 {rdelim});
 </script>
 {{/if}}
+
 {/if}
+
+{{if !empty($vardef.onchangeSetFileNameTo) }}
+<script type="text/javascript">
+
+var {{$idName}}_setFileName = function()
+{literal}
+{
+    var dom = YAHOO.util.Dom;
+{/literal}    
+    sourceElement = "{{$idName}}_file";
+    targetElement = "{{$vardef.onchangeSetFileNameTo}}";
+	src = new String(dom.get(sourceElement).value);
+	target = new String(dom.get(targetElement).value);
+{literal}
+	if (target.length == 0) 
+	{
+		lastindex=src.lastIndexOf("/");
+		if (lastindex == -1) {
+			lastindex=src.lastIndexOf("\\");
+		} 
+		if (lastindex == -1) {
+			dom.get(targetElement).value=src;
+		} else {
+			dom.get(targetElement).value=src.substr(++lastindex, src.length);
+		}	
+	}	
+}
+{/literal}
+
+YAHOO.util.Event.onDOMReady(function() 
+{ldelim}
+if(document.getElementById("{{$vardef.onchangeSetFileNameTo}}"))
+{ldelim}
+YAHOO.util.Event.addListener('{{$idName}}_file', 'change', {{$idName}}_setFileName);
+{rdelim}
+{rdelim});
+</script>
+{{/if}}
+
 </span>
