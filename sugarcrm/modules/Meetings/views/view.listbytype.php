@@ -31,9 +31,30 @@ class MeetingsViewListbytype extends ViewList {
     }
     
  	function listViewProcess(){
-        if ( ! EAPM::getLoginInfo('LotusLive') ) {
+        if (!$eapmBean = EAPM::getLoginInfo('LotusLive', true) ) {
             $smarty = new Sugar_Smarty();
             echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
+            return;
+        }
+
+        $apiName = 'LotusLive';
+        $api = ExternalAPIFactory::loadAPI($apiName,true);
+        $api->loadEAPM($eapmBean);
+
+        $quickCheck = $api->quickCheckLogin();
+        if ( ! $quickCheck['success'] ) {
+            $errorMessage = 'LotusLive' . translate('LBL_ERR_FAILED_QUICKCHECK','EAPM');
+            $errorMessage .= '<form method="POST" target="_EAPM_CHECK" action="index.php">';
+            $errorMessage .= '<input type="hidden" name="module" value="EAPM">';
+            $errorMessage .= '<input type="hidden" name="action" value="Save">';
+            $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
+            $errorMessage .= '<input type="hidden" name="active" value="1">';
+            $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
+
+            $errorMessage .= '<br><input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">&nbsp;';
+            $errorMessage .= '<input type="button" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">';
+            $errorMessage .= '</form>';
+            echo $errorMessage;
             return;
         }
 

@@ -72,10 +72,10 @@ class DocumentsViewExtdoc extends SugarView
             $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
             $errorMessage .= '<input type="hidden" name="active" value="1">';
             $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
-            
-            $errorMessage .= '<br><button onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;">'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'</button> ';
-            $errorMessage .= '<input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">';
-            
+
+            $errorMessage .= '<br><input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">&nbsp;';
+            $errorMessage .= '<input type="button" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">';
+            $errorMessage .= '</form>';
             echo $errorMessage;
             return;
         }
