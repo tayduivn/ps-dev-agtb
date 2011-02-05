@@ -139,6 +139,7 @@ function get_report_schedule($report_id){
 }
 
 function get_reports_to_email($user_id= '', $schedule_type="pro"){
+    global $timedate;
 	$where = '';
 	if(!empty($user_id)){
 		$where = "AND user_id='$user_id'";

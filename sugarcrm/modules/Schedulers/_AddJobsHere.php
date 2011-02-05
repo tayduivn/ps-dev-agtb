@@ -510,7 +510,7 @@ function dceActionCleanup() {
  * Job 9
  */
 function updateTrackerSessions() {
-    global $sugar_config;
+    global $sugar_config, $timedate;
 	$GLOBALS['log']->info('----->Scheduler fired job of type updateTrackerSessions()');
 	$db = DBManagerFactory::getInstance();
     require_once('include/utils/db_utils.php');
