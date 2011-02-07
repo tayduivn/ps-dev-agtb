@@ -536,6 +536,7 @@ class ViewConvertLead extends SugarView
 			if(!isset($_REQUEST[$module . $field]) && isset($lead->$field) && $field != 'id')
 			{
 				$bean->$field = $lead->$field;
+				if($field == 'date_entered') $bean->$field = gmdate($GLOBALS['timedate']->get_db_date_time_format()); //bug 41030
 			}
 		}
 		//Try to link to the new contact
