@@ -3,7 +3,7 @@
 		Detail View Opportunity_Verify that the list in the sub-panel "Contacts" of
 		"Opportunity" detail view can be paginated.
 	-->
-	<puts text="Test: Opportunity_10615.xml starting" />
+	<puts text="Test: Opportunity_10616.xml starting" />
 
 	<!--set the 2 record on per-->
 	<wait timeout="3" />
@@ -103,5 +103,5 @@
 	<script file="{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
 
-	<puts text="Test: Opportunity_10615.xml finished" />
+	<puts text="Test: Opportunity_10616.xml finished" />
 </soda>
