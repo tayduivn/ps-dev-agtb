@@ -245,7 +245,7 @@ var $myFavoritesOnly = false;
 //END SUGARCRM flav=pro ONLY
                                     'link_url',
                                     'link_type'));
-            
+
             foreach($this->lvs->data['data'] as $row => $data) {
 
                 $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['ASSIGNED_USER_ID']),$data['NAME']);
@@ -310,7 +310,8 @@ var $myFavoritesOnly = false;
         $numRecords = $numRecords - $this->lvs->data['pageData']['offsets']['current'];
         $numRecords = min($this->displayRows,$numRecords);
 
-        $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
+        //rrs bug: 42122 - was cutting out feed items.42122
+       // $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
 
         foreach ( $resortQueue as $key=>&$item ) {
             if ( empty($item['NAME']) ) {
