@@ -65,7 +65,7 @@ class DocumentsViewExtdoc extends SugarView
 
         $quickCheck = $api->quickCheckLogin();
         if ( ! $quickCheck['success'] ) {
-            $errorMessage = 'LotusLive' . translate('LBL_ERR_FAILED_QUICKCHECK','EAPM');
+            $errorMessage = string_format(translate('LBL_ERR_FAILED_QUICKCHECK','EAPM'), array('LotusLive'));
             $errorMessage .= '<form method="POST" target="_EAPM_CHECK" action="index.php">';
             $errorMessage .= '<input type="hidden" name="module" value="EAPM">';
             $errorMessage .= '<input type="hidden" name="action" value="Save">';
