@@ -24,6 +24,7 @@
 
 	<!-- Set View Tasks search back to Basic -->
 	<link id="moduleTab_Activities" />
+	<wait timeout="3" />
 	<link text="/Basic Search/" />
 	<wait timeout="3" />
 	<button id="search_form_clear" />
