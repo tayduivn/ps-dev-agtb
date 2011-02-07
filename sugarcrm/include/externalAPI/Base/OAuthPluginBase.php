@@ -139,18 +139,28 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
             {
             	$callback_url .= '&application=' . $_REQUEST['application'];
             }
+
+            //Pass back the id of the application that triggered this oauth login
+            if (!empty($_REQUEST['refreshParentWindow']))
+            {
+            	$callback_url .= '&refreshParentWindow=' . $_REQUEST['refreshParentWindow'];
+            }
             
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
             
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
-            
-            // FIXME: error checking here
-            $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
-            $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
-            $authReq = $this->getOauthAuthURL();
-            SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
+
+            if(empty($request_token_info['oauth_token_secret']) || empty($request_token_info['oauth_token'])){
+                return false;
+            }else{
+                // FIXME: error checking here
+                $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
+                $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
+                $authReq = $this->getOauthAuthURL();
+                SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
+            }
         } else {
             $accReq = $this->getOauthAccessURL();
             $oauth->setToken($_SESSION['eapm_oauth_token'],$_SESSION['eapm_oauth_secret']);

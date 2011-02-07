@@ -34,7 +34,7 @@ class EAPMController extends SugarController
      */
     protected $api;
 
-    var $admin_actions = array('displayproperties', 'listview', 'index');
+    var $admin_actions = array('listview', 'index');
 
 	public function process() {
 		if(!is_admin($GLOBALS['current_user']) && in_array(strtolower($this->action), $this->admin_actions)) {
@@ -104,10 +104,17 @@ class EAPMController extends SugarController
             return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
         } else {
             $this->bean->validated();
+            
             // This is a tweak so that we can automatically close windows if requested by the external account system
-            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {   	
-            	$js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
-            	echo($js);
+            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+                if(!empty($_REQUEST['callbackFunction']) && !empty($_REQUEST['application'])){
+            	    $js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
+                }else if(!empty($_REQUEST['refreshParentWindow'])){
+                    $js = '<script type="text/javascript">window.opener.location.reload();window.close();</script>';
+                }else{
+                    $js = '<script type="text/javascript">window.close();</script>';
+                }
+                echo($js);
                 return;
             }            
 
@@ -152,37 +159,6 @@ class EAPMController extends SugarController
 
     protected function post_Reauthenticate(){
         $this->post_save();
-    }
-
-    protected function action_listview()
-    {
-        $this->view = 'displayproperties';
-    }
-
-    protected function action_SaveDisplayProperties()
-    {
-        //write out a custom file
-        $fileName = ExternalAPIFactory::$disabledApiFileName;
-        if(isset($_REQUEST['disabled_apis'])){
-            $disabledApis = array();
-
-            foreach(explode (',', $_REQUEST['disabled_apis'] ) as $api)
-            {
-                $disabledApis[] = $api;
-            }
-
-            if(!empty($disabledApis)){
-                if(!write_array_to_file("disabledAPIList", $disabledApis, $fileName)){
-                    //Log error message and throw Exception
-                    global $app_strings;
-                    $msg = string_format($app_strings['ERR_FILE_WRITE'], array($fileName));
-                    $GLOBALS['log']->error($msg);
-                    throw new Exception($msg);
-                }
-                ExternalAPIFactory::clearCache();
-    	    }
-        }
-        $this->view = 'displayproperties';
     }
 
     protected function action_FlushFileCache()

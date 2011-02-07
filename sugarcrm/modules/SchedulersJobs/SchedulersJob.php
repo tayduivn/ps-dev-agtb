@@ -159,6 +159,7 @@ class SchedulersJob extends SugarBean {
 	 * @return	boolean		Success
 	 */
 	function finishJob() {
+        global $timedate;
 		$trackerManager = TrackerManager::getInstance();
 		$trackerManager->pause();
 		$GLOBALS['log']->debug('----->SchedulersJob updating Job Status and finishing Job execution.');

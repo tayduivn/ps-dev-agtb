@@ -356,6 +356,7 @@ class Scheduler extends SugarBean {
 	 * @return	false		If we the Scheduler is not in scope, return false.
 	 */
 	function deriveDBDateTimes($focus) {
+        global $timedate;
 		$GLOBALS['log']->debug('----->Schedulers->deriveDBDateTimes() got an object of type: '.$focus->object_name);
 		/* [min][hr][dates][mon][days] */
 		$dateTimes = array();
@@ -650,7 +651,7 @@ class Scheduler extends SugarBean {
                         if($tsGmt > $lastRunTs) { // start from last run, last run should not be included
                             if( $tsGmt <= $timeEndTs ) { // this is taken care of by the initial query - start is less than the date spec'd by admin
                                 if( $tsGmt <= $timeToTs ) { // start is less than the time_to
-                                    $validJobTime[] = $timedate->asDb($timedate->fromTimedstamp($tsGmt));
+                                    $validJobTime[] = $timedate->asDb($timedate->fromTimestamp($tsGmt));
                                 } else {
                                     //_pp('Job Time is NOT smaller that TimeTO: '.$tsGmt .'<='. $timeToTs);
                                 }

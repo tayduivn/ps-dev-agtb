@@ -60,6 +60,81 @@ $default_connectors = array (
       3 => 'Prospects',
     ),
   ),
+  'ext_eapm_facebook' =>
+  array (
+    'id' => 'ext_eapm_facebook',
+    'name' => 'Facebook',
+    'enabled' => true,
+    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/facebook',
+    'eapm' =>
+    array (
+      'enabled' => true,
+      'only' => true,
+    ),
+    'modules' =>
+    array (
+    ),
+  ),
+  'ext_eapm_google' =>
+  array (
+    'id' => 'ext_eapm_google',
+    'name' => 'Google',
+    'enabled' => true,
+    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/google',
+    'eapm' =>
+    array (
+      'enabled' => true,
+      'only' => true,
+    ),
+    'modules' =>
+    array (
+    ),
+  ),
+  'ext_eapm_gotomeeting' =>
+  array (
+    'id' => 'ext_eapm_gotomeeting',
+    'name' => 'GoToMeeting',
+    'enabled' => true,
+    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/gotomeeting',
+    'eapm' =>
+    array (
+      'enabled' => true,
+      'only' => true,
+    ),
+    'modules' =>
+    array (
+    ),
+  ),
+  'ext_eapm_lotuslive' =>
+  array (
+    'id' => 'ext_eapm_lotuslive',
+    'name' => 'LotusLive',
+    'enabled' => true,
+    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/lotuslive',
+    'eapm' =>
+    array (
+      'enabled' => true,
+      'only' => true,
+    ),
+    'modules' =>
+    array (
+    ),
+  ),
+  'ext_eapm_webex' =>
+  array (
+    'id' => 'ext_eapm_webex',
+    'name' => 'WebEx',
+    'enabled' => true,
+    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/webex',
+    'eapm' =>
+    array (
+      'enabled' => true,
+      'only' => true,
+    ),
+    'modules' =>
+    array (
+    ),
+  ),
 //END SUGARCRM flav=pro ONLY
 
 );
