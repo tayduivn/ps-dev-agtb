@@ -506,6 +506,14 @@ class Team extends SugarBean
 			$focus->retrieve($user_id);
 		}
 
+		//Check to see if the user being is the user's private team
+		if($this->id == $focus->getPrivateTeamID() && $this->deleted == 0)
+		{
+		   global $mod_strings;
+		   $GLOBALS['log']->fatal($mod_strings['ERR_CANNOT_REMOVE_PRIVATE_TEAM']);
+		   throw new Exception($mod_strings['ERR_CANNOT_REMOVE_PRIVATE_TEAM']);
+		}
+		
 		// Step1: Add the current focus to the visited list
 		$visited_users[$focus->id] = $focus->user_name;
 
