@@ -206,6 +206,7 @@ if(!function_exists('amsi')){
 		global $login_error;
 		$q = 0;
 		$m = '';
+		$str = '';
 		foreach ($as as $k) {
 			if (!empty ($k['m'])) {
 				$temp = vcmsi($k['g'], $k['m'], $k['a'], $k['l']);
@@ -218,8 +219,12 @@ if(!function_exists('amsi')){
 			if($k['s'] == 2){
 				if($sugar_flavor == 'CE' || $sugar_flavor == 'COM'){
 					$m = $k['a'];
+					$str .= base64_decode($m);
 				}else{
+					
 					$m = $k['b'];
+					if(!empty($str))$str.='<br/>';
+					$str .= base64_decode($m);
 				}
 			}
 		}
@@ -253,7 +258,7 @@ if(!function_exists('amsi')){
 
 				$_SESSION['mvi'] = '';
 				if($q & 2){
-					$_SESSION['mvi'] .= '<div align="center" class="copyRight">' .base64_decode($m) . '</div>';
+					$_SESSION['mvi'] .= '<div align="center" class="copyRight">' .$str . '</div>';
 				}
 				if($q & 1){
 					$_SESSION['mvi'] .= '<div align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="Powered By SugarCRM"></div>';
