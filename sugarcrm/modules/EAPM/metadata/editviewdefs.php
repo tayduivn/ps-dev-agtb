@@ -58,7 +58,10 @@ $viewdefs[$module_name]['EditView'] = array(
         array('name'=>'password', 'type'=>'password', 'displayParams' => array('required' => true) ),
     ),
     array (
-        array('name' => 'url', 'displayParams' => array('required' => true) ),
+        array('name' => 'url',
+              'displayParams' => array('required' => true),
+              'customLabel' => '{$MOD.LBL_URL}<br>(Omit http:// or https://)',
+            )
     ),
     array (
         'description',
