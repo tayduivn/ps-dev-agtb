@@ -77,7 +77,7 @@ $mod_strings = array (
   'LBL_ERR_NO_AUTHINFO' => 'There is no authentication information for this account.',
   'LBL_ERR_NO_TOKEN' => 'There are no valid login tokens for this account.',
   
-  'LBL_ERR_FAILED_QUICKCHECK' => 'You are not currently logged in to your {0} account. Click OK to re-login to your account.',
+  'LBL_ERR_FAILED_QUICKCHECK' => 'You are not currently logged in to your {0} account. Click OK to re-login to your account and to activate the external account record.',
 
   // Various strings used throughout the external account modules
   'LBL_MEET_NOW_BUTTON' => 'Meet Now',

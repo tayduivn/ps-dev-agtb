@@ -211,9 +211,7 @@ $args['upper_left'] = '';
 control($args);
 
 $params = array();
-if(empty($_REQUEST['favorite']))
-	$params[] = "";
-else 
+if(!empty($_REQUEST['favorite']))
     $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
 $star = '';
 //BEGIN SUGARCRM flav=pro ONLY

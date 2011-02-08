@@ -28,8 +28,8 @@ Calendar.setup = function (params) {
                     calendar = null;
                     dialog = null;
                 }
-
-                dialog = new YAHOO.widget.Dialog("container", {
+                             
+                dialog = new YAHOO.widget.SimpleDialog("container", {
                     visible:false,
                     context:[showButton, "tl", "bl"],
                     buttons:[ {text:SUGAR.language.get('app_strings', 'LBL_CLOSE_BUTTON_LABEL'), handler: closeHandler}],
@@ -70,10 +70,23 @@ Calendar.setup = function (params) {
 
             // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
             if (!calendar) {
+            
+                var navConfig = {
+                    strings : {
+                        month: SUGAR.language.get('app_strings', 'LBL_CHOOSE_MONTH'),
+                        year: SUGAR.language.get('app_strings', 'LBL_ENTER_YEAR'),
+                        submit: SUGAR.language.get('app_strings', 'LBL_EMAIL_OK'),
+                        cancel: SUGAR.language.get('app_strings', 'LBL_CANCEL_BUTTON_LABEL'),
+                        invalidYear: SUGAR.language.get('app_strings', 'LBL_ENTER_VALID_YEAR')
+                    },
+                    monthFormat: YAHOO.widget.Calendar.SHORT,
+                    initialFocus: "year"
+                };               	
             	
                 calendar = new YAHOO.widget.Calendar(showButton + '_div', {
                     iframe:false,
-                    hide_blank_weeks:true  
+                    hide_blank_weeks:true,
+                    navigator:navConfig
                 });
                 
                 calendar.cfg.setProperty('DATE_FIELD_DELIMITER', date_field_delimiter);

@@ -118,21 +118,25 @@ class SugarFieldDatetime extends SugarFieldBase {
         $format = $timedate->merge_date_time($settings->dateformat, $settings->timeformat);
 
         if ( !$timedate->check_matching_format($value, $format) ) {
-            list($datepart, $timepart) = $timedate->split_date_time($value);
-            if(empty($datepart)) {
+            $parts = $timedate->split_date_time($value);
+            if(empty($parts[0])) {
                $datepart = $timedate->getNow()->format($settings->dateformat);
             }
-            if(empty($timepart)) {
+            else {
+               $datepart = $parts[0];
+            }
+            if(empty($parts[1])) {
                 $timepart = $timedate->fromTimestamp(0)->format($settings->timeformat);
             } else {
+                $timepart = $parts[1];
                 // see if we can get by stripping the seconds
                 if(strpos($settings->timeformat, 's') === false) {
                     $sep = $timedate->timeSeparatorFormat($settings->timeformat);
                     // We are assuming here seconds are the last component, which
                     // is kind of reasonable - no sane time format puts seconds first
-                    list($h, $m, $s) = explode($sep, $timepart);
-                    if(!empty($s)) {
-                        $timepart = join($sep, array($h, $m));
+                    $timeparts = explode($sep, $timepart);
+                    if(!empty($timeparts[2])) {
+                        $timepart = join($sep, array($timeparts[0], $timeparts[1]));
                     }
                 }
             }

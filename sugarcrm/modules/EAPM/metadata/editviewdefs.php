@@ -33,6 +33,7 @@ $viewdefs[$module_name]['EditView'] = array(
                                             array('label' => '10', 'field' => '30')
                                             ),
                             'form' => array(
+                                'hidden'=>array('<input name="assigned_user_id" type="hidden" value="{$fields.assigned_user_id.value}" autocomplete="off">'),
                                 'buttons' =>
                                 array (
                                   0 => 'SAVE',
@@ -58,10 +59,6 @@ $viewdefs[$module_name]['EditView'] = array(
     ),
     array (
         array('name' => 'url', 'displayParams' => array('required' => true) ),
-        array('name' => 'assigned_user_name',
-              'type' => 'readonly',
-              'customCode'=>'{$fields.assigned_user_name.value}<input name="assigned_user_id" type="hidden" value="{$fields.assigned_user_id.value}" autocomplete="off">',
-            ),
     ),
     array (
         'description',

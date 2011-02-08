@@ -67,7 +67,7 @@ class JsChart extends SugarChart {
 	}
 	
 	function tab($str, $depth){
-		return str_repeat("\t", $depth) . $str;	
+		return str_repeat("\t", $depth) . $str. "\n";	
 	}
 	
 	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
@@ -559,6 +559,55 @@ class JsChart extends SugarChart {
 		}
 	}
 	
+	function buildHTMLLegend($xmlFile) {
+		$xmlstr = $this->processXML($xmlFile);
+		$xml = new SimpleXMLElement($xmlstr);
+		$this->chartType = $xml->properties->type;
+		$html = "<table align=\"left\" cellpadding=\"2\" cellspacing=\"2\">";
+		
+		if ($this->chartType == "group by chart" || $this->chartType == "horizontal group by chart") {
+			$groups = $xml->data->group[0]->subgroups->group;
+			$items = (sizeof($xml->data->group[0]->subgroups->group) <= 5) ? 5 : sizeof($xml->data->group[0]->subgroups->group);
+		} else {
+			$groups = $xml->data->group;
+			$items = (sizeof($xml->data->group) <= 5) ? 5 : sizeof($xml->data->group);
+		}
+		
+		$rows = ceil($items/5);
+		$fullItems = $rows * 5;
+		$remainder = ($items < $fullItems) ? $fullItems - $items : 0;
+		$i = 0;
+		$x = 0;
+		
+		
+		$colorArr = array();
+		$xmlColors = $this->getConfigProperties();
+		$colors = ($this->chartType == "gauge chart") ? $xmlColors->gaugeChartElementColors->color : $xmlColors->chartElementColors->color;
+		
+		foreach($colors as $color) {
+			$colorArr[] = str_replace("0x","#",$color);
+		}
+		
+		
+		foreach($groups as $group) {
+			if($i == 5) {$i = 0;}
+			$html .= ($i == 0) ? "<tr>" : "";
+			$html .= "<td width=\"50\">";
+			$html .= "<div style=\"background-color:".$colorArr[$x].";\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>";
+			$html .= "</td>";
+			$html .= "<td>";
+			$html .= $group->title;
+			$html .= "</td>";
+			$html .= ($x+1 == $items) ? "<td colspan=".($remainder*2)."></td>" : "";
+			$html .= ($i == 4) ? "</tr>" : "";
+			$x++;
+			$i++;
+		}
+			
+		
+		$html .= "</table>";
+		return $html;
+	}
 	
 	function saveJsonFile($jsonContents) {
 		
@@ -583,6 +632,22 @@ class JsChart extends SugarChart {
 		return true;
 	}
 
+	function get_png_cache_file_name ($xmlFile) {
+		$filename = str_replace("/xml/","/images/",str_replace(".xml",".png",$xmlFile));
+		
+		return $filename;
+	}
+	
+	
+	function getXMLChartProperties($xmlStr) {
+		$props = array();
+		$xml = new SimpleXMLElement($xmlstr);
+		foreach($xml->properties->children() as $properties) {
+			$props[$properties->getName()] = $properties;
+		}
+		return $props;
+	}
+	
 	function processXML($xmlFile) {
 		
 		if(!file_exists($xmlFile)) {
