@@ -1,5 +1,7 @@
 <soda>
 	<puts text="Lib: login.xml starting." />
+	<csv file="tests/csvs/users.csv" var="user" />
+
 	<browser url="{@global.url}" />
 
 	<link text="Log Out" required="false" timeout="2" />

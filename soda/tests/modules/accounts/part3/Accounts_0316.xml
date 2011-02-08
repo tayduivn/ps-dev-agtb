@@ -15,6 +15,7 @@
 		<link text="{@pre_account_name}" />
 	</table>
 	<button id="accounts_contacts_create_button" />
+	<wait timeout="3" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0316.csv" var="accounts0316" />
 	<form id="form_SubpanelQuickCreate_Contacts">
 		<textfield id="first_name" set="{@accounts0316.first_name}" />
