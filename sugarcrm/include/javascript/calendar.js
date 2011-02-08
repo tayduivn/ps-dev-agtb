@@ -29,7 +29,7 @@ Calendar.setup = function (params) {
                     dialog = null;
                 }
                              
-                dialog = new YAHOO.widget.Overlay("container", {
+                dialog = new YAHOO.widget.SimpleDialog("container", {
                     visible:false,
                     context:[showButton, "tl", "bl"],
                     buttons:[ {text:SUGAR.language.get('app_strings', 'LBL_CLOSE_BUTTON_LABEL'), handler: closeHandler}],
