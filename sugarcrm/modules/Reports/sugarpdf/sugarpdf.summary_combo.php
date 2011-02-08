@@ -22,14 +22,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('modules/Reports/sugarpdf/sugarpdf.reports.php');
+require_once('modules/Reports/templates/templates_chart.php');
+require_once('include/SugarCharts/SugarChartFactory.php');
 
+			
 class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
 {
     function display(){
         global $app_list_strings, $locale;
-        
+         
+        //add chart
+        if (isset($_REQUEST['id']) && $_REQUEST['id'] != false) {
+	    	$this->bean->is_saved_report = true;
+	    }
+	    $xmlFile = get_cache_file_name($this->bean);
+	    $sugarChart = SugarChartFactory::getInstance();
+	    if($sugarChart->supports_image_export) {
+		    $pngFile = $sugarChart->get_png_cache_file_name($xmlFile);
+		    if(file_exists($pngFile)) {
+		    	$this->AddPage();
+		    	list($width, $height) = getimagesize($pngFile); 
+		    	$pngHeight = ($height >= $width) ? $this->getPageHeight()*.7 : "";
+		    	$pngWidth = ($width >= $width) ? $this->getPageWidth()*.9 : "";
+		    	$this->Image($pngFile,$this->GetX(),$this->GetY(),$pngWidth,$pngHeight,"PNG","","N",false,300,"", false,false,0,true);
+		    	
+		    	$legend = $sugarChart->buildHTMLLegend($xmlFile);
+		    	
+//		    	$this->Write(12,$legend);
+		    	$this->writeHTML($legend,true,false,false,true,"");
+		    }
+	    }
+	    
         $this->AddPage();
-        
+       
         //disable paging so we get all results in one pass
         $this->bean->enable_paging = false;
         $cols = count($this->bean->report_def['display_columns']);
@@ -89,7 +114,10 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
             }
             $this->writeCellTable($item, $this->options);
         }
+        
+	    
     }
+    
     
 }
 

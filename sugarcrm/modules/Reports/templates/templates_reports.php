@@ -269,6 +269,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
     $sugarChart = SugarChartFactory::getInstance();
 	$resources = $sugarChart->getChartResources();
 	$smarty->assign('chartResources', $resources);
+	$smarty->assign('id', empty($_REQUEST['id']) ? false : $_REQUEST['id']);
+	
 	echo $smarty->fetch("modules/Reports/templates/_reportCriteriaWithResult.tpl");
 	
 	reportResults($reporter, $args);	

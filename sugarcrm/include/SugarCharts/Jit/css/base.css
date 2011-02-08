@@ -47,6 +47,8 @@
     position:relative;
     margin:auto;
     overflow:hidden;
+    background-image: url(../../../../index.php?entryPoint=getImage&imageName=chartBg.png);
+	background-repeat:repeat-x;
 }
 
 .query-color {

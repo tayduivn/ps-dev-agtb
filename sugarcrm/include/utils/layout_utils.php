@@ -246,9 +246,7 @@ function getClassicModuleTitle(
 	$count = count($params);
 	$index = 0;
 
-	if(SugarThemeRegistry::current()->directionality == "rtl") {
-		$params = array_reverse($params);
-	}
+
 
     $module = preg_replace("/ /","",$module);
     $iconPath = "";
@@ -262,33 +260,30 @@ function getClassicModuleTitle(
     {
         $iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     }
-
-	foreach($params as $parm){
-		$index++;
-	   	$module_title .= $parm;
-	   	if($index < $count){
-	    	$module_title .= ( $index == 1) ? SugarView::getBreadCrumbSymbol() : "";
-	    }
-	}
-
     if (!empty($iconPath)) {
-    	if (SugarThemeRegistry::current()->directionality == "ltr") {
-	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
-	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
-	        $the_title .= SugarView::getBreadCrumbSymbol();
-	        $the_title .= $module_title;
-    	} else {
-    		$the_title .= $module_title;
-    		$the_title .= SugarView::getBreadCrumbSymbol();
-    		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
-	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
-    	}
-    } else {
-		$the_title .= $module_title;
+    	array_unshift ($params,"<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
+	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>");
 	}
 	
+	$new_params = array();
+	$i = 0;
+	foreach ($params as $value) {
+	  if ((!is_null($value)) && ($value !== "")) {
+	    $new_params[$i] = $value;
+	    $i++;
+	  }
+	} 
 
-    $the_title .= "</h2>\n";
+
+	if(SugarThemeRegistry::current()->directionality == "rtl") {
+		$new_params = array_reverse($new_params);
+	}
+	
+	$module_title = join(SugarView::getBreadCrumbSymbol(),$new_params);
+	
+	
+	
+    $the_title .= $module_title."</h2>\n";
     
     if ($show_create) {
         $the_title .= "<span class='utils'>";
