@@ -44,10 +44,11 @@ class ReportsSugarpdfSummary extends ReportsSugarpdfReports
 		    	$pngHeight = ($height >= $width) ? $this->getPageHeight()*.7 : "";
 		    	$pngWidth = ($width >= $width) ? $this->getPageWidth()*.9 : "";
 		    	$this->Image($pngFile,$this->GetX(),$this->GetY(),$pngWidth,$pngHeight,"PNG","","N",false,300,"", false,false,0,true);
-		    	$legend = $sugarChart->buildHTMLLegend($xmlFile);
-		    	
-//		    	$this->Write(12,$legend);
-		    	$this->writeHTML($legend,true,false,false,true,"");
+		    	if($sugarChart->print_html_legend_pdf) {
+			    	$legend = $sugarChart->buildHTMLLegend($xmlFile);
+	//		    	$this->Write(12,$legend);
+			    	$this->writeHTML($legend,true,false,false,true,"");
+		    	}
 		    }
 	    }
 	    
