@@ -4644,10 +4644,12 @@ function save_relationship_changes($is_update, $exclude=array())
     		}
     	}
     	if(empty($ids))
-    	{
-    		$ids = '(';
+    	{   //if ids array is empty then pass back db friendly empty single quotes in parentehesis
+    		$ids = "('')";
+    	}else{
+    		$ids .= ')';
     	}
-    	$ids .= ')';
+    	
     	return array('list'=>$idList, 'in'=>$ids);
     }
 
