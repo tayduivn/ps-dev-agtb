@@ -157,7 +157,9 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $curr['name'] = $result->title->getText();
             $curr['date_modified'] = $result->updated->getText();
 
-            $curr['id'] = $this->getIdFromUrl($alternateLink);
+            $fileid=$result->id;
+            $cut = substr($fileid, 63);
+            $curr['id'] = $cut;
 
 
             $results[] = $curr;
