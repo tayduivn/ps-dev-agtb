@@ -32,7 +32,7 @@ global $current_user;
 $dashletData['MyDocumentsDashlet']['searchFields'] = array('date_entered'    => array('default' => ''),
                                                           'document_name'    => array('default' => ''),
                                                           'category_id'      => array('default' => ''),
- 														  'doc_type'  => array('default' => array('Sugar')),
+ 														  'doc_type'  => array('default' => ''),
  														  'status_id'     => array('default' => ''),
  														  'active_date'      => array('default' => ''),
                                                           //BEGIN SUGARCRM flav=pro ONLY
@@ -85,5 +85,20 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
                                                       'team_name' => array('width'   => '15', 
                                                                            'label'   => 'LBL_LIST_TEAM'),
                                                       //END SUGARCRM flav=pro ONLY
+                                                      'FILENAME' => array (
+                                                                    'width' => '20%',
+                                                                    'label' => 'LBL_FILENAME',
+                                                                    'link' => true,
+                                                                    'default' => false,
+                                                                    'bold' => false,
+                                                                    'displayParams' => array ( 'module' => 'Documents', ),
+                                                                    'related_fields' =>
+                                                                    array (
+                                                                        0 => 'document_revision_id',
+                                                                        1 => 'doc_id',
+                                                                        2 => 'doc_type',
+                                                                        3 => 'doc_url',
+                                                                    ),
+                                                                  ),
                                                );
 ?>

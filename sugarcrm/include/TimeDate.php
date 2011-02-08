@@ -977,16 +977,24 @@ class TimeDate
      */
     public function timeSeparator()
     {
-        if (! empty($this->time_separator)) {
-            return $this->time_separator;
+        if (empty($this->time_separator)) {
+            $this->time_separator = $this->timeSeparatorFormat($this->get_time_format());
         }
-        $date = $this->_convert("00:11:22", self::DB_TIME_FORMAT, null, $this->get_time_format(), null);
+        return $this->time_separator;
+    }
+
+    /**
+     * Find out format's time separator
+     * @param string $timeformat Time format
+     */
+    public function timeSeparatorFormat($timeformat)
+    {
+        $date = $this->_convert("00:11:22", self::DB_TIME_FORMAT, null, $timeformat, null);
         if (preg_match('/\d+(.+?)11/', $date, $matches)) {
             $sep = $matches[1];
         } else {
             $sep = ':';
         }
-        $this->time_separator = $sep;
         return $sep;
     }
 
@@ -1167,6 +1175,16 @@ class TimeDate
         return sprintf("%s (GMT%+2d:%02d)%s", str_replace('_',' ', $name), $off/3600, (abs($off)/60)%60, "");//$now->format('I')==1?"(+DST)":"");
 	}
 
+
+	public static function _sortTz($a, $b)
+	{
+	    if($a[0] == $b[0]) {
+            return strcmp($a[1], $b[1]);
+	    } else {
+	        return $a[0]<$b[0]?-1:1;
+	    }
+	}
+
 	/**
 	 * Get list of all timezones in the system
 	 * @return array
@@ -1174,14 +1192,14 @@ class TimeDate
 	public static function getTimezoneList()
 	{
         $now = new DateTime();
-        $zones = array();
+        $res_zones = $zones = array();
 	    foreach(timezone_identifiers_list() as $zoneName) {
             $tz = new DateTimeZone($zoneName);
-	        $zones[$zoneName] = $tz->getOffset($now);
+	        $zones[$zoneName] = array($tz->getOffset($now), self::tzName($zoneName));
 	    }
-	    asort($zones);
-	    foreach($zones as $name => $offset) {
-	        $res_zones[$name] = self::tzName($name);
+	    uasort($zones, array('TimeDate', '_sortTz'));
+	    foreach($zones as $name => $zonedef) {
+	        $res_zones[$name] = $zonedef[1];
 	    }
 	    return $res_zones;
 	}

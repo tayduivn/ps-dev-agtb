@@ -62,9 +62,7 @@ function document_set_return(popup_reply_data)
  	var query = new Array();
  	var query = {"module":"DocumentRevisions","field_list":['id','revision','date_entered'],"conditions":conditions,"order":'date_entered desc'};
     
- 	console.log(query);
- 	
-    //make the call call synchronous for now...
+ 	//make the call call synchronous for now...
     //todo: convert to async, test on mozilla..
     result = global_rpcClient.call_method('query',query,true);
     rhandle.display(result);

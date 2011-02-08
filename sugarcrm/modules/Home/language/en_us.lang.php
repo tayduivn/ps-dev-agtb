@@ -226,6 +226,7 @@ $mod_strings = array (
   'LBL_SOURCE_TCPDF' => 'TCPDF - A PHP class for generating PDF documents.',
   'LBL_SOURCE_CSSMIN' => 'CssMin - A css parser and minifier.',
   'LBL_SOURCE_PHPSAML' => 'PHP-SAML - A simple SAML toolkit for PHP.',
+  'LBL_SOURCE_ISCROLL' => 'iScroll - The overflow:scroll for mobile webkit.  Native scrolling inside a fixed width/height element.',
 
 //BEGIN SUGARCRM flav=dce ONLY
   'LNK_NEW_DCEINSTANCE' => 'Create Instance',

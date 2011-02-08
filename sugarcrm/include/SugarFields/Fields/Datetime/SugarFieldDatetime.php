@@ -115,28 +115,43 @@ class SugarFieldDatetime extends SugarFieldBase {
     {
         global $timedate;
 
-        $format = $settings->dateformat . ' ' . $settings->timeformat;
+        $format = $timedate->merge_date_time($settings->dateformat, $settings->timeformat);
 
         if ( !$timedate->check_matching_format($value, $format) ) {
-            // see if adding a valid time at the end makes it work
-            list($dateformat,$timeformat) = explode(' ',$format);
-            $value .= ' ' . date($timeformat,0);
+            $parts = $timedate->split_date_time($value);
+            if(empty($parts[0])) {
+               $datepart = $timedate->getNow()->format($settings->dateformat);
+            }
+            else {
+               $datepart = $parts[0];
+            }
+            if(empty($parts[1])) {
+                $timepart = $timedate->fromTimestamp(0)->format($settings->timeformat);
+            } else {
+                $timepart = $parts[1];
+                // see if we can get by stripping the seconds
+                if(strpos($settings->timeformat, 's') === false) {
+                    $sep = $timedate->timeSeparatorFormat($settings->timeformat);
+                    // We are assuming here seconds are the last component, which
+                    // is kind of reasonable - no sane time format puts seconds first
+                    $timeparts = explode($sep, $timepart);
+                    if(!empty($timeparts[2])) {
+                        $timepart = join($sep, array($timeparts[0], $timeparts[1]));
+                    }
+                }
+            }
+
+            $value = $timedate->merge_date_time($datepart, $timepart);
             if ( !$timedate->check_matching_format($value, $format) ) {
                 return false;
             }
         }
 
-        if ( !$settings->isValidTimeDate($value, $format) )
+        try {
+            $date = SugarDateTime::createFromFormat($format, $value, new DateTimeZone($settings->timezone));
+        } catch(Exception $e) {
             return false;
-
-        $value = $timedate->swap_formats(
-            $value, $format, $timedate->get_date_time_format());
-        $value = $timedate->handle_offset(
-            $value, $timedate->get_date_time_format(), false, $GLOBALS['current_user'], $settings->timezone);
-        $value = $timedate->swap_formats(
-            $value, $timedate->get_date_time_format(), $timedate->get_db_date_time_format() );
-
-        return $value;
+        }
+        return $date->asDb();
     }
 }
-?>

@@ -44,7 +44,7 @@ class TemplateFloat extends TemplateRange
 
     function get_field_def(){
     	$def = parent::get_field_def();
-		$def['precision'] = !empty($this->ext1) ? $this->ext1 : $this->precision;
+		$def['precision'] = isset($this->ext1) && $this->ext1 != '' ? $this->ext1 : $this->precision;
     	return $def;
     }
 
@@ -88,8 +88,7 @@ class TemplateFloat extends TemplateRange
 	
 	function populateFromRow($row=array()) {
 	   parent::populateFromRow($row);
-	   
-	}
+	}	
 }
 
 ?>

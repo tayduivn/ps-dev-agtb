@@ -140,7 +140,10 @@ class Meeting extends SugarBean {
 		if(isset($this->date_start)
 			&& isset($this->duration_hours)
 			&& isset($this->duration_minutes)) {
-			    $this->date_end = $timedate->fromDb($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+                $dbObj = $timedate->fromDb($this->date_start);
+                if($dbObj){
+			        $this->date_end = $dbObj->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+                }
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
@@ -639,7 +642,7 @@ class Meeting extends SugarBean {
 			$notify_user->retrieve($user_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
@@ -647,7 +650,7 @@ class Meeting extends SugarBean {
 			$notify_user->retrieve($contact_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
         foreach($this->leads_arr as $lead_id) {
@@ -655,7 +658,7 @@ class Meeting extends SugarBean {
 			$notify_user->retrieve($lead_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
 		return $list;
