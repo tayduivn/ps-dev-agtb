@@ -224,6 +224,9 @@ class ViewConvertLead extends SugarView
             }
             $jsOut .= "
             YAHOO.util.Event.onDOMReady(SUGAR.convert.toggle$module);";
+        } else if (isset($viewdef['default_action'])  && $viewdef['default_action'] == "create")
+        {
+             $jsOut .= "\n            SUGAR.convert.{$module}Enabled = true;";
         }
         $jsOut .= "
             YAHOO.util.Event.addListener('new$module', 'click', SUGAR.convert.toggle$module);

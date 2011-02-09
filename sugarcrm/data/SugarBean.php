@@ -3438,6 +3438,13 @@ function save_relationship_changes($is_update, $exclude=array())
 						$where = preg_replace('/'.$data['name'].'/', $db_field, $where);
 					}else{
 						$where = preg_replace('/(^|[\s(])' . $data['name'] . '/', '${1}' . $params['join_table_alias'] . '.'.$data['rname'], $where);
+                        /**
+                         * Bug #39988 - Added the line below. create_export_query_relate_link_patch() in export_utils.php                         
+                         *    generates a where clause that works for stock modules. They all have a                         
+                         *    custom create_export_query function on the bean. However, the Basic() object calls this                         
+                         *    function for it's export_query. So, we have to handle the where clause that comes in.
+                         */
+						$where = preg_replace('/(^|[\s(])join_' . $data['name'] . '/', '${1}' . $params['join_table_alias'], $where);
 					}
     				if(!$table_joined)
     				{
@@ -3737,7 +3744,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
     			$temp->check_date_relationships_load();
     			$temp->fill_in_additional_list_fields();
-				$temp->custom_fields->fill_relationships();
+				if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
 				$temp->call_custom_logic("process_record");
 
     			$list[] = $temp;
@@ -4621,27 +4628,27 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     function build_related_in($query)
     {
-    	$idList = array();
-    	$result = $this->db->query($query, true);
-    	$ids = '';
-    	while($row = $this->db->fetchByAssoc($result))
-    	{
-    		$idList[] = $row['id'];
-    		if(empty($ids))
-    		{
-    			$ids = "('" . $row['id'] . "'";
-    		}
-    		else
-    		{
-    			$ids .= ",'" . $row['id'] . "'";
-    		}
-    	}
-    	if(empty($ids))
-    	{
-    		$ids = '(';
-    	}
-    	$ids .= ')';
-    	return array('list'=>$idList, 'in'=>$ids);
+        $idList = array();
+        $result = $this->db->query($query, true);
+        $ids = '';
+        while($row = $this->db->fetchByAssoc($result))
+        {
+            $idList[] = $row['id'];
+            if(empty($ids))
+            {
+                $ids = "('" . $row['id'] . "'";
+            }
+            else
+            {
+                $ids .= ",'" . $row['id'] . "'";
+            }
+        }
+        if(empty($ids))
+        {
+            $ids = '(';
+        }
+        $ids .= ')';
+        return array('list'=>$idList, 'in'=>$ids);
     }
 
     /**

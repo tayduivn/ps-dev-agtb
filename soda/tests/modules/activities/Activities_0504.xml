@@ -5,6 +5,7 @@
 	<link id="moduleTab_Activities" />
 	<browser assert="Task List" />
 	<link text="Create Task" />
+	<wait timeout="3" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Task_Create_Lib.csv" var="activitiy_record_0504">
 		<textfield id="name" set="{@activitiy_record_0504.name} {@user.name} {@stamp}" />
@@ -39,6 +40,7 @@
 		<textfield name="name" set="{@activitiy_record_0504.team_name}" />
 		<button value="Search" />
 		<link text="{@activitiy_record_0504.team_name}" />
+		<wait timeout="3" />
 
 		<button value="Cancel" alert="true" />
 	</csv>

@@ -27,7 +27,8 @@
 				set="{@contact_record.assistant_phone}"/
 			-->
 			<textfield id="Contacts0emailAddress0" set="{@stamp}{@contact_record.emailAddress0}" />
-			<textfield id="description" set="{@contact_record.description}" />
+			<textfield id="description" click="true" />
+			<wait timeout="2" />
 			<textfield id="description" set="{@contact_record.description}" />
 			<select id="lead_source" set="{@contact_record.lead_source}" />
 			<checkbox id="do_not_call" set="{@contact_record.do_not_call}" />
@@ -44,7 +45,6 @@
 			<textfield id="alt_address_state" set="{@contact_record.alt_address_state}" />
 			<textfield id="alt_address_postalcode" set="{@contact_record.alt_address_postalcode}" />
 			<textfield id="alt_address_country" set="{@contact_record.alt_address_country}" />
-			<checkbox id="alt_checkbox" set="false" />
 
 			<wait timeout="2" />
 			<button value="Save" />

@@ -13,9 +13,7 @@ class SugarTestStudioUtilities
     /*
      * $module_name should be the module name (Contacts, Leads, etc)
      * $view should be the layout (editview, detailview, etc)
-     * $layout_properties should be an array with the layout properties
-     * 
-     * eg - 'Leads', 'EditView', array('name' => 'opportunity_name', 'label' => 'LBL_OPPORTUNITY_NAME')
+     * $field_name should be the name of the field being added
      */
     public static function addFieldToLayout($module_name, $view, $field_name) 
     {

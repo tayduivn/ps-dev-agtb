@@ -98,8 +98,11 @@ class ModuleBuilderParser
 	 */
 	function _writeToFile ($file,$view,$moduleName,$defs,$variables)
 	{
-	        mkdir_recursive(dirname($file));
-            $GLOBALS['log']->debug("ModuleBuilderParser->_writeFile(): file=".$file);
+	        if(file_exists($file))
+	            unlink($file);
+	        
+	        mkdir_recursive ( dirname ( $file ) ) ;
+	        $GLOBALS['log']->debug("ModuleBuilderParser->_writeFile(): file=".$file);
             $useVariables = (count($variables)>0);
             if( $fh = @sugar_fopen( $file, 'w' ) )
             {

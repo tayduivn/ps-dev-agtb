@@ -1,8 +1,6 @@
 <soda>
-	<script
-		file="{@global.scriptsdir}/modules/calendar/module_lib/setup-calendar.xml" />
-	<script fileset="{@global.scriptsdir}/modules/calendar" />
-	<script
-		file="{@global.scriptsdir}/modules/calendar/module_lib/cleanup-calendar.xml" />
+	<script file="tests/modules/calendar/module_lib/setup-calendar.xml" />
+	<script fileset="tests/modules/calendar" />
+	<script file="tests/modules/calendar/module_lib/cleanup-calendar.xml" />
 </soda>
 

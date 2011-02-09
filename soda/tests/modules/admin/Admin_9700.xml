@@ -3,14 +3,17 @@
 
 	<!--Nav to Administration module-->
 	<link href="index.php?module=Administration&amp;action=index" />
+	
 	<!--Nav to Connectors Settings-->
 	<link text="Connectors" />
 	<div class="moduleTitle">
 		<browser assert="Connector Settings" />
 	</div>
+	
 	<!--Nav to Connector Properties Configuration-->
 	<image name="connectorConfig" click="true" />
 	<wait timeout="15" />
+	
 	<!--Click on the "Test Connector" button-->
 	<link text="/Hoovers/" />
 	<wait timeout="15" />

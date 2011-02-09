@@ -1,7 +1,11 @@
 <soda>
-	<!-- Edit Task_Verify that modification of task for case can be canceled in task detail view -->
+   <!-- Edit Task_Verify that modification of task for case can be canceled 
+      in task detail view 
+   -->
+
 	<puts text="Test: Cases_1353.xml starting." />
-	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+   <csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" 
+      var="cases" />
 
 	<!--Create a case record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.xml" />
@@ -26,15 +30,16 @@
 	<timestamp />
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1353.csv" var="Case_1353">
-		<form id="form_SubpanelQuickCreate_Tasks">
+      <div id="form_SubpanelQuickCreate_Tasks_tabs">
 			<textfield id="name" set="{@Case_1353.name} {@user.name} {@stamp}" />
-		</form>
+		</div>
 		<button id="Tasks_subpanel_save_button" />
 
 		<!--modify the Task-->
 		<div id="list_subpanel_activities">
 			<table class="list view">
-				<link text="{@Case_1353.name} {@user.name} {@stamp}" click="false" />
+            <link text="{@Case_1353.name} {@user.name} {@stamp}" 
+               click="false" />
 			</table>
 
 			<link class="listViewTdToolsS1" index="1" />
@@ -44,7 +49,8 @@
 
 		<div id="list_subpanel_activities">
 			<table class="list view">
-				<link text="{@Case_1353.name} {@user.name} {@stamp}" click="false" />
+            <link text="{@Case_1353.name} {@user.name} {@stamp}" 
+               click="false" />
 			</table>
 		</div>
 	</csv>
@@ -52,6 +58,5 @@
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Task_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
-
 	<puts text="Test: Cases_1353.xml finished." />
 </soda>

@@ -5,7 +5,9 @@
 	-->
 	<puts text="Test: Emails_9679.xml starting." />
 	<link id="moduleTab_Emails" />
+	<wait timeout="15" />
 	<button id="composeButton" />
+	<wait timeout="10" />
 	<table id="composeHeaderTable1">
 		<button index="4" />
 	</table>

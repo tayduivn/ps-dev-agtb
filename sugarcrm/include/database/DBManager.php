@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: DBManager.php 56825 2010-06-04 00:09:04Z smalyshev $
+* $Id: DBManager.php 56151 2010-04-28 21:02:22Z jmertic $
 * Description: This file handles the Data base functionality for the application.
 * It acts as the DB abstraction layer for the application. It depends on helper classes
 * which generate the necessary SQL. This sql is then passed to PEAR DB classes.
@@ -203,7 +203,7 @@ abstract class DBManager
                 if ( function_exists('sqlsrv_connect')
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' ))
                     $my_db_helper = 'SqlsrvHelper';
-                elseif (is_freetds() 
+                elseif (is_freetds()
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' ))
                     $my_db_helper = 'FreeTDSHelper';
                 else
@@ -292,7 +292,7 @@ abstract class DBManager
         }
 
         if($monitor = $trackerManager->getMonitor('tracker_queries')){
-        	$monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        	$monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()));	
         	$monitor->setValue('text', $query);
         	$monitor->setValue('sec_total', $this->query_time);
 
@@ -792,6 +792,9 @@ abstract class DBManager
         $sql .=	"/* INDEXES */\n";
         $correctedIndexs = array();
         foreach ($indices as $value) {
+            if (isset($value['source']) && $value['source'] != 'db')
+                continue;
+
             $name = $value['name'];
 
 			//Don't attempt to fix the same index twice in one pass;
@@ -1517,7 +1520,7 @@ abstract class DBManager
         $sql
         )
     {
-		if (++self::$queryCount > self::$queryLimit
+		if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
             &&(empty($GLOBALS['current_user']) || !is_admin($GLOBALS['current_user']))) {
 		   require_once('include/resource/ResourceManager.php');
 		   $resourceManager = ResourceManager::getInstance();
@@ -1641,7 +1644,12 @@ abstract class DBManager
     {
         $GLOBALS['log']->info("Get One: . |$sql|");
         $this->checkConnection();
-        $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        if(!($this instanceof MysqlManager) || stripos($sql, ' LIMIT ') === false) {
+            $queryresult = $this->limitQuery($sql, 0, 1, $dieOnError, $msg);
+        } else {
+            // backward compatibility with queries having LIMIT
+            $queryresult = $this->query($sql, $dieOnError, $msg);
+        }
         if (!$queryresult)
             return false;
 
@@ -1733,7 +1741,7 @@ abstract class DBManager
      * @param  resource $result
      * @param  int      $rowNum optional, specify a certain row to return
      * @param  bool     $encode optional, true if we want html encode the resulting array
-     * @return array
+     * @return array    returns false if there are no more rows available to fetch
      */
     abstract public function fetchByAssoc(
         &$result,
@@ -1954,9 +1962,7 @@ abstract class DBManager
             			break;
             		case '&':
             			$filename = $data[$dataIndex++];
-				        $handle = sugar_fopen($filename, "rb");
-				        $query .= fread($handle, filesize($filename));
-				        fclose($handle);
+				        $query .= sugar_file_get_contents($filename);
             			break;
             		case '!':
             			$query .= $data[$dataIndex++];
