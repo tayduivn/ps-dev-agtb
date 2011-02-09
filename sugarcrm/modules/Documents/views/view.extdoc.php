@@ -49,7 +49,18 @@ class DocumentsViewExtdoc extends SugarView
         }
         
         // $apiName = 'LotusLiveDirect';
-        $apiName = 'LotusLive';
+        if ( !isset($_REQUEST['apiName']) ) {
+            $apiName = 'LotusLive';
+        } else {
+            $apiName = $_REQUEST['apiName'];
+        }
+
+        // See if we are running as a popup window
+        if ( isset($_REQUEST['isPopup']) && $_REQUEST['isPopup'] == 1 && !empty($_REQUEST['elemBaseName']) ) {
+            $isPopup = true;
+        } else {
+            $isPopup = false;
+        }
 
         // Need to manually attempt to fetch the EAPM record, we don't want to give them the signup screen when they just have a deactivated account.
         
@@ -92,6 +103,10 @@ class DocumentsViewExtdoc extends SugarView
                 foreach ( $row as $key => $value ) {
                     $newRow[strtoupper($key)] = $value;
                 }
+                if ( $isPopup ) {
+                    // We are running as a popup window, we need to replace the direct url with some javascript
+                    $newRow['DIRECT_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['DIRECT_URL'])."'); window.close();";
+                }
                 $searchData[] = $newRow;
             }
         }
@@ -109,9 +124,42 @@ class DocumentsViewExtdoc extends SugarView
         );
 
         $ss = new Sugar_Smarty();
+        $ss->assign('searchFieldLabel',translate('LBL_SEARCH_EXTERNAL_DOCUMENT','Documents'));
+        $ss->assign('APP',$GLOBALS['app_strings']);
         $ss->assign('data', $searchData);
         $ss->assign('displayColumns',$displayColumns);
+        $ss->assign('imgPath',SugarThemeRegistry::current()->getImageURL($apiName.'_image_inline.png'));
+
+        if ( $isPopup ) { 
+            $ss->assign('linkTarget','');
+            $ss->assign('isPopup',1);
+            $ss->assign('elemBaseName',$_REQUEST['elemBaseName']);
+        } else {
+            $ss->assign('linkTarget','_new');
+            $ss->assign('isPopup',0);
+            $ss->assign('elemBaseName','');
+        }
+        $ss->assign('apiName',$apiName);
         $ss->assign('DCSEARCH',$file_search);
+
+        if ( $isPopup ) {
+            // Need the popup header... I feel so dirty.
+            ob_start();
+            echo('<div class="dccontent">');
+            insert_popup_header($GLOBALS['theme']);
+            $output_html = ob_get_contents();
+            ob_end_clean();
+            
+            $output_html .= get_form_header(translate('LBL_SEARCH_FORM_TITLE','Documents'), '', false);
+            
+            echo($output_html);
+        }
+
         $ss->display('modules/Documents/tpls/view.extdoc.tpl');
+        
+        if ( $isPopup ) {
+            // Close the dccontent div
+            echo('</div>');
+        }
  	}
 }

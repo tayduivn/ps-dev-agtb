@@ -59,6 +59,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting password',
     'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
   'join_url' =>
   array (
@@ -88,6 +89,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '400',
     'comment' => 'Meeting URL',
     'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
   'creator' =>
   array (
@@ -178,6 +180,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
      'comment' => 'Meeting type (ex: WebEx, Other)',
      'options' => 'eapm_list',
      'default'	=> 'Sugar',
+   	 'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>

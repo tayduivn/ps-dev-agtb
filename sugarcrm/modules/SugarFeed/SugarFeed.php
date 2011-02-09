@@ -245,7 +245,12 @@ class SugarFeed extends Basic {
 		//END SUGARCRM flav=pro ONLY
 		) {
 		$feed = new SugarFeed();
-		if(empty($text) || !$feed->ACLAccess('save', true) )return;
+		if((empty($text) && empty($link_url)) || !$feed->ACLAccess('save', true) )
+		{
+			$GLOBALS['log']->error('Unable to save SugarFeed record (missing data or no ACL access)');
+			return;
+		}
+		
 		if(!empty($link_url)){
             $linkClass = SugarFeed::getLinkClass($link_type);
             if ( $linkClass !== FALSE ) {
