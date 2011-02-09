@@ -150,7 +150,7 @@ if ( empty($_REQUEST['search_form_only']) ) {
         $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
     else
         $params[] = $app_strings['LBL_SEARCH'];
-    echo getClassicModuleTitle("Reports", $params, true);
+    echo getClassicModuleTitle("Reports", $params, false);
 }
 
 include("modules/Reports/ListView.php");

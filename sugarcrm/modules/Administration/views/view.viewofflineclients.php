@@ -134,7 +134,7 @@ class ViewViewofflineclients extends SugarView
                     "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                    $mod_strings['LBL_MANAGE_OFFLINE_CLIENT'],
                    ), 
-                true
+                false
                 );
         echo '<div class="listViewBody">';
         

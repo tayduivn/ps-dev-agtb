@@ -70,7 +70,7 @@ class ViewConfig extends SugarView
         global $sugar_config;
         
         
-        echo $this->getModuleTitle();
+        echo $this->getModuleTitle(false);
         global $currentModule;
         
         
