@@ -344,7 +344,6 @@ var $myFavoritesOnly = false;
         }
     }
 	 function pushUserFeed() {
-	 	$GLOBALS['log']->fatal(var_export($_REQUEST, true));
     	if(!empty($_REQUEST['text']) || (!empty($_REQUEST['link_url']) && !empty($_REQUEST['link_type']))) {
 			$text = htmlspecialchars($_REQUEST['text']);
 			//allow for bold and italic user tags
