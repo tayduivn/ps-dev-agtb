@@ -36,6 +36,9 @@
          set="{@ProductCatalog_Create_Lib.discount_price}" />
       <select id="pricing_formula" 
          set="{@ProductCatalog_Create_Lib.Default_Pricing_Formula}" />
+		 
+	  <wait timeout="5" />
+		 
       <textfield id="description" 
          set="{@ProductCatalog_Create_Lib.description}" />
       <select id="status" set="{@ProductCatalog_Create_Lib.status}" />
