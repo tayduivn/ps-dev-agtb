@@ -18,7 +18,7 @@
             <textfield id="Accounts0emailAddress0" set="{@stamp}{@account_record.emailAddress0}" />
 			<textfield id="description" set="{@account_record.description}" />
             
-            <link id="tab1" />
+            <link id="tab1" required="false" />
             <select id="industry" set="{@account_record.industry}" />
             <select id="account_type" set="{@account_record.account_type}" />
 						            
