@@ -492,7 +492,7 @@ class Meeting extends SugarBean {
 
 		$meeting_fields['JOIN_MEETING']  = '';
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
-			$meeting_fields['JOIN_MEETING']= '&nbsp;<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
+			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
 		}
 
 		return $meeting_fields;
@@ -642,7 +642,7 @@ class Meeting extends SugarBean {
 			$notify_user->retrieve($user_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
@@ -650,7 +650,7 @@ class Meeting extends SugarBean {
 			$notify_user->retrieve($contact_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
         foreach($this->leads_arr as $lead_id) {
@@ -658,7 +658,7 @@ class Meeting extends SugarBean {
 			$notify_user->retrieve($lead_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
 		return $list;

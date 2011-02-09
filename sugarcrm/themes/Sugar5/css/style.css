@@ -3484,7 +3484,7 @@ ul.tablist li a.current:link, ul.tablist li a.current:visited, ul.tablist li a.c
     border-top-color: #abc3d7;
 }
 
-#change_layout, #add_dashlets
+#change_layout
 {
     border: 0;
 }

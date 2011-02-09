@@ -65,17 +65,17 @@ class DocumentsViewExtdoc extends SugarView
 
         $quickCheck = $api->quickCheckLogin();
         if ( ! $quickCheck['success'] ) {
-            $errorMessage = 'LotusLive' . translate('LBL_ERR_FAILED_QUICKCHECK','EAPM');
+            $errorMessage = string_format(translate('LBL_ERR_FAILED_QUICKCHECK','EAPM'), array('LotusLive'));
             $errorMessage .= '<form method="POST" target="_EAPM_CHECK" action="index.php">';
             $errorMessage .= '<input type="hidden" name="module" value="EAPM">';
             $errorMessage .= '<input type="hidden" name="action" value="Save">';
             $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
             $errorMessage .= '<input type="hidden" name="active" value="1">';
             $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
-            
-            $errorMessage .= '<br><button onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;">'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'</button> ';
-            $errorMessage .= '<input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">';
-            
+
+            $errorMessage .= '<br><input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">&nbsp;';
+            $errorMessage .= '<input type="button" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">';
+            $errorMessage .= '</form>';
             echo $errorMessage;
             return;
         }

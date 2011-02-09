@@ -703,8 +703,9 @@ $mod_strings = array(
 //END SUGARCRM flav=pro ONLY
 ,
 //BEGIN SUGARCRM flav=pro ONLY
-'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br>" 
-   . "Fields using formulas will not be calculated in real-time in " 
+'LBL_POPHELP_CALCULATED'=>"Create a formula to determine the value in this field.<br>"
+   . "Workflow definitions containing an action that are set to update this field will no longer execute the action.<br>"
+   . "Fields using formulas will not be calculated in real-time in "
    //BEGIN SUGARCRM flav=ent ONLY
    . "the Sugar Self-Service Portal or " 
    //END SUGARCRM flav=ent ONLY

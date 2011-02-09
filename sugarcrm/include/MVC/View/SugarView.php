@@ -445,15 +445,6 @@ class SugarView
                 if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
                     // We have a default value. Use it
                     if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
-                        // As of 6.1, we shouldn't have a max subtabs higher than 10.
-                        // If it's larger, bring it down to the max and save it in the config override
-                        if($GLOBALS['sugar_config']['default_max_subtabs'] > 10){
-                            require_once('modules/Configurator/Configurator.php');
-                            $configurator = new Configurator();
-                            $configurator->config['default_max_subtabs'] = '10';
-                            $configurator->handleOverride();
-                            $configurator->clearCache();
-                        }
                         $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
                     }
                     else{

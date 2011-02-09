@@ -477,7 +477,7 @@ class Call extends SugarBean
 
 		// Assumes $call dates are in user format
 		$calldate = $timedate->fromDb($call->date_start);
-		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->tzUser($calldate, $call->current_notify_user)->format('T(P)');
+		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->userTimezoneSuffix($calldate, $call->current_notify_user);
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
@@ -594,14 +594,7 @@ class Call extends SugarBean
 
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($this,true));
 		$list = array();
-
-		$notify_user = new User();
-		$notify_user->retrieve($this->assigned_user_id);
-		$notify_user->new_assigned_user_name = $notify_user->full_name;
-		$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-		$list[] = $notify_user;
-
-		if(!is_array($this->contacts_arr)) {
+        if(!is_array($this->contacts_arr)) {
 			$this->contacts_arr =	array();
 		}
 
@@ -618,7 +611,7 @@ class Call extends SugarBean
 			$notify_user->retrieve($user_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
@@ -626,7 +619,7 @@ class Call extends SugarBean
 			$notify_user->retrieve($contact_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
         foreach($this->leads_arr as $lead_id) {
@@ -634,7 +627,7 @@ class Call extends SugarBean
 			$notify_user->retrieve($lead_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($list,true));
 		return $list;

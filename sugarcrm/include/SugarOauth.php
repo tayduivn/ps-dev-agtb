@@ -67,8 +67,12 @@
                 $params = array_merge($params, $query_params);
             }
             $this->setRequestTokenUrl($url);
-            $this->_last = $token = parent::getRequestToken($params);
-            return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
+            try{
+                $this->_last = $token = parent::getRequestToken($params);
+                return array('oauth_token' => $token->getToken(), 'oauth_token_secret' => $token->getTokenSecret());
+            }catch(Zend_Oauth_Exception $e){
+                return array('oauth_token' => '', 'oauth_token_secret' => '');
+            }
         }
 
         public function getAccessToken($url)

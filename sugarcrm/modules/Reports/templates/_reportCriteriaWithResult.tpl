@@ -50,6 +50,7 @@
 <input type="hidden" name="action" value="ReportCriteriaResults">
 <input type="hidden" name="module" value="Reports">
 <input type="hidden" id="record" name="record" value="{$report_id}">
+<input type="hidden" id="id" name="id" value="{$id}">
 <input type="hidden" name='report_def' value ="">
 <input type="hidden" name='save_as' value ="">
 <input type="hidden" name='save_as_report_type' value ="">

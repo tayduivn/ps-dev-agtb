@@ -56,7 +56,7 @@ $viewdefs['Documents']['QuickCreate'] = array(
     ),
     array (
       array('name'=>'filename', 
-            'displayParams'=>array('required'=>true),
+            'displayParams'=>array('required'=>true, 'onchangeSetFileNameTo' => 'document_name'),
             ),
     ),
     
