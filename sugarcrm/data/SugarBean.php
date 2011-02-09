@@ -4638,29 +4638,27 @@ function save_relationship_changes($is_update, $exclude=array())
      */
     function build_related_in($query)
     {
-    	$idList = array();
-    	$result = $this->db->query($query, true);
-    	$ids = '';
-    	while($row = $this->db->fetchByAssoc($result))
-    	{
-    		$idList[] = $row['id'];
-    		if(empty($ids))
-    		{
-    			$ids = "('" . $row['id'] . "'";
-    		}
-    		else
-    		{
-    			$ids .= ",'" . $row['id'] . "'";
-    		}
-    	}
-    	if(empty($ids))
-    	{   //if ids array is empty then pass back db friendly empty single quotes in parentehesis
-    		$ids = "('')";
-    	}else{
-    		$ids .= ')';
-    	}
-    	
-    	return array('list'=>$idList, 'in'=>$ids);
+        $idList = array();
+        $result = $this->db->query($query, true);
+        $ids = '';
+        while($row = $this->db->fetchByAssoc($result))
+        {
+            $idList[] = $row['id'];
+            if(empty($ids))
+            {
+                $ids = "('" . $row['id'] . "'";
+            }
+            else
+            {
+                $ids .= ",'" . $row['id'] . "'";
+            }
+        }
+        if(empty($ids))
+        {
+            $ids = '(';
+        }
+        $ids .= ')';
+        return array('list'=>$idList, 'in'=>$ids);
     }
 
     /**
