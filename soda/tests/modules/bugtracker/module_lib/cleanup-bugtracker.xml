@@ -8,5 +8,8 @@
 	<link text="del" alert="true" />
 	<link text="del" alert="true" />
 	<link text="del" exists="false" />
+
+	<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
+	<browser action="close" />
 </soda>
 
