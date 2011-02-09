@@ -28,7 +28,9 @@
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1407.csv" var="Case_1407">
 		<button name="Activities_create_button" />
 		<wait timeout="16" />
-		<textfield id="name" set="{@Case_1407.name}" />
+      <div id="DEFAULT">
+   		<textfield id="name" set="{@Case_1407.name}" />
+      </div>
 		<button id="Tasks_subpanel_save_button" />
 		<wait timeout="9" />
 	</csv>

@@ -24,7 +24,9 @@
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1371.csv" var="Case_1371">
-		<textfield id="name" set="{@Case_1371.name} {@user.name} {@stamp}" />
+      <div id="DEFAULT">
+   		<textfield id="name" set="{@Case_1371.name} {@user.name} {@stamp}" />
+      </div>
 		<button id="Calls_subpanel_save_button" />
 		<wait timeout="3" />
 	</csv>
