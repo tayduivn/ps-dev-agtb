@@ -37,7 +37,7 @@ class ViewSchedule extends SugarView
         $smarty = new Sugar_Smarty();
         $smarty->assign('MOD',$mod_strings);
         $smarty->assign('APP',$app_strings);
-        $smarty->assign('PAGE_TITLE',getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_SCHEDULE_EMAIL']),''));
+        $smarty->assign('PAGE_TITLE',getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_SCHEDULE_EMAIL']),false));
         $smarty->assign('STYLESHEET',SugarThemeRegistry::current()->getCSS());
         $smarty->assign("CALENDAR_LANG", substr($GLOBALS['current_language'], 0, 2) ) ;
         $smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());

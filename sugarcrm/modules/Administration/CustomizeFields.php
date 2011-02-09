@@ -31,7 +31,7 @@ global $currentModule;
 global $gridline;
 
 
-echo getClassicModuleTitle('Customize Fields', array('Customize Fields'), true);
+echo getClassicModuleTitle('Customize Fields', array('Customize Fields'), false);
 
 ?>
 <table cellspacing="<?php echo $gridline; ?>" class="other view">

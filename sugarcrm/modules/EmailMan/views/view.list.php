@@ -59,6 +59,12 @@ class EmailManViewList extends ViewList
     	   );
     }
     
+    
+    function listViewPrepare(){
+    	$this->options['show_title'] = false;
+    	parent::listViewPrepare();
+    	echo $this->getModuleTitle(false);
+    }
 	/**
 	 * @see ViewList::listViewProcess()
 	 */

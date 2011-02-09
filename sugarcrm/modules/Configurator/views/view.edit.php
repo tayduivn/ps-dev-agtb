@@ -115,7 +115,7 @@ class ConfiguratorViewEdit extends ViewEdit
             $this->ss->assign('filename_suffix', get_select_options_with_id(  SugarLogger::$filename_suffix,''));
         }
         
-        echo $this->getModuleTitle();
+        echo $this->getModuleTitle(false);
         
         $this->ss->display('modules/Configurator/tpls/EditView.tpl');
         

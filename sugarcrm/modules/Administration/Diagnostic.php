@@ -52,7 +52,7 @@ echo getClassicModuleTitle(
             "<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",
            translate('LBL_DIAGNOSTIC_TITLE')
            ), 
-        true
+        false
         );
 
 global $currentModule;

@@ -48,7 +48,7 @@ global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $
 
 $params = array();
 $params[] = $mod_strings['LBL_CREATE_CUSTOM_REPORT'];
-echo getClassicModuleTitle("Reports", $params, true);
+echo getClassicModuleTitle("Reports", $params, false);
 
 $ACLAllowedModules = getACLAllowedModules();
 uksort($ACLAllowedModules,"juliansort");

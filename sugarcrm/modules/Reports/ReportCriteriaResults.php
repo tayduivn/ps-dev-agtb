@@ -221,7 +221,7 @@ if(!empty($args['reporter']->saved_report->id)){
 //END SUGARCRM flav=pro ONLY
 $params[] = "{$args['reporter']->name}&nbsp;{$star}";
     
-echo getClassicModuleTitle("Reports", $params, true);
+echo getClassicModuleTitle("Reports", $params, false);
 
 // show report interface
 if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report') {

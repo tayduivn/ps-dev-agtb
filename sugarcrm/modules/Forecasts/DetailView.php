@@ -53,7 +53,7 @@ $current_timeperiod=null;
 $current_forecastype='Direct';
 
 //output the module header.
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_QC_WORKSHEET_BUTTON']), true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_QC_WORKSHEET_BUTTON']), false);
 $sugar_smarty = new Sugar_Smarty();
 
 //get timperiods.
