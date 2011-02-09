@@ -74,13 +74,13 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                     // We're hiding the "more" element, so we clicked on the "less" element and want to hide stuff
                     moreElem.style.display = '';
                     document.getElementById(elemBaseName + '_less').style.display = 'none';
-                    document.getElementById(elemBaseName + '_remoteName').style.display = 'none';
+                    document.getElementById(elemBaseName + '_remoteNameSpan').style.display = 'none';
                     document.getElementById(elemBaseName + '_file').disabled = false;
                 } else {
                     // We're not hiding the "more" element, so we clicked on the "more" element and want to show stuff
                     moreElem.style.display = 'none';
                     document.getElementById(elemBaseName + '_less').style.display = '';
-                    document.getElementById(elemBaseName + '_remoteName').style.display = '';
+                    document.getElementById(elemBaseName + '_remoteNameSpan').style.display = '';
                     document.getElementById(elemBaseName + '_file').disabled = true;
                 }
             }
@@ -133,6 +133,27 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
 
             document.getElementById(elemBaseName + '_externalApiLabel').onclick = externalSearchToggle;
             showHideFunc();
+        },
+        
+// Select button / popup related functions
+        openPopup: function(elemBaseName) {
+            window.open('index.php?module=Documents&action=extdoc&isPopup=1&elemBaseName='+elemBaseName+'&apiName='+document.getElementById('doc_type').value,'sugarPopup','width=600,height=400,menubar=no,toolbar=no,status=no,resizeable=yes,scrollbars=yes'); 
+        },
+        
+        clearRemote: function(elemBaseName) {
+            document.getElementById('doc_id').value = '';
+            document.getElementById(elemBaseName).value = '';
+            document.getElementById(elemBaseName + '_remoteName').value = '';
+            document.getElementById('doc_url').value = '';
+            document.getElementById('doc_direct_url').value = '';
+        },
+
+        populateFromPopup: function(elemBaseName, docId, docName, docUrl, docDirectUrl) {
+            document.getElementById('doc_id').value = docId;
+            document.getElementById(elemBaseName).value = docId;
+            document.getElementById(elemBaseName + '_remoteName').value = docName;
+            document.getElementById('doc_url').value = docUrl;
+            document.getElementById('doc_direct_url').value = docUrl;
         }
     }
 }

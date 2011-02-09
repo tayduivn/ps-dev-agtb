@@ -29,7 +29,7 @@ if(!ACLController::checkAccess('Calendar', 'list', true)){
 	ACLController::displayNoAccess(true);
 }
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_ACTION']), true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_ACTION']), false);
 
 if ( empty($_REQUEST['view']))
 {

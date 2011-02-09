@@ -40,7 +40,7 @@ echo getClassicModuleTitle(
             "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
            $mod_strings['LBL_MODULE_NAME'],
            ), 
-        true
+        false
         );
 
 if($current_user->is_admin){

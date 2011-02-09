@@ -96,7 +96,7 @@ else
 
 $seedForecast = new Forecast();
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_FORECAST_HISTORY_TITLE']), true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_FORECAST_HISTORY_TITLE']), false);
 
 //START:processing the search form.
 $fcst_timeperiods =  $comm->get_my_forecasted_timeperiods($ws_current_user_id);

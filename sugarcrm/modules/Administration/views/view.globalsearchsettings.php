@@ -52,7 +52,7 @@ class AdministrationViewGlobalsearchsettings extends SugarView
     	global $mod_strings;
     	
         echo '<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr><td colspan="100"><h2>' . $this->getModuleTitle() . 
+		<tr><td colspan="100"><h2>' . $this->getModuleTitle(false) . 
         '</h2></td></tr><tr><td colspan="100">' .
 		$mod_strings['LBL_GLOBAL_SEARCH_SETTINGS_TITLE'] .
 		'</td></tr><tr><td><br></td></tr><tr><td colspan="100">';

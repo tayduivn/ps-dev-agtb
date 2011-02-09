@@ -78,12 +78,14 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		try{
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
                                                             $mimeType,
-                                                            Zend_Gdata_Docs::DOCUMENTS_LIST_FEED_URI);
 
+                                                            Zend_Gdata_Docs::DOCUMENTS_LIST_FEED_URI);
+            $fileid=$newDocumentEntry->id;
+            $cut = substr($fileid, 63);
             // Find the URL of the HTML view of this document.
             $alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
-            $bean->doc_id = $this->getIdFromUrl($alternateLink);
+            $bean->doc_id = $cut;//$this->getIdFromUrl($alternateLink);
             $bean->doc_url = $alternateLink;
             $bean->doc_direct_url = $alternateLink;
             $result['success'] = TRUE;
@@ -157,7 +159,9 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $curr['name'] = $result->title->getText();
             $curr['date_modified'] = $result->updated->getText();
 
-            $curr['id'] = $this->getIdFromUrl($alternateLink);
+            $fileid=$result->id;
+            $cut = substr($fileid, 63);
+            $curr['id'] = $cut;
 
 
             $results[] = $curr;
