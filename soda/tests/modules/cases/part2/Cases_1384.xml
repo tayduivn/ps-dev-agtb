@@ -23,10 +23,13 @@
 	<div id="list_subpanel_history">
 		<button value="  Create Note or Attachment  " />
 	</div>
-	<wait timeout="2" />
+	<wait timeout="3" />
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1384.csv" var="Case_1384">
-		<textfield id="name" set="{@Case_1384.name}" />
+      <div id="DEFAULT">
+   		<textfield id="name" set="{@Case_1384.name}" />
+      </div>
+
 		<button id="Notes_subpanel_save_button" />
 		<wait timeout="2" />
 		<div id="list_subpanel_history">
