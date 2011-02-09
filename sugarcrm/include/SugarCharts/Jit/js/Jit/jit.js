@@ -217,12 +217,16 @@ $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
 	}
 };
 
-$.saveImageFile = function (id,jsonfilename) {
+$.saveImageFile = function (id,jsonfilename,imageExt) {
 	var parts = jsonfilename.split("/");
-	var filename = parts[2].replace(".json",".png");
+	var filename = parts[2].replace(".json","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
-	var strDataURI = oCanvas.toDataURL();  
+	if(imageExt == "jpg") {
+		var strDataURI = oCanvas.toDataURL("image/jpeg"); 
+	} else {
+		var strDataURI = oCanvas.toDataURL("image/png");
+	}
 	var handleFailure = function(o){
 		alert('failed to write image' + filename);
 	}	
@@ -239,11 +243,11 @@ $.saveImageFile = function (id,jsonfilename) {
 	var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 };
 
-$.saveImageTest = function (id,jsonfilename) {
+$.saveImageTest = function (id,jsonfilename,imageExt) {
 		if(typeof FlashCanvas != "undefined") {
-			setTimeout(function(){$.saveImageFile(id,jsonfilename)},10000);
+			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt)},10000);
 		} else {
-			$.saveImageFile(id,jsonfilename);
+			$.saveImageFile(id,jsonfilename,imageExt);
 		}
 	};
 /*

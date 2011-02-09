@@ -38,13 +38,13 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
 	    $xmlFile = get_cache_file_name($this->bean);
 	    $sugarChart = SugarChartFactory::getInstance();
 	    if($sugarChart->supports_image_export) {
-		    $pngFile = $sugarChart->get_png_cache_file_name($xmlFile);
-		    if(file_exists($pngFile)) {
+		    $imageFile = $sugarChart->get_image_cache_file_name($xmlFile,".".$sugarChart->image_export_type);
+		    if(file_exists($imageFile)) {
 		    	$this->AddPage();
-		    	list($width, $height) = getimagesize($pngFile); 
-		    	$pngHeight = ($height >= $width) ? $this->getPageHeight()*.7 : "";
-		    	$pngWidth = ($width >= $width) ? $this->getPageWidth()*.9 : "";
-		    	$this->Image($pngFile,$this->GetX(),$this->GetY(),$pngWidth,$pngHeight,"PNG","","N",false,300,"", false,false,0,true);
+		    	list($width, $height) = getimagesize($imageFile); 
+		    	$imageHeight = ($height >= $width) ? $this->getPageHeight()*.7 : "";
+		    	$imageWidth = ($width >= $width) ? $this->getPageWidth()*.9 : "";
+		    	$this->Image($imageFile,$this->GetX(),$this->GetY(),$imageWidth,$imageHeight,"","","N",false,300,"", false,false,0,true);
 		    	
 		    	if($sugarChart->print_html_legend_pdf) {
 			    	$legend = $sugarChart->buildHTMLLegend($xmlFile);
