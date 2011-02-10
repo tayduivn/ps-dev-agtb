@@ -22,7 +22,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $connector_strings = array (
-    'oauth_consumer_key' => 'OAuth Consumer Key',
-    'oauth_consumer_secret' => 'OAuth Consumer Secret',
+    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">The OAuth Consumer Key and Secret are strings you obtain from Facebook&#169; when you create a new application. To get started go to: <a href=\'http://www.facebook.com/developers/createapp.php\'>http://www.facebook.com/developers/createapp.php</a>.<ol><li>Enter application name this will be what the user\'s see when they authenticate from SugarCRM</li><li>Click on Website and enter: the local url for your sugar instance into "Site Url"</li><li>Save Changes</li><li>Copy the API Key and App Secret to the corresponding fields in Connext Settings.</li></ol></td></tr></table>',
+    'oauth_consumer_key' => 'API Key',
+    'oauth_consumer_secret' => 'App Secret',
 );
 
