@@ -88,4 +88,5 @@ $mod_strings = array (
   'LBL_REAUTHENTICATE_LABEL' => 'Reauthenticate',
   'LBL_REAUTHENTICATE_KEY' => 'a',
   'LBL_APPLICATION_FOUND_NOTICE' => 'An account for this application already exists.  We have just reinstated your previous account.',
+  'LBL_OMIT_URL' => '(Omit http:// or https://)',
 );

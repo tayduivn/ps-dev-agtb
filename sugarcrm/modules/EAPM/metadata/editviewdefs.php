@@ -60,7 +60,7 @@ $viewdefs[$module_name]['EditView'] = array(
     array (
         array('name' => 'url',
               'displayParams' => array('required' => true),
-              'customLabel' => '{$MOD.LBL_URL}<br>(Omit http:// or https://)',
+              'customCode' => '<input type=\'text\' name=\'url\' id=\'url\' size=\'30\' maxlength=\'255\' value=\'\' title=\'\' tabindex=\'104\' ><br>{$MOD.LBL_OMIT_URL}',
             )
     ),
     array (
