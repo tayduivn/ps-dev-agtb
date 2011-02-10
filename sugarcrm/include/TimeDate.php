@@ -1082,7 +1082,7 @@ class TimeDate
 	 */
 	public static function userTimezone(User $user = null)
 	{
-	    $user = $this->_getUser($user);
+	    $user = self::getInstance()->_getUser($user);
 	    if(empty($user)) {
 	        return '';
 	    }
@@ -1139,11 +1139,11 @@ class TimeDate
 	 */
 	public static function userTimezoneSuffix(DateTime $date, User $user = null)
 	{
-	    $user = $this->_getUser($user);
+	    $user = self::getInstance()->_getUser($user);
 	    if(empty($user)) {
 	        return '';
 	    }
-	    $this->tzUser($date, $user);
+	    self::getInstance()->tzUser($date, $user);
 	    return $date->format('T(P)');
 	}
 
