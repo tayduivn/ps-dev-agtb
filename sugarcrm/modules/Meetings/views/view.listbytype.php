@@ -50,6 +50,7 @@ class MeetingsViewListbytype extends ViewList {
             $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
             $errorMessage .= '<input type="hidden" name="active" value="1">';
             $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
+            $errorMessage .= '<input type="hidden" name="refreshParentWindow" value="1">';
 
             $errorMessage .= '<br><input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">&nbsp;';
             $errorMessage .= '<input type="button" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">';
