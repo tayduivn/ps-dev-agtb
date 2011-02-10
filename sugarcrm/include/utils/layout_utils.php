@@ -237,7 +237,8 @@ EOHTML;
 function getClassicModuleTitle(
     $module, 
     $params, 
-    $show_create)
+    $show_create,
+    $index_url_override="")
 {
 	global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
     global $app_strings;
@@ -261,7 +262,8 @@ function getClassicModuleTitle(
         $iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     }
     if (!empty($iconPath)) {
-    	array_unshift ($params,"<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
+    	$url = (!empty($index_url_override)) ? $index_url_override : "index.php?module={$module}&action=index";
+    	array_unshift ($params,"<a href='{$url}'><img src='{$iconPath}' " 
 	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>");
 	}
 	
