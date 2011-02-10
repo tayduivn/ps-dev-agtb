@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+if (!isset($_SESSION['SHOW_DUPLICATES']))
+    sugar_die("Unauthorized access to this area.");
+
 // retrieve $_POST values out of the $_SESSION variable - placed in there by AccountFormBase to avoid the length limitations on URLs implicit with GETS
 //$GLOBALS['log']->debug('ShowDuplicates.php: _POST = '.print_r($_SESSION['SHOW_DUPLICATES'],true));
 parse_str($_SESSION['SHOW_DUPLICATES'],$_POST);
