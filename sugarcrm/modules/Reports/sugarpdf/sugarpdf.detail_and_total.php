@@ -27,9 +27,11 @@ class ReportsSugarpdfDetail_and_total extends ReportsSugarpdfReports
     function display(){
         global $report_modules, $app_list_strings;
         global $mod_strings, $locale;
-    
         $this->bean->run_query();
-    
+        
+        //Create new page
+        $this->AddPage();
+            
         $item = array();
         $header_row = $this->bean->get_header_row('display_columns',false, true);
         $count = 0;
