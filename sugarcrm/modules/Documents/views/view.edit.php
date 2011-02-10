@@ -72,10 +72,8 @@ class DocumentsViewEdit extends ViewEdit
 				$this->ss->assign("DISABLED", "disabled");
 			}
 		} else {
-			global $timedate;
-		    $format = $timedate->get_cal_date_format();
-		    $format = str_replace('%', '', $format);
-		    $this->bean->active_date = $timedate->now();
+	    	$datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
+			$this->bean->active_date = gmdate($datetime_prefs['date']);		    
 			$this->bean->revision = 1;
 		    $this->ss->assign("FILE_OR_HIDDEN", "file");
 		}
