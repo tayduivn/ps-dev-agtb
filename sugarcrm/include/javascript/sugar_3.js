@@ -1731,8 +1731,16 @@ sugarListView.update_count = function(count, add) {
 			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
 				if(add)	{
 					the_form.elements[wp].value = parseInt(the_form.elements[wp].value,10) + count;
+					if (the_form.select_entire_list.value == 1 && the_form.show_plus.value) {
+						the_form.elements[wp].value += '+';
+					}
+				} else {
+					if (the_form.select_entire_list.value == 1 && the_form.show_plus.value) {
+				        the_form.elements[wp].value = count + '+';
+				    } else {
+				        the_form.elements[wp].value = count;
+				    }
 				}
-				else the_form.elements[wp].value = count;
 			}
 		}
 	}

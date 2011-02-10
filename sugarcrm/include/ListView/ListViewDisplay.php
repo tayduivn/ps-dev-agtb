@@ -46,6 +46,7 @@ class ListViewDisplay {
 	var $multiSelect = true;
 	var $mailMerge = true;
 	var $should_process = true;
+	var $show_plus = false;
 	/*
 	 * Used in view.popup.php. Sometimes there are fields on the search form that are not referenced in the listviewdefs. If this
 	 * is the case, then the filterFields will be set and the related fields will not be referenced when calling create_new_list_query.
@@ -256,6 +257,7 @@ class ListViewDisplay {
 		$plus = '';
 		if (!empty($GLOBALS['sugar_config']['disable_count_query']) && $total > $pageTotal) {
 			$plus = '+';
+			$this->show_plus = true;
 		}
 		$script = "<script>
 			function select_overlib() {
@@ -608,7 +610,8 @@ EOF;
 
 		$str .= "<textarea style='display: none' name='uid'>{$uids}</textarea>\n" .
 				"<input type='hidden' name='select_entire_list' value='{$select_entire_list}'>\n".
-				"<input type='hidden' name='{$this->moduleString}' value='0'>\n";
+				"<input type='hidden' name='{$this->moduleString}' value='0'>\n".
+		        "<input type='hidden' name='show_plus' value='{$this->show_plus}'>\n";
 		return $str;
 	}
 
