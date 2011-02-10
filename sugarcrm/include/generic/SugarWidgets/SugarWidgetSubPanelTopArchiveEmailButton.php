@@ -66,7 +66,7 @@ class SugarWidgetSubPanelTopArchiveEmailButton extends SugarWidgetSubPanelTopBut
 			return $button;
 		}
 		$button = $this->_get_form($defines, $additionalFormFields);
-		$button .= "<input id='".preg_replace('[ ]', '', $value)."_button' title='$title' accesskey='$accesskey' class='button' type='submit' name='button' value='  $value  '/>\n";
+		$button .= "<input id='".preg_replace('[ ]', '', $value)."_button' title='$title' accesskey='$accesskey' class='button' type='submit' name='".preg_replace('[ ]', '', $value)."_button' value='  $value  '/>\n";
 		$button .= "</form>";
 		return $button;
 	}
