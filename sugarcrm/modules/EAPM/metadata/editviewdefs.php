@@ -41,6 +41,7 @@ $viewdefs[$module_name]['EditView'] = array(
                                     'customCode' => '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=EditView&module=Users&record={$return_id}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">',
                                   ),
                                 ),
+                                'headerTpl'=>'modules/EAPM/tpls/EditViewHeader.tpl',
                                 'footerTpl'=>'modules/EAPM/tpls/EditViewFooter.tpl',),
                                             ),
 

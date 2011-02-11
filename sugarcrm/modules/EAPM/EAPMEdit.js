@@ -30,6 +30,19 @@ function EAPMChange() {
     urlObj.exec();
     userObj.exec();
     passObj.exec();
+
+    //hide/show new window notice
+    if(apiOpts.authMethod){
+        var messageDiv = document.getElementById('eapm_notice_div');
+        if(apiOpts.authMethod == "oauth"){
+            messageDiv.innerHTML = EAPMOAuthNotice;
+        }else{
+             messageDiv.innerHTML = EAPMBAsicAuthNotice;
+        }
+    }else{
+        var messageDiv = document.getElementById('eapm_notice_div');
+        messageDiv.innerHTML = EAPMBAsicAuthNotice;
+    }
 }
 
 function EAPMSetFieldRequired(fieldName, isRequired) {

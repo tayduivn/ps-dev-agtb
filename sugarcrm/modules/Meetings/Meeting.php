@@ -206,7 +206,6 @@ class Meeting extends SugarBean {
                     }
                 }
             } else {
-                if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
                 SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage']);
                 return $this->id;
             }
