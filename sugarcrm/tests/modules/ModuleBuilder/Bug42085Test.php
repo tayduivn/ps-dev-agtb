@@ -10,6 +10,7 @@ class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function setUp()
 	{
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		$this->meeting = SugarTestMeetingUtilities::createMeeting();	
 		//$this->listLayoutMetaDataParser = new ListLayoutMetaDataParser(MB_LISTVIEW, 'Meetings');
 	}
@@ -17,6 +18,8 @@ class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown()
 	{
 		SugarTestMeetingUtilities::removeAllCreatedMeetings();
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+		unset($GLOBALS['current_user']);
 	}
 	
     public function testHideMeetingType()
