@@ -350,9 +350,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	    	$focus->save(true);
 	    	$return_id = $focus->id;
 	    	if(empty($return_id)){
+                //this is to handle the situation where the save fails, most likely because of a failure
+                //in the external api. bug: 42200
                 $_REQUEST['action'] = 'EditView';
                 $_REQUEST['return_action'] = 'EditView';
-                handleRedirect($return_id, 'Meetings');
+                handleRedirect('', 'Meetings');
             }
 	    	// Process users
 	    	$existing_users = array();
