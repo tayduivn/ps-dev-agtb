@@ -192,7 +192,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 				
 				//save canvas to image for pdf consumption
-				$jit.util.saveImageTest(chartId,jsonFilename);
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 				
 				
 					}
@@ -307,7 +307,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 								
 				//save canvas to image for pdf consumption
-				$jit.util.saveImageTest(chartId,jsonFilename);
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 				}
 			}
 								
@@ -457,7 +457,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				list.innerHTML = table;
 								
 				//save canvas to image for pdf consumption
-				$jit.util.saveImageTest(chartId,jsonFilename);
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 				}
 			}
 						
@@ -581,7 +581,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 								
 				//save canvas to image for pdf consumption
-				$jit.util.saveImageTest(chartId,jsonFilename);
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
 				}
 			}
 								

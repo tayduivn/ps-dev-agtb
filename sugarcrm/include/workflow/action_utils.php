@@ -98,7 +98,7 @@ function process_action_update($focus, $action_array){
 			execute_special_logic($field, $focus);
 		}
 		if($new_value=='Existing Value'){
-			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field], true, $focus->$field);
+			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field], false, true, $focus->$field);
 			execute_special_logic($field, $focus);
 		}
 	}
@@ -146,7 +146,7 @@ function process_action_update_rel(& $focus, $action_array){
 					$rel_object->$field = get_expiry_date(get_field_type($rel_object->field_defs[$field]), $action_array['basic'][$field]);
 				}
 				if($new_value=='Existing Value'){
-					$rel_object->$field = get_expiry_date(get_field_type($rel_object->field_defs[$field]), $action_array['basic'][$field], true, $rel_object->$field);
+					$rel_object->$field = get_expiry_date(get_field_type($rel_object->field_defs[$field]), $action_array['basic'][$field], true, true, $rel_object->$field);
 				}
 			}
 
@@ -364,7 +364,7 @@ function clean_save_data(& $target_module, $action_array){
 						$target_module->object_name == "Meeting"  )
 
 				){
-					$target_module->$field = get_expiry_date(get_field_type($target_module->field_defs[$field]), 0, false);
+					$target_module->$field = get_expiry_date(get_field_type($target_module->field_defs[$field]), 0);
 					if($target_module->field_defs[$field]['type']=='date' && !empty($target_module->field_defs[$field]['rel_field']) ){
 						$rel_field = $target_module->field_defs[$field]['rel_field'];
 						$target_module->$rel_field = get_expiry_date('time', $action_array['basic'][$field]);
@@ -409,52 +409,22 @@ function clean_save_data(& $target_module, $action_array){
 }
 
 
-	function get_expiry_date($stamp_type, $time_interval, $is_update = false, $value=null)
-	{
-		/* This function needs to be combined with the one in WorkFlowSchedule.php
-		Really it should all be moved into the TimeDate stuff. TODO - jgreen.  Contact me
-		with questions.
-		*/
-		global $timedate;
+function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_update = false, $value=null)
+{
+	/* This function needs to be combined with the one in WorkFlowSchedule.php
+	*/
+	global $timedate;
 
-		$format = dbstampformat($stamp_type);
-		if($is_update == false){
-			$date = $timedate->getNow();
-		} else {
-			$date = $timedate->fromDbFormat($value, $format);
-		}
-		$date->modify("+$time_interval seconds");
-
-		//convert stamp and add interval
-		$current_unix_stamp = strtotime($target_stamp);
-		$new_unix_stamp = $time_interval + $current_unix_stamp;
-
-		$newtimestamp = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $new_unix_stamp);
-
-		if(!empty($disable_date_format)){
-			if($stamp_type=="date"){
-				$final_stamp = $timedate->to_display_date($newtimestamp, true);
-			}
-			if($stamp_type=="time"){
-				$final_stamp = $timedate->to_display_time($newtimestamp, true);
-			}
-			if($stamp_type=="datetime" || $stamp_type=="datetimecombo" ){
-				$final_stamp = $timedate->to_display_date_time($newtimestamp, true);
-			}
-		}else{
-			$final_stamp = $newtimestamp;
-		}
-
-		return $final_stamp;
-
+	if($is_update){
+	    if($user_format) {
+	        $date = $timedate->fromUserType($value, $stamp_type);
+	    } else {
+		    $date = $timedate->fromDbType($value, $stamp_type);
+	    }
+	} else {
+	    $date = $timedate->getNow();
+	}
+	$date->modify("+$time_interval seconds");
+    return $timedate->asDbType($date, $stamp_type);
 	//end function get_expiry_date
-	}
-
-
-	function dbstampformat($stamp_type)
-	{
-		if($stamp_type=="date") return $GLOBALS['timedate']->dbDayFormat;
-		if($stamp_type=="time") return $GLOBALS['timedate']->dbTimeFormat;
-		if($stamp_type=="datetime"||$stamp_type=="datetimecombo") return $GLOBALS['timedate']->get_db_date_time_format();
-
-	}
+}

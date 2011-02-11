@@ -22,17 +22,11 @@ Calendar.setup = function (params) {
         Event.on(Dom.get(showButton), "click", function() {
 
             if (!dialog) {
-        
-                function closeHandler() {
-                    dialog.hide();
-                    calendar = null;
-                    dialog = null;
-                }
                              
                 dialog = new YAHOO.widget.SimpleDialog("container", {
                     visible:false,
                     context:[showButton, "tl", "bl"],
-                    buttons:[ {text:SUGAR.language.get('app_strings', 'LBL_CLOSE_BUTTON_LABEL'), handler: closeHandler}],
+                    buttons:[],
                     draggable:false,
                     close:true
                 });

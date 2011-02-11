@@ -40,6 +40,12 @@ if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'U
 //END SUGARCRM flav=sales ONLY
       && ($_REQUEST['record'] != $current_user->id)) sugar_die("Unauthorized access to administration.");
 
+$is_current_admin=is_admin($current_user)
+//BEGIN SUGARCRM flav=sales ONLY
+                ||$current_user->user_type = 'UserAdministrator'
+//END SUGARCRM flav=sales ONLY
+                ||is_admin_for_module($GLOBALS['current_user'],'Users');
+                
 $focus = new User();
 
 $detailView = new DetailView();
@@ -71,7 +77,11 @@ if(isset($_REQUEST['reset_homepage'])){
 
 $params = array();
 $params[] = $locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
-echo getClassicModuleTitle("Users", $params, true);
+
+$index_url = ($is_current_admin) ? "index.php?module=Users&action=index" : "index.php?module=Users&action=DetailView&record={$focus->id}"; 
+
+
+echo getClassicModuleTitle("Users", $params, true,$index_url);
 
 global $app_list_strings;
 

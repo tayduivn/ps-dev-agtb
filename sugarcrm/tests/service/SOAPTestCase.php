@@ -15,6 +15,12 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function setUp()
     {
+        $beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+		
         $this->_soapClient = new nusoapclient($this->_soapURL,false,false,false,false,false,600,600);
         $this->_setupTestUser();
         parent::setUp();
@@ -29,6 +35,9 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
         $this->_tearDownTestUser();
         $this->_user = null;
         $this->_sessionId = '';
+        
+		unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
         parent::tearDown();
     }
 

@@ -101,6 +101,7 @@ class JsChart extends SugarChart {
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
 			$chartConfig[$key] = $value;
 		}
+		$chartConfig['imageExportType'] = $this->image_export_type;
 		$this->ss->assign("config", $chartConfig);
 		if($json == "No Data") {
 			$this->ss->assign("error", "No Data");
@@ -170,6 +171,7 @@ class JsChart extends SugarChart {
 			foreach($params as $key => $value) {
 				$chartConfig[$key] = $value;
 			}
+			$chartConfig['imageExportType'] = $this->image_export_type;
 			$customChartsArray[$id]['chartConfig'] = $chartConfig;
 		}
 
@@ -632,8 +634,8 @@ class JsChart extends SugarChart {
 		return true;
 	}
 
-	function get_png_cache_file_name ($xmlFile) {
-		$filename = str_replace("/xml/","/images/",str_replace(".xml",".png",$xmlFile));
+	function get_image_cache_file_name ($xmlFile,$ext = ".png") {
+		$filename = str_replace("/xml/","/images/",str_replace(".xml",$ext,$xmlFile));
 		
 		return $filename;
 	}
