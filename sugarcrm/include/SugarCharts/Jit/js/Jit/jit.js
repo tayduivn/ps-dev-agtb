@@ -119,7 +119,7 @@ function pad(number, length) {
    
     return str;
 
-}
+};
 
 var Url = {
  
@@ -191,7 +191,7 @@ var Url = {
 		return string;
 	}
  
-}
+};
 
 Array.prototype.sum = function() {
   return (! this.length) ? 0 : this.slice(1).sum() +
@@ -217,7 +217,39 @@ $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
 	}
 };
 
+$.saveImageFile = function (id,jsonfilename,imageExt) {
+	var parts = jsonfilename.split("/");
+	var filename = parts[2].replace(".json","."+imageExt);
+	var oCanvas = document.getElementById(id+"-canvas");
+	
+	if(imageExt == "jpg") {
+		var strDataURI = oCanvas.toDataURL("image/jpeg"); 
+	} else {
+		var strDataURI = oCanvas.toDataURL("image/png");
+	}
+	var handleFailure = function(o){
+		alert('failed to write image' + filename);
+	}	
+	var handleSuccess = function(o){
+	}			
+	var callback =
+	{
+	  success:handleSuccess,
+	  failure:handleFailure,
+	  argument: { foo:'foo', bar:''}
+	};
+	var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+	var postData = "imageStr=" + strDataURI + "&filename=" + filename;
+	var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
+};
 
+$.saveImageTest = function (id,jsonfilename,imageExt) {
+		if(typeof FlashCanvas != "undefined") {
+			setTimeout(function(){$.saveImageFile(id,jsonfilename,imageExt)},10000);
+		} else {
+			$.saveImageFile(id,jsonfilename,imageExt);
+		}
+	};
 /*
   Method: extend
   
@@ -2845,7 +2877,7 @@ var Canvas;
       }
     }
     if (tag == "canvas" && !supportsCanvas && G_vmlCanvasManager) {
-      elem = G_vmlCanvasManager.initElement(document.body.appendChild(elem));
+      elem = G_vmlCanvasManager.initElement(elem);
     }
     return elem;
   }
@@ -3318,7 +3350,7 @@ var Canvas;
 		  lingrad.addColorStop(0, conf.colorStop1);
 		  lingrad.addColorStop(1, conf.colorStop2);
 		  ctx.fillStyle = lingrad;
-		  ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+		  ctx.fillRect(-size.width/2 + 100,-size.height/2,size.width,size.height);
       //TODO(nico): print labels too!
     }
   });
@@ -12285,8 +12317,10 @@ $jit.ST.Plot.NodeTypes.implement({
 	if(label.type == 'Native') {      
        if(showLabels(node.name, valAcum, node)) {
        		 ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
-       	     mV = ctx.measureText(stringArray[i]);
-             mVL = ctx.measureText(valuelabelArray[i]);
+       		 var stringValue = stringArray[i];
+       		 var valueLabel = String(valuelabelArray[i]);
+       	     var mV = ctx.measureText(stringValue);
+             var mVL = ctx.measureText(valueLabel);
           	 var previousElementHeight = (i > 0) ? dimArray[i - 1] : 100;
 		 	 var labelOffsetHeight = (previousElementHeight < label.size && i > 0) ? ((dimArray[i] > label.size) ? (dimArray[i]/2) - (label.size/2) : label.size) : 0;
 		  	 var topWidth = minWidth + ((acum + dimArray[i]) * ratio);
@@ -12324,8 +12358,10 @@ $jit.ST.Plot.NodeTypes.implement({
           ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
 		  	  var colori = colorArray[i % colorLength];
 		  	  if(label.type == 'Native') { 
-			      var mV = ctx.measureText(stringArray[i]);
-	              var mVL = ctx.measureText(valuelabelArray[i]);
+		  	  	  var stringValue = stringArray[i];
+       		 	  var valueLabel = String(valuelabelArray[i]);
+			      var mV = ctx.measureText(stringValue);
+	              var mVL = ctx.measureText(valueLabel);
 		  	  } else {
 		  	  	  var mV = 10;
 	              var mVL = 10;	
@@ -12825,7 +12861,9 @@ $jit.FunnelChart = new Class({
 	if(!animate && subtitle.text) {
 		this.renderSubtitle();
 	}
-	this.renderDropShadow();
+	if(typeof FlashCanvas == "undefined") {
+		this.renderDropShadow();
+	}
     st.compute();
     st.select(st.root);
     if(animate) {
@@ -14224,7 +14262,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           polar.theta = begin;
           var p4coord = polar.getc(true);
           
-          if(label.type == 'Native') {
+          if(typeof FlashCanvas == "undefined") {
 	          //drop shadow
 	          ctx.beginPath();
 	          ctx.fillStyle = "rgba(0,0,0,.2)";

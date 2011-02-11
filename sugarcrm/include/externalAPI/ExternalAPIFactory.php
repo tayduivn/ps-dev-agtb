@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/connectors/utils/ConnectorUtils.php');
+require_once('include/connectors/sources/SourceFactory.php');
 /**
  * Provides a factory to list, discover and create external API calls
  *
@@ -40,9 +41,20 @@ class ExternalAPIFactory
         foreach($apiFullList as $name => $data) {
             if(isset($data['connector'])) {
                 if(ConnectorUtils::eapmEnabled($data['connector'])) {
-                    $filteredList[$name] = $data;
+                     if(isset($data['authMethod']) && $data['authMethod'] == 'oauth'){
+                        $connector = SourceFactory::getSource($data['connector'], false);
+                        if(!empty($connector)) {
+                            $key = $connector->getProperty('oauth_consumer_key');
+                            $secret = $connector->getProperty('oauth_consumer_secret');
+                            if(!empty($key) && !empty($secret)){
+                                $filteredList[$name] = $data;
+                            }
+                        }
+                     }else{
+                        $filteredList[$name] = $data;
+                     }
                 }
-            } else {
+            }else {
                 $filteredList[$name] = $data;
             }
         }
@@ -94,7 +106,7 @@ class ExternalAPIFactory
             }
         }
 
-        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions','connector');
+        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions','connector', 'oauthParams');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {
@@ -104,6 +116,7 @@ class ExternalAPIFactory
             $apiClass = new $className();
             foreach ( $optionList as $opt ) {
                 if ( isset($apiClass->$opt) ) {
+                    print_r($apiClass->$opt);
                     $apiFullList[$apiName][$opt] = $apiClass->$opt;
                 }
             }

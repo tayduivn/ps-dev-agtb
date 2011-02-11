@@ -53,7 +53,7 @@ switch ($_REQUEST['view']) {
                 "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                $mod_strings['LBL_SUPPORT_TITLE'],
                ), 
-            true
+            false
             );
         
         $sugar_smarty = new Sugar_Smarty();

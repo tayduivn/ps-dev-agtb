@@ -51,7 +51,7 @@ class ViewConnectorSettings extends SugarView
     {
 		global $mod_strings, $app_strings;
 		
-		echo $this->getModuleTitle();
+		echo $this->getModuleTitle(false);
 		
 		$this->ss->assign('mod', $mod_strings);
 		$this->ss->assign('app', $app_strings);

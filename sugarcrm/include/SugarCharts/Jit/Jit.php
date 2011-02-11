@@ -32,6 +32,9 @@ require_once("include/SugarCharts/JsChart.php");
 
 class Jit extends JsChart {
 	
+	var $supports_image_export = true;
+	var $print_html_legend_pdf = true;
+	
 	function __construct() {
 		parent::__construct();
 	}
@@ -39,7 +42,9 @@ class Jit extends JsChart {
 	function getChartResources() {
 		return '
 		<link type="text/css" href="'.getJSPath('include/SugarCharts/Jit/css/base.css').'" rel="stylesheet" />
-		<!--[if IE]><script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/js/Jit/Extras/excanvas.js').'"></script><![endif]-->
+		<!--[if lt IE 9]>
+		<script type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/FlashCanvas/flashcanvas.js').'"></script>
+		<![endif]-->
 		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/js/Jit/jit.js').'"></script>
 		<script language="javascript" type="text/javascript" src="'.getJSPath('include/SugarCharts/Jit/js/sugarCharts.js').'"></script>
 		';

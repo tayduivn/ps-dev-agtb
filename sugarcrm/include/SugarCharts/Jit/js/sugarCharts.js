@@ -39,15 +39,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
 				  //I'm setting this based on the fact that ExCanvas provides text support for IE
 				  //and that as of today iPhone/iPad current text support is lame
-				  labelType = (nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
+				  labelType = (!iStuff) ? 'Native' : 'HTML';
 				  nativeTextSupport = labelType == 'Native';
 				  useGradients = nativeCanvasSupport;
 				  animate = !(iStuff || !nativeCanvasSupport);
 				})();
-			var handleUrl = function(loc) {
-				alert(loc);
-				window.location.href=loc;
-			}
 
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -70,7 +66,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: true,
+				  background: false,
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  shadow: {
@@ -194,8 +190,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					table += "</table>";
 				list.innerHTML = table;
 				
+				
+				//save canvas to image for pdf consumption
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				
+				
 					}
-						}
+				}
 						
 				var callback =
 				{
@@ -229,7 +230,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: true,
+				  background: false,
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',	
 				  labelType: properties['labels'],
@@ -304,9 +305,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					table += "</table>";
 				list.innerHTML = table;
 				
-				
-							}
-								}
+								
+				//save canvas to image for pdf consumption
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				}
+			}
 								
 				var callback =
 				{
@@ -341,7 +344,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: true,
+				  background: false,
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',	
 				  //orientation setting should not be changed
@@ -452,9 +455,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 					table += "</table>";
 				list.innerHTML = table;
-				
-					}
-						}
+								
+				//save canvas to image for pdf consumption
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				}
+			}
 						
 				var callback =
 				{
@@ -488,7 +493,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: true,
+				  background: false,
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  labelType: properties['labels'],
@@ -574,9 +579,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					table += "</table>";
 				list.innerHTML = table;
 				
-				
-							}
-								}
+								
+				//save canvas to image for pdf consumption
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				}
+			}
 								
 				var callback =
 				{

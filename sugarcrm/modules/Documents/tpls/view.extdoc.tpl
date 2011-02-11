@@ -44,20 +44,23 @@ failure: function(o) {
 window.history.go(0);
 }
 };
-
-YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents&action=extdoc&button=Search&name_basic="+document.getElementById('dcSearch').value);
-
+{/literal}
+YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents&action=extdoc&isPopup={$isPopup}&elemBaseName={$elemBaseName}&apiName={$apiName}&button=Search&name_basic="+document.getElementById('dcSearch').value);
+{literal}
 }
 {/literal}
 </script>
 <form id="dcSearchForm">
 <table class='dcSearch' cellpadding='0' cellspacing='0'>
 			<tr>
+              <td>
+                <b>{$searchFieldLabel}:</b>
+              </td>
 			<td>
 			<input type='text' id='dcSearch' name='dcSearch' value="{$DCSEARCH}">
 			</td>
 			<td>
-			<input type='submit' name='submit' class='dcSubmit' value='Search Documents' onclick="submitListViewDCMenu(this); return false;">
+			<input type='submit' name='submit' class='dcSubmit' value='{$APP.LBL_SEARCH}' onclick="submitListViewDCMenu(this); return false;">
 			</td>
 			</tr>
 		</table>
@@ -91,7 +94,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
           <td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
             {if $col == 'NAME' || $params.bold}<b>{/if}
             {if $params.link && !empty($rowData.DIRECT_URL) }
-              <a href="{$rowData.DIRECT_URL}" target="_new">
+              <a href="{$rowData.DIRECT_URL}" target="{$linkTarget}">
             {/if}
             {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
             {if empty($rowData.$col)}&nbsp;{/if}
@@ -99,7 +102,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
               </a>
             {/if}
             {if $params.link && !empty($rowData.URL) }
-              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file="LotusLive_image_inline.png"}" border="0"></a>
+              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{$imgPath}" border="0"></a>
             {/if}
             {if $col == 'NAME' || $params.bold}</b>{/if}
           </td>

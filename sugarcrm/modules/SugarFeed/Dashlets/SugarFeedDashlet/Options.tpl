@@ -150,9 +150,18 @@ function hideExternalDiv(id)
 function promptAuthentication()
 {
     //This is how we know that not all external API links were authenticated
+{/literal}
+     categoryElement = YAHOO.util.Dom.get('categories_{$id}');  
+{literal} 
+    //Only check for prompt warning if the 'ALL' option was selected
+    if(categoryElement.options[categoryElement.selectedIndex].value != 'ALL')
+    {
+       return;
+    }
+    
 	if(authenticatedExternalApiList.length < externalApiList.length)
 	{
-{/literal}	
+{/literal}
 		if(!confirm("{$autenticationPendingLBL}")) 
 {literal}		
 		{

@@ -158,6 +158,7 @@ $mod_strings = array (
     'LBL_DOC_TYPE_POPUP' => 'Select a source to which this document will be uploaded<br> and from which it will be available.',
 	'LBL_DOC_URL' => 'Document Source URL',
 	'LBL_DOC_DIRECT_URL' => 'Document Download URL',
+    'LBL_SEARCH_EXTERNAL_DOCUMENT' => 'Document Name',
 
     // Links around the world
     'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Accounts',

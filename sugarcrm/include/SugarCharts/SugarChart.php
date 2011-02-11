@@ -45,6 +45,9 @@ class SugarChart {
 	var $currency_symbol;
 	var $thousands_symbol;
 	var $is_currency;
+	var $supports_image_export = false;
+	var $print_html_legend_pdf = false;
+	var $image_export_type = "";
 	
 	public function __construct() {
 		$this->db = &DBManagerFactory::getInstance();
@@ -69,6 +72,7 @@ class SugarChart {
 			$this->div = 1;
 			$this->is_currency = false;
         }
+        $this->image_export_type = (extension_loaded('gd') && function_exists('gd_info')) ? "png" : "jpg";
 	}
 	
 	function getData($query){

@@ -2261,7 +2261,6 @@ $app_strings = array (
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
-    'LBL_CLOSE_BUTTON_TITLE' => 'Close',
     'LBL_CLOSE_BUTTON_KEY' => 'C',
     'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
@@ -3035,6 +3034,11 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
+    
+    //Calendar widget labels
+    'LBL_CHOOSE_MONTH' => 'Choose Month',
+    'LBL_ENTER_YEAR' => 'Enter Year',
+    'LBL_ENTER_VALID_YEAR' => 'Please enter a valid year',
 
     //SugarFieldPhone labels
     'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter a numeric U.S. phone number, including area code.',
@@ -3800,7 +3804,7 @@ $app_list_strings['kbdocument_status_dom'] = array (
   	'WebEx'=>'WebEx',
   	'GoToMeeting'=>'GoToMeeting',
   	'LotusLive'=>'LotusLive',
-  	'Google' => 'Google Document',
+  	'Google' => 'Google Docs',
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',
     'Twitter'=>'Twitter',

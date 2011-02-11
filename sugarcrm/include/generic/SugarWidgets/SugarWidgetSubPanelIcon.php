@@ -118,7 +118,7 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
  
             if ( !empty($imagePath) ) {
                 $icon_img_html = SugarThemeRegistry::current()->getImage( $imagePath . '', 'border="0" alt="' . $imagePath . '"');
-                $ret.= (empty($link_url)) ? '' : '<a href="' . $link_url. '" TARGET = "_blank">' . "$icon_img_html</a>";	
+                $ret.= (empty($link_url)) ? '' : '&nbsp;<a href="' . $link_url. '" TARGET = "_blank">' . "$icon_img_html</a>";
             }
         }
 //if requested, add attachement icon.
