@@ -177,6 +177,9 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
 
+	if (field.children.length == 1 && field.children[0].tagName.toLowerCase() == "input")
+		field = field.children[0];
+
 	// special select case for IE6 and dropdowns
 	if ( field.tagName.toLowerCase() == "select" ) {
 		if(field.selectedIndex == -1) {
@@ -188,7 +191,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 
 	//checkboxes need to return a boolean value
 	if(field.tagName.toLowerCase() == "input" && field.type.toLowerCase() == "checkbox") {
-		return field.checked?SUGAR.expressions.Expression.TRUE:SUGAR.expressions.Expression.FALSE;
+		return field.checked ? SUGAR.expressions.Expression.TRUE : SUGAR.expressions.Expression.FALSE;
 	}
 
 	//Special case for dates
