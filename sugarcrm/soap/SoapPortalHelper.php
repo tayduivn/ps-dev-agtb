@@ -305,7 +305,11 @@ function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $l
         if(empty($in)  || $in =='()' || $in =="('')"){
             $in = '';
             //build the query to pass into the template list function
-            $q = 'select id from '.$template->table_name.' where deleted = 0 and '.$where;
+             $q = 'select id from '.$template->table_name.' where deleted = 0 ';
+        	//add where statement if it is not empty
+			if(!empty($where)){
+				$q .= ' and '.$where;
+			}
         }
         
         return $template->build_related_list_where($q, $template, $where, $in, $order_by, $limit, $row_offset);
