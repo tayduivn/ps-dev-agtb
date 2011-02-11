@@ -349,7 +349,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	    	// the users and contacts relationships
 	    	$focus->save(true);
 	    	$return_id = $focus->id;
-	    	
+	    	if(empty($return_id)){
+                $_REQUEST['action'] = 'EditView';
+                $_REQUEST['return_action'] = 'EditView';
+                handleRedirect($return_id, 'Meetings');
+            }
 	    	// Process users
 	    	$existing_users = array();
 	    	if(!empty($_POST['existing_invitees'])) {
