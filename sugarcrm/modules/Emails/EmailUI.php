@@ -357,12 +357,10 @@ eoq;
     function generateComposePackageForQuickCreate($composeData,$fullLinkUrl)
     {
         $_REQUEST['forQuickCreate'] = true;
-    	require_once('modules/Emails/Compose.php');
-    	$composePackage = generateComposeDataPackage($composeData,FALSE);
 
     	//JSON object is passed into the function defined within the a href onclick event
     	//which is delimeted by '.  Need to escape all single quotes, every other char is valid.
-    	foreach ($composePackage as $key => $singleCompose)
+    	foreach ($composeData as $key => $singleCompose)
     	{
     	   if (is_string($singleCompose))
     	       $composePackage[$key] = str_replace("'","&#039;",$singleCompose);
