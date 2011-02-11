@@ -1,5 +1,5 @@
 <soda>
-    <puts text="---User_0593:remove team from user---Start!"/>
+    <puts text="Test: User_0593.xml starting."/>
     <!--goto Admin-->
     <div id='globalLinks'>
         <link text='Admin'/>
@@ -20,8 +20,9 @@
         <table class='list view'>
             <link text='Administrator' click='false'/>
         </table>
+		<wait timeout="5" />
         <link class='listViewTdToolsS1' index='1' alert='true'/>
-		<wait/>
+		<wait timeout="5" />
         <link text='Administrator' click='false' exist='false'/>
     </div>    
     <!--restore:add removed user-->
