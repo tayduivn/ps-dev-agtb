@@ -424,6 +424,27 @@ class TimeDate
     }
 
     /**
+     * Format date as DB-formatted field type
+     * @param DateTime $date
+     * @param string $type Field type - date, time, datetime[combo]
+     */
+    public function asDbType(DateTime $date, $type)
+    {
+        switch($type) {
+            case "date":
+                return $this->asDbDate($date);
+                break;
+            case 'time':
+                return $this->asDbtime($date);
+                break;
+            case 'datetime':
+            case 'datetimecombo':
+            default:
+                return $this->asDb($date);
+        }
+    }
+
+    /**
      * Format DateTime object as user datetime
      *
      * @param DateTime $date
@@ -436,6 +457,27 @@ class TimeDate
     }
 
     /**
+     * Format date as user-formatted field type
+     * @param DateTime $date
+     * @param string $type Field type - date, time, datetime[combo]
+     */
+    public function asUserType(DateTime $date, $type, User $user = null)
+    {
+        switch($type) {
+            case "date":
+                return $this->asUserDate($date, true, $user);
+                break;
+            case 'time':
+                return $this->asUserTime($date, true, $user);
+                break;
+            case 'datetime':
+            case 'datetimecombo':
+            default:
+                return $this->asUser($date, $user);
+        }
+    }
+
+    /**
      * Produce timestamp offset by user's timezone
      *
      * So if somebody converts it to format assuming GMT, it would actually display user's time.
@@ -444,9 +486,9 @@ class TimeDate
      * @param DateTime $date
      * @return int
      */
-    public function asUserTs(DateTime $date)
+    public function asUserTs(DateTime $date, User $user = null)
     {
-        return $date->format('U')+$this->_getUserTZ()->getOffset($date);
+        return $date->format('U')+$this->_getUserTZ($user)->getOffset($date);
     }
 
     /**
@@ -469,10 +511,10 @@ class TimeDate
      * @param boolean $tz Perform TZ conversion?
      * @return string
      */
-    public function asUserDate(DateTime $date, $tz = false)
+    public function asUserDate(DateTime $date, $tz = false, User $user = null)
     {
-        if($tz) $this->tzUser($date);
-        return $date->format($this->get_date_format());
+        if($tz) $this->tzUser($date, $user);
+        return $date->format($this->get_date_format($user));
     }
 
     /**
@@ -493,10 +535,10 @@ class TimeDate
      * @param DateTime $date
      * @return string
      */
-    public function asUserTime(DateTime $date)
+    public function asUserTime(DateTime $date, User $user = null)
     {
-        $this->tzUser($date);
-        return $date->format($this->get_time_format());
+        $this->tzUser($date, $user);
+        return $date->format($this->get_time_format($user));
     }
 
     /**
@@ -512,6 +554,29 @@ class TimeDate
         } catch (Exception $e) {
             $GLOBALS['log']->error("fromDb: Conversion of $date from DB format failed: {$e->getMessage()}");
             return null;
+        }
+    }
+
+    /**
+     * Create a date from a certain type of field in DB format
+     * The types are: date, time, datatime[combo]
+     * @param string $date the datetime string
+     * @param string $type string type
+     * @return SugarDateTime
+     */
+    public function fromDbType($date, $type)
+    {
+        switch($type) {
+            case "date":
+                return $this->fromDbDate($date);
+                break;
+            case 'time':
+                return $this->fromDbFormat($date, self::DB_TIME_FORMAT);
+                break;
+            case 'datetime':
+            case 'datetimecombo':
+            default:
+                return $this->fromDb($date);
         }
     }
 
@@ -564,6 +629,30 @@ class TimeDate
             $uf = $this->get_date_time_format($user);
             $GLOBALS['log']->error("fromUser: Conversion of $date from user format $uf failed: {$e->getMessage()}");
             return null;
+        }
+    }
+
+    /**
+     * Create a date from a certain type of field in user format
+     * The types are: date, time, datatime[combo]
+     * @param string $date the datetime string
+     * @param string $type string type
+     * @param User $user
+     * @return SugarDateTime
+     */
+    public function fromUserType($date, $type, $user = null)
+    {
+        switch($type) {
+            case "date":
+                return $this->fromUserDate($date, $user);
+                break;
+            case 'time':
+                return $this->fromUserTime($date, $user);
+                break;
+            case 'datetime':
+            case 'datetimecombo':
+            default:
+                return $this->fromUser($date, $user);
         }
     }
 
@@ -1082,7 +1171,7 @@ class TimeDate
 	 */
 	public static function userTimezone(User $user = null)
 	{
-	    $user = $this->_getUser($user);
+	    $user = self::getInstance()->_getUser($user);
 	    if(empty($user)) {
 	        return '';
 	    }
@@ -1139,11 +1228,11 @@ class TimeDate
 	 */
 	public static function userTimezoneSuffix(DateTime $date, User $user = null)
 	{
-	    $user = $this->_getUser($user);
+	    $user = self::getInstance()->_getUser($user);
 	    if(empty($user)) {
 	        return '';
 	    }
-	    $this->tzUser($date, $user);
+	    self::getInstance()->tzUser($date, $user);
 	    return $date->format('T(P)');
 	}
 

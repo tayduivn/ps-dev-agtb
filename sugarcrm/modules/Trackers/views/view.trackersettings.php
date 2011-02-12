@@ -97,7 +97,7 @@ class TrackersViewTrackersettings extends SugarView
                     "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                     translate('LBL_TRACKER_SETTINGS','Administration'),
                     ), 
-                true
+                false
                 );
         
         $trackerManager = TrackerManager::getInstance();

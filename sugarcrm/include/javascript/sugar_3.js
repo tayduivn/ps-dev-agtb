@@ -283,9 +283,11 @@ function addToValidateUSAPhone(formname, name, type, required, msg) {
 //END SUGARCRM flav=int ONLY
 
 function removeFromValidate(formname, name) {
-	for(i = 0; i < validate[formname].length; i++){
-		if(validate[formname][i][nameIndex] == name){
-			validate[formname].splice(i, 1);
+	for(i = 0; i < validate[formname].length; i++)
+	{
+		if(validate[formname][i][nameIndex] == name)
+		{
+			validate[formname].splice(i--,1); // We subtract 1 from i since the slice removed an element, and we'll skip over the next item we scan
 		}
 	}
 }

@@ -59,7 +59,7 @@ echo getClassicModuleTitle(
             "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
            $mod_strings['LBL_SUGAR_UPDATE_TITLE'],
            ), 
-        true
+        false
         );
 
 if (get_sugarbeat()) $xtpl->assign("SEND_STAT_CHECKED", "checked");

@@ -88,4 +88,8 @@ $mod_strings = array (
   'LBL_REAUTHENTICATE_LABEL' => 'Reauthenticate',
   'LBL_REAUTHENTICATE_KEY' => 'a',
   'LBL_APPLICATION_FOUND_NOTICE' => 'An account for this application already exists.  We have just reinstated your previous account.',
+  'LBL_OMIT_URL' => '(Omit http:// or https://)',
+  'LBL_OAUTH_SAVE_NOTICE' => 'Click Save to create the external account record. You will be directed to a page to enter your account information to authorize access by Sugar. After entering your account information, you will be directed back to Sugar.',
+  'LBL_BASIC_SAVE_NOTICE' => 'Click Save to create the external account record. SugarCRM will then verify your credentials.',
+
 );

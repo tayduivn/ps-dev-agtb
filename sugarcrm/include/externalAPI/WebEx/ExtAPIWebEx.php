@@ -123,6 +123,9 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
             $join_reply = $this->joinMeeting($bean,$GLOBALS['current_user']->full_name);
             $xp = new DOMXPath($join_reply['responseXML']);
             $bean->join_url = $xp->query('/serv:message/serv:body/serv:bodyContent/meet:joinMeetingURL')->item(0)->nodeValue;
+            // Strip out the name parts of the join URL, make them type them in. Since we are storing the join_url per meeting
+            // we can't really use one first and last name for the whole site.
+            $bean->join_url = preg_replace('/&FN=.*&LN=.*/','',$bean->join_url);
             $GLOBALS['log']->debug('Join URL: '.print_r($bean->join_url,true));
 
 

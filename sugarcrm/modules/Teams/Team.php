@@ -261,6 +261,7 @@ class Team extends SugarBean
 			$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->full_name));
 			$GLOBALS['log']->fatal($msg);
             SugarApplication::appendErrorMessage($msg);
+            return false;
 		}
 
 		// Update team_memberships table and set deleted = 1

@@ -101,6 +101,7 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 <span id="{{$idName}}_more">{sugar_image name="advanced_search" width="8px" height="8px"}</span>
 <span id="{{$idName}}_less" style="display: none;">{sugar_image name="basic_search" width="8px" height="8px"}</span>
 {$APP.LBL_SEARCH_EXTERNAL_API}</h4>
+<span id="{{$idName}}_remoteNameSpan" style="display: none;">
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -108,8 +109,20 @@ onchange="document.getElementById('{{$idName}}').value='something'"
     maxlength="{{$displayParams.maxlength}}"
 {{else}}
     maxlength="255"
-{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}" style="display: none;">
+{{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
+
+{{if empty($displayParams.hideButtons) }}
+<span class="id-ff multiple">
+<button type="button" name="{{$idName}}_remoteSelectBtn" id="{{$idName}}_remoteSelectBtn" tabindex="{{$tabindex}}" title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" class="button firstChild" value="{$APP.LBL_SELECT_BUTTON_LABEL}"
+onclick="SUGAR.field.file.openPopup('{{$idName}}'); return false;"
+><img src="{sugar_getimagepath file="id-ff-select.png"}"></button
+><button type="button" name="{{$idName}}_remoteClearBtn" id="{{$idName}}_remoteClearBtn" tabindex="{{$tabindex}}" title="{$APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" class="button lastChild" value="{$APP.LBL_CLEAR_BUTTON_LABEL}"
+onclick="SUGAR.field.file.clearRemote('{{$idName}}'); return false;"
+><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
 </span>
+{{/if}}
+</span>
+
 <div style="display: none;" id="{{$idName}}_securityLevelBox">
   <b>{$APP.LBL_EXTERNAL_SECURITY_LEVEL}: </b>
   <select name="{{$idName}}_securityLevel" id="{{$idName}}_securityLevel">

@@ -170,6 +170,15 @@ abstract class SugarCacheAbstract
     }
     
     /**
+     * Flush the contents of the cache
+     */
+    public function flush()
+    {
+        $this->_localStore = array();
+        $this->_resetExternal();
+    }
+    
+    /**
      * Returns the number of cache hits made
      *
      * @return array assocative array with each key have the value

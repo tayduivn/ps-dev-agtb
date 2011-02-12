@@ -100,7 +100,7 @@ class ConfiguratorViewSugarpdfsettings extends SugarView
                     "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                    $mod_strings['LBL_PDFMODULE_NAME'],
                    ), 
-                true
+                false
                 );
         
         $pdf_class = array("TCPDF"=>"TCPDF","EZPDF"=>"EZPDF");

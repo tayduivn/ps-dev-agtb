@@ -277,9 +277,11 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         }
         $bean->doc_id = $result['responseJSON']['FileId'];
 
-        $bean->doc_direct_url = $this->baseURL.'files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
+        //rrs bug: 42235 - removing this for now and pointing to the doc_url until we can fix the baisc auth issue
+        //$bean->doc_direct_url = $this->baseURL.'files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
 
         $bean->doc_url = $this->baseURL.'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
+        $bean->doc_direct_url = $bean->doc_url;
 
         // Refresh the document cache
         $this->loadDocCache(true);

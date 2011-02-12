@@ -63,7 +63,7 @@ $default_connectors = array (
   'ext_eapm_facebook' =>
   array (
     'id' => 'ext_eapm_facebook',
-    'name' => 'Facebook',
+    'name' => 'Facebook&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/eapm/facebook',
     'eapm' =>
@@ -78,7 +78,7 @@ $default_connectors = array (
   'ext_eapm_google' =>
   array (
     'id' => 'ext_eapm_google',
-    'name' => 'Google',
+    'name' => 'Google&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/eapm/google',
     'eapm' =>
@@ -93,7 +93,7 @@ $default_connectors = array (
   'ext_eapm_gotomeeting' =>
   array (
     'id' => 'ext_eapm_gotomeeting',
-    'name' => 'GoToMeeting',
+    'name' => 'GoToMeeting&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/eapm/gotomeeting',
     'eapm' =>
@@ -108,7 +108,7 @@ $default_connectors = array (
   'ext_eapm_lotuslive' =>
   array (
     'id' => 'ext_eapm_lotuslive',
-    'name' => 'LotusLive',
+    'name' => 'LotusLive&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/eapm/lotuslive',
     'eapm' =>
@@ -123,7 +123,7 @@ $default_connectors = array (
   'ext_eapm_webex' =>
   array (
     'id' => 'ext_eapm_webex',
-    'name' => 'WebEx',
+    'name' => 'WebEx&#169;',
     'enabled' => true,
     'directory' => 'modules/Connectors/connectors/sources/ext/eapm/webex',
     'eapm' =>

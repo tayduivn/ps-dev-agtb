@@ -67,7 +67,7 @@ class ViewCampaignconfig extends SugarView
         global $app_strings;
         global $current_user;
         
-        echo $this->getModuleTitle();
+        echo $this->getModuleTitle(false);
         global $currentModule;
         
         $focus = new Administration();
