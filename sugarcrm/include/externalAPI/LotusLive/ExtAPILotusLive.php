@@ -281,8 +281,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         //$bean->doc_direct_url = $this->baseURL.'files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$bean->doc_id.'/stream/'.$bean->doc_id;
 
         $bean->doc_url = $this->baseURL.'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$bean->doc_id;
-        $bean->doc_direct_url = $bean->doc_url;
-
         // Refresh the document cache
         $this->loadDocCache(true);
 
@@ -322,10 +320,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             $result['id'] = $remoteFile['file_id'];
             $result['name'] = $remoteFile['file_name'];
             $result['date_modified'] = preg_replace('/^([^T]*)T([^.]*)\....Z$/','\1 \2',$remoteFile['date_modified']);
-            $result['direct_url'] = $this->baseURL.'files/basic/cmis/repository/p!'.$this->subscriberID.'/object/snx:file!'.$remoteFile['file_id'].'/stream/'.$remoteFile['file_id'];
-
             $result['url'] = $this->baseURL.'files/filer2/home.do#files.do?subContent=fileDetails.do?fileId='.$remoteFile['file_id'];
-
             $results[] = $result;
         }
 

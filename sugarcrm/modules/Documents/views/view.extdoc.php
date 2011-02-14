@@ -106,7 +106,7 @@ class DocumentsViewExtdoc extends SugarView
                 }
                 if ( $isPopup ) {
                     // We are running as a popup window, we need to replace the direct url with some javascript
-                    $newRow['DIRECT_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['DIRECT_URL'])."'); window.close();";
+                    $newRow['DOC_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['URL'])."'); window.close();";
                 }
                 $searchData[] = $newRow;
             }

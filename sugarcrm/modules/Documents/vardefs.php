@@ -68,17 +68,6 @@ $dictionary['Document'] = array('table' => 'documents',
   	'importable' => false,
     'massupdate' => false,
   ),
-'doc_direct_url' =>
-  array (
-  	'name' => 'doc_direct_url',
-  	'vname' => 'LBL_DOC_DIRECT_URL',
-  	'type' => 'varchar',
-  	'len' => '255',
-  	'comment' => 'Document URL from documents web server provider for direct download',
-  	'importable' => false,
-    'massupdate' => false,
-  ),
-
   'filename' =>
   array (
      'name' => 'filename',

@@ -129,7 +129,6 @@ class Document extends SugarBean {
             $Revision->doc_type = $this->doc_type;
             $Revision->doc_id = $this->doc_id;
             $Revision->doc_url = $this->doc_url;
-            $Revision->doc_direct_url = $this->doc_direct_url;
             $Revision->save();
 			
             //Move file saved during populatefrompost to match the revision id rather than document id
