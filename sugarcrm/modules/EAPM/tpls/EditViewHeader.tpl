@@ -1,4 +1,4 @@
-<div id='eapm_notice_div' style="color:green;"></div>
+<div id='eapm_notice_div'>&nbsp;</div><br/>
 <form action="index.php" method="POST" name="EditView" id="EditView" >
 <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
 <tr>
