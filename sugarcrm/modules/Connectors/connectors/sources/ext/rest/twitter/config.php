@@ -34,7 +34,6 @@ $config = array (
   ),
   'order' => 5,
   'properties' => array (
-      'company_url' => 'http://widgets.twimg.com/j/2/widget.js',
       'oauth_consumer_key' => '',
       'oauth_consumer_secret' => '',
       ),
