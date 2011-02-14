@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 $connector_strings = array (
-    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">The Consumer Key and Secret are strings you obtain from Twitter&#169; when you create a new application. To get started go to: <a href=\'http://dev.twitter.com/apps/new\'>http://dev.twitter.com/apps/new</a>.<br><ol><li>Enter application name this will be what the user\'s see when they authenticate from SugarCRM</li><li>Enter at least 10 words for description</li><li>Enter your company url (can be anything)</li><li>Check Application type: "Browser"</li><li>Save</li></ol></td></tr></table>',
+    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">The Consumer Key and Secret are strings you obtain from Twitter&#169; when you create a new application. To get started go to: <a href=\'http://dev.twitter.com/apps/new\'>http://dev.twitter.com/apps/new</a>.<br><ol><li>Enter application name this will be what the user\'s see when they authenticate from SugarCRM</li><li>Enter at least 10 words for description</li><li>Enter your company url (can be anything)</li><li>Check Application type: "Browser"</li><li>Be sure to enter a url into "Callback URL". It can be anything since SugarCRM passes this on authentication. For example you could enter your SugarCRM root url.</li><li>Save</li></ol></td></tr></table>',
     'LBL_NAME' => 'Twitter Username',
     'LBL_ID' => 'Twitter Username',
 	'company_url' => 'URL',
