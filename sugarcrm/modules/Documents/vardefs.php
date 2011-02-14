@@ -57,6 +57,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'massupdate' => false,
     'options' => 'eapm_list',
     'default'	=> 'Sugar',
+  	'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
 'doc_url' =>
   array (
