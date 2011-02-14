@@ -501,18 +501,18 @@ class Team extends SugarBean
 		if(isset($user_override))
 		{
 			$focus=$user_override;
-		}
-		else
-		{
+		} else {
 			$focus->retrieve($user_id);
 		}
 
-		//Check to see if the user being is the user's private team
-		if($this->id == $focus->getPrivateTeamID() && $this->deleted == 0)
+		// Check to see if the user being deleted is the user's private team
+		// the is_null($user_override) check is done because this function is also called from user_manager_changed
+		// in which case we are not deleting the team, but changing who the user reports to
+		if(is_null($user_override) && $this->id == $focus->getPrivateTeamID() && $this->deleted == 0)
 		{
-		   global $mod_strings;
-		   $GLOBALS['log']->fatal($mod_strings['ERR_CANNOT_REMOVE_PRIVATE_TEAM']);
-		   throw new Exception($mod_strings['ERR_CANNOT_REMOVE_PRIVATE_TEAM']);
+		   $error_message = translate('ERR_CANNOT_REMOVE_PRIVATE_TEAM', 'Teams');
+		   $GLOBALS['log']->fatal($error_message);
+		   throw new Exception($error_message);
 		}
 		
 		// Step1: Add the current focus to the visited list
