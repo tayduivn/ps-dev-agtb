@@ -430,7 +430,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		   $data = $result['return']['companies']['hit']['companyResults'];
  		   $id = $data['duns'];
  		   $data['id'] = $id;
- 		   $single[$id] = $this->formatListResult(data);
+ 		   $single[$id] = $this->formatListResult($data);
  		   return $single;
  		} else if($result['return']['companies']['hits'] > 1) {
  		   $multiple = array();
