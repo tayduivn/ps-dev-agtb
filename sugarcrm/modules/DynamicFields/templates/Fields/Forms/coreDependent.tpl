@@ -64,6 +64,16 @@
 <tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+        <img id="depToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
+        <script>
+			if (!ModuleBuilder.dfToolTip)
+			     ModuleBuilder.dfToolTip = new YAHOO.widget.Tooltip("dfToolTip", {ldelim}
+                        context:"depToolTipIcon", text:SUGAR.language.get("ModuleBuilder", "LBL_POPHELP_DEPENDENT")
+				 {rdelim});
+		    else
+			    ModuleBuilder.cfToolTip.cfg.setProperty("context", "depToolTipIcon");
+			ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})
+		</script>
     </td>
 </tr>
 <tr id='visFormulaRow' {if empty($vardef.dependency)}style="display:none"{/if}><td class='mbLBL'>Visible If:</td> 
