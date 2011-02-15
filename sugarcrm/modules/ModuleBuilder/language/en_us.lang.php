@@ -710,6 +710,8 @@ $mod_strings = array(
    . "the Sugar Self-Service Portal or " 
    //END SUGARCRM flav=ent ONLY
    . "Mobile EditView layouts.",
+
+'LBL_POPHELP_DEPENDENT'=>"Create a formula to determine whether this field is visible in layouts.",
 //END SUGARCRM flav=pro ONLY
 
 //Revert Module labels
