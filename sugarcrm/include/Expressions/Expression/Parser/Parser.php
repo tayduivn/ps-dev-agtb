@@ -281,20 +281,27 @@ class Parser {
 				}
 			} else 
 			{
+				//BEGIN SUGARCRM flav=een ONLY
 				//Special case for link fields
                 if (isset($target->field_defs[$field]) && $target->field_defs[$field]['type'] == "link")
                 {
                     $val = "link(\"$field\")";
                     $ret = str_replace("$$field", $val, $ret);
                 }
-                else if (isset ($target->$field)) {
-                    $val = Parser::getFormatedValue($target->$field, $field);
-					$ret = str_replace("$$field", $val, $ret);	
-				} else  {
-					continue;
-                   // throw new Exception("Unknown variable $$field in formula: $expr");
-                   // return;
-				}
+                else {
+                //END SUGARCRM flav=een ONLY
+
+                    if (isset ($target->$field)) {
+                        $val = Parser::getFormatedValue($target->$field, $field);
+                        $ret = str_replace("$$field", $val, $ret);
+                    } else  {
+                        continue;
+                       // throw new Exception("Unknown variable $$field in formula: $expr");
+                       // return;
+                    }
+                //BEGIN SUGARCRM flav=een ONLY
+                }
+                //END SUGARCRM flav=een ONLY
 			}
 		}
 		return $ret;

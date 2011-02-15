@@ -52,7 +52,7 @@
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
  * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.10
+ * @version    Release: 3.5.11
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 3.0.0
  */
@@ -615,9 +615,16 @@ class PHPUnit_TextUI_Command
         }
 
         if (isset($this->arguments['configuration'])) {
-            $configuration = PHPUnit_Util_Configuration::getInstance(
-              $this->arguments['configuration']
-            );
+            try {
+                $configuration = PHPUnit_Util_Configuration::getInstance(
+                  $this->arguments['configuration']
+                );
+            }
+
+            catch (Exception $e) {
+                print $e->getMessage() . "\n";
+                exit(PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
+            }
 
             $phpunit = $configuration->getPHPUnitConfiguration();
 

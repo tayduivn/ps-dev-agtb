@@ -289,6 +289,7 @@ class DependencyManager {
         )) . ";\n";
     }
 
+    //BEGIN SUGARCRM flav=een ONLY
     /**
      * @static returns the javascript for the link variables of this view.
      * @param  $fields array, field_defs for this view
@@ -335,5 +336,6 @@ class DependencyManager {
         //Otherwise this link looks ok
         return true;
     }
+    //END SUGARCRM flav=een ONLY
 }
 ?>
