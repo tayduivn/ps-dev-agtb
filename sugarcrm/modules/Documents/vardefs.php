@@ -44,6 +44,7 @@ $dictionary['Document'] = array('table' => 'documents',
   	'len' => '100',
   	'comment' => 'Document ID from documents web server provider',
   	'importable' => false,
+  	'studio' => false,
   ),
   'doc_type' =>
   array (
@@ -68,6 +69,7 @@ $dictionary['Document'] = array('table' => 'documents',
   	'comment' => 'Document URL from documents web server provider',
   	'importable' => false,
     'massupdate' => false,
+  	'studio' => false,
   ),
   'filename' =>
   array (
