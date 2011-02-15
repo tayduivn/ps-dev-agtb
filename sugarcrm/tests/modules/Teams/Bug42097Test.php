@@ -15,7 +15,15 @@ class Bug42907Test extends Sugar_PHPUnit_Framework_TestCase
 	   $this->testUser = null;
     } 	
 	
-    public function testDeletePrivateTeamUser() {
+    
+    /**
+     * testRemoveUserFromTeam
+     * 
+     * This test checks the case where a user is removed from his own private team.  
+     * We are expecting an exception to be thrown.
+     */    
+    public function testRemoveUserFromTeam() 
+    {
 	   $team = new Team();
 	   $team->retrieve($this->testUser->getPrivateTeamID());
 	   $exceptionThrown = false;
@@ -25,7 +33,9 @@ class Bug42907Test extends Sugar_PHPUnit_Framework_TestCase
 	   	 $exceptionThrown = true;
 	   }
 	   
-	   $this->assertTrue($exceptionThrown, 'Assert that an exception was thrown for attempting to delete user off own private team');
+	   $this->assertTrue($exceptionThrown, 'Assert that an exception was thrown for attempting to remove user off own private team');
     }
-
+    
 }
+
+?>
