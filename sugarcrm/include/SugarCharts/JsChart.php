@@ -55,7 +55,8 @@ class JsChart extends SugarChart {
 			"horizontal bar chart",
 			"pie chart",
 			"gauge chart",
-			"funnel chart 3D"
+			"funnel chart 3D",
+			"line chart",
 		);
 		
 		if(in_array($chartType,$charts)) {
