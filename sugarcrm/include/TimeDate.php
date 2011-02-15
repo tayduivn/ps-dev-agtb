@@ -783,7 +783,6 @@ S	S	S	12	20	-8	0	0
 	 */
 	function handle_offset($date, $format, $to = true, $user = null, $usetimezone = null) {
 		global $sugar_config;
-        global $timedate;
 		$date = trim($date);
 		// Samir Gandhi
 		// This has been commented out because it is going through the wrong code path
@@ -808,15 +807,7 @@ S	S	S	12	20	-8	0	0
 			    return $cached_result;
 			}
 		}
-		// strtotime does not take format as parameter, so if the format is d/m/Y
-		// for example, 23/12/2010, strtotime gets confused and return either
-		// -1 or false (depends on php version), so we need to convert $date to US style
-		// format (e.g. m/d/Y) first for strtotime to work.
-		// A better approach is to use date_create_from_format() which takes format
-		// as a parameter, but it's only available in php 5.3.0 and beyond. So we can't
-		// use it as long as we support php 5.2.x.
-		$US_style_date = $timedate->swap_formats($date, $format, 'm/d/Y H:i:s');
-		if (strtotime($US_style_date) == -1 || !strtotime($US_style_date)) {
+		if (strtotime($date) == -1) {
 			return $date;
 		}
 		$deltaServerGMT = date('Z');
@@ -834,8 +825,7 @@ S	S	S	12	20	-8	0	0
 		if (!$to) {
 			$zone = -1;
 		}
-		$result = date($format, strtotime($US_style_date) + $deltaServerUser * 3600 + ($ue + $deltaServerGMT) * $zone);
-		//$result = date($format, date_create_from_format($format, $date)->getTimestamp() + $deltaServerUser * 3600 + ($ue + $deltaServerGMT) * $zone);
+		$result = date($format, strtotime($date) + $deltaServerUser * 3600 + ($ue + $deltaServerGMT) * $zone);
 		if($this->allow_cache) {
 			sugar_cache_put($cache_key, $result);
 		}
