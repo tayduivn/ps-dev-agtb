@@ -1817,15 +1817,15 @@ print "<BR>";
 		return  $header_row;
 	}
 
-	function get_header_row($column_field_name = 'display_columns',$skip_non_group=false, $exporting = false)
+	function get_header_row($column_field_name = 'display_columns',$skip_non_group=false, $exporting = false, $force_distinct = false)
 	{
 		$this->layout_manager->setAttribute('list_type','columns');
 
-		$header_row = $this->get_header_row_generic($column_field_name, $skip_non_group, $exporting);
+		$header_row = $this->get_header_row_generic($column_field_name, $skip_non_group, $exporting, $force_distinct);
 		return  $header_row;
 	}
 
-    function get_header_row_generic($column_field_name = 'display_columns', $skip_non_group=false, $exporting = false)
+    function get_header_row_generic($column_field_name = 'display_columns', $skip_non_group=false, $exporting = false, $force_distinct = false)
     {
     	if ( $this->plain_text_output == true) {
             $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
@@ -1948,6 +1948,25 @@ print "<BR>";
 
         } // END foreach
 
+        // Bug 29829 Make sure the header names are distinct labels for sugarpdf writeCellTable()
+        if ($force_distinct) {
+	        $distinct_labels = array();
+	        for ($i= 0 ; $i < sizeof($header_row); $i++) {
+	        	$label = $header_row[$i];
+				if (!in_array($label, $distinct_labels)) {
+					$distinct_labels[] = $label;
+				} else {
+					$j = 0;
+					while (in_array($label, $distinct_labels) && $j < 100) {
+						$label .= ' ';
+						$j++;
+					}
+					$distinct_labels[] = $label;
+				}
+	        }
+	        $header_row = $distinct_labels;
+        }
+        
         return $header_row;
     }
 

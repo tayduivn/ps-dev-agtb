@@ -33,7 +33,7 @@ class ReportsSugarpdfDetail_and_total extends ReportsSugarpdfReports
         $this->AddPage();
             
         $item = array();
-        $header_row = $this->bean->get_header_row('display_columns',false, true);
+        $header_row = $this->bean->get_header_row('display_columns', false, true, true);
         $count = 0;
     
         while($row = $this->bean->get_next_row('result', 'display_columns', false, true)) {

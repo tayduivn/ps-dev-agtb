@@ -32,7 +32,7 @@ class ReportsSugarpdfListview extends ReportsSugarpdfReports
         $this->AddPage();
         
         $item = array();
-        $header_row = $this->bean->get_header_row();
+        $header_row = $this->bean->get_header_row('display_columns', false, false, true);
         $count = 0;
     
         while($row = $this->bean->get_next_row('result', 'display_columns', false, true)) {
