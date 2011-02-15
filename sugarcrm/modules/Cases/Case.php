@@ -187,9 +187,13 @@ class aCase extends Basic {
 		$this->created_by_name = get_assigned_user_name($this->created_by);
 		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 
-		$account_info = $this->getAccount($this->id);
-		$this->account_name = $account_info['account_name'];
-		$this->account_id = $account_info['account_id'];
+        if(!empty($this->id)) {
+		    $account_info = $this->getAccount($this->id);
+            if(!empty($account_info)) {
+                $this->account_name = $account_info['account_name'];
+                $this->account_id = $account_info['account_id'];
+            }
+        }
 	}
 
 
