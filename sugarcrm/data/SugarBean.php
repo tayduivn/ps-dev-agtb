@@ -1672,8 +1672,10 @@ class SugarBean
 
             // let subclasses save related field changes
             $this->save_relationship_changes($isUpdate);
-        //BEGIN SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=een ONLY
             $this->updateRelatedCalcFields();
+            //END SUGARCRM flav=een ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         }
 
         //rrs - bug 7908
@@ -1709,6 +1711,7 @@ class SugarBean
         }
     }
 
+    //BEGIN SUGARCRM flav=een ONLY
     function updateRelatedCalcFields()
     {
         if (empty($this->id))
@@ -1756,6 +1759,7 @@ class SugarBean
         }
         $updating_relationships = false;
     }
+    //END SUGARCRM flav=een ONLY
     //END SUGARCRM flav=pro ONLY
 
     /**
@@ -5294,14 +5298,14 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
-            //BEGIN SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav=een ONLY
             //Fire dependency manager dependencies here for some custom logic types.
             if (empty($GLOBALS['updating_relationships']) &&
                     ($event == "after_relationship_add" || $event == "after_relationship_delete"))
             {
                 $this->updateRelatedCalcFields();
             }
-            //END SUGARCRM flav=pro ONLY
+            //END SUGARCRM flav=een ONLY
         }
     }
 
