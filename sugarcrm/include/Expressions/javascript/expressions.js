@@ -1055,8 +1055,8 @@ SUGAR.util.DateUtils = {
 				format = SUGAR.expressions.userPrefs.datef;
         }
         var out = "";
-        for (var c in format) {
-			c = format[c];
+        for (var i=0; i < format.length; i++) {
+			var c = format[i];
 			switch (c) {
                 case 'm':
                     out += date.getMonth() + 1; break;
