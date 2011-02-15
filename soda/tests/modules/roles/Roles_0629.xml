@@ -1,4 +1,4 @@
-﻿<soda>
+<soda>
 	<!-- Verify module enabled -->
 	<puts text="Test: Role_0629.xml starting." />
 	<!--Set role-->
