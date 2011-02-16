@@ -521,8 +521,14 @@ function isValidEmail(emailStr) {
 	reg = /@.*?,/g;
 	while ((results = reg.exec(emailStr)) != null) {
 			orignial = results[0];
+			var check = results[0].substr(1);// bug 42259 - "Error Encountered When Trying to Send to Multiple Recipients with Commas in Name"
+			 // if condition to check the presence of @ charcater before replacing ','
+			//now if ',' is used to separate two email addresses, then only it will be replaced by ::;::
+		   //if name has ',' e.g. smith, jr ',' will not be replaced (which was causing the given problem)
+			if(check.indexOf('@') !=-1){
 			parsedResult = results[0].replace(',', '::;::');
 			emailStr = emailStr.replace (orignial, parsedResult);
+			}
 	}
 
 	// mfh: bug 15010 - more practical implementation of RFC 2822 from http://www.regular-expressions.info/email.html, modifed to accept CAPITAL LETTERS
