@@ -1710,6 +1710,19 @@ class SugarBean
             }
         }
     }
+    function updateDependentField()
+    {
+        require_once("include/Expressions/DependencyManager.php");
+        $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
+        foreach($deps as $dep)
+        {
+            if ($dep->getFireOnLoad())
+            {
+                $dep->fire($this);
+            }
+        }
+    }
+
 
     //BEGIN SUGARCRM flav=een ONLY
     function updateRelatedCalcFields()
@@ -4385,6 +4398,9 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($this->field_defs['parent_name']) && empty($this->parent_name)){
             $this->fill_in_additional_parent_fields();
         }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->updateDependentField();
+        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -4413,6 +4429,9 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($this->field_defs['parent_name'])){
             $this->fill_in_additional_parent_fields();
         }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->updateDependentField();
+        //END SUGARCRM flav=pro ONLY
     }
 
     /**
