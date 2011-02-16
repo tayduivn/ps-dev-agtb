@@ -54,7 +54,7 @@ class="yui-navset"
 
 {{* Print out the table data *}}
 {{if $label == 'DEFAULT'}}
-	<div id="{$label}_{$module}_subpanel">
+	<div id="Default_{$module}_Subpanel">
 {{else if}}
 	<div id="{$label}">
 {{/if}}

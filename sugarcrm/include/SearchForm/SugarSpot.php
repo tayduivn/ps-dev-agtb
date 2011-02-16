@@ -302,7 +302,7 @@ EOHTML;
 			            $allfields[$skey] = $seed->field_defs[$skey];
 			        }
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, array(), 0, '', true, $seed, true);
-                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['inner_join']. $ret_array['where'] . $ret_array['order_by'] ;
+                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
                 }
                 $main_query = "(".join(") UNION (", $query_parts).")";
 			} else {
@@ -312,7 +312,7 @@ EOHTML;
                     }
 			    }
 			    $ret_array = $seed->create_new_list_query('', $where_clauses[0], $return_fields, array(), 0, '', true, $seed, true);
-		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['inner_join']. $ret_array['where'] . $ret_array['order_by'] ;
+		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
 			}
 
             $totalCount = null;
