@@ -4,8 +4,9 @@
 
 	<!--Nav to emails module-->
 	<link id="moduleTab_Emails" />
+	<wait timeout="10" />
 	<button id="composeButton" />
-	<wait timeout="5" />
+	<wait timeout="10" />
 
 	<!--click "attachment"-->
 	<table id="composeHeaderTable1">

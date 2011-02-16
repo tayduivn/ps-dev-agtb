@@ -16,6 +16,7 @@
 	<div id="list_subpanel_history">
 		<button name="History_create_button" />
 	</div>
+	<wait timeout="3" />
 	<div id="form_SubpanelQuickCreate_Notes_tabs">
 		<textfield id="name" set="Test Note" />
 		<textfield id="name" set="Test Note" />

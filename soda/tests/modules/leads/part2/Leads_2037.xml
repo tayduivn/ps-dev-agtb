@@ -100,7 +100,7 @@
 		</wait>
 		<textfield id="name" set="{@Leads_2037.name_note}" />
 		<button id="Notes_subpanel_save_button" />
-		<wait timeout="20" />
+		<wait timeout="40" />
 	</csv>
 
 	<!--verify list_subpanel_history-->

@@ -26,7 +26,9 @@
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1379.csv" var="Case_1379">
-		<textfield id="name" set="{@Case_1379.name} {@user.name} {@stamp}" />
+      <div id="DEFAULT">
+   		<textfield id="name" set="{@Case_1379.name} {@user.name} {@stamp}" />
+      </div>
 		<button id="Notes_subpanel_save_button" />
 		<wait timeout="12" />
 		<div id="list_subpanel_history">

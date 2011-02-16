@@ -45,7 +45,7 @@
 			<textfield id="description" set="{@account_record.description}" />
 			<button value="Save" />
 		</form>
-		<wait timeout="3" />
+		<wait timeout="4" />
 		<browser assert="{@account_record.name} {@user.name} {@stamp}" />
 
 		<!--Save the account id & name-->

@@ -319,7 +319,7 @@ class DashletGeneric extends Dashlet {
 	private function loadCustomMetadata(){
     	$customMetadate = 'custom/modules/'.$this->seedBean->module_dir.'/metadata/dashletviewdefs.php';
     	if ( file_exists ( $customMetadate )){
-    		require_once($customMetadate);
+    		require($customMetadate);
 			$this->searchFields = $dashletData[$this->seedBean->module_dir.'Dashlet']['searchFields'];
 			foreach($this->searchFields  as $key =>$def){
 				if($key == 'assigned_user_name'){
@@ -379,6 +379,7 @@ class DashletGeneric extends Dashlet {
 
         $this->lvs->lvd->setVariableName($this->seedBean->object_name, array());
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default
+
         $nameRelatedFields = array();
         if(empty($lvdOrderBy['orderBy'])) {
             foreach($displayColumns as $colName => $colParams) {

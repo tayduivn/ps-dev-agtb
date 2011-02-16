@@ -59,7 +59,12 @@ class SugarSpot
 <small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining more)</small>
 EOHTML;
 			}
-			$str.= "<div>$m $more</div>";
+			
+			$modDisplayString = $m;
+			if(isset($GLOBALS['app_list_strings']['moduleList'][$m]))
+			    $modDisplayString = $GLOBALS['app_list_strings']['moduleList'][$m];
+			
+			$str.= "<div>{$modDisplayString} $more</div>";
 			$str.= '<ul>';
 			foreach($data['data'] as $row){
 				$name = '';
@@ -252,6 +257,7 @@ EOHTML;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
 			$where = "";
+
 			if (count($where_clauses) > 0){
                 $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
             }

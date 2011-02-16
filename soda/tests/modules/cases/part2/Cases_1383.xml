@@ -1,7 +1,8 @@
 <soda>
 	<!-- Edit Note_Verify that modification of note for case can be canceled in "Notes" detail view -->
 	<puts text="Test: Cases_1383.xml starting." />
-	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+   <csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" 
+      var="cases" />
 	<timestamp />
 
 	<!--Create a case record-->
@@ -26,7 +27,9 @@
 	<wait timeout="2" />
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1383.csv" var="Case_1383">
-		<textfield id="name" set="{@Case_1383.name} {@user.name} {@stamp}" />
+      <div id="DEFAULT">
+   		<textfield id="name" set="{@Case_1383.name} {@user.name} {@stamp}" />
+      </div>
 		<button id="Notes_subpanel_save_button" />
 		<wait timeout="2" />
 		<div id="list_subpanel_history">
@@ -50,7 +53,8 @@
 		<link text="{@case_record}" />
 		<div id="list_subpanel_history">
 			<table class="list view">
-				<link text="{@Case_1383.name} {@user.name} {@stamp}" click="false" />
+            <link text="{@Case_1383.name} {@user.name} {@stamp}" 
+               click="false" />
 			</table>
 		</div>
 	</csv>

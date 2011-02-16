@@ -1,8 +1,6 @@
 <soda>
-   <script
-   	file="{@global.scriptsdir}/modules/contacts/module_lib/setup-contacts.xml" />
-   <script fileset="{@global.scriptsdir}/modules/contacts" />
-   <script
-   	file="{@global.scriptsdir}/modules/contacts/module_lib/cleanup-contacts.xml" />
+   <script file="tests/modules/contacts/module_lib/setup-contacts.xml" />
+   <script fileset="tests/modules/contacts" />
+   <script file="tests/modules/contacts/module_lib/cleanup-contacts.xml" />
 </soda>
 

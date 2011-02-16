@@ -67,6 +67,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                         "header"=>array("fill"=>"#4B4B4B", "fontStyle"=>"B", "textColor"=>"#FFFFFF"),
                         "width"=>array(
                             $mod_strings["LBL_PDF_ITEM_QUANTITY"] => "10%",
+                            // for the next two vars, if you change the value, change the value below in the else block in the display() function
                             $mod_strings["LBL_PDF_PART_NUMBER"] => "25%",
                             $mod_strings["LBL_PDF_ITEM_PRODUCT"] => "25%",
                             $mod_strings["LBL_PDF_ITEM_LIST_PRICE"] => "10%",
@@ -246,9 +247,13 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
 				    if(format_number($product_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision())== 0.00){
 						$this->itemOptions["width"][$mod_strings["LBL_PDF_PART_NUMBER"]] = "30%";
 						$this->itemOptions["width"][$mod_strings["LBL_PDF_ITEM_PRODUCT"]] = "30%";
-
 				    }
-
+				    else{
+				        // If you change these two values, change the values above in the _initOptions() function to match these
+						$this->itemOptions["width"][$mod_strings["LBL_PDF_PART_NUMBER"]] = "25%";
+						$this->itemOptions["width"][$mod_strings["LBL_PDF_ITEM_PRODUCT"]] = "25%";
+				    }
+				    
 					if (count($item) > 0)
                     	$this->writeCellTable($item, $this->itemOptions);
                     if($pdf_group_subtotal){

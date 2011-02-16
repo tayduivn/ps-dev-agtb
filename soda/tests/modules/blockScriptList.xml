@@ -119,6 +119,13 @@
 		<reason>Send key re-attached to previous window</reason>
 		<modulename>Contacts</modulename>
 	</block>
+	
+	<block>
+		<testfile>Studio_8287</testfile>
+		<bugnumber></bugnumber>
+		<reason>Can't find element during CI only</reason>
+		<modulename>Studio</modulename>
+	</block>
 
 	<!-- Franklin's Modules -->
 

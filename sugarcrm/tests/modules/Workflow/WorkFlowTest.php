@@ -14,6 +14,8 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
+    	$this->testWFName = "WFUnitTest" . mt_rand(); 
+    	$this->testAccName = "WFTestAccount" . mt_rand(); 
     	$this->wf = new WorkFlow();
     	$this->wf->name = $this->testWFName;
     	$this->wf->base_module = "Accounts";

@@ -428,6 +428,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		if($result['return']['companies']['hits'] == 1) {
  		   $single = array();
  		   $data = $result['return']['companies']['hit']['companyResults'];
+
  		   $id = $data['duns'];
  		   $data['id'] = $id;
  		   $single[$id] = $this->formatListResult($data);
@@ -520,4 +521,3 @@ function get_hoovers_api_key() {
 //END ENCODE
  
 ?>
-

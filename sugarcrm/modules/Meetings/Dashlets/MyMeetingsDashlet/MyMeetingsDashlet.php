@@ -63,18 +63,19 @@ class MyMeetingsDashlet extends DashletGeneric {
         //END SUGARCRM flav=pro ONLY
     }
     
-    function process() {
+    function process($lvsParams = array()) {
         global $current_language, $app_list_strings, $current_user;        
         $mod_strings = return_module_language($current_language, 'Meetings');
         
-        if($this->myItemsOnly) { // handle myitems only differently
-			$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
-            $lvsParams = array(
-                           'custom_where' => ' AND  m_u.user_id = \'' . $current_user->id . '\' and m_u.deleted=0 ',
-                           );
-        } else {
-            $lvsParams = array();
+        // handle myitems only differently --  set the custom query to show assigned meetings and invitee meetings
+        if($this->myItemsOnly) {  
+           	//join with meeting_users table to process related users
+       		$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
+        	
+        	//set the custom query to retrieve invitees AND assigned meetings            
+        	$lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\') ';
         }
+        
         $this->myItemsOnly = false; 
 		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
 		//so we need to make sure date entered is also set so the sort can work with the group by
@@ -90,7 +91,7 @@ class MyMeetingsDashlet extends DashletGeneric {
         
         // grab meeting status       
         if(!empty($keys)){ 
-            $query = "SELECT meeting_id, accept_status FROM meetings_users WHERE user_id = '" . $current_user->id . "' AND meeting_id IN ('" . implode("','", $keys) . "')";
+            $query = "SELECT meeting_id, accept_status FROM meetings_users WHERE deleted = 0 AND user_id = '" . $current_user->id . "' AND meeting_id IN ('" . implode("','", $keys) . "')";
             $result = $GLOBALS['db']->query($query);
         }
         
@@ -118,6 +119,7 @@ class MyMeetingsDashlet extends DashletGeneric {
             {
                 if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
 					//if no status has been set, then do not show accept options
+					$this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" class=\"acceptMeeting\"></div>";
 				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
                 {
                     $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" class=\"acceptMeeting\"><a title=\"".

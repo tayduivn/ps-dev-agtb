@@ -13,7 +13,7 @@
 		Results:
 			Appropriate error message
 	-->
-	<puts text="Text: Admin_10140.xml Starting." />
+	<puts text="Test: Admin_10140.xml Starting." />
 	
 	<link text="Admin" />
 	<link text="Studio" />
