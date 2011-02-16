@@ -305,7 +305,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             }
         }
 
-        $reply = $this->makeRequest('GetFileList/OAuth',null,array('subscriberid' => $this->subscriberID));
+        $reply = $this->makeRequest('GetFileList/OAuth',null,array('subscriberid' => $this->subscriberID, 'maxitems' => '20', 'skipcount' => '0'));
 
         if ( $reply['success'] != true ) {
             return array();
