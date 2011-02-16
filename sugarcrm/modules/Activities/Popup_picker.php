@@ -152,8 +152,15 @@ class Popup_Picker
 		} // end Tasks
 
 		foreach ($focus_meetings_list as $meeting) {
+			
+			if (empty($meeting->contact_id) && empty($meeting->contact_name)) {
+				$meeting_contacts = $meeting->get_linked_beans('contacts','Contact');
+				if (!empty($meeting_contacts[0]->id) && !empty($meeting_contacts[0]->name)) {
+					$meeting->contact_id = $meeting_contacts[0]->id;
+					$meeting->contact_name = $meeting_contacts[0]->name;
+				}
+			}
 			if ($meeting->status != "Planned") {
-
 				$history_list[] = array('name' => $meeting->name,
 									 'id' => $meeting->id,
 									 'type' => "Meeting",
@@ -190,7 +197,15 @@ class Popup_Picker
 		} // end Meetings
 
 		foreach ($focus_calls_list as $call) {
-			if ($call->status != "Planned") {		
+			
+			if (empty($call->contact_id) && empty($call->contact_name)) {
+				$call_contacts = $call->get_linked_beans('contacts','Contact');
+				if (!empty($call_contacts[0]->id) && !empty($call_contacts[0]->name)) {
+					$call->contact_id = $call_contacts[0]->id;
+					$call->contact_name = $call_contacts[0]->name;
+				}
+			}
+			if ($call->status != "Planned") {
 				$history_list[] = array('name' => $call->name,
 									 'id' => $call->id,
 									 'type' => "Call",
@@ -227,7 +242,14 @@ class Popup_Picker
 		} // end Calls
 
 		foreach ($focus_emails_list as $email) {
-
+			
+			if (empty($email->contact_id) && empty($email->contact_name)) {
+				$email_contacts = $email->get_linked_beans('contacts','Contact');
+				if (!empty($email_contacts[0]->id) && !empty($email_contacts[0]->name)) {
+					$email->contact_id = $email_contacts[0]->id;
+					$email->contact_name = $email_contacts[0]->name;
+				}
+			}			
 			$history_list[] = array('name' => $email->name,
 									 'id' => $email->id,
 									 'type' => "Email",

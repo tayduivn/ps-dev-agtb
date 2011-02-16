@@ -73,9 +73,9 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
         $subpanel_1->saveSubPanelDefOverride($subpanel_def_1, 'list_fields', $subpanel_list_fields_1);
 
   		$path_1     = 'custom/modules/'. $subpanel_def_1->_instance_properties['module'] . '/metadata/subpanels';
-  		$filename_1 = $subpanel_def_1->parent_bean->object_name . $subpanel_def_1->_instance_properties['get_subpanel_data'];
-  		$extname_1  = '_override'.$subpanel_def_1->parent_bean->object_name .$subpanel_def_1->_instance_properties['get_subpanel_data'];
-
+  		$filename_1 = $subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_1->name;
+  		$extname_1  = '_override'.$subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_1->name;
+  	
         // Create SubPane 2
         $subpanel_2 = array(
             'order' => 100,
@@ -109,8 +109,8 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
         $subpanel_2->saveSubPanelDefOverride($subpanel_def_2, 'list_fields', $subpanel_list_fields_2);
 
   		$path_2     = 'custom/modules/'. $subpanel_def_2->_instance_properties['module'] . '/metadata/subpanels';
-  		$filename_2 = $subpanel_def_2->parent_bean->object_name . $subpanel_def_2->_instance_properties['get_subpanel_data'];
-  		$extname_2  = '_override'.$subpanel_def_2->parent_bean->object_name .$subpanel_def_2->_instance_properties['get_subpanel_data'];
+  		$filename_2 = $subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_2->name;
+  		$extname_2  = '_override'.$subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_2->name;
   		
         // Check files genertaed by subpanel overriding : layout override and subpanel overire
         $this->filename_check[] = 'custom/Extension/modules/'. $subpanel_def_1->parent_bean->module_dir . "/Ext/Layoutdefs/$extname_1.php";

@@ -1,11 +1,9 @@
 <soda>
-	<!--
-		Search Task_Verify that task can be searched for advanced search function
-	-->
+	<!-- Search Task_Verify that task can be searched for advanced search function -->
 	<puts text="Test: Activites_0483.xml starting" />
 
 
-	<!--Create a task record-->
+	<!--Create a task record -->
 	<script file="{@global.scriptsdir}/modules/lib/Task_Create_Lib.xml" />
 
 	<link id="moduleTab_Activities" />
@@ -24,6 +22,8 @@
 
 	<!-- Set View Tasks search back to Basic -->
 	<link id="moduleTab_Activities" />
+	<wait timeout="3" />
+	<link text="View Tasks" />
 	<wait timeout="3" />
 	<link text="/Basic Search/" />
 	<wait timeout="3" />

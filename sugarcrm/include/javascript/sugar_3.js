@@ -1616,6 +1616,10 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+    // we don't need to check if the data is changed in the search popup
+    if (theForm.id == 'popup_query_form') {
+    	return;
+    }
 	if ( typeof editViewSnapshots == 'undefined' ) {
         editViewSnapshots = new Object();
     }

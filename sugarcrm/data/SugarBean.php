@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/********************************************************************************* 
+/*********************************************************************************
  * $Id: SugarBean.php 58121 2010-09-09 18:35:17Z kjing $
  * Description:  Defines the base class for all data entities used throughout the
  * application.  The base class including its methods and variables is designed to
@@ -245,7 +245,7 @@ class SugarBean
      * Used to pass inner join string to ListView Data.
      */
     var $listview_inner_join = array();
-    
+
     /**
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
@@ -358,7 +358,7 @@ class SugarBean
     		ACLField::loadUserFields($this->module_dir,$this->object_name, $GLOBALS['current_user']->id);
     		//END SUGARCRM flav=pro ONLY
     	}
-    	$this->populateDefaultValues();  	
+    	$this->populateDefaultValues();
     	//BEGIN SUGARCRM flav=pro ONLY
     	if(isset($this->disable_team_security)){
     		$this->disable_row_level_security = $this->disable_team_security;
@@ -619,11 +619,11 @@ class SugarBean
      * Basically undoes the effects of SugarBean::populateDefaultValues(); this method is best called right after object
      * initialization.
      */
-    public function unPopulateDefaultValues() 
+    public function unPopulateDefaultValues()
     {
         if ( !is_array($this->field_defs) )
             return;
-        
+
         foreach ($this->field_defs as $field => $value) {
             if( !empty($this->$field)
                   && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
@@ -632,8 +632,8 @@ class SugarBean
             }
         }
     }
-    
-    
+
+
     function populateDefaultValues($force=false){
         if ( !is_array($this->field_defs) )
             return;
@@ -1362,7 +1362,7 @@ class SugarBean
 
 		}
 		$this->updateCalculatedFields();
-		
+
 		//END SUGARCRM flav=pro ONLY
 		if($isUpdate && !$this->update_date_entered)
 		{
@@ -1370,10 +1370,10 @@ class SugarBean
 		}
 		// call the custom business logic
 		$custom_logic_arguments['check_notify'] = $check_notify;
-		
+
 		$this->call_custom_logic("before_save", $custom_logic_arguments);
 		unset($custom_logic_arguments);
-		
+
 		if(isset($this->custom_fields))
 		{
 			$this->custom_fields->bean =& $this;
@@ -1657,7 +1657,7 @@ class SugarBean
 
 		return $this->id;
 	}
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Retrieves and executes the CF dependencies for this bean
@@ -2028,15 +2028,15 @@ function save_relationship_changes($is_update, $exclude=array())
 			if(!isset($this->processed_dates_times[$field]))
 			{
 				$this->processed_dates_times[$field] = '1';
-				if(empty($this->$field)) continue; 
+				if(empty($this->$field)) continue;
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
 					$this->$field = from_db_convert($this->$field, 'datetime');
 					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
-				} 
-				elseif(isset($this->field_name_map[$field]['type'])) 
+				}
+				elseif(isset($this->field_name_map[$field]['type']))
 				{
 					$type = $this->field_name_map[$field]['type'];
 
@@ -2168,6 +2168,7 @@ function save_relationship_changes($is_update, $exclude=array())
             switch($def['type']) {
                 case 'datetime':
                 case 'datetimecombo':
+                    if(empty($this->$field)) break;
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$this->$field) ) {
                         // This appears to be formatted in user date/time
                         $this->$field = $timedate->to_db($this->$field);
@@ -2175,6 +2176,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     break;
                 case 'date':
+                    if(empty($this->$field)) break;
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_date($this->$field, false);
@@ -2182,6 +2184,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     break;
                 case 'time':
+                    if(empty($this->$field)) break;
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_time($timedate->to_display_date(gmdate('Y-m-d')).' '.$this->$field);
@@ -2470,10 +2473,28 @@ function save_relationship_changes($is_update, $exclude=array())
     			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
     		}
     		$modified_select_query=implode(" UNION ALL ",$union_qs);
+    	} else if (strstr($query," UNION ") !== false) {
+
+    		//seperate out all the queries.
+    		$union_qs=explode(" UNION ", $query);
+    		foreach ($union_qs as $key=>$union_query) {
+        		$star = '*';
+				preg_match($pattern, $union_query, $matches);
+				if (!empty($matches)) {
+					if (stristr($matches[0], "distinct")) {
+			          	if (!empty($this->seed) && !empty($this->seed->table_name ))
+			          		$star = 'DISTINCT ' . $this->seed->table_name . '.id';
+			          	else
+			          		$star = 'DISTINCT ' . $this->table_name . '.id';
+					}
+				} // if
+    			$replacement = 'SELECT count(' . $star . ') c FROM ';
+    			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
+    		}
+    		$modified_select_query=implode(" UNION ",$union_qs);
     	} else {
 	    	$modified_select_query = preg_replace($pattern, $replacement, $query,1);
     	}
-
 
 		return $modified_select_query;
     }
@@ -2571,7 +2592,7 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						$value = implode($list_column,' ');
 						// Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
-						if ( $this->db->dbType == 'mssql' 
+						if ( $this->db->dbType == 'mssql'
 						     && $source != 'non-db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
@@ -2581,7 +2602,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
                         }
 						// Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
-						if ( $this->db->dbType == 'oci8' 
+						if ( $this->db->dbType == 'oci8'
 						     && $source != 'non-db'
                             && in_array(
                                 $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
@@ -3102,7 +3123,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	$custom_join = false;
     	if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
     	{
-    		
+
     		$custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
     		if($custom_join)
     		{
@@ -3159,7 +3180,7 @@ function save_relationship_changes($is_update, $exclude=array())
     	{
     		$fields = 	$this->field_defs;
     	}
-		
+
         $used_join_key = array();
 
     	foreach($fields as $field=>$value)
@@ -3314,8 +3335,8 @@ function save_relationship_changes($is_update, $exclude=array())
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
 						}
 					}
-					
-					
+
+
     				if($join['type'] == 'many-to-many')
     				{
     					if(empty($ret_array['secondary_select']))
@@ -3449,9 +3470,9 @@ function save_relationship_changes($is_update, $exclude=array())
 					}else{
 						$where = preg_replace('/(^|[\s(])' . $data['name'] . '/', '${1}' . $params['join_table_alias'] . '.'.$data['rname'], $where);
                         /**
-                         * Bug #39988 - Added the line below. create_export_query_relate_link_patch() in export_utils.php                         
-                         *    generates a where clause that works for stock modules. They all have a                         
-                         *    custom create_export_query function on the bean. However, the Basic() object calls this                         
+                         * Bug #39988 - Added the line below. create_export_query_relate_link_patch() in export_utils.php
+                         *    generates a where clause that works for stock modules. They all have a
+                         *    custom create_export_query function on the bean. However, the Basic() object calls this
                          *    function for it's export_query. So, we have to handle the where clause that comes in.
                          */
 						$where = preg_replace('/(^|[\s(])join_' . $data['name'] . '/', '${1}' . $params['join_table_alias'], $where);
@@ -4513,7 +4534,7 @@ function save_relationship_changes($is_update, $exclude=array())
 	{
 		$GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
 		$db = &DBManagerFactory::getInstance('listviews');
-			
+
 		if(!empty($row_offset) && $row_offset != 0 && !empty($limit) && $limit != -1)
 		{
 			$result = $db->limitQuery($query, $row_offset, $limit,true,"Error retrieving $template->object_name list: ");
@@ -4655,9 +4676,11 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         if(empty($ids))
         {
-            $ids = '(';
+            $ids = "('')";
+        }else{
+            $ids .= ')';
         }
-        $ids .= ')';
+        
         return array('list'=>$idList, 'in'=>$ids);
     }
 

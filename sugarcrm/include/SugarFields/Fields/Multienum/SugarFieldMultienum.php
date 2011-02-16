@@ -40,5 +40,13 @@ class SugarFieldMultienum extends SugarFieldBase {
 
 			$bean->$field = encodeMultienumValue($params[$prefix.$field]);
 		}
-    }
+		else {
+			// if the value in db is not empty and
+			// if the data is not set in params (means the user has deselected everything)
+			// then set field to ''
+			if (!empty($bean->$field)) {
+				$bean->$field = '';
+			}
+		}
+	}
 }
