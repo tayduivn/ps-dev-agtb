@@ -3780,8 +3780,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 $limit = $max_per_page + 1;
                 $max_per_page = $limit;
             }
-
-<<<<<<< HEAD
         }
 
         if(empty($row_offset))
@@ -3887,48 +3885,6 @@ function save_relationship_changes($is_update, $exclude=array())
         $response['previous_offset'] = $previous_offset;
         $response['current_offset'] = $row_offset ;
         return $response;
-=======
-    					$GLOBALS['log']->debug("$temp->object_name({$row['id']}): ".$field." = ".$temp->$field);
-    				}else if (isset($row[$this->table_name .'.'.$field]))
-    				{
-    					$temp->$field = $row[$this->table_name .'.'.$field];
-    				}
-    				else
-    				{
-    					$temp->$field = "";
-    				}
-    			}
-
-    			$temp->check_date_relationships_load();
-    			$temp->fill_in_additional_list_fields();
-				if($temp->hasCustomFields()) $temp->custom_fields->fill_relationships();
-				$temp->call_custom_logic("process_record");
-
-    			$list[] = $temp;
-
-    			$index++;
-    		}
-    	}
-    	if(!empty($sugar_config['disable_count_query']) && !empty($limit))
-    	{
-
-    		$rows_found = $row_offset + count($list);
-
-    		unset($list[$limit - 1]);
-    		if(!$toEnd)
-    		{
-    			$next_offset--;
-    			$previous_offset++;
-    		}
-    	}
-    	$response = Array();
-    	$response['list'] = $list;
-    	$response['row_count'] = $rows_found;
-    	$response['next_offset'] = $next_offset;
-    	$response['previous_offset'] = $previous_offset;
-    	$response['current_offset'] = $row_offset ;
-    	return $response;
->>>>>>> master
     }
 
     /**
