@@ -34,9 +34,19 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewPopupview extends ViewListView
 {
-    function ViewPopupview()
+    function __construct()
     {
-        $this->init ();
+        $this->editModule = $_REQUEST [ 'view_module' ] ;
+        $this->editLayout = $_REQUEST [ 'view' ] ;
+        $this->editPackage = (isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
+
+        $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (isset($_REQUEST['view_package']) && $_REQUEST['view_package'] && $_REQUEST['view_package'] != 'studio') ;
+        if (!$this->fromModuleBuilder)
+        {
+            global $app_list_strings ;
+            $moduleNames = array_change_key_case ( $app_list_strings [ 'moduleList' ] ) ;
+            $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
+        }
     }
     
     /**
@@ -57,17 +67,7 @@ class ViewPopupview extends ViewListView
      */
     function init()
     {
-    	$this->editModule = $_REQUEST [ 'view_module' ] ;
-        $this->editLayout = $_REQUEST [ 'view' ] ;
-        $this->editPackage = (isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
 
-        $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (isset($_REQUEST['view_package']) && $_REQUEST['view_package'] && $_REQUEST['view_package'] != 'studio') ;
-        if (!$this->fromModuleBuilder)
-        {
-            global $app_list_strings ;
-            $moduleNames = array_change_key_case ( $app_list_strings [ 'moduleList' ] ) ;
-            $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
-        }
     }
 
     function preDisplay()
