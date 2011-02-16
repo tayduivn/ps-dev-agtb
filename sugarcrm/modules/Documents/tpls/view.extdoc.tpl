@@ -95,12 +95,12 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
         {strip}
           <td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
             {if $col == 'NAME' || $params.bold}<b>{/if}
-            {if $params.link && !empty($rowData.DOC_URL) }
-              <a href="{$rowData.DOC_URL}" target="{$linkTarget}">
+            {if $params.link && !empty($rowData.URL) }
+              <a href="{$rowData.URL}" target="{$linkTarget}">
             {/if}
             {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
             {if empty($rowData.$col)}&nbsp;{/if}
-            {if $params.link && !empty($rowData.DOC_URL) }
+            {if $params.link && !empty($rowData.URL) }
               </a>
             {/if}
             {if $params.link && !empty($rowData.URL) }
