@@ -120,7 +120,7 @@ $popup_request_data = array(
 	'form_name' => 'EditView',
 	'field_to_name_array' => array(
 		'id' => 'kbdoc_approver_id',
-		'name' => 'kbdoc_approver_name',
+		'user_name' => 'kbdoc_approver_name',
 		),
 	);
 $xtpl->assign('encoded_approvers_popup_request_data', $json->encode($popup_request_data));
@@ -506,7 +506,7 @@ foreach($javascript->sugarbean->field_name_map as $field=>$value){
 $javascript->addFieldGeneric('kbdocument_name', '','LBL_ARTICLE_TITLE','true');
 $javascript->addFieldGeneric('assigned_user_name', 'varchar', $mod_strings['LBL_ARTICLE_AUTHOR'] ,'true');
 $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_ARTICLE_AUTHOR'], 'false', '', 'assigned_user_id');
-$javascript->addToValidateBinaryDependency('kbdoc_approver_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_ARTICLE_AUTHOR'], 'false', '', 'kbdoc_approver_id');
+$javascript->addToValidateBinaryDependency('kbdoc_approver_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_ARTICLE_APPROVED_BY'], 'false', '', 'kbdoc_approver_id');
 $javascript->addFieldGeneric('kbdocument_revision_number', '', 'LBL_DOC_VERSION' ,'true');
 $javascript->addFieldGeneric('team_name', 'varchar', $app_strings['LBL_TEAM'] ,'true');
 $javascript->addToValidateBinaryDependency('team_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_TEAM'], 'false', '', 'team_id');

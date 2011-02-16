@@ -116,7 +116,6 @@ class ExternalAPIFactory
             $apiClass = new $className();
             foreach ( $optionList as $opt ) {
                 if ( isset($apiClass->$opt) ) {
-                    print_r($apiClass->$opt);
                     $apiFullList[$apiName][$opt] = $apiClass->$opt;
                 }
             }

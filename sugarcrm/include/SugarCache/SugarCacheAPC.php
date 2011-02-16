@@ -63,6 +63,6 @@ class SugarCacheAPC extends SugarCacheAbstract
      */
     protected function _resetExternal()
     {
-        apc_clear_cache();
+        apc_clear_cache('user');
     }
 }

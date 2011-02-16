@@ -10,6 +10,5 @@ $config = array (
   ),
   'order' => 15,
   'properties' => array (
-      'url' => '',
   ),
 );

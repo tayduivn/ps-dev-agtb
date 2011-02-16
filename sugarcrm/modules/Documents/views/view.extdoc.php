@@ -83,6 +83,7 @@ class DocumentsViewExtdoc extends SugarView
             $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
             $errorMessage .= '<input type="hidden" name="active" value="1">';
             $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
+            $errorMessage .= '<input type="hidden" name="refreshParentWindow" value="1">';
 
             $errorMessage .= '<br><input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">&nbsp;';
             $errorMessage .= '<input type="button" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">';
@@ -105,7 +106,7 @@ class DocumentsViewExtdoc extends SugarView
                 }
                 if ( $isPopup ) {
                     // We are running as a popup window, we need to replace the direct url with some javascript
-                    $newRow['DIRECT_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['DIRECT_URL'])."'); window.close();";
+                    $newRow['DOC_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['URL'])."'); window.close();";
                 }
                 $searchData[] = $newRow;
             }

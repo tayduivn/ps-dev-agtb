@@ -297,7 +297,7 @@ class quicksearchQuery {
         $response['fields']=array();
         $i=0;
         foreach($user_array as $id=>$name) {
-            array_push($response['fields'], array('id' => $id, 'user_name' => $name, 'module' => 'Users'));
+            array_push($response['fields'], array('id' => (string) $id, 'user_name' => $name, 'module' => 'Users'));
             $i++;
         }
     

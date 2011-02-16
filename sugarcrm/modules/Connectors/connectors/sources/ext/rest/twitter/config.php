@@ -34,9 +34,13 @@ $config = array (
   ),
   'order' => 5,
   'properties' => array (
-      'company_url' => 'http://widgets.twimg.com/j/2/widget.js',
-      'oauth_consumer_key' => 'ZjoUiIbIeJJT7ONo7JcuAg',
-      'oauth_consumer_secret' => 'GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0',
+      'oauth_consumer_key' => '',
+      'oauth_consumer_secret' => '',
       ),
 );
+
+//BEGIN SUGARCRM flav=int ONLY
+$config['properties']['oauth_consumer_key'] = 'ZjoUiIbIeJJT7ONo7JcuAg';
+$config['properties']['oauth_consumer_secret'] = 'GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0';
+//END SUGARCRM flav=int ONLY
 ?>

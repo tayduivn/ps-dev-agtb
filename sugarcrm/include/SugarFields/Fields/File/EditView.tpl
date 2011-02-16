@@ -61,7 +61,6 @@
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <input type="hidden" name="{{$vardef.docId}}" id="{{$vardef.docId}}" value="{$fields.{{$vardef.docId}}.value}">
 <input type="hidden" name="{{$vardef.docUrl}}" id="{{$vardef.docUrl}}" value="{$fields.{{$vardef.docUrl}}.value}">
-<input type="hidden" name="{{$vardef.docDirectUrl}}" id="{{$vardef.docDirectUrl}}" value="{$fields.{{$vardef.docDirectUrl}}.value}">
 <input type="hidden" name="{{$idName}}_old_doctype" id="{{$idName}}_old_doctype" value="{$fields.{{$vardef.docType}}.value}">
 {{/if}}
 <span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
@@ -142,8 +141,8 @@ sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
 "method":"externalApi",
 "api":"",
 "modules":["EAPM"],
-"field_list":["name", "id", "url", "direct_url", "id"],
-"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$vardef.docDirectUrl}}", "{{$idName}}"],
+"field_list":["name", "id", "url", "id"],
+"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$idName}}"],
 "required_list":["name"],
 "conditions":[],
 "no_match_text":"No Match"

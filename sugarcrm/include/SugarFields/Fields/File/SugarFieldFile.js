@@ -145,7 +145,6 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             document.getElementById(elemBaseName).value = '';
             document.getElementById(elemBaseName + '_remoteName').value = '';
             document.getElementById('doc_url').value = '';
-            document.getElementById('doc_direct_url').value = '';
         },
 
         populateFromPopup: function(elemBaseName, docId, docName, docUrl, docDirectUrl) {
@@ -153,7 +152,6 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             document.getElementById(elemBaseName).value = docId;
             document.getElementById(elemBaseName + '_remoteName').value = docName;
             document.getElementById('doc_url').value = docUrl;
-            document.getElementById('doc_direct_url').value = docUrl;
         }
     }
 }

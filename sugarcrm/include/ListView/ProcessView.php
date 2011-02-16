@@ -79,17 +79,14 @@ class ProcessView {
 
         foreach($target_meta_array as $element => $specific_array){
             $selected_element = $this->is_selected_element($specific_array);
-            if($this->build_this_type($specific_array)=="true" && (empty($exclusion_list) || !in_array($element, $exclusion_list))){
+            if($this->build_this_type($specific_array) && (empty($exclusion_list) || !in_array($element, $exclusion_list))){
                 $this->build_top_block($element_count, $specific_array['top'], $selected_element);
                 $this->build_bottom_block($element_count, $specific_array['bottom'], $selected_element);
             } else {
                 //do not display this option
             }
 
-
-
             ++$element_count;
-
             //end foreach
         }
         $this->top_block = $this->xtpl->text("top");
@@ -157,8 +154,6 @@ class ProcessView {
 
             $adv_related_array = array();
 
-
-
             //Build Relationships
             $rel_handler = $this->workflow_object->call_relationship_handler("base_module", true);
 
@@ -209,9 +204,6 @@ class ProcessView {
                 $start_script .= "hide_target('lang_rel2'); \n";
             }
 
-
-
-
             $this->xtpl->assign("START_SCRIPT", $start_script);
             $this->xtpl->parse("adv_related");
             $adv_related_array['block'] = $this->xtpl->text("adv_related");
@@ -220,8 +212,6 @@ class ProcessView {
 
             //end if there is a need for an advanced block
         }
-
-
         //end function get_adv_related
     }
 
@@ -229,7 +219,7 @@ class ProcessView {
 
     function build_top_block($element_count, & $top_array, $selected_element){
 
-        if($this->hide_this_type($top_array['value'])=="true"){
+        if($this->hide_this_type($top_array['value'])){
             //mod_id
             //input_element
             //display_text
@@ -240,7 +230,7 @@ class ProcessView {
             $mod_id = "mod_".$specific_type;
 
             //SELECTED_ELEMENT////
-            if($selected_element =="true"){
+            if($selected_element){
                 $selected = "checked";
             } else {
                 $selected = "";
@@ -281,14 +271,6 @@ class ProcessView {
         $value = $bottom_array['value'];
         $lang_id = "lang_".$value;
 
-        //SELECTED_ELEMENT////
-        if($selected_element == "true"){
-            $selected = "true";
-        } else {
-            $selected = "false";
-        }
-
-
         ///////////DISPLAY_TEXT/////////////////
         $display_text = "";
         $default_text = "";
@@ -323,12 +305,9 @@ class ProcessView {
             //end foreach display_text loop
         }
 
-
         $this->xtpl->assign("LANG_ID", $lang_id);
         $this->xtpl->assign("DISPLAY_TEXT", $display_text);
         $this->xtpl->assign("DEFAULT_TEXT_VALUES", $default_text);
-
-
 
         //Add address information - For Recipient/Invitee Processing
         if(!empty($this->step) && $this->step=="AlertsCreateStep1"){
@@ -352,17 +331,9 @@ class ProcessView {
         }
         //End address information - For Recipient/Invitee Processing
 
-
-
-
-
         $this->xtpl->parse("bottom");
         //end function build_bottom_block
     }
-
-
-
-
 
     function is_selected_element($specific_array){
 
@@ -374,9 +345,9 @@ class ProcessView {
             $actual_value = "";
         }
         if($specific_array['top']['value'] == $actual_value){
-            return "true";
+            return true;
         }
-        return "false";
+        return false;
         //end function is_selected_element
     }
 
@@ -422,7 +393,7 @@ class ProcessView {
 
         //checks for if this is a non-first trigger element. Some types are only allowed to
         //be the main trigger and not an additional filter trigger element.
-        if($this->add_filter==true){
+        if($this->add_filter){
             if(!empty($specific_array['filter_type'][$this->workflow_object->type])){
                 return true;
             } else {
@@ -432,15 +403,15 @@ class ProcessView {
         ///////////////////
 
         if($trigger_type=="all"){
-            return  "true";
+            return  true;
         }
         if($trigger_type=="non_time"){
 
             if($this->workflow_object->type=="Normal"){
-                return "true";
+                return true;
             }
             if($this->workflow_object->type=="Time"){
-                return "false";
+                return false;
             }
 
             //if trigger_type is non_time
@@ -449,10 +420,10 @@ class ProcessView {
         if($trigger_type=="time_only"){
 
             if($this->workflow_object->type=="Normal"){
-                return "false";
+                return false;
             }
             if($this->workflow_object->type=="Time"){
-                return "true";
+                return true;
             }
 
             //if trigger_type is time_only
@@ -476,14 +447,14 @@ class ProcessView {
             return true;
         }
 
-        foreach($this->hide_array['target_element'][$target_element] as $keep_element){
-            if($target_value == $keep_element){
-                return "true";
+        if(!empty($this->hide_array['target_element'][$target_element])) {
+            foreach($this->hide_array['target_element'][$target_element] as $keep_element){
+                if($target_value == $keep_element){
+                    return true;
+                }
             }
-            //end foreach array
         }
-
-        return "false";
+        return false;
 
         //end hide_this_type function
     }
@@ -496,9 +467,6 @@ class ProcessView {
         } else {
             $href_id = $option_array['type']."_".$target_value;
         }
-
-
-
 
         $javascript_content = "";
         ///Javascript content value
@@ -525,12 +493,7 @@ class ProcessView {
             //end if the jscript content array is set
         }
 
-
-
-
-
-
-        if($selected_element=="true"){
+        if($selected_element){
             //this is selected so translate the value
             $href_inner_text = $this->translate_element($option_array);
         } else {
@@ -554,8 +517,6 @@ class ProcessView {
             $select_options = $expression_object->get_selector_array("dom_array", $this->target_bean->$option_array['value'], $option_array['dom_name'], false);
             return "<select id='".$option_array['value']."' name='".$option_array['value']."' tabindex='1'>".$select_options."</select>";
         }
-
-
         //end function get_input_element
     }
 
@@ -573,9 +534,6 @@ class ProcessView {
 
         //end function get_default_element
     }
-
-
-
 
     function translate_element(& $option_array){
         global $current_language;
@@ -689,7 +647,6 @@ class ProcessView {
             }
 
         }
-
 
         //end function translate_element
     }
@@ -1067,4 +1024,3 @@ class ProcessView {
     //end class ProcessView
 }
 
-?>

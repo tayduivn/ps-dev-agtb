@@ -55,7 +55,7 @@
 	<link text="Dropdown Editor" />
 	<link text="salutation_dom" />
 	
-	<wait timeout="10" />
+	<wait timeout="15" />
 	<li id="Senor">
 		<cell index="2">
 			<link index="2" jscriptevent="onclick" />

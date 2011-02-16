@@ -66,11 +66,13 @@ SUGAR.forms.AssignmentHandler.ANIMATE = true;
  */
 SUGAR.forms.AssignmentHandler.VARIABLE_MAP = {};
 
+//BEGIN SUGARCRM flav=een ONLY
 /**
  * @STATIC
  * This array contains a list of valid relationship links for this module
  */
 SUGAR.forms.AssignmentHandler.LINKS = {};
+//END SUGARCRM flav=een ONLY
 
 /**
  * @STATIC
@@ -170,12 +172,17 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
 SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 
+	//BEGIN SUGARCRM flav=een ONLY
 	//Relate fields are only string on the client side, so return the variable name back.
 	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
 		return variable;
+	//END SUGARCRM flav=een ONLY
 
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
+
+	if (field.children.length == 1 && field.children[0].tagName.toLowerCase() == "input")
+		field = field.children[0];
 
 	// special select case for IE6 and dropdowns
 	if ( field.tagName.toLowerCase() == "select" ) {
@@ -188,7 +195,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 
 	//checkboxes need to return a boolean value
 	if(field.tagName.toLowerCase() == "input" && field.type.toLowerCase() == "checkbox") {
-		return field.checked?SUGAR.expressions.Expression.TRUE:SUGAR.expressions.Expression.FALSE;
+		return field.checked ? SUGAR.expressions.Expression.TRUE : SUGAR.expressions.Expression.FALSE;
 	}
 
 	//Special case for dates
@@ -395,10 +402,12 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 
 		var value = "";
 
+		//BEGIN SUGARCRM flav=een ONLY
 		//Relate fields are only string on the client side, so return the variable name back.
 		if(SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname])
 			value = varname;
 		else
+		//END SUGARCRM flav=een ONLY
 			value = SUGAR.forms.AssignmentHandler.getValue(varname, this.formName);
 
 		if (typeof(value) == "string")

@@ -237,7 +237,7 @@ class WorkFlowActionShell extends SugarBean {
 			{
 				//There was an error in this action
 				$table_html .= "<tr><td>";
-                $table_html .= "<li class='error'>" . translate('LBL_ACTION_ERROR') . "</li>";
+                $table_html .= "<span class='error'>" . translate('LBL_ACTION_ERROR') . "</span>";
                 $table_html .= "</td></tr>";
                 if (empty($this->hasError))
                 {

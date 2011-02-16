@@ -206,8 +206,8 @@ class Meeting extends SugarBean {
                     }
                 }
             } else {
-                if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
-                $_SESSION['user_error_message'][] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage'];
+                SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']. ': ' .$response['errorMessage']);
+                return $this->id;
             }
 
             $api->logoff();
@@ -763,12 +763,14 @@ class Meeting extends SugarBean {
 } // end class def
 
 // External API integration, for the dropdown list of what external API's are available
-function getMeetingsExternalApiDropDown() {
+function getMeetingsExternalApiDropDown($focus = null, $name = null, $value = null, $view = null) {
     require_once('include/externalAPI/ExternalAPIFactory.php');
-    
+
     $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
     $apiList = array_merge(array('Sugar'=>$GLOBALS['app_list_strings']['eapm_list']['Sugar']),$apiList);
-
+    if(!empty($value) && empty($apiList[$value])){
+        $apiList[$value] = $value;
+    }
     return $apiList;
 
 }

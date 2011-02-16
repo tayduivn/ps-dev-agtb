@@ -87,7 +87,6 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 //        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
             $bean->doc_id = $cut;//$this->getIdFromUrl($alternateLink);
             $bean->doc_url = $alternateLink;
-            $bean->doc_direct_url = $alternateLink;
             $result['success'] = TRUE;
 		}catch (Exception $e)
          {
@@ -158,7 +157,6 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $curr['url'] = $alternateLink;
             $curr['name'] = $result->title->getText();
             $curr['date_modified'] = $result->updated->getText();
-
             $fileid=$result->id;
             $cut = substr($fileid, 63);
             $curr['id'] = $cut;

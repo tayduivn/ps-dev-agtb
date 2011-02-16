@@ -44,6 +44,7 @@ $dictionary['Document'] = array('table' => 'documents',
   	'len' => '100',
   	'comment' => 'Document ID from documents web server provider',
   	'importable' => false,
+  	'studio' => false,
   ),
   'doc_type' =>
   array (
@@ -57,6 +58,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'massupdate' => false,
     'options' => 'eapm_list',
     'default'	=> 'Sugar',
+  	'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
 'doc_url' =>
   array (
@@ -67,18 +69,8 @@ $dictionary['Document'] = array('table' => 'documents',
   	'comment' => 'Document URL from documents web server provider',
   	'importable' => false,
     'massupdate' => false,
+  	'studio' => false,
   ),
-'doc_direct_url' =>
-  array (
-  	'name' => 'doc_direct_url',
-  	'vname' => 'LBL_DOC_DIRECT_URL',
-  	'type' => 'varchar',
-  	'len' => '255',
-  	'comment' => 'Document URL from documents web server provider for direct download',
-  	'importable' => false,
-    'massupdate' => false,
-  ),
-
   'filename' =>
   array (
      'name' => 'filename',

@@ -41,6 +41,7 @@ $viewdefs[$module_name]['EditView'] = array(
                                     'customCode' => '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=EditView&module=Users&record={$return_id}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">',
                                   ),
                                 ),
+                                'headerTpl'=>'modules/EAPM/tpls/EditViewHeader.tpl',
                                 'footerTpl'=>'modules/EAPM/tpls/EditViewFooter.tpl',),
                                             ),
 
@@ -60,7 +61,7 @@ $viewdefs[$module_name]['EditView'] = array(
     array (
         array('name' => 'url',
               'displayParams' => array('required' => true),
-              'customLabel' => '{$MOD.LBL_URL}<br>(Omit http:// or https://)',
+              'customCode' => '<input type=\'text\' name=\'url\' id=\'url\' size=\'30\' maxlength=\'255\' value=\'\' title=\'\' tabindex=\'104\' ><br>{$MOD.LBL_OMIT_URL}',
             )
     ),
     array (

@@ -349,7 +349,13 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	    	// the users and contacts relationships
 	    	$focus->save(true);
 	    	$return_id = $focus->id;
-	    	
+	    	if(empty($return_id)){
+                //this is to handle the situation where the save fails, most likely because of a failure
+                //in the external api. bug: 42200
+                $_REQUEST['action'] = 'EditView';
+                $_REQUEST['return_action'] = 'EditView';
+                handleRedirect('', 'Meetings');
+            }
 	    	// Process users
 	    	$existing_users = array();
 	    	if(!empty($_POST['existing_invitees'])) {

@@ -143,8 +143,8 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 		if (matchType && matchType != tokens.returnType)
 		{
 			Msg.show({
-                title: "Validation Failed",
-                msg: "The formula must be of type " + matchType
+                title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
+                msg: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_TYPE") + matchType
             });
 			return false;
 		}
@@ -154,15 +154,9 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 		
 		return true;
 	} catch (e) {
-		if (e.message)
 			Msg.show({
-                title: "Validation Failed",
-                msg: e.message
-            });
-		else
-			Msg.show({
-                title: "Validation Failed",
-                msg: e
+                title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
+                msg: e.message ? e.message : e
             });
 		return false;
 	}

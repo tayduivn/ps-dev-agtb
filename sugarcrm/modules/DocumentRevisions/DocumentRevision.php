@@ -40,7 +40,6 @@ class DocumentRevision extends SugarBean {
     var $doc_id;
     var $doc_type;
     var $doc_url;
-    var $doc_direct_url;
 	var $date_entered;
 	var $created_by;
 	var $filename;
@@ -113,7 +112,7 @@ class DocumentRevision extends SugarBean {
             $row = $this->db->fetchByAssoc($ret);
             $this->document_id = $row['document_id'];
         }
-		$query = "UPDATE documents set document_revision_id='".$this->db->quote($this->id)."', doc_type='".$this->db->quote($this->doc_type)."', doc_url='".$this->db->quote($this->doc_url)."', doc_direct_url='".$this->db->quote($this->doc_direct_url)."', doc_id='".$this->db->quote($this->doc_id)."' where id = '".$this->db->quote($this->document_id)."'";
+		$query = "UPDATE documents set document_revision_id='".$this->db->quote($this->id)."', doc_type='".$this->db->quote($this->doc_type)."', doc_url='".$this->db->quote($this->doc_url)."', doc_id='".$this->db->quote($this->doc_id)."' where id = '".$this->db->quote($this->document_id)."'";
 		$this->db->query($query,true);
 
         return $saveRet;

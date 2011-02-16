@@ -203,7 +203,8 @@ $mod_strings = array (
 	'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	//END SUGARCRM flav=pro ONLY
-	'LBL_COPY_ADDRESS_CHECKED' => 'Copy Address to Checked Contacts',
+	'LBL_COPY_ADDRESS_CHECKED_PRIMARY' => 'Copy to Primary Address',
+	'LBL_COPY_ADDRESS_CHECKED_ALT' => 'Copy to Other Address',
 	//BEGIN SUGARCRM flav!=sales ONLY
 
 	'LBL_CASES_SUBPANEL_TITLE' => 'Cases',

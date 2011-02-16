@@ -75,13 +75,13 @@ else {
         }
         
         // See if it is a remote file, if so, send them that direction
-        if ( isset($focus->doc_direct_url) && !empty($focus->doc_direct_url) ) {
-            header('Location: '.$focus->doc_direct_url);
+        if ( isset($focus->doc_url) && !empty($focus->doc_url) ) {
+            header('Location: '.$focus->doc_url);
             sugar_die();
         }
 
-        if ( isset($focusRevision) && isset($focusRevision->doc_direct_url) && !empty($focusRevision->doc_direct_url) ) {
-            header('Location: '.$focusRevision->doc_direct_url);
+        if ( isset($focusRevision) && isset($focusRevision->doc_url) && !empty($focusRevision->doc_url) ) {
+            header('Location: '.$focusRevision->doc_url);
             sugar_die();
         }
 

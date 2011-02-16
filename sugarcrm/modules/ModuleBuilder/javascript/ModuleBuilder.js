@@ -1105,6 +1105,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var reportable = Dom.get('reportable');
             var importable = Dom.get('importable');
             var duplicate  = Dom.get('duplicate_merge');
+			var massupdate  = Dom.get('massupdate');
 			//Getting the default value field is tricky as it can have multiple different ID's
 			var defaultVal = false;
 			for(var i in {'default':"", 'int_default':"", 'default[]':""})
@@ -1120,6 +1121,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             }
             if (importable)importable.disabled = disable;
             if (duplicate)duplicate.disabled = disable;
+			if (massupdate)massupdate.disabled = disable;
 			this.toggleDateTimeDefalutEnabled(disable);
 			if (defaultVal) defaultVal.disabled = disable;
             Dom.get("enforced").value = enable;

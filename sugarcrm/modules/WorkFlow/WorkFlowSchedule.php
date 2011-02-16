@@ -215,31 +215,43 @@ class WorkFlowSchedule extends SugarBean {
 
         if($update == false && $time_array['time_int_type']=="normal") {
             //take current date and add the time interval
-            $this->date_expired = get_expiry_date("datetime", $time_array['time_int'], false);
+            $this->date_expired = get_expiry_date("datetime", $time_array['time_int']);
             //end if update is false, then create a new time expiry
         }
 
-        if($update == true || $time_array['time_int_type']=="datetime"){
+        if($update == true || $time_array['time_int_type']=="datetime") {
             //convert date_expired into time stamp and add time_interval
-            $this->date_expired = $this->get_expiry_date($bean_object, $time_array['time_int'], true, $time_array['target_field']);
+            if($update) {
+                if($time_array['target_field'] == 'none') {
+                    $target_stamp = TimeDate::getInstance()->nowDb();
+                } else {
+                    $target_field = $time_array['target_field'];
+                    $target_stamp = $bean_object->$target_field;
+                }
+            } else {
+                $target_stamp = null;
+            }
+            $this->date_expired = get_expiry_date("datetime", $time_array['time_int'], false, $update, $target_stamp);
             //end if update is true, then just update existing expiry
         }
     //end function set_time_interval
     }
 
-
+    /**
+     * @deprecated
+     */
     function get_expiry_date($bean_object, $time_interval, $is_update = false, $target_field="none")
     {
-        if($is_update == false){
-            $target_stamp = TimeDate::getInstance()->nowDb();
-        } else {
+        if($is_update) {
             if($target_field=="none"){
                 $target_stamp = TimeDate::getInstance()->nowDb();
             } else {
                 $target_stamp = $bean_object->$target_field;
             }
+        } else {
+            $target_stamp = null;
         }
-        return get_expiry_date("datetime", $time_interval, $is_update, $target_stamp);
+        return get_expiry_date("datetime", $time_interval, false, $is_update, $target_stamp);
     }
 
 function process_scheduled(){

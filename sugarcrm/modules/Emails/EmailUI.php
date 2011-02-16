@@ -332,7 +332,7 @@ eoq;
      * @param String $emailLinkUrl
      * @return JSON Object containing the composePackage and full link url
      */
-    function generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl)
+    function generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, $lazyLoad=false)
     {
         $composeData = explode("&",$emailLinkUrl);
         $a_composeData = array();
@@ -342,7 +342,7 @@ eoq;
     		$a_composeData[$tmp[0]] = urldecode($tmp[1]);
     	}
 
-    	return $this->generateComposePackageForQuickCreate($a_composeData,$emailLinkUrl);
+    	return $this->generateComposePackageForQuickCreate($a_composeData,$emailLinkUrl, $lazyLoad);
     }
     /**
      * Generate the composePackage for the quick compose email UI.  The package contains
@@ -354,11 +354,15 @@ eoq;
      *                              directed to the full compose screen if needed
      * @return JSON Object containg composePackage and fullLinkUrl
      */
-    function generateComposePackageForQuickCreate($composeData,$fullLinkUrl)
+    function generateComposePackageForQuickCreate($composeData,$fullLinkUrl, $lazyLoad=false)
     {
         $_REQUEST['forQuickCreate'] = true;
-    	require_once('modules/Emails/Compose.php');
-    	$composePackage = generateComposeDataPackage($composeData,FALSE);
+        if(!$lazyLoad){
+    	    require_once('modules/Emails/Compose.php');
+    	    $composePackage = generateComposeDataPackage($composeData,FALSE);
+        }else{
+            $composePackage = $composeData;
+        }
 
     	//JSON object is passed into the function defined within the a href onclick event
     	//which is delimeted by '.  Need to escape all single quotes, every other char is valid.
@@ -367,6 +371,7 @@ eoq;
     	   if (is_string($singleCompose))
     	       $composePackage[$key] = str_replace("'","&#039;",$singleCompose);
     	}
+        
 
     	$quickComposeOptions = array('fullComposeUrl' => $fullLinkUrl,'composePackage' => $composePackage);
     	$j_quickComposeOptions = json_encode($quickComposeOptions);

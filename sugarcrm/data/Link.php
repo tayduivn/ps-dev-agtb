@@ -938,7 +938,7 @@ class Link {
         if (empty($this->_bean->id)) {
             $this->_bean->retrieve($id);//!$bean_is_lhs || empty($related_id) ? $id : $related_id);
         }
-        //BEGIN SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=een ONLY
         $linkField = VardefManager::getLinkFieldForRelationship(
             $this->_bean->module_dir, $this->_bean->object_name, $this->_relationship_name
         );
@@ -947,7 +947,7 @@ class Link {
                 && VardefManager::modHasCalcFieldsWithLink($this->_bean->module_dir, $this->_bean->object_name, $linkField['name'])) {
             $this->_bean->save();
         }
-        //END SUGARCRM flav=pro ONLY
+        //END SUGARCRM flav=een ONLY
         $this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
 		//NOW THE REVERSE WAY SINCE A RELATIONSHIP TAKES TWO
 		global $beanList;
@@ -956,7 +956,7 @@ class Link {
             if ( !empty($class) ) {
                 $rbean = new $class();
                 $rbean->retrieve(empty($related_id) ? $id : $related_id);
-                //BEGIN SUGARCRM flav=pro ONLY
+                //BEGIN SUGARCRM flav=een ONLY
                 $linkField = VardefManager::getLinkFieldForRelationship(
                     $custom_logic_arguments['related_module'], $class, $this->_relationship_name
                 );
@@ -965,7 +965,7 @@ class Link {
                         && VardefManager::modHasCalcFieldsWithLink($custom_logic_arguments['related_module'], $class, $linkField['name'])) {
                     $rbean->save();
                 }
-                //END SUGARCRM flav=pro ONLY
+                //END SUGARCRM flav=een ONLY
                 $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);
             }
         }
