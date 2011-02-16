@@ -26,7 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-session_regenerate_id(false); 
+if (!defined('SUGAR_PHPUNIT_RUNNER')) {
+    session_regenerate_id(false); 
+}
 global $mod_strings;
 //BEGIN SUGARCRM flav=pro ONLY
 $res = $GLOBALS['sugar_config']['passwordsetting'];
