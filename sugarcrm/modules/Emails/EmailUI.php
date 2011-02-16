@@ -91,33 +91,7 @@ class EmailUI {
 
 
         //Check quick create module access
-        $QCAvailibleModules = array();
-        $QCModules = array(
-        //BEGIN SUGARCRM flav!=sales ONLY
-        'Bugs',
-        'Cases',
-        //END SUGARCRM flav!=sales ONLY
-        'Contacts',
-        //BEGIN SUGARCRM flav!=sales ONLY
-        'Leads',
-        //END SUGARCRM flav!=sales ONLY
-        'Tasks'
-        );
-        foreach($QCModules as $module) {
-        	$class = substr($module, 0, strlen($module) - 1);
-            require_once("modules/{$module}/{$class}.php");
-
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($class=="Case") {
-                $class = "aCase";
-            }
-            //END SUGARCRM flav!=sales ONLY
-
-            $seed = new $class();
-        	if ($seed->ACLAccess('edit')) {
-        		$QCAvailibleModules[] = $module;
-        	}
-        }
+        $QCAvailableModules = $this->_loadQuickCreateModules();
 
         //Get the quickSearch js needed for assigned user id on Search Tab
         require_once('include/QuickSearchDefaults.php');
@@ -145,7 +119,7 @@ class EmailUI {
 		$this->smarty->assign('sugar_flavor', $sugar_flavor);
 		$this->smarty->assign('current_language', $current_language);
 		$this->smarty->assign('server_unique_key', $server_unique_key);
-		$this->smarty->assign('qcModules', json_encode($QCAvailibleModules));
+		$this->smarty->assign('qcModules', json_encode($QCAvailableModules));
 		$extAllDebugValue = "ext-all.js";
 		//BEGIN SUGARCRM flav=ent ONLY
 		$extAllDebugValue = "ext-all-debug.js";
@@ -321,6 +295,31 @@ eoq;
         $outData = array('jsData' => $javascriptOut,'divData'=> $divOut);
         $out = json_encode($outData);
         return $out;
+    }
+    
+    /**
+     * Load the modules from the metadata file and include in a custom one if it exists
+     *
+     * @return array
+     */
+    protected function _loadQuickCreateModules()
+    {
+        $QCAvailableModules = array();
+        $QCModules = array();
+
+        include('modules/Emails/metadata/qcmodulesdefs.php');
+        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
+            include('custom/modules/Emails/metadata/qcmodulesdefs.php');
+        }
+
+        foreach($QCModules as $module) {
+            $seed = SugarModule::get($module)->loadBean();
+            if ( ( $seed instanceOf SugarBean ) && $seed->ACLAccess('edit') ) {
+                $QCAvailableModules[] = $module;
+            }
+        }
+        
+        return $QCAvailableModules;
     }
 
     /**
