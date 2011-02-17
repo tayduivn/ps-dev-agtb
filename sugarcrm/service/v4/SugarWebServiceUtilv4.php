@@ -266,4 +266,117 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
 	    return $results;
 	}
+	
+	/**
+	 * Processes the filter_fields attribute to use with SugarBean::create_new_list_query()
+	 *
+	 * @param object $value SugarBean
+	 * @param array $fields
+	 * @return array
+	 */
+    protected function filter_fields_for_query(SugarBean $value, array $fields)
+    {
+        $GLOBALS['log']->info('Begin: SoapHelperWebServices->filter_fields_for_query');
+        $filterFields = array();
+        foreach($fields as $field)
+        {
+            if (isset($value->field_defs[$field])) 
+            {
+                $filterFields[$field] = $value->field_defs[$field];
+            }
+        }
+        $GLOBALS['log']->info('End: SoapHelperWebServices->filter_fields_for_query');
+        return $filterFields;
+    }
+
+    /**
+     * @see SugarWebServiceUtilv3::getRelationshipResults()
+     */
+    public function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '', $order_by = '') 
+    {
+		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
+		require_once('include/TimeDate.php');
+		global  $beanList, $beanFiles, $current_user;
+		global $disable_date_format;
+
+		$bean->load_relationship($link_field_name);
+		if (isset($bean->$link_field_name)) {
+			// get the query object for this link field
+			$query_array = $bean->$link_field_name->getQuery(true,array(),0,'',true);
+			if (isset($query_array['where'])) {
+				$query_array['where'] = str_ireplace("where", "", $query_array['where']);
+				if (!empty($optional_where)) {
+					$optional_where = $query_array['where'] . " and " . $optional_where;
+				} else {
+					$optional_where = $query_array['where'];
+				} // else
+			} // if
+			
+			$params = array();
+			$params['joined_tables'] = $query_array['join_tables'];
+
+			// get the related module name and instantiate a bean for that.
+			$submodulename = $bean->$link_field_name->getRelatedModuleName();
+			$submoduleclass = $beanList[$submodulename];
+			require_once($beanFiles[$submoduleclass]);
+			$submodule = new $submoduleclass();
+			$filterFields = $this->filter_fields($submodule, $link_module_fields);
+            $filterFieldsForQuery = $this->filter_fields_for_query($submodule, $filterFields);
+			$relFields = $bean->$link_field_name->getRelatedFields();
+			$roleSelect = '';
+
+			$idSetInSubModule = false;
+			if($submodulename == 'Users' && !in_array('id', $link_module_fields)){
+				$link_module_fields[] = 'id';
+				$idSetInSubModule = true;
+			}
+
+			if(!empty($relFields)){
+				foreach($link_module_fields as $field){
+					if(!empty($relFields[$field])){
+						$roleSelect .= ', ' . $query_array['join_tables'][0] . '.'. $field;
+					}
+				}
+			}
+			// create a query
+			$subquery = $submodule->create_new_list_query($order_by,$optional_where ,$filterFieldsForQuery,$params, 0,'', true,$bean);
+			$query =  $subquery['select'].$roleSelect .   $subquery['from'].$query_array['join']. $subquery['where'].$subquery['order_by'];
+			$GLOBALS['log']->info('SoapHelperWebServices->getRelationshipResults query = ' . $query);
+
+			$result = $submodule->db->query($query, true);
+			$list = array();
+			while($row = $submodule->db->fetchByAssoc($result)) {
+				if (!$disable_date_format) {
+					foreach ($filterFields as $field) {
+						if (isset($submodule->field_defs[$field]) &&
+							isset($submodule->field_defs[$field]['type']) &&
+							isset($row[$field])) {
+
+								if ($submodule->field_defs[$field]['type'] == 'date') {
+									global $timedate;
+									$row[$field] = $timedate->to_display_date_time($row[$field]);
+								}
+								if ($submodule->field_defs[$field]['type'] == 'currency') {
+									// TODO: convert data from db to user preferred format absed on the community input
+								} // if
+						} // if
+
+					} // foreach
+				}
+				if($submodulename == 'Users' && $current_user->id != $row['id']) {
+					$row['user_hash'] = "";
+				} // if
+				if ($idSetInSubModule) {
+					unset($row['id']);
+				} // if
+				$list[] = $row;
+			}
+			$GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults');
+			return array('rows' => $list, 'fields_set_on_rows' => $filterFields);
+		} else {
+			$GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults - ' . $link_field_name . ' relationship does not exists');
+			return false;
+		} // else
+
+	} // fn
 }
