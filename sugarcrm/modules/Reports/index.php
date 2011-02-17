@@ -249,7 +249,7 @@ function checkSavedReportACL(&$reporter,&$args) {
 			}
 			$type = $hashModules[$col_module];
 			//todo: check the last param of this call (is_owner)
-			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams'){
+			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams' && $col_module != 'CampaignLog'){
 				sugar_die($mod_strings['LBL_NO_ACCESS']);
 			}			
 		}

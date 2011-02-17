@@ -22,6 +22,87 @@
         <directory>./tests/tests</directory>
     </testsuite>
     <filter>
+        <whitelist>
+            <directory suffix=".php">./data</directory>
+            <directory suffix=".php">./include</directory>
+            <file>./install/install_utils.php</file>
+            <directory suffix=".php">./ModuleInstall</directory>
+            <exclude>
+                <directory suffix=".php">./include/controller</directory>
+                <file>./include/EditView/EditView.php</file>
+                <file>./include/EditView/QuickCreate.php</file>
+                <directory suffix=".php">./include/Expressions/metadata</directory>
+                <directory suffix=".php">./include/Expressions/javascript</directory>
+                <file>./include/Expressions/index.php</file>
+                <file>./include/Expressions/updatecache.php</file>
+                <directory suffix=".php">./include/fonts</directory>
+                <file>./include/generic/DeleteRelationship.php</file>
+                <file>./include/generic/Save2.php</file>
+                <directory suffix=".php">./include/HTTP_WebDAV_Server</directory>
+                <directory suffix=".php">./include/images</directory>
+                <directory suffix=".php">./include/javascript</directory>
+                <directory suffix=".php">./include/jsolait</directory>
+                <directory suffix=".php">./include/language</directory>
+                <directory suffix=".php">./include/nusoap</directory>
+                <file>./include/MVC/Controller/action_file_map.php</file>
+                <file>./include/MVC/Controller/action_view_map.php</file>
+                <file>./include/MVC/Controller/entry_point_registry.php</file>
+                <file>./include/MVC/Controller/file_access_control_map.php</file>
+                <file>./include/MVC/Controller/wireless_module_registry.php</file>
+                <directory suffix=".php">./include/Pear</directory>
+                <directory suffix=".php">./include/pclzip</directory>
+                <directory suffix=".php">./include/phpmailer</directory>
+                <file>./include/Popups/Popup_picker.php</file>
+                <directory suffix=".php">./include/reCaptcha</directory>
+                <file>./include/SearchForm/SearchForm.php</file>
+                <directory suffix=".php">./include/Smarty</directory>
+                <directory suffix=".php">./include/SubPanel/tpls</directory>
+                <file>./include/SubPanel/SubPanelViewer.php</file>
+                <file>./include/SubPanel/SugarTab.php</file>
+                <directory suffix=".php">./include/SugarDependentDropdown/metadata</directory>
+                <file>./include/SugarFields/Fields/Collection/view.sugarfieldcollection.php</file>
+                <directory suffix=".php">./include/SugarObjects/implements/assignable</directory>
+                <directory suffix=".php">./include/SugarObjects/implements/team_security</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/basic/Dashlets/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/basic/language/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/basic/metadata/</directory>
+                <file>./include/SugarObjects/templates/basic/vardefs.php</file>
+                <directory suffix=".php">./include/SugarObjects/templates/company/language/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/company/metadata/</directory>
+                <file>./include/SugarObjects/templates/company/config.php</file>
+                <file>./include/SugarObjects/templates/company/vardefs.php</file>
+                <directory suffix=".php">./include/SugarObjects/templates/file/language/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/file/metadata/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/file/views/</directory>
+                <file>./include/SugarObjects/templates/file/vardefs.php</file>
+                <directory suffix=".php">./include/SugarObjects/templates/issue/language/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/issue/metadata/</directory>
+                <file>./include/SugarObjects/templates/issue/config.php</file>
+                <file>./include/SugarObjects/templates/issue/vardefs.php</file>
+                <directory suffix=".php">./include/SugarObjects/templates/person/language/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/person/metadata/</directory>
+                <file>./include/SugarObjects/templates/person/config.php</file>
+                <file>./include/SugarObjects/templates/person/vardefs.php</file>
+                <directory suffix=".php">./include/SugarObjects/templates/sale/language/</directory>
+                <directory suffix=".php">./include/SugarObjects/templates/sale/metadata/</directory>
+                <file>./include/SugarObjects/templates/sale/config.php</file>
+                <file>./include/SugarObjects/templates/sale/vardefs.php</file>
+                <file>./include/SugarTheme/getImage.php</file>
+                <file>./include/SugarTheme/cssmin.php</file>
+                <file>./include/Sugarpdf/sugarpdf_config.php</file>
+                <file>./include/Sugarpdf/sugarpdf_default.php</file>
+                <directory suffix=".php">./include/tcpdf</directory>
+                <directory suffix=".php">./include/timezone</directory>
+                <directory suffix=".php">./include/VarDefHandler/SugarTabs</directory>
+                <file>./include/VarDefHandler/listvardefoverride.php</file>
+                <file>./include/VarDefHandler/vardef_meta_arrays.php</file>
+                <file>./include/entryPoint.php</file>
+                <file>./include/globalControlLinks.php</file>
+                <file>./include/JSON.php</file>
+                <file>./include/modules.php</file>
+                <file>./include/SugarPDF.php</file>
+            </exclude>
+        </whitelist>
         <blacklist>
             <directory suffix=".php">./cache</directory>
             <directory suffix=".php">./custom</directory>

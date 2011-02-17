@@ -133,7 +133,7 @@ function get_report_schedule($report_id){
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $row;
+			$return_array[] = $row;
 	}
 	return $return_array;
 }
@@ -201,6 +201,11 @@ function update_next_run_time($schedule_id, $next_run, $interval){
 		$query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
 		$this->db->query($query);
 
+}
+
+function mark_deleted($id){
+    $query = "UPDATE {$this->table_name} SET deleted = '1' WHERE id = '{$id}'";
+    $GLOBALS['db']->query($query);
 }
 }
 ?>

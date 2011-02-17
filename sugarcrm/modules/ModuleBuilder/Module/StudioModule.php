@@ -463,17 +463,23 @@ class StudioModule
         $GLOBALS [ 'log' ]->debug ( print_r( $sources,true) ) ;
         foreach ( $sources as $name => $defs )
         {
-            $parser = ParserFactory::getParser( $defs [ 'type' ] , $this->module ) ;
-            if ($parser->removeField ( $fieldName ) )
-                $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
+            //If this module type doesn't support a given metadata type, we will get an exception from getParser()
+            try {
+                $parser = ParserFactory::getParser( $defs [ 'type' ] , $this->module ) ;
+                if ($parser->removeField ( $fieldName ) )
+                    $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
+            } catch(Exception $e){}
         }
         
         //Remove the fields in subpanel
         $data = $this->getParentModulesOfSubpanel($this->module);
         foreach($data as $parentModule){
-			$parser = ParserFactory::getParser( MB_LISTVIEW , $parentModule, null ,  $this->module) ;
-			if ($parser->removeField ( $fieldName ) )
-                $parser->handleSave(false) ; 
+            //If this module type doesn't support a given metadata type, we will get an exception from getParser()
+            try {
+                $parser = ParserFactory::getParser( MB_LISTVIEW , $parentModule, null ,  $this->module) ;
+                if ($parser->removeField ( $fieldName ) )
+                    $parser->handleSave(false) ;
+            } catch(Exception $e){}
         }
     }
 

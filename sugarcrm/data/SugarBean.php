@@ -3528,7 +3528,6 @@ function save_relationship_changes($is_update, $exclude=array())
                                     $ret_array['select'] .= ' , ' .$params['join_table_alias'] . '.created_by ' .  $field . '_owner';
                                 }
                                 $ret_array['select'] .= "  , '".$rel_module  ."' " .  $field . '_mod';
-
                             }
                         }
                     }
@@ -3781,7 +3780,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 $limit = $max_per_page + 1;
                 $max_per_page = $limit;
             }
-
         }
 
         if(empty($row_offset))

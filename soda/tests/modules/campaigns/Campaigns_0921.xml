@@ -57,9 +57,11 @@
 	</csv>
 	
 	<!-- Reset search form to default settings. -->
-	<link text="Basic Search" />
-	<button id="search_form_clear" />
-	<button id="search_form_submit" />
+        <link id="basic_search_link" />
+        <wait timeout="1" />	
+        <button id='search_form_clear'/>
+        <wait timeout="1" />
+        <button id="search_form_submit" />
 
 	<script file="{@global.scriptsdir}/modules/lib/TargetList_Delete_Lib.xml" />
 

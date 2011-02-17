@@ -8,6 +8,11 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function setup()
     {
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
         $this->_role_id = null;
         $beanList = $beanFiles = array();
         require('include/modules.php');

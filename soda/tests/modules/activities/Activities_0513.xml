@@ -8,7 +8,7 @@
 	<link id="moduleTab_Meetings" />
 	<browser assert="Meetings" />
 	<link text="Schedule Meeting" />
-
+	<wait timeout="3" />
 	<csv file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.csv" var="meeting_record_0513">
 		<textfield id="name" set="{@meeting_record_0513.name} {@user.name} {@stamp}" />
 		<textfield id="location" set="{@meeting_record_0513.location}" />

@@ -20,7 +20,8 @@
 	<link id="moduleTab_Tasks" />
 	<browser assert="Tasks" />
 	<link text="View Tasks" />
-	<link text="/Basic Search/" required="false" />
+	<link text="/Basic Search/" />
+	<wait timeout="3" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
 
