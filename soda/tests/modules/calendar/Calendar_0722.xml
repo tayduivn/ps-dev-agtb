@@ -36,23 +36,20 @@
 	<form id="form_SubpanelQuickCreate_Notes">
 		<button id="Notes_subpanel_save_button" />
 	</form>
-	<wait timeout="3" />
+	<wait timeout="5" />
 
 	<div id="list_subpanel_history">
 		<link class="listViewTdToolsS1" index="1" />
 	</div>
-
+	<wait timeout="3" />
 	<textfield id="name" set="{@calendar_0722.subject2}" />
 	<textfield id="description" set="{@calendar_0722.description2}" />
 
-	<form id="form_SubpanelQuickCreate_Notes">
-		<button id="Notes_subpanel_save_button" />
-	</form>
+	<button value="Save" />
 
 	<div id="list_subpanel_history">
 		<link text="{@calendar_0722.subject2}" click="false" />
 	</div>
-
 
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
 
