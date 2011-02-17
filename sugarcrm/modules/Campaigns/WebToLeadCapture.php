@@ -119,43 +119,38 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 			if(isset($_POST['redirect_url']) && !empty($_POST['redirect_url'])){
 			    // Get the redirect url, and make sure the query string is not too long
 		        $redirect_url = $_POST['redirect_url'];
-		        //build and include url encoded query string if querystring option was checked
-		        if(isset($_POST['use_querystring']) && $_POST['use_querystring']){
-				
-			        $query_string = '';
-					$first_char = '&';
-					if(strpos($redirect_url, '?') === FALSE){
-						$first_char = '?';
-					}
-					$first_iteration = true;
-					$get_and_post = array_merge($_GET, $_POST);
-					foreach($get_and_post as $param => $value) {
-		
-						if($param == 'redirect_url' || $param == 'submit')
-							continue;
-						
-						if($first_iteration){
-							$first_iteration = false;
-							$query_string .= $first_char;
-						}
-						else{
-							$query_string .= "&";
-						}
-						$query_string .= "{$param}=".urlencode($value);
-					}
-					if(empty($lead)) {
-						if($first_iteration){
-							$query_string .= $first_char;
-						}
-						else{
-							$query_string .= "&";
-						}
-						$query_string .= "error=1";
-					}
-					
-					$redirect_url .= $query_string;
-
+		        $query_string = '';
+				$first_char = '&';
+				if(strpos($redirect_url, '?') === FALSE){
+					$first_char = '?';
 				}
+				$first_iteration = true;
+				$get_and_post = array_merge($_GET, $_POST);
+				foreach($get_and_post as $param => $value) {
+
+					if($param == 'redirect_url' || $param == 'submit')
+						continue;
+					
+					if($first_iteration){
+						$first_iteration = false;
+						$query_string .= $first_char;
+					}
+					else{
+						$query_string .= "&";
+					}
+					$query_string .= "{$param}={$value}";
+				}
+				if(empty($lead)) {
+					if($first_iteration){
+						$query_string .= $first_char;
+					}
+					else{
+						$query_string .= "&";
+					}
+					$query_string .= "error=1";
+				}
+				
+				$redirect_url = $redirect_url.$query_string;
 				
 				// Check if the headers have been sent, or if the redirect url is greater than 2083 characters (IE max URL length)
 				//   and use a javascript form submission if that is the case.
