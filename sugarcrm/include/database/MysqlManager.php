@@ -106,7 +106,7 @@ class MysqlManager extends DBManager
         if (mysql_errno($this->getDatabase())) {
             if ($this->dieOnError || $dieOnError){
                 $GLOBALS['log']->fatal("MySQL error ".mysql_errno($this->database).": ".mysql_error($this->database));
-                sugar_die ($userMsg.$GLOBALS['app_strings']['ERR_DB_FAIL']);
+                sugar_die ($GLOBALS['app_strings']['ERR_DB_FAIL']);
             }
             else {
                 $this->last_error = $msg."MySQL error ".mysql_errno($this->database).": ".mysql_error($this->database);
