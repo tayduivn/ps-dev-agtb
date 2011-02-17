@@ -2924,8 +2924,8 @@ SUGAR.savedViews = function() {
 			         hideTabsDef.push(hideTabs.options[i].value);
 				}
 			}
-
-			document.getElementById('displayColumnsDef').value = displayColumnsDef.join('|');
+			if (!SUGAR.savedViews.clearColumns)
+				document.getElementById('displayColumnsDef').value = displayColumnsDef.join('|');
 			document.getElementById('hideTabsDef').value = hideTabsDef.join('|');
 		},
 
@@ -3149,7 +3149,7 @@ SUGAR.searchForm = function() {
                     }
                 }
             }
-
+			SUGAR.savedViews.clearColumns = true;
 		}
 	};
 }();
@@ -3213,6 +3213,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			left_to_right: function(left_name, right_name, left_size, right_size) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 
@@ -3298,6 +3299,7 @@ SUGAR.tabChooser = function () {
 
 
 			right_to_left: function(left_name, right_name, left_size, right_size, max_left) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 
@@ -3384,6 +3386,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			up: function(name, left_name, right_name) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 			    var td = document.getElementById(name+'_td');
@@ -3419,6 +3422,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			down: function(name, left_name, right_name) {
+				SUGAR.savedViews.clearColumns = false;
 			   	var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 			    var td = document.getElementById(name+'_td');
