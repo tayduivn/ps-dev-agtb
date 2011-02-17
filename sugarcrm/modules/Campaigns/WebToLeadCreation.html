@@ -130,8 +130,13 @@
 				<td scope="row"><slot>{MOD.LBL_DEFINE_LEAD_POST_URL}</slot></td>
 				<td ><slot><input id="post_url" name="post_url" size="60"
 					disabled='true' value="{WEB_POST_URL}" type="text"></slot> <input
-					id="chk_edit_url" name="chk_edit_url" onclick="editUrl();" class='checkbox' type='checkbox'> <class ="dataLabel" width="10%">{MOD.LBL_EDIT_LEAD_POST_URL}				
+					id="chk_edit_url" name="chk_edit_url" onclick="editUrl();" class='checkbox' type='checkbox'> <class ="dataLabel" width="10%">{MOD.LBL_EDIT_LEAD_POST_URL}
+				</td>				
 			</tr>
+			
+			<tr>
+				<td scope="row"><slot>{MOD.LBL_DEFINE_LEAD_USE_QUERYSTRING}</slot></td>
+				<td ><slot><input id="chk_use_querystring" name="chk_use_querystring" class='checkbox' type='checkbox'></slot></td>			
 			</tr>
 			<tr>
 				<td scope="row"><slot>{MOD.LBL_DEFINE_LEAD_REDIRECT_URL}</slot></td>

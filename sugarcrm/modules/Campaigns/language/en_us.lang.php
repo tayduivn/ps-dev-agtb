@@ -342,6 +342,7 @@ $mod_strings = array (
     'LBL_DEFINE_LEAD_POST_URL' => 'Post URL:',
     'LBL_EDIT_LEAD_POST_URL' => 'Edit Post URL?',
     'LBL_DEFINE_LEAD_REDIRECT_URL' => 'Redirect URL:',
+	'LBL_DEFINE_LEAD_USE_QUERYSTRING' => 'Pass Form Values in Post:',
     'LBL_LEAD_NOTIFY_CAMPAIGN' => 'Related Campaign:',
     'LBL_DEFAULT_LEAD_SUBMIT' => 'Submit',
     'LBL_WEB_TO_LEAD'    =>  'Create Lead Form',

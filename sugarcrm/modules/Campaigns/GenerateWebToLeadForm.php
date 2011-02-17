@@ -47,6 +47,7 @@ $web_required_symbol = $app_strings['LBL_REQUIRED_SYMBOL'];
 $web_not_valid_email_address = $mod_strings['LBL_NOT_VALID_EMAIL_ADDRESS'];
 $web_post_url = $site_url.'/index.php?entryPoint=WebToLeadCapture';
 $web_redirect_url = '';
+$web_use_querystring = '';
 $web_notify_campaign = '';
 $web_assigned_user = '';
 $web_team_user = '';
@@ -67,6 +68,9 @@ if(!empty($_REQUEST['post_url'])){
 }
 if(!empty($_REQUEST['redirect_url']) && $_REQUEST['redirect_url'] !="http://"){
     $web_redirect_url= $_REQUEST['redirect_url'];
+}
+if(!empty($_REQUEST['chk_use_querystring']) && $_REQUEST['chk_use_querystring'] == 'on' || $_REQUEST['chk_use_querystring'] ==TRUE){
+    $web_use_querystring= TRUE;
 }
 if(!empty($_REQUEST['notify_campaign'])){
     $web_notify_campaign = $_REQUEST['notify_campaign'];
@@ -451,6 +455,9 @@ if(!empty($web_form_campaign)){
 }
 if(!empty($web_redirect_url)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='redirect_url' name='redirect_url' value='$web_redirect_url'></td></tr>";
+}
+if(!empty($web_use_querystring)){
+    $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='use_querystring' name='use_querystring' value='$web_use_querystring'></td></tr>";
 }
 if(!empty($web_assigned_user)){
     $Web_To_Lead_Form_html .= "<tr><td style='display: none'><input type='hidden' id='assigned_user_id' name='assigned_user_id' value='$web_assigned_user'></td></tr>";
