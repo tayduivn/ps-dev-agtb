@@ -1,8 +1,30 @@
 <?php
 
 /*
-
 Modification information for LGPL compliance
+
+commit 1767411d701b8216cc5e043888fd1337e2eca315
+Author: Stanislav Malyshev <smalyshev@gmail.com>
+Date:   Fri Jan 7 12:19:10 2011 -0800
+
+    conserve memory when no debug is enabled
+
+commit 843510ebf455368865302a05b9d5041815a32c23
+Author: John Mertic <jmertic@sugarcrm.com>
+Date:   Wed Nov 17 13:18:09 2010 -0500
+
+    Bug 40716 - Fix WSDL validation problem by removing hardcoded schemaLocation attribute for the <xsd:import> tag.
+
+commit 2bd12c02078f3e291bd9c1e76179a144c788ce97
+Author: Collin Lee <clee@Collin-Lee-MacBook-Pro.local>
+Date:   Fri Oct 22 16:37:42 2010 -0400
+
+    Bug: 39937
+
+    We traced the error to a combination of the new Hoovers' WSDL + the nusoapclient code that winds up improperly encoding the parameter elem
+ents (this is because the namespace specified for the soap call did not match that declared in the WSDL). Made changes to nusoap.php so that w
+e may manually set a payload XML portion that will not apply the namespace encoding to the parameters. Fixed unit tests to reflect the changes
+ and also re-enabled those for Hoovers that were marked skipped.
 
 r58622 - 2010-10-22 18:18:59 -0700 (Fri, 22 Oct 2010) - engsvnbuild - Author: lam <lam@198.18.142.201>
     bug 40066
