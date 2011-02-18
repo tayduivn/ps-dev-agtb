@@ -3,6 +3,12 @@
 /*
 Modification information for LGPL compliance
 
+commit af784931b8ab2263776badac5ac3fc4776c9cd61
+Author: Stanislav Malyshev <smalyshev@gmail.com>
+Date:   Thu Feb 17 18:09:12 2011 -0800
+
+    bug 34897 - remove characters that aren't valid in XML
+
 commit 1767411d701b8216cc5e043888fd1337e2eca315
 Author: Stanislav Malyshev <smalyshev@gmail.com>
 Date:   Fri Jan 7 12:19:10 2011 -0800
