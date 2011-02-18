@@ -574,11 +574,9 @@ class nusoap_base {
 	*/
 	function expandEntities($val) {
 		if ($this->charencoding) {
-	    	$val = str_replace('&', '&amp;', $val);
-	    	$val = str_replace("'", '&apos;', $val);
-	    	$val = str_replace('"', '&quot;', $val);
-	    	$val = str_replace('<', '&lt;', $val);
-	    	$val = str_replace('>', '&gt;', $val);
+	    	$val = htmlspecialchars($val, ENT_QUOTES, $this->soap_defencoding);
+	    	// XML 1.0 doesn't allow those...
+	    	$val = preg_replace("/([\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F])/", '', $val);
 	    }
 	    return $val;
 	}
