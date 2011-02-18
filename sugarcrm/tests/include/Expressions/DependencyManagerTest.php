@@ -187,15 +187,10 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
     {
         $deps = DependencyManager::getCalculatedFieldDependencies($this->reliantCalcFields, false, true);
         $expectedOrder = array("cf1", "cf2", "cf5","cf3", "cf4");
-        $fieldOrder = array();
-        foreach($deps as $dep)
+        foreach($deps as $i => $dep)
         {
             $def = $dep->getDefinition();
-            $fieldOrder[] = $def['name'];
-        }
-        foreach($expectedOrder as $i => $field)
-        {
-            $this->assertEquals($field, $fieldOrder[$i]);
+            $this->assertEquals($def['name'], $expectedOrder[$i]);
         }
     }
 }
