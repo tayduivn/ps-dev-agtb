@@ -208,6 +208,7 @@ class ViewLayoutView extends ViewEdit
         $smarty->assign ( 'disable_layout', $disableLayout) ;
         $smarty->assign ( 'required_fields', $requiredFields) ;
         $smarty->assign ( 'layout', $parser->getLayout () ) ;
+        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         $smarty->assign ( 'view', $this->editLayout ) ;
         $smarty->assign ( 'maxColumns', $parser->getMaxColumns() ) ;
