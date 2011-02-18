@@ -1701,7 +1701,7 @@ class SugarBean
     function updateCalculatedFields()
     {
         require_once("include/Expressions/DependencyManager.php");
-        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false, true);
         foreach($deps as $dep)
         {
             if ($dep->getFireOnLoad())

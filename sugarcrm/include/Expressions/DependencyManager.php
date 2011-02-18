@@ -33,13 +33,18 @@ class DependencyManager {
 	 * @param Boolean $includeReadOnly
 	 * @return array<Dependency>
 	 */
-	public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true) {
+	public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true, $orderMatters = false) {
 
 		$deps = array();
+        $ro_deps = array();
 		require_once("include/Expressions/Actions/SetValueAction.php");
+        //In order to make sure the deps are returned in order such that fields that ared by other fields are calculated first,
+        //we keep track of how many times a field is used and what fields that field references.
+        $formulaFields = array();
 		foreach($fields as $field => $def) {
 			if (isset($def['calculated']) && $def['calculated'] && !empty($def['formula'])) {
 		    	$triggerFields = Parser::getFieldsFromExpression($def['formula']);
+                $formulaFields[$field] = $triggerFields;
 		    	$dep = new Dependency($field);
 		    	$dep->setTrigger(new Trigger('true', $triggerFields));
 
@@ -56,16 +61,59 @@ class DependencyManager {
 		    					array('target' => $field,
 		    						  'value' => 'true')));
 
-				    	$deps[] = $readOnlyDep;
+				    	$ro_deps[] = $readOnlyDep;
 		    		}
 		    	}
-
-		    	$deps[] = $dep;
+		    	$deps[$field] = $dep;
 		    }
 	    }
+        if ($orderMatters)
+            $deps = self::orderCalculatedFields($deps, $formulaFields);
+        else 
+            $deps = array_values($deps);
 
-	    return $deps;
+	    return array_merge($deps, $ro_deps);
 	}
+
+    protected static function orderCalculatedFields($deps, $formulaFields)
+    {
+        $weights = array_fill_keys(array_keys($formulaFields), 0);
+        foreach($formulaFields as $field => $triggers)
+        {
+            $updated = array();
+            //Add to the weights of fields this field relies on, don't loop or double add.
+            self::updateWeights($weights, $updated, $formulaFields, $field);
+        }
+        //Calculate fields that are relied upon by other fields will now all be heavier than the
+        //fields that rely upon them. Do a reverse sort to bring the heaviest to the top.
+        arsort($weights);
+
+        //Now build the result array from the weights
+        $ret = array();
+        foreach($weights as $field => $weight)
+        {
+            $ret[] = $deps[$field];
+        }
+        return $ret;
+    }
+
+    /*
+     * Recusivly add weight to calculated fields that are used by the field in question
+     */
+    protected static function updateWeights(&$weights, &$updated, $formulaFields, $field)
+    {
+        foreach($formulaFields[$field] as $tField)
+        {
+            if (isset($formulaFields[$tField]) && !isset($updated[$tField]))
+            {
+                if(isset($weights[$tField])) $weights[$tField]++;
+                else $weights[$tField] = 1;
+
+                $updated[$tField] = true;
+                self::updateWeights($weights, $updated, $formulaFields, $tField);
+            }
+        }
+    }
 
 	static function getDependentFieldDependencies($fields) {
 		$deps = array();
@@ -278,6 +326,7 @@ class DependencyManager {
      */
     public static function getJSUserVariables($user)
     {
+        require_once("include/TimeDate.php");
         $ts = TimeDate::getInstance();
         return "SUGAR.expressions.userPrefs = " . json_encode(array(
             "num_grp_sep" => $user->getPreference("num_grp_sep"),
