@@ -68,8 +68,8 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
             $fake_record['NAME'] = $message['user']['name'].'</b>';
             if ( !empty($message['text']) ) 
             {
-            	$message['text'] = preg_replace('/\@(\w+)/', "<a target='_blank' href='http://twitter.com/\$1'>@\$1</a>", $message['text']);
-            	$fake_record['NAME'] .= ' '.$message['text'];
+            	$message['text'] = SugarFeed::parseMessage($message['text']); 
+            	$fake_record['NAME'] .= ' '.preg_replace('/\@(\w+)/', "<a target='_blank' href='http://twitter.com/\$1'>@\$1</a>", $message['text']);
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
             $fake_record['IMAGE_URL'] = $message['user']['profile_image_url'];
