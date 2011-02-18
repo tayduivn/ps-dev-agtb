@@ -150,6 +150,10 @@ logThis(" Finish Rebuilding the config file again", $path);
 
 set_upgrade_progress('end','in_progress');
 
+logThis("Begin: Repairing the global prefs so that the list/moduleQ prefs have their own category", $path);
+repairListGlobalPrefs();
+logThis("Complete: Repairing the global prefs so that the list/moduleQ prefs have their own category", $path);
+
 //BEGIN SUGARCRM flav=pro ONLY
 // If going from pre 610 to 610+, migrate the report favorites
 logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
