@@ -69,6 +69,41 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
     );
 
 
+//Final order for these should be cf1, cf2, cf5, cf3, cf4
+    var $reliantCalcFields = array(
+        'cf1' => array(
+            'name' => "cf1",
+            'type' => 'int',
+            'calculated' => true,
+            'formula' => 'add(1,1)'
+        ),
+        'cf2' => array(
+            'name' => "cf2",
+            'type' => 'int',
+            'calculated' => true,
+            'formula' => 'add($cf1,1)'
+        ),
+        'cf3' => array(
+            'name' => "cf3",
+            'type' => 'int',
+            'calculated' => true,
+            'formula' => 'add($cf5, $cf2)'
+        ),
+        'cf4' => array(
+            'name' => "cf4",
+            'type' => 'int',
+            'calculated' => true,
+            'formula' => 'add($cf2, $cf5, $cf3)'
+        ),
+        'cf5' => array(
+            'name' => "cf5",
+            'type' => 'int',
+            'calculated' => true,
+            'formula' => 'add($cf2, 1)'
+        ),
+    );
+
+
 
     public function testCFDeps() {
         $fields = array(
@@ -146,5 +181,21 @@ class DependencyManagerTest extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertEquals($this->dd_field['name'], $aDef['params']['target']);
         $this->assertEquals($expectedKeys, $aDef['params']['keys']);
         $this->assertEquals($expectedLabels, $aDef['params']['labels']);
+    }
+
+    public function testCalculatedOrdering()
+    {
+        $deps = DependencyManager::getCalculatedFieldDependencies($this->reliantCalcFields, false, true);
+        $expectedOrder = array("cf1", "cf2", "cf5","cf3", "cf4");
+        $fieldOrder = array();
+        foreach($deps as $dep)
+        {
+            $def = $dep->getDefinition();
+            $fieldOrder[] = $def['name'];
+        }
+        foreach($expectedOrder as $i => $field)
+        {
+            $this->assertEquals($field, $fieldOrder[$i]);
+        }
     }
 }
