@@ -62,7 +62,7 @@
 					<!--create a Task-->
 					<div id='list_subpanel_activities'>
 						<table class='list view'>
-							<button name='Activities_create_button'/>
+							<button name='Activities_CreateTask_button'/>
 						</table>
 					</div>
 					<textfield id='name' set='{@wf_8908.task_name}'/>

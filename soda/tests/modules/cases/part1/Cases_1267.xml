@@ -24,7 +24,7 @@
 	<!--create a task-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1267.csv" var="Case_1267">
 		<div id="list_subpanel_activities">
-			<button name="Activities_create_button" />
+			<button name="Activities_CreateTask_button" />
 		</div>
 
 		<!--set data-->
