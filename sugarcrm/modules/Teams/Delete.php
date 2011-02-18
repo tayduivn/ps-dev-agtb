@@ -58,7 +58,7 @@ if($focus->has_records_in_modules()) {
 	$user->retrieve($focus->associated_user_id);
 	if($focus->private == 1 && (!empty($user->id) && $user->deleted != 1))
 	{
-		$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($user->full_name));
+		$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($focus->name, $user->full_name));
 		$GLOBALS['log']->fatal($msg);
         SugarApplication::appendErrorMessage($msg);
 		header('Location: index.php?module=Teams&action=DetailView&record='.$focus->id);

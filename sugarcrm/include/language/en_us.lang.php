@@ -2997,7 +2997,7 @@ $app_strings = array (
 
     //cma
     'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
-    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team cannot be deleted unless the user [{0}] is deleted.',
+    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team [{0}] cannot be deleted until the user [{1}] is deleted.',
 
     //martin #25548
     'LBL_NO_FLASH_PLAYER' => 'You either have Abobe Flash turned off or are using an older version of the Adobe Flash Player. To get the latest version of the Flash Player, <a href="http://www.adobe.com/go/getflashplayer/">click here</a>.',
