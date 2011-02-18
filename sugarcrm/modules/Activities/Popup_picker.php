@@ -130,7 +130,7 @@ class Popup_Picker
 									 'date_modified' => $date_due,
 									 'description' => $this->getTaskDetails($task),
 									 'date_type' => $app_strings['DATA_TYPE_DUE'],
-									 'sort_value' => $task->date_entered,
+									 'sort_value' => strtotime($task->fetched_row['date_entered'].' GMT'),
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $task->name,
@@ -175,7 +175,7 @@ class Popup_Picker
 									 'date_modified' => $meeting->date_start,
 									 'description' => $this->formatDescription($meeting->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $meeting->date_entered,
+									 'sort_value' => strtotime($meeting->fetched_row['date_entered'].' GMT'),
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $meeting->name,
@@ -220,7 +220,7 @@ class Popup_Picker
 									 'date_modified' => $call->date_start,
 									 'description' => $this->formatDescription($call->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $call->date_entered,
+									 'sort_value' => strtotime($call->fetched_row['date_entered'].' GMT'),
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $call->name,
@@ -264,12 +264,12 @@ class Popup_Picker
 									 'date_modified' => $email->date_start." ".$email->time_start,
 									 'description' => $this->getEmailDetails($email),
 									 'date_type' => $app_strings['DATA_TYPE_SENT'],
-									 'sort_value' => $email->date_entered,
+									 'sort_value' => strtotime($email->fetched_row['date_entered'].' GMT'),
 									 );
 		} //end Emails
 
 		foreach ($focus_notes_list as $note) {
-
+			
 			$history_list[] = array('name' => $note->name,
 									 'id' => $note->id,
 									 'type' => "Note",
@@ -284,7 +284,7 @@ class Popup_Picker
 									 'date_modified' => $note->date_modified,
 									 'description' => $this->formatDescription($note->description),
 									 'date_type' => $app_strings['DATA_TYPE_MODIFIED'],
-									 'sort_value' => $note->date_entered,
+									 'sort_value' => strtotime($note->fetched_row['date_entered'].' GMT'),
 									 );
 			if(!empty($note->filename)) {
 				$count = count($history_list);
