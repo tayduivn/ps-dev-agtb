@@ -46,7 +46,6 @@ class SugarFieldDatetime extends SugarFieldBase {
 
 		// format date and time to db format
 		$date_start = $timedate->swap_formats($datetime[0], $datetime_prefs['date'], $timedate->dbDayFormat);
-    	$time_start = $timedate->swap_formats($datetime[1], $datetime_prefs['time'], $timedate->dbTimeFormat);
 
     	// pass date parameters to smarty
     	if ($datetime_prefs['date'] == 'Y-m-d' || $datetime_prefs['date'] == 'Y/m/d' || $datetime_prefs['date'] == 'Y.m.d'){
@@ -59,10 +58,6 @@ class SugarFieldDatetime extends SugarFieldBase {
     		$this->ss->assign('field_order', 'MDY');
     	}
     	$this->ss->assign('date_start', $date_start);
-    	// pass time parameters to smarty
-    	$use_24_hours = stripos($datetime_prefs['time'], 'a') ? false : true;
-    	$this->ss->assign('time_start', $time_start);
-    	$this->ss->assign('use_meridian', $use_24_hours);
 
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
     	return $this->fetch($this->findTemplate('WirelessEditView'));

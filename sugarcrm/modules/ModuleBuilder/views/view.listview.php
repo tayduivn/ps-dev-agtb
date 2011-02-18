@@ -178,6 +178,7 @@ class ViewListView extends ViewEdit
 
         $smarty->assign ( 'view', $this->editLayout ) ;
         $smarty->assign ( 'module', "ModuleBuilder" ) ;
+        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $smarty->assign ( 'action', 'listViewSave' ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         if (!empty ( $this->subpanel ) )

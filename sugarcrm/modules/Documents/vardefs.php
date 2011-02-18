@@ -400,7 +400,7 @@ $dictionary['Document'] = array('table' => 'documents',
        ),
  'relationships' => array (
     'document_revisions' => array('lhs_module'=> 'Documents', 'lhs_table'=> 'documents', 'lhs_key' => 'id',
-                              'rhs_module'=> 'Documents', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'document_id',
+                              'rhs_module'=> 'DocumentRevisions', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'document_id',
                               'relationship_type'=>'one-to-many')
 
    ,'documents_modified_user' =>
