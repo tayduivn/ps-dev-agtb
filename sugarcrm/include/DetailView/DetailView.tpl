@@ -113,7 +113,7 @@ class="yui-navset detailview_tabs"
 			    {if !$fields.{{$colData.field.name}}.hidden}
 				{{if $colData.field.customCode || $colData.field.assign}}
 					{counter name="panelFieldCount"}
-					{{sugar_evalcolumn var=$colData.field colData=$colData}}
+					<span id="{{$colData.field.name}}" class="sugar_field">{{sugar_evalcolumn var=$colData.field colData=$colData}}</span>
 				{{elseif $fields[$colData.field.name] && !empty($colData.field.fields) }}
 				    {{foreach from=$colData.field.fields item=subField}}
 				        {{if $fields[$subField]}}

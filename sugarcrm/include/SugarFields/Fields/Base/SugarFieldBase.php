@@ -139,7 +139,7 @@ class SugarFieldBase {
      *      * fieldSpan - column span for the field
      */
     function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-        return"<span class='sugar_field' id='{$vardef['name']}'>" .  $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView') . '</span>';
+        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
     }
 
  	// 99% of all fields will just format like a listview, but just in case, it's here to override
