@@ -4680,4 +4680,23 @@ function sugar_microtime()
 	$unique_id = $now[1].str_replace('.', '', $now[0]);
 	return $unique_id;
 }
+
+/**
+ * Extract urls from a piece of text
+ * @param  $string
+ * @return array of urls found in $string
+ */
+function getUrls($string)
+{
+	$lines = explode("<br>", trim($string));
+	$urls = array();
+	foreach($lines as $line){
+    	$regex = '/http?\:\/\/[^\" ]+/i';
+    	preg_match_all($regex, $line, $matches);
+    	foreach($matches[0] as $match){
+    		$urls[] = $match;
+    	}
+	}
+    return $urls;
+}
 ?>

@@ -463,4 +463,20 @@ class SugarFeed extends Basic {
 		return $result . ' ' . translate('LBL_TIME_AGO','SugarFeed');
     }
 
+    /**
+     * Parse a piece of text and replace with proper display tags.
+     * @static
+     * @param  $input
+     * @return void
+     */
+    public static function parseMessage($input){
+        $urls = getUrls($input);
+        foreach($urls as $url){
+			$output = "<a href='$url' target='_blank'>".$url."</a>";
+			$input = str_replace($url, $output, $input);
+		}
+		return $input;
+    }
+
+
 }
