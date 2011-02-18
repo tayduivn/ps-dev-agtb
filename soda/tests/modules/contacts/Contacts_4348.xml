@@ -33,7 +33,7 @@
 	<!-- *3* Create note for this created contact record-->
 	<csv file="{@global.scriptsdir}/csvs/Contacts/Contacts_4348.csv" var="Contacts_4348">
 		<div id="list_subpanel_history">
-			<button name="History_create_button" />
+			<button name="History_CreateNoteorAttachment_button" />
 		</div>
 		<wait timeout="3" />
 		<div class="moduleTitle">

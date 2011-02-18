@@ -92,7 +92,7 @@
 	<csv file="{@global.scriptsdir}/csvs/leads/Leads_2037.csv" var="Leads_2037">
 		<div id="list_subpanel_history">
 			<table class="list view">
-				<button name="History_create_button" />
+				<button name="History_CreateNoteorAttachment_button" />
 			</table>
 		</div>
 		<wait timeout="60" condition="true">
