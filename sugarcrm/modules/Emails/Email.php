@@ -939,7 +939,7 @@ class Email extends SugarBean {
 	 * @param $idsArray array of record ids to get the email address for
 	 * @return string comma delimited list of email addresses
 	 */
-	public function getNamePlusEmailAddressesForCompose($module, $idsArray) 
+	public function getNamePlusEmailAddressesForCompose($module, $idsArray)
 	{
 		global $locale;
 		global $db;
@@ -978,7 +978,7 @@ class Email extends SugarBean {
 				if ($module == 'Users' || $module == 'Employees') {
 				    $full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], '', $a['title']));
 					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
-				} 
+				}
 				elseif (SugarModule::get($module)->moduleImplements('Person')) {
 					$full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], $a['salutation'], $a['title']));
 					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
@@ -1013,6 +1013,28 @@ class Email extends SugarBean {
 
 			// handle legacy concatenation of date and time fields
 			if(empty($this->date_sent)) $this->date_sent = $this->date_start." ".$this->time_start;
+
+            while(!empty($this->parent_type) && !empty($this->parent_id)) {
+                if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
+                    if($this->fetched_row['parent_id'] != $this->parent_id || $this->fetched_row['parent_type'] != $this->parent_type) {
+                        $mod = strtolower($this->fetched_row['parent_type']);
+                        $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
+                        if($this->load_relationship($rel) ) {
+                            $this->$rel->delete($this->id, $this->fetched_row['parent_id']);
+                        }
+                    } else {
+                        // we already have this relationship, don't add it
+                        break;
+                    }
+                }
+                $mod = strtolower($this->parent_type);
+                $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
+                if($this->load_relationship($rel) ) {
+                    $this->$rel->add($this->parent_id);
+                }
+                break;
+			}
+
 			parent::save($check_notify);
 		}
 	}

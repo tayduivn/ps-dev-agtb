@@ -4171,12 +4171,6 @@ class InboundEmail extends SugarBean {
 	        if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
                 $email->parent_id = $_REQUEST['parent_id'];
                 $email->parent_type = $_REQUEST['parent_type'];
-                $mod = strtolower($email->parent_type);
-                $rel = array_key_exists($mod, $email->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
-
-                if(! $email->load_relationship($rel) )
-                    return FALSE;
-                $email->$rel->add($email->parent_id);
 	        }
 
 			// override $forDisplay w/user pref
