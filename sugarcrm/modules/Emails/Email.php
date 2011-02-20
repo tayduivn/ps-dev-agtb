@@ -1014,7 +1014,9 @@ class Email extends SugarBean {
 			// handle legacy concatenation of date and time fields
 			if(empty($this->date_sent)) $this->date_sent = $this->date_start." ".$this->time_start;
 
-            while(!empty($this->parent_type) && !empty($this->parent_id)) {
+			parent::save($check_notify);
+
+			if(!empty($this->parent_type) && !empty($this->parent_id)) {
                 if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
                     if($this->fetched_row['parent_id'] != $this->parent_id || $this->fetched_row['parent_type'] != $this->parent_type) {
                         $mod = strtolower($this->fetched_row['parent_type']);
@@ -1024,7 +1026,7 @@ class Email extends SugarBean {
                         }
                     } else {
                         // we already have this relationship, don't add it
-                        break;
+                        return;
                     }
                 }
                 $mod = strtolower($this->parent_type);
@@ -1032,10 +1034,7 @@ class Email extends SugarBean {
                 if($this->load_relationship($rel) ) {
                     $this->$rel->add($this->parent_id);
                 }
-                break;
 			}
-
-			parent::save($check_notify);
 		}
 	}
 
