@@ -265,7 +265,14 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
    ),
-
+  'quotes'=>
+   array (
+       'name' => 'quotes',
+       'type' => 'link',
+       'relationship' => 'documents_quotes',
+       'source' => 'non-db',
+       'vname' => 'LBL_QUOTES_SUBPANEL_TITLE',
+   ),
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',
