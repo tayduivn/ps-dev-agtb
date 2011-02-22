@@ -83,7 +83,9 @@ class="yui-navset detailview_tabs"
 		{{* //END SUGARCRM flav=pro ONLY*}}
 			{counter name="fieldsUsed"}
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].label}}%' scope="row">
-				{if !$fields.{{$colData.field.name}}.hidden}
+				{{if !empty($colData.field.name)}}
+				    {if !$fields.{{$colData.field.name}}.hidden}
+                {{/if}}
 				{{if isset($colData.field.customLabel)}}
 			       {{$colData.field.customLabel}}
 				{{elseif isset($colData.field.label) && strpos($colData.field.label, '$')}}
@@ -107,10 +109,14 @@ class="yui-navset detailview_tabs"
                    {overlib_includes}
                    {sugar_help text=$popupText WIDTH=400}
                 {{/if}}
+                {{if !empty($colData.field.name)}}
                 {/if}
+                {{/if}}
 			</td>
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}} {{if isset($fields[$colData.field.name].type) && $fields[$colData.field.name].type == 'phone'}}class="phone"{{/if}}>
+			    {{if !empty($colData.field.name)}}
 			    {if !$fields.{{$colData.field.name}}.hidden}
+			    {{/if}}
 				{{if $colData.field.customCode || $colData.field.assign}}
 					{counter name="panelFieldCount"}
 					<span id="{{$colData.field.name}}" class="sugar_field">{{sugar_evalcolumn var=$colData.field colData=$colData}}</span>
@@ -128,7 +134,9 @@ class="yui-navset detailview_tabs"
 					{counter name="panelFieldCount"}
 					{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='DetailView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type}}
 				{{/if}}
+				{{if !empty($colData.field.name)}}
 				{/if}
+				{{/if}}
 			</td>
 		{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
