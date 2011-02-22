@@ -432,12 +432,6 @@ if(!$origVersion){
     global $silent_upgrade_vars_loaded;
     logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
-if($origVersion < '620'){
-    logThis("Begin: Repairing the global prefs so that the list/moduleQ prefs have their own category", $path);
-    repairListGlobalPrefs();
-    logThis("Complete: Repairing the global prefs so that the list/moduleQ prefs have their own category", $path);
-}
-
 
 //BEGIN SUGARCRM flav=pro ONLY 
 // If going from pre 610 to 610+, migrate the report favorites
