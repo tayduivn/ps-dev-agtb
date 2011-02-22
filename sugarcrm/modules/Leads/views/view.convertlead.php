@@ -679,10 +679,10 @@ class ViewConvertLead extends SugarView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
-	    $params = parent::_getModuleTitleParams();
+	    $params = parent::_getModuleTitleParams($browserTitle);
 	    $params[] = "<a href='index.php?module=Leads&action=DetailView&record={$this->bean->id}'>{$this->bean->name}</a>";
 	    $params[] = $mod_strings['LBL_CONVERTLEAD'];
     	return $params;
