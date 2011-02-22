@@ -323,9 +323,9 @@ function checkOtherFields() {
 } // fn
 
 
-function checkTrashFolder() {
-	var field1=document.getElementById('protocol');
-	if (field1.value == 'imap') {
+function checkTrashFolder() 
+{
+	if (document.getElementById('protocol').value == 'imap' && document.getElementById('mailbox_type').value != 'bounce') {
 		var trashFolderValue = document.getElementById("trashFolder").value;
 		if (trim(trashFolderValue).length <= 0) {
 		    requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
@@ -358,13 +358,13 @@ function showCreateCaseRow() {
 } // fn
 
 function possibleActionChange() {
-	var maliBoxType = document.getElementById('mailbox_type');
+	var mailBoxType = document.getElementById('mailbox_type');
 	var trashRequiredSpan = document.getElementById('trashRequiredSpan');
 	<!--//BEGIN SUGARCRM flav=pro ONLY -->
 	var teamSpanRequired = document.getElementById('teamSpanRequired');
 
 	<!--//END SUGARCRM flav=pro ONLY -->
-	if(maliBoxType.value == 'bounce') {
+	if(mailBoxType.value == 'bounce') {
 
 		trashRequiredSpan.style.display = 'none';
 		trashRequiredSpan.style.display = 'none';
