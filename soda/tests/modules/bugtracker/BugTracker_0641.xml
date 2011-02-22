@@ -18,7 +18,9 @@
 			<browser assert="{@bugtracker.bugtracker_create}" />
 		</div>
 
-		<textfield id="assigned_user_name" set="{@bugtracker_0641.user}" />
+		<textfield id="assigned_user_name" set="{@bugtracker_0641.user}" jscriptevent="onkeydown" />
+		<textfield id="assigned_user_name" jscriptevent="onkeyup" click="false"/>
+		<wait timeout="2" />
 		<textfield id="name" set="{@bugtracker_0641.subject}" />
 		<select id="priority" set="{@bugtracker_0641.priority}" />
 		<select id="status" set="{@bugtracker_0641.status}" />
