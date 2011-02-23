@@ -19,7 +19,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Goto opp subpanel & click "Cancel"-->
-	<button name="accounts_opportunities_create_button" />
+	<button name="accounts_opportunities_Create_button" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0043.csv" var="opp_record_0066">
 		<form id="form_SubpanelQuickCreate_Opportunities">
 			<textfield id="name" set="{@opp_record_0066.name} {@user.name} {@stamp}" />

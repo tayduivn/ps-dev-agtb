@@ -19,7 +19,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Create Case Subpanel & click "Full Form"-->
-	<button name="account_cases_create_button" />
+	<button name="account_cases_Create_button" />
 	<button id="Cases_subpanel_full_form_button" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0073.csv" var="case_record_0073">
 		<textfield id="name" set="{@case_record_0073.name} {@user.name} {@stamp}" />

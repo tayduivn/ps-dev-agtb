@@ -24,7 +24,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Create Case via Subpanel-->
-	<button name="account_cases_create_button" />
+	<button name="account_cases_Create_button" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0044.csv" var="lead_record_0260">
 		<form id="form_SubpanelQuickCreate_Cases">
 			<textfield id="name" set="{@lead_record_0260.first_name} {@stamp}" />
