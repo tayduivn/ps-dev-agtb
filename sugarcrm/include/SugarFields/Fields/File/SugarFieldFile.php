@@ -110,7 +110,7 @@ class SugarFieldFile extends SugarFieldBase {
                 if(!empty($extension))
                 {
                 	$bean->file_ext = $extension;
-                	$bean->file_mime_type = mime_content_type_from_filename($bean->$field);
+                	$bean->file_mime_type = get_mime_content_type_from_filename($bean->$field);
                 }
             }
         }
