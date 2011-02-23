@@ -82,24 +82,19 @@ class SugarFieldFile extends SugarFieldBase {
         }
 
 		if ($move) {
-            //$GLOBALS['log']->debug("IKEA: Moving the file ({$bean->filename})");
-			$upload_file->final_move($bean->id);
+            $upload_file->final_move($bean->id);
             $upload_file->upload_doc($bean, $bean->id, $params[$prefix . $vardef['docType']], $bean->$field, $upload_file->mime_type);
         } else if ( ! empty($old_id) ) {
             // It's a duplicate, I think
-            //$GLOBALS['log']->debug("IKEA: It's a duplicate old id ($old_id) / isDuplicate ({$params['isDuplicate']})");
 
             if ( empty($params[$prefix . $vardef['docUrl'] ]) ) {
-                //$GLOBALS['log']->debug("IKEA: It's a locally stored file, ($prefix{$vardef['docUrl']}) is empty");
                 $upload_file->duplicate_file($old_id, $bean->id, $bean->$field);
             } else {
-                //$GLOBALS['log']->debug("IKEA: It's a remotely stored file, lets copy manually");
                 $docType = $vardef['docType'];
                 $bean->$docType = $params[$prefix . $field . '_old_doctype'];
             }
 		} else if ( !empty($params[$prefix . $field . '_remoteName']) ) {
             // We ain't moving, we might need to do some remote linking
-            //$GLOBALS['log']->debug("IKEA: Remotely linking the file");
             $displayParams = array();
             $this->fillInOptions($vardef,$displayParams);
             
@@ -108,7 +103,6 @@ class SugarFieldFile extends SugarFieldBase {
                  && isset($params[$prefix . $vardef['docType']]) 
                  && ! empty($params[$prefix . $vardef['docType']])
                 ) {
-                //$GLOBALS['log']->debug("IKEA: Set filename: ".__LINE__.":(".$bean->$field.")");
                 $bean->$field = $params[$prefix . $field . '_remoteName'];
                 
                 require_once('include/utils/file_utils.php');
@@ -119,8 +113,6 @@ class SugarFieldFile extends SugarFieldBase {
                 	$bean->file_mime_type = mime_content_type_from_filename($bean->$field);
                 }
             }
-        } else {
-            //$GLOBALS['log']->debug("IKEA: Not doing a thing");
         }
         
         if ( empty($bean->$field) ) {
