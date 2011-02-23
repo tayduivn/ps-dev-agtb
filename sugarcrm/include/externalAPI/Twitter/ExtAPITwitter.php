@@ -97,11 +97,11 @@ class ExtAPITwitter extends OAuthPluginBase implements WebFeed {
         $rawResponse = $oauth->fetch($url, $urlParams, $requestMethod, $headers);
 
         if ( empty($rawResponse) ) {
-            return array('success'=>FALSE,'errorMessage'=>'No response from server');
+            return array('success'=>FALSE,'errorMessage'=>translate('LBL_ERR_TWITTER', 'EAPM'));
         }
         $response = json_decode($rawResponse,true);
         if ( empty($response) ) {
-            return array('success'=>FALSE,'errorMessage'=>'Invalid response');
+            return array('success'=>FALSE,'errorMessage'=>translate('LBL_ERR_TWITTER', 'EAPM'));
         }
 
         if ( isset($response['error']) ) {

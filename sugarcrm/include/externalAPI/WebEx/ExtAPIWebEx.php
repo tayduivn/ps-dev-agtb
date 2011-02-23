@@ -294,7 +294,7 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
       if ( empty($response) ) {
           $reply['success'] = FALSE;
           // FIXME: Translate
-          $reply['errorMessage'] = 'No response from the server.';
+          $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
       } else {
           // The namespaces seem to destroy SimpleXML.
           // $responseXML = new SimpleXMLElement(str_replace('serv:message','message',$response),NULL,false,'http://www.webex.com/schemas/2002/06/service');
@@ -307,7 +307,7 @@ class ExtAPIWebEx extends ExternalAPIBase implements WebMeeting {
               // Looks like the XML processing didn't go so well.
               $reply['success'] = FALSE;
               // FIXME: Translate
-              $reply['errorMessage'] = 'Server responded with an unknown message';
+              $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
           } else {
               $reply['responseXML'] = $responseXML;
               $xpath = new DOMXPath($responseXML);
