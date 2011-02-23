@@ -273,6 +273,14 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_QUOTES_SUBPANEL_TITLE',
    ),
+  'products'=>
+   array (
+       'name' => 'products',
+       'type' => 'link',
+       'relationship' => 'documents_products',
+       'source' => 'non-db',
+       'vname' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+   ),   
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',
