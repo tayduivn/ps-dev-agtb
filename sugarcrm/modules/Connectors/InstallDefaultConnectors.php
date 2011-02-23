@@ -61,6 +61,16 @@ $default_modules_sources = array (
 
 );
 
+$previous_connectors = array();
+if(file_exists('custom/modules/Connectors/metadata/connectors.php')){
+    require('custom/modules/Connectors/metadata/connectors.php');
+
+    foreach($connectors as $connector_array){
+        $connector_id = $connector_array['id'];
+        $previous_connectors[$connector_id] = $connector_id;
+    }
+}
+
 // Merge in old modules the customer added instead of overriding it completely with defaults
 // If they have customized their connectors modules
 if(file_exists('custom/modules/Connectors/metadata/display_config.php')){
