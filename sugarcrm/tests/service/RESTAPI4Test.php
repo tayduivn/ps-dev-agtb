@@ -146,6 +146,43 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
+     * Test set entries call with name value list format key=>value.
+     *
+     */
+    public function testSetEntriesCall()
+    {
+        $result = $this->_login();
+        $session = $result['id'];
+        $module = 'Contacts';
+        $c1_uuid = uniqid();
+        $c2_uuid = uniqid();
+        $contacts = array( 
+            array('first_name' => 'Unit Test', 'last_name' => $c1_uuid), 
+            array('first_name' => 'Unit Test', 'last_name' => $c2_uuid)
+        );
+        $results = $this->_makeRESTCall('set_entries',
+        array(
+            'session' => $session,
+            'module' => $module,
+            'name_value_lists' => $contacts,
+        ));
+        $this->assertTrue(isset($results['ids']) && count($results['ids']) == 2);
+        
+        $actual_results = $this->_makeRESTCall('get_entries',
+        array(
+            'session' => $session,
+            'module' => $module,
+            'ids' => $results['ids'],
+            'select_fields' => array('first_name','last_name')
+        ));
+        
+        $this->assertTrue(isset($actual_results['entry_list']) && count($actual_results['entry_list']) == 2);
+        $this->assertEquals($actual_results['entry_list'][0]['name_value_list']['last_name']['value'], $c1_uuid);
+        $this->assertEquals($actual_results['entry_list'][1]['name_value_list']['last_name']['value'], $c2_uuid);
+    }
+    
+    
+    /**
      * Test search by module with favorites flag enabled.
      *
      */
