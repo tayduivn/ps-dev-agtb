@@ -13,8 +13,8 @@
 	<csv file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.csv" 
 		var="case_record">
 		<textfield id="name" set="{@case_record.name} {@user.name} {@stamp}" />
-		<textfield id="account_name" set="{@pre_account_name}" />
-		<textfield id="name" click="true" />
+		<textfield id="account_name" set="{@pre_account_name}" jscriptevent="onkeydown" />
+		<textfield id="account_name" jscriptevent="onkeyup" />
 		<wait timeout="2" />
 		<button value="Save" />
 		<div class="moduleTitle">
