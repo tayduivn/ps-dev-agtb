@@ -19,7 +19,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Goto opp subpanel & click "Full Form"-->
-	<button name="accounts_opportunities_Create_button" />
+	<button name="accounts_opportunities_create_button" />
 	<button id="Opportunities_subpanel_full_form_button" />
 	<browser assert="Opportunities" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0067.csv" var="opp_record_0067">
