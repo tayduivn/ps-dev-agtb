@@ -64,6 +64,92 @@
 	</block>
 	
 	<!-- Mazen's Modules -->
+	<!-- BEGINING OF BUG #42362 BLOCK FILES -->
+	<block>
+		<testfile>Accounts_0045</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0046</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0047</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0048</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0072</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0073</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0105</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0106</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0107</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Subpanel</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0230</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0261</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	
+	<block>
+		<testfile>Accounts_0263</testfile>
+		<bugnumber>42362</bugnumber>
+		<reason>bug 42362</reason>
+		<modulename>Accounts</modulename>
+	</block>
+	<!-- END OF BUG # 42362 BLOCK FILES -->
+	
 	<block>
 		<testfile>Accounts_0130</testfile>
 		<bugnumber>39955</bugnumber>

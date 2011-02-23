@@ -39,7 +39,8 @@
 		<link href="index.php?module=Accounts&amp;action=index" click="false" />
 	</div>
 	<wait timeout="3" />
-	<link text="/Basic Search/" required="false" timeout="2" />
+	<link text="Basic Search" />
+	<wait timeout="3" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
 	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />

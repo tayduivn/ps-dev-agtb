@@ -14,7 +14,7 @@
 
 	<!--Create one note-->
 	<div id="list_subpanel_history">
-		<button name="History_create_button" />
+		<button name="History_CreateNoteorAttachment_button" />
 	</div>
 	<wait timeout="3" />
 	<div id="form_SubpanelQuickCreate_Notes_tabs">

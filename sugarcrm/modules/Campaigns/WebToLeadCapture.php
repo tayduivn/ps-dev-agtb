@@ -138,7 +138,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 					else{
 						$query_string .= "&";
 					}
-					$query_string .= "{$param}={$value}";
+					$query_string .= "{$param}=".urlencode($value);
 				}
 				if(empty($lead)) {
 					if($first_iteration){

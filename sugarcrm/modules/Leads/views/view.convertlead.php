@@ -119,6 +119,9 @@ class ViewConvertLead extends SugarView
                     else if ($module == "Opportunities" && $field == 'name' && $opportunityNameInLayout) {
                         $focus->name = $this->focus->opportunity_name;
                     }
+                    else if ($module == "Opportunities" && $field == 'name' && !$opportunityNameInLayout) {
+                        $focus->name = '';
+                    }
 	                else if ($field == "id")
                     {
 						//If it is not a contact, don't copy the ID from the lead

@@ -19,7 +19,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Create History Subpanel-->
-	<button name="History_create_button" />
+	<button name="History_CreateNoteorAttachment_button" />
 	<wait timeout="3" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0036.csv" var="history_record_0054">
 		<form id="form_SubpanelQuickCreate_Notes">
