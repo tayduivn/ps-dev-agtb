@@ -27,12 +27,12 @@ class ProjectViewTemplatesEdit extends ViewEdit
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
 	    $crumbs = array();
-	    $crumbs[] = $this->_getModuleTitleListParam();
+	    $crumbs[] = $this->_getModuleTitleListParam($browserTitle);
 	    if(!empty($this->bean->id)){
 	    	$crumbs[] =  "<a href='index.php?module=Project&action=EditView&record={$this->bean->id}'>{$this->bean->name}</a>";
 	    }

@@ -4599,42 +4599,6 @@ function upgradeUserPreferences() {
 	//END SUGARCRM flav=pro ONLY
 }
 
-function repairListGlobalPrefs() {
-
-    global $beanList;
-    
-    $res = $GLOBALS['db']->query("select * from user_preferences where category='global' and deleted=0");
-    while($row = $GLOBALS['db']->fetchByAssoc($res)){
-        $contents = $row['contents'];
-        $assigned_user_id = $row['assigned_user_id'];
-        $record_id = $row['id'];
-        $current_user = new User();
-        $current_user->retrieve($row['assigned_user_id']);
-        
-        $decodedContents = base64_decode($contents);
-        $unserializedContents = unserialize($decodedContents);
-        foreach ($beanList as $module=>$bean) {
-            if (!empty($unserializedContents[$module.'Q'])) {
-                $newContents = $unserializedContents[$module.'Q'];
-                $current_user->setPreference($module.'Q',$newContents,0,$module.'Q');
-                unset($unserializedContents[$module.'Q']);
-
-                $query = "UPDATE user_preferences SET deleted = 1 WHERE assigned_user_id = '" . $current_user->id . "' AND category = 'global'";
-                $GLOBALS['db']->query($query);
-                
-                // Going to the UserPreference object rather than the User->setpreference() method because we'd have to iterate through each setting in the global category
-                // and unnecessarily set each one. 
-                $focus = new UserPreference($current_user);
-                $focus->assigned_user_id = $current_user->id;
-                $focus->deleted = 0;
-                $focus->contents = base64_encode(serialize($unserializedContents));
-                $focus->category = 'global';
-                $focus->save();
-            }
-        }
-    }   
-}
-
 // BEGIN SUGARCRM flav=pro ONLY
 function migrate_sugar_favorite_reports(){
     require_once('modules/SugarFavorites/SugarFavorites.php');
@@ -5109,7 +5073,12 @@ function upgradeModulesForTeam() {
            	  require($file);
            	  $touched = false;
            	  $contents = file_get_contents($file);
-           	  $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  if ( !isset($GLOBALS['app_list_strings']) ) {
+           	      $GLOBALS['app_list_strings'] = $app_list_strings;
+           	  }
+           	  else {
+           	      $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  }
 
            	  if(isset($GLOBALS['app_list_strings']) && is_array($GLOBALS['app_list_strings'])) {
            	  	 foreach($GLOBALS['app_list_strings'] as $key=>$entry) {

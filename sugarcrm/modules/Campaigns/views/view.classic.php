@@ -56,10 +56,10 @@ class CampaignsViewClassic extends SugarView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
     	$params = array();
-    	$params[] = $this->_getModuleTitleListParam();
+    	$params[] = $this->_getModuleTitleListParam($browserTitle);
     	if (isset($this->action)){
     		switch($_REQUEST['action']){
     				case 'WizardHome':

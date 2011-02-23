@@ -1219,11 +1219,13 @@ EOHTML;
     /**
      * Returns an array composing of the breadcrumbs to use for the module title
      *
+     * @param bool $browserTitle true if the returned string is being used for the browser title, meaning
+     *                           there should be no HTML in the string
      * @return array
      */
-    protected function _getModuleTitleParams($bTitle=false)
+    protected function _getModuleTitleParams($browserTitle = false)
     {
-        $params = array($this->_getModuleTitleListParam($bTitle));
+        $params = array($this->_getModuleTitleListParam($browserTitle));
 
         if (isset($this->action)){
             switch ($this->action) {
@@ -1258,9 +1260,11 @@ EOHTML;
     /**
      * Returns the portion of the array that will represent the listview in the breadcrumb
      *
+     * @param bool $browserTitle true if the returned string is being used for the browser title, meaning
+     *                           there should be no HTML in the string
      * @return string
      */
-    protected function _getModuleTitleListParam($bTitle=false)
+    protected function _getModuleTitleListParam( $browserTitle = false )
     {
     	global $current_user;
     	global $app_strings;
@@ -1271,9 +1275,8 @@ EOHTML;
     		$firstParam = $this->module;
 
     	$iconPath = $this->getModuleTitleIconPath($this->module);
-    	if($this->action == "ListView" || $this->action == "index")
-    	{
-    	    if (!empty($iconPath) && !$bTitle) {
+    	if($this->action == "ListView" || $this->action == "index") {
+    	    if (!empty($iconPath) && !$browserTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
 					return "<a href='index.php?module={$this->module}&action=index'>"
 					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>"
@@ -1286,24 +1289,24 @@ EOHTML;
 			} else {
 				return $firstParam;
 			}
-    	} else
-    	{
-		    if (!empty($iconPath) && !$bTitle) {
+    	} 
+    	else {
+		    if (!empty($iconPath) && !$browserTitle) {
 				return "<a href='index.php?module={$this->module}&action=index'>"
 				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
 			} else {
-				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
+				return "{$firstParam}";
 			}
     	}
     }
 
-    protected function getModuleTitleIconPath($module) {
+    protected function getModuleTitleIconPath($module) 
+    {
     	$iconPath = "";
-    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
-    	{
+    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
-    	} else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
-    	{
+    	} 
+    	else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     	}
     	return $iconPath;
@@ -1323,7 +1326,7 @@ EOHTML;
         if ( $this->module == 'Users' && ($this->action == 'SetTimezone' || $this->action == 'Login') )
             return $browserTitle;
         $params = $this->_getModuleTitleParams(true);
-        foreach ($params  as $value )
+        foreach ($params as $value )
             $browserTitle = strip_tags($value) . ' &raquo; ' . $browserTitle;
 
         return $browserTitle;

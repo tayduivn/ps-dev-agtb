@@ -20,136 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$default_connectors = array (
-  'ext_rest_linkedin' =>
-  array (
-    'id' => 'ext_rest_linkedin',
-    'name' => 'LinkedIn&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/rest/linkedin',
-    'modules' =>
-    array (
-    ),
-  ),
-//BEGIN SUGARCRM flav!=com ONLY
-  'ext_soap_hoovers' =>
-  array (
-    'id' => 'ext_soap_hoovers',
-    'name' => 'Hoovers&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/soap/hoovers',
-    'modules' =>
-    array (
-      0 => 'Accounts',
-    ),
-  ),
-//END SUGARCRM flav!=com ONLY
-//BEGIN SUGARCRM flav=pro ONLY
-  'ext_rest_twitter' =>
-  array (
-    'id' => 'ext_rest_twitter',
-    'name' => 'Twitter&#169;',
-    'enabled' => true,
-    'eapm' => array('enabled' => true),
-    'directory' => 'modules/Connectors/connectors/sources/ext/rest/twitter',
-    'modules' =>
-    array (
-      0 => 'Accounts',
-      1 => 'Contacts',
-      2 => 'Leads',
-      3 => 'Prospects',
-    ),
-  ),
-  'ext_eapm_facebook' =>
-  array (
-    'id' => 'ext_eapm_facebook',
-    'name' => 'Facebook&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/facebook',
-    'eapm' =>
-    array (
-      'enabled' => true,
-      'only' => true,
-    ),
-    'modules' =>
-    array (
-    ),
-  ),
-  'ext_eapm_google' =>
-  array (
-    'id' => 'ext_eapm_google',
-    'name' => 'Google&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/google',
-    'eapm' =>
-    array (
-      'enabled' => true,
-      'only' => true,
-    ),
-    'modules' =>
-    array (
-    ),
-  ),
-  'ext_eapm_gotomeeting' =>
-  array (
-    'id' => 'ext_eapm_gotomeeting',
-    'name' => 'GoToMeeting&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/gotomeeting',
-    'eapm' =>
-    array (
-      'enabled' => true,
-      'only' => true,
-    ),
-    'modules' =>
-    array (
-    ),
-  ),
-  'ext_eapm_lotuslive' =>
-  array (
-    'id' => 'ext_eapm_lotuslive',
-    'name' => 'LotusLive&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/lotuslive',
-    'eapm' =>
-    array (
-      'enabled' => true,
-      'only' => true,
-    ),
-    'modules' =>
-    array (
-    ),
-  ),
-  'ext_eapm_webex' =>
-  array (
-    'id' => 'ext_eapm_webex',
-    'name' => 'WebEx&#169;',
-    'enabled' => true,
-    'directory' => 'modules/Connectors/connectors/sources/ext/eapm/webex',
-    'eapm' =>
-    array (
-      'enabled' => true,
-      'only' => true,
-    ),
-    'modules' =>
-    array (
-    ),
-  ),
-//END SUGARCRM flav=pro ONLY
-
-);
-
-// Gather a list of the previous Connectors available for a potential merge
-$previous_connectors = array();
-if(file_exists('custom/modules/Connectors/metadata/connectors.php')){
-    require('custom/modules/Connectors/metadata/connectors.php');
-
-    foreach($connectors as $connector_array){
-        $connector_id = $connector_array['id'];
-        $previous_connectors[$connector_id] = $connector_id;
-    }
-}
-
 $default_modules_sources = array (
   'Accounts' =>
   array (
@@ -191,6 +61,16 @@ $default_modules_sources = array (
 
 );
 
+$previous_connectors = array();
+if(file_exists('custom/modules/Connectors/metadata/connectors.php')){
+    require('custom/modules/Connectors/metadata/connectors.php');
+
+    foreach($connectors as $connector_array){
+        $connector_id = $connector_array['id'];
+        $previous_connectors[$connector_id] = $connector_id;
+    }
+}
+
 // Merge in old modules the customer added instead of overriding it completely with defaults
 // If they have customized their connectors modules
 if(file_exists('custom/modules/Connectors/metadata/display_config.php')){
@@ -223,10 +103,6 @@ if(file_exists('custom/modules/Connectors/metadata/display_config.php')){
 
 if(!file_exists('custom/modules/Connectors/metadata')) {
    mkdir_recursive('custom/modules/Connectors/metadata');
-}
-
-if(!write_array_to_file('connectors', $default_connectors, 'custom/modules/Connectors/metadata/connectors.php')) {
-   $GLOBALS['log']->fatal('Cannot write file custom/modules/Connectors/metadata/connectors.php');
 }
 
 if(!write_array_to_file('modules_sources', $default_modules_sources, 'custom/modules/Connectors/metadata/display_config.php')) {

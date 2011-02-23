@@ -35,7 +35,7 @@ class EAPMViewDetail extends ViewDetail {
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 
@@ -60,17 +60,25 @@ class EAPMViewDetail extends ViewDetail {
         $this->_returnId = $returnId;
 
         $iconPath = $this->getModuleTitleIconPath($this->module);
-    	$params = array(
-           "<a href='index.php?module=Users&action=index'><img src='{$iconPath}' alt='Users' title='Users' align='absmiddle'></a>",
-    	   "<a href='index.php?module={$returnModule}&action=EditView&record={$returnId}'>".$returnName."</a>",
-    	   );
+        $params = array();
+        if (!empty($iconPath) && !$browserTitle) {
+            $params[] = "<a href='index.php?module=Users&action=index'><img src='{$iconPath}' alt='".translate('LBL_MODULE_NAME','Users')."' title='".translate('LBL_MODULE_NAME','Users')."' align='absmiddle'></a>";
+        }
+        else {
+            $params[] = translate('LBL_MODULE_NAME','Users');
+        }
+        $params[] = "<a href='index.php?module={$returnModule}&action=EditView&record={$returnId}'>".$returnName."</a>";
         if($returnAction == 'EditView'){
             $params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
         }
         return $params;
     }
 
-    protected function getModuleTitleIconPath($module) {
+    /**
+	 * @see SugarView::getModuleTitleIconPath()
+	 */
+	protected function getModuleTitleIconPath($module) 
+    {
         return parent::getModuleTitleIconPath('Users');
     }
 

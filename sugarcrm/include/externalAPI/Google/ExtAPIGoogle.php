@@ -5,7 +5,23 @@ require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/Docs/Query.php');
 require_once('Zend/Gdata/ClientLogin.php');
 
+/**
+ * ExtAPIGoogle
+ * 
+ * This class manages the communication to the Google document web services. Currently the
+ * Zend_Gdata_Docs class is used in PHP (see http://framework.zend.com/manual/en/zend.gdata.docs.html).
+ * The Zend_Gdata_Docs class currently used in this class adheres to the Google Documents List 
+ * API 1.0 specification (see http://code.google.com/apis/documents/docs/1.0/developers_guide_protocol.html).
+ * 
+ * There are some known limitations with the documents that may be searched.  In particular, we have 
+ * observed that certain file types that are uploaded to Google Docs do not appear when queried (.png, .tpl, etc.).
+ * On the other hand, files that are created within Google Docs will be displayed.  So for example,
+ * if you were to create a new drawing and insert a PNG file into the drawing, the drawing will appear in 
+ * the result list and be able to be uploaded to SugarCRM.
+ *
+ */
 class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
+	
     public $supportedModules = array('Documents', 'Notes');
     public $authMethod = 'password';
     public $connector = "ext_eapm_google";
@@ -17,7 +33,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
     public $docSearch = true;
     public $needsUrl = false;
-    public $sharingOptions = null;//array('private'=>'LBL_SHARE_PRIVATE','linkable'=>'LBL_SHARE_LINKABLE','public'=>'LBL_SHARE_PUBLIC');
+    public $sharingOptions = null;
 
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
@@ -49,8 +65,6 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
-            // $GLOBALS['log']->debug("IKEA REQ: ".var_export($this->httpClient->getLastRequest(), true));
-            // $GLOBALS['log']->debug("IKEA RES: ".var_export($this->httpClient->getLastResponse(), true));
         }
 
         return $reply;
@@ -101,7 +115,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		$this->getClient();
     	$format = 'txt';
     	$document = $this->gdClient->getDocument($documentId);
-    	//var_dump(var_export($document));
+
     	if($this->authMethod == "password") {
     	    // FIXME: can't we just use the httpClient? It should add auth automatically
     		$sessionToken = $this->httpClient->getClientLoginToken();
@@ -139,8 +153,9 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     function searchDoc($keywords, $flushDocCache = false){
 		$this->getClient();
 
-        if ( empty($keywords) ) {
-            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full/-/document');
+        if ( empty($keywords) ) 
+        {
+            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full');
         } else {
             $docsQuery = new Zend_Gdata_Docs_Query();
             $docsQuery->setQuery($keywords);
@@ -151,17 +166,11 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         $results = array();
         foreach ( $rawResults as $result ) {
-            $alternateLink = $result->getAlternateLink()->getHref();
-//        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
-
-            $curr['url'] = $alternateLink;
+            $curr['url'] = $result->getAlternateLink()->getHref();
             $curr['name'] = $result->title->getText();
             $curr['date_modified'] = $result->updated->getText();
-            $fileid=$result->id;
-            $cut = substr($fileid, 63);
+            $cut = substr($result->id, 63);
             $curr['id'] = $cut;
-
-
             $results[] = $curr;
         }
 

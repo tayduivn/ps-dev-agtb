@@ -395,7 +395,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         if ( empty($rawResponse) || !is_array($response) ) {
             $reply['success'] = FALSE;
             // FIXME: Translate
-            $reply['errorMessage'] = 'No response from the server.';
+            $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
         } else {
             $GLOBALS['log']->debug("Decoded:\n".print_r($response,true));
             $reply['responseJSON'] = $response;
@@ -405,7 +405,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
             } else {
                 $reply['success'] = FALSE;
                 // FIXME: Translate
-                $reply['errorMessage'] = 'Request denied by server.';
+                $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
             }
         }
 

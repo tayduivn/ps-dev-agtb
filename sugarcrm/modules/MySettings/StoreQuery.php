@@ -31,7 +31,7 @@ class StoreQuery{
 	
 	function SaveQuery($name){
 		global $current_user;
-	    $current_user->setPreference($name.'Q', $this->query,0,$name.'Q');
+		$current_user->setPreference($name.'Q', $this->query);
 	}
 	
 	function clearQuery($name){
@@ -155,7 +155,7 @@ class StoreQuery{
 	 */
 	public static function getStoredQueryForUser($module){
 		global $current_user;
-		return $current_user->getPreference($module.'Q',$module.'Q');
+		return $current_user->getPreference($module.'Q');
 	}
 }
 

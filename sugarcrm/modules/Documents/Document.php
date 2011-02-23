@@ -124,8 +124,17 @@ class Document extends SugarBean {
             $Revision->revision = $this->revision;
             $Revision->document_id = $this->id;
             $Revision->filename = $this->filename;
-            $Revision->file_ext = $this->file_ext;
-            $Revision->file_mime_type = $this->file_mime_type;
+
+            if(isset($this->file_ext))
+            {
+            	$Revision->file_ext = $this->file_ext;
+            }
+            
+            if(isset($this->file_mime_type))
+            {
+            	$Revision->file_mime_type = $this->file_mime_type;
+            }
+            
             $Revision->doc_type = $this->doc_type;
             $Revision->doc_id = $this->doc_id;
             $Revision->doc_url = $this->doc_url;
