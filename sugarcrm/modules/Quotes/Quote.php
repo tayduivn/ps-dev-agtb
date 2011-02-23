@@ -116,7 +116,7 @@ class Quote extends SugarBean {
 	var $shipping_contact_name;
 
     var $order_stage;
-    
+
 	var $table_name = "quotes";
 	var $rel_account_table = "quotes_accounts";
 	var $rel_contact_table = "quotes_contacts";
@@ -177,7 +177,7 @@ class Quote extends SugarBean {
         $custom_join = $this->custom_fields->getJOIN(true, true,$where);
 		if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
-        $query = "SELECT  
+        $query = "SELECT
         $this->table_name.*,
         $this->user_table.user_name as assigned_user_name";
         $query .= ", teams.name AS team_name";
@@ -191,14 +191,14 @@ class Quote extends SugarBean {
         $query .= "LEFT JOIN users ON quotes.assigned_user_id=users.id ";
         $query .= getTeamSetNameJoin('quotes');
         /*$query .= "LEFT JOIN quotes_accounts ON quotes_accounts.quote_id=quotes.id
-                   LEFT JOIN accounts ON accounts.id=quotes_accounts.account_id 
+                   LEFT JOIN accounts ON accounts.id=quotes_accounts.account_id
                    LEFT JOIN quotes_contacts ON quotes_contacts.quote_id=quotes.id
                    LEFT JOIN contacts ON contacts.id=quotes_contacts.contact_id ";*/
-		
+
 		if($custom_join) {
 			$query .= $custom_join['join'];
 		}
-		
+
 		$where_auto = '1=1';
 		if($show_deleted == 0) {
        	 	$where_auto = "$this->table_name.deleted=0";
@@ -231,31 +231,34 @@ class Quote extends SugarBean {
 	}
 
 	function fill_in_additional_detail_fields() {
-		
+
         parent::fill_in_additional_detail_fields();
         if(!empty($this->team_id) && empty($this->team_name)){
-	        $this->assigned_name = get_assigned_team_name($this->team_id);      
+	        $this->assigned_name = get_assigned_team_name($this->team_id);
 			$this->team_name = $this->assigned_name;
         }
-		$this->set_account();
-		$this->set_contact();
-		$this->set_opportunity();
+        if(!empty($this->id)) {
+    		$this->set_account();
+    		$this->set_contact();
+    		$this->set_opportunity();
+        }
 
-		$currency = new Currency();
-		$currency->retrieve($this->currency_id);
-
-		if($currency->id != $this->currency_id || $currency->deleted == 1) {
-			$this->tax = $this->tax_usdollar;
-			$this->total = $this->total_usdollar;
-			$this->subtotal = $this->subtotal_usdollar;
-			$this->shipping = $this->shipping_usdollar;
-			$this->currency_id = $currency->id;
+		if(!empty($this->currency_id)) {
+		    $currency = new Currency();
+		    $currency->retrieve($this->currency_id);
+    		if($currency->id != $this->currency_id || $currency->deleted == 1) {
+    			$this->tax = $this->tax_usdollar;
+    			$this->total = $this->total_usdollar;
+    			$this->subtotal = $this->subtotal_usdollar;
+    			$this->shipping = $this->shipping_usdollar;
+    			$this->currency_id = $currency->id;
+    		}
 		}
-		
+
 		if(!empty($this->shipper_id)) {
 			$this->set_shipper();
 		}
-		
+
 		if(!empty($this->taxrate_id)) {
 			$this->set_taxrate_info();
 		}
@@ -263,7 +266,7 @@ class Quote extends SugarBean {
 
 	function set_contact() {
 		global $locale;
-		
+
 		$query = "SELECT con.first_name, con.last_name, con.assigned_user_id contact_name_owner, con.id, c_q.contact_role from $this->contact_table  con, $this->rel_contact_table  c_q where con.id = c_q.contact_id and c_q.quote_id = '$this->id' and c_q.deleted=0 and con.deleted=0";
 		$result = $this->db->query($query, true,"Error filling in additional detail fields: ");
 
@@ -276,7 +279,7 @@ class Quote extends SugarBean {
 		$this->billing_contact_name_owner = '';
 		$this->billing_contact_name_mod = '';
 		$this->shipping_contact_name_mod = '';
-		
+
 		while($row = $this->db->fetchByAssoc($result))	{
 			if($row != null && $row['contact_role'] == 'Ship To') {
 				$this->shipping_contact_name = $locale->getLocaleFormattedName(stripslashes($row['first_name']), stripslashes($row['last_name']));
@@ -290,7 +293,7 @@ class Quote extends SugarBean {
 				$this->billing_contact_name_mod = 'Contacts';
 			}
 		}
-		
+
 		$GLOBALS['log']->debug("shipping contact name is $this->shipping_contact_name");
 		$GLOBALS['log']->debug("billing contact name is $this->billing_contact_name");
 	}
@@ -308,7 +311,7 @@ class Quote extends SugarBean {
 		$this->billing_account_name_owner = '';
 		$this->billing_account_mod = '';
 		$this->shipping_account_mod = '';
-		
+
 		while($row = $this->db->fetchByAssoc($result)) {
 			if($row != null && $row['account_role'] == 'Ship To') {
 				$this->shipping_account_name = stripslashes($row['name']);
@@ -322,7 +325,7 @@ class Quote extends SugarBean {
 				$this->billing_account_mod = 'Accounts';
 			}
 		}
-		
+
 		$GLOBALS['log']->debug("billing account name is $this->billing_account_name");
 		$GLOBALS['log']->debug("shipping account name is $this->shipping_account_name");
 	}
@@ -402,19 +405,19 @@ class Quote extends SugarBean {
 		$where_clauses = array();
 		$the_query_string = $GLOBALS['db']->quote($the_query_string);
 		array_push($where_clauses, "quotes.name like '$the_query_string%'");
-	
+
 		$the_where = "";
 		foreach($where_clauses as $clause) {
-			if($the_where != "") 
+			if($the_where != "")
 				$the_where .= " or ";
 			$the_where .= $clause;
 		}
-	
+
 		return $the_where;
 	}
 
 	function get_list_view_data() {
-		
+
 		global $current_language, $current_user, $mod_strings, $app_list_strings, $sugar_config;
 		$app_strings = return_application_language($current_language);
 
@@ -425,7 +428,7 @@ class Quote extends SugarBean {
 		if(isset($this->team_name)){
 			$temp_array['TEAM_NAME'] = $this->team_name;
 		}
-		
+
 		$temp_array["ENCODED_NAME"] = $this->name;
 		//BEGIN SUGARCRM flav=pro ONLY
 		$temp_array["QUOTE_NUM"] = format_number_display($this->quote_num,$this->system_id);
@@ -434,12 +437,12 @@ class Quote extends SugarBean {
 	}
 
 	function update_currency_id($fromid, $toid) {
-		
+
 
 		$idequals = '';
 		$currency = new Currency();
 		$currency->retrieve($toid);
-		
+
 		foreach($fromid as $f){
 			if(!empty($idequals)){
 				$idequals .=' or ';
@@ -450,7 +453,7 @@ class Quote extends SugarBean {
 		if(!empty($idequals)) {
 			$query = "select tax, total, subtotal,shipping, id from ".$this->table_name."  where (". $idequals. ") and deleted=0 ;";
 			$result = $this->db->query($query);
-			
+
 			while($row = $this->db->fetchByAssoc($result)) {
 				$query = "update ".$this->table_name." set currency_id='".$currency->id."', tax_usdollar='".$currency->convertToDollar($row['tax'])."', subtotal_usdollar='".$currency->convertToDollar($row['subtotal'])."', total_usdollar='".$currency->convertToDollar($row['total'])."', shipping_usdollar='".$currency->convertToDollar($row['shipping'])."' where id='".$row['id']."';";
 				$this->db->query($query);
@@ -468,9 +471,9 @@ class Quote extends SugarBean {
 
 		$this->number_formatting_done = true;
 	}
-	
+
 	function save($check_notify = FALSE) {
-		
+
 
 		$currency = new Currency();
 		$currency->retrieve($this->currency_id);
@@ -493,10 +496,10 @@ class Quote extends SugarBean {
 	        if(!empty($this->deal_tot)){
             $this->deal_tot_usdollar = $currency->convertToDollar($this->deal_tot);
         }
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(!isset($this->system_id) || empty($this->system_id)) {
-			
+
 			$admin = new Administration();
 			$admin->retrieveSettings();
 			$system_id = $admin->settings['system_system_id'];
@@ -505,12 +508,12 @@ class Quote extends SugarBean {
 			}
 			$this->system_id = $system_id;
 		}
-		
+
 		// CL Fix for 14365.  Have a default quote_type value
 		if(!isset($this->quote_type) || empty($this->quote_type)) {
 		   $this->quote_type = 'Quotes';
 		}
-		
+
 		//END SUGARCRM flav=pro ONLY
 		return parent::save($check_notify);
 	}
@@ -539,13 +542,13 @@ class Quote extends SugarBean {
 		}
 		return false;
 	}
-	
+
 	function listviewACLHelper() {
 		global $current_user;
 
 		$array_assign = parent::listviewACLHelper();
 		$is_owner = false;
-		
+
 		if(!empty($this->shipping_account_name)) {
 			if(!empty($this->shipping_account_name_owner)) {
 				$is_owner = $current_user->id == $this->shipping_account_name_owner;
@@ -569,23 +572,23 @@ class Quote extends SugarBean {
 		} else {
 			$array_assign['BILLING_ACCOUNT'] = 'span';
 		}
-		
+
 		$is_owner = false;
-		
+
 		if(!empty($this->shipping_contact_name)) {
 			if(!empty($this->shipping_contact_name_owner)) {
 				$is_owner = $current_user->id == $this->shipping_contact_name_owner;
 			}
 		}
-	
+
 		if(ACLController::checkAccess('Contacts', 'view', $is_owner)) {
 			$array_assign['SHIPPING_CONTACT'] = 'a';
 		}else{
 			$array_assign['SHIPPING_CONTACT'] = 'span';
 		}
-		
+
 		$is_owner = false;
-		
+
 		if(!empty($this->billing_contact_name)) {
 			if(!empty($this->billing_contact_name_owner)) {
 				$is_owner = $current_user->id == $this->billing_contact_name_owner;
@@ -598,7 +601,7 @@ class Quote extends SugarBean {
 		}
 
 		$is_owner = false;
-		
+
 		if(!empty($this->opportunity_name)) {
 			if(!empty($this->opportunity_name_owner)) {
 				$is_owner = $current_user->id == $this->opportunity_name_owner;
@@ -613,11 +616,12 @@ class Quote extends SugarBean {
 
 		return $array_assign;
 	}
-	
+
 	/**
 	 * Static helper function for getting releated account info.
 	 */
 	function get_account_detail($quote_id) {
+	    if(empty($quote_id)) return array();
 		$ret_array = array();
 		$db = DBManagerFactory::getInstance();
 		$query = "SELECT acc.id, acc.name, acc.assigned_user_id "
@@ -636,7 +640,7 @@ class Quote extends SugarBean {
 		}
 		return $ret_array;
 	}
-	
+
 	/**
 	 * returns the export-appropriate file name
 	 * @param string type LBL_PROPOSAL or LBL_INVOICE
@@ -645,13 +649,13 @@ class Quote extends SugarBean {
 	function getExportFilename($type) {
 		global $mod_strings;
 		global $locale;
-		
+
 		$filename = preg_replace("#[^A-Z0-9\-_\.]#i", "_", $this->shipping_account_name);
-		
+
 		if(!empty($this->quote_num)) {
 			$filename .= "_{$this->quote_num}";
 		}
-		
+
 		return $locale->translateCharset($mod_strings[$type]."_{$filename}.pdf", 'UTF-8', $this->getExportCharset());
 	}
 }

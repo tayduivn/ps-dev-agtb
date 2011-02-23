@@ -145,10 +145,10 @@ class DocumentsViewEdit extends ViewEdit
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
     	$params = array();
-    	$params[] = $this->_getModuleTitleListParam();
+    	$params[] = $this->_getModuleTitleListParam($browserTitle);
     	if(!empty($this->bean->id)){
 			$params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$this->bean->document_name."</a>";
 			$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];

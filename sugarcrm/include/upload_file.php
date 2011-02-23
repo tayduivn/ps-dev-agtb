@@ -305,7 +305,7 @@ class UploadFile
                 $bean->doc_type = 'Sugar';
                 // FIXME: Translate
                 if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
-                $_SESSION['user_error_message'][] = 'Error during external API save: '.$result['errorMessage'];
+                $_SESSION['user_error_message'][] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
 
             }
         }

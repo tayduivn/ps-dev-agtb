@@ -243,7 +243,7 @@ class ExtAPIGoToMeeting extends ExternalAPIBase implements WebMeeting {
 
         if ( empty($response) ) {
             // FIXME: Translate
-            $reply['errorMessage'] = 'No response from the server.';
+            $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
         } else {
             $responseXML = new DOMDocument();
             $responseXML->preserveWhiteSpace = false;
@@ -254,7 +254,7 @@ class ExtAPIGoToMeeting extends ExternalAPIBase implements WebMeeting {
                 // Looks like the XML processing didn't go so well.
                 $reply['success'] = FALSE;
                 // FIXME: Translate
-                $reply['errorMessage'] = 'Server responded with an unknown message';
+                $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
             } else {
                 $reply['responseXML'] = $responseXML;
                 $xp = new DOMXPath($responseXML);

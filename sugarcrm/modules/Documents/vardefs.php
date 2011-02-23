@@ -265,7 +265,14 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
    ),
-
+  'quotes'=>
+   array (
+       'name' => 'quotes',
+       'type' => 'link',
+       'relationship' => 'documents_quotes',
+       'source' => 'non-db',
+       'vname' => 'LBL_QUOTES_SUBPANEL_TITLE',
+   ),
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',
@@ -400,7 +407,7 @@ $dictionary['Document'] = array('table' => 'documents',
        ),
  'relationships' => array (
     'document_revisions' => array('lhs_module'=> 'Documents', 'lhs_table'=> 'documents', 'lhs_key' => 'id',
-                              'rhs_module'=> 'Documents', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'document_id',
+                              'rhs_module'=> 'DocumentRevisions', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'document_id',
                               'relationship_type'=>'one-to-many')
 
    ,'documents_modified_user' =>

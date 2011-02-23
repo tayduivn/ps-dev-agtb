@@ -265,7 +265,9 @@ class Parser {
 	 * @param Array/SugarBean $target
 	 */
 	static function replaceVariables($expr, $target) {
+        //BEGIN SUGARCRM flav=een ONLY
 		$target->load_relationships();
+        //END SUGARCRM flav=een ONLY
         $variables = Parser::getFieldsFromExpression($expr);
 		$ret = $expr;
 		foreach($variables as $field) {

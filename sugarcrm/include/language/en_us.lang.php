@@ -84,6 +84,7 @@ $app_list_strings = array (
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
     'Documents'=>'Documents',
+    'DocumentRevisions'=>'Document Revisions',
     //END SUGARCRM flav!=sales ONLY
     'Connectors'=>'Connectors',
     'Roles'=>'Roles',
@@ -2302,7 +2303,7 @@ $app_strings = array (
     'ERR_ADDRESS_KEY_NOT_SPECIFIED' => 'Please specify \'key\' index in displayParams attribute for the Meta-Data definition',
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
-    'ERR_EXTERNAL_API_SAVE_FAIL' => 'Error during external API save',
+    'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
 
@@ -2997,7 +2998,7 @@ $app_strings = array (
 
     //cma
     'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
-    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team cannot be deleted unless the user [{0}] is deleted.',
+    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team [{0}] cannot be deleted until the user [{1}] is deleted.',
 
     //martin #25548
     'LBL_NO_FLASH_PLAYER' => 'You either have Abobe Flash turned off or are using an older version of the Adobe Flash Player. To get the latest version of the Flash Player, <a href="http://www.adobe.com/go/getflashplayer/">click here</a>.',

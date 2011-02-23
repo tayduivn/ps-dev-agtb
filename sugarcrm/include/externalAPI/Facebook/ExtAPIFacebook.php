@@ -112,7 +112,7 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
             $fbMessages = $this->fb->api('/me/home?limit='.$maxEntries);
         } catch ( Exception $e ) {
             $GLOBALS['log']->error('Facebook Error: '.$e->getMessage());
-            return array('success'=>FALSE,'errorMessage'=>'Facebook returned the error: '.$e->getMessage());
+            return array('success'=>FALSE,'errorMessage'=>translate('LBL_ERR_FACEBOOK', 'EAPM'));
         }
 
         if ( !isset($fbMessages['data'][0]) ) {

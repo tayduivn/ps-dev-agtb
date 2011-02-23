@@ -36,7 +36,7 @@
         <textfield id="primary_address_street" set="{@studio10100.street}" />
         <textfield id="primary_address_city" set="{@studio10100.city}" />
         <textfield id="primary_address_state" set="{@studio10100.state}" />
-        <textfield id="description" assert="{@studio10100.des}" />
+        <textfield id="description" set="{@studio10100.des}" />
         <button value="Save" />
       </form>
       <wait timeout="3" />

@@ -13,7 +13,12 @@
 	<csv file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.csv" 
 		var="case_record">
 		<textfield id="name" set="{@case_record.name} {@user.name} {@stamp}" />
-		<textfield id="account_name" set="{@pre_account_name}" />
+		
+		<!-- fix for lack of account_name filling in -->
+		<textfield id="account_name" set="{@pre_account_name}" jscriptevent="onkeydown" />
+		<textfield id="account_name" jscriptevent="onkeyup" click="false"/> 
+		<wait timeout="2" />
+		
 		<textfield id="name" click="true" />
 		<wait timeout="5" />
 		<button value="Save" />

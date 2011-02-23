@@ -7,10 +7,11 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 class SugarFieldEnum extends SugarFieldBase {
    
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-		if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html'){
+		if(!empty($vardef['function']['returns']) && $vardef['function']['returns']== 'html')
+		{
     		  $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        	  return "<span id='{$vardef['name']}'>" . $this->fetch($this->findTemplate('DetailViewFunction')) . '</span>';
-    	}else{
+        	  return "<span id='{$vardef['name']}'>" . $this->fetch($this->findTemplate('DetailViewFunction')) . "</span>";
+    	} else {
     		  return parent::getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     	}
     }

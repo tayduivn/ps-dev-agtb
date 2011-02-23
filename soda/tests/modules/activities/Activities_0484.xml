@@ -5,9 +5,11 @@
 	<browser assert="Tasks"/>
         <link text='View Tasks'/>
 
-	<link id="moduleTab_Activities" />
-	<browser assert="Task List" />
-	<link text="View Tasks" />
+    <link id="moduleTab_Activities" />
+    <browser assert="Task List" />
+    <link text="View Tasks" />
+
+
 	<wait timeout="3" />
 	<textfield id="name_basic" set="Search This"/>
 	<button id="search_form_clear" />

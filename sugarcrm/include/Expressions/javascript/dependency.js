@@ -203,7 +203,12 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 		return SUGAR.util.DateUtils.parse(field.value);
 	}
 
-
+	//For DetailViews where value is enclosed in a span tag
+    if (field.tagName.toLowerCase() == "span")
+    {
+        return document.all ? trim(field.innerText) : trim(field.textContent);
+    }
+	
 	if (field.value !== null && typeof(field.value) != "undefined")
 		return field.value;
 	
@@ -712,6 +717,7 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	if ( ! (this.variables instanceof Array) ) {
 		this.variables = [this.variables];
 	}
+	
 	for ( var i = 0; i < this.variables.length; i++){
 		var el = handler.getElement(this.variables[i]);
 		if (!el) continue;

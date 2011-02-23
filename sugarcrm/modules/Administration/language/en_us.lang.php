@@ -389,7 +389,7 @@ $mod_strings = array (
     'LBL_MANAGE_CURRENCIES' => 'Currencies',
     'LBL_MANAGE_GROUPS_TITLE'   => 'Manage Groups',
     'LBL_MANAGE_GROUPS'         => 'Manage groups queues',
-    'LBL_MANAGE_LANGUAGES' => 'Manage Languages',
+    'LBL_MANAGE_LANGUAGES' => 'Languages',
 	'LBL_MANAGE_LAYOUT' => 'Field Layout',
     'LBL_MANAGE_LICENSE_TITLE'  => 'License Management',
     'LBL_MANAGE_LICENSE'        => 'Manage license properties',
@@ -1140,7 +1140,7 @@ $mod_strings = array (
 
    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
    'LBL_SELECT_MODULES' => 'Advanced',
-   'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order.',
+   'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
 

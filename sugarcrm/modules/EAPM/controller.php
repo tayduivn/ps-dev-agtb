@@ -76,7 +76,7 @@ class EAPMController extends SugarController
             // do not load bean here since password is already encoded
             $reply = $this->api->checkLogin();
             if ( !$reply['success'] ) {
-                return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+                return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
             } else {
                 $this->bean->validated();
             }
@@ -100,7 +100,7 @@ class EAPMController extends SugarController
         $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
         $reply = $this->api->checkLogin($this->bean);
         if ( !$reply['success'] ) {
-            return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+            return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
         } else {
             $this->bean->validated();
             
