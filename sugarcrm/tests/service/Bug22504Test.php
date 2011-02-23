@@ -14,12 +14,15 @@ class Bug22504Test extends SOAPTestCase
 	public function setUp()
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
+    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$this->acc = SugarTestAccountUtilities::createAccount();
 		parent::setUp();
     }
 
     public function tearDown()
     {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
         if(!empty($this->email_id)) {
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='{$this->email_id}'");
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE email_id='{$this->email_id}'");
