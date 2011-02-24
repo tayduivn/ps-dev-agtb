@@ -132,11 +132,11 @@ class TimeDate
     protected $time_separator;
 
     /**
-     * Always consider user TZ to be GMT - for SOAP etc.
+     * Always consider user TZ to be GMT and date format DB format - for SOAP etc.
      *
      * @var bool
      */
-    protected $always_gmt = false;
+    protected $always_db = false;
 
     /**
      * Global instance of TimeDate
@@ -154,6 +154,31 @@ class TimeDate
         $this->now = new SugarDateTime();
         $this->tzGMT($this->now);
         $this->user = $user;
+        // Backward compatibility
+        if(!empty($GLOBALS['disable_date_format'])) {
+            $this->setAlwaysDb();
+        }
+    }
+
+    /**
+     * Set flag specifying we should always use DB format
+     * @param bool $flag
+     * @return TimeDate
+     */
+    public function setAlwaysDb($flag = true)
+    {
+        $this->always_db = $flag;
+        $this->clearCache();
+        return $this;
+    }
+
+    /**
+     * Get "always use DB format" flag
+     * @return bool
+     */
+    public function isAlwaysDb()
+    {
+        return !empty($GLOBALS['disable_date_format']) || $this->always_db;
     }
 
     /**
@@ -194,16 +219,6 @@ class TimeDate
         return $this;
     }
 
-    /**
-     * Set always using GMT zone
-     * @param bool $gmt
-     */
-    public function setAlwaysGmt($gmt = true)
-    {
-    	$this->always_gmt = $gmt;
-    	return $this;
-    }
-
      /**
      * Figure out what the required user is
      *
@@ -233,7 +248,7 @@ class TimeDate
     {
         $user = $this->_getUser($user);
 
-        if (empty($user) || $this->always_gmt) {
+        if (empty($user) || $this->isAlwaysDb()) {
             return self::$gmtTimezone;
         }
 
@@ -283,8 +298,8 @@ class TimeDate
     {
         $user = $this->_getUser($user);
 
-        if (empty($user)) {
-            return '';
+        if (empty($user) || $this->isAlwaysDb()) {
+            return self::DB_DATE_FORMAT;
         }
 
         $datef = $user->getPreference('datef');
@@ -322,8 +337,8 @@ class TimeDate
         }
         $user = $this->_getUser($user);
 
-        if (empty($user)) {
-            return '';
+        if (empty($user) || $this->isAlwaysDb()) {
+            return self::DB_TIME_FORMAT;
         }
 
         $timef = $user->getPreference('timef');
