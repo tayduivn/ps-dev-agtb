@@ -154,10 +154,6 @@ class TimeDate
         $this->now = new SugarDateTime();
         $this->tzGMT($this->now);
         $this->user = $user;
-        // Backward compatibility
-        if(!empty($GLOBALS['disable_date_format'])) {
-            $this->setAlwaysDb();
-        }
     }
 
     /**
