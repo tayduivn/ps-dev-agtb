@@ -714,7 +714,10 @@ $mod_strings = array(
    //END SUGARCRM flav=ent ONLY
    . "Mobile EditView layouts.",
 
-'LBL_POPHELP_DEPENDENT'=>"Create a formula to determine whether this field is visible in layouts.",
+'LBL_POPHELP_DEPENDENT'=>"Create a formula to determine whether this field is visible in layouts.<br/>"
+        . "Dependent fields will follow the dependency formula in the browser-based mobile view, <br/>"
+        . "but will not follow the formula in the native applications, such as Sugar Mobile for iPhone. <br/>"
+        . "They will not follow the formula in the Sugar Self-Service Portal.",
 //END SUGARCRM flav=pro ONLY
 
 //Revert Module labels
