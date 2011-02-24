@@ -23,7 +23,7 @@
 	</table>
 
 	<browser assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
-	<button name="Activities_CreateTask_button" />
+	<button name="Activities_createtask_button" />
 	<button id="Tasks_subpanel_full_form_button" />
 	<!--goto task subpanel & click "Full Form"-->
 	<csv file="{@global.scriptsdir}/csvs/contacts/Contacts_1471.csv" var="contact_record_1471">

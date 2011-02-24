@@ -17,7 +17,7 @@
 	<div id="list_subpanel_activities">
 		<table class="list view">
 			<!--<button value=" Create Task "/>-->
-			<button name="Activities_CreateTask_button" />
+			<button name="Activities_createtask_button" />
 		</table>
 	</div>
 

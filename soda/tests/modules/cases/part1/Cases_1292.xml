@@ -22,7 +22,7 @@
 	<!--create a Call-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1292.csv" var="Case_1292">
 		<form id="formformCalls">
-			<button name="Activities_CreateTask_button" />
+			<button name="Activities_createtask_button" />
 		</form>
 
 		<!--set data-->
