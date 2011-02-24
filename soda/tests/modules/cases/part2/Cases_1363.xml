@@ -37,23 +37,17 @@
 	</csv>
 
 	<div id="list_subpanel_activities">
-      <!-- <table class="list view"> -->
 			<link text="{@Case_1363.name} {@user.name} {@stamp}" click="true" />
-      <!-- </table> -->
-	</div>
-	<div class="moduleTitle">
-		<link href="index.php?module=Meetings&amp;action=index" click="false" />
-		<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
 	</div>
 
+	<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
+	
 	<button id="edit_button" />
 
 	<textfield id="name" set="{@Case_1363.new_name} {@user.name} {@stamp}" />
 	<button value="Cancel" alert="true" />
-	<div class="moduleTitle">
-		<link href="index.php?module=Meetings&amp;action=index" click="false" />
-		<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
-	</div>
+	
+	<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
 
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
