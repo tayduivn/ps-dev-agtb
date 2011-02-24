@@ -75,8 +75,19 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
                     $GLOBALS['log']->error('Have an INVALID session from facebook:'.print_r($fbSession,true));
                     return array('success'=>false,'errorMessage'=>'No authentication.');
                 }
-            } else {
+            } else {     	
                 $callback_url = $GLOBALS['sugar_config']['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
+                
+	            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+	                $callback_url .= '&closeWhenDone=1';
+	            }
+	
+	            //Pass back the callbackFunction to call on the window.opener object
+	            if (!empty($_REQUEST['callbackFunction']))
+	            {
+	            	$callback_url .= '&callbackFunction=' . $_REQUEST['callbackFunction'];
+	            }
+                
                 $loginUrl = $this->fb->getLoginUrl(array('next'=>$callback_url,'cancel'=>$callback_url));
                 $GLOBALS['log']->debug('IKEA: Shipping the user to here: '.$loginUrl);
                 SugarApplication::redirect($loginUrl);
