@@ -70,6 +70,9 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 $lead->new_with_id = true;
             }
             $GLOBALS['check_notify'] = true;
+
+            //bug: 42398 - have to unset the id from the required_fields since it is not populated in the $_POST
+            unset($lead->required_fields['id']);
             $lead = $leadForm->handleSave($prefix, false, true, false, $lead);
             
 			if(!empty($lead)){
