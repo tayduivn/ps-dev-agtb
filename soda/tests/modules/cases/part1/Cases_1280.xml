@@ -21,10 +21,13 @@
 		<select id="type" set="{@Case_1280.type}" />     
 
 		<!--Account set-->
-		<textfield id="account_name" set="{@Case_1280.new_account_name}" />
+		<!-- applied dsafar fix -->
+		<textfield id="account_name" set="{@Case_1280.new_account_name}" jscriptevent="onkeydown" />
+		<textfield id="account_name" jscriptevent="onkeyup" click="false" />
+		<wait timeout="2" />
 
 		<button value="Save" />
-
+		
 		<!--verify the warning message show-->
 		<browser assert="Missing required field: Account Name" />
 		<browser assert="Missing required field: No match for field: Account Name" />
