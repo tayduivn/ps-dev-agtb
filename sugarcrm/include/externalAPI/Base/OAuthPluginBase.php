@@ -123,28 +123,7 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         if($stage == 0) {
             $oauthReq = $this->getOauthRequestURL();
             $callback_url = $sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
-            // This is a tweak so that we can automatically close windows if requested by the external account system
-            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
-                $callback_url .= '&closeWhenDone=1';
-            }
-
-            //Pass back the callbackFunction to call on the window.opener object
-            if (!empty($_REQUEST['callbackFunction']))
-            {
-            	$callback_url .= '&callbackFunction=' . $_REQUEST['callbackFunction'];
-            }
-            
-            //Pass back the id of the application that triggered this oauth login
-            if (!empty($_REQUEST['application']))
-            {
-            	$callback_url .= '&application=' . $_REQUEST['application'];
-            }
-
-            //Pass back the id of the application that triggered this oauth login
-            if (!empty($_REQUEST['refreshParentWindow']))
-            {
-            	$callback_url .= '&refreshParentWindow=' . $_REQUEST['refreshParentWindow'];
-            }
+            $callback_url = $this->formatCallbackURL($callback_url);
             
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
             
@@ -181,7 +160,4 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         }
         return false;
 	}
-
-
-
 }
