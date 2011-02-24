@@ -68,7 +68,7 @@ class JsChart extends SugarChart {
 	}
 	
 	function tab($str, $depth){
-		return str_repeat("\t", $depth) . $str. "\n";	
+		return str_repeat("\t", $depth) . $str . "\n";	
 	}
 	
 	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
@@ -195,6 +195,8 @@ class JsChart extends SugarChart {
 		$chartType = $xml->properties->type;
 		if($chartType == "pie chart") {
 			return array ("pieType" => "basic","tip" => "name","chartType" => "pieChart");
+		} elseif($chartType == "line chart") {
+			return array ("lineType" => "basic","tip" => "name","chartType" => "lineChart");
 		} elseif($chartType == "funnel chart 3D") {
 			return array ("funnelType" => "basic","tip" => "name","chartType" => "funnelChart");
 		} elseif($chartType == "gauge chart") {

@@ -198,6 +198,17 @@ Array.prototype.sum = function() {
       ((typeof this[0] == 'number') ? this[0] : 0);
 };
 
+function array_match(needle, haystack) {
+    var length = haystack.length;
+    var indexValue = new Array();
+    for(var i = 0, count = 0; i < length; i++) {
+        if(haystack[i] == needle) {
+        	indexValue[count] = i;
+        	count++;
+        }
+    }
+    return new Array(count,indexValue);
+};
 
 $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
   ctx.beginPath();
@@ -9949,6 +9960,828 @@ $jit.ST.Plot.EdgeTypes = new Class({
        }
     }
 });
+
+
+Options.LineChart = {
+  $extend: true,
+
+  animate: false,
+  labelOffset: 3, // label offset
+  type: 'basic', // gradient
+  dataPointSize: 10,
+  Tips: {
+    enable: false,
+    onShow: $.empty,
+    onHide: $.empty
+  },
+  Ticks: {
+	enable: false,
+	segments: 4,
+	color: '#000000'
+  },
+  Events: {
+    enable: false,
+    onClick: $.empty
+  },
+  selectOnHover: true,
+  showAggregates: true,
+  showLabels: true,
+  filterOnClick: false,
+  restoreOnRightClick: false
+};
+
+
+/*
+ * File: LineChart.js
+ *
+*/
+
+$jit.ST.Plot.NodeTypes.implement({
+  'linechart-basic' : {
+    'render' : function(node, canvas) {
+      var pos = node.pos.getc(true), 
+          width = node.getData('width'),
+          height = node.getData('height'),
+          algnPos = this.getAlignedPos(pos, width, height),
+          x = algnPos.x + width/2 , y = algnPos.y,
+          stringArray = node.getData('stringArray'),
+          lastNode = node.getData('lastNode'),
+          dimArray = node.getData('dimArray'),
+          valArray = node.getData('valueArray'),
+          colorArray = node.getData('colorArray'),
+          colorLength = colorArray.length,
+          config = node.getData('config'),
+          gradient = node.getData('gradient'),
+          showLabels = config.showLabels,
+          aggregates = config.showAggregates,
+          label = config.Label,
+          prev = node.getData('prev'),
+          dataPointSize = config.dataPointSize;
+
+      var ctx = canvas.getCtx(), border = node.getData('border');
+      if (colorArray && dimArray && stringArray) {
+      	
+	       for (var i=0, l=dimArray.length, acumLeft=0, acumRight=0, valAcum=0; i<l; i++) {
+	       	ctx.fillStyle = ctx.strokeStyle = colorArray[i % colorLength];
+		   	ctx.lineWidth = 4;
+		   	ctx.lineCap = "round";
+	          if(!lastNode) {
+
+		          ctx.save();
+				  //render line segment, dimarray[i][0] is the curent datapoint, dimarrya[i][1] is the next datapoint, we need both in the current iteration to draw the line segment
+		          ctx.beginPath();
+		          ctx.moveTo(x, y  - dimArray[i][0]); 
+		          ctx.lineTo(x + width, y - dimArray[i][1]);
+		          ctx.stroke();
+		          ctx.restore();
+	          }
+	          //render data point
+	          ctx.fillRect(x - (dataPointSize/2), y  - dimArray[i][0] - (dataPointSize/2),dataPointSize,dataPointSize);
+	        }
+      	
+
+          if(label.type == 'Native' && showLabels) {
+          //bottom labels
+          ctx.fillStyle = ctx.strokeStyle = label.color;
+          ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(node.name, x, y + label.size + config.labelOffset);
+          }
+          
+
+      }
+    },
+    'contains': function(node, mpos) {
+      var pos = node.pos.getc(true), 
+          width = node.getData('width'),
+          height = node.getData('height'),
+          config = node.getData('config'),
+          dataPointSize = config.dataPointSize,
+          dataPointMidPoint = dataPointSize/2,
+          algnPos = this.getAlignedPos(pos, width, height),
+          x = algnPos.x + width/2, y = algnPos.y,
+          dimArray = node.getData('dimArray');
+      //bounding box check
+      if(mpos.x < x - dataPointMidPoint || mpos.x > x + dataPointMidPoint) {
+        return false;
+      }
+      //deep check
+      for(var i=0, l=dimArray.length; i<l; i++) {
+        var dimi = dimArray[i];
+		var url = Url.decode(node.getData('linkArray')[i]);
+          if(mpos.x >= x - dataPointMidPoint && mpos.x <= x + dataPointMidPoint && mpos.y >= y - dimi[0] - dataPointMidPoint && mpos.y <= y - dimi[0] + dataPointMidPoint) {
+		var valArrayCur = node.getData('valArrayCur');
+          var results = array_match(valArrayCur[i],valArrayCur);
+          var matches = results[0];
+          var indexValues = results[1];
+          if(matches > 1) {
+          		var names = new Array(),
+          			values = new Array(),
+          			percentages = new Array(),
+          			linksArr = new Array();
+          			for(var j=0, il=indexValues.length; j<il; j++) {
+          				names[j] = node.getData('stringArray')[indexValues[j]];
+          				values[j] = valArrayCur[indexValues[j]];
+          				percentages[j] = ((valArrayCur[indexValues[j]]/node.getData('groupTotalValue')) * 100).toFixed(1);
+          				linksArr[j] = Url.decode(node.getData('linkArray')[j]);
+          				
+          			}	
+          		return {
+		            'name': names,
+		            'color': node.getData('colorArray')[i],
+		            'value': values,
+		            'percentage': percentages,
+		            'link': false,
+		            'collision': true
+          		};
+          	}
+          else {
+	          return {
+	            'name': node.getData('stringArray')[i],
+	            'color': node.getData('colorArray')[i],
+	            'value': node.getData('valueArray')[i][0],
+	//            'value': node.getData('valueArray')[i][0] + " - mx:" + mpos.x + " x:" + x + " my:" + mpos.y + " y:" + y + " h:" + height + " w:" + width,
+	            'percentage': ((node.getData('valueArray')[i][0]/node.getData('groupTotalValue')) * 100).toFixed(1),
+	            'link': url,
+	            'collision': false
+	          };
+          }
+        }
+      }
+      return false;
+    }
+  }
+});
+
+/*
+  Class: Line
+  
+  A visualization that displays line charts.
+  
+  Constructor Options:
+  
+  See <Options.Line>.
+
+*/
+$jit.LineChart = new Class({
+  st: null,
+  colors: ["#416D9C", "#70A35E", "#EBB056", "#C74243", "#83548B", "#909291", "#557EAA"],
+  selected: {},
+  busy: false,
+  
+  initialize: function(opt) {
+    this.controller = this.config = 
+      $.merge(Options("Canvas", "Margin", "Label", "LineChart"), {
+        Label: { type: 'Native' }
+      }, opt);
+    //set functions for showLabels and showAggregates
+    var showLabels = this.config.showLabels,
+        typeLabels = $.type(showLabels),
+        showAggregates = this.config.showAggregates,
+        typeAggregates = $.type(showAggregates);
+    this.config.showLabels = typeLabels == 'function'? showLabels : $.lambda(showLabels);
+    this.config.showAggregates = typeAggregates == 'function'? showAggregates : $.lambda(showAggregates);
+    Options.Fx.clearCanvas = false;
+    this.initializeViz();
+  },
+  
+  initializeViz: function() {
+    var config = this.config,
+        that = this,
+        nodeType = config.type.split(":")[0],
+        nodeLabels = {};
+
+    var st = new $jit.ST({
+      injectInto: config.injectInto,
+      orientation: "bottom",
+      levelDistance: 0,
+      siblingOffset: 0,
+      subtreeOffset: 0,
+      withLabels: config.Label.type != 'Native',
+      useCanvas: config.useCanvas,
+      Label: {
+        type: config.Label.type
+      },
+      Node: {
+        overridable: true,
+        type: 'linechart-' + nodeType,
+        align: 'left',
+        width: 1,
+        height: 1
+      },
+      Edge: {
+        type: 'none'
+      },
+      Tips: {
+        enable: config.Tips.enable,
+        type: 'Native',
+        force: true,
+        onShow: function(tip, node, contains) {
+          var elem = contains;
+          config.Tips.onShow(tip, elem, node);
+        }
+      },
+      Events: {
+        enable: true,
+        type: 'Native',
+        onClick: function(node, eventInfo, evt) {
+          if(!config.filterOnClick && !config.Events.enable) return;
+          var elem = eventInfo.getContains();
+          if(elem) config.filterOnClick && that.filter(elem.name);
+          config.Events.enable && config.Events.onClick(elem, eventInfo, evt);
+        },
+        onRightClick: function(node, eventInfo, evt) {
+          if(!config.restoreOnRightClick) return;
+          that.restore();
+        },
+        onMouseMove: function(node, eventInfo, evt) {
+          if(!config.selectOnHover) return;
+          if(node) {
+            var elem = eventInfo.getContains();
+            that.select(node.id, elem.name, elem.index);
+          } else {
+            that.select(false, false, false);
+          }
+        }
+      },
+      onCreateLabel: function(domElement, node) {
+        var labelConf = config.Label,
+            valueArray = node.getData('valueArray'),
+            acumLeft = $.reduce(valueArray, function(x, y) { return x + y[0]; }, 0),
+            acumRight = $.reduce(valueArray, function(x, y) { return x + y[1]; }, 0);
+        if(node.getData('prev')) {
+          var nlbs = {
+            wrapper: document.createElement('div'),
+            aggregate: document.createElement('div'),
+            label: document.createElement('div')
+          };
+          var wrapper = nlbs.wrapper,
+              label = nlbs.label,
+              aggregate = nlbs.aggregate,
+              wrapperStyle = wrapper.style,
+              labelStyle = label.style,
+              aggregateStyle = aggregate.style;
+          //store node labels
+          nodeLabels[node.id] = nlbs;
+          //append labels
+          wrapper.appendChild(label);
+          wrapper.appendChild(aggregate);
+          if(!config.showLabels(node.name, acumLeft, acumRight, node)) {
+            label.style.display = 'none';
+          }
+          if(!config.showAggregates(node.name, acumLeft, acumRight, node)) {
+            aggregate.style.display = 'none';
+          }
+          wrapperStyle.position = 'relative';
+          wrapperStyle.overflow = 'visible';
+          wrapperStyle.fontSize = labelConf.size + 'px';
+          wrapperStyle.fontFamily = labelConf.family;
+          wrapperStyle.color = labelConf.color;
+          wrapperStyle.textAlign = 'center';
+          aggregateStyle.position = labelStyle.position = 'absolute';
+          
+          domElement.style.width = node.getData('width') + 'px';
+          domElement.style.height = node.getData('height') + 'px';
+          label.innerHTML = node.name;
+          
+          domElement.appendChild(wrapper);
+        }
+      },
+      onPlaceLabel: function(domElement, node) {
+        if(!node.getData('prev')) return;
+        var labels = nodeLabels[node.id],
+            wrapperStyle = labels.wrapper.style,
+            labelStyle = labels.label.style,
+            aggregateStyle = labels.aggregate.style,
+            width = node.getData('width'),
+            height = node.getData('height'),
+            dimArray = node.getData('dimArray'),
+            valArray = node.getData('valueArray'),
+            acumLeft = $.reduce(valArray, function(x, y) { return x + y[0]; }, 0),
+            acumRight = $.reduce(valArray, function(x, y) { return x + y[1]; }, 0),
+            font = parseInt(wrapperStyle.fontSize, 10),
+            domStyle = domElement.style;
+        
+        if(dimArray && valArray) {
+          if(config.showLabels(node.name, acumLeft, acumRight, node)) {
+            labelStyle.display = '';
+          } else {
+            labelStyle.display = 'none';
+          }
+          if(config.showAggregates(node.name, acumLeft, acumRight, node)) {
+            aggregateStyle.display = '';
+          } else {
+            aggregateStyle.display = 'none';
+          }
+          wrapperStyle.width = aggregateStyle.width = labelStyle.width = domElement.style.width = width + 'px';
+          aggregateStyle.left = labelStyle.left = -width/2 + 'px';
+          for(var i=0, l=valArray.length, acum=0, leftAcum=0; i<l; i++) {
+            if(dimArray[i][0] > 0) {
+              acum+= valArray[i][0];
+              leftAcum+= dimArray[i][0];
+            }
+          }
+          aggregateStyle.top = (-font - config.labelOffset) + 'px';
+          labelStyle.top = (config.labelOffset + leftAcum) + 'px';
+          domElement.style.top = parseInt(domElement.style.top, 10) - leftAcum + 'px';
+          domElement.style.height = wrapperStyle.height = leftAcum + 'px';
+          labels.aggregate.innerHTML = acum;
+        }
+      }
+    });
+    
+    var size = st.canvas.getSize(),
+        margin = config.Margin;
+    st.config.offsetY = -size.height/2 + margin.bottom 
+      + (config.showLabels && (config.labelOffset + config.Label.size));
+    st.config.offsetX = (margin.right - margin.left - config.labelOffset - config.Label.size)/2;
+    this.st = st;
+    this.canvas = this.st.canvas;
+  },
+  
+    renderTicks: function() {
+
+	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	ticks = config.Ticks,
+	title = config.Title,
+	subtitle = config.Subtitle,
+	label = config.Label,
+	maxValue = this.maxValue,
+	maxTickValue = Math.ceil(maxValue*.1)*10;
+	if(maxTickValue == maxValue) {
+		var length = maxTickValue.toString().length;
+		maxTickValue = maxTickValue + parseInt(pad(1,length));
+	}
+
+
+	labelValue = 0,
+	labelIncrement = maxTickValue/ticks.segments,
+	ctx = canvas.getCtx();
+	ctx.strokeStyle = ticks.color;
+    ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	
+	idLabel = canvas.id + "-label";
+	labelDim = 100;
+	container = document.getElementById(idLabel);
+		  
+		  
+		var axis = (size.height/2)-(margin.bottom+config.labelOffset+label.size+(subtitle.text? subtitle.size+subtitle.offset:0)),
+		htmlOrigin = size.height - (margin.bottom+config.labelOffset+label.size+(subtitle.text? subtitle.size+subtitle.offset:0)),
+		grid = -size.height+(margin.bottom+config.labelOffset+label.size+margin.top+(title.text? title.size+title.offset:0)+(subtitle.text? subtitle.size+subtitle.offset:0)),
+		segmentLength = grid/ticks.segments;
+		ctx.fillStyle = ticks.color;
+		ctx.fillRect(-(size.width/2)+margin.left+config.labelOffset+label.size-1, -(size.height/2)+margin.top+(title.text? title.size+title.offset:0),1,size.height-margin.top-margin.bottom-label.size-config.labelOffset-(title.text? title.size+title.offset:0)-(subtitle.text? subtitle.size+subtitle.offset:0));
+
+		while(axis>=grid) {
+			ctx.save();
+			ctx.translate(-(size.width/2)+margin.left, Math.round(axis));
+			ctx.rotate(Math.PI / 2);
+			ctx.fillStyle = label.color;
+			if(config.showLabels) {
+				if(label.type == 'Native') { 
+					ctx.fillText(labelValue, 0, 0);
+				} else {
+					//html labels on y axis
+					labelDiv = document.createElement('div');
+					labelDiv.innerHTML = labelValue;
+					labelDiv.className = "rotatedLabel";
+//					labelDiv.class = "rotatedLabel";
+					labelDiv.style.top = (htmlOrigin - (labelDim/2)) + "px";
+					labelDiv.style.left = margin.left + "px";
+					labelDiv.style.width = labelDim + "px";
+					labelDiv.style.height = labelDim + "px";
+					labelDiv.style.textAlign = "center";
+					labelDiv.style.verticalAlign = "middle";
+					labelDiv.style.position = "absolute";
+					container.appendChild(labelDiv);
+				}
+			}
+			ctx.restore();
+			ctx.fillStyle = ticks.color;
+			ctx.fillRect(-(size.width/2)+margin.left+config.labelOffset+label.size, Math.round(axis), size.width-margin.right-margin.left-config.labelOffset-label.size,1 );
+			htmlOrigin += segmentLength;
+			axis += segmentLength;
+			labelValue += labelIncrement;
+		}
+	
+
+	
+	
+	
+
+  },
+ /*
+  Method: loadJSON
+ 
+  Loads JSON data into the visualization. 
+  
+  Parameters:
+  
+  json - The JSON data format. This format is described in <http://blog.thejit.org/2010/04/24/new-javascript-infovis-toolkit-visualizations/#json-data-format>.
+  
+  Example:
+  (start code js)
+  var areaChart = new $jit.AreaChart(options);
+  areaChart.loadJSON(json);
+  (end code)
+ */  
+  loadJSON: function(json) {
+    var prefix = $.time(), 
+        ch = [], 
+        st = this.st,
+        name = $.splat(json.label), 
+        color = $.splat(json.color || this.colors),
+        config = this.config,
+        ticks = config.Ticks,
+        gradient = !!config.type.split(":")[1],
+        animate = config.animate,
+        groupTotalValue = 0;
+    
+    var valArrayAll = new Array();
+
+    for(var i=0, values=json.values, l=values.length; i<l; i++) {
+    	var val = values[i];
+      	var valArray = $.splat(val.values);
+      	for (var j=0, len=valArray.length; j<len; j++) {
+      		valArrayAll.push(parseInt(valArray[j]));
+      	}
+      	groupTotalValue += parseInt(valArray.sum());
+    }
+    
+    this.maxValue =  Math.max.apply(null, valArrayAll);
+    
+    for(var i=0, values=json.values, l=values.length; i<l; i++) {
+      var val = values[i], prev = values[i-1];
+
+      var next = (i+1 < l) ? values[i+1] : 0;
+      var valLeft = $.splat(values[i].values);
+      var valRight = (i+1 < l) ? $.splat(values[i+1].values) : 0;
+      var valArray = $.zip(valLeft, valRight);
+      var valArrayCur = $.splat(values[i].values);
+      var linkArray = $.splat(values[i].links);
+      var acumLeft = 0, acumRight = 0;
+      var lastNode = (l-1 == i) ? true : false; 
+      ch.push({
+        'id': prefix + val.label,
+        'name': val.label,
+        'data': {
+          'value': valArray,
+          '$valueArray': valArray,
+          '$valArrayCur': valArrayCur,
+          '$colorArray': color,
+          '$linkArray': linkArray,
+          '$stringArray': name,
+          '$next': next? next.label:false,
+          '$prev': prev? prev.label:false,
+          '$config': config,
+          '$lastNode': lastNode,
+          '$groupTotalValue': groupTotalValue,
+          '$gradient': gradient
+        },
+        'children': []
+      });
+    }
+    var root = {
+      'id': prefix + '$root',
+      'name': '',
+      'data': {
+        '$type': 'none',
+        '$width': 1,
+        '$height': 1
+      },
+      'children': ch
+    };
+    st.loadJSON(root);
+    
+    this.normalizeDims();
+    
+    if(!animate && ticks.enable) {
+		this.renderTicks();
+	}
+	
+    st.compute();
+    st.select(st.root);
+    if(animate) {
+      st.fx.animate({
+        modes: ['node-property:height:dimArray'],
+        duration:1500
+      });
+    }
+  },
+  
+ /*
+  Method: updateJSON
+ 
+  Use this method when updating values for the current JSON data. If the items specified by the JSON data already exist in the graph then their values will be updated.
+  
+  Parameters:
+  
+  json - (object) JSON data to be updated. The JSON format corresponds to the one described in <AreaChart.loadJSON>.
+  onComplete - (object) A callback object to be called when the animation transition when updating the data end.
+  
+  Example:
+  
+  (start code js)
+  areaChart.updateJSON(json, {
+    onComplete: function() {
+      alert('update complete!');
+    }
+  });
+  (end code)
+ */  
+  updateJSON: function(json, onComplete) {
+    if(this.busy) return;
+    this.busy = true;
+    
+    var st = this.st,
+        graph = st.graph,
+        labels = json.label && $.splat(json.label),
+        values = json.values,
+        animate = this.config.animate,
+        that = this;
+    $.each(values, function(v) {
+      var n = graph.getByName(v.label);
+      if(n) {
+        v.values = $.splat(v.values);
+        var stringArray = n.getData('stringArray'),
+            valArray = n.getData('valueArray');
+        $.each(valArray, function(a, i) {
+          a[0] = v.values[i];
+          if(labels) stringArray[i] = labels[i];
+        });
+        n.setData('valueArray', valArray);
+        var prev = n.getData('prev'),
+            next = n.getData('next'),
+            nextNode = graph.getByName(next);
+        if(prev) {
+          var p = graph.getByName(prev);
+          if(p) {
+            var valArray = p.getData('valueArray');
+            $.each(valArray, function(a, i) {
+              a[1] = v.values[i];
+            });
+          }
+        }
+        if(!nextNode) {
+          var valArray = n.getData('valueArray');
+          $.each(valArray, function(a, i) {
+            a[1] = v.values[i];
+          });
+        }
+      }
+    });
+    this.normalizeDims();
+    st.compute();
+    
+    st.select(st.root);
+    if(animate) {
+      st.fx.animate({
+        modes: ['node-property:height:dimArray'],
+        duration:1500,
+        onComplete: function() {
+          that.busy = false;
+          onComplete && onComplete.onComplete();
+        }
+      });
+    }
+  },
+  
+/*
+  Method: filter
+ 
+  Filter selected stacks, collapsing all other stacks. You can filter multiple stacks at the same time.
+  
+  Parameters:
+  
+  Variable strings arguments with the name of the stacks.
+  
+  Example:
+  
+  (start code js)
+  areaChart.filter('label A', 'label C');
+  (end code)
+  
+  See also:
+  
+  <AreaChart.restore>.
+ */  
+  filter: function() {
+    if(this.busy) return;
+    this.busy = true;
+    if(this.config.Tips.enable) this.st.tips.hide();
+    this.select(false, false, false);
+    var args = Array.prototype.slice.call(arguments);
+    var rt = this.st.graph.getNode(this.st.root);
+    var that = this;
+    rt.eachAdjacency(function(adj) {
+      var n = adj.nodeTo, 
+          dimArray = n.getData('dimArray'),
+          stringArray = n.getData('stringArray');
+      n.setData('dimArray', $.map(dimArray, function(d, i) {
+        return ($.indexOf(args, stringArray[i]) > -1)? d:[0, 0];
+      }), 'end');
+    });
+    this.st.fx.animate({
+      modes: ['node-property:dimArray'],
+      duration:1500,
+      onComplete: function() {
+        that.busy = false;
+      }
+    });
+  },
+  
+  /*
+  Method: restore
+ 
+  Sets all stacks that could have been filtered visible.
+  
+  Example:
+  
+  (start code js)
+  areaChart.restore();
+  (end code)
+  
+  See also:
+  
+  <AreaChart.filter>.
+ */  
+  restore: function() {
+    if(this.busy) return;
+    this.busy = true;
+    if(this.config.Tips.enable) this.st.tips.hide();
+    this.select(false, false, false);
+    this.normalizeDims();
+    var that = this;
+    this.st.fx.animate({
+      modes: ['node-property:height:dimArray'],
+      duration:1500,
+      onComplete: function() {
+        that.busy = false;
+      }
+    });
+  },
+  //adds the little brown bar when hovering the node
+  select: function(id, name, index) {
+    if(!this.config.selectOnHover) return;
+    var s = this.selected;
+    if(s.id != id || s.name != name 
+        || s.index != index) {
+      s.id = id;
+      s.name = name;
+      s.index = index;
+      this.st.graph.eachNode(function(n) {
+        n.setData('border', false);
+      });
+      if(id) {
+        var n = this.st.graph.getNode(id);
+        n.setData('border', s);
+        var link = index === 0? 'prev':'next';
+        link = n.getData(link);
+        if(link) {
+          n = this.st.graph.getByName(link);
+          if(n) {
+            n.setData('border', {
+              name: name,
+              index: 1-index
+            });
+          }
+        }
+      }
+      this.st.plot();
+    }
+  },
+  
+  /*
+    Method: getLegend
+   
+    Returns an object containing as keys the legend names and as values hex strings with color values.
+    
+    Example:
+    
+    (start code js)
+    var legend = areaChart.getLegend();
+    (end code)
+ */  
+  getLegend: function() {
+    var legend = new Array();
+    var name = new Array();
+    var color = new Array();
+    var n;
+    this.st.graph.getNode(this.st.root).eachAdjacency(function(adj) {
+      n = adj.nodeTo;
+    });
+    var colors = n.getData('colorArray'),
+        len = colors.length;
+    $.each(n.getData('stringArray'), function(s, i) {
+      color[i] = colors[i % len];
+      name[i] = s;
+    });
+	legend['name'] = name;
+	legend['color'] = color;
+    return legend;
+  },
+  
+  /*
+    Method: getMaxValue
+   
+    Returns the maximum accumulated value for the stacks. This method is used for normalizing the graph heights according to the canvas height.
+    
+    Example:
+    
+    (start code js)
+    var ans = areaChart.getMaxValue();
+    (end code)
+    
+    In some cases it could be useful to override this method to normalize heights for a group of AreaCharts, like when doing small multiples.
+    
+    Example:
+    
+    (start code js)
+    //will return 100 for all AreaChart instances,
+    //displaying all of them with the same scale
+    $jit.AreaChart.implement({
+      'getMaxValue': function() {
+        return 100;
+      }
+    });
+    (end code)
+    
+*/  
+
+  normalizeDims: function() {
+    //number of elements
+    var root = this.st.graph.getNode(this.st.root), l=0;
+    root.eachAdjacency(function() {
+      l++;
+    });
+    
+
+    var maxValue = this.maxValue || 1,
+        size = this.st.canvas.getSize(),
+        config = this.config,
+        margin = config.Margin,
+        labelOffset = config.labelOffset + config.Label.size,
+        fixedDim = (size.width - (margin.left + margin.right + labelOffset )) / (l-1),
+        animate = config.animate,
+        ticks = config.Ticks,
+        height = size.height - (margin.top + margin.bottom) - (config.showAggregates && labelOffset) 
+          - (config.showLabels && labelOffset);
+          
+          
+        var maxTickValue = Math.ceil(maxValue*.1)*10;
+		if(maxTickValue == maxValue) {
+			var length = maxTickValue.toString().length;
+			maxTickValue = maxTickValue + parseInt(pad(1,length));
+		}
+		
+		
+		
+    this.st.graph.eachNode(function(n) {
+      var acumLeft = 0, acumRight = 0, animateValue = [];
+      $.each(n.getData('valueArray'), function(v) {
+        acumLeft += +v[0];
+        acumRight += +v[1];
+        animateValue.push([0, 0]);
+      });
+      var acum = acumRight>acumLeft? acumRight:acumLeft;
+      
+      n.setData('width', fixedDim);
+      if(animate) {
+        n.setData('height', acum * height / maxValue, 'end');
+        n.setData('dimArray', $.map(n.getData('valueArray'), function(n) { 
+          return [n[0] * height / maxValue, n[1] * height / maxValue]; 
+        }), 'end');
+        var dimArray = n.getData('dimArray');
+        if(!dimArray) {
+          n.setData('dimArray', animateValue);
+        }
+      } else {
+      	
+      	if(ticks.enable) {
+	        n.setData('height', acum * height / maxValue);
+	        n.setData('dimArray', $.map(n.getData('valueArray'), function(n) { 
+	          return [n[0] * height / maxTickValue, n[1] * height / maxTickValue]; 
+	        }));
+      	} else {
+      		n.setData('height', acum * height / maxValue);
+	        n.setData('dimArray', $.map(n.getData('valueArray'), function(n) { 
+	          return [n[0] * height / maxValue, n[1] * height / maxValue]; 
+	        }));
+      	}
+        
+        
+      }
+    });
+  }
+});
+
+
 
 
 

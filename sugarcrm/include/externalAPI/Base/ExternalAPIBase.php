@@ -137,4 +137,44 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if(empty($connector)) return null;
         return $connector->getProperty($name);
 	}
+	
+	
+	/**
+	 * formatCallbackURL
+	 * 
+	 * This function takes a callback_url and checks the $_REQUEST variable to see if
+	 * additional parameters should be appended to the callback_url value.  The $_REQUEST variables
+	 * that are being checked deal with handling the behavior of closing/hiding windows/tabs that
+	 * are displayed when prompting for OAUTH validation
+	 * 
+	 * @param $callback_url String value of callback URL
+	 * @return String value of URL with applicable formatting
+	 */
+	protected function formatCallbackURL($callback_url)
+	{
+		 // This is a tweak so that we can automatically close windows if requested by the external account system
+	     if (isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+             $callback_url .= '&closeWhenDone=1';
+         }
+
+         //Pass back the callbackFunction to call on the window.opener object
+         if (!empty($_REQUEST['callbackFunction']))
+         {
+             $callback_url .= '&callbackFunction=' . $_REQUEST['callbackFunction'];
+         }
+            
+         //Pass back the id of the application that triggered this oauth login
+         if (!empty($_REQUEST['application']))
+         {
+             $callback_url .= '&application=' . $_REQUEST['application'];
+         }		
+            
+	     //Pass back the id of the application that triggered this oauth login
+         if (!empty($_REQUEST['refreshParentWindow']))
+         {
+             $callback_url .= '&refreshParentWindow=' . $_REQUEST['refreshParentWindow'];
+         }         
+         
+         return $callback_url;
+	}	
 }

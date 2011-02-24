@@ -156,7 +156,7 @@ class JitReports extends Jit {
 			$data .= $this->tab('</group>', 2);				
 			$this->processed_report_keys = array();
 			// we're done with the first row!
-			$first = false;
+			//$first = false;
 		}
 		return $data;		
 	}

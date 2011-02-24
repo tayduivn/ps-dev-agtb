@@ -101,7 +101,7 @@ if(!empty($error_message))
    } else if($error_message == 'LBL_MASSUPDATE_DELETE_USER_EXISTS') {
    	  $user = new User();
 	  $user->retrieve($focus->associated_user_id);
-	  $error_message = string_format($app_strings['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array($focus->name, $user->full_name));
+	  $error_message = string_format($app_strings['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array(Team::getDisplayName($focus->name, $focus->name_2), $user->full_name));
    }
    
 echo <<<EOQ
