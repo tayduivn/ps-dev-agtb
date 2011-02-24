@@ -217,6 +217,7 @@ $mod_strings = array (
     'LBL_NO_LINES' => 'There were no lines in your import file',
     'LBL_FILE_ALREADY_BEEN_OR' => 'The import file has already been processed or does not exist',
     'LBL_SUCCESS' => 'Success:',
+	'LBL_FAILURE' => 'Import Failed:',
     'LBL_SUCCESSFULLY' => 'Successfully imported',
     'LBL_LAST_IMPORT_UNDONE' => 'Your last import was undone',
     'LBL_NO_IMPORT_TO_UNDO' => 'There was no import to undo.',

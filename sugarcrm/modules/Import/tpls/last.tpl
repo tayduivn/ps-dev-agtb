@@ -32,7 +32,11 @@
 *}
 {$MODULE_TITLE}
 <span>
-{$MOD.LBL_SUCCESS}<BR>
+{if $noSuccess}
+	<p>{$MOD.LBL_FAILURE}</p>
+{else}
+	<p>{$MOD.LBL_SUCCESS}</p>
+{/if}
 {if $createdCount > 0}
 <b>{$createdCount}</b>&nbsp;{$MOD.LBL_SUCCESSFULLY_IMPORTED}<br />
 {/if}
