@@ -12,13 +12,16 @@ class Bug41738Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    global $moduleList, $beanList, $beanFiles;
         require('include/modules.php');
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
+        $GLOBALS['modules_exempt_from_availability_check']['Calls']='Calls';
+        $GLOBALS['modules_exempt_from_availability_check']['Meetings']='Meetings';
         $this->bean = new Opportunity();
 	}
 
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 	}
 
@@ -57,7 +60,7 @@ class Bug41738Test extends Sugar_PHPUnit_Framework_TestCase
         $subpanel_def = new aSubPanel("testpanel", $subpanel, $this->bean);
         $query = $this->bean->get_union_related_list($this->bean, "", '', "", 0, 5, -1, 0, $subpanel_def);
         $result = $this->bean->db->query($query["query"]);
-        $this->assertTrue($result != false, "Bad query: {$query["query"]}");
+        $this->assertTrue($result != false, "Bad query: {$query['query']}");
     }
 
 

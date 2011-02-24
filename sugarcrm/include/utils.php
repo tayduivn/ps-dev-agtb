@@ -903,6 +903,16 @@ function return_app_list_strings_language($language)
             include("include/language/$lang.lang.php.override");
             $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
         }
+
+        $app_list_strings_array[] = $app_list_strings;
+    }
+
+  	$app_list_strings = array();
+  	foreach ( $app_list_strings_array as $app_list_strings_item ) {
+  	    $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
+  	} 	
+
+    foreach ( $langs as $lang ) {
         if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
             $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
             $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
@@ -911,12 +921,6 @@ function return_app_list_strings_language($language)
             include("custom/include/language/$lang.lang.php");
             $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
         }
-        $app_list_strings_array[] = $app_list_strings;
-    }
-    
-    $app_list_strings = array();
-    foreach ( $app_list_strings_array as $app_list_strings_item ) {
-        $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
 	if(!isset($app_list_strings)) {

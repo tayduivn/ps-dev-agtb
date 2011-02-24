@@ -5088,8 +5088,12 @@ function upgradeModulesForTeam() {
            	  require($file);
            	  $touched = false;
            	  $contents = file_get_contents($file);
-           	  $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
-
+           	  if ( !isset($GLOBALS['app_list_strings']) ) {
+           	      $GLOBALS['app_list_strings'] = $app_list_strings;
+           	  }
+           	  else {
+           	      $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  }
            	  if(isset($GLOBALS['app_list_strings']) && is_array($GLOBALS['app_list_strings'])) {
            	  	 foreach($GLOBALS['app_list_strings'] as $key=>$entry) {
            	  	 	if(preg_match('/([^A-Za-z_])/', $key, $matches) && is_array($entry)) {

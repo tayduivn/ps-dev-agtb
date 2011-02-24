@@ -11,8 +11,8 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->contact = SugarTestContactUtilities::createContact('SDizzle');
-        $this->account = SugarTestAccountUtilities::createAccount('SDizzle');
+        $this->contact = SugarTestContactUtilities::createContact();
+        $this->account = SugarTestAccountUtilities::createAccount();
         
         $override_data = array(
             'parent_type' => 'Accounts',
@@ -33,7 +33,7 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
     public function testContactRelationship()
     {
         $this->assertTrue($this->email->parent_type == 'Accounts', "The email parent_type should be Accounts");
-        $this->assertTrue($this->email->parent_id == 'SDizzle', "The email parent_id should be SDizzle");
+        $this->assertTrue($this->email->parent_id == $this->account->id, "The email parent_id should be SDizzle");
         
         $this->email->fill_in_additional_detail_fields();
         $this->assertTrue(empty($this->email->contact_id), "There should be no contact associated with the Email");
