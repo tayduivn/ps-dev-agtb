@@ -64,16 +64,14 @@ class campaign_charts {
 			$query.= " GROUP BY  activity_type, target_type";
 			$query.= " ORDER BY  activity_type, target_type";
 			$result = $focus->db->query($query);
-			$camp_data=$focus->db->fetchByAssoc($result);
-
-			//
+			//$camp_data=$focus->db->fetchByAssoc($result);
 			$camp_data = array();
 			$leadSourceArr = array();
 			$total=0;
 			$total_targeted=0;
 			$rowTotalArr = array();
 			$rowTotalArr[] = 0;
-			while($row = $focus->db->fetchByAssoc($result, -1, false))
+			while($row = $focus->db->fetchByAssoc($result))
 			{
 				if(!isset($leadSourceArr[$row['activity_type']]['row_total'])) {
 					$leadSourceArr[$row['activity_type']]['row_total']=0;
