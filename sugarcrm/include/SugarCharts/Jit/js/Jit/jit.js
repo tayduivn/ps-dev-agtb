@@ -10092,7 +10092,7 @@ $jit.ST.Plot.NodeTypes.implement({
 		            'color': node.getData('colorArray')[i],
 		            'value': values,
 		            'percentage': percentages,
-		            'link': linksArr,
+		            'link': false,
 		            'collision': true
           		};
           	}
