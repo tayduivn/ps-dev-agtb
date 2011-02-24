@@ -81,7 +81,11 @@ $mod_strings = array(
 
 	),
 	'subPanelEditor'=>array(
-		'modify'	=> 'All of the fields that can be displayed in the <b>Subpanel</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the Subpanel.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default column.',
+		'modify'	=> 'All of the fields that can be displayed in the <b>Subpanel</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the Subpanel.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default column.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
 		'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
 		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 	    'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
@@ -90,7 +94,11 @@ $mod_strings = array(
 
 	),
 	'listViewEditor'=>array(
-		'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Available</b> column contains fields that a user can select in the Search to create a custom ListView. <br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.',
+		'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Available</b> column contains fields that a user can select in the Search to create a custom ListView. <br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
 		'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
 		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 		'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
@@ -99,7 +107,11 @@ $mod_strings = array(
 		'Default'	=> '<b>Default</b> fields appear in ListViews that are not customized by users.'
 	),
 	'popupListViewEditor'=>array(
-		'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.',
+		'modify'	=> 'All of the fields that can be displayed in the <b>ListView</b> appear here.<br><br>The <b>Default</b> column contains the fields that are displayed in the ListView by default.<br/><br/>The <b>Hidden</b> column contains fields that can be added to the Default or Available column.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
 		'savebtn'	=> 'Click <b>Save & Deploy</b> to save changes you made and to make them active within the module.',
 		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
 		'historyDefault'=> 'Click <b>Restore Default</b> to restore a view to its original layout.',
@@ -107,7 +119,11 @@ $mod_strings = array(
 		'Default'	=> '<b>Default</b> fields appear in ListViews that are not customized by users.'
 	),
 	'searchViewEditor'=>array(
-		'modify'	=> 'All of the fields that can be displayed in the <b>Search</b> form appear here.<br><br>The <b>Default</b> column contains the fields that will be displayed in the Search form.<br/><br/>The <b>Hidden</b> column contains fields available for you as an admin to add to the Search form.',
+		'modify'	=> 'All of the fields that can be displayed in the <b>Search</b> form appear here.<br><br>The <b>Default</b> column contains the fields that will be displayed in the Search form.<br/><br/>The <b>Hidden</b> column contains fields available for you as an admin to add to the Search form.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
 		'savebtn'	=> 'Clicking <b>Save & Deploy</b> will save all changes and make them active',
 		'Hidden' 	=> '<b>Hidden</b> fields do not appear in the Search.',
 		'historyBtn'=> 'Click <b>View History</b> to view and restore a previously saved layout from the history.',
@@ -115,12 +131,20 @@ $mod_strings = array(
 		'Default'	=> '<b>Default</b> fields appear in the Search.'
 	),
 	'layoutEditor'=>array(
-		'defaultdetailview'=>'The <b>Layout</b> area contains the fields that are currently displayed within the <b>DetailView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.',
-		'defaultquickcreate'=>'The <b>Layout</b> area contains the fields that are currently displayed within the <b>QuickCreate</b> form.<br><br>The QuickCreate form appears in the subpanels for the module when the Create button is clicked.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.',
+		'defaultdetailview'=>'The <b>Layout</b> area contains the fields that are currently displayed within the <b>DetailView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
+		'defaultquickcreate'=>'The <b>Layout</b> area contains the fields that are currently displayed within the <b>QuickCreate</b> form.<br><br>The QuickCreate form appears in the subpanels for the module when the Create button is clicked.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
+    //BEGIN SUGARCRM flav=pro ONLY
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
+    //END SUGARCRM flav=pro ONLY
+    ,
 		//this defualt will be used for edit view
 		'default'	=> 'The <b>Layout</b> area contains the fields that are currently displayed within the <b>EditView</b>.<br/><br/>The <b>Toolbox</b> contains the <b>Recycle Bin</b> and the fields and layout elements that can be added to the layout.<br><br>Make changes to the layout by dragging and dropping elements and fields between the <b>Toolbox</b> and the <b>Layout</b> and within the layout itself.<br><br>To remove a field from the layout, drag the field to the <b>Recycle Bin</b>. The field will then be available in the Toolbox to add to the layout.'
     //BEGIN SUGARCRM flav=pro ONLY
-    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependnent field that may or may not be visible depending on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whos value will be automatically determined based on a formula.'
+    . '<br/><br/><img src="themes/default/images/SugarLogic/icon_dependent.png"/>Indicates a Dependent field that may or may not be visible based on the value of a formula.<br/><img src="themes/default/images/SugarLogic/icon_calculated.png"/>Indicates a Calculated field whose value will be automatically determined based on a formula.'
     //END SUGARCRM flav=pro ONLY
     ,
 		'saveBtn'	=> 'Click <b>Save</b> to preserve the changes you made to the layout since the last time you saved it.<br><br>The changes will not be displayed in the module until you Deploy the saved changes.',
