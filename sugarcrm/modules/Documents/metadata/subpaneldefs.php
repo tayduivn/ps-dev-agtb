@@ -179,6 +179,23 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
+        'products' => array(
+            'order' => 80,
+            'module' => 'Products',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'products',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),        
 	),
 );
 ?>

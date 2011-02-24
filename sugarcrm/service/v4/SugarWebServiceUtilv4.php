@@ -379,4 +379,159 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		} // else
 
 	} // fn
+	
+	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
+		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
+		global $beanList, $beanFiles, $current_user, $app_list_strings;
+
+		$ret_values = array();
+
+		$class_name = $beanList[$module_name];
+		require_once($beanFiles[$class_name]);
+		$ids = array();
+		$count = 1;
+		$total = sizeof($name_value_lists);
+		foreach($name_value_lists as $name_value_list){
+			$seed = new $class_name();
+
+			$seed->update_vcal = false;
+			foreach($name_value_list as $name => $value){
+				if(is_array($value) &&  $value['name'] == 'id'){
+                    $seed->retrieve($value['value']);
+                    break;
+                }
+                else if($name === 'id' ){
+                    $seed->retrieve($value);
+                }
+			}
+
+			foreach($name_value_list as $name => $value) {
+			    //Normalize the input
+				if(!is_array($value)){
+                    $field_name = $name;
+                    $val = $value;
+                }
+                else{
+                    $field_name = $value['name'];
+                    $val = $value['value'];
+                }
+				
+				if($seed->field_name_map[$field_name]['type'] == 'enum'){
+					$vardef = $seed->field_name_map[$field_name];
+					if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$val]) ) {
+						if ( in_array($val,$app_list_strings[$vardef['options']]) ){
+							$val = array_search($val,$app_list_strings[$vardef['options']]);
+						}
+					}
+				}
+				if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $field_name == 'user_hash'){
+					continue;
+				}
+
+				$seed->$field_name = $val;
+			}
+
+			if($count == $total){
+				$seed->update_vcal = false;
+			}
+			$count++;
+
+			//Add the account to a contact
+			if($module_name == 'Contacts'){
+				$GLOBALS['log']->debug('Creating Contact Account');
+				$this->add_create_account($seed);
+				$duplicate_id = $this->check_for_duplicate_contacts($seed);
+				if($duplicate_id == null){
+					if($seed->ACLAccess('Save') && ($seed->deleted != 1 || $seed->ACLAccess('Delete'))){
+						$seed->save();
+						if($seed->deleted == 1){
+							$seed->mark_deleted($seed->id);
+						}
+						$ids[] = $seed->id;
+					}
+				}
+				else{
+					//since we found a duplicate we should set the sync flag
+					if( $seed->ACLAccess('Save')){
+						$seed = new $class_name();
+						$seed->id = $duplicate_id;
+						$seed->contacts_users_id = $current_user->id;
+						$seed->save();
+						$ids[] = $duplicate_id;//we have a conflict
+					}
+				}
+			}
+			else if($module_name == 'Meetings' || $module_name == 'Calls'){
+				//we are going to check if we have a meeting in the system
+				//with the same outlook_id. If we do find one then we will grab that
+				//id and save it
+				if( $seed->ACLAccess('Save') && ($seed->deleted != 1 || $seed->ACLAccess('Delete'))){
+					if(empty($seed->id) && !isset($seed->id)){
+						if(!empty($seed->outlook_id) && isset($seed->outlook_id)){
+							//at this point we have an object that does not have
+							//the id set, but does have the outlook_id set
+							//so we need to query the db to find if we already
+							//have an object with this outlook_id, if we do
+							//then we can set the id, otherwise this is a new object
+							$order_by = "";
+							$query = $seed->table_name.".outlook_id = '".$seed->outlook_id."'";
+							$response = $seed->get_list($order_by, $query, 0,-1,-1,0);
+							$list = $response['list'];
+							if(count($list) > 0){
+								foreach($list as $value)
+								{
+									$seed->id = $value->id;
+									break;
+								}
+							}//fi
+						}//fi
+					}//fi
+				    if (empty($seed->reminder_time)) {
+                        $seed->reminder_time = -1;
+                    }
+                    if($seed->reminder_time == -1){
+                        $defaultRemindrTime = $current_user->getPreference('reminder_time');
+                        if ($defaultRemindrTime != -1){
+                            $seed->reminder_checked = '1';
+                            $seed->reminder_time = $defaultRemindrTime;
+                        }
+                    }
+					$seed->save();
+					$ids[] = $seed->id;
+				}//fi
+			}
+			else
+			{
+				if( $seed->ACLAccess('Save') && ($seed->deleted != 1 || $seed->ACLAccess('Delete'))){
+					$seed->save();
+					$ids[] = $seed->id;
+				}
+			}
+
+			// if somebody is calling set_entries_detail() and wants fields returned...
+			if ($select_fields !== FALSE) {
+				$ret_values[$count] = array();
+
+				foreach ($select_fields as $select_field) {
+					if (isset($seed->$select_field)) {
+						$ret_values[$count][$select_field] = $this->get_name_value($select_field, $seed->$select_field);
+					}
+				}
+			}
+		}
+
+		// handle returns for set_entries_detail() and set_entries()
+		if ($select_fields !== FALSE) {
+			$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_entries');
+			return array(
+				'name_value_lists' => $ret_values,
+			);
+		}
+		else {
+			$GLOBALS['log']->info('End: SoapHelperWebServices->new_handle_set_entries');
+			return array(
+				'ids' => $ids,
+			);
+		}
+	}
 }
