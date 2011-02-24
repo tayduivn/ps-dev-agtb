@@ -208,7 +208,167 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
 				break;
 				
+			case "lineChart":
+				var handleFailure = function(o){
+				alert('fail');
+					if(o.responseText !== undefined){
+						alert('failed');
+					}
+				}	
+				var handleSuccess = function(o){
+
+					if(o.responseText !== undefined && o.responseText != "No Data"){	
+					var json = eval('('+o.responseText+')');
+
+				var properties = $jit.util.splat(json.properties)[0];	
+				//init Linecahrt
+				var lineChart = new $jit.LineChart({
+				  //id of the visualization container
+				  injectInto: chartId,
+				  //whether to add animations
+				  animate: false,
+				  background: false,
+				  colorStop1: 'rgba(255,255,255,.8)',
+				  colorStop2: 'rgba(255,255,255,0)',
+				  selectOnHover: false,
+				  Title: {
+					text: properties['title'],
+					size: 16,
+					color: '#444444',
+					offset: 20
+				  },
+				  Subtitle: {
+					text: properties['subtitle'],
+					size: 11,
+					color: css["color"],
+					offset: 20
+				  },
+				  Ticks: {
+					enable: true,
+					color: css["gridLineColor"]
+				  },
+				  //visualization offset
+				  Margin: {
+					top:20,
+					left: 40,
+					right: 40,
+					bottom: 20
+				  },
+				  Events: {
+					enable: true,
+					onClick: function(node) {  
+					if(!node || SUGAR.util.isTouchScreen()) return;  
+					if(node.link == 'undefined' || node.link == '') return;
+					window.location.href=node.link;
+					}
+				  },
+				  //labels offset position
+				  labelOffset: 5,
+				  //bars style
+				  type: useGradients? chartConfig["lineType"]+':gradient' : chartConfig["lineType"],
+				  //whether to show the aggregation of the values
+				  showAggregates:true,
+				  //whether to show the labels for the bars
+				  showLabels:true,
+				  //labels style
+				  Label: {
+					type: labelType, //Native or HTML
+					size: 12,
+					family: css["font-family"],
+					color: css["color"],
+					colorAlt: "#ffffff"
+				  },
+				  //add tooltips
+				  Tips: {
+					enable: true,
+					onShow: function(tip, elem) {
+					  if(elem.link != 'undefined' && elem.link != '') {
+						drillDown = (SUGAR.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
+					  } else {
+						drillDown = "";
+					  }
+
+					  if(elem.valuelabel != 'undefined' && elem.valuelabel != undefined && elem.valuelabel != '') {
+						var value = "elem.valuelabel";
+					  } else {
+						var value = "elem.value";
+					  }
+					  
+					  if(elem.collision) {
+					  	eval("var name = elem."+chartConfig["tip"]+";");
+					  	tip.innerHTML = '';
+					  	
+					  	for(var i=0; i<name.length; i++) {
+					  		tip.innerHTML += "<b>" + name[i] + "</b>: " + elem.value[i] + " - " + elem.percentage[i] + "%" + "<br>";
+					  	}
+					  	//eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
+					  
+					  } else {
+					  	eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");	
+					  }
+					}
+				  }
+				});
+				//load JSON data.
+				lineChart.loadJSON(json);
+				//end
 				
+				/*
+				var list = $jit.id('id-list'),
+					button = $jit.id('update'),
+					orn = $jit.id('switch-orientation');
+				//update json on click 'Update Data'
+				$jit.util.addEvent(button, 'click', function() {
+				  var util = $jit.util;
+				  if(util.hasClass(button, 'gray')) return;
+				  util.removeClass(button, 'white');
+				  util.addClass(button, 'gray');
+				  barChart.updateJSON(json2);
+				});
+				*/
+				//dynamically add legend to list
+				var list = $jit.id('legend'+chartId);
+				var legend = lineChart.getLegend(),
+					rows = Math.ceil(legend["name"].length/5);
+					table = "<table cellpadding='0' cellspacing='0' align='left'>";
+				var j = 0;
+				for(i=0;i<rows;i++) {
+					table += "<tr>"; 
+					for(td=0;td<5;td++) {
+						
+						table += '<td nowrap>';
+						if(legend["name"][j] != undefined) {
+							table += '<div class=\'query-color\' style=\'background-color:'
+							  + legend["color"][j] +'\'>&nbsp;</div>' + legend["name"][j];
+						}
+						  
+						table += '</td>';
+						j++;
+						}
+					table += "</tr>"; 
+				}
+				
+					table += "</table>";
+				list.innerHTML = table;
+				
+				
+				//save canvas to image for pdf consumption
+				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				
+				
+					}
+				}
+						
+				var callback =
+				{
+				  success:handleSuccess,
+				  failure:handleFailure,
+				  argument: { foo:'foo', bar:''}
+				};
+				
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				break;
+			
 				
 			case "pieChart":
 
