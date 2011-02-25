@@ -180,7 +180,12 @@ $dictionary['Meeting'] = array('table' => 'meetings',
      'comment' => 'Meeting type (ex: WebEx, Other)',
      'options' => 'eapm_list',
      'default'	=> 'Sugar',
+   	 //BEGIN SUGARCRM flav=com ONLY
+   	 'studio' => 'false',
+     //END SUGARCRM flav=com ONLY
+   	 //BEGIN SUGARCRM flav!=com ONLY
    	 'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+   	 //END SUGARCRM flav!=com ONLY
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>

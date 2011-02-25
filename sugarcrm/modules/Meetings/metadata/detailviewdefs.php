@@ -69,7 +69,9 @@ array (
           'status',
         ),
         array (
-          'type',
+        	//BEGIN SUGARCRM flav!=com ONLY
+            'type',
+            //END SUGARCRM flav!=com ONLY
             array(
                 'name'=>'displayed_url',
             ),           
