@@ -54,7 +54,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 	    unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
-	    unset($GLOBALS['disable_date_format']);
 	    unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
