@@ -179,6 +179,7 @@ $layout_defs['Documents'] = array(
                     ),
                 ),
         ),
+        //BEGIN SUGARCRM flav=pro ONLY
         'products' => array(
             'order' => 80,
             'module' => 'Products',
@@ -195,7 +196,8 @@ $layout_defs['Documents'] = array(
                     'mode' => 'MultiSelect',
                     ),
                 ),
-        ),        
+        ),    
+        //END SUGARCRM flav=pro ONLY    
 	),
 );
 ?>

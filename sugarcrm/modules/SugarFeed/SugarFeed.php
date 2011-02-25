@@ -350,8 +350,10 @@ class SugarFeed extends Basic {
 
 	function get_list_view_data(){
 		$data = parent::get_list_view_data();
+		//BEGIN SUGARCRM flav=pro ONLY
 		if ( !isset($data['TEAM_NAME']) )
 		    $data['TEAM_NAME'] = '';
+		//END SUGARCRM flav=pro ONLY
 		$delete = '';
 		if (ACLController::moduleSupportsACL($data['RELATED_MODULE']) && !ACLController::checkAccess($data['RELATED_MODULE'], 'view', $data['CREATED_BY'] == $GLOBALS['current_user']->id) && !ACLController::checkAccess($data['RELATED_MODULE'], 'list', $data['CREATED_BY'] == $GLOBALS['current_user']->id)){
 			$data['NAME'] = '';

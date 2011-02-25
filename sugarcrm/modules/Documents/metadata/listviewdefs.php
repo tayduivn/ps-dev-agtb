@@ -54,12 +54,14 @@ $listViewDefs['Documents'] = array(
         3 => 'doc_url',
     ),
   ),
+  //BEGIN SUGARCRM flav=pro ONLY
   'DOC_TYPE' => array (
   	'width' => '5%',
   	'label' => 'LBL_DOC_TYPE',
     'link' => false,
   	'default' => true,
   ),
+  //END SUGARCRM flav=pro ONLY
   'CATEGORY_ID' => 
   array (
     'width' => '10%',

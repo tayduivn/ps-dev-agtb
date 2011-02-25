@@ -37,9 +37,11 @@ $viewdefs['Documents']['DetailView'] = array(
     array (
       'lbl_document_information' => 
       array (
+        //BEGIN SUGARCRM flav=pro ONLY
         array (
           'doc_type',
         ),
+        //END SUGARCRM flav=pro ONLY
         array (
           'filename',
           'status',
