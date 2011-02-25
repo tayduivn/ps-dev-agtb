@@ -81,10 +81,6 @@ $subpanel_layout = array(
 		  array (
 		    'usage' => 'query_only',
 		  ),
-		  'doc_id' => 
-		  array (
-		    'usage' => 'query_only',
-		  ),
 		  //BEGIN SUGARCRM flav=pro ONLY
 		  'doc_type' => 
 		  array (

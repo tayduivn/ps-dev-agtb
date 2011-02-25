@@ -100,12 +100,6 @@ $subpanel_layout = array(
 		 	'module' => 'Documents',
 			'width' => '5%',
 		),
-		'document_revision_id'=>array(
-			'usage'=>'query_only'
-		),
-		'doc_url'=>array(
-			'usage'=>'query_only'
-		),
 	),
 );
 ?>
