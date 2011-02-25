@@ -36,7 +36,7 @@ global $timedate;
  
 $mod_strings = array (
     'LBL_GOOD_FILE' => 'Import File Read Successfully',
-    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Records skipped due to error',
+    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Records were not imported due to error.',
     'LBL_UPDATE_SUCCESSFULLY' => 'Records updated successfully',
     'LBL_SUCCESSFULLY_IMPORTED' => 'Records created successfully',
     'LBL_STEP_4_TITLE' => 'Step 4: Import File',
@@ -231,9 +231,9 @@ $mod_strings = array (
     'LBL_LAST_IMPORTED'=>'Last Created',
     'ERR_MULTIPLE_PARENTS' => 'You can only have one Parent ID defined',
     'LBL_DUPLICATES' => 'Duplicates Found',
-    'LNK_DUPLICATE_LIST' => 'Download List of Duplicates',
-    'LNK_ERROR_LIST' => 'Download List of Errors',
-    'LNK_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Download records that could not be imported.',
+    'LNK_DUPLICATE_LIST' => 'Download list of duplicates',
+    'LNK_ERROR_LIST' => 'Download list of errors',
+    'LNK_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Download list of records that were not imported',
     'LBL_UNIQUE_INDEX' => 'Choose index for duplicate comparison',
     'LBL_VERIFY_DUPS' => 'Verify duplicate entries against selected indexes.',
     'LBL_INDEX_USED' => 'Index(es) used:',
