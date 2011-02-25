@@ -304,6 +304,6 @@ $mod_strings = array (
     'LBL_IMPORT_STARTED' => 'Import Started:',
     'LBL_IMPORT_FILE_SETTINGS' => 'Import File Settings',
     'LBL_RECORD_CANNOT_BE_UPDATED' => 'The record could not be updated due to a permissions issue',
-    'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
+    'DELETE_MAP_CONFIRMATION' => 'Are you sure you want to delete this mapping?',
 );
 ?>
