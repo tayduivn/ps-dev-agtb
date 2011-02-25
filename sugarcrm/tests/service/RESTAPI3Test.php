@@ -35,7 +35,6 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 	    unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
-	    unset($GLOBALS['disable_date_format']);
 	}
 
     protected function _makeRESTCall($method,$parameters)

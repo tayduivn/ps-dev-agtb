@@ -89,9 +89,9 @@ require_once 'SugarTestMergeUtilities.php';
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
-    
+
     protected $useOutputBuffering = true;
-    
+
     protected function assertPostConditions() {
         if(!empty($_REQUEST)) {
             foreach(array_keys($_REQUEST) as $k) {
@@ -110,6 +110,12 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 		        unset($_GET[$k]);
 		    }
         }
+    }
+
+    public static function tearDownAfterClass()
+    {
+        unset($GLOBALS['disable_date_format']);
+        $GLOBALS['timedate']->clearCache();
     }
 }
 
