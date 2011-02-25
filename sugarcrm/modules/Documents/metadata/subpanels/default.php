@@ -71,11 +71,13 @@ $subpanel_layout = array(
 	 	    'vname' => 'LBL_LIST_CATEGORY',
 		    'width' => '20%',
 		),		
+	   //BEGIN SUGARCRM flav=pro ONLY
        'doc_type'=>array(
  	    	'name' => 'doc_type',
 	 	    'vname' => 'LBL_LIST_DOC_TYPE',
 		    'width' => '10%',
 		),
+	   //END SUGARCRM flav=pro ONLY
        'status_id'=>array(
  	    	'name' => 'status_id',
 	 	    'vname' => 'LBL_LIST_STATUS',

@@ -58,7 +58,12 @@ $dictionary['Document'] = array('table' => 'documents',
     'massupdate' => false,
     'options' => 'eapm_list',
     'default'	=> 'Sugar',
+ 	//BEGIN SUGARCRM flav!=pro ONLY
+	'studio' => 'false',
+  	//END SUGARCRM flav!=pro ONLY 
+  	//BEGIN SUGARCRM flav=pro ONLY  
   	'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+	//END SUGARCRM flav=pro ONLY
   ),
 'doc_url' =>
   array (

@@ -66,6 +66,9 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'function' => 'getDocumentsExternalApiDropDown',
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+ 	//BEGIN SUGARCRM flav!=pro ONLY
+	'studio' => 'false',
+  	//END SUGARCRM flav!=pro ONLY 
   ),
 'doc_url' =>
   array (

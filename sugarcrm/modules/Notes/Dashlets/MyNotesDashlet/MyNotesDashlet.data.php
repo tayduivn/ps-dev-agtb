@@ -77,6 +77,7 @@ $dashletData['MyNotesDashlet']['columns'] = array (
 											      1 => 'parent_type',
 											    ),
 											  ),  
+											  //BEGIN SUGARCRM flav=pro ONLY
 											  'doc_type' =>
 											  array(
 												'width' => '5%', 
@@ -84,6 +85,7 @@ $dashletData['MyNotesDashlet']['columns'] = array (
 											    'link' => false,
 											 	'default' => true,
 											  ), 
+											   //END SUGARCRM flav=pro ONLY
 											  'filename' => 
 											  array (
 											    'width' => '20%',
