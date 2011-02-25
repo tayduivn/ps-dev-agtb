@@ -77,6 +77,10 @@ class SugarFieldExpression extends GenericExpression
                      throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 return $timedate->fromUserTime($timedate->to_display_time($this->context->$fieldName));
+            case 'bool':
+                if (!empty($this->context->$fieldName))
+                    return AbstractExpression::$TRUE;
+                return AbstractExpression::$FALSE;
         }
         return $this->context->$fieldName;
 	}

@@ -31,9 +31,12 @@ class EqualExpression extends BooleanExpression {
 	 */
 	function evaluate() {
 		$params = $this->getParameters();
-
+        //echo("<pre>" . print_r($params, true) . "</pre>");
+        echo "<pre>" . get_class($params[0]) . "\n" . get_class($params[1]) . "</pre>";
 		$a = $params[0]->evaluate();
 		$b = $params[1]->evaluate();
+
+        echo("<pre>" . print_r(array($a, $b), true) . "</pre>");
 
 		if ( $a == $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;

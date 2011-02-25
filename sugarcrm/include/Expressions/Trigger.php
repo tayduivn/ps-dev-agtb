@@ -42,8 +42,7 @@ class Trigger {
 				return Trigger::$ValueNotSetError;
 			}
 		}
-		$expression = Parser::replaceVariables($this->conditionFunction, $target);
-		$result = Parser::evaluate($expression)->evaluate();
+		$result = Parser::evaluate($this->conditionFunction, $target)->evaluate();
 		if ($result == AbstractExpression::$TRUE){
 			return true;
 		} else {
