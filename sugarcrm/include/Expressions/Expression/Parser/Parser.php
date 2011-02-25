@@ -259,6 +259,7 @@ class Parser {
 	}
 	
 	/**
+     * @deprecated
 	 * returns the expression with the variables replaced with the values in target.
 	 *
 	 * @param string $expr
@@ -292,7 +293,6 @@ class Parser {
                 }
                 else {
                 //END SUGARCRM flav=een ONLY
-
                     if (isset ($target->$field)) {
                         $val = Parser::getFormatedValue($target->$field, $field);
                         $ret = str_replace("$$field", $val, $ret);
