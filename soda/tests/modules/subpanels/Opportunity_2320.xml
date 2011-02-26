@@ -53,7 +53,7 @@
 	</div>
 	
 	<!-- Clean up all records -->
-	<script file="{@global.scriptsdir}/modules/lib/Account_DeleteLib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
 
