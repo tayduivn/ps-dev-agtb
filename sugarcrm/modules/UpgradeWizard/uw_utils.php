@@ -5791,3 +5791,41 @@ function upgradeSugarCache($file)
 	}
 }
 
+
+/**
+ * upgradeDisplayedTabsAndSubpanels
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function upgradeDisplayedTabsAndSubpanels($version)
+{
+	if($version < '620')
+	{
+		logThis('start upgrading system displayed tabs and subpanels');
+	    require_once('modules/MySettings/TabController.php');
+	    $tc = new TabController();	
+	    
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();  
+
+	    //add Calls, Meetings, Tasks and Notes to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes');
+	    $added_tabs = array();
+	    
+	    foreach($modules_to_add as $module)
+	    {
+		       $tabs[0][$module] = $module;
+		       $added_tabs[] = $module;
+	    }
+	    
+	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
+	    $tc->set_system_tabs($tabs[0]);    
+	    logThis('finish upgrading system displayed tabs and subpanels');
+	    /*
+	    //handle subpanels
+	    require_once('include/SubPanel/SubPanelDefinitions.php');
+        $panels_arr = SubPanelDefinitions::get_all_subpanels();
+        $hidpanels_arr = SubPanelDefinitions::get_hidden_subpanels();	 
+        */   
+	}
+}
