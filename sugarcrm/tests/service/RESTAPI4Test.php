@@ -104,12 +104,66 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                         'password' => $user->user_hash,
                         'version' => '.01',
                         ),
-                'application_name' => 'SugarTestRunner',
+                'application_name' => 'mobile',
                 'name_value_list' => array(),
                 )
             );
     }
 
+    /**
+     * Test the login function to ensure it returns the available quotes layouts when application name
+     * is mobile.
+     *
+     */
+    public function testLoginForMobileWithQuotes()
+    {
+        $results = $this->_login($this->_admin_user);
+        $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Standard']) );
+        $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Invoice']) );
+    }
+    
+    /**
+     * Test the ability to retrieve quote PDFs
+     *
+     */
+    public function testGetQuotesPDF()
+    {
+        $log_result = $this->_login($this->_admin_user);
+        $session = $log_result['id'];
+        
+        //Retrieve a list of quote ids to work with
+        $whereClause = "";
+        $module = 'Quotes';
+        $orderBy = 'name';
+        $offset = 0;
+        $returnFields = array('id');
+        $linkNameFields = "";
+        $maxResults = 2;
+        $deleted = FALSE;
+        $favorites = FALSE;
+        $list_result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
+        
+        //Test for standard oob layouts
+        foreach ($list_result['entry_list'] as $entry)
+        {
+            $quote_id = $entry['id'];
+            $result = $this->_makeRESTCall('get_quotes_pdf', array($session, $quote_id, 'Standard' ));
+            $this->assertTrue(!empty($result['file_contents']));
+        }
+        
+        //Test for a fake pdf type.
+        if( count($list_result['entry_list']) > 0 )
+        {
+            $quote_id = $list_result['entry_list'][0]['id'];
+            $result = $this->_makeRESTCall('get_quotes_pdf', array($session, $quote_id, 'Fake' ));
+            $this->assertTrue(!empty($result['file_contents']));
+        }   
+        
+        //Test for a fake bean.
+        $result = $this->_makeRESTCall('get_quotes_pdf', array($session, '-1', 'Standard' ));
+        $this->assertTrue(!empty($result['file_contents']));     
+    }
+    
     /**
      * Ensure the ability to retrieve a module list of recrods that are favorites.
      *
