@@ -119,7 +119,6 @@ class VisibilityAction extends AbstractAction{
                 {
                     var node = el.childNodes[i];
                     if (node.nodeName == '#text' && YAHOO.lang.trim(node.textContent) != '') {
-                        console.log(node);
                         return true;
                     }
                 }
