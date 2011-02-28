@@ -106,9 +106,14 @@ class VisibilityAction extends AbstractAction{
 			    if (el && this.containsPlainText(el))
 			    {
 			        var span = document.createElement('SPAN');
-			        for(var i = el.childNodes.length - 1; i > -1 ; i--)
+			        var nodes = [];
+			        for(var i = 0; i < el.childNodes.length ; i++)
                     {
-                        span.appendChild(el.childNodes[i]);
+                        nodes[i] = el.childNodes[i];
+                    }
+                    for(var i = 0 ; i < nodes.length; i++)
+                    {
+                        span.appendChild(nodes[i]);
                     }
 			        el.appendChild(span);
 			    }
