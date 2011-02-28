@@ -5808,8 +5808,9 @@ function upgradeDisplayedTabsAndSubpanels($version)
 	    //grab the existing system tabs
 	    $tabs = $tc->get_tabs_system();  
 
-	    //add Calls, Meetings, Tasks and Notes to displayed tabs unless explicitly set to hidden
-	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes');
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
 	    $added_tabs = array();
 	    
 	    foreach($modules_to_add as $module)
@@ -5820,12 +5821,6 @@ function upgradeDisplayedTabsAndSubpanels($version)
 	    
 	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
 	    $tc->set_system_tabs($tabs[0]);    
-	    logThis('finish upgrading system displayed tabs and subpanels');
-	    /*
-	    //handle subpanels
-	    require_once('include/SubPanel/SubPanelDefinitions.php');
-        $panels_arr = SubPanelDefinitions::get_all_subpanels();
-        $hidpanels_arr = SubPanelDefinitions::get_hidden_subpanels();	 
-        */   
+	    logThis('finish upgrading system displayed tabs and subpanels'); 
 	}
 }
