@@ -437,24 +437,6 @@ function upgradeOutboundSetting(){
 	}
 }
 
-function hide_subpanels_if_tabs_are_hidden(){
-	global $path;	
-	require_once('modules/MySettings/TabController.php');
-    require_once ('include/SubPanel/SubPanelDefinitions.php') ;
-        
-	//grab the existing system tabs
-	$newTB = new TabController();
-	$tabs = $newTB->get_tabs_system();
-
-	//set the hidden tabs key to lowercase
-	$hidpanels_arr = array_change_key_case($tabs[1]);
-	_logThis('panels to hide because tabs are hidden: '.var_export($hidpanels_arr,true), $path);
-		
-    //make subpanels hidden if tab is hidden
-	SubPanelDefinitions::set_hidden_subpanels($hidpanels_arr);
-	_logThis('panels were hidden ', $path);	
-}
-
 
 /**
  * write_to_modules_ext_php
