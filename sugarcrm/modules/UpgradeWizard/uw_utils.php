@@ -2135,7 +2135,7 @@ function testQueryDrop($table, $dbType, $query) {
 
 			// get sample data into the temp table to test for data/constraint conflicts
 			logThis('inserting temp dataset...');
-			$query = stripQuotes($query, $table);
+			$query = stripQuotesUW($query, $table);
 			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
 			$r3 = $db->query($q3);
 
@@ -2294,7 +2294,7 @@ function testQueryUpdate($table, $dbType, $query) {
 /**
  * strip queries of single and double quotes
  */
-function stripQuotes($query, $table) {
+function stripQuotesUW($query, $table) {
 	$queryStrip = '';
 
 	$start = strpos($query, $table);
@@ -4273,10 +4273,10 @@ function upgradeDashletsForSalesAndMarketing() {
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
-        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
+        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
+        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
+        'pbls_ids' => 'OppByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -5408,7 +5408,7 @@ function upgradeModulesForTeam() {
 		if($db->dbType == 'mysql')
 		{
 			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";	
+			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
 		} else if($db->dbType == 'mssql') {
 			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
 			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
@@ -5416,19 +5416,19 @@ function upgradeModulesForTeam() {
 			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
 			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
 		}
-		
+
 		if(isset($meetingsSql) && isset($callsSql))
 		{
 			logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
 			$db->query($meetingsSql);
-			
+
 			logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
 			$db->query($callsSql);
 		}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * upgradeDocumentTypeFields
 	 *
@@ -5444,7 +5444,7 @@ function upgradeModulesForTeam() {
 		$db->query($documentsSql);
 		logThis('upgradeDocumentTypeFields Meetings SQL:' . $meetingsSql, $path);
 		$db->query($meetingsSql);
-	}	
+	}
 
 
 /**
@@ -5791,3 +5791,36 @@ function upgradeSugarCache($file)
 	}
 }
 
+
+/**
+ * upgradeDisplayedTabsAndSubpanels
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function upgradeDisplayedTabsAndSubpanels($version)
+{
+	if($version < '620')
+	{
+		logThis('start upgrading system displayed tabs and subpanels');
+	    require_once('modules/MySettings/TabController.php');
+	    $tc = new TabController();	
+	    
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();  
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
+	    $added_tabs = array();
+	    
+	    foreach($modules_to_add as $module)
+	    {
+		       $tabs[0][$module] = $module;
+		       $added_tabs[] = $module;
+	    }
+	    
+	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
+	    $tc->set_system_tabs($tabs[0]);    
+	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	}
+}

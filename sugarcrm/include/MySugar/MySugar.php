@@ -684,8 +684,8 @@ EOJS;
 		$display = array();
 
 		$predefinedChartsList = array( 	'MyPipelineBySalesStageDashlet',
-										'OpportunitiesByLeadSourceDashlet',
-									   	'OpportunitiesByLeadSourceByOutcomeDashlet',
+										'OppByLeadSourceDashlet',
+									   	'OppByLeadOutcomeDashlet',
 									   	'OutcomeByMonthDashlet',
 									   	'PipelineBySalesStageDashlet',
 									   	//BEGIN SUGARCRM flav!=sales ONLY

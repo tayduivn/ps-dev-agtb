@@ -77,8 +77,8 @@ class VisibilityAction extends AbstractAction{
 					var target = SUGAR.forms.AssignmentHandler.getElement(this.target);
 					if (target != null) {
 					    var inv_class = 'vis_action_hidden';
-						var inputTD = target.parentNode;
-						var labelTD = YAHOO.util.Dom.getPreviousSiblingBy(inputTD, function(e){
+						var inputTD = Dom.getAncestorByTagName(target, 'TD');
+						var labelTD = Dom.getPreviousSiblingBy(inputTD, function(e){
 							if (e.tagName == 'TD') return true;
 							return false;
 						});
@@ -100,14 +100,36 @@ class VisibilityAction extends AbstractAction{
 					}
 				} catch (e) {if (console && console.log) console.log(e);}
 			},
-			//we need to wrap the contents of a TD in a span in order to hide the contents without hiding the TD itesef
+			//we need to wrap plain text nodes in a span in order to hide the contents without hiding the TD itesef
 			wrapContent: function(el)
 			{
-			    if (el && !YAHOO.util.Dom.getFirstChild(el))
+			    if (el && this.containsPlainText(el))
 			    {
-			        el.innerHTML = '<span>' + el.innerHTML + '</span>';
+			        var span = document.createElement('SPAN');
+			        var nodes = [];
+			        for(var i = 0; i < el.childNodes.length ; i++)
+                    {
+                        nodes[i] = el.childNodes[i];
+                    }
+                    for(var i = 0 ; i < nodes.length; i++)
+                    {
+                        span.appendChild(nodes[i]);
+                    }
+			        el.appendChild(span);
 			    }
+			},
+			containsPlainText: function(el)
+			{
+                for(var i = 0; i < el.childNodes.length; i++)
+                {
+                    var node = el.childNodes[i];
+                    if (node.nodeName == '#text' && YAHOO.lang.trim(node.textContent) != '') {
+                        return true;
+                    }
+                }
+			    return false;
 			}
+
 		});";
 	}
 
@@ -127,8 +149,7 @@ class VisibilityAction extends AbstractAction{
 	 */
 	function fire(&$target) {
 		require_once("include/Expressions/Expression/AbstractExpression.php");
-		$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
+		$result = Parser::evaluate($this->expression, $target)->evaluate();
 		if ($result === AbstractExpression::$FALSE) {
 			$target->field_defs[$this->targetField]['hidden'] = true;
 		} else 

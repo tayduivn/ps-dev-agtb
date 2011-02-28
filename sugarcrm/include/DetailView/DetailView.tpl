@@ -68,11 +68,12 @@ class="yui-navset detailview_tabs"
 
 	{{foreach name=rowIteration from=$panel key=row item=rowData}}
 	{counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
+	{counter name="fieldsHidden" start=0 print=false assign="fieldsHidden"}
 	{capture name="tr" assign="tableRow"}
 	<tr>
 		{{assign var='columnsInRow' value=$rowData|@count}}
 		{{assign var='columnsUsed' value=0}}
-	    {{foreach name=colIteration from=$rowData key=col item=colData}}
+		{{foreach name=colIteration from=$rowData key=col item=colData}}
 	    {{if !empty($colData.field.hideIf)}}
 	    	{if !({{$colData.field.hideIf}}) }
 	    {{/if}}
@@ -109,9 +110,13 @@ class="yui-navset detailview_tabs"
                    {overlib_includes}
                    {sugar_help text=$popupText WIDTH=400}
                 {{/if}}
+                {{* //BEGIN SUGARCRM flav=pro ONLY*}}
                 {{if !empty($colData.field.name)}}
+                {else}
+                    {counter name="fieldsHidden"}
                 {/if}
                 {{/if}}
+                {{* //END SUGARCRM flav=pro ONLY*}}
 			</td>
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}} {{if isset($fields[$colData.field.name].type) && $fields[$colData.field.name].type == 'phone'}}class="phone"{{/if}}>
 			    {{if !empty($colData.field.name)}}
@@ -155,7 +160,7 @@ class="yui-navset detailview_tabs"
 		{{/foreach}}
 	</tr>
 	{/capture}
-	{if $fieldsUsed > 0 }
+	{if $fieldsUsed > 0 && $fieldsUsed != $fieldsHidden}
 	{$tableRow}
 	{/if}
 	{{/foreach}}

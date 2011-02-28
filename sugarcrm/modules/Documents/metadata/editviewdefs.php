@@ -46,11 +46,11 @@ $viewdefs['Documents']['EditView'] = array(
  'panels' =>array (
   'lbl_document_information' => 
   array (
-    //BEGIN SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav!=com ONLY
     array (
       'doc_type',
     ),
-    //END SUGARCRM flav=pro ONLY
+    //END SUGARCRM flav!=com ONLY
     array (
       array(
       		'name' => 'filename',

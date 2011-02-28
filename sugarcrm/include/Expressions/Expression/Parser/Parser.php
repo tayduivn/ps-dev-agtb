@@ -41,7 +41,10 @@ class Parser {
         {
             require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
             $var = substr($expr, 1);
-            return new SugarFieldExpression($var);
+            $ret = new SugarFieldExpression($var);
+            if ($context)
+                $ret->context = $context;
+            return $ret;
         }
 
 
@@ -259,6 +262,7 @@ class Parser {
 	}
 	
 	/**
+     * @deprecated
 	 * returns the expression with the variables replaced with the values in target.
 	 *
 	 * @param string $expr
@@ -292,7 +296,6 @@ class Parser {
                 }
                 else {
                 //END SUGARCRM flav=een ONLY
-
                     if (isset ($target->$field)) {
                         $val = Parser::getFormatedValue($target->$field, $field);
                         $ret = str_replace("$$field", $val, $ret);

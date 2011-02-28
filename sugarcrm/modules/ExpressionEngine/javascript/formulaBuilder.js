@@ -137,7 +137,6 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 			varTypeMap[fieldsArray[i][0]] = fieldsArray[i][1];
 		}
 		var expression = YAHOO.lang.trim(Dom.get('formulaInput').value);
-		SUGAR.expressions.ExpressionParser.prototype.validate(expression);
 		var tokens = new SUGAR.expressions.ExpressionParser().tokenize(expression);
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
