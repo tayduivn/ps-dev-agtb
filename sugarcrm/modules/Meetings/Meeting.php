@@ -477,6 +477,7 @@ class Meeting extends SugarBean {
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
 
+        //BEGIN SUGARCRM flav!=com ONLY
         $oneHourAgo = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time()-3600);
         if(!empty($this->host_url) && $date_db	>= $oneHourAgo) {
             if($this->assigned_user_id == $GLOBALS['current_user']->id){
@@ -494,7 +495,8 @@ class Meeting extends SugarBean {
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
 			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
 		}
-
+		//END SUGARCRM flav!=com ONLY
+		
 		return $meeting_fields;
 	}
 

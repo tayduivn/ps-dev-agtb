@@ -78,11 +78,15 @@ class LogicHook{
 	function call_custom_logic($module_dir, $event, $arguments = null){
 		// declare the hook array variable, it will be defined in the included file.
 		$hook_array = null;
-        $GLOBALS['log']->debug("Hook called: $module_dir::$event");
+        if(isset($GLOBALS['log'])){
+            $GLOBALS['log']->debug("Hook called: $module_dir::$event");
+        }
 		if(!empty($module_dir)){
 			// This will load an array of the hooks to process
 			if(file_exists("custom/modules/$module_dir/logic_hooks.php")){
-				$GLOBALS['log']->debug('Including module specific hook file for '.$module_dir);
+                if(isset($GLOBALS['log'])){
+				    $GLOBALS['log']->debug('Including module specific hook file for '.$module_dir);
+                }
 				include("custom/modules/$module_dir/logic_hooks.php");
 				$this->process_hooks($hook_array, $event, $arguments);
 				$hook_array = null;
@@ -90,7 +94,9 @@ class LogicHook{
 		}
 		// Now load the generic array if it exists.
 		if(file_exists('custom/modules/logic_hooks.php')){
-			$GLOBALS['log']->debug('Including generic hook file');
+            if(isset($GLOBALS['log'])){
+			    $GLOBALS['log']->debug('Including generic hook file');
+            }
 			include('custom/modules/logic_hooks.php');
 			$this->process_hooks($hook_array, $event, $arguments);
 		}
@@ -111,7 +117,9 @@ class LogicHook{
 		if(!empty($hook_array[$event])){
 			foreach($hook_array[$event] as $hook_details){
 				if(!file_exists($hook_details[2])){
-					$GLOBALS['log']->error('Unable to load custom logic file: '.$hook_details[2]);
+                    if(isset($GLOBALS['log'])){
+					    $GLOBALS['log']->error('Unable to load custom logic file: '.$hook_details[2]);
+                    }
 					continue;
 				}
 				include_once($hook_details[2]);
@@ -121,13 +129,17 @@ class LogicHook{
 				// Make a static call to the function of the specified class
 				//TODO Make a factory for these classes.  Cache instances accross uses
 				if($hook_class == $hook_function){
-					$GLOBALS['log']->debug('Creating new instance of hook class '.$hook_class.' with parameters');
+                    if(isset($GLOBALS['log'])){
+					    $GLOBALS['log']->debug('Creating new instance of hook class '.$hook_class.' with parameters');
+                    }
 					if(!is_null($this->bean))
 						$class = new $hook_class($this->bean, $event, $arguments);
 					else
 						$class = new $hook_class($event, $arguments);
 				}else{
-					$GLOBALS['log']->debug('Creating new instance of hook class '.$hook_class.' without parameters');
+                    if(isset($GLOBALS['log'])){
+					    $GLOBALS['log']->debug('Creating new instance of hook class '.$hook_class.' without parameters');
+                    }
 					$class = new $hook_class();
 					if(!is_null($this->bean))
 						$class->$hook_function($this->bean, $event, $arguments);
