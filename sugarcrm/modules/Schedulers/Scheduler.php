@@ -24,11 +24,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:
  ********************************************************************************/
 
-
-
-
-
-
 class Scheduler extends SugarBean {
 	// table columns
 	var $id;
@@ -107,7 +102,7 @@ class Scheduler extends SugarBean {
 			$trackerManager->pause();
 			$job				= new SchedulersJob();
 			$job->scheduler_id	= $this->id;
-			$job->scheduler		=& $this;
+			$job->scheduler		= $this;
 			$job->execute_time	= $job->handleDateFormat('now');
 			$jobId = $job->save();
 			$trackerManager->unPause();
@@ -210,9 +205,9 @@ class Scheduler extends SugarBean {
 			return false;
 		}
 
-		$now = TimeDate::getInstance()->nowDb();
+		$now = TimeDate::getInstance()->getNow();
+		$now = $now->setTime($now->hour, $now->min)->asDb();
 		$validTimes = $this->deriveDBDateTimes($this);
-		//_pp('now: '.$now); _pp($validTimes);
 
 		if(is_array($validTimes) && in_array($now, $validTimes)) {
 			$GLOBALS['log']->debug('----->Scheduler found valid job ('.$this->name.') for time GMT('.$now.')');
@@ -222,103 +217,6 @@ class Scheduler extends SugarBean {
 			return false;
 		}
 	}
-
-
-
-
-
-
-
-
-	/**
-	 * Checks if any jobs qualify to run at this moment
-	 */
-	function checkPendingJobs2() {
-		$this->cleanJobLog();
-		$allSchedulers = $this->get_full_list('', 'schedulers.status=\'Active\'');
-
-
-		if(!empty($allSchedulers)) {
-
-			// cURL inits
-			$ch = curl_init();
-////			curl_setopt($ch, CURLOPT_FAILONERROR, true); // silent failure (code >300);
-////			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false); // do not follow location(); inits - we always use the current
-////			curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
-////			curl_setopt($ch, CURLOPT_DNS_USE_GLOBAL_CACHE, false);  // not thread-safe
-//			curl_setopt($ch, CURLOPT_TIMEOUT, 5); // never times out - bad idea?
-//			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // 5 secs for connect timeout
-//			curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);  // open brand new conn
-////			curl_setopt($ch, CURLOPT_NOPROGRESS, true); // do not have progress bar
-////			curl_setopt($ch, CURLOPT_PORT, $_SERVER['SERVER_PORT']); // set port as reported by Server
-////			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // most customers will not have Certificate Authority account
-////			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // most customers will not have Certificate Authority account
-//			if(constant('PHP_VERSION') > '5.0.0') {
-////				curl_setopt($ch, CURLOPT_NOSIGNAL, true); // ignore any cURL signals to PHP (for multi-threading)
-//			}
-//			/* play with these options */
-////			curl_setopt($ch, CURLOPT_HEADER, false); // do not return header info with result
-////			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // return into a variable to continue program execution
-//
-//
-//			foreach($allSchedulers as $focus) {
-//				if($focus->fireQualified()) {
-//					$GLOBALS['log']->debug('---------------------- GOT A JOB FOR CURL -----------');
-//					curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1/headdev/cronJob.php?id='.$focus->id); // set url
-//				}
-//			}
-			curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1/headdev/cronJob.php?id=82a9421a-9c60-111b-7212-4412394279e4'); // set url
-			curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1/headdev/cronJob.php?id=82a9421a-9c60-111b-7212-4412394279e4');
-
-			$result = curl_exec($ch);
-			$cInfo = curl_getinfo($ch);/* url,content_type,header_size,request_size,filetime,http_code,ssl_verify_result,total_time,namelookup_time,connect_time,pretransfer_time,size_upload,size_download,speed_download,speed_upload,download_content_length,upload_content_length,starttransfer_time,redirect_time */
-			curl_close($ch);
-
-			if($cInfo['http_code'] < 400) {
-				$GLOBALS['log']->debug('----->Firing was successful: ('.$this->id.') at');
-				$GLOBALS['log']->debug('----->WTIH RESULT: '.strip_tags($result).' AND '.strip_tags(print_r($cInfo)));
-				return true;
-			} else {
-				$GLOBALS['log']->fatal('Job errored: ('.$this->id.')');
-				return false;
-			}
-
-
-
-		} else {
-			$GLOBALS['log']->debug('----->No Schedulers found');
-		}
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	/**
 	 * Checks if any jobs qualify to run at this moment
