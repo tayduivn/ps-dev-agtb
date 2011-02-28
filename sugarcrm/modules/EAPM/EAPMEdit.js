@@ -12,17 +12,17 @@ function EAPMChange() {
     if(SUGAR.eapm[apiName]){
         var apiOpts = SUGAR.eapm[apiName];
 
-        var urlObj = new SUGAR.forms.VisibilityAction('url',(apiOpts.needsUrl==true), EAPMFormName);
+        var urlObj = new SUGAR.forms.VisibilityAction('url',(apiOpts.needsUrl?'true':'false'), EAPMFormName);
         if ( EAPMFormName == 'EditView' ) {
             EAPMSetFieldRequired('url',(apiOpts.needsUrl == true));
         }
 
-        var userObj = new SUGAR.forms.VisibilityAction('name',(apiOpts.authMethod=='password'), EAPMFormName);
+        var userObj = new SUGAR.forms.VisibilityAction('name',((apiOpts.authMethod=='password')?'true':'false'), EAPMFormName);
         if ( EAPMFormName == 'EditView' ) {
             EAPMSetFieldRequired('name',(apiOpts.authMethod == 'password'));
         }
 
-        var passObj = new SUGAR.forms.VisibilityAction('password',(apiOpts.authMethod=='password'), EAPMFormName);
+        var passObj = new SUGAR.forms.VisibilityAction('password',((apiOpts.authMethod=='password')?'true':'false'), EAPMFormName);
         if ( EAPMFormName == 'EditView' ) {
             EAPMSetFieldRequired('password',(apiOpts.authMethod == 'password'));
         }

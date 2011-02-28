@@ -562,6 +562,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	for ( var i = 0 ; i <= length ; i++ ) {
 		// store the last character read
 		lastCharRead = currChar;
+		justReadComma = false;
 
 		// the last parameter
 		if ( i == length ) {
