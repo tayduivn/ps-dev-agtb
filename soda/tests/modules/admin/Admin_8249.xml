@@ -6,6 +6,8 @@
 	<link text="Repair" />
 	<link text="Quick Repair and Rebuild" />
 	<wait timeout="5" />
+	<button value="Execute" alert="true" />
+	<wait timeout="15" />
 	<browser assert="Database tables are synced with vardefs" />
 	<link text="Return to Administration page" />
 	<puts text="Test: Admin_8249.xml finished." />
