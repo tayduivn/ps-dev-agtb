@@ -303,11 +303,9 @@ SUGAR.mySugar.init = function () {
 	{if $default}
 //	SUGAR.mySugar.renderFirstLoadDialog();
 	{/if}
-
+    {literal}
 	//END SUGARCRM flav=pro ONLY
 	SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
-
-	{literal}
 }
 
 </script>
