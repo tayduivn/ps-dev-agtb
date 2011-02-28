@@ -1,8 +1,6 @@
 <soda>
-	<!--
-		Activities-Create Task-Verified that warning message is displayed when
-		creating task with start date later than due date.
-	-->
+	<!-- Activities-Create Task-Verified that warning message is displayed when creating 
+		task with start date later than due date. -->
 	<puts text="Test: Activities_9133.xml starting." />
 
 
@@ -16,24 +14,24 @@
 		<select id="status" set="{@task_record.status}" />
 		<textfield id="description" set="{@task_record.description}" />
 
-		<!--Due Date-->
+		<!--Due Date -->
 		<textfield id="date_due_date" set="09/28/2010" />
 		<select id="date_due_hours" set="00" />
 		<select id="date_due_minutes" set="00" />
 
-		<!--Start Date-->
+		<!--Start Date -->
 		<textfield id="date_start_date" set="09/30/2010" />
 		<select id="date_start_hours" set="00" />
 		<select id="date_start_minutes" set="00" />
 
-		<!--user select-->
+		<!--user select -->
 		<button id="btn_assigned_user_name" />
 		<browser assert="User Search" />
 		<textfield name="last_name_advanced" set="{@task_record.assigned_user_name}" />
 		<button value="Search" />
 		<link text="{@task_record.assigned_user_name}" />
 
-		<!--teams select-->
+		<!--teams select -->
 		<table id="EditView_team_name_table">
 			<button value="Select" />
 		</table>
@@ -47,10 +45,7 @@
 		<browser assert="Start Date(09/30/2010 00:00) is not before 09/28/2010 00:00" />
 	</csv>
 
-	<textfield id="date_due_date" set="10/1/2010" />
-	<button value="Save" />
+	<button value="Cancel" alert="true" />
 
-
-	<script file='{@global.scriptsdir}/modules/lib/Task_Delete_Lib.xml'/> 
 	<puts text="Test: Activities_9133.xml finished." />
 </soda>

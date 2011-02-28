@@ -18,7 +18,7 @@
 		<link text="{@pre_account_name}" />
 	</table>
 
-	<button name="Activities_CreateTask_button" />
+	<button name="Activities_createtask_button" />
 	<button id="Tasks_subpanel_full_form_button" />
 	<button value="Save" />
 	<browser assert="Missing required field: Subject" />

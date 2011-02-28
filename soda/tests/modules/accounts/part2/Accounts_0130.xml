@@ -78,8 +78,8 @@
 	<!-- Verify that the account was created without warning of duplicates -->
 	<div class="moduleTitle">
 		<link href="index.php?module=Accounts&amp;action=index" click="false" />
-		<browser assert="{@admin_record.duplicate}" />
 	</div>
+	<browser assert="{@admin_record.duplicate}" />
 	
 	<!-- Delete Records in QAuser -->
 	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />

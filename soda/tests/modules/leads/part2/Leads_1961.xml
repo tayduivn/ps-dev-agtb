@@ -6,6 +6,7 @@
 
 	<!--go to the leads -->
 	<link id="moduleTab_Leads" />
+	<wait timeout="3" />
 	<div class="moduleTitle">
 		<link href="index.php?module=Leads&amp;action=index" click="false" />
 	</div>
