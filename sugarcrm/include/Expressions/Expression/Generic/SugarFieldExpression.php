@@ -87,11 +87,14 @@ class SugarFieldExpression extends GenericExpression
 
     protected function setContext()
     {
-        $module = $_REQUEST['module'];
-        $id = $_REQUEST['record'];
-        $focus = $this->getBean($module);
-        $focus->retrieve($id);
-        $this->context = $focus;
+        if (empty($this->context) && !empty($_REQUEST['module']) && !empty($_REQUEST['record']))
+        {
+            $module = $_REQUEST['module'];
+            $id = $_REQUEST['record'];
+            $focus = $this->getBean($module);
+            $focus->retrieve($id);
+            $this->context = $focus;
+        }
     }
 
     protected function getBean($module)

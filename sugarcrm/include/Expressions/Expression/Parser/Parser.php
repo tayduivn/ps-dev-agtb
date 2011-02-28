@@ -41,7 +41,10 @@ class Parser {
         {
             require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
             $var = substr($expr, 1);
-            return new SugarFieldExpression($var);
+            $ret = new SugarFieldExpression($var);
+            if ($context)
+                $ret->context = $context;
+            return $ret;
         }
 
 
