@@ -124,12 +124,7 @@ class UsersController extends SugarController
         //BEGIN SUGARCRM flav=sales ONLY
         $_POST['email_link_type'] = $sugar_config['default_email_client'];
         //END SUGARCRM flav=sales ONLY
-        //BEGIN SUGARCRM flav=com ONLY
-	    $_POST['user_theme'] = 'Sugar5';
-	    //END SUGARCRM flav=com ONLY
-	    //BEGIN SUGARCRM flav!=com ONLY
-	    $_POST['user_theme'] = 'Sugar';
-	    //END SUGARCRM flav!=com ONLY
+        $_POST['user_theme'] = (string) SugarThemeRegistry::getDefault();
 	    
 	    // save and redirect to new view
 	    $_REQUEST['return_module'] = 'Home';

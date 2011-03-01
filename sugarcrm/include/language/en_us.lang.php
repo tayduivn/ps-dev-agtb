@@ -84,6 +84,7 @@ $app_list_strings = array (
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
     'Documents'=>'Documents',
+    'DocumentRevisions'=>'Document Revisions',
     //END SUGARCRM flav!=sales ONLY
     'Connectors'=>'Connectors',
     'Roles'=>'Roles',
@@ -404,15 +405,7 @@ $app_list_strings = array (
   'meeting_type_dom' =>
    array (
       'Other' => 'Other',
-      'WebEx' => 'WebEx',
-      'GoToMeeting' => 'GoToMeeting'
-   ),
-   'doc_type_dom' =>
-   array (
-   	'Sugar' => 'Sugar',
-    'Google' => 'Google',
-    'Box.net' => 'Box.net',
-   	'LotusLive' => 'LotusLive',
+      'SugarCRM' => 'SugarCRM',
    ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
@@ -887,32 +880,6 @@ $app_list_strings = array (
   array (
     'SMTP' => 'SMTP',
   ),
-  'dom_timezones' => array('-12'=>'(GMT - 12) International Date Line West',
-                            '-11'=>'(GMT - 11) Midway Island, Samoa',
-                            '-10'=>'(GMT - 10) Hawaii',
-                            '-9'=>'(GMT - 9) Alaska',
-                            '-8'=>'(GMT - 8) San Francisco',
-                            '-7'=>'(GMT - 7) Phoenix',
-                            '-6'=>'(GMT - 6) Saskatchewan',
-                            '-5'=>'(GMT - 5) New York',
-                            '-4'=>'(GMT - 4) Santiago',
-                            '-3'=>'(GMT - 3) Buenos Aires',
-                            '-2'=>'(GMT - 2) Mid-Atlantic',
-                            '-1'=>'(GMT - 1) Azores',
-                            '0'=>'(GMT)',
-                            '1'=>'(GMT + 1) Madrid',
-                            '2'=>'(GMT + 2) Athens',
-                            '3'=>'(GMT + 3) Moscow',
-                            '4'=>'(GMT + 4) Kabul',
-                            '5'=>'(GMT + 5) Ekaterinburg',
-                            '6'=>'(GMT + 6) Astana',
-                            '7'=>'(GMT + 7) Bangkok',
-                            '8'=>'(GMT + 8) Perth',
-                            '9'=>'(GMT + 9) Seol',
-                            '10'=>'(GMT + 10) Brisbane',
-                            '11'=>'(GMT + 11) Solomone Is.',
-                            '12'=>'(GMT + 12) Auckland',
-                            ),
       'dom_cal_month_long'=>array(
                 '0'=>"",
                 '1'=>"January",
@@ -1486,34 +1453,6 @@ $app_list_strings = array (
     'all' => 'all related',
     'any' => 'any related',
         ),
-    //I added the PST, CST, MST, EST denotations here
-  'dom_timezones_extra' => array('-12'=>'(GMT-12) International Date Line West',
-                            '-11'=>'(GMT-11) Midway Island, Samoa',
-                            '-10'=>'(GMT-10) Hawaii',
-                            '-9'=>'(GMT-9) Alaska',
-                            '-8'=>'(GMT-8) (PST)',
-                            '-7'=>'(GMT-7) (MST)',
-                            '-6'=>'(GMT-6) (CST)',
-                            '-5'=>'(GMT-5) (EST)',
-                            '-4'=>'(GMT-4) Santiago',
-                            '-3'=>'(GMT-3) Buenos Aires',
-                            '-2'=>'(GMT-2) Mid-Atlantic',
-                            '-1'=>'(GMT-1) Azores',
-                            '0'=>'(GMT)',
-                            '1'=>'(GMT+1) Madrid',
-                            '2'=>'(GMT+2) Athens',
-                            '3'=>'(GMT+3) Moscow',
-                            '4'=>'(GMT+4) Kabul',
-                            '5'=>'(GMT+5) Ekaterinburg',
-                            '6'=>'(GMT+6) Astana',
-                            '7'=>'(GMT+7) Bangkok',
-                            '8'=>'(GMT+8) Perth',
-                            '9'=>'(GMT+9) Seol',
-                            '10'=>'(GMT+10) Brisbane',
-                            '11'=>'(GMT+11) Solomone Is.',
-                            '12'=>'(GMT+12) Auckland',
-                            ),
-
         'wflow_fire_order_dom' => array('alerts_actions'=>'Alerts then Actions',
                                     'actions_alerts'=>'Actions then Alerts'),
 
@@ -1818,6 +1757,34 @@ $app_list_strings = array (
         '300' 	=> 'Every 5 minutes',
         '600' 	=> 'Every 10 minutes',
 		),
+	'date_range_search_dom' =>
+	array(
+		'=' => 'Equals',
+		'not_equal' => 'Not On',
+		'greater_than' => 'After',
+		'less_than' => 'Before',
+		'last_7_days' => 'Last 7 Days',
+		'next_7_days' => 'Next 7 Days',
+		'last_30_days' => 'Last 30 Days',
+		'next_30_days' => 'Next 30 Days',
+		'last_month' => 'Last Month',
+		'this_month' => 'This Month',
+		'next_month' => 'Next Month',
+		'last_year' => 'Last Year',
+		'this_year' => 'This Year',
+		'next_year' => 'Next Year',
+		'between' => 'Is Between',
+	),
+	'numeric_range_search_dom' =>
+	array(
+		'=' => 'Equals',
+		'not_equal' => 'Does Not Equal',
+		'greater_than' => 'Greater Than',
+		'greater_than_equals' => 'Greater Than Or Equal To',
+		'less_than' => 'Less Than',
+		'less_than_equals' => 'Less Than Or Equal To',
+		'between' => 'Is Between',
+	),
 );
 
 $app_strings = array (
@@ -2295,7 +2262,6 @@ $app_strings = array (
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
-    'LBL_CLOSE_BUTTON_TITLE' => 'Close',
     'LBL_CLOSE_BUTTON_KEY' => 'C',
     'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
@@ -2337,7 +2303,7 @@ $app_strings = array (
     'ERR_ADDRESS_KEY_NOT_SPECIFIED' => 'Please specify \'key\' index in displayParams attribute for the Meta-Data definition',
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
-    'ERR_EXTERNAL_API_SAVE_FAIL' => 'Error during external API save',
+    'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
 
@@ -2409,7 +2375,7 @@ $app_strings = array (
     'LBL_CLOSE_AND_CREATE_BUTTON_LABEL' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_TITLE' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_KEY' => 'C',
-    'LBL_OPEN_ITEMS' => 'Open Items:',    
+    'LBL_OPEN_ITEMS' => 'Open Items:',
     'LBL_COMPOSE_EMAIL_BUTTON_KEY' => 'L',
     'LBL_COMPOSE_EMAIL_BUTTON_LABEL' => 'Compose Email',
     'LBL_COMPOSE_EMAIL_BUTTON_TITLE' => 'Compose Email [Alt+L]',
@@ -2652,13 +2618,13 @@ $app_strings = array (
 
     /* The following version of LBL_SUGAR_COPYRIGHT is intended for Sugar Open Source only. */
 
-    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2010 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT' => '&copy; 2004-2011 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
 
     // The following version of LBL_SUGAR_COPYRIGHT is for Professional and Enterprise editions.
 
-    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
+    'LBL_SUGAR_COPYRIGHT_SUB' => '&copy; 2004-2011 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />SugarCRM is a trademark of SugarCRM, Inc. All other company and product names may be trademarks of the respective companies with which they are associated.',
 
 
     'LBL_SYNC' => 'Sync',
@@ -2723,6 +2689,7 @@ $app_strings = array (
     'LNK_LOAD_SIGNED'=>'Sign',
     'LNK_LOAD_SIGNED_TOOLTIP'=>'Replace with signed document',
     'LNK_PRINT' => 'Print',
+    'LNK_BACKTOTOP' => 'Back to top',
     'LNK_REMOVE' => 'rem',
     'LNK_RESUME' => 'Resume',
     'LNK_VIEW_CHANGE_LOG' => 'View Change Log',
@@ -3031,7 +2998,7 @@ $app_strings = array (
 
     //cma
     'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
-    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team cannot be deleted unless the user [{0}] is deleted.',
+    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team [{0}] cannot be deleted until the user [{1}] is deleted.',
 
     //martin #25548
     'LBL_NO_FLASH_PLAYER' => 'You either have Abobe Flash turned off or are using an older version of the Adobe Flash Player. To get the latest version of the Flash Player, <a href="http://www.adobe.com/go/getflashplayer/">click here</a>.',
@@ -3068,45 +3035,37 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
+    
+    //Calendar widget labels
+    'LBL_CHOOSE_MONTH' => 'Choose Month',
+    'LBL_ENTER_YEAR' => 'Enter Year',
+    'LBL_ENTER_VALID_YEAR' => 'Please enter a valid year',
 
     //SugarFieldPhone labels
     'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter a numeric U.S. phone number, including area code.',
 
     //File write error label
     'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
+	'ERR_FILE_NOT_FOUND' => 'Error: Could not load file {0}.  Please check system and web server permissions.',
 
     'LBL_AND' => 'And',
     'LBL_BEFORE' => 'Before',
-    'LBL_AFTER' => 'After',
-    'LBL_ON' => 'On',
-    'LBL_NOT_ON' => 'Not On',
-    'LBL_BETWEEN' => 'Is Between',
-	'LBL_LAST_7_DAYS'=>'Last 7 Days',
-	'LBL_NEXT_7_DAYS'=>'Next 7 Days',
-	'LBL_LAST_MONTH'=>'Last Month',
-	'LBL_NEXT_MONTH'=>'Next Month',
-    'LBL_THIS_MONTH'=>'This Month',
-    'LBL_LAST_30_DAYS'=>'Last 30 Days',
-    'LBL_NEXT_30_DAYS'=>'Next 30 Days',    
-	'LBL_LAST_YEAR'=>'Last Year',
-    'LBL_THIS_YEAR'=>'This Year',
-	'LBL_NEXT_YEAR'=>'Next Year',
-    'LBL_EQUAL'=>'Equals',
-	'LBL_NOT_EQUAL'=>'Does Not Equal',
-	'LBL_GREATER_THAN'=>'Greater Than',
-	'LBL_GREATER_THAN_OR_EQUAL'=>'Greater Than or Equal To',
-	'LBL_LESS_THAN'=>'Less Than',
-	'LBL_LESS_THAN_OR_EQUAL' => 'Less Than or Equal To',
 
     // File fields
     'LBL_UPLOAD_FROM_COMPUTER' => 'Upload From Your Computer',
-    'LBL_SEARCH_EXTERNAL_API' => 'Search External Source',
+    'LBL_SEARCH_EXTERNAL_API' => 'File on External Source',
     'LBL_EXTERNAL_SECURITY_LEVEL' => 'Security',
     'LBL_SHARE_PRIVATE' => 'Private',
     'LBL_SHARE_COMPANY' => 'Company',
     'LBL_SHARE_LINKABLE' => 'Linkable',
     'LBL_SHARE_PUBLIC' => 'Public',
 
+    
+    // Web Services REST RSS
+    'LBL_RSS_FEED' => 'RSS Feed',
+    'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
+    'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
+    'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
@@ -3842,12 +3801,14 @@ $app_list_strings['kbdocument_status_dom'] = array (
 
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
   $app_list_strings['eapm_list']= array(
-  	'SugarCRM'=>'SugarCRM',
-  	'webex'=>'WebEx',
-  	'gotomeeting'=>'GoToMeeting',
-  	'lotuslive'=>'LotusLive',
-  	'google' => 'Google Document',
-    'box' => 'Box.net',
+  	'Sugar'=>'Sugar',
+  	'WebEx'=>'WebEx',
+  	'GoToMeeting'=>'GoToMeeting',
+  	'LotusLive'=>'LotusLive',
+  	'Google' => 'Google Docs',
+    'Box' => 'Box.net',
+    'Facebook'=>'Facebook',
+    'Twitter'=>'Twitter',
   );
   $app_list_strings['LBL_API_TYPE_ENUM'] = array(
     'password' => 'Username/Password',

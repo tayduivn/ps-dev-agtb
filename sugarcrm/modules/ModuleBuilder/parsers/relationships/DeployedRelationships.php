@@ -52,7 +52,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
      * The cardinality in the installed relationship is not necessarily correct for custom relationships, which currently are all built as many-to-many relationships
      * Instead we must obtain the true cardinality from a property we added to the relationship metadata when we created the relationship
      * This relationship metadata is accessed through the Table Dictionary
-     */
+     */ 
     function load ()
     {
         
@@ -180,13 +180,12 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $spd = new SubPanelDefinitions ( $module ) ;
         $subpanelNames = $spd->get_available_tabs () ; // actually these are the displayed subpanels
         
-
-        $subPanels = array ( ) ;
         foreach ( $subpanelNames as $key => $name )
         {
             $GLOBALS [ 'log' ]->debug ( $thisModuleName . " " . $name ) ;
+            
             $subPanel = $spd->load_subpanel ( $name ) ;
-            if (! isset ( $subPanel->_instance_properties [ 'collection_list' ] ))
+            if ($subPanel && ! isset ( $subPanel->_instance_properties [ 'collection_list' ] ))
             {
                 if ($sourceModuleName == $subPanel->_instance_properties [ 'module' ])
                 {

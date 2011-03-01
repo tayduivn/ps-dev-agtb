@@ -274,11 +274,17 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            // load stored theme cache from sugar cache
-            $this->_jsCache       = sugar_cache_retrieve('theme_'.$this->dirName.'_jsCache');
-            $this->_cssCache      = sugar_cache_retrieve('theme_'.$this->dirName.'_cssCache');
-            $this->_imageCache    = sugar_cache_retrieve('theme_'.$this->dirName.'_imageCache');
-            $this->_templateCache = sugar_cache_retrieve('theme_'.$this->dirName.'_templateCache');
+            if ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
+                $caches = unserialize(file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
+                if ( isset($caches['jsCache']) )
+                    $this->_jsCache       = $caches['jsCache'];
+                if ( isset($caches['cssCache']) )
+                    $this->_cssCache      = $caches['cssCache'];
+                if ( isset($caches['imageCache']) )
+                    $this->_imageCache    = $caches['imageCache'];
+                if ( isset($caches['templateCache']) )
+                    $this->_templateCache = $caches['templateCache'];
+            }
         }
         $this->_initialCacheSize = array(
             'jsCache'       => count($this->_jsCache),
@@ -299,25 +305,30 @@ class SugarTheme
         chdir(realpath(dirname(__FILE__) . '/../..'));
 
         // clear out the cache on destroy if we are asked to
-        if ( !inDeveloperMode() && !$this->_clearCacheOnDestroy ) {
-            // push our cache into the sugar cache
-            // only update the caches if they have been changed in this request
-            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_jsCache',$this->_jsCache);
-            if ( count($this->_cssCache) != $this->_initialCacheSize['cssCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_cssCache',$this->_cssCache);
-            if ( count($this->_imageCache) != $this->_initialCacheSize['imageCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_imageCache',$this->_imageCache);
-            if ( count($this->_templateCache) != $this->_initialCacheSize['templateCache'] )
-                sugar_cache_put('theme_'.$this->dirName.'_templateCache',$this->_templateCache);
+        if ( $this->_clearCacheOnDestroy ) {
+            if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
+                unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
         }
-        // clear out the cache if we are in developerMode
-        // ( so it will be freshly rebuilt for the next load )
-        else {
-            sugar_cache_clear('theme_'.$this->dirName.'_jsCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_cssCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_imageCache');
-            sugar_cache_clear('theme_'.$this->dirName.'_templateCache');
+        elseif ( !inDeveloperMode() ) {
+            // only update the caches if they have been changed in this request
+            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] 
+                    || count($this->_cssCache) != $this->_initialCacheSize['cssCache']
+                    || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
+                    || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
+                ) {
+                sugar_file_put_contents(
+                    create_cache_directory($this->getFilePath().'/pathCache.php'),
+                    serialize(
+                        array(
+                            'jsCache'       => $this->_jsCache,
+                            'cssCache'      => $this->_cssCache,
+                            'imageCache'    => $this->_imageCache,
+                            'templateCache' => $this->_templateCache,
+                            )
+                        )
+                    );
+                
+            }
         }
     }
 
@@ -793,7 +804,7 @@ EOHTML;
         $jsFilePath = create_cache_directory($fullFileName);
 
         // minify the js
-        if ( !inDeveloperMode() && !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
+        if ( !inDeveloperMode()&& !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
             $jsFileContents = JSMin::minify($jsFileContents);
             $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
             $fullFileName = str_replace('.js','-min.js',$fullFileName);
@@ -951,6 +962,7 @@ class SugarThemeRegistry
     /**
      * Returns the current theme object
      *
+     * @return SugarTheme object
      */
     public static function current()
     {
@@ -960,6 +972,23 @@ class SugarThemeRegistry
         return self::$_themes[self::$_currentTheme];
     }
 
+    /**
+     * Returns the default theme object
+     *
+     * @return SugarTheme object
+     */
+    public static function getDefault()
+    {
+        if ( !isset(self::$_currentTheme) )
+            self::buildRegistry();
+        
+        if ( isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) ) {
+            return self::get($GLOBALS['sugar_config']['default_theme']);
+        }
+            
+        return self::get(array_pop(array_keys(self::availableThemes())));
+    }
+    
     /**
      * Returns true if a theme object specified by the given $themeName exists in the registry
      *
@@ -1043,7 +1072,7 @@ class SugarThemeRegistry
         }
 
         // default to setting the default theme as the current theme
-        if ( !self::set($GLOBALS['sugar_config']['default_theme']) ) {
+        if ( !isset($GLOBALS['sugar_config']['default_theme']) || !self::set($GLOBALS['sugar_config']['default_theme']) ) {
             if ( count(self::availableThemes()) == 0 )
                 sugar_die('No valid themes are found on this instance');
             else

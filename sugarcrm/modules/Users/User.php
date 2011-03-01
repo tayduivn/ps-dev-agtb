@@ -838,7 +838,7 @@ EOQ;
         $user_hash = strtolower(md5($new_password));
         $this->setPreference('loginexpiration','0');
         //set new password
-        $now=date("Y-m-d H:i:s");
+        $now = TimeDate::getInstance()->nowDb();
 		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';
@@ -1402,7 +1402,7 @@ EOQ;
     		//$composeOptionsLink = $json->encode( array('composeOptionsLink' => $emailLinkUrl,'id' => $focus->id) );
 			require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl);
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
 
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
 
@@ -1492,7 +1492,7 @@ EOQ;
 			//Generate the compose package for the quick create options.
     		require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl);
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
 
 		} else {

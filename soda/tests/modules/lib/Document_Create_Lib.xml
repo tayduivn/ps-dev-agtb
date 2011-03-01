@@ -11,8 +11,8 @@
          <timestamp />
          <textfield name="document_name" 
             set="{@Doc_New_Record.document_name} {@user.name} {@stamp}" /> 
-         <filefield name="uploadfile"
-         set="{@global.scriptsdir}/modules/lib/{@Doc_New_Record.attach_path}" />
+         <filefield id="filename_file" 
+            set="{@global.scriptsdir}/modules/lib/{@Doc_New_Record.attach_path}" />
 
          <textfield name="revision" set="{@Doc_New_Record.revision}" /> 
          <select id="category_id" set="{@Doc_New_Record.category}" />

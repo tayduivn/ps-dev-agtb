@@ -96,6 +96,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'importable' => 'required',
     'required'=>true,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'original_po_date' =>
   array (
@@ -103,6 +104,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'vname' => 'LBL_ORIGINAL_PO_DATE',
     'type' => 'date',
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'payment_terms' =>
   array (
@@ -120,6 +122,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'date',
     'reportable'=>false,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'date_order_shipped' =>
   array (
@@ -129,6 +132,7 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'date',
     'reportable' => false,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'order_stage' =>
   array (
@@ -166,6 +170,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'required'=>true,
     'unified_search' => true,
     'disable_num_format' => true,
+  	'enable_range_search' => true,
+  	'options' => 'numeric_range_search_dom',
   ),
   'subtotal' =>
   array (
@@ -277,6 +283,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'type' => 'currency',
     'len' => '26,6',
     'audited'=>true,
+  	'enable_range_search' => true,
+  	'options' => 'numeric_range_search_dom',
   ),
   'billing_address_street' =>
   array (
@@ -379,7 +387,8 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 		'link'=>'shipping_accounts',
 		'module'=>'Accounts',
 		'source'=>'non-db',
-        'join_name'=>'jt1',
+        'join_name'=>'jt0',
+ 		'join_link_name'=>'jtl0',
 		),
  'shipping_account_id' =>
  	array(
@@ -664,6 +673,15 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 	'vname'=>'LBL_BILLING_ACCOUNT_NAME',
 	'source'=>'non-db',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_quotes',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
+
 //BEGIN SUGARCRM flav=pro ONLY
   'contracts' => array (
 	'name' => 'contracts',

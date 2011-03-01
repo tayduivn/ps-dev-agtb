@@ -130,7 +130,7 @@ SUGAR.expressions.validateReturnTypes = function(t)
 		}
 	}
 };
-SUGAR.expressions.validateCurrExpression = function(silent) {
+SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 	try {
 		var varTypeMap = {};
 		for (var i = 0; i < fieldsArray.length; i++){
@@ -140,28 +140,30 @@ SUGAR.expressions.validateCurrExpression = function(silent) {
 		var tokens = new SUGAR.expressions.ExpressionParser().tokenize(expression);
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
+		if (matchType && matchType != tokens.returnType)
+		{
+			Msg.show({
+                title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
+                msg: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_TYPE") + matchType
+            });
+			return false;
+		}
 		
 		if (typeof (silent) == 'undefined' || !silent) 
 			Msg.show({msg: "Validation Sucessfull"});
 		
 		return true;
 	} catch (e) {
-		if (e.message)
 			Msg.show({
-                title: "Validation Failed",
-                msg: e.message
-            });
-		else
-			Msg.show({
-                title: "Validation Failed",
-                msg: e
+                title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
+                msg: e.message ? e.message : e
             });
 		return false;
 	}
 }
-SUGAR.expressions.saveCurrentExpression = function(target)
+SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
-	if (!SUGAR.expressions.validateCurrExpression(true))
+	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
 		return false;
 	if (YAHOO.lang.isString(target))
 		target = Dom.get(target);

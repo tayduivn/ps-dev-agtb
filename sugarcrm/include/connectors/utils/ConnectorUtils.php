@@ -37,6 +37,18 @@ function sources_sort_function($a, $b) {
 
 class ConnectorUtils
 {
+    /**
+     * Cached connectors data
+     * @var array
+     */
+    protected static $connectors_cache;
+
+    /**
+     * Get connector data by ID
+     * @param string $id
+     * @param bool $refresh
+     * @return null|array Connector data
+     */
     public static function getConnector(
         $id,
         $refresh = false
@@ -46,6 +58,19 @@ class ConnectorUtils
         return !empty($s[$id]) ? $s[$id] : null;
     }
 
+    /**
+     * Check if external accounts are enabled for this connector
+     * @param string $id
+     */
+    public static function eapmEnabled($id, $refresh = false)
+    {
+        $data = self::getConnector($id, $refresh);
+        if(!$data || !isset($data["eapm"])) {
+            // TODO: if we don't know this connector, should we decide it's enabled or disabled?
+            return true;
+        }
+        return !empty($data["eapm"]["enabled"]);
+    }
 
     /**
      * getSearchDefs
@@ -189,7 +214,6 @@ class ConnectorUtils
 
         require('custom/modules/Connectors/metadata/mergeviewdefs.php');
         return $viewdefs;
-
     }
 
 
@@ -205,6 +229,13 @@ class ConnectorUtils
         $refresh = false
         )
     {
+        if ( isset($GLOBALS['sugar_config']['developer_mode']) ) {
+            $refresh = true;
+        }
+
+        if(!empty(self::$connectors_cache) && !$refresh) {
+            return self::$connectors_cache;
+        }
         //define paths
         $src1 = 'modules/Connectors/connectors/sources';
         $src2 = 'custom/modules/Connectors/connectors/sources';
@@ -225,18 +256,44 @@ class ConnectorUtils
           if(!file_exists($src3)) {
              mkdir_recursive($src3);
           }
+          if(file_exists($src4)) {
+              require($src4);
+              $sources = array_merge($sources, $connectors);
+          }
 
-          if(!write_array_to_file('connectors', $sources, $src4)) {
-             //Log error and return empty array
-             $GLOBALS['log']->fatal("Cannot write sources to file");
+          if(!self::saveConnectors($sources, $src4)) {
              return array();
           }
         } //if
 
         require($src4);
+        self::$connectors_cache = $connectors;
         return $connectors;
     }
 
+    /**
+     * Save connectors array to file
+     * @param array $connectors Source data to write
+     * @param string $toFile filename to use
+     * @return bool success
+     */
+    public static function saveConnectors($connectors, $toFile = '')
+    {
+        if(empty($toFile)) {
+            $toFile = 'custom/modules/Connectors/metadata/connectors.php';
+            if(defined('TEMPLATE_URL')) {
+                $toFile = SugarTemplateUtilities::getFilePath($toFile);
+            }
+        }
+
+        if(!write_array_to_file('connectors', $connectors, $toFile)) {
+           //Log error and return empty array
+           $GLOBALS['log']->fatal("Cannot write sources to file");
+           return false;
+        }
+        self::$connectors_cache = $connectors;
+        return true;
+    }
 
     /**
      * getSources
@@ -266,6 +323,7 @@ class ConnectorUtils
                       $order = isset($config['order']) ? $config['order'] : 99; //default to end using 99 if no order set
 
                       $instance = ConnectorFactory::getInstance($source['id']);
+                      $source['eapm'] = empty($config['eapm'])?false:$config['eapm'];
                       $mapping = $instance->getMapping();
                       $modules = array();
                       if(!empty($mapping['beans'])) {
@@ -321,7 +379,7 @@ class ConnectorUtils
      *
      * @param String $module the module to get the connectors for
      * @param mixed $connectors Array of connectors mapped to the module or empty if none
-     * @return unknown
+     * @return array
      */
     public static function getModuleConnectors(
         $module
@@ -427,8 +485,8 @@ class ConnectorUtils
             return false;
         }
 
-        if(file_exists($cachefile = sugar_cached("modules/{$module}/DetailView.tpl")) && !unlink($cachefile)) {
-            $GLOBALS['log']->fatal("Cannot delete file $cachefile");
+        if(file_exists("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl") && !unlink("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl")) {
+            $GLOBALS['log']->fatal("Cannot delete file {$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl");
             return false;
         }
     }
@@ -560,8 +618,8 @@ class ConnectorUtils
                         return false;
                      }
 
-                    if(file_exists($cachefile = sugar_cached("modules/{$module}/DetailView.tpl")) && !unlink($cachefile)) {
-                        $GLOBALS['log']->fatal("Cannot delete file $cachefile");
+                     if(file_exists("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl") && !unlink("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl")) {
+                        $GLOBALS['log']->fatal("Cannot delete file {$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl");
                         return false;
                     }
               }

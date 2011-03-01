@@ -48,9 +48,9 @@ class DCEReportsViewLicensingReport extends SugarView
     public function display(){
         global $mod_strings, $app_list_strings, $app_strings, $current_user;
         $this->ss->assign("MODULE_TITLE", 
-            get_module_title(
+            getClassicModuleTitle(
                 $mod_strings['LBL_MODULE_NAME'], 
-                $mod_strings['LBL_MODULE_NAME']." : ".$mod_strings['LBL_LICENSING_REPORT'], 
+                array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_LICENSING_REPORT']), 
                 false
                 )
             );
@@ -61,8 +61,8 @@ class DCEReportsViewLicensingReport extends SugarView
         if(isset($_REQUEST['return_id']))$this->ss->assign("RETURN_ID", $_REQUEST['return_id']);
 //For date
         global $timedate;
-        $this->ss->assign('DEFAULT_START_DATE', gmdate($timedate->get_date_format(),mktime(0, 0, 0, date("m")-1, 1,   date("Y"))));
-        $this->ss->assign('DEFAULT_END_DATE', gmdate($timedate->get_date_format(),strtotime("-1 day", mktime(0, 0, 0, date("m"), 1,   date("Y")))));
+        $this->ss->assign('DEFAULT_START_DATE', $timedate->asUserDate($timedate->getNow()->get("-1 month")));
+        $this->ss->assign('DEFAULT_END_DATE', $timedate->asUserDate($timedate->getNow()->get("-1 day")));
         $this->ss->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
         $this->ss->assign('USER_DATEFORMAT', $timedate->get_user_date_format());
         $time_format = $timedate->get_user_time_format();

@@ -31,9 +31,31 @@ class MeetingsViewListbytype extends ViewList {
     }
     
  	function listViewProcess(){
-        if ( ! EAPM::getLoginInfo('LotusLive') ) {
+        if (!$eapmBean = EAPM::getLoginInfo('LotusLive', true) ) {
             $smarty = new Sugar_Smarty();
             echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
+            return;
+        }
+
+        $apiName = 'LotusLive';
+        $api = ExternalAPIFactory::loadAPI($apiName,true);
+        $api->loadEAPM($eapmBean);
+
+        $quickCheck = $api->quickCheckLogin();
+        if ( ! $quickCheck['success'] ) {
+            $errorMessage = string_format(translate('LBL_ERR_FAILED_QUICKCHECK','EAPM'), array('LotusLive'));
+            $errorMessage .= '<form method="POST" target="_EAPM_CHECK" action="index.php">';
+            $errorMessage .= '<input type="hidden" name="module" value="EAPM">';
+            $errorMessage .= '<input type="hidden" name="action" value="Save">';
+            $errorMessage .= '<input type="hidden" name="record" value="'.$eapmBean->id.'">';
+            $errorMessage .= '<input type="hidden" name="active" value="1">';
+            $errorMessage .= '<input type="hidden" name="closeWhenDone" value="1">';
+            $errorMessage .= '<input type="hidden" name="refreshParentWindow" value="1">';
+
+            $errorMessage .= '<br><input type="submit" value="'.$GLOBALS['app_strings']['LBL_EMAIL_OK'].'">&nbsp;';
+            $errorMessage .= '<input type="button" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" value="'.$GLOBALS['app_strings']['LBL_CANCEL_BUTTON_LABEL'].'">';
+            $errorMessage .= '</form>';
+            echo $errorMessage;
             return;
         }
 
@@ -71,7 +93,7 @@ class MeetingsViewListbytype extends ViewList {
  	function processSearchForm(){
  		// $type = 'LotusLiveDirect';
  		$type = 'LotusLive';
- 		$where =  " meetings.type = '$type' AND meetings.date_start > UTC_TIMESTAMP() - 7200 ";
+ 		$where =  " meetings.type = '$type' AND meetings.status != 'Held' AND meetings.status != 'Not Held' AND meetings.date_start > UTC_TIMESTAMP() - 7200 AND ( meetings.assigned_user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' OR exists ( SELECT id FROM meetings_users WHERE meeting_id = meetings.id AND user_id = '".$GLOBALS['db']->quote($GLOBALS['current_user']->id)."' AND deleted = 0 ) ) ";
 
         if ( isset($_REQUEST['name_basic']) ) {
             $name_search = trim($_REQUEST['name_basic']);

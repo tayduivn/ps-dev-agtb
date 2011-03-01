@@ -58,7 +58,6 @@ if(isset($_REQUEST['record'])) {
 }
 
 
-//echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME']." ".$mod_strings['LBL_STEP_3_TITLE'], true);
 $this->ss->assign("MOD", $mod_strings);
 $this->ss->assign("APP", $app_strings);
 

@@ -37,8 +37,12 @@ class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
-        if ( isset($this->_old_installing) )
+        if ( isset($this->_old_installing) ) {
             $GLOBALS['installing'] = $this->_old_installing;
+        }
+        else {
+            unset($GLOBALS['installing']);
+        }
     }
     
     public function testDynamicFieldsRetrieveWorks()

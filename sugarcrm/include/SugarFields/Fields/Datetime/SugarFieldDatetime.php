@@ -6,29 +6,29 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldDatetime extends SugarFieldBase {
 
-    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {        
-       
+    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+
         // Create Smarty variables for the Calendar picker widget
         if(!isset($displayParams['showMinutesDropdown'])) {
-           $displayParams['showMinutesDropdown'] = false;	
+           $displayParams['showMinutesDropdown'] = false;
         }
-        
+
         if(!isset($displayParams['showHoursDropdown'])) {
-           $displayParams['showHoursDropdown'] = false;	
+           $displayParams['showHoursDropdown'] = false;
         }
-        
+
         if(!isset($displayParams['showNoneCheckbox'])) {
-           $displayParams['showNoneCheckbox'] = false;	
+           $displayParams['showNoneCheckbox'] = false;
         }
-        
+
         if(!isset($displayParams['showFormats'])) {
-           $displayParams['showFormats'] = false;	
+           $displayParams['showFormats'] = false;
         }
-        
+
         if(!isset($displayParams['hiddeCalendar'])) {
-           $displayParams['hiddeCalendar'] = false;   
-        } 
-       
+           $displayParams['hiddeCalendar'] = false;
+        }
+
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         //jchi , bug #24557 , 10/31/2008
         if(isset($vardef['name']) && ($vardef['name'] == 'date_entered' || $vardef['name'] == 'date_modified')){
@@ -37,7 +37,7 @@ class SugarFieldDatetime extends SugarFieldBase {
         //end
         return $this->fetch($this->findTemplate('EditView'));
     }
-    
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	global $timedate;
@@ -46,7 +46,6 @@ class SugarFieldDatetime extends SugarFieldBase {
 
 		// format date and time to db format
 		$date_start = $timedate->swap_formats($datetime[0], $datetime_prefs['date'], $timedate->dbDayFormat);
-    	$time_start = $timedate->swap_formats($datetime[1], $datetime_prefs['time'], $timedate->dbTimeFormat);
 
     	// pass date parameters to smarty
     	if ($datetime_prefs['date'] == 'Y-m-d' || $datetime_prefs['date'] == 'Y/m/d' || $datetime_prefs['date'] == 'Y.m.d'){
@@ -59,39 +58,46 @@ class SugarFieldDatetime extends SugarFieldBase {
     		$this->ss->assign('field_order', 'MDY');
     	}
     	$this->ss->assign('date_start', $date_start);
-    	// pass time parameters to smarty
-    	$use_24_hours = stripos($datetime_prefs['time'], 'a') ? false : true;
-    	$this->ss->assign('time_start', $time_start);
-    	$this->ss->assign('use_meridian', $use_24_hours);
-    	
+
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
     	return $this->fetch($this->findTemplate('WirelessEditView'));
-    }   
+    }
     //END SUGARCRM flav=pro || flav=sales ONLY
 
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         if($this->isRangeSearchView($vardef)) {
            $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
            $id = isset($displayParams['idName']) ? $displayParams['idName'] : $vardef['name'];
+           $this->ss->assign('original_id', "{$id}");
            $this->ss->assign('id_range', "range_{$id}");
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
-           $this->ss->assign('id_range_choice', "{$id}_range_choice");        
+           $this->ss->assign('id_range_choice', "{$id}_range_choice");
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
-        }   
-    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');    
-    }    
-    
-    public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
+        }
+    	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
+    }
+
+    public function getEmailTemplateValue($inputField, $vardef, $context = null){
+        // This does not return a smarty section, instead it returns a direct value
+        if(isset($context['notify_user'])) {
+            $user = $context['notify_user'];
+        } else {
+            $user = $GLOBALS['current_user'];
+        }
+        return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
+    }
+
+    public function save($bean, $inputData, $field, $def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
             return;
         }
 
         $offset = strlen(trim($inputData[$prefix.$field])) < 11 ? false : true;
-	    $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);    	
+	    $bean->$field = $timedate->to_db_date($inputData[$prefix.$field], $offset);
     }
-    
+
     /**
      * @see SugarFieldBase::importSanitize()
      */
@@ -103,29 +109,44 @@ class SugarFieldDatetime extends SugarFieldBase {
         )
     {
         global $timedate;
-        
-        $format = $settings->dateformat . ' ' . $settings->timeformat;
-        
+
+        $format = $timedate->merge_date_time($settings->dateformat, $settings->timeformat);
+
         if ( !$timedate->check_matching_format($value, $format) ) {
-            // see if adding a valid time at the end makes it work
-            list($dateformat,$timeformat) = explode(' ',$format);
-            $value .= ' ' . date($timeformat,0);
+            $parts = $timedate->split_date_time($value);
+            if(empty($parts[0])) {
+               $datepart = $timedate->getNow()->format($settings->dateformat);
+            }
+            else {
+               $datepart = $parts[0];
+            }
+            if(empty($parts[1])) {
+                $timepart = $timedate->fromTimestamp(0)->format($settings->timeformat);
+            } else {
+                $timepart = $parts[1];
+                // see if we can get by stripping the seconds
+                if(strpos($settings->timeformat, 's') === false) {
+                    $sep = $timedate->timeSeparatorFormat($settings->timeformat);
+                    // We are assuming here seconds are the last component, which
+                    // is kind of reasonable - no sane time format puts seconds first
+                    $timeparts = explode($sep, $timepart);
+                    if(!empty($timeparts[2])) {
+                        $timepart = join($sep, array($timeparts[0], $timeparts[1]));
+                    }
+                }
+            }
+
+            $value = $timedate->merge_date_time($datepart, $timepart);
             if ( !$timedate->check_matching_format($value, $format) ) {
                 return false;
             }
         }
-        
-        if ( !$settings->isValidTimeDate($value, $format) )
+
+        try {
+            $date = SugarDateTime::createFromFormat($format, $value, new DateTimeZone($settings->timezone));
+        } catch(Exception $e) {
             return false;
-        
-        $value = $timedate->swap_formats(
-            $value, $format, $timedate->get_date_time_format());
-        $value = $timedate->handle_offset(
-            $value, $timedate->get_date_time_format(), false, $GLOBALS['current_user'], $settings->timezone);
-        $value = $timedate->swap_formats(
-            $value, $timedate->get_date_time_format(), $timedate->get_db_date_time_format() );
-        
-        return $value;
+        }
+        return $date->asDb();
     }
 }
-?>

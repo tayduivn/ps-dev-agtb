@@ -1050,16 +1050,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			return false;
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
-		,moduleLoadFormula: function(formula, targetId){
+		,moduleLoadFormula: function(formula, targetId, returnType){
             if (!targetId)
                 targetId = "formula";
-            
-            var saveFunc = "function(expr){Ext.getDom('"+ targetId + "').value = expr;";
-            if (targetId instanceof Array) {
-                saveFunc = "function(expr){var targets=" + Ext.encode(targetId) + ";for(t in targets){Ext.getDom(targets[t]).value = expr;}";
-            }
-            saveFunc += "Ext.getCmp('formulaBuilderWindow').close();}";
-            
+            if(!returnType)
+				returnType = "";
+
             if (!ModuleBuilder.formulaEditorWindow)
             	ModuleBuilder.formulaEditorWindow = new YAHOO.SUGAR.AsyncPanel('formulaBuilderWindow', {
 					width: 512,
@@ -1071,12 +1067,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
 			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
-			win.setBody("test");
+			win.setBody("loading...");
 			win.render(document.body);
 			win.params = {
                 module:"ExpressionEngine",
                 action:"editFormula",
                 targetField: targetId,
+				returnType: returnType,
                 loadExt:false,
                 embed: true,
                 targetModule:ModuleBuilder.module,
@@ -1108,17 +1105,37 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var reportable = Dom.get('reportable');
             var importable = Dom.get('importable');
             var duplicate  = Dom.get('duplicate_merge');
+			var massupdate  = Dom.get('massupdate');
+			//Getting the default value field is tricky as it can have multiple different ID's
+			var defaultVal = false;
+			for(var i in {'default':"", 'int_default':"", 'default[]':""})
+				if (Dom.get(i)){defaultVal = Dom.get(i); break;}
+
             var disable = enable ? true : "";
             if (reportable) reportable.disabled = disable;
             if(enable)
             {
-            	if (duplicate)ModuleBuilder.setSelectedOption(duplicate, '0');
+            	if (duplicate)ModuleBuilder.setSelectedOption(duplicate, '0')
+
             	if (importable)ModuleBuilder.setSelectedOption(importable, 'false');
             }
             if (importable)importable.disabled = disable;
             if (duplicate)duplicate.disabled = disable;
+			if (massupdate)massupdate.disabled = disable;
+			this.toggleDateTimeDefalutEnabled(disable);
+			if (defaultVal) defaultVal.disabled = disable;
             Dom.get("enforced").value = enable;
         },
+		toggleDateTimeDefalutEnabled : function(disable)
+		{
+			if (Dom.get("defaultDate_date"))
+			{
+				Dom.get("defaultDate_date").disabled = disable;
+				Dom.get("defaultTime_hours").disabled = disable;
+				Dom.get("defaultTime_minutes").disabled = disable;
+				Dom.get("defaultTime_meridiem").disabled = disable;
+			}
+		},
         toggleDF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('dependent').checked;
@@ -1126,7 +1143,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var display = enable ? "" : "none";
             Dom.setStyle('visFormulaRow', 'display', display);
             Dom.get('dependency').disabled = !enable;
-            Dom.get('dependent').value = enable;
+			Dom.get('dependent').value = enable;
         }
 		//END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=een ONLY

@@ -48,7 +48,7 @@ global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $
 
 $params = array();
 $params[] = $mod_strings['LBL_CREATE_CUSTOM_REPORT'];
-echo getClassicModuleTitle("Reports", $params, true);
+echo getClassicModuleTitle("Reports", $params, false);
 
 $ACLAllowedModules = getACLAllowedModules();
 uksort($ACLAllowedModules,"juliansort");
@@ -100,7 +100,7 @@ $sugar_smarty->assign("MOD", $mod_strings);
 $sugar_smarty->assign("APP", $app_strings);
 $sugar_smarty->assign("LANG", $current_language);
 $sugar_smarty->assign("ACLAllowedModules", $ACLAllowedModules);
-$sugar_smarty->assign("cache_path", "cache/");
+$sugar_smarty->assign("cache_path", $GLOBALS['sugar_config']['cache_dir']);
 $sugar_smarty->assign("USER_ID_MD5", md5($current_user->id));
 $sugar_smarty->assign("BUTTONS", $buttons);
 $sugar_smarty->assign("IS_ADMIN", $current_user->is_admin);
@@ -108,6 +108,7 @@ $sugar_smarty->assign("users_array", $user_array);
 $sugar_smarty->assign("help_image", $help_img);
 $sugar_smarty->assign("chart_data_help", $chart_data_help);
 $sugar_smarty->assign("do_round_help", $do_round_help);
+$sugar_smarty->assign("js_custom_version", $sugar_config['js_custom_version']);
 $sugar_smarty->assign("sugar_version", $sugar_version);
 
 

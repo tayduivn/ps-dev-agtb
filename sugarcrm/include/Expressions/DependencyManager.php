@@ -33,13 +33,18 @@ class DependencyManager {
 	 * @param Boolean $includeReadOnly
 	 * @return array<Dependency>
 	 */
-	public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true) {
+	public static function getCalculatedFieldDependencies($fields, $includeReadOnly = true, $orderMatters = false) {
 
 		$deps = array();
+        $ro_deps = array();
 		require_once("include/Expressions/Actions/SetValueAction.php");
+        //In order to make sure the deps are returned in order such that fields that ared by other fields are calculated first,
+        //we keep track of how many times a field is used and what fields that field references.
+        $formulaFields = array();
 		foreach($fields as $field => $def) {
 			if (isset($def['calculated']) && $def['calculated'] && !empty($def['formula'])) {
 		    	$triggerFields = Parser::getFieldsFromExpression($def['formula']);
+                $formulaFields[$field] = $triggerFields;
 		    	$dep = new Dependency($field);
 		    	$dep->setTrigger(new Trigger('true', $triggerFields));
 
@@ -56,22 +61,65 @@ class DependencyManager {
 		    					array('target' => $field,
 		    						  'value' => 'true')));
 
-				    	$deps[] = $readOnlyDep;
+				    	$ro_deps[] = $readOnlyDep;
 		    		}
 		    	}
-
-		    	$deps[] = $dep;
+		    	$deps[$field] = $dep;
 		    }
 	    }
+        if ($orderMatters)
+            $deps = self::orderCalculatedFields($deps, $formulaFields);
+        else 
+            $deps = array_values($deps);
 
-	    return $deps;
+	    return array_merge($deps, $ro_deps);
 	}
+
+    protected static function orderCalculatedFields($deps, $formulaFields)
+    {
+        $weights = array_fill_keys(array_keys($formulaFields), 0);
+        foreach($formulaFields as $field => $triggers)
+        {
+            $updated = array();
+            //Add to the weights of fields this field relies on, don't loop or double add.
+            self::updateWeights($weights, $updated, $formulaFields, $field);
+        }
+        //Calculate fields that are relied upon by other fields will now all be heavier than the
+        //fields that rely upon them. Do a reverse sort to bring the heaviest to the top.
+        arsort($weights);
+
+        //Now build the result array from the weights
+        $ret = array();
+        foreach($weights as $field => $weight)
+        {
+            $ret[] = $deps[$field];
+        }
+        return $ret;
+    }
+
+    /*
+     * Recusivly add weight to calculated fields that are used by the field in question
+     */
+    protected static function updateWeights(&$weights, &$updated, $formulaFields, $field)
+    {
+        foreach($formulaFields[$field] as $tField)
+        {
+            if (isset($formulaFields[$tField]) && !isset($updated[$tField]))
+            {
+                if(isset($weights[$tField])) $weights[$tField]++;
+                else $weights[$tField] = 1;
+
+                $updated[$tField] = true;
+                self::updateWeights($weights, $updated, $formulaFields, $tField);
+            }
+        }
+    }
 
 	static function getDependentFieldDependencies($fields) {
 		$deps = array();
 
 		foreach($fields as $field => $def) {
-			if ( isset ( $def [ 'dependency' ] ) )
+			if ( !empty ( $def [ 'dependency' ] ) )
     		{
     			// normalize the dependency definition
     			if ( ! is_array ( $def [ 'dependency' ] ) )
@@ -81,7 +129,7 @@ class DependencyManager {
     			}
 				foreach ( $def [ 'dependency' ]  as $depdef)
 				{
-    				$dep = new Dependency ( $field ) ;
+    				$dep = new Dependency ( "{$field}_vis" ) ;
     				if (is_array($depdef [ 'trigger' ])) {
     					$triggerFields = $depdef [ 'trigger' ];
     				} else {
@@ -110,42 +158,34 @@ class DependencyManager {
     				continue;
 
     			$trigger_list_id = $fields[$grid [ 'trigger' ]]['options'];
-    			$trigger_values = $app_list_strings[$trigger_list_id];
+    			$trigger_values = $app_list_strings[$trigger_list_id];  
 
     			$options = $app_list_strings[$def['options']];
-    			$result_labels = array();
     			$result_keys = array();
     			foreach($trigger_values as $label_key => $label) {
     				if (!empty($grid['values'][$label_key])) {
     					$key_list = array();
-    					$trans_labels = array();
     					foreach($grid['values'][$label_key] as $label_key) {
     						if (isset($options[$label_key]))
     						{
     							$key_list[$label_key] = $label_key;
-    							$trans_labels[$label_key] = $options[$label_key];
     						}
     					}
     					$result_keys[] = 'enum("' . implode('","', $key_list) . '")';
-    					$result_labels[] = 'enum("' . implode('","', $trans_labels) . '")';
     				} else {
     					$result_keys[] = 'enum("")';
-    					$result_labels[] = 'enum("")';
     				}
     			}
 
     			$keys = 'enum(' . implode(',', $result_keys) . ')';
-    			$labels = 'enum(' . implode(',', $result_labels) . ')';
     			//If the trigger key doesn't appear in the child list, hide the child field.
     			$keys_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ]
     					    . ', getDD("' . $trigger_list_id . '")), -1), enum(""), '
     						. 'valueAt(indexOf($' . $grid [ 'trigger' ]
     						. ',getDD("' . $trigger_list_id . '")),' . $keys . '))';
-    			$labels_expression = 'cond(equal(indexOf($' . $grid [ 'trigger' ]
-    						. ', getDD("' . $trigger_list_id . '")), -1), enum(""), '
-    			 			. 'valueAt(indexOf($' . $grid [ 'trigger' ]
-    						. ',getDD("' . $trigger_list_id . '")),' . $labels . '))';
-    			$dep = new Dependency ( $field . "DDD");
+    			//Have SetOptionsAction pull from the javascript language files. 
+                $labels_expression = '"' . $def['options'] . '"';
+                $dep = new Dependency ( $field . "DDD");
     			$dep -> setTrigger( new Trigger ('true', $grid['trigger']));
     			$dep -> addAction (
     				ActionFactory::getNewAction('SetOptions', array(
@@ -192,6 +232,10 @@ class DependencyManager {
         {
             $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit'));
         }
+        else
+        {
+            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'view'));
+        }
         return $deps;
     }
 
@@ -233,6 +277,7 @@ class DependencyManager {
 
     private static function getModuleDependencyMetadata($module)
     {
+        /* //Disable caching for now
         $cacheLoc = create_cache_directory("modules/$module/dependencies.php");
         //If the cache file exists, use it.
         if(empty($GLOBALS['sugar_config']['developerMode']) && empty($_SESSION['developerMode']) && is_file($cacheLoc)) {
@@ -240,29 +285,38 @@ class DependencyManager {
         }
         //Otherwise load all the def locations and create the cache file.
         else {
-            $dependencies = array($module => array());
-            $location = "modules/$module/metadata/dependencydefs.php";
-            foreach(array(
-                $location,
-                "custom/{$location}",
-                "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
-            {
-                if(is_file($loc)) {
-                    include $loc;
-                }
+        */
+        $dependencies = array($module => array());
+        $location = "modules/$module/metadata/dependencydefs.php";
+        foreach(array(
+            $location,
+            "custom/{$location}",
+            "custom/modules/{$module}/Ext/Dependencies/deps.ext.php") as $loc)
+        {
+            if(is_file($loc)) {
+                include $loc;
             }
+        }
+        /*  //More disabled cache code
             $out = "<?php\n // created: " . date('Y-m-d H:i:s') . "\n"
                  . override_value_to_string('dependencies', $module, $dependencies[$module]);
             file_put_contents($cacheLoc, $out);
-        }
+        }*/
 
         return $dependencies[$module];
     }
 
 	static function getDependenciesForFields($fields, $view = "") {
-		return array_merge(self::getCalculatedFieldDependencies($fields),
-						   self::getDependentFieldDependencies($fields),
-						   self::getDropDownDependencies($fields));
+		if ($view == "DetailView")
+        {
+            return self::getDependentFieldDependencies($fields);
+        } else
+        {
+            return array_merge(
+                self::getCalculatedFieldDependencies($fields),
+				self::getDependentFieldDependencies($fields),
+				self::getDropDownDependencies($fields));
+        }
 	}
 
     /**
@@ -272,6 +326,7 @@ class DependencyManager {
      */
     public static function getJSUserVariables($user)
     {
+        require_once("include/TimeDate.php");
         $ts = TimeDate::getInstance();
         return "SUGAR.expressions.userPrefs = " . json_encode(array(
             "num_grp_sep" => $user->getPreference("num_grp_sep"),
@@ -283,6 +338,7 @@ class DependencyManager {
         )) . ";\n";
     }
 
+    //BEGIN SUGARCRM flav=een ONLY
     /**
      * @static returns the javascript for the link variables of this view.
      * @param  $fields array, field_defs for this view
@@ -329,5 +385,6 @@ class DependencyManager {
         //Otherwise this link looks ok
         return true;
     }
+    //END SUGARCRM flav=een ONLY
 }
 ?>

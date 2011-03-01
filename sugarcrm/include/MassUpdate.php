@@ -1206,7 +1206,7 @@ EOQ;
         if (isset($oldTime[1])) {
         	$oldTime = $oldTime[1];
         } else {
-        	$oldTime = $timedate->to_display_time($timedate->get_gmt_db_datetime());
+        	$oldTime = $timedate->now();
         }
         $value = explode(" ", $value);
         $value = $value[0];

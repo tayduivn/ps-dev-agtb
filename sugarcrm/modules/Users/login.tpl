@@ -29,36 +29,12 @@ var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUB
 <table cellpadding="0" align="center" width="100%" cellspacing="0" border="0">
 	<tr>
 		<td align="center">
-		<div class="dashletPanelMenu" style="width: 460px;">
-		<div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
-		<div class="bd">
-		<div class="ml"></div>
-		<div class="bd-center">
+		<div class="loginBoxShadow" style="width: 460px;">
 			<div class="loginBox">
 			<table cellpadding="0" cellspacing="0" border="0" align="center">
 				<tr>
 					<td align="left"><b>{sugar_translate module="Users" label="LBL_LOGIN_WELCOME_TO"}</b><br>
-					    {* //BEGIN SUGARCRM flav=pro && flav!=ent ONLY *}
-						<IMG src="include/images/sugar_md.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=pro && flav!=ent ONLY *}
-					    {* //BEGIN SUGARCRM flav=sales ONLY
-						<IMG src="include/images/sugar_md_sales.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=sales ONLY
-					    {* //BEGIN SUGARCRM flav=dev ONLY
-						<IMG src="include/images/sugar_md_dev.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=dev ONLY
-					    {* //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-						<IMG src="include/images/sugar_md_express.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-					    {* //BEGIN SUGARCRM flav=com && lic!=sub ONLY
-						<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=com && lic!=sub ONLY
-					    {* //BEGIN SUGARCRM flav=dce ONLY
-						<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=dce ONLY
-					    {* //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
-						<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=ent && flav!=dev ONLY *}
+					    {$LOGIN_IMAGE}
 					</td>
 				</tr>
 				<tr>
@@ -161,10 +137,7 @@ var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUB
 				</tr>
 			</table>
 			</div>
-			</div>
-			<div class="mr"></div>
-			</div>
-<div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>
+
 </div>
 		</td>
 	</tr>

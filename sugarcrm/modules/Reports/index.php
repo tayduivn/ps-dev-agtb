@@ -150,7 +150,7 @@ if ( empty($_REQUEST['search_form_only']) ) {
         $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
     else
         $params[] = $app_strings['LBL_SEARCH'];
-    echo getClassicModuleTitle("Reports", $params, true);
+    echo getClassicModuleTitle("Reports", $params, false);
 }
 
 include("modules/Reports/ListView.php");
@@ -249,7 +249,7 @@ function checkSavedReportACL(&$reporter,&$args) {
 			}
 			$type = $hashModules[$col_module];
 			//todo: check the last param of this call (is_owner)
-			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams'){
+			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams' && $col_module != 'CampaignLog'){
 				sugar_die($mod_strings['LBL_NO_ACCESS']);
 			}			
 		}

@@ -33,7 +33,7 @@ class ViewConfigureshortcutbar extends SugarView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
@@ -74,7 +74,7 @@ class ViewConfigureshortcutbar extends SugarView
                         "<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",
                        translate('LBL_CONFIGURE_SHORTCUT_BAR')
                        ), 
-                    true
+                    false
                     );
         $msg = "";
         

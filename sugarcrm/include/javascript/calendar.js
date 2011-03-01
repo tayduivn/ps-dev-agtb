@@ -22,17 +22,11 @@ Calendar.setup = function (params) {
         Event.on(Dom.get(showButton), "click", function() {
 
             if (!dialog) {
-        
-                function closeHandler() {
-                    dialog.hide();
-                    calendar = null;
-                    dialog = null;
-                }
-
-                dialog = new YAHOO.widget.Dialog("container", {
+                             
+                dialog = new YAHOO.widget.SimpleDialog("container", {
                     visible:false,
                     context:[showButton, "tl", "bl"],
-                    buttons:[ {text:SUGAR.language.get('app_strings', 'LBL_CLOSE_BUTTON_LABEL'), handler: closeHandler}],
+                    buttons:[],
                     draggable:false,
                     close:true
                 });
@@ -70,10 +64,23 @@ Calendar.setup = function (params) {
 
             // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
             if (!calendar) {
+            
+                var navConfig = {
+                    strings : {
+                        month: SUGAR.language.get('app_strings', 'LBL_CHOOSE_MONTH'),
+                        year: SUGAR.language.get('app_strings', 'LBL_ENTER_YEAR'),
+                        submit: SUGAR.language.get('app_strings', 'LBL_EMAIL_OK'),
+                        cancel: SUGAR.language.get('app_strings', 'LBL_CANCEL_BUTTON_LABEL'),
+                        invalidYear: SUGAR.language.get('app_strings', 'LBL_ENTER_VALID_YEAR')
+                    },
+                    monthFormat: YAHOO.widget.Calendar.SHORT,
+                    initialFocus: "year"
+                };               	
             	
                 calendar = new YAHOO.widget.Calendar(showButton + '_div', {
                     iframe:false,
-                    hide_blank_weeks:true  
+                    hide_blank_weeks:true,
+                    navigator:navConfig
                 });
                 
                 calendar.cfg.setProperty('DATE_FIELD_DELIMITER', date_field_delimiter);
@@ -82,7 +89,7 @@ Calendar.setup = function (params) {
                 calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos+1);
                 
                 //Configure the month and days label with localization support where defined
-                if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
+                if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined' && SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
                 {
                 	if(SUGAR.language.languages['app_list_strings']['dom_cal_month_long'].length == 13)
                 	{
@@ -91,7 +98,7 @@ Calendar.setup = function (params) {
                 	calendar.cfg.setProperty('MONTHS_LONG', SUGAR.language.languages['app_list_strings']['dom_cal_month_long']);
                 }
                 
-                if(typeof SUGAR.language.languages['app_list_strings']['dom_cal_day_short'] != 'undefined')
+                if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined'  && typeof SUGAR.language.languages['app_list_strings']['dom_cal_day_short'] != 'undefined')
                 {
                 	if(SUGAR.language.languages['app_list_strings']['dom_cal_day_short'].length == 8)
                 	{
@@ -101,11 +108,23 @@ Calendar.setup = function (params) {
                 }
                 
                 calendar.selectEvent.subscribe(function() {
-                    if (calendar.getSelectedDates().length > 0) {
+                    var input = Dom.get(inputField);
+					if (calendar.getSelectedDates().length > 0) {
 
                         var selDate = calendar.getSelectedDates()[0];
                         var monthVal = selDate.getMonth() + 1; //Add one for month value
+                        if(monthVal < 10)
+                        {
+                           monthVal = '0' + monthVal;	
+                        }
+                        
                         var dateVal = selDate.getDate();
+                        
+                        if(dateVal < 10)
+                        {
+                           dateVal = '0' + dateVal;	
+                        }
+                        
                         var yearVal = selDate.getFullYear();
                         
                         selDate = '';
@@ -133,16 +152,25 @@ Calendar.setup = function (params) {
                           selDate += date_field_delimiter + yearVal;
                         }
 
-                        Dom.get(inputField).value =  selDate;
+                        input.value = selDate;
                         
                         if(params.comboObject)
                         {
                            params.comboObject.update();
                         }
                     } else {
-                        Dom.get(inputField).value = "";
+                        input.value = "";
                     }
+
                     dialog.hide();
+					//Fire any on-change events for this input field
+					var listeners = YAHOO.util.Event.getListeners(input, 'change');
+					if (listeners != null) {
+						for (var i = 0; i < listeners.length; i++) {
+							var l = listeners[i];
+							l.fn.call(l.scope ? l.scope : this, l.obj);
+						}
+					}
                 });
 
                 calendar.renderEvent.subscribe(function() {
@@ -155,9 +183,13 @@ Calendar.setup = function (params) {
             
             var seldate = calendar.getSelectedDates();
             if (Dom.get(inputField).value.length > 0) {
-            	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
-                seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
-            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
+            	val = new Date(Dom.get(inputField).value);
+            	if(!isNaN(val.getTime()))
+            	{
+	            	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
+	                seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
+	            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
+	            }
             } else if (seldate.length > 0) {
                 // Set the pagedate to show the selected date if it exists
                 calendar.cfg.setProperty("selected", seldate[0]);

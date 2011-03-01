@@ -174,10 +174,11 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                 self::$helperObject->trackView($seed, 'detailview');
             }
         }
+
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
         return array('entry_list'=>$output_list, 'relationship_list' => $linkoutput_list);
     }
-    
+
     /**
      * Update or create a single SugarBean.
      *
@@ -212,7 +213,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                 $seed->retrieve($value);
             }
         }
-        
+
         $return_fields = array();
         foreach($name_value_list as $name=>$value){
             if($module_name == 'Users' && !empty($seed->id) && ($seed->id != $current_user->id) && $name == 'user_hash'){
@@ -232,9 +233,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         } // if
 
         $seed->save(self::$helperObject->checkSaveOnNotify());
-        
+
         $return_entry_list = self::$helperObject->get_name_value_list_for_fields($seed, $return_fields );
-        
+
         if($seed->deleted == 1){
             $seed->mark_deleted($seed->id);
         }
@@ -262,7 +263,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      *                                         - user_default_team_id, user_is_admin, user_default_dateformat, user_default_timeformat
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    public function login($user_auth, $application, $name_value_list){
+    public function login($user_auth, $application, $name_value_list = array()){
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->login');
         global $sugar_config, $system_config;
         $error = new SoapError();
@@ -308,8 +309,8 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
             self::$helperObject->setFaultObject($error);
             return;
-        } 
-        else if( $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser" 
+        }
+        else if( $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser"
                  && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN' ) )
         {
             $error->set_error('ldap_error');
@@ -418,7 +419,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     	        break;
     	    case 'all':
     	    default:
-    	        $modules = $availModules;
+    	        $modules = self::$helperObject->getModulesFromList(array_flip($availModules), $availModules);
     	}
 
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_available_modules');
@@ -479,6 +480,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         return $results;
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Get the base64 contents of a quote pdf.
      *
@@ -564,8 +566,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
-
-        /**
+    //END SUGARCRM flav=pro ONLY
+    
+    /**
      * Retrieve the layout metadata for a given module given a specific type and view.
      *
      * @param String $session -- Session ID returned by a previous call to login.
@@ -713,11 +716,11 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 			}
 			$returnRelationshipList[]['link_list'] = $link_output;
 		}
-        
+
 		$totalRecordCount = $response['row_count'];
         if( !empty($sugar_config['disable_count_query']) )
             $totalRecordCount = -1;
-            
+
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
         return array('result_count'=>sizeof($output_list), 'total_count' => $totalRecordCount, 'next_offset'=>$next_offset, 'entry_list'=>$output_list, 'relationship_list' => $returnRelationshipList);
     } // fn

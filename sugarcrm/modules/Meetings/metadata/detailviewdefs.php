@@ -69,36 +69,32 @@ array (
           'status',
         ),
         array (
+        	//BEGIN SUGARCRM flav!=com ONLY
+            'type',
+            //END SUGARCRM flav!=com ONLY
+            array(
+                'name'=>'displayed_url',
+            ),           
+        ),
+        array (
           array (
             'name' => 'date_start',
             'label' => 'LBL_DATE_TIME',
           ),
-          array (
-            'name' => 'parent_name',
-            'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
+          array(
+            'name'=>'password',
           ),
         ),
         array (
           array (
             'name' => 'duration_hours',
-            'customCode' => '{$fields.duration_hours.value}{$MOD.LBL_HOURS_ABBREV} {$fields.duration_minutes.value}{$MOD.LBL_MINSS_ABBREV}&nbsp;',
+            'customCode' => '{$fields.duration_hours.value}{$MOD.LBL_HOURS_ABBREV} {$fields.duration_minutes.value}{$MOD.LBL_MINSS_ABBREV} ',
             'label' => 'LBL_DURATION',
           ),
-          'location',
-        ),
-        array (
-          'type',
-        ),
-        array (
-            array(
-                'name'=>'host_url',
-                'customCode'=>'{if !empty($fields.join_url.value)}{if $current_user->id == $fields.assigned_user_id.value}<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id={$fields.id.value}&host_meeting=1" target="_blank"><img src="{sugar_getimagepath file="start_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_HOST_EXT_MEETING}"></a>{/if} <a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id={$fields.id.value}" target="_blank"><img src="{sugar_getimagepath file="join_meeting_inline.png"}" height="19" width="18" border="0" title="{$MOD.LBL_JOIN_EXT_MEETING}"></a></a>{/if}',
-                'customLabel'=>'{if !empty($fields.join_url.value)}{$MOD.LBL_URL}:{/if}',
-            ),           
-            array(
-                'name'=>'password',
-                'customLabel'=>'{if !empty($fields.password.value)}{$MOD.LBL_PASSWORD}:{/if}',
-            ),
+          array (
+            'name' => 'parent_name',
+            'customLabel' => '{sugar_translate label=\'LBL_MODULE_NAME\' module=$fields.parent_type.value}',
+          ),
         ),
         array (
           array (
@@ -109,6 +105,7 @@ array (
               'reminder_time',
             ),
           ),
+          'location',
         ),
         array (
           'description',

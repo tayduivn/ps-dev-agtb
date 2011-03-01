@@ -39,6 +39,7 @@ class TemplateRange extends TemplateText
 	function __construct()
 	{
 		$this->vardef_map['enable_range_search'] = 'enable_range_search';
+		$this->vardef_map['options'] = 'options';
 	}	
 	
 	
@@ -51,10 +52,12 @@ class TemplateRange extends TemplateText
 	 */
 	function populateFromPost() {
 		parent::populateFromPost();
-		
 		//If we are enabling range search, make sure we add the start and end range fields
 		if (!empty($this->enable_range_search))
 		{
+			//If range search is enabled, set the options attribute for the dropdown choice selections
+			$this->options = ($this->type == 'date' || $this->type == 'datetimecombo' || $this->type == 'datetime') ? 'date_range_search_dom' : 'numeric_range_search_dom'; 
+			
 			if(isset($_REQUEST['view_module']))
 			{
 				$module = $_REQUEST['view_module'];
@@ -82,7 +85,7 @@ class TemplateRange extends TemplateText
                    	   $searchFields[$module][$field_name_range]['is_date_field'] = true;
                     }
                 	
-                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'range_operator'=>'between', 'enable_range_search'=>true);
+                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'enable_range_search'=>true);
                     if($isDateField)
                     {
                    	   $searchFields[$module][$field_name_start]['is_date_field'] = true;
@@ -180,7 +183,10 @@ class TemplateRange extends TemplateText
 		$vardef = parent::get_field_def();
     	if(!empty($this->enable_range_search))
     	{
-		   $vardef['enable_range_search'] = $this->enable_range_search;		   
+		   $vardef['enable_range_search'] = $this->enable_range_search;
+		   $vardef['options'] = ($this->type == 'date' || $this->type == 'datetimecombo' || $this->type == 'datetime') ? 'date_range_search_dom' : 'numeric_range_search_dom'; 
+		} else {
+		   $vardef['enable_range_search'] = false;
 		}		
 		return $vardef;
     }
@@ -244,7 +250,7 @@ class TemplateRange extends TemplateText
                    	   $searchFields[$module][$field_name_range]['is_date_field'] = true;
                     }
                 	
-                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'range_operator'=>'between', 'enable_range_search'=>true);
+                    $searchFields[$module][$field_name_start] = array('query_type'=>'default', 'enable_range_search'=>true);
                     if($isDateField)
                     {
                    	   $searchFields[$module][$field_name_start]['is_date_field'] = true;
@@ -266,5 +272,7 @@ class TemplateRange extends TemplateText
 			
 		}   	
     }
+    
+     
 }
 ?>

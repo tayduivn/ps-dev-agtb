@@ -33,6 +33,7 @@ $viewdefs[$module_name]['EditView'] = array(
                                             array('label' => '10', 'field' => '30')
                                             ),
                             'form' => array(
+                                'hidden'=>array('<input name="assigned_user_id" type="hidden" value="{$fields.assigned_user_id.value}" autocomplete="off">'),
                                 'buttons' =>
                                 array (
                                   0 => 'SAVE',
@@ -40,6 +41,7 @@ $viewdefs[$module_name]['EditView'] = array(
                                     'customCode' => '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.location.href=\'index.php?action=EditView&module=Users&record={$return_id}\'; return false;" type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">',
                                   ),
                                 ),
+                                'headerTpl'=>'modules/EAPM/tpls/EditViewHeader.tpl',
                                 'footerTpl'=>'modules/EAPM/tpls/EditViewFooter.tpl',),
                                             ),
 
@@ -57,8 +59,10 @@ $viewdefs[$module_name]['EditView'] = array(
         array('name'=>'password', 'type'=>'password', 'displayParams' => array('required' => true) ),
     ),
     array (
-        array('name' => 'url', 'displayParams' => array('required' => true) ),
-        'assigned_user_name',
+        array('name' => 'url',
+              'displayParams' => array('required' => true),
+              'customCode' => '<input type=\'text\' name=\'url\' id=\'url\' size=\'30\' maxlength=\'255\' value=\'\' title=\'\' tabindex=\'104\' ><br>{$MOD.LBL_OMIT_URL}',
+            )
     ),
     array (
         'description',

@@ -188,17 +188,6 @@ if(isset($_REQUEST['object_type']) && !empty($_REQUEST['object_type']) && isset(
         }
     }
 }
-//// handle legacy parent_id/parent_type relationship calls
-elseif(isset($_REQUEST['parent_type']) && !empty($_REQUEST['parent_type'])
-		&& isset($_REQUEST['parent_id']) && !empty($_REQUEST['parent_id'])) {
-    //run linking code only if the object_id has not been linked as part of the contacts above
-    if(!isset($exContactIds) || !in_array($_REQUEST['parent_id'],$exContactIds)){
-        $rel = strtolower($_REQUEST['parent_type']);
-        if ($focus->load_relationship($rel)) {
-        	$focus->$rel->add($_REQUEST['parent_id']);
-        }
-    }
-}
 ////    END RELATIONSHIP LINKING
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -67,12 +67,17 @@ $mod_strings = array (
   'LBL_API_CONSSECRET' => 'Consumer Secret',
   'LBL_API_OAUTHTOKEN' => 'OAuth Token',
   'LBL_AUTH_UNSUPPORTED' => "This authorization method is not supported by the application",
-  'LBL_AUTH_ERROR' => 'Error during login: %s',
+  'LBL_AUTH_ERROR' => 'Attempt to authenticate the external account failed.',
   'LBL_VALIDATED' => 'Access Validated',
   'LBL_ACTIVE' => 'Active',
   'LBL_OAUTH_NAME' => '%s',
   'LBL_SUGAR_USER_NAME' => 'Sugar User',
   'LBL_DISPLAY_PROPERTIES' => 'Display Properties',
+
+  'LBL_ERR_NO_AUTHINFO' => 'There is no authentication information for this account.',
+  'LBL_ERR_NO_TOKEN' => 'There are no valid login tokens for this account.',
+  
+  'LBL_ERR_FAILED_QUICKCHECK' => 'You are not currently logged in to your {0} account. Click OK to re-login to your account and to activate the external account record.',
 
   // Various strings used throughout the external account modules
   'LBL_MEET_NOW_BUTTON' => 'Meet Now',
@@ -80,4 +85,13 @@ $mod_strings = array (
   'LBL_TITLE_LOTUS_LIVE_MEETINGS' => 'Upcoming LotusLive&trade; Meetings',
   'LBL_VIEW_LOTUS_LIVE_DOCUMENTS' => 'View LotusLive&trade; Documents',
   'LBL_TITLE_LOTUS_LIVE_DOCUMENTS' => 'LotusLive&trade; Documents',
+  'LBL_REAUTHENTICATE_LABEL' => 'Reauthenticate',
+  'LBL_REAUTHENTICATE_KEY' => 'a',
+  'LBL_APPLICATION_FOUND_NOTICE' => 'An account for this application already exists. We have reinstated the existing account.',
+  'LBL_OMIT_URL' => '(Omit http:// or https://)',
+  'LBL_OAUTH_SAVE_NOTICE' => 'Click Save to create the external account record. You will be directed to a page to enter your account information to authorize access by Sugar. After entering your account information, you will be directed back to Sugar.',
+  'LBL_BASIC_SAVE_NOTICE' => 'Click Save to create the external account record. Sugar will then validate your credentials.',
+  'LBL_ERR_FACEBOOK' => 'Facebook returned an error, and the feed cannot be displayed.',
+  'LBL_ERR_NO_RESPONSE' => 'An error occurred when trying to save to the external account.',
+  'LBL_ERR_TWITTER' => 'Twitter returned an error, and the feed cannot be displayed.',
 );

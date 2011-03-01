@@ -1,7 +1,11 @@
 <soda>
-	<!-- Edit Scheduled Meeting_Verify that the information of a schedule meeting for case can be modified when using "Edit" function in "Activities" sub-panel -->
+   <!-- Edit Scheduled Meeting_Verify that the information of a schedule 
+      meeting for case can be modified when using "Edit" function in 
+      "Activities" sub-panel 
+   -->
 	<puts text="Test: Cases_1360.xml starting." />
-	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+   <csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" 
+      var="cases" />
 
 	<!--Create a case record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.xml" />
@@ -19,14 +23,16 @@
 	<link text="{@case_record}" />
 
 	<!--create a Meeting-->
-	<div id="list_subpanel_activities">
-		<button value="  Schedule Meeting  " />
+   <div id="list_subpanel_activities">
+      <button value="  Schedule Meeting  " />
+      <wait timeout="3" />
 	</div>
-
 	<timestamp />
 
-	<csv file="{@global.scriptsdir}/csvs/cases/Case_1360.csv" var="Case_1360">
-		<textfield id="name" set="{@Case_1360.name} {@user.name} {@stamp}" />
+   <csv file="{@global.scriptsdir}/csvs/cases/Case_1360.csv" var="Case_1360">
+      <div id="DEFAULT">
+         <textfield id="name" set="{@Case_1360.name} {@user.name} {@stamp}" />
+      </div>
 		<button id="Meetings_subpanel_save_button" />
 	</csv>
 	<div id="list_subpanel_activities">
@@ -41,7 +47,8 @@
 
 	<div id="list_subpanel_activities">
 		<table class="list view">
-			<link text="{@Case_1360.new_name} {@user.name} {@stamp}" click="false" />
+         <link text="{@Case_1360.new_name} {@user.name} {@stamp}" 
+            click="false" />
 		</table>
 	</div>
 

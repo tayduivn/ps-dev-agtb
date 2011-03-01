@@ -91,33 +91,7 @@ class EmailUI {
 
 
         //Check quick create module access
-        $QCAvailibleModules = array();
-        $QCModules = array(
-        //BEGIN SUGARCRM flav!=sales ONLY
-        'Bugs',
-        'Cases',
-        //END SUGARCRM flav!=sales ONLY
-        'Contacts',
-        //BEGIN SUGARCRM flav!=sales ONLY
-        'Leads',
-        //END SUGARCRM flav!=sales ONLY
-        'Tasks'
-        );
-        foreach($QCModules as $module) {
-        	$class = substr($module, 0, strlen($module) - 1);
-            require_once("modules/{$module}/{$class}.php");
-
-            //BEGIN SUGARCRM flav!=sales ONLY
-            if($class=="Case") {
-                $class = "aCase";
-            }
-            //END SUGARCRM flav!=sales ONLY
-
-            $seed = new $class();
-        	if ($seed->ACLAccess('edit')) {
-        		$QCAvailibleModules[] = $module;
-        	}
-        }
+        $QCAvailableModules = $this->_loadQuickCreateModules();
 
         //Get the quickSearch js needed for assigned user id on Search Tab
         require_once('include/QuickSearchDefaults.php');
@@ -145,7 +119,7 @@ class EmailUI {
 		$this->smarty->assign('sugar_flavor', $sugar_flavor);
 		$this->smarty->assign('current_language', $current_language);
 		$this->smarty->assign('server_unique_key', $server_unique_key);
-		$this->smarty->assign('qcModules', json_encode($QCAvailibleModules));
+		$this->smarty->assign('qcModules', json_encode($QCAvailableModules));
 		$extAllDebugValue = "ext-all.js";
 		//BEGIN SUGARCRM flav=ent ONLY
 		$extAllDebugValue = "ext-all-debug.js";
@@ -322,6 +296,31 @@ eoq;
         $out = json_encode($outData);
         return $out;
     }
+    
+    /**
+     * Load the modules from the metadata file and include in a custom one if it exists
+     *
+     * @return array
+     */
+    protected function _loadQuickCreateModules()
+    {
+        $QCAvailableModules = array();
+        $QCModules = array();
+
+        include('modules/Emails/metadata/qcmodulesdefs.php');
+        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
+            include('custom/modules/Emails/metadata/qcmodulesdefs.php');
+        }
+
+        foreach($QCModules as $module) {
+            $seed = SugarModule::get($module)->loadBean();
+            if ( ( $seed instanceOf SugarBean ) && $seed->ACLAccess('edit') ) {
+                $QCAvailableModules[] = $module;
+            }
+        }
+        
+        return $QCAvailableModules;
+    }
 
     /**
      * Given an email link url (eg. index.php?action=Compose&parent_type=Contacts...) break up the
@@ -332,7 +331,7 @@ eoq;
      * @param String $emailLinkUrl
      * @return JSON Object containing the composePackage and full link url
      */
-    function generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl)
+    function generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, $lazyLoad=false)
     {
         $composeData = explode("&",$emailLinkUrl);
         $a_composeData = array();
@@ -342,7 +341,7 @@ eoq;
     		$a_composeData[$tmp[0]] = urldecode($tmp[1]);
     	}
 
-    	return $this->generateComposePackageForQuickCreate($a_composeData,$emailLinkUrl);
+    	return $this->generateComposePackageForQuickCreate($a_composeData,$emailLinkUrl, $lazyLoad);
     }
     /**
      * Generate the composePackage for the quick compose email UI.  The package contains
@@ -354,11 +353,15 @@ eoq;
      *                              directed to the full compose screen if needed
      * @return JSON Object containg composePackage and fullLinkUrl
      */
-    function generateComposePackageForQuickCreate($composeData,$fullLinkUrl)
+    function generateComposePackageForQuickCreate($composeData,$fullLinkUrl, $lazyLoad=false)
     {
         $_REQUEST['forQuickCreate'] = true;
-    	require_once('modules/Emails/Compose.php');
-    	$composePackage = generateComposeDataPackage($composeData,FALSE);
+        if(!$lazyLoad){
+    	    require_once('modules/Emails/Compose.php');
+    	    $composePackage = generateComposeDataPackage($composeData,FALSE);
+        }else{
+            $composePackage = $composeData;
+        }
 
     	//JSON object is passed into the function defined within the a href onclick event
     	//which is delimeted by '.  Need to escape all single quotes, every other char is valid.
@@ -367,6 +370,7 @@ eoq;
     	   if (is_string($singleCompose))
     	       $composePackage[$key] = str_replace("'","&#039;",$singleCompose);
     	}
+        
 
     	$quickComposeOptions = array('fullComposeUrl' => $fullLinkUrl,'composePackage' => $composePackage);
     	$j_quickComposeOptions = json_encode($quickComposeOptions);
@@ -1613,11 +1617,11 @@ EOQ;
 		$title = "";
 		$offset		= 0;
 		if($focus->type == 'out') {
-			$title = get_module_title('Emails', $mod_strings['LBL_SENT_MODULE_NAME'].": ".$focus->name, true);
+			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_SENT_MODULE_NAME'],$focus->name), true);
 		} elseif ($focus->type == 'draft') {
-			$title = get_module_title('Emails', $mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'].": ".$focus->name, true);
+			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'],$focus->name), true);
 		} elseif($focus->type == 'inbound') {
-			$title = get_module_title('Emails', $mod_strings['LBL_INBOUND_TITLE'].": ".$focus->name, true);
+			$title = getClassicModuleTitle('Emails', array($mod_strings['LBL_INBOUND_TITLE'],$focus->name), true);
 		}
 		$smarty->assign("emailTitle", $title);
 

@@ -43,7 +43,7 @@
 {/if}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}:</td><td>
 {if $hideLevel < 5}
-<input type='text' name='default' value='{sugar_currency_format var=$vardef.default}'>
+<input type='text' id='default' name='default' value='{sugar_currency_format var=$vardef.default}'>
 <script>
 addToValidate('popup_form', 'default', 'float', false,'{sugar_translate module="DynamicFields" label="COLUMN_TITLE_DEFAULT_VALUE"}' );
 </script>

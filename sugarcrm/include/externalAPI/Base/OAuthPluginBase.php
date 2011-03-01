@@ -3,7 +3,27 @@ require_once('include/externalAPI/Base/ExternalAPIBase.php');
 
 class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin {
     public $authMethod = 'oauth';
-    
+    protected $oauthParams = array();
+
+    public function __construct()
+    {
+        $connector = $this->getConnector();
+        if(!empty($connector)) {
+            $cons_key = $connector->getProperty('oauth_consumer_key');
+            if(!empty($cons_key)) {
+                $this->oauthParams['consumerKey'] = $cons_key;
+            }
+            $cons_secret = $connector->getProperty('oauth_consumer_secret');
+            if(!empty($cons_secret)) {
+                $this->oauthParams['consumerSecret'] = $cons_secret;
+            }
+        }
+    }
+
+    /**
+     * Load data from EAPM bean
+     * @see ExternalAPIBase::loadEAPM()
+     */
     public function loadEAPM($eapmBean)
     {
         if ( !parent::loadEAPM($eapmBean) ) { return false; }
@@ -25,11 +45,26 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         if ( !$reply['success'] ) {
             return $reply;
         }
-        
+
         if ( $this->checkOauthLogin() ) {
             return array('success' => true);
         }
-    }    
+    }
+
+    public function quickCheckLogin()
+    {
+        $reply = parent::quickCheckLogin();
+
+        if ( !$reply['success'] ) {
+            return $reply;
+        }
+
+        if ( !empty($this->oauth_token) && !empty($this->oauth_secret) ) {
+            return array('success'=>true);
+        } else {
+            return array('success'=>false,'errorMessage'=>translate('LBL_ERR_NO_TOKEN','EAPM'));
+        }
+    }
 
     protected function checkOauthLogin()
     {
@@ -66,12 +101,13 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
      */
     public function getOauth()
     {
+
         $oauth = new SugarOAuth($this->oauthParams['consumerKey'], $this->oauthParams['consumerSecret'], $this->getOauthParams());
-        
+
         if ( isset($this->oauth_token) && !empty($this->oauth_token) ) {
             $oauth->setToken($this->oauth_token, $this->oauth_secret);
         }
-        
+
         return $oauth;
     }
 
@@ -87,14 +123,23 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         if($stage == 0) {
             $oauthReq = $this->getOauthRequestURL();
             $callback_url = $sugar_config['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
+            $callback_url = $this->formatCallbackURL($callback_url);
+            
             $GLOBALS['log']->debug("OAuth request token: {$oauthReq} callback: $callback_url");
+            
             $request_token_info = $oauth->getRequestToken($oauthReq, $callback_url);
+            
             $GLOBALS['log']->debug("OAuth token: ".var_export($request_token_info, true));
-            // FIXME: error checking here
-            $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
-            $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
-            $authReq = $this->getOauthAuthURL();
-            SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
+
+            if(empty($request_token_info['oauth_token_secret']) || empty($request_token_info['oauth_token'])){
+                return false;
+            }else{
+                // FIXME: error checking here
+                $_SESSION['eapm_oauth_secret'] = $request_token_info['oauth_token_secret'];
+                $_SESSION['eapm_oauth_token'] = $request_token_info['oauth_token'];
+                $authReq = $this->getOauthAuthURL();
+                SugarApplication::redirect("{$authReq}?oauth_token={$request_token_info['oauth_token']}");
+            }
         } else {
             $accReq = $this->getOauthAccessURL();
             $oauth->setToken($_SESSION['eapm_oauth_token'],$_SESSION['eapm_oauth_secret']);
@@ -115,7 +160,4 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
         }
         return false;
 	}
-
-
-    
 }

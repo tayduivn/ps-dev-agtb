@@ -43,6 +43,7 @@ class Document extends SugarBean {
 	var $date_entered;
 	var $date_modified;
 	var $modified_user_id;
+    var $assigned_user_id;
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_id;
 	//END SUGARCRM flav=pro ONLY
@@ -50,6 +51,7 @@ class Document extends SugarBean {
 	var $exp_date;
 	var $document_revision_id;
 	var $filename;
+	var $doc_type;
 
 	var $img_name;
 	var $img_name_bare;
@@ -94,35 +96,65 @@ class Document extends SugarBean {
 	}
 
 	function save($check_notify = false) {
-        if (!empty($_FILES['filename_file']))
-        {
+
+        if (empty($this->doc_type)) {
+			$this->doc_type = 'Sugar';
+		}
+        if (empty($this->id) || $this->new_with_id)
+		{
             if (empty($this->id)) { 
                 $this->id = create_guid();
                 $this->new_with_id = true;
             }
+
+            if ( isset($_REQUEST) && isset($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] == true && isset($_REQUEST['filename_old_doctype']) ) {
+                $this->doc_type = $_REQUEST['filename_old_doctype'];
+                $isDuplicate = true;
+            } else {
+                $isDuplicate = false;
+            }
+
             $Revision = new DocumentRevision();
             //save revision.
+            $Revision->in_workflow = true;
+            $Revision->not_use_rel_in_req = true;
+            $Revision->new_rel_id = $this->id;
+            $Revision->new_rel_relname = 'Documents';
             $Revision->change_log = translate('DEF_CREATE_LOG','Documents');
             $Revision->revision = $this->revision;
             $Revision->document_id = $this->id;
             $Revision->filename = $this->filename;
-            $Revision->file_ext = $this->file_ext;
-            $Revision->file_mime_type = $this->file_mime_type;
+
+            if(isset($this->file_ext))
+            {
+            	$Revision->file_ext = $this->file_ext;
+            }
+            
+            if(isset($this->file_mime_type))
+            {
+            	$Revision->file_mime_type = $this->file_mime_type;
+            }
+            
             $Revision->doc_type = $this->doc_type;
             $Revision->doc_id = $this->doc_id;
             $Revision->doc_url = $this->doc_url;
-            $Revision->doc_direct_url = $this->doc_direct_url;
             $Revision->save();
 			
             //Move file saved during populatefrompost to match the revision id rather than document id
-            rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+            if (!empty($_FILES['filename_file'])) {
+                rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+            } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'Sugar' ) ) {
+                // Looks like we need to duplicate a file, this is tricky
+                $oldDocument = new Document();
+                $oldDocument->retrieve($_REQUEST['duplicateId']);
+                $GLOBALS['log']->debug('Attempting to copy from '.UploadFile :: get_url($this->filename, $oldDocument->document_revision_id).' to '.UploadFile :: get_url($this->filename, $Revision->id));
+                copy(UploadFile :: get_url($this->filename, $oldDocument->document_revision_id), UploadFile :: get_url($this->filename, $Revision->id));
+            }
             //update document with latest revision id
             $this->process_save_dates=false; //make sure that conversion does not happen again.
             $this->document_revision_id = $Revision->id;	
-        }
-		
-        if (empty($this->id) || $this->new_with_id)
-		{
+
+
             //set relationship field values if contract_id is passed (via subpanel create)
             if (!empty($_POST['contract_id'])) {
                 $save_revision['document_revision_id']=$this->document_revision_id;	

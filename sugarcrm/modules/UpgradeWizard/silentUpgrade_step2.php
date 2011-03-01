@@ -160,6 +160,13 @@ function verifyArguments($argv,$usage_regular){
 ////	END UTILITIES THAT MUST BE LOCAL :(
 ///////////////////////////////////////////////////////////////////////////////
 
+function rebuildRelations($pre_path = '')
+{
+	$_REQUEST['silent'] = true;
+	include($pre_path.'modules/Administration/RebuildRelationship.php');
+	$_REQUEST['upgradeWizard'] = true;
+	include($pre_path.'modules/ACL/install_actions.php');
+}
 
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -374,11 +381,18 @@ foreach ($beanFiles as $bean => $file) {
 		}
 
 		if (($focus instanceOf SugarBean)) {
-			$sql = $db->repairTable($focus, true);
-			if(!empty($sql)) {
-	   		   logThis($sql, $path);
-	   		   $repairedTables[$focus->table_name] = true;
+			if(!isset($repairedTables[$focus->table_name])) 
+			{
+				$sql = $GLOBALS['db']->repairTable($focus, true);
+				logThis('Running sql:' . $sql, $path);
+				$repairedTables[$focus->table_name] = true;
 			}
+			
+			//Check to see if we need to create the audit table
+		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
+               logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
+		       $focus->create_audit_table();
+            }
 		}
 	}
 }
@@ -404,6 +418,9 @@ foreach ($dictionary as $meta) {
 
 logThis('database repaired', $path);
 
+logThis('Start rebuild relationships.', $path);
+@rebuildRelations();
+logThis('End rebuild relationships.', $path);
 
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
@@ -461,21 +478,37 @@ if($ce_to_pro_ent) {
     }
 }
 
-//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
+
 if($origVersion < '620'){
-	upgradeDateTimeFields();
+	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
+	upgradeDateTimeFields($path);
+	
+	//upgrade the documents and meetings for lotus support
+	upgradeDocumentTypeFields($path);
 }
 
 //bug: 37214 - merge config_si.php settings if available
 logThis('Begin merge_config_si_settings', $path);
-merge_config_si_settings(true);
+merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
+
+//Upgrade connectors
+if($origVersion < '610' && function_exists('upgrade_connectors'))
+{
+   upgrade_connectors($path);
+}
 
 //bug: 36845 - ability to provide global search support for custom modules
 if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
    logThis('Add global search for custom modules finished .', $path);
+}
+
+//Upgrade system displayed tabs and subpanels
+if(function_exists('upgradeDisplayedTabsAndSubpanels'))
+{
+	upgradeDisplayedTabsAndSubpanels($origVersion);
 }
 
 //also add the cache cleaning here.

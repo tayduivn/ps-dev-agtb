@@ -270,8 +270,7 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 		require_once ('modules/Sync/file_config.php');
         global $file_sync_info;
 		if(!isset($file_sync_info['last_local_sync']) && !isset($file_sync_info['last_server_sync'])){
-			$last_local_sync = $timedate->nowDb();
-    		$last_server_sync = $timedate->nowDb();
+			$last_server_sync = $last_local_sync = $timedate->nowDb();
     		$is_first_sync = true;
 		}else{
 			$last_local_sync = $file_sync_info['last_local_sync'];
@@ -280,8 +279,7 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 		}
     }
     else{
-    	$last_local_sync = $timedate->nowDb();
-    	$last_server_sync = $timedate->nowDb();
+    	$last_server_sync = $last_local_sync = $timedate->nowDb();
     	$is_first_sync = true;
     }
 

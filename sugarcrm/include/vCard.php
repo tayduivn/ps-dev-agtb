@@ -26,10 +26,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class vCard
 {
-	var $properties = array();
-	var $name = 'no_name';
+	protected $properties = array();
+	
+	protected $name = 'no_name';
 
-	function clear(){
+	public function clear()
+	{
 		$this->properties = array();
 	}
 
@@ -132,13 +134,15 @@ class vCard
 	function saveVCard(){
 		global $locale;
 		$content = $this->toString();
-		header("Content-Disposition: attachment; filename={$this->name}.vcf");
-		header("Content-Type: text/x-vcard; charset=".$locale->getExportCharset());
-		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-		header("Last-Modified: " . TimeDate::httpTime() );
-		header("Cache-Control: max-age=0");
-		header("Pragma: public");
-		header("Content-Length: ".strlen($content));
+		if ( !defined('SUGAR_PHPUNIT_RUNNER') ) {
+            header("Content-Disposition: attachment; filename={$this->name}.vcf");
+            header("Content-Type: text/x-vcard; charset=".$locale->getExportCharset());
+            header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
+            header("Last-Modified: " . TimeDate::httpTime() );
+            header("Cache-Control: max-age=0");
+            header("Pragma: public");
+            header("Content-Length: ".strlen($content));
+        }
 
 		print $locale->translateCharset($content, 'UTF-8', $locale->getExportCharset());
 	}

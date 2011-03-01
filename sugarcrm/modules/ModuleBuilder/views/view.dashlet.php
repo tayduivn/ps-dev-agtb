@@ -44,7 +44,7 @@ class ViewDashlet extends ViewListView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
@@ -134,6 +134,7 @@ class ViewDashlet extends ViewListView
         $smarty->assign ( 'action', 'dashletSave' ) ;
         $smarty->assign( 'module', 'ModuleBuilder');
         $smarty->assign ( 'view_module', $this->editModule ) ;
+        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $helpName = (isset( $_REQUEST['view']) && $_REQUEST['view']=='dashletsearch') ? 'searchViewEditor' : 'listViewEditor';
         $smarty->assign ( 'helpName', $helpName ) ;
         $smarty->assign ( 'helpDefault', 'modify' ) ;

@@ -63,7 +63,7 @@ if(typeof SugarFeed == 'undefined') { // since the dashlet can be included multi
 	        },
             buildReplyForm: function(record, id, elem) {
                // See if we already have a blockquote
-               var myParentElem = elem.parentElement.parentElement.parentElement;
+               var myParentElem = elem.parentNode.parentNode.parentNode;
                
                var blockElem = myParentElem.getElementsByTagName('blockquote')[0];
                if ( typeof(blockElem) == 'undefined' || typeof(blockElem[0]) == 'undefined' ) {
@@ -81,7 +81,7 @@ if(typeof SugarFeed == 'undefined') { // since the dashlet can be included multi
 
                // Move the reply form up over here
                var formElem = document.getElementById('SugarFeedReplyForm_'+id);
-               formElem.parentElement.removeChild(formElem);
+               formElem.parentNode.removeChild(formElem);
                blockElem.appendChild(formElem);
                formElem.getElementsByTagName('div')[0].style.display = 'block';
                formElem.parentFeed.value = record;
@@ -97,9 +97,17 @@ if(typeof SugarFeed == 'undefined') { // since the dashlet can be included multi
 				var cObj = YAHOO.util.Connect.asyncRequest('POST','index.php', 
 								  {success: SugarFeed.saved, failure: SugarFeed.saved, argument: id}, postData);
                
+            },
+            loaded: function(id) {
+            	var scrollConent;
+            	scrollContent = new iScroll('contentScroller' + id);
             }
 	    };
 	}();
+}
+
+if(SUGAR.util.isTouchScreen()) {
+	document.addEventListener('DOMContentLoaded', function(){SugarFeed.loaded('{/literal}{$idjs}{literal}')}, false);	
 }
 </script>
 {/literal}

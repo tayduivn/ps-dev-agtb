@@ -136,7 +136,7 @@ $result = $soapclient->call('get_module_fields',array('session'=>$session, 'modu
 print_result($result);
 }
 echo '<br><br><b>Set A Contact - set_entry test:</b><BR>';
-$time = date($GLOBALS['timedate']->get_db_date_time_format()) ;
+$time = $timedate->nowDb();
 $date = date($GLOBALS['timedate']->dbDayFormat, time() + rand(0,360000));
 $hour = date($GLOBALS['timedate']->dbTimeFormat, time() + rand(0,360000));
 $result = $soapclient->call('set_entry',array('session'=>$session,'module_name'=>'Contacts', 'name_value_list'=>array(array('name'=>'last_name' , 'value'=>"$time Contact SINGLE"), array('name'=>'first_name' , 'value'=>'tester'))));
@@ -147,7 +147,7 @@ echo '<br><br><b>Set list of Contacts:</b><BR>';
 $dm = date($GLOBALS['timedate']->get_db_date_time_format(), time() - 36000) ;
 $timestart = microtime(true);
 for($i = 0; $i < 10; $i++){
-$time = date($GLOBALS['timedate']->get_db_date_time_format()) ;
+$time = $timedate->nowDb();
 $date = date($GLOBALS['timedate']->dbDayFormat, time() + rand(0,360000));
 $hour = date($GLOBALS['timedate']->dbTimeFormat, time() + rand(0,360000));
 $name_value_lists[] =  array(array('name'=>'last_name' , 'value'=>"$time Contact $i"), array('name'=>'first_name' , 'value'=>'tester'));
@@ -236,9 +236,9 @@ if(!$quick_test){
 }
 echo '<BR>TESTING NOTES<BR>';
 echo '<br><br><b>Set A Note - set_entry test:</b><BR>';
-$time = date($GLOBALS['timedate']->get_db_date_time_format()) ;
-$date = date($GLOBALS['timedate']->dbDayFormat, time() + rand(0,360000));
-$hour = date($GLOBALS['timedate']->dbTimeFormat, time() + rand(0,360000));
+$time = $timedate->nowDb();
+$date = $timedate->asDbDate($timedate->getNow()->get("+"+rand(0, 360000)+"seconds"));
+$hour = $timedate->asDbTime($timedate->getNow()->get("+"+rand(0, 360000)+"seconds"));
 $result = $soapclient->call('set_entry',array('session'=>$session,'module_name'=>'Notes', 'name_value_list'=>array(array('name'=>'name' , 'value'=>"$time Note $i"), )));
 $note_id = $result['id'];
 print_result($result);

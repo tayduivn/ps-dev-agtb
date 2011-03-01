@@ -51,9 +51,8 @@
 	</csv>
 
 	<!-- Verify task has been created -->
-	<div id="list_subpanel_activities">
-		<link text="{@activity_record_0239.name}" click="false" />
-	</div>
+	<link text="{@activity_record_0239.name}" click="false" />
+	
 
 	<!-- Edit Task and Cancel Edits -->
 	<div id="list_subpanel_activities">

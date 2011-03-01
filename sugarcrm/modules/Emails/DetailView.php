@@ -123,18 +123,18 @@ if (!empty($focus->status)) {
 echo "\n<p>\n";
 $GLOBALS['log']->info("Email detail view");
 if ($email_type == 'archived') {
-	echo get_module_title('Emails', $mod_strings['LBL_ARCHIVED_EMAIL'].": ".$focus->name, true);
+	echo getClassicModuleTitle('Emails', array($mod_strings['LBL_ARCHIVED_EMAIL'],$focus->name), true);
 	$xtpl=new XTemplate ('modules/Emails/DetailView.html');
 } else {
 	$xtpl=new XTemplate ('modules/Emails/DetailViewSent.html');
 	if($focus->type == 'out') {
-		echo get_module_title('Emails', $mod_strings['LBL_SENT_MODULE_NAME'].": ".$focus->name, true);
+		echo getClassicModuleTitle('Emails', array($mod_strings['LBL_SENT_MODULE_NAME'],$focus->name), true);
 		//$xtpl->assign('DISABLE_REPLY_BUTTON', 'NONE');
 	} elseif ($focus->type == 'draft') {
 		$xtpl->assign('DISABLE_FORWARD_BUTTON', 'NONE');
-		echo get_module_title('Emails', $mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'].": ".$focus->name, true);
+		echo getClassicModuleTitle('Emails', array($mod_strings['LBL_LIST_FORM_DRAFTS_TITLE'],$focus->name), true);
 	} elseif($focus->type == 'inbound') {
-		echo get_module_title('Emails', $mod_strings['LBL_INBOUND_TITLE'].": ".$focus->name, true);
+		echo getClassicModuleTitle('Emails', array($mod_strings['LBL_INBOUND_TITLE'],$focus->name), true);
 	}
 }
 echo "\n</p>\n";

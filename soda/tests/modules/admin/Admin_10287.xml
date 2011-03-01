@@ -14,7 +14,7 @@
 
 	<link text="Display Module Tabs and Subpanels" />
 
-	<browser assert="Select Module Tabs and Subpanels" />
+	<browser assert="Display Module Tabs and Subpanels" />
 	<browser assert=
 	"Drag and Drop the names of the modules below to set tabs or subpanels to be displayed or to be hidden." />	
 	

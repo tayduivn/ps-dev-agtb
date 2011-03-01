@@ -9,27 +9,41 @@ function EAPMChange() {
     } else {
         apiName = document.getElementById('application_raw').value;
     }
-    
-    var apiOpts = SUGAR.eapm[apiName];
+    if(SUGAR.eapm[apiName]){
+        var apiOpts = SUGAR.eapm[apiName];
 
-    var urlObj = new SUGAR.forms.VisibilityAction('url',(apiOpts.needsUrl==true), EAPMFormName);
-    if ( EAPMFormName == 'EditView' ) {
-        EAPMSetFieldRequired('url',(apiOpts.needsUrl == true));
+        var urlObj = new SUGAR.forms.VisibilityAction('url',(apiOpts.needsUrl?'true':'false'), EAPMFormName);
+        if ( EAPMFormName == 'EditView' ) {
+            EAPMSetFieldRequired('url',(apiOpts.needsUrl == true));
+        }
+
+        var userObj = new SUGAR.forms.VisibilityAction('name',((apiOpts.authMethod=='password')?'true':'false'), EAPMFormName);
+        if ( EAPMFormName == 'EditView' ) {
+            EAPMSetFieldRequired('name',(apiOpts.authMethod == 'password'));
+        }
+
+        var passObj = new SUGAR.forms.VisibilityAction('password',((apiOpts.authMethod=='password')?'true':'false'), EAPMFormName);
+        if ( EAPMFormName == 'EditView' ) {
+            EAPMSetFieldRequired('password',(apiOpts.authMethod == 'password'));
+        }
+
+        urlObj.exec();
+        userObj.exec();
+        passObj.exec();
+
+        //hide/show new window notice
+        if(apiOpts.authMethod){
+            var messageDiv = document.getElementById('eapm_notice_div');
+            if(apiOpts.authMethod == "oauth"){
+                messageDiv.innerHTML = EAPMOAuthNotice;
+            }else{
+                 messageDiv.innerHTML = EAPMBAsicAuthNotice;
+            }
+        }else{
+            var messageDiv = document.getElementById('eapm_notice_div');
+            messageDiv.innerHTML = EAPMBAsicAuthNotice;
+        }
     }
-
-    var userObj = new SUGAR.forms.VisibilityAction('name',(apiOpts.authMethod=='password'), EAPMFormName);
-    if ( EAPMFormName == 'EditView' ) {
-        EAPMSetFieldRequired('name',(apiOpts.authMethod == 'password'));
-    }
-
-    var passObj = new SUGAR.forms.VisibilityAction('password',(apiOpts.authMethod=='password'), EAPMFormName);
-    if ( EAPMFormName == 'EditView' ) {
-        EAPMSetFieldRequired('password',(apiOpts.authMethod == 'password'));
-    }
-
-    urlObj.exec();
-    userObj.exec();
-    passObj.exec();
 }
 
 function EAPMSetFieldRequired(fieldName, isRequired) {

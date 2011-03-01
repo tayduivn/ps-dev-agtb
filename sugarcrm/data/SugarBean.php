@@ -1664,10 +1664,20 @@ class SugarBean
             }
         }
 
-        // let subclasses save related field changes
-        $this->save_relationship_changes($isUpdate);
-
         //BEGIN SUGARCRM flav=pro ONLY
+        //Prevent cascading saves
+        if (empty($GLOBALS['updating_relationships']))
+        {
+        //END SUGARCRM flav=pro ONLY
+
+            // let subclasses save related field changes
+            $this->save_relationship_changes($isUpdate);
+            //BEGIN SUGARCRM flav=een ONLY
+            $this->updateRelatedCalcFields();
+            //END SUGARCRM flav=een ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        }
+
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1691,7 +1701,7 @@ class SugarBean
     function updateCalculatedFields()
     {
         require_once("include/Expressions/DependencyManager.php");
-        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false, true);
         foreach($deps as $dep)
         {
             if ($dep->getFireOnLoad())
@@ -1700,6 +1710,69 @@ class SugarBean
             }
         }
     }
+    function updateDependentField()
+    {
+        require_once("include/Expressions/DependencyManager.php");
+        $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
+        foreach($deps as $dep)
+        {
+            if ($dep->getFireOnLoad())
+            {
+                $dep->fire($this);
+            }
+        }
+    }
+
+
+    //BEGIN SUGARCRM flav=een ONLY
+    function updateRelatedCalcFields()
+    {
+        if (empty($this->id))
+            return;
+        global $dictionary, $updating_relationships;
+        if ($updating_relationships)
+        {
+            return;
+        }
+        if (!isset($GLOBALS['related_calc_records_saved']))
+            $GLOBALS['related_calc_records_saved'] = array();
+        $updating_relationships = true;
+        if (!empty($dictionary[$this->object_name]['related_calc_fields']))
+        {
+            $links = $dictionary[$this->object_name]['related_calc_fields'];
+            foreach($links as $lname)
+            {
+                if (empty($this->$lname))
+                {
+                    $this->load_relationship($lname);
+                }
+                $rmodule = $this->$lname->getRelatedModuleName();
+                $beans = array();
+                if(isset($this->$lname->beans))
+                    $beans = $this->$lname->beans;
+                else
+                {
+                    //now we need a seed of the related module to load.
+                    global $beanList;
+                    if (empty($beanList[$rmodule]))
+                       continue;
+                    $bName = $beanList[$rmodule];
+                    $seed = new $bName();
+
+                    $beans = $this->$lname->getBeans($seed);
+                    $this->$lname->beans = $beans;
+                }
+                foreach($beans as $rBean)
+                {
+                    if (empty($rBean->deleted)) {
+                        $rBean->save();
+                    }
+                }
+            }
+        }
+        $updating_relationships = false;
+    }
+    //END SUGARCRM flav=een ONLY
     //END SUGARCRM flav=pro ONLY
 
     /**
@@ -2479,29 +2552,47 @@ function save_relationship_changes($is_update, $exclude=array())
         //sub-selects.
         if (strstr($query," UNION ALL ") !== false) {
 
-            //seperate out all the queries.
-            $union_qs=explode(" UNION ALL ", $query);
-            foreach ($union_qs as $key=>$union_query) {
-                $star = '*';
-                preg_match($pattern, $union_query, $matches);
-                if (!empty($matches)) {
-                    if (stristr($matches[0], "distinct")) {
-                        if (!empty($this->seed) && !empty($this->seed->table_name ))
-                            $star = 'DISTINCT ' . $this->seed->table_name . '.id';
-                        else
-                            $star = 'DISTINCT ' . $this->table_name . '.id';
-                    }
-                } // if
-                $replacement = 'SELECT count(' . $star . ') c FROM ';
-                $union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
-            }
-            $modified_select_query=implode(" UNION ALL ",$union_qs);
-        } else {
-            $modified_select_query = preg_replace($pattern, $replacement, $query,1);
-        }
+    		//seperate out all the queries.
+    		$union_qs=explode(" UNION ALL ", $query);
+    		foreach ($union_qs as $key=>$union_query) {
+        		$star = '*';
+				preg_match($pattern, $union_query, $matches);
+				if (!empty($matches)) {
+					if (stristr($matches[0], "distinct")) {
+			          	if (!empty($this->seed) && !empty($this->seed->table_name ))
+			          		$star = 'DISTINCT ' . $this->seed->table_name . '.id';
+			          	else
+			          		$star = 'DISTINCT ' . $this->table_name . '.id';
+					}
+				} // if
+    			$replacement = 'SELECT count(' . $star . ') c FROM ';
+    			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
+    		}
+    		$modified_select_query=implode(" UNION ALL ",$union_qs);
+    	} else if (strstr($query," UNION ") !== false) {
 
+    		//seperate out all the queries.
+    		$union_qs=explode(" UNION ", $query);
+    		foreach ($union_qs as $key=>$union_query) {
+        		$star = '*';
+				preg_match($pattern, $union_query, $matches);
+				if (!empty($matches)) {
+					if (stristr($matches[0], "distinct")) {
+			          	if (!empty($this->seed) && !empty($this->seed->table_name ))
+			          		$star = 'DISTINCT ' . $this->seed->table_name . '.id';
+			          	else
+			          		$star = 'DISTINCT ' . $this->table_name . '.id';
+					}
+				} // if
+    			$replacement = 'SELECT count(' . $star . ') c FROM ';
+    			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
+    		}
+    		$modified_select_query=implode(" UNION ",$union_qs);
+    	} else {
+	    	$modified_select_query = preg_replace($pattern, $replacement, $query,1);
+    	}
 
-        return $modified_select_query;
+		return $modified_select_query;
     }
 
     /**
@@ -3455,7 +3546,6 @@ function save_relationship_changes($is_update, $exclude=array())
                                     $ret_array['select'] .= ' , ' .$params['join_table_alias'] . '.created_by ' .  $field . '_owner';
                                 }
                                 $ret_array['select'] .= "  , '".$rel_module  ."' " .  $field . '_mod';
-
                             }
                         }
                     }
@@ -3708,7 +3798,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 $limit = $max_per_page + 1;
                 $max_per_page = $limit;
             }
-
         }
 
         if(empty($row_offset))
@@ -4325,6 +4414,9 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($this->field_defs['parent_name']) && empty($this->parent_name)){
             $this->fill_in_additional_parent_fields();
         }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->updateDependentField();
+        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -4353,6 +4445,9 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($this->field_defs['parent_name'])){
             $this->fill_in_additional_parent_fields();
         }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->updateDependentField();
+        //END SUGARCRM flav=pro ONLY
     }
 
     /**
@@ -4488,6 +4583,7 @@ function save_relationship_changes($is_update, $exclude=array())
             } else
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
             $this->db->query($query, true,"Error marking record deleted: ");
+            $this->deleted = 1;
             $this->mark_relationships_deleted($id);
 
             // Take the item off the recently viewed lists
@@ -5237,6 +5333,14 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
+            //BEGIN SUGARCRM flav=een ONLY
+            //Fire dependency manager dependencies here for some custom logic types.
+            if (empty($GLOBALS['updating_relationships']) &&
+                    ($event == "after_relationship_add" || $event == "after_relationship_delete"))
+            {
+                $this->updateRelatedCalcFields();
+            }
+            //END SUGARCRM flav=een ONLY
         }
     }
 

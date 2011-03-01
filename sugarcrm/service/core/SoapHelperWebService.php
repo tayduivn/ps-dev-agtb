@@ -903,7 +903,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_report_value');
 		$field_list = array();
 		$output_list = array();
-		$report = new Report(html_entity_decode($seed->content));
+		$report = new Report(html_entity_decode($seed->content),'','',true);
 		$report->enable_paging = false; //set paging = false for report.
 
 		$next_row_fn = 'get_next_row';

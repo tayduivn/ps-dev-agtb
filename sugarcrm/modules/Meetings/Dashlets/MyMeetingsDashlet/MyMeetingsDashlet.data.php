@@ -38,6 +38,11 @@ $dashletData['MyMeetingsDashlet']['searchFields'] = array('name'             => 
                                                           //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
                                                           //END SUGARCRM flav=pro ONLY
+
+														  //BEGIN SUGARCRM flav!=com ONLY
+                                                          'type'  => array('default' => array('Sugar')),
+														  //END SUGARCRM flav!=com ONLY
+
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name,
 																					  'label'   => 'LBL_ASSIGNED_TO'),);
@@ -75,6 +80,10 @@ $dashletData['MyMeetingsDashlet']['columns'] = array('set_complete' => array('wi
                                                                          'related_fields' => array('time_start')),                               
                                                    'status' => array('width'   => '8', 
                                                                      'label'   => 'LBL_STATUS'),
+												   //BEGIN SUGARCRM flav!=com ONLY
+                                                   'type' => array('width'   => '8', 
+                                                                     'label'   => 'LBL_TYPE'),
+												   //END SUGARCRM flav!=com ONLY
                                                    'date_entered' => array('width'   => '15', 
                                                                            'label'   => 'LBL_DATE_ENTERED'),
                                                    'date_modified' => array('width'   => '15', 

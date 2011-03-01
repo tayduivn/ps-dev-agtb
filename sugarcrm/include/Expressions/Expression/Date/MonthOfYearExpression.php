@@ -27,12 +27,14 @@ require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 class MonthOfYearExpression extends NumericExpression
 {
 	/**
-	 * Returns the entire enumeration bare.
+	 * Return current month
 	 */
 	function evaluate() {
-		$params = $this->getParameters()->evaluate();
-		$time = strtotime($params);
-		return date("m", $time);
+		$params = DateExpression::parse($this->getParameters()->evaluate());
+        if(!$params) {
+            return false;
+        }
+		return $params->month;
 	}
 
 

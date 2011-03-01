@@ -91,7 +91,7 @@ $dictionary['User'] = array(
             'type' => 'image',
             'dbType' => 'varchar',
             'len' => '255',
-            'width' => '120',
+            'width' => '',
             'height' => '',
             'border' => '',
         ) ,

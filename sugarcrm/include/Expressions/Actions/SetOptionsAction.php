@@ -48,7 +48,7 @@ class SetOptionsAction extends AbstractAction{
 			exec: function(context) {
 			    if (typeof(context) == 'undefined')
                     context = this.context;
-				var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[this.target];
+				var field = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if ( field == null )	return null;		
 				
 				var keys = this.evalExpression(this.keyExpr, context);
@@ -69,6 +69,16 @@ class SetOptionsAction extends AbstractAction{
 					while (options.length > 0) {
 						field.remove(options[0]);
 					}
+
+					if (typeof(labels) == 'string') //get translated values from Sugar Language
+					{
+					    var fullSet = SUGAR.language.get('app_list_strings', labels);
+					    labels = [];
+					    for (var i in keys)
+					    {
+					        labels[i] = fullSet[keys[i]];
+					    }
+					}
 					
 					var new_opt;
 					for (var i in keys) {
@@ -84,7 +94,8 @@ class SetOptionsAction extends AbstractAction{
 									new_opt = options[options.length] = new Option(keys[i], keys[i], keys[i] == selected);
 								}
 							}
-						} else //Use the keys as labels
+						}
+						else //Use the keys as labels
 						{
 							if (typeof keys[0] == 'undefined') {
 								if (typeof(keys[i]) == 'string') {

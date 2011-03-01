@@ -21,8 +21,11 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = '1';
         $GLOBALS['sugar_config']['default_max_tabs'] = $this->_max_tabs_test;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        $GLOBALS['request_string'] = '';
     }
 
     public function tearDown() 
@@ -36,21 +39,19 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['beanList']);
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['request_string']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
     public function testUsingDefaultMaxTabsForOptionsValues() 
     {
-
-        $_REQUEST['module'] = 'Users';
-        $_REQUEST['action'] = 'EditView';
+        global $current_user, $locale, $sugar_config;
         
-        require_once('include/MVC/Controller/ControllerFactory.php');
-        require_once('include/MVC/View/ViewFactory.php');
-        require_once('include/utils/layout_utils.php');
-        $GLOBALS['app']->controller = ControllerFactory::getController($_REQUEST['module']);
         ob_start();
-        $GLOBALS['app']->controller->execute();
+        $_REQUEST['module'] = 'Users';
+        require_once('modules/Users/EditView.php');
         $html = ob_get_clean();
 
         $this->assertRegExp('/<select name="user_max_tabs".*<option label="' . $this->_max_tabs_test . '" value="' . $this->_max_tabs_test . '".*>' . $this->_max_tabs_test . '<\/option>.*<\/select>/ms', $html);

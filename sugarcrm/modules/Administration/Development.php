@@ -29,7 +29,7 @@ global $theme;
 global $currentModule;
 global $gridline;
 
-echo get_module_title('MigrateFields', $mod_strings['LBL_EXTERNAL_DEV_TITLE'], true);
+echo getClassicModuleTitle('MigrateFields', array($mod_strings['LBL_EXTERNAL_DEV_TITLE']), true);
 
 ?>
 <p>

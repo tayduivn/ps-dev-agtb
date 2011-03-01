@@ -43,6 +43,19 @@ class VisibilityAction extends AbstractAction{
 			this.target = target;
 			this.expr	= 'cond(' + expr + ', \"\", \"none\")';
 			this.view = view;
+			if (!SUGAR.forms.VisibilityAction.initialized)
+			{
+			    var head = document.getElementsByTagName('head')[0];
+                var cssdef = 'td.vis_action_hidden * { visibility:hidden}'
+			    var newStyle = document.createElement('style');
+                newStyle.setAttribute('type', 'text/css');
+				if (newStyle.styleSheet)
+			        newStyle.styleSheet.cssText = cssdef;
+			    else
+			        newStyle.innerHTML = cssdef;
+			    head.appendChild(newStyle);
+                SUGAR.forms.VisibilityAction.initialized = true;
+			}
 		}
 		
 		/**
@@ -58,21 +71,60 @@ class VisibilityAction extends AbstractAction{
 				if (typeof(context) == 'undefined')
                     context = this.context;
                 try {
-					var visibility = this.evalExpression(this.expr, context);
+                    var Dom = YAHOO.util.Dom;
+                    var exp = this.evalExpression(this.expr, context);
+					var hide =  exp == 'none' || exp == 'hidden';
 					var target = SUGAR.forms.AssignmentHandler.getElement(this.target);
 					if (target != null) {
-						var inputTD = target.parentNode;
-						var labelTD = YAHOO.util.Dom.getPreviousSiblingBy(inputTD, function(e){
+					    var inv_class = 'vis_action_hidden';
+						var inputTD = Dom.getAncestorByTagName(target, 'TD');
+						var labelTD = Dom.getPreviousSiblingBy(inputTD, function(e){
 							if (e.tagName == 'TD') return true;
 							return false;
-						});					
-                        var oldVisibility = labelTD.style.display;
-						labelTD.style.display = inputTD.style.display = visibility;
-						if (visibility == '' && this.view == 'EditView' && visibility != oldVisibility)
-							SUGAR.forms.FlashField(target);
+						});
+						this.wrapContent(labelTD);
+						this.wrapContent(inputTD);
+						var wasHidden = Dom.hasClass(labelTD, inv_class);
+						if (hide)
+						{
+						    Dom.addClass(labelTD, inv_class);
+						    Dom.addClass(inputTD, inv_class);
+						}
+						else
+						{
+						    Dom.removeClass(labelTD, inv_class);
+						    Dom.removeClass(inputTD, inv_class);
+						    if (wasHidden && this.view == 'EditView')
+						        SUGAR.forms.FlashField(target);
+						}
 					}
 				} catch (e) {if (console && console.log) console.log(e);}
+			},
+			//we need to wrap plain text nodes in a span in order to hide the contents without hiding the TD itesef
+			wrapContent: function(el)
+			{
+			    if (el && this.containsPlainText(el))
+			    {
+			        var span = document.createElement('SPAN');
+			        for(var i = el.childNodes.length - 1; i > -1 ; i--)
+                    {
+                        span.appendChild(el.childNodes[i]);
+                    }
+			        el.appendChild(span);
+			    }
+			},
+			containsPlainText: function(el)
+			{
+                for(var i = 0; i < el.childNodes.length; i++)
+                {
+                    var node = el.childNodes[i];
+                    if (node.nodeName == '#text' && YAHOO.lang.trim(node.textContent) != '') {
+                        return true;
+                    }
+                }
+			    return false;
 			}
+
 		});";
 	}
 
@@ -92,8 +144,7 @@ class VisibilityAction extends AbstractAction{
 	 */
 	function fire(&$target) {
 		require_once("include/Expressions/Expression/AbstractExpression.php");
-		$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
+		$result = Parser::evaluate($this->expression, $target)->evaluate();
 		if ($result === AbstractExpression::$FALSE) {
 			$target->field_defs[$this->targetField]['hidden'] = true;
 		} else 

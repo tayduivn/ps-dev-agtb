@@ -12,15 +12,16 @@
 
 		<form id="EditView">
 			<textfield id="name" set="{@account_record.name} {@user.name} {@stamp}" />
-			<select id="industry" set="{@account_record.industry}" />
-			<select id="account_type" set="{@account_record.account_type}" />
 			<textfield id="website" set="{@account_record.website}" />
 			<textfield id="phone_office" set="{@account_record.phone_office}" />
 			<textfield id="phone_fax" set="{@account_record.phone_fax}" />
-
-			<textfield id="Accounts0emailAddress0" set="{@stamp}{@account_record.emailAddress0}" />
+            <textfield id="Accounts0emailAddress0" set="{@stamp}{@account_record.emailAddress0}" />
 			<textfield id="description" set="{@account_record.description}" />
-			<textfield id="description" set="{@account_record.description}" />
+            
+            <link id="tab1" required="false" />
+            <select id="industry" set="{@account_record.industry}" />
+            <select id="account_type" set="{@account_record.account_type}" />
+						            
 			<button value="Save" />
 		</form>
 		<wait timeout="3" />

@@ -31,7 +31,9 @@
 	<textfield id="first_name_advanced" assertnot="{@pre_lead_first_name}" />
 	<browser assertnot = "{@lead1_first_name}" />
 	
-	<link text="Basic Search" jscriptevent="onclick" />
+	<!--Restore back to basic search-->
+	<link text="Basic Search" required="false" />
+	<button id="search_form_clear" />
 	<button id="search_form_submit" />
 	
 	<script file="{@global.scriptsdir}/modules/lib/Lead_Delete_Lib.xml" />	

@@ -31,6 +31,11 @@ class SugarView
      */
     var $errors = array();
     /**
+     * Set to true if you do not want to display errors from SugarView::displayErrors(); instead they will be returned
+     */
+    var $suppressDisplayErrors = false;
+
+    /**
      * Options for what UI elements to hide/show/
      */
     var $options = array('show_header' => true, 'show_title' => true, 'show_subpanels' => false, 'show_search' => true, 'show_footer' => true, 'show_javascript' => true, 'view_print' => false,);
@@ -105,8 +110,17 @@ class SugarView
      */
     public function displayErrors()
     {
+        $errors = '';
+
         foreach($this->errors as $error) {
-            echo '<span class="error">' . $error . '</span><br>';
+            $errors .= '<span class="error">' . $error . '</span><br>';
+        }
+
+        if ( !$this->suppressDisplayErrors ) {
+            echo $errors;
+        }
+        else {
+            return $errors;
         }
     }
 
@@ -431,15 +445,6 @@ class SugarView
                 if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
                     // We have a default value. Use it
                     if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
-                        // As of 6.1, we shouldn't have a max subtabs higher than 10.
-                        // If it's larger, bring it down to the max and save it in the config override
-                        if($GLOBALS['sugar_config']['default_max_subtabs'] > 10){
-                            require_once('modules/Configurator/Configurator.php');
-                            $configurator = new Configurator();
-                            $configurator->config['default_max_subtabs'] = '10';
-                            $configurator->handleOverride();
-                            $configurator->clearCache();
-                        }
                         $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
                     }
                     else{
@@ -580,14 +585,14 @@ class SugarView
         $ss->display($headerTpl);
 
         $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
-        
-        if ( isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message']) ) {
-            foreach ( $_SESSION['user_error_message'] as $error_message ) {
+
+        $errorMessages = SugarApplication::getErrorMessages();
+        if ( !empty($errorMessages)) {
+            foreach ( $errorMessages as $error_message ) {
                 echo('<p class="error">' . $error_message.'</p>');
             }
-            unset($_SESSION['user_error_message']);
         }
-        
+
     }
     /**
      * If the view is classic then this method will include the file and
@@ -647,6 +652,42 @@ EOQ;
     }
 
     /**
+     * Get JS validation code for views
+     */
+    public static function getJavascriptValidation()
+    {
+        global $timedate;
+        $cal_date_format = $timedate->get_cal_date_format();
+        $timereg = $timedate->get_regular_expression($timedate->get_time_format());
+        $datereg = $timedate->get_regular_expression($timedate->get_date_format());
+        $date_pos = '';
+        foreach ($datereg['positions'] as $type => $pos) {
+            if (empty($date_pos)) {
+                $date_pos .= "'$type': $pos";
+            } else {
+                $date_pos .= ",'$type': $pos";
+            }
+        }
+
+        $time_separator = $timedate->timeSeparator();
+        $hour_offset = $timedate->getUserUTCOffset() * 60;
+
+        // Add in the number formatting styles here as well, we have been handling this with individual modules.
+        require_once ('modules/Currencies/Currency.php');
+        list ($num_grp_sep, $dec_sep) = get_number_seperators();
+
+        $the_script = "<script type=\"text/javascript\">\n" . "\tvar time_reg_format = '" .
+             $timereg['format'] . "';\n" . "\tvar date_reg_format = '" .
+             $datereg['format'] . "';\n" . "\tvar date_reg_positions = { $date_pos };\n" .
+             "\tvar time_separator = '$time_separator';\n" .
+             "\tvar cal_date_format = '$cal_date_format';\n" .
+             "\tvar time_offset = $hour_offset;\n" . "\tvar num_grp_sep = '$num_grp_sep';\n" .
+             "\tvar dec_sep = '$dec_sep';\n" . "</script>";
+
+        return $the_script;
+    }
+
+    /**
      * Called from process(). This method will display the correct javascript.
      */
     protected function _displayJavascript()
@@ -696,8 +737,8 @@ EOHTML;
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
-            echo $GLOBALS['timedate']->get_javascript_validation();
-            if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+            echo self::getJavascriptValidation();
+            if (!is_file((sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
@@ -719,6 +760,9 @@ EOHTML;
                 echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
             else
                 echo getVersionedScript('cache/Expressions/functions_cache.js');
+
+            require_once("include/Expressions/DependencyManager.php");
+            echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
             //END SUGARCRM flav=pro ONLY
         }
 
@@ -754,6 +798,34 @@ EOHTML;
         $ss->assign("AUTHENTICATED",isset($_SESSION["authenticated_user_id"]));
         $ss->assign('MOD',return_module_language($GLOBALS['current_language'], 'Users'));
 
+		$bottomLinkList = array();
+		 if (isset($this->action) && $this->action != "EditView") {
+			 $bottomLinkList['print'] =
+			array($app_strings['LNK_PRINT'] => 'javascript:void window.open(\'index.php?'.$GLOBALS['request_string'].'\',\'printwin\',\'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1\')');
+
+		}
+		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => '#top');
+
+		$bottomLinksStr = "";
+		foreach($bottomLinkList as $key => $value) {
+			foreach($value as $text => $link) {
+				   $href = $link;
+				   if(substr($link, 0, 11) == "javascript:") {
+                       $onclick = " onclick=\"".substr($link,11)."\"";
+                       $href = "#";
+                   } else {
+                   		$onclick = "";
+                   	}
+                $imageURL = SugarThemeRegistry::current()->getImageURL($key.'.gif');
+				$bottomLinksStr .= "<a href=\"{$href}\"";
+				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
+				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'></a>";
+				$bottomLinksStr .= " <a href=\"{$href}\" class=\"bottomLink\"";
+				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
+				$bottomLinksStr .= ">".$text."</a>";
+			}
+		}
+		$ss->assign("BOTTOMLINKS",$bottomLinksStr);
         if (SugarConfig::getInstance()->get('calculate_response_time', false))
             $ss->assign('STATISTICS',$this->_getStatistics());
 
@@ -762,7 +834,7 @@ EOHTML;
 
         //BEGIN SUGARCRM flav=com  && dep=os ONLY
 
-        $copyright = '&copy; 2004-2010 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br>This program is free software; you can redistribute it and/or modify it under the terms of the <br><a href="LICENSE.txt" target="_blank" class="copyRightLink"> GNU Affero General Public License version 3</a> as published by the Free Software Foundation, including the additional permission set forth in the source code header.<br>';
+        $copyright = '&copy; 2004-2011 SugarCRM Inc. The Program is provided AS IS, without warranty.  Licensed under <a href="LICENSE.txt" target="_blank" class="copyRightLink">AGPLv3</a>.<br>This program is free software; you can redistribute it and/or modify it under the terms of the <br><a href="LICENSE.txt" target="_blank" class="copyRightLink"> GNU Affero General Public License version 3</a> as published by the Free Software Foundation, including the additional permission set forth in the source code header.<br>';
 
         //END SUGARCRM flav=com  && dep=os ONLY
 
@@ -771,7 +843,7 @@ EOHTML;
 
         //BEGIN SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 
-        $copyright = 'é™�ä¸­å›½åœ°åŒºä½¿ç�1ￄ1�7�1�7�1�7r> &copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> ç‰ˆæ�ƒæ‰€æœ 1�7�1�7r>';
+        $copyright = 'é™�ä¸­å›½åœ°åŒºä½¿ç�1ￄ1�7�1�7�1�7r> &copy; 2004-2011 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> ç‰ˆæ�ƒæ‰€æœ 1�7�1�7r>';
 
         //END SUGARCRM flav=pro  && dep=od && reg=zh_cn  ONLY
 
@@ -779,7 +851,7 @@ EOHTML;
 
           //BEGIN SUGARCRM lic=sub ONLY
 
-        $copyright = '&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br>';
+        $copyright = '&copy; 2004-2011 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br>';
 
           //END SUGARCRM lic=sub ONLY
 
@@ -932,16 +1004,7 @@ EOHTML;
         $deltaTime = $endTime - $GLOBALS['startTime'];
         $this->responseTime = number_format(round($deltaTime, 2), 2);
         // Print out the resources used in constructing the page.
-        $included_files = get_included_files();
-        // take all of the included files and make a list that does not allow for duplicates based on case
-        // I believe the full get_include_files result set appears to have one entry for each file in real
-        // case, and one entry in all lower case.
-        $list_of_files_case_insensitive = array();
-        foreach($included_files as $key => $name) {
-            // preserve the first capitalization encountered.
-            $list_of_files_case_insensitive[mb_strtolower($name) ] = $name;
-        }
-        $this->fileResources = sizeof($list_of_files_case_insensitive);
+        $this->fileResources = count(get_included_files());
     }
 
     private function _getStatistics()
@@ -1004,43 +1067,39 @@ EOHTML;
         if ( empty($module) )
             $module = $this->module;
 
-        $module_menu = sugar_cache_retrieve("{$current_user->id}_{$module}_module_menu_{$current_language}");
-        if ( !is_array($module_menu) ) {
-            $final_module_menu = array();
+        $final_module_menu = array();
 
-            if (file_exists('modules/' . $module . '/Menu.php')) {
-                $GLOBALS['module_menu'] = $module_menu = array();
-                require('modules/' . $module . '/Menu.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
-            }
-            if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
-                $GLOBALS['module_menu'] = $module_menu = array();
-                require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
-            }
-            if (!file_exists('modules/' . $module . '/Menu.php')
-                    && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')
-                    && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
-                $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
-                    $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
-                $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
-                    $module, $module);
-                if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
-                    if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
-                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
-                            $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
-                    else
-                        $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
-                            $app_strings['LBL_IMPORT'], "Import", $module);
-            }
-            if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
-                $GLOBALS['module_menu'] = $module_menu = array();
-                require('custom/application/Ext/Menus/menu.ext.php');
-                $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
-            }
-            $module_menu = $final_module_menu;
-            sugar_cache_put("{$current_user->id}_{$module}_module_menu_{$current_language}",$module_menu);
+        if (file_exists('modules/' . $module . '/Menu.php')) {
+            $GLOBALS['module_menu'] = $module_menu = array();
+            require('modules/' . $module . '/Menu.php');
+            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
+        if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
+            $GLOBALS['module_menu'] = $module_menu = array();
+            require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
+            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+        }
+        if (!file_exists('modules/' . $module . '/Menu.php')
+                && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')
+                && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
+            $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
+                $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
+            $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
+                $module, $module);
+            if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
+                if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
+                    $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
+                        $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
+                else
+                    $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
+                        $app_strings['LBL_IMPORT'], "Import", $module);
+        }
+        if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
+            $GLOBALS['module_menu'] = $module_menu = array();
+            require('custom/application/Ext/Menus/menu.ext.php');
+            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
+        }
+        $module_menu = $final_module_menu;
 
         return $module_menu;
     }
@@ -1088,11 +1147,11 @@ EOHTML;
         $params = $this->_getModuleTitleParams();
         $count = count($params);
         $index = 0;
-        
+
 		if(SugarThemeRegistry::current()->directionality == "rtl") {
 			$params = array_reverse($params);
 		}
-	
+
         foreach($params as $parm){
             $index++;
             $theTitle .= $parm;
@@ -1125,8 +1184,8 @@ EOHTML;
      *
      * @return string File location of the metadata file.
      */
-    public function getMetaDataFile(){
-
+    public function getMetaDataFile()
+    {
         $metadataFile = null;
         $foundViewDefs = false;
         $viewDef = strtolower($this->type) . 'viewdefs';
@@ -1162,11 +1221,13 @@ EOHTML;
     /**
      * Returns an array composing of the breadcrumbs to use for the module title
      *
+     * @param bool $browserTitle true if the returned string is being used for the browser title, meaning
+     *                           there should be no HTML in the string
      * @return array
      */
-    protected function _getModuleTitleParams($bTitle=false)
+    protected function _getModuleTitleParams($browserTitle = false)
     {
-        $params = array($this->_getModuleTitleListParam($bTitle));
+        $params = array($this->_getModuleTitleListParam($browserTitle));
 
         if (isset($this->action)){
             switch ($this->action) {
@@ -1201,9 +1262,11 @@ EOHTML;
     /**
      * Returns the portion of the array that will represent the listview in the breadcrumb
      *
+     * @param bool $browserTitle true if the returned string is being used for the browser title, meaning
+     *                           there should be no HTML in the string
      * @return string
      */
-    protected function _getModuleTitleListParam($bTitle=false)
+    protected function _getModuleTitleListParam( $browserTitle = false )
     {
     	global $current_user;
     	global $app_strings;
@@ -1214,39 +1277,38 @@ EOHTML;
     		$firstParam = $this->module;
 
     	$iconPath = $this->getModuleTitleIconPath($this->module);
-    	if($this->action == "ListView" || $this->action == "index")
-    	{
-    	    if (!empty($iconPath) && !$bTitle) {
+    	if($this->action == "ListView" || $this->action == "index") {
+    	    if (!empty($iconPath) && !$browserTitle) {
     	    	if (SugarThemeRegistry::current()->directionality == "ltr") {
 					return "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>" 
+					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>"
 					     . $this->getBreadCrumbSymbol().$app_strings['LBL_SEARCH'];
     	    	} else {
     	    		return $app_strings['LBL_SEARCH'].$this->getBreadCrumbSymbol()
     	    			 . "<a href='index.php?module={$this->module}&action=index'>"
-					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";	
+					     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
     	    	}
 			} else {
 				return $firstParam;
 			}
-    	} else
-    	{
-		    if (!empty($iconPath) && !$bTitle) {
+    	} 
+    	else {
+		    if (!empty($iconPath) && !$browserTitle) {
 				return "<a href='index.php?module={$this->module}&action=index'>"
 				     . "<img src='{$iconPath}' alt='".$this->module."' title='".$this->module."' align='absmiddle'></a>";
 			} else {
-				return "<a href='index.php?module={$this->module}&action=index'>{$firstParam}</a>";
+				return "{$firstParam}";
 			}
     	}
     }
 
-    protected function getModuleTitleIconPath($module) {
+    protected function getModuleTitleIconPath($module) 
+    {
     	$iconPath = "";
-    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
-    	{
+    	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
-    	} else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
-    	{
+    	} 
+    	else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     	}
     	return $iconPath;
@@ -1266,22 +1328,23 @@ EOHTML;
         if ( $this->module == 'Users' && ($this->action == 'SetTimezone' || $this->action == 'Login') )
             return $browserTitle;
         $params = $this->_getModuleTitleParams(true);
-        foreach ($params  as $value )
+        foreach ($params as $value )
             $browserTitle = strip_tags($value) . ' &raquo; ' . $browserTitle;
 
         return $browserTitle;
     }
-    
-     /**
+
+    /**
      * Returns the correct breadcrumb symbol according to theme's directionality setting
-     * 
      *
      * @return string
      */
-    public function getBreadCrumbSymbol() {
+    public function getBreadCrumbSymbol()
+    {
     	if(SugarThemeRegistry::current()->directionality == "ltr") {
         	return "<span class='pointer'>&raquo;</span>";
-        } else {
+        }
+        else {
         	return "<span class='pointer'>&laquo;</span>";
         }
     }

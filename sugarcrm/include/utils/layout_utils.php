@@ -207,18 +207,7 @@ function get_module_title(
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;
-/*
-        if (isset($action) && $action != "EditView") {
-            $printImageURL = SugarThemeRegistry::current()->getImageURL('print.gif');
-            $the_title .= <<<EOHTML
-<a href="javascript:void window.open('index.php?{$GLOBALS['request_string']}','printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')" class='utilsLink'>
-<img src="{$printImageURL}" alt="{$GLOBALS['app_strings']['LNK_PRINT']}"></a>
-<a href="javascript:void window.open('index.php?{$GLOBALS['request_string']}','printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')" class='utilsLink'>
-{$GLOBALS['app_strings']['LNK_PRINT']}
-</a>
-EOHTML;
-        }
-*/
+
         $the_title .= '</span>';
     }
     
@@ -248,23 +237,74 @@ EOHTML;
 function getClassicModuleTitle(
     $module, 
     $params, 
-    $show_help)
+    $show_create,
+    $index_url_override="")
 {
+	global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
+    global $app_strings;
+    
 	$module_title = '';
 	$count = count($params);
 	$index = 0;
 
+
+
+    $module = preg_replace("/ /","",$module);
+    $iconPath = "";
+    $the_title = "<div class='moduleTitle'>\n<h2>";
+    
+    
+    if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
+    {
+    	$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
+    } else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false)))
+    {
+        $iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
+    }
+    if (!empty($iconPath)) {
+    	$url = (!empty($index_url_override)) ? $index_url_override : "index.php?module={$module}&action=index";
+    	array_unshift ($params,"<a href='{$url}'><img src='{$iconPath}' " 
+	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>");
+	}
+	
+	$new_params = array();
+	$i = 0;
+	foreach ($params as $value) {
+	  if ((!is_null($value)) && ($value !== "")) {
+	    $new_params[$i] = $value;
+	    $i++;
+	  }
+	} 
+
+
 	if(SugarThemeRegistry::current()->directionality == "rtl") {
-		$params = array_reverse($params);
+		$new_params = array_reverse($new_params);
 	}
-	foreach($params as $parm){
-		$index++;
-	   	$module_title .= $parm;
-	   	if($index < $count || ($count == 1 && SugarThemeRegistry::current()->directionality == "rtl")){
-	    	$module_title .= SugarView::getBreadCrumbSymbol();
-	    }
-	}
-	return get_module_title($module, $module_title, $show_help, $count);
+	
+	$module_title = join(SugarView::getBreadCrumbSymbol(),$new_params);
+	
+	
+	
+    $the_title .= $module_title."</h2>\n";
+    
+    if ($show_create) {
+        $the_title .= "<span class='utils'>";
+        $createRecordURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+        $the_title .= <<<EOHTML
+&nbsp;
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<img src='{$createRecordURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+{$GLOBALS['app_strings']['LNK_CREATE']}
+</a>
+EOHTML;
+
+        $the_title .= '</span>';
+    }
+    
+    $the_title .= "</div>\n";
+    return $the_title;
+    
 }
 
 /**

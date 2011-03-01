@@ -29,8 +29,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $config = array (
   'name' => 'Twitter&#169;',
-  'properties' => array (
-      'company_url' => 'http://widgets.twimg.com/j/2/widget.js',
+  'eapm' => array(
+    'enabled' => true,
   ),
+  'order' => 5,
+  'properties' => array (
+      //BEGIN SUGARCRM flav=pro ONLY
+      'oauth_consumer_key' => '',
+      'oauth_consumer_secret' => '',
+      //END SUGARCRM flav=pro ONLY
+      ),
 );
+
+//BEGIN SUGARCRM flav=int ONLY
+$config['properties']['oauth_consumer_key'] = 'ZjoUiIbIeJJT7ONo7JcuAg';
+$config['properties']['oauth_consumer_secret'] = 'GjOjIaes3VzWUBstl3JfxouYMhB4TbZJcTra93KSo0';
+//END SUGARCRM flav=int ONLY
 ?>

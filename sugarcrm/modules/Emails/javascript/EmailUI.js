@@ -286,8 +286,8 @@ SE.accounts = {
                 var viewH = YAHOO.util.Dom.getViewportHeight();
                 if (this.header && el && viewH - 50 < el.clientHeight) {
                     var body = this.header.nextElementSibling;
-					body.style.overflow = "auto";
-                    body.style.height = (viewH - 50) + "px";
+					body.style.overflow = "hidden";
+                    body.style.height = "100%";
                 }
             }, EAD);
             EAD.setHeader(mod_strings.LBL_EMAIL_ACCOUNTS_INBOUND);
@@ -1217,6 +1217,8 @@ SE.contextMenus = {
 
 
         var count = 0;
+        
+        
         if(type == 'read' || type == 'deleted') {
             // mark read
             for(var j=0; j<rows.length; j++) {
@@ -1225,7 +1227,8 @@ SE.contextMenus = {
                     SE.grid.getRecord(rows[j]).setData("seen", "1");
                 }
             }
-
+           //bug# 40257 - adding if condition to check the ieId (Id of a sugar mail box) , which would be null for search email results
+            if(ieId){
             var node = SE.folders.getNodeFromIeIdAndMailbox(ieId, folder);
             var unseenCount = node.data.unseen;
             if (isNaN(unseenCount)) {
@@ -1235,6 +1238,7 @@ SE.contextMenus = {
             node.data.unseen = finalCount;
 
             SE.accounts.renderTree();
+            }
         } else if(type == 'unread') {
             // mark unread
             for(var j=0; j<rows.length; j++) {

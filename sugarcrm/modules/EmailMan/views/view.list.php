@@ -49,7 +49,7 @@ class EmailManViewList extends ViewList
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
@@ -59,6 +59,12 @@ class EmailManViewList extends ViewList
     	   );
     }
     
+    
+    function listViewPrepare(){
+    	$this->options['show_title'] = false;
+    	parent::listViewPrepare();
+    	echo $this->getModuleTitle(false);
+    }
 	/**
 	 * @see ViewList::listViewProcess()
 	 */

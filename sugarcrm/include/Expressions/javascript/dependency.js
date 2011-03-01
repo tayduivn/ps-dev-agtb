@@ -66,11 +66,13 @@ SUGAR.forms.AssignmentHandler.ANIMATE = true;
  */
 SUGAR.forms.AssignmentHandler.VARIABLE_MAP = {};
 
+//BEGIN SUGARCRM flav=een ONLY
 /**
  * @STATIC
  * This array contains a list of valid relationship links for this module
  */
 SUGAR.forms.AssignmentHandler.LINKS = {};
+//END SUGARCRM flav=een ONLY
 
 /**
  * @STATIC
@@ -147,7 +149,7 @@ SUGAR.forms.AssignmentHandler.registerView = function(view, startEl) {
 	if (Dom.get(view) != null && Dom.get(view).tagName == "FORM") {
 		return AH.registerForm(view);
 	}
-	var nodes = YAHOO.util.Selector.query("." + view + ".view [id]", startEl);
+	var nodes = YAHOO.util.Selector.query("span.sugar_field", startEl);
 	for (var i in nodes) {
 		if (nodes[i].id != "")
 			AH.VARIABLE_MAP[view][nodes[i].id] = nodes[i];
@@ -170,12 +172,17 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
 SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 
+	//BEGIN SUGARCRM flav=een ONLY
 	//Relate fields are only string on the client side, so return the variable name back.
 	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
 		return variable;
+	//END SUGARCRM flav=een ONLY
 
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
+
+	if (field.children.length == 1 && field.children[0].tagName.toLowerCase() == "input")
+		field = field.children[0];
 
 	// special select case for IE6 and dropdowns
 	if ( field.tagName.toLowerCase() == "select" ) {
@@ -188,7 +195,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 
 	//checkboxes need to return a boolean value
 	if(field.tagName.toLowerCase() == "input" && field.type.toLowerCase() == "checkbox") {
-		return field.checked?SUGAR.expressions.Expression.TRUE:SUGAR.expressions.Expression.FALSE;
+		return field.checked ? SUGAR.expressions.Expression.TRUE : SUGAR.expressions.Expression.FALSE;
 	}
 
 	//Special case for dates
@@ -196,11 +203,16 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 		return SUGAR.util.DateUtils.parse(field.value);
 	}
 
-
+	//For DetailViews where value is enclosed in a span tag
+    if (field.tagName.toLowerCase() == "span")
+    {
+        return document.all ? trim(field.innerText) : trim(field.textContent);
+    }
+	
 	if (field.value !== null && typeof(field.value) != "undefined")
 		return field.value;
 	
-	return field.innerHTML;
+	return YAHOO.lang.trim(field.innerText);
 }
 
 
@@ -275,7 +287,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	if (listeners != null) {
 		for (var i = 0; i < listeners.length; i++) {
 			var l = listeners[i];
-			l.fn(null, l.obj);
+			l.fn.call(l.scope ? l.scope : this, l.obj);
 		}
 	}
 
@@ -395,10 +407,12 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 
 		var value = "";
 
+		//BEGIN SUGARCRM flav=een ONLY
 		//Relate fields are only string on the client side, so return the variable name back.
 		if(SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname])
 			value = varname;
 		else
+		//END SUGARCRM flav=een ONLY
 			value = SUGAR.forms.AssignmentHandler.getValue(varname, this.formName);
 
 		if (typeof(value) == "string")
@@ -417,9 +431,11 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 				return toConst('"' + value + '"');
 			}
 		} else if (typeof(value) == "object" && value.getTime) {
-			//This is probably a date object that we must convert to a string first.
-			//value = "date(" + value.getTime() + ")";
-			//expression = expression.replace(regex, value);
+			//This is probably a date object that we must convert to an expression
+			var d = new SUGAR.DateExpression("");
+			d.evaluate = function(){return this.value};
+			d.value = value;
+			return d;
 		}
 
 
@@ -625,7 +641,7 @@ SUGAR.forms.Dependency = function(trigger, actions, falseActions, testOnLoad, fo
 	this.trigger = trigger;
 	if (testOnLoad) {
 		try {
-			SUGAR.forms.Trigger.fire("", trigger);
+			YAHOO.util.Event.onDOMReady(SUGAR.forms.Trigger.fire, trigger, true);
 		}catch (e) {}
 	}
 }
@@ -701,14 +717,15 @@ SUGAR.forms.Trigger.prototype._attachListeners = function() {
 	if ( ! (this.variables instanceof Array) ) {
 		this.variables = [this.variables];
 	}
+	
 	for ( var i = 0; i < this.variables.length; i++){
 		var el = handler.getElement(this.variables[i]);
 		if (!el) continue;
 		if (el.type && el.type.toUpperCase() == "CHECKBOX")
 		{
-			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this);
+			YAHOO.util.Event.addListener(el, "click", SUGAR.forms.Trigger.fire, this, true);
 		} else {
-			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this);
+			YAHOO.util.Event.addListener(el, "change", SUGAR.forms.Trigger.fire, this, true);
 		}
 	}
 }
@@ -732,16 +749,16 @@ SUGAR.forms.Trigger.prototype.setContext = function(context)
  * is triggered. If the condition is true, then it triggers
  * all the dependencies.
  */
-SUGAR.forms.Trigger.fire = function(e, obj)
+SUGAR.forms.Trigger.fire = function()
 {
 	// eval the condition
 	var eval;
 	var val;
 	try {
-		eval = SUGAR.forms.DefaultExpressionParser.evaluate(obj.condition, this.context);
+		eval = SUGAR.forms.DefaultExpressionParser.evaluate(this.condition, this.context);
 	} catch (e) {
 		if (!SUGAR.isIE && console && console.log){ 
-			console.log('ERROR:' + e + "; in Condition: " + obj.condition);
+			console.log('ERROR:' + e + "; in Condition: " + this.condition);
 		}
 	}
 
@@ -752,14 +769,14 @@ SUGAR.forms.Trigger.fire = function(e, obj)
 	// if the condition is met
 	if ( val == SUGAR.expressions.Expression.TRUE ) {
 		// single dependency
-		if (obj.dependency instanceof SUGAR.forms.Dependency ) {
-			obj.dependency.fire(false);
+		if (this.dependency instanceof SUGAR.forms.Dependency ) {
+			this.dependency.fire(false);
 			return;
 		}
 	} else if ( val == SUGAR.expressions.Expression.FALSE ) {
 		// single dependency
-		if (obj.dependency instanceof SUGAR.forms.Dependency ) {
-			obj.dependency.fire(true);
+		if (this.dependency instanceof SUGAR.forms.Dependency ) {
+			this.dependency.fire(true);
 			return;
 		}
 	}

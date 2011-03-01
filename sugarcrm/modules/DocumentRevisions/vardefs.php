@@ -57,6 +57,7 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
   	'len' => '100',
   	'comment' => 'Document ID from documents web server provider',
   	'importable' => false,
+  	'studio' => 'false',
   ),
   'doc_type' =>
   array (
@@ -66,6 +67,9 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'function' => 'getDocumentsExternalApiDropDown',
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
+ 	//BEGIN SUGARCRM flav=com ONLY
+	'studio' => 'false',
+  	//END SUGARCRM flav=com ONLY 
   ),
 'doc_url' =>
   array (
@@ -75,15 +79,7 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
   	'len' => '255',
   	'comment' => 'Document URL from documents web server provider',
   	'importable' => false,
-  ),
-'doc_direct_url' =>
-  array (
-  	'name' => 'doc_direct_url',
-  	'vname' => 'LBL_DOC_DIRECT_URL',
-  	'type' => 'varchar',
-  	'len' => '255',
-  	'comment' => 'Document URL from documents web server provider for direct download',
-  	'importable' => false,
+  	'studio' => 'false',
   ),
    'date_entered' =>
   array (
@@ -108,6 +104,7 @@ $dictionary['DocumentRevision'] = array('table' => 'document_revisions'
     'name' => 'filename',
     'vname' => 'LBL_FILENAME',
     'type' => 'file',
+  	'dbType' => 'varchar',
     'required'=>true,
     'len' => '255',
     'allowEapm' => true,

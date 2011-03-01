@@ -232,6 +232,9 @@ class ViewConvertLead extends SugarView
             }
             $jsOut .= "
             YAHOO.util.Event.onDOMReady(SUGAR.convert.toggle$module);";
+        } else if (isset($viewdef['default_action'])  && $viewdef['default_action'] == "create")
+        {
+             $jsOut .= "\n            SUGAR.convert.{$module}Enabled = true;";
         }
         $jsOut .= "
             YAHOO.util.Event.addListener('new$module', 'click', SUGAR.convert.toggle$module);
@@ -430,7 +433,7 @@ class ViewConvertLead extends SugarView
                 if(empty($module_name)) {
                     $module_name = translate($beanName);
                 }
-                echo "<li>" . translate("LBL_CREATED_NEW") . $module_name . " -
+                echo "<li>" . translate("LBL_CREATED_NEW") . ' ' . $module_name . " -
                     <a href='index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}'>
                        {$bean->get_summary_text()}
                     </a></li>";
@@ -676,10 +679,10 @@ class ViewConvertLead extends SugarView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
-	    $params = parent::_getModuleTitleParams();
+	    $params = parent::_getModuleTitleParams($browserTitle);
 	    $params[] = "<a href='index.php?module=Leads&action=DetailView&record={$this->bean->id}'>{$this->bean->name}</a>";
 	    $params[] = $mod_strings['LBL_CONVERTLEAD'];
     	return $params;

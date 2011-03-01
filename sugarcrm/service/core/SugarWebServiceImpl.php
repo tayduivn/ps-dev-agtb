@@ -627,7 +627,7 @@ function get_server_info(){
 	}
 
 	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_server_info');
-	return array('flavor' => $sugar_flavor, 'version' => $sugar_version, 'gmt_time' => gmdate('Y-m-d H:i:s'));
+	return array('flavor' => $sugar_flavor, 'version' => $sugar_version, 'gmt_time' => TimeDate::getInstance()->nowDb());
 } // fn
 
 /**
@@ -658,7 +658,7 @@ function get_user_id($session){
  *                  'link_fields' -- Array - The vardef information on the link fields
  * @exception 'SoapFault' -- The SOAP error, if any
  */
-function get_module_fields($session, $module_name, $fields){
+function get_module_fields($session, $module_name, $fields = array()){
 	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields');
 	global  $beanList, $beanFiles;
 	$error = new SoapError();
@@ -1196,7 +1196,7 @@ function get_report_entries($session, $ids, $select_fields ){
 	$class_name = $beanList[$module_name];
 	require_once($beanFiles[$class_name]);
 
-	$temp = new $class_name();
+	$temp = new $class_name('','','',true);
 	foreach($ids as $id) {
 		$seed = @clone($temp);
 		$seed->retrieve($id);

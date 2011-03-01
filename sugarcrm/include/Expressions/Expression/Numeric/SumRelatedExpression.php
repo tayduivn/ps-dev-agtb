@@ -1,5 +1,5 @@
-
 <?php
+//FILE SUGARCRM flav=een ONLY
 /************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -74,7 +74,7 @@ class SumRelatedExpression extends NumericExpression
                     action:"execFunction",
                     id: record,
                     tmodule:module,
-                    "function":"rollup",
+                    "function":"rollupSum",
                     params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
                 });
                 //The response should the be the JSON encoded value of the related field
@@ -95,7 +95,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return array("rollup");
+		return array("rollupSum");
 	}
 
 	/**

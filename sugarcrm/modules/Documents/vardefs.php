@@ -44,6 +44,7 @@ $dictionary['Document'] = array('table' => 'documents',
   	'len' => '100',
   	'comment' => 'Document ID from documents web server provider',
   	'importable' => false,
+  	'studio' => 'false',
   ),
   'doc_type' =>
   array (
@@ -54,6 +55,15 @@ $dictionary['Document'] = array('table' => 'documents',
   	'len' => '100',
   	'comment' => 'Document type (ex: Google, box.net, LotusLive)',
     'popupHelp' => 'LBL_DOC_TYPE_POPUP',
+    'massupdate' => false,
+    'options' => 'eapm_list',
+    'default'	=> 'Sugar',
+ 	//BEGIN SUGARCRM flav=com ONLY
+	'studio' => 'false',
+  	//END SUGARCRM flav=com ONLY 
+  	//BEGIN SUGARCRM flav!=com ONLY  
+  	'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+	//END SUGARCRM flav!=com ONLY
   ),
 'doc_url' =>
   array (
@@ -63,17 +73,9 @@ $dictionary['Document'] = array('table' => 'documents',
   	'len' => '255',
   	'comment' => 'Document URL from documents web server provider',
   	'importable' => false,
+    'massupdate' => false,
+  	'studio' => 'false',
   ),
-'doc_direct_url' =>
-  array (
-  	'name' => 'doc_direct_url',
-  	'vname' => 'LBL_DOC_DIRECT_URL',
-  	'type' => 'varchar',
-  	'len' => '255',
-  	'comment' => 'Document URL from documents web server provider for direct download',
-  	'importable' => false,
-  ),
-
   'filename' =>
   array (
      'name' => 'filename',
@@ -268,7 +270,22 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
    ),
-
+  'quotes'=>
+   array (
+       'name' => 'quotes',
+       'type' => 'link',
+       'relationship' => 'documents_quotes',
+       'source' => 'non-db',
+       'vname' => 'LBL_QUOTES_SUBPANEL_TITLE',
+   ),
+  'products'=>
+   array (
+       'name' => 'products',
+       'type' => 'link',
+       'relationship' => 'documents_products',
+       'source' => 'non-db',
+       'vname' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+   ),   
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',
@@ -403,7 +420,7 @@ $dictionary['Document'] = array('table' => 'documents',
        ),
  'relationships' => array (
     'document_revisions' => array('lhs_module'=> 'Documents', 'lhs_table'=> 'documents', 'lhs_key' => 'id',
-                              'rhs_module'=> 'Documents', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'document_id',
+                              'rhs_module'=> 'DocumentRevisions', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'document_id',
                               'relationship_type'=>'one-to-many')
 
    ,'documents_modified_user' =>

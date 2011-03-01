@@ -62,7 +62,7 @@ class SOAPAPI2Test extends SOAPTestCase
     		$this->assertTrue(empty($this->_soapClient->faultcode), 'Can not retrieve newly created contact. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
     	}
     } // fn
-    
+
     /**
      * @ticket 38986
      */
@@ -136,7 +136,7 @@ class SOAPAPI2Test extends SOAPTestCase
     public function _setEntryForContact() {
 		$this->_login();
 		global $timedate;
-		$current_date = $timedate->convert_to_gmt_datetime('now');
+		$current_date = $timedate->nowDb();
         $time = mt_rand();
     	$first_name = 'SugarContactFirst' . $time;
     	$last_name = 'SugarContactLast';
@@ -157,7 +157,7 @@ class SOAPAPI2Test extends SOAPTestCase
     	global $soap_version_test_accountId;
 		$this->_login();
 		global $timedate;
-		$current_date = $timedate->convert_to_gmt_datetime('now');
+		$current_date = $timedate->nowDb();
         $time = mt_rand();
     	$name = 'SugarAccount' . $time;
         $email1 = 'account@'. $time. 'sugar.com';
@@ -172,7 +172,7 @@ class SOAPAPI2Test extends SOAPTestCase
     	global $soap_version_test_accountId, $soap_version_test_opportunityId;
 		$this->_login();
 		global $timedate;
-		$date_closed = $timedate->convert_to_gmt_datetime(strtotime('+1 week'));
+		$date_closed = $timedate->getNow()->get("+1 week")->asDb();
         $time = mt_rand();
     	$name = 'SugarOpportunity' . $time;
     	$account_id = $soap_version_test_accountId;

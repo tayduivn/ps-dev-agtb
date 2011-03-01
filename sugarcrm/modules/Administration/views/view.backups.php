@@ -26,7 +26,7 @@ class ViewBackups extends SugarView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
@@ -131,7 +131,7 @@ class ViewBackups extends SugarView
                     "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                    $mod_strings['LBL_BACKUPS_TITLE'],
                    ), 
-                true
+                false
                 );
             echo $mod_strings['LBL_BACKUP_INSTRUCTIONS_1']; ?>
             <br>

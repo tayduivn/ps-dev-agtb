@@ -46,7 +46,7 @@ global $theme;
 
 $GLOBALS['log']->info("Project Dashboard view");
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MY_PROJECTS_DASHBOARD'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_MY_PROJECTS_DASHBOARD']), true);
 
 $sugar_smarty = new Sugar_Smarty();
 ///
@@ -61,8 +61,8 @@ $sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $projectBean = new Project();
 $projects = array();
 
-$today = date($GLOBALS['timedate']->dbDayFormat, time());
-$nextWeek = date($GLOBALS['timedate']->dbDayFormat, time() + (7 * 24 * 60 * 60));
+$today = $timedate->nowDbDate();
+$nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
 
 $query = "SELECT * FROM project WHERE project.assigned_user_id='".$current_user->id."' AND project.estimated_end_date >= '".
         $today."' AND project.is_template=0 AND project.deleted=0 order by project.estimated_end_date ASC";

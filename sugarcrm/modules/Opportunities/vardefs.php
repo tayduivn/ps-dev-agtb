@@ -136,6 +136,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'duplicate_merge'=>'disabled',
     'importable' => 'required',
     'required' => true,
+  	'options' => 'numeric_range_search_dom',
+    'enable_range_search' => '1',
   ),
   'amount_usdollar' =>
   array (
@@ -198,6 +200,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'importable' => 'required',
     'required' => true,
     'enable_range_search' => '1',
+    'options' => 'date_range_search_dom',
   ),
   'next_step' =>
   array (

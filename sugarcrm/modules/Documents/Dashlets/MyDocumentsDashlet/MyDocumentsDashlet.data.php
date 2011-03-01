@@ -32,15 +32,21 @@ global $current_user;
 $dashletData['MyDocumentsDashlet']['searchFields'] = array('date_entered'    => array('default' => ''),
                                                           'document_name'    => array('default' => ''),
                                                           'category_id'      => array('default' => ''),
- 														  // ??? 'document_source'  => array('default' => ''),
+														  //BEGIN SUGARCRM flav!=com ONLY
+ 														  'doc_type'  => array('default' => ''),
+														  //END SUGARCRM flav!=com ONLY
  														  'status_id'     => array('default' => ''),
  														  'active_date'      => array('default' => ''),
                                                           //BEGIN SUGARCRM flav=pro ONLY
                                                           'team_id'          => array('default' => '', 'label'=>'LBL_TEAMS'),
                                                           //END SUGARCRM flav=pro ONLY
+
                                                           'assigned_user_id' => array('type'    => 'assigned_user_name', 
                                                                                       'default' => $current_user->name,
 																					  'label' => 'LBL_ASSIGNED_TO'));
+
+
+
 $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array('width'   => '40', 
                                                                       'label'   => 'LBL_NAME',
                                                                       'link'    => true,
@@ -62,7 +68,12 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
 																		 'default' => true), 
 													  'active_date' => array('width' => '8',
                                                                          'label' => 'LBL_ACTIVE_DATE',
-																		 'default' => true), 
+																		 'default' => true),
+													   //BEGIN SUGARCRM flav!=com ONLY
+													  'doc_type' => array('width' => '8',
+                                                                         'label' => 'LBL_DOC_TYPE',
+																		 'default' => false), 
+													   //END SUGARCRM flav!=com ONLY
 													  'exp_date' => array('width' => '8',
                                                                          'label' => 'LBL_EXPIRATION_DATE',
 																		 'default' => false), 
@@ -78,5 +89,20 @@ $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array(
                                                       'team_name' => array('width'   => '15', 
                                                                            'label'   => 'LBL_LIST_TEAM'),
                                                       //END SUGARCRM flav=pro ONLY
+                                                      'FILENAME' => array (
+                                                                    'width' => '20%',
+                                                                    'label' => 'LBL_FILENAME',
+                                                                    'link' => true,
+                                                                    'default' => false,
+                                                                    'bold' => false,
+                                                                    'displayParams' => array ( 'module' => 'Documents', ),
+                                                                    'related_fields' =>
+                                                                    array (
+                                                                        0 => 'document_revision_id',
+                                                                        1 => 'doc_id',
+                                                                        2 => 'doc_type',
+                                                                        3 => 'doc_url',
+                                                                    ),
+                                                                  ),
                                                );
 ?>

@@ -194,6 +194,14 @@ if(!function_exists('mb_strlen')) {
     installLog("MBString Support Found");
 }
 
+// zip
+if(!class_exists('ZipArchive')) {
+    $zipStatus = "<b><span class=stop>{$mod_strings['ERR_CHECKSYS_ZIP']}</font></b>";
+    installLog("ERROR:: {$mod_strings['ERR_CHECKSYS_ZIP']}");
+}else{
+    installLog("ZIP Support Found");
+}
+
 // config.php
 if(file_exists('./config.php') && (!(make_writable('./config.php')) ||  !(is_writable('./config.php')))) {
     installLog("ERROR:: {$mod_strings['ERR_CHECKSYS_CONFIG_NOT_WRITABLE']}");

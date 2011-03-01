@@ -61,14 +61,13 @@
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <input type="hidden" name="{{$vardef.docId}}" id="{{$vardef.docId}}" value="{$fields.{{$vardef.docId}}.value}">
 <input type="hidden" name="{{$vardef.docUrl}}" id="{{$vardef.docUrl}}" value="{$fields.{{$vardef.docUrl}}.value}">
-<input type="hidden" name="{{$vardef.docDirectUrl}}" id="{{$vardef.docDirectUrl}}" value="{$fields.{{$vardef.docDirectUrl}}.value}">
 <input type="hidden" name="{{$idName}}_old_doctype" id="{{$idName}}_old_doctype" value="{$fields.{{$vardef.docType}}.value}">
 {{/if}}
 <span id="{{$idName}}_old" style="display:{if !$showRemove}none;{/if}">
   <a href="index.php?entryPoint=download&id={$fields.{{$vardef.fileId}}.value}&type={{$vardef.linkModule}}" class="tabDetailViewDFLink">{{sugarvar key='value'}}</a>
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-{if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'SugarCRM' && !empty($fields.{{$vardef.docUrl}}.value) }
+{if isset($fields.{{$vardef.docType}}) && !empty($fields.{{$vardef.docType}}.value) && $fields.{{$vardef.docType}}.value != 'Sugar' && !empty($fields.{{$vardef.docUrl}}.value) }
 {capture name=imageNameCapture assign=imageName}
 {$fields.{{$vardef.docType}}.value}_image_inline.png
 {/capture}
@@ -81,9 +80,6 @@
 </span>
 {if !$noChange}
 <span id="{{$idName}}_new" style="display:{if $showRemove}none;{/if}">
-{{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<h4><input type="radio" name="{{$idName}}_uploadType" value="upload" id="{{$idName}}_rad_upload" checked> {$APP.LBL_UPLOAD_FROM_COMPUTER}</h4>
-{{/if}}
 <input type="hidden" name="{{$idName}}_escaped">
 <input id="{{$idName}}_file" name="{{$idName}}_file" 
 type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}" 
@@ -99,8 +95,12 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 
 
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
-<span id="{{$idName}}_externalApiSelector" style="display:inline;">
-<br><h4><input type="radio" name="{{$idName}}_uploadType" value="search" id="{{$idName}}_rad_search"> {$APP.LBL_SEARCH_EXTERNAL_API}</h4>
+<span id="{{$idName}}_externalApiSelector" style="display:none;">
+<br><h4 id="{{$idName}}_externalApiLabel">
+<span id="{{$idName}}_more">{sugar_image name="advanced_search" width="8px" height="8px"}</span>
+<span id="{{$idName}}_less" style="display: none;">{sugar_image name="basic_search" width="8px" height="8px"}</span>
+{$APP.LBL_SEARCH_EXTERNAL_API}</h4>
+<span id="{{$idName}}_remoteNameSpan" style="display: none;">
 <input type="text" class="sqsEnabled" name="{{$idName}}_remoteName" id="{{$idName}}_remoteName" size="{{$displayParams.size|default:30}}" 
 {{if !empty($vardef.len)}}
     maxlength='{{$vardef.len}}'
@@ -109,7 +109,19 @@ onchange="document.getElementById('{{$idName}}').value='something'"
 {{else}}
     maxlength="255"
 {{/if}} autocomplete="off" value="{if !empty($fields[{{$vardef.docId}}].value)}{{sugarvar key='name'}}{/if}">
+
+{{if empty($displayParams.hideButtons) }}
+<span class="id-ff multiple">
+<button type="button" name="{{$idName}}_remoteSelectBtn" id="{{$idName}}_remoteSelectBtn" tabindex="{{$tabindex}}" title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" class="button firstChild" value="{$APP.LBL_SELECT_BUTTON_LABEL}"
+onclick="SUGAR.field.file.openPopup('{{$idName}}'); return false;"
+><img src="{sugar_getimagepath file="id-ff-select.png"}"></button
+><button type="button" name="{{$idName}}_remoteClearBtn" id="{{$idName}}_remoteClearBtn" tabindex="{{$tabindex}}" title="{$APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" class="button lastChild" value="{$APP.LBL_CLEAR_BUTTON_LABEL}"
+onclick="SUGAR.field.file.clearRemote('{{$idName}}'); return false;"
+><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
 </span>
+{{/if}}
+</span>
+
 <div style="display: none;" id="{{$idName}}_securityLevelBox">
   <b>{$APP.LBL_EXTERNAL_SECURITY_LEVEL}: </b>
   <select name="{{$idName}}_securityLevel" id="{{$idName}}_securityLevel">
@@ -129,8 +141,8 @@ sqs_objects["{$form_name}_{{$idName}}_remoteName"] = {ldelim}
 "method":"externalApi",
 "api":"",
 "modules":["EAPM"],
-"field_list":["name", "id", "url", "direct_url", "id"],
-"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$vardef.docDirectUrl}}", "{{$idName}}"],
+"field_list":["name", "id", "url", "id"],
+"populate_list":["{{$idName}}_remoteName", "{{$vardef.docId}}", "{{$vardef.docUrl}}", "{{$idName}}"],
 "required_list":["name"],
 "conditions":[],
 "no_match_text":"No Match"
@@ -147,12 +159,54 @@ enableQS(false);
 {{/if}}
 {else}
 {* No change possible *}
+
 {{if isset($vardef.allowEapm) && $vardef.allowEapm}}
 <script type="text/javascript">
-YAHOO.util.Event.onDOMReady(function() {ldelim}
+YAHOO.util.Event.onDOMReady(function() 
+{ldelim}
 document.getElementById("{{$vardef.docType}}").disabled = true;
 {rdelim});
 </script>
 {{/if}}
+
 {/if}
+
+{{if !empty($displayParams.onchangeSetFileNameTo) }}
+<script type="text/javascript">
+
+var {{$idName}}_setFileName = function()
+{literal}
+{
+    var dom = YAHOO.util.Dom;
+{/literal}    
+    sourceElement = "{{$idName}}_file";
+    targetElement = "{{$displayParams.onchangeSetFileNameTo}}";
+	src = new String(dom.get(sourceElement).value);
+	target = new String(dom.get(targetElement).value);
+{literal}
+	if (target.length == 0) 
+	{
+		lastindex=src.lastIndexOf("/");
+		if (lastindex == -1) {
+			lastindex=src.lastIndexOf("\\");
+		} 
+		if (lastindex == -1) {
+			dom.get(targetElement).value=src;
+		} else {
+			dom.get(targetElement).value=src.substr(++lastindex, src.length);
+		}	
+	}	
+}
+{/literal}
+
+YAHOO.util.Event.onDOMReady(function() 
+{ldelim}
+if(document.getElementById("{{$displayParams.onchangeSetFileNameTo}}"))
+{ldelim}
+YAHOO.util.Event.addListener('{{$idName}}_file', 'change', {{$idName}}_setFileName);
+{rdelim}
+{rdelim});
+</script>
+{{/if}}
+
 </span>

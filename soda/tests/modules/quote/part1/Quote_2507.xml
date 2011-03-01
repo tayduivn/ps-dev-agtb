@@ -19,7 +19,7 @@
     <link id='moduleTab_Quotes'/>
     <browser assert='Quotes'/>
     <form id='search_form'>
-        <link text='Basic Search' required='false'/>
+        <link id='basic_search_link' required='false'/>
         <wait timeout='2'/>
         <button id='search_form_clear'/>
     </form>

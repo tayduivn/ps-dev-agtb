@@ -2,7 +2,7 @@
 /**
  * PHPUnit
  *
- * Copyright (c) 2002-2010, Sebastian Bergmann <sebastian@phpunit.de>.
+ * Copyright (c) 2002-2011, Sebastian Bergmann <sebastian@phpunit.de>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
  * @package    PHPUnit
  * @subpackage Framework
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
  * @since      File available since Release 2.0.0
@@ -76,9 +76,9 @@ require_once 'PHP/CodeCoverage.php';
  * @package    PHPUnit
  * @subpackage Framework
  * @author     Sebastian Bergmann <sebastian@phpunit.de>
- * @copyright  2002-2010 Sebastian Bergmann <sebastian@phpunit.de>
+ * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
- * @version    Release: 3.5.6
+ * @version    Release: 3.5.12
  * @link       http://www.phpunit.de/
  * @since      Class available since Release 2.0.0
  */
@@ -365,28 +365,19 @@ class PHPUnit_Framework_TestSuite implements PHPUnit_Framework_Test, PHPUnit_Fra
             return;
         }
 
-        if (!file_exists($filename)) {
-            $includePaths = explode(PATH_SEPARATOR, get_include_path());
-
-            foreach ($includePaths as $includePath) {
-                $file = $includePath . DIRECTORY_SEPARATOR . $filename;
-
-                if (file_exists($file)) {
-                    $filename = $file;
-                    break;
-                }
-            }
-        }
-
         PHPUnit_Util_Class::collectStart();
-        PHPUnit_Util_Fileloader::checkAndLoad($filename, $syntaxCheck);
+        $filename   = PHPUnit_Util_Fileloader::checkAndLoad($filename, $syntaxCheck);
         $newClasses = PHPUnit_Util_Class::collectEnd();
         $baseName   = str_replace('.php', '', basename($filename));
 
         foreach ($newClasses as $className) {
             if (substr($className, 0 - strlen($baseName)) == $baseName) {
-                $newClasses = array($className);
-                break;
+                $class = new ReflectionClass($className);
+
+                if ($class->getFileName() == $filename) {
+                    $newClasses = array($className);
+                    break;
+                }
             }
         }
 
@@ -840,9 +831,9 @@ class PHPUnit_Framework_TestSuite implements PHPUnit_Framework_Test, PHPUnit_Fra
             $this->addTest(
               self::warning(
                 sprintf(
-                  'Test method "%s" is not public.',
-
-                  $name
+                  'Test method "%s" in test class "%s" is not public.',
+                  $name,
+                  $class->getName()
                 )
               )
             );

@@ -18,7 +18,12 @@ class Bug40433Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp() 
     {
-    	$this->reportInstance = new Report();
+    	$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+		$this->reportInstance = new Report();
 		$this->dbType = $this->reportInstance->db->dbType;
 		//force test to simulate mssql
 		$this->reportInstance->db->dbType = 'mssql';	    
@@ -29,6 +34,8 @@ class Bug40433Test extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    $this->reportInstance->db->dbType = $this->dbType;	
 		$this->reportInstance = null;
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
 	}
 
 	/**

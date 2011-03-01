@@ -71,10 +71,10 @@ if(!$hasUserPreferences){
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
-        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
+        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
+        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
+        'pbls_ids' => 'OppByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -645,8 +645,14 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
                 }
 
             	array_push($dashletIds, $id);
-
-            	$dashlet->process();
+            	
+		        $dashlets = $current_user->getPreference('dashlets', 'Home'); // Using hardcoded 'Home' because DynamicAction.php $_REQUEST['module'] value is always Home
+		        $lvsParams = array();
+		        if(!empty($dashlets[$id]['sort_options'])){
+		            $lvsParams = $dashlets[$id]['sort_options'];
+    	        }
+		        
+            	$dashlet->process($lvsParams);
             	try {
 	            	$display[$colNum]['dashlets'][$id]['display'] = $dashlet->display();
 	            	$display[$colNum]['dashlets'][$id]['displayHeader'] = $dashlet->getHeader();
@@ -707,12 +713,19 @@ $sugar_smarty->assign('lblNumberOfColumns', $GLOBALS['app_strings']['LBL_NUMBER_
 $sugar_smarty->assign('lbl1Column', $GLOBALS['app_strings']['LBL_1_COLUMN']);
 $sugar_smarty->assign('lbl2Column', $GLOBALS['app_strings']['LBL_2_COLUMN']);
 $sugar_smarty->assign('lbl3Column', $GLOBALS['app_strings']['LBL_3_COLUMN']);
-$sugar_smarty->assign('form_header', get_module_title("Home","", false));
+$sugar_smarty->assign('form_header', getClassicModuleTitle("Home",array(), false));
 //END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));
 $sugar_smarty->assign('app', $GLOBALS['app_strings']);
 $sugar_smarty->assign('module', 'Home');
+//custom chart code
+require_once('include/SugarCharts/SugarChartFactory.php');
+$sugarChart = SugarChartFactory::getInstance();
+$resources = $sugarChart->getChartResources();
+$mySugarResources = $sugarChart->getMySugarChartResources();
+$sugar_smarty->assign('chartResources', $resources);
+$sugar_smarty->assign('mySugarChartResources', $mySugarResources);
 echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
 
 ?>

@@ -280,7 +280,7 @@ class Popup_Picker
 
         //output header
         echo "<table width='100%' cellpadding='0' cellspacing='0'><tr><td>";
-        echo get_module_title($focus->module_dir, translate('LBL_MODULE_NAME', $focus->module_dir).": ".$focus->name, false);
+        echo getClassicModuleTitle($focus->module_dir, array(translate('LBL_MODULE_NAME', $focus->module_dir),$focus->name), false);
         echo "</td><td align='right' class='moduleTitle'>";
         echo "<A href='javascript:print();' class='utilsLink'><img src='".SugarThemeRegistry::current()->getImageURL("print.gif")."' width='13' height='13' alt='".$app_strings['LNK_PRINT']."' border='0' align='absmiddle'></a>&nbsp;<A href='javascript:print();' class='utilsLink'>".$app_strings['LNK_PRINT']."</A>\n";
         echo "</td></tr></table>";

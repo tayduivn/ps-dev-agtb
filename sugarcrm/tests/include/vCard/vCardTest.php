@@ -83,6 +83,46 @@ class vCardTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains("N;CHARSET=utf-8:$lname;$fname", $cardtext, "Cannot find N name", true);
         $this->assertContains("FN;CHARSET=utf-8: $fname $lname", $cardtext, "Cannot find FN name", true);
     }
+    
+    public function testClear()
+    {
+        $vcard = new vCard();
+        $vcard->setProperty('dog','cat');
+        $vcard->clear();
+        
+        $this->assertNull($vcard->getProperty('dog'));
+    }
+    
+    public function testSetProperty()
+    {
+        $vcard = new vCard();
+        $vcard->setProperty('dog','cat');
+        
+        $this->assertEquals('cat',$vcard->getProperty('dog'));
+    }
+    
+    public function testGetPropertyThatDoesNotExist()
+    {
+        $vcard = new vCard();
+        
+        $this->assertNull($vcard->getProperty('dog'));
+    }
+    
+    public function testSetTitle()
+    {
+        $vcard = new vCard();
+        $vcard->setTitle('cat');
+        
+        $this->assertEquals('cat',$vcard->getProperty('TITLE'));
+    }
+    
+    public function testSetORG()
+    {
+        $vcard = new vCard();
+        $vcard->setORG('foo','bar');
+        
+        $this->assertEquals('foo;bar',$vcard->getProperty('ORG'));
+    }
 }
 
 class vCardMockModule extends Person

@@ -81,15 +81,22 @@ class ImportViewLast extends SugarView
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
-	    global $mod_strings;
-
-    	return array(
-           "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$_REQUEST['import_module'].'_32.png')."' alt='".$_REQUEST['import_module']."' title='".$_REQUEST['import_module']."' align='absmiddle'></a>",
-    	   "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>",
-    	   $mod_strings['LBL_RESULTS'],
-    	   );
+	    global $mod_strings, $app_list_strings;
+	    
+	    $iconPath = $this->getModuleTitleIconPath($this->module);
+	    $returnArray = array();
+	    if (!empty($iconPath) && !$browserTitle) {
+	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
+    	}
+    	else {
+    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
+    	}
+	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
+	    $returnArray[] = $mod_strings['LBL_RESULTS'];
+    	
+	    return $returnArray;
     }
 
  	/**
@@ -179,7 +186,9 @@ class ImportViewLast extends SugarView
             $lbl_last_imported = $mod_strings['LBL_LAST_IMPORTED'];
             $lvf->lv->mergeduplicates = false;
             $lvf->lv->showMassupdateFields = false;
-            $lvf->template = 'include/ListView/ListViewNoMassUpdate.tpl';
+            if ( $lvf->type == 2 ) {
+                $lvf->template = 'include/ListView/ListViewNoMassUpdate.tpl';
+            }
             $module_mod_strings = return_module_language($current_language, $this->bean->module_dir);
             $lvf->setup('', $where, $params, $module_mod_strings, 0, -1, '', strtoupper($beanname), array(), 'id');
             $lvf->display($lbl_last_imported.": ".$module_mod_strings['LBL_MODULE_NAME']);

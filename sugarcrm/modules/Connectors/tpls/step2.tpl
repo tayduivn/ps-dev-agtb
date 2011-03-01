@@ -55,14 +55,14 @@
 	{foreach from=$source_names item=source_name}
 		<td>
 		{if $source_name.id}
-		<input class="button" onclick="copy_all('{$source_name.id}', '{$source_name.color}');" type="button" name="copyValue" value="<<"/>&nbsp;
+		<input class="button" onclick="copy_all('{$source_name.id}', '{$source_name.color}');" type="button" name="copyValue" value="&lt;&lt;"/>&nbsp;
 		<script language='javascript'>
 			sourceArray[sourceIndex] = '{$source_name.id}';
 			sourceIndex++;
 		</script>
 		{/if}
 		<b>{$source_name.name}</b></td>
-		
+
 	{/foreach}
 	</tr>
 	{foreach from=$merge_fields key=field_name item=label}
@@ -70,7 +70,7 @@
 			<td width='12.5%' scope="row">
 			{sugar_translate label="$label" module="$merge_module"}
 			</td>
-			
+
 			<td class="tabDetailViewDF">
 			   <input name="{$field_name}" id="{$field_name}" size="35" maxlength="150" type="text" value="{$record->$field_name}">
 			</td>
@@ -103,7 +103,7 @@
 		</td>
 		<td align="right" nowrap></td>
 	</tr>
-	</table>	 
+	</table>
 </form>
 
 {literal}

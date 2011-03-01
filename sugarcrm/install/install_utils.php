@@ -1009,9 +1009,9 @@ function handleSugarConfig() {
     $sugar_config['session_dir']                    = $setup_site_session_path;
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
-    $sugar_config['upload_dir']                     = $cache_dir.'upload/';
-    $sugar_config['import_dir']                     = $sugar_config['upload_dir'] .'import/';
-    $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
+    $sugar_config['tmp_dir']                        = $cache_dir.'xml/';
+    $sugar_config['upload_dir']                 = $cache_dir.'upload/';
+//    $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
 //BEGIN SUGARCRM flav=com ONLY
     if( isset($_SESSION['setup_site_sugarbeet_anonymous_stats']) ){
         $sugar_config['sugarbeet']      = $_SESSION['setup_site_sugarbeet_anonymous_stats'];
@@ -1239,6 +1239,8 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
+    
+	require_once('install/UserDemoData.php');
 
     //Create default admin user
     $user = new User();
@@ -1254,6 +1256,7 @@ function create_default_users(){
     //$user->user_password = $user->encrypt_password($setup_site_admin_password);
     $user->user_hash = strtolower(md5($setup_site_admin_password));
     $user->email = '';
+    $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
 
     // echo 'Creating RSS Feeds';

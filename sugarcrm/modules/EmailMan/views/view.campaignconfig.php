@@ -35,7 +35,7 @@ class ViewCampaignconfig extends SugarView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
@@ -67,7 +67,7 @@ class ViewCampaignconfig extends SugarView
         global $app_strings;
         global $current_user;
         
-        echo $this->getModuleTitle();
+        echo $this->getModuleTitle(false);
         global $currentModule;
         
         $focus = new Administration();

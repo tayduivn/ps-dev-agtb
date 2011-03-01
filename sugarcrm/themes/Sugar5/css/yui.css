@@ -591,7 +591,6 @@ p#clear {
  .yui-calendar a.calnav {
     border: 1px solid #f2f2f2;
     padding: 0 4px;
-    text-decoration: none;
     color: #000;
     zoom: 1;
 }
@@ -680,16 +679,18 @@ p#clear {
     color: #000;
 }
 
- .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default
-    {
-    border: 1px solid #304369;
+ .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default {
     background-color: #426fd9;
+    border: 1px solid #326A9C; 
+    -moz-border-radius :  4px 4px 4px 4px;
 }
 
- .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default button
-    {
+ .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default button {
     color: #fff;
+    background-color: #356EA1;
+    text-shadow: -1px -1px #254F74;    
 }
+
 
 .yui-carousel {
     visibility: hidden;

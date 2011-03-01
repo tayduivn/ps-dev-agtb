@@ -65,20 +65,22 @@ $dictionary["documents_opportunities"] = array (
     ),
     1 => 
     array (
-      'name' => 'documents_opportunities_opportunity_id',
+      'name' => 'idx_docu_opps_oppo_id',
       'type' => 'alternate_key',
       'fields' => 
       array (
         0 => 'opportunity_id',
+        1 => 'document_id',
       ),
     ),
     2 => 
     array (
-      'name' => 'documents_opportunities_document_id',
+      'name' => 'idx_docu_oppo_docu_id',
       'type' => 'alternate_key',
       'fields' => 
       array (
         0 => 'document_id',
+        1 => 'opportunity_id',
       ),
     ),
   ),

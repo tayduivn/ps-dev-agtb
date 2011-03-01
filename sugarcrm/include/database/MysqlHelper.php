@@ -180,7 +180,7 @@ class MysqlHelper extends DBHelper
             ($ref['colType'] == 'text' || $ref['colType'] == 'blob'
                 || $ref['colType'] == 'longtext' || $ref['colType'] == 'longblob' ))
             $ref['default'] = '';
-
+            
         if ( $return_as_array )
             return $ref;
         else
@@ -396,7 +396,7 @@ class MysqlHelper extends DBHelper
                 $columns[$name]['auto_increment'] = '1';
             if ($row['Null'] == 'NO' && !stristr($row['Key'],'PRI'))
                 $columns[$name]['required'] = 'true';
-            if ( !empty($row['Default']) )
+            if (!empty($row['Default']) )
                 $columns[$name]['default'] = $row['Default'];
         }
         return $columns;

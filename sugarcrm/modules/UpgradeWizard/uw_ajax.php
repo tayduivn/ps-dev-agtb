@@ -104,8 +104,8 @@ function commitAjaxFinalTouches($persistence) {
 		}
 
 		//MFH #13468
-		$nowDate = gmdate($timedate->dbDateFormat);
-		$nowTime = gmdate($timedate->dbTimeFormat);
+		$nowDate = $timedate->nowDbDate();
+		$nowTime = $timedate->asDbTime($timedate->getNow());
 		$nowDateTime = $nowDate.' '.$nowTime;
 
 		if($_REQUEST['addTaskReminder'] == 'remind') {

@@ -139,21 +139,11 @@ abstract class DashletGenericChart extends Dashlet
      */
     public function displayScript()
     {
-    	global $sugar_config, $current_user, $current_language;
 
-		$xmlFile = sugar_cached("xml/"). $current_user->id . '_' . $this->id . '.xml';
-		$chartStringsXML = sugar_cached("xml/") .'chart_strings.' . $current_language .'.lang.xml';
+		require_once('include/SugarCharts/SugarChartFactory.php');
+		$sugarChart = SugarChartFactory::getInstance();
+		return $sugarChart->getDashletScript($this->id);
 
-    	$ss = new Sugar_Smarty();
-        $ss->assign('chartName', $this->id);
-        $ss->assign('chartXMLFile', $xmlFile);
-
-        $ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
-        $ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
-        $ss->assign('chartStringsXML', $chartStringsXML);
-
-        $str = $ss->fetch('include/Dashlets/DashletGenericChartScript.tpl');
-        return $str;
     }
 
     /**

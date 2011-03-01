@@ -63,7 +63,10 @@ $sync_modules = array(
 $moduleList =  array(
 			     'Home',
 				 'Calendar',
-				 'Activities',
+				 'Meetings',
+                 'Calls',
+                 'Notes',
+                 'Tasks',
 				 'Accounts',
 				 'Contacts',
 				 'Leads',

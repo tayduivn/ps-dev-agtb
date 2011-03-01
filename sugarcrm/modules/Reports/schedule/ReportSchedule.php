@@ -55,7 +55,7 @@ function save_schedule($id, $user_id, $report_id, $date_start, $interval, $activ
 		$id = create_guid();
 
 		if( empty($date_start) )
-		    $date_start = gmdate($timedate->get_db_date_time_format() );
+		    $date_start = $timedate->nowDb();
 
         $next_run_date = $this->getNextRunDate($date_start, $interval);
 
@@ -91,7 +91,7 @@ function getNextRunDate($date_start,$interval)
     global $timedate;
 	$time = time();
 
-    $date_start = strtotime($date_start . ' GMT');
+    $date_start = $timedate->fromDb($date_start)->ts;
     if( $date_start <= $time )
     {
         while($date_start <= $time)
@@ -100,7 +100,7 @@ function getNextRunDate($date_start,$interval)
     else
         $date_start += $interval;
 
-    return gmdate($timedate->get_db_date_time_format(), $date_start);
+    return $timedate->fromTimestamp($date_start)->asDb();
 }
 
 function get_users_schedule($id=''){
@@ -133,17 +133,18 @@ function get_report_schedule($report_id){
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $row;
+			$return_array[] = $row;
 	}
 	return $return_array;
 }
 
 function get_reports_to_email($user_id= '', $schedule_type="pro"){
+    global $timedate;
 	$where = '';
 	if(!empty($user_id)){
 		$where = "AND user_id='$user_id'";
 	}
-	$time = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
+	$time = $timedate->nowDb();
 	$query = "SELECT report_schedules.* FROM $this->table_name \n".
 			"join saved_reports on saved_reports.id=$this->table_name.report_id \n".
 			"join users on users.id = report_schedules.user_id".
@@ -190,18 +191,21 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 }
 
 function update_next_run_time($schedule_id, $next_run, $interval){
-    $next_run .= " GMT"; // Append GMT to the value from the database to ensure it is converted correctly in strtotime
-    $last_run = strtotime($next_run);
-    $time = time();
+        global $timedate;
+		$last_run = $timedate->fromDb($next_run)->ts;
+		$time = time();
+		while($last_run <= $time){
+			$last_run += $interval;
+		}
+		$next_run = $timedate->fromTimestamp($last_run)->asDb();
+		$query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
+		$this->db->query($query);
 
-    while($last_run <= $time){
-        $last_run += $interval;
-    }
+}
 
-    $next_run = gmdate($GLOBALS['timedate']->get_db_date_time_format(), $last_run); //GMT for database
-    $query = "UPDATE $this->table_name SET next_run='$next_run' WHERE id='$schedule_id'";
-    $this->db->query($query);
-			
+function mark_deleted($id){
+    $query = "UPDATE {$this->table_name} SET deleted = '1' WHERE id = '{$id}'";
+    $GLOBALS['db']->query($query);
 }
 }
 ?>

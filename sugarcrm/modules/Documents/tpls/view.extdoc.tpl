@@ -44,25 +44,30 @@ failure: function(o) {
 window.history.go(0);
 }
 };
-
-YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents&action=extdoc&button=Search&name_basic="+document.getElementById('dcSearch').value);
-
+{/literal}
+YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents&action=extdoc&isPopup={$isPopup}&elemBaseName={$elemBaseName}&apiName={$apiName}&button=Search&name_basic="+document.getElementById('dcSearch').value);
+{literal}
 }
 {/literal}
 </script>
+<div id="dcSearchFormDiv" style="left:20px;">
 <form id="dcSearchForm">
-<table class='dcSearch' cellpadding='0' cellspacing='0'>
-			<tr>
-			<td>
-			<input type='text' id='dcSearch' name='dcSearch' value="{$DCSEARCH}">
-			</td>
-			<td>
-			<input type='submit' name='submit' class='dcSubmit' value='Search Documents' onclick="submitListViewDCMenu(this); return false;">
-			</td>
-			</tr>
-		</table>
-</form>		
-<table width='500' class='dcListView' cellpadding='0' cellspacing='0'>
+<table class='dcSearch' border='0' cellpadding='2' cellspacing='2'>
+<tr>
+<td>
+<b>{$searchFieldLabel}:&nbsp;&nbsp;</b>
+</td>
+<td>
+<input type='text' id='dcSearch' name='dcSearch' value="{$DCSEARCH}">
+</td>
+<td>
+<input type='submit' name='submit' class='dcSubmit' value='{$APP.LBL_SEARCH}' onclick="submitListViewDCMenu(this); return false;">
+</td>
+</tr>
+</table>
+</form>	
+</div>	
+<table width='100%' class='dcListView' cellpadding='0' cellspacing='0'>
   <tr height='20'>
     {counter start=0 name="colCounter" print=false assign="colCounter"}
     {foreach from=$displayColumns key=colHeader item=params}
@@ -90,16 +95,16 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
         {strip}
           <td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
             {if $col == 'NAME' || $params.bold}<b>{/if}
-            {if $params.link && !empty($rowData.DIRECT_URL) }
-              <a href="{$rowData.DIRECT_URL}" target="_new">
+            {if $params.link && !empty($rowData.DOC_URL) }
+              <a href="{$rowData.DOC_URL}" target="{$linkTarget}">
             {/if}
             {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
             {if empty($rowData.$col)}&nbsp;{/if}
-            {if $params.link && !empty($rowData.DIRECT_URL) }
+            {if $params.link && !empty($rowData.DOC_URL) }
               </a>
             {/if}
             {if $params.link && !empty($rowData.URL) }
-              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file="LotusLive_image_inline.png"}" border="0"></a>
+              <a href="{$rowData.URL}" class="tabDetailViewDFLink" target="_blank"><img src="{$imgPath}" border="0"></a>
             {/if}
             {if $col == 'NAME' || $params.bold}</b>{/if}
           </td>

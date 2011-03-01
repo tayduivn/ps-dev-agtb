@@ -48,7 +48,7 @@ if (isset($_REQUEST['record']) && isset($_REQUEST['record'])) {
 }
 
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->get_summary_text(), true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->get_summary_text()), true);
 
 $xtpl = new XTemplate("modules/Teams/EditView.html");
 $xtpl->assign("MOD", $mod_strings);

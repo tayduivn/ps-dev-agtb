@@ -34,8 +34,7 @@ class EAPMController extends SugarController
      */
     protected $api;
 
-    var $admin_actions = array('displayproperties', 'listview', 'index');
-
+    var $admin_actions = array('listview', 'index');
 
 	public function process() {
 		if(!is_admin($GLOBALS['current_user']) && in_array(strtolower($this->action), $this->admin_actions)) {
@@ -46,8 +45,7 @@ class EAPMController extends SugarController
 
     protected function failed($error)
     {
-        if ( ! is_array($_SESSION['user_error_message']) ) { $_SESSION['user_error_message'] = array(); }
-        $_SESSION['user_error_message'][] = $error;
+        SugarApplication::appendErrorMessage($error);
         $GLOBALS['log']->error("Login error: $error");
         $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
         return $this->set_redirect($url);
@@ -60,9 +58,16 @@ class EAPMController extends SugarController
         if(empty($this->api)) {
             return $this->failed(translate('LBL_AUTH_UNSUPPORTED', $this->bean->module_dir));
         }
-        $this->api->loadEAPM($this->bean);
+        if(empty($this->bean->id)){
+            $eapmBean = EAPM::getLoginInfo($this->bean->application,true);
+            if($eapmBean){
+                SugarApplication::appendErrorMessage(translate('LBL_APPLICATION_FOUND_NOTICE', $this->bean->module_dir));
+                $this->bean->id = $eapmBean->id;
+            }
+        }
         $this->bean->validated = false;
         $this->bean->save_cleanup();
+        $this->api->loadEAPM($this->bean);
     }
 
     protected function post_save()
@@ -71,7 +76,7 @@ class EAPMController extends SugarController
             // do not load bean here since password is already encoded
             $reply = $this->api->checkLogin();
             if ( !$reply['success'] ) {
-                return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+                return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
             } else {
                 $this->bean->validated();
             }
@@ -95,46 +100,67 @@ class EAPMController extends SugarController
         $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
         $reply = $this->api->checkLogin($this->bean);
         if ( !$reply['success'] ) {
-            return $this->failed(sprintf(translate('LBL_AUTH_ERROR', $this->bean->module_dir), $reply['errorMessage']));
+            return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
         } else {
             $this->bean->validated();
+            
+            // This is a tweak so that we can automatically close windows if requested by the external account system
+            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+                if(!empty($_REQUEST['callbackFunction']) && !empty($_REQUEST['application'])){
+            	    $js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
+                }else if(!empty($_REQUEST['refreshParentWindow'])){
+                    $js = '<script type="text/javascript">window.opener.location.reload();window.close();</script>';
+                }else{
+                    $js = '<script type="text/javascript">window.close();</script>';
+                }
+                echo($js);
+                return;
+            }            
+
             // redirect to detail view, as in save
             return parent::post_save();
         }
     }
 
-    protected function action_listview()
-    {
-        $this->view = 'displayproperties';
-    }
-
-    protected function action_SaveDisplayProperties()
-    {
-        //write out a custom file
-        $fileName = ExternalAPIFactory::$disabledApiFileName;
-        if(isset($_REQUEST['disabled_apis'])){
-            $disabledApis = array();
-
-            foreach(explode (',', $_REQUEST['disabled_apis'] ) as $api)
-            {
-                $disabledApis[] = $api;
+    protected function pre_QuickSave(){
+        if(!empty($_REQUEST['application'])){
+            $eapmBean = EAPM::getLoginInfo($_REQUEST['application'],true);
+            if (!$eapmBean) {
+                $this->bean->application = $_REQUEST['application'];
+                $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
+            }else{
+                $this->bean = $eapmBean;
+                $this->bean->active = 1;
             }
-
-            if(!empty($disabledApis)){
-                if(!write_array_to_file("disabledAPIList", $disabledApis, $fileName)){
-                    //Log error message and throw Exception
-                    global $app_strings;
-                    $msg = string_format($app_strings['ERR_FILE_WRITE'], array($fileName));
-                    $GLOBALS['log']->error($msg);
-                    throw new Exception($msg);
-                }
-                ExternalAPIFactory::clearCache();
-    	    }     
+            $this->pre_save();
+                    
+        }else{
+            sugar_die("Please pass an application name.");
         }
-        $this->view = 'displayproperties';
+    }
+    
+	public function action_QuickSave(){
+		$this->action_save();
+	}
+
+    protected function post_QuickSave(){
+        $this->post_save();
     }
 
-    protected function action_FlushFileCache() 
+    protected function pre_Reauthenticate(){
+        $this->bean->active = 1;
+        $this->pre_save();
+    }
+
+    protected function action_Reauthenticate(){
+        $this->action_save();
+    }
+
+    protected function post_Reauthenticate(){
+        $this->post_save();
+    }
+
+    protected function action_FlushFileCache()
     {
         $api = ExternalAPIFactory::loadAPI($_REQUEST['api']);
         if ( $api == false ) {
@@ -145,7 +171,7 @@ class EAPMController extends SugarController
         if ( method_exists($api,'loadDocCache') ) {
             $api->loadDocCache(true);
         }
-        
+
         echo 'SUCCESS';
     }
 }

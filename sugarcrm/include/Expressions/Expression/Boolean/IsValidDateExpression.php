@@ -32,65 +32,20 @@ class IsValidDateExpression extends BooleanExpression {
 	 */
 	function evaluate() {
         global $current_user;
-
-        $td = TimeDate::getInstance();
-        $format = trim($td->get_db_date_format()) . " ";
-        $userFormat = trim($GLOBALS['current_user']->getPreference("datef")) . " ";
-        if (!empty($userFormat))
-            $format = $userFormat;
-
         $dtStr = $this->getParameters()->evaluate();
-        $part = "";
-        if (!is_string($dtStr))
-            return AbstractExpression::$FALSE;;
-        $dateRemain = trim($dtStr);
 
-        $m = "";
-        $d = "";
-        $y = "";
-
-        for ($j = 0; $j < strlen($format); $j++) {
-			$c = $format[$j];
-			if ($c == ':' || $c == '/' || $c == '-' || $c == '.' || $c == " " || $c == 'a' || $c == "A") {
-				$i = strpos($dateRemain, $c);
-				if ($i === false)
-                    $i = strlen($dateRemain);
-				$v = substr($dateRemain, 0, $i);
-				$dateRemain = substr($dateRemain, $i+1);
-				//check the date parts, ignore Time for now
-                switch ($part) {
-					case 'm':
-						if (!($v > 0 && $v < 13)) {
-                            return AbstractExpression::$FALSE;
-                        }
-                        $m = $v;
-                        break;
-					case 'd':
-						if(!($v > 0 && $v < 32)) {
-                            return AbstractExpression::$FALSE;
-                        }
-                        $d = $v;
-                        break;
-					case 'Y':
-                    case 'y':
-						if(!($v > 0)) {
-                            return AbstractExpression::$FALSE;
-                        }
-                        $y = $v;
-                    break;
-				}
-				$part = "";
-			} else {
-				$part = $c;
-			}
-		}
-        if (empty($m) || empty($d) || empty($y)) {
-            return  AbstractExpression::$FALSE;
-        } else {
-            echo "month:$m, day:$d, year:$y<br/>";
+        if(empty($dtStr)) {
+            return AbstractExpression::$FALSE;
         }
-
-        return AbstractExpression::$TRUE;
+        try {
+            $date = TimeDate::getInstance()->fromUser($dtStr);
+            if(!empty($date)) {
+                return AbstractExpression::$TRUE;
+            }
+            return AbstractExpression::$FALSE;
+        } catch(Exception $e) {
+            return AbstractExpression::$FALSE;
+        }
 	}
 
 	/**

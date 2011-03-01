@@ -261,13 +261,10 @@ class EditView
 			                    }
 			                }
 
-
 			                //Set address types to have colspan value of 2 if colspan is not already defined
-			            	if(isset($colDef['type']) && $colDef['type'] == 'address' && $this->view == 'EditView' && !isset($panel[$row][$col]['colspan'])) {
-			                   $panel[$row][$col]['colspan'] = 2;
+			                if(is_array($colDef) && !empty($colDef['hideLabel']) && !isset($panel[$row][$col]['colspan'])) {
+			                    $panel[$row][$col]['colspan'] = 2;
 			                }
-
-
 
 			                $itemCount++;
 

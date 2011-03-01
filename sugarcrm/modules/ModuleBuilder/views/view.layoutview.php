@@ -61,7 +61,7 @@ class ViewLayoutView extends ViewEdit
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
@@ -110,9 +110,11 @@ class ViewLayoutView extends ViewEdit
         {
             $smarty->assign ( 'layouttitle', translate ( 'LBL_CURRENT_LAYOUT', 'ModuleBuilder' ) ) ;
 
-            if($this->editLayout == MB_DETAILVIEW){
+            if($this->editLayout == MB_DETAILVIEW || $this->editLayout == MB_QUICKCREATE){
 		        $parser2 = ParserFactory::getParser(MB_EDITVIEW,$this->editModule,$this->package);
-		        $disableLayout = $parser2->getSyncDetailEditViews();
+                if($this->editLayout == MB_DETAILVIEW){
+		            $disableLayout = $parser2->getSyncDetailEditViews();
+                }
                 if(!empty($_REQUEST['copyFromEditView'])){
                     $editViewPanels = $parser2->convertFromCanonicalForm ( $parser2->_viewdefs [ 'panels' ] , $parser2->_fielddefs ) ;
                     $parser->_viewdefs [ 'panels' ] = $editViewPanels;
@@ -206,6 +208,7 @@ class ViewLayoutView extends ViewEdit
         $smarty->assign ( 'disable_layout', $disableLayout) ;
         $smarty->assign ( 'required_fields', $requiredFields) ;
         $smarty->assign ( 'layout', $parser->getLayout () ) ;
+        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         $smarty->assign ( 'view', $this->editLayout ) ;
         $smarty->assign ( 'maxColumns', $parser->getMaxColumns() ) ;

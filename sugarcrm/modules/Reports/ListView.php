@@ -208,8 +208,8 @@ if(!empty($_REQUEST['favorite'])) { // handle favorite requests
         'saved_reports.id IN ( 
             SELECT sugarfavorites.record_id FROM sugarfavorites 
                 WHERE sugarfavorites.deleted=0 
-                    and sugarfavorites.module = "Reports" 
-                    and sugarfavorites.assigned_user_id = "'.$GLOBALS['current_user']->id.'")');
+                    and sugarfavorites.module = \'Reports\' 
+                    and sugarfavorites.assigned_user_id = \''.$GLOBALS['current_user']->id.'\')');
 }
 $displayColumns = array();
 if(!empty($_REQUEST['displayColumns'])) {
@@ -311,11 +311,11 @@ echo $favoritesText;
 $params['custom_select'] = ', report_schedules.id as schedule_id, report_schedules.active as active, report_cache.date_modified as last_run_date';
 $params['custom_from'] = " LEFT OUTER JOIN report_cache on saved_reports.id = report_cache.id AND report_cache.assigned_user_id = '{$current_user->id}' LEFT JOIN report_schedules ON saved_reports.id = report_schedules.report_id AND report_schedules.user_id = '{$current_user->id}' AND report_schedules.deleted = 0 ";
 $params['custom_order_by_override'] = array();
-$params['custom_order_by_override']['ori_code'] = 'report_cache.date_modified';
+$params['custom_order_by_override']['ori_code'] = 'saved_reports.date_entered';
 $params['custom_order_by_override']['custom_code'] = "coalesce(report_cache.date_modified, saved_reports.date_modified)";
 
 if (!isset($params['orderBy']) && $toSetdefaultOrderBy) {
-	$params['orderBy'] = "report_cache.date_modified";
+	$params['orderBy'] = "saved_reports.date_entered";
 	$params['sortOrder'] = "desc";
     $params['overrideOrder'] = true;
 } // if

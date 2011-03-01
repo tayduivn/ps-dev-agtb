@@ -90,6 +90,14 @@ studiotabs.reset();
             </td>
             <td></td>
             <td align="right" class="editIcon">
+                {* BEGIN SUGARCRM flav=pro ONLY *}
+                {if isset($field_defs.$key.calculated) && $field_defs.$key.calculated}
+                    <img src="{sugar_getimagepath file='SugarLogic/icon_calculated.png'}" />
+                {/if}
+                {if isset($field_defs.$key.dependency) && $field_defs.$key.dependency}
+                    <img src="{sugar_getimagepath file='SugarLogic/icon_dependent.png'}" />
+                {/if}
+                {* END SUGARCRM flav=pro ONLY *}
                 <img src="{sugar_getimagepath file='edit_inline.gif'}" style="cursor: pointer;"
 				onclick="var value_label = document.getElementById('subslot{$modCounter}label').innerHTML.replace(/^\s+|\s+$/g,''); 
 				    {if !($view|substr:-6 == "search") }

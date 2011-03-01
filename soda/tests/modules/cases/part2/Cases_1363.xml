@@ -1,7 +1,11 @@
 <soda>
-	<!-- Edit Scheduled Meeting_Verify that modification of schedule meeting for case can be canceled in "Meetings" detail view -->
+   <!-- Edit Scheduled Meeting_Verify that modification of schedule meeting 
+      for case can be canceled in "Meetings" detail view 
+   -->
+
 	<puts text="Test: Cases_1363.xml starting." />
-	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+   <csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" 
+      var="cases" />
 
 	<!--Create a case record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.xml" />
@@ -20,37 +24,33 @@
 
 	<!--create a Meeting-->
 	<div id="list_subpanel_activities">
-		<button value="  Schedule Meeting  " />
+      <button value="  Schedule Meeting  " />
+      <wait timeout="3" />
 	</div>
-
 	<timestamp />
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1363.csv" var="Case_1363">
-		<textfield id="name" set="{@Case_1363.name} {@user.name} {@stamp}" />
+      <div id="DEFAULT">
+         <textfield id="name" set="{@Case_1363.name} {@user.name} {@stamp}" />
+      </div>
 		<button id="Meetings_subpanel_save_button" />
 	</csv>
+
 	<div id="list_subpanel_activities">
-		<table class="list view">
 			<link text="{@Case_1363.name} {@user.name} {@stamp}" click="true" />
-		</table>
-	</div>
-	<div class="moduleTitle">
-		<link href="index.php?module=Meetings&amp;action=index" click="false" />
-		<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
 	</div>
 
+	<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
+	
 	<button id="edit_button" />
 
 	<textfield id="name" set="{@Case_1363.new_name} {@user.name} {@stamp}" />
 	<button value="Cancel" alert="true" />
-	<div class="moduleTitle">
-		<link href="index.php?module=Meetings&amp;action=index" click="false" />
-		<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
-	</div>
+	
+	<browser assert="{@Case_1363.name} {@user.name} {@stamp}" />
 
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
-
 	<puts text="Test: Cases_1363.xml finished." />
 </soda>

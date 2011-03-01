@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<span id='{{sugarvar key='name'}}'>
+<span class="sugar_field" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}">
 {sugar_number_format var={{sugarvar key='value' stringFormat='false'}} {{if !empty($vardef.precision)}}precision={{$vardef.precision}}{{/if}} }
 </span>
 {{if !empty($displayParams.enableConnectors)}}

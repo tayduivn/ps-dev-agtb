@@ -1,8 +1,6 @@
 <soda>
-	<script
-		file="{@global.scriptsdir}/modules/teams/module_lib/setup-teams.xml" />
-	<script fileset="{@global.scriptsdir}/modules/teams" />
-	<script
-		file="{@global.scriptsdir}/modules/teams/module_lib/cleanup-teams.xml" />
+	<script file="tests/modules/teams/module_lib/setup-teams.xml" />
+	<script fileset="tests/modules/teams" />
+	<script file="tests/modules/teams/module_lib/cleanup-teams.xml" />
 </soda>
 

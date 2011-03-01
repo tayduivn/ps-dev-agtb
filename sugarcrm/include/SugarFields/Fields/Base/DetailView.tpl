@@ -31,7 +31,7 @@
 {else}
 {assign var="value" value={{sugarvar key='value' string=true}} }
 {/if} 
-<span id='{{sugarvar key='name'}}'>{{sugarvar key='value'}}</span>
+<span class="sugar_field" id="{{sugarvar key='name'}}">{{sugarvar key='value'}}</span>
 {{if !empty($displayParams.enableConnectors)}}
 {if !empty($value)}
 {{sugarvar_connector view='DetailView'}}

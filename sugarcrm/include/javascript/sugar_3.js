@@ -275,15 +275,19 @@ function addToValidateMoreThan(formname, name, type, required, msg, min) {
     validate[formname][validate[formname].length - 1][minIndex] = min;
 }
 
+//BEGIN SUGARCRM flav=int ONLY
 function addToValidateUSAPhone(formname, name, type, required, msg) {
 	addToValidate(formname, name, type, required, msg);
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'usa_phone';
 }
+//END SUGARCRM flav=int ONLY
 
 function removeFromValidate(formname, name) {
-	for(i = 0; i < validate[formname].length; i++){
-		if(validate[formname][i][nameIndex] == name){
-			validate[formname].splice(i, 1);
+	for(i = 0; i < validate[formname].length; i++)
+	{
+		if(validate[formname][i][nameIndex] == name)
+		{
+			validate[formname].splice(i--,1); // We subtract 1 from i since the slice removed an element, and we'll skip over the next item we scan
 		}
 	}
 }
@@ -1008,6 +1012,7 @@ function validate_form(formname, startsWith){
 							   isError = true;
 							}
 							break;
+							//BEGIN SUGARCRM flav=int ONLY
 							case 'usa_phone':
 								var nodes = YAHOO.util.Selector.query('input[name=' + validate[formname][i][nameIndex] + ']', form);
 								for(el in nodes)
@@ -1024,6 +1029,7 @@ function validate_form(formname, startsWith){
 									}
 								}
 							break;
+							//END SUGARCRM flav=int ONLY
 							}
 						}
 					}
@@ -1663,7 +1669,7 @@ function onUnloadEditView(theForm) {
 	
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' || typeof theForm == 'undefined' || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+    if ( typeof editViewSnapshots == 'undefined' ) { 
         // No snapshots, move along
         return;
     }
@@ -1688,7 +1694,7 @@ function onUnloadEditView(theForm) {
         }
     } else {
         // Just need to check a single form for changes
-		if ( editViewSnapshots == null  || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
             return;
         }
 
@@ -3502,8 +3508,8 @@ SUGAR.language = function() {
         {
             text = this.get(module, str);
             return text != 'undefined' ? text : this.get('app_strings', str);  	
-        },
-    };
+        }
+    }
 }();
 
 SUGAR.contextMenu = function() {
@@ -3711,7 +3717,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	
 	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
 	width = (width == 600) ? 800 : width;
-	height = (width == 400) ? 800 : height;
+	height = (height == 400) ? 800 : height;
 	
 	// launch the popup
 	URL = 'index.php?'

@@ -48,7 +48,6 @@ $params = array();
 $params[] = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_FORECASTS_NAME']}</a>";
 $params[] = $mod_strings['LBL_MODULE_NAME'];
 echo getClassicModuleTitle($focus->module_dir, $params, true);
-//echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_TITLE'], true); 
 
 /* Set initial booleans for the module */
 $is_edit = false;

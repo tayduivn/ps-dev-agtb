@@ -59,6 +59,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting password',
     'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
   'join_url' =>
   array (
@@ -66,7 +67,9 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_URL',
     'type' => 'varchar',
     'len' => '200',
-    'comment' => 'Join URL'
+    'comment' => 'Join URL',
+    'studio' => 'false',
+    'reportable' => false,
   ),
   'host_url' =>
   array (
@@ -74,7 +77,9 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_URL',
     'type' => 'varchar',
     'len' => '400',
-    'comment' => 'Host URL'
+    'comment' => 'Host URL',
+    'studio' => 'false',
+    'reportable' => false,
   ),
   'displayed_url' =>
   array (
@@ -82,7 +87,9 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_URL',
     'type' => 'url',
     'len' => '400',
-    'comment' => 'Meeting URL'
+    'comment' => 'Meeting URL',
+    'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
   ),
   'creator' =>
   array (
@@ -90,7 +97,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_CREATOR',
     'type' => 'varchar',
     'len' => '50',
-    'comment' => 'Meeting creator'
+    'comment' => 'Meeting creator',
+    'studio' => 'false',
   ),
   'external_id' =>
   array (
@@ -98,7 +106,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'vname' => 'LBL_EXTERNALID',
     'type' => 'varchar',
     'len' => '50',
-    'comment' => 'Meeting ID for external app API'
+    'comment' => 'Meeting ID for external app API',
+    'studio' => 'false',
    ),
   'duration_hours' =>
   array (
@@ -164,11 +173,19 @@ $dictionary['Meeting'] = array('table' => 'meetings',
   'type' =>
    array (
      'name' => 'type',
-      'vname' => 'LBL_TYPE',
-      'type' => 'enum',
-      'len' => 255,
-      'function' => 'getMeetingsExternalApiDropDown',
-      'comment' => 'Meeting type (ex: WebEx, Other)' 
+     'vname' => 'LBL_TYPE',
+     'type' => 'enum',
+     'len' => 255,
+     'function' => 'getMeetingsExternalApiDropDown',
+     'comment' => 'Meeting type (ex: WebEx, Other)',
+     'options' => 'eapm_list',
+     'default'	=> 'Sugar',
+   	 //BEGIN SUGARCRM flav=com ONLY
+   	 'studio' => 'false',
+     //END SUGARCRM flav=com ONLY
+   	 //BEGIN SUGARCRM flav!=com ONLY
+   	 'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+   	 //END SUGARCRM flav!=com ONLY
    ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>

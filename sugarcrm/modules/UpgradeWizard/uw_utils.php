@@ -538,8 +538,9 @@ function commitHandleReminders($skippedFiles, $path='') {
 		}
 
 		//MFH #13468
-		$nowDate = gmdate($timedate->dbDateFormat);
-		$nowTime = gmdate($timedate->dbTimeFormat);
+		/// Not using new TimeDate stuff here because it needs to be compatible with 6.0
+		$nowDate = gmdate('Y-m-d');
+		$nowTime = gmdate('H:i:s');
 		$nowDateTime = $nowDate . ' ' . $nowTime;
 
 		if($_REQUEST['addTaskReminder'] == 'remind') {
@@ -2136,7 +2137,7 @@ function testQueryDrop($table, $dbType, $query) {
 
 			// get sample data into the temp table to test for data/constraint conflicts
 			logThis('inserting temp dataset...');
-			$query = stripQuotes($query, $table);
+			$query = stripQuotesUW($query, $table);
 			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
 			$r3 = $db->query($q3);
 
@@ -2295,7 +2296,7 @@ function testQueryUpdate($table, $dbType, $query) {
 /**
  * strip queries of single and double quotes
  */
-function stripQuotes($query, $table) {
+function stripQuotesUW($query, $table) {
 	$queryStrip = '';
 
 	$start = strpos($query, $table);
@@ -3301,7 +3302,7 @@ function UWrebuild() {
 
 	// insert a new database row to show the rebuild extensions is done
 	$id = create_guid();
-	$gmdate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	$gmdate = gmdate('Y-m-d H:i:s');
 	$date_entered = db_convert("'$gmdate'", 'datetime');
 	$query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
 		. "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
@@ -4264,10 +4265,10 @@ function upgradeDashletsForSalesAndMarketing() {
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
-        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
+        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
+        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
+        'pbls_ids' => 'OppByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -5064,7 +5065,12 @@ function upgradeModulesForTeam() {
            	  require($file);
            	  $touched = false;
            	  $contents = file_get_contents($file);
-           	  $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  if ( !isset($GLOBALS['app_list_strings']) ) {
+           	      $GLOBALS['app_list_strings'] = $app_list_strings;
+           	  }
+           	  else {
+           	      $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  }
 
            	  if(isset($GLOBALS['app_list_strings']) && is_array($GLOBALS['app_list_strings'])) {
            	  	 foreach($GLOBALS['app_list_strings'] as $key=>$entry) {
@@ -5328,7 +5334,7 @@ function upgradeModulesForTeam() {
 		foreach( $allHelpFiles as $the_file ){
 	        if( is_file( $the_file ) ){
 	            unlink( $the_file );
-	            _logThis("Deleted file: $the_file", $path);
+	            logThis("Deleted file: $the_file", $path);
 	        }
 	    }
 	}
@@ -5386,16 +5392,50 @@ function upgradeModulesForTeam() {
 	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
 	 * which prevents you from performing timezone offset calculations once the data has been saved.
 	 *
+	 * @param path String location to log file, empty by default
 	 */
-	function upgradeDateTimeFields(){
+	function upgradeDateTimeFields($path=''){
 		//bug: 39757
-		$meetingsSql = "UPDATE meetings AS a INNER JOIN meetings AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
-		logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$GLOBALS['db']->query($meetingsSql);
+		global $db;
+		if($db->dbType == 'mysql')
+		{
+			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+		} else if($db->dbType == 'mssql') {
+			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+		} else if ($db->dbType == 'oci8') {
+			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+		}
 
-		$callsSql = "UPDATE calls AS a INNER JOIN calls AS b ON a.id = b.id SET a.date_end = date_add(b.date_start, INTERVAL + concat(b.duration_hours, b.duration_minutes) HOUR_MINUTE)";
-		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$GLOBALS['db']->query($callsSql);
+		if(isset($meetingsSql) && isset($callsSql))
+		{
+			logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+			$db->query($meetingsSql);
+
+			logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+			$db->query($callsSql);
+		}
+	}
+
+
+
+	/**
+	 * upgradeDocumentTypeFields
+	 *
+	 */
+	function upgradeDocumentTypeFields($path){
+		//bug: 39757
+		global $db;
+
+		$documentsSql = "UPDATE documents SET doc_type = 'Sugar' WHERE doc_type IS NULL";
+		$meetingsSql = "UPDATE meetings SET type = 'Sugar' WHERE type IS NULL";
+
+		logThis('upgradeDocumentTypeFields Documents SQL:' . $documentsSql, $path);
+		$db->query($documentsSql);
+		logThis('upgradeDocumentTypeFields Meetings SQL:' . $meetingsSql, $path);
+		$db->query($meetingsSql);
 	}
 
 
@@ -5409,15 +5449,16 @@ function upgradeModulesForTeam() {
  * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
  * @param config_location String optional value to config.php file location
  * @param config_si_location String optional value to config_si.php file location
+ * @param path String file of the location of log file to write to
  * @return boolean value indicating whether or not a merge was attempted with config_si.php file
  */
-function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='')
+function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='', $path='')
 {
 	if(!empty($config_location) && !file_exists($config_location))
 	{
 		if($write_to_upgrade_log)
 		{
-	       _logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+	       logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
 		}
 	    return false;
 	} else if(empty($config_location)) {
@@ -5434,13 +5475,13 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 	   if($write_to_upgrade_log)
 	   {
-	   	  _logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
+	   	  logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
 	   }
 	   return false;
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
+	      logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
 	   }
 
 	   include($config_location);
@@ -5448,7 +5489,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   {
 	   	  if($write_to_upgrade_log)
 		  {
-	   	     _logThis('config.php contents are empty.  Skip merging.', $path);
+	   	     logThis('config.php contents are empty.  Skip merging.', $path);
 		  }
 	   	  return false;
 	   }
@@ -5458,7 +5499,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 		if($write_to_upgrade_log)
 		{
-	       _logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+	       logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
 		}
 	    return false;
 	} else if(empty($config_si_location)) {
@@ -5476,13 +5517,13 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
+	      logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
 	   }
 	   return false;
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
+	      logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
 	   }
 
 	   include($config_si_location);
@@ -5490,7 +5531,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	   {
 	      if($write_to_upgrade_log)
 		  {
-	   	     _logThis('config_si.php contents are empty.  Skip merging.', $path);
+	   	     logThis('config_si.php contents are empty.  Skip merging.', $path);
 		  }
 	   	  return false;
 	   }
@@ -5504,7 +5545,7 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 		{
 		   if($write_to_upgrade_log)
 		   {
-		      _logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
+		      logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
 		   }
 		   $sugar_config[$key] = $value;
 		   $modified = true;
@@ -5515,27 +5556,27 @@ function merge_config_si_settings($write_to_upgrade_log=false, $config_location=
 	{
 		if($write_to_upgrade_log)
 		{
-	       _logThis('Update config.php file with new values', $path);
+	       logThis('Update config.php file with new values', $path);
 		}
 
 	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
 	       if($write_to_upgrade_log)
 		   {
-	    	  _logThis('*** ERROR: could not write to config.php', $path);
+	    	  logThis('*** ERROR: could not write to config.php', $path);
 		   }
 		   return false;
 		}
 	} else {
 	   if($write_to_upgrade_log)
 	   {
-	      _logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
 	   }
 	   return false;
 	}
 
 	if($write_to_upgrade_log)
 	{
-	   _logThis('End merge_config_si_settings', $path);
+	   logThis('End merge_config_si_settings', $path);
 	}
 	return true;
 }
@@ -5744,3 +5785,36 @@ function upgradeSugarCache($file)
 	}
 }
 
+
+/**
+ * upgradeDisplayedTabsAndSubpanels
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function upgradeDisplayedTabsAndSubpanels($version)
+{
+	if($version < '620')
+	{
+		logThis('start upgrading system displayed tabs and subpanels');
+	    require_once('modules/MySettings/TabController.php');
+	    $tc = new TabController();	
+	    
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();  
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
+	    $added_tabs = array();
+	    
+	    foreach($modules_to_add as $module)
+	    {
+		       $tabs[0][$module] = $module;
+		       $added_tabs[] = $module;
+	    }
+	    
+	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
+	    $tc->set_system_tabs($tabs[0]);    
+	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	}
+}

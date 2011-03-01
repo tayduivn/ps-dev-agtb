@@ -133,7 +133,9 @@ if(empty($focus->id)){
 	$params[] = "<a href='index.php?module=Users&action=DetailView&record={$focus->id}'>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name)."</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
-echo getClassicModuleTitle("Users", $params, true);
+
+$index_url = ($is_current_admin) ? "index.php?module=Users&action=index" : "index.php?module=Users&action=DetailView&record={$focus->id}"; 
+echo getClassicModuleTitle("Users", $params, true,$index_url);
 
 $GLOBALS['log']->info('User edit view');
 $sugar_smarty->assign('MOD', $mod_strings);
@@ -367,7 +369,7 @@ if(empty($focus->id)) { // remove default timezone for new users(set later)
     $focus->user_preferences['timezone'] = '';
 }
 
-//$userTZ = $focus->getPreference('timezone');
+$userTZ = $focus->getPreference('timezone');
 
 if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
 	$userTZ = TimeDate::guessTimezone();

@@ -422,7 +422,7 @@ class SugarDateTime extends DateTime
      * @param string $time
      * @return array Parsed parts
      */
-    function _strptime($time, $format)
+    protected function _strptime($time, $format)
     {
        $data = self::$data_init;
        if(empty(self::$strptime_short_mon)) {

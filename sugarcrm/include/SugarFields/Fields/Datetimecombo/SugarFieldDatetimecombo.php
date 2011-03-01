@@ -6,76 +6,78 @@ require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
 class SugarFieldDatetimecombo extends SugarFieldBase {
 
-    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {        
+    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
         // Create Smarty variables for the Calendar picker widget
         if(!isset($displayParams['showMinutesDropdown'])) {
-           $displayParams['showMinutesDropdown'] = false;	
-        }
-        
-        if(!isset($displayParams['showHoursDropdown'])) {
-           $displayParams['showHoursDropdown'] = false;	
-        }
-        
-        if(!isset($displayParams['showNoneCheckbox'])) {
-           $displayParams['showNoneCheckbox'] = false;	
-        }
-        
-        if(!isset($displayParams['showFormats'])) {
-           $displayParams['showFormats'] = false;	
-        }
-       
-        global $timedate;
-        $displayParams['dateFormat'] = $timedate->get_cal_date_format();
-
-        $displayParams['timeFormat'] = $timedate->get_user_time_format();
-        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);       
-        return $this->fetch($this->findTemplate('EditView'));
-    }
-	
-    function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
-    	
-    	 if($this->isRangeSearchView($vardef)) {
            $displayParams['showMinutesDropdown'] = false;
-           $displayParams['showHoursDropdown'] = false;	
-           $displayParams['showNoneCheckbox'] = false;	
-           $displayParams['showFormats'] = false;
-	       global $timedate, $current_language;
-	       $displayParams['dateFormat'] = $timedate->get_cal_date_format();
-	       $displayParams['timeFormat'] = $timedate->get_user_time_format();           
-           $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-           $id = isset($displayParams['idName']) ? $displayParams['idName'] : $vardef['name'];
-           $this->ss->assign('id_range', "range_{$id}");
-           $this->ss->assign('id_range_start', "start_range_{$id}");
-           $this->ss->assign('id_range_end', "end_range_{$id}");
-           $this->ss->assign('id_range_choice', "{$id}_range_choice");
-           return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
-        }    	
-    	
-    	// Create Smarty variables for the Calendar picker widget
-        if(!isset($displayParams['showMinutesDropdown'])) {
-           $displayParams['showMinutesDropdown'] = false;	
         }
-        
+
         if(!isset($displayParams['showHoursDropdown'])) {
-           $displayParams['showHoursDropdown'] = false;	
+           $displayParams['showHoursDropdown'] = false;
         }
-        
+
         if(!isset($displayParams['showNoneCheckbox'])) {
-           $displayParams['showNoneCheckbox'] = false;	
+           $displayParams['showNoneCheckbox'] = false;
         }
-        
+
         if(!isset($displayParams['showFormats'])) {
-           $displayParams['showFormats'] = false;	
+           $displayParams['showFormats'] = false;
         }
-       
+
         global $timedate;
         $displayParams['dateFormat'] = $timedate->get_cal_date_format();
 
         $displayParams['timeFormat'] = $timedate->get_user_time_format();
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch($this->findTemplate('SearchView')); 
+        return $this->fetch($this->findTemplate('EditView'));
     }
-    
+
+    function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
+
+    	 if($this->isRangeSearchView($vardef)) {
+           $displayParams['showMinutesDropdown'] = false;
+           $displayParams['showHoursDropdown'] = false;
+           $displayParams['showNoneCheckbox'] = false;
+           $displayParams['showFormats'] = false;
+	       global $timedate, $current_language;
+	       $displayParams['dateFormat'] = $timedate->get_cal_date_format();
+	       $displayParams['timeFormat'] = $timedate->get_user_time_format();
+
+           $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+           $id = isset($displayParams['idName']) ? $displayParams['idName'] : $vardef['name'];
+           $this->ss->assign('original_id', "{$id}");
+           $this->ss->assign('id_range', "range_{$id}");
+           $this->ss->assign('id_range_start', "start_range_{$id}");
+           $this->ss->assign('id_range_end', "end_range_{$id}");
+           $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
+        }
+
+    	// Create Smarty variables for the Calendar picker widget
+        if(!isset($displayParams['showMinutesDropdown'])) {
+           $displayParams['showMinutesDropdown'] = false;
+        }
+
+        if(!isset($displayParams['showHoursDropdown'])) {
+           $displayParams['showHoursDropdown'] = false;
+        }
+
+        if(!isset($displayParams['showNoneCheckbox'])) {
+           $displayParams['showNoneCheckbox'] = false;
+        }
+
+        if(!isset($displayParams['showFormats'])) {
+           $displayParams['showFormats'] = false;
+        }
+
+        global $timedate;
+        $displayParams['dateFormat'] = $timedate->get_cal_date_format();
+
+        $displayParams['timeFormat'] = $timedate->get_user_time_format();
+        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+        return $this->fetch($this->findTemplate('SearchView'));
+    }
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	global $timedate;
@@ -101,26 +103,37 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     	$use_24_hours = stripos($datetime_prefs['time'], 'a') ? false : true;
     	$this->ss->assign('time_start', $time_start);
     	$this->ss->assign('use_meridian', $use_24_hours);
-    	
+
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
     	return $this->fetch($this->findTemplate('WirelessEditView'));
-    }   
+    }
     //END SUGARCRM flav=pro || flav=sales ONLY
-    
+
+    public function getEmailTemplateValue($inputField, $vardef, $context = null){
+        // This does not return a smarty section, instead it returns a direct value
+        if(isset($context['notify_user'])) {
+            $user = $context['notify_user'];
+        } else {
+            $user = $GLOBALS['current_user'];
+        }
+        return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
+    }
+
+
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
             //$bean->$field = '';
             return;
         }
-        
+
         if(strpos($inputData[$prefix.$field], ' ') > 0) {
 	        $bean->$field = $timedate->to_db($inputData[$prefix.$field]);
         } else {
         	$GLOBALS['log']->error('Field ' . $prefix.$field . ' expecting datetime format, but got value: ' . $inputData[$prefix.$field]);
 	        //Default to assume date format value
-        	$bean->$field = $timedate->to_db_date($inputData[$prefix.$field]);    	
+        	$bean->$field = $timedate->to_db_date($inputData[$prefix.$field]);
         }
-    } 
+    }
 }
 ?>

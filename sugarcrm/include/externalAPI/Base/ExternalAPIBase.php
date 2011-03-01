@@ -2,6 +2,7 @@
 
 require_once ('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once ('include/externalAPI/Base/ExternalOAuthAPIPlugin.php');
+require_once('include/connectors/sources/SourceFactory.php');
 
 abstract class ExternalAPIBase implements ExternalAPIPlugin
 {
@@ -42,7 +43,24 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         if(!empty($eapmBean)) {
             $this->loadEAPM($eapmBean);
         }
-        
+
+        if ( !isset($this->eapmBean) ) {
+            return array('success' => false);
+        }
+
+        return array('success' => true);
+    }
+
+    public function quickCheckLogin()
+    {
+        if ( !isset($this->eapmBean) ) {
+            return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
+        }
+
+        if ( $this->eapmBean->active==0 || $this->eapmBean->validated==0 ) {
+            return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
+        }
+
         return array('success' => true);
     }
 
@@ -60,6 +78,10 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         return true;
     }
 
+    /**
+     * Does API support this method?
+     * @see ExternalAPIPlugin::supports()
+     */
     public function supports($method = '')
 	{
         return $method==$this->authMethod;
@@ -70,7 +92,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if ( ( is_array($postfields) && count($postfields) == 0 ) || 
+        if ( ( is_array($postfields) && count($postfields) == 0 ) ||
              empty($postfields) ) {
             curl_setopt($ch, CURLOPT_POST, false);
         } else {
@@ -80,12 +102,79 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
-        $GLOBALS['log']->fatal("Where: ".$url);
-        // $GLOBALS['log']->fatal("Headers:\n".print_r($headers,true));
-        // $GLOBALS['log']->fatal("Postfields:\n".print_r($postfields,true));
+        $GLOBALS['log']->debug("ExternalAPIBase->postData Where: ".$url);
+        $GLOBALS['log']->debug("Headers:\n".print_r($headers,true));
+        // $GLOBALS['log']->debug("Postfields:\n".print_r($postfields,true));
         $rawResponse = curl_exec($ch);
-        $GLOBALS['log']->fatal("Got:\n".print_r($rawResponse,true));
+        $GLOBALS['log']->debug("Got:\n".print_r($rawResponse,true));
 
         return $rawResponse;
 	}
+
+	/**
+	 * Get connector for this API
+	 * @return source|null
+	 */
+	public function getConnector()
+	{
+	    if(isset($this->connector)) {
+	        if(empty($this->connector_source)) {
+	            $this->connector_source = SourceFactory::getSource($this->connector, false);
+	        }
+	        return $this->connector_source;
+	    }
+	    return null;
+	}
+
+	/**
+	 * Get parameter from source
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function getConnectorParam($name)
+	{
+        $connector =  $this->getConnector();
+        if(empty($connector)) return null;
+        return $connector->getProperty($name);
+	}
+	
+	
+	/**
+	 * formatCallbackURL
+	 * 
+	 * This function takes a callback_url and checks the $_REQUEST variable to see if
+	 * additional parameters should be appended to the callback_url value.  The $_REQUEST variables
+	 * that are being checked deal with handling the behavior of closing/hiding windows/tabs that
+	 * are displayed when prompting for OAUTH validation
+	 * 
+	 * @param $callback_url String value of callback URL
+	 * @return String value of URL with applicable formatting
+	 */
+	protected function formatCallbackURL($callback_url)
+	{
+		 // This is a tweak so that we can automatically close windows if requested by the external account system
+	     if (isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+             $callback_url .= '&closeWhenDone=1';
+         }
+
+         //Pass back the callbackFunction to call on the window.opener object
+         if (!empty($_REQUEST['callbackFunction']))
+         {
+             $callback_url .= '&callbackFunction=' . $_REQUEST['callbackFunction'];
+         }
+            
+         //Pass back the id of the application that triggered this oauth login
+         if (!empty($_REQUEST['application']))
+         {
+             $callback_url .= '&application=' . $_REQUEST['application'];
+         }		
+            
+	     //Pass back the id of the application that triggered this oauth login
+         if (!empty($_REQUEST['refreshParentWindow']))
+         {
+             $callback_url .= '&refreshParentWindow=' . $_REQUEST['refreshParentWindow'];
+         }         
+         
+         return $callback_url;
+	}	
 }

@@ -133,9 +133,11 @@ class RepairAndClear
 		if (is_admin($current_user) || is_admin_for_any_module($current_user))
 		{
 			$export = false;
-    		if($this->show_output) echo get_module_title($mod_strings['LBL_REPAIR_DATABASE'], $mod_strings['LBL_REPAIR_DATABASE'], true);
-            if($this->show_output) echo "<h1 id=\"rdloading\">{$mod_strings['LBL_REPAIR_DATABASE_PROCESSING']}</h1>";
-            ob_flush();
+    		if($this->show_output) echo getClassicModuleTitle($mod_strings['LBL_REPAIR_DATABASE'], array($mod_strings['LBL_REPAIR_DATABASE']), false);
+            if($this->show_output) {
+                echo "<h1 id=\"rdloading\">{$mod_strings['LBL_REPAIR_DATABASE_PROCESSING']}</h1>";
+                ob_flush();
+            }
 	    	$sql = '';
 			if($this->module_list && !in_array($mod_strings['LBL_ALL_MODULES'],$this->module_list))
 			{
@@ -215,7 +217,7 @@ class RepairAndClear
 
         // insert a new database row to show the rebuild extensions is done
         $id = create_guid();
-        $gmdate = TimeDate::getInstance()->nowDb();
+        $gmdate = gmdate('Y-m-d H:i:s');
         $date_entered = db_convert("'$gmdate'", 'datetime');
         $query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
             . "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
@@ -363,7 +365,7 @@ class RepairAndClear
             unlink( "$src_file" );
         }
     }
-    public function clearExternalAPICache() 
+    public function clearExternalAPICache()
 	{
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_EXT_API']}</h3>";

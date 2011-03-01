@@ -55,7 +55,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == '1') {
 	$focus->id = "";
 }
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->name, true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
 
 $GLOBALS['log']->info("Time Period edit view");
 $xtpl=new XTemplate ('modules/TimePeriods/EditView.html');

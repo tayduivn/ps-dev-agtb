@@ -139,17 +139,15 @@ class OracleManager extends DBManager
         if (parent::checkError($msg, $dieOnError))
             return true;
 
-    	$userMsg = inDeveloperMode()?"$msg: ":"";
-
         $err = oci_error($this->getDatabase());
         if ($err){
             $error = $err['code']."-".$err['message'];
             if($this->dieOnError || $dieOnError){
-                $GLOBALS['log']->fatal("$msg: Oracle error: $error");
-                sugar_die($userMsg.$GLOBALS['app_strings']['ERR_DB_FAIL']);
+                $GLOBALS['log']->fatal("Oracle error: $error");
+                sugar_die($GLOBALS['app_strings']['ERR_DB_FAIL']);
             }else{
-                $this->last_error = $userMsg."Oracle error: $error";
-                $GLOBALS['log']->error("$msg: ORACLE error: $error");
+                $this->last_error = $msg."Oracle error: $error";
+                $GLOBALS['log']->error("Oracle error: $error");
             }
             return true;
         }

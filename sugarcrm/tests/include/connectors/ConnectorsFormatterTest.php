@@ -1,36 +1,31 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-require_once('include/connectors/ConnectorFactory.php');
-require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/formatters/FormatterFactory.php');
-require_once('include/connectors/utils/ConnectorUtils.php');
-require_once('modules/Connectors/controller.php');
 require_once('include/MVC/Controller/SugarController.php');
+require_once('include/connectors/ConnectorsTestCase.php');
 
-class ConnectorsFormatterTest extends Sugar_PHPUnit_Framework_TestCase {
+class ConnectorsFormatterTest extends Sugar_Connectors_TestCase
+{
+	var $parentFieldArray, $vardef, $displayParams, $tabindex, $ss;
 
-	var $parentFieldArray, $vardef, $displayParams, $tabindex, $ss, $original_modules_sources, $original_searchdefs;
-
-    function setUp() {
-    	$this->markTestSkipped('Skipping for now');
-    	return;
+	function setUp() {
     	//Store original files
-    	if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE))
+	    if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE))
     	{
 $the_string = <<<EOQ
 <?php
 \$modules_sources = array (
-  'Accounts' => 
+  'Accounts' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
     'ext_soap_hoovers' => 'ext_soap_hoovers',
   ),
-  'Opportunities' => 
+  'Opportunities' =>
   array (
     'ext_rest_linkedin' => 'ext_rest_linkedin',
     'ext_soap_hoovers' => 'ext_soap_hoovers',
   ),
-  'Contacts' => 
+  'Contacts' =>
   array (
     'ext_soap_hoovers' => 'ext_soap_hoovers',
   ),
@@ -41,12 +36,9 @@ EOQ;
 
 $fp = sugar_fopen('custom/modules/Connectors/metadata/display_config.php', "w" );
 fwrite( $fp, $the_string );
-fclose( $fp );	    		
+fclose( $fp );
     	}
-    	
-    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_modules_sources = $modules_sources;
-    	$this->original_searchdefs = ConnectorUtils::getSearchDefs();
+        parent::setUp();
 
    		if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter/twitter.php')) {
    		   copy_recursive('custom/modules/Connectors/connectors/sources/ext/rest/twitter', 'custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup');
@@ -63,12 +55,11 @@ fclose( $fp );
    		   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/soap/hoovers');
    		}
 
-
-    	//Setup the neccessary Smarty configurations
+   		//Setup the neccessary Smarty configurations
     	$this->parentFieldArray = 'fields';
     	require_once('include/SugarObjects/VardefManager.php');
-        VardefManager::loadVardef('Accounts', 'Account');
-        require_once(sugar_cached('modules/Accounts/Accountvardefs.php'));
+        VardefManager::loadVardef('Accounts', 'Account', true);
+        require_once('cache/modules/Accounts/Accountvardefs.php');
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];
     	$this->displayParams = array('sources'=>array('ext_rest_linkedin','ext_rest_twitter'));
     	$this->tabindex = 0;
@@ -96,7 +87,7 @@ fclose( $fp );
     }
 
     function tearDown() {
-
+        parent::tearDown();
         if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/twitter_backup/twitter.php')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/rest/twitter_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/twitter');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/sources/ext/rest/twitter_backup');
@@ -111,13 +102,9 @@ fclose( $fp );
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers_backup', 'custom/modules/Connectors/connectors/sources/ext/rest/hoovers');
     	   ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers_backup');
         }
-
-    	write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
-        write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
     }
 
     function test_hover_link_for_accounts() {
-    	$this->markTestSkipped('Skipping for now');	
     	$enabled_sources = ConnectorUtils::getModuleConnectors('Accounts');
     	$hover_sources = array();
     	$displayParams = array();
@@ -157,9 +144,7 @@ fclose( $fp );
     }
     */
     function test_remove_hover_links_in_viewdefs() {
-    	
-    	$this->markTestSkipped('Skipping for now');	
-    	
+
     	$module = 'Accounts';
 
     	if(file_exists("custom/modules/{$module}/metadata/detailviewdefs.php")) {
@@ -188,9 +173,7 @@ fclose( $fp );
     }
 
     function test_modify_display_changes() {
-    	
-    	$this->markTestSkipped('Skipping for now');	
-    	
+
     	$module = 'Accounts';
 
     	//Now call the code that will add the mapping fields

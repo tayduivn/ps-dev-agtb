@@ -247,7 +247,12 @@ class SugarFeed extends Basic {
 		//END SUGARCRM flav=pro ONLY
 		) {
 		$feed = new SugarFeed();
-		if(empty($text) || !$feed->ACLAccess('save', true) )return;
+		if((empty($text) && empty($link_url)) || !$feed->ACLAccess('save', true) )
+		{
+			$GLOBALS['log']->error('Unable to save SugarFeed record (missing data or no ACL access)');
+			return;
+		}
+		
 		if(!empty($link_url)){
             $linkClass = SugarFeed::getLinkClass($link_type);
             if ( $linkClass !== FALSE ) {
@@ -349,19 +354,18 @@ class SugarFeed extends Basic {
 
 	function get_list_view_data(){
 		$data = parent::get_list_view_data();
+		//BEGIN SUGARCRM flav=pro ONLY
 		if ( !isset($data['TEAM_NAME']) )
 		    $data['TEAM_NAME'] = '';
+		//END SUGARCRM flav=pro ONLY
 		$delete = '';
 		if (ACLController::moduleSupportsACL($data['RELATED_MODULE']) && !ACLController::checkAccess($data['RELATED_MODULE'], 'view', $data['CREATED_BY'] == $GLOBALS['current_user']->id) && !ACLController::checkAccess($data['RELATED_MODULE'], 'list', $data['CREATED_BY'] == $GLOBALS['current_user']->id)){
 			$data['NAME'] = '';
 			return $data;
 		}
-        //rrs - removing reply and delete for now.
-        /*
-		if(is_admin($GLOBALS['current_user']) || (isset($data['CREATED_BY']) && $data['CREATED_BY'] == $GLOBALS['current_user']->id) ) {
+        if(is_admin($GLOBALS['current_user']) || (isset($data['CREATED_BY']) && $data['CREATED_BY'] == $GLOBALS['current_user']->id) ) {
             $delete = ' - <a id="sugarFeedDeleteLink'.$data['ID'].'" href="#" onclick=\'SugarFeed.deleteFeed("'. $data['ID'] . '", "{this.id}"); return false;\'>'. $GLOBALS['app_strings']['LBL_DELETE_BUTTON_LABEL'].'</a>';
         }
-        */
 		$data['NAME'] .= $data['DESCRIPTION'];
 		$data['NAME'] =  '<div style="padding:3px">' . html_entity_decode($data['NAME']);
 		if(!empty($data['LINK_URL'])){
@@ -371,18 +375,17 @@ class SugarFeed extends Basic {
             }
 		}
         $data['NAME'] .= '<div class="byLineBox"><span class="byLineLeft">';
-		//$data['NAME'] .= $this->getTimeLapse($data['DATE_ENTERED']) . '&nbsp;</span><div class="byLineRight"><a id="sugarFeedReplyLink'.$data['ID'].'" href="#" onclick=\'SugarFeed.buildReplyForm("'.$data['ID'].'", "{this.id}", this); return false;\'>'.$GLOBALS['app_strings']['LBL_EMAIL_REPLY'].'</a>' .$delete. '</div></div>';
-        $data['NAME'] .= $this->getTimeLapse($data['DATE_ENTERED']) . '&nbsp;</span></div>';
+		$data['NAME'] .= $this->getTimeLapse($data['DATE_ENTERED']) . '&nbsp;</span><div class="byLineRight"><a id="sugarFeedReplyLink'.$data['ID'].'" href="#" onclick=\'SugarFeed.buildReplyForm("'.$data['ID'].'", "{this.id}", this); return false;\'>'.$GLOBALS['app_strings']['LBL_EMAIL_REPLY'].'</a>' .$delete. '</div></div>';
 
-        //$data['NAME'] .= $this->fetchReplies($data);
+        $data['NAME'] .= $this->fetchReplies($data);
 		return  $data ;
 	}
-	
+
     function fetchReplies($data) {
         $seedBean = new SugarFeed;
 
         $replies = $seedBean->get_list('date_entered',"related_module = 'SugarFeed' AND related_id = '".$data['ID']."'");
-        
+
         if ( count($replies['list']) < 1 ) {
             return '';
         }
@@ -397,7 +400,7 @@ class SugarFeed extends Basic {
                 $delete = '<a id="sugarFieldDeleteLink'.$reply->id.'" href="#" onclick=\'SugarFeed.deleteFeed("'. $reply->id . '", "{this.id}"); return false;\'>'. $GLOBALS['app_strings']['LBL_DELETE_BUTTON_LABEL'].'</a>';
             }
 
-            $image_url = 'include/images/blank.gif';
+            $image_url = 'include/images/default_user_feed_picture.png';
             if ( isset($reply->created_by) ) {
                 $user = loadBean('Users');
                 $user->retrieve($reply->created_by);
@@ -405,24 +408,19 @@ class SugarFeed extends Basic {
                     $image_url = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
                 }
             }
-            $replyHTML .= '<div style="float: left; margin-right: 3px;"><img src="'.$image_url.'" height=50></div> ';
-            $replyHTML .= html_entity_decode($reply->name).'<br>';
+            $replyHTML .= '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><img src="'.$image_url.'" style="max-width: 50px; max-height: 50px;"></div> ';
+            $replyHTML .= str_replace("{this.CREATED_BY}",get_assigned_user_name($reply->created_by),html_entity_decode($reply->name)).'<br>';
             $replyHTML .= '<div class="byLineBox"><span class="byLineLeft">'. $this->getTimeLapse($reply->date_entered) . '&nbsp;</span><div class="byLineRight">  &nbsp;' .$delete. '</div></div><div class="clear"></div>';
         }
 
         $replyHTML .= '</blockquote>';
         return $replyHTML;
-        
+
     }
 
 	static function getTimeLapse($startDate)
 	{
-		$startDate = $GLOBALS['timedate']->to_db($startDate);
-		$start = array();
-   		preg_match('/(\d+)\-(\d+)\-(\d+) (\d+)\:(\d+)\:(\d+)/', $startDate, $start);
-		$end = gmdate('Y-m-d H:i:s');
-    	$start_time = gmmktime($start[4],$start[5], $start[6], $start[2], $start[3], $start[1] );
-		$seconds = time()- $start_time;
+		$seconds = $GLOBALS['timedate']->getNow()->ts - $GLOBALS['timedate']->fromUser($startDate)->ts;
 		$minutes =   $seconds/60;
 		$seconds = $seconds % 60;
 		$hours = floor( $minutes / 60);
@@ -469,10 +467,22 @@ class SugarFeed extends Basic {
 			}
 		}
 		return $result . ' ' . translate('LBL_TIME_AGO','SugarFeed');
-
-
-
     }
 
+    /**
+     * Parse a piece of text and replace with proper display tags.
+     * @static
+     * @param  $input
+     * @return void
+     */
+    public static function parseMessage($input){
+        $urls = getUrls($input);
+        foreach($urls as $url){
+			$output = "<a href='$url' target='_blank'>".$url."</a>";
+			$input = str_replace($url, $output, $input);
+		}
+		return $input;
+    }
+
+
 }
-?>

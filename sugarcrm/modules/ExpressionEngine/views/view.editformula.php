@@ -53,16 +53,20 @@ class ViewEditFormula extends SugarView
 	        	$seed = new $class ( ) ;
 	        	$fields = $this->cleanFields($seed->field_defs);
  			}
-        	$smarty->assign('Field_Array', $json->encodeReal($fields));
+        	$smarty->assign('Field_Array', $json->encode($fields));
 		}
 		else
 		{
 			$fields = array(array('income', 'number'), array('employed', 'boolean'), array('first_name', 'string'), array('last_name', 'string'));
-			$smarty->assign('Field_Array', $json->encodeReal($fields));
+			$smarty->assign('Field_Array', $json->encode($fields));
 		}
 		if (!empty($_REQUEST['targetField']))
 		{
 			$smarty->assign("target", $_REQUEST['targetField']);
+		}
+        if (isset($_REQUEST['returnType']))
+		{
+			$smarty->assign("returnType", $_REQUEST['returnType']);
 		}
 		//Assign any requested Javascript event actions
 		foreach(array('onSave', 'onLoad', 'onClose') as $e) {
@@ -102,7 +106,7 @@ class ViewEditFormula extends SugarView
  	function cleanFields($fieldDef){
  		$fieldArray = array();
  		foreach($fieldDef as $fieldName => $def) {
- 			if ($fieldName == 'deleted' || empty($def['type']))
+ 			if ($fieldName == 'deleted' || $fieldName == 'email1' || empty($def['type']))
  				continue;
  			if (isset($def['studio']) && ($def['studio'] == false || $def['studio'] == "false"))
  			    continue;

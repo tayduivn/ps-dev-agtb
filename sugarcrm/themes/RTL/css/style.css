@@ -202,4 +202,9 @@ direction: rtl;
 direction: rtl;	
 }
 
+#bottomLinks {
+	padding: 0 25px;
+	float: left;
+	direction: rtl;	
+}
 

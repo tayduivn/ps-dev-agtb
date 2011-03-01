@@ -122,8 +122,8 @@ class="yui-navset"
               {{elseif isset($fields[$colData.field.name].popupHelp)}}
                 {capture name="popupText" assign="popupText"}{sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}{/capture}
               {{/if}}
-              {overlib_includes}
-              {sugar_help text=$popupText WIDTH=400}
+              {capture name="overlibStuff" assign="overlibStuff"}{overlib_includes}{/capture}
+              {sugar_help text=$popupText WIDTH=-1}
             {{/if}}
           
 		</td>
@@ -229,6 +229,7 @@ class="yui-navset"
 {{/foreach}}
 </div></div>
 {{include file=$footerTpl}}
+{$overlibStuff}
 {{if $useTabs}}
 <script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
 <script type="text/javascript">
@@ -237,7 +238,7 @@ var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 </script>
 {{/if}}
 <script type="text/javascript">
-YAHOO.util.Event.onContentReady("form_QuickCreate_Accounts",
+YAHOO.util.Event.onContentReady("{{$form_name}}",
     function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim});
 //window.setTimeout(, 100);
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};

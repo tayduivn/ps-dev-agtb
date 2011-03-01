@@ -138,6 +138,21 @@ class MySugar{
 		    $id = $_REQUEST['id'];
 		    $dashlets = $current_user->getPreference('dashlets', $this->type);
 
+		    $sortOrder = '';
+		    $orderBy = '';
+		    foreach($_REQUEST as $k => $v){
+		        if($k == 'lvso'){
+		            $sortOrder = $v;
+		        }
+		        else if(preg_match('/Home2_.+_ORDER_BY/', $k)){
+		            $orderBy = $v;
+		        }
+		    }
+		    if(!empty($sortOrder) && !empty($orderBy)){
+		        $dashlets[$id]['sort_options'] = array('sortOrder' => $sortOrder, 'orderBy' => $orderBy);
+		        $current_user->setPreference('dashlets', $dashlets, 0, $this->type);
+		    }
+		    
 		    require_once($dashlets[$id]['fileLocation']);
 		    $dashlet = new $dashlets[$id]['className']($id, (isset($dashlets[$id]['options']) ? $dashlets[$id]['options'] : array()));
 		    if(!empty($_REQUEST['configure']) && $_REQUEST['configure']) { // save settings
@@ -149,7 +164,11 @@ class MySugar{
 		        echo $dashlet->getTitle('') . $mod_strings['LBL_RELOAD_PAGE'];
 		    }
 		    else {
-		        $dashlet->process();
+		        $lvsParams = array();
+		        if(!empty($dashlets[$id]['sort_options'])){
+		            $lvsParams = $dashlets[$id]['sort_options'];
+                }
+		        $dashlet->process($lvsParams);
 		        $contents =  $dashlet->display();
                 // Many dashlets expect to be able to initialize in the display() function, so we have to create the header second
                 echo $dashlet->getHeader();
@@ -665,8 +684,8 @@ EOJS;
 		$display = array();
 
 		$predefinedChartsList = array( 	'MyPipelineBySalesStageDashlet',
-										'OpportunitiesByLeadSourceDashlet',
-									   	'OpportunitiesByLeadSourceByOutcomeDashlet',
+										'OppByLeadSourceDashlet',
+									   	'OppByLeadOutcomeDashlet',
 									   	'OutcomeByMonthDashlet',
 									   	'PipelineBySalesStageDashlet',
 									   	//BEGIN SUGARCRM flav!=sales ONLY
@@ -685,10 +704,12 @@ EOJS;
 	    $chartColorsXML = SugarThemeRegistry::current()->getImageURL('sugarColors.xml');
 
 	    $chartStringsXML = sugar_cached("xml/").'chart_strings.' . $current_language .'.lang.xml';
+	    
+	    require_once('include/SugarCharts/SugarChartFactory.php');
+		$sugarChart = SugarChartFactory::getInstance();
+						
         if (!file_exists($chartStringsXML)) {
-			require_once('include/SugarCharts/SugarChart.php');
-			$chart = new SugarChart;
-            $chart->generateChartStrings($chartStringsXML);
+            $sugarChart->generateChartStrings($chartStringsXML);
 		}
 
 		$selectedPage = $_REQUEST['pageId'];
@@ -735,8 +756,7 @@ EOJS;
 							if (in_array($dashlets[$id]['className'], $predefinedChartsList)){
 								$chartsArray[$id] = array();
 								$chartsArray[$id]['id'] = $id;
-								require_once('include/SugarCharts/SugarChart.php');
-								$chartsArray[$id]['xmlFile'] = SugarChart::getXMLFileName($id);
+								$chartsArray[$id]['xmlFile'] = $sugarChart->getXMLFileName($id);
 								$chartsArray[$id]['width'] = '100%';
 								$chartsArray[$id]['height'] = '480';
 								$chartsArray[$id]['styleSheet'] = $chartStyleCSS;
@@ -807,7 +827,8 @@ EOJS;
 		$scriptResponse['dashletScript'] = $dashletScript;
 		$scriptResponse['newDashletsToReg'] = $dashletIds;
 		$scriptResponse['numCols'] = sizeof($pages[$selectedPage]['columns']);
-		$scriptResponse['chartsArray'] = $chartsArray;
+		//custom chart code
+		$scriptResponse['chartsArray'] = $sugarChart->chartArray($chartsArray);
 		$scriptResponse['trackerScript'] = $trackerScript . (strpos($trackerScriptArray,',') ? (substr($trackerScriptArray, 0, strlen($trackerScriptArray)-1) . ']; </script>') : $trackerScriptArray . ']; </script>');
 		$scriptResponse['toggleHeaderToolsetScript'] = "<script>".$toggleHeaderToolsetScript."</script>";
 

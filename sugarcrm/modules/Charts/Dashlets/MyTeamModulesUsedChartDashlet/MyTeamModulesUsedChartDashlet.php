@@ -53,8 +53,8 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['my_team_modules_used_last_30_days'];
 
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->forceHideDataGroupLink = true;
         $sugarChart->setProperties('', $chartDef['chartUnits'], $chartDef['chartType']);
         $sugarChart->group_by = $chartDef['groupBy'];
@@ -71,7 +71,7 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();
 	}
 
     /**

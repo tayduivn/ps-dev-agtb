@@ -59,7 +59,12 @@ class SugarSpot
 <small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining more)</small>
 EOHTML;
 			}
-			$str.= "<div>$m $more</div>";
+
+			$modDisplayString = $m;
+			if(isset($GLOBALS['app_list_strings']['moduleList'][$m]))
+			    $modDisplayString = $GLOBALS['app_list_strings']['moduleList'][$m];
+
+			$str.= "<div>{$modDisplayString} $more</div>";
 			$str.= '<ul>';
 			foreach($data['data'] as $row){
 				$name = '';
@@ -129,7 +134,7 @@ EOHTML;
 	 * @param  $moduleName string
 	 * @return array
 	 */
-	protected function getSearchFields(
+	protected static function getSearchFields(
 	    $moduleName
 	    )
 	{
@@ -171,7 +176,25 @@ EOHTML;
 
 		return array('data'=>$data , 'pageData'=>$pageData);;
 	}
+
 	//END SUGARCRM flav=spotactions ONLY
+
+	/**
+	 * Get count from query
+	 * @param SugarBean $seed
+	 * @param string $main_query
+	 */
+	protected function _getCount($seed, $main_query)
+	{
+        $count_query = $seed->create_list_count_query($main_query);
+		$result = $seed->db->query($count_query);
+		$cnt = 0;
+		while($row = $seed->db->fetchByAssoc($result)){
+			$cnt += $row['c'];
+		}
+		return $cnt;
+	}
+
 	/**
 	 * Performs the search
 	 *
@@ -186,93 +209,200 @@ EOHTML;
 	    $offset = -1
 	    )
 	{
+	    if(empty($query)) return array();
 		$primary_module='';
 		$results = array();
 		require_once 'include/SearchForm/SearchForm2.php' ;
 		$where = '';
 
-		$searchEmail = preg_match("/^([^\%]|\%)*@([^\%]|\%)*$/", $query);
+		$searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
 
-		foreach($modules as $moduleName){
-			if (empty($primary_module)) $primary_module=$moduleName;
+        $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
+		if($offset !== -1){
+			$limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20 );
+		}
+    	$totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
+
+	    foreach($modules as $moduleName){
+		    if (empty($primary_module)) $primary_module=$moduleName;
 
 			$searchFields = SugarSpot::getSearchFields($moduleName);
+			if (empty($searchFields[$moduleName])) continue;
+
 			$class = $GLOBALS['beanList'][$moduleName];
 			$return_fields = array();
 			$seed = new $class();
+            if(!$seed->ACLAccess('ListView')) continue;
 
-			if (empty($searchFields[$moduleName]))
-			    continue;
+			if ($class == 'aCase') {
+		            $class = 'Case';
+			}
+			foreach($searchFields[$moduleName] as $k=>$v){
+				$keep = false;
+				$searchFields[$moduleName][$k]['value'] = $query;
 
-				if ($class == 'aCase') {
-			            $class = 'Case';
-				}
-				foreach($searchFields[$moduleName] as $k=>$v){
-					$keep = false;
-					$searchFields[$moduleName][$k]['value'] = $query;
+				if(!empty($GLOBALS['dictionary'][$class]['unified_search'])){
+					if(empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search'])){
 
-					if(!empty($GLOBALS['dictionary'][$class]['unified_search'])){
-						if(empty($GLOBALS['dictionary'][$class]['fields'][$k]['unified_search'])){
-
-							if(isset($searchFields[$moduleName][$k]['db_field'])){
-								foreach($searchFields[$moduleName][$k]['db_field'] as $field){
-									if(!empty($GLOBALS['dictionary'][$class]['fields'][$field]['unified_search'])){
-										$return_fields[] = $field;
-										$keep = true;
-									}
+						if(isset($searchFields[$moduleName][$k]['db_field'])){
+							foreach($searchFields[$moduleName][$k]['db_field'] as $field){
+								if(!empty($GLOBALS['dictionary'][$class]['fields'][$field]['unified_search'])){
+									$keep = true;
 								}
 							}
-							if(!$keep){
-								if(strpos($k,'email') === false || !$searchEmail) {
-									unset($searchFields[$moduleName][$k]);
-								}
-							}
-						}else{
-							$return_fields[] = $k;
 						}
-					}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){;
-						unset($searchFields[$moduleName][$k]);
-					}else{
-						switch($GLOBALS['dictionary'][$class]['fields'][$k]['type']){
-							case 'id':
-							case 'date':
-							case 'datetime':
-							case 'bool':
+						if(!$keep){
+							if(strpos($k,'email') === false || !$searchEmail) {
 								unset($searchFields[$moduleName][$k]);
-							default:
-								$return_fields[] = $k;
-
+							}
 						}
-
+					}else{
+					    if($GLOBALS['dictionary'][$class]['fields'][$k]['type'] == 'int' && !is_numeric($query)) {
+					        unset($searchFields[$moduleName][$k]);
+					    }
 					}
-
+				}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){;
+					unset($searchFields[$moduleName][$k]);
+				}else{
+					switch($GLOBALS['dictionary'][$class]['fields'][$k]['type']){
+						case 'id':
+						case 'date':
+						case 'datetime':
+						case 'bool':
+							unset($searchFields[$moduleName][$k]);
+							break;
+						case 'int':
+						    if(!is_numeric($query)) {
+						        unset($searchFields[$moduleName][$k]);
+						        break;
+						    }
+					}
 				}
+			}
+
+			if (empty($searchFields[$moduleName])) continue;
+
+			if(isset($seed->field_defs['id']) && $seed->field_defs['id']['type'] == 'id') {
+			    $return_fields['id'] = $seed->field_defs['id'];
+			}
+			if(isset($seed->field_defs['name']) && $seed->field_defs['name']['type'] == 'name') {
+			    $return_fields['name'] = $seed->field_defs['name'];
+			}
+			if(!isset($return_fields['name']) || !isset($return_fields['id'])) {
+			    // guessing didn't work, try the hard way
+			    foreach($seed->field_defs as $k => $v) {
+			        if(isset($seed->field_defs[$k]['type'])
+				    && ($seed->field_defs[$k]['type'] == 'name' || $seed->field_defs[$k]['type'] == 'id')) {
+				        $return_fields[$k] = $seed->field_defs[$k];
+				    }
+			    }
+			}
+			if(!isset($return_fields['name']) || !isset($return_fields['id'])) {
+			    // FAIL: couldn't find id & name for the module
+			    $GLOBALS['log']->fatal("Unable to find name and id for module $moduleName");
+			    continue;
+			}
+
+			if(isset($return_fields['name']['fields'])) {
+			    // some names are composite
+			    foreach($return_fields['name']['fields'] as $field) {
+			        $return_fields[$field] = $seed->field_defs[$field];
+			    }
+			}
+
 
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
-			$where = "";
-			if (count($where_clauses) > 0){
-                $where = '(('. implode(' ) OR ( ', $where_clauses) . '))';
-            }
 
-			$lvd = new ListViewData();
-			$lvd->additionalDetails = false;
-			$max = ( !empty($sugar_config['max_spotresults_initial']) ? $sugar_config['max_spotresults_initial'] : 5 );
-			if($offset !== -1){
-				$max = ( !empty($sugar_config['max_spotresults_more']) ? $sugar_config['max_spotresults_more'] : 20 );
+			if(empty($where_clauses)) {
+			    continue;
 			}
-			$params = array();
-			if ( $moduleName == 'Reports') {
-			    $params['overrideOrder'] = true;
-			    $params['orderBy'] = 'name';
-			}
-			$results[$moduleName]= $lvd->getListViewData($seed, $where, $offset,  $max, $return_fields,$params,'id') ;
+			if(count($where_clauses) > 1) {
+			    $query_parts =  array();
 
+			    $ret_array_start = $seed->create_new_list_query('', '', $return_fields, array("distinct" => true), 0, '', true, $seed, true);
+                $search_keys = array_keys($searchFields[$moduleName]);
+
+                foreach($where_clauses as $n => $clause) {
+			        $allfields = $return_fields;
+			        $skey = $search_keys[$n];
+			        if(isset($seed->field_defs[$skey])) {
+                        // Joins for foreign fields aren't produced unless the field is in result, hence the merge
+			            $allfields[$skey] = $seed->field_defs[$skey];
+			        }
+                    $ret_array = $seed->create_new_list_query('', $clause, $allfields, array(), 0, '', true, $seed, true);
+                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
+                }
+                $main_query = "(".join(") UNION (", $query_parts).")";
+			} else {
+                foreach($searchFields[$moduleName] as $k=>$v){
+                    if(isset($seed->field_defs[$k])) {
+			            $return_fields[$k] = $seed->field_defs[$k];
+                    }
+			    }
+			    $ret_array = $seed->create_new_list_query('', $where_clauses[0], $return_fields, array(), 0, '', true, $seed, true);
+		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
+			}
+
+            $totalCount = null;
+		    if($limit < -1) {
+			    $result = $seed->db->query($main_query);
+		    } else {
+			    if($limit == -1) {
+				    $limit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
+                }
+
+                if($offset == 'end') {
+		            $totalCount = $this->_getCount($seed, $main_query);
+		            if($totalCount) {
+                	    $offset = (floor(($totalCount -1) / $limit)) * $limit;
+		            } else {
+		                $offset = 0;
+		            }
+                }
+                $result = $seed->db->limitQuery($main_query, $offset, $limit + 1);
+		    }
+
+            $data = array();
+            $count = 0;
+            while($count < $limit && ($row = $seed->db->fetchByAssoc($result))) {
+		        $temp = clone $seed;
+			    $temp->setupCustomFields($temp->module_dir);
+				$temp->loadFromRow($row);
+				$data[] = $temp->get_list_view_data($return_fields);
+				$count++;
+		    }
+
+    		$nextOffset = -1;
+    		$prevOffset = -1;
+    		$endOffset = -1;
+
+    		if($count >= $limit) {
+    			$nextOffset = $offset + $limit;
+    		}
+
+    		if($offset > 0) {
+    			$prevOffset = $offset - $limit;
+    			if($prevOffset < 0) $prevOffset = 0;
+    		}
+
+    		if( $count >= $limit && $totalCounted){
+    		    if(!isset($totalCount)) {
+    			    $totalCount  = $this->_getCount($seed, $main_query);
+    		    }
+    		} else {
+    		    $totalCount = $count + $offset;
+    		}
+
+            $pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
+		    $pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir);
+
+		    $results[$moduleName] = array("data" => $data, "pageData" => $pageData);
 		}
         //BEGIN SUGARCRM flav=spotactions ONLY
         //Search actions...
-        $results['Actions'] = $this->_searchActions($query,$offset,$max,$primary_module);
+        $results['Actions'] = $this->_searchActions($query,$offset,$limit,$primary_module);
         //END SUGARCRM flav=spotactions ONLY
         return $results;
 	}
@@ -290,7 +420,7 @@ EOHTML;
 		global $current_user, $current_language, $app_list_strings, $mod_list_strings;
 		$current_language= (empty($current_language)? "en_us": $current_language);
 
-		 $user_action_map_filename = sugar_cached('modules/'). $current_language . '_sugar_actions_' . $current_user->id . ".php";
+		 $user_action_map_filename = 'cache/modules/'. $current_language . '_sugar_actions_' . $current_user->id . ".php";
 
 		 if (!file_exists($user_action_map_filename)) {
 			 $all_menu_files=findAllFiles(getcwd(). "/modules",$all_menu_files,false,"Menu.php");

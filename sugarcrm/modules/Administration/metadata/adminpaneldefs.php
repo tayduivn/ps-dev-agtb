@@ -135,7 +135,6 @@ $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LB
 
 // Connector Integration
 $admin_option_defs['Administration']['connector_settings']=array('icon_Connectors','LBL_CONNECTOR_SETTINGS','LBL_CONNECTOR_SETTINGS_DESC','./index.php?module=Connectors&action=ConnectorSettings');
-$admin_option_defs['Administration']['eapm_settings']=array('icon_Connectors','LBL_EAPM_SETTINGS','LBL_EAPM_SETTINGS_DESC','./index.php?module=EAPM&action=displayproperties');
 
 //BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['sugarpdf']= array('icon_AdminPDF','LBL_SUGARPDF_SETTINGS','LBL_SUGARPDF_SETTINGS_DESC','./index.php?module=Configurator&action=SugarpdfSettings');
@@ -206,8 +205,8 @@ $admin_option_defs['Administration']['module_loader'] = array('ModuleLoader','LB
 //BEGIN SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $admin_option_defs['Administration']['config_prod_bar']=array('icon_ShortcutBar','LBL_CONFIGURE_SHORTCUT_BAR','LBL_CONFIGURE_SHORTCUT_BAR_DESC','./index.php?module=Administration&action=ConfigureShortcutBar');
-$admin_option_defs['any']['configure_group_tabs']= array('ConfigureTabs','LBL_CONFIGURE_GROUP_TABS','LBL_CONFIGURE_GROUP_TABS_DESC','./index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabs');
 //END SUGARCRM flav=pro ONLY
+$admin_option_defs['any']['configure_group_tabs']= array('ConfigureTabs','LBL_CONFIGURE_GROUP_TABS','LBL_CONFIGURE_GROUP_TABS_DESC','./index.php?action=wizard&module=Studio&wizard=StudioWizard&option=ConfigureGroupTabs');
 
 $admin_option_defs['any']['dropdowneditor']= array('Dropdown','LBL_DROPDOWN_EDITOR','DESC_DROPDOWN_EDITOR','./index.php?module=ModuleBuilder&action=index&type=dropdowns');
 //END SUGARCRM flav!=sales ONLY

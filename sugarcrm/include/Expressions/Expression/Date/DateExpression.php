@@ -22,54 +22,11 @@ require_once('include/Expressions/Expression/AbstractExpression.php');
 require_once('include/TimeDate.php');
 abstract class DateExpression extends AbstractExpression
 {
-	protected $internalDateFormat = "Y-m-d";
-	protected $internalDateTimeFormat = "Y-m-d H:i:s";
-	protected $includeTime = false;
-	
 	/**
 	 * All parameters have to be a string.
 	 */
 	function getParameterTypes() {
 		return AbstractExpression::$DATE_TYPE;
-	}
-
-	protected function convertToGMT($unixTime) {
-		$TD = TimeDate::getInstance();
-		$time = date($TD->get_date_time_format(), $unixTime);
-		$time = $TD->to_db($time);
-		return strtotime($time);
-	}
-
-	protected function convertToUserZone($unixTime) {
-		$TD = TimeDate::getInstance();
-		$time = date($this->internalDateFormat, $unixTime);
-		return $TD->to_display_date($time);
-	}
-
-	/**
-	 * returns the users display date format.
-	 *
-	 * @param int $unixTime (should be in GMT Time zone)
-	 */
-	protected function toDisplayTime($unixTime) {
-		$TD = TimeDate::getInstance();
-		if ($this->includeTime)
-		{
-			return  date($TD->get_date_format() . " " . $TD->get_time_format(), $unixTime);
-		}
-		return date($TD->get_date_format(), $unixTime);
-	}
-
-	protected function convertFromUserFormat($date) {
-		$TD = TimeDate::getInstance();
-		if (strrchr(trim($date), ' ')) {
-			$this->includeTime = true;
-			$date = $TD->swap_formats($date, $TD->get_date_time_format(), $this->internalDateTimeFormat);
-		}
-		 else {
-		 	$date = $TD->swap_formats($date, $TD->get_date_format(), $this->internalDateFormat);
-		 }
-		return $date;
 	}
 
     /**
@@ -83,10 +40,26 @@ abstract class DateExpression extends AbstractExpression
         if ($date instanceof DateTime)
             return $date;
 
-        //Assume that string dates are all in UTC
-        if (is_string($date))
-            return new DateTime($date, new DateTimeZone("UTC"));
-
+        //String dates must be in User format.
+        if (is_string($date)) {
+            $timedate = TimeDate::getInstance();
+            $split = $timedate->split_date_time($date);
+            if(!empty($split[1])) {
+                // have time
+                $resdate = $timedate->fromUser($date);
+            } else {
+                // just date, no time
+                $resdate = $timedate->fromUserDate($date);
+            }
+            /*if(!$resdate) {
+                $resdate = $timedate->fromString($date);
+            }*/
+            if(!$resdate) {
+                throw new Exception("attempt to convert invalid value to date: $date");
+            }
+            return $resdate;
+        }
+        throw new Exception("attempt to convert invalid value to date: $date");
         return false;
     }
 
@@ -111,8 +84,10 @@ abstract class DateExpression extends AbstractExpression
         {
             $offset = 60 - $min;
         }
-        $date->modify("+$offset minutes");
-        
+        if($offset != 0) {
+            $date->modify("+$offset minutes");
+        }
+
         return $date;
     }
 }

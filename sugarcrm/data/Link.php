@@ -670,7 +670,7 @@ class Link {
 				}
 		}
         $GLOBALS['log']->debug("Relationship type = {$this->_relationship->relationship_type}");
-	    foreach($keys as $key) {
+        foreach($keys as $key) {
 
 			//fetch the related record using the key and update.
 			if ($this->_relationship->relationship_type=='one-to-one' or $this->_relationship->relationship_type == 'one-to-many') {
@@ -719,36 +719,36 @@ class Link {
 					$this->_add_many_to_many($additional_values);
 				}
 			}
-		$custom_logic_arguments = array();
-		$custom_reverse_arguments = array();
-		$custom_logic_arguments['related_id'] = $key;
-		$custom_logic_arguments['id'] =  $this->_bean->id;
-		$custom_reverse_arguments['related_id'] = $this->_bean->id;
-		$custom_reverse_arguments['id'] = $key;
-		if($bean_is_lhs) {
-			$custom_logic_arguments['module'] = $this->_relationship->lhs_module;
-			$custom_logic_arguments['related_module'] = $this->_relationship->rhs_module;
-			$custom_reverse_arguments['module'] = $this->_relationship->rhs_module;
-			$custom_reverse_arguments['related_module'] = $this->_relationship->lhs_module;
-		} else {
-			$custom_logic_arguments['related_module'] = $this->_relationship->lhs_module;
-			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
-			$custom_logic_arguments['module'] = $this->_relationship->rhs_module;
-			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
+            $custom_logic_arguments = array();
+            $custom_reverse_arguments = array();
+            $custom_logic_arguments['related_id'] = $key;
+            $custom_logic_arguments['id'] =  $this->_bean->id;
+            $custom_reverse_arguments['related_id'] = $this->_bean->id;
+            $custom_reverse_arguments['id'] = $key;
+            if($bean_is_lhs) {
+                $custom_logic_arguments['module'] = $this->_relationship->lhs_module;
+                $custom_logic_arguments['related_module'] = $this->_relationship->rhs_module;
+                $custom_reverse_arguments['module'] = $this->_relationship->rhs_module;
+                $custom_reverse_arguments['related_module'] = $this->_relationship->lhs_module;
+            } else {
+                $custom_logic_arguments['related_module'] = $this->_relationship->lhs_module;
+                $custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
+                $custom_logic_arguments['module'] = $this->_relationship->rhs_module;
+                $custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
+            }
+            /**** CALL IT FROM THE MAIN BEAN FIRST ********/
+            $this->_bean->call_custom_logic('after_relationship_add', $custom_logic_arguments);
+            /**** NOW WE HAVE TO CALL THE LOGIC HOOK THE OTHER WAY SINCE IT TAKES TWO FOR A RELATIONSHIP****/
+            global $beanList;
+            if ( isset($beanList[$custom_logic_arguments['related_module']]) ) {
+                $class = $beanList[$custom_logic_arguments['related_module']];
+                if ( !empty($class) ) {
+                    $rbean = new $class();
+                    $rbean->id = $key;
+                    $rbean->call_custom_logic('after_relationship_add', $custom_reverse_arguments);
+                }
+            }
 		}
-		/**** CALL IT FROM THE MAIN BEAN FIRST ********/
-		$this->_bean->call_custom_logic('after_relationship_add', $custom_logic_arguments);
-		/**** NOW WE HAVE TO CALL THE LOGIC HOOK THE OTHER WAY SINCE IT TAKES TWO FOR A RELATIONSHIP****/
-		global $beanList;
-		$class = $beanList[$custom_logic_arguments['related_module']];
-		if ( !empty($class) ) {
-            $rbean = new $class();
-            $rbean->id = $key;
-            $rbean->call_custom_logic('after_relationship_add', $custom_reverse_arguments);
-		}
-
-		}
-
 	}
 
 	function _add_many_to_many($add_values) {
@@ -934,14 +934,40 @@ class Link {
 			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
 			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
 		}
-		$this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
+
+        if (empty($this->_bean->id)) {
+            $this->_bean->retrieve($id);//!$bean_is_lhs || empty($related_id) ? $id : $related_id);
+        }
+        //BEGIN SUGARCRM flav=een ONLY
+        $linkField = VardefManager::getLinkFieldForRelationship(
+            $this->_bean->module_dir, $this->_bean->object_name, $this->_relationship_name
+        );
+        //Resave records with calculated relate fields to update those fields
+        if (!empty($this->_bean->id) && empty($this->_bean->deleted)
+                && VardefManager::modHasCalcFieldsWithLink($this->_bean->module_dir, $this->_bean->object_name, $linkField['name'])) {
+            $this->_bean->save();
+        }
+        //END SUGARCRM flav=een ONLY
+        $this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
 		//NOW THE REVERSE WAY SINCE A RELATIONSHIP TAKES TWO
 		global $beanList;
-		$class = $beanList[$custom_logic_arguments['related_module']];
-		if ( !empty($class) ) {
-            $rbean = new $class();
-            $rbean->id = $id;
-            $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);
+		if ( isset($beanList[$custom_logic_arguments['related_module']]) ) {
+            $class = $beanList[$custom_logic_arguments['related_module']];
+            if ( !empty($class) ) {
+                $rbean = new $class();
+                $rbean->retrieve(empty($related_id) ? $id : $related_id);
+                //BEGIN SUGARCRM flav=een ONLY
+                $linkField = VardefManager::getLinkFieldForRelationship(
+                    $custom_logic_arguments['related_module'], $class, $this->_relationship_name
+                );
+                //Resave records with calculated relate fields to update those fields
+                if (!empty($rbean->id) && empty($rbean->deleted)
+                        && VardefManager::modHasCalcFieldsWithLink($custom_logic_arguments['related_module'], $class, $linkField['name'])) {
+                    $rbean->save();
+                }
+                //END SUGARCRM flav=een ONLY
+                $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);
+            }
         }
 	}
 
@@ -995,11 +1021,9 @@ class Link {
 		$indices=Link::_get_link_table_definition($table_name,'indices');
 		if (!empty($indices)) {
 			foreach ($indices as $index) {
-				foreach ($index as $key=>$value) {
-					if ($key=='type' && $value=='alternate_key') {
-						return $index['fields'];
-					}
-				}
+                if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {
+                    return $index['fields'];
+                }
 			}
 		}
 		$relationships=Link::_get_link_table_definition($table_name,'relationships');

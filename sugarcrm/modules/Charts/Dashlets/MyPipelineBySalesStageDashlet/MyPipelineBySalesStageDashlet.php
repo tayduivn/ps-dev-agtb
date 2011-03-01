@@ -93,8 +93,8 @@ class MyPipelineBySalesStageDashlet extends DashletGenericChart
     {
 		global $sugar_config, $current_user;
 
-        require_once('include/SugarCharts/SugarChart.php');
-		$sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+		$sugarChart = SugarChartFactory::getInstance();
 		$sugarChart->base_url = array( 	'module' => 'Opportunities',
 								'action' => 'index',
 								'query' => 'true',

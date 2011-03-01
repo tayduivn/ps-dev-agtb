@@ -97,8 +97,8 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
     {
         global $current_user, $sugar_config;
         
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->base_url = array( 	
             'module' => 'Opportunities',
             'action' => 'index',
@@ -133,7 +133,7 @@ class PipelineBySalesStageDashlet extends DashletGenericChart
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 		
-        return $this->getTitle('') . '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();		
+        return $this->getTitle('') . '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();		
     }
 
 	/**

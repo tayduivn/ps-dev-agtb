@@ -634,14 +634,24 @@ class SugarApplication
         $theme = $GLOBALS['current_user']->getPreference('user_theme');
 
         if (is_null($theme)) {
-			$theme = !empty($_SESSION['authenticated_user_theme'])
-                ? $_SESSION['authenticated_user_theme']
-                : $GLOBALS['sugar_config']['default_theme'];
+            $theme = $GLOBALS['sugar_config']['default_theme'];
+            if(!empty($_SESSION['authenticated_user_theme'])){
+                $theme = $_SESSION['authenticated_user_theme'];
+            }
+            else if(!empty($_COOKIE['sugar_user_theme'])){
+                $theme = $_COOKIE['sugar_user_theme'];
+            }
+            
 			if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '') {
 				$_SESSION['theme_changed'] = false;
 			}
 		}
-
+		   
+        if(!is_null($theme) && !headers_sent())
+        {
+            setcookie('sugar_user_theme', $theme, time() + 31536000); // expires in a year
+        }
+		
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
         $GLOBALS['image_path'] = SugarThemeRegistry::current()->getImagePath().'/';
@@ -805,6 +815,31 @@ class SugarApplication
 			header( "Location: ". $url );
 		}
 		exit();
+	}
+
+    /**
+	 * Redirect to another URL
+	 *
+	 * @access	public
+	 * @param	string	$url	The URL to redirect to
+	 */
+ 	public static function appendErrorMessage($error_message)
+	{
+        if (empty($_SESSION['user_error_message']) || !is_array($_SESSION['user_error_message'])){
+            $_SESSION['user_error_message'] = array();
+        }
+		$_SESSION['user_error_message'][] = $error_message;
+	}
+
+    public static function getErrorMessages()
+	{
+		if (isset($_SESSION['user_error_message']) && is_array($_SESSION['user_error_message']) ) {
+            $msgs = $_SESSION['user_error_message'];
+            unset($_SESSION['user_error_message']);
+            return $msgs;
+        }else{
+            return array();
+        }
 	}
 
 	/**

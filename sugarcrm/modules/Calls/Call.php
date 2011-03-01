@@ -476,7 +476,8 @@ class Call extends SugarBean
 		global $timedate;
 
 		// Assumes $call dates are in user format
-		$xOffset = $timedate->asUser($timedate->fromUser($timedate->merge_date_time($call->date_start, $call->time_start)), $call->current_notify_user);
+		$calldate = $timedate->fromDb($call->date_start);
+		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->userTimezoneSuffix($calldate, $call->current_notify_user);
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].
@@ -491,7 +492,7 @@ class Call extends SugarBean
 
 		$xtpl->assign("CALL_TO", $call->current_notify_user->new_assigned_user_name);
 		$xtpl->assign("CALL_SUBJECT", $call->name);
-		$xtpl->assign("CALL_STARTDATE", $xOffset . " " . (!empty($app_list_strings['dom_timezones_extra'][$prefDate['userGmtOffset']]) ? $app_list_strings['dom_timezones_extra'][$prefDate['userGmtOffset']] : $prefDate['userGmt']));
+		$xtpl->assign("CALL_STARTDATE", $xOffset);
 		$xtpl->assign("CALL_HOURS", $call->duration_hours);
 		$xtpl->assign("CALL_MINUTES", $call->duration_minutes);
 		$xtpl->assign("CALL_STATUS", ((isset($call->status))?$app_list_strings['call_status_dom'][$call->status] : ""));
@@ -593,14 +594,7 @@ class Call extends SugarBean
 
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($this,true));
 		$list = array();
-
-		$notify_user = new User();
-		$notify_user->retrieve($this->assigned_user_id);
-		$notify_user->new_assigned_user_name = $notify_user->full_name;
-		$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-		$list[] = $notify_user;
-
-		if(!is_array($this->contacts_arr)) {
+        if(!is_array($this->contacts_arr)) {
 			$this->contacts_arr =	array();
 		}
 
@@ -617,7 +611,7 @@ class Call extends SugarBean
 			$notify_user->retrieve($user_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
 		foreach($this->contacts_arr as $contact_id) {
@@ -625,7 +619,7 @@ class Call extends SugarBean
 			$notify_user->retrieve($contact_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 
         foreach($this->leads_arr as $lead_id) {
@@ -633,7 +627,7 @@ class Call extends SugarBean
 			$notify_user->retrieve($lead_id);
 			$notify_user->new_assigned_user_name = $notify_user->full_name;
 			$GLOBALS['log']->info("Notifications: recipient is $notify_user->new_assigned_user_name");
-			$list[] = $notify_user;
+			$list[$notify_user->id] = $notify_user;
 		}
 //		$GLOBALS['log']->debug('Call.php->get_notification_recipients():'.print_r($list,true));
 		return $list;
@@ -681,7 +675,13 @@ class Call extends SugarBean
 	function save_relationship_changes($is_update) {
 		$exclude = array();
 		if(empty($this->in_workflow)) {
-            $exclude = array('lead_id', 'contact_id', 'user_id', 'assigned_user_id');
+           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise 
+           //add assigned_user_id to exclude list and let the logic from MeetingFormBase determine whether assigned user id gets added to the relationship
+           	if(!empty($GLOBALS['soap_server_object'])){
+           		$exclude = array('lead_id', 'contact_id', 'user_id');
+           	}else{   	
+	            $exclude = array('lead_id', 'contact_id', 'user_id', 'assigned_user_id');
+           	}
         }
 		parent::save_relationship_changes($is_update, $exclude);
 	}
