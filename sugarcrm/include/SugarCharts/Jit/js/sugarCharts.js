@@ -44,7 +44,9 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  useGradients = nativeCanvasSupport;
 				  animate = !(iStuff || !nativeCanvasSupport);
 				})();
-
+				
+			jsonFilename =  jsonFilename + "?r=" + new Date().getTime();
+			
 			switch(chartConfig["chartType"]) {
 			case "barChart":
 				var handleFailure = function(o){
@@ -658,6 +660,12 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  colorStop2: 'rgba(255,255,255,0)',
 				  labelType: properties['labels'],
 				  hoveredColor: false,
+				  Title: {
+					text: properties['title'],
+					size: 16,
+					color: '#444444',
+					offset: 20
+				  },
 				  Subtitle: {
 					text: properties['subtitle'],
 					size: 11,
