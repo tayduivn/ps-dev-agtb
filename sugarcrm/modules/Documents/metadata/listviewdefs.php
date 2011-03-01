@@ -46,6 +46,7 @@ $listViewDefs['Documents'] = array(
     'default' => true,
     'bold' => false,
     'displayParams' => array ( 'module' => 'Documents', ),
+    'sortable' => false,
     'related_fields' => 
     array (
         0 => 'document_revision_id',
