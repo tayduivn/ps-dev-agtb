@@ -30,14 +30,20 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 	function queryFilterEmpty(&$layout_def)
 	{
         if( $this->reporter->db->dbType == 'mysql') {
-	    	return '( '.$this->_get_column_select($layout_def).' IS NULL OR '.$this->_get_column_select($layout_def)."='' )\n";
+			return '( '.$this->_get_column_select($layout_def).' IS NULL'.
+				 ' OR '.$this->_get_column_select($layout_def)." = ''".
+				 ' OR '.$this->_get_column_select($layout_def)." = '^^' )\n";
         }		
         elseif( $this->reporter->db->dbType == 'mssql') {
-	    	return '( '.$this->_get_column_select($layout_def).' IS NULL OR '.$this->_get_column_select($layout_def)." LIKE '' )\n";
+			return '( '.$this->_get_column_select($layout_def).' IS NULL'.
+				 ' OR '.$this->_get_column_select($layout_def)." LIKE ''".
+				 ' OR '.$this->_get_column_select($layout_def)." = '^^' )\n";
         }
         //BEGIN SUGARCRM flav=ent ONLY
         elseif ( $this->reporter->db->dbType == 'oci8') {
-	    	return '( '.$this->_get_column_select($layout_def).' IS NULL OR '.$this->_get_column_select($layout_def)." LIKE '' )\n";
+			return '( '.$this->_get_column_select($layout_def).' IS NULL'.
+				 ' OR '.$this->_get_column_select($layout_def)." LIKE ''".
+				 ' OR '.$this->_get_column_select($layout_def)." = '^^' )\n";
         }
         //END SUGARCRM flav=ent ONLY
 	}
@@ -46,15 +52,19 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
 	 {
 	    $reporter = $this->layout_manager->getAttribute("reporter");
         if( $this->reporter->db->dbType == 'mysql') {
-	   		return '( '.$this->_get_column_select($layout_def).' IS NOT NULL AND '.$this->_get_column_select($layout_def)."<>'' )\n";
+			return '( '.$this->_get_column_select($layout_def).' IS NOT NULL'.
+				' AND '.$this->_get_column_select($layout_def)." <> ''".
+				' AND '.$this->_get_column_select($layout_def)." != '^^' )\n";
         }
         else if( $this->reporter->db->dbType == 'mssql') {
-	        return $this->_get_column_select($layout_def).' IS NOT NULL ' . "\n";
+			return '( '.$this->_get_column_select($layout_def).' IS NOT NULL'.
+				' AND '.$this->_get_column_select($layout_def)." != '^^' )\n";
         }
 	//BEGIN SUGARCRM flav=ent ONLY
 	    else if ( $reporter->db->dbType == 'oci8')
 	    {
-	        return $this->_get_column_select($layout_def).' IS NOT NULL ' . "\n";
+			return '( '.$this->_get_column_select($layout_def).' IS NOT NULL'.
+				' AND '.$this->_get_column_select($layout_def)." != '^^' )\n";
 	    }
 	//END SUGARCRM flav=ent ONLY
 	 }
