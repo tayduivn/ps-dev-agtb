@@ -1,13 +1,17 @@
 <soda>
-	<puts text="Test: Reports_1771.xml starting." />
+	<puts text="Test: Reports_1774.xml starting." />
 	<!--
-		1. Login to SugarCRM as a valid user who creates the report mentioned 
-			in precondition 1, such as "user1".
-		2. Go to Home module. /* Franklin 01/20/2011: changed Dashboard to Home 
-			for 6.1.2 release */
+		Action:
 
-		4. Click "Add Sugar Dashlets" link.
-		5. Expand "My Team Reports" in pop-up window.
+			1. Login to system with valid user.
+			2. Click "Home" navigation tab. /* Franklin 01/20/2011: changed
+				Dashboard to Home for 6.1.2 release */
+			3. Click "Edit" link on top right corner of a customization chart.
+				Edit Document
+
+		Expected Results:
+
+			3. The summation report detail view page is displayed
 	-->
 
 	<csv file="{@global.scriptsdir}/modules/lib/SugarInit_Lib.csv" var="user">
@@ -100,12 +104,23 @@
 	<!-- clean up -->
 	
 	<div class="dashletToolSet" index="1">
-		<link index="3" alert="true" />
+		<link index="1" alert="true" />
 	</div>
 
+	<!-- make sure we're editing report -->
+	<button id="runReportButton" click="false" />
+	
+	<link id="moduleTab_Home" />
+
+	<!-- clean up -->
+	
+	<div class="dashletToolSet" index="1">
+		<link index="3" alert="true" />
+	</div>
+	
 	<script file="{@global.scriptsdir}/modules/lib/Report_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/login.xml" />
 	
-	<puts text="Test: Reports_1771.xml finished." />
+	<puts text="Test: Reports_1774.xml finished." />
 </soda>
 	
