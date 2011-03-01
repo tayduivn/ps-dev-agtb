@@ -26,6 +26,7 @@
 
 	<!-- Clone previous custom field -->
 	<link text="testfield_c" />
+	<wait timeout="3" />
 	<button value="Clone" />
 	<wait timeout="3" />
 

@@ -42,6 +42,7 @@
 	<!-- edit formerly created "qasuer" user -->
 	<link text="Admin" />
 	<link text="User Management" />
+	<wait timeout="3" />
 	<link text="qauser" />
 
 	<!-- verify visibility of # as delim, revert to comma for future use -->
