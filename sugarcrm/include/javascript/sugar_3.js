@@ -2409,8 +2409,14 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	    num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
-	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
+	
+	    if(num_grp_sep != '')
+	    {
+	       num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
+		   n = n.replace(num_grp_sep_re, '');
+	    }
+	    
+		n = n.replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
             // Need to strip out the currency symbols from the start.
