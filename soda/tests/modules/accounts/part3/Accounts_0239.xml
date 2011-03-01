@@ -22,7 +22,7 @@
 
 	<!--Create Task-->
 	<browser assert="{@pre_account_name}" />
-	<button name="Activities_CreateTask_button" />
+	<button name="Activities_createtask_button" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0239.csv" var="activity_record_0239">
 		<form id="form_SubpanelQuickCreate_Tasks">
 			<textfield id="name" set="{@activity_record_0239.name}" />

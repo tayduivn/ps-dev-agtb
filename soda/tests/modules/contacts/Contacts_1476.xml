@@ -23,7 +23,7 @@
 	</table>
 
 	<browser assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
-	<button name="Activities_CreateTask_button" />
+	<button name="Activities_createtask_button" />
 	<!--goto task subpanel & click "Create"-->
 	<csv file="{@global.scriptsdir}/csvs/contacts/Contacts_1471.csv" var="contact_record_1475">
 		<textfield id="name" set="{@contact_record_1475.name} {@user.name} {@stamp}" />

@@ -271,11 +271,11 @@ class vCard
                         $GLOBALS['log']->debug('I found a company name');
 						if(!empty($value)){
                             $GLOBALS['log']->debug('I found a company name (fer real)');
-                            $full_company_name = trim($values[0]);
-                            if ( is_a($contact,"Contact") ) {
+                            if ( is_a($contact,"Contact") || is_a($contact,"Lead") ) {
                                 $GLOBALS['log']->debug('And Im dealing with a person!');
                                 $accountBean = loadBean('Accounts');
                                 // It's a contact, we better try and match up an account
+								$full_company_name = trim($values[0]);
                                 // Do we have a full company name match?
                                 $result = $accountBean->retrieve_by_string_fields(array('name' => $full_company_name, 'deleted' => 0));
                                 if ( ! isset($result->id) ) {
@@ -296,8 +296,8 @@ class vCard
                                     $result = $accountBean->retrieve_by_string_fields(array('name' => $short_company_name, 'deleted' => 0));
                                 }
                                 
-                                if ( ! isset($result->id) ) {
-                                    // We could not find a parent account
+                                if (  is_a($contact,"Lead") || ! isset($result->id) ) {
+                                    // We could not find a parent account, or this is a lead so only copy the name, no linking
                                     $GLOBALS['log']->debug("Did not find a matching company ($full_company_name)");
                                     $contact->account_id = '';
                                     $contact->account_name = $full_company_name;
@@ -307,10 +307,7 @@ class vCard
                                     $contact->account_name = $result->name;
                                 }
                                 $contact->department = $values[1];
-                            } else if ( is_a($contact,"Lead") ){
-                                $contact->account_name = $full_company_name;
-                            }
-                            else {
+                            } else{
 								$contact->department = $value;
                             }
 						}

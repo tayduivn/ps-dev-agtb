@@ -10,7 +10,7 @@
 	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
 
 	<!--Create one task-->
-	<button name="Activities_CreateTask_button" />
+	<button name="Activities_createtask_button" />
 	<form id="form_SubpanelQuickCreate_Tasks">
 		<textfield id="name" set="task_accounts_3044" />
 	</form>

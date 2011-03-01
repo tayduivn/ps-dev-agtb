@@ -62,6 +62,7 @@
 
 	<!--Delete a account record-->
 	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
 	<puts text="Test: Accounts_0115.xml finished." />
 </soda>
        

@@ -19,7 +19,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Create History Subpanel & Click "Full Form" button-->
-	<button name="History_CreateNoteorAttachment_button" />
+	<button name="History_createnoteorattachment_button" />
 	<button id="Notes_subpanel_full_form_button" />
 	<browser assert="Notes" />
 

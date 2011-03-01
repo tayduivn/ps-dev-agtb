@@ -51,6 +51,7 @@
 	<link text="Basic Search" required="false" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
+	<wait timeout="3" />
 
 	<script file="{@global.scriptsdir}/modules/lib/Lead_Delete_Lib.xml" />
 	<puts text="Test: Leads_1973.xml finished" />

@@ -1,6 +1,6 @@
 <soda>
 	<!-- Create team notices -->
-	<puts text="Test: Teams_9406.xml starting." />
+	<puts text="Test: Teams_0604.xml starting." />
 	<timestamp />
 
 	<!-- goto Admin -->
@@ -14,7 +14,7 @@
 
 	<!-- click "team notices" -->
 	<link href="index.php?module=TeamNotices&amp;action=index" />
-	<browser assert="Team Notice" />
+	<browser assert="Team Notices" />
 
 	<!-- create team notice --> 
 	<link text="Create Team Notice" />  
@@ -43,7 +43,7 @@
 			<button value="Save" />
 			<wait timeout="5" />
 		</form>
-		<browser assert="Team Notice" />
+		<browser assert="Team Notices" />
 		<table class="list view">
 			<link text="{@team_record_0604.title}{@stamp}" click="false" />
 		</table>       
@@ -54,5 +54,5 @@
 		<link class="listViewTdToolsS1" index="2" alert="true" />
 	</table>
 
-	<puts text="Test: Teams_9406.xml finished." />
+	<puts text="Test: Teams_0604.xml finished." />
 </soda>
