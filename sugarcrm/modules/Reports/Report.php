@@ -1600,20 +1600,27 @@ print "<BR>";
         else
                         $query .= " WHERE ".$where_auto;
 
-        if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  )
-    {
-            foreach ( $this->group_order_by_arr as $group_order_by )
-  {
+        if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  ) {
+            foreach ( $this->group_order_by_arr as $group_order_by ) {
                 array_unshift($this->order_by_arr, $group_order_by);
             }
+	    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr)) {
+	        	foreach ($this->summary_order_by_arr as $group_order_by) {
+	        		array_unshift($this->order_by_arr, $group_order_by);
+	        	}
+	    	}
         }
-        else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query'  && empty($this->summary_order_by_arr))
-    {
-            foreach ( $this->group_order_by_arr as $group_order_by )
-  {
-                array_unshift($this->summary_order_by_arr, $group_order_by);
-            }
-    }
+        else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query') {
+	        if (empty($this->summary_order_by_arr)) {
+	    	    foreach ( $this->group_order_by_arr as $group_order_by ) {
+	                array_unshift($this->summary_order_by_arr, $group_order_by);
+	            }
+	        } else {
+	        	foreach (array_reverse($this->group_order_by_arr) as $group_order_by) {
+	        		array_push($this->summary_order_by_arr, $group_order_by);
+	        	}
+	        }
+        }
 
         // if we are doing the details part of a summary query.. we need the details
     // to be sorted by the group by
