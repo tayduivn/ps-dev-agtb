@@ -60,7 +60,7 @@
     </td>
 </tr>
 {/if}
-{if $vardef.type != 'address' && $vardef.type != 'relate' && $vardef.type != 'parent'}
+{if $vardef.type != 'address'}
 <tr><td class='mbLBL'>Dependent:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
