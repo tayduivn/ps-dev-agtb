@@ -29,6 +29,12 @@
 		</form>
 
 	</csv>
+	
+	<link id="moduleTab_Contacts" />
+	<div class="moduleTitle">
+		<link href="index.php?module=Contacts&amp;action=index" click="false" />
+	</div>
+	<link text="Basic Search" required="false" />
 	<!--Delete contact record-->
 	<script file="{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml" />
 	<puts text="Test: Contacts_1461.xml finished." />
