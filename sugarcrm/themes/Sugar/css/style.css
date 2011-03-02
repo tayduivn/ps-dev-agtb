@@ -2522,6 +2522,7 @@ embed
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 	margin-bottom: 20px;
+	border: 1px solid #ccc\9;
 	}
 	
 	.dashletPanel .hd {
