@@ -55,8 +55,8 @@ class="yui-navset"
 {{* Print out the table data *}}
 {{if $label == 'DEFAULT'}}
 	<div id="Default_{$module}_Subpanel">
-{{else if}}
-	<div id="{$label}">
+{{else}}
+	<div id="{{$label}}">
 {{/if}}
 
 {counter name="panelFieldCount" start=0 print=false assign="panelFieldCount"}
