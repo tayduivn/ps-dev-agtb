@@ -197,11 +197,11 @@ $mod_strings = array (
 
 	'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
 	'LBL_OPPORTUNITIES_SUBPANEL_TITLE' => 'Opportunities',
+	'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
 	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',
 	'LBL_CONTRACTS_SUBPANEL_TITLE' => 'Contracts',
-    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	//END SUGARCRM flav=pro ONLY
 	'LBL_COPY_ADDRESS_CHECKED_PRIMARY' => 'Copy to Primary Address',
 	'LBL_COPY_ADDRESS_CHECKED_ALT' => 'Copy to Other Address',
