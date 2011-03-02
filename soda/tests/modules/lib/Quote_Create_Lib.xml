@@ -32,7 +32,7 @@
       <textfield id="bundle_name_group_0" set="{@Quote_Create_Lib.bundle_name_group_0}" />
       <select id="bundle_stage_group_0" set="{@Quote_Create_Lib.bundle_stage_group_0}" />
       <button name="Add Row" value="Add Row" />
-      <button value="Select" name="product_name[1]" id="product_name_select_1" />
+      <button id="product_name_select_1" />
 
       <table class="list view">
          <link text="{@pre_ProductCatalog_name}" />
