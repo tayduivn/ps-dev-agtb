@@ -161,4 +161,34 @@ class MiscUtilsTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertFalse($result);
     }
+
+    public function testValuesToKeys()
+    {
+        $arr = array('apples', 'oranges', 'lemons', 'strawberries');
+        $newArr = values_to_keys($arr);
+        $this->assertArrayHasKey('lemons', $newArr, 'The conversion to hash did not work properly');
+    }
+
+    public function testNumberEmpty()
+    {
+        $num1 = 0;
+        $num2 = '0';
+        $num3 = -1;
+        $num4 = 'true';
+        $num5 = 'false';
+        $num6 = false;
+        $num7 = 10;
+        $num8 = '10';
+        $num9 = '';
+
+        $this->assertEquals(false, number_empty($num1), "Found 0 to be empty");
+        $this->assertEquals(false, number_empty($num2), "Found '0' to be empty");
+        $this->assertEquals(false, number_empty($num3), "Found -1 to be empty");
+        $this->assertEquals(false, number_empty($num4), "Found 'true' to be empty");
+        $this->assertEquals(false, number_empty($num5), "Found 'false' to be empty");
+        $this->assertEquals(false, number_empty($num6), "Found false to be empty");
+        $this->assertEquals(false, number_empty($num7), "Found 10 to be empty");
+        $this->assertEquals(false, number_empty($num8), "Found '10' to be empty");
+        $this->assertEquals(true, number_empty($num9), "Did not find empty string to be empty");
+    }
 }
