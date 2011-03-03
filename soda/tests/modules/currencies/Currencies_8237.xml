@@ -44,7 +44,7 @@
 
       <wait timeout="5" />
       <div id="subpanel_opportunities">
-         <browser assert="{@currency_8237.symbol}" />  
+         <browser assert="{@pre_currency_symbol}" />  
       </div>
    </csv>
    <wait timeout="2"/>
