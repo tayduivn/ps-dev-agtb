@@ -1567,8 +1567,7 @@ function is_admin_for_any_module($user) {
     $actions = ACLAction::getUserActions($user->id);
 	foreach ($beanList as $key=>$val) {
         if(($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'&& $key!='Calendar' && $key!='Activities') &&
-            ((isset($actions[$key]['module']) && $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV) ||
-            	(isset($actions[$key]['module']) && $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)   	)) {
+            (isset($actions[$key]['module']['admin']['aclaccess']) && ($actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV))) {
                 $_SESSION['is_admin_for_module'] = true;
                 return true;
         }
