@@ -38,9 +38,9 @@ $mod_strings = array (
 	'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
 	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
-    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	'LNK_ACCOUNT_REPORTS' => 'View Account Reports',
 	//END SUGARCRM flav=pro ONLY
+    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	// Dashlet Categories
 	'LBL_CHARTS'    => 'Charts',
 	'LBL_DEFAULT' => 'Views',
