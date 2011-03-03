@@ -110,11 +110,6 @@ class ViewModulefields extends SugarView
             $this->module->mbvardefs->vardefs['fields'] = array_reverse($this->module->mbvardefs->vardefs['fields'], true);
             $loadedFields = array();
             foreach($this->module->mbvardefs->vardefs['fields'] as $k=>$v){
-                if($k != $module_name)
-                    $titleLBL[$k]=translate("LBL_".strtoupper($k),'ModuleBuilder');
-                else{
-                    $titleLBL[$k]=$k;
-                }
                 foreach($v as $field => $def)
                 {
                 	// bug 40299, making sure the field is valid before we display it
@@ -122,6 +117,17 @@ class ViewModulefields extends SugarView
                 		unset($this->module->mbvardefs->vardefs['fields'][$k][$field]);
                 	else
                 	   $loadedFields[$field] = true;
+                }
+            	if (count($this->module->mbvardefs->vardefs['fields'][$k])==0 && $k != $module_name) {
+            		unset($this->module->mbvardefs->vardefs['fields'][$k]);
+            	}
+            }
+            // after unsetting some array elements, process the titles with the new data
+            foreach($this->module->mbvardefs->vardefs['fields'] as $k=>$v) {
+                if($k != $module_name)
+                    $titleLBL[$k]=translate("LBL_".strtoupper($k),'ModuleBuilder');
+                else{
+                    $titleLBL[$k]=$k;
                 }
             }
             $this->module->mbvardefs->vardefs['fields'][$module_name] = $this->cullFields($this->module->mbvardefs->vardefs['fields'][$module_name]);
