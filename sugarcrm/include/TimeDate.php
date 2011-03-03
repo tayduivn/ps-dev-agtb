@@ -1202,14 +1202,27 @@ class TimeDate
 	    if(!is_numeric($userOffset)) {
 		    return '';
 	    }
-	    $defaultZones= array('America/New_York', 'America/Los_Angeles','America/Chicago', 'America/Denver',
-	    	'America/Anchorage', 'America/Phoenix', 'Europe/Amsterdam','Europe/Athens','Europe/London',
-	    	'Australia/Sydney', 'Australia/Perth');
+	    $defaultZones= array(
+	        'America/Anchorage', 'America/Los_Angeles', 'America/Phoenix', 'America/Chicago',
+	    	'America/New_York', 'America/Argentina/Buenos_Aires', 'America/Montevideo',
+	        'Europe/London', 'Europe/Amsterdam', 'Europe/Athens', 'Europe/Moscow',
+	        'Asia/Tbilisi', 'Asia/Omsk', 'Asia/Jakarta', 'Asia/Hong_Kong',
+	        'Asia/Tokyo', 'Pacific/Guam', 'Australia/Sydney', 'Australia/Perth',
+	    );
 
 	    $now = new DateTime();
+	    $tzlist = timezone_identifiers_list();
 	    if($userOffset == 0) {
-    	     array_unshift($defaultZones, date('e'));
     	     $gmtOffset = date('Z');
+	         $nowtz = date('e');
+	         if(in_array($nowtz, $tzlist)) {
+    	         array_unshift($defaultZones, $nowtz);
+	         } else {
+	             $nowtz = timezone_name_from_abbr(date('T'), $gmtOffset, date('I'));
+	             if(in_array($nowtz, $tzlist)) {
+	                 array_unshift($defaultZones, $nowtz);
+	             }
+	         }
     	} else {
     	    $gmtOffset = $userOffset * 60;
     	}
@@ -1220,7 +1233,7 @@ class TimeDate
 	        }
 	    }
     	// try all zones
-	    foreach(timezone_identifiers_list() as $zoneName) {
+	    foreach($tzlist as $zoneName) {
 	        $tz = new DateTimeZone($zoneName);
 	        if($tz->getOffset($now) == $gmtOffset) {
                 return $tz->getName();
