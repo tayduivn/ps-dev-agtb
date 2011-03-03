@@ -4860,7 +4860,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 if(!isset($cache[$field]))
                     $cache[$field] = strtoupper($field);
 
-                //BEGIN SUGARCRM flav=pro ONLY
                 //Fields hidden by Dependent Fields
                 if (isset($value['hidden']) && $value['hidden'] === true) {
                     //BEGIN SUGARCRM flav=een ONLY
@@ -4871,8 +4870,6 @@ function save_relationship_changes($is_update, $exclude=array())
                         $return_array[$cache[$field]] = "";
 
                 }
-                //END SUGARCRM flav=pro ONLY
-
                 //cn: if $field is a _dom, detect and return VALUE not KEY
                 //cl: empty function check for meta-data enum types that have values loaded from a function
                 else if (((!empty($value['type']) && ($value['type'] == 'enum' || $value['type'] == 'radioenum') ))  && empty($value['function'])){
