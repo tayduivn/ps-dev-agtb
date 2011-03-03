@@ -10300,6 +10300,23 @@ $jit.LineChart = new Class({
     this.canvas = this.st.canvas;
   },
   
+    renderTitle: function() {
+  	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	label = config.Label,
+	title = config.Title;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.textBaseline = 'top';
+	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	}
+  },  
+  
     renderTicks: function() {
 
 	var canvas = this.canvas,
@@ -10401,6 +10418,7 @@ $jit.LineChart = new Class({
         ticks = config.Ticks,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
+        title = config.Title,
         groupTotalValue = 0;
     
     var valArrayAll = new Array();
@@ -10463,6 +10481,11 @@ $jit.LineChart = new Class({
     
     if(!animate && ticks.enable) {
 		this.renderTicks();
+	}
+	
+	
+	if(title.text) {
+		this.renderTitle();	
 	}
 	
     st.compute();
