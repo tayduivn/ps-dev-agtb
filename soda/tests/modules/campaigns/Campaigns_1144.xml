@@ -29,7 +29,7 @@
 
 	<button id="edit_button" />
 
-	<div id="DEFAULT">
+	<div id="Default_ProspectLists_Subpanel">
 		<timestamp />
 		<textfield id="name" set="Unsubscription List {@stamp}" />
 	</div>
