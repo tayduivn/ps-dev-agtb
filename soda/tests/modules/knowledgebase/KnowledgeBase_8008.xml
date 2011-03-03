@@ -46,7 +46,7 @@
             <link text='View Articles'/>
             <link id='advanced_tab_link'/>
             <button id='clearForm'/>
-            <image id='up_down_img2' click='true'/>
+            
             <textfield name='kbdocument_name' set='{@knowledgebase_80082.search1}'/>
             <button id='fts_search_ADV'/>
             <table class='list view'>
@@ -55,7 +55,7 @@
             </table>
             
             <button id='clearForm'/>
-            <image id='up_down_img2' click='true'/>
+            
             <textfield name='kbdocument_name' set='{@knowledgebase_80082.search2}'/>
             <button id='fts_search_ADV'/>
             <table class='list view'>
@@ -63,7 +63,7 @@
             </table>
             
             <button id='clearForm'/>
-            <image id='up_down_img2' click='true'/>
+           
             <textfield name='kbdocument_name' set='{@knowledgebase_80082.search3}'/>
             <button id='fts_search_ADV'/>
             <table class='list view'>

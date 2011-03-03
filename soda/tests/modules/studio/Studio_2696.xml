@@ -14,7 +14,7 @@
 
 	<select id="type" set="DropDown" />
 	<wait timeout="3" />
-	<textfield id="field_name_id" set="TestDropDown" />
+	<textfield id="field_name_id" set="testdropdown" />
 	<wait timeout="3" />
 
 	<form id="popup_form_id">

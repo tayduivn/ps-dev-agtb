@@ -117,8 +117,9 @@ class ViewConvertLead extends SugarView
 	                    $focus->amount = unformat_number($this->focus->opportunity_amount);
 	                } 
                  	else if ($module == "Opportunities" && $field == 'name') {
-                       if ($opportunityNameInLayout)
+                 		if ($opportunityNameInLayout && !empty($this->focus->opportunity_name)){
                            $focus->name = $this->focus->opportunity_name;
+                 		}
                    	}
 	                else if ($field == "id")
                     {

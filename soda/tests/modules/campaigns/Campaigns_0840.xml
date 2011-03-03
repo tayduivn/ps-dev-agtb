@@ -18,7 +18,7 @@
 		<span class="pageNumbers" assert="(0 - 0 of 0)" />
 	</form>
 
-	<script file="{@global.scriptsdir}/modules/lib/TargetList_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Campaign_Delete_Lib.xml" />
 
 	<puts text="Test: Campaigns_0840.xml finished." />
 </soda>

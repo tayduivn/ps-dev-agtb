@@ -47,7 +47,7 @@
             <link text='View Articles'/>
             <link id='advanced_tab_link'/>
             <button id='clearForm'/>
-            <image id='up_down_img2' click='true'/>
+            
             <select name='status_id' set='{@knowledgebase_80102.search}'/>
             <button id='fts_search_ADV'/>
             <table class='list view'>

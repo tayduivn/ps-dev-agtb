@@ -7,6 +7,7 @@
 	<timestamp/>
 	<!--create 2 users in a team-->
 	<link text="Admin" />
+	<wait timeout="3" />
 	<!--create user-->
 	<csv file="{@global.scriptsdir}/csvs/leads/Leads_1976.csv" var="lead_1976">
 		<link text="User Management" />
