@@ -22,8 +22,13 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testEnsureUnique()
     {
+        $this->assertEquals(
+            getValidDBName('idx_test_123_456_789_foo_bar_id', true),
+            getValidDBName('idx_test_123_456_789_foo_bar_id', true)
+        );
+
         $this->assertNotEquals(
-            'idx_test_123_456_789_foo_bar_id',
+            getValidDBName('idx_test_123_456_789_foo_bar_id', true),
             getValidDBName('idx_test_123_446_789_foo_bar_id', true)
         );
     }
