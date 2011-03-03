@@ -15061,6 +15061,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           colorArray = node.getData('colorMono'),
           colorLength = colorArray.length,
           stringArray = node.getData('stringArray'),
+		  percentage = node.getData('percentage'),
           span = node.getData('span') / 2,
           theta = node.pos.theta,
           begin = theta - span,
@@ -15158,15 +15159,20 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           ctx.font = label.style + ' ' + fontSize + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'center';
-          
+          pi = Math.PI;
+          angle = theta * 360 / (2 * pi);
           polar.rho = acum + config.labelOffset + config.sliceOffset;
           polar.theta = node.pos.theta;
           var cart = polar.getc(true);
-          if(config.labelType == 'name') {
-			ctx.fillText(node.name, cart.x, cart.y);
-		  } else {
-			ctx.fillText(node.data.valuelabel, cart.x, cart.y);
-		  }
+          if(((angle >= 225 && angle <= 315) || (angle <= 135 && angle >= 45)) && percentage <= 5) {
+          	
+          	} else {
+	          if(config.labelType == 'name') {
+				ctx.fillText(node.name, cart.x, cart.y);
+			  } else {
+				ctx.fillText(node.data.valuelabel, cart.x, cart.y);
+			  }
+          }
           ctx.restore();
         }
       }
