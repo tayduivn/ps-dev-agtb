@@ -298,13 +298,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					  
 					  if(elem.collision) {
 					  	eval("var name = elem."+chartConfig["tip"]+";");
-					  	tip.innerHTML = '';
+					  	var content = '<table>';
 					  	
 					  	for(var i=0; i<name.length; i++) {
-					  		tip.innerHTML += "<b>" + name[i] + "</b>: " + elem.value[i] + " - " + elem.percentage[i] + "%" + "<br>";
+					  		content += '<tr><td><b>' + name[i] + '</b>:</td><td> ' + elem.value[i] + ' - ' + elem.percentage[i] + '%' + '</td></tr>';
 					  	}
-					  	//eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
-					  
+					  	content += '</table>';
+					  	tip.innerHTML = content;
 					  } else {
 					  	eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");	
 					  }
