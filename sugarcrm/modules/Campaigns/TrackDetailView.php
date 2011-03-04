@@ -64,13 +64,13 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_NEWSLETTER'],$focus->name), true);
 } else{
     echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
-}    
-    
+}
+
     $GLOBALS['log']->info("Campaign detail view");
     $smarty = new Sugar_Smarty();
     $smarty->assign("MOD", $mod_strings);
     $smarty->assign("APP", $app_strings);
-    
+
     $smarty->assign("GRIDLINE", $gridline);
     $smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
     $smarty->assign("ID", $focus->id);
@@ -80,25 +80,25 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     $smarty->assign("TYPE", $app_list_strings['campaign_type_dom'][$focus->campaign_type]);
     $smarty->assign("START_DATE", $focus->start_date);
     $smarty->assign("END_DATE", $focus->end_date);
-    
+
     $smarty->assign("BUDGET", $focus->budget);
     $smarty->assign("ACTUAL_COST", $focus->actual_cost);
     $smarty->assign("EXPECTED_COST", $focus->expected_cost);
     $smarty->assign("EXPECTED_REVENUE", $focus->expected_revenue);
-    
-    
+
+
     $smarty->assign("OBJECTIVE", nl2br($focus->objective));
     $smarty->assign("CONTENT", nl2br($focus->content));
     $smarty->assign("DATE_MODIFIED", $focus->date_modified);
     $smarty->assign("DATE_ENTERED", $focus->date_entered);
-    
+
     $smarty->assign("CREATED_BY", $focus->created_by_name);
     $smarty->assign("MODIFIED_BY", $focus->modified_by_name);
     $smarty->assign("TRACKER_URL", $sugar_config['site_url'] . '/campaign_tracker.php?track=' . $focus->tracker_key);
     $smarty->assign("TRACKER_COUNT", intval($focus->tracker_count));
     $smarty->assign("TRACKER_TEXT", $focus->tracker_text);
     $smarty->assign("REFER_URL", $focus->refer_url);
-    
+
     if(isset($focus->campaign_type) && $focus->campaign_type == "Email" || $focus->campaign_type == "NewsLetter") {
         $smarty->assign("TRACK_DELETE_BUTTON","<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" accessKey=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_KEY']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
     }
@@ -111,13 +111,13 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
     		$smarty->assign("CURRENCY", $currency->iso4217 .' '.$currency->symbol );
     	}else $smarty->assign("CURRENCY", $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol() );
     }else{
-    
+
     	$smarty->assign("CURRENCY", $currency->getDefaultISO4217() .' '.$currency->getDefaultCurrencySymbol() );
-    
+
     }
     global $current_user;
     if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-    
+
     	$smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$_REQUEST['record']. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>");
     }
 
@@ -176,7 +176,7 @@ if(isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter"){
             }
          }
          $options_str .="</select>";
-        //populate the dropdown    
+        //populate the dropdown
         $smarty->assign("FILTER_LABEL", $mod_strings['LBL_FILTER_CHART_BY']);
         $smarty->assign("MKT_DROP_DOWN",$options_str);
     }
@@ -193,9 +193,9 @@ $chart= new campaign_charts();
 
     if(!empty($selected_marketing_id)){$latest_marketing_id = $selected_marketing_id;}
     if(empty($latest_marketing_id) ||  $latest_marketing_id === 'all'){
-        $smarty->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,$sugar_config['tmp_dir'].$cache_file_name,true));        
-    }else{         
-        $smarty->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,$sugar_config['tmp_dir'].$cache_file_name,true,$latest_marketing_id));        
+        $smarty->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,sugar_cached("xml/$cache_file_name"),true));
+    }else{
+        $smarty->assign("MY_CHART", $chart->campaign_response_by_activity_type($app_list_strings['campainglog_activity_type_dom'],$app_list_strings['campainglog_target_type_dom'],$focus->id,sugar_cached("xml/$cache_file_name"),true,$latest_marketing_id));
     }
 
 //end chart
