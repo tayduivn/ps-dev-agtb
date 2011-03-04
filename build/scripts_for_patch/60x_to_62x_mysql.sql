@@ -1,7 +1,3 @@
-ALTER TABLE `email_addr_bean_rel` MODIFY COLUMN `bean_module` varchar(100) NULL;
-
-ALTER TABLE `emails_beans` MODIFY COLUMN `bean_module` varchar(100) NULL;
-
 ALTER TABLE accounts_audit
     ADD INDEX idx_accounts_primary (id);
 ALTER TABLE bugs_audit
