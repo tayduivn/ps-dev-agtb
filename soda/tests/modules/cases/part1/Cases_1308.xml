@@ -2,6 +2,7 @@
 	<!-- Search case_Verify that cases which are assigned to the current user can be searched when checking "Only my items" check box -->
 	<puts text="Test: Cases_1308.xml starting." />
 	<csv file="{@global.scriptsdir}/csvs/cases/CasesAssertText.csv" var="cases" />
+	<csv file="{@global.scriptsdir}/csvs/cases/Case_1308.csv" var="Case_1308" />
 
 	<!--Create cases-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Create_Lib.xml" />
@@ -27,9 +28,9 @@
 
 	<button id="btn_assigned_user_name" />
 	<browser assert="User Search" />                        
-	<textfield name="last_name_advanced" set="{@pre_user_name}" />                        
+	<textfield name="last_name_advanced" set="{@Case_1308.update_user_name}" />                        
 	<button value="Search" />
-	<link text="{@pre_user_name}" />
+	<link text="{@Case_1308.update_user_name}" />
 
 	<button value="Save" />
 
