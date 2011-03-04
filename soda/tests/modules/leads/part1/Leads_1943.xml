@@ -37,7 +37,7 @@
 
 		<!--user select-->
 		<button id="btn_assigned_user_name" />
-		<wait timeout="5" />
+		<wait timeout="8" />
 		<browser assert="User Search" />
 		<textfield name="last_name_advanced" set="{@Leads_1943.assigned_user_name}" />
 		<button value="Search" />
