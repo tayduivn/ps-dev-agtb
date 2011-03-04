@@ -738,7 +738,7 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo self::getJavascriptValidation();
-            if (!is_file((sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+            if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
@@ -1291,7 +1291,7 @@ EOHTML;
 			} else {
 				return $firstParam;
 			}
-    	} 
+    	}
     	else {
 		    if (!empty($iconPath) && !$browserTitle) {
 				return "<a href='index.php?module={$this->module}&action=index'>"
@@ -1302,12 +1302,12 @@ EOHTML;
     	}
     }
 
-    protected function getModuleTitleIconPath($module) 
+    protected function getModuleTitleIconPath($module)
     {
     	$iconPath = "";
     	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
-    	} 
+    	}
     	else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     	}
