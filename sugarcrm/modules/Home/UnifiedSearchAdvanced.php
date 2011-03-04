@@ -61,18 +61,18 @@ class UnifiedSearchAdvanced {
 
 		include($this->cache_search);
 
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists($cachefile = sugar_cached('modules/unified_search_modules_display.php')))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
-		
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
-		
+
+		include $cachefile;
+
 		global $mod_strings, $modListHeader, $app_list_strings, $current_user, $app_strings, $beanList;
 		$users_modules = $current_user->getPreference('globalSearch', 'search');
 
 		// preferences are empty, select all
-		if(empty($users_modules)) {			
+		if(empty($users_modules)) {
 			$users_modules = array();
 			foreach($unified_search_modules_display as $module=>$data) {
 				if (!empty($data['visible']) ) {
@@ -81,7 +81,7 @@ class UnifiedSearchAdvanced {
 			}
 			$current_user->setPreference('globalSearch', $users_modules, 0, 'search');
 		}
-		
+
 		$sugar_smarty = new Sugar_Smarty();
 
 		$modules_to_search = array();
@@ -105,7 +105,7 @@ class UnifiedSearchAdvanced {
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('USE_SEARCH_GIF', 0);
 		$sugar_smarty->assign('LBL_SEARCH_BUTTON_LABEL', $app_strings['LBL_SEARCH_BUTTON_LABEL']);
-		
+
 		$json_enabled = array();
 		$json_disabled = array();
 
@@ -114,7 +114,7 @@ class UnifiedSearchAdvanced {
 		{
 			if(!isset($modules_to_search[$module]) && $data['visible'] && ACLController::checkAccess($module, 'list', true))
 			{
-			   $modules_to_search[$module]['checked'] = false;     
+			   $modules_to_search[$module]['checked'] = false;
 			} else if (isset($modules_to_search[$module]) && !$data['visible']) {
 			   unset($modules_to_search[$module]);
 			}
@@ -176,15 +176,15 @@ class UnifiedSearchAdvanced {
 		} else {
 			$users_modules = $current_user->getPreference('globalSearch', 'search');
 			$modules_to_search = array();
-						
-			if(!empty($users_modules)) { 
+
+			if(!empty($users_modules)) {
 				// use user's previous selections
 			    foreach ( $users_modules as $key => $value ) {
 			        if ( isset($unified_search_modules[$key]) ) {
 			            $modules_to_search[$key] = $value;
 			        }
 			    }
-			} else { 
+			} else {
 				// select all the modules (ie first time user has used global search)
 				foreach($unified_search_modules as $module=>$data) {
 				    if (!empty($data['default']) ) {
@@ -229,11 +229,11 @@ class UnifiedSearchAdvanced {
                 $lv = new ListViewSmarty();
                 $lv->lvd->additionalDetails = false;
                 $mod_strings = return_module_language($current_language, $seed->module_dir);
-                
+
                 //retrieve the original list view defs and store for processing in case of custom layout changes
                 require('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
 				$orig_listViewDefs = $listViewDefs;
-				
+
                 if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
                 {
                     require('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
@@ -258,7 +258,7 @@ class UnifiedSearchAdvanced {
 						}
 
 					}
-                    
+
                     //bug: 34125 we might want to try to use the LEFT JOIN operator instead of the INNER JOIN in the case we are
                     //joining against a field that has not been populated.
                     if(!empty($def['innerjoin']) )
@@ -673,7 +673,7 @@ class UnifiedSearchAdvanced {
 	/**
 	 * createUnifiedSearchModulesDisplay
 	 * method to create the unified_search_modules_display.php file
-	 * 
+	 *
 	 */
 	public function createUnifiedSearchModulesDisplay()
 	{

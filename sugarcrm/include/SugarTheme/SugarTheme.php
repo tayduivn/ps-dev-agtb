@@ -66,7 +66,7 @@ class SugarTheme
      * @var string
      */
     protected $ignoreParentFiles = array();
-    
+
     /**
      * Defines which parent files to not include
      *
@@ -274,8 +274,8 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            if ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
-                $caches = unserialize(file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
+            if ( sugar_is_file($cachedfile = sugar_cached($this->getFilePath().'/pathCache.php'))) {
+                $caches = unserialize(file_get_contents($cachedfile));
                 if ( isset($caches['jsCache']) )
                     $this->_jsCache       = $caches['jsCache'];
                 if ( isset($caches['cssCache']) )
@@ -306,12 +306,12 @@ class SugarTheme
 
         // clear out the cache on destroy if we are asked to
         if ( $this->_clearCacheOnDestroy ) {
-            if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
-                unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
+            if (is_file($cachedfile = sugar_cached($this->getFilePath().'/pathCache.php')))
+                unlink($cachedfile);
         }
         elseif ( !inDeveloperMode() ) {
             // only update the caches if they have been changed in this request
-            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache'] 
+            if ( count($this->_jsCache) != $this->_initialCacheSize['jsCache']
                     || count($this->_cssCache) != $this->_initialCacheSize['cssCache']
                     || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
                     || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
@@ -327,7 +327,7 @@ class SugarTheme
                             )
                         )
                     );
-                
+
             }
         }
     }
@@ -981,14 +981,14 @@ class SugarThemeRegistry
     {
         if ( !isset(self::$_currentTheme) )
             self::buildRegistry();
-        
+
         if ( isset($GLOBALS['sugar_config']['default_theme']) && self::exists($GLOBALS['sugar_config']['default_theme']) ) {
             return self::get($GLOBALS['sugar_config']['default_theme']);
         }
-            
+
         return self::get(array_pop(array_keys(self::availableThemes())));
     }
-    
+
     /**
      * Returns true if a theme object specified by the given $themeName exists in the registry
      *
