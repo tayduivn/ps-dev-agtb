@@ -4,6 +4,9 @@
 
 Modification information for LGPL compliance
 
+Author: Eddy Ramirez <eddy@sugarcrm.com>
+        2011-03-03 18:00:00 -0700 (Thu, 03 Mar 2011) - eddy - bug 31778 - added html chars (apostrophe and ampersand) back to email address before sending
+
 r58121 - 2010-09-09 11:35:17 -0700 (Thu, 09 Sep 2010) - kjing - Merge: 717e037 0ca4d1c
 Author: Jenny Gonsalves <jenny@sugarcrm.com>
     Merge branch 'master' of git+ssh://github.com/sugarcrm/Mango
@@ -470,6 +473,18 @@ class PHPMailer {
     if((count($this->to) + count($this->cc) + count($this->bcc)) < 1) {
       $this->SetError($this->Lang('provide_address'));
       return false;
+    }
+
+    //iterate through recipients and add back in html characters (apostrophe ' and ampersand &) to email addresses
+    //this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
+    foreach($this->to as $k=>$addr){
+        $this->to[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
+    }
+    foreach($this->cc as $k=>$addr){
+        $this->cc[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
+    }
+    foreach($this->bcc as $k=>$addr){
+        $this->bcc[$k][0] = htmlspecialchars_decode($addr[0],ENT_QUOTES);
     }
 
     /* Set whether the message is multipart/alternative */
