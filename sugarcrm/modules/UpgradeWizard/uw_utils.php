@@ -4844,14 +4844,16 @@ function upgradeTeamColumn($bean, $column_name) {
 			$GLOBALS['db']->addColumn($bean->table_name, $bean->field_defs['team_set_id']);
 		}
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
-		$indexDef = array(
+		
+        $indexName = getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34);
+        $indexDef = array(
 					 array(
-						'name' => 'idx_'.strtolower($bean->table_name).'_tmst_id',
+						'name' => $indexName,
 						'type' => 'index',
 						'fields' => array('team_set_id')
 					 )
 				   );
-		if(!isset($indexArray['idx_'.strtolower($bean->table_name).'_tmst_id'])) {
+		if(!isset($indexArray[$indexName])) {
 			$GLOBALS['db']->addIndexes($bean->table_name, $indexDef);
 		}
 
