@@ -172,7 +172,7 @@ $vardefs = array(
 ),
 'indices' => array(
 		array(
-			'name' => getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34),
+			'name' => getValidDBName('idx_'.strtolower($table_name).'_tmst_id', true, 34),
 			'type' => 'index', 
 			'fields' => array('team_set_id')
 		),
