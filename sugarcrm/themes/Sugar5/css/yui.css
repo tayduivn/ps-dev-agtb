@@ -457,8 +457,7 @@ p#clear {
     bottom: 0;
     left: -10px;
     margin-left: .4em;
-    cursor: pointer;
-    background: transparent url(layout_sprite.png) no-repeat 0 -450px;    
+    cursor: pointer; 
 }
 
  .yui-calendar .calnavright {
@@ -469,8 +468,7 @@ p#clear {
     bottom: 0;
     right: -10px;
     margin-right: .4em;
-    cursor: pointer;
-    background: transparent url(layout_sprite.png) no-repeat 0 -500px; 
+    cursor: pointer; 
 }
 
  .yui-calendar .calweekdayrow {
