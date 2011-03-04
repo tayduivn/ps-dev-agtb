@@ -5826,3 +5826,35 @@ function upgradeDisplayedTabsAndSubpanels($version)
 	    logThis('finish upgrading system displayed tabs and subpanels'); 
 	}
 }
+
+
+/**
+ * unlinkUpgradeFiles
+ * This is a helper function to clean up 
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function unlinkUpgradeFiles($version)
+{
+	if(!isset($version))
+	{
+	   return;
+	}
+	
+	logThis('start unlinking files from previous upgrade');
+	if($version < '620')
+	{
+	   //list of files to remove
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php');
+	   
+	   foreach($files_to_remove as $f)
+	   {
+		   if(file_exists($f))
+		   {
+		   	  logThis('removing file: ' . $f);
+		   	  unlink($f);
+		   }  
+	   }
+	}
+	logThis('end unlinking files from previous upgrade');
+}

@@ -514,6 +514,12 @@ if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 	upgradeDisplayedTabsAndSubpanels($origVersion);
 }
 
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($origVersion);
+}
+
 //also add the cache cleaning here.
 if(function_exists('deleteCache')){
 	@deleteCache();
