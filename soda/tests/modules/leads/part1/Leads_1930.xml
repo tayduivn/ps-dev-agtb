@@ -8,7 +8,7 @@
 	<div class="moduleTitle">
 		<link href="index.php?module=Leads&amp;action=index" click="false" />
 	</div>
-	<wait timeout="5" />
+	<wait timeout="8" />
 	<button id="search_form_clear" />
 	<textfield id="search_name_basic" set="{@pre_lead_first_name}" />
 	<button id="search_form_submit" />

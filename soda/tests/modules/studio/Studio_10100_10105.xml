@@ -34,8 +34,11 @@
         <form id="EditView">
         <textfield id="last_name" set="{@studio10100.name} {@user.name} {@stamp}" />
         <textfield id="primary_address_street" set="{@studio10100.street}" />
+        <textfield id="primary_address_street" click="false" jscriptevent="onchange" />
         <textfield id="primary_address_city" set="{@studio10100.city}" />
+        <textfield id="primary_address_city" click="false" jscriptevent="onchange" />
         <textfield id="primary_address_state" set="{@studio10100.state}" />
+        <textfield id="primary_address_state" click="false" jscriptevent="onchange" />
         <textfield id="description" assert="{@studio10100.des}" />
         <button value="Save" />
       </form>
