@@ -26,9 +26,9 @@
 
 	<!-- Clone previous custom field -->
 	<link text="testfield_c" />
-	<wait timeout="3" />
+	<wait timeout="5" />
 	<button value="Clone" />
-	<wait timeout="3" />
+	<wait timeout="5" />
 
 
 	<textfield id="label_value_id" assert="testfield" />
