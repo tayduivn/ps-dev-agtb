@@ -23,7 +23,9 @@
 			</wait>
 		</form>
 	</csv>
-
+	
+	<wait timeout="10" />
+	
 	<!-- Contacts sub-panel. -->
 	<div id="list_subpanel_contacts">
 		<button name="listViewNextButton" />
