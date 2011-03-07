@@ -1963,8 +1963,7 @@ print "<BR>";
 				if (!in_array($label, $distinct_labels)) {
 					$distinct_labels[] = $label;
 				} else {
-					$j = 0;
-					while (in_array($label, $distinct_labels) && $j < 100) {
+					while (in_array($label, $distinct_labels)) {
 						$label .= ' ';
 						$j++;
 					}
