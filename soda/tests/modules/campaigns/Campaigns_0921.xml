@@ -51,6 +51,15 @@
 		<form id="MassUpdate">
 			<span class="pageNumbers" assert="(1 - 1 of 1)" />
 		</form>
+		
+		<!-- Back to the basic search -->>
+		<link id="basic_search_link" />
+		<wait timeout="1" />
+		<button id='search_form_clear'/>
+		<wait timeout="1" />
+		<button id="search_form_submit" />
+		
+		
 		<checkbox name="massall" set="true" />
 		<link text="Actions" />
 		<link text="Delete" alert="true" />
