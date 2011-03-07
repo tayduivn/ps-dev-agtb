@@ -1206,11 +1206,10 @@ class SugarBean
                 }else{
 //END SUGARCRM flav=dce ONLY
                     if($this->bean_implements('ACL')){
-                        $category = isset($this->acl_category)?$this->acl_category:$this->module_dir;
                         if(!empty($this->acltype)){
-                            ACLAction::addActions($category, $this->acltype);
+                            ACLAction::addActions($this->getACLCategory(), $this->acltype);
                         }else{
-                            ACLAction::addActions($category);
+                            ACLAction::addActions($this->getACLCategory());
                         }
                     }
 //BEGIN SUGARCRM flav=dce ONLY
