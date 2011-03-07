@@ -28,7 +28,7 @@
       <wait timeout="3" />
 	</div>
 
-	<textfield id="team_name_collection_0" set=" " />
+	<textfield id="team_name_collection_0" set="" />
 	<button id="Meetings_subpanel_save_button" />
 	<browser assert="Missing required field: Subject" />
 	<browser assert="No Primary Team specified" />
