@@ -4037,7 +4037,10 @@ SUGAR.util.closeActivityPanel = {
                             SUGAR.util.closeActivityPanel.panel.hide();
                                     
                         ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-                        var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
+                        var args = "action=save&id=" + id + "&record=" + id + "&status=" + new_status + "&module=" + module;
+                        // 20110307 Frank Steegmans: Fix for bug 42361, Any field with a default configured in any activity will be set to this default when closed using the close dialog
+                        // TODO: Take id out and regression test. Left id in for now to not create any other unexpected problems
+                        //var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
                             {	//refresh window to show updated changes
