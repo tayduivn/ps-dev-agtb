@@ -149,7 +149,8 @@ class EmailUI {
 		$this->smarty->assign('dateFormat', $cuDatePref['date']);
 		$this->smarty->assign('dateFormatExample', str_replace(array("Y", "m", "d"), array("yyyy", "mm", "dd"), $cuDatePref['date']));
 		$this->smarty->assign('calFormat', $timedate->get_cal_date_format());
-
+        $this->smarty->assign('TIME_FORMAT', $timedate->get_user_time_format());
+		
 		$ieAccounts = $ie->retrieveByGroupId($current_user->id);
 		$ieAccountsOptions = "<option value=''>{$app_strings['LBL_NONE']}</option>\n";
 
@@ -264,11 +265,12 @@ class EmailUI {
 				    type : "js",
 				    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
 				    varName: "YAHOO.SUGAR",
-				    requires: ["datatable", "dragdrop", "treeview", "tabview"]
+				    requires: ["datatable", "dragdrop", "treeview", "tabview", "calendar"]
 				});
 				loader.insert();
 
 				{$preloadFolder};
+	
 			</script>
 eoq;
 
