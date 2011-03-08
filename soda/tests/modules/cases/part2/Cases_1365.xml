@@ -41,6 +41,7 @@
 
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml" />
 
 	<puts text="Test: Cases_1365.xml finished." />
 </soda>
