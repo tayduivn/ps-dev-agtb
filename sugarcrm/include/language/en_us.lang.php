@@ -3034,7 +3034,7 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
-    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
     
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
