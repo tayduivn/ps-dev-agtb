@@ -21,6 +21,7 @@
 
 	<!--Create Lead Subpanel -->
 	<button id="account_leads_create_button" />
+	<wait timeout="5" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0044.csv" var="lead_record_0044">
 		<form id="form_SubpanelQuickCreate_Leads">
 			<textfield id="refered_by" set="{@lead_record_0044.refered_by}" />
@@ -39,7 +40,7 @@
 
 		<!--user select -->
 		<button id="btn_assigned_user_name" />
-		<wait timeout="8" />
+		<wait timeout="10" />
 		<browser assert="User Search" />
 		<textfield id="last_name_advanced" set="{@lead_record_0044.assigned_user_name}" />
 		<button value="Search" />

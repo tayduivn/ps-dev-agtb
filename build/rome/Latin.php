@@ -2,10 +2,11 @@
 
 class Latin{
 	
-	function __construct($rome, $translationPath, $baseDir){
+	function __construct($rome, $translationPath, $baseDir, $ver){
 		$this->translationPath = $translationPath;
 		$this->rome = $rome;
 		$this->baseDir = realpath($baseDir);
+		$this->ver = $ver;
 		if(empty($this->startPath))$this->startPath = $this->baseDir;
 		
 	}
@@ -17,7 +18,14 @@ class Latin{
                         passthru("git clone git@github.com:sugarcrm/translations");
          }
         chdir(realpath($this->cwd ."/". $this->translationPath));
-		passthru("git pull origin master");
+
+		if(preg_match("/6\.1\.\d/", $this->ver)){
+			passthru("git branch --track 6_1 origin/6_1");
+			passthru("git checkout 6_1");
+			passthru("git pull origin 6_1");
+		}else{
+			passthru("git pull origin master");
+		}
 	}
 	
 	function copyFiles($path){

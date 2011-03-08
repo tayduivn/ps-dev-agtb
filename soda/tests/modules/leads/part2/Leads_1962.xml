@@ -18,6 +18,7 @@
 			<button value="  Create Task  " />
 		</table>
 	</div>
+	<wait timeout="5" />
 	<csv file="{@global.scriptsdir}/csvs/leads/Leads_1962.csv" var="Leads_1962">
 		<textfield id="name" set="{@Leads_1962.name}" />
 		<select id="priority" set="{@Leads_1962.priority}" />
@@ -38,7 +39,7 @@
 
 		<!--user select -->
 		<button id="btn_assigned_user_name" />
-		<wait timeout="5" />
+		<wait timeout="8" />
 		<browser assert="User Search" />
 		<textfield id="last_name_advanced" set="{@Leads_1962.assigned_user_name}" />
 		<button value="Search" />

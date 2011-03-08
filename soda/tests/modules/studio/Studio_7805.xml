@@ -1,7 +1,5 @@
 <soda>
-	<!--
-		Verify that cloning of a custom field maintains data from the original
-	-->
+	<!-- Verify that cloning of a custom field maintains data from the original -->
 	<puts text="Test: Studio_7805.xml starting" />
 
 	<!-- Create Custom Field in Studio -->
@@ -14,8 +12,10 @@
 	<select id="type" set="TextField" />
 	<wait timeout="3" />
 	<textfield id="field_name_id" set="testfield" />
+	<textfield id="field_name_id" click="false" jscriptevent="onchange" />
 	<wait timeout="3" />
-	<textfield name="help" click="false" />
+	<textfield id="label_value_id" click="true" />
+	<textfield id="field_name_id" click="false" jscriptevent="onchange" />
 
 	<wait timeout="3" />
 	<button name="fsavebtn" />
@@ -26,9 +26,9 @@
 
 	<!-- Clone previous custom field -->
 	<link text="testfield_c" />
-	<wait timeout="3" />
+	<wait timeout="5" />
 	<button value="Clone" />
-	<wait timeout="3" />
+	<wait timeout="5" />
 
 
 	<textfield id="label_value_id" assert="testfield" />

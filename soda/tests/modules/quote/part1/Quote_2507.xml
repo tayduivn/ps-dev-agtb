@@ -22,6 +22,7 @@
         <link id='basic_search_link' required='false'/>
         <wait timeout='2'/>
         <button id='search_form_clear'/>
+        <button id='search_form_submit'/>
     </form>
     <puts text='---Quote_2507.xml---Finished!'/>
 </soda>
