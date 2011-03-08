@@ -55,6 +55,9 @@
 			<textfield id="name" set="{@Case_1270.name} {@user.name} {@stamp}" />
 			<textfield id="description" set="{@Case_1270.description}" />
 			<filefield name="uploadfile" set="{@global.scriptsdir}/export/Accounts.csv" />
+			<filefield name="uploadfile" click="false" jscriptevent="onchange" />
+
+			<wait timeout="10" />
 			<button id="Notes_subpanel_save_button" />
 		</form>
 
@@ -64,8 +67,6 @@
 				<link text="{@Case_1270.name} {@user.name} {@stamp}" click="true" />
 			</table>
 		</div>
-		
-		<wait timeout="10" />
 		
 		<browser assert="{@Case_1270.name} {@user.name} {@stamp}" />
 		<browser assert="{@Case_1270.description}" />

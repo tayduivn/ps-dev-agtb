@@ -16,12 +16,9 @@
 
 	<button id="edit_button" />
 
-	<!-- A bit of a hack here.  If you move directly from the user box to the
-			Save button, it doesn"t save.  A bit of JavaScript doesn"t have time to
-			finish, maybe?  So we set another field after the user box to give it
-			some time. -->
-	<textfield id="assigned_user_name" set="{@bugtracker_0643.user}" />
-	<textfield id="work_log" set="Changed assigned to user." />
+	<textfield id="assigned_user_name" set="{@bugtracker_0643.user}" jscriptevent="onkeydown" />
+	<textfield id="assigned_user_name" click="false" jscriptevent="onkeyup" />
+	<wait timeout="2" />
 	<button value="Save" />
 	
 	<link id="moduleTab_Bugs" />
@@ -41,7 +38,7 @@
 			list will break it (as will filling more or fewer fields in the bug
 			record).  Feel free to suggest a better way to do it. -->
 	<table class="tabform">
-		<row index="9">
+		<row index="8">
 			<cell index="3">
 				<browser assert="{@bugtracker_0643.user2}" />
 			</cell>
