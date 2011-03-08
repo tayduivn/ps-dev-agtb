@@ -413,6 +413,7 @@ class Meeting extends SugarBean {
 			$this->parent_type = $app_list_strings['record_type_default_key'];
 		}
 
+		//BEGIN SUGARCRM flav!=com ONLY
         // Fill in the meeting url for external account types
         if ( !empty($this->id) && !empty($this->type) && $this->type != 'Sugar' && !empty($this->join_url) ) {
             // It's an external meeting
@@ -426,6 +427,7 @@ class Meeting extends SugarBean {
             
             $this->displayed_url = $meetingLink;
         }
+        //END SUGARCRM flav!=com ONLY
 	}
 
 	function get_list_view_data() {
