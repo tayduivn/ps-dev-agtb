@@ -11,7 +11,7 @@
 			5. Call detail view is displayed with the detail information
 				of the call entered by step #4.
 	-->
-	<puts text="Test: Calendar_0664.xml starting." />
+	<puts text="Test: Calendar_0666.xml starting." />
 	
 	<link id="moduleTab_Calendar" />
 
