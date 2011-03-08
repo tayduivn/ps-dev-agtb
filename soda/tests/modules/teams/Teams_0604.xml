@@ -31,9 +31,11 @@
 		<link text="{@team_record_0604.team_name}" />
 
 		<form id="EditView">
-			<textfield id="jscal_field" set="{@team_record_0604.datestart}" />
+			<textfield id="jscal_field" set="{@team_record_0604.datestart}" jscriptevent="onkeydown" />
+			<textfield id="jscal_field" click="false" jscriptevent="onkeyup" />
 			<wait timeout="5" />
-			<textfield id="jscal_field_end" set="{@team_record_0604.dateend}" />
+			<textfield id="jscal_field_end" set="{@team_record_0604.dateend}" jscriptevent="onkeydown" />
+			<textfield id="jscal_field_end" click="false" jscriptevent="onkeyup" />
 			<wait timeout="5" />
 			<textfield name="name" set="{@team_record_0604.title}{@stamp}" />
 			<select name="status" set="{@team_record_0604.status}" />

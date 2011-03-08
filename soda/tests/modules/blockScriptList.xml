@@ -121,13 +121,6 @@
 	</block>
 	
 	<block>
-		<testfile>Leads_1925</testfile>
-		<bugnumber>42509</bugnumber>
-		<reason>create lead from vCard - field missing</reason>
-		<modulename>Leads</modulename>
-	</block>
-	
-	<block>
 		<testfile>Studio_8287</testfile>
 		<bugnumber></bugnumber>
 		<reason>Can't find element during CI only</reason>
