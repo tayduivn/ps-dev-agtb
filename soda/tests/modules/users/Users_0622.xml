@@ -11,10 +11,10 @@
         <!--create group user-->
         <link text='Create Group User'/>
         <csv file='{@global.scriptsdir}/csvs/users/Users_0622.csv' var='User0622'>
-             <textfield name='sugar_user_name' set='{@User0622.name}{@stamp}'/>
-              <textfield id='Users0emailAddress0' set='{@User0622.email_address}'/>
+             <textfield name='sugar_user_name' set='{@User0622.name}{@stamp}' jscriptevent="onkeyup" />
+              <textfield id='Users0emailAddress0' set='{@User0622.email_address}' jscriptevent="onkeyup" />
              <select name='status' set='{@User0622.status}'/>
-             <textfield id='unique_name' set='{@User0622.username}{@stamp}'/>
+             <textfield id='unique_name' set='{@User0622.username}{@stamp}' jscriptevent="onkeyup" />
              
              <browser assert='Change Password' exist='false'/>
              <table class="actionsContainer" >

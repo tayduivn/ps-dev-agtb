@@ -12,8 +12,8 @@
     <link text='Create Group User'/>
     <browser assert='Users'/>
     <csv file='{@global.scriptsdir}/csvs/users/Users_9647.csv' var='Users9647'>
-          <textfield name='sugar_user_name' set='{@Users9647.last_name}{@stamp}'/>
-          <textfield id='unique_name' set='{@Users9647.last_name}{@stamp}'/>
+          <textfield name='sugar_user_name' set='{@Users9647.last_name}{@stamp}' jscriptevent="onkeyup" />
+          <textfield id='unique_name' set='{@Users9647.last_name}{@stamp}' jscriptevent="onkeyup"/>
           <select name='status' set='Inactive'/>
           <button id='Save'/>
           <!--search user-->

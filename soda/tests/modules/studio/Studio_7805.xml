@@ -12,6 +12,7 @@
 	<select id="type" set="TextField" />
 	<wait timeout="3" />
 	<textfield id="field_name_id" set="testfield" />
+	<textfield id="field_name_id" click="false" jscriptevent="onchange" />
 	<wait timeout="3" />
 	<textfield id="label_value_id" click="true" />
 	<textfield id="field_name_id" click="false" jscriptevent="onchange" />
