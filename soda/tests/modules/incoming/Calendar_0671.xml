@@ -35,8 +35,8 @@
 	<textfield name="name_basic" set="Dup_{@pre_call_name}" />
 	<button id="search_form_submit" />
 	<browser assertnot="Dup_{@pre_call_name}" />
-	<!--
+	
 	<script file="{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml" />
-	-->
+	
 	<puts text="Test: Calendar_0671.xml finished." />
 </soda>
