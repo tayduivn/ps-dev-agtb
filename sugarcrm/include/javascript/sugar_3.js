@@ -339,6 +339,7 @@ function isInteger(s) {
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
+		return parseInt(s) == s;
 	}
 	
 	return typeof(s) == 'number' && parseInt(s) == s;
