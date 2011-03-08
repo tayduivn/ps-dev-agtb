@@ -38,6 +38,7 @@ class SugarSpot
 	{
 		$query_encoded = urlencode($query);
 	    $results = $this->_performSearch($query, $modules, $offset);
+
 		$str = '<div id="SpotResults">';
 		$actions=0;
 		$foundData = false;
@@ -45,6 +46,7 @@ class SugarSpot
 			if(empty($data['data'])){
 				continue;
 			}
+
 			$foundData = true;
 
 			$countRemaining = $data['pageData']['offsets']['total'] - count($data['data']);
@@ -72,6 +74,16 @@ EOHTML;
 						if(strpos($k, 'NAME') !== false){
 							$name = $v;
 							break;
+						}
+					}
+
+					if(empty($name))
+					{
+						foreach($row as $k=>$v){
+							if(strpos($k, 'NAME') !== false){
+								$name = $v;
+								break;
+							}
 						}
 					}
 				}
@@ -252,24 +264,41 @@ EOHTML;
 
 			if (empty($searchFields[$moduleName])) continue;
 
-			if(isset($seed->field_defs['id']) && $seed->field_defs['id']['type'] == 'id') {
-			    $return_fields['id'] = $seed->field_defs['id'];
-			}
-			if(isset($seed->field_defs['name']) && $seed->field_defs['name']['type'] == 'name') {
+			if(isset($seed->field_defs['name'])) {
 			    $return_fields['name'] = $seed->field_defs['name'];
 			}
-			if(!isset($return_fields['name']) || !isset($return_fields['id'])) {
-			    // guessing didn't work, try the hard way
-			    foreach($seed->field_defs as $k => $v) {
-			        if(isset($seed->field_defs[$k]['type'])
-				    && ($seed->field_defs[$k]['type'] == 'name' || $seed->field_defs[$k]['type'] == 'id')) {
+
+			foreach($seed->field_defs as $k => $v) {
+			    if(isset($seed->field_defs[$k]['type']) && ($seed->field_defs[$k]['type'] == 'name') && !isset($return_fields[$k])) {
+				    $return_fields[$k] = $seed->field_defs[$k];
+				}
+			}
+
+			if(!isset($return_fields['name'])) {
+			    // if we couldn't find any name fields, try search fields that have name in it
+			    foreach($searchFields[$moduleName] as $k => $v) {
+			        if(strpos($k, 'name') != -1 && isset($seed->field_defs[$k])
+			            && !isset($seed->field_defs[$k]['source'])) {
 				        $return_fields[$k] = $seed->field_defs[$k];
+				        break;
 				    }
 			    }
 			}
-			if(!isset($return_fields['name']) || !isset($return_fields['id'])) {
+
+			if(!isset($return_fields['name'])) {
+			    // last resort - any fields that have 'name' in their name
+			    foreach($seed->field_defs as $k => $v) {
+			        if(strpos($k, 'name') != -1 && isset($seed->field_defs[$k])
+			            && !isset($seed->field_defs[$k]['source'])) {
+				        $return_fields[$k] = $seed->field_defs[$k];
+				        break;
+				    }
+			    }
+			}
+
+			if(!isset($return_fields['name'])) {
 			    // FAIL: couldn't find id & name for the module
-			    $GLOBALS['log']->fatal("Unable to find name and id for module $moduleName");
+			    $GLOBALS['log']->fatal("Unable to find name for module $moduleName");
 			    continue;
 			}
 
