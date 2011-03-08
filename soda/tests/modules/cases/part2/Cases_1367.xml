@@ -27,7 +27,7 @@
 	</div>
 
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1367.csv" var="Case_1367">
-      <div id="DEFAULT">
+      <div id="Default_Calls_Subpanel">
    		<textfield id="name" set="{@Case_1367.name} {@user.name} {@stamp}" />
       </div>
 		<button id="Calls_subpanel_cancel_button" alert="true" />

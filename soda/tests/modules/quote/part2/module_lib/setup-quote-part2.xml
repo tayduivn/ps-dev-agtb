@@ -5,6 +5,6 @@
 	<script file="{@global.scriptsdir}/modules/lib/Contact_Create_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/ProductCatalog_Create_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Quote_Create_Lib_NoDep.xml" />
-	<script file="{@global.scriptsdir}/modules/lib/Contract_Create_Lib_NoDep.xml" />
+	<!--script file="{@global.scriptsdir}/modules/lib/Contract_Create_Lib_NoDep.xml" /-->
 	<script file="{@global.scriptsdir}/modules/lib/Lead_Create_Lib.xml" />
 </soda>

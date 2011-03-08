@@ -54,6 +54,7 @@
 	</div>
 
 	<link text="Basic Search" />
+	<wait timeout="2" />
 	<button id="search_form_clear" />
 	<button id="search_form_submit" />
 
