@@ -69,16 +69,7 @@ if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
     	SUGAR.contextMenu= {};
 
     	SUGAR.config= {};
-/**
- * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- */
-// Declaring valid date character, minimum year and maximum year
-var dtCh= "-";
-var minYear=1900;
-var maxYear=2100;
+
 var nameIndex = 0;
 var typeIndex = 1;
 var requiredIndex = 2;
@@ -346,21 +337,11 @@ function toDecimal(original, precision) {
 
 function isInteger(s) {
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
-
-	var i;
-    for (i = 0; i < s.length; i++){
-        // Check that current character is number.
-        var c = s.charAt(i);
-        if (((c < "0") || (c > "9"))){
-        	if(i == 0 && c == "-"){
-        		//do nothing
-        	}else
-        		return false;
-        }
-    }
-    // All characters are numbers.
-    return true;
+	}
+	
+	return typeof(s) == 'number' && parseInt(s) == s;
 }
 
 function isNumeric(s) {
@@ -370,33 +351,6 @@ function isNumeric(s) {
    else {
 		return true;
    }
-}
-
-function stripCharsInBag(s, bag) {
-	var i;
-    var returnString = "";
-    // Search through string's characters one by one.
-    // If character is not in bag, append to returnString.
-    for (i = 0; i < s.length; i++){
-        var c = s.charAt(i);
-        if (bag.indexOf(c) == -1) returnString += c;
-    }
-    return returnString;
-}
-
-function daysInFebruary(year) {
-	// February has 29 days in any year evenly divisible by four,
-    // EXCEPT for centurial years which are not also divisible by 400.
-    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
-}
-
-function DaysArray(n) {
-	for (var i = 1; i <= n; i++) {
-		this[i] = 31
-		if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
-		if (i==2) {this[i] = 29}
-   }
-   return this
 }
 
 var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
