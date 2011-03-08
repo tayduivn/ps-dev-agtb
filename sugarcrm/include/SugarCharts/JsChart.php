@@ -129,7 +129,7 @@ class JsChart extends SugarChart {
 		$style = array();
 		$chartConfig = array();
 		$this->ss->assign("chartId", $this->chartId);
-		$this->ss->assign("filename", str_replace(".xml",".json",$this->xmlFile));
+		$this->ss->assign("filename", str_replace(".xml",".js",$this->xmlFile));
 		$css = $this->getChartCss();
 		$config = $this->getConfigProperties();
 		$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
@@ -154,7 +154,7 @@ class JsChart extends SugarChart {
 		foreach($chartsArray as $id => $data) {
 			$customChartsArray[$id] = array();
 			$customChartsArray[$id]['chartId'] = $id;
-			$customChartsArray[$id]['filename'] = str_replace(".xml",".json",$data['xmlFile']);
+			$customChartsArray[$id]['filename'] = str_replace(".xml",".js",$data['xmlFile']);
 			$customChartsArray[$id]['width'] = $data['width'];
 			$customChartsArray[$id]['height'] = $data['height'];
 
@@ -617,7 +617,7 @@ class JsChart extends SugarChart {
 
 	function saveJsonFile($jsonContents) {
 
-		$this->jsonFilename = str_replace(".xml",".json",$this->xmlFile);
+		$this->jsonFilename = str_replace(".xml",".js",$this->xmlFile);
 		//$jsonContents = mb_convert_encoding($jsonContents, 'UTF-16LE', 'UTF-8');
 
 		// open file
