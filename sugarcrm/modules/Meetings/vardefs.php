@@ -59,7 +59,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting password',
     //BEGIN SUGARCRM flav=com ONLY  
-    'studio' => false,
+    'studio' => 'false',
     //END SUGARCRM flav=com ONLY    
 	//BEGIN SUGARCRM flav!=com ONLY    
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
@@ -94,7 +94,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '400',
     'comment' => 'Meeting URL',
     //BEGIN SUGARCRM flav=com ONLY  
-    'studio' => false,
+    'studio' => 'false',
     //END SUGARCRM flav=com ONLY  
     //BEGIN SUGARCRM flav!=com ONLY
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
@@ -210,7 +210,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'importable' => 'false',
     'massupdate'=>false,
     'reportable'=>false,
-	'studio' => false,
+	'studio' => 'false',
   ),
   'parent_id' =>
   array (
