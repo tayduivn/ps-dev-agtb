@@ -24,7 +24,7 @@
 	<!--create a Call-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1299.csv" var="Case_1299">
 		<div id="list_subpanel_history">
-			<button name="History_CreateNoteorAttachment_button" value="  Create Note or Attachment  " />
+			<button name="History_createnoteorattachment_button" value="  Create Note or Attachment  " />
 		</div>
 
 		<!--set data-->

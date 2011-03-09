@@ -28,8 +28,11 @@
 		<form id="form_SubpanelQuickCreate_Calls">
 			<textfield id="name" set="{@Case_1365.name} {@user.name} {@stamp}" />
 			<!--<image id="remove_team_name_collection_0" click="true" />-->
-			<textfield id="team_name_collection_0" set="{@Case_1365.team}" />
+			<textfield id="team_name_collection_0" set="{@Case_1365.team}" jscriptevent="onkeydown" />
+			<textfield id="team_name_collection_0" click="false" jscriptevent="onkeyup" />
+			<wait timeout="2" />
 			<button id="Calls_subpanel_save_button" />
+			<wait timeout="3" />	
 		</form>
 	</csv>
 	<browser assert="No Primary Team specified" />
@@ -38,6 +41,7 @@
 
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml" />
 
 	<puts text="Test: Cases_1365.xml finished." />
 </soda>

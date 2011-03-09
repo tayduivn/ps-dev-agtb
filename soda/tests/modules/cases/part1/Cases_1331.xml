@@ -22,7 +22,8 @@
 
 	<!--create case record from quick create-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1331.csv" var="case_1331">
-		<textfield id="account_name" set="{@case_1331.account_record}" />
+		<textfield id="account_name" set="{@case_1331.account_record}" jscriptevent="onkeydown" />
+		<textfield id="account_name" click="false" jscriptevent="onkeyup" />
 		<button value="Save" />
 	</csv>
 	<browser assert="Missing required field: Account Name" />

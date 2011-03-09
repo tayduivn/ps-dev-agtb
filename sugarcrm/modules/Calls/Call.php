@@ -140,11 +140,10 @@ class Call extends SugarBean
         if(	isset($this->date_start) &&
         	isset($this->duration_hours) &&
         	isset($this->duration_minutes) ) {
-        	    $db_date_start = $timedate->to_db($this->date_start);
-        	    $date_time_start = DateTimeUtil::get_time_start($db_date_start);
-    	        $date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
-                $this->date_end = gmdate("Y-m-d", $date_time_end->ts);
-        	}
+    			$date_time_start = DateTimeUtil::get_time_start($this->date_start);
+    			$date_time_end = DateTimeUtil::get_time_end($date_time_start, $this->duration_hours, $this->duration_minutes);
+    			$this->date_end = gmdate("Y-m-d", $date_time_end->ts);
+        }
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
         } else {

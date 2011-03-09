@@ -29,6 +29,7 @@
 
 		<!--set data-->
 		<form id="form_SubpanelQuickCreate_Tasks">
+			<wait timeout="2" />
 			<textfield id="name" set="{@Case_1267.subject}" />
 			<select id="status" set="{@Case_1267.status}" />
 			<textfield id="date_due_date" set="{@Case_1267.date_due_date}" />
@@ -38,6 +39,7 @@
 			<select id="date_start_hours" set="{@Case_1267.date_start_hours}" />
 			<select id="date_start_minutes" set="{@Case_1267.date_start_minutes}" />
 			<button id="btn_contact_name" />
+			<wait timeout="2" />
 		</form>
 		<textfield id="first_name_advanced" set="{@pre_contact_first_name}" />
 		<textfield id="last_name_advanced" set="{@pre_contact_last_name}" />
@@ -92,8 +94,6 @@
 		<browser assert="{@Case_1267.description}" />
 	</csv>
 	
-	<!--<link text="arglebarg" />-->
-
 	<!--Delete the record-->
 	<script file="{@global.scriptsdir}/modules/lib/Case_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml" />
