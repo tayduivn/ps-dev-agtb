@@ -46,6 +46,9 @@ if(!class_exists('Tracker')){
     var $object_name = 'Tracker';
 	var $disable_var_defs = true;
 	var $acltype = 'Tracker';
+    //BEGIN SUGARCRM flav=pro ONLY
+    var $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
 
     var $column_fields = Array(
         "id",
