@@ -5,13 +5,11 @@
 
 	<link text="Email Settings" />
 
-	<!--
-		The JavaScript on the span tag does all the real work. The button click is
-		only a formality.
-	-->
-	<span id="gmail" jscriptevent="onmouseup">
-		<button id="gmail-button" />
-	</span>
+	<!-- The JavaScript on the span tag does all the real work. The button click is 
+		only a formality. -->
+
+	<button id="gmail-button" jscriptevent="onmouseup" />
+	<wait timeout="2" />
 
 	<csv file="{@global.scriptsdir}/modules/lib/Email_Setting_Lib.csv" var="EmailLib">
 		<textfield id="notify_fromname" set="{@EmailLib.notify_fromname}" />
