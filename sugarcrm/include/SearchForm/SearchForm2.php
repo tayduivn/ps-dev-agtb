@@ -522,6 +522,7 @@ require_once('include/EditView/EditView2.php');
                }
            }
        } 
+
     }
 
     /**
@@ -561,37 +562,45 @@ require_once('include/EditView/EditView2.php');
             // a generic search form validation mechanism.
             $type = (!empty($this->seed->field_name_map[$field]['type']))?$this->seed->field_name_map[$field]['type']:'';
 
-			if(!empty($parms['enable_range_search']))
-			{
-				if(empty($type))
-				{					
-					if(preg_match('/^start_range_(.*?)$/', $field, $match))
-					{
-						$real_field = $match[1];
-						$start_field = 'start_range_' . $real_field;
-						$end_field = 'end_range_' . $real_field;
+			if(!empty($parms['enable_range_search']) && empty($type))
+			{				
+				if(preg_match('/^start_range_(.*?)$/', $field, $match))
+				{
+					$real_field = $match[1];
+					$start_field = 'start_range_' . $real_field;
+					$end_field = 'end_range_' . $real_field;
 
-						if(isset($this->searchFields[$start_field]['value']) && isset($this->searchFields[$end_field]['value']))
-						{								
-							$this->searchFields[$real_field]['value'] = $this->searchFields[$start_field]['value'] . '<>' . $this->searchFields[$end_field]['value'];
-							$this->searchFields[$real_field]['operator'] = 'between';
-							$parms['value'] = $this->searchFields[$real_field]['value'];
-							$parms['operator'] = 'between';
-							$field = $real_field;
-							unset($this->searchFields[$end_field]['value']);
-						}
-					} else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
-						$real_field = $match[1];
-						$this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
-						$this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];
-						$params['value'] = $this->searchFields[$field]['value'];
-						$params['operator'] = $this->searchFields[$field]['operator'];
-						unset($this->searchFields[$field]['value']);
+					if(isset($this->searchFields[$start_field]['value']) && isset($this->searchFields[$end_field]['value']))
+					{								
+						$this->searchFields[$real_field]['value'] = $this->searchFields[$start_field]['value'] . '<>' . $this->searchFields[$end_field]['value'];
+						$this->searchFields[$real_field]['operator'] = 'between';
+						$parms['value'] = $this->searchFields[$real_field]['value'];
+						$parms['operator'] = 'between';
 						$field = $real_field;
-					} else {
-        			    //Skip this range search field, it is the end field THIS IS NEEDED or the end range date will break the query
-		            	continue;
+						unset($this->searchFields[$end_field]['value']);
 					}
+				} else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
+					$real_field = $match[1];
+					
+					//Special case for datetime and datetimecombo fields.  By setting the type here we allow an actual between search
+					if($parms['operator'] == '=')
+					{
+					   $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';					
+					   if($field_type == 'datetimecombo' || $field_type == 'datetime')
+					   {
+					   	  $type = $field_type;
+					   }
+					}
+					
+					$this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
+					$this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];						
+					$params['value'] = $this->searchFields[$field]['value'];
+					$params['operator'] = $this->searchFields[$field]['operator'];
+					unset($this->searchFields[$field]['value']);
+					$field = $real_field;
+				} else {
+        		    //Skip this range search field, it is the end field THIS IS NEEDED or the end range date will break the query
+	            	continue;
 				}
 			}
             
@@ -832,11 +841,10 @@ require_once('include/EditView/EditView2.php');
 								$first_between = false;								
 							}
 								
-							// Databases can't really search for floating point numbers, because they can't be accurately described in binary,
-							// So we have to fuzz out the math a little bit
-							if(!empty($parms['enable_range_search']) && ($parms['operator']!='equals' ||  $parms['operator']!='between')){
-								//do not add between clause if this is a range search, it will be handled below
-							} else {
+							if(!empty($parms['enable_range_search']) && $parms['operator'] == '=')
+							{
+								// Databases can't really search for floating point numbers, because they can't be accurately described in binary,
+								// So we have to fuzz out the math a little bit								
 								$field_value = ($field_value - 0.01) . "<>" . ($field_value + 0.01);
 								$operator = 'between';
 							}										
@@ -864,7 +872,7 @@ require_once('include/EditView/EditView2.php');
                         if(!empty($where)) {
                             $where .= " OR ";
                         }
-
+                        
                         switch(strtolower($operator)) {
                         	case 'subquery':
                         	    $in = 'IN';
