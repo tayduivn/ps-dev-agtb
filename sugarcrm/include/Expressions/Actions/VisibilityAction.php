@@ -97,6 +97,7 @@ class VisibilityAction extends AbstractAction{
 						    if (wasHidden && this.view == 'EditView')
 						        SUGAR.forms.FlashField(target);
 						}
+						this.checkRow(Dom.getAncestorByTagName(inputTD, 'TR'), inv_class);
 					}
 				} catch (e) {if (console && console.log) console.log(e);}
 			},
@@ -128,6 +129,19 @@ class VisibilityAction extends AbstractAction{
                     }
                 }
 			    return false;
+			},
+			checkRow: function(el, inv_class)
+			{
+                var hide = true;
+                for(var i = 0; i < el.children.length; i++)
+                {
+                    var node = el.children[i];
+                    if (!Dom.hasClass(node, inv_class)) {
+                        hide = false;
+                        break;
+                    }
+                }
+                el.style.display = hide ? 'none' : '';
 			}
 
 		});";
