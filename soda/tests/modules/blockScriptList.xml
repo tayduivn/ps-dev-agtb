@@ -209,6 +209,20 @@
 		<modulename>Knowledge Base</modulename>
 	</block>
 	
+	<!--Randy's modules-->
+	<block>
+		<testfile>contract_1661</testfile>
+		<bugnumber>42741</bugnumber>
+		<reason>we don't support YUI custom jsevent</reason>
+		<modulename>contracts</modulename>
+	</block>
+
+	<block>
+		<testfile>contract_1667</testfile>
+		<bugnumber>42741</bugnumber>
+		<reson>we don't suport YUI custom jsevent</reason>
+		<modulename>contracts</modulename>
+	</block>
 	<block>
 		<testfile>contract_1688</testfile>
 		<bugnumber>36446</bugnumber>
