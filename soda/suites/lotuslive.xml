@@ -2,8 +2,8 @@
 	<csv file="{@global.scriptsdir}/csvs/users.csv" var="user">
 		<script file="{@global.scriptsdir}/modules/lib/login.xml" />
 		<script file="{@global.scriptsdir}/modules/lib/LotusLive_Init.xml" />
-		<script fileset="{@global.scriptsdir}/modules/opportunity/part1" />
-		<script file="{@global.scriptsdir}/modules/lib/Opp_UnInit_Lib.xml" />
+		<script fileset="{@global.scriptsdir}/modules/integration/lotuslive" />
+		<script file="{@global.scriptsdir}/modules/lib/LotusLive_UnInit_Lib.xml" />
 		<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
 	</csv>
 
