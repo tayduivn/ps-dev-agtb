@@ -40,11 +40,11 @@
  * @copyright  2002-2011 Sebastian Bergmann <sebastian@phpunit.de>
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       http://www.phpunit.de/
- * @since      File available since Release 3.1.0
+ * @since      File available since Release 3.5.12
  */
 
 /**
- * Iterator for test suites.
+ * Default utility for PHP sub-processes.
  *
  * @package    PHPUnit
  * @subpackage Util
@@ -53,97 +53,16 @@
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @version    Release: 3.5.13
  * @link       http://www.phpunit.de/
- * @since      Class available since Release 3.1.0
+ * @since      Class available since Release 3.5.12
  */
-class PHPUnit_Util_TestSuiteIterator implements RecursiveIterator
+class PHPUnit_Util_PHP_Default extends PHPUnit_Util_PHP
 {
     /**
-     * @var    integer
+     * @param resource $pipe
+     * @since Method available since Release 3.5.12
      */
-    protected $position;
-
-    /**
-     * @var    PHPUnit_Framework_Test[]
-     */
-    protected $tests;
-
-    /**
-     * Constructor.
-     *
-     * @param  PHPUnit_Framework_TestSuite $suite
-     */
-    public function __construct(PHPUnit_Framework_TestSuite $testSuite)
+    protected function process($pipe, $job)
     {
-        $this->tests = $testSuite->tests();
-    }
-
-    /**
-     * Rewinds the Iterator to the first element.
-     *
-     */
-    public function rewind()
-    {
-        $this->position = 0;
-    }
-
-    /**
-     * Checks if there is a current element after calls to rewind() or next().
-     *
-     * @return boolean
-     */
-    public function valid()
-    {
-        return $this->position < count($this->tests);
-    }
-
-    /**
-     * Returns the key of the current element.
-     *
-     * @return integer
-     */
-    public function key()
-    {
-        return $this->position;
-    }
-
-    /**
-     * Returns the current element.
-     *
-     * @return PHPUnit_Framework_Test
-     */
-    public function current()
-    {
-        return $this->valid() ? $this->tests[$this->position] : NULL;
-    }
-
-    /**
-     * Moves forward to next element.
-     *
-     */
-    public function next()
-    {
-        $this->position++;
-    }
-
-    /**
-     * Returns the sub iterator for the current element.
-     *
-     * @return PHPUnit_Util_TestSuiteIterator
-     */
-    public function getChildren()
-    {
-        return new PHPUnit_Util_TestSuiteIterator(
-          $this->tests[$this->position]
-        );
-    }
-
-    /**
-     * Checks whether the current element has children.
-     *
-     * @return boolean
-     */
-    public function hasChildren()
-    {
-        return $this->tests[$this->position] instanceof PHPUnit_Framework_TestSuite;
+        fwrite($pipe, $job);
     }
 }
