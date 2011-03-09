@@ -339,8 +339,8 @@ function post_install() {
 	  
 	//Set the chart engine
 	if ($origVersion < '620') {
-		_logThis('Set chartEngine in config.php to SugarFlash', $path);
-		$sugar_config['chartEngine'] = 'SugarFlash';
+		_logThis('Set chartEngine in config.php to JS Charts', $path);
+		$sugar_config['chartEngine'] = 'Jit';
 	}
 	
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
