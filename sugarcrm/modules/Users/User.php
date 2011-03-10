@@ -324,30 +324,6 @@ class User extends Person {
         $user->_userPreferenceFocus->resetPreferences($category);
 	}
 
-
-	/**
-	 * Interface for the User object to calling the UserPreference::isPreferenceSizeTooLarge() method in modules/UserPreferences/UserPreference.php
-	 *
-	 * @see UserPreference::isPreferenceSizeTooLarge()
-	 *
-	 * @param string $category category to check
-	 */
-	public function isPreferenceSizeTooLarge(
-	    $category = 'global'
-	    )
-	{
-	    // for BC
-	    if ( func_num_args() > 1 ) {
-	        $user = func_get_arg(1);
-	        $GLOBALS['log']->deprecated('User::resetPreferences() should not be used statically.');
-	    }
-	    else
-	        $user = $this;
-
-        return $user->_userPreferenceFocus->isPreferenceSizeTooLarge($category);
-	}
-	
-	
 	/**
 	 * Interface for the User object to calling the UserPreference::savePreferencesToDB() method in modules/UserPreferences/UserPreference.php
 	 *

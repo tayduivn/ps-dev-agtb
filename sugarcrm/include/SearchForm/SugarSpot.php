@@ -186,13 +186,10 @@ EOHTML;
 	 */
 	protected function _getCount($seed, $main_query)
 	{
-        $count_query = $seed->create_list_count_query($main_query);
-		$result = $seed->db->query($count_query);
-		$cnt = 0;
-		while($row = $seed->db->fetchByAssoc($result)){
-			$cnt += $row['c'];
-		}
-		return $cnt;
+//        $count_query = $seed->create_list_count_query($main_query);
+		$result = $seed->db->query("SELECT COUNT(*) as c FROM ($main_query) main");
+		$row = $seed->db->fetchByAssoc($result);
+		return isset($row['c'])?$row['c']:0;
 	}
 
 	/**
@@ -338,7 +335,7 @@ EOHTML;
 			if(count($where_clauses) > 1) {
 			    $query_parts =  array();
 
-			    $ret_array_start = $seed->create_new_list_query('', '', $return_fields, array("distinct" => true), 0, '', true, $seed, true);
+			    $ret_array_start = $seed->create_new_list_query('', '', $return_fields, array(), 0, '', true, $seed, true);
                 $search_keys = array_keys($searchFields[$moduleName]);
 
                 foreach($where_clauses as $n => $clause) {
@@ -349,7 +346,7 @@ EOHTML;
 			            $allfields[$skey] = $seed->field_defs[$skey];
 			        }
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, array(), 0, '', true, $seed, true);
-                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
+                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
                 }
                 $main_query = "(".join(") UNION (", $query_parts).")";
 			} else {
@@ -359,10 +356,10 @@ EOHTML;
                     }
 			    }
 			    $ret_array = $seed->create_new_list_query('', $where_clauses[0], $return_fields, array(), 0, '', true, $seed, true);
-		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
+		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
 			}
 
-            $totalCount = null;
+			$totalCount = null;
 		    if($limit < -1) {
 			    $result = $seed->db->query($main_query);
 		    } else {

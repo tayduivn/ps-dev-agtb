@@ -450,7 +450,7 @@ $sugar_smarty->assign('getNameJs', $locale->getNameJs());
 
 
 // Grouped tabs?
-$useGroupTabs = $current_user->getPreference('navigation_paradigm');
+$useGroupTabs = $focus->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
         $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';

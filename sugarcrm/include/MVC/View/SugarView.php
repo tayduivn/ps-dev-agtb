@@ -440,12 +440,12 @@ class SugarView
                 $groupedTabsClass = new GroupedTabStructure();
                 $modules = query_module_access_list($current_user);
                 //handle with submoremodules
-                $max_tabs = $current_user->getPreference('max_subtabs');
+                $max_tabs = $current_user->getPreference('max_tabs');
                 // If the max_tabs isn't set incorrectly, set it within the range, to the default max sub tabs size
                 if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
                     // We have a default value. Use it
-                    if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
-                        $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
+                    if(isset($GLOBALS['sugar_config']['default_max_tabs'])){
+                        $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
                     }
                     else{
                         $max_tabs = 8;

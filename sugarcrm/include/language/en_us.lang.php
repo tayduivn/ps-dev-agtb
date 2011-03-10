@@ -2771,9 +2771,6 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
 	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
-	'ERROR_USER_PREFS' => "WARNING: Not all of your data could be saved because your data limit has been reached.",
-	'ERROR_USER_PREFS_DASH' => "WARNING: The Sugar dashlet could not be added because your data limit has been reached.",
-	'ERROR_USER_PREFS_TAB' => "WARNING: The Home Page could not be added because your data limit has been reached.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
