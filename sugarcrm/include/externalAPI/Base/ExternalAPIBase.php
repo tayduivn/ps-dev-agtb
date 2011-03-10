@@ -11,6 +11,10 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
     public $authMethod = 'password';
     public $useAuth = true;
     public $requireAuth = true;
+    
+    const APP_STRING_ERROR_PREFIX = 'ERR_EXTERNAL_API_';
+    protected $_appStringErrorPrefix = self::APP_STRING_ERROR_PREFIX;
+    
     /**
      * Authorization data
      * @var EAPM
@@ -177,4 +181,18 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
          
          return $callback_url;
 	}	
+	
+	/**
+	 * Allow API clients to provide translated language strings for a given error code
+	 *
+	 * @param unknown_type $error_numb
+	 */
+	protected function getErrorStringFromCode($error_numb)
+	{
+	    $language_key = $this->_appStringErrorPrefix . $error_numb;
+	    if( isset($GLOBALS['app_strings'][$language_key]) )
+	       return $GLOBALS['app_strings'][$language_key];
+	    else 
+	       return '';	    
+	}
 }
