@@ -187,7 +187,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
         file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
-            '<?php $QCModules = array("Users", "Teams"); ?>'
+            '<?php $QCModules = array("Users"); ?>'
             );
         
         $qArray = $this->eui->_loadQuickCreateModules();
@@ -200,7 +200,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
         
-        $this->assertEquals(array("Users", "Teams"), $qArray);
+        $this->assertEquals(array("Users"), $qArray);
     }
 }
 

@@ -184,6 +184,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
     {
 		$GLOBALS['db']->dbType = 'mssql';
 		$where_clauses = $this->searchForm->generateSearchWhere();
+		var_dump($where_clauses);
 		$this->assertEquals($where_clauses[0], 'DATEPART(yy,opportunities.date_closed) = DATEPART(yy, GETDATE())');
 
 		$this->searchForm->searchFields['range_date_closed'] = array (
@@ -198,7 +199,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($where_clauses[0], 'DATEPART(yy,opportunities.date_closed) = DATEPART(yy,( dateadd(yy, 1,GETDATE())))');
 		
     }       
-
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testRangeSearchOracle()
     {
 		$GLOBALS['db']->dbType = 'oci8';
@@ -217,7 +218,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($where_clauses[0], 'TRUNC(opportunities.date_closed,\'YEAR\') = TRUNC(add_months(sysdate,+12),\'YEAR\')');
 		
     } 
-    
+    //END SUGARCRM flav=ent ONLY
     
     /**
      * testRangeSearchWithSavedReportValues
