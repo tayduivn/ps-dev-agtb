@@ -213,7 +213,7 @@
 	<block>
 		<testfile>contract_1667</testfile>
 		<bugnumber>42741</bugnumber>
-		<reson>we don't suport YUI custom jsevent</reason>
+		<reason>we don't suport YUI custom jsevent</reason>
 		<modulename>contracts</modulename>
 	</block>
 	<block>
