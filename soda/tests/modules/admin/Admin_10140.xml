@@ -47,7 +47,7 @@
 
 	<button value="Cancel" />
 
-	<link text="uppercity_c" />
+	<link text="upperCity_c" />
 	
 	<button value="Delete" alert="true" />
 	<wait timeout="6" />

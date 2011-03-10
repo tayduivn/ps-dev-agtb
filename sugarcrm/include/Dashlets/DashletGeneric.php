@@ -296,7 +296,8 @@ class DashletGeneric extends Dashlet {
         return $returnArray;
     }
 
-	private function loadCustomMetadata(){
+	protected function loadCustomMetadata()
+	{
     	$customMetadate = 'custom/modules/'.$this->seedBean->module_dir.'/metadata/dashletviewdefs.php';
     	if ( file_exists ( $customMetadate )){
     		require($customMetadate);

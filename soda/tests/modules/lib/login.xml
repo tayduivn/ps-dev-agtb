@@ -1,7 +1,6 @@
 <soda>
 	<puts text="Lib: login.xml starting." />
-	<csv file="tests/csvs/users.csv" var="user" />
-
+	<csv file="{@global.scriptsdir}/csvs/users.csv" var="user" />
 
 	<browser url="{@global.url}" />
 

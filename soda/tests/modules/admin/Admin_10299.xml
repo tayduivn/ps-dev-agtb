@@ -34,14 +34,14 @@
 	<button name="fsavebtn" />
 	<wait timeout="12" />
 	
-	<browser assert="uppercity_c" />
+	<browser assert="upperCity_c" />
 
-	<link text="uppercity_c" />
+	<link text="upperCity_c" />
 	
 	<button value="Delete" alert="true" />
 	<wait timeout="12" />
 	
-	<browser assertnot="uppercity_c" />
+	<browser assertnot="upperCity_c" />
 	
 	
 	<puts text="Test: Admin_10299.xml finished." />

@@ -9,7 +9,8 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Create Activities Subpanel-->
-	<button name="Activities_create_button" />
+	<button name="Activities_createtask_button" />
+	<wait timeout="5" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0032.csv" var="activity_record_0197">
 		<div id="form_SubpanelQuickCreate_Tasks_tabs">
 			<textfield id="name" set="{@activity_record_0197.name} {@user.name} {@stamp}" />
@@ -32,6 +33,7 @@
 
 		<!--user select-->
 		<button id="btn_assigned_user_name" />
+		<wait timeout="3" />
 		<browser assert="User Search" />
 		<textfield name="last_name_advanced" set="{@activity_record_0197.assigned_user_name}" />
 		<button value="Search" />

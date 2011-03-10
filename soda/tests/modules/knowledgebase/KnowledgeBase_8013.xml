@@ -50,7 +50,7 @@
             <link text='View Articles'/>
             <link id='advanced_tab_link'/>
             <button id='clearForm'/>
-            <image id='up_down_img2' click='true'/>
+            
             <!--Author select-->
             <button name='btn_author'/>
             <browser assert='User Search'/>                        

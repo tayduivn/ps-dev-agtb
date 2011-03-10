@@ -12,12 +12,12 @@
     <link text='Create Portal API User'/>
     <browser assert='Users'/>
     <csv file='{@global.scriptsdir}/csvs/users/Users_9648.csv' var='Users9648'>
-          <textfield name='sugar_user_name' set='{@Users9648.last_name}{@stamp}'/>
-          <textfield id='unique_name' set='{@Users9648.last_name}{@stamp}'/>
+          <textfield name='sugar_user_name' set='{@Users9648.last_name}{@stamp}' jscriptevent="onkeyup" />
+          <textfield id='unique_name' set='{@Users9648.last_name}{@stamp}' jscriptevent="onkeyup" />
           <select name='status' set='Inactive'/>
           <link text='Password'/>
-          <textfield id='new_password' set='{@Users9648.pass}'/>
-          <textfield id='confirm_pwd' set='{@Users9648.pass}'/>
+          <textfield id='new_password' set='{@Users9648.pass}' jscriptevent="onkeyup" />
+          <textfield id='confirm_pwd' set='{@Users9648.pass}' jscriptevent="onkeyup" />
           <button id='Save'/>
           <!--search user-->
           <link text='Users'/>

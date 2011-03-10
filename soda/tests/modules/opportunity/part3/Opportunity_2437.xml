@@ -19,7 +19,7 @@
 		</table>
 
 		<form id="formformNotes">
-			<button name="History_create_button" />
+			<button name="History_createnoteorattachment_button" />
 		</form>
 		<button id="Notes_subpanel_full_form_button" />
 		<timestamp />

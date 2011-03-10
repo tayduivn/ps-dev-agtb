@@ -68,7 +68,7 @@ if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
     	SUGAR.Studio= {};
     	SUGAR.contextMenu= {};
 
-
+    	SUGAR.config= {};
 /**
  * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
@@ -1608,6 +1608,10 @@ function snapshotForm(theForm) {
 function initEditView(theForm) {
     if (SUGAR.util.ajaxCallInProgress()) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
+    	return;
+    }
+    // we don't need to check if the data is changed in the search popup
+    if (theForm.id == 'popup_query_form') {
     	return;
     }
 	if ( typeof editViewSnapshots == 'undefined' ) {

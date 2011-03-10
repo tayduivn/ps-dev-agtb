@@ -12,14 +12,15 @@
 	<button id="search_form_clear" />
 	<textfield id="search_name_basic" set="{@pre_contact_first_name}" />
 	<button id="search_form_submit" />
-	<table class="list view">
-		<link text="{@pre_contact_first_name} {@pre_contact_last_name}"
-			jscriptevent="onfocus" />
-	</table>
+	<link text="{@pre_contact_first_name} {@pre_contact_last_name}" />
+	<wait timeout="5" />
 
-	<!--Go its detail view $ "Duplicate"-->
-	<browser assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
+	<!--Go its detail view $ "Duplicate" -->
+	<div class="moduleTitle">
+		<browser assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
+	</div>
 	<button id="duplicate_button" />
+	<wait timeout="3" />
 	<csv file="{@global.scriptsdir}/csvs/contacts/Contacts_1449.csv" var="contact_record_1449">
 		<button id="btn_assigned_user_name" />
 		<browser assert="User Search" />
@@ -27,7 +28,7 @@
 		<button value="Search" />
 		<link text="{@contact_record_1449.assigned_user_name}" />
 
-		<!--teams select-->
+		<!--teams select -->
 		<table id="EditView_team_name_table">
 			<button value="Select" />
 		</table>
@@ -37,7 +38,7 @@
 		<button value="Search" />
 		<link text="{@contact_record_1449.team_name}" />
 
-		<!--fill the fields and "Save"-->
+		<!--fill the fields and "Save" -->
 		<form id="EditView">
 			<textfield name="first_name"
 				set="{@contact_record_1449.first_name} {@user.name} {@stamp}" />

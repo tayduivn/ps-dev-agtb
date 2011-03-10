@@ -60,10 +60,10 @@ class SugarWidgetSubPanelTopComposeEmailButton extends SugarWidgetSubPanelTopBut
 			// awu: Not all beans have emailAddress property, we must account for this
 			if (isset($bean->emailAddress)){
 				$to_addrs = $bean->emailAddress->getPrimaryAddress($bean);
-				$button = "<input class='button' type='button'  value='$value'  name='$title'  accesskey='$accesskey' title='$title' onclick=\"location.href='mailto:$to_addrs';return false;\" />";
+				$button = "<input class='button' type='button'  value='$value'  id='".preg_replace('[ ]', '', strtolower($value))."_button'  name='".preg_replace('[ ]', '', $value)."_button'  accesskey='$accesskey' title='$title' onclick=\"location.href='mailto:$to_addrs';return false;\" />";
 			}
 			else{
-				$button = "<input class='button' type='button'  value='$value'  name='$title'  accesskey='$accesskey' title='$title' onclick=\"location.href='mailto:';return false;\" />";
+				$button = "<input class='button' type='button'  value='$value'  id='".preg_replace('[ ]', '', strtolower($value))."_button'  name='".preg_replace('[ ]', '', $value)."_button'  accesskey='$accesskey' title='$title' onclick=\"location.href='mailto:';return false;\" />";
 			}
 		}else 
 		{
@@ -73,7 +73,7 @@ class SugarWidgetSubPanelTopComposeEmailButton extends SugarWidgetSubPanelTopBut
             $eUi = new EmailUI();
             $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($composeData);
                     
-            $button = "<input title='$title' accesskey='$accesskey' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='button' type='submit' name='button' value='$value'";
+            $button = "<input title='$title'  id='".preg_replace('[ ]', '', strtolower($value))."_button' accesskey='$accesskey' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='button' type='submit' name='".preg_replace('[ ]', '', $value)."_button' value='$value'";
 		}
 		return $button;	 
 	}

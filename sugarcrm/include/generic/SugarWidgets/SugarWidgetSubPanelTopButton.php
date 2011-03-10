@@ -233,15 +233,18 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 	function display($defines, $additionalFormFields = null)
 	{
 		$temp='';
+		$inputID = $this->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value)).'_button';
+		
 		if(!empty($this->acl) && ACLController::moduleSupportsACL($defines['module'])  &&  !ACLController::checkAccess($defines['module'], $this->acl, true)){
-			$button = "<input title='$this->title'  class='button' type='button' name='" . $this->getWidgetId() . "_create_button' value='  $this->form_value  ' disabled/>\n</form>";
+			$inputID = $this->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value)).'_button';
+			$button = "<input title='$this->title'  class='button' type='button' name='$inputID' id='$inputID' value='  $this->form_value  ' disabled/>\n</form>";
 			return $temp;
 		}
 		
 		global $app_strings;
 		
 		$button = $this->_get_form($defines, $additionalFormFields);
-		$button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='" . $this->getWidgetId() . "_create_button' value='  $this->form_value  ' />\n</form>";
+		$button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='  $this->form_value  ' />\n</form>";
 		return $button;
 	}
 

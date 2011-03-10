@@ -19,7 +19,7 @@
 		<link text="{@pre_account_name}" />
 	</table>
 
-	<button name="Activities_create_button" />
+	<button name="Activities_createtask_button" />
 	<button id="Tasks_subpanel_save_button" />
 	<browser assert="Missing required field: Subject" />
 	<link id="moduleTab_Accounts" alert="true"/>

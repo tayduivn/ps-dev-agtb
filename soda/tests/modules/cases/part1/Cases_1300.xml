@@ -24,7 +24,7 @@
 	<!--create a Note-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1300.csv" var="Case_1300">
 		<form id="formformNotes">
-			<button name="History_create_button" />
+			<button name="History_createnoteorattachment_button" />
 		</form>
 
 		<!--set data-->

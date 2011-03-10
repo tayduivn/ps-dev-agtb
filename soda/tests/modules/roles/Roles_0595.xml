@@ -1,7 +1,5 @@
 ﻿<soda>
-
 	<!-- set role disabled -->
-
 	<puts text="Test: Role_0595.xml starting." />
 	<!--Roles Create_Verify that particular modules can be disabled.-->
 	<link text="Admin" />
@@ -18,14 +16,16 @@
 	<browser assert="{@pre_role_name}" />
 	<browser assert="Edit" />
 	<!--Set modules disabled-->
-	<csv file="{@global.scriptsdir}/csvs/roles/Roles_0595.csv" var="role_record_0595">
+	<csv file="{@global.scriptsdir}/csvs/roles/Roles_0595.csv" 
+      var="role_record_0595">
 		<form id="ACLEditView">
 			<select index="{@role_record_0595.num}" set="Disabled" />
 			<button value="  Save  " />
 		</form>
 	</csv>
 	<!--select user-->
-	<csv file="{@global.scriptsdir}/modules/lib/SugarInit_Lib.csv" var="SugarInit0595">
+	<csv file="{@global.scriptsdir}/modules/lib/SugarInit_Lib.csv" 
+      var="SugarInit0595">
 		<div id="list_subpanel_users">
 			<button id="acl_roles_users_select_button" value="Select" />
 		</div>

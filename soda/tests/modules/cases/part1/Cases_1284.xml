@@ -23,7 +23,7 @@
 	<button name="clear" />
 	<checkbox name="massall" set="true" />
 
-	<timestamp/>
+	<timestamp />
 
 	<!--mass update case-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1284.csv" var="Case_1284">
@@ -33,9 +33,9 @@
 			<button value="Select" index="1" />
 		</table>
 		<browser assert="User Search" />                        
-		<textfield name="last_name_advanced" set="{@pre_user_name}" />                        
+		<textfield name="last_name_advanced" set="{@Case_1284.update_user_name}" />                        
 		<button value="Search" />
-		<link text="{@pre_user_name}" />
+		<link text="{@Case_1284.update_user_name}" />
 
 		<!--set Type-->
 		<select id="mass_type" set="{@Case_1284.type}" />
@@ -84,7 +84,7 @@
 
 		<button name="clear" />
 		<link text="{@case_record1}" />
-		<browser assert="{@pre_user_name}" />
+		<browser assert="{@Case_1284.update_user_name}" />
 		<browser assert="{@Case_1284.type}" />
 		<browser assert="{@Case_1284.priority}" />
 		<browser assert="{@acc_record3}" />
@@ -97,7 +97,7 @@
 
 		<button name="clear" />
 		<link text="{@case_record2}" />
-		<browser assert="{@pre_user_name}" />
+		<browser assert="{@Case_1284.update_user_name}" />
 		<browser assert="{@Case_1284.type}" />
 		<browser assert="{@Case_1284.priority}" />
 		<browser assert="{@acc_record3}" />
@@ -110,7 +110,7 @@
 
 		<button name="clear" />
 		<link text="{@case_record3}" />
-		<browser assert="{@pre_user_name}" />
+		<browser assert="{@Case_1284.update_user_name}" />
 		<browser assert="{@Case_1284.type}" />
 		<browser assert="{@Case_1284.priority}" />
 		<browser assert="{@acc_record3}" />

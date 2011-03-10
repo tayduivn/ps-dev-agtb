@@ -17,7 +17,8 @@
 	<browser assert='{@Contract_Create_Lib}'/>
 	<button id='edit_button'/>
 	<form name="EditView">
-            <textfield id="account_name" set="none-account {@user.name} {@stamp}"/>
+            <textfield id="account_name" set="none-account {@user.name} {@stamp}" jscriptevent="onchange"/>
+		<wait timeout="2"/>
 			<button value='Save'/>
 			<browser assert='Missing required field: Account Name'/>
 			<browser assert='Missing required field: No match for field: Account Name'/>

@@ -22,7 +22,7 @@
 	<browser assert="{@pre_account_name}" />
 
 	<!--Create Activities Subpanel-->
-	<button name="Activities_create_button" />
+	<button name="Activities_createtask_button" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0032.csv" var="activity_record_0361">
 		<div id="form_SubpanelQuickCreate_Tasks_tabs">
 			<textfield id="name" set="{@activity_record_0361.name} {@user.name} {@stamp}" />

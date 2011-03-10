@@ -155,7 +155,6 @@ function post_install()
 	createDefaultReports();
 
 	
-	//BEGIN SUGARCRM flav=ent ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){
 		global $sugar_config;
@@ -174,7 +173,6 @@ function post_install()
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
-	//END SUGARCRM flav=ent ONLY
 	
     //Upgrade Projects
 	upgradeProjects();

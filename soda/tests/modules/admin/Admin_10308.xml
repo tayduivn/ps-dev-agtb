@@ -47,9 +47,7 @@
 
 	<wait timeout="10" />
 	<li id="Senor">
-		<cell index="2">
-			<link index="2" jscriptevent="onclick" />
-		</cell>
+		<image index="2" click="true" jscriptevent="onclick" />
 	</li>
 	<wait timeout="3" />
 	<button id="saveBtn" alert="true" />

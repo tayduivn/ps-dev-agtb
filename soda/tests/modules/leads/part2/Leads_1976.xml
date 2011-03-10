@@ -4,8 +4,10 @@
 		correctly in team manager user page
 	-->
 	<puts text="Test: Leads_1976.xml starting." />
+	<timestamp/>
 	<!--create 2 users in a team-->
 	<link text="Admin" />
+	<wait timeout="3" />
 	<!--create user-->
 	<csv file="{@global.scriptsdir}/csvs/leads/Leads_1976.csv" var="lead_1976">
 		<link text="User Management" />
@@ -13,11 +15,11 @@
 		<textfield name="sugar_user_name" set="{@lead_1976.sugar_user_name_1}" />
 		<textfield id="last_name" set="{@lead_1976.sugar_user_name_1}" />
 		<textfield id="Users0emailAddress0" set="{@lead_1976.Users0emailAddress1}" />
-		<link text="Password" />
+		<link href="#tab2" />
 		<wait timeout="3" />
-		<textfield id="new_password" set="{@lead_1976.new_password}" />
-		<textfield id="new_password" set="{@lead_1976.new_password}" />
-		<textfield id="confirm_pwd" set="{@lead_1976.new_password}" />
+		<textfield id="new_password" set="{@lead_1976.new_password}" jscriptevent="onkeyup"/>
+		<textfield id="new_password" set="{@lead_1976.new_password}" jscriptevent="onkeyup"/>
+		<textfield id="confirm_pwd" set="{@lead_1976.new_password}" jscriptevent="onkeyup"/>
 
 		<button id="Save" />
 		<wait timeout="3" />
@@ -27,10 +29,11 @@
 		<textfield name="sugar_user_name" set="{@lead_1976.sugar_user_name_2}" />
 		<textfield id="last_name" set="{@lead_1976.sugar_user_name_2}" />
 		<textfield id="Users0emailAddress0" set="{@lead_1976.Users0emailAddress2}" />
-		<link text="Password" />
-		<textfield id="new_password" set="{@lead_1976.new_password}" />
-		<textfield id="new_password" set="{@lead_1976.new_password}" />
-		<textfield id="confirm_pwd" set="{@lead_1976.new_password}" />
+		<link href="#tab2" />
+		<wait timeout="3" />
+		<textfield id="new_password" set="{@lead_1976.new_password}" jscriptevent="onkeyup"/>
+		<textfield id="new_password" set="{@lead_1976.new_password}" jscriptevent="onkeyup"/>
+		<textfield id="confirm_pwd" set="{@lead_1976.new_password}" jscriptevent="onkeyup"/>
 
 		<button id="Save" />
 		<wait timeout="3" />

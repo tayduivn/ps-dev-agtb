@@ -7,7 +7,7 @@ class SugarTestAccountUtilities
 
     private function __construct() {}
 
-    public static function createAccount() 
+    public static function createAccount($id = '') 
     {
         $time = mt_rand();
     	$name = 'SugarAccount';
@@ -15,6 +15,11 @@ class SugarTestAccountUtilities
     	$account = new Account();
         $account->name = $name . $time;
         $account->email1 = 'account@'. $time. 'sugar.com';
+        if(!empty($id))
+        {
+            $account->new_with_id = true;
+            $account->id = $id;
+        }
         $account->save();
         self::$_createdAccounts[] = $account;
         return $account;

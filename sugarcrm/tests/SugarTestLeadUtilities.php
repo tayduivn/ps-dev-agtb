@@ -7,7 +7,7 @@ class SugarTestLeadUtilities
 
     private function __construct() {}
 
-    public static function createLead() 
+    public static function createLead($id = '') 
     {
         $time = mt_rand();
     	$first_name = 'SugarLeadFirst';
@@ -17,6 +17,11 @@ class SugarTestLeadUtilities
         $lead->first_name = $first_name . $time;
         $lead->last_name = $last_name ;
         $lead->email1 = 'lead@'. $time. 'sugar.com';
+        if(!empty($id))
+        {
+            $lead->new_with_id = true;
+            $lead->id = $id;
+        }
         $lead->save();
         self::$_createdLeads[] = $lead;
         return $lead;

@@ -166,7 +166,7 @@ EOHTML;
 		require_once 'include/SearchForm/SearchForm2.php' ;
 		$where = '';
 		
-		$searchEmail = preg_match("/^([^\%]|\%)*@([^\%]|\%)*$/", $query);
+		$searchEmail = preg_match('/^([^\%]|\%)*@([^\%]|\%)*$/', $query);
 		
 		foreach($modules as $moduleName){ 
 			if (empty($primary_module)) $primary_module=$moduleName;

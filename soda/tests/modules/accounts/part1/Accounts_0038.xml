@@ -23,7 +23,7 @@
 
 
 	<!--Create History Subpanel-->
-	<button name="History_create_button" />
+	<button name="History_createnoteorattachment_button" />
 	<wait timeout="5" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0036.csv" var="history_record_0036">
 		<form id="form_SubpanelQuickCreate_Notes">

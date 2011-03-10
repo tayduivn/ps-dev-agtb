@@ -20,7 +20,7 @@
 	<!--create a Task-->
 	<div id="list_subpanel_activities">
 		<table class="list view">
-			<button name="Activities_create_button" />
+			<button name="Activities_createtask_button" />
 		</table>
 	</div>
 

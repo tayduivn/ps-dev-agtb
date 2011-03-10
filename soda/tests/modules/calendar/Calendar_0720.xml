@@ -26,7 +26,7 @@
 
 	<!-- Create a note. -->
 	<div id="list_subpanel_history">
-		<button name="History_create_button" />
+		<button name="History_createnoteorattachment_button" />
 	</div>
 	<div id="subpanel_history_newDiv">
 		<form id="form_SubpanelQuickCreate_Notes">

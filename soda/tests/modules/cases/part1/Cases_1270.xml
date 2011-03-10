@@ -27,7 +27,8 @@
 	<!--create a note-->
 	<csv file="{@global.scriptsdir}/csvs/cases/Case_1270.csv" var="Case_1270">
 		<form id="formformNotes">
-			<button name="History_create_button" />
+			<button name="History_createnoteorattachment_button" />
+			<wait timeout="3" />
 		</form>
 
 		<!--set data-->
@@ -54,6 +55,9 @@
 			<textfield id="name" set="{@Case_1270.name} {@user.name} {@stamp}" />
 			<textfield id="description" set="{@Case_1270.description}" />
 			<filefield name="uploadfile" set="{@global.scriptsdir}/export/Accounts.csv" />
+			<filefield name="uploadfile" click="false" jscriptevent="onchange" />
+
+			<wait timeout="10" />
 			<button id="Notes_subpanel_save_button" />
 		</form>
 
@@ -63,6 +67,7 @@
 				<link text="{@Case_1270.name} {@user.name} {@stamp}" click="true" />
 			</table>
 		</div>
+		
 		<browser assert="{@Case_1270.name} {@user.name} {@stamp}" />
 		<browser assert="{@Case_1270.description}" />
 		<browser assert="Accounts.csv" />

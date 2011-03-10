@@ -11,7 +11,7 @@
 	<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
 
 	<!--Create one activity-->
-	<button name="Activities_create_button" />
+	<button name="Activities_createtask_button" />
 	<form id="form_SubpanelQuickCreate_Tasks">
 		<textfield id="name" set="activity_3042" />
 

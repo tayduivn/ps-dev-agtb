@@ -125,7 +125,9 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 					$first_char = '?';
 				}
 				$first_iteration = true;
-				foreach($_REQUEST as $param => $value) {
+				$get_and_post = array_merge($_GET, $_POST);
+				foreach($get_and_post as $param => $value) {
+
 					if($param == 'redirect_url' || $param == 'submit')
 						continue;
 					
@@ -136,7 +138,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 					else{
 						$query_string .= "&";
 					}
-					$query_string .= "{$param}={$value}";
+					$query_string .= "{$param}=".urlencode($value);
 				}
 				if(empty($lead)) {
 					if($first_iteration){

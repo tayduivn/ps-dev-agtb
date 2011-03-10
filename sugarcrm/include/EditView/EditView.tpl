@@ -53,7 +53,12 @@ class="yui-navset"
 {{counter name="panelCount" print=false}}
 
 {{* Print out the table data *}}
-<div id="{{$label}}">
+{{if $label == 'DEFAULT'}}
+	<div id="Default_{$module}_Subpanel">
+{{else}}
+	<div id="{{$label}}">
+{{/if}}
+
 {counter name="panelFieldCount" start=0 print=false assign="panelFieldCount"}
 {{* Check to see if the panel variable is an array, if not, we'll attempt an include with type param php *}}
 {{* See function.sugar_include.php *}}

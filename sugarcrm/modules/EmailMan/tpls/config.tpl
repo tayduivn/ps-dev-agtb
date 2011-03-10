@@ -691,7 +691,7 @@ function changeEmailScreenDisplay(smtptype, clear)
                 || document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' ) {
             document.getElementById("mail_smtpserver").value = '';
         }
-        document.getElementById("mail_smtpport").value = '25';
+        //document.getElementById("mail_smtpport").value = '25';
         document.getElementById("mail_smtpauth_req").checked = true;
         document.getElementById("mailsettings1").style.display = '';
         document.getElementById("mailsettings2").style.display = '';
