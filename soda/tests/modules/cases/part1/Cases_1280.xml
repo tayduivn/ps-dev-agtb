@@ -21,8 +21,9 @@
 		<select id="type" set="{@Case_1280.type}" />     
 
 		<!--Account set-->
-		<textfield id="account_name" set="{@Case_1280.new_account_name}" />
-
+		<textfield id="account_name" set="{@Case_1280.new_account_name}" jscriptevent="onkeydown" />
+		<textfield id="account_name" click="false" jscriptevent="onkeyup" />
+		<wait timeout="2" />
 		<button value="Save" />
 
 		<!--verify the warning message show-->

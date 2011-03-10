@@ -28,7 +28,6 @@
 	<wait timeout="5" />
 	<browser assert="Gloria Chen" />
 	<!--verify convert a new account-->
-	<browser assert="Converted Account:" />
 	<link text="SugarCRM Inc." click="false" exist="true" />
 
 	<!--verify the vcard-->
