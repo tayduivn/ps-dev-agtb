@@ -2247,6 +2247,7 @@ $app_strings = array (
     'LBL_CLOSE_ACTIVITY_HEADER' => "Confirm",
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
+    'LBL_INVALID_FILE_EXTENSION' => 'Invalid File Extension',
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',

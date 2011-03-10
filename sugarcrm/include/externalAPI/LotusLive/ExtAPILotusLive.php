@@ -68,6 +68,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     public $supportedModules = array('Meetings','Notes', 'Documents');
     public $supportMeetingPassword = false;
     public $docSearch = true;
+    public $restrictUploadsByExtension = false;
     public $connector = "ext_eapm_lotuslive";
 
 	protected $meetingID;
