@@ -1014,11 +1014,9 @@ require_once('include/EditView/EditView2.php');
 								$where .= $db_field . " <= '". $field_value . "'";
 								break;
 							case 'last_7_days':
-								if($GLOBALS['db']->dbType == 'mysql')
-								{
+								if($GLOBALS['db']->dbType == 'mysql') {
 									$where .= "LEFT(" . $db_field . ",10) BETWEEN LEFT((current_date - interval '7' day),10) AND LEFT(current_date,10)";	
 								} 
-								//BEGIN SUGARCRM flav=PRO ONLY
 								elseif ($GLOBALS['db']->dbType == 'mssql') {
 									$where .= "DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) <= 7 and DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) >= 0";
 								} 
@@ -1027,14 +1025,11 @@ require_once('include/EditView/EditView2.php');
 									$where .= $db_field . " BETWEEN (sysdate - interval '7' day) AND sysdate";
 								}
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY
 								break;
 							case 'next_7_days':	
-								if($GLOBALS['db']->dbType == 'mysql')
-								{
+								if($GLOBALS['db']->dbType == 'mysql') {
 									$where .= "LEFT(" . $db_field . ",10)  BETWEEN LEFT(current_date,10) AND LEFT((current_date + interval '7' day),10)";	
-                        		} 
-                        		//BEGIN SUGARCRM flav=PRO ONLY
+                        		}
                         		elseif ($GLOBALS['db']->dbType == 'mssql') {
 									$where .= "DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) <= 7 and DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) >= 0";
                         		} 
@@ -1043,14 +1038,11 @@ require_once('include/EditView/EditView2.php');
 									$where .= $db_field . " BETWEEN sysdate AND (sysdate + interval '7' day)";
                         		}
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY                        		
 								break;
 							case 'next_month':
-					            if ($GLOBALS['db']->dbType  == 'mysql') 
-					            {
+					            if ($GLOBALS['db']->dbType  == 'mysql') {
 					            	$where .= "LEFT(" . $db_field . ",7) = LEFT( (current_date  + interval '1' month),7)";
-					            } 
-					            //BEGIN SUGARCRM flav=PRO ONLY
+					            }
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 									$where .= "(LEFT( ".$db_field.",4) = LEFT( (DATEADD(mm,1,GETDATE())),4)) and (DATEPART(yy, DATEADD(mm,1,GETDATE())) = DATEPART(yy, DATEADD(mm,1,".$db_field.")))";
 					            } 
@@ -1059,15 +1051,12 @@ require_once('include/EditView/EditView2.php');
 					                $where .= "TRUNC(" . $db_field . ",'MONTH') = TRUNC(add_months(sysdate,+1),'MONTH')";
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY 					            
 								break;
 					        case 'last_month':
-					            if ($GLOBALS['db']->dbType == 'mysql')
-					            {
+					            if ($GLOBALS['db']->dbType == 'mysql') {
 					                $where .= "LEFT(" . $db_field . ",7) = LEFT( (current_date  - interval '1' month),7)";
-					            } 
-					            //BEGIN SUGARCRM flav=PRO ONLY
-					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					            }
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "LEFT(" . $db_field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
@@ -1075,15 +1064,12 @@ require_once('include/EditView/EditView2.php');
 					            	$where .= "TRUNC(" . $db_field . ",'MONTH') = TRUNC(add_months(sysdate,-'1'),'MONTH')";  
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY 					            
 								break;
 					        case 'this_month':
-					            if ($GLOBALS['db']->dbType == 'mysql')
-					            {
+					            if ($GLOBALS['db']->dbType == 'mysql') {
 					                $where .= "LEFT(" . $db_field . ",7) = LEFT( current_date,7)";
-					            } 
-					            //BEGIN SUGARCRM flav=PRO ONLY
-					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					            }
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "LEFT (" . $db_field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
@@ -1091,31 +1077,25 @@ require_once('include/EditView/EditView2.php');
 					            	$where .= "TRUNC(" . $db_field . ",'MONTH') = TRUNC((sysdate),'MONTH')";
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY
 								break;					
 					        case 'last_30_days':
-					            if ($GLOBALS['db']->dbType == 'mysql')
-					            {
+					            if ($GLOBALS['db']->dbType == 'mysql') {
 					                $where .= "LEFT(" . $db_field . ",10) BETWEEN LEFT((current_date - interval '30' day),10) AND LEFT(current_date,10)";
-					            } 
-					            //BEGIN SUGARCRM flav=PRO ONLY
-					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					            }
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) <= 30 and DATEDIFF ( d ,  " . $db_field . " , GETDATE() ) >= 0";
 					            }
 					            //BEGIN SUGARCRM flav=ENT ONLY
-					            else{
+					            else {
 					            	$where .= $db_field . " BETWEEN (sysdate - interval '30' day) AND sysdate";
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY
 								break; 					
 					        case 'next_30_days':
-					            if ($GLOBALS['db']->dbType == 'mysql')
-					            {
+					            if ($GLOBALS['db']->dbType == 'mysql') {
 					            	$where .= $db_field  . " BETWEEN (current_date) AND (current_date + interval '1' month)";
 					            }
-					            //BEGIN SUGARCRM flav=PRO ONLY
-					            elseif ($GLOBALS['db']->dbType == 'mssql'){
+					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) <= 30 and DATEDIFF ( d , GETDATE() ,  " . $db_field . " ) >= 0";
 					            } 
 					            //BEGIN SUGARCRM flav=ENT ONLY
@@ -1123,30 +1103,24 @@ require_once('include/EditView/EditView2.php');
 					                $where .= $db_field  . " BETWEEN (sysdate) AND (sysdate + interval '1' month)";
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY
 								break; 								
 					        case 'this_year':
-					            if ($GLOBALS['db']->dbType == 'mysql')
-					            {
+					            if ($GLOBALS['db']->dbType == 'mysql') {
 					                $where .= "LEFT(" . $db_field . ",4) = EXTRACT(YEAR FROM ( current_date ))";
 					            }
-					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy, GETDATE())";
 					            }
 					            //BEGIN SUGARCRM flav=ENT ONLY
-					            else{
+					            else {
 					            	$where .= "TRUNC(" . $db_field . ",'YEAR') = TRUNC( sysdate,'YEAR')";    
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY 
 								break;								            
 					        case 'last_year':
-					            if ($GLOBALS['db']->dbType == 'mysql')
-					            {
+					            if ($GLOBALS['db']->dbType == 'mysql') {
 					            	$where .= "LEFT(" . $db_field . ",4) = EXTRACT(YEAR FROM ( current_date  - interval '1' year))";
 					            }
-					            //BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE())))";
 					            } 
@@ -1155,13 +1129,11 @@ require_once('include/EditView/EditView2.php');
 					                $where .= "TRUNC(" . $db_field . ",'YEAR') = TRUNC(add_months(sysdate,-12),'YEAR')";
 					            }
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY
 								break; 					
 					        case 'next_year':
 					            if ($GLOBALS['db']->dbType == 'mysql') {
 					                $where .= "LEFT(" . $db_field . ",4) = EXTRACT(YEAR FROM ( current_date  + interval '1' year))";
 					            }
-								//BEGIN SUGARCRM flav=PRO ONLY
 					            elseif ($GLOBALS['db']->dbType == 'mssql') {
 					                $where .= "DATEPART(yy," . $db_field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE())))";
 					            } 
@@ -1170,7 +1142,6 @@ require_once('include/EditView/EditView2.php');
 					                $where .= "TRUNC(" . $db_field . ",'YEAR') = TRUNC(add_months(sysdate,+12),'YEAR')";
 					            } 
 								//END SUGARCRM flav=ENT ONLY
-								//END SUGARCRM flav=PRO ONLY 
 								break;								    
                         }
                     }

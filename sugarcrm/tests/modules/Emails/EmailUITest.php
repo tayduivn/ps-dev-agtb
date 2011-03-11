@@ -102,14 +102,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $person['bean_module'] = $a['module'];
         $person['email'] = $a['email_address'];
         
-        $this->assertEquals("test@test.com", $person['email']);
-        
         //Cleanup
-    	$contact->deleted = true;
-        $contact->save(false);
-        $account->deleted = true;
-    	$account->save(false);
-    	
+    	$GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$account->id}'");
+    	$GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contact->id}'");
+        
+        $this->assertEquals("test@test.com", $person['email']);
     }
     
     /**
@@ -187,7 +184,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
         file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
-            '<?php $QCModules = array("Users", "Teams"); ?>'
+            '<?php $QCModules = array("Users"); ?>'
             );
         
         $qArray = $this->eui->_loadQuickCreateModules();
@@ -200,7 +197,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
         
-        $this->assertEquals(array("Users", "Teams"), $qArray);
+        $this->assertEquals(array("Users"), $qArray);
     }
 }
 
