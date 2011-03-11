@@ -30,8 +30,8 @@ class Parser {
 		// the function map
 		static $FUNCTION_MAP = array();
 
-		// trim spaces, left and right
-		$expr = trim($expr);
+		// trim spaces, left and right, and remove newlines
+		$expr = str_replace("\n", "", trim($expr));
 
 		// check if its a constant and return a constant expression
 		$const = Parser::toConstant($expr);

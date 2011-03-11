@@ -25,7 +25,7 @@ class StyleAction extends AbstractAction{
 	
 	function StyleAction($params) {
 		$this->targetField = $params['target'];
-		$this->attributes = $params['attrs'];
+		$this->attributes = str_replace("\n", "",$params['attrs']);
 	}
 	
 	/**
