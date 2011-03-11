@@ -102,14 +102,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $person['bean_module'] = $a['module'];
         $person['email'] = $a['email_address'];
         
-        $this->assertEquals("test@test.com", $person['email']);
-        
         //Cleanup
-    	$contact->deleted = true;
-        $contact->save(false);
-        $account->deleted = true;
-    	$account->save(false);
-    	
+    	$GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$account->id}'");
+    	$GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contact->id}'");
+        
+        $this->assertEquals("test@test.com", $person['email']);
     }
     
     /**

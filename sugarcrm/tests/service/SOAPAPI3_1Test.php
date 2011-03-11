@@ -145,6 +145,9 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
                           );
 
        $result = $this->_soapClient->call('get_entry_list', $soap_data);
+       
+       $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$a1->id}'");
+       
        $actual = $result['entry_list'][0]['name_value_list'][0]['value'];
        $this->assertEquals($account_name, $actual);
 

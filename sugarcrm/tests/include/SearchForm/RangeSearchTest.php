@@ -184,7 +184,6 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
     {
 		$GLOBALS['db']->dbType = 'mssql';
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		var_dump($where_clauses);
 		$this->assertEquals($where_clauses[0], 'DATEPART(yy,opportunities.date_closed) = DATEPART(yy, GETDATE())');
 
 		$this->searchForm->searchFields['range_date_closed'] = array (
