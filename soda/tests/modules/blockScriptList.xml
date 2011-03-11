@@ -203,6 +203,20 @@
 
 	<!--Randy's Modules-->	
 	<block>
+                <testfile>contract_1661</testfile>
+                <bugnumber>42741</bugnumber>
+                <reason>bug 42741</reason>
+                <modulename>contracts</modulename>
+        </block>
+
+	<block>
+                <testfile>contract_1667</testfile>
+                <bugnumber>42741</bugnumber>
+                <reason>bug 42741</reason>
+                <modulename>contracts</modulename>
+        </block>
+
+	<block>
 		<testfile>contract_1655</testfile>
 		<bugnumber>42824</bugnumber>
 		<reason>bug 42824</reason>
