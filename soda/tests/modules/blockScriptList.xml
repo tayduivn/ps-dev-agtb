@@ -210,6 +210,21 @@
 	</block>
 
 	<block>
+                <testfile>contract_1662</testfile>
+                <bugnumber>42824</bugnumber>
+                <reason>bug 42824</reason>
+                <modulename>contracts</modulename>
+        </block>
+
+	<block>
+                <testfile>contract_1668</testfile>
+                <bugnumber>42824</bugnumber>
+                <reason>bug 42824</reason>
+                <modulename>contracts</modulename>
+        </block>
+
+
+	<block>
 		<testfile>contract_1688</testfile>
 		<bugnumber>36446</bugnumber>
 		<reason>bug 36446</reason>
