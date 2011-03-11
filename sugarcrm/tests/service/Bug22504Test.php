@@ -41,6 +41,7 @@ class Bug22504Test extends SOAPTestCase
     	    'parent_type' => 'Accounts',
     	    'parent_id' => $this->acc->id,
     	    'description' => 'test',
+    	    'name' => 'Test Subject',
     	);
 		$result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Emails', 'name_value_list' => $nv));
 		$this->email_id = $result['id'];

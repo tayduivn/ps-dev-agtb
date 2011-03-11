@@ -27,7 +27,7 @@ class VisibilityAction extends AbstractAction{
 	function VisibilityAction($params) {
         $this->params = $params;
 		$this->targetField = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 		$this->view = isset($params['view']) ? $params['view'] : "";
 	}
 	
@@ -136,7 +136,7 @@ class VisibilityAction extends AbstractAction{
                 for(var i = 0; i < el.children.length; i++)
                 {
                     var node = el.children[i];
-                    if (!Dom.hasClass(node, inv_class)) {
+                    if (!YAHOO.util.Dom.hasClass(node, inv_class)) {
                         hide = false;
                         break;
                     }

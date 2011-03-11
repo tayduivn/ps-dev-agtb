@@ -25,7 +25,7 @@ class ReadOnlyAction extends AbstractAction{
 
 	function ReadOnlyAction($params) {
 		$this->targetField = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 	}
 
 /**
