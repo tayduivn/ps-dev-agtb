@@ -69,16 +69,6 @@ if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
     	SUGAR.contextMenu= {};
 
 
-/**
- * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- */
-// Declaring valid date character, minimum year and maximum year
-var dtCh= "-";
-var minYear=1900;
-var maxYear=2100;
 var nameIndex = 0;
 var typeIndex = 1;
 var requiredIndex = 2;
@@ -356,21 +346,12 @@ function toDecimal(original, precision) {
 
 function isInteger(s) {
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
-
-	var i;
-    for (i = 0; i < s.length; i++){
-        // Check that current character is number.
-        var c = s.charAt(i);
-        if (((c < "0") || (c > "9"))){
-        	if(i == 0 && c == "-"){
-        		//do nothing
-        	}else
-        		return false;
-        }
-    }
-    // All characters are numbers.
-    return true;
+		return parseInt(s) == s;
+	}
+	
+	return typeof(s) == 'number' && parseInt(s) == s;
 }
 
 function isNumeric(s) {
@@ -807,6 +788,13 @@ function validate_form(formname, startsWith){
 			if(validate[formname][i][nameIndex].indexOf(startsWith) == 0){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
 					var bail = false;
+					
+					//If a field is not required and it is blank, skip validation
+					if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '')
+                    {
+                       continue;
+                    }					
+					
 					if(validate[formname][i][requiredIndex] && validate[formname][i][typeIndex] != 'bool'){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
