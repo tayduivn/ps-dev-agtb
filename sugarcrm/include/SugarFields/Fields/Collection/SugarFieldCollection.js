@@ -238,8 +238,10 @@ if(typeof(SUGAR.collection) == "undefined") {
             
             var count = this.fields_count;
             
-            //Clone the table element containing the fields for each row
-            Field0 = this.cloneField[0].cloneNode(true);
+            //Clone the table element containing the fields for each row, use safe_clone uder IE to prevent events from being cloned
+            Field0 = SUGAR.isIE ? 
+            	SUGAR.collection.safe_clone(this.cloneField[0], true) : 
+            	this.cloneField[0].cloneNode(true);
 
             Field0.id = "lineFields_"+this.field_element_name+"_"+count;
                         
@@ -403,7 +405,9 @@ if(typeof(SUGAR.collection) == "undefined") {
          */
         create_clone: function() {
             var oneField = document.getElementById('lineFields_'+this.field_element_name+'_0');
-            this.cloneField[0] = oneField.cloneNode(true);
+            this.cloneField[0] = SUGAR.isIE ? 
+            	SUGAR.collection.safe_clone(oneField, true) : 
+            	oneField.cloneNode(true);
             this.cloneField[1] = oneField.parentNode;
             this.more_status = true;
             clone_id = this.form + '_' + this.field + '_collection_0';
@@ -583,4 +587,40 @@ if(typeof(SUGAR.collection) == "undefined") {
             return false;
         }
     }
+
+	SUGAR.collection.safe_clone = function(e, recursive)
+	{
+		if (e.nodeName == "#text")
+		{
+			return document.createTextNode(e.data);
+		}
+		if(!e.tagName) return false;
+		
+		var newNode = document.createElement(e.tagName);
+		if (!newNode) return false;
+		
+		var properties = ['class', 'style', 'name', 'type', 'valign', 'border', 'width', 'height', 'top', 'bottom', 'left', 'right', 'scope', 'row', 'columns', 'src', 'href', 'className', 'align', 'nowrap'];
+		for (var i in properties)
+		{
+			if (e[properties[i]])
+			{
+				if ((properties[i] != 'style' || !SUGAR.isIE) && 
+					//Only <a> and <iframe> tags can have hrefs
+					(properties[i] != 'href'  || e.tagName == 'a' || e.tagName == 'iframe'))
+					newNode[properties[i]] = e[properties[i]];
+			}
+		}
+		if(recursive)
+		{
+			for (var i in e.childNodes)
+			{
+				if(e.childNodes[i].nodeName && (!e.className || e.className != "yui-ac-container"))
+				{
+					var child = SUGAR.collection.safe_clone(e.childNodes[i], true);
+					if (child) newNode.appendChild(child);
+				}
+			}
+		}
+		return newNode;
+	}
 }
