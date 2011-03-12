@@ -911,7 +911,7 @@ class OracleManager extends DBManager
                 	if ($err != false) {
 			            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
                 	}
-                	$GLOBALS['log']->fatal("Could not connect to server ".$this->dbName." as ".$this->userName.".");
+                	$GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_name']." as ".$configOptions['db_user_name'].".");
                 	sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
                 }
                 if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
@@ -930,11 +930,11 @@ class OracleManager extends DBManager
                 QUERY_REWRITE_INTEGRITY = TRUSTED
                 QUERY_REWRITE_ENABLED = TRUE
                 NLS_LENGTH_SEMANTICS=CHAR ";
-                
+
             if(!empty($GLOBALS['sugar_config']['oracle_enable_ci'])){
             	$session_query .= "
             	NLS_COMP=LINGUISTIC
-				NLS_SORT=BINARY_CI";	
+				NLS_SORT=BINARY_CI";
             }
             $this->query($session_query);
 
