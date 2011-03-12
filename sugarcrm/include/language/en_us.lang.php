@@ -3066,6 +3066,9 @@ $app_strings = array (
     'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
     'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
+    
+    //External API Error Messages
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
