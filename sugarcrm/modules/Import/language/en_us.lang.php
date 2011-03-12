@@ -36,9 +36,9 @@ global $timedate;
  
 $mod_strings = array (
     'LBL_GOOD_FILE' => 'Import File Read Successfully',
-    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Records were not imported due to error.',
-    'LBL_UPDATE_SUCCESSFULLY' => 'Records updated successfully',
-    'LBL_SUCCESSFULLY_IMPORTED' => 'Records created successfully',
+    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'records were not imported due to error.',
+    'LBL_UPDATE_SUCCESSFULLY' => 'records updated successfully',
+    'LBL_SUCCESSFULLY_IMPORTED' => 'records created successfully',
     'LBL_STEP_4_TITLE' => 'Step 4: Import File',
     'LBL_STEP_5_TITLE' => 'Step 5: View Results',
     'LBL_CUSTOM_ENCLOSURE' => 'Fields Qualified By:',
