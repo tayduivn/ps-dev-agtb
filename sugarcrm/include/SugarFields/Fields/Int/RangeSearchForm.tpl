@@ -41,7 +41,7 @@
 {if isset($smarty.request.{{$id_range_choice}})}
 {assign var="starting_choice" value=$smarty.request.{{$id_range_choice}}}
 {else}
-{assign var="starting_choice" value="equals"}
+{assign var="starting_choice" value="="}
 {/if}
 
 <script type='text/javascript'>
