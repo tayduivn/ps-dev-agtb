@@ -60,6 +60,12 @@
 			<textfield id='field_0__field_value' set='{@wf_8914.task_name}'/>
 			<wait timeout='3'/>
 			<button value='Save'/>
+			<link id='href_5'/>
+			<wait timeout='3'/>
+			<button value='Save'/>
+			<link id='href_10'/>
+			<wait timeout='3'/>
+			<button value='Save'/>
 			<wait timeout='3'/>
 			<button value='  Save  '/>
 
@@ -82,7 +88,7 @@
 				<button id='edit_button'/>
 				<textfield id='name' set='{@wf_8914.future_trigger__field_value}'/>
 				<button value='Save'/>
-				<div id="list_subpanel_activities">
+				<div id="list_subpanel_history">
 					<span class='pageNumbers' assert='(1 - 1 of 1)'/>
 					<table class='list view'>
 						<link text='{@wf_8914.task_name}' click='false'/>
