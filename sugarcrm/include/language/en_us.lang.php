@@ -2305,6 +2305,7 @@ $app_strings = array (
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
     'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
+    'ERR_EXTERNAL_API_UPLOAD_FAIL' => 'An error occurred while uploading.  Please ensure the file you are uploading is not empty.',
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
 
