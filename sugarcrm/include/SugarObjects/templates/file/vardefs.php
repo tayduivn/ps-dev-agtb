@@ -37,7 +37,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'type' => 'name',
 	'dbType' => 'varchar',
     'len' => '255',
-    'required'=>true
+    'required'=>true,
+    'unified_search' => true,
   ),
 
 'name'=>
