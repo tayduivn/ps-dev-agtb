@@ -33,17 +33,12 @@
 	<select name="duration_minutes" set="45"/>
 	<button value="Save" />
 
-	<table id="detailpanel_1">
+	<div id="LBL_MEETING_INFORMATION">
 		<span id="name" assert="EditMeeting{@stamp}" />
-		<row index="2">
-			<cell index="2" assert="09/17/2009 10:30" />
-		</row>
-		<row index="3">
-			<cell index="2" assert="1h 45m" />
-		</row>
-	</table>
-
-	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
-
+		<span id="date_start" assert="09/17/2009 10:30pm" />
+		<span id="duration_hours" assert="1h 45m" />
+	</div>
+	
+	<script file="{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml" />
 	<puts text="Test: Calendar_0699.xml finished." />
 </soda>
