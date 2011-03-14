@@ -749,6 +749,13 @@ function validate_form(formname, startsWith){
 			if(validate[formname][i][nameIndex].indexOf(startsWith) == 0){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
 					var bail = false;
+					
+					//If a field is not required and it is blank, skip validation
+					if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '')
+                    {
+                       continue;
+                    }						
+					
 					if(validate[formname][i][requiredIndex] && validate[formname][i][typeIndex] != 'bool'){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
