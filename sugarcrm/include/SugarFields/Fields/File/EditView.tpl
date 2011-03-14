@@ -204,6 +204,7 @@ YAHOO.util.Event.onDOMReady(function()
 if(document.getElementById("{{$displayParams.onchangeSetFileNameTo}}"))
 {ldelim}
 YAHOO.util.Event.addListener('{{$idName}}_file', 'change', {{$idName}}_setFileName);
+YAHOO.util.Event.addListener(['{{$idName}}_file', '{{$vardef.docType}}'], 'change', SUGAR.field.file.checkFileExtension,{ldelim} fileEl: '{{$idName}}_file', targEl: '{{$displayParams.onchangeSetFileNameTo}}'{rdelim});
 {rdelim}
 {rdelim});
 </script>

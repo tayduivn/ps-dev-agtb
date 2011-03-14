@@ -35,7 +35,7 @@
 {if isset($smarty.request.{{$id_range_choice}})}
 {assign var="starting_choice" value=$smarty.request.{{$id_range_choice}}}
 {else}
-{assign var="starting_choice" value="equals"}
+{assign var="starting_choice" value="="}
 {/if}
 
 <div style="white-space:nowrap !important;">
@@ -145,7 +145,7 @@ function {$id}_range_change(val)
 
 var {$id}_range_reset = function()
 {ldelim}
-{$id}_range_change('equals');
+{$id}_range_change('=');
 {rdelim}
 
 YAHOO.util.Event.onDOMReady(function() {ldelim}

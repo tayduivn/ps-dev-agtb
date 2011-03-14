@@ -34,10 +34,15 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     public $docSearch = true;
     public $needsUrl = false;
     public $sharingOptions = null;
-
+    public $restrictUploadsByExtension = true;
+    
+    const APP_STRING_ERROR_PREFIX = 'ERR_GOOGLE_API_';
+    
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
 		$this->oauthReq .= "?scope=".urlencode($this->scope);
+		
+		$this->restrictUploadsByExtension = $this->getAcceptibleFileExtensions();
 	}
 
     protected function getIdFromUrl($url) {
@@ -90,6 +95,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
 		try{
+		    
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
                                                             $mimeType,
 
@@ -105,7 +111,8 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		}catch (Exception $e)
          {
              $result['success'] = FALSE;
-             $result['errorMsg'] = $e->getMessage();
+             $resp = $e->getResponse();  //Zend_Http_Response with details of failed request.
+             $result['errorMessage'] = $this->getErrorStringFromCode($resp->getStatus());
          }
 
         return $result;
@@ -176,4 +183,10 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         return $results;
     }
+    
+    private function getAcceptibleFileExtensions() {
+        $mimeTypes = Zend_Gdata_Docs::getSupportedMimeTypes();
+        return array_keys($mimeTypes);        
+    }
+    
 }

@@ -15,6 +15,7 @@ class Bug40699Test extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown()
 	{
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 	}
