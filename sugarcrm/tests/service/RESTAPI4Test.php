@@ -37,15 +37,18 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->aclRole->name = "Unit Test";
         $this->aclRole->save();
         $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
-        
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->aclField = new ACLField();
         $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        //END SUGARCRM flav=pro ONLY
     }
 
     public function tearDown()
 	{
+	    //BEGIN SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
+	    //END SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' )");
 	    $GLOBALS['db']->query("DELETE FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}'");
 	    
@@ -109,7 +112,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
     }
-
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test the login function to ensure it returns the available quotes layouts when application name
      * is mobile.
@@ -163,7 +166,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->_makeRESTCall('get_quotes_pdf', array($session, '-1', 'Standard' ));
         $this->assertTrue(!empty($result['file_contents']));     
     }
-    
+    //END SUGARCRM flav=pro ONLY
     /**
      * Ensure the ability to retrieve a module list of recrods that are favorites.
      *
@@ -285,8 +288,8 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
     }    
-    
-    function _aclEditViewFieldProvider()
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function _aclEditViewFieldProvider()
     {
         return array(       
 
@@ -336,9 +339,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
     
-    
-    
-    function _aclListViewFieldProvider()
+    public function _aclListViewFieldProvider()
     {
         return array(       
             array('Accounts','wireless', array('name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 )),
@@ -374,7 +375,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    
+    //END SUGARCRM flav=pro ONLY
     /**
      * Private helper function to mark a bean as a favorite item.
      *

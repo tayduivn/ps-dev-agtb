@@ -61,7 +61,9 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
 	$focus->user_name = "";
 }else if(!isset($_REQUEST['record'])){
-    define('SUGARPDF_USE_DEFAULT_SETTINGS', true);
+    if ( !defined('SUGARPDF_USE_DEFAULT_SETTINGS') ) {
+        define('SUGARPDF_USE_DEFAULT_SETTINGS', true);
+    }
 }
 	//BEGIN SUGARCRM lic=sub ONLY
 	global $sugar_flavor;
@@ -341,7 +343,9 @@ $sugar_smarty->assign('DATEOPTIONS', $dateOptions);
 /////////  PDF SETTINGS
 global $focus_user;
 $focus_user = $focus;
-define('SUGARPDF_USE_FOCUS', true);
+if ( !defined('SUGARPDF_USE_FOCUS') ) {
+    define('SUGARPDF_USE_FOCUS', true);
+}
 include_once('include/Sugarpdf/sugarpdf_config.php');
 $sugar_smarty->assign('PDF_CLASS',PDF_CLASS);
 $sugar_smarty->assign('PDF_UNIT',PDF_UNIT);
@@ -446,7 +450,7 @@ $sugar_smarty->assign('getNameJs', $locale->getNameJs());
 
 
 // Grouped tabs?
-$useGroupTabs = $current_user->getPreference('navigation_paradigm');
+$useGroupTabs = $focus->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
         $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
@@ -463,7 +467,7 @@ if(isset($user_max_tabs) && $user_max_tabs > 0) {
 } else {
     $sugar_smarty->assign("MAX_TAB", $GLOBALS['sugar_config']['default_max_tabs']);
 }
-$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, (!empty($GLOBALS['sugar_config']['default_max_tabs']) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
+$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, ((!empty($GLOBALS['sugar_config']['default_max_tabs']) && $GLOBALS['sugar_config']['default_max_tabs'] > 10 ) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $user_subpanel_tabs = $focus->getPreference('subpanel_tabs');

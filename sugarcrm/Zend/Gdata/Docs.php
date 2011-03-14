@@ -22,6 +22,12 @@
  */
 
 /**
+ * Modifications by SugarCRM
+ * 
+ * March 10, 2011 - asandberg: Added getSupportedMimeTypes function
+ */
+
+/**
  * @see Zend_Gdata
  */
 require_once 'Zend/Gdata.php';
@@ -300,4 +306,13 @@ class Zend_Gdata_Docs extends Zend_Gdata
         return $this->insertEntry($data, $uri, $className);
     }
 
+    /**
+     * Return the supported mime types and file extensions.
+     *
+     * @return array
+     * @author Andreas Sandberg
+     */
+    public static function getSupportedMimeTypes() {
+      return self::$SUPPORTED_FILETYPES;
+    }
 }

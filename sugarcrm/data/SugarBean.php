@@ -253,7 +253,7 @@ class SugarBean
      * Used to pass inner join string to ListView Data.
      */
     var $listview_inner_join = array();
-    
+
     /**
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
@@ -2568,25 +2568,6 @@ function save_relationship_changes($is_update, $exclude=array())
     			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
     		}
     		$modified_select_query=implode(" UNION ALL ",$union_qs);
-    	} else if (strstr($query," UNION ") !== false) {
-
-    		//seperate out all the queries.
-    		$union_qs=explode(" UNION ", $query);
-    		foreach ($union_qs as $key=>$union_query) {
-        		$star = '*';
-				preg_match($pattern, $union_query, $matches);
-				if (!empty($matches)) {
-					if (stristr($matches[0], "distinct")) {
-			          	if (!empty($this->seed) && !empty($this->seed->table_name ))
-			          		$star = 'DISTINCT ' . $this->seed->table_name . '.id';
-			          	else
-			          		$star = 'DISTINCT ' . $this->table_name . '.id';
-					}
-				} // if
-    			$replacement = 'SELECT count(' . $star . ') c FROM ';
-    			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
-    		}
-    		$modified_select_query=implode(" UNION ",$union_qs);
     	} else {
 	    	$modified_select_query = preg_replace($pattern, $replacement, $query,1);
     	}
@@ -3425,8 +3406,8 @@ function save_relationship_changes($is_update, $exclude=array())
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
 						}
 					}
-					
-					
+
+
     				if($join['type'] == 'many-to-many')
     				{
     					if(empty($ret_array['secondary_select']))
