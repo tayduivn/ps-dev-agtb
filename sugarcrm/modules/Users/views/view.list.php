@@ -37,7 +37,8 @@ class UsersViewList extends ViewList
                 && $GLOBALS['current_user']->user_type != 'UserAdministrator'
                 //END SUGARCRM flav=sales ONLY
                 && !is_admin_for_module($GLOBALS['current_user'],'Users') ) {
-            sugar_die("Unauthorized access to administration.");
+            //instead of just dying here with unauthorized access will send the user back to his/her settings
+             SugarApplication::redirect('index.php?module=Users&action=DetailView&record='.$GLOBALS['current_user']->id);
         }
  	    $this->lv = new ListViewSmarty();
  	    $this->lv->delete = false;
