@@ -18,7 +18,9 @@
 	</table>
 
 	<!--Go its detail view $ "Duplicate"-->
+	<link text="{@pre_contact_first_name} {@pre_contact_last_name}"/>
 	<browser assert="{@pre_contact_first_name} {@pre_contact_last_name}" />
+	<wait timeout="2"/>
 	<button id="duplicate_button" />
 	<csv file="{@global.scriptsdir}/csvs/contacts/Contacts_1449.csv" var="contact_record_1449">
 		<button id="btn_assigned_user_name" />
