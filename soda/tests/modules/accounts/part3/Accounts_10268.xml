@@ -43,22 +43,24 @@
 	<button id="accounts_contacts_select_button" />
 	
 	<!-- Select All... -->
-	<link id="select_link" />
+	<checkbox name="massall" click="true" />
+	<!-- <link id="select_link" /> -->
 	
+	<!--  
 	<cell class="olOptionsFgClass">
 		<div class="olFontClass">
 			<link index="2" />
 		</div>
 	</cell>
-	
+	-->
 	<!-- activate and close window -->
 	<form id="MassUpdate">
-		<button value="Select" jscriptevent="onclick" />
+		<button value="Select" />
 	</form>
 
 	<!-- move to next page -->
 	<div id="list_subpanel_contacts">
-			<button index="5" />
+			<button name="listViewNextButton" />
 	</div>
 
 	<!-- re-login -->

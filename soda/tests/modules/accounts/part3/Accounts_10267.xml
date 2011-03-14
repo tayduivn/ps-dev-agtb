@@ -50,7 +50,7 @@
 	
 	<!-- activate and close window -->
 	<form id="MassUpdate">
-		<button value="Select" jscriptevent="onclick" />
+		<button value="Select" />
 	</form>
 
 	<!-- move to next page -->
