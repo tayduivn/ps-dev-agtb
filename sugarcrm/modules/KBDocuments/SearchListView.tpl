@@ -139,12 +139,11 @@
 							symbol=$params.currency_format.symbol
 						}
 					{elseif $params.type == 'bool'}
-							3<input type='checkbox' disabled=disabled class='checkbox'
+							<input type='checkbox' disabled=disabled class='checkbox'
 							{if !empty($rowData[$col])}
 								checked=checked
 							{/if}
-							/>3
-					
+							/>
 					{else}	
 						{$rowData.$col}
 					{/if}
