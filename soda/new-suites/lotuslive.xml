@@ -6,8 +6,12 @@
 		<script file="{@global.scriptsdir}/modules/integration/module_lib/LotusLive_UnInit_Lib.xml" />
 		<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
 	</csv>
+	<script file="{@global.scriptsdir}/modules/integration/module_lib/setup-lotuslive.xml" />
+	<script file="{@global.scriptsdir}/modules/integration/module_lib/LotusLive_Init.xml" />
+	<script fileset="{@global.scriptsdir}/modules/integration/lotuslive" />
+	<script file="{@global.scriptsdir}/modules/integration/module_lib/LotusLive_UnInit_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/integration/module_lib/cleanup-lotuslive.xml" />
 
-	<browser action="close" />
 	<!-- var var="pre_account_name" set="Haier Air Condition of China admin 110221_145641" />
 	<var var="pre_contact_first_name" set="Mandy admin 110221_145828" />
 	<var var="pre_contact_last_name" set="Westbrooks" />
