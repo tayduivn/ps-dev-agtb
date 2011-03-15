@@ -798,9 +798,17 @@ require_once('include/EditView/EditView2.php');
                         }
 
                         if($type == 'datetime' || $type == 'datetimecombo') {
-                            $dates = $timedate->getDayStartEndGMT($field_value);
-                            $field_value = $dates["start"] . "<>" . $dates["end"];
-                            $operator = 'between';
+                        	try {
+	                            $dates = $timedate->getDayStartEndGMT($field_value);
+	                            $field_value = $dates["start"] . "<>" . $dates["end"];
+	                            $operator = 'between';
+                        	} catch(Exception $timeException) {
+                        		//In the event that a date value is given that cannot be correctly processed by getDayStartEndGMT method,
+                        		//just skip searching on this field and continue.  This may occur if user switches locale date formats 
+                        		//in another browser screen, but re-runs a search with the previous format on another screen
+                        		$GLOBALS['log']->error($timeException->getMessage());
+                        		continue;
+                        	}
                         }
                         
                     	if($type == 'decimal' || $type == 'float' || $type == 'currency' || (!empty($parms['enable_range_search']) && empty($parms['is_date_field']))) {

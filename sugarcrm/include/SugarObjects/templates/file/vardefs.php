@@ -88,6 +88,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'type' => 'date',
 	'required'=>true,
     'importable' => 'required',
+    'display_default' => 'now',
   ),
 
 'exp_date' =>

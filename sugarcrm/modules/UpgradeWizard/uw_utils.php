@@ -5869,7 +5869,7 @@ function unlinkUpgradeFiles($version)
 	if($version < '620')
 	{
 	   //list of files to remove
-	   $files_to_remove = array('modules/Notifications/metadata/studio.php');
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php');
 	   
 	   foreach($files_to_remove as $f)
 	   {
