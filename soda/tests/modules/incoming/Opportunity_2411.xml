@@ -1,40 +1,44 @@
 <soda>
-        <puts text="Test: Opportunity_2411.xml starting." />
-		<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2411.csv" var="Opportunity_2411">
-            
-        <!--script file='scripts/sugarcrm/modules/lib/Team_Create_Lib.xml'/-->
-        <script file='{@global.scriptsdir}/modules/lib/Contact_Create_Lib.xml'/>
-        <script file='{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml'/>
-        <link id='moduleTab_Opportunities'/>
-       
-             <link text="Basic Search" required="false" />
+	<!-- Search Opportunities_Verify that all the opportunities are displayed when using 
+		basic search function with all the fields empty in the "Search" sub-panel. -->
+		
+	<puts text="Test: Opportunity_2411.xml starting." />
+	<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2411.csv" var="Opportunity_2411">
 
-             <button id="search_form_submit" />
-			 
-        <form id="search_form">             
-             <textfield id="name_basic" set="{@Opportunity_2411.name} {@user.name} {@stamp}"/>
-        </form>
-        
-             <button id="search_form_submit" class="button" type="submit" value="Search" name="button" onclick="SUGAR.savedViews.setChooser()"/>
-        
-        <table class="list view">
-             <browser assert="{@Opportunity_2411.name} {@user.name} {@stamp}"/>
-             <link text="{@Opportunity_2411.name} {@user.name} {@stamp}" click="true"/>             
-        </table>
-        <table id="detailpanel_1">
+		<!--script file="scripts/sugarcrm/modules/lib/Team_Create_Lib.xml"/ -->
+		<script file="{@global.scriptsdir}/modules/lib/Contact_Create_Lib.xml" />
+		<script file="{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml" />
+		<link id="moduleTab_Opportunities" />
 
-                    <browser assert="{@Opportunity_2411.name} {@user.name} {@stamp}"/>
-         </table>               
-       
-             <hidden name="record" var="pre_opp_id"/>
-                
-		<var var='pre_opp_name' set='{@Opportunity_2411.name} {@user.name} {@stamp}'/>
-                
-        </csv>
-                 <!--Run Delete XML-->
-                 <script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>
-                 <script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
-                 <script file='{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml'/>
-                 <!--script file='scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml'/-->                 
-                 <puts text="Test: Opportunity_2411.xml finished."/>
+		<link text="Basic Search" required="false" />
+
+		<button id="search_form_submit" />
+
+		<form id="search_form">
+			<textfield id="name_basic" set="{@Opportunity_2411.name} {@user.name} {@stamp}" />
+		</form>
+
+		<button id="search_form_submit" class="button" type="submit" value="Search"
+			name="button" onclick="SUGAR.savedViews.setChooser()" />
+
+		<table class="list view">
+			<browser assert="{@Opportunity_2411.name} {@user.name} {@stamp}" />
+			<link text="{@Opportunity_2411.name} {@user.name} {@stamp}" click="true" />
+		</table>
+
+		<table id="detailpanel_1">
+			<browser assert="{@Opportunity_2411.name} {@user.name} {@stamp}" />
+		</table>
+
+		<hidden name="record" var="pre_opp_id" />
+
+		<var var="pre_opp_name" set="{@Opportunity_2411.name} {@user.name} {@stamp}" />
+
+	</csv>
+	<!--Run Delete XML -->
+	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml" />
+	<!--script file="scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml"/ -->
+	<puts text="Test: Opportunity_2411.xml finished." />
 </soda>
