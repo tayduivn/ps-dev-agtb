@@ -191,6 +191,11 @@ class Meeting extends SugarBean {
 
         if ( isset($api) && is_a($api,'WebMeeting') ) {
             // Make sure the API initialized and it supports Web Meetings
+            // Also make suer we have an ID, the external site needs something to reference
+            if ( !isset($this->id) || empty($this->id) ) {
+                $this->id = create_guid();
+                $this->new_with_id = true;
+            }
             $response = $api->scheduleMeeting($this);
             if ( $response['success'] == TRUE ) {
                 // Need to send out notifications
