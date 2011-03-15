@@ -29,7 +29,7 @@ require_once('include/externalAPI/Base/WebDocument.php');
 function ExtAPILotusLiveGetCredentials() {
 // For Testing
 /*
-    return array('ciUrl' => 'eval-cloud2.castiron.com/envq/Production/',
+    return array('ciUrl' => 'eval-cloud2.castiron.com/envq/Staging/',
                  'ciUser' => 'admin@LL_SugarCRM',
                  'ciPassword' => 'changeIt!',
                  'consumerKey' => 'test_app',
@@ -75,7 +75,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     protected $joinURL;
 // Test site
 //    protected $baseURL = 'https://apps.test.lotuslive.com/';
-//    protected $url = 'eval-cloud2.castiron.com/envq/Production/';
+//    protected $url = 'eval-cloud2.castiron.com/envq/Staging/';
 // Stage
     protected $baseURL = 'https://apps.stage.lotuslive.com/';
     protected $url = 'eval-cloud2.castiron.com/envq/Production/';
@@ -165,9 +165,17 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         if ( ! $reply['success'] ) {
             return $reply;
         }
+        if ( empty($reply['responseJSON']['subscriber_id']) ) {
+            $reply = array('success'=>false,'errorMessage'=> translate('LBL_ERR_NO_RESPONSE', 'EAPM')." #CL1");
+            return $reply;
+        }
 
         $reply2 = $this->makeRequest('GetMeeting/OAuth');
         if ( ! $reply2['success'] ) {
+            return $reply2;
+        }
+        if ( empty($reply2['responseJSON']['feed']['entry']['meetingID']) ) {
+            $reply2 = array('success'=>false,'errorMessage'=> translate('LBL_ERR_NO_RESPONSE', 'EAPM')." #CL2");
             return $reply2;
         }
 
@@ -395,7 +403,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 
         if ( empty($rawResponse) || !is_array($response) ) {
             $reply['success'] = FALSE;
-            // FIXME: Translate
             $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
         } else {
             $GLOBALS['log']->debug("Decoded:\n".print_r($response,true));
@@ -405,7 +412,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
                 $reply['success'] = TRUE;
             } else {
                 $reply['success'] = FALSE;
-                // FIXME: Translate
                 $reply['errorMessage'] = translate('LBL_ERR_NO_RESPONSE', 'EAPM');
             }
         }

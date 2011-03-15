@@ -51,7 +51,8 @@
 		<browser assert="Team Search" />
 		<textfield name="name" set="{@bug_record_3590.team_name}" /> 
 		<button value="Search" />
-		<link text="{@bug_record_3590.team_name}" jscriptevent="onmouseover" />
+		<!--link text="{@bug_record_3590.team_name}" jscriptevent="onmouseover" /-->
+		<link text="{@bug_record_3590.team_name}" />
 		<form id="EditView">				
 			<textfield id="name" set="{@bug_record_3590.name} {@user.name} {@stamp}" /> 
 			<select id="found_in_release" set="1.0" />

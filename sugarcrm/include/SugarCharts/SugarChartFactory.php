@@ -45,10 +45,10 @@ class SugarChartFactory
         )
     {
         global $sugar_config;
-
-        //fall back to the default Js Engine
+		$defaultEngine = "Jit";
+        //fall back to the default Js Engine if config is not defined
         if(empty($sugar_config['chartEngine'])){
-        	$sugar_config['chartEngine'] = 'Jit';
+        	$sugar_config['chartEngine'] = $defaultEngine;
         }
 
         if(empty($chartEngine)){
@@ -63,9 +63,7 @@ class SugarChartFactory
         } else if(file_exists($file)) {
           require_once($file);
         } else {
-           global $app_strings;
-           $GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
-           die();
+           require_once("include/SugarCharts/".$defaultEngine."/".$defaultEngine.$module.".php");
         }
 
         $className = $chartEngine.$module;

@@ -1,5 +1,6 @@
 <soda>
 	<csv file="{@global.scriptsdir}/csvs/users.csv" var="user" />
+	<script file="{@global.scriptsdir}/modules/lib/login.xml" />
 
 	<!-- Create some releases. -->
 	<link text="Admin" />
