@@ -108,11 +108,22 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $bean->doc_id = $cut;//$this->getIdFromUrl($alternateLink);
             $bean->doc_url = $alternateLink;
             $result['success'] = TRUE;
-		}catch (Exception $e)
+		}
+		catch(Zend_Gdata_App_HttpException $e)
+		{
+		    $result['success'] = FALSE;
+		    $resp = $e->getResponse();  //Zend_Http_Response with details of failed request.
+            $result['errorMessage'] = $this->getErrorStringFromCode($resp->getStatus());
+		}
+		catch(Zend_Gdata_App_IOException $e)
+		{
+		    $result['success'] = FALSE;
+		    $result['errorMessage'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_UPLOAD_FAIL'];
+		}
+		catch (Exception $e)
          {
              $result['success'] = FALSE;
-             $resp = $e->getResponse();  //Zend_Http_Response with details of failed request.
-             $result['errorMessage'] = $this->getErrorStringFromCode($resp->getStatus());
+             $result['errorMessage'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
          }
 
         return $result;
@@ -162,7 +173,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         if ( empty($keywords) ) 
         {
-            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full');
+            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full');
         } else {
             $docsQuery = new Zend_Gdata_Docs_Query();
             $docsQuery->setQuery($keywords);
