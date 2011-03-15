@@ -90,7 +90,6 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}}
-onchange="document.getElementById('{{$idName}}').value='something'"
 {{$displayParams.field}}>
 
 
