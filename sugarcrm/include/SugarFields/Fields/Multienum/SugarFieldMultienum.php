@@ -40,9 +40,10 @@ class SugarFieldMultienum extends SugarFieldBase {
 
 			$bean->$field = encodeMultienumValue($params[$prefix.$field]);
 		}
-		else {
+		else  if (isset($params[$prefix.$field.'_multiselect']) && $params[$prefix.$field.'_multiselect']==true) {
 			// if the value in db is not empty and
-			// if the data is not set in params (means the user has deselected everything)
+			// if the data is not set in params (means the user has deselected everything) and
+			// if the coorespoding multiselect flag is true
 			// then set field to ''
 			if (!empty($bean->$field)) {
 				$bean->$field = '';
