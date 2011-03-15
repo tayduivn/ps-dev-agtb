@@ -173,7 +173,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         if ( empty($keywords) ) 
         {
-            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full');
+            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full');
         } else {
             $docsQuery = new Zend_Gdata_Docs_Query();
             $docsQuery->setQuery($keywords);
