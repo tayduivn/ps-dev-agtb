@@ -96,6 +96,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'type' => 'date',
     'importable' => 'required',
 	'required' => true,
+    'display_default' => 'now',
   ),
 
 'exp_date' =>
