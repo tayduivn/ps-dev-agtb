@@ -765,6 +765,7 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
         if(fieldType == exemptList[i])
             return true;
     }
+    return results;
 }
 
 function validate_form(formname, startsWith){
