@@ -756,6 +756,17 @@ function fade_error_style(normalStyle, percent) {
 	}
 }
 
+function isFieldTypeExceptFromEmptyCheck(fieldType)
+{
+    var results = false;
+    var exemptList = ['bool','file'];
+    for(var i=0;i<exemptList.length;i++)
+    {
+        if(fieldType == exemptList[i])
+            return true;
+    }
+    return results;
+}
 
 function validate_form(formname, startsWith){
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
@@ -795,7 +806,7 @@ function validate_form(formname, startsWith){
                        continue;
                     }					
 					
-					if(validate[formname][i][requiredIndex] && validate[formname][i][typeIndex] != 'bool'){
+					if(validate[formname][i][requiredIndex] && ! isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex]) ){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
 							isError = true;
@@ -828,6 +839,12 @@ function validate_form(formname, startsWith){
 							break;
 						case 'alphanumeric':
 							break;
+						case 'file':
+						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "") {
+						          isError = true;
+						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
+						      }					      
+						  break;	
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
