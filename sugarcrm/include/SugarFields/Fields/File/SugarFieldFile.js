@@ -166,7 +166,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             var docType = document.getElementById('doc_type').value;
             var fileExtension = this.getFileExtension(fileName);
             
-            if( typeof(SUGAR.eapm[docType]) == 'undefined' || ! fileExtension ){
+            if( typeof(SUGAR.eapm[docType]) == 'undefined' || ! fileExtension || ! SUGAR.eapm[docType].restrictUploadsByExtension ){
                 return true;
             }   
             var whiteSuffixlist = SUGAR.eapm[docType]['restrictUploadsByExtension']; 

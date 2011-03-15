@@ -79,13 +79,19 @@ class SugarFieldDatetime extends SugarFieldBase {
     }
 
     public function getEmailTemplateValue($inputField, $vardef, $context = null){
+        global $timedate;
         // This does not return a smarty section, instead it returns a direct value
         if(isset($context['notify_user'])) {
             $user = $context['notify_user'];
         } else {
             $user = $GLOBALS['current_user'];
         }
-        return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
+        if($vardef['type'] == 'date') {
+            // convert without TZ
+            return $timedate->to_display($inputField, $timedate->get_db_date_format(),  $timedate->get_date_format($user));
+        } else {
+            return $timedate->to_display_date_time($inputField, true, true, $user);
+        }
     }
 
     public function save($bean, $inputData, $field, $def, $prefix = '') {
