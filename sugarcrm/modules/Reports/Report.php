@@ -726,7 +726,7 @@ function _check_user_permissions()
 				'summary_row_end');
 	}
 
-
+	
 	function execute_query($query_name='query',
 				$result_name='result',
 				$row_count_name='row_count',
@@ -1476,6 +1476,37 @@ print "<BR>";
             }
     }
 
+    function get_extra_info(&$layout_def)
+    {
+        $layout_def['table_alias'] = $this->getTableFromField($layout_def);
+        $field_def = $this->getFieldDefFromLayoutDef($layout_def);
+        if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
+                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {          		
+                global $mod_strings;
+	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
+			
+        	
+        }
+        if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
+                && !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table']))
+        {
+            $layout_def['table_alias'] .= '_cstm';
+        }
+        $layout_def['column_key'] = $this->_get_full_key($layout_def);
+        if (!empty($field_def['ext2']) && !empty($field_def['id_name'])) {
+            $layout_def['name'] = $field_def['id_name'];
+        }
+        if (!empty($layout_def['name'])&& ($layout_def['name'] == 'weighted_amount' ||   $layout_def['name'] == 'weighted_sum'))
+        {
+                $field_def['type'] = 'currency';
+        }
+        $layout_def['type'] = $field_def['type'];
+        if (isset($field_def['rel_field'])) {
+            $layout_def['rel_field'] = $field_def['rel_field'];
+        }
+    }
+	
+    
     function create_query($query_name='query',$field_list_name='select_fields')
     {
 
@@ -1607,12 +1638,12 @@ print "<BR>";
                 array_unshift($this->order_by_arr, $group_order_by);
             }
 	    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr) && $query_name=='query') {
-				$this->layout_manager->setAttribute('context', 'OrderBy');
 				$summary_order_by = $this->report_def['summary_order_by'][0];
-				$this->register_field_for_query($summary_order_by);
 				if (isset($summary_order_by['group_function']) || isset($summary_order_by['column_function'])) {
 					// if it's a function (count/sum/max, etc), exclude it in the query
-				    $exclude_query = $this->layout_manager->widgetQuery($summary_order_by);
+				    $this->layout_manager->setAttribute('context', 'OrderBy');
+				    $this->get_extra_info($summary_order_by); //get extra info for widgetQuery to work
+					$exclude_query = $this->layout_manager->widgetQuery($summary_order_by);
 				}
 	    		
 	    		foreach ($this->summary_order_by_arr as $group_order_by) {
