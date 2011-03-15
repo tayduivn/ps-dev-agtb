@@ -1600,13 +1600,25 @@ print "<BR>";
         else
                         $query .= " WHERE ".$where_auto;
 
+        $exclude_query = '';
+
         if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  ) {
             foreach ( $this->group_order_by_arr as $group_order_by ) {
                 array_unshift($this->order_by_arr, $group_order_by);
             }
-	    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr)) {
-	        	foreach ($this->summary_order_by_arr as $group_order_by) {
-	        		array_unshift($this->order_by_arr, $group_order_by);
+	    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr) && $query_name=='query') {
+				$this->layout_manager->setAttribute('context', 'OrderBy');
+				$summary_order_by = $this->report_def['summary_order_by'][0];
+				$this->register_field_for_query($summary_order_by);
+				if (isset($summary_order_by['group_function']) || isset($summary_order_by['column_function'])) {
+					// if it's a function (count/sum/max, etc), exclude it in the query
+				    $exclude_query = $this->layout_manager->widgetQuery($summary_order_by);
+				}
+	    		
+	    		foreach ($this->summary_order_by_arr as $group_order_by) {
+	    	    	if ($group_order_by != $exclude_query) {
+	    			    array_unshift($this->order_by_arr, $group_order_by);
+	    	    	}
 	        	}
 	    	}
         }
