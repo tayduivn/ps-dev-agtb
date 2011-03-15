@@ -29,8 +29,44 @@ class StoreQuery{
 		$this->query[$name] = $val;	
 	}
 	
-	function SaveQuery($name){
-		global $current_user;
+	/**
+	 * SaveQuery
+	 * 
+	 * This function handles saving the query parameters to the user preferences
+	 * SavedSearch.php does something very similar when saving saved searches as well
+	 * 
+	 * @see SavedSearch
+	 * @param $name String name  to identify this query
+	 */
+	function SaveQuery($name)
+	{
+		global $current_user, $timedate;
+		if(isset($this->query['module']))
+		{
+		   $bean = loadBean($this->query['module']);
+		   if(!empty($bean))
+		   {
+		   	  foreach($this->query as $key=>$value)
+		   	  {
+	   	  	    //Filter date fields to ensure it is saved to DB format, but also avoid empty values
+				if(!empty($value) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
+				{
+				   $field = $match[2];
+				   if(isset($bean->field_defs[$field]['type']))
+				   {
+				   	  $type = $bean->field_defs[$field]['type'];
+				   	  
+				   	  if(($type == 'date' || $type == 'datetime' || $type == 'datetimecombo') && !preg_match('/^\[.*?\]$/', $value))
+				   	  {
+				   	  	 $db_format = $timedate->to_db_date($value, false);
+				   	  	 $this->query[$key] = $db_format;
+				   	  }
+				   }
+				}
+		   	  }
+		   }
+		}
+		
 		$current_user->setPreference($name.'Q', $this->query);
 	}
 	
@@ -54,12 +90,38 @@ class StoreQuery{
 	}
 	
 	
-	function populateRequest(){
-		foreach($this->query as $key=>$val){
+	function populateRequest()
+	{
+		global $timedate;
+		
+		if(isset($this->query['module']))
+		{
+		   $bean = loadBean($this->query['module']);
+		}
+		
+		foreach($this->query as $key=>$value)
+		{
             // todo wp: remove this
-            if($key != 'advanced' && $key != 'module') { // cn: bug 6546 storequery stomps correct value for 'module' in Activities
-    			$_REQUEST[$key] = $val;	
-    			$_GET[$key] = $val;	
+            if($key != 'advanced' && $key != 'module') 
+            {   
+            	//Filter date fields to ensure it is saved to DB format, but also avoid empty values
+				if(!empty($value) && !empty($bean) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
+				{
+				   $field = $match[2];
+				   if(isset($bean->field_defs[$field]['type']))
+				   {
+				   	  $type = $bean->field_defs[$field]['type'];
+				   	  
+				   	  if(($type == 'date' || $type == 'datetime' || $type == 'datetimecombo') && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) && !preg_match('/^\[.*?\]$/', $value))
+				   	  {
+				   	  	 $value = $timedate->to_display_date($value, false);
+				   	  }
+				   }
+				}            	
+            	
+            	// cn: bug 6546 storequery stomps correct value for 'module' in Activities
+    			$_REQUEST[$key] = $value;	
+    			$_GET[$key] = $value;	
             }
 		}	
 	}
