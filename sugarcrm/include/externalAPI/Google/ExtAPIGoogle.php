@@ -66,7 +66,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
         try {
             $this->getClient();
 		    // test documents access
-		    $docs = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full?title=TestTestTest');
+		    $docs = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full?title=TestTestTest');
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
