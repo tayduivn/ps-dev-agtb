@@ -17,6 +17,7 @@
 		<button name="prospect_list_contacts_create_button" />
 		<form id="form_SubpanelQuickCreate_Contacts">
 			<textfield id="last_name" set="{@Campaign_1022.last_name} {@stamp}" />
+			<wait timeout='5' />
 			<button id="Contacts_subpanel_save_button" />
 			<wait timeout="5" condition="true">
 				<button name="prospect_list_contacts_create_button" />
@@ -24,7 +25,7 @@
 		</form>
 	</csv>
 	
-	<wait timeout="10" />
+	<wait timeout="5" />
 	
 	<!-- Contacts sub-panel. -->
 	<div id="list_subpanel_contacts">
