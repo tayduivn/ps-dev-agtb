@@ -29,7 +29,8 @@
         <form name="EditView">
             <textfield name="name" set="{@Contract_Create.name} {@user.name} {@stamp}"/>
             <select id="status" set="{@Contract_Create.status}"/>
-            <button value="Save" name="button" onclick="this.form.action.value='Save'; return check_form('EditView');"/>
+            <!--<button value="Save" name="button" onclick="this.form.action.value='Save'; return check_form('EditView');"/>-->
+            <button value="Save" name="button"/> 
         </form>
         <table id="detailpanel_1">
                   <browser assert="{@Contract_Create.name} {@user.name} {@stamp}"/>    
