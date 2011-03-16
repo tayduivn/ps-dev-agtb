@@ -1,37 +1,35 @@
 <soda>
-		<!--
-				This test ensures that you can delete an opp from its detailview
-		-->
+	<!-- This test ensures that you can delete an opp from its detailview -->
 
-        <puts text="Test: Opportunity_2241.xml starting." />
-        <!--script file='scripts/sugarcrm/modules/lib/Team_Create_Lib.xml'/-->
-        <script file='{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml'/>
-        <link id='moduleTab_Opportunities'/>
-     
-        <link text="Basic Search" required="false" />
-        <button id="search_form_clear" />
-                   
-        <textfield id="name_basic" set="{@pre_opp_name}"/>
-   
-        <button id="search_form_submit"/>
-        
-        <table class="list view">
-            <browser assert="{@pre_opp_name}"/>
-            <link text="{@pre_opp_name}" click="true"/>             
-        </table>   
-             
-        <form id="form">
-            <button value="Delete" alert='true'/>
-        </form>
-        
-		<link id='moduleTab_Opportunities'/>
-		
-		<table class="list view">
-			<browser assertnot="{@pre_opp_name}" />
-        </table>
-              
-        <!--Run Delete XML-->
-        <script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>
-        <script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>               
-        <puts text="Test: Opportunity_2241.xml finished."/>
+	<puts text="Test: Opportunity_2241.xml starting." />
+	<!--script file="scripts/sugarcrm/modules/lib/Team_Create_Lib.xml"/ -->
+	<script file="{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml" />
+	<link id="moduleTab_Opportunities" />
+
+	<link text="Basic Search" required="false" />
+	<button id="search_form_clear" />
+
+	<textfield id="name_basic" set="{@pre_opp_name}" />
+
+	<button id="search_form_submit" />
+
+	<table class="list view">
+		<browser assert="{@pre_opp_name}" />
+		<link text="{@pre_opp_name}" click="true" />
+	</table>
+
+	<form id="form">
+		<button value="Delete" alert="true" />
+	</form>
+
+	<link id="moduleTab_Opportunities" />
+
+	<table class="list view">
+		<browser assertnot="{@pre_opp_name}" />
+	</table>
+
+	<!--Run Delete XML -->
+	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
+	<puts text="Test: Opportunity_2241.xml finished." />
 </soda>
