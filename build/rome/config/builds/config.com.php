@@ -85,7 +85,6 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/SugarWireless'=>1,
 'sugarcrm/include/SugarCharts/swf'=>1,
 
-'sugarcrm/Zend'=>1,
 'sugarcrm/modules/Administration/views/view.configureshortcutbar.php'=>1,
 'sugarcrm/themes/default/images/SugarLogic/icon_calculated.png'=>1,
 'sugarcrm/themes/default/images/SugarLogic/icon_dependent.png'=>1,
