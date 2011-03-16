@@ -1,59 +1,59 @@
 <soda>
-        <puts text="Test: Opportunity_2381.xml starting." /> 
-		<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2381.csv" var="Opportunity_2381">
-           
-        <script file='{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml'/>
-        <script file='{@global.scriptsdir}/modules/lib/Campaign_Create_Lib.xml'/>
-        <!--script file='scripts/sugarcrm/modules/lib/Team_Create_Lib.xml'/-->        
-        <timestamp/>        
-        <link id='moduleTab_Opportunities'/>	
-        <link text="Create Opportunity"/>
-                <textfield id='name' set='{@Opportunity_2381.name} {@user.name} {@stamp}'/> 
-                <textfield id='amount' set='{@Opportunity_2381.amount}'/> 
-                <textfield id='probability' set='{@Opportunity_2381.probability}'/> 
-                <textfield id='date_closed' set='{@Opportunity_2381.date_closed}'/> 
-                <textfield id='next_step' set='{@Opportunity_2381.next_step}'/>
-                <textfield id='description' set='{@Opportunity_2381.description}'/>
-                <select id='opportunity_type' set='{@Opportunity_2381.opportunity_type}'/>
-                <select id='lead_source' set='{@Opportunity_2381.lead_source}'/>
-                <select name='currency_id' set='{@Opportunity_2381.currency_id}'/>
-                <select id='sales_stage' set='{@Opportunity_2381.sales_stage}'/>
-                
-                <!--Account Select-->
-                <button id='btn_account_name'/>
-                <browser assert='Account Search'/>
-                <textfield id='name_advanced' set='{@pre_account_name}'/> 
-                <button value='Search'/>
-                <link text='{@pre_account_name}'/>
+	<puts text="Test: Opportunity_2381.xml starting." />
+	<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2381.csv" var="Opportunity_2381">
+
+		<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
+		<script file="{@global.scriptsdir}/modules/lib/Campaign_Create_Lib.xml" />
+		<!--script file="scripts/sugarcrm/modules/lib/Team_Create_Lib.xml"/ -->
+		<timestamp />
+		<link id="moduleTab_Opportunities" />
+		<link text="Create Opportunity" />
+		<textfield id="name" set="{@Opportunity_2381.name} {@user.name} {@stamp}" />
+		<textfield id="amount" set="{@Opportunity_2381.amount}" />
+		<textfield id="probability" set="{@Opportunity_2381.probability}" />
+		<textfield id="date_closed" set="{@Opportunity_2381.date_closed}" />
+		<textfield id="next_step" set="{@Opportunity_2381.next_step}" />
+		<textfield id="description" set="{@Opportunity_2381.description}" />
+		<select id="opportunity_type" set="{@Opportunity_2381.opportunity_type}" />
+		<select id="lead_source" set="{@Opportunity_2381.lead_source}" />
+		<select name="currency_id" set="{@Opportunity_2381.currency_id}" />
+		<select id="sales_stage" set="{@Opportunity_2381.sales_stage}" />
+
+		<!--Account Select -->
+		<button id="btn_account_name" />
+		<browser assert="Account Search" />
+		<textfield id="name_advanced" set="{@pre_account_name}" />
+		<button value="Search" />
+		<link text="{@pre_account_name}" />
 
 
-                <!--teams select-->
-                <table id='EditView_team_name_table'>
-                <button value='Select'/>
-                </table>
-                <browser assert='Team Search'/>
-                <textfield name='name' set='{@Opportunity_2381.team_name}'/> 
-                <button value='Search'/>
-                <link text='{@Opportunity_2381.team_name}'/>
-                
-                <!--Select Campaign record-->
-		<button id = "btn_campaign_name" />
-		<browser assert="Campaign Search"/>
-		<textfield id = "name_advanced" set = "{@Campaign_Name}"/>
-		<button value = "Search" />
-		<!--table class = "list view"-->
-			<link  text = "{@Campaign_Name}"/>
-		<!--/table-->
-                <button value='Save'/>
+		<!--teams select -->
+		<table id="EditView_team_name_table">
+			<button value="Select" />
+		</table>
+		<browser assert="Team Search" />
+		<textfield name="name" set="{@Opportunity_2381.team_name}" />
+		<button value="Search" />
+		<link text="{@Opportunity_2381.team_name}" />
 
-                <browser assert="{@Opportunity_2381.name} {@user.name} {@stamp}"/>
-                <browser assert="{@Opportunity_2381.amount}"/>
-                
-        </csv>
-                 <!--Run Delete XML-->
-                 <script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>
-                 <script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
-                 <!--script file='scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml'/-->
-                 <script file='{@global.scriptsdir}/modules/lib/Campaign_Create_Lib.xml'/>
-                 <puts text="Test: Opportunity_2381.xml finished."/>
+		<!--Select Campaign record -->
+		<button id="btn_campaign_name" />
+		<browser assert="Campaign Search" />
+		<textfield id="name_advanced" set="{@Campaign_Name}" />
+		<button value="Search" />
+		<!--table class = "list view" -->
+		<link text="{@Campaign_Name}" />
+		<!--/table -->
+		<button value="Save" />
+
+		<browser assert="{@Opportunity_2381.name} {@user.name} {@stamp}" />
+		<browser assert="{@Opportunity_2381.amount}" />
+
+	</csv>
+	<!--Run Delete XML -->
+	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
+	<!--script file="scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml"/ -->
+	<script file="{@global.scriptsdir}/modules/lib/Campaign_Create_Lib.xml" />
+	<puts text="Test: Opportunity_2381.xml finished." />
 </soda>
