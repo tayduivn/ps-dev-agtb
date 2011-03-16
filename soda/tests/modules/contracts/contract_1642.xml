@@ -57,7 +57,8 @@
             <textfield id="total_contract_value" set="{@Contract_Create.total_contract_value}"/>
             <textfield name="customer_signed_date" set="{@Contract_Create.customer_signed_date}"/>
             <textfield name="company_signed_date" set="{@Contract_Create.company_signed_date}"/>
-            <button value="Save" name="button" onclick="this.form.action.value='Save'; return check_form('EditView');"/>
+            <!--<button value="Save" name="button" onclick="this.form.action.value='Save'; return check_form('EditView');"/>-->
+            <button value="Save" name="button"/> 
         </form>
         <table id="detailpanel_1">
                   <browser assert="{@Contract_Create.name} {@user.name} {@stamp}"/>    

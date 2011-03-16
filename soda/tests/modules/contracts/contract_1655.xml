@@ -50,7 +50,8 @@
             <textfield id="total_contract_value" set="{@Contract_Create_Lib.total_contract_value}"/>
             <textfield name="customer_signed_date" set="{@Contract_Create_Lib.customer_signed_date}"/>
             <textfield name="company_signed_date" set="{@Contract_Create_Lib.company_signed_date}"/>
-            <button value="Save" name="button" onclick="this.form.action.value='Save'; return check_form('EditView');"/>
+            <!--<button value="Save" name="button" onclick="this.form.action.value='Save'; return check_form('EditView');"/>-->
+            <button value="Save" name="button"/> 
         
 			<browser assert='Missing required field: Account Name'/>
 			<browser assert='Missing required field: No match for field: Account Name'/>
