@@ -1632,47 +1632,61 @@ print "<BR>";
                         $query .= " WHERE ".$where_auto;
 
         $exclude_query = '';
-
-        if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  ) {
-	    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr) && $query_name=='query') {
-				$summary_order_by = $this->report_def['summary_order_by'][0];
-				if (isset($summary_order_by['group_function']) || isset($summary_order_by['column_function'])) {
-					// if it's a function (count/sum/max, etc), exclude it in the query
-				    $this->layout_manager->setAttribute('context', 'OrderBy');
-				    $this->get_extra_info($summary_order_by); //get extra info for widgetQuery to work
-					$exclude_query = $this->layout_manager->widgetQuery($summary_order_by);
-				}
-	    		
-	    		foreach ($this->summary_order_by_arr as $group_order_by) {
-	    	    	if ($group_order_by != $exclude_query) {
-            	        if (!in_array($group_order_by, $this->order_by_arr)) {
-	    	    		    array_unshift($this->order_by_arr, $group_order_by);
-            	        }
-	    	    	}
-	        	}
-	    	}
-            foreach ( array_reverse($this->group_order_by_arr) as $group_order_by ) {
-            	if (!in_array($group_order_by, $this->order_by_arr)) {
-                    array_push($this->order_by_arr, $group_order_by);
-            	}
-            }
-        }
-        else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query') {
-	        if (empty($this->summary_order_by_arr)) {
-	    	    foreach ( $this->group_order_by_arr as $group_order_by ) {
-            	    if (!in_array($group_order_by, $this->summary_order_by_arr)) {
-	    	    	    array_unshift($this->summary_order_by_arr, $group_order_by);
-            	    }
-	            }
-	        } else {
-	        	foreach (array_reverse($this->group_order_by_arr) as $group_order_by) {
-            	    if (!in_array($group_order_by, $this->summary_order_by_arr)) {
-	        		    array_push($this->summary_order_by_arr, $group_order_by);
-            	    }
-	        	}
-	        }
-        }
+        $report_type = $this->get_report_type();
         
+        if ($report_type=='detailed_summary') {
+        	// Have to do it differently for "Summation Report with Details" since it invloves two queries
+	        if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  ) {
+		    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr) && $query_name=='query') {
+					$summary_order_by = $this->report_def['summary_order_by'][0];
+					if (isset($summary_order_by['group_function']) || isset($summary_order_by['column_function'])) {
+						// if it's a function (count/sum/max, etc), exclude it in the query
+					    $this->layout_manager->setAttribute('context', 'OrderBy');
+					    $this->get_extra_info($summary_order_by); //get extra info for widgetQuery to work
+						$exclude_query = $this->layout_manager->widgetQuery($summary_order_by);
+					}
+		    		
+		    		foreach ($this->summary_order_by_arr as $group_order_by) {
+		    	    	if ($group_order_by != $exclude_query) {
+	            	        if (!in_array($group_order_by, $this->order_by_arr)) {
+		    	    		    array_unshift($this->order_by_arr, $group_order_by);
+	            	        }
+		    	    	}
+		        	}
+		    	}
+	            foreach ( array_reverse($this->group_order_by_arr) as $group_order_by ) {
+	            	if (!in_array($group_order_by, $this->order_by_arr)) {
+	            		array_push($this->order_by_arr, $group_order_by);
+	            	}
+	            }
+	        }
+	        else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query') {
+		        if (empty($this->summary_order_by_arr)) {
+		    	    foreach ( $this->group_order_by_arr as $group_order_by ) {
+	            	    if (!in_array($group_order_by, $this->summary_order_by_arr)) {
+	            	    	array_unshift($this->summary_order_by_arr, $group_order_by);
+	            	    }
+		            }
+		        } else {
+		        	foreach (array_reverse($this->group_order_by_arr) as $group_order_by) {
+	            	    if (!in_array($group_order_by, $this->summary_order_by_arr)) {
+	            	    	array_push($this->summary_order_by_arr, $group_order_by);
+	            	    }
+		        	}
+		        }
+	        }
+        } else {
+        	if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  ) {
+        		foreach ( $this->group_order_by_arr as $group_order_by ) {
+        			array_unshift($this->order_by_arr, $group_order_by);
+        		}
+        	} else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query'  && empty($this->summary_order_by_arr)) {
+        		foreach ( $this->group_order_by_arr as $group_order_by ) {
+        			array_unshift($this->summary_order_by_arr, $group_order_by);
+        		}
+        	}
+        }
+                                
         // if we are doing the details part of a summary query.. we need the details
     // to be sorted by the group by
 
@@ -2307,17 +2321,9 @@ print "<BR>";
         return $row;
     }
 
-	function save($report_name){
-		global $current_user;
-		$saved_vars = array();
-
-		$saved_report = new SavedReport();
+    function get_report_type() {
 		$report_type = 'tabular';
-		$chart_type = 'none';
 		
-		if (isset($this->report_def['chart_type'])) {
-			$chart_type = $this->report_def['chart_type'];
-		}
 		if ( $this->report_def['report_type'] == 'summary'){
   		 	$report_type = 'summary';
 			if ( ! empty( $this->report_def['display_columns'])){
@@ -2331,6 +2337,21 @@ print "<BR>";
   		 			} // if
   		 		} // if				
 			} // else
+		}
+		
+		return $report_type;
+    }
+    
+	function save($report_name){
+		global $current_user;
+		$saved_vars = array();
+
+		$saved_report = new SavedReport();
+		$report_type = $this->get_report_type();
+		$chart_type = 'none';
+		
+		if (isset($this->report_def['chart_type'])) {
+			$chart_type = $this->report_def['chart_type'];
 		}
 
 	    if ( empty($_REQUEST['record'])){
