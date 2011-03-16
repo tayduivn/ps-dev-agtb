@@ -1,4 +1,6 @@
 <?php
+require_once('modules/MySettings/StoreQuery.php');
+
 class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase 
 {
 	var $saved_search_id;
@@ -6,7 +8,7 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
 	
     public function setUp() 
     {
-        $this->useOutputBuffering = false;
+        //$this->useOutputBuffering = false;
         $this->saved_search_id = md5(gmmktime());
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -91,6 +93,80 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
 		$focus->populateRequest();
     	$this->assertEquals($_REQUEST['date_modified_advanced'], '03/07/2009', "Assert that dates in db format were converted back to user's date preference");            
     }       
+    
+    public function testStoreQuerySaveAndPopulate()
+    {
+    	global $current_user, $timedate;
+    	
+    	$storeQuery = new StoreQuery();
+    	//Simulate a search request here
+    	$_REQUEST = array
+			(
+			    'module' => 'Opportunities',
+			    'action' => 'index',
+			    'searchFormTab' => 'advanced_search',
+			    'query' => true,
+			    'name_advanced' => '',
+			    'account_name_advanced' => '',
+			    'amount_advanced_range_choice' => '=',
+			    'range_amount_advanced' => '',
+			    'start_range_amount_advanced' => '',
+			    'end_range_amount_advanced' => '',
+			    'date_closed_advanced_range_choice' => '=',
+			    'range_date_closed_advanced' => '09/01/2008',
+			    'start_range_date_closed_advanced' => '',
+			    'end_range_date_closed_advanced' => '',
+			    'next_step_advanced' => '',
+			    'update_fields_team_name_advanced_collection' => '',
+			    'team_name_advanced_new_on_update' => false,
+			    'team_name_advanced_allow_update' => '',
+			    'team_name_advanced_allowed_to_check' => false,
+			    'team_name_advanced_collection_0' => '',
+			    'id_team_name_advanced_collection_0' => '',
+			    'team_name_advanced_type' => 'any',
+			    'favorites_only_advanced' => 0,
+			    'showSSDIV' => 'no',
+			    'saved_search_name' => '',
+			    'search_module' => '',
+			    'saved_search_action' => '',
+			    'displayColumns' => 'NAME|ACCOUNT_NAME|SALES_STAGE|AMOUNT_USDOLLAR|DATE_CLOSED|ASSIGNED_USER_NAME|DATE_ENTERED',
+			    'hideTabs' => 'OPPORTUNITY_TYPE|LEAD_SOURCE|NEXT_STEP|PROBABILITY|CREATED_BY_NAME|TEAM_NAME|MODIFIED_BY_NAME',
+			    'orderBy' => 'NAME',
+			    'sortOrder' => 'ASC',
+			    'button' => 'Search',
+			    'saved_search_select' => '_none',
+			    'sugar_user_theme' => 'Sugar',
+			    'ModuleBuilder' => 'helpHidden=true',
+			    'Contacts_divs' => 'quotes_v=#',
+			    'sugar_theme_gm_current' => 'All',
+			    'globalLinksOpen' => 'true',
+			    'SQLiteManager_currentLangue' => '2',
+			    'PHPSESSID' => 'b8e4b4b955ef3c4b29291779751b5fca',
+			);
+    	
+    	$storeQuery->saveFromRequest('Opportunities');
+    	
+    	$storedSearch = StoreQuery::getStoredQueryForUser('Opportunities');
+    	$this->assertEquals($storedSearch['range_date_closed_advanced'], '2008-09-01', 'Assert that search date 09/02/2008 was saved in db format 2008-09-01');
+
+    	//Test that value is converted to user date preferences when retrieved
+    	unset($_REQUEST['range_date_closed_advanced']);
+    	$storeQuery->loadQuery('Opportunities');
+        $storeQuery->populateRequest();
+        $this->assertTrue(isset($_REQUEST['range_date_closed_advanced']), 'Assert that the field was correctly populated');
+    	$this->assertEquals($_REQUEST['range_date_closed_advanced'], '09/01/2008', 'Assert that search date in db_format 2008-09-01 was converted to user date preference 09/01/2008');
+    	
+    	//Now say the user changes his date preferences and switches back to this StoredQuery
+        $current_user->setPreference('datef', 'Y.m.d', 0, 'global');
+        $current_user->save();
+
+        //Now when we reload this store query, the $_REQUEST array should be populated with new user date preference
+    	unset($_REQUEST['range_date_closed_advanced']);
+    	$storeQuery->loadQuery('Opportunities');
+        $storeQuery->populateRequest();
+        $this->assertTrue(isset($_REQUEST['range_date_closed_advanced']), 'Assert that the field was correctly populated');
+    	$this->assertEquals($_REQUEST['range_date_closed_advanced'], '2008.09.01', 'Assert that search date in db_format 2008-09-01 was converted to user date preference 2008.09.01');    	        
+    }
     
 }
 

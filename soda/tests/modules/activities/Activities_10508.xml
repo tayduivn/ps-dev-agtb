@@ -1,0 +1,13 @@
+<soda>
+	<!-- Activities_10508.xml: Activities tab does not appear in enable/disable modules. -->
+	<puts text="Test: Activities_10508.xml starting." />
+	
+	<link text="Admin" />
+	<link text="Display Module Tabs and Subpanels" />
+
+	<table id="ConfigureTabs">
+		<browser assertnot="Activities" />
+	</table>
+	
+	<puts text="Test: Activities_10508.xml finished." />
+</soda>
