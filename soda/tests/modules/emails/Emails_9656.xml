@@ -5,9 +5,8 @@
   <link text="Admin" />
   <link text="Email Settings" />
 
-	<span id="gmail" jscriptevent="onmouseup">
-		<button id="gmail-button" />
-	</span>
+<button id="gmail-button" jscriptevent="onmouseup" />
+<wait timeout="2" />
 
 	<csv file="{@global.scriptsdir}/csvs/emails/Email_9656.csv" var="email">
 		<textfield id="mail_smtpuser" set="{@email.emailaddress}" />
