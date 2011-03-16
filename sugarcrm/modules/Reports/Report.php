@@ -1634,9 +1634,6 @@ print "<BR>";
         $exclude_query = '';
 
         if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  ) {
-            foreach ( $this->group_order_by_arr as $group_order_by ) {
-                array_unshift($this->order_by_arr, $group_order_by);
-            }
 	    	if (!empty($this->summary_order_by_arr) && is_array($this->summary_order_by_arr) && $query_name=='query') {
 				$summary_order_by = $this->report_def['summary_order_by'][0];
 				if (isset($summary_order_by['group_function']) || isset($summary_order_by['column_function'])) {
@@ -1648,23 +1645,34 @@ print "<BR>";
 	    		
 	    		foreach ($this->summary_order_by_arr as $group_order_by) {
 	    	    	if ($group_order_by != $exclude_query) {
-	    			    array_unshift($this->order_by_arr, $group_order_by);
+            	        if (!in_array($group_order_by, $this->order_by_arr)) {
+	    	    		    array_unshift($this->order_by_arr, $group_order_by);
+            	        }
 	    	    	}
 	        	}
 	    	}
+            foreach ( array_reverse($this->group_order_by_arr) as $group_order_by ) {
+            	if (!in_array($group_order_by, $this->order_by_arr)) {
+                    array_push($this->order_by_arr, $group_order_by);
+            	}
+            }
         }
         else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query') {
 	        if (empty($this->summary_order_by_arr)) {
 	    	    foreach ( $this->group_order_by_arr as $group_order_by ) {
-	                array_unshift($this->summary_order_by_arr, $group_order_by);
+            	    if (!in_array($group_order_by, $this->summary_order_by_arr)) {
+	    	    	    array_unshift($this->summary_order_by_arr, $group_order_by);
+            	    }
 	            }
 	        } else {
 	        	foreach (array_reverse($this->group_order_by_arr) as $group_order_by) {
-	        		array_push($this->summary_order_by_arr, $group_order_by);
+            	    if (!in_array($group_order_by, $this->summary_order_by_arr)) {
+	        		    array_push($this->summary_order_by_arr, $group_order_by);
+            	    }
 	        	}
 	        }
         }
-
+        
         // if we are doing the details part of a summary query.. we need the details
     // to be sorted by the group by
 
