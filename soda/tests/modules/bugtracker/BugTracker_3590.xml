@@ -4,33 +4,6 @@
 	<csv file="{@global.scriptsdir}/csvs/bugtracker/BugTrackerAssertText.csv" var="bugtracker" />
 	<timestamp />
 
-	<!--add fixed in release record to bug tracker module-->
-	<link text="Admin" />
-	<div class="moduleTitle">
-		<browser assert="{@bugtracker.administration_main}" />
-	</div>
-
-	<link text="Releases" />
-	<div class="moduleTitle">
-		<browser assert="{@bugtracker.administration_releases}" />
-	</div>
-
-	<button value="  Create  " />
-
-	<textfield name="name" set="1.0" />
-	<button value="  Save &amp; Create New  " />
-
-	<table class="list view">
-		<link text="1.0" click="false" />
-	</table>
-
-	<textfield name="name" set="2.0" />
-	<button value="  Save &amp; Create New  " />
-
-	<table class="list view">
-		<link text="2.0" click="false" />
-	</table>
-
 	<!--create a bug tracker record-->
 	<link id="moduleTab_Bugs" />
 	<div class="moduleTitle">
@@ -51,7 +24,7 @@
 		<browser assert="Team Search" />
 		<textfield name="name" set="{@bug_record_3590.team_name}" /> 
 		<button value="Search" />
-		<link text="{@bug_record_3590.team_name}" jscriptevent="onmouseover" />
+		<link text="{@bug_record_3590.team_name}" click="true" jscriptevent="onmouseover" />
 		<form id="EditView">				
 			<textfield id="name" set="{@bug_record_3590.name} {@user.name} {@stamp}" /> 
 			<select id="found_in_release" set="1.0" />
@@ -71,29 +44,6 @@
 		<browser assert="{@bug_record_3590.name} {@user.name} {@stamp}" />
 		<browser assert="1.0" />
 		<browser assert="2.0" />
-
-		<!--delete fix in release record-->
-		<link text="Admin" />
-		<div class="moduleTitle">
-			<browser assert="{@bugtracker.administration_main}" />
-		</div>
-
-		<link text="Releases" />
-		<div class="moduleTitle">
-			<browser assert="{@bugtracker.administration_releases}" />
-		</div>
-
-		<table class="list view">
-			<link text="1.0" click="false" />
-		</table>
-
-		<link class="listViewTdToolsS1" index="2" alert="true" />
-
-		<table class="list view">
-			<link text="2.0" click="false" />
-		</table>
-
-		<link class="listViewTdToolsS1" index="2" alert="true" />
 	</csv>
 
 	<!--Delete the record-->
