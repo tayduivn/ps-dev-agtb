@@ -1,54 +1,54 @@
 <soda>
-        <puts text="Test: Opportunity_2342.xml starting." />
-		<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2342.csv" var="Opportunity_2342">
-            
-        <!--script file='scripts/sugarcrm/modules/lib/Team_Create_Lib.xml'/-->
-        <script file='{@global.scriptsdir}/modules/lib/Lead_Create_Lib.xml'/>
-        <script file='{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml'/>
-        <link id='moduleTab_Opportunities'/>
-	       
-             <link text="Basic Search" required="false" />
- 
-             <button id="search_form_clear" />
-			 
-        <form id="search_form">             
-             <textfield id="name_basic" set="{@Opportunity_2342.name} {@user.name} {@stamp}"/>
-        </form>
-        
-             <button id="search_form_submit" />
-			 
-        <table class="list view">
-             <browser assert="{@Opportunity_2342.name} {@user.name} {@stamp}"/>
-             <link text="{@Opportunity_2342.name} {@user.name} {@stamp}" click="true"/>             
-        </table>
-        <table id="detailpanel_1">
+	<puts text="Test: Opportunity_2342.xml starting." />
+	<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2342.csv" var="Opportunity_2342">
 
-                    <browser assert="{@Opportunity_2342.name} {@user.name} {@stamp}"/>
-         </table>
-         <div id="list_subpanel_leads">
-           <table class='list view'>             
-             <button id="opportunity_leads_select_button"/>
-           </table>
-         </div>
-            <browser assert='Lead Search'/>                        
-            <textfield name='first_name_advanced' set='{@pre_lead_first_name}'/>                        
-            <button value='Search'/>
-            <link text='{@pre_lead_salutation} {@pre_lead_first_name} {@pre_lead_last_name}'/>
-         <wait/>          
-      <div id="list_subpanel_leads">
-           <table class='list view'>             
-             <browser assert="{@pre_lead_first_name} {@pre_lead_last_name}"/>
-           </table>
-       </div>
-             <hidden name="record" var="pre_opp_id"/>
-                
-		<var var='pre_opp_name' set='{@Opportunity_2342.name} {@user.name} {@stamp}'/>
-                
-        </csv>
-                 <!--Run Delete XML-->
-                 <script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>
-                 <script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
-                 <script file='{@global.scriptsdir}/modules/lib/Lead_Delete_Lib.xml'/>
-                 <!--script file='scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml'/-->                 
-                 <puts text="Test: Opportunity_2342.xml finished."/>
+		<!--script file="scripts/sugarcrm/modules/lib/Team_Create_Lib.xml"/ -->
+		<script file="{@global.scriptsdir}/modules/lib/Lead_Create_Lib.xml" />
+		<script file="{@global.scriptsdir}/modules/lib/Opp_Create_Lib.xml" />
+		<link id="moduleTab_Opportunities" />
+
+		<link text="Basic Search" required="false" />
+
+		<button id="search_form_clear" />
+
+		<form id="search_form">
+			<textfield id="name_basic" set="{@Opportunity_2342.name} {@user.name} {@stamp}" />
+		</form>
+
+		<button id="search_form_submit" />
+
+		<table class="list view">
+			<browser assert="{@Opportunity_2342.name} {@user.name} {@stamp}" />
+			<link text="{@Opportunity_2342.name} {@user.name} {@stamp}" click="true" />
+		</table>
+		<table id="detailpanel_1">
+
+			<browser assert="{@Opportunity_2342.name} {@user.name} {@stamp}" />
+		</table>
+		<div id="list_subpanel_leads">
+			<table class="list view">
+				<button id="opportunity_leads_select_button" />
+			</table>
+		</div>
+		<browser assert="Lead Search" />
+		<textfield name="first_name_advanced" set="{@pre_lead_first_name}" />
+		<button value="Search" />
+		<link text="{@pre_lead_salutation} {@pre_lead_first_name} {@pre_lead_last_name}" />
+		<wait />
+		<div id="list_subpanel_leads">
+			<table class="list view">
+				<browser assert="{@pre_lead_first_name} {@pre_lead_last_name}" />
+			</table>
+		</div>
+		<hidden name="record" var="pre_opp_id" />
+
+		<var var="pre_opp_name" set="{@Opportunity_2342.name} {@user.name} {@stamp}" />
+
+	</csv>
+	<!--Run Delete XML -->
+	<script file="{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Lead_Delete_Lib.xml" />
+	<!--script file="scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml"/ -->
+	<puts text="Test: Opportunity_2342.xml finished." />
 </soda>

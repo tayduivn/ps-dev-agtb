@@ -1,6 +1,6 @@
 <soda>
 	<csv file="{@global.scriptsdir}/csvs/opportunity/Opportunity_2380.csv" var="Opportunity_2380">
-		<puts text="----Opportunity_2380.xml--------Start!" />
+		<puts text="Test: Opportunity_2380.xml starting" />
 		<script file="{@global.scriptsdir}/modules/lib/Account_Create_Lib.xml" />
 		<script file="{@global.scriptsdir}/modules/lib/Campaign_Create_Lib.xml" />
 
@@ -53,5 +53,5 @@
 	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
 	<!--script file="scripts/sugarcrm/modules/lib/Team_Delete_Lib.xml"/ -->
 	<script file="{@global.scriptsdir}/modules/lib/Campaign_Create_Lib.xml" />
-	<puts text="---Opportunity_2380.xml---Finished!" />
+	<puts text="Test: Opportunity_2380.xml finished" />
 </soda>
