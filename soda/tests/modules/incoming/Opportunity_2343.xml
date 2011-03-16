@@ -22,17 +22,17 @@
 			<browser assert="{@Opportunity_2343.name} {@user.name} {@stamp}" />
 			<link text="{@Opportunity_2343.name} {@user.name} {@stamp}" click="true" />
 		</table>
-		
+
 		<table id="detailpanel_1">
 			<browser assert="{@Opportunity_2343.name} {@user.name} {@stamp}" />
 		</table>
-		
+
 		<div id="list_subpanel_leads">
 			<table class="list view">
 				<button id="opportunity_leads_select_button" />
 			</table>
 		</div>
-		
+
 		<!--Lead select -->
 		<browser assert="Lead Search" />
 		<textfield name="first_name_advanced" set="{@pre_lead_first_name}" />

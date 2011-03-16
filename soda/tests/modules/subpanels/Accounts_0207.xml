@@ -19,6 +19,7 @@
 	<!--Create bug Organization -->
 	<browser assert="{@pre_account_name}" />
 	<button name="accounts_bugs_create_button" />
+	<wait timeout="3" />
 	<csv file="{@global.scriptsdir}/csvs/accounts/Accounts_0086.csv" var="bug_record">
 		<form id="form_SubpanelQuickCreate_Bugs">
 			<textfield id="name" set="{@bug_record.name} {@user.name} {@stamp}" />
