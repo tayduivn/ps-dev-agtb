@@ -193,15 +193,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'importable' => 'false',
     'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
   ),
-  'account' =>
-  array (
-  	'name' => 'account',
-    'type' => 'link',
-    'relationship' => 'account_calls',
-		'link_type'=>'one',
-    'source'=>'non-db',
-		'vname'=>'LBL_OLD_ACCOUNT_LINK',
-  ),
   'opportunity' =>
   array (
   	'name' => 'opportunity',

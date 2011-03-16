@@ -66,13 +66,11 @@ SUGAR.forms.AssignmentHandler.ANIMATE = true;
  */
 SUGAR.forms.AssignmentHandler.VARIABLE_MAP = {};
 
-//BEGIN SUGARCRM flav=een ONLY
 /**
  * @STATIC
  * This array contains a list of valid relationship links for this module
  */
 SUGAR.forms.AssignmentHandler.LINKS = {};
-//END SUGARCRM flav=een ONLY
 
 /**
  * @STATIC
@@ -172,11 +170,9 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
 SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 
-	//BEGIN SUGARCRM flav=een ONLY
 	//Relate fields are only string on the client side, so return the variable name back.
 	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
 		return variable;
-	//END SUGARCRM flav=een ONLY
 
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
@@ -407,12 +403,10 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 
 		var value = "";
 
-		//BEGIN SUGARCRM flav=een ONLY
 		//Relate fields are only string on the client side, so return the variable name back.
 		if(SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname])
 			value = varname;
 		else
-		//END SUGARCRM flav=een ONLY
 			value = SUGAR.forms.AssignmentHandler.getValue(varname, this.formName);
 
 		if (typeof(value) == "string")

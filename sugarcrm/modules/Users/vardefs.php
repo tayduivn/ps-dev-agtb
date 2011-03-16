@@ -515,6 +515,15 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_REPORTS_TO',
         ) ,
+        'reportees' => array(
+            'name' => 'reportees',
+            'type' => 'link',
+            'relationship' => 'user_direct_reports',
+            'link_type' => 'many',
+            'side' => 'left',
+            'source' => 'non-db',
+            'vname' => 'LBL_REPORTS_TO',
+        ) ,
         'email1' => array(
             'name' => 'email1',
             'vname' => 'LBL_EMAIL',

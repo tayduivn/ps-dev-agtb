@@ -1,4 +1,4 @@
-//FILE SUGARCRM flav=een ONLY
+
 <?php
 /************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -32,16 +32,21 @@ class RelatedFieldExpression extends GenericExpression
 	 */
 	function evaluate() {
 		$params = $this->getParameters();
-		//This should be of relate type, which means an array of SugarBean objects
+        //This should be of relate type, which means an array of SugarBean objects
         $linkField = $params[0]->evaluate();
         $relfield = $params[1]->evaluate();
 
-
-        if (empty($linkField) || !isset($linkField[0]->$relfield)) {
+        if (empty($linkField)) {
             return "";
         }
-
-        return $linkField[0]->$relfield;
+        
+        foreach($linkField as $id => $bean)
+        {
+            if (isset($bean->$relfield))
+                return $bean->$relfield;
+        }
+        
+        return "";
 	}
 
 	/**

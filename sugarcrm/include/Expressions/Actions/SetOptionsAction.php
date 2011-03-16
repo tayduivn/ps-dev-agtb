@@ -147,10 +147,6 @@ class SetOptionsAction extends AbstractAction{
 	 */
 	function fire(&$target) {
 		
-		/*$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
-		$field = $this->targetField;
-		$target->$field = $result;*/
 	}
 	
 	static function getActionName() {

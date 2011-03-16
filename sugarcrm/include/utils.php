@@ -4416,7 +4416,7 @@ function can_start_session(){
 }
 
 function load_link_class($properties){
-	$class = 'Link';
+	$class = 'Link2';
 	if(!empty($properties['link_class']) && !empty($properties['link_file'])){
     	require_once($properties['link_file']);
     	$class = $properties['link_class'];

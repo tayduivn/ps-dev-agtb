@@ -307,10 +307,18 @@ class VardefManager{
     protected static function getLinkFieldsForModule($module, $object)
     {
         global $dictionary;
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if($object == 'aCase') {
+            $object = 'Case';
+        }
+        //END SUGARCRM flav!=sales ONLY
         if (empty($dictionary[$object]))
             self::refreshVardefs($module, $object);
         if (empty($dictionary[$object]))
+        {
+            $GLOBALS['log']->debug("Failed to load vardefs for $module:$object in linkFieldsForModule<br/>");
             return false;
+        }
 
         //Cache link fields for this call in a static variable
         if (!isset(self::$linkFields))
@@ -367,17 +375,23 @@ class VardefManager{
     public static function getLinkFieldForRelationship($module, $object, $relName)
     {
         $relLinkFields = self::getLinkFieldsForModule($module, $object);
+        $matches = array();
         if (!empty($relLinkFields))
         {
             foreach($relLinkFields as $rfName => $rfDef)
             {
                 if ($rfDef['relationship'] == $relName)
                 {
-                    return $rfDef;
+                    $matches[] = $rfDef;
                 }
             }
         }
-        return false;
+        if (empty($matches))
+            return false;
+        if (sizeof($matches) == 1)
+            return $matches[0];
+        //For relationships where both sides are the same module, more than one link will be returned
+        return $matches;
     }
 
     //END SUGARCRM flav=pro ONLY

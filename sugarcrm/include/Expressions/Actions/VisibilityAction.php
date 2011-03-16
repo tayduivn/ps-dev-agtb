@@ -127,8 +127,7 @@ class VisibilityAction extends AbstractAction{
 	 */
 	function fire(&$target) {
 		require_once("include/Expressions/Expression/AbstractExpression.php");
-		$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
+		$result = Parser::evaluate($this->expression, $target)->evaluate();
 		if ($result === AbstractExpression::$FALSE) {
 			$target->field_defs[$this->targetField]['hidden'] = true;
 		} else 

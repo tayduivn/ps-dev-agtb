@@ -41,7 +41,21 @@ class Parser {
         {
             require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
             $var = substr($expr, 1);
-            return new SugarFieldExpression($var);
+            $ret = new SugarFieldExpression($var);
+            if ($context) $ret->context = $context;
+            return $ret;
+        }
+        //Related field shorthand
+        if (preg_match('/^\$[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+$/', $expr))
+        {
+            require_once( "include/Expressions/Expression/Generic/RelatedFieldExpression.php");
+            $link = substr($expr, 1, strpos($expr, ".") - 1);
+            $related = substr($expr, strpos($expr, ".") + 1);
+            $linkField = new SugarFieldExpression($link);
+            if ($context) $linkField->context = $context;
+            return new RelatedFieldExpression(array(
+                $linkField, Parser::toConstant('"' . $related . '"'))
+            );
         }
 
 
@@ -265,9 +279,7 @@ class Parser {
 	 * @param Array/SugarBean $target
 	 */
 	static function replaceVariables($expr, $target) {
-        //BEGIN SUGARCRM flav=een ONLY
 		$target->load_relationships();
-        //END SUGARCRM flav=een ONLY
         $variables = Parser::getFieldsFromExpression($expr);
 		$ret = $expr;
 		foreach($variables as $field) {
@@ -283,17 +295,13 @@ class Parser {
 				}
 			} else 
 			{
-				//BEGIN SUGARCRM flav=een ONLY
 				//Special case for link fields
                 if (isset($target->field_defs[$field]) && $target->field_defs[$field]['type'] == "link")
                 {
                     $val = "link(\"$field\")";
                     $ret = str_replace("$$field", $val, $ret);
                 }
-                else {
-                //END SUGARCRM flav=een ONLY
-
-                    if (isset ($target->$field)) {
+                else if (isset ($target->$field)) {
                         $val = Parser::getFormatedValue($target->$field, $field);
                         $ret = str_replace("$$field", $val, $ret);
                     } else  {
@@ -301,11 +309,8 @@ class Parser {
                        // throw new Exception("Unknown variable $$field in formula: $expr");
                        // return;
                     }
-                //BEGIN SUGARCRM flav=een ONLY
                 }
-                //END SUGARCRM flav=een ONLY
 			}
-		}
 		return $ret;
 	}
 	

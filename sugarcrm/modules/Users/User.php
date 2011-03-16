@@ -445,6 +445,8 @@ class User extends Person {
 	}
 
 	function save($check_notify = false) {
+		$isUpdate = !empty($this->id) && !$this->new_with_id;
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		// this will cause the logged in admin to have the licensed user count refreshed
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
@@ -538,6 +540,27 @@ class User extends Person {
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
+        if(!$this->portal_only) {
+		   // If this is not an update, then make sure the new user logic is executed.
+            if (!$isUpdate) {
+                // If this is a new user, make sure to add them to the appriate default teams
+                if (!$this->team_exists) {
+                    $team = new Team();
+                    $team->new_user_created($this);
+                }
+            }else{
+                //if this is an update, then we need to ensure we keep the user's
+                //private team name and name_2 in sync with their name.
+                $team_id = $this->getPrivateTeamID();
+                if(!empty($team_id)){
+
+                    $team = new Team();
+                    $team->retrieve($team_id);
+                    Team::set_team_name_from_user($team, $this);
+                    $team->save();
+                }
+            }
+		}
 		//END SUGARCRM flav=pro ONLY
 
 		//BEGIN SUGARCRM flav=sales ONLY
@@ -1022,37 +1045,6 @@ EOQ;
 	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {
 		return $list_form;
 	}
-
-	function save_relationship_changes($is_update) {
-		//BEGIN SUGARCRM flav=pro ONLY
-		if($this->portal_only) {
-		   return;
-		}
-
-
-		//todo: move this logic into a post save helper method.
-		// If this is not an update, then make sure the new user logic is executed.
-		if ($is_update == false) {
-			// If this is a new user, make sure to add them to the appriate default teams
-			if (!$this->team_exists) {
-				$team = new Team();
-				$team->new_user_created($this);
-			}
-		}else{
-			//if this is an update, then we need to ensure we keep the user's
-			//private team name and name_2 in sync with their name.
-			$team_id = $this->getPrivateTeamID();
-			if(!empty($team_id)){
-
-				$team = new Team();
-				$team->retrieve($team_id);
-                Team::set_team_name_from_user($team, $this);
-				$team->save();
-			}
-		}
-		//END SUGARCRM flav=pro ONLY
-	}
-
 
 
     //BEGIN SUGARCRM flav=pro ONLY

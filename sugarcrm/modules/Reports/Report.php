@@ -228,13 +228,14 @@ class Report
             foreach($this->report_def['links_def'] as $old_link )
             {
                 $tmpBean->load_relationship($old_link);
+                $linkObject = $tmpBean->$old_link;
                 $relationship = $tmpBean->$old_link->_relationship;
 				$newIndex = $tempFullTableList['self']['module'].':'. $linked_fields[$old_link]['name'];
 				$upgrade_lookup[$old_link] = $newIndex;
                 $tempFullTableList[$newIndex]['label'] = translate($linked_fields[$old_link]['vname']);
                 $tempFullTableList[$newIndex]['link_def']['relationship_name'] = $linked_fields[$old_link]['relationship'];
                 $tempFullTableList[$newIndex]['link_def']['name'] = $linked_fields[$old_link]['name'];
-                $tempFullTableList[$newIndex]['link_def']['link_type'] = $relationship->relationship_type;
+                $tempFullTableList[$newIndex]['link_def']['link_type'] = $linkObject->getType();
                 $tempFullTableList[$newIndex]['link_def']['label'] = $tempFullTableList[$newIndex]['label'];
                 $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
 
@@ -252,18 +253,8 @@ class Report
 
                 //Update the parent with one of us children
                 $tempFullTableList['self']['children'][$old_link] = $old_link;
-
-                $tmpBean_is_left = $tmpBean->$old_link->_get_bean_position();
-                if ( $tmpBean_is_left == true )
-                {
-                    $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = 1;
-                    $tempFullTableList[$newIndex]['module'] = $relationship->rhs_module;
-                }
-                else
-                {
-                    $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = 0;
-                    $tempFullTableList[$newIndex]['module'] = $relationship->lhs_module;
-                }
+                $tempFullTableList[$newIndex]['module'] = $linkObject->getRelatedModuleName();
+                $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = $linkObject->_get_bean_position() ? 1 : 0;
                 $tempFullTableList[$newIndex]['name'] = $tempFullTableList['self']['module']." > ". $tempFullTableList[$newIndex]['module'] ;
 
             }
