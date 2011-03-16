@@ -58,6 +58,8 @@ $config['blackList']['sales'] = array(
 'sugarcrm/modules/Forecasts'=>1,
 'sugarcrm/modules/ForecastSchedule'=>1,
 
+'sugarcrm/modules/Administration/views/view.configureshortcutbar.php'=>1,
+
 'sugarcrm/modules/Groups'=>1,
 
 'sugarcrm/modules/Holidays'=>1,

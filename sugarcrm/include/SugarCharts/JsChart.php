@@ -28,7 +28,6 @@
 
 // $Id$
 
-require_once("include/SugarCharts/cssParser.php");
 require_once("include/SugarCharts/SugarChart.php");
 
 class JsChart extends SugarChart {
@@ -92,11 +91,10 @@ class JsChart extends SugarChart {
 		$dimensions = $this->getChartDimensions($xmlStr);
 		$this->ss->assign("width", $dimensions['width']);
 		$this->ss->assign("height", $dimensions['height']);
-		$css = $this->getChartCss();
 		$config = $this->getConfigProperties();
 		$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-		$style['font-family'] = $css[".barvaluelabels"]["font-family"];
-		$style['color'] = $css[".barvaluelabels"]["color"];
+		$style['font-family'] = $config->labelFontFamily;
+		$style['color'] = str_replace("0x","#",$config->labelFontColor);
 		$this->ss->assign("css", $style);
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
 			$chartConfig[$key] = $value;
@@ -130,11 +128,10 @@ class JsChart extends SugarChart {
 		$chartConfig = array();
 		$this->ss->assign("chartId", $this->chartId);
 		$this->ss->assign("filename", str_replace(".xml",".js",$this->xmlFile));
-		$css = $this->getChartCss();
 		$config = $this->getConfigProperties();
 		$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-		$style['font-family'] = $css[".barvaluelabels"]["font-family"];
-		$style['color'] = $css[".barvaluelabels"]["color"];
+		$style['font-family'] = $config->labelFontFamily;
+		$style['color'] = str_replace("0x","#",$config->labelFontColor);
 		$this->ss->assign("css", $style);
 		$xmlStr = $this->processXML($this->xmlFile);
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
@@ -159,10 +156,9 @@ class JsChart extends SugarChart {
 			$customChartsArray[$id]['height'] = $data['height'];
 
 			$config = $this->getConfigProperties();
-			$css = $this->getChartCss();
 			$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-			$style['font-family'] = $css[".barvaluelabels"]["font-family"];
-			$style['color'] = $css[".barvaluelabels"]["color"];
+			$style['font-family'] = $config->labelFontFamily;
+			$style['color'] = str_replace("0x","#",$config->labelFontColor);
 			$customChartsArray[$id]['css'] = $style;
 			$xmlStr = $this->processXML($data['xmlFile']);
 			$xml = new SimpleXMLElement($xmlStr);
@@ -176,15 +172,6 @@ class JsChart extends SugarChart {
 		}
 
 		return $customChartsArray;
-	}
-
-	function getChartCss() {
-		$cssParser = new cssparser;
-		$path = SugarThemeRegistry::current()->getCSSURL('chart.css',false);
-		$cssParser->Parse($path);
-
-		$css = $cssParser->css;
-		return $css;
 	}
 
 	function getChartConfigParams($xmlStr) {

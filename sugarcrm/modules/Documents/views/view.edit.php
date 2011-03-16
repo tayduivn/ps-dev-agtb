@@ -71,9 +71,7 @@ class DocumentsViewEdit extends ViewEdit
 			if (!$this->ev->isDuplicate) {
 				$this->ss->assign("DISABLED", "disabled");
 			}
-		} else {
-	    	$datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
-			$this->bean->active_date = gmdate($datetime_prefs['date']);		    
+		} else {	    
 			$this->bean->revision = 1;
 		    $this->ss->assign("FILE_OR_HIDDEN", "file");
 		}

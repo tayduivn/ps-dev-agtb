@@ -1,0 +1,4 @@
+<soda>
+	<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
+	<browser action="close" />
+</soda>

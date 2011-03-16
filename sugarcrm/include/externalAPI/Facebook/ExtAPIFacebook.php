@@ -79,7 +79,7 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
                 $callback_url = $GLOBALS['sugar_config']['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;   
 	            $callback_url = $this->formatCallbackURL($callback_url);
 	            
-                $loginUrl = $this->fb->getLoginUrl(array('next'=>$callback_url,'cancel'=>$callback_url));
+                $loginUrl = $this->fb->getLoginUrl(array('next'=>$callback_url,'cancel'=>$callback_url, 'req_perms' => 'read_stream'));
                 $GLOBALS['log']->debug('IKEA: Shipping the user to here: '.$loginUrl);
                 SugarApplication::redirect($loginUrl);
                 return array('success'=>false);

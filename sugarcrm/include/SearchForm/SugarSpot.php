@@ -68,9 +68,12 @@ EOHTML;
 			$str.= '<ul>';
 			foreach($data['data'] as $row){
 				$name = '';
+				
 				if(!empty($row['NAME'])){
 					$name = $row['NAME'];
-				}else{
+				} else if(!empty($row['DOCUMENT_NAME'])) {
+				    $name = $row['DOCUMENT_NAME'];
+				} else {
 					foreach($row as $k=>$v){
 						if(strpos($k, 'NAME') !== false && !empty($row[$k])){
 							$name = $v;
@@ -313,7 +316,7 @@ EOHTML;
 
 			if(!isset($return_fields['name'])) {
 			    // FAIL: couldn't find id & name for the module
-			    $GLOBALS['log']->fatal("Unable to find name for module $moduleName");
+			    $GLOBALS['log']->error("Unable to find name for module $moduleName");
 			    continue;
 			}
 

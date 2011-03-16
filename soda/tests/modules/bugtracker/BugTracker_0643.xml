@@ -20,7 +20,13 @@
 			Save button, it doesn"t save.  A bit of JavaScript doesn"t have time to
 			finish, maybe?  So we set another field after the user box to give it
 			some time. -->
-	<textfield id="assigned_user_name" set="{@bugtracker_0643.user}" />
+	<button id="btn_assigned_user_name"/>
+	
+	<textfield id="user_name_advanced" set="{@bugtracker_0643.user}"/>
+	<button name="button" value="Search"/>
+	<link text="{@bugtracker_0643.user}" index="1"/>
+
+	<!--textfield id="assigned_user_name" set="{@bugtracker_0643.user}" /-->
 	<textfield id="work_log" set="Changed assigned to user." />
 	<button value="Save" />
 	

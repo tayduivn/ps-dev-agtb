@@ -1,0 +1,43 @@
+<soda>
+	<puts text='Contract 1703: Create Note verify that note can be created for a Contract '/>
+
+	<timestamp/>
+	<!--Create a contract with filling all the fields-->
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Create_Lib.xml'/>
+
+	<!--Search the contract record in list view-->
+	<link id='moduleTab_Contracts'/>
+	<browser assert="Contracts"/>
+	<textfield id='name_basic' set='{@Contract_Create_Lib}'/> 
+	<button id="search_form_submit"/>
+	<table class='list view'>
+	<link text='{@Contract_Create_Lib}'/>
+	</table>
+	<browser assert='{@Contract_Create_Lib}'/>
+
+	<!--Create a new Note against the Contract-->
+	<div id="subpanel_history">
+		<button name="History_create_button"/>
+	</div>
+
+	<div id="subpanel_history_newDiv">
+		<textfield id="name" set="{@Contract_Create_Lib}{@stamp}"/>
+		<button id="Notes_subpanel_cancel_button" alert="true"/>
+	</div>
+
+	<!--Verify the Note created succeffully-->
+	<div id="list_subpanel_history">
+		<browser assertnot="{@Contract_Create_Lib}{@stamp}"/>
+		<link text="{@Contract_Create_Lib}{@stamp}" exist="false" click="false"/>
+	</div>
+
+	<!--Delete the records-->
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/ContractType_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Note_Delete_Lib.xml'/>
+	<!--<script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>-->
+
+	<puts text='-------------------Contract_1703: finished-------------------'/>
+
+</soda>

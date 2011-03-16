@@ -11653,7 +11653,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
             } else {
 			  ctx.textAlign = 'center';
-			  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+			  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 			  //background box
 			  ctx.save();
 			  gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -11678,8 +11678,9 @@ $jit.ST.Plot.NodeTypes.implement({
 			  
 			  ctx.rotate(270* Math.PI / 180);
 			  ctx.fillStyle = "rgba(255,255,255,.8)";
+			  
 			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+			  //$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 			  ctx.fillStyle = ctx.strokeStyle = label.color;
 			  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
 			  ctx.restore();
@@ -11691,7 +11692,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
 
                 //background box
-                ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+                ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 				inset = 10;
 				
 				gridWidth = canvasSize.width - (config.Margin.left + config.Margin.right);
@@ -11714,7 +11715,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				ctx.fillStyle = "rgba(255,255,255,.8)";
 				cornerRadius = 4;	
 				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				
 			  ctx.fillStyle = label.color;
               ctx.rotate(0 * Math.PI / 180);
@@ -11907,7 +11908,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					acumValueLabel = valueArray[i];
 				}
 			   if(horz) {
-			   	  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+			   	  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 				  ctx.textAlign = 'left';
 				  ctx.textBaseline = 'top';
 				  ctx.fillStyle = "rgba(255,255,255,.8)";
@@ -11927,7 +11928,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				  cornerRadius = 4;	
 				  
 				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				//  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				  
 				  ctx.fillStyle = ctx.strokeStyle = label.color;
 				  ctx.fillText(acumValueLabel, x + inset/2 + leftPadding, y + i*fixedDim + (fixedDim/2) - (label.size/2));
@@ -11937,7 +11938,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					
 				} else {
 				  
-				  	ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+				  	ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					ctx.save();
 					ctx.textAlign = 'left';
 					
@@ -11965,7 +11966,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
 					ctx.rotate(270* Math.PI / 180);
 					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					
 					ctx.fillStyle = ctx.strokeStyle = label.color;
 					ctx.fillText(acumValueLabel, 0,0);
@@ -12151,7 +12152,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  }
 					 if(!horz) {
 					  ctx.textAlign = 'center';
-					  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+					  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					  //background box
 					  ctx.save();
 					  gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -12177,7 +12178,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  ctx.rotate(270* Math.PI / 180);
 					  ctx.fillStyle = "rgba(255,255,255,.6)";
 					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					 // $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					  ctx.fillStyle = ctx.strokeStyle = label.color;
 					  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
 					  ctx.restore();
@@ -12199,7 +12200,7 @@ $jit.ST.Plot.NodeTypes.implement({
         if(label.type == 'Native') {
           ctx.save();
           ctx.fillStyle = ctx.strokeStyle = label.color;
-          ctx.font = "bold" + ' ' + label.size + 'px ' + label.family;
+          ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
@@ -12227,7 +12228,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				cornerRadius = 4;	
 				
 				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 		
 				
 				ctx.fillStyle = label.color;
@@ -12686,7 +12687,7 @@ $jit.BarChart = new Class({
 		while(axis>=grid) {
 			ctx.save();
 			ctx.translate(-(size.width/2)+margin.left, Math.round(axis));
-			ctx.rotate(Math.PI / 2);
+			ctx.rotate(270 * Math.PI / 180 );
 			ctx.fillStyle = label.color;
 			if(config.showLabels) {
 				if(label.type == 'Native') { 
