@@ -1,0 +1,58 @@
+<soda>
+	<!--
+		Action:
+			1. Login to system as a valid user.
+			2. Click "Calendar" navigation tab.
+			3. Click "Schedule Call" link on Navigation shortcuts.
+			4. Enter all the Mandatory fields, like "Subject", "Start date & time",
+				"Team", "Status" and "Duration".
+			5. Search for users with "first name or last name or with email" 
+			search condition in "Add Invitees" sub-panel.
+			6. Click on "Send Invites" button.
+			7. Logout current user. Then login to system 
+				with the invited user mention above.
+		Expectation:
+			7. Call is displayed in "My Calls" dashlet of the invited users Home page.
+	-->
+	<puts text="Test: Calendar_0692.xml starting." />
+	
+	<script file="{@global.scriptsdir}/modules/lib/Call_Create_Lib.xml" />
+	
+	<link id="moduleTab_Calls" />
+	<textfield id="name_basic" set="{@pre_call_name}" />
+	<button id="search_form_submit" />
+	<browser assert="{@pre_call_name}" />
+	<link text="{@pre_call_name}" />>
+	
+	<button id="edit_button" />
+	
+	<textfield name="search_email" set="sugarqa3@gmail.com" />
+	<button value="Search" />
+	<wait timeout="3" />
+	<javascript addUtils="true">
+		SugarWidgetSchedulerAttendees.form_add_attendee(0);
+	</javascript>
+	<wait timeout="2" />
+	<button value="Save" />
+	
+	<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
+	
+	<browser url="{@global.url}" />
+
+	<link text="Log Out" required="false" timeout="2" />
+	<browser assert="Please enter your user name and password" />
+
+	<textfield id="user_name" set="qauser" />
+	<textfield id="user_password" set="QAuser1" />
+	<button id="login_button" />
+
+	<!-- Match a new user login or an existing user login, but not a failed login. -->
+	<browser assert="/Welcome(, | to Sugar!)/" />
+	
+	<browser assert="{@pre_call_name}" />
+	
+	<script file="{@global.scriptsdir}/modules/lib/login.xml" />
+	<script file="{@global.scriptsdir}/modules/lib/Call_Delete_Lib.xml" />
+	
+	<puts text="Test: Calendar_0692.xml finished." />
+</soda>
