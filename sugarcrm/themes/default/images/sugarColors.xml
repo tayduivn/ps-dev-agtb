@@ -24,7 +24,8 @@
     <charts>		
         <docBorder>0xcccccc</docBorder>
 		<docBackground>0xffffff</docBackground>
-		
+		<labelFontFamily>Arial</labelFontFamily>
+		<labelFontColor>0x000000</labelFontColor>
         <scrollButtonFill>0x999999</scrollButtonFill>
         <scrollButtonArrow>0x333333</scrollButtonArrow>
         <scrollBarHighlight>off</scrollBarHighlight>
