@@ -41,6 +41,7 @@
 	<browser assert="Last Name"/>
 	
 	<!--Delete the records-->
+	<script file='{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml'/>
 	<script file='{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml'/>
 	<script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
 	<script file='{@global.scriptsdir}/modules/lib/ContractType_Delete_Lib.xml'/>
