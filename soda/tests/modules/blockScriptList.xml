@@ -294,4 +294,10 @@
 		<modulename>Accounts</modulename>
 	</block>
 
+	<block>
+		<testfile>Calendar_0706</testfile>
+		<bugnumber>42919</bugnumber>
+		<reason>mfleeger: Advanced Search not functioning on Meetings</reason>
+		<mobuldname>Calendar</modulename>
+	</block>
 </soda>
