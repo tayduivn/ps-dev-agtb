@@ -1,0 +1,36 @@
+<soda>
+	<!--
+		Action:
+			1. Login to system as a valid user.
+			2. Click "Calendar" navigation tab.
+			3. Click any special time link on Day Calendar panel.
+			4. Click "Schedule Meeting" radio button and enter the
+				"Subject" Mandatory fields in the open out area.
+			5. Click on "Save" button.
+		Expectation:
+			5. Meeting detail information is displayed on
+				"Meeting Detail View" page.
+	-->
+	<puts text="Test: Calendar_0696.xml starting." />
+	
+	<link id="moduleTab_Calendar" />
+	
+	<link text="11:00" />
+	
+	<radio name="appointment" value="Meeting" set="true" />
+	
+	<timestamp />
+	<var var="meeting_name" set="QA_Meeting_{@stamp}" />
+	
+	<textfield name="name" set="{@meeting_name}" />
+	
+	<button value=" Save " />
+	
+	<table id="detailpanel_1">
+		<browser assert="{@meeting_name}" />
+	</table>
+
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
+
+	<puts text="Test: Calendar_0696.xml finished." />
+</soda>

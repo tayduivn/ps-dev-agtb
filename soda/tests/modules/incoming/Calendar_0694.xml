@@ -1,0 +1,46 @@
+<soda>
+	<!--
+		Action:
+			1. Login to system as a valid user.
+			2. Click "Calendar" navigation tab.
+			3. Click "Schedule Meeting" link on Navigation shortcuts.
+			2,3. mfleeger - these are now done as one step...
+			4. Enter all the Mandatory fields, like "Subject",
+				"Start date & time", "Team", "Status" and "Duration".
+				And enter other field, like "Location", "Description", etc.
+			5. Click on "Cancel" button.
+			6. Click the OK button on the "Confirm Navigation" dialog.
+		Expectation:
+			6. The canceled meeting is not displayed in "Meeting List" sub-panel.
+	-->
+	<puts text="Test: Calendar_0694.xml starting." />
+	
+	<link id="moduleTab_Meetings" />
+	
+	<link text="Schedule Meeting" />
+	
+	<timestamp />
+	<var var="meeting_name" set="QA_Meeting_{@stamp}" />
+	
+	<textfield id="name" set="{@meeting_name}" />
+	<textfield id="date_start_date" set="12/12/2012" />
+	<select id="date_start_hours" set="05" />
+	<select id="date_start_minutes" set="30" />
+	<textfield name="duration_hours" set="1" />
+	<select id="duration_minutes" set="30" />
+	<textfield id="location" set="White Room" />
+	<textfield id="description" set="This is a meeting..." />
+	
+	<textfield id="team_name_collection_0" set="Administrator" jscriptevent="onkeydown" />
+	<textfield id="team_name_collection_0" jscriptevent="onkeyup" click="false" />
+	<wait timeout="2" />
+	
+	<button value="Cancel" alert="true" />
+	
+	<div id="Meetings_detailview_tabs" exist="false" />
+	<browser assertnot="{@meeting_name}" />
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
+		
+	<puts text="Test: Calendar_0694.xml finished." />
+</soda>
