@@ -295,9 +295,9 @@
 	</block>
 
 	<block>
-		<testfile>Calendar_0706</testfile>
+		<testfisle>Calendar_0706</testfile>
 		<bugnumber>42919</bugnumber>
 		<reason>mfleeger: Advanced Search not functioning on Meetings</reason>
-		<mobuldname>Calendar</modulename>
+		<modulename>Calendar</modulename>
 	</block>
 </soda>
