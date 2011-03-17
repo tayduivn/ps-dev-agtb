@@ -1,0 +1,41 @@
+<soda>
+	<puts text='Contract_1708:Select Contact_Verify that Contact can be searched when selecting contact for Contract.'/>
+
+	<timestamp/>
+	<!--Create a contract with filling all the fields-->
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Create_Lib.xml'/>
+
+	<!--Create a Contact record with lib-->
+	<script file='{@global.scriptsdir}/modules/lib/Contact_Create_Lib.xml'/>
+	
+	<!--Search the contract record in list view-->
+	<link id='moduleTab_Contracts'/>
+	<browser assert="Contract Name"/>
+	<textfield id='name_basic' set='{@Contract_Create_Lib}'/> 
+	<button id="search_form_submit"/>
+	<table class='list view'>
+	<link text='{@Contract_Create_Lib}'/>
+	<browser assert="{@Contract_Create_Lib}"/>
+	</table>
+
+	<!--Search contract in pop-up window from contact subpanel in contract detail view-->
+	<button id="contracts_contacts_select_button"/>
+	<browser assert="Contact Search"/>
+	<textfield id="first_name_advanced" set="{@pre_contact_first_name}"/>
+	<textfield id="last_name_advanced" set="{@pre_contact_last_name}"/>
+	<button value="Search"/>
+	<wait timeout="2"/>
+	<link text="{@pre_contact_first_name} {@pre_contact_last_name}"/>
+	<wait timeout="2"/>
+	<browser assert="{@pre_contact_first_name} {@pre_contact_last_name}"/>
+
+	<!--Delete the records-->
+	<script file='{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/ContractType_Delete_Lib.xml'/>
+	<!--<script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>-->
+
+	<puts text='-------------------Contract_1708: finished-------------------'/>
+
+</soda>
