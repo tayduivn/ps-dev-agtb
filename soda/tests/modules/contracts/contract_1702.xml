@@ -1,0 +1,46 @@
+<soda>
+	<puts text='Contract_1702:Delete Document_Verify that Document can be deleted for Contract.'/>
+
+	<timestamp/>
+	<!--Create a contract with filling all the fields-->
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Create_Lib.xml'/>
+	
+	<!--Create a Document record-->	
+	<script file='{@global.scriptsdir}/modules/lib/Document_Create_Lib.xml'/>
+
+	<!--Search the contract record in list view-->
+	<link id='moduleTab_Contracts'/>
+	<browser assert="Contract Name"/>
+	<textfield id='name_basic' set='{@Contract_Create_Lib}'/> 
+	<button id="search_form_submit"/>
+	<table class='list view'>
+	<link text='{@Contract_Create_Lib}'/>
+	<browser assert="{@Contract_Create_Lib}"/>
+	</table>
+
+	<!--Add Document record its subpael in contract detail view-->
+	<button id="contracts_documents_select_button"/>
+	<browser assert="Document Search"/>
+	<textfield name='document_name' set='{@Doc_Name}'/>
+	<button value="Search"/> 
+	<link text="{@Doc_Name}"/>
+	<wait timeout="2"/>
+	<browser assert="{@Doc_Name}"/>
+	
+	<!--Delete Document record form subpanel-->
+	<div id="list_subpanel_contract_documents">
+		<link class="listViewTdToolsS1" index="2" alert="true"/>
+		<wait timeout="2"/>
+		<browser assert="{@Doc_Name}" exist="false"/>
+	</div>
+
+	<!--Delete the records-->
+	<script file="{@global.scriptsdir}/modules/lib/Document_Delete_Lib.xml"/>
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/ContractType_Delete_Lib.xml'/>
+	<!--<script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>-->
+
+	<puts text='-------------------Contract_1630: finished-------------------'/>
+
+</soda>
