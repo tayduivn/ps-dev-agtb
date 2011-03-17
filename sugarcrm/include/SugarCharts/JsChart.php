@@ -157,7 +157,7 @@ class JsChart extends SugarChart {
 
 			$config = $this->getConfigProperties();
 			$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-			$style['font-family'] = $config->labelFontFamily;
+			$style['font-family'] = (string)$config->labelFontFamily;
 			$style['color'] = str_replace("0x","#",$config->labelFontColor);
 			$customChartsArray[$id]['css'] = $style;
 			$xmlStr = $this->processXML($data['xmlFile']);
