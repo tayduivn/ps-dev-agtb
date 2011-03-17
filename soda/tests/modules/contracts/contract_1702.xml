@@ -41,6 +41,6 @@
 	<script file='{@global.scriptsdir}/modules/lib/ContractType_Delete_Lib.xml'/>
 	<!--<script file='{@global.scriptsdir}/modules/lib/Opp_Delete_Lib.xml'/>-->
 
-	<puts text='-------------------Contract_1630: finished-------------------'/>
+	<puts text='-------------------Contract_1702: finished-------------------'/>
 
 </soda>
