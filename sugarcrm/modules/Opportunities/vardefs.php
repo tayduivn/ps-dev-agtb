@@ -137,7 +137,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'importable' => 'required',
     'required' => true,
   	'options' => 'numeric_range_search_dom',
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
   ),
   'amount_usdollar' =>
   array (
@@ -199,7 +199,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'comment' => 'Expected or actual date the oppportunity will close',
 	'importable' => 'required',
     'required' => true,
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
   'next_step' =>

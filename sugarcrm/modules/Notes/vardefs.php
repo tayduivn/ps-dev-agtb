@@ -47,7 +47,7 @@ $dictionary['Note'] = array(
     'vname' => 'LBL_DATE_ENTERED',
     'type' => 'datetime',
     'comment' => 'Date record created',
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
   'date_modified' =>
@@ -56,7 +56,7 @@ $dictionary['Note'] = array(
     'vname' => 'LBL_DATE_MODIFIED',
     'type' => 'datetime',
     'comment' => 'Date record last modified',
-    'enable_range_search' => '1',  
+    'enable_range_search' => true,  
   ),
    'modified_user_id' =>
 	  array (
