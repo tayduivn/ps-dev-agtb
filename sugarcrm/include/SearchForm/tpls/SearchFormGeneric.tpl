@@ -47,19 +47,36 @@
 		</tr><tr>
 	{/if}
 	
-	<td scope="row" nowrap="nowrap" width='1%' >
-	{{if isset($colData.field.label)}}	
-		{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
-    {{elseif isset($fields[$colData.field.name])}}
-		{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
-	{{/if}}
+	{{capture name=fieldLabelContent assign=fieldLabel}}
+    	{{if isset($colData.field.label)}}	
+    		{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
+        {{elseif isset($fields[$colData.field.name])}}
+    		{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
+    	{{/if}}
+	{{/capture}}
+	
+	{{capture name=fieldInputContent assign=fieldInputField}}
+    	{{if $fields[$colData.field.name]}}
+    		{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='searchView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
+       	{{/if}}
+   	{{/capture}}
+   	
+	<td nowrap="nowrap" width='1%' 
+	   {{if isset($colData.field.type) && $colData.field.type|lower == 'bool'}}	
+            >{{$fieldInputField}}
+       {{else}}
+           scope="row"> {{$fieldLabel}}
+       {{/if}}
 	</td>
 
 	
-	<td  nowrap="nowrap" width='1%'>
-	{{if $fields[$colData.field.name]}}
-		{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='searchView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
-   	{{/if}}
+	<td  nowrap="nowrap" width='1%' 
+	   {{if isset($colData.field.type) && $colData.field.type|lower == 'bool'}}	
+            scope="row">{{$fieldLabel}}
+       {{else}}
+            >{{$fieldInputField}}
+       {{/if}}
+	
    	   	{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{/if}
