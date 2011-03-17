@@ -1,0 +1,51 @@
+<soda>
+	<puts text='Contract_1710:Select Contact_Verify that creating a Contact can be canceled for Contract.'/>
+
+	<timestamp/>
+	<!--Create a contract with filling all the fields-->
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Create_Lib.xml'/>
+
+	<!--Search the contract record in list view-->
+	<link id='moduleTab_Contracts'/>
+	<browser assert="Contract Name"/>
+	<textfield id='name_basic' set='{@Contract_Create_Lib}'/> 
+	<button id="search_form_submit"/>
+	<table class='list view'>
+	<link text='{@Contract_Create_Lib}'/>
+	<browser assert="{@Contract_Create_Lib}"/>
+	</table>
+
+	<!--Create a Contact record from Contact subpanel in Contract detail view.-->
+	<button id="contracts_contacts_select_button"/>
+	<browser assert="Contact Search"/>
+
+	<button value="Create Contact"/>
+	<wait timeout="2"/>
+	<browser assert="Create Contact"/>
+	<textfield id="last_name" set="Last Name"/>
+	<button id="Contacts_popup_cancel_button" alert="true"/>
+	<wait timeout="2"/>
+	
+	<!--Verify the Contact record is not created-->
+	<link text="Last Name" exist="false"/>
+
+	<!--This part is used to close the pop-up window-->
+	<button value="Create Contact"/>
+	<wait timeout="2"/>
+	<browser assert="Create Contact"/>
+	<textfield id="last_name" set="Last Name"/>
+	<button id="Contacts_popupcreate_save_button"/>
+	<wait timeout="2"/>
+	<link text="Last Name"/>
+	<wait timeout="2"/>
+	<browser assert="Last Name"/>
+	
+	<!--Delete the records-->
+	<script file='{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Contract_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml'/>
+	<script file='{@global.scriptsdir}/modules/lib/ContractType_Delete_Lib.xml'/>
+
+	<puts text='-------------------Contract_1710: finished-------------------'/>
+
+</soda>

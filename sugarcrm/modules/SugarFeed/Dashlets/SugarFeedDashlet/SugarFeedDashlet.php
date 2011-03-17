@@ -186,20 +186,25 @@ var $myFavoritesOnly = false;
 
 			$module_limiter = " sugarfeed.related_module in ('" . implode("','", $regular_modules) . "')";
 
-            if ( count($owner_modules) > 0
+			if( is_admin($GLOBALS['current_user'] ) )
+            {
+                $all_modules = array_merge($regular_modules, $owner_modules, $admin_modules);
+                $module_limiter = " sugarfeed.related_module in ('" . implode("','", $all_modules) . "')";
+            }
+            else if ( count($owner_modules) > 0
 //BEGIN SUGARCRM flav=pro ONLY
 				 || count($admin_modules) > 0
 //END SUGARCRM flav=pro ONLY
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-
-                $lvsParams['custom_from'] .= ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
-
+                 //From SugarBean add_team_security_where_clause but customized select.
+                $lvsParams['custom_from'] .= ' LEFT JOIN (select tst.team_set_id, team_memberships.id as team_membership_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = "' . $current_user->id . '" AND team_memberships.deleted=0 group by tst.team_set_id) sugarfeed_tf on sugarfeed_tf.team_set_id  = sugarfeed.team_set_id ';
+    
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY
-					."AND team_memberships.id IS NOT NULL "
+					."AND team_membership_id IS NOT NULL "
 //END SUGARCRM flav=pro ONLY
 					.") ";
 //BEGIN SUGARCRM flav=pro ONLY
@@ -210,7 +215,7 @@ var $myFavoritesOnly = false;
 				if ( count($owner_modules) > 0 ) {
 					$module_limiter .= "OR (sugarfeed.related_module IN('".implode("','", $owner_modules)."') AND sugarfeed.assigned_user_id = '".$current_user->id."' "
 //BEGIN SUGARCRM flav=pro ONLY
-						."AND team_memberships.id IS NOT NULL "
+						."AND team_membership_id IS NOT NULL "
 //END SUGARCRM flav=pro ONLY
 						.") ";
 				}
