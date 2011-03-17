@@ -1,0 +1,116 @@
+<soda>
+	<!--
+		Action:
+			1. Login to system as a valid user.
+			2. Click "Calendar" navigation tab.
+			3. Click "Meetings" link on Navigation shortcuts.
+			2,3. Now one step - Meetings tab - mfleeger
+			4. Enter basic search condition, like "Subject", "Contact",
+				check or un-check "Only my items" check box.
+			4. mfleeger - contact no longer present in basic search.
+			5. Click "Search" button.
+		Expectation:
+			5. The match scheduled meetings are displayed in the "Meeting List" view.
+
+	-->
+	<puts text="Test: Calendar_0705.xml starting." />
+
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	<var var="meeting1_name" set="{@pre_meeting_name}" />
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	<var var="meeting2_name" set="{@pre_meeting_name}" />	
+	
+	
+	<link id="moduleTab_Meetings" />
+		
+	<button id="search_form_clear" />
+	<textfield id="name_basic" set="{@meeting2_name}" />
+	<button id="search_form_submit" />
+	
+	<browser assert="{@meeting2_name}" />
+	<link text="{@meeting2_name}" />
+	
+	<button id="edit_button" />
+	
+	<textfield id="assigned_user_name" set="qauser" jscriptevent="onkeydown" />
+	<textfield id="assigned_user_name" jscriptevent="onkeyup" click="false" />
+	<wait timeout="2" />
+	
+	<select id="status" set="Held" />
+	
+	<button value="Save" />
+	
+	<wait timeout="5" />
+	
+	<link id="moduleTab_Meetings" />
+	
+	<button id="search_form_clear" />	
+	
+	<!-- simple search for meeting 2 -->
+	<textfield id="name_basic" set="{@meeting2_name}" />
+	<button id="search_form_submit" />
+	
+	<table class="list view">
+		<browser assert="{@meeting2_name}" />
+		<browser assertnot="{@meeting1_name}" />
+	</table>
+	
+	<!-- Star meeting2 while we're here... -->
+	
+	<javascript addUtils="true">
+            <!-- this is a javascript hack to enable the first of 
+			the favorites... -->
+        stars = document.getElementsByClassName('off');
+        var star = stars[0];
+		star.onclick();
+    </javascript>
+
+	
+	<button id="search_form_clear" />
+
+	<!-- simple search for meeting 1 -->
+	<textfield id="name_basic" set="{@meeting1_name}" />
+	<button id="search_form_submit" />
+	
+	<table class="list view">
+		<browser assert="{@meeting1_name}" />
+		<browser assertnot="{@meeting2_name}" />
+	</table>	
+
+	<button id="search_form_clear" />
+	
+	<!-- search for my items (#1) -->
+	<checkbox id="current_user_only_basic" set="true" />
+	<button id="search_form_submit" />
+	
+	<table class="list view">
+		<browser assert="{@meeting1_name}" />
+		<browser assertnot="{@meeting2_name}" />
+	</table>
+
+	<button id="search_form_clear" />
+	
+	<!-- search for favorite (#2) -->
+	<checkbox id="favorites_only_basic" set="true" />
+	<button id="search_form_submit" />
+	<table class="list view">
+		<browser assert="{@meeting2_name}" />
+		<browser assertnot="{@meeting1_name}" />
+	</table>
+	
+	<button id="search_form_clear" />
+	
+	<!-- search for open only (#1) -->
+	<checkbox id="open_only_basic" set="true" />
+	<button id="search_form_submit" />
+	<table class="list view">
+		<browser assert="{@meeting1_name}" />
+		<browser assertnot="{@meeting2_name}" />
+	</table>
+	
+	<!-- Clean up... -->
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
+	
+	<puts text="Test: Calendar_0705.xml finished." />
+</soda>
