@@ -65,7 +65,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Date in which call is schedule to (or did) start',
     'importable' => 'required',
 	'required' => true,
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
 
@@ -76,7 +76,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date is which call is scheduled to (or did) end',
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
 
