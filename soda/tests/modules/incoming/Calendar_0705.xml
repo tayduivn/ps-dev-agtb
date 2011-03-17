@@ -110,7 +110,6 @@
 	</table>
 	
 	<!-- Clean up... -->
-	<script file="{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml" />
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
 	
 	<puts text="Test: Calendar_0705.xml finished." />
