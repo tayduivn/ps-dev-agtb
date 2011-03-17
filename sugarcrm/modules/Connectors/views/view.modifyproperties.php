@@ -62,8 +62,6 @@ class ViewModifyProperties extends SugarView
 		$connectors = ConnectorUtils::getConnectors(true);
 		$required_fields = array();
     	//Get required fields for first connector only
-        //rrs removing lotuslive for on-demand build
-        unset($connectors['ext_eapm_lotuslive']);
 		foreach($connectors as $id=>$entry) {
 			    $s = SourceFactory::getSource($id);
 			    $connector_strings = ConnectorUtils::getConnectorStrings($id);
