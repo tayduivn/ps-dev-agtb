@@ -1,10 +1,9 @@
-//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 3.0.0
-build: 1549
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
 */
 YUI.add('attribute-base', function(Y) {
 
@@ -155,6 +154,7 @@ YUI.add('attribute-base', function(Y) {
         SETTER = "setter",
         READ_ONLY = "readOnly",
         WRITE_ONCE = "writeOnce",
+        INIT_ONLY = "initOnly",
         VALIDATOR = "validator",
         VALUE = "value",
         VALUE_FN = "valueFn",
@@ -172,6 +172,7 @@ YUI.add('attribute-base', function(Y) {
         IS_LAZY_ADD = "isLazyAdd",
 
         INVALID_VALUE,
+
         MODIFIABLE = {};
 
         // Properties which can be changed after the attribute has been added.
@@ -226,7 +227,7 @@ YUI.add('attribute-base', function(Y) {
         host._requireAddAttr = host._requireAddAttr || false;
 
         // ATTRS support for Node, which is not Base based
-        if ( attrs && !(Base && host instanceof Base)) {
+        if ( attrs && !(Base && Y.instanceOf(host, Base))) {
             host.addAttrs(this._protectAttrs(attrs));
         }
     }
@@ -273,35 +274,61 @@ YUI.add('attribute-base', function(Y) {
          *    <dt>value &#60;Any&#62;</dt>
          *    <dd>The initial value to set on the attribute</dd>
          *
-         *    <dt>valueFn &#60;Function&#62;</dt>
-         *    <dd>A function, which will return the initial value to set on the attribute. This is useful
+         *    <dt>valueFn &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>A function, which will return the initial value to set on the attribute. This is useful
          *    for cases where the attribute configuration is defined statically, but needs to 
-         *    reference the host instance ("this") to obtain an initial value.
-         *    If defined, this precedence over the value property.</dd>
+         *    reference the host instance ("this") to obtain an initial value. If both the value and valueFn properties are defined, 
+         *    the value returned by the valueFn has precedence over the value property, unless it returns undefined, in which 
+         *    case the value property is used.</p>
+         *
+         *    <p>valueFn can also be set to a string, representing the name of the instance method to be used to retrieve the value.</p>
+         *    </dd>
          *
          *    <dt>readOnly &#60;boolean&#62;</dt>
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
          *        cannot be modified by invoking the set method.</dd>
          *
-         *    <dt>writeOnce &#60;boolean&#62;</dt>
-         *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+         *    <dt>writeOnce &#60;boolean&#62; or &#60;string&#62;</dt>
+         *    <dd>
+         *        Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
-         *        constructor configuration arguments, or by invoking set.</dd>
+         *        constructor configuration arguments, or by invoking set.
+         *        <p>The writeOnce attribute can also be set to the string "initOnly", in which case the attribute can only be set during initialization
+         *        (when used with Base, this means it can only be set during construction)</p>
+         *    </dd>
          *
-         *    <dt>setter &#60;Function&#62;</dt>
-         *    <dd>The setter function used to massage or normalize the value passed to the set method for the attribute. 
+         *    <dt>setter &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>The setter function used to massage or normalize the value passed to the set method for the attribute. 
          *    The value returned by the setter will be the final stored value. Returning
          *    <a href="#property_Attribute.INVALID_VALUE">Attribute.INVALID_VALUE</a>, from the setter will prevent
-         *    the value from being stored.</dd>
-         *
-         *    <dt>getter &#60;Function&#62;</dt>
-         *    <dd>The getter function used to massage or normalize the value returned by the get method for the attribute.
+         *    the value from being stored.
+         *    </p>
+         *    
+         *    <p>setter can also be set to a string, representing the name of the instance method to be used as the setter function.</p>
+         *    </dd>
+         *      
+         *    <dt>getter &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>
+         *    The getter function used to massage or normalize the value returned by the get method for the attribute.
          *    The value returned by the getter function is the value which will be returned to the user when they 
-         *    invoke get.</dd>
+         *    invoke get.
+         *    </p>
          *
-         *    <dt>validator &#60;Function&#62;</dt>
-         *    <dd>The validator function invoked prior to setting the stored value. Returning
-         *    false from the validator function will prevent the value from being stored.</dd>
+         *    <p>getter can also be set to a string, representing the name of the instance method to be used as the getter function.</p>
+         *    </dd>
+         *
+         *    <dt>validator &#60;Function | String&#62;</dt>
+         *    <dd>
+         *    <p>
+         *    The validator function invoked prior to setting the stored value. Returning
+         *    false from the validator function will prevent the value from being stored.
+         *    </p>
+         *    
+         *    <p>validator can also be set to a string, representing the name of the instance method to be used as the validator function.</p>
+         *    </dd>
          *    
          *    <dt>broadcast &#60;int&#62;</dt>
          *    <dd>If and how attribute change events for this attribute should be broadcast. See CustomEvent's <a href="CustomEvent.html#property_broadcast">broadcast</a> property for 
@@ -362,7 +389,7 @@ YUI.add('attribute-base', function(Y) {
                     if (config.readOnly && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on initial call to set', 'warn', 'attribute');}
 
                     if(hasValue) {
-                        // We'll go through set, don't want to set value in _state directly
+                        // We'll go through set, don't want to set value in config directly
                         value = config.value;
                         delete config.value;
                     }
@@ -599,6 +626,10 @@ YUI.add('attribute-base', function(Y) {
             val = host._getStateVal(name);
             getter = state.get(name, GETTER);
 
+            if (getter && !getter.call) {
+                getter = this[getter];
+            }
+
             val = (getter) ? getter.call(host, val, fullName) : val;
             val = (path) ? O.getValue(val, path) : val;
 
@@ -631,7 +662,9 @@ YUI.add('attribute-base', function(Y) {
                 initialSet,
                 strPath,
                 path,
-                currVal;
+                currVal,
+                writeOnce,
+                initializing;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -654,9 +687,12 @@ YUI.add('attribute-base', function(Y) {
                 Y.log('Set attribute:' + name + ', aborted; Attribute is not configured', 'warn', 'attribute');
             } else {
 
+                writeOnce = state.get(name, WRITE_ONCE);
+                initializing = state.get(name, INITIALIZING);
+
                 if (!initialSet && !force) {
 
-                    if (state.get(name, WRITE_ONCE)) {
+                    if (writeOnce) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce', 'warn', 'attribute');
                         allowSet = false;
                     }
@@ -665,6 +701,11 @@ YUI.add('attribute-base', function(Y) {
                         Y.log('Set attribute:' + name + ', aborted; Attribute is readOnly', 'warn', 'attribute');
                         allowSet = false;
                     }
+                }
+
+                if (!initializing && !force && writeOnce === INIT_ONLY) {
+                    Y.log('Set attribute:' + name + ', aborted; Attribute is writeOnce: "initOnly"', 'warn', 'attribute');
+                    allowSet = false;
                 }
 
                 if (allowSet) {
@@ -683,7 +724,7 @@ YUI.add('attribute-base', function(Y) {
                     }
 
                     if (allowSet) {
-                        if (state.get(name, INITIALIZING)) {
+                        if (initializing) {
                             this._setAttrVal(name, strPath, currVal, val);
                         } else {
                             this._fireAttrChange(name, strPath, currVal, val, opts);
@@ -715,7 +756,8 @@ YUI.add('attribute-base', function(Y) {
 
             if (!state.get(attrName, PUBLISHED)) {
                 host.publish(eventName, {
-                    queuable:false, 
+                    queuable:false,
+                    defaultTargetOnly: true, 
                     defaultFn:host._defAttrChangeFn, 
                     silent:true,
                     broadcast : state.get(attrName, BROADCAST)
@@ -725,13 +767,17 @@ YUI.add('attribute-base', function(Y) {
 
             facade = (opts) ? Y.merge(opts) : host._ATTR_E_FACADE;
 
-            facade.type = eventName;
+            // Not using the single object signature for fire({type:..., newVal:...}), since 
+            // we don't want to override type. Changed to the fire(type, {newVal:...}) signature.
+
+            // facade.type = eventName;
             facade.attrName = attrName;
             facade.subAttrName = subAttrName;
             facade.prevVal = currVal;
             facade.newVal = newVal;
 
-            host.fire(facade);
+            // host.fire(facade);
+            host.fire(eventName, facade);
         },
 
         /**
@@ -747,7 +793,7 @@ YUI.add('attribute-base', function(Y) {
                 // Prevent "after" listeners from being invoked since nothing changed.
                 e.stopImmediatePropagation();
             } else {
-                e.newVal = this._getStateVal(e.attrName);
+                e.newVal = this.get(e.attrName);
             }
         },
 
@@ -812,24 +858,36 @@ YUI.add('attribute-base', function(Y) {
                 valid;
 
             if (validator) {
-                valid = validator.call(host, newVal, name);
+                if (!validator.call) { 
+                    // Assume string - trying to keep critical path tight, so avoiding Lang check
+                    validator = this[validator];
+                }
+                if (validator) {
+                    valid = validator.call(host, newVal, name);
 
-                if (!valid && initializing) {
-                    newVal = state.get(attrName, DEF_VALUE);
-                    valid = true; // Assume it's valid, for perf.
+                    if (!valid && initializing) {
+                        newVal = state.get(attrName, DEF_VALUE);
+                        valid = true; // Assume it's valid, for perf.
+                    }
                 }
             }
 
             if (!validator || valid) {
                 if (setter) {
-                    retVal = setter.call(host, newVal, name);
+                    if (!setter.call) {
+                        // Assume string - trying to keep critical path tight, so avoiding Lang check
+                        setter = this[setter];
+                    }
+                    if (setter) {
+                        retVal = setter.call(host, newVal, name);
 
-                    if (retVal === INVALID_VALUE) {
-                        Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
-                        allowSet = false;
-                    } else if (retVal !== undefined){
-                        Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
-                        newVal = retVal;
+                        if (retVal === INVALID_VALUE) {
+                            Y.log('Attribute: ' + attrName + ', setter returned Attribute.INVALID_VALUE for value:' + newVal, 'warn', 'attribute');
+                            allowSet = false;
+                        } else if (retVal !== undefined){
+                            Y.log('Attribute: ' + attrName + ', raw value: ' + newVal + ' modified by setter to:' + retVal, 'info', 'attribute');
+                            newVal = retVal;
+                        }
                     }
                 }
 
@@ -1057,17 +1115,61 @@ YUI.add('attribute-base', function(Y) {
          * @private
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
-
+            var val, valFn;
             // init value is provided by the user if it exists, else, provided by the config
-            var val = (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) ?
-                            val = initValues[attr] :
-                            (cfg[VALUE_FN]) ?
-                                cfg[VALUE_FN].call(this) : 
-                                cfg[VALUE];
+            if (!cfg[READ_ONLY] && initValues && initValues.hasOwnProperty(attr)) {
+                val = initValues[attr];
+            } else {
+                val = cfg[VALUE];
+                valFn = cfg[VALUE_FN];
+ 
+                if (valFn) {
+                    if (!valFn.call) {
+                        valFn = this[valFn];
+                    }
+                    if (valFn) {
+                        val = valFn.call(this);
+                    }
+                }
+            }
 
             Y.log('initValue for ' + attr + ':' + val, 'info', 'attribute');
 
             return val;
+        },
+
+        /**
+         * Returns an object with the configuration properties (and value)
+         * for the given attrubute. If attrName is not provided, returns the
+         * configuration properties for all attributes.
+         *
+         * @method _getAttrCfg
+         * @protected
+         * @param {String} name Optional. The attribute name. If not provided, the method will return the configuration for all attributes.
+         * @return {Object} The configuration properties for the given attribute, or all attributes.
+         */
+        _getAttrCfg : function(name) {
+            var o,
+                data = this._state.data;
+
+            if (data) {
+                o = {};
+
+                Y.each(data, function(cfg, cfgProp) {
+                    if (name) {
+                        if(name in cfg) {
+                            o[cfgProp] = cfg[name];
+                        }
+                    } else {
+                        Y.each(cfg, function(attrCfg, attr) {
+                           o[attr] = o[attr] || {};
+                           o[attr][cfgProp] = attrCfg;
+                        });
+                    }
+                });
+            }
+
+            return o;
         }
     };
 
@@ -1077,7 +1179,7 @@ YUI.add('attribute-base', function(Y) {
     Y.Attribute = Attribute;
 
 
-}, '3.0.0' ,{requires:['event-custom']});
+}, '3.3.0' ,{requires:['event-custom']});
 YUI.add('attribute-complex', function(Y) {
 
     /**
@@ -1154,7 +1256,8 @@ YUI.add('attribute-complex', function(Y) {
          */
         _getAttrInitVal : function(attr, cfg, initValues) {
 
-            var val = (cfg.valueFn) ? cfg.valueFn.call(this) : cfg.value,
+            var val = cfg.value,
+                valFn = cfg.valueFn,
                 simple,
                 complex,
                 i,
@@ -1162,6 +1265,15 @@ YUI.add('attribute-complex', function(Y) {
                 path,
                 subval,
                 subvals;
+
+            if (valFn) {
+                if (!valFn.call) {
+                    valFn = this[valFn];
+                }
+                if (valFn) {
+                    val = valFn.call(this);
+                }
+            }
 
             if (!cfg.readOnly && initValues) {
 
@@ -1190,8 +1302,8 @@ YUI.add('attribute-complex', function(Y) {
     Y.mix(Y.Attribute, Y.Attribute.Complex, true, null, 1);
 
 
-}, '3.0.0' ,{requires:['attribute-base']});
+}, '3.3.0' ,{requires:['attribute-base']});
 
 
-YUI.add('attribute', function(Y){}, '3.0.0' ,{use:['attribute-base', 'attribute-complex']});
+YUI.add('attribute', function(Y){}, '3.3.0' ,{use:['attribute-base', 'attribute-complex']});
 

@@ -1,10 +1,9 @@
-//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Copyright (c) 2010, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 3.0.0
-build: 1549
+http://developer.yahoo.com/yui/license.html
+version: 3.3.0
+build: 3167
 */
 YUI.add('widget-position', function(Y) {
 
@@ -18,8 +17,10 @@ YUI.add('widget-position', function(Y) {
 
         XY_COORD = "xy",
 
+        POSITION = "position",
         POSITIONED = "positioned",
         BOUNDING_BOX = "boundingBox",
+        RELATIVE = "relative",
 
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
@@ -67,10 +68,10 @@ YUI.add('widget-position', function(Y) {
             setter: function(val) {
                 this._setX(val);
             },
-            lazyAdd:false,
             getter: function() {
                 return this._getX();
-            }
+            },
+            lazyAdd:false
         },
 
         /**
@@ -85,12 +86,12 @@ YUI.add('widget-position', function(Y) {
             setter: function(val) {
                 this._setY(val);
             },
-            lazyAdd: false,
             getter: function() {
                 return this._getY();
-            }
+            },
+            lazyAdd: false
         },
-        
+
         /**
          * @attribute xy
          * @type Array
@@ -100,7 +101,6 @@ YUI.add('widget-position', function(Y) {
          */
         xy: {
             value:[0,0],
-
             validator: function(val) {
                 return this._validateXY(val);
             }
@@ -142,6 +142,10 @@ YUI.add('widget-position', function(Y) {
          * @protected
          */
         _syncUIPosition : function() {
+            var posNode = this._posNode;
+            if (posNode.getStyle(POSITION) === RELATIVE) {
+                this.syncXY();
+            }
             this._uiSetXY(this.get(XY_COORD));
         },
 
@@ -270,4 +274,4 @@ YUI.add('widget-position', function(Y) {
     Y.WidgetPosition = Position;
 
 
-}, '3.0.0' ,{requires:['widget']});
+}, '3.3.0' ,{requires:['base-build', 'node-screen', 'widget']});
