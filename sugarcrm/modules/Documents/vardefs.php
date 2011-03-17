@@ -271,6 +271,7 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
    ),
+   //BEGIN SUGARCRM flav=pro ONLY
   'quotes'=>
    array (
        'name' => 'quotes',
@@ -286,7 +287,8 @@ $dictionary['Document'] = array('table' => 'documents',
        'relationship' => 'documents_products',
        'source' => 'non-db',
        'vname' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-   ),   
+   ),
+   //END SUGARCRM flav=pro ONLY
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',
