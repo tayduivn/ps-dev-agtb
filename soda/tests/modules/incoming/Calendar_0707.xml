@@ -1,0 +1,37 @@
+<soda>
+	<!--
+		Action:
+			Search meeting_Verify that searching meetings
+			with special characters works correctly.
+			(For example, with "@$*&" characters, etc)
+
+		Expectation:
+			They should work as expected.
+	-->
+	<puts text="Test: Calendar_0707.xml starting." />
+
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	
+	<button id="edit_button" />
+	<var var="new_meeting_name" set="@#$*&amp;{@pre_meeting_name} @#$*&amp;" />
+	<textfield name="name" set="{@new_meeting_name}" />
+	<button value="Save" />
+	
+	<wait timeout="3" />
+	<browser assert="{@new_meeting_name}" />
+	
+	<link id="moduleTab_Meetings" />
+	<button id="search_form_clear" />
+	
+	<textfield id="name_basic" set="{@new_meeting_name}" />
+	<button id="search_form_submit" />
+	<!--container goes here -->
+	<table class="list view">
+		<browser assert="{@new_meeting_name}" />
+	</table>
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
+	
+	<puts text="Test: Calendar_0707.xml finished." />
+</soda>
