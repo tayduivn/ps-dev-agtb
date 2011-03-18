@@ -1,0 +1,73 @@
+<soda>
+	<!--
+		Action:
+			1. Login to system as a valid user.
+			2. Click "Calendar" navigation tab.
+			3. Click "Meetings" link on Navigation shortcuts.
+			4. Check one or more check boxes on the left of meeting
+				record in "Meeting List" view.
+			5. Click "Select" button to select a existing user for 
+				"Assigned to" text field.
+			6. Click "Update" button in "Mass Update" sub-panel.
+			7. Logout the system.
+			8. Login to system with the "Assigned to" user mention above.
+		Expectation:
+			8. The selected meetings are displayed in "My Meetings" dashlet of Home page.
+	-->
+	<puts text="Test: Calendar_0713.xml starting." />
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	<var var="meeting1_name" set="{@pre_meeting_name}" />
+
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	<var var="meeting2_name" set="{@pre_meeting_name}" />
+	
+	
+	<link id="moduleTab_Meetings" />
+	
+	<button id="search_form_clear" />
+	<button id="search_form_submit" />
+	
+	<table class="list view">
+		<browser assert="{@meeting1_name}" />
+		<browser assert="{@meeting2_name}" />
+	</table>
+	
+	<checkbox id="massall" set="true" />
+	
+	<link id="actions_link" />
+	<link text="Mass Update" />
+	
+	<textfield id="mass_assigned_user_name" set="qauser" jscriptevent="onkeydown" />
+	<textfield id="mass_assigned_user_name" jscriptevent="onkeyup" click="false" />
+	<wait timeout="8" />
+
+	<button id="update_button" alert="true" />
+
+	<wait timeout="5" />
+	
+	<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
+	
+	<browser url="{@global.url}" />
+
+	<link text="Log Out" required="false" timeout="2" />
+	<browser assert="Please enter your user name and password" />
+
+	<textfield id="user_name" set="qauser" />
+	<textfield id="user_password" set="QAuser1" />
+	<button id="login_button" />
+
+   <!-- Match a new user login or an existing user login, but not a failed login. -->
+	<browser assert="/Welcome(, | to Sugar!)/" />
+
+	<ul id="col_0_0">
+		<browser assert="{@meeting1_name}" />
+		<browser assert="{@meeting2_name}" />
+	</ul>
+	
+	<script file="{@global.scriptsdir}/modules/lib/login.xml" />
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
+	
+	<puts text="Test: Calendar_0713.xml finished." />
+</soda>

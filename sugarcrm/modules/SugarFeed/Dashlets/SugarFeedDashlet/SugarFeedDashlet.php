@@ -315,13 +315,14 @@ var $myFavoritesOnly = false;
         $numRecords = $numRecords - $this->lvs->data['pageData']['offsets']['current'];
         $numRecords = min($this->displayRows,$numRecords);
 
+        //BEGIN SUGARCRM flav=pro ONLY
         //rrs bug: 42122 - was cutting out feed items.42122
-       // $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
-
+        // $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
         foreach ( $resortQueue as $key=>&$item ) {
             if ( empty($item['NAME']) ) {
                 continue;
             }
+            
             if ( empty($item['IMAGE_URL']) ) {
                 $item['IMAGE_URL'] = 'include/images/default_user_feed_picture.png';
                 if ( isset($item['ASSIGNED_USER_ID']) ) {
@@ -332,9 +333,10 @@ var $myFavoritesOnly = false;
                     }
                 }
             }
+    
             $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><img src="'.$item['IMAGE_URL'].'" style="max-width: 50px; max-height: 50px;"></div> '.$item['NAME'];
         }
-        
+        //END SUGARCRM flav=pro ONLY
         $this->lvs->data['data'] = $resortQueue;
     }
 

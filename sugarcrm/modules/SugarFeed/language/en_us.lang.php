@@ -66,6 +66,7 @@ $mod_strings = array (
   'LBL_ROWS'=>'Rows',
 //BEGIN SUGARCRM flav=pro ONLY
   'LBL_MY_FAVORITES_ONLY'=>'Only My Favorites',
+  'LBL_ENABLE_EXTERNAL_CONNECTORS' => 'To enable users to view Facebook and Twitter feeds, go to the Connectors settings to configure the Facebook and Twitter connectors.',
 //END SUGARCRM flav=pro ONLY
   'LBL_CATEGORIES'=>'Modules',
   'LBL_TIME_LAST_WEEK'=>'Last Week',
