@@ -126,6 +126,38 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
+     * Test the get_entry_list call with Export access disabled to ensure results are returned.
+     *
+     */
+    public function testGetEntryListWithExportRole()
+    {
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        
+        //Set the Export Role to no access for user.
+        $aclRole = new ACLRole();
+        $aclRole->name = "Unit Test Export";
+        $aclRole->save();
+        $aclRole->set_relationship('acl_roles_users', array('role_id'=> $aclRole->id ,'user_id'=> $this->_user->id), false);
+        $role_actions = $aclRole->getRoleActions($aclRole->id);
+        $action_id = $role_actions['Accounts']['module']['export']['id'];
+        $aclRole->setAction($aclRole->id, $action_id, -99);
+        
+        $result = $this->_login($this->_user);
+        $session = $result['id'];
+
+        $module = 'Accounts';
+        $orderBy = 'name';
+        $offset = 0;
+        $returnFields = array('name');
+        $linkNameFields = "";
+        $maxResults = 2;
+        $deleted = FALSE;
+        $favorites = FALSE;
+        $result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
+        $this->assertTrue( ! isset($result['name']) &&  $result['name'] != 'Access Denied');
+    }
+    
+    /**
      * Test the ability to retrieve quote PDFs
      *
      */
