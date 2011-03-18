@@ -13,7 +13,7 @@
     </table>
     
     <link id='actions_link' />
-    <link text='Delete' alert='true' message='Please select at least 1 record to proceed.'/>
+    <link text='Delete' alert='true'/>
 
     <puts text='---Quote_2516.xml---Finished!'/>   
 </soda>
