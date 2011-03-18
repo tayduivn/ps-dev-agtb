@@ -16,6 +16,6 @@
       <link text="{@KB_New_tag.tag} {@user.name} {@stamp}(0)" click="false" />
    </csv>
    <var var="KB_tag" set="{@KB_New_tag.tag} {@user.name} {@stamp}(0)" />
-   <puts var='{@KB_tag}(0)'/>
+   <!--puts var='{@KB_tag}(0)'/-->
    <puts text="KnowledgeBase_Createtag_Lib: Finished" />
 </soda>

@@ -60,7 +60,7 @@
 	<browser assertnot="{@pre_account_name}" />
 	<button value="Reset" />
 
-	<text_field name="text_input" assert="{@pre_account_name}" />
+	<textfield name="text_input" assert="{@pre_account_name}" />
 	<browser assert="{@pre_account_name}" />
 
 	<script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
