@@ -1,9 +1,0 @@
-<soda>
-	<!-- Remove "Advanced Search" expand/collapse link -->
-	<puts text="Test: Admin_9550.xml starting." />
-	<link text="Admin" />
-	<browser assert="Administration" />
-	<link text="Diagnostic Tool" />
-	<browser assert="Advanced Search" exist="false" />
-	<puts text="Test: Admin_9550.xml finished." />
-</soda>

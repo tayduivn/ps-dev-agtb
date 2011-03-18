@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,description,new_name,new_module
-wf_8319,When record saved,Active,Accounts,New and Updated Records,description,new_name,Calls

@@ -1,2 +1,0 @@
-quantity,serial_number,asset_number,status,date_purchased,date_support_starts,date_support_expires,description
-400,454,154,Quoted,3/30/2010,3/30/2010,3/30/2011,Create a product with missing mandatory fields in account's Products subpanel

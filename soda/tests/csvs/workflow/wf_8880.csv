@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,new_name,new_name,new_type,new_status,new_record_type,new_fire_order,new_description
-wf_8319,When record saved,Active,Accounts,New and Updated Records,Alerts then Actions,description,new_name,new_name,After time elapses,Inactive,New Records Only,Actions then Alerts,new_description

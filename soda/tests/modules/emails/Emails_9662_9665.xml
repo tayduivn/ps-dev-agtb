@@ -1,7 +1,0 @@
-<soda>
-	<!-- Add and Delete Outgoing SMTP Mail Server in Emails module -->
-	<puts text="Test: Emails_9662_9665.xml starting." />
-	<script file="{@global.scriptsdir}/modules/lib/Emails_OutGoing_Create_Lib.xml" />
-	<script file="{@global.scriptsdir}/modules/lib/Emails_OutGoing_Delete_Lib.xml" />
-	<puts text="Test: Emails_9662_9665.xml finished." />
-</soda> 

@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/reports/module_lib/setup-reports.xml" />
-	<script fileset="tests/modules/reports" />
-	<script file="tests/modules/reports/module_lib/cleanup-reports.xml" />
-</soda>
-

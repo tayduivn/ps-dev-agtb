@@ -1,2 +1,0 @@
-ie_name,email_user,email_password,server_url,protocol,ssl,port,mailbox,trashFolder,sentFolder,from_name,from_addr,reply_address,outbound_email
-EmailAcct,workflowtestworkflowtest1@gmail.com,test86502680,imap.gmail.com,IMAP,TRUE,993,INBOX,[Gmail]/Trash,SENT,EmailFromName,workflowtestworkflowtest1@gmail.com,workflowtestworkflowtest1@gmail.com,system - Gmail
