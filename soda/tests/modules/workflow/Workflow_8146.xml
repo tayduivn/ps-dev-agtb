@@ -114,6 +114,6 @@
    <script file="{@global.scriptsdir}/modules/lib/Task_Delete_Lib.xml" />
    <script file="{@global.scriptsdir}/modules/lib/Lead_Delete_Lib.xml" />
    <script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
-   <puts test="Test: Cases_8146: Finished."/>
+   <puts text="Test: Cases_8146: Finished."/>
 </soda>
 
