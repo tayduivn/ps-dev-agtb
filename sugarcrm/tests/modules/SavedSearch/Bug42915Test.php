@@ -1,97 +1,91 @@
 <?php
 require_once('modules/MySettings/StoreQuery.php');
 
-class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug42915Test extends Sugar_PHPUnit_Framework_TestCase 
 {
+	var $previousCurrentUser;
 	var $saved_search_id;
 	
     public function setUp() 
     {
-        //$this->useOutputBuffering = false;
-        $this->saved_search_id = md5(gmmktime());
+    	global $current_user;
+    	$this->previousCurrentUser = $current_user;
+    	$this->saved_search_id = md5(gmmktime());
+        $this->useOutputBuffering = false;        
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->setPreference('num_grp_sep', ',', 0, 'global');
+        $current_user->setPreference('dec_sep', '.', 0, 'global');
+        $current_user->save();
         
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $datetime_prefs = $GLOBALS['current_user']->getUserDateTimePreferences();
-        $GLOBALS['current_user']->setPreference('datef', 'm/d/Y', 0, 'global');
-        $GLOBALS['current_user']->save();
+        //Force reset on dec_sep and num_grp_sep because the dec_sep and num_grp_sep values are stored as static variables
+	    get_number_seperators(true);  
+        
         //BEGIN SUGARCRM flav=pro ONLY
-        $GLOBALS['db']->query("INSERT INTO saved_search (team_id, team_set_id, id, name, search_module, deleted, date_entered, date_modified, assigned_user_id, contents) VALUES ('1', '1', '" . $this->saved_search_id . "', 'Bug42738', 'Opportunities', 0, '2011-03-10 17:05:27', '2011-03-10 17:05:27', '".$GLOBALS["current_user"]->id."', 'YTo0OTp7czoxMzoic2VhcmNoRm9ybVRhYiI7czoxNToiYWR2YW5jZWRfc2VhcmNoIjtzOjU6InF1ZXJ5IjtzOjQ6InRydWUiO3M6MTM6Im5hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjIxOiJhY2NvdW50X25hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjM0OiJjdXN0b21kYXRlX2NfYWR2YW5jZWRfcmFuZ2VfY2hvaWNlIjtzOjE6Ij0iO3M6Mjc6InJhbmdlX2N1c3RvbWRhdGVfY19hZHZhbmNlZCI7czoxMDoiMDMvMDEvMjAxMSI7czozMzoic3RhcnRfcmFuZ2VfY3VzdG9tZGF0ZV9jX2FkdmFuY2VkIjtzOjA6IiI7czozMToiZW5kX3JhbmdlX2N1c3RvbWRhdGVfY19hZHZhbmNlZCI7czowOiIiO3M6Mzg6ImN1c3RvbWRhdGV0aW1lX2NfYWR2YW5jZWRfcmFuZ2VfY2hvaWNlIjtzOjE6Ij0iO3M6MzE6InJhbmdlX2N1c3RvbWRhdGV0aW1lX2NfYWR2YW5jZWQiO3M6MTA6IjAzLzAyLzIwMTEiO3M6Mzc6InN0YXJ0X3JhbmdlX2N1c3RvbWRhdGV0aW1lX2NfYWR2YW5jZWQiO3M6MDoiIjtzOjM1OiJlbmRfcmFuZ2VfY3VzdG9tZGF0ZXRpbWVfY19hZHZhbmNlZCI7czowOiIiO3M6Mjg6ImFtb3VudF9hZHZhbmNlZF9yYW5nZV9jaG9pY2UiO3M6MToiPSI7czoyMToicmFuZ2VfYW1vdW50X2FkdmFuY2VkIjtzOjA6IiI7czoyNzoic3RhcnRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkIjtzOjA6IiI7czoyNToiZW5kX3JhbmdlX2Ftb3VudF9hZHZhbmNlZCI7czowOiIiO3M6MzQ6ImRhdGVfZW50ZXJlZF9hZHZhbmNlZF9yYW5nZV9jaG9pY2UiO3M6NzoiYmV0d2VlbiI7czoyNzoicmFuZ2VfZGF0ZV9lbnRlcmVkX2FkdmFuY2VkIjtzOjA6IiI7czozMzoic3RhcnRfcmFuZ2VfZGF0ZV9lbnRlcmVkX2FkdmFuY2VkIjtzOjEwOiIwMy8wMS8yMDExIjtzOjMxOiJlbmRfcmFuZ2VfZGF0ZV9lbnRlcmVkX2FkdmFuY2VkIjtzOjEwOiIwMy8wNS8yMDExIjtzOjM1OiJkYXRlX21vZGlmaWVkX2FkdmFuY2VkX3JhbmdlX2Nob2ljZSI7czoxMjoiZ3JlYXRlcl90aGFuIjtzOjI4OiJyYW5nZV9kYXRlX21vZGlmaWVkX2FkdmFuY2VkIjtzOjEwOiIwMy8wMS8yMDExIjtzOjM0OiJzdGFydF9yYW5nZV9kYXRlX21vZGlmaWVkX2FkdmFuY2VkIjtzOjA6IiI7czozMjoiZW5kX3JhbmdlX2RhdGVfbW9kaWZpZWRfYWR2YW5jZWQiO3M6MDoiIjtzOjMzOiJkYXRlX2Nsb3NlZF9hZHZhbmNlZF9yYW5nZV9jaG9pY2UiO3M6MTE6Imxhc3RfN19kYXlzIjtzOjI2OiJyYW5nZV9kYXRlX2Nsb3NlZF9hZHZhbmNlZCI7czoxMzoiW2xhc3RfN19kYXlzXSI7czozMjoic3RhcnRfcmFuZ2VfZGF0ZV9jbG9zZWRfYWR2YW5jZWQiO3M6MDoiIjtzOjMwOiJlbmRfcmFuZ2VfZGF0ZV9jbG9zZWRfYWR2YW5jZWQiO3M6MDoiIjtzOjQzOiJ1cGRhdGVfZmllbGRzX3RlYW1fbmFtZV9hZHZhbmNlZF9jb2xsZWN0aW9uIjtzOjA6IiI7czozMjoidGVhbV9uYW1lX2FkdmFuY2VkX25ld19vbl91cGRhdGUiO3M6NToiZmFsc2UiO3M6MzE6InRlYW1fbmFtZV9hZHZhbmNlZF9hbGxvd191cGRhdGUiO3M6MDoiIjtzOjM1OiJ0ZWFtX25hbWVfYWR2YW5jZWRfYWxsb3dlZF90b19jaGVjayI7czo1OiJmYWxzZSI7czozMToidGVhbV9uYW1lX2FkdmFuY2VkX2NvbGxlY3Rpb25fMCI7czowOiIiO3M6MzQ6ImlkX3RlYW1fbmFtZV9hZHZhbmNlZF9jb2xsZWN0aW9uXzAiO3M6MDoiIjtzOjIzOiJ0ZWFtX25hbWVfYWR2YW5jZWRfdHlwZSI7czozOiJhbnkiO3M6MjM6ImZhdm9yaXRlc19vbmx5X2FkdmFuY2VkIjtzOjE6IjAiO3M6OToic2hvd1NTRElWIjtzOjI6Im5vIjtzOjEzOiJzZWFyY2hfbW9kdWxlIjtzOjEzOiJPcHBvcnR1bml0aWVzIjtzOjE5OiJzYXZlZF9zZWFyY2hfYWN0aW9uIjtzOjQ6InNhdmUiO3M6MTQ6ImRpc3BsYXlDb2x1bW5zIjtzOjg5OiJOQU1FfEFDQ09VTlRfTkFNRXxTQUxFU19TVEFHRXxBTU9VTlRfVVNET0xMQVJ8REFURV9DTE9TRUR8QVNTSUdORURfVVNFUl9OQU1FfERBVEVfRU5URVJFRCI7czo4OiJoaWRlVGFicyI7czo5MzoiT1BQT1JUVU5JVFlfVFlQRXxMRUFEX1NPVVJDRXxORVhUX1NURVB8UFJPQkFCSUxJVFl8Q1JFQVRFRF9CWV9OQU1FfFRFQU1fTkFNRXxNT0RJRklFRF9CWV9OQU1FIjtzOjc6Im9yZGVyQnkiO3M6NDoiTkFNRSI7czo5OiJzb3J0T3JkZXIiO3M6MzoiQVNDIjtzOjE2OiJzdWdhcl91c2VyX3RoZW1lIjtzOjU6IlN1Z2FyIjtzOjEzOiJDb250YWN0c19kaXZzIjtzOjE3OiJvcHBvcnR1bml0aWVzX3Y9IyI7czoxMzoiTW9kdWxlQnVpbGRlciI7czoxNToiaGVscEhpZGRlbj10cnVlIjtzOjIyOiJzdWdhcl90aGVtZV9nbV9jdXJyZW50IjtzOjM6IkFsbCI7czoxNToiZ2xvYmFsTGlua3NPcGVuIjtzOjQ6InRydWUiO3M6ODoiYWR2YW5jZWQiO2I6MTt9')");
+        $GLOBALS['db']->query("INSERT INTO saved_search (team_id, team_set_id, id, name, search_module, deleted, date_entered, date_modified, assigned_user_id, contents) VALUES ('1', '1', '" . $this->saved_search_id . "', 'Bug42738', 'Opportunities', 0, '2011-03-10 17:05:27', '2011-03-10 17:05:27', '".$GLOBALS["current_user"]->id."', 'YTozNjp7czoxMzoic2VhcmNoRm9ybVRhYiI7czoxNToiYWR2YW5jZWRfc2VhcmNoIjtzOjU6InF1ZXJ5IjtzOjQ6InRydWUiO3M6MTM6Im5hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjIxOiJhY2NvdW50X25hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjI4OiJhbW91bnRfYWR2YW5jZWRfcmFuZ2VfY2hvaWNlIjtzOjc6ImJldHdlZW4iO3M6MjE6InJhbmdlX2Ftb3VudF9hZHZhbmNlZCI7czowOiIiO3M6Mjc6InN0YXJ0X3JhbmdlX2Ftb3VudF9hZHZhbmNlZCI7ZDo5NTAwMDtzOjI1OiJlbmRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkIjtkOjQ5NTAwO3M6MjA6ImRhdGVfY2xvc2VkX2FkdmFuY2VkIjtzOjA6IiI7czoxODoibmV4dF9zdGVwX2FkdmFuY2VkIjtzOjA6IiI7czo0MzoidXBkYXRlX2ZpZWxkc190ZWFtX25hbWVfYWR2YW5jZWRfY29sbGVjdGlvbiI7czowOiIiO3M6MzI6InRlYW1fbmFtZV9hZHZhbmNlZF9uZXdfb25fdXBkYXRlIjtzOjU6ImZhbHNlIjtzOjMxOiJ0ZWFtX25hbWVfYWR2YW5jZWRfYWxsb3dfdXBkYXRlIjtzOjA6IiI7czozNToidGVhbV9uYW1lX2FkdmFuY2VkX2FsbG93ZWRfdG9fY2hlY2siO3M6NToiZmFsc2UiO3M6MzE6InRlYW1fbmFtZV9hZHZhbmNlZF9jb2xsZWN0aW9uXzAiO3M6MDoiIjtzOjM0OiJpZF90ZWFtX25hbWVfYWR2YW5jZWRfY29sbGVjdGlvbl8wIjtzOjA6IiI7czoyMzoidGVhbV9uYW1lX2FkdmFuY2VkX3R5cGUiO3M6MzoiYW55IjtzOjIzOiJmYXZvcml0ZXNfb25seV9hZHZhbmNlZCI7czoxOiIwIjtzOjk6InNob3dTU0RJViI7czoyOiJubyI7czoxMzoic2VhcmNoX21vZHVsZSI7czoxMzoiT3Bwb3J0dW5pdGllcyI7czoxOToic2F2ZWRfc2VhcmNoX2FjdGlvbiI7czo0OiJzYXZlIjtzOjE0OiJkaXNwbGF5Q29sdW1ucyI7czo4OToiTkFNRXxBQ0NPVU5UX05BTUV8U0FMRVNfU1RBR0V8QU1PVU5UX1VTRE9MTEFSfERBVEVfQ0xPU0VEfEFTU0lHTkVEX1VTRVJfTkFNRXxEQVRFX0VOVEVSRUQiO3M6ODoiaGlkZVRhYnMiO3M6OTM6Ik9QUE9SVFVOSVRZX1RZUEV8TEVBRF9TT1VSQ0V8TkVYVF9TVEVQfFBST0JBQklMSVRZfENSRUFURURfQllfTkFNRXxURUFNX05BTUV8TU9ESUZJRURfQllfTkFNRSI7czo3OiJvcmRlckJ5IjtzOjQ6Ik5BTUUiO3M6OToic29ydE9yZGVyIjtzOjM6IkFTQyI7czoxNjoic3VnYXJfdXNlcl90aGVtZSI7czo1OiJTdWdhciI7czoxMzoiTW9kdWxlQnVpbGRlciI7czoxNToiaGVscEhpZGRlbj10cnVlIjtzOjEzOiJDb250YWN0c19kaXZzIjtzOjEwOiJxdW90ZXNfdj0jIjtzOjIyOiJzdWdhcl90aGVtZV9nbV9jdXJyZW50IjtzOjM6IkFsbCI7czoxNToiZ2xvYmFsTGlua3NPcGVuIjtzOjQ6InRydWUiO3M6Mjc6IlNRTGl0ZU1hbmFnZXJfY3VycmVudExhbmd1ZSI7czoxOiIyIjtzOjQ2OiJzdGFydF9yYW5nZV9hbW91bnRfYWR2YW5jZWRfdW5mb3JtYXR0ZWRfbnVtYmVyIjtiOjE7czo0Mzoic3RhcnRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkX2N1cnJlbmN5X3N5bWJvbCI7czoxOiIkIjtzOjQ0OiJlbmRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkX3VuZm9ybWF0dGVkX251bWJlciI7YjoxO3M6NDE6ImVuZF9yYW5nZV9hbW91bnRfYWR2YW5jZWRfY3VycmVuY3lfc3ltYm9sIjtzOjE6IiQiO3M6ODoiYWR2YW5jZWQiO2I6MTt9')");
         //END SUGARCRM flav=pro ONLY
         //BEGIN SUGARCRM flav=com ONLY
-        $GLOBALS['db']->query("INSERT INTO saved_search (id, name, search_module, deleted, date_entered, date_modified, assigned_user_id, contents) VALUES ('" . $this->saved_search_id . "', 'Bug42738', 'Opportunities', 0, '2011-03-10 17:05:27', '2011-03-10 17:05:27', '".$GLOBALS["current_user"]->id."', 'YTo0OTp7czoxMzoic2VhcmNoRm9ybVRhYiI7czoxNToiYWR2YW5jZWRfc2VhcmNoIjtzOjU6InF1ZXJ5IjtzOjQ6InRydWUiO3M6MTM6Im5hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjIxOiJhY2NvdW50X25hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjM0OiJjdXN0b21kYXRlX2NfYWR2YW5jZWRfcmFuZ2VfY2hvaWNlIjtzOjE6Ij0iO3M6Mjc6InJhbmdlX2N1c3RvbWRhdGVfY19hZHZhbmNlZCI7czoxMDoiMDMvMDEvMjAxMSI7czozMzoic3RhcnRfcmFuZ2VfY3VzdG9tZGF0ZV9jX2FkdmFuY2VkIjtzOjA6IiI7czozMToiZW5kX3JhbmdlX2N1c3RvbWRhdGVfY19hZHZhbmNlZCI7czowOiIiO3M6Mzg6ImN1c3RvbWRhdGV0aW1lX2NfYWR2YW5jZWRfcmFuZ2VfY2hvaWNlIjtzOjE6Ij0iO3M6MzE6InJhbmdlX2N1c3RvbWRhdGV0aW1lX2NfYWR2YW5jZWQiO3M6MTA6IjAzLzAyLzIwMTEiO3M6Mzc6InN0YXJ0X3JhbmdlX2N1c3RvbWRhdGV0aW1lX2NfYWR2YW5jZWQiO3M6MDoiIjtzOjM1OiJlbmRfcmFuZ2VfY3VzdG9tZGF0ZXRpbWVfY19hZHZhbmNlZCI7czowOiIiO3M6Mjg6ImFtb3VudF9hZHZhbmNlZF9yYW5nZV9jaG9pY2UiO3M6MToiPSI7czoyMToicmFuZ2VfYW1vdW50X2FkdmFuY2VkIjtzOjA6IiI7czoyNzoic3RhcnRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkIjtzOjA6IiI7czoyNToiZW5kX3JhbmdlX2Ftb3VudF9hZHZhbmNlZCI7czowOiIiO3M6MzQ6ImRhdGVfZW50ZXJlZF9hZHZhbmNlZF9yYW5nZV9jaG9pY2UiO3M6NzoiYmV0d2VlbiI7czoyNzoicmFuZ2VfZGF0ZV9lbnRlcmVkX2FkdmFuY2VkIjtzOjA6IiI7czozMzoic3RhcnRfcmFuZ2VfZGF0ZV9lbnRlcmVkX2FkdmFuY2VkIjtzOjEwOiIwMy8wMS8yMDExIjtzOjMxOiJlbmRfcmFuZ2VfZGF0ZV9lbnRlcmVkX2FkdmFuY2VkIjtzOjEwOiIwMy8wNS8yMDExIjtzOjM1OiJkYXRlX21vZGlmaWVkX2FkdmFuY2VkX3JhbmdlX2Nob2ljZSI7czoxMjoiZ3JlYXRlcl90aGFuIjtzOjI4OiJyYW5nZV9kYXRlX21vZGlmaWVkX2FkdmFuY2VkIjtzOjEwOiIwMy8wMS8yMDExIjtzOjM0OiJzdGFydF9yYW5nZV9kYXRlX21vZGlmaWVkX2FkdmFuY2VkIjtzOjA6IiI7czozMjoiZW5kX3JhbmdlX2RhdGVfbW9kaWZpZWRfYWR2YW5jZWQiO3M6MDoiIjtzOjMzOiJkYXRlX2Nsb3NlZF9hZHZhbmNlZF9yYW5nZV9jaG9pY2UiO3M6MTE6Imxhc3RfN19kYXlzIjtzOjI2OiJyYW5nZV9kYXRlX2Nsb3NlZF9hZHZhbmNlZCI7czoxMzoiW2xhc3RfN19kYXlzXSI7czozMjoic3RhcnRfcmFuZ2VfZGF0ZV9jbG9zZWRfYWR2YW5jZWQiO3M6MDoiIjtzOjMwOiJlbmRfcmFuZ2VfZGF0ZV9jbG9zZWRfYWR2YW5jZWQiO3M6MDoiIjtzOjQzOiJ1cGRhdGVfZmllbGRzX3RlYW1fbmFtZV9hZHZhbmNlZF9jb2xsZWN0aW9uIjtzOjA6IiI7czozMjoidGVhbV9uYW1lX2FkdmFuY2VkX25ld19vbl91cGRhdGUiO3M6NToiZmFsc2UiO3M6MzE6InRlYW1fbmFtZV9hZHZhbmNlZF9hbGxvd191cGRhdGUiO3M6MDoiIjtzOjM1OiJ0ZWFtX25hbWVfYWR2YW5jZWRfYWxsb3dlZF90b19jaGVjayI7czo1OiJmYWxzZSI7czozMToidGVhbV9uYW1lX2FkdmFuY2VkX2NvbGxlY3Rpb25fMCI7czowOiIiO3M6MzQ6ImlkX3RlYW1fbmFtZV9hZHZhbmNlZF9jb2xsZWN0aW9uXzAiO3M6MDoiIjtzOjIzOiJ0ZWFtX25hbWVfYWR2YW5jZWRfdHlwZSI7czozOiJhbnkiO3M6MjM6ImZhdm9yaXRlc19vbmx5X2FkdmFuY2VkIjtzOjE6IjAiO3M6OToic2hvd1NTRElWIjtzOjI6Im5vIjtzOjEzOiJzZWFyY2hfbW9kdWxlIjtzOjEzOiJPcHBvcnR1bml0aWVzIjtzOjE5OiJzYXZlZF9zZWFyY2hfYWN0aW9uIjtzOjQ6InNhdmUiO3M6MTQ6ImRpc3BsYXlDb2x1bW5zIjtzOjg5OiJOQU1FfEFDQ09VTlRfTkFNRXxTQUxFU19TVEFHRXxBTU9VTlRfVVNET0xMQVJ8REFURV9DTE9TRUR8QVNTSUdORURfVVNFUl9OQU1FfERBVEVfRU5URVJFRCI7czo4OiJoaWRlVGFicyI7czo5MzoiT1BQT1JUVU5JVFlfVFlQRXxMRUFEX1NPVVJDRXxORVhUX1NURVB8UFJPQkFCSUxJVFl8Q1JFQVRFRF9CWV9OQU1FfFRFQU1fTkFNRXxNT0RJRklFRF9CWV9OQU1FIjtzOjc6Im9yZGVyQnkiO3M6NDoiTkFNRSI7czo5OiJzb3J0T3JkZXIiO3M6MzoiQVNDIjtzOjE2OiJzdWdhcl91c2VyX3RoZW1lIjtzOjU6IlN1Z2FyIjtzOjEzOiJDb250YWN0c19kaXZzIjtzOjE3OiJvcHBvcnR1bml0aWVzX3Y9IyI7czoxMzoiTW9kdWxlQnVpbGRlciI7czoxNToiaGVscEhpZGRlbj10cnVlIjtzOjIyOiJzdWdhcl90aGVtZV9nbV9jdXJyZW50IjtzOjM6IkFsbCI7czoxNToiZ2xvYmFsTGlua3NPcGVuIjtzOjQ6InRydWUiO3M6ODoiYWR2YW5jZWQiO2I6MTt9')");
+        $GLOBALS['db']->query("INSERT INTO saved_search (id, name, search_module, deleted, date_entered, date_modified, assigned_user_id, contents) VALUES ('" . $this->saved_search_id . "', 'Bug42738', 'Opportunities', 0, '2011-03-10 17:05:27', '2011-03-10 17:05:27', '".$GLOBALS["current_user"]->id."', 'YTozNjp7czoxMzoic2VhcmNoRm9ybVRhYiI7czoxNToiYWR2YW5jZWRfc2VhcmNoIjtzOjU6InF1ZXJ5IjtzOjQ6InRydWUiO3M6MTM6Im5hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjIxOiJhY2NvdW50X25hbWVfYWR2YW5jZWQiO3M6MDoiIjtzOjI4OiJhbW91bnRfYWR2YW5jZWRfcmFuZ2VfY2hvaWNlIjtzOjc6ImJldHdlZW4iO3M6MjE6InJhbmdlX2Ftb3VudF9hZHZhbmNlZCI7czowOiIiO3M6Mjc6InN0YXJ0X3JhbmdlX2Ftb3VudF9hZHZhbmNlZCI7ZDo5NTAwMDtzOjI1OiJlbmRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkIjtkOjQ5NTAwO3M6MjA6ImRhdGVfY2xvc2VkX2FkdmFuY2VkIjtzOjA6IiI7czoxODoibmV4dF9zdGVwX2FkdmFuY2VkIjtzOjA6IiI7czo0MzoidXBkYXRlX2ZpZWxkc190ZWFtX25hbWVfYWR2YW5jZWRfY29sbGVjdGlvbiI7czowOiIiO3M6MzI6InRlYW1fbmFtZV9hZHZhbmNlZF9uZXdfb25fdXBkYXRlIjtzOjU6ImZhbHNlIjtzOjMxOiJ0ZWFtX25hbWVfYWR2YW5jZWRfYWxsb3dfdXBkYXRlIjtzOjA6IiI7czozNToidGVhbV9uYW1lX2FkdmFuY2VkX2FsbG93ZWRfdG9fY2hlY2siO3M6NToiZmFsc2UiO3M6MzE6InRlYW1fbmFtZV9hZHZhbmNlZF9jb2xsZWN0aW9uXzAiO3M6MDoiIjtzOjM0OiJpZF90ZWFtX25hbWVfYWR2YW5jZWRfY29sbGVjdGlvbl8wIjtzOjA6IiI7czoyMzoidGVhbV9uYW1lX2FkdmFuY2VkX3R5cGUiO3M6MzoiYW55IjtzOjIzOiJmYXZvcml0ZXNfb25seV9hZHZhbmNlZCI7czoxOiIwIjtzOjk6InNob3dTU0RJViI7czoyOiJubyI7czoxMzoic2VhcmNoX21vZHVsZSI7czoxMzoiT3Bwb3J0dW5pdGllcyI7czoxOToic2F2ZWRfc2VhcmNoX2FjdGlvbiI7czo0OiJzYXZlIjtzOjE0OiJkaXNwbGF5Q29sdW1ucyI7czo4OToiTkFNRXxBQ0NPVU5UX05BTUV8U0FMRVNfU1RBR0V8QU1PVU5UX1VTRE9MTEFSfERBVEVfQ0xPU0VEfEFTU0lHTkVEX1VTRVJfTkFNRXxEQVRFX0VOVEVSRUQiO3M6ODoiaGlkZVRhYnMiO3M6OTM6Ik9QUE9SVFVOSVRZX1RZUEV8TEVBRF9TT1VSQ0V8TkVYVF9TVEVQfFBST0JBQklMSVRZfENSRUFURURfQllfTkFNRXxURUFNX05BTUV8TU9ESUZJRURfQllfTkFNRSI7czo3OiJvcmRlckJ5IjtzOjQ6Ik5BTUUiO3M6OToic29ydE9yZGVyIjtzOjM6IkFTQyI7czoxNjoic3VnYXJfdXNlcl90aGVtZSI7czo1OiJTdWdhciI7czoxMzoiTW9kdWxlQnVpbGRlciI7czoxNToiaGVscEhpZGRlbj10cnVlIjtzOjEzOiJDb250YWN0c19kaXZzIjtzOjEwOiJxdW90ZXNfdj0jIjtzOjIyOiJzdWdhcl90aGVtZV9nbV9jdXJyZW50IjtzOjM6IkFsbCI7czoxNToiZ2xvYmFsTGlua3NPcGVuIjtzOjQ6InRydWUiO3M6Mjc6IlNRTGl0ZU1hbmFnZXJfY3VycmVudExhbmd1ZSI7czoxOiIyIjtzOjQ2OiJzdGFydF9yYW5nZV9hbW91bnRfYWR2YW5jZWRfdW5mb3JtYXR0ZWRfbnVtYmVyIjtiOjE7czo0Mzoic3RhcnRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkX2N1cnJlbmN5X3N5bWJvbCI7czoxOiIkIjtzOjQ0OiJlbmRfcmFuZ2VfYW1vdW50X2FkdmFuY2VkX3VuZm9ybWF0dGVkX251bWJlciI7YjoxO3M6NDE6ImVuZF9yYW5nZV9hbW91bnRfYWR2YW5jZWRfY3VycmVuY3lfc3ltYm9sIjtzOjE6IiQiO3M6ODoiYWR2YW5jZWQiO2I6MTt9')");
         //END SUGARCRM flav=com ONLY
     }
     
     public function tearDown() 
     {
-        //$GLOBALS['db']->query("DELETE FROM saved_search where id = '{$this->saved_search_id}'"); 
+        $GLOBALS['db']->query("DELETE FROM saved_search where id = '{$this->saved_search_id}'"); 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-    }
-    
-    /**
-     * This test captures the scenario for date_modified field where range search is enabled
-     */    
-    public function testSaveRangeDateFields() 
-    {
-        require_once('modules/SavedSearch/SavedSearch.php');
-	    $focus = new SavedSearch();
-		$focus->retrieve($this->saved_search_id);
-		$_REQUEST = unserialize(base64_decode($focus->contents));
-		$mockBean = new Bug42377MockOpportunity();
-		$focus->handleSave('', false, '', $this->saved_search_id, $mockBean);
-		
-		//Now retrieve what we have saved and test
-		$focus = new SavedSearch();
-		$focus->retrieve($this->saved_search_id);
-		$formatted_data = unserialize(base64_decode($focus->contents));
-		$this->assertEquals($formatted_data['range_date_modified_advanced'], '2011-03-01', "Assert that value is in db format ('2011-03-01')");
-		$this->assertEquals($formatted_data['start_range_date_entered_advanced'], '2011-03-01', "Assert that value is in db format ('2011-03-01')");
-		$this->assertEquals($formatted_data['end_range_date_entered_advanced'], '2011-03-05', "Assert that value is in db format ('2011-03-05')");		
-		
-		//Last check to see that the macro value is okay and preserved
-		$this->assertEquals($formatted_data['range_date_closed_advanced'], '[last_7_days]', "Assert that the macro date value [last_7_days] was preserved");
-		$this->assertEquals($formatted_data['date_closed_advanced_range_choice'], 'last_7_days', "Assert that the macro date value choice last_7_days was preserved");		
-    }
-    
-    /**
-     * This test captures the scenario for date_modified field where range search is not enabled
-     */
-    public function testSaveDateFields() 
-    {
-        require_once('modules/SavedSearch/SavedSearch.php');
-	    $focus = new SavedSearch();
-		$focus->retrieve($this->saved_search_id);
-		$_REQUEST = unserialize(base64_decode($focus->contents));
-		unset($_REQUEST['start_range_date_modified_advanced']);
-		unset($_REQUEST['end_range_date_modified_advanced']);
-		unset($_REQUEST['range_date_modified_advanced']);
-		$_REQUEST['date_modified_advanced'] = '07/03/2009'; //Special date :)
-		$mockBean = new Bug42377MockOpportunity();
-		$focus->handleSave('', false, '', $this->saved_search_id, $mockBean);
-		
-		//Now retrieve what we have saved and test
-		$focus = new SavedSearch();
-		$focus->retrieve($this->saved_search_id);
-		$formatted_data = unserialize(base64_decode($focus->contents));
-		$this->assertEquals($formatted_data['date_modified_advanced'], '2009-07-03', "Assert that value is in db format ('2009-07-03')");		
-
-    	//Now test that when we populate the search form, we bring it back to user's date format
-    	$focus->retrieveSavedSearch($this->saved_search_id);
-		$focus->populateRequest();
-    	$this->assertEquals($_REQUEST['date_modified_advanced'], '07/03/2009', "Assert that dates in db format were converted back to user's date preference");    
-    
-    	//Take this a step further, assume date format now changes, will date be populated correctly?
         global $current_user;
-    	$current_user->setPreference('datef', 'd/m/Y', 0, 'global');
-        $current_user->save();  
+        $current_user = $this->previousCurrentUser;
+    }
 
-    	//Now test that when we populate the search form, we bring it back to user's date format
-    	$focus->retrieveSavedSearch($this->saved_search_id);
+    
+    public function testSaveNumericFields() 
+    {
+    	global $current_user;        
+		require_once('modules/SavedSearch/SavedSearch.php');
+	    $focus = new SavedSearch();	
+	    $focus->retrieve($this->saved_search_id);
+		$_REQUEST = unserialize(base64_decode($focus->contents));
+		$_REQUEST['start_range_amount_advanced'] = '$9,500.00';
+        $_REQUEST['end_range_amount_advanced'] = '$49,500.00';
+		
+		$mockBean = new Bug42915MockOpportunity();
+		$focus->handleSave('', false, '', $this->saved_search_id, $mockBean);
+		
+		//Now retrieve what we have saved and test
+		$focus->retrieveSavedSearch($this->saved_search_id);
+		$formatted_data = $focus->contents;
+
+		$this->assertEquals(9500, $formatted_data['start_range_amount_advanced'], "Assert that value is unformatted value 9500");
+		$this->assertEquals(49500, $formatted_data['end_range_amount_advanced'], "Assert that value is unformatted value 49500");
+		
 		$focus->populateRequest();
-    	$this->assertEquals($_REQUEST['date_modified_advanced'], '03/07/2009', "Assert that dates in db format were converted back to user's date preference");            
+		$this->assertEquals('$9,500.00', $_REQUEST['start_range_amount_advanced'], "Assert that value is formatted value $9,500.00");
+		$this->assertEquals('$49,500.00', $_REQUEST['end_range_amount_advanced'], "Assert that value is formatted value $49,500.00");
+		
+        $current_user->setPreference('num_grp_sep', '.');
+        $current_user->setPreference('dec_sep', ',');
+        $current_user->save();
+        //Force reset on dec_sep and num_grp_sep because the dec_sep and num_grp_sep values are stored as static variables
+	    get_number_seperators(true);  
+        
+        $focus = new SavedSearch();
+        $focus->retrieveSavedSearch($this->saved_search_id);
+        $focus->populateRequest();
+		$this->assertEquals('$9.500,00', $_REQUEST['start_range_amount_advanced'], "Assert that value is formatted value $9,500.00");
+		$this->assertEquals('$49.500,00', $_REQUEST['end_range_amount_advanced'], "Assert that value is formatted value $49,500.00");
+    
+        //Okay so now what happens if they don't specify currency or separator or decimal values?
+        $_REQUEST['start_range_amount_advanced'] = '9500';
+        $_REQUEST['end_range_amount_advanced'] = '49500';
+        
+        //Well then the populated values should be unformatted!
+        $focus->handleSave('', false, '', $this->saved_search_id, $mockBean);
+        $focus->retrieveSavedSearch($this->saved_search_id);
+        $focus->populateRequest();
+		$this->assertEquals(9500, $_REQUEST['start_range_amount_advanced'], "Assert that value is unformatted value 9500");
+		$this->assertEquals(49500, $_REQUEST['end_range_amount_advanced'], "Assert that value is unformatted value 49500");
     }       
     
+
     public function testStoreQuerySaveAndPopulate()
     {
     	global $current_user, $timedate;
@@ -108,10 +102,10 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
 			    'account_name_advanced' => '',
 			    'amount_advanced_range_choice' => '=',
 			    'range_amount_advanced' => '',
-			    'start_range_amount_advanced' => '',
-			    'end_range_amount_advanced' => '',
+			    'start_range_amount_advanced' => '$9,500.00',
+			    'end_range_amount_advanced' => '$45,900.00',
 			    'date_closed_advanced_range_choice' => '=',
-			    'range_date_closed_advanced' => '09/01/2008',
+			    'range_date_closed_advanced' => '',
 			    'start_range_date_closed_advanced' => '',
 			    'end_range_date_closed_advanced' => '',
 			    'next_step_advanced' => '',
@@ -145,31 +139,55 @@ class Bug42378Test extends Sugar_PHPUnit_Framework_TestCase
     	$storeQuery->saveFromRequest('Opportunities');
     	
     	$storedSearch = StoreQuery::getStoredQueryForUser('Opportunities');
-    	$this->assertEquals($storedSearch['range_date_closed_advanced'], '2008-09-01', 'Assert that search date 09/02/2008 was saved in db format 2008-09-01');
-
-    	//Test that value is converted to user date preferences when retrieved
-    	unset($_REQUEST['range_date_closed_advanced']);
+    	$this->assertEquals($storedSearch['start_range_amount_advanced'], 9500.00, 'Assert that start range amount $9,500.00 was saved unformatted as 9500.00');
+   		$this->assertEquals($storedSearch['end_range_amount_advanced'], 45900.00, 'Assert that end range amount $45,900.00 was saved unformatted as 45900.00');
+    	
+    	
+    	//Test that value is converted to user's numer formatting
+    	unset($_REQUEST['start_range_amount_advanced']);
+    	unset($_REQUEST['end_range_amount_advanced']);
     	$storeQuery->loadQuery('Opportunities');
         $storeQuery->populateRequest();
-        $this->assertTrue(isset($_REQUEST['range_date_closed_advanced']), 'Assert that the field was correctly populated');
-    	$this->assertEquals($_REQUEST['range_date_closed_advanced'], '09/01/2008', 'Assert that search date in db_format 2008-09-01 was converted to user date preference 09/01/2008');
+        $this->assertTrue(isset($_REQUEST['start_range_amount_advanced']), 'Assert that the start_range_amount_advanced field was correctly populated');
+    	$this->assertEquals('$9,500.00', $_REQUEST['start_range_amount_advanced'], 'Assert that start_range_amount_advanced value was converted to $9,500.00');
+        $this->assertTrue(isset($_REQUEST['end_range_amount_advanced']), 'Assert that the end_range_amount_advanced field was correctly populated');
+    	$this->assertEquals('$45,900.00', $_REQUEST['end_range_amount_advanced'], 'Assert that end_range_amount_advanced value was converted to $45,900.00');
     	
-    	//Now say the user changes his date preferences and switches back to this StoredQuery
-        $current_user->setPreference('datef', 'Y.m.d', 0, 'global');
+    	//Now say the user changes his number preferences and switches back to this StoredQuery
+        $current_user->setPreference('num_grp_sep', '.');
+        $current_user->setPreference('dec_sep', ',');
         $current_user->save();
+        //Force reset on dec_sep and num_grp_sep because the dec_sep and num_grp_sep values are stored as static variables
+	    get_number_seperators(true);  
 
         //Now when we reload this store query, the $_REQUEST array should be populated with new user date preference
-    	unset($_REQUEST['range_date_closed_advanced']);
+    	unset($_REQUEST['start_range_amount_advanced']);
+    	unset($_REQUEST['end_range_amount_advanced']);
     	$storeQuery->loadQuery('Opportunities');
         $storeQuery->populateRequest();
-        $this->assertTrue(isset($_REQUEST['range_date_closed_advanced']), 'Assert that the field was correctly populated');
-    	$this->assertEquals($_REQUEST['range_date_closed_advanced'], '2008.09.01', 'Assert that search date in db_format 2008-09-01 was converted to user date preference 2008.09.01');    	        
+        $this->assertTrue(isset($_REQUEST['start_range_amount_advanced']), 'Assert that the start_range_amount_advanced field was correctly populated');
+    	$this->assertEquals('$9.500,00', $_REQUEST['start_range_amount_advanced'], 'Assert that start_range_amount_advanced value was converted to $9.500,00');
+        $this->assertTrue(isset($_REQUEST['end_range_amount_advanced']), 'Assert that the end_range_amount_advanced field was correctly populated');
+    	$this->assertEquals('$45.900,00', $_REQUEST['end_range_amount_advanced'], 'Assert that end_range_amount_advanced value was converted to $45.900,00');
+
+        //Okay so now what happens if they don't specify currency or separator or decimal values?
+        $_REQUEST['start_range_amount_advanced'] = 9500;
+        $_REQUEST['end_range_amount_advanced'] = 45900;    
+        
+    	$storeQuery->saveFromRequest('Opportunities');
+		$storeQuery->loadQuery('Opportunities');
+        $storeQuery->populateRequest();
+        $this->assertTrue(isset($_REQUEST['start_range_amount_advanced']), 'Assert that the start_range_amount_advanced field was correctly populated');
+    	$this->assertEquals(9500, $_REQUEST['start_range_amount_advanced'], 'Assert that start_range_amount_advanced value remained as is (9500)');
+        $this->assertTrue(isset($_REQUEST['end_range_amount_advanced']), 'Assert that the end_range_amount_advanced field was correctly populated');
+    	$this->assertEquals(45900, $_REQUEST['end_range_amount_advanced'], 'Assert that end_range_amount_advanced value remained as is (45900)');
+    	
     }
     
 }
 
 
-class Bug42377MockOpportunity extends Opportunity
+class Bug42915MockOpportunity extends Opportunity
 {
 	
 var $field_defs = array (
