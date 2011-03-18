@@ -43,7 +43,7 @@
         <browser assert="{@users_record_0612.last_name1}{@stamp}"/>
         <var var="pre_user_name1" set="{@users_record_0612.last_name1}{@stamp}"/>
         
-        <puts var="{@users_record_0612.last_name1}{@stamp}"/>
+        <!--puts var="{@users_record_0612.last_name1}{@stamp}"/-->
         <!--Create new user as member2-->
         <link text="Create New User"/>
         <textfield name="last_name" set="{@users_record_0612.last_name2}{@stamp}"/>
