@@ -1,2 +1,0 @@
-team_name,assigned_user_name,name,meeting_name,meeting_date_start_date,meeting_date_start_hours,meeting_date_start_minutes,meeting_date_start_meridiem,meeting_duration_hours,meeting_duration_minutes,meeting_reminder_checked,meeting_description,meeting_assigned_user_name,meeting_team_name,meeting_location,meeting_status
-Administrator,Administrator,Quote,Meeting_Soda_test,9/9/2021,11,30,pm,1,30,FALSE,Soda test for meeting module,Administrator,Administrator,Shanghai,Planned

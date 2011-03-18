@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/campaigns/module_lib/setup-campaigns.xml" />
-	<script fileset="tests/modules/campaigns" />
-	<script file="tests/modules/campaigns/module_lib/cleanup-campaigns.xml" />
-</soda>
-

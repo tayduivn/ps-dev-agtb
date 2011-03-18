@@ -1,6 +1,0 @@
-<soda>
-   <script file="tests/modules/activities/module_lib/setup-activities.xml" />
-   <script fileset="tests/modules/activities"/>
-   <script file="tests/modules/activities/module_lib/cleanup-activities.xml" />
-</soda>
-

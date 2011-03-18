@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,selector,rel_module_type,lhs_field,trigger__operator,trigger__field_value,alert_name,alert_type,source_type,alert_text,selector1,account_name,new_name,test
-wf_8216,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,Contacts,all related,Last Name,Equals,Sugar_wf_8216,alert_name_wf_8216,Email,Normal Message,wf_8216,Administrator,account_name,new_name,KobeMail

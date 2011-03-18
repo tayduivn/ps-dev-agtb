@@ -1,2 +1,0 @@
-name,quantity,serial_number,asset_number,status,date_purchased,date_support_starts,date_support_expires,currency_id,cost_price,list_price,discount_price,discount_amount,book_value,book_value_date,website,mft_part_num,vendor_part_num,description,support_name,support_description,tax_class,weight,support_contact,support_term
-Product,10,100,200,Ordered,3/15/2010,3/15/2010,3/15/2011,US Dollars : $,1000,2000,1800,200,1,3/15/2010,http://www.sugarcrm.com,123456,567890,Create a Product record,will,support description,Taxable,100,jim,Six months

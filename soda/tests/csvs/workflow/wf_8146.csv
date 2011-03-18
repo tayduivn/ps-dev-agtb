@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,field,past_operator,past_field_value,future_trigger__operator,future_trigger__field_value,rel_module1,rel_module2,task_name,account_name,leads_name
-wf_8146,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,industry,Is,Apparel,Is,Banking,Lead,Task,task_name,account_name,leads_name

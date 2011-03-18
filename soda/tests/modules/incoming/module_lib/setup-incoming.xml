@@ -1,5 +1,0 @@
-<soda>
-	<csv file="{@global.scriptsdir}/csvs/users.csv" var="user" />
-	<script file="{@global.scriptsdir}/modules/lib/login.xml" />
-	<script file="{@global.scriptsdir}/modules/subpanels/module_lib/setup-subpanels.xml" />
-</soda>

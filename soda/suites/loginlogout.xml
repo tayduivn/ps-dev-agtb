@@ -1,8 +1,0 @@
-<soda>
-	<csv file="{@global.scriptsdir}/csvs/users.csv" var="user">
-		<script file="{@global.scriptsdir}/modules/lib/login.xml"/>
-		<script file="{@global.scriptsdir}/modules/accounts/create.xml"/>
-		<script file="{@global.scriptsdir}/modules/lib/logout.xml"/>
-	</csv>
-	<browser close="true"/>
-</soda>

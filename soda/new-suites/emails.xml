@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/emails/module_lib/setup-emails.xml" />
-	<script fileset="tests/modules/emails" />
-	<script file="tests/modules/emails/module_lib/cleanup-emails.xml" />
-</soda>
-

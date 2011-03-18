@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/currencies/module_lib/setup-currencies.xml" />
-	<script fileset="tests/modules/currencies" />
-	<script file="tests/modules/currencies/module_lib/cleanup-currencies.xml" />
-</soda>
-
