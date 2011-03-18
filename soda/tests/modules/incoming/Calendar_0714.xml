@@ -1,0 +1,49 @@
+<soda>
+	<!--
+		Action:
+			1. Login to system as a valid user.
+			2. Click "Calendar" navigation tab.
+			3. Click "Meetings" link on Navigation shortcuts.
+			4. Check one or more check boxes on the left of meeting
+				record in "Meeting List" view.
+			5. Click "Delete" link under "Action" menu
+		Expectation:
+			5. The selected meetings are deleted from "Meeting List" view.
+	-->
+	<puts text="Test: Calendar_0714.xml starting." />
+	
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	<var var="meeting1_name" set="{@pre_meeting_name}" />
+
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Create_Lib.xml" />
+	<var var="meeting2_name" set="{@pre_meeting_name}" />
+	
+	
+	<link id="moduleTab_Meetings" />
+	
+	<button id="search_form_clear" />
+	<button id="search_form_submit" />
+	
+	<table class="list view">
+		<browser assert="{@meeting1_name}" />
+		<browser assert="{@meeting2_name}" />
+	</table>
+	
+	<checkbox id="massall" set="true" />
+	
+	<link id="actions_link" />
+	<link text="Delete" alert="true" />
+
+	<wait timeout="4" />
+	
+	<table class="list view">
+		<browser assertnot="{@meeting1_name}" />
+		<browser assertnot="{@meeting2_name}" />
+	</table>
+	
+	<!-- the following *should* be redundant, due to the nature of
+		this test, but putting it in as a "safety net." -->
+	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
+	
+	<puts text="Test: Calendar_0714.xml finished." />
+</soda>
