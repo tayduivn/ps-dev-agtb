@@ -3193,30 +3193,6 @@ function unlinkTempFiles() {
 }
 }
 
-if ( !function_exists('getValidDBName') ) {
-/**
- * Required for team vardefs to work.
- */
- function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
-{
-    // first strip any invalid characters - all but alphanumerics and -
-    $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
-    $len = strlen ( $name ) ;
-    $result = $name;
-    if ($ensureUnique)
-    {
-        $md5str = md5($name);
-        $tail = substr ( $name, -11) ;
-        $temp = substr($md5str , strlen($md5str)-4 );
-        $result = substr ( $name, 0, 10) . $temp . $tail ;
-    }else if ($len > ($maxLen - 5))
-    {
-        $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
-    }
-    return strtolower ( $result ) ;
-}
-}
-
 /**
  * finds all files in the passed path, but skips select directories
  * @param string dir Relative path

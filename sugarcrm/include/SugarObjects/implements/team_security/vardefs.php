@@ -172,7 +172,7 @@ $vardefs = array(
 ),
 'indices' => array(
 		array(
-			'name' => getValidDBName('idx_'.strtolower($table_name).'_tmst_id', true, 34),
+			'name' => 'idx_'.strtolower($table_name).'_tmst_id',
 			'type' => 'index', 
 			'fields' => array('team_set_id')
 		),
