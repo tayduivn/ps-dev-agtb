@@ -1,2 +1,0 @@
-name,purchase_order_num,payment_terms,quote_stage,date_quote_expected_closed,original_po_date,bundle_name_group_0,bundle_stage_group_0,currency_id,shipper_id,description,team_name,assigned_user_name
-Quote,10000,Net 15,Negotiation,3/22/2010,9/20/2009,Group1,Negotiation,US Dollars : $,-none-,Create a new quote record,Administrator,Administrator

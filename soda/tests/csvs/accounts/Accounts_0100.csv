@@ -1,2 +1,0 @@
-name,status,reference_code,start_date,end_date,total_contract_value,customer_signed_date,company_signed_date,description,expiration_notice_date,expiration_notice_hours,expiration_notice_minutes,expiration_notice_meridiem,expiration_notice_datetime,contract_value
-Account_contract_0100,Signed,Account_Contract_RF_Code,3/29/2010,3/29/2011,223256,3/24/2010,3/26/2010,Edit a contract in account's contract subpanel,12/31/2012,11,15,AM,12/31/2012 11:15AM,"223,256.00"

@@ -1,8 +1,0 @@
-<soda>
-   <puts text="ProductType_Delete_Lib: Starting" />
-   <link text="Admin" />
-   <link text="Product Types" />
-   <link href="index.php?action=Delete&amp;module=ProductTypes&amp;record={@types_id}&amp;return_module=ProductTypes&amp;return_action=index&amp;return_id=" alert="true" />
-   <puts text="ProductType_Delete_Lib: Finished" />
-</soda>
-

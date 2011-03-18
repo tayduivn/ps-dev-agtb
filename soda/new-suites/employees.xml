@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/employees/module_lib/setup-employees.xml" />
-	<script fileset="tests/modules/employees" />
-	<script file="tests/modules/employees/module_lib/cleanup-employees.xml" />
-</soda>
-

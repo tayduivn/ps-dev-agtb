@@ -1,2 +1,0 @@
-ie_name,email_user,email_password,server_url,protocol,ssl,port,mailbox,trashFolder,sentFolder,from_name,from_addr,reply_address,outbound_email
-EmailAcct,sugarqa4@gmail.com,SugarQA!,imap.gmail.com,IMAP,true,993,INBOX,TRASH,SENT,EmailFromName,sugarqa4@gmail.com,sugarqa4@gmail.com,system - smtp.gmail.com

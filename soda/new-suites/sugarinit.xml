@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/lib/login.xml" />
-	<script file="tests/modules/lib/SugarInit_Lib.xml" />
-	<script file="tests/modules/lib/logout.xml" />
-</soda>
-

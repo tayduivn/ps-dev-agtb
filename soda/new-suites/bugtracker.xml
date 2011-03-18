@@ -1,6 +1,0 @@
-<soda>        
-	<script file="tests/modules/bugtracker/module_lib/setup-bugtracker.xml" />
-	<script fileset="tests/modules/bugtracker" />
-	<script file="tests/modules/bugtracker/module_lib/cleanup-bugtracker.xml" />
-</soda>
-
