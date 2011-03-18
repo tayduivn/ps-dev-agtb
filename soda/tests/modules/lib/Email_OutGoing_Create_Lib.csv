@@ -1,2 +1,0 @@
-mail_name,mail_smtpserver,mail_smtpport,mail_smtpssl,mail_smtpauth_req,mail_smtpuser,mail_smtppass
-EmailOutGoing,smtp.gmail.com,587,TLS,true,sugarqa3@gmail.com,sugarcrm1

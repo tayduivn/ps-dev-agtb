@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/teams/module_lib/setup-teams.xml" />
-	<script fileset="tests/modules/teams" />
-	<script file="tests/modules/teams/module_lib/cleanup-teams.xml" />
-</soda>
-

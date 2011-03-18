@@ -1,9 +1,0 @@
-<soda>
-	<csv file='{@global.scriptsdir}/csvs/users.csv' var='user'/>
-	<script file='{@global.scriptsdir}/modules/lib/login.xml'/>
-	<script file='{@global.scriptsdir}/modules/lib/SugarInit_Lib.xml'/>
-	<script file='{@global.scriptsdir}/modules/forecast/Forcast_1782.xml'/><!--Forcast Commit-->
-	<script file='{@global.scriptsdir}/modules/forecast/Forcast_1783.xml'/><!--Forcast Worksheet-->
-	<script file='{@global.scriptsdir}/modules/lib/logout.xml'/>
-	<browser action='close' />
-</soda>

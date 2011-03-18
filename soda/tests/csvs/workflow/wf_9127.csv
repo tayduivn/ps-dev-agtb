@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,lhs_field,trigger__operator,trigger__field_value,alert_name,alert_type,source_type,alert_text,selector1,opp_name,amount,date_closed,test
-wf_9127,When record saved,Active,Opportunities,New and Existing Records,Alerts then Actions,description,Sales Stage,Equals,Closed Lost,alert_name_wf_9127,Invite,Normal Message,wf_9127,Administrator,wf_9127_opp_name,1,11/11/2010,KobeMail

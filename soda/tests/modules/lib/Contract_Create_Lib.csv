@@ -1,2 +1,0 @@
-name,assigned_user_name,team_name,reference_code,expiration_notice_date,expiration_notice_hours,expiration_notice_minutes,expiration_notice_meridiem,description,status,start_date,end_date,currency_id,total_contract_value,customer_signed_date,company_signed_date,description
-Contracts,Administrator,Administrator,1,9/14/2011,12,30,am,Create Contracts Records,Not Started,9/14/2009,12/30/2010,US Dollars : $,1000,9/14/2009,9/14/2009,description of the contact
