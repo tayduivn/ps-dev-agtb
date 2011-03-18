@@ -53,7 +53,7 @@
             <textfield id='bundle_name_group_0' set='{@Quote_2479.bundle_name_group_0}'/>
             <select id='bundle_stage_group_0' set='{@Quote_2479.bundle_stage_group_0}'/>
 
-            <button type='button' name='Add Row' value='Add Row'/>
+            <button name='Add Row' value='Add Row'/>
             <wait timeout='3'/>
             <button id='product_name_select_1' click='true'/>
         </form>
