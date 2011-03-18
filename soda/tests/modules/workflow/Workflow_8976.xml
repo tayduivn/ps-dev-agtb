@@ -92,6 +92,6 @@
    <script file="{@global.scriptsdir}/modules/lib/Contact_Delete_Lib.xml" />
    <script file="{@global.scriptsdir}/modules/lib/Lead_Delete_Lib.xml" />
    <script file="{@global.scriptsdir}/modules/lib/Account_Delete_Lib.xml" />
-   <puts test="Test: Cases_8976: Finished." />
+   <puts test="Text: Cases_8976: Finished." />
 </soda>
 
