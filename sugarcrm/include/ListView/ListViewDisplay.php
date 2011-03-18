@@ -310,7 +310,7 @@ class ListViewDisplay {
 		// mass update
 		$mass = new MassUpdate();
 		$mass->setSugarBean($this->seed);
-		if ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
+		if ( ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && ACLController::checkAccess($this->seed->module_dir,'massupdate',true) ) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
             $menuItems .= $this->buildMassUpdateLink();
 		//BEGIN SUGARCRM flav=sales ONLY
 		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
