@@ -66,8 +66,8 @@
 	</ul>
 	
 	<script file="{@global.scriptsdir}/modules/lib/login.xml" />
-	<!--
+	
 	<script file="{@global.scriptsdir}/modules/lib/Meeting_Delete_Lib.xml" />
-	-->
+	
 	<puts text="Test: Calendar_0713.xml finished." />
 </soda>
