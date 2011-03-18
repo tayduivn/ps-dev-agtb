@@ -1636,7 +1636,7 @@ SUGAR.reports = function() {
 				report_def.summary_columns = summary_columns;
 			if (order_by.length > 0)
 				report_def.order_by = order_by;
-			if (summary_order_by.length > 0)
+			if (summary_order_by.length > 0 && report_type == 'summation')
 				report_def.summary_order_by = summary_order_by;
 
 			report_def.report_name = document.ReportsWizardForm.save_report_as.value;
@@ -3555,7 +3555,7 @@ SUGAR.reports = function() {
 				cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\""	+ id + "\")' >";
 				cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
 				if (typeof (summaryOrderBy) != "undefined" && summaryOrderBy.length > 0) {
-					if (summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
+					if (report_type='summation' && summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
 						document.getElementById("summary_order_by_radio_" + id).setAttribute('checked', true);
 						SUGAR.reports.summaryOrderBySelected(id, summaryOrderBy[0].sort_dir);
 					}
