@@ -1,8 +1,0 @@
-﻿<soda>
-	<!--  Add/delete mail account in Emails module -->
-	<puts text="Test: Emails_9659_9661.xml starting." />
-	<script file="{@global.scriptsdir}/modules/lib/Emails_Acct_Create_Lib.xml" />
-  <link id="moduleTab_Home" />
-	<script file="{@global.scriptsdir}/modules/lib/Emails_Acct_Delete_Lib.xml" />
-	<puts text="Test: Emails_9659_9661.xml finished." />
-</soda> 

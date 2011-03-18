@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/cases/module_lib/setup-cases.xml" />
-	<script fileset="tests/modules/cases/part2" />
-	<script file="tests/modules/cases/module_lib/cleanup-cases.xml" />
-</soda>
-

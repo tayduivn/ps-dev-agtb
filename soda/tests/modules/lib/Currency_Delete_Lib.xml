@@ -1,9 +1,0 @@
-<soda>
-   <puts text="Lib: Currency_Delete_Lib: Starting" />
-   <link text="Admin" />
-   <link text="Currencies" />
-   <browser assert="Currency Name" />
-   <link class="listViewTdToolsS1" index="1" alert="true" />
-   <browser assertnot="{@pre_currency_name}" />
-   <puts text="Lib: Currency_Delete_Lib: Finished" />
-</soda>

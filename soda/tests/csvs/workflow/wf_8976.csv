@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,selector,rel_module_type,lhs_field,trigger__operator,trigger__field_value,rel_module1,rel_module2,field_5__field_value,account_name,new_account_name
-wf_8976,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,Contacts,any related,Last Name,Equals,8976,Contact,Lead,successful,account_name,new_account_name

@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/forecast/module_lib/setup-forecast.xml" />
-	<script fileset="tests/modules/forecast" />
-	<script file="tests/modules/forecast/module_lib/cleanup-forecast.xml" />
-</soda>
-

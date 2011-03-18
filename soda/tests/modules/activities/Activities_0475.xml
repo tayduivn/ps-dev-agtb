@@ -1,8 +1,0 @@
-<soda>
-        <puts text='--------------Activities_0475:Create Task_Verify that task can be created with all the fields entered.------------------'/>
-        
-        <!--Create a account record-->
-        <script file='{@global.scriptsdir}/modules/lib/Task_Create_Lib.xml'/>
-        
-        <puts text='--------------Activities_0475 is Finished!------------------'/>
-</soda>

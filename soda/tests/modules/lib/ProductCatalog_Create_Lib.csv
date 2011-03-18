@@ -1,2 +1,0 @@
-name,cost_price,list_price,discount_price,category_name,Default_Pricing_Formula,website,tax_class,manufacturer_id,mft_part_num,vendor_part_num,currency_id,description,status,date_available,qty_in_stock,weight,type_id,support_name,support_contact,support_description,support_term
-Product1,1000,1500,1400,Laptops,Profit Margin,http://www.sugarcrm.com,Taxable,TeskkyWare Inc.,Tall Stores 638219XYZ987,Number.001,US Dollars : $,Create a product for product catalog,In Stock,8/24/2009,1,100,Widgets,jim,will,"Mon - Fri, 8:00 AM - 5:00 PM",Six months
