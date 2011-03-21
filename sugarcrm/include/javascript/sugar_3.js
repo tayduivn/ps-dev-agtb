@@ -750,8 +750,9 @@ function validate_form(formname, startsWith){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
 					var bail = false;
 
-                    //If a field is not required and it is blank, skip validation, skip this check for date/alpha fields in case hours/min/meridiem is set to blank (validate[formname][i][nameIndex].indexOf('date') < 0)
-                    if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (validate[formname][i][typeIndex]!='alpha'))
+                    //If a field is not required and it is blank or is binarydependant, skip validation.
+                    //Example of binary dependant fields would be the hour/min/meridian dropdowns in a date time combo widget, which require further processing than a blank check
+                    if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
                     {
                         continue;
                     }
