@@ -1707,6 +1707,15 @@ class SugarBean
                 $dep->fire($this);
             }
         }
+        //Check for other on-save dependencies
+        $deps = DependencyManager::getModuleDependenciesForAction($this->module_dir, "save");
+        foreach($deps as $dep)
+        {
+            if ($dep->getFireOnLoad())
+            {
+                $dep->fire($this);
+            }
+        }
     }
     function updateDependentField()
     {
