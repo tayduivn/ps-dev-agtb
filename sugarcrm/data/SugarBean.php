@@ -4405,9 +4405,6 @@ function save_relationship_changes($is_update, $exclude=array())
         if(!empty($this->field_defs['parent_name']) && empty($this->parent_name)){
             $this->fill_in_additional_parent_fields();
         }
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->updateDependentField();
-        //END SUGARCRM flav=pro ONLY
     }
 
     /**
