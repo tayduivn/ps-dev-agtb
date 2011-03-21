@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/workflow/module_lib/setup-workflow.xml" />
-	<script fileset="tests/modules/workflow" />
-	<script file="tests/modules/workflow/module_lib/cleanup-workflow.xml" />
-</soda>
-

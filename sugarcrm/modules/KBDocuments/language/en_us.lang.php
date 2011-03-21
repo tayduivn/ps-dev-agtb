@@ -171,7 +171,7 @@ $mod_strings = array (
     //kbdocument full text search form.
     'LBL_TAB_SEARCH' => 'Search',
     'LBL_TAB_BROWSE' => 'Browse',
-    'LBL_TAB_ADVANCED' => 'Advanced',
+    'LBL_TAB_ADVANCED' => 'Advanced Search',
     'LBL_MENU_FTS' => 'Full Text Search',
     'LBL_FTS_EMPTY_STRING' =>  'Cannot perform full text search on an empty string',
     'LBL_SEARCH_WITHIN' => 'Search within:',      

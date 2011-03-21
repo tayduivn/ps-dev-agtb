@@ -354,7 +354,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		return $this->fetch($this->findTemplate('TeamsetListView'));
 	}
 	
-	function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
+	function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderImportView');
 		return $this->fetch($this->findTemplate('Teamset'));

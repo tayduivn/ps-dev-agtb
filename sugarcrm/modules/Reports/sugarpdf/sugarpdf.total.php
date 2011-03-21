@@ -27,6 +27,9 @@ class ReportsSugarpdfTotal extends ReportsSugarpdfReports
     function display(){
         global $locale;
     
+        //Create new page
+        $this->AddPage();
+        
         $this->bean->clear_results();
         $this->bean->run_total_query();
     

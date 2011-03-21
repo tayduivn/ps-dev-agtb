@@ -198,9 +198,10 @@ var $myFavoritesOnly = false;
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
+                
                  //From SugarBean add_team_security_where_clause but customized select.
                 $lvsParams['custom_from'] .= ' LEFT JOIN (select tst.team_set_id, team_memberships.id as team_membership_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = "' . $current_user->id . '" AND team_memberships.deleted=0 group by tst.team_set_id) sugarfeed_tf on sugarfeed_tf.team_set_id  = sugarfeed.team_set_id ';
-    
+
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY
@@ -315,13 +316,14 @@ var $myFavoritesOnly = false;
         $numRecords = $numRecords - $this->lvs->data['pageData']['offsets']['current'];
         $numRecords = min($this->displayRows,$numRecords);
 
+        //BEGIN SUGARCRM flav=pro ONLY
         //rrs bug: 42122 - was cutting out feed items.42122
-       // $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
-
+        // $resortQueue = array_slice($resortQueue,$this->lvs->data['pageData']['offsets']['current'],$numRecords);
         foreach ( $resortQueue as $key=>&$item ) {
             if ( empty($item['NAME']) ) {
                 continue;
             }
+            
             if ( empty($item['IMAGE_URL']) ) {
                 $item['IMAGE_URL'] = 'include/images/default_user_feed_picture.png';
                 if ( isset($item['ASSIGNED_USER_ID']) ) {
@@ -332,9 +334,10 @@ var $myFavoritesOnly = false;
                     }
                 }
             }
+    
             $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><img src="'.$item['IMAGE_URL'].'" style="max-width: 50px; max-height: 50px;"></div> '.$item['NAME'];
         }
-        
+        //END SUGARCRM flav=pro ONLY
         $this->lvs->data['data'] = $resortQueue;
     }
 

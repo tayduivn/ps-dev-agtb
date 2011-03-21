@@ -69,7 +69,7 @@ class StandardField extends DynamicField
         if (empty($dictionary[$bean_name]) || empty($dictionary[$bean_name]["fields"][$field->name]))
             return false;
 
-        $currdef = $dictionary[$bean_name]["fields"][$field->name];
+        $currdef = $dictionary[$vBean]["fields"][$field->name];
         $this->loadCustomDef($field->name);
         $newDef = $field->get_field_def();
         

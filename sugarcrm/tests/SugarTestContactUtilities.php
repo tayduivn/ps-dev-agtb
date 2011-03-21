@@ -7,7 +7,7 @@ class SugarTestContactUtilities
 
     private function __construct() {}
 
-    public static function createContact() 
+    public static function createContact($id = '') 
     {
         $time = mt_rand();
     	$first_name = 'SugarContactFirst';
@@ -17,6 +17,11 @@ class SugarTestContactUtilities
         $contact->first_name = $first_name . $time;
         $contact->last_name = $last_name ;
         $contact->email1 = 'contact@'. $time. 'sugar.com';
+        if(!empty($id))
+        {
+            $contact->new_with_id = true;
+            $contact->id = $id;
+        }
         $contact->save();
         self::$_createdContacts[] = $contact;
         return $contact;

@@ -1,8 +1,0 @@
-<soda>
-   <puts text="TaxRate_Delete_Lib: Start" />
-   <link text="Admin" />
-   <link text="Tax Rates" />
-<link href="index.php?action=Delete&amp;module=TaxRates&amp;record={@taxrate_id}&amp;return_module=TaxRates&amp;return_action=index&amp;return_id=" alert="true" />
-   <puts text="TaxRate_Delete_Lib: Finished" />
-</soda>
-

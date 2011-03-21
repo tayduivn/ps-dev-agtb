@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/opportunity/module_lib/setup-opportunity.xml" />
-	<script fileset="tests/modules/opportunity/part4" />
-	<script file="tests/modules/opportunity/module_lib/cleanup-opportunity.xml" />
-</soda>
-

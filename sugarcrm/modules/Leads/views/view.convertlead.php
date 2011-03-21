@@ -123,10 +123,12 @@ class ViewConvertLead extends SugarView
 	                else if ($module == "Opportunities" && $field == 'amount')
 	                {
 	                    $focus->amount = unformat_number($this->focus->opportunity_amount);
-	                }
-                    else if ($module == "Opportunities" && $field == 'name' && $opportunityNameInLayout) {
-                        $focus->name = $this->focus->opportunity_name;
-                    }
+	                } 
+                 	else if ($module == "Opportunities" && $field == 'name') {
+                 		if ($opportunityNameInLayout && !empty($this->focus->opportunity_name)){
+                           $focus->name = $this->focus->opportunity_name;
+                 		}
+                   	}
 	                else if ($field == "id")
                     {
 						//If it is not a contact, don't copy the ID from the lead
@@ -553,6 +555,7 @@ class ViewConvertLead extends SugarView
 			if(!isset($_REQUEST[$module . $field]) && isset($lead->$field) && $field != 'id')
 			{
 				$bean->$field = $lead->$field;
+				if($field == 'date_entered') $bean->$field = gmdate($GLOBALS['timedate']->get_db_date_time_format()); //bug 41030
 			}
 		}
 		//Try to link to the new contact

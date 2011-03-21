@@ -1,6 +1,0 @@
-first_name,last_name,account_name,home_phone,office_phone,primary_email,secondary_email
-Ted1,Green1,SugarCRM3,123,4567,oyang@yangfan.com,oyang@sugarcrm.net
-Ted1,Green2,SugarCRM3,9234,1234,user_b@yangfan.com,oyang@sugarcrm.net
-Ted1,Green1,SugarCRM3,123,4567,user_a@yangfan.com,oyang@yangfan.com
-Ted2,Green1,SugarCRM3,1234,4567,eyang@yangfan.com,oyang@sugarcrm.net
-Ted3,Green8,SugarCRMR,9999,77778,eyang@example.com,oyang@example.net

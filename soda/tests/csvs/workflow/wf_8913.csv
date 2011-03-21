@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,alert_name,alert_type,source_type,alert_text,new_source_type1
-wf_8913,When record saved,Active,Accounts,New and Updated Records,Alerts then Actions,description,alert_name_wf_8912,Invite,Normal Message,wf_8913_alert_text,System Default

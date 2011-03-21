@@ -92,17 +92,9 @@ function getControl(
         }
         
         $displayParams = array();
-        $displayParams['formName'] = 'importstep3';    
+        $displayParams['formName'] = 'importstep3';  
 
-        $view = 'EditView';
-        //BEGIN SUGARCRM flav=pro ONLY
-        //Special case handling for the teamset view
-        if(!empty($vardef['custom_type']) && $vardef['custom_type'] == 'teamset') {
-           $view = 'importView';
-        }
-        //END SUGARCRM flav=pro ONLY
-        
-        $contents = $sfh->displaySmarty('fields', $vardef, $view, $displayParams);
+        $contents = $sfh->displaySmarty('fields', $vardef, 'ImportView', $displayParams);
         
         // Remove all the copyright comments
         $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
@@ -127,6 +119,8 @@ function getControl(
     global $timedate;
     $time_format = $timedate->get_user_time_format();
     $date_format = $timedate->get_cal_date_format();
+    $ss->assign('USER_DATEFORMAT', $timedate->get_user_date_format());
+ 	$ss->assign('TIME_FORMAT', $time_format);
     $time_separator = ":";
     $match = array();
     if(preg_match('/\d+([^\d])\d+([^\d]*)/s', $time_format, $match)) {

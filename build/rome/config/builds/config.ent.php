@@ -46,6 +46,7 @@ $config['blackList']['ent'] = array(
 
 'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/lotuslive' => 1,
 'sugarcrm/include/externalAPI/LotusLive'=>1,
+'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
 'sugarcrm/include/DashletContainer/Containers/DynamicDCActions.php'=>1,
 
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,

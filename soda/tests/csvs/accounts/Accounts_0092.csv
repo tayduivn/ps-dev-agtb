@@ -1,2 +1,0 @@
-name,reference_code,start_date,end_date,total_contract_value,customer_signed_date,company_signed_date,description,expiration_notice_date,expiration_notice_hours,expiration_notice_minutes,status,assigned_user_name,team_name,
-Account_contract_subpanel,AC,11/11/2011,12/12/2012,123256,10/10/2011,10/10/2011,test cancel button,12/31/2012,11,15,Not Started,Administrator,Global

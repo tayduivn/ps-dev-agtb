@@ -53,7 +53,7 @@ while (strpos($bodyHTML, "ta_replace") !== false){
 	//replace input markup with text areas markups 
 	$new_str = str_replace('input','textarea',$working_str);
 	$new_str = str_replace("type='text'", ' ', $new_str);
-	$new_str = $new_str . ' </textarea';
+	$new_str = $new_str . '> </textarea';
 
 	//replace the marker with generic term
 	$new_str = str_replace('ta_replace', 'sugarslot', $new_str);

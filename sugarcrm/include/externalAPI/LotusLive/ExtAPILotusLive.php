@@ -74,11 +74,11 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 	protected $meetingID;
     protected $joinURL;
 // Test site
-//    protected $baseURL = 'https://apps.test.lotuslive.com/';
-//    protected $url = 'eval-cloud2.castiron.com/envq/Staging/';
+    protected $baseURL = 'https://apps.test.lotuslive.com/';
+    protected $url = 'eval-cloud2.castiron.com/envq/Staging/';
 // Stage
-    protected $baseURL = 'https://apps.stage.lotuslive.com/';
-    protected $url = 'eval-cloud2.castiron.com/envq/Production/';
+//    protected $baseURL = 'https://apps.stage.lotuslive.com/';
+//    protected $url = 'eval-cloud2.castiron.com/envq/Production/';
 // Production
 //    protected $baseURL = 'https://apps.lotuslive.com/';
 //    protected $url = 'provide.castiron.com/envq/Production/';
@@ -93,8 +93,8 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 //        'consumerKey' => "test_app",
 //        'consumerSecret' => "87323at4aj6y8e9a0pa92w",
 // Stage
-        'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
-        'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
+ //       'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
+ //       'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
 // Production
 //      'consumerKey' => '9399cf0ce6e4ca4d30d56a76b21da89',
 //      'consumerSecret' => '7704b27829c5715445e14637415b67c1',
@@ -112,6 +112,18 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $this->oauthReq = $this->baseURL.'manage/oauth/getRequestToken';
         $this->oauthAuth = $this->baseURL.'manage/oauth/authorizeToken';
         $this->oauthAccess = $this->baseURL.'manage/oauth/getAccessToken';
+
+        $connector = $this->getConnector();
+        if(!empty($connector)) {
+            $cons_key = $connector->getProperty('oauth_consumer_key');
+            if(!empty($cons_key)) {
+                $this->oauthParams['consumerKey'] = $cons_key;
+            }
+            $cons_secret = $connector->getProperty('oauth_consumer_secret');
+            if(!empty($cons_secret)) {
+                $this->oauthParams['consumerSecret'] = $cons_secret;
+            }
+        }
 
 //        parent::__construct();
 /*

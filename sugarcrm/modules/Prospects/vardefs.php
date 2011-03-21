@@ -86,6 +86,7 @@ $dictionary['Prospect'] = array(
         'source' => 'non-db',
 		'vname' => 'LBL_EMAIL_ADDRESSES',
 		'reportable'=>false,
+        'rel_fields' => array('primary_address' => array('type'=>'bool')),
 	),
 	'email_addresses_primary' =>
 	array (

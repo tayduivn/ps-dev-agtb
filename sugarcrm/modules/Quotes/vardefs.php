@@ -387,8 +387,6 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
 		'link'=>'shipping_accounts',
 		'module'=>'Accounts',
 		'source'=>'non-db',
-        'join_name'=>'jt0',
- 		'join_link_name'=>'jtl0',
 		),
  'shipping_account_id' =>
  	array(

@@ -417,7 +417,7 @@ EOSQL;
             }
 			elseif ( in_array($row['TYPE_NAME'],array('nchar','nvarchar')) )
 				$columns[$column_name]['len']=strtolower($row['PRECISION']);
-            elseif ( !in_array($row['TYPE_NAME'],array('datetime','text')) )
+            elseif ( !in_array($row['TYPE_NAME'],array('datetime','text','bit')) )
                 $columns[$column_name]['len']=strtolower($row['LENGTH']);
             if ( stristr($row['TYPE_NAME'],'identity') ) {
                 $columns[$column_name]['auto_increment'] = '1';

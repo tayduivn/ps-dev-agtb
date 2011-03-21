@@ -323,6 +323,7 @@ class UnifiedSearchAdvanced {
                 $lv->delete = false;
                 $lv->select = false;
                 $lv->showMassupdateFields = false;
+                $lv->email = false;
                 if($overlib) {
                     $lv->overlib = true;
                     $overlib = false;
@@ -330,8 +331,8 @@ class UnifiedSearchAdvanced {
                 	$lv->overlib = false;
                 }
                 
-                $lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params, 0, 10);
-
+                $lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params, 0, 10);
+                
                 $module_results[$moduleName] = '<br /><br />' . get_form_header($GLOBALS['app_list_strings']['moduleList'][$seed->module_dir] . ' (' . $lv->data['pageData']['offsets']['total'] . ')', '', false);
                 $module_counts[$moduleName] = $lv->data['pageData']['offsets']['total'];
 

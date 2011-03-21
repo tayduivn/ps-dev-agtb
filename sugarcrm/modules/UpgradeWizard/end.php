@@ -255,6 +255,7 @@ if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
 }
 
+
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles'))
 {
