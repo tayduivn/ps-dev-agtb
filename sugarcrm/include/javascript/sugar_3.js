@@ -749,13 +749,13 @@ function validate_form(formname, startsWith){
 			if(validate[formname][i][nameIndex].indexOf(startsWith) == 0){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
 					var bail = false;
-					
-					//If a field is not required and it is blank, skip validation
-					if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '')
+
+                    //If a field is not required and it is blank, skip validation, skip this check for date/alpha fields in case hours/min/meridiem is set to blank (validate[formname][i][nameIndex].indexOf('date') < 0)
+                    if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (validate[formname][i][typeIndex]!='alpha'))
                     {
-                       continue;
-                    }						
-					
+                        continue;
+                    }
+
 					if(validate[formname][i][requiredIndex] && validate[formname][i][typeIndex] != 'bool'){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
