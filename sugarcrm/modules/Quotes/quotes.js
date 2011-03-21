@@ -1423,8 +1423,23 @@ function calculate_formula(doc, formula, table_id){
 				  + "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) "
 				  + "* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
 			if (i != 0) {
+				
+            	var chckd = null;
 				var ckId = 'checkbox_select_' + table_array[table_id][i];
-				if (doc.getElementById(ckId) && doc.getElementById(ckId).checked) {
+                //retrieve the value of percentage discount check box
+                if(
+                		typeof(rows[i].cells[11])!='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0]) !='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0].childNodes[0]) !='undefined'
+                ){//check box was found, retrieve value through dom tree.  We try this way first as it is more
+                  //reliable when rows have been removed than relying on count
+                        chckd = rows[i].cells[11].childNodes[0].childNodes[0].checked;
+                }else{
+                //check box was not found, retrieve value directly
+                        chckd = doc.getElementById(ckId) && doc.getElementById(ckId).checked;
+                }
+
+				if (chckd) {
 					formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 " +
 							"* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) " +
 							"* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
@@ -1448,8 +1463,23 @@ function calculate_formula(doc, formula, table_id){
 			var taxable = SUGAR.language.get('app_list_strings','tax_class_dom');
 			taxable = taxable['Taxable'];
 			var formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
-			if (i != 0) {        
-				if (doc.getElementById('checkbox_select_' + table_array[table_id][i]) && doc.getElementById('checkbox_select_' + table_array[table_id][i]).checked == true) {
+			if (i != 0) {    
+            	var chckd = null;
+				var ckId = 'checkbox_select_' + table_array[table_id][i];
+                //retrieve the value of percentage discount check box
+                if(
+                		typeof(rows[i].cells[11])!='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0]) !='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0].childNodes[0]) !='undefined'
+                ){//check box was found, retrieve value through dom tree.  We try this way first as it is more
+                  //reliable when rows have been removed than relying on count
+                        chckd = rows[i].cells[11].childNodes[0].childNodes[0].checked;
+                }else{
+                //check box was not found, retrieve value directly
+                        chckd = doc.getElementById(ckId) && doc.getElementById(ckId).checked;
+                }
+
+				if (chckd) {
 					formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
 				}
 				else {

@@ -337,7 +337,6 @@ class SugarBean
                     $this->optimistic_lock=true;
                 }
             }
-
             $loaded_defs[$this->object_name]['column_fields'] =& $this->column_fields;
             $loaded_defs[$this->object_name]['list_fields'] =& $this->list_fields;
             $loaded_defs[$this->object_name]['required_fields'] =& $this->required_fields;
@@ -1384,7 +1383,6 @@ class SugarBean
         if (empty($this->team_id) && isset($this->field_defs['team_id']) && isset($current_user)){
             $this->team_id = $current_user->team_id;
             $usedDefaultTeam = true;
-
         }
         $this->updateCalculatedFields();
 
@@ -1395,6 +1393,7 @@ class SugarBean
         }
         // call the custom business logic
         $custom_logic_arguments['check_notify'] = $check_notify;
+
 
         $this->call_custom_logic("before_save", $custom_logic_arguments);
         unset($custom_logic_arguments);
@@ -2266,6 +2265,7 @@ function save_relationship_changes($is_update, $exclude=array())
             switch($def['type']) {
                 case 'datetime':
                 case 'datetimecombo':
+                    if(empty($this->$field)) break;
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$this->$field) ) {
                         // This appears to be formatted in user date/time
                         $this->$field = $timedate->to_db($this->$field);
@@ -2273,6 +2273,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     break;
                 case 'date':
+                    if(empty($this->$field)) break;
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_date($this->$field, false);
@@ -2280,6 +2281,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     break;
                 case 'time':
+                    if(empty($this->$field)) break;
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
                         $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
@@ -2926,109 +2928,118 @@ function save_relationship_changes($is_update, $exclude=array())
         $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 
-        if(isset($_SESSION['show_deleted']))
-        {
-            $show_deleted = 1;
-        }
-        $final_query = '';
-        $final_query_rows = '';
-        $subpanel_list=array();
-        if ($subpanel_def->isCollection())
-        {
-            $subpanel_def->load_sub_subpanels();
-            $subpanel_list=$subpanel_def->sub_subpanels;
-        }
-        else
-        {
-            $subpanel_list[]=$subpanel_def;
-        }
+		if(isset($_SESSION['show_deleted']))
+		{
+			$show_deleted = 1;
+		}
+		$final_query = '';
+		$final_query_rows = '';
+		$subpanel_list=array();
+		if ($subpanel_def->isCollection())
+		{
+			$subpanel_def->load_sub_subpanels();
+			$subpanel_list=$subpanel_def->sub_subpanels;
+		}
+		else
+		{
+			$subpanel_list[]=$subpanel_def;
+		}
+		
+		$first = true;
 
-        //Breaking the building process into two loops. The first loop gets a list of all the sub-queries.
-        //The second loop merges the queries and forces them to select the same number of columns
-        //All columns in a sub-subpanel group must have the same aliases
-        //If the subpanel is a datasource function, it can't be a collection so we just poll that function for the and return that
-        foreach($subpanel_list as $this_subpanel)
-        {
-            if($this_subpanel->isDatasourceFunction() && empty($this_subpanel->_instance_properties['generate_select']))
-            {
-                $shortcut_function_name = $this_subpanel->get_data_source_name();
-                $parameters=$this_subpanel->get_function_parameters();
-                if (!empty($parameters))
-                {
-                    //if the import file function is set, then import the file to call the custom function from
-                    if (is_array($parameters)  && isset($parameters['import_function_file'])){
-                        //this call may happen multiple times, so only require if function does not exist
-                        if(!function_exists($shortcut_function_name)){
-                            require_once($parameters['import_function_file']);
-                        }
-                        //call function from required file
-                        $final_query =  $shortcut_function_name($parameters);
-                    }else{
-                        //call function from parent bean
-                        $final_query =  $parentbean->$shortcut_function_name($parameters);
-                    }
-                }
-                else
-                {
-                    $final_query = $parentbean->$shortcut_function_name();
-                }
-                $final_query_rows.= $parentbean->create_list_count_query($final_query, $parameters);
-            }
-        }
-        //If final_query is still empty, its time to build the sub-queries
-        if (empty($final_query))
-        {
-            $subqueries = SugarBean::build_sub_queries_for_union($subpanel_list, $subpanel_def, $parentbean, $order_by);
-            $all_fields = array();
-            foreach($subqueries as $i => $subquery)
-            {
-                $query_fields = $GLOBALS['db']->helper->getSelectFieldsFromQuery($subquery['select']);
-                foreach($query_fields as $field => $select)
-                {
-                    if (!in_array($field, $all_fields))
-                        $all_fields[] = $field;
-                }
-                $subqueries[$i]['query_fields'] = $query_fields;
-            }
-            $first = true;
-            //Now ensure the queries have the same set of fields in the same order.
-            foreach($subqueries as $subquery)
-            {
-                $subquery['select'] = "SELECT";
-                foreach($all_fields as $field)
-                {
-                    if (!isset($subquery['query_fields'][$field]))
-                    {
-                        $subquery['select'] .= " ' ' $field,";
-                    }
-                    else
-                    {
-                        $subquery['select'] .= " {$subquery['query_fields'][$field]},";
-                    }
-                }
-                $subquery['select'] = substr($subquery['select'], 0 , strlen($subquery['select']) - 1);
-                //Put the query into the final_query
-                $query =  $subquery['select'] . " " . $subquery['from'] . " " . $subquery['where'];
-                if(!$first)
-                {
-                    $query = ' UNION ALL ( '.$query . ' )';
-                    $final_query_rows .= " UNION ALL ";
-                } else {
-                    $query = '(' . $query . ')';
-                    $first = false;
-                }
-                $query_array = $subquery['query_array'];
-                $select_position=strpos($query_array['select'],"SELECT");
-                $distinct_position=strpos($query_array['select'],"DISTINCT");
-                if ($select_position !== false && $distinct_position!= false)
-                {
-                    $query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
-                }
-                else
-                {
-                    //resort to default behavior.
-                    $query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
-
+		//Breaking the building process into two loops. The first loop gets a list of all the sub-queries.
+		//The second loop merges the queries and forces them to select the same number of columns
+		//All columns in a sub-subpanel group must have the same aliases
+		//If the subpanel is a datasource function, it can't be a collection so we just poll that function for the and return that
+		foreach($subpanel_list as $this_subpanel)
+		{
+			if($this_subpanel->isDatasourceFunction() && empty($this_subpanel->_instance_properties['generate_select']))
+			{
+				$shortcut_function_name = $this_subpanel->get_data_source_name();
+				$parameters=$this_subpanel->get_function_parameters();
+				if (!empty($parameters))
+				{
+					//if the import file function is set, then import the file to call the custom function from
+					if (is_array($parameters)  && isset($parameters['import_function_file'])){
+						//this call may happen multiple times, so only require if function does not exist
+						if(!function_exists($shortcut_function_name)){
+							require_once($parameters['import_function_file']);
+						}
+						//call function from required file
+						$tmp_final_query =  $shortcut_function_name($parameters);
+					}else{
+						//call function from parent bean
+						$tmp_final_query =  $parentbean->$shortcut_function_name($parameters);
+					}
+				}
+				else
+				{
+					$tmp_final_query = $parentbean->$shortcut_function_name();
+				}
+				if(!$first)
+				{
+					$final_query_rows .= ' UNION ALL ( '.$parentbean->create_list_count_query($tmp_final_query, $parameters) . ' )';
+					$final_query .= ' UNION ALL ( '.$tmp_final_query . ' )';
+				} else {
+					$final_query_rows = '(' . $parentbean->create_list_count_query($tmp_final_query, $parameters) . ')';
+					$final_query = '(' . $tmp_final_query . ')';
+					$first = false;
+				}
+			}
+		}
+		//If final_query is still empty, its time to build the sub-queries
+		if (empty($final_query))
+		{
+			$subqueries = SugarBean::build_sub_queries_for_union($subpanel_list, $subpanel_def, $parentbean, $order_by);
+			$all_fields = array();
+			foreach($subqueries as $i => $subquery)
+			{
+				$query_fields = $GLOBALS['db']->helper->getSelectFieldsFromQuery($subquery['select']);
+				foreach($query_fields as $field => $select)
+				{
+					if (!in_array($field, $all_fields))
+						$all_fields[] = $field;
+				}
+				$subqueries[$i]['query_fields'] = $query_fields;
+			}
+			$first = true;
+			//Now ensure the queries have the same set of fields in the same order.
+			foreach($subqueries as $subquery)
+			{
+				$subquery['select'] = "SELECT";
+				foreach($all_fields as $field)
+				{
+					if (!isset($subquery['query_fields'][$field]))
+					{
+						$subquery['select'] .= " ' ' $field,";
+					}
+					else
+					{
+						$subquery['select'] .= " {$subquery['query_fields'][$field]},";
+					}
+				}
+				$subquery['select'] = substr($subquery['select'], 0 , strlen($subquery['select']) - 1);
+				//Put the query into the final_query
+				$query =  $subquery['select'] . " " . $subquery['from'] . " " . $subquery['where'];
+				if(!$first)
+				{
+					$query = ' UNION ALL ( '.$query . ' )';
+					$final_query_rows .= " UNION ALL ";
+				} else {
+					$query = '(' . $query . ')';
+					$first = false;
+				}
+				$query_array = $subquery['query_array'];
+				$select_position=strpos($query_array['select'],"SELECT");
+				$distinct_position=strpos($query_array['select'],"DISTINCT");
+				if ($select_position !== false && $distinct_position!= false)
+				{
+					$query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
+				}
+				else
+				{
+					//resort to default behavior.
+					$query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
                 }
                 if(!empty($subquery['secondary_select']))
                 {
@@ -4416,15 +4427,15 @@ function save_relationship_changes($is_update, $exclude=array())
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->field_defs['team_name']) && !empty($this->team_id) && empty($this->team_name))
             $this->team_name = get_assigned_team_name($this->team_id);
-        //END SUGARCRM flav=pro ONLY
-        if(!empty($this->field_defs['created_by']))
-        $this->created_by_name = get_assigned_user_name($this->created_by);
-        if(!empty($this->field_defs['modified_user_id']) && !empty($this->modified_user_id))
-        $this->modified_by_name = get_assigned_user_name($this->modified_user_id);
+		//END SUGARCRM flav=pro ONLY
+		if(!empty($this->field_defs['created_by']) && !empty($this->created_by))
+		$this->created_by_name = get_assigned_user_name($this->created_by);
+		if(!empty($this->field_defs['modified_user_id']) && !empty($this->modified_user_id))
+		$this->modified_by_name = get_assigned_user_name($this->modified_user_id);
 
-        if(!empty($this->field_defs['parent_name'])){
-            $this->fill_in_additional_parent_fields();
-        }
+		if(!empty($this->field_defs['parent_name'])){
+			$this->fill_in_additional_parent_fields();
+		}
         //BEGIN SUGARCRM flav=pro ONLY
         $this->updateDependentField();
         //END SUGARCRM flav=pro ONLY
@@ -4763,9 +4774,11 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         if(empty($ids))
         {
-            $ids = '(';
+            $ids = "('')";
+        }else{
+            $ids .= ')';
         }
-        $ids .= ')';
+        
         return array('list'=>$idList, 'in'=>$ids);
     }
 

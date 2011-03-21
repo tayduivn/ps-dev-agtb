@@ -31,68 +31,68 @@ require_once('modules/Reports/config.php');
 
 class Report
 {
-	var $result;
-	var $summary_result;
-	var $total_result;
-	var $row_start = 0;
-	var $row_end = 0;
-	var $row_count = 0;
-	var $summary_row_start = 0;
-	var $summary_row_end = 0;
-	var $summary_row_count = 0;
-	var $current_summary_row_count = 0;
-	var $requested_fields_map = array();
-	var $group_fields_map = array();
-	var $summary_fields_map = array();
+    var $result;
+    var $summary_result;
+    var $total_result;
+    var $row_start = 0;
+    var $row_end = 0;
+    var $row_count = 0;
+    var $summary_row_start = 0;
+    var $summary_row_end = 0;
+    var $summary_row_count = 0;
+    var $current_summary_row_count = 0;
+    var $requested_fields_map = array();
+    var $group_fields_map = array();
+    var $summary_fields_map = array();
     var $full_table_list = array();
     var $full_table_beans = array();
-	var $where;
-	var $order_by;
-	var $order_by_arr = array();
-	var $summary_order_by_arr = array();
-	var $order_by_special;
-	var $group_by;
-	var $group_order_by = '';
+    var $where;
+    var $order_by;
+    var $order_by_arr = array();
+    var $summary_order_by_arr = array();
+    var $order_by_special;
+    var $group_by;
+    var $group_order_by = '';
     var $module = 'Accounts';
-	var $focus;
-	var $currency_symbol;
-	var $currency_obj;
-	var $name;
-	var $select_fields = array();
-	var $summary_select_fields = array();
-	var $total_select_fields = array();
-	var $report_def = array();
-	var $group_defs_Info = array();
-	var $addedColumns = 0;
-	var $do_export = false;
-	var $report_type = 'tabular';
-	var $show_columns = false;
-	var $enable_paging = true;
+    var $focus;
+    var $currency_symbol;
+    var $currency_obj;
+    var $name;
+    var $select_fields = array();
+    var $summary_select_fields = array();
+    var $total_select_fields = array();
+    var $report_def = array();
+    var $group_defs_Info = array();
+    var $addedColumns = 0;
+    var $do_export = false;
+    var $report_type = 'tabular';
+    var $show_columns = false;
+    var $enable_paging = true;
 
-	var $query_list = array();
-	var $query = '';
-	var $summary_query = '';
-	var $total_query = '';
+    var $query_list = array();
+    var $query = '';
+    var $summary_query = '';
+    var $total_query = '';
 
-	var $module_dir = 'Reports';
-	var $time_date_obj = null;
-	var $is_saved_report = false;
-	var $saved_report_id = '';
-	var $saved_report = null;
-	var $alias_lookup = array();
-	var $upgrade_lookup = array();
+    var $module_dir = 'Reports';
+    var $time_date_obj = null;
+    var $is_saved_report = false;
+    var $saved_report_id = '';
+    var $saved_report = null;
+    var $alias_lookup = array();
+    var $upgrade_lookup = array();
 
-	var $all_fields = array();
-	var $relationships = array();
-	var $loaded_links = array();
-	var $selected_loaded_links = array();
-	var $selected_loaded_custom_links = array();
-	var $layout_manager = null;
-	var $plain_text_output = false;
+    var $all_fields = array();
+    var $relationships = array();
+    var $loaded_links = array();
+    var $selected_loaded_links = array();
+    var $selected_loaded_custom_links = array();
+    var $layout_manager = null;
+    var $plain_text_output = false;
     var $obj_array = array();//array to store the object reference in get_next_row()
-	var $default_report_def_str = '{"report_type":"tabular","display_columns":[],"summary_columns":[],"order_by":[{"name":"","sort_dir":""}],"filters_def":[],"group_defs":[],"links_def":[],"module":"Accounts","chart_type":"hBarF","chart_description":""}';
+    var $default_report_def_str = '{"report_type":"tabular","display_columns":[],"summary_columns":[],"order_by":[{"name":"","sort_dir":""}],"filters_def":[],"group_defs":[],"links_def":[],"module":"Accounts","chart_type":"hBarF","chart_description":""}';
 
-	var $select_already_defined_hash = array();
+    var $select_already_defined_hash = array();
 
   var $do_chart = true;
   var $chart_header_row = array();
@@ -101,7 +101,7 @@ class Report
   var $table_name = 'saved_reports';
   var $chart_description = '';
   var $chart_group_position = array();
-	var $chart_numerical_position = 0;
+    var $chart_numerical_position = 0;
   var $group_header;
   var $group_column_is_invisible = 0;
   var $chart_total_header_row = array();
@@ -229,8 +229,10 @@ class Report
             {
                 $tmpBean->load_relationship($old_link);
                 $relationship = $tmpBean->$old_link->_relationship;
+
 				$newIndex = $tempFullTableList['self']['module'].':'. $linked_fields[$old_link]['name'];
 				$upgrade_lookup[$old_link] = $newIndex;
+
                 $tempFullTableList[$newIndex]['label'] = translate($linked_fields[$old_link]['vname']);
                 $tempFullTableList[$newIndex]['link_def']['relationship_name'] = $linked_fields[$old_link]['relationship'];
                 $tempFullTableList[$newIndex]['link_def']['name'] = $linked_fields[$old_link]['name'];
@@ -436,49 +438,49 @@ class Report
         $this->report_def_str = $json->encode($this->report_def);
 
 
-	}
+    }
 
-	// gets rid of fields that user shouldn't see
-	// assumes all_fields only contains viewable fields
-	function clean_report_def()
-	{
-		$fields = array('display_columns','summary_columns','order_by','filters_def','group_defs');
-		foreach($fields as $field)
-		{
-			if ( count($this->report_def[$field]))
-			{
-				continue;
-			}
-		for($i = 0; $i < count($this->report_def[$field] ) ; $i++)
-		{
-			$def = $this->report_def[$field][$i];
-			if ( empty($def['table_key']) && empty($def['name']))
-			{
-				continue;
-			}
+    // gets rid of fields that user shouldn't see
+    // assumes all_fields only contains viewable fields
+    function clean_report_def()
+    {
+        $fields = array('display_columns','summary_columns','order_by','filters_def','group_defs');
+        foreach($fields as $field)
+        {
+            if ( count($this->report_def[$field]))
+            {
+                continue;
+            }
+        for($i = 0; $i < count($this->report_def[$field] ) ; $i++)
+        {
+            $def = $this->report_def[$field][$i];
+            if ( empty($def['table_key']) && empty($def['name']))
+            {
+                continue;
+            }
 
-			$key = $this->_get_full_key($def);
-			if ( empty($this->all_fields[$key]))
-			{
-				unset($def);
-			}
-		}
-		}
+            $key = $this->_get_full_key($def);
+            if ( empty($this->all_fields[$key]))
+            {
+                unset($def);
+            }
+        }
+        }
 
-		global $report_modules;
-		if ( empty($report_modules[$this->module]))
-		{
-			sugar_die("you are not allowed to report on this module:".$this->module);
-		}
-	}
+        global $report_modules;
+        if ( empty($report_modules[$this->module]))
+        {
+            sugar_die("you are not allowed to report on this module:".$this->module);
+        }
+    }
 
 // make sure this user can report on this module
 
 function _check_user_permissions()
 {
-	global $current_user;
-	if(isset($current_user))
-	{
+    global $current_user;
+    if(isset($current_user))
+    {
         require_once('modules/MySettings/TabController.php');
         $tabs = new TabController();
         $tabArray = $tabs->get_user_tabs($current_user);
@@ -500,54 +502,52 @@ function _check_user_permissions()
         }
         //BEGIN SUGARCRM flav!=sales ONLY
         if( isset($moduleMap["Project"]) )
-			{
+            {
                 $moduleMap['ProjectTask'] = 1;
-			}
-		//END SUGARCRM flav!=sales ONLY
+            }
+        //END SUGARCRM flav!=sales ONLY
         if ( empty($moduleMap[$this->module_dir]))
         {
                 die ("you do not have access to report this module");
         }
 
-	} else
-	{
+    } else
+    {
                die ("you shouldn't be here");
-	}
+    }
 }
 
-	function isVisibleModule($related_module)
-	{
-		global $report_modules;
-		if (empty($report_modules[$related_module]))
-		{
-			return false;
-		}
-		return true;
-	}
+    function isVisibleModule($related_module)
+    {
+        global $report_modules;
+        if (empty($report_modules[$related_module]))
+        {
+            return false;
+        }
+        return true;
+    }
 
-	function _load_all_fields(){
-		foreach( $this->full_table_list as $table_key => $table_data ) {
-        	foreach ( $this->full_bean_list[$table_key]->field_defs as $field_def )
+    function _load_all_fields(){
+        foreach( $this->full_table_list as $table_key => $table_data ) {
+            foreach ( $this->full_bean_list[$table_key]->field_defs as $field_def )
             {
-            	$field_def['module'] = $this->full_table_list[$table_key]['bean_label'];
+                $field_def['module'] = $this->full_table_list[$table_key]['bean_label'];
                 $field_def['real_table'] = $this->full_bean_list[$table_key]->table_name;
-				//if ( ! empty($field_def['source']) && $field_def['source'] == 'custom_fields' ) {
-				if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
-				&& !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table'])) {
+                //if ( ! empty($field_def['source']) && $field_def['source'] == 'custom_fields' ) {
+                if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
+                && !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table'])) {
                     $field_def['real_table'] .= '_cstm';
                 }
                 if ($field_def['type'] == 'relate' && !empty($field_def['ext2'])) {
-				    global $beanFiles,$beanList;
-				    require_once($beanFiles[$beanList[$field_def['ext2']]]);
-				    $joinFocus = new $beanList[$field_def['ext2']]();
-                	$field_def['secondary_table'] = $joinFocus->table_name;
+                    global $beanFiles,$beanList;
+                    require_once($beanFiles[$beanList[$field_def['ext2']]]);
+                    $joinFocus = new $beanList[$field_def['ext2']]();
+                    $field_def['secondary_table'] = $joinFocus->table_name;
                 }
                 $this->all_fields[$table_key.':'.$field_def['name']] = $field_def;
             }
         }
     }
-
-
 
 	function _load_currency()
 	{
@@ -740,82 +740,81 @@ print $this->$query_name;
 print "<BR>";
 print "<BR>";
 */
-	if($limit){
-		$start_offset = $this->report_offset;
-		if ($this->db->dbType == 'oci8'){
-			if($start_offset > 0)$start_offset++;
-		}
-		$this->$result_name = $this->db->limitQuery($this->$query_name,$start_offset , $this->report_max,true,
-				"Error executing query ");
-	}else{
-		$this->$result_name = $this->db->query(
-				$this->$query_name,
-				true,
-				"Error executing query ");
-	}
-		if (!empty($row_count_name) && empty($this->$row_count_name))
-		{
-			if ($this->db->dbType == 'oci8'){
-				$this->$row_count_name = $this->report_offset;
-				$this->$row_end_name = $this->report_max;
+    if($limit){
+        $start_offset = $this->report_offset;
+        if ($this->db->dbType == 'oci8'){
+            if($start_offset > 0)$start_offset++;
+        }
+        $this->$result_name = $this->db->limitQuery($this->$query_name,$start_offset , $this->report_max,true,
+                "Error executing query ");
+    }else{
+        $this->$result_name = $this->db->query(
+                $this->$query_name,
+                true,
+                "Error executing query ");
+    }
+        if (!empty($row_count_name) && empty($this->$row_count_name))
+        {
+            if ($this->db->dbType == 'oci8'){
+                $this->$row_count_name = $this->report_offset;
+                $this->$row_end_name = $this->report_max;
 
-				if($limit && $this->total_count < $this->$row_end_name + $this->$row_count_name){
-					$this->$row_end_name = $this->total_count - $this->$row_count_name;
-				}
-			}else{
-				$this->$row_count_name =  $this->db->getRowCount($this->$result_name);
-				$this->$row_end_name =  $this->$row_count_name;
-			}
-			if ($this->$row_count_name > 0)
-			{
-				$this->$row_start_name =  1;
-			}
-		}
-	}
+                if($limit && $this->total_count < $this->$row_end_name + $this->$row_count_name){
+                    $this->$row_end_name = $this->total_count - $this->$row_count_name;
+                }
+            }else{
+                $this->$row_count_name =  $this->db->getRowCount($this->$result_name);
+                $this->$row_end_name =  $this->$row_count_name;
+            }
+            if ($this->$row_count_name > 0)
+            {
+                $this->$row_start_name =  1;
+            }
+        }
+    }
 
 
-	function getTableFromField(&$layout_def)
-	{
+    function getTableFromField(&$layout_def)
+    {
 
-		$field = $this->getFieldDefFromLayoutDef($layout_def);
+        $field = $this->getFieldDefFromLayoutDef($layout_def);
 
-		$custom_table = '';
-		if ( ! empty($field['table']))
-		{
+        $custom_table = '';
+        if ( ! empty($field['table']))
+        {
       // truncate because oracle doesn't like long alias names
       $custom_table = substr($field['table'],0,8);
-			$custom_table .= '_';
-		}
+            $custom_table .= '_';
+        }
 
-		if ( empty($layout_def['table_key']))
-		{
-		  $linked_field = 'self';
-		} else {
-		  $linked_field =$layout_def['table_key'];
-		}
+        if ( empty($layout_def['table_key']))
+        {
+          $linked_field = 'self';
+        } else {
+          $linked_field =$layout_def['table_key'];
+        }
 
-		if ($linked_field != 'self')
-		{
-			$field_table = $custom_table .$this->getRelatedAliasName($linked_field);
-		} else {
-			$field_table = $custom_table .$this->focus->table_name;
-		}
-		return $field_table;
-	}
+        if ($linked_field != 'self')
+        {
+            $field_table = $custom_table .$this->getRelatedAliasName($linked_field);
+        } else {
+            $field_table = $custom_table .$this->focus->table_name;
+        }
+        return $field_table;
+    }
 
 
-	// used mainly to register the join if this column needs it
+    // used mainly to register the join if this column needs it
     function register_field_for_query(&$layout_def)
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
 
         if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
-                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {          		
+                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {                  
                 global $mod_strings;
 
 	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
-
 
         }
         if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
@@ -1041,32 +1040,32 @@ print "<BR>";
             return 'self';
         }
         */
-		return $table_key.":".$layout_def['name'];
-	}
+        return $table_key.":".$layout_def['name'];
+    }
 
-	function parseLinkedField($fieldname)
-	{
-		preg_match('/^(\w+):/',$fieldname,$match);
+    function parseLinkedField($fieldname)
+    {
+        preg_match('/^(\w+):/',$fieldname,$match);
                 return  $match[1];
-	}
+    }
 
-	function getRelatedAliasName($linked_field)
-	{
+    function getRelatedAliasName($linked_field)
+    {
        /* return str_replace('link_','l',
                            str_replace('self_','',$linked_field));
-		return str_replace(' > ','_',
+        return str_replace(' > ','_',
                            str_replace('self_','',$linked_field));
                            */
 
     	return $this->alias_lookup[$linked_field];
 	    //return $linked_field;
 
-	}
+    }
 
-	function getRelatedLinkAliasName($linked_field)
-	{
+    function getRelatedLinkAliasName($linked_field)
+    {
 
-		/*
+        /*
         return str_replace('link_','l',
                            str_replace('self_','',$linked_field)).'_l';
                            */
@@ -1075,13 +1074,13 @@ print "<BR>";
 
 	}
 
-	function has_summary_columns()
-	{
-	$key='summary_columns';
+    function has_summary_columns()
+    {
+    $key='summary_columns';
 
 
-	$got_summary = 0;
-	  foreach($this->report_def[$key] as $index=>$display_column)
+    $got_summary = 0;
+      foreach($this->report_def[$key] as $index=>$display_column)
           {
 
                         if ( $display_column['name'] == 'count')
@@ -1091,37 +1090,37 @@ print "<BR>";
                         {
                                 $got_summary = 1;
                         }
-	 }
-	 return $got_summary;
-	}
+     }
+     return $got_summary;
+    }
 
-	function is_group_column(&$display_column)
+    function is_group_column(&$display_column)
   {
-		$qualifier = '';
+        $qualifier = '';
 
-		if ( ! empty($display_column['column_function']))
-		{
-			$qualifier = $display_column['column_function'];
-		}
+        if ( ! empty($display_column['column_function']))
+        {
+            $qualifier = $display_column['column_function'];
+        }
 
 
-		for( $i = 0;$i < count($this->report_def['group_defs']); $i++)
-		{
-			$def_qualifier = '';
-			if ( ! empty($this->report_def['group_defs'][$i]['qualifier']))
-			{
-				$def_qualifier = $this->report_def['group_defs'][$i]['qualifier'];
-			}
+        for( $i = 0;$i < count($this->report_def['group_defs']); $i++)
+        {
+            $def_qualifier = '';
+            if ( ! empty($this->report_def['group_defs'][$i]['qualifier']))
+            {
+                $def_qualifier = $this->report_def['group_defs'][$i]['qualifier'];
+            }
 
-			if ( $this->report_def['group_defs'][$i]['table_key']."_".$this->report_def['group_defs'][$i]['name']."_".$def_qualifier ==
-					$display_column['table_key']."_".$display_column['name']."_".$qualifier)
-			{
-				return 1;
+            if ( $this->report_def['group_defs'][$i]['table_key']."_".$this->report_def['group_defs'][$i]['name']."_".$def_qualifier ==
+                    $display_column['table_key']."_".$display_column['name']."_".$qualifier)
+            {
+                return 1;
 
-			}
+            }
 
-		}
-		return 0;
+        }
+        return 0;
   }
 
     function create_select($key = 'display_columns', $field_list_name = 'select_fields')
@@ -1211,56 +1210,56 @@ print "<BR>";
         }
     } // end create_select
 
-	function clear_group_by()
-	{
-		$this->group_by='';
-	}
+    function clear_group_by()
+    {
+        $this->group_by='';
+    }
 
-	function create_order_by()
-	{
+    function create_order_by()
+    {
 
-		$this->layout_manager->setAttribute('context', 'OrderBy');
-		$this->order_by='';
-		$this->order_by_arr= array();
-		$this->summary_order_by_arr= array();
-		if(!empty($this->report_def['order_by'][0]))
-		{
-			$order_by = $this->report_def['order_by'][0];
+        $this->layout_manager->setAttribute('context', 'OrderBy');
+        $this->order_by='';
+        $this->order_by_arr= array();
+        $this->summary_order_by_arr= array();
+        if(!empty($this->report_def['order_by'][0]))
+        {
+            $order_by = $this->report_def['order_by'][0];
 
-			$this->register_field_for_query($order_by);
+            $this->register_field_for_query($order_by);
 
-			array_push($this->order_by_arr, $this->layout_manager->widgetQuery($order_by));
+            array_push($this->order_by_arr, $this->layout_manager->widgetQuery($order_by));
 
-		}
-		$this->summary_order_by='';
-		//$this->summary_order_by_arr= array();
-		if(!empty($this->report_def['summary_order_by'][0]))
-		{
-			$summary_order_by = $this->report_def['summary_order_by'][0];
+        }
+        $this->summary_order_by='';
+        //$this->summary_order_by_arr= array();
+        if(!empty($this->report_def['summary_order_by'][0]))
+        {
+            $summary_order_by = $this->report_def['summary_order_by'][0];
 
-			$this->register_field_for_query($summary_order_by);
+            $this->register_field_for_query($summary_order_by);
 
-			array_push($this->summary_order_by_arr,$this->layout_manager->widgetQuery($summary_order_by));
+            array_push($this->summary_order_by_arr,$this->layout_manager->widgetQuery($summary_order_by));
         }
 
 
-	}
-
-	function select_already_defined($select,$which='select_fields')
-	{
-		if ( empty($this->select_already_defined_hash[$which]))
-		{
-			$this->select_already_defined_hash[$which] = array();
-		}
-
-		if ( empty($this->select_already_defined_hash[$which][$select]))
-    {
-		 $this->select_already_defined_hash[$which][$select] = 1;
-			return false;
     }
-		return true;
 
-	}
+    function select_already_defined($select,$which='select_fields')
+    {
+        if ( empty($this->select_already_defined_hash[$which]))
+        {
+            $this->select_already_defined_hash[$which] = array();
+        }
+
+        if ( empty($this->select_already_defined_hash[$which][$select]))
+    {
+         $this->select_already_defined_hash[$which][$select] = 1;
+            return false;
+    }
+        return true;
+
+    }
 
     function create_group_by($register_group_by = true)
     {
@@ -1448,33 +1447,34 @@ print "<BR>";
                }
 
                 else
-            	{
+                {
                     die("table_def[parent] is not an object! (".$table_def['parent'].")<br>");
                 }
 
                 // Do not add team security on modules that opt out of row level security
                 require_once($beanFiles[$table_def['bean_name']]);
                 $focus = new $table_def['bean_name']();
-				//BEGIN SUGARCRM flav!=sales ONLY
+                //BEGIN SUGARCRM flav!=sales ONLY
                 if(!is_admin($GLOBALS['current_user']) && !$focus->disable_row_level_security) {
                 	$this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
 									tst INNER JOIN team_memberships team_memberships ON tst.team_id =
 									team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
+
                     //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
                 }
-				//END SUGARCRM flav!=sales ONLY
+                //END SUGARCRM flav!=sales ONLY
             }
-   			foreach ( $this->selected_loaded_custom_links as $custom_table=>$params)
+            foreach ( $this->selected_loaded_custom_links as $custom_table=>$params)
             {
                 if (!empty($params['join_id'])){
-                	 $this->from .= "LEFT JOIN ". $params['base_table']." ".$params['join_table_alias']." ON ".$params['join_table_alias'].".id = ";
-                	$this->from .= $params['join_id']."\n";
-            	}
+                     $this->from .= "LEFT JOIN ". $params['base_table']." ".$params['join_table_alias']." ON ".$params['join_table_alias'].".id = ";
+                    $this->from .= $params['join_id']."\n";
+                }
                 else{
-                	 $tablename = ( empty($params['real_table']) ? $params['base_table'] :$params['real_table'] );
-                	 $this->from .= "LEFT JOIN ". $tablename." ".$params['join_table_alias']." ON ".$params['base_table'].".id = ";
-           			$this->from .=$params['join_table_alias'].".id_c\n";
-				}
+                     $tablename = ( empty($params['real_table']) ? $params['base_table'] :$params['real_table'] );
+                     $this->from .= "LEFT JOIN ". $tablename." ".$params['join_table_alias']." ON ".$params['base_table'].".id = ";
+                    $this->from .=$params['join_table_alias'].".id_c\n";
+                }
             }
     }
 
@@ -1496,84 +1496,84 @@ print "<BR>";
         while($currCount<$arrCount){
             // Bug 39692 - Correctly add the ISNULL() for concatenated fields
             if ( strpos($field_list_name_array[$currCount],'+') ) {
-				$fieldsInField = explode('+',trim($field_list_name_array[$currCount]));
-				$newField = '';
-				foreach ( $fieldsInField as $field ) {
-					$field = trim($field);
-					//if it has a space, then it is aliased, let's process
-					//to see if it has a period
-					$has_space = strrpos($field, " ");
-					if($has_space && !stristr("' '",$field)){
-						$temp_field_name = substr($field,0,$has_space);
-						$temp_field_alias  = substr($field,$has_space+1);
-						if ( stristr('ISNULL',$temp_field_name) ) {
-							$newField .= "$temp_field_name $temp_field_alias";
-						}
-						else {
-							$newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
-						}
-					}
-					else {
-						if ( stristr('ISNULL',$field) ) {
-							$newField .= "$field + ";
-						}
-						else {
-							$newField .= "ISNULL({$field},' ') + ";
-						}
-					}
-				}
-				$field_list_name_array[$currCount] = $newField;
-			} else {
-				$fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
-				$loopCount = 0;
-				foreach ( $fieldsInField as $field ) {
-					$field = trim($field);
-					//if it has a space, then it is aliased, let's process
-					//to see if it has a period
-					$has_space = strrpos($field, " ");
-						if($has_space){
-							$temp_field_name = substr($field,0,$has_space);
-							$has_period = strrpos($temp_field_name, ".");
-							$aggregate_func = substr($temp_field_name, 0, 3);
-							$is_aggregate = false;
-							if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
-							{
-								$is_aggregate = true;
-							}
-							//has period, and is aliased, so wrap an "ISNULL function around it"
-							// get field type, and don't wrap numeric or date fields with ISNULL
-							$field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
-							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
-								$temp_field_alias  = substr($field,$has_space+1);
-								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-								
-								if($loopCount > 0)
-								{
-								    $field_list_name_array[$currCount] .= ", ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
-								} else {
-									$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
-								}
-								
-								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
-								{
-									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
-								}
-							} else if(!$is_aggregate && !empty($field_type) && $field_type == 'currency') {
+                $fieldsInField = explode('+',trim($field_list_name_array[$currCount]));
+                $newField = '';
+                foreach ( $fieldsInField as $field ) {
+                    $field = trim($field);
+                    //if it has a space, then it is aliased, let's process
+                    //to see if it has a period
+                    $has_space = strrpos($field, " ");
+                    if($has_space && !stristr("' '",$field)){
+                        $temp_field_name = substr($field,0,$has_space);
+                        $temp_field_alias  = substr($field,$has_space+1);
+                        if ( stristr('ISNULL',$temp_field_name) ) {
+                            $newField .= "$temp_field_name $temp_field_alias";
+                        }
+                        else {
+                            $newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
+                        }
+                    }
+                    else {
+                        if ( stristr('ISNULL',$field) ) {
+                            $newField .= "$field + ";
+                        }
+                        else {
+                            $newField .= "ISNULL({$field},' ') + ";
+                        }
+                    }
+                }
+                $field_list_name_array[$currCount] = $newField;
+            } else {
+                $fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
+                $loopCount = 0;
+                foreach ( $fieldsInField as $field ) {
+                    $field = trim($field);
+                    //if it has a space, then it is aliased, let's process
+                    //to see if it has a period
+                    $has_space = strrpos($field, " ");
+                        if($has_space){
+                            $temp_field_name = substr($field,0,$has_space);
+                            $has_period = strrpos($temp_field_name, ".");
+                            $aggregate_func = substr($temp_field_name, 0, 3);
+                            $is_aggregate = false;
+                            if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
+                            {
+                                $is_aggregate = true;
+                            }
+                            //has period, and is aliased, so wrap an "ISNULL function around it"
+                            // get field type, and don't wrap numeric or date fields with ISNULL
+                            $field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
+                            if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
+                                $temp_field_alias  = substr($field,$has_space+1);
+                                $field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
+                                
+                                if($loopCount > 0)
+                                {
+                                    $field_list_name_array[$currCount] .= ", ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+                                } else {
+                                    $field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
+                                }
+                                
+                                for ( $i = 0; $i < count($this->order_by_arr); $i++ )
+                                {
+                                    $this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
+                                }
+                            } else if(!$is_aggregate && !empty($field_type) && $field_type == 'currency') {
 
-								if($loopCount > 0)
-								{
-								    $field_list_name_array[$currCount] .= ", " . $field;
-								} else {
-									$field_list_name_array[$currCount] = $field;
-								}								
-								
-							}
-					    } //if($has_space)
-					    
-					    $loopCount++;
-				} //foreach
-			}
-			$currCount = $currCount+1;
+                                if($loopCount > 0)
+                                {
+                                    $field_list_name_array[$currCount] .= ", " . $field;
+                                } else {
+                                    $field_list_name_array[$currCount] = $field;
+                                }                               
+                                
+                            }
+                        } //if($has_space)
+                        
+                        $loopCount++;
+                } //foreach
+            }
+            $currCount = $currCount+1;
         }
 
        $this->$field_list_name = $field_list_name_array;
@@ -1738,7 +1738,7 @@ print "<BR>";
                             //the order list in the defined order
                             if ($multiple>1 || $multiple_order_bys >1){
                                 if(strpos($oba,'=')){
-									foreach($order_by as $ob){
+                                    foreach($order_by as $ob){
                                         if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
                                         if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
                                         $ob = trim($ob);
@@ -1755,14 +1755,14 @@ print "<BR>";
                                     //there are multiple order by's, but order is not defined, so lets iterate through and
                                     //create the order by string
                                     $sep = strrpos($oba," ");
-                               	 	if(!$first)
-                               	 		$order_by_string2 .= ', ';
+                                    if(!$first)
+                                        $order_by_string2 .= ', ';
                                     $ASC_DESC2 = (strrpos($oba,"ASC") !== false) ? "ASC":((strrpos($oba,"DESC") !== false)?"DESC": (!empty($ASC_DESC)?$ASC_DESC:"DESC"));
                                     if($sep){
                                         $order_by_string2 .= substr($oba,0,$sep);
                                     }
                                     else{
-                                    	$order_by_string2 .= $oba;
+                                        $order_by_string2 .= $oba;
                                     }
                                     $first = false;
                                 }
@@ -1773,7 +1773,7 @@ print "<BR>";
                             }
                         }
                         if (!empty($ASC_DESC2))
-  	                      $order_by_string2 .= ' '.$ASC_DESC2;
+                          $order_by_string2 .= ' '.$ASC_DESC2;
                 //If there were multiple order by's and a group by in the array, then create the Order By
                 //SQL string using the "CharAt" function.  If there were not, then
                 //we don't need to process as it is already defaulted to the entire string
@@ -1783,7 +1783,7 @@ print "<BR>";
                         $order_by_string = "CharIndex(".$groupby." + '``', '". $order_by_string  ."') ". $ASC_DESC ;
                         //#27518
                         if(!empty($order_by_string2)){
-                        	$order_by_string .= ' ,'.$order_by_string2;
+                            $order_by_string .= ' ,'.$order_by_string2;
                         }
                         //end
                     }
@@ -1795,8 +1795,6 @@ print "<BR>";
                 	else{
                 		$query .= " ORDER BY ". $order_by_string;
             		}
-
-                    }
              }else{
                 $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
              }
@@ -1811,34 +1809,34 @@ print "<BR>";
     }
 
 
-	function get_summary_header_row()
-	{
-		$this->layout_manager->setAttribute('list_type','summary');
-		// this needs to be fixed.. turn on summary sorting
-	//	$this->layout_manager->setAttribute('no_sort','1');
-		$header_row = $this->get_header_row_generic('summary_columns');
-		return  $header_row;
-	}
-
-	function get_total_header_row($exporting = false)
-	{
-		$this->layout_manager->setAttribute('list_type','summary');
-		$this->layout_manager->setAttribute('no_sort','1');
-		$header_row = $this->get_header_row_generic('summary_columns',true, $exporting);
-		return  $header_row;
-	}
-
-	function get_header_row($column_field_name = 'display_columns',$skip_non_group=false, $exporting = false)
-	{
-		$this->layout_manager->setAttribute('list_type','columns');
-
-		$header_row = $this->get_header_row_generic($column_field_name, $skip_non_group, $exporting);
-		return  $header_row;
-	}
-
-    function get_header_row_generic($column_field_name = 'display_columns', $skip_non_group=false, $exporting = false)
+    function get_summary_header_row()
     {
-    	if ( $this->plain_text_output == true) {
+        $this->layout_manager->setAttribute('list_type','summary');
+        // this needs to be fixed.. turn on summary sorting
+    //  $this->layout_manager->setAttribute('no_sort','1');
+        $header_row = $this->get_header_row_generic('summary_columns');
+        return  $header_row;
+    }
+
+    function get_total_header_row($exporting = false)
+    {
+        $this->layout_manager->setAttribute('list_type','summary');
+        $this->layout_manager->setAttribute('no_sort','1');
+        $header_row = $this->get_header_row_generic('summary_columns',true, $exporting);
+        return  $header_row;
+    }
+
+    function get_header_row($column_field_name = 'display_columns',$skip_non_group=false, $exporting = false, $force_distinct = false)
+    {
+        $this->layout_manager->setAttribute('list_type','columns');
+
+        $header_row = $this->get_header_row_generic($column_field_name, $skip_non_group, $exporting, $force_distinct);
+        return  $header_row;
+    }
+
+    function get_header_row_generic($column_field_name = 'display_columns', $skip_non_group=false, $exporting = false, $force_distinct = false)
+    {
+        if ( $this->plain_text_output == true) {
             $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
         }
         else {
@@ -1943,14 +1941,14 @@ print "<BR>";
 
             //if summary, but not the total summary, and doing the chart
             if($skip_non_group == false && $column_field_name == 'summary_columns' && $this->do_chart == true) {
-//            	$this->layout_manager->setAttribute('context', 'HeaderCellPlain');
+//              $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
                 $chart_header = array();
                 $chart_header['label'] = $this->layout_manager->widgetDisplay($display_column);
                 $chart_header['column_key'] = $column_key;
                 array_push($this->chart_header_row,$chart_header);
             }
             elseif($skip_non_group == true && $column_field_name == 'summary_columns' && $this->do_chart == true) {
-            	$this->layout_manager->setAttribute('context', 'HeaderCellPlain');
+                $this->layout_manager->setAttribute('context', 'HeaderCellPlain');
                 $chart_header = array();
                 $chart_header['label'] = $this->layout_manager->widgetDisplay($display_column);
                 $chart_header['column_key'] = $column_key;
@@ -1959,67 +1957,84 @@ print "<BR>";
 
         } // END foreach
 
+        // Bug 29829 Make sure the header names are distinct labels for sugarpdf writeCellTable()
+        if ($force_distinct) {
+            $distinct_labels = array();
+            for ($i= 0 ; $i < sizeof($header_row); $i++) {
+                $label = $header_row[$i];
+                if (!in_array($label, $distinct_labels)) {
+                    $distinct_labels[] = $label;
+                } else {
+                    while (in_array($label, $distinct_labels)) {
+                        $label .= ' ';
+                    }
+                    $distinct_labels[] = $label;
+                }
+            }
+            $header_row = $distinct_labels;
+        }
+        
         return $header_row;
     }
 
-	function get_summary_total_row($exporting = false)
-	{
-		$this->_load_currency();
-		$get_next_row = $this->get_next_row('total_result','summary_columns',true, $exporting);
-		return $get_next_row;
-	}
-
-	function get_summary_next_row()
-	{
+    function get_summary_total_row($exporting = false)
+    {
         $this->_load_currency();
-		$get_next_row = $this->get_next_row('summary_result','summary_columns');
-		$this->current_summary_row_count = $get_next_row['count'];
+        $get_next_row = $this->get_next_row('total_result','summary_columns',true, $exporting);
+        return $get_next_row;
+    }
+
+    function get_summary_next_row()
+    {
+        $this->_load_currency();
+        $get_next_row = $this->get_next_row('summary_result','summary_columns');
+        $this->current_summary_row_count = $get_next_row['count'];
 //print "<BR>SUMMAYR COUNT:".$this->current_summary_row_count."<BR>";
     //$get_next_row['anch'] = '';
 
 
-		return $get_next_row;
-	}
+        return $get_next_row;
+    }
 
-	function get_next_child_row($result_name){
-		if(empty($this->child_filter ))return false;
-		$db_row = $this->db->fetchByAssoc($this->$result_name);
-		if(!$db_row)return false;
-		$fields  = array();
-		foreach($db_row as $key=>$value)
-		{
-			$fields[strtoupper($key)] = $value;
-		}
-			$this->_load_currency();
-		// here we want to make copies, so use foreach
-		$cells = array();
-		foreach($this->report_def['display_columns'] as $display_column)
-		{
-			$display_column['table_alias'] = $this->getTableFromField($display_column);
-			$display_column['fields'] = $fields;
+    function get_next_child_row($result_name){
+        if(empty($this->child_filter ))return false;
+        $db_row = $this->db->fetchByAssoc($this->$result_name);
+        if(!$db_row)return false;
+        $fields  = array();
+        foreach($db_row as $key=>$value)
+        {
+            $fields[strtoupper($key)] = $value;
+        }
+            $this->_load_currency();
+        // here we want to make copies, so use foreach
+        $cells = array();
+        foreach($this->report_def['display_columns'] as $display_column)
+        {
+            $display_column['table_alias'] = $this->getTableFromField($display_column);
+            $display_column['fields'] = $fields;
 
-			$this->register_field_for_query($display_column);
-
-
-
-		if ( $this->plain_text_output == true)
-		{
-			$this->layout_manager->setAttribute('context', 'ListPlain');
-		} else {
-			$this->layout_manager->setAttribute('context', 'List');
-		}
-			$display = $this->layout_manager->widgetDisplay($display_column);
-			$cells[] = $display;
-		}
+            $this->register_field_for_query($display_column);
 
 
-		return $cells;
+
+        if ( $this->plain_text_output == true)
+        {
+            $this->layout_manager->setAttribute('context', 'ListPlain');
+        } else {
+            $this->layout_manager->setAttribute('context', 'List');
+        }
+            $display = $this->layout_manager->widgetDisplay($display_column);
+            $cells[] = $display;
+        }
 
 
-	}
+        return $cells;
 
-	function getDataTypeForColumnsForMatrix($column_field_name = 'summary_columns') {
-		$labelToDataTypeArray = array();
+
+    }
+
+    function getDataTypeForColumnsForMatrix($column_field_name = 'summary_columns') {
+        $labelToDataTypeArray = array();
         foreach($this->report_def[$column_field_name] as $display_column) {
             $display_column['table_alias'] = $this->getTableFromField($display_column);
             $this->register_field_for_query($display_column);
@@ -2050,19 +2065,19 @@ print "<BR>";
 				$this->child_filter_by =$db_row[$this->child_filter_name];
 			}
             else {
-				$this->child_filter = '';
-				$this->child_filter_by = '';
-				$this->child_filter_name = '';
-			}
-		}
+                $this->child_filter = '';
+                $this->child_filter_by = '';
+                $this->child_filter_name = '';
+            }
+        }
 
-		$row = array();
-		$cells = array();
-		$fields = array();
+        $row = array();
+        $cells = array();
+        $fields = array();
 
-		foreach($db_row as $key=>$value) {
-			$fields[strtoupper($key)] = $value;
-		}
+        foreach($db_row as $key=>$value) {
+            $fields[strtoupper($key)] = $value;
+        }
 
 		// here we want to make copies, so use foreach
 
@@ -2071,17 +2086,17 @@ print "<BR>";
 
             $this->register_field_for_query($display_column);
 
-			if($skip_non_summary_columns &&   empty($display_column['group_function'])) {
+            if($skip_non_summary_columns &&   empty($display_column['group_function'])) {
                 if($exporting || $this->plain_text_output)
                     array_push($cells, ' ');
                 else
                     array_push($cells, '&nbsp;');
                 continue;
-			}
-			$display_column['fields'] = $fields;
+            }
+            $display_column['fields'] = $fields;
 
-    		if ( $this->plain_text_output == true) {
-    		     /*nsingh: bug 13554- date and time fields must be displayed using user's locale settings.
+            if ( $this->plain_text_output == true) {
+                 /*nsingh: bug 13554- date and time fields must be displayed using user's locale settings.
                  * Since to_pdf uses plain_text_output=true, we handle the date and time case here by using the 'List' context of the layout_manager
                  */
                 if($display_column['type']=='date' || $display_column['type']=='time'|| $display_column['type']=='datetimecombo')
@@ -2102,6 +2117,7 @@ print "<BR>";
 
 				if (isset($display_column['group_function'])) {
             		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
+
                 } else {
                     unset($field_name);
                 }          
@@ -2132,14 +2148,15 @@ print "<BR>";
 			} else {
 				if (isset($display_column['group_function'])) {
             		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
+
                 } else {
                     unset($field_name);
                 }          
               
                 if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-                
+
             	if (isset($display_column['fields'][$field_name]))
             	{
             		$display = $display_column['fields'][$field_name];
@@ -2151,6 +2168,7 @@ print "<BR>";
 			    $params['convert'] = true;
 			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
 			    $display = currency_format_number($display, $params);          	
+
             }
             		
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
@@ -2164,12 +2182,12 @@ print "<BR>";
             	if (array_key_exists($field_name, $display_column['fields'])) {
             		$displayData = $display_column['fields'][$field_name];
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum'  || $display_column['type'] == 'enum' && $displayData != '0')) {
-            		  $display = "";
-            		}
-            		if ($display_column['type'] == 'int') {
-            			$display = $displayData;
-            		} // if
-            	} // if
+                      $display = "";
+                    }
+                    if ($display_column['type'] == 'int') {
+                        $display = $displayData;
+                    } // if
+                } // if
             } // if
 
             //  for charts
@@ -2193,7 +2211,7 @@ print "<BR>";
 
         $row['cells'] = $cells;
 
-		if( ! empty($db_row['count'])) {
+        if( ! empty($db_row['count'])) {
             $row['count'] = $db_row['count'];
         }
 
@@ -2347,14 +2365,23 @@ print "<BR>";
     return $modules;
   }
 
-    private function getTruncatedColumnAlias($column_name)
-    {
-        if(empty($column_name) || !is_string($column_name) || strlen($column_name) < 28) {
-            return $column_name;
-        }
 
-        return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));
-    }
+  /**
+   * getTruncatedColumnAlias
+   * This function ensures that a column alias is no more than 28 characters.  Shoulud the column_name
+   * argument exceed 28 charcters, it creates an alias using the first 22 characters of the column_name
+   * plus an md5 of the first 6 characters of the lowercased column_name value.
+   *
+   */
+  private function getTruncatedColumnAlias($column_name)
+  {
+      if(empty($column_name) || !is_string($column_name) || strlen($column_name) < 28)
+      {
+         return $column_name;
+      }
+      
+      return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));   
+  }
 }
 
 ?>

@@ -214,8 +214,7 @@ EOHTML;
 		$results = array();
 		require_once 'include/SearchForm/SearchForm2.php' ;
 		$where = '';
-
-		$searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
+        $searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
 		if($offset !== -1){

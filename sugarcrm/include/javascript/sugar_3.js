@@ -68,6 +68,7 @@ if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
     	SUGAR.Studio= {};
     	SUGAR.contextMenu= {};
 
+    	SUGAR.config= {};
 
 var nameIndex = 0;
 var typeIndex = 1;
@@ -363,33 +364,6 @@ function isNumeric(s) {
    }
 }
 
-function stripCharsInBag(s, bag) {
-	var i;
-    var returnString = "";
-    // Search through string's characters one by one.
-    // If character is not in bag, append to returnString.
-    for (i = 0; i < s.length; i++){
-        var c = s.charAt(i);
-        if (bag.indexOf(c) == -1) returnString += c;
-    }
-    return returnString;
-}
-
-function daysInFebruary(year) {
-	// February has 29 days in any year evenly divisible by four,
-    // EXCEPT for centurial years which are not also divisible by 400.
-    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
-}
-
-function DaysArray(n) {
-	for (var i = 1; i <= n; i++) {
-		this[i] = 31
-		if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
-		if (i==2) {this[i] = 29}
-   }
-   return this
-}
-
 var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
 var date_reg_format = '([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})'
 function isDate(dtStr) {
@@ -514,8 +488,14 @@ function isValidEmail(emailStr) {
 	reg = /@.*?,/g;
 	while ((results = reg.exec(emailStr)) != null) {
 			orignial = results[0];
+			var check = results[0].substr(1);// bug 42259 - "Error Encountered When Trying to Send to Multiple Recipients with Commas in Name"
+			 // if condition to check the presence of @ charcater before replacing ','
+			//now if ',' is used to separate two email addresses, then only it will be replaced by ::;::
+		   //if name has ',' e.g. smith, jr ',' will not be replaced (which was causing the given problem)
+			if(check.indexOf('@') !=-1){
 			parsedResult = results[0].replace(',', '::;::');
 			emailStr = emailStr.replace (orignial, parsedResult);
+			}
 	}
 
 	// mfh: bug 15010 - more practical implementation of RFC 2822 from http://www.regular-expressions.info/email.html, modifed to accept CAPITAL LETTERS
@@ -1651,6 +1631,10 @@ function snapshotForm(theForm) {
 function initEditView(theForm) {
     if (SUGAR.util.ajaxCallInProgress()) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
+    	return;
+    }
+    // we don't need to check if the data is changed in the search popup
+    if (theForm.id == 'popup_query_form') {
     	return;
     }
 	if ( typeof editViewSnapshots == 'undefined' ) {
@@ -2967,8 +2951,8 @@ SUGAR.savedViews = function() {
 			         hideTabsDef.push(hideTabs.options[i].value);
 				}
 			}
-
-			document.getElementById('displayColumnsDef').value = displayColumnsDef.join('|');
+			if (!SUGAR.savedViews.clearColumns)
+				document.getElementById('displayColumnsDef').value = displayColumnsDef.join('|');
 			document.getElementById('hideTabsDef').value = hideTabsDef.join('|');
 		},
 
@@ -3192,7 +3176,7 @@ SUGAR.searchForm = function() {
                     }
                 }
             }
-
+			SUGAR.savedViews.clearColumns = true;
 		}
 	};
 }();
@@ -3256,6 +3240,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			left_to_right: function(left_name, right_name, left_size, right_size) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 
@@ -3341,6 +3326,7 @@ SUGAR.tabChooser = function () {
 
 
 			right_to_left: function(left_name, right_name, left_size, right_size, max_left) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 
@@ -3427,6 +3413,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			up: function(name, left_name, right_name) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 			    var td = document.getElementById(name+'_td');
@@ -3462,6 +3449,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			down: function(name, left_name, right_name) {
+				SUGAR.savedViews.clearColumns = false;
 			   	var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 			    var td = document.getElementById(name+'_td');

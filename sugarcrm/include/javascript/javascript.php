@@ -250,8 +250,7 @@ class javascript{
                 $returnstring .= $this->buildStringToTranslateInSmarty($astring);
             return $returnstring;
         }
-
-        return "{/literal}{sugar_translate label='$string' module='{$this->sugarbean->module_dir}'}{literal}";
+        return "{/literal}{sugar_translate label='$string' module='{$this->sugarbean->module_dir}' for_js=true}{literal}";
     }
 }
 ?>

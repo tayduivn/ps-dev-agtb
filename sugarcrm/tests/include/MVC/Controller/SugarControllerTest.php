@@ -13,7 +13,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
-    
+
     public function testSetup()
     {
         $controller = new SugarControllerMock;
@@ -86,7 +86,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
     public function testCallLegacyCodeIfNewDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -96,6 +96,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
         $controller->do_action = 'DetailView';
+
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -103,7 +104,8 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
+
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -114,6 +116,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
         $controller->do_action = 'DetailView';
+
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -121,7 +124,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
     public function testCallLegacyCodeIfCustomLegacyDetailViewAndNewDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -133,6 +136,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
         $controller->do_action = 'DetailView';
+
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -140,7 +144,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
     public function testCallLegacyCodeIfLegacyDetailViewAndCustomNewDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -159,7 +163,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomLegacyDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -172,6 +176,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
         $controller->do_action = 'DetailView';
+
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -179,7 +184,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomNewDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -199,7 +204,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-    
+
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomLegacyDetailViewFoundAndCustomNewDetailViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
@@ -213,6 +218,7 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
         $controller->do_action = 'DetailView';
+
         $controller->view = 'list';
         $controller->callLegacyCode();
         

@@ -63,9 +63,9 @@ function portal_login($portal_auth, $user_name, $application_name){
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
     global $current_user;
-    //BEGIN SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     $sessionManager = new SessionManager();
-    //END SUGARCRM flav=ent ONLY
+    //END SUGARCRM flav=pro ONLY
 
     if($user_name == 'lead'){
         session_start();
@@ -73,12 +73,12 @@ function portal_login($portal_auth, $user_name, $application_name){
         $_SESSION['ip_address'] = query_client_ip();
         $_SESSION['portal_id'] = $current_user->id;
         $_SESSION['type'] = 'lead';
-        //BEGIN SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'lead';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav=pro ONLY
         login_success();
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
     }else if($user_name == 'portal'){
@@ -87,12 +87,12 @@ function portal_login($portal_auth, $user_name, $application_name){
         $_SESSION['ip_address'] = query_client_ip();
         $_SESSION['portal_id'] = $current_user->id;
         $_SESSION['type'] = 'portal';
-        //BEGIN SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'portal';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav=pro ONLY
         $GLOBALS['log']->debug("Saving new session");
         login_success();
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
@@ -111,12 +111,12 @@ function portal_login($portal_auth, $user_name, $application_name){
         $_SESSION['team_set_id'] = $contact->team_set_id;
         //END SUGARCRM flav=pro ONLY
         $_SESSION['assigned_user_id'] = $contact->assigned_user_id;
-        //BEGIN SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'contact';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav=pro ONLY
         login_success();
         build_relationship_tree($contact);
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
@@ -149,9 +149,9 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
     global $current_user;
-    //BEGIN SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     $sessionManager = new SessionManager();
-    //END SUGARCRM flav=ent ONLY
+    //END SUGARCRM flav=pro ONLY
     $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$contact_portal_auth['user_name'], 'portal_password' => $contact_portal_auth['password'], 'portal_active'=>'1', 'deleted'=>0) );
 
     if($contact != null){
@@ -167,12 +167,12 @@ function portal_login_contact($portal_auth, $contact_portal_auth, $application_n
         $_SESSION['team_set_id'] = $contact->team_set_id;
         
         $_SESSION['assigned_user_id'] = $contact->assigned_user_id;
-        //BEGIN SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager->session_type = 'contact';
         $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
         $sessionManager->session_id = session_id();
         $sessionManager->save();
-        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav=pro ONLY
         login_success();
         build_relationship_tree($contact);
         return array('id'=>session_id(), 'error'=>$error->get_soap_array());
@@ -225,10 +225,10 @@ $server->register(
 function portal_logout($session){
     $error = new SoapError();
     if(portal_validate_authenticated($session)){
-        //BEGIN SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $sessionManager = new SessionManager();
         $sessionManager->archiveSession($session);
-        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav=pro ONLY
         session_destroy();
         return $error->get_soap_array();
     }
@@ -376,10 +376,15 @@ $server->register(
 function portal_get_entry($session, $module_name, $id,$select_fields ){
     global  $beanList, $beanFiles;
     $error = new SoapError();
+    
     if(!portal_validate_authenticated($session)){
         $error->set_error('invalid_session');
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
+    
+    //set the working module
+    set_module_in(array('list'=>array($id=>$id), 'in'=>'('.$id.')'), $module_name);
+    
     if($_SESSION['type'] == 'lead'){
         $error->set_error('no_access');
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());

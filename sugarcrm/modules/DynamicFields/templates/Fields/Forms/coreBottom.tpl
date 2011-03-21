@@ -45,7 +45,7 @@
 <td>
 	<input type="checkbox" name="reportableCheckbox" value="1" {if !empty($vardef.reportable)}CHECKED{/if} {if $hideLevel > 5}disabled{/if} 
 	onClick="if(this.checked) document.getElementById('reportable').value=1; else document.getElementById('reportable').value=0;"/>
-	<input type="hidden" name="reportable" id="reportable" value="{$vardef.reportable}">
+	<input type="hidden" name="reportable" id="reportable" value="{if !empty($vardef.reportable)}{$vardef.reportable}{else}0{/if}">
 </td>
 </tr>
 {/if}

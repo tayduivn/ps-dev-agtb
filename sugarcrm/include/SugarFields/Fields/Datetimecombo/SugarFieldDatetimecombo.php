@@ -32,6 +32,12 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         return $this->fetch($this->findTemplate('EditView'));
     }
 
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
+    {
+        $displayParams['showFormats'] = true;
+        return $this->getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 
     	 if($this->isRangeSearchView($vardef)) {

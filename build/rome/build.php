@@ -78,7 +78,7 @@ if(!empty($config['base_dir'])){
 	if(!empty($config['latin'])){
 		echo "\nImporting Languages\n\n";
 		require_once('Latin.php');
-		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir']);
+		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir'], $config['ver']);
 		$latin->copyTranslations();
 	}
 

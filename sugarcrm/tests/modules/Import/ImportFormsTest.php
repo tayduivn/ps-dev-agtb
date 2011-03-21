@@ -171,4 +171,17 @@ class ImportFormsTest extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->assertNotContains('manufacturer_status_dom',$html);
     }
     //END SUGARCRM flav=pro ONLY
+
+    /**
+     * @group bug41447
+     */
+    public function testGetControlDatetimecombo()
+    {
+        $html = getControl('Calls','date_start');
+
+        global $timedate;
+        $string = '", "' . $timedate->get_user_time_format() . '", "';
+
+        $this->assertContains($string, $html);
+    }
 }

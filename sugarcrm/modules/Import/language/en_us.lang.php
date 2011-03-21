@@ -36,9 +36,9 @@ global $timedate;
  
 $mod_strings = array (
     'LBL_GOOD_FILE' => 'Import File Read Successfully',
-    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Records skipped due to error',
-    'LBL_UPDATE_SUCCESSFULLY' => 'Records updated successfully',
-    'LBL_SUCCESSFULLY_IMPORTED' => 'Records created successfully',
+    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'records were not imported due to error.',
+    'LBL_UPDATE_SUCCESSFULLY' => 'records updated successfully',
+    'LBL_SUCCESSFULLY_IMPORTED' => 'records created successfully',
     'LBL_STEP_4_TITLE' => 'Step 4: Import File',
     'LBL_STEP_5_TITLE' => 'Step 5: View Results',
     'LBL_CUSTOM_ENCLOSURE' => 'Fields Qualified By:',
@@ -217,6 +217,7 @@ $mod_strings = array (
     'LBL_NO_LINES' => 'There were no lines in your import file',
     'LBL_FILE_ALREADY_BEEN_OR' => 'The import file has already been processed or does not exist',
     'LBL_SUCCESS' => 'Success:',
+	'LBL_FAILURE' => 'Import Failed:',
     'LBL_SUCCESSFULLY' => 'Successfully imported',
     'LBL_LAST_IMPORT_UNDONE' => 'Your last import was undone',
     'LBL_NO_IMPORT_TO_UNDO' => 'There was no import to undo.',
@@ -230,9 +231,9 @@ $mod_strings = array (
     'LBL_LAST_IMPORTED'=>'Last Created',
     'ERR_MULTIPLE_PARENTS' => 'You can only have one Parent ID defined',
     'LBL_DUPLICATES' => 'Duplicates Found',
-    'LNK_DUPLICATE_LIST' => 'Download List of Duplicates',
-    'LNK_ERROR_LIST' => 'Download List of Errors',
-    'LNK_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Download records that could not be imported.',
+    'LNK_DUPLICATE_LIST' => 'Download list of duplicates',
+    'LNK_ERROR_LIST' => 'Download list of errors',
+    'LNK_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Download list of records that were not imported',
     'LBL_UNIQUE_INDEX' => 'Choose index for duplicate comparison',
     'LBL_VERIFY_DUPS' => 'Verify duplicate entries against selected indexes.',
     'LBL_INDEX_USED' => 'Index(es) used:',
@@ -303,5 +304,6 @@ $mod_strings = array (
     'LBL_IMPORT_STARTED' => 'Import Started:',
     'LBL_IMPORT_FILE_SETTINGS' => 'Import File Settings',
     'LBL_RECORD_CANNOT_BE_UPDATED' => 'The record could not be updated due to a permissions issue',
+    'LBL_DELETE_MAP_CONFIRMATION' => 'Are you sure you want to delete this mapping?',
 );
 ?>

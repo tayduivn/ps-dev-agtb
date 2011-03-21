@@ -929,6 +929,7 @@ function return_app_list_strings_language($language)
         $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
     }
     
+
     foreach ( $langs as $lang ) {
         if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
             $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
@@ -1010,6 +1011,7 @@ function return_application_language($language)
 	if ($default_language != 'en_us' && $language != $default_language) {
 	    $langs[] = $default_language;
 	}
+
 	$langs[] = $language;
 	
 	$app_strings_array = array();

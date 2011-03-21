@@ -3,7 +3,6 @@ require_once('modules/Emails/EmailUI.php');
 
 class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_user = null;
     private $_folders = null;
     
     public function setUp()
@@ -12,6 +11,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
         $this->eui = new EmailUIMock();
+
         $this->_folders = array();
 		
 		$beanList = array();
@@ -23,7 +23,12 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown()
     {
-        unset($this->eui);
+        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
+        foreach ($this->_folders as $f) {
+            $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
+            $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
+        }
+        
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         
