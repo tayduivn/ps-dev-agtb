@@ -60,6 +60,19 @@ function {$id}_range_change(val)
   document.getElementById("{$id}_range_div").style.display = calculate_between ? 'none' : '';
   document.getElementById("{$id}_between_range_div").style.display = calculate_between ? '' : 'none';
 {rdelim}
+
+var {$id}_range_reset = function()
+{ldelim}
+{$id}_range_change('=');
+{rdelim}
+
+YAHOO.util.Event.onDOMReady(function() {ldelim}
+if(document.getElementById('search_form_clear'))
+{ldelim}
+YAHOO.util.Event.addListener('search_form_clear', 'click', {$id}_range_reset);
+{rdelim}
+
+{rdelim});
 </script>
 
 <span style="white-space:nowrap !important;">
