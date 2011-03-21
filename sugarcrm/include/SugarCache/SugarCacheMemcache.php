@@ -59,9 +59,6 @@ class SugarCacheMemcache extends SugarCacheAbstract
     
     /**
      * @see SugarCacheAbstract::__construct()
-     *
-     * For this backend, we'll read from the SugarCacheFile::_cacheFileName file into 
-     * the SugarCacheFile::$localCache array.
      */
     public function __construct()
     {
@@ -87,8 +84,6 @@ class SugarCacheMemcache extends SugarCacheAbstract
     
     /**
      * @see SugarCacheAbstract::_setExternal()
-     *
-     * Does nothing; we write to cache on destroy
      */
     protected function _setExternal(
         $key,
@@ -100,8 +95,6 @@ class SugarCacheMemcache extends SugarCacheAbstract
     
     /**
      * @see SugarCacheAbstract::_getExternal()
-     *
-     * Does nothing; we get from cache on construct
      */
     protected function _getExternal(
         $key
@@ -117,8 +110,6 @@ class SugarCacheMemcache extends SugarCacheAbstract
     
     /**
      * @see SugarCacheAbstract::_clearExternal()
-     *
-     * Does nothing; we write to cache on destroy
      */
     protected function _clearExternal(
         $key
@@ -129,8 +120,6 @@ class SugarCacheMemcache extends SugarCacheAbstract
     
     /**
      * @see SugarCacheAbstract::_resetExternal()
-     *
-     * Does nothing; we write to cache on destroy
      */
     protected function _resetExternal()
     {
