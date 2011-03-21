@@ -88,29 +88,6 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
     }
 
     /**
-     * Convert modules list to Web services result
-     *
-     * @param array $list List of module candidates (only keys are used)
-     * @param array $availModules List of module availability from Session
-     */
-    public function getModulesFromList($list, $availModules)
-    {
-        global $app_list_strings;
-        $enabled_modules = array();
-        $availModulesKey = array_flip($availModules);
-        foreach ($list as $key=>$value)
-        {
-            if( isset($availModulesKey[$key]) )
-            {
-                $label = !empty( $app_list_strings['moduleList'][$key] ) ? $app_list_strings['moduleList'][$key] : '';
-        	    $acl = self::checkModuleRoleAccess($key);
-        	    $enabled_modules[] = array('module_key' => $key,'module_label' => $label, 'acls' => $acl);
-            }
-        }
-        return $enabled_modules;
-    }
-
-    /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
      * @param array $availModules An array of all the modules the user already has access to.

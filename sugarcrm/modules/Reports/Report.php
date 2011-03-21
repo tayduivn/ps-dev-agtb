@@ -1795,6 +1795,7 @@ print "<BR>";
                 	else{
                 		$query .= " ORDER BY ". $order_by_string;
             		}
+                    }
              }else{
                 $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
              }
