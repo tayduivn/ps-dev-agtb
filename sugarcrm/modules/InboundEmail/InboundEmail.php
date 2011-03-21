@@ -3428,25 +3428,6 @@ class InboundEmail extends SugarBean {
 		6 => video
 		7 => other
 	*/
-	public $imap_types = array(
-		0 => 'text',
-		1 => 'multipart',
-		2 => 'message',
-		3 => 'application',
-		4 => 'audio',
-		5 => 'image',
-		6 => 'video',
-	);
-
-	public function getMimeType($type, $subtype)
-	{
-		if(isset($this->imap_types[$type])) {
-			return $this->imap_types[$type]."/$subtype";
-		} else {
-			return "other/$subtype";
-		}
-		
-	}
 
 	/**
 	Primary body types for a part of a mail structure (imap_fetchstructure returned object)
