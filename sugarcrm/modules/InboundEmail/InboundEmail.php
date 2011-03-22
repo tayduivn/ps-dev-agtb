@@ -203,7 +203,9 @@ class InboundEmail extends SugarBean {
 		//_ppd($raw);
 		$raw = $this->filterMailBoxFromRaw(explode(",", $this->mailbox), $raw);
 		$this->mailbox = implode(",", $raw);
-		$this->email_password = blowfishEncode(blowfishGetKey('InboundEmail'), $this->email_password);
+		if(!empty($this->email_password)) {
+		    $this->email_password = blowfishEncode(blowfishGetKey('InboundEmail'), $this->email_password);
+		}
 		$ret = parent::save($check_notify);
 		return $ret;
 	}
