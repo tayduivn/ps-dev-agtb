@@ -55,7 +55,8 @@ Calendar.setup = function (params) {
                     context:[showButton, "tl", "bl"],
                     buttons:[],
                     draggable:false,
-                    close:true
+                    close:true,
+                    zIndex: 1000
                 });
                 
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));
