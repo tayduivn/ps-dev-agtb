@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/EditView/EditView2.php");
+require_once("include/upload_file.php");
 
 class ViewConvertLead extends SugarView
 {
@@ -519,6 +520,9 @@ class ViewConvertLead extends SugarView
             $newActivity->parent_id = $bean->id;
 	        $newActivity->parent_type = $bean->module_dir;
 	        $newActivity->save();
+	        if ($newActivity->module_dir == "Notes" && $newActivity->filename) {
+	        	UploadFile::duplicate_file($activity->id, $newActivity->id,  $newActivity->filename);
+	        }
          }
 	}
     
