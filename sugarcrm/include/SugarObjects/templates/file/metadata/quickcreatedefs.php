@@ -70,8 +70,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	),
 
     array (
-       'category_id',
-       'subcategory_id',
+      'active_date',
     ),
     
     array (

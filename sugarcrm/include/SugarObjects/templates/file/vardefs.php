@@ -56,6 +56,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'required'=>true,
 	'importable' => 'required',
     'len' => '255',
+    'studio' => 'false',
   ),
   'file_ext' =>
   array (
