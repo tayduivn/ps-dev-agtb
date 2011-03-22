@@ -178,7 +178,7 @@ $javascript->setSugarBean($focus);
 $javascript->setFormName('EditView');
 $javascript->addRequiredFields();
 $javascript->addFieldGeneric('email_user', 'alpha', $mod_strings['LBL_LOGIN'], true);
-$javascript->addFieldGeneric('email_password', 'alpha', $mod_strings['LBL_PASSWORD'], true);
+$javascript->addFieldGeneric('email_password', 'alpha', $mod_strings['LBL_PASSWORD'], false);
 $javascript->addFieldRange('email_num_autoreplies_24_hours', 'int', $mod_strings['LBL_MAX_AUTO_REPLIES'], true, "", 1, $focus->maxEmailNumAutoreplies24Hours);
 
 $r = $focus->db->query('SELECT value FROM config WHERE name = \'fromname\'');

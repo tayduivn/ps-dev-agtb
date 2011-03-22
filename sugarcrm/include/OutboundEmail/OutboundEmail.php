@@ -47,7 +47,7 @@ class OutboundEmail {
 	var $mail_smtpssl; // bool
 	var $mail_smtpdisplay; // calculated value, not in DB
 	var $new_with_id = FALSE;
-	
+
 	/**
 	 * Sole constructor
 	 */
@@ -70,12 +70,12 @@ class OutboundEmail {
 		{
 		  $oe = new OutboundEmail();
 		  $oe->retrieve($row['id']);
-		  return $oe;   
+		  return $oe;
 		}
-		else 
+		else
 		  return null;
 	}
-	
+
 	/**
 	 * Duplicate the system account for a user, setting new parameters specific to the user.
 	 *
@@ -93,10 +93,10 @@ class OutboundEmail {
 	    $ob->mail_smtpuser = $user_name;
 	    $ob->mail_smtppass = $user_pass;
 	    $ob->save();
-	    
+
 	    return $ob;
 	}
-	
+
 	/**
 	 * Determines if a user needs to set their user name/password for their system
 	 * override account.
@@ -109,19 +109,19 @@ class OutboundEmail {
 	    $userCredentialsReq = FALSE;
 	    $sys = new OutboundEmail();
 	    $ob = $sys->getSystemMailerSettings(); //Dirties '$this'
-	    
+
 	    //If auth for system account is disabled or user can use system outbound account return false.
 	    if($ob->mail_smtpauth_req == 0 || $this->isAllowUserAccessToSystemDefaultOutbound() || $this->mail_sendtype == 'sendmail')
-	       return $userCredentialsReq; 
-	    
+	       return $userCredentialsReq;
+
 	    $userOverideAccount = $this->getUsersMailerForSystemOverride($user_id);
 	    if( $userOverideAccount == null || empty($userOverideAccount->mail_smtpuser) || empty($userOverideAccount->mail_smtpuser) )
 	       $userCredentialsReq = TRUE;
-	       
-        return $userCredentialsReq;	    
-           
+
+        return $userCredentialsReq;
+
 	}
-	
+
 	/**
 	 * Retrieves name value pairs for opts lists
 	 */
@@ -134,15 +134,15 @@ class OutboundEmail {
 		$ret = array();
 
 		$system = $this->getSystemMailerSettings();
-		
+
 		//Now add the system default or user override default to the response.
-		if(!empty($system->id) ) 
+		if(!empty($system->id) )
 		{
-			if ($system->mail_sendtype == 'SMTP') 
+			if ($system->mail_sendtype == 'SMTP')
 			{
 			    $systemErrors = "";
                 $userSystemOverride = $this->getUsersMailerForSystemOverride($user->id);
-                
+
                 //If the user is required to to provide a username and password but they have not done so yet,
         	    //create the account for them.
         	     $autoCreateUserSystemOverride = FALSE;
@@ -151,15 +151,15 @@ class OutboundEmail {
         		      $systemErrors = $app_strings['LBL_EMAIL_WARNING_MISSING_USER_CREDS'];
         		      $autoCreateUserSystemOverride = TRUE;
         		 }
-                 
+
                 //Substitute in the users system override if its available.
                 if($userSystemOverride != null)
         		   $system = $userSystemOverride;
         		else if ($autoCreateUserSystemOverride)
         	       $system = $this->createUserSystemOverrideAccount($user->id,"","");
-			    		    
+
 			    $isEditable = ($system->type == 'system') ? FALSE : TRUE; //User overrides can be edited.
-			    
+
                 if( !empty($system->mail_smtpserver) )
 				    $ret[] = array('id' =>$system->id, 'name' => "$system->name", 'mail_smtpserver' => $system->mail_smtpdisplay,
 								   'is_editable' => $isEditable, 'type' => $system->type, 'errors' => $systemErrors);
@@ -171,7 +171,7 @@ class OutboundEmail {
 			}
 		}
 
-		while($a = $this->db->fetchByAssoc($r)) 
+		while($a = $this->db->fetchByAssoc($r))
 		{
 			$oe = array();
 			if($a['mail_sendtype'] != 'SMTP')
@@ -186,7 +186,7 @@ class OutboundEmail {
 			    $oe['mail_smtpserver'] = $this->_getOutboundServerDisplay($a['mail_smtptype'],$a['mail_smtpserver']);
 			else
 			    $oe['mail_smtpserver'] = $a['mail_smtpserver'];
-			
+
 			$ret[] = $oe;
 		}
 
@@ -242,17 +242,17 @@ class OutboundEmail {
 	{
 	    $query = "SELECT id,stored_options FROM inbound_email WHERE is_personal='1' AND deleted='0' AND created_by = '{$user->id}'";
 		$rs = $this->db->query($query);
-		
+
         $results = array();
         while($row = $this->db->fetchByAssoc($rs) )
         {
             $opts = unserialize(base64_decode($row['stored_options']));
-            if( isset($opts['outbound_email']) && $opts['outbound_email'] == $this->id) 
+            if( isset($opts['outbound_email']) && $opts['outbound_email'] == $this->id)
             {
                 $results[] = $row['id'];
-            } 
+            }
 		}
-		
+
 		return $results;
 	}
 	/**
@@ -288,7 +288,7 @@ class OutboundEmail {
 		if (empty($mailer)) {
 			$mailer = "type = 'system'";
 		} // if
-		
+
 		$q = "SELECT id FROM outbound_email WHERE {$mailer}";
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
@@ -307,7 +307,7 @@ class OutboundEmail {
 	function isAllowUserAccessToSystemDefaultOutbound()
 	{
 	    $allowAccess = FALSE;
-	    
+
 	    // first check that a system default exists
 	    $q = "SELECT id FROM outbound_email WHERE type = 'system'";
 		$r = $this->db->query($q);
@@ -320,10 +320,10 @@ class OutboundEmail {
                 &&  $admin->settings['notify_allow_default_outbound'] == 2 )
                 $allowAccess = TRUE;
         }
-        
+
         return $allowAccess;
 	}
-	
+
 	/**
 	 * Retrieves the system's Outbound options
 	 */
@@ -399,7 +399,7 @@ class OutboundEmail {
 	function save() {
 		require_once('include/utils/encryption_utils.php');
 		if(empty($this->id) || $this->new_with_id) {
-		    
+
 		    if( empty($this->id) )
 			    $this->id = create_guid();
 
@@ -407,21 +407,21 @@ class OutboundEmail {
 			$values = '';
 
 			foreach($this->field_defs as $def) {
-				if(!empty($cols)) {
+			    if(!empty($cols)) {
 					$cols .= ", ";
 				}
 				if(!empty($values)) {
 					$values .= ", ";
 				}
 				$cols .= $def;
-				if ($def == 'mail_smtppass' && !empty($this->mail_smtppass)) {
-					$this->mail_smtppass = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->mail_smtppass);
+				if ($def == 'mail_smtppass' && !empty($this->$def)) {
+					$this->$def = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->$def);
 				} // if
 				if($def == 'mail_smtpauth_req' || $def == 'mail_smtpssl'){
 					if(empty($this->$def)){
-						$this->$def = 0;	
+						$this->$def = 0;
 					}
-					$values .= "{$this->$def}";
+					$values .= $this->$def;
 				}else{
 					$values .= "'{$this->$def}'";
 				}
@@ -431,16 +431,23 @@ class OutboundEmail {
 		} else {
 			$values = "";
 			foreach($this->field_defs as $def) {
-				if(!empty($values)) {
+				if ($def == 'mail_smtppass') {
+    				if(!empty($this->mail_smtppass)) {
+					    $this->mail_smtppass = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->mail_smtppass);
+				    } else {
+				        // ignore empty password unless username is empty too
+				        if(!empty($this->mail_smtpuser)) {
+				            continue;
+				        }
+				    }
+				}
+			    if(!empty($values)) {
 					$values .= ", ";
 				}
 
-				if ($def == 'mail_smtppass' && !empty($this->$def)) {
-					$this->$def = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->$def);
-				} // if
 				if($def == 'mail_smtpauth_req' || $def == 'mail_smtpssl'){
 					if(empty($this->$def)){
-						$this->$def = 0;	
+						$this->$def = 0;
 					}
 					$values .= "{$def} = {$this->$def}";
 				}else{
@@ -472,52 +479,52 @@ class OutboundEmail {
 		$this->type = 'system';
 		$this->user_id = '1';
 		$this->save();
-		
+
 		$this->updateUserSystemOverrideAccounts();
-		
+
 	}
 
 	/**
 	 * Update the user system override accounts with the system information if anything has changed.
-	 * 
+	 *
 	 */
 	function updateUserSystemOverrideAccounts()
 	{
 	    $updateFields = array('mail_smtptype','mail_sendtype','mail_smtpserver', 'mail_smtpport','mail_smtpauth_req','mail_smtpssl');
-	    
+
 	    //Update the username ans password for the override accounts if alloweed access.
 	    if( $this->isAllowUserAccessToSystemDefaultOutbound() )
 	    {
 	        $updateFields[] = 'mail_smtpuser';
 	        $updateFields[] = 'mail_smtppass';
 	    }
-	    
+
 	    $values = "";
 	    foreach ($updateFields as $singleField)
 	    {
-	        if(!empty($values)) 
+	        if(!empty($values))
 					$values .= ", ";
 	        if($singleField == 'mail_smtpauth_req' || $singleField == 'mail_smtpssl')
 	        {
 				if(empty($this->$singleField))
-				    $this->$singleField = 0;	
-				    
+				    $this->$singleField = 0;
+
                 $values .= "{$singleField} = {$this->$singleField} ";
-	        }	
+	        }
 	        else
 	            $values .= "{$singleField} = '{$this->$singleField}' ";
 	    }
-	    
+
 	    $query = "UPDATE outbound_email set {$values} WHERE type='system-override' ";
-	    
+
 	    $this->db->query($query);
 	}
 	/**
-	 * Remove all of the user override accounts.  
-	 *  
+	 * Remove all of the user override accounts.
+	 *
 	 */
 	function removeUserOverrideAccounts()
-	{	    
+	{
 	    $query = "DELETE FROM outbound_email WHERE type = 'system-override'";
 		return $this->db->query($query);
 	}
@@ -532,14 +539,14 @@ class OutboundEmail {
 		$q = "DELETE FROM outbound_email WHERE id = '{$this->id}'";
 		return $this->db->query($q);
 	}
-	
+
 	private function _getOutboundServerDisplay(
 	    $smtptype,
 	    $smtpserver
 	    )
 	{
 	    global $app_strings;
-	    
+
 	    switch ($smtptype) {
         case "yahoomail":
             return $app_strings['LBL_SMTPTYPE_YAHOO']; break;
