@@ -130,7 +130,7 @@ class ImportViewLast extends SugarView
         fclose($fp);
     
         $this->ss->assign("noSuccess",FALSE);
-        if($count == $errorCount){
+        if(($count == $errorCount) || ($dupeCount == $count)){
         	$this->ss->assign("noSuccess",TRUE);        	
         }
               

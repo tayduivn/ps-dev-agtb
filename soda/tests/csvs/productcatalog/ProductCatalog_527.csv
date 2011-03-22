@@ -1,2 +1,0 @@
-name,cost_price,list_price,discount_price,category_name,Default_Pricing_Formula,category_name_edit,status,website,date_available,tax_class,qty_in_stock,manufacturer_id,weight,mft_part_num,vendor_part_num,type_id,currency_id,support_name,support_contact,support_description,support_term,description,Pricing_Factor
-Catalog,1000,1500,1234,Laptops,Profit Margin,Desktops,In Stock,http://www.google.com,8/11/2009,Taxable,100,TekkyWare.Inc.,20,123456,789012,wihgets,US Dollars:$,1,2,3,Six months,Product Catalog_Verify that procuct catalog are display in list view.,5.5

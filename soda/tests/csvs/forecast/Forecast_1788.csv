@@ -1,2 +1,0 @@
-name,value,start_date,end_date,forecast_start_date,user_id,status,commit_best_case,commit_likely_case,commit_worst_case,opp_name,amount,date_closed,sales_stage,team_name,assigned_user_name,opportunity_type,lead_source,assigned_user_name,currency_id,probability,description,next_step
-Time Periods,9/14/2001,9/30/2100,1/1/2009,12/30/2009,admin,Active,123,456,789,WEST ARKANSAS,"21,474,836,480.00",11/11/2010,Prospecting,Administrator,Administrator,Existing Business,Conference,Administrator,US Dollars : $,10,test for account opp subpanel,to be leads

@@ -1,9 +1,0 @@
-<soda>
-	<csv file='{@global.scriptsdir}/csvs/users.csv' var='user'/>
-	<script file='{@global.scriptsdir}/modules/lib/login.xml'/>
-	<script file='{@global.scriptsdir}/modules/lib/SugarInit_Lib.xml'/>
-	<script file='{@global.scriptsdir}/modules/moduleloader/ModuleLoader_8256.xml'/><!--Upload A Custom Module Zip File-->
-	<script file='{@global.scriptsdir}/modules/moduleloader/ModuleLoader_8388.xml'/><!--Package Can Be Disable And Enable-->
-	<script file='{@global.scriptsdir}/modules/lib/logout.xml'/>
-	<browser action='close' />
-</soda>

@@ -1,8 +1,0 @@
-<soda>
-	<script file="tests/modules/quote/module_lib/setup-quote.xml" />
-	<script file="tests/modules/quote/part1/module_lib/setup-quote-part1.xml" />
-	<script fileset="tests/modules/quote/part1" />
-	<script file="tests/modules/quote/part1/module_lib/cleanup-quote-part1.xml" />
-	<script file="tests/modules/quote/module_lib/cleanup-quote.xml" />
-</soda>
-

@@ -1,8 +1,0 @@
-<soda>
-	<!-- Verify the connector link and description -->
-	<puts text="Test: Admin_9190.xml starting." />
-	<link text="Admin" />
-	<browser assert="Manage connector settings" />
-	<link text="Connectors" />
-	<puts text="Test: Admin_9190.xml finished." />
-</soda>

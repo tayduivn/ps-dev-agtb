@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,lhs_field,trigger__operator,trigger__field_value,field_1__field_value
-wf_8900,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,Name,Equals,Sugar_wf_8900,wf_8900_successful
