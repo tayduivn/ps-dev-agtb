@@ -69,6 +69,7 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/WorkFlowActions/Selector.html");
 }
 else {
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
 	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/WorkFlowActions/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/WorkFlowActions/".$_REQUEST['html'].'.html');
