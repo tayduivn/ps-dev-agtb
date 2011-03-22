@@ -57,6 +57,10 @@ class SugarFieldInt extends SugarFieldBase
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           if(file_exists('custom/include/SugarFields/Fields/Int/RangeSearchForm.tpl'))
+           {
+           	  return $this->fetch('custom/include/SugarFields/Fields/Int/RangeSearchForm.tpl');
+           } 
            return $this->fetch('include/SugarFields/Fields/Int/RangeSearchForm.tpl');
         }        
     
