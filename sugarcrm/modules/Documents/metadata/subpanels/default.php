@@ -62,6 +62,7 @@ $subpanel_layout = array(
 	 	    'vname' => 'LBL_LIST_FILENAME',
 		    'width' => '20%',
             'module' => 'Documents',
+            'sortable'=>false,
             'displayParams' => array(
                 'module' => 'Documents',
             ),
