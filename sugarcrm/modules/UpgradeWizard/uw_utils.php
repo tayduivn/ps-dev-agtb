@@ -4959,36 +4959,19 @@ function upgradeModulesForTeam() {
             //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
             logThis('new modules to add are '.var_export($newModuleList,true),$path);
 
-            //grab the existing system tabs
-            $tabs = $newTB->get_system_tabs();
-
-            //add the new tabs to the array
-            foreach($newModuleList as $nm ){
-              $tabs[$nm] = $nm;
+            if(!empty($newModuleList))
+            {
+	            //grab the existing system tabs
+	            $tabs = $newTB->get_system_tabs();
+	
+	            //add the new tabs to the array
+	            foreach($newModuleList as $nm ){
+	              $tabs[$nm] = $nm;
+	            }
+	
+	            $newTB->set_system_tabs($tabs);
             }
-
-            if(!file_exists('modules/iFrames/iFrame.php') && isset($tabs['iFrames'])){
-                unset($tabs['iFrames']);
-            }
-
-	        //Set the default order
-	        $default_order = array(
-	        	'Home'=>'Home',
-	        	'Accounts'=>'Accounts',
-	        	'Contacts'=>'Contacts',
-	        	'Opportunities'=>'Opportunities',
-	        	'Activities'=>'Activities',
-	            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-	        	'Reports'=>'Reports',
-	            //END SUGARCRM flav=pro || flav=sales ONLY
-	        	'Documents'=>'Documents'
-	        );
-	        $tabs = array_merge($default_order, $tabs);
-
-            //now assign the modules to system tabs
-            $newTB->set_system_tabs($tabs);
             logThis('module tabs updated',$path);
-
         }
     }
 
