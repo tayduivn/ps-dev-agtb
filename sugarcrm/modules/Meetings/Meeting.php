@@ -205,10 +205,6 @@ class Meeting extends SugarBean {
                         $api->inviteAttendee($this,$person,$check_notify);
                     }
 
-                    // Don't double-send if the WebMeeting API sends invites
-                    if ( $api->sendsInvites ) {
-                        $check_notify = false;
-                    }
                 }
             } else {
                 SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']);
