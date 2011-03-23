@@ -88,9 +88,9 @@ require_once 'SugarTestImportUtilities.php';
 require_once 'SugarTestMergeUtilities.php';
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestQuoteUtilities.php';
-//END SUGARCRM flav=pro ONLY
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
+//END SUGARCRM flav=pro ONLY
 
 // define our testcase subclass
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
