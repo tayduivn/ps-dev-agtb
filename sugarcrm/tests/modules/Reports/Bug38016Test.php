@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 require_once 'modules/Reports/Report.php';
 require_once 'modules/Reports/sugarpdf/sugarpdf.summary.php';
 

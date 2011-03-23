@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 require_once('include/connectors/ConnectorFactory.php');
 require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/formatters/FormatterFactory.php');

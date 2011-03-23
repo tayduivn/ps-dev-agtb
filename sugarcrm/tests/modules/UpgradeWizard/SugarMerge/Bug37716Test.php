@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY 
 require_once 'include/dir_inc.php';
 
 class Bug37716Test extends Sugar_PHPUnit_Framework_TestCase  {
