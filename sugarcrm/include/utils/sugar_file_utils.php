@@ -44,9 +44,9 @@ function sugar_mkdir($pathname, $mode=null, $recursive=false, $context='') {
 	if(empty($mode))
 		$mode = 0777;
 	if(empty($context)) {
-		$result = mkdir($pathname, $mode, $recursive);
+		$result = @mkdir($pathname, $mode, $recursive);
 	} else {
-		$result = mkdir($pathname, $mode, $recursive, $context);
+		$result = @mkdir($pathname, $mode, $recursive, $context);
 	}
 
 	if($result){
@@ -64,6 +64,10 @@ function sugar_mkdir($pathname, $mode=null, $recursive=false, $context='') {
    			}
 		}
 	}
+	else {
+	    $GLOBALS['log']->error("Cannot create directory $pathname cannot be touched");
+	}
+	
 	return $result;
 }
 
@@ -115,7 +119,7 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
 	}
 
 	if ( !is_writable($filename) ) {
-	    $GLOBALS['log']->error("File $templateName cannot be written to");
+	    $GLOBALS['log']->error("File $filename cannot be written to");
 	    return false;
 	}
 	
@@ -143,7 +147,7 @@ function sugar_file_get_contents($filename, $use_include_path=false, $context=nu
 	}
 
 	if ( !is_readable($filename) ) {
-	    $GLOBALS['log']->error("File $templateName cannot be read");
+	    $GLOBALS['log']->error("File $filename cannot be read");
 	    return false;
 	}
 	
@@ -173,15 +177,17 @@ function sugar_touch($filename, $time=null, $atime=null) {
    $result = false;
 
    if(!empty($atime) && !empty($time)) {
-   	  $result = touch($filename, $time, $atime);
+   	  $result = @touch($filename, $time, $atime);
    } else if(!empty($time)) {
-   	  $result = touch($filename, $time);
+   	  $result = @touch($filename, $time);
    } else {
-   	  $result = touch($filename);
+   	  $result = @touch($filename);
    }
 
-   if(!$result) return $result;
-
+   if(!$result) {
+       $GLOBALS['log']->error("File $filename cannot be touched");
+       return $result;
+   }
 	if(!empty($GLOBALS['sugar_config']['default_permissions']['file_mode'])){
 		sugar_chmod($filename, $GLOBALS['sugar_config']['default_permissions']['file_mode']);
 	}

@@ -842,7 +842,7 @@ EOHTML;
         foreach ( $pathsToSearch as $path )
         {
             if (!sugar_is_dir($path)) $path = "custom/$path";
-            if (sugar_is_dir($path) && $dir = opendir($path)) {
+            if (sugar_is_dir($path) && is_readable($path) && $dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".." 
                             || $file == "."
@@ -1038,7 +1038,7 @@ class SugarThemeRegistry
         }
         
         foreach ($dirs as $dirPath ) {
-            if (sugar_is_dir('./'.$dirPath) && $dir = opendir('./'.$dirPath)) {
+            if (sugar_is_dir('./'.$dirPath) && is_readable('./'.$dirPath) && $dir = opendir('./'.$dirPath)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".." 
                             || $file == "."
