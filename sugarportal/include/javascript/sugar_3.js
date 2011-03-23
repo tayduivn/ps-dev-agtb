@@ -69,17 +69,6 @@ var SUGAR = function() {
     }
 }();
 
-
-/**
- * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- */
-// Declaring valid date character, minimum year and maximum year
-var dtCh= "-";
-var minYear=1900;
-var maxYear=2100;
 var nameIndex = 0;
 var typeIndex = 1;
 var requiredIndex = 2;
@@ -207,17 +196,7 @@ function toDecimal(original) {
 }
 
 function isInteger(s) {
-	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
-		s = unformatNumber(s, num_grp_sep, dec_sep).toString();
-
-	var i;
-    for (i = 0; i < s.length; i++){
-        // Check that current character is number.
-        var c = s.charAt(i);
-        if (((c < "0") || (c > "9"))) return false;
-    }
-    // All characters are numbers.
-    return true;
+	return parseFloat(s) == parseInt(s) && !isNaN(s);
 }
 
 function isNumeric(s) {
@@ -229,44 +208,47 @@ function isNumeric(s) {
    }
 }
 
-function stripCharsInBag(s, bag) {
-	var i;
-    var returnString = "";
-    // Search through string's characters one by one.
-    // If character is not in bag, append to returnString.
-    for (i = 0; i < s.length; i++){
-        var c = s.charAt(i);
-        if (bag.indexOf(c) == -1) returnString += c;
-    }
-    return returnString;
-}
-
-function daysInFebruary(year) {
-	// February has 29 days in any year evenly divisible by four,
-    // EXCEPT for centurial years which are not also divisible by 400.
-    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
-}
-
-function DaysArray(n) {
-	for (var i = 1; i <= n; i++) {
-		this[i] = 31
-		if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
-		if (i==2) {this[i] = 29}
-   }
-   return this
-}
-
 var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
 var date_reg_format = '([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})'
 function isDate(dtStr) {
+
 	if(dtStr.length== 0) {
 		return true;
 	}
+
+    // Check that we have numbers
 	myregexp = new RegExp(date_reg_format)
 	if(!myregexp.test(dtStr))
 		return false
 
-return true
+    m = '';
+    d = '';
+    y = '';
+
+    var dateParts = dtStr.match(date_reg_format);
+    for(key in date_reg_positions) {
+        index = date_reg_positions[key];
+        if(key == 'm') {
+           m = dateParts[index];
+        } else if(key == 'd') {
+           d = dateParts[index];
+        } else {
+           y = dateParts[index];
+        }
+    }
+
+    // Check that date is real
+    var dd = new Date(y,m,0);
+    // reject negative years
+    if (y < 1)
+        return false;
+    // reject month less than 1 and greater than 12
+    if (m > 12 || m < 1)
+        return false;
+    // reject days less than 1 or days not in month (e.g. February 30th)
+    if (d < 1 || d > dd.getDate())
+        return false;
+    return true;
 }
 
 function getDateObject(dtStr) {
