@@ -1724,7 +1724,7 @@ class SugarBean
 
     function updateRelatedCalcFields()
     {
-        if (empty($this->id))
+        if (empty($this->id) || $this->new_with_id)
             return;
         global $dictionary, $updating_relationships, $saved_beans;
         if ($updating_relationships)
@@ -1778,8 +1778,11 @@ class SugarBean
                 }
             }
         }
-        if (empty($saved_beans[$this->module_name][$this->id]))
+        if (!empty($dictionary[$this->object_name]['related_calc_fields'])
+            && empty($saved_beans[$this->module_name][$this->id]))
+        {
             $this->save();
+        }
         $updating_relationships = false;
     }
     //END SUGARCRM flav=pro ONLY
