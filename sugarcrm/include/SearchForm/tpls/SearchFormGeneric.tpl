@@ -72,7 +72,7 @@
 	
 	<td  nowrap="nowrap" width='1%' 
 	   {{if isset($colData.field.type) && $colData.field.type|lower == 'bool'}}	
-            scope="row">{{$fieldLabel}}
+            scope="row" class="chkbxRow">{{$fieldLabel}}
        {{else}}
             >{{$fieldInputField}}
        {{/if}}

@@ -70,6 +70,10 @@ text-align: right;
 .search_form .view{    padding-right:10px !important;
 }
 
+.search_form  .edit tr td.chkbxRow {
+    padding-right: 0px !important;
+      padding-left: 7px !important;
+    }
 .search_form .sumbitButtons {	text-align: right;}.search_form .helpIcon {	text-align: left;}
 
 .search_form .view.advanced .help {
