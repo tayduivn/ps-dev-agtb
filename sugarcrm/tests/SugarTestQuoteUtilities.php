@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 $beanList = array();
 $beanFiles = array();
 require('include/modules.php');
