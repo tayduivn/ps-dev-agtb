@@ -747,7 +747,14 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
     }
     return results;
 }
-
+//BEGIN SUGARCRM flav=pro ONLY
+function isFieldHidden(field)
+{
+    var Dom = YAHOO.util.Dom;
+	var td = Dom.getAncestorByTagName(field, 'TD');
+	return Dom.hasClass(td, 'vis_action_hidden');
+}
+//END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
@@ -787,7 +794,12 @@ function validate_form(formname, startsWith){
                        continue;
                     }					
 					
-					if(validate[formname][i][requiredIndex] && ! isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex]) ){
+					if(validate[formname][i][requiredIndex]
+						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
+						//BEGIN SUGARCRM flav=pro ONLY
+						&& !isFieldHidden(form[validate[formname][i][nameIndex]])
+						//END SUGARCRM flav=pro ONLY
+					){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
 							isError = true;
