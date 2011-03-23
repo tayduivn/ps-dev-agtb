@@ -364,14 +364,16 @@ class ExtAPILotusLiveDirect extends OAuthPluginBase implements WebMeeting,WebDoc
         
         $searchLen = strlen($keywords);
 
-        foreach ( $docList as $doc ) {
-            if ( stristr($doc['name'],$keywords) !== FALSE ) {
-                // It matches
-                $results[] = $doc;
-                
-                if ( count($results) > 15 ) {
-                    // Only return the first 15 results
-                    break;
+        if(!empty($keywords)){
+            foreach ( $docList as $doc ) {
+                if ( stristr($doc['name'],$keywords) !== FALSE ) {
+                    // It matches
+                    $results[] = $doc;
+
+                    if ( count($results) > 15 ) {
+                        // Only return the first 15 results
+                        break;
+                    }
                 }
             }
         }
