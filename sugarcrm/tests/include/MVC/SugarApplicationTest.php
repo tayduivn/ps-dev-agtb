@@ -89,7 +89,12 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_loadUser();
         
+        //BEGIN SUGARCRM flav!=com ONLY
         $_REQUEST['usertheme'] = 'Sugar';
+        //END SUGARCRM flav!=com ONLY
+        //BEGIN SUGARCRM flav=com ONLY
+        $_REQUEST['usertheme'] = 'Sugar5';
+        //END SUGARCRM flav=com ONLY
         
         $this->_app->loadDisplaySettings();
         

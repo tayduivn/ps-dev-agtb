@@ -1,5 +1,5 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 require_once('modules/Teams/Team.php');
 require_once('include/nusoap/nusoap.php');
 

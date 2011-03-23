@@ -268,7 +268,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                     array('module' => 'Accounts','type' => 'default', 'view' => 'list','expected_file' => 'modules/Accounts/metadata/listviewdefs.php' ), 
                     array('module' => 'Accounts','type' => 'default', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/editviewdefs.php' ),  
                     array('module' => 'Accounts','type' => 'default', 'view' => 'detail','expected_file' => 'modules/Accounts/metadata/detailviewdefs.php' ),  
-                    array('module' => 'Accounts','type' => 'wireless', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/wireless.editviewdefs.php' ),  
+                    //BEGIN SUGARCRM flav=pro ONLY 
+                    array('module' => 'Accounts','type' => 'wireless', 'view' => 'edit','expected_file' => 'modules/Accounts/metadata/wireless.editviewdefs.php' ),
+                    //END SUGARCRM flav=pro ONLY 
         );
     }
 
@@ -695,7 +697,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
         $monitor = $trackerManager->getMonitor('tracker');
 
+        //BEGIN SUGARCRM flav=pro ONLY 
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
+        //END SUGARCRM flav=pro ONLY 
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
         $monitor->setValue('module_name', $module);
