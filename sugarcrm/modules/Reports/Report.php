@@ -1593,16 +1593,7 @@ print "<BR>";
 		if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
 			sugar_die($mod_strings['LBL_NO_ACCESS']);
 		if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER) {
-		    //BEGIN SUGARCRM flav=pro ONLY
-			if ( $this->focus->table_name == 'forecasts' ) {
-			    $where_auto .= " AND ". $this->focus->table_name. ".user_id='".$current_user->id."' \n";
-			}
-			else {
-			//END SUGARCRM flav=pro ONLY
-			    $where_auto .= " AND ". $this->focus->table_name. ".assigned_user_id='".$current_user->id."' \n";
-			//BEGIN SUGARCRM flav=pro ONLY
-			}
-			//END SUGARCRM flav=pro ONLY
+		    $where_auto .= " AND ". $this->focus->table_name. ".assigned_user_id='".$current_user->id."' \n";
         }
 		// End ACL check
 
