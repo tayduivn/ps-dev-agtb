@@ -114,6 +114,11 @@ function sugar_file_put_contents($filename, $data, $flags=null, $context=null){
 		sugar_touch($filename);
 	}
 
+	if ( !is_writable($filename) ) {
+	    $GLOBALS['log']->error("File $templateName cannot be written to");
+	    return false;
+	}
+	
 	if(empty($flags)) {
 		return file_put_contents($filename, $data);
 	} elseif(empty($context)) {
@@ -137,6 +142,11 @@ function sugar_file_get_contents($filename, $use_include_path=false, $context=nu
 		sugar_touch($filename);
 	}
 
+	if ( !is_readable($filename) ) {
+	    $GLOBALS['log']->error("File $templateName cannot be read");
+	    return false;
+	}
+	
 	if(empty($context)) {
 		return file_get_contents($filename, $use_include_path);
 	} else {
