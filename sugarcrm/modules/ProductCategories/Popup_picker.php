@@ -81,6 +81,7 @@ class Popup_Picker
             $GLOBALS['log']->debug("using file modules/ProductCategories/Popup_picker1.html");
         }
         else {
+            $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
             $GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
             $xtpl =new XTemplate ('modules/ProductCategories/'.$_REQUEST['html'].'.html');
             $GLOBALS['log']->debug("using file modules/ProductCategories/".$_REQUEST['html'].'.html');

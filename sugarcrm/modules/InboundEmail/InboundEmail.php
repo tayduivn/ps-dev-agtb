@@ -2226,7 +2226,9 @@ class InboundEmail extends SugarBean {
 		$this->status = $_REQUEST['ie_status'];
 		$this->server_url = trim($_REQUEST['server_url']);
 		$this->email_user = trim($_REQUEST['email_user']);
-		$this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
+		if(!empty($_REQUEST['email_password'])) {
+		    $this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
+		}
 		$this->port = trim($_REQUEST['port']);
 		$this->protocol = $_REQUEST['protocol'];
 		if ($this->protocol == "pop3") {
