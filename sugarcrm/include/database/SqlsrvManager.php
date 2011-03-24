@@ -146,7 +146,7 @@ class SqlsrvManager extends MssqlManager
             $GLOBALS['log']->info("connected to db");
 
         sqlsrv_query($this->database, 'SET DATEFORMAT mdy');
-        
+
         $GLOBALS['log']->info("Connect:".$this->database);
     }
 
@@ -308,7 +308,7 @@ class SqlsrvManager extends MssqlManager
         if (empty($row)) {
             return false;
         }
-        
+
         foreach($row as $key => $column) {
             // MSSQL returns a space " " when a varchar column is empty ("") and not null.
             // We need to strip empty spaces
@@ -326,7 +326,7 @@ class SqlsrvManager extends MssqlManager
             // HTML encode if needed
             if($encode && $this->encode) {
                 $row[$key] = to_html($row[$key]);
-            }    
+            }
         }
 
         return $row;

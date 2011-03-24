@@ -44,7 +44,7 @@ class MysqlHelper extends DBHelper
         'index' => 64,
         'alias' => 256
     );
-    
+
     /**
      * @see DBHelper::createTableSQL()
      */
@@ -80,8 +80,18 @@ class MysqlHelper extends DBHelper
         if ( !$this->isEngineEnabled($engine) )
             $engine = '';
 
-        $sql = parent::createTableSQLParams($tablename,$fieldDefs,$indices);
-        if (!empty($engine))
+        $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
+        if (empty($columns))
+            return false;
+
+        $keys = $this->keysSQL($indices);
+        if (!empty($keys))
+            $keys = ",$keys";
+
+        // cn: bug 9873 - module tables do not get created in utf8 with assoc collation
+        $sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8 COLLATE utf8_general_ci";
+
+	    if (!empty($engine))
             $sql.= " ENGINE=$engine";
 
         return $sql;
@@ -190,7 +200,7 @@ class MysqlHelper extends DBHelper
             ($ref['colType'] == 'text' || $ref['colType'] == 'blob'
                 || $ref['colType'] == 'longtext' || $ref['colType'] == 'longblob' ))
             $ref['default'] = '';
-            
+
         if ( $return_as_array )
             return $ref;
         else
@@ -261,7 +271,7 @@ class MysqlHelper extends DBHelper
                continue;
            if (isset($index['source']) && $index['source'] != 'db')
                continue;
-           
+
            $type = $index['type'];
            $name = $index['name'];
 

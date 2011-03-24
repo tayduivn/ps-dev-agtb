@@ -92,13 +92,52 @@ class MysqlManager extends DBManager
         'affected_row_count' => 'mysql_affected_rows',
         );
 
+    protected $maxNameLengths = array(
+        'table' => 64,
+        'column' => 64,
+        'index' => 64,
+        'alias' => 256
+    );
+
+    protected $type_map = array(
+            'int'      => 'int',
+            'double'   => 'double',
+            'float'    => 'float',
+            'uint'     => 'int unsigned',
+            'ulong'    => 'bigint unsigned',
+            'long'     => 'bigint',
+            'short'    => 'smallint',
+            'varchar'  => 'varchar',
+            'text'     => 'text',
+            'longtext' => 'longtext',
+            'date'     => 'date',
+            'enum'     => 'varchar',
+            'relate'   => 'varchar',
+            'multienum'=> 'text',
+            'html'     => 'text',
+            'datetime' => 'datetime',
+            'datetimecombo' => 'datetime',
+            'time'     => 'time',
+            'bool'     => 'bool',
+            'tinyint'  => 'tinyint',
+            'char'     => 'char',
+            'blob'     => 'blob',
+            'longblob' => 'longblob',
+            'currency' => 'decimal(26,6)',
+            'decimal'  => 'decimal',
+            'decimal2' => 'decimal',
+            'id'       => 'char(36)',
+           'url'=>'varchar',
+           'encrypt'=>'varchar',
+           'file'      => 'varchar',
+     );
+
+
+
     /**
      * @see DBManager::checkError()
      */
-    public function checkError(
-        $msg = '',
-        $dieOnError = false
-        )
+    public function checkError($msg = '', $dieOnError = false)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
@@ -125,35 +164,27 @@ class MysqlManager extends DBManager
      * @param  bool     $dieOnError True if we want to call die if the query returns errors
      * @param  string   $msg        Message to log if error occurs
      * @param  bool     $suppress   Flag to suppress all error output unless in debug logging mode.
-     * @param  bool     $autofree   True if we want to push this result into the $lastResult array.
+     * @param  bool     $keepResult True if we want to push this result into the $lastResult array.
      * @return resource result set
      */
-    public function query(
-        $sql,
-        $dieOnError = false,
-        $msg = '',
-        $suppress = false,
-        $autofree = false
-        )
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
-        //$this->freeResult();
         $this->query_time = microtime(true);
         $this->lastsql = $sql;
+        //BEGIN SUGARCRM flav=ent ONLY
         if ($suppress==true) {
-            //BEGIN SUGARCRM flav=ent ONLY
             //suppress flag is when you are using CSQL and make a bad query.
             //We don't want any php errors to appear
-            $orig_level = error_reporting(0);
+            $result = @mysql_query($sql, $this->database);
+        } else {
+        //END SUGARCRM flav=ent ONLY
             $result = mysql_query($sql, $this->database);
-            error_reporting($orig_level);
-            //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
         }
-        else {
-            $result = mysql_query($sql, $this->database);
-        }
+        //END SUGARCRM flav=ent ONLY
 
         $this->lastmysqlrow = -1;
         $this->query_time = microtime(true) - $this->query_time;
@@ -166,21 +197,64 @@ class MysqlManager extends DBManager
         //END SUGARCRM flav=pro ONLY
 
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
-        if($autofree)
-            $this->lastResult[] =& $result;
+        if($keepResult)
+            $this->lastResult[] = $result;
 
         return $result;
     }
 
     /**
+     * Returns the number of rows affected by the last query
+     *
+     * @return int
+     */
+    public function getAffectedRowCount()
+    {
+        return mysql_affected_rows($this->getDatabase());
+    }
+
+    /**
+     * Disconnects from the database
+     *
+     * Also handles any cleanup needed
+     */
+    public function disconnect()
+    {
+    	$GLOBALS['log']->debug('Calling MySQL::disconnect()');
+        if(!empty($this->database)){
+            $this->freeResult();
+            mysql_close($this->database);
+            $this->database = null;
+        }
+    }
+
+    /**
+     * @see DBManager::freeDbResult()
+     */
+    protected function freeDbResult($dbResult)
+    {
+        if(!empty($dbResult))
+            mysql_free_result($dbResult);
+    }
+
+    /**
+     * Returns the number of rows returned by the result
+     *
+     * @param  resource $result
+     * @return int
+     */
+    public function getRowCount($result)
+    {
+        if(!empty($result)) {
+            return mysql_num_rows($result);
+		}
+		return 0;
+	}
+
+    /**
      * @see DBManager::limitQuery()
      */
-    public function limitQuery(
-        $sql,
-        $start,
-        $count,
-        $dieOnError = false,
-        $msg = '')
+    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '')
     {
         if ($start < 0)
             $start = 0;
@@ -200,9 +274,7 @@ class MysqlManager extends DBManager
     /**
      * @see DBManager::checkQuery()
      */
-    protected function checkQuery(
-        $sql
-        )
+    protected function checkQuery($sql)
     {
         $result   = $this->query('EXPLAIN ' . $sql);
         $badQuery = array();
@@ -242,76 +314,67 @@ class MysqlManager extends DBManager
         return false;
     }
 
-    /**
-     * @see DBManager::describeField()
+   	/**
+     * @see DBManager::get_columns()
      */
-    protected function describeField(
-        $name,
-        $tablename
-        )
+    public function get_columns($tablename)
     {
-        global $table_descriptions;
-        if(isset($table_descriptions[$tablename])
-                && isset($table_descriptions[$tablename][$name]))
-            return 	$table_descriptions[$tablename][$name];
+        //find all unique indexes and primary keys.
+        $result = $this->query("DESCRIBE $tablename");
 
-        $table_descriptions[$tablename] = array();
-        $sql = "DESCRIBE $tablename";
-        $result = $this->query($sql);
-        while ($row = $this->fetchByAssoc($result) ){
-            $table_descriptions[$tablename][$row['Field']] = $row;
-            if(empty($table_descriptions[$tablename][$row['Field']]['Null']))
-            	$table_descriptions[$tablename][$row['Field']]['Null'] = 'NO';
+        $columns = array();
+        while (($row=$this->fetchByAssoc($result)) !=null) {
+            $name = strtolower($row['Field']);
+            $columns[$name]['name']=$name;
+            $matches = array();
+            preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*)\)|)( unsigned)?/i', $row['Type'], $matches);
+            $columns[$name]['type']=strtolower($matches[1][0]);
+            if ( isset($matches[2][0]) && in_array(strtolower($matches[1][0]),array('varchar','char','varchar2','int','decimal','float')) )
+                $columns[$name]['len']=strtolower($matches[2][0]);
+            if ( stristr($row['Extra'],'auto_increment') )
+                $columns[$name]['auto_increment'] = '1';
+            if ($row['Null'] == 'NO' && !stristr($row['Key'],'PRI'))
+                $columns[$name]['required'] = 'true';
+            if (!empty($row['Default']) )
+                $columns[$name]['default'] = $row['Default'];
         }
-        if(isset($table_descriptions[$tablename][$name]))
-            return 	$table_descriptions[$tablename][$name];
-
-        return array();
+        return $columns;
     }
 
     /**
      * @see DBManager::getFieldsArray()
      */
-    public function getFieldsArray(
-        &$result,
-        $make_lower_case=false)
+    public function getFieldsArray($result, $make_lower_case=false)
     {
         $field_array = array();
 
-        if(! isset($result) || empty($result))
+        if(empty($result))
             return 0;
 
-        $i = 0;
-        while ($i < mysql_num_fields($result)) {
+        $fields = mysql_num_fields($result);
+        for ($i=0; $i < $fields; $i++) {
             $meta = mysql_fetch_field($result, $i);
             if (!$meta)
-                return 0;
+                return array();
 
             if($make_lower_case == true)
                 $meta->name = strtolower($meta->name);
 
             $field_array[] = $meta->name;
-            $i++;
         }
 
         return $field_array;
     }
 
-
-
     /**
      * @see DBManager::fetchByAssoc()
      */
-    public function fetchByAssoc(
-        &$result,
-        $rowNum = -1,
-        $encode = true
-        )
+    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
     {
         if (!$result)
             return false;
 
-        if ($result && $rowNum > -1){
+        if ($result && $rowNum > -1) {
             if ($this->getRowCount($result) > $rowNum)
                 mysql_data_seek($result, $rowNum);
             $this->lastmysqlrow = $rowNum;
@@ -330,13 +393,12 @@ class MysqlManager extends DBManager
      */
     public function getTablesArray()
     {
-        global $sugar_config;
         $GLOBALS['log']->debug('Fetching table list');
 
         if ($this->getDatabase()) {
             $tables = array();
             $r = $this->query('SHOW TABLES');
-            if (is_resource($r) || $r instanceOf mysqli_result ) {
+            if (!empty($r)) {
                 while ($a = $this->fetchByAssoc($r)) {
                     $row = array_values($a);
 					$tables[]=$row[0];
@@ -359,15 +421,13 @@ class MysqlManager extends DBManager
     /**
      * @see DBManager::tableExists()
      */
-    public function tableExists(
-        $tableName
-        )
+    public function tableExists($tableName)
     {
         $GLOBALS['log']->info("tableExists: $tableName");
 
         if ($this->getDatabase()) {
-            $result = $this->query("SHOW TABLES LIKE '".$tableName."'");
-            return ($this->getRowCount($result) == 0) ? false : true;
+            $result = $this->getOne("SHOW TABLES LIKE ".$this->quoted($tableName));
+            return !empty($result);
         }
 
         return false;
@@ -376,32 +436,15 @@ class MysqlManager extends DBManager
     /**
      * @see DBManager::quote()
      */
-    public function quote(
-        $string,
-        $isLike = true
-        )
+    public function quote($string)
     {
         return mysql_real_escape_string(parent::quote($string), $this->getDatabase());
     }
 
     /**
-     * @see DBManager::quoteForEmail()
-     */
-    public function quoteForEmail(
-        $string,
-        $isLike = true
-        )
-    {
-        return mysql_real_escape_string($string, $this->getDatabase());
-    }
-
-    /**
      * @see DBManager::connect()
      */
-	public function connect(
-        array $configOptions = null,
-        $dieOnError = false
-        )
+	public function connect(array $configOptions = null, $dieOnError = false)
     {
 		global $sugar_config;
 
@@ -457,13 +500,7 @@ class MysqlManager extends DBManager
      * For MySQL, we can write the ALTER TABLE statement all in one line, which speeds things
      * up quite a bit. So here, we'll parse the returned SQL into a single ALTER TABLE command.
      */
-    public function repairTableParams(
-        $tablename,
-        $fielddefs,
-        $indices,
-        $execute = true,
-        $engine = null
-        )
+    public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
         $sql = parent::repairTableParams($tablename,$fielddefs,$indices,false,$engine);
 
@@ -481,9 +518,9 @@ class MysqlManager extends DBManager
 
         // first, parse out all the comments
         $match = array();
-        preg_match_all("!/\*.*?\*/!is", $sql, $match);
+        preg_match_all('!/\*.*?\*/!is', $sql, $match);
         $commentBlocks = $match[0];
-        $sql = preg_replace("!/\*.*?\*/!is",'', $sql);
+        $sql = preg_replace('!/\*.*?\*/!is','', $sql);
 
         // now, we should only have alter table statements
         // let's replace the 'alter table name' part with a comma
@@ -507,51 +544,393 @@ class MysqlManager extends DBManager
     /**
      * @see DBManager::convert()
      */
-    public function convert(
-        $string,
-        $type,
-        array $additional_parameters = array(),
-        array $additional_parameters_oracle_only = array()
-        )
+    public function convert($string, $type, array $additional_parameters = array())
     {
         // convert the parameters array into a comma delimited string
-        $additional_parameters_string = '';
-        if (!empty($additional_parameters))
-            $additional_parameters_string = ','.implode(',',$additional_parameters);
+        $all_strings = join(",", array_unshift($additional_parameters, $string));
 
         switch ($type) {
-        case 'today': return "CURDATE()";
-        case 'left': return "LEFT($string".$additional_parameters_string.")";
-        case 'date_format': return "DATE_FORMAT($string".$additional_parameters_string.")";
-        case 'datetime': return "DATE_FORMAT($string, '%Y-%m-%d %H:%i:%s')";
-        case 'IFNULL': return "IFNULL($string".$additional_parameters_string.")";
-        case 'CONCAT': return "CONCAT($string,".implode(",",$additional_parameters).")";
-        case 'text2char': return "$string";
+        case 'today':
+            return "CURDATE()";
+        case 'left':
+            return "LEFT($all_strings)";
+        case 'date_format':
+            return "DATE_FORMAT($all_strings)";
+        case 'datetime':
+            return "DATE_FORMAT($string, '%Y-%m-%d %H:%i:%s')";
+        case 'IFNULL':
+            return "IFNULL($all_strings)";
+        case 'CONCAT':
+            return "CONCAT($all_strings)";
         }
 
-        return "$string";
+        return $string;
     }
 
     /**
-     * @see DBManager::concat()
+     * Returns the name of the engine to use or null if we are to use the default
+     *
+     * @param  object $bean SugarBean instance
+     * @return string
      */
-    public function concat(
-        $table,
-        array $fields
-        )
+    protected function getEngine($bean)
     {
-        $ret = '';
-
-        foreach ( $fields as $index => $field )
-            if (empty($ret))
-                $ret = "CONCAT(". db_convert($table.".".$field,'IFNULL', array("''"));
-            else
-                $ret.=	",' ',".db_convert($table.".".$field,'IFNULL', array("''"));
-
-		if (!empty($ret)) {
-		    $ret = "TRIM($ret))";
+        global $dictionary;
+        $engine = null;
+        if (isset($dictionary[$bean->getObjectName()]['engine'])) {
+			$engine = $dictionary[$bean->getObjectName()]['engine'];
 		}
-
-		return $ret;
+        return $engine;
     }
+
+    /**
+     * Returns true if the engine given is enabled in the backend
+     *
+     * @param  string $engine
+     * @return bool
+     */
+    protected function isEngineEnabled($engine)
+    {
+        $engine = strtoupper($engine);
+
+        $r = $this->db->query("SHOW ENGINES");
+
+        while ( $row = $this->db->fetchByAssoc($r) )
+            if ( strtoupper($row['Engine']) == $engine )
+                return ($row['Support']=='YES' || $row['Support']=='DEFAULT');
+
+        return false;
+    }
+
+    /**
+     * @see DBManager::createTableSQL()
+     */
+    public function createTableSQL(SugarBean $bean)
+    {
+        $tablename = $bean->getTableName();
+        $fieldDefs = $bean->getFieldDefinitions();
+        $indices   = $bean->getIndices();
+        $engine    = $this->getEngine($bean);
+        return $this->createTableSQLParams($tablename, $fieldDefs, $indices, $engine);
+	}
+
+    /**
+     * Generates sql for create table statement for a bean.
+     *
+     * @param  string $tablename
+     * @param  array  $fieldDefs
+     * @param  array  $indices
+     * @param  string $engine optional, MySQL engine to use
+     * @return string SQL Create Table statement
+    */
+    public function createTableSQLParams($tablename, $fieldDefs, $indices, $engine = null)
+    {
+ 		if ( empty($engine) && isset($fieldDefs['engine']))
+            $engine = $fieldDefs['engine'];
+        if ( !$this->isEngineEnabled($engine) )
+            $engine = '';
+
+        $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
+        if (empty($columns))
+            return false;
+
+        $keys = $this->keysSQL($indices);
+        if (!empty($keys))
+            $keys = ",$keys";
+
+        // cn: bug 9873 - module tables do not get created in utf8 with assoc collation
+        $sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8 COLLATE utf8_general_ci";
+
+	    if (!empty($engine))
+            $sql.= " ENGINE=$engine";
+
+        return $sql;
+	}
+
+    /**
+     * @see DBManager::oneColumnSQLRep()
+     */
+	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    {
+        $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
+
+        if ( $ref['colType'] == 'int'
+                && !empty($fieldDef['len']) )
+            $ref['colType'] .= "(".$fieldDef['len'].")";
+
+        // bug 22338 - don't set a default value on text or blob fields
+        if ( isset($ref['default']) &&
+            ($ref['colType'] == 'text' || $ref['colType'] == 'blob'
+                || $ref['colType'] == 'longtext' || $ref['colType'] == 'longblob' ))
+            $ref['default'] = '';
+
+        if ( $return_as_array )
+            return $ref;
+        else
+            return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
+    }
+
+    /**
+     * @see DBManager::changeColumnSQL()
+     */
+    protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
+    {
+        if ($this->isFieldArray($fieldDefs)){
+            foreach ($fieldDefs as $def){
+                if ($action == 'drop')
+                    $columns[] = $def['name'];
+                else
+                    $columns[] = $this->oneColumnSQLRep($def, $ignoreRequired);
+            }
+        } else {
+            if ($action == 'drop')
+                $columns[] = $fieldDefs['name'];
+        else
+            $columns[] = $this->oneColumnSQLRep($fieldDefs);
+        }
+
+        return "ALTER TABLE $tablename $action COLUMN ".implode(",$action column ", $columns);
+    }
+
+    /**
+     * @see DBManager::keysSQL
+     */
+    public function keysSQL($indices, $alter_table = false, $alter_action = '')
+	{
+       // check if the passed value is an array of fields.
+       // if not, convert it into an array
+       if (!$this->isFieldArray($indices))
+           $indices[] = $indices;
+
+       $columns = array();
+       foreach ($indices as $index) {
+           if(!empty($index['db']) && $index['db'] != 'mysql')
+               continue;
+           if (isset($index['source']) && $index['source'] != 'db')
+               continue;
+
+           $type = $index['type'];
+           $name = $index['name'];
+
+           if (is_array($index['fields']))
+               $fields = implode(", ", $index['fields']);
+           else
+               $fields = $index['fields'];
+
+           switch ($type) {
+           case 'unique':
+               $columns[] = " UNIQUE $name ($fields)";
+               break;
+           case 'primary':
+               $columns[] = " PRIMARY KEY ($fields)";
+               break;
+           case 'index':
+           case 'foreign':
+           case 'clustered':
+           case 'alternate_key':
+               /**
+                * @todo here it is assumed that the primary key of the foreign
+                * table will always be named 'id'. It must be noted though
+                * that this can easily be fixed by referring to db dictionary
+                * to find the correct primary field name
+                */
+               if ( $alter_table )
+                   $columns[] = " INDEX $name ($fields)";
+               else
+                   $columns[] = " KEY $name ($fields)";
+               break;
+           case 'fulltext':
+               if ($this->full_text_indexing_enabled())
+                   $columns[] = " FULLTEXT ($fields)";
+               else
+                   $GLOBALS['log']->debug('MYISAM engine is not available/enabled, full-text indexes will be skipped. Skipping:',$name);
+               break;
+          }
+       }
+       $columns = implode(", $alter_action ", $columns);
+       if(!empty($alter_action)){
+           $columns = $alter_action . ' '. $columns;
+       }
+       return $columns;
+    }
+
+    /**
+     * @see DBManager::setAutoIncrement()
+     */
+ 	protected function setAutoIncrement($table, $field_name)
+    {
+		return "auto_increment";
+	}
+
+   	/**
+     * Sets the next auto-increment value of a column to a specific value.
+     *
+     * @param  string $table tablename
+     * @param  string $field_name
+     */
+    public function setAutoIncrementStart($table, $field_name, $start_value)
+    {
+        $start_value = (int)$start_value;
+        return $this->query( "ALTER TABLE $table AUTO_INCREMENT = $start_value;");
+    }
+
+    /**
+     * Returns the next value for an auto increment
+     *
+     * @param  string $table tablename
+     * @param  string $field_name
+     * @return string
+     */
+    public function getAutoIncrement($table, $field_name)
+    {
+        $result = $this->query("SHOW TABLE STATUS LIKE '$table'");
+        $row = $this->fetchByAssoc($result);
+        if (!empty($row['Auto_increment']))
+            return $row['Auto_increment'];
+
+    	return "";
+    }
+
+   	/**
+     * @see DBManager::get_indices()
+     */
+    public function get_indices($tablename)
+    {
+        //find all unique indexes and primary keys.
+        $result = $this->query("SHOW INDEX FROM $tablename");
+
+        $indices = array();
+        while (($row=$this->fetchByAssoc($result)) !=null) {
+            $index_type='index';
+            if ($row['Key_name'] =='PRIMARY') {
+                $index_type='primary';
+            }
+            elseif ( $row['Non_unique'] == '0' ) {
+                $index_type='unique';
+            }
+            $name = strtolower($row['Key_name']);
+            $indices[$name]['name']=$name;
+            $indices[$name]['type']=$index_type;
+            $indices[$name]['fields'][]=strtolower($row['Column_name']);
+        }
+        return $indices;
+    }
+
+    /**
+     * @see DBManager::add_drop_constraint()
+     */
+    public function add_drop_constraint($table, $definition, $drop = false)
+    {
+        $type         = $definition['type'];
+        $fields       = implode(',',$definition['fields']);
+        $name         = $definition['name'];
+        $foreignTable = isset($definition['foreignTable']) ? $definition['foreignTable'] : array();
+        $sql          = '';
+
+        switch ($type){
+        // generic indices
+        case 'index':
+        case 'alternate_key':
+            if ($drop)
+                $sql = "DROP INDEX {$name} ";
+            else
+                $sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
+            break;
+        // constraints as indices
+        case 'unique':
+            if ($drop)
+                $sql = "ALTER TABLE {$table} DROP INDEX $name";
+            else
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT UNIQUE {$name} ({$fields})";
+            break;
+        case 'primary':
+            if ($drop)
+                $sql = "ALTER TABLE {$table} DROP PRIMARY KEY";
+            else
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT PRIMARY KEY ({$fields})";
+            break;
+        case 'foreign':
+            if ($drop)
+                $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
+            else
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT FOREIGN KEY {$name} ({$fields}) REFERENCES {$foreignTable}({$definition['foreignField']})";
+            break;
+        }
+        return $sql;
+    }
+
+    /**
+     * @see DBManager::number_of_columns()
+     */
+    public function number_of_columns($table_name)
+    {
+        return $this->getRowCount($this->query("DESCRIBE $table_name"));
+    }
+
+    /**
+     * Runs a query and returns a single row
+     *
+     * @param  string   $sql        SQL Statement to execute
+     * @param  bool     $dieOnError True if we want to call die if the query returns errors
+     * @param  string   $msg        Message to log if error occurs
+     * @param  bool     $suppress   Message to log if error occurs
+     * @return array    single row from the query
+     */
+    public function fetchOne($sql, $dieOnError = false, $msg = '', $suppress = false)
+    {
+        if(stripos($sql, ' LIMIT ') === false) {
+            // little optimization to just fetch one row
+            $sql .= " LIMIT 0,1";
+        }
+        return parent::fetchOne($sql, $dieOnError, $msg, $suppress);
+    }
+
+	/**
+     * @see DBManager::full_text_indexing_enabled()
+     */
+    protected function full_text_indexing_enabled($dbname = null)
+    {
+		return $this->isEngineEnabled('MyISAM');
+	}
+
+    /**
+     * @see DBManager::massageFieldDef()
+     */
+    public function massageFieldDef(&$fieldDef, $tablename)
+    {
+        parent::massageFieldDef($fieldDef,$tablename);
+
+        if ( isset($fieldDef['default']) &&
+            ($fieldDef['dbType'] == 'text'
+                || $fieldDef['dbType'] == 'blob'
+                || $fieldDef['dbType'] == 'longtext'
+                || $fieldDef['dbType'] == 'longblob' ))
+            unset($fieldDef['default']);
+        if ($fieldDef['dbType'] == 'uint')
+            $fieldDef['len'] = '10';
+        if ($fieldDef['dbType'] == 'ulong')
+            $fieldDef['len'] = '20';
+        if ($fieldDef['dbType'] == 'bool')
+            $fieldDef['type'] = 'tinyint';
+        if ($fieldDef['dbType'] == 'bool' && empty($fieldDef['default']) )
+            $fieldDef['default'] = '0';
+        if (($fieldDef['dbType'] == 'varchar' || $fieldDef['dbType'] == 'enum') && empty($fieldDef['len']) )
+            $fieldDef['len'] = '255';
+        if ($fieldDef['dbType'] == 'uint')
+            $fieldDef['len'] = '10';
+        if ($fieldDef['dbType'] == 'int' && empty($fieldDef['len']) )
+            $fieldDef['len'] = '11';
+    }
+
+    /**
+     * Generates SQL for dropping a table.
+     *
+     * @param  string $name table name
+     * @return string SQL statement
+     */
+	public function dropTableNameSQL($name)
+    {
+		return "DROP TABLE IF EXISTS ".$name;
+	}
+
 }

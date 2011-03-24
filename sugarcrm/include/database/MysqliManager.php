@@ -97,10 +97,7 @@ class MysqliManager extends MysqlManager
     /**
      * @see DBManager::checkError()
      */
-    public function checkError(
-        $msg = '',
-        $dieOnError = false
-        )
+    public function checkError($msg = '', $dieOnError = false)
     {
         if (DBManager::checkError($msg, $dieOnError))
             return true;
@@ -125,13 +122,7 @@ class MysqliManager extends MysqlManager
     /**
      * @see MysqlManager::query()
      */
-    public function query(
-        $sql,
-        $dieOnError = false,
-        $msg = '',
-        $suppress = false,
-        $autofree = false
-        )
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $autofree = false)
     {
         static $queryMD5 = array();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -192,12 +183,57 @@ class MysqliManager extends MysqlManager
     }
 
     /**
+     * Returns the number of rows affected by the last query
+     *
+     * @return int
+     */
+    public function getAffectedRowCount()
+    {
+        return mysqli_affected_rows($this->getDatabase());
+    }
+
+    /**
+     * Disconnects from the database
+     *
+     * Also handles any cleanup needed
+     */
+    public function disconnect()
+    {
+    	$GLOBALS['log']->debug('Calling MySQLi::disconnect()');
+        if(!empty($this->database)){
+            $this->freeResult();
+            mysqli_close($this->database);
+            $this->database = null;
+        }
+    }
+
+    /**
+     * @see DBManager::freeDbResult()
+     */
+    protected function freeDbResult($dbResult)
+    {
+        if(!empty($dbResult))
+            mysqli_free_result($dbResult);
+    }
+
+    /**
+     * Returns the number of rows returned by the result
+     *
+     * @param  resource $result
+     * @return int
+     */
+    public function getRowCount($result)
+    {
+        if(!empty($result)) {
+            return mysqli_num_rows($result);
+		}
+		return 0;
+	}
+
+    /**
      * @see DBManager::getFieldsArray()
      */
-    public function getFieldsArray(
-        &$result,
-        $make_lower_case = false
-        )
+    public function getFieldsArray($result, $make_lower_case = false)
     {
         $field_array = array();
 
@@ -224,11 +260,7 @@ class MysqliManager extends MysqlManager
     /**
      * @see DBManager::fetchByAssoc()
      */
-    public function fetchByAssoc(
-        &$result,
-        $rowNum = -1,
-        $encode = true
-        )
+    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
     {
         if (!$result)
             return false;
@@ -253,32 +285,15 @@ class MysqliManager extends MysqlManager
     /**
      * @see DBManager::quote()
      */
-    public function quote(
-        $string,
-        $isLike = true
-        )
+    public function quote($string)
     {
-        return mysqli_escape_string($this->getDatabase(),DBManager::quote($string));
-    }
-
-    /**
-     * @see DBManager::quoteForEmail()
-     */
-    public function quoteForEmail(
-        $string,
-        $isLike = true
-        )
-    {
-        return mysqli_escape_string($this->getDatabase(),$string);
+        return mysqli_real_escape_string($this->getDatabase(),DBManager::quote($string));
     }
 
     /**
      * @see DBManager::connect()
      */
-    public function connect(
-        array $configOptions = null,
-        $dieOnError = false
-        )
+    public function connect(array $configOptions = null, $dieOnError = false)
     {
         global $sugar_config;
 
@@ -315,5 +330,3 @@ class MysqliManager extends MysqlManager
             $GLOBALS['log']->info("connected to db");
     }
 }
-
-?>

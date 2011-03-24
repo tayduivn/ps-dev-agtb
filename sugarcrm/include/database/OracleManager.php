@@ -980,25 +980,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBManager::concat()
-     */
-    public function concat(
-        $table,
-        array $fields
-        )
-    {
-        $ret = '';
-
-        foreach ( $fields as $index => $field )
-			if (empty($ret))
-			    $ret = "CONCAT(".$this->convert($table.".".$field,'IFNULL', array("''")).",' ')";
-			else
-			    $ret = "CONCAT($ret, CONCAT(".$this->convert($table.".".$field,'IFNULL', array("''")).",' '))";
-
-		return empty($ret)?$ret:"TRIM($ret)";
-    }
-
-    /**
      * @see DBManager::fromConvert()
      */
     public function fromConvert(
@@ -1012,5 +993,31 @@ class OracleManager extends DBManager
 
 		return $string;
     }
+
+    protected function isNullable($vardef)
+    {
+        if(!empty($vardef['type']) && $vardef['type'] == 'clob') {
+            return false;
+        }
+		return parent::isNullable($vardef);
+    }
+
+    /**
+     * @see DBManager::createTableSQLParams()
+	 */
+	public function createTableSQLParams(
+        $tablename,
+        $fieldDefs,
+        $indices,
+        $engine = null
+        )
+    {
+        $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
+        if(empty($columns))
+ 			return false;
+
+        return "CREATE TABLE $tablename ($columns)";
+	}
+
 }
 

@@ -196,7 +196,7 @@ class MssqlManager extends DBManager
             return true;
 
         $sqlmsg = mssql_get_last_message();
-        
+
         $sqlpos = strpos($sqlmsg, 'Changed database context to');
         $sqlpos2 = strpos($sqlmsg, 'Warning:');
         $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
@@ -276,7 +276,7 @@ class MssqlManager extends DBManager
             $sqlpos = strpos($sqlmsg, 'Changed database context to');
 			$sqlpos2 = strpos($sqlmsg, 'Warning:');
 			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-            
+
 			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
 				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
 			else {
@@ -1000,7 +1000,7 @@ class MssqlManager extends DBManager
 
         $sql = sprintf( "SELECT COLUMN_NAME AS Field
 				, DATA_TYPE + CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL
-                        THEN '(' + RTRIM(CAST(CHARACTER_MAXIMUM_LENGTH AS CHAR)) + ')' 
+                        THEN '(' + RTRIM(CAST(CHARACTER_MAXIMUM_LENGTH AS CHAR)) + ')'
 						ELSE '' END as 'Type'
 				, CHARACTER_MAXIMUM_LENGTH
 				, IS_NULLABLE AS 'Null'
@@ -1275,22 +1275,20 @@ class MssqlManager extends DBManager
     }
 
     /**
+     * Returns the database string needed for concatinating multiple database strings together
      * @see DBManager::concat()
+     * @param string $table table name of the database fields to concat
+     * @param array $fields fields in the table to concat together
+     * @return string
      */
-    public function concat(
-        $table,
-        array $fields
-        )
+    public function concat($table, array $fields)
     {
-        $ret = '';
+        if(empty($fields)) return '';
 
-        foreach ( $fields as $index => $field )
-			if (empty($ret))
-			    $ret =  db_convert($table.".".$field,'IFNULL', array("''"));
-			else
-			    $ret .=	" + ' ' + ".db_convert($table.".".$field,'IFNULL', array("''"));
-
-		return empty($ret)?$ret:"LTRIM(RTRIM($ret))";
+        foreach ( $fields as $index => $field ) {
+            $elems[] = $this->convert("$table.$field", 'IFNULL', array("''"));
+        }
+        return "LTRIM(RTRIM(".join("+", $elems)."))";
     }
 
     /**
@@ -1307,5 +1305,21 @@ class MssqlManager extends DBManager
 		}
 
 		return $string;
+    }
+    /**
+     * @see DBManager::createTableSQLParams()
+     */
+	public function createTableSQLParams($tablename, $fieldDefs, $indices)
+    {
+        if (empty($tablename) || empty($fieldDefs))
+            return '';
+
+        $sql ='';
+        $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
+        if (empty($columns))
+            return '';
+
+        return "CREATE TABLE $tablename ($columns ) " .
+            $this->indexSQL($tablename, $fieldDefs, $indices);
     }
 }

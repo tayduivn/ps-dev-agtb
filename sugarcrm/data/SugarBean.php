@@ -48,7 +48,7 @@ class SugarBean
     /**
      * A pointer to the database helper object DBHelper
      *
-     * @var DBHelper
+     * @var DBManager
      */
     var $db;
 
@@ -120,14 +120,6 @@ class SugarBean
 	 * @var BOOL
 	 */
 	var $duplicates_found = false;
-
-	/**
-	 * The DBManager instance that was used to load this bean and should be used for
-	 * future database interactions.
-	 *
-	 * @var DBManager
-	 */
-	var $dbManager;
 
 	/**
 	 * true if this bean has been deleted, false otherwise.
@@ -254,7 +246,7 @@ class SugarBean
      * Used to pass inner join string to ListView Data.
      */
     var $listview_inner_join = array();
-    
+
     /**
      * Set to true in <modules>/Import/views/view.step4.php if a module is being imported
      */
@@ -274,7 +266,6 @@ class SugarBean
         global  $dictionary, $current_user;
         static $loaded_defs = array();
         $this->db = DBManagerFactory::getInstance();
-        $this->dbManager = DBManagerFactory::getInstance();
         if (empty($this->module_name))
             $this->module_name = $this->module_dir;
         //BEGIN SUGARCRM flav=pro ONLY
@@ -505,10 +496,10 @@ class SugarBean
             $engine = $dictionary[$this->getObjectName()]['engine'];
         }
 
-        $sql=$this->dbManager->helper->createTableSQLParams($table_name, $fieldDefs, $indices, $engine);
+        $sql=$this->db->createTableSQLParams($table_name, $fieldDefs, $indices, $engine);
 
         $msg = "Error creating table: ".$table_name. ":";
-        $this->dbManager->query($sql,true,$msg);
+        $this->db->query($sql,true,$msg);
     }
 
     /**
@@ -1186,7 +1177,7 @@ class SugarBean
         {
             if(!$this->db->tableExists($this->table_name))
             {
-                $this->dbManager->createTable($this);
+                $this->db->createTable($this);
 //BEGIN SUGARCRM flav=dce ONLY
                 if($GLOBALS['sugar_flavor']=='DCE'){
                     global $DCEbeanList, $beanFiles;
@@ -1249,14 +1240,14 @@ class SugarBean
             if(empty($this->table_name))return;
             if ($this->db->tableExists($this->table_name))
 
-                $this->dbManager->dropTable($this);
+                $this->db->dropTable($this);
             if ($this->db->tableExists($this->table_name. '_cstm'))
             {
-                $this->dbManager->dropTableName($this->table_name. '_cstm');
+                $this->db->dropTableName($this->table_name. '_cstm');
                 DynamicField::deleteCache();
             }
             if ($this->db->tableExists($this->get_audit_table_name())) {
-                $this->dbManager->dropTableName($this->get_audit_table_name());
+                $this->db->dropTableName($this->get_audit_table_name());
             }
 
 
@@ -1446,7 +1437,7 @@ class SugarBean
             }
             else
             {
-                $dataChanges=$this->dbManager->helper->getDataChanges($this);
+                $dataChanges=$this->db->getDataChanges($this);
             }
         }
 
@@ -1457,12 +1448,12 @@ class SugarBean
             //BEGIN SUGARCRM flav=ent ONLY
             if ($isUpdate)
             {
-                $this->dbManager->update($this);
+                $this->db->update($this);
             }
             else
-                $this->dbManager->insert($this);
+                $this->db->insert($this);
             //add rollback
-            ocicommit($this->dbManager->database);
+            ocicommit($this->db->database);
             //END SUGARCRM flav=ent ONLY
         }
         if ($this->db->dbType == 'mysql')
@@ -1672,7 +1663,7 @@ class SugarBean
         {
             foreach ($dataChanges as $change)
             {
-                $this->dbManager->helper->save_audit_records($this,$change);
+                $this->db->save_audit_records($this,$change);
             }
         }
 
@@ -3421,8 +3412,8 @@ function save_relationship_changes($is_update, $exclude=array())
 								$data['db_concat_fields'] = array(0=>'first_name', 1=>'last_name');
 						}
 					}
-					
-					
+
+
     				if($join['type'] == 'many-to-many')
     				{
     					if(empty($ret_array['secondary_select']))
@@ -3753,7 +3744,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function process_list_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '')
     {
         global $sugar_config;
-        $db = &DBManagerFactory::getInstance('listviews');
+        $db = DBManagerFactory::getInstance('listviews');
         /**
         * if the row_offset is set to 'end' go to the end of the list
         */
@@ -3948,7 +3939,7 @@ function save_relationship_changes($is_update, $exclude=array())
     $row_offset, $limit= -1, $max_per_page = -1, $where = '', $subpanel_def, $query_row_count='', $secondary_queries = array())
 
     {
-        $db = &DBManagerFactory::getInstance('listviews');
+        $db = DBManagerFactory::getInstance('listviews');
         /**
         * if the row_offset is set to 'end' go to the end of the list
         */
@@ -4627,7 +4618,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function build_related_list($query, &$template, $row_offset = 0, $limit = -1)
     {
         $GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
-        $db = &DBManagerFactory::getInstance('listviews');
+        $db = DBManagerFactory::getInstance('listviews');
 
         if(!empty($row_offset) && $row_offset != 0 && !empty($limit) && $limit != -1)
         {
@@ -4676,7 +4667,7 @@ function save_relationship_changes($is_update, $exclude=array())
     */
   function build_related_list_where($query, &$template, $where='', $in='', $order_by, $limit='', $row_offset = 0)
   {
-    $db = &DBManagerFactory::getInstance('listviews');
+    $db = DBManagerFactory::getInstance('listviews');
     // No need to do an additional query
     $GLOBALS['log']->debug("Finding linked records $this->object_name: ".$query);
     if(empty($in) && !empty($query))
