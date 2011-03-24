@@ -175,7 +175,6 @@ function isDataValid(formName, validateMonitoredFolder) {
         errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_USER'));
     }
     if(trim(formObject.email_password.value) == "" && trim(formObject.ie_id.value) == "") {
-    	console.log(formObject);
     	errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_PASSWORD'));
     }
     if(formObject.protocol.protocol == "") {
