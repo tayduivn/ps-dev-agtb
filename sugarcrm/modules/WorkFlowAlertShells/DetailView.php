@@ -54,7 +54,7 @@ if(!empty($_REQUEST['record'])) {
     }	
 }
 else {
-	header("Location: index.php?module=WorkFlowAlertShells&action=index");
+	header("Location: index.php?module=WorkFlowAlertShells&module_tab=WorkFlow&action=index");
 }
 
 //Get the meta information
