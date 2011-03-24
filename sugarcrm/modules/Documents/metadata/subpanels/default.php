@@ -67,8 +67,8 @@ $subpanel_layout = array(
                 'module' => 'Documents',
             ),
 		),
-       'category'=>array(
- 	    	'name' => 'category',
+       'category_id'=>array(
+ 	    	'name' => 'category_id',
 	 	    'vname' => 'LBL_LIST_CATEGORY',
 		    'width' => '20%',
 		),		
