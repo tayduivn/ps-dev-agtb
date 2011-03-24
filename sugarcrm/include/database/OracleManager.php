@@ -863,17 +863,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBManager::quoteForEmail()
-     */
-    public function quoteForEmail(
-        $string,
-        $isLike = true
-        )
-    {
-        return OracleHelper::magic_quotes_oracle_ForEmail($string);
-    }
-
-    /**
      * @see DBManager::quote()
      */
     public function quote(
@@ -972,7 +961,7 @@ class OracleManager extends DBManager
         case 'date_format': return "TO_CHAR($string".$additional_parameters_string.")";
         case 'time_format': return "TO_CHAR($string".$additional_parameters_string.")";
         case 'IFNULL': return "NVL($string".$additional_parameters_string.")";
-        case 'CONCAT': return "CONCAT($string,".implode(",",$additional_parameters_oracle_only).")";
+        case 'CONCAT': return "$string||".implode("||",$additional_parameters_oracle_only);
         case 'text2char': return "to_char($string)";
         }
 

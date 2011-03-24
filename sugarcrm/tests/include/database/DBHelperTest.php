@@ -324,11 +324,11 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         // TODO: write this test
     }
 
-    public function testQuote()
+    public function testQuoted()
     {
         $this->assertEquals(
-            $this->_helper->quote('foobar'),
-            "'".$this->_db->quote('foobar')."'"
+            "'".$this->_db->quote('foobar')."'",
+            $this->_db->quoted('foobar')
             );
     }
 

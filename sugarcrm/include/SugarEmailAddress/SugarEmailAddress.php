@@ -19,10 +19,10 @@ class SugarEmailAddress extends SugarBean {
     var $module_name = "EmailAddresses";
     var $module_dir = 'EmailAddresses';
     var $object_name = 'EmailAddress';
-    
-    //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+
+    //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
 	//allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
-    var $regex = "/^(['\.\-\+&'#!\$\*=\?\^_`\{\}~\/\w]+)*@((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+([\.-]?\w+)*(\.[\w-]{2,})+)\$/";
+    var $regex = '/^([\'\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)*@((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+([\.-]?\w+)*(\.[\w-]{2,})+)\$/';
     var $disable_custom_fields = true;
     var $db;
     var $smarty;
@@ -564,7 +564,7 @@ class SugarEmailAddress extends SugarBean {
     function AddUpdateEmailAddress($addr,$invalid=0,$opt_out=0) {
 
         $address = $this->_cleanAddress($addr);
-        $addressCaps = strtoupper($this->db->quoteForEmail($address));
+        $addressCaps = strtoupper($this->db->quote($address));
 
         $q = "SELECT * FROM email_addresses WHERE email_address_caps = '{$addressCaps}' and deleted=0";
         $r = $this->db->query($q);

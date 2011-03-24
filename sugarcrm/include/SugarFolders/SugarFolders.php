@@ -840,7 +840,7 @@ class SugarFolder {
 	function save($addSubscriptions = TRUE) {
 		global $current_user;
 
-		$this->dynamic_query = $this->db->helper->escape_quote($this->dynamic_query);
+		$this->dynamic_query = $this->db->quote($this->dynamic_query);
 
 		if((empty($this->id) && $this->new_with_id == false) || (!empty($this->id) && $this->new_with_id == true))
 		{

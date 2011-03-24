@@ -1146,13 +1146,13 @@ class Email extends SugarBean {
 			//END SUGARCRM flav=ent ONLY
 		} else {
 			$description = $this->db->quote(trim($this->description));
-			$description_html = $this->db->quoteForEmail(trim($this->description_html));
+			$description_html = $this->db->quote(trim($this->description_html));
 			$raw_source = $this->db->quote(trim($this->raw_source));
-			$fromAddressName = $this->db->helper->escape_quote($this->from_addr_name);
-			$toAddressName = $this->db->helper->escape_quote($this->to_addrs_names);
-			$ccAddressName = $this->db->helper->escape_quote($this->cc_addrs_names);
-			$bccAddressName = $this->db->helper->escape_quote($this->bcc_addrs_names);
-			$replyToAddrName = $this->db->helper->escape_quote($this->reply_to_addr);
+			$fromAddressName = $this->db->quote($this->from_addr_name);
+			$toAddressName = $this->db->quote($this->to_addrs_names);
+			$ccAddressName = $this->db->quote($this->cc_addrs_names);
+			$bccAddressName = $this->db->quote($this->bcc_addrs_names);
+			$replyToAddrName = $this->db->quote($this->reply_to_addr);
 
 			if(!$this->new_with_id) {
 				$q = "UPDATE emails_text SET from_addr = '{$fromAddressName}', to_addrs = '{$toAddressName}', cc_addrs = '{$ccAddressName}', bcc_addrs = '{$bccAddressName}', reply_to_addr = '{$replyToAddrName}', description = '{$description}', description_html = '{$description_html}', raw_source = '{$raw_source}' WHERE email_id = '{$this->id}'";

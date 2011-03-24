@@ -596,8 +596,6 @@ abstract class DBManager
      */
     public function repairTableParams($tablename, $fielddefs,  $indices, $execute = true, $engine = null)
     {
-        global $table_descriptions;
-
 		//jc: had a bug when running the repair if the tablename is blank the repair will
 		//fail when it tries to create a repair table
         if ($tablename == '' || empty($fielddefs))
@@ -850,11 +848,8 @@ abstract class DBManager
                         if (!isset($row2[$fname])) {
                             $returnArray['msg'] = 'no_match';
                         }
-                        foreach($fvalue as $key => $value) {
-                            //ignore keys when checking we will check them when we do the index check
-                            if(!isset($ignore_filter[$key]) && $row1[$fname][$key] != $row2[$fname][$key]){
-                                $returnArray['msg'] = 'no_match';
-                            }
+                        if(!isset($ignore_filter[$fname]) && $row1[$fname] != $row2[$fname]){
+                            $returnArray['msg'] = 'no_match';
                         }
                     }
                 }
@@ -914,7 +909,7 @@ abstract class DBManager
         foreach ($indexes as $index) {
             $name =$index['name'];
             if($execute) {
-                unset($GLOBALS['table_descriptions'][$tablename]['indexes'][$name]);
+               unset(self::$index_descriptions[$tablename][$name]);
             }
             if ($index['type'] == 'primary') {
                 $sql[] = 'DROP PRIMARY KEY';
@@ -981,13 +976,13 @@ abstract class DBManager
         $sql = $this->alterColumnSQL($tablename, $newFieldDef,$ignoreRequired);
         if ($this->isFieldArray($newFieldDef)){
             foreach ($newFieldDef as $fieldDef) {
-                unset($GLOBALS['table_descriptions'][$tablename][$fieldDef['name']]);
+                unset(self::$table_descriptions[$tablename][$fieldDef['name']]);
                 $columns[] = $fieldDef['name'];
             }
             $columns = implode(",", $columns);
         }
         else {
-            unset($GLOBALS['table_descriptions'][$tablename][$newFieldDef['name']]);
+            unset(self::$table_descriptions[$tablename][$newFieldDef['name']]);
             $columns = $newFieldDef['name'];
         }
 
@@ -1259,10 +1254,12 @@ abstract class DBManager
      * Returns a string properly quoted for this database
      *
      * @param string $string
-     * @param bool   $isLike
      */
-    public function quote($string, $isLike = true)
+    public function quote($string)
     {
+        if(is_array($string)) {
+            return $this->arrayQuote($string);
+        }
         return from_html($string);
     }
 
@@ -1293,11 +1290,12 @@ abstract class DBManager
      * @param array $array
      * @param bool  $isLike
      */
-    public function arrayQuote(array &$array, $isLike = true)
+    public function arrayQuote(array &$array)
     {
-        for($i = 0; $i < count($array); $i++) {
-            $array[$i] = $this->quote($array[$i], $isLike);
+        foreach($array as &$val) {
+            $val = $this->quote($val);
         }
+        return $array;
     }
     /**
      * Parses and runs queries
@@ -1360,8 +1358,11 @@ abstract class DBManager
      */
     public function getOne($sql, $dieOnError = false, $msg = '', $suppress = false)
     {
-        $GLOBALS['log']->info("Get One: . |$sql|");
-        $row = $this->fetchOne($sql, $dieOnError, $msg, $suppress);
+        $GLOBALS['log']->info("Get One: |$sql|");
+        $queryresult = $this->query($sql, $dieOnError, $msg);
+        $this->checkError($msg.' Get One Failed:' . $sql, $dieOnError);
+        if (!$queryresult) return false;
+        $row = $this->fetchByAssoc($queryresult);
         if(!empty($row)) {
             return array_shift($row);
         }
@@ -1379,15 +1380,15 @@ abstract class DBManager
      */
     public function fetchOne($sql, $dieOnError = false, $msg = '', $suppress = false)
     {
-        $GLOBALS['log']->info("Fetch One: . |$sql|");
+        $GLOBALS['log']->info("Fetch One: |$sql|");
         $this->checkConnection();
         $queryresult = $this->query($sql, $dieOnError, $msg);
+        $this->checkError($msg.' Fetch One Failed:' . $sql, $dieOnError);
+
         if (!$queryresult) return false;
 
         $row = $this->fetchByAssoc($queryresult);
         if ( !$row ) return false;
-
-        $this->checkError($msg.' Fetch One Failed:' . $sql, $dieOnError);
 
         $this->freeResult($queryresult);
         return $row;
@@ -1506,14 +1507,14 @@ abstract class DBManager
      */
     protected function describeIndex($name, $tablename)
     {
-        if(isset(self::$index_descriptions[$tablename]) && isset(self::$index_descriptions[$tablename]['indexes']) && isset(self::$index_descriptions[$tablename]['indexes'][$name])){
-            return 	self::$index_descriptions[$tablename]['indexes'][$name];
+        if(isset(self::$index_descriptions[$tablename]) && isset(self::$index_descriptions[$tablename]) && isset(self::$index_descriptions[$tablename][$name])){
+            return 	self::$index_descriptions[$tablename][$name];
         }
 
-        self::$index_descriptions[$tablename]['indexes'] = $this->get_indices($tablename);
+        self::$index_descriptions[$tablename] = $this->get_indices($tablename);
 
-        if(isset(self::$index_descriptions[$tablename]['indexes'][$name])){
-            return 	self::$index_descriptions[$tablename]['indexes'][$name];
+        if(isset(self::$index_descriptions[$tablename][$name])){
+            return 	self::$index_descriptions[$tablename][$name];
         }
 
         return array();
@@ -1582,8 +1583,10 @@ abstract class DBManager
     public function concat($table, array $fields)
     {
         if(empty($fields)) return '';
-
+        $elems = array();
+        $space = $this->quoted(" ");
         foreach ( $fields as $index => $field ) {
+            if(!empty($elems)) $elems[] = $space;
             $elems[] = $this->convert("$table.$field", 'IFNULL', array("''"));
         }
         return "LTRIM(RTRIM(CONCAT(".join(",", $elems).")))";
@@ -2566,7 +2569,8 @@ abstract class DBManager
      */
     protected function validColumnType($type)
     {
-        return !empty($this->getColumnType($type));
+        $type = $this->getColumnType($type);
+        return !empty($type);
     }
 
     /**

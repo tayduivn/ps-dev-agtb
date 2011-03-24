@@ -60,23 +60,6 @@ class PearDatabase
     }
 
     /**
-     * Returns a quoted string for email
-     *
-     * @deprecated
-     * @param  string $string
-     * @param  bool   $isLike optional
-     * @return string
-     */
-    public static function quoteForEmail(
-        $string, 
-        $isLike = true
-        )
-    {
-        $GLOBALS['log']->info('call to PearDatabase::quoteForEmail() is deprecated');
-        return $GLOBALS['db']->quoteForEmail($string, $isLike);
-    }    
-    
-    /**
      * Quotes each string in the given array
      *
      * @deprecated

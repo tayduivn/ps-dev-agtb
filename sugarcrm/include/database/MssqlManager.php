@@ -1079,18 +1079,6 @@ class MssqlManager extends DBManager
     }
 
     /**
-     * @see DBManager::quoteForEmail()
-     */
-    public function quoteForEmail(
-        $string,
-        $isLike = true
-        )
-    {
-        return str_replace("'","''", $string);
-    }
-
-
-    /**
      * @see DBManager::tableExists()
      */
     public function tableExists(

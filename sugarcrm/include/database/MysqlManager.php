@@ -547,7 +547,8 @@ class MysqlManager extends DBManager
     public function convert($string, $type, array $additional_parameters = array())
     {
         // convert the parameters array into a comma delimited string
-        $all_strings = join(",", array_unshift($additional_parameters, $string));
+        array_unshift($additional_parameters, $string);
+        $all_strings = join(",", $additional_parameters);
 
         switch ($type) {
         case 'today':

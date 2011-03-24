@@ -4085,7 +4085,6 @@ class InboundEmail extends SugarBean {
 			////	ASSIGN APPROPRIATE ATTRIBUTES TO NEW EMAIL OBJECT
 			// handle UTF-8/charset encoding in the ***headers***
 			global $db;
-			//bug #33929 added quoteForEmail() to replace single quote
 			$email->name			= $this->handleMimeHeaderDecode($header->subject);
 			$email->date_start = (!empty($unixHeaderDate)) ? $timedate->asUserDate($unixHeaderDate) : "";
 			$email->time_start = (!empty($unixHeaderDate)) ? $timedate->asUserTime($unixHeaderDate) : "";

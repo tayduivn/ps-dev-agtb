@@ -4,6 +4,9 @@ require_once 'modules/Contacts/Contact.php';
 
 class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    /**
+     * @var DBManager
+     */
     private $_db;
 
     protected $backupGlobals = FALSE;
@@ -649,7 +652,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $res = $this->_db->compareIndexInTables(
             'idx_foo', $tablename1, $tablename2);
 
-        $this->assertEquals($res['msg'],'match');
+        $this->assertEquals('match', $res['msg']);
 
         // first test not executing the statement
         $this->_db->dropIndexes(
@@ -664,7 +667,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $res = $this->_db->compareIndexInTables(
             'idx_foo', $tablename1, $tablename2);
 
-        $this->assertEquals($res['msg'],'match');
+        $this->assertEquals('match', $res['msg']);
 
         // now, execute the statement
         $sql = $this->_db->dropIndexes(
@@ -680,7 +683,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $res = $this->_db->compareIndexInTables(
             'idx_foo', $tablename1, $tablename2);
 
-        $this->assertEquals($res['msg'],'not_exists_table2');
+        $this->assertEquals('not_exists_table2', $res['msg']);
 
         $this->_db->dropTableName($tablename1);
         $this->_db->dropTableName($tablename2);
@@ -932,9 +935,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $string = "'dog eat ";
 
         if ( $this->_db->dbType == 'mysql')
-            $this->assertEquals($this->_db->quoteForEmail($string),"\'dog eat ");
+            $this->assertEquals($this->_db->quote($string),"\\'dog eat ");
         else
-            $this->assertEquals($this->_db->quoteForEmail($string),"''dog eat ");
+            $this->assertEquals($this->_db->quote($string),"''dog eat ");
     }
 
     public function testQuoteForEmail()
@@ -942,9 +945,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $string = "'dog eat ";
 
         if ( $this->_db->dbType == 'mysql')
-            $this->assertEquals($this->_db->quoteForEmail($string),"\'dog eat ");
+            $this->assertEquals($this->_db->quote($string),"\\'dog eat ");
         else
-            $this->assertEquals($this->_db->quoteForEmail($string),"''dog eat ");
+            $this->assertEquals($this->_db->quote($string),"''dog eat ");
     }
 
     public function testArrayQuote()
@@ -952,7 +955,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $string = array("'dog eat ");
         $this->_db->arrayQuote($string);
         if ( $this->_db->dbType == 'mysql')
-            $this->assertEquals($string,array("\'dog eat "));
+            $this->assertEquals($string,array("\\'dog eat "));
         else
             $this->assertEquals($string,array("''dog eat "));
     }
@@ -1407,17 +1410,11 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
          $ret = $this->_db->concat('foo',array('col1','col2','col3'));
 
          if ( $this->_db instanceOf MysqlManager )
-             $this->assertEquals($ret,
-                 "TRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,'')))"
-                 );
+             $this->assertEquals("LTRIM(RTRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))))", $ret);
          if ( $this->_db instanceOf MssqlManager )
-             $this->assertEquals($ret,
-                 "LTRIM(RTRIM(ISNULL(foo.col1,'') + ' ' + ISNULL(foo.col2,'') + ' ' + ISNULL(foo.col3,'')))"
-                 );
+             $this->assertEquals("LTRIM(RTRIM(ISNULL(foo.col1,'') + ' ' + ISNULL(foo.col2,'') + ' ' + ISNULL(foo.col3,'')))", $ret);
          if ( $this->_db instanceOf OracleManager )
-             $this->assertEquals($ret,
-                 "TRIM(CONCAT(CONCAT(CONCAT(NVL(foo.col1,''),' '), CONCAT(NVL(foo.col2,''),' ')), CONCAT(NVL(foo.col3,''),' ')))"
-                 );
+             $this->assertEquals("LTRIM(RTRIM(NVL(foo.col1,'') || ' ' || NVL(foo.col2,'') || ' ' || NVL(foo.col3,'') || ' '))", $ret);
      }
 
      public function providerFromConvert()
