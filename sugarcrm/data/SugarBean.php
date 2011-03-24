@@ -46,7 +46,7 @@ require_once('modules/DynamicFields/DynamicField.php');
 class SugarBean
 {
     /**
-     * A pointer to the database helper object DBHelper
+     * A pointer to the database object
      *
      * @var DBManager
      */
@@ -2676,7 +2676,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         if ( $this->db->dbType == 'mssql'
                             && $source != 'non-db'
                             && in_array(
-                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                $this->db->getColumnType($this->db->getFieldType($bean_queried->field_defs[$list_column_name])),
                                 array('ntext','text','image')
                                 )
                             ) {
@@ -2686,7 +2686,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         if ( $this->db->dbType == 'oci8'
                             && $source != 'non-db'
                             && in_array(
-                                $this->db->getHelper()->getColumnType($this->db->getHelper()->getFieldType($bean_queried->field_defs[$list_column_name])),
+                                $this->db->getColumnType($this->db->getFieldType($bean_queried->field_defs[$list_column_name])),
                                 array('clob')
                                 )
                             ) {
@@ -2988,7 +2988,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $all_fields = array();
             foreach($subqueries as $i => $subquery)
             {
-                $query_fields = $GLOBALS['db']->helper->getSelectFieldsFromQuery($subquery['select']);
+                $query_fields = $GLOBALS['db']->getSelectFieldsFromQuery($subquery['select']);
                 foreach($query_fields as $field => $select)
                 {
                     if (!in_array($field, $all_fields))
