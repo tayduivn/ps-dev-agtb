@@ -45,7 +45,11 @@ else {
 	$focus->retrieve($_REQUEST['team_record']);
 }
 
-$focus->remove_user_from_team($_REQUEST['record']);
+try {
+	$focus->remove_user_from_team($_REQUEST['record']);
+} catch (Exception $ex) {
+	SugarApplication::appendErrorMessage($ex->getMessage());
+}
 
 header("Location: index.php?module={$_REQUEST['return_module']}&action={$_REQUEST['return_action']}&record={$_REQUEST['return_id']}");
 ?>
