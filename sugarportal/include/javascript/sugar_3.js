@@ -330,19 +330,7 @@ function bothExist(item1, item2) {
 	return true;
 }
 
-function trim(s) {
-	if(typeof(s) == 'undefined')  
-		return s;
-	while (s.substring(0,1) == " ") {
-		s = s.substring(1, s.length);
-	}
-	while (s.substring(s.length-1, s.length) == ' ') {
-		s = s.substring(0,s.length-1);
-	}
-
-	return s;
-}
-
+trim = YAHOO.lang.trim;
 
 function check_form(formname) {
 	if (typeof(siw) != 'undefined' && siw 
