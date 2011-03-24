@@ -35,6 +35,7 @@ class DateExpressionTest extends Sugar_PHPUnit_Framework_TestCase
 	    $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
+		unset($GLOBALS['disable_date_format']);
 	}
 
 	public static function tearDownAfterClass()
