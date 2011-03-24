@@ -336,7 +336,9 @@ function toDecimal(original, precision) {
 }
 
 function isInteger(s) {
-	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	if (typeof s == "string" && s == "")
+        return true;
+    if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
 	}
