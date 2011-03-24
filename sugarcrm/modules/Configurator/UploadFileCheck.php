@@ -35,7 +35,7 @@ if($json->decode(html_entity_decode($_REQUEST['forQuotes']))){
 }
 if(isset($_FILES['file_1'])){
     $uploadTmpDir=$sugar_config['tmp_dir'].'tmp_logo_'.$returnArray['forQuotes'].'_upload';
-    $file_name = $uploadTmpDir .'/'. basename($_FILES['file_1']['name']);
+    $file_name = $uploadTmpDir . DIRECTORY_SEPARATOR .  cleanFileName(basename($_FILES['file_1']['name']));
     if(file_exists($uploadTmpDir))
        rmdir_recursive($uploadTmpDir);
     
