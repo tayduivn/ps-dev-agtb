@@ -2580,6 +2580,7 @@ $app_strings = array (
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search [Alt+Q]',
     'LBL_SEARCH' => 'Search',
+    'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
     'LBL_SELECT_BUTTON_KEY' => 'T',

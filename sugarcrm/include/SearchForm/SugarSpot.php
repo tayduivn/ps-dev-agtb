@@ -56,7 +56,7 @@ class SugarSpot
 			$data['pageData']['offsets']['next']++;
 			if($countRemaining > 0){
 				$more = <<<EOHTML
-<small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining more)</small>
+<small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining {$GLOBALS['app_strings']['LBL_SEARCH_MORE']})</small>
 EOHTML;
 			}
 
