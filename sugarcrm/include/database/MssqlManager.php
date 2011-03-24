@@ -88,6 +88,11 @@ class MssqlManager extends DBManager
         'row_count'   => 'mssql_num_rows'
         );
 
+    protected $capabilities = array(
+        "affected_rows" => true,
+        "select_rows" => true,
+    );
+
 
 	/**
      * @see DBManager::connect()
@@ -1309,5 +1314,15 @@ class MssqlManager extends DBManager
 
         return "CREATE TABLE $tablename ($columns ) " .
             $this->indexSQL($tablename, $fieldDefs, $indices);
+    }
+
+    /**
+     * Does this type represent text (i.e., non-varchar) value?
+     * @param string $type
+     */
+    public function isTextType($type)
+    {
+        $type = strtolower($type);
+        return in_array($type, array('ntext','text','image'));
     }
 }

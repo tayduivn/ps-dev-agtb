@@ -84,7 +84,11 @@ class SqlsrvManager extends MssqlManager
         'close'       => 'sqlsrv_close',
         );
 
-	/**
+    protected $capabilities = array(
+        "affected_rows" => true,
+    );
+
+    /**
      * cache of the results sets as they are fetched
      */
     protected $_resultsCache;

@@ -64,7 +64,11 @@ class OracleManager extends DBManager
      */
     protected $_lastResult;
 
-	/**
+    protected $capabilities = array(
+        "affected_rows" => true,
+    );
+
+    /**
      * @see DBManager::createTable()
 	 */
     public function createTable(
@@ -1008,5 +1012,14 @@ class OracleManager extends DBManager
         return "CREATE TABLE $tablename ($columns)";
 	}
 
+    /**
+     * Does this type represent text (i.e., non-varchar) value?
+     * @param string $type
+     */
+    public function isTextType($type)
+    {
+        $type = strtolower($type);
+        return ($type == 'clob');
+    }
 }
 

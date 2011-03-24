@@ -1429,236 +1429,22 @@ class SugarBean
 
         //construct the SQL to create the audit record if auditing is enabled.
         $dataChanges=array();
-        if ($this->is_AuditEnabled())
-        {
-            if ($isUpdate && !isset($this->fetched_row))
-            {
+        if ($this->is_AuditEnabled()) {
+            if ($isUpdate && !isset($this->fetched_row)) {
                 $GLOBALS['log']->debug('Auditing: Retrieve was not called, audit record will not be created.');
-            }
-            else
-            {
+            } else {
                 $dataChanges=$this->db->getDataChanges($this);
             }
         }
 
         $this->_sendNotifications($check_notify);
 
-        if ($this->db->dbType == "oci8")
-        {
-            //BEGIN SUGARCRM flav=ent ONLY
-            if ($isUpdate)
-            {
-                $this->db->update($this);
-            }
-            else
-                $this->db->insert($this);
-            //add rollback
-            ocicommit($this->db->database);
-            //END SUGARCRM flav=ent ONLY
+        if ($isUpdate) {
+            $this->db->update($this);
+        } else {
+            $this->db->insert($this);
         }
-        if ($this->db->dbType == 'mysql')
-        {
-            // write out the SQL statement.
-            $query .= $this->table_name." set ";
 
-            $firstPass = 0;
-
-            foreach($this->field_defs as $field=>$value)
-            {
-                if(!isset($value['source']) || $value['source'] == 'db')
-                {
-                    // Do not write out the id field on the update statement.
-                    // We are not allowed to change ids.
-                    if($isUpdate && ('id' == $field))
-                        continue;
-                    //custom fields handle there save seperatley
-                    if(isset($this->field_name_map) && !empty($this->field_name_map[$field]['custom_type']))
-                        continue;
-
-                    // Only assign variables that have been set.
-                    if(isset($this->$field))
-                    {
-                        //bug: 37908 - this is to handle the issue where the bool value is false, but strlen(false) <= so it will
-                        //set the default value. TODO change this code to esend all fields through getFieldValue() like DbHelper->insertSql
-                        if(!empty($value['type']) && $value['type'] == 'bool'){
-                            $this->$field = $this->getFieldValue($field);
-                        }
-
-                        if(strlen($this->$field) <= 0)
-                        {
-                            if(!$isUpdate && isset($value['default']) && (strlen($value['default']) > 0))
-                            {
-                                $this->$field = $value['default'];
-                            }
-                            else
-                            {
-                                $this->$field = null;
-                            }
-                        }
-                        // Try comparing this element with the head element.
-                        if(0 == $firstPass)
-                            $firstPass = 1;
-                        else
-                            $query .= ", ";
-
-                        if(is_null($this->$field))
-                        {
-                            $query .= $field."=null";
-                        }
-                        else
-                        {
-                            //added check for ints because sql-server does not like casting varchar with a decimal value
-                            //into an int.
-                            if(isset($value['type']) and $value['type']=='int') {
-                                $query .= $field."=".$this->db->quote($this->$field);
-                            } elseif ( isset($value['len']) ) {
-                                $query .= $field."='".$this->db->quote($this->db->truncate(from_html($this->$field),$value['len']))."'";
-                            } else {
-                                $query .= $field."='".$this->db->quote($this->$field)."'";
-                            }
-                        }
-                    }
-                }
-            }
-
-            if($isUpdate)
-            {
-                $query = $query." WHERE ID = '$this->id'";
-                $GLOBALS['log']->info("Update $this->object_name: ".$query);
-            }
-            else
-            {
-                $GLOBALS['log']->info("Insert: ".$query);
-            }
-            $GLOBALS['log']->info("Save: $query");
-            $this->db->query($query, true);
-        }
-        //process if type is set to mssql
-        if ($this->db->dbType == 'mssql')
-        {
-            if($isUpdate)
-            {
-                // build out the SQL UPDATE statement.
-                $query = "UPDATE " . $this->table_name." SET ";
-                $firstPass = 0;
-                foreach($this->field_defs as $field=>$value)
-                {
-                    if(!isset($value['source']) || $value['source'] == 'db')
-                    {
-                        // Do not write out the id field on the update statement.
-                        // We are not allowed to change ids.
-                        if($isUpdate && ('id' == $field))
-                            continue;
-
-                        // If the field is an auto_increment field, then we shouldn't be setting it.  This was added
-                        // specially for Bugs and Cases which have a number associated with them.
-                        if ($isUpdate && isset($this->field_name_map[$field]['auto_increment']) &&
-                            $this->field_name_map[$field]['auto_increment'] == true)
-                            continue;
-
-                        //custom fields handle their save seperatley
-                        if(isset($this->field_name_map) && !empty($this->field_name_map[$field]['custom_type']))
-                            continue;
-
-                        // Only assign variables that have been set.
-                        if(isset($this->$field))
-                        {
-                            //bug: 37908 - this is to handle the issue where the bool value is false, but strlen(false) <= so it will
-                            //set the default value. TODO change this code to esend all fields through getFieldValue() like DbHelper->insertSql
-                            if(!empty($value['type']) && $value['type'] == 'bool'){
-                                $this->$field = $this->getFieldValue($field);
-                            }
-
-                            if(strlen($this->$field) <= 0)
-                            {
-                                if(!$isUpdate && isset($value['default']) && (strlen($value['default']) > 0))
-                                {
-                                    $this->$field = $value['default'];
-                                }
-                                else
-                                {
-                                    $this->$field = null;
-                                }
-                            }
-                            // Try comparing this element with the head element.
-                            if(0 == $firstPass)
-                                $firstPass = 1;
-                            else
-                                $query .= ", ";
-
-                            if(is_null($this->$field))
-                            {
-                                $query .= $field."=null";
-                            }
-                            elseif ( isset($value['len']) )
-                           {
-                               $query .= $field."='".$this->db->quote($this->db->truncate(from_html($this->$field),$value['len']))."'";
-                           }
-                           else
-                            {
-                                $query .= $field."='".$this->db->quote($this->$field)."'";
-                            }
-                        }
-                    }
-                }
-                $query = $query." WHERE ID = '$this->id'";
-                $GLOBALS['log']->info("Update $this->object_name: ".$query);
-            }
-            else
-            {
-                $colums = array();
-                $values = array();
-                foreach($this->field_defs as $field=>$value)
-                {
-                    if(!isset($value['source']) || $value['source'] == 'db')
-                    {
-                        // Do not write out the id field on the update statement.
-                        // We are not allowed to change ids.
-                        //if($isUpdate && ('id' == $field)) continue;
-                        //custom fields handle there save seperatley
-
-                        if(isset($this->field_name_map) && !empty($this->field_name_map[$field]['custom_module']))
-                        continue;
-
-                        // Only assign variables that have been set.
-                        if(isset($this->$field))
-                        {
-                            //trim the value in case empty space is passed in.
-                            //this will allow default values set in db to take effect, otherwise
-                            //will insert blanks into db
-                            $trimmed_field = trim($this->$field);
-                            //if this value is empty, do not include the field value in statement
-                            if($trimmed_field =='')
-                            {
-                                continue;
-                            }
-                            //bug: 37908 - this is to handle the issue where the bool value is false, but strlen(false) <= so it will
-                            //set the default value. TODO change this code to esend all fields through getFieldValue() like DbHelper->insertSql
-                            if(!empty($value['type']) && $value['type'] == 'bool'){
-                                $this->$field = $this->getFieldValue($field);
-                            }
-                            //added check for ints because sql-server does not like casting varchar with a decimal value
-                            //into an int.
-                            if(isset($value['type']) and $value['type']=='int') {
-                                $values[] = $this->db->quote($this->$field);
-                            } elseif ( isset($value['len']) ) {
-                                $values[] = "'".$this->db->quote($this->db->truncate(from_html($this->$field),$value['len']))."'";
-                            } else {
-                                $values[] = "'".$this->db->quote($this->$field)."'";
-
-                            }
-                            $columns[] = $field;
-                        }
-                    }
-                }
-                // build out the SQL INSERT statement.
-                $query = "INSERT INTO $this->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
-                $GLOBALS['log']->info("Insert: ".$query);
-            }
-
-            $GLOBALS['log']->info("Save: $query");
-            $this->db->query($query, true);
-        }
         if (!empty($dataChanges) && is_array($dataChanges))
         {
             foreach ($dataChanges as $change)
@@ -1787,14 +1573,11 @@ class SugarBean
     function has_been_modified_since($date, $modified_user_id)
     {
         global $current_user;
+        $date = $this->db->convert($this->db->quoted($date), 'datetime');
         if (isset($current_user))
         {
-            if ($this->db->dbType == 'mssql')
-                $date_modified_string = 'CONVERT(varchar(20), date_modified, 120)';
-            else
-                $date_modified_string = 'date_modified';
-
-            $query = "SELECT date_modified FROM $this->table_name WHERE id='$this->id' AND modified_user_id != '$current_user->id' AND (modified_user_id != '$modified_user_id' OR $date_modified_string > " . db_convert("'".$date."'", 'datetime') . ')';
+            $query = "SELECT date_modified FROM $this->table_name WHERE id='$this->id' AND modified_user_id != '$current_user->id'
+            	AND (modified_user_id != '$modified_user_id' OR date_modified > $date)";
             $result = $this->db->query($query);
 
             if($this->db->fetchByAssoc($result))
@@ -2481,15 +2264,10 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             if($field == 'user_preferences' && $this->module_dir == 'Users')
                 continue;
-            //BEGIN SUGARCRM flav=ent ONLY
-            // oracle returns upper case fields. use that
-            //$rfield = ($this->db->dbType == 'oci8') ? strtoupper($field) : $field;
-            //END SUGARCRM flav=ent ONLY
-            $rfield = $field; // fetch returns it in lowercase only
-            if(isset($row[$rfield]))
+            if(isset($row[$field]))
             {
-                $this->$field = $row[$rfield];
-                $owner = $rfield . '_owner';
+                $this->$field = $row[$field];
+                $owner = $field . '_owner';
                 if(!empty($row[$owner])){
                     $this->$owner = $row[$owner];
                 }
@@ -2674,37 +2452,19 @@ function save_relationship_changes($is_update, $exclude=array())
                         {
                             $list_column[0] = $bean_queried->table_name ."_cstm.".$list_column[0] ;
                         }
-                        $value = implode($list_column,' ');
                         // Bug 38803 - Use CONVERT() function when doing an order by on ntext, text, and image fields
-                        if ( $this->db->dbType == 'mssql'
-                            && $source != 'non-db'
-                            && in_array(
-                                $this->db->getColumnType($this->db->getFieldType($bean_queried->field_defs[$list_column_name])),
-                                array('ntext','text','image')
-                                )
-                            ) {
-                        $value = "CONVERT(varchar(500),{$list_column[0]}) {$list_column[1]}";
+                        if ($source != 'non-db' && $this->db->isTextType($this->db->getFieldType($bean_queried->field_defs[$list_column_name]))) {
+                            $list_column[0] = $this->db->convert($list_column[0], "text2char");
                         }
-                        // Bug 29011 - Use TO_CHAR() function when doing an order by on a clob field
-                        if ( $this->db->dbType == 'oci8'
-                            && $source != 'non-db'
-                            && in_array(
-                                $this->db->getColumnType($this->db->getFieldType($bean_queried->field_defs[$list_column_name])),
-                                array('clob')
-                                )
-                            ) {
-                        $value = "TO_CHAR({$list_column[0]}) {$list_column[1]}";
-                        }
-                    }
-                    else
-                    {
+                        $value = implode(' ',$list_column);
+                    } else {
                         $GLOBALS['log']->debug("process_order_by: ($list_column[0]) does not have a vardef entry.");
                     }
                 }
             }
             $elements[$key]=$value;
         }
-        return implode($elements,',');
+        return implode(',', $elements);
 
     }
 
@@ -3464,11 +3224,11 @@ function save_relationship_changes($is_update, $exclude=array())
                             $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
                         }
                         $count_used =0;
-                        if($this->db->dbType != 'mysql') {//bug 26801, these codes are just used to duplicate rel_key in the select sql, or it will throw error in MSSQL and Oracle.
+//                        if($this->db->dbType != 'mysql') {//bug 26801, these codes are just used to duplicate rel_key in the select sql, or it will throw error in MSSQL and Oracle.
                             foreach($used_join_key as $used_key) {
                                if($used_key == $join['rel_key']) $count_used++;
                             }
-                        }
+//                        }
                         if($count_used <= 1) {//27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
                             $ret_array['secondary_select'] .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
                         }
@@ -3813,9 +3573,9 @@ function save_relationship_changes($is_update, $exclude=array())
         $next_offset = $row_offset + $max_per_page;
 
         $class = get_class($this);
-        if($rows_found != 0 or $db->dbType != 'mysql')
+        if($rows_found != 0 || !$db->supports('select_rows'))
         {
-            //todo Bug? we should remove the magic number -99
+            //FIXME: Bug? we should remove the magic number -99
             //use -99 to return all
             $index = $row_offset;
             while ($max_per_page == -99 || ($index < $row_offset + $max_per_page))
@@ -4017,7 +3777,7 @@ function save_relationship_changes($is_update, $exclude=array())
             }
 
             $GLOBALS['log']->debug("Found $rows_found ".$parent_bean->object_name."s");
-            if($rows_found != 0 or $db->dbType != 'mysql')
+            if($rows_found != 0 || !$db->supports('select_rows'))
             {
                 //use -99 to return all
 
@@ -4037,7 +3797,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 while($row)
                 {
                     $function_fields = array();
-                    if(($index < $row_offset + $max_per_page || $max_per_page == -99) or ($db->dbType != 'mysql'))
+                    if(($index < $row_offset + $max_per_page || $max_per_page == -99)/* or ($db->dbType != 'mysql') */)
                     {
                         if ($processing_collection)
                         {
@@ -4275,7 +4035,7 @@ function save_relationship_changes($is_update, $exclude=array())
         $previous_offset = $row_offset - $max_per_page;
         $next_offset = $row_offset + $max_per_page;
 
-        if($rows_found != 0 or $this->db->dbType != 'mysql')
+        if($rows_found != 0 || !$this->db->supports('select_rows'))
         {
             $index = 0;
             $row = $this->db->fetchByAssoc($result, $index);

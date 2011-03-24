@@ -132,7 +132,10 @@ class MysqlManager extends DBManager
            'file'      => 'varchar',
      );
 
-
+    protected $capabilities = array(
+        "affected_rows" => true,
+        "select_rows" => true,
+    );
 
     /**
      * @see DBManager::checkError()

@@ -164,6 +164,11 @@ abstract class DBManager
      */
     protected $type_map = array();
 
+    /**
+     * Capabilities this DB supports
+     */
+    protected $capabilities = array();
+
     public function __construct()
     {
         $this->timedate = TimeDate::getInstance();
@@ -1741,32 +1746,32 @@ abstract class DBManager
     {
 		// get column names and values
 		$values = array();
-		foreach ($bean->getFieldDefinitions() as $fieldDef)
+		foreach ($bean->getFieldDefinitions() as $field => $fieldDef)
 		{
-            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')
-                continue;
+            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
+            //custom fields handle there save seperatley
+            if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type'])) continue;
 
-            $val = $bean->getFieldValue($fieldDef['name']);
-            // clean the incoming value..
-            $val = from_html($val);
-            if (strlen($val) <= 0) {
-                if(isset($fieldDef['default']) && (strlen($fieldDef['default']) > 0))
+            if(isset($bean->$field)) {
+                // clean the incoming value..
+                $val = from_html($bean->$field);
+            } else {
+                if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
                     $val = $fieldDef['default'];
-                else
+                } else {
                     $val = null;
+                }
             }
 
             //handle auto increment values here only need to do this on insert not create
-            if (isset($fieldDef['auto_increment']) && $fieldDef['auto_increment']) {
-                $values[$fieldDef['name']] =
-                    $this->getAutoIncrementSQL($bean->getTableName(), $fieldDef['name']);
-            }
-            elseif (isset($bean->$fieldDef['name'])) {
+            // TODO: do we really need to do this?
+            if (!empty($fieldDef['auto_increment'])) {
+                $values[$field] = $this->getAutoIncrementSQL($bean->getTableName(), $fieldDef['name']);
+            } elseif ($fieldDef['name'] == 'deleted') {
+                $values['deleted'] = (int)$val;
+            } else {
                 // need to do some thing about types of values
-                $values[$fieldDef['name']] = $this->massageValue($val, $fieldDef);
-            }
-            elseif ($fieldDef['name'] == 'deleted'){
-                $values['deleted'] = $val;
+                $values[$field] = $this->massageValue($val, $fieldDef);
             }
 		}
 
@@ -1793,33 +1798,31 @@ abstract class DBManager
 
 		// get column names and values
 		foreach ($bean->getFieldDefinitions() as $field => $fieldDef) {
-           // Do not write out the id field on the update statement.
+            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
+		    // Do not write out the id field on the update statement.
            // We are not allowed to change ids.
-           if ($fieldDef['name'] == $primaryField['name'])
-               continue;
+           if ($fieldDef['name'] == $primaryField['name']) continue;
 
            // If the field is an auto_increment field, then we shouldn't be setting it.  This was added
            // specially for Bugs and Cases which have a number associated with them.
-           if (isset($bean->field_name_map[$field]['auto_increment']) &&
-                    $bean->field_name_map[$field]['auto_increment'] == true)
-               continue;
+           if (!empty($bean->field_name_map[$field]['auto_increment'])) continue;
 
            //custom fields handle their save seperatley
-           if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))
-               continue;
+           if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
-           if (isset($bean->$fieldDef['name'])
-                    && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
-               $val = $bean->getFieldValue($fieldDef['name']);
-               // clean the incoming value..
-               $val = from_html($val);
-
-               // need to do some thing about types of values
-               if (strlen($val) <= 0)
-                    $columns[] = "{$fieldDef['name']}=null";
-		       else
-                    $columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
+           if(isset($bean->$field)) {
+               $val = from_html($bean->$field);
+           } else {
+                continue;
            }
+		   if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
+               $val = $this->getFieldValue($field);
+		   }
+           if(strlen($val) == 0 && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+               $val = $fieldDef['default'];
+           }
+
+		   $columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
 		}
 
 		if ( sizeof($columns) == 0 )
@@ -1913,6 +1916,10 @@ abstract class DBManager
      */
 	public function massageValue($val, $fieldDef)
     {
+        if(is_null($val)) {
+            return "NULL";
+        }
+
         if ( strlen($val) <= 0 )
             return "''";
 
@@ -2847,5 +2854,23 @@ abstract class DBManager
         }
 
         return false;
+    }
+
+    /**
+     * Does this type represent text (i.e., non-varchar) value?
+     * @param string $type
+     */
+    public function isTextType($type)
+    {
+        return false;
+    }
+
+    /**
+     * Check if this DB supports certain capability
+     * @param string $cap
+     */
+    public function supports($cap)
+    {
+        return !empty($this->capabilities[$cap]);
     }
 }
