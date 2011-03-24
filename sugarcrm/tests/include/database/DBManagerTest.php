@@ -63,7 +63,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetHelper()
     {
-        $this->assertInstanceOf('DBHelper',$this->_db->getHelper());
+        $this->assertInstanceOf('DBManager',$this->_db->getHelper());
     }
 
     public function testCheckError()
@@ -1120,7 +1120,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->_db->dropTableName($tablename);
     }
-    
+
     public function providerCompareVardefs()
     {
         $returnArray = array(
@@ -1180,13 +1180,13 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                     'name' => 'FOO',
                     'type' => 'varchar',
                     'len' => '255',
-                    ), 
+                    ),
                 true),
             );
-        
+
         return $returnArray;
     }
-    
+
     /**
      * @dataProvider providerCompareVarDefs
      */
@@ -1199,7 +1199,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertFalse($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
         }
     }
-    
+
     public function providerConvert()
     {
         $db = DBManagerFactory::getInstance();
