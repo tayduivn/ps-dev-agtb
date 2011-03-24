@@ -141,12 +141,15 @@ EOHTML;
 	    $moduleName
 	    )
 	{
-		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) {
+		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) {
+			$searchFields = array();
+		    require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
+			return $searchFields;
+		} else if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) {
 			$searchFields = array();
 		    require "modules/{$moduleName}/metadata/SearchFields.php" ;
 			return $searchFields;
-		}
-		else {
+		} else {
 			return array();
 		}
 	}
@@ -226,6 +229,7 @@ EOHTML;
 		    if (empty($primary_module)) $primary_module=$moduleName;
 
 			$searchFields = SugarSpot::getSearchFields($moduleName);
+
 			if (empty($searchFields[$moduleName])) continue;
 
 			$class = $GLOBALS['beanList'][$moduleName];
@@ -236,6 +240,7 @@ EOHTML;
 			if ($class == 'aCase') {
 		            $class = 'Case';
 			}
+			
 			foreach($searchFields[$moduleName] as $k=>$v){
 				$keep = false;
 				$searchFields[$moduleName][$k]['value'] = $query;
@@ -260,7 +265,7 @@ EOHTML;
 					        unset($searchFields[$moduleName][$k]);
 					    }
 					}
-				}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){;
+				}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){
 					unset($searchFields[$moduleName][$k]);
 				}else{
 					switch($GLOBALS['dictionary'][$class]['fields'][$k]['type']){
@@ -330,7 +335,7 @@ EOHTML;
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
-
+			
 			if(empty($where_clauses)) {
 			    continue;
 			}
