@@ -909,7 +909,7 @@ class SugarBean
      */
     function load_relationship($rel_name)
     {
-        $GLOBALS['log']->debug("SugarBean.load_relationships, Loading relationship (".$rel_name.").");
+        $GLOBALS['log']->debug("SugarBean{$this->object_name}.load_relationships, Loading relationship (".$rel_name.").");
 
         if (empty($rel_name))
         {
@@ -942,6 +942,8 @@ class SugarBean
                     return false;
                 }
                 return true;
+            } else {
+                $GLOBALS['log']->debug("SugarBean.load_relationships[$rel_name], can't find link: ".var_export($fieldDefs[$rel_name], true));
             }
         }
         $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading relationship (".$rel_name.").");
@@ -1721,6 +1723,19 @@ class SugarBean
         }
         //Check for other on-save dependencies
         $deps = DependencyManager::getModuleDependenciesForAction($this->module_dir, "save");
+        foreach($deps as $dep)
+        {
+            if ($dep->getFireOnLoad())
+            {
+                $dep->fire($this);
+            }
+        }
+    }
+
+    function updateDependentField()
+    {
+        require_once("include/Expressions/DependencyManager.php");
+        $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
         foreach($deps as $dep)
         {
             if ($dep->getFireOnLoad())
@@ -4793,7 +4808,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }else{
             $ids .= ')';
         }
-        
+
         return array('list'=>$idList, 'in'=>$ids);
     }
 
