@@ -62,46 +62,22 @@ EOQ;
 		$dateTimeNow = $timedate->nowDb();
 
 		global $db;
+		$dateTimeNow = $db->convert($db->quoted($dateTimeNow), 'datetime');
+		$dateTimeMax = $db->convert($db->quoted($dateTimeMax), 'datetime');
+		$desc = $db->convert("description", "text2char");
+		if($desc != "description") {
+		    $desc .= " description";
+		}
 		// Prep Meetings Query
-		if ($db->dbType == 'mysql') {
-			$selectMeetings = "
-				SELECT meetings.id, name,reminder_time, description,location, date_start, assigned_user_id
-				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
-				WHERE meetings_users.user_id ='".$current_user->id."'
-					AND meetings_users.accept_status != 'decline'
-					AND meetings.reminder_time != -1
-					AND meetings_users.deleted != 1
-					AND meetings.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-		}
-		elseif ($db->dbType == 'oci8')
-		{
-			//BEGIN SUGARCRM flav=ent ONLY
-			$selectMeetings = "
-				SELECT meetings.id, name,reminder_time, description,location, date_start,  assigned_user_id
-				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
-				WHERE meetings_users.user_id ='".$current_user->id."'
-					AND meetings_users.accept_status != 'decline'
-					AND meetings.reminder_time != -1
-					AND meetings_users.deleted != 1
-					AND meetings.status != 'Held'
-					AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')
-					AND date_start <= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')";
-	       	//END SUGARCRM flav=ent ONLY
-		}elseif($db->dbType == 'mssql') {
-			$selectMeetings = "
-				SELECT meetings.id, name,reminder_time, CAST(description AS varchar(8000)),location, date_start, assigned_user_id
-				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
-				WHERE meetings_users.user_id ='".$current_user->id."'
-					AND meetings_users.accept_status != 'decline'
-					AND meetings.reminder_time != -1
-					AND meetings_users.deleted != 1
-					AND meetings.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-		}
-
+    	$selectMeetings = "SELECT meetings.id, name,reminder_time, $desc,location, date_start, assigned_user_id
+			FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
+			WHERE meetings_users.user_id ='".$current_user->id."'
+				AND meetings_users.accept_status != 'decline'
+				AND meetings.reminder_time != -1
+				AND meetings_users.deleted != 1
+				AND meetings.status != 'Held'
+			    AND date_start >= $dateTimeNow
+			    AND date_start <= $dateTimeMax";
 		$result = $db->query($selectMeetings);
 
 		///////////////////////////////////////////////////////////////////////
@@ -173,47 +149,17 @@ EOQ;
 		}
 
 		// Prep Calls Query
-		if ($db->dbType == 'mysql') {
-
-			$selectCalls = "
-				SELECT calls.id, name, reminder_time, description, date_start
+		$selectCalls = "
+				SELECT calls.id, name, reminder_time, $desc, date_start
 				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id
 				WHERE calls_users.user_id ='".$current_user->id."'
 				    AND calls_users.accept_status != 'decline'
 				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-		}elseif ($db->dbType == 'oci8')
-		{
-			//BEGIN SUGARCRM flav=ent ONLY
-			$selectCalls = "
-				SELECT calls.id, name, reminder_time, description, date_start
-				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id
-				WHERE calls_users.user_id ='".$current_user->id."'
-                    AND calls_users.accept_status != 'decline'
-				    AND calls.reminder_time != -1
-					AND calls_users.deleted != 1
-					AND calls.status != 'Held'
-					AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')
-					AND date_start <= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')";
-			//END SUGARCRM flav=ent ONLY
-		}elseif ($db->dbType == 'mssql') {
+				    AND date_start >= $dateTimeNow
+				    AND date_start <= $dateTimeMax";
 
-			$selectCalls = "
-				SELECT calls.id, name, reminder_time, CAST(description AS varchar(8000)), date_start
-				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id
-				WHERE calls_users.user_id ='".$current_user->id."'
-                    AND calls_users.accept_status != 'decline'
-				    AND calls.reminder_time != -1
-					AND calls_users.deleted != 1
-					AND calls.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-		}
-
-		global $db;
 		$result = $db->query($selectCalls);
 
 		while($row = $db->fetchByAssoc($result)){
@@ -238,5 +184,3 @@ EOQ;
 
 
 }
-
-?>

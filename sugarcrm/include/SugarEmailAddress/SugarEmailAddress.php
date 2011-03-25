@@ -22,7 +22,7 @@ class SugarEmailAddress extends SugarBean {
 
     //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
 	//allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
-    var $regex = '/^([\'\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)*@((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+([\.-]?\w+)*(\.[\w-]{2,})+)\$/';
+    var $regex = '/^([\'\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)*@((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+([\.-]?\w+)*(\.[\w-]{2,})+)$/';
     var $disable_custom_fields = true;
     var $db;
     var $smarty;

@@ -1816,7 +1816,7 @@ abstract class DBManager
                 continue;
            }
 		   if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
-               $val = $this->getFieldValue($field);
+               $val = $bean->getFieldValue($field);
 		   }
            if(strlen($val) == 0 && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
                $val = $fieldDef['default'];
