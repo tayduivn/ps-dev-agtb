@@ -1292,9 +1292,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 .search_form  .edit tr td[scope="row"] {
 	background-color: transparent;
 }
-.search_form  .edit tr td.chkbxRow {
-	padding-left: 0px !important;
-}
 
 .search_form .sumbitButtons {
 	padding-left: 10px !important;
