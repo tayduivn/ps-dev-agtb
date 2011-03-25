@@ -190,6 +190,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
      'comment' => 'Meeting type (ex: WebEx, Other)',
      'options' => 'eapm_list',
      'default'	=> 'Sugar',
+     'massupdate' => false,
    	 //BEGIN SUGARCRM flav=com ONLY
    	 'studio' => 'false',
      //END SUGARCRM flav=com ONLY
