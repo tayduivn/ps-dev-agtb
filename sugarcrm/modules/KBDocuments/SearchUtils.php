@@ -39,7 +39,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     // focus_list is the means of passing data to a ListView.
     global $focus_list;
 
-    
+
     require_once('include/ListView/ListViewSmarty.php');
     $view = new SugarView();
     $view->type = 'list';
@@ -182,7 +182,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     // focus_list is the means of passing data to a ListView.
     global $focus_list;
 
-    
+
     require_once('include/ListView/ListViewSmarty.php');
 	require_once('modules/KBDocuments/metadata/listviewdefs.php');
     require_once('modules/KBDocuments/KBListViewData.php');
@@ -294,7 +294,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 	return $ret_str;
 
 }
-    
+
 
    /**
     * get_faq_list
@@ -688,7 +688,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                         'required_list' => array('kbdoc_approver_id'),
                         'conditions' => array(array('name'=>'user_name','op'=>'like_custom','end'=>'%','value'=>'')),
                         'limit' => '30','no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
-        return $qsUser;        
+        return $qsUser;
     }
     function getQSTags($form = 'EditView') {
 		global $app_strings;
@@ -2125,7 +2125,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
 		$sugar_config['dbconfig']['db_user_name'] = $db['db_user_name'];
 		$sugar_config['dbconfig']['db_password'] = $db['db_password'];
 	    $sugar_config['dbconfig']['db_name'] = $db['db_name'];
-	    
+
 	    $bean = new KBDocument();
 	    $bean->disable_row_level_security = true;
 
@@ -2237,5 +2237,3 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
         }
 
     }
- ?>
-
