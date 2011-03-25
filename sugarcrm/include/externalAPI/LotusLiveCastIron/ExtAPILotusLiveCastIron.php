@@ -108,6 +108,11 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
     public $sharingOptions = null;
 
     function __construct() {
+        if ( isset($GLOBALS['sugar_config']['ll_base_url']) ) {
+            $this->baseURL = $GLOBALS['sugar_config']['ll_base_url'];
+            $this->url = $GLOBALS['sugar_config']['ll_ci_url'];
+        }
+
         $this->hostURL = $this->baseURL.'meetings/host';
         $this->oauthReq = $this->baseURL.'manage/oauth/getRequestToken';
         $this->oauthAuth = $this->baseURL.'manage/oauth/authorizeToken';

@@ -39,6 +39,9 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     // public $sharingOptions = array('private'=>'LBL_SHARE_PRIVATE','company'=>'LBL_SHARE_COMPANY','public'=>'LBL_SHARE_PUBLIC');
 
     function __construct() {
+        if ( isset($GLOBALS['sugar_config']['ll_base_url']) ) {
+            $this->url = $GLOBALS['sugar_config']['ll_base_url'];
+        }
         $this->hostURL = $this->url.'meetings/host';
         $this->oauthReq = $this->url.'manage/oauth/getRequestToken';
         $this->oauthAuth = $this->url.'manage/oauth/authorizeToken';
@@ -378,16 +381,14 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         
         $searchLen = strlen($keywords);
 
-        if(!empty($keywords)){
-            foreach ( $docList as $doc ) {
-                if ( stristr($doc['name'],$keywords) !== FALSE ) {
-                    // It matches
-                    $results[] = $doc;
-
-                    if ( count($results) > 15 ) {
-                        // Only return the first 15 results
-                        break;
-                    }
+        foreach ( $docList as $doc ) {
+            if ( stristr($doc['name'],$keywords) !== FALSE || empty($keywords) ) {
+                // It matches
+                $results[] = $doc;
+                
+                if ( count($results) > 15 ) {
+                    // Only return the first 15 results
+                    break;
                 }
             }
         }
