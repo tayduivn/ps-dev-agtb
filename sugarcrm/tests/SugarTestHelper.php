@@ -102,7 +102,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
     protected function assertPreConditions()
     {
         if(isset($GLOBALS['log'])) {
-            $GLOBALS['log']->info("START TEST: {$this->toString()}");
+            $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
         }
     }
 
@@ -125,7 +125,7 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 		    }
         }
         if(isset($GLOBALS['log'])) {
-            $GLOBALS['log']->info("DONE TEST: {$this->toString()}");
+            $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
         }
     }
 
