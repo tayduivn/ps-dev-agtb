@@ -1037,6 +1037,7 @@ class Email extends SugarBean {
                 }
 			}
 		}
+		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
 
 	/**
