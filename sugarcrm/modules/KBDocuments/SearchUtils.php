@@ -2217,10 +2217,6 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
     }
     //END SUGARCRM flav=int ONLY
 
-
-
-
-
     function validate_quotes($quote_string){
         $esc_quote_string = str_replace("\\\"", "", $quote_string);
         $dubCount = substr_count($esc_quote_string, '"');
@@ -2233,5 +2229,3 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
         }
 
     }
- ?>
-

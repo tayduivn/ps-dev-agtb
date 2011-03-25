@@ -1,5 +1,3 @@
-
-
 <?php
 
 require_once("data/Relationships/SugarRelationship.php");
@@ -53,7 +51,7 @@ class M2MRelationship extends SugarRelationship
             $GLOBALS['log']->fatal("could not load RHS $rhsLinkName in $rhsClass");
             return false;
         }
-        
+
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = array(
             "id" => create_guid(),
@@ -164,7 +162,7 @@ class M2MRelationship extends SugarRelationship
         $targetTableWithAlias = $targetTable;
         $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
         $join_type= isset($params['join_type']) ? $params['join_type'] : ' INNER JOIN ';
-		
+
         $join = '';
 
         //Set up any table aliases required
