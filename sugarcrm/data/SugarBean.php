@@ -909,7 +909,7 @@ class SugarBean
      */
     function load_relationship($rel_name)
     {
-        $GLOBALS['log']->debug("SugarBean{$this->object_name}.load_relationships, Loading relationship (".$rel_name.").");
+        $GLOBALS['log']->debug("SugarBean[{$this->object_name}].load_relationships, Loading relationship (".$rel_name.").");
 
         if (empty($rel_name))
         {
@@ -942,11 +942,9 @@ class SugarBean
                     return false;
                 }
                 return true;
-            } else {
-                $GLOBALS['log']->debug("SugarBean.load_relationships[$rel_name], can't find link: ".var_export($fieldDefs[$rel_name], true));
             }
         }
-        $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading relationship (".$rel_name.").");
+        $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading relationship (".$rel_name.")");
         return false;
     }
 
