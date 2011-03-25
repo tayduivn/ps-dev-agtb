@@ -95,6 +95,11 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     }   
     //END SUGARCRM flav=pro || flav=sales ONLY
     
+    public function getEmailTemplateValue($inputField, $vardef, $displayParams = array(), $tabindex = 0){
+        
+        return $GLOBALS['timedate']->to_display_date_time($inputField, true, false, new stdClass() );
+    }
+    
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {
