@@ -170,6 +170,10 @@ SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 	if (YAHOO.lang.isString(target))
 		target = Dom.get(target);
 	target.value = Dom.get("formulaInput").value;
+	if (typeof target.onchange == "function")
+	{
+		target.onchange();
+	}
 	return true;
 }
 

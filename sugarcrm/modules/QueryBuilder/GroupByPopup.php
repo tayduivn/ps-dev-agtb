@@ -66,7 +66,8 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/QueryBuilder/GroupBy_Popup_picker.html");
 }
 else {
-	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
+    $GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/QueryBuilder/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/QueryBuilder/".$_REQUEST['html'].'.html');
 }
@@ -81,11 +82,11 @@ if(!isset($_REQUEST['form']))
 // This code should always return an answer.
 // The form name should be made into a parameter and not be hard coded in this file.
 
-$focus = new QueryGroupBy(); 
+$focus = new QueryGroupBy();
 
 if(isset($_REQUEST['groupby_record']) && isset($_REQUEST['groupby_record'])) {
    $focus->retrieve($_REQUEST['groupby_record']);
-} 
+}
 
 if ($_REQUEST['component'] == 'GroupBy')
 {
@@ -108,13 +109,13 @@ if ($_REQUEST['component'] == 'GroupBy')
         $the_javascript .= "}\n";
         $the_javascript .= "</script>\n";
 
-        
-     
-        
+
+
+
 	$groupby_select_array = $seed_object->get_relationship_modules($seed_object->base_module);
 
-	$form->assign("GROUPBY_MODULE", get_select_options_with_id($groupby_select_array,$focus->groupby_module)); 
-	$form->assign("GROUPBY_CALC_MODULE", get_select_options_with_id($groupby_select_array,$focus->groupby_calc_module)); 
+	$form->assign("GROUPBY_MODULE", get_select_options_with_id($groupby_select_array,$focus->groupby_module));
+	$form->assign("GROUPBY_CALC_MODULE", get_select_options_with_id($groupby_select_array,$focus->groupby_calc_module));
 
 	$form->assign("GROUPBY_FIELD", $focus->groupby_field);
 	$form->assign("GROUPBY_CALC_FIELD", $focus->groupby_calc_field);
@@ -125,7 +126,7 @@ if ($_REQUEST['component'] == 'GroupBy')
 	$form->assign("GROUPBY_QUALIFIER", get_select_options_with_id($app_list_strings['query_groupby_qualifier_dom'],$focus->groupby_qualifier));
 	$form->assign("GROUPBY_QUALIFIER_START", get_select_options_with_id($app_list_strings['query_groupby_qualifier_start_dom'],$focus->groupby_qualifier_start));
 	$form->assign("GROUPBY_QUALIFIER_QTY", get_select_options_with_id($app_list_strings['query_groupby_qualifier_qty_dom'],$focus->groupby_qualifier_qty));
-	
+
 
 }
 $form->assign("MODULE_NAME", $currentModule);

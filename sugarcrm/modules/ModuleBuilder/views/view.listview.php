@@ -54,7 +54,7 @@ class ViewListView extends ViewEdit
     /*
      * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
      */
-    function init ()
+    function __construct()
     {
         $this->editModule = $_REQUEST [ 'view_module' ] ;
         $this->editLayout = $_REQUEST [ 'view' ] ;

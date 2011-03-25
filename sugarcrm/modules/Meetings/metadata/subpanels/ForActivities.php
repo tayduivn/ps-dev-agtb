@@ -108,12 +108,14 @@ $subpanel_layout = array(
 			'usage'=>'query_only',
 	
 		),	
+		//BEGIN SUGARCRM flav!=com ONLY
 		'join_url'=>array(
 			'usage'=>'query_only'
 		),	
 		'host_url'=>array(
 			'usage'=>'query_only'
 		),			
+		//END SUGARCRM flav!=com ONLY
 	),
 );		
 ?>

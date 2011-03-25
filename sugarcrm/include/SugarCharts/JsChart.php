@@ -28,7 +28,6 @@
 
 // $Id$
 
-require_once("include/SugarCharts/cssParser.php");
 require_once("include/SugarCharts/SugarChart.php");
 
 class JsChart extends SugarChart {
@@ -92,11 +91,10 @@ class JsChart extends SugarChart {
 		$dimensions = $this->getChartDimensions($xmlStr);
 		$this->ss->assign("width", $dimensions['width']);
 		$this->ss->assign("height", $dimensions['height']);
-		$css = $this->getChartCss();
 		$config = $this->getConfigProperties();
 		$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-		$style['font-family'] = $css[".barvaluelabels"]["font-family"];
-		$style['color'] = $css[".barvaluelabels"]["color"];
+		$style['font-family'] = $config->labelFontFamily;
+		$style['color'] = str_replace("0x","#",$config->labelFontColor);
 		$this->ss->assign("css", $style);
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
 			$chartConfig[$key] = $value;
@@ -129,12 +127,11 @@ class JsChart extends SugarChart {
 		$style = array();
 		$chartConfig = array();
 		$this->ss->assign("chartId", $this->chartId);
-		$this->ss->assign("filename", str_replace(".xml",".json",$this->xmlFile));
-		$css = $this->getChartCss();
+		$this->ss->assign("filename", str_replace(".xml",".js",$this->xmlFile));
 		$config = $this->getConfigProperties();
 		$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-		$style['font-family'] = $css[".barvaluelabels"]["font-family"];
-		$style['color'] = $css[".barvaluelabels"]["color"];
+		$style['font-family'] = $config->labelFontFamily;
+		$style['color'] = str_replace("0x","#",$config->labelFontColor);
 		$this->ss->assign("css", $style);
 		$xmlStr = $this->processXML($this->xmlFile);
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
@@ -154,15 +151,14 @@ class JsChart extends SugarChart {
 		foreach($chartsArray as $id => $data) {
 			$customChartsArray[$id] = array();
 			$customChartsArray[$id]['chartId'] = $id;
-			$customChartsArray[$id]['filename'] = str_replace(".xml",".json",$data['xmlFile']);
+			$customChartsArray[$id]['filename'] = str_replace(".xml",".js",$data['xmlFile']);
 			$customChartsArray[$id]['width'] = $data['width'];
 			$customChartsArray[$id]['height'] = $data['height'];
 
 			$config = $this->getConfigProperties();
-			$css = $this->getChartCss();
 			$style['gridLineColor'] = str_replace("0x","#",$config->gridLines);
-			$style['font-family'] = $css[".barvaluelabels"]["font-family"];
-			$style['color'] = $css[".barvaluelabels"]["color"];
+			$style['font-family'] = (string)$config->labelFontFamily;
+			$style['color'] = str_replace("0x","#",$config->labelFontColor);
 			$customChartsArray[$id]['css'] = $style;
 			$xmlStr = $this->processXML($data['xmlFile']);
 			$xml = new SimpleXMLElement($xmlStr);
@@ -176,15 +172,6 @@ class JsChart extends SugarChart {
 		}
 
 		return $customChartsArray;
-	}
-
-	function getChartCss() {
-		$cssParser = new cssparser;
-		$path = SugarThemeRegistry::current()->getCSSURL('chart.css',false);
-		$cssParser->Parse($path);
-
-		$css = $cssParser->css;
-		return $css;
 	}
 
 	function getChartConfigParams($xmlStr) {
@@ -217,7 +204,9 @@ class JsChart extends SugarChart {
 	function getChartDimensions($xmlStr) {
 		if($this->getNumNodes($xmlStr) > 9 && $this->chartType != "pie chart") {
 			if($this->chartType == "horizontal group by chart" || $this->chartType == "horizontal bar chart") {
-				return array("width"=>$this->width, "height"=>($this->height * 2));
+				$diff = $this->getNumNodes($xmlStr) - 9;
+				$height = ($diff * (.20 * $this->height)) + $this->height;
+				return array("width"=>$this->width, "height"=>($height));
 			} else {
 				return array("width"=>($this->width * 2), "height"=>$this->height);
 			}
@@ -614,8 +603,7 @@ class JsChart extends SugarChart {
 	}
 
 	function saveJsonFile($jsonContents) {
-
-		$this->jsonFilename = str_replace(".xml",".json",$this->xmlFile);
+		$this->jsonFilename = str_replace(".xml",".js",$this->xmlFile);
 		//$jsonContents = mb_convert_encoding($jsonContents, 'UTF-16LE', 'UTF-8');
 
 		// open file

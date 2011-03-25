@@ -99,14 +99,13 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 	$args['reportCache'] = $reportCache;
 } 
 else if (isset($_REQUEST['record'])){
-    $report_def = array();
     $saved_report_seed = new SavedReport();
     $saved_report_seed->disable_row_level_security = true;
     $saved_report_seed->retrieve($_REQUEST['record'], false);
     // do this to go through the transformation
     $reportObj = new Report($saved_report_seed->content);
     $saved_report_seed->content = $reportObj->report_def_str;
-    $report_def = html_entity_decode($_REQUEST['report_def']);
+    $report_def = isset($_REQUEST['report_def']) ? html_entity_decode($_REQUEST['report_def']) : array();
 
     if (!empty($_REQUEST['reset_filters'])) {
 //        $rCache = new ReportCache();

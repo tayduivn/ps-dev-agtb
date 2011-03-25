@@ -106,7 +106,7 @@ class ExternalAPIFactory
             }
         }
 
-        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions','connector', 'oauthParams');
+        $optionList = array('supportedModules','useAuth','requireAuth','supportMeetingPassword','docSearch', 'authMethod', 'oauthFixed','needsUrl','canInvite','sendsInvites','sharingOptions','connector', 'oauthParams','restrictUploadsByExtension');
         foreach ( $apiFullList as $apiName => $apiOpts ) {
             require_once($apiOpts['file']);
             if ( !empty($apiOpts['file_cstm']) ) {

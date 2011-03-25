@@ -141,6 +141,7 @@
         <td width='35%' >
             <img id="company_logo_image" src='{$company_logo}' height="40" width="212">
         </td>
+        //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
 		{if !isset($config.show_download_tab) || !empty($config.show_download_tab)}
 			{assign var='show_download_tab_checked' value='CHECKED'}
@@ -148,6 +149,7 @@
 			{assign var='show_download_tab_checked' value=''}
 		{/if}
 		<td ><input type='hidden' name='show_download_tab' value='false'><input name='show_download_tab'  type="checkbox" value='true' {$show_download_tab_checked}></td>
+        //END SUGARCRM flav!=com && flav!=sales ONLY
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>

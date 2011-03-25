@@ -1,6 +1,0 @@
-<soda>
-   <script file="tests/modules/contacts/module_lib/setup-contacts.xml" />
-   <script fileset="tests/modules/contacts" />
-   <script file="tests/modules/contacts/module_lib/cleanup-contacts.xml" />
-</soda>
-

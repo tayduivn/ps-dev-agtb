@@ -659,6 +659,7 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
 	}
 
 //Used primarily for alert templates
+
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sugarField = SugarFieldHandler::getSugarField($target_type);
     $GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");

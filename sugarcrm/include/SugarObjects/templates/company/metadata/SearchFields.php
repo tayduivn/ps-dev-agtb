@@ -40,7 +40,15 @@ $searchFields[$module_name] =
 		'address_country'=> array('query_type'=>'default','db_field'=>array('billing_address_country','shipping_address_country')),
 		'rating'=> array('query_type'=>'default'),
 		'phone'=> array('query_type'=>'default','db_field'=>array('phone_office')),
-		'email'=> array('query_type'=>'default','db_field'=>array('email1','email2')),
+		'email'=> array(
+			'query_type' => 'default',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address LIKE',
+			'db_field' => array(
+				'id',
+			),
+			'vname' =>'LBL_ANY_EMAIL',
+		),
 		'website'=> array('query_type'=>'default'),
 		'ownership'=> array('query_type'=>'default'),
 		'employees'=> array('query_type'=>'default'),

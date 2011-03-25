@@ -51,11 +51,45 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_TestCase
         
         ob_start();
         $_REQUEST['module'] = 'Users';
-        require_once('modules/Users/EditView.php');
+        require('modules/Users/EditView.php');
         $html = ob_get_clean();
 
         $this->assertRegExp('/<select name="user_max_tabs".*<option label="' . $this->_max_tabs_test . '" value="' . $this->_max_tabs_test . '".*>' . $this->_max_tabs_test . '<\/option>.*<\/select>/ms', $html);
     }
+    
+    /**
+     * @ticket 42719
+     */
+    public function testAllowSettingMaxTabsTo10WhenSettingIsLessThan10() 
+    {
+        global $current_user, $locale, $sugar_config;
+        
+        $GLOBALS['sugar_config']['default_max_tabs'] = 7;
+        
+        ob_start();
+        $_REQUEST['module'] = 'Users';
+        require('modules/Users/EditView.php');
+        $html = ob_get_clean();
 
+        $this->assertRegExp('/<select name="user_max_tabs".*<option label="10" value="10".*>10<\/option>.*<\/select>/ms', $html);
+    }
+
+    /**
+     * @ticket 42719
+     */
+    public function testUsersDefaultMaxTabsSettingHonored() 
+    {
+        global $current_user, $locale, $sugar_config;
+        
+        $current_user->setPreference('max_tabs', 3, 0, 'global');
+        
+        ob_start();
+        $_REQUEST['module'] = 'Users';
+        $_REQUEST['record'] = $current_user->id;
+        require('modules/Users/EditView.php');
+        $html = ob_get_clean();
+        
+        $this->assertRegExp('/<select name="user_max_tabs".*<option label="3" value="3" selected="selected">3<\/option>.*<\/select>/ms', $html);
+    }
 }
 

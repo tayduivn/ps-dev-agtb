@@ -474,9 +474,13 @@ class Call extends SugarBean
 		global $app_list_strings;
 		global $timedate;
 
+        // rrs: bug 42684 - passing a contact breaks this call
+		$notifyUser =($call->current_notify_user->object_name == 'User') ? $call->current_notify_user : $current_user;
+		        
+
 		// Assumes $call dates are in user format
 		$calldate = $timedate->fromDb($call->date_start);
-		$xOffset = $timedate->asUser($calldate, $call->current_notify_user).' '.$timedate->userTimezoneSuffix($calldate, $call->current_notify_user);
+		$xOffset = $timedate->asUser($calldate, $notifyUser).' '.$timedate->userTimezoneSuffix($calldate, $notifyUser);
 
 		if ( strtolower(get_class($call->current_notify_user)) == 'contact' ) {
 			$xtpl->assign("ACCEPT_URL", $sugar_config['site_url'].

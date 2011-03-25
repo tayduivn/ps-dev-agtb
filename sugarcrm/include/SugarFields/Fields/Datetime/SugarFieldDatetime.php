@@ -38,6 +38,18 @@ class SugarFieldDatetime extends SugarFieldBase {
         return $this->fetch($this->findTemplate('EditView'));
     }
 
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
+    {
+        $displayParams['showMinutesDropdown'] = false;
+        $displayParams['showHoursDropdown'] = false;
+        $displayParams['showNoneCheckbox'] = false;
+        $displayParams['showFormats'] = true;
+        $displayParams['hiddeCalendar'] = false;
+
+        $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+        return $this->fetch($this->findTemplate('EditView'));
+    }
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	global $timedate;
@@ -73,19 +85,29 @@ class SugarFieldDatetime extends SugarFieldBase {
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           if(file_exists('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl'))
+           {
+              return $this->fetch('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
+           }
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
         }
     	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
     }
 
     public function getEmailTemplateValue($inputField, $vardef, $context = null){
+        global $timedate;
         // This does not return a smarty section, instead it returns a direct value
         if(isset($context['notify_user'])) {
             $user = $context['notify_user'];
         } else {
             $user = $GLOBALS['current_user'];
         }
-        return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
+        if($vardef['type'] == 'date') {
+            // convert without TZ
+            return $timedate->to_display($inputField, $timedate->get_db_date_format(),  $timedate->get_date_format($user));
+        } else {
+            return $timedate->to_display_date_time($inputField, true, true, $user);
+        }
     }
 
     public function save($bean, $inputData, $field, $def, $prefix = '') {

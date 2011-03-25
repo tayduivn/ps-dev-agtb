@@ -33,14 +33,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $theme;
 
-
-
-
-
-
-
-
-
 require_once('include/ListView/ProcessView.php');
 
 global $app_strings;
@@ -50,14 +42,13 @@ global $mod_strings;
 global $urlPrefix;
 global $currentModule;
 
-
 $seed_object = new WorkFlow();
 
 if(!empty($_REQUEST['workflow_id']) && $_REQUEST['workflow_id']!="") {
     $seed_object->retrieve($_REQUEST['workflow_id']);
 } else {
-	sugar_die("You shouldn't be here");	
-}	
+	sugar_die("You shouldn't be here");
+}
 
 
 
@@ -69,6 +60,7 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/WorkFlowActions/Selector.html");
 }
 else {
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
 	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/WorkFlowActions/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/WorkFlowActions/".$_REQUEST['html'].'.html');
@@ -77,7 +69,7 @@ else {
 $form->assign("MOD", $mod_strings);
 $form->assign("APP", $app_strings);
 
-$focus = new WorkFlowActionShell();  
+$focus = new WorkFlowActionShell();
 
 
 
@@ -92,23 +84,23 @@ $focus = new WorkFlowActionShell();
 	$action_object = new WorkFlowAction();
 
 	if(!empty($_REQUEST['action_id']) && $_REQUEST['action_id']!=""){
-		$action_object->retrieve($_REQUEST['action_id']); 	
+		$action_object->retrieve($_REQUEST['action_id']);
 	}
-		
+
 	if(!empty($_REQUEST['target_field']) && $_REQUEST['target_field']!=""){
-		$action_object->field = $_REQUEST['target_field']; 	
+		$action_object->field = $_REQUEST['target_field'];
 	}
 
 	foreach($action_object->selector_fields as $field){
 		if(isset($_REQUEST[$field])){
 			//echo "FIELD".$field."REQ:".$_REQUEST[$field]."<BR>";
-		$action_object->$field = $_REQUEST[$field];	
+		$action_object->$field = $_REQUEST[$field];
 		}
 	}
-	
+
 	if(!empty($_REQUEST['adv_value']) && $_REQUEST['adv_value']!=""){
-		$action_object->value = $_REQUEST['adv_value']; 	
-	}	
+		$action_object->value = $_REQUEST['adv_value'];
+	}
 
 
 $output_array = $action_object->build_field_selector($_REQUEST['field_num'], $_REQUEST['target_module'], $seed_object->type, $_REQUEST['action_type']);
@@ -118,7 +110,7 @@ $output_array = $action_object->build_field_selector($_REQUEST['field_num'], $_R
 		$form->assign('FIELD_NAME', $output_array['name']);
 	    $form->assign('MOD', $GLOBALS['mod_strings']);
 		$form->assign('TITLE', $GLOBALS['mod_strings']['LBL_TITLE']);
-		
+
 		$form->assign('FIELD_NUM', "field_".$_REQUEST['field_num']);
 		$form->assign('FIELD_NUMBER', $_REQUEST['field_num']);
 		$form->assign('ADV_TYPE', $output_array['adv_type']['display']);
@@ -126,7 +118,7 @@ $output_array = $action_object->build_field_selector($_REQUEST['field_num'], $_R
 		$form->assign('EXT1', $output_array['ext1']['display']);
 		$form->assign('EXT2', $output_array['ext2']['display']);
 		$form->assign('EXT3', $output_array['ext3']['display']);
-		
+
 		$form->assign('FIELD_TYPE', $output_array['real_type'] );
 		if($action_object->set_type == "") $action_object->set_type =  "Basic";
 
@@ -135,11 +127,11 @@ $output_array = $action_object->build_field_selector($_REQUEST['field_num'], $_R
 		if(!empty($output_array['set_type']['disabled'])){
 			$form->assign('SET_DISABLED', "Yes");
 		}
-		
-		
+
+
 	$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','alt="'.$app_strings['LNK_ADVANCED_SEARCH'].'"  border="0"'));
 	$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','alt="'.$app_strings['LNK_BASIC_SEARCH'].'"  border="0"'));
-		
+
 $form->assign("MODULE_NAME", $currentModule);
 
 $form->assign("GRIDLINE", $gridline);
@@ -149,7 +141,7 @@ insert_popup_header($theme);
 $form->parse("embeded");
 $form->out("embeded");
 
-	
+
 
 $form->parse("main");
 $form->out("main");
@@ -187,16 +179,16 @@ $form->out("main");
 	$js .= "removeFromValidate('EditView', 'field_".$field_num."__adv_value');";
 	}
 	$javascript = new javascript();
-	
+
 	if($type == 'date' || $type == 'time' || $type=='datetimecombo'){
 		$js .= "addToValidate('EditView', 'field_".$field_num."__field_value', 'assigned_user_name', 1,'". $javascript->stripEndColon(translate($temp_module->field_name_map[$action_object->field]['vname'])) . "' )";
 	}
 	else if(in_array($type, ProcessView::get_js_exception_fields()) == 1){
 				//do nothing
-				
+
 			}
 	else{
-	
+
 		$javascript->setFormName('EditView');
 		$javascript->setSugarBean($temp_module);
 		$javascript->addField($action_object->field, true, '', 'field_'.$_REQUEST['field_num'].'__field_value');
@@ -216,6 +208,7 @@ $form->out("main");
 	}
 	echo $js;
 	//rsmith
+	echo $GLOBALS['timedate']->get_javascript_validation();
 
 ?>
 

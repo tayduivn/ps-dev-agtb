@@ -58,7 +58,7 @@ class Trigger {
 				$js .= ",";
 			}
 		}
-		$js .= "], '{$this->conditionFunction}')";
+		$js .= "], '" . str_replace("\n","",$this->conditionFunction) . "')";
 		return $js;
 	}
 	

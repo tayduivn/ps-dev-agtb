@@ -275,7 +275,7 @@ class SugarTheme
         }
         if ( !inDeveloperMode() ) {
             if ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
-                $caches = unserialize(file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
+                $caches = unserialize(sugar_file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
                 if ( isset($caches['jsCache']) )
                     $this->_jsCache       = $caches['jsCache'];
                 if ( isset($caches['cssCache']) )
@@ -841,7 +841,7 @@ EOHTML;
         foreach ( $pathsToSearch as $path )
         {
             if (!sugar_is_dir($path)) $path = "custom/$path";
-            if (sugar_is_dir($path) && $dir = opendir($path)) {
+            if (sugar_is_dir($path) && is_readable($path) && $dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".."
                             || $file == "."
@@ -1038,7 +1038,7 @@ class SugarThemeRegistry
         }
 
         foreach ($dirs as $dirPath ) {
-            if (sugar_is_dir('./'.$dirPath) && $dir = opendir('./'.$dirPath)) {
+            if (sugar_is_dir('./'.$dirPath) && is_readable('./'.$dirPath) && $dir = opendir('./'.$dirPath)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".."
                             || $file == "."

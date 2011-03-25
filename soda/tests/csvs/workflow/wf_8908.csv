@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,lhs_field,trigger__operator,trigger__field_value,selector,field_1__field_value,task_name,ticker_symbol
-wf_8908,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,Name,Equals,Sugar_wf_8900,Tasks,wf_8908_successful,wf_8908_task_name,Trigger_the_workflow

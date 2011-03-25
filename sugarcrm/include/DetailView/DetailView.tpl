@@ -68,11 +68,12 @@ class="yui-navset detailview_tabs"
 
 	{{foreach name=rowIteration from=$panel key=row item=rowData}}
 	{counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
+	{counter name="fieldsHidden" start=0 print=false assign="fieldsHidden"}
 	{capture name="tr" assign="tableRow"}
 	<tr>
 		{{assign var='columnsInRow' value=$rowData|@count}}
 		{{assign var='columnsUsed' value=0}}
-	    {{foreach name=colIteration from=$rowData key=col item=colData}}
+		{{foreach name=colIteration from=$rowData key=col item=colData}}
 	    {{if !empty($colData.field.hideIf)}}
 	    	{if !({{$colData.field.hideIf}}) }
 	    {{/if}}
@@ -110,6 +111,10 @@ class="yui-navset detailview_tabs"
                    {sugar_help text=$popupText WIDTH=400}
                 {{/if}}
                 {{if !empty($colData.field.name)}}
+                {{* //BEGIN SUGARCRM flav=pro ONLY*}}
+                {else}
+                    {counter name="fieldsHidden"}
+                {{* //END SUGARCRM flav=pro ONLY*}}
                 {/if}
                 {{/if}}
 			</td>
@@ -155,7 +160,7 @@ class="yui-navset detailview_tabs"
 		{{/foreach}}
 	</tr>
 	{/capture}
-	{if $fieldsUsed > 0 }
+	{if $fieldsUsed > 0 && $fieldsUsed != $fieldsHidden}
 	{$tableRow}
 	{/if}
 	{{/foreach}}

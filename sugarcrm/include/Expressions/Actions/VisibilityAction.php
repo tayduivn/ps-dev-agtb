@@ -27,7 +27,7 @@ class VisibilityAction extends AbstractAction{
 	function VisibilityAction($params) {
         $this->params = $params;
 		$this->targetField = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 		$this->view = isset($params['view']) ? $params['view'] : "";
 	}
 	
@@ -77,8 +77,8 @@ class VisibilityAction extends AbstractAction{
 					var target = SUGAR.forms.AssignmentHandler.getElement(this.target);
 					if (target != null) {
 					    var inv_class = 'vis_action_hidden';
-						var inputTD = target.parentNode;
-						var labelTD = YAHOO.util.Dom.getPreviousSiblingBy(inputTD, function(e){
+						var inputTD = Dom.getAncestorByTagName(target, 'TD');
+						var labelTD = Dom.getPreviousSiblingBy(inputTD, function(e){
 							if (e.tagName == 'TD') return true;
 							return false;
 						});
@@ -97,17 +97,53 @@ class VisibilityAction extends AbstractAction{
 						    if (wasHidden && this.view == 'EditView')
 						        SUGAR.forms.FlashField(target);
 						}
+						this.checkRow(Dom.getAncestorByTagName(inputTD, 'TR'), inv_class);
 					}
 				} catch (e) {if (console && console.log) console.log(e);}
 			},
-			//we need to wrap the contents of a TD in a span in order to hide the contents without hiding the TD itesef
+			//we need to wrap plain text nodes in a span in order to hide the contents without hiding the TD itesef
 			wrapContent: function(el)
 			{
-			    if (el && !YAHOO.util.Dom.getFirstChild(el))
+			    if (el && this.containsPlainText(el))
 			    {
-			        el.innerHTML = '<span>' + el.innerHTML + '</span>';
+			        var span = document.createElement('SPAN');
+			        var nodes = [];
+			        for(var i = 0; i < el.childNodes.length ; i++)
+                    {
+                        nodes[i] = el.childNodes[i];
+                    }
+                    for(var i = 0 ; i < nodes.length; i++)
+                    {
+                        span.appendChild(nodes[i]);
+                    }
+			        el.appendChild(span);
 			    }
+			},
+			containsPlainText: function(el)
+			{
+                for(var i = 0; i < el.childNodes.length; i++)
+                {
+                    var node = el.childNodes[i];
+                    if (node.nodeName == '#text' && YAHOO.lang.trim(node.textContent) != '') {
+                        return true;
+                    }
+                }
+			    return false;
+			},
+			checkRow: function(el, inv_class)
+			{
+                var hide = true;
+                for(var i = 0; i < el.children.length; i++)
+                {
+                    var node = el.children[i];
+                    if (!YAHOO.util.Dom.hasClass(node, inv_class)) {
+                        hide = false;
+                        break;
+                    }
+                }
+                el.style.display = hide ? 'none' : '';
 			}
+
 		});";
 	}
 

@@ -32,6 +32,7 @@ array (
       0 => 'status',
     ),
   ),
+  //BEGIN SUGARCRM flav!=com ONLY
   'JOIN_MEETING' => 
   array (
     'width' => '1%',
@@ -43,6 +44,7 @@ array (
     array('join_url', 'host_url'),
     'noHeader' => true,
   ),
+  //END SUGARCRM flav!=com ONLY
   'NAME' => 
   array (
     'width' => '40%',

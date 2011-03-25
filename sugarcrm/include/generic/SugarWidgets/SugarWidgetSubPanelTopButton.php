@@ -1,4 +1,4 @@
-<?php
+    <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * SugarWidgetSubPanelTopButton
@@ -255,8 +255,11 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
 	function display($defines, $additionalFormFields = null)
 	{
 		$temp='';
+		$inputID = $this->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value)).'_button';
+		
 		if(!empty($this->acl) && ACLController::moduleSupportsACL($defines['module'])  &&  !ACLController::checkAccess($defines['module'], $this->acl, true)){
-			$button = "<input title='$this->title'  class='button' type='button' name='" . $this->getWidgetId() . "_create_button' value='  $this->form_value  ' disabled/>\n</form>";
+			$inputID = $this->getWidgetId() . '_'.preg_replace('[ ]', '', strtolower($this->form_value)).'_button';
+			$button = "<input title='$this->title'  class='button' type='button' name='$inputID' id='$inputID' value='  $this->form_value  ' disabled/>\n</form>";
 			return $temp;
 		}
 		
@@ -265,10 +268,10 @@ class SugarWidgetSubPanelTopButton extends SugarWidget
         if ( isset($_REQUEST['layout_def_key']) && $_REQUEST['layout_def_key'] == 'UserEAPM' ) {
             // Subpanels generally don't go on the editview, so we have to handle this special
             $megaLink = $this->_get_form($defines, $additionalFormFields,true);
-            $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='" . $this->getWidgetId() . "_create_button' value='  $this->form_value  ' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
+            $button = "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='  $this->form_value  ' onclick='javascript:document.location=\"index.php?".$megaLink."\"; return false;'/>";
         } else {
             $button = $this->_get_form($defines, $additionalFormFields);
-            $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='" . $this->getWidgetId() . "_create_button' value='  $this->form_value  ' />\n</form>";
+            $button .= "<input title='$this->title' accesskey='$this->access_key' class='button' type='submit' name='$inputID' id='$inputID' value='  $this->form_value  ' />\n</form>";
         }
         return $button;
 	}

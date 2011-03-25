@@ -304,11 +304,6 @@ SUGAR.mySugar = function() {
 
 			var addBlankPage = function(data) {
 				//check to see if a user preference error occurred
-				if(data.responseText == 'userpref_error'){
-					//user preference error occured, flash message and exit processing
-					ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_TAB'),7000);
-					return;
-				} 
 				
 			    var pageContainerDivElem = document.getElementById('pageContainer');
 			    var newPageId = 'pageNum_' + pageCount + '_div';
@@ -704,13 +699,6 @@ SUGAR.mySugar = function() {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_ADDING_DASHLET'));
 			var success = function(data) {
 
-			//check to see if a user preference error occurred
-			if(data.responseText == 'userpref_error'){
-				//user preference error occured, close the dashlet dialog, flash the error message and exit processing
-				SUGAR.mySugar.closeDashletsDialog();
-				ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_DASH'),7000);
-				return;
-			}
 				colZero = document.getElementById('col_'+activeTab+'_0');
 				newDashlet = document.createElement('li'); // build the list item
 				newDashlet.id = 'dashlet_' + data.responseText;

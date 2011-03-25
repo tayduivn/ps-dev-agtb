@@ -929,6 +929,7 @@ function return_app_list_strings_language($language)
         $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
     }
     
+
     foreach ( $langs as $lang ) {
         if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
             $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
@@ -1010,6 +1011,7 @@ function return_application_language($language)
 	if ($default_language != 'en_us' && $language != $default_language) {
 	    $langs[] = $default_language;
 	}
+
 	$langs[] = $language;
 	
 	$app_strings_array = array();
@@ -1567,8 +1569,7 @@ function is_admin_for_any_module($user) {
     $actions = ACLAction::getUserActions($user->id);
 	foreach ($beanList as $key=>$val) {
         if(($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'&& $key!='Calendar' && $key!='Activities') &&
-            ((isset($actions[$key]['module']) && $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV) ||
-            	(isset($actions[$key]['module']) && $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)   	)) {
+            (isset($actions[$key]['module']['admin']['aclaccess']) && ($actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV))) {
                 $_SESSION['is_admin_for_module'] = true;
                 return true;
         }
@@ -1600,8 +1601,8 @@ function is_admin_for_module($user,$module) {
     else {
         $key = 'module';
     }
-    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key]))||
-    	(isset($actions[$module][$key]) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
+    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key])) ||
+    	(isset($actions[$module][$key]['admin']['aclaccess']) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
     }
@@ -3034,25 +3035,6 @@ function sugar_cleanup($exit = false) {
 	if(!empty($GLOBALS['savePreferencesToDB']) && $GLOBALS['savePreferencesToDB']) {
 	    if ( isset($GLOBALS['current_user']) && $GLOBALS['current_user'] instanceOf User )
 	        $GLOBALS['current_user']->savePreferencesToDB();
-	}
-
-	//check to see if this is not an ajax call AND the user preference error flag is set
-	if(
-		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
-		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
-		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
-		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
-
-	){
-		global $app_strings;
-		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
-		$err_mess = $app_strings['ERROR_USER_PREFS'];
-		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
-		echo "
-		<script>
-			ajaxStatus.flashStatus('$err_mess',7000);
-		</script>";
-
 	}
 
 	pre_login_check();

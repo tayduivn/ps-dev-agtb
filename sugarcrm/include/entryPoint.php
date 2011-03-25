@@ -178,7 +178,14 @@ if(!empty($sugar_config['session_dir'])) {
 }
 
 SugarApplication::preLoadLanguages();
+
 $timedate = TimeDate::getInstance();
+
+$GLOBALS['sugar_version'] = $sugar_version;
+$GLOBALS['sugar_flavor'] = $sugar_flavor;
+$GLOBALS['timedate'] = $timedate;
+$GLOBALS['js_version_key'] = md5($GLOBALS['sugar_config']['unique_key'].$GLOBALS['sugar_version'].$GLOBALS['sugar_flavor']);
+
 $db = DBManagerFactory::getInstance();
 $db->resetQueryCount();
 $locale = new Localization();
@@ -193,11 +200,6 @@ $current_user = new User();
 $current_entity = null;
 $system_config = new Administration();
 $system_config->retrieveSettings();
-
-$GLOBALS['sugar_version'] = $sugar_version;
-$GLOBALS['sugar_flavor'] = $sugar_flavor;
-$GLOBALS['timedate'] = $timedate;
-$GLOBALS['js_version_key'] = md5($GLOBALS['sugar_config']['unique_key'].$GLOBALS['sugar_version'].$GLOBALS['sugar_flavor']);
 }
 ////	END SETTING DEFAULT VAR VALUES
 ///////////////////////////////////////////////////////////////////////////////

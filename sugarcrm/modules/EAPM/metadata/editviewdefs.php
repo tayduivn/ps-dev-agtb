@@ -61,7 +61,7 @@ $viewdefs[$module_name]['EditView'] = array(
     array (
         array('name' => 'url',
               'displayParams' => array('required' => true),
-              'customCode' => '<input type=\'text\' name=\'url\' id=\'url\' size=\'30\' maxlength=\'255\' value=\'\' title=\'\' tabindex=\'104\' ><br>{$MOD.LBL_OMIT_URL}',
+              'customCode' => '<input type=\'text\' name=\'url\' id=\'url\' size=\'30\' maxlength=\'255\' value=\'{$fields.url.value}\' title=\'\' tabindex=\'104\' ><br>{$MOD.LBL_OMIT_URL}',
             )
     ),
     array (

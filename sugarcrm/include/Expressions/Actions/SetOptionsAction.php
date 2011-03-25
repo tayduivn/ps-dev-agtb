@@ -27,8 +27,8 @@ class SetOptionsAction extends AbstractAction{
 	function SetOptionsAction($params) {
         $this->params = $params;
 		$this->targetField = $params['target'];
-		$this->keysExpression = $params['keys'];
-		$this->labelsExpression = $params['labels'];
+		$this->keysExpression = str_replace("\n", "",$params['keys']);
+		$this->labelsExpression = str_replace("\n", "",$params['labels']);
 	}
 	
 	/**

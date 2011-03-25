@@ -450,18 +450,24 @@ class ProductTemplate extends SugarBean {
 		global $app_list_strings;
 		global $current_user;
 		global $locale;
-		
+
 		if (!empty($this->currency_id) and $this->currency_id=="-99") {
 			$this->currency_symbol = $this->default_currency_symbol;
 		}
-		
+
+		//define format number array to be used for format number call
+		$format_number_array = array(
+			'currency_id' => $this->currency_id,
+			'charset_convert' => true, /* UTF-8 uses different bytes for Euro and Pounds */
+		);			
+				
 		$temp_array = parent::get_list_view_data();
 		$temp_array['NAME'] = (($this->name == "") ? "<em>blank</em>" : $this->name);
 		$temp_array['STATUS'] = !empty($this->status) ? $app_list_strings['product_template_status_dom'][$this->status] : "";
-		$temp_array['COST_PRICE'] = $this->cost_price;
+		$temp_array['COST_PRICE'] = format_number($this->cost_price, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
 		$temp_array['CURRENCY_SYMBOL'] = $this->currency_symbol;
-		$temp_array['DISCOUNT_PRICE'] = $this->discount_price;
-		$temp_array['LIST_PRICE'] = $this->list_price;
+		$temp_array['DISCOUNT_PRICE'] = format_number($this->discount_price, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
+		$temp_array['LIST_PRICE'] = format_number($this->list_price, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
 		$temp_array['TAX_CLASS_NAME'] = !empty($this->tax_class)? $app_list_strings['tax_class_dom'][$this->tax_class] : "";
 		$temp_array['PRICING_FORMULA_NAME'] = !empty($this->pricing_formula) ?$app_list_strings['pricing_formula_dom'][$this->pricing_formula]:"";
 		$temp_array['ENCODED_NAME'] = $this->name;

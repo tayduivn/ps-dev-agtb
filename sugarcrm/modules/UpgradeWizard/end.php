@@ -236,7 +236,7 @@ if(!$ce_to_pro_ent) {
 //END SUGARCRM flav=pro ONLY
 
 //Upgrade connectors
-if(function_exists('upgrade_connectors'))
+if($_SESSION['current_db_version'] < '610' && function_exists('upgrade_connectors'))
 {
    upgrade_connectors($path);
 }
@@ -247,6 +247,19 @@ if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_searc
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
    logThis('Add global search for custom modules finished .', $path);
+}
+
+//Upgrade system displayed tabs and subpanels
+if(function_exists('upgradeDisplayedTabsAndSubpanels'))
+{
+	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
+}
+
+
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($_SESSION['current_db_version']);
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');

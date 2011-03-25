@@ -333,6 +333,7 @@ abstract class DashletGenericChart extends Dashlet
             $this->autoRefresh = min($sugar_config['dashlet_auto_refresh_min'],$this->autoRefresh);
         }
         $autoRefreshSS->assign('dashletRefreshInterval', $this->autoRefresh * 1000);
+        $autoRefreshSS->assign('url', "predefined_chart");
         $tpl = 'include/Dashlets/DashletGenericAutoRefresh.tpl';
         if ( $_REQUEST['action'] == "DynamicAction" ) {
             $tpl = 'include/Dashlets/DashletGenericAutoRefreshDynamic.tpl';

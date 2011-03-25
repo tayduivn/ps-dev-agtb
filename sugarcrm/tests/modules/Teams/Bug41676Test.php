@@ -28,8 +28,8 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		SugarTestAccountUtilities::createAccount();
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+	    SugarTestAccountUtilities::removeAllCreatedAccounts();
 	}
 	
     public function testAccountWithDeletedUserAndTeam() 

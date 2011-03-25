@@ -1,7 +1,3 @@
-ALTER TABLE email_addr_bean_rel ALTER COLUMN bean_module varchar(100) NULL;
-
-ALTER TABLE emails_beans ALTER COLUMN bean_module varchar(100) NULL;
-
 CREATE NONCLUSTERED INDEX idx_accounts_parent_id on accounts_audit (parent_id);
 
 CREATE NONCLUSTERED INDEX idx_bugs_parent_id on bugs_audit (parent_id);

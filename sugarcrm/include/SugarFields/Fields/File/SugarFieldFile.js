@@ -128,6 +128,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
                 } else {
                     secLevelBoxElem.style.display='none';
                 }
+                
             }
             document.getElementById(docTypeName).onchange = showHideFunc;
 
@@ -152,6 +153,51 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             document.getElementById(elemBaseName).value = docId;
             document.getElementById(elemBaseName + '_remoteName').value = docName;
             document.getElementById('doc_url').value = docUrl;
+        },
+        
+        getFileExtension:function(fileName) {
+            var lastindex = fileName.lastIndexOf(".");   
+            if(lastindex == -1)
+                return false;
+            else
+                return fileName.substr(++lastindex);
+        },
+        isFileExtensionValid: function(fileName) {
+            var docType = document.getElementById('doc_type').value;
+            var fileExtension = this.getFileExtension(fileName);
+            
+            if( typeof(SUGAR.eapm[docType]) == 'undefined' || ! fileExtension || ! SUGAR.eapm[docType].restrictUploadsByExtension ){
+                return true;
+            }   
+            var whiteSuffixlist = SUGAR.eapm[docType]['restrictUploadsByExtension']; 
+            if(whiteSuffixlist.constructor == Array){
+                var results = false;
+                for(var i=0;i<whiteSuffixlist.length;i++){
+                    if( fileExtension.toLowerCase() == whiteSuffixlist[i].toLowerCase() ){
+                        return true;
+                    }
+                }
+            }
+            return results;
+        },
+        
+        checkFileExtension: function(e,obj) {
+            var sff = SUGAR.field.file; //Scope is set to element.
+            var fileEl = document.getElementById(obj.fileEl);
+            var fileName = fileEl.value;
+            
+            var isValid = sff.isFileExtensionValid(fileName);
+            if( !isValid ){
+                var errorPannel = new YAHOO.widget.SimpleDialog('sugarMsgWindow', {
+        			width: '240px',visible: true, fixedcenter: true,constraintoviewport: true,
+        	        draggable: true,type:'alert',modal:true,id:'sugarMsgWindow',close:true,
+        		});
+        		errorPannel.setBody(SUGAR.language.get("app_strings", "LBL_INVALID_FILE_EXTENSION"));
+        		errorPannel.render(document.body);
+        		errorPannel.show();
+        		fileEl.value = '';
+        		document.getElementById(obj.targEl).value = '';
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ class SetRequiredAction extends AbstractAction{
 	function SetRequiredAction($params) {
 		$this->targetField = $params['target'];
 		$this->targetLabel = $params['label'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 	}
 	
 /**

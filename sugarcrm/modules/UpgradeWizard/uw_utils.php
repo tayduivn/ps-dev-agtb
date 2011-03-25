@@ -4273,10 +4273,10 @@ function upgradeDashletsForSalesAndMarketing() {
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
-        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
+        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
+        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
+        'pbls_ids' => 'OppByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -4844,14 +4844,16 @@ function upgradeTeamColumn($bean, $column_name) {
 			$GLOBALS['db']->addColumn($bean->table_name, $bean->field_defs['team_set_id']);
 		}
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
-		$indexDef = array(
+		
+        $indexName = getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34);
+        $indexDef = array(
 					 array(
-						'name' => 'idx_'.strtolower($bean->table_name).'_tmst_id',
+						'name' => $indexName,
 						'type' => 'index',
 						'fields' => array('team_set_id')
 					 )
 				   );
-		if(!isset($indexArray['idx_'.strtolower($bean->table_name).'_tmst_id'])) {
+		if(!isset($indexArray[$indexName])) {
 			$GLOBALS['db']->addIndexes($bean->table_name, $indexDef);
 		}
 
@@ -4957,36 +4959,19 @@ function upgradeModulesForTeam() {
             //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
             logThis('new modules to add are '.var_export($newModuleList,true),$path);
 
-            //grab the existing system tabs
-            $tabs = $newTB->get_system_tabs();
-
-            //add the new tabs to the array
-            foreach($newModuleList as $nm ){
-              $tabs[$nm] = $nm;
+            if(!empty($newModuleList))
+            {
+	            //grab the existing system tabs
+	            $tabs = $newTB->get_system_tabs();
+	
+	            //add the new tabs to the array
+	            foreach($newModuleList as $nm ){
+	              $tabs[$nm] = $nm;
+	            }
+	
+	            $newTB->set_system_tabs($tabs);
             }
-
-            if(!file_exists('modules/iFrames/iFrame.php') && isset($tabs['iFrames'])){
-                unset($tabs['iFrames']);
-            }
-
-	        //Set the default order
-	        $default_order = array(
-	        	'Home'=>'Home',
-	        	'Accounts'=>'Accounts',
-	        	'Contacts'=>'Contacts',
-	        	'Opportunities'=>'Opportunities',
-	        	'Activities'=>'Activities',
-	            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-	        	'Reports'=>'Reports',
-	            //END SUGARCRM flav=pro || flav=sales ONLY
-	        	'Documents'=>'Documents'
-	        );
-	        $tabs = array_merge($default_order, $tabs);
-
-            //now assign the modules to system tabs
-            $newTB->set_system_tabs($tabs);
             logThis('module tabs updated',$path);
-
         }
     }
 
@@ -5791,3 +5776,68 @@ function upgradeSugarCache($file)
 	}
 }
 
+
+/**
+ * upgradeDisplayedTabsAndSubpanels
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function upgradeDisplayedTabsAndSubpanels($version)
+{
+	if($version < '620')
+	{
+		logThis('start upgrading system displayed tabs and subpanels');
+	    require_once('modules/MySettings/TabController.php');
+	    $tc = new TabController();	
+	    
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();  
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
+	    $added_tabs = array();
+	    
+	    foreach($modules_to_add as $module)
+	    {
+		       $tabs[0][$module] = $module;
+		       $added_tabs[] = $module;
+	    }
+	    
+	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
+	    $tc->set_system_tabs($tabs[0]);    
+	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	}
+}
+
+
+/**
+ * unlinkUpgradeFiles
+ * This is a helper function to clean up 
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function unlinkUpgradeFiles($version)
+{
+	if(!isset($version))
+	{
+	   return;
+	}
+	
+	logThis('start unlinking files from previous upgrade');
+	if($version < '620')
+	{
+	   //list of files to remove
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php');
+	   
+	   foreach($files_to_remove as $f)
+	   {
+		   if(file_exists($f))
+		   {
+		   	  logThis('removing file: ' . $f);
+		   	  unlink($f);
+		   }  
+	   }
+	}
+	logThis('end unlinking files from previous upgrade');
+}

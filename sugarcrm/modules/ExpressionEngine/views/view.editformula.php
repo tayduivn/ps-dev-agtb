@@ -87,7 +87,7 @@ class ViewEditFormula extends SugarView
 			$smarty->assign('loadExt', false);
 		}
 		if (!empty($_REQUEST['formula'])) {
-			$smarty->assign('formula', htmlspecialchars_decode($_REQUEST['formula']));
+			$smarty->assign('formula', $json->decode(htmlspecialchars_decode($_REQUEST['formula'])));
 		}
 		if (isset($_REQUEST['returnType'])) {
 			$smarty->assign('returnType', $_REQUEST['returnType']);

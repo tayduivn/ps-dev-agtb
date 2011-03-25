@@ -495,11 +495,29 @@ logThis('Begin merge_config_si_settings', $path);
 merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
+//Upgrade connectors
+if($origVersion < '610' && function_exists('upgrade_connectors'))
+{
+   upgrade_connectors($path);
+}
+
 //bug: 36845 - ability to provide global search support for custom modules
 if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
    logThis('Add global search for custom modules finished .', $path);
+}
+
+//Upgrade system displayed tabs and subpanels
+if(function_exists('upgradeDisplayedTabsAndSubpanels'))
+{
+	upgradeDisplayedTabsAndSubpanels($origVersion);
+}
+
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($origVersion);
 }
 
 //also add the cache cleaning here.

@@ -32,6 +32,12 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         return $this->fetch($this->findTemplate('EditView'));
     }
 
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
+    {
+        $displayParams['showFormats'] = true;
+        return $this->getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 
     	 if($this->isRangeSearchView($vardef)) {
@@ -50,6 +56,10 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           if(file_exists('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl'))
+           {
+              return $this->fetch('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
+           }
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
         }
 

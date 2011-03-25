@@ -1,8 +1,0 @@
-<soda>
-   <puts text="Manufacturer_Delete_Lib: Starting" />
-   <link text="Admin" />
-   <link text="Manufacturers" />
-   <link href="index.php?action=Delete&amp;module=Manufacturers&amp;record={@manufacturer_id}&amp;return_module=Manufacturers&amp;return_action=index&amp;return_id=" alert="true" />
-   <puts text="Manufacturer_Delete_Lib: Finished" />
-</soda>
-

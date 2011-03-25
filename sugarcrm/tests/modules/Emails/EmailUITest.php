@@ -3,7 +3,6 @@ require_once('modules/Emails/EmailUI.php');
 
 class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_user = null;
     private $_folders = null;
     
     public function setUp()
@@ -12,6 +11,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
         $this->eui = new EmailUIMock();
+
         $this->_folders = array();
 		
 		$beanList = array();
@@ -23,7 +23,12 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
     
     public function tearDown()
     {
-        unset($this->eui);
+        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
+        foreach ($this->_folders as $f) {
+            $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
+            $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
+        }
+        
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         
@@ -102,14 +107,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $person['bean_module'] = $a['module'];
         $person['email'] = $a['email_address'];
         
-        $this->assertEquals("test@test.com", $person['email']);
-        
         //Cleanup
-    	$contact->deleted = true;
-        $contact->save(false);
-        $account->deleted = true;
-    	$account->save(false);
-    	
+    	$GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$account->id}'");
+    	$GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contact->id}'");
+        
+        $this->assertEquals("test@test.com", $person['email']);
     }
     
     /**
@@ -187,7 +189,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
         file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
-            '<?php $QCModules = array("Users", "Teams"); ?>'
+            '<?php $QCModules = array("Users"); ?>'
             );
         
         $qArray = $this->eui->_loadQuickCreateModules();
@@ -200,7 +202,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
         
-        $this->assertEquals(array("Users", "Teams"), $qArray);
+        $this->assertEquals(array("Users"), $qArray);
     }
 }
 

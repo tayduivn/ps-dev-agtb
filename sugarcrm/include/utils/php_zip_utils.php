@@ -94,7 +94,12 @@ function zip_dir( $zip_dir, $zip_archive )
 function zip_files_list($zip_file, $file_list, $prefix = '')
 {
     $archive    = new ZipArchive();
-    $archive->open(ZipArchive::CREATE|ZipArchive::OVERWRITE);
+    $res = $archive->open($zip_file, ZipArchive::CREATE|ZipArchive::OVERWRITE);
+    if($res !== TRUE)
+    {
+        $GLOBALS['log']->fatal("Unable to open zip file, check directory permissions: $zip_file");
+        return FALSE;
+    }
     foreach($file_list as $file) {
         if(!empty($prefix) && preg_match($prefix, $file, $matches) > 0) {
             $zipname = substr($file, strlen($matches[0]));
@@ -103,5 +108,5 @@ function zip_files_list($zip_file, $file_list, $prefix = '')
         }
         $archive->addFile($file, $zipname);
     }
-    return true;
+    return TRUE;
 }

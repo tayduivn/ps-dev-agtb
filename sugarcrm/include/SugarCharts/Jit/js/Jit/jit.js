@@ -1,32 +1,3 @@
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
- */
-
-// $Id: jit.js 2010-12-01 23:11:36Z lhuynh $
-
 /*
   Copyright (c) 2010, Nicolas Garcia Belmonte
   All rights reserved
@@ -53,6 +24,11 @@
   >  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   >  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+ /** Lam Huynh on 10/10/2010 added funnel,guage charts **/
+ /** Lam Huynh on 02/27/2011 added image exporting **/
+ /** Lam Huynh on 02/23/2011 added line charts **/
+ 
  (function () { 
 
 /*
@@ -10300,6 +10276,23 @@ $jit.LineChart = new Class({
     this.canvas = this.st.canvas;
   },
   
+    renderTitle: function() {
+  	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	label = config.Label,
+	title = config.Title;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.textBaseline = 'top';
+	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	}
+  },  
+  
     renderTicks: function() {
 
 	var canvas = this.canvas,
@@ -10401,6 +10394,7 @@ $jit.LineChart = new Class({
         ticks = config.Ticks,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
+        title = config.Title,
         groupTotalValue = 0;
     
     var valArrayAll = new Array();
@@ -10463,6 +10457,11 @@ $jit.LineChart = new Class({
     
     if(!animate && ticks.enable) {
 		this.renderTicks();
+	}
+	
+	
+	if(title.text) {
+		this.renderTitle();	
 	}
 	
     st.compute();
@@ -11654,7 +11653,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
             } else {
 			  ctx.textAlign = 'center';
-			  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+			  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 			  //background box
 			  ctx.save();
 			  gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -11679,8 +11678,9 @@ $jit.ST.Plot.NodeTypes.implement({
 			  
 			  ctx.rotate(270* Math.PI / 180);
 			  ctx.fillStyle = "rgba(255,255,255,.8)";
+			  
 			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+			  //$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 			  ctx.fillStyle = ctx.strokeStyle = label.color;
 			  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
 			  ctx.restore();
@@ -11692,7 +11692,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
 
                 //background box
-                ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+                ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 				inset = 10;
 				
 				gridWidth = canvasSize.width - (config.Margin.left + config.Margin.right);
@@ -11715,7 +11715,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				ctx.fillStyle = "rgba(255,255,255,.8)";
 				cornerRadius = 4;	
 				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				
 			  ctx.fillStyle = label.color;
               ctx.rotate(0 * Math.PI / 180);
@@ -11908,7 +11908,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					acumValueLabel = valueArray[i];
 				}
 			   if(horz) {
-			   	  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+			   	  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 				  ctx.textAlign = 'left';
 				  ctx.textBaseline = 'top';
 				  ctx.fillStyle = "rgba(255,255,255,.8)";
@@ -11928,7 +11928,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				  cornerRadius = 4;	
 				  
 				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				//  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				  
 				  ctx.fillStyle = ctx.strokeStyle = label.color;
 				  ctx.fillText(acumValueLabel, x + inset/2 + leftPadding, y + i*fixedDim + (fixedDim/2) - (label.size/2));
@@ -11938,7 +11938,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					
 				} else {
 				  
-				  	ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+				  	ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					ctx.save();
 					ctx.textAlign = 'left';
 					
@@ -11966,7 +11966,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
 					ctx.rotate(270* Math.PI / 180);
 					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					
 					ctx.fillStyle = ctx.strokeStyle = label.color;
 					ctx.fillText(acumValueLabel, 0,0);
@@ -12152,7 +12152,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  }
 					 if(!horz) {
 					  ctx.textAlign = 'center';
-					  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+					  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					  //background box
 					  ctx.save();
 					  gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -12178,7 +12178,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  ctx.rotate(270* Math.PI / 180);
 					  ctx.fillStyle = "rgba(255,255,255,.6)";
 					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					 // $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					  ctx.fillStyle = ctx.strokeStyle = label.color;
 					  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
 					  ctx.restore();
@@ -12200,7 +12200,7 @@ $jit.ST.Plot.NodeTypes.implement({
         if(label.type == 'Native') {
           ctx.save();
           ctx.fillStyle = ctx.strokeStyle = label.color;
-          ctx.font = "bold" + ' ' + label.size + 'px ' + label.family;
+          ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
@@ -12228,7 +12228,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				cornerRadius = 4;	
 				
 				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 		
 				
 				ctx.fillStyle = label.color;
@@ -12687,7 +12687,7 @@ $jit.BarChart = new Class({
 		while(axis>=grid) {
 			ctx.save();
 			ctx.translate(-(size.width/2)+margin.left, Math.round(axis));
-			ctx.rotate(Math.PI / 2);
+			ctx.rotate(270 * Math.PI / 180 );
 			ctx.fillStyle = label.color;
 			if(config.showLabels) {
 				if(label.type == 'Native') { 
@@ -15061,6 +15061,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           colorArray = node.getData('colorMono'),
           colorLength = colorArray.length,
           stringArray = node.getData('stringArray'),
+		  percentage = node.getData('percentage'),
           span = node.getData('span') / 2,
           theta = node.pos.theta,
           begin = theta - span,
@@ -15158,15 +15159,20 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           ctx.font = label.style + ' ' + fontSize + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'center';
-          
+          pi = Math.PI;
+          angle = theta * 360 / (2 * pi);
           polar.rho = acum + config.labelOffset + config.sliceOffset;
           polar.theta = node.pos.theta;
           var cart = polar.getc(true);
-          if(config.labelType == 'name') {
-			ctx.fillText(node.name, cart.x, cart.y);
-		  } else {
-			ctx.fillText(node.data.valuelabel, cart.x, cart.y);
-		  }
+          if(((angle >= 225 && angle <= 315) || (angle <= 135 && angle >= 45)) && percentage <= 5) {
+          	
+          	} else {
+	          if(config.labelType == 'name') {
+				ctx.fillText(node.name, cart.x, cart.y);
+			  } else {
+				ctx.fillText(node.data.valuelabel, cart.x, cart.y);
+			  }
+          }
           ctx.restore();
         }
       }

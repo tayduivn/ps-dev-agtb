@@ -68,17 +68,8 @@ if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
     	SUGAR.Studio= {};
     	SUGAR.contextMenu= {};
 
+    	SUGAR.config= {};
 
-/**
- * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- */
-// Declaring valid date character, minimum year and maximum year
-var dtCh= "-";
-var minYear=1900;
-var maxYear=2100;
 var nameIndex = 0;
 var typeIndex = 1;
 var requiredIndex = 2;
@@ -356,21 +347,12 @@ function toDecimal(original, precision) {
 
 function isInteger(s) {
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
-
-	var i;
-    for (i = 0; i < s.length; i++){
-        // Check that current character is number.
-        var c = s.charAt(i);
-        if (((c < "0") || (c > "9"))){
-        	if(i == 0 && c == "-"){
-        		//do nothing
-        	}else
-        		return false;
-        }
-    }
-    // All characters are numbers.
-    return true;
+		return parseInt(s) == s;
+	}
+	
+	return typeof(s) == 'number' && parseInt(s) == s;
 }
 
 function isNumeric(s) {
@@ -380,33 +362,6 @@ function isNumeric(s) {
    else {
 		return true;
    }
-}
-
-function stripCharsInBag(s, bag) {
-	var i;
-    var returnString = "";
-    // Search through string's characters one by one.
-    // If character is not in bag, append to returnString.
-    for (i = 0; i < s.length; i++){
-        var c = s.charAt(i);
-        if (bag.indexOf(c) == -1) returnString += c;
-    }
-    return returnString;
-}
-
-function daysInFebruary(year) {
-	// February has 29 days in any year evenly divisible by four,
-    // EXCEPT for centurial years which are not also divisible by 400.
-    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
-}
-
-function DaysArray(n) {
-	for (var i = 1; i <= n; i++) {
-		this[i] = 31
-		if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
-		if (i==2) {this[i] = 29}
-   }
-   return this
 }
 
 var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
@@ -533,8 +488,14 @@ function isValidEmail(emailStr) {
 	reg = /@.*?,/g;
 	while ((results = reg.exec(emailStr)) != null) {
 			orignial = results[0];
+			var check = results[0].substr(1);// bug 42259 - "Error Encountered When Trying to Send to Multiple Recipients with Commas in Name"
+			 // if condition to check the presence of @ charcater before replacing ','
+			//now if ',' is used to separate two email addresses, then only it will be replaced by ::;::
+		   //if name has ',' e.g. smith, jr ',' will not be replaced (which was causing the given problem)
+			if(check.indexOf('@') !=-1){
 			parsedResult = results[0].replace(',', '::;::');
 			emailStr = emailStr.replace (orignial, parsedResult);
+			}
 	}
 
 	// mfh: bug 15010 - more practical implementation of RFC 2822 from http://www.regular-expressions.info/email.html, modifed to accept CAPITAL LETTERS
@@ -775,7 +736,25 @@ function fade_error_style(normalStyle, percent) {
 	}
 }
 
-
+function isFieldTypeExceptFromEmptyCheck(fieldType)
+{
+    var results = false;
+    var exemptList = ['bool','file'];
+    for(var i=0;i<exemptList.length;i++)
+    {
+        if(fieldType == exemptList[i])
+            return true;
+    }
+    return results;
+}
+//BEGIN SUGARCRM flav=pro ONLY
+function isFieldHidden(field)
+{
+    var Dom = YAHOO.util.Dom;
+	var td = Dom.getAncestorByTagName(field, 'TD');
+	return Dom.hasClass(td, 'vis_action_hidden');
+}
+//END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
@@ -807,7 +786,20 @@ function validate_form(formname, startsWith){
 			if(validate[formname][i][nameIndex].indexOf(startsWith) == 0){
 				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
 					var bail = false;
-					if(validate[formname][i][requiredIndex] && validate[formname][i][typeIndex] != 'bool'){
+
+                    //If a field is not required and it is blank or is binarydependant, skip validation.
+                    //Example of binary dependant fields would be the hour/min/meridian dropdowns in a date time combo widget, which require further processing than a blank check
+                    if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
+                    {
+                       continue;
+                    }					
+					
+					if(validate[formname][i][requiredIndex]
+						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
+						//BEGIN SUGARCRM flav=pro ONLY
+						&& !isFieldHidden(form[validate[formname][i][nameIndex]])
+						//END SUGARCRM flav=pro ONLY
+					){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
 							isError = true;
@@ -840,6 +832,12 @@ function validate_form(formname, startsWith){
 							break;
 						case 'alphanumeric':
 							break;
+						case 'file':
+						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "") {
+						          isError = true;
+						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
+						      }					      
+						  break;	
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
@@ -1648,6 +1646,10 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+    // we don't need to check if the data is changed in the search popup
+    if (theForm.id == 'popup_query_form') {
+    	return;
+    }
 	if ( typeof editViewSnapshots == 'undefined' ) {
         editViewSnapshots = new Object();
     }
@@ -2409,8 +2411,14 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	    num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
-	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
+	
+	    if(num_grp_sep != '')
+	    {
+	       num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
+		   n = n.replace(num_grp_sep_re, '');
+	    }
+	    
+		n = n.replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
             // Need to strip out the currency symbols from the start.
@@ -2956,8 +2964,8 @@ SUGAR.savedViews = function() {
 			         hideTabsDef.push(hideTabs.options[i].value);
 				}
 			}
-
-			document.getElementById('displayColumnsDef').value = displayColumnsDef.join('|');
+			if (!SUGAR.savedViews.clearColumns)
+				document.getElementById('displayColumnsDef').value = displayColumnsDef.join('|');
 			document.getElementById('hideTabsDef').value = hideTabsDef.join('|');
 		},
 
@@ -3181,7 +3189,7 @@ SUGAR.searchForm = function() {
                     }
                 }
             }
-
+			SUGAR.savedViews.clearColumns = true;
 		}
 	};
 }();
@@ -3245,6 +3253,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			left_to_right: function(left_name, right_name, left_size, right_size) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 
@@ -3330,6 +3339,7 @@ SUGAR.tabChooser = function () {
 
 
 			right_to_left: function(left_name, right_name, left_size, right_size, max_left) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 
@@ -3416,6 +3426,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			up: function(name, left_name, right_name) {
+				SUGAR.savedViews.clearColumns = false;
 			    var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 			    var td = document.getElementById(name+'_td');
@@ -3451,6 +3462,7 @@ SUGAR.tabChooser = function () {
 			},
 
 			down: function(name, left_name, right_name) {
+				SUGAR.savedViews.clearColumns = false;
 			   	var left_td = document.getElementById(left_name+'_td');
 			    var right_td = document.getElementById(right_name+'_td');
 			    var td = document.getElementById(name+'_td');

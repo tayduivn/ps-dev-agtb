@@ -546,6 +546,8 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	var open_paren_loc = expr.indexOf('(');
 	if (open_paren_loc < 1)
 		throw (expr + ": Syntax Error, no open parentheses found");
+	if (expr.charAt(expr.length-1) != ')')
+		throw (expr + ": Syntax Error, no close parentheses found");
 
 	// get the function
 	var func = expr.substring(0, open_paren_loc);
@@ -563,12 +565,14 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	var currChar		= null;
 	var lastCharRead	= null;
 	var justReadString	= false;		// did i just read in a string
+	var justReadComma   = false;
 	var isInQuotes 		= false;		// am i currently reading in a string
 	var isPrevCharBK 	= false;		// is my previous character a backslash
 
 	for ( var i = 0 ; i <= length ; i++ ) {
 		// store the last character read
 		lastCharRead = currChar;
+		justReadComma = false;
 
 		// the last parameter
 		if ( i == length ) {
@@ -623,6 +627,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 				throw ("Syntax Error: Unexpected ','");
 				args[args.length] = this.tokenize(argument);
 			argument = "";
+			justReadComma = true;
 			continue;
 		}
 
@@ -631,10 +636,13 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	}
 
 	// now check to make sure all the quotes opened were closed
-	if ( isInQuotes )	throw ("Syntax Error (Unterminated String Literal)");
+	if ( isInQuotes )	 throw ("Syntax Error (Unterminated String Literal)");
 
 	// now check to make sure all the parantheses opened were closed
-	if ( level != 0 )	throw ("Syntax Error (Incorrectly Matched Parantheses)");
+	if ( level != 0 )	 throw ("Syntax Error (Incorrectly Matched Parantheses)");
+
+	//If we hit a comma, but no paramter follows, we shoudl throw an error. 
+	if ( justReadComma ) throw ("Syntax Error (No parameter after comma near <b>" + func + "</b>)");
 
 	// require and return the appropriate expression object
 	return {
@@ -1097,7 +1105,7 @@ SUGAR.util.DateUtils = {
         }
         var out = "";
         for (var i=0; i < format.length; i++) {
-			var c = format[i];
+			var c = format.charAt(i);
 			switch (c) {
                 case 'm':
                     out += date.getMonth() + 1; break;

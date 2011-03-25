@@ -81,7 +81,7 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c1->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c2->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$this->a1->id}'");
-        
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE name = 'joe pizza'");
         unset($this->c1);
         unset($this->c2);
         unset($this->a1);

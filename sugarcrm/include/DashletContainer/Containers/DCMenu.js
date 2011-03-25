@@ -101,6 +101,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                                 if ( confirm(warnMsg) ) {
                                     disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
                                 } else {
+                                    i++;
                                     continue;
                                 }
                             }

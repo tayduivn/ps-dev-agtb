@@ -58,7 +58,12 @@ $dictionary['Document'] = array('table' => 'documents',
     'massupdate' => false,
     'options' => 'eapm_list',
     'default'	=> 'Sugar',
+ 	//BEGIN SUGARCRM flav=com ONLY
+	'studio' => 'false',
+  	//END SUGARCRM flav=com ONLY 
+  	//BEGIN SUGARCRM flav!=com ONLY  
   	'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+	//END SUGARCRM flav!=com ONLY
   ),
 'doc_url' =>
   array (
@@ -91,6 +96,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'type' => 'date',
     'importable' => 'required',
 	'required' => true,
+    'display_default' => 'now',
   ),
 
 'exp_date' =>
@@ -265,6 +271,7 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
    ),
+   //BEGIN SUGARCRM flav=pro ONLY
   'quotes'=>
    array (
        'name' => 'quotes',
@@ -280,7 +287,8 @@ $dictionary['Document'] = array('table' => 'documents',
        'relationship' => 'documents_products',
        'source' => 'non-db',
        'vname' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-   ),   
+   ),
+   //END SUGARCRM flav=pro ONLY
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',

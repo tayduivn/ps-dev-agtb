@@ -28,9 +28,33 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['sugar_config']['somewhackypreference'] = 'somewhackyvalue';
         
-        $this->assertEquals('somewhackyvalue',$this->_user->getPreference('somewhackypreference'));
+        $result = $this->_user->getPreference('somewhackypreference');
         
         unset($GLOBALS['sugar_config']['somewhackypreference']);
+        
+        $this->assertEquals('somewhackyvalue',$result);
+    }
+    
+    /**
+     * @ticket 42667
+     */
+    public function testGettingSystemPreferenceWhenNoUserPreferenceExistsForEmailDefaultClient()
+    {
+        if ( isset($GLOBALS['sugar_config']['email_default_client']) ) {
+            $oldvalue = $GLOBALS['sugar_config']['email_default_client'];
+        }
+        $GLOBALS['sugar_config']['email_default_client'] = 'somewhackyvalue';
+        
+        $result = $this->_user->getPreference('email_link_type');
+        
+        if ( isset($oldvalue) ) {
+            $GLOBALS['sugar_config']['email_default_client'] = $oldvalue;
+        }
+        else {
+            unset($GLOBALS['sugar_config']['email_default_client']);
+        }
+        
+        $this->assertEquals('somewhackyvalue',$result);
     }
     
     public function testResetingUserPreferences()

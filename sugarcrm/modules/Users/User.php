@@ -324,30 +324,6 @@ class User extends Person {
         $user->_userPreferenceFocus->resetPreferences($category);
 	}
 
-
-	/**
-	 * Interface for the User object to calling the UserPreference::isPreferenceSizeTooLarge() method in modules/UserPreferences/UserPreference.php
-	 *
-	 * @see UserPreference::isPreferenceSizeTooLarge()
-	 *
-	 * @param string $category category to check
-	 */
-	public function isPreferenceSizeTooLarge(
-	    $category = 'global'
-	    )
-	{
-	    // for BC
-	    if ( func_num_args() > 1 ) {
-	        $user = func_get_arg(1);
-	        $GLOBALS['log']->deprecated('User::resetPreferences() should not be used statically.');
-	    }
-	    else
-	        $user = $this;
-
-        return $user->_userPreferenceFocus->isPreferenceSizeTooLarge($category);
-	}
-	
-	
 	/**
 	 * Interface for the User object to calling the UserPreference::savePreferencesToDB() method in modules/UserPreferences/UserPreference.php
 	 *
@@ -1598,4 +1574,33 @@ EOQ;
 		}
 	}
 	//END SUGARCRM flav!=com ONLY
+	
+
+   function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
+   {	//call parent method, specifying for array to be returned
+   		$ret_array = parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, true,$parentbean, $singleSelect);
+   		
+   		//if this is being called from webservices, then run additional code
+   		if(!empty($GLOBALS['soap_server_object'])){
+	
+	   		//if this is a single select, then secondary queries are being run that may result in duplicate rows being returned through the 
+	   		//left joins with meetings/tasks/call.  Add a group by to return one user record (bug 40250)
+	       	if($singleSelect)
+	    	{
+	    		$ret_array['order_by'] = ' Group By '.$this->table_name.'.id '.$ret_array['order_by'];
+	    	}
+   		}
+
+   		//return array or query string
+   		if($return_array)
+    	{
+    		return $ret_array;
+    	}
+
+    	return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
+
+   		
+   
+   }
+	
 }

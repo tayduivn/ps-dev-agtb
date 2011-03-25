@@ -46,6 +46,7 @@ $listViewDefs['Documents'] = array(
     'default' => true,
     'bold' => false,
     'displayParams' => array ( 'module' => 'Documents', ),
+    'sortable' => false,
     'related_fields' => 
     array (
         0 => 'document_revision_id',
@@ -54,12 +55,14 @@ $listViewDefs['Documents'] = array(
         3 => 'doc_url',
     ),
   ),
+  //BEGIN SUGARCRM flav!=com ONLY
   'DOC_TYPE' => array (
   	'width' => '5%',
   	'label' => 'LBL_DOC_TYPE',
     'link' => false,
   	'default' => true,
   ),
+  //END SUGARCRM flav!=com ONLY
   'CATEGORY_ID' => 
   array (
     'width' => '10%',

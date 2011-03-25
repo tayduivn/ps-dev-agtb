@@ -2228,7 +2228,9 @@ class InboundEmail extends SugarBean {
 		$this->status = $_REQUEST['ie_status'];
 		$this->server_url = trim($_REQUEST['server_url']);
 		$this->email_user = trim($_REQUEST['email_user']);
-		$this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
+		if(!empty($_REQUEST['email_password'])) {
+		    $this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
+		}
 		$this->port = trim($_REQUEST['port']);
 		$this->protocol = $_REQUEST['protocol'];
 		if ($this->protocol == "pop3") {
@@ -2692,6 +2694,7 @@ class InboundEmail extends SugarBean {
 
 				$replyToName = (!empty($storedOptions['reply_to_name']))? from_html($storedOptions['reply_to_name']) :$from_name ;
 				$replyToAddr = (!empty($storedOptions['reply_to_addr'])) ? $storedOptions['reply_to_addr'] : $from_addr;
+
 
 				if(!empty($email->reply_to_email)) {
 					$to[0]['email'] = $email->reply_to_email;
@@ -3418,6 +3421,18 @@ class InboundEmail extends SugarBean {
 		return (strtolower($encoding) == 'utf-8') ? $name : mb_convert_encoding($name, 'UTF-8', $encoding);
 	}
 
+	/*
+		Primary body types for a part of a mail structure (imap_fetchstructure returned object)
+		0 => text
+		1 => multipart
+		2 => message
+		3 => application
+		4 => audio
+		5 => image
+		6 => video
+		7 => other
+	*/
+
 	/**
 	Primary body types for a part of a mail structure (imap_fetchstructure returned object)
 	@var array $imap_types
@@ -3464,6 +3479,7 @@ class InboundEmail extends SugarBean {
 			6 => video
 			7 => other
 		*/
+
 		foreach($parts as $k => $part) {
 			$thisBc = $k+1;
 			if($breadcrumb != '0') {
@@ -3474,7 +3490,7 @@ class InboundEmail extends SugarBean {
 			//if($part->type == 1 && !empty($part->parts)) {
 			if(isset($part->parts) && !empty($part->parts) && !( isset($part->subtype) && strtolower($part->subtype) == 'rfc822')  ) {
 				$this->saveAttachments($msgNo, $part->parts, $emailId, $thisBc, $forDisplay);
-				continue;
+                continue;
 			} elseif($part->ifdisposition) {
 				// we will take either 'attachments' or 'inline'
 				if(strtolower($part->disposition) == 'attachment' || ((strtolower($part->disposition) == 'inline') && $part->type != 0)) {
@@ -3493,6 +3509,14 @@ class InboundEmail extends SugarBean {
 
 					// deal with the MIME types email has
 					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
+					$attach->safeAttachmentName();
+					if($forDisplay) {
+						$attach->id = $this->getTempFilename();
+					} else {
+						// only save if doing a full import, else we want only the binaries
+						$attach->save();
+					}
+					$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 				} // end if disposition type 'attachment'
 			}// end ifdisposition
 			//Retrieve contents of subtype rfc8822
@@ -3503,6 +3527,14 @@ class InboundEmail extends SugarBean {
 			    $attach->file_mime_type = 'messsage/rfc822';
 			    $attach->description = $tmp_eml;
 			    $attach->filename = 'bounce.eml';
+			    $attach->safeAttachmentName();
+			    if($forDisplay) {
+			        $attach->id = $this->getTempFilename();
+			    } else {
+			        // only save if doing a full import, else we want only the binaries
+			        $attach->save();
+			    }
+			    $this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 			} elseif(!$part->ifdisposition && $part->type != 1 && $part->type != 2 && $thisBc != '1') {
         		// No disposition here, but some IMAP servers lie about disposition headers, try to find the truth
 				// Also Outlook puts inline attachments as type 5 (image) without a disposition
@@ -3514,21 +3546,22 @@ class InboundEmail extends SugarBean {
                         }
                     }
                     if(empty($fname)) continue;
+
 					// we assume that named parts are attachments too
                     $attach = $this->getNoteBeanForAttachment($emailId);
 
 					$attach->filename = $attach->name = $fname;
 					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
-				}
-			}
 
-			if(empty($attach)) continue;
-			$attach->safeAttachmentName();
-			if ($forDisplay) {
-			    $attach->id = $this->getTempFilename();
-			} else {
-			    // only save if doing a full import, else we want only the binaries
-			    $attach->save();
+					$attach->safeAttachmentName();
+					if($forDisplay) {
+						$attach->id = $this->getTempFilename();
+					} else {
+						// only save if doing a full import, else we want only the binaries
+						$attach->save();
+					}
+					$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
+				}
 			}
 			$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 		} // end foreach
@@ -4173,6 +4206,13 @@ class InboundEmail extends SugarBean {
 	        if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
                 $email->parent_id = $_REQUEST['parent_id'];
                 $email->parent_type = $_REQUEST['parent_type'];
+
+                $mod = strtolower($email->parent_type);
+                $rel = array_key_exists($mod, $email->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
+
+                if(! $email->load_relationship($rel) )
+                    return FALSE;
+                $email->$rel->add($email->parent_id);
 	        }
 
 			// override $forDisplay w/user pref

@@ -534,4 +534,15 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 			);
 		}
 	}
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	function get_mobile_login_data(&$nameValueArray)
+	{
+	    if( file_exists('modules/Quotes/Layouts.php') )
+	    {
+    	    require_once('modules/Quotes/Layouts.php');
+    	    $nameValueArray['avail_quotes_layouts'] = get_layouts();
+	    }
+	}
+	//END SUGARCRM flav=pro ONLY
 }
