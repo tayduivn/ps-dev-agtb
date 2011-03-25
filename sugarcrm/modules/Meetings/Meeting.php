@@ -135,7 +135,6 @@ class Meeting extends SugarBean {
 	function save($check_notify = FALSE) {
 		global $timedate;
 		global $current_user;
-		global $disable_date_format;
 
 		if(isset($this->date_start)
 			&& isset($this->duration_hours)
@@ -417,13 +416,13 @@ class Meeting extends SugarBean {
         if ( !empty($this->id) && !empty($this->type) && $this->type != 'Sugar' && !empty($this->join_url) ) {
             // It's an external meeting
             global $mod_strings;
-            
+
             $meetingLink = '';
             if ($GLOBALS['current_user']->id == $this->assigned_user_id ) {
                 $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_HOST_EXT_MEETING'].'"></a>';
             }
             $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_JOIN_EXT_MEETING'].'"></a>';
-            
+
             $this->displayed_url = $meetingLink;
         }
 	}
@@ -442,7 +441,7 @@ class Meeting extends SugarBean {
 		}
 		global $timedate;
 		$today = $timedate->nowDb();
-		$nextday = $timedate->asDbDate($timedate->getNow()->get("+1 day")); 
+		$nextday = $timedate->asDbDate($timedate->getNow()->get("+1 day"));
 		$mergeTime = $meeting_fields['DATE_START']; //$timedate->merge_date_time($meeting_fields['DATE_START'], $meeting_fields['TIME_START']);
 		$date_db = $timedate->to_db($mergeTime);
 		if($date_db	< $today	) {
