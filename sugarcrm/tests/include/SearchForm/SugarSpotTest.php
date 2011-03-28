@@ -54,11 +54,10 @@ class SugarSpotTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @bug 43080
+     * @ticket 43080
      */
     public function testSearchGrabsMore() 
     {
-
         $app_strings = return_application_language($GLOBALS['current_language']); 
         $this->assertTrue(array_key_exists('LBL_SEARCH_MORE', $app_strings));
 

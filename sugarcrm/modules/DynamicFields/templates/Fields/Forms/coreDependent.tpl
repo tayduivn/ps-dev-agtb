@@ -88,7 +88,7 @@
     </td>
 </tr>
 
-//BEGIN SUGARCRM flav=een ONLY
+{* //BEGIN SUGARCRM flav=een ONLY *}
 <tr id='enforcedRow' {if empty($vardef.enforced)}style="display:none"{/if}><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_ENFORCED"}:</td>
     <td><input type="checkbox" name="enforced" id="enforced" value="1" onclick="ModuleBuilder.toggleEnforced();"{if !empty($vardef.enforced)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
@@ -109,5 +109,5 @@
 		<input type='hidden' name='visibility_grid' id='visibility_grid' value='{$visiblity_grid}'>
 	</td>
 </tr>
-//END SUGARCRM flav=een ONLY
+{* //END SUGARCRM flav=een ONLY *}
 {/if}
