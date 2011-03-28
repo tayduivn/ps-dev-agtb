@@ -546,7 +546,7 @@ class SugarDateTime extends DateTime
      */
     public function modify($modify)
     {
-        if(PHP_VERSION_ID >= 050300 || $modify != 'first day of next month') {
+        if(PHP_VERSION_ID >= 50300 || $modify != 'first day of next month') {
             parent::modify($modify);
         } else {
             /* PHP 5.2 does not understand 'first day of' and defaults need it */
