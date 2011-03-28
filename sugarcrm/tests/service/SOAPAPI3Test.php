@@ -170,8 +170,9 @@ class SOAPAPI3Test extends SOAPTestCase
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
-
+        //BEGIN SUGARCRM flav=pro ONLY 
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
+        //END SUGARCRM flav=pro ONLY 
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
         $monitor->setValue('module_name', $module);

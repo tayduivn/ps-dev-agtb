@@ -73,6 +73,8 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 
             //bug: 42398 - have to unset the id from the required_fields since it is not populated in the $_POST
             unset($lead->required_fields['id']);
+            unset($lead->required_fields['team_name']);
+            unset($lead->required_fields['team_count']);
             $lead = $leadForm->handleSave($prefix, false, true, false, $lead);
             
 			if(!empty($lead)){
