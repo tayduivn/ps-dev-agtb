@@ -655,11 +655,18 @@ class SugarBean
         }
     }
 
+    /**
+     * Create date string from default value
+     * like '+1 month'
+     * @param string $value
+     * @param bool $time Should be expect time set too?
+     * @return string
+     */
     protected function parseDateDefault($value, $time = false)
     {
         global $timedate;
         if($time) {
-            $dtAry = explode('&', $value['display_default'] , 2);
+            $dtAry = explode('&', $value, 2);
             $dateValue = $timedate->getNow(true)->modify($dtAry[0]);
             if(!empty($dtAry[1])) {
                 $timeValue = $timedate->fromString($dtAry[1]);
