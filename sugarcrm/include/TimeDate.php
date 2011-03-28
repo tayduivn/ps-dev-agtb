@@ -1037,7 +1037,7 @@ class TimeDate
 
     /**
      * Get 'now' DateTime object
-     * @param $userTz return in user timezone?
+     * @param bool $userTz return in user timezone?
      * @return SugarDateTime
      */
     public function getNow($userTz = false)
@@ -1051,6 +1051,17 @@ class TimeDate
             return $this->tzUser($now);
         }
         return $now;
+    }
+
+    /**
+     * Set 'now' time
+     * For testability - predictable time value
+     * @param DateTime $now
+     */
+    public function setNow($now)
+    {
+        $this->now = $now;
+        return $this;
     }
 
     /**
