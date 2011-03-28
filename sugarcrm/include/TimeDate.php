@@ -1032,7 +1032,7 @@ class TimeDate
         } else {
             $nowGMT = $this->now;
         }
-        return $this->asDbDate($nowGMT);
+        return $this->asDbDate($nowGMT, true);
     }
 
     /**
