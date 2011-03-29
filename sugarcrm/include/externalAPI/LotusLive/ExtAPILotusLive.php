@@ -31,7 +31,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
        // 'consumerKey' => "9399cf0ce6e4ca4d30d56a76b21da89",
         //'consumerSecret' => "7704b27829c5715445e14637415b67c1",
     );
-    protected $url = 'https://apps.test.lotuslive.com/';
+    protected $url = 'https://apps.lotuslive.com/';
 
     public $canInvite = false;
     public $sendsInvites = false;
