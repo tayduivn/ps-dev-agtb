@@ -67,6 +67,10 @@ $subpanel_layout = array(
                 'module' => 'Documents',
             ),
 		),
+		'document_revision_id' => array(
+	       'name' => 'document_revision_id',
+	       'usage' => 'query_only',
+	   ),
        'category_id'=>array(
  	    	'name' => 'category_id',
 	 	    'vname' => 'LBL_LIST_CATEGORY',

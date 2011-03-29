@@ -88,6 +88,7 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
         unset($soap_version_test_accountId);
         unset($soap_version_test_opportunityId);
         unset($soap_version_test_contactId);
+
 		unset($GLOBALS['beanList']);
 		unset($GLOBALS['beanFiles']);
     }	

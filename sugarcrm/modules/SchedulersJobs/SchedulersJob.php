@@ -159,16 +159,11 @@ class SchedulersJob extends SugarBean {
 	 * @return	boolean		Success
 	 */
 	function finishJob() {
-        global $timedate;
 		$trackerManager = TrackerManager::getInstance();
 		$trackerManager->pause();
 		$GLOBALS['log']->debug('----->SchedulersJob updating Job Status and finishing Job execution.');
 		$this->scheduler->retrieve($this->scheduler->id);
-		$this->scheduler->last_run = $this->handleDateFormat('now');
-		if($this->scheduler->last_run == $timedate->asDb($timedate->fromString('Jan 01 2000 00:00:00'))) {
-			$this->scheduler->last_run = $this->handleDateFormat('now');
-			$GLOBALS['log']->fatal('Scheduler applying bogus date for "Last Run": '.$this->scheduler->last_run);
-		}
+		$this->scheduler->last_run = TimeDate::getInstance()->nowDb();
 		$this->scheduler->save();
 		$trackerManager->unPause();
 	}

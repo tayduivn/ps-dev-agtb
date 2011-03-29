@@ -64,7 +64,7 @@
 </tr>
 {/if}
 {if $vardef.type != 'address'}
-<tr><td class='mbLBL'>Dependent:</td>
+<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         <img id="depToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
@@ -79,7 +79,7 @@
 		</script>
     </td>
 </tr>
-<tr id='visFormulaRow' {if empty($vardef.dependency)}style="display:none"{/if}><td class='mbLBL'>Visible If:</td> 
+<tr id='visFormulaRow' {if empty($vardef.dependency)}style="display:none"{/if}><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_VISIBLE_IF"}:</td> 
     <td>
         <input id="dependency" type="hidden" name="dependency" value="{$vardef.dependency|escape:'html'}" onchange="document.getElementById('dependency_display').value = this.value"/>
         <input id="dependency_display" type="text" name="dependency_display" value="{$vardef.dependency|escape:'html'}" readonly="1" style="background-color:#eee"/>
@@ -88,8 +88,8 @@
     </td>
 </tr>
 
-//BEGIN SUGARCRM flav=een ONLY
-<tr id='enforcedRow' {if empty($vardef.enforced)}style="display:none"{/if}><td class='mbLBL'>Enforced:</td>
+{* //BEGIN SUGARCRM flav=een ONLY *}
+<tr id='enforcedRow' {if empty($vardef.enforced)}style="display:none"{/if}><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_ENFORCED"}:</td>
     <td><input type="checkbox" name="enforced" id="enforced" value="1" onclick="ModuleBuilder.toggleEnforced();"{if !empty($vardef.enforced)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
         {if $hideLevel > 5}<input type="hidden" name="enforced" value="{$vardef.enforced}">{/if}
     </td>
@@ -109,5 +109,5 @@
 		<input type='hidden' name='visibility_grid' id='visibility_grid' value='{$visiblity_grid}'>
 	</td>
 </tr>
-//END SUGARCRM flav=een ONLY
+{* //END SUGARCRM flav=een ONLY *}
 {/if}

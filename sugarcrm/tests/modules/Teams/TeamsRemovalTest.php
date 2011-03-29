@@ -5,6 +5,7 @@
  */
 class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
 {
+
 	var $_user = null;    
 	var $_contact = null;
 	var $_contact2 = null;
@@ -22,10 +23,11 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
     var $_teamB = null;
     var $_teamBId = null;
 
+
 	function setUp() 
 	{
 	    $this->markTestSkipped("Skipping unless otherwise specified");
-    	
+
         global $beanList, $beanFiles, $moduleList;
         require('include/modules.php');		
 		
