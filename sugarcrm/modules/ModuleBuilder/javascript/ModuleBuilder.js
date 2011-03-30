@@ -1096,7 +1096,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var display = enable ? "" : "none";
 			Dom.setStyle("formulaRow", "display", display);
 			Dom.setStyle("enforcedRow", "display", display);
-			Dom.get('calculated').value = enable;
+            if(Dom.get('calculated')){
+			    Dom.get('calculated').value = enable;
+            }
             this.toggleEnforced(enable);
         },
         toggleEnforced: function(enable) {
@@ -1124,7 +1126,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			if (massupdate)massupdate.disabled = disable;
 			this.toggleDateTimeDefalutEnabled(disable);
 			if (defaultVal) defaultVal.disabled = disable;
-            Dom.get("enforced").value = enable;
+            if(Dom.get("enforced")){
+                Dom.get("enforced").value = enable;
+            }
         },
 		toggleDateTimeDefalutEnabled : function(disable)
 		{
