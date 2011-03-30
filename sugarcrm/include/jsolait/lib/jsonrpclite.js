@@ -329,7 +329,7 @@ alert(str);
             }
             var data = new Request(this.request_id++, name, args);
             // cn: bug 12274 - defend against CSRF
-            data = JSON.stringify(data); // creates security envelope wrapped JSON object
+            data = YAHOO.lang.JSON.stringify(data); // creates security envelope wrapped JSON object
 
             if(sync){
                 var rsp = urllib.postURL(this.url, data, [["Content-Type", "text/plain"]]);
