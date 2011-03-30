@@ -2,7 +2,7 @@
 
 class JSMin {
     /**
-     * Calls the JSMinPlus minify function.
+     * Calls the SugarMin minify function.
      *
      * @param string $js Javascript to be minified 
      * @return string Minified javascript

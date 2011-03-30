@@ -55,7 +55,7 @@ function document_set_return(popup_reply_data)
 			window.document.forms[form_name].elements[the_key].value = displayValue;
 		}
 	}
-	related_doc_id=JSON.stringifyNoSecurity(related_doc_id);
+	related_doc_id=YAHOO.lang.JSON.stringify(related_doc_id);
 	//make request for document revisions data.
 	var conditions  = new Array();
     conditions[conditions.length] = {"name":"document_id","op":"starts_with","value":related_doc_id};

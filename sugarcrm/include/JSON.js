@@ -31,6 +31,7 @@ SOFTWARE.
 2008-10-10: New regular expressions copied in from the new json2.js file on http://json.org (released into the public domain), work better on Safari and IE for more complicated datasets
 */
 var JSON = function () {
+	
     var m = {
             '\b': '\\b',
             '\t': '\\t',
@@ -114,6 +115,7 @@ var JSON = function () {
     Stringify a JavaScript value, adding a security envelope, producing a JSON text.
 */
         stringify: function (v) {
+			
             var f = s[typeof v];
             if (f) {
                 v = f(v);
@@ -152,6 +154,7 @@ var JSON = function () {
     It returns false if there is a syntax error.
 */
         parse: function (text) {
+            
         	// mfh: bug 14599
         	text = text.replace(/^\s*|\s*$/,'');
 			// cn: bug 12274 - the below defend against CSRF (see desc for whitepaper)

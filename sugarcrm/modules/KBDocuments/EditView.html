@@ -280,7 +280,7 @@
 	     }				     
      } 
 	} 
-	postData = 'newKBTitle=' + JSON.stringify(kbName) + '&module=KBDocuments&action=CheckForDuplicateKBDocument&to_pdf=1';    
+	postData = 'newKBTitle=' + YAHOO.lang.JSON.stringify(kbName) + '&module=KBDocuments&action=CheckForDuplicateKBDocument&to_pdf=1';    
 	YAHOO.util.Connect.asyncRequest('GET', 'index.php', callback, postData);
   }
 javascript:SUGAR.kb.externalCheckedOnLoad();

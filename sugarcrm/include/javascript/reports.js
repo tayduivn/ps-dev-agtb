@@ -1714,11 +1714,11 @@ SUGAR.reports = function() {
 			} // else
 			
 			report_def.full_table_list = full_table_list;
-			report_def_str = JSON.stringifyNoSecurity(report_def);
+			report_def_str = YAHOO.lang.JSON.stringify(report_def);
 			document.ReportsWizardForm.report_def.value = report_def_str;
-			filters_defs_str = JSON.stringifyNoSecurity(filters_defs);
+			filters_defs_str = YAHOO.lang.JSON.stringify(filters_defs);
 			document.ReportsWizardForm.filters_defs.value = filters_defs_str;
-			panels_def_str = JSON.stringifyNoSecurity(panels);
+			panels_def_str = YAHOO.lang.JSON.stringify(panels);
 			document.ReportsWizardForm.panels_def.value = panels_def_str;
 			return true;
 		},

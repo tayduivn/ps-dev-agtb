@@ -405,7 +405,7 @@ document_additionalDetailsCalls = new Array();
 			     //alert(r.responseText);	
 		     } 
 	    } 
-		postData = 'selectedKBId=' + JSON.stringify(kbId) + '&module=KBDocuments&action=UpdateKBViewsCount&to_pdf=1';    
+		postData = 'selectedKBId=' + YAHOO.lang.JSON.stringify(kbId) + '&module=KBDocuments&action=UpdateKBViewsCount&to_pdf=1';    
 		YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 	}
 	
@@ -508,7 +508,7 @@ document_additionalDetailsCalls = new Array();
 		//create data to send across
 		postData = 'module=KBDocuments&action=BrowseListView&to_pdf=1'+ '&sortCol='+name;
 		
-		args = '&to_pdf=1'+'&params=' + JSON.stringify(params) + '&sortCol='+name;
+		args = '&to_pdf=1'+'&params=' + YAHOO.lang.JSON.stringify(params) + '&sortCol='+name;
 		//create callback function
 		var callback =	{
 			//on success, refresh list

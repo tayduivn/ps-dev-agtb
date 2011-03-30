@@ -76,17 +76,7 @@
 {SITEURL}
 {TREEHEADER}
 {SET_RETURN_JS}
-<script type="text/javascript">
-<!--
-/* initialize the popup request from the parent */
 
-if(typeof window.document.forms['popup_query_form'] != 'undefined' && window.document.forms['popup_query_form'].request_data.value == "")
-{
-	window.document.forms['popup_query_form'].request_data.value
-		= JSON.stringify(window.opener.get_popup_request_data());
-}
--->
-</script>
 <script>
 function select_document(treeid) {
 	var node=YAHOO.namespace(treeid).selectednode;

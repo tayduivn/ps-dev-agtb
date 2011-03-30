@@ -158,7 +158,7 @@ function makeRPCCall(upEl, sqs_id) {
 
 				//alert("sqs_query: " + sqs_query);
 				for(var i = 0; i < sqs_objects[sqs_id]['conditions'].length; i++) {
-					sqs_objects[sqs_id]['conditions'][i]['value'] = JSON.stringify(sqs_query);
+					sqs_objects[sqs_id]['conditions'][i]['value'] = YAHOO.lang.JSON.stringify(sqs_query);
 				}
 				
 				req_id = global_rpcClient.call_method(sqs_objects[sqs_id]['method'], sqs_objects[sqs_id]);
@@ -745,7 +745,6 @@ SugarQS.prototype.display = function(result) {
 //alert(names.length);
 //alert(names[0].fields[sqs_objects[sqs_id].field_list[0]]); //garbled
 	for(i = 0; i < names.length; i++) { 
-//		alert(JSON.parse(names[i].fields[sqs_objects[sqs_id].field_list[0]]));
 		escaped_name = names[i].fields[sqs_objects[sqs_id].field_list[0]];//.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 //		var theReturnedString = names[i].fields[sqs_objects[sqs_id].field_list[0]];
 //		for(var ii=0; ii<theReturnedString.length; ii++) {

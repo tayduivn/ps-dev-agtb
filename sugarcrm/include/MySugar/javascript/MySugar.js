@@ -149,7 +149,7 @@ SUGAR.mySugar = function() {
             {
                 ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING_PAGE_TITLE'));
 
-                url = 'index.php?DynamicAction=savePageTitle&action=DynamicAction&module='+module+'&to_pdf=1&newPageTitle='+JSON.stringify(newTitleValue)+'&pageId='+pageNum;
+                url = 'index.php?DynamicAction=savePageTitle&action=DynamicAction&module='+module+'&to_pdf=1&newPageTitle='+YAHOO.lang.JSON.stringify(newTitleValue)+'&pageId='+pageNum;
 
                 var setPageTitle = function(data)
                 {
@@ -338,7 +338,7 @@ SUGAR.mySugar = function() {
 			var tabListElemWidth = tabListElem.offsetWidth;
 			var maxWidth = contentElemWidth-(dashletCtrlsElemWidth+addPageElemWidth+2);
 
-			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+JSON.stringify(newPageName);
+			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+YAHOO.lang.JSON.stringify(newPageName);
 
 			var addBlankPage = function(data) {
 				//check to see if a user preference error occurred

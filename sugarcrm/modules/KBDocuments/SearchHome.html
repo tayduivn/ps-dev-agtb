@@ -292,7 +292,7 @@
 		     	window.location.href = 'index.php?action=DetailView&module=KBDocuments&record='+kbId;
 		     } 
 	    } 
-		postData = 'selectedKBId=' + JSON.stringify(kbId) + '&module=KBDocuments&action=UpdateKBViewsCount&to_pdf=1';    
+		postData = 'selectedKBId=' + YAHOO.lang.JSON.stringify(kbId) + '&module=KBDocuments&action=UpdateKBViewsCount&to_pdf=1';    
 		YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 	}
 
