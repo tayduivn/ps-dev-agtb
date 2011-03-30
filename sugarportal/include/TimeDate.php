@@ -994,6 +994,92 @@ class TimeDate
         return str_replace('@~@', $mer, $newDate);
     }
 
+    // format - date expression ('' means now) for start and end of the range
+    protected $date_expressions = array(
+        'yesterday' =>    array("-1 day", "-1 day"),
+        'today' =>        array("", ""),
+        'tomorrow' =>     array("+1 day", "+1 day"),
+        'last_7_days' =>  array("-6 days", ""),
+        'next_7_days' =>  array("", "+6 days"),
+        'last_30_days' => array("-29 days", ""),
+        'next_30_days' => array("", "+29 days"),
+    );
+
+    /**
+     * Parse date template
+     * @param string $template Date expression
+     * @param bool $daystart Do we want start or end of the day?
+     * @param User $user
+     */
+    protected function parseFromTemplate($template, $daystart, User $user = null)
+	{
+        $now = $this->tzUser($this->getNow(), $user);
+        if(!empty($template[0])) {
+            $now->modify($template[0]);
+        }
+        if($daystart) {
+            return $now->get_day_begin();
+        } else {
+            return $now->get_day_end();
+        }
+	}
+
+	/**
+	 * Get month-long range mdiff months from now
+	 */
+	protected function diffMon($mdiff, User $user)
+	{
+        $now = $this->tzUser($this->getNow(), $user);
+	    $now->setDate($now->year, $now->month+$mdiff, 1);
+	    $start = $now->get_day_begin();
+	    $end = $now->setDate($now->year, $now->month, $now->days_in_month)->setTime(23, 59, 59);
+	    return array($start, $end);
+	}
+
+	/**
+	 * Get year-long range ydiff years from now
+	 */
+	protected function diffYear($ydiff, User $user)
+	{
+        $now = $this->tzUser($this->getNow(), $user);
+	    $now->setDate($now->year+$ydiff, 1, 1);
+	    $start = $now->get_day_begin();
+	    $end = $now->setDate($now->year, 12, 31)->setTime(23, 59, 59);
+	    return array($start, $end);
+	}
+
+	/**
+	 * Parse date range expression
+	 * Returns beginning and end of the range as a date
+	 * @param string $range
+	 * @param User $user
+	 * @return array
+	 */
+	public function parseDateRange($range, User $user = null)
+	{
+        if(isset($this->date_expressions[$range])) {
+            return array($this->parseFromTemplate($this->date_expressions[$range][0], true, $user),
+                $this->parseFromTemplate($this->date_expressions[$range][1], false, $user)
+            );
+        }
+	    switch($range) {
+			case 'next_month':
+			    return $this->diffMon(1,  $user);
+		    case 'last_month':
+			    return $this->diffMon(-1,  $user);
+		    case 'this_month':
+			    return $this->diffMon(0,  $user);
+	        case 'last_year':
+			    return $this->diffYear(-1,  $user);
+	        case 'this_year':
+			    return $this->diffYear(0,  $user);
+	        case 'next_year':
+			    return $this->diffYear(1,  $user);
+	        default:
+			    return null;
+	    }
+	}
+
     /********************* OLD functions, should not be used publicly anymore ****************/
     /**
      * @deprecated for public use
