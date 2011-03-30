@@ -592,19 +592,8 @@ class SugarApplication
  	    $row_count = sugar_cache_retrieve('checkDatabaseVersion_row_count');
  	    if ( empty($row_count) ) {
             global $sugar_db_version;
-            $version_query = 'SELECT count(*) as the_count FROM config WHERE category=\'info\' AND name=\'sugar_version\'';
-
-            if($GLOBALS['db']->dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $version_query .= " AND to_char(value) = '$sugar_db_version'";
-                //END SUGARCRM flav=ent ONLY
-            }
-            else if ($GLOBALS['db']->dbType == 'mssql'){
-                $version_query .= " AND CAST(value AS varchar(8000)) = '$sugar_db_version'";
-            }
-            else {
-                $version_query .= " AND value = '$sugar_db_version'";
-            }
+            $version_query = "SELECT count(*) as the_count FROM config WHERE category='info' AND name='sugar_version' AND ".
+            	$GLOBALS['db']->convert('value', 'text2char')." = ".$GLOBALS['db']->quoted($sugar_db_version);
 
             $result = $GLOBALS['db']->query($version_query);
             $row = $GLOBALS['db']->fetchByAssoc($result, -1, true);
@@ -641,17 +630,17 @@ class SugarApplication
             else if(!empty($_COOKIE['sugar_user_theme'])){
                 $theme = $_COOKIE['sugar_user_theme'];
             }
-            
+
 			if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '') {
 				$_SESSION['theme_changed'] = false;
 			}
 		}
-		   
+
         if(!is_null($theme) && !headers_sent())
         {
             setcookie('sugar_user_theme', $theme, time() + 31536000); // expires in a year
         }
-		
+
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
         $GLOBALS['image_path'] = SugarThemeRegistry::current()->getImagePath().'/';
@@ -712,7 +701,7 @@ class SugarApplication
                 return false;
 			}
 		}
-		
+
 		return true;
 	}
 	function startSession()

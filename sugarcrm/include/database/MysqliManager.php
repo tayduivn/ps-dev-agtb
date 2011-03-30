@@ -153,7 +153,6 @@ class MysqliManager extends MysqlManager
         if (empty($queryMD5[$md5]))
         	$queryMD5[$md5] = true;
 
-        $this->lastmysqlrow = -1;
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
@@ -187,7 +186,7 @@ class MysqliManager extends MysqlManager
      *
      * @return int
      */
-    public function getAffectedRowCount()
+    public function getAffectedRowCount($result)
     {
         return mysqli_affected_rows($this->getDatabase());
     }
@@ -268,7 +267,6 @@ class MysqliManager extends MysqlManager
         if ($result && $rowNum > -1) {
             if ($this->getRowCount($result) > $rowNum)
                 mysqli_data_seek($result, $rowNum);
-            $this->lastmysqlrow = $rowNum;
         }
 
         $row = mysqli_fetch_assoc($result);

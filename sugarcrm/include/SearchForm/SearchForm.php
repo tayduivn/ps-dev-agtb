@@ -312,39 +312,24 @@ class SearchForm {
                         }
 
                         if($type == 'date') {
-                           // Collin - Have mysql as first because it's usually the case
                            // The regular expression check is to circumvent special case YYYY-MM
-                           if($GLOBALS['db']->dbType == 'mysql') {
-                                 if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) == 0) {
-                                    $field_value = $timedate->to_db_date($field_value, false);
-                                    $operator = '=';
-                                 } else {
-                                    $operator = 'db_date';
-                                 }
-                           } else if($GLOBALS['db']->dbType == 'oci8') {
-                            	 if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) == 0) {
-                                    $field_value = $timedate->to_db_date($field_value, false);
-                                    $field_value = "to_date('" . $field_value . "', 'YYYY-MM-DD hh24:mi:ss')";
-                            	 }
-                                 $operator = 'db_date';
-                           } else if($GLOBALS['db']->dbType == 'mssql') {
-                                 if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) == 0) {
-                                    $field_value = "Convert(DateTime, '".$timedate->to_db_date($field_value, false)."')";
-                                 }
-                                 $operator = 'db_date';
+                            $operator = '=';
+                            if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) == 0) {
+                               $db_field = $this->bean->db->convert($db_field, "date_format", "%Y-%m");
                            } else {
-                           	     $field_value = $timedate->to_db_date($field_value, false);
-                           	     $operation = '=';
+                               $field_value = $timedate->to_db_date($field_value, false);
+                               $db_field = $this->bean->db->convert($db_field, "date_format", "%Y-%m-%d");
                            }
                         }
 
                         if($type == 'datetime'|| $type == 'datetimecombo') {
                             $dates = $timedate->getDayStartEndGMT($field_value);
-                            $field_value = $dates["start"] . "<>" . $dates["end"];
+                            $field_value = array($this->bean->db->convert($dates["start"], "datetime"),
+                                $this->bean->db->convert($dates["end"], "datetime"));
                             $operator = 'between';
                         }
 
-                        if($GLOBALS['db']->dbType == 'oci8' && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
+                        if($this->bean->db->supports('case_sensitive') && isset($parms['query_type']) && $parms['query_type'] == 'case_insensitive') {
                               $db_field = 'upper(' . $db_field . ")";
                               $field_value = strtoupper($field_value);
                         }
@@ -388,29 +373,20 @@ class SearchForm {
 
     	                    	break;
                             case 'like':
-                                $where .=  $db_field . " like '".$field_value.$like_char."'";
+                                $where .=  $db_field . " like ".$this->bean->db->quoted($field_value);
                                 break;
                             case 'in':
                                 $where .=  $db_field . " in (".$field_value.')';
                                 break;
                             case '=':
-                                $where .=  $db_field . " = '".$field_value ."'";
-                                break;
-                            case 'db_date':
-                                if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) == 0) {
-                                  $where .=  $db_field . " = ". $field_value;
-                                } else {
-                                  // Create correct date_format conversion String
-                                  if($GLOBALS['db']->dbType == 'oci8') {
-                                  	$where .= db_convert($db_field,'date_format',array("'YYYY-MM'")) . " = '" . $field_value . "'";
-                                  } else {
-                                  	$where .= db_convert($db_field,'date_format',array("'%Y-%m'")) . " = '" . $field_value . "'";
-                                  }
-                                }
+                                $where .=  $db_field . " = ".$this->bean->db->quoted($field_value);
                                 break;
                             case 'between':
-                                $field_value = explode('<>', $field_value);
-                                $where .= $db_field . " >= '".$field_value[0] . "' AND " .$db_field . " <= '".$field_value[1]."'";
+                                if(!is_array($field_value)) {
+                                    $field_value = explode('<>', $field_value);
+                                }
+                                $where .= "(". $db_field . " >= ".$this->bean->db->quoted($field_value[0]) .
+                                	" AND " .$db_field . " <= ".$this->bean->db->quoted($field_value[1]).")";
                                 break;
                         }
                     }

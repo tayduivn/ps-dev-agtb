@@ -91,6 +91,7 @@ class MssqlManager extends DBManager
     protected $capabilities = array(
         "affected_rows" => true,
         "select_rows" => true,
+        "fix:expandDatabase" => true, // Support expandDatabase fix
     );
 
 
@@ -423,7 +424,7 @@ class MssqlManager extends DBManager
     {
         $newSQL = $sql;
         $distinctSQLARRAY = array();
-        if (strpos($sql, "UNION") && !preg_match("/(\')(UNION).?(\')/i", $sql))
+        if (strpos($sql, "UNION") && !preg_match("/(')(UNION).?(')/i", $sql))
             $newSQL = $this->handleUnionLimitQuery($sql,$start,$count);
         else {
             if ($start < 0)
@@ -1236,15 +1237,16 @@ class MssqlManager extends DBManager
         return false; // no database available
     }
 
+    protected $date_formats = array(
+        '%Y-%m-%d' => 10,
+        '%Y-%m' => 7,
+        '%Y' => 4,
+    );
+
     /**
      * @see DBManager::convert()
      */
-    public function convert(
-        $string,
-        $type,
-        array $additional_parameters = array(),
-        array $additional_parameters_oracle_only = array()
-        )
+    public function convert($string, $type, array $additional_parameters = array())
     {
         // convert the parameters array into a comma delimited string
         $additional_parameters_string = '';
@@ -1252,16 +1254,27 @@ class MssqlManager extends DBManager
             $additional_parameters_string = ','.implode(',',$additional_parameters);
 
         switch ($type) {
-        case 'today': return "GETDATE()";
-        case 'left': return "LEFT($string".$additional_parameters_string.")";
-        case 'date_format':
-            if(!empty($additional_parameters) && in_array("'%Y-%m'", $additional_parameters))
-               return "CONVERT(varchar(7),". $string . ",120)";
-            else
-               return "CONVERT(varchar(10),". $string . ",120)";
-        case 'IFNULL': return "ISNULL($string".$additional_parameters_string.")";
-        case 'CONCAT': return "$string+".implode("+",$additional_parameters);
-        case 'text2char': return "CAST($string AS varchar(8000))";
+            case 'today':
+                return "GETDATE()";
+            case 'left':
+                return "LEFT($string$additional_parameters_string)";
+            case 'date_format':
+                if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
+                    $len = $this->date_formats[$additional_parameters[0]];
+                    return "LEFT(CONVERT(varchar($len),". $string . ",120), $len)";
+                } else {
+                   return "LEFT(CONVERT(varchar(10),". $string . ",120), 10)";
+                }
+            case 'IFNULL':
+                return "ISNULL($string".$additional_parameters_string.")";
+            case 'CONCAT':
+                return "$string+".implode("+",$additional_parameters);
+            case 'text2char':
+                return "CAST($string AS varchar(8000))";
+            case 'quarter':
+                return "DATEPART(quarter, $string)";
+            case "length":
+                    return "LENGTH($string)";
         }
 
         return "$string";
@@ -1325,4 +1338,22 @@ class MssqlManager extends DBManager
         $type = strtolower($type);
         return in_array($type, array('ntext','text','image'));
     }
+
+    /**
+     * Return representation of an empty value depending on type
+     * @param string $type
+     */
+    public function emptyValue($type)
+    {
+        if($type == "currency") {
+            return 0;
+        }
+        return parent::emptyValue($type);
+    }
+
+    public function renameColumnSQL($tablename, $column, $newname)
+    {
+        return "SP_RENAME '$tablename.$column', '$newname', 'COLUMN'";
+    }
+
 }

@@ -90,7 +90,7 @@ function extractManifest( $zip_file ){
 function getInstallType( $type_string ){
     // detect file type
     global $subdirs;
-	
+
     foreach( $subdirs as $subdir ){
         if( preg_match( "#/$subdir/#", $type_string ) ){
             return( $subdir );
@@ -101,7 +101,7 @@ function getInstallType( $type_string ){
 }
 
 function getImageForType( $type ){
-    
+
     $icon = "";
     switch( $type ){
         case "full":
@@ -144,22 +144,6 @@ function getUITextForMode( $mode ){
     $mode = 'LBL_UW_MODE_'.strtoupper($mode);
     global $mod_strings;
     return $mod_strings[$mode];
-}
-
-/**
- * @deprecated
- * @todo this function doesn't seemed to be used anymore; trying kill this off
- */
-function run_upgrade_wizard_sql( $script ){
-    global $unzip_dir;
-    global $sugar_config;
-    global $mod_strings;
-
-    $db_type = $sugar_config['dbconfig']['db_type'];
-    $script = str_replace( "%db_type%", $db_type, $script );
-    if( !run_sql_file( "$unzip_dir/$script" ) ){
-        die( "{$mod_strings['ERR_UW_RUN_SQL']} $unzip_dir/$script" );
-    }
 }
 
 function validate_manifest( $manifest ){
@@ -252,6 +236,6 @@ function getDiffFiles($unzip_dir, $install_file, $is_install = true, $previous_v
 			}//fi
 		}//rof
 	}//fi
-	return $modified_files;		
+	return $modified_files;
 }
 ?>

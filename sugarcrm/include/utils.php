@@ -872,13 +872,13 @@ function safe_map_named($request_var, & $focus, $member_var, $always_copy)
 	}
 }
 
-/** 
+/**
  * This function retrieves an application language file and returns the array of strings included in the $app_list_strings var.
- * 
+ *
  * @param string $language specific language to load
  * @return array lang strings
  */
-function return_app_list_strings_language($language) 
+function return_app_list_strings_language($language)
 {
 	global $app_list_strings;
 	global $sugar_config;
@@ -894,7 +894,7 @@ function return_app_list_strings_language($language)
 
 	$default_language = $sugar_config['default_language'];
 	$temp_app_list_strings = $app_list_strings;
-	
+
 	$langs = array();
 	if ($language != 'en_us') {
 	    $langs[] = 'en_us';
@@ -903,9 +903,9 @@ function return_app_list_strings_language($language)
 	    $langs[] = $default_language;
 	}
 	$langs[] = $language;
-	
+
 	$app_list_strings_array = array();
-	
+
 	foreach ( $langs as $lang ) {
 	    $app_list_strings = array();
 	    if(file_exists("include/language/$lang.lang.php")) {
@@ -920,15 +920,15 @@ function return_app_list_strings_language($language)
             include("include/language/$lang.lang.php.override");
             $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
         }
-        
+
         $app_list_strings_array[] = $app_list_strings;
     }
-    
+
     $app_list_strings = array();
     foreach ( $app_list_strings_array as $app_list_strings_item ) {
         $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
     }
-    
+
     foreach ( $langs as $lang ) {
         if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
             $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
@@ -981,13 +981,13 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
    return $app_list_strings;
 }
 
-/** 
+/**
  * This function retrieves an application language file and returns the array of strings included.
- * 
+ *
  * @param string $language specific language to load
  * @return array lang strings
  */
-function return_application_language($language) 
+function return_application_language($language)
 {
 	global $app_strings, $sugar_config;
 
@@ -1011,9 +1011,9 @@ function return_application_language($language)
 	    $langs[] = $default_language;
 	}
 	$langs[] = $language;
-	
+
 	$app_strings_array = array();
-	
+
 	foreach ( $langs as $lang ) {
 	    $app_strings = array();
 	    if(file_exists("include/language/$lang.lang.php")) {
@@ -1043,7 +1043,7 @@ function return_application_language($language)
     foreach ( $app_strings_array as $app_strings_item ) {
         $app_strings = sugarArrayMerge($app_strings, $app_strings_item);
     }
-	
+
 	if(!isset($app_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language strings");
 		return null;
@@ -1068,19 +1068,19 @@ function return_application_language($language)
 	$app_strings = $temp_app_strings;
 
 	sugar_cache_put($cache_key, $return_value);
-	
+
 	return $return_value;
 }
 
-/** 
+/**
  * This function retrieves a module's language file and returns the array of strings included.
- * 
+ *
  * @param string $language specific language to load
  * @param string $module module name to load strings for
  * @param bool $refresh optional, true if you want to rebuild the language strings
  * @return array lang strings
  */
-function return_module_language($language, $module, $refresh=false) 
+function return_module_language($language, $module, $refresh=false)
 {
 	global $mod_strings;
 	global $sugar_config;
@@ -1132,7 +1132,7 @@ function return_module_language($language, $module, $refresh=false)
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
-     
+
     // Load in en_us strings by default
     if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
         $loaded_mod_strings = sugarArrayMerge(
@@ -3913,7 +3913,7 @@ function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_
 					if (strstr($db_field,'.')===false) {
 						$db_field=$bean->table_name.".".$db_field;
 					}
-					if ($GLOBALS['db']->dbType=='oci8' &&  isset($parms['query_type']) && $parms['query_type']=='case_insensitive') {
+					if ($GLOBALS['db']->supports('case_sensitive') &&  isset($parms['query_type']) && $parms['query_type']=='case_insensitive') {
 						$db_field='upper('.$db_field.")";
 						$field_value=strtoupper($field_value);
 					}

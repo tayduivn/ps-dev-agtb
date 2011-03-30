@@ -535,7 +535,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 		   	   $sql = create_most_recent_articles_query($bean, $order_by, $where, $keywords, $row_offset, $limit, $date_filter);
 			   if(!empty($limit)) {
 				   $sql = preg_replace('/[\s]top[\s]+(\d+)/i', '', $sql);
-				   if(preg_match("/LIMIT[\s]+[\d]+,[\d]+/", $sql)) {
+				   if(preg_match('/LIMIT[\s]+[\d]+,[\d]+/', $sql)) {
 				  	  $sql = substr($sql, 0, strpos($sql, "LIMIT"));
 				   } //if
 

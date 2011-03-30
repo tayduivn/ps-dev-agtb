@@ -244,7 +244,7 @@ class SugarDateTime extends DateTime
 	{
 		$newdate = clone $this;
 		$newdate->setDate($this->year, $month_index+1, 1);
-		$newdate->modify("last day of this month");
+		$newdate->setDate($newdate->year, $newdate->month,  $newdate->days_in_month);
 		$newdate->setTime(0, 0);
 		return $newdate;
 	}

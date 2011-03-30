@@ -22,12 +22,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/generic/SugarWidgets/SugarWidgetFielddatetime.php');
 
-class SugarWidgetFieldDatePicker extends SugarWidgetFieldDateTime 
+class SugarWidgetFieldDatePicker extends SugarWidgetFieldDateTime
 {
-	function displayInput(&$layout_def) 
+	function displayInput($layout_def)
     {
         global $timedate;
-        
+
         $cal_dateformat = $timedate->get_cal_date_format();
         $LBL_ENTER_DATE = translate('LBL_ENTER_DATE', 'Charts');
         $jscalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');
@@ -41,9 +41,7 @@ Calendar.setup ({
 });
 </script>
 EOHTML;
-        
+
         return $str;
     }
 }
-?>
-

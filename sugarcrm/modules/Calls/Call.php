@@ -228,17 +228,6 @@ class Call extends SugarBean
 			}
 			$query .= " FROM calls ";
 
-			/*
-			if ( $this->db->dbType == 'mssql' )
-			{
-				$query .= ", calls.date_start ";
-				if ( preg_match("/contacts/",$where)){
-					$query .= ", contacts.first_name, contacts.last_name";
-					$query .= ", contacts.assigned_user_id contact_name_owner";
-				}
-				$query .= " FROM calls ";
-			}
-			*/
 //BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
@@ -249,7 +238,7 @@ class Call extends SugarBean
 	                    LEFT JOIN contacts
 	                    ON calls_contacts.contact_id=contacts.id ";
 			}
-			if ( preg_match("/calls_users\.user_id/",$where))
+			if ( preg_match('/calls_users\.user_id/',$where))
 			{
 		$query .= "LEFT JOIN calls_users
 			ON calls.id=calls_users.call_id and calls_users.deleted=0 ";
@@ -675,11 +664,11 @@ class Call extends SugarBean
 	function save_relationship_changes($is_update) {
 		$exclude = array();
 		if(empty($this->in_workflow)) {
-           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise 
+           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise
            //add assigned_user_id to exclude list and let the logic from MeetingFormBase determine whether assigned user id gets added to the relationship
            	if(!empty($GLOBALS['soap_server_object'])){
            		$exclude = array('lead_id', 'contact_id', 'user_id');
-           	}else{   	
+           	}else{
 	            $exclude = array('lead_id', 'contact_id', 'user_id', 'assigned_user_id');
            	}
         }

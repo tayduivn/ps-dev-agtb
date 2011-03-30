@@ -130,47 +130,6 @@ function from_html($string, $encode=true) {
     return $cache[$string];
 }
 
-/**
- * @deprecated
- * @todo this function is only used by one function ( run_upgrade_wizard_sql() ), which isn't
- *       used either; trying kill this off
- */
-function run_sql_file( $filename )
-{
-    if( !is_file( $filename ) ){
-        print( "Could not find file: $filename <br>" );
-        return( false );
-    }
-
-
-    $contents = sugar_file_get_contents($filename);
-
-    $lastsemi   = strrpos( $contents, ';') ;
-    $contents   = substr( $contents, 0, $lastsemi );
-    $queries    = explode( ';', $contents );
-    $db         = DBManagerFactory::getInstance();
-
-    foreach( $queries as $query ){
-        if( !empty($query) ){
-        	//BEGIN SUGARCRM flav=int ONLY
-			// BUG 10339: wrapping print statement in INT tag to prevent from being sent in builds
-            print( "Sending query: $query ;<br>" );
-            //END SUGARCRM flav=int ONLY
-			if($db->dbType == 'oci8')
-			{
-			//BEGIN SUGARCRM flav=ent ONLY
-				$db->query( $query, true, "An error has occured while running.<br>" );
-			//END SUGARCRM flav=ent ONLY
-			}
-			else
-			{
-				$db->query( $query.';', true, "An error has occured while running.<br>" );
-			}
-        }
-    }
-    return( true );
-}
-
 /*
  * Return a version of $proposed that can be used as a column name in any of our supported databases
  * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)

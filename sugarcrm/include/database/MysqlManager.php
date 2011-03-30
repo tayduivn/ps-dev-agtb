@@ -189,7 +189,6 @@ class MysqlManager extends DBManager
         }
         //END SUGARCRM flav=ent ONLY
 
-        $this->lastmysqlrow = -1;
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
@@ -199,10 +198,10 @@ class MysqlManager extends DBManager
         }
         //END SUGARCRM flav=pro ONLY
 
-        $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
         if($keepResult)
-            $this->lastResult[] = $result;
+            $this->lastResult = $result;
 
+        $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
         return $result;
     }
 
@@ -211,7 +210,7 @@ class MysqlManager extends DBManager
      *
      * @return int
      */
-    public function getAffectedRowCount()
+    public function getAffectedRowCount($result)
     {
         return mysql_affected_rows($this->getDatabase());
     }
@@ -257,7 +256,7 @@ class MysqlManager extends DBManager
     /**
      * @see DBManager::limitQuery()
      */
-    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '')
+    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
         if ($start < 0)
             $start = 0;
@@ -268,6 +267,9 @@ class MysqlManager extends DBManager
 
         if(!empty($GLOBALS['sugar_config']['check_query'])){
             $this->checkQuery($sql);
+        }
+        if(!$execute) {
+            return $sql;
         }
 
         return $this->query($sql, $dieOnError, $msg);
@@ -380,7 +382,6 @@ class MysqlManager extends DBManager
         if ($result && $rowNum > -1) {
             if ($this->getRowCount($result) > $rowNum)
                 mysql_data_seek($result, $rowNum);
-            $this->lastmysqlrow = $rowNum;
         }
 
         $row = mysql_fetch_assoc($result);
@@ -554,18 +555,26 @@ class MysqlManager extends DBManager
         $all_strings = join(",", $additional_parameters);
 
         switch ($type) {
-        case 'today':
-            return "CURDATE()";
-        case 'left':
-            return "LEFT($all_strings)";
-        case 'date_format':
-            return "DATE_FORMAT($all_strings)";
-        case 'datetime':
-            return "DATE_FORMAT($string, '%Y-%m-%d %H:%i:%s')";
-        case 'IFNULL':
-            return "IFNULL($all_strings)";
-        case 'CONCAT':
-            return "CONCAT($all_strings)";
+            case 'today':
+                return "CURDATE()";
+            case 'left':
+                return "LEFT($all_strings)";
+            case 'date_format':
+                if(empty($additional_parameters)) {
+                    return "DATE_FORMAT($string, '%Y-%m-%d')";
+                } else {
+                    return "DATE_FORMAT($string, '{$additional_parameters[0]}')";
+                }
+            case 'datetime':
+                return "DATE_FORMAT($string, '%Y-%m-%d %H:%i:%s')";
+            case 'IFNULL':
+                return "IFNULL($all_strings)";
+            case 'CONCAT':
+                return "CONCAT($all_strings)";
+            case 'quarter':
+                    return "QUARTER($string)";
+            case "length":
+                    return "LENGTH($string)";
         }
 
         return $string;
@@ -597,9 +606,9 @@ class MysqlManager extends DBManager
     {
         $engine = strtoupper($engine);
 
-        $r = $this->db->query("SHOW ENGINES");
+        $r = $this->query("SHOW ENGINES");
 
-        while ( $row = $this->db->fetchByAssoc($r) )
+        while ( $row = $this->fetchByAssoc($r) )
             if ( strtoupper($row['Engine']) == $engine )
                 return ($row['Support']=='YES' || $row['Support']=='DEFAULT');
 
@@ -697,9 +706,18 @@ class MysqlManager extends DBManager
     }
 
     /**
-     * @see DBManager::keysSQL
+     * Generates SQL for key specification inside CREATE TABLE statement
+     *
+     * The passes array is an array of field definitions or a field definition
+     * itself. The keys generated will be either primary, foreign, unique, index
+     * or none at all depending on the setting of the "key" parameter of a field definition
+     *
+     * @param  array  $indices
+     * @param  bool   $alter_table
+     * @param  string $alter_action
+     * @return string SQL Statement
      */
-    public function keysSQL($indices, $alter_table = false, $alter_action = '')
+    protected function keysSQL($indices, $alter_table = false, $alter_action = '')
 	{
        // check if the passed value is an array of fields.
        // if not, convert it into an array
@@ -708,7 +726,7 @@ class MysqlManager extends DBManager
 
        $columns = array();
        foreach ($indices as $index) {
-           if(!empty($index['db']) && $index['db'] != 'mysql')
+           if(!empty($index['db']) && $index['db'] != $this->dbType)
                continue;
            if (isset($index['source']) && $index['source'] != 'db')
                continue;
@@ -828,13 +846,13 @@ class MysqlManager extends DBManager
         $type         = $definition['type'];
         $fields       = implode(',',$definition['fields']);
         $name         = $definition['name'];
-        $foreignTable = isset($definition['foreignTable']) ? $definition['foreignTable'] : array();
         $sql          = '';
 
         switch ($type){
         // generic indices
         case 'index':
         case 'alternate_key':
+        case 'clustered':
             if ($drop)
                 $sql = "DROP INDEX {$name} ";
             else
@@ -857,18 +875,10 @@ class MysqlManager extends DBManager
             if ($drop)
                 $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT FOREIGN KEY {$name} ({$fields}) REFERENCES {$foreignTable}({$definition['foreignField']})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT FOREIGN KEY {$name} ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
             break;
         }
         return $sql;
-    }
-
-    /**
-     * @see DBManager::number_of_columns()
-     */
-    public function number_of_columns($table_name)
-    {
-        return $this->getRowCount($this->query("DESCRIBE $table_name"));
     }
 
     /**
@@ -936,5 +946,40 @@ class MysqlManager extends DBManager
     {
 		return "DROP TABLE IF EXISTS ".$name;
 	}
+
+    /**
+     * List of available collation settings
+     * @return string
+     */
+    public function getDefaultCollation()
+    {
+        return "utf8_general_ci";
+    }
+
+    /**
+     * List of available collation settings
+     * @return array
+     */
+    public function getCollationList()
+    {
+	    $q = "SHOW COLLATION LIKE 'utf8%'";
+	    $r = $this->query($q);
+	    $res = array();
+    	while($a = $this->fetchByAssoc($r)) {
+    	    $res[] = $a['Collation'];
+    	}
+        return $res;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::renameColumnSQL()
+     */
+    public function renameColumnSQL($tablename, $column, $newname)
+    {
+        $field = $this->describeField($column, $tablename);
+        $field['name'] = $newname;
+        return "ALTER TABLE $tablename CHANGE COLUMN $column ".$this->oneColumnSQLRep($field);
+    }
 
 }

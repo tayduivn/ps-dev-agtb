@@ -31,10 +31,10 @@ global $gridline;
 
 echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_UPGRADE_TITLE']), false);
 $str1="";
-if ($GLOBALS['db']->dbType=='oci8') {
-	
+if ($GLOBALS['db']->supports('fulltext')) {
+
 	$str1='<tr><td scope="row">';
-	$str1.=SugarThemeRegistry::current()->getImage('Repair','alt="'. $mod_strings['LBL_REPAIR_ORACLE_FULLTEXT'].'" align="absmiddle" border="0"'); 
+	$str1.=SugarThemeRegistry::current()->getImage('Repair','alt="'. $mod_strings['LBL_REPAIR_ORACLE_FULLTEXT'].'" align="absmiddle" border="0"');
 	$str1.='&nbsp;<a href="./index.php?module=Administration&action=RebuildFulltextIndices">' . $mod_strings['LBL_REPAIR_ORACLE_FULLTEXT'] .'</a></td>';
 	$str1.='<td>' .$mod_strings['LBL_REPAIR_ORACLE_FULLTEXT_DESC'] . '</td></tr>';
 }
@@ -56,7 +56,7 @@ if ($GLOBALS['db']->dbType=='oci8') {
 	<td> <?php echo $mod_strings['LBL_EXPAND_DATABASE_COLUMNS_DESC'] ; ?> </td>
 </tr>
 <tr>
-<?php 
+<?php
 $server_software = $_SERVER["SERVER_SOFTWARE"];
 if(strpos($server_software,'Microsoft-IIS') === false) {
 ?>
@@ -67,9 +67,9 @@ if(strpos($server_software,'Microsoft-IIS') === false) {
 ?>
     <td scope="row"><?php echo SugarThemeRegistry::current()->getImage('Rebuild','alt="'. $mod_strings['LBL_REBUILD_WEBCONFIG'].'" align="absmiddle" border="0"'); ?>&nbsp;<a href="./index.php?module=Administration&action=UpgradeIISAccess"><?php echo $mod_strings['LBL_REBUILD_WEBCONFIG']; ?></a></td>
     <td> <?php echo $mod_strings['LBL_REBUILD_WEBCONFIG_DESC'] ; ?> </td>
-<?php	
+<?php
 }
-?>    
+?>
 </tr>
 <tr>
     <td scope="row"><?php echo SugarThemeRegistry::current()->getImage('Rebuild','alt="'. $mod_strings['LBL_REBUILD_CONFIG'].'" align="absmiddle" border="0"'); ?>&nbsp;<a href="./index.php?module=Administration&action=RebuildConfig"><?php echo $mod_strings['LBL_REBUILD_CONFIG']; ?></a></td>

@@ -3051,21 +3051,6 @@ function getUITextForType($type) {
     }
 }
 
-/**
- * @deprecated
- * @todo this function doesn't seemed to be used anymore; trying kill this off
- */
-function run_upgrade_wizard_sql($script) {
-    global $unzip_dir;
-    global $sugar_config;
-
-    $db_type = $sugar_config['dbconfig']['db_type'];
-    $script = str_replace("%db_type%", $db_type, $script);
-    if(!run_sql_file("$unzip_dir/$script")) {
-        die("Error running sql file: $unzip_dir/$script");
-    }
-}
-
 if ( !function_exists('validate_manifest') ) {
 /**
  * Verifies a manifest from a patch or module to be compatible with the current Sugar version and flavor

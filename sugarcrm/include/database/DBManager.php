@@ -100,11 +100,6 @@ abstract class DBManager
     protected $query_time = 0;
 
     /**
-     * Number of the last row fetched from the query result set
-     */
-    protected $lastmysqlrow = -1;
-
-    /**
      * Last error message from the DB backend
      */
     protected $last_error = '';
@@ -112,7 +107,7 @@ abstract class DBManager
     /**
      * Registry of available result sets
      */
-    protected $lastResult = array();
+    protected $lastResult;
 
     /**
      * Current query count
@@ -206,7 +201,7 @@ abstract class DBManager
 
     /**
      * Returns this instance's DBHelper
-     *
+     * @deprecated
      * @return object DBHelper instance
      */
     public function getHelper()
@@ -883,6 +878,35 @@ abstract class DBManager
         return $this->query($sql,true,$msg);
     }
 
+	/**
+     * returns a SQL query that creates the indices as defined in metadata
+     * @param  array  $indices Assoc array with index definitions from vardefs
+     * @param  string $table Focus table
+     * @return array  Array of SQL queries to generate indices
+     */
+	protected function getConstraintSql($indices, $table)
+    {
+        if (!$this->isFieldArray($indices))
+            $indices = array($indices);
+
+        $columns = array();
+
+		foreach ($indices as $index) {
+            if(!empty($index['db']) && $index['db'] != $this->dbType)
+                continue;
+            if (isset($index['source']) && $index['source'] != 'db')
+               continue;
+
+            $sql = $this->add_drop_constraint($table, $index);
+
+            if(!empty($sql)) {
+                $columns[] = $sql;
+            }
+		}
+
+		return $columns;
+	}
+
     /**
      * Adds a new indexes
      *
@@ -893,10 +917,17 @@ abstract class DBManager
      */
     public function addIndexes($tablename, $indexes, $execute = true)
     {
-        $alters = $this->keysSQL($indexes,true,'ADD');
-        $sql = "ALTER TABLE $tablename $alters";
-        if ($execute)
-            $this->query($sql);
+        $alters = $this->getConstraintSql($indexes,true,'ADD');
+        if ($execute) {
+            foreach($alters as $sql) {
+                $this->query($sql, true, "Error adding index: ");
+            }
+        }
+        if(!empty($alters)) {
+            $sql = join(";\n", $alters).";\n";
+        } else {
+            $sql = '';
+        }
         return $sql;
     }
 
@@ -1284,7 +1315,7 @@ abstract class DBManager
      */
     public function quoteIdentifier($string)
     {
-        return $string;
+        return $this->quoted($string);
     }
 
     /**
@@ -1303,52 +1334,18 @@ abstract class DBManager
         return $array;
     }
     /**
-     * Parses and runs queries
-     *
-     * @param  string   $sql        SQL Statement to execute
-     * @param  bool     $dieOnError True if we want to call die if the query returns errors
-     * @param  string   $msg        Message to log if error occurs
-     * @param  bool     $suppress   Flag to suppress all error output unless in debug logging mode.
-     * @return resource result set
-     */
-    abstract public function query($sql, $dieOnError = false, $msg = '', $suppress = false);
-
-    /**
-     * Runs a limit query: one where we specify where to start getting records and how many to get
-     *
-     * @param  string   $sql
-     * @param  int      $start
-     * @param  int      $count
-     * @param  boolean  $dieOnError
-     * @param  string   $msg
-     * @return resource query result
-     */
-    abstract function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '');
-
-
-    /**
-     * Free Database result
-     * @param resource $dbResult
-     */
-    abstract protected function freeDbResult($dbResult);
-
-    /**
      * Frees out previous results
      *
      * @param resource $result optional, pass if you want to free a single result instead of all results
      */
     protected function freeResult($result = false)
     {
-        if(!$result && $this->lastResult){
-            $result = current($this->lastResult);
-            while($result){
-                $this->freeDbResult($result);
-                $result = next($this->lastResult);
-            }
-            $this->lastResult = array();
-        }
-        if($result){
+        if($result) {
             $this->freeDbResult($result);
+        }
+        if($this->lastResult) {
+            $this->freeDbResult($this->lastResult);
+            $this->lastResult = null;
         }
     }
 
@@ -1400,15 +1397,6 @@ abstract class DBManager
     }
 
     /**
-     * Returns the description of fields based on the result
-     *
-     * @param  resource $result
-     * @param  boolean  $make_lower_case
-     * @return array field array
-     */
-    abstract public function getFieldsArray($result, $make_lower_case = false);
-
-    /**
      * Returns the number of rows returned by the result
      *
      * @param  resource $result
@@ -1429,57 +1417,21 @@ abstract class DBManager
      *
      * @return int
      */
-    public function getAffectedRowCount()
+    public function getAffectedRowCount($result)
     {
-        // TODO: override!
-//        $affected_row_count = $this->backendFunctions['affected_row_count'];
-//        return $affected_row_count($this->getDatabase());
         return 0;
     }
 
     /**
-     * Fetches the next row in the query result into an associative array
-     *
-     * @param  resource $result
-     * @param  int      $rowNum optional, specify a certain row to return
-     * @param  bool     $encode optional, true if we want html encode the resulting array
-     * @return array    returns false if there are no more rows available to fetch
+     * Get table description
+     * @param string $tablename
      */
-    abstract public function fetchByAssoc($result, $rowNum = -1, $encode = true);
-
-    /**
-     * Connects to the database backend
-     *
-     * Takes in the database settings and opens a database connection based on those
-     * will open either a persistent or non-persistent connection.
-     * If a persistent connection is desired but not available it will defualt to non-persistent
-     *
-     * configOptions must include
-     * db_host_name - server ip
-     * db_user_name - database user name
-     * db_password - database password
-     *
-     * @param array   $configOptions
-     * @param boolean $dieOnError
-     */
-    abstract public function connect(array $configOptions = null, $dieOnError = false);
-
-    /**
-     * Disconnects from the database
-     *
-     * Also handles any cleanup needed
-     */
-    public function disconnect()
+    public function getTableDescription($tablename, $reload = false)
     {
-        // TODO: override!
-    	$GLOBALS['log']->debug('Calling DBManager::disconnect()');
-//        $close = $this->backendFunctions['close'];
-//        if(isset($this->database)){
-//            $this->freeResult();
-//            if ( is_resource($this->database) || is_object($this->database) )
-//				$close($this->database);
-//            unset($this->database);
-//        }
+        if($reload || empty(self::$table_descriptions[$tablename])) {
+            self::$table_descriptions[$tablename] = $this->get_columns($tablename);
+        }
+        return self::$table_descriptions[$tablename];
     }
 
     /**
@@ -1491,14 +1443,14 @@ abstract class DBManager
      */
     protected function describeField($name, $tablename)
     {
-        if(isset(self::$table_descriptions[$tablename])
-                && isset(self::$table_descriptions[$tablename][$name]))
-            return 	self::$table_descriptions[$tablename][$name];
+        $table = $this->getTableDescription($tablename);
+        if(!empty($table) && isset($table[$name]))
+            return 	$table[$name];
 
-        self::$table_descriptions[$tablename] = $this->get_columns($tablename);
+        $table = $this->getTableDescription($tablename, true);
 
-        if(isset(self::$table_descriptions[$tablename][$name]))
-            return 	self::$table_descriptions[$tablename][$name];
+        if(isset($table[$name]))
+           return $table[$name];
 
         return array();
     }
@@ -1524,30 +1476,6 @@ abstract class DBManager
 
         return array();
     }
-
-    /**
-     * Returns an array of table for this database
-     *
-     * @return	$tables		an array of with table names
-     * @return	false		if no tables found
-     */
-    abstract public function getTablesArray();
-
-    /**
-     * Return's the version of the database
-     *
-     * @return string
-     */
-    abstract public function version();
-
-    /**
-     * Checks if a table with the name $tableName exists
-     * and returns true if it does or false otherwise
-     *
-     * @param  string $tableName
-     * @return bool
-     */
-    abstract public function tableExists($tableName);
 
     /**
      * Truncates a string to a given length
@@ -1594,7 +1522,8 @@ abstract class DBManager
             if(!empty($elems)) $elems[] = $space;
             $elems[] = $this->convert("$table.$field", 'IFNULL', array("''"));
         }
-        return "LTRIM(RTRIM(CONCAT(".join(",", $elems).")))";
+        $first = array_shift($elems);
+        return "LTRIM(RTRIM(".$this->convert($first, 'CONCAT', $elems)."))";
     }
 
     /**
@@ -1724,17 +1653,6 @@ abstract class DBManager
 		$indices = $bean->getIndices();
 		return $this->createTableSQLParams($tablename, $fieldDefs, $indices);
 	}
-
-	/**
-	 * Generates sql for create table statement for a bean.
-	 *
-	 * @param  string $tablename
-	 * @param  array  $fieldDefs
-     * @param  array  $indices
-     * @param  string $engine
-     * @return string SQL Create Table statement
-	 */
-	abstract public function createTableSQLParams($tablename, $fieldDefs, $indices);
 
 	/**
      * Generates SQL for insert statement.
@@ -1916,53 +1834,32 @@ abstract class DBManager
      */
 	public function massageValue($val, $fieldDef)
     {
-        if(is_null($val)) {
-            return "NULL";
-        }
-
-        if ( strlen($val) <= 0 )
-            return "''";
-
+//        if(is_null($val)) {
+//            return "NULL";
+//        }
+//
         $type = $this->getFieldType($fieldDef);
 
         switch ($type) {
-        case 'int':
-        case 'double':
-        case 'float':
-        case 'uint':
-        case 'ulong':
-        case 'long':
-        case 'short':
-        case 'tinyint':
-        case 'bool':
-            return $val;
-            break;
+            case 'int':
+            case 'uint':
+            case 'ulong':
+            case 'long':
+            case 'short':
+            case 'tinyint':
+            case 'bool':
+                return intval($val);
+            case 'double':
+            case 'float':
+            case 'currency':
+                return floatval($val);
+                break;
 		}
 
-        if ( strlen($val) <= 0 )
+		if ( strlen($val) == 0 )
             return "''";
 
-
-        switch ($type) {
-        case 'varchar':
-        case 'char':
-        case 'longtext':
-        case 'text':
-        case 'enum':
-        case 'multienum':
-        case 'html':
-        case 'blob':
-        case 'longblob':
-        case 'clob':
-        case 'id':
-        case 'datetime':
-        case 'date':
-        case 'time':
-		    $qval = $this->quoted($val);
-            return $qval;
-        }
-
-        return $val;
+        return $this->quoted($val);
 	}
 
     /**
@@ -2399,16 +2296,6 @@ abstract class DBManager
         return;
 	}
 
-	/**
-     * Generates the SQL for changing columns
-     *
-     * @param string $tablename
-     * @param array  $fieldDefs
-     * @param string $action
-     * @param bool   $ignoreRequired Optional, true if we should ignor this being a required field
-	 */
-	abstract protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false);
-
     /**
      * This method generates sql for adding a column to table identified by field def.
      *
@@ -2481,23 +2368,6 @@ abstract class DBManager
         return $this->changeColumnSQL($tablename, $fieldDefs, 'drop');
 	}
 
-    /**
-     * Generates SQL for key statement for any bean identified by id.
-     *
-     * The passes array is an array of field definitions or a field definition
-     * itself. The keys generated will be either primary, foreign, unique, index
-     * or none at all depending on the setting of the "key" parameter of a field definition
-     *
-     * @param  array  $indices
-     * @param  bool   $alter_table
-     * @param  string $alter_action
-     * @return string SQL Statement
-     */
-    protected function keysSQL($indices, $alter_table = false, $alter_action = '')
-	{
-        return '';
-    }
-
     /*
      * Return a version of $proposed that can be used as a column name in any of our supported databases
      * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
@@ -2510,7 +2380,7 @@ abstract class DBManager
         if(is_array($name)) {
             $result = array();
             foreach($name as $field) {
-                $result[] = self::getValidDBName($field, $ensureUnique, $type);
+                $result[] = $this->getValidDBName($field, $ensureUnique, $type);
             }
         } else {
             // first strip any invalid characters - all but alphanumerics and -
@@ -2689,7 +2559,7 @@ abstract class DBManager
      */
 	protected function full_text_indexing_enabled($dbname = null)
 	{
-	    return false;
+	    return $this->supports('fulltext');
 	}
 
     /**
@@ -2706,64 +2576,6 @@ abstract class DBManager
     }
 
     /**
-     * Returns definitions of all indies for passed table.
-     *
-     * return will is a multi-dimensional array that
-     * categorizes the index definition by types, unique, primary and index.
-     * <code>
-     * <?php
-     * array(
-     *       'index1'=> array (
-     *           'name'   => 'index1',
-     *           'type'   => 'primary',
-     *           'fields' => array('field1','field2')
-     *           )
-     *       )
-     * ?>
-     * </code>
-     * This format is similar to how indicies are defined in vardef file.
-     *
-     * @param  string $tablename
-     * @return array
-     */
-    abstract public function get_indices($tablename);
-
-    /**
-     * Returns definitions of all indies for passed table.
-     *
-     * return will is a multi-dimensional array that
-     * categorizes the index definition by types, unique, primary and index.
-     * <code>
-     * <?php
-     * array(
-     *       'field1'=> array (
-     *           'name'   => 'field1',
-     *           'type'   => 'varchar',
-     *           'len' => '200'
-     *           )
-     *       )
-     * ?>
-     * </code>
-     * This format is similar to how indicies are defined in vardef file.
-     *
-     * @param  string $tablename
-     * @return array
-     */
-    abstract public function get_columns($tablename);
-
-    /**
-     * Generates alter constraint statement given a table name and vardef definition.
-     *
-     * Supports both adding and droping a constraint.
-     *
-     * @param  string $table     tablename
-     * @param  array  $defintion field definition
-     * @param  bool   $drop      true if we are dropping the constraint, false if we are adding it
-     * @return string SQL statement
-     */
-    abstract public function add_drop_constraint($table, $definition, $drop = false);
-
-    /**
      * Renames an index definition
      *
      * @param  array  $old_definition
@@ -2776,13 +2588,6 @@ abstract class DBManager
         return array($this->add_drop_constraint($table_name,$old_definition,true),
                 $this->add_drop_constraint($table_name,$new_definition), false);
     }
-    /**
-     * Returns the number of columns in a table
-     *
-     * @param  string $table_name
-     * @return int
-     */
-    abstract public function number_of_columns($table_name);
 
     /**
      * Check if type is boolean
@@ -2873,4 +2678,250 @@ abstract class DBManager
     {
         return !empty($this->capabilities[$cap]);
     }
+
+    public function orderByEnum($order_by, $values, $order_dir)
+    {
+        $order_by_arr = array();
+        foreach ($values as $key => $value) {
+				array_push($order_by_arr, $order_by."=".$this->quoted($key)." $order_dir\n");
+			}
+		return implode(',', $order_by_arr);
+    }
+
+    /**
+     * Return representation of an empty value depending on type
+     * @param string $type
+     */
+    public function emptyValue($type)
+    {
+        return "''";
+    }
+
+    /**
+     * List of available collation settings
+     * @return string
+     */
+    public function getDefaultCollation()
+    {
+        return null;
+    }
+
+    /**
+     * List of available collation settings
+     * @return array
+     */
+    public function getCollationList()
+    {
+        return null;
+    }
+
+    /**
+     * Returns the number of columns in a table
+     *
+     * @param  string $table_name
+     * @return int
+     */
+    public function number_of_columns($table_name)
+    {
+        $table = $this->getTableDescription($table_name);
+        return count($table);
+    }
+
+    /**
+     * Return limit query based on given query
+     * @param string $sql
+     * @param int $start
+     * @param int $count
+     * @param bool $dieOnError
+     * @param string $msg
+     * @see DBManager::limitQuery()
+     */
+    public function limitQuerySql($sql, $start, $count, $dieOnError=false, $msg='')
+    {
+        return $this->limitQuery($sql,$start,$count,$dieOnError,$msg,false);
+    }
+
+    /**
+     * Parses and runs queries
+     *
+     * @param  string   $sql        SQL Statement to execute
+     * @param  bool     $dieOnError True if we want to call die if the query returns errors
+     * @param  string   $msg        Message to log if error occurs
+     * @param  bool     $suppress   Flag to suppress all error output unless in debug logging mode.
+     * @return resource result set
+     */
+    abstract public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false);
+
+    /**
+     * Runs a limit query: one where we specify where to start getting records and how many to get
+     *
+     * @param  string   $sql
+     * @param  int      $start
+     * @param  int      $count
+     * @param  boolean  $dieOnError
+     * @param  string   $msg
+     * @return resource query result
+     */
+    abstract function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true);
+
+
+    /**
+     * Free Database result
+     * @param resource $dbResult
+     */
+    abstract protected function freeDbResult($dbResult);
+
+    /**
+     * Rename column in the DB
+     * @param string $tablename
+     * @param string $column
+     * @param string $newname
+     */
+    abstract function renameColumnSQL($tablename, $column, $newname);
+
+    /**
+     * Returns definitions of all indies for passed table.
+     *
+     * return will is a multi-dimensional array that
+     * categorizes the index definition by types, unique, primary and index.
+     * <code>
+     * <?php
+     * array(
+     *       'index1'=> array (
+     *           'name'   => 'index1',
+     *           'type'   => 'primary',
+     *           'fields' => array('field1','field2')
+     *           )
+     *       )
+     * ?>
+     * </code>
+     * This format is similar to how indicies are defined in vardef file.
+     *
+     * @param  string $tablename
+     * @return array
+     */
+    abstract public function get_indices($tablename);
+
+    /**
+     * Returns definitions of all indies for passed table.
+     *
+     * return will is a multi-dimensional array that
+     * categorizes the index definition by types, unique, primary and index.
+     * <code>
+     * <?php
+     * array(
+     *       'field1'=> array (
+     *           'name'   => 'field1',
+     *           'type'   => 'varchar',
+     *           'len' => '200'
+     *           )
+     *       )
+     * ?>
+     * </code>
+     * This format is similar to how indicies are defined in vardef file.
+     *
+     * @param  string $tablename
+     * @return array
+     */
+    abstract public function get_columns($tablename);
+
+    /**
+     * Generates alter constraint statement given a table name and vardef definition.
+     *
+     * Supports both adding and droping a constraint.
+     *
+     * @param  string $table     tablename
+     * @param  array  $defintion field definition
+     * @param  bool   $drop      true if we are dropping the constraint, false if we are adding it
+     * @return string SQL statement
+     */
+    abstract public function add_drop_constraint($table, $definition, $drop = false);
+
+    /**
+     * Returns the description of fields based on the result
+     *
+     * @param  resource $result
+     * @param  boolean  $make_lower_case
+     * @return array field array
+     */
+    abstract public function getFieldsArray($result, $make_lower_case = false);
+
+    /**
+     * Returns an array of tables for this database
+     *
+     * @return	$tables		an array of with table names
+     * @return	false		if no tables found
+     */
+    abstract public function getTablesArray();
+
+    /**
+     * Return's the version of the database
+     *
+     * @return string
+     */
+    abstract public function version();
+
+    /**
+     * Checks if a table with the name $tableName exists
+     * and returns true if it does or false otherwise
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    abstract public function tableExists($tableName);
+
+    /**
+     * Fetches the next row in the query result into an associative array
+     *
+     * @param  resource $result
+     * @param  int      $rowNum optional, specify a certain row to return
+     * @param  bool     $encode optional, true if we want html encode the resulting array
+     * @return array    returns false if there are no more rows available to fetch
+     */
+    abstract public function fetchByAssoc($result, $rowNum = -1, $encode = true);
+
+    /**
+     * Connects to the database backend
+     *
+     * Takes in the database settings and opens a database connection based on those
+     * will open either a persistent or non-persistent connection.
+     * If a persistent connection is desired but not available it will defualt to non-persistent
+     *
+     * configOptions must include
+     * db_host_name - server ip
+     * db_user_name - database user name
+     * db_password - database password
+     *
+     * @param array   $configOptions
+     * @param boolean $dieOnError
+     */
+    abstract public function connect(array $configOptions = null, $dieOnError = false);
+
+    /**
+	 * Generates sql for create table statement for a bean.
+	 *
+	 * @param  string $tablename
+	 * @param  array  $fieldDefs
+     * @param  array  $indices
+     * @param  string $engine
+     * @return string SQL Create Table statement
+	 */
+	abstract public function createTableSQLParams($tablename, $fieldDefs, $indices);
+
+	/**
+     * Generates the SQL for changing columns
+     *
+     * @param string $tablename
+     * @param array  $fieldDefs
+     * @param string $action
+     * @param bool   $ignoreRequired Optional, true if we should ignor this being a required field
+	 */
+	abstract protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false);
+
+    /**
+     * Disconnects from the database
+     *
+     * Also handles any cleanup needed
+     */
+    abstract public function disconnect();
 }

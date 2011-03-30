@@ -714,25 +714,10 @@ rebuildConfigFile($sugar_config, $sugar_config['sugar_version']);
         $relContacts = $acc->contacts->get();
 
         if(empty($relContacts)){ return;}
-        $insrtQRY = "";
         //create insert query
-        if($inst->db->dbType == 'oci8'){
-            $insrtQRY = "INSERT INTO dceinstances_contacts (id , contact_id , instance_id , contact_role , date_modified , deleted )
+        $insrtQRY = "INSERT INTO dceinstances_contacts (id , contact_id , instance_id , contact_role , date_modified , deleted )
             VALUES ('".create_guid()."', '".$relContacts[0]."', '".$inst->id."',
-                    '".$roles[mt_rand(0,1)]."',  to_date('".$timedate->nowDb()."', 'YYYY-MM-DD HH24:MI:SS'), '0')";
-
-        }else{
-            $insrtQRY = "INSERT INTO dceinstances_contacts (id , contact_id , instance_id , contact_role , date_modified , deleted )
-            VALUES ('".create_guid()."', '".$relContacts[0]."', '".$inst->id."',
-                    '".$roles[mt_rand(0,1)]."', '".$timedate->nowDb()."', '0')";
-        }
-             //execute query
-             $inst->db->query($insrtQRY);
-
+                    '".$roles[mt_rand(0,1)]."', ".$inst->db->convert($inst->db->quoted($timedate->nowDb()), "datetime").", '0')";
+        //execute query
+        $inst->db->query($insrtQRY);
     }
-
-
-
-
-
-?>

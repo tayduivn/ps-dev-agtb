@@ -38,8 +38,15 @@ $alias_map = array();
 
 class SugarWidgetReportField extends SugarWidgetField
 {
+    /**
+     * Layout manager reporter attribute
+     * @var SugarBean
+     */
+    protected $reporter;
+
 	function SugarWidgetReportField(&$layout_manager) {
         parent::SugarWidgetField($layout_manager);
+        $this->reporter = $this->layout_manager->getAttribute("reporter");
     }
 
 	function  getSubClass($layout_def)
@@ -86,34 +93,16 @@ class SugarWidgetReportField extends SugarWidgetField
 			$alias = $layout_def['table_alias'];
 		 }
 
-		$reporter = $this->layout_manager->getAttribute("reporter");
-
     if ($layout_def['name'] == 'weighted_sum' )
     {
-//BEGIN SUGARCRM flav=ent ONLY
-			if ( $reporter->db->dbType == 'oci8')
-			{
-				return "SUM( NVL(".$alias.".probability,0) * NVL(".$alias.".amount_usdollar,0) * 0.01) ";
-			} else {
-//END SUGARCRM flav=ent ONLY
-				return "SUM( ".$alias.".probability * ".$alias.".amount_usdollar * 0.01) ";
-//BEGIN SUGARCRM flav=ent ONLY
-			}
-//END SUGARCRM flav=ent ONLY
-		}
+        return sprintf("SUM(%s * %s * 0.01)", $this->reporter->db->convert("$alias.probability","IFNULL", array(0)),
+            $this->reporter->db->convert("$alias.amount_usdollar","IFNULL", array(0)));
+	}
     if ($layout_def['name'] == 'weighted_amount' )
     {
-//BEGIN SUGARCRM flav=ent ONLY
-			if ( $reporter->db->dbType == 'oci8')
-			{
-				return "AVG( NVL(".$alias.".probability,0) * NVL(".$alias.".amount_usdollar,0) * 0.01) ";
-			} else {
-//END SUGARCRM flav=ent ONLY
-				return "AVG(".$alias.".probability * ".$alias.".amount_usdollar * 0.01) ";
-//BEGIN SUGARCRM flav=ent ONLY
-			}
-//END SUGARCRM flav=ent ONLY
-		}
+        return sprintf("AVG(%s * %s * 0.01)", $this->reporter->db->convert("$alias.probability","IFNULL", array(0)),
+            $this->reporter->db->convert("$alias.amount_usdollar","IFNULL", array(0)));
+	}
  }
 
  function _get_column_select($layout_def)
@@ -122,8 +111,14 @@ class SugarWidgetReportField extends SugarWidgetField
  	if (!isset($reportAlias)) {
  		$reportAlias = array();
  	}
-		$alias = '';
-		$endalias = '';
+
+	if ( ! empty($layout_def['table_alias'])) {
+		$alias = $layout_def['table_alias'].".".$layout_def['name'];
+	} else if (! empty($layout_def['name'])) {
+		$alias = $layout_def['name'];
+	} else {
+		$alias = "*";
+	}
 
 	if ( ! empty($layout_def['group_function']) )
 	{
@@ -134,30 +129,8 @@ class SugarWidgetReportField extends SugarWidgetField
 				return $alias;
     	}
 
-			$reporter = $this->layout_manager->getAttribute('reporter');
-//BEGIN SUGARCRM flav=ent ONLY
-			if ($reporter->db->dbType == 'oci8')
-			{
-				$alias .= $layout_def['group_function']."(NVL(";
-				$endalias = ',0))';
-			} else {
-//END SUGARCRM flav=ent ONLY
-				$alias .= $layout_def['group_function']."(";
-				$endalias = ')';
-//BEGIN SUGARCRM flav=ent ONLY
-			}
-//END SUGARCRM flav=ent ONLY
+		$alias = sprintf("%s(%s)", $layout_def['group_function'], $this->reporter->db->convert($alias, "IFNULL", array(0)));
 	}
-	if ( ! empty($layout_def['table_alias']))
-	{
-		$alias .= $layout_def['table_alias'].".".$layout_def['name'];
-
-	}else if (! empty($layout_def['name'])) {
-		$alias = $layout_def['name'];
-	} else {
-		$alias .= "*";
-	}
-	$alias .= $endalias;
 
 	$reportAlias[$alias] = $layout_def;
 	return $alias;
@@ -176,8 +149,7 @@ class SugarWidgetReportField extends SugarWidgetField
 
  function queryOrderBy($layout_def)
  {
-	$reporter = $this->layout_manager->getAttribute('reporter');
-	if(!empty($reporter->all_fields[$layout_def['column_key']])) $field_def = $reporter->all_fields[$layout_def['column_key']];
+	if(!empty($this->reporter->all_fields[$layout_def['column_key']])) $field_def = $this->reporter->all_fields[$layout_def['column_key']];
 
 	if ( ! empty( $field_def['sort_on']))
 	{
@@ -322,7 +294,7 @@ class SugarWidgetReportField extends SugarWidgetField
 		global $used_aliases, $alias_map;
 
         $alias = strtolower(implode("_",$alias_arr));
-        
+
         $short_alias = $this->getTruncatedColumnAlias($alias);
 
 		if ( empty($used_aliases[$short_alias]))
@@ -340,42 +312,26 @@ class SugarWidgetReportField extends SugarWidgetField
 		}
  }
 
- function queryFilterEmpty(&$layout_def)
+ function queryFilterEmpty($layout_def)
  {
-	 $reporter = $this->layout_manager->getAttribute("reporter");
-	 if( $reporter->db->dbType == 'mssql' && $layout_def['type'] == 'currency')
-     {
-    	 return '( '.$this->_get_column_select($layout_def).' IS NULL OR '.$this->_get_column_select($layout_def)."=0 )\n";
-     }
-     return '( '.$this->_get_column_select($layout_def).' IS NULL OR '.$this->_get_column_select($layout_def)."='' )\n";
+     $column = $this->_get_column_select($layout_def);
+     return "($column IS NULL OR $column = ".$this->reporter->db->emptyValue($layout_def['type']).")";
  }
 
- function queryFilterIs(&$layout_def)
+ function queryFilterIs($layout_def)
  {
  	return '( '.$this->_get_column_select($layout_def)."='".$GLOBALS['db']->quote($layout_def['input_name0'])."')\n";
  }
 
-  function queryFilteris_not(&$layout_def)
+ function queryFilteris_not($layout_def)
  {
  	return '( '.$this->_get_column_select($layout_def)."<>'".$GLOBALS['db']->quote($layout_def['input_name0'])."')\n";
  }
- function queryFilterNot_Empty(&$layout_def)
+
+ function queryFilterNot_Empty($layout_def)
  {
-    $reporter = $this->layout_manager->getAttribute("reporter");
-//BEGIN SUGARCRM flav=ent ONLY
-    if ( $reporter->db->dbType == 'oci8')
-    {
-        return $this->_get_column_select($layout_def).' IS NOT NULL ' . "\n";
-    }
-
-//END SUGARCRM flav=ent ONLY
-    if( $reporter->db->dbType == 'mssql' && $layout_def['type'] == 'currency')
-    {
-    	return '( '.$this->_get_column_select($layout_def).' IS NOT NULL AND '.$this->_get_column_select($layout_def)."<>0 )\n";
-    }
-
-    return '( '.$this->_get_column_select($layout_def).' IS NOT NULL AND '.$this->_get_column_select($layout_def)."<>'' )\n";
+     $column = $this->_get_column_select($layout_def);
+     return "($column IS NOT NULL AND $column <> ".$this->reporter->db->emptyValue($layout_def['type']).")";
  }
 
 }
-?>

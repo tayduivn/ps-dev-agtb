@@ -34,20 +34,20 @@ if (!isset($_REQUEST['export_report']) || $_REQUEST['export_report'] != '1') {
 		$global_json = getJSONobj();
 		require_once('include/QuickSearchDefaults.php');
 		$qsd = new QuickSearchDefaults();
-		if (isset($_REQUEST['parent_type'])) 
+		if (isset($_REQUEST['parent_type']))
 				$sqs_objects = array('parent_name' => $qsd->getQSParent($_REQUEST['parent_type']));
 		else
 			$sqs_objects = array('parent_name' => $qsd->getQSParent($module));
-		
+
 		$quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $global_json->encode($sqs_objects) . '</script>';
 		return $quicksearch_js;
 	}
-	
-	
+
+
 	global $theme,$mod_strings,$current_user,$timedate;
 	if (!isset($_REQUEST['to_pdf']) || $_REQUEST['to_pdf'] != '1')
 		echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_ACTIVITIES_REPORTS']), false);
-			
+
 	global $app_list_strings;
 	$parent_types = $app_list_strings['parent_type_display'];
 	$disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
@@ -64,17 +64,17 @@ if (!isset($_REQUEST['export_report']) || $_REQUEST['export_report'] != '1') {
 		$sugar_smarty->assign('PARENT_TYPE', $_REQUEST['parent_type']);
 	else
 		$sugar_smarty->assign('PARENT_TYPE', '0');
-	
+
 	if (isset($_REQUEST['object_name']))
 		$sugar_smarty->assign('object_name', $_REQUEST['object_name']);
 	else
 		$sugar_smarty->assign('object_name', '');
-		
+
 	if (isset($_REQUEST['parent_id']))
 		$sugar_smarty->assign('object_id', $_REQUEST['parent_id']);
 	else
 		$sugar_smarty->assign('object_id', '');
-	
+
 	if (isset($_REQUEST['date_start']))
 		$sugar_smarty->assign('DATE_START', $_REQUEST['date_start']);
 	else
@@ -83,11 +83,11 @@ if (!isset($_REQUEST['export_report']) || $_REQUEST['export_report'] != '1') {
 		$sugar_smarty->assign('DATE_FINISH', $_REQUEST['date_finish']);
 	else
 		$sugar_smarty->assign('DATE_FINISH', '');
-	
+
 	$sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 	$sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 	$sugar_smarty->assign("CURRENT_USER", $current_user->id);
-	$firstModule = array_keys($parent_types); 
+	$firstModule = array_keys($parent_types);
 	$sugar_smarty->assign("quicksearch_js", js_setup($firstModule[0]));
 }
 
@@ -99,20 +99,16 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
 	$focus = new SugarBean();
 	$query = "";
 	if(ACLController::checkAccess('Calls', 'list', true)) {
-	 	$query = "select 'Calls' as ";
-		if ($focus->db->dbType == 'mysql')
-		 	$query .= "'call' ";
-	 	else 
-		 	$query .= "call ";
-	 		
+	 	$query = "select 'Calls' as 'call' ";
+
 	 	$query .=",calls.description,calls.id, calls.name,calls.date_start,calls.status from calls  ";
 		if (method_exists($focus,'add_team_security_where_clause'))
 			$query .= $focus->add_team_security_where_clause($query, 'calls');
 
-	
+
 		if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Users') {
 			$query .= " INNER JOIN calls_users on calls_users.call_id=calls.id and calls_users.deleted=0 where calls_users.user_id=".
-			"'" .$_REQUEST['parent_id']."'"; 	
+			"'" .$_REQUEST['parent_id']."'";
 		}
 		else {
 			$query .= " where 1=1 ";
@@ -154,21 +150,21 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
 	if(ACLController::checkAccess('Meetings', 'list', true)) {
 		if ($query != "")
 			$query .= " union all ";
-		
+
 		$query .="select 'Meetings',meetings.description,meetings.id, meetings.name,meetings.date_start,meetings.status from meetings ";
 
 		if (method_exists($focus,'add_team_security_where_clause'))
 			$query .= $focus->add_team_security_where_clause($query, 'meetings');
 
-		
+
 		if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Users') {
 			$query .= " INNER JOIN meetings_users on meetings_users.meeting_id=meetings.id and meetings_users.deleted=0 where meetings_users.user_id=".
-			"'" .$_REQUEST['parent_id']."'"; 	
+			"'" .$_REQUEST['parent_id']."'";
 		}
 		else {
 			$query .= " where 1=1 ";
 		}
-		
+
 	 	if (!empty($_REQUEST['date_start'])) {
 	 		$query .= " and meetings.date_start >= ".db_convert("'".$timedate->to_db_date($_REQUEST['date_start'], false)." 00:00:00'", 'date');
 	 	}
@@ -177,7 +173,7 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
 	 	}
 		if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] != 'Users') {
 			$query .="  and meetings.parent_id='".$_REQUEST['parent_id']."' ";
-		}	 	
+		}
 		$query .= " and meetings.deleted=0 union all select 'Notes',notes.description,notes.id, notes.name,notes.date_entered,'None' from notes ";
 
 		if (method_exists($focus,'add_team_security_where_clause'))
@@ -190,9 +186,9 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
 	 	if (!empty($_REQUEST['date_finish'])) {
 	 		$query .= " and notes.date_entered <= ".db_convert("'".$timedate->to_db_date($_REQUEST['date_finish'], false)." 23:59:59'", 'date');
 	 	}
-		
+
 	}
-	if(ACLController::checkAccess('Emails', 'list', true)) {	
+	if(ACLController::checkAccess('Emails', 'list', true)) {
 		if ($query != "")
 			$query .= " union all ";
 		$query .="select 'Emails', '', emails.id,emails.name,emails.date_sent,emails.status from emails ";
@@ -201,22 +197,22 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
 			$query .= $focus->add_team_security_where_clause($query, 'emails');
 
 		$query .= "	where emails.deleted=0 and ";
-		
+
 	 	if (!empty($_REQUEST['date_start'])) {
 	 		$query .= "emails.date_sent >= ".db_convert("'".$timedate->to_db_date($_REQUEST['date_start'], false)." 00:00:00'", 'date')." and ";
 	 	}
 	 	if (!empty($_REQUEST['date_finish'])) {
 	 		$query .= "emails.date_sent <= ".db_convert("'".$timedate->to_db_date($_REQUEST['date_finish'], false)." 23:59:59'", 'date')." and ";
 	 	}
-		
-		
+
+
 		if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] != 'Users') {
 			$query .= "emails.parent_id='".$_REQUEST['parent_id']."' ";
 		}
 		else if (isset($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Users') {
 			$query .= "emails.assigned_user_id='".$_REQUEST['parent_id']."' ";
 		}
-	}	
+	}
     $result = $focus->db->query($query, true, "");
     $row = $focus->db->fetchByAssoc($result);
 
@@ -230,7 +226,7 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
         $activity['date_start'] = $timedate->to_display_date_time($row['date_start']);
         if ($row['status'] == 'None')
         	$activity['status'] = $mod_strings['LBL_NONE_STRING'];
-        else 
+        else
         	$activity['status'] = $row['status'];
         array_push($activities, $activity);
         $row = $focus->db->fetchByAssoc($result);
@@ -258,13 +254,13 @@ if ((isset($_REQUEST['run_report']) && $_REQUEST['run_report'] == '1') ||
 		header("Content-Length: ".strlen($content));
 		print $GLOBALS['locale']->translateCharset($content, 'UTF-8', $locale->getExportCharset());
 		exit;
-    	
+
     }
     else {
     	$json = getJSONobj();
 		echo $json->encode($activities);
 		return;
-    	
+
     }
 }
 $sugar_smarty->assign('count',count($activities));

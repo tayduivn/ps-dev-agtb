@@ -1165,6 +1165,7 @@ class Email extends SugarBean {
 	}
 
 	//BEGIN SUGARCRM flav=ent ONLY
+	// FIXME: fix this!
 	function saveEmailTextForOracle() {
 		global $dictionary;
 		if(file_exists('custom/metadata/emails_beansMetaData.php')) {

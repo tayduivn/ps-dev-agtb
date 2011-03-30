@@ -54,11 +54,6 @@ class OracleManager extends DBManager
         'row_count'   => 'oci_num_rows',
         );
 
-    /**
-     * internal property if this is a new query or not
-     */
-    private $newQuery = true;
-
 	/**
      * contains the last result set returned from query()
      */
@@ -66,67 +61,100 @@ class OracleManager extends DBManager
 
     protected $capabilities = array(
         "affected_rows" => true,
+        "case_sensitive" => true,
+        "fulltext" => true,
     );
 
-    /**
+    protected static $maxNameLengths = array(
+        'table' => 30,
+        'column' => 30,
+        'index' => 30,
+        'alias' => 30
+    );
+
+    protected $type_map = array(
+            'int'      => 'number',
+            'double'   => 'number(30,10)',
+            'float'    => 'number(30,6)',
+            'uint'     => 'number(15)',
+            'ulong'    => 'number(38)',
+            'long'     => 'number(38)',
+            'short'    => 'number(3)',
+            'varchar'  => 'varchar2',
+            'text'     => 'clob',
+            'longtext' => 'clob',
+            'date'     => 'date',
+            'enum'     => 'varchar2(255)',
+            'relate'   => 'varchar2',
+            'multienum'=> 'clob',
+            'html'     => 'clob',
+            'datetime' => 'date',
+            'datetimecombo' => 'date',
+            'time'     => 'date',
+            'bool'     => 'number(1)',
+            'tinyint'  => 'number(3)',
+            'char'     => 'char',
+            'id'       => 'varchar2(36)',
+            'blob'     => 'blob',
+            'longblob' => 'blob',
+            'currency' => 'number(26,6)',
+            'decimal'  => 'number (20,2)',
+            'decimal2' => 'number (30,6)',
+            'url'      =>'varchar2(255)',
+            'encrypt'  =>'varchar2(255)',
+            'file'     => 'varchar2(255)',
+            );
+
+	/**
+     * List of known sequences
+     * @var array
+     */
+    protected static $sequences = null;
+
+	/**
      * @see DBManager::createTable()
 	 */
-    public function createTable(
-        SugarBean $bean
-        )
+    public function createTable(SugarBean $bean)
     {
         parent::createTable($bean);
 
         // handle constraints and indices
-        $indicesArr = $this->helper->createConstraintSql($bean);
+        $indicesArr = $this->createConstraintSql($bean);
         if (count($indicesArr) > 0)
         	foreach ($indicesArr as $indexSql)
-        		$bean->db->query($indexSql);
+        		$this->query($indexSql);
     }
 
     /**
      * @see DBManager::createTable()
 	 */
-    public function createTableParams(
-        $tablename,
-        $fieldDefs,
-        $indices
-        )
+    public function createTableParams($tablename, $fieldDefs, $indices)
     {
         parent::createTableParams($tablename,$fieldDefs,$indices);
         if (!empty($fieldDefs)) {
             // handle constraints and indices
-            $indicesArr = $this->helper->getConstraintSql($indices, $tablename);
+            $indicesArr = $this->getConstraintSql($indices, $tablename);
             if (count($indicesArr) > 0)
                 foreach ($indicesArr as $indexSql)
                     $this->query($indexSql);
         }
     }
 
-    public function repairTableParams(
-        $tablename,
-        $fielddefs,
-        $indices,
-        $execute = true,
-        $engine = null
-        )
+    public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
         //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them
         foreach ($indices as $key => $value) {
-            $indices[$key]['name'] = OracleHelper::getValidDBName($value['name'], true, 'index');
+            $indices[$key]['name'] = $this->getValidDBName($value['name'], true, 'index');
         }
 
         return parent::repairTableParams($tablename,$fielddefs,$indices,$execute,$engine);
-
     }
     /**
      * @see DBManager::version()
      */
     public function version()
     {
-        return $this->getOne(
-            "SELECT version FROM product_component_version
-                WHERE product like '%Oracle%'");
+        return $this->getOne("SELECT version FROM product_component_version WHERE product like '%Oracle%'");
     }
 
     /**
@@ -135,14 +163,12 @@ class OracleManager extends DBManager
      * @param  resource $obj
      * @return bool
      */
-    private function checkOCIerror(
-        $obj
-        )
+    protected function checkOCIerror($obj)
     {
         $err = oci_error($obj);
         if ($err != false){
             $result = false;
-            $GLOBALS['log']->fatal("OCI error:".var_export($err, true));
+            $GLOBALS['log']->fatal("OCI error: ".var_export($err, true));
             return true;
         }
         return false;
@@ -151,10 +177,7 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::checkError()
      */
-    public function checkError(
-        $msg = '',
-        $dieOnError = false
-        )
+    public function checkError($msg = '', $dieOnError = false)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
@@ -181,178 +204,42 @@ class OracleManager extends DBManager
      * @param  bool     $dieOnError        True if we want to call die if the query returns errors
      * @param  string   $msg               Message to log if error occurs
      * @param  bool     $suppress          Flag to suppress all error output unless in debug logging mode.
-     * @param  bool     $endSessionOnError True if we want to end the session if the query returns errors
+     * @param  bool     $keepResult		   True if we want to push this result into the $lastResult var.
      * @return resource result set
      */
-    public function query(
-        $sql,
-        $dieOnError = false,
-        $msg = '',
-        $suppress = false,
-        $endSessionOnError = false
-        )
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
         parent::countQuery($sql);
-        $GLOBALS['log']->info('Query:' . $sql);
+        $GLOBALS['log']->info('Query: ' . $sql);
         $this->checkConnection();
         $this->query_time = microtime(true);
+        $db = $this->getDatabase();
 
-        if ($suppress) {
-			$stmt = @oci_parse($this->getDatabase(), $sql);
-		    $err = oci_error($this->getDatabase());
-
-			if($err != false)
-				$GLOBALS['log']->debug("OCI error:".var_export($err, true));
-			else {
-				@oci_execute($stmt);
-
-	            $this->query_time = microtime(true) - $this->query_time;
-	            $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
-	            //BEGIN SUGARCRM flav=pro ONLY
-				if($this->dump_slow_queries($sql)) {
-				   $this->track_slow_queries($sql);
-				}
-				//END SUGARCRM flav=pro ONLY
+        $stmt = $suppress?@oci_parse($db, $sql):oci_parse($db, $sql);
+		if(!$this->checkOCIerror($db)) {
+			$suppress?@oci_execute($stmt):oci_execute($stmt);
+	        $this->query_time = microtime(true) - $this->query_time;
+	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
+	        //BEGIN SUGARCRM flav=pro ONLY
+		    if($this->dump_slow_queries($sql)) {
+			    $this->track_slow_queries($sql);
 			}
-
-			$result = $stmt;
-		}
-        else {
-		    $stmt = oci_parse($this->getDatabase(), $sql);
-		    $err = oci_error($this->getDatabase());
-
-		    if ($err != false) {
-                $GLOBALS['log']->fatal("OCI error:".var_export($err, true));
-                $result = false;
-		    }
-            else {
-                oci_execute($stmt);
-
-	            $this->query_time = microtime(true) - $this->query_time;
-	            $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
-	            //BEGIN SUGARCRM flav=pro ONLY
-				if($this->dump_slow_queries($sql)) {
-				   $this->track_slow_queries($sql);
-				}
-				//END SUGARCRM flav=pro ONLY
-
-                $result = $stmt;
-		    }
-		    $this->lastmysqlrow = -1;
-		    $this->newQuery = true;
-		    $this->lastQuery = $sql;
-		    $this->_lastResult = $result;
-
-		    if ( $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError) ) {
-		        $result = false;
-		        if ($endSessionOnError) {
-                    global $app_strings;
-                    if (!empty($app_strings['ERR_DATABASE_CONN_DROPPED'])) {
-                        echo $app_strings['ERR_DATABASE_CONN_DROPPED'];
-                    }
-                    else {
-                        echo("Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.");
-                    }
-                    sugar_cleanup(true);
-                }
-            }
+			//END SUGARCRM flav=pro ONLY
 		}
 
+		$result = $stmt;
+		$this->lastQuery = $sql;
+		if($keepResult)
+		    $this->lastResult = $result;
+
+		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
         return $result;
-    }
-
-    /**
-     * @see DBManager::describeField()
-     */
-	protected function describeField(
-        $name,
-        $tablename
-        )
-    {
-        global $table_descriptions;
-        if(isset($table_descriptions[$tablename]) && isset($table_descriptions[$tablename][$name])){
-            return 	$table_descriptions[$tablename][$name];
-        }
-        $table_descriptions[$tablename] = array();
-
-        $sql = sprintf( "SELECT COLUMN_NAME
-			   , DATA_TYPE
-			   , CASE WHEN DATA_TYPE = 'VARCHAR2' THEN DATA_LENGTH ELSE NULL END AS CHARACTER_MAXIMUM_LENGTH
-			   , NULLABLE
-			   , DATA_DEFAULT
-			FROM user_tab_columns
-			WHERE TABLE_NAME = '%s'",
-			strtoupper($tablename)
-        );
-
-
-        $result = $this->query($sql);
-        while ($row = $this->fetchByAssoc($result) ) {
-			//Oracle is very strict with reserved words. null and default are both
-			//reserved words and should not be used as column aliases. so to fix the
-			//problem, we use the fixedKeys array workaround.
-        	$fixedKeys = array(
-        		'Field' => strtolower($row[strtolower('COLUMN_NAME')]),
-        		'Type' => strtolower($row[strtolower('DATA_TYPE')]),
-        		'CHARACTER_MAXIMUM_LENGTH' => strtolower($row[strtolower('CHARACTER_MAXIMUM_LENGTH')]),
-        		'Null' => strtolower($row[strtolower('NULLABLE')]),
-        		'Default' => strtolower($row[strtolower('DATA_DEFAULT')])
-        	);
-
-            $table_descriptions[$tablename][$fixedKeys['Field']] = $fixedKeys;
-        }
-        if(isset($table_descriptions[$tablename][$name])){
-            return 	$table_descriptions[$tablename][$name];
-        }
-        return array();
-    }
-
-    /**
-     * @see DBManager::describeIndex()
-     */
-    protected function describeIndex(
-        $name,
-        $tablename
-        )
-    {
-		$repair_table=((strtolower($tablename) == 'repair_table') ? true : false);
-
-		$orig_name=$name;
-		$name = ($repair_table ? $this->helper->repair_index_name($name) : $name);
-    	$name = $this->helper->fixIndexName($name);
-
-        global $table_descriptions;
-        if(isset($table_descriptions[$tablename]) && isset($table_descriptions[$tablename]['indexes']) && isset($table_descriptions[$tablename]['indexes'][$name])){
-            return 	$table_descriptions[$tablename]['indexes'][$name];
-        }
-
-        $table_descriptions[$tablename]['indexes'] = array();
-
-        $result = $this->helper->get_indices($tablename,$name);
-
-		foreach($result as $index_name => $row) {
-            if(!isset($table_descriptions[$tablename]['indexes'][$orig_name]))
-                $table_descriptions[$tablename]['indexes'][$orig_name] = array();
-
-            if (isset($row['name']))
-            	$row['name']=$orig_name;
-
-            $table_descriptions[$tablename]['indexes'][$orig_name]['Column_name'] = $row;
-		}
-
-
-		if(isset($table_descriptions[$tablename]['indexes'][$name]))
-            return 	$table_descriptions[$tablename]['indexes'][$name];
-
-        return array();
     }
 
     /**
      * @see DBManager::checkQuery()
      */
-    protected function checkQuery(
-        $sql
-        )
+    protected function checkQuery($sql)
     {
         $name = (empty($GLOBALS['current_user']) || empty($GLOBALS['current_user']->user_name))
             ? 'generic' : $GLOBALS['current_user']->user_name;
@@ -378,9 +265,6 @@ class OracleManager extends DBManager
             foreach ($badQuery as $table=>$data ) {
                 if(!empty($data)){
                     $warning = ' Table:' . $table . ' Data:' . $data;
-                    //BEGIN SUGARCRM flav=int ONLY
-                    _pp('Warning Check Query:' . $warning);
-                    //END SUGARCRM flav=int ONLY
                     if(!empty($GLOBALS['sugar_config']['check_query_log'])){
                         $GLOBALS['log']->fatal($sql);
                         $GLOBALS['log']->fatal('CHECK QUERY:' .$warning);
@@ -404,13 +288,7 @@ class OracleManager extends DBManager
      * @param  bool     $execute    optional, false if we just want to return the query
      * @return resource query result
      */
-    public function limitQuery(
-        $sql,
-        $start,
-        $count,
-        $dieOnError = false,
-        $msg = '',
-        $execute = true)
+    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
         $matches = array();
         preg_match('/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is',$sql, $matches);
@@ -437,11 +315,7 @@ class OracleManager extends DBManager
 
             return $this->query($sql);
         }
-        if (
-                //BEGIN SUGARCRM flav=int ONLY
-                true ||
-                //END SUGARCRM flav=int ONLY
-                !empty($GLOBALS['sugar_config']['check_query']))
+        if (!empty($GLOBALS['sugar_config']['check_query']))
             $this->checkQuery($sql);
 
         $query = "SELECT * FROM (SELECT ROWNUM AS orc_row , MSI.* FROM ($sql) MSI where ROWNUM <= $next) WHERE orc_row >= $start";
@@ -452,27 +326,9 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Alias of limitQuery() with the last parameter as true
-     * @see OracleManager::limitQuery()
-     */
-    public function limitQuerySql(
-        $sql,
-        $start,
-        $count,
-        $dieOnError=false,
-        $msg=''
-        )
-    {
-        return $this->limitQuery($sql,$start,$count,$dieOnError,$msg,false);
-    }
-
-    /**
      * @see DBManager::getFieldsArray()
      */
-	public function getFieldsArray(
-        &$result,
-        $make_lower_case = false
-        )
+	public function getFieldsArray($result, $make_lower_case = false)
 	{
 		$field_array = array();
 
@@ -494,23 +350,16 @@ class OracleManager extends DBManager
         }
 
         return $field_array;
-
     }
 
     /**
-     * Uses the same backend function as DBManager::getRowCount(), but we need to pass in the last result
-     * set used into the function.
-     *
-     * @see DBManager::getRowCount()
+     * Get number of rows affected by last operation
      * @see DBManager::getAffectedRowCount()
      */
-	public function getAffectedRowCount()
+	public function getAffectedRowCount($result)
     {
-        return $this->getRowCount($this->_lastResult);
+        return oci_num_rows($result);
     }
-
-
-
 
     /**
      * Fetches the next row from the result set
@@ -518,11 +367,9 @@ class OracleManager extends DBManager
      * @param  resource $result result set
      * @return array
      */
-    private function ociFetchRow(
-        $result
-        )
+    protected function ociFetchRow($result)
     {
-        $row = oci_fetch_array($result, OCI_ASSOC+OCI_RETURN_NULLS+OCI_RETURN_LOBS);
+        $row = oci_fetch_array($result, OCI_ASSOC|OCI_RETURN_NULLS|OCI_RETURN_LOBS);
         if ( !$row )
             return false;
         if ($this->checkOCIerror($result) == false) {
@@ -541,26 +388,17 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::fetchByAssoc()
      */
-    public function fetchByAssoc(
-        &$result,
-        $rowNum = -1,
-        $encode = true
-        )
+    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
     {
         if (!$result)
             return false;
 
         if (isset($result) && $result && $rowNum < 0) {
             $row = $this->ociFetchRow($result);
-        }
-        else {
+        } else {
             if ($this->getRowCount($result) > $rowNum)
                 return array(); // cannot do seek in oracle
-            $this->lastmysqlrow = $rowNum;
             $row = $this->ociFetchRow($result);
-        }
-        if ($this->newQuery) {
-            $this->newQuery = false;
         }
         if ($row != false && $encode && $this->encode && sizeof($row)>0)
             return array_map('to_html', $row);
@@ -590,41 +428,16 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBManager::addIndexes()
-     */
-    public function addIndexes(
-        $tablename,
-        $indexes,
-        $execute = true
-        )
-    {
-        $alters = $this->getHelper()->getConstraintSQL($indexes,$tablename);
-
-        $sql = "";
-        foreach ($alters as $stmt) {
-        	if ($execute)
-                $this->query($stmt);
-        	$sql = $stmt . "\n";
-        }
-
-        return $sql;
-    }
-
-    /**
      * @see DBManager::dropIndexes()
      */
-    public function dropIndexes(
-        $tablename,
-        $indexes,
-        $execute = true
-        )
+    public function dropIndexes($tablename, $indexes, $execute = true)
     {
         $sql = '';
         foreach ($indexes as $index) {
             if (empty($sql))
-                $sql .= $this->getHelper()->add_drop_constraint($tablename,$index,true);
+                $sql .= $this->add_drop_constraint($tablename,$index,true);
             else
-                $sql .= "; " . $this->getHelper()->add_drop_constraint($tablename,$index,true);
+                $sql .= "; " . $this->add_drop_constraint($tablename,$index,true);
         }
         if (!empty($sql) && $execute)
             $this->query($sql);
@@ -635,9 +448,7 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::tableExists()
      */
-    public function tableExists(
-        $tableName
-        )
+    public function tableExists($tableName)
     {
         $GLOBALS['log']->info("tableExists: $tableName");
 
@@ -654,12 +465,9 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::update()
      */
-    public function update(
-        SugarBean $bean,
-        array $where = array()
-        )
+    public function update(SugarBean $bean, array $where = array())
     {
-        $sql = $this->getHelper()->updateSQL($bean,$where);
+        $sql = $this->updateSQL($bean,$where);
 
         $ret = $this->AltlobExecute($bean, $sql);
         oci_commit($this->getDatabase()); //moved here from sugarbean
@@ -669,35 +477,13 @@ class OracleManager extends DBManager
     }
 
     /**
-     * Executes an insert or update for the Emails module
-     *
-     * @param  object   $bean SugarBean instance
-     * @param  string   $sql  SQL statement
-     * @return resource
-     */
-    public function insertUpdateForEmail(
-        SugarBean $bean,
-        $sql
-        )
-    {
-        $ret = $this->AltlobExecute($bean, $sql);
-        oci_commit($this->getDatabase()); //moved here from sugarbean
-        return $ret;
-    }
-
-    /**
      * @see DBManager::insert()
      */
-    public function insert(
-        SugarBean $bean
-        )
+    public function insert(SugarBean $bean)
     {
-        $sql = $this->helper->insertSQL($bean);
+        $sql = $this->insertSQL($bean);
         $ret = $this->AltlobExecute($bean, $sql);
 
-        //jc: when this was moved it was moved as written in sugarbean ($this->dbManager->database).
-        //this raised an error each time this method is called because $this is a child class of DbManager
-      	//so $this does not have a dbManager.
         oci_commit($this->getDatabase()); //moved here from sugarbean.
         $this->tableName = $bean->getTableName();
         $msg = "Error inserting into table: ".$this->tableName;
@@ -711,22 +497,19 @@ class OracleManager extends DBManager
      * @param  string   $sql  SQL statement
      * @return resource
      */
-    private function AltlobExecute(
-        SugarBean $bean,
-        $sql
-        )
+    protected function AltlobExecute(SugarBean $bean, $sql)
     {
-    	$GLOBALS['log']->debug($sql);
+    	$GLOBALS['log']->debug("Oracle Execute: $sql");
         $this->checkConnection();
         if(empty($sql)){
-            return;
+            return false;
         }
 
         $lob_fields=array();
         $lob_field_type=array();
         $lobs=array();
-        foreach ($bean->field_defs as $fieldDef){
-            $type = $this->helper->getFieldType($fieldDef);
+        foreach ($bean->field_defs as $fieldDef) {
+            $type = $this->getFieldType($fieldDef);
             if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
                 continue;
             }
@@ -750,8 +533,7 @@ class OracleManager extends DBManager
         }
 
         $stmt = oci_parse($this->database, $sql);
-        $err = oci_error($this->database);
-        if ($err != false){
+        if($this->checkOCIerror($this->database)) {
             return false;
         }
 
@@ -760,14 +542,9 @@ class OracleManager extends DBManager
             oci_bind_by_name($stmt, $descriptor, $newlob, -1, $lob_field_type[$key]);
             $lobs[$key] = $newlob;
         }
-
+        $result = false;
         oci_execute($stmt,OCI_DEFAULT);
-        $err = oci_error($stmt);
-        if ($err != false){
-            $GLOBALS['log']->fatal($sql.">>".$err['code'].":".$err['message']);
-            $result = false;
-        }
-        else {
+        if(!$this->checkOCIerror($stmt)) {
             foreach ($lobs as $key=>$lob){
                 $val = $bean->getFieldValue($key);
                 if (empty($val)) $val=" ";
@@ -787,103 +564,17 @@ class OracleManager extends DBManager
     }
 
     /**
-     * will set lob values for the passed sql and execute the sql
-     *
-     * @deprecated use AltlobExecute() instead
-     *
-     * @param  object   $bean SugarBean instance
-     * @param  string   $sql  SQL statement
-     * @return resource
-     */
-    private function lobExecute(
-        SugarBean $bean,
-        $sql
-        )
-    {
-        $GLOBALS['log']->info('call to OracleManager::lobExecute() is deprecated');
-
-        $this->checkConnection();
-        if(empty($sql)){
-            return;
-        }
-        //$GLOBALS['log']->fatal("lobExecute sql : $sql");
-        $stmt = oci_parse($this->database, $sql);
-        $err = oci_error($this->database);
-        if ($err != false){
-            return false;
-        }
-        // set all the lobs
-
-        $lobs = array();
-
-        foreach ($bean->field_defs as $fieldDef){
-            $type = $this->helper->getFieldType($fieldDef);
-            if (isset($fieldDef['source']) && $fieldDef['source']!='db') {
-                continue;
-            }
-
-            $lob_type = false;
-            if ($type == 'longtext' or $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
-            else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
-
-            // this is not a lob, continue;
-            if ($lob_type === false) continue;
-
-            $val = $bean->getFieldValue($fieldDef['name']);
-            if (!isset($bean->$fieldDef['name'])) continue; // no value
-            $newlob = oci_new_descriptor($this->database, OCI_D_LOB);
-            oci_bind_by_name($stmt, ':'.$fieldDef['name'], $newlob, -1, $lob_type);
-            if(empty($val)){
-                $newlob->WriteTemporary(' ');
-            }else{
-                $newlob->WriteTemporary($val);
-            }
-
-            $lobs[] = $newlob;
-        }
-        oci_execute($stmt);
-        $err = oci_error($stmt);
-        if ($err != false){
-
-            $GLOBALS['log']->fatal($sql.">>".$err['code'].":".$err['message']);
-            $result = false;
-        }
-        else {
-            // commit since it is a DML stantement. NO ROLLBACKS
-            oci_commit($this->database);
-            $result = true;
-        }
-
-        oci_free_statement($stmt);
-        // free all the lobs.
-        foreach ($lobs as $lob){
-            $lob->close();
-            $lob->free();
-
-        }
-
-
-        return $result;
-    }
-
-    /**
      * @see DBManager::quote()
      */
-    public function quote(
-        $string,
-        $isLike = true
-        )
+    public function quote($string)
     {
-        return OracleHelper::magic_quotes_oracle($string);
+        return str_replace("'", "''", $string);
     }
 
 	/**
      * @see DBManager::connect()
      */
-    public function connect(
-        array $configOptions = null,
-        $dieOnError = false
-        )
+    public function connect(array $configOptions = null, $dieOnError = false)
     {
         global $sugar_config;
 
@@ -931,59 +622,94 @@ class OracleManager extends DBManager
 
 	}
 
+    /**
+     * Disconnects from the database
+     *
+     * Also handles any cleanup needed
+     */
+    public function disconnect()
+    {
+    	$GLOBALS['log']->debug('Calling Oracle::disconnect()');
+        if(!empty($this->database)){
+            $this->freeResult();
+            oci_close($this->database);
+            $this->database = null;
+        }
+    }
+
+    /**
+     * @see DBManager::freeDbResult()
+     */
+    protected function freeDbResult($dbResult)
+    {
+        if(!empty($dbResult))
+            oci_free_statement($dbResult);
+    }
+
+	protected $date_formats = array(
+        '%Y-%m-%d' => 'YYYY-MM-DD',
+        '%Y-%m' => 'YYYY-MM',
+        '%Y' => 'YYYY',
+    );
+
 	 /**
      * @see DBManager::convert()
      */
-    public function convert(
-        $string,
-        $type,
-        array $additional_parameters = array(),
-        array $additional_parameters_oracle_only = array()
-        )
+    public function convert($string, $type, array $additional_parameters = array())
     {
         // convert the parameters array into a comma delimited string
         $additional_parameters_string = '';
-        foreach ($additional_parameters as $value) {
-			$additional_parameters_string.=",".$value;
-		}
-	    $additional_parameters_string_oracle_only='';
-		foreach ($additional_parameters_oracle_only as $value) {
-			$additional_parameters_string_oracle_only.=",".$value;
-		}
-    	if (!empty($additional_parameters_string_oracle_only)) {
-			$additional_parameters_string=$additional_parameters_string_oracle_only;
-		}
-		if ( $type == 'CONCAT' && empty($additional_parameters_oracle_only) ) {
-		    return $string;
-		}
+        if (!empty($additional_parameters))
+            $additional_parameters_string = ','.implode(',',$additional_parameters);
+		// TODO: add defaults to date/time formats
         switch ($type) {
-        case 'date': return "to_date($string, 'YYYY-MM-DD')";
-        case 'time': return "to_date($string, 'HH24:MI:SS')";
-        case 'datetime': return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'".$additional_parameters_string.")";
-        case 'today': return "sysdate";
-        case 'left': return "LTRIM($string".$additional_parameters_string.")";
-        case 'date_format': return "TO_CHAR($string".$additional_parameters_string.")";
-        case 'time_format': return "TO_CHAR($string".$additional_parameters_string.")";
-        case 'IFNULL': return "NVL($string".$additional_parameters_string.")";
-        case 'CONCAT': return "$string||".implode("||",$additional_parameters_oracle_only);
-        case 'text2char': return "to_char($string)";
+            case 'date':
+                return "to_date($string, 'YYYY-MM-DD')";
+            case 'time':
+                return "to_date($string, 'HH24:MI:SS')";
+            case 'datetime':
+                return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'".$additional_parameters_string.")";
+            case 'today':
+                return "sysdate";
+            case 'left':
+                return "LTRIM($string".$additional_parameters_string.")";
+            case 'date_format':
+                if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
+                    $format = $this->date_formats[$additional_parameters[0]];
+                    return "TO_CHAR($string, '$format')";
+                } else {
+                   return "TO_CHAR($string, 'YYYY-MM-DD')";
+                }
+            case 'time_format':
+                if(empty($additional_parameters_string)) {
+                    $additional_parameters_string = ",'HH24:MI:SS'";
+                }
+                return "TO_CHAR($string".$additional_parameters_string.")";
+            case 'IFNULL':
+                return "NVL($string".$additional_parameters_string.")";
+            case 'CONCAT':
+                return "$string||".implode("||",$additional_parameters);
+            case 'text2char':
+                return "to_char($string)";
+            case 'quarter':
+                return "TO_CHAR($string, 'Q')";
+            case "length":
+                return "LENGTH($string)";
         }
 
-        return "$string";
+        return $string;
     }
 
     /**
      * @see DBManager::fromConvert()
      */
-    public function fromConvert(
-        $string,
-        $type)
+    public function fromConvert($string, $type)
     {
+        // YYYY-MM-DD HH:MM:SS
         switch($type) {
-        case 'date': return substr($string, 0,11);
-        case 'time': return substr($string, 11);
+            case 'date': return substr($string, 0, 10);
+            case 'time': return substr($string, 11);
 		}
-
 		return $string;
     }
 
@@ -998,12 +724,7 @@ class OracleManager extends DBManager
     /**
      * @see DBManager::createTableSQLParams()
 	 */
-	public function createTableSQLParams(
-        $tablename,
-        $fieldDefs,
-        $indices,
-        $engine = null
-        )
+	public function createTableSQLParams($tablename, $fieldDefs, $indices)
     {
         $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
         if(empty($columns))
@@ -1019,7 +740,607 @@ class OracleManager extends DBManager
     public function isTextType($type)
     {
         $type = strtolower($type);
-        return ($type == 'clob');
+        return ($type == 'clob' || $this->getColumnType($type) == 'clob');
     }
+
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::orderByEnum()
+     */
+    public function orderByEnum($order_by, $values, $order_dir)
+    {
+		$i = 0;
+        $order_by_arr = array();
+        foreach ($values as $key => $value) {
+			array_push($order_by_arr, $this->quoted($key).", $i");
+			$i++;
+		}
+		return "DECODE($order_by, ".implode(',', $order_by_arr).", $i) $order_dir\n";
+    }
+
+    public function renameColumnSQL($tablename, $column, $newname)
+    {
+        return "ALTER TABLE $tablename RENAME COLUMN '$column' TO '$newname'";
+    }
+
+    /**
+     * returns SQL to create constraints or indices
+     *
+     * @param  object $bean SugarBean instance
+     * @return string SQL statement
+     */
+	public function createConstraintSql(SugarBean $bean)
+    {
+		return $this->getConstraintSql($bean->getIndices(), $bean->getTableName());
+	}
+
+    /**
+	 * @see DBHelper::massageValue()
+	 */
+	public function massageValue($val, $fieldDef)
+    {
+        $type = $this->getFieldType($fieldDef);
+        switch ($type) {
+            case 'int':
+            case 'uint':
+            case 'ulong':
+            case 'long':
+            case 'short':
+            case 'bool':
+                if (!empty($fieldDef['required']) && $fieldDef['required'] == true && $val == ''){
+                    if (isset($fieldDef['default'])){
+                        return $fieldDef['default'];
+                    }
+                    return 0;
+                }
+                return intval($val);
+            case 'double':
+            case 'float':
+            case 'currency':
+                if (!empty($fieldDef['required']) && $fieldDef['required'] == true && $val == ''){
+                    if (isset($fieldDef['default'])){
+                        return $fieldDef['default'];
+                    }
+                    return 0;
+                }
+                return floatval($val);
+        }
+
+        if($this->type_map[$type] == 'clob') {
+            return "EMPTY_CLOB()";
+        }
+
+        if($this->type_map[$type] == 'blob') {
+            return "EMPTY_BLOB()";
+        }
+
+        $qval = $this->quoted($val);
+        switch($type) {
+            case 'date':
+                $val = explode(" ", $val); // make sure that we do not pass the time portion
+                $val = $val[0];            // get the date portion
+                return "TO_DATE($qval, 'YYYY-MM-DD')";
+            case 'datetime':
+                return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
+            case 'time':
+                return "TO_DATE($qval, 'HH24:MI:SS')";
+            default:
+                if (!$val or $val == '')
+                    return "''";
+		}
+
+        return $qval;
+    }
+
+	/**
+     * @see DBHelper::oneColumnSQLRep()
+     */
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    {
+		//Bug 25814
+		if(isset($fieldDef['name'])){
+			$name = $fieldDef['name'];
+	        $type = $this->getFieldType($fieldDef);
+	        $colType = $this->getColumnType($type, $name, $table);
+	    	if(stristr($colType, 'decimal')){
+				$fieldDef['len'] = min($fieldDef['len'],38);
+			}
+		}
+
+		return parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array);
+	}
+
+	/**
+	 * returns true if the field is nullable
+	 *
+	 * @param  string $tableName
+	 * @param  string $fieldName
+	 * @return bool
+	 */
+	protected function _isNullableDb($tableName, $fieldName)
+	{
+		return $this->db->getOne("SELECT nullable FROM user_tab_columns
+				WHERE TABLE_NAME = '".strtoupper($tableName)."'
+					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
+	}
+
+	/**
+     * @see DBHelper::changeColumnSQL()
+     *
+     * Oracle's ALTER TABLE syntax is a bit different from the other rdbmss
+     */
+    protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
+    {
+        $tablename = strtoupper($tablename);
+        $action = strtoupper($action);
+
+        $columns = "";
+        if ($this->isFieldArray($fieldDefs)) {
+            /**
+             *jc: if we are dropping columns we do not need the
+             * column definition data provided with the oneColumnSQLRep
+             * method. instead we only need the column names.
+             */
+        	$addColumns = array();
+			foreach($fieldDefs as $def) {
+                switch(strtoupper($action)) {
+                case 'DROP':
+                    $addColumns[] = $def['name'];
+                    break;
+                case 'ADD':
+                case 'MODIFY':
+					$colArray = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
+					$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+					if ( !$ignoreRequired
+							&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
+					  	$colArray['required'] = '';
+					$addColumns[] = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+                	break;
+                }
+			}
+        	$columns = "(" . implode(",", $addColumns) . ")";
+        }
+        else {
+            switch(strtoupper($action)) {
+            case 'DROP':
+                $columns = $fieldDefs['name'];
+                break;
+            case 'ADD':
+            case 'MODIFY':
+				$colArray = $this->oneColumnSQLRep($fieldDefs, $ignoreRequired, $tablename, true);
+				$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+				if ( !$ignoreRequired
+						&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
+					$colArray['required'] = '';
+				$columns = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
+				break;
+            }
+        }
+        if ( $action == 'DROP' )
+            $action = 'DROP COLUMN';
+        return ($columns == '' || empty($columns))
+            ? ""
+            : "ALTER TABLE $tablename $action $columns";
+    }
+
+	/**
+     * @see DBHelper::dropTableNameSQL()
+     */
+    public function dropTableNameSQL($name)
+    {
+		return "DROP TABLE ". strtoupper($name);
+    }
+
+    /**
+     * Fixes an Oracle index name
+     *
+     * Oracle has a strict limit on the size of object names (30 characters). errors will
+     * occur if this is not checked. indexes should follow the naming convention as follows
+     *
+     *   idx_[table name]_[column_](_[column2] ...)
+     *
+     * and columns should be abbreviated by the first three letters or the following abbreviation
+     * chart
+     *
+     * 		u = assigned user
+     *		t = assigned team
+     * 		d = deleted
+     * 		n = name
+     *
+     * @param  string $name index name
+     * @return string
+     */
+    protected function fixIndexName($name)
+    {
+    	$result = $this->query(
+            "SELECT COUNT(*) CNT
+                FROM USER_INDEXES
+                WHERE INDEX_NAME = '$name'
+                    OR INDEX_NAME = '".strtoupper($name)."'");
+		$row = $this->db->fetchByAssoc($result);
+		return ($row['cnt'] > 1) ? $name . (intval($row['cnt']) + 1) : $name;
+    }
+
+    /**
+     * Generates an index name for the repair table
+     *
+     * If the last character is not an 'r', make it that; else make it '1'
+     *
+     * @param  string $index_name
+     * @return string
+     */
+	protected function repair_index_name($index_name)
+    {
+		$last_char='r';
+		if (substr($index_name,strlen($index_name) -1,1) =='r')
+			$last_char='1';
+
+		return substr($index_name,0,strlen($index_name)-1). $last_char;
+	}
+
+    /**
+     * @see DBHelper::getAutoIncrement()
+     */
+    public function getAutoIncrement($table, $field_name)
+    {
+	    $currval = $this->getOne("SELECT max($field_name) currval FROM $table");
+        if (!empty($currval))
+            return $currval + 1 ;
+
+        return "";
+    }
+
+	/**
+     * @see DBHelper::getAutoIncrement()
+     */
+    public function getAutoIncrementSQL($table, $field_name)
+    {
+        return $this->_getSequenceName($table, $field_name, true) . '.nextval';
+    }
+
+    /**
+     * @see DBHelper::setAutoIncrement()
+     */
+    protected function setAutoIncrement($table, $field_name)
+    {
+      	$this->deleteAutoIncrement($table, $field_name);
+      	$this->query(
+            'CREATE SEQUENCE ' . $this->_getSequenceName($table, $field_name, true) .
+                ' START WITH 0 increment by 1 nomaxvalue minvalue 0');
+		$this->query(
+            'SELECT ' . $this->_getSequenceName($table, $field_name, true) .
+                '.NEXTVAL FROM DUAL');
+
+        return "";
+    }
+
+	/**
+     * Sets the next auto-increment value of a column to a specific value.
+     *
+     * @param  string $table tablename
+     * @param  string $field_name
+     */
+    public function setAutoIncrementStart($table, $field_name, $start_value)
+    {
+    	$sequence_name = $this->_getSequenceName($table, $field_name, true);
+    	$result = $this->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
+    	$row = $this->db->fetchByAssoc($result);
+    	$current = $row['currval'];
+    	$change = $start_value - $current - 1;
+    	$this->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY $change");
+        $this->query("SELECT {$sequence_name}.NEXTVAL FROM DUAL");
+        $this->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY 1");
+
+    	return true;
+    }
+
+	/**
+     * @see DBHelper::deleteAutoIncrement()
+     */
+    public function deleteAutoIncrement($table, $field_name)
+    {
+	  	$sequence_name = $this->_getSequenceName($table, $field_name, true);
+	  	if ($this->_findSequence($sequence_name)) {
+            $this->query('DROP SEQUENCE ' .$sequence_name);
+        }
+    }
+
+    /**
+     * @see DBHelper::updateSQL()
+     */
+    public function updateSQL(SugarBean $bean, array $where = array())
+    {
+		// get field definitions
+        $primaryField = $bean->getPrimaryFieldDefinition();
+        $columns = array();
+
+		// get column names and values
+		foreach ($bean->getFieldDefinitions() as $fieldDef) {
+            $name = $fieldDef['name'];
+            if ($name == $primaryField['name'])
+                continue;
+            if (isset($bean->$name)
+                    && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
+                $val = $bean->getFieldValue($name);
+			   	// clean the incoming value..
+			   	$val = from_html($val);
+
+                if (strlen($val) <= 0)
+                    $val = null;
+
+		        // need to do some thing about types of values
+		        $val = $this->massageValue($val, $fieldDef);
+		        $columns[] = "$name=$val";
+            }
+		}
+
+		if (sizeof ($columns) == 0)
+            return ""; // no columns set
+
+		$where = $this->updateWhereArray($bean, $where);
+        $where = $this->getWhereClause($bean, $where);
+
+        // get the entire sql
+		return "UPDATE ".$bean->getTableName()." SET ".implode(",", $columns)." $where ";
+	}
+
+    /**
+     * @see DBHelper::get_indices()
+     */
+    public function get_indices($tablename,$indexname = null)
+    {
+		$tablename = strtoupper($tablename);
+		$indexname = strtoupper($this->getValidDBName($indexname, true, 'index'));
+
+        //find all unique indexes and primary keys.
+		$query = <<<EOQ
+select a.index_name, c.column_name, b.constraint_type, c.column_position
+    from user_indexes a
+        inner join user_ind_columns c
+            on c.index_name = a.index_name
+        left join user_constraints b
+            on b.constraint_name = a.index_name
+                and b.table_name='$tablename'
+    where a.table_name='$tablename'
+        and a.index_type='NORMAL'
+EOQ;
+        if (!empty($indexname)) {
+            $query .= " and a.index_name='$indexname'";
+        }
+        $query .= " order by a.index_name,c.column_position";
+        $result = $this->query($query);
+
+        $indices = array();
+		while (($row=$this->fetchByAssoc($result)) !=null) {
+            $index_type='index';
+            if ($row['constraint_type'] =='P')
+                $index_type='primary';
+            if ($row['constraint_type'] =='U')
+                $index_type='unique';
+
+            $name = strtolower($row['index_name']);
+            $indices[$name]['name']=$name;
+            $indices[$name]['type']=$index_type;
+            $indices[$name]['fields'][]=strtolower($row['column_name']);
+        }
+
+        return $indices;
+	}
+
+    /**
+     * Get list of DB column definitions
+     */
+    public function get_columns($tablename)
+    {
+        //find all unique indexes and primary keys.
+        $result = $this->query(
+            "SELECT * FROM user_tab_columns WHERE TABLE_NAME = '".strtoupper($tablename)."'");
+
+        $columns = array();
+        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+            $name = strtolower($row['column_name']);
+            $columns[$name]['name']=$name;
+            $columns[$name]['type']=strtolower($row['data_type']);
+            if ( $columns[$name]['type'] == 'number' ) {
+                $columns[$name]['len']=
+                    ( !empty($row['data_precision']) ? $row['data_precision'] : '3');
+                if ( !empty($row['data_scale']) )
+                    $columns[$name]['len'].=','.$row['data_scale'];
+            }
+            elseif ( in_array($columns[$name]['type']
+                ,array('date','clob','blob')) ) {
+                // do nothing
+            }
+            else
+                $columns[$name]['len']=strtolower($row['char_length']);
+            if ( !empty($row['data_default']) ) {
+                $matches = array();
+                $row['data_default'] = html_entity_decode($row['data_default'],ENT_QUOTES);
+                if ( preg_match("/'(.*)'/i",$row['data_default'],$matches) )
+                    $columns[$name]['default'] = $matches[1];
+            }
+
+            $sequence_name = $this->_getSequenceName($tablename, $row['column_name'], true);
+            if ($this->_findSequence($sequence_name))
+                $columns[$name]['auto_increment'] = '1';
+            elseif ( $row['nullable'] == 'N' )
+                $columns[$name]['required'] = 'true';
+        }
+        return $columns;
+    }
+
+    /**
+     * Returns true if the sequence name given is found
+     *
+     * @param  string $name
+     * @return bool   true if the sequence is found, false otherwise
+     */
+    protected function _findSequence($name)
+    {
+        global $sugar_config;
+        $db_user_name = isset($sugar_config['dbconfig']['db_user_name'])?$sugar_config['dbconfig']['db_user_name']:'';
+        $db_user_name = strtoupper($db_user_name);
+
+        if ( !is_array(self::$sequences) ) {
+            $result = $this->query(
+                "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' ");
+            while ( $row = $this->db->fetchByAssoc($result) )
+                $sequences[] = $row['sequence_name'];
+        }
+        if ( !is_array($sequences) )
+            return false;
+        else
+            return in_array($name,$sequences);
+    }
+
+	/**
+     * @see DBHelper::add_drop_constraint()
+     */
+    public function add_drop_constraint($table, $definition, $drop = false)
+    {
+        $type         = $definition['type'];
+        $fields       = is_array($definition['fields'])?implode(',',$definition['fields']):$definition['fields'];
+        $name         = $this->getValidDBName($definition['name'], true, 'index');
+        $sql          = '';
+
+        /**
+         * Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY
+         * and UNIQUE (which can defined inline with the CREATE TABLE)
+         */
+        switch ($type){
+        // generic indices
+        case 'index':
+        case 'alternate_key':
+        case 'clustered':
+            if ($drop)
+                $sql = "DROP INDEX {$name}";
+            else
+                $sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
+            break;
+        // constraints as indices
+        case 'unique':
+            if ($drop)
+                $sql = "ALTER TABLE {$table} DROP UNIQUE ({$fields})";
+            else
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE ({$fields})";
+            break;
+        case 'primary':
+            if ($drop)
+                $sql = "ALTER TABLE {$table} DROP PRIMARY KEY CASCADE";
+            else
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fields})";
+            break;
+        case 'foreign':
+            if ($drop)
+                $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
+            else
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FORIEGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
+            break;
+        case 'fulltext':
+                if($drop) {
+                    $sql = "DROP INDEX {$name}";
+                } elseif ($this->full_text_indexing_enabled()) {
+                    $indextype=$definition['indextype'];
+                    $parameters="";
+                    //add parameters attribute if oracle version of 10 or more.
+                    $ver = $this->version();
+                    $tok = strtok($ver, '.');
+                    if ($tok !== false && $tok > 9) {
+                        $parameters = isset($definition['parameters'])
+                            ? "parameters ('". $definition['parameters']. "')" : "";
+                    }
+                   $sql = "CREATE INDEX {$name} ON $table($fields) INDEXTYPE IS $indextype $parameters";
+                }
+                break;
+        }
+        return $sql;
+	}
+
+    /**
+     * @see DBHelper::rename_index()
+     */
+    public function rename_index($old_definition, $new_definition, $table_name)
+    {
+        $old_definition = $this->getValidDBName($old_definition, true, 'index');
+        $new_definition = $this->getValidDBName($new_definition, true, 'index');
+        return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
+    }
+
+    /**
+     * @see DBHelper::massageFieldDef()
+     */
+    public function massageFieldDef($fieldDef, $tablename)
+    {
+        parent::massageFieldDef($fieldDef,$tablename);
+
+        if ($fieldDef['name'] == 'id')
+            $fieldDef['required'] = 'true';
+        if ($fieldDef['dbType'] == 'decimal')
+            $fieldDef['len'] = '20,2';
+        if ($fieldDef['dbType'] == 'decimal2')
+            $fieldDef['len'] = '30,6';
+        if ($fieldDef['dbType'] == 'double')
+            $fieldDef['len'] = '30,10';
+        if ($fieldDef['dbType'] == 'float')
+            $fieldDef['len'] = '30,6';
+        if ($fieldDef['dbType'] == 'uint')
+            $fieldDef['len'] = '15';
+        if ($fieldDef['dbType'] == 'ulong')
+            $fieldDef['len'] = '38';
+        if ($fieldDef['dbType'] == 'long')
+            $fieldDef['len'] = '38';
+        if ($fieldDef['dbType'] == 'enum')
+            $fieldDef['len'] = '255';
+        if ($fieldDef['dbType'] == 'bool')
+            $fieldDef['len'] = '1';
+        if ($fieldDef['dbType'] == 'id')
+            $fieldDef['len'] = '36';
+        if ($fieldDef['dbType'] == 'currency')
+            $fieldDef['len'] = '26,6';
+        if ($fieldDef['dbType'] == 'short')
+            $fieldDef['len'] = '3';
+        if ($fieldDef['dbType'] == 'tinyint')
+            $fieldDef['len'] = '3';
+        if ($fieldDef['dbType'] == 'int')
+            $fieldDef['len'] = '3';
+        if ($fieldDef['type'] == 'int' && empty($fieldDef['len']) )
+            $fieldDef['len'] = '';
+        if ($fieldDef['dbType'] == 'enum')
+            $fieldDef['len'] = '255';
+        if ($fieldDef['type'] == 'varchar2' && empty($fieldDef['len']) )
+            $fieldDef['len'] = '255';
+
+    }
+
+    /**
+     * Generate an Oracle SEQUENCE name. If the length of the sequence names exceeds a certain amount
+     * we will use an md5 of the field name to shorten.
+     *
+     * @param string $table
+     * @param string $field_name
+     * @param boolean $upper_case
+     * @return string
+     */
+    protected function _getSequenceName($table, $field_name, $upper_case = true)
+    {
+        $sequence_name = $this->getValidDBName($table. '_' .$field_name . '_seq', true, 'index');
+        if($upper_case)
+            $sequence_name = strtoupper($sequence_name);
+        return $sequence_name;
+    }
+
+    /**
+     * @see DBHelper::deleteColumnSQL()
+     */
+	public function deleteColumnSQL(SugarBean $bean, $fieldDefs)
+    {
+        if ($this->isFieldArray($fieldDefs))
+            foreach ($fieldDefs as $fieldDef)
+                $columns[] = $fieldDef['name'];
+        else
+            $columns[] = $fieldDefs['name'];
+
+        return "ALTER TABLE ".$bean->getTableName()." DROP COLUMN (".implode(", ", $columns).")";
+	}
 }
 
