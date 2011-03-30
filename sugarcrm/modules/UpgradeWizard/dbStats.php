@@ -330,11 +330,11 @@ function checkColumnKeysIndices($relationship,$table,$rel_key,&$col_data_type,&$
 
 function checkSchema($execute=false,$return=false){
 
-	
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
-	
+
 	$db = DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
@@ -815,53 +815,3 @@ function checkIndexExists($table_name,$column_name){
 	return $row;
 }
 
-
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-/*
-function createTable(SugarBean $bean,$execute=false)
-{
-	$sql = $this->getHelper()->createTableSQL($bean);
-	$this->tableName = $bean->getTableName();
-	$msg = "Error creating table: ".$this->tableName. ":";
-	$this->query($sql,true,$msg);
-}
-
-/**
- * Implements creation of a db table
- *
- * @param string $tablename
- * @param array  $fieldDefs
- * @param array  $indices
- * @param string $engine    MySQL engine to use
- */
- /*
-function createTableParams($tablename,$fieldDefs,$indices,$engine = null,$execute=false)
-{
-	if (!empty($fieldDefs)) {
-	    $sql = $this->getHelper()
-	                ->createTableSQLParams($tablename, $fieldDefs, $indices,$engine);
-	    $this->tableName = $tablename;
-	    if ($sql) {
-	        $msg = "Error creating table: ".$this->tableName. ":";
-	        $this->query($sql,true,$msg);
-	    }
-	}
-}
-
-$newUWMsg =<<<eoq
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th colspan="2" align="center">
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-			<h1><span class='error'><b>Schema_Inconsistentcies.txt file is generated after the DB Scan </b></span></h1>
-
-			<h1><span class='error'><b><a href=cache/upload/dbscan/schema_inconsistencies.txt>Download DB Scan Results File</a></b></span></h1>
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-		</th>
-	</tr>
-</table>
-eoq;
-echo $newUWMsg;
-*/
-?>

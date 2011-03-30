@@ -474,10 +474,8 @@ if($ce_to_pro_ent) {
         include('modules/Administration/upgradeTeams.php'); 
         logThis(" Finish modules/Administration/upgradeTeams.php", $path);
         
-    if($sugar_config['dbconfig']['db_type'] == 'mssql') {
-            if(check_FTS()){
-                $GLOBALS['db']->wakeupFTS();
-            }
+    if(check_FTS()){
+    	$GLOBALS['db']->full_text_indexing_setup();
     }  
 }
 

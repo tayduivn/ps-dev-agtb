@@ -72,18 +72,8 @@ class CampaignLog extends SugarBean {
             $emptyArr = array();
             return $emptyArr;
         }
-        if ( ( $this->db->dbType == 'mysql' ) or ( $this->db->dbType == 'oci8' ) )
-        {
-            $query="select first_name, last_name, CONCAT(CONCAT(first_name, ' '), last_name) name from ".strtolower($temp_array['TARGET_TYPE']) .  " where id ='{$temp_array['TARGET_ID']}'";
-        }
-        if($this->db->dbType == 'mssql')
-        {
-            $query="select first_name, last_name, (first_name + ' ' + last_name) name from ".strtolower($temp_array['TARGET_TYPE']) .  " where id ='{$temp_array['TARGET_ID']}'";
-        }
-        if($temp_array['TARGET_TYPE']=='Accounts'){
-               $query="select name from ".strtolower($temp_array['TARGET_TYPE']) .  " where id ='{$temp_array['TARGET_ID']}'";
-        }
-
+        $query = "select first_name, last_name, ".$this->db->concat(array('first_name', 'last_name'))." name from ".strtolower($temp_array['TARGET_TYPE']) .
+        	" where id = ".$this->db->quoted($temp_array['TARGET_ID']);
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
 
@@ -105,7 +95,7 @@ class CampaignLog extends SugarBean {
         {
         	$temp_array['MARKETING_NAME'] = $row['name'];
         }
-        
+
         return $temp_array;
     }
 

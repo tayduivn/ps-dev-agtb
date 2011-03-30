@@ -76,6 +76,39 @@ include_once('include/database/MssqlManager.php');
 
 class SqlsrvManager extends MssqlManager
 {
+    protected $type_map = array(
+            'int'      => 'int',
+            'double'   => 'float',
+            'float'    => 'float',
+            'uint'     => 'int',
+            'ulong'    => 'int',
+            'long'     => 'bigint',
+            'short'    => 'smallint',
+            'varchar'  => 'nvarchar',
+            'text'     => 'nvarchar(max)',
+            'longtext' => 'nvarchar(max)',
+            'date'     => 'datetime',
+            'enum'     => 'nvarchar',
+            'relate'   => 'nvarchar',
+            'multienum'=> 'nvarchar(max)',
+            'html'     => 'nvarchar(max)',
+            'datetime' => 'datetime',
+            'datetimecombo' => 'datetime',
+            'time'     => 'datetime',
+            'bool'     => 'bit',
+            'tinyint'  => 'tinyint',
+            'char'     => 'char',
+            'blob'     => 'nvarchar(max)',
+            'longblob' => 'nvarchar(max)',
+            'currency' => 'decimal(26,6)',
+            'decimal'  => 'decimal',
+            'decimal2' => 'decimal',
+            'id'       => 'varchar(36)',
+            'url'      => 'nvarchar',
+            'encrypt'  => 'nvarchar',
+            'file'     => 'nvarchar',
+            );
+
     /**
      * @see DBManager::$backendFunctions
      */
@@ -83,10 +116,6 @@ class SqlsrvManager extends MssqlManager
         'free_result' => 'sqlsrv_free_stmt',
         'close'       => 'sqlsrv_close',
         );
-
-    protected $capabilities = array(
-        "affected_rows" => true,
-    );
 
     /**
      * cache of the results sets as they are fetched
@@ -108,10 +137,7 @@ class SqlsrvManager extends MssqlManager
 	/**
      * @see DBManager::connect()
      */
-    public function connect(
-        array $configOptions = null,
-        $dieOnError = false
-        )
+    public function connect(array $configOptions = null, $dieOnError = false)
     {
         global $sugar_config;
 
@@ -157,10 +183,7 @@ class SqlsrvManager extends MssqlManager
 	/**
      * @see DBManager::checkError()
      */
-    public function checkError(
-        $msg = '',
-        $dieOnError = false
-        )
+    public function checkError($msg = '', $dieOnError = false)
     {
         if (DBManager::checkError($msg, $dieOnError))
             return true;
@@ -201,12 +224,7 @@ class SqlsrvManager extends MssqlManager
 	/**
      * @see DBManager::query()
 	 */
-	public function query(
-        $sql,
-        $dieOnError = false,
-        $msg = '',
-        $suppress = false
-        )
+	public function query($sql, $dieOnError = false, $msg = '', $suppress = false)
     {
 		global $app_strings;
 
@@ -217,19 +235,7 @@ class SqlsrvManager extends MssqlManager
         $this->checkConnection();
         $this->query_time = microtime(true);
 
-		if ($suppress) {
-            //BEGIN SUGARCRM flav=ent ONLY
-            //suppress flag is when you are using CSQL and make a bad query.
-            //We don't want any php errors to appear
-            $orig_level = error_reporting();
-            error_reporting(0);
-            $result = sqlsrv_query($this->database, $sql);
-            error_reporting($orig_level);
-            //END SUGARCRM flav=ent ONLY
-        }
-        else {
-            $result = @sqlsrv_query($this->database, $sql);
-        }
+        $result = $suppress?@sqlsrv_query($this->database, $sql):sqlsrv_query($this->database, $sql);
 
         if (!$result) {
             // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
@@ -243,10 +249,6 @@ class SqlsrvManager extends MssqlManager
 			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
 				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
 			else {
-				//BEGIN SUGARCRM flav=int ONLY
-				_pp($sql);
-				display_stack_trace();
-				//END SUGARCRM flav=int ONLY
 				$GLOBALS['log']->fatal($sqlmsg . ": " . $sql );
 				if($dieOnError)
 					sugar_die('SQL Error : ' . $sqlmsg);
@@ -254,7 +256,6 @@ class SqlsrvManager extends MssqlManager
 					echo 'SQL Error : ' . $sqlmsg;
 			}
         }
-        $this->lastmysqlrow = -1;
 
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
@@ -366,17 +367,12 @@ class SqlsrvManager extends MssqlManager
     /**
      * @see DBManager::convert()
      */
-    public function convert(
-        $string,
-        $type,
-        array $additional_parameters = array(),
-        array $additional_parameters_oracle_only = array()
-        )
+    public function convert($string, $type, array $additional_parameters = array())
     {
         if ( $type == 'datetime')
-            return "CONVERT(varchar(25)," . $string . ",120)";
+            return "CONVERT(varchar(25),$string,120)";
         else
-            return parent::convert($string, $type, $additional_parameters, $additional_parameters_oracle_only);
+            return parent::convert($string, $type, $additional_parameters);
     }
 
     /**
@@ -386,9 +382,7 @@ class SqlsrvManager extends MssqlManager
      * @param  $sql string SQL statement
      * @return string SQL statement with single quote values prepended with "N" character for nvarchar columns
      */
-    private function _appendN(
-       $sql
-       )
+    private function _appendN($sql)
     {
         // If there are no single quotes, don't bother, will just assume there is no character data
         if (strpos($sql, "'") === false)
@@ -417,7 +411,7 @@ class SqlsrvManager extends MssqlManager
             }
         }
 
-        $regexp  = "/(N?\'.+?\')/is";
+        $regexp  = "/(N?'.+?')/is";
         $matches = array();
         preg_match_all($regexp, $sql, $matches);
         $replace = array();
@@ -460,5 +454,207 @@ class SqlsrvManager extends MssqlManager
             }
         }
         return parent::compareVarDefs($fielddef1, $fielddef2);
+    }
+
+    /**
+     * Disconnects from the database
+     *
+     * Also handles any cleanup needed
+     */
+    public function disconnect()
+    {
+    	$GLOBALS['log']->debug('Calling Mssql::disconnect()');
+        if(!empty($this->database)){
+            $this->freeResult();
+            sqlsrv_close($this->database);
+            $this->database = null;
+        }
+    }
+
+    /**
+     * @see DBManager::freeDbResult()
+     */
+    protected function freeDbResult($dbResult)
+    {
+        if(!empty($dbResult))
+            sqlsrv_free_stmt($dbResult);
+    }
+
+
+	/**
+	 * Detect if no clustered index has been created for a table; if none created then just pick the first index and make it that
+	 *
+	 * @see MssqlHelper::indexSQL()
+     */
+    public function getConstraintSql($indices, $table)
+    {
+        if ( $this->doesTableHaveAClusteredIndexDefined($table) ) {
+            return parent::getConstraintSql($indices, $table);
+        }
+
+        // check to see if one of the passed in indices is a primary one; if so we can bail as well
+        foreach ( $indices as $index ) {
+            if ( $index['type'] == 'primary' ) {
+                return parent::getConstraintSql($indices, $table);
+            }
+        }
+
+        // Change the first index listed to be a clustered one instead ( so we have at least one for the table )
+        if ( isset($indices[0]) ) {
+            $indices[0]['type'] = 'clustered';
+        }
+
+        return parent::getConstraintSql($indices, $table);
+    }
+
+    /**
+     * @see DBHelper::get_columns()
+     */
+    public function get_columns($tablename)
+    {
+        //find all unique indexes and primary keys.
+        $result = $this->db->query("sp_columns_90 $tablename");
+
+        $columns = array();
+        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+            $column_name = strtolower($row['COLUMN_NAME']);
+            $columns[$column_name]['name']=$column_name;
+            $columns[$column_name]['type']=strtolower($row['TYPE_NAME']);
+            if ( $row['TYPE_NAME'] == 'decimal' ) {
+                $columns[$column_name]['len']=strtolower($row['PRECISION']);
+                $columns[$column_name]['len'].=','.strtolower($row['SCALE']);
+            }
+			elseif ( in_array($row['TYPE_NAME'],array('nchar','nvarchar')) ) {
+				$columns[$column_name]['len']=strtolower($row['PRECISION']);
+				if ( $row['TYPE_NAME'] == 'nvarchar' && $row['PRECISION'] == '0' ) {
+				    $columns[$column_name]['len']='max';
+				}
+			}
+            elseif ( !in_array($row['TYPE_NAME'],array('datetime','text')) ) {
+                $columns[$column_name]['len']=strtolower($row['LENGTH']);
+            }
+            if ( stristr($row['TYPE_NAME'],'identity') ) {
+                $columns[$column_name]['auto_increment'] = '1';
+                $columns[$column_name]['type']=str_replace(' identity','',strtolower($row['TYPE_NAME']));
+            }
+
+            if (!empty($row['IS_NULLABLE']) && $row['IS_NULLABLE'] == 'NO' && (empty($row['KEY']) || !stristr($row['KEY'],'PRI')))
+                $columns[strtolower($row['COLUMN_NAME'])]['required'] = 'true';
+
+            $column_def = 0;
+            if ( strtolower($tablename) == 'relationships' ) {
+                $column_def = $this->db->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
+            }
+            if ( $column_def != 0 ) {
+                $matches = array();
+                $row['COLUMN_DEF'] = html_entity_decode($row['COLUMN_DEF'],ENT_QUOTES);
+                if ( preg_match('/\([\(|\'](.*)[\)|\']\)/i',$row['COLUMN_DEF'],$matches) )
+                    $columns[$column_name]['default'] = $matches[1];
+                elseif ( preg_match('/\(N\'(.*)\'\)/i',$row['COLUMN_DEF'],$matches) )
+                    $columns[$column_name]['default'] = $matches[1];
+                else
+                    $columns[$column_name]['default'] = $row['COLUMN_DEF'];
+            }
+        }
+        return $columns;
+    }
+
+    /**
+     * @see DBHelper::get_indices()
+     */
+    public function get_indices($tableName)
+    {
+        //find all unique indexes and primary keys.
+        $query = <<<EOSQL
+SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as column_name,
+        sys.indexes.name as index_name, sys.indexes.is_unique, sys.indexes.is_primary_key
+    FROM sys.tables, sys.indexes, sys.index_columns, sys.columns
+    WHERE (sys.tables.object_id = sys.indexes.object_id
+            AND sys.tables.object_id = sys.index_columns.object_id
+            AND sys.tables.object_id = sys.columns.object_id
+            AND sys.indexes.index_id = sys.index_columns.index_id
+            AND sys.index_columns.column_id = sys.columns.column_id)
+        AND sys.tables.name = '$tableName'
+EOSQL;
+        $result = $this->db->query($query);
+
+        $indices = array();
+        while (($row=$this->db->fetchByAssoc($result)) != null) {
+            $index_type = 'index';
+            if ($row['is_primary_key'] == '1')
+                $index_type = 'primary';
+            elseif ($row['is_unique'] == 1 )
+                $index_type = 'unique';
+            $name = strtolower($row['index_name']);
+            $indices[$name]['name']     = $name;
+            $indices[$name]['type']     = $index_type;
+            $indices[$name]['fields'][] = strtolower($row['column_name']);
+        }
+        return $indices;
+    }
+
+    /**
+     * protected function to return true if the given tablename has any clustered indexes defined.
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    protected function doesTableHaveAClusteredIndexDefined($tableName)
+    {
+        $query = <<<EOSQL
+SELECT IST.TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES IST
+    WHERE objectProperty(object_id(IST.TABLE_NAME), 'IsUserTable') = 1
+        AND objectProperty(object_id(IST.TABLE_NAME), 'TableHasClustIndex') = 1
+        AND IST.TABLE_NAME = '{$tableName}'
+EOSQL;
+
+        $result = $this->db->getOne($query);
+        if ( !$result ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * protected function to return true if the given tablename has any fulltext indexes defined.
+     *
+     * @param  string $tableName
+     * @return bool
+     */
+    protected function doesTableHaveAFulltextIndexDefined($tableName)
+    {
+        $query = <<<EOSQL
+SELECT 1
+    FROM sys.fulltext_indexes i
+        JOIN sys.objects o ON i.object_id = o.object_id
+    WHERE o.name = '{$tableName}'
+EOSQL;
+
+        $result = $this->db->getOne($query);
+        if ( !$result ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Override method to add support for detecting and dropping fulltext indices.
+     *
+     * @see DBHelper::changeColumnSQL()
+     * @see MssqlHelper::changeColumnSQL()
+     */
+    protected function changeColumnSQL($tablename,$fieldDefs, $action, $ignoreRequired = false)
+    {
+        $sql = '';
+        if ( $action == 'drop' && $this->doesTableHaveAFulltextIndexDefined($tablename) ) {
+            $sql .= "DROP FULLTEXT INDEX ON {$tablename}";
+        }
+
+        $sql .= parent::changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
+
+        return $sql;
     }
 }

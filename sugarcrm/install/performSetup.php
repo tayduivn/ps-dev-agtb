@@ -172,10 +172,6 @@ $nonStandardModules = array (
     //'Tracker',
 );
 
-//if working with sql-server create a catalog for full-text indexes.
-if ($GLOBALS['db']->dbType=='mssql') {
-	$GLOBALS['db']->create_default_full_text_catalog();
-}
 /**
  * loop through all the Beans and create their tables
  */
@@ -624,11 +620,8 @@ enableSugarFeeds();
 
 //BEGIN SUGARCRM flav=pro ONLY
 //If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
-    if($_SESSION['setup_db_type']=='mssql') {
-
-        if(isset($_SESSION['IsFulltextInstalled']) && $_SESSION['IsFulltextInstalled']){
-            $db->wakeupFTS();
-        }
+    if($db->supports('fulltext') && isset($_SESSION['IsFulltextInstalled']) && $_SESSION['IsFulltextInstalled']){
+    	$db->full_text_indexing_setup();
     }
 //END SUGARCRM flav=pro ONLY
 

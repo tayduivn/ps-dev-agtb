@@ -5226,13 +5226,8 @@ function upgradeModulesForTeam() {
 	function check_FTS(){
 		//check to see if FTS is installed in mssql
 		global $sugar_config;
-		if($sugar_config['dbconfig']['db_type'] == 'mssql'){
-			$result = $GLOBALS['db']->query("SELECT FULLTEXTSERVICEPROPERTY('IsFulltextInstalled') is_FTS ");
-			while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-				if(isset($row['is_FTS']) && ($row['is_FTS'] == 1 || $row['is_FTS'] == '1')){
-					return true;
-				}
-			}
+		if($GLOBALS['db']->supports('fulltext') && $GLOBALS['db']->full_text_indexing_installed()) {
+            return true;
 		}
 		return false;
 	}

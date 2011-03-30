@@ -346,8 +346,8 @@ class User extends Person {
 
         return $user->_userPreferenceFocus->isPreferenceSizeTooLarge($category);
 	}
-	
-	
+
+
 	/**
 	 * Interface for the User object to calling the UserPreference::savePreferencesToDB() method in modules/UserPreferences/UserPreference.php
 	 *
@@ -982,14 +982,8 @@ EOQ;
 			$verified = FALSE;
 		}
 
-		if (($current_user->is_admin == "on")) {
-            if($this->db->dbType == 'mssql'){
-                $query = "SELECT user_name from users where is_admin = 1 AND deleted=0";
-            }else{
-                $query = "SELECT user_name from users where is_admin = 'on' AND deleted=0";
-            }
-			$result = $this->db->query($query, true, "Error selecting possible duplicate users: ");
-			$remaining_admins = $this->db->getRowCount($result);
+		if (is_admin($current_user)) {
+			$remaining_admins = $this->db->getOne("SELECT COUNT(*) as c from users where is_admin = 1 AND deleted=0");
 
 			if (($remaining_admins <= 1) && ($this->is_admin != "on") && ($this->id == $current_user->id)) {
 				$GLOBALS['log']->debug("Number of remaining administrator accounts: {$remaining_admins}");

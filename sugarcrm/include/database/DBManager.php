@@ -160,7 +160,15 @@ abstract class DBManager
     protected $type_map = array();
 
     /**
-     * Capabilities this DB supports
+     * Capabilities this DB supports. Supported list:
+     * affected_rows	Can report query affected rows for UPDATE/DELETE
+     * select_rows		Can report row count for SELECT
+     * case_sensitive	Supports case-sensitive text columns
+     * fulltext			Supports fulltext search indexes
+     * inline_keys		Supports defining keys together with the table
+     *
+     * Special cases:
+     * fix:expandDatabase - needs expandDatabase fix, see expandDatabase.php
      */
     protected $capabilities = array();
 
@@ -512,6 +520,7 @@ abstract class DBManager
     /**
 	 * Implements creation of a db table for a bean.
 	 *
+	 * NOTE: does not handle out-of-table constraints, use createConstraintSQL for that
      * @param object $bean  Sugarbean instance
      */
     public function createTable(SugarBean $bean)
@@ -519,8 +528,26 @@ abstract class DBManager
         $sql = $this->createTableSQL($bean);
         $this->tableName = $tablename = $bean->getTableName();
         $msg = "Error creating table: $tablename:";
-        return $this->query($sql,true,$msg);
+        $this->query($sql,true,$msg);
+        if(!$this->supports("inline_keys")) {
+           // handle constraints and indices
+            $indicesArr = $this->createConstraintSql($bean);
+            if (count($indicesArr) > 0)
+        	    foreach ($indicesArr as $indexSql)
+        		    $this->query($indexSql, true, $msg);
+        }
     }
+
+    /**
+     * returns SQL to create constraints or indices
+     *
+     * @param  object $bean SugarBean instance
+     * @return string SQL statement
+     */
+	protected function createConstraintSql(SugarBean $bean)
+    {
+		return $this->getConstraintSql($bean->getIndices(), $bean->getTableName());
+	}
 
     /**
      * Implements creation of a db table
@@ -534,11 +561,19 @@ abstract class DBManager
     {
         if (!empty($fieldDefs)) {
             $sql = $this->createTableSQLParams($tablename, $fieldDefs, $indices,$engine);
-            $this->tableName = $tablename;
+            $res = true;
             if ($sql) {
                 $msg = "Error creating table: $tablename";
-                return $this->query($sql,true,$msg);
+                $res = $res and $this->query($sql,true,$msg);
             }
+            if(!$this->supports("inline_keys")) {
+                // handle constraints and indices
+                $indicesArr = $this->getConstraintSql($indices, $tablename);
+                if (count($indicesArr) > 0)
+                    foreach ($indicesArr as $indexSql)
+                        $res = $res and $this->query($indexSql, true, $msg);
+            }
+            return $res;
         }
         return false;
     }
@@ -941,26 +976,22 @@ abstract class DBManager
      */
     public function dropIndexes($tablename, $indexes, $execute = true)
     {
-        $sql = array();
+        $sqls = array();
         foreach ($indexes as $index) {
             $name =$index['name'];
-            if($execute) {
-               unset(self::$index_descriptions[$tablename][$name]);
-            }
-            if ($index['type'] == 'primary') {
-                $sql[] = 'DROP PRIMARY KEY';
-            } else {
-                $sql[] = "DROP INDEX $name";
-            }
+            $sqls[$name] = $this->add_drop_constraint($tablename,$index,true);
         }
-        if (!empty($sql)) {
-            $sql = "ALTER TABLE $tablename ".join(",", $sql);
-            if($execute)
+        if (!empty($sqls) && $execute) {
+            foreach($sqls as $name => $sql) {
+                unset(self::$index_descriptions[$tablename][$name]);
                 $this->query($sql);
-        } else {
-            $sql = '';
+            }
         }
-        return $sql;
+        if(!empty($sqls)) {
+            return join(";\n",$sqls).";";
+        } else {
+            return '';
+        }
     }
 
     /**
@@ -1643,6 +1674,7 @@ abstract class DBManager
     /**
 	 * Generates sql for create table statement for a bean.
 	 *
+	 * NOTE: does not handle out-of-table constraints, use createConstraintSQL for that
 	 * @param  object $bean SugarBean instance
 	 * @return string SQL Create Table statement
 	 */
@@ -1651,7 +1683,7 @@ abstract class DBManager
 		$tablename = $bean->getTableName();
 		$fieldDefs = $bean->getFieldDefinitions();
 		$indices = $bean->getIndices();
-		return $this->createTableSQLParams($tablename, $fieldDefs, $indices);
+		$sql = $this->createTableSQLParams($tablename, $fieldDefs, $indices);
 	}
 
 	/**
@@ -2562,7 +2594,16 @@ abstract class DBManager
 	    return $this->supports('fulltext');
 	}
 
-    /**
+	public function full_text_indexing_installed()
+	{
+	    return false;
+	}
+
+	public function full_text_indexing_setup()
+	{
+	}
+
+	/**
      * Quotes a string for storing in the database
      * @deprecated
      * Return value will be not surrounded by quotes

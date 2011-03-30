@@ -3,40 +3,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 ////	STANDARD REQUIRED SUGAR INCLUDES AND PRESETS
 if(!defined('sugarEntry')) define('sugarEntry', true);
-	// only run from command line
-
-/*SUGAR.util.evalScript(r.responseText);
-            if (document.getElementById('select_column'))
-				{
-				    var replace=document.getElementById('select_column');
-
-				    if (replace)
-				    {
-				        if (replace.childNodes[0])
-				        {alert(r.responseText);
-				            SUGAR.util.evalScript(replace.childNodes[0].nodeValue=r.responseText);
-				        }
-				        else if (replace.value)
-				        {
-				            SUGAR.util.evalScript(replace.value=r.responseText);
-				        }
-				        else //if (replace.innerHTML)
-				        {
-
-				            SUGAR.util.evalScript(replace.innerHTML=r.responseText);
-				        }
-				    }
-
-				}
-				<div id='tabColumns' name='tabColumns'>
-			       <table>
-				       <tr>
-					   		<span sugar='slot9b'>&nbsp;<select tabindex='1' name='column_name' id='column_id'></select>
-	   						</span sugar='slot'>
-			           </tr>
-			       </table>
-			    </div>
-			*/
 
 require_once('include/JSON.php');
 
@@ -118,21 +84,6 @@ echo "<form name='checkSchema'>
 	</tr>
 </table>
 </form>";
-
-/*
-echo "<b>Tables</b>
-<form name='repairdb'>
-	<input type='hidden' name='action' value='expandDatabase'>
-	<input type='hidden' name='module' value='Administration'>
-	<div id=tables>
-	<select name='do_action' id='do_action' onchange=populateColumns();>
-			$tabDropDown;
-	</select></div>
-	<div id=columns>Columns here</div>
-</form>
-				".$mod_strings['LBL_EXPAND_DATABASE_TEXT'];
-
-*/
 
 function createDatabaseForER_Diagram($sql) {
     global $mod_strings;
@@ -292,11 +243,11 @@ function checkColumnKeysIndices($relationship,$table,$rel_key,&$col_data_type,&$
 
 function checkSchema($execute=false,$return=false){
 
-	
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
-	
+
 	$db = &DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
@@ -399,40 +350,6 @@ function checkSchema($execute=false,$return=false){
             	 }
             }
 	    }
-   /*
-	//print_r($_SESSION['dbScanError']);
-	if(isset($_SESSION['dbScanError']) && $_SESSION['dbScanError'] != null){
-		echo '****************************<b> FOLLOWING SCHEMA INCONSITENCIES EXIST IN DATABASE </b>********************* </br>';
-		echo '</br>';
-	}
-	if(isset($_SESSION['dbScanError']['high']) && $_SESSION['dbScanError']['high'] != null){
-		echo '***************************************************************************************************'.'</br>';
-		echo '*******************<b>SEVERITY HIGH (SCHEMA INCONSISTENCIES)</b>************************'.'</br>';
-		foreach($_SESSION['dbScanError']['high'] as $dbEr){
-			echo $dbEr.'</br>';
-		}
-		echo '*********************************************************'.'</br>';
-		echo '</br>';
-	}
-	if(isset($_SESSION['dbScanError']['medium']) && $_SESSION['dbScanError']['medium'] != null){
-		echo '***************************************************************************************************'.'</br>';
-		echo '*******************<b>SEVERITY MEDIUM (SCHEMA INCONSISTENCIES)</b>**********************'.'</br>';
-		foreach($_SESSION['dbScanError']['medium'] as $dbEr){
-			echo $dbEr.'</br>';
-		}
-		echo '*********************************************************'.'</br>';
-		echo '</br>';
-
-	}
-	if(isset($_SESSION['dbScanError']['low']) && $_SESSION['dbScanError']['low'] != null){
-		echo '***************************************************************************************************'.'</br>';
-		echo '*******************<b>SEVERITY LOW (SCHEMA INCONSISTENCIES)</b>**********************'.'</br>';
-		foreach($_SESSION['dbScanError']['low'] as $dbEr){
-			echo $dbEr.'</br>';
-		}
-		echo '*********************************************************'.'</br>';
-	}
-	*/
 	    $db_scan = '';
 	if(isset($_SESSION['dbScanError']) && $_SESSION['dbScanError'] != null){
 		$db_scan .= "**************************** FOLLOWING SCHEMA INCONSITENCIES EXIST IN DATABASE *********************"."\n";
@@ -649,54 +566,3 @@ function checkIndexExists($table_name,$column_name){
     $row=mysql_fetch_assoc($ct);
 	return $row;
 }
-
-
-//////////////////////////////////////////////
-//////////////////////////////////////////////
-/*
-function createTable(SugarBean $bean,$execute=false)
-{
-	$sql = $this->getHelper()->createTableSQL($bean);
-	$this->tableName = $bean->getTableName();
-	$msg = "Error creating table: ".$this->tableName. ":";
-	$this->query($sql,true,$msg);
-}
-
-/**
- * Implements creation of a db table
- *
- * @param string $tablename
- * @param array  $fieldDefs
- * @param array  $indices
- * @param string $engine    MySQL engine to use
- */
- /*
-function createTableParams($tablename,$fieldDefs,$indices,$engine = null,$execute=false)
-{
-	if (!empty($fieldDefs)) {
-	    $sql = $this->getHelper()
-	                ->createTableSQLParams($tablename, $fieldDefs, $indices,$engine);
-	    $this->tableName = $tablename;
-	    if ($sql) {
-	        $msg = "Error creating table: ".$this->tableName. ":";
-	        $this->query($sql,true,$msg);
-	    }
-	}
-}
-
-$newUWMsg =<<<eoq
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th colspan="2" align="center">
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-			<h1><span class='error'><b>Schema_Inconsistentcies.txt file is generated after the DB Scan </b></span></h1>
-
-			<h1><span class='error'><b><a href=cache/upload/dbscan/schema_inconsistencies.txt>Download DB Scan Results File</a></b></span></h1>
-			<h1><span class='error'><b>************************************************************************</b></span></h1>
-		</th>
-	</tr>
-</table>
-eoq;
-echo $newUWMsg;
-*/
-?>

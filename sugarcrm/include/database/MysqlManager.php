@@ -135,6 +135,7 @@ class MysqlManager extends DBManager
     protected $capabilities = array(
         "affected_rows" => true,
         "select_rows" => true,
+        "inline_keys" => true,
     );
 
     /**
@@ -442,6 +443,9 @@ class MysqlManager extends DBManager
      */
     public function quote($string)
     {
+        if(is_array($string)) {
+            return $this->arrayQuote($string);
+        }
         return mysql_real_escape_string(parent::quote($string), $this->getDatabase());
     }
 
@@ -945,6 +949,30 @@ class MysqlManager extends DBManager
 	public function dropTableNameSQL($name)
     {
 		return "DROP TABLE IF EXISTS ".$name;
+	}
+
+    public function dropIndexes($tablename, $indexes, $execute = true)
+    {
+        $sql = array();
+        foreach ($indexes as $index) {
+            $name =$index['name'];
+            if($execute) {
+               unset(self::$index_descriptions[$tablename][$name]);
+            }
+            if ($index['type'] == 'primary') {
+                $sql[] = 'DROP PRIMARY KEY';
+            } else {
+                $sql[] = "DROP INDEX $name";
+            }
+        }
+        if (!empty($sql)) {
+            $sql = "ALTER TABLE $tablename ".join(",", $sql);
+            if($execute)
+                $this->query($sql);
+        } else {
+            $sql = '';
+        }
+        return $sql;
 	}
 
     /**

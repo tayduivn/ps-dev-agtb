@@ -117,10 +117,8 @@ if($ce_to_pro_ent)
 	upgradeFolderSubscriptionsTeamSetId();
     logThis("Finished rebuilding team_set_id for folders table", $path);
 
-    if($sugar_config['dbconfig']['db_type'] == 'mssql') {
-        if(check_FTS()){
-            $GLOBALS['db']->wakeupFTS();
-        }
+    if(check_FTS()) {
+    	$GLOBALS['db']->full_text_indexing_setup();
     }
 }
 //END SUGARCRM flav=pro ONLY

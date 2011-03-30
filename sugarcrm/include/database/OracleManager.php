@@ -65,7 +65,7 @@ class OracleManager extends DBManager
         "fulltext" => true,
     );
 
-    protected static $maxNameLengths = array(
+    protected $maxNameLengths = array(
         'table' => 30,
         'column' => 30,
         'index' => 30,
@@ -110,35 +110,6 @@ class OracleManager extends DBManager
      * @var array
      */
     protected static $sequences = null;
-
-	/**
-     * @see DBManager::createTable()
-	 */
-    public function createTable(SugarBean $bean)
-    {
-        parent::createTable($bean);
-
-        // handle constraints and indices
-        $indicesArr = $this->createConstraintSql($bean);
-        if (count($indicesArr) > 0)
-        	foreach ($indicesArr as $indexSql)
-        		$this->query($indexSql);
-    }
-
-    /**
-     * @see DBManager::createTable()
-	 */
-    public function createTableParams($tablename, $fieldDefs, $indices)
-    {
-        parent::createTableParams($tablename,$fieldDefs,$indices);
-        if (!empty($fieldDefs)) {
-            // handle constraints and indices
-            $indicesArr = $this->getConstraintSql($indices, $tablename);
-            if (count($indicesArr) > 0)
-                foreach ($indicesArr as $indexSql)
-                    $this->query($indexSql);
-        }
-    }
 
     public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
@@ -428,24 +399,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBManager::dropIndexes()
-     */
-    public function dropIndexes($tablename, $indexes, $execute = true)
-    {
-        $sql = '';
-        foreach ($indexes as $index) {
-            if (empty($sql))
-                $sql .= $this->add_drop_constraint($tablename,$index,true);
-            else
-                $sql .= "; " . $this->add_drop_constraint($tablename,$index,true);
-        }
-        if (!empty($sql) && $execute)
-            $this->query($sql);
-
-        return $sql;
-    }
-
-    /**
      * @see DBManager::tableExists()
      */
     public function tableExists($tableName)
@@ -568,7 +521,10 @@ class OracleManager extends DBManager
      */
     public function quote($string)
     {
-        return str_replace("'", "''", $string);
+        if(is_array($string)) {
+            return $this->arrayQuote($string);
+        }
+        return str_replace("'", "''", parent::quote($string));
     }
 
 	/**
@@ -764,17 +720,6 @@ class OracleManager extends DBManager
     }
 
     /**
-     * returns SQL to create constraints or indices
-     *
-     * @param  object $bean SugarBean instance
-     * @return string SQL statement
-     */
-	public function createConstraintSql(SugarBean $bean)
-    {
-		return $this->getConstraintSql($bean->getIndices(), $bean->getTableName());
-	}
-
-    /**
 	 * @see DBHelper::massageValue()
 	 */
 	public function massageValue($val, $fieldDef)
@@ -928,7 +873,7 @@ class OracleManager extends DBManager
      */
     public function dropTableNameSQL($name)
     {
-		return "DROP TABLE ". strtoupper($name);
+		return parent::dropTableNameSQL(strtoupper($name));
     }
 
     /**
@@ -1328,19 +1273,5 @@ EOQ;
             $sequence_name = strtoupper($sequence_name);
         return $sequence_name;
     }
-
-    /**
-     * @see DBHelper::deleteColumnSQL()
-     */
-	public function deleteColumnSQL(SugarBean $bean, $fieldDefs)
-    {
-        if ($this->isFieldArray($fieldDefs))
-            foreach ($fieldDefs as $fieldDef)
-                $columns[] = $fieldDef['name'];
-        else
-            $columns[] = $fieldDefs['name'];
-
-        return "ALTER TABLE ".$bean->getTableName()." DROP COLUMN (".implode(", ", $columns).")";
-	}
 }
 

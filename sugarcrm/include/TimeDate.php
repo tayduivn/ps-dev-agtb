@@ -1470,7 +1470,7 @@ class TimeDate
         }
 	}
 
-	/*
+	/**
 	 * Get month-long range mdiff months from now
 	 */
 	protected function diffMon($mdiff, User $user)
@@ -1482,7 +1482,7 @@ class TimeDate
 	    return array($start, $end);
 	}
 
-	/*
+	/**
 	 * Get year-long range ydiff years from now
 	 */
 	protected function diffYear($ydiff, User $user)
