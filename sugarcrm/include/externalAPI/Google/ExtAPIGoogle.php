@@ -115,6 +115,13 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
+        
+        // Remap the mime type to something acceptable if we can do it.
+        $goodMimeTypes = Zend_Gdata_Docs::getSupportedMimeTypes();
+        if ( isset($goodMimeTypes[strtoupper($fileExtension)]) ) {
+            $mimeType = $goodMimeTypes[strtoupper($fileExtension)];
+        }
+
 		try{
 		    
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
