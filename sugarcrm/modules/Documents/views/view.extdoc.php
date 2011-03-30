@@ -129,6 +129,7 @@ class DocumentsViewExtdoc extends SugarView
 
         $ss = new Sugar_Smarty();
         $ss->assign('searchFieldLabel',translate('LBL_SEARCH_EXTERNAL_DOCUMENT','Documents'));
+        $ss->assign('displayedNote',translate('LBL_EXTERNAL_DOCUMENT_NOTE','Documents'));
         $ss->assign('APP',$GLOBALS['app_strings']);
         $ss->assign('MOD',$GLOBALS['mod_strings']);
         $ss->assign('data', $searchData);

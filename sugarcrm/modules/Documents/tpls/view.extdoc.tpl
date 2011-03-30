@@ -66,7 +66,8 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
 </tr>
 </table>
 </form>	
-</div>	
+</div>
+<div>{$displayedNote}</div>
 <table width='100%' class='dcListView' cellpadding='0' cellspacing='0'>
   <tr height='20'>
     {counter start=0 name="colCounter" print=false assign="colCounter"}
