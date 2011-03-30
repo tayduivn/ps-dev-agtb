@@ -13,7 +13,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     public $supportMeetingPassword = false;
     public $docSearch = true;
     public $restrictUploadsByExtension = false;
-    public $connector = "ext_eapm_lotuslive";
+    // public $connector = "ext_eapm_lotuslive";
 
     public $hostURL;
     protected $oauthReq = "/manage/oauth/getRequestToken";
@@ -28,8 +28,8 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 //        'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
 //        'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
 // Production
-       // 'consumerKey' => "9399cf0ce6e4ca4d30d56a76b21da89",
-        //'consumerSecret' => "7704b27829c5715445e14637415b67c1",
+        'consumerKey' => "9399cf0ce6e4ca4d30d56a76b21da89",
+        'consumerSecret' => "7704b27829c5715445e14637415b67c1",
     );
     protected $url = 'https://apps.lotuslive.com/';
 
