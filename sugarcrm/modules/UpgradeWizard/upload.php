@@ -301,7 +301,6 @@ $form3 =<<<eoq2
 	</table>
 </td></tr>
 </table>
-<script type="text/javascript" language="Javascript" src="include/JSON.js"></script>
 <script>
  function fileBrowseLoaded(){
  	//alert(document.the_form.upgrade_zip.value.length);

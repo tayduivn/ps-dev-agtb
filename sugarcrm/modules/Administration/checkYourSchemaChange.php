@@ -69,8 +69,7 @@ $colsDropDown = '';
 $relDropDown = '';
 
 
-echo"<script type='text/javascript' src='include/JSON.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}'></script>
-	 <script type='text/javascript' src='modules/Administration/javascript/dbSchema.js'></script>";
+echo"<script type='text/javascript' src='modules/Administration/javascript/dbSchema.js'></script>";
 
 
 echo "<form name='checkSchema'>

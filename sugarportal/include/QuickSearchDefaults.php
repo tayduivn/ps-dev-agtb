@@ -78,8 +78,7 @@ class QuickSearchDefaults {
 		if(!isset($json_config)) $json_config = new json_config();
 		
 		global $sugar_version, $sugar_config, $theme;
-		$qsScripts = '<script type="text/javascript" src="include/JSON.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script><script type="text/javascript">' . $json_config->get_static_json_server() . '</script>
-		<script type="text/javascript" src="include/jsolait/init.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
+		$qsScripts = '<script type="text/javascript" src="include/jsolait/init.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
 		<script type="text/javascript" src="include/jsolait/lib/urllib.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
 		<script type="text/javascript" src="include/javascript/jsclass_base.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
 		<script type="text/javascript" src="include/javascript/jsclass_async.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
@@ -94,8 +93,7 @@ class QuickSearchDefaults {
 	function getQSScriptsNoServer() {
 		global $sugar_version, $sugar_config, $theme;
 		
-		$qsScriptsNoServer = '<script type="text/javascript" src="include/JSON.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
-		<script type="text/javascript" src="include/jsolait/init.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
+		$qsScriptsNoServer = '<script type="text/javascript" src="include/jsolait/init.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
 		<script type="text/javascript" src="include/jsolait/lib/urllib.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
 		<script type="text/javascript" src="include/javascript/jsclass_base.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>
 		<script type="text/javascript" src="include/javascript/jsclass_async.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>

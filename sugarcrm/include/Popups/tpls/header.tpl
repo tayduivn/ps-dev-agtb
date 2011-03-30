@@ -28,7 +28,6 @@
 *}
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_3.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file="jscalendar/lang/calendar-$lang.js"} . '"></script>
-<script type="text/javascript" src="{sugar_getjspath file='include/JSON.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/popup_helper.js'}"></script>
 <script type='text/javascript' src='{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}'></script>
 <script type="text/javascript">
