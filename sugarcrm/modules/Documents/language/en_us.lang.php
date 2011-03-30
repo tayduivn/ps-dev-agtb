@@ -157,7 +157,9 @@ $mod_strings = array (
 	'LBL_LIST_DOC_TYPE' => 'Source',
     'LBL_DOC_TYPE_POPUP' => 'Select a source to which this document will be uploaded<br> and from which it will be available.',
 	'LBL_DOC_URL' => 'Document Source URL',
-    'LBL_SEARCH_EXTERNAL_DOCUMENT' => 'Document Name',
+    'LBL_SEARCH_EXTERNAL_DOCUMENT' => 'File Name',
+    'LBL_EXTERNAL_DOCUMENT_NOTE' => 'The first 20 most recently modified files are displayed in descending order in the list below. Use the Search to find other files.',
+    'LBL_LIST_EXT_DOCUMENT_NAME' => 'File Name',
 
     // Links around the world
     'LBL_ACCOUNTS_SUBPANEL_TITLE' => 'Accounts',
