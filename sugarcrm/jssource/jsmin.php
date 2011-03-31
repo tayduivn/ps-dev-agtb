@@ -2,16 +2,12 @@
 
 class JSMin {
     /**
-     * Calls the JSMinPlus minify function.
+     * Calls the SugarMin minify function.
      *
      * @param string $js Javascript to be minified 
      * @return string Minified javascript
      */
-    public static function minify($js, $filename)
-    {   
-        error_log('Minifying: '.$filename);
-        error_log(memory_get_usage());
-        // return JSMinPlus::minify($js, $filename);
+    public static function minify($js, $filename) {
         return SugarMin::minify($js);
     }
 }
@@ -65,7 +61,6 @@ class SugarMin {
         $js = str_replace("\r\n", "\n", $js);
         $js = str_replace("\r", "\n", $js);
         $js = preg_replace("/\n+/","\n", $js);
-        $js = preg_replace("/ +/", " ", $js);
         $js = preg_replace('!/\*.*?\*/!s', '', $js);
         
         // Split our string up into an array and iterate over each line
@@ -76,11 +71,33 @@ class SugarMin {
         // Strip whitespaces and tabs and inline comments
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
+            
+            // Strip out double slash ('//') comments.
+            // First check if there exists coments.
             $comment = strpos($line, "//");
             
-            // If we have found a comment, remove it from the line.
             if ($comment !== false) {
-                $line = substr($line, 0, $comment);
+                $literal = false; // Set flag that we are not currently in a string literal.
+                
+                for ($i = 0; $i < $comment; $i++) { 
+                    // If we encounter a string literal, skip over it.
+                    if ($line[$i] == "'" || $line[$i] == '"') {
+                        $literal = true;
+                        
+                        for ($j = $i + 1; $j <= $comment; $j++) {
+                            if ($line[$j] == $line[$i]) {
+                                $literal = false;
+                                break;
+                            }
+                        }
+                        
+                        $i = $j;
+                    }
+                }
+                 
+                if ($literal == false) {
+                    $line = substr($line, 0, $comment);
+                }
             }
             
             $line = trim($line, " \t");
