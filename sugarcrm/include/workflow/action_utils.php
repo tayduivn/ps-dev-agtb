@@ -87,7 +87,11 @@ function process_action_update($focus, $action_array){
 	}
 
 	foreach($action_array['basic_ext'] as $field => $new_value){
-
+        if (!empty($focus->field_defs[$field]['calculated']))
+        {
+            $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+            continue;
+        }
 		//Only here if there is a datetime.
 		if($new_value=='Triggered Date'){
 			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field]);
@@ -104,7 +108,11 @@ function process_action_update($focus, $action_array){
 	}
 
 	foreach($action_array['advanced'] as $field => $meta_array){
-
+        if (!empty($focus->field_defs[$field]['calculated']))
+            {
+                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                continue;
+            }
 		$new_value = process_advanced_actions($focus, $field, $meta_array, $focus);
 		$focus->$field = $new_value;
 		execute_special_logic($field, $focus);
