@@ -64,6 +64,13 @@ EOQ;
 		return 1;
 	}
 
+    /**
+	 * All parameters have to be a date.
+	 */
+	function getParameterTypes() {
+		return array(AbstractExpression::$DATE_TYPE);
+	}
+
 	/**
 	 * Returns the String representation of this Expression.
 	 */
