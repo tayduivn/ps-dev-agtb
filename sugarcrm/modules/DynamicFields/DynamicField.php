@@ -691,18 +691,39 @@ class DynamicField {
         $out = "";
         if (!$GLOBALS['db']->tableExists($this->bean->table_name."_cstm")) {
             $GLOBALS['log']->debug('creating custom table for '. $this->bean->table_name);
-            $query = 'CREATE TABLE '.$this->bean->table_name.'_cstm ( ';
-            $query .='id_c ' . $this->bean->dbManager->helper->getColumnType('id') .' NOT NULL';
-            $query .=', PRIMARY KEY ( id_c ) )';
-            if($GLOBALS['db']->dbType == 'mysql'){
-                $query .= ' CHARACTER SET utf8 COLLATE utf8_general_ci';
+            $iddef = array(
+                "id_c" => array(
+                    "name" => "id_c",
+                    "type" => "id",
+                    "required" => 1,
+                )
+            );
+            $ididx = array(
+       			'id'=>array(
+       				'name' =>$this->bean->table_name."_cstm_pk",
+       				'type' =>'primary',
+       				'fields'=>array('id')
+                ),
+           );
+
+            $query = $GLOBALS['db']->createTableSQL($this->bean->table_name."_cstm", $iddef, $ididx);
+            $indicesArr = $GLOBALS['db']->getConstraintSql($ididx, $this->bean->table_name."_cstm");
+            if($execute) {
+                $GLOBALS['db']->query($query);
+                if(!empty($indicesArr)) {
+                    foreach($indicesArr as $idxq) {
+                        $GLOBALS['db']->query($idxq);
+                    }
+                }
             }
             $out = $query . "\n";
-            if ($execute)
-                $GLOBALS['db']->query($query);
+            if(!empty($indicesArr)) {
+                $out .= join("\n", $indicesArr)."\n";
+            }
+
             $out .= $this->add_existing_custom_fields($execute);
         }
-        
+
         return $out;
     }
 

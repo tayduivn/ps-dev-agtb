@@ -84,7 +84,7 @@ class CustomQuery extends SugarBean {
 
 	function CustomQuery() {
 		parent::SugarBean();
-        $this->db_slave = &DBManagerFactory::getInstance('reports');
+        $this->db_slave = DBManagerFactory::getInstance('reports');
 		$this->disable_row_level_security =false;
 
 	}
@@ -105,22 +105,19 @@ class CustomQuery extends SugarBean {
 		if ($add_blank) {
 			$list['']='';
 		}
-		//if($this->db->getRowCount($result) > 0){
-			// We have some data.
-			while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
-				$list[$row['id']] = $row['name'];
-				$GLOBALS['log']->debug("row id is:".$row['id']);
-				$GLOBALS['log']->debug("row name is:".$row['name']);
-			}
-		//}
+		while (($row = $this->db_slave->fetchByAssoc($result)) != null) {
+		//while ($row = $this->db->fetchByAssoc($result)) {
+			$list[$row['id']] = $row['name'];
+			$GLOBALS['log']->debug("row id is:".$row['id']);
+			$GLOBALS['log']->debug("row name is:".$row['name']);
+		}
 		return $list;
 	}
 
 	function get_custom_results($check_valid=false, $get_columns=false, $building_query=false, $listview_only=false){
-	global $current_user;
-	global $current_language;
-	$temp_mod_strings = return_module_language($current_language, "CustomQueries");
+	    global $current_user;
+	    global $current_language;
+	    $temp_mod_strings = return_module_language($current_language, "CustomQueries");
 		//Store query, in case we are saving;
 		$this->statis_query = $this->custom_query;
 
@@ -217,8 +214,8 @@ class CustomQuery extends SugarBean {
 		//This checks for either a bad query or checks for a wrong type of query.  Will only pass if
 		//it is a select statement.
 
+		$query = html_entity_decode("EXPLAIN ".$this->custom_query, ENT_QUOTES);
 		if($this->db_slave->dbType=='mysql'){
-			$query = html_entity_decode("EXPLAIN ".$this->custom_query, ENT_QUOTES);
 			$result =$this->db_slave->query($query, false, "", true);
 			$GLOBALS['log']->debug("explain custom query: ".print_r($result,true));
 		//end if db is mysql
@@ -226,7 +223,6 @@ class CustomQuery extends SugarBean {
 		elseif($this->db_slave->dbType=='mssql')
 		{
 			//run query, if fails, "false" will be returned
-			$query = html_entity_decode($this->custom_query, ENT_QUOTES);
 			$result =$this->db_slave->query($query, false, "", true);
 			$GLOBALS['log']->debug("explain custom query: ".print_r($result,true));
 
@@ -236,7 +232,6 @@ class CustomQuery extends SugarBean {
 		elseif($this->db_slave->dbType=='oci8')
 		{
 //BEGIN SUGARCRM flav=ent ONLY
-			$query = html_entity_decode($this->custom_query, ENT_QUOTES);
 			$explain_error = $this->pseudo_explain_oracle($query);
 			if(!$explain_error){
 				$result =$this->db_slave->query($query, false, "", true);

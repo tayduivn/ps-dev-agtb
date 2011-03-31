@@ -388,10 +388,6 @@ abstract class DBManager
                    $GLOBALS['log']->fatal('CHECK QUERY:' .$warning);
                else
                    $GLOBALS['log']->warn('CHECK QUERY:' .$warning);
-
-               //BEGIN SUGARCRM flav=int ONLY
-               _pp($warning);
-               //END SUGARCRM flav=int ONLY
            }
        }
        return false;
@@ -1536,11 +1532,11 @@ abstract class DBManager
      * @param array $fields fields in the table to concat together
      * @return string
      */
-    public function concat($table, array $fields)
+    public function concat($table, array $fields, $space = ' ')
     {
         if(empty($fields)) return '';
         $elems = array();
-        $space = $this->quoted(" ");
+        $space = $this->quoted($space);
         foreach ( $fields as $index => $field ) {
             if(!empty($elems)) $elems[] = $space;
             $elems[] = $this->convert("$table.$field", 'IFNULL', array("''"));

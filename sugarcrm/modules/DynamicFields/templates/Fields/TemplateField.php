@@ -211,11 +211,12 @@ class TemplateField{
 		*/
 
 	function get_db_type(){
-		switch($GLOBALS['db']->dbType){
-			case 'oci8': return " varchar2($this->len)";
-			case 'mssql': return !empty($GLOBALS['db']->isFreeTDS) ? " nvarchar($this->len)" : " varchar($this->len)";
-			default: return " varchar($this->len)";
-		}
+	    if(!empty($this->type)) {
+	        $type = $GLOBALS['db']->getColumnType($this->type);
+	    }
+	    if(!empty($type)) return " $type";
+	    $type = $GLOBALS['db']->getColumnType("varchar");
+        return " $type({$this->len})";
 	}
 
 	function get_db_default($modify=false){
@@ -311,28 +312,7 @@ class TemplateField{
 		global $db;
 		$db_default=$this->get_db_default(true);
 		$db_required=$this->get_db_required(true);
-		switch ($GLOBALS['db']->dbType) {
-
-			case "mssql":
-				//Bug 21772: MSSQL handles alters in strange ways. Defer to DBHelpers guidance.
-				$query = $db->helper->alterColumnSQL($table, $this->get_field_def());
-				return $query;
-				break;
-
-			case "mysql":
-				$query="ALTER TABLE $table MODIFY $this->name " .$this->get_db_type();
-				break;
-			default:
-				$query="ALTER TABLE $table MODIFY $this->name " .$this->get_db_type();;
-				break;
-
-		}
-		if (!empty($db_default) && !empty($db_required)) {
-			$query .= $db_default . $db_required ;
-		} else if (!empty($db_default)) {
-			$query .= $db_default;
-		}
-		return $query;
+		return $db->alterColumnSQL($table, $this->get_field_def());
 	}
 
 
@@ -467,13 +447,13 @@ class TemplateField{
 	protected function applyVardefRules()
 	{
 		//BEGIN SUGARCRM flav=pro ONLY
-		if (!empty($this->calculated) && !empty($this->formula) 
-		      && is_string($this->formula) && !empty($this->enforced) && $this->enforced) 
+		if (!empty($this->calculated) && !empty($this->formula)
+		      && is_string($this->formula) && !empty($this->enforced) && $this->enforced)
 		{
 				$this->importable = 'false';
 				$this->duplicate_merge = 0;
 				$this->duplicate_merge_dom_value = 0;
-			
+
 		}
 		//END SUGARCRM flav=pro ONLY
 	}

@@ -37,16 +37,6 @@ class TemplateTextArea extends TemplateText{
 		$this->vardef_map['cols'] = 'ext3';
 	}
 
-	function get_db_type(){
-		if ($GLOBALS['db']->dbType=='oci8') {
-			return " CLOB ";
-		} else if(!empty($GLOBALS['db']->isFreeTDS)) {
-		    return " NTEXT ";
-		} else {
-			return " TEXT ";
-		}
-	}
-
 	function set($values){
 	   parent::set($values);
 	    if(!empty($this->ext2)){

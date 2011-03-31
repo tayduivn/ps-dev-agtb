@@ -160,6 +160,7 @@ $beanList['SavedSearch']            = 'SavedSearch';
 $beanList['UserPreferences']        = 'UserPreference';
 $beanList['MergeRecords'] = 'MergeRecord';
 $beanList['EmailAddresses'] = 'EmailAddress';
+$beanList['EmailText'] = 'EmailText';
 $beanList['Relationships'] = 'Relationship';
 $beanList['Employees']      = 'Employee';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
@@ -320,6 +321,7 @@ $beanFiles['SavedSearch']  = 'modules/SavedSearch/SavedSearch.php';
 $beanFiles['UserPreference']  = 'modules/UserPreferences/UserPreference.php';
 $beanFiles['MergeRecord']  = 'modules/MergeRecords/MergeRecord.php';
 $beanFiles['EmailAddress'] = 'modules/EmailAddresses/EmailAddress.php';
+$beanFiles['EmailText'] = 'modules/EmailText/EmailText.php';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 $beanFiles['SavedReport']   = 'modules/Reports/SavedReport.php';
 //END SUGARCRM flav=pro || flav=sales ONLY
@@ -405,7 +407,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //END SUGARCRM flav=pro ONLY
     'Releases','Sync',
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
-    ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses',
+    ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses','EmailText',
     //BEGIN SUGARCRM flav=int ONLY
     'TeamHierarchy',
     //END SUGARCRM flav=int ONLY

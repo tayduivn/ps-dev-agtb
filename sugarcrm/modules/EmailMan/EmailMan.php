@@ -70,34 +70,16 @@ class EmailMan extends SugarBean{
 
 
 
-		if ( ( $this->db->dbType == 'mysql' ) or ( $this->db->dbType == 'oci8' ) )
-		{
-
 		$query['select'] = "SELECT $this->table_name.* ,
 					campaigns.name as campaign_name,
 					email_marketing.name as message_name,
 					(CASE related_type
-						WHEN 'Contacts' THEN CONCAT(CONCAT(contacts.first_name, '&nbsp;' ), contacts.last_name)
-						WHEN 'Leads' THEN CONCAT(CONCAT(leads.first_name, '&nbsp;' ), leads.last_name)
+						WHEN 'Contacts' THEN ".$this->db->concat('contacts', array('first_name', 'last_name'), '&nbsp;')."
+						WHEN 'Leads' THEN ".$this->db->concat('leads', array('first_name', 'last_name'), '&nbsp;')."
 						WHEN 'Accounts' THEN accounts.name
-						WHEN 'Users' THEN CONCAT(CONCAT(users.first_name, ' ' ), users.last_name)
-						WHEN 'Prospects' THEN CONCAT(CONCAT(prospects.first_name, '&nbsp;' ), prospects.last_name)
+						WHEN 'Users' THEN ".$this->db->concat('users', array('first_name', 'last_name'), '&nbsp;')."
+						WHEN 'Prospects' THEN ".$this->db->concat('prospects', array('first_name', 'last_name'), '&nbsp;')."
 					END) recipient_name";
-		}
-	    if($this->db->dbType == 'mssql')
-		{
-				$query['select'] = "SELECT $this->table_name.* ,
-					campaigns.name as campaign_name,
-					email_marketing.name as message_name,
-					(CASE related_type
-						WHEN 'Contacts' THEN contacts.first_name + '&nbsp;' + contacts.last_name
-						WHEN 'Leads' THEN  leads.first_name + '&nbsp;' + leads.last_name
-						WHEN 'Accounts' THEN  accounts.name
-						WHEN 'Users' THEN  users.first_name + ' ' + users.last_name
-						WHEN 'Prospects' THEN prospects.first_name + '&nbsp;' + prospects.last_name
-					END) recipient_name";
-		}
-
 		$query['from'] = "	FROM $this->table_name
 					LEFT JOIN users ON users.id = $this->table_name.related_id and $this->table_name.related_type ='Users'
 					LEFT JOIN contacts ON contacts.id = $this->table_name.related_id and $this->table_name.related_type ='Contacts'
@@ -139,33 +121,16 @@ class EmailMan extends SugarBean{
 			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect);
 		}
 
-		if ( ( $this->db->dbType == 'mysql' ) or ( $this->db->dbType == 'oci8' ) )
-		{
-
 		$query = "SELECT $this->table_name.* ,
 					campaigns.name as campaign_name,
 					email_marketing.name as message_name,
 					(CASE related_type
-						WHEN 'Contacts' THEN CONCAT(CONCAT(contacts.first_name, '&nbsp;' ), contacts.last_name)
-						WHEN 'Leads' THEN CONCAT(CONCAT(leads.first_name, '&nbsp;' ), leads.last_name)
+						WHEN 'Contacts' THEN ".$this->db->concat('contacts', array('first_name', 'last_name'), '&nbsp;')."
+						WHEN 'Leads' THEN ".$this->db->concat('leads', array('first_name', 'last_name'), '&nbsp;')."
 						WHEN 'Accounts' THEN accounts.name
-						WHEN 'Users' THEN CONCAT(CONCAT(users.first_name, ' ' ), users.last_name)
-						WHEN 'Prospects' THEN CONCAT(CONCAT(prospects.first_name, '&nbsp;' ), prospects.last_name)
+						WHEN 'Users' THEN ".$this->db->concat('users', array('first_name', 'last_name'), '&nbsp;')."
+						WHEN 'Prospects' THEN ".$this->db->concat('prospects', array('first_name', 'last_name'), '&nbsp;')."
 					END) recipient_name";
-		}
-	    if($this->db->dbType == 'mssql')
-		{
-				$query = "SELECT $this->table_name.* ,
-					campaigns.name as campaign_name,
-					email_marketing.name as message_name,
-					(CASE related_type
-						WHEN 'Contacts' THEN contacts.first_name + '&nbsp;' + contacts.last_name
-						WHEN 'Leads' THEN  leads.first_name + '&nbsp;' + leads.last_name
-						WHEN 'Accounts' THEN  accounts.name
-						WHEN 'Users' THEN  users.first_name + ' ' + users.last_name
-						WHEN 'Prospects' THEN prospects.first_name + '&nbsp;' + prospects.last_name
-					END) recipient_name";
-		}
 
 		 $query .= " FROM $this->table_name
 		            LEFT JOIN users ON users.id = $this->table_name.related_id and $this->table_name.related_type ='Users'
@@ -194,45 +159,27 @@ class EmailMan extends SugarBean{
 			$query .= "WHERE ".$where_auto;
 
 
-		if($order_by != "") 
+		if($order_by != "")
 		{
 			$query .= ' ORDER BY ' . $this->process_order_by($order_by, null);
 		}
-		
+
 		return $query;
 
     }
 
 	function create_list_query($order_by, $where, $show_deleted = 0){
 
-		if ( ( $this->db->dbType == 'mysql' ) or ( $this->db->dbType == 'oci8' ) )
-		{
-
 		$query = "SELECT $this->table_name.* ,
 					campaigns.name as campaign_name,
 					email_marketing.name as message_name,
 					(CASE related_type
-						WHEN 'Contacts' THEN CONCAT(CONCAT(contacts.first_name, '&nbsp;' ), contacts.last_name)
-						WHEN 'Leads' THEN CONCAT(CONCAT(leads.first_name, '&nbsp;' ), leads.last_name)
+						WHEN 'Contacts' THEN ".$this->db->concat('contacts', array('first_name', 'last_name'), '&nbsp;')."
+						WHEN 'Leads' THEN ".$this->db->concat('leads', array('first_name', 'last_name'), '&nbsp;')."
 						WHEN 'Accounts' THEN accounts.name
-						WHEN 'Users' THEN CONCAT(CONCAT(users.first_name, ' ' ), users.last_name)
-						WHEN 'Prospects' THEN CONCAT(CONCAT(prospects.first_name, '&nbsp;' ), prospects.last_name)
+						WHEN 'Users' THEN ".$this->db->concat('users', array('first_name', 'last_name'), '&nbsp;')."
+						WHEN 'Prospects' THEN ".$this->db->concat('prospects', array('first_name', 'last_name'), '&nbsp;')."
 					END) recipient_name";
-		}
-	    if($this->db->dbType == 'mssql')
-		{
-				$query = "SELECT $this->table_name.* ,
-					campaigns.name as campaign_name,
-					email_marketing.name as message_name,
-					(CASE related_type
-						WHEN 'Contacts' THEN contacts.first_name + '&nbsp;' + contacts.last_name
-						WHEN 'Leads' THEN  leads.first_name + '&nbsp;' + leads.last_name
-						WHEN 'Accounts' THEN  accounts.name
-						WHEN 'Users' THEN  users.first_name + ' ' + users.last_name
-						WHEN 'Prospects' THEN prospects.first_name + '&nbsp;' + prospects.last_name
-					END) recipient_name";
-		}
-
 		$query .= "	FROM $this->table_name
 					LEFT JOIN users ON users.id = $this->table_name.related_id and $this->table_name.related_type ='Users'
 					LEFT JOIN contacts ON contacts.id = $this->table_name.related_id and $this->table_name.related_type ='Contacts'
@@ -259,26 +206,26 @@ class EmailMan extends SugarBean{
 	}
 
     function get_list_view_data()
-    {   
+    {
     	global $locale, $current_user;
         $temp_array = parent::get_list_view_array();
 
         $related_type = $temp_array['RELATED_TYPE'];
         $related_id = $temp_array['RELATED_ID'];
         $is_person = SugarModule::get($related_type)->moduleImplements('Person');
-        
+
         if($is_person)
         {
             $query = "SELECT first_name, last_name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
         } else {
             $query = "SELECT name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
         }
-        
+
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
 
-        if($row) 
-        {      
+        if($row)
+        {
         	$temp_array['RECIPIENT_NAME'] = $is_person ? $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '') : $row['name'];
         }
 
@@ -287,7 +234,7 @@ class EmailMan extends SugarBean{
 
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
-        if ($row) 
+        if ($row)
         {
             $temp_array['RECIPIENT_EMAIL']=$row['email_address'];
         }
@@ -999,7 +946,7 @@ class EmailMan extends SugarBean{
         {
             $query .=  ' ORDER BY '. $this->process_order_by($order_by, null);
         }
-        
+
         return $query;
     }
 }

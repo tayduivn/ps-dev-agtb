@@ -56,14 +56,6 @@ function __construct() {
 }
 
 
-function get_db_type(){
-
-    if($GLOBALS['db']->dbType == 'mssql'){
-        return " DATETIME ";
-    } else {
-        return " DATE ";
-    }
-}
 function get_db_default($modify=false){
 		return '';
 }

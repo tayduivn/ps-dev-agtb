@@ -127,6 +127,7 @@ class MssqlManager extends DBManager
             'url'      => 'varchar',
             'encrypt'  => 'varchar',
             'file'     => 'varchar',
+	    'decimal_tpl' => 'decimal(%d, %d)',
             );
 
     /**

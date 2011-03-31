@@ -90,11 +90,12 @@ class OracleManager extends DBManager
             'blob'     => 'blob',
             'longblob' => 'blob',
             'currency' => 'number(26,6)',
-            'decimal'  => 'number (20,2)',
-            'decimal2' => 'number (30,6)',
-            'url'      =>'varchar2(255)',
-            'encrypt'  =>'varchar2(255)',
+            'decimal'  => 'number(20,2)',
+            'decimal2' => 'number(30,6)',
+            'url'      => 'varchar2(255)',
+            'encrypt'  => 'varchar2(255)',
             'file'     => 'varchar2(255)',
+	    	'decimal_tpl' => 'number(%d, %d)',
             );
 
 	/**

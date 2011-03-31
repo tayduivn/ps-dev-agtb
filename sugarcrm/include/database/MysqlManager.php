@@ -117,9 +117,11 @@ class MysqlManager extends DBManager
             'decimal'  => 'decimal',
             'decimal2' => 'decimal',
             'id'       => 'char(36)',
-           'url'=>'varchar',
-           'encrypt'=>'varchar',
-           'file'      => 'varchar',
+            'url'      => 'varchar',
+            'encrypt'  => 'varchar',
+            'file'     => 'varchar',
+            'decimal_tpl' => 'decimal(%d, %d)',
+
      );
 
     protected $capabilities = array(

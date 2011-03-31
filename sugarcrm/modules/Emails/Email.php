@@ -1137,79 +1137,32 @@ class Email extends SugarBean {
 		return $guid;
 	}
 
+    protected $email_to_text = array(
+        "email_id" => "id",
+        "description" => "description",
+        "description_html" => "description_html",
+        "raw_source" => "raw_source",
+        "from_addr" => "from_addr_name",
+        "reply_to_addr" => "reply_to_addr",
+    	"to_addrs" => "to_addrs_names",
+        "cc_addrs" => "cc_addrs_names",
+        "bcc_addrs" => "bcc_addrs_names",
+    );
 
-	function saveEmailText() {
-		$isOracle = ($this->db->dbType == "oci8") ? true : false;
-		if ($isOracle) {
-			//BEGIN SUGARCRM flav=ent ONLY
-			$this->saveEmailTextForOracle();
-			//END SUGARCRM flav=ent ONLY
-		} else {
-			$description = $this->db->quote(trim($this->description));
-			$description_html = $this->db->quote(trim($this->description_html));
-			$raw_source = $this->db->quote(trim($this->raw_source));
-			$fromAddressName = $this->db->quote($this->from_addr_name);
-			$toAddressName = $this->db->quote($this->to_addrs_names);
-			$ccAddressName = $this->db->quote($this->cc_addrs_names);
-			$bccAddressName = $this->db->quote($this->bcc_addrs_names);
-			$replyToAddrName = $this->db->quote($this->reply_to_addr);
-
-			if(!$this->new_with_id) {
-				$q = "UPDATE emails_text SET from_addr = '{$fromAddressName}', to_addrs = '{$toAddressName}', cc_addrs = '{$ccAddressName}', bcc_addrs = '{$bccAddressName}', reply_to_addr = '{$replyToAddrName}', description = '{$description}', description_html = '{$description_html}', raw_source = '{$raw_source}' WHERE email_id = '{$this->id}'";
-			} else {
-				$q = "INSERT INTO emails_text (email_id, from_addr, to_addrs, cc_addrs, bcc_addrs, reply_to_addr, description, description_html, raw_source, deleted) VALUES('{$this->id}', '{$fromAddressName}', '{$toAddressName}', '{$ccAddressName}', '{$bccAddressName}', '{$replyToAddrName}', '{$description}', '{$description_html}', '{$raw_source}', 0)";
-			}
-			$this->db->query($q);
-
-		} // else
-	}
-
-	//BEGIN SUGARCRM flav=ent ONLY
-	// FIXME: fix this!
-	function saveEmailTextForOracle() {
-		global $dictionary;
-		if(file_exists('custom/metadata/emails_beansMetaData.php')) {
-		  require_once('custom/metadata/emails_beansMetaData.php');
-		} else {
-		  require_once('metadata/emails_beansMetaData.php');
-		}
-
-		$fromAddressName = $this->db->helper->escape_quote($this->from_addr_name);
-		$oldTo_Addrs = $this->to_addrs;
-		$this->to_addrs = $this->db->helper->escape_quote($this->to_addrs_names);
-		$oldCC_Addrs = $this->cc_addrs;
-		$this->cc_addrs = $this->db->helper->escape_quote($this->cc_addrs_names);
-		$oldBCC_Addrs = $this->bcc_addrs;
-		$this->bcc_addrs = $this->db->helper->escape_quote($this->bcc_addrs_names);
-		$oldReplyTo_Addrs = $this->reply_to_addr;
-		$this->reply_to_addr = $this->db->helper->escape_quote($this->reply_to_addr);
-
-		$description = $this->db->helper->massageValue(from_html(trim($this->description)), $dictionary['emails_text']['fields']['description']);
-		$description_html = $this->db->helper->massageValue(trim($this->description_html), $dictionary['emails_text']['fields']['description_html']);
-		$raw_source = $this->db->helper->massageValue(from_html(trim($this->raw_source)), $dictionary['emails_text']['fields']['raw_source']);
-		$toAddressName = $this->db->helper->massageValue($this->to_addrs_names, $dictionary['emails_text']['fields']['to_addrs']);
-		$ccAddressName = $this->db->helper->massageValue($this->cc_addrs_names, $dictionary['emails_text']['fields']['cc_addrs']);
-		$bccAddressName = $this->db->helper->massageValue($this->bcc_addrs_names, $dictionary['emails_text']['fields']['bcc_addrs']);
-
+	protected function saveEmailText()
+	{
+        $text = SugarModule::get("EmailText")->loadBean();
+        foreach($this->email_to_text as $mailfield => $textfield) {
+            $text->$textfield = $this->$mailfield;
+        }
+        $text->email_id = $this->id;
 		if(!$this->new_with_id) {
-			$setValues = " from_addr = '{$fromAddressName}', to_addrs = {$toAddressName}, cc_addrs = {$ccAddressName}, bcc_addrs = {$bccAddressName}, reply_to_addr = '{$this->reply_to_addr}', description = {$description}, description_html = {$description_html}, raw_source = {$raw_source}";
-			$q = "UPDATE emails_text SET {$setValues} WHERE email_id = '{$this->id}'";
+            $q = $this->db->updateSQL($text);
 		} else {
-			$setValues = " {$toAddressName}, {$ccAddressName}, {$bccAddressName}, {$description}, {$description_html}, {$raw_source}";
-			$q = "INSERT INTO emails_text (email_id, from_addr, reply_to_addr, to_addrs, cc_addrs, bcc_addrs, description, description_html, raw_source, deleted) VALUES('{$this->id}', '{$fromAddressName}', '{$this->reply_to_addr}', {$setValues}, 0)";
-		} // else
-
-		$fieldDefsForEmails = $this->getFieldDefinitions();
-		$fieldsDefOfEmails_Text = $dictionary['emails_text']['fields'];
-		$this->field_defs = $fieldsDefOfEmails_Text;
-		$this->dbManager->insertUpdateForEmail($this, $q);
-		$this->field_defs = $fieldDefsForEmails;
-		$this->to_addrs = $oldTo_Addrs;
-		$this->cc_addrs = $oldCC_Addrs;
-		$this->bcc_addrs = $oldBCC_Addrs;
-		$this->reply_to_addr = $oldReplyTo_Addrs;
-	} // fn
-	//END SUGARCRM flav=ent ONLY
+		    $q = $this->db->insertSQL($text);
+		}
+		$this->db->query($q);
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	////	RETRIEVERS
