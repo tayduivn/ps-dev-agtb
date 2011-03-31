@@ -343,7 +343,12 @@ class ViewConvertLead extends SugarView
 		$this->handleActivities($lead, $beans);
 		// Bug 39268 - Add the lead's activities to the selected beans
 		$this->handleActivities($lead, $selectedBeans);
-		
+
+		//link selected account to lead if it exists
+        if(!empty($selectedBeans['Accounts'])){
+            $lead->account_id = $selectedBeans['Accounts']->id;
+        }
+
         //Handle non-contacts relationships
 	    foreach($beans as $bean)
         {
