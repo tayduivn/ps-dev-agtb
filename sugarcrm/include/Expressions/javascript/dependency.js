@@ -210,7 +210,13 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
     }
 	
 	if (field.value !== null && typeof(field.value) != "undefined")
+	{
+		var asNum = SUGAR.expressions.unFormatNumber(field.value);
+		if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
+			return asNum;
+		}
 		return field.value;
+	}
 	
 	return YAHOO.lang.trim(field.innerText);
 }

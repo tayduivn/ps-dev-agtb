@@ -807,9 +807,8 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 
 	// a raw numeric constant
-	var asNum = SUGAR.expressions.unFormatNumber(expr);
-	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
-		return new SUGAR.ConstantExpression( parseFloat(asNum) );
+	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(expr) != null ) {
+		return new SUGAR.ConstantExpression( parseFloat(expr) );
 	}
 
 	// a pre defined numeric constant
