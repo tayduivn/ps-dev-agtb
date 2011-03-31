@@ -7,7 +7,7 @@ class JSMin {
      * @param string $js Javascript to be minified 
      * @return string Minified javascript
      */
-    public static function minify($js, $filename) {
+    public static function minify($js, $filename = '') {
         return SugarMin::minify($js);
     }
 }
