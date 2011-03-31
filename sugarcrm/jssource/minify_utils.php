@@ -46,7 +46,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.'cache'                         => 'cache',
             $prefix.'include/javascript/tiny_mce'   => 'include/javascript/tiny_mce',
             $prefix.'include/javascript/yui'        => 'include/javascript/yui',
-            $prefix.'include/javsacript/yui3'       => 'include/javascript/yui3',
+            $prefix.'include/javascript/yui3'       => 'include/javascript/yui3',
             // $prefix.'include/javascript/yui-old'    => 'include/javascript/yui-old',
             // $prefix.'include/javascript/ext-1.1.1'  => 'include/javascript/ext-1.1.1',
             // $prefix.'include/javascript/ext-2.0'    => 'include/javascript/ext-2.0',
