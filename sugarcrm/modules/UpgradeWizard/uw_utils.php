@@ -5088,8 +5088,12 @@ function upgradeModulesForTeam() {
            	  require($file);
            	  $touched = false;
            	  $contents = file_get_contents($file);
-           	  $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
-
+           	  if ( !isset($GLOBALS['app_list_strings']) ) {
+           	      $GLOBALS['app_list_strings'] = $app_list_strings;
+           	  }
+           	  else {
+           	      $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  }
            	  if(isset($GLOBALS['app_list_strings']) && is_array($GLOBALS['app_list_strings'])) {
            	  	 foreach($GLOBALS['app_list_strings'] as $key=>$entry) {
            	  	 	if(preg_match('/([^A-Za-z_])/', $key, $matches) && is_array($entry)) {
@@ -5540,4 +5544,35 @@ function upgradeModulesForTeam() {
 	    }
 	}
 
+	/**
+	 * unlinkUpgradeFiles
+	 * This is a helper function to clean up 
+	 * 
+	 * @param $version String value of current system version (pre upgrade)
+	 */
+	function unlinkUpgradeFiles($version)
+	{
+		if(!isset($version))
+		{
+		   return;
+		}
+		
+		logThis('start unlinking files from previous upgrade');
+		if($version < '614')
+		{
+		   //list of files to remove
+		   $files_to_remove = array('modules/Help/Forms.php');
+		   
+		   foreach($files_to_remove as $f)
+		   {
+			   if(file_exists($f))
+			   {
+			   	  logThis('removing file: ' . $f);
+			   	  unlink($f);
+			   }  
+		   }
+		}
+		logThis('end unlinking files from previous upgrade');
+	}	
+	
 ?>

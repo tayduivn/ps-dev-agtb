@@ -30,7 +30,9 @@
             <directory suffix=".php">./jssource</directory>
             <directory suffix=".php">./log4php</directory>
             <directory suffix=".php">./metadata</directory>
+            <!-- //BEGIN SUGARCRM flav=pro ONLY -->
             <directory suffix=".php">./portal</directory>
+            <!-- //END SUGARCRM flav=pro ONLY -->
             <directory suffix=".php">./tests</directory>
             <directory suffix=".php">./themes</directory>
             <directory suffix=".php">./XTemplate</directory>

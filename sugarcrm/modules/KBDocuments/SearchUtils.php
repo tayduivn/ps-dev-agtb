@@ -41,7 +41,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
     
     require_once('include/ListView/ListViewSmarty.php');
-    require_once('modules/KBDocuments/metadata/KBSearchlistviewdefs.php');
+    $view = new SugarView();
+    $view->type = 'list';
+    $view->module = 'KBDocuments';
+    $metadataFile = $view->getMetaDataFile();
+    require_once($metadataFile);
     require_once('modules/KBDocuments/KBListViewData.php');
 
 
@@ -61,15 +65,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     // check $_REQUEST if new display columns from post
     if(!empty($_REQUEST['displayColumns'])) {
         foreach(explode('|', $_REQUEST['displayColumns']) as $num => $col) {
-            if(!empty($listViewDefs['KBSearch'][$col]))
-                $displayColumns[$col] = $listViewDefs['KBSearch'][$col];
+            if(!empty($listViewDefs['KBDocuments'][$col]))
+                $displayColumns[$col] = $listViewDefs['KBDocuments'][$col];
         }
     }
     elseif(!empty($savedDisplayColumns)) { // use user defined display columns from preferences
         $displayColumns = $savedDisplayColumns;
     }
     else { // use columns defined in listviewdefs for default display columns
-        foreach($listViewDefs['KBSearch'] as $col => $params) {
+        foreach($listViewDefs['KBDocuments'] as $col => $params) {
             if(!empty($params['default']) && $params['default'])
                 $displayColumns[$col] = $params;
         }

@@ -855,12 +855,14 @@ function safe_map_named($request_var, & $focus, $member_var, $always_copy)
 	}
 }
 
-/** This function retrieves an application language file and returns the array of strings included in the $app_list_strings var.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- * If you are using the current language, do not call this function unless you are loading it for the first time */
-function return_app_list_strings_language($language) {
+/** 
+ * This function retrieves an application language file and returns the array of strings included in the $app_list_strings var.
+ * 
+ * @param string $language specific language to load
+ * @return array lang strings
+ */
+function return_app_list_strings_language($language) 
+{
 	global $app_list_strings;
 	global $sugar_config;
 
@@ -875,75 +877,54 @@ function return_app_list_strings_language($language) {
 
 	$default_language = $sugar_config['default_language'];
 	$temp_app_list_strings = $app_list_strings;
-	$language_used = $language;
-
-	include("include/language/en_us.lang.php");
-
-	$en_app_list_strings = array();
-	if($language_used != $default_language){
-	    require("include/language/$default_language.lang.php");
-
-        if(file_exists("include/language/$default_language.lang.override.php")) {
-            include("include/language/$default_language.lang.override.php");
+	
+	$langs = array();
+	if ($language != 'en_us') {
+	    $langs[] = 'en_us';
+	}
+	if ($default_language != 'en_us' && $language != $default_language) {
+	    $langs[] = $default_language;
+	}
+	$langs[] = $language;
+	
+	$app_list_strings_array = array();
+	
+	foreach ( $langs as $lang ) {
+	    $app_list_strings = array();
+	    if(file_exists("include/language/$lang.lang.php")) {
+            include("include/language/$lang.lang.php");
+            $GLOBALS['log']->info("Found language file: $lang.lang.php");
+        }
+        if(file_exists("include/language/$lang.lang.override.php")) {
+            include("include/language/$lang.lang.override.php");
+            $GLOBALS['log']->info("Found override language file: $lang.lang.override.php");
+        }
+        if(file_exists("include/language/$lang.lang.php.override")) {
+            include("include/language/$lang.lang.php.override");
+            $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
         }
 
-        if(file_exists("include/language/$default_language.lang.php.override")) {
-            include("include/language/$default_language.lang.php.override");
-        }
-
-	    $en_app_list_strings = $app_list_strings;
-	}
-
-	if(file_exists("include/language/$language.lang.php")) {
-	include("include/language/$language.lang.php");
-	}
-
-	if(file_exists("include/language/$language.lang.override.php")) {
-		include("include/language/$language.lang.override.php");
-	}
-
-	if(file_exists("include/language/$language.lang.php.override")) {
-		include("include/language/$language.lang.php.override");
-	}
-
-	// cn: bug 6048 - merge en_us with requested language
-    if (!empty($en_app_list_strings)) {
-        $app_list_strings = sugarArrayMerge($en_app_list_strings, $app_list_strings);
+        $app_list_strings_array[] = $app_list_strings;
     }
 
-    if (file_exists("custom/application/Ext/Language/en_us.lang.ext.php")){
-		$app_list_strings =  _mergeCustomAppListStrings("custom/application/Ext/Language/en_us.lang.ext.php" , $app_list_strings) ;
-   }
+  	$app_list_strings = array();
+  	foreach ( $app_list_strings_array as $app_list_strings_item ) {
+  	    $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
+  	} 	
 
-   if($language_used != $default_language){
-    	 if(file_exists("custom/application/Ext/Language/$default_language.lang.ext.php")) {
-        	$app_list_strings =  _mergeCustomAppListStrings("custom/application/Ext/Language/$default_language.lang.ext.php" , $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $default_language.lang.ext.php");
+    foreach ( $langs as $lang ) {
+        if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
+            $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
+            $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
         }
-        if(file_exists("custom/include/language/$default_language.lang.php")) {
-            include("custom/include/language/$default_language.lang.php");
-            $GLOBALS['log']->info("Found custom language file: $default_language.lang.php");
+        if(file_exists("custom/include/language/$lang.lang.php")) {
+            include("custom/include/language/$lang.lang.php");
+            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
         }
     }
 
-	if(file_exists("custom/application/Ext/Language/$language.lang.ext.php")) {
-		$app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$language.lang.ext.php" , $app_list_strings);
-	   $GLOBALS['log']->info("Found extended language file: $language.lang.ext.php");
-	}
-
-	if(file_exists("custom/include/language/$language.lang.php")) {
-		include("custom/include/language/$language.lang.php");
-		$GLOBALS['log']->info("Found custom language file: $language.lang.php");
-	}
-
 	if(!isset($app_list_strings)) {
-		$GLOBALS['log']->warn("Unable to find the application language file for language: ".$language);
-		$language_used = $default_language;
-		$app_list_strings = $en_app_list_strings;
-	}
-
-	if(!isset($app_list_strings)) {
-		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language($language) or the default language($default_language)");
+		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
 		return null;
 	}
 
@@ -983,12 +964,14 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
    return $app_list_strings;
 }
 
-/** This function retrieves an application language file and returns the array of strings included.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- * If you are using the current language, do not call this function unless you are loading it for the first time */
-function return_application_language($language) {
+/** 
+ * This function retrieves an application language file and returns the array of strings included.
+ * 
+ * @param string $language specific language to load
+ * @return array lang strings
+ */
+function return_application_language($language) 
+{
 	global $app_strings, $sugar_config;
 
 	$cache_key = 'app_strings.'.$language;
@@ -1001,67 +984,58 @@ function return_application_language($language) {
 	}
 
 	$temp_app_strings = $app_strings;
-	$language_used = $language;
 	$default_language = $sugar_config['default_language'];
 
-	// cn: bug 6048 - merge en_us with requested language
-	include("include/language/en_us.lang.php");
-	if(file_exists("custom/include/language/en_us.lang.php")) {
-		include("custom/include/language/en_us.lang.php");
+	$langs = array();
+	if ($language != 'en_us') {
+	    $langs[] = 'en_us';
 	}
-	$en_app_strings = array();
-	if($language_used != $default_language)
-	$en_app_strings = $app_strings;
+	if ($default_language != 'en_us' && $language != $default_language) {
+	    $langs[] = $default_language;
+	}
+	$langs[] = $language;
+	
+	$app_strings_array = array();
+	
+	foreach ( $langs as $lang ) {
+	    $app_strings = array();
+	    if(file_exists("include/language/$lang.lang.php")) {
+            include("include/language/$lang.lang.php");
+            $GLOBALS['log']->info("Found language file: $lang.lang.php");
+        }
+        if(file_exists("include/language/$lang.lang.override.php")) {
+            include("include/language/$lang.lang.override.php");
+            $GLOBALS['log']->info("Found override language file: $lang.lang.override.php");
+        }
+        if(file_exists("include/language/$lang.lang.php.override")) {
+            include("include/language/$lang.lang.php.override");
+            $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
+        }
+        if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
+            include("custom/application/Ext/Language/$lang.lang.ext.php");
+            $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
+        }
+        if(file_exists("custom/include/language/$lang.lang.php")) {
+            include("custom/include/language/$lang.lang.php");
+            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
+        }
+        $app_strings_array[] = $app_strings;
+	}
 
-	if(!empty($language)) {
-		include("include/language/$language.lang.php");
-	}
-
-	if(file_exists("include/language/$language.lang.override.php")) {
-		include("include/language/$language.lang.override.php");
-	}
-	if(file_exists("include/language/$language.lang.php.override")) {
-		include("include/language/$language.lang.php.override");
-	}
-	if(file_exists("custom/application/Ext/Language/$language.lang.ext.php")) {
-		include("custom/application/Ext/Language/$language.lang.ext.php");
-		$GLOBALS['log']->info("Found extended language file: $language.lang.ext.php");
-	}
-	if(file_exists("custom/include/language/$language.lang.php")) {
-		include("custom/include/language/$language.lang.php");
-		$GLOBALS['log']->info("Found custom language file: $language.lang.php");
-	}
-
-
+	$app_strings = array();
+    foreach ( $app_strings_array as $app_strings_item ) {
+        $app_strings = sugarArrayMerge($app_strings, $app_strings_item);
+    }
+	
 	if(!isset($app_strings)) {
-		$GLOBALS['log']->warn("Unable to find the application language file for language: ".$language);
-		require("include/language/$default_language.lang.php");
-		if(file_exists("include/language/$default_language.lang.override.php")) {
-			include("include/language/$default_language.lang.override.php");
-		}
-		if(file_exists("include/language/$default_language.lang.php.override")) {
-			include("include/language/$default_language.lang.php.override");
-		}
-
-		if(file_exists("custom/application/Ext/Language/$default_language.lang.ext.php")) {
-			include("custom/application/Ext/Language/$default_language.lang.ext.php");
-			$GLOBALS['log']->info("Found extended language file: $default_language.lang.ext.php");
-		}
-		$language_used = $default_language;
-	}
-
-	if(!isset($app_strings)) {
-		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language($language) or the default language($default_language)");
+		$GLOBALS['log']->fatal("Unable to load the application language strings");
 		return null;
 	}
-
-	// cn: bug 6048 - merge en_us with requested language
-	$app_strings = sugarArrayMerge($en_app_strings, $app_strings);
 
 	// If we are in debug mode for translating, turn on the prefix now!
 	if($sugar_config['translation_string_prefix']) {
 		foreach($app_strings as $entry_key=>$entry_value) {
-			$app_strings[$entry_key] = $language_used.' '.$entry_value;
+			$app_strings[$entry_key] = $language.' '.$entry_value;
 		}
 	}
 	if(isset($_SESSION['show_deleted'])) {
@@ -1077,15 +1051,20 @@ function return_application_language($language) {
 	$app_strings = $temp_app_strings;
 
 	sugar_cache_put($cache_key, $return_value);
+	
 	return $return_value;
 }
 
-/** This function retrieves a module's language file and returns the array of strings included.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- * If you are in the current module, do not call this function unless you are loading it for the first time */
-function return_module_language($language, $module, $refresh=false) {
+/** 
+ * This function retrieves a module's language file and returns the array of strings included.
+ * 
+ * @param string $language specific language to load
+ * @param string $module module name to load strings for
+ * @param bool $refresh optional, true if you want to rebuild the language strings
+ * @return array lang strings
+ */
+function return_module_language($language, $module, $refresh=false) 
+{
 	global $mod_strings;
 	global $sugar_config;
 	global $currentModule;
@@ -1126,6 +1105,13 @@ function return_module_language($language, $module, $refresh=false) {
 	if($language != $sugar_config['default_language'])
         $loaded_mod_strings = sugarArrayMerge(
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
+                $loaded_mod_strings
+            );
+     
+    // Load in en_us strings by default
+    if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
+        $loaded_mod_strings = sugarArrayMerge(
+            LanguageManager::loadModuleLanguage($module, 'en_us', $refresh),
                 $loaded_mod_strings
             );
 

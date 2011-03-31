@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY 
 require_once('include/nusoap/nusoap.php');
 require_once('include/TimeDate.php');
 /**
@@ -138,8 +139,7 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     	$result = $this->_getEntryForContact();
     	if (empty($this->_soapClient->faultcode)) {
     		if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
-    			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call") &&
-    			($result['relationship_list'][0][0]['records'][0][1]['value'] == 'contact@sugar.com')) {
+    			($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call")) {
     			
     			$this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],1,"testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
     		} // else

@@ -3,27 +3,32 @@ require_once('modules/Emails/EmailUI.php');
 
 class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_user = null;
     private $_folders = null;
-    
-    
     
     public function setUp()
     {
-        global $current_user;
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->eui = new EmailUI();
         $this->_folders = array();
     }
     
     public function tearDown()
     {
-        unset($this->eui);
+        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
+        foreach ($this->_folders as $f) {
+            $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
+            $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
+        }
+        
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        foreach ($this->_folders as $f)
-            $this->_clearFolder($f);
+        unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanList']);
     }
 
     /**
@@ -100,12 +105,4 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
     	$account->save(false);
     	
     }
-    
-    private function _clearFolder($folder_id)
-    {
-        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
-        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$folder_id}'");
-        $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$folder_id}'");
-    }
-
 }

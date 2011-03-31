@@ -1,4 +1,5 @@
 <?php 
+//FILE SUGARCRM flav=pro ONLY
 require_once('modules/Teams/TeamSet.php');
 
 /***

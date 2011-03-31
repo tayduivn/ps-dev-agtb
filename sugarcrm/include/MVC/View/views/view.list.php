@@ -73,6 +73,9 @@ class ViewList extends SugarView{
                 $_SESSION['LastSavedView'][$_REQUEST['module']] = '';
                 unset($_REQUEST['saved_search_select']);
                 unset($_REQUEST['saved_search_select_name']);
+                global $current_user;
+                //Reset the current display columns to default.
+                $current_user->setPreference('ListViewDisplayColumns', array(), 0, $_REQUEST['search_module']);
             }
             else if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
                 $this->saved_search = loadBean('SavedSearch');

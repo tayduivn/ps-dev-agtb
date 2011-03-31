@@ -126,6 +126,8 @@ class UserPreference extends SugarBean
 	        return $sugar_config['default_date_format'];
 	    if ( $name == 'timef' )
 	        return $sugar_config['default_time_format'];
+	    if ( $name == 'email_link_type' )
+	        return $sugar_config['email_default_client'];
 	}
 
 	/**

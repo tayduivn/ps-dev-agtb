@@ -571,25 +571,30 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 		//echo $field;
         //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && $for_action_display) {
-            $assigned_user = loadBean('Users');
-            $assigned_user->retrieve($field_value);
-            if (empty($assigned_user->id))
-                return false;
-            if($current_user->getPreference('use_real_names') == 'on'){
-                return $assigned_user->full_name;
+            if($adv_type != 'exist_user') {
+                $assigned_user = loadBean('Users');
+                $assigned_user->retrieve($field_value);
+                if (empty($assigned_user->id))
+                    return false;
+                if($current_user->getPreference('use_real_names') == 'on'){
+                    return $assigned_user->full_name;
+                }
+                else {
+                    return $assigned_user->user_name;
+                }
+            } else {
+                $target_type = "assigned_user_name";
             }
-            else {
-                return $assigned_user->user_name;
-            }
+        } else {
+    		if(!empty($temp_module->field_defs[$field]['dbType']))
+    			$target_type = $temp_module->field_defs[$field]['dbType'];
+    		else
+    			return $field_value;
         }
-		if(!empty($temp_module->field_defs[$field]['dbType']))
-			$target_type = $temp_module->field_defs[$field]['dbType'];
-		else
-			return $field_value;
 	} else {
 		$target_type = $temp_module->field_defs[$field]['type'];
 	}
-	
+
 
 	//Land of the "one offs"
 	//This is for meetings and calls, the reminder time
@@ -605,8 +610,8 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 			if (!isset($user_array[$field_value])) {
 				return false;
 			}
-			
-			
+
+
 			return $user_array[$field_value];
 		}
 		if($adv_type=="exist_user"){
@@ -699,7 +704,7 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 		} else {
 			return $field_value;
 		}
-		
+
 		if(isset($temp_module->field_defs[$field]['isMultiSelect']) && $temp_module->field_defs[$field]['isMultiSelect']===true){
 			return str_replace("^,^",", ",$field_value);
 		}
@@ -844,12 +849,12 @@ function check_special_fields($field_name, & $source_object, $use_past_array=fal
         require_once('modules/Teams/TeamSetManager.php');
         if($use_past_array==false)
         {
-            $team_set_id = $source_object->team_set_id; 
+            $team_set_id = $source_object->team_set_id;
             $team_id = $source_object->team_id;
         }
         else
         {
-            $team_set_id = $source_object->fetched_row['team_set_id']; 
+            $team_set_id = $source_object->fetched_row['team_set_id'];
             $team_id = $source_object->fetched_row['team_id'];
         }
 

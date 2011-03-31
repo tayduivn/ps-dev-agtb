@@ -177,8 +177,9 @@ class SOAPAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $trackerManager = TrackerManager::getInstance();
         $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
         $monitor = $trackerManager->getMonitor('tracker');
-
+        //BEGIN SUGARCRM flav=pro ONLY 
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
+        //END SUGARCRM flav=pro ONLY 
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
         $monitor->setValue('module_name', $module);

@@ -37,7 +37,9 @@ class SugarTestTrackerUtility
         $_REQUEST['action'] = $action;
         if($monitor = $trackerManager->getMonitor('tracker'))
         {
+            //BEGIN SUGARCRM flav=pro ONLY
             $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
+            //END SUGARCRM flav=pro ONLY
             $monitor->setValue('action', $action);
             $monitor->setValue('user_id', $GLOBALS['current_user']->id);
             $monitor->setValue('module_name', $bean->module_dir);

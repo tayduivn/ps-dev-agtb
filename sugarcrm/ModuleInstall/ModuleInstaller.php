@@ -446,8 +446,8 @@ class ModuleInstaller{
         if(isset($this->installdefs['dcaction'])){
 			$this->log(translate('LBL_MI_UN_MENUS'));
 			foreach($this->installdefs['dcaction'] as $action){
-				$menu['from'] = str_replace('<basepath>', $this->base_dir, $menu['from']);
-				$GLOBALS['log']->debug("Uninstalling Menu ..." . $action['from'] );
+				$action['from'] = str_replace('<basepath>', $this->base_dir, $action['from']);
+				$GLOBALS['log']->debug("Uninstalling DCActions ..." . $action['from'] );
 				$path = 'custom/Extension/application/Ext/DashletContainer/Containers';
 				if (sugar_is_file($path . '/'. $this->id_name . '.php', 'w'))
 				{

@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 require_once "modules/KBDocuments/SearchUtils.php";
 
 class SearchUtilsTest extends Sugar_PHPUnit_Framework_TestCase

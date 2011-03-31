@@ -2473,28 +2473,10 @@ function save_relationship_changes($is_update, $exclude=array())
     			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
     		}
     		$modified_select_query=implode(" UNION ALL ",$union_qs);
-    	} else if (strstr($query," UNION ") !== false) {
-
-    		//seperate out all the queries.
-    		$union_qs=explode(" UNION ", $query);
-    		foreach ($union_qs as $key=>$union_query) {
-        		$star = '*';
-				preg_match($pattern, $union_query, $matches);
-				if (!empty($matches)) {
-					if (stristr($matches[0], "distinct")) {
-			          	if (!empty($this->seed) && !empty($this->seed->table_name ))
-			          		$star = 'DISTINCT ' . $this->seed->table_name . '.id';
-			          	else
-			          		$star = 'DISTINCT ' . $this->table_name . '.id';
-					}
-				} // if
-    			$replacement = 'SELECT count(' . $star . ') c FROM ';
-    			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
-    		}
-    		$modified_select_query=implode(" UNION ",$union_qs);
     	} else {
 	    	$modified_select_query = preg_replace($pattern, $replacement, $query,1);
     	}
+
 
 		return $modified_select_query;
     }
@@ -2866,6 +2848,8 @@ function save_relationship_changes($is_update, $exclude=array())
 		{
 			$subpanel_list[]=$subpanel_def;
 		}
+		
+		$first = true;
 
 		//Breaking the building process into two loops. The first loop gets a list of all the sub-queries.
 		//The second loop merges the queries and forces them to select the same number of columns
@@ -2886,17 +2870,25 @@ function save_relationship_changes($is_update, $exclude=array())
 							require_once($parameters['import_function_file']);
 						}
 						//call function from required file
-						$final_query =  $shortcut_function_name($parameters);
+						$tmp_final_query =  $shortcut_function_name($parameters);
 					}else{
 						//call function from parent bean
-						$final_query =  $parentbean->$shortcut_function_name($parameters);
+						$tmp_final_query =  $parentbean->$shortcut_function_name($parameters);
 					}
 				}
 				else
 				{
-					$final_query = $parentbean->$shortcut_function_name();
+					$tmp_final_query = $parentbean->$shortcut_function_name();
 				}
-				$final_query_rows.= $parentbean->create_list_count_query($final_query, $parameters);
+				if(!$first)
+				{
+					$final_query_rows .= ' UNION ALL ( '.$parentbean->create_list_count_query($tmp_final_query, $parameters) . ' )';
+					$final_query .= ' UNION ALL ( '.$tmp_final_query . ' )';
+				} else {
+					$final_query_rows = '(' . $parentbean->create_list_count_query($tmp_final_query, $parameters) . ')';
+					$final_query = '(' . $tmp_final_query . ')';
+					$first = false;
+				}
 			}
 		}
 		//If final_query is still empty, its time to build the sub-queries

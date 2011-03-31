@@ -244,6 +244,11 @@ if(function_exists('upgrade_connectors'))
    upgrade_connectors($path);
 }
 
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($_SESSION['current_db_version']);
+}
 
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();

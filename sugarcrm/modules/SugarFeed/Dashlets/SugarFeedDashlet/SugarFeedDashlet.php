@@ -162,7 +162,7 @@ var $selectedCategories = array();
 				) {
 //BEGIN SUGARCRM flav=pro ONLY
                 $this->seedBean->disable_row_level_security = true;
-                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON jt0.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
+                $lvsParams['custom_from'] = ' LEFT JOIN team_sets_teams ON team_sets_teams.team_set_id = sugarfeed.team_set_id LEFT JOIN team_memberships ON tj.id = team_memberships.team_id AND team_memberships.user_id = "'.$current_user->id.'" AND team_memberships.deleted = 0 ';
 //END SUGARCRM flav=pro ONLY
                 $module_limiter = " ((sugarfeed.related_module IN ('".implode("','", $regular_modules)."') "
 //BEGIN SUGARCRM flav=pro ONLY

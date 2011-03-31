@@ -124,7 +124,7 @@ class OneToManyRelationship extends AbstractRelationship
         if ($this->relationship_only)
             return array () ;
  
-        return array( $this->rhs_module => $this->relationship_name . "_name" ) ; // this must match the name of the relate field from buildVardefs
+        return array( $this->rhs_module =>$this->getValidDBName($this->relationship_name . "_name")); // this must match the name of the relate field from buildVardefs
     }
        
     /*
