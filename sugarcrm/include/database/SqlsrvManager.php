@@ -76,6 +76,11 @@ include_once('include/database/MssqlManager.php');
 
 class SqlsrvManager extends MssqlManager
 {
+    protected $capabilities = array(
+        "affected_rows" => true,
+        'fulltext' => true,
+    );
+
     protected $type_map = array(
             'int'      => 'int',
             'double'   => 'float',
@@ -116,23 +121,6 @@ class SqlsrvManager extends MssqlManager
         'free_result' => 'sqlsrv_free_stmt',
         'close'       => 'sqlsrv_close',
         );
-
-    /**
-     * cache of the results sets as they are fetched
-     */
-    protected $_resultsCache;
-
-    /**
-     * cache of the results sets as they are fetched
-     */
-    protected $_lastResultsCacheKey = 0;
-
-
-    public function __construct()
-    {
-    	parent::__construct();
-    	$this->_resultsCache = new ArrayObject;
-    }
 
 	/**
      * @see DBManager::connect()
@@ -335,16 +323,6 @@ class SqlsrvManager extends MssqlManager
         }
 
         return $row;
-	}
-
-    /**
-     * @see DBManager::getRowCount()
-     */
-    public function getRowCount(
-        &$result
-        )
-    {
-        return $this->getOne('SELECT @@ROWCOUNT');
 	}
 
     /**
@@ -657,4 +635,15 @@ EOSQL;
 
         return $sql;
     }
+
+    /**
+     * Returns the number of rows returned by the result
+     *
+     * @param  resource $result
+     * @return int
+     */
+     public function getRowCount($result)
+    {
+		return 0;
+	}
 }

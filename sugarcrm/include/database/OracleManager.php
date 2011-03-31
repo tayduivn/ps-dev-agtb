@@ -45,15 +45,6 @@ class OracleManager extends DBManager
      */
     public $dbType = 'oci8';
 
-    /**
-     * @see DBManager::$backendFunctions
-     */
-    protected $backendFunctions = array(
-        'free_result' => 'oci_free_statement',
-        'close'       => 'oci_close',
-        'row_count'   => 'oci_num_rows',
-        );
-
 	/**
      * contains the last result set returned from query()
      */

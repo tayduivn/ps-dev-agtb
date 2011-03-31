@@ -82,16 +82,6 @@ class MysqlManager extends DBManager
      */
     public $dbType = 'mysql';
 
-    /**
-     * @see DBManager::$backendFunctions
-     */
-    protected $backendFunctions = array(
-        'free_result'        => 'mysql_free_result',
-        'close'              => 'mysql_close',
-        'row_count'          => 'mysql_num_rows',
-        'affected_row_count' => 'mysql_affected_rows',
-        );
-
     protected $maxNameLengths = array(
         'table' => 64,
         'column' => 64,

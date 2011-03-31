@@ -120,11 +120,6 @@ abstract class DBManager
     private static $queryLimit = 0;
 
     /**
-     * Array of common backend functions and what the PHP they map to is
-     */
-    protected $backendFunctions = array();
-
-    /**
      * Array of prepared statements and their correspoding parsed tokens
      */
     protected $preparedTokens = array();
@@ -1435,11 +1430,6 @@ abstract class DBManager
      */
     public function getRowCount($result)
     {
-        // TODO: override!
-//        $row_count = $this->backendFunctions['row_count'];
-//        if(isset($result) && !empty($result)){
-//            return $row_count($result);
-//		}
 		return 0;
 	}
 

@@ -79,19 +79,11 @@ class MssqlManager extends DBManager
      */
     public $dbType = 'mssql';
 
-	/**
-     * @see DBManager::$backendFunctions
-     */
-    protected $backendFunctions = array(
-        'free_result' => 'mssql_free_result',
-        'close'       => 'mssql_close',
-        'row_count'   => 'mssql_num_rows'
-        );
-
     protected $capabilities = array(
         "affected_rows" => true,
         "select_rows" => true,
         "fix:expandDatabase" => true, // Support expandDatabase fix
+        'fulltext' => true,
     );
 
     /**
@@ -1698,4 +1690,19 @@ EOQ;
         if(!empty($dbResult))
             mssql_free_result($dbResult);
     }
+
+    /**
+     * Returns the number of rows returned by the result
+     *
+     * @param  resource $result
+     * @return int
+     */
+     public function getRowCount($result)
+    {
+        if(!empty($result)) {
+            return mssql_num_rows($result);
+		}
+		return 0;
+	}
+
 }
