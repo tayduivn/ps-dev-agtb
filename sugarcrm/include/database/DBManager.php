@@ -161,9 +161,11 @@ abstract class DBManager
      * case_sensitive	Supports case-sensitive text columns
      * fulltext			Supports fulltext search indexes
      * inline_keys		Supports defining keys together with the table
+     * auto_increment_sequence Autoincrement support implemented as sequence
      *
      * Special cases:
      * fix:expandDatabase - needs expandDatabase fix, see expandDatabase.php
+     * TODO: verify if we need these cases
      */
     protected $capabilities = array();
 
@@ -2318,7 +2320,29 @@ abstract class DBManager
         return;
 	}
 
-    /**
+	/**
+	 * Return VALUE part for INSERT auto-increment value
+	 * @param string $table
+	 * @param string $field_name
+	 * @param bool $comma
+	 */
+    public function autoIncrementInsertValue($table, $field_name, $comma = true)
+    {
+        return "";
+    }
+
+	/**
+	 * Return column name part for INSERT auto-increment value
+	 * @param string $table
+	 * @param string $field_name
+	 * @param bool $comma
+	 */
+    public function autoIncrementInsertInto($table, $field_name, $comma = true)
+    {
+        return "";
+    }
+
+	/**
      * This method generates sql for adding a column to table identified by field def.
      *
      * @param  string $tablename
@@ -2770,6 +2794,14 @@ abstract class DBManager
     public function limitQuerySql($sql, $start, $count, $dieOnError=false, $msg='')
     {
         return $this->limitQuery($sql,$start,$count,$dieOnError,$msg,false);
+    }
+
+    /**
+     * Return current time in format fit for insertion into DB
+     */
+    public function now()
+    {
+        return $this->convert($this->quoted(TimeDate::getInstance()->nowDb()), "datetime");
     }
 
     /**

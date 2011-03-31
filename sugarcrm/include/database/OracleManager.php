@@ -54,6 +54,7 @@ class OracleManager extends DBManager
         "affected_rows" => true,
         "case_sensitive" => true,
         "fulltext" => true,
+        "auto_increment_sequence" => true,
     );
 
     protected $maxNameLengths = array(
@@ -950,7 +951,17 @@ class OracleManager extends DBManager
         return "";
     }
 
-	/**
+    public function autoIncrementInsertValue($table, $field_name, $comma = true)
+    {
+        return ($comma?",":"").$this->_getSequenceName($table, $field_name, true).".NEXTVAL";
+    }
+
+    public function autoIncrementInsertInto($table, $field_name, $comma = true)
+    {
+        return ($comma?",":"").$field_name;
+    }
+
+    /**
      * Sets the next auto-increment value of a column to a specific value.
      *
      * @param  string $table tablename
