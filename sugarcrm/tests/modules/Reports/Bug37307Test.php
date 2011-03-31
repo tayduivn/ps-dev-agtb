@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 require_once('modules/Reports/views/view.buildreportmoduletree.php');
 
 class Bug37307Test extends Sugar_PHPUnit_Framework_TestCase
