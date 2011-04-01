@@ -2472,11 +2472,6 @@ SUGAR.ajaxStatusClass.prototype.positionStatus = function() {
 SUGAR.ajaxStatusClass.prototype.createStatus = function(text) {
 	statusDiv = document.createElement('div');
 	statusDiv.className = 'dataLabel';
-	statusDiv.style.background = '#ffffff';
-	statusDiv.style.color = '#c60c30';
-	statusDiv.style.position = 'absolute';
-	statusDiv.style.opacity = .8;
-	statusDiv.style.filter = 'alpha(opacity=80)';
 	statusDiv.id = 'ajaxStatusDiv';
 	document.body.appendChild(statusDiv);
 	this.statusDiv = document.getElementById('ajaxStatusDiv');
