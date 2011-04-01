@@ -266,6 +266,9 @@ SUGAR.mySugar = function() {
 				//custom chart code
                 SUGAR.mySugar.sugarCharts.loadSugarCharts(pageNum);
                 
+                //refresh page when user resizes window
+
+
 				SUGAR.mySugar.loading.hide();                                                  
 				document.getElementById('loading_c').style.display = 'none';
             }

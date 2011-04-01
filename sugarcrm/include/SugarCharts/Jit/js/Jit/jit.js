@@ -206,7 +206,7 @@ $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
 
 $.saveImageFile = function (id,jsonfilename,imageExt) {
 	var parts = jsonfilename.split("/");
-	var filename = parts[2].replace(".json","."+imageExt);
+	var filename = parts[2].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
 	if(imageExt == "jpg") {
@@ -11521,6 +11521,7 @@ Options.BarChart = {
   type: 'stacked', //stacked, grouped, : gradient
   labelOffset: 3, //label offset
   barsOffset: 0, //distance between bars
+  nodeCount: 0, //number of bars
   hoveredColor: '#9fd4ff',
   orientation: 'horizontal',
   showAggregates: true,
@@ -11664,19 +11665,19 @@ $jit.ST.Plot.NodeTypes.implement({
 			  inset = 10;
 			  boxHeight = label.size+6;
 			  
-			  if(boxWidth + acum + config.labelOffset > gridHeight) {
-				bottomPadding = acum - config.labelOffset - boxWidth;
+			  if(boxHeight + acum + config.labelOffset > gridHeight) {
+				bottomPadding = acum - config.labelOffset - boxHeight;
 			  } else {
 				bottomPadding = acum + config.labelOffset + inset;
 			  }
 			
 			
-			  ctx.translate(x + width/2, y - bottomPadding);
+			  ctx.translate(x + width/2 - (mtxt.width/2) , y - bottomPadding);
 			  cornerRadius = 4;	
 			  boxX = -inset/2;
 			  boxY = -boxHeight/2;
 			  
-			  ctx.rotate(270* Math.PI / 180);
+			  ctx.rotate(0 * Math.PI / 180);
 			  ctx.fillStyle = "rgba(255,255,255,.8)";
 			  
 			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
@@ -11940,7 +11941,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				  
 				  	ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					ctx.save();
-					ctx.textAlign = 'left';
+					ctx.textAlign = 'center';
 					
 					//background box
 					gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -11949,22 +11950,23 @@ $jit.ST.Plot.NodeTypes.implement({
 					
 					mtxt = ctx.measureText(acumValueLabel);
 					boxWidth = mtxt.width+10;
-					if(boxWidth + dimArray[i] + config.labelOffset > gridHeight) {
-						bottomPadding = dimArray[i] - config.labelOffset - boxWidth - inset;
+					boxHeight = label.size+6;
+					if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+						bottomPadding = dimArray[i] - config.labelOffset - boxHeight - inset;
 					} else {
 						bottomPadding = dimArray[i] + config.labelOffset + inset;
 					}
 										              	
-					boxHeight = label.size+6;
-					ctx.translate(x + i*fixedDim + (fixedDim/2), y - bottomPadding);
 					
-					boxX = -inset/2;
+					ctx.translate(x + (i*fixedDim) + (fixedDim/2) , y - bottomPadding);
+					
+					boxX = -boxWidth/2;
 					boxY = -boxHeight/2;
 					ctx.fillStyle = "rgba(255,255,255,.8)";
 					
 					cornerRadius = 4;	
 
-					ctx.rotate(270* Math.PI / 180);
+					//ctx.rotate(270* Math.PI / 180);
 					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
 					//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					
@@ -12163,19 +12165,19 @@ $jit.ST.Plot.NodeTypes.implement({
 					  inset = 10;
 					  boxHeight = label.size+6;
 					  
-					  if(boxWidth + dimArray[i] + config.labelOffset > gridHeight) {
-						bottomPadding = dimArray[i] - config.labelOffset - boxWidth - inset;
+					  if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+						bottomPadding = dimArray[i] - config.labelOffset - boxHeight - inset;
 					  } else {
 						bottomPadding = dimArray[i] + config.labelOffset + inset;
 					  }
 					
 					
-					  ctx.translate(x + width/2, y - bottomPadding);
+					  ctx.translate(x + width/2 - (mtxt.width/2) , y - bottomPadding);
 					  cornerRadius = 4;	
 					  boxX = -inset/2;
 					  boxY = -boxHeight/2;
 					  
-					  ctx.rotate(270* Math.PI / 180);
+					  //ctx.rotate(270* Math.PI / 180);
 					  ctx.fillStyle = "rgba(255,255,255,.6)";
 					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
 					 // $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
@@ -12358,6 +12360,7 @@ $jit.BarChart = new Class({
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       levelDistance: 0,
+      nodeCount: config.nodeCount,
       siblingOffset: config.barsOffset,
       subtreeOffset: 0,
       withLabels: config.Label.type != 'Native',      
@@ -12546,10 +12549,27 @@ $jit.BarChart = new Class({
     });
 
     var size = st.canvas.getSize(),
+    	l = config.nodeCount,
         margin = config.Margin;
         title = config.Title;
         subtitle = config.Subtitle,
-        grouped = config.type.split(':')[0] == 'grouped';
+        grouped = config.type.split(':')[0] == 'grouped',
+        margin = config.Margin,
+        ticks = config.Ticks,
+        marginWidth = margin.left + margin.right + (config.Label && grouped ? config.Label.size + config.labelOffset: 0),
+        marginHeight = (title.text? title.size + title.offset : 0) + (subtitle.text? subtitle.size + subtitle.offset : 0) + margin.top + margin.bottom,
+        horz = config.orientation == 'horizontal',
+        fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
+        fixedDim = (fixedDim > 40) ? 40 : fixedDim;
+        whiteSpace = size.width - (marginWidth + (fixedDim * l));
+        
+        //if not a grouped chart and is a vertical chart, adjust bar spacing to fix canvas width.
+        if(!grouped && !horz) {
+        	st.config.siblingOffset = whiteSpace/(l+1);
+        }
+        
+        
+        
 	//Bars offset
     if(horz) {
       st.config.offsetX = size.width/2 - margin.left - (grouped && config.Label ? config.labelOffset + config.Label.size : 0);    
@@ -12687,7 +12707,7 @@ $jit.BarChart = new Class({
 		while(axis>=grid) {
 			ctx.save();
 			ctx.translate(-(size.width/2)+margin.left, Math.round(axis));
-			ctx.rotate(270 * Math.PI / 180 );
+			ctx.rotate(0 * Math.PI / 180 );
 			ctx.fillStyle = label.color;
 			if(config.showLabels) {
 				if(label.type == 'Native') { 
@@ -13053,7 +13073,7 @@ $jit.BarChart = new Class({
       });
       
       if(grouped) {
-      	fixedDim = animateValue.length * 25;
+      	fixedDim = animateValue.length * 40;
       }
       n.setData(dim1, fixedDim);
       

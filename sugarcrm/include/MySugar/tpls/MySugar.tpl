@@ -308,6 +308,7 @@ SUGAR.mySugar.init = function () {
 	SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
 }
 
+
 </script>
 {/literal}
 

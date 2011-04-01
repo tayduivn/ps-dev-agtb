@@ -34,8 +34,10 @@ var charts = new Object();
 
 	return {
 		loadSugarCharts: function(activeTab) {
+			var chartFound = false;
 			for (id in charts[activeTab]){
 				if(id != 'undefined'){
+					chartFound = true;
 				//alert(charts[activeTab][id]['chartType']);
 					loadSugarChart(
 											 charts[activeTab][id]['chartId'], 
@@ -45,6 +47,7 @@ var charts = new Object();
 											 );
 				}
 			}
+
 		},
 
 		addToChartsArrayJson: function(json,activeTab) {

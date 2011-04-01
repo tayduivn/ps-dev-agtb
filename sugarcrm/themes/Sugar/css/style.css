@@ -131,7 +131,7 @@ th, td
 
 /* layout the header elements */
 #header {
-
+min-width: 1050px;
 }
 
 .headerLarge {
@@ -5188,6 +5188,7 @@ color:blue;
 height:55px;
 background-image:url('../../../../index.php?entryPoint=getImage&imageName=dcmenugrade.png');
 background-repeat:repeat-x;
+min-width: 1050px;
 }
 
 
