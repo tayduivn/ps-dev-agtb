@@ -30,7 +30,13 @@ require_once('modules/Trackers/store/Store.php');
 
 class TrackerQueriesDatabaseStore implements Store {
 
-    public function flush($monitor) {
+    public function flush($monitor)
+    {
+        if($monitor->run_count > 1) {
+            $query = "UPDATE $monitor->table_name set run_count={$monitor->run_count}, sec_avg={$monitor->sec_avg}, sec_total={$monitor->sec_total}, date_modified='{$monitor->date_modified}' where query_hash = '{$monitor->query_hash}'";
+            $GLOBALS['db']->query($query);
+            return;
+        }
 
        $metrics = $monitor->getMetrics();
        $values = array();
@@ -47,14 +53,6 @@ class TrackerQueriesDatabaseStore implements Store {
        }
 
        $fields['id'] = array('auto_increment' => true, "name" => "id", "type" => "int");
-
-       if($monitor->run_count == 1) {
-          $GLOBALS['db']->insertParams($monitor->table_name, $fields, $values);
-       } else {
-       	  $query = "UPDATE $monitor->table_name set run_count={$monitor->run_count}, sec_avg={$monitor->sec_avg}, sec_total={$monitor->sec_total}, date_modified='{$monitor->date_modified}' where query_hash = '{$monitor->query_hash}'";
-          $GLOBALS['db']->query($query);
-       }
+       $GLOBALS['db']->insertParams($monitor->table_name, $fields, $values);
     }
 }
-
-?>
