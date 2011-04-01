@@ -888,19 +888,8 @@ function updateVersions($version) {
 		return false;
 	}
 
-	// handle config table
-	if($db->dbType == 'mysql') {
-		$q1 = "DELETE FROM `config` WHERE `category` = 'info' AND `name` = 'sugar_version'";
-		$q2 = "INSERT INTO `config` (`category`, `name`, `value`) VALUES ('info', 'sugar_version', '{$version}')";
-	} elseif($db->dbType == 'oci8' || $db->dbType == 'oracle') {
-		//BEGIN SUGARCRM flav=ent ONLY
-		$q1 = "DELETE FROM \"".strtoupper($sugar_config['dbconfig']['db_user_name'])."\".\"CONFIG\" WHERE category = 'info' AND name = 'sugar_version'";
-		$q2 = "INSERT INTO \"".strtoupper($sugar_config['dbconfig']['db_user_name'])."\".\"CONFIG\" (category, name, value) VALUES ('info', 'sugar_version', '{$version}')";
-		//END SUGARCRM flav=ent ONLY
-	} elseif($db->dbType == 'mssql') {
-		$q1 = "DELETE FROM config WHERE category = 'info' AND name = 'sugar_version'";
-		$q2 = "INSERT INTO config (category, name, value) VALUES ('info', 'sugar_version', '{$version}')";
-	}
+	$q1 = "DELETE FROM CONFIG WHERE category = 'info' AND name = 'sugar_version'";
+	$q2 = "INSERT INTO CONFIG (category, name, value) VALUES ('info', 'sugar_version', '{$version}')";
 
 	logThis('Deleting old DB version info from config table.', $path);
 	$db->query($q1);
@@ -1905,7 +1894,7 @@ function testQueryAlter($table, $dbType, $query, $newTables) {
 	global $sugar_config;
 
 	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
+		$db = DBManagerFactory::getInstance();
 	}
 
 	// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
@@ -3301,12 +3290,12 @@ function UWrebuild() {
 	logThis('Registering rebuild record in versions table: '.$query, $path);
 }
 
-function getCustomTables($dbType) {
+function getCustomTables() {
 	global $db;
 
 	$customTables = array();
 
-    switch($dbType) {
+    switch($db->dbType) {
 		case 'mysql':
     		$query = "SHOW tables LIKE '%_cstm'";
         	$result = $db->query($query);//, true, 'Error getting custom tables');
@@ -3318,9 +3307,10 @@ function getCustomTables($dbType) {
     return $customTables;
 }
 
-function alterCustomTables($dbType, $customTables)
+function alterCustomTables($customTables)
 {
-	switch($dbType) {
+	global $db;
+    switch($db->dbType) {
 		case 'mysql':
 			$i = 0;
 			while( $i < count($customTables) ) {
@@ -3352,21 +3342,9 @@ function executeAlterCustomTablesSql($dbType, $queries) {
 	return true;
 }
 
-function getAllTables($dbType) {
+function getAllTables() {
 	global $db;
-
-	$tables = array();
-
-    switch($dbType) {
-		case 'mysql':
-    		$query = "SHOW tables";
-        	$result = $db->query($query, true, 'Error getting custom tables');
-            while ($row = $db->fetchByAssoc($result)){
-            	$tables[] = array_pop($row);
-            }
-            break;
-	}
-    return $tables;
+    return $db->getTablesArray();
 }
 
 function printAlterTableSql($tables)
@@ -3379,20 +3357,15 @@ function printAlterTableSql($tables)
 	return $alterTableSql;
 }
 
-function executeConvertTablesSql($dbType, $tables) {
+function executeConvertTablesSql($tables)
+{
 	global $db;
 
 	foreach($tables as $table){
 		$query = "ALTER TABLE " . $table . " CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci";
 		if(!empty($table)){
 			logThis("Sending query: ".$query);
-	            if($db->dbType == 'oci8') {
-	    	        //BEGIN SUGARCRM flav=ent ONLY
-               		$query_result = $db->query($query);//, true, "An error has occured while performing db query.  See log file for details.<br>");
-                	//END SUGARCRM flav=ent ONLY
-     	        } else {
-                    $query_result = $db->query($query);//.';', true, "An error has occured while performing db query.  See log file for details.<br>");
-                }
+            $query_result = $db->query($query);//, true, "An error has occured while performing db query.  See log file for details.<br>");
          }
 	}
 	return true;

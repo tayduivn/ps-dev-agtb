@@ -718,47 +718,33 @@ function _check_user_permissions()
 	}
 
 
-	function execute_query($query_name='query',
-				$result_name='result',
-				$row_count_name='row_count',
-				$row_start_name='row_start',
-				$row_end_name='row_end',
-				$limit=false)
+	function execute_query($query_name='query', $result_name='result', $row_count_name='row_count',
+	    $row_start_name='row_start', $row_end_name='row_end', $limit=false)
 	{
-/*
-print "<BR>QUERY:";
-print $this->$query_name;
-print "<BR>";
-print "<BR>";
-*/
-	if($limit){
-		$start_offset = $this->report_offset;
-		if ($this->db->dbType == 'oci8'){
-			if($start_offset > 0)$start_offset++;
-		}
-		$this->$result_name = $this->db->limitQuery($this->$query_name,$start_offset , $this->report_max,true,
-				"Error executing query ");
-	}else{
-		$this->$result_name = $this->db->query(
-				$this->$query_name,
-				true,
-				"Error executing query ");
-	}
-		if (!empty($row_count_name) && empty($this->$row_count_name))
-		{
-			if ($this->db->dbType == 'oci8'){
+	    // FIXME: needs DB-independent code here
+    	if($limit) {
+    		$start_offset = $this->report_offset;
+    		if (!$this->db->supports('select_rows')){
+    			if($start_offset > 0) $start_offset++;
+    		}
+    		$this->$result_name = $this->db->limitQuery($this->$query_name, $start_offset, $this->report_max, true,
+    				"Error executing query ");
+    	} else {
+    		$this->$result_name = $this->db->query($this->$query_name, true, "Error executing query ");
+    	}
+    	if (!empty($row_count_name) && empty($this->$row_count_name)) {
+			if (!$this->db->supports('select_rows')) {
 				$this->$row_count_name = $this->report_offset;
 				$this->$row_end_name = $this->report_max;
 
 				if($limit && $this->total_count < $this->$row_end_name + $this->$row_count_name){
 					$this->$row_end_name = $this->total_count - $this->$row_count_name;
 				}
-			}else{
+			} else {
 				$this->$row_count_name =  $this->db->getRowCount($this->$result_name);
 				$this->$row_end_name =  $this->$row_count_name;
 			}
-			if ($this->$row_count_name > 0)
-			{
+			if ($this->$row_count_name > 0) {
 				$this->$row_start_name =  1;
 			}
 		}
@@ -802,7 +788,7 @@ print "<BR>";
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
 
         if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
-                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {          		
+                && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {
                 global $mod_strings;
 
 	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
@@ -1537,14 +1523,14 @@ print "<BR>";
 							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
 								$temp_field_alias  = substr($field,$has_space+1);
 								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-								
+
 								if($loopCount > 0)
 								{
 								    $field_list_name_array[$currCount] .= ", ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
 								} else {
 									$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
 								}
-								
+
 								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
 								{
 									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
@@ -1556,11 +1542,11 @@ print "<BR>";
 								    $field_list_name_array[$currCount] .= ", " . $field;
 								} else {
 									$field_list_name_array[$currCount] = $field;
-								}								
-								
+								}
+
 							}
 					    } //if($has_space)
-					    
+
 					    $loopCount++;
 				} //foreach
 			}
@@ -1620,35 +1606,15 @@ print "<BR>";
         // if we are doing the details part of a summary query.. we need the details
     // to be sorted by the group by
 
-    if(!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query')
-    {
-            if ( $this->db->dbType == 'mssql'
-                //BEGIN SUGARCRM flav=ent ONLY
-                || $this->db->dbType == 'oci8'
-                //END SUGARCRM flav=ent ONLY
-                )
-            {
-                $query .= " GROUP BY ";
-                foreach ( $this->group_by_arr as $group_by )
-                {
-                    $query .= " ".$group_by.",";
-                }
-                // Take out the extra comma from the end.
-                $query = rtrim($query,',');
-            }
-            else
-            {
-                $query .= " GROUP BY ";
-                foreach ( $this->group_by_arr as $group_by )
-                {
-                    $query .= " IFNULL(".$group_by.",''),";
-                }
-                // Take out the extra comma from the end.
-                $query = rtrim($query,',');
-            }
+    if(!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query') {
+        $groups = array();
+// FIXME: see if we need to handle NULLs on GROUP BY
+//        foreach ( $this->group_by_arr as $group_by ) {
+//            $groups[] = $this->db->convert($group_by, "IFNULL", "''");
+//        }
+        $query .= " GROUP BY ".join(",", $this->group_by_arr);
     }
-    if ( $query_name == 'summary_query')
-    {
+    if ( $query_name == 'summary_query') {
       if(!empty($this->summary_order_by_arr))
       {
              if ($this->db->dbType == 'mssql'){
@@ -2032,7 +1998,7 @@ print "<BR>";
 		else {
 			$db_row = $this->db->fetchByAssoc($this->$result_field_name);
 		}
-		
+
 		if ( $db_row == 0 || sizeof($db_row) == 0 ) {
 			return 0;
 		}
@@ -2095,8 +2061,8 @@ print "<BR>";
             		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
-                }          
-              
+                }
+
                 if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
                 	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
@@ -2125,29 +2091,29 @@ print "<BR>";
             		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
-                }          
-              
+                }
+
                 if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
                 	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-                
+
             	if (isset($display_column['fields'][$field_name]))
             	{
             		$display = $display_column['fields'][$field_name];
             	}
-            	
-				global $locale;				   
+
+				global $locale;
 				$params = array();
 				$params['currency_id'] = $locale->getPrecedentPreference('currency');
 			    $params['convert'] = true;
 			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-			    $display = currency_format_number($display, $params);          	
+			    $display = currency_format_number($display, $params);
             }
-            		
+
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
                 $display = $this->layout_manager->widgetDisplay($display_column);
             }
-            
+
             if (isset($display_column['type'])) {
 
             	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));

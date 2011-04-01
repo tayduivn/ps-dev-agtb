@@ -137,11 +137,12 @@ class TrackerReporter{
 	 *
 	 * @return array - dataset
 	 */
-	public function ShowActiveUsers($date_selected = null){
-		if(!empty($date_selected))
-			$sessionTimeout = db_convert("'".$date_selected."'" ,"datetime");
-		else
-			$sessionTimeout = db_convert("'".$GLOBALS['timedate']->getNow()->get("-20 minutes")->asDb()."'" ,"datetime");
+	public function ShowActiveUsers($date_selected = null)
+	{
+		if(empty($date_selected))
+			$date_selected = $GLOBALS['timedate']->getNow()->get("-20 minutes")->asDb();
+
+        $sessionTimeout = $GLOBALS['db']->convert($GLOBALS['db']->quoted($date_selected), "datetime");
 
 		$result = $this->execute($this->setup('ShowActiveUsers', array($sessionTimeout)));
 	    $data = array();
@@ -157,11 +158,11 @@ class TrackerReporter{
 	 *
 	 * @return array - dataset
 	 */
-	public function ShowLoggedInUserCount($date_selected = null){
-		if(!empty($date_selected))
-			$sessionTimeout = db_convert("'".$date_selected."'" ,"datetime");
-		else
-			$sessionTimeout = db_convert("'".$GLOBALS['timedate']->getNow()->get("-20 minutes")->asDb()."'","datetime");
+	public function ShowLoggedInUserCount($date_selected = null)
+	{
+		if(empty($date_selected))
+			$date_selected = $GLOBALS['timedate']->getNow()->get("-20 minutes")->asDb();
+        $sessionTimeout = $GLOBALS['db']->convert($GLOBALS['db']->quoted($date_selected), "datetime");
 		return $this->execute($this->setup('ShowLoggedInUserCount', array($sessionTimeout)));
 	}
 

@@ -26,13 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
-
-
-
-
-
 global $app_strings;
 global $app_list_strings;
 global $current_language, $current_user, $timedate;
@@ -42,26 +35,10 @@ $tomorrow = $timedate->getNow()->get("+1 day")->asDb();
 
 $ListView = new ListView();
 $seedTasks = new Task();
-if ($seedTasks->db->dbType=='mysql') {
-	$format=array("'%Y-%m-%d'");
-	$where = "tasks.assigned_user_id='". $current_user->id ."' and (tasks.status is NULL or (tasks.status!='Completed' and tasks.status!='Deferred')) ";
-	$where .= "and (tasks.date_start is NULL or ";
-	$where .=  " CONCAT(".db_convert("tasks.date_start","date_format",$format).", CONCAT(' ',". db_convert("tasks.time_start","time_format",$format)." ))  <=". "'".$tomorrow."')";
-}
-else if ($seedTasks->db->dbType=='mssql')
-{
-	$where = "tasks.assigned_user_id='". $current_user->id ."' and (tasks.status is NULL or (tasks.status!='Completed' and tasks.status!='Deferred')) ";
-	$where .= "and (tasks.date_start is NULL or ";
-	$where .=  db_convert("tasks.date_start","date_format") . ' + ' . db_convert("tasks.time_start","time_format") . " <=". "'".$tomorrow."')";
-}
-
-else if ($seedTasks->db->dbType=='oci8')
-{
-	$format=array("'YYYY-MM-DD'");
-	$where = "tasks.assigned_user_id='". $current_user->id ."' and (tasks.status is NULL or (tasks.status!='Completed' and tasks.status!='Deferred')) ";
-	$where .= "and (tasks.date_start is NULL or ";
-	$where .=  " CONCAT(".db_convert("tasks.date_start","date_format",$format).", CONCAT(' ',". db_convert("tasks.time_start","time_format",$format)." ))  <=". "'".$tomorrow."')";
-}
+$where = "tasks.assigned_user_id='". $current_user->id ."' and (tasks.status is NULL or (tasks.status!='Completed' and tasks.status!='Deferred')) ";
+$where .= "and (tasks.date_start is NULL or ";
+$where .= $seedTasks->db->convert($seedTasks->db->convert("tasks.date_start", "date_format", '%Y-%m-%d'),  "CONCAT",
+    array("' '", $seedTasks->db->convert("tasks.time_start", "time_format"))). " <= ".$seedTasks->db->quoted($tomorrow);
 
 $ListView->initNewXTemplate( 'modules/Tasks/MyTasks.html',$current_module_strings);
 $header_text = '';

@@ -29,24 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: Project.php 56650 2010-05-24 18:53:17Z jenny $
-
-
-
-
-
-
-
-
-
-//BEGIN SUGARCRM flav=pro ONLY
-
-//END SUGARCRM flav=pro ONLY
-
-
-/**
- *
- */
 class Project extends SugarBean {
 	// database table columns
 	var $id;
@@ -167,12 +149,7 @@ class Project extends SugarBean {
 	{
 		$return_value = '';
 
-		$query = 'SELECT SUM(estimated_effort) total_estimated_effort';
-		if ($this->db->dbType=='oci8') {
-//BEGIN SUGARCRM flav=ent ONLY
-			$query = 'SELECT SUM(NVL(estimated_effort,0)) total_estimated_effort';
-//END SUGARCRM flav=ent ONLY
-		}
+		$query = 'SELECT SUM('.$this->db->convert('estimated_effort', "IFNULL", 0).') total_estimated_effort';
 		$query.= ' FROM project_task';
 		$query.= " WHERE parent_id='{$project_id}' AND deleted=0";
 
@@ -193,12 +170,7 @@ class Project extends SugarBean {
 	{
 		$return_value = '';
 
-		$query = 'SELECT SUM(actual_effort) total_actual_effort';
-		if ($this->db->dbType=='oci8') {
-//BEGIN SUGARCRM flav=ent ONLY
-			$query = 'SELECT SUM(NVL(actual_effort,0)) total_actual_effort';
-//END SUGARCRM flav=ent ONLY
-		}
+		$query = 'SELECT SUM('.$this->db->convert('actual_effort', "IFNULL", 0).') total_actual_effort';
 		$query.=  ' FROM project_task';
 		$query.=  " WHERE parent_id='{$project_id}' AND deleted=0";
 
@@ -306,22 +278,13 @@ class Project extends SugarBean {
 //BEGIN SUGARCRM flav=pro ONLY
 	function getProjectHolidays()
 	{
-		$firstName = db_convert(db_convert("users.first_name, contacts.first_name","IFNULL") . ",''", "IFNULL");
-		$lastName = db_convert(db_convert("users.last_name, contacts.last_name","IFNULL") . ",''", "IFNULL");
-		
-		if ($this->db->dbType=='mssql'){
-			$resource_select = "$firstName + ' ' + $lastName";
-		}
-		else if ($this->db->dbType=='mysql'){
-			$resource_select = "CONCAT($firstName, ' ', $lastName)";
-		}
-		else if ($this->db->dbType=='oci8'){
-			$resource_select = "CONCAT(CONCAT($firstName, ' '), $lastName)";
-		}
+	    $firstName = $this->db->covert($this->db->convert('users.first_name', "IFNULL", 'contacts.first_name'), "IFNULL", "''");
+	    $lastName = array("' '", $this->db->covert($this->db->convert('users.last_name', "IFNULL", 'contacts.last_name'), "IFNULL", "''"));
+	    $resource_select = $this->db->convert($firstName, "CONCAT", $lastName);
 
-		$query = "SELECT holidays.id, holidays.holiday_date, holidays.description as description, " 
+	    $query = "SELECT holidays.id, holidays.holiday_date, holidays.description as description, "
 				. $resource_select . " as resource_name " .
-				" FROM holidays LEFT JOIN users on users.id = holidays.person_id" . 
+				" FROM holidays LEFT JOIN users on users.id = holidays.person_id" .
 				" LEFT JOIN contacts on contacts.id = holidays.person_id" .
 				" WHERE related_module_id = '".$this->id."'" .
 				" AND holidays.related_module like 'Project'" .

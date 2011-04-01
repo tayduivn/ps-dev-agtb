@@ -929,7 +929,7 @@ class OracleManager extends DBManager
     }
 
 	/**
-     * @see DBHelper::getAutoIncrement()
+     * @see DBHelper::getAutoIncrementSQL()
      */
     public function getAutoIncrementSQL($table, $field_name)
     {
@@ -950,16 +950,6 @@ class OracleManager extends DBManager
                 '.NEXTVAL FROM DUAL');
 
         return "";
-    }
-
-    public function autoIncrementInsertValue($table, $field_name, $comma = true)
-    {
-        return ($comma?",":"").$this->_getSequenceName($table, $field_name, true).".NEXTVAL";
-    }
-
-    public function autoIncrementInsertInto($table, $field_name, $comma = true)
-    {
-        return ($comma?",":"").$field_name;
     }
 
     /**
@@ -1275,6 +1265,23 @@ EOQ;
         if($upper_case)
             $sequence_name = strtoupper($sequence_name);
         return $sequence_name;
+    }
+
+    public function emptyValue($type)
+    {
+        $ctype = $this->getColumnType($type);
+        if($ctype == "datetime") {
+            return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
+        }
+        if($ctype == "date") {
+            return $this->convert($this->quoted("1970-01-01"), "date");
+        }
+        return parent::emptyValue($type);
+    }
+
+    public function lastError()
+    {
+        return oci_error();
     }
 }
 

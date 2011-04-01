@@ -77,7 +77,7 @@ function commitAjaxFinalTouches($persistence) {
 
 	// convert to UTF8 if needed
 	if(!empty($persistence['allTables']))
-		executeConvertTablesSql($GLOBALS['db']->dbType, $persistence['allTables']);
+		executeConvertTablesSql($persistence['allTables']);
 
 	// rebuild
 	logThis('Performing UWrebuild()...');
@@ -189,20 +189,7 @@ function commitAjaxRunSql($persistence) {
 				logThis("[RUNNING SQL QUERY] {$sql}");
 				$db->query($sql);
 
-				$error = '';
-				switch($db->dbType) {
-					case 'mysql':
-						$error = mysql_error();
-					break;
-
-					case 'oci8':
-					break;
-
-					case 'mssql':
-
-					break;
-				}
-
+				$error = $db->lastError();
 				if(!empty($error)) {
 					logThis('************************************************************');
 					logThis('*** ERROR: SQL Commit Error!');

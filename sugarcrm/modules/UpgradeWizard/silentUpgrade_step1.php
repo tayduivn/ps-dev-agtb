@@ -872,7 +872,7 @@ if(!didThisStepRunBefore('commit')){
 					post_install();
 				// cn: only run conversion if admin selects "Sugar runs SQL"
 				if(!empty($_SESSION['allTables']) && $_SESSION['schema_change'] == 'sugar')
-					executeConvertTablesSql($db->dbType, $_SESSION['allTables']);
+					executeConvertTablesSql($_SESSION['allTables']);
 				//set process to done
 				$progArray['post_install']='done';
 				//set_upgrade_progress('commit','in_progress','post_install','done');

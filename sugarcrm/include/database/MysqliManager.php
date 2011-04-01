@@ -327,4 +327,9 @@ class MysqliManager extends MysqlManager
         if($this->checkError('Could Not Connect', $dieOnError))
             $GLOBALS['log']->info("connected to db");
     }
+
+    public function lastError()
+    {
+        return mysqli_error();
+    }
 }

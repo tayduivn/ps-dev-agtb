@@ -204,19 +204,13 @@ class ForecastOpportunities extends SugarBean {
     function get_opportunity_summary($currency_format=true) {
 
         $abc = array();
-
-        $query1 = "SELECT count(*) as opportunitycount, sum(amount_usdollar) as total_amount,sum((amount_usdollar * probability)/100) as weightedvalue";
-        $query1.=" , sum(IFNULL(best_case,((amount_usdollar * probability)/100))) total_best_case, sum(IFNULL(likely_case,((amount_usdollar * probability)/100))) total_likely_case,sum(IFNULL(worst_case,((amount_usdollar * probability)/100))) total_worst_case ";
-
-        if ($this->db->dbType =='oci8') {
-//BEGIN SUGARCRM flav=ent ONLY
-            $query1 = "SELECT count(*) as opportunitycount, sum(nvl(amount_usdollar,0)) as total_amount,sum((nvl(amount_usdollar,0) * nvl(probability,0))/100) as weightedvalue";
-            $query1.=" , sum(nvl(best_case,(nvl(amount_usdollar,0) * nvl(probability,0))/100)) total_best_case, sum(nvl(likely_case,(nvl(amount_usdollar,0) * nvl(probability,0))/100)) total_likely_case,sum(nvl(worst_case,(nvl(amount_usdollar,0) * nvl(probability,0))/100)) total_worst_case ";
-//END SUGARCRM flav=ent ONLY
-        } elseif ($this->db->dbType =='mssql') {
-            $query1 = "SELECT count(*) as opportunitycount, sum(isnull(amount_usdollar,0)) as total_amount,sum((isnull(amount_usdollar,0) * isnull(probability,0))/100) as weightedvalue";
-            $query1.=" , sum(isnull(best_case,(isnull(amount_usdollar,0) * isnull(probability,0))/100)) total_best_case, sum(isnull(likely_case,(isnull(amount_usdollar,0) * isnull(probability,0))/100)) total_likely_case,sum(isnull(worst_case,(isnull(amount_usdollar,0) * isnull(probability,0))/100)) total_worst_case ";
-        }
+        $amount_usdollar = $this->db->convert("amount_usdollar", "IFNULL", 0);
+        $probability = $this->db->convert("probability", "IFNULL", 0);
+        $query1 = "SELECT count(*) as opportunitycount, sum(amount_usdollar) as total_amount,
+        	sum((amount_usdollar * probability)/100) as weightedvalue,
+        	sum(".$this->db->convert("best_case","IFNULL", "(($amount_usdollar * $probability)/100))").") total_best_case,
+        	sum(".$this->db->convert("likely_case","IFNULL", "(($amount_usdollar * $probability)/100))").") total_likely_case,
+        	sum(".$this->db->convert("worst_case","IFNULL", "(($amount_usdollar * $probability)/100))").") total_worst_case";
 
         $query1 .= " FROM timeperiods, opportunities ";
         $query1 .= " LEFT JOIN worksheet on opportunities.id = worksheet.related_id and worksheet.user_id='{$this->fo_user_id}' and worksheet.timeperiod_id='{$this->fo_timeperiod_id}' and worksheet.forecast_type='{$this->fo_forecast_type}'";

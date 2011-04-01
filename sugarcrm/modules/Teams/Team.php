@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Teams/TeamMembership.php');
 
-class Team extends SugarBean 
+class Team extends SugarBean
 {
 	// Stored fields
 	var $id;
@@ -58,33 +58,33 @@ class Team extends SugarBean
 	var $module_dir = 'Teams';
 
 	var $encodeFields = Array("name", "description");
-   
+
     var $my_memberships=array();
-	
+
 	var $new_schema = true;
 
-	function Team() 
+	function Team()
 	{
 		parent::SugarBean();
 		$this->disable_row_level_security =true;
 	}
-	
-	function save($check_notify = false) 
+
+	function save($check_notify = false)
 	{
 		require_once('modules/Teams/TeamSetManager.php');
 		TeamSetManager::flushBackendCache();
 		sugar_cache_put("teamname_{$this->id}",$this->name);
 		return parent::save($check_notify);
 	}
-	
+
 	function create_tables(){
 		global $current_language;
 		$mod_strings = return_module_language($current_language, 'Teams');
-		
+
 		parent::create_tables();
-		Team::create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $this->global_team);	
+		Team::create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $this->global_team);
 	}
-	
+
 	function get_summary_text() {
 		if (!isset($this->name_2)) $this->name_2='';
 		return self::getDisplayName($this->name, $this->name_2);
@@ -109,7 +109,7 @@ class Team extends SugarBean
 	function get_list_view_data() {
 		$yes_label = isset($GLOBALS['app_list_strings']['dom_int_bool'][1]) ? $GLOBALS['app_list_strings']['dom_int_bool'][1] : 1;
 		$no_label = isset($GLOBALS['app_list_strings']['dom_int_bool'][0]) ? $GLOBALS['app_list_strings']['dom_int_bool'][0] : 0;
-			
+
 		$team_fields = $this->get_list_view_array();
 		$team_fields['NAME'] = self::getDisplayName($team_fields['NAME'], $team_fields['NAME_2']);
 		$team_fields['PRIVATE'] = !empty($team_fields['PRIVATE']) ? $yes_label : $no_label;
@@ -152,11 +152,11 @@ class Team extends SugarBean
 		$team->name = $name;
 		$team->private = $private;
 		$team->name_2 = $name_2;
-		
+
 		if(isset($associated_user_id)) {
 			$team->associated_user_id = $associated_user_id;
 		}
-		
+
 
 		$team->save();
 		return $team->id;
@@ -179,17 +179,17 @@ class Team extends SugarBean
 		if($this->private_teams == true) {
 			// cn: bug 9751 - no longer can rely on ASCII-only user names
 			$team_id = $user->getPrivateTeamID();
-			
-			if(empty($team_id)) {				
+
+			if(empty($team_id)) {
 				self::set_team_name_from_user($team, $user);
 				$description = "{$mod_strings['LBL_PRIVATE_TEAM_FOR']} {$user->user_name}";
 				$team_id = $this->create_team($user->first_name, $description, create_guid(), 1, $user->last_name, $user->id);
 			}
-			
+
 			$team->retrieve($team_id);
 			$team->add_user_to_team($user->id);
 		}
-		
+
 		$su = new User();
 		$su->retrieve($user->id);
 		$team->retrieve($this->global_team);
@@ -221,7 +221,7 @@ class Team extends SugarBean
 		{
 			$user = new User();
 			$user->retrieve($current_member->user_id);
-			
+
 			//if the flag $only_active_users is set to true, then we only want to return
 			//active users. This was defined as part of workflow to not send out notifications
 			//to inactive users
@@ -239,9 +239,9 @@ class Team extends SugarBean
 	}
 
 	function mark_deleted() {
-		$this->delete_team();			
+		$this->delete_team();
 	}
-	
+
 	/**
 	 * Delete a team and all team memberships.  This method will only work if no items are assigned to the team.
 	 */
@@ -252,7 +252,7 @@ class Team extends SugarBean
 			$GLOBALS['log']->fatal($msg);
 			die($msg);
 		}
-		
+
 		//Check if the associated user is deleted
 		$user = new User();
 		$user->retrieve($this->associated_user_id);
@@ -271,15 +271,15 @@ class Team extends SugarBean
 		// Update teams and set deleted = 1
 		$query = "UPDATE teams SET deleted = 1 WHERE id='{$this->id}'";
 		$this->db->query($query,true,"Error deleting team: ");
-		
+
 		require_once('modules/Teams/TeamSetManager.php');
 		TeamSetManager::flushBackendCache();
 		//clean up any team sets that use this team id
 		TeamSetManager::removeTeamFromSets($this->id);
-		
+
 	    // Take the item off the recently viewed lists
 	    $tracker = new Tracker();
-	    $tracker->makeInvisibleForAll($this->id);	
+	    $tracker->makeInvisibleForAll($this->id);
 	}
 
 	/**
@@ -342,8 +342,8 @@ class Team extends SugarBean
 				return;
 			}
 			if($membership->implicit_assign)
-			{	
-							
+			{
+
 				if(isset($user_override))
 				{
 					$focus=$user_override;
@@ -360,7 +360,7 @@ class Team extends SugarBean
 					$manager->retrieve($manager->reports_to_id);
                     $managers_membership = new TeamMembership();
 					$result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->id);
-					
+
 					if($result)
 					{
 						if($managers_membership->implicit_assign)
@@ -368,7 +368,7 @@ class Team extends SugarBean
 							// We already have an implicit assignment.  It must have come from another person that reports to the focus.  Stop.
 							$GLOBALS['log']->debug("Found existing implicit assignment $manager->id is a member of $this->id");
                             $membership->explicit_assign = true;
-                            $membership->save();   	
+                            $membership->save();
                             return;
 						}
 						if($managers_membership->explicit_assign)
@@ -379,14 +379,14 @@ class Team extends SugarBean
 							$managers_membership->save();
 
                             $membership->explicit_assign = true;
-                            $membership->save();                        
+                            $membership->save();
                         	return;
 						}
 
 						// This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
 						$GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
 					}
-					else 
+					else
 					{
 						// This user does not have an implict assign already, add it.
 						$managers_membership = new TeamMembership();
@@ -416,7 +416,7 @@ class Team extends SugarBean
 
 
 		// Now it is time to update the management hierarchy to give them implicit access to this team.
-		
+
 		if(isset($user_override))
 		{
 			$focus=$user_override;
@@ -465,7 +465,7 @@ class Team extends SugarBean
 			$membership->team_id = $this->id;
 			$membership->save();
 			$GLOBALS['log']->debug("Creating new team memberhsip $manager->id is a member of $this->id");
-			
+
 			// Since we added implicit membership we need to update the focuses global membership to indicate
 			// it has implicit membership.
 			$result = $membership->retrieve_by_user_and_team($manager->id, 1);
@@ -484,8 +484,8 @@ class Team extends SugarBean
 
 
 	/**
-	* Remove a user from the the team that this object represents.  This method only removes explicit team membership, if implicit is not also set.  
-	* It will always leave implicit team memberships intact. We leave records with both explicit and implicit set because there is no way to 
+	* Remove a user from the the team that this object represents.  This method only removes explicit team membership, if implicit is not also set.
+	* It will always leave implicit team memberships intact. We leave records with both explicit and implicit set because there is no way to
 	* differentiate records that are Explicit and Implicit, from records that are only implicit only in the rebuilding process.
 	* An explicit team membership is when a user is manually added to a team.  An implicit team membership is one that is inherited through the reporting struction of the company.
 	* @param user_override is used to pass in a user with a modified reports to id in cases where it just changed.
@@ -514,7 +514,7 @@ class Team extends SugarBean
 		   $GLOBALS['log']->fatal($error_message);
 		   throw new Exception($error_message);
 		}
-		
+
 		// Step1: Add the current focus to the visited list
 		$visited_users[$focus->id] = $focus->user_name;
 
@@ -525,10 +525,10 @@ class Team extends SugarBean
 		{
         	$GLOBALS['log']->debug("Found existing team membership.  $user_id is a member of $this->id");
             $this->load_relationship('users');
-    		
+
     		//if the user does not have implicit access, then we do not
     		//care what the explicit access is, delete the memnbership
-    		
+
     		//if the user has implicit and has explicit then update
     		//explicit flag, but do not delete.
     		if($membership->explicit_assign and $membership->implicit_assign)
@@ -539,7 +539,7 @@ class Team extends SugarBean
     		} else if (!$membership->explicit_assign and $membership->implicit_assign) {
                 //preserve the implicit relationship
             }
-            else {   
+            else {
                 //delete   explcit implicit
                 //             1     0
                 //             0     0
@@ -550,7 +550,7 @@ class Team extends SugarBean
             while(!empty($manager->reports_to_id) && $manager->id != $manager->reports_to_id)
             {
                 $manager->retrieve($manager->reports_to_id);
-    
+
                 $result = $membership->retrieve_by_user_and_team($manager->id, $this->id);
                 if($result)
                 {
@@ -559,11 +559,11 @@ class Team extends SugarBean
                         {
                             $membership->implicit_assign = 0;
                             $membership->save();
-                        }else{   
+                        }else{
                              $GLOBALS['log']->debug("Remove membership record {$manager->user_name} from {$this->name}");
                              $this->users->delete($this->id, $manager->id);
-                        }   
-                        
+                        }
+
                     }
                 }
             }
@@ -592,7 +592,7 @@ class Team extends SugarBean
 
 		return false;
 	}
-    
+
     function scan_direct_reports_team_for_access($user_id)
     {
         // At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
@@ -622,7 +622,7 @@ class Team extends SugarBean
 		$user->reports_to_id = $old_reports_to_id;
 
         //keep track of team memberships too.
-        
+
 		// Step1: For each team that the focus is a member of:
 		$team_array = $this->get_teams_for_user($user_id);
 		foreach($team_array as $team)
@@ -641,21 +641,21 @@ class Team extends SugarBean
 			//		a. Run the iterative rebuild for member removal steps.
 			$team->add_user_to_team($user_id, $user);
 		}
-	   
+
        //make sure the user has same memberships as before. If not, update them accordingly.
        if (count($this->my_memberships) > 0) {
             foreach ($this->my_memberships as $team_id=>$before_row) {
                 $query = "select * from team_memberships where user_id='$user_id' and team_id='$team_id'";
                 $result = $this->db->query($query,true,"Error finding the full membership list for a user: ");
-                $after_row=$this->db->fetchByAssoc($result);    
-                
+                $after_row=$this->db->fetchByAssoc($result);
+
                 if  ($after_row['explicit_assign'] != $before_row['explicit_assign'] or $after_row['implicit_assign'] != $before_row['implicit_assign'] ) {
                      $update_query="update team_memberships set explicit_assign='{$before_row['explicit_assign']}', implicit_assign='{$before_row['implicit_assign']}' where id='{$after_row['id']}'";
                      $this->db->query($update_query,true,"Error updating the team sync. ");
                 }
             }
        }
-    
+
     }
 
 
@@ -668,42 +668,12 @@ class Team extends SugarBean
 		// At this point, we have the manager's ID.  Let's gather the list of their employee's IDs.
 		$query = "select * from team_memberships where user_id='$user_id' and deleted = 0";
 		$result = $this->db->query($query,true,"Error finding the full membership list for a user: ");
-		
 
 		$team_array = Array();
-
-		// cn: bug 13809 - getRowCount fails on oracle as there is no equivalent.
-		if($this->db->dbType == 'oci8') {
-			$ids = array();
-			
-			while($row = $this->db->fetchByAssoc($result)) {
-				$ids[] = $row['team_id'];
-                $this->my_memberships[$row['team_id']]=$row;
-			}
-			
-		} else {
-			$rows_found =  $this->db->getRowCount($result);
-
-			// We know that one person reports to this user and they are not on the team.  If they only have one
-			// person reporting to them right now, they will be removed.
-			if($rows_found > 0)
-			{
-				// Now we have the list of direct reports.  We have already deleted the membership for the user that was being removed
-				// gather all memberships for this list of users in the team in question.
-				$ids = Array();
-				for($index = 0, $row = $this->db->fetchByAssoc($result, $index); $row && ($index < $rows_found) ;$index++, $row = $this->db->fetchByAssoc($result, $index))
-				{
-					$ids[] = $row['team_id'];
-	                $this->my_memberships[$row['team_id']]=$row;
-				}
-			}
-		}
-
-		// For each id, retrieve the team and stick it in the team_array
-		foreach($ids as $id)
-		{
+		while($row = $this->db->fetchByAssoc($result)) {
+            $this->my_memberships[$row['team_id']]=$row;
 			$team = new Team();
-			$team->retrieve($id);
+			$team->retrieve($row['team_id']);
 			$team_array[] = $team;
 		}
 
@@ -726,65 +696,65 @@ class Team extends SugarBean
 		if (!$row) return false;
 		return $row['id'];
 	}
-	
-	
+
+
 	/**
 	 * has_records_in_modules
-	 * 
-	 * This function checks to see if there are currently records which have a team_set_id that contains 
+	 *
+	 * This function checks to see if there are currently records which have a team_set_id that contains
 	 * the team.  It checks the team_sets_modules table for records where the team_set_id
 	 * belongs to entries in team_sets_teams table and whose team_sets_teams.team_id value contains
 	 * the team's id.
-	 * 
+	 *
 	 * @return boolean value indicating whether or not the team instance is assigned as part of a team set in modules
 	 */
 	function has_records_in_modules() {
-		$query = "SELECT count(tsm.team_set_id) as total  
-		          FROM team_sets_modules tsm 
-		          inner join team_sets_teams tst 
-		          on tsm.team_set_id = tst.team_set_id 
+		$query = "SELECT count(tsm.team_set_id) as total
+		          FROM team_sets_modules tsm
+		          inner join team_sets_teams tst
+		          on tsm.team_set_id = tst.team_set_id
 		          where tst.team_id = '{$this->id}'";
 		$results = $this->db->query($query);
 		if(!empty($results)) {
 		   $row = $GLOBALS['db']->fetchByAssoc($results);
 		   return $row['total'] == 0 ? false : true;
 		}
-		return false;	
+		return false;
 	}
-	
-	
+
+
 	/**
 	 * reassign_team_records
 	 * This function accepts an Array of team ids that have records that should be reassigned
 	 * to the team instance.
-	 * 
+	 *
 	 * @param $old_teams Array of team ids whose records will be reassigned to the team instance id
 	 */
 	function reassign_team_records($old_teams=array()) {
-		$old_team = new Team();	
+		$old_team = new Team();
 		foreach($old_teams as $old_team_id) {
 			$old_team->retrieve($old_team_id);
-			
+
 			$query = "SELECT tsm.module_table_name FROM team_sets_modules tsm inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = '{$old_team->id}'";
 			$results = $this->db->query($query);
 			$modules_with_team = array();
 			if(!empty($results)) {
 				while($row = $this->db->fetchByAssoc($results)) {
 			          $modules_with_team[] = $row['module_table_name'];
-				}    
-			}	
-			
+				}
+			}
+
 			if(!empty($modules_with_team)) {
 			   foreach($modules_with_team as $module) {
 			   	   $sql = "UPDATE {$module} SET team_id = '{$this->id}' WHERE team_id = '{$old_team->id}'";
 			   	   $GLOBALS['log']->info("Updating team_id column values in {$module} table from '{$old_team->id}' to '{$this->id}'");
-			   	   $this->db->query($sql); 
+			   	   $this->db->query($sql);
 			   }
 			}
 			$old_team->delete_team();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Return the proper display name of the team given the user's preferred format.
 	 *
@@ -797,7 +767,7 @@ class Team extends SugarBean
 	    $localeFormat = $locale->getLocaleFormatMacro($GLOBALS['current_user']);
 	    $show_last_name_first = strpos($localeFormat,'l') < strpos($localeFormat,'f');
 		$display_name = '';
-		
+
 	    if($show_last_name_first){
 			if(!empty($name_2)){
 				$display_name = $name_2.' ';
@@ -812,24 +782,24 @@ class Team extends SugarBean
 		return $display_name;
 	}
 
-	
+
 	/**
 	 * set_team_name_from_user
-	 * 
+	 *
 	 * @param $team The Team instance we are setting the names for
 	 * @param $user The User instance whose values we are using
-	 * 
+	 *
 	 */
     public static function set_team_name_from_user(&$team, &$user) {
     	if(empty($user->first_name) && $user->last_name) {
-			$team->name = $user->last_name;	
+			$team->name = $user->last_name;
 			$team->name_2 = '';
     	} else {
 			$team->name = $user->first_name;
 			$team->name_2 = $user->last_name;
-    	}    	
+    	}
     }
-    
+
 	function create_export_query($order_by, $where) {
 		include('modules/Teams/field_arrays.php');
 
@@ -848,15 +818,15 @@ class Team extends SugarBean
 		else
 			$query .= " WHERE ".$where_auto;
 
-		
+
 		if ($order_by != "")
 			$query .= " ORDER BY $order_by";
 		else
 			$query .= " ORDER BY teams.name";
 
 		return $query;
-	}    
-	
+	}
+
 	/**
      * Bug 13271 - Sometimes we just want to know the name of a team for display purposes when the team_id may not be one of the users assigned teams.
      * For example when they have an admin Role for a module we may need to display the teams for other users
@@ -872,17 +842,17 @@ class Team extends SugarBean
         $teamname = sugar_cache_retrieve("teamname_$team_id");
         if ( !empty($teamname) )
             return $teamname;
-        
+
         $focus = new Team;
         $focus->retrieve($team_id);
         if ( !empty($focus->id) ) {
             $teamname = $focus->name;
             sugar_cache_put("teamname_$team_id",$teamname);
-        }   
-        
+        }
+
         return $teamname;
     }
-    
+
     /**
      * Returns an array of all teams in the system that the user has access to
      *
@@ -892,36 +862,36 @@ class Team extends SugarBean
     public static function getArrayAllAvailable(
         $add_blank = FALSE,
         $user = null
-        ) 
+        )
     {
         $team_array = sugar_cache_retrieve('team_array:'. $add_blank.'ADDBLANK'.$user->id);
         if(!empty($team_array))
             return $team_array;
-        
+
         global $db, $current_user;
         if ( !isset($db) )
             $db = DBManagerFactory::getInstance();
         if ( !isset($user) )
             $user = $current_user;
-    
+
         if($user->isAdmin()||(!$user->isAdmin() && $user->isAdminForModule('Users')))
             $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1 where t1.deleted = 0 ORDER BY t1.private,t1.name ASC';
         else
             $query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1, team_memberships t2 where t1.deleted = 0 and t2.deleted = 0 and t1.id=t2.team_id and t2.user_id = '."'".$user->id."'".' ORDER BY t1.private,t1.name ASC';
         $result = $db->query($query, true, "Error filling in team array: ");
-    
+
         if ($add_blank)
             $team_array[""] = "";
-        
+
         while ($row = $db->fetchByAssoc($result)) {
             if($user->showLastNameFirst())
-                $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);  
+                $team_array[$row['id']] = trim($row['name_2'] . ' ' . $row['name']);
             else
                 $team_array[$row['id']] = trim($row['name'] . ' ' . $row['name_2']);
         }
-    
+
         sugar_cache_put('team_array:'.$add_blank.'ADDBLANK'.$current_user->id, $team_array);
-        
+
         return $team_array;
     }
 }

@@ -155,21 +155,15 @@ class Common {
     //todo add date format for sqlserver.
 	function get_my_timeperiods() {
 
-        $format="'%Y%m%d'";
-        if ($this->db->dbType=='oci8') {
-            //BEGIN SUGARCRM flav=ent ONLY
-            $format="'YYYYMMDD'";
-            //END SUGARCRM flav=ent ONLY
-        }
-
+        $nowdate = $this->db->now();
         //current system date must fall between forecast start date (forecast schedule) and end date (time period)
         //not checking systemdate against the time period start date because users may  want to start forecasting before the actual
         //time period begins.
         $query  = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy";
         $query .= " from forecast_schedule a, timeperiods b";
         $query .= " where a.timeperiod_id = b.id";
-        $query .= " and " . db_convert('a.forecast_start_date','date_format',array($format)) . " <= ". db_convert(db_convert('','today'),'date_format',array($format));
-        $query .= " and " . db_convert('b.end_date','date_format',array($format)) . " >= ".db_convert(db_convert('','today'),'date_format',array($format));
+        $query .= " and a.forecast_start_date <= $nowdate";
+        $query .= " and b.end_date >= $nowdate";
         $query .= " and a.deleted = 0";
         $query .= " and b.deleted = 0";
         $query .= " and a.status = 'Active'";

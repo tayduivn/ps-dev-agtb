@@ -325,13 +325,11 @@ $diffs ='';
 		$contents = stream_get_contents($fp);
 	    $anyScriptChanges =$contents;
 
-		// remove __uw_temp tables
-		//testCleanUp($db->dbType);
 		fclose($fp);
 
-		$customTables = getCustomTables($db->dbType);
+		$customTables = getCustomTables();
 		if ( !empty($customTables) ) {
-			$_SESSION['alterCustomTableQueries'] = alterCustomTables($db->dbType, $customTables);
+			$_SESSION['alterCustomTableQueries'] = alterCustomTables($customTables);
 		} else {
 			$_SESSION['alterCustomTableQueries'] = false;
 		}

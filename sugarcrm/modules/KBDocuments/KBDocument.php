@@ -669,22 +669,9 @@ function get_kbdoc_tags_heirarchy($kbdoc_id,$screen){
 	{
 		$GLOBALS['log']->info("Finding linked records $this->object_name: ".$query);
 
-        if(isset($row_offset) && isset($limit) && $limit != -1)
-		{
-			//Fix for 13099.  For current MssqlManager.php implementation, we cannot build query properly using limitQuery method, so let's override it
-			if($this->db->dbType == 'mssql' && preg_match('/kr.kbdocument_id[\s]IN[\s]+[\(][\(][\']([^\']*?)[\'][\)][\)]/', $query, $matches)) {
-			  $query = "SELECT TOP $limit *
-                        FROM (SELECT ROW_NUMBER() OVER (ORDER BY dr.date_entered DESC) AS row_number, dr.id, dr.filename, dr.created_by, dr.date_entered, dr.file_mime_type
-                        FROM document_revisions dr INNER JOIN
-                        kbdocument_revisions kr ON kr.document_revision_id = dr.id AND kr.kbdocument_id = '". $matches[1] ."' AND dr.file_mime_type IS NOT NULL AND dr.deleted = 0) AS a
-                        WHERE row_number > $row_offset AND row_number < " . ($row_offset + $limit + 1);
-              $result = $this->db->query($query, true);
-			} else {
-			  $result = $this->db->limitQuery($query, $row_offset, $limit, true, "Error retrieving $template->object_name list: ");
-			}
-		}
-		else
-		{
+        if(isset($row_offset) && isset($limit) && $limit != -1) {
+		    $result = $this->db->limitQuery($query, $row_offset, $limit, true, "Error retrieving $template->object_name list: ");
+		} else {
 			$result = $this->db->query($query, true);
 		}
 

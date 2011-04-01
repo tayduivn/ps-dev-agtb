@@ -52,16 +52,8 @@ function query_opportunity_subject_exists($subj)
 {
 	global $db;
 
-	$subject='';
-	if ($db->dbType=='mysql') {
-    	$subject = $db->getHelper()->escape_quote($subj);
-	} else if ($db->dbType=='oci8') {
-//BEGIN SUGARCRM flav=ent ONLY
-    	$subject = $db->getHelper()->magic_quotes_oracle($subj);
-//END SUGARCRM flav=ent ONLY
-	}
-
-	$query = "select count(id) as num from opportunities where name = '$subject' and deleted = 0";
+	$subject = $db->quoted($subj);
+	$query = "select count(id) as num from opportunities where name = $subject and deleted = 0";
 	$check = $db->query($query);
 
 	$row = $db->fetchByAssoc($check);
@@ -150,7 +142,7 @@ else
 	$opp->account_id = $account_id;
 	$opp->save();
 
-	
+
 	//link quote contracts with the opportunity.
 	$quote = new Quote();
 	$quote->retrieve($_REQUEST['record']);

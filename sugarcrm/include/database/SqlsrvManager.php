@@ -212,7 +212,7 @@ class SqlsrvManager extends MssqlManager
 	/**
      * @see DBManager::query()
 	 */
-	public function query($sql, $dieOnError = false, $msg = '', $suppress = false)
+	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
 		global $app_strings;
 
@@ -646,4 +646,9 @@ EOSQL;
     {
 		return 0;
 	}
+
+    public function lastError()
+    {
+        return join("\n",sqlsrv_errors(SQLSRV_ERR_ERRORS));
+    }
 }

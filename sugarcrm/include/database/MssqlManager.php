@@ -264,7 +264,7 @@ class MssqlManager extends DBManager
 	/**
      * @see DBManager::query()
 	 */
-	public function query($sql, $dieOnError = false, $msg = '', $suppress = false)
+	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
         // Flag if there are odd number of single quotes
         if ((substr_count($sql, "'") & 1))
@@ -409,9 +409,10 @@ class MssqlManager extends DBManager
     }
 
 	/**
+	 * FIXME: verify and thoroughly test this code, these regexps look fishy
      * @see DBManager::limitQuery()
      */
-    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '')
+    public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
         $newSQL = $sql;
         $distinctSQLARRAY = array();
@@ -423,8 +424,7 @@ class MssqlManager extends DBManager
             $GLOBALS['log']->debug(print_r(func_get_args(),true));
             $this->lastsql = $sql;
             $matches = array();
-            preg_match('/^(.*SELECT )(.*?FROM.*WHERE)(.*)$/isU',$sql, $matches);
-            if (!empty($matches[3])) {
+            if(preg_match('/^(.*SELECT )(.*?FROM.*?)(WHERE(.*))?$/isU',$sql, $matches)) {
                 if ($start == 0) {
                     $match_two = strtolower($matches[2]);
                     if (!strpos($match_two, "distinct")> 0 && strpos($match_two, "distinct") !==0) {
@@ -579,9 +579,13 @@ class MssqlManager extends DBManager
         }
 
         $GLOBALS['log']->debug('Limit Query: ' . $newSQL);
-        $result =  $this->query($newSQL, $dieOnError, $msg);
-        $this->dump_slow_queries($newSQL);
-        return $result;
+        if($execute) {
+            $result =  $this->query($newSQL, $dieOnError, $msg);
+            $this->dump_slow_queries($newSQL);
+            return $result;
+        } else {
+            return $newSQL;
+        }
     }
 
 
@@ -1197,8 +1201,12 @@ class MssqlManager extends DBManager
      */
     public function emptyValue($type)
     {
-        if($type == "currency") {
-            return 0;
+        $ctype = $this->getColumnType($type);
+        if($ctype == "datetime") {
+            return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
+        }
+        if($ctype == "date") {
+            return $this->convert($this->quoted("1970-01-01"), "datetime");
         }
         return parent::emptyValue($type);
     }
@@ -1706,4 +1714,8 @@ EOQ;
 		return 0;
 	}
 
+    public function lastError()
+    {
+        return mssql_get_last_message();
+    }
 }

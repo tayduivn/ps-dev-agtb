@@ -123,12 +123,13 @@ foreach ($_POST['mass'] as $message_id) {
 		//delete all messages for the current campaign and current email marketing message.
 		$delete_emailman_query="delete from emailman where campaign_id='{$campaign->id}' and marketing_id='{$message_id}' and list_id='{$prospect_list_id}'";
 		$campaign->db->query($delete_emailman_query);
+        $auto = $campaign->db->getAutoIncrementSQL("emailman", "id");
 
 		$insert_query= "INSERT INTO emailman (date_entered, user_id, campaign_id, marketing_id,list_id, related_id, related_type, send_date_time";
-		$insert_query.= $campaign->db->autoIncrementInsertInto("emailman", "id");
+		$insert_query.= empty($auto)?"":",id";
 		$insert_query.=')';
 		$insert_query.= " SELECT $current_date,'{$current_user->id}',plc.campaign_id,'{$message_id}',plp.prospect_list_id, plp.related_id, plp.related_type,{$send_date_time}";
-		$insert_query.= $campaign->db->autoIncrementInsertValue("emailman", "id");
+		$insert_query.= empty($auto)?"":",$auto";
 		$insert_query.= " FROM prospect_lists_prospects plp ";
 		$insert_query.= "INNER JOIN prospect_list_campaigns plc ON plc.prospect_list_id = plp.prospect_list_id ";
 		$insert_query.= "WHERE plp.prospect_list_id = '{$prospect_list_id}' ";

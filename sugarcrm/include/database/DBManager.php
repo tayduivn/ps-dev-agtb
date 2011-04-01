@@ -1704,7 +1704,10 @@ abstract class DBManager
             //handle auto increment values here only need to do this on insert not create
             // TODO: do we really need to do this?
             if (!empty($fieldDef['auto_increment'])) {
-                $values[$field] = $this->getAutoIncrementSQL($bean->getTableName(), $fieldDef['name']);
+                $auto = $this->getAutoIncrementSQL($bean->getTableName(), $fieldDef['name']);
+                if(!empty($auto)) {
+                    $values[$field] = $auto;
+                }
             } elseif ($fieldDef['name'] == 'deleted') {
                 $values['deleted'] = (int)$val;
             } else {
@@ -2317,28 +2320,6 @@ abstract class DBManager
 	}
 
 	/**
-	 * Return VALUE part for INSERT auto-increment value
-	 * @param string $table
-	 * @param string $field_name
-	 * @param bool $comma
-	 */
-    public function autoIncrementInsertValue($table, $field_name, $comma = true)
-    {
-        return "";
-    }
-
-	/**
-	 * Return column name part for INSERT auto-increment value
-	 * @param string $table
-	 * @param string $field_name
-	 * @param bool $comma
-	 */
-    public function autoIncrementInsertInto($table, $field_name, $comma = true)
-    {
-        return "";
-    }
-
-	/**
      * This method generates sql for adding a column to table identified by field def.
      *
      * @param  string $tablename
@@ -2671,6 +2652,7 @@ abstract class DBManager
     {
         switch ($type) {
             case 'decimal':
+            case 'decimal2':
             case 'int':
             case 'double':
             case 'float':
@@ -2691,8 +2673,12 @@ abstract class DBManager
         if (empty($val))
             return true;
 
+        if($this->emptyValue($type) == $val) {
+            return true;
+        }
         switch ($type) {
             case 'decimal':
+            case 'decimal2':
             case 'int':
             case 'double':
             case 'float':
@@ -2741,10 +2727,17 @@ abstract class DBManager
 
     /**
      * Return representation of an empty value depending on type
+     * The value is fully quoted, converted, etc.
      * @param string $type
      */
     public function emptyValue($type)
     {
+        if($this->_isTypeNumber($type)) {
+            return 0;
+        }
+        if($type == "currency") {
+            return 0;
+        }
         return "''";
     }
 
@@ -2983,4 +2976,10 @@ abstract class DBManager
      * Also handles any cleanup needed
      */
     abstract public function disconnect();
+
+    /**
+     * Get last database error
+     */
+    abstract public function lastError();
+
 }

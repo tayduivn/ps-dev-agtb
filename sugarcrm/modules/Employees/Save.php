@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Save.php 51719 2009-10-22 17:18:00Z mitani $
@@ -31,7 +31,7 @@ require_once('modules/MySettings/TabController.php');
 
 $tabs_def = urldecode(isset($_REQUEST['display_tabs_def']) ? $_REQUEST['display_tabs_def'] : '');
 $DISPLAY_ARR = array();
-parse_str($tabs_def,$DISPLAY_ARR); 
+parse_str($tabs_def,$DISPLAY_ARR);
 
 
 $focus = new Employee();
@@ -41,13 +41,13 @@ $focus->retrieve($_POST['record']);
 $old_reports_to_id = $focus->reports_to_id;
 
 populateFromRow($focus,$_POST);
-	
+
 $focus->save();
 $return_id = $focus->id;
 
 //BEGIN SUGARCRM flav=pro ONLY
 // If reports to has changed, call update team memberships to correct the membership tree
-if ($old_reports_to_id != $focus->reports_to_id) 
+if ($old_reports_to_id != $focus->reports_to_id)
 {
 	$focus->update_team_memberships($old_reports_to_id);
 }
@@ -66,19 +66,15 @@ header("Location: index.php?action=$return_action&module=$return_module&record=$
 
 
 function populateFromRow(&$focus,$row){
-	
 
-	//only employee specific field values need to be copied.    	
+
+	//only employee specific field values need to be copied.
 	$e_fields=array('first_name','last_name','reports_to_id','description','phone_home','phone_mobile','phone_work','phone_other','phone_fax','address_street','address_city','address_state','address_country','address_country', 'address_postalcode', 'messenger_id','messenger_type');
 	if ( is_admin($GLOBALS['current_user']) )
         $e_fields = array_merge($e_fields,array('title','department','employee_status'));
     $nullvalue='';
 	foreach($e_fields as $field)
 	{
-		//BEGIN SUGARCRM flav=ent ONLY
-		// oracle returns upper case fields. use that
-		//$rfield = ($this->db->dbType == 'oci8') ? strtoupper($field) : $field;
-		//END SUGARCRM flav=ent ONLY
 		$rfield = $field; // fetch returns it in lowercase only
 		if(isset($row[$rfield]))
 		{
