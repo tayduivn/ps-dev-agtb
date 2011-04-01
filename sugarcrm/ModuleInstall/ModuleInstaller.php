@@ -1361,6 +1361,12 @@ class ModuleInstaller{
         $this->log(translate('LBL_MI_REBUILDING') . " Logic hooks...");
 		$this->merge_files('Ext/LogicHooks/', 'logichooks.ext.php');
 	}
+	
+	function rebuild_schedulers()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Schedulers...");
+		$this->merge_files('Ext/ScheduledTasks/', 'scheduledtasks.ext.php');
+	}
 
 	/**
 	 * Rebuilds the extension files found in custom/Extension
@@ -1388,6 +1394,7 @@ class ModuleInstaller{
 		$this->rebuild_tabledictionary();
 		//$this->repair_indices();
         $this->rebuild_logichooks();
+        $this->rebuild_schedulers();
 		$this->reset_opcodes();
 		sugar_cache_reset();
 	}
