@@ -88,9 +88,17 @@ class LogicHook{
 				    $GLOBALS['log']->debug('Including module specific hook file for '.$module_dir);
                 }
 				include("custom/modules/$module_dir/logic_hooks.php");
-				$this->process_hooks($hook_array, $event, $arguments);
-				$hook_array = null;
 			}
+			if(file_exists("custom/modules/$module_dir/Ext/LogicHooks/logichooks.ext.php")) {
+                if(isset($GLOBALS['log'])){
+				    $GLOBALS['log']->debug('Including Ext hook file for '.$module_dir);
+                }
+			    include("custom/modules/$module_dir/Ext/LogicHooks/logichooks.ext.php");
+			}
+			if(!empty($hook_array)) {
+			    $this->process_hooks($hook_array, $event, $arguments);
+			}
+			$hook_array = null;
 		}
 		// Now load the generic array if it exists.
 		if(file_exists('custom/modules/logic_hooks.php')){
@@ -98,7 +106,15 @@ class LogicHook{
 			    $GLOBALS['log']->debug('Including generic hook file');
             }
 			include('custom/modules/logic_hooks.php');
-			$this->process_hooks($hook_array, $event, $arguments);
+		}
+		if(file_exists("custom/modules/Ext/LogicHooks/logichooks.ext.php")) {
+            if(isset($GLOBALS['log'])){
+			    $GLOBALS['log']->debug('Including generic Ext hook file');
+            }
+		    include("custom/modules/Ext/LogicHooks/logichooks.ext.php");
+		}
+		if(!empty($hook_array)) {
+		    $this->process_hooks($hook_array, $event, $arguments);
 		}
 	}
 

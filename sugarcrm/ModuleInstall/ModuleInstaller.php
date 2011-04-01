@@ -216,11 +216,11 @@ class ModuleInstaller{
 				$rac->repairAndClearAll($selectedActions, $installed_modules,true, false);
 				$this->rebuild_relationships();
 				UpdateSystemTabs('Add',$tab_modules);
-				
-				//clear the unified_search_module.php file 
+
+				//clear the unified_search_module.php file
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
-	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile(); 
-	            				
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
 			die("No \$installdefs Defined In $this->base_dir/manifest.php");
@@ -1257,10 +1257,10 @@ class ModuleInstaller{
 
 				UpdateSystemTabs('Restore',$installed_modules);
 
-	            //clear the unified_search_module.php file 
+	            //clear the unified_search_module.php file
 	            require_once('modules/Home/UnifiedSearchAdvanced.php');
-	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();     				
-				
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
 					update_progress_bar('install', $total_steps, $total_steps);
@@ -1356,6 +1356,12 @@ class ModuleInstaller{
 		include("modules/Administration/RepairIndex.php");
 	}
 
+	function rebuild_logichooks()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Logic hooks...");
+		$this->merge_files('Ext/LogicHooks/', 'logichooks.ext.php');
+	}
+
 	/**
 	 * Rebuilds the extension files found in custom/Extension
 	 * @param boolean $silent
@@ -1381,6 +1387,7 @@ class ModuleInstaller{
 		$this->rebuild_relationships();
 		$this->rebuild_tabledictionary();
 		//$this->repair_indices();
+        $this->rebuild_logichooks();
 		$this->reset_opcodes();
 		sugar_cache_reset();
 	}
