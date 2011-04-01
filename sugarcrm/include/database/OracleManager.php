@@ -437,6 +437,93 @@ class OracleManager extends DBManager
     }
 
     /**
+     * TODO: may want to join it with Altlobexecute
+     * (non-PHPdoc)
+     * @see DBManager::insertParams()
+     */
+    public function insertParams($table, $field_defs, $data)
+    {
+        $values = array();
+        $lob_fields = array();
+        $lob_field_type = array();
+		foreach ($field_defs as $field => $fieldDef)
+		{
+            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
+            //custom fields handle there save seperatley
+
+            if(isset($data[$field])) {
+                // clean the incoming value..
+                $val = from_html($data[$field]);
+            } else {
+                continue;
+            }
+            $type = $this->getFieldType($fieldDef);
+
+            //handle auto increment values here only need to do this on insert not create
+            // TODO: do we really need to do this?
+            if (!empty($fieldDef['auto_increment'])) {
+                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
+                if(!empty($auto)) {
+                    $values[$field] = $auto;
+                }
+            } elseif ($fieldDef['name'] == 'deleted') {
+                $values['deleted'] = (int)$val;
+            } else {
+                // need to do some thing about types of values
+                $values[$field] = $this->massageValue($val, $fieldDef);
+            }
+            $lob_type = false;
+            if ($type == 'longtext' or  $type == 'text' or $type == 'clob' or $type == 'multienum') $lob_type = OCI_B_CLOB;
+            else if ($type == 'blob' || $type == 'longblob') $lob_type = OCI_B_BLOB;
+
+            // this is not a lob, continue;
+            if ($lob_type === false) continue;
+
+            $lob_fields[$fieldDef['name']]=":".$fieldDef['name'];
+            $lob_field_type[$fieldDef['name']]=$lob_type;
+		}
+
+		if ( empty($values)) return true;
+
+        // get the entire sql
+		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
+                    VALUES (".implode(",", $values).")";
+
+        if (count($lob_fields) > 0 ) {
+            $query .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
+        }
+
+        $stmt = oci_parse($this->database, $query);
+        if($this->checkOCIerror($this->database)) {
+            return false;
+        }
+
+        foreach ($lob_fields as $key=>$descriptor) {
+            $newlob = oci_new_descriptor($this->database, OCI_D_LOB);
+            oci_bind_by_name($stmt, $descriptor, $newlob, -1, $lob_field_type[$key]);
+            $lobs[$key] = $newlob;
+        }
+        $result = false;
+        oci_execute($stmt,OCI_DEFAULT);
+        if(!$this->checkOCIerror($stmt)) {
+            foreach ($lobs as $key=>$lob){
+                $val = $data[$key];
+                if (empty($val)) $val=" ";
+                $lob->save($val);
+            }
+            oci_commit($this->database);
+            $result = true;
+        }
+
+        // free all the lobs.
+        foreach ($lobs as $lob){
+            $lob->free();
+        }
+        oci_free_statement($stmt);
+        return true;
+    }
+
+    /**
      * Executes a query, with special handling for Oracle CLOB and BLOB field type
      *
      * @param  object   $bean SugarBean instance

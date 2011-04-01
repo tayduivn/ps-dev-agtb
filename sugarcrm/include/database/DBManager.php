@@ -437,6 +437,50 @@ abstract class DBManager
     }
 
     /**
+     * Insert data into table by parameter definition
+     * @param string $table
+     * @param array $field_defs Definitions in vardef-like format
+     * @param array $data Key/value to insert
+     */
+    public function insertParams($table, $field_defs, $data)
+    {
+        $values = array();
+		foreach ($field_defs as $field => $fieldDef)
+		{
+            if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
+            //custom fields handle there save seperatley
+
+            if(isset($data[$field])) {
+                // clean the incoming value..
+                $val = from_html($data[$field]);
+            } else {
+                continue;
+            }
+
+            //handle auto increment values here only need to do this on insert not create
+            // TODO: do we really need to do this?
+            if (!empty($fieldDef['auto_increment'])) {
+                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
+                if(!empty($auto)) {
+                    $values[$field] = $auto;
+                }
+            } elseif ($fieldDef['name'] == 'deleted') {
+                $values['deleted'] = (int)$val;
+            } else {
+                // need to do some thing about types of values
+                $values[$field] = $this->massageValue($val, $fieldDef);
+            }
+		}
+		if (empty($values))
+            return true; // no columns set
+
+		// get the entire sql
+		$query = "INSERT INTO $table (".implode(",", array_keys($values)).")
+                    VALUES (".implode(",", $values).")";
+		return $this->query($query);
+    }
+
+    /**
      * Implements a generic update for any bean
      *
      * @param object $bean  Sugarbean instance
