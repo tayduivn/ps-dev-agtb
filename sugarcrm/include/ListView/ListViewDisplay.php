@@ -343,7 +343,6 @@ class ListViewDisplay {
 		$menuItems = str_replace(array("\r","\n"),'',$menuItems);
 		if ( empty($menuItems) )
 		    return '';
-		
 
 		return <<<EOHTML
 <script type="text/javascript">
@@ -521,7 +520,7 @@ EOHTML;
 	protected function buildTargetList()
 	{
         global $app_strings;
-        $current_query_by_page = base64_encode(serialize($_REQUEST));
+        $current_query_by_page = base64_encode(serialize(array_merge($_POST, $_GET)));
 
 		$js = <<<EOF
             if(sugarListView.get_checks_count() < 1) {
