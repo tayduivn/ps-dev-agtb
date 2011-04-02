@@ -759,15 +759,57 @@ class ModuleInstaller{
      */
     function install_logichooks() {
         // Since the logic hook files get copied over with the rest of the module directory, we just need to enable them
-        $this->enable_logichooks();
+        $this->enable_manifest_logichooks();
+        // Here we support Ext-type hooks
+        if(isset($this->installdefs['hookdefs'])){
+			$this->log(translate('LBL_MI_IN_HOOKS') );
+			foreach($this->installdefs['hookdefs'] as $hookdefs){
+				$from = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+			    $GLOBALS['log']->debug("Installing Layout Defs ..." . $from .  " for " . $hookdefs['to_module']);
+    			if($hookdefs['to_module'] == 'application'){
+    				$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+    			} else {
+    			    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+    			}
+			    if(!file_exists($path)){
+				    mkdir_recursive($path, true);
+			    }
+			    copy_recursive($from , $path.'/'. basename($from));
+			}
+			$this->rebuild_logichooks();
+		}
     }
 
     function uninstall_logichooks() {
         // Since the logic hook files get removed with the rest of the module directory, we just need to disable them
-        $this->disable_logichooks();
+        $this->disable_manifest_logichooks();
+        // And Ext-type stuff support
+        if(isset($this->installdefs['hookdefs'])){
+			$this->log(translate('LBL_MI_UN_HOOKS') );
+            foreach($this->installdefs['hookdefs'] as $hookdefs){
+					$hookdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+					$GLOBALS['log']->debug("Uninstalling LogicHooks ..." . $hookdefs['from'] .  " for " .$hookdefs['to_module']);
+					if($hookdefs['to_module'] == 'application'){
+						$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+					} else {
+					    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+					}
+					if (file_exists($path . '/'. $this->id_name . '.php'))
+					{
+						rmdir_recursive( $path . '/'. $this->id_name . '.php');
+					} else if (file_exists($path . '/'. DISABLED_PATH . '/' . $this->id_name . '.php')) {
+						rmdir_recursive($path . '/'. DISABLED_PATH . '/' . $this->id_name . '.php');
+					} else if (file_exists($path . '/'. basename($hookdefs['from'] ))) {
+						rmdir_recursive( $path . '/'. basename($hookdefs['from'] ));
+					} else if(file_exists($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']))) {
+							rmdir_recursive($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']));
+						}
+			}
+		    $this->rebuild_layoutdefs();
+	    }
     }
 
-    function enable_logichooks() {
+    function enable_manifest_logichooks() {
         if(empty($this->installdefs['logic_hooks']) || !is_array($this->installdefs['logic_hooks'])) {
            return;
         }
@@ -779,15 +821,55 @@ class ModuleInstaller{
         }
     }
 
-    function disable_logichooks() {
+    function enable_logichooks()
+    {
+        $this->enable_manifest_logichooks();
+		if(isset($this->installdefs['hookdefs'])){
+			foreach($this->installdefs['hookdefs'] as $hookdefs){
+        		$GLOBALS['log']->debug("Enabling Logic Hookd ..." .$hookdefs['to_module']);
+        		if($hookdefs['to_module'] == 'application'){
+        			$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+        		} else {
+        		    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+        		}
+        		if (file_exists($path . '/'.DISABLED_PATH.'/'. basename($hookdefs['from'])))
+        		{
+        			rename($path . '/'.DISABLED_PATH.'/'. basename($hookdefs['from']),  $path . '/'. basename($hookdefs['from']));
+        		}
+			}
+			$this->rebuild_logichooks();
+		}
+    }
+
+    function disable_manifest_logichooks() {
         if(empty($this->installdefs['logic_hooks']) || !is_array($this->installdefs['logic_hooks'])) {
             return;
         }
 
-
         foreach($this->installdefs['logic_hooks'] as $hook ) {
             remove_logic_hook($hook['module'], $hook['hook'], array($hook['order'], $hook['description'],  $hook['file'], $hook['class'], $hook['function']));
         }
+    }
+
+    function disable_logichooks()
+    {
+        $this->disable_manifest_logichooks();
+		if(isset($this->installdefs['hookdefs'])){
+			foreach($this->installdefs['hookdefs'] as $hookdefs){
+				$layoutdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+				$GLOBALS['log']->debug("Disabling Logic Hooks ..." . $hookdefs['from'] .  " for " .$hookdefs['to_module']);
+				if($hookdefs['to_module'] == 'application'){
+					$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+				} else {
+				    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+				}
+				if (file_exists($path . '/'. basename($hookdefs['from']))) {
+					mkdir_recursive($path . '/'.DISABLED_PATH, true);
+					rename( $path . '/'. basename($hookdefs['from']), $path . '/'.DISABLED_PATH.'/'. basename($hookdefs['from']));
+				}
+			}
+			$this->rebuild_logichooks();
+		}
     }
 
 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
@@ -1361,7 +1443,7 @@ class ModuleInstaller{
         $this->log(translate('LBL_MI_REBUILDING') . " Logic hooks...");
 		$this->merge_files('Ext/LogicHooks/', 'logichooks.ext.php');
 	}
-	
+
 	function rebuild_schedulers()
 	{
         $this->log(translate('LBL_MI_REBUILDING') . " Schedulers...");
@@ -2042,6 +2124,7 @@ private function dir_file_count($path){
 			$this->rebuild_layoutdefs();
 		}
 	}
+
 	function enable_layoutdef($to_module){
 		$GLOBALS['log']->debug("Enabling Layout Defs ..." .$to_module);
 		if(isset($this->installdefs['layoutdefs'])){

@@ -463,6 +463,8 @@ $mod_strings = array (
     'LBL_MI_REPAIR_INDICES' => 'Repairing indexes',
 	'LBL_MI_IN_CONNECTORS' => 'Installing Connectors',
 	'LBL_MI_UN_CONNECTORS' => 'UnInstalling Connectors',
+    'LBL_MI_IN_HOOKS' => 'Installing Logic Hooks',
+    'LBL_MI_UN_HOOKS' => 'Uninstalling Logic Hooks',
 
     'LBL_ML_ACTION' => 'Action',
     'LBL_ML_CANCEL'             => 'Cancel',
