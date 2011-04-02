@@ -340,6 +340,22 @@ class ModuleBuilderController extends SugarController
         }
     }
 
+    function action_DeleteHook()
+    {
+        if(isset($_REQUEST['type']) && isset($_REQUEST['hook']) && isset($_REQUEST['view_package']) && isset($_REQUEST['view_module'])) {
+            $mb = new ModuleBuilder ( ) ;
+            $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
+            $hk = $module->hooks[$_REQUEST['type']][$_REQUEST['hook']];
+            $file = $module->path."/LogicHooks/".basename($hk[2]);
+            if(file_exists($file)) {
+                unlink($file);
+            }
+            unset($module->hooks[$_REQUEST['type']][$_REQUEST['hook']]);
+            $module->saveHooks();
+        }
+        $this->view = 'modulehooks';
+    }
+
     function action_SaveHook()
     {
         if(isset($_REQUEST['type']) && isset($_REQUEST['view_package']) && isset($_REQUEST['view_module'])) {

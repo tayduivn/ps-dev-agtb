@@ -33,7 +33,7 @@ addForm('popup_form');
 </script>
 {/literal}
 
-<form name='popup_form' method="POST" id='popup_form_id' enctype="multipart/form-data">
+<form name='popup_form' method="POST" id='popup_form_id' submit="return false;" enctype="multipart/form-data">
 <input type='hidden' name='module' value='ModuleBuilder'>
 <input type='hidden' name='action' value='saveHook'>
 <input type='hidden' name='to_pdf' value='1'>
@@ -56,7 +56,7 @@ addForm('popup_form');
 	        {/literal}
 {if !empty($hookdata)}
 	    {literal}
-	     &nbsp;<input type='button' class='button' name='ldelbtn' value='{/literal}{$mod_strings.LBL_BTN_DELETE}{literal}' onclick='if(check_form("popup_form")){this.form.action="delHook";ModuleBuilder.submitForm("popup_form_id")};'>
+	     &nbsp;<input type='button' class='button' name='ldelbtn' value='{/literal}{$mod_strings.LBL_BTN_DELETE}{literal}' onclick='if(check_form("popup_form")){this.form.action.value="DeleteHook";ModuleBuilder.submitForm("popup_form_id")};'>
 	    {/literal}
 {/if}
 <hr>
