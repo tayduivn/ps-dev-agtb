@@ -131,7 +131,21 @@ class LogicHook{
 	function process_hooks($hook_array, $event, $arguments){
 		// Now iterate through the array for the appropriate hook
 		if(!empty($hook_array[$event])){
-			foreach($hook_array[$event] as $hook_details){
+			
+			// Apply sorting to the hooks using the sort index.
+			// Hooks with matching sort indexes will be processed in no particular order.
+			$sorted_indexes = array();
+			foreach($hook_array[$event] as $idx => $hook_details)
+			{
+				$order_idx = $hook_details[0];
+				$sorted_indexes[$idx] = $order_idx;
+			}
+			asort($sorted_indexes);
+			
+			$process_order = array_keys($sorted_indexes);
+		
+			foreach($process_order as $hook_index){
+				$hook_details = $hook_array[$event][$hook_index];
 				if(!file_exists($hook_details[2])){
                     if(isset($GLOBALS['log'])){
 					    $GLOBALS['log']->error('Unable to load custom logic file: '.$hook_details[2]);
