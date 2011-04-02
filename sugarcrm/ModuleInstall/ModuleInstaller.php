@@ -765,7 +765,7 @@ class ModuleInstaller{
 			$this->log(translate('LBL_MI_IN_HOOKS') );
 			foreach($this->installdefs['hookdefs'] as $hookdefs){
 				$from = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
-			    $GLOBALS['log']->debug("Installing Layout Defs ..." . $from .  " for " . $hookdefs['to_module']);
+			    $GLOBALS['log']->debug("Installing Logic Hooks ..." . $from .  " for " . $hookdefs['to_module']);
     			if($hookdefs['to_module'] == 'application'){
     				$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
     			} else {

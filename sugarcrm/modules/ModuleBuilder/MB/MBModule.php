@@ -142,7 +142,14 @@ class MBModule
     function saveHooks()
     {
         $header = file_get_contents ( 'modules/ModuleBuilder/MB/header.php' ) ;
-        write_array_to_file("hook_array", $this->hooks, $this->path . "/hooks.php", 'w', $header);
+        $fp = fopen($this->path . "/hooks.php", 'w');
+        fwrite($fp, $header);
+        foreach($this->hooks as $type => $hookg) {
+            foreach($hookg as $hook) {
+                fwrite($fp, '$hook_array["'.$type.'"][]='.var_export($hook, true).";\n");
+            }
+        }
+        fclose($fp);
     }
 
     function addTemplate ($template)
