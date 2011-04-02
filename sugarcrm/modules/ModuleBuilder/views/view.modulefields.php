@@ -112,8 +112,7 @@ class ViewModulefields extends SugarView
             foreach($this->module->mbvardefs->vardefs['fields'] as $k=>$v){
                 foreach($v as $field => $def)
                 {
-                	// bug 40299, making sure the field is valid before we display it
-                	if (isset($loadedFields[$field]) || !$this->isValidStudioField($def))
+                	if (isset($loadedFields[$field]))
                 		unset($this->module->mbvardefs->vardefs['fields'][$k][$field]);
                 	else
                 	   $loadedFields[$field] = true;
