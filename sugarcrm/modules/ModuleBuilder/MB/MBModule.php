@@ -53,6 +53,7 @@ class MBModule
     'team_security' ,
     //END SUGARCRM flav=pro ONLY
     'assignable' ) ;
+    public $hooks = array();
 
     public $config_md5 = null ;
 
@@ -125,7 +126,23 @@ class MBModule
         $this->mblanguage->templates = $this->config [ 'templates' ] ;
         $this->mbvardefs->load () ;
         $this->mblanguage->load () ;
+        $this->loadHooks();
 
+    }
+
+    function loadHooks()
+    {
+        $GLOBALS['log']->debug("HOOKS: ".$this->path . "/hooks.php");
+        if(file_exists($this->path . "/hooks.php")) {
+                include($this->path . "/hooks.php");
+                $this->hooks = $hook_array;
+        }
+    }
+
+    function saveHooks()
+    {
+        $header = file_get_contents ( 'modules/ModuleBuilder/MB/header.php' ) ;
+        write_array_to_file("hook_array", $this->hooks, $this->path . "/hooks.php", 'w', $header);
     }
 
     function addTemplate ($template)
@@ -291,6 +308,7 @@ class MBModule
             $this->copyMetaData () ;
             $this->copyDashlet () ;
             $this->copyViews() ;
+            $this->saveHooks();
             if (0 != strcmp ( $old_config_md5, $this->config_md5 ))
             {
                 $this->mblanguage->reload () ;
@@ -339,7 +357,9 @@ class MBModule
         {
         	if (substr ( $filename, 0, 1 ) == '.')
             	continue ;
-           	if ( $filename != 'metadata' && $filename != 'Dashlets' && $filename != 'relationships' && $filename != 'language' && $filename != 'config.php' && $filename != 'relationships.php' && $filename != 'vardefs.php' )
+           	if ( $filename != 'metadata' && $filename != 'Dashlets' && $filename != 'relationships'
+           	    && $filename != 'language' && $filename != 'config.php' && $filename != 'relationships.php'
+           	    && $filename != 'vardefs.php' && $filename != 'hooks.php')
            		copy_recursive ( "$from/$filename" , "$to/$filename" ) ;
         }
     }
@@ -417,6 +437,9 @@ class MBModule
             $this->createClasses ( $path ) ;
             if( $this->config['importable'] || in_array ( 'person', array_keys($this->config[ 'templates' ]) ) )
                 $this->createMenu ( $path ) ;
+            if(file_exists($this->path . "/hooks.php")) {
+                copy($this->path . "/hooks.php", $path . '/logic_hooks.'.$this->key_name.".php");
+            }
             $this->copyCustomFiles ( $this->path , $path ) ;
             $this->copyMetaRecursive ( $this->path . '/metadata/', $path . '/metadata/', true ) ;
             $this->copyMetaRecursive ( $this->path . '/Dashlets/' . $this->key_name . 'Dashlet/',
@@ -512,6 +535,9 @@ class MBModule
         $installDefs [ 'copy' ] [] = array ( 'from' => '<basepath>/SugarModules/modules/' . $name , 'to' => 'modules/' . $name ) ;
         $installDefs [ 'beans' ] [] = array ( 'module' => $name , 'class' => $name , 'path' => 'modules/' . $name . '/' . $name . '.php' , 'tab' => $this->config [ 'has_tab' ] ) ;
         $this->relationships->addInstallDefs ( $installDefs ) ;
+        if(!empty($this->hooks)) {
+            $installDefs['hookdefs'][] = array( 'from' => "<basepath>/SugarModules/modules/$name/logic_hooks.$name.php", "to_module" => $name);
+        }
     }
 
     function getNodes ()
@@ -544,7 +570,7 @@ class MBModule
 		$popups = array( );
         $popups [] = array('name' => translate('LBL_POPUPLISTVIEW') , 'type' => 'popuplistview' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popuplist&view_module=' . $this->name . '&view_package=' . $this->package );
 		$popups [] = array('name' => translate('LBL_POPUPSEARCH') , 'type' => 'popupsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popupsearch&view_module=' . $this->name . '&view_package=' . $this->package );
-		
+
         $layouts = array (
         	array ( 'name' => translate('LBL_EDITVIEW') , 'type' => 'edit' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_EDITVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	array ( 'name' => translate('LBL_DETAILVIEW') , 'type' => 'detail' , 'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_DETAILVIEW.'&view_module=' . $this->name . '&view_package=' . $this->package ) ,
@@ -558,14 +584,15 @@ class MBModule
         $children = array (
         	array ( 'name' => translate('LBL_FIELDS') , 'action' => 'module=ModuleBuilder&action=modulefields&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	array ( 'name' => translate('LBL_LABELS') , 'action' => 'module=ModuleBuilder&action=modulelabels&view_module=' . $this->name . '&view_package=' . $this->package ) ,
+        	array ( 'name' => translate('LBL_HOOKS') ,  'action' => 'module=ModuleBuilder&action=modulehooks&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	//BEGIN SUGARCRM flav!=sales ONLY
         	array ( 'name' => translate('LBL_RELATIONSHIPS') , 'action' => 'module=ModuleBuilder&action=relationships&view_module=' . $this->name . '&view_package=' . $this->package ) ,
         	//END SUGARCRM flav!=sales ONLY
         	array ( 'name' => translate('LBL_LAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $layouts ) ,
         	//BEGIN SUGARCRM flav=pro || flav=sales ONLY
-        	array ( 'name' => translate('LBL_WIRELESSLAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $this->getWirelessLayouts() )
+        	array ( 'name' => translate('LBL_WIRELESSLAYOUTS') , 'type' => 'Folder' , 'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->name}&view_package={$this->package}&MB=1" , 'children' => $this->getWirelessLayouts() ),
         	//END SUGARCRM flav=pro || flav=sales ONLY
-        	) ;
+        ) ;
 
         if (count ( $lSubs ) > 0)
         {
@@ -580,37 +607,37 @@ class MBModule
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessLayouts ()
     {
-        $nodes [ translate ('LBL_WIRELESSEDITVIEW') ] = array ( 
-            'name' => translate('LBL_WIRELESSEDITVIEW') , 
+        $nodes [ translate ('LBL_WIRELESSEDITVIEW') ] = array (
+            'name' => translate('LBL_WIRELESSEDITVIEW') ,
             'type' => MB_WIRELESSEDITVIEW,
-            'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSEDITVIEW."&view_module={$this->name}&view_package={$this->package}" , 
-            'imageTitle' => 'EditView' , 
-            'help' => "viewBtn".MB_WIRELESSEDITVIEW , 
-            'size' => '48' 
+            'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSEDITVIEW."&view_module={$this->name}&view_package={$this->package}" ,
+            'imageTitle' => 'EditView' ,
+            'help' => "viewBtn".MB_WIRELESSEDITVIEW ,
+            'size' => '48'
         ) ;
-        $nodes [ translate('LBL_WIRELESSDETAILVIEW') ] = array ( 
-            'name' => translate('LBL_WIRELESSDETAILVIEW') , 
+        $nodes [ translate('LBL_WIRELESSDETAILVIEW') ] = array (
+            'name' => translate('LBL_WIRELESSDETAILVIEW') ,
             'type' => MB_WIRELESSDETAILVIEW,
-            'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSDETAILVIEW."&view_module={$this->name}&view_package={$this->package}" , 
-            'imageTitle' => 'DetailView' , 
-            'help' => "viewBtn".MB_WIRELESSDETAILVIEW , 
-            'size' => '48' 
+            'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSDETAILVIEW."&view_module={$this->name}&view_package={$this->package}" ,
+            'imageTitle' => 'DetailView' ,
+            'help' => "viewBtn".MB_WIRELESSDETAILVIEW ,
+            'size' => '48'
         ) ;
-        $nodes [ translate('LBL_WIRELESSLISTVIEW') ] = array ( 
-            'name' => translate('LBL_WIRELESSLISTVIEW') , 
+        $nodes [ translate('LBL_WIRELESSLISTVIEW') ] = array (
+            'name' => translate('LBL_WIRELESSLISTVIEW') ,
             'type' => MB_WIRELESSLISTVIEW,
-            'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSLISTVIEW."&view_module={$this->name}&view_package={$this->package}" , 
-            'imageTitle' => 'ListView' , 
-            'help' => "viewBtn".MB_WIRELESSLISTVIEW , 
-            'size' => '48' 
+            'action' => 'module=ModuleBuilder&MB=true&action=editLayout&view='.MB_WIRELESSLISTVIEW."&view_module={$this->name}&view_package={$this->package}" ,
+            'imageTitle' => 'ListView' ,
+            'help' => "viewBtn".MB_WIRELESSLISTVIEW ,
+            'size' => '48'
         ) ;
-        $nodes [ translate('LBL_WIRELESSSEARCH') ] = array ( 
-            'name' => translate('LBL_WIRELESSSEARCH') , 
+        $nodes [ translate('LBL_WIRELESSSEARCH') ] = array (
+            'name' => translate('LBL_WIRELESSSEARCH') ,
             'type' => MB_WIRELESSBASICSEARCH,
-            'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->name}&view_package={$this->package}" , 
-            'imageTitle' => 'BasicSearch' , 
-            'help' => "searchBtn" , 
-            'size' => '48' 
+            'action' => "module=ModuleBuilder&MB=true&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->name}&view_package={$this->package}" ,
+            'imageTitle' => 'BasicSearch' ,
+            'help' => "searchBtn" ,
+            'size' => '48'
         ) ;
     	return $nodes ;
     }
@@ -821,7 +848,7 @@ class MBModule
         $template = "" ;
         foreach ( $this->config [ 'templates' ] as $temp => $val )
             $template = $temp ;
-		//BEGIN SUGARCRM flav=pro || flav=sales ONLY	
+		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 		copy ( "themes/Sugar/images/icon_{$template}_32.png", "$icondir/icon_" . ucfirst ( $this->key_name ) . "_32.png" ) ;
 		//END SUGARCRM flav=pro || flav=sales ONLY
 		//BEGIN SUGARCRM flav=com ONLY
@@ -833,7 +860,7 @@ class MBModule
 		//BEGIN SUGARCRM flav=com ONLY
         if (file_exists("include/SugarObjects/templates/$template/icons/{$template}_32.gif"))
         	copy ( "include/SugarObjects/templates/$template/icons/{$template}_32.gif", "$icondir/icon_" . $this->key_name . "_32.gif" ) ;
-		//END SUGARCRM flav=com ONLY	
+		//END SUGARCRM flav=com ONLY
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
         if (file_exists("include/SugarObjects/templates/$template/icons/{$template}_bar_32.png"))
         	copy ( "include/SugarObjects/templates/$template/icons/{$template}_bar_32.png", "$icondir/icon_{$this->key_name}_bar_32.png" ) ;
@@ -849,7 +876,7 @@ class MBModule
     	foreach ($this->getWirelessLayouts() as $layout)
     		$views[] = $layout['type'];
         //END SUGARCRM flav=pro || flav=sales ONLY
-        
+
     	foreach ($views as $type )
         {
             $parser = ParserFactory::getParser( $type , $this->name , $this->package ) ;
@@ -857,12 +884,12 @@ class MBModule
                 $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
         }
 		//Remove the fields in subpanel
-        $psubs = $this->getProvidedSubpanels() ; 
+        $psubs = $this->getProvidedSubpanels() ;
         foreach ( $psubs as $sub )
         {
 			$parser = ParserFactory::getParser( MB_LISTVIEW , $this->name, $this->package ,  $sub) ;
 			if ($parser->removeField ( $fieldName ) )
-	            $parser->handleSave(false) ; 
+	            $parser->handleSave(false) ;
         }
     }
 
