@@ -638,8 +638,25 @@ function buildInstall($path){
                             $return[$value][$va] = $mod_strings['LBL_EC_CUSTOMLAYOUT'];
                             break;
                         case 'Ext':
+                            $extpath = $path.$value.'/Ext';
+                            $extensions = scandir($extpath);
+                            if (empty($extensions))
+                            {
+                            	continue;
+                            }
                             
-							$return[$value][$va] = $mod_strings['LBL_EC_CUSTOMFIELD'];
+                            foreach($extensions as $path)
+                            {
+                            	if ($path == '.' || $path == '..')
+                            	{
+                            		continue;
+                            	}
+                            	$vakey = 'ext'.$path;
+                            	$lbl = 'LBL_EC_EXT_'.strtoupper($path);
+                            	
+                            	$return[$value][$vakey] = (array_key_exists($lbl, $mod_strings) ? $mod_strings[$lbl] : $mod_strings['LBL_EC_EXT_UNDEFINED_EXTENSION']);
+                            }
+                            
                             break;
                         case '':
                             $return[$value . " " . $mod_strings['LBL_EC_EMPTYCUSTOM']] = "";
