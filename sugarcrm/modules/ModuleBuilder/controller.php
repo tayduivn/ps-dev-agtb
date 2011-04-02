@@ -343,43 +343,139 @@ class ModuleBuilderController extends SugarController
     function action_DeleteHook()
     {
         if(isset($_REQUEST['type']) && isset($_REQUEST['hook']) && isset($_REQUEST['view_package']) && isset($_REQUEST['view_module'])) {
-            $mb = new ModuleBuilder ( ) ;
-            $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
-            $hk = $module->hooks[$_REQUEST['type']][$_REQUEST['hook']];
-            $file = $module->path."/LogicHooks/".basename($hk[2]);
-            if(file_exists($file)) {
-                unlink($file);
+            if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio' || empty ( $_REQUEST [ 'view_package' ] ) ) {
+                $module_name = $_REQUEST [ 'view_module' ];
+                $lh = new LogicHook();
+                $lh->scanHooksDir("custom/Extension/modules/$module_name/Ext/LogicHooks");
+                $lh->scanHooksDir("custom/Extension/applicaion/Ext/LogicHooks");
+                $hooks = $lh->getHooksList();
+                $hooks_map = $lh->getHooksMap();
+                if(isset($hooks[$_REQUEST['type']][$_REQUEST['hook']]) && isset($hooks_map[$_REQUEST['type']][$_REQUEST['hook']])) {
+                    $file = $hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['file'];
+                    if(file_exists($file)) {
+                        include($file);
+                        if(isset($hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']])) {
+                            unset($hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']]);
+                            if(count($hook_array[$_REQUEST['type']]) == 0) {
+                                unset($hook_array[$_REQUEST['type']]);
+                            }
+                            if(count($hook_array) == 0) {
+                                unlink($file);
+                            } else {
+                                $this->saveHooksFile($file, $hook_array);
+                            }
+                        }
+                    }
+                }
+                require_once('ModuleInstall/ModuleInstaller.php');
+                ob_start();
+                $mi = new ModuleInstaller();
+                $mi->rebuild_logichooks();
+                ob_end_clean();
+            } else {
+                $mb = new ModuleBuilder ( ) ;
+                $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
+                $hk = $module->hooks[$_REQUEST['type']][$_REQUEST['hook']];
+                $file = $module->path."/LogicHooks/".basename($hk[2]);
+                foreach($module->hooks as $hgroup) {
+                    foreach($hgroup as $hook) {
+                        if($file == $hook[2]) {
+                            // used by other hook, don't remove
+                            $file = null;
+                            break 2;
+                        }
+                    }
+                }
+                if(!empty($file) && file_exists($file)) {
+                    unlink($file);
+                }
+                unset($module->hooks[$_REQUEST['type']][$_REQUEST['hook']]);
+                $module->saveHooks();
             }
-            unset($module->hooks[$_REQUEST['type']][$_REQUEST['hook']]);
-            $module->saveHooks();
         }
         $this->view = 'modulehooks';
+    }
+
+    protected function saveHooksFile($file, $hooks)
+    {
+        $fp = fopen($file, 'w');
+        fwrite($fp, "<?php\n");
+        foreach($hooks as $type => $hookg) {
+            foreach($hookg as $hook) {
+                fwrite($fp, '$hook_array["'.$type.'"][]='.var_export($hook, true).";\n");
+            }
+        }
+        fclose($fp);
     }
 
     function action_SaveHook()
     {
         if(isset($_REQUEST['type']) && isset($_REQUEST['view_package']) && isset($_REQUEST['view_module'])) {
-            $mb = new ModuleBuilder ( ) ;
-            $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
-            if(isset($_REQUEST['hook'])) {
-                $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][0] = $_REQUEST['order'];
-                $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][3] = $_REQUEST['class'];
-                $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][4] = $_REQUEST['func'];
-            } else {
-                $fname = $_FILES['file']['tmp_name'];
-                if(is_uploaded_file($fname)) {
-                    $lhname = "modules/".$module->key_name."/LogicHooks/".basename($_FILES['file']['name']);
-                    if(!file_exists($module->path."/LogicHooks")) {
-                       mkdir_recursive($module->path."/LogicHooks");
+            $module_name = $_REQUEST [ 'view_module' ];
+            if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio' || empty ( $_REQUEST [ 'view_package' ] ) ) {
+                if(isset($_REQUEST['hook'])) {
+                    $lh = new LogicHook();
+                    $lh->scanHooksDir("custom/Extension/modules/$module_name/Ext/LogicHooks");
+                    $lh->scanHooksDir("custom/Extension/applicaion/Ext/LogicHooks");
+                    $hooks = $lh->getHooksList();
+                    $hooks_map = $lh->getHooksMap();
+                    if(isset($hooks[$_REQUEST['type']][$_REQUEST['hook']]) && isset($hooks_map[$_REQUEST['type']][$_REQUEST['hook']])) {
+                        $file = $hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['file'];
+                        if(file_exists($file)) {
+                            include($file);
+                            if(isset($hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']])) {
+                                $hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']][0] = $_REQUEST['order'];
+                                $hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']][3] = $_REQUEST['class'];
+                                $hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']][4] = $_REQUEST['func'];
+                                $this->saveHooksFile($file, $hook_array);
+                            }
+                        }
                     }
-                    move_uploaded_file($fname, $module->path."/LogicHooks/".basename($_FILES['file']['name']));
-                    if(empty($_REQUEST['order'])) {
-                        $_REQUEST['order'] = 1;
+                } else {
+                    $fname = $_FILES['file']['tmp_name'];
+                    if(is_uploaded_file($fname)) {
+                        $lhname = "custom/Extension/modules/$module_name/Ext/LogicHooks/hook.".basename($_FILES['file']['name']);
+                        $hname = "custom/modules/$module_name/LogicHooks/".basename($_FILES['file']['name']);
+                        if(!file_exists("custom/modules/$module_name/LogicHooks")) {
+                           mkdir_recursive("custom/modules/$module_name/LogicHooks");
+                        }
+                        move_uploaded_file($fname, $hname);
+                        if(empty($_REQUEST['order'])) {
+                            $_REQUEST['order'] = 1;
+                        }
+
+                        $hook = array($_REQUEST['type'] => array(array($_REQUEST['order'], $module_name, $hname,  $_REQUEST['class'],  $_REQUEST['func'])));
+                        $this->saveHooksFile($lhname, $hook);
                     }
-                    $module->hooks[$_REQUEST['type']][] = array($_REQUEST['order'], $module->key_name, $lhname,  $_REQUEST['class'],  $_REQUEST['func']);
                 }
+                require_once('ModuleInstall/ModuleInstaller.php');
+                ob_start();
+                $mi = new ModuleInstaller();
+                $mi->rebuild_logichooks();
+                ob_end_clean();
+            } else {
+                $mb = new ModuleBuilder ( ) ;
+                $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
+                if(isset($_REQUEST['hook'])) {
+                    $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][0] = $_REQUEST['order'];
+                    $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][3] = $_REQUEST['class'];
+                    $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][4] = $_REQUEST['func'];
+                } else {
+                    $fname = $_FILES['file']['tmp_name'];
+                    if(is_uploaded_file($fname)) {
+                        $lhname = "modules/".$module->key_name."/LogicHooks/".basename($_FILES['file']['name']);
+                        if(!file_exists($module->path."/LogicHooks")) {
+                           mkdir_recursive($module->path."/LogicHooks");
+                        }
+                        move_uploaded_file($fname, $module->path."/LogicHooks/".basename($_FILES['file']['name']));
+                        if(empty($_REQUEST['order'])) {
+                            $_REQUEST['order'] = 1;
+                        }
+                        $module->hooks[$_REQUEST['type']][] = array($_REQUEST['order'], $module->key_name, $lhname,  $_REQUEST['class'],  $_REQUEST['func']);
+                    }
+                }
+                $module->saveHooks();
             }
-            $module->saveHooks();
         }
         $this->view = 'modulehooks' ;
     }

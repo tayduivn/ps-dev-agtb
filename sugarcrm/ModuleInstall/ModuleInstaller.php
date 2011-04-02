@@ -800,7 +800,7 @@ class ModuleInstaller{
 							rmdir_recursive($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']));
 					}
 			}
-		    $this->rebuild_layoutdefs();
+		    $this->rebuild_logichooks();
 	    }
     }
 

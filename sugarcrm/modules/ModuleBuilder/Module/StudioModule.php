@@ -106,14 +106,14 @@ class StudioModule
 
     	// If a standard module then just look up its type - type is implicit for standard modules. Perhaps one day we will make it explicit, just as we have done for custom modules...
 		$types = array (
-		'Accounts' => 'company' , 
+		'Accounts' => 'company' ,
 		//BEGIN SUGARCRM flav!=sales ONLY
-		'Bugs' => 'issue' , 
+		'Bugs' => 'issue' ,
 		//END SUGARCRM flav!=sales ONLY
-		'Cases' => 'issue' , 
-		'Contacts' => 'person' , 
-		'Documents' => 'file' , 
-		'Leads' => 'person' , 
+		'Cases' => 'issue' ,
+		'Contacts' => 'person' ,
+		'Documents' => 'file' ,
+		'Leads' => 'person' ,
 		'Opportunities' => 'sale'
 		) ;
 		if ( isset ( $types [ $this->module ] ) )
@@ -141,6 +141,7 @@ class StudioModule
     {
     	$sources = array (	translate('LBL_LABELS') => array ( 'action' => "module=ModuleBuilder&action=editLabels&view_module={$this->module}" , 'imageTitle' => 'Labels' , 'help' => 'labelsBtn' ) ,
         					translate('LBL_FIELDS') => array ( 'action' => "module=ModuleBuilder&action=modulefields&view_package=studio&view_module={$this->module}" , 'imageTitle' => 'Fields' , 'help' => 'fieldsBtn'  ) ,
+        					translate('LBL_HOOKS') => array ( 'action' => "module=ModuleBuilder&action=modulehooks&view_package=studio&view_module={$this->module}" , 'imageTitle' => 'Fields' , 'help' => 'fieldsBtn'  ) ,
         					//BEGIN SUGARCRM flav!=sales ONLY
         					translate('LBL_RELATIONSHIPS') => array ( 'action' => "get_tpl=true&module=ModuleBuilder&action=relationships&view_module={$this->module}" , 'imageTitle' => 'Relationships' , 'help' => 'relationshipsBtn' ) ,
         					//END SUGARCRM flav!=sales ONLY
@@ -150,10 +151,10 @@ class StudioModule
         $sources [ translate('LBL_WIRELESSLAYOUTS') ] = array ( 'children' => 'getWirelessLayouts' , 'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->module}" , 'imageTitle' => 'MobileLayouts' , 'help' => 'wirelesslayoutsBtn' ) ;
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        $sources [ translate ( 'LBL_PORTAL_LAYOUTS' ) ] = array ( 
-            'children' => 'getPortal' , 
-            'action' => "module=ModuleBuilder&action=wizard&portal=1&view_module={$this->module}" , 
-            'imageTitle' => 'Portal' , 
+        $sources [ translate ( 'LBL_PORTAL_LAYOUTS' ) ] = array (
+            'children' => 'getPortal' ,
+            'action' => "module=ModuleBuilder&action=wizard&portal=1&view_module={$this->module}" ,
+            'imageTitle' => 'Portal' ,
             'help' => 'portalBtn' ) ;
         //END SUGARCRM flav=ent ONLY
 
@@ -177,7 +178,7 @@ class StudioModule
 
         return $nodes ;
     }
-    
+
     function getViews() {
         $views = array () ;
         foreach ( $this->sources as $file => $def )
@@ -196,7 +197,7 @@ class StudioModule
 
         // Now add in the QuickCreates - quickcreatedefs can be created by Studio from editviewdefs if they are absent, so just add them in regardless of whether the quickcreatedefs file exists
 
-        $hideQuickCreateForModules = array ( 'kbdocuments' , 'projecttask' , 
+        $hideQuickCreateForModules = array ( 'kbdocuments' , 'projecttask' ,
             //BEGIN SUGARCRM flav!=sales ONLY
             'campaigns'
             //END SUGARCRM flav!=sales ONLY
@@ -220,15 +221,15 @@ class StudioModule
 			$dashlets = array( );
 	        $dashlets [] = array('name' => translate('LBL_DASHLETLISTVIEW') , 'type' => 'dashlet' , 'action' => 'module=ModuleBuilder&action=editLayout&view=dashlet&view_module=' . $this->module );
 			$dashlets [] = array('name' => translate('LBL_DASHLETSEARCHVIEW') , 'type' => 'dashletsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=dashletsearch&view_module=' . $this->module );
-			$layouts [ translate('LBL_DASHLET') ] = array ( 'name' => translate('LBL_DASHLET') , 'type' => 'Folder', 'children' => $dashlets,  'imageTitle' => 'Dashlet',  'action' => 'module=ModuleBuilder&action=wizard&view=dashlet&view_module=' . $this->module);        	
+			$layouts [ translate('LBL_DASHLET') ] = array ( 'name' => translate('LBL_DASHLET') , 'type' => 'Folder', 'children' => $dashlets,  'imageTitle' => 'Dashlet',  'action' => 'module=ModuleBuilder&action=wizard&view=dashlet&view_module=' . $this->module);
         }
-		
+
         //For popup tree node
         $popups = array( );
         $popups [] = array('name' => translate('LBL_POPUPLISTVIEW') , 'type' => 'popuplistview' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popuplist&view_module=' . $this->module );
 		$popups [] = array('name' => translate('LBL_POPUPSEARCH') , 'type' => 'popupsearch' , 'action' => 'module=ModuleBuilder&action=editLayout&view=popupsearch&view_module=' . $this->module );
-		$layouts [ translate('LBL_POPUP') ] = array ( 'name' => translate('LBL_POPUP') , 'type' => 'Folder', 'children' => $popups, 'imageTitle' => 'Popup',  'imageName' => 'icon_Popup.gif', 'action' => 'module=ModuleBuilder&action=wizard&view=popup&view_module=' . $this->module);  
-			
+		$layouts [ translate('LBL_POPUP') ] = array ( 'name' => translate('LBL_POPUP') , 'type' => 'Folder', 'children' => $popups, 'imageTitle' => 'Popup',  'imageName' => 'icon_Popup.gif', 'action' => 'module=ModuleBuilder&action=wizard&view=popup&view_module=' . $this->module);
+
         $nodes = $this->getSearch () ;
         if ( !empty ( $nodes ) )
         {
@@ -243,7 +244,7 @@ class StudioModule
 		$fileName = "My{$moduleName}Dashlet";
 		$customFileName = "{$moduleName}Dashlet";
 		if (file_exists ( "modules/{$moduleName}/Dashlets/{$fileName}/{$fileName}.php" )
-			|| file_exists ( "custom/modules/{$moduleName}/Dashlets/{$fileName}/{$fileName}.php" ) 
+			|| file_exists ( "custom/modules/{$moduleName}/Dashlets/{$fileName}/{$fileName}.php" )
 			|| file_exists ( "modules/{$moduleName}/Dashlets/{$customFileName}/{$customFileName}.php" )
 			|| file_exists ( "custom/modules/{$moduleName}/Dashlets/{$customFileName}/{$customFileName}.php" ))
         {
@@ -251,40 +252,40 @@ class StudioModule
         }
         return false;
 	}
-	
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessLayouts ()
     {
-        $layouts [ translate ('LBL_WIRELESSEDITVIEW') ] = array ( 
-            'name' => translate('LBL_WIRELESSEDITVIEW') , 
+        $layouts [ translate ('LBL_WIRELESSEDITVIEW') ] = array (
+            'name' => translate('LBL_WIRELESSEDITVIEW') ,
             'type' => MB_WIRELESSEDITVIEW ,
-            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSEDITVIEW."&view_module={$this->module}" , 
-            'imageTitle' => 'EditView' , 
-            'help' => "viewBtn".MB_WIRELESSEDITVIEW , 
-            'size' => '48' 
+            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSEDITVIEW."&view_module={$this->module}" ,
+            'imageTitle' => 'EditView' ,
+            'help' => "viewBtn".MB_WIRELESSEDITVIEW ,
+            'size' => '48'
         ) ;
-        $layouts [ translate('LBL_WIRELESSDETAILVIEW') ] = array ( 
-            'name' => translate('LBL_WIRELESSDETAILVIEW') , 
+        $layouts [ translate('LBL_WIRELESSDETAILVIEW') ] = array (
+            'name' => translate('LBL_WIRELESSDETAILVIEW') ,
             'type' => MB_WIRELESSDETAILVIEW ,
-            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSDETAILVIEW."&view_module={$this->module}" , 
-            'imageTitle' => 'DetailView' , 
-            'help' => "viewBtn".MB_WIRELESSDETAILVIEW , 
-            'size' => '48' 
+            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSDETAILVIEW."&view_module={$this->module}" ,
+            'imageTitle' => 'DetailView' ,
+            'help' => "viewBtn".MB_WIRELESSDETAILVIEW ,
+            'size' => '48'
         ) ;
-        $layouts [ translate('LBL_WIRELESSLISTVIEW') ] = array ( 
+        $layouts [ translate('LBL_WIRELESSLISTVIEW') ] = array (
             'name' => translate('LBL_WIRELESSLISTVIEW') ,
-            'type' => MB_WIRELESSLISTVIEW , 
-            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSLISTVIEW."&view_module={$this->module}" , 
-            'imageTitle' => 'ListView' , 
-            'help' => "viewBtn".MB_WIRELESSLISTVIEW , 
+            'type' => MB_WIRELESSLISTVIEW ,
+            'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSLISTVIEW."&view_module={$this->module}" ,
+            'imageTitle' => 'ListView' ,
+            'help' => "viewBtn".MB_WIRELESSLISTVIEW ,
             'size' => '48' ) ;
-        $layouts [ translate('LBL_WIRELESSSEARCH') ] = array ( 
+        $layouts [ translate('LBL_WIRELESSSEARCH') ] = array (
 	        'name' => translate('LBL_WIRELESSSEARCH') ,
-            'type' => MB_WIRELESSBASICSEARCH , 
-	        'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->module}" , 
-	        'imageTitle' => 'BasicSearch' , 
-	        'help' => "searchBtn" , 
-	        'size' => '48' 
+            'type' => MB_WIRELESSBASICSEARCH ,
+	        'action' => "module=ModuleBuilder&action=editLayout&view=".MB_WIRELESSBASICSEARCH."&view_module={$this->module}" ,
+	        'imageTitle' => 'BasicSearch' ,
+	        'help' => "searchBtn" ,
+	        'size' => '48'
         ) ;
     	return $layouts ;
     }
@@ -337,9 +338,9 @@ class StudioModule
             if (file_exists ( "portal/modules/{$this->module}/metadata/$file" ))
             {
             	$file = str_replace ( $file, '.php', '' ) ;
-            	$nodes [] = array ( 
-            	   'name' => $def [ 'name' ] , 
-            	   'action' => 'module=ModuleBuilder&action=editPortal&view=' . ucfirst ( $def [ 'type' ] ) . '&view_module=' . $this->module 
+            	$nodes [] = array (
+            	   'name' => $def [ 'name' ] ,
+            	   'action' => 'module=ModuleBuilder&action=editPortal&view=' . ucfirst ( $def [ 'type' ] ) . '&view_module=' . $this->module
             	) ;
             }
         }
@@ -367,14 +368,14 @@ class StudioModule
                 if ($name == 'users')
                     continue ;
                 $subname = sugar_ucfirst ( (! empty ( $label )) ? translate ( $label, $this->module ) : $name ) ;
-                $nodes [ $subname ] = array ( 
-                	'name' => $name , 
-                	'label' => $subname , 
-                	'action' => "module=ModuleBuilder&action=editLayout&view=ListView&view_module={$this->module}&subpanel={$name}&subpanelLabel={$subname}" , 
-                	'imageTitle' => $subname , 
-                	'imageName' => 'icon_' . ucfirst($name) . '_32', 
-                	'altImageName' => 'Subpanels', 
-                	'size' => '48' 
+                $nodes [ $subname ] = array (
+                	'name' => $name ,
+                	'label' => $subname ,
+                	'action' => "module=ModuleBuilder&action=editLayout&view=ListView&view_module={$this->module}&subpanel={$name}&subpanelLabel={$subname}" ,
+                	'imageTitle' => $subname ,
+                	'imageName' => 'icon_' . ucfirst($name) . '_32',
+                	'altImageName' => 'Subpanels',
+                	'size' => '48'
                 ) ;
             }
 
@@ -399,7 +400,7 @@ class StudioModule
 	            foreach(scandir($dir) as $fileName)
 	            {
 	            	// sanity check to confirm that this is a usable subpanel...
-	                if (substr ( $fileName, 0, 1 ) != '.' && substr ( strtolower($fileName), -4 ) == ".php" 
+	                if (substr ( $fileName, 0, 1 ) != '.' && substr ( strtolower($fileName), -4 ) == ".php"
 	                	&& AbstractRelationships::validSubpanel ( "$dir/$fileName" ))
 	                {
 	                    $subname = str_replace ( '.php', '', $fileName ) ;
@@ -412,10 +413,10 @@ class StudioModule
 		return $this->providedSubpanels;
     }
 
-    
+
     function getParentModulesOfSubpanel($subpanel){
         global $moduleList, $beanFiles, $beanList, $module;
-    
+
         //use tab controller function to get module list with named keys
         require_once("modules/MySettings/TabController.php");
         require_once("include/SubPanel/SubPanelDefinitions.php");
@@ -423,19 +424,19 @@ class StudioModule
 
         //change case to match subpanel processing later on
         $modules_to_check = array_change_key_case($modules_to_check);
-    
+
         $spd = '';
         $spd_arr = array();
-        //iterate through modules and build subpanel array  
+        //iterate through modules and build subpanel array
         foreach($modules_to_check as $mod_name){
-            
+
             //skip if module name is not in bean list, otherwise get the bean class name
             if(!isset($beanList[$mod_name])) continue;
             $class = $beanList[$mod_name];
 
             //skip if class name is not in file list, otherwise require the bean file and create new class
             if(!isset($beanFiles[$class]) || !file_exists($beanFiles[$class])) continue;
-            
+
             //retrieve subpanels for this bean
             require_once($beanFiles[$class]);
             $bean_class = new $class();
@@ -459,7 +460,7 @@ class StudioModule
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
         //END SUGARCRM flav=pro || flav=sales ONLY
-        
+
         $GLOBALS [ 'log' ]->debug ( print_r( $sources,true) ) ;
         foreach ( $sources as $name => $defs )
         {
@@ -470,7 +471,7 @@ class StudioModule
                     $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
             } catch(Exception $e){}
         }
-        
+
         //Remove the fields in subpanel
         $data = $this->getParentModulesOfSubpanel($this->module);
         foreach($data as $parentModule){
@@ -483,8 +484,8 @@ class StudioModule
         }
     }
 
-	
-	
+
+
 	public function getViewMetadataSources() {
 		$sources = $this->getViews();
         $sources[] = array('type'  => MB_BASICSEARCH);
@@ -493,14 +494,14 @@ class StudioModule
         $sources[] = array('type'  => MB_DASHLETSEARCH);
         $sources[] = array('type'  => MB_POPUPLIST);
         $sources[] = array('type'  => MB_QUICKCREATE);
-        //BEGIN SUGARCRM flav=pro ONLY 
+        //BEGIN SUGARCRM flav=pro ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
-        //END SUGARCRM flav=pro ONLY 
-		
+        //END SUGARCRM flav=pro ONLY
+
 		return $sources;
 	}
-	
-	
-	
+
+
+
 }
 ?>
