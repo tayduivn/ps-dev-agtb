@@ -802,5 +802,13 @@ $mod_strings = array(
                                  "to apply a U.S. format to the phone number when the record<br>" .
                                  "is saved. The following format will be applied: (xxx) xxx-xxxx.",
 
+
+'LBL_EC_EXT_LOGICHOOKS' => "Extension: Logic Hook(s)",
+'LBL_EC_EXT_SCHEDULEDTASKS' => "Extension: Scheduled Task(s)",
+'LBL_EC_EXT_VARDEFS' => "Extension: Custom Field(s)",
+'LBL_EC_EXT_LAYOUTDEFS' => "Extension: Subpanel Layout(s)",
+'LBL_EC_EXT_LANGUAGE' => "Extension: Module Language",
+'LBL_EC_EXT_UNDEFINED_EXTENSION' => "Extension: Unspecified",
+
 );
 
