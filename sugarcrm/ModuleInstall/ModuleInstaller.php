@@ -794,16 +794,11 @@ class ModuleInstaller{
 					} else {
 					    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
 					}
-					if (file_exists($path . '/'. $this->id_name . '.php'))
-					{
-						rmdir_recursive( $path . '/'. $this->id_name . '.php');
-					} else if (file_exists($path . '/'. DISABLED_PATH . '/' . $this->id_name . '.php')) {
-						rmdir_recursive($path . '/'. DISABLED_PATH . '/' . $this->id_name . '.php');
-					} else if (file_exists($path . '/'. basename($hookdefs['from'] ))) {
+					if (file_exists($path . '/'. basename($hookdefs['from'] ))) {
 						rmdir_recursive( $path . '/'. basename($hookdefs['from'] ));
 					} else if(file_exists($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']))) {
 							rmdir_recursive($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']));
-						}
+					}
 			}
 		    $this->rebuild_layoutdefs();
 	    }
