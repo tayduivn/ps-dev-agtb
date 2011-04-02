@@ -647,7 +647,7 @@ function buildInstall($path){
                             
                             foreach($extensions as $path)
                             {
-                            	if ($path == '.' || $path == '..')
+                            	if ($path == '.' || $path == '..' || $path == 'ScheduledTasks')
                             	{
                             		continue;
                             	}
@@ -665,6 +665,58 @@ function buildInstall($path){
                             $return[$value][$va] = $mod_strings['LBL_UNDEFINED'];
                         }
                     }
+                    
+                    // Inject the Schedulers
+                    $custommodules['Schedulers']=$this->getCustomModules('Schedulers');
+                    if (!empty($custommodules['Schedulers']))
+                    {
+                    	$extpath = 'custom/modules/Schedulers/Ext';
+                    	$extensions = scandir($extpath);
+                        if (empty($extensions))
+                        {
+                        	continue;
+                        }
+                            
+                        foreach($extensions as $path)
+                        {
+                            if ($path == '.' || $path == '..')
+                            {
+                            	continue;
+                            }
+                            $vakey = 'ext'.$path;
+                            $lbl = 'LBL_EC_EXT_'.strtoupper($path);
+                            
+                            $return['Schedulers'][$vakey] = (array_key_exists($lbl, $mod_strings) ? $mod_strings[$lbl] : $mod_strings['LBL_EC_EXT_UNDEFINED_EXTENSION']);
+						}
+                    }
+                    
+                    //Inject the Application
+                    /**
+                     * A lot more work to do in other areas of this so commented for now.
+                     *
+               		$custommodules['application']=scandir('custom/application');
+                    if (!empty($custommodules['application']))
+                    {
+                    	$extpath = 'custom/application/Ext';
+                    	$extensions = scandir($extpath);
+                        if (empty($extensions))
+                        {
+                        	continue;
+                        }
+                            
+                        foreach($extensions as $path)
+                        {
+                            if ($path == '.' || $path == '..')
+                            {
+                            	continue;
+                            }
+                            $vakey = 'ext'.$path;
+                            $lbl = 'LBL_EC_EXT_'.strtoupper($path);
+                            
+                            $return['application'][$vakey] = (array_key_exists($lbl, $mod_strings) ? $mod_strings[$lbl] : $mod_strings['LBL_EC_EXT_UNDEFINED_EXTENSION']);
+						}
+                    }
+                    */
                 }
                 return $return;
             }
