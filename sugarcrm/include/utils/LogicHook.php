@@ -104,7 +104,8 @@ class LogicHook{
 
 	public function loadHooks($module_dir)
 	{
-	    if(empty($module_dir)) {
+		$hook_array = null;
+	    if(!empty($module_dir)) {
 	        $custom = "custom/modules/$module_dir";
 	    } else {
 	        $custom = "custom/modules";

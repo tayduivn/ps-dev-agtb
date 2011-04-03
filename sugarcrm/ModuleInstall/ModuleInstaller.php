@@ -94,6 +94,7 @@ class ModuleInstaller{
 			'install_connectors',
 			'install_vardefs',
 			'install_layoutdefs',
+			'install_actionviewmaps',
 			'install_layoutfields',
 			'install_relationships',
 			'install_languages',
@@ -682,6 +683,60 @@ class ModuleInstaller{
 			$path = 'custom/Extension/modules/' . $to_module. '/Ext/Layoutdefs';
 			if($to_module == 'application'){
 				$path ='custom/Extension/' . $to_module. '/Ext/Layoutdefs';
+			}
+			if(!file_exists($path)){
+				mkdir_recursive($path, true);
+			}
+			copy_recursive($from , $path.'/'. basename($from));
+	}
+
+	function install_actionviewmaps(){
+        if(isset($this->installdefs['actionviewmap'])){
+			$this->log(translate('LBL_MI_IN_ACTIONVIEWMAP') );
+			foreach($this->installdefs['actionviewmap'] as $actionviewmap){
+				$actionviewmap['from'] = str_replace('<basepath>', $this->base_dir, $actionviewmap['from']);
+				$this->install_actionviewmap($actionviewmap['from'], $actionviewmap['to_module'], $this->id_name);
+			}
+			$this->rebuild_layoutdefs();
+		}
+	}
+
+	function uninstall_actionviewmaps(){
+        if(isset($this->installdefs['actionviewmap'])){
+					$this->log(translate('LBL_MI_UN_ACTIONVIEWMAP') );
+					foreach($this->installdefs['actionviewmap'] as $actionviewmap){
+						$actionviewmap['from'] = str_replace('<basepath>', $this->base_dir, $actionviewmap['from']);
+						$GLOBALS['log']->debug("Uninstalling Action View Maps ..." . $actionviewmap['from'] .  " for " .$actionviewmap['to_module']);
+						$path = 'custom/Extension/modules/' . $actionviewmap['to_module']. '/Ext/ActionViewMap';
+						if($actionviewmap['to_module'] == 'application'){
+							$path ='custom/Extension/' . $actionviewmap['to_module']. '/Ext/ActionViewMap';
+						}
+						if (file_exists($path . '/'. $this->id_name . '.php'))
+						{
+							rmdir_recursive( $path . '/'. $this->id_name . '.php');
+						}
+						else if (file_exists($path . '/'. DISABLED_PATH . '/' . $this->id_name . '.php'))
+						{
+							rmdir_recursive($path . '/'. DISABLED_PATH . '/' . $this->id_name . '.php');
+						}
+						else if (file_exists($path . '/'. basename($actionviewmap['from'] )))
+						{
+							rmdir_recursive( $path . '/'. basename($actionviewmap['from'] ));
+						}
+						else if(file_exists($path . '/'. DISABLED_PATH . '/'.  basename($actionviewmap['from'])))
+						{
+							rmdir_recursive($path . '/'. DISABLED_PATH . '/'.  basename($actionviewmap['from']));
+						}
+					}
+					$this->rebuild_actionviewmaps();
+		}
+	}
+
+	function install_actionviewmap($from, $to_module){
+			$GLOBALS['log']->debug("Installing Action View Map ..." . $from .  " for " .$to_module);
+			$path = 'custom/Extension/modules/' . $to_module. '/Ext/ActionViewMap';
+			if($to_module == 'application'){
+				$path ='custom/Extension/' . $to_module. '/Ext/ActionViewMap';
 			}
 			if(!file_exists($path)){
 				mkdir_recursive($path, true);
@@ -1327,6 +1382,7 @@ class ModuleInstaller{
 			'uninstall_connectors',
 			'uninstall_vardefs',
 			'uninstall_layoutdefs',
+			'uninstall_actionviewmaps',
 			'uninstall_layoutfields',
 			'uninstall_languages',
 			'uninstall_logichooks',
@@ -1455,6 +1511,12 @@ class ModuleInstaller{
 
 	}
 
+	function rebuild_actionviewmaps(){
+            $this->log(translate('LBL_MI_REBUILDING') . " Action View Maps...");
+			$this->merge_files('Ext/ActionViewMap/', 'action_view_map.ext.php');
+
+	}
+
 	function rebuild_menus(){
             $this->log(translate('LBL_MI_REBUILDING') . " Menus...");
 			$this->merge_files('Ext/Menus/', 'menu.ext.php');
@@ -1550,6 +1612,7 @@ class ModuleInstaller{
         $this->rebuild_dependencies();
         //END SUGARCRM flav=pro ONLY
 		$this->rebuild_layoutdefs();
+		$this->rebuild_actionviewmaps();
 		$this->rebuild_menus();
 		$this->rebuild_dashletcontainers();
 		$this->rebuild_userpage();
@@ -1931,6 +1994,7 @@ private function dir_file_count($path){
 								'enable_administration',
 								'enable_vardefs',
 								'enable_layoutdefs',
+								'enable_actionviewmaps',
 								'enable_relationships',
 								'enable_languages',
 								'enable_logichooks',
@@ -2211,6 +2275,15 @@ private function dir_file_count($path){
 		}
 	}
 
+	function enable_actionviewmaps(){
+		if(isset($this->installdefs['actionviewmap'])){
+			foreach($this->installdefs['actionviewmap'] as $actionviewmap){
+				$this->enable_actionviewmap($actionviewmap['to_module'], $this->id_name);
+			}
+			$this->rebuild_actionviewmaps();
+		}
+	}
+
 	function enable_layoutdef($to_module){
 		$GLOBALS['log']->debug("Enabling Layout Defs ..." .$to_module);
 		if(isset($this->installdefs['layoutdefs'])){
@@ -2226,6 +2299,26 @@ private function dir_file_count($path){
 				if (file_exists($path . '/'.DISABLED_PATH.'/'. basename($layoutdefs['from'])))
 				{
 					rename($path . '/'.DISABLED_PATH.'/'. basename($layoutdefs['from']),  $path . '/'. basename($layoutdefs['from']));
+				}
+			}
+		}
+	}
+
+	function enable_actionviewmap($to_module){
+		$GLOBALS['log']->debug("Enabling Action View Map ..." .$to_module);
+		if(isset($this->installdefs['actionviewmap'])){
+			foreach($this->installdefs['actionviewmap'] as $actionviewmap){
+				$path = 'custom/Extension/modules/' . $to_module. '/Ext/ActionViewMap';
+				if($to_module == 'application'){
+					$path ='custom/Extension/' . $to_module. '/Ext/ActionViewMap';
+				}
+				if (file_exists($path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php'))
+				{
+					rename($path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php',  $path . '/'. $this->id_name . '.php');
+				}
+				if (file_exists($path . '/'.DISABLED_PATH.'/'. basename($actionviewmap['from'])))
+				{
+					rename($path . '/'.DISABLED_PATH.'/'. basename($actionviewmap['from']),  $path . '/'. basename($actionviewmap['from']));
 				}
 			}
 		}
@@ -2251,6 +2344,29 @@ private function dir_file_count($path){
 				}
 			}
 			$this->rebuild_layoutdefs();
+		}
+	}
+
+	function disable_actionviewmaps(){
+		if(isset($this->installdefs['actionviewmap'])){
+			foreach($this->installdefs['actionviewmap'] as $actionviewmap){
+				$actionviewmap['from'] = str_replace('<basepath>', $this->base_dir, $actionviewmap['from']);
+				$GLOBALS['log']->debug("Disabling ActionViewMap ..." . $actionviewmap['from'] .  " for " .$actionviewmap['to_module']);
+				$path = 'custom/Extension/modules/' . $actionviewmap['to_module']. '/Ext/ActionViewMap';
+				if($actionviewmap['to_module'] == 'application'){
+					$path ='custom/Extension/' . $actionviewmap['to_module']. '/Ext/ActionViewMap';
+				}
+				if (file_exists($path . '/'. $this->id_name . '.php'))
+				{
+					mkdir_recursive($path . '/'.DISABLED_PATH, true);
+					rename( $path . '/'. $this->id_name . '.php', $path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php');
+				}else if (file_exists($path . '/'. basename($actionviewmap['from'])))
+				{
+					mkdir_recursive($path . '/'.DISABLED_PATH, true);
+					rename( $path . '/'. basename($actionviewmap['from']), $path . '/'.DISABLED_PATH.'/'. basename($actionviewmap['from']));
+				}
+			}
+			$this->rebuild_actionviewmaps();
 		}
 	}
 

@@ -235,6 +235,16 @@ class SugarController{
 				require('custom/application/Ext/EntryPoints/entrypoints.ext.php');
 			}
 			
+
+			if($var == 'action_view_map') {
+				if(file_exists('custom/application/Ext/ActionViewMap/action_view_map.ext.php')){
+					require('custom/application/Ext/ActionViewMap/action_view_map.ext.php');
+				}
+				if(file_exists('custom/modules/' . $this->module . '/Ext/ActionViewMap/action_view_map.ext.php')){
+					require('custom/modules/' . $this->module . '/Ext/ActionViewMap/action_view_map.ext.php');
+				}
+			}
+
 			sugar_cache_put("CONTROLLER_". $var . "_".$this->module, $$var);
 		}
 		$this->$var = $$var;

@@ -832,6 +832,6 @@ $mod_strings = array(
 'LBL_EC_EXT_LAYOUTDEFS' => "Extension: Subpanel Layout(s)",
 'LBL_EC_EXT_LANGUAGE' => "Extension: Module Language",
 'LBL_EC_EXT_UNDEFINED_EXTENSION' => "Extension: Unspecified",
-
+'LBL_EC_EXT_ENTRYPOINTS' => 'Extension: Entry Point Definition(s)',
 );
 
