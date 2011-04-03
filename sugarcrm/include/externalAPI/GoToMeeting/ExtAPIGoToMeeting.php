@@ -34,7 +34,7 @@ class ExtAPIGoToMeeting extends ExternalAPIBase implements WebMeeting {
     private $login_key;
 
     protected $dateFormat = 'Y-m-d\TH:i:s';
-    protected $account_url = 'gotomeeting.com/axis/services/G2M_Organizers';
+    protected $account_url = 'www.gotomeeting.com/axis/services/G2M_Organizers';
 
     public $supportedModules = array('Meetings');
     public $supportMeetingPassword = true;
