@@ -27,6 +27,8 @@
  ********************************************************************************/
 *}
 <!--end body panes-->
+		</td>
+		</tr>
 	  </table>
     </div>
     <div class="clear"></div>
@@ -42,6 +44,13 @@
         {$COPYRIGHT}
     </div>
 </div>
+<script>
+{literal}
+if(SUGAR.util.isTouchScreen()) {
+	setTimeout(resizeHeader,10000);
+}
+{/literal}
+</script>
 
 </body>
 </html>

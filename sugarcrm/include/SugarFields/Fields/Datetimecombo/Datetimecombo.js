@@ -209,7 +209,10 @@ Datetimecombo.prototype.update = function() {
 	if (listeners != null) {
 		for (var i = 0; i < listeners.length; i++) {
 			var l = listeners[i];
-			l.fn(null, l.obj);
+			if (l.scope)
+				l.fn.call(l.scope, l.obj);
+			else
+				l.fn(l.obj);
 		}
 	}
 

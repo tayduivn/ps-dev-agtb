@@ -606,3 +606,28 @@ setSigDigits();
 		</form>
 	</div>
 </div>
+
+{literal}
+<script type="text/javascript" language="JavaScript">
+<!--
+/* Bug 43242 - Added the time zone auto detection to the new user wizard */
+lookupTimezone = function() {
+    var success = function(data) {
+        eval(data.responseText);
+        if(typeof userTimezone != 'undefined') {
+            document.UserWizard.timezone.value = userTimezone;
+        }
+    }
+    
+    var now = new Date();
+    var d1 = new Date(now.getFullYear(), 0, 1, 0, 0, 0);
+    d1GMTString = d1.toGMTString();
+    var d2 = new Date(d1GMTString.substring(0, d1GMTString.lastIndexOf(' ') - 1));
+    offset = ((d1 - d2) / (1000 * 60));
+    url = 'index.php?module=Users&action=SetTimezone&to_pdf=1&userOffset=' + offset; 
+    var cObj = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});    
+}
+YAHOO.util.Event.addListener(window, 'load', lookupTimezone);
+-->
+</script>
+{/literal} 

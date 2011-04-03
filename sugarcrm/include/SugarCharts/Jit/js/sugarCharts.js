@@ -42,7 +42,6 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  animate = false;
 				})();
 				
-			jsonFilename =  jsonFilename + "?r=" + new Date().getTime();
 			
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -65,6 +64,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
+				  nodeCount: json.values.length,
 				  background: false,
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
@@ -92,11 +92,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					color: css["gridLineColor"]
 				  },
 				  //bars separation
-				  barsOffset: 20,
+				  barsOffset: (chartConfig["orientation"] == "vertical") ? 30 : 20,
 				  //visualization offset
 				  Margin: {
 					top:20,
-					left: 20,
+					left: 30,
 					right: 20,
 					bottom: marginBottom
 				  },
@@ -204,7 +204,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 				break;
 				
 			case "lineChart":
@@ -365,7 +365,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 				break;
 			
 				
@@ -477,7 +477,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 							
 				break;
 				
@@ -627,7 +627,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 				break;
 				
 				
@@ -757,7 +757,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 							
 				break;
 				
