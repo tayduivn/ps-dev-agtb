@@ -230,7 +230,11 @@ class SugarController{
 			if(file_exists('custom/include/MVC/Controller/'. $var . '.php')){
 				require('custom/include/MVC/Controller/'. $var . '.php');
 			}
-
+			if (file_exists('custom/application/Ext/EntryPoints/entrypoints.ext.php') && $var == 'entry_point_registry')
+			{
+				require('custom/application/Ext/EntryPoints/entrypoints.ext.php');
+			}
+			
 			sugar_cache_put("CONTROLLER_". $var . "_".$this->module, $$var);
 		}
 		$this->$var = $$var;

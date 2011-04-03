@@ -1444,6 +1444,12 @@ class ModuleInstaller{
         $this->log(translate('LBL_MI_REBUILDING') . " Schedulers...");
 		$this->merge_files('Ext/ScheduledTasks/', 'scheduledtasks.ext.php');
 	}
+	
+	function rebuild_entrypoints()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Entry Points...");
+		$this->merge_files('Ext/EntryPoints/', 'entrypoints.ext.php', '', TRUE);
+	}
 
 	/**
 	 * Rebuilds the extension files found in custom/Extension
@@ -1472,6 +1478,7 @@ class ModuleInstaller{
 		//$this->repair_indices();
         $this->rebuild_logichooks();
         $this->rebuild_schedulers();
+        $this->rebuild_entrypoints();
 		$this->reset_opcodes();
 		sugar_cache_reset();
 	}
