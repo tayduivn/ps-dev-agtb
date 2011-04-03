@@ -696,7 +696,7 @@ class ModuleInstaller{
 				$actionviewmap['from'] = str_replace('<basepath>', $this->base_dir, $actionviewmap['from']);
 				$this->install_actionviewmap($actionviewmap['from'], $actionviewmap['to_module'], $this->id_name);
 			}
-			$this->rebuild_layoutdefs();
+			$this->rebuild_actionviewmaps();
 		}
 	}
 
