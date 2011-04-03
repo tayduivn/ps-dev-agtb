@@ -42,7 +42,7 @@ class ViewModulehook extends SugarView
     	   );
     }
 
-	function display()
+    function display()
 	{
         $smarty = new Sugar_Smarty();
         global $mod_strings;
@@ -50,14 +50,24 @@ class ViewModulehook extends SugarView
         $smarty->assign('mod_strings', $mod_strings);
 
         $module_name = $_REQUEST['view_module'];
+        if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio' || empty ( $_REQUEST [ 'view_package' ] ) ) {
+            $this->module = new Stdclass;
+            $this->module->name = $module_name;
+            $lh = new LogicHook();
+            $lh->scanHooksDir("custom/Extension/modules/$module_name/Ext/LogicHooks");
+            $lh->scanHooksDir("custom/Extension/applicaion/Ext/LogicHooks");
+            $this->module->hooks = $lh->getHooksList();
+            $package = new stdClass;
+            $package->name = '';
+        } else {
+            require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
+            $mb = new ModuleBuilder();
+            $mb->getPackage($_REQUEST['view_package']);
+            $package = $mb->packages[$_REQUEST['view_package']];
 
-        require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
-        $mb = new ModuleBuilder();
-        $mb->getPackage($_REQUEST['view_package']);
-        $package = $mb->packages[$_REQUEST['view_package']];
-
-        $package->getModule($module_name);
-        $this->module = $package->modules[$module_name];
+            $package->getModule($module_name);
+            $this->module = $package->modules[$module_name];
+        }
 
         $smarty->assign('package', $package);
         $smarty->assign('module', $this->module);

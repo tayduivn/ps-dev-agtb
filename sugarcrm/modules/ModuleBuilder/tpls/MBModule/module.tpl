@@ -43,6 +43,7 @@
 			<input type='button' name='viewrelsbtn' value='{$mod_strings.LBL_BTN_VIEW_RELATIONSHIPS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewRelationships);">
 			{* //END SUGARCRM flav!=sales ONLY*}
 			<input type='button' name='viewlayoutsbtn' value='{$mod_strings.LBL_BTN_VIEW_LAYOUTS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewLayouts);">
+			<input type='button' name='viewlayoutsbtn' value='{$mod_strings.LBL_BTN_VIEW_HOOKS}' class='button' onclick="ModuleBuilder.handleSave('CreateModule', ModuleBuilder.moduleViewHooks);">
 			&nbsp;<input type='button' name='deletebtn' value='{$mod_strings.LBL_BTN_DELETE}' class='button' onclick="ModuleBuilder.moduleDelete('{$package->name}', '{$module->name}');">{/if}</td></tr>
 	<tr>
 		<td height='100%'>&nbsp;</td><td>&nbsp;</td>
@@ -61,7 +62,7 @@
 	</tr><tr>
 	<td class='mbLBL' width='5%' nowrap>{$label}:</td>
 	<td >&nbsp;<input type='checkbox' name='{$name}' value=1 {if !empty($module->config[$name])}checked{/if}></td>
-	{counter name='items'}	
+	{counter name='items'}
 	{/foreach}
 	</tr>
 	<tr>
@@ -105,12 +106,12 @@
                     {/if}
                     </td>
                     {/if}
-                {counter name='items'}  
+                {counter name='items'}
                 {/foreach}
                 </tr>
             </table>
         </td>
-	</tr>	
+	</tr>
 	<tr>
 		<td height='100%'>&nbsp;</td><td>&nbsp;</td>
 	</tr>
@@ -126,7 +127,7 @@ if(document.getElementById('factory_modules'))
 	ModuleBuilder.helpRegisterByID('factory_modules', 'table');
 ModuleBuilder.helpSetup({/literal}'{$module->help.group}','{$module->help.default}'{literal});
 ModuleBuilder.MBpackage = '{/literal}{$module->package}{literal}';
-ModuleBuilder.module = '{/literal}{$module->name}{literal}';	
+ModuleBuilder.module = '{/literal}{$module->name}{literal}';
 </script>
 {/literal}
 {include file='modules/ModuleBuilder/tpls/assistantJavascript.tpl'}

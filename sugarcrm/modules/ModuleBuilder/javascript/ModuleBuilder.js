@@ -974,6 +974,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			ModuleBuilder.callLock = false;
 			ModuleBuilder.getContent('module=ModuleBuilder&MB=1&action=wizard&view_package=' + ModuleBuilder.MBpackage + '&view_module=' + ModuleBuilder.module);
 		},
+		moduleViewHooks: function(o){
+			ModuleBuilder.callLock = false;
+			ModuleBuilder.getContent('module=ModuleBuilder&MB=1&action=modulehooks&view_package=' + ModuleBuilder.MBpackage + '&view_module=' + ModuleBuilder.module);
+		},
 		findTabById : function(id) {
 			var tabs = ModuleBuilder.tabPanel.get("tabs");
 			for (var i = 0; i < tabs.length; i++) {

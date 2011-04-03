@@ -52,10 +52,15 @@ class ViewModulehooks extends SugarView
 
         $module_name = $_REQUEST['view_module'];
 
-        if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
+        if(empty($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             //$this->loadPackageHelp($module_name);
             $studioClass = new stdClass;
             $studioClass->name = $module_name;
+            require_once 'include/utils/LogicHook.php';
+            $lh = new LogicHook();
+            $lh->scanHooksDir("custom/Extension/modules/$module_name/Ext/LogicHooks");
+            $lh->scanHooksDir("custom/Extension/applicaion/Ext/LogicHooks");
+            $studioClass->hooks = $lh->getHooksList();
 
             global $beanList;
             $objectName = $beanList[$module_name];
@@ -65,25 +70,6 @@ class ViewModulehooks extends SugarView
                 $objectName = 'Case';
             //END SUGARCRM flav!=sales ONLY
 
-            VardefManager::loadVardef($module_name, $objectName, true);
-            global $dictionary;
-            $f = array($mod_strings['LBL_HCUSTOM']=>array(), $mod_strings['LBL_HDEFAULT']=>array());
-
-            // TODO: replace this section to select fields to list with the algorithm in AbstractMetaDataImplmentation::validField()
-            $def = $this->cullFields($dictionary[$objectName]['fields']);
-
-            foreach($dictionary[$objectName]['fields'] as $def) {
-                if ($this->isValidStudioField($def))
-                {
-					//Custom relate fields will have a non-db source, but custom_module set
-                	if(isset($def['source']) && $def['source'] == 'custom_fields' || isset($def['custom_module'])) {
-                       $f[$mod_strings['LBL_HCUSTOM']][$def['name']] = $def;
-                    } else {
-                       $f[$mod_strings['LBL_HDEFAULT']][$def['name']] = $def;
-                    }
-                }
-            }
-            $studioClass->mbvardefs->vardefs['fields'] = $f;
             $smarty->assign('module', $studioClass);
 
             $package = new stdClass;
@@ -92,9 +78,8 @@ class ViewModulehooks extends SugarView
             $ajax = new AjaxCompose();
             $ajax->addCrumb($mod_strings['LBL_STUDIO'], 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
             $ajax->addCrumb(translate($module_name), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module='.$module_name.'")');
-            $ajax->addCrumb($mod_strings['LBL_FIELDS'], '');
-            $ajax->addSection('center', $mod_strings['LBL_EDIT_FIELDS'],$smarty->fetch('modules/ModuleBuilder/tpls/MBModule/hooks.tpl'));
-            $_REQUEST['field'] = '';
+            $ajax->addCrumb($mod_strings['LBL_HOOKS'], '');
+            $ajax->addSection('center', $mod_strings['LBL_EDIT_HOOKS'],$smarty->fetch('modules/ModuleBuilder/tpls/MBModule/hooks.tpl'));
 
             echo $ajax->getJavascript();
         } else {

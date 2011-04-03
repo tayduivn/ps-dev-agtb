@@ -379,6 +379,7 @@ $mod_strings = array(
 'LBL_EDIT_COLUMNS'=>'Edit Columns',
 'LBL_EDIT_LABELS'=>'Edit Labels',
 'LBL_EDIT_FIELDS'=>'Edit Custom Fields',
+'LBL_EDIT_HOOKS'=>'Edit Logic Hooks',
 'LBL_EDIT_PORTAL'=>'Edit Portal for ',
 'LBL_EDIT_FIELDS'=>'Edit Fields',
 'LBL_EDITVIEW'=>'EditView',
@@ -574,6 +575,7 @@ $mod_strings = array(
 'LBL_BTN_DELETE'=>'Delete',
 'LBL_BTN_VIEW_LAYOUTS'=>'View Layouts',
 'LBL_BTN_VIEW_FIELDS'=>'View Fields',
+'LBL_BTN_VIEW_HOOKS'=>'View Logic Hooks',
 'LBL_BTN_VIEW_RELATIONSHIPS'=>'View Relationships',
 'LBL_BTN_ADD_RELATIONSHIP'=>'Add Relationship',
 //TABS
