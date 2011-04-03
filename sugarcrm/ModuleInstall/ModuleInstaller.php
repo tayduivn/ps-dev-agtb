@@ -98,6 +98,7 @@ class ModuleInstaller{
 			'install_relationships',
 			'install_languages',
             'install_logichooks',
+			'install_scheduletasks',
 			'post_execute',
 			'reset_opcodes',
 		);
@@ -867,6 +868,46 @@ class ModuleInstaller{
 		}
     }
 
+    function install_scheduletasks() {
+        //$this->enable_manifest_logichooks();
+        if(isset($this->installdefs['scheduledefs'])){
+			$this->log(translate('LBL_MI_IN_SCHEDULEDTASKS') );
+			foreach($this->installdefs['scheduledefs'] as $scheduledefs){
+				$from = str_replace('<basepath>', $this->base_dir, $scheduledefs['from']);
+			    $GLOBALS['log']->debug("Installing Scheduler Task '" . $from .  "' for " . $scheduledefs['for']);
+   			    $path = 'custom/Extension/modules/Schedulers/Ext/ScheduledTasks';
+    			
+			    if(!file_exists($path)){
+				    mkdir_recursive($path, true);
+			    }
+			    copy_recursive($from , $path.'/'.$scheduledefs['for'].'.'.basename($from));
+			}
+			$this->rebuild_schedulers();
+		}
+    }
+
+    function uninstall_scheduletasks() {
+        // Since the logic hook files get removed with the rest of the module directory, we just need to disable them
+        //$this->disable_manifest_logichooks();
+        // And Ext-type stuff support
+        if(isset($this->installdefs['scheduledefs'])){
+			$this->log(translate('LBL_MI_UN_SCHEDULEDTASKS') );
+            foreach($this->installdefs['scheduledefs'] as $scheduledefs){
+					$from = str_replace('<basepath>', $this->base_dir, $scheduledefs['from']);
+					$GLOBALS['log']->debug("Uninstalling Scheduler Task ..." . $from .  " for " .$scheduledefs['for']);
+					$filename = $scheduledefs['for'].'.'.basename($from);
+					$path = 'custom/Extension/modules/Schedulers/Ext/ScheduledTasks';
+					if (file_exists($path . '/'. $filename)) {
+						rmdir_recursive( $path . '/'. $filename);
+					} else if(file_exists($path . '/'. DISABLED_PATH . '/'.  $filename)) {
+							rmdir_recursive($path . '/'. DISABLED_PATH . '/'.  $filename);
+					}
+			}
+		    $this->rebuild_schedulers();
+	    }
+    }
+    
+    
 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
 	function copy_path($from, $to, $backup_path='', $uninstall=false){
 	//function copy_path($from, $to){
@@ -1256,6 +1297,7 @@ class ModuleInstaller{
 			'uninstall_layoutfields',
 			'uninstall_languages',
 			'uninstall_logichooks',
+			'uninstall_scheduletasks',
 			'post_uninstall',
 		);
 		$total_steps += count($tasks); //now the real number of steps
