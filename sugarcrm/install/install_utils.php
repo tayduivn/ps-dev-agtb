@@ -1119,7 +1119,12 @@ EOQ;
 /**
  * (re)write the web.config file to prevent browser access to the log file
  */
-function handleWebConfig() {
+function handleWebConfig() 
+{
+    if ( !isset($_SERVER['IIS_UrlRewriteModule']) ) {
+        return;
+    }
+
 	global $setup_site_log_dir;
     global $setup_site_log_file;
     global $sugar_config;
