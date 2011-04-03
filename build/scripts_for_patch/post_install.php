@@ -239,13 +239,8 @@ function clearCompanyLogo(){
 
 function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
-	if(strpos($server_software,'Microsoft-IIS') !== false)
+	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
-		if($sugar_version < '5.5.0'){
-		    _logThis("Rebuild web.config.", $path);
-		    include_once("modules/Administration/UpgradeIISAccess.php");
-		}
-	} else {
 		///////////////////////////////////////////////////////////////////////////
         ////    FILESYSTEM SECURITY FIX (Bug 9365)
 	    _logThis("Applying .htaccess update security fix.", $path);
@@ -276,42 +271,6 @@ function genericFunctions(){
 	////	REBUILD DASHLETS
 	_logThis("Rebuilding Dashlets", $path);
 	rebuild_dashlets();
-
-    //BEGIN SUGARCRM flav=pro ONLY 
-    ///////////////////////////////////////////////////////////////////////////
-    ////    REBUILD TEAMS, REWORK IMPLICIT TEAM RELATIONSHIP
-    _logThis("Rebuilding Teams", $path);
-    rebuild_teams();
-    //END SUGARCRM flav=pro ONLY 
-
-  	global $sugar_version;
-    if($sugar_version < '5.5.0') {
-        _logThis("Begin Upgrade LDAP authentication", $path);
-        upgrade_LDAP();
-        _logThis("End Upgrade LDAP authentication", $path);
-        
-        _logThis("BEGIN CLEAR COMPANY LOGO", $path);
-        clearCompanyLogo();
-        _logThis("END CLEAR COMPANY LOGO", $path);
-        
-        _logThis("BEGIN CLEAR IMAGES IN THEME SUGAR", $path);
-        clearSugarImages();
-        _logThis("END CLEAR IMAGES IN THEME SUGAR", $path);
-    } 
-    
-	if($sugar_version < '5.5.1') {
-    	_logThis("Begin Clear all English inline help files", $path);
-    	clearHelpFiles();
-    	_logThis("End all English inline help files", $path);
-    }
-    //Rebuild roles
-     _logThis("Rebuilding Roles", $path);
-	 if($sugar_version < '5.5.0') {
-	     add_EZ_PDF();
-     }    
-     ob_start();
-     rebuild_roles();
-     ob_end_clean();
 }
 
 function status_post_install_action($action){
@@ -349,37 +308,7 @@ function post_install() {
 	$new_sugar_version = getUpgradeVersion();
 	$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
 	$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
-
-	if($origVersion < '550') {
-        require('include/utils/autoloader.php');
-        spl_autoload_register(array('SugarAutoLoader', 'autoload'));
-        hide_subpanels_if_tabs_are_hidden();
-	}    
 	
-	if($origVersion < '551') {
-		_logThis('Upgrade outbound email setting', $path);
-        upgradeOutboundSetting();
-	}
-	
-	if($origVersion < '600' && !isset($_SERVER['HTTP_USER_AGENT'])) {
-	   _logThis('Check to hide iFrames and Feeds modules', $path);
-	   hide_iframes_and_feeds_modules();
-	}	
-				
-	if($origVersion < '550' && ($sugar_config['dbconfig']['db_type'] == 'mssql')) {
-		dropColumnConstraintForMSSQL("outbound_email", "mail_smtpssl");
-		$GLOBALS['db']->query("ALTER TABLE outbound_email alter column mail_smtpssl int NULL");
-		
-		dropColumnConstraintForMSSQL("outbound_email", "mail_sendtype");
-		$GLOBALS['db']->query("alter table outbound_email  add default 'smtp' for mail_sendtype;");
-	} // if	
-	
-    //Upgrade multienum data if the version was less than 5.2.0k
-    if ($sugar_version < '5.2.0k') {
-        _logThis("Upgrading multienum data", $path);
-        require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-        upgrade_multienum_data();   
-    }
     $post_action = status_post_install_action('sql_query');
 	if($post_action != null){
 	   if($post_action != 'done'){
@@ -408,6 +337,12 @@ function post_install() {
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
 	  
+	//Set the chart engine
+	if ($origVersion < '620') {
+		_logThis('Set chartEngine in config.php to JS Charts', $path);
+		$sugar_config['chartEngine'] = 'Jit';
+	}
+	
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
     if(file_exists('modules/Administration/SaveTabs.php'))
@@ -431,48 +366,7 @@ function post_install() {
     // End Bug 40458///////////////////
 
     upgradeGroupInboundEmailAccounts();
-	//BEGIN SUGARCRM flav=pro ONLY
-        if($origVersion < '600') {
-	   _logThis("Start of check to see if Jigsaw connector should be disabled", $path);
-	   require_once('include/connectors/utils/ConnectorUtils.php');
-	   if(!ConnectorUtils::isSourceEnabled('ext_soap_jigsaw')) {
-	   	  _logThis("Jigsaw connector is not being used, remove it", $path);
-	   	  ConnectorUtils::uninstallSource('ext_soap_jigsaw');
-	   	  if(file_exists('modules/Connectors/connectors/filters/ext/soap/jigsaw')) {
-	   	     rmdir_recursive('modules/Connectors/connectors/filters/ext/soap/jigsaw');
-	   	  }
-	   	  
-	   	  if(file_exists('modules/Connectors/connectors/formatters/ext/soap/jigsaw')) {
-	   	     rmdir_recursive('modules/Connectors/connectors/formatters/ext/soap/jigsaw');
-	   	  }
-	   	  
-	   	  if(file_exists('modules/Connectors/connectors/sources/ext/soap/jigsaw')) {
-	   	     rmdir_recursive('modules/Connectors/connectors/sources/ext/soap/jigsaw');
-	   	  }
-	   	  
-	   	  if(file_exists('custom/modules/Connectors')) {
-		   	  ConnectorUtils::uninstallSource('ext_soap_jigsaw');
-		   	  if(file_exists('custom/modules/Connectors/metadata/connectors.php')) {
-			   	  require('custom/modules/Connectors/metadata/connectors.php');
-			   	  if(is_array($connectors) && isset($connectors['ext_soap_jigsaw'])) {
-				   	  unset($connectors['ext_soap_jigsaw']);
-				   	  if(!write_array_to_file('connectors', $connectors, 'custom/modules/Connectors/metadata/connectors.php')) {
-			   			_logThis("Could not remove Jigsaw connector from custom/modules/Connectors/metadata/connectors.php", $path);
-					  }	else {
-					  	_logThis("Removed Jigsaw connector from custom/modules/Connectors/metadata/connectors.php", $path);
-					  }
-			   	  } 	  
-		   	  }
-	   	  }
-	   	  
-	   } else {
-	   	  _logThis("Jigsaw connector is being used, do not remove it", $path);
-	   }
-	   _logThis("End of check to see if Jigsaw connector should be disabled", $path);
-	}		
-        //END SUGARCRM flav=pro ONLY
-
-	
+    	
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){
@@ -492,7 +386,15 @@ function post_install() {
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
-	//END SUGARCRM flav=pro ONLY		
+	//END SUGARCRM flav=pro ONLY	
+
+    //Remove jssource/src_files directory if it still exists
+    if(file_exists('jssource/src_files'))
+    {
+       _logThis('Remove jssource/src_files directory');
+       rmdir_recursive('jssource/src_files');
+       _logThis('Finished removing jssource/src_files directory');	
+    }
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
@@ -535,147 +437,6 @@ function upgradeOutboundSetting(){
 	}
 }
 
-function hide_subpanels_if_tabs_are_hidden(){
-	global $path;	
-	require_once('modules/MySettings/TabController.php');
-    require_once ('include/SubPanel/SubPanelDefinitions.php') ;
-        
-	//grab the existing system tabs
-	$newTB = new TabController();
-	$tabs = $newTB->get_tabs_system();
-
-	//set the hidden tabs key to lowercase
-	$hidpanels_arr = array_change_key_case($tabs[1]);
-	_logThis('panels to hide because tabs are hidden: '.var_export($hidpanels_arr,true), $path);
-		
-    //make subpanels hidden if tab is hidden
-	SubPanelDefinitions::set_hidden_subpanels($hidpanels_arr);
-	_logThis('panels were hidden ', $path);	
-}
-
-/**
- * hide_iframes_and_feeds_modules
- * This method determines whether or not to hide the iFrames and Feeds module
- * for an upgrade to 551
- */
-function hide_iframes_and_feeds_modules() {
-	global $path;
-	
-    _logThis('Beginning hide_iframes_and_feeds_modules', $path);
-	$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";
-	$result = $GLOBALS['db']->query($query, true, "Unable to update iFrames and Feeds dashlets!");
-	while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-		$content = unserialize(base64_decode($row['contents']));
-		$assigned_user_id = $row['assigned_user_id'];
-		$record_id = $row['id'];
-		$current_user = new User();
-        $current_user->retrieve($row['assigned_user_id']);
-        
-		if(!empty($content['dashlets']) && !empty($content['pages'])){
-			$originalDashlets = $content['dashlets'];
-			$originalPages = $content['pages'];
-			
-			//Determine if the original perference has already had the two dashlets or not
-			foreach($originalDashlets as $key=>$ds){
-				//BEGIN SUGARCRM flav=com ONLY 
-				if(!empty($ds['options']['title']) && $ds['options']['title'] == 'LBL_DASHLET_DISCOVER_SUGAR_PRO'){
-				   $originalDashlets[$key]['module'] = 'Home';
-				}
-				//END SUGARCRM flav=com ONLY 
-				if(!empty($ds['options']['title']) && $ds['options']['title'] == 'LBL_DASHLET_SUGAR_NEWS'){
-				   $originalDashlets[$key]['module'] = 'Home';
-				}
-			}
-		}
-		$current_user->setPreference('dashlets', $originalDashlets, 0, 'Home');
-		$current_user->setPreference('pages', $originalPages, 0, 'Home');	
-	} //while	
-	
-	$remove_iframes = false;
-	$remove_feeds = false;
-	
-	//Check if we should remove iframes.  If the table does not exist or the directory
-	//does not exist then we set remove_iframes to true
-	if(!$GLOBALS['db']->tableExists('iframes') || !file_exists('modules/iFrames')) {
-		$remove_iframes = true;
-	} else {
-		$result = $GLOBALS['db']->query('SELECT count(id) as total from iframes');
-		if(!empty($result)) {
-			$row = $GLOBALS['db']->fetchByAssoc($result);
-			if($row['total'] == 0) {
-			   $remove_iframes = true;
-			}
-		}
-	}
-	
-	//Check if we should remove Feeds.  We check if the tab is hidden
-	require_once("modules/MySettings/TabController.php");
-	$controller = new TabController();
-	$tabs = $controller->get_tabs_system();
-	
-	//If the feeds table does not exists or if the directory does not exist or if it is hidden in 
-	//system tabs then set remove_feeds to true
-	if(!$GLOBALS['db']->tableExists('feeds') || !file_exists('modules/Feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
-	   $remove_feeds = true;
-	}
-	
-	if($remove_feeds) {
-	   //Remove the modules/Feeds files
-	   if(is_dir('modules/Feeds')) 
-	   {
-	      _logThis('Removing the Feeds files', $path);
-	      rmdir_recursive('modules/Feeds');
-	   }
-		
-	   if(file_exists('custom/Extension/application/Ext/Include/Feeds.php'))
-	   {
-	      _logThis('Removing custom/Extension/application/Ext/Include/Feeds.php ', $path);
-	      unlink('custom/Extension/application/Ext/Include/Feeds.php');	   	
-	   }
-	   
-	   //Drop the table
-	   if($GLOBALS['db']->tableExists('feeds')) 
-	   {
-		   _logThis('Removing the Feeds table', $path);
-		   $GLOBALS['db']->dropTableName('feeds');
-	   }
-	} else {
-	   if(file_exists('modules/Feeds') && $GLOBALS['db']->tableExists('feeds')) {
-		   _logThis('Writing Feed.php module to custom/Extension/application/Ext/Include', $path);
-		   write_to_modules_ext_php('Feed', 'Feeds', 'modules/Feeds/Feed.php', true);
-	   }
-	}
-	
-	if($remove_iframes) {
-		//Remove the module/iFrames files
-		if(is_dir('modules/iFrames')) 
-		{
-		   _logThis('Removing the iFrames files', $path);
-		   rmdir_recursive('modules/iFrames');
-		}
-		
-		if(file_exists('custom/Extension/application/Ext/Include/iFrames.php'))
-	    {
-	       _logThis('Removing custom/Extension/application/Ext/Include/iFrames.php ', $path);
-	       unlink('custom/Extension/application/Ext/Include/iFrames.php');	   	
-	    }		
-		
-		//Drop the table
-		if($GLOBALS['db']->tableExists('iframes')) 
-		{
-		   _logThis('Removing the iframes table', $path);
-		   $GLOBALS['db']->dropTableName('iframes');
-		}
-
-	} else {
-	   if(file_exists('modules/iFrames') && $GLOBALS['db']->tableExists('iframes')) {
-		  _logThis('Writing iFrame.php module to custom/Extension/application/Ext/Include', $path);
-		  write_to_modules_ext_php('iFrame', 'iFrames', 'modules/iFrames/iFrame.php', true);
-	   }
-	}	
-	
-	 _logThis('Finshed with hide_iframes_and_feeds_modules', $path);
-}
 
 /**
  * write_to_modules_ext_php

@@ -8,7 +8,7 @@ class APIv3Helper
     function populateSeedDataForSearchTest($user_id)
     {
         $results = array();
-        $a1_id = uniqid();
+        $a1_id = create_guid();
         $a1 = new Account();
         $a1->id = $a1_id;
         $a1->new_with_id = TRUE;
@@ -17,7 +17,7 @@ class APIv3Helper
         $a1->save();
         $results[] = array('id' => $a1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a1_id");
         
-        $a2_id = uniqid();
+        $a2_id = create_guid();
         $a2 = new Account();
         $a2->new_with_id = TRUE;
         $a2->id = $a2_id;
@@ -26,7 +26,7 @@ class APIv3Helper
         $a2->save();
         $results[] = array('id' => $a2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a2_id");
         
-        $c1_id = uniqid();
+        $c1_id = create_guid();
         $c1 = new Contact();
         $c1->id = $c1_id;
         $c1->new_with_id = TRUE;
@@ -36,7 +36,7 @@ class APIv3Helper
         $c1->save();
         $results[] = array('id' => $c1_id, 'fieldName' => 'name', 'fieldValue' => $c1->first_name .' ' . $c1->last_name);
         
-        $op1_id = uniqid();
+        $op1_id = create_guid();
         $op1 = new Opportunity();
         $op1->new_with_id = TRUE;
         $op1->id = $op1_id;
@@ -45,7 +45,7 @@ class APIv3Helper
         $op1->save();
         $results[] = array('id' => $op1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op1_id");
         
-        $op2_id = uniqid();
+        $op2_id = create_guid();
         $op2 = new Opportunity();
         $op2->new_with_id = TRUE;
         $op2->id = $op2_id;

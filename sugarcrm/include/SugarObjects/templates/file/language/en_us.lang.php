@@ -38,6 +38,7 @@ $mod_strings = array (
 	'LBL_DOCUMENT_ID' => 'Document ID',
 	'LBL_NAME' => 'Document Name',
 	'LBL_DESCRIPTION' => 'Description',
+	'LBL_ASSIGNED_TO' => 'Assigned to:',
 	'LBL_CATEGORY' => 'Category',
 	'LBL_SUBCATEGORY' => 'Sub Category',
 	'LBL_STATUS' => 'Status',
@@ -107,4 +108,3 @@ $mod_strings = array (
 
 
 ?>
-

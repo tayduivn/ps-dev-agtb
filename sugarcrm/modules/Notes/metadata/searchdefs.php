@@ -69,6 +69,7 @@ array (
       ),
       'filename' => 
       array (
+        'type' => 'name',
         'name' => 'filename',
         'default' => true,
         'width' => '10%',

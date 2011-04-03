@@ -81,7 +81,7 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 	
 	/**
-	 * @group bug25119
+	 * @ticket 25119
 	 */
     public function testTrimSpaces()
     {

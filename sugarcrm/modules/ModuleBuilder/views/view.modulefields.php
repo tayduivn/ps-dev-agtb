@@ -33,13 +33,13 @@ class ViewModulefields extends SugarView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
 
@@ -65,13 +65,13 @@ class ViewModulefields extends SugarView
                 $objectName = 'Case';
             //END SUGARCRM flav!=sales ONLY
                 
-            VardefManager::loadVardef($module_name, $objectName);
+            VardefManager::loadVardef($module_name, $objectName, true);
             global $dictionary;
             $f = array($mod_strings['LBL_HCUSTOM']=>array(), $mod_strings['LBL_HDEFAULT']=>array());
 
             // TODO: replace this section to select fields to list with the algorithm in AbstractMetaDataImplmentation::validField()
             $def = $this->cullFields($dictionary[$objectName]['fields']);
-
+            
             foreach($dictionary[$objectName]['fields'] as $def) {
                 if ($this->isValidStudioField($def))
                 {

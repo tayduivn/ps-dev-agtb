@@ -59,13 +59,13 @@ $viewdefs['Quotes']['EditView'] = array(
 	
 	'lbl_bill_to' => array (
 	    array (
-	      array('name'=>'billing_account_name', 'displayParams'=>array('key'=>array('billing', 'shipping'), 'copy'=>array('billing', 'shipping'), 'billingKey'=>'billing', 'shippingKey'=>'shipping', 'copyPhone'=>false, 'call_back_function' => 'set_billing_return',)),	
-	      array('name'=>'shipping_account_name','displayParams'=>array('key'=>'shipping', 'copy'=>'shipping', 'shippingKey'=>'shipping', 'copyPhone'=>false)),
+	      array('name'=>'billing_account_name', 'displayParams'=>array('key'=>array('billing', 'shipping'), 'copy'=>array('billing', 'shipping'), 'billingKey'=>'billing', 'shippingKey'=>'shipping', 'copyPhone'=>false, 'call_back_function' => 'set_billing_return')),	
+	      array('name'=>'shipping_account_name','displayParams'=>array('key'=>array('shipping'), 'copy'=>array('shipping'), 'shippingKey'=>'shipping', 'copyPhone'=>false, 'call_back_function' => 'set_shipping_return')),
 	    ),
 	    
 	    array (
-	      array('name'=>'billing_contact_name'),
-	       array('name'=>'shipping_contact_name')
+	      array('name'=>'billing_contact_name','displayParams' => array('initial_filter' => '&account_id_advanced="+this.form.{$fields.billing_account_name.id_name}.value+"&account_name_advanced="+this.form.{$fields.billing_account_name.name}.value+"'),),
+	       array('name'=>'shipping_contact_name','displayParams' => array('initial_filter' => '&account_id_advanced="+this.form.{$fields.shipping_account_name.id_name}.value+"&account_name_advanced="+this.form.{$fields.shipping_account_name.name}.value+"'),),
 	    ),
     ),
     'lbl_address_information' => array (

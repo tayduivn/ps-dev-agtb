@@ -10,7 +10,7 @@ require_once "modules/Campaigns/Campaign.php";
 //END SUGARCRM flav!=sales ONLY
 
 /**
- * @group bug20955
+ * @ticket 20955
  */
 class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 {

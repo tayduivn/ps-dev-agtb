@@ -89,7 +89,7 @@ function traverse_tree($parent_id, $depth_flag, &$tree_depth, &$tree_branches, &
 function create_category($parent_id){
 	global $sugar_demodata;
 	$last_name_array = $sugar_demodata['last_name_array'];
-	$last_name_count = count($sugar_demoata['last_name_array']) - 1;
+	$last_name_count = count($sugar_demodata['last_name_array']) - 1;
 	$last_name_max = $last_name_count - 1;
 	$category = new ProductCategory();
 	$category->name = $last_name_array[mt_rand(0,$last_name_max)] ." Widgets";

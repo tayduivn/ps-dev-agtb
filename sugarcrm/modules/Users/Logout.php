@@ -46,7 +46,7 @@ if(isset($_COOKIE[session_name()])) {
 $trackerManager = TrackerManager::getInstance();
 if($monitor = $trackerManager->getMonitor('tracker_sessions')){ 
 	$monitor->setValue('user_id', $GLOBALS['current_user']->id);
-	$monitor->setValue('date_end', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+	$monitor->setValue('date_end', TimeDate::getInstance()->nowDb());
 	$seconds = strtotime($monitor->date_end) - strtotime($monitor->date_start);
 	$monitor->setValue('seconds', $seconds);
 	$monitor->setValue('active', 0);

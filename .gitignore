@@ -3,3 +3,8 @@
 .project
 .settings/
 build/rome/builds/
+sugarcrm/config_si.php
+*~
+translations/
+/.idea
+/.settings

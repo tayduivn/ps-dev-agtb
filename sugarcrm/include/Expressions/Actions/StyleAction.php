@@ -25,7 +25,7 @@ class StyleAction extends AbstractAction{
 	
 	function StyleAction($params) {
 		$this->targetField = $params['target'];
-		$this->attributes = $params['attrs'];
+		$this->attributes = str_replace("\n", "",$params['attrs']);
 	}
 	
 	/**
@@ -52,8 +52,10 @@ SUGAR.util.extend(SUGAR.forms.StyleAction, SUGAR.forms.AbstractAction, {
     /**
      * Triggers the style dependencies.
      */
-    exec: function()
+    exec: function(context)
     {
+        if (typeof(context) == 'undefined')
+            context = this.context;
         try {
             // a temp attributes array containing the evaluated version
             // of the original attributes array
@@ -63,7 +65,7 @@ SUGAR.util.extend(SUGAR.forms.StyleAction, SUGAR.forms.AbstractAction, {
             for (var i in this.attrs)
             {
                 if ( typeof(this.attrs[i]) === 'object' ) {
-                    temp[i] = SUGAR.forms.evalVariableExpression(this.attrs[i].evaluate).evaluate();
+                    temp[i] = this.evalExpression(this.attrs[i].evaluate, context);
                 } else {
                     temp[i] = this.attrs[i];
                 }

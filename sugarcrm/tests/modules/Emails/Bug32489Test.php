@@ -45,7 +45,7 @@ class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        
+        unset($GLOBALS['mod_strings']);
         $GLOBALS['db']->query("DELETE FROM emails WHERE id= '{$this->em1->id}'");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id= '{$this->note1->id}'");
         if($this->note2 != null)

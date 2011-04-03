@@ -27,7 +27,7 @@ require_once('include/upload_file.php');
 class DocumentSoap{
 var $upload_file;
 	function DocumentSoap(){
-		$this->upload_file = new UploadFile('uploadfile');	
+		$this->filename = new UploadFile('filename_file');	
 	}
 	
 	function saveFile($document, $portal = false){

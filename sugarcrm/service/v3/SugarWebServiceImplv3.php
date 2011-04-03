@@ -182,7 +182,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	require_once('sugar_version.php');
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_server_info');
     	
-    	return array('flavor' => $GLOBALS['sugar_flavor'], 'version' => $GLOBALS['sugar_version'], 'gmt_time' => gmdate('Y-m-d H:i:s'));
+    	return array('flavor' => $GLOBALS['sugar_flavor'], 'version' => $GLOBALS['sugar_version'], 'gmt_time' => TimeDate::getInstance()->nowDb());
     } // fn
 
     /**
@@ -195,7 +195,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_module_layout($session, $a_module_names, $a_type, $a_view,$md5 = FALSE){
-    	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
+    	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout');
     
     	global  $beanList, $beanFiles;
     	$error = new SoapError();

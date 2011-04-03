@@ -33,7 +33,15 @@ require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyModulesUsedChartDashlet extends DashletGenericChart 
 {
-    public $isConfigurable = false;
+    /**
+     * @see Dashlet::$isConfigurable
+     */
+    public $isConfigurable = true;
+    
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
+    protected $_seedName = 'Trackers';
     
     /**
      * @see DashletGenericChart::display()
@@ -45,8 +53,8 @@ class MyModulesUsedChartDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['my_modules_used_last_30_days'];
         
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->setProperties('',  translate('LBL_MY_MODULES_USED_SIZE', 'Charts'), $chartDef['chartType']);
         $sugarChart->base_url = $chartDef['base_url'];
         $sugarChart->group_by = $chartDef['groupBy'];
@@ -61,10 +69,14 @@ class MyModulesUsedChartDashlet extends DashletGenericChart
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
         
-        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
 	}
 
-    public function hasAccess(){
+    /**
+     * @see Dashlet::hasAccess()
+     */
+    public function hasAccess()
+    {
     	return ACLController::checkAccess('Trackers', 'view', false, 'Tracker');
     }	
 	
@@ -80,5 +92,3 @@ class MyModulesUsedChartDashlet extends DashletGenericChart
                         "GROUP BY tracker.module_name ORDER BY count DESC";
 	}
 }
-
-?>

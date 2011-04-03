@@ -30,7 +30,7 @@
 {sugar_include include=$includes}
 
 
-<div id="{{$form_name}}_tabs" 
+<div id="{{$form_name}}_tabs"
 {{if $useTabs}}
 class="yui-navset"
 {{/if}}
@@ -78,6 +78,8 @@ class="yui-navset"
 
 {{assign var='rowCount' value=0}}
 {{foreach name=rowIteration from=$panel key=row item=rowData}}
+{counter name="fieldsUsed" start=0 print=false assign="fieldsUsed"}
+{capture name="tr" assign="tableRow"}
 <tr>
 
 	{{assign var='columnsInRow' value=$rowData|@count}}
@@ -94,6 +96,9 @@ class="yui-navset"
 		{{assign var="colCount" value=0}}
 	{{/if}}
 
+    {{if !empty($colData.field.hideIf)}}
+    	{if !({{$colData.field.hideIf}}) }
+    {{/if}}
 	{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 	{{if !empty($colData.field.name)}}
 		{if $fields.{{$colData.field.name}}.acl > 1 || ($showDetailData && $fields.{{$colData.field.name}}.acl > 0)}
@@ -105,24 +110,30 @@ class="yui-navset"
 			{{if isset($colData.field.customLabel)}}
 			   {{$colData.field.customLabel}}
 			{{elseif isset($colData.field.label)}}
-			   {capture name="label" assign="label"}
-			   {sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
-			   {/capture}
+			   {capture name="label" assign="label"}{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}{/capture}
 			   {$label|strip_semicolon}:
 			{{elseif isset($fields[$colData.field.name])}}
-			   {capture name="label" assign="label"}
-			   {sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
-			   {/capture}
+			   {capture name="label" assign="label"}{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}{/capture}
 			   {$label|strip_semicolon}:
 			{{/if}}
 			{{* Show the required symbol if field is required, but override not set.  Or show if override is set *}}
-			{{if ($fields[$colData.field.name].required && !isset($colData.field.displayParams.required)) || 
-			     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required && $fields[$colData.field.name].required !== false)}}
+				{{if ($fields[$colData.field.name].required && (!isset($colData.field.displayParams.required) || $colData.field.displayParams.required)) ||
+				     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required)}}
 			    <span class="required">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
 			{{/if}}
+            {{if isset($colData.field.popupHelp) || isset($fields[$colData.field.name]) && isset($fields[$colData.field.name].popupHelp) }}
+              {{if isset($colData.field.popupHelp) }}
+                {capture name="popupText" assign="popupText"}{sugar_translate label="{{$colData.field.popupHelp}}" module='{{$module}}'}{/capture}
+              {{elseif isset($fields[$colData.field.name].popupHelp)}}
+                {capture name="popupText" assign="popupText"}{sugar_translate label="{{$fields[$colData.field.name].popupHelp}}" module='{{$module}}'}{/capture}
+              {{/if}}
+              {capture name="overlibStuff" assign="overlibStuff"}{overlib_includes}{/capture}
+              {sugar_help text=$popupText WIDTH=-1}
+            {{/if}}
+          
 		</td>
 		{{/if}}
-
+		{counter name="fieldsUsed"}
 		<td valign="top" width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}}>
 			{{if !empty($def.templateMeta.labelsOnTop)}}
 				{{if isset($colData.field.label)}}
@@ -132,9 +143,9 @@ class="yui-navset"
 				{{elseif isset($fields[$colData.field.name])}}
 			  		{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}:
 				{{/if}}
-				
+
 				{{* Show the required symbol if field is required, but override not set.  Or show if override is set *}}
-				{{if ($fields[$colData.field.name].required && (!isset($colData.field.displayParams.required) || $colData.field.displayParams.required)) || 
+				{{if ($fields[$colData.field.name].required && (!isset($colData.field.displayParams.required) || $colData.field.displayParams.required)) ||
 				     (isset($colData.field.displayParams.required) && $colData.field.displayParams.required)}}
 				    <span class="required" title="{{$APP.LBL_REQUIRED_TITLE}}">{{$APP.LBL_REQUIRED_SYMBOL}}</span>
 				{{/if}}
@@ -148,7 +159,7 @@ class="yui-navset"
 			{if $fields.{{$colData.field.name}}.acl > 1}
 		{{/if}}
 		{{* //END SUGARCRM flav=pro ONLY*}}
-			
+
 			{{if $fields[$colData.field.name] && !empty($colData.field.fields) }}
 			    {{foreach from=$colData.field.fields item=subField}}
 			        {{if $fields[$subField.name]}}
@@ -171,7 +182,7 @@ class="yui-navset"
 			{{if $fields[$colData.field.name] && !empty($colData.field.fields) }}
 			    {{foreach from=$colData.field.fields item=subField}}
 			        {{if $fields[$subField.name]}}
-			        	
+
 			            {{sugar_field parentFieldArray='fields' tabindex=$colData.field.tabindex vardef=$fields[$subField.name] displayType='DetailView' displayParams=$subField.displayParams formName=$form_name}}&nbsp;
 			        {{/if}}
 			    {{/foreach}}
@@ -198,9 +209,18 @@ class="yui-navset"
 		</td>
 	{{/if}}
 	{{* //END SUGARCRM flav=pro ONLY*}}
+    {{if !empty($colData.field.hideIf)}}
+		{else}
+		<td></td><td></td>
+		{/if}
+    {{/if}}
 
 	{{/foreach}}
 </tr>
+{/capture}
+{if $fieldsUsed > 0 }
+{$tableRow}
+{/if}
 {{/foreach}}
 </table>
 
@@ -214,15 +234,16 @@ class="yui-navset"
 {{/foreach}}
 </div></div>
 {{include file=$footerTpl}}
+{$overlibStuff}
 {{if $useTabs}}
 <script type="text/javascript" src="include/javascript/sugar_grp_yui_widgets.js"></script>
 <script type="text/javascript">
 var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{$form_name}}_tabs.selectTab(0);
-</script> 
+</script>
 {{/if}}
 <script type="text/javascript">
-YAHOO.util.Event.onContentReady("form_QuickCreate_Accounts", 
+YAHOO.util.Event.onContentReady("{{$form_name}}",
     function () {ldelim} initEditView(document.forms.{{$form_name}}) {rdelim});
 //window.setTimeout(, 100);
 window.onbeforeunload = function () {ldelim} return onUnloadEditView(); {rdelim};

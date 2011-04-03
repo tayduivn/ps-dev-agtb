@@ -135,6 +135,27 @@ $layout_defs['Contacts'] = array(
 	    		),
 			)
 		),
+        'documents' => array(
+            'order' => 25,
+            'module' => 'Documents',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'documents',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                1 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
 //BEGIN SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 		'leads' => array(
@@ -273,6 +294,18 @@ $layout_defs['Contacts'] = array(
 			'title_key' => 'LBL_CAMPAIGN_LIST_SUBPANEL_TITLE',
 		),
 //END SUGARCRM flav!=dce && flav!=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+		'contracts' => array(
+			'order' => 120,
+			'sort_order' => 'desc',
+			'sort_by' => 'end_date',
+			'module' => 'Contracts',
+			'subpanel_name' => 'default',
+			'get_subpanel_data' => 'contracts',
+			'add_subpanel_data' => 'contract_id',
+			'title_key' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
+		),
+        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>

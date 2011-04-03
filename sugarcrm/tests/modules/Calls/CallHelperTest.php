@@ -41,7 +41,8 @@ EOHTML
 <OPTION value='45'>45</OPTION></select>
 EOHTML
                 ),
-            //BEGIN SUGARCRM flav=pro ONLY 
+            //BEGIN SUGARCRM flav=pro ONLY
+
             array('wirelessedit',<<<EOHTML
 <select id="duration_minutes"tabindex="1" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
@@ -50,7 +51,8 @@ EOHTML
 <OPTION value='45'>45</OPTION></select>
 EOHTML
                 ),
-            //END SUGARCRM flav=pro ONLY 
+            //END SUGARCRM flav=pro ONLY
+
             array('DetailView','15'),
         );
     }
@@ -152,7 +154,8 @@ EOHTML
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML
                 ),
-            //BEGIN SUGARCRM flav=pro ONLY 
+            //BEGIN SUGARCRM flav=pro ONLY
+
             array('wirelessedit',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
@@ -163,7 +166,8 @@ EOHTML
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML
                 ),
-            //END SUGARCRM flav=pro ONLY 
+            //END SUGARCRM flav=pro ONLY
+
             array('DetailView',''),
         );
     }

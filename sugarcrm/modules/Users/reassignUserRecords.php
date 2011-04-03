@@ -116,6 +116,11 @@ echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['
 <BR>
 <select name="touser" id="touser">
 <?php
+if(isset($_SESSION['reassignRecords']['fromuser']) && isset($all_users[$_SESSION['reassignRecords']['fromuser']]))
+{
+	unset($all_users[$_SESSION['reassignRecords']['fromuser']]);
+}
+
 echo get_select_options_with_id($all_users, isset($_SESSION['reassignRecords']['touser']) ? $_SESSION['reassignRecords']['touser'] : '');
 ?>
 </select>
@@ -198,7 +203,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 	$display = (!empty($fieldArray['display_default']) && $fieldArray['display_default'] == true ? "block" : "none");
 	//Leon bug 20739
 	$t_mod_strings=return_module_language($GLOBALS['current_language'], $modFilter);
-	echo "<div id=\"div_{$app_list_strings['moduleList'][$modFilter]}\" style=\"display:$display\">\n";
+	echo "<div id=\"reassign_{$GLOBALS['beanList'][$modFilter]}\" style=\"display:$display\">\n";
 	echo "<h5 style=\"padding-left:0px; margin-bottom:4px;\">{$app_list_strings['moduleList'][$modFilter]} ", " {$mod_strings_users['LBL_REASS_FILTERS']}</h5>\n";
 	foreach($fieldArray['fields'] as $meta){
 		$multi = "";
@@ -320,7 +325,7 @@ else if(!isset($_GET['execute'])){
 		$q_select = "select id";
 		$q_update = "update ";
 		$q_set = " set assigned_user_id = '{$_POST['touser']}', ".
-			      "date_modified = '".date("Y-m-d H:i:s")."', ".
+			      "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
 		
@@ -545,13 +550,13 @@ function updateDivDisplay(multiSelectObj){
             allselected[i] = multiSelectObj.options[i].selected;
             
             if(allselected[i]){
-                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
+                theElement = document.getElementById('reassign_'+multiSelectObj.options[i].value);
                 if(theElement != null){
                     theElement.style.display = 'block';
                 }
             }
             else{
-                theElement = document.getElementById('div_' + multiSelectObj.options[i].text);
+                theElement = document.getElementById('reassign_'+multiSelectObj.options[i].value);
                 if(theElement != null){
                     theElement.style.display = 'none';
                 }

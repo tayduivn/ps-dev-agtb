@@ -229,7 +229,7 @@ class Email extends SugarBean {
 	function email2ParseAddresses($addresses) {
 		$addresses = from_html($addresses);
         $addresses = $this->et->unifyEmailString($addresses);
-        		
+
 		$pattern = '/@.*,/U';
 		preg_match_all($pattern, $addresses, $matchs);
 		if (!empty($matchs[0])){
@@ -285,7 +285,7 @@ class Email extends SugarBean {
 		}
 
 		$exAddr = explode("::;::", $addresses);
-		
+
 		$ret = array();
 		$clean = array("<", ">");
 		$dirty = array("&lt;", "&gt;");
@@ -350,9 +350,9 @@ class Email extends SugarBean {
     			$mail->Password = $smtppassword;
     		}
 		}
-		else 
+		else
 		    $mail->Mailer = 'sendmail';
-		    
+
 		$mail->Subject = from_html($mod_strings['LBL_TEST_EMAIL_SUBJECT']);
 		$mail->From = $fromaddress;
 		$mail->FromName = $current_user->name;
@@ -361,7 +361,7 @@ class Email extends SugarBean {
 		$mail->Body = $mod_strings['LBL_TEST_EMAIL_BODY'];
 
 		$return = array();
-		
+
 		if(!$mail->Send()) {
 	        ob_clean();
 	        $return['status'] = false;
@@ -371,13 +371,13 @@ class Email extends SugarBean {
 		$return['status'] = true;
         return $return;
 	} // fn
-	
+
 	function decodeDuringSend($htmlData) {
 	    $htmlData = str_replace("sugarLessThan", "&lt;", $htmlData);
 	    $htmlData = str_replace("sugarGreaterThan", "&gt;", $htmlData);
 		return $htmlData;
 	}
-	
+
 	/**
 	 * Returns true or false if this email is a draft.
 	 *
@@ -388,7 +388,7 @@ class Email extends SugarBean {
 	{
 	    return ( isset($request['saveDraft']) || ($this->type == 'draft' && $this->status == 'draft') );
 	}
-	
+
 	/**
 	 * Sends Email for Email 2.0
 	 */
@@ -427,18 +427,18 @@ class Email extends SugarBean {
 		 */
 		$mail = new SugarPHPMailer();
 		$mail = $this->setMailer($mail, '', $_REQUEST['fromAccount']);
-		if (empty($mail->Host) && !$this->isDraftEmail($request)) 
+		if (empty($mail->Host) && !$this->isDraftEmail($request))
 		{
             $this->status = 'send_error';
-            
-            if ($mail->oe->type == 'system') 
+
+            if ($mail->oe->type == 'system')
             	echo($app_strings['LBL_EMAIL_ERROR_PREPEND']. $app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-             else 
+             else
             	echo($app_strings['LBL_EMAIL_ERROR_PREPEND']. $app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-            
+
             return false;
-		} 
-		
+		}
+
 		$subject = $this->name;
 		$mail->Subject = from_html($this->name);
 
@@ -452,7 +452,7 @@ class Email extends SugarBean {
 		}
 		// end work-around
 
-		if ( $this->isDraftEmail($request) ) 
+		if ( $this->isDraftEmail($request) )
 		{
 			if($this->type != 'draft' && $this->status != 'draft') {
 	        	$this->id = create_guid();
@@ -492,7 +492,7 @@ class Email extends SugarBean {
 	                		$object_arr[$bean->module_dir] = $bean->id;
 						} // if
 					} // if
-			}		
+			}
 			foreach($toAddresses as $addrMeta) {
 				$addr = $addrMeta['email'];
 				$beans = $sea->getBeansByEmailAddress($addr);
@@ -564,13 +564,13 @@ class Email extends SugarBean {
 			// After adding remove below code
 
 			// code to remove
-			if ($ie->is_personal) 
+			if ($ie->is_personal)
 			{
-				if (empty($replyToAddress)) 
+				if (empty($replyToAddress))
 				{
 					$replyToAddress = $current_user->emailAddress->getReplyToAddress($current_user);
 				} // if
-				if (empty($replyToName)) 
+				if (empty($replyToName))
 				{
 					$replyToName = $defaults['name'];
 				} // if
@@ -578,16 +578,16 @@ class Email extends SugarBean {
 				//overwrite the users set default.
 				if( !empty($storedOptions['reply_to_addr']) )
 					$replyToAddress = $storedOptions['reply_to_addr'];
-				
+
 			}
 			// end of code to remove
 			$mail->From = (!empty($fromAddress)) ? $fromAddress : $defaults['email'];
 			$mail->FromName = (!empty($fromName)) ? $fromName : $defaults['name'];
 			$replyToName = (!empty($replyToName)) ? $replyToName : $mail->FromName;
 		}
-		
+
 		$mail->Sender = $mail->From; /* set Return-Path field in header to reduce spam score in emails sent via Sugar's Email module */
-		
+
 		if (!empty($replyToAddress)) {
 			$mail->AddReplyTo($replyToAddress,$locale->translateCharsetMIME(trim( $replyToName), 'UTF-8', $OBCharset));
 		} else {
@@ -669,7 +669,7 @@ class Email extends SugarBean {
             			$note->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
             			$noteTeamSet = new TeamSet();
             			$noteteamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
-            			$note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);	
+            			$note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
 						//END SUGARCRM flav=pro ONLY
 
 						if(!copy($fileLocation, $noteFile)) {
@@ -686,8 +686,8 @@ class Email extends SugarBean {
 		if(!empty($request['documents'])) {
 			$exDocs = explode("::", $request['documents']);
 
-			
-			
+
+
 
 			foreach($exDocs as $docId) {
 				$docId = trim($docId);
@@ -730,7 +730,7 @@ class Email extends SugarBean {
 
 		/* handle template attachments */
 		if(!empty($request['templateAttachments'])) {
-			
+
 			$exNotes = explode("::", $request['templateAttachments']);
 			foreach($exNotes as $noteId) {
 				$noteId = trim($noteId);
@@ -746,8 +746,8 @@ class Email extends SugarBean {
 							// only save attachments if we're archiving or drafting
 							if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
 
-								if ($note->parent_id != $this->id) 
-								    $this->saveTempNoteAttachments($filename,$fileLocation, $mime_type); 
+								if ($note->parent_id != $this->id)
+								    $this->saveTempNoteAttachments($filename,$fileLocation, $mime_type);
 							} // if
 
 						} // if
@@ -759,13 +759,13 @@ class Email extends SugarBean {
 						$filename = substr($noteId, 36, strlen($noteId)); // strip GUID	for PHPMailer class to name outbound file
 
 						$mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $this->email2GetMime($fileLocation));
-                        
-						//If we are saving an email we were going to forward we need to save the attachments as well.  
-						if( (($this->type == 'draft') && !empty($this->id)) 
-						      || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) 
+
+						//If we are saving an email we were going to forward we need to save the attachments as well.
+						if( (($this->type == 'draft') && !empty($this->id))
+						      || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1))
 						  {
 						      $mimeType = $this->email2GetMime($fileLocation);
-						      $this->saveTempNoteAttachments($filename,$fileLocation, $mimeType); 
+						      $this->saveTempNoteAttachments($filename,$fileLocation, $mimeType);
 						 } // if
 					}
 				}
@@ -800,7 +800,7 @@ class Email extends SugarBean {
             $mail->Body = $this->decodeDuringSend($mail->Body);
             $mail->AltBody = $this->decodeDuringSend($mail->AltBody);
             if (!$mail->Send()) {
-                $this->status = 'send_error'; 
+                $this->status = 'send_error';
                 ob_clean();
                 echo($app_strings['LBL_EMAIL_ERROR_PREPEND']. $mail->ErrorInfo);
                 return false;
@@ -815,7 +815,7 @@ class Email extends SugarBean {
 			$originalEmail->save();
 			$this->reply_to_status = 0;
 		} // if
-		
+
 		if ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase') {
 			if (isset($_REQUEST['ieId']) && isset($_REQUEST['mbox'])) {
 				$emailFromIe = new InboundEmail();
@@ -856,8 +856,7 @@ class Email extends SugarBean {
 			//END SUGARCRM flav=pro ONLY
 			$this->assigned_user_id = $current_user->id;
 
-			$this->date_sent = $timedate->convert_to_gmt_datetime('now');
-	        $this->date_sent = $timedate->to_display_date_time($this->date_sent);
+			$this->date_sent = $timedate->now();
 			///////////////////////////////////////////////////////////////////
 			////	LINK EMAIL TO SUGARBEANS BASED ON EMAIL ADDY
 
@@ -889,7 +888,7 @@ class Email extends SugarBean {
 
 				} else {
 					if(!class_exists('aCase')) {
-						
+
 					}
 					else{
 						$c = new aCase();
@@ -935,11 +934,16 @@ class Email extends SugarBean {
 	/**
 	 * Generates a comma sperated name and addresses to be used in compose email screen for contacts or leads
 	 * from listview
+	 *
+	 * @param $module string module name
+	 * @param $idsArray array of record ids to get the email address for
+	 * @return string comma delimited list of email addresses
 	 */
-	function getNamePlusEmailAddressesForCompose($table, $idsArray) {
+	public function getNamePlusEmailAddressesForCompose($module, $idsArray)
+	{
 		global $locale;
 		global $db;
-		$table = strtolower($table);
+		$table = SugarModule::get($module)->loadBean()->table_name;
 		$returndata = array();
 		$idsString = "";
 		foreach($idsArray as $id) {
@@ -950,9 +954,14 @@ class Email extends SugarBean {
 		} // foreach
 		$where = "({$table}.deleted = 0 AND {$table}.id in ({$idsString}))";
 
-		$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
-		if ($table == 'accounts') {
-			$selectColumn = "{$table}.name";
+		if ($module == 'Users' || $module == 'Employees') {
+			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.title";
+		}
+		elseif (SugarModule::get($module)->moduleImplements('Person')) {
+			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
+		}
+		else {
+		    $selectColumn = "{$table}.name";
 		}
 		$query = "SELECT {$table}.id, {$selectColumn}, eabr.primary_address, ea.email_address";
 		$query .= " FROM {$table} ";
@@ -966,11 +975,16 @@ class Email extends SugarBean {
 
 		while($a = $this->db->fetchByAssoc($r)) {
 			if (!isset($returndata[$a['id']])) {
-				if ($table == 'accounts') {
-					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
-				} else {
+				if ($module == 'Users' || $module == 'Employees') {
+				    $full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], '', $a['title']));
+					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
+				}
+				elseif (SugarModule::get($module)->moduleImplements('Person')) {
 					$full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], $a['salutation'], $a['title']));
 					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
+				}
+				else {
+					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
 				} // else
 			}
 		}
@@ -999,7 +1013,28 @@ class Email extends SugarBean {
 
 			// handle legacy concatenation of date and time fields
 			if(empty($this->date_sent)) $this->date_sent = $this->date_start." ".$this->time_start;
+
 			parent::save($check_notify);
+
+			if(!empty($this->parent_type) && !empty($this->parent_id)) {
+                if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
+                    if($this->fetched_row['parent_id'] != $this->parent_id || $this->fetched_row['parent_type'] != $this->parent_type) {
+                        $mod = strtolower($this->fetched_row['parent_type']);
+                        $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
+                        if($this->load_relationship($rel) ) {
+                            $this->$rel->delete($this->id, $this->fetched_row['parent_id']);
+                        }
+                    } else {
+                        // we already have this relationship, don't add it
+                        return;
+                    }
+                }
+                $mod = strtolower($this->parent_type);
+                $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
+                if($this->load_relationship($rel) ) {
+                    $this->$rel->add($this->parent_id);
+                }
+			}
 		}
 	}
 
@@ -1013,7 +1048,7 @@ class Email extends SugarBean {
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
 	{
 	    global $sugar_config;
-	    
+
 	    $tmpNote = new Note();
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
@@ -1021,7 +1056,7 @@ class Email extends SugarBean {
 	    $tmpNote->parent_type = $this->module_dir;
 	    $tmpNote->name = $filename;
 	    $tmpNote->filename = $filename;
-	    $tmpNote->file_mime_type = $mimeType; 
+	    $tmpNote->file_mime_type = $mimeType;
 	    //BEGIN SUGARCRM flav=pro ONLY
 	    $tmpNote->team_id = $this->team_id;
 	    $tmpNote->team_set_id = $this->team_set_id;
@@ -1295,7 +1330,7 @@ class Email extends SugarBean {
      */
     function getNotes($id, $duplicate=false) {
         if(!class_exists('Note')) {
-            
+
         }
 
         $exRemoved = array();
@@ -1396,7 +1431,7 @@ class Email extends SugarBean {
 		}
 		$text = str_replace("\n", "\n<BR/>", $text);
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
-    
+
 		return $out;
 	}
 
@@ -1656,9 +1691,9 @@ class Email extends SugarBean {
 	 * handles attachments of various kinds when sending email
 	 */
 	function handleAttachments() {
-		
-		
-		
+
+
+
 
 		global $mod_strings;
 
@@ -1938,7 +1973,7 @@ class Email extends SugarBean {
 
 		// ssl or tcp - keeping outside isSMTP b/c a default may inadvertantly set ssl://
 		$mail->protocol = ($oe->mail_smtpssl) ? "ssl://" : "tcp://";
-        if($oe->mail_sendtype == "SMTP") 
+        if($oe->mail_sendtype == "SMTP")
         {
     		//Set mail send type information
     		$mail->Mailer = "smtp";
@@ -1950,16 +1985,16 @@ class Email extends SugarBean {
             if ($oe->mail_smtpssl == 2) {
                 $mail->SMTPSecure = 'tls';
             } // if
-    
+
     		if($oe->mail_smtpauth_req) {
     			$mail->SMTPAuth = TRUE;
     			$mail->Username = $oe->mail_smtpuser;
     			$mail->Password = $oe->mail_smtppass;
     		}
         }
-        else 
+        else
 			$mail->Mailer = "sendmail";
-			
+
 		$mail->oe = $oe;
 		return $mail;
 	}
@@ -2009,7 +2044,7 @@ class Email extends SugarBean {
 
 		return $mail;
 	}
-	
+
 	/**
 	 * Retrieve function from handlebody() to unit test easily
 	 * @param $mail
@@ -2035,7 +2070,7 @@ class Email extends SugarBean {
 		$filePatternSearch = "{$sugar_config['cache_dir']}";
 		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
 		$filePatternSearch = $filePatternSearch . "images\/";
-		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE) 
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
 		{  //cache/images
 			$matches = array();
 			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
@@ -2061,7 +2096,7 @@ class Email extends SugarBean {
 		$fileBasePath = "{$sugar_config['upload_dir']}";
 		$filePatternSearch = "{$sugar_config['upload_dir']}";
 		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
-		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE) 
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
 		{
 			$matches = array();
 			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
@@ -2085,19 +2120,19 @@ class Email extends SugarBean {
 			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
 			$mail->Body = preg_replace($regex, '', $mail->Body);
 		}
-		
+
 		//Replace any embeded images using the secure entryPoint for src url.
 		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im";
-        $embededImageMatches = array(); 
+        $embededImageMatches = array();
         preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
-        
+
         foreach ($embededImageMatches as $singleMatch )
         {
             $fullMatch = $singleMatch[0];
             $noteId = $singleMatch[1];
             $cid = $noteId;
             $filename = $noteId;
-           
+
             //Retrieve note for mimetype
             $tmpNote = new Note();
             $tmpNote->retrieve($noteId);
@@ -2107,16 +2142,16 @@ class Email extends SugarBean {
 
             //Replace the body, old tag for new tag
             $mail->Body = str_replace($fullMatch, $replaceMatch, $mail->Body);
-            
+
             //Attach the file
             $file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$noteId}");
-            
-            if(file_exists($file_location)) 
+
+            if(file_exists($file_location))
 					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
         }
         //End Replace
-		
-		
+
+
 		$mail->Body = from_html($mail->Body);
 	}
 
@@ -2323,8 +2358,8 @@ class Email extends SugarBean {
     function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false) {
 
 		if ($return_array) {
-			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect); 
-		}   	
+			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect);
+		}
         $custom_join = $this->custom_fields->getJOIN();
 
 		$query = "SELECT ".$this->table_name.".*, users.user_name as assigned_user_name\n";
@@ -2420,7 +2455,7 @@ class Email extends SugarBean {
 			$row = $this->db->fetchByAssoc($result);
 			if($row != null)
 			{
-				
+
 				$contact = new Contact();
 				$contact->retrieve($row['id']);
 				$this->contact_name = $contact->full_name;
@@ -2566,7 +2601,7 @@ class Email extends SugarBean {
 					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Bugs&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateBugs.gif').'">'.$mod_strings['LBL_CREATE_BUG'].'</a>';
 				break;
                 //END SUGARCRM flav!=sales ONLY
-				
+
 				case 'task':
 					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Tasks&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateTasks.gif').'">'.$mod_strings['LBL_CREATE_TASK'].'</a>';
 				break;
@@ -2623,18 +2658,18 @@ class Email extends SugarBean {
 
 		$emailSettings = $current_user->getPreference('emailSettings', 'Emails');
 		// cn: default to a low number until user specifies otherwise
-		if(empty($emailSettings['showNumInList'])) 
+		if(empty($emailSettings['showNumInList']))
 			$pageSize = 20;
-        else 
+        else
             $pageSize = $emailSettings['showNumInList'];
-			
-        if( isset($_REQUEST['start']) && isset($_REQUEST['limit']) )    
+
+        if( isset($_REQUEST['start']) && isset($_REQUEST['limit']) )
 	       $page = ceil($_REQUEST['start'] / $_REQUEST['limit']) + 1;
-	    else 
+	    else
 	       $page = 1;
-	       
-	     //Determine sort ordering 
-	     
+
+	     //Determine sort ordering
+
 	     //Sort ordering parameters in the request do not coincide with actual column names
 	     //so we need to remap them.
 	     $hrSortLocal = array(
@@ -2646,15 +2681,15 @@ class Email extends SugarBean {
             'AssignedTo' => 'assigned_user_id',
             'flagged' => 'flagged'
         );
-          
+
 	     $sort = !empty($_REQUEST['sort']) ? $_REQUEST['sort'] : "";
          $direction = !empty($_REQUEST['dir']) ? $_REQUEST['dir'] : "";
-         
+
          $order = ( !empty($sort) && !empty($direction) ) ? " ORDER BY {$hrSortLocal[$sort]} {$direction}" : "";
-        
+
          //Get our main query.
 		$fullQuery = $this->_genereateSearchImportedEmailsQuery();
-        
+
 		//Perform a count query needed for pagination.
 		$countQuery = $this->create_list_count_query($fullQuery);
 		$count_rs = $this->db->query($countQuery, false, 'Error executing count query for imported emails search');
@@ -2662,7 +2697,7 @@ class Email extends SugarBean {
 		$total_count = ($count_row != null) ? $count_row['c'] : 0;
 
         $start = ($page - 1) * $pageSize;
-        
+
         //Execute the query
 		$rs = $this->db->limitQuery($fullQuery . $order, $start, $pageSize);
 
@@ -2681,7 +2716,7 @@ class Email extends SugarBean {
 			$temp['type'] = $a['type'];
 			$temp['mbox'] = 'sugar::Emails';
 			$temp['hasAttach'] =  $this->doesImportedEmailHaveAttachment($a['id']);
-			//To and from addresses may be stored in emails_text, if nothing is found, revert to 
+			//To and from addresses may be stored in emails_text, if nothing is found, revert to
 			//regular email addresses.
 			$temp['to_addrs'] = preg_replace('/[\x00-\x08\x0B-\x1F]/', '', $a['to_addrs']);
 			$temp['from']	= preg_replace('/[\x00-\x08\x0B-\x1F]/', '', $a['from_addr']);
@@ -2691,10 +2726,10 @@ class Email extends SugarBean {
     			$tmpEmail = new Email();
     			$tmpEmail->id = $a['id'];
     			$tmpEmail->retrieveEmailAddresses();
-    			$temp['from'] = $tmpEmail->from_addr; 
+    			$temp['from'] = $tmpEmail->from_addr;
     			$temp['to_addrs'] = $tmpEmail->to_addrs;
 			}
-						
+
 			$return[] = $temp;
 		}
 
@@ -2719,12 +2754,12 @@ class Email extends SugarBean {
 	   $row = $this->db->fetchByAssoc($rs);
 	   if( !empty($row['id']) )
 	       $hasAttachment = TRUE;
-	
+
 	   return (int) $hasAttachment;
 	}
-	
+
     /**
-     * Generate the query used for searching imported emails.  
+     * Generate the query used for searching imported emails.
      *
      * @return String Query to be executed.
      */
@@ -2733,44 +2768,44 @@ class Email extends SugarBean {
 		global $timedate;
 
         $additionalWhereClause = $this->_generateSearchImportWhereClause();
-        
+
         $query = array();
         $fullQuery = "";
-        $query['select'] = "emails.id , emails.mailbox_id, emails.name, emails.date_sent, emails.status, emails.type, emails.flagged, emails.reply_to_status, 
+        $query['select'] = "emails.id , emails.mailbox_id, emails.name, emails.date_sent, emails.status, emails.type, emails.flagged, emails.reply_to_status,
 		                      emails_text.from_addr, emails_text.to_addrs  FROM emails ";
-        
+
         $query['joins'] = " JOIN emails_text on emails.id = emails_text.email_id ";
-        
+
         //Handle from and to addr joins
         if( !empty($_REQUEST['from_addr']) )
-        {  
-            $query['joins'] .= "INNER JOIN emails_email_addr_rel er_from ON er_from.email_id = emails.id AND er_from.deleted = 0 INNER JOIN email_addresses ea_from ON ea_from.id = er_from.email_address_id 
-                                AND er_from.address_type='from' AND ea_from.email_address='" . strtolower($_REQUEST['from_addr']) . "'";  
+        {
+            $query['joins'] .= "INNER JOIN emails_email_addr_rel er_from ON er_from.email_id = emails.id AND er_from.deleted = 0 INNER JOIN email_addresses ea_from ON ea_from.id = er_from.email_address_id
+                                AND er_from.address_type='from' AND ea_from.email_address='" . strtolower($_REQUEST['from_addr']) . "'";
         }
-            
+
         if( !empty($_REQUEST['to_addrs'])  )
         {
-            $query['joins'] .= "INNER JOIN emails_email_addr_rel er_to ON er_to.email_id = emails.id AND er_to.deleted = 0 INNER JOIN email_addresses ea_to ON ea_to.id = er_to.email_address_id 
-                                    AND er_to.address_type='to' AND ea_to.email_address='" . strtolower($_REQUEST['to_addrs']) . "'";  
+            $query['joins'] .= "INNER JOIN emails_email_addr_rel er_to ON er_to.email_id = emails.id AND er_to.deleted = 0 INNER JOIN email_addresses ea_to ON ea_to.id = er_to.email_address_id
+                                    AND er_to.address_type='to' AND ea_to.email_address='" . strtolower($_REQUEST['to_addrs']) . "'";
         }
-             
+
         //BEGIN SUGARCRM flav=pro ONLY
 		$this->add_team_security_where_clause($query['joins']);
 		//END SUGARCRM flav=pro ONLY
         $query['where'] = " WHERE (emails.type= 'inbound' OR emails.type='archived' OR emails.type='out') AND emails.deleted = 0 ";
 		if( !empty($additionalWhereClause) )
     	    $query['where'] .= "AND $additionalWhereClause";
-		  
-    	//If we are explicitly looking for attachments.  Do not use a distinct query as the to_addr is defined 
+
+    	//If we are explicitly looking for attachments.  Do not use a distinct query as the to_addr is defined
     	//as a text which equals clob in oracle and the distinct query can not be executed correctly.
     	$addDistinctKeyword = "";
         if( !empty($_REQUEST['attachmentsSearch']) &&  $_REQUEST['attachmentsSearch'] == 1) //1 indicates yes
             $query['where'] .= " AND EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
         else if( !empty($_REQUEST['attachmentsSearch']) &&  $_REQUEST['attachmentsSearch'] == 2 )
-             $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )"; 
-    	    
-        $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where']; 
-  
+             $query['where'] .= " AND NOT EXISTS ( SELECT id FROM notes n WHERE n.parent_id = emails.id AND n.deleted = 0 AND n.filename is not null )";
+
+        $fullQuery = "SELECT " . $query['select'] . " " . $query['joins'] . " " . $query['where'];
+
         return $fullQuery;
     }
         /**
@@ -2780,50 +2815,50 @@ class Email extends SugarBean {
     function _generateSearchImportWhereClause()
     {
         global $timedate;
-        
+
         //The clear button was removed so if a user removes the asisgned user name, do not process the id.
         if( empty($_REQUEST['assigned_user_name']) && !empty($_REQUEST['assigned_user_id'])  )
             unset($_REQUEST['assigned_user_id']);
-            
+
         $availableSearchParam = array('name' => array('table_name' =>'emails'),
                                         'data_parent_id_search' => array('table_name' =>'emails','db_key' => 'parent_id','opp' => '='),
                                         'assigned_user_id' => array('table_name' => 'emails', 'opp' => '=') );
-		
+
 		$additionalWhereClause = array();
 		foreach ($availableSearchParam as $key => $properties)
 		{
-		      if( !empty($_REQUEST[$key]) )   
+		      if( !empty($_REQUEST[$key]) )
 		      {
 		          $db_key =  isset($properties['db_key']) ? $properties['db_key'] : $key;
 		          $searchValue = $_REQUEST[$key];
-		          
+
 		          $opp = isset($properties['opp']) ? $properties['opp'] : 'like';
 		          if($opp == 'like')
 		              $searchValue = $searchValue . "%";
-		              
+
 		          $additionalWhereClause[] = "{$properties['table_name']}.$db_key $opp '$searchValue' ";
 		      }
         }
-        
+
         $isDateFromSearchSet = !empty($_REQUEST['dateFrom']);
         $isdateToSearchSet = !empty($_REQUEST['dateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
-        
+
         //Hanlde date from and to seperately
         if($bothDateRangesSet)
         {
             $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
-            
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false); 
+
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
-            
+
             $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND
                                           emails.date_sent <= $dbFormatDateTo )";
         }
         elseif ($isdateToSearchSet)
         {
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false); 
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent <= $dbFormatDateTo ";
         }
@@ -2833,14 +2868,14 @@ class Email extends SugarBean {
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent >= $dbFormatDateFrom ";
         }
-        
+
         $additionalWhereClause = implode(" AND ", $additionalWhereClause);
-        
+
         return $additionalWhereClause;
     }
-    
-    
-    
+
+
+
 	/**
 	 * takes a long TO: string of emails and returns the first appended by an
 	 * elipse
@@ -2880,7 +2915,7 @@ class Email extends SugarBean {
 		$sqs_objects = $teamSetField->createQuickSearchCode(true);
 		$teamWidget = $code.$sqs_objects;
 		//END SUGARCRM flav=pro ONLY
-		
+
 		$out = '<form name="Distribute" id="Distribute">';
 		$out .= get_form_header($mod_strings['LBL_DIST_TITLE'], '', false);
 		$out .=<<<eoq
@@ -2987,10 +3022,10 @@ eoq;
 								<select name="distribute_method" id="dm" onChange="checkDeps(this.form);">'.$distribution.'</select>
 							</td>';
 
-					
+
 					$out .= '</td>
 							</tr>';
-					
+
 					//BEGIN SUGARCRM flav=pro ONLY
 					$out .= '<tr><td/>';
 					$out .= '<td>'.translate('LBL_TEAMS', 'EmailTemplates');
@@ -2998,7 +3033,7 @@ eoq;
 					$out .= '</td>
 							</tr>';
 					//END SUGARCRM flav=pro ONLY
-							
+
 					$out .= '<tr>
 								<td scope="col" width="50%" scope="row" NOWRAP align="right" colspan="2">
 								<input title="'.$mod_strings['LBL_BUTTON_DISTRIBUTE_TITLE'].'"

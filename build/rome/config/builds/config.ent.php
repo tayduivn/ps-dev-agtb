@@ -44,14 +44,15 @@ $config['blackList']['ent'] = array(
 'sugarcrm/themes/VintageSugar'=>1,
 'sugarcrm/themes/WhiteSands'=>1,
 
+'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
+'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
+//'sugarcrm/include/externalAPI/LotusLive'=>1,
+//'sugarcrm/modules/Connectors/connectors/sources/ext/eapm/lotuslive' => 1,
+//'sugarcrm/include/DashletContainer/Containers/DynamicDCActions.php'=>1,
+
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,
 'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,
 'sugarcrm/themes/default/images/exchange_logo.png'=>1,
-
-'sugarcrm/themes/default/images/icon_notifications.gif'=>1,
-'sugarcrm/themes/default/images/Notifications.gif'=>1,
-'sugarcrm/themes/default/images/user_follow.png'=>1,    
-'sugarcrm/themes/default/images/user_unfollow.png'=>1,
 
 'sugarcrm/modules/DCEActions'=>1,
 'sugarcrm/modules/DCEClients'=>1,
@@ -95,6 +96,9 @@ $config['blackList']['ent'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 
 'sugarcrm/modules/SugarFollowing'=>1,
+'sugarcrm/themes/default/images/user_follow.png'=>1,    
+'sugarcrm/themes/default/images/user_unfollow.png'=>1,
+
 'sugarcrm/include/EditView/InlineEdit.css'=>1,
 'sugarcrm/include/EditView/InlineEdit.js'=>1,
 'sugarcrm/include/EditView/InlineEdit.php'=>1,

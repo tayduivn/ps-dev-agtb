@@ -113,20 +113,27 @@ $config['blackList']['od_exp'] = array(
 'sugarcrm/themes/VintageSugar'=>1,
 'sugarcrm/themes/WhiteSands'=>1,
 
-
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,
 'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,
 'sugarcrm/themes/default/images/exchange_logo.png'=>1,
 
+'sugarcrm/modules/Notifications'=>1,
+'sugarcrm/themes/default/images/icon_notifications.gif'=>1,
+'sugarcrm/themes/default/images/icon_notifications.png'=>1,
+'sugarcrm/themes/default/images/Notifications.gif'=>1,
+
+'sugarcrm/modules/SugarFollowing'=>1,
 'sugarcrm/themes/default/images/user_follow.png'=>1,    
 'sugarcrm/themes/default/images/user_unfollow.png'=>1,
 
-'sugarcrm/modules/SugarFollowing'=>1,
 'sugarcrm/include/EditView/InlineEdit.css'=>1,
 'sugarcrm/include/EditView/InlineEdit.js'=>1,
 'sugarcrm/include/EditView/InlineEdit.php'=>1,
 'sugarcrm/include/MVC/View/views/view.inlinefield.php'=>1,
 'sugarcrm/include/MVC/View/views/view.inlinefieldsave.php'=>1,
+
+'sugarcrm/modules/SugarFavorites'=>1,
+'sugarcrm/themes/default/images/star-sheet.png'=>1,
 
 'sugarcrm/modules/DCEActions'=>1,
 'sugarcrm/modules/DCEClients'=>1,

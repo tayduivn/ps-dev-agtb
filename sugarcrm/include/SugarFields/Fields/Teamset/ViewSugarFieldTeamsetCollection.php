@@ -39,8 +39,8 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         $this->value_name = $this->name . '_values';
         $this->numFields = 1;
         $this->ss = new Sugar_Smarty();
-        $this->edit_tpl_path = 'include/SugarFields/Fields/Collection/CollectionEditView.tpl';
-        $this->detail_tpl_path = 'include/SugarFields/Fields/Collection/CollectionDetailView.tpl';
+        $this->edit_tpl_path = $this->findTemplate('CollectionEditView');
+        $this->detail_tpl_path = $this->findTemplate('CollectionDetailView');
         $this->extra_var = array();
         $this->field_to_name_array = array();
     }
@@ -54,14 +54,14 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
            $this->tpl_path = $this->detail_tpl_path;
         } else {
 			if($this->action_type == 'search_form' || $this->action_type == 'popup_query_form') {
-               $this->tpl_path = 'include/SugarFields/Fields/Teamset/TeamsetCollectionSearchView.tpl';
+               $this->tpl_path = $this->findTemplate('TeamsetCollectionSearchView');
             } else if($this->action_type == 'quickcreate') {
                $this->displayParams['primaryChecked'] = true;
                $this->displayParams['formName'] = $this->form_name;
-               $this->tpl_path = 'include/SugarFields/Fields/Teamset/TeamsetCollectionEditView.tpl';
+               $this->tpl_path = $this->findTemplate('TeamsetCollectionEditView');
             } else {
                $this->displayParams['formName'] = isset($this->displayParams['formName']) ? $this->displayParams['formName'] : "EditView";
-               $this->tpl_path = 'include/SugarFields/Fields/Teamset/TeamsetCollectionEditView.tpl';
+               $this->tpl_path = $this->findTemplate('TeamsetCollectionEditView');
             }
             $this->ss->assign('quickSearchCode',$this->createQuickSearchCode());
             $this->createPopupCode();      	
@@ -323,6 +323,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
                     $sqs_objects[$name1]['primary_populate_list'] = array();
                     $sqs_objects[$name1]['primary_field_list'] = array();
                 }
+                $sqs_objects[$name1]['whereExtra'] = "( teams.associated_user_id IS NULL OR teams.associated_user_id NOT IN ( SELECT id FROM users WHERE status = 'Inactive' OR portal_only = '1' ))";
         }
         
         $id = "{$this->form_name}_{$fieldName}_collection_0";
@@ -345,6 +346,44 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
             }
        }
        return '';
+    }
+
+function findTemplate($view){
+        static $tplCache = array();
+
+        if ( isset($tplCache['TeamsetCollection'][$view]) ) {
+            return $tplCache['TeamsetCollection'][$view];
+        }
+
+        $lastClass = get_class($this);
+        $classList = array('Teamset');
+        
+        $tplName = '';
+        foreach ( $classList as $className ) {
+            global $current_language;
+            if(isset($current_language)) {
+                $tplName = 'include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl';
+                if ( file_exists('custom/'.$tplName) ) {
+                    $tplName = 'custom/'.$tplName;
+                    break;
+                }
+                if ( file_exists($tplName) ) {
+                    break;
+                }
+            }
+            $tplName = 'include/SugarFields/Fields/'. $className .'/'. $view .'.tpl';
+            if ( file_exists('custom/'.$tplName) ) {
+                $tplName = 'custom/'.$tplName;
+                break;
+            }
+            if ( file_exists($tplName) ) {
+                break;
+            }
+        }
+
+        $tplCache['TeamsetCollection'][$view] = $tplName;
+
+        return $tplName;
     }    
 }
 ?>

@@ -27,6 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 if(!$current_user->is_admin) {
 	sugar_die('You must have administrative access to proceed.');	
 }
-echo get_module_title($mod_strings['LBL_MODULE_TITLE'], $mod_strings['LBL_MODULE_TITLE'], true); 
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_MODULE_TITLE']), true); 
 require_once('modules/Schedulers/ListView.php');
 ?>

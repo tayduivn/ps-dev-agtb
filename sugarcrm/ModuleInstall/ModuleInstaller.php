@@ -215,10 +215,13 @@ class ModuleInstaller{
 				$rac = new RepairAndClear();
 				$rac->repairAndClearAll($selectedActions, $installed_modules,true, false);
 				$this->rebuild_relationships();
-				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
-
 				UpdateSystemTabs('Add',$tab_modules);
 
+				//clear the unified_search_module.php file
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+
+				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
 			die("No \$installdefs Defined In $this->base_dir/manifest.php");
 		}
@@ -328,7 +331,9 @@ class ModuleInstaller{
 				//if it's not a sugar file then we remove it otherwise we can't restor it
 				if(!$this->ms->sugarFileExists($to)){
 					$GLOBALS['log']->debug('ModuleInstaller[uninstall_new_file] deleting file ' . $to);
-					unlink($to);
+					if(file_exists($to)) {
+					    unlink($to);
+					}
 				}else{
 					$GLOBALS['log']->fatal('ModuleInstaller[uninstall_new_file] Could not remove file ' . $to . ' as no backup file was found to restore to');
 				}
@@ -754,15 +759,52 @@ class ModuleInstaller{
      */
     function install_logichooks() {
         // Since the logic hook files get copied over with the rest of the module directory, we just need to enable them
-        $this->enable_logichooks();
+        $this->enable_manifest_logichooks();
+        // Here we support Ext-type hooks
+        if(isset($this->installdefs['hookdefs'])){
+			$this->log(translate('LBL_MI_IN_HOOKS') );
+			foreach($this->installdefs['hookdefs'] as $hookdefs){
+				$from = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+			    $GLOBALS['log']->debug("Installing Logic Hooks ..." . $from .  " for " . $hookdefs['to_module']);
+    			if($hookdefs['to_module'] == 'application'){
+    				$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+    			} else {
+    			    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+    			}
+			    if(!file_exists($path)){
+				    mkdir_recursive($path, true);
+			    }
+			    copy_recursive($from , $path.'/'. basename($from));
+			}
+			$this->rebuild_logichooks();
+		}
     }
 
     function uninstall_logichooks() {
         // Since the logic hook files get removed with the rest of the module directory, we just need to disable them
-        $this->disable_logichooks();
+        $this->disable_manifest_logichooks();
+        // And Ext-type stuff support
+        if(isset($this->installdefs['hookdefs'])){
+			$this->log(translate('LBL_MI_UN_HOOKS') );
+            foreach($this->installdefs['hookdefs'] as $hookdefs){
+					$hookdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+					$GLOBALS['log']->debug("Uninstalling LogicHooks ..." . $hookdefs['from'] .  " for " .$hookdefs['to_module']);
+					if($hookdefs['to_module'] == 'application'){
+						$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+					} else {
+					    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+					}
+					if (file_exists($path . '/'. basename($hookdefs['from'] ))) {
+						rmdir_recursive( $path . '/'. basename($hookdefs['from'] ));
+					} else if(file_exists($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']))) {
+							rmdir_recursive($path . '/'. DISABLED_PATH . '/'.  basename($hookdefs['from']));
+					}
+			}
+		    $this->rebuild_layoutdefs();
+	    }
     }
 
-    function enable_logichooks() {
+    function enable_manifest_logichooks() {
         if(empty($this->installdefs['logic_hooks']) || !is_array($this->installdefs['logic_hooks'])) {
            return;
         }
@@ -774,15 +816,55 @@ class ModuleInstaller{
         }
     }
 
-    function disable_logichooks() {
+    function enable_logichooks()
+    {
+        $this->enable_manifest_logichooks();
+		if(isset($this->installdefs['hookdefs'])){
+			foreach($this->installdefs['hookdefs'] as $hookdefs){
+        		$GLOBALS['log']->debug("Enabling Logic Hookd ..." .$hookdefs['to_module']);
+        		if($hookdefs['to_module'] == 'application'){
+        			$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+        		} else {
+        		    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+        		}
+        		if (file_exists($path . '/'.DISABLED_PATH.'/'. basename($hookdefs['from'])))
+        		{
+        			rename($path . '/'.DISABLED_PATH.'/'. basename($hookdefs['from']),  $path . '/'. basename($hookdefs['from']));
+        		}
+			}
+			$this->rebuild_logichooks();
+		}
+    }
+
+    function disable_manifest_logichooks() {
         if(empty($this->installdefs['logic_hooks']) || !is_array($this->installdefs['logic_hooks'])) {
             return;
         }
 
-
         foreach($this->installdefs['logic_hooks'] as $hook ) {
             remove_logic_hook($hook['module'], $hook['hook'], array($hook['order'], $hook['description'],  $hook['file'], $hook['class'], $hook['function']));
         }
+    }
+
+    function disable_logichooks()
+    {
+        $this->disable_manifest_logichooks();
+		if(isset($this->installdefs['hookdefs'])){
+			foreach($this->installdefs['hookdefs'] as $hookdefs){
+				$layoutdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+				$GLOBALS['log']->debug("Disabling Logic Hooks ..." . $hookdefs['from'] .  " for " .$hookdefs['to_module']);
+				if($hookdefs['to_module'] == 'application'){
+					$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+				} else {
+				    $path = 'custom/Extension/modules/' . $hookdefs['to_module']. '/Ext/LogicHooks';
+				}
+				if (file_exists($path . '/'. basename($hookdefs['from']))) {
+					mkdir_recursive($path . '/'.DISABLED_PATH, true);
+					rename( $path . '/'. basename($hookdefs['from']), $path . '/'.DISABLED_PATH.'/'. basename($hookdefs['from']));
+				}
+			}
+			$this->rebuild_logichooks();
+		}
     }
 
 /* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
@@ -1252,6 +1334,10 @@ class ModuleInstaller{
 
 				UpdateSystemTabs('Restore',$installed_modules);
 
+	            //clear the unified_search_module.php file
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
+
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
 					update_progress_bar('install', $total_steps, $total_steps);
@@ -1280,6 +1366,14 @@ class ModuleInstaller{
 			$this->merge_files('Ext/Vardefs/', 'vardefs.ext.php');
 			sugar_cache_reset();
 	}
+    //BEGIN SUGARCRM flav=pro ONLY
+    function rebuild_dependencies(){
+            $this->log(translate('LBL_MI_REBUILDING') . " Dependencies...");
+			$this->merge_files('Ext/Dependencies/', 'deps.ext.php');
+			sugar_cache_reset();
+	}
+    //END SUGARCRM flav=pro ONLY
+
 	function rebuild_layoutdefs(){
             $this->log(translate('LBL_MI_REBUILDING') . " Layoutdefs...");
 			$this->merge_files('Ext/Layoutdefs/', 'layoutdefs.ext.php');
@@ -1293,12 +1387,12 @@ class ModuleInstaller{
 
 	function rebuild_dashletcontainers(){
             $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-			$this->merge_files('Ext/DashletContainer/Containers', 'dcactions.ext.php');
+			$this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php');
 	}
 
 	function rebuild_modules(){
             $this->log(translate('LBL_MI_REBUILDING') . " Modules...");
-			$this->merge_files('Ext/Include', 'modules.ext.php', '', true);
+			$this->merge_files('Ext/Include/', 'modules.ext.php', '', true);
 	}
 
 	function rebuild_administration(){
@@ -1339,6 +1433,18 @@ class ModuleInstaller{
 		include("modules/Administration/RepairIndex.php");
 	}
 
+	function rebuild_logichooks()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Logic hooks...");
+		$this->merge_files('Ext/LogicHooks/', 'logichooks.ext.php');
+	}
+
+	function rebuild_schedulers()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Schedulers...");
+		$this->merge_files('Ext/ScheduledTasks/', 'scheduledtasks.ext.php');
+	}
+
 	/**
 	 * Rebuilds the extension files found in custom/Extension
 	 * @param boolean $silent
@@ -1353,6 +1459,9 @@ class ModuleInstaller{
 
 		$this->rebuild_languages($sugar_config['languages']);
 		$this->rebuild_vardefs();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->rebuild_dependencies();
+        //END SUGARCRM flav=pro ONLY
 		$this->rebuild_layoutdefs();
 		$this->rebuild_menus();
 		$this->rebuild_dashletcontainers();
@@ -1361,6 +1470,8 @@ class ModuleInstaller{
 		$this->rebuild_relationships();
 		$this->rebuild_tabledictionary();
 		//$this->repair_indices();
+        $this->rebuild_logichooks();
+        $this->rebuild_schedulers();
 		$this->reset_opcodes();
 		sugar_cache_reset();
 	}
@@ -1391,18 +1502,14 @@ class ModuleInstaller{
 						     if (substr($entry, 0, 9) == '_override') {
 						    	$override[] = $entry;
 						    } else {
-							    $fp = sugar_fopen($module_install . '/' . $entry, 'r');
-							    $file = fread($fp , filesize($module_install . '/' . $entry));
+							    $file = file_get_contents($module_install . '/' . $entry);
 							    $GLOBALS['log']->debug(get_class($this)."->merge_files(): found {$module_install}{$entry}") ;
-							    fclose($fp);
 							    $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 						    }
 						}
 					}
 					foreach ($override as $entry) {
-						$fp = sugar_fopen($module_install . '/' . $entry, 'r');
-                        $file = fread($fp , filesize($module_install . '/' . $entry));
-                        fclose($fp);
+                        $file = file_get_contents($module_install . '/' . $entry);
                         $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 					}
 				}
@@ -1437,9 +1544,7 @@ class ModuleInstaller{
 								if((empty($filter) || substr_count($entry, $filter) > 0) && is_file($module_install.'/'.$entry)
 								  && $entry != '.' && $entry != '..' && strtolower(substr($entry, -4)) == ".php")
 								{
-									$fp = sugar_fopen($module_install . '/' . $entry, 'r');
-									$file = fread($fp , filesize($module_install . '/' . $entry));
-									fclose($fp);
+									$file = file_get_contents($module_install . '/' . $entry);
 									$extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 								}
 						}
@@ -1620,6 +1725,7 @@ private function dir_get_files($path, $base_path){
 private function dir_file_count($path){
 	//if its a file then it has at least 1 file in the directory
 	if(is_file($path)) return 1;
+	if(!is_dir($path)) return 0;
 	$d = dir($path);
 	$count = 0;
 	while ($e = $d->read()){
@@ -1988,7 +2094,7 @@ private function dir_file_count($path){
                         $path ='custom/Extension/' . $relationship['module']. '/Ext/Layoutdefs';
                     }
 				}
-                
+
 				if(!empty($relationship['module_layoutdefs']) && file_exists($path . '/'. $this->id_name . '.php')){
 					mkdir_recursive($path . '/'.DISABLED_PATH, true);
 					rename( $path . '/'. $this->id_name . '.php', $path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php');
@@ -2013,6 +2119,7 @@ private function dir_file_count($path){
 			$this->rebuild_layoutdefs();
 		}
 	}
+
 	function enable_layoutdef($to_module){
 		$GLOBALS['log']->debug("Enabling Layout Defs ..." .$to_module);
 		if(isset($this->installdefs['layoutdefs'])){

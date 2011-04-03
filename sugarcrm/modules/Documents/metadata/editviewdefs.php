@@ -46,11 +46,15 @@ $viewdefs['Documents']['EditView'] = array(
  'panels' =>array (
   'lbl_document_information' => 
   array (
-    
+    //BEGIN SUGARCRM flav!=com ONLY
+    array (
+      'doc_type',
+    ),
+    //END SUGARCRM flav!=com ONLY
     array (
       array(
-      		'name'=>'uploadfile', 
-            'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="{$FILE_OR_HIDDEN}" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
+      		'name' => 'filename',
+            'displayParams' => array('onchangeSetFileNameTo' => 'document_name'),
       ),
       array (
             'name' => 'status_id',
@@ -105,12 +109,18 @@ $viewdefs['Documents']['EditView'] = array(
     ),
     //END SUGARCRM flav!=sales ONLY
     
-    
-     //BEGIN SUGARCRM flav=pro ONLY
-    array (
-      array('name'=>'team_name','displayParams'=>array('required'=>true)),
     ),
-    //END SUGARCRM flav=pro ONLY
+  'LBL_PANEL_ASSIGNMENT' =>
+  array (
+     array (
+        array (
+            'name' => 'assigned_user_name',
+            'label' => 'LBL_ASSIGNED_TO_NAME',
+          ),
+        //BEGIN SUGARCRM flav=pro ONLY
+        array('name'=>'team_name','displayParams'=>array('required'=>true)),
+        //END SUGARCRM flav=pro ONLY
+    ),
   ),
 )
 

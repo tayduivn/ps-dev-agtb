@@ -57,7 +57,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug26803
+     * @ticket 26803
      */
     public function testGetLocaleFormattedNameWhenNameIsEmpty()
     {
@@ -69,7 +69,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug26803
+     * @ticket 26803
      */
     public function testGetLocaleFormattedNameWhenNameIsEmptyAndReturningEmptyString()
     {
@@ -206,6 +206,33 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(
             $this->_locale->getPrecedentPreference('default_email_charset',$this->_user),
             $emailSettings['defaultOutboundCharset']
+            );
+    }
+    
+    /**
+     * @ticket 23992
+     */
+    public function testGetCurrencySymbol()
+    {
+        $this->_user->setPreference('default_currency_symbol','&&');
+        
+        $this->assertEquals(
+            $this->_locale->getCurrencySymbol($this->_user),
+            '&&'
+            );
+    }
+    
+    /**
+     * @ticket 23992
+     */
+    public function testGetLocaleFormattedNumberWithNoCurrencySymbolSpecified()
+    {
+        $this->_user->setPreference('default_currency_symbol','**');
+        $this->_user->setPreference('default_decimal_separator','.');
+        
+        $this->assertEquals(
+            $this->_locale->getLocaleFormattedNumber(20,'',true,$this->_user),
+            '**20'
             );
     }
 }

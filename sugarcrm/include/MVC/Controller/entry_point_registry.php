@@ -45,7 +45,7 @@ $entry_point_registry = array(
 	'FormValidationTest' => array('file' => 'examples/FormValidationTest.php', 'auth' => false),
 	'ProgressBarTest' => array('file' => 'examples/ProgressBarTest.php', 'auth' => false),
 	'SoapFullTest' => array('file' => 'examples/SoapFullTest.php', 'auth' => false),
-	'SoapFullTest_Version2.php' => array('file' => 'examples/SoapFullTest.php', 'auth' => false),
+	'SoapFullTest_Version2.php' => array('file' => 'examples/SoapFullTest_Version2.php', 'auth' => false),
 	'SoapPortalFullTest' => array('file' => 'examples/SoapPortalFullTest.php', 'auth' => false),
 	'SoapTest' => array('file' => 'examples/SoapTest.php', 'auth' => false),
 	'SoapTestPortal' => array('file' => 'examples/SoapTestPortal.php', 'auth' => false),

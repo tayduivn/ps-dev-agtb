@@ -45,6 +45,11 @@ class registry_v3_1 extends registry_v3 {
 		    array('return'=>'tns:get_entry_result_version2'));
 
 	   $this->serviceClass->registerFunction(
+		    'get_entry_list',
+		    array('session'=>'xsd:string', 'module_name'=>'xsd:string', 'query'=>'xsd:string', 'order_by'=>'xsd:string','offset'=>'xsd:int', 'select_fields'=>'tns:select_fields', 'link_name_to_fields_array'=>'tns:link_names_to_fields_array', 'max_results'=>'xsd:int', 'deleted'=>'xsd:int', 'favorites'=>'xsd:boolean'),
+		    array('return'=>'tns:get_entry_list_result_version2'));
+		    
+		$this->serviceClass->registerFunction(
 		    'search_by_module',
 	        array('session'=>'xsd:string','search_string'=>'xsd:string', 'modules'=>'tns:select_fields', 'offset'=>'xsd:int', 'max_results'=>'xsd:int','unified_search_only'=>'xsd:boolean'),
 	        array('return'=>'tns:return_search_result'));

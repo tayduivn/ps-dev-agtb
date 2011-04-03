@@ -64,15 +64,12 @@ class StandardField extends DynamicField
         if (empty($beanList[$this->module]))
             return false;
 
-        $bean_name = $beanList[$this->module];
-        //Hack for the broken cases module
-    	$vBean = $bean_name == "aCase" ? "Case" : $bean_name;
+        $bean_name = get_valid_bean_name($this->module);
 
-        if (empty($dictionary[$vBean]) || empty($dictionary[$vBean]["fields"][$field->name]))
-
+        if (empty($dictionary[$bean_name]) || empty($dictionary[$bean_name]["fields"][$field->name]))
             return false;
 
-        $currdef = $dictionary[$vBean]["fields"][$field->name];
+        $currdef = $dictionary[$bean_name]["fields"][$field->name];
         $this->loadCustomDef($field->name);
         $newDef = $field->get_field_def();
         

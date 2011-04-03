@@ -38,7 +38,7 @@ $dictionary['emails_beans'] = array('table' => 'emails_beans',
 		array(
 			'name'		=> 'bean_module',
 			'type'		=> 'varchar',
-			'len'		=> '36',
+			'len'		=> '100',
 			'comment' 	=> 'bean\'s Module',
 		),
 		//BEGIN SUGARCRM flav!=sales ONLY

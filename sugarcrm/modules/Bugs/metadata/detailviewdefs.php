@@ -26,85 +26,66 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Bugs']['DetailView'] = array(
-'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 
-                                                         array('customCode'=>'<input title="{$APP.LBL_DUP_MERGE}" ' .
-                                                         		'                    accesskey="M" ' .
-                                                         		'                    class="button" ' .
-                                                         		'                    onclick="this.form.return_module.value=\'Bugs\';this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Step1\'; this.form.module.value=\'MergeRecords\';" ' .
-                                                         		'                    name="button" ' .
-                                                         		'                    value="{$APP.LBL_DUP_MERGE}" ' .
-                                                         		'                    type="submit">'),)),
-                        'maxColumns' => '2', 
+'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',)),
+                        'maxColumns' => '2',
                         'widths' => array(
-                                        array('label' => '10', 'field' => '30'), 
+                                        array('label' => '10', 'field' => '30'),
                                         array('label' => '10', 'field' => '30')
                                         ),
                         ),
-                        
+
 'panels' =>array (
-  'lbl_bug_information'=>array( 
+  'lbl_bug_information'=>array(
 	  array (
 	    'bug_number',
 	    'priority',
 	  ),
-	  
+
 	  array (
 	    array (
-	      'name' => 'name',      
+	      'name' => 'name',
 	      'label' => 'LBL_SUBJECT',
-	    ),	  
+	    ),
 	    'status',
 	  ),
-	  
+
 	  array (
 	    'type',
 	    'source',
 	  ),
-	  
+
 	  array (
 	    'product_category',
 	    'resolution',
 	  ),
-	  
+
 	  array (
 	    array (
 	      'name' => 'found_in_release',
-	      'label' => 'LBL_FOUND_IN_RELEASE',      
-	    ),    
+	      'label' => 'LBL_FOUND_IN_RELEASE',
+	    ),
 	    'fixed_in_release',
 	  ),
-	  
+
 	  array (
 	    'description',
 	  ),
-	  
+
 	  array (
 	    'work_log',
 	  ),
-	  
+
 	  //BEGIN SUGARCRM flav=ent ONLY
 	  array (
 	     array('name'=>'portal_viewable',
-	           'customLabel'=>'{if ($PORTAL_ENABLED)}
-	           				   {capture name="label" assign="label"}
-							   {sugar_translate label="LBL_SHOW_IN_PORTAL" module="Bugs"}
-							   {/capture}
-							   {$label|strip_semicolon}:     
-							   {/if}',
-			   'customCode'=> '{if ($PORTAL_ENABLED)}
-							   {if $fields.portal_viewable.value == "1"} 
-							   {assign var="checked" value="CHECKED"}
-							   {else}
-							   {assign var="checked" value=""}
-							   {/if}
-							   <input type="checkbox" class="checkbox" name="{$fields.portal_viewable.name}" disabled="true" {$checked}>
-							   {/if}',
-		      ),
+			   'label' => 'LBL_SHOW_IN_PORTAL',
+		       'hideIf' => 'empty($PORTAL_ENABLED)',
+	         ),
 	  ),
 	  //END SUGARCRM flav=ent ONLY
   ),
 
-      'LBL_PANEL_ASSIGNMENT' => 
+      'LBL_PANEL_ASSIGNMENT' =>
       array (
 
         array (
@@ -124,8 +105,8 @@ $viewdefs['Bugs']['DetailView'] = array(
         array (
           //BEGIN SUGARCRM flav=pro ONLY
           'team_name',
-          //END SUGARCRM flav=pro ONLY        
-        
+          //END SUGARCRM flav=pro ONLY
+
           array (
             'name' => 'date_entered',
             'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
@@ -133,7 +114,7 @@ $viewdefs['Bugs']['DetailView'] = array(
           ),
 
         ),
-      ),  
-)   
+      ),
+)
 );
 ?>

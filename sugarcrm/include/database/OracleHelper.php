@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: OracleHelper.php 56133 2010-04-28 02:09:10Z jmertic $
+* $Id: OracleHelper.php 56151 2010-04-28 21:02:22Z jmertic $
 * Description: This file handles the Data base functionality for the application specific
 * to oracle database. It is called by the DBManager class to generate various sql statements.
 *
@@ -216,6 +216,7 @@ class OracleHelper extends DBHelper
             'decimal2' => 'number (30,6)',
             'url'=>'varchar2(255)',
             'encrypt'=>'varchar2(255)',
+            'file'     => 'varchar2(255)',
             );
                     
 		return $map[$type];
@@ -367,10 +368,11 @@ class OracleHelper extends DBHelper
          * Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY 
          * and UNIQUE (which can defined inline with the CREATE TABLE)
          */
-        $ret = '';
 		foreach ($indices as $index) {
             if(!empty($index['db']) && $index['db'] != 'oci8')
                 continue;
+            if (isset($index['source']) && $index['source'] != 'db')
+               continue;
             
             $type = '';
             if (!empty($index['type']))
@@ -491,7 +493,7 @@ class OracleHelper extends DBHelper
         $start_value
         )
     {
-    	$sequence_name = _getSequenceName($table, $field_name, true);
+    	$sequence_name = $this->_getSequenceName($table, $field_name, true);
     	$result = $this->db->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
     	$row = $this->db->fetchByAssoc($result);
     	$current = $row['currval'];

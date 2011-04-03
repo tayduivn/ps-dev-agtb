@@ -447,12 +447,12 @@ installLog("Begin DB Check Process *************");
                 // check oracle minimum version requirement
                 if( $conn = @ociplogon($_SESSION['setup_db_sugarsales_user'], $_SESSION['setup_db_sugarsales_password'], $_SESSION['setup_db_database_name']) ){
                     $the_count = 0;
-                    $query = "SELECT COUNT(*) AS the_count FROM product_component_version WHERE product LIKE '%Oracle9i%' OR product LIKE '%Oracle Database 10g%'";
+                    $query = "SELECT COUNT(*) AS the_count FROM product_component_version WHERE product LIKE '%Oracle9i%' OR product LIKE '%Oracle Database 10g%' OR product LIKE '%11%'";
 
-                    $stmt = ociparse( $conn, $query );
-                    ociexecute( $stmt, OCI_DEFAULT );
-                    if( ocifetch( $stmt ) ){
-                        $the_count = ociresult($stmt, "THE_COUNT");
+                    $stmt = oci_parse( $conn, $query );
+                    oci_execute( $stmt, OCI_DEFAULT );
+                    if( oci_fetch( $stmt ) ){
+                        $the_count = oci_result($stmt, "THE_COUNT");
                     }
 
                     if( $the_count == 0 ){
@@ -464,10 +464,10 @@ installLog("Begin DB Check Process *************");
 
                     //check to see if datbase already exists
                     $cnfgTableQry = "SELECT COUNT(*) AS the_count FROM user_tables where table_name = 'CONFIG'";
-                    $cnfgStmt = ociparse( $conn, $cnfgTableQry );
-                    ociexecute( $cnfgStmt, OCI_DEFAULT );
-                    if( ocifetch( $cnfgStmt ) ){
-                        $cnfgCount = ociresult($cnfgStmt, "THE_COUNT");
+                    $cnfgStmt = oci_parse( $conn, $cnfgTableQry );
+                    oci_execute( $cnfgStmt, OCI_DEFAULT );
+                    if( oci_fetch( $cnfgStmt ) ){
+                        $cnfgCount = oci_result($cnfgStmt, "THE_COUNT");
                     }
 
                     if( $cnfgCount == 0 && $silent==false){
