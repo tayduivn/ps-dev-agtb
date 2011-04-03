@@ -852,7 +852,7 @@ class ModuleInstaller{
         $this->disable_manifest_logichooks();
 		if(isset($this->installdefs['hookdefs'])){
 			foreach($this->installdefs['hookdefs'] as $hookdefs){
-				$layoutdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+				$hookdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
 				$GLOBALS['log']->debug("Disabling Logic Hooks ..." . $hookdefs['from'] .  " for " .$hookdefs['to_module']);
 				if($hookdefs['to_module'] == 'application'){
 					$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
@@ -1487,6 +1487,18 @@ class ModuleInstaller{
 		$this->merge_files('Ext/ScheduledTasks/', 'scheduledtasks.ext.php');
 	}
 
+	function rebuild_entrypoints()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Entry Points...");
+		$this->merge_files('Ext/EntryPoints/', 'entrypoints.ext.php', '', TRUE);
+	}
+
+	function rebuild_links()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Global Links...");
+		$this->merge_files('Ext/GlobalLinks/', 'links.ext.php', '', true);
+	}
+
 	/**
 	 * Rebuilds the extension files found in custom/Extension
 	 * @param boolean $silent
@@ -1514,7 +1526,9 @@ class ModuleInstaller{
 		//$this->repair_indices();
         $this->rebuild_logichooks();
         $this->rebuild_schedulers();
-		$this->reset_opcodes();
+        $this->rebuild_entrypoints();
+        $this->rebuild_links();
+        $this->reset_opcodes();
 		sugar_cache_reset();
 	}
 
