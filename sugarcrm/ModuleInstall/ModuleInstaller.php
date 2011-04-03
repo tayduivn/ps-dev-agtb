@@ -851,7 +851,7 @@ class ModuleInstaller{
         $this->disable_manifest_logichooks();
 		if(isset($this->installdefs['hookdefs'])){
 			foreach($this->installdefs['hookdefs'] as $hookdefs){
-				$layoutdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
+				$hookdefs['from'] = str_replace('<basepath>', $this->base_dir, $hookdefs['from']);
 				$GLOBALS['log']->debug("Disabling Logic Hooks ..." . $hookdefs['from'] .  " for " .$hookdefs['to_module']);
 				if($hookdefs['to_module'] == 'application'){
 					$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
