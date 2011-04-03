@@ -1444,11 +1444,17 @@ class ModuleInstaller{
         $this->log(translate('LBL_MI_REBUILDING') . " Schedulers...");
 		$this->merge_files('Ext/ScheduledTasks/', 'scheduledtasks.ext.php');
 	}
-	
+
 	function rebuild_entrypoints()
 	{
         $this->log(translate('LBL_MI_REBUILDING') . " Entry Points...");
 		$this->merge_files('Ext/EntryPoints/', 'entrypoints.ext.php', '', TRUE);
+	}
+
+	function rebuild_links()
+	{
+        $this->log(translate('LBL_MI_REBUILDING') . " Global Links...");
+		$this->merge_files('Ext/GlobalLinks/', 'links.ext.php', '', true);
 	}
 
 	/**
@@ -1479,7 +1485,8 @@ class ModuleInstaller{
         $this->rebuild_logichooks();
         $this->rebuild_schedulers();
         $this->rebuild_entrypoints();
-		$this->reset_opcodes();
+        $this->rebuild_links();
+        $this->reset_opcodes();
 		sugar_cache_reset();
 	}
 
