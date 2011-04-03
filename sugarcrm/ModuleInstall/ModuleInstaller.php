@@ -822,7 +822,7 @@ class ModuleInstaller{
         $this->enable_manifest_logichooks();
 		if(isset($this->installdefs['hookdefs'])){
 			foreach($this->installdefs['hookdefs'] as $hookdefs){
-        		$GLOBALS['log']->debug("Enabling Logic Hookd ..." .$hookdefs['to_module']);
+        		$GLOBALS['log']->debug("Enabling Logic Hooks ..." .$hookdefs['to_module']);
         		if($hookdefs['to_module'] == 'application'){
         			$path ='custom/Extension/' . $hookdefs['to_module']. '/Ext/LogicHooks';
         		} else {
@@ -894,7 +894,7 @@ class ModuleInstaller{
 			$this->log(translate('LBL_MI_UN_SCHEDULEDTASKS') );
             foreach($this->installdefs['scheduledefs'] as $scheduledefs){
 					$from = str_replace('<basepath>', $this->base_dir, $scheduledefs['from']);
-					$GLOBALS['log']->debug("Uninstalling Scheduler Task ..." . $from .  " for " .$scheduledefs['for']);
+					$GLOBALS['log']->debug("Uninstalling Scheduler Task '" . $from .  "' for " .$scheduledefs['for']);
 					$filename = $scheduledefs['for'].'.'.basename($from);
 					$path = 'custom/Extension/modules/Schedulers/Ext/ScheduledTasks';
 					if (file_exists($path . '/'. $filename)) {
@@ -905,6 +905,39 @@ class ModuleInstaller{
 			}
 		    $this->rebuild_schedulers();
 	    }
+    }
+
+    function enable_scheduletasks()
+    {
+		if(isset($this->installdefs['scheduledefs'])){
+			foreach($this->installdefs['scheduledefs'] as $scheduledefs){
+				$from = str_replace('<basepath>', $this->base_dir, $scheduledefs['from']);
+				$GLOBALS['log']->debug("Enabling Scheduler Task '" . $from .  "' for " .$scheduledefs['for']);
+				$filename = $scheduledefs['for'].'.'.basename($from);
+				$path = 'custom/Extension/modules/Schedulers/Ext/ScheduledTasks';
+        		if(file_exists($path . '/'. DISABLED_PATH . '/'.  $filename)) {
+        			rename($path . '/'. DISABLED_PATH . '/'.  $filename, $path . '/'. $filename);
+        		}
+			}
+			$this->rebuild_schedulers();
+		}
+    }
+
+    function disable_scheduletasks()
+    {
+		if(isset($this->installdefs['scheduledefs'])){
+			foreach($this->installdefs['scheduledefs'] as $scheduledefs){
+				$from = str_replace('<basepath>', $this->base_dir, $scheduledefs['from']);
+				$GLOBALS['log']->debug("Disabling Scheduler Task '" . $from .  "' for " .$scheduledefs['for']);
+				$filename = $scheduledefs['for'].'.'.basename($from);
+				$path = 'custom/Extension/modules/Schedulers/Ext/ScheduledTasks';
+				if (file_exists($path . '/'. $filename)) {
+					mkdir_recursive($path . '/'.DISABLED_PATH, true);
+					rename($path . '/'. $filename, $path . '/'. DISABLED_PATH . '/'.  $filename);
+				}
+			}
+			$this->rebuild_schedulers();
+		}
     }
     
     
@@ -1901,6 +1934,7 @@ private function dir_file_count($path){
 								'enable_relationships',
 								'enable_languages',
 								'enable_logichooks',
+								'enable_scheduletasks',
 								'reset_opcodes',
 		);
 		$total_steps += count($tasks);
@@ -1981,6 +2015,7 @@ private function dir_file_count($path){
 							'disable_relationships',
 							'disable_languages',
 							'disable_logichooks',
+							'disable_scheduletasks',
 							'reset_opcodes',
 							);
 		$total_steps += count($tasks); //now the real number of steps
