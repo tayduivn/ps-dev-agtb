@@ -3332,12 +3332,8 @@ var Canvas;
           conf = this.config,
           styles = conf.CanvasStyles,
           size = base.getSize();
-		   // Create gradients
-		  var lingrad = ctx.createLinearGradient(-size.width/2,-size.height/2,-size.width/2,size.height/2);
-		  lingrad.addColorStop(0, conf.colorStop1);
-		  lingrad.addColorStop(1, conf.colorStop2);
-		  ctx.fillStyle = lingrad;
-		  ctx.fillRect(-size.width/2 + 100,-size.height/2,size.width,size.height);
+		  ctx.fillStyle = 'rgb(255,255,255)';
+		  ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
       //TODO(nico): print labels too!
     }
   });
@@ -10131,6 +10127,8 @@ $jit.LineChart = new Class({
     var st = new $jit.ST({
       injectInto: config.injectInto,
       orientation: "bottom",
+      backgroundColor: config.backgroundColor,
+      renderBackground: config.renderBackground,
       levelDistance: 0,
       siblingOffset: 0,
       subtreeOffset: 0,
@@ -10369,6 +10367,19 @@ $jit.LineChart = new Class({
 	
 
   },
+  
+  renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	//ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
+  
+  
  /*
   Method: loadJSON
  
@@ -10392,6 +10403,7 @@ $jit.LineChart = new Class({
         color = $.splat(json.color || this.colors),
         config = this.config,
         ticks = config.Ticks,
+        renderBackground = config.renderBackground,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         title = config.Title,
@@ -10454,6 +10466,10 @@ $jit.LineChart = new Class({
     st.loadJSON(root);
     
     this.normalizeDims();
+    
+    if(renderBackground) {
+    	this.renderBackground();	
+    }
     
     if(!animate && ticks.enable) {
 		this.renderTicks();
@@ -11523,6 +11539,8 @@ Options.BarChart = {
   barsOffset: 0, //distance between bars
   nodeCount: 0, //number of bars
   hoveredColor: '#9fd4ff',
+  background: false,
+  renderBackground: false,
   orientation: 'horizontal',
   showAggregates: true,
   showLabels: true,
@@ -12357,6 +12375,8 @@ $jit.BarChart = new Class({
       injectInto: config.injectInto,
       orientation: horz? 'left' : 'bottom',
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       levelDistance: 0,
@@ -12741,6 +12761,16 @@ $jit.BarChart = new Class({
 	
 
   },
+  
+  renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
   /*
     Method: loadJSON
    
@@ -12767,6 +12797,7 @@ $jit.BarChart = new Class({
         color = $.splat(json.color || this.colors),
         config = this.config,
         gradient = !!config.type.split(":")[1],
+        renderBackground = config.renderBackground,
         animate = config.animate,
         ticks = config.Ticks,
         title = config.Title,
@@ -12827,6 +12858,10 @@ $jit.BarChart = new Class({
     st.loadJSON(root);
     
     this.normalizeDims();
+    
+    if(renderBackground) {
+   		this.renderBackground();
+    }
 	
 	if(!animate && ticks.enable) {
 		this.renderTicks();
@@ -13391,6 +13426,8 @@ $jit.FunnelChart = new Class({
       orientation: horz? 'left' : 'bottom',
       levelDistance: 0,
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       siblingOffset: config.segmentOffset,
@@ -13616,6 +13653,18 @@ $jit.FunnelChart = new Class({
 			
   },
 
+   renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	//ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
+  
+  
   loadJSON: function(json) {
     if(this.busy) return;
     this.busy = true;
@@ -13630,6 +13679,7 @@ $jit.FunnelChart = new Class({
         animate = config.animate,
         title = config.Title,
         subtitle = config.Subtitle,
+        renderBackground = config.renderBackground,
         horz = config.orientation == 'horizontal',
         that = this,
 		colorLength = color.length,
@@ -13708,6 +13758,9 @@ $jit.FunnelChart = new Class({
     
     this.normalizeDims();
 	
+	if(renderBackground) {
+		this.renderBackground();	
+	}
 	if(!animate && title.text) {
 		this.renderTitle();
 	}
@@ -15262,6 +15315,8 @@ $jit.PieChart = new Class({
       useCanvas: config.useCanvas,
       withLabels: config.Label.type != 'Native',
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       Label: {
@@ -15369,7 +15424,16 @@ $jit.PieChart = new Class({
     this.canvas = this.sb.canvas;
     this.canvas.getCtx().globalCompositeOperation = 'lighter';
   },
-  
+    renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
   /*
     Method: loadJSON
    
@@ -15394,6 +15458,7 @@ $jit.PieChart = new Class({
         color = $.splat(json.color || this.colors),
         colorLength = color.length,
         config = this.config,
+        renderBackground = config.renderBackground,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -15445,8 +15510,19 @@ $jit.PieChart = new Class({
     };
     sb.loadJSON(root);
     
+    
+
+    
     this.normalizeDims();
+
+    
     sb.refresh();
+    
+        if(renderBackground) {
+    	this.renderBackground();	
+    }
+    
+    
     if(animate) {
       sb.fx.animate({
         modes: ['node-property:dimArray'],
@@ -15851,6 +15927,8 @@ $jit.GaugeChart = new Class({
       useCanvas: config.useCanvas,
       withLabels: config.Label.type != 'Native',
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       Label: {
@@ -16197,6 +16275,7 @@ $jit.GaugeChart = new Class({
 	config = this.config,
 	margin = config.Margin,
 	radius = this.sb.config.levelDistance,
+	title = config.Title,
 	label = config.Label,
 	subtitle = config.Subtitle;
 	ctx = canvas.getCtx();
@@ -16209,6 +16288,17 @@ $jit.GaugeChart = new Class({
 	}
   },
   
+  renderChartBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	//ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
+  
   loadJSON: function(json) {
   
      var prefix = $.time(), 
@@ -16219,6 +16309,7 @@ $jit.GaugeChart = new Class({
         color = $.splat(json.color || this.colors),
         colorLength = color.length,
         config = this.config,
+        renderBackground = config.renderBackground,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -16271,7 +16362,14 @@ $jit.GaugeChart = new Class({
 	
 	
     sb.loadJSON(root);
+    
+    if(renderBackground) {
+    	this.renderChartBackground();	
+    }
+    
     this.renderBackground();
+    
+    
     this.normalizeDims();
 	
     sb.refresh();

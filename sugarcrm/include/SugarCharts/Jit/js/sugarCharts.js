@@ -65,7 +65,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  //whether to add animations
 				  animate: false,
 				  nodeCount: json.values.length,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  shadow: {
@@ -226,7 +227,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  selectOnHover: false,
@@ -389,7 +391,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',	
 				  labelType: properties['labels'],
@@ -503,7 +506,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',	
 				  //orientation setting should not be changed
@@ -652,7 +656,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  labelType: properties['labels'],
