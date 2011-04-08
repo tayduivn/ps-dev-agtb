@@ -34,7 +34,7 @@
 <script type="text/javascript" src="include/javascript/sugar_grp_yui_widgets.js"></script>
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 
-<form name='UnifiedSearchAdvancedMain' action='index.php' method='POST'>
+<form name='UnifiedSearchAdvancedMain' action='index.php' onsubmit="SUGAR.saveGlobalSearchSettings();" method='POST'>
 <input type='hidden' name='module' value='Home'>
 <input type='hidden' name='query_string' value='test'>
 <input type='hidden' name='advanced' value='true'>
@@ -46,7 +46,7 @@
 	<tr style='padding-bottom: 10px'>
 		<td colspan='8' nowrap>
 			<input id='searchFieldMain' class='searchField' type='text' size='80' name='query_string' value='{$query_string}'>
-		    <input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}" onclick="SUGAR.saveGlobalSearchSettings();">&nbsp;
+		    <input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}">&nbsp;
 			<a href='javascript:toggleInlineSearch()' style='color: #005A9B; text-decoration:none; font-weight: bold;'>{$MOD.LBL_SELECT_MODULES}&nbsp;
             {if $SHOWGSDIV == 'yes'}
 			<img src='{sugar_getimagepath file="basic_search.gif"}' id='up_down_img' border=0>
