@@ -184,7 +184,22 @@ class Configurator {
 		}
 		//END SUGARCRM flav=pro ONLY
 	}
-    
+	
+	function checkTempImage($path){
+		$exists = false;
+		if(file_exists($path)){
+			$supportedExtensions = array('jpg', 'png', 'jpeg');
+			$img_size = getimagesize($path);
+			$filetype = $img_size['mime'];
+	    	$ext = end(explode(".", $path));
+	    	$exists = true;
+		}
+    	if(!$exists || substr_count('..', $path) > 0 || $ext === $path || !in_array($ext, $supportedExtensions) || ($filetype != 'image/jpeg' && $filetype != 'image/png') ){
+        	$GLOBALS['log']->fatal("A user ({$GLOBALS['current_user']->id}) attempted to use an invalid file for the logo - {$path}");
+        	sugar_die('Invalid File Type');
+		}
+		return $path;
+	}
     /**
      * Saves the company logo to the custom directory for the default theme, so all themes can use it
      *
@@ -192,6 +207,7 @@ class Configurator {
      */
 	function saveCompanyLogo($path) 
     {
+    	$path = $this->checkTempImage($path);
         mkdir_recursive('custom/'.SugarThemeRegistry::current()->getDefaultImagePath(), true);
         copy($path,'custom/'. SugarThemeRegistry::current()->getDefaultImagePath(). '/company_logo.png');
         sugar_cache_clear('company_logo_attributes');
@@ -267,6 +283,7 @@ class Configurator {
 
 //BEGIN SUGARCRM flav=pro ONLY
 	function saveCompanyQuoteLogo($path) {
+		$path = $this->checkTempImage($path);
 		copy($path, 'modules/Quotes/layouts/company.jpg');
 	}
 //END SUGARCRM flav=pro ONLY
