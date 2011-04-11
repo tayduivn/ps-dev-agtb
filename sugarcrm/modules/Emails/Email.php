@@ -2840,17 +2840,17 @@ class Email extends SugarBean {
 		      }
         }
 
-        $isDateFromSearchSet = !empty($_REQUEST['dateFrom']);
-        $isdateToSearchSet = !empty($_REQUEST['dateTo']);
+        $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
+        $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
         //Hanlde date from and to seperately
         if($bothDateRangesSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
 
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
 
             $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND
@@ -2858,13 +2858,13 @@ class Email extends SugarBean {
         }
         elseif ($isdateToSearchSet)
         {
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent <= $dbFormatDateTo ";
         }
         elseif ($isDateFromSearchSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent >= $dbFormatDateFrom ";
         }
