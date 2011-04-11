@@ -153,7 +153,6 @@ SUGAR.reports = function() {
 			    SUGAR.reports.populateFieldGrid(current_module,"","");
 				report_type = report_def_str.report_type;
 				SUGAR.FiltersWidget.init(imgPath);
-				
 				if (report_type == 'summary') {
 					report_type = 'summation';
 					if (report_def_str.display_columns && report_def_str.display_columns.length > 0) 
@@ -3555,7 +3554,7 @@ SUGAR.reports = function() {
 				cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\""	+ id + "\")' >";
 				cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
 				if (typeof (summaryOrderBy) != "undefined" && summaryOrderBy.length > 0) {
-					if (report_type='summation' && summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
+					if (report_type=='summation' && summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
 						document.getElementById("summary_order_by_radio_" + id).setAttribute('checked', true);
 						SUGAR.reports.summaryOrderBySelected(id, summaryOrderBy[0].sort_dir);
 					}
