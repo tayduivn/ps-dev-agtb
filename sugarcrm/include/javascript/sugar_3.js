@@ -822,7 +822,7 @@ function validate_form(formname, startsWith){
 						case 'alphanumeric':
 							break;
 						case 'file':
-						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
+						    if( validate[formname][i][requiredIndex] && typeof( form[validate[formname][i][nameIndex] + '_file'] ) != 'undefined' && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
 						          isError = true;
 						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
 						      }					      
