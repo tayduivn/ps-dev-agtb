@@ -78,6 +78,7 @@ class MssqlManager extends DBManager
      * @see DBManager::$dbType
      */
     public $dbType = 'mssql';
+    public $dbName = 'MsSQL';
 
     protected $capabilities = array(
         "affected_rows" => true,

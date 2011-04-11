@@ -63,27 +63,9 @@ $sugar_smarty = new Sugar_Smarty();
 $sugar_smarty->assign("MOD", $mod_strings);
 $sugar_smarty->assign("APP", $app_strings);
 
-if($db->dbType != 'mysql') {
-	$sugar_smarty->assign("NO_MYSQL_MESSAGE", "<tr><td class=\"dataLabel\"><slot><font color=red>".
-										$mod_strings['LBL_DIAGNOSTIC_NO_MYSQL'].
-									  "</font></slot></td></tr><tr><td>&nbsp;</td></tr>");
-	$sugar_smarty->assign("MYSQL_CAPABLE", "");
-	$sugar_smarty->assign("MYSQL_CAPABLE_CHECKBOXES",
-				  "<script type=\"text/javascript\" language=\"Javascript\"> ".
-				  "document.Diagnostic.mysql_dumps.disabled=true;".
-				  "document.Diagnostic.mysql_schema.disabled=true;".
-				  "document.Diagnostic.mysql_info.disabled=true;".
-				  "</script>"
-				  );
-}
-else {
-	$sugar_smarty->assign("NO_MYSQL_MESSAGE", "");
-	$sugar_smarty->assign("MYSQL_CAPABLE", "checked");
-	$sugar_smarty->assign("MYSQL_CAPABLE_CHECKBOXES", "");
-}
-
 $sugar_smarty->assign("RETURN_MODULE", "Administration");
 $sugar_smarty->assign("RETURN_ACTION", "index");
+$sugar_smarty->assign("DB_NAME", $db->dbName);
 
 $sugar_smarty->assign("MODULE", $currentModule);
 $sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);

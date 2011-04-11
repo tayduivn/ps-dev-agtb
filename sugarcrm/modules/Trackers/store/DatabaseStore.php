@@ -65,7 +65,6 @@ class DatabaseStore implements Store {
        	  $columns[] = 'id';
        	  $values[] = $id;
        }
-       //END SUGARCRM flav=pro ONLY
 
        $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
 	   $GLOBALS['db']->query($query);

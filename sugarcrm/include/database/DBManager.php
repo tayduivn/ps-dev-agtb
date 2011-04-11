@@ -2835,6 +2835,16 @@ abstract class DBManager
         return "0=1";
     }
 
+    public function getDbInfo()
+    {
+        return null;
+    }
+
+    public function getCharsetInfo()
+    {
+        return null;
+    }
+
     /**
      * Parses and runs queries
      *

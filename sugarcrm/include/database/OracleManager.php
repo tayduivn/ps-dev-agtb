@@ -44,6 +44,7 @@ class OracleManager extends DBManager
      * @see DBManager::$dbType
      */
     public $dbType = 'oci8';
+    public $dbName = 'Oracle';
 
 	/**
      * contains the last result set returned from query()

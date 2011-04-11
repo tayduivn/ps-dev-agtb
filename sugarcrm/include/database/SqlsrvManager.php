@@ -76,6 +76,7 @@ include_once('include/database/MssqlManager.php');
 
 class SqlsrvManager extends MssqlManager
 {
+    public $dbName = 'SQL Server';
     protected $capabilities = array(
         "affected_rows" => true,
         'fulltext' => true,

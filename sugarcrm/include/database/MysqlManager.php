@@ -81,6 +81,7 @@ class MysqlManager extends DBManager
      * @see DBManager::$dbType
      */
     public $dbType = 'mysql';
+    public $dbName = 'MySQL';
 
     protected $maxNameLengths = array(
         'table' => 64,
@@ -1023,4 +1024,30 @@ class MysqlManager extends DBManager
     {
         return "CONTAINS($field, ".$this->quoted($condition).")";
     }
+
+    public function getCharsetInfo()
+    {
+        $res = $this->query("show variables like 'character_set_%'");
+        while($row = $this->fetchByAssoc($res)) {
+            $charsets[$row['Variable_name']] = $row['Value'];
+        }
+        return $charsets;
+    }
+
+    public function getDbInfo()
+    {
+        $charsets = $this->getCharsetInfo();
+        $charset_str = array();
+        foreach($charsets as $name => $value) {
+            $charset_str[] = "$name = $value";
+        }
+        return array(
+          	"MySQL Version" => @mysql_get_client_info(),
+            "MySQL Host Info" => @mysql_get_host_info($this->database),
+      		"MySQL Server Info" => @mysql_get_server_info($this->database),
+          	"MySQL Client Encoding" =>  @mysql_client_encoding($this->database),
+            "MySQL Character Set Settings" => join(", ", $charset_str),
+          );
+    }
+
 }
