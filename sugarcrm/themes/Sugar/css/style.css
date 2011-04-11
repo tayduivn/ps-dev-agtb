@@ -4670,6 +4670,11 @@ margin: 0 4px 0 0;
 *height: 19px; /* ie 7 hack */
 }
 
+.yui-navset .yui-nav {
+	overflow: hidden;	
+}
+
+
 .yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav, .yui-layout .yui-layout-hd {
 
     background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png') repeat-x scroll 0 0; 
