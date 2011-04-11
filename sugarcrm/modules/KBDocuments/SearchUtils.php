@@ -379,7 +379,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $spec_SearchVars = array();
      	$spec_SearchVars['exp_date'] = TimeDate::getInstance()->nowDate();
      	$spec_SearchVars['exp_date_filter'] = "after";
-   	   	$date_filter = return_date_filter($bean->db->dbType, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date']);
+   	   	$date_filter = return_date_filter($bean->db, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date']);
         $date_filter = str_replace("kbdocuments", "k", $date_filter);
         $date_filter = "($date_filter OR k.exp_date IS NULL)";
         $query = "select distinct(k.id) as doc_id, k.kbdocument_name as doc_name from kbdocuments k
@@ -424,8 +424,8 @@ function get_admin_fts_list($where,$isMultiSelect=false){
    /**
     * get_child_ids
     * This method returns an Array of id=>TagNode value pairs of the $root_id
-    * @param $root_id The root id value to query for (i.e. the id column in kbtags table)
-    * @param $bean A sugarbean instance
+    * @param string $root_id The root id value to query for (i.e. the id column in kbtags table)
+    * @param SugarBean $bean A sugarbean instance
     * @return $results Array of child id=>tag_name key/value pairs found where the root node is $root_id
     */
    function get_child_ids($root_id, $bean) {
@@ -498,7 +498,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     /**
      * create_portal_list_query
      * This is the function that handles the searches called by the KB Portal code.
-     * @param $bean A SugarBean instance (used to get dbType and perform queries)
+     * @param $bean SugarBean instance (used to perform queries)
      * @param $order_by String SQL for ORDER BY clause
      * @param $where String SQL for additional WHERE clause
      * @param $keywords Array of keyword arguments ([most_recent_articles] and [most_viewed_articles] are special)
@@ -507,15 +507,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      * @param $recentLimit Integer value for the most recent articles limit
      * @return $result The result set of resulting query
      */
-	function create_portal_list_query($bean, $order_by, $where, $keywords, $row_offset, $limit, $test = false) {
-
-		//BEGIN SUGARCRM flav=int ONLY
-		if($test) {
-		   test_kb_portal_queries($bean, $order_by, $where, $keywords, $row_offset, $limit);
-		   die();
-		}
-
-		//END SUGARCRM flav=int ONLY
+	function create_portal_list_query($bean, $order_by, $where, $keywords, $row_offset, $limit) {
 		$searchVars = array();
 
 
@@ -526,7 +518,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 		$spec_SearchVars = array();
 
 	    //Create the common date filter to check for expiration and exp_date IS NULL
-		$date_filter = return_date_filter($bean->db->dbType, 'exp_date', 'after', TimeDate::getInstance()->nowDate(), null);
+		$date_filter = return_date_filter($bean->db, 'exp_date', 'after', TimeDate::getInstance()->nowDate(), null);
 		$date_filter = "($date_filter OR kbdocuments.exp_date IS NULL) ";
 
 		if(!empty($keywords)) {
@@ -548,26 +540,8 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 			   $sql = create_most_viewed_articles_query($bean, $order_by, $where, $keywords, $row_offset, $limit, $date_filter, $searchVars, $spec_SearchVars);
 
 		   	   if(!empty($limit)) {
-                   // There is an error in the MssqlManager->limitQuery function
-                   if($bean->db->dbType == 'mssql') {
-                   	  $sql = "SELECT TOP $limit *
-							  FROM (SELECT ROW_NUMBER() OVER (ORDER BY kbdocuments_views_ratings.views_number DESC, kbdocuments_views_ratings.date_modified DESC) AS row_number, kbdocuments.*, kbdocuments_views_ratings.views_number
-							  FROM kbdocuments LEFT JOIN kbdocuments_views_ratings ON kbdocuments.id = kbdocuments_views_ratings.kbdocument_id
-							  WHERE kbdocuments.id IN
-                              (SELECT kbdocument_id
-                              FROM kbdocument_revisions
-                              WHERE deleted = 0 AND latest = 1)";
-                              //BEGIN SUGARCRM flav=ent ONLY
-                              $sql .= " AND kbdocuments.is_external_article = '1'";
-                              //END SUGARCRM flav=ent ONLY
-                              $sql .= " AND kbdocuments.status_id = 'Published' AND $date_filter AND kbdocuments.id IN
-                              (SELECT TOP 10 kbdocument_id FROM kbdocuments_views_ratings WHERE deleted = 0)) AS a
-							  WHERE row_number > $row_offset and row_number < " . ($row_offset + $limit + 1);
-
-                   } else {
-			   	   	  $result = $bean->db->limitQuery($sql, $row_offset, $limit, true, "Error retrieving KBDocument list: $sql");
-	                  return $result;
-                   }
+			   	   $result = $bean->db->limitQuery($sql, $row_offset, $limit, true, "Error retrieving KBDocument list: $sql");
+	               return $result;
 		   	   } //if
 
 		   } else {
@@ -578,7 +552,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 	    	   	       	  $searchVars[$key] = $value;
 	    	   	       }
 	    	   } //foreach
-	    	   $sql = create_fts_search_list_query($bean->db->dbType, $spec_SearchVars, $searchVars, true);
+	    	   $sql = create_fts_search_list_query($bean->db, $spec_SearchVars, $searchVars, true);
 	 	   	   $sql = $sql . " AND " . $date_filter;
 
 			   if(!empty($limit)) {
@@ -599,56 +573,16 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     /**
      * create_portal_most_recent_query()
      * This method builds and returns query for most recent documents for portal
-     * @param $dbType type of db to build this query for, ie oci8, mysql, mssql
-     * @param $n the number of articles to return.  Default is 10
-     * @param $where clause to use in where portion of query, if needed.
+     * @param DBManager $db db to build this query for, ie oci8, mysql, mssql
+     * @param int $n the number of articles to return.  Default is 10
+     * @param string $where clause to use in where portion of query, if needed.
      */
-    function create_portal_most_recent_query($dbtype ='mysql', $n = '10', $where='') {
+    function create_portal_most_recent_query($db, $n = '10', $where='') {
 
         $portal_most_recent_query = ' ';
         //create portal most recent query, default is top 10
-        if($dbtype == 'mysql'){
-
-            $portal_most_recent_query =  'Select kbdocuments.* from kbdocuments where ';
-            $portal_most_recent_query .= ' kbdocuments.deleted = 0';
-            //BEGIN SUGARCRM flav=ent ONLY
-            $portal_most_recent_query .= '  AND kbdocuments.is_external_article = 1 ';
-             //END SUGARCRM flav=ent ONLY
-            //add where clause if specified
-            if (!empty($where)){
-                $portal_most_recent_query .= $where;
-            }
-            $portal_most_recent_query .= " order by active_date desc LIMIT 0,$n ";
-
-
-        }elseif($dbtype == 'mssql'){//handle sqlserver
-            $portal_most_recent_query =  " Select top $n kbdocuments.* from kbdocuments where ";
-            $portal_most_recent_query .= ' kbdocuments.deleted = 0 ';
-            //BEGIN SUGARCRM flav=ent ONLY
-            $portal_most_recent_query .= '  AND kbdocuments.is_external_article = 1 ';
-             //END SUGARCRM flav=ent ONLY
-            //add where clause if specified
-            if (!empty($where)){
-                $portal_most_recent_query .= $where;
-            }
-            $portal_most_recent_query .= 'order by active_date desc';
-
-
-        }else{//handle oracle
-            $portal_most_recent_query =  ' Select * from (SELECT  * from kbdocuments WHERE ';
-            $portal_most_recent_query .= ' kbdocuments.deleted = 0 ';
-            //BEGIN SUGARCRM flav=ent ONLY
-            $portal_most_recent_query .= '  AND kbdocuments.is_external_article = 1 ';
-             //END SUGARCRM flav=ent ONLY
-            //add where clause if specified
-            if (!empty($where)){
-                $portal_most_recent_query .=  $where;
-            }
-            $portal_most_recent_query .= ' order by active_date desc) WHERE rownum <'.($n+1) ;
-        }
-
-        return $portal_most_recent_query;
-
+        return $db->limitQuerySQL("SELECT kbdocuments.* FROM kbdocuments WHERE deleted=0
+        	AND is_external_article = 1 $where ORDER BY active_date DESC", 0, $n);
     }
 
     /**getQSAuthor()
@@ -768,12 +702,12 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      *
      * This method takes in parameters in order to construct the where clause used by our list form api's to construct the list form.
      * The parameters that can be used are as follow:
-     * @param $dbType The db type this search is for ('oci8', 'mssql', 'mysql')
+     * @param $db The db this search is for ('oci8', 'mssql', 'mysql')
      * @param $spec_SearchVars Array of parameters used to build special handling into query
      * @param $searchVars Array of parameters used to add bean fields into query
      * @search_str String holding where clause, ready to be passed into list view setup
      */
-    function create_fts_search_list_query($dbType='mysql',$spec_SearchVars,$searchVars,$fullQuery=false){
+    function create_fts_search_list_query($db,$spec_SearchVars,$searchVars,$fullQuery=false){
 
 
     /**
@@ -851,7 +785,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
             }
 
             //strip quotes for easier processing
-            $include_stripped = stripQuotes($spec_SearchVars['searchText_include'],$dbType);
+            $include_stripped = stripQuotes($spec_SearchVars['searchText_include'],$db);
             $include_quote_token = $include_stripped['quote_token'];
             $include_srch_str_raw = $include_stripped['search_string_raw'];
         }
@@ -949,50 +883,14 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $srch_str_raw = trim($include_search_str) . ' ' .trim($exclude_search_str);
         $srch_str_raw = str_replace("'", "''", $srch_str_raw);
 
-        //do a final pass thru and replace all '%' wildcards with '*' wildcard and trim leading/trailing spaces
-        // dreverri - bug #20215
-        // Fulltext search wildcards
-        // Oracle - '%' (the '*' character is used to weight search terms)
-        // MSSQL - '*'
-        // MySQL - '*'
-        // if Oracle keep wildcards as '%'
-        if($dbType != 'oci8') {
-        	$srch_str_raw = str_replace("%", "*", $srch_str_raw);
-        } else {
-        	$srch_str_raw = str_replace("*", "%", $srch_str_raw);
-        }
-        $srch_str_raw = trim($srch_str_raw);
+        $srch_str_raw = trim(str_replace("%", "*", $srch_str_raw));
 
         //create portion of query that holds the fts search
         $search_str =",
             (
-              SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1 ";
-
-            if($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                //if only the * param is defined, then do not perform full text search
-                if(trim($srch_str_raw) !== '*' && trim($srch_str_raw) !== '"*"'){
-                    //add fulltext search string for oracle
-                    $search_str .= "  and kbcontent_id in (
+              SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1 and kbcontent_id in (
                      select id from kbcontents where deleted = 0
-                     and CONTAINS(kbdocument_body, '$srch_str_raw') > 0
-                     )";
-                }
-                //END SUGARCRM flav=ent ONLY
-
-            }else{
-                //if only the * param is defined, then do not perform full text search
-                if(trim($srch_str_raw) !== '*' && trim($srch_str_raw) !== '"*"'){
-                    //add fulltext search string for mssql
-                    $search_str .= "  and kbcontent_id in (
-                     select id from kbcontents where deleted = 0
-                     and contains(kbdocument_body, '$srch_str_raw')
-                     )";
-                }
-            }
-         $search_str .= "
-            ) derived_table ";
-
+                     and ".$db->getFulltextQuery('kbdocument_body', $srch_str_raw)." > 0) derived_table";
             //assign string to custom from
            $qry_arr['custom_from']=from_html($search_str);
 
@@ -1199,14 +1097,14 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
         //add the date range filters
         if(isset($spec_SearchVars['active_date_filter']) && !empty($spec_SearchVars['active_date_filter'])){
-            $ac =return_date_filter($dbType, 'active_date', $spec_SearchVars['active_date_filter'], $spec_SearchVars['active_date'], $spec_SearchVars['active_date2']);
+            $ac =return_date_filter($db, 'active_date', $spec_SearchVars['active_date_filter'], $spec_SearchVars['active_date'], $spec_SearchVars['active_date2']);
             if(!empty($ac)){
                     $search_str .= " and $ac";
             }
         }
 
         if(isset($spec_SearchVars['exp_date_filter']) && !empty($spec_SearchVars['exp_date_filter'])){
-            $xd = return_date_filter($dbType, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date'], $spec_SearchVars['exp_date2']);
+            $xd = return_date_filter($db, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date'], $spec_SearchVars['exp_date2']);
             if(!empty($xd)){
                 $search_str .= ' and ' . $xd;
                     }
@@ -1214,19 +1112,19 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
         //add the Frequency filter
         if(isset($spec_SearchVars['frequency'])  && !empty($spec_SearchVars['frequency'])){
-            $frequencyFilter = return_view_frequency_filter($spec_SearchVars['frequency']);
+            $frequencyFilter = return_view_frequency_filter($db, $spec_SearchVars['frequency']);
             if(!empty($frequencyFilter)){ $search_str .= $frequencyFilter;}
         }
 
         //add attachment Search
         if(isset($spec_SearchVars['attachments'])  && !empty($spec_SearchVars['attachments'])){
-            $attachmentFilter = return_attachment_filter($dbType, $spec_SearchVars);
+            $attachmentFilter = return_attachment_filter($db, $spec_SearchVars);
             if(!empty($attachmentFilter)){ $search_str .= $attachmentFilter;}
         }
 
         //finally, add the canned query constraints
         if(isset($spec_SearchVars['canned_search'])  && !empty($spec_SearchVars['canned_search'])){
-            $return_can = return_canned_query($dbType,$spec_SearchVars['canned_search']);
+            $return_can = return_canned_query($db,$spec_SearchVars['canned_search']);
             if(!empty($return_can)){ $search_str .= $return_can;}
         }
 
@@ -1257,9 +1155,9 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      * @param $filter name of filter type used to return filter
      * @param $filter_date if needed, date to be used in filter
      * @param $filter_date2 if needed, 2nd date to be used in 'between_dates' filter
-     * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
+     * @param DBManager $db database for example 'mssql', 'mysql', or 'oci8'
      */
-function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_date2=''){
+function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2=''){
     global $timedate;
 
     //if set, change the dates to be from user display format to db ready format
@@ -1273,175 +1171,26 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
 
     if (!empty($filter)){
         $field ='kbdocuments.'.$field;
-        if ($filter == 'on'){
-            if(!empty($filter_date)){
-                if ($dbType == 'oci8') {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    return $field . "=TO_DATE('".$GLOBALS['db']->quote($filter_date)."','YYYY-MM-DD') ";
-                    //END SUGARCRM flav=ent ONLY
-                } else {
-                    return $field . "='".$GLOBALS['db']->quote($filter_date)."' ";
-                }
-            }
-
+        if ($filter == 'on' && !empty($filter_date) ){
+            return "$field =" .$db->convert($db->quoted($filter_date), 'date') . " ";
         }elseif($filter == 'isnull'){
-                if ($dbType == 'oci8') {
-                    return  "LENGTH($field ) = 0";
-
-                } elseif($dbType == 'mssql'){
-
-                    return  "($field IS NULL or DATALENGTH($field ) = 0)";
-                }else{
-                    //return mysql check for null
-                    return  "$field IS NULL ";
-                }
-
+            return "($field IS NULL OR ".$db->convert($field, "length").'=0) ';
         }elseif($filter == 'before' && !empty($filter_date)){
-            if(!empty($filter_date)){
-                if ($dbType == 'oci8') {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    return  $field . " < TO_DATE('".$GLOBALS['db']->quote($filter_date)."', 'yyyy-mm-dd') ";
-                    //END SUGARCRM flav=ent ONLY
-                } else {
-                    return $field . " < '".$GLOBALS['db']->quote($filter_date)."' ";
-                }
-            }
-
+            return "$field <" .$db->convert($db->quoted($filter_date), 'date') . " ";
         }elseif($filter == 'after' && !empty($filter_date)){
-            if(!empty($filter_date)){
-                if ($dbType == 'oci8') {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    return  $field . " > TO_DATE('".$GLOBALS['db']->quote($filter_date)."', 'yyyy-mm-dd') ";
-                    //END SUGARCRM flav=ent ONLY
-                } else {
-                    return $field . " > '".$GLOBALS['db']->quote($filter_date)."' ";
-                }
-            }
+            return "$field >" .$db->convert($db->quoted($filter_date), 'date') . " ";
         }elseif($filter == 'between_dates' && !empty($filter_date) && !empty($filter_date2)){
-            if(!empty($filter_date) && !empty($filter_date2)){
-                if ($dbType == 'oci8') {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    return $field . " >= TO_DATE('".$GLOBALS['db']->quote($filter_date)."','yyyy-mm-dd') AND   " . $field . "<=TO_DATE('".$GLOBALS['db']->quote($filter_date2)."','yyyy-mm-dd')";
-                    //END SUGARCRM flav=ent ONLY
-                } else {
-                    return $field . ">='" . $GLOBALS['db']->quote($filter_date) . "' AND  " . $field . "<='" . $GLOBALS['db']->quote($filter_date2)."'";
-                }
+            return "($field >=" .$db->convert($db->quoted($filter_date), 'date') .
+            	" AND $field <= " . $db->convert($db->quoted($filter_date2), 'date') .") ";
+        }else {
+            $range = TimeDate::getInstance()->parseDateRange($filter);
+            if($range) {
+                return "($field >=" .$db->convert($db->quoted($range[0]->asDb()), 'date') .
+            		" AND $field <= " . $db->convert($db->quoted($range[1]->asDb()), 'date') .") ";
             }
-        }elseif($filter == 'last_7_days'){
-            if ($dbType  == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                return  $field . " BETWEEN (sysdate - interval '7' day) AND sysdate";
-                //END SUGARCRM flav=ent ONLY
-            } elseif ($dbType  == 'mssql'){
-                return "DATEDIFF ( d ,  " . $field . " , GETDATE() ) <= 7 and DATEDIFF ( d ,  " . $field . " , GETDATE() ) >= 0";
-            }else{
-                return "LEFT(" . $field . ",10) BETWEEN LEFT((current_date - interval '7' day),10) AND LEFT(current_date,10)";
-            }
-        }elseif($filter == 'next_7_days'){
-            if ($dbType  == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                return $field . " BETWEEN sysdate AND (sysdate + interval '7' day)";
-                //END SUGARCRM flav=ent ONLY
-            } elseif ($dbType == 'mssql'){
-                return "DATEDIFF ( d , GETDATE() ,  " . $field . " ) <= 7 and DATEDIFF ( d , GETDATE() ,  " . $field . " ) >= 0";
-            } else {
-                return "LEFT(" . $field . ",10) BETWEEN LEFT(current_date,10) AND LEFT((current_date + interval '7' day),10)";
-            }
-
-        }elseif($filter == 'next_month'){
-            if ($dbType  == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                  return "TRUNC(" . $field . ",'MONTH') = TRUNC(add_months(sysdate,+1),'MONTH')";
-                //END SUGARCRM flav=ent ONLY
-            } elseif ($dbType == 'mssql'){
-                    return "LEFT(" . $field . ",4) = LEFT( (DATEADD(mm,1,GETDATE())),4) and DATEPART(yy," . $field . ") = DATEPART(yy, GETDATE()) ";
-            } else {
-                return "LEFT(" . $field . ",7) = LEFT( (current_date  + interval '1' month),7)";
-            }
-
-
-        }elseif($filter == 'last_month'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                  return "TRUNC(" . $field . ",'MONTH') = TRUNC(add_months(sysdate,-'1'),'MONTH')";
-                //END SUGARCRM flav=ent ONLY
-            } elseif ($dbType == 'mssql'){
-                return "LEFT(" . $field . ",4) = LEFT((DATEADD(mm,-1,GETDATE())),4) and DATEPART(yy," . $field . ") = DATEPART(yy, GETDATE()) ";
-            } else {
-                return "LEFT(" . $field . ",7) = LEFT( (current_date  - interval '1' month),7)";
-            }
-
-        }elseif($filter == 'this_month'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                return "TRUNC(" . $field . ",'MONTH') = TRUNC((sysdate),'MONTH')";
-                //END SUGARCRM flav=ent ONLY
-            } elseif ($dbType == 'mssql'){
-                    return "LEFT (" . $field . ",4) = LEFT( GETDATE(),4) and DATEPART(yy," . $field . ") = DATEPART(yy, GETDATE()) ";
-            } else {
-                return "LEFT(" . $field . ",7) = LEFT( current_date,7)";
-            }
-
-
-        }elseif($filter == 'last_30_days'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                return $field . " BETWEEN (sysdate - interval '30' day) AND sysdate";
-                //END SUGARCRM flav=ent ONLY
-            } elseif ($dbType == 'mssql'){
-                return "DATEDIFF ( d ,  " . $field . " , GETDATE() ) <= 30 and DATEDIFF ( d ,  " . $field . " , GETDATE() ) >= 0";
-            }else{
-                return "LEFT(" . $field . ",10) BETWEEN LEFT((current_date - interval '30' day),10) AND LEFT(current_date,10)";
-            }
-
-
-        }elseif($filter == 'next_30_days'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                return $field  . " BETWEEN (sysdate) AND (sysdate + interval '1' month)";
-                //END SUGARCRM flav=ent ONLY
-            }elseif ($dbType == 'mssql'){
-                return "DATEDIFF ( d , GETDATE() ,  " . $field . " ) <= 30 and DATEDIFF ( d , GETDATE() ,  " . $field . " ) >= 0";
-            } else {
-                return $field  . " BETWEEN (current_date) AND (current_date + interval '1' month)";
-            }
-
-        }elseif($filter == 'this_year'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                return "TRUNC(" . $field . ",'YEAR') = TRUNC( sysdate,'YEAR')";
-                //END SUGARCRM flav=ent ONLY
-            }elseif ($dbType == 'mssql') {
-                return "DATEPART(yy," . $field . ") = DATEPART(yy, GETDATE()) ";
-            }else{
-                return "LEFT(" . $field . ",4) = EXTRACT(YEAR FROM ( current_date ))";
-            }
-        }elseif($filter == 'last_year'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                  return "TRUNC(" . $field . ",'YEAR') = TRUNC(add_months(sysdate,-12),'YEAR')";
-                //END SUGARCRM flav=ent ONLY
-            }elseif ($dbType == 'mssql') {
-                return "DATEPART(yy," . $field . ") = DATEPART(yy,( dateadd(yy,-1,GETDATE()))) ";
-            } else {
-                return "LEFT(" . $field . ",4) = EXTRACT(YEAR FROM ( current_date  - interval '1' year))";
-            }
-
-
-        }elseif($filter == 'next_year'){
-            if ($dbType == 'oci8') {
-                //BEGIN SUGARCRM flav=ent ONLY
-                  return "TRUNC(" . $field . ",'YEAR') = TRUNC(add_months(sysdate,+12),'YEAR')";
-                //END SUGARCRM flav=ent ONLY
-            }elseif ($dbType == 'mssql') {
-                   return "DATEPART(yy," . $field . ") = DATEPART(yy,( dateadd(yy, 1,GETDATE()))) ";
-            } else {
-                return "LEFT(" . $field . ",4) = EXTRACT(YEAR FROM ( current_date  + interval '1' year))";
-            }
-
         }
     }
-
+    return '';
 }
 
 
@@ -1752,112 +1501,42 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      *
      * @param $freq_search_opt //option specifying frequency filter to create
      */
-    function return_view_frequency_filter($freq_search_opt){
+    function return_view_frequency_filter($db, $freq_search_opt){
         $filter_query = ' ';
-        $dbType = $GLOBALS['db']->dbType;
         $isTop = true;
 
-        //process 'top 5' filter
-        if($freq_search_opt=='Top_5'){
-            if($dbType == 'mssql'){
-                $filter_query = 'Select top 5 kbdocument_id from kbdocuments_views_ratings where deleted = 0 and kbdocument_id is not null and DATALENGTH(kbdocument_id) > 0  order by kbdocuments_views_ratings.views_number desc';
-            }elseif($dbType == 'mysql'){
-                $filter_query = 'Select kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number desc  LIMIT 0, 5';
-            }elseif($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $filter_query = 'Select kbdocument_id from (SELECT rowid as row_num, kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number desc)  WHERE rownum < 6';
-                //END SUGARCRM flav=ent ONLY
-            }
+        //process 'top X' filter
+        if(substr($freq_search_opt, 0, 4) == 'Top_' && is_numeric(substr($freq_search_opt, 4))) {
+            $filter_query = $db->limitQuerySQL("SELECT kbdocument_id FROM kbdocuments_views_ratings WHERE deleted = 0
+            	AND kbdocument_id IS NOT NULL ORDER BY kbdocuments_views_ratings.views_number DESC",0, intval(substr($freq_search_opt, 4)));
         }
 
-        //process 'top 10' filter
-        if($freq_search_opt=='Top_10'){
-            if($dbType == 'mssql'){
-                $filter_query = 'Select top 10 kbdocument_id from kbdocuments_views_ratings where deleted = 0 and kbdocument_id is not null and DATALENGTH(kbdocument_id) > 0  order by kbdocuments_views_ratings.views_number desc, kbdocuments_views_ratings.date_modified  desc';
-            }elseif($dbType == 'mysql'){
-                $filter_query = 'Select kbdocument_id from kbdocuments_views_ratings where deleted = 0  order by kbdocuments_views_ratings.views_number desc, kbdocuments_views_ratings.date_modified  desc  LIMIT 0, 10';
-            }elseif($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $filter_query = 'Select kbdocument_id from (SELECT rowid as row_num, kbdocument_id from kbdocuments_views_ratings where deleted = 0  order by kbdocuments_views_ratings.views_number desc, kbdocuments_views_ratings.date_modified  desc)  WHERE rownum < 11';
-                //END SUGARCRM flav=ent ONLY
-            }
-        }
-
-        //process 'top 20' filter
-        if($freq_search_opt=='Top_20'){
-            if($dbType == 'mssql'){
-                $filter_query = 'Select top 20 kbdocument_id from kbdocuments_views_ratings where deleted = 0 and kbdocument_id is not null and DATALENGTH(kbdocument_id) > 0  order by kbdocuments_views_ratings.views_number desc, kbdocuments_views_ratings.date_modified  desc';
-            }elseif($dbType == 'mysql'){
-                $filter_query = 'Select kbdocument_id from kbdocuments_views_ratings where deleted = 0  order by kbdocuments_views_ratings.views_number desc, kbdocuments_views_ratings.date_modified  desc LIMIT 0, 20';
-            }elseif($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $filter_query = 'Select kbdocument_id from (SELECT rowid as row_num, kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number desc, kbdocuments_views_ratings.date_modified  desc)  WHERE rownum < 21';
-                //END SUGARCRM flav=ent ONLY
-            }
-        }
-
-        //process 'bot 5' filter
-        if($freq_search_opt=='Bot_5'){
-            if($dbType == 'mssql'){
-                $filter_query = 'Select top 5 kbdocument_id from kbdocuments_views_ratings where deleted = 0 and kbdocument_id is not null and DATALENGTH(kbdocument_id) > 0  order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc';
-            }elseif($dbType == 'mysql'){
-                $filter_query = 'Select kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc LIMIT 0,5';
-            }elseif($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $filter_query = 'Select kbdocument_id from (SELECT rowid as row_num, kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc)  WHERE rownum < 6';
-                //END SUGARCRM flav=ent ONLY
-            }
+        //process 'bot X' filter
+        if(substr($freq_search_opt, 0, 4) == 'Bot_' && is_numeric(substr($freq_search_opt, 4))) {
+            $filter_query = $db->limitQuerySQL("SELECT kbdocument_id FROM kbdocuments_views_ratings WHERE deleted = 0
+            	AND kbdocument_id IS NOT NULL ORDER BY kbdocuments_views_ratings.views_number ASC, kbdocuments_views_ratings.date_modified ASC",0, intval(substr($freq_search_opt, 4)));
             $isTop = false;
         }
 
-        //process 'bot 10' filter
-        if($freq_search_opt=='Bot_10'){
-            if($dbType == 'mssql'){
-                $filter_query = 'Select top 10 kbdocument_id from kbdocuments_views_ratings where deleted = 0 and kbdocument_id is not null and DATALENGTH(kbdocument_id) > 0  order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified asc';
-            }elseif($dbType == 'mysql'){
-                $filter_query = 'Select kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified asc  LIMIT 0, 10';
-            }elseif($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $filter_query = 'Select kbdocument_id from (SELECT rowid as row_num, kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc)  WHERE rownum < 11';
-                //END SUGARCRM flav=ent ONLY
-            }
-            $isTop = false;
-        }
-
-        //process 'bot 20' filter
-        if($freq_search_opt=='Bot_20'){
-            if($dbType == 'mssql'){
-                $filter_query = 'Select top 20  kbdocument_id from kbdocuments_views_ratings where deleted = 0 and kbdocument_id is not null and DATALENGTH(kbdocument_id) > 0  order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc';
-            }elseif($dbType == 'mysql'){
-                $filter_query = 'Select kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc  LIMIT 0, 20';
-            }elseif($dbType == 'oci8'){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $filter_query = 'Select kbdocument_id from (SELECT rowid as row_num, kbdocument_id from kbdocuments_views_ratings where deleted = 0 order by kbdocuments_views_ratings.views_number asc, kbdocuments_views_ratings.date_modified  asc)  WHERE rownum < 21';
-                //END SUGARCRM flav=ent ONLY
-            }
-            $isTop = false;
-        }
-
-        if($dbType == 'mysql'){
-            //mysql does not support limits in subqueries, so we need to run query
+        if(!$db->supports("limit_subquery")){
+            //Some DBs like mysql do not support limits in subqueries, so we need to run query
             //and retrieve id's.  This will allow us to construct an id 'not in' subquery.
-            $result = $GLOBALS['db']->query($filter_query);
-            $isfirst = true;
-            $id_list = "";
-            while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-             	   $id_list .= ",'" . $row['kbdocument_id'] . "'";
+            $result = $db->query($filter_query);
+            $ids = array();
+            if(!empty($result)) {
+                while($row = $db->fetchByAssoc($result)) {
+                 	   $ids[] = $db->quoted($row['kbdocument_id']);
+                }
             }
-            $filter_query = strlen($id_list) > 0 ? substr($id_list, 1) : "";
-
+            $filter_query = join(',', $ids);
         }
 
         //use value to create query
-        $ret_query = "";
         if(!empty($filter_query)) {
-           $ret_query = " and kbdocuments.id in ( $filter_query )";
+           return " AND kbdocuments.id IN ( $filter_query )";
+        } else {
+            return "";
         }
-
-        return $ret_query;
     }
 
 
@@ -1865,24 +1544,18 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      *
      * This method creates and returns canned query filters
      *
-     * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
+     * @param DBManage $db database type, for example 'mssql', 'mysql', or 'oci8'
      * @param $canned_search_opt key value of type of canned search to process
      */
-    function return_canned_query($dbType, $canned_search_opt){
+    function return_canned_query($db, $canned_search_opt){
             $return_can = '';
 
              if (isset($canned_search_opt)){
                 //process 'articles added last 30 days' filter
                 if($canned_search_opt == 'added'){
-                    if ($dbType == 'oci8') {
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        $return_can = " and  kbdocuments.date_entered BETWEEN (sysdate - interval '30' day) AND (sysdate + interval '1' day)";
-                        //END SUGARCRM flav=ent ONLY
-                    } elseif ($dbType == 'mssql'){
-                        $return_can = " and  kbdocuments.date_entered BETWEEN (DATEADD(dd,-30,GETDATE())) AND (DATEADD(dd,1,GETDATE()))";
-                    }else {
-                        $return_can = " and  kbdocuments.date_entered BETWEEN (current_date - interval '30' day) AND (current_date + interval '1' day)";
-                    }
+                    $range = TimeDate::getInstance()->parseDateRange('last_30_days');
+                    return " AND (kbdocuments.date_entered >=" .$db->convert($db->quoted($range[0]->asDb()), 'date') .
+            			" AND kbdocuments.date_entered <= " . $db->convert($db->quoted($range[1]->asDb()), 'date') .") ";
                 }
 
                 //process 'articles pending my approval' filter
@@ -1893,15 +1566,9 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
 
                 //process 'articles updated last 30 days' filter
                 if($canned_search_opt == 'updated'){
-                    if ($dbType == 'oci8') {
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        $return_can = " and kbdocuments.date_modified  BETWEEN (sysdate - interval '30' day) AND (sysdate + interval '1' day)";
-                        //END SUGARCRM flav=ent ONLY
-                    } elseif ($dbType == 'mssql'){
-                        $return_can = " and  kbdocuments.date_modified BETWEEN (DATEADD(dd,-30,GETDATE())) AND (DATEADD(dd,1,GETDATE()))";
-                    }else {
-                        $return_can = " and  kbdocuments.date_modified BETWEEN (current_date - interval '30' day) AND (current_date + interval '1' day)";
-                    }
+                    $range = TimeDate::getInstance()->parseDateRange('last_30_days');
+                    return " AND (kbdocuments.date_modified >=" .$db->convert($db->quoted($range[0]->asDb()), 'date') .
+            			" AND kbdocuments.date_modified <= " . $db->convert($db->quoted($range[1]->asDb()), 'date') .") ";
                 }
 
                 //process 'articles under faq's tag' filter
@@ -1925,10 +1592,10 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      *
      * This method creates and returns filter string for searching on attachments
      * returns full text search query
-     * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
+     * @param $db dbType of install, for example 'mssql', 'mysql', or 'oci8'
      * @param $spec_SearchVars Array of inputs needed for attachment filters.
      */
-  function return_attachment_filter($dbType, $spec_SearchVars){
+  function return_attachment_filter($db, $spec_SearchVars){
 
             //retrieve param specifying the filter type to return.
             $attachment_search_opt = $spec_SearchVars['attachments'];
@@ -1938,58 +1605,10 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
              if (isset($attachment_search_opt)){
 
                 //Create if filter type is set to none
-                if($attachment_search_opt == 'none'){
-                  if ($dbType == 'oci8') {
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        $return_att = "and kbdocuments.id not in
-                                        (
-                                           select kbdocument_id from kbdocument_revisions where LENGTH(kbcontent_id) = 0  or kbcontent_id is null
-                                        )";
-
-                        //END SUGARCRM flav=ent ONLY
-                    }else if($dbType == 'mssql'){
-                    $return_att = " and kbdocuments.id not in
-                                    (
-                                        select kbdocument_id from kbdocument_revisions where kbcontent_id IS NULL or DATALENGTH(kbcontent_id) = 0
-                                    )";
-
-                    }else if($dbType == 'mysql'){
-                    $return_att = " and kbdocuments.id not in
-                                    (
-                                        select kbdocument_id from kbdocument_revisions where kbcontent_id IS NULL
-
-                                     )";
-
-                    }
-
-
+                if($attachment_search_opt == 'none' || $attachment_search_opt == 'some'){
+                    $return_att = "and kbdocuments.id not in
+                                        (select kbdocument_id from kbdocument_revisions where ".$db->convert('kbdocument_id', 'length')." or kbcontent_id IS NULL)";
                 }
-                //Create if filter type is set to some
-                if($attachment_search_opt == 'some'){
-                    if ($dbType == 'oci8') {
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        $return_att = "and kbdocuments.id in
-                                        (
-                                           select kbdocument_id from kbdocument_revisions where LENGTH(kbcontent_id) = 0  or kbcontent_id is null
-                                        )";
-
-                        //END SUGARCRM flav=ent ONLY
-                    }else if($dbType == 'mssql'){
-                    $return_att = " and kbdocuments.id in
-                                    (
-                                        select kbdocument_id from kbdocument_revisions where kbcontent_id IS NULL or DATALENGTH(kbcontent_id) = 0
-                                    )";
-
-                    }else if($dbType == 'mysql'){
-                    $return_att = " and kbdocuments.id in
-                                    (
-                                        select kbdocument_id from kbdocument_revisions where kbcontent_id IS NULL
-
-                                     )";
-
-                    }
-                }
-
                 //Create if filter type is set to name
                 if($attachment_search_opt == 'name'){
                     if(isset($spec_SearchVars['filename'])  && !empty($spec_SearchVars['filename'])){
@@ -2060,7 +1679,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      */
     function create_most_recent_articles_query($bean, $order_by, $where, $keywords, $row_offset, $limit, $date_filter) {
 		$where = " AND kbdocuments.status_id = 'Published' AND " . $date_filter;
-		$sql = create_portal_most_recent_query($bean->db->dbType, $limit, $where);
+		$sql = create_portal_most_recent_query($bean->db, $limit, $where);
 		return $sql;
     }
 
@@ -2069,157 +1688,10 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      */
     function create_most_viewed_articles_query($bean, $order_by, $where, $keywords, $row_offset, $limit, $date_filter, $searchVars, $spec_SearchVars) {
    		$spec_SearchVars['frequency'] = 'Top_10';
-   		$sql = create_fts_search_list_query($bean->db->dbType, $spec_SearchVars, $searchVars, true);
+   		$sql = create_fts_search_list_query($bean->db, $spec_SearchVars, $searchVars, true);
    		$sql = str_replace("'Published'", "'Published' AND $date_filter ", $sql);
    		return $sql;
     }
-
-    //BEGIN SUGARCRM flav=int ONLY
-    /**
-     * test_kb_portal_queries
-     *
-     * This is an internal test method to facilitate testing the KB Portal Queries.
-     * To invoke, follow these three steps:
-     * 1) Uncomment the line in create_portal_list_query_method that calls this method and set the $test param to true.
-     * 2) Fill in the database values accordingly in the $dbs Array for the databases you wish to test.
-     * 3) In the Portal code, uncomment the _pp line in include/Portal/Portal.php file for getEntries() method.
-     */
-    function test_kb_portal_queries($bean, $order_by, $where, $keywords, $row_offset, $limit) {
-
-        //Begin Setup
-		$searchVars = array();
-
-        //BEGIN SUGARCRM flav=ent ONLY
-		$searchVars['is_external_article'] = array('operator'=>'=','filter'=>1);
-        //END SUGARCRM flav=ent ONLY
-
-		$searchVars['status_id'] = array('operator'=>'=','filter'=>'Published');
-		$spec_SearchVars = array();
-
-		$date_filter = return_date_filter($bean->db->dbType, 'exp_date', 'after', date($GLOBALS['timedate']->dbDayFormat), null);
-		$date_filter = "($date_filter OR kbdocuments.exp_date IS NULL) ";
-
-		$dbs = array(
-                     //'mysql' => array('db_host_name'=>'localhost',       'db_host_instance'=>'',            'db_user_name'=>'root',     'db_password'=>'',          'db_name'=>'ent451d'),
-                     //'mssql' => array('db_host_name'=>'collin-d620',     'db_host_instance'=>'sqlexpress',  'db_user_name'=>'sa',       'db_password'=>'password',    'db_name'=>'ent451d'),
-                     //'oci8'  => array('db_host_name'=>'localhost',       'db_host_instance'=>'',            'db_user_name'=>'ent451d',  'db_password'=>'password',  'db_name'=>'sugarcrm'),
-               );
-		//End Setup
-		global $sugar_config, $dbinstances;
-
-		foreach($dbs as $db_type => $db) {
-
-		echo "<p><h1>Testing database: " . $db_type . "</h1><br><hr><p>";
-		//Configure the $sugar_config values
-		//This does not work yet so we can only test 1 db at a time
-		$sugar_config['dbconfig']['db_type'] = $db_type;
-		$sugar_config['dbconfig']['db_host_name'] = $db['db_host_name'];
-		$sugar_config['dbconfig']['db_host_instance'] = $db['db_host_instance'];
-		$sugar_config['dbconfig']['db_user_name'] = $db['db_user_name'];
-		$sugar_config['dbconfig']['db_password'] = $db['db_password'];
-	    $sugar_config['dbconfig']['db_name'] = $db['db_name'];
-
-	    $bean = new KBDocument();
-	    $bean->disable_row_level_security = true;
-
-	    $tests = array("Running tests for Most Recent Articles" => '[most_recent_articles]',
-	                   "Running tests for Most Viewed Articles" => '[most_viewed_articles]',
-	                   "Running tests for Keyword Search" => 'Test*');
-
-		    foreach($tests as $name=>$keyword) {
-		       echo "<h3>". $name . "........";
-		       $keywords['keywords'] = $keyword;
-		       $testPaging = $keywords['keywords'] == '[most_recent_articles]' || $keywords['keywords'] == '[most_viewed_articles]';
-		       test_kb_portal_results_recursively($bean, $order_by, $where, $keywords, $row_offset, $limit, $testPaging);
-		    } //foreach
-		} //foreach
-
-    } //test_kb_portal_queries
-
-    /**
-     * test_kb_portal_results_recursively
-     *
-     * This is a recursive function that tests a result set
-     */
-    function test_kb_portal_results_recursively($bean, $order_by, $where, $keywords, $row_offset, $limit, $testPaging = true, $start = true) {
-
-	    $result = create_portal_list_query($bean, $order_by, $where, $keywords, $row_offset, $limit, false);
-        $return_result = test_kb_portal_results($result, $bean);
-        if($return_result['error']['description'] == "No Error") {
-           if($start) {
-           	  echo "Successful!</h3><p>";
-           }
-
-           //array_shift($return_result['entry_list']);
-           $count = count($return_result['entry_list']);
-           if($count == 0) {
-           	  return;
-           }
-           echo "Found <b>$count</b> entries!<br>";
-
-
-           foreach($return_result['entry_list'] as $entry) {
-           	       echo $entry['name_value_list']['kbdocument_name']['value'] . "<br>";
-           } //foreach
-
-           // Test paging if the last element has an id value
-           if($testPaging && isset($return_result['entry_list'][$count-1]['id'])) {
-           	  $new_offset = $row_offset + $limit;
-              echo "<br>Testing paging for row_offset=$new_offset, limit=$limit<br>";
-              test_kb_portal_results_recursively($bean, $order_by, $where, $keywords, $new_offset, $limit, $testPaging, false);
-           } else {
-           	  return;
-           }
-
-        } else {
-           echo "Error found: " . $return_result['error']['description'] . "... aborting<br>";
-           die();
-        }
-    }
-
-    function test_kb_portal_results($result, $bean) {
-
-    	$list = array();
-    	if(!isset($result)) {
-    	   return "Query failed!";
-    	}
-
-		while ($row = $bean->db->fetchByAssoc($result)) {
-			   $id = $row['id'];
-			   $record = new KBDocument();
-			   $record->disable_row_level_security = true;
-			   $record->retrieve($id);
-			   $record->fill_in_additional_list_fields();
-			   $list[] = $record;
-		} //while
-
-		require_once('soap/SoapHelperFunctions.php');
-
-		$error = new SoapError();
-		$module_name = "KBDocuments";
-		$select_fields = array();
-		$output_list = array();
-		$field_list = array();
-
-		foreach ($list as $value) {
-
-			$output_list[] = get_return_value($value, $module_name);
-			$_SESSION['viewable'][$module_name][$value->id] = $value->id;
-			if (empty ($field_list)) {
-				$field_list = get_field_list($value);
-			}
-		} //foreach
-
-		$output_list = filter_return_list($output_list, $select_fields, $module_name);
-		$field_list = filter_field_list($field_list, $select_fields, $module_name);
-
-	    return array ('result_count' => sizeof($output_list), 'next_offset' => 0, 'field_list' => $field_list, 'entry_list' => $output_list, 'error' => $error->get_soap_array());
-    }
-    //END SUGARCRM flav=int ONLY
-
-
-
-
 
     function validate_quotes($quote_string){
         $esc_quote_string = str_replace("\\\"", "", $quote_string);

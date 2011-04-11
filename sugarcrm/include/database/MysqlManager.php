@@ -550,7 +550,7 @@ class MysqlManager extends DBManager
         array_unshift($additional_parameters, $string);
         $all_strings = join(",", $additional_parameters);
 
-        switch ($type) {
+        switch (strtolower($type)) {
             case 'today':
                 return "CURDATE()";
             case 'left':
@@ -563,9 +563,9 @@ class MysqlManager extends DBManager
                 }
             case 'datetime':
                 return "DATE_FORMAT($string, '%Y-%m-%d %H:%i:%s')";
-            case 'IFNULL':
+            case 'ifnull':
                 return "IFNULL($all_strings)";
-            case 'CONCAT':
+            case 'concat':
                 return "CONCAT($all_strings)";
             case 'quarter':
                     return "QUARTER($string)";
@@ -1017,5 +1017,10 @@ class MysqlManager extends DBManager
     public function lastError()
     {
         return mysql_error();
+    }
+
+    public function getFulltextQuery($field, $condition)
+    {
+        return "CONTAINS($field, ".$this->quoted($condition).")";
     }
 }

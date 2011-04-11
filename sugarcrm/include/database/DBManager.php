@@ -162,6 +162,7 @@ abstract class DBManager
      * fulltext			Supports fulltext search indexes
      * inline_keys		Supports defining keys together with the table
      * auto_increment_sequence Autoincrement support implemented as sequence
+     * limit_subquery   Supports LIMIT clauses in subqueries
      *
      * Special cases:
      * fix:expandDatabase - needs expandDatabase fix, see expandDatabase.php
@@ -579,7 +580,7 @@ abstract class DBManager
      * returns SQL to create constraints or indices
      *
      * @param  object $bean SugarBean instance
-     * @return string SQL statement
+     * @return array list of SQL statements
      */
 	protected function createConstraintSql(SugarBean $bean)
     {
@@ -608,7 +609,7 @@ abstract class DBManager
                 $indicesArr = $this->getConstraintSql($indices, $tablename);
                 if (count($indicesArr) > 0)
                     foreach ($indicesArr as $indexSql)
-                        $res = $res and $this->query($indexSql, true, $msg);
+                        $res = $res and $this->query($indexSql, true, "Error creating indexes");
             }
             return $res;
         }
@@ -1056,6 +1057,7 @@ abstract class DBManager
         $this->tableName = $tablename;
         $sql = $this->addColumnSQL($tablename, $fieldDefs);
         if ($this->isFieldArray($fieldDefs)){
+
             foreach ($fieldDefs as $fieldDef)
                 $columns[] = $fieldDef['name'];
             $columns = implode(",", $columns);
@@ -1856,13 +1858,14 @@ abstract class DBManager
      */
     protected function getColumnWhereClause($table, array $whereArray = array())
     {
+        $where = array();
         foreach ($whereArray as $name => $val) {
             $op = "=";
             if (is_array($val)) {
                 $op = "IN";
                 $temp = array();
                 foreach ($val as $tval){
-                    $temp[] = $this->quoted($val);
+                    $temp[] = $this->quoted($tval);
                 }
                 $val = implode(",", $temp);
                 $val = "($val)";
@@ -1873,10 +1876,10 @@ abstract class DBManager
             $where[] = " $table.$name $op $val";
         }
 
-        if (is_array($where))
-            $where = implode(" AND ", $where);
+        if (!empty($where))
+            return implode(" AND ", $where);
 
-        return $where;
+        return '';
     }
 
     /**
@@ -2071,7 +2074,7 @@ abstract class DBManager
     public function retrieveViewSQL(array $beans, array $cols = array(), array $whereClause = array())
     {
         $relations = array(); // stores relations between tables as they are discovered
-
+        $where = $select = array();
         foreach ($beans as $beanID => $bean) {
             $tableName = $bean->getTableName();
             $beanTables[$beanID] = $tableName;
@@ -2104,7 +2107,7 @@ abstract class DBManager
         }
 
         // join these clauses
-        $select = (sizeof($select) > 0) ? implode(",", $select) : "*";
+        $select = !empty($select) ? implode(",", $select) : "*";
         $where = implode(" AND ", $where);
 
         // generate the from clause. Use relations array to generate outer joins
@@ -2112,6 +2115,7 @@ abstract class DBManager
         // relations table define relations between table1 and table2 through column on table 1
         // table2 is assumed to joing through primaty key called id
         $separator = "";
+        $from = ''; $table_used_in_from = array();
         foreach ($relations as $table1 => $rightsidearray){
             if ($table_used_in_from[$table1]) continue; // table has been joined
 
@@ -2202,17 +2206,6 @@ abstract class DBManager
      */
 	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
-        //BEGIN SUGARCRM flav=int ONLY
-        if (!isset($fieldDef['type'])){
-            display_notice('No type specified in vardefs for ' .  $fieldDef['name']);
-        }
-        elseif ($fieldDef['type'] == 'enum'){
-            if(!isset($fieldDef['options']) && !isset($fieldDef['function'])){
-                display_notice('No options specified in vardefs for ' .  $fieldDef['name']);
-            }
-        }
-       	//END SUGARCRM flav=int ONLY
-
         $name = $fieldDef['name'];
         $type = $this->getFieldType($fieldDef);
         $colType = $this->getColumnType($type, $name, $table);
@@ -2835,6 +2828,11 @@ abstract class DBManager
     public function now()
     {
         return $this->convert($this->quoted(TimeDate::getInstance()->nowDb()), "datetime");
+    }
+
+    public function getFulltextQuery($field, $condition)
+    {
+        return "0=1";
     }
 
     /**

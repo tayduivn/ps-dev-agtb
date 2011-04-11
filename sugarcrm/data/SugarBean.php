@@ -512,13 +512,13 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    function getTableName()
+    public function getTableName()
     {
-        global $dictionary;
         if(isset($this->table_name))
         {
             return $this->table_name;
         }
+        global $dictionary;
         return $dictionary[$this->getObjectName()]['table'];
     }
 

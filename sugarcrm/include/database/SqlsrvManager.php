@@ -79,6 +79,7 @@ class SqlsrvManager extends MssqlManager
     protected $capabilities = array(
         "affected_rows" => true,
         'fulltext' => true,
+        'limit_subquery' => true,
     );
 
     protected $type_map = array(

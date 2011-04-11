@@ -55,6 +55,7 @@ class OracleManager extends DBManager
         "case_sensitive" => true,
         "fulltext" => true,
         "auto_increment_sequence" => true,
+        'limit_subquery' => true,
     );
 
     protected $maxNameLengths = array(
@@ -698,7 +699,7 @@ class OracleManager extends DBManager
         if (!empty($additional_parameters))
             $additional_parameters_string = ','.implode(',',$additional_parameters);
 		// TODO: add defaults to date/time formats
-        switch ($type) {
+        switch (strtolower($type)) {
             case 'date':
                 return "to_date($string, 'YYYY-MM-DD')";
             case 'time':
@@ -721,9 +722,9 @@ class OracleManager extends DBManager
                     $additional_parameters_string = ",'HH24:MI:SS'";
                 }
                 return "TO_CHAR($string".$additional_parameters_string.")";
-            case 'IFNULL':
+            case 'ifnull':
                 return "NVL($string".$additional_parameters_string.")";
-            case 'CONCAT':
+            case 'concat':
                 return "$string||".implode("||",$additional_parameters);
             case 'text2char':
                 return "to_char($string)";
@@ -1369,6 +1370,12 @@ EOQ;
     public function lastError()
     {
         return oci_error();
+    }
+
+    public function getFulltextQuery($field, $condition)
+    {
+        $condition = str_replace("*", "%", $condition);
+        return "CONTAINS($field, ".$this->quoted($condition).")";
     }
 }
 

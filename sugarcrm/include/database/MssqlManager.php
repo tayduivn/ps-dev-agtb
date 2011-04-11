@@ -82,8 +82,9 @@ class MssqlManager extends DBManager
     protected $capabilities = array(
         "affected_rows" => true,
         "select_rows" => true,
-        "fix:expandDatabase" => true, // Support expandDatabase fix
         'fulltext' => true,
+        'limit_subquery' => true,
+        "fix:expandDatabase" => true, // Support expandDatabase fix
     );
 
     /**
@@ -127,7 +128,7 @@ class MssqlManager extends DBManager
             'url'      => 'varchar',
             'encrypt'  => 'varchar',
             'file'     => 'varchar',
-	    'decimal_tpl' => 'decimal(%d, %d)',
+	        'decimal_tpl' => 'decimal(%d, %d)',
             );
 
     /**
@@ -269,6 +270,8 @@ class MssqlManager extends DBManager
         // Flag if there are odd number of single quotes
         if ((substr_count($sql, "'") & 1))
             $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");
+
+		$sql = $this->_appendN($sql);
 
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
@@ -1129,7 +1132,7 @@ class MssqlManager extends DBManager
         if (!empty($additional_parameters))
             $additional_parameters_string = ','.implode(',',$additional_parameters);
 
-        switch ($type) {
+        switch (strtolower($type)) {
             case 'today':
                 return "GETDATE()";
             case 'left':
@@ -1141,16 +1144,16 @@ class MssqlManager extends DBManager
                 } else {
                    return "LEFT(CONVERT(varchar(10),". $string . ",120), 10)";
                 }
-            case 'IFNULL':
+            case 'ifnull':
                 return "ISNULL($string".$additional_parameters_string.")";
-            case 'CONCAT':
+            case 'concat':
                 return "$string+".implode("+",$additional_parameters);
             case 'text2char':
                 return "CAST($string AS varchar(8000))";
             case 'quarter':
                 return "DATEPART(quarter, $string)";
             case "length":
-                    return "LENGTH($string)";
+                return "DATALENGTH($string)";
         }
 
         return "$string";
@@ -1718,4 +1721,10 @@ EOQ;
     {
         return mssql_get_last_message();
     }
+
+    public function getFulltextQuery($field, $condition)
+    {
+        return "CONTAINS($field, ".$this->quoted($condition).")";
+    }
+
 }

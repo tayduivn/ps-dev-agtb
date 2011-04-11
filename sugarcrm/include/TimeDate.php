@@ -1499,7 +1499,7 @@ class TimeDate
 	 * Returns beginning and end of the range as a date
 	 * @param string $range
 	 * @param User $user
-	 * @return array
+	 * @return array of two Date objects, start & end
 	 */
 	public function parseDateRange($range, User $user = null)
 	{
