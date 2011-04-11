@@ -232,7 +232,7 @@ var $myFavoritesOnly = false;
                 if (!isset($lvsParams['custom_from'])) {
                     $lvsParams['custom_from'] = '';
                 }
-                $lvsParams['custom_from'] = ' INNER JOIN ' . $user_favorites_module->table_name . ' ON (' . $user_favorites_module->table_name . '.record_id = sugarfeed.related_id AND ' . $user_favorites_module->table_name . '.module = sugarfeed.related_module AND ' . $user_favorites_module->table_name . '.assigned_user_id = \'' . $current_user->id . '\') ' . $lvsParams['custom_from'];
+                $lvsParams['custom_from'] = ' INNER JOIN ' . $user_favorites_module->table_name . ' ON (' . $user_favorites_module->table_name . '.record_id = sugarfeed.related_id AND ' . $user_favorites_module->table_name . '.module = sugarfeed.related_module AND ' . $user_favorites_module->table_name . '.assigned_user_id = \'' . $current_user->id . '\' AND ' . $user_favorites_module->table_name . '.deleted = 0) ' . $lvsParams['custom_from'];
             }
 //END SUGARCRM flav=pro ONLY
 
