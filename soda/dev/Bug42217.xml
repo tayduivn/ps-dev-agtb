@@ -1,0 +1,60 @@
+<soda>
+	<puts text="--------Bug 42217 Started--------" />
+	<csv file="tests/csvs/users.csv" var="user">
+		<script file="tests/modules/lib/login.xml" />
+	</csv>
+	
+	<!-- setup basic search panel -->
+	<browser
+		url="{@global.url}?module=ModuleBuilder&amp;action=index&amp;type=studio#mbContent=module%3DModuleBuilder%26action%3DeditLayout%26view%3Dbasic_search%26view_module%3DLeads"
+		assertPage="false" />
+	<wait timeout="30" condition="true">
+		<ul id="ul0" />
+	</wait>
+	<!-- add 'assigned to' -->
+	<javascript addUtils="true">
+		var start = YAHOO.util.Selector.query("li#subslot9")[0];
+		var end = YAHOO.util.Selector.query("li#topslot0")[0];
+		SUGAR.soda.fakeDrag(start, end);
+	</javascript>
+	<button name="savebtn" />
+	<wait timeout="30" condition="true">
+		<link id="moduleTab_Leads" />
+	</wait>
+	
+	<!-- search -->
+	<link id="moduleTab_Leads" />
+	<button name="btn_assigned_user_name_basic" />
+	<wait condition="true">
+		<link href="#" />
+	</wait>
+	<table class="list view">
+		<link index="8" />
+	</table>
+	<wait timeout="1" />
+	<button id="search_form_submit" />
+	<wait condition="true">
+		<button id="search_form_clear" />
+	</wait>
+	<button id="search_form_clear" />
+	<javascript>
+		if (YAHOO.util.Selector.query("#assigned_user_id_basic")[0].value == "")
+		{
+			var div = document.createElement('div');
+			div.id = "test_passed";
+			div.innerHTML = "Test Passed";
+			YAHOO.util.Dom.insertBefore(div, "main");
+		}
+	</javascript>
+	<wait timeout="3" />
+	<browser assert="Test Passed" />	
+	<!-- restore defaults -->
+	<browser
+		url="{@global.url}?module=ModuleBuilder&amp;action=index&amp;type=studio#mbContent=module%3DModuleBuilder%26action%3DeditLayout%26view%3Dbasic_search%26view_module%3DLeads"
+		assertPage="false" />
+	<wait timeout="30" condition="true">
+		<button id="historyDefault" />
+	</wait>
+	<button id="historyDefault" />
+	<puts text="--------Bug 42217 Finished--------" />
+</soda>
