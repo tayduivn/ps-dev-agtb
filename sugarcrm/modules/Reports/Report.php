@@ -1233,17 +1233,19 @@ print "<BR>";
         }
         $this->summary_order_by='';
         //$this->summary_order_by_arr= array();
-        if(!empty($this->report_def['summary_order_by'][0]))
-        {
-            $summary_order_by = $this->report_def['summary_order_by'][0];
-
-            $this->register_field_for_query($summary_order_by);
-
-            array_push($this->summary_order_by_arr,$this->layout_manager->widgetQuery($summary_order_by));
+        
+        // Only do this for Summation reports.
+        if ($this->report_def['report_type'] == 'summary' && empty($this->report_def['display_columns'])){
+            if(!empty($this->report_def['summary_order_by'][0]))
+            {
+                $summary_order_by = $this->report_def['summary_order_by'][0];
+                $this->register_field_for_query($summary_order_by);
+                array_push($this->summary_order_by_arr,$this->layout_manager->widgetQuery($summary_order_by));
+            }
         }
 
-
     }
+    
 
     function select_already_defined($select,$which='select_fields')
     {
@@ -1610,6 +1612,7 @@ print "<BR>";
                         $query .= " WHERE ($this->where) \nAND ".$where_auto;
         else
                         $query .= " WHERE ".$where_auto;
+
 
         if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  )
     {

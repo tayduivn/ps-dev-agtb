@@ -24,7 +24,7 @@ require_once('include/JSON.php');
 require_once('include/entryPoint.php');
 
 global $sugar_config;
-
+$supportedExtensions = array('jpg', 'png', 'jpeg');
 $json = getJSONobj();
 $rmdir=true;
 $returnArray = array();
@@ -35,7 +35,7 @@ if($json->decode(html_entity_decode($_REQUEST['forQuotes']))){
 }
 if(isset($_FILES['file_1'])){
     $uploadTmpDir=$sugar_config['tmp_dir'].'tmp_logo_'.$returnArray['forQuotes'].'_upload';
-    $file_name = $uploadTmpDir .'/'. basename($_FILES['file_1']['name']);
+    $file_name = $uploadTmpDir . DIRECTORY_SEPARATOR .  cleanFileName(basename($_FILES['file_1']['name']));
     if(file_exists($uploadTmpDir))
        rmdir_recursive($uploadTmpDir);
     
@@ -61,8 +61,11 @@ if(file_exists($file_name) && is_file($file_name)){
     $returnArray['path']=$file_name;
     $img_size = getimagesize($file_name);
     $filetype = $img_size['mime'];
-    if(($filetype != 'image/jpeg' && $filetype != 'image/png') ||  ($filetype != 'image/jpeg' && $returnArray['forQuotes'] == 'quotes')){
+    $ext = end(explode(".", $file_name));
+    if($ext === $file_name || !in_array($ext, $supportedExtensions) || ($filetype != 'image/jpeg' && $filetype != 'image/png') ||  ($filetype != 'image/jpeg' && $returnArray['forQuotes'] == 'quotes')){
         $returnArray['data']='other';
+        $returnArray['path'] = '';
+        
     }else{
         $test=$img_size[0]/$img_size[1];
         if (($test>10 || $test<1) && $returnArray['forQuotes'] == 'company'){

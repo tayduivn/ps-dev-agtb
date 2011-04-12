@@ -318,7 +318,7 @@ EditView_tabs.on('contentReady', function(e){
                                 <td >&nbsp;</td>
                             </tr>
                              {if !empty($mail_smtpauth_req) }
-                            
+
                             <tr id="mail_smtpuser_tr">
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtpuser_label">{$MOD.LBL_MAIL_SMTPUSER}</span></td>
                                 <td width="30%" ><slot><input type="text" id="mail_smtpuser" name="mail_smtpuser" size="25" maxlength="64" value="{$mail_smtpuser}" tabindex='1' ></slot></td>
@@ -332,7 +332,7 @@ EditView_tabs.on('contentReady', function(e){
                                 <td >&nbsp;</td>
                             </tr>
                             {/if}
-                         
+
                             <tr id="test_outbound_settings_tr">
                                 <td width="17%" scope="row"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="startOutBoundEmailSettingsTest();"></td>
                                 <td width="33%" >&nbsp;</td>
@@ -820,20 +820,15 @@ function testOutboundSettings()
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
         return false;
     }
-    
-   
-    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '') 
+
+
+    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '')
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPUSER}{literal}" + "<br/>";
     }
 
-    
-    if(document.getElementById('mail_smtppass') && trim(document.getElementById('mail_smtppass').value) == '') 
-    {
-        isError = true;
-        errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPASS}{literal}" + "<br/>";
-    }
+
     if(isError) {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
         return false;
@@ -844,6 +839,7 @@ function testOutboundSettings()
 
 function sendTestEmail()
 {
+    var toAddress = document.getElementById("outboundtest_from_address").value;
     var fromAddress = document.getElementById("outboundtest_from_address").value;
 
     if (trim(fromAddress) == "")
@@ -867,14 +863,14 @@ function sendTestEmail()
     	}
     };
     var smtpServer = document.getElementById('mail_smtpserver').value;
-    
+
     if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass')){
-    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
     }
     else{
-	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress;
+	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
     }
-	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
+	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&mail_name=system&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
         // lazy load dialogue

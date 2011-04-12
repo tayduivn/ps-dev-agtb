@@ -24,16 +24,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('include/SugarFolders/SugarFolders.php');
 
-
-
-
-
 global $current_user;
 
 $focus = new InboundEmail();
 $focus->retrieve($_REQUEST['record']);
 
 foreach($focus->column_fields as $field) {
+    if($field == 'email_password' && empty($_REQUEST['email_password']) && !empty($_REQUEST['email_user'])) {
+        continue;
+    }
 	if(isset($_REQUEST[$field])) {
 		if ($field != "group_id") {
 			$focus->$field = trim($_REQUEST[$field]);
@@ -55,6 +54,7 @@ foreach($focus->required_fields as $field) {
 if(!empty($_REQUEST['email_password'])) {
     $focus->email_password = $_REQUEST['email_password'];
 }
+
 $focus->protocol = $_REQUEST['protocol'];
 
 if( isset($_REQUEST['is_create_case']) && $_REQUEST['is_create_case'] == 'on' )
