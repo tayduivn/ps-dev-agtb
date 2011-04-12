@@ -1027,7 +1027,7 @@ class MysqlManager extends DBManager
 
     protected function getCharsetInfo()
     {
-        $res = $this->query("show variables like 'character_set_%'");
+        $res = $this->query("show variables like 'character\\_set\\_%'");
         while($row = $this->fetchByAssoc($res)) {
             $charsets[$row['Variable_name']] = $row['Value'];
         }
