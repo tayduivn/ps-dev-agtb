@@ -2240,8 +2240,6 @@ eoq;
 		$ret['description'] = $description;
 		$ret['from'] = (isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'forward') ? "" : $email->from_addr;
 		$ret['to'] = from_html($toAddresses);
-		$ret['cc'] = from_html($ccAddresses);
-		$ret['bcc'] = $bccAddresses;
 		$ret['uid'] = $email->id;
 		$ret['parent_name'] = $email->parent_name;
 		$ret['parent_type'] = $email->parent_type;
@@ -2249,6 +2247,9 @@ eoq;
 
 		// reply all
 		if(isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'replyAll') {
+		    $ret['cc'] = from_html($ccAddresses);
+		    $ret['bcc'] = $bccAddresses;
+
 			$userEmails = array();
 			$userEmailsMeta = $ea->getAddressesByGUID($current_user->id, 'Users');
 			foreach($userEmailsMeta as $emailMeta) {
