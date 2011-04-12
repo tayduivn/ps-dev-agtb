@@ -119,7 +119,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     }
     //END SUGARCRM flav=pro || flav=sales ONLY
 
-    public function getEmailTemplateValue($inputField, $vardef, $context = null){
+	public function getEmailTemplateValue($inputField, $vardef, $context = null, $tabindex = 0){
         // This does not return a smarty section, instead it returns a direct value
         if(isset($context['notify_user'])) {
             $user = $context['notify_user'];
@@ -128,8 +128,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         }
         return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
     }
-
-
+    
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {

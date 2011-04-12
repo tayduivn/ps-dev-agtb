@@ -38,7 +38,7 @@
 <h4><a href='javascript:void(0);' onclick='document.getElementById("directions").style.display="";'>Click here for directions to add this site to the acceptable referer list</a></h4>
 </div>
 <div id='directions' style='display:none'>
-	<h3>Directions</h3>
+	<h3>Directions:</h3>
 	<ol>
 		<li>On your file system go to the root of your SugarCRM instance
 		<li>Open the file config_override.php. If it does not exist, create it. (it should be at the same level as index.php and config.php)
@@ -46,7 +46,7 @@
 		<li>Add the following line to your config_override.php file<br> <pre>$sugar_config['http_referer']['list'][] = '{$host}';</pre>
 		<li>Save the file and it should work
 	</ol>
-	<h3>Attempted action ({$action})</h3>
+	<h3>Attempted action ({$action}):</h3>
 	If you feel this is a valid action that should be allowed from any referer, add the following to your config_override.php file
 	<ul><li><pre>$sugar_config['http_referer']['actions'] =array( {$whiteListString} ); </pre></ul>
 </div>

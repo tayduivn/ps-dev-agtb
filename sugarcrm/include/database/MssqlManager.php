@@ -831,12 +831,15 @@ class MssqlManager extends DBManager
             //and is not part of a function (i.e. "ISNULL(leads.last_name,'') as name"  )
             //this is especially true for unified search from home screen
 
+            $alias_beg_pos = 0;
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
-            else
+            else if (strncasecmp($psql, 'isnull', 6))
                 $alias_beg_pos = strpos($psql, " ");
 
-            $col_name = substr($psql,0, $alias_beg_pos );
+            if ($alias_beg_pos > 0) {
+                $col_name = substr($psql,0, $alias_beg_pos );
+            }
             //add the "asc/desc" order back
             $col_name = $col_name. " ". $asc_desc;
 

@@ -341,6 +341,7 @@ class ListViewDisplay {
 
 		$menuItems = str_replace('"','\"',$menuItems);
 		$menuItems = str_replace(array("\r","\n"),'',$menuItems);
+
 		if ( empty($menuItems) )
 		    return '';
 
@@ -371,7 +372,6 @@ EOHTML;
 	protected function buildExportLink()
 	{
 		global $app_strings;
-
 		return "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' onclick=\"return sListView.send_form(true, '{$this->seed->module_dir}', 'index.php?entryPoint=export','{$app_strings['LBL_LISTVIEW_NO_SELECTED']}')\">{$app_strings['LBL_EXPORT']}</a>";
 	}
 

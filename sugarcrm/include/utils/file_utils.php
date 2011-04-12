@@ -427,4 +427,9 @@ function get_mime_content_type_from_filename($filename)
     return '';
 }
 
+function cleanFileName($name)
+{
+    return preg_replace('/[^\w-._]+/i', '', $name);
+}
+
 ?>

@@ -40,7 +40,6 @@ $entry_point_registry = array(
     'json_server' => array('file' => 'json_server.php', 'auth' => true),
 	'HandleAjaxCall' => array('file' => 'HandleAjaxCall.php', 'auth' => true),
 	'TreeData' => array('file' => 'TreeData.php', 'auth' => true),
-	'oc_convert' => array('file' => 'oc_convert.php', 'auth' => false),
 	'ExampleLeadCapture' => array('file' => 'examples/ExampleLeadCapture.php', 'auth' => false),
 	'FormValidationTest' => array('file' => 'examples/FormValidationTest.php', 'auth' => false),
 	'ProgressBarTest' => array('file' => 'examples/ProgressBarTest.php', 'auth' => false),
@@ -72,7 +71,7 @@ $entry_point_registry = array(
     'GenerateQuickComposeFrame' => array('file' => 'modules/Emails/GenerateQuickComposeFrame.php', 'auth' => true),
     'DetailUserRole' => array('file' => 'modules/ACLRoles/DetailUserRole.php', 'auth' => true),
     'getYUIComboFile' => array('file' => 'include/javascript/getYUIComboFile.php', 'auth' => false),
-    'UploadFileCheck' => array('file' => 'modules/Configurator/UploadFileCheck.php', 'auth' => false),
+    'UploadFileCheck' => array('file' => 'modules/Configurator/UploadFileCheck.php', 'auth' => true),
     'SAML'=>  array('file' => 'modules/Users/authentication/SAMLAuthenticate/index.php', 'auth' => false),
 );
 ?>
