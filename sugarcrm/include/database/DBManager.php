@@ -3082,4 +3082,9 @@ abstract class DBManager
      */
     abstract public function lastError();
 
+    /**
+     * Check if this query is valid
+     */
+    abstract public function validateQuery($query);
+
 }

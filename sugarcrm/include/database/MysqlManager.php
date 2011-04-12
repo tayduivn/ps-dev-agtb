@@ -1050,4 +1050,9 @@ class MysqlManager extends DBManager
           );
     }
 
+    public function validateQuery($query)
+    {
+        $res = $this->getOne("EXPLAIN $query");
+        return !empty($res);
+    }
 }

@@ -213,34 +213,9 @@ class CustomQuery extends SugarBean {
 		}
 		//This checks for either a bad query or checks for a wrong type of query.  Will only pass if
 		//it is a select statement.
-
-		$query = html_entity_decode("EXPLAIN ".$this->custom_query, ENT_QUOTES);
-		if($this->db_slave->dbType=='mysql'){
-			$result =$this->db_slave->query($query, false, "", true);
-			$GLOBALS['log']->debug("explain custom query: ".print_r($result,true));
-		//end if db is mysql
-		}
-		elseif($this->db_slave->dbType=='mssql')
-		{
-			//run query, if fails, "false" will be returned
-			$result =$this->db_slave->query($query, false, "", true);
-			$GLOBALS['log']->debug("explain custom query: ".print_r($result,true));
-
-		//end if db is mssql
-		//$result = true;
-		}
-		elseif($this->db_slave->dbType=='oci8')
-		{
-//BEGIN SUGARCRM flav=ent ONLY
-			$explain_error = $this->pseudo_explain_oracle($query);
-			if(!$explain_error){
-				$result =$this->db_slave->query($query, false, "", true);
-				$GLOBALS['log']->debug("explain custom query: ".print_r($result,true));
-			} else {
-				$result = false;
-			}
-//END SUGARCRM flav=ent ONLY
-		}
+        if(!$this->check_selects($this->custom_query) || !$this->db_slave->validateQuery($this->custom_query)) {
+			$result = false;
+        }
 
 		if(!$result){
 
@@ -629,7 +604,7 @@ in use by a data set, especially if the data set has the custom layout enabled.
 	End function group dealing with changes to custom query
 */
 
-	function pseudo_explain_oracle($query){
+	function check_selects($query){
 	//This function is used to mimic the explain function in MYSQL
 	//Checks for invalid query types
 		$select_check = strpos(strtolower($query), strtolower("SELECT"));

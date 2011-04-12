@@ -1408,4 +1408,11 @@ EOQ;
         $res = $this->getOne("SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = '$oracle_priv'", false);
         return !empty($res);
     }
+
+    // FIXME: provide real validation
+    public function validateQuery($query)
+    {
+        $res = $this->getOne("EXPLAIN $query");
+        return !empty($res);
+    }
 }

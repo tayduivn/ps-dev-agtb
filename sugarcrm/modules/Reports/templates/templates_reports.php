@@ -51,14 +51,14 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	global $current_language;
 	global $mod_strings, $app_strings, $timedate;
 	global $sugar_config, $sugar_version;
-		
+
 	$sort_by = '';
 	$sort_dir = '';
 	$summary_sort_by = '';
 	$summary_sort_dir = '';
 	$report_type = '';
-	
-	
+
+
 	$smarty = new Sugar_Smarty();
 
 	if (isset($reporter->report_def['order_by'][0]['name']) && isset($reporter->report_def['order_by'][0]['table_key'])) {
@@ -67,32 +67,32 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	if (isset($reporter->report_def['order_by'][0]['sort_dir'])) {
 		$sort_dir = $reporter->report_def['order_by'][0]['sort_dir'];
 	} // if
-	
+
 	if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && $reporter->report_def['summary_order_by'][0]['group_function'] == 'count') {
-	
+
 	  $summary_sort_by = 'count';
 	} else if ( isset($reporter->report_def['summary_order_by'][0]['name'])) {
 		$summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".$reporter->report_def['summary_order_by'][0]['name'];
-	
+
 		if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function'])) {
 			$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['group_function'];
 		} else if ( ! empty($reporter->report_def['summary_order_by'][0]['column__function'])) {
 	    	$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['column_function'];
 	    } // else if
 	} // else if
-	
+
 	if ( isset($reporter->report_def['summary_order_by'][0]['sort_dir'])) {
 		$summary_sort_dir = $reporter->report_def['summary_order_by'][0]['sort_dir'];
 	} // if
 	if ( isset($reporter->report_def['report_type'])) {
 		$report_type = $reporter->report_def['report_type'];
 	} // if
-		
+
 	$issetSaveResults = false;
 	$isSaveResults = false;
 	if (isset($args['save_result'])) {
 		$issetSaveResults = true;
-		$smarty->assign('save_report_as_str', $_REQUEST['save_report_as']);	
+		$smarty->assign('save_report_as_str', $_REQUEST['save_report_as']);
 		if($args['save_result']) {
 			$isSaveResults = true;
 		} // if
@@ -104,32 +104,32 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	// Summation with Details
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['display_columns']) && count($reporter->report_def['display_columns']) > 0 )) {
 		$canCovertToMatrix = 0;
-		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  )) 						
+		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
-	} 
+	}
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'matrix\');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
-	} 
+	}
 	// Summation
 	else if ($report_type == 'summary') {
 		$canCovertToMatrix = 0;
-		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  )) 						
+		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  ))
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation\','.$canCovertToMatrix.');" type="button">' .
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
-	} 	
+	}
 
-	$smarty->assign('duplicateButtons', $duplicateButtons);	
-	
+	$smarty->assign('duplicateButtons', $duplicateButtons);
+
 	$smarty->assign('mod_strings', $mod_strings);
-	$smarty->assign('app_strings', $app_strings);	
+	$smarty->assign('app_strings', $app_strings);
 	$smarty->assign('current_language', $current_language);
 	$smarty->assign('sugar_config', $sugar_config);
-	$smarty->assign('sugar_version', $sugar_version);	
+	$smarty->assign('sugar_version', $sugar_version);
 	$smarty->assign('issetSaveResults', $issetSaveResults);
 	$smarty->assign('isSaveResults', $isSaveResults);
 	$smarty->assign('report_type', $report_type);
@@ -143,7 +143,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$smarty->assign('sort_dir', $sort_dir);
 	$smarty->assign('summary_sort_by', $summary_sort_by);
 	$smarty->assign('summary_sort_dir', $summary_sort_dir);
-	
+
 	if (isset($_REQUEST['save_as']) &&  $_REQUEST['save_as'] == 'true') {
 	    $report_id = '';
 	} else if (isset($reporter->saved_report->id) ) {
@@ -151,13 +151,13 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	} elseif(!empty($_REQUEST['record'])) {
 	    $report_id = $_REQUEST['record'];
 	} else {
-	    $report_id = ''; 
+	    $report_id = '';
 	} // else
-    	
+
 	$smarty->assign('report_id', $report_id);
 	$smarty->assign('to_pdf', isset($_REQUEST['to_pdf']) ? $_REQUEST['to_pdf'] : "");
 	$smarty->assign('to_csv', isset($_REQUEST['to_csv']) ? $_REQUEST['to_csv'] : "");
-	
+
 	$isAdmin = false;
 	if ($current_user->is_admin) {
 		$isAdmin = true;
@@ -169,13 +169,13 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 			$smarty->assign('show_query_checked', true);
 		} // if
 	} // if
-	
+
 	$schedule_value = $app_strings['LBL_LINK_NONE'];
 	if(isset($args['reporter']->saved_report->schedule_id) && $args['reporter']->saved_report->active == 1) {
 		$schedule_value = $timedate->to_display_date_time($args['reporter']->saved_report->next_run);
 	} // if
 	$smarty->assign('schedule_value', $schedule_value);
-	
+
 	$current_favorites = $current_user->getPreference('favorites', 'Reports');
 	if (!is_array($current_favorites)){
 		$current_favorites = array();
@@ -184,24 +184,24 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	if (!is_array($report_ids_array)) {
 		$report_ids_array = array();
 	} // if
-	
+
 	if (isset($args['warnningMessage'])) {
-		$smarty->assign('warnningMessage', $args['warnningMessage']);		
+		$smarty->assign('warnningMessage', $args['warnningMessage']);
 	} // if
 	$is_owner =  true;
 	if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
-		$is_owner = false;	
+		$is_owner = false;
 	} // if
 	$report_edit_access = false;
 	if(ACLController::checkAccess('Reports', 'edit', $is_owner)) {
-		$report_edit_access = true;	
+		$report_edit_access = true;
 	} // if
 	$smarty->assign('report_edit_access', $report_edit_access);
 	$report_export_access = false;
 	if(ACLController::checkAccess('Reports', 'export', $is_owner)) {
-		$report_export_access = true;	
+		$report_export_access = true;
 	} // if
-	
+
 	$isExportAccess = false;
 	if(!ACLController::checkAccess('Reports', 'export', $is_owner) || $sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user) || (ACLController::moduleSupportsACL($reporter->module) && ACLAction::getUserAccessLevel($current_user->id,$reporter->module, 'access') == ACL_ALLOW_ENABLED && ACLAction::getUserAccessLevel($current_user->id, $reporter->module, 'admin') == ACL_ALLOW_ADMIN)))){
 		// no op
@@ -211,18 +211,17 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		}
 	} // else
 
-	$smarty->assign('report_export_access', $report_export_access);	
-	$smarty->assign('report_export_as_csv_access', $isExportAccess);	
+	$smarty->assign('report_export_access', $report_export_access);
+	$smarty->assign('report_export_as_csv_access', $isExportAccess);
 	$smarty->assign('form_submit', empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);
-	
+
 	$global_json = getJSONobj();
-	global $ACLAllowedModules; 
+	global $ACLAllowedModules;
 	$ACLAllowedModules = getACLAllowedModules();
-	$smarty->assign('ACLAllowedModules', $global_json->encode(array_keys($ACLAllowedModules))); 	
+	$smarty->assign('ACLAllowedModules', $global_json->encode(array_keys($ACLAllowedModules)));
 
 	template_reports_filters($smarty, $args);
 	$smarty->assign('reporter_report_type', $args['reporter']->report_type);
-	$smarty->assign('reporter_db_dbType', $reporter->db->dbType);
 	$smarty->assign('md5_current_user_id', md5($current_user->id));
 	if (!hasRuntimeFilter($reporter)) {
 		//$showRunReportButton = false;
@@ -244,7 +243,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		} // if
 	} // if
 	//END SUGARCRM flav!=sales ONLY
-	
+
 	//BEGIN SUGARCRM flav=sales ONLY
 	$reportDetailsButtonTitle = $mod_strings['LBL_REPORT_SHOW_DETAILS'];
 	$reportDetailsTableStyle = 'display:none';
@@ -258,8 +257,8 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		} // if
 	} // if
 	//END SUGARCRM flav=sales ONLY
-	
-	
+
+
 	$smarty->assign('reportDetailsButtonTitle', $reportDetailsButtonTitle);
 	$smarty->assign('reportDetailsTableStyle', $reportDetailsTableStyle);
     $smarty->assign('cache_path', $GLOBALS['sugar_config']['cache_dir']);
@@ -270,10 +269,10 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$resources = $sugarChart->getChartResources();
 	$smarty->assign('chartResources', $resources);
 	$smarty->assign('id', empty($_REQUEST['id']) ? false : $_REQUEST['id']);
-	
+
 	echo $smarty->fetch("modules/Reports/templates/_reportCriteriaWithResult.tpl");
-	
-	reportResults($reporter, $args);	
+
+	reportResults($reporter, $args);
 } // fn
 
 function hasRuntimeFilter(&$reporter) {
@@ -317,11 +316,11 @@ function checkFilterModified($filters, $filterModified, &$newFilters) {
 		if ((isset($filters['operator']) && !isset($newFilters['operator'])) ||
 			(!isset($filters['operator']) && isset($newFilters['operator'])) ||
 			($filters['operator'] != $newFilters['operator'])) {
-			
+
 			$filterModified = true;
 			return $filterModified;
 		} // if
-	}	
+	}
 	$i = 0;
 	while (isset($filters[$i])) {
 		$current_filter = $filters[$i];
@@ -345,12 +344,12 @@ function checkFilterModified($filters, $filterModified, &$newFilters) {
 				$filterModified = true;
 				return true;
 			} // if
-			if((isset($current_filter['runtime']) && !isset($new_filter['runtime'])) 
+			if((isset($current_filter['runtime']) && !isset($new_filter['runtime']))
 				|| (!isset($current_filter['runtime']) && isset($new_filter['runtime']))) {
 				$filterModified = true;
 				return true;
-			} // if	
-			
+			} // if
+
 			//do not perform this check if runtime filter
 			if(!isset($current_filter['runtime']) && !isset($new_filter['runtime'])) {
 				$item = 0;
@@ -383,7 +382,7 @@ function checkFilterModified($filters, $filterModified, &$newFilters) {
 function getFlatListFilterContents($filters, &$filterContentsArray) {
 	$i = 0;
 	if (isset($filters['operator'])) {
-		$filterContentsArray[] = $filters['operator'];		
+		$filterContentsArray[] = $filters['operator'];
 	}
 	while (isset($filters[$i])) {
 		$current_filter = $filters[$i];
@@ -395,7 +394,7 @@ function getFlatListFilterContents($filters, &$filterContentsArray) {
 			$filterContentsArray[] = $current_filter;
 		} // else
 		$i++;
-	} // while	
+	} // while
 } // fn
 
 function hasReportFilterModified($reportId, $filtersContent) {
@@ -407,7 +406,7 @@ function hasReportFilterModified($reportId, $filtersContent) {
 			(!is_array($filtersContent) && is_array($reportCache->contents_array)) ||
 			(!empty($filtersContent) && empty($reportCache->contents_array)) ||
 			(empty($filtersContent) && !empty($reportCache->contents_array))) {
-				
+
 				$isModified = true;
 		} else {
 				$filterContentsArray = array();
@@ -424,7 +423,7 @@ function hasReportFilterModified($reportId, $filtersContent) {
 	$returnArray['reportCache'] = $reportCache;
 	$returnArray['isModified'] = $isModified;
 	return $returnArray;
-	
+
 } // fn
 
 function saveReportFilters($reportId, $filtersContent) {
@@ -446,7 +445,7 @@ function updateReportAccessDate($reportId, $filtersContent) {
 		$reportCache->id = $reportId;
 		$reportCache->new_with_id = true;
 		$reportCache->contents = $filtersContent;
-		$reportCache->save();	
+		$reportCache->save();
 	} else {
 		$reportCache->update();
 	}
@@ -474,9 +473,9 @@ function getReportDetailViewString(&$reporter,&$args) {
 	$reportName = $reporter->name;
 	$focus = $reporter->saved_report;
 	$assignedUserName = '';
-	$assignedTeamName = '';	
+	$assignedTeamName = '';
 	$reportType = ($reporter->report_def['report_type'] == 'tabular' ? $mod_strings['LBL_ROWS_AND_COLUMNS_REPORT'] : $mod_strings['LBL_SUMMATION_REPORT']);
-	
+
 	$detailViewString = "<table border=0 width=\'50%\' cellspacing=\'0\' cellpadding=\'0\'><tr class={$classname}><td class={$classname}>{$mod_strings['LBL_REPORT_NAME']}:";
 	$detailViewString = $detailViewString . str_replace($order, "", $reportName);
 	$detailViewString = $detailViewString . "</td>";
@@ -492,58 +491,58 @@ function template_reports_report(&$reporter,&$args) {
 	global $current_language;
 	global $mod_strings, $app_strings;
 	global $sugar_config, $sugar_version;
-	
+
 	$sort_by = '';
 	$sort_dir = '';
 	$summary_sort_by = '';
 	$summary_sort_dir = '';
 	$report_type = '';
-	
-	
+
+
 	$smarty = new Sugar_Smarty();
-	
+
 	if (isset($reporter->report_def['order_by'][0]['name']) && isset($reporter->report_def['order_by'][0]['table_key'])) {
 		$sort_by = $reporter->report_def['order_by'][0]['table_key'].":".$reporter->report_def['order_by'][0]['name'];
 	} // if
 	if (isset($reporter->report_def['order_by'][0]['sort_dir'])) {
 		$sort_dir = $reporter->report_def['order_by'][0]['sort_dir'];
 	} // if
-	
+
 	if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && $reporter->report_def['summary_order_by'][0]['group_function'] == 'count') {
-	
+
 	  $summary_sort_by = 'count';
 	} else if ( isset($reporter->report_def['summary_order_by'][0]['name'])) {
 		$summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".$reporter->report_def['summary_order_by'][0]['name'];
-	
+
 		if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function'])) {
 			$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['group_function'];
 		} else if ( ! empty($reporter->report_def['summary_order_by'][0]['column__function'])) {
 	    	$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['column_function'];
 	    } // else if
 	} // else if
-	
+
 	if ( isset($reporter->report_def['summary_order_by'][0]['sort_dir'])) {
 		$summary_sort_dir = $reporter->report_def['summary_order_by'][0]['sort_dir'];
 	} // if
 	if ( isset($reporter->report_def['report_type'])) {
 		$report_type = $reporter->report_def['report_type'];
 	} // if
-	
+
 	$issetSaveResults = false;
 	$isSaveResults = false;
 	if (isset($args['save_result'])) {
 		$issetSaveResults = true;
-		$smarty->assign('save_report_as_str', $_REQUEST['save_report_as']);	
+		$smarty->assign('save_report_as_str', $_REQUEST['save_report_as']);
 		if($args['save_result']) {
 			$isSaveResults = true;
 		} // if
 	} // if
-	
+
 	$smarty->assign('mod_strings', $mod_strings);
-	$smarty->assign('app_strings', $app_strings);	
+	$smarty->assign('app_strings', $app_strings);
 	$smarty->assign('current_language', $current_language);
 	$smarty->assign('sugar_config', $sugar_config);
-	$smarty->assign('sugar_version', $sugar_version);	
+	$smarty->assign('sugar_version', $sugar_version);
 	$smarty->assign('issetSaveResults', $issetSaveResults);
 	$smarty->assign('isSaveResults', $isSaveResults);
 	$smarty->assign('report_type', $report_type);
@@ -555,7 +554,7 @@ function template_reports_report(&$reporter,&$args) {
 	$smarty->assign('sort_dir', $sort_dir);
 	$smarty->assign('summary_sort_by', $summary_sort_by);
 	$smarty->assign('summary_sort_dir', $summary_sort_dir);
-	
+
 	if (isset($_REQUEST['save_as']) &&  $_REQUEST['save_as'] == 'true') {
 	    $report_id = '';
 	} else if (isset($reporter->saved_report->id) ) {
@@ -563,38 +562,38 @@ function template_reports_report(&$reporter,&$args) {
 	} elseif(!empty($_REQUEST['record'])) {
 	    $report_id = $_REQUEST['record'];
 	} else {
-	    $report_id = ''; 
+	    $report_id = '';
 	} // else
-    	
+
 	$smarty->assign('report_id', $report_id);
 	$smarty->assign('to_pdf', isset($_REQUEST['to_pdf']) ? $_REQUEST['to_pdf'] : "");
 	$smarty->assign('to_csv', isset($_REQUEST['to_csv']) ? $_REQUEST['to_csv'] : "");
-	
+
 	$is_owner =  true;
 	if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
-		$is_owner = false;	
+		$is_owner = false;
 	} // if
 	$report_edit_access = false;
 	if(ACLController::checkAccess('Reports', 'edit', $is_owner)) {
-		$report_edit_access = true;	
+		$report_edit_access = true;
 	} // if
 	$smarty->assign('report_edit_access', $report_edit_access);
 	$report_export_access = false;
 	if(ACLController::checkAccess('Reports', 'export', $is_owner)) {
-		$report_export_access = true;	
+		$report_export_access = true;
 	} // if
-	$smarty->assign('report_export_access', $report_export_access);	
+	$smarty->assign('report_export_access', $report_export_access);
 	$smarty->assign('form_submit', empty($_REQUEST['form_submit']) ? false : $_REQUEST['form_submit']);
-	
+
 	$global_json = getJSONobj();
-	global $ACLAllowedModules; 
+	global $ACLAllowedModules;
 	$ACLAllowedModules = getACLAllowedModules();
-	$smarty->assign('ACLAllowedModules', $global_json->encode(array_keys($ACLAllowedModules))); 	
-		
+	$smarty->assign('ACLAllowedModules', $global_json->encode(array_keys($ACLAllowedModules)));
+
 	require_once('include/tabs.php');
-	                                                                                     
+
 	$tabs = array();
-	                                                                                     
+
 	array_push($tabs,array('title'=>$mod_strings['LBL_1_REPORT_ON'],'link'=>'module_join_tab','key'=>'module_join_tab'));
 	array_push($tabs,array('title'=>$mod_strings['LBL_2_FILTER'],'link'=>'filters_tab','key'=>'filters_tab'));
 	//array_push($tabs,array('title'=>$mod_strings['LBL_3_GROUP'],'link'=>'group_by_tab','key'=>'group_by_tab'));
@@ -608,13 +607,13 @@ function template_reports_report(&$reporter,&$args) {
 	  array_push($tabs,array('title'=>$mod_strings['LBL_4_CHOOSE'],'link'=>'columns_tab','key'=>'columns_tab'));
 	  array_push($tabs,array('title'=>$mod_strings['LBL_5_CHART_OPTIONS'],'link'=>'chart_options_tab','key'=>'chart_options_tab'));
 	}
-	
+
 	$current_key = 'module_join_tab';
 	$tab_panel= new SugarWidgetTabs($tabs,$current_key,'showReportTab');
 	$smarty->assign('tab_panel_display', $tab_panel->display());
-	
-	template_reports_tables($smarty, $args);	
-	
+
+	template_reports_tables($smarty, $args);
+
 	if( $reporter->report_type=='summary') {
 		$summary_display = '';
 	 	if ( $reporter->show_columns) {
@@ -626,43 +625,42 @@ function template_reports_report(&$reporter,&$args) {
 		 $summary_display = 'none';
 		 $column_display = '';
 	} // else
-	
+
 	$summary_join_selector = '&nbsp;<div style="padding-bottom:2px">'.$mod_strings['LBL_MODULE'].': <select onChange="viewJoinChanged(this);" id="view_join_summary" name="view_join_summary"></select></div>';
-	
+
 	$chooser_args_summary = array('id'=>'summary_table','title'=>$mod_strings['LBL_CHOOSE_SUMMARIES'].':','left_name'=>'display_summary','right_name'=>'hidden_summary','left_label'=>$mod_strings['LBL_DISPLAY_SUMMARIES'],'right_label'=>$summary_join_selector,'display'=>$summary_display,'onmoveleft'=>'reload_columns(\'join\')','onmoveright'=>'reload_columns(\'join\')');
-		
+
 	$join_selector = '&nbsp;<div style="padding-bottom:2px">'.$mod_strings['LBL_MODULE'].': <select onChange="viewJoinChanged(this);" id="view_join" name="view_join"></select></div>';
-	
-	$chooser_args = array('id'=>'columns_table','title'=>$mod_strings['LBL_CHOOSE_COLUMNS'].':','left_name'=>'display_columns','right_name'=>'hidden_columns','left_label'=>$mod_strings['LBL_DISPLAY_COLUMNS'],'right_label'=>$join_selector,'display'=>$column_display,'topleftcontent'=>$join_selector,'onmoveleft'=>'reload_columns(\'join\')','onmoveright'=>'reload_columns(\'join\')');	
-	
+
+	$chooser_args = array('id'=>'columns_table','title'=>$mod_strings['LBL_CHOOSE_COLUMNS'].':','left_name'=>'display_columns','right_name'=>'hidden_columns','left_label'=>$mod_strings['LBL_DISPLAY_COLUMNS'],'right_label'=>$join_selector,'display'=>$column_display,'topleftcontent'=>$join_selector,'onmoveleft'=>'reload_columns(\'join\')','onmoveright'=>'reload_columns(\'join\')');
+
 	$smarty->assign('template_grups_choosers1', template_groups_chooser($chooser_args_summary));
-	
+
 	if ($summary_display == 'none') {
-		$smarty->assign('summary_display_style', "display:none");		
+		$smarty->assign('summary_display_style', "display:none");
 	} // if
 	if ($reporter->show_columns) {
-		$smarty->assign('show_columns_reports', true);		
+		$smarty->assign('show_columns_reports', true);
 	} // if
 	$smarty->assign('column_display', $column_display);
-	
+
 	$smarty->assign('template_grups_choosers2', template_groups_chooser($chooser_args));
 	template_reports_filters($smarty, $args);
 	$smarty->assign('reporter_report_type', $args['reporter']->report_type);
 	template_reports_group_by($smarty, $args);
 	template_reports_chart_options($smarty, $args);
-	$smarty->assign('reporter_db_dbType', $reporter->db->dbType);
 	$smarty->assign('md5_current_user_id', md5($current_user->id));
 	$smarty->assign('args_image_path', $args['IMAGE_PATH']);
 	template_reports_request_vars_js($smarty, $reporter,$args);
 	$smarty->assign('cache_path', $GLOBALS['sugar_config']['cache_dir']);
 	echo $smarty->fetch("modules/Reports/templates/_template_reports_report.tpl");
-	
+
 ob_start();
 ?>
 <script language="javascript">
 if(typeof YAHOO != 'undefined') YAHOO.util.Event.addListener(window, 'load', load_page);
 </script>
-<?php 
+<?php
 reportResults($reporter, $args);
 /*
 $do_chart = false;
@@ -670,25 +668,25 @@ $do_chart = false;
 $dbStart = microtime();
 
 if ($reporter->report_type == 'summary' && ! empty($reporter->report_def['summary_columns'])) {
-	if ($reporter->show_columns && 
-		!empty($reporter->report_def['display_columns']) && 
+	if ($reporter->show_columns &&
+		!empty($reporter->report_def['display_columns']) &&
         !empty($reporter->report_def['group_defs'])) {
-			
+
 		template_summary_combo_view($reporter,$args);
 		$do_chart = true;
-	
-    } else if($reporter->show_columns && 
-	          !empty($reporter->report_def['display_columns']) && 
+
+    } else if($reporter->show_columns &&
+	          !empty($reporter->report_def['display_columns']) &&
           	   empty($reporter->report_def['group_defs'])) {
 		template_detail_and_total_list_view($reporter,$args);
 	} else if (!empty($reporter->report_def['group_defs'])) {
-		template_summary_list_view($reporter,$args); 
+		template_summary_list_view($reporter,$args);
 		$do_chart = true;
 	} else {
-		template_total_view($reporter,$args); 
+		template_total_view($reporter,$args);
 	} // else
 } else if (!empty($reporter->report_def['display_columns'])) {
-	template_list_view($reporter,$args); 
+	template_list_view($reporter,$args);
 } // else if
 
 if ($reporter->report_def['chart_type']== 'none') {
@@ -701,7 +699,7 @@ echo "time = " . microtime_diff($dbStart, microtime())."s ";
 	$contents = ob_get_contents();
 	ob_end_clean();
 
-	if ($do_chart) {	
+	if ($do_chart) {
    		template_chart($reporter);
 	} // if
 
@@ -714,29 +712,29 @@ function reportResults(&$reporter, &$args) {
 	echo '<div id="report_results">';
 
 	$do_chart = false;
-	
+
 	if ($reporter->report_type == 'summary' && ! empty($reporter->report_def['summary_columns'])) {
-		if ($reporter->show_columns && 
-			!empty($reporter->report_def['display_columns']) && 
+		if ($reporter->show_columns &&
+			!empty($reporter->report_def['display_columns']) &&
 	        !empty($reporter->report_def['group_defs'])) {
-				
+
 			template_summary_combo_view($reporter,$args);
 			$do_chart = true;
-		
-	    } else if($reporter->show_columns && 
-		          !empty($reporter->report_def['display_columns']) && 
+
+	    } else if($reporter->show_columns &&
+		          !empty($reporter->report_def['display_columns']) &&
 	          	   empty($reporter->report_def['group_defs'])) {
 			template_detail_and_total_list_view($reporter,$args);
 		} else if (!empty($reporter->report_def['group_defs'])) {
-			template_summary_list_view($reporter,$args); 
+			template_summary_list_view($reporter,$args);
 			$do_chart = true;
 		} else {
-			template_total_view($reporter,$args); 
+			template_total_view($reporter,$args);
 		} // else
 	} else if (!empty($reporter->report_def['display_columns'])) {
-		template_list_view($reporter,$args); 
+		template_list_view($reporter,$args);
 	} // else if
-	
+
 	$searchArray = array("'", "\r\n", "\n");
 	$replaceArray = array("\\'", "", "");
 	$filterStringForUI = str_replace($searchArray, $replaceArray, $reporter->createFilterStringForUI());
@@ -750,7 +748,7 @@ function reportResults(&$reporter, &$args) {
 
 	if ($do_chart) {
 	global $mod_strings;
-	
+
 	$reportChartButtonTitle = $mod_strings['LBL_REPORT_HIDE_CHART'];
 	$reportChartDivStyle = "";
 	if (isset($args['reportCache'])) {
@@ -763,8 +761,8 @@ function reportResults(&$reporter, &$args) {
 		} // if
 	} // if
 
-	echo "<input class=\"button\" name=\"showHideChartButton\" id=\"showHideChartButton\" title=\"{$reportChartButtonTitle}\" 
-	type=\"button\" value=\"{$reportChartButtonTitle}\" onclick=\"showHideChart();\"><br/><br/>";		
+	echo "<input class=\"button\" name=\"showHideChartButton\" id=\"showHideChartButton\" title=\"{$reportChartButtonTitle}\"
+	type=\"button\" value=\"{$reportChartButtonTitle}\" onclick=\"showHideChart();\"><br/><br/>";
 
 	echo "<script>function showHideChart() {
 	var idObject = document.getElementById('record');
@@ -780,7 +778,7 @@ function reportResults(&$reporter, &$args) {
 		showHideChartButton.title = \"{$mod_strings['LBL_REPORT_HIDE_CHART']}\";
 		showHideChartButton.value = \"{$mod_strings['LBL_REPORT_HIDE_CHART']}\";
 	} else {
-		chartId.style.display = 'none';		
+		chartId.style.display = 'none';
 		saveReportOptionsState('showChart', '0');
 		showHideChartButton.title = \"{$mod_strings['LBL_REPORT_SHOW_CHART']}\";
 		showHideChartButton.value = \"{$mod_strings['LBL_REPORT_SHOW_CHART']}\";
@@ -828,7 +826,7 @@ if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && 
 	} else if ( ! empty($reporter->report_def['summary_order_by'][0]['column__function'])) {
 
                 $summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['column_function'];
-        } 
+        }
 }
 
 if ( isset($reporter->report_def['summary_order_by'][0]['sort_dir']))
@@ -873,17 +871,17 @@ if (isset($args['save_result']))
 <input type="hidden" name='expanded_combo_summary_divs' id='expanded_combo_summary_divs' value=''>
 <input type="hidden" name="action" value="index">
 <input type="hidden" name="module" value="Reports">
-<?php 
+<?php
 
 
 if (isset($_REQUEST['save_as']) &&  $_REQUEST['save_as'] == 'true')
     $report_id = '';
 else if (isset($reporter->saved_report->id) )
     $report_id = $reporter->saved_report->id;
-elseif(!empty($_REQUEST['record'])) 
+elseif(!empty($_REQUEST['record']))
     $report_id = $_REQUEST['record'];
-else  
-    $report_id = ''; 
+else
+    $report_id = '';
 ?>
 <input type="hidden" name="record" value="<?php echo $report_id;?>">
 <input type="hidden" name='report_def' value ="">
@@ -900,33 +898,33 @@ else
 <td style="padding-bottom: 2px;"">
 <?php
 $is_owner =  true;
-if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) 
+if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id)
 	$is_owner = false;
 
-if(ACLController::checkAccess('Reports', 'edit', $is_owner)) 
+if(ACLController::checkAccess('Reports', 'edit', $is_owner))
 {?>
-<input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_KEY']?>" 
-    value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''"> 
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $app_strings['LBL_SAVE_BUTTON_KEY']?>" 
-    value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>" 
+<input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_KEY']?>"
+    value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
+<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $app_strings['LBL_SAVE_BUTTON_KEY']?>"
+    value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_KEY']?>" 
-    value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'"> 
-<?php }?>    
-<?php		
-if(ACLController::checkAccess('Reports', 'export', $is_owner)) 
+<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_KEY']?>"
+    value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
+<?php }?>
+<?php
+if(ACLController::checkAccess('Reports', 'export', $is_owner))
 {
-?>   
-<input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_KEY']?>" 
-    value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>" 
+?>
+<input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_KEY']?>"
+    value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
-<?php }?>    
+<?php }?>
 </td>
 </tr>
 </table>
@@ -939,14 +937,14 @@ function showReportTab(show_key)
  for(var i in tab_keys)
  {
 	document.getElementById(tab_keys[i]).style.display='none';
- } 
+ }
  document.getElementById(show_key).style.display='block';
 }
 <?php
 $global_json = getJSONobj();
-global $ACLAllowedModules; 
+global $ACLAllowedModules;
 $ACLAllowedModules = getACLAllowedModules();
-echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules)); 
+echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules));
 ?>
 
 </script>
@@ -954,14 +952,14 @@ echo 'ACLAllowedModules = ' . $global_json->encode(array_keys($ACLAllowedModules
 
 
 require_once('include/tabs.php');
-                                                                                     
+
 $tabs = array();
-                                                                                     
+
 array_push($tabs,array('title'=>$mod_strings['LBL_1_REPORT_ON'],'link'=>'module_join_tab','key'=>'module_join_tab'));
 array_push($tabs,array('title'=>$mod_strings['LBL_2_FILTER'],'link'=>'filters_tab','key'=>'filters_tab'));
 //array_push($tabs,array('title'=>$mod_strings['LBL_3_GROUP'],'link'=>'group_by_tab','key'=>'group_by_tab'));
 //array_push($tabs,array('title'=>$mod_strings['LBL_3_CHOOSE'],'link'=>'columns_tab','key'=>'columns_tab'));
-if ( $args['reporter']->report_type == 'tabular') 
+if ( $args['reporter']->report_type == 'tabular')
 {
   array_push($tabs,array('title'=>$mod_strings['LBL_3_GROUP'],'hidden'=>true,'link'=>'group_by_tab','key'=>'group_by_tab'));
   array_push($tabs,array('title'=>$mod_strings['LBL_3_CHOOSE'],'link'=>'columns_tab','key'=>'columns_tab'));
@@ -983,7 +981,7 @@ echo "<BR>".$tab_panel->display();
 <?php template_reports_tables1($smarty, $args); ?>
 
 
-<?php 
+<?php
 if( $reporter->report_type=='summary')
 {
  $summary_display = '';
@@ -1051,26 +1049,26 @@ style="display: none"
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td style="padding-bottom: 2px;"">
-<?if(ACLController::checkAccess('Reports', 'edit', $is_owner)) 
+<?if(ACLController::checkAccess('Reports', 'edit', $is_owner))
 {?>
-<input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_KEY']?>" 
-    value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''"> 
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $app_strings['LBL_SAVE_BUTTON_KEY']?>" 
-    value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>" 
+<input type=submit class="button" title="<?php echo $mod_strings['LBL_RUN_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_KEY']?>"
+    value="<?php echo $mod_strings['LBL_RUN_REPORT_BUTTON_LABEL']; ?>"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
+<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $app_strings['LBL_SAVE_BUTTON_KEY']?>"
+    value="<?php echo $app_strings['LBL_SAVE_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_KEY']?>" 
-    value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>" 
+<input type=submit class="button" title="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_KEY']?>"
+    value="<?php echo $app_strings['LBL_SAVE_AS_BUTTON_LABEL']; ?>"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 <?}?>
-<?if(ACLController::checkAccess('Reports', 'export', $is_owner)) 
+<?if(ACLController::checkAccess('Reports', 'export', $is_owner))
 {?>
-<input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>" 
-    accessKey="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_KEY']?>" 
-    value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>" 
+<input type=submit class="button" title="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_TITLE']; ?>"
+    accessKey="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_KEY']?>"
+    value="<?php echo $app_strings['LBL_VIEW_PDF_BUTTON_LABEL']; ?>"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 <?}?>
 
@@ -1080,20 +1078,16 @@ style="display: none"
 </form>
 </p>
 <?php
-// template_module_defs_js($args); 
+// template_module_defs_js($args);
 ?>
-<script>
-var current_db_type = '<?php echo $reporter->db->dbType;?>';
-</script>
 <script type="text/javascript" src="cache/modules/modules_def_<?php echo $current_language; ?>_<?php echo md5($current_user->id) ?>.js"></script>
 <script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
-                                                                                                       
+
 var visible_modules;
 var report_def;
 var current_module;
-// only defaulting to mysql.. actual dbType is set in templates_reports_request_js.php
 var visible_fields = new Array();
 var visible_fields_map =  new Object();
 var visible_summary_fields = new Array();
@@ -1111,44 +1105,44 @@ var users_array = new Array();
 </script>
 <?php template_reports_functions_js($args); ?>
 <?php template_reports_request_vars_js($reporter,$args); ?>
-<?php 
+<?php
 ob_start();
 ?>
 <script language="javascript">
 if(typeof YAHOO != 'undefined') YAHOO.util.Event.addListener(window, 'load', load_page);
 </script>
 <div id="report_results">
-<?php 
+<?php
 $do_chart = false;
 
-if ($reporter->report_type == 'summary' && 
-     ! empty($reporter->report_def['summary_columns'])) 
-{ 
+if ($reporter->report_type == 'summary' &&
+     ! empty($reporter->report_def['summary_columns']))
+{
 
-		if ( $reporter->show_columns && 
-			!empty($reporter->report_def['display_columns']) && 
-          ! empty($reporter->report_def['group_defs'])) 
+		if ( $reporter->show_columns &&
+			!empty($reporter->report_def['display_columns']) &&
+          ! empty($reporter->report_def['group_defs']))
 	{
-		
+
 		template_summary_combo_view($reporter,$args);
 			$do_chart = true;
-	} else if ($reporter->show_columns && 
-	             	!empty($reporter->report_def['display_columns']) && 
-          empty($reporter->report_def['group_defs'])) 
+	} else if ($reporter->show_columns &&
+	             	!empty($reporter->report_def['display_columns']) &&
+          empty($reporter->report_def['group_defs']))
 	{
-		
-		template_detail_and_total_list_view($reporter,$args); 
-	} else if (! empty($reporter->report_def['group_defs'])) 
+
+		template_detail_and_total_list_view($reporter,$args);
+	} else if (! empty($reporter->report_def['group_defs']))
 	{
-		template_summary_list_view($reporter,$args); 
+		template_summary_list_view($reporter,$args);
 			$do_chart = true;
-	} else	 
+	} else
 	{
-		template_total_view($reporter,$args); 
-		} 
-} else if (! empty($reporter->report_def['display_columns']) ) 
-{ 
-	template_list_view($reporter,$args); 
+		template_total_view($reporter,$args);
+		}
+} else if (! empty($reporter->report_def['display_columns']) )
+{
+	template_list_view($reporter,$args);
 		}
 
 if ($reporter->report_def['chart_type']== 'none')
@@ -1192,17 +1186,17 @@ function template_reports_filters(&$smarty, &$args) {
 	if (isset($reporter->report_def['sort_by'])) {
 		$sort_dir = $reporter->report_def['sort_by'];
 	} // if
-	
+
 	if (isset($reporter->report_def['sort_dir'])) {
 		$sort_dir = $reporter->report_def['sort_dir'];
-	} // if	
+	} // if
 	//require_once("include/Sugar_Smarty.php");
 	//$smarty = new Sugar_Smarty();
-	$smarty->assign('mod_strings', $mod_strings);	
+	$smarty->assign('mod_strings', $mod_strings);
 	$smarty->assign('selectedAnd', $selectedAnd);
 	$smarty->assign('selectedOR', $selectedOR);
 	//echo $smarty->fetch("modules/Reports/templates/_template_reports_filters.tpl");
-	
+
 } // fn
 
 /*
@@ -1252,9 +1246,9 @@ function template_reports_group_by(&$smarty, &$args) {
 	global $mod_strings;
 	//require_once("include/Sugar_Smarty.php");
 	//$smarty = new Sugar_Smarty();
-	$smarty->assign('mod_strings', $mod_strings);	
+	$smarty->assign('mod_strings', $mod_strings);
 	//echo $smarty->fetch("modules/Reports/templates/_template_reports_group_by.tpl");
-	
+
 } // fn
 
 /*
@@ -1415,7 +1409,7 @@ function get_select_related_html(&$args)
     $content .= "tabindex='{$args['tabindex']}' ";
   }
 
-  $content .= " onclick='open_popup(\"{$args['module']}\", 600, 400, \"\", true, false, $request_data);' />"; 
+  $content .= " onclick='open_popup(\"{$args['module']}\", 600, 400, \"\", true, false, $request_data);' />";
 
   return $content;
 
@@ -1428,16 +1422,16 @@ function js_setup(&$smarty) {
 	$qsd = new QuickSearchDefaults();
 	$qsd->form_name = "ReportsWizardForm";
 	$sqs_objects = array('ReportsWizardForm_assigned_user_name' => $qsd->getQSUser()); //, 'ReportsWizardForm_team_name_collection_0' => $qsd->getQSTeam());
-	
+
     $quicksearch_js = '<script language="javascript">';
     $quicksearch_js.= "if(typeof sqs_objects == 'undefined'){ var sqs_objects = new Array; }";
-            
+
     foreach($sqs_objects as $sqsfield=>$sqsfieldArray){
             $quicksearch_js .= "sqs_objects['$sqsfield']={$global_json->encode($sqsfieldArray)};";
     }
 
     $quicksearch_js .= '</script>';
-	$smarty->assign('quicksearch_js', $quicksearch_js);  
+	$smarty->assign('quicksearch_js', $quicksearch_js);
 }
 
 
@@ -1447,7 +1441,7 @@ function template_reports_tables(&$smarty, &$args) {
 	global $app_list_strings;
 	global $current_user;
 	$reporter = $args['reporter'];
-	
+
 	$classname = "dataLabel";
 	$smarty->assign('classname', $classname);
 	global $ACLAllowedModules;
@@ -1471,14 +1465,14 @@ function template_reports_tables(&$smarty, &$args) {
 		$focus = & $reporter->saved_report;
 	} else {
 		$focus = new SavedReport();
-		$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']); 
+		$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']);
 		$focus->assigned_user_id = (empty($_REQUEST['assigned_user_id']) ? '' : $_REQUEST['assigned_user_id']);
-		$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']); 
+		$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']);
 		$focus->team_id = (empty($_REQUEST['team_id']) ? '' : $_REQUEST['team_id']);
 	}
 	if (empty($focus->assigned_user_id) && empty($focus->id))  $focus->assigned_user_id = $current_user->id;
 	if (empty($focus->assigned_user_name) && empty($focus->id))  $focus->assigned_user_name = $current_user->user_name;
-	
+
 	$assigned_user_html_def = array(
 	    'parent_id'=>'assigned_user_id',
 	    'parent_id_value'=>$focus->assigned_user_id,
@@ -1486,14 +1480,14 @@ function template_reports_tables(&$smarty, &$args) {
 	    'parent_name_value'=>$focus->assigned_user_name,
 	    'real_parent_name'=>'user_name',
 	    'module'=>'Users',
-	);	
+	);
 	$assigned_user_html = get_select_related_html($assigned_user_html_def);
 	$smarty->assign('assigned_user_html', $assigned_user_html);
 	if (empty($focus->id) && empty($_REQUEST['team_name'])) {
 	  $focus->team_name = $current_user->default_team_name;
 	  $focus->team_id =  $current_user->default_team;
 	} // if
-	
+
 	$team_html_def = array(
 	    'parent_id'=>'team_id',
 	    'parent_id_value'=>$focus->team_id,
@@ -1501,12 +1495,12 @@ function template_reports_tables(&$smarty, &$args) {
 	    'parent_name_value'=>$focus->team_name,
 	    'real_parent_name'=>'name',
 	    'module'=>'Teams',
-	);	
-	$team_html = get_select_related_html($team_html_def);	
+	);
+	$team_html = get_select_related_html($team_html_def);
 	$smarty->assign('team_html', $team_html);
 	if (empty( $reporter->report_def['report_type'] )) {
 		$reporter->report_def['report_type']='tabular';
-	}	
+	}
 	$smarty->assign('reporter_report_def_report_type', $reporter->report_def['report_type']);
 	js_setup($smarty);
 } // fn
@@ -1576,7 +1570,7 @@ foreach ($ACLAllowedModules as $module=>$bean_name)
 <table border=0 width="100%" cellspacing="0" cellpadding="0">
 <tr class="<?php echo $classname; ?>">
 <td class="<?php echo $classname; ?>"><?php echo $mod_strings['LBL_REPORT_NAME'];?>:</td>
-<?php 
+<?php
  $save_report_as = $mod_strings['LBL_UNTITLED'];
 if (! empty($reporter->name))
 {
@@ -1600,9 +1594,9 @@ if (! empty($reporter->saved_report))
 	$focus = & $reporter->saved_report;
 } else {
 	$focus = new SavedReport();
-	$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']); 
+	$focus->assigned_user_name = (empty($_REQUEST['assigned_user_name']) ? '' : $_REQUEST['assigned_user_name']);
 	$focus->assigned_user_id = (empty($_REQUEST['assigned_user_id']) ? '' : $_REQUEST['assigned_user_id']);
-	$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']); 
+	$focus->team_name = (empty($_REQUEST['team_name']) ? '' : $_REQUEST['team_name']);
 	$focus->team_id = (empty($_REQUEST['team_id']) ? '' : $_REQUEST['team_id']);
 }
 global $current_user;
@@ -1631,7 +1625,7 @@ if (empty($focus->assigned_user_name) && empty($focus->id))  $focus->assigned_us
 if (empty($focus->id) && empty($_REQUEST['team_name'])) {
   $focus->team_name = $current_user->default_team_name;
   $focus->team_id =  $current_user->default_team;
-} 
+}
 
   $team_html_def = array(
     'parent_id'=>'team_id',
@@ -1657,7 +1651,7 @@ if (empty($focus->id) && empty($_REQUEST['team_name'])) {
 <p/>
 <table>
 <tr>
-<?php 
+<?php
 
 if ( empty( $reporter->report_def['report_type'] ))
 {

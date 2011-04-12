@@ -1728,4 +1728,10 @@ EOQ;
         return "CONTAINS($field, ".$this->quoted($condition).")";
     }
 
+    // FIXME: provide real validation
+    public function validateQuery($query)
+    {
+        $res = $this->getOne("EXPLAIN $query");
+        return !empty($res);
+    }
 }

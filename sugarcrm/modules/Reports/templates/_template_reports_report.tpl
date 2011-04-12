@@ -57,23 +57,23 @@
 <td style="padding-bottom: 2px;"">
 {if ($report_edit_access)}
 
-<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}" 
-    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" 
-    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''"> 
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}" 
+<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}"
+    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'"> 
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 {/if}
-{if ($report_export_access)}	
-<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" 
-    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" 
+{if ($report_export_access)}
+<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}"
+    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 {/if}
 </td>
@@ -133,23 +133,23 @@ ACLAllowedModules = {$ACLAllowedModules};
 <td style="padding-bottom: 2px;"">
 {if ($report_edit_access)}
 
-<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}" 
-    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" 
-    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''"> 
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}" 
+<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}"
+    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'"> 
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 {/if}
-{if ($report_export_access)}	
-<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" 
-    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" 
+{if ($report_export_access)}
+<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}"
+    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 {/if}
 </td>
@@ -157,18 +157,14 @@ ACLAllowedModules = {$ACLAllowedModules};
 </table>
 </form>
 </p>
-<script>
-var current_db_type = '{$reporter_db_dbType}';
-</script>
 <script type="text/javascript" src="{$cache_path}modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
 <script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
-                                                                                                       
+
 var visible_modules;
 var report_def;
 var current_module;
-// only defaulting to mysql.. actual dbType is set in templates_reports_request_js.php
 var visible_fields = new Array();
 var visible_fields_map =  new Object();
 var visible_summary_fields = new Array();
@@ -217,10 +213,10 @@ function report_onload() {
 	    	anch.focus();
 	  	} // if
 	} else {
-		// no op		
+		// no op
 	}
 } // fn
-                                                                                
+
 window.onload = report_onload;
 current_module = report_def.module;
 field_defs = module_defs[current_module].field_defs;
