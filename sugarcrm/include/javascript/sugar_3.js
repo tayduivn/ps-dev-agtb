@@ -4050,6 +4050,16 @@ SUGAR.util.ajaxCallInProgress = function(){
 	return SUGAR_callsInProgress != 0;
 }
 
+SUGAR.util.callOnChangeListers = function(field){
+	var listeners = YAHOO.util.Event.getListeners(field, 'change');
+	if (listeners != null) {
+		for (var i = 0; i < listeners.length; i++) {
+			var l = listeners[i];
+			l.fn.call(l.scope ? l.scope : this, l.obj);
+		}
+	}
+}
+
 SUGAR.util.closeActivityPanel = {
     show:function(module,id,new_status,viewType,parentContainerId){
         if (SUGAR.util.closeActivityPanel.panel) 

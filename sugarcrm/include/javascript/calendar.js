@@ -192,13 +192,7 @@ Calendar.setup = function (params) {
 
                     dialog.hide();
 					//Fire any on-change events for this input field
-					var listeners = YAHOO.util.Event.getListeners(input, 'change');
-					if (listeners != null) {
-						for (var i = 0; i < listeners.length; i++) {
-							var l = listeners[i];
-							l.fn.call(l.scope ? l.scope : this, l.obj);
-						}
-					}
+					SUGAR.util.callOnChangeListers(input);
                 });
 
                 calendar.renderEvent.subscribe(function() {

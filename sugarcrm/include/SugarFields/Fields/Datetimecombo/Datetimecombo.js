@@ -205,16 +205,7 @@ Datetimecombo.prototype.update = function() {
 	}
 	document.getElementById(this.fieldname).value = newdate;
 	//Check for onchange actions and fire them
-	var listeners = YAHOO.util.Event.getListeners(this.fieldname, 'change');
-	if (listeners != null) {
-		for (var i = 0; i < listeners.length; i++) {
-			var l = listeners[i];
-			if (l.scope)
-				l.fn.call(l.scope, l.obj);
-			else
-				l.fn(l.obj);
-		}
-	}
+	SUGAR.util.callOnChangeListers(this.fieldname);
 
     if(this.showCheckbox) {	
          flag = this.fieldname + '_flag';
