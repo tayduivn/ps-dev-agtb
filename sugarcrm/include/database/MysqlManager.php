@@ -1025,7 +1025,7 @@ class MysqlManager extends DBManager
         return "CONTAINS($field, ".$this->quoted($condition).")";
     }
 
-    public function getCharsetInfo()
+    protected function getCharsetInfo()
     {
         $res = $this->query("show variables like 'character_set_%'");
         while($row = $this->fetchByAssoc($res)) {

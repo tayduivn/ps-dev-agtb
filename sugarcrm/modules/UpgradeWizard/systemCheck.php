@@ -117,20 +117,20 @@ $dbOut = "
 		<th align='left'>{$mod_strings['LBL_UW_DB_PERMS']}</th>
 	</tr>";
 
-$db =& DBManagerFactory::getInstance();
+$db = DBManagerFactory::getInstance();
 $outs = array();
 $outs['skip'] = false;
 $outs['db'] = array();
 $outs['dbOut'] = $dbOut;
-$outs = testPermsCreate($db->dbType, $outs);
-$outs = testPermsInsert($db->dbType, $outs, $outs['skip']);
-$outs = testPermsUpdate($db->dbType, $outs, $outs['skip']);
-$outs = testPermsSelect($db->dbType, $outs, $outs['skip']);
-$outs = testPermsDelete($db->dbType, $outs, $outs['skip']);
-$outs = testPermsAlterTableAdd($db->dbType, $outs, $outs['skip']);
-$outs = testPermsAlterTableChange($db->dbType, $outs, $outs['skip']);
-$outs = testPermsAlterTableDrop($db->dbType, $outs, $outs['skip']);
-$outs = testPermsDropTable($db->dbType, $outs, $outs['skip']);
+$outs = testPermsCreate($db, $outs);
+$outs = testPermsInsert($db, $outs, $outs['skip']);
+$outs = testPermsUpdate($db, $outs, $outs['skip']);
+$outs = testPermsSelect($db, $outs, $outs['skip']);
+$outs = testPermsDelete($db, $outs, $outs['skip']);
+$outs = testPermsAlterTableAdd($db, $outs, $outs['skip']);
+$outs = testPermsAlterTableChange($db, $outs, $outs['skip']);
+$outs = testPermsAlterTableDrop($db, $outs, $outs['skip']);
+$outs = testPermsDropTable($db, $outs, $outs['skip']);
 $outs['dbOut'] .= '</table>';
 
 

@@ -1378,5 +1378,34 @@ EOQ;
         $condition = str_replace("*", "%", $condition);
         return "CONTAINS($field, ".$this->quoted($condition).")";
     }
-}
 
+    protected $oracle_privs = array(
+        "CREATE TABLE" => "CREATE TABLE",
+        "DROP TABLE" => "DROP ANY TABLE",
+        "INSERT" => "INSERT ANY TABLE",
+        "UPDATE" => "UPDATE ANY TABLE",
+        "SELECT" => "SELECT ANY TABLE",
+        "DELETE" => "DELETE ANY TABLE",
+        "ADD COLUMN" => "ALTER ANY TABLE",
+        "CHANGE COLUMN" => "ALTER ANY TABLE",
+        "DROP COLUMN" => "ALTER ANY TABLE",
+    );
+
+    /**
+     * Check if connecting user has certain privilege
+     * @param string $privilege
+     */
+    public function checkPrivilege($privilege)
+    {
+        if(getOci8Version() == 'express') {
+            return parent::checkPrivilege($privilege);
+        }
+        if(!isset($this->oracle_privs[$privilege])) {
+            return parent::checkPrivilege($privilege);
+        }
+
+        $oracle_priv = $this->oracle_privs[$privilege];
+        $res = $this->getOne("SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = '$oracle_priv'", false);
+        return !empty($res);
+    }
+}

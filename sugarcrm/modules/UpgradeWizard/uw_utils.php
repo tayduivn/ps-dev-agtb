@@ -1279,448 +1279,133 @@ function cleanQuery($query, $oci8=false) {
 /**
  * test perms for CREATE queries
  */
-function testPermsCreate($type, $out) {
+function testPermsCreate($db, $out) {
 	logThis('Checking CREATE TABLE permissions...');
-	global $db;
 	global $mod_strings;
 
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			$db->query('CREATE TABLE temp (id varchar(36))');
-			if($db->checkError()) {
-				logThis('cannot CREATE TABLE!');
-				$out['db']['dbNoCreate'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_CREATE']}</span></td></tr>";
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'CREATE TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-			if(!empty($a)) {
-				if($a['p'] != 'CREATE TABLE') {
-					logThis('cannot CREATE TABLE!');
-					$out['db']['dbNoCreate'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_CREATE']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
+	if(!$db->checkPrivilege("CREATE TABLE")) {
+        logThis('cannot CREATE TABLE!');
+		$out['db']['dbNoCreate'] = true;
+		$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_CREATE']}</span></td></tr>";
 	}
-
-	return $out;
+    return $out;
 }
 
 /**
  * test perms for INSERT
  */
-function testPermsInsert($type, $out, $skip=false) {
+function testPermsInsert($db, $out, $skip=false) {
 	logThis('Checking INSERT INTO permissions...');
-	global $db;
 	global $mod_strings;
 
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			if(!$skip) {
-				$db->query("INSERT INTO temp (id) VALUES ('abcdef0123456789abcdef0123456789abcd')");
-				if($db->checkError()) {
-					logThis('cannot INSERT INTO!');
-					$out['db']['dbNoInsert'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_INSERT']}</span></td></tr>";
-				}
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'INSERT ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			if(!empty($a)) {
-				if($a['p'] != 'INSERT ANY TABLE') {
-					logThis('cannot INSERT ANY TABLE!');
-					$out['db']['dbNoInsert'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_INSERT']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+	if(!$db->checkPrivilege("INSERT")) {
+		logThis('cannot INSERT INTO!');
+		$out['db']['dbNoInsert'] = true;
+		$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_INSERT']}</span></td></tr>";
+    }
+    return $out;
 }
 
 
 /**
  * test perms for UPDATE TABLE
  */
-function testPermsUpdate($type, $out, $skip=false) {
+function testPermsUpdate($db, $out, $skip=false) {
 	logThis('Checking UPDATE TABLE permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			if(!$skip) {
-				$db->query("UPDATE temp SET id = '000000000000000000000000000000000000' WHERE id = 'abcdef0123456789abcdef0123456789abcd'");
-				if($db->checkError()) {
+	if(!$db->checkPrivilege("UPDATE")) {
 					logThis('cannot UPDATE TABLE!');
 					$out['db']['dbNoUpdate'] = true;
 					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_UPDATE']}</span></td></tr>";
-				}
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'UPDATE ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-			if(!empty($a)) {
-				if($a['p'] != 'UPDATE ANY TABLE') {
-					logThis('cannot UPDATE ANY TABLE!');
-					$out['db']['dbNoUpdate'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_UPDATE']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
 
 
 /**
  * test perms for SELECT
  */
-function testPermsSelect($type, $out, $skip=false) {
+function testPermsSelect($db, $out, $skip=false) {
 	logThis('Checking SELECT permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			$r = $db->query('SELECT id FROM temp');
-			if($db->checkError()) {
+	if(!$db->checkPrivilege("SELECT")) {
 				logThis('cannot SELECT!');
 				$out['db']['dbNoSelect'] = true;
 				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_SELECT']}</span></td></tr>";
-			}
-			logThis('Checking validity of SELECT results');
-			while($a = $db->fetchByAssoc($r)) {
-				if($a['id'] != '000000000000000000000000000000000000') {
-					logThis('results DO NOT MATCH! got: '.$a['id']);
-					$out['db'][] = 'selectFailed';
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_INSERT_FAILED']}</span></td></tr>";
-				}
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'SELECT ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-			if(!empty($a)) {
-				if($a['p'] != 'SELECT ANY TABLE') {
-					logThis('cannot SELECT ANY TABLE!');
-					$out['db']['dbNoSelect'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_SELECT']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
-
-
 
 /**
  * test perms for DELETE
  */
-function testPermsDelete($type, $out, $skip=false) {
+function testPermsDelete($db, $out, $skip=false) {
 	logThis('Checking DELETE FROM permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			$db->query("DELETE FROM temp WHERE id = '000000000000000000000000000000000000'");
-			if($db->checkError()) {
+	if(!$db->checkPrivilege("DELETE")) {
 				logThis('cannot DELETE FROM!');
 				$out['db']['dbNoDelete'] = true;
 				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_DELETE']}</span></td></tr>";
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'DELETE ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-			if(!empty($a)) {
-				if($a['p'] != 'DELETE ANY TABLE') {
-					logThis('cannot DELETE ANY TABLE!');
-					$out['db']['dbNoDelete'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_DELETE']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
 
 
 /**
  * test perms for ALTER TABLE ADD COLUMN
  */
-function testPermsAlterTableAdd($type, $out, $skip=false) {
+function testPermsAlterTableAdd($db, $out, $skip=false) {
 	logThis('Checking ALTER TABLE ADD COLUMN permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-			$db->query('ALTER TABLE temp ADD COLUMN test varchar(100)');
-			if($db->checkError()) {
+	if(!$db->checkPrivilege("ADD COLUMN")) {
 				logThis('cannot ADD COLUMN!');
 				$out['db']['dbNoAddColumn'] = true;
 				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		break;
-
-		case 'mssql':
-			$db->query('ALTER TABLE [temp] ADD [test] [varchar] (100)');
-			if($db->checkError()) {
-				logThis('cannot ADD COLUMN!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'ALTER ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			if(!empty($a)) {
-				if($a['p'] != 'ALTER ANY TABLE') {
-					logThis('cannot ALTER ANY TABLE!');
-					$out['db']['dbNoAddColumn'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
-
-
-
 
 /**
  * test perms for ALTER TABLE ADD COLUMN
  */
-function testPermsAlterTableChange($type, $out, $skip=false) {
+function testPermsAlterTableChange($db, $out, $skip=false) {
 	logThis('Checking ALTER TABLE CHANGE COLUMN permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-			$db->query('ALTER TABLE temp CHANGE COLUMN test test varchar(100)');
-			if($db->checkError()) {
+	if(!$db->checkPrivilege("CHANGE COLUMN")) {
 				logThis('cannot CHANGE COLUMN!');
 				$out['db']['dbNoChangeColumn'] = true;
 				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_CHANGE_COLUMN']}</span></td></tr>";
-			}
-		break;
-
-		case 'mssql':
-			$db->query('ALTER TABLE [temp] ALTER COLUMN [test] [varchar] (100)');
-			if($db->checkError()) {
-				logThis('cannot CHANGE COLUMN!');
-				$out['db']['dbNoChangeColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_CHANGE_COLUMN']}</span></td></tr>";
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'ALTER ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-			if(!empty($a)) {
-				if($a['p'] != 'ALTER ANY TABLE') {
-					logThis('cannot ALTER ANY TABLE!');
-					$out['db']['dbNoChangeColumn'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_CHANGE_COLUMN']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
-
-
 
 /**
  * test perms for ALTER TABLE DROP COLUMN
  */
-function testPermsAlterTableDrop($type, $out, $skip=false) {
+function testPermsAlterTableDrop($db, $out, $skip=false) {
 	logThis('Checking ALTER TABLE DROP COLUMN permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			$db->query('ALTER TABLE temp DROP COLUMN test');
-			if($db->checkError()) {
+	if(!$db->checkPrivilege("DROP COLUMN")) {
 				logThis('cannot DROP COLUMN!');
 				$out['db']['dbNoDropColumn'] = true;
 				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_DROP_COLUMN']}</span></td></tr>";
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'ALTER ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-			if(!empty($a)) {
-				if($a['p'] != 'ALTER ANY TABLE') {
-					logThis('cannot ALTER ANY TABLE!');
-					$out['db']['dbNoDropColumn'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_DROP_COLUMN']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
 
 
 /**
  * test perms for DROP TABLE
  */
-function testPermsDropTable($type, $out, $skip=false) {
+function testPermsDropTable($db, $out, $skip=false) {
 	logThis('Checking DROP TABLE permissions...');
-	global $db;
 	global $mod_strings;
-
-	switch($type) {
-		case 'mysql':
-		case 'mssql':
-			$db->query('DROP TABLE temp');
-			if($db->checkError()) {
+	if(!$db->checkPrivilege("DROP TABLE")) {
 				logThis('cannot DROP TABLE!');
 				$out['db']['dbNoDropTable'] = true;
 				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_DROP_TABLE']}</span></td></tr>";
-			}
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			if(getOci8Version() == 'express')
-				return $out;
-
-			$q = "SELECT PRIVILEGE p FROM SESSION_PRIVS WHERE PRIVILEGE = 'DROP ANY TABLE'";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			if(!empty($a)) {
-				if($a['p'] != 'DROP ANY TABLE') {
-					logThis('cannot DROP ANY TABLE!');
-					$out['db']['dbNoDropTable'] = true;
-					$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_DROP_TABLE']}</span></td></tr>";
-				}
-			} else {
-				logThis('cannot ALTER ANY TABLE!');
-				$out['db']['dbNoAddColumn'] = true;
-				$out['dbOut'] .= "<tr><td align='left'><span class='error'>{$mod_strings['LBL_UW_DB_NO_ADD_COLUMN']}</span></td></tr>";
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
-
-	return $out;
+    }
+    return $out;
 }
 
 

@@ -82,11 +82,6 @@ class Campaign extends SugarBean {
 
 	var $relationship_fields = Array('prospect_list_id'=>'prospect_lists');
 
-	function Campaign() {
-		global $sugar_config;
-		parent::SugarBean();
-	}
-
 	var $new_schema = true;
 
 	function list_view_parse_additional_sections(&$listTmpl) {

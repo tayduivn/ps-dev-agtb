@@ -2835,14 +2835,62 @@ abstract class DBManager
         return "0=1";
     }
 
+    /**
+     * Get database configuration information (DB-dependent)
+     * @return array|null
+     */
     public function getDbInfo()
     {
         return null;
     }
 
-    public function getCharsetInfo()
+    /**
+     * Check if connecting user has certain privilege
+     * @param string $privilege
+     */
+    public function checkPrivilege($privilege)
     {
-        return null;
+        switch($privilege) {
+            case "CREATE TABLE":
+                $this->query("CREATE TABLE temp (id varchar(36))");
+                break;
+            case "DROP TABLE":
+                $sql = $this->dropTableNameSQL("temp");
+                $this->query($sql);
+                break;
+            case "INSERT":
+                $this->query("INSERT INTO temp (id) VALUES ('abcdef0123456789abcdef0123456789abcd')");
+                break;
+            case "UPDATE":
+                $this->query("UPDATE temp SET id = '100000000000000000000000000000000000' WHERE id = 'abcdef0123456789abcdef0123456789abcd'");
+                break;
+            case 'SELECT':
+                return $this->getOne('SELECT id FROM temp WHERE id=\'100000000000000000000000000000000000\'', false);
+            case 'DELETE':
+                $this->query("DELETE FROM temp WHERE id = '100000000000000000000000000000000000'");
+                break;
+            case "ADD COLUMN":
+                $test = array("test" => array("name" => "test", "type" => "varchar", "len" => 50));
+                $sql = 	$this->changeColumnSQL("temp", $test, "add");
+                $this->query($sql);
+                break;
+            case "CHANGE COLUMN":
+                $test = array("test" => array("name" => "test", "type" => "varchar", "len" => 100));
+                $sql = 	$this->changeColumnSQL("temp", $test, "modify");
+                $this->query($sql);
+                break;
+            case "DROP COLUMN":
+                $test = array("test" => array("name" => "test", "type" => "varchar", "len" => 100));
+                $sql = 	$this->changeColumnSQL("temp", $test, "drop");
+                $this->query($sql);
+                break;
+            default:
+                return false;
+        }
+        if($this->checkError()) {
+    	    return false;
+	    }
+        return true;
     }
 
     /**
