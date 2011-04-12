@@ -40,7 +40,6 @@ $entry_point_registry = array(
     'json_server' => array('file' => 'json_server.php', 'auth' => true),
 	'HandleAjaxCall' => array('file' => 'HandleAjaxCall.php', 'auth' => true),
 	'TreeData' => array('file' => 'TreeData.php', 'auth' => true),
-	'oc_convert' => array('file' => 'oc_convert.php', 'auth' => false),
 	'ExampleLeadCapture' => array('file' => 'examples/ExampleLeadCapture.php', 'auth' => false),
 	'FormValidationTest' => array('file' => 'examples/FormValidationTest.php', 'auth' => false),
 	'ProgressBarTest' => array('file' => 'examples/ProgressBarTest.php', 'auth' => false),
