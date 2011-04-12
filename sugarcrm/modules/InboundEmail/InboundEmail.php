@@ -6209,7 +6209,7 @@ eoq;
 			$temp = array();
 			$temp['flagged'] = $flagged;
 			$temp['status'] = $status;
-			$temp['from']	= $from;
+			$temp['from']	= to_html($from);
 			$temp['subject'] = $subject;
 			$temp['date']	= $date;
 			$temp['uid'] = $msg->uid; // either from an imap_search() or massaged cache value
@@ -6218,7 +6218,7 @@ eoq;
 			$temp['site_url'] = $sugar_config['site_url'];
 			$temp['seen'] = $msg->seen;
 			$temp['type'] = (isset($msg->type)) ? $msg->type: 'remote';
-			$temp['to_addrs'] = $msg->to;
+			$temp['to_addrs'] = to_html($msg->to);
 			$temp['hasAttach'] = '0';
 
 			$return[] = $temp;
