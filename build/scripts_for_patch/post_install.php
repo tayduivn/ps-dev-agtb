@@ -249,7 +249,7 @@ function repair_long_relationship_names()
         {
             if (strlen($rel_name) > 27 && empty($touched[$rel_name]))
             {
-                _logThis('Rebuilding relationship fields for $rel_name', $path);
+                _logThis("Rebuilding relationship fields for $rel_name", $path);
                 $touched[$rel_name] = true;
                 $rel_obj = $relationships->get($rel_name);
                 $rel_obj->setReadonly(false);
