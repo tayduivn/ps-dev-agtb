@@ -308,25 +308,6 @@ SUGAR.mySugar.init = function () {
 	SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
 }
 
-function remakeGraphs(){				
-			setTimeout("refreshIfSame()", 1000);
-			
-					}
-	
-			var windowWidth = 0;		
-			var firstLoad = true;
-			function refreshIfSame(){			
-				var newWidth = document.body.offsetWidth;			
-				if(newWidth != windowWidth && !firstLoad){					
-					SUGAR.mySugar.retrievePage(activePage);	
-					SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
-							
-				}
-				firstLoad = false;		
-				windowWidth = newWidth;		
-			}
-			
-			window.onresize = remakeGraphs;
 </script>
 {/literal}
 
