@@ -363,6 +363,12 @@ $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
 	
+//Add the cache cleaning here.
+if(function_exists('deleteCache'))
+{
+	logThis('Call deleteCache', $path);
+	@deleteCache();
+}
 
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);
@@ -518,11 +524,6 @@ if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 if(function_exists('unlinkUpgradeFiles'))
 {
 	unlinkUpgradeFiles($origVersion);
-}
-
-//also add the cache cleaning here.
-if(function_exists('deleteCache')){
-	@deleteCache();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
