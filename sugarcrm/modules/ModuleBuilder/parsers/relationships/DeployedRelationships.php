@@ -78,7 +78,8 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             {
                 if (($definition [ 'lhs_module' ] == $this->moduleName) || ($definition [ 'rhs_module' ] == $this->moduleName))
                 {
-                    if (in_array ( $definition [ 'lhs_module' ], $validModules ) && in_array ( $definition [ 'rhs_module' ], $validModules ) && ! in_array ( $definition [ 'lhs_module' ], $invalidModules ) && ! in_array ( $definition [ 'rhs_module' ], $invalidModules ))
+                    if (in_array ( $definition [ 'lhs_module' ], $validModules ) && in_array ( $definition [ 'rhs_module' ], $validModules )
+                        && ! in_array ( $definition [ 'lhs_module' ], $invalidModules ) && ! in_array ( $definition [ 'rhs_module' ], $invalidModules ))
                     {
                         // identify the subpanels for this relationship - TODO: optimize this - currently does m x n scans through the subpanel list...
                         $definition [ 'rhs_subpanel' ] = self::identifySubpanel ( $definition [ 'lhs_module' ], $definition [ 'rhs_module' ] ) ;
@@ -154,6 +155,10 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $rac = new RepairAndClear ( ) ;
         $rac->repairAndClearAll ( array ( 'clearAll', 'rebuildExtensions',  ), array ( $GLOBALS [ 'mod_strings' ] [ 'LBL_ALL_MODULES' ] ), true, false ) ;
         $GLOBALS [ 'mod_strings' ] = $MBmodStrings;
+        if (isset($this->relationships[$rel_name]))
+        {
+            unset($this->relationships[$rel_name]);
+        }
     }
 
     /*
