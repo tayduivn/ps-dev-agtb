@@ -855,13 +855,13 @@ function safe_map_named($request_var, & $focus, $member_var, $always_copy)
 	}
 }
 
-/** 
+/**
  * This function retrieves an application language file and returns the array of strings included in the $app_list_strings var.
- * 
+ *
  * @param string $language specific language to load
  * @return array lang strings
  */
-function return_app_list_strings_language($language) 
+function return_app_list_strings_language($language)
 {
 	global $app_list_strings;
 	global $sugar_config;
@@ -877,7 +877,7 @@ function return_app_list_strings_language($language)
 
 	$default_language = $sugar_config['default_language'];
 	$temp_app_list_strings = $app_list_strings;
-	
+
 	$langs = array();
 	if ($language != 'en_us') {
 	    $langs[] = 'en_us';
@@ -886,9 +886,9 @@ function return_app_list_strings_language($language)
 	    $langs[] = $default_language;
 	}
 	$langs[] = $language;
-	
+
 	$app_list_strings_array = array();
-	
+
 	foreach ( $langs as $lang ) {
 	    $app_list_strings = array();
 	    if(file_exists("include/language/$lang.lang.php")) {
@@ -910,7 +910,7 @@ function return_app_list_strings_language($language)
   	$app_list_strings = array();
   	foreach ( $app_list_strings_array as $app_list_strings_item ) {
   	    $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
-  	} 	
+  	}
 
     foreach ( $langs as $lang ) {
         if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
@@ -964,13 +964,13 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
    return $app_list_strings;
 }
 
-/** 
+/**
  * This function retrieves an application language file and returns the array of strings included.
- * 
+ *
  * @param string $language specific language to load
  * @return array lang strings
  */
-function return_application_language($language) 
+function return_application_language($language)
 {
 	global $app_strings, $sugar_config;
 
@@ -994,9 +994,9 @@ function return_application_language($language)
 	    $langs[] = $default_language;
 	}
 	$langs[] = $language;
-	
+
 	$app_strings_array = array();
-	
+
 	foreach ( $langs as $lang ) {
 	    $app_strings = array();
 	    if(file_exists("include/language/$lang.lang.php")) {
@@ -1026,7 +1026,7 @@ function return_application_language($language)
     foreach ( $app_strings_array as $app_strings_item ) {
         $app_strings = sugarArrayMerge($app_strings, $app_strings_item);
     }
-	
+
 	if(!isset($app_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language strings");
 		return null;
@@ -1051,19 +1051,19 @@ function return_application_language($language)
 	$app_strings = $temp_app_strings;
 
 	sugar_cache_put($cache_key, $return_value);
-	
+
 	return $return_value;
 }
 
-/** 
+/**
  * This function retrieves a module's language file and returns the array of strings included.
- * 
+ *
  * @param string $language specific language to load
  * @param string $module module name to load strings for
  * @param bool $refresh optional, true if you want to rebuild the language strings
  * @return array lang strings
  */
-function return_module_language($language, $module, $refresh=false) 
+function return_module_language($language, $module, $refresh=false)
 {
 	global $mod_strings;
 	global $sugar_config;
@@ -1107,7 +1107,7 @@ function return_module_language($language, $module, $refresh=false)
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
-     
+
     // Load in en_us strings by default
     if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
         $loaded_mod_strings = sugarArrayMerge(
@@ -1950,12 +1950,12 @@ function clean_xss($str, $cleanImg=true) {
 	// cn: bug 13079 - "on\w" matched too many non-events (cONTact, strONG, etc.)
 	$jsEvents  = "onblur|onfocus|oncontextmenu|onresize|onscroll|onunload|ondblclick|onclick|";
 	$jsEvents .= "onmouseup|onmouseover|onmousedown|onmouseenter|onmouseleave|onmousemove|onload|onchange|";
-	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror";
+	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror|ondragdrop";
 
-	$attribute_regex	= "#<[^/>][^>]+({$jsEvents}\w+)[^=>]*=[^>]*>#sim";
+	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
-	$css_url			= "#url\(.*\.\w+\)#";
+	$css_url			= '#url\(.*\.\w+\)#';
 
 
 	$str = str_replace("\t", "", $str);
@@ -2998,24 +2998,24 @@ function sugar_cleanup($exit = false) {
 	}
 
 	//check to see if this is not an ajax call AND the user preference error flag is set
-	if( 
+	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
-		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction') 
-		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )  
-		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] ) 
-		
+		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
+		&& (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
+		&& (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
+
 	){
 		global $app_strings;
 		//this is not an ajax call and the user preference error flag is set, so reset the flag and print js to flash message
 		$err_mess = $app_strings['ERROR_USER_PREFS'];
 		$_SESSION['USER_PREFRENCE_ERRORS'] = false;
-		echo " 
+		echo "
 		<script>
 			ajaxStatus.flashStatus('$err_mess',7000);
-		</script>";				
-		
-	}	
-	
+		</script>";
+
+	}
+
 	pre_login_check();
 	if(class_exists('DBManagerFactory')) {
 		$db = DBManagerFactory::getInstance();
