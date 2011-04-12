@@ -591,13 +591,21 @@ function deleteCache(){
 	//Clean modules from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
-	   foreach($allModFiles as $file){
-	       	if(file_exists($file)){
-				unlink($file);
+		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles,true);
+		foreach($allModFiles as $file)
+		{
+	       	if(file_exists($file))
+	       	{
+	       		if(is_dir($file))
+	       		{
+				  rmdir_recursive($file);
+	       		} else {
+	       		  unlink($file);
+	       		}
 	       	}
-	   }
+		}
 	}
+	
 	//Clean jsLanguage from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'jsLanguage')){
 		$allModFiles = array();
@@ -5840,4 +5848,73 @@ function unlinkUpgradeFiles($version)
 	   }
 	}
 	logThis('end unlinking files from previous upgrade');
+}
+
+/**
+ * repairTableDictionaryExtFile
+ * 
+ * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file 
+ * did not exist.  This would cause warnings to appear during the upgrade.  As a result, this
+ * function scans the contents of tabledictionary.ext.php and then remove entries where the file does exist.
+ */
+function repairTableDictionaryExtFile()
+{
+	$tableDictionaryExtFile = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';
+	
+	if(file_exists($tableDictionaryExtFile) && is_writable($tableDictionaryExtFile))
+	{
+		logThis('start repair custom tabledictionary.ext.php file');
+		
+		if(function_exists('sugar_fopen'))
+		{
+			$fp = @sugar_fopen($tableDictionaryExtFile, 'r');
+		} else {
+			$fp = fopen($tableDictionaryExtFile, 'r');
+		}			
+		
+		
+	    if($fp)
+        {
+             $altered = false;
+             $contents = '';
+		     
+             while($line = fgets($fp))
+		     {
+		    	if(preg_match('/\s*include\s*\(\'(.*?)\'\);/', $line, $match))
+		    	{
+		    	   if(!file_exists($match[1]))
+		    	   {
+		    	      $altered = true;
+		    	   	  logThis('file ' . $match[1] . ' does not exist, removing from tabledictionary.ext.php');
+		    	   } else {
+		    	   	  $contents .= $line;
+		    	   }
+		    	} else {
+		    	   $contents .= $line;
+		    	}
+		     }
+		     
+		     fclose($fp); 
+        }
+        
+        
+	    if($altered)
+	    {
+			if(function_exists('sugar_fopen'))
+			{
+				$fp = @sugar_fopen($tableDictionaryExtFile, 'w');
+			} else {
+				$fp = fopen($tableDictionaryExtFile, 'w');
+			}		    	
+            
+			if($fp && fwrite($fp, $contents))
+			{
+				logThis('updated custom tabledictionary.ext.php file');
+				fclose($fp);
+			}
+	    }
+
+	    logThis('end repair custom tabledictionary.ext.php file');
+	}
+
 }
