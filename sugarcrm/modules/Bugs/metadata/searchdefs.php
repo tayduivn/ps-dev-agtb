@@ -33,7 +33,7 @@
  */
   $searchdefs['Bugs'] = array(
 					'templateMeta' => array(
-							'maxColumns' => '3', 
+							'maxColumns' => '4', 
                             'widths' => array('label' => '10', 'field' => '30'),                 
                            ),
                     'layout' => array(  					

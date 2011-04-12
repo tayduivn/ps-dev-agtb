@@ -43,7 +43,7 @@
           right=$templateMeta.maxColumns
           assign=modVal
     }
-	{if ($index % ($templateMeta.maxColumns+1) == 1 && $index != 1)}
+	{if ($index % $templateMeta.maxColumns == 1 && $index != 1)}
 		</tr><tr>
 	{/if}
 	
@@ -67,7 +67,7 @@
 	{{* //END SUGARCRM flav=pro ONLY*}}
    	</td>
 {{/foreach}}
-    {if $formData|@count >= $templateMeta.maxColumns+2}
+    {if $formData|@count >= $templateMeta.maxColumns+1}
     </tr>
     <tr>
 	<td colspan="{$searchTableColumnCount}">

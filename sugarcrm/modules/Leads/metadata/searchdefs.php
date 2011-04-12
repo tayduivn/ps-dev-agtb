@@ -153,7 +153,7 @@ array (
   ),
   'templateMeta' => 
   array (
-    'maxColumns' => '3',
+    'maxColumns' => '4',
     'widths' => 
     array (
       'label' => '10',
