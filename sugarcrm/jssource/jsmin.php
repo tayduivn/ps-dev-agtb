@@ -1,5 +1,7 @@
 <?php
 
+echo JSMin::minify(file_get_contents('sample.js'));
+
 class JSMin {
     /**
      * Calls the SugarMin minify function.
@@ -61,45 +63,51 @@ class SugarMin {
         $js = str_replace("\r\n", "\n", $js);
         $js = str_replace("\r", "\n", $js);
         $js = preg_replace("/\n+/","\n", $js);
-        $js = preg_replace('!/\*.*?\*/!s', '', $js);
         
         // Split our string up into an array and iterate over each line
         // to do processing.
         $input = explode("\n", $js);
         $primedInput = '';
+
+        // mL is short for multiline, these variables will keep track of multi-line states
+        $mLCommentStart = false;
+        $mLCommentEnd = false;
+        $mLActive = false;
         
-        // Strip whitespaces and tabs and inline comments
+        // In the first pass we will strip out multiline comments and single line comments
+        // To allow for easier parsing / processing in the second pass.
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
             
-            // Strip out double slash ('//') comments.
-            // First check if there exists coments.
-            $comment = strpos($line, "//");
-            
-            if ($comment !== false) {
-                $literal = false; // Set flag that we are not currently in a string literal.
-                
-                for ($i = 0; $i < $comment; $i++) { 
-                    // If we encounter a string literal, skip over it.
-                    if ($line[$i] == "'" || $line[$i] == '"') {
-                        $literal = true;
-                        
-                        for ($j = $i + 1; $j <= $comment; $j++) {
-                            if ($line[$j] == $line[$i]) {
-                                $literal = false;
-                                break;
-                            }
-                        }
-                        
-                        $i = $j;
-                    }
+            // Is $line inside a multi-line comment?
+            if ($mLActive) {
+                $mLCommentEnd = strpos($line, "*/");
+                if ($mLCommentEnd !== false && !$this->checkIfInLiteral($mLCommentEnd, $line)) {
+                    $line = substr($line, $mLCommentEnd + 2, strlen($line) - $mLCommentEnd + 2);
+                    $mLActive = false;
                 }
-                 
-                if ($literal == false) {
+
+                // If the entire line is part of a comment, skip line.
+                continue;
+            }
+            
+            // Is there a beginning of a mult-line comment?
+            $mLCommentStart = strpos($line, "/*");
+            if ($mLCommentStart !== false) {
+                if ($this->checkIfInLiteral($mLCommentStart, $line) == false) {
+                    $line = substr($line, 0, $comment);
+                    $mLActive = true;
+                }
+            }
+
+            // Strip out double slash ('//') comments.
+            $comment = strpos($line, "//");
+            if ($comment !== false) {
+                if ($this->checkIfInLiteral($comment, $line) == false) {
                     $line = substr($line, 0, $comment);
                 }
             }
-            
+
             $line = trim($line, " \t");
             
             // If the line is empty, ignore it.
@@ -209,4 +217,33 @@ class SugarMin {
            return "\n".$output."\n";
         }
 	}
+
+    /**
+     * Check to see if the character at a certain position is inside a string literal.
+     * Returns true if the character at $position is inside a string literal and false
+     * if it isn't.
+     * @int position
+     * @return
+     */
+    protected function checkIfInLiteral($position, $line) {
+        $literal = false; // Set flag that we are not currently in a string literal.
+        
+        for ($i = 0; $i < $position; $i++) {
+            // If we encounter a string literal, skip over it.
+            if ($line[$i] == "'" || $line[$i] == '"') {
+                $literal = true;
+
+                for ($j = $i + 1; $j <= $position; $j++) {
+                    if ($line[$j] == $line[$i]) {
+                        $literal = false;
+                        break;
+                    }
+                }
+
+                $i = $j;
+            }
+        }
+
+        return $literal;
+    }
 }
