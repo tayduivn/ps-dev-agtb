@@ -1924,6 +1924,23 @@ function getDefaultXssTags() {
 }
 
 /**
+ * Remove potential xss vectors from strings
+ * @param string str String to search for XSS attack vectors
+ * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
+ * @return string
+ */
+function remove_xss($str, $cleanImg=true)
+{
+    $potentials = clean_xss($str, $cleanImg);
+    if(is_array($potentials) && !empty($potentials)) {
+        foreach($potentials as $bad) {
+            $str = str_replace($bad, "", $str);
+        }
+    }
+    return $str;
+}
+
+/**
  * Detects typical XSS attack patterns
  * @param string str String to search for XSS attack vectors
  * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
@@ -2015,16 +2032,16 @@ function clean_string($str, $filter = "STANDARD") {
 	global  $sugar_config;
 
 	$filters = Array(
-	"STANDARD"        => "#[^A-Z0-9\-_\.\@]#i",
-	"STANDARDSPACE"   => "#[^A-Z0-9\-_\.\@\ ]#i",
-	"FILE"            => "#[^A-Z0-9\-_\.]#i",
-	"NUMBER"          => "#[^0-9\-]#i",
-	"SQL_COLUMN_LIST" => "#[^A-Z0-9,_\.]#i",
-	"PATH_NO_URL"     => "#://#i",
-	"SAFED_GET"		  => "#[^A-Z0-9\@\=\&\?\.\/\-_~]#i", /* range of allowed characters in a GET string */
+	"STANDARD"        => '#[^A-Z0-9\-_\.\@]#i',
+	"STANDARDSPACE"   => '#[^A-Z0-9\-_\.\@\ ]#i',
+	"FILE"            => '#[^A-Z0-9\-_\.]#i',
+	"NUMBER"          => '#[^0-9\-]#i',
+	"SQL_COLUMN_LIST" => '#[^A-Z0-9,_\.]#i',
+	"PATH_NO_URL"     => '#://#i',
+	"SAFED_GET"		  => '#[^A-Z0-9\@\=\&\?\.\/\-_~]#i', /* range of allowed characters in a GET string */
 	"UNIFIED_SEARCH"	=> "#[\\x00]#", /* cn: bug 3356 & 9236 - MBCS search strings */
-	"AUTO_INCREMENT"	=> "#[^0-9\-,\ ]#i",
-	"ALPHANUM"        => "#[^A-Z0-9\-]#i",
+	"AUTO_INCREMENT"	=> '#[^0-9\-,\ ]#i',
+	"ALPHANUM"        => '#[^A-Z0-9\-]#i',
 	);
 
 	if (preg_match($filters[$filter], $str)) {
