@@ -126,22 +126,6 @@ function convert_disc_client(){
 	    }
     }//end check for offline client install
 
-
-    //check to see if installer has been run before,
-    if(!empty($sugar_config['installer_locked']) && $sugar_config['installer_locked']){
-
-        //this is an installed instance, make sure user being used exists on instance to be converted.  This is done
-        //.. to prevent a malicious attack to convert the installed seperate instance into an offline client.
-        if( !empty($user_name) && !empty($password) ){
-            $tmpUser = new User();
-            $result = $tmpUser->retrieve_by_string_fields(array('user_name' => $user_name, 'user_hash' => $password, 'deleted' => 0));
-            //there was no user matched, give semi nebulous error
-            if ( empty($result) || !isset($result->id) ){
-                $errors[] = "1. Users do not match.";
-            }
-        }
-    }
-
     if(!isset($_SESSION['is_oc_conversion']) || $_SESSION['is_oc_conversion'] == false){
         $password = md5($password);    
     }
