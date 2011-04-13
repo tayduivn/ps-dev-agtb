@@ -1,6 +1,5 @@
 <?php
 
-echo JSMin::minify(file_get_contents('sample.js'));
 
 class JSMin {
     /**
@@ -95,7 +94,7 @@ class SugarMin {
             $mLCommentStart = strpos($line, "/*");
             if ($mLCommentStart !== false) {
                 if ($this->checkIfInLiteral($mLCommentStart, $line) == false) {
-                    $line = substr($line, 0, $comment);
+                    $line = substr($line, 0, $mLCommentStart);
                     $mLActive = true;
                 }
             }
@@ -121,6 +120,7 @@ class SugarMin {
         // Preliminary cleaning up of the code is done, now we move onto
         // advanced parsing / stripping of spaces and literals.
         $input = $primedInput;
+        $output = '';
         
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
