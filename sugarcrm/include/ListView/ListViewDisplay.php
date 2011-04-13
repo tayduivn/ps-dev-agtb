@@ -414,7 +414,7 @@ EOHTML;
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 		else
 			$script = "<a href='#' style='width: 150px' class='menuItem' onmouseover='hiliteItem(this,\"yes\");' onmouseout='unhiliteItem(this);' " .
-					'onclick="return sListView.use_external_mail_client(\''.$app_strings['LBL_LISTVIEW_NO_SELECTED'].'\');">' .
+					"onclick=\"return sListView.use_external_mail_client('{$app_strings['LBL_LISTVIEW_NO_SELECTED']}', '{$_REQUEST['module']}');\">" .
 					$app_strings['LBL_EMAIL_COMPOSE'] . '</a>';
 
 		return $script;
