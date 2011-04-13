@@ -46,14 +46,14 @@ class SugarMin {
         }
     }
 	
-	/**
+    /**
 	 * jsParser will take javascript source code and 
 	 *
 	 * @param string $js 
 	 * @param string $currentOptions 
 	 * @return void
 	 */
-	protected function jsParser($js, $compression = 'light') {
+    protected function jsParser($js, $compression = 'light') {
 	    
         // We first perform a few operations to simplify our
         // minification process. We convert all carriage returns
@@ -226,15 +226,23 @@ class SugarMin {
      */
     protected function checkIfInLiteral($position, $line) {
         $literal = false; // Set flag that we are not currently in a string literal.
-        
-        for ($i = 0; $i < $position; $i++) {
+        $escapes = 0;
+
+        for($i = 0; $i < $position; $i++) {
             // If we encounter a string literal, skip over it.
-            if ($line[$i] == "'" || $line[$i] == '"') {
+            if (($line[$i] == "'" || $line[$i] == '"') && ($escapes % 2 == 0)) {
                 $literal = true;
 
                 for ($j = $i + 1; $j <= $position; $j++) {
-                    if ($line[$j] == $line[$i]) {
+                    if ($line[$j] == '\\') {
+                        $escapes++;
+                    } else {
+                        $escapes = 0;
+                    }
+
+                    if (($line[$j] == $line[$i]) && ($escapes % 2 == 0)) {
                         $literal = false;
+                        $escapes = 0;
                         break;
                     }
                 }
@@ -242,7 +250,7 @@ class SugarMin {
                 $i = $j;
             }
         }
-
+        
         return $literal;
     }
 }
