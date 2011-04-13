@@ -65,9 +65,7 @@ class SugarMin {
             $line = $input[$index];
 
             // Get rid of single line multi-line comments
-            echo "\nLine:      $line";
             $line = $this->getEscapedLine($line);
-            echo "\nProcessed: $line";
 
             $line = trim($line, " \t");
 
@@ -78,8 +76,7 @@ class SugarMin {
 
             $primedInput[] = $line;
         }
-        print_r($primedInput);
-        echo "\n\n";
+
         // Preliminary cleaning up of the code is done, now we move onto
         // advanced parsing / stripping of spaces and literals.
         $input = $primedInput;
@@ -252,10 +249,8 @@ class SugarMin {
         static $escapes = 0;
         static $literal = '';
 
-        echo "$char:".($this->inLiteral?1:0)."$escapes->";
         if ($this->inLiteral) {
             if ($char == "\\") {
-                // echo "Escape char detected ";
                 $escapes++;
             }
             elseif (($char == $literal) && ($escapes % 2 == 0)) {
@@ -269,7 +264,6 @@ class SugarMin {
             $literal = $char;
             $escapes = 0;
         }
-        echo (($this->inLiteral?1:0))."$escapes\n";
 
         return $this->inLiteral;
     }
