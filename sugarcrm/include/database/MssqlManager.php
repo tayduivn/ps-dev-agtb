@@ -1129,9 +1129,17 @@ class MssqlManager extends DBManager
     public function convert($string, $type, array $additional_parameters = array())
     {
         // convert the parameters array into a comma delimited string
-        $additional_parameters_string = '';
-        if (!empty($additional_parameters))
+        if (!empty($additional_parameters)) {
             $additional_parameters_string = ','.implode(',',$additional_parameters);
+        } else {
+            $additional_parameters_string = '';
+        }
+        $all_parameters = $additional_parameters;
+        if(is_array($string)) {
+            $all_parameters = array_merge($string, $all_parameters);
+        } elseif (!is_null($string)) {
+            array_unshift($all_parameters, $string);
+        }
 
         switch (strtolower($type)) {
             case 'today':
@@ -1146,15 +1154,15 @@ class MssqlManager extends DBManager
                    return "LEFT(CONVERT(varchar(10),". $string . ",120), 10)";
                 }
             case 'ifnull':
-                return "ISNULL($string".$additional_parameters_string.")";
+                return "ISNULL($string$additional_parameters_string)";
             case 'concat':
-                return "$string+".implode("+",$additional_parameters);
+                return implode("+",$all_parameters);
             case 'text2char':
                 return "CAST($string AS varchar(8000))";
             case 'quarter':
                 return "DATEPART(quarter, $string)";
             case "length":
-                return "DATALENGTH($string)";
+                return "LEN($string)";
         }
 
         return "$string";
@@ -1723,15 +1731,29 @@ EOQ;
         return mssql_get_last_message();
     }
 
+    // FIXME: provide proper fulltext query
     public function getFulltextQuery($field, $condition)
     {
         return "CONTAINS($field, ".$this->quoted($condition).")";
     }
 
-    // FIXME: provide real validation
+    public function getDbInfo()
+    {
+        return array("version" => $this->version());
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::validateQuery()
+     */
     public function validateQuery($query)
     {
-        $res = $this->getOne("EXPLAIN $query");
+        if(!$this->isSelect($query)) {
+            return false;
+        }
+        $this->query("SET SHOWPLAN_TEXT ON");
+        $res = $this->getOne($query);
+        $this->query("SET SHOWPLAN_TEXT OFF");
         return !empty($res);
     }
 }

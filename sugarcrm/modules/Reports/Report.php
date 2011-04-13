@@ -1459,105 +1459,11 @@ function _check_user_permissions()
     {
 
         $query = "SELECT ";
-
-    // TODO: All this should be in sugarwidgetfield*.php
-    if ( $this->db->dbType == 'mssql'){
-        //make sure empty fields are returned as an empty string during concatenation, not a null
-        //so for example, searching on an account with no first name name will return ' ' + 'smith' for the last name
-        //instead of null + smith
         $field_list_name_array = $this->$field_list_name;
-        $arrCount = count($field_list_name_array);
-        $currCount = 0;
-
-        //for each field
-        while($currCount<$arrCount){
-            // Bug 39692 - Correctly add the ISNULL() for concatenated fields
-            if ( strpos($field_list_name_array[$currCount],'+') ) {
-				$fieldsInField = explode('+',trim($field_list_name_array[$currCount]));
-				$newField = '';
-				foreach ( $fieldsInField as $field ) {
-					$field = trim($field);
-					//if it has a space, then it is aliased, let's process
-					//to see if it has a period
-					$has_space = strrpos($field, " ");
-					if($has_space && !stristr("' '",$field)){
-						$temp_field_name = substr($field,0,$has_space);
-						$temp_field_alias  = substr($field,$has_space+1);
-						if ( stristr('ISNULL',$temp_field_name) ) {
-							$newField .= "$temp_field_name $temp_field_alias";
-						}
-						else {
-							$newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
-						}
-					}
-					else {
-						if ( stristr('ISNULL',$field) ) {
-							$newField .= "$field + ";
-						}
-						else {
-							$newField .= "ISNULL({$field},' ') + ";
-						}
-					}
-				}
-				$field_list_name_array[$currCount] = $newField;
-			} else {
-				$fieldsInField = explode(',',trim($field_list_name_array[$currCount]));
-				$loopCount = 0;
-				foreach ( $fieldsInField as $field ) {
-					$field = trim($field);
-					//if it has a space, then it is aliased, let's process
-					//to see if it has a period
-					$has_space = strrpos($field, " ");
-						if($has_space){
-							$temp_field_name = substr($field,0,$has_space);
-							$has_period = strrpos($temp_field_name, ".");
-							$aggregate_func = substr($temp_field_name, 0, 3);
-							$is_aggregate = false;
-							if ($aggregate_func == 'max' || $aggregate_func == 'min' || $aggregate_func == 'avg' || $aggregate_func == 'sum')
-							{
-								$is_aggregate = true;
-							}
-							//has period, and is aliased, so wrap an "ISNULL function around it"
-							// get field type, and don't wrap numeric or date fields with ISNULL
-							$field_type = (empty($this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]) ? '' : $this->focus->field_name_map[substr($temp_field_name, $has_period + 1)]['type']);
-							if($has_period && !$is_aggregate && !empty($field_type) && $field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date'){
-								$temp_field_alias  = substr($field,$has_space+1);
-								$field = "ISNULL(".$temp_field_name.",'') ".$temp_field_alias;
-
-								if($loopCount > 0)
-								{
-								    $field_list_name_array[$currCount] .= ", ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
-								} else {
-									$field_list_name_array[$currCount] = "ISNULL(".$temp_field_name.",' ') ".$temp_field_alias;
-								}
-
-								for ( $i = 0; $i < count($this->order_by_arr); $i++ )
-								{
-									$this->order_by_arr[$i] = str_replace($temp_field_alias,"ISNULL(".$temp_field_name.",' ')",$this->order_by_arr[$i]);
-								}
-							} else if(!$is_aggregate && !empty($field_type) && $field_type == 'currency') {
-
-								if($loopCount > 0)
-								{
-								    $field_list_name_array[$currCount] .= ", " . $field;
-								} else {
-									$field_list_name_array[$currCount] = $field;
-								}
-
-							}
-					    } //if($has_space)
-
-					    $loopCount++;
-				} //foreach
-			}
-			$currCount = $currCount+1;
+        foreach($field_list_name_array as $field) {
+            $field_not_null[] = $this->db->convert($field, "IFNULL");
         }
-
-       $this->$field_list_name = $field_list_name_array;
-
-    }
-
-        $query .= implode(",",$this->$field_list_name);
+        $query .= $this->db->convert($field_not_null, "CONCAT");
 
         $query .= $this->from ."\n";
 
@@ -2282,7 +2188,7 @@ function _check_user_permissions()
 	}
 
   // static function to return the modules associated to a report definition
-  function &getModules(&$report_def)
+  function getModules(&$report_def)
   {
     $modules = array();
     $modules_hash[$report_def['module']] =1 ;

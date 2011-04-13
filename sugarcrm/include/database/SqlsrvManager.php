@@ -114,7 +114,8 @@ class SqlsrvManager extends MssqlManager
             'url'      => 'nvarchar',
             'encrypt'  => 'nvarchar',
             'file'     => 'nvarchar',
-            );
+	        'decimal_tpl' => 'decimal(%d, %d)',
+    );
 
     /**
      * @see DBManager::$backendFunctions
@@ -652,5 +653,11 @@ EOSQL;
     public function lastError()
     {
         return join("\n",sqlsrv_errors(SQLSRV_ERR_ERRORS));
+    }
+
+    public function getDbInfo()
+    {
+        $info = array_merge(sqlsrv_client_info(), sqlsrv_server_info());
+        return $info;
     }
 }

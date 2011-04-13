@@ -213,7 +213,7 @@ class CustomQuery extends SugarBean {
 		}
 		//This checks for either a bad query or checks for a wrong type of query.  Will only pass if
 		//it is a select statement.
-        if(!$this->check_selects($this->custom_query) || !$this->db_slave->validateQuery($this->custom_query)) {
+        if(!$this->db_slave->validateQuery($this->custom_query, true)) {
 			$result = false;
         }
 
@@ -603,24 +603,6 @@ in use by a data set, especially if the data set has the custom layout enabled.
 /*
 	End function group dealing with changes to custom query
 */
-
-	function check_selects($query){
-	//This function is used to mimic the explain function in MYSQL
-	//Checks for invalid query types
-		$select_check = strpos(strtolower($query), strtolower("SELECT"));
-	//Checks to see if there is union select which is valid
-		$select_check2 = strpos(strtolower($query), strtolower("(SELECT"));
-		if($select_check==0 || $select_check2==0){
-			//Returning false means query is ok!
-			return false;
-		} else {
-			//Returning true means query is invalid
-			return true;
-		}
-
-	//end function pseudo_explain_oracle
-	}
-
 //end class
 }
 

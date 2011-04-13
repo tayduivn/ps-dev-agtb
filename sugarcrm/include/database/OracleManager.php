@@ -620,14 +620,14 @@ class OracleManager extends DBManager
 			$configOptions = $sugar_config['dbconfig'];
 
 		if($sugar_config['dbconfigoption']['persistent'] == true){
-            $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name']);
+            $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
             $err = oci_error();
             if ($err != false) {
 	            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
             }
 		}
             if(!$this->database){
-                $this->database = oci_connect($configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name']);
+                $this->database = oci_connect($configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
                 if (!$this->database) {
                 	$err = oci_error();
                 	if ($err != false) {
@@ -695,22 +695,29 @@ class OracleManager extends DBManager
      */
     public function convert($string, $type, array $additional_parameters = array())
     {
-        // convert the parameters array into a comma delimited string
-        $additional_parameters_string = '';
-        if (!empty($additional_parameters))
+        if (!empty($additional_parameters)) {
             $additional_parameters_string = ','.implode(',',$additional_parameters);
-		// TODO: add defaults to date/time formats
+        } else {
+            $additional_parameters_string = '';
+        }
+        $all_parameters = $additional_parameters;
+        if(is_array($string)) {
+            $all_parameters = array_merge($string, $all_parameters);
+        } elseif (!is_null($string)) {
+            array_unshift($all_parameters, $string);
+        }
+
         switch (strtolower($type)) {
             case 'date':
                 return "to_date($string, 'YYYY-MM-DD')";
             case 'time':
                 return "to_date($string, 'HH24:MI:SS')";
             case 'datetime':
-                return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'".$additional_parameters_string.")";
+                return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'$additional_parameters_string)";
             case 'today':
                 return "sysdate";
             case 'left':
-                return "LTRIM($string".$additional_parameters_string.")";
+                return "LTRIM($string$additional_parameters_string)";
             case 'date_format':
                 if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
                     $format = $this->date_formats[$additional_parameters[0]];
@@ -724,9 +731,9 @@ class OracleManager extends DBManager
                 }
                 return "TO_CHAR($string".$additional_parameters_string.")";
             case 'ifnull':
-                return "NVL($string".$additional_parameters_string.")";
+                return "NVL($string$additional_parameters_string)";
             case 'concat':
-                return "$string||".implode("||",$additional_parameters);
+                return implode("||",$all_parameters);
             case 'text2char':
                 return "to_char($string)";
             case 'quarter':
@@ -1409,10 +1416,34 @@ EOQ;
         return !empty($res);
     }
 
-    // FIXME: provide real validation
+    public function getDbInfo()
+    {
+        return array(
+            "Server version" => @oci_server_version($this->database),
+        );
+    }
+
     public function validateQuery($query)
     {
-        $res = $this->getOne("EXPLAIN $query");
-        return !empty($res);
+        $stmt = oci_parse($this->database, $query);
+        if(!$stmt) {
+            return false;
+        }
+        if(oci_statement_type($stmt) != "SELECT") {
+            return false;
+        }
+        $valid = false;
+        // try query, but don't generate result set and do not commit
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        if(!empty($res)) {
+            // check that we got good metadata
+            $name = oci_field_name($res, 1);
+            if(empty($name)) {
+                $valid = true;
+            }
+        }
+        // just in case, rollback all changes
+        oci_rollback($this->database);
+        return $valid;
     }
 }

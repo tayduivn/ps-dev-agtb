@@ -2894,6 +2894,23 @@ abstract class DBManager
     }
 
     /**
+     * Check if the query is a select query
+     * @param string $query
+     */
+	protected function isSelect($query)
+	{
+	    $query = trim($query);
+		$select_check = strpos(strtolower($query), strtolower("SELECT"));
+    	//Checks to see if there is union select which is valid
+		$select_check2 = strpos(strtolower($query), strtolower("(SELECT"));
+		if($select_check==0 || $select_check2==0){
+			//Returning false means query is ok!
+			return true;
+		}
+		return false;
+	}
+
+    /**
      * Parses and runs queries
      *
      * @param  string   $sql        SQL Statement to execute
@@ -3084,6 +3101,7 @@ abstract class DBManager
 
     /**
      * Check if this query is valid
+     * Validates only SELECT queries
      */
     abstract public function validateQuery($query);
 
