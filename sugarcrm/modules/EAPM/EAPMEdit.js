@@ -59,16 +59,17 @@ function EAPMChange() {
         passObj.exec();
 
         //hide/show new window notice
-        if(apiOpts.authMethod){
-            var messageDiv = document.getElementById('eapm_notice_div');
-            if(apiOpts.authMethod == "oauth"){
-                messageDiv.innerHTML = EAPMOAuthNotice;
+        var messageDiv = document.getElementById('eapm_notice_div');
+        if ( typeof messageDiv != 'undefined' && messageDiv != null ) {
+            if(apiOpts.authMethod){
+                if(apiOpts.authMethod == "oauth"){
+                    messageDiv.innerHTML = EAPMOAuthNotice;
+                }else{
+                    messageDiv.innerHTML = EAPMBAsicAuthNotice;
+                }
             }else{
-                 messageDiv.innerHTML = EAPMBAsicAuthNotice;
+                messageDiv.innerHTML = EAPMBAsicAuthNotice;
             }
-        }else{
-            var messageDiv = document.getElementById('eapm_notice_div');
-            messageDiv.innerHTML = EAPMBAsicAuthNotice;
         }
     }
 }
