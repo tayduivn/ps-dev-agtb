@@ -1,20 +1,8 @@
 <?php
 
 
-class JSMin {
-    /**
-     * Calls the SugarMin minify function.
-     *
-     * @param string $js Javascript to be minified 
-     * @return string Minified javascript
-     */
-    public static function minify($js, $filename = '') {
-        return SugarMin::minify($js);
-    }
-}
-
 /**
- * SugarMin is a Javascript minifier with two levels of compression. The default compression 
+ * SugarMin is a Javascript minifier with two levels of compression. The default compression
  * is set to light. Light compression will preserve some line breaks that may interfere with
  * operation of the script. Deep compression will remove all the line breaks, but before using
  * deep compression make sure the script has passed JSLint.
@@ -25,9 +13,12 @@ class SugarMin {
     protected $preNewLineSafeChars = array('\\', '$', '_', '}', ']', ')', '+', '-', '"', "'");
     protected $regexChars = array('(', ',',  '=', ':', '[', '!', '&', '|', '?', '{', '}', ';');
     protected $compression;
-    
+    protected $inLiteral = false;
+    protected $inMlComment = false;
+    protected $lastchar = null;
+
     private function __construct() {}
-    
+
     /**
      * Entry point function to minify javascript.
      *
@@ -45,16 +36,16 @@ class SugarMin {
             throw $e;
         }
     }
-	
+
     /**
-	 * jsParser will take javascript source code and 
+	 * jsParser will take javascript source code and
 	 *
-	 * @param string $js 
-	 * @param string $currentOptions 
+	 * @param string $js
+	 * @param string $currentOptions
 	 * @return void
 	 */
     protected function jsParser($js, $compression = 'light') {
-	    
+
         // We first perform a few operations to simplify our
         // minification process. We convert all carriage returns
         // into line breaks and delete runs of spacees and line breaks.
@@ -62,79 +53,48 @@ class SugarMin {
         $js = str_replace("\r\n", "\n", $js);
         $js = str_replace("\r", "\n", $js);
         $js = preg_replace("/\n+/","\n", $js);
-        
+
         // Split our string up into an array and iterate over each line
         // to do processing.
         $input = explode("\n", $js);
         $primedInput = '';
 
-        // mL is short for multiline, these variables will keep track of multi-line states
-        $mLCommentStart = false;
-        $mLCommentEnd = false;
-        $mLActive = false;
-        
         // In the first pass we will strip out multiline comments and single line comments
         // To allow for easier parsing / processing in the second pass.
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
 
             // Get rid of single line multi-line comments
-//            $line = preg_replace('!/\*.*?\*/!s', '', $line);
-            
-            // Is $line inside a multi-line comment?
-            if ($mLActive) {
-                $mLCommentEnd = strpos($line, "*/");
-                if ($mLCommentEnd !== false && !$this->checkIfInLiteral($mLCommentEnd, $line)) {
-                    $line = substr($line, $mLCommentEnd + 2, strlen($line) - $mLCommentEnd + 2);
-                    $mLActive = false;
-                }
-
-                // If the entire line is part of a comment, skip line.
-                continue;
-            }
-            
-            // Is there a beginning of a mult-line comment?
-            $mLCommentStart = strpos($line, "/*");
-            if ($mLCommentStart !== false) {
-                if ($this->checkIfInLiteral($mLCommentStart, $line) == false) {
-                    $line = substr($line, 0, $mLCommentStart);
-                    $mLActive = true;
-                }
-            }
-
-            // Strip out double slash ('//') comments.
-            $comment = strpos($line, "//");
-            if ($comment !== false) {
-                if ($this->checkIfInLiteral($comment, $line) == false) {
-                    $line = substr($line, 0, $comment);
-                }
-            }
+            echo "\nLine:      $line";
+            $line = $this->getEscapedLine($line);
+            echo "\nProcessed: $line";
 
             $line = trim($line, " \t");
-            
+
             // If the line is empty, ignore it.
             if (strlen($line) == 0) {
                 continue;
             }
-            
+
             $primedInput[] = $line;
         }
-        
+        print_r($primedInput);
+        echo "\n\n";
         // Preliminary cleaning up of the code is done, now we move onto
         // advanced parsing / stripping of spaces and literals.
         $input = $primedInput;
         $output = '';
-        
+
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
             $newLine = '';
             $len = strlen($line);
 
             $nextLine = ($index < count($input) -1 ) ? $input[$index + 1] : '';
-            
+
             $lastChar = $line[$len - 1];
             $nextChar = ($nextLine) ? $nextLine[0] : null;
-            
+
             // Iterate through the string one character at a time.
             for ($i = 0; $i < $len; $i++) {
                 switch($line[$i]) {
@@ -146,16 +106,16 @@ class SugarMin {
                         if (in_array($newLine[strlen($newLine) - 1], $this->regexChars)) {
                             $nesting = 0;
                             $newLine .= $line[$i];
-                            
-                            for ($j = $i + 1; $j < $len; $j++) { 
+
+                            for ($j = $i + 1; $j < $len; $j++) {
                                 if ($line[$j] == '[') {
                                     $nesting++;
                                 } else if ($line[$j] == ']') {
                                     $nesting--;
                                 }
-                                
+
                                 $newLine .= $line[$j];
-                                
+
                                 if ($line[$j] == '/' && $nesting == 0 && $newLine[strlen($newLine) - 1] != "\\") {
                                     break;
                                 }
@@ -169,21 +129,21 @@ class SugarMin {
                     case '"':
                     case "'":
                         $literal = $delimiter = $line[$i];
-                        
+
                         for ($j = $i + 1; $j < strlen($line); $j++) {
                             $literal .= $line[$j];
-                            
+
                             if ($line[$j] == "\\") {
                                 $literal .= $line[$j + 1];
                                 $j++;
                                 continue;
                             }
-                            
+
                             if ($line[$j] == $delimiter) {
                                 break;
                             }
                         }
-                        
+
                         $i = $j;
                         $newLine .= $literal;
                         break;
@@ -202,14 +162,14 @@ class SugarMin {
                         break;
                 }
             }
-            
+
             if ((ctype_alnum($lastChar) || in_array($lastChar, $this->preNewLineSafeChars)) && ((in_array($nextChar, $this->postNewLineSafeChars) || ctype_alnum($nextChar)))) {
                 $newLine .= "\n";
             }
-            
+
             $output .= $newLine;
         }
-        
+
         if ($compression == 'deep') {
             return trim(str_replace("\n", "", $output));
         } else {
@@ -217,6 +177,70 @@ class SugarMin {
         }
 	}
 
+    protected function getEscapedLine($line)
+    {
+        $len = strlen($line);
+        $res = '';
+
+        for($i = 0; $i < $len; $i ++)
+        {
+            $char = $line[$i];
+            if ($this->inMlComment)
+            {
+                $this->checkMlComment($char);
+            }
+            else
+            {
+                if ($this->checkLiteral($char))
+                {
+                    $res = $res . $char;
+                }
+                elseif ($this->checkComment($char))
+                {
+                    // Return with the result with the / from // removed
+                    $this->lastchar = null;
+                    return substr($res, 0, -1);
+                }
+                elseif($this->checkMlComment($char))
+                {
+                    // Comment started, strip the opening /
+                    $res = substr($res, 0, -1);
+                }
+                else
+                {
+                    $res = $res . $char;
+                }
+            }
+            $this->lastchar = $char;
+        }
+        $this->lastchar = null;
+        return $res;
+    }
+
+
+    protected function checkMlComment($char)
+    {
+        if ($this->inMlComment && (($this->lastchar === '*') && ($char === '/')))
+        {
+            $this->inMlComment = false;
+        }
+        elseif (($this->lastchar === '/') && ($char === '*'))
+        {
+            $this->inMlComment = true;
+        }
+        return $this->inMlComment;
+    }
+
+    protected function checkComment($char)
+    {
+        if (($char === '/') &&  ($this->lastchar === '/'))
+        {
+            // Reset the last char as we should be escaping out of checking now.
+            return true;
+        }
+
+        return false;
+    }
     /**
      * Check to see if the character at a certain position is inside a string literal.
      * Returns true if the character at $position is inside a string literal and false
@@ -224,33 +248,29 @@ class SugarMin {
      * @int position
      * @return
      */
-    protected function checkIfInLiteral($position, $line) {
-        $literal = false; // Set flag that we are not currently in a string literal.
-        $escapes = 0;
+    protected function checkLiteral($char) {
+        static $escapes = 0;
+        static $literal = '';
 
-        for($i = 0; $i < $position; $i++) {
-            // If we encounter a string literal, skip over it.
-            if (($line[$i] == "'" || $line[$i] == '"') && ($escapes % 2 == 0)) {
-                $literal = true;
-
-                for ($j = $i + 1; $j <= $position; $j++) {
-                    if ($line[$j] == '\\') {
-                        $escapes++;
-                    } else {
-                        $escapes = 0;
-                    }
-
-                    if (($line[$j] == $line[$i]) && ($escapes % 2 == 0)) {
-                        $literal = false;
-                        $escapes = 0;
-                        break;
-                    }
-                }
-
-                $i = $j;
+        echo "$char:".($this->inLiteral?1:0)."$escapes->";
+        if ($this->inLiteral) {
+            if ($char == "\\") {
+                // echo "Escape char detected ";
+                $escapes++;
             }
+            elseif (($char == $literal) && ($escapes % 2 == 0)) {
+                // Flip the literal bit
+                $this->inLiteral = (!$this->inLiteral);
+            }
+            $escapes = 0;
         }
-        
-        return $literal;
+        elseif ($char == '"' || $char == "'") {
+            $this->inLiteral = true;
+            $literal = $char;
+            $escapes = 0;
+        }
+        echo (($this->inLiteral?1:0))."$escapes\n";
+
+        return $this->inLiteral;
     }
 }
