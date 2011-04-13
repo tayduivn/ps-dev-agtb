@@ -126,15 +126,11 @@ class SugarMin {
             $line = $input[$index];
             $newLine = '';
             $len = strlen($line);
-            
-            if ($index < count($input) - 1) {
-                $nextLine = $input[$index + 1];
-            } else {
-                $nextLine = '';
-            }
+
+            $nextLine = ($index < count($input) -1 ) ? $input[$index + 1] : '';
             
             $lastChar = $line[$len - 1];
-            $nextChar = $nextLine[0];
+            $nextChar = ($nextLine) ? $nextLine[0] : null;
             
             // Iterate through the string one character at a time.
             for ($i = 0; $i < $len; $i++) {
