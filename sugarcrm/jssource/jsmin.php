@@ -77,6 +77,9 @@ class SugarMin {
         // To allow for easier parsing / processing in the second pass.
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
+
+            // Get rid of single line multi-line comments
+            $line = preg_replace('!/\*.*?\*/!s', '', $line);
             
             // Is $line inside a multi-line comment?
             if ($mLActive) {
