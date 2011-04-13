@@ -897,7 +897,8 @@ print "<BR>";
     }
     
     function filtersIterate($filters, &$where_clause) {
-        //$where_arr = array();
+        $where_clause .= '(';
+    	//$where_arr = array();
         $operator = $filters['operator'];
         $isSubCondition = 0;
         if(count($filters) < 2) { // We only have an operator and an empty Filter Box.
@@ -922,6 +923,7 @@ print "<BR>";
                 $where_clause .= " $operator ";
             
         }
+        $where_clause .= ')';
     }
     
     function create_where()
