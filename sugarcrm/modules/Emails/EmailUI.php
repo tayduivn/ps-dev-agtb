@@ -298,7 +298,7 @@ eoq;
         $out = json_encode($outData);
         return $out;
     }
-    
+
     /**
      * Load the modules from the metadata file and include in a custom one if it exists
      *
@@ -358,6 +358,7 @@ eoq;
     function generateComposePackageForQuickCreate($composeData,$fullLinkUrl, $lazyLoad=false)
     {
         $_REQUEST['forQuickCreate'] = true;
+
         if(!$lazyLoad){
     	    require_once('modules/Emails/Compose.php');
     	    $composePackage = generateComposeDataPackage($composeData,FALSE);
@@ -372,7 +373,6 @@ eoq;
     	   if (is_string($singleCompose))
     	       $composePackage[$key] = str_replace("'","&#039;",$singleCompose);
     	}
-        
 
     	$quickComposeOptions = array('fullComposeUrl' => $fullLinkUrl,'composePackage' => $composePackage);
     	$j_quickComposeOptions = json_encode($quickComposeOptions);
@@ -2217,7 +2217,7 @@ eoq;
 		$ea = new SugarEmailAddress();
 
 		if(!empty($email)) {
-			$description = (empty($email->description_html)) ? $email->description : from_html($email->description_html);
+			$description = (empty($email->description_html)) ? $email->description : $email->description_html;
 		}
 
 		//Get the most complete address list availible for this email
