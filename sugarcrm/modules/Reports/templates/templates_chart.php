@@ -267,7 +267,7 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 		$guid = $id;
 	}
 	else{
-		$width = '720px';
+		$width = '100%';
 		$height = '480';
 		$guid = $reporter->saved_report_id;
 	}

@@ -710,48 +710,37 @@ class SugarApplication
 		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions)){
 			$whiteListActions[] = $this->controller->action;
 			$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
-			header("Cache-Control: no-cache, must-revalidate");
-			echo <<<EOQ
-					<div align='center' style='background:lightgray'>
-					<h3 style='color:red'>Possible Cross Site Request Forgery (XSRF) Attack Detected</h3>
-					<h4>You've made a request to {$this->controller->action} but your HTTP Referer header is blank.</h4>
-					<h4><a href='javascript:void(0);' onclick='document.getElementById("directions").style.display="";'>Click here for directions to allow the HTTP Referer to not be set</a></h4>
-					</div>
-					<div id='directions' style='display:none'>
-						<h3>Directions to allow HTTP Referer to not be set. This will cause your system to be insecure:</h3>
-						<ol>
-							<li>On your file system go to the root of your SugarCRM instance
-							<li>Open the file config_override.php. If it does not exist, create it. (it should be at the same level as index.php and config.php)
-							<li>Make sure the file starts with <pre>&lt;?php</pre> followed by a new line
-							<li>Add the following line to your config_override.php file<br> <pre>\$sugar_config['http_referer']['weak']= true;</pre>
-							<li>Save the file and it should work
-						</ol>
-						<h3>Attempted action ({$this->controller->action}):</h3>
-						If you feel this is a valid action that should be allowed with or without an HTTP Referer, add the following to your config_override.php file
-						<ul><li><pre>\$sugar_config['http_referer']['actions'] =array( $whiteListString ); </pre></ul>
-					</div>
-
-
-EOQ;
-			sugar_cleanup(true);
+            if ( $dieIfInvalid ) {
+                header("Cache-Control: no-cache, must-revalidate");
+                $ss = new Sugar_Smarty;
+                $ss->assign('host',$http_ref['host']);
+                $ss->assign('action',$this->controller->action);
+                $ss->assign('whiteListString',$whiteListString);
+                $ss->display('include/MVC/View/tpls/xsrf.tpl');
+                sugar_cleanup(true);
+            }
+            return false;
 		}else if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
 			$http_ref = parse_url($_SERVER['HTTP_REFERER']);
 			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $whiteListActions) &&
 
 				(empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))){
-				header("Cache-Control: no-cache, must-revalidate");
-				$whiteListActions[] = $this->controller->action;
-				$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
+                if ( $dieIfInvalid ) {
+                    header("Cache-Control: no-cache, must-revalidate");
+                    $whiteListActions[] = $this->controller->action;
+                    $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
 
-				$ss = new Sugar_Smarty;
-                $ss->assign('host',$http_ref['host']);
-                $ss->assign('action',$this->controller->action);
-                $ss->assign('whiteListString',$whiteListString);
-                $ss->display('include/MVC/View/tpls/xsrf.tpl');
-				sugar_cleanup(true);
+                    $ss = new Sugar_Smarty;
+                    $ss->assign('host',$http_ref['host']);
+                    $ss->assign('action',$this->controller->action);
+                    $ss->assign('whiteListString',$whiteListString);
+                    $ss->display('include/MVC/View/tpls/xsrf.tpl');
+                    sugar_cleanup(true);
+                }
+                return false;
 			}
 		}
-
+         return true;
 	}
 	function startSession()
 	{

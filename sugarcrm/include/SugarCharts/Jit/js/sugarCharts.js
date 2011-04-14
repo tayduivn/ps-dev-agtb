@@ -168,12 +168,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = barChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols),
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
 						table += '<td nowrap>';
 						if(legend["name"][j] != undefined) {
@@ -330,12 +331,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = lineChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols),
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
 						table += '<td nowrap>';
 						if(legend["name"][j] != undefined) {
@@ -445,12 +447,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = pieChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols);
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
 						table += '<td nowrap>';
 						if(legend["name"][j] != undefined) {
@@ -597,12 +600,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = funnelChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols);
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
 						table += '<td nowrap>';
 						if(legend["name"][j] != undefined) {
@@ -727,12 +731,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 				var list = $jit.id('legend'+chartId);
 				var legend = gaugeChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols);
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 1;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
 						table += '<td nowrap>';
 						if(legend["name"][j] != undefined) {
