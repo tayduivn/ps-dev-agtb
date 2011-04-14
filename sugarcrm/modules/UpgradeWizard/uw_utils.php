@@ -5574,5 +5574,109 @@ function upgradeModulesForTeam() {
 		}
 		logThis('end unlinking files from previous upgrade');
 	}	
+
+
+/**
+ * repairTableDictionaryExtFile
+ * 
+ * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file 
+ * did not exist.  This would cause warnings to appear during the upgrade.  As a result, this
+ * function scans the contents of tabledictionary.ext.php and then remove entries where the file does exist.
+ */
+function repairTableDictionaryExtFile()
+{
+	$tableDictionaryExtFiles = array('custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php', 
+	                                 'custom/application/Ext/TableDictionary/tabledictionary.ext.php');
+	
+	foreach($tableDictionaryExtFiles as $tableDictionaryExtFile)
+	{
+	
+		if(file_exists($tableDictionaryExtFile) && is_writable($tableDictionaryExtFile))
+		{
+			logThis("start repair {$tableDictionaryExtFile}");
+			
+			if(function_exists('sugar_fopen'))
+			{
+				$fp = @sugar_fopen($tableDictionaryExtFile, 'r');
+			} else {
+				$fp = fopen($tableDictionaryExtFile, 'r');
+			}			
+			
+			
+		    if($fp)
+	        {
+	             $altered = false;
+	             $contents = '';
+			     
+	             while($line = fgets($fp))
+			     {
+			    	if(preg_match('/\s*include\s*\(\s*\'(.*?)\'\s*\)\s*;/', $line, $match))
+			    	{
+			    	   if(!file_exists($match[1]))
+			    	   {
+			    	      $altered = true;
+			    	   	  logThis('file ' . $match[1] . ' does not exist, removing from tabledictionary.ext.php');
+			    	   } else {
+			    	   	  $contents .= $line;
+			    	   }
+			    	} else {
+			    	   $contents .= $line;
+			    	}
+			     }
+			     
+			     fclose($fp); 
+	        }
+	        
+	        
+		    if($altered)
+		    {
+				if(function_exists('sugar_fopen'))
+				{
+					$fp = @sugar_fopen($tableDictionaryExtFile, 'w');
+				} else {
+					$fp = fopen($tableDictionaryExtFile, 'w');
+				}		    	
+	            
+				if($fp && fwrite($fp, $contents))
+				{
+					logThis('updated custom tabledictionary.ext.php file');
+					fclose($fp);
+				}
+		    }
+	
+		    logThis("end repair {$tableDictionaryExtFile}");
+		}
+
+	}
+}
+
+if (!function_exists("getValidDBName"))
+{
+    /*
+     * Return a version of $proposed that can be used as a column name in any of our supported databases
+     * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+     * @param string $name Proposed name for the column
+     * @param string $ensureUnique
+     * @return string Valid column name trimmed to right length and with invalid characters removed
+     */
+     function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
+    {
+        // first strip any invalid characters - all but alphanumerics and -
+        $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
+        $len = strlen ( $name ) ;
+        $result = $name;
+        if ($ensureUnique)
+        {
+            $md5str = md5($name);
+            $tail = substr ( $name, -11) ;
+            $temp = substr($md5str , strlen($md5str)-4 );
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
+        }else if ($len > ($maxLen - 5))
+        {
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
+        }
+        return strtolower ( $result ) ;
+    }
+}
 	
 ?>
