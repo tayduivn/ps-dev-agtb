@@ -379,7 +379,139 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		} // else
 
 	} // fn
-	
+
+
+    function get_field_list($value,$fields,  $translate=true) {
+
+	    $GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list');
+		$module_fields = array();
+		$link_fields = array();
+		if(!empty($value->field_defs)){
+
+			foreach($value->field_defs as $var){
+				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
+				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' &&$var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
+				if ((isset($var['source']) && $var['source'] == 'non_db') && (isset($var['type']) && $var['type'] != 'link')) {
+					continue;
+				}
+				$required = 0;
+				$options_dom = array();
+				$options_ret = array();
+				// Apparently the only purpose of this check is to make sure we only return fields
+				//   when we've read a record.  Otherwise this function is identical to get_module_field_list
+				if( isset($var['required']) && ($var['required'] || $var['required'] == 'true' ) ){
+					$required = 1;
+				}
+
+				if($var['type'] == 'bool')
+				    $var['options'] = 'checkbox_dom';
+
+				if(isset($var['options'])){
+					$options_dom = translate($var['options'], $value->module_dir);
+					if(!is_array($options_dom)) $options_dom = array();
+					foreach($options_dom as $key=>$oneOption)
+						$options_ret[$key] = $this->get_name_value($key,$oneOption);
+				}
+
+	            if(!empty($var['dbType']) && $var['type'] == 'bool') {
+	                $options_ret['type'] = $this->get_name_value('type', $var['dbType']);
+	            }
+
+	            $entry = array();
+	            $entry['name'] = $var['name'];
+	            $entry['type'] = $var['type'];
+	            $entry['group'] = isset($var['group']) ? $var['group'] : '';
+	            $entry['id_name'] = isset($var['id_name']) ? $var['id_name'] : '';
+
+	            if ($var['type'] == 'link') {
+		            $entry['relationship'] = (isset($var['relationship']) ? $var['relationship'] : '');
+		            $entry['module'] = (isset($var['module']) ? $var['module'] : '');
+		            $entry['bean_name'] = (isset($var['bean_name']) ? $var['bean_name'] : '');
+					$link_fields[$var['name']] = $entry;
+	            } else {
+		            if($translate) {
+		            	$entry['label'] = isset($var['vname']) ? translate($var['vname'], $value->module_dir) : $var['name'];
+		            } else {
+		            	$entry['label'] = isset($var['vname']) ? $var['vname'] : $var['name'];
+		            }
+		            $entry['required'] = $required;
+		            $entry['options'] = $options_ret;
+		            $entry['related_module'] = (isset($var['id_name']) && isset($var['module'])) ? $var['module'] : '';
+		            $entry['calculated'] =  (isset($var['calculated']) && $var['calculated']) ? true : false;
+                    $entry['len'] =  isset($var['len']) ? $var['len'] : '';
+
+					if(isset($var['default'])) {
+					   $entry['default_value'] = $var['default'];
+					}
+					if( $var['type'] == 'parent' && isset($var['type_name']) )
+					   $entry['type_name'] = $var['type_name'];
+
+					$module_fields[$var['name']] = $entry;
+	            } // else
+			} //foreach
+		} //if
+
+		if($value->module_dir == 'Meetings' || $value->module_dir == 'Calls')
+		{
+		    if( isset($module_fields['duration_minutes']) && isset($GLOBALS['app_list_strings']['duration_intervals']))
+		    {
+		        $options_dom = $GLOBALS['app_list_strings']['duration_intervals'];
+		        $options_ret = array();
+		        foreach($options_dom as $key=>$oneOption)
+						$options_ret[$key] = $this->get_name_value($key,$oneOption);
+
+		        $module_fields['duration_minutes']['options'] = $options_ret;
+		    }
+		}
+
+		if($value->module_dir == 'Bugs'){
+			require_once('modules/Releases/Release.php');
+			$seedRelease = new Release();
+			$options = $seedRelease->get_releases(TRUE, "Active");
+			$options_ret = array();
+			foreach($options as $name=>$value){
+				$options_ret[] =  array('name'=> $name , 'value'=>$value);
+			}
+			if(isset($module_fields['fixed_in_release'])){
+				$module_fields['fixed_in_release']['type'] = 'enum';
+				$module_fields['fixed_in_release']['options'] = $options_ret;
+			}
+            if(isset($module_fields['found_in_release'])){
+                $module_fields['found_in_release']['type'] = 'enum';
+                $module_fields['found_in_release']['options'] = $options_ret;
+            }
+			if(isset($module_fields['release'])){
+				$module_fields['release']['type'] = 'enum';
+				$module_fields['release']['options'] = $options_ret;
+			}
+			if(isset($module_fields['release_name'])){
+				$module_fields['release_name']['type'] = 'enum';
+				$module_fields['release_name']['options'] = $options_ret;
+			}
+		}
+
+		if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
+			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
+			$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
+		}
+		if(isset($value->assigned_name) && isset($module_fields['team_id'])) {
+			$module_fields['team_name'] = $module_fields['team_id'];
+			$module_fields['team_name']['name'] = 'team_name';
+		}
+		if(isset($module_fields['modified_user_id'])) {
+			$module_fields['modified_by_name'] = $module_fields['modified_user_id'];
+			$module_fields['modified_by_name']['name'] = 'modified_by_name';
+		}
+		if(isset($module_fields['created_by'])) {
+			$module_fields['created_by_name'] = $module_fields['created_by'];
+			$module_fields['created_by_name']['name'] = 'created_by_name';
+		}
+
+		$GLOBALS['log']->info('End: SoapHelperWebServices->get_field_list');
+		return array('module_fields' => $module_fields, 'link_fields' => $link_fields);
+	}
+
+    
 	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
 		global $beanList, $beanFiles, $current_user, $app_list_strings;
