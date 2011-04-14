@@ -366,7 +366,7 @@ function post_install() {
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
 
-    if ($origVersion < '620' && $sugar_config['dbconfig']['db_type'] != 'mysql') {
+    if ($origVersion < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8')) {
         _logThis('About to repair relationship fields', $path);
         repair_long_relationship_names();
     }

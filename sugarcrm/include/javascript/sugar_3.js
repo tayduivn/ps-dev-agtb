@@ -1808,15 +1808,59 @@ sugarListView.update_count = function(count, add) {
 		}
 	}
 }
-sugarListView.prototype.use_external_mail_client = function(no_record_txt) {
+sugarListView.prototype.use_external_mail_client = function(no_record_txt, module) {
 	selected_records = sugarListView.get_checks_count();
 	if(selected_records <1) {
 		alert(no_record_txt);
-	} else {
-		location.href = 'mailto:';
+        return false;
 	}
+
+    if (document.MassUpdate.select_entire_list.value == 1) {
+		if (totalCount > 10) {
+			alert(totalCountError);
+			return;
+		} // if
+		select = false;
+	}
+	else if (document.MassUpdate.massall.checked == true)
+		select = false;
+	else
+		select = true;
+    sugarListView.get_checks();
+    var ids = "";
+    if(select) { // use selected items
+		ids = document.MassUpdate.uid.value;
+	}
+	else { // use current page
+		inputs = document.MassUpdate.elements;
+		ar = new Array();
+		for(i = 0; i < inputs.length; i++) {
+			if(inputs[i].name == 'mass[]' && inputs[i].checked && typeof(inputs[i].value) != 'function') {
+				ar.push(inputs[i].value);
+			}
+		}
+		ids = ar.join(',');
+	}
+    YAHOO.util.Connect.asyncRequest("POST", "index.php?", {
+        success: this.use_external_mail_client_callback
+    }, SUGAR.util.paramsToUrl({
+        module: "Emails",
+        action: "Compose",
+        listViewExternalClient: 1,
+        action_module: module,
+        uid: ids,
+        to_pdf:1
+    }));
+
 	return false;
 }
+
+sugarListView.prototype.use_external_mail_client_callback = function(o)
+{
+    if (o.responseText)
+        location.href = 'mailto:' + o.responseText;
+}
+
 sugarListView.prototype.send_form_for_emails = function(select, currentModule, action, no_record_txt,action_module,totalCount, totalCountError) {
 	if (document.MassUpdate.select_entire_list.value == 1) {
 		if (totalCount > 10) {

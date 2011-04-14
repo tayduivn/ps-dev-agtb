@@ -209,25 +209,27 @@ $.saveImageFile = function (id,jsonfilename,imageExt) {
 	var filename = parts[2].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
-	if(imageExt == "jpg") {
-		var strDataURI = oCanvas.toDataURL("image/jpeg"); 
-	} else {
-		var strDataURI = oCanvas.toDataURL("image/png");
+	if(oCanvas) {
+		if(imageExt == "jpg") {
+			var strDataURI = oCanvas.toDataURL("image/jpeg"); 
+		} else {
+			var strDataURI = oCanvas.toDataURL("image/png");
+		}
+		var handleFailure = function(o){
+			alert('failed to write image' + filename);
+		}	
+		var handleSuccess = function(o){
+		}			
+		var callback =
+		{
+		  success:handleSuccess,
+		  failure:handleFailure,
+		  argument: { foo:'foo', bar:''}
+		};
+		var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+		var postData = "imageStr=" + strDataURI + "&filename=" + filename;
+		var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 	}
-	var handleFailure = function(o){
-		alert('failed to write image' + filename);
-	}	
-	var handleSuccess = function(o){
-	}			
-	var callback =
-	{
-	  success:handleSuccess,
-	  failure:handleFailure,
-	  argument: { foo:'foo', bar:''}
-	};
-	var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
-	var postData = "imageStr=" + strDataURI + "&filename=" + filename;
-	var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 };
 
 $.saveImageTest = function (id,jsonfilename,imageExt) {
