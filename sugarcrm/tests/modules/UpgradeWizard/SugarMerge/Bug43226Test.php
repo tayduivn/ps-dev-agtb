@@ -28,8 +28,6 @@ function test_uploadfile_convert_merge() {
 
    require('custom/modules/Documents/metadata/editviewdefs.php');
 
-   print_r($viewdefs['Documents']['EditView']['panels']);
-
    $foundUploadFile = 0;
    $foundFilename = 0;
 
