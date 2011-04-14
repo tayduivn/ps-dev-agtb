@@ -209,25 +209,27 @@ $.saveImageFile = function (id,jsonfilename,imageExt) {
 	var filename = parts[2].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
-	if(imageExt == "jpg") {
-		var strDataURI = oCanvas.toDataURL("image/jpeg"); 
-	} else {
-		var strDataURI = oCanvas.toDataURL("image/png");
+	if(oCanvas) {
+		if(imageExt == "jpg") {
+			var strDataURI = oCanvas.toDataURL("image/jpeg"); 
+		} else {
+			var strDataURI = oCanvas.toDataURL("image/png");
+		}
+		var handleFailure = function(o){
+			alert('failed to write image' + filename);
+		}	
+		var handleSuccess = function(o){
+		}			
+		var callback =
+		{
+		  success:handleSuccess,
+		  failure:handleFailure,
+		  argument: { foo:'foo', bar:''}
+		};
+		var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+		var postData = "imageStr=" + strDataURI + "&filename=" + filename;
+		var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 	}
-	var handleFailure = function(o){
-		alert('failed to write image' + filename);
-	}	
-	var handleSuccess = function(o){
-	}			
-	var callback =
-	{
-	  success:handleSuccess,
-	  failure:handleFailure,
-	  argument: { foo:'foo', bar:''}
-	};
-	var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
-	var postData = "imageStr=" + strDataURI + "&filename=" + filename;
-	var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 };
 
 $.saveImageTest = function (id,jsonfilename,imageExt) {
@@ -11668,9 +11670,7 @@ $jit.ST.Plot.NodeTypes.implement({
 				acumValueLabel = valAcum;
 			}
           if(aggregates(node.name, valAcum)) {
-            if(horz) {
-
-            } else {
+            if(!horz) {
 			  ctx.textAlign = 'center';
 			  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 			  //background box
@@ -11697,8 +11697,9 @@ $jit.ST.Plot.NodeTypes.implement({
 			  
 			  ctx.rotate(0 * Math.PI / 180);
 			  ctx.fillStyle = "rgba(255,255,255,.8)";
-			  
-			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+			  if(boxHeight + acum + config.labelOffset > gridHeight) {
+			  	$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+			  }
 			  //$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 			  ctx.fillStyle = ctx.strokeStyle = label.color;
 			  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
@@ -11732,8 +11733,10 @@ $jit.ST.Plot.NodeTypes.implement({
 				boxX = -inset/2;
 				boxY = -boxHeight/2;
 				ctx.fillStyle = "rgba(255,255,255,.8)";
-				cornerRadius = 4;	
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				cornerRadius = 4;
+				if(acum + boxWidth + config.labelOffset + inset > gridWidth) {	
+					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				}
 				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				
 			  ctx.fillStyle = label.color;
@@ -11946,7 +11949,10 @@ $jit.ST.Plot.NodeTypes.implement({
 				  boxY = y + i*fixedDim + (fixedDim/2) - boxHeight/2;
 				  cornerRadius = 4;	
 				  
-				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				  
+				  if(boxWidth + dimArray[i] + config.labelOffset > gridWidth) {
+				  	$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				  }
 				//  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				  
 				  ctx.fillStyle = ctx.strokeStyle = label.color;
@@ -11985,7 +11991,9 @@ $jit.ST.Plot.NodeTypes.implement({
 					cornerRadius = 4;	
 
 					//ctx.rotate(270* Math.PI / 180);
-					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+						$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					}
 					//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					
 					ctx.fillStyle = ctx.strokeStyle = label.color;
@@ -12184,7 +12192,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  boxHeight = label.size+6;
 					  
 					  if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
-						bottomPadding = dimArray[i] - config.labelOffset - boxHeight - inset;
+						bottomPadding = dimArray[i] - config.labelOffset  - inset;
 					  } else {
 						bottomPadding = dimArray[i] + config.labelOffset + inset;
 					  }
@@ -12197,7 +12205,9 @@ $jit.ST.Plot.NodeTypes.implement({
 					  
 					  //ctx.rotate(270* Math.PI / 180);
 					  ctx.fillStyle = "rgba(255,255,255,.6)";
-					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					  if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+					  	$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					  }
 					 // $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					  ctx.fillStyle = ctx.strokeStyle = label.color;
 					  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
@@ -12246,8 +12256,9 @@ $jit.ST.Plot.NodeTypes.implement({
 				ctx.fillStyle = "rgba(255,255,255,.8)";
 				
 				cornerRadius = 4;	
-				
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				if(acum + boxWidth + config.labelOffset + inset > gridWidth) {
+					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				}
 				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 		
 				

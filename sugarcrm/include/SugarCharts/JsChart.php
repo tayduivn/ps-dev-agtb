@@ -137,6 +137,8 @@ class JsChart extends SugarChart {
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
 			$chartConfig[$key] = $value;
 		}
+		
+		$chartConfig['imageExportType'] = $this->image_export_type;
 		$this->ss->assign("config", $chartConfig);
 
 		$file = "";

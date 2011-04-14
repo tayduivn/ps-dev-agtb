@@ -40,6 +40,9 @@ $entry_point_registry = array(
     'json_server' => array('file' => 'json_server.php', 'auth' => true),
 	'HandleAjaxCall' => array('file' => 'HandleAjaxCall.php', 'auth' => true),
 	'TreeData' => array('file' => 'TreeData.php', 'auth' => true),
+//BEGIN SUGARCRM flav=pro ONLY
+	'oc_convert' => array('file' => 'oc_convert.php', 'auth' => false),
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
     'image' => array('file' => 'modules/Campaigns/image.php', 'auth' => false),
     'campaign_trackerv2' => array('file' => 'modules/Campaigns/Tracker.php', 'auth' => false),

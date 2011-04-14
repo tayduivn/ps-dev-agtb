@@ -5859,64 +5859,69 @@ function unlinkUpgradeFiles($version)
  */
 function repairTableDictionaryExtFile()
 {
-	$tableDictionaryExtFile = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';
+	$tableDictionaryExtFiles = array('custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php', 
+	                                 'custom/application/Ext/TableDictionary/tabledictionary.ext.php');
 	
-	if(file_exists($tableDictionaryExtFile) && is_writable($tableDictionaryExtFile))
+	foreach($tableDictionaryExtFiles as $tableDictionaryExtFile)
 	{
-		logThis('start repair custom tabledictionary.ext.php file');
-		
-		if(function_exists('sugar_fopen'))
+	
+		if(file_exists($tableDictionaryExtFile) && is_writable($tableDictionaryExtFile))
 		{
-			$fp = @sugar_fopen($tableDictionaryExtFile, 'r');
-		} else {
-			$fp = fopen($tableDictionaryExtFile, 'r');
-		}			
-		
-		
-	    if($fp)
-        {
-             $altered = false;
-             $contents = '';
-		     
-             while($line = fgets($fp))
-		     {
-		    	if(preg_match('/\s*include\s*\(\'(.*?)\'\);/', $line, $match))
-		    	{
-		    	   if(!file_exists($match[1]))
-		    	   {
-		    	      $altered = true;
-		    	   	  logThis('file ' . $match[1] . ' does not exist, removing from tabledictionary.ext.php');
-		    	   } else {
-		    	   	  $contents .= $line;
-		    	   }
-		    	} else {
-		    	   $contents .= $line;
-		    	}
-		     }
-		     
-		     fclose($fp); 
-        }
-        
-        
-	    if($altered)
-	    {
+			logThis("start repair {$tableDictionaryExtFile}");
+			
 			if(function_exists('sugar_fopen'))
 			{
-				$fp = @sugar_fopen($tableDictionaryExtFile, 'w');
+				$fp = @sugar_fopen($tableDictionaryExtFile, 'r');
 			} else {
-				$fp = fopen($tableDictionaryExtFile, 'w');
-			}		    	
-            
-			if($fp && fwrite($fp, $contents))
-			{
-				logThis('updated custom tabledictionary.ext.php file');
-				fclose($fp);
-			}
-	    }
+				$fp = fopen($tableDictionaryExtFile, 'r');
+			}			
+			
+			
+		    if($fp)
+	        {
+	             $altered = false;
+	             $contents = '';
+			     
+	             while($line = fgets($fp))
+			     {
+			    	if(preg_match('/\s*include\s*\(\s*\'(.*?)\'\s*\)\s*;/', $line, $match))
+			    	{
+			    	   if(!file_exists($match[1]))
+			    	   {
+			    	      $altered = true;
+			    	   	  logThis('file ' . $match[1] . ' does not exist, removing from tabledictionary.ext.php');
+			    	   } else {
+			    	   	  $contents .= $line;
+			    	   }
+			    	} else {
+			    	   $contents .= $line;
+			    	}
+			     }
+			     
+			     fclose($fp); 
+	        }
+	        
+	        
+		    if($altered)
+		    {
+				if(function_exists('sugar_fopen'))
+				{
+					$fp = @sugar_fopen($tableDictionaryExtFile, 'w');
+				} else {
+					$fp = fopen($tableDictionaryExtFile, 'w');
+				}		    	
+	            
+				if($fp && fwrite($fp, $contents))
+				{
+					logThis('updated custom tabledictionary.ext.php file');
+					fclose($fp);
+				}
+		    }
+	
+		    logThis("end repair {$tableDictionaryExtFile}");
+		}
 
-	    logThis('end repair custom tabledictionary.ext.php file');
 	}
-
 }
 
 if (!function_exists("getValidDBName"))

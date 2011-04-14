@@ -136,15 +136,16 @@ class Meeting extends SugarBean {
 		global $timedate;
 		global $current_user;
 		global $disable_date_format;
-
-		if(isset($this->date_start)
-			&& isset($this->duration_hours)
-			&& isset($this->duration_minutes)) {
-                $dbObj = $timedate->fromDb($this->date_start);
-                if($dbObj){
-			        $this->date_end = $dbObj->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-                }
-		}
+		
+	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+        {
+		   if(preg_match('/[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}/',$this->date_start))
+		   {
+    	   	 $this->date_end = $timedate->fromDb($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+		   } else {
+		   	 $this->date_end = $timedate->fromUser($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+		   }
+		}			
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
 		if(empty($_REQUEST['send_invites'])) {
