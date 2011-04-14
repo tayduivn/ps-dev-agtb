@@ -136,12 +136,11 @@ class Call extends SugarBean
 		global $timedate,$current_user;
 		global $disable_date_format;
 
-		
-	    if(isset($this->date_start) && !empty($this->duration_hours) && !empty($this->duration_minutes) ) 
-        {
-    	   $this->date_end = $timedate->fromUser($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-        }		
-		
+        if(	isset($this->date_start) &&
+        	!empty($this->duration_hours) &&
+        	!empty($this->duration_minutes) ) {
+    			$this->date_end = $timedate->fromDb($this->date_start)->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+        }
 		if(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') {
 			$check_notify = true;
         } else {
