@@ -25,11 +25,11 @@ require_once("include/Expressions/Actions/VisibilityAction.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 
 class Dependency {
-	private $trigger;
-	private $actions = array();
-	private $falseActions = array();
-	private $id = "";
-	private $fireOnLoad = false;
+	protected $trigger;
+	protected $actions = array();
+	protected $falseActions = array();
+	protected $id = "";
+	protected $fireOnLoad = false;
 	
 	function Dependency($id) {
 		$this->id = $id;
@@ -87,7 +87,7 @@ class Dependency {
 	/**
 	 * Returns the javascript equivalent of this dependency.
 	 */
-	function getJavascript() {
+	function getJavascript($form = "EditView") {
 		if (empty($this->actions)) return "";
 		
 		$js = "var {$this->id}dep = new SUGAR.forms.Dependency(" . 
@@ -112,9 +112,12 @@ class Dependency {
 		$js .= "]";
 		if ($this->fireOnLoad) {
 			$js .= ",true";
-		}
+		} else {
+            $js .= ",false";
+        }
 		
-		$js .= ");\n";
+		$js .= ",'$form');\n";
+
 		return $js;
 	}
 	
@@ -161,7 +164,7 @@ class Dependency {
 	 * @param boolean $useFalse
 	 */
 	private function fireActions(&$target, $useFalse = false) {
-		$action;
+		$action = "";
 		try {
 			$actions = $this->actions;
 			if ($useFalse)

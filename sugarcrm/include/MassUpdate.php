@@ -1206,7 +1206,7 @@ EOQ;
         if (isset($oldTime[1])) {
         	$oldTime = $oldTime[1];
         } else {
-        	$oldTime = $timedate->to_display_time($timedate->get_gmt_db_datetime());
+        	$oldTime = $timedate->now();
         }
         $value = explode(" ", $value);
         $value = $value[0];
@@ -1283,12 +1283,16 @@ EOQ;
             $searchForm = new SearchForm($seed, $module);
             $searchForm->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl');
         }
-        $searchForm->populateFromArray(unserialize(base64_decode($query)));
+	/* bug 31271: using false to not add all bean fields since some beans - like SavedReports
+	   can have fields named 'module' etc. which may break the query */
+        $searchForm->populateFromArray(unserialize(base64_decode($query)), null, false); // see bug 31271
         $this->searchFields = $searchForm->searchFields;
         $where_clauses = $searchForm->generateSearchWhere(true, $module);
         if (count($where_clauses) > 0 ) {
             $this->where_clauses = '('. implode(' ) AND ( ', $where_clauses) . ')';
             $GLOBALS['log']->info("MassUpdate Where Clause: {$this->where_clauses}");
+        } else {
+            $this->where_clauses = '';
         }
     }
 

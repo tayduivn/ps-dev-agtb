@@ -108,9 +108,9 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 			$type_obj = 'target_'.$type;
 
 			//remove the email address and relationship			
-			$query = 'delete from email_addresses where email_address = \''.$type.'UnitTest@example.com\';';
+			$query = 'delete from email_addresses where email_address = \''.$type.'UnitTest@example.com\'';
 			$GLOBALS['db']->query($query);
-			$query = 'delete from email_addr_bean_rel where bean_id = \''.$this->$type_obj->id.'\';';
+			$query = 'delete from email_addr_bean_rel where bean_id = \''.$this->$type_obj->id.'\'';
 			$GLOBALS['db']->query($query);			
 
 			//remove the bean and delete record
@@ -123,7 +123,7 @@ class CampaignLogTest extends Sugar_PHPUnit_Framework_TestCase
 
 		//delete the campaign logs and campaign tracker
 		$GLOBALS['db']->query('DELETE FROM campaign_log WHERE campaign_id = \''.$this->campaign_id.'\' ');
-		$GLOBALS['db']->query('DELETE FROM campaign_tracker WHERE id = \''.$this->campaign_tracker->id.'\' ');
+		$GLOBALS['db']->query('DELETE FROM campaign_trkrs WHERE id = \''.$this->campaign_tracker->id.'\' ');
 		unset($this->campaign_tracker);
         unset($this->campaign_log );SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

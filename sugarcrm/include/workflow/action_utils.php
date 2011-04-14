@@ -34,7 +34,7 @@ include_once('include/workflow/workflow_utils.php');
 include_once('include/workflow/field_utils.php');
 include_once('include/utils/expression_utils.php');
 
-function process_workflow_actions(& $focus, $action_array){
+function process_workflow_actions($focus, $action_array){
 
 
 	if($action_array['action_type']=="update"){
@@ -54,7 +54,7 @@ function process_workflow_actions(& $focus, $action_array){
 //end function process_workflow_actions
 }
 
-function process_action_update(&$focus, $action_array){
+function process_action_update($focus, $action_array){
 
 	foreach($action_array['basic'] as $field => $new_value){
 		if(empty($action_array['basic_ext'][$field])){
@@ -69,6 +69,11 @@ function process_action_update(&$focus, $action_array){
 					continue;
 				}
 			}
+            if (!empty($focus->field_defs[$field]['calculated']))
+            {
+                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                continue;
+            }
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
 			execute_special_logic($field, $focus);
 		}
@@ -82,7 +87,11 @@ function process_action_update(&$focus, $action_array){
 	}
 
 	foreach($action_array['basic_ext'] as $field => $new_value){
-
+        if (!empty($focus->field_defs[$field]['calculated']))
+        {
+            $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+            continue;
+        }
 		//Only here if there is a datetime.
 		if($new_value=='Triggered Date'){
 			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field]);
@@ -99,7 +108,11 @@ function process_action_update(&$focus, $action_array){
 	}
 
 	foreach($action_array['advanced'] as $field => $meta_array){
-
+        if (!empty($focus->field_defs[$field]['calculated']))
+            {
+                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                continue;
+            }
 		$new_value = process_advanced_actions($focus, $field, $meta_array, $focus);
 		$focus->$field = $new_value;
 		execute_special_logic($field, $focus);
@@ -403,70 +416,23 @@ function clean_save_data($target_module, $action_array){
 //end function clean_save_data
 }
 
+function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_update = false, $value=null)
+{
+	/* This function needs to be combined with the one in WorkFlowSchedule.php
+	*/
+	global $timedate;
 
-	function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_update = false, $value=null)
-	{
-		/* TODO: This function needs to be combined with the one in WorkFlowSchedule.php
-		*/
-		global $timedate;
-		global $disable_date_format;
+	if($is_update){
+	    if($user_format) {
+	        $date = $timedate->fromUserType($value, $stamp_type);
+	    } else {
+		    $date = $timedate->fromDbType($value, $stamp_type);
+	    }
+	} else {
+	    $date = $timedate->getNow();
 
-		if($is_update){
-		    if($user_format) {
-		        switch($stamp_type) {
-		            case "date":
-		              $target_date = $timedate->to_db_date($value);
-		              break;
-		            case "time":
-		              $target_date = $timedate->to_db_time($value);
-		              break;
-		            case "datetime":
-		            case "datetimecombo":
-		            default:
-		              $target_date = $timedate->to_db($value);
-		              break;
-		        }
-		    } else {
-			    $target_date = $value;
-		    }
-		    $current_unix_stamp = strtotime($target_date)+date('Z');
-		} else {
-		    $current_unix_stamp = time();
-		}
-
-		// add interval
-		$current_unix_stamp += $time_interval;
-
-		if($user_format) {
-            $newtimestamp = gmdate($timedate->get_db_date_time_format(), $current_unix_stamp);
-		    switch($stamp_type) {
-	            case "date":
-	              $final_stamp = $timedate->to_display_date($newtimestamp);
-	              break;
-	            case "time":
-	              $final_stamp = $timedate->to_display_time($newtimestamp);
-	              break;
-	            case "datetime":
-	            case "datetimecombo":
-	            default:
-	              $final_stamp = $timedate->to_display_date_time($newtimestamp);
-	              break;
-	        }
-		} else {
-		    return gmdate(dbstampformat($stamp_type), $current_unix_stamp);
-		}
-
-		return $final_stamp;
-
+	}
+	$date->modify("+$time_interval seconds");
+    return $timedate->asDbType($date, $stamp_type);
 	//end function get_expiry_date
-	}
-
-	function dbstampformat($stamp_type){
-		if($stamp_type=="date") return $GLOBALS['timedate']->dbDayFormat;
-		if($stamp_type=="time") return $GLOBALS['timedate']->dbTimeFormat;
-		if($stamp_type=="datetime"||$stamp_type=="datetimecombo") return $GLOBALS['timedate']->get_db_date_time_format();
-
-	}
-
-
-?>
+}

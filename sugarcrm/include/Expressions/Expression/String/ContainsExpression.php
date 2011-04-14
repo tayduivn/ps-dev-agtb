@@ -47,7 +47,7 @@ class ContainsExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params	  = this.getParameters();
-			var haystack  = params[0].evaluate();
+			var haystack  = params[0].evaluate() + "";
 			var needle	  = params[1].evaluate();
 
 			return ( haystack.indexOf(needle) > -1 ? SUGAR.expressions.Expression.TRUE : SUGAR.expressions.Expression.FALSE );

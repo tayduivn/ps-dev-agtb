@@ -100,24 +100,25 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 	}
 	//totals keys is a list of tables for the products bundles
 	if(isset($_REQUEST['total'])){
-	$total_keys = array_keys($_REQUEST['total']);
+	    $total_keys = array_keys($_REQUEST['total']);
 	}else{
 		$total_keys = array();
 	}
 	$product_bundels = array();
-
+    $last_pb_index = -1;
+    $last_pb = null;
 	for($k = 0; $k < sizeof($total_keys); $k++){
 		$pb = new ProductBundle();
 
 		if(substr_count($total_keys[$k], 'group_') == 0){
 				$pb->id = $total_keys[$k];
 		}
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$pb->team_id = $focus->team_id;
         $pb->team_set_id = $focus->team_set_id;
         //END SUGARCRM flav=pro ONLY
-        
+
 		$pb->tax = unformat_number($_REQUEST['tax'][$total_keys[$k]]);
 		$pb->shipping = unformat_number($_REQUEST['shipping'][$total_keys[$k]]);
 		$pb->subtotal = unformat_number($_REQUEST['subtotal'][$total_keys[$k]]);
@@ -138,13 +139,23 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		}
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
-			$pb->set_productbundle_quote_relationship($focus->id, $pb->id, $k);
+		    // Base new index on last saved bundle's index +1
+		    // or 0 if no bundles were saved
+		    if($last_pb_index == -1 && !empty($last_pb)) {
+		        $last_pb_index_row = $last_pb->get_index($focus->id);
+		        $last_pb_index = $last_pb_index_row[0]['bundle_index'];
+		    }
+		    $last_pb_index++;
+		    $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $last_pb_index);
+		} else {
+		    $last_pb = $pb;
 		}
 
 		//clear the old relationships out
 		$pb->clear_productbundle_product_relationship($product_bundels[$total_keys[$k]]);
 		$pb->clear_product_bundle_note_relationship($product_bundels[$total_keys[$k]]);
 	}
+	unset($last_pb);
 
 	$pb = new ProductBundle();
 	$deletedGroups = array();
@@ -214,12 +225,12 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 			}
 		}
 		$product->currency_id = $focus->currency_id;
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$product->team_id = $focus->team_id;
 		$product->team_set_id = $focus->team_set_id;
 		//END SUGARCRM flav=pro ONLY
-		
+
 		$product->quote_id=$focus->id;
         $product->account_id=$focus->billing_account_id;  
         $product->contact_id=$focus->billing_contact_id;

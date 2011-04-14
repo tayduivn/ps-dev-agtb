@@ -72,7 +72,7 @@ class AuthenticationController {
 			checkAuthUserStatus();
 
 			if(!empty($GLOBALS['login_error'])){
-				session_unregister('authenticated_user_id');
+				unset($_SESSION['authenticated_user_id']);
 				$GLOBALS['log']->fatal('FAILED LOGIN: potential hack attempt');
 				return false;
 			}

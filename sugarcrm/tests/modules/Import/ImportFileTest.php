@@ -16,7 +16,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
- 	 * @group bug23380
+ 	 * @ticket 23380
  	 */
 	public function testFileImportNoEnclosers()
     {

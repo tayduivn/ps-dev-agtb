@@ -10,7 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
  *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+ *right to remove SugarCRM copyrights from the source code or user interface
  * All copies of the Covered Code must include on each user interface screen:
  * (i) the "Powered by SugarCRM" logo and
  * (ii) the SugarCRM copyright notice

@@ -119,8 +119,7 @@ function processReports(){
                 $templInfo = getVersionEdition($arr['dcetemplate_id'],$db);
                 $arr['last_used'] = getLastAccess($arr['inst_id'], $db, $mod_strings);
                 $arr['last_used'] = strtotime($arr['last_used']);
-                $atim = mktime(date("H",$arr['last_used']), date("i",$arr['last_used']), date("s",$arr['last_used']), date("m",$arr['last_used']), date("d",$arr['last_used']),   date("Y",$arr['last_used']));
-
+				$atim = TimeDate::getInstance()->fromString($arr['last_used'])->ts;
                  if(dateCheck($atim, $mode)){
                         $arr['expires'] = $arr['license_expire_date'];
                         $arr['version'] = $templInfo['sugar_version'].' '.$templInfo['sugar_edition'];
@@ -233,7 +232,7 @@ function processReports(){
         return false;
         
         //get current time
-        $now = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $now = TimeDate::getInstance()->nowDb();
         $stim = strtotime($now);
 
         //compare the days
@@ -332,7 +331,7 @@ function processReports(){
                     $emailObj->description_html =null;
                     $emailObj->from_addr = $mail->From;
                     $emailObj->parent_type = 'DCEReport';
-                    $emailObj->date_sent =$timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+                    $emailObj->date_sent =$timedate->now();
                     $emailObj->modified_user_id = '1';                               
                     $emailObj->created_by = '1';
                     $emailObj->status='sent';
@@ -385,11 +384,11 @@ function processReports(){
     
     function  getNumOfActiveUsers($id, $db){
             //get current time
-            $now = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+            $now = TimeDate::getInstance()->nowDb();
             $stim = strtotime($now);
             $wtim = mktime(gmdate("H",$stim), gmdate("i",$stim), gmdate("s",$stim), gmdate("m",$stim), gmdate("d",$stim)-7,   gmdate("Y",$stim));
             //convert back into date format
-            $sevenDaysAgo = gmdate("Y-m-d ",$wtim);
+            $sevenDaysAgo = $timedate->asDb($timedate->getNow()->get("-1 week"));
 
            $dceRprtQry  =  "Select max(num_of_users) num_of_users from dcereports where instance_id = '$id' ";
            $dceRprtQry .=  " and date_entered >= '$sevenDaysAgo' order by date_entered desc";

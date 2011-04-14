@@ -33,7 +33,8 @@
 <div class="sec">
 <table>
 	{foreach from=$DETAILS item=DETAIL name="recordlist"}
-	<tr>
+	{if !$fields[$DETAIL.field].hidden}
+    <tr>
 		<td class="detail_label {if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">{$DETAIL.label|strip_semicolon}:</td>
 		<td class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
 		{if !empty($DETAIL.customCode)}
@@ -43,6 +44,7 @@
         {/if}
 		</td>
 	</tr>
+    {/if}
 	{/foreach}
 </table>
 {if $ENABLE_FORM}

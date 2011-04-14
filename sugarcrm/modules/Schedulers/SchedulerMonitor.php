@@ -56,7 +56,7 @@ class SchedulerMonitor extends Scheduler {
 		$this->socketPort = $this->socketPortMonitor;
 		
 		if($this->sendMsg("heartbeat\n", true)) {
-			$GLOBAL['log']->fatal('Monitor FAILURE monitor already listening on port '.$this->socketPortMonitor);
+			$GLOBALS['log']->fatal('Monitor FAILURE monitor already listening on port '.$this->socketPortMonitor);
 			die();	
 		} elseif($this->createListener()) {
 			$GLOBALS['log']->debug('----->SC Monitor up ready to go!');
@@ -96,7 +96,7 @@ class SchedulerMonitor extends Scheduler {
 		}
 		global $sugar_config;
 		$GLOBALS['log']->debug('----->Monitor starting Scheduler thread');
-		$this->uptimeScheduler = mktime();
+		$this->uptimeScheduler = TimeDate::getInstance()->getNow()->ts;
 		$job = new Job();
 		$job->object_assigned_name = 'SchedulerDaemon';
 		
@@ -160,13 +160,14 @@ class SchedulerMonitor extends Scheduler {
 		$buf = '';
 		$ack = "ack\n";
 		
-		$pingAt = mktime() + 10;
+		$pingAt = TimeDate::getInstance()->getNow()->get('+10 seconds')->ts;
 		
 		while($this->stop == false) {
 			
 			if(!$this->shutdown) { // if we manually shutdown the service, don't try to ping
 				if($pingAt <= mktime()) { 
-					$pingAt = mktime() + 10;// every 10 secs
+					$pingAt = TimeDate::getInstance()->getNow()->get('+10 seconds')->ts;
+// every 10 secs
 					$this->checkCount++;
 					$GLOBALS['log']->debug('----->Monitor pinging SD :: next ping at: '.$pingAt);
 
@@ -189,7 +190,7 @@ class SchedulerMonitor extends Scheduler {
 				}
 			} else {
 				$GLOBALS['log']->debug('Monitor FAILURE lost contact with Daemon! Sending admin alert email.');
-				$this->sendAdminAlert('Monitor lost contact with the Daemon at GMT: '.gmdate('Y-m-d H:i:s', strtotime('now')));
+				$this->sendAdminAlert('Monitor lost contact with the Daemon at GMT: '.TimeDate::getInstance()->nowDb());
 			}
 
 			if(($socketInbound = @socket_accept($this->socket)) < 0) { // we hold here until input arrives
@@ -294,7 +295,7 @@ class SchedulerMonitor extends Scheduler {
 							$GLOBALS['log']->debug('----->Monitor got STATUS');
 							$msg = "\nSchedulerMonitor received STATUS command.\nDaemon status:\n";
 							$msg .= "UPTIME: ";
-							$msg .= mktime() - $this->uptimeScheduler."secs\n";
+							$msg .= TimeDate::getInstance()->getNow()->ts - $this->uptimeScheduler."secs\n";
 							usleep(100);
 							socket_write($socketInbound, $msg, strlen($msg));  // output feedback to admin
 							usleep(100);

@@ -94,12 +94,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         //clean_stale_actions($db);
 
         //get the time for 5 hours ago
-        $now = date($GLOBALS['timedate']->get_db_date_time_format());
+        $now = $timedate->nowDb();
         $stim = strtotime($now);
         //remove a day from timestamp 
         $ytim = mktime(date("H",$stim)-5, date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim));
         //convert back into date format
-        $staletime = date($GLOBALS['timedate']->get_db_date_time_format()." ",$ytim);
+        $staletime = $timedate->to_db($ytim);
                
         //grab all the actions of type started that are 5 hours old or more
         $getActionQry = "select id, status, type   from dceactions where status = 'started' and deleted = 0 and date_started < '$staletime'";
@@ -136,7 +136,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
 
         //update Instance Status, and url
@@ -222,7 +222,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed= $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed= $timedate->now();
         $act->save();
 
 
@@ -255,7 +255,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
         
         //now delete the instance bean
@@ -290,7 +290,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
 
         //only send out email if toggle is for on, not off
@@ -342,7 +342,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
         //update Action Status
         $act->status='completed';
-        $act->date_completed = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->date_completed = $timedate->now();
         $act->save();
 
         //if is live then just send out email
@@ -738,7 +738,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                     $emailObj->from_addr = $mail->From;
                     $emailObj->parent_type = 'DCEInstance';
                     $emailObj->parent_id = $inst_id ;
-                    $emailObj->date_sent =gmdate($GLOBALS['timedate']->get_db_date_time_format());
+                    $emailObj->date_sent =TimeDate::getInstance()->now();
                     $emailObj->modified_user_id = '1';                               
                     $emailObj->created_by = '1';
                     $emailObj->status='sent';

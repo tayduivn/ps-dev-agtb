@@ -25,6 +25,7 @@ class Bug40527Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
+
         SugarTestEmailUtilities::removeAllCreatedEmails();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

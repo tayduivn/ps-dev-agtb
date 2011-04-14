@@ -31,15 +31,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: SugarTab.php 54556 2010-02-17 14:32:05Z jmertic $
 
 
-if(empty($GLOBALS['sugar_smarty']))$GLOBALS['sugar_smarty'] = new Sugar_Smarty();
-class SugarTab{
-    
-    function SugarTab($type='singletabmenu'){
+class SugarTab
+{    
+    function SugarTab($type='singletabmenu')
+    {
         $this->type = $type;
-        
+        $this->ss = new Sugar_Smarty();
     }
     
-    function setup($mainTabs, $otherTabs=array(), $subTabs=array(), $selected_group='All'){
+    function setup($mainTabs, $otherTabs=array(), $subTabs=array(), $selected_group='All')
+    {
         global $sugar_version, $sugar_config, $current_user;
         
         $max_tabs = $current_user->getPreference('max_tabs');
@@ -54,27 +55,28 @@ class SugarTab{
             array_splice($mainTabs, $max_tabs-1, 0, $temp);
         }
         
-        $GLOBALS['sugar_smarty']->assign('showLinks', 'false');
-        $GLOBALS['sugar_smarty']->assign('sugartabs', array_slice($mainTabs, 0, $max_tabs));
-        $GLOBALS['sugar_smarty']->assign('moreMenu', array_slice($mainTabs, $max_tabs));
-        $GLOBALS['sugar_smarty']->assign('othertabs', $otherTabs);
-        $GLOBALS['sugar_smarty']->assign('startSubPanel', $selected_group);
-        $GLOBALS['sugar_smarty']->assign('sugarVersionJsStr', "?s=$sugar_version&c={$sugar_config['js_custom_version']}");
+        $this->ss->assign('showLinks', 'false');
+        $this->ss->assign('sugartabs', array_slice($mainTabs, 0, $max_tabs));
+        $this->ss->assign('moreMenu', array_slice($mainTabs, $max_tabs));
+        $this->ss->assign('othertabs', $otherTabs);
+        $this->ss->assign('startSubPanel', $selected_group);
+        $this->ss->assign('sugarVersionJsStr', "?s=$sugar_version&c={$sugar_config['js_custom_version']}");
         if(!empty($mainTabs))
         {
             $mtak = array_keys($mainTabs);
-            $GLOBALS['sugar_smarty']->assign('moreTab', $mainTabs[$mtak[min(count($mtak)-1, $max_tabs-1)]]['label']);
+            $this->ss->assign('moreTab', $mainTabs[$mtak[min(count($mtak)-1, $max_tabs-1)]]['label']);
         }
     }
     
-    function fetch(){
-        return $GLOBALS['sugar_smarty']->fetch('include/SubPanel/tpls/' . $this->type . '.tpl');
-    }
-    function display(){
-       $GLOBALS['sugar_smarty']->display('include/SubPanel/tpls/' . $this->type . '.tpl');
+    function fetch()
+    {
+        return $this->ss->fetch('include/SubPanel/tpls/' . $this->type . '.tpl');
     }
     
-    
+    function display()
+    {
+       $this->ss->display('include/SubPanel/tpls/' . $this->type . '.tpl');
+    }  
 }
 
 

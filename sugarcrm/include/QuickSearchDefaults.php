@@ -175,6 +175,7 @@ class QuickSearchDefaults {
                     'field_list' => array('name', 'id'),
                     'populate_list' => array('team_name', 'team_id'),
                     'required_list' => array('team_id'),
+                    'whereExtra'=> "( teams.associated_user_id IS NULL OR teams.associated_user_id NOT IN ( SELECT id FROM users WHERE status = 'Inactive' OR portal_only = '1' ))",
                     'conditions' => array(array('name'=>'name','op'=>'like_custom','end'=>'%','value'=>''),
                                                  array('name'=>'name','op'=>'like_custom','begin'=>'(','end'=>'%','value'=>'')),
                     'order' => 'name', 'limit' => '30', 'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);

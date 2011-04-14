@@ -264,6 +264,12 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	$smarty->assign('reportDetailsTableStyle', $reportDetailsTableStyle);
     $smarty->assign('cache_path', $GLOBALS['sugar_config']['cache_dir']);
 	template_reports_request_vars_js($smarty, $reporter,$args);
+	//custom chart code
+    require_once('include/SugarCharts/SugarChartFactory.php');
+    $sugarChart = SugarChartFactory::getInstance();
+	$resources = $sugarChart->getChartResources();
+	$smarty->assign('chartResources', $resources);
+	$smarty->assign('id', empty($_REQUEST['id']) ? false : $_REQUEST['id']);
 	
 	echo $smarty->fetch("modules/Reports/templates/_reportCriteriaWithResult.tpl");
 	
@@ -780,7 +786,9 @@ function reportResults(&$reporter, &$args) {
 		showHideChartButton.value = \"{$mod_strings['LBL_REPORT_SHOW_CHART']}\";
 	} // else
 } </script>";
+	echo "<div class='reportChartContainer'>";
 	 template_chart($reporter, $reportChartDivStyle);
+	 echo "</div>";
 	} // if
 
 	print $contents;

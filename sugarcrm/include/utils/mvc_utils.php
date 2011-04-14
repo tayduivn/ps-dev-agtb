@@ -46,6 +46,9 @@ if(!class_exists('Tracker')){
     var $object_name = 'Tracker';
 	var $disable_var_defs = true;
 	var $acltype = 'Tracker';
+    //BEGIN SUGARCRM flav=pro ONLY
+    var $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
 
     var $column_fields = Array(
         "id",
@@ -144,7 +147,7 @@ if(!class_exists('Tracker')){
     	   if(isset($configEntry['bean']) && $configEntry['bean'] != 'Tracker') {
 	    	   $bean = new $configEntry['bean']();
     		   if($bean->bean_implements('ACL')) {
-                  ACLAction::addActions($bean->module_dir, $configEntry['bean']);
+                  ACLAction::addActions($bean->getACLCategory(), $configEntry['bean']);
                }
     	   }
     	}
@@ -210,8 +213,8 @@ if(!function_exists('amsi')){
 		global $login_error;
 		$q = 0;
 		$m = '';
-		$str = '';
-		foreach ($as as $k) {
+		$str = '';		
+			foreach ($as as $k) {
 			if (!empty ($k['m'])) {
 				$temp = vcmsi($k['g'], $k['m'], $k['a'], $k['l']);
 			} else {

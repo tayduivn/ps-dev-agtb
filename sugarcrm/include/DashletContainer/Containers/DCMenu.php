@@ -32,7 +32,9 @@ class DCMenu extends DashletContainer
 	        $createRecordTitle = $module_mod_strings['LNK_NEW_RECORD'];
 	    elseif ( isset($module_mod_strings['LNK_NEW_'.strtoupper($GLOBALS['beanList'][$module])]) )
 	        $createRecordTitle = $module_mod_strings['LNK_NEW_'.strtoupper($GLOBALS['beanList'][$module])];
-	    else
+	    elseif ( strtoupper($GLOBALS['beanList'][$module]) == 'ACASE' && isset($module_mod_strings['LNK_NEW_CASE']) )
+	        $createRecordTitle = $module_mod_strings['LNK_NEW_CASE'];
+        else
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 	    return <<<EOQ
 		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}'></a></li>	
@@ -150,7 +152,7 @@ EOQ;
 		<div id='dcmenutop'></div>
 		<div id='dcmenu' class='dcmenu dcmenuFloat'>
 		{$notificationsHTML}
-		<div class="dcmenuDivider" style="float: left; margin-left: 15px;"></div>
+		<div class="dcmenuDivider" id="notificationsDivider"></div>
 		
 		<div id="dcmenuContainer">
 		<ul id="dcmenuitems">
@@ -175,6 +177,20 @@ EOQ;
 			   $html .= $this->getMenuItem($action);	
 			}
 		}
+
+		$dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
+		if (is_file('custom/' . $dyn_actions_path)) {
+		    include('custom/' . $dyn_actions_path);
+		} else if ( is_file($dyn_actions_path) ) {
+		    include($dyn_actions_path); 
+        }
+		if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php')) {
+			include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
+        }
+
+        //rrs done for trials and survey
+        $dynamicDCActions[] = array('icon' => 'themes/Sugar/images/icon_Feedback_32.png', 'label' => 'Feedback', 'action' => "DCMenu.iFrame('http://www.surveymonkey.com/s/Sugar620Feedback', '700px', '600px');");
+        //rrs
 		
 		foreach($dynamicDCActions as $def){
 			$html .= $this->getDynamicMenuItem($def);

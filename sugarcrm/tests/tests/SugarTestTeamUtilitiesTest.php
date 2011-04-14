@@ -1,6 +1,5 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-require_once 'PHPUnit/Framework.php';
 
 class SugarTestTeamUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -31,7 +30,7 @@ class SugarTestTeamUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $team = SugarTestTeamUtilities::createAnonymousTeam();
 
-        $this->assertType('Team', $team);
+        $this->assertInstanceOf('Team', $team);
 
         $after_snapshot = $this->_takeTeamDBSnapshot();
         $this->assertNotEquals($this->_before_snapshot, $after_snapshot, "Simply insure that something was added");

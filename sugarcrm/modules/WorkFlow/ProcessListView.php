@@ -58,7 +58,7 @@ global $currentModule;
 // focus_list is the means of passing data to a ListView.
 global $focus_list;
 
-echo get_module_title($mod_strings['LBL_MODULE_ID'], $mod_strings['LBL_PROCESS_LIST'], true); 
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LBL_PROCESS_LIST'])	, true); 
 
 if(!empty($_REQUEST['base_module']) && $_REQUEST['base_module']){
 	

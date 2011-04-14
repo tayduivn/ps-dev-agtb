@@ -36,13 +36,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     foreach($clustr as $clust){
         if(empty($clust)|| empty($clust['id'])) continue;
         $act = new DCEAction();
-        $act->name = 'DCE Reports Action' ; 
+        $act->name = 'DCE Reports Action' ;
         $act->cluster_id = $clust['id'] ;
         $act->type = 'report';
         $act->status = 'queued';
         $act->priority = '2';
-        $act->start_date = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+        $act->start_date = $timedate->now();
         $act->save();
     }
-
-?>

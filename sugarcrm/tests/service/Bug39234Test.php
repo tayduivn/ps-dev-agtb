@@ -25,11 +25,11 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,600,600);
         $this->_setupTestUser();
         
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+		$beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
         
         $unid = uniqid();
 		$time = date('Y-m-d H:i:s');
@@ -81,27 +81,30 @@ class Bug39234Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c1->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c2->id}'");
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$this->a1->id}'");
-        
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE name = 'joe pizza'");
         unset($this->c1);
         unset($this->c2);
         unset($this->a1);
         unset($soap_version_test_accountId);
         unset($soap_version_test_opportunityId);
         unset($soap_version_test_contactId);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
+
+		unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
     }	
     
     public function testSetEntries() {
     	$this->_login();
 		$result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c1->last_name), array('name'=>'email1' , 'value'=>$this->c1->email1), array('name'=>'first_name' , 'value'=>$this->c1->first_name), array('name'=>'account_name' , 'value'=>$this->a1->name)))));
-		$this->assertTrue(isset($result['ids']) && $result['ids'][0] == $this->c1->id);
+		$this->assertTrue(isset($result['ids']));
+		$this->assertEquals($result['ids'][0],$this->c1->id);
     } // fn
     
      public function testSetEntries2() {
     	$this->_login();
 		$result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c2->last_name), array('name'=>'email1' , 'value'=>$this->c2->email1), array('name'=>'first_name' , 'value'=>$this->c2->first_name), array('name'=>'account_name' , 'value'=>'joe pizza')))));
-		$this->assertTrue(isset($result['ids']) && $result['ids'][0] != $this->c1->id);
+		$this->assertTrue(isset($result['ids']));
+		$this->assertNotEquals($result['ids'][0],$this->c1->id);
     } // fn
     
 	/**********************************
