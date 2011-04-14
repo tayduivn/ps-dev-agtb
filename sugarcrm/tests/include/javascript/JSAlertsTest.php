@@ -18,13 +18,12 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         foreach($this->beans as $bean) {
-            $bean->mark_deleted($bean->id);
+    	    $bean->mark_deleted($bean->id);
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
-		unset($GLOBALS['app_list_strings']);
-		unset($GLOBALS['current_user']);
-		unset($GLOBALS['app_strings']);
+        unset($GLOBALS['app_list_strings']);
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['app_strings']);
     }
 
     protected function createNewMeeting()

@@ -7,12 +7,7 @@ class Bug37168Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp() 
     {
-        global $sugar_config, $current_user;
-        
-        if ( $GLOBALS['db']->dbType != 'mysql' ) {
-            $this->markTestSkipped('Only applies to MySQL');
-        }
-        
+        global $sugar_config;
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
         if(!$this->has_disable_count_query_enabled) {
            $sugar_config['disable_count_query'] = true;
@@ -24,7 +19,6 @@ class Bug37168Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown() 
     {
         global $sugar_config;
-        
         if(!$this->has_disable_count_query_enabled) {
            unset($sugar_config['disable_count_query']);
         }

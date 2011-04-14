@@ -64,22 +64,18 @@ array (
       1 => 'parent_type',
     ),
   ),
-  
   'FILENAME' => 
   array (
     'width' => '20%',
     'label' => 'LBL_LIST_FILENAME',
+    'link' => false,
     'default' => true,
-    'type' => 'file',
     'related_fields' => 
     array (
       0 => 'file_url',
       1 => 'id',
     ),
-    'displayParams' =>
-    array(
-      'module' => 'Notes',
-    ),
+    'customCode' => '<a href="index.php?entryPoint=download&id={$ID}&type=Notes" >{$FILENAME}</a>',
   ),
   'CREATED_BY_NAME' => 
   array (
@@ -88,6 +84,13 @@ array (
     'width' => '10%',
     'default' => true,
 	'related_fields' =>  array ( 'created_by' ),
+  ),
+  'DATE_ENTERED' => 
+  array (
+    'type' => 'datetime',
+    'label' => 'LBL_DATE_ENTERED',
+    'width' => '10%',
+    'default' => false,
   ),
   'DATE_MODIFIED' => 
   array (
@@ -103,12 +106,5 @@ array (
     'default' => false
   ),        
   //END SUGARCRM flav=pro ONLY
-  'DATE_ENTERED' => 
-  array (
-    'type' => 'datetime',
-    'label' => 'LBL_DATE_ENTERED',
-    'width' => '10%',
-    'default' => true,
-  ),  
 );
 ?>

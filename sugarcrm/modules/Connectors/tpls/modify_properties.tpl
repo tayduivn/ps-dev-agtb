@@ -108,7 +108,7 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 <input type="hidden" name="source{$source_count}" value="{$source.id}">
 {/foreach}
 
-<table border="0" class="actionsContainer">
+<table border="0">
 <tr><td>
 <input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ModifyProperties') || confirm('{$mod.LBL_CONFIRM_CONTINUE_SAVE}');">
 <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.ModifyProperties.action.value='ConnectorSettings'; document.ModifyProperties.module.value='Connectors';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
@@ -125,7 +125,7 @@ YAHOO.util.Event.onDOMReady(SourceTabs.init);
 </div>
 </td></tr>
 </table>
-<table border="0" class="actionsContainer">
+<table border="0">
 <tr><td>
 <input title="{$APP.LBL_SAVE_BUTTON_LABEL}" accessKey="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button" type="submit" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" onclick="return check_form('ModifyProperties') || confirm('{$mod.LBL_CONFIRM_CONTINUE_SAVE}');">
 <input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.ModifyProperties.action.value='ConnectorSettings'; document.ModifyProperties.module.value='Connectors';" type="submit" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">

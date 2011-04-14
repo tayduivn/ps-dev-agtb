@@ -31,67 +31,51 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/Dashlets/DashletGenericChart.php');
 
-class MyTeamModulesUsedChartDashlet extends DashletGenericChart
+class MyTeamModulesUsedChartDashlet extends DashletGenericChart 
 {
-    /**
-     * @see Dashlet::$isConfigurable
-     */
-    public $isConfigurable = true;
+    public $isConfigurable = false;
     
-    /**
-     * @see DashletGenericChart::$_seedName
-     */
-    protected $_seedName = 'Trackers';
-    
-    /**
-     * @see DashletGenericChart::display()
-     */
     public function display() 
     {
         global $db;
-
+        
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['my_team_modules_used_last_30_days'];
-
-        require_once('include/SugarCharts/SugarChartFactory.php');
-        $sugarChart = SugarChartFactory::getInstance();
+        
+        require_once('include/SugarCharts/SugarChart.php');
+        $sugarChart = new SugarChart();
         $sugarChart->forceHideDataGroupLink = true;
         $sugarChart->setProperties('', $chartDef['chartUnits'], $chartDef['chartType']);
         $sugarChart->group_by = $chartDef['groupBy'];
-        $sugarChart->url_params = array();
-
+        $sugarChart->url_params = array();		
+		
         $result = $db->query($this->constructQuery());
         $dataset = array();
         while(($row = $db->fetchByAssoc($result)))
             $dataset[] = array('user_name'=>$row['user_name'], 'module_name'=>$row['module_name'], 'total'=>$row['count']);
 
         $sugarChart->setData($dataset);
-
-        $xmlFile = $sugarChart->getXMLFileName($this->id);
+        
+        $xmlFile = $sugarChart->getXMLFileName($this->id);        	
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
 	}
 
-    /**
-     * @see Dashlet::hasAccess()
-     */
-    public function hasAccess()
-    {
+    public function hasAccess(){
     	return ACLController::checkAccess('Trackers', 'view', false, 'Tracker');
     }	
 	
-    /**
-     * @see DashletGenericChart::constructQuery()
-     */
     protected function constructQuery() 
     {
 		return "SELECT l1.user_name, tracker.module_name, count(*) count " .
                     "FROM tracker INNER JOIN users l1 ON l1.id = tracker.user_id and l1.deleted = 0 " .
-                    "WHERE tracker.deleted = 0 AND tracker.date_modified > ".db_convert("'".$GLOBALS['timedate']->getNow()->modify("-30 days")->asDb()."'" ,"datetime")." " .
+                    "WHERE tracker.deleted = 0 AND tracker.date_modified > ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 30 days"))."'" ,"datetime")." " .	    
                         "AND tracker.user_id in (Select id from users where reports_to_id = '{$GLOBALS['current_user']->id}') " .
                     "GROUP BY l1.user_name, tracker.module_name " .
                     "ORDER BY l1.user_name ASC";
 	}
 }
+
+?>

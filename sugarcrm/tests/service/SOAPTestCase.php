@@ -38,9 +38,7 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
         
 		unset($GLOBALS['beanList']);
 		unset($GLOBALS['beanFiles']);
-		
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestContactUtilities::removeAllCreatedContacts();
+        parent::tearDown();
     }
 
     protected function _login()
@@ -78,3 +76,4 @@ abstract class SOAPTestCase extends Sugar_PHPUnit_Framework_TestCase
     }
 
 }
+

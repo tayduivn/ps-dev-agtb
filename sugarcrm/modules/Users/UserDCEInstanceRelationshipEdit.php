@@ -81,7 +81,7 @@ $xtpl->assign("ID", $focus->id);
 $xtpl->assign("USER",$userName = Array("NAME" => $focus->user_name, "ID" => $focus->user_id));
 $xtpl->assign("DCEINSTANCE",$instName = Array("NAME" => $focus->dceinstance_name, "ID" => $focus->instance_id));
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_USER_DCEINST_FORM_TITLE']." ".$userName['NAME'] . " - ". $instName['NAME']), true);
+echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_USER_DCEINST_FORM_TITLE']." ".$userName['NAME'] . " - ". $instName['NAME'], true);
 
 $xtpl->assign("USER_ROLE_OPTIONS", get_select_options_with_id($app_list_strings['dceinstance_user_relationship_type_dom'], $focus->user_role));
 

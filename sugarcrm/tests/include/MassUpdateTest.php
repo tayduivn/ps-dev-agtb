@@ -18,7 +18,7 @@ class MassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 12300
+     * @group bug12300
      */
     public function testAdddateWorksWithMultiByteCharacters()
     {
@@ -32,7 +32,7 @@ class MassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 23900
+     * @group bug23900
      */
     public function testAddStatus() 
     {
@@ -51,7 +51,7 @@ class MassUpdateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 23900
+     * @group bug23900
      */
     public function testAddStatusMulti() 
     {

@@ -4,7 +4,7 @@ require_once 'include/utils/array_utils.php';
 class DeepArrayDiffTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @ticket 24067
+     * @group bug24067
      */
     public function testdeepArrayDiffWithBooleanFalse()
     {

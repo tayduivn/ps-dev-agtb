@@ -12,7 +12,7 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 	protected $testValue = "Workflow triggred!";
 	protected $testAccName = "WF Test Account";
 
-	public function setUp()
+	public function setUp() 
     {
     	$this->testWFName = "WFUnitTest" . mt_rand(); 
     	$this->testAccName = "WFTestAccount" . mt_rand(); 
@@ -24,24 +24,22 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->wf->record_type = "All";
     	$this->wf->save();
 	}
-
+	
 	public function tearDown()
 	{
 	    $this->wf->deleted = true;
 	    $this->wf->cascade_delete($this->wf);
-	    $sql = "DELETE FROM workflow WHERE id='{$this->wf->id}'";
-        $GLOBALS['db']->query($sql);
+	    $this->wf->save();
 	}
 
-	public function testCreate_new_list_query()
+	public function testCreate_new_list_query() 
     {
-        $query = $this->wf->create_new_list_query("name", "workflow.name like '{$this->testWFName}%'");
+        $query = $this->wf->create_new_list_query("name", 'workflow.name like "' . $this->testWFName . '%"');
         $result = $this->wf->db->query($query);
-        $count = 0;
-        while ( $row = $this->wf->db->fetchByAssoc($result) ) $count++;
+        $count = $this->wf->db->getRowCount($result);
         $this->assertEquals(1, $count);
     }
-
+    
     /* Non-functional test.
     public function testWrite_workflow()
     {
@@ -53,14 +51,14 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
         $trigger->rel_module_type = "any";
         $trigger->parent_id = $this->wf->id;
         $trigger->save();
-
+        
         echo ("Building workflow Action Shell...\n");
         $actionShell = new WorkFlowActionShell();
         $actionShell->action_type = "update";
         $actionShell->rel_module_type = "all";
         $actionShell->parent_id = $this->wf->id;
         $actionShell->save();
-
+        
         echo ("Building workflow Action...\n");
         $action = new WorkFlowAction();
         $action->field = "description";
@@ -68,17 +66,17 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
         $action->set_type = "Basic";
         $action->parent_id = $actionShell->id;
         $action->save();
-
+        
         echo ("Rebuilding workflow...\n");
         //Now build the logic hook and test it
         $this->wf->check_logic_hook_file();
         $this->wf->write_workflow();
-
+        
         echo ("Creating a new Account...w\n");
         $acc = new Account();
         $acc->name = $this->testAccName;
         $acc->save();
-
+        
         $this->assertEquals($this->testValue, $acc->description);
     }
     */

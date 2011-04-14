@@ -127,15 +127,15 @@ class SchedulerDaemon extends Scheduler {
 	 */
 	function watch() {
 		$GLOBALS['log']->debug('----->SchedulerDaemon Object running as user: ('.$this->runAsUserName.')');
-		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.$timedate->nowDb());
+		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.date('Y-m-d H:i:s',strtotime('now')) );
 
 		$sleepTil = strtotime('now +'.$this->sleepInterval.'secs');
-		$GLOBALS['log']->debug('----->sleepTil: '.$timedate->asDbTime($timetime->fromTimestamp($sleepTil)).' :: timerstarted at '.$timedate->nowDbTime());
+		$GLOBALS['log']->debug('----->sleepTil: '.date('H:i:s', $sleepTil).' :: timerstarted at '.date('H:i:s',strtotime('now')));
 		
 		while($this->stop == false) {
 			usleep(250); // sleep 0.25 secs
 			
-			if($timedate->nowDbTime() == '00:00:01') { // refresh at Midnight local time
+			if(date('H:i:s', strtotime('now')) == '00:00:01') { // refresh at Midnight local time
 				$GLOBALS['log']->fatal('----->Daemon refreshing job queue.');
 				$this->dropSchedules();
 				$this->insertSchedules();	
@@ -169,7 +169,7 @@ class SchedulerDaemon extends Scheduler {
 					$sleepTil = strtotime('+'.$this->sleepInterval.'secs');
 				} else {
 					$GLOBALS['log']->debug('Daemon FAILURE lost contact with Monitor! Sending admin alert email.');
-					$this->sendAdminAlert('Daemon lost contact with the Monitor at GMT: '.$timedate->nowDb());
+					$this->sendAdminAlert('Daemon lost contact with the Monitor at GMT: '.gmdate('Y-m-d H:i:s', strtotime('now')));
 				}
 			}
 				
@@ -286,10 +286,9 @@ class SchedulerDaemon extends Scheduler {
 		if(empty($this->db)) {
 			$this->db = DBManagerFactory::getInstance();
 		}
+		$fireTimeMinus = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now -1 min'));
+		$fireTimePlus = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime('now +1 min'));
 		
-		$fireTimeMinus = $timedate->asDb($timedate->getNow()->get('-1 minute'));
-		$fireTimePlus = $timedate->asDb($timedate->getNow()->get('+1 minute'));
-
 		// collapse list of schedulers where "catch_up" is 0 and status is "ready" (not "in progress, completed, etc.");
 		if($sugar_config['dbconfig']['db_type'] == 'oci8') {
 			//BEGIN SUGARCRM flav=ent ONLY
@@ -352,8 +351,7 @@ class SchedulerDaemon extends Scheduler {
 		$dates	= $ints[2];
 		$hrs	= $ints[1];
 		$mins	= $ints[0];
-		$today	= getdate($timedate->getNow()->ts);
-
+		$today	= getdate(gmmktime());
 		
 		// derive day part
 		if($days == '*') {
@@ -400,7 +398,7 @@ class SchedulerDaemon extends Scheduler {
 			$GLOBALS['log']->debug('got * months');
 		} elseif(strstr($mons, '*/')) {
 			$mult = str_replace('*/','',$mons);
-			$startMon = $timedate->fromTimestamp($focus->date_time_start)->month;
+			$startMon = date(strtotime('m',$focus->date_time_start));
 			$startFrom = ($startMon % $mult);
 
 			for($i=$startFrom;$i<=12;$i+$mult) {
@@ -444,7 +442,7 @@ class SchedulerDaemon extends Scheduler {
 			$GLOBALS['log']->debug('got * dates');
 		} elseif(strstr($dates, '*/')) {
 			$mult = str_replace('*/','',$dates);
-			$startDate = $timedate->fromTimestamp($focus->date_time_start)->day;
+			$startDate = date('d', strtotime($focus->date_time_start));
 			$startFrom = ($startDate % $mult);
 
 			for($i=$startFrom; $i<=31; $i+$mult) {
@@ -486,7 +484,7 @@ class SchedulerDaemon extends Scheduler {
 		// derive hours part
 		//$startHour = date('G', strtotime($focus->date_time_start));
 		//$currentHour = ($startHour < 1) ? 23 : date('G', strtotime($focus->date_time_start));
-		$currentHour = $timedate->getNow()->hour;
+		$currentHour = date('G');
 		if($hrs == '*') {
 			$GLOBALS['log']->debug('got * hours');
 			for($i=0;$i<=24; $i++) {
@@ -529,7 +527,7 @@ class SchedulerDaemon extends Scheduler {
 			}
 		}
 		// derive minutes
-		$currentMin = $timedate->getNow()->minute;
+		$currentMin = date('i');
 		if(substr($currentMin, 0, 1) == '0') {
 			$currentMin = substr($currentMin, 1, 1);
 		}
@@ -544,7 +542,7 @@ class SchedulerDaemon extends Scheduler {
 			}
 		} elseif(strstr($mins,'*/')) {
 			$mult = str_replace('*/','',$mins);
-			$startMin = $timedate->fromTimestmp($focus->date_time_start)->minute;
+			$startMin = date('i',strtotime($focus->date_time_start));
 			$startFrom = ($startMin % $mult);
 			
 			for($i=$startFrom; $i<=59; $i+$mult) {
@@ -611,13 +609,13 @@ class SchedulerDaemon extends Scheduler {
 			$dte2 = $timedate->to_db_date_time($dte[0],$dte[1]);
 			$dateTimeEnd = $dte2[0]." ".$dte2[1];
 		} else {
-			$dateTimeEnd = $timedate->getNow()->get('+1 day')->asDb();
+			$dateTimeEnd = date('Y-m-d H:i:s', strtotime('+1 day'));
 //			$dateTimeEnd = '2020-12-31 23:59:59'; // if empty, set it to something ridiculous
 		}
 		$timeEndTs = strtotime($dateTimeEnd); // GMT end timestamp if necessary
 		$timeEndTs++;
 		/*_pp('hours:'); _pp($hrName);_pp('mins:'); _pp($minName);*/
-		$nowTs = $timedate->getNow()->ts;
+		$nowTs = mktime();
 
 //		_pp('currentHour: '. $currentHour);
 //		_pp('timeStartTs: '.date('r',$timeStartTs));
@@ -636,10 +634,11 @@ class SchedulerDaemon extends Scheduler {
 			$hourSeen++;
 			foreach($minName as $kMin=>$min) {
 				if($hr < $currentHour || $hourSeen == 25) {
-					$theDate = $timedate->asDbDate($timedate->getNow()->get('+1 day'));
+					$theDate = date('Y-m-d', strtotime('+1 day'));
 				} else {
-					$theDate = $timedate->nowDbDate();		
+					$theDate = date('Y-m-d');
 				}
+
 				$tsGmt = strtotime($theDate.' '.str_pad($hr,2,'0',STR_PAD_LEFT).":".str_pad($min,2,'0',STR_PAD_LEFT).":00"); // this is LOCAL
 //				_pp(date('Y-m-d H:i:s',$tsGmt));
 				
@@ -649,7 +648,8 @@ class SchedulerDaemon extends Scheduler {
 							if( $tsGmt <= $timeToTs ) { // start is less than the time_to
 								if( $tsGmt >= $nowTs ) { // we only want to add jobs that are in the future
 									if( $tsGmt > $lastRunTs ) { //TODO figure if this is better than the above check
-										$validJobTime[] = $timedate->fromTimestamp($tsGmt)->asDb(); //_pp("Job Qualified for: ".date('Y-m-d H:i:s', $tsGmt));
+										$validJobTime[] = gmdate('Y-m-d H:i:s', $tsGmt);
+										//_pp("Job Qualified for: ".date('Y-m-d H:i:s', $tsGmt));
 									} else {
 										//_pp('Job Time is NOT greater than Last Run');
 									}
@@ -692,8 +692,8 @@ class SchedulerDaemon extends Scheduler {
 						VALUES (
 						'".$guid."',
 						0, 
-						".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').",
-						".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').",
+						".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').",
+						".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').",
 						'".$jobsArr['ids'][$k]."',
 						".db_convert("'".$time."'", 'datetime').",
 						'ready'
@@ -750,8 +750,8 @@ class SchedulerDaemon extends Scheduler {
 				"FROM schedulers " .
 				"WHERE deleted=0 " .
 				"AND status = 'Active' " .
-				"AND date_time_start < ".db_convert("'".TimeDate::getInstance()->nowDb()."'",'datetime')." " .
-				"AND (date_time_end > ".db_convert("'".TimeDate::getInstance()->nowDb()."'",'datetime')." OR date_time_end IS NULL)";
+				"AND date_time_start < ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'",'datetime')." " .
+				"AND (date_time_end > ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'",'datetime')." OR date_time_end IS NULL)";
 				
 		$result	= $this->db->query($query);
 		$rows=0;

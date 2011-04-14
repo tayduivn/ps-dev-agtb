@@ -22,7 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 set_time_limit(360);
+require_once('include/pclzip/pclzip.lib.php');
+
 require_once('include/utils/zip_utils.php');
+
 $server->wsdl->addComplexType(
 
     'encoded_file',
@@ -130,9 +133,19 @@ function get_encoded_file( $session, $filename ){
 
     }
 
+	$md5 = md5_file( $filename );
+
+
+
     // read file
-    $contents = sugar_file_get_contents($filename);
-	$md5 = md5( $contents );
+
+    $fh = sugar_fopen( $filename, "rb" );
+
+    $contents = fread( $fh, filesize( $filename ) );
+
+    fclose( $fh );
+
+
 
     // encode data
 
@@ -170,18 +183,18 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
     if( !validate_authenticated( $session ) ){
         $the_error = "Invalid session";
     }
-
+    
     require("install/data/disc_client.php");
     $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
     $temp_file  = tempnam( $temp_dir, "sug" );
-    write_encoded_file($md5file, $temp_dir, $temp_file );
-
-    $ignore = false;
+    write_encoded_file($md5file, $temp_dir, $temp_file );	
+    
+   $ignore = false;
     //generate md5 files on server
     require_once( $temp_file );
-    $server_files       = array();  // used later for removing unneeded local files
-    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session).".zip";
-    $file_list = array();
+    $server_files       = array();  // used later for removing unneeded local files 
+    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
+    $archive = new PclZip($zip_file.".zip");
     if(!$is_md5_sync){
     	$all_src_files  = findAllTouchedFiles( ".", array(), $last_sync);
     	foreach( $all_src_files as $src_file ){
@@ -192,15 +205,17 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
             	}
         	}
             if(!$ignore){
-                if($client_file_list != null && isset($client_file_list[$src_file])){
+                $key = $src_file;
+                $value = $src_file;
+                if($client_file_list != null && isset($client_file_list[$key])){
                     //we have found a file out of sync
-                    $file_list[] = $src_file;
+                    $archive->add($key);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
-                    unset($client_file_list[$src_file]);
+                  unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                    $file_list[] = $src_file;
+                $archive->add($key);    
                }
             }
    		}
@@ -214,45 +229,49 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
             	}
             }
             if(!$ignore){
-                $value = md5_file( $src_file );
-                if($client_file_list != null && isset($client_file_list[$src_file])){
-                  if($value != $client_file_list[$src_file]){
+                $md5 = md5_file( $src_file );
+                $key = $src_file;
+                $value = $md5;
+                if($client_file_list != null && isset($client_file_list[$key])){
+                  if($value != $client_file_list[$key]){
                     //we have found a file out of sync
-                    $file_list[] = $src_file;
+                    $archive->add($key);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   }
-                  unset($client_file_list[$src_file]);
+                  unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                    $file_list[] = $src_file;
+                $archive->add($key);    
                }
             }
-    	}
+    	}	
     }
-
-	//at this point we have a set of files that have been changed both on the client
-	//as well as on the server, but there is the possibility that the client copy could have
-	//changed and the server copy has not.  Here we will account for this.
-	if(isset($client_file_list)){
-		foreach($client_file_list as $key=>$value){
-			$ignore = false;
-			foreach($disc_client_ignore as $ignore_pattern ){
-				if(preg_match( "#" . $ignore_pattern . "#", $key ) ){
-					$ignore = true;
+   	
+  		//at this point we have a set of files that have been changed both on the client
+  		//as well as on the server, but there is the possibility that the client copy could have 
+  		//changed and the server copy has not.  Here we will account for this.
+		if(isset($client_file_list)){
+			foreach($client_file_list as $key=>$value){
+				$ignore = false;
+				foreach($disc_client_ignore as $ignore_pattern ){
+					if(preg_match( "#" . $ignore_pattern . "#", $key ) ){
+						$ignore = true;
+					}
+				}
+				if(!$ignore && file_exists($key)){
+					$archive->add($key);
 				}
 			}
-			if(!$ignore && file_exists($key)){
-				$file_list[] = $key;
-			}
 		}
-	}
-    zip_files_list($zip_file, $file_list);
-	$contents = sugar_file_get_contents( $zip_file);
 
+   	$fh = sugar_fopen($archive->zipname, "rb" );
+    $contents = fread( $fh, filesize( $archive->zipname ) );
+	fclose( $fh );
+	
     // encode data
     $data = base64_encode( $contents );
-	unlink($zip_file);
+	unlink($archive->zipname);
 
     return(array('result'=>$data, 'error'=>$error->get_soap_array()));
 }
@@ -314,7 +333,7 @@ $server->register(
 /*
  * Obtain an array of upgrades that have been performed on the server but have not yet been
  * been performed on the client
- *
+ * 
  * @param session			current session for authenticated user
  * @param client_upgrade_history	an array of upgrde history items
  * 									which will be used in deducing which items need
@@ -327,13 +346,13 @@ function get_required_upgrades($session, $client_upgrade_history, $client_versio
     global $sugar_config;
     $error = new SoapError();
 		if(!validate_authenticated($session)){
-		$error->set_error('invalid_login');
-		return array('upgrade_history_list' => array(), 'error' => $error->get_soap_array());
+		$error->set_error('invalid_login');	
+		return array('upgrade_history_list' => array(), 'error' => $error->get_soap_array()); 
 	}
 
 	global $current_user;
-
-
+    
+    
     $upgrade_history = new UpgradeHistory();
     $installeds = $upgrade_history->getAllOrderBy('date_entered ASC');
     $history = array();
@@ -363,7 +382,7 @@ function get_required_upgrades($session, $client_upgrade_history, $client_versio
             }
         }
 	}
-	return array('upgrade_history_list' => $history, 'error' => $error->get_soap_array());
+	return array('upgrade_history_list' => $history, 'error' => $error->get_soap_array()); 
 }
 
 
@@ -395,9 +414,9 @@ function get_disc_client_file_list( $session ){
 
     global $sugar_config;
 
+    
 
-
-
+    
 
 
 
@@ -467,19 +486,19 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
     if( !validate_authenticated( $session ) ){
         $the_error = "Invalid session";
     }
-
+    
     require("install/data/disc_client.php");
     $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
     $temp_file  = tempnam( $temp_dir, "sug" );
-    write_encoded_file($md5file, $temp_dir, $temp_file );
+    write_encoded_file($md5file, $temp_dir, $temp_file );	
    $ignore = false;
     //generate md5 files on server
     require_once( $temp_file );
-    $server_files       = array();  // used later for removing unneeded local files
+    $server_files       = array();  // used later for removing unneeded local files 
     $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
+    $archive = new PclZip($zip_file.".zip");
     $root_files = array();
     $custom_files = array();
-    $file_list = array();
     if(!$is_md5_sync){
     	if(is_dir("portal"))
     		$root_files  = findAllTouchedFiles( "portal", array(), $last_sync);
@@ -495,62 +514,74 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
         	}
             if(!$ignore){
                 //we have to strip off portal or custom/portal before the src file to look it up
+				preg_match('/.*portal\//', $src_file, $matches);
+				$path_to_remove = '';
+				if(count($matches) == 1)
+					$path_to_remove = $matches[0];
                 $key = str_replace('custom/portal/', '', $src_file);
                 $key = str_replace('portal/', '', $key);
+                $value = $src_file;
                 if($client_file_list != null && isset($client_file_list[$key])){
                     //we have found a file out of sync
-                    $file_list[] = $src_file;
+                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
-                    unset($client_file_list[$key]);
-               } else {
-                   //this file does not exist on the client side
-                    $file_list[] = $src_file;
+                  unset($client_file_list[$key]);
+               } else{
+                //this file does not exist on the client side
+                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                }
             }
    		}
     }else{
-
+   		
    		if(is_dir("portal"))
    			$root_files  = findAllFiles( "portal", array());
     	if(is_dir("custom/portal"))
     		$custom_files  = findAllFiles( "custom/portal", array());
     	$all_src_files = array_merge($root_files, $custom_files);
-
+    	
     	foreach( $all_src_files as $src_file ){
             $ignore = false;
-            foreach($disc_client_ignore as $ignore_pattern ){
+            preg_match('/.*portal\//', $src_file, $matches);
+			$path_to_remove = '';
+			if(count($matches) == 1)$path_to_remove = $matches[0];
+    		foreach($disc_client_ignore as $ignore_pattern ){
             	if(preg_match( "#" . $ignore_pattern . "#", $src_file ) ){
                 	$ignore = true;
             	}
             }
             if(!$ignore){
-                $value = md5_file( $src_file );
+                $md5 = md5_file( $src_file );
                 //we have to strip off portal or custom/portal before the src file to look it up
                 $key = str_replace('custom/portal/', '', $src_file);
                 $key = str_replace('portal/', '', $key);
+                $value = $md5;
                 if($client_file_list != null && isset($client_file_list[$key])){
                   if($value != $client_file_list[$key]){
                     //we have found a file out of sync
-                    $file_list[] = $src_file;
+                    $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                     //since we have processed this element of the client
                     //list of files, remove it from the list
                   }
                   unset($client_file_list[$key]);
                } else{
                 //this file does not exist on the client side
-                   $file_list[] = $src_file;
+                $archive->add($src_file, PCLZIP_OPT_REMOVE_PATH, $path_to_remove);    
                }
             }
-    	}
+    	}	
     }
-    zip_files_list($zip_file, $file_list, '|.*portal/|');
 
-    $contents = sugar_file_get_contents( $zip_file );
-
+   	$fh = sugar_fopen($archive->zipname, "rb" );
+    $contents = fread( $fh, filesize( $archive->zipname ) );
+	fclose( $fh );
+	
     // encode data
     $data = base64_encode( $contents );
-	unlink($zip_file);
+	unlink($archive->zipname);
 
     return(array('result'=>$data, 'error'=>$error->get_soap_array()));
 }
+
+?>

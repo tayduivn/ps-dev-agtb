@@ -48,11 +48,12 @@ if(!empty($_REQUEST['record']))
 }
 
 if ($focus->is_template){
-	echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'],
-						 array($mod_strings['LBL_PROJECT_TEMPLATE'] . ': ' . $focus->name), true);
+	echo get_module_title($mod_strings['LBL_MODULE_NAME'],
+						  $mod_strings['LBL_PROJECT_TEMPLATE'] . ': ' . $focus->name, true);
 }
 else{
-	echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
+	echo get_module_title($mod_strings['LBL_MODULE_NAME'],
+						  $mod_strings['LBL_MODULE_NAME'] . ': ' . $focus->name, true);
 
 }
 
@@ -75,8 +76,8 @@ $sugar_smarty->assign('NAME', $focus->name);
 // awu: Bug 11820 - date entered was not conforming to correct date in Oracle
 $focus->fetched_row['estimated_start_date'] = $focus->estimated_start_date;
 $focus->fetched_row['estimated_end_date'] = $focus->estimated_end_date;
-$focus->fetched_row['date_entered'] = $timedate->nowDbDate();
-$focus->fetched_row['date_modified'] = $timedate->nowDbDate();
+$focus->fetched_row['date_entered'] = date($GLOBALS['timedate']->dbDayFormat);
+$focus->fetched_row['date_modified'] = date($GLOBALS['timedate']->dbDayFormat);
 
 // populate form with project's data
 $sugar_smarty->assign('PROJECT_FORM', $focus->fetched_row);

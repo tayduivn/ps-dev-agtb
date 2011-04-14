@@ -26,21 +26,17 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class Basic extends SugarBean
-{
-    /** 
-     * Constructor
-     */
-	public function Basic()
-	{
+class Basic extends SugarBean{
+
+	function Basic(){
 		parent::SugarBean();
 	}
-
-	/**
-	 * @see SugarBean::get_summary_text()
-	 */
-	public function get_summary_text()
+	function get_summary_text()
 	{
 		return "$this->name";
 	}
+	
+	function create_export_query($order_by, $where){
+		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
+	}	
 }

@@ -36,7 +36,6 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='$emailID'");
         
         unset($this->folder);
-        unset($GLOBALS['mod_strings']);
     }
 
     /**

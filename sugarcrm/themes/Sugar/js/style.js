@@ -399,11 +399,3 @@ function sugar_theme_gm_switch( groupName ) {
 }
 
 offsetPadding = 15;
-
-function resizeHeader() {
-	var e = document.getElementById("contentTable");
-	document.getElementById("moduleList").style.width = e.offsetWidth + "px";
-	document.getElementById("header").style.width = e.offsetWidth + 20 + "px";
-	document.getElementById("dcmenu").style.width = e.offsetWidth + 20 + "px";
-
-}

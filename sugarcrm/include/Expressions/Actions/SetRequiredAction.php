@@ -26,7 +26,7 @@ class SetRequiredAction extends AbstractAction{
 	function SetRequiredAction($params) {
 		$this->targetField = $params['target'];
 		$this->targetLabel = $params['label'];
-		$this->expression = str_replace("\n", "",$params['value']);
+		$this->expression = $params['value'];
 	}
 	
 /**
@@ -49,40 +49,32 @@ SUGAR.forms.SetRequiredAction = function(variable, expr, label) {
 SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
 
     /**
-     * Triggers the required dependencies.
+     * Triggers the style dependencies.
      */
-    exec: function(context)
+    exec: function()
     {
-        if (typeof(context) == 'undefined')
-		    context = this.context;
         var el = SUGAR.forms.AssignmentHandler.getElement(this.variable);
-        this.required = this.evalExpression(this.expr, context);
+        this.required = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
 
         if ( typeof(SUGAR.forms.FormValidator) != 'undefined' )
             SUGAR.forms.FormValidator.setRequired(el.form.name, el.name, this.required);
 
 
         if (this._el_lbl != null) {
-            var p = this._el_lbl;
-            var els = YAHOO.util.Dom.getElementsBy( function(e) { return e.className == 'req'; }, \"span\", p)
-            var reqSpan = false;
-            if ( els != null && els[0] != null)
-                reqSpan = els[0];
-
             if ( (this.required == true  || this.required == 'true')) {
-                if (!reqSpan) {
-                    var node = document.createElement(\"span\");
-                    node.innerHTML = \"<font color='red'>*</font>\";
-                    node.className = \"req\";
-                    this._el_lbl.appendChild(node);
-                    addToValidate('EditView', this.variable, 'text', true, this.variable);
-                }
-            } else {
-                if ( p != null  && reqSpan != false) {
-                    p.removeChild(reqSpan);
-                }
-                removeFromValidate('EditView', this.variable);
+            var node = document.createElement(\"span\");
+            node.innerHTML = \"<font color='red'>*</font>\";
+            node.className = \"req\";
+            this._el_lbl.appendChild(node);
+	            addToValidate('EditView', this.variable, 'text', true, this.variable);
+        } else {
+            var p = this._el_lbl;
+            if ( p != null ) {
+                var els = YAHOO.util.Dom.getElementsBy( function(e) { return e.className == 'req'; }, \"span\", p)
+                if ( els != null )  p.removeChild(els[0]);
             }
+	            removeFromValidate('EditView', this.variable);
+	        }
         }
     } 
 });";

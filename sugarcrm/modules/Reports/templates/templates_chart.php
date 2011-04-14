@@ -21,6 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry)
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once ('include/charts/Charts.php');
 
 
 $do_thousands = false;
@@ -273,9 +274,10 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 	}
 
 	if ($drawChart){
-		require_once('include/SugarCharts/SugarChartFactory.php');
+		require_once('include/SugarCharts/SugarChartReports.php');
 
-		$sugarChart = SugarChartFactory::getInstance('','Reports');
+		echo '<script type="text/javascript" src="include/javascript/swfobject.js"></script>';
+		$sugarChart = new SugarChartReports();
 
 		$sugarChart->setData($chart_rows);
 		$sugarChart->setProperties($chartTitle, '', $chartType);

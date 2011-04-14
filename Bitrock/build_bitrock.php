@@ -132,7 +132,7 @@ function build_installer($FLAVOR, $PLATFORM, $OUTPUT){
 
     $BASE_BITROCK_DIR = "$BITROCK_BASE/base";
     $BASE_LICENSE_DIR = "$BITROCK_BASE/license";
-    $BASE_PROJECT_DIR= "/home/build/sugarsvn/build-bitrock_pineapple/Bitrock/project";
+    $BASE_PROJECT_DIR= "/home/build/sugarsvn/build-bitrock_mango/Bitrock/project";
     $BASE_MYSQL_DIR = "$BITROCK_BASE/mysql";
 
     $INSTALL_BUILDER_EXE = "/opt/installbuilder-6.0.3/bin/builder";
@@ -220,7 +220,7 @@ $lpr->output( "+--->  Done copying license files" );
     chdir( "$TMP_DIR/$PLATFORM/$FLAVOR" );
 
     // Running the installbuilder executable
-     if ($FLAVOR == 'ce' || $FLAVOR == 'ent' ) {
+     if ($FLAVOR == 'ce') {
     	$lpr->output( "+--->  Compiling using command: $INSTALL_BUILDER_EXE build ./sugarcrm-$SUGAR_VERSION.xml $BUILD_PLATFORM" );
     	system( "$INSTALL_BUILDER_EXE build ./sugarcrm-$SUGAR_VERSION.xml $BUILD_PLATFORM" );
     	$lpr->output( "+--->  Compiling done"  );

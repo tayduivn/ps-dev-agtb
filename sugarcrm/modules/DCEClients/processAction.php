@@ -87,7 +87,7 @@ chdir(realpath(dirname(__FILE__)));
         if(!empty($row)){
             $startDate = $row['start_date'];
         }    
-        $currDate = TimeDate::getInstance()->nowDb();
+        $currDate = gmdate('Y-m-d H:i:s');
     
         //compare start date with current time in a loop
         while(!empty($row) && ($startDate > $currDate)){
@@ -420,10 +420,10 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     $filenames['sprintStr'] = trim($filenames['sprintStr']);
     if(empty($filenames['sprintStr'])){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
-            $singleActionLog .=  " updating actions table\n";
+            $singleActionLog .=  " updating actions table. $nl";
             updateDCEAction($inst, $action['id'], $db, $filenames);
 
-        $singleActionLog .=  " done!!!!\n";
+        $singleActionLog .=  " done!!!! $nl";        
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
@@ -431,7 +431,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
         //remove files and database
         deleteCore($db, $action,$inst,false);        
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors\n";
+        $singleActionLog .=  " done with errors $nl";   
         return false;
                
     }
@@ -559,22 +559,22 @@ This is here as a hook, for future use.  Currently no client action needs to occ
   function deleteInstance($db, $action,$inst){
     global $dce_config, $singleActionLog;
     
-    $singleActionLog .=  "processing delete action\n";
+    $singleActionLog .=  "processing delete action$nl";
     $sprintStr = deleteCore($db, $action,$inst);
 
     $sprintStr = trim($sprintStr);
     if(empty($sprintStr)){
         // No errors, Connect to DCE DB and Update actions record to have status of ’Done’.
-            $singleActionLog .=  " updating actions table\n";
+            $singleActionLog .=  " updating actions table. $nl";
             updateDCEAction($inst, $action['id'], $db, '');   
 
-        $singleActionLog .=  " done!!!!\n";
+        $singleActionLog .=  " done!!!! $nl";        
     }else{
         $errString  = "Action with id: ".$action['id']." of type ".$action['type']." finished with errors...  ";
         $errString .= 'the following messages were returned while processing.. ';
         $errString .= $sprintStr;
         reportError($action['id'], $inst, $db, $errString);
-        $singleActionLog .=  " done with errors\n";
+        $singleActionLog .=  " done with errors $nl";   
         return false;
                
     }    
@@ -674,7 +674,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
     //check to see if db has been dumped before
     if(file_exists("'$inst_path/dump.sql'")){
         //file has been dumped before, so rename   
-        rename("'$inst_path/dump.sql'",  "'".$inst_path.'/dump.sql'.TimeDate::getInstance()->nowDb()."'" );
+        rename("'$inst_path/dump.sql'",  "'".$inst_path.'/dump.sql'.date('Y-m-d H:i:s')."'" );
     }
 
     //dump db
@@ -1016,7 +1016,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
   function gatherReportData($db, $action, $inst){
     global $dce_config, $singleActionLog;
 
-    $singleActionLog .=  " gathering report data\n";
+    $singleActionLog .=  " gathering report data$nl";  
     //get list of all instances for this cluster
     $getParInstQry = "select name, id from dceinstances where dcecluster_id = '".$dce_config['client_cluster_id']."' and status='live' and deleted = 0 and from_copy_template = 0";
     $piqRes = $db->query($getParInstQry);
@@ -1218,7 +1218,7 @@ This is here as a hook, for future use.  Currently no client action needs to occ
   function importInstances($db, $action, $inst){
     require_once('instanceImport.php');
     global $dce_config, $singleActionLog;
-    $singleActionLog .=  " processing new instance\n";
+    $singleActionLog .=  " processing new instance $nl";
     $rootpath =  checkSlash($dce_config['client_instancePath']) .$inst['name'];
 
     $importResult = importClientInstances($rootpath,$db);    

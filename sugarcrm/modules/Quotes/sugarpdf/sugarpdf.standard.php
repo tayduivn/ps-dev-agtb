@@ -48,7 +48,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
      * @var Array
      */
     private $grandTotalOptions;
-
+    
     private function _initOptions(){
         global $mod_strings;
         $this->headerOptions = array(
@@ -105,42 +105,46 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         require_once($beanFiles['User']);
         $rep = new User;
         $rep->retrieve($this->bean->assigned_user_id);
-
+        
+        $userCurrentTime = time();
+        $offset = $timedate->getUserTimeZone($user);
+        $userCurrentTime += $offset['gmtOffset'] * 60;
+        
         $quote[0]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_NUMBER'];
         $quote[1]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_DATE'];
         $quote[2]['TITLE'] = $mod_strings['LBL_PDF_SALES_PERSON'];
         $quote[3]['TITLE'] = $mod_strings['LBL_PDF_QUOTE_CLOSE'];
-
+        
         $quote[0]['VALUE']['value'] = format_number_display($this->bean->quote_num,$this->bean->system_id);
-        $quote[1]['VALUE']['value'] = $timedate->nowDate();
-	    $quote[2]['VALUE']['value'] = $rep->first_name.' '.$rep->last_name;
+        $quote[1]['VALUE']['value'] = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat, $userCurrentTime), false);
+        $quote[2]['VALUE']['value'] = $rep->first_name.' '.$rep->last_name;
         $quote[3]['VALUE']['value'] = $this->bean->date_quote_expected_closed;
-
+        
         // these options override the params of the $options array.
         $quote[0]['VALUE']['options'] = array();
         $quote[1]['VALUE']['options'] = array();
         $quote[2]['VALUE']['options'] = array();
         $quote[3]['VALUE']['options'] = array();
-
+        
         $html = $this->writeHTMLTable($quote, true, $this->headerOptions);
         $this->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, $mod_strings['LBL_PDF_QUOTE_TITLE'], $html);
     }
     function display(){
         global $mod_strings, $app_strings, $app_list_strings;
         global $locale;
-
+        
         require_once('modules/Quotes/Quote.php');
         require('modules/Quotes/config.php');
-
+        
         parent::display();
-
+        
         // cn: bug 8587 handle strings for export
         /*$mod_strings        = $locale->translateStringPack($mod_strings, $locale->getExportCharset());
         $app_strings        = $locale->translateStringPack($app_strings, $locale->getExportCharset());
         $app_list_strings   = $locale->translateStringPack($app_list_strings, $locale->getExportCharset());
         */
         $GLOBALS['log']->info("Quote layout view: Invoice");
-
+        
         $addressBS[0][$mod_strings['LBL_PDF_BILLING_ADDRESS']]  = $this->bean->billing_contact_name;
         $addressBS[1][$mod_strings['LBL_PDF_BILLING_ADDRESS']]  = $this->bean->billing_account_name;
         $addressBS[2][$mod_strings['LBL_PDF_BILLING_ADDRESS']]  = $this->bean->billing_address_street;
@@ -150,7 +154,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
             $addressBS[3][$mod_strings['LBL_PDF_BILLING_ADDRESS']]  = '';
         }
         $addressBS[4][$mod_strings['LBL_PDF_BILLING_ADDRESS']]  = $this->bean->billing_address_country;
-
+        
         $addressBS[0][$mod_strings['LBL_PDF_SHIPPING_ADDRESS']]  = $this->bean->shipping_contact_name;
         $addressBS[1][$mod_strings['LBL_PDF_SHIPPING_ADDRESS']]  = $this->bean->shipping_account_name;
         $addressBS[2][$mod_strings['LBL_PDF_SHIPPING_ADDRESS']]  = $this->bean->shipping_address_street;
@@ -160,11 +164,11 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
             $addressBS[3][$mod_strings['LBL_PDF_SHIPPING_ADDRESS']]  = '';
         }
         $addressBS[4][$mod_strings['LBL_PDF_SHIPPING_ADDRESS']]  = $this->bean->shipping_address_country;
-
-
+        
+        
         // Write the Billing/Shipping array
         $this->writeHTMLTable($addressBS, false, $this->addressOptions);
-
+        
         require_once('modules/Currencies/Currency.php');
         $currency = new Currency();
         ////    settings
@@ -178,7 +182,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
         //kbrill Bug#11569 - When Quotes are printed as Proposals or Invoices, multiple product groups are out of order from the original quote
         //$product_bundle_list = $this->bean->get_product_bundles();
         $product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
-
+        
         if(is_array($product_bundle_list)){
             $ordered_bundle_list = array();
             for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
@@ -186,9 +190,9 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                 $ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
             } //for
             ksort($ordered_bundle_list);
-
+            
             foreach ($ordered_bundle_list as $product_bundle) {
-
+        
                 if(isset($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
                     //$options['showRowCount']=1;
                 }
@@ -197,11 +201,11 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                     $item = array();
                     $product_list = $product_bundle->get_products();
                     if (is_array($product_list)) {
-
+        
                         $bundle_list = $product_bundle->get_product_bundle_line_items();
                         if (is_array($bundle_list)) {
                             while (list($key, $line_item) = each ($bundle_list)) {
-
+        
                                 if ($line_item->object_name == "Product") {
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_QUANTITY']] = format_number_sugarpdf($line_item->quantity, 0, 0);
                                     $item[$count][$mod_strings['LBL_PDF_PART_NUMBER']] = $line_item->mft_part_num;
@@ -209,7 +213,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                                     if(!empty($line_item->description)){
                                         $item[$count][$mod_strings['LBL_PDF_ITEM_PRODUCT']] .= "\n" . stripslashes($line_item->description);
                                     }
-
+                                    
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_LIST_PRICE']]['value'] = format_number_sugarpdf($line_item->list_usdollar, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_UNIT_PRICE']]['value'] = format_number_sugarpdf($line_item->discount_usdollar, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_EXT_PRICE']]['value'] = format_number_sugarpdf($line_item->discount_usdollar * $line_item->quantity, $locale->getPrecision(), $locale->getPrecision(), array_merge($format_number_array, array('convert' => true)));
@@ -222,7 +226,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
 		                                }
 	                                    $item[$count][$mod_strings['LBL_PDF_ITEM_DISCOUNT']]['options'] = array("align"=>"R");
 		                            }
-
+	                                    
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_LIST_PRICE']]['options'] = array("align"=>"R");
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_UNIT_PRICE']]['options'] = array("align"=>"R");
                                     $item[$count][$mod_strings['LBL_PDF_ITEM_EXT_PRICE']]['options'] = array("align"=>"R");
@@ -243,7 +247,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                         }
                     }
                     $this->MultiCell(0,0, "<b>".$product_bundle->name."</b>" ,0,'L',0,1,"","",true,0,true);
-
+				    
 				    if(format_number($product_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision())== 0.00){
 						$this->itemOptions["width"][$mod_strings["LBL_PDF_PART_NUMBER"]] = "30%";
 						$this->itemOptions["width"][$mod_strings["LBL_PDF_ITEM_PRODUCT"]] = "30%";
@@ -258,7 +262,7 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                     	$this->writeCellTable($item, $this->itemOptions);
                     if($pdf_group_subtotal){
                         $total = array();
-
+                        
                         $total[0]['BLANK'] = ' ';
                         $total[0]['TITLE'] =  $mod_strings['LBL_PDF_SUBTOTAL'];
                         $total[0]['VALUE']['value'] = format_number_sugarpdf($product_bundle->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
@@ -267,12 +271,12 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
 						if(format_number_sugarpdf($product_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision())!= 0.00){
 	                        $total[1]['BLANK'] = ' ';
 	                		$total[1]['TITLE'] =  $mod_strings['LBL_PDF_DISCOUNT'];
-	                		$total[1]['VALUE']['value'] = format_number_sugarpdf($product_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+	                		$total[1]['VALUE']['value'] = format_number_sugarpdf($product_bundle->deal_tot, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);               
 	                        $total[1]['VALUE']['options'] = array("align"=>"R");
-
+	                		
 	                        $total[2]['BLANK'] = ' ';
 	                		$total[2]['TITLE'] =  $mod_strings['LBL_PDF_NEW_SUB'];
-	                		$total[2]['VALUE']['value'] = format_number_sugarpdf($product_bundle->new_sub, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+	                		$total[2]['VALUE']['value'] = format_number_sugarpdf($product_bundle->new_sub, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);              
 	                        $total[2]['VALUE']['options'] = array("align"=>"R");
 	                        $i = 3;
 						}
@@ -290,16 +294,16 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                         $total[$i]['TITLE'] = $mod_strings['LBL_PDF_TOTAL'];
                         $total[$i]['VALUE']['value'] =  format_number_sugarpdf($product_bundle->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
                         $total[$i]['VALUE']['options'] = array("align"=>"R");
-
-
+                        
+                        
                         $this->drawLine();
-
+                     
                         $this->writeCellTable($total, $this->totalOptions);
                     }
                 }
             }
         }
-
+        
         if(isset($this->bean->calc_grand_total) && $this->bean->calc_grand_total == 1) {
             $total = array();
 
@@ -309,22 +313,22 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
             $total[0]['TITLE'] = $mod_strings['LBL_PDF_SUBTOTAL'];
             $total[0]['VALUE']['value'] = format_number_sugarpdf($this->bean->subtotal, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             $total[0]['VALUE']['options'] = array("align"=>"R");
-
+			
 			$i = 1;
 			if(format_number_sugarpdf($this->bean->deal_tot, $locale->getPrecision(), $locale->getPrecision())!= 0.00){
-
+            
 	            $total[1]['BLANK'] = ' ';
 			    $total[1]['TITLE0'] = '';
-			    $total[1]['VALUE0'] ='';
+			    $total[1]['VALUE0'] ='';    
 			    $total[1]['TITLE'] = $mod_strings['LBL_PDF_DISCOUNT'];
 			    $total[1]['VALUE']['value'] = format_number_sugarpdf($this->bean->deal_tot, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
 	            $total[1]['VALUE']['options'] = array("align"=>"R");
-
+			    
 	            $total[2]['BLANK'] = ' ';
 			    $total[2]['TITLE0'] = '';
 			    $total[2]['VALUE0'] ='';
 			    $total[2]['TITLE'] = $mod_strings['LBL_PDF_NEW_SUB'];
-			    $total[2]['VALUE']['value'] = format_number_sugarpdf($this->bean->new_sub, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
+			    $total[2]['VALUE']['value'] = format_number_sugarpdf($this->bean->new_sub, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);   
 	            $total[2]['VALUE']['options'] = array("align"=>"R");
 	            $i = 3;
 			}
@@ -348,26 +352,26 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
             $total[$i]['TITLE'] = $mod_strings['LBL_PDF_TOTAL'];
             $total[$i]['VALUE']['value'] =  format_number_sugarpdf($this->bean->total, $locale->getPrecision(), $locale->getPrecision(), $format_number_array);
             $total[$i]['VALUE']['options'] = array("align"=>"R");
-
-
+			
+            
             $this->Ln1();
             $this->drawLine();
-
+            
             $this->MultiCell(0,0, "<b>".$mod_strings['LBL_PDF_GRAND_TOTAL']."</b>" ,0,'C',0,1,"","",true,0,true);
-
+            
             $this->writeCellTable($total, $this->grandTotalOptions);
-
+            
             $this->drawLine();
         }
     }
-
+    
     /**
      * This method build the name of the PDF file to output.
      */
     function buildFileName(){
         global $mod_strings;
         $fileName = html_entity_decode($this->bean->shipping_account_name, ENT_QUOTES, 'UTF-8');//bug #8584
-
+        
         if (!empty($this->bean->quote_num)) {
             $fileName .= "_{$this->bean->quote_num}";
         }

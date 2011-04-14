@@ -2722,10 +2722,10 @@ SUGAR.grid = function() {
 
 		exportToPDF: function() {
 			document.getElementById("numRowsToSave").value = totalRowsInGrid;
-			if(document.getElementById("pdfclass").value == "EZPDF"){
-			    document.getElementById('EditView').action.value='Layouts';
-			}else{
+			if(document.getElementById("pdfclass").value == "TCPDF"){
 				document.getElementById('EditView').action.value='sugarpdf';
+			}else{
+				document.getElementById('EditView').action.value='Layouts';
 			}
 			document.getElementById('EditView').submit();
 

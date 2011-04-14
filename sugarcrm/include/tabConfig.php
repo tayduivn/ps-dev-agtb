@@ -59,8 +59,6 @@ $GLOBALS['tabStructure'] = array(
             "Contacts",
             "Leads",    
             "Campaigns",
-            "Prospects",
-            "ProspectLists",
         )
     ),
     "LBL_TABGROUP_SUPPORT" => array(
@@ -105,18 +103,14 @@ $GLOBALS['tabStructure'] = array(
             //END SUGARCRM flav=pro ONLY
         )
     ),
-//BEGIN SUGARCRM flav=pro || flav=sales ONLY
     "LBL_TABGROUP_REPORTS"=>array(
         'label' => 'LBL_TABGROUP_REPORTS',
         'modules' => array(
             "Home",
             "Reports",
-            //BEGIN SUGARCRM flav!=sales ONLY
             "Forecasts",
-            //END SUGARCRM flav!=sales ONLY
         )
     ),
-//END SUGARCRM flav=pro || flav=sales ONLY
 //BEGIN SUGARCRM flav=dce ONLY
     "LBL_TABGROUP_DCE"=>array(
         'label' => 'LBL_TABGROUP_DCE',

@@ -101,7 +101,7 @@ $dictionary['WorkFlowAlert'] = array('table' => 'workflow_alerts'
     'name' => 'rel_module1',
     'vname' => 'LBL_REL_MODULE1',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '50',
     'required' => false,
   ),
     'rel_module2' => 
@@ -109,7 +109,7 @@ $dictionary['WorkFlowAlert'] = array('table' => 'workflow_alerts'
     'name' => 'rel_module2',
     'vname' => 'LBL_REL_MODULE2',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '50',
     'required' => false,
   ),
       'rel_module1_type' => 

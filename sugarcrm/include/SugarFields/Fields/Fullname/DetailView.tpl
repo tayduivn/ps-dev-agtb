@@ -26,11 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{if strlen({{sugarvar key='value' string=true}}) <= 0}
-{assign var="value" value={{sugarvar key='default_value' string=true}} }
-{else}
-{assign var="value" value={{sugarvar key='value' string=true}} }
-{/if}
 <form name="vcard" action="index.php" style="display: inline;">
 <span id='{{sugarvar key='name'}}'>{{sugarvar key='value'}}</span>
 &nbsp;&nbsp;
@@ -43,7 +38,5 @@
 </span>
 </form>
 {{if !empty($displayParams.enableConnectors)}}
-{if !empty($value)}
-{{sugarvar_connector view='DetailView'}}
-{/if}
+{{sugarvar_connector view='DetailView'}} 
 {{/if}}

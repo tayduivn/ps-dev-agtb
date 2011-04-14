@@ -272,7 +272,7 @@ class ProductBundle extends SugarBean {
 		if(empty($bundle_id)){
 			$bundle_id = $this->id;
 		}
-		$query = "insert into $this->rel_products (id,product_index,product_id,bundle_id, date_modified) VALUES ('".create_guid()."','$product_index', '$product_id', '$bundle_id', ".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').")";
+		$query = "insert into $this->rel_products (id,product_index,product_id,bundle_id, date_modified) VALUES ('".create_guid()."','$product_index', '$product_id', '$bundle_id', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
 		$this->db->query($query,true,"Error setting product to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting product to product bundle relationship for $product_id and $bundle_id");
 	}
@@ -283,7 +283,7 @@ class ProductBundle extends SugarBean {
     		$bundle_id = $this->id;
     	}
 
-    	$query = "INSERT INTO $this->rel_notes (id,bundle_id,note_id,note_index, date_modified) VALUES ('".create_guid()."','".$bundle_id."','".$note_id."','".$note_index."', ".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').")";
+    	$query = "INSERT INTO $this->rel_notes (id,bundle_id,note_id,note_index, date_modified) VALUES ('".create_guid()."','".$bundle_id."','".$note_id."','".$note_index."', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
 
     	$this->db->query($query, true, "Error setting note to product to product bundle relationship: "."<BR>$query");
     	$GLOBALS['log']->debug("Setting note to product to product bundle relationship for bundle_id: $bundle_id, note_index: $note_index, and note_id: $note_id");
@@ -312,7 +312,7 @@ class ProductBundle extends SugarBean {
 		if(empty($bundle_id)){
 			$bundle_id = $this->id;
 		}
-		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values ('".create_guid()."', '$quote_id', '$bundle_id', '$bundle_index', ".db_convert("'".TimeDate::getInstance()->nowDb()."'", 'datetime').")";
+		$query = "insert into $this->rel_quotes (id,quote_id,bundle_id,bundle_index, date_modified) values ('".create_guid()."', '$quote_id', '$bundle_id', '$bundle_index', ".db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format())."'", 'datetime').")";
 		$this->db->query($query,true,"Error setting quote to product bundle relationship: "."<BR>$query");
 		$GLOBALS['log']->debug("Setting quote to product bundle relationship for $quote_id and $bundle_id");
 	}

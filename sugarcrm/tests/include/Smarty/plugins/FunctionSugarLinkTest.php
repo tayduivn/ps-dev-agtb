@@ -39,7 +39,7 @@ class FunctionSugarLinkTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 33909
+     * @group bug33909
      */
     public function testReturnLinkWhenPassingData()
     {

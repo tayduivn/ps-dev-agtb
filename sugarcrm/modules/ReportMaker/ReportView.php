@@ -56,7 +56,7 @@ if(!empty($_REQUEST['record'])) {
 else {
 	header("Location: index.php?module=ReportMaker&action=index");
 }
-echo getClassicModuleTitle("Report Maker", array($mod_strings['LBL_MODULE_TITLE'] . " " . $focus->name), true);
+echo get_module_title("Report Maker", $mod_strings['LBL_MODULE_TITLE'] . " " . $focus->name, true);
 
 $button  = "<table cellspacing='0' border='0'><form  action='index.php' method='post' name='form' id='form'>\n";
 $button .= "<input type='hidden' name='module' value='ReportMaker'>\n";

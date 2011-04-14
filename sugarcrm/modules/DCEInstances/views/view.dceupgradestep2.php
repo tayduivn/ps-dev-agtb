@@ -81,9 +81,9 @@ class DCEInstancesViewDCEUpgradestep2 extends SugarView
         }
 
         $this->ss->assign("MODULE_TITLE", 
-            getClassicModuleTitle(
+            get_module_title(
                 $mod_strings['LBL_MODULE_NAME'], 
-                array($mod_strings['LBL_MODULE_NAME']." ".$mod_strings['LBL_DCEUPGRADE_STEP_2_TITLE']), 
+                $mod_strings['LBL_MODULE_NAME']." ".$mod_strings['LBL_DCEUPGRADE_STEP_2_TITLE'], 
                 false
                 )
             );
@@ -100,7 +100,7 @@ class DCEInstancesViewDCEUpgradestep2 extends SugarView
         if(isset($_REQUEST['return_id']))$this->ss->assign("RETURN_ID", $_REQUEST['return_id']);
 //For date Time Combo
         global $timedate;
- 	    $this->ss->assign('DEFAULT_DATE', $timedate->now());
+ 	    $this->ss->assign('DEFAULT_DATE', $timedate->to_display_date_time(gmdate($timedate->get_date_time_format())));
         $this->ss->assign('CALENDAR_DATEFORMAT', $timedate->get_cal_date_format());
         $this->ss->assign('USER_DATEFORMAT', $timedate->get_user_date_format());
         $time_format = $timedate->get_user_time_format();

@@ -43,12 +43,12 @@ $listViewDefs['Employees'] = array(
         'link' => true,
         'default' => true),
     'TITLE' => array(
-        'width' => '15', 
+        'width' => '20', 
         'label' => 'LBL_TITLE', 
         'link' => true,
         'default' => true), 
     'REPORTS_TO_NAME' => array(
-        'width' => '15', 
+        'width' => '20', 
         'label' => 'LBL_LIST_REPORTS_TO_NAME', 
         'link' => true,
         'sortable' => false,
@@ -70,9 +70,6 @@ $listViewDefs['Employees'] = array(
         'label' => 'LBL_LIST_EMPLOYEE_STATUS', 
         'link' => false,
         'default' => true),    
-	'DATE_ENTERED' => array (
-	    'width' => '10',
-	    'label' => 'LBL_DATE_ENTERED',
-	    'default' => true),
+
 );
 ?>

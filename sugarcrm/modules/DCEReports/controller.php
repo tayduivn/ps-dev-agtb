@@ -48,8 +48,8 @@ class DCEReportsController extends SugarController{
         $seed = new DCEReport();
         $start_date=strtotime($_REQUEST['startDate_date']);
         $end_date = strtotime("+1 day -1 second", strtotime($_REQUEST['endDate_date']));
-        $end_date=db_convert("'".$timedate->to_db($end_date)."'",'datetime'); 
-        $start_date=db_convert("'".$timedate->to_db($start_date)."'",'datetime');
+        $end_date=db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),$end_date)."'",'datetime'); 
+        $start_date=db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),$start_date)."'",'datetime');
         $first=false;
         $where='(';
         foreach($_REQUEST['instances_types_opt'] as $v){
@@ -187,7 +187,7 @@ class DCEReportsController extends SugarController{
         header("Content-Disposition: attachment; filename=licensingReport.csv");
         header("Content-transfer-encoding: binary");
         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-        header("Last-Modified: " . $timedate->httpTime() . " GMT" );
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
         header("Cache-Control: post-check=0, pre-check=0", false );
         header("Content-Length: ".strlen($content));
         

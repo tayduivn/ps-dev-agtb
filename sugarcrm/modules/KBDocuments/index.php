@@ -30,7 +30,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $mod_strings;
 
-
+/*
+echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'], true); 
+*/
 include ('modules/KBDocuments/SearchHome.php'); 
 
 ?>

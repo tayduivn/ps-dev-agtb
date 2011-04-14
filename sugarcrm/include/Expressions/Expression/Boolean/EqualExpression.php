@@ -32,10 +32,10 @@ class EqualExpression extends BooleanExpression {
 	function evaluate() {
 		$params = $this->getParameters();
 
-        $a = $params[0]->evaluate();
+		$a = $params[0]->evaluate();
 		$b = $params[1]->evaluate();
 
-        if ( $a == $b )	return AbstractExpression::$TRUE;
+		if ( $a == $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;
 	}
 

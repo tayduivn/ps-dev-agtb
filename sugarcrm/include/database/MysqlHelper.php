@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: MysqlHelper.php 56151 2010-04-28 21:02:22Z jmertic $
+* $Id: MysqlHelper.php 56133 2010-04-28 02:09:10Z jmertic $
 * Description: This file handles the Data base functionality for the application specific
 * to oracle database. It is called by the DBManager class to generate various sql statements.
 *
@@ -48,7 +48,7 @@ class MysqlHelper extends DBHelper
         $engine    = $this->getEngine($bean);
         return $this->createTableSQLParams($tablename, $fieldDefs, $indices, $engine);
 	}
-
+    
     /**
      * Generates sql for create table statement for a bean.
      *
@@ -59,12 +59,12 @@ class MysqlHelper extends DBHelper
      * @return string SQL Create Table statement
     */
     public function createTableSQLParams(
-        $tablename,
-        $fieldDefs,
-        $indices,
+        $tablename, 
+        $fieldDefs, 
+        $indices, 
         $engine = null
         )
-    {
+    {		
  		if ( empty($engine) && isset($fieldDefs['engine']))
             $engine = $fieldDefs['engine'];
         if ( !$this->isEngineEnabled($engine) )
@@ -72,18 +72,20 @@ class MysqlHelper extends DBHelper
 
         $sql = parent::createTableSQLParams($tablename,$fieldDefs,$indices);
         if (!empty($engine))
-            $sql.= " ENGINE=$engine";
+            $sql.= " ENGINE=$engine"; 
 
         return $sql;
 	}
-
+    
     /**
      * Returns the name of the engine to use or null if we are to use the default
      *
      * @param  object $bean SugarBean instance
      * @return string
      */
-    private function getEngine($bean)
+    private function getEngine(
+        &$bean
+        )
     {
         global $dictionary;
         $engine = null;
@@ -92,7 +94,7 @@ class MysqlHelper extends DBHelper
 		}
         return $engine;
     }
-
+    
     /**
      * Returns true if the engine given is enabled in the backend
      *
@@ -104,26 +106,26 @@ class MysqlHelper extends DBHelper
         )
     {
         $engine = strtoupper($engine);
-
+        
         $r = $this->db->query("SHOW ENGINES");
-
+        
         while ( $row = $this->db->fetchByAssoc($r) )
             if ( strtoupper($row['Engine']) == $engine )
                 return ($row['Support']=='YES' || $row['Support']=='DEFAULT');
 
         return false;
     }
-
+    
     /**
      * @see DBHelper::getColumnType()
      */
     public function getColumnType(
-        $type,
-        $name = '',
+        $type, 
+        $name = '', 
         $table = ''
         )
     {
-        $map = array(
+        $map = array( 
             'int'      => 'int',
             'double'   => 'double',
             'float'    => 'float',
@@ -153,9 +155,8 @@ class MysqlHelper extends DBHelper
             'id'       => 'char(36)',
            'url'=>'varchar',
            'encrypt'=>'varchar',
-           'file'      => 'varchar',
             );
-
+        
         return $map[$type];
     }
 
@@ -163,20 +164,20 @@ class MysqlHelper extends DBHelper
      * @see DBHelper::oneColumnSQLRep()
      */
 	protected function oneColumnSQLRep(
-        $fieldDef,
-        $ignoreRequired = false,
-        $table = '',
+        $fieldDef,  
+        $ignoreRequired = false, 
+        $table = '', 
         $return_as_array = false
         )
     {
         $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
-
-        if ( $ref['colType'] == 'int'
+        
+        if ( $ref['colType'] == 'int' 
                 && !empty($fieldDef['len']) )
             $ref['colType'] .= "(".$fieldDef['len'].")";
-
+        
         // bug 22338 - don't set a default value on text or blob fields
-        if ( isset($ref['default']) &&
+        if ( isset($ref['default']) && 
             ($ref['colType'] == 'text' || $ref['colType'] == 'blob'
                 || $ref['colType'] == 'longtext' || $ref['colType'] == 'longblob' ))
             $ref['default'] = '';
@@ -191,9 +192,9 @@ class MysqlHelper extends DBHelper
      * @see DBHelper::changeColumnSQL()
      */
     protected function changeColumnSQL(
-        $tablename,
-        $fieldDefs,
-        $action,
+        $tablename, 
+        $fieldDefs, 
+        $action, 
         $ignoreRequired = false
         )
     {
@@ -218,12 +219,12 @@ class MysqlHelper extends DBHelper
      * @see DBHelper::deleteColumnSQL()
      */
     public function deleteColumnSQL(
-        SugarBean $bean,
+        SugarBean $bean, 
         $fieldDefs
         )
     {
-        if ($this->isFieldArray($fieldDefs))
-            foreach ($fieldDefs as $fieldDef)
+        if ($this->isFieldArray($fieldDefs)) 
+            foreach ($fieldDefs as $fieldDef) 
                 $columns[] = $fieldDef['name'];
         else
             $columns[] = $fieldDefs['name'];
@@ -234,24 +235,22 @@ class MysqlHelper extends DBHelper
     /**
      * @see DBHelper::keysSQL
      */
-    public function keysSQL(
-        $indices,
-        $alter_table = false,
-        $alter_action = ''
+    public function keysSQL( 
+        $indices, 
+        $alter_table = false, 
+        $alter_action = '' 
         )
 	{
        // check if the passed value is an array of fields.
        // if not, convert it into an array
-       if (!$this->isFieldArray($indices))
+       if (!$this->isFieldArray($indices)) 
            $indices[] = $indices;
 
        $columns = array();
        foreach ($indices as $index) {
            if(!empty($index['db']) && $index['db'] != 'mysql')
                continue;
-           if (isset($index['source']) && $index['source'] != 'db')
-               continue;
-           
+          
            $type = $index['type'];
            $name = $index['name'];
 
@@ -271,7 +270,7 @@ class MysqlHelper extends DBHelper
            case 'foreign':
            case 'clustered':
            case 'alternate_key':
-               /**
+               /** 
                 * @todo here it is assumed that the primary key of the foreign
                 * table will always be named 'id'. It must be noted though
                 * that this can easily be fixed by referring to db dictionary
@@ -301,7 +300,7 @@ class MysqlHelper extends DBHelper
      * @see DBHelper::setAutoIncrement()
      */
  	protected function setAutoIncrement(
-        $table,
+        $table, 
         $field_name
         )
     {
@@ -321,10 +320,10 @@ class MysqlHelper extends DBHelper
         )
     {
         $this->db->query( "ALTER TABLE $table AUTO_INCREMENT = $start_value;");
-
+        
     	return true;
     }
-
+	
     /**
      * Returns the next value for an auto increment
      *
@@ -337,12 +336,12 @@ class MysqlHelper extends DBHelper
         $field_name
         )
     {
-
+        
         $result = $this->db->query("SHOW TABLE STATUS LIKE '$table'");
         $row = $this->db->fetchByAssoc($result);
         if (!empty($row['Auto_increment']))
             return $row['Auto_increment'];
-
+        
     	return "";
     }
 
@@ -351,16 +350,16 @@ class MysqlHelper extends DBHelper
      */
     public function get_indices(
         $tablename
-        )
+        ) 
     {
         //find all unique indexes and primary keys.
         $result = $this->db->query("SHOW INDEX FROM $tablename");
-
+        
         $indices = array();
         while (($row=$this->db->fetchByAssoc($result)) !=null) {
             $index_type='index';
             if ($row['Key_name'] =='PRIMARY') {
-                $index_type='primary';
+                $index_type='primary';  
             }
             elseif ( $row['Non_unique'] == '0' ) {
                 $index_type='unique';
@@ -378,11 +377,11 @@ class MysqlHelper extends DBHelper
      */
     public function get_columns(
         $tablename
-        )
+        ) 
     {
         //find all unique indexes and primary keys.
         $result = $this->db->query("DESCRIBE $tablename");
-
+        
         $columns = array();
         while (($row=$this->db->fetchByAssoc($result)) !=null) {
             $name = strtolower($row['Field']);
@@ -396,27 +395,27 @@ class MysqlHelper extends DBHelper
                 $columns[$name]['auto_increment'] = '1';
             if ($row['Null'] == 'NO' && !stristr($row['Key'],'PRI'))
                 $columns[$name]['required'] = 'true';
-            if (!empty($row['Default']) )
+            if ( !empty($row['Default']) )
                 $columns[$name]['default'] = $row['Default'];
         }
         return $columns;
     }
-
+    
     /**
      * @see DBHelper::add_drop_constraint()
      */
     public function add_drop_constraint(
         $table,
-        $definition,
+        $definition, 
         $drop = false
-        )
+        ) 
     {
         $type         = $definition['type'];
         $fields       = implode(',',$definition['fields']);
         $name         = $definition['name'];
         $foreignTable = isset($definition['foreignTable']) ? $definition['foreignTable'] : array();
         $sql          = '';
-
+        
         switch ($type){
         // generic indices
         case 'index':
@@ -454,23 +453,23 @@ class MysqlHelper extends DBHelper
      */
     public function number_of_columns(
         $table_name
-        )
+        ) 
     {
         $result = $this->db->query("DESCRIBE $table_name");
 
         return ($this->db->getRowCount($result));
     }
-
+	
 	/**
      * @see DBHelper::full_text_indexing_enabled()
      */
     protected function full_text_indexing_enabled(
         $dbname = null
-        )
+        ) 
     {
 		return $this->isEngineEnabled('MyISAM');
 	}
-
+    
     /**
      * @see DBHelper::massageFieldDef()
      */
@@ -480,11 +479,11 @@ class MysqlHelper extends DBHelper
         )
     {
         DBHelper::massageFieldDef($fieldDef,$tablename);
-
-        if ( isset($fieldDef['default']) &&
-            ($fieldDef['dbType'] == 'text'
+        
+        if ( isset($fieldDef['default']) && 
+            ($fieldDef['dbType'] == 'text' 
                 || $fieldDef['dbType'] == 'blob'
-                || $fieldDef['dbType'] == 'longtext'
+                || $fieldDef['dbType'] == 'longtext' 
                 || $fieldDef['dbType'] == 'longblob' ))
             unset($fieldDef['default']);
         if ($fieldDef['dbType'] == 'uint')

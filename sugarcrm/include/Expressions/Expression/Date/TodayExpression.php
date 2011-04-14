@@ -23,17 +23,14 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
 /**
  * <b>today()</b><br>
  * Returns a date object representing todays date.
- *
- */
+ **/
 class TodayExpression extends DateExpression
 {
 	/**
-     * The today function is sensitive to the current users timezone since it returns a day without time.
+	 * Returns the entire enumeration bare.
 	 */
-	function evaluate() {
-        $d = TimeDate::getInstance()->getNow(true);
-        $d->setTime(0,0,0);
-		return $d;
+	function evaluate() {		
+		return date($this->internalDateFormat);
 	}
 
 
@@ -46,7 +43,7 @@ class TodayExpression extends DateExpression
 		  d.setHours(0);
 		  d.setMinutes(0);
 		  d.setSeconds(0);
-		  return d;
+		  return d.toString();
 EOQ;
 	}
 

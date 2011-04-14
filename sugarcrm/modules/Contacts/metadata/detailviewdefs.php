@@ -32,27 +32,27 @@ $viewdefs['Contacts']['DetailView'] = array(
 //END SUGARCRM flav!=dce && flav!=sales ONLY
                                                         ),
                                        ),
-                        'maxColumns' => '2',
+                        'maxColumns' => '2', 
                         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
                         'useTabs' => true,
                         //END SUGARCRM flav=pro || flav=sales ONLY
                         'widths' => array(
-                                        array('label' => '10', 'field' => '30'),
+                                        array('label' => '10', 'field' => '30'), 
                                         array('label' => '10', 'field' => '30')
                                         ),
-
+                        
 						'includes'=> array(
 										//BEGIN SUGARCRM flav!=sales ONLY
                             			array('file'=>'modules/Leads/Lead.js'),
 										//END SUGARCRM flav!=sales ONLY
-                         				),
+                         				),		                
                         ),
-
-
-
-    'panels' =>
+                        
+                        
+                        
+    'panels' => 
     array (
-      'lbl_contact_information' =>
+      'lbl_contact_information' => 
       array (
 
         array (
@@ -60,17 +60,6 @@ $viewdefs['Contacts']['DetailView'] = array(
           array (
             'name' => 'full_name',
             'label' => 'LBL_NAME',
-            //BEGIN SUGARCRM flav=pro ONLY
-            'displayParams' => 
-              array (
-                'enableConnectors' => true,
-                'module' => 'Contacts',
-                'connectors' => 
-                array (
-                  0 => 'ext_rest_twitter',
-                ),
-            ),
-            //END SUGARCRM flav=pro ONLY         
           ),
 
 	      //BEGIN SUGARCRM flav!=com ONLY
@@ -78,7 +67,7 @@ $viewdefs['Contacts']['DetailView'] = array(
 	      	'name' => 'picture',
 	        'label' => 'LBL_PICTURE_FILE',
 	      ),
-	      //END SUGARCRM flav!=com ONLY
+	      //END SUGARCRM flav!=com ONLY           
         ),
 
         array (
@@ -99,24 +88,13 @@ $viewdefs['Contacts']['DetailView'] = array(
           array (
             'name' => 'phone_mobile',
             'label' => 'LBL_MOBILE_PHONE',
-          ),
+          ),                
         ),
-
+        
         array (
           array (
             'name' => 'account_name',
             'label' => 'LBL_ACCOUNT_NAME',
-            //BEGIN SUGARCRM flav=pro ONLY
-            'displayParams' => 
-              array (
-                'enableConnectors' => true,
-                'module' => 'Contacts',
-                'connectors' => 
-                array (
-                  0 => 'ext_rest_linkedin',
-                ),
-            ),
-            //END SUGARCRM flav=pro ONLY
           ),
           array (
             'name' => 'phone_fax',
@@ -130,7 +108,7 @@ $viewdefs['Contacts']['DetailView'] = array(
             'name' => 'primary_address_street',
             'label' => 'LBL_PRIMARY_ADDRESS',
             'type' => 'address',
-            'displayParams' =>
+            'displayParams' => 
             array (
               'key' => 'primary',
             ),
@@ -140,7 +118,7 @@ $viewdefs['Contacts']['DetailView'] = array(
             'name' => 'alt_address_street',
             'label' => 'LBL_ALTERNATE_ADDRESS',
             'type' => 'address',
-            'displayParams' =>
+            'displayParams' => 
             array (
               'key' => 'alt',
             ),
@@ -154,8 +132,8 @@ $viewdefs['Contacts']['DetailView'] = array(
             'studio' => 'false',
             'label' => 'LBL_EMAIL_ADDRESS',
           ),
-        ),
-
+        ),      
+        
         array (
 
           array (
@@ -165,8 +143,8 @@ $viewdefs['Contacts']['DetailView'] = array(
           ),
         ),
       ),
-
-      'LBL_PANEL_ADVANCED' =>
+      
+      'LBL_PANEL_ADVANCED' => 
       array (
 
         array (
@@ -190,40 +168,45 @@ $viewdefs['Contacts']['DetailView'] = array(
             'comment' => 'How did the contact come about',
             'label' => 'LBL_LEAD_SOURCE',
           ),
-
+ 
           array (
             'name' => 'do_not_call',
             'comment' => 'An indicator of whether contact can be called',
             'label' => 'LBL_DO_NOT_CALL',
           ),
         ),
-
+        
         //BEGIN SUGARCRM flav!=sales ONLY
 	    array (
-
+		   
 		    array (
 		      'name' => 'campaign_name',
 		      'label' => 'LBL_CAMPAIGN',
 		    ),
-
-	  	),
+		    
+	  	),  
 	  	//END SUGARCRM flav!=sales ONLY
-
+	  	
 	    //BEGIN SUGARCRM flav=ent ONLY
 		array (
 		    array('name'=>'portal_name',
-		          'label' => 'LBL_PORTAL_NAME',
-		          'hideIf' => 'empty($PORTAL_ENABLED)',
-		          ),
+		          'customCode'=>'{if $PORTAL_ENABLED}{$fields.portal_name.value}{else}&nbsp;{/if}',
+		          'customLabel'=>'{if $PORTAL_ENABLED}{sugar_translate label="LBL_PORTAL_NAME" module="Contacts"}{else}&nbsp;{/if}'),
 		    array('name'=>'portal_active',
-		          'label' => 'LBL_PORTAL_ACTIVE',
- 		    	  'hideIf' => 'empty($PORTAL_ENABLED)',
-		        ),
-		    ),
+		          'customCode'=>'{if $PORTAL_ENABLED}
+		          		         {if strval($fields.portal_active.value) == "1" || strval($fields.portal_active.value) == "yes" || strval($fields.portal_active.value) == "on"}
+		          		         {assign var="checked" value="CHECKED"}
+	                             {else}
+	                             {assign var="checked" value=""}
+	                             {/if}
+	                             <input type="checkbox" class="checkbox" name="{$fields.portal_active.name}" size="{$displayParams.size}" disabled="true" {$checked}>
+	                             {else}&nbsp;{/if}',
+	                             'customLabel'=>'{if $PORTAL_ENABLED}{sugar_translate label="LBL_PORTAL_ACTIVE" module="Contacts"}{else}&nbsp;{/if}'),
+		  ),
 	    //END SUGARCRM flav=ent ONLY
-
+	  	
       ),
-      'LBL_PANEL_ASSIGNMENT' =>
+      'LBL_PANEL_ASSIGNMENT' => 
       array (
 
         array (
@@ -243,8 +226,8 @@ $viewdefs['Contacts']['DetailView'] = array(
         array (
           //BEGIN SUGARCRM flav=pro ONLY
           'team_name',
-          //END SUGARCRM flav=pro ONLY
-
+          //END SUGARCRM flav=pro ONLY        
+        
           array (
             'name' => 'date_entered',
             'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
@@ -253,6 +236,6 @@ $viewdefs['Contacts']['DetailView'] = array(
 
         ),
       ),
-     )
+     )                         
 );
 ?>

@@ -1,5 +1,4 @@
 <?php
-//BEGIN SUGARCRM flav!=sales ONLY
 require_once 'include/dir_inc.php';
 
 class Bug37692Test extends Sugar_PHPUnit_Framework_TestCase  {

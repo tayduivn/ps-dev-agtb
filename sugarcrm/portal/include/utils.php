@@ -2115,7 +2115,7 @@ function display_stack_trace(){
 }
 
 function StackTraceErrorHandler($errno, $errstr, $errfile,$errline, $errcontext) {
-	$error_msg = " $errstr occured in <b>$errfile</b> on line $errline [" . TimeDate::getInstance()->nowDb() . ']';
+	$error_msg = " $errstr occured in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
 	$halt_script = true;
 	switch($errno){
 			case 2048: return; //depricated we have lots of these ignore them

@@ -48,7 +48,6 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
-		
 		//END SUGARCRM flav=pro ONLY
 	),
 	'default_subpanel_define' => array(
@@ -127,26 +126,6 @@ if(is_admin($current_user)|| is_admin_for_module($current_user, 'Users')){
 }else{
 	$layout_defs['UserRoles']['subpanel_setup']['aclroles']['top_buttons'] = array();
 }
-
-$layout_defs['UserEAPM'] = array(
-	'subpanel_setup' => array(
-        'eapm' => array(
-			'order' => 30,
-			'module' => 'EAPM',
-			'sort_order' => 'asc',
-			'sort_by' => 'name',
-			'subpanel_name' => 'default',
-			'get_subpanel_data' => 'eapm',
-			'add_subpanel_data' => 'assigned_user_id',
-			'title_key' => 'LBL_EAPM_SUBPANEL_TITLE',
-			'top_buttons' => array(
-				array('widget_class' => 'SubPanelTopCreateButton'),
-			),
-		),
-
-    ),
-);
-
 
 //BEGIN SUGARCRM flav=pro ONLY
 //remove the administrator create button holiday for the user admin only

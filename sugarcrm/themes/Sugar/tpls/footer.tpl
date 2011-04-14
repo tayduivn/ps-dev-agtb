@@ -27,30 +27,17 @@
  ********************************************************************************/
 *}
 <!--end body panes-->
-		</td>
-		</tr>
 	  </table>
     </div>
     <div class="clear"></div>
 </div>
-<div id="bottomLinks">
-{if $AUTHENTICATED}
-{$BOTTOMLINKS}
-{/if}
-</div>
+
 <div id="footer">
     {$STATISTICS}
     <div id="copyright">
         {$COPYRIGHT}
     </div>
 </div>
-<script>
-{literal}
-if(SUGAR.util.isTouchScreen()) {
-	setTimeout(resizeHeader,10000);
-}
-{/literal}
-</script>
 
 </body>
 </html>

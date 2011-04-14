@@ -126,7 +126,7 @@ $dictionary['WorkFlowTriggerShell'] = array('table' => 'workflow_triggershells'
     'name' => 'rel_module',
     'vname' => 'LBL_REL_MODULE',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '50',
     'required' => false,
   ),  
     'rel_module_type' => 

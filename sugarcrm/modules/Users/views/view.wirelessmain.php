@@ -71,7 +71,7 @@ class ViewWirelessmain extends SugarWirelessListView
 	
 	private function wl_activities_today(){
 		global $timedate;
-		$today = $timedate->nowDbDate();
+		$today = date($timedate->dbDayFormat);
         
         $where = array();
 		$where['Calls'] = "date_start > '" . $today . " 00:00:00' AND date_start < '" . $today . " 23:59:59'";

@@ -234,17 +234,15 @@ class TeamSetManager {
         $teamSetsMD5[$md5] = $team_set_id;
         sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
 	 	
-        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) { 
-            mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); 
-        }
-        $fd = @fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php','w');
-        if ($fd) {
+        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) { mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); }
+        if ( is_writable($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) {
+            $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php','w');
             fwrite($fd,"<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>");
             fclose($fd);
         }
-        else {
+        else
             $GLOBALS['log']->error('File "'.$GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php" could not be written');
-        }
+        
 	}
 	
 	/**
@@ -288,18 +286,15 @@ class TeamSetManager {
 		
 	 	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
 	 	
-        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php') ) { 
-            mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); 
-        }
+        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php') ) { mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); }
         
-        $fd = @fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php','w');
-        if ( $fd ) {
+        if ( is_writable($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php') ) {
+            $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php','w');
             fwrite($fd,"<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>");
             fclose($fd);
         }
-        else {
+        else
             $GLOBALS['log']->error('File "'.$GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php" could not be written');
-        }
         
         return isset($teamSets[$team_set_id])?$teamSets[$team_set_id]:'';
 	}

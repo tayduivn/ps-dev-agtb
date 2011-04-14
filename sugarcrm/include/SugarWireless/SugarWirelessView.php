@@ -129,7 +129,7 @@ class SugarWirelessView extends SugarView
 		    if($module == 'Reports')
 			     continue;
 			// check if user has access to the listed module
-			if (in_array($module, $GLOBALS['moduleList'])){
+			if (in_array($module, $GLOBALS['moduleList']) || in_array($module, $GLOBALS['modInvisListActivities'])){
 				$wl_module_select_list[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
                 $module_reg = $this->view_object_map['wireless_module_registry'][$module];
                 if ( isset($module_reg['disable_create']) && $module_reg['disable_create'] )

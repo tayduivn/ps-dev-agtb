@@ -32,7 +32,7 @@ class TeamsViewList extends ViewList
 {
  	public function preDisplay()
  	{
- 	    if ( !is_admin($GLOBALS['current_user']) && !is_admin_for_module($GLOBALS['current_user'],'Users') )
+ 	    if ( !is_admin($GLOBALS['current_user']) && !is_admin_for_module($current_user,'Users') ) 
  	        sugar_die("Unauthorized access to administration.");
  	    
  	    parent::preDisplay();

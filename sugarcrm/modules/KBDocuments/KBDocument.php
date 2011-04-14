@@ -286,11 +286,7 @@ class KBDocument extends SugarBean {
             $this->add_team_security_where_clause($ret_array['from']);
         }
         //END SUGARCRM flav=pro ONLY
-        if(!empty($where)) {
-            $ret_array['where'] = ' WHERE '. $where;
-        } else {
-            $ret_array['where'] = '';
-        }
+        $ret_array['where'] = ' WHERE '. $where;
         //if order by just has asc or des
         $temp_order = trim($order_by);
         $temp_order = strtolower($temp_order);
@@ -299,9 +295,6 @@ class KBDocument extends SugarBean {
         $ret_array['order_by'] = (!empty($order_by) ? ' ORDER BY '. $order_by : '  ORDER BY kbdocuments.date_entered');
 
         $ret_array['from_min'] = $ret_array['from'];
-        if ( !$return_array ) {
-            return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
-        }
         return $ret_array;
     }
 

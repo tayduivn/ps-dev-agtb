@@ -23,7 +23,7 @@ class FunctionMultienumToArrayTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 21574
+     * @group bug21574
      * @dataProvider providerPassedString
      */
 	public function testPassedString(

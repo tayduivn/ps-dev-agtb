@@ -4,7 +4,7 @@ require_once 'include/utils.php';
 class SugarArrayMergeTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @ticket 17142
+     * @group bug17142
      */
     public function testSubArrayOrderIsPreserved() 
     {

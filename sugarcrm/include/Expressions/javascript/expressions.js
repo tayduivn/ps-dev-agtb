@@ -53,7 +53,6 @@ SUGAR.expressions.Expression.DATE_TYPE 	 	= "date";
 SUGAR.expressions.Expression.TIME_TYPE 	 	= "time";
 SUGAR.expressions.Expression.BOOLEAN_TYPE 	= "boolean";
 SUGAR.expressions.Expression.ENUM_TYPE 	 	= "enum";
-SUGAR.expressions.Expression.RELATE_TYPE	= "relate";
 SUGAR.expressions.Expression.GENERIC_TYPE  	= "generic";
 
 /**
@@ -216,39 +215,29 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 	}
 
 	// check if it's an instance of type or a generic that could map to any (unknown type)
-	if  (variable instanceof c || variable instanceof see.TYPE_MAP.generic || type == see.GENERIC_TYPE)
-        return true;
+	var isInstance = variable instanceof c || variable instanceof see.TYPE_MAP.generic;
 
 	// now check for generics
 	switch(type) {
 		case see.STRING_TYPE:
-			return (typeof(variable) == 'string' || typeof(variable) == 'number'
-                || variable instanceof see.TYPE_MAP[see.NUMERIC_TYPE]);
+			return ( isInstance || typeof(variable) == 'string' || typeof(variable) == 'number' || variable instanceof 				see.TYPE_MAP[see.NUMERIC_TYPE]);
 			break;
 		case see.NUMERIC_TYPE:
-			return (typeof(variable) == 'number' || SUGAR.expressions.isNumeric(variable));
+			return ( isInstance || typeof(variable) == 'number' || SUGAR.expressions.isNumeric(variable));
 			break;
 		case see.BOOLEAN_TYPE:
 			if ( variable instanceof see ) {
 				variable = variable.evaluate();
 			}
-			return ( variable == see.TRUE || variable == see.FALSE );
+			return ( isInstance || variable == see.TRUE || variable == see.FALSE );
 			break;
-        case see.DATE_TYPE:
-        case see.TIME_TYPE:
-            if ( variable instanceof see ) {
-				variable = variable.evaluate();
-			}
-            if (typeof(variable) == 'string' && SUGAR.util.DateUtils.guessFormat(variable))
-                return true;
-            break;
-		case see.RELATE_TYPE:
+		case see.GENERIC_TYPE:
 			return true;
 			break;
 	}
 
-	// If its not an instane and we can't map the value to a type, return false.
-	return false;
+	// just return whether it is an instance or not
+	return isInstance;
 };
 
 /** ABSTRACT METHODS **/
@@ -391,19 +380,6 @@ SUGAR.util.extend(SUGAR.TimeExpression, SUGAR.expressions.Expression, {
 	}
 });
 
-/** GENERIC TYPE EXPRESSIONS **/
-SUGAR.RelateExpression = function(params) {
-
-};
-SUGAR.util.extend(SUGAR.RelateExpression, SUGAR.expressions.Expression, {
-	/**
-	 * All parameters have to be a number by default.
-	 */
-	getParameterTypes: function() {
-		return SUGAR.expressions.Expression.GENERIC_TYPE;
-	}
-});
-
 
 
 
@@ -418,7 +394,6 @@ SUGAR.expressions.Expression.TYPE_MAP	= {
 		"time" 		: SUGAR.TimeExpression,
 		"boolean" 	: SUGAR.BooleanExpression,
 		"enum" 		: SUGAR.EnumExpression,
-		"relate" 	: SUGAR.RelateExpression,
 		"generic" 	: SUGAR.GenericExpression
 };
 
@@ -535,9 +510,7 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	// EXTRACT: Function
 	var open_paren_loc = expr.indexOf('(');
 	if (open_paren_loc < 1)
-		throw (expr + ": Syntax Error, no open parentheses found");
-	if (expr.charAt(expr.length-1) != ')')
-		throw (expr + ": Syntax Error, no close parentheses found");
+		throw (expr + ": Syntax Error");
 
 	// get the function
 	var func = expr.substring(0, open_paren_loc);
@@ -555,14 +528,12 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	var currChar		= null;
 	var lastCharRead	= null;
 	var justReadString	= false;		// did i just read in a string
-	var justReadComma   = false;
 	var isInQuotes 		= false;		// am i currently reading in a string
 	var isPrevCharBK 	= false;		// is my previous character a backslash
 
 	for ( var i = 0 ; i <= length ; i++ ) {
 		// store the last character read
 		lastCharRead = currChar;
-		justReadComma = false;
 
 		// the last parameter
 		if ( i == length ) {
@@ -617,7 +588,6 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 				throw ("Syntax Error: Unexpected ','");
 				args[args.length] = this.tokenize(argument);
 			argument = "";
-			justReadComma = true;
 			continue;
 		}
 
@@ -626,13 +596,10 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	}
 
 	// now check to make sure all the quotes opened were closed
-	if ( isInQuotes )	 throw ("Syntax Error (Unterminated String Literal)");
+	if ( isInQuotes )	throw ("Syntax Error (Unterminated String Literal)");
 
 	// now check to make sure all the parantheses opened were closed
-	if ( level != 0 )	 throw ("Syntax Error (Incorrectly Matched Parantheses)");
-
-	//If we hit a comma, but no paramter follows, we shoudl throw an error. 
-	if ( justReadComma ) throw ("Syntax Error (No parameter after comma near <b>" + func + "</b>)");
+	if ( level != 0 )	throw ("Syntax Error (Incorrectly Matched Parantheses)");
 
 	// require and return the appropriate expression object
 	return {
@@ -661,7 +628,7 @@ SUGAR.expressions.ExpressionParser.prototype.getType = function(variable) {
  * Evaluate a given string expression and return an Expression
  * object.
  */
-SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
+SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr)
 {
 	// make sure it is only parsing strings
 	if ( typeof(expr) != 'string' )	throw "ExpressionParser requires a string expression.";
@@ -674,17 +641,10 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 	if ( fixed != null && typeof(fixed) != 'undefined' )
 		return fixed;
 
-	//Check if the expression is just a variable
-	if (expr.match(/^\$\w+$/))
-	{
-		if (typeof (context) == "undefined")
-			throw ("Syntax Error: variable " + expr + " without context");
-		return context.getValue(expr.substring(1));
-	}
-
 	// VALIDATE: expression format
 	if ((/^[\w\-]+\(.*\)$/).exec(expr) == null) {
 		throw ("Syntax Error (Expression Format Incorrect '" + expr + "' )");
+		debugger; 
 	}
 
 	// EXTRACT: Function
@@ -715,15 +675,14 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 	var justReadString	= false;		// did i just read in a string
 	var isInQuotes 		= false;		// am i currently reading in a string
 	var isPrevCharBK 	= false;		// is my previous character a backslash
-	var isInVar 		= false;		// am i currently reading a variable name
 
-	if (length > 0) { for ( var i = 0 ; i <= length ; i++ ) {
+	for ( var i = 0 ; i <= length ; i++ ) {
 		// store the last character read
 		lastCharRead = currChar;
 
 		// the last parameter
 		if ( i == length ) {
-			args[args.length] = this.evaluate(argument, context);
+			args[args.length] = this.evaluate(argument);
 			break;
 		}
 
@@ -739,9 +698,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 			continue;
 		}
 
-		if (isInVar && (currChar == " " || currChar == "," ))
-			isInVar = false;
-		
 		// check for quotes
 		if ( currChar == '"' && !isPrevCharBK && level == 0 )
 		{
@@ -761,15 +717,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 			isInQuotes = !isInQuotes;
 		}
 
-		if( currChar == '$' && !isPrevCharBK && !isInQuotes && level == 0)
-		{
-			if (isInVar)
-				throw (func + ": Syntax Error (unexpeted '$' in  '" + argument + "')");
-			else {
-				isInVar = true;
-			}
-		}
-
 		// check parantheses open/close
 		if ( currChar == '(' ) {
 			level++;
@@ -779,14 +726,14 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 
 		// argument splitting
 		else if ( currChar == ',' && level == 0 ) {
-			args[args.length] = this.evaluate(argument, context);
+			args[args.length] = this.evaluate(argument);
 			argument = "";
 			continue;
 		}
 
 		// construct the next argument
 		argument += currChar;
-	}}
+	}
 
 	// now check to make sure all the quotes opened were closed
 	if ( isInQuotes )	throw ("Syntax Error (Unterminated String Literal)");
@@ -805,7 +752,6 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
  * string can be converted to a constant.
  */
 SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
-
 	// a raw numeric constant
 	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(expr) != null ) {
 		return new SUGAR.ConstantExpression( parseFloat(expr) );
@@ -849,25 +795,6 @@ SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 	return null;
 };
 
-/**
- * An expression context is used to retrieve variables when evaluating expressions.
- * the default class only returns the empty string.
- */
-SUGAR.expressions.ExpressionContext = function()
-{
-	//No opp, this is just an API
-}
-
-SUGAR.expressions.ExpressionContext.prototype.getValue = function(varname)
-{
-	return "";
-}
-
-SUGAR.expressions.ExpressionContext.prototype.setValue = function(varname, value)
-{
-	return "";
-}
-
 SUGAR.expressions.isNumeric = function(str) {
     if(typeof(str) != 'number' && typeof(str) != 'string')
         return false;
@@ -909,36 +836,23 @@ SUGAR.util.DateUtils = {
  	 * Converts a date string to a new format.
  	 * If no new format is passed in, the date is returned as a Unix timestamp.
  	 * If no old format is passed in, the old format is guessed.
- 	 * @param {String} date String representing a date.
- 	 * @param {String} oldFormat Optional: Current format of the date string.
+ 	 * @param {Object} date String representing a date.
+ 	 * @param {Object} newFormat Optional: Format date should be returned in.
+ 	 * @param {Object} oldFormat Optional: Current format of the date string.
  	 */
-	parse : function(date, oldFormat) {
-        if (date instanceof Date)
-            return date;
-        if (oldFormat == "user")
-		{
-			if (SUGAR.expressions.userPrefs && SUGAR.expressions.userPrefs.datef) {
-				oldFormat = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;
-			} else {
-				oldFormat = SUGAR.util.DateUtils.guessFormat(date);
-			}
-		}
+	convert : function(date, newFormat, oldFormat) {
 		if (oldFormat == null || oldFormat == "") {
 			oldFormat = SUGAR.util.DateUtils.guessFormat(date);
 		}
 		if (oldFormat == false) {
-			//Check if date is a timestamp
-			if (/^\d+$/.test(date))
-				return new Date(date);
-			//Otherwise give up
 			return false;
 		}
 		var jsDate = new Date("Jan 1, 1970 00:00:00");
 		var part = "";
-		var dateRemain = YAHOO.lang.trim(date);
-		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
-		for (var j = 0; j < oldFormat.length; j++) {
-			var c = oldFormat[j];
+		var dateRemain = date;
+		oldFormat = oldFormat + " "; // Trailing space to read as last separator.
+		for (var c in oldFormat) {
+			c = oldFormat[c];
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
 				var i = dateRemain.indexOf(c);
 				if (i == -1) i = dateRemain.length;
@@ -946,19 +860,16 @@ SUGAR.util.DateUtils = {
 				dateRemain = dateRemain.substring(i+1);
 				switch (part) {
 					case 'm':
-						if (!(v > 0 && v < 13)) return false;
 						jsDate.setMonth(v - 1); break;
 					case 'd':
-						if(!(v > 0 && v < 32)) return false;
 						jsDate.setDate(v); break;
 					case 'Y':
-						if(!(v > 0)) return false;
 						jsDate.setYear(v); break;
 					case 'h':
 						//Read time, assume minutes are at end of date string (we do not accept seconds)
-						var timeformat = oldFormat.substring(oldFormat.length - 4);
-						if (timeformat.toLowerCase() == "i a " || timeformat.toLowerCase() == c + "ia ") {
-							if (dateRemain.substring(dateRemain.length - 2).toLowerCase() == 'pm') {
+						var timeformat = oldFormat.substring(oldFormat.length - 5);
+						if (timeformat.toLowerCase == "i a " || timeformat.toLowerCase == c + "ia ") {
+							if (dateRemain.substring(dateRemain.length - 3).toLowerCase == 'pm') {
 								v = v * 1;
 								if (v < 12) {
 									v += 12;
@@ -977,7 +888,7 @@ SUGAR.util.DateUtils = {
 				part = c;
 			}
 		}
-		return jsDate;
+		return jsDate.toString();
 	},
 	guessFormat: function(date) {
 		if (typeof date != "string")
@@ -1051,74 +962,5 @@ SUGAR.util.DateUtils = {
 		}
 
 		return dateFormat;
-	},
-
-    formatDate : function(date, useTime, format)
-    {
-        if (!format && SUGAR.expressions.userPrefs.datef && SUGAR.expressions.userPrefs.timef) {
-            if (useTime)
-				format = SUGAR.expressions.userPrefs.datef + " " + SUGAR.expressions.userPrefs.timef;
-			else
-				format = SUGAR.expressions.userPrefs.datef;
-        }
-        var out = "";
-        for (var i=0; i < format.length; i++) {
-			var c = format.charAt(i);
-			switch (c) {
-                case 'm':
-                    out += date.getMonth() + 1; break;
-                case 'd':
-                    out += date.getDate(); break;
-                case 'Y':
-                    out += date.getFullYear(); break;
-				case 'H':
-                case 'h':
-					var h = date.getHours();
-                    if(c == "h") h = h > 12 ? h - 12 : h;
-                    out += h < 10 ? "0" + h : h; break;
-                case 'i':
-                    var m = date.getMinutes();
-                    out += m < 10 ? "0" + m : m; break;
-                case 'a':
-                    if (date.getHours() < 12)
-                        out += "am";
-                    else
-                        out += "pm";
-                    break;
-                case 'A':
-                    if (date.getHours() < 12)
-                        out += "AM";
-                    else
-                        out += "PM";
-                    break;
-                default :
-                    out += c;
-            }
-		}
-        return out;
-    },
-	roundTime: function(date)
-	{
-		var min = date.getMinutes();
-
-		if (min < 16) { min = 15; }
-		else if (min < 31) { min = 30; }
-		else if (min < 46) { min = 45; }
-		else { min = 0; date.setHours(date.getHours() + 1)}
-
-		date.setMinutes(min);
-
-		return date;
-	},
-	getUserTime: function()
-	{
-		var date = new Date();
-		if (typeof(SUGAR.expressions.userPrefs.gmt_offset) != "undefined")
-		{
-			//Sugars TZ offset is negative compared with JS's offset, so adding is really subtracting;
-			var offset = SUGAR.expressions.userPrefs.gmt_offset;
-			date.setMinutes(date.getMinutes() + (date.getTimezoneOffset() + offset));
-		}
-		return date;
 	}
  }

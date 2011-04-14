@@ -213,10 +213,10 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 }
 
 if( $view == "module") {
-	print( getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_LOADER_TITLE']), false) );
+	print( get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_LOADER_TITLE'], true) );
 }
 else {
-	print( getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_UPGRADE_WIZARD_TITLE']), false) );
+	print( get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$mod_strings['LBL_UPGRADE_WIZARD_TITLE'], true) );
 }
 
 // upload link

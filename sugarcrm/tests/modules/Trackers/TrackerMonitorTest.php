@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 class TrackerMonitorTest extends Sugar_PHPUnit_Framework_TestCase {
 
     function setUp() {

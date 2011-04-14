@@ -59,9 +59,9 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 
 $params = array();
 if(empty($focus->id)){
-	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
+	$params[] = "<span class='pointer'>&raquo;</span>".$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
-	$params[] = "<a href='index.php?module=ReportMaker&action=DetailView&record={$focus->id}'>".$focus->get_summary_text()."</a>";
+	$params[] = "<span class='pointer'>&raquo;</span><a href='index.php?module=ReportMaker&action=DetailView&record={$focus->id}'>".$focus->get_summary_text()."</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
 echo getClassicModuleTitle("ReportMaker", $params, true);

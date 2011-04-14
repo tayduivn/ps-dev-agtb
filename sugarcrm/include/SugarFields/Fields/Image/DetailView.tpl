@@ -27,7 +27,12 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<input type="hidden" class="sugar_field" id="{{sugarvar key='name'}}" value="{{sugarvar key='value' string=true}}">
+{if empty({{sugarvar key='value' string=true}})}
+{assign var="value" value={{sugarvar key='default_value' string=true}} }
+{else}
+{assign var="value" value={{sugarvar key='value' string=true}} }
+{/if}  
+
 {if isset($displayParams.link)}
 <a href='{{$displayParams.link}}'>
 {else}

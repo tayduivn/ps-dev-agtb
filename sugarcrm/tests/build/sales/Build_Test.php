@@ -8,6 +8,11 @@ class Build_Test extends Sugar_PHPUnit_Framework_TestCase
 	
     public function setUp() 
     {    	 
+      /*         
+      if($GLOBALS['sugar_flavor'] != 'SALES') {
+      	 $this->markTestSkipped('Skipping for non-SALES editions');
+      }
+      */
       $this->removed_directories = array();
       $this->removed_directories[] = 'modules/ACLFields';
       $this->removed_directories[] = 'modules/Bugs';
@@ -32,6 +37,7 @@ class Build_Test extends Sugar_PHPUnit_Framework_TestCase
       $this->removed_directories[] = 'modules/DCEIntances';   
       $this->removed_directories[] = 'modules/DCEReports';   
       $this->removed_directories[] = 'modules/DCETemplates';   
+      $this->removed_directories[] = 'modules/EmailMan';
       $this->removed_directories[] = 'modules/EmailMarketing'; 
       $this->removed_directories[] = 'modules/Expressions'; 
       $this->removed_directories[] = 'modules/Forecasts';
@@ -73,7 +79,9 @@ class Build_Test extends Sugar_PHPUnit_Framework_TestCase
       $this->removed_directories[] = 'modules/WorkFlowAlerts'; 
       $this->removed_directories[] = 'modules/WorkFlowAlertShells';
       $this->removed_directories[] = 'modules/WorkFlowTriggerShells';        
-      $this->removed_directories[] = 'include/workflow';
+      $this->removed_directories[] = 'include/workflow'; 
+      $this->removed_directories[] = 'include/SugarWireless';
+      $this->removed_directories[] = 'include/SugarCharts/swf';
       $this->removed_directories[] = 'portal'; 
 
       $this->removed_modules = array();

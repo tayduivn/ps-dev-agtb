@@ -6,10 +6,13 @@ var $rel_guid;
 var $has_custom_table_dictionary;	
 var $moduleList;
 
-function setUp() 
-{
-    $this->markTestSkipped("Skipping unless otherwise specified");
-    
+function setUp() {
+	
+    if(true) {
+       $this->markTestSkipped("Skipping unless otherwise specified");
+       return;
+    }	
+	
     $admin = new User();
     $GLOBALS['current_user'] = $admin->retrieve('1');	
 	
@@ -231,33 +234,17 @@ function tearDown() {
        unlink('modules/abc_Test/metadata/studio.php'); 
     }    
     
-    if(is_dir('custom/Extension/modules/abc_Test/Ext/Vardefs')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Vardefs');
-    }
-    if(is_dir('custom/Extension/modules/abc_Test/Ext/Layoutdefs')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Layoutdefs');
-    }
-    if(is_dir('custom/Extension/modules/abc_Test/Ext')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test/Ext');
-    }
-    if(is_dir('custom/Extension/modules/abc_Test')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test');
-    }
-    if(is_dir('modules/abc_Test/metadata')) {
-        rmdir_recursive('modules/abc_Test/metadata');
-    }
-    if(is_dir('modules/abc_Test')) {
-        rmdir_recursive('modules/abc_Test');
-    }
+	rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Vardefs');
+	rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Layoutdefs');
+	rmdir_recursive('custom/Extension/modules/abc_Test/Ext');
+	rmdir_recursive('custom/Extension/modules/abc_Test');
+	rmdir_recursive('modules/abc_Test/metadata');
+	rmdir_recursive('modules/abc_Test');
 	
-    if ( !empty($this->rel_guid) ) {
-        $sql = "DELETE FROM relationships WHERE id = '{$this->rel_guid}'";
-        $GLOBALS['db']->query($sql);
-	}
+	$sql = "DELETE FROM relationships WHERE id = '{$this->rel_guid}'";
+	$GLOBALS['db']->query($sql);
 	
-	if ( !empty($this->moduleList) ) {
-        $GLOBALS['moduleList'] = $this->moduleList;
-    }
+	$GLOBALS['moduleList'] = $this->moduleList;
 }
 
 

@@ -215,7 +215,7 @@ if ($sync_module_index > -1) {
 	if (empty ($_SESSION['sync_start_time'])) {
 		//get the what the server says is gmt time
 		$start_time = $soapclient->call('get_gmt_time', array ());
-		$local_time = $timedate->nowDb();
+		$local_time = $timedate->get_gmt_db_datetime();
 
 		if (has_error()) {
 			add_to_msg('Could not connect to server');

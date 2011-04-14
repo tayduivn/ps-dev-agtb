@@ -41,7 +41,7 @@ class ListViewReports extends ListViewSmarty {
     
     function display() {
         global $current_user, $app_strings;
-		$admin = is_admin($current_user) || is_admin_for_module($current_user,'Reports');
+		$admin = is_admin($current_user);
         foreach($this->data['data'] as $i => $rowData) {
             if(isset($this->data['data'][$i]['IS_PUBLISHED'])) {
                 $this->data['data'][$i]['IS_PUBLISHED'] = "<input type='checkbox' ";

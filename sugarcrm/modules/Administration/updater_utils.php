@@ -33,7 +33,7 @@ require_once('include/utils/encryption_utils.php');
 
 function getSystemInfo($send_usage_info=true){
 	global $sugar_config;
-	global $db, $authLevel, $administration, $timedate;
+	global $db, $authLevel, $administration;
 	$info=array();
 	$info = getBaseSystemInfo($send_usage_info);
     	if($send_usage_info){
@@ -56,22 +56,22 @@ function getSystemInfo($send_usage_info=true){
 		//END SUGARCRM dep=os ONLY
 
 		//BEGIN SUGARCRM dep=od ONLY
-		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);
+		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);		
 		//END SUGARCRM dep=od ONLY
 
 		//BEGIN SUGARCRM flav=sales ONLY
 		$user_list = get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND is_admin = 0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false);
 		//END SUGARCRM flav=sales ONLY
-
+		
 		$info['users']=count($user_list);
 		if(empty($administration)){
-
+			
 			$administration = new Administration();
 		}
 		$administration->retrieveSettings('system');
 		$info['system_name'] = (!empty($administration->settings['system_name']))?substr($administration->settings['system_name'], 0 ,255):'';
 
-
+		
 		$query="select count(*) count from users where status='Active' and deleted=0 and is_admin='1'";
 		$result=$db->query($query, 'fetching admin count', false);
 		$row = $db->fetchByAssoc($result);
@@ -88,7 +88,7 @@ function getSystemInfo($send_usage_info=true){
 		if(!empty($row)) {
 			$info['registered_users'] = $row['count'];
 		}
-		$lastMonth = db_convert("'". $timedate->getNow()->modify("-30 days")->asDb(false) . "'", 'datetime');
+		$lastMonth = db_convert("'".date($GLOBALS['timedate']->get_db_date_time_format() , strtotime('-1 month')) . "'", 'datetime');
 		if( !$send_usage_info){
 			$info['users_active_30_days'] = -1;
 		}
@@ -97,10 +97,10 @@ function getSystemInfo($send_usage_info=true){
 			$result=$db->query($query, 'fetching last 30 users count', false);
 			$row = $db->fetchByAssoc($result);
 			$info['users_active_30_days'] = $row['user_count'];
-
+			
 		}
-
-
+		
+        
             //BEGIN SUGARCRM flav=pro ONLY
             if (file_exists('modules/Administration/System.php')) {
 	            require_once('modules/Administration/System.php');
@@ -138,13 +138,13 @@ function getSystemInfo($send_usage_info=true){
 	$result = $GLOBALS['db']->query($query);
 	$info['license_portal_ex'] = 0;
 	if($row = $GLOBALS['db']->fetchByAssoc($result)){
-		$info['license_portal_ex'] = $row['record_count'];
-	}
+		$info['license_portal_ex'] = $row['record_count'];	
+	} 
 	$query = "SELECT MAX(num_active_sessions) as record_max FROM session_history WHERE date_entered >= $lastMonth";
 	$result = $GLOBALS['db']->query($query);
 	$info['license_portal_max'] = 0;
 	if($row = $GLOBALS['db']->fetchByAssoc($result)){
-		$info['license_portal_max'] = $row['record_max'];
+		$info['license_portal_max'] = $row['record_max'];	
 	}
 	//END SUGARCRM flav=pro ONLY
 	$info['os'] = php_uname('s');
@@ -187,10 +187,10 @@ function getBaseSystemInfo($send_usage_info=true){
 
 
     return $info;
-
+   
 
 }
-
+    
 function check_now($send_usage_info=true, $get_request_data=false, $response_data = false, $from_install=false ) {
 	global $sugar_config, $timedate;
 	global $db, $license;
@@ -215,7 +215,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 
         if($from_install){
     		$info = getBaseSystemInfo(false);
-
+            
         }else{
             $info = getSystemInfo($send_usage_info);
         }
@@ -228,7 +228,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 		if(empty($ping) || $sclient->getError()){
 			$sclient = '';
 		}
-
+		
 		if(empty($sclient)){
 			$GLOBALS['log']->debug('USING HTTP TO CONNECT TO HEARTBEAT');
 			$sclient = new nusoapclient('http://updates.sugarcrm.com/heartbeat/soap.php', false, false, false, false, false, 15, 15);
@@ -267,7 +267,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 			return serialize($request_data);
 		}
 		$encodedResult = $sclient->call('sugarHome', array('key'=>$key, 'data'=>$encoded));
-
+		
 	}else{
 		$encodedResult = 	$response_data['data'];
 		$key = $response_data['key'];
@@ -319,15 +319,15 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 		$resultData = array();
 		$resultData['versions'] = array();
 
-		$license->saveSetting('license', 'last_connection_fail', TimeDate::getInstance()->nowDb());
+		$license->saveSetting('license', 'last_connection_fail', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
 		$license->saveSetting('license', 'last_validation', 'no_connection');
-
+		
 		if( empty($license->settings['license_last_validation_success']) && empty($license->settings['license_last_validation_fail']) && empty($license->settings['license_vk_end_date'])){
-			$license->saveSetting('license', 'vk_end_date', TimeDate::getInstance()->nowDb());
-
+			$license->saveSetting('license', 'vk_end_date', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+			
 			$license->saveSetting('license', 'validation_key', base64_encode(serialize(array('verified'=>false))));
 		}
-		$_SESSION['COULD_NOT_CONNECT'] =TimeDate::getInstance()->nowDb();
+		$_SESSION['COULD_NOT_CONNECT'] =gmdate($GLOBALS['timedate']->get_db_date_time_format());
 
 	}
 	if(!empty($resultData['versions'])){
@@ -353,7 +353,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 	return $resultData['versions'];
 }
 function set_CheckUpdates_config_setting($value) {
-
+	
 
 	$admin=new Administration();
 	$admin->saveSetting('Update','CheckUpdates',$value);
@@ -364,7 +364,7 @@ function set_CheckUpdates_config_setting($value) {
 function get_CheckUpdates_config_setting() {
 
 	$checkupdates='automatic';
-
+	
 
 	$admin=new Administration();
 	$admin=$admin->retrieveSettings('Update',true);
@@ -377,14 +377,14 @@ function get_CheckUpdates_config_setting() {
 }
 
 function set_last_check_version_config_setting($value) {
-
+	
 
 	$admin=new Administration();
 	$admin->saveSetting('Update','last_check_version',$value);
 }
 function get_last_check_version_config_setting() {
 
-
+	
 
 	$admin=new Administration();
 	$admin=$admin->retrieveSettings('Update');
@@ -397,14 +397,14 @@ function get_last_check_version_config_setting() {
 
 
 function set_last_check_date_config_setting($value) {
-
+	
 
 	$admin=new Administration();
 	$admin->saveSetting('Update','last_check_date',$value);
 }
 function get_last_check_date_config_setting() {
 
-
+	
 
 	$admin=new Administration();
 	$admin=$admin->retrieveSettings('Update');
@@ -445,11 +445,11 @@ function get_sugarbeat() {
 
 
 function shouldCheckSugar(){
-	global $license, $timedate;
+	global $license;
 	if(
-
+	
 	  //BEGIN SUGARCRM lic=sub ONLY
-	(empty($license->settings['license_last_validation_fail']) ||  $license->settings['license_last_validation_fail'] < $timedate->getNow()->modify("-6 hours")->asDb(false))  &&
+	(empty($license->settings['license_last_validation_fail']) ||  $license->settings['license_last_validation_fail']< gmdate($GLOBALS['timedate']->get_db_date_time_format(), time() - 3600 * 6))  && 
 	  //END SUGARCRM lic=sub ONLY
 	get_CheckUpdates_config_setting() == 'automatic' ){
 		return true;
@@ -472,12 +472,12 @@ function authenticateDownloadKey(){
 		check_now(get_sugarbeat());
 	}
 	//could not connect to server so we'll let it pass
-
+    
 	if(empty($GLOBALS['license']->settings['license_validation_key'])){
 		return false;
 	}
-
-
+	
+     
 	if(!empty($GLOBALS['license']->settings['license_validation_key']['validation']))return true;
 	$data['license_expire_date'] = $GLOBALS['license']->settings['license_expire_date'];
 	$data['license_users'] =  intval($GLOBALS['license']->settings['license_users']);
@@ -492,7 +492,7 @@ function authenticateDownloadKey(){
 	foreach($og as $name=>$value){
 
 		if(!isset($data[$name]) || $data[$name] != $value){
-
+			
 			return false;
 		}
 	}
@@ -507,12 +507,12 @@ function ocLicense(){
 }
 
 function checkDownloadKey($data){
-
+	
 	if(!isset($GLOBALS['license'])){
 		loadLicense(true);
 	}
-
-
+	
+	
 	if(!is_array($data)){
 
 
@@ -525,7 +525,7 @@ function checkDownloadKey($data){
 
 			$GLOBALS['license']->saveSetting('license', 'expire_date', '2000-10-10');
 			$GLOBALS['license']->saveSetting('license', 'validation_notice', 'invalid');
-			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate::getInstance()->nowDb());
+			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
 			return 'Invalid Download Key';
 		}
 		if($data == 'expired' || $data == 'closed'){
@@ -534,20 +534,20 @@ function checkDownloadKey($data){
 			if($data == 'closed'){
 				$GLOBALS['license']->saveSetting('license', 'users', 1);
 			}
-			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate::getInstance()->nowDb());
+			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
 			return 'Expired Download Key';
 		}else if($data == 'invalid validation key'){
 			$GLOBALS['license']->saveSetting('license', 'validation_notice', 'Invalid Validation Key File - please make sure you uploaded the right file');
-			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', TimeDate::getInstance()->nowDb());
+			$GLOBALS['license']->saveSetting('license', 'last_validation_fail', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
 			return 'Invalid Validation Key';
-
+			
 		}
 		return $data;
 
 
 	}
 
-
+	
 	$GLOBALS['license']->saveSetting('license', 'users', $data['license_users']);
 	$GLOBALS['license']->saveSetting('license', 'num_lic_oc', (empty($data['license_num_lic_oc']) ? 0 : $data['license_num_lic_oc']));
 	if(empty($data['license_num_portal_users'])) $data['license_num_portal_users'] = 0;
@@ -555,13 +555,13 @@ function checkDownloadKey($data){
 	$GLOBALS['license']->saveSetting('license', 'validation_key', $data['license_validation_key']);
 	$GLOBALS['license']->saveSetting('license', 'vk_end_date', $data['license_vk_end_date']);
 	$GLOBALS['license']->saveSetting('license', 'expire_date', $data['license_expire_date']);
-	$GLOBALS['license']->saveSetting('license', 'last_validation_success', TimeDate::getInstance()->nowDb());
+	$GLOBALS['license']->saveSetting('license', 'last_validation_success', gmdate($GLOBALS['timedate']->get_db_date_time_format()));
 	$GLOBALS['license']->saveSetting('license', 'validation_notice', '');
 	$GLOBALS['license']->saveSetting('license', 'enforce_portal_user_limit', isset($data['enforce_portal_user_limit']) ? '1' : '0');
-
-	if(isset($data['enforce_user_limit']))
+	
+	if(isset($data['enforce_user_limit'])) 
 		$GLOBALS['license']->saveSetting('license', 'enforce_user_limit', $data['enforce_user_limit']);
-
+	
 	loadLicense(true);
 	return 'Validation Complete';
 }
@@ -587,7 +587,7 @@ function setSystemState($state){
 
 				}else if(
 				is_admin($current_user) &&
-				!($_REQUEST['action'] == 'SetTimezone'
+				!($_REQUEST['action'] == 'SetTimezone' 
 				|| $_REQUEST['action'] == 'SaveTimezone' || ( $_REQUEST['module'] == 'Administration'  && ( $_REQUEST['action'] == 'LicenseSettings' || $_REQUEST['action'] == 'Save')
 				||  ($_REQUEST['module'] == 'Home' && $_REQUEST['action'] == 'About')
 				||  ($_REQUEST['module'] == 'Users' && $_REQUEST['action'] == 'Logout')
@@ -642,11 +642,11 @@ function checkSystemLicenseStatus(){
 		}else{
 			$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
 		}
-
+        
         if(isset($license->settings['license_num_lic_oc'])){
             $_SESSION['EXCEEDING_OC_LICENSES'] = hasExceededOfflineClientLicenses($license->settings['license_num_lic_oc']);
         }else{
-            $_SESSION['EXCEEDING_OC_LICENSES'] = false;
+            $_SESSION['EXCEEDING_OC_LICENSES'] = false;   
         }
 	}else{
 		$_SESSION['INVALID_LICENSE'] = true;
@@ -684,7 +684,7 @@ function hasExceededOfflineClientLicenses($num_oc_lic){
 	    $GLOBALS['log']->debug("CHECKING SYSTEMS TABLE");
 	    $system_count = $system->getEnabledOfflineClients($system->create_new_list_query("",$where));
 	    if(isset($system_count) && isset($num_oc_lic) && !empty($num_oc_lic) && $system_count > $num_oc_lic){
-	        return true;
+	        return true;    
 	    }
 	}
 	return false;
@@ -694,7 +694,7 @@ function hasExceededOfflineClientLicenses($num_oc_lic){
 
 
 function loadLicense($firstLogin=false){
-
+	
 	$GLOBALS['license']=new Administration();
 	$GLOBALS['license']=$GLOBALS['license']->retrieveSettings('license', $firstLogin);
 
@@ -703,29 +703,29 @@ function loadLicense($firstLogin=false){
 function loginLicense(){
 	global $current_user, $license, $authLevel;
 	loadLicense(true);
-
+     
   //BEGIN SUGARCRM lic=sub ONLY
 	if((isset($_SESSION['EXCEEDS_MAX_USERS']) && $_SESSION['EXCEEDS_MAX_USERS'] == 1 ) || empty($license->settings['license_key']) || (!empty($license->settings['license_last_validation']) && $license->settings['license_last_validation'] == 'failed' &&  !empty($license->settings['license_last_validation_fail']) && (empty($license->settings['license_last_validation_success']) || $license->settings['license_last_validation_fail'] > $license->settings['license_last_validation_success']))){
-
+		
 		if(!is_admin($current_user)){
 		   $GLOBALS['login_error'] = $GLOBALS['app_strings']['ERROR_LICENSE_VALIDATION'];
 		   $_SESSION['login_error'] =  $GLOBALS['login_error'];
 		}else{
 			if(empty($license->settings['license_key'])){
-				$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';
+				$_SESSION['VALIDATION_EXPIRES_IN'] = 'REQUIRED';	
 			}else{
 				$_SESSION['COULD_NOT_CONNECT'] = $license->settings['license_last_validation_fail'];
 			}
 		}
-
+	    
 	}
 
   //END SUGARCRM lic=sub ONLY
 	$authLevel = 0;
-
+	
 	if (shouldCheckSugar()) {
-
-
+	   
+		
 		$last_check_date=get_last_check_date_config_setting();
 		$current_date_time=time();
 		$time_period=3*23*3600 ;
@@ -762,9 +762,9 @@ function loginLicense(){
 	// to as Critical Control Software under the End User
 	// License Agreement.  Neither the Company nor the Users
 	// may modify any portion of the Critical Control Software.
-
+	
 	if(!authenticateDownloadKey() && !ocLicense()){
-
+	  
 	   if(is_admin($current_user)){
 		  $_SESSION['HomeOnly'] = true;
 	    }else{

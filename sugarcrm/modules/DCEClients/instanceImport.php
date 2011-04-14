@@ -98,7 +98,7 @@
             return 'could not create instance based on directory name '.$name.', instance with that name already exists';   
         }
         $id = createGuidOnDN();
-        $date = TimeDate::getInstance()->nowDb();
+        $date = gmdate("Y-m-d H:i:s");
                             
         //creates query that will insert instance record
         $newInstQry = 

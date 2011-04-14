@@ -4,7 +4,7 @@ require_once 'include/utils.php';
 class SugarArrayMergeRecursiveTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
-     * @ticket 25280
+     * @group bug25280
      */
     public function testDeepArrayMerge()
     {

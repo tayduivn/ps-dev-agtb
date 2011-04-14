@@ -7,7 +7,6 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array("some data", "some data"),
-
             array("test <a href=\"http://www.digitalbrandexpressions.com\">link</a>", "test <a href=\"http://www.digitalbrandexpressions.com\">link</a>"),
             array("some data<script>alert('xss!')</script>", "some data<>alert('xss!')</>"),
             array("some data<script src=\" http://localhost/xss.js\"></script>", "some data< src=\" http://localhost/xss.js\"></>"),
@@ -39,7 +38,7 @@ class XssTest extends Sugar_PHPUnit_Framework_TestCase
     public function testXssFilterBean($before, $after)
     {
         $bean = new EmailTemplate();
-		$bean->body_html = to_html($before);
+        $bean->body_html = to_html($before);
         $bean->cleanBean();
         $this->assertEquals(to_html($after), $bean->body_html);
     }

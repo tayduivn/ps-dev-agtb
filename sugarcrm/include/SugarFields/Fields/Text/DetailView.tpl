@@ -26,15 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<span class="sugar_field" id="{{sugarvar key='name'}}">
+
 {{if empty($displayParams.textonly)}}
 {{sugarvar key='value' htmlentitydecode='true'}}
 {{else}}
 {{sugarvar key='value'}}
 {{/if}}
-</span>
+
+
 {{if !empty($displayParams.enableConnectors)}}
-{if !empty({{sugarvar key='value'}})}
-{{sugarvar_connector view='DetailView'}}
-{/if}
+{{sugarvar_connector view='DetailView'}} 
 {{/if}}

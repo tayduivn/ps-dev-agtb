@@ -41,7 +41,7 @@ class CharacterAtExpression extends StringExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters();
-			var str = params[0].evaluate() + "";
+			var str = params[0].evaluate();
 			var idx = params[1].evaluate();
 			return str.charAt(idx);
 EOQ;

@@ -40,14 +40,14 @@ class SugarFavoritesDashlet extends DashletGeneric
     {
 		global $current_user, $app_strings;
 		require('modules/SugarFavorites/metadata/dashletviewdefs.php');
-		$this->loadLanguage('SugarFavoritesDashlet', 'modules/SugarFavorites/Dashlets/');
+
         parent::DashletGeneric($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_HOMEPAGE_TITLE', 'SugarFavorites');
 
         $this->searchFields = $dashletData['SugarFavoritesDashlet']['searchFields'];
         $this->columns = $dashletData['SugarFavoritesDashlet']['columns'];
-        $this->isConfigurable = true;
+        $this->isConfigurable = false;
         $this->seedBean = new SugarFavorites();   
         $this->filters = array();
     }
@@ -83,46 +83,5 @@ class SugarFavoritesDashlet extends DashletGeneric
         }
         //pass in query params for processing	
         parent::process($lvsParams);    
-    }
-    
-    /**
-     * Displays the configuration form for the dashlet
-     * 
-     * @return string html to display form
-     */
-    public function displayOptions() 
-    {
-        global $app_strings;
-        
-        $ss = new Sugar_Smarty();
-        $this->dashletStrings['LBL_SAVE'] = $app_strings['LBL_SAVE_BUTTON_LABEL'];
-        $ss->assign('lang', $this->dashletStrings);
-        $ss->assign('id', $this->id);
-        $ss->assign('title', $this->title);
-        $ss->assign('titleLbl', $this->dashletStrings['LBL_CONFIGURE_TITLE']);
-        if($this->isAutoRefreshable()) {
-       		$ss->assign('isRefreshable', true);
-			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
-			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
-			$ss->assign('autoRefreshSelect', $this->autoRefresh);
-		}
-       
-        $str = $ss->fetch('modules/SugarFavorites/Dashlets/SugarFavoritesDashlet/SugarFavoritesDashletOptions.tpl');  
-        return Dashlet::displayOptions() . $str;
-    }  
-
-    /**
-     * called to filter out $_REQUEST object when the user submits the configure dropdown
-     * 
-     * @param array $req $_REQUEST
-     * @return array filtered options to save
-     */  
-    public function saveOptions($req) 
-    {
-        $options = array();
-        $options['title'] = $req['title'];
-        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
-        
-        return $options;
     }
 }

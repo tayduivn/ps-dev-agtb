@@ -25,7 +25,7 @@ define('sugarEntry', true);
 $user_name ='';
 $user_password = '';
 $quick_test = false;
-$url = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+$url = 'http://localhost/sugarcrm/soap.php';
 foreach($_POST as $name=>$value){
 		$$name = $value;
 }
@@ -67,6 +67,7 @@ print_r($result);
 echo '<br>';
 }
 
+chdir('../');
 require_once('include/entryPoint.php');
 
 require_once('soap/SoapError.php');
