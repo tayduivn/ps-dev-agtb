@@ -1384,12 +1384,6 @@ EOQ;
         return oci_error();
     }
 
-    public function getFulltextQuery($field, $condition)
-    {
-        $condition = str_replace("*", "%", $condition);
-        return "CONTAINS($field, ".$this->quoted($condition).")";
-    }
-
     protected $oracle_privs = array(
         "CREATE TABLE" => "CREATE TABLE",
         "DROP TABLE" => "DROP ANY TABLE",
@@ -1449,5 +1443,45 @@ EOQ;
         // just in case, rollback all changes
         oci_rollback($this->database);
         return $valid;
+    }
+
+    /**
+     * Quote Oracle search term
+     * @param string $term
+     * @return string
+     */
+    protected function quoteTerm($term)
+    {
+        $condition = str_replace("*", "%", $term); // Oracle's wildcard is %
+        return '{'.$term.'}';
+    }
+
+    /**
+     * Generate fulltext query from set of terms
+     * @param string $fields Field to search against
+     * @param array $terms Search terms that may be or not be in the result
+     * @param array $must_terms Search terms that have to be in the result
+     * @param array $exclude_terms Search terms that have to be not in the result
+     */
+    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array(), $label = 1)
+    {
+        $condition = $or_condition = array();
+        foreach($must_terms as $term) {
+            $condition[] = $this->quoteTerm($term);
+        }
+
+        foreach($terms as $term) {
+            $or_condition[] = $this->quoteTerm($term);
+        }
+
+        if(!empty($or_condition)) {
+            $condition[] = " & (".join(" | ", $or_condition).")";
+        }
+
+        foreach($exclude_terms as $term) {
+            $condition[] = "~".$this->quoteTerm($term);
+        }
+        $condition = $this->quoted(join(" & ",$condition));
+        return "CONTAINS($field, $condition, $label) > 0";
     }
 }

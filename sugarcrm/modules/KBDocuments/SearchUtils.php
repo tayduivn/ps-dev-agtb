@@ -702,10 +702,11 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      *
      * This method takes in parameters in order to construct the where clause used by our list form api's to construct the list form.
      * The parameters that can be used are as follow:
-     * @param $db The db this search is for ('oci8', 'mssql', 'mysql')
+     * @param $db DBManager The db this search is for ('oci8', 'mssql', 'mysql')
      * @param $spec_SearchVars Array of parameters used to build special handling into query
      * @param $searchVars Array of parameters used to add bean fields into query
-     * @search_str String holding where clause, ready to be passed into list view setup
+     * @param $fullQuery bool Return string query or array?
+     * @return array|string
      */
     function create_fts_search_list_query($db,$spec_SearchVars,$searchVars,$fullQuery=false){
 
@@ -772,235 +773,39 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     $qry_arr['where'] ='';
     $qry_arr['custom_from'] ='';
 
-
-        //create the fts 'include' search string
-        $include_quote_token = array();
-        $include_srch_str_raw = '*';
-        if(isset($spec_SearchVars['searchText_include'])  && !empty($spec_SearchVars['searchText_include'])){
-            $spec_SearchVars['searchText'] = $spec_SearchVars['searchText_include'];
-
-            //validate the number of quotes
-            if(!validate_quotes($spec_SearchVars['searchText_include'])){
-             return '';
-            }
-
-            //strip quotes for easier processing
-            $include_stripped = stripQuotes($spec_SearchVars['searchText_include'],$db);
-            $include_quote_token = $include_stripped['quote_token'];
-            $include_srch_str_raw = $include_stripped['search_string_raw'];
+    //create the fts 'include' search string
+    $query_include = $query_exclude = $query_must = array();
+    if(!empty($spec_SearchVars['searchText_include'])){
+        $query = $this->db->parseFulltextQuery($spec_SearchVars['searchText_include']);
+        if(empty($query)) {
+            return '';
         }
+        $query_include = $query[0];
+        $query_must = $query[1];
+        $query_exclude = $query[2];
+    }
 
-        //search through remaining string and replace commas with space for easier processing
-        $include_srch_str_raw = str_replace(',', ' ',$include_srch_str_raw);
-        $include_srch_str_raw = trim($include_srch_str_raw);
-
-    //if this is oracle or mssql db
-    if($dbType != 'mysql') {
-
-        $i = 0;
-        $not_token = array();
-        $and_token = array();
-        $or_token = array();
-
-        //split search text values into array
-        $incl_query_array = explode(" ",$include_srch_str_raw);
-
-        //for each word being searched on, figure out if this word should be in
-        //an 'or', 'and', or 'and not' clause
-        foreach($incl_query_array as $key=>$val){
-            $first_char = ' ';
-            $val = ltrim($val);
-            if(!empty($val)){
-                $first_char = $val{0};
-                if($first_char == '+'){
-                    //if + is defined, this is an 'and' word
-                    $and_token['and_'.$i] =  substr($val,1);
-                }elseif($first_char == '-'){
-                    //if - is defined, this is an 'and not' word
-                    $not_token['not_'.$i] =  substr($val,1);
-                }else{
-                    //no character defined, this is an 'or' word
-                    if(!empty($first_char) || $first_char != '*'){
-                        $or_token['or_'.$i] =  $val;
-                    }
-                }
-                $i = $i+1;
-            }
+    if(!empty($spec_SearchVars['searchText_exclude'])) {
+        $query_ex = $this->db->parseFulltextQuery($spec_SearchVars['searchText_exclude']);
+        if(empty($query_ex)) {
+            return '';
         }
+        $query_include = array_merge($query_include, $query_ex[2]);
+        $query_exclude = array_merge($query_exclude, $query_ex[0]);
+        $query_exclude = array_merge($query_exclude, $query_ex[1]);
+    }
 
-        //create method that will take and, not, or, arrays and will construct a
-        //string that is almost ready to use as fts filter.  This string is still tokenized
-        //and has not had the values in quotes added back in
-        $include_search_str =createTokenizedQuery($or_token,$and_token,$not_token,$dbType);
-        $include_search_str = trim($include_search_str);
-
-        //time to add values in quotes back in.  Remember, they were taken out because values in
-        //quotes are to be treated as one word.
-        foreach($include_quote_token as $quote_key => $quote){
-                //double quotes have already been added, so remove any stragglers
-                $quote = str_replace("\"", "", $quote);
-                $include_search_str = str_replace($quote_key, $quote, $include_search_str);
-        }
-        $include_search_str = trim($include_search_str);
-
-        //now process the 'exclude' portion
-        $exclude_search_str = ' ';
-        if(isset($spec_SearchVars['searchText_exclude']) && !empty($spec_SearchVars['searchText_exclude']) && !empty($include_search_str) && $include_search_str !='*'){
-
-            //validate the number of quotes
-            if(!validate_quotes($spec_SearchVars['searchText_exclude'])){
-             return '';
-            }
-
-            //since this is from exclude field, all words are to be excluded
-            //so strip the + or - signs
-            $xclude_str = str_replace('+', ' ',$spec_SearchVars['searchText_exclude']);
-            $xclude_str = str_replace('-', ' ',$spec_SearchVars['searchText_exclude']);
-
-            //strip out any words enclosed in quotes, for easy processing
-            $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'],$dbType);
-            $exclude_quote_token = $exclude_stripped['quote_token'];
-            $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
-
-            //search through remaining string and replace commas with space for easy processing.
-            $exclude_srch_str_raw = str_replace(',', ' ',$exclude_srch_str_raw);
-
-            //create array of search words to exclude
-            $excl_query_array = explode(" ",$exclude_srch_str_raw);
-            $exclude_search_str =createTokenizedQuery(null,null,$excl_query_array,$dbType,true);
-            $exclude_search_str = trim($exclude_search_str);
-
-            //time to add values in quotes back in.  Remember, they were taken out because values in
-            //quotes are to be treated as one word.
-            foreach($exclude_quote_token as $quote_key => $quote){
-                    //double quotes have already been added, so remove any stragglers
-                    $quote = str_replace("\"", "", $quote);
-                    $exclude_search_str = str_replace($quote_key, $quote, $exclude_search_str);
-            }
-        }
-
-        //combine the include and exclude strings
-        $srch_str_raw = trim($include_search_str) . ' ' .trim($exclude_search_str);
-        $srch_str_raw = str_replace("'", "''", $srch_str_raw);
-
-        $srch_str_raw = trim(str_replace("%", "*", $srch_str_raw));
-
-        //create portion of query that holds the fts search
-        $search_str =",
+    //create portion of query that holds the fts search
+    $search_str =",
             (
               SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1 and kbcontent_id in (
                      select id from kbcontents where deleted = 0
-                     and ".$db->getFulltextQuery('kbdocument_body', $srch_str_raw)." > 0) derived_table";
-            //assign string to custom from
-           $qry_arr['custom_from']=from_html($search_str);
+                     and ".$db->getFulltextQuery('kbdocument_body', $query_include, $query_must, $query_exclude).") derived_table";
+    //assign string to custom from
+    $qry_arr['custom_from']=from_html($search_str);
 
-            //reset search string to begin where clause
-            $search_str =' kbdocuments.id = derived_table.id ';
-
-            //assign back original search string prior to processing so it can be displayed back to user
-            $srch_str_raw = $spec_SearchVars['searchText'];
-
-            //if exclude string has been defined, then reset values for display
-            if(isset($spec_SearchVars['searchText_exclude'])  && !empty($spec_SearchVars['searchText_exclude'])){
-                if($dbType == 'oci8') {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                    $exclude_search_str_display = $spec_SearchVars['searchText_exclude'];
-                    $exclude_search_str_array = explode(" ",$exclude_search_str_display);
-
-                    //create raw tokenized string
-                    $exclude_search_str_display = ' ';
-                    foreach($exclude_search_str_array as $not){
-                        if(!empty($not)){
-                            $exclude_search_str_display .= ' -' . $not . ' ';
-                        }
-                    }
-                    //END SUGARCRM flav=ent ONLY
-                }else{
-
-                    $exclude_search_str_display = $exclude_search_str;
-                    $exclude_search_str_display = str_replace("AND NOT ", "-", $exclude_search_str_display);
-                }
-
-                //final search string for display
-                $srch_str_raw .= ' '. $exclude_search_str_display ;
-            }
-
-
-    }else if($dbType == 'mysql') {
-
-                //add words in quotes back in
-                foreach($include_quote_token as $quote_key => $quote){
-                    //remove quotes
-                    $quote = str_replace("'", "\"", $quote );
-                    $include_srch_str_raw = str_replace($quote_key, $quote, $include_srch_str_raw);
-                }
-
-                //now process the 'exclude' portion
-                $exclude_search_str = ' ';
-                if(isset($spec_SearchVars['searchText_exclude']) && !empty($spec_SearchVars['searchText_exclude'])){
-
-                //validate the number of quotes
-                if(!validate_quotes($spec_SearchVars['searchText_exclude'])){
-                 return '';
-                }
-
-                //replace words in quotes qith tokens
-                $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'], $dbType);
-                $exclude_quote_token = $exclude_stripped['quote_token'];
-                $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
-
-                //search through tokenized string and replace commas with space.
-                str_replace(',', ' ',$exclude_srch_str_raw);
-
-                //create array of words to exclude
-                $excl_query_array = explode(" ",$exclude_srch_str_raw);
-
-                //create string that is properly formatted to exclude words in fts filter
-                foreach($excl_query_array as $not){
-                    if(!empty($not)) $exclude_search_str .= '  -'.$not;
-                }
-
-                //add words in quotes back to query.
-                foreach($exclude_quote_token as $quote_key => $quote){
-                    $exclude_search_str = str_replace($quote_key, $quote, $exclude_search_str);
-                }
-            }
-
-            //combine include and exclude strings
-            $srch_str_raw = $include_srch_str_raw . ' ' . $exclude_search_str;
-            $srch_str_raw = str_replace("'", "''", $srch_str_raw);
-
-            //do a final pass thru and replace all '%' wildcards with '*' wildcard and trim leading/trailing spaces
-            // dreverri - bug #20215 - swap '*' and '%' in str_replace
-            $srch_str_raw = str_replace("%", "*", $srch_str_raw);
-            $srch_str_raw = trim($srch_str_raw);
-
-            //create portion of query that holds the fts search
-            $search_str =",
-            (
-              SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1
-              ";
-              //if only default '*' character exists, do not create fts filter
-            if(trim($srch_str_raw) !== '*' && trim($srch_str_raw) !== '"*"'){
-                //crate mysql formatted fts filter
-                $search_str .= "  and kbcontent_id in (
-                                 select id from kbcontents where deleted = 0
-                                 and match(kbdocument_body) against('$srch_str_raw'  IN BOOLEAN MODE)
-                                 )";
-            }
-
-            //end the query string
-             $search_str .= "
-                ) as derived_table ";
-
-                //assign string to custom from
-               $qry_arr['custom_from']=from_html($search_str);
-
-            //reset search string to begin where clause
-            $search_str =' kbdocuments.id = derived_table.id ';
-
-
-        }
+    //reset search string to begin where clause
+    $search_str =' kbdocuments.id = derived_table.id ';
 
         $tag_display =' ';
         $tag_name_string = '';
@@ -1193,308 +998,6 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
     return '';
 }
 
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**escape_oracle_key_words
-     *
-     * This method takes Oracle keywords specified in array that
-     * and available to CONTAINS Oracle function and
-     * escapes them so as to avoid errors during query execution
-     *
-     * @param $srch_str_raw string to be processed
-     */
-    function escape_oracle_key_words($srch_str_raw){
-     global $sugar_config;
-     $escaped_str = strtolower($srch_str_raw);
-
-         if(!empty($escaped_str)){
-            //define arrays of key words and characters to escape
-            $ociKeywordArray = array('about', 'accum', 'and', 'bt', 'btg', 'bti', 'btp', 'equiv', 'fuzzy', 'haspath', 'inpath', 'mdata', 'minus', 'near', 'not', 'nt', 'ntg', 'nti', 'ntp', 'or', 'pt', 'rt', 'sqe', 'syn', 'tr', 'trsyn', 'tt', 'within');
-            $ociCharacterArray = array('=','?','{' ,'}','\\','(' ,')','[',']',';','~','|','$','!','>','_');
-
-         //override arrays if already defined in sugar config
-         if(isset($sugar_config['ociFullTextReservedWords'])  && !empty($sugar_config['ociFullTextReservedWords'])){
-            $ociKeywordArray = $sugar_config['ociFullTextReservedWords'];
-         }
-         if(isset($sugar_config['ociFullTextReservedChars'])  && !empty($sugar_config['ociFullTextReservedChars'])){
-            $ociCharacterArray = $sugar_config['ociFullTextReservedChars'];
-         }
-
-
-            $escaped_str_arr = explode(' ',$escaped_str);
-            $return_string = ' ';
-            //override character and word array
-            foreach($escaped_str_arr as $tmp_escaped_str){
-                $not_escaped = true;
-
-                //do not process if array element is empty
-                if(!empty($tmp_escaped_str)){
-                     //for each character in array, replace with empty string
-                     foreach($ociCharacterArray as $esc1){
-                        if($not_escaped){
-                            $found = strpos($tmp_escaped_str, $esc1);
-                            if($found !== false){
-                               //check to see if we need to preserve the '+' or '-' position
-                               $first_char = $tmp_escaped_str{0};
-                               if($first_char == '-' || $first_char == '+'){
-                                    $tmp_escaped_str = $first_char."{".substr($tmp_escaped_str,1)."}";
-                                    $not_escaped = false;
-                                    // once string is escaped once, we can break out of loop
-                                    break;
-                               }else{
-                                    $tmp_escaped_str = "{".$tmp_escaped_str."}";
-                                    $not_escaped = false;
-                                    // once string is escaped once, we can break out of loop
-                                    break;
-                                }
-                            }
-                        }
-                    }//end foreach
-                     //only enter 2nd loop if string has not been escaped
-                     if($not_escaped){
-                         //for each work in array, replace with same word within curly braces
-                         foreach($ociKeywordArray as $esc2){
-                            $found = strpos($tmp_escaped_str, $esc2);
-                            if($not_escaped){
-                                if($found !== false){
-                                   $first_char = $tmp_escaped_str{0};
-                                   if($first_char == '-' || $first_char == '+'){
-                                        //check to see if we need to preserve the '+' or '-' position
-                                        $tmp_escaped_str = $first_char ."{".substr($tmp_escaped_str,1)."}";
-                                        $not_escaped = false;
-                                        // once string is escaped once, we can break out of loop
-                                        break;
-                                   }else{
-                                        $tmp_escaped_str = "{".$tmp_escaped_str."}";
-                                        $not_escaped = false;
-                                        // once string is escaped once, we can break out of loop
-                                        break;
-                                    }
-                                }
-                            }
-                        }//end foreach
-                    }//end if($not_escaped)
-                    $return_string .= " $tmp_escaped_str";
-                }//end foreach
-             }//end if(!empty($tmp_escaped_str)
-         }
-     //return escaped string
-     return $return_string;
-    }
-    //END SUGARCRM flav=ent ONLY
-
-
-    /**stripQuotes
-     *
-     * This method places all words inside quotes into an array and replaces their place
-     * in string with a token.  Both array of words and tokenized string are returned.
-     *
-     * @param $srch_str_raw string to be processed for quoted words
-     * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
-     */
-    function stripQuotes($srch_str_raw, $dbType){
-            //lets look for paired quotes and tokenize them
-            $quote_token = array();
-            $first_quote = 0;
-            $last_quote = 1;
-            $i=0;
-            $dub = "\"";
-            $esc_dub = "\"";
-            $srch_str_raw = from_html($srch_str_raw);
-            //replace excaped double quotes with token
-            $esc_dub_count = substr_count($srch_str_raw,"\\\"");
-            $srch_str_raw = str_replace("\\\"", "##dub##", $srch_str_raw);
-
-
-            //remove double quotes
-            while($last_quote!==false  || $i<30){
-                $first_quote = strpos($srch_str_raw,$dub);
-                $last_quote = strpos($srch_str_raw,$dub, $first_quote+1);
-                if($last_quote!==false){
-                    $quote_token['#quote_'.$i.'#'] = substr($srch_str_raw,$first_quote, ($last_quote - $first_quote+1));
-
-                    //if this is oracle, each subsequent word must be prepended with 'and'
-                    if($dbType == 'oci8'){
-                        //BEGIN SUGARCRM flav=ent ONLY
-                        $orclStr = $quote_token['#quote_'.$i.'#'];
-                        $orclStr_arr = explode(' ', $orclStr);
-                        $newOrclStr = ' ';
-                        $orclFirst = true;
-                        foreach($orclStr_arr as $word){
-                            $word = trim($word);
-                            if(!empty($word)){
-                                if($orclFirst){
-                                    $newOrclStr .= " $word";
-                                    $orclFirst = false;
-                                }else{
-                                    $newOrclStr .= " AND $word";
-                                }
-                            }
-                        }
-                        $srch_str_raw = str_replace($orclStr, "(#quote_$i#)", $srch_str_raw);
-                        $quote_token['#quote_'.$i.'#'] = $newOrclStr;
-                    //END SUGARCRM flav=ent ONLY
-                    }else{
-
-                        $srch_str_raw = str_replace($quote_token['#quote_'.$i.'#'], "#quote_$i#", $srch_str_raw);
-                      }
-
-
-                }else{
-                    break;
-                }
-                $i = $i+1;
-            }
-
-             //add escaped quotes back in and escape the quote
-             if($esc_dub_count && $esc_dub_count>0){
-                $quote_temp = array();
-                 foreach($quote_token as $k=>$v ){
-                    if($dbType == 'mssql'){
-                      $quote_temp[$k]  = str_replace( "##dub##", "\"\"", $v);
-                    }else{
-                        $quote_temp[$k]  = str_replace( "##dub##", "\\\"", $v);
-                    }
-
-                 }
-                 $quote_token = $quote_temp;
-                    if($dbType == 'mssql'){
-                        $srch_str_raw = str_replace( "##dub##", "\"\"", $srch_str_raw);
-                    }else{
-                        $srch_str_raw = str_replace( "##dub##", "\\\"", $srch_str_raw);
-                    }
-
-             }
-
-
-        $return_arr['search_string_raw'] = $srch_str_raw;
-        $return_arr['quote_token'] = $quote_token;
-        return $return_arr;
-    }
-
-
-
-    /**createTokenizedQuery
-     *
-     * This method returns query formatted for use in full text search using the
-     * provided arrays.  This method is not needed for mysql, only for mssql and oci8
-     * @param $or_token_arr values to be used to construct 'or' statements
-     * @param $and_token_arr values to be used to construct 'and' statements
-     * @param $not_token_arr values to be used to construct 'and not' statements
-     * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
-     */
-    function createTokenizedQuery($or_token_arr,$and_token_arr,$not_token_arr,$dbtype,$exclude_only=false){
-
-            $search_str =" ";
-            $isFirst = true;
-            if($exclude_only){
-                $isFirst = false;
-            }
-            if($dbtype != 'mysql'){
-
-                //add Or's back in
-                if(isset($or_token_arr) && count($or_token_arr)>0){
-                    foreach($or_token_arr as $or){
-                        if(!empty($or)){
-                            if($isFirst){
-                                if($dbtype == 'oci8') {
-                                    $search_str .= " " . $or;
-                                }else{
-                                    $search_str .= " \"" . $or ."\"";
-                                }
-                                $isFirst = false;
-                            }else{
-                                if($dbtype == 'oci8') {
-                                    $search_str .= " OR " . $or;
-                                }else{
-                                    $search_str .= " OR \"" . $or ."\"";
-                                }
-                            }
-                        }
-                    }
-                }
-                //add Ands
-                if(isset($and_token_arr) && count($and_token_arr)>0){
-                    foreach($and_token_arr as $and){
-                        if(!empty($and)){
-                            if($isFirst){
-                                if($dbtype == 'oci8') {
-                                    $search_str .= " " . $and;
-                                }else{
-                                    $search_str .= " \"" . $and ."\"";
-                                }
-                                $isFirst = false;
-                            }else{
-                                if($dbtype == 'oci8') {
-                                    $search_str .= " AND " . $and;
-                                }else{
-                                    $search_str .= " AND \"" . $and ."\"";
-                                }
-                            }
-                        }
-                    }
-                }
-
-                //add Nots
-                if(isset($not_token_arr) && count($not_token_arr)>0){
-                    if($dbtype == 'oci8') {
-                    //BEGIN SUGARCRM flav=ent ONLY
-                        $search_str .= ' ';
-                        $not_strt = '';
-                        $not_string = '';
-                        $not_end = '';
-                        foreach($not_token_arr as $not){
-                            if(!empty($not)){
-                                if($isFirst){
-                                    $not_strt = '% NOT ( ';
-                                    if(empty($not_string)){
-                                        $not_string .= $not ;
-                                        $isFirst = false;
-                                        $not_end = ' ) ';
-                                    }else{
-                                        $not_strt = ' NOT ( ';
-                                        $not_string .= " OR $not";
-                                        $not_end = ' ) ';
-                                    }
-                                $isFirst = false;
-                                }else{
-
-                                    if(empty($not_strt)){
-                                        $not_strt = ' NOT ( ';
-                                        $not_string .= "  $not";
-                                        $not_end = ' ) ';
-                                    }else{
-                                     $not_string .= " OR $not";
-                                    }
-                                }
-                            }
-                        }
-
-                        if(!$isFirst){
-                            $search_str .= $not_strt.$not_string.$not_end;
-                        }
-                    //END SUGARCRM flav=ent ONLY
-                    }else{
-                        foreach($not_token_arr as $not){
-                            if(!empty($not)){
-                                if($isFirst){
-                                    $search_str .= " \"%\"  AND NOT \"" . $not ."\"";
-                                    $isFirst = false;
-                                }else{
-                                    $search_str .= " AND NOT \"" . $not ."\"";
-                                }
-                            }
-                        }
-
-                    }
-
-                }
-            }
-
-            return $search_str;
-    }
-
-
     /**return_view_frequency_filter
      *
      * This method creates and returns canned query filters
@@ -1592,7 +1095,7 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
      *
      * This method creates and returns filter string for searching on attachments
      * returns full text search query
-     * @param $db dbType of install, for example 'mssql', 'mysql', or 'oci8'
+     * @param $db Database
      * @param $spec_SearchVars Array of inputs needed for attachment filters.
      */
   function return_attachment_filter($db, $spec_SearchVars){

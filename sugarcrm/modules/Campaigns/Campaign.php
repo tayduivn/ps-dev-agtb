@@ -24,13 +24,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Description:
  ********************************************************************************/
 
-
-
-
-
-
-
-
 class Campaign extends SugarBean {
 	var $field_name_map;
 

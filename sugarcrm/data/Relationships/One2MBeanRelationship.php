@@ -126,9 +126,9 @@ class One2MBeanRelationship extends One2MRelationship
             else
             {
                 return array(
-                    'select' => "SELECT id",
+                    'select' => "SELECT {$this->def['rhs_table']}.id",
                     'from' => "FROM {$this->def['rhs_table']}",
-                    'where' => "WHERE {$this->def['rhs_key']} = '{$link->getFocus()->$lhsKey}' AND deleted=0",
+                    'where' => "WHERE {$this->def['rhs_table']}.{$this->def['rhs_key']} = '{$link->getFocus()->$lhsKey}' AND {$this->def['rhs_table']}.deleted=0",
                 );
             }
         }

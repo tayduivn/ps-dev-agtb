@@ -2843,9 +2843,16 @@ abstract class DBManager
         return $this->convert($this->quoted(TimeDate::getInstance()->nowDb()), "datetime");
     }
 
-    public function getFulltextQuery($field, $condition)
+    /**
+     * Generate fulltext query from set of terms
+     * @param string $fields Field to search against
+     * @param array $terms Search terms that may be or not be in the result
+     * @param array $must_terms Search terms that have to be in the result
+     * @param array $exclude_terms Search terms that have to be not in the result
+     */
+    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array())
     {
-        return "0=1";
+        return "0=1"; // by default we don't have fulltext search
     }
 
     /**
@@ -2921,6 +2928,39 @@ abstract class DBManager
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Parse fulltext serahc query with mysql syntax:
+	 *  terms quoted by ""
+	 *  + means the term must be included
+	 *  - means the term must be excluded
+	 *  * or % at the end means wildcard
+	 * @param string $query
+	 * @return array of 3 elements - query terms, mandatory terms and excluded terms
+	 */
+	public function parseFulltextQuery($query)
+	{
+	    /* split on space or comma, double quotes with \ for escape */
+        if(!preg_match_all('/([^" ,]+|".*?[^\\\\]")(,|\s)\s*/', $query, $m)) {
+            return false;
+        }
+        $terms = $must_terms = $not_terms = array();
+        foreach($m[1] as $item) {
+            if($item[0] == '"') {
+                $item = trim($item, '"');
+            }
+            if($item[0] == '+') {
+                $must_terms[] = substr($item, 1);
+                continue;
+            }
+            if($item[0] == '-') {
+                $not_terms[] = substr($item, 1);
+                continue;
+            }
+            $terms[] = $item;
+        }
+        return array($terms, $must_terms, $not_terms);
 	}
 
     /**

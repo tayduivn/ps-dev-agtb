@@ -1736,12 +1736,6 @@ EOQ;
         return mssql_get_last_message();
     }
 
-    // FIXME: provide proper fulltext query
-    public function getFulltextQuery($field, $condition)
-    {
-        return "CONTAINS($field, ".$this->quoted($condition).")";
-    }
-
     public function getDbInfo()
     {
         return array("version" => $this->version());
@@ -1822,5 +1816,45 @@ EOQ;
             $sql = str_replace(array('<@#@#@PAIR@#@#@>'), array("''"), $sql);
 
         return $sql;
+    }
+
+    /**
+     * Quote SQL Server search term
+     * @param string $term
+     * @return string
+     */
+    protected function quoteTerm($term)
+    {
+        $condition = str_replace("%", "*", $term); // Mssql wildcard is *
+        return '"'.$term.'"';
+    }
+
+    /**
+     * Generate fulltext query from set of terms
+     * @param string $fields Field to search against
+     * @param array $terms Search terms that may be or not be in the result
+     * @param array $must_terms Search terms that have to be in the result
+     * @param array $exclude_terms Search terms that have to be not in the result
+     */
+    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array())
+    {
+        $condition = $or_condition = array();
+        foreach($must_terms as $term) {
+            $condition[] = $this->quoteTerm($term);
+        }
+
+        foreach($terms as $term) {
+            $or_condition[] = $this->quoteTerm($term);
+        }
+
+        if(!empty($or_condition)) {
+            $condition[] = " AND (".join(" | ", $or_condition).")";
+        }
+
+        foreach($exclude_terms as $term) {
+            $condition[] = " NOT ".$this->quoteTerm($term);
+        }
+        $condition = $this->quoted(join(" AND ",$condition));
+        return "CONTAINS($field, $condition)";
     }
 }

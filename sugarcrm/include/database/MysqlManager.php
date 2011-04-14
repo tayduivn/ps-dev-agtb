@@ -1033,9 +1033,39 @@ class MysqlManager extends DBManager
         return mysql_error();
     }
 
-    public function getFulltextQuery($field, $condition)
+    /**
+     * Quote MySQL search term
+     * @param unknown_type $term
+     */
+    protected function quoteTerm($term)
     {
-        return "CONTAINS($field, ".$this->quoted($condition).")";
+        if(strpos($term, ' ') !== false) {
+            return '"'.$term.'"';
+        }
+        return $term;
+    }
+
+    /**
+     * Generate fulltext query from set of terms
+     * @param string $fields Field to search against
+     * @param array $terms Search terms that may be or not be in the result
+     * @param array $must_terms Search terms that have to be in the result
+     * @param array $exclude_terms Search terms that have to be not in the result
+     */
+    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array())
+    {
+        $condition = array();
+        foreach($terms as $term) {
+            $condition[] = $this->quoteTerm($term);
+        }
+        foreach($must_terms as $term) {
+            $condition[] = "+".$this->quoteTerm($term);
+        }
+        foreach($exclude_terms as $term) {
+            $condition[] = "-".$this->quoteTerm($term);
+        }
+        $condition = $this->quoted(join(" ",$condition));
+        return "MATCH($field) AGAINST($condition IN BOOLEAN MODE)";
     }
 
     protected function getCharsetInfo()
