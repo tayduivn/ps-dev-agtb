@@ -24,7 +24,7 @@ class ReportCache {
 	public $date_modified;
 	public $report_options;
 	public $report_options_array;
-
+	
 	private $assigned_user_id;
 	private $date_entered;
 	private $deleted;
@@ -36,55 +36,54 @@ class ReportCache {
 	public function __construct() {
 		$this->db = DBManagerFactory::getInstance();
 	}
-
+		
 	/**
 	 * Flags a report_cache as deleted
 	 * @return bool True on success
 	 */
 	public function delete() {
-	    global $timedate;
 		if(!empty($this->id)) {
-			$q = "UPDATE report_cache SET deleted = '1', date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assign_user_id}'";
+			$q = "UPDATE report_cache SET deleted = '1', date_modified = '{$timedate->convert_to_gmt_datetime('now')}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assign_user_id}'";
 			$r = $this->db->query($q);
 			return true;
 		} // if
 		return false;
 	}
-
+			
 	/**
 	 * Saves report_cache
 	 * @return bool
 	 */
 	public function save() {
-
+				
 		global $current_user, $timedate;
 
 		if($this->new_with_id == true) {
 			$q = "INSERT INTO report_cache(id, assigned_user_id, contents, date_entered, date_modified, deleted)".
-				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($this->contents)}', '{$timedate->nowDb()}', '{$timedate->nowDb()}', '0')";
+				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($this->contents)}', '{$timedate->convert_to_gmt_datetime('now')}', '{$timedate->convert_to_gmt_datetime('now')}', '0')";
 		} else {
-			$q = "UPDATE report_cache SET contents = '{$this->db->quote($this->contents)}', date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
+			$q = "UPDATE report_cache SET contents = '{$this->db->quote($this->contents)}', date_modified = '{$timedate->convert_to_gmt_datetime('now')}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'"; 
 		} // if
-
-		$this->db->query($q, true);
+		
+		$this->db->query($q, true);		
 		return true;
 	}
-
+	
 	/**
 	 * This updates the date_modified value only. This is a special update function
 	 *
 	 * @return bool
 	 */
-
+	
 	public function update() {
-
+				
 		global $current_user, $timedate;
 
-		$q = "UPDATE report_cache SET date_modified = '{$timedate->nowDb()}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
-
-		$this->db->query($q, true);
+		$q = "UPDATE report_cache SET date_modified = '{$timedate->convert_to_gmt_datetime('now')}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'"; 
+		
+		$this->db->query($q, true);		
 		return true;
-
+		
 	} // fn
 
 	/**
@@ -92,29 +91,29 @@ class ReportCache {
 	 *
 	 * @return bool
 	 */
-
+	
 	public function updateReportOptions($reportOptions) {
-		global $global_json, $current_user, $timedate;
+		global $global_json;
 		if (empty($this->report_options_array)) {
 			$this->report_options_array = array();
 		}
 		foreach($reportOptions as $key => $value) {
 			$this->report_options_array[$key] = $value;
 		} // foreach
-
+		
 		$reportOptionsEncodedData = $global_json->encode($this->report_options_array);
 		if($this->new_with_id == true) {
 			$q = "INSERT INTO report_cache(id, assigned_user_id, report_options, date_entered, date_modified, deleted)".
-				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($reportOptionsEncodedData)}', '{$timedate->nowDb()}', '{$timedate->nowDb()}', '0')";
+				" VALUES('{$this->id}', '{$current_user->id}', '{$this->db->quote($reportOptionsEncodedData)}', '{$timedate->convert_to_gmt_datetime('now')}', '{$timedate->convert_to_gmt_datetime('now')}', '0')";
 		} else {
-		$q = "UPDATE report_cache SET report_options = '{$this->db->quote($reportOptionsEncodedData)}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'";
+		$q = "UPDATE report_cache SET report_options = '{$this->db->quote($reportOptionsEncodedData)}' WHERE id = '{$this->id}' AND assigned_user_id = '{$this->assigned_user_id}'"; 
 		}
-
-		$this->db->query($q, true);
+		
+		$this->db->query($q, true);		
 		return true;
-
+		
 	} // fn
-
+	
 	/**
 	 * Retrieves and populates object
 	 * @param string $reportId ID of report
@@ -122,7 +121,7 @@ class ReportCache {
 	 * @return bool True on success
 	 */
 	public function retrieve($reportId, $assigned_user_id='') {
-
+		
 		global $timedate, $current_user, $global_json;
 		if (empty($assigned_user_id)) {
 			$assigned_user_id = $current_user->id;
@@ -130,7 +129,7 @@ class ReportCache {
 		$q = "SELECT * FROM report_cache WHERE id = '{$reportId}' AND assigned_user_id = '{$assigned_user_id}' AND deleted = '0'";
 		$r = $this->db->query($q);
 		$a = $this->db->fetchByAssoc($r);
-
+		
 		if(!empty($a)) {
 			foreach($a as $k => $v) {
 				$this->$k = $v;
@@ -141,7 +140,7 @@ class ReportCache {
 			$this->report_options_array = $global_json->decode(from_html($this->report_options));
 			return true;
 		}
-
+		
 		return false;
 	}
 } // end class def

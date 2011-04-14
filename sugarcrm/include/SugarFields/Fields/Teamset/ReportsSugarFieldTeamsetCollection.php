@@ -31,8 +31,6 @@ require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection
 
 class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
 
-	var $showPrimaryChecked = true;
-	
 	function ReportsSugarFieldTeamsetCollection($fill_data=false) {
     	parent::ViewSugarFieldTeamsetCollection($fill_data);
 		$this->form_name = "ReportsWizardForm";
@@ -48,7 +46,9 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
         if(!empty($this->bean)) {      	
       	   $this->ss->assign('values',$this->bean->{$this->value_name});
            //Check if we have a primary team checked
-	       $this->displayParams['primaryChecked'] = !empty($this->bean->{$this->value_name}['primary']) && $this->showPrimaryChecked;     	   
+	       if(!empty($this->bean->{$this->value_name}['primary'])) {
+	          $this->displayParams['primaryChecked'] = true;
+	       }        	   
         }
         
         $this->ss->assign('displayParams',$this->displayParams);
@@ -82,14 +82,11 @@ class ReportsSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection
 	    		$full_form_values['primary'] = $primaryTeam;
 	    		unset($teams[$primary]); //Unset the primary team
 	    	} else {
-	    		//Here we technically don't have a primary team chosen, but we need to allocate
-	    		//a primary team to display as the first team in the widget
 	    	    foreach($teams as $team_id=>$team_name) {
 	    		   $full_form_values['primary'] = array('id'=>$team_id, 'name'=>$team_name);
-	    		   $this->showPrimaryChecked = false;
 	    		   unset($teams[$team_id]);
 	    		   break;
-	    	    }   		
+	    	    }	    		
 	    	}	    	
 	    	
         	foreach($teams as $team_id=>$team_name) {

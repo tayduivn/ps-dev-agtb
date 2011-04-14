@@ -36,7 +36,7 @@ if (!is_admin($current_user) && (!is_admin_for_module($GLOBALS['current_user'],'
 }
 
 $focus = new ProductType();
-echo getClassicModuleTitle($focus->module_dir, array($mod_strings['LBL_MODULE_NAME']), true);
+echo get_module_title($focus->module_dir, $mod_strings['LBL_MODULE_NAME'], true);
 
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {

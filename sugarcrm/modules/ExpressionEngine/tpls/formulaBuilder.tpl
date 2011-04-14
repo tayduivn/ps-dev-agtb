@@ -53,7 +53,7 @@
 <input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'  
 	onclick="ModuleBuilder.formulaEditorWindow.hide()" >
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}' 
-	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))ModuleBuilder.formulaEditorWindow.hide()">
+	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}'))ModuleBuilder.formulaEditorWindow.hide()">
 </div>
 <script src="modules/ExpressionEngine/javascript/formulaBuilder.js"></script>
 <script type="text/javascript">

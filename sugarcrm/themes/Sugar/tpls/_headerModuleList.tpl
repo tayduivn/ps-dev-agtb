@@ -97,7 +97,7 @@
 				<ul>
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
                   
-					<li>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}
+					<li>{sugar_link id="moduleTab_$groupTabId$name" class="yuimenuitemlabel" module="$module" data="$name"}
 					{/foreach}
 				</ul>
 				</div>

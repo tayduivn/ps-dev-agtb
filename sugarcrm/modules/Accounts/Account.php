@@ -45,7 +45,7 @@ class Account extends Company {
     var $billing_address_street_2;
     var $billing_address_street_3;
     var $billing_address_street_4;
-
+    
 	var $description;
 	var $email1;
 	var $email2;
@@ -67,13 +67,9 @@ class Account extends Company {
 	var $shipping_address_country;
 	var $shipping_address_postalcode;
     
-    var $shipping_address_street_2;
-    var $shipping_address_street_3;
-    var $shipping_address_street_4;
-    
-//BEGIN SUGARCRM flav!=sales ONLY
-    var $campaign_id;
-//END SUGARCRM flav!=sales ONLY
+    var $shipping_address_street_2;    
+    var $shipping_address_street_3;    
+    var $shipping_address_street_4;    
     
 	var $sic_code;
 	var $ticker_symbol;
@@ -101,7 +97,7 @@ class Account extends Company {
 	var $account_name = '';
 	var $bug_id ='';
 	var $module_dir = 'Accounts';
-	var $emailAddress;
+	var $emailAddress;	
 
 //BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;
@@ -121,7 +117,7 @@ class Account extends Company {
 	, "quote_id"
 //END SUGARCRM flav=pro ONLY
 	);
-	var $relationship_fields = Array('opportunity_id'=>'opportunities', 'bug_id' => 'bugs', 'case_id'=>'cases',
+	var $relationship_fields = Array('opportunity_id'=>'opportunities', 'bug_id' => 'bugs', 'case_id'=>'cases', 
 									'contact_id'=>'contacts', 'task_id'=>'tasks', 'note_id'=>'notes',
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails','member_id'=>'members',
 									//BEGIN SUGARCRM flav=pro ONLY
@@ -133,36 +129,36 @@ class Account extends Company {
     //Meta-Data Framework fields
     var $push_billing;
     var $push_shipping;
-
+    
 	function Account() {
         parent::Company();
-
+        
         $this->setupCustomFields('Accounts');
-
+        
 		foreach ($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;
 		}
-
+		
 		//BEGIN SUGARCRM flav=pro ONLY
-		global $current_user;
+		global $current_user;	
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
-		}
+		}		
 		//END SUGARCRM flav=pro ONLY
-
+		
         //Combine the email logic original here with bug #26450.
 		if( (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] == 'Emails'
-        	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails' )
+        	&& !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Emails' ) 
         	||
         	(!empty($_REQUEST['parent_type']) && $_REQUEST['parent_type'] != 'Accounts' &&
         	!empty($_REQUEST['return_module']) && $_REQUEST['return_module'] != 'Accounts') ){
 			$_REQUEST['parent_name'] = '';
-			$_REQUEST['parent_id'] = '';
+			$_REQUEST['parent_id'] = '';	
 		}
 	}
-
+	
 	function get_summary_text()
 	{
 		return $this->name;
@@ -176,23 +172,23 @@ class Account extends Company {
 	*/
 	function get_products()
 	{
-
+		
 
 		$product = new Product();
-
+		
 		// First, get the list of IDs.
 		$query = $this->get_products_query();
 		return $this->build_related_list($query, new Product());
 	}
-
+	
 	/**
 	 * Returns the SELECT query that will get the list of associated Products.
 	 */
 	function get_products_query()
 	{
-
+		
 		$product = new Product();
-
+		
 		if($GLOBALS['db']->tableExists($product->table_name . "_cstm")){
 		    return "SELECT 'Products' module, products.*, products_cstm.*"
                 . " FROM $product->table_name "
@@ -205,14 +201,14 @@ class Account extends Company {
                 . " LEFT JOIN quotes ON products.quote_id = quotes.id"
                 . " WHERE products.account_id='$this->id' AND products.deleted=0 AND (quotes.quote_stage IS NULL OR quotes.quote_stage NOT IN ('Closed Lost', 'Closed Dead'))";
 		}
-
+		
 	}
 
 //END SUGARCRM flav=pro ONLY
 	function get_contacts() {
 		return $this->get_linked_beans('contacts','Contact');
 	}
-
+	
 
 
 	function clear_account_case_relationship($account_id='', $case_id='')
@@ -254,16 +250,16 @@ class Account extends Company {
 	function fill_in_additional_detail_fields()
 	{
         parent::fill_in_additional_detail_fields();
-
+        
         //rrs bug: 28184 - instead of removing this code altogether just adding this check to ensure that if the parent_name
         //is empty then go ahead and fill it.
-        if(empty($this->parent_name) && !empty($this->id)){
+        if(empty($this->parent_name)){
 			$query = "SELECT a1.name from accounts a1, accounts a2 where a1.id = a2.parent_id and a2.id = '$this->id' and a1.deleted=0";
 			$result = $this->db->query($query,true," Error filling in additional detail fields: ");
-
+	
 			// Get the id and the name.
 			$row = $this->db->fetchByAssoc($result);
-
+	
 			if($row != null)
 			{
 				$this->parent_name = $row['name'];
@@ -273,19 +269,8 @@ class Account extends Company {
 				$this->parent_name = '';
 			}
         }		
-        
-//BEGIN SUGARCRM flav!=sales ONLY
-        // Set campaign name if there is a campaign id
-		if( !empty($this->campaign_id)){
-			
-			$camp = new Campaign();
-		    $where = "campaigns.id='{$this->campaign_id}'";
-		    $campaign_list = $camp->get_full_list("campaigns.name", $where, true);
-		    $this->campaign_name = $campaign_list[0]->name;	
-		}
-//END SUGARCRM flav!=sales ONLY        
 	}
-
+	
 	function get_list_view_data(){
 		global $system_config,$current_user;
 		$temp_array = $this->get_list_view_array();
@@ -343,7 +328,7 @@ class Account extends Company {
 			if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
-                                accounts.*,email_addresses.email_address email_address,
+                                accounts.*,email_addresses.email_address email1,
                                 accounts.name as account_name,
                                 users.user_name as assigned_user_name ";
 //BEGIN SUGARCRM flav=pro ONLY
@@ -362,17 +347,17 @@ class Account extends Company {
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= getTeamSetNameJoin('accounts');
 //END SUGARCRM flav=pro ONLY
-
+				
 						//join email address table too.
 						$query .=  ' LEFT JOIN  email_addr_bean_rel on accounts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module=\'Accounts\' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 ';
 						$query .=  ' LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ' ;
-
+						
 						if($custom_join){
   							$query .= $custom_join['join'];
 						}
 
 		        $where_auto = "( accounts.deleted IS NULL OR accounts.deleted=0 )";
-
+ 
                 if($where != "")
                         $query .= "where ($where) AND ".$where_auto;
                 else
@@ -392,7 +377,7 @@ class Account extends Company {
 
 		return $xtpl;
 	}
-
+	
 	function bean_implements($interface){
 		switch($interface){
 			case 'ACL':return true;
@@ -400,7 +385,7 @@ class Account extends Company {
 		return false;
 	}
 	function get_unlinked_email_query($type=array()) {
-
+		
 		return get_unlinked_email_query($type, $this);
 	}
 

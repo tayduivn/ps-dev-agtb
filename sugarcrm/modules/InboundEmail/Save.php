@@ -51,10 +51,6 @@ foreach($focus->required_fields as $field) {
 		$focus->$field = $value;
 	}
 }
-if(!empty($_REQUEST['email_password'])) {
-    $focus->email_password = $_REQUEST['email_password'];
-}
-
 $focus->protocol = $_REQUEST['protocol'];
 
 if( isset($_REQUEST['is_create_case']) && $_REQUEST['is_create_case'] == 'on' )

@@ -140,15 +140,5 @@ class SugarWidgetSubPanelTopCreateTaskButton extends SugarWidgetSubPanelTopButto
 		return $button;
 	}
 
-
-	function display($defines, $additionalFormFields = null)
-	{
-	    $focus = new Task;
-		if ( !$focus->ACLAccess('EditView') ) {
-		    return '';
-	    }
-		
-		return parent::display($defines, $additionalFormFields);
-	}
 }
 ?>

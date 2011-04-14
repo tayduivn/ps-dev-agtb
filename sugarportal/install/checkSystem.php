@@ -87,18 +87,11 @@ if(function_exists('gzclose')) {
 	$zlibStatus = "<b><span class=go>{$mod_strings['ERR_CHECKSYS_ZLIB']}</span></b>";
 }
 
-// zip
-if(class_exists("ZipArchive")) {
-	$zipStatus = "<b><span class=go>{$mod_strings['LBL_CHECKSYS_OK']}</span></b>";
-} else {
-	$zipStatus = "<b><span class=go>{$mod_strings['ERR_CHECKSYS_ZIP']}</span></b>";
-}
-
 // php-json
 /*
 if(function_exists('json_encode')) {
 	$jsonPhpStatus = "<b><span class=go>{$mod_strings['LBL_CHECKSYS_OK']}</span></b>";
-
+	
 	if(returnPhpJsonStatus()) {
 		$phpInfo = getPhpInfo(8);
 		$jsonPhpStatus = "<b><span class='go'>{$mod_strings['ERR_CHECKSYS_PHP_JSON_VERSION']}<br>".$mod_strings['LBL_CHECKSYS_VER'].$phpInfo['json']['json version']." )</span></b>";
@@ -325,11 +318,6 @@ $out =<<<EOQ
           <tr>
             <td><strong>{$mod_strings['LBL_CHECKSYS_ZLIB']}</strong></td>
             <td align="right">{$zlibStatus}</td>
-          </tr>
-
-          <tr>
-            <td><strong>{$mod_strings['LBL_CHECKSYS_ZIP']}</strong></td>
-            <td align="right">{$zipStatus}</td>
           </tr>
 
         </table>

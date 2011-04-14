@@ -2,9 +2,9 @@
 /*********************************************************************************
  * The contents of this file are subject to
  * *******************************************************************************/
-require_once('include/SugarFields/Fields/Relate/SugarFieldRelate.php');
+require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
-class SugarFieldParent extends SugarFieldRelate {
+class SugarFieldParent extends SugarFieldBase {
    
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 		$nolink = array('Users', 'Teams');
@@ -14,7 +14,7 @@ class SugarFieldParent extends SugarFieldRelate {
 			$this->ss->assign('nolink', false);
 		}
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
-        return $this->fetch($this->findTemplate('DetailView'));
+        return $this->fetch('include/SugarFields/Fields/Parent/DetailView.tpl');
     }
     
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -48,7 +48,7 @@ class SugarFieldParent extends SugarFieldRelate {
     	$displayParams['disabled_parent_types'] = '<script>var disabledModules='. $json->encode($disabled_parent_types).';</script>';
     	$this->ss->assign('quickSearchCode', $this->createQuickSearchCode($form_name, $vardef));
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);        
-        return $this->fetch($this->findTemplate('EditView'));
+        return $this->fetch('include/SugarFields/Fields/Parent/EditView.tpl');
     }
  	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -83,33 +83,7 @@ class SugarFieldParent extends SugarFieldRelate {
 		$displayParams['popupData'] = '{literal}'.$json->encode($popup_request_data).'{/literal}';
     	$displayParams['disabled_parent_types'] = '<script>var disabledModules='. $json->encode($disabled_parent_types).';</script>';
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);        
-        return $this->fetch($this->findTemplate('SearchView'));
-    }
-    
-    /**
-     * @see SugarFieldBase::importSanitize()
-     */
-    public function importSanitize(
-        $value,
-        $vardef,
-        $focus,
-        ImportFieldSanitize $settings
-        )
-    {
-        global $beanList;
-        
-        if ( isset($vardef['type_name']) ) {
-            $moduleName = $vardef['type_name'];
-            if ( isset($focus->$moduleName) && isset($beanList[$focus->$moduleName]) ) {
-                $vardef['module'] = $focus->$moduleName;
-                $vardef['rname'] = 'name';
-                $relatedBean = loadBean($focus->$moduleName);
-                $vardef['table'] = $relatedBean->table_name;
-                return parent::importSanitize($value,$vardef,$focus,$settings);
-            }
-        }
-        
-        return false;
+        return $this->fetch('include/SugarFields/Fields/Parent/SearchView.tpl');
     }
     
     function createQuickSearchCode($formName = 'EditView', $vardef){

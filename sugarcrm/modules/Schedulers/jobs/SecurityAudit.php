@@ -335,7 +335,7 @@ class SecurityAudit {
 		ob_start();
 		$badHack = array();
 		$returned = '';
-		$startTime = $timedate->getNow()->ts;
+		$startTime = mktime();
 		$idx = 0;
 		$goodReturn = 0;
 		

@@ -44,19 +44,6 @@ class SugarTestThemeUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals($themedef['parentTheme'],$themename);
     }
-    
-    public function testCanCreateAnAnonymousRTLTheme() 
-    {
-        $themename = SugarTestThemeUtilities::createAnonymousRTLTheme();
-
-        $this->assertTrue(is_dir("themes/$themename"));
-        $this->assertTrue(is_file("themes/$themename/themedef.php"));
-        
-        $themedef = array();
-        include("themes/$themename/themedef.php");
-        
-        $this->assertEquals($themedef['directionality'],'rtl');
-    }
 
     public function testCanTearDownAllCreatedAnonymousThemes() 
     {

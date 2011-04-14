@@ -2,7 +2,7 @@
 require_once('include/SugarFolders/SugarFolders.php');
 
 /**
- * @ticket 33404
+ * @group bug33404
  */
 class Bug33906Test extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -15,7 +15,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 19499
+     * @group bug19499
      */
     public function testCreateProperNameFieldContainsFirstAndLastName()
     {

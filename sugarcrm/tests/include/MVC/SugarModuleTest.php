@@ -24,14 +24,12 @@ class SugarModuleTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function testLoadBean()
     {
-        $beanList = array('Accounts'=>'Account');
-        $beanFiles = array('Account'=>'modules/Accounts/Account.php');
-        $this->assertTrue(SugarModule::get('Accounts')->loadBean($beanList,$beanFiles,false));
+        $this->assertTrue(SugarModule::get('Accounts')->loadBean() instanceOf Account);
     }
     
     public function testLoadBeanInvalidBean()
     {
-        $this->assertFalse(SugarModule::get('JohnIsACoolGuy')->loadBean(array(),array(),false));
+        $this->assertFalse(SugarModule::get('JohnIsACoolGuy')->loadBean());
     }
     
     public function testModuleImpliments()

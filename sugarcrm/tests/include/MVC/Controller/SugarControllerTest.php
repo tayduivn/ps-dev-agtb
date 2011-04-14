@@ -13,72 +13,16 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
-
-    public function testSetup()
-    {
-        $controller = new SugarControllerMock;
-        $controller->setup();
-        
-        $this->assertEquals('Home',$controller->module);
-        $this->assertNull($controller->target_module);
-    }
     
-    public function testSetupSpecifyModule()
-    {
-        $controller = new SugarControllerMock;
-        $controller->setup('foo');
-        
-        $this->assertEquals('foo',$controller->module);
-        $this->assertNull($controller->target_module);
-    }
-    
-    public function testSetupUseRequestVars()
-    {
-        $_REQUEST = array(
-            'module' => 'dog33434',
-            'target_module' => 'dog121255',
-            'action' => 'dog3232',
-            'record' => 'dog5656',
-            'view' => 'dog4343',
-            'return_module' => 'dog1312',
-            'return_action' => 'dog1212',
-            'return_id' => '11212',
-            );
-        $controller = new SugarControllerMock;
-        $controller->setup();
-        
-        $this->assertEquals($_REQUEST['module'],$controller->module);
-        $this->assertEquals($_REQUEST['target_module'],$controller->target_module);
-        $this->assertEquals($_REQUEST['action'],$controller->action);
-        $this->assertEquals($_REQUEST['record'],$controller->record);
-        $this->assertEquals($_REQUEST['view'],$controller->view);
-        $this->assertEquals($_REQUEST['return_module'],$controller->return_module);
-        $this->assertEquals($_REQUEST['return_action'],$controller->return_action);
-        $this->assertEquals($_REQUEST['return_id'],$controller->return_id);
-    }
-    
-    public function testSetModule()
-    {
-        $controller = new SugarControllerMock;
-        $controller->setModule('cat');
-        
-        $this->assertEquals('cat',$controller->module);
-    }
-    
-    public function testLoadBean()
-    {
-        
-    }
-    
-    public function testCallLegacyCodeIfLegacyDetailViewFound()
+    public function testCallLegacyCodeIfLegacyListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("modules/$module_name/",null,true);
-        sugar_touch("modules/$module_name/DetailView.php");
+        sugar_touch("modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -86,17 +30,16 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-    public function testCallLegacyCodeIfNewDetailViewFound()
+    
+    public function testCallLegacyCodeIfNewListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("modules/$module_name/views",null,true);
-        sugar_touch("modules/$module_name/views/view.detail.php");
+        sugar_touch("modules/$module_name/views/view.list.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
-
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -104,19 +47,20 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-
-    public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFound()
+    
+    /**
+     * @ticket 41755
+     */
+    public function testCallLegacyCodeIfLegacyListViewAndNewListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("modules/$module_name/views",null,true);
-        sugar_touch("modules/$module_name/views/view.detail.php");
-        sugar_touch("modules/$module_name/DetailView.php");
+        sugar_touch("modules/$module_name/views/view.list.php");
+        sugar_touch("modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
-
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -124,19 +68,18 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-    public function testCallLegacyCodeIfCustomLegacyDetailViewAndNewDetailViewFound()
+    
+    public function testCallLegacyCodeIfCustomLegacyListViewAndNewListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("modules/$module_name/views",null,true);
-        sugar_touch("modules/$module_name/views/view.detail.php");
+        sugar_touch("modules/$module_name/views/view.list.php");
         sugar_mkdir("custom/modules/$module_name",null,true);
-        sugar_touch("custom/modules/$module_name/DetailView.php");
+        sugar_touch("custom/modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
-
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -144,18 +87,18 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-    public function testCallLegacyCodeIfLegacyDetailViewAndCustomNewDetailViewFound()
+    
+    public function testCallLegacyCodeIfLegacyListViewAndCustomNewListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("custom/modules/$module_name/views",null,true);
-        sugar_touch("custom/modules/$module_name/views/view.detail.php");
+        sugar_touch("custom/modules/$module_name/views/view.list.php");
         sugar_mkdir("modules/$module_name",null,true);
-        sugar_touch("modules/$module_name/DetailView.php");
+        sugar_touch("modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -163,20 +106,19 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-    public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomLegacyDetailViewFound()
+    
+    public function testCallLegacyCodeIfLegacyListViewAndNewListViewFoundAndCustomLegacyListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("modules/$module_name/views",null,true);
-        sugar_touch("modules/$module_name/views/view.detail.php");
-        sugar_touch("modules/$module_name/DetailView.php");
+        sugar_touch("modules/$module_name/views/view.list.php");
+        sugar_touch("modules/$module_name/ListView.php");
         sugar_mkdir("custom/modules/$module_name",null,true);
-        sugar_touch("custom/modules/$module_name/DetailView.php");
+        sugar_touch("custom/modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
-
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -184,19 +126,19 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-    public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomNewDetailViewFound()
+    
+    public function testCallLegacyCodeIfLegacyListViewAndNewListViewFoundAndCustomNewListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("custom/modules/$module_name/views",null,true);
-        sugar_touch("custom/modules/$module_name/views/view.detail.php");
+        sugar_touch("custom/modules/$module_name/views/view.list.php");
         sugar_mkdir("modules/$module_name/views",null,true);
-        sugar_touch("modules/$module_name/views/view.detail.php");
-        sugar_touch("modules/$module_name/DetailView.php");
+        sugar_touch("modules/$module_name/views/view.list.php");
+        sugar_touch("modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         
@@ -204,21 +146,20 @@ class SugarControllerTest extends Sugar_PHPUnit_Framework_TestCase
         
         rmdir_recursive("modules/$module_name");
     }
-
-    public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomLegacyDetailViewFoundAndCustomNewDetailViewFound()
+    
+    public function testCallLegacyCodeIfLegacyListViewAndNewListViewFoundAndCustomLegacyListViewFoundAndCustomNewListViewFound()
     {
         $module_name = 'TestModule'.mt_rand();
         sugar_mkdir("custom/modules/$module_name/views",null,true);
-        sugar_touch("custom/modules/$module_name/views/view.detail.php");
-        sugar_touch("custom/modules/$module_name/DetailView.php");
+        sugar_touch("custom/modules/$module_name/views/view.list.php");
+        sugar_touch("custom/modules/$module_name/ListView.php");
         sugar_mkdir("modules/$module_name/views",null,true);
-        sugar_touch("modules/$module_name/views/view.detail.php");
-        sugar_touch("modules/$module_name/DetailView.php");
+        sugar_touch("modules/$module_name/views/view.list.php");
+        sugar_touch("modules/$module_name/ListView.php");
         
         $controller = new SugarControllerMock;
         $controller->setup($module_name);
-        $controller->do_action = 'DetailView';
-
+        $controller->do_action = 'ListView';
         $controller->view = 'list';
         $controller->callLegacyCode();
         

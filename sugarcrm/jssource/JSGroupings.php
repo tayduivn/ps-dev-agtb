@@ -42,7 +42,9 @@
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/menu.js'            => 'include/javascript/sugar_grp1.js',
-                'include/javascript/calendar.js'        => 'include/javascript/sugar_grp1.js',
+                'jscalendar/calendar.js'                => 'include/javascript/sugar_grp1.js',
+                'jscalendar/lang/calendar-en.js'        => 'include/javascript/sugar_grp1.js',
+                'jscalendar/calendar-setup_3.js'        => 'include/javascript/sugar_grp1.js',
                 'include/javascript/quickCompose.js'        => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
@@ -75,8 +77,6 @@
             'include/javascript/quicksearch.js'                         => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/menu/menu-min.js'             => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/sugar_connection_event_listener.js'     => 'include/javascript/sugar_grp1_yui.js',
-			'include/javascript/yui/build/calendar/calendar.js'     => 'include/javascript/sugar_grp1_yui.js',   
-			    
             ),
 
             $sugar_grp_yui_widgets = array(
@@ -86,7 +86,6 @@
             'include/javascript/yui/build/tabview/tabview-min.js'       => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/yui/build/treeview/treeview-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/yui/build/button/button-min.js'         => 'include/javascript/sugar_grp_yui_widgets.js',
-            'include/javascript/yui/build/calendar/calendar-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/sugarwidgets/SugarYUIWidgets.js'        => 'include/javascript/sugar_grp_yui_widgets.js',
             ),
 
@@ -100,8 +99,6 @@
 					=> 'include/javascript/sugar_grp_yui_widgets.css',
                 "include/javascript/yui/build/button/assets/skins/sam/button.css"
 					=> 'include/javascript/sugar_grp_yui_widgets.css',
-				"include/javascript/yui/build/calendar/assets/skins/sam/calendar.css"
-					=> 'include/javascript/sugar_grp_yui_widgets.css',					
 			),
 
             $sugar_grp_yui2 = array(

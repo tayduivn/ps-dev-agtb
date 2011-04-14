@@ -40,7 +40,7 @@ var user_detailview_tabs = new YAHOO.widget.TabView("user_detailview_tabs");
 user_detailview_tabs.on('contentReady', function(e){
 {/literal}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
-{if $EDIT_SELF && $SHOW_DOWNLOADS_TAB}
+{if $EDIT_SELF}
 {literal}
     user_detailview_tabs.addTab( new YAHOO.widget.Tab({
         label: '{/literal}{$MOD.LBL_DOWNLOADS}{literal}',
@@ -274,7 +274,7 @@ user_detailview_tabs.on('contentReady', function(e){
                 <!--//BEGIN SUGARCRM flav=ent ONLY -->
                 <tr>
                 <td valign="top" scope="row"><slot>{$APP.LBL_OC_STATUS}:</slot></td>
-                <td valign="top" nowrap><slot>{$OC_STATUS}&nbsp;</slot></td>
+                <td valign="top" nowrap><slot>{$OC_STATUS}</slot></td>
                 <td><slot>{$APP.LBL_OC_STATUS_TEXT}&nbsp;</slot></td>
                 </tr>
                 <!--//END SUGARCRM flav=ent ONLY -->
@@ -404,7 +404,7 @@ user_detailview_tabs.on('contentReady', function(e){
             </tr>
             <tr>
             <td width="15%" scope="row"><slot>{$MOD.LBL_PUBLISH_KEY}:</slot></td>
-            <td width="20%"><slot>{$CALENDAR_PUBLISH_KEY}&nbsp;</slot></td>
+            <td width="20%"><slot>{$CALENDAR_PUBLISH_KEY}</slot></td>
             <td width="65%"><slot>{$MOD.LBL_CHOOSE_A_KEY}&nbsp;</slot></td>
             </tr>
             <tr>

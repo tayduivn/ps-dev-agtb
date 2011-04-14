@@ -67,11 +67,6 @@ class UsersController extends SugarController
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
-
-            $eapm = loadBean('EAPM');
-            $eapm->delete_user_accounts($_REQUEST['record']);
-            $GLOBALS['log']->info("Removing user's External Accounts");
-            
             //BEGIN SUGARCRM flav=PRO ONLY
             if($u->portal_only == '0'){
                 SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
@@ -124,7 +119,12 @@ class UsersController extends SugarController
         //BEGIN SUGARCRM flav=sales ONLY
         $_POST['email_link_type'] = $sugar_config['default_email_client'];
         //END SUGARCRM flav=sales ONLY
-        $_POST['user_theme'] = (string) SugarThemeRegistry::getDefault();
+        //BEGIN SUGARCRM flav=com ONLY
+	    $_POST['user_theme'] = 'Sugar5';
+	    //END SUGARCRM flav=com ONLY
+	    //BEGIN SUGARCRM flav!=com ONLY
+	    $_POST['user_theme'] = 'Sugar';
+	    //END SUGARCRM flav!=com ONLY
 	    
 	    // save and redirect to new view
 	    $_REQUEST['return_module'] = 'Home';

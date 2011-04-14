@@ -77,6 +77,7 @@ $javascript->setSugarBean($focus);
 $javascript->setFormName('EditView');
 $javascript->addAllFields('');
 $javascript->addFieldGeneric('mins', 'alpha', 'Mins', true, $prefix='');
+$javascript->addFieldGeneric('hours', 'alpha', 'Hours', true, $prefix='');
 $javascript->addFieldGeneric('day_of_month', 'alpha', 'Days of Month', true, $prefix='');
 $javascript->addFieldGeneric('months', 'alpha', 'Months', true, $prefix='');
 $javascript->addFieldGeneric('day_of_week', 'alpha', 'Days of Week', true, $prefix='');
@@ -95,7 +96,7 @@ if(!empty($dtStart)) {
 	$time_start = $exStart[1];
 } else {
 	$prefDate = $current_user->getUserDateTimePreferences();
-	$date_start =  $timedate->asUserDate($timedate->fromString('2005-01-01'));
+	$date_start = date($prefDate['date'], strtotime('2005-01-01'));
 	$time_start = '';
 }
 

@@ -31,11 +31,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/Dashlets/DashletGenericChart.php');
 
+
 class MyOpportunitiesGaugeDashlet extends DashletGenericChart 
 {
-    /**
-     * @see DashletGenericChart::$_seedName
-     */
     protected $_seedName = 'Opportunities';
     
     /**
@@ -60,8 +58,8 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
         require('modules/Charts/chartdefs.php');
         $chartDef = $chartDefs['opportunities_this_quarter'];
 		
-        require_once('include/SugarCharts/SugarChartFactory.php');
-        $sugarChart = SugarChartFactory::getInstance();
+        require_once('include/SugarCharts/SugarChart.php');
+        $sugarChart = new SugarChart();
         $sugarChart->setProperties('', translate('LBL_NUMBER_OF_OPPS', 'Charts'), $chartDef['chartType']);
         $sugarChart->base_url = $chartDef['base_url'];
         $sugarChart->group_by = $chartDef['groupBy'];
@@ -78,7 +76,7 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
         $xmlFile = $sugarChart->getXMLFileName($this->id);
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
         
-        return $this->getTitle('<div align="center"></div>') . '<div align="center">' .$sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />'. $this->processAutoRefresh();
+        return $this->getTitle('<div align="center"></div>') . '<div align="center">' .$sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
     }  
     
     /**
@@ -100,3 +98,5 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
     	return array( 'sales_stage', 'user_name', );
     }
 }
+
+?>

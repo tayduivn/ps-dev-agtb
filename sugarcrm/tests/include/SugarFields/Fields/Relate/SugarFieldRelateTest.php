@@ -30,7 +30,7 @@ class SugarFieldRelateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 35265
+     * @group bug35265
      */
     public function testFormatContactNameWithoutFirstName()
 	{
@@ -48,7 +48,7 @@ class SugarFieldRelateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 35265
+     * @group bug35265
      */
     public function testFormatContactNameThatIsEmpty()
 	{

@@ -30,7 +30,7 @@
 require_once('include/TemplateHandler/TemplateHandler.php');
 require_once('include/EditView/SugarVCR.php');
 
-class EditView
+class EditView 
 {
     var $th;
     var $tpl;
@@ -73,14 +73,14 @@ class EditView
      * @param createFocus bool value to tell whether to create a new bean if we do not have one with an id, this is used from ConvertLead
      *
      */
-    function setup($module, $focus = null, $metadataFile = null, $tpl = 'include/EditView/EditView.tpl', $createFocus = true)
+    function setup($module, $focus = null, $metadataFile = null, $tpl = 'include/EditView/EditView.tpl', $createFocus = true) 
     {
         $this->th = new TemplateHandler();
         $this->th->ss =& $this->ss;
         $this->tpl = $tpl;
         $this->module = $module;
         $this->focus = $focus;
-
+        
         //this logic checks if the focus has an id and if it does not then it will create a new instance of the focus bean
         //but in convert lead we do not want to create a new instance and do not want to populate id.
         if($createFocus)
@@ -131,7 +131,7 @@ class EditView
     function createFocus()
     {
         global $beanList, $beanFiles;
-
+    	
         if(empty($beanList[$this->module]))return;
     	if(!$this->focus ){
            $bean = $beanList[$this->module];
@@ -150,7 +150,7 @@ class EditView
     	}
     }
 
-    function populateBean()
+    function populateBean() 
     {
         if(!empty($_REQUEST['record']) && $this->populateBean) {
            global $beanList;
@@ -169,7 +169,7 @@ class EditView
      */
     function enableFormatting(
         $format = true
-        )
+        ) 
     {
         $this->formatFields = $format;
     }
@@ -185,9 +185,10 @@ class EditView
 		    	foreach($p as $row=>$rowDef) {
 		            foreach($rowDef as $col => $colDef) {
 		                $field = (is_array($p[$row][$col])) ? $p[$row][$col]['name'] : $p[$row][$col];
-		                if((!empty($this->focus->field_defs[$field])
-		                        && !empty($this->focus->field_defs[$field]['required']))
-		                    || ( !empty($p[$row][$col]['displayParams']['required']) )) {
+		                if((!empty($this->focus->field_defs[$field]) 
+		                        && !empty($this->focus->field_defs[$field]['required'])) 
+		                    || ( !empty($p[$row][$col]['displayParams']['required']) 
+		                        && ( isset($this->focus->field_defs[$field]) ? $this->focus->field_defs[$field]['required'] !== false : false ) ) ) {
 		                	$reqCol++;
 		                	if($reqCol == $this->defs['templateMeta']['maxColumns']) {
 		                		$reqCol = -1;
@@ -235,7 +236,7 @@ class EditView
         $maxColumns = isset($this->defs['templateMeta']['maxColumns']) ? $this->defs['templateMeta']['maxColumns'] : 2;
         $panelCount = 0;
 		static $itemCount = 100; //Start the generated tab indexes at 100 so they don't step on custom ones.
-
+        
 		/* loop all the panels */
 		foreach($this->defs['panels'] as $key=>$p)
 		{
@@ -251,7 +252,7 @@ class EditView
 			            foreach($rowDef as $col => $colDef) {
 			                $panel[$row][$col] = is_array($p[$row][$col]) ? array('field' => $p[$row][$col]) : array('field' => array('name'=>$p[$row][$col]));
                             $panel[$row][$col]['field']['tabindex'] = (isset($p[$row][$col]['tabindex']) && is_numeric($p[$row][$col]['tabindex'])) ? $p[$row][$col]['tabindex'] : $itemCount;
-
+			            	
 			                if($columnsInRows < $maxColumns) {
 			                    if($col == $columnsInRows - 1) {
 			                        $panel[$row][$col]['colspan'] = 2 * $maxColumns - ($columnsUsed + 1);
@@ -261,11 +262,14 @@ class EditView
 			                    }
 			                }
 
+			                
 			                //Set address types to have colspan value of 2 if colspan is not already defined
-			                if(is_array($colDef) && !empty($colDef['hideLabel']) && !isset($panel[$row][$col]['colspan'])) {
-			                    $panel[$row][$col]['colspan'] = 2;
+			            	if(isset($colDef['type']) && $colDef['type'] == 'address' && $this->view == 'EditView' && !isset($panel[$row][$col]['colspan'])) {
+			                   $panel[$row][$col]['colspan'] = 2;  	
 			                }
 
+                            
+                          
 			                $itemCount++;
 
 			            } //foreach
@@ -288,20 +292,20 @@ class EditView
 			              $panel[$rowCount - 1][$filler++] = array('field'=>array('name'=>''));
 			    	   } //while
 			        }
-
+						
 
 			    	$this->sectionPanels[strtoupper($key)] = $panel;
 		        }
-
+		        
 
 		$panelCount++;
 		} //foreach
     }
 
     function process(
-        $checkFormName = false,
+        $checkFormName = false, 
         $formName = ''
-        )
+        ) 
     {
         global $mod_strings, $sugar_config, $app_strings, $app_list_strings;
 
@@ -364,8 +368,8 @@ class EditView
 	               $this->fieldDefs[$name] = array_merge($this->focus->field_defs[$name] , $this->fieldDefs[$name] ) ;
 	            else
                    $this->fieldDefs[$name] = $this->focus->field_defs[$name];
-
-
+				
+				
 				foreach(array("formula", "default", "comments", "help") as $toEscape)
 		        {
 		            if (!empty($this->fieldDefs[$name][$toEscape])) {
@@ -401,7 +405,7 @@ class EditView
 	       	 	}
 
 	       	 	if(!$valueFormatted) {
-                    // $this->focus->format_field($this->focus->field_defs[$name]);
+                    // $this->focus->format_field($this->focus->field_defs[$name]);	
                    $value = isset($this->focus->$name) ? $this->focus->$name : '';
 	       	 	}
 
@@ -409,7 +413,7 @@ class EditView
 	       	 	{
 	               $this->fieldDefs[$name]['value'] = $value;
 	       	 	}
-
+	       	 	
 				//BEGIN SUGARCRM flav=pro ONLY
 	            if($this->focus->bean_implements('ACL')){
 	       			$this->fieldDefs[$name]['acl'] = ACLField::hasAccess($name, $this->focus->module_dir,$GLOBALS['current_user']->id, $is_owner);
@@ -454,14 +458,14 @@ class EditView
 		if(isset($this->focus->additional_meta_fields)) {
 		    $this->fieldDefs = array_merge($this->fieldDefs, $this->focus->additional_meta_fields);
 		}
-
+		
         if($this->isDuplicate) {
 		   foreach($this->fieldDefs as $name=>$defs) {
 		   		if(!empty($defs['auto_increment'])) {
 		   		   $this->fieldDefs[$name]['value'] = '';
 		   		}
 		   }
-    	}
+    	}		
     }
 
     /**
@@ -473,9 +477,9 @@ class EditView
      * @return HTML display for view as String
      */
     function display(
-        $showTitle = true,
+        $showTitle = true, 
         $ajaxSave = false
-        )
+        ) 
     {
         global $mod_strings, $sugar_config, $app_strings, $app_list_strings, $theme, $current_user;
 
@@ -530,10 +534,10 @@ class EditView
         	//$this->defs['templateMeta']['form']['buttons'] = array();
         	//$this->defs['templateMeta']['form']['buttons']['ajax_save'] = array('id' => 'AjaxSave', 'customCode'=>'<input type="button" class="button" value="Save" onclick="this.form.action.value=\'AjaxFormSave\';return saveForm(\''.$form_name.'\', \'multiedit_form_{$module}\', \'Saving {$module}...\');"/>');
         }
-
-		$form_name = $form_name == "QuickCreate" ? "QuickCreate_{$this->module}" : $form_name;
+        
+		$form_name = $form_name == "QuickCreate" ? "QuickCreate_{$this->module}" : $form_name;        
         $form_id = $form_id == "QuickCreate" ? "QuickCreate_{$this->module}" : $form_id;
-
+		
         if(isset($this->defs['templateMeta']['preForm'])) {
           $this->th->ss->assign('preForm', $this->defs['templateMeta']['preForm']);
         } //if
@@ -555,7 +559,7 @@ class EditView
         $this->th->ss->assign('form_id', $form_id);
         $this->th->ss->assign('form_name', $form_name);
   		$this->th->ss->assign('set_focus_block', get_set_focus_js());
-
+		
         $this->th->ss->assign('form', isset($this->defs['templateMeta']['form']) ? $this->defs['templateMeta']['form'] : null);
         $this->th->ss->assign('includes', isset($this->defs['templateMeta']['includes']) ? $this->defs['templateMeta']['includes'] : null);
 		$this->th->ss->assign('view', $this->view);
@@ -596,7 +600,7 @@ class EditView
 		$seps = get_number_seperators();
 		$this->th->ss->assign('NUM_GRP_SEP', $seps[0]);
 		$this->th->ss->assign('DEC_SEP', $seps[1]);
-
+		
 		if($this->view == 'EditView') {
 			$height = $current_user->getPreference('text_editor_height');
 			$width = $current_user->getPreference('text_editor_width');
@@ -606,10 +610,10 @@ class EditView
 			$this->th->ss->assign('RICH_TEXT_EDITOR_WIDTH', $width);
 		} else {
 			$this->th->ss->assign('RICH_TEXT_EDITOR_HEIGHT', '100px');
-			$this->th->ss->assign('RICH_TEXT_EDITOR_WIDTH', '95%');
+			$this->th->ss->assign('RICH_TEXT_EDITOR_WIDTH', '95%');			
 		}
 
-
+		
 		$this->th->ss->assign('SHOW_VCR_CONTROL', $this->showVCRControl);
 
         //$str='';
@@ -682,9 +686,9 @@ class EditView
      * @return String value for given name
      */
     function getValueFromRequest(
-        $request,
+        $request, 
         $name
-        )
+        ) 
     {
         //Special processing for date values (combine to one field)
         if(preg_match('/^date_(.*)$/s', $name, $matches)) {
@@ -720,16 +724,16 @@ class EditView
         )
     {
         global $mod_strings, $app_strings;
-
+    	
         if (is_null($this->viewObject))
     		if (!empty($GLOBALS['current_view']))
     			$this->viewObject = $GLOBALS['current_view'];
     		else
     			$this->viewObject = new SugarView();
-
+        
         if ($showTitle)
     		return $this->viewObject->getModuleTitle();
-
+        
     	return '';
     }
 }

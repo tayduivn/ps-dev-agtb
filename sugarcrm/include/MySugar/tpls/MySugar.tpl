@@ -45,10 +45,6 @@ li.active a img.deletePageImg {
    display: inline !important;
    margin-bottom: 2px;
 }
-
-div.moduleTitle {
-height: 10px;
-	}
 </style>
 {/literal}
 
@@ -75,12 +71,8 @@ document.body.setAttribute("class", "yui-skin-sam");
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
 <script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
 <script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/swfobject.js'}"></script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
-
-
-{$chartResources}
-{$mySugarChartResources}
-
 
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {$form_header}
@@ -116,21 +108,21 @@ document.body.setAttribute("class", "yui-skin-sam");
 </div>
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
 	<div id="addPage">
-		<a href='javascript:void(0)' id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"><img src='{sugar_getimagepath file="info-add-page.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'></a>
+		<a href='#' id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"><img src='{sugar_getimagepath file="info-add-page.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'></a>
 	</div>
 <!--//END SUGARCRM flav=pro ONLY -->
 </td>
 
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
 {if !$lock_homepage}
-<td nowrap id="dashletCtrlsTD">
+<td nowrap align="right">
 	<div id="dashletCtrls">
-            <a href="javascript:void(0)" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
+            <a href="#" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
 			<img src='{sugar_getimagepath file="info-add.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
 			    {$mod.LBL_ADD_DASHLETS}
             </a>
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
-            <a href="javascript:void(0)" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
+            <a href="#" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
 			<img src='{sugar_getimagepath file="info-layout.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
 			    {$app.LBL_CHANGE_LAYOUT}
             </a>
@@ -252,7 +244,7 @@ document.body.setAttribute("class", "yui-skin-sam");
 	{* //END SUGARCRM flav=pro ONLY*}
 	
 	<div id="dashletsDialog" style="display:none;">
-		<div class="hd" id="dashletsDialogHeader"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.closeDashletsDialog();">
+		<div class="hd" id="dashletsDialogHeader"><a href="#" onClick="javascript:SUGAR.mySugar.closeDashletsDialog();">
 			<div class="container-close">&nbsp;</div></a>{$lblAdd}
 		</div>	
 		<div class="bd" id="dashletsList">
@@ -303,9 +295,10 @@ SUGAR.mySugar.init = function () {
 	{if $default}
 //	SUGAR.mySugar.renderFirstLoadDialog();
 	{/if}
-    {literal}
+	{literal}
 	//END SUGARCRM flav=pro ONLY
-	SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
+
+	SUGAR.mySugar.loadSugarCharts();
 }
 
 </script>

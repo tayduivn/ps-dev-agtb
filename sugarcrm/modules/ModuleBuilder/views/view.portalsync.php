@@ -43,13 +43,13 @@ class ViewPortalSync extends SugarView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams($browserTitle = false)
+	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   ModuleBuilderController::getModuleTitle(),
+    	   $mod_strings['LBL_MODULEBUILDER'],
     	   );
     }
 
@@ -73,7 +73,7 @@ class ViewPortalSync extends SugarView
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');
         $ajax->addCrumb(translate('LBL_SYNCPORTAL', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=portalsync")');
         $ajax->addSection('center', translate('LBL_SYNCPORTAL', 'ModuleBuilder'), $smarty->fetch('modules/ModuleBuilder/tpls/portalsync.tpl'));
-		$GLOBALS['log']->debug($smarty->fetch('modules/ModuleBuilder/tpls/portalsync.tpl'));
+		$GLOBALS['log']->fatal($smarty->fetch('modules/ModuleBuilder/tpls/portalsync.tpl'));
         echo $ajax->getJavascript();
 	}
 }

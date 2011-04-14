@@ -2,7 +2,7 @@
 require_once 'include/database/DBManagerFactory.php';
 
 /**
- * @ticket 33049
+ * @group bug33049
  */
 class FreeTDSManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {

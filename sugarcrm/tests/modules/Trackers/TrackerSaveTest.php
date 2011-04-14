@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+
 class TrackerSaveTest extends Sugar_PHPUnit_Framework_TestCase {
    
     function testSaveObject() {

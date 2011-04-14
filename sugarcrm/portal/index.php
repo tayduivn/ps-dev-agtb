@@ -59,7 +59,7 @@ $portal->loadSoapClient();
 
 require_once ('sugar_version.php'); // provides $sugar_version, $sugar_db_version, $sugar_flavor
 require_once ('include/TimeDate.php');
-require_once ('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList
+require_once ('include/modules.php'); // provides $moduleList, $beanList, $beanFiles, $modInvisList, $adminOnlyList, $modInvisListActivities
 require_once ('log4php/LoggerManager.php');
 require_once ('modules/Users/authentication/AuthenticationController.php');
 
@@ -85,7 +85,7 @@ if(!empty($sugar_config['session_dir'])) {
 	session_save_path($sugar_config['session_dir']);
 }
 
-$timedate = TimeDate::getInstance();
+$timedate = new TimeDate();
 
 // Emails uses the REQUEST_URI later to construct dynamic URLs.
 // IIS does not pass this field to prevent an error, if it is not set, we will assign it to ''.
@@ -191,7 +191,7 @@ if(isset($_SESSION['authenticated_user_language']) && $_SESSION['authenticated_u
 
 // Check to see ifthere is an authenticated user in the session.
 if(isset($_SESSION['authenticated_user_id'])) {
-
+	
 	$GLOBALS['log']->debug('We have an authenticated user id: '.$_SESSION['authenticated_user_id']);
 	/**
 	 * CN: Bug 4128: some users are getting redirected to
@@ -221,7 +221,7 @@ if(isset($_SESSION['authenticated_user_id'])) {
     else {
 //        $_SESSION['login_error'] = null;
     }
-
+    
     $_REQUEST['action'] = $action;
 	$_REQUEST['module'] = $module;
 }
@@ -437,7 +437,6 @@ if(!$skipFooters) {
 	// Under the Sugar Public License referenced above, you are required to leave in all copyright statements in both
 	// the code and end-user application.
 	echo "<tr><td align='center' class='copyRight'>";
-
 	
 	echo ('&copy; 2004-2011 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />');
 

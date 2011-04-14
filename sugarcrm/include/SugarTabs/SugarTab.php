@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=int ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional

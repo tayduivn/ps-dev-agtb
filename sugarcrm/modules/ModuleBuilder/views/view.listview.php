@@ -41,13 +41,13 @@ class ViewListView extends ViewEdit
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams($browserTitle = false)
+	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   ModuleBuilderController::getModuleTitle(),
+    	   $mod_strings['LBL_MODULEBUILDER'],
     	   );
     }
 
@@ -178,7 +178,6 @@ class ViewListView extends ViewEdit
 
         $smarty->assign ( 'view', $this->editLayout ) ;
         $smarty->assign ( 'module', "ModuleBuilder" ) ;
-        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $smarty->assign ( 'action', 'listViewSave' ) ;
         $smarty->assign ( 'view_module', $this->editModule ) ;
         if (!empty ( $this->subpanel ) )

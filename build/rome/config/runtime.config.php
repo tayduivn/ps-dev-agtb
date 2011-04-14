@@ -29,4 +29,4 @@ $config['exclusive'] = false;
 $config['base_dir'] = '../../';
 $config['clean'] = true;
 
-$config['svn_path'] = 'http://svn1.sjc.sugarcrm.pvt/sugarcrm/branches/Pineapple';
+$config['svn_path'] = 'http://svn1.sjc.sugarcrm.pvt/sugarcrm/branches/Mango';

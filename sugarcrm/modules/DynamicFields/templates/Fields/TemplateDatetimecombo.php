@@ -27,10 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
-
-class TemplateDatetimecombo extends TemplateRange 
-{
+class TemplateDatetimecombo extends TemplateText{
 	var $type = 'datetimecombo';
 	var $len = '';
 	var $dateStrings = array(
@@ -107,11 +104,6 @@ class TemplateDatetimecombo extends TemplateRange
     	'pm' => 'pm',
     );
     
-	function __construct() 
-	{
-		parent::__construct();
-	}       
-    
 	function get_db_type(){
 	    if($GLOBALS['db']->dbType == 'oracle'){
 	        return " DATE ";
@@ -143,7 +135,6 @@ class TemplateDatetimecombo extends TemplateRange
     } 
     
     function populateFromPost(){
-    	parent::populateFromPost();
     	if(!empty($_REQUEST['defaultDate']) && !empty($_REQUEST['defaultTime'])){
     		$_REQUEST['default'] = $_REQUEST['defaultDate'].'&'.$_REQUEST['defaultTime'];
     		
@@ -168,7 +159,6 @@ class TemplateDatetimecombo extends TemplateRange
     	}
     	unset($_REQUEST['defaultDate']);
     	unset($_REQUEST['defaultTime']);
-    	
 		foreach($this->vardef_map as $vardef=>$field){
 			if(isset($_REQUEST[$vardef])){
 				$this->$vardef = $_REQUEST[$vardef];

@@ -60,9 +60,8 @@ function test_contacts_editview_merge() {
    }
    
    //echo var_export($viewdefs['Contacts']['EditView']['panels'], true);
-   //BEGIN SUGARCRM flav=pro ONLY
+   
    $this->assertTrue(isset($fields['picture']), 'Assert that picture field exists');
-   //END SUGARCRM flav=pro ONLY
 }
 
 

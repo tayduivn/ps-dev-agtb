@@ -29,7 +29,7 @@ class ViewModifyMapping extends SugarView
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams($browserTitle = false)
+	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
 	    
@@ -59,13 +59,6 @@ class ViewModifyMapping extends SugarView
 		$this->ss->assign('mod', $mod_strings);
 		$this->ss->assign('APP', $app_strings);
 		$connectors = ConnectorUtils::getConnectors(true);
-        foreach($connectors as $id=>$source) {
-            $s = SourceFactory::getSource($id);
-            $mapping = $s->getMapping();
-			if(empty($mapping)) {
-			    unset($connectors[$id]);
-			}
-		}
 
 		$this->ss->assign('SOURCES', $connectors);
 	    echo $this->getModuleTitle();

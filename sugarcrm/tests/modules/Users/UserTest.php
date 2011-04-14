@@ -14,7 +14,6 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
 	public function tearDown()
 	{
 	    unset($GLOBALS['current_user']);
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
 
 	public function testSettingAUserPreference() 
@@ -67,7 +66,7 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 36657
+     * @group bug36657
      */
     public function testCertainPrefsAreNotResetWhenResetingUserPreferences()
     {

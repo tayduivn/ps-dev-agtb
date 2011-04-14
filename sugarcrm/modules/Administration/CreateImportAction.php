@@ -19,11 +19,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
-
+ 
+ 
 //FILE SUGARCRM flav=dce ONLY
 //create action for importing of instances
-
+    
     global $timedate;
     $clusterQuery = "Select id from dceclusters where deleted = 0 and server_status = 'active'";
     $db = DBManagerFactory::getInstance();
@@ -35,13 +35,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     foreach($clustr as $clust){
         if(empty($clust)|| empty($clust['id'])) continue;
         $act = new DCEAction();
-        $act->name = 'DCE Import Instance Action' ;
+        $act->name = 'DCE Import Instance Action' ; 
         $act->cluster_id = $clust['id'] ;
         $act->type = 'import';
         $act->status = 'queued';
         $act->priority = '2';
-        $act->start_date = $timedate->now();
+        $act->start_date = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
         $act->save();
     }
 
-echo '<br>'.$mod_strings['LBL_IMPORT_INSTANCE_ACTION'];
+ 
+ echo '<br>'.$mod_strings['LBL_IMPORT_INSTANCE_ACTION'];
+ 
+ 
+ 
+ 
+ 
+ ?>

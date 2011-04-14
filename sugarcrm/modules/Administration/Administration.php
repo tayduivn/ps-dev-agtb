@@ -30,154 +30,154 @@ require_once('data/SugarBean.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
 class Administration extends SugarBean {
-    var $settings;
-    var $table_name = "config";
-    var $object_name = "Administration";
-    var $new_schema = true;
-    var $module_dir = 'Administration';
-    var $config_categories = array(
-        // 'mail', // cn: moved to include/OutboundEmail
-        'disclosure', // appended to all outbound emails
-        'notify',
-        'system',
-        'portal',
-        'proxy',
-        'massemailer',
-        'ldap',
-        'captcha',
+	var $settings;
+	var $table_name = "config";
+	var $object_name = "Administration";
+	var $new_schema = true;
+	var $module_dir = 'Administration';
+	var $config_categories = array(
+		// 'mail', // cn: moved to include/OutboundEmail
+		'disclosure', // appended to all outbound emails
+		'notify',
+		'system',
+		'portal',
+		'proxy',
+		'massemailer',
+		'ldap',
+		'captcha',
         'sugarpdf',
 
-            //BEGIN SUGARCRM lic=sub ONLY
+			//BEGIN SUGARCRM lic=sub ONLY
 
-        'license',
+		'license',
 
-            //END SUGARCRM lic=sub ONLY
+			//END SUGARCRM lic=sub ONLY
         //BEGIN SUGARCRM flav=dce ONLY
         'dce',
         //END SUGARCRM flav=dce ONLY
-    );
-    var $disable_custom_fields = true;
-    var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'portal_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');
+	);
 
-    function Administration() {
-        parent::SugarBean();
+	var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'portal_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');
 
-        $this->setupCustomFields('Administration');
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->disable_row_level_security =true;
-        //END SUGARCRM flav=pro ONLY
-    }
+	function Administration() {
+		parent::SugarBean();
 
-    function retrieveSettings($category = FALSE, $clean=false) {
-        // declare a cache for all settings
-        $settings_cache = sugar_cache_retrieve('admin_settings_cache');
+		 $this->setupCustomFields('Administration');
+		//BEGIN SUGARCRM flav=pro ONLY
+		$this->disable_row_level_security =true;
+		//END SUGARCRM flav=pro ONLY
+	}
 
-        if($clean) {
-            $settings_cache = array();
-        }
+	function retrieveSettings($category = FALSE, $clean=false) {
+	    // declare a cache for all settings
+	    $settings_cache = sugar_cache_retrieve('admin_settings_cache');
 
-        // Check for a cache hit
-        if(!empty($settings_cache)) {
-            $this->settings = $settings_cache;
-            return $this;
-        }
+	    if($clean) {
+	    	$settings_cache = array();
+	    }
 
-        $query = "SELECT category, name, value FROM {$this->table_name}";
+	    // Check for a cache hit
+	    if(!empty($settings_cache)) {
+	        $this->settings = $settings_cache;
+	        return $this;
+	    }
 
-        $result = $this->db->query($query, true, "Unable to retrieve system settings");
+		$query = "SELECT category, name, value FROM {$this->table_name}";
 
-        if(empty($result)) {
-            return NULL;
-        }
+		$result = $this->db->query($query, true, "Unable to retrieve system settings");
 
-        while($row = $this->db->fetchByAssoc($result, -1, true)) {
-            if($row['category']."_".$row['name'] == 'ldap_admin_password' || $row['category']."_".$row['name'] == 'proxy_password')
-                $this->settings[$row['category']."_".$row['name']] = $this->decrypt_after_retrieve($row['value']);
-            else
-                $this->settings[$row['category']."_".$row['name']] = $row['value'];
-        }
+		if(empty($result)) {
+			return NULL;
+		}
 
-        // outbound email settings
-        $oe = new OutboundEmail();
-        $oe->getSystemMailerSettings();
+		while($row = $this->db->fetchByAssoc($result, -1, true)) {
+			if($row['category']."_".$row['name'] == 'ldap_admin_password' || $row['category']."_".$row['name'] == 'proxy_password')
+			    $this->settings[$row['category']."_".$row['name']] = $this->decrypt_after_retrieve($row['value']);
+			else
+			    $this->settings[$row['category']."_".$row['name']] = $row['value'];
+		}
 
-        foreach($oe->field_defs as $def) {
-            if(strpos($def, "mail_") !== false)
-                $this->settings[$def] = $oe->$def;
-        }
+		// outbound email settings
+		$oe = new OutboundEmail();
+		$oe->getSystemMailerSettings();
 
-        // At this point, we have built a new array that should be cached.
+		foreach($oe->field_defs as $def) {
+			if(strpos($def, "mail_") !== false)
+				$this->settings[$def] = $oe->$def;
+		}
+
+		// At this point, we have built a new array that should be cached.
         sugar_cache_put('admin_settings_cache',$this->settings);
-        return $this;
-    }
+		return $this;
+	}
 
-    function saveConfig() {
-        //BEGIN SUGARCRM flav=ent ONLY
-        $this->retrieveSettings(false, true);
-        if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
-            if(file_exists('cache/modules/Contacts/EditView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
-            }
+	function saveConfig() {		
+		//BEGIN SUGARCRM flav=ent ONLY
+		$this->retrieveSettings(false, true);
+		if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
+			if(file_exists('cache/modules/Contacts/EditView.tpl')) {
+			   unlink('cache/modules/Contacts/EditView.tpl');
+			}
+			
+		    if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
+			   unlink('cache/modules/Contacts/EditView.tpl');
+			}		
+			
+			if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
+			   unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
+			}
+		}
+		//END SUGARCRM flav!=ent ONLY		
+		
+		//BEGIN SUGARCRM flav=ent ONLY
+		$this->retrieveSettings(false, true);
+		if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
+			if(file_exists('cache/modules/Contacts/EditView.tpl')) {
+			   unlink('cache/modules/Contacts/EditView.tpl');
+			}
+			
+		    if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
+			   unlink('cache/modules/Contacts/EditView.tpl');
+			}		
+			
+			if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
+			   unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
+			}
+		}
+		//END SUGARCRM flav!=ent ONLY		
+		
+		// outbound email settings
+		$oe = new OutboundEmail();
 
-            if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
-            }
+		foreach($_POST as $key => $val) {
+			$prefix = $this->get_config_prefix($key);
+			if(in_array($prefix[0], $this->config_categories)) {
+			    if(is_array($val)){
+			        $val=implode(",",$val);
+			    }
+				$this->saveSetting($prefix[0], $prefix[1], $val);
+			}
+			if(strpos($key, "mail_") !== false) {
+				if(in_array($key, $oe->field_defs)) {
+					$oe->$key = $val;
+				}
+			}
+		}
 
-            if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
-            unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
-            }
-        }
-        //END SUGARCRM flav!=ent ONLY
-
-        //BEGIN SUGARCRM flav=ent ONLY
-        $this->retrieveSettings(false, true);
-        if(isset($this->settings['portal_on']) && isset($_POST['portal_on']) && (bool)$this->settings['portal_on'] != (bool)$_POST['portal_on']) {
-            if(file_exists('cache/modules/Contacts/EditView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
-            }
-
-            if(file_exists('cache/modules/Contacts/DetailView.tpl')) {
-            unlink('cache/modules/Contacts/EditView.tpl');
-            }
-
-            if(file_exists('cache/modules/Contacts/form_EmailQCView_Contacts.tpl')) {
-            unlink('cache/modules/Contacts/form_EmailQCView_Contacts.tpl');
-            }
-        }
-        //END SUGARCRM flav!=ent ONLY
-
-        // outbound email settings
-        $oe = new OutboundEmail();
-
-        foreach($_POST as $key => $val) {
-            $prefix = $this->get_config_prefix($key);
-            if(in_array($prefix[0], $this->config_categories)) {
-                if(is_array($val)){
-                    $val=implode(",",$val);
-                }
-                $this->saveSetting($prefix[0], $prefix[1], $val);
-            }
-            if(strpos($key, "mail_") !== false) {
-                if(in_array($key, $oe->field_defs)) {
-                    $oe->$key = $val;
-                }
-            }
-        }
-
-        //saving outbound email from here is probably redundant, adding a check to make sure
-        //smtpserver name is set.
-        if (!empty($oe->mail_smtpserver)) {
-            $oe->saveSystem();
-        }
-
-        $this->retrieveSettings(false, true);
-    }
+		//saving outbound email from here is probably redundant, adding a check to make sure
+		//smtpserver name is set.
+		if (!empty($oe->mail_smtpserver)) {
+			$oe->saveSystem();
+		}
+		
+		$this->retrieveSettings(false, true);		
+	}
 
     function saveSetting($category, $key, $value) {
         $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}'");
         $row = $this->db->fetchByAssoc( $result, -1, true );
         $row_count = $row['the_count'];
-
+        
         if($category."_".$key == 'ldap_admin_password' || $category."_".$key == 'proxy_password')
             $value = $this->encrpyt_before_save($value);
 
@@ -191,8 +191,8 @@ class Administration extends SugarBean {
         return $this->db->getAffectedRowCount();
     }
 
-    function get_config_prefix($str) {
-        return Array(substr($str, 0, strpos($str, "_")), substr($str, strpos($str, "_")+1));
-    }
+	function get_config_prefix($str) {
+		return Array(substr($str, 0, strpos($str, "_")), substr($str, strpos($str, "_")+1));
+	}
 }
 ?>

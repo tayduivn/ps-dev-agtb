@@ -43,21 +43,10 @@ class SugarTestUserUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->assertInstanceOf('User', $user);
+        $this->assertType('User', $user);
 
         $after_snapshot = $this->_takeUserDBSnapshot();
         $this->assertNotEquals($this->_before_snapshot, $after_snapshot, 
-            "Simply insure that something was added");
-    }
-    
-    public function testCanCreateAnAnonymousUserButDoNotSaveIt() 
-    {
-        $user = SugarTestUserUtilities::createAnonymousUser(false);
-
-        $this->assertInstanceOf('User', $user);
-
-        $after_snapshot = $this->_takeUserDBSnapshot();
-        $this->assertEquals($this->_before_snapshot, $after_snapshot, 
             "Simply insure that something was added");
     }
 

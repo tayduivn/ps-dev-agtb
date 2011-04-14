@@ -519,7 +519,7 @@ qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_stri
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
 filter_defs['date'] = qualifiers;
 filter_defs['datetime'] = qualifiers;
-/*
+
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'on',value:'<?php echo $mod_strings['LBL_ON']; ?>'};
 qualifiers[qualifiers.length] = {name:'before',value:'<?php echo $mod_strings['LBL_BEFORE']; ?>'};
@@ -528,7 +528,6 @@ qualifiers[qualifiers.length] = {name:'between_datetimes',value:'<?php echo $mod
 qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_NOT_ON']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
-*/
 filter_defs['datetimecombo'] = qualifiers;
 
 var qualifiers =  new Array();

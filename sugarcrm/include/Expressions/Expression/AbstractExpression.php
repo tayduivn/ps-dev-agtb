@@ -30,7 +30,6 @@ abstract class AbstractExpression
 	public static $TIME_TYPE 	 = "time";
 	public static $BOOLEAN_TYPE  = "boolean";
 	public static $ENUM_TYPE 	 = "enum";
-    public static $RELATE_TYPE   = "relate";
 	public static $GENERIC_TYPE  = "generic";
 
 	// booleans
@@ -45,7 +44,6 @@ abstract class AbstractExpression
 											"time" 		=> "TimeExpression",
 											"boolean" 	=> "BooleanExpression",
 											"enum" 		=> "EnumExpression",
-                                            "relate"	=> "RelateExpression",
 											"generic" 	=> "AbstractExpression",
 										);
 
@@ -112,7 +110,7 @@ abstract class AbstractExpression
 		// retrieve the operation name for throwing exceptions
 		$op_name = call_user_func(array(get_class($this), "getOperationName"));
 
-        /* parameter and type validation */
+		/* parameter and type validation */
 
 		// make sure count is a number
 		if ( !is_numeric($count) )	throw new Exception($op_name . ": Number of paramters required must be a number");
@@ -146,10 +144,11 @@ abstract class AbstractExpression
 
 		// we require multiple but params only has 1
 		if ( $count > 1 && !is_array($params) )
-            throw new Exception($op_name . ": Requires exactly $count parameter(s), only one passed in");
+			throw new Exception($op_name . ": Requires exactly $count parameter(s)");
+
 		// we require only 1 and params has multiple
 		if ( $count == 1 && is_array($params) )
-			throw new Exception($op_name . ": Requires exactly $count parameter(s), more than one passed in");
+			throw new Exception($op_name . ": Requires exactly $count parameter(s)");
 
 		// check parameter count
 		if ( $count != AbstractExpression::$INFINITY && sizeof($params) != $count )
@@ -192,41 +191,36 @@ abstract class AbstractExpression
 	function isProperType($variable, $type) {
 		if ( is_array($type) )	return false;
 
+		/*echo "isProperType $type<br>";
+		print_r($variable);
+		echo "done<br>";*/
+
 		// retrieve the class
 		$class = AbstractExpression::$TYPE_MAP[$type];
 
 		// check if type is empty
-		if ( !isset($class) )
-            return false;
+		if ( !isset($class) )		return false;
 
 		// check if it's an instance of type
-		if($variable instanceof $class);
-            return true;
+		$isInstance = $variable instanceof $class;
 
 		// now check for generics
 		switch($type) {
 			case AbstractExpression::$STRING_TYPE:
-				return (is_string($variable) || is_numeric($variable)
+				return ( $isInstance || is_string($variable) || is_numeric($variable) 
 				    || $variable instanceof AbstractExpression::$TYPE_MAP[AbstractExpression::$NUMERIC_TYPE]);
 				break;
 			case AbstractExpression::$NUMERIC_TYPE:
-				return (is_numeric($variable) );
+				return ( $isInstance || is_numeric($variable) );
 				break;
 			case AbstractExpression::$BOOLEAN_TYPE:
 				if ( $variable instanceof Expression )	$variable = $variable->evaluate();
-				return ($variable == AbstractExpression::$TRUE || $variable == AbstractExpression::$FALSE );
+				return ( $isInstance ||$variable == AbstractExpression::$TRUE || $variable == AbstractExpression::$FALSE );
 				break;
-            case AbstractExpression::$DATE_TYPE:
-            case AbstractExpression::$TIME_TYPE:
-                if ( $variable instanceof Expression )	$variable = $variable->evaluate();
-				return ((is_string($variable) && new DateTime($variable) !== false));
-				break;
-            case AbstractExpression::$RELATE_TYPE:
-                return true; 
 		}
 
 		// just return whether it is an instance or not
-		return false;
+		return $isInstance;
 	}
 
 	/**

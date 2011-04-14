@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 class TrackerTestUtility {
 	
 static $trackerSettings;	

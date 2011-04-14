@@ -44,8 +44,8 @@ if ($_POST['isDuplicate'] != 1) {
 //validate, start_date <= end_Date.
 global $timedate;
 
-$start_date = $timedate->to_db_date($_POST['start_date'], false);
-$end_date=$timedate->to_db_date($_POST['end_date'], false);
+$start_date=$timedate->to_db_date($_POST['start_date'],false);
+$end_date=$timedate->to_db_date($_POST['end_date'],false);
 
 if ($end_date >= $start_date) {
 	//defult checbox value to 0;

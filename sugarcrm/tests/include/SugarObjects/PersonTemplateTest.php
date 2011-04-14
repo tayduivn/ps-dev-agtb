@@ -31,7 +31,7 @@ class PersonTemplateTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @ticket 38648
+     * @group bug38648
      */
     public function testNameIsReturnedAsSummaryTextWhenSalutationIsInvalid()
     {

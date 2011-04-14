@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -28,7 +27,7 @@ require_once("include/Expressions/Actions/ActionFactory.php");
 class ActionFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     var $removeCustomDir = false;
-
+    
     protected function createCustomAction()
     {
         $actionContent = <<<EOQ
@@ -41,12 +40,12 @@ class TestCustomAction extends AbstractAction{
     function getJavascriptFire() { return ""; }
     function fire(&\$target){}
     function getDefinition() {
-        return array(
-            "action" => \$this->getActionName(),
+        return array(   
+            "action" => \$this->getActionName(), 
             "target" => "nothing"
         );
     }
-
+    
     static function getActionName() {
         return "testCustomAction";
     }
@@ -58,32 +57,32 @@ EOQ;
         }
         file_put_contents("custom/" . ActionFactory::$action_directory . "/testCustomAction.php", $actionContent);
     }
-
+    
     protected function removeCustomAction()
     {
         unlink("custom/" . ActionFactory::$action_directory . "/testCustomAction.php");
         if ($this->removeCustomDir)
-            rmdir("custom/" . ActionFactory::$action_directory);
+            unlink("custom/" . ActionFactory::$action_directory);
     }
-
+    
     public function testGetNewAction()
     {
         $sva = ActionFactory::getNewAction('SetValue',
             array(
-                'target' => 'name',
+                'target' => 'name', 
                 'value' => 'strlen($name)'
             )
         );
-        $this->assertInstanceOf("SetValueAction", $sva);
+        $this->assertType("SetValueAction", $sva);
     }
-
+    
     public function testLoadCustomAction()
     {
-
+        
         $this->createCustomAction();
         ActionFactory::buildActionCache(true);
         $customAction = ActionFactory::getNewAction('testCustomAction', array());
-        $this->assertInstanceOf("TestCustomAction", $customAction);
+        $this->assertType("TestCustomAction", $customAction);
         $this->removeCustomAction();
         ActionFactory::buildActionCache(true);
     }

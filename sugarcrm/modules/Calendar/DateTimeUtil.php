@@ -23,10 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: DateTimeUtil.php 15853 2006-08-12 01:29:14 +0000 (Sat, 12 Aug 2006) jenny $
  ********************************************************************************/
 
-/**
- * @deprecated Phased out, should not be used anymore
- * Use SugarDateTime instead
- */
 class DateTimeUtil
 {
 		var $timezone;

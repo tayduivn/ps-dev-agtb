@@ -80,17 +80,11 @@ class quicksearchQuery {
 	        }
 	    }
 	    
-        $whereClause = '('.implode(" {$query_obj['group']} ",$cond_arr).')';
+        $whereClause = implode(" {$query_obj['group']} ",$cond_arr);
         
         if($table == 'users.') 
             $whereClause .= " AND {$table}status='Active'";
         
-        // Need to include the default whereStatement
-		if(!empty($query_obj['whereExtra'])){
-            if(!empty($whereClause))$whereClause .= ' AND ';
-            $whereClause .= html_entity_decode($query_obj['whereExtra'],ENT_QUOTES);
-		}
-		
         return $whereClause;
     }
     
@@ -154,7 +148,6 @@ class quicksearchQuery {
     }
     
     protected function formatResults($args, $list_return){
-        global $sugar_config;
         $app_list_strings = null;
         $list_arr['totalCount']=count($list_return);
         $list_arr['fields']= array();
@@ -180,7 +173,7 @@ class quicksearchQuery {
                         $list_return[$i]->$field = $app_list_strings[$list_return[$i]->field_name_map[$field]['options']][$list_return[$i]->$field];
                     }
                 }
-
+                
                 //BEGIN SUGARCRM flav=pro ONLY
                 if($list_return[$i] instanceof Team){
                 	$list_return[$i]->name = Team::getDisplayName($list_return[$i]->name, $list_return[$i]->name_2);
@@ -289,15 +282,15 @@ class quicksearchQuery {
         $response = array();
         
         if(showFullName()) { // utils.php, if system is configured to show full name
-        	$user_array = getUserArrayFromFullName($args['conditions'][0]['value'], true);
+        	$user_array = getUserArrayFromFullName($args['conditions'][0]['value']);
         } else {
-            $user_array = get_user_array(false, "Active", '', false, $args['conditions'][0]['value'],' AND portal_only=0 ',false);
+            $user_array = get_user_array(false, "Active", '', false, $args['conditions'][0]['value'],null,false);
         }
         $response['totalCount']=count($user_array);
         $response['fields']=array();
         $i=0;
         foreach($user_array as $id=>$name) {
-            array_push($response['fields'], array('id' => (string) $id, 'user_name' => $name, 'module' => 'Users'));
+            array_push($response['fields'], array('id' => $id, 'user_name' => $name, 'module' => 'Users'));
             $i++;
         }
     
@@ -345,21 +338,6 @@ class quicksearchQuery {
         return $json->encodeReal($list_arr);
     }
     //END SUGARCRM flav=pro ONLY
-
-    function externalApi($data) {
-        require_once('include/externalAPI/ExternalAPIFactory.php');
-        
-        $api = ExternalAPIFactory::loadAPI($data['api']);
-
-    	$json = getJSONobj();
-
-        $listArray['fields'] = $api->searchDoc($_REQUEST['query']);
-        $listArray['totalCount'] = count($listArray['fields']);
-        
-        $listJson = $json->encodeReal($listArray);
-        
-        return $listJson;
-    }
 }
 
 $json = getJSONobj();

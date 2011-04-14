@@ -99,13 +99,14 @@ if (isset($_REQUEST['id']) && !isset($_REQUEST['record'])) {
 	$args['reportCache'] = $reportCache;
 } 
 else if (isset($_REQUEST['record'])){
+    $report_def = array();
     $saved_report_seed = new SavedReport();
     $saved_report_seed->disable_row_level_security = true;
     $saved_report_seed->retrieve($_REQUEST['record'], false);
     // do this to go through the transformation
     $reportObj = new Report($saved_report_seed->content);
     $saved_report_seed->content = $reportObj->report_def_str;
-    $report_def = isset($_REQUEST['report_def']) ? html_entity_decode($_REQUEST['report_def']) : array();
+    $report_def = html_entity_decode($_REQUEST['report_def']);
 
     if (!empty($_REQUEST['reset_filters'])) {
 //        $rCache = new ReportCache();
@@ -210,7 +211,9 @@ $args['upper_left'] = '';
 control($args);
 
 $params = array();
-if(!empty($_REQUEST['favorite']))
+if(empty($_REQUEST['favorite']))
+	$params[] = "";
+else 
     $params[] = "<a href='index.php?module=Reports&action=index&favorite=1'>{$mod_strings['LBL_FAVORITES_TITLE']}</a>";
 $star = '';
 //BEGIN SUGARCRM flav=pro ONLY
@@ -220,7 +223,7 @@ if(!empty($args['reporter']->saved_report->id)){
 //END SUGARCRM flav=pro ONLY
 $params[] = "{$args['reporter']->name}&nbsp;{$star}";
     
-echo getClassicModuleTitle("Reports", $params, false);
+echo getClassicModuleTitle("Reports", $params, true);
 
 // show report interface
 if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report') {

@@ -111,7 +111,7 @@ function test_contacts_detailview_merge() {
    		$this->assertTrue(isset($fields["{$c_field}"]), "Assert that custom field {$c_field} is present");
    }
    
-   //BEGIN SUGARCRM flav=pro ONLY
+  
    $this->assertTrue(isset($fields['picture']), "Assert that picture field is present");
    
    $found_team_name = false;
@@ -125,7 +125,7 @@ function test_contacts_detailview_merge() {
    }
    
    $this->assertTrue($found_team_name, "Assert that team_name is present in default panel"); 
-   //END SUGARCRM flav=pro ONLY
+
    
 
 }

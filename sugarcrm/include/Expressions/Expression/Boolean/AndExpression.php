@@ -30,8 +30,7 @@ class AndExpression extends BooleanExpression {
 	 * Returns itself when evaluating.
 	 */
 	function evaluate() {
-		$params = $this->getParameters();
-        if (!is_array($params)) $params = array($params);
+		$params = $this->getParameters();		
 		foreach ( $params as $param ) {
 			if ( $param->evaluate() != AbstractExpression::$TRUE )
 				return AbstractExpression::$FALSE;
@@ -44,8 +43,7 @@ class AndExpression extends BooleanExpression {
 	 */
 	static function getJSEvaluate() {
 		return <<<EOQ
-			var params = this.getParameters();
-            if(!(params instanceof Array)) params = [params];
+			var params = this.getParameters();		
 			for ( var i = 0; i < params.length; i++ ) {
 				if ( params[i].evaluate() != SUGAR.expressions.Expression.TRUE )
 					return SUGAR.expressions.Expression.FALSE;

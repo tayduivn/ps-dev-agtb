@@ -3,7 +3,7 @@ require_once('modules/Contacts/Contact.php');
 
 
 /**
- * @ticket 32487
+ * @group bug32487
  */
 class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -31,26 +31,16 @@ class ComposePackageTest extends Sugar_PHPUnit_Framework_TestCase
         $contact->new_with_id = true;
         $contact->disable_custom_fields = true;
         $contact->save();
-		$this->c = $contact;
-		
-		$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-
+        $this->c = $contact;	
 	}
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-
-        unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
-		
-
+        
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
         
         unset($this->c);

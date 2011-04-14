@@ -37,8 +37,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'type' => 'name',
 	'dbType' => 'varchar',
     'len' => '255',
-    'required'=>true,
-    'unified_search' => true,
+    'required'=>true
   ),
 
 'name'=>
@@ -56,7 +55,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'required'=>true,
 	'importable' => 'required',
     'len' => '255',
-    'studio' => 'false',
   ),
   'file_ext' =>
   array (
@@ -89,7 +87,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     'type' => 'date',
 	'required'=>true,
     'importable' => 'required',
-    'display_default' => 'now',
   ),
 
 'exp_date' =>

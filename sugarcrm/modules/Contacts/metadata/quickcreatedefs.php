@@ -42,8 +42,8 @@ $viewdefs = array (
             '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
             '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
             '<input type="hidden" name="inbound_email_id" value="{$smarty.request.inbound_email_id}">',
-            '{if !empty($smarty.request.contact_id)}<input type="hidden" name="reports_to_id" value="{$smarty.request.contact_id}">{/if}',
-            '{if !empty($smarty.request.contact_name)}<input type="hidden" name="report_to_name" value="{$smarty.request.contact_name}">{/if}',
+            '<input type="hidden" name="reports_to_id" value="{$smarty.request.contact_id}">',
+            '<input type="hidden" name="report_to_name" value="{$smarty.request.contact_name}">',
 //BEGIN SUGARCRM flav=dce ONLY
             '<input type="hidden" name="instance_id" value="{$smarty.request.instance_id}">',
 //END SUGARCRM flav=dce ONLY

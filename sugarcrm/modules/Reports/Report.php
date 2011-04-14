@@ -107,92 +107,92 @@ class Report
   var $chart_total_header_row = array();
   var $jtcount = 0;
 
-	function Report($report_def_str='', $filters_def_str='', $panels_def_str='', $skipCacheJSBuild = false) {
-		global $current_user, $current_language, $app_list_strings;
-		if(!isset($current_user) || empty($current_user)) {
+    function Report($report_def_str='', $filters_def_str='', $panels_def_str='') {
+        global $current_user, $current_language, $app_list_strings;
+        if(!isset($current_user) || empty($current_user)) {
+            
+            $current_user = new User();
+            $current_user->retrieve('1');
+        }
+        
+        //Scheduled reports don't have $_REQUEST.
+        if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')){
+            Report::cache_modules_def_js();
+        }
 
-			$current_user = new User();
-			$current_user->retrieve('1');
-		}
+        //_pp($report_def_str);
+        $mod_strings = return_module_language($current_language, 'Reports'); 
+        
+        $this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))?$GLOBALS['sugar_config']['list_report_max_per_page']:100;
+        $this->report_offset = (!empty($_REQUEST['report_offset']))?$_REQUEST['report_offset']:0;
+        if($this->report_offset < 0)$this->report_offset = 0;
+        $this->time_date_obj =  new TimeDate();
+        $this->name = $mod_strings['LBL_UNTITLED'];
+        $this->db = &DBManagerFactory::getInstance('reports');
+        if ( Report::is_old_content($report_def_str))
+        {
+            sugar_die('this report was created with an older version of reports. please upgrade');
+        }
 
-		//Scheduled reports don't have $_REQUEST.
-		if (!$skipCacheJSBuild &&(!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')) {
-			Report::cache_modules_def_js();
-		}
-
-		//_pp($report_def_str);
-		$mod_strings = return_module_language($current_language, 'Reports');
-
-		$this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))?$GLOBALS['sugar_config']['list_report_max_per_page']:100;
-		$this->report_offset = (!empty($_REQUEST['report_offset']))?$_REQUEST['report_offset']:0;
-		if($this->report_offset < 0)$this->report_offset = 0;
-		$this->time_date_obj = TimeDate::getInstance();
-		$this->name = $mod_strings['LBL_UNTITLED'];
-		$this->db = DBManagerFactory::getInstance('reports');
-		if ( Report::is_old_content($report_def_str))
-		{
-			sugar_die('this report was created with an older version of reports. please upgrade');
-		}
-
-		$json = getJSONobj();
-		if ( empty($report_def_str))
-		{
-			$this->report_def_str = $this->default_report_def_str;
-			$this->report_def = $json->decode($this->report_def_str);
-		} else {
-			$this->report_def_str = $report_def_str;
-			$this->report_def = $json->decode($this->report_def_str);
-		}
-		// 5.1 Report Format - only called by the Wizard.
-		if (!empty($filters_def_str)) {
-			$this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
-		}
-
-		if ( ! empty($this->report_def['report_name']))
-		{
-			$this->name = $this->report_def['report_name'];
-		}
-		if ( ! empty($this->report_def['module']))
-		{
-			$this->module = $this->report_def['module'];
-		}
-		if(! empty($this->report_def['report_type']))
-		{
-			$this->report_type = $this->report_def['report_type'];
-		}
-			if (! empty($this->report_def['display_columns']) && count($this->report_def['display_columns']) > 0 && $this->report_type == 'summary')
-			{
-				$this->show_columns = true;
-			}
-		if ( ! empty($this->report_def['chart_type']))
-		{
-			$this->chart_type = $this->report_def['chart_type'];
-		} else
-		{
-			$this->report_def['chart_type'] = 'none';
-			$this->chart_type = $this->report_def['chart_type'];
-		}
-		if ( ! empty($this->report_def['chart_description']))
-		{
-			$this->chart_description = $this->report_def['chart_description'];
-		}
+        $json = getJSONobj();
+        if ( empty($report_def_str))
+        {
+            $this->report_def_str = $this->default_report_def_str;
+            $this->report_def = $json->decode($this->report_def_str);
+        } else {
+            $this->report_def_str = $report_def_str;
+            $this->report_def = $json->decode($this->report_def_str);
+        }
+        // 5.1 Report Format - only called by the Wizard.
+        if (!empty($filters_def_str)) {
+            $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));          
+        }
+        
+        if ( ! empty($this->report_def['report_name']))
+        {
+            $this->name = $this->report_def['report_name'];
+        }
+        if ( ! empty($this->report_def['module']))
+        {
+            $this->module = $this->report_def['module'];
+        }
+        if(! empty($this->report_def['report_type']))
+        {
+            $this->report_type = $this->report_def['report_type'];
+        }
+            if (! empty($this->report_def['display_columns']) && count($this->report_def['display_columns']) > 0 && $this->report_type == 'summary')
+            {
+                $this->show_columns = true;
+            }
+        if ( ! empty($this->report_def['chart_type']))
+        {
+            $this->chart_type = $this->report_def['chart_type'];
+        } else
+        {
+            $this->report_def['chart_type'] = 'none';
+            $this->chart_type = $this->report_def['chart_type'];
+        }
+        if ( ! empty($this->report_def['chart_description']))
+        {
+            $this->chart_description = $this->report_def['chart_description'];
+        }
 
         //Upgrade the pre-5.1 reports that had a summary column field that wasn't in the group by or an aggregate field.
         if (!empty ($this->report_def['summary_columns'])) {
-        	foreach ($this->report_def['summary_columns'] as $summary_column) {
-				if (!isset($summary_column['group_function']) && !isset($summary_column['is_group_by']) &&!isset($summary_column['column_function'])) {
-			        	$isInGroupBy = false;
-			        	foreach ($this->report_def['group_defs'] as $group_by_col) {
-							if ($summary_column['table_key'] == $group_by_col['table_key'] && $summary_column['name'] == $group_by_col['name'] ) {
-								$isInGroupBy = true;
-								break;
-							}
-						}
-					if (!$isInGroupBy)
-						$this->report_def['group_defs'][count($this->report_def['group_defs'])] = $summary_column;
-	        	}
-			}
-        }
+            foreach ($this->report_def['summary_columns'] as $summary_column) {
+                if (!isset($summary_column['group_function']) && !isset($summary_column['is_group_by']) &&!isset($summary_column['column_function'])) {
+                        $isInGroupBy = false;
+                        foreach ($this->report_def['group_defs'] as $group_by_col) {
+                            if ($summary_column['table_key'] == $group_by_col['table_key'] && $summary_column['name'] == $group_by_col['name'] ) {
+                                $isInGroupBy = true;
+                                break;
+                            }
+                        }
+                    if (!$isInGroupBy)                  
+                        $this->report_def['group_defs'][count($this->report_def['group_defs'])] = $summary_column;  
+                }
+            }
+        }        
 
         if ( ! empty($this->report_def['full_table_list']) )
         {
@@ -229,10 +229,8 @@ class Report
             {
                 $tmpBean->load_relationship($old_link);
                 $relationship = $tmpBean->$old_link->_relationship;
-
-				$newIndex = $tempFullTableList['self']['module'].':'. $linked_fields[$old_link]['name'];
-				$upgrade_lookup[$old_link] = $newIndex;
-
+                $newIndex = $tempFullTableList['self']['module'].':'. $linked_fields[$old_link]['name'];
+                $upgrade_lookup[$old_link] = $newIndex; 
                 $tempFullTableList[$newIndex]['label'] = translate($linked_fields[$old_link]['vname']);
                 $tempFullTableList[$newIndex]['link_def']['relationship_name'] = $linked_fields[$old_link]['relationship'];
                 $tempFullTableList[$newIndex]['link_def']['name'] = $linked_fields[$old_link]['name'];
@@ -267,7 +265,7 @@ class Report
                     $tempFullTableList[$newIndex]['module'] = $relationship->lhs_module;
                 }
                 $tempFullTableList[$newIndex]['name'] = $tempFullTableList['self']['module']." > ". $tempFullTableList[$newIndex]['module'] ;
-
+                
             }
 
             unset($this->report_def['links_def']);
@@ -278,121 +276,121 @@ class Report
         // START: Dynamically convert previous versions to 5.1 version of content string.
         foreach ( $this->full_table_list as $table_key => $table_data )
         {
-			if (preg_match('/self_/',$table_key) == 1) {
-				$currLinkIndex = strripos($table_key, '_link_');
-				$parentLink = substr($table_key, 0, $currLinkIndex);
-				if ($parentLink == 'self') {
-					$newIndex =  $tempFullTableList['self']['module'] .":". $table_data['link_def']['name'];
-					$tempFullTableList[$newIndex] = $table_data;
-					$tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
-					$tempFullTableList[$newIndex]['parent']= 'self';
-					$tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];
-					if (isset($table_data['optional']) && $table_data['optional'] == 1)
-						$tempFullTableList[$newIndex]['optional']= 1;
-					unset($tempFullTableList[$newIndex]['children']);
-					//unset($tempFullTableList[$newIndex]['label']);
-					unset($tempFullTableList[$newIndex]['value']);
-					$upgrade_lookup[$table_key] = $newIndex;
-				}
-				else {
-					$newIndex =  $tempFullTableList[$upgrade_lookup[$parentLink]]['link_def']['table_key'] .":".
-						$table_data['link_def']['name'];
-					$tempFullTableList[$newIndex] = $table_data;
-					$tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
-					$tempFullTableList[$newIndex]['parent']= $upgrade_lookup[$parentLink];
-					$tempFullTableList[$newIndex]['name']= $tempFullTableList[$upgrade_lookup[$parentLink]]['name'] . " > " .$table_data['module'];
-					unset($tempFullTableList[$newIndex]['children']);
-					//unset($tempFullTableList[$newIndex]['label']);
-					unset($tempFullTableList[$newIndex]['value']);
-					if (isset($table_data['optional']) && $table_data['optional'] == 1)
-						$tempFullTableList[$newIndex]['optional']= 1;
-					$upgrade_lookup[$table_key] = $newIndex;
-				}
-			}
-			else if ($table_key != 'self' && preg_match('/:/',$table_key) == 0) {
-				$newIndex =  $tempFullTableList['self']['module'] .":". $table_data['link_def']['name'];
-				$tempFullTableList[$newIndex] = $table_data;
-				$tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
-				$tempFullTableList[$newIndex]['parent']= 'self';
-				$tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];
-				if (isset($table_data['optional']) && $table_data['optional'] == 1)
-					$tempFullTableList[$newIndex]['optional']= 1;
-				unset($tempFullTableList[$newIndex]['children']);
-				//unset($tempFullTableList[$newIndex]['label']);
-				unset($tempFullTableList[$newIndex]['value']);
-				$upgrade_lookup[$table_key] = $newIndex;
-			}
-        }
+            if (preg_match('/self_/',$table_key) == 1) {
+                $currLinkIndex = strripos($table_key, '_link_');
+                $parentLink = substr($table_key, 0, $currLinkIndex);
+                if ($parentLink == 'self') {
+                    $newIndex =  $tempFullTableList['self']['module'] .":". $table_data['link_def']['name'];
+                    $tempFullTableList[$newIndex] = $table_data;
+                    $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
+                    $tempFullTableList[$newIndex]['parent']= 'self';                    
+                    $tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];     
+                    if (isset($table_data['optional']) && $table_data['optional'] == 1) 
+                        $tempFullTableList[$newIndex]['optional']= 1;       
+                    unset($tempFullTableList[$newIndex]['children']);
+                    //unset($tempFullTableList[$newIndex]['label']);
+                    unset($tempFullTableList[$newIndex]['value']);
+                    $upgrade_lookup[$table_key] = $newIndex;                    
+                }
+                else {
+                    $newIndex =  $tempFullTableList[$upgrade_lookup[$parentLink]]['link_def']['table_key'] .":". 
+                        $table_data['link_def']['name'];
+                    $tempFullTableList[$newIndex] = $table_data;
+                    $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
+                    $tempFullTableList[$newIndex]['parent']= $upgrade_lookup[$parentLink];                  
+                    $tempFullTableList[$newIndex]['name']= $tempFullTableList[$upgrade_lookup[$parentLink]]['name'] . " > " .$table_data['module'];                 
+                    unset($tempFullTableList[$newIndex]['children']);
+                    //unset($tempFullTableList[$newIndex]['label']);
+                    unset($tempFullTableList[$newIndex]['value']);
+                    if (isset($table_data['optional']) && $table_data['optional'] == 1) 
+                        $tempFullTableList[$newIndex]['optional']= 1;       
+                    $upgrade_lookup[$table_key] = $newIndex;                    
+                }           
+            }
+            else if ($table_key != 'self' && preg_match('/:/',$table_key) == 0) {
+                $newIndex =  $tempFullTableList['self']['module'] .":". $table_data['link_def']['name'];
+                $tempFullTableList[$newIndex] = $table_data;
+                $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
+                $tempFullTableList[$newIndex]['parent']= 'self';                    
+                $tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];     
+                if (isset($table_data['optional']) && $table_data['optional'] == 1) 
+                    $tempFullTableList[$newIndex]['optional']= 1;       
+                unset($tempFullTableList[$newIndex]['children']);
+                //unset($tempFullTableList[$newIndex]['label']);
+                unset($tempFullTableList[$newIndex]['value']);
+                $upgrade_lookup[$table_key] = $newIndex;                    
+            }
+        } 
         if (isset($upgrade_lookup) && count($upgrade_lookup) > 0) {
-	        $this->full_table_list = $tempFullTableList;
-			$this->report_def['full_table_list'] = 	$tempFullTableList;
-	        for ($i = 0; $i < count($this->report_def['display_columns']); $i++) {
-	        	if ($this->report_def['display_columns'][$i]['table_key'] != 'self') {
-	        		$this->report_def['display_columns'][$i]['table_key'] = $upgrade_lookup[$this->report_def['display_columns'][$i]['table_key']];
-	        	}
-	        }
-	        for ($i = 0; $i < count($this->report_def['summary_columns']); $i++) {
-	        	if ($this->report_def['summary_columns'][$i]['table_key'] != 'self') {
-	        		$this->report_def['summary_columns'][$i]['table_key'] = $upgrade_lookup[$this->report_def['summary_columns'][$i]['table_key']];
-	        	}
-	        }
+            $this->full_table_list = $tempFullTableList;
+            $this->report_def['full_table_list'] =  $tempFullTableList;      
+            for ($i = 0; $i < count($this->report_def['display_columns']); $i++) {
+                if ($this->report_def['display_columns'][$i]['table_key'] != 'self') {
+                    $this->report_def['display_columns'][$i]['table_key'] = $upgrade_lookup[$this->report_def['display_columns'][$i]['table_key']];
+                }
+            }
+            for ($i = 0; $i < count($this->report_def['summary_columns']); $i++) {
+                if ($this->report_def['summary_columns'][$i]['table_key'] != 'self') {
+                    $this->report_def['summary_columns'][$i]['table_key'] = $upgrade_lookup[$this->report_def['summary_columns'][$i]['table_key']];
+                }
+            }       
 
-	        for ($i = 0; $i < count($this->report_def['group_defs']); $i++) {
-	        	if ($this->report_def['group_defs'][$i]['table_key'] != 'self') {
-	        		$this->report_def['group_defs'][$i]['table_key'] = $upgrade_lookup[$this->report_def['group_defs'][$i]['table_key']];
-	        	}
-	        }
-	        if (isset($this->report_def['order_by'])) {
-		        for ($i = 0; $i < count($this->report_def['order_by']); $i++) {
-		        	if ($this->report_def['order_by'][$i]['table_key'] != 'self') {
-		        		$this->report_def['order_by'][$i]['table_key'] = $upgrade_lookup[$this->report_def['order_by'][$i]['table_key']];
-		        	}
-		        }
-	        }
-
-	        $filters = array();
-	        $filters['Filter_1'] = array();
-	        if (isset($this->report_def['filters_combiner']))
-	        	$filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
-	        else
-	        	$filters['Filter_1']['operator'] = 'AND';
-	        for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
-	        	if ($this->report_def['filters_def'][$i]['table_key'] != 'self') {
-	        		$this->report_def['filters_def'][$i]['table_key'] = $upgrade_lookup[$this->report_def['filters_def'][$i]['table_key']];
-	        	}
-	        	array_push($filters['Filter_1'],$this->report_def['filters_def'][$i]);
-	        }
-			$this->report_def['filters_def'] = $filters;
-
-	        // Re-encode the report definition
-	        $this->report_def_str = $json->encode($this->report_def);
-
+            for ($i = 0; $i < count($this->report_def['group_defs']); $i++) {
+                if ($this->report_def['group_defs'][$i]['table_key'] != 'self') {
+                    $this->report_def['group_defs'][$i]['table_key'] = $upgrade_lookup[$this->report_def['group_defs'][$i]['table_key']];
+                }
+            }   
+            if (isset($this->report_def['order_by'])) {
+                for ($i = 0; $i < count($this->report_def['order_by']); $i++) {
+                    if ($this->report_def['order_by'][$i]['table_key'] != 'self') {
+                        $this->report_def['order_by'][$i]['table_key'] = $upgrade_lookup[$this->report_def['order_by'][$i]['table_key']];
+                    }
+                }   
+            }
+            
+            $filters = array();
+            $filters['Filter_1'] = array();
+            if (isset($this->report_def['filters_combiner']))
+                $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
+            else 
+                $filters['Filter_1']['operator'] = 'AND';
+            for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
+                if ($this->report_def['filters_def'][$i]['table_key'] != 'self') {
+                    $this->report_def['filters_def'][$i]['table_key'] = $upgrade_lookup[$this->report_def['filters_def'][$i]['table_key']];
+                }
+                array_push($filters['Filter_1'],$this->report_def['filters_def'][$i]);
+            }   
+            $this->report_def['filters_def'] = $filters;
+            
+            // Re-encode the report definition
+            $this->report_def_str = $json->encode($this->report_def);
+            
         }
-
+        
         // Still need to update older formats that only have self in the full_table_list
         if (!isset($this->report_def['filters_def']['Filter_1'])) {
-	        $filters = array();
-	        $filters['Filter_1'] = array();
-	        if (isset($this->report_def['filters_combiner']))
-	        	$filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
-	        else
-	        	$filters['Filter_1']['operator'] = 'AND';
+            $filters = array();
+            $filters['Filter_1'] = array();
+            if (isset($this->report_def['filters_combiner']))
+                $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
+            else 
+                $filters['Filter_1']['operator'] = 'AND';
 
-	        for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
-	        	array_push($filters['Filter_1'],$this->report_def['filters_def'][$i]);
-	        }
-			$this->report_def['filters_def'] = $filters;
-	        // Re-encode the report definition
-	        $this->report_def_str = $json->encode($this->report_def);
+            for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
+                array_push($filters['Filter_1'],$this->report_def['filters_def'][$i]);
+            }   
+            $this->report_def['filters_def'] = $filters;
+            // Re-encode the report definition
+            $this->report_def_str = $json->encode($this->report_def);
         }
 
-		if (isset($this->report_def['numerical_chart_column']) && $this->report_def['numerical_chart_column'] == 'count')
-			$this->report_def['numerical_chart_column'] = 'self:count';
+        if (isset($this->report_def['numerical_chart_column']) && $this->report_def['numerical_chart_column'] == 'count')
+            $this->report_def['numerical_chart_column'] = 'self:count';               
         // END: Dynamically convert previous versions to 5.1 version of content string.
         // Load all the necessary beans, and populate the full_table_beans array
         foreach ( $this->full_table_list as $table_key => $table_data )
         {
-
+           
             // Set this to a reasonable default
             $beanLabel = 'Accounts';
             if ( isset($table_data['module']) )
@@ -423,17 +421,17 @@ class Report
         //$this->linked_fields = $this->focus->get_linked_fields();
         //  $this->_check_user_permissions();
 
-		$this->_load_all_fields();
-		$this->_load_currency();
+        $this->_load_all_fields();
+        $this->_load_currency();
 
-		require_once('include/generic/LayoutManager.php');
-
-		if ( $this->layout_manager == null)
-		{
-			$this->layout_manager = new LayoutManager();
-			$this->layout_manager->default_widget_name = 'ReportField';
-			$this->layout_manager->setAttributePtr('reporter',$this);
-		}
+        require_once('include/generic/LayoutManager.php');
+        
+        if ( $this->layout_manager == null)
+        {
+            $this->layout_manager = new LayoutManager();
+            $this->layout_manager->default_widget_name = 'ReportField';
+            $this->layout_manager->setAttributePtr('reporter',$this);
+        }
         // Re-encode the report definition
         $this->report_def_str = $json->encode($this->report_def);
 
@@ -549,191 +547,193 @@ function _check_user_permissions()
         }
     }
 
-	function _load_currency()
-	{
 
 
-		$this->currency_obj = new Currency();
-		$this->currency_symbol = '$';
-		global $current_user;
+    function _load_currency()
+    {
 
-		if($current_user->getPreference('currency') )
-		{
-			$this->currency_obj->retrieve($current_user->getPreference('currency'));
-			$this->currency_symbol = $this->currency_obj->symbol;
-		}
-		else
-		{
-			$this->currency_obj->retrieve('-99');
-			$this->currency_symbol = $this->currency_obj->symbol;
-		}
-	}
+        
+        $this->currency_obj = new Currency();
+        $this->currency_symbol = '$';
+        global $current_user;
 
-	function clear_results()
-	{
-		$this->where = null;
-		$this->order_by = null;
-		$this->group_by = null;
-		$this->select_fields = array();
-		$this->query = null;
-		$this->result = null;
-		$this->summary_result = null;
-		$this->total_result = null;
-		$this->row_count = 0;
-		$this->row_end = 0;
-		$this->summary_row_count = 0;
-		$this->summary_row_end = 0;
-	}
+        if($current_user->getPreference('currency') )
+        {
+            $this->currency_obj->retrieve($current_user->getPreference('currency'));
+            $this->currency_symbol = $this->currency_obj->symbol;
+        }
+        else
+        {
+            $this->currency_obj->retrieve('-99');
+            $this->currency_symbol = $this->currency_obj->symbol;
+        }
+    }
 
-	function run_summary_combo_query($run_main_query= true)
-	{
-		if($run_main_query)$this->run_query();
+    function clear_results()
+    {
+        $this->where = null;
+        $this->order_by = null;
+        $this->group_by = null;
+        $this->select_fields = array();
+        $this->query = null;
+        $this->result = null;
+        $this->summary_result = null;
+        $this->total_result = null;
+        $this->row_count = 0;
+        $this->row_end = 0;
+        $this->summary_row_count = 0;
+        $this->summary_row_end = 0;
+    }
 
-		$this->run_summary_query();
-		if ($this->has_summary_columns())
-		{
-			$this->run_total_query();
-		}
-	}
+    function run_summary_combo_query($run_main_query= true)
+    {
+        if($run_main_query)$this->run_query();
 
-	function run_summary_child_query(){
-		$this->clear_group_by();
-		$this->create_order_by();
-		$this->create_select();
-		// false means don't
-		$this->create_where();
-		$this->create_group_by(false);
-		$this->create_from();
-		$this->create_query();
+        $this->run_summary_query();
+        if ($this->has_summary_columns())
+        {
+            $this->run_total_query();
+        }
+    }
 
-		 if(empty($this->child_filter_by)){
-			return false;
-		}
+    function run_summary_child_query(){
+        $this->clear_group_by();
+        $this->create_order_by();
+        $this->create_select();
+        // false means don't
+        $this->create_where();
+        $this->create_group_by(false);
+        $this->create_from();
+        $this->create_query();
 
-		$query = $this->query;
-		if(!empty($this->group_order_by)){
-			$queries = explode( "ORDER BY", $query);
-			$query = $queries[0] . " AND  $this->child_filter= '$this->child_filter_by'";
-		}
-		$query_name = $this->child_filter;
-		$this->$query_name = $query;
-		$this->create_order_by();
-		if(!empty($this->order_by_arr)){
-			$this->$query_name .= " ORDER BY ". implode( ',', $this->order_by_arr);
-		}
-		$this->execute_query($query_name,'child_result', '', '','' );
+         if(empty($this->child_filter_by)){
+            return false;
+        }
 
-		return 'child_result';
-	}
+        $query = $this->query;
+        if(!empty($this->group_order_by)){
+            $queries = explode( "ORDER BY", $query);
+            $query = $queries[0] . " AND  $this->child_filter= '$this->child_filter_by'";
+        }
+        $query_name = $this->child_filter;
+        $this->$query_name = $query;
+        $this->create_order_by();
+        if(!empty($this->order_by_arr)){
+            $this->$query_name .= " ORDER BY ". implode( ',', $this->order_by_arr);
+        }
+        $this->execute_query($query_name,'child_result', '', '','' );
 
-
-
-	function create_summary_select()
-	{
-		$this->create_select('summary_columns','summary_select_fields');
-	}
-
-	function create_total_select()
-	{
-		$this->create_select('summary_columns','total_select_fields');
-	}
-
-	function create_total_query()
-	{
-		$this->create_query('total_query','total_select_fields');
-	}
-
-	function create_summary_query()
-	{
-		$this->create_query('summary_query','summary_select_fields');
-	}
+        return 'child_result';
+    }
 
 
-	function run_summary_query()
-	{
-		$this->create_group_by();
-		$this->create_order_by();
-		$this->create_summary_select();
-		$this->create_where();
-		$this->create_from();
-		$this->create_summary_query();
-		$this->execute_summary_query();
 
-	}
+    function create_summary_select()
+    {
+        $this->create_select('summary_columns','summary_select_fields');
+    }
 
-	function run_total_query()
-	{
-		$this->create_order_by();
-		$this->create_total_select();
-		$this->create_where();
-		$this->create_from();
-		$this->create_total_query();
-		$this->execute_total_query();
-	}
+    function create_total_select()
+    {
+        $this->create_select('summary_columns','total_select_fields');
+    }
 
-	function run_query($do_group_by=false)
-	{
-		$this->clear_group_by();
-		$this->create_order_by();
-		$this->create_select();
-		// false means don't
-		$this->create_where();
-		$this->create_group_by(false);
-		$this->create_from();
-		$this->create_query();
-		$limit = false;
-		if($this->report_type == 'tabular' && $this->enable_paging){
-			$this->total_count = $this->execute_count_query();
-			$limit = true;
-		}
-		$this->execute_query('query', 'result', 'row_count', 'row_start', 'row_end', $limit);
+    function create_total_query()
+    {
+        $this->create_query('total_query','total_select_fields');
+    }
 
-	}
-	function execute_count_query($query_name='query'){
-
-		$query = $this->$query_name;
-		$queries = explode('FROM',$query, 2);
-		if(count($queries) == 1){
-			$queries = explode('from',$query, 2);
-		}
-		if(count($queries) == 2){
-			$queries = explode('ORDER BY', $queries[1]);
-				$result = $this->db->query("SELECT count(*) as total_count FROM ". $queries[0]);
-
-			if( $row =  $this->db->fetchByAssoc($result)){
-				return $row['total_count'];
-			}
-
-		}
-		return 0;
-	}
-	function execute_total_query()
-	{
-		$this->execute_query('total_query',
-				'total_result',
-				'',
-				'',
-				'');
-	}
+    function create_summary_query()
+    {
+        $this->create_query('summary_query','summary_select_fields');
+    }
 
 
-	function execute_summary_query()
-	{
-		$this->execute_query('summary_query',
-				'summary_result',
-				'summary_row_count',
-				'summary_row_start',
-				'summary_row_end');
-	}
+    function run_summary_query()
+    {
+        $this->create_group_by();
+        $this->create_order_by();
+        $this->create_summary_select();
+        $this->create_where();
+        $this->create_from();
+        $this->create_summary_query();
+        $this->execute_summary_query();
+
+    }
+
+    function run_total_query()
+    {
+        $this->create_order_by();
+        $this->create_total_select();
+        $this->create_where();
+        $this->create_from();
+        $this->create_total_query();
+        $this->execute_total_query();
+    }
+
+    function run_query($do_group_by=false)
+    {
+        $this->clear_group_by();
+        $this->create_order_by();
+        $this->create_select();
+        // false means don't
+        $this->create_where();
+        $this->create_group_by(false);
+        $this->create_from();
+        $this->create_query();
+        $limit = false;
+        if($this->report_type == 'tabular' && $this->enable_paging){
+            $this->total_count = $this->execute_count_query();
+            $limit = true;
+        }
+        $this->execute_query('query', 'result', 'row_count', 'row_start', 'row_end', $limit);
+
+    }
+    function execute_count_query($query_name='query'){
+
+        $query = $this->$query_name;
+        $queries = explode('FROM',$query, 2);
+        if(count($queries) == 1){
+            $queries = explode('from',$query, 2);
+        }
+        if(count($queries) == 2){
+            $queries = explode('ORDER BY', $queries[1]);
+                $result = $this->db->query("SELECT count(*) as total_count FROM ". $queries[0]);
+
+            if( $row =  $this->db->fetchByAssoc($result)){
+                return $row['total_count'];
+            }
+
+        }
+        return 0;
+    }
+    function execute_total_query()
+    {
+        $this->execute_query('total_query',
+                'total_result',
+                '',
+                '',
+                '');
+    }
 
 
-	function execute_query($query_name='query',
-				$result_name='result',
-				$row_count_name='row_count',
-				$row_start_name='row_start',
-				$row_end_name='row_end',
-				$limit=false)
-	{
+    function execute_summary_query()
+    {
+        $this->execute_query('summary_query',
+                'summary_result',
+                'summary_row_count',
+                'summary_row_start',
+                'summary_row_end');
+    }
+
+
+    function execute_query($query_name='query',
+                $result_name='result',
+                $row_count_name='row_count',
+                $row_start_name='row_start',
+                $row_end_name='row_end',
+                $limit=false)
+    {
 /*
 print "<BR>QUERY:";
 print $this->$query_name;
@@ -809,13 +809,12 @@ print "<BR>";
     {
         $layout_def['table_alias'] = $this->getTableFromField($layout_def);
         $field_def = $this->getFieldDefFromLayoutDef($layout_def);
-
         if (empty($field_def) && (!isset($layout_def['group_function']) || ((isset($layout_def['group_function']) && $layout_def['group_function'] != 'count'
                 && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {                  
                 global $mod_strings;
-
-	        	sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
-
+                sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
+            
+            
         }
         if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
                 && !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table']))
@@ -857,179 +856,179 @@ print "<BR>";
         }
 //print "REGISTER:".$layout_def['name'].":". $layout_def['type']."<BR>";
     }
+    
+    function parseUIFiltersDef($filters_def_str, $panels_def_str) {
+        $filters = array();
+        $panelParents = array();
+        foreach ($panels_def_str as $index=>$key) {
+            $panelParents[$key['id']] = $key['parentId'];
+            foreach ($filters_def_str as $filter_key=>$filter_def) {
+                if ($filter_def['panelId'] == $key['id']) {             
+                    if (!isset ($filters[$filter_def['panelId']])) {
+                        $filters[$filter_def['panelId']] = array();
+                        $filters[$filter_def['panelId']]['operator'] = $key['operator'];
+                    }
+                    // Remove the panelId from the filter definition as it's no longer needed.
+                    array_splice($filter_def, 0, 1);
+                    array_push($filters[$key['id']], $filter_def);
+                }
+            }
+            if (!isset($filters[$key['id']])) {
+                $filters[$key['id']] = array();
+                $filters[$key['id']]['operator']= $key['operator'];
+            }
+        }
+        krsort($panelParents);
 
-	function parseUIFiltersDef($filters_def_str, $panels_def_str) {
-		$filters = array();
-		$panelParents = array();
-		foreach ($panels_def_str as $index=>$key) {
-			$panelParents[$key['id']] = $key['parentId'];
-			foreach ($filters_def_str as $filter_key=>$filter_def) {
-				if ($filter_def['panelId'] == $key['id']) {
-					if (!isset ($filters[$filter_def['panelId']])) {
-						$filters[$filter_def['panelId']] = array();
-						$filters[$filter_def['panelId']]['operator'] = $key['operator'];
-					}
-					// Remove the panelId from the filter definition as it's no longer needed.
-					array_splice($filter_def, 0, 1);
-					array_push($filters[$key['id']], $filter_def);
-				}
-			}
-			if (!isset($filters[$key['id']])) {
-				$filters[$key['id']] = array();
-				$filters[$key['id']]['operator']= $key['operator'];
-			}
-		}
-		krsort($panelParents);
+        foreach ($panelParents as $panel=>$parent) {
+            if (isset($filters[$parent])) {
+                array_push($filters[$parent], $filters[$panel]);
+            }           
+        }
+        array_splice($filters, 1);
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'Reports'); 
+        $filterString = $mod_strings['LBL_FILTER'] . '.1';      
+        if (isset($filters[$filterString])) {
+            $filters['Filter_1'] = $filters[$filterString];
+            unset($filters[$filterString]);
+        }
+        $this->report_def['filters_def'] = $filters;
+    }
+    
+    function filtersIterate($filters, &$where_clause) {
+        //$where_arr = array();
+        $operator = $filters['operator'];
+        $isSubCondition = 0;
+        if(count($filters) < 2) { // We only have an operator and an empty Filter Box.
+            $where_clause .= "1=1";
+        }
+        for($i = 0; $i < count($filters) - 1; $i++) {
+            $current_filter = $filters[$i];
+            if (isset($current_filter['operator'])) {
+                $where_clause .="(";
+                $isSubCondition = 1;
+                Report::filtersIterate($current_filter, $where_clause);
+            }
+            else {
+                $this->register_field_for_query($current_filter);
+                $select_piece = "(".$this->layout_manager->widgetQuery($current_filter).")";
+                //$where_arr[count($where_arr)] = $select_piece;
+                $where_clause .= $select_piece;
+            }
+            if ($isSubCondition == 1)
+                $where_clause .= ")";
+            if ($i != count($filters) - 2)
+                $where_clause .= " $operator ";
+            
+        }
+    }
+    
+    function create_where()
+    {
+        $where_arr = array();
+        $this->layout_manager->setAttribute('context', 'Filter');
+        $filters = $this->report_def['filters_def'];
+        $where_clause = "";
+        if (isset($filters['Filter_1']))
+            Report::filtersIterate($filters['Filter_1'], $where_clause);
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if(!is_admin($GLOBALS['current_user']) && !$this->focus->disable_row_level_security) {  
+            if(!empty($where_clause)){
+                $where_clause .= " AND";
+            }
+            $where_clause .= " ".$this->focus->table_name.".team_set_id IN (SELECT tst.team_set_id FROM 
+                                team_sets_teams tst INNER JOIN team_memberships team_memberships ON 
+                                tst.team_id = team_memberships.team_id AND team_memberships.user_id = 
+                                '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
+        }
+        //END SUGARCRM flav!=sales ONLY
+        $this->where = $where_clause;
+        /*
+        for($i=0; $i < count($this->report_def['filters_def']) ; $i++)
+        {
+            $filter_def = $this->report_def['filters_def'][$i];
 
-		foreach ($panelParents as $panel=>$parent) {
-			if (isset($filters[$parent])) {
-				array_push($filters[$parent], $filters[$panel]);
-			}
-		}
-		array_splice($filters, 1);
-		global $current_language;
-		$mod_strings = return_module_language($current_language, 'Reports');
-		$filterString = $mod_strings['LBL_FILTER'] . '.1';
-		if (isset($filters[$filterString])) {
-			$filters['Filter_1'] = $filters[$filterString];
-			unset($filters[$filterString]);
-		}
-		$this->report_def['filters_def'] = $filters;
-	}
+            $this->register_field_for_query($filter_def);
 
-	function filtersIterate($filters, &$where_clause) {
-		//$where_arr = array();
-		$operator = $filters['operator'];
-		$isSubCondition = 0;
-		if(count($filters) < 2) { // We only have an operator and an empty Filter Box.
-			$where_clause .= "1=1";
-		}
-		for($i = 0; $i < count($filters) - 1; $i++) {
-			$current_filter = $filters[$i];
-			if (isset($current_filter['operator'])) {
-				$where_clause .="(";
-				$isSubCondition = 1;
-				Report::filtersIterate($current_filter, $where_clause);
-			}
-			else {
-				$this->register_field_for_query($current_filter);
-				$select_piece = "(".$this->layout_manager->widgetQuery($current_filter).")";
-				//$where_arr[count($where_arr)] = $select_piece;
-				$where_clause .= $select_piece;
-			}
-			if ($isSubCondition == 1)
-			 	$where_clause .= ")";
-			if ($i != count($filters) - 2)
-				$where_clause .= " $operator ";
-
-		}
-	}
-
-	function create_where()
-	{
-		$where_arr = array();
-		$this->layout_manager->setAttribute('context', 'Filter');
-		$filters = $this->report_def['filters_def'];
-		$where_clause = "";
-		if (isset($filters['Filter_1']))
-			Report::filtersIterate($filters['Filter_1'], $where_clause);
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if(!is_admin($GLOBALS['current_user']) && !$this->focus->disable_row_level_security) {
-			if(!empty($where_clause)){
-				$where_clause .= " AND";
-			}
-			$where_clause .= " ".$this->focus->table_name.".team_set_id IN (SELECT tst.team_set_id FROM
-								team_sets_teams tst INNER JOIN team_memberships team_memberships ON
-								tst.team_id = team_memberships.team_id AND team_memberships.user_id =
-								'{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-		}
-		//END SUGARCRM flav!=sales ONLY
-		$this->where = $where_clause;
-		/*
-		for($i=0; $i < count($this->report_def['filters_def']) ; $i++)
-		{
-			$filter_def = $this->report_def['filters_def'][$i];
-
-			$this->register_field_for_query($filter_def);
-
-		 	 $select_piece = $this->layout_manager->widgetQuery($filter_def);
-			array_push($where_arr,$select_piece);
-		}
+             $select_piece = $this->layout_manager->widgetQuery($filter_def);
+            array_push($where_arr,$select_piece);
+        }
         if(!empty($this->report_def['filters_combiner']) && $this->report_def['filters_combiner'] == 'OR') {
             $combiner = 'OR';
         }
         else {
             $combiner = 'AND';
         }
-		$this->where = implode(" $combiner ",$where_arr);
-		*/
-	}
+        $this->where = implode(" $combiner ",$where_arr);
+        */
+    }
 
-	function filtersIterateForUI($filters, &$verdef_arr_for_filters) {
-		$operator = $filters['operator'];
-		for($i = 0; $i < count($filters) - 1; $i++) {
-			$current_filter = $filters[$i];
-			if (isset($current_filter['operator'])) {
-				Report::filtersIterateForUI($current_filter, $verdef_arr_for_filters);
-			}
-			else {
-				$fieldDef = $this->getFieldDefFromLayoutDef($current_filter);
-				$verdef_arr_for_filters[$fieldDef['name']] = $fieldDef;
-			}
-		}
-	}
-
-	function createFilterStringForUI() {
+    function filtersIterateForUI($filters, &$verdef_arr_for_filters) {
+        $operator = $filters['operator'];
+        for($i = 0; $i < count($filters) - 1; $i++) {
+            $current_filter = $filters[$i];
+            if (isset($current_filter['operator'])) {
+                Report::filtersIterateForUI($current_filter, $verdef_arr_for_filters);
+            }
+            else {
+                $fieldDef = $this->getFieldDefFromLayoutDef($current_filter);
+                $verdef_arr_for_filters[$fieldDef['name']] = $fieldDef;
+            }
+        }
+    }
+    
+    function createFilterStringForUI() {
         global $app_list_strings;
-		$verdef_arr_for_filters = array();
-		$filters = $this->report_def['filters_def'];
-		$originalWhereClause = $this->where;
-		if (isset($filters['Filter_1'])) {
-			Report::filtersIterateForUI($filters['Filter_1'], $verdef_arr_for_filters);
-		} // if
-		$where_clause = $this->where;
-		global $reportAlias;
-		if (empty($reportAlias) || empty($where_clause)) {
-			return "";
-		}
-		// reportalias is a table.cllumn key to filter object
-		foreach($reportAlias as $key => $value) {
-			$columnKey = $value['column_key'];
-			$tableKey = $value['table_key'];
-			$tableArray = $this->report_def['full_table_list'][$tableKey];
-			//This is used for old data. the 'label' in old data is not translated at all.
-			$reportDisplayTableName = ($tableKey == "self") ? (isset($app_list_strings['moduleList'][$tableArray['label']]) ? $app_list_strings['moduleList'][$tableArray['label']] : $tableArray['label']) : $tableArray['name'];
-			$columnKeyArray = explode(":", $columnKey);
-			if (isset($verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray)-1]])) {
-				$varDefLabel = $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray)-1]]['vname'];
-				$varDefLabel = translate($varDefLabel, $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray)-1]]['module']);
-				$finalDisplayName = $reportDisplayTableName . " > " . $varDefLabel;
-				$where_clause = str_replace($key, $finalDisplayName, $where_clause);
-			}
-		} // foreach
-		return $where_clause;
-	} // fn
+        $verdef_arr_for_filters = array();
+        $filters = $this->report_def['filters_def'];
+        $originalWhereClause = $this->where;
+        if (isset($filters['Filter_1'])) {
+            Report::filtersIterateForUI($filters['Filter_1'], $verdef_arr_for_filters);
+        } // if
+        $where_clause = $this->where;
+        global $reportAlias;
+        if (empty($reportAlias) || empty($where_clause)) {
+            return "";
+        }
+        // reportalias is a table.cllumn key to filter object
+        foreach($reportAlias as $key => $value) {
+            $columnKey = $value['column_key'];
+            $tableKey = $value['table_key'];
+            $tableArray = $this->report_def['full_table_list'][$tableKey];
+            //This is used for old data. the 'label' in old data is not translated at all.
+            $reportDisplayTableName = ($tableKey == "self") ? (isset($app_list_strings['moduleList'][$tableArray['label']]) ? $app_list_strings['moduleList'][$tableArray['label']] : $tableArray['label']) : $tableArray['name'];
+            $columnKeyArray = explode(":", $columnKey);
+            if (isset($verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray)-1]])) {
+                $varDefLabel = $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray)-1]]['vname'];
+                $varDefLabel = translate($varDefLabel, $verdef_arr_for_filters[$columnKeyArray[sizeof($columnKeyArray)-1]]['module']);
+                $finalDisplayName = $reportDisplayTableName . " > " . $varDefLabel;
+                $where_clause = str_replace($key, $finalDisplayName, $where_clause);
+            }
+        } // foreach
+        return $where_clause;
+    } // fn
+    
+    function getFieldDefFromLayoutDef(&$layout_def)
+    {
+        $field = null;
+        $relModules = explode('_',$layout_def['table_key']);
+        $module = $relModules[count($relModules)-1];
+        if ( ! empty($this->all_fields[$this->_get_full_key($layout_def)]))
+        {
+        $field = $this->all_fields[$this->_get_full_key($layout_def)];
+        }
+        return $field;
+    }
 
-	function getFieldDefFromLayoutDef(&$layout_def)
-	{
-		$field = null;
-    	$relModules = explode('_',$layout_def['table_key']);
-    	$module = $relModules[count($relModules)-1];
-    	if ( ! empty($this->all_fields[$this->_get_full_key($layout_def)]))
-		{
-    	$field = $this->all_fields[$this->_get_full_key($layout_def)];
-		}
-		return $field;
-	}
-
-	function _get_full_key(&$layout_def)
-	{
-		if ( empty($layout_def['table_key']))
-		{
-			$table_key = 'self';
-		} else {
-			$table_key = $layout_def['table_key'];
-		}
+    function _get_full_key(&$layout_def)
+    {
+        if ( empty($layout_def['table_key']))
+        {
+            $table_key = 'self';
+        } else {
+            $table_key = $layout_def['table_key'];
+        }
         if(empty($layout_def['name']))
             return $table_key;
 
@@ -1057,8 +1056,8 @@ print "<BR>";
                            str_replace('self_','',$linked_field));
                            */
 
-    	return $this->alias_lookup[$linked_field];
-	    //return $linked_field;
+        return $this->alias_lookup[$linked_field];                           
+        //return $linked_field;                           
 
     }
 
@@ -1069,10 +1068,10 @@ print "<BR>";
         return str_replace('link_','l',
                            str_replace('self_','',$linked_field)).'_l';
                            */
-	     return $this->alias_lookup[$linked_field].'_1';
-	    //return $linked_field;
-
-	}
+         return $this->alias_lookup[$linked_field].'_1';
+        //return $linked_field;                           
+                           
+    }
 
     function has_summary_columns()
     {
@@ -1163,7 +1162,7 @@ print "<BR>";
                             $id_column['table_alias'] = strtolower($this->module);
                         } else{
                             $id_column['table_alias'] = $display_column['table_alias'];
-                        }
+                        }    
                         $id_column['column_key'] = $id_column['table_key'].':'.$id_column['name'];
                         $select_piece = $this->layout_manager->widgetQuery($id_column);
                         array_push($this->$field_list_name,$select_piece);
@@ -1176,24 +1175,24 @@ print "<BR>";
                 array_push($this->$field_list_name,$select_piece);
             }
             if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])) {
-            	$field_def = $this->all_fields[$display_column['column_key']];
-            	if (!empty($field_def['ext2'])) {
-					global $beanList;
-					$extModule = new $beanList[$field_def['ext2']];
-					$secondaryTableAlias = $field_def['secondary_table'];
-					if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']])){
-						$secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]['join_table_alias'];
-					}
-            		else if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])){
-						$secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
-					}
-					if (isset($extModule->field_defs['name']['db_concat_fields']))
-		            	$select_piece = db_concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']).' '.$secondaryTableAlias.'_name';
-		            else
-		            	$select_piece = $secondaryTableAlias.'.name '. $secondaryTableAlias.'_name';
+                $field_def = $this->all_fields[$display_column['column_key']];
+                if (!empty($field_def['ext2'])) {
+                    global $beanList;
+                    $extModule = new $beanList[$field_def['ext2']];
+                    $secondaryTableAlias = $field_def['secondary_table'];
+                    if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']])){
+                        $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]['join_table_alias'];                       
+                    }
+                    else if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])){
+                        $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];                      
+                    }                   
+                    if (isset($extModule->field_defs['name']['db_concat_fields']))
+                        $select_piece = db_concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']).' '.$secondaryTableAlias.'_name';
+                    else
+                        $select_piece = $secondaryTableAlias.'.name '. $secondaryTableAlias.'_name';
 
-                	array_push($this->$field_list_name,$select_piece);
-            	}
+                    array_push($this->$field_list_name,$select_piece);
+                }
             }
         }
 
@@ -1348,7 +1347,7 @@ print "<BR>";
             $this->jtcount=0;
             foreach ( $this->full_table_list as $table_key => $table_def)
             {
-
+                
                 // Increment the join table count
                 $this->jtcount++;
 
@@ -1405,40 +1404,40 @@ print "<BR>";
 
                         $this->full_bean_list[$table_def['parent']]->load_relationships();
                         $params['primary_table_name'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
+                                    
+                        if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
+                            // Start ACL check
+                            global $current_user, $mod_strings;
+                            $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
+                            $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
+                            $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
+                            
+                            if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE) {
+                                if((isset($_REQUEST['DynamicAction']) && $_REQUEST['DynamicAction'] == 'retrievePage') || (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Home')) {
+                                    throw new Exception($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
+                                } else {
+                                    sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
+                                }
+                            }
+                                
+                            $this->from .= $this->full_bean_list[$table_def['parent']]->$link_name->getJoin($params);
+                            if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
+                                $this->from .= " AND ".$params['join_table_alias'].".assigned_user_id='".$current_user->id."' ";
+                            // End ACL check                            
+                        }
+                        else { 
+                            // Start ACL check
+                            global $current_user, $mod_strings;
+                            $linkModName = $this->full_bean_list[$table_def['parent']]->$rel_name->getRelatedModuleName();
+                            $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
+                            $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
 
-                       	if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
-							// Start ACL check
-						    global $current_user, $mod_strings;
-						    $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
-						    $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
-						    $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
-
-                       		if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE) {
-								if((isset($_REQUEST['DynamicAction']) && $_REQUEST['DynamicAction'] == 'retrievePage') || (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Home')) {
-									throw new Exception($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
-								} else {
-									sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
-								}
-							}
-
-                        	$this->from .= $this->full_bean_list[$table_def['parent']]->$link_name->getJoin($params);
-							if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
-	                        	$this->from .= " AND ".$params['join_table_alias'].".assigned_user_id='".$current_user->id."' ";
-							// End ACL check
-                       	}
-                        else {
-							// Start ACL check
-						    global $current_user, $mod_strings;
-						    $linkModName = $this->full_bean_list[$table_def['parent']]->$rel_name->getRelatedModuleName();
-						    $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
-						    $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
-
-							if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-								sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
-                        	$this->from .= $this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params);
-							if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
-	                        	$this->from .= " AND ".$params['join_table_alias'].".assigned_user_id='".$current_user->id."' ";
-							// End ACL check
+                            if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
+                                sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
+                            $this->from .= $this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params);
+                            if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
+                                $this->from .= " AND ".$params['join_table_alias'].".assigned_user_id='".$current_user->id."' ";
+                            // End ACL check                            
                         }
                         //echo("<br>Join for $link_name (parent: ".$table_def['parent']."):<br>".$this->from."<pre>".print_r($params,true)."</pre>");
                     }
@@ -1447,21 +1446,20 @@ print "<BR>";
                         die("Could not find link name, searching through for: ".$link_name);
                     }
                }
-
+               
                 else
                 {
                     die("table_def[parent] is not an object! (".$table_def['parent'].")<br>");
                 }
-
+               
                 // Do not add team security on modules that opt out of row level security
                 require_once($beanFiles[$table_def['bean_name']]);
                 $focus = new $table_def['bean_name']();
                 //BEGIN SUGARCRM flav!=sales ONLY
                 if(!is_admin($GLOBALS['current_user']) && !$focus->disable_row_level_security) {
-                	$this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
-									tst INNER JOIN team_memberships team_memberships ON tst.team_id =
-									team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-
+                    $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams 
+                                    tst INNER JOIN team_memberships team_memberships ON tst.team_id = 
+                                    team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
                     //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
                 }
                 //END SUGARCRM flav!=sales ONLY
@@ -1587,26 +1585,17 @@ print "<BR>";
         $query .= $this->from ."\n";
 
         $where_auto = " " . $this->focus->table_name. ".deleted=0 \n";
-		// Start ACL check
-	    global $current_user, $mod_strings;
-	    $list_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'list',$type='module');
-	    $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view',$type='module');
+        // Start ACL check
+        global $current_user, $mod_strings;
+        $list_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'list',$type='module');
+        $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view',$type='module');
+        
+        if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
+            sugar_die($mod_strings['LBL_NO_ACCESS']);
+        if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
+            $where_auto .= " AND ". $this->focus->table_name. ".assigned_user_id='".$current_user->id."' \n";
 
-		if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
-			sugar_die($mod_strings['LBL_NO_ACCESS']);
-		if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER) {
-		    //BEGIN SUGARCRM flav=pro ONLY
-			if ( $this->focus->table_name == 'forecasts' ) {
-			    $where_auto .= " AND ". $this->focus->table_name. ".user_id='".$current_user->id."' \n";
-			}
-			else {
-			//END SUGARCRM flav=pro ONLY
-			    $where_auto .= " AND ". $this->focus->table_name. ".assigned_user_id='".$current_user->id."' \n";
-			//BEGIN SUGARCRM flav=pro ONLY
-			}
-			//END SUGARCRM flav=pro ONLY
-        }
-		// End ACL check
+        // End ACL check
 
         if(! empty($this->where))
                         $query .= " WHERE ($this->where) \nAND ".$where_auto;
@@ -1729,7 +1718,7 @@ print "<BR>";
                         $multiple = 0;
                         $order_by_string2 ='';
                         $first = true;
-
+                        
                         //parse each order by and create mssql friendly order by
                         foreach($this->order_by_arr as $oba){
 
@@ -1784,20 +1773,21 @@ print "<BR>";
                     //check to see if there is a group by
                     if(isset($groupby)){
                         $order_by_string = "CharIndex(".$groupby." + '``', '". $order_by_string  ."') ". $ASC_DESC ;
-                        //#27518
+                        //#27518   
                         if(!empty($order_by_string2)){
                             $order_by_string .= ' ,'.$order_by_string2;
                         }
                         //end
                     }
                 }
-                //#26632
-                	if(empty($order_by_string) && !empty($order_by_string2)){
-                    	$query .= " ORDER BY ". $order_by_string2;
-                	}
-                	else{
-                		$query .= " ORDER BY ". $order_by_string;
-            		}
+                //#26632   
+                    if(empty($order_by_string) && !empty($order_by_string2)){
+                        $query .= " ORDER BY ". $order_by_string2;
+                    }
+                    else{
+                        $query .= " ORDER BY ". $order_by_string;
+                    }
+
                     }
              }else{
                 $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
@@ -1846,7 +1836,7 @@ print "<BR>";
         else {
             $this->layout_manager->setAttribute('context', 'HeaderCell');
         }
-
+        
         $header_row = array();
         $summary_count = 0;
 
@@ -2045,29 +2035,29 @@ print "<BR>";
             $display_column['varname'] = $display_column['label'];
             $labelToDataTypeArray[$display_column['label']] = $display_column;
         } // foreach
-		return $labelToDataTypeArray;
-	} // fn
-
-	function get_summary_group_count(){
-		return $this->db->getRowCount($this->summary_result);
-	}
-	function get_next_row($result_field_name = 'result', $column_field_name = 'display_columns', $skip_non_summary_columns=false, $exporting = false) {
+        return $labelToDataTypeArray;
+    } // fn
+    
+    function get_summary_group_count(){
+        return $this->db->getRowCount($this->summary_result);
+    }
+    function get_next_row($result_field_name = 'result', $column_field_name = 'display_columns', $skip_non_summary_columns=false, $exporting = false) {
         $chart_cells = array();
 
-		if ($this->do_export) {
-			$db_row = $this->db->fetchByAssoc($this->$result_field_name,-1,false);
-		}
-		else {
-			$db_row = $this->db->fetchByAssoc($this->$result_field_name);
-		}
-		
-		if ( $db_row == 0 || sizeof($db_row) == 0 ) {
-			return 0;
-		}
-		if($result_field_name == 'summary_result') {
-			if(!empty($this->child_filter) && !empty($db_row[$this->child_filter_name])) {
-				$this->child_filter_by =$db_row[$this->child_filter_name];
-			}
+        if ($this->do_export) {
+            $db_row = $this->db->fetchByAssoc($this->$result_field_name,-1,false);
+        }
+        else {
+            $db_row = $this->db->fetchByAssoc($this->$result_field_name);
+        }
+
+        if ( $db_row == 0 || sizeof($db_row) == 0 ) {
+            return 0;
+        }
+        if($result_field_name == 'summary_result') {
+            if(!empty($this->child_filter) && !empty($db_row[$this->child_filter_name])) {
+                $this->child_filter_by =$db_row[$this->child_filter_name];
+            }
             else {
                 $this->child_filter = '';
                 $this->child_filter_by = '';
@@ -2083,7 +2073,7 @@ print "<BR>";
             $fields[strtoupper($key)] = $value;
         }
 
-		// here we want to make copies, so use foreach
+        // here we want to make copies, so use foreach      
 
         foreach($this->report_def[$column_field_name] as $display_column) {
             $display_column['table_alias'] = $this->getTableFromField($display_column);
@@ -2111,48 +2101,47 @@ print "<BR>";
             else {
                 $this->layout_manager->setAttribute('context', 'List');
             }
-
-			if ($display_column['type'] !='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) {
-				$pos = $display_column['table_key'];
-				$module_name = '';
-				if($pos) {
-					$module_name = substr($pos ,strrpos($pos,':')+1);
-				}
-
-				if (isset($display_column['group_function'])) {
-            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
-
+            
+            if ($display_column['type']!='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) { 
+                $pos = $display_column['table_key'];
+                $module_name = '';
+                if($pos) {
+                    $module_name = substr($pos ,strrpos($pos,':')+1);
+                }
+                
+                if (isset($display_column['group_function'])) {
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
-                }          
-              
-                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-
-				if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
-					 switch($display_column['name']) {
-				        case 'iso4217':
-				            $display = $this->currency_obj->getDefaultISO4217();
-				            break;
-				        case 'symbol':
-				            $display = $this->currency_obj->getDefaultCurrencySymbol();
-				            break;
-				        case 'name':
-				            $display = $this->currency_obj->getDefaultCurrencyName();
-				            break;
-				        default:
-				        	$display = $this->layout_manager->widgetDisplay($display_column);
-				     }
-				     $display_column['fields'][$field_name] = $display;
-				}else {
-            	   $display = $this->layout_manager->widgetDisplay($display_column);
-				}
-
-			} else {
-				if (isset($display_column['group_function'])) {
-            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
-
+                
+                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
+                }
+                                         
+                if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
+                     switch($display_column['name']) {
+                        case 'iso4217':
+                            $display = $this->currency_obj->getDefaultISO4217();                            
+                            break;
+                        case 'symbol':
+                            $display = $this->currency_obj->getDefaultCurrencySymbol();
+                            break;                      
+                        case 'name':
+                            $display = $this->currency_obj->getDefaultCurrencyName();
+                            break;
+                        default:
+                            $display = $this->layout_manager->widgetDisplay($display_column);
+                     }
+                     $display_column['fields'][$field_name] = $display;
+                }else { 
+                   $display = $this->layout_manager->widgetDisplay($display_column);
+                }
+                
+            } else {
+                
+                if (isset($display_column['group_function'])) {
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
                 }          
@@ -2160,31 +2149,41 @@ print "<BR>";
                 if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
                     $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-
-            	if (isset($display_column['fields'][$field_name]))
-            	{
-            		$display = $display_column['fields'][$field_name];
-            	}
-            	
-				global $locale;				   
-				$params = array();
-				$params['currency_id'] = $locale->getPrecedentPreference('currency');
-			    $params['convert'] = true;
-			    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-			    $display = currency_format_number($display, $params);          	
-
+                
+                if (isset($display_column['fields'][$field_name])) {
+                    $display = $display_column['fields'][$field_name];
+                }
+                    
+                global $locale;                
+                $params = array();
+                $params['currency_id'] = $locale->getPrecedentPreference('currency');
+                $params['convert'] = true;
+                $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+                $display = currency_format_number($display, $params);
+            
             }
-            		
+/*
+            if (isset($display_column['type']) && $display_column['type'] == 'bool') {
+                if (isset($display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])])) {
+                    $display = $display_column['fields'][strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])];
+                    if ($display) {
+                        $display = "True";
+                    } else {
+                        $display = "False";
+                    } // else
+                } // if
+            }
+*/
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
                 $display = $this->layout_manager->widgetDisplay($display_column);
             }
-            
+
             if (isset($display_column['type'])) {
-
-            	$fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
-
-            	if (array_key_exists($field_name, $display_column['fields'])) {
-            		$displayData = $display_column['fields'][$field_name];
+                
+                $fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])); 
+                
+                if (array_key_exists($field_name, $display_column['fields'])) {
+                    $displayData = $display_column['fields'][$field_name];
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum'  || $display_column['type'] == 'enum' && $displayData != '0')) {
                       $display = "";
                     }
@@ -2193,11 +2192,24 @@ print "<BR>";
                     } // if
                 } // if
             } // if
-
+            
             //  for charts
             if($column_field_name == 'summary_columns' && $this->do_chart) {
+                //_pp($display);
                 $raw_display = preg_replace('/^\$/','',$display);
+               /*
+                if ($type == 'currency') {
+                    require_once('modules/Currencies/Currency.php');
+                    global $locale;                
+                    $params = array();
+                    $params['currency_id'] = $locale->getPrecedentPreference('currency');
+                    $params['convert'] = true;
+                    $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
+                    $raw_display = currency_format_number($raw_display, $params);
+                }*/
+                
                 $cell_arr = array('val'=>$raw_display,'key'=>$display_column['column_key']);
+                //_pp($cell_arr);
                 array_push($chart_cells,$cell_arr);
             }
 
@@ -2240,111 +2252,111 @@ print "<BR>";
         return $row;
     }
 
-	function save($report_name){
-		global $current_user;
-		$saved_vars = array();
+    function save($report_name){
+        global $current_user;
+        $saved_vars = array();
 
-		$saved_report = new SavedReport();
-		$report_type = 'tabular';
-		$chart_type = 'none';
+        $saved_report = new SavedReport();
+        $report_type = 'tabular';
+        $chart_type = 'none';
+        
+        if (isset($this->report_def['chart_type'])) {
+            $chart_type = $this->report_def['chart_type'];
+        }
+        if ( $this->report_def['report_type'] == 'summary'){
+            $report_type = 'summary';
+            if ( ! empty( $this->report_def['display_columns'])){
+                $report_type = 'detailed_summary';
+            } else {
+                if (!empty($this->report_def['group_defs'])) {
+                    $group_def_array = $this->report_def['group_defs'];
+                    if (isset($this->report_def['layout_options']) && 
+                        ((count($group_def_array) == 2) || (count($group_def_array) == 3))) {
+                            $report_type = 'Matrix';
+                    } // if
+                } // if             
+            } // else
+        }
 
-		if (isset($this->report_def['chart_type'])) {
-			$chart_type = $this->report_def['chart_type'];
-		}
-		if ( $this->report_def['report_type'] == 'summary'){
-  		 	$report_type = 'summary';
-			if ( ! empty( $this->report_def['display_columns'])){
-  		 		$report_type = 'detailed_summary';
-			} else {
-  		 		if (!empty($this->report_def['group_defs'])) {
-  		 			$group_def_array = $this->report_def['group_defs'];
-  		 			if (isset($this->report_def['layout_options']) &&
-  		 				((count($group_def_array) == 2) || (count($group_def_array) == 3))) {
-  		 					$report_type = 'Matrix';
-  		 			} // if
-  		 		} // if
-			} // else
-		}
+        if ( empty($_REQUEST['record'])){
+            $_REQUEST['record'] = -1;
+        }
 
-	    if ( empty($_REQUEST['record'])){
-	    	$_REQUEST['record'] = -1;
-	    }
-
-		require_once('include/formbase.php');
+        require_once('include/formbase.php');
         populateFromPost('', $saved_report);
+        
+        $result = $saved_report->save_report(
+            $_REQUEST['record'],
+            $_REQUEST['assigned_user_id'],
+            $report_name,
+            $this->module,
+            $report_type,
+            $this->report_def_str,
+            0,
+            $saved_report->team_id,
+            $chart_type);
+        $this->saved_report = &$saved_report;
+        
+        if(!empty($this->saved_report)) {
+            $_REQUEST['record'] = $this->saved_report->id;
+        }
+        return $result;
+    }
 
-		$result = $saved_report->save_report(
-	        $_REQUEST['record'],
-	        $_REQUEST['assigned_user_id'],
-	        $report_name,
-	        $this->module,
-	        $report_type,
-	        $this->report_def_str,
-	        0,
-	        $saved_report->team_id,
-	        $chart_type);
-  		$this->saved_report = &$saved_report;
+    function cache_modules_def_js()
+    {
+        global $current_language, $current_user;
+        if (!isset($_SESSION['reports_cache']) || !file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js'))
+        {
+            require_once('modules/Reports/templates/templates_modules_def_js.php');
+            ob_start();
+            template_module_defs_js($args);
 
-  		if(!empty($this->saved_report)) {
-	    	$_REQUEST['record'] = $this->saved_report->id;
-  		}
-		return $result;
-	}
+            $contents = ob_get_clean();
+            $filename = $GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js';
+            if (is_writable($GLOBALS['sugar_config']['cache_dir'].'modules/'))
+            {
+                $fp =sugar_fopen($filename,'w+');
+                fwrite($fp,$contents);
+                fclose($fp);
+            }
+            // Only set this if we're not being called from the home page.
+            // Charts on the home page go through this code as well and 
+            // _SESSION hasn't been initialized completely and this causes errors with global vars.
+            if (!isset($_REQUEST['module']) || $_REQUEST['module'] != 'Home')
+                $_SESSION['reports_cache'] = true;
+        }
 
-	function cache_modules_def_js()
-	{
-		global $current_language, $current_user;
-		if (!isset($_SESSION['reports_cache']) || !file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js'))
-		{
-			require_once('modules/Reports/templates/templates_modules_def_js.php');
-			ob_start();
-			template_module_defs_js($args);
+    }
 
-			$contents = ob_get_clean();
-			$filename = $GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js';
-			if (is_writable($GLOBALS['sugar_config']['cache_dir'].'modules/'))
-			{
-				$fp =sugar_fopen($filename,'w+');
-				fwrite($fp,$contents);
-				fclose($fp);
-			}
-			// Only set this if we're not being called from the home page.
-			// Charts on the home page go through this code as well and
-			// _SESSION hasn't been initialized completely and this causes errors with global vars.
-			if (!isset($_REQUEST['module']) || $_REQUEST['module'] != 'Home')
-				$_SESSION['reports_cache'] = true;
-		}
+    function is_old_content($content)
+    {
 
-	}
+        if ( preg_match('/report_type\=/', $content))
+        {
+            return true;
+        }
+        return false;
 
-	function is_old_content($content)
-	{
+    }
 
-		if ( preg_match('/report_type\=/', $content))
-		{
-			return true;
-		}
-		return false;
+    function run_chart_queries()
+    {
 
-	}
+        $this->run_summary_query();
 
-	function run_chart_queries()
-	{
+        $this->get_summary_header_row();
 
-		$this->run_summary_query();
+        while (( $row = $this->get_summary_next_row() ) != 0 )
+        {
+        }
+        if($this->has_summary_columns())
+        {
+            $this->run_total_query();
+        }
+        $this->get_summary_total_row();
 
-		$this->get_summary_header_row();
-
-		while (( $row = $this->get_summary_next_row() ) != 0 )
-		{
-		}
-		if($this->has_summary_columns())
-		{
-			$this->run_total_query();
-		}
-		$this->get_summary_total_row();
-
-	}
+    }
 
   // static function to return the modules associated to a report definition
   function &getModules(&$report_def)
@@ -2359,7 +2371,7 @@ print "<BR>";
     foreach($report_def['links_def'] as $name) {
       $properties = $linked_fields[$name];
       $class = load_link_class($properties);
-
+      
       $link = new $class($properties['relationship'], $focus, $properties);
       $module = $link->getRelatedModuleName();
       $modules_hash[$module] = 1;
@@ -2386,6 +2398,7 @@ print "<BR>";
       
       return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));   
   }
+  
 }
 
 ?>

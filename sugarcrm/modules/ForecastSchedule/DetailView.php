@@ -62,7 +62,7 @@ else {
 	header("Location: index.php?module=TimePeriods&action=DetailView&return_id=".$_REQUEST['return_id']);
 }
 
-echo getClassicModuleTitle($mod_strings['LBL_FS_MODULE_NAME'], array($mod_strings['LBL_FS_MODULE_NAME'],$focus->get_summary_text()), true);
+echo get_module_title($mod_strings['LBL_FS_MODULE_NAME'], $mod_strings['LBL_FS_MODULE_NAME']. ": " . $focus->get_summary_text(), true);
 
 
 

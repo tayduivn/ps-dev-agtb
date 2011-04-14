@@ -10,17 +10,17 @@ class UpgradeHistoryTest extends Sugar_PHPUnit_Framework_TestCase
         $patchToCheck->id = '';
 		//BEGIN SUGARCRM flav=ent ONLY
         if ($GLOBALS['db']->dbType == 'oci8') {
-            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name, md5sum, date_entered) VALUES
-('444','abc','444',to_date('2008-12-20 08:08:20','YYYY-MM-DD hh24:mi:ss'))");
-            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name, md5sum, date_entered) VALUES
-('555','abc','555',to_date('2008-12-20 08:08:20','YYYY-MM-DD hh24:mi:ss'))");	
+            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name, date_entered) VALUES
+('444', 'abc',to_date('2008-12-20 08:08:20','YYYY-MM-DD hh24:mi:ss'))");
+            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name , date_entered) VALUES
+('555','abc', to_date('2008-12-20 08:08:20','YYYY-MM-DD hh24:mi:ss'))");	
 		}
 		else {
         //END SUGARCRM flav=ent ONLY
-            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name, md5sum, date_entered) VALUES
-('444','abc','444','2008-12-20 08:08:20') ");
-            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name, md5sum, date_entered) VALUES
-('555','abc','555','2008-12-20 08:08:20')");
+            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name, date_entered) VALUES
+('444', 'abc','2008-12-20 08:08:20') ");
+            $GLOBALS['db']->query("INSERT INTO upgrade_history (id, name , date_entered) VALUES
+('555','abc', '2008-12-20 08:08:20')");
         //BEGIN SUGARCRM flav=ent ONLY    
 		}
 		//END SUGARCRM flav=ent ONLY

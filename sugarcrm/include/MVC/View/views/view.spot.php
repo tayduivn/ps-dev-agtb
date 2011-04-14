@@ -32,48 +32,27 @@ class ViewSpot extends ViewAjax
     public function display()
     {
         if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
-            $usa = new UnifiedSearchAdvanced();
+            $usa = new UnifiedSearchAdvanced;
             $usa->buildCache();
         }
         
         // load the list of unified search enabled modules
         $modules = array();
         
-        //check to see if the user has customized the list of modules available to search
+        // check to see if the user has customized the list of modules available to search
         $users_modules = $GLOBALS['current_user']->getPreference('globalSearch', 'search');
         if(!isset($users_modules)) {
             $unified_search_modules = array();
             include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
-            foreach ($unified_search_modules as $key => $value)
-            {
+            foreach ( $unified_search_modules as $key => $value )
                 $modules[$key] = $key;
-            }
-        } else {
-            foreach ($users_modules as $key => $value)
-            {
+        }
+        // otherwise, just use them all
+        else {
+            foreach ( $users_modules as $key => $value )
                 $modules[$key] = $key;
-            }
         }
 		
-        //Filter out the modules that are not allowed to be searched upon
-        if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
-        {
-            $usa = new UnifiedSearchAdvanced();
-            $usa->createUnifiedSearchModulesDisplay();
-        }
-        
-        include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
-        if(!empty($unified_search_modules_display))
-        {
-	        foreach($modules as $module)
-	        {
-	        	if(isset($unified_search_modules_display[$module]['visible']) && $unified_search_modules_display[$module]['visible'] === false)
-	        	{
-	        		unset($modules[$module]);
-	        	}
-	        }
-        }
-        
 		$offset = -1;
 		
 		// make sure the current module appears first in the list

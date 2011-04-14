@@ -1,8 +1,9 @@
 <?php
+require_once 'PHPUnit/Framework/MockObject/Mock.php';
 require_once("modules/Accounts/Account.php");
 
 /**
- * @ticket 24095
+ * Test cases for Bug 24095
  */
 class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -11,7 +12,7 @@ class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        $this->accountMockBean = $this->getMock('Account' , array('hasCustomFields'));
+        $this->accountMockBean = PHPUnit_Framework_MockObject_Mock::generate('Account' , array('hasCustomFields'));
         $this->_tablename = 'test' . date("YmdHis");
         if ( isset($GLOBALS['installing']) )
             $this->_old_installing = $GLOBALS['installing'];
@@ -37,17 +38,13 @@ class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
-        if ( isset($this->_old_installing) ) {
+        if ( isset($this->_old_installing) )
             $GLOBALS['installing'] = $this->_old_installing;
-        }
-        else {
-            unset($GLOBALS['installing']);
-        }
     }
     
     public function testDynamicFieldsRetrieveWorks()
     {
-        $bean = $this->accountMockBean;
+        $bean =new $this->accountMockBean->mockClassName();
         $bean->custom_fields = new DynamicField($bean->module_dir);
         $bean->custom_fields->setup($bean);
         $bean->expects($this->any())
@@ -60,3 +57,5 @@ class Bug24095Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($bean->foo_c, '67890');
     }
 }
+
+

@@ -105,7 +105,7 @@ echo getClassicModuleTitle(
             "<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",
            translate('LBL_WIRELESS_MODULES_ENABLE')
            ), 
-        false
+        true
         );
 echo $this->ss->fetch('modules/Administration/templates/enableWirelessModules.tpl');
 

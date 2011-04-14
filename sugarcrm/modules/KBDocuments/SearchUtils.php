@@ -321,7 +321,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
        //BEGIN SUGARCRM flav=ent ONLY
        $query .= " AND k.is_external_article = 1";
        //END SUGARCRM flav=ent ONLY
-	$query .= "	AND kt.kbtag_id in ($queryIds)";
+		$query .= "	AND kt.kbtag_id in ($queryIds)";
 
        $result = $bean->db->query($query);
 
@@ -381,7 +381,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $list = array();
 
         $spec_SearchVars = array();
-     	$spec_SearchVars['exp_date'] = TimeDate::getInstance()->nowDate();
+     	$spec_SearchVars['exp_date'] = date($GLOBALS['timedate']->dbDayFormat);
      	$spec_SearchVars['exp_date_filter'] = "after";
    	   	$date_filter = return_date_filter($bean->db->dbType, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date']);
         $date_filter = str_replace("kbdocuments", "k", $date_filter);
@@ -530,7 +530,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 		$spec_SearchVars = array();
 
 	    //Create the common date filter to check for expiration and exp_date IS NULL
-		$date_filter = return_date_filter($bean->db->dbType, 'exp_date', 'after', TimeDate::getInstance()->nowDate(), null);
+		$date_filter = return_date_filter($bean->db->dbType, 'exp_date', 'after', date($GLOBALS['timedate']->dbDayFormat), null);
 		$date_filter = "($date_filter OR kbdocuments.exp_date IS NULL) ";
 
 		if(!empty($keywords)) {
@@ -644,7 +644,6 @@ function get_admin_fts_list($where,$isMultiSelect=false){
             //BEGIN SUGARCRM flav=ent ONLY
             $portal_most_recent_query .= '  AND kbdocuments.is_external_article = 1 ';
              //END SUGARCRM flav=ent ONLY
-
             //add where clause if specified
             if (!empty($where)){
                 $portal_most_recent_query .=  $where;

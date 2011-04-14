@@ -415,7 +415,7 @@ function get_unique_system_id($session, $unique_key, $system_name = '', $install
 		        $system->user_id = $current_user->id;
 		        $system->system_name = $system_name;
 		        $system->install_method = $install_method;
-		        $system->last_connect_date = TimeDate::getInstance()->nowDb();
+		        $system->last_connect_date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
 		        $system_id = $system->retrieveNextKey();
 		        if($system_id == -1){
 		            $error->set_error('client_deactivated');    

@@ -215,10 +215,6 @@ class TemplateHandler {
             $mod = $beanList[$module];
             if($mod == 'aCase')
                 $mod = 'Case';
-            $defs = $dictionary[$mod]['fields'];
-            $contents .= "{literal}\n";
-            $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view);
-            $contents .= "{/literal}\n";
         }//if
 		//END SUGARCRM flav=pro ONLY
 
@@ -398,17 +394,14 @@ class TemplateHandler {
                             $sqs_objects[$name] = $qsd->getQSTeam();
                             //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
-                            if($field['name'] == 'reports_to_name') {
+                            if($field['name'] == 'reports_to_name')
                                 $sqs_objects[$name] = $qsd->getQSUser('reports_to_name','reports_to_id');
-                            }
-                            // Bug 34643 - Default what the options should be for the assigned_user_name field
-                            //             and then pass thru the fields to be used in the fielddefs.
-                            elseif($field['name'] == 'assigned_user_name') {
-                                $sqs_objects[$name] = $qsd->getQSUser('assigned_user_name','assigned_user_id');
-                            }
                             else {
-                                $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
-                            }
+                                if ($view == "ConvertLead")
+								    $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
+								else
+								    $sqs_objects[$name] = $qsd->getQSUser();
+							}
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->getQSCampaigns();
@@ -485,18 +478,13 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
-        //BEGIN SUGARCRM flav=een ONLY
-        $js .= DependencyManager::getLinkFields($fieldDefs, $view);
-        //END SUGARCRM flav=een ONLY
-
         $dependencies = array_merge(
-           DependencyManager::getDependenciesForFields($fieldDefs, $view),
-           DependencyManager::getDependenciesForView($viewDefs, $view)
+           DependencyManager::getDependenciesForFields($fieldDefs),
+           DependencyManager::getDependenciesForView($viewDefs)
         );
 
-        
         foreach($dependencies as $dep) {
-            $js .= $dep->getJavascript($view);
+            $js .= $dep->getJavascript();
         }
 
         $js .= "</script>";

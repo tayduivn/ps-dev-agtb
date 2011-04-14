@@ -123,9 +123,6 @@ var AjaxObject = {
     handleFailure : function(o) {
 		// Failure handler
 		overlay('Exception occurred...', o.statusText, 'alert');
-		if(document.getElementById('saveButton')) {
-			document.getElementById('saveButton').disabled = false;
-		}
 		//BEGIN SUGARCRM flav=int ONLY
 		debugger;
 		//END SUGARCRM flav=int ONLY

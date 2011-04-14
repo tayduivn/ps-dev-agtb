@@ -43,30 +43,30 @@ class SessionManager extends SugarBean {
     var $session_type;
     var $last_request_time;
     var $date_entered;
-    var $date_modified;
+    var $date_modified; 
     var $is_violation;
     var $num_active_sessions;
-
+    
     var $table_name = "session_active";
     var $history_table_name = "session_history";
     var $object_name = "SessionManager";
     var $module_dir = 'Administration';
-    var $disable_custom_fields = true;
+    
      var $column_fields = Array( "id", "session_id", "last_request_time");
-
+    
     function SessionManager() {
         parent::SugarBean();
         $this->disable_row_level_security =true;
     }
-
+    
     function archiveSession($session_id){
-
+        
         $valid_session = SessionManager::getValidSession($session_id);
         if($valid_session != null){
-            $valid_session->archive();
-        }
+            $valid_session->archive();  
+        }    
     }
-
+    
     /*
      * Move the session of the active table and into the history table
      */
@@ -74,61 +74,61 @@ class SessionManager extends SugarBean {
         //remove from the active table
         $query = "DELETE FROM $this->table_name WHERE id = '$this->id'";
         $result = $this->db->query($query);
-
+        
         //now save to the archvie table
         $this->table_name = $this->history_table_name;
         unset($this->id);
-        $this->save();
-        $this->table_name = "session_active";
+        $this->save(); 
+        $this->table_name = "session_active";      
     }
-
+    
     /*
      * Whether or not we can add another session
-     *
+     * 
      * return true if we can add a session, false if there are no available slots
      */
     function canAddSession(){
         $this->archiveInactiveSessions();
-
-        //we may not even have to check b/c the license could have the
+                
+        //we may not even have to check b/c the license could have the 
         //license_enforce_portal_user_limit set to 0
         if($this->getEnforcePortalUserLimit()) {
-            $num_active = $this->getNumActiveSessions();
-            $num_users = $this->getNumPortalUsers();
-
-            $num = $num_users;
-
-            if(file_exists('modules\Administration\ncc_config.php')){
-                require_once('modules\Administration\ncc_config.php');
-                $num = $ncc_config['value'];
-            }
-
-            if(!isset($num)){
-                $num = 1.2;
-            }
-            $num = $num * $num_users;
-
-            $GLOBALS['log']->debug("Number of valid concurrent sessions: ".$num);
-            if($num_active < $num){
-                return true;
-            }else{
-            return false;
-            }
+        	$num_active = $this->getNumActiveSessions();
+       		$num_users = $this->getNumPortalUsers();
+        
+        	$num = $num_users;
+        	
+        	if(file_exists('modules\Administration\ncc_config.php')){
+		    	require_once('modules\Administration\ncc_config.php');
+		      	$num = $ncc_config['value'];
+		    }
+		        
+		   	if(!isset($num)){
+		    	$num = 1.2;
+		   	}
+		   	$num = $num * $num_users;
+	 
+	        $GLOBALS['log']->debug("Number of valid concurrent sessions: ".$num);
+	        if($num_active < $num){
+	            return true;
+	        }else{
+	           return false;
+	        }	
         }else{
-            //if we are not enforcing the portal user limit then
-            //do not worry about how many active sessions we can have, just assume we can add one.
-            return true;
+        	//if we are not enforcing the portal user limit then 
+        	//do not worry about how many active sessions we can have, just assume we can add one.
+	        return true;
         }
-
+	   
     }
-
+    
     /*
      * Retrieves the number of currently active sessions
      */
     function getNumActiveSessions(){
-       $result = $this->db->query("SELECT count(*) from $this->table_name");
+       $result = $this->db->query("SELECT count(*) from $this->table_name"); 
        $row = $this->db->fetchByAssoc($result);
-       return $row['count(*)'];
+       return $row['count(*)'];   
     }
 
     /*
@@ -139,53 +139,55 @@ class SessionManager extends SugarBean {
         $time_diff = $this->getTimeDiff();
         $return_list = $this->get_list("", "$this->table_name.last_request_time < " . db_convert("'$time_diff'", 'datetime'));
         foreach($return_list['list'] as $session){
-                $session->archive();
-        }
+                $session->archive();     
+        } 
     }
-
+    
     /*
      * Determine whether the session is still valid
-     *
+     * 
      * @param session_id
-     *
+     * 
      * return   true if session is still valid, false otherwise
      */
     function getValidSession($session_id){
         $GLOBALS['log']->debug("Checking session validity");
         $sessionManager = new SessionManager();
-        $session = $sessionManager->retrieve_by_string_fields(array('session_id'=>$session_id));
+        $session = $sessionManager->retrieve_by_string_fields(array('session_id'=>$session_id)); 
         if($session != null){
             $GLOBALS['log']->debug("Time Diff: ". $sessionManager->getTimeDiff());
             $GLOBALS['log']->debug("LAST REQUEST TIME: ". $session->last_request_time);
             if($session->last_request_time > $sessionManager->getTimeDiff()){
                  $GLOBALS['log']->debug("Session Time Succeeded");
-                return $session;
+                return $session;    
             }
         }else{
             return null;
         }
     }
-
+    
     /*
-     * Return GMT date that represents the cutoff for expiring sessions
-     *
-     * The date returned is "now" - X seconds, where X is the session timeout
-     * return @string
+     * Return the proper offset from GMT
+     * 
+     * return a gmt offset accounting for the number of seconds from now
      */
     function getTimeDiff(){
         $admin = new Administration();
         $admin->retrieveSettings('system');
-        $session_timeout = abs($admin->settings['system_session_timeout']);
+        $session_timeout = $admin->settings['system_session_timeout'];
         if(!isset($session_timeout)){
-            $session_timeout = abs(ini_get('session.gc_maxlifetime'));
+            $session_timeout = ini_get('session.gc_maxlifetime');
         }
         $GLOBALS['log']->debug("System Session Timeout: ".$session_timeout);
-
-        global $timedate;
-        $now = $timedate->getNow();
-        return $timedate->asDb($now->get("-{$session_timeout} seconds"));
-    }
-
+       
+        $time = time();
+        $gm_time = $time - date('Z', $time);
+        $date_array = getdate($gm_time);
+        $time_diff = mktime($date_array['hours'],$date_array['minutes'],$date_array['seconds'] - $session_timeout,$date_array['mon'],$date_array['mday'],$date_array['year']);
+        $time_diff = date($GLOBALS['timedate']->get_db_date_time_format(), $time_diff); 
+        return $time_diff;
+    }  
+    
     /*
      * Return the number of allowed portal users
      * as defined by the license
@@ -195,17 +197,17 @@ class SessionManager extends SugarBean {
         $admin->retrieveSettings('license');
         return $admin->settings['license_num_portal_users'];
     }
-
+    
     /**
      * Return boolean indicating whether or not portal user limits are enforced
-     *
+     * 
      */
     function getEnforcePortalUserLimit() {
         $admin = new Administration();
         $admin->retrieveSettings('license');
-        return $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;
+        return $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;    	
     }
-
+    
     /*
      * Overload the save function so we can log the number of currently active sessions and if this
      * session is in violation of the license
@@ -214,7 +216,7 @@ class SessionManager extends SugarBean {
     {
         if($this->table_name != $this->history_table_name && empty($this->id)){
             $this->num_active_sessions = $this->getNumActiveSessions();
-
+        
             $num_users = $this->getNumPortalUsers();
             $this->is_violation = 0;
             if($this->num_active_sessions > $num_users){

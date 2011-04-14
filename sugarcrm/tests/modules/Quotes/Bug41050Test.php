@@ -7,64 +7,69 @@ class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	var $quote;
 	var $account;
+
     
     public function setup()
     {
-        global $current_user, $currentModule ;
+		 global $current_user, $currentModule ;
 		 
-        $beanList = array();
+		 $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->is_admin = '1';
-        $GLOBALS['current_user']->save();
+		 //make sure we have a current user
+		 if(empty($current_user) || empty($current_user->id)){
+		 	$usr = new User();
+		 	$usr->retrieve('1');
+		 	$current_user = $usr;	
+		 	
 		 
-        $time = date('Y-m-d H:i:s');
-        //for the purpose of this test, we need to create an account and quote object and relate them
+		 }
+		 $time = date('Y-m-d H:i:s');
+		//for the purpose of this test, we need to create an account and quote object and relate them
 
-        //create account
-        $account = new Account();
+		//create account
+		$account = new Account();
         $account->name = 'quote test account name';
         $account->assigned_user_id = $current_user->id;
         $account->disable_custom_fields = true;
         $account->save();
         $this->account = $account;
 
-        //create quote
-        $timeDate = new TimeDate();
-        $quote = new Quote();
-        $quote->name = 'quote test ' . time();
-        $quote->quote_stage = 'Draft';
-        $quote->date_quote_expected_closed = $timeDate->to_display_date(date('Y')+1 .'-01-01');;
-        $quote->assigned_id = $current_user->id;
-        $quote->save();		
-        $this->quote = $quote;
+		//create quote
+		$timeDate = new TimeDate();
+    	$quote = new Quote();
+    	$quote->name = 'quote test ' . time();
+    	$quote->quote_stage = 'Draft';
+    	$quote->date_quote_expected_closed = $timeDate->to_display_date(date('Y')+1 .'-01-01');;
+    	$quote->assigned_id = $current_user->id;
+    	$quote->save();		
+		$this->quote = $quote;
 		
-        //relate the two with different roles on relationship
-        $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Bill To', '$time', 0)");
-        $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', {$quote->id}', '{$account->id}', 'Ship To', '$time', 0)");
+		//relate the two with different roles on relationship
+		$GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Bill To', '$time', 0)");
+		$GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', {$quote->id}', '{$account->id}', 'Ship To', '$time', 0)");
+		
     }
     
     public function tearDown()
     {
-        //delete the account, quote and relationship table
-        $GLOBALS['db']->query('DELETE FROM quotes WHERE id = \''.$this->quote->id.'\' ');
-        $GLOBALS['db']->query('DELETE FROM accounts WHERE id = \''.$this->account->id.'\' ');
-        $GLOBALS['db']->query('DELETE FROM quotes_accounts WHERE account_id = \''.$this->account->id.'\' ');
-        unset($this->account);
+		global $current_user;	
+
+		//delete the account, quote and relationship table
+		$GLOBALS['db']->query('DELETE FROM quotes WHERE id = \''.$this->quote->id.'\' ');
+		$GLOBALS['db']->query('DELETE FROM accounts WHERE id = \''.$this->account->id.'\' ');
+		$GLOBALS['db']->query('DELETE FROM quotes_accounts WHERE account_id = \''.$this->account->id.'\' ');
+		unset($this->account);
         unset($this->quote);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
     }
 	
 
-	public function testRetrieveQuoteByAccountName()
-	{
+	public function testRetrieveQuoteByAccountName(){
 		global $current_user;
 		
 		//We are going to mimic searching for the quotes by account name using the same api the list views do.
@@ -107,5 +112,9 @@ class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
 
 		//if there is no data returned, then an error occurred
 		$this->assertFalse(empty($listResults['data']), 'List view query failed to retrieve the quote by the account name.');
+		
 	}
+	
+	
+
 }

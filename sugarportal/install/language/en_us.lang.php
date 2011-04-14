@@ -330,9 +330,7 @@ $mod_strings = array(
     'LBL_IMPORTANT'         => 'Important',
     'LBL_COPY_SCRIPT'       => 'Place the following lines of code on the webpage where you want Sugar Portal to appear.',
     'LBL_SCRIPT_MOD'        => 'You can modify the portal.js to change the height and width of the iframe',
-    'LBL_SCRIPT_COPY'       => 'Script Copy',
-    'ERR_CHECKSYS_ZIP'					=> 'ZIP support not found: SugarCRM needs ZIP support in order to process compressed files.',
-	'LBL_CHECKSYS_ZIP'					=> 'ZIP Handling Module',
+    'LBL_SCRIPT_COPY'       => 'Script Copy' 
 );
 
 ?>

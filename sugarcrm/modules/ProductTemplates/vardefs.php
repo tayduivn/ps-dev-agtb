@@ -148,6 +148,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	'dbType' => 'varchar',
 	'len' => '255',
 	'source' => 'non-db',
+	//'unified_search' => true,
   ),
   'type_name' =>
   array (
@@ -164,6 +165,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 	'dbType' => 'varchar',
 	'len' => '255',
 	'source' => 'non-db',
+	//'unified_search' => true,
 	'importable' => 'true',
     'studio' => false,
   ),
@@ -268,7 +270,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
         'javascript'=>'onchange="ConvertItems(this.options[selectedIndex].value);"',
         'required'=>false,
 		'reportable'=>false,
-		'importable' => 'true',
+		'importable' => 'false',
 		'comment' => 'Currency of the product'
 	),
   'currency_symbol' =>
@@ -285,7 +287,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'type' => 'varchar',
 		'required'=>false,
 		'reportable'=>false,
-		'importable' => 'false',
+		'importable' => 'true',
 		'comment' => 'Currency of the product'
 	),
 	'status' =>

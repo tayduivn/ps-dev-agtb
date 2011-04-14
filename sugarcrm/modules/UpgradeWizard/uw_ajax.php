@@ -67,7 +67,7 @@ function ajaxSqlProgress($persistence, $sql, $type) {
  */
 function commitAjaxFinalTouches($persistence) {
 	global $current_user;
-	global $timedate;
+	global $locale;
 	global $mod_strings;
 	global $sugar_version;
 
@@ -77,7 +77,7 @@ function commitAjaxFinalTouches($persistence) {
 
 	// convert to UTF8 if needed
 	if(!empty($persistence['allTables']))
-		executeConvertTablesSql($GLOBALS['db']->dbType, $persistence['allTables']);
+		executeConvertTablesSql($db->dbType, $persistence['allTables']);
 
 	// rebuild
 	logThis('Performing UWrebuild()...');
@@ -104,13 +104,13 @@ function commitAjaxFinalTouches($persistence) {
 		}
 
 		//MFH #13468
-		$nowDate = $timedate->nowDbDate();
-		$nowTime = $timedate->asDbTime($timedate->getNow());
+		$nowDate = gmdate($timedate->dbDateFormat);
+		$nowTime = gmdate($timedate->dbTimeFormat);
 		$nowDateTime = $nowDate.' '.$nowTime;
 
 		if($_REQUEST['addTaskReminder'] == 'remind') {
 			logThis('Adding Task for admin for manual merge.');
-
+			
 			$task = new Task();
 			$task->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
 			$task->description = $desc;
@@ -130,7 +130,7 @@ function commitAjaxFinalTouches($persistence) {
 
 		if($_REQUEST['addEmailReminder'] == 'remind') {
 			logThis('Sending Reminder for admin for manual merge.');
-
+			
 			$email = new Email();
 			$email->assigned_user_id = $current_user->id;
 			$email->name = $mod_strings['LBL_UW_COMMIT_ADD_TASK_NAME'];
@@ -380,7 +380,7 @@ function preflightCheckJsonDiffFiles($persistence) {
 	global $mod_strings;
 
 	if(!isset($sugar_version) || empty($sugar_version)) {
-
+		
 	}
 
 	// get md5 sums
@@ -425,9 +425,10 @@ function preflightCheckJsonDiffFiles($persistence) {
 		if(is_file($destFile)) {
 			if(strpos($targetFile, '.php')) {
 				// handle PHP files that were hit with the security regex
+				$fp = sugar_fopen($destFile, 'r');
 				$filesize = filesize($destFile);
 				if($filesize > 0) {
-				    $fileContents = file_get_contents($destFile);
+					$fileContents = fread($fp, $filesize);
 					$targetMd5 = md5($fileContents);
 				}
 			} else {
@@ -617,8 +618,9 @@ function preflightCheckJsonPrepSchemaCheck($persistence, $preflight=true) {
 	if(is_file($sqlScript)) {
 		logThis('found schema upgrade script: '.$sqlScript);
 		$fp = sugar_fopen($sqlScript, 'r');
+		$contents = fread($fp, filesize($sqlScript));
 
-		if(!empty($fp)) {
+		if(rewind($fp)) {
 			$completeLine = '';
 			while($line = fgets($fp)) {
 				if(strpos($line, '--') === false) {
@@ -738,7 +740,8 @@ function preflightCheckJsonFillSchema() {
 	//END SUGARCRM flav=ent ONLY
 	logThis('looking for SQL script for DISPLAY at '.$sqlScript);
 	if(file_exists($sqlScript)) {
-		$contents = sugar_file_get_contents($sqlScript);
+		$fp = sugar_fopen($sqlScript, 'r');
+		$contents = fread($fp, filesize($sqlScript));
 		$schema  = "<p><a href='javascript:void(0); toggleNwFiles(\"schemashow\");'>{$mod_strings['LBL_UW_SHOW_SCHEMA']}</a>";
 		$schema .= "<div id='schemashow' style='display:none;'>";
 		$schema .= "<textarea readonly cols='80' rows='10'>{$contents}</textarea>";

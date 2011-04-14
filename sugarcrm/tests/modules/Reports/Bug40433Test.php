@@ -32,7 +32,6 @@ class Bug40433Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function tearDown()
 	{
-	    $this->reportInstance->db->dbType = $this->dbType;	
 		$this->reportInstance = null;
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);

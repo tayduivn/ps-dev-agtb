@@ -57,9 +57,7 @@ class GadgetDashlet extends Dashlet {
                 
         // if no custom title, use default
         if(empty($def['title'])) $this->title = $this->dashletStrings['LBL_TITLE'];
-        else $this->title = $def['title'];   
-        
-        if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
+        else $this->title = $def['title'];        
     }
 
     /**
@@ -108,12 +106,7 @@ class GadgetDashlet extends Dashlet {
         $ss->assign('title', $this->title);
         $ss->assign('gadget', $this->gadget);
         $ss->assign('category', $this->category);
-        if($this->isAutoRefreshable()) {
-       		$ss->assign('isRefreshable', true);
-			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
-			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
-			$ss->assign('autoRefreshSelect', $this->autoRefresh);
-		}
+
        
         $str = $ss->fetch('modules/Home/Dashlets/GadgetDashlet/GadgetDashletOptions.tpl');  
         return parent::displayOptions() . $str;
@@ -131,7 +124,6 @@ class GadgetDashlet extends Dashlet {
         $options['title'] = $_REQUEST['title'];
         $options['gadget'] = $_REQUEST['gadget'];
         $options['category'] = $_REQUEST['category'];
-        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
         return $options;
     }
 

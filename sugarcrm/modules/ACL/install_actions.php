@@ -42,43 +42,43 @@ $GLOBALS['db']->query("UPDATE acl_actions set acltype = 'TrackerQuery' where cat
 //END SUGARCRM flav=pro ONLY
 
 if(is_admin($current_user)){
-    foreach($ACLbeanList as $module=>$class){
+	foreach($ACLbeanList as $module=>$class){
 
-        if(empty($installed_classes[$class]) && isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
-            if($class == 'Tracker'){
-                //BEGIN SUGARCRM flav=pro ONLY
-                ACLAction::addActions('Trackers', 'Tracker');
-                //END SUGARCRM flav=pro ONLY
-            } else {
-                require_once($beanFiles[$class]);
-                $mod = new $class();
-                $GLOBALS['log']->debug("DOING: $class");
-                if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
-                    // BUG 10339: do not display messages for upgrade wizard
-                    if(!isset($_REQUEST['upgradeWizard'])){
-                        echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
-                    }
-                    if(!empty($mod->acltype)){
-                        ACLAction::addActions($mod->getACLCategory(), $mod->acltype);
-                    }else{
-                        ACLAction::addActions($mod->getACLCategory());
-                    }
-
-                    $installed_classes[$class] = true;
-                }
-    //BEGIN SUGARCRM flav=dce ONLY
-                if($mod->bean_implements('DCEACL') && empty($mod->acl_display_only)){
-                    if(!isset($_REQUEST['upgradeWizard'])){
-                        echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
-                    }
-                    ACLAction::addActions($mod->getACLCategory(), 'DCE');
-                    $installed_classes[$class] = true;
-
-                }
-    //END SUGARCRM flav=dce ONLY
-            }
-        }
-    }
+		if(empty($installed_classes[$class]) && isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
+			if($class == 'Tracker'){
+				//BEGIN SUGARCRM flav=pro ONLY
+				ACLAction::addActions('Trackers', 'Tracker');
+				//END SUGARCRM flav=pro ONLY
+			} else {
+				require_once($beanFiles[$class]);
+				$mod = new $class();
+				if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
+					// BUG 10339: do not display messages for upgrade wizard
+					if(!isset($_REQUEST['upgradeWizard'])){
+						echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
+					}
+	
+	                if(!empty($mod->acltype)){
+	                	ACLAction::addActions($mod->module_dir, $mod->acltype);
+	                }else{
+	                	ACLAction::addActions($mod->module_dir);
+	                }				
+	
+	                $installed_classes[$class] = true;
+				}
+	//BEGIN SUGARCRM flav=dce ONLY
+				if($mod->bean_implements('DCEACL') && empty($mod->acl_display_only)){
+				    if(!isset($_REQUEST['upgradeWizard'])){
+	                    echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
+	                }
+				    ACLAction::addActions($mod->module_dir, 'DCE');
+	                $installed_classes[$class] = true;
+	
+				}
+	//END SUGARCRM flav=dce ONLY
+			}
+		}
+	}
 
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -98,28 +98,28 @@ if(!empty($role_id['id'])) {
    $count = $GLOBALS['db']->fetchByAssoc($result);
    // If there are no corresponding entries in acl_roles_actions, then we need to add it
    if(empty($count['count'])) {
-        $missingAclRolesActions = true;
+   	  $missingAclRolesActions = true;
    }
 } else {
    $role1->name = "Tracker";
    $role1->description = "Tracker Role";
-   $role1_id = $role1->save();
-   $role1->set_relationship('acl_roles_users', array('role_id'=>$role1->id ,'user_id'=>1), false);
+   $role1_id = $role1->save();	
+   $role1->set_relationship('acl_roles_users', array('role_id'=>$role1->id ,'user_id'=>1), false);	 
    $installActions = true;
 }
 
 if($installActions || $missingAclRolesActions) {
-    $defaultTrackerRoles = array(
-        'Tracker'=>array(
-            'Trackers'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
-            'TrackerQueries'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
-            'TrackerPerfs'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
-            'TrackerSessions'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
-        )
-    );
-
-
-    foreach($defaultTrackerRoles as $roleName=>$role){
+	$defaultTrackerRoles = array(
+	    'Tracker'=>array(
+	        'Trackers'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
+	        'TrackerQueries'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
+	        'TrackerPerfs'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
+	        'TrackerSessions'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
+	     )
+	);
+	
+    
+	foreach($defaultTrackerRoles as $roleName=>$role){
         foreach($role as $category=>$actions){
             foreach($actions as $name=>$access_override){
                     $queryACL="SELECT id FROM acl_actions where category='$category' and name='$name'";
@@ -130,7 +130,7 @@ if($installActions || $missingAclRolesActions) {
                     }
             }
         }
-    } //foreach
+	} //foreach
 }
 //Check for the existence of MLA roles
 $installActions = false;
@@ -150,7 +150,7 @@ if(!empty($role_id['id'])) {
    if(empty($count['count'])) {
       $missingAclRolesActions = true;
    }
-}
+} 
 else {
    $installActions = true;
 }
@@ -190,9 +190,9 @@ if($installActions || $missingAclRolesActions) {
          'KBDocuments'=>array('admin'=>100, 'access'=>89),
          //END SUGARCRM flav!=sales ONLY
         )
-    );
-
-
+    );  
+    
+    
     foreach($mlaRoles as $roleName=>$role){
         $ACLField = new ACLField();
         $role1= new ACLRole();
@@ -215,7 +215,7 @@ if($installActions || $missingAclRolesActions) {
                 }
             }
         }
-    }
+    }   
 }
 //END SUGARCRM flav=pro ONLY
 }

@@ -18,23 +18,21 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
+require_once('include/Expressions/Expression/Date/DateExpression.php');
 /**
  * <b>monthofyear(Date d)</b><br>
  * Returns the month of year that <i>d</i> is in.<br/>
  * Jan = 1, Feb = 2, ... , Dec = 12
  */
-class MonthOfYearExpression extends NumericExpression
+class MonthOfYearExpression extends DateExpression
 {
 	/**
-	 * Return current month
+	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$params = DateExpression::parse($this->getParameters()->evaluate());
-        if(!$params) {
-            return false;
-        }
-		return $params->month;
+		$params = $this->getParameters()->evaluate();
+		$time = strtotime($params);
+		return date("m", $time);
 	}
 
 
@@ -61,13 +59,6 @@ EOQ;
 	 */
 	static function getParamCount() {
 		return 1;
-	}
-
-    /**
-	 * All parameters have to be a date.
-	 */
-	function getParameterTypes() {
-		return array(AbstractExpression::$DATE_TYPE);
 	}
 
 	/**

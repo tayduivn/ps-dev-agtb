@@ -22,7 +22,7 @@ $viewdefs['Cases']['DetailView'] = array(
 	    array('name' => 'case_number', 'label' => 'LBL_CASE_NUMBER'),
 	    'priority'
 	  ),
-
+	
 	  array (
 	    'status',
 	    'account_name',
@@ -30,33 +30,45 @@ $viewdefs['Cases']['DetailView'] = array(
 	  array (
 	      'type',
 	  ),
-
+	
 	  array (
-
+	
 	    array (
 	      'name' => 'name',
 	      'label' => 'LBL_SUBJECT',
 	    ),
 	  ),
-
+	
 	  array (
 	    'description',
 	  ),
-
+	
 	  array (
 	    'resolution',
 	  ),
-
+	
 	  //BEGIN SUGARCRM flav=ent ONLY
 	  array (
 	     array('name'=>'portal_viewable',
-			   'label' => 'LBL_SHOW_IN_PORTAL',
-		       'hideIf' => 'empty($PORTAL_ENABLED)',
+	           'customLabel'=>'{if ($PORTAL_ENABLED)}
+	           				   {capture name="label" assign="label"}
+							   {sugar_translate label="LBL_SHOW_IN_PORTAL" module="Cases"}
+							   {/capture}
+							   {$label|strip_semicolon}:
+							   {/if}',
+			   'customCode'=> '{if ($PORTAL_ENABLED)}
+							   {if $fields.portal_viewable.value == "1"}
+							   {assign var="checked" value="CHECKED"}
+							   {else}
+							   {assign var="checked" value=""}
+							   {/if}
+							   <input type="checkbox" class="checkbox" name="{$fields.portal_viewable.name}" disabled="true" {$checked}>
+							   {/if}',
 		      ),
 	  ),
 	  //END SUGARCRM flav=ent ONLY
 	),
-
+	
 	'LBL_PANEL_ASSIGNMENT' => array(
         array (
           array (
@@ -71,13 +83,13 @@ $viewdefs['Cases']['DetailView'] = array(
         ),
         array (
 		  //BEGIN SUGARCRM flav=pro ONLY
-		  'team_name',
+		  'team_name', 
 		  //END SUGARCRM flav=pro ONLY
           array (
             'name' => 'date_entered',
             'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
           ),
-        ),
+        ),		
 	),
 )
 

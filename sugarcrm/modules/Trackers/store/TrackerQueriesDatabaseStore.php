@@ -74,8 +74,8 @@ class TrackerQueriesDatabaseStore implements Store {
 			
 			  $query .= " RETURNING ".implode(",", array_keys($lob_fields)).' INTO '.implode(",", array_values($lob_fields));
 			
-			  $stmt = oci_parse($GLOBALS['db']->database, $query);
-			  $err = oci_error($GLOBALS['db']->database);
+			  $stmt = ociparse($GLOBALS['db']->database, $query);
+			  $err = ocierror($GLOBALS['db']->database);
 			  if ($err != false){
 			      $GLOBALS['log']->error($query.">>".$err['code'].":".$err['message']);
 			      return;
@@ -87,8 +87,8 @@ class TrackerQueriesDatabaseStore implements Store {
 			    $lobs[$key] = $newlob;
 			  }
 			
-			  oci_execute($stmt,OCI_DEFAULT);
-			  $err = oci_error($stmt);
+			  ociexecute($stmt,OCI_DEFAULT);
+			  $err = ocierror($stmt);
 			  if ($err != false){
 				  $GLOBALS['log']->fatal($query.">>".$err['code'].":".$err['message']);
 				  return;
@@ -98,14 +98,14 @@ class TrackerQueriesDatabaseStore implements Store {
 				        if (empty($val)) $val=" ";
 				        $lob->save($val);
 				  }
-				  oci_commit($GLOBALS['db']->database);
+				  ocicommit($GLOBALS['db']->database);
 			  }
 			
 			  // free all the lobs.
 			  foreach ($lobs as $lob){
 			    $lob->free();
 			  }
-			  oci_freecursor($stmt); 
+			  ocifreecursor($stmt); 
 			  //END SUGARCRM flav=pro ONLY
        	  } else {
 	          $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';

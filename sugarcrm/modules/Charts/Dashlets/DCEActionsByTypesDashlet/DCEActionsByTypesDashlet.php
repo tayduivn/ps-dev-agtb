@@ -37,9 +37,6 @@ class DCEActionsByTypesDashlet extends DashletGenericChart
 {
     public $abt_date_start = 'TP_this_month';
     
-    /**
-     * @see DashletGenericChart::$_seedName
-     */
     protected $_seedName = 'DCEActions';
     
     /**
@@ -50,8 +47,8 @@ class DCEActionsByTypesDashlet extends DashletGenericChart
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['dceactions_by_types'];
 		
-        require_once('include/SugarCharts/SugarChartFactory.php');
-		$sugarChart = SugarChartFactory::getInstance();
+        require_once('include/SugarCharts/SugarChart.php');
+		$sugarChart = new SugarChart();
 		$sugarChart->is_currency = false;
 		$sugarChart->setProperties('', $chartDef['chartUnits'], $chartDef['chartType']);
 		$sugarChart->base_url = $chartDef['base_url'];
@@ -63,7 +60,7 @@ class DCEActionsByTypesDashlet extends DashletGenericChart
 		$sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
 		$returnStr = $sugarChart->display($this->id, $xmlFile, '100%', '480', false);
-        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div>'. $this->processAutoRefresh();
+        return $this->getTitle('<div align="center"></div>') . '<div align="center">' . $returnStr . '</div><br />';
 	}
     
     private function getDataFromQueries()
@@ -102,14 +99,12 @@ class DCEActionsByTypesDashlet extends DashletGenericChart
         return $data_set;
     }
     
-    /**
-     * @see DashletGenericChart::saveOptions()
-     */
-    public function saveOptions($req) 
-    {
+    public function saveOptions($req) {
         $options = parent::saveOptions($req);
 	    $options['abt_date_start'] =  $_REQUEST['type_abt_date_start'];
 
         return $options;
     }
 }
+
+?>
