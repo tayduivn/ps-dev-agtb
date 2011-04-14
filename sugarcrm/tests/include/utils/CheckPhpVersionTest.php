@@ -19,7 +19,7 @@ class CheckPHPVersionTest extends Sugar_PHPUnit_Framework_TestCase
     
     /**
      * @dataProvider providerPhpVersion
-     * @group bug33202
+     * @ticket 33202
      */
 	public function testPhpVersion(
 	    $ver, 

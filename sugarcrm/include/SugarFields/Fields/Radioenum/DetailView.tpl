@@ -26,7 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<span class="sugar_field" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}">
 { {{sugarvar  key='options' string=true}}[{{sugarvar key='value' string=true}}]}
+</span>
 {{if !empty($displayParams.enableConnectors)}}
-{{sugarvar_connector view='DetailView'}} 
+{if !empty({{sugarvar  key='options' string=true}}[{{sugarvar key='value' string=true}}])}
+{{sugarvar_connector view='DetailView'}}
+{/if}
 {{/if}}

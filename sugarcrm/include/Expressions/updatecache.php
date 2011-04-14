@@ -37,6 +37,7 @@ $GLOBALS['ignore_files'] = array(
 						'BooleanExpression.php',
 						'FalseExpression.php',
 						'GenericExpression.php',
+                        'RelateExpression.php',
 						'AbstractAction.php',
 						'ActionFactory.php',
 					);
@@ -231,10 +232,11 @@ $cache_contents .= <<<EOQ
 SUGAR.FunctionMap = {
 
 EOQ;
-
-foreach ( $FUNCTION_MAP as $key=>$value ) {
-	$entry = $FUNCTION_MAP[$key]['class'];
-	$cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+if ( isset($FUNCTION_MAP) && is_array($FUNCTION_MAP) ) {
+    foreach ( $FUNCTION_MAP as $key=>$value ) {
+        $entry = $FUNCTION_MAP[$key]['class'];
+        $cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+    }
 }
 $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
@@ -250,8 +252,11 @@ $cache_contents .= <<<EOQ
 SUGAR.NumericConstants = {
 
 EOQ;
-foreach ( $NUMERIC_CONSTANTS as $key=>$value )
-	$cache_contents .= "\t'$key'\t:\t$value,";
+if ( isset($NUMERIC_CONSTANTS) && is_array($NUMERIC_CONSTANTS) ) {
+    foreach ( $NUMERIC_CONSTANTS as $key=>$value ) {
+        $cache_contents .= "\t'$key'\t:\t$value,";
+    }
+}
 $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 

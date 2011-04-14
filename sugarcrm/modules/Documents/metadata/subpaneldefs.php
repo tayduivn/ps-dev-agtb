@@ -57,6 +57,147 @@ $layout_defs['Documents'] = array(
 			'top_buttons' => array(),	
 		),
 		//END SUGARCRM flav=pro ONLY
+        'accounts' => array(
+            'order' => 30,
+            'module' => 'Accounts',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_ACCOUNTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'accounts',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                1 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
+        'contacts' => array(
+            'order' => 40,
+            'module' => 'Contacts',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'contacts',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                1 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
+        'opportunities' => array(
+            'order' => 40,
+            'module' => 'Opportunities',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_OPPORTUNITIES_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'opportunities',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                1 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
+        'cases' => array(
+            'order' => 50,
+            'module' => 'Cases',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_CASES_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'cases',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                1 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
+        'bugs' => array(
+            'order' => 60,
+            'module' => 'Bugs',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_BUGS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'bugs',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopButtonQuickCreate',
+                    ),
+                1 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
+        'quotes' => array(
+            'order' => 70,
+            'module' => 'Quotes',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_QUOTES_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'quotes',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),
+        //BEGIN SUGARCRM flav=pro ONLY
+        'products' => array(
+            'order' => 80,
+            'module' => 'Products',
+            'subpanel_name' => 'default',
+            'sort_order' => 'asc',
+            'sort_by' => 'id',
+            'title_key' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
+            'get_subpanel_data' => 'products',
+            'top_buttons' => 
+            array (
+                0 => 
+                array (
+                    'widget_class' => 'SubPanelTopSelectButton',
+                    'mode' => 'MultiSelect',
+                    ),
+                ),
+        ),    
+        //END SUGARCRM flav=pro ONLY    
 	),
 );
 ?>

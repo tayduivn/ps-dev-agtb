@@ -2,7 +2,7 @@
 require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
- * @group bug23140
+ * @ticket 23140
  */
 class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
 {

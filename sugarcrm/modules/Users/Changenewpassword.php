@@ -96,8 +96,8 @@ if (isset($_REQUEST['guid']))
 	    if($pwd_settings['linkexpiration']){
 	    	$delay=$pwd_settings['linkexpirationtime']*$pwd_settings['linkexpirationtype'];
 			$stim = strtotime($row['date_generated']);
-	    	$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+$delay, date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));
-	    	$timenow = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+			$expiretime = TimeDate::getInstance()->fromTimestamp($stim)->get("+"+$delay+" minutes")->asDb();
+	    	$timenow = TimeDate::getInstance()->nowDb();
 	    	if ($timenow > $expiretime)
 	    		$expired='1';	
 	    }
@@ -114,7 +114,7 @@ if (isset($_REQUEST['guid']))
 	    				$user_hash = strtolower(md5($_POST['new_password']));
 					    $usr->setPreference('loginexpiration','0');
 					    //set new password
-					    $now=date("Y-m-d H:i:s");
+					    $now=TimeDate::getInstance()->nowDb();
 					    $query1 = "UPDATE $usr->table_name SET user_hash='$user_hash', system_generated_password='0', pwd_last_changed='$now' where id='$usr->id'";
 					    $GLOBALS['db']->query($query1, true, "Error setting new password for $usr->user_name: ");
 					    $query2 = "UPDATE users_password_link SET deleted='1' where id='".$_REQUEST['guid']."'";

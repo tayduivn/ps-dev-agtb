@@ -63,7 +63,8 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 	{
 		if(typeof(vMap[t.name]) == "undefined")
 			throw ("Unknown field: " + t.name);
-		t.returnType = vMap[t.name];
+		else
+			t.returnType = vMap[t.name];
 	}
 	if (t.type == "function")
 	{
@@ -84,6 +85,7 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 			throw (t.name + ": No known return type!");
 	}
 }
+
 SUGAR.expressions.validateReturnTypes = function(t)
 {
 	if (t.type == "function")
@@ -122,13 +124,13 @@ SUGAR.expressions.validateReturnTypes = function(t)
 		else {
 			for ( var i = 0 ; i < types.length ; i++ ) {
 				if ( !fMap[t.name].prototype.isProperType(new see.TYPE_MAP[t.args[i].returnType],types[i]) ) {
-					throw (this.getClass() + ": The parameter at index " + i + " must be of type " + types[i] );
+					throw (t.name + ": The parameter at index " + i + " must be of type " + types[i] );
 				}
 			}
 		}
 	}
 };
-SUGAR.expressions.validateCurrExpression = function(silent) {
+SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 	try {
 		var varTypeMap = {};
 		for (var i = 0; i < fieldsArray.length; i++){
@@ -138,32 +140,38 @@ SUGAR.expressions.validateCurrExpression = function(silent) {
 		var tokens = new SUGAR.expressions.ExpressionParser().tokenize(expression);
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
+		if (matchType && matchType != tokens.returnType)
+		{
+			Msg.show({
+                title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
+                msg: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_TYPE") + matchType
+            });
+			return false;
+		}
 		
 		if (typeof (silent) == 'undefined' || !silent) 
 			Msg.show({msg: "Validation Sucessfull"});
 		
 		return true;
 	} catch (e) {
-		if (e.message)
 			Msg.show({
-                title: "Validation Failed",
-                msg: e.message
-            });
-		else
-			Msg.show({
-                title: "Validation Failed",
-                msg: e
+                title: SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_INVALID"),
+                msg: e.message ? e.message : e
             });
 		return false;
 	}
 }
-SUGAR.expressions.saveCurrentExpression = function(target)
+SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 {
-	if (!SUGAR.expressions.validateCurrExpression(true))
+	if (!SUGAR.expressions.validateCurrExpression(true, returnType))
 		return false;
 	if (YAHOO.lang.isString(target))
 		target = Dom.get(target);
 	target.value = Dom.get("formulaInput").value;
+	if (typeof target.onchange == "function")
+	{
+		target.onchange();
+	}
 	return true;
 }
 
@@ -231,7 +239,20 @@ SUGAR.expressions.GridToolTip = {
 	{
 		el.innerHTML = "$" + data;
 	};
-	var fieldDS = new YAHOO.util.LocalDataSource(fieldsArray, {
+	var visibleFields = [];
+	var fieldsJSON =  [];
+	var j = 0;
+	for(var i in fieldsArray)
+	{
+		//Hide relate(link) fields from the user, but allow them to be used.
+		if(fieldsArray[i][1] != "relate") {
+			visibleFields[j] = fieldsArray[i];
+			fieldsJSON[j] = {name: fieldsArray[i][0], type: fieldsArray[i][1]};
+			j++;
+		}
+	}
+
+	var fieldDS = new YAHOO.util.LocalDataSource(visibleFields, {
 		responseType: YAHOO.util.LocalDataSource.TYPE_JSARRAY,
 		responseSchema: {
 		   resultsList : "relationships",
@@ -263,11 +284,8 @@ SUGAR.expressions.GridToolTip = {
 		fieldsGrid.sortColumn(fieldsGrid.sortedColumn.column, fieldsGrid.sortedColumn.dir);
 		fieldsGrid.render();
     }
-	var fieldsJSON =  [];
-	for(var i in fieldsArray)
-	{
-		fieldsJSON[i] = {name: fieldsArray[i][0], type: fieldsArray[i][1]};
-	}
+
+
 	Dom.get("formulaFieldsSearch").onkeyup = function() {
 		if (this.value == '') {
 			fieldsGrid.initializeTable();
@@ -302,7 +320,6 @@ SUGAR.expressions.GridToolTip = {
 			var fName = functionsArray[i][0];
 			//Internal Sugar functions that most users will not find useful
 			switch (fName) {
-			case "daysUntil":
 			case "isValidTime":
 			case "isAlpha":
 			case "doBothExist":
@@ -314,11 +331,14 @@ SUGAR.expressions.GridToolTip = {
 			case "stddev":
 			case "charAt":
 			case "formatName":
+			case "rollup":
+			case "count":
+			case "sugarField":
 				continue;
 				break;
 			}
 			//For now, hide date functions in the formula builder as they are unstable.
-			if (functionsArray[i][1] == "date" || functionsArray[i][1] == "time")
+			if (functionsArray[i][1] == "time")
 				continue;
 			if (usedClasses[SUGAR.FunctionMap[fName].prototype.className])
 				continue;

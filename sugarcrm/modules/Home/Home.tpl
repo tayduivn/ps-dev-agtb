@@ -64,7 +64,13 @@ var moduleName = 'Home';
 <script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/javascript/yui/build/assets/skins/sam/skin.css'}'>
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/swfobject.js'}"></script>
+
+<!-- CSS Files -->
+<link type="text/css" href="{sugar_getjspath file='custom/include/SugarCharts/js/Jit/Examples/css/base.css'}" rel="stylesheet" />
+<link type="text/css" href="{sugar_getjspath file='custom/include/SugarCharts/js/Jit/css/Examples/BarChart.css'}" rel="stylesheet" />
+<!--[if IE]><script language="javascript" type="text/javascript" src="{sugar_getjspath file='custom/include/SugarCharts/js/Jit/Extras/excanvas.js'}"></script><![endif]-->
+<!-- JIT Library File -->
+<script language="javascript" type="text/javascript" src="{sugar_getjspath file='custom/include/SugarCharts/js/Jit/jit.js'}"></script>
 
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
 <ul class="subpanelTablist" id="tabList">

@@ -36,9 +36,12 @@
   
  class NotesController extends SugarController
 {
-	
 	function action_save(){
 		require_once('include/upload_file.php');
+		// Check for both relate_id and parent_id, and prevent overriding of parent_id
+		if (!empty($_REQUEST['relate_id']) && !empty($_REQUEST['parent_id'])) {
+			$_REQUEST['relate_id'] = false;
+		}
 		$GLOBALS['log']->debug('PERFORMING NOTES SAVE');
 		$upload_file = new UploadFile('uploadfile');
 		$do_final_move = 0;
@@ -77,7 +80,7 @@
 		}
 	}
 	
-	function action_editview(){
+    function action_editview(){
 		$this->view = 'edit';
 		$GLOBALS['view'] = $this->view;
 		if(!empty($_REQUEST['deleteAttachment'])){

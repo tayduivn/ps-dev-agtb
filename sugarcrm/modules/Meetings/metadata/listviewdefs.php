@@ -32,6 +32,19 @@ array (
       0 => 'status',
     ),
   ),
+  //BEGIN SUGARCRM flav!=com ONLY
+  'JOIN_MEETING' => 
+  array (
+    'width' => '1%',
+    'label' => 'LBL_LIST_JOIN_MEETING',
+    'link' => true,
+    'sortable' => false,
+    'default' => true,
+    'related_fields' => 
+    array('join_url', 'host_url'),
+    'noHeader' => true,
+  ),
+  //END SUGARCRM flav!=com ONLY
   'NAME' => 
   array (
     'width' => '40%',
@@ -106,5 +119,10 @@ array (
     'link' => false,
     'default' => false,
   ),
+  'DATE_ENTERED' => array (
+	'width' => '10%',
+	'label' => 'LBL_DATE_ENTERED',
+	'default' => true
+  ),  
 );
 ?>

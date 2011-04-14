@@ -1,26 +1,26 @@
 <?php
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('service/core/SoapHelperWebService.php');
 class SugarWebServiceUtilv3 extends SoapHelperWebServices {
-	
+
     function filter_fields($value, $fields)
     {
         $GLOBALS['log']->info('Begin: SoapHelperWebServices->filter_fields');
@@ -28,29 +28,29 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         $filterFields = array();
         foreach($fields as $field)
         {
-            if (is_array($invalid_contact_fields)) 
+            if (is_array($invalid_contact_fields))
             {
-                if (in_array($field, $invalid_contact_fields)) 
+                if (in_array($field, $invalid_contact_fields))
                 {
                     continue;
-                } 
+                }
             }
-            if (isset($value->field_defs[$field])) 
+            if (isset($value->field_defs[$field]))
             {
                 $var = $value->field_defs[$field];
-                if( isset($var['source']) 
-                    && ($var['source'] != 'db' && $var['source'] != 'custom_fields' && $var['source'] != 'non-db') 
-                    && $var['name'] != 'email1' && $var['name'] != 'email2' 
+                if( isset($var['source'])
+                    && ($var['source'] != 'db' && $var['source'] != 'custom_fields' && $var['source'] != 'non-db')
+                    && $var['name'] != 'email1' && $var['name'] != 'email2'
                     && (!isset($var['type'])|| $var['type'] != 'relate')) {
 
-                    if( $value->module_dir == 'Emails' 
-                        && (($var['name'] == 'description') || ($var['name'] == 'description_html') || ($var['name'] == 'from_addr_name') 
-                            || ($var['name'] == 'reply_to_addr') || ($var['name'] == 'to_addrs_names') || ($var['name'] == 'cc_addrs_names') 
-                            || ($var['name'] == 'bcc_addrs_names') || ($var['name'] == 'raw_source'))) 
+                    if( $value->module_dir == 'Emails'
+                        && (($var['name'] == 'description') || ($var['name'] == 'description_html') || ($var['name'] == 'from_addr_name')
+                            || ($var['name'] == 'reply_to_addr') || ($var['name'] == 'to_addrs_names') || ($var['name'] == 'cc_addrs_names')
+                            || ($var['name'] == 'bcc_addrs_names') || ($var['name'] == 'raw_source')))
                     {
 
-                    } 
-                    else 
+                    }
+                    else
                     {
                         continue;
                     }
@@ -61,7 +61,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         $GLOBALS['log']->info('End: SoapHelperWebServices->filter_fields');
         return $filterFields;
     }
-	
+
     function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '', $order_by = '') {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
 		require_once('include/TimeDate.php');
@@ -80,7 +80,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 					$optional_where = $query_array['where'];
 				} // else
 			} // if
-			
+
 			$params = array();
 			$params['joined_tables'] = $query_array['join_tables'];
 
@@ -147,8 +147,8 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 		} // else
 
 	} // fn
-	
-	function get_field_list($value,$fields,  $translate=true) {
+
+	function get_field_list($value, $fields, $translate=true) {
 
 	    $GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list');
 		$module_fields = array();
@@ -169,7 +169,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 				if( isset($var['required']) && ($var['required'] || $var['required'] == 'true' ) ){
 					$required = 1;
 				}
-				
+
 				if(isset($var['options'])){
 					$options_dom = translate($var['options'], $value->module_dir);
 					if(!is_array($options_dom)) $options_dom = array();
@@ -186,7 +186,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	            $entry['type'] = $var['type'];
 	            $entry['group'] = isset($var['group']) ? $var['group'] : '';
 	            $entry['id_name'] = isset($var['id_name']) ? $var['id_name'] : '';
-	            
+
 	            if ($var['type'] == 'link') {
 		            $entry['relationship'] = (isset($var['relationship']) ? $var['relationship'] : '');
 		            $entry['module'] = (isset($var['module']) ? $var['module'] : '');
@@ -230,7 +230,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 				$module_fields['release_name']['options'] = $options_ret;
 			}
 		}
-		
+
 		if(isset($value->assigned_user_name) && isset($module_fields['assigned_user_id'])) {
 			$module_fields['assigned_user_name'] = $module_fields['assigned_user_id'];
 			$module_fields['assigned_user_name']['name'] = 'assigned_user_name';
@@ -251,7 +251,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 		$GLOBALS['log']->info('End: SoapHelperWebServices->get_field_list');
 		return array('module_fields' => $module_fields, 'link_fields' => $link_fields);
 	}
-	
+
 	function get_subpanel_defs($module, $type)
 	{
 	    global $beanList, $beanFiles;
@@ -288,7 +288,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    return $results;
 
 	}
-	
+
     function get_module_view_defs($module_name, $type, $view){
         require_once('include/MVC/View/SugarView.php');
         $metadataFile = null;
@@ -315,14 +315,14 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     //Wireless detail metadata may actually be just edit metadata.
                     $results = isset($viewdefs[$meta['module_name']][$fullView] ) ? $viewdefs[$meta['module_name']][$fullView] : $viewdefs[$meta['module_name']]['EditView'];
                 }
-                
+
                 break;
             case 'default':
             default:
                 if ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($module_name, $type);
-                else 
-                {    
+                else
+                {
                     $v = new SugarView(null,array());
                     $v->module = $module_name;
                     $v->type = $view;
@@ -330,18 +330,18 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                     $metadataFile = $v->getMetaDataFile();
                     require_once($metadataFile);
                     if($view == 'list')
-                        $results = $listViewDefs[$module_name];            
+                        $results = $listViewDefs[$module_name];
                     else
                         $results = $viewdefs[$module_name][$fullView];
                 }
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
-     * 
+     *
      * @param array $availModules An array of all the modules the user already has access to.
      * @return array Modules enalbed for mobile view.
      */
@@ -353,19 +353,19 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
         		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
         }
-        
+
         foreach ( $wireless_module_registry as $e => $def )
         {
         	if( isset($availModulesKey[$e]) )
                 $enabled_modules[] = $e;
         }
-        
+
         return $enabled_modules;
     }
-    
+
     /**
      * Examine the application to determine which modules have been enabled..
-     * 
+     *
      * @param array $availModules An array of all the modules the user already has access to.
      * @return array Modules enabled within the application.
      */
@@ -380,10 +380,10 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
             if( isset($availModulesKey[$key]) )
                 $enabled_modules[] = $key;
         }
-        
+
         return $enabled_modules;
     }
-    
+
     /**
      * Retrieve all of the upcoming activities for a particular user.
      *
@@ -393,7 +393,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
     {
         global $beanList;
         $maxCount = 10;
-        
+
         $activityModules = array('Meetings' => array('date_field' => 'date_start','status' => 'Planned','status_field' => 'status', 'status_opp' => '='),
                                  'Calls' => array('date_field' => 'date_start','status' => 'Planned','status_field' => 'status', 'status_opp' => '='),
                                  'Tasks' => array('date_field' =>'date_due','status' => 'Not Started','status_field' => 'status','status_opp' => '='),
@@ -406,35 +406,35 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                 $GLOBALS['log']->debug("SugarWebServiceImpl->get_last_viewed: NO ACCESS to $module");
                 continue;
             }
-            
+
             $class_name = $beanList[$module];
 	        $seed = new $class_name();
             $query = $this->generateUpcomingActivitiesWhereClause($seed, $meta);
 
             $response = $seed->get_list(/* Order by date field */"{$meta['date_field']} ASC",  /*Where clause */$query, /* No Offset */ 0,
                                         /* No limit */-1, /* Max 10 items */10, /*No Deleted */ 0 );
-            
-            $result = array();                            
+
+            $result = array();
 
             if( isset($response['list']) )
                 $result = $this->format_upcoming_activities_entries($response['list'],$meta['date_field']);
-           
+
             $results = array_merge($results,$result);
         }
-        
+
         //Sort the result list by the date due flag in ascending order
-        usort( $results, array( $this , "cmp_datedue" ) ) ; 
-        
+        usort( $results, array( $this , "cmp_datedue" ) ) ;
+
         //Only return a subset of the results.
         $results = array_slice($results, 0, $maxCount);
-        
+
         return $results;
     }
-    
+
     function generateUpcomingActivitiesWhereClause($seed,$meta)
     {
         $query = array();
-        $query_date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $query_date = TimeDate::getInstance()->nowDb();
         $query[] = " {$seed->table_name}.{$meta['date_field']} > '$query_date'"; //Add date filter
         $query[] = "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}' "; //Add assigned user filter
         if(is_array($meta['status_field']))
@@ -442,9 +442,9 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
             foreach ($meta['status'] as $field)
                 $query[] = "{$seed->table_name}.{$meta['status_field']} {$meta['status_opp']} '{$field}' ";
         }
-        else 
+        else
             $query[] = "{$seed->table_name}.{$meta['status_field']} {$meta['status_opp']} '{$meta['status']}' ";
-            
+
         return implode(" AND ",$query);
     }
     /**
@@ -465,7 +465,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 
         return $results;
     }
-    
+
     /**
      * Sort the array for upcoming activities based on the date due flag ascending.
      *
@@ -473,11 +473,11 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
      * @param array $b
      * @return int Indicates equality for date due flag
      */
-    static function cmp_datedue( $a, $b ) 
+    static function cmp_datedue( $a, $b )
     {
         $a_date = strtotime( $a['date_due'] ) ;
         $b_date = strtotime( $b['date_due'] ) ;
-    
+
         if( $a_date == $b_date ) return 0 ;
         return ($a_date > $b_date ) ? 1 : -1;
   }

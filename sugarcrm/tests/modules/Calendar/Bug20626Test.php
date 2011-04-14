@@ -4,7 +4,7 @@ require_once 'modules/Calendar/Calendar.php';
 require_once 'modules/Meetings/Meeting.php';
 
 /**
- * @group bug20626
+ * @ticket 20626
  */
 class Bug20626Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class Bug20626Test extends Sugar_PHPUnit_Framework_TestCase
     {
     	$GLOBALS['reload_vardefs'] = true;
         global $current_user;
-		
+
         $current_user = SugarTestUserUtilities::createAnonymousUser();
 	}
 
@@ -22,14 +22,14 @@ class Bug20626Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
         $GLOBALS['reload_vardefs'] = false;
     }
-    
+
     public function testDateAndTimeShownInCalendarActivityAdditionalDetailsPopup()
     {
         global $timedate,$sugar_config,$DO_USER_TIME_OFFSET , $current_user;
-		
+
         $DO_USER_TIME_OFFSET = true;
-        $timedate = new TimeDate();
-		
+        $timedate = TimeDate::getInstance();
+
         $meeting = new Meeting();
         $format = $current_user->getUserDateTimePreferences();
         $meeting->date_start = $timedate->swap_formats("2006-12-23 11:00pm" , 'Y-m-d h:ia', $format['date'].' '.$format['time']);

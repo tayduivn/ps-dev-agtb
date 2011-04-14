@@ -324,30 +324,6 @@ class User extends Person {
         $user->_userPreferenceFocus->resetPreferences($category);
 	}
 
-
-	/**
-	 * Interface for the User object to calling the UserPreference::isPreferenceSizeTooLarge() method in modules/UserPreferences/UserPreference.php
-	 *
-	 * @see UserPreference::isPreferenceSizeTooLarge()
-	 *
-	 * @param string $category category to check
-	 */
-	public function isPreferenceSizeTooLarge(
-	    $category = 'global'
-	    )
-	{
-	    // for BC
-	    if ( func_num_args() > 1 ) {
-	        $user = func_get_arg(1);
-	        $GLOBALS['log']->deprecated('User::resetPreferences() should not be used statically.');
-	    }
-	    else
-	        $user = $this;
-
-        return $user->_userPreferenceFocus->isPreferenceSizeTooLarge($category);
-	}
-	
-	
 	/**
 	 * Interface for the User object to calling the UserPreference::savePreferencesToDB() method in modules/UserPreferences/UserPreference.php
 	 *
@@ -838,7 +814,7 @@ EOQ;
         $user_hash = strtolower(md5($new_password));
         $this->setPreference('loginexpiration','0');
         //set new password
-        $now=date("Y-m-d H:i:s");
+        $now = TimeDate::getInstance()->nowDb();
 		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';
@@ -1073,7 +1049,7 @@ EOQ;
 
 
 	function get_my_teams($return_obj = FALSE) {
-		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
+		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2, rel.implicit_assign FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
 		$result = $this->db->query($query, false, "Error retrieving user ID: ");
 		$out = Array ();
 
@@ -1085,7 +1061,8 @@ EOQ;
 		while ($row = $this->db->fetchByAssoc($result)) {
 			if ($return_obj) {
 				$out[$x] = new Team();
-				$out[$x ++]->retrieve($row['team_id']);
+				$out[$x]->retrieve($row['team_id']);
+				$out[$x++]->implicit_assign = $row['implicit_assign'];
 			} else {
 				$out[$row['team_id']] = Team::getDisplayName($row['name'], $row['name_2']);
 			}
@@ -1401,7 +1378,7 @@ EOQ;
     		//$composeOptionsLink = $json->encode( array('composeOptionsLink' => $emailLinkUrl,'id' => $focus->id) );
 			require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl);
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
 
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
 
@@ -1491,7 +1468,7 @@ EOQ;
 			//Generate the compose package for the quick create options.
     		require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl);
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
 
 		} else {

@@ -34,7 +34,7 @@ global $currentModule;
 
 $GLOBALS['displayListView'] = true; 
 $focus = new ProductCategory();
-echo get_module_title($focus->module_dir, $mod_strings['LBL_MODULE_NAME'], true);
+echo getClassicModuleTitle($focus->module_dir, array($mod_strings['LBL_MODULE_NAME']), true);
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);

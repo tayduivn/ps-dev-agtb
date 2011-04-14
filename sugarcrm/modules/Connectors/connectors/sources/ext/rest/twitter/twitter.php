@@ -35,28 +35,28 @@ class ext_rest_twitter extends ext_rest {
         $this->_enable_in_wizard = false;
         $this->_enable_in_hover = true;
     }
-    
+
     /*
      * getItem
-     * 
-     * As the linked in connector does not have a true API call, we simply
-     * override this abstract 
+     *
+     * As the twitter connector does not have a true API call, we simply
+     * override this abstract
      */
     public function getItem($args=array(), $module=null){}
 
 
     /*
      * getList
-     * 
-     * As the linked in connector does not have a true API call, we simply
+     *
+     * As the twitter connector does not have a true API call, we simply
      * override this abstract method
-     */    
+     */
     public function getList($args=array(), $module=null){}
-    
-    
+
+
     public function __destruct(){
         parent::__destruct();
     }
 }
- 
+
 ?>

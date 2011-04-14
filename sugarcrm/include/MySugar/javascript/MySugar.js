@@ -191,42 +191,6 @@ SUGAR.mySugar = function() {
 		},
 		//END SUGARCRM flav=pro ONLY
 		
-		clearChartsArray: function(){
-			charts[activeTab] = new Object();
-		},
-		
-		addToChartsArray: function(name, xmlFile, width, height, styleSheet, colorScheme, langFile){
-
-			if (charts[activeTab] == null){
-				charts[activeTab] = new Object();
-			}
-			charts[activeTab][name] = new Object();
-			charts[activeTab][name]['name'] = name;
-			charts[activeTab][name]['xmlFile'] = xmlFile;
-			charts[activeTab][name]['width'] = width;
-			charts[activeTab][name]['height'] = height;
-			charts[activeTab][name]['styleSheet'] = styleSheet;
-			charts[activeTab][name]['colorScheme'] = colorScheme;	
-			charts[activeTab][name]['langFile'] = langFile;				
-		},
-
-		loadSugarChart: function(name, xmlFile, width, height, styleSheet, colorScheme, langFile){
-			loadChartSWF(name, xmlFile, width, height, styleSheet, colorScheme, langFile);
-		},
-		
-		loadSugarCharts: function(){
-			for (id in charts[activeTab]){
-				if(id != 'undefined'){
-					SUGAR.mySugar.loadSugarChart(charts[activeTab][id]['name'], 
-											 charts[activeTab][id]['xmlFile'], 
-											 charts[activeTab][id]['width'], 
-											 charts[activeTab][id]['height'],
-											 charts[activeTab][id]['styleSheet'],
-											 charts[activeTab][id]['colorScheme'],
-											 charts[activeTab][id]['langFile']);
-				}
-			}
-		},
 
 		//BEGIN SUGARCRM flav=pro ONLY
         retrievePage: function(pageNum){
@@ -264,16 +228,12 @@ SUGAR.mySugar = function() {
                     } 
                 }
 
-                for(chart in scriptResponse['chartsArray']){
-                	SUGAR.mySugar.addToChartsArray(scriptResponse['chartsArray'][chart]['id'],
-                								   scriptResponse['chartsArray'][chart]['xmlFile'],
-                								   scriptResponse['chartsArray'][chart]['width'],
-                								   scriptResponse['chartsArray'][chart]['height'],
-                								   scriptResponse['chartsArray'][chart]['styleSheet'],
-                								   scriptResponse['chartsArray'][chart]['colorScheme'],
-												   scriptResponse['chartsArray'][chart]['langFile']);
-                }
-                
+
+                			
+                //custom chart code
+				SUGAR.mySugar.sugarCharts.addToChartsArrayJson(scriptResponse['chartsArray'],pageNum);
+				
+				
                 if(YAHOO.util.DDM.mode == 1) {
                     for(var wp = 0; wp < scriptResponse['numCols']; wp++) {
                         SUGAR.mySugar.homepage_dd[counter++] = new ygDDListBoundary('page_'+pageNum+'_hidden' + wp);
@@ -303,7 +263,12 @@ SUGAR.mySugar = function() {
 				if(scriptResponse['dashletCtrl']){
 					SUGAR.util.evalScript(scriptResponse['dashletCtrl']);			
 				}
-                SUGAR.mySugar.loadSugarCharts();
+				//custom chart code
+                SUGAR.mySugar.sugarCharts.loadSugarCharts(pageNum);
+                
+                //refresh page when user resizes window
+
+
 				SUGAR.mySugar.loading.hide();                                                  
 				document.getElementById('loading_c').style.display = 'none';
             }
@@ -342,11 +307,6 @@ SUGAR.mySugar = function() {
 
 			var addBlankPage = function(data) {
 				//check to see if a user preference error occurred
-				if(data.responseText == 'userpref_error'){
-					//user preference error occured, flash message and exit processing
-					ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_TAB'),7000);
-					return;
-				} 
 				
 			    var pageContainerDivElem = document.getElementById('pageContainer');
 			    var newPageId = 'pageNum_' + pageCount + '_div';
@@ -498,7 +458,7 @@ SUGAR.mySugar = function() {
 			newLayout = SUGAR.mySugar.getLayout(true);
 		  	if(originalLayout != newLayout) { // only save if the layout has changed
 				SUGAR.mySugar.saveLayout(newLayout);
-				SUGAR.mySugar.loadSugarCharts(); // called safely because there is a check to be sure the array exists
+				SUGAR.mySugar.sugarCharts.loadSugarCharts(); // called safely because there is a check to be sure the array exists
 		  	}
 		},
 		
@@ -628,7 +588,7 @@ SUGAR.mySugar = function() {
 
 		 		ajaxStatus.hideStatus();
 				if(data) {		
-					SUGAR.mySugar.currentDashlet.innerHTML = data.responseText;				
+					SUGAR.mySugar.currentDashlet.innerHTML = data.responseText;			
 				}
 
 				SUGAR.util.evalScript(data.responseText);
@@ -636,14 +596,9 @@ SUGAR.mySugar = function() {
 				
 				var processChartScript = function(scriptData){
 					SUGAR.util.evalScript(scriptData.responseText);
+					//custom chart code
+					SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
 
-					SUGAR.mySugar.loadSugarChart(charts[activeTab][id]['name'], 
-												 charts[activeTab][id]['xmlFile'], 
-												 charts[activeTab][id]['width'], 
-												 charts[activeTab][id]['height'],
-												 charts[activeTab][id]['styleSheet'],
-												 charts[activeTab][id]['colorScheme'],
-												 charts[activeTab][id]['langFile']);
 				}
 				if(typeof(is_chart_dashlet)=='undefined'){
 					is_chart_dashlet = false;
@@ -659,7 +614,7 @@ SUGAR.mySugar = function() {
 			
 			SUGAR.mySugar.currentDashlet = document.getElementById('dashlet_entire_' + id);
 			var cObj = YAHOO.util.Connect.asyncRequest('GET', url,
-												  {success: fillInDashlet, failure: fillInDashlet}, null);
+			                    {success: fillInDashlet, failure: fillInDashlet}, null); 
 			return false;
 		},
 		
@@ -747,13 +702,6 @@ SUGAR.mySugar = function() {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_ADDING_DASHLET'));
 			var success = function(data) {
 
-			//check to see if a user preference error occurred
-			if(data.responseText == 'userpref_error'){
-				//user preference error occured, close the dashlet dialog, flash the error message and exit processing
-				SUGAR.mySugar.closeDashletsDialog();
-				ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_DASH'),7000);
-				return;
-			}
 				colZero = document.getElementById('col_'+activeTab+'_0');
 				newDashlet = document.createElement('li'); // build the list item
 				newDashlet.id = 'dashlet_' + data.responseText;

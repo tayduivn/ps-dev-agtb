@@ -213,6 +213,9 @@ $mod_strings = array (
 	'PDF_FORMAT'=>'PDF Format:',
 	'LBL_ASSIGNED_TO_ID'=>'Assigned User:',
 	'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
+    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
 	'LBL_QUOTE_INFORMATION' => 'Quote Overview',
+	'LBL_LIST_MY_QUOTES' => 'My Quotes',
+    'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Address fields. To overwrite these values with the following Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
 );
 ?>

@@ -29,16 +29,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 	
 if(!empty($_REQUEST['saved_search_action'])) {
-//	_pp($_REQUEST);
-	
+
 	$ss = new SavedSearch();
 	
 	switch($_REQUEST['saved_search_action']) {
         case 'update': // save here
-            $ss->handleSave('', true, false, $_REQUEST['saved_search_select']);
+        	$savedSearchBean = loadBean($_REQUEST['search_module']);
+            $ss->handleSave('', true, false, $_REQUEST['saved_search_select'], $savedSearchBean);
             break;
 		case 'save': // save here
-			$ss->handleSave('', true, false);
+			$savedSearchBean = loadBean($_REQUEST['search_module']);
+			$ss->handleSave('', true, false, null, $savedSearchBean);
 			break;
 		case 'delete': // delete here
 			$ss->handleDelete($_REQUEST['saved_search_select']);

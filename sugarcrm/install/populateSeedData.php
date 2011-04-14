@@ -22,34 +22,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: populateSeedData.php 56343 2010-05-10 21:18:10Z jenny $
 
-
-
-
-require_once('include/language/en_us.lang.php');
-
+// load the correct demo data and main application language file depending upon the installer language selected; if
+// it's not found fall back on en_us
+if(file_exists("include/language/{$current_language}.lang.php")){
+    require_once("include/language/{$current_language}.lang.php");
+}
+else {
+    require_once("include/language/en_us.lang.php");
+}
 require_once('install/UserDemoData.php');
 require_once('install/TeamDemoData.php');
-require_once('install/seed_data/basicSeedData.php');
-if(isset($sugar_config['i18n_test']) && $sugar_config['i18n_test'] == true)
-	require_once('modules/Contacts/contactSeedData_jp.php');
-else
-	require_once('modules/Contacts/contactSeedData.php');
-//BEGIN SUGARCRM flav=pro ONLY
-//bug 28138 
+
 global $sugar_demodata;
-// mssql is broken for mbcs
-if( ($_SESSION['setup_db_type'] == 'mssql') && ($_SESSION['demoData'] != 'en_us')){
-	require_once("install/demoData.en_us.php");
-}else{
-    //END SUGARCRM flav=pro ONLY
-    if(file_exists("install/demoData.$_SESSION[demoData].php")){
-	   require_once("install/demoData.$_SESSION[demoData].php");
-    }else{
-	   require_once("install/demoData.en_us.php");
-    }
-//BEGIN SUGARCRM flav=pro ONLY
+if(file_exists("install/demoData.{$current_language}.php")){
+   require_once("install/demoData.{$current_language}.php");
 }
-//END SUGARCRM flav=pro ONLY
+else {
+   require_once("install/demoData.en_us.php");
+}
+
 $last_name_count = count($sugar_demodata['last_name_array']);
 $first_name_count = count($sugar_demodata['first_name_array']);
 $company_name_count = count($sugar_demodata['company_name_array']);
@@ -71,7 +62,7 @@ if(empty($app_list_strings)) {
  */
 mt_srand(93285903);
 $db = DBManagerFactory::getInstance();
-$timedate = new TimeDate();
+$timedate = TimeDate::getInstance();
 // Set the max time to one hour (helps Windows load the seed data)
 ini_set("max_execution_time", "3600");
 // ensure we have enough memory
@@ -180,9 +171,9 @@ for($i = 0; $i < $number_companies; $i++) {
 //BEGIN SUGARCRM flav=pro ONLY
 	// If this is a large scale test, switch to the bulk teams 90% of the time.
 	if ($large_scale_test) {
-		$assigned_team = $team_demo_data->get_random_team();		
+		$assigned_team = $team_demo_data->get_random_team();
 		$account->assigned_user_id = $account->team_id;
-		$account->assigned_user_name = $assigned_team;		
+		$account->assigned_user_name = $assigned_team;
 		if(mt_rand(0,100) < 90) {
 		  $account->team_id = $assigned_team;
 		  $account->team_set_id = $account->team_id;
@@ -190,13 +181,13 @@ for($i = 0; $i < $number_companies; $i++) {
 		  $account->team_id = $assigned_team;
 		  $teams = $team_demo_data->get_random_teamset();
 		  $account->load_relationship('teams');
-		  $account->teams->add($teams);			
+		  $account->teams->add($teams);
 		}
 	} else if(mt_rand(0,100) < 50) {
 		$account->team_id = $account->billing_address_state == "CA" ? "West" : "East";
 		$teams = $team_demo_data->get_random_teamset();
 		$account->load_relationship('teams');
-		$account->teams->add($teams);					
+		$account->teams->add($teams);
 	} else {
 		$account->team_id = $account->billing_address_state == "CA" ? "West" : "East";
 		$account->team_set_id = $account->team_id;
@@ -229,7 +220,7 @@ for($i = 0; $i < $number_companies; $i++) {
 	$case->team_set_id = $account->team_set_id;
 //END SUGARCRM flav=pro ONLY
 	$case->save();
-	
+
 	// Create a bug for the account
 	$bug = new Bug();
 	$bug->account_id = $account->id;
@@ -474,7 +465,7 @@ for($i=0; $i<$number_leads; $i++)
 	$leads_account = $accounts[$account_number];
 	$lead->primary_address_state = $leads_account->billing_address_state;
 	$lead->status = array_rand($app_list_strings['lead_status_dom']);
-	$lead->lead_source = array_rand($app_list_strings['lead_source_dom']);	
+	$lead->lead_source = array_rand($app_list_strings['lead_source_dom']);
 	if($i % 3 == 1)
 	{
 		$lead->billing_address_state = $sugar_demodata['billing_address_state']['east'];
@@ -530,20 +521,20 @@ for($i=0; $i<$number_leads; $i++)
 			$lead->teams->add($teams);
 			$lead->assigned_user_id = $account->assigned_user_id;
 	//END SUGARCRM flav=pro ONLY
-		} 
-	} 
+		}
+	}
 	//BEGIN SUGARCRM flav=pro ONLY
     else {
     	if(mt_rand(0,100) < 50) {
     		$lead->team_id = $lead->billing_address_state == "CA" ? "West" : "East";
 			$teams = $team_demo_data->get_random_teamset();
 			$lead->load_relationship('teams');
-			$lead->teams->add($teams);	
+			$lead->teams->add($teams);
     	} else {
 			$lead->team_id = $lead->billing_address_state == "CA" ? "West" : "East";
 			$lead->team_set_id = $lead->team_id;
     	}
-	}	
+	}
 	//END SUGARCRM flav=pro ONLY
 	$lead->primary_address_postalcode = mt_rand(10000,99999);
 	$lead->primary_address_country = $sugar_demodata['primary_address_country'];
@@ -555,20 +546,22 @@ for($i=0; $i<$number_leads; $i++)
 //create timeperiods - pro only
 require_once('modules/Forecasts/ForecastDirectReports.php');
 require_once('modules/Forecasts/Common.php');
+$timedate = TimeDate::getInstance();
+$now = $timedate->getNow();
+$timedate->tzUser($now); // use local TZ to calculate dates
 $timeperiods=array();
 $arr_today = getdate();
-$timedate = new TimeDate();
 $timeperiod = new TimePeriod();
 $timeperiod->name = "Year ".$arr_today['year'];
-$timeperiod->start_date = $timedate->to_display_date($arr_today['year']."-01-01");
-$timeperiod->end_date = $timedate->to_display_date($arr_today['year']."-12-31");
+$timeperiod->start_date = $timedate->asUserDate($now->get_day_begin(1, 1));
+$timeperiod->end_date = $timedate->asUserDate($now->get_day_end(31, 12));
 $timeperiod->is_fiscal_year =1;
 $fiscal_year_id=$timeperiod->save();
 //create a time period record for the first quarter.
 $timeperiod = new TimePeriod();
 $timeperiod->name = "Q1 ".$arr_today['year'];
-$timeperiod->start_date = $timedate->to_display_date($arr_today['year']."-01-01");
-$timeperiod->end_date = $timedate->to_display_date($arr_today['year']."-03-31");
+$timeperiod->start_date = $timedate->asUserDate($now->get_day_begin(1, 1));
+$timeperiod->end_date =  $timedate->asUserDate($now->get_day_end(31, 3));
 $timeperiod->is_fiscal_year =0;
 $timeperiod->parent_id=$fiscal_year_id;
 $current_timeperiod_id = $timeperiod->save();
@@ -576,8 +569,8 @@ $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
 //create a timeperiod record for the 2nd quarter.
 $timeperiod = new TimePeriod();
 $timeperiod->name = "Q2 ".$arr_today['year'];
-$timeperiod->start_date = $timedate->to_display_date($arr_today['year']."-04-01");
-$timeperiod->end_date = $timedate->to_display_date($arr_today['year']."-06-30");
+$timeperiod->start_date = $timedate->asUserDate($now->get_day_begin(1, 4));
+$timeperiod->end_date =  $timedate->asUserDate($now->get_day_end(30, 6));
 $timeperiod->is_fiscal_year =0;
 $timeperiod->parent_id=$fiscal_year_id;
 $current_timeperiod_id = $timeperiod->save();
@@ -585,8 +578,8 @@ $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
 //create a timeperiod record for the 3rd quarter.
 $timeperiod = new TimePeriod();
 $timeperiod->name = "Q3 ".$arr_today['year'];
-$timeperiod->start_date = $timedate->to_display_date($arr_today['year']."-07-01");
-$timeperiod->end_date = $timedate->to_display_date($arr_today['year']."-09-30");
+$timeperiod->start_date = $timedate->asUserDate($now->get_day_begin(1, 7));
+$timeperiod->end_date =  $timedate->asUserDate($now->get_day_end(31, 10));
 $timeperiod->is_fiscal_year =0;
 $timeperiod->parent_id=$fiscal_year_id;
 $current_timeperiod_id = $timeperiod->save();
@@ -594,8 +587,8 @@ $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
 //create a timeperiod record for the 4th quarter.
 $timeperiod = new TimePeriod();
 $timeperiod->name = "Q4 ".$arr_today['year'];
-$timeperiod->start_date = $timedate->to_display_date($arr_today['year']."-10-01");
-$timeperiod->end_date = $timedate->to_display_date($arr_today['year']."-12-31");
+$timeperiod->start_date = $timedate->asUserDate($now->get_day_begin(1, 10));
+$timeperiod->end_date =  $timedate->asUserDate($now->get_day_end(31, 12));
 $timeperiod->is_fiscal_year =0;
 $timeperiod->parent_id=$fiscal_year_id;
 $current_timeperiod_id = $timeperiod->save();
@@ -603,7 +596,6 @@ $timeperiods[$current_timeperiod_id]=$timeperiod->start_date;
 //build a collection of users
 $query = "SELECT id from users";
 $result = $db->query($query, false,"error fetching users collection:");
-$timedate = new TimeDate();
 $comm = new Common();
 $commit_order=$comm->get_forecast_commit_order();
 
@@ -697,7 +689,7 @@ foreach ($timeperiods as $timeperiod_id=>$start_date) {
 foreach($sugar_demodata['manufacturer_seed_data_names'] as $v){
 	$manufacturer = new Manufacturer;
 	$manufacturer->name = $v;
-	$manufacturer->status = "Active";	
+	$manufacturer->status = "Active";
 	$manufacturer->list_order = "1";
 	$manufacturer->save();
 	$manufacturer_id_arr[] = $manufacturer->id;
@@ -707,7 +699,7 @@ foreach($sugar_demodata['shipper_seed_data_names'] as $v){
 	$shipper = new Shipper;
 	$shipper->name = $v;
 	$shipper->status = "Active";
-	$shipper->list_order = $list_order;	
+	$shipper->list_order = $list_order;
 	$list_order++;
 	$shipper->save();
 	$ship_id_arr[] = $shipper->id;
@@ -718,7 +710,7 @@ foreach($sugar_demodata['productcategory_seed_data_names'] as $v){
 	$category->name = $v;
 	$category->list_order = "1";
 	$category->save();
-	$productcategory_id_arr[] = $category->id;	
+	$productcategory_id_arr[] = $category->id;
 }
 $list_order = 1;
 foreach($sugar_demodata['producttype_seed_data_names'] as $v){
@@ -726,7 +718,7 @@ foreach($sugar_demodata['producttype_seed_data_names'] as $v){
 	$type->name = $v;
 	$type->list_order = $list_order;
 	$type->save();
-	$producttype_id_arr[] = $type->id;	
+	$producttype_id_arr[] = $type->id;
 	$list_order++;
 }
 foreach($sugar_demodata['taxrate_seed_data'] as $v){
@@ -775,7 +767,7 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$template->manufacturer_id = $manufacturer_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->category_id = $productcategory_id_arr[mt_rand(0,$manufacturer_id_max)];
 	$template->type_id = $producttype_id_arr[mt_rand(0,$manufacturer_id_max)];
-	$template->currency_id = $dollar_id;		
+	$template->currency_id = $dollar_id;
 	$template = new ProductTemplate;
 	$template->name = $v['name'];
 	$template->tax_class = $v['tax_class'];
@@ -792,7 +784,7 @@ foreach($sugar_demodata['producttemplate_seed_data'] as $v){
 	$template->weight = $v['weight'];
 	$template->date_available = $v['date_available'];
 	$template->qty_in_stock = $v['qty_in_stock'];
-	$template->save();	
+	$template->save();
 }
 include_once('modules/TeamNotices/DefaultNotices.php');
 ///
@@ -836,37 +828,37 @@ foreach($sugar_demodata['kbdocument_seed_data'] as $v){
 	$kbdoc->active_date = $v['start_date'];
 	$kbdoc->exp_date = $v['exp_date'];
 	$kbdoc->save();
-	
+
 	$kbdocRevision = new KBDocumentRevision;
 	$kbdocRevision->change_log = translate('DEF_CREATE_LOG','KBDocuments');
-	$kbdocRevision->revision = '1';		
-	$kbdocRevision->kbdocument_id = $kbdoc->id;	
+	$kbdocRevision->revision = '1';
+	$kbdocRevision->kbdocument_id = $kbdoc->id;
 	$kbdocRevision->latest = true;
-	$kbdocRevision->save(); 
-	
+	$kbdocRevision->save();
+
 	$docRevision = new DocumentRevision();
-	$docRevision->filename = $kbdoc->kbdocument_name; 
-	$docRevision->save();		
-	
+	$docRevision->filename = $kbdoc->kbdocument_name;
+	$docRevision->save();
+
     $kbdocContent = new KBContent();
-    $kbdocContent->document_revision_id = $docRevision->id;  
+    $kbdocContent->document_revision_id = $docRevision->id;
     $kbdocContent->team_id = $kbdoc->team_id;
 	$kbdocContent->kbdocument_body = $v['body'];
-	$kbdocContent->save();	
-	
+	$kbdocContent->save();
+
 	$kbdocRevision->kbcontent_id = $kbdocContent->id;
     $kbdocRevision->document_revision_id = $docRevision->id;
     $kbdocRevision->save();
-		
-    $kbdoc->kbdocument_revision_id = $kbdocRevision->id;	
+
+    $kbdoc->kbdocument_revision_id = $kbdocRevision->id;
 	$kbdoc->save();
-	
+
 	foreach ($v['tags'] as $tag) {
 	    $kbdocKBTag = new KBDocumentKBTag();
 	    $kbdocKBTag->kbtag_id = array_search($tag,$kbtags_hash);
 	    $kbdocKBTag->kbdocument_id = $kbdoc->id;
 	    $kbdocKBTag->team_id = $kbdoc->team_id;
-	    $kbdocKBTag->save(); 
+	    $kbdocKBTag->save();
 	}
 }
 
@@ -911,15 +903,7 @@ $project->priority = $sugar_demodata['project_seed_data']['audit']['priority'];
 $project->team_id = 1;
 //END SUGARCRM flav=pro ONLY
 $audit_plan_id = $project->save();
-$sugar_demodata['project_seed_data']['audit']['project_tasks'][] = array(
-	'name' => 'Gather data from meetings',
-	'date_start' => '2007/11/20',
-	'date_finish' => '2007/11/20',
-	'description' => 'Need to organize the data and put it in the right spreadsheet.',
-	'duration' => '1',
-	'duration_unit' => 'Days',
-	'percent_complete' => 0,
-);
+
 foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 	$project_task = new ProjectTask();
 	$project_task->assigned_user_id = 1;
@@ -927,19 +911,15 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 	$project_task->team_id = 1;
 	//END SUGARCRM flav=pro ONLY
 	$project_task->name = $v['name'];
-	list($year, $month, $day) = $v['date_start'];
-	$project_task->date_start = create_date($year, $month, $day);
-	//$project_task->time_start = create_time(8,0,0);
-	list($year, $month, $day) = $v['date_start'];
-	$project_task->date_finish = create_date($year, $month, $day);
-	//$project_task->time_finish = create_time(8,0,0);
+	$project_task->date_start = $v['date_start'];
+	$project_task->date_finish = $v['date_finish'];
 	$project_task->project_id = $audit_plan_id;
 	$project_task->project_task_id = '1';
 	$project_task->description = $v['description'];
 	$project_task->duration = $v['duration'];
 	$project_task->duration_unit = $v['duration_unit'];
 	$project_task->percent_complete = $v['percent_complete'];
-	$communicate_stakeholders_id = $project_task->save();	
+	$communicate_stakeholders_id = $project_task->save();
 }
 //BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/products_SeedData.php');
@@ -955,5 +935,5 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 //END SUGARCRM flav=dce ONLY
 
 //END SUGARCRM flav!=sales ONLY
-  
+
 ?>

@@ -94,4 +94,5 @@ The following terms apply if Company is using the MSSQL Installer:
 5.	The embedded database for packaged installer contains other Microsoft programs.  The terms of this Exhibit B govern Company's use of such other Microsoft programs. 
 
 - PRIVATE AND CONFIDENTIAL
+
 The SugarCRM logo is a trademark of SugarCRM, Inc., 2006-2011

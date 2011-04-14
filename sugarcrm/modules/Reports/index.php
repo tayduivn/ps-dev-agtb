@@ -147,10 +147,10 @@ else
 if ( empty($_REQUEST['search_form_only']) ) {
     $params = array();
     if(!empty($_REQUEST['favorite']))
-        $params[] = "<span class='pointer'>&raquo;</span>".$mod_strings['LBL_FAVORITES_TITLE'];
+        $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
     else
-        $params[] = "<span class='pointer'>&raquo;</span>".$app_strings['LBL_SEARCH'];
-    echo getClassicModuleTitle("Reports", $params, true);
+        $params[] = $app_strings['LBL_SEARCH'];
+    echo getClassicModuleTitle("Reports", $params, false);
 }
 
 include("modules/Reports/ListView.php");

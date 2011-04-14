@@ -138,17 +138,20 @@ $focus->parent_id = $_REQUEST['workflow_id'];
     	//rsmith
     	require_once('include/ListView/ProcessView.php');
 		$ProcessView = new ProcessView($seed_object, $focus);
-		$results = $ProcessView->get_action_shell_display_text($focus);
+		$results = $ProcessView->get_action_shell_display_text($focus, true);
 		$result = $results["RESULT_ARRAY"];
 		$field_count = 0;
 		foreach($result as $value)
 		{
-			foreach($value as $aKey=>$aVal)
-			{
-				$form->assign($aKey, $aVal);
-			}
-			$form->parse("main.lang_field");
-			++ $field_count;
+			if (isset($value['FIELD_NAME']))
+            {
+                foreach($value as $aKey=>$aVal)
+                {
+                    $form->assign($aKey, $aVal);
+                }
+                $form->parse("main.lang_field");
+                ++ $field_count;
+            }
 		}
     	//rsmith
 

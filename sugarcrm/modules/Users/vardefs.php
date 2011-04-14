@@ -52,7 +52,7 @@ $dictionary['User'] = array(
             'reportable' => false,
             'massupdate' => false,
         ) ,
-        
+
         'pwd_last_changed' => array(
             'name' => 'pwd_last_changed',
             'vname' => 'LBL_PSW_MODIFIED',
@@ -91,7 +91,7 @@ $dictionary['User'] = array(
             'type' => 'image',
             'dbType' => 'varchar',
             'len' => '255',
-            'width' => '120',
+            'width' => '',
             'height' => '',
             'border' => '',
         ) ,
@@ -313,7 +313,7 @@ $dictionary['User'] = array(
             'name' => 'address_postalcode',
             'vname' => 'LBL_ADDRESS_POSTALCODE',
             'type' => 'varchar',
-            'len' => '9',
+            'len' => '20',
         ) ,
         //BEGIN SUGARCRM flav=sales ONLY
         'user_type' => array(
@@ -391,7 +391,7 @@ $dictionary['User'] = array(
 				'len' => 36,
 				'custom_type' => 'teamset',
 			),
-			'team_link' => 
+			'team_link' =>
 		    array (
 		      'name' => 'team_link',
 		      'type' => 'link',
@@ -430,7 +430,7 @@ $dictionary['User'] = array(
 				'link_file' => 'modules/Teams/TeamSetLink.php',
 				'studio' => 'false',
 				'reportable'=>false,
-			),   
+			),
 			'team_memberships' => array(
 	            'name' => 'team_memberships',
 	            'type' => 'link',
@@ -446,7 +446,7 @@ $dictionary['User'] = array(
 			    'studio' => 'false',
 			    'reportable'=>false,
 			    ),
-			
+
         //END SUGARCRM flav=pro ONLY
         'deleted' => array(
             'name' => 'deleted',
@@ -468,12 +468,8 @@ $dictionary['User'] = array(
         'employee_status' => array(
             'name' => 'employee_status',
             'vname' => 'LBL_EMPLOYEE_STATUS',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getEmployeeStatusOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'employee_status_dom',
             'len' => 100,
         ) ,
         'messenger_id' => array(
@@ -485,12 +481,8 @@ $dictionary['User'] = array(
         'messenger_type' => array(
             'name' => 'messenger_type',
             'vname' => 'LBL_MESSENGER_TYPE',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getMessengerTypeOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'messenger_type_dom',
             'len' => 100,
         ) ,
         'calls' => array(
@@ -638,6 +630,14 @@ $dictionary['User'] = array(
             'side' => 'right',
             'vname' => 'LBL_HOLIDAYS',
         ) ,
+       'eapm' =>
+		  array (
+		    'name' => 'eapm',
+		    'type' => 'link',
+		    'relationship' => 'eapm_assigned_user',
+		    'vname' => 'LBL_ASSIGNED_TO_USER',
+		    'source'=>'non-db',
+		  ),
         //BEGIN SUGARCRM flav=dce ONLY
         'dceinstance_role_fields' => array(
             'name' => 'dceinstance_role_fields',
@@ -670,7 +670,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DCEINSTANCE_ROLE',
             'options' => 'dceinstance_user_relationship_type_dom',
             'importable' => 'false',
-            'massupdate' => false,            
+            'massupdate' => false,
         ) ,
         'dceinstances' => array(
             'name' => 'dceinstances',
@@ -680,10 +680,10 @@ $dictionary['User'] = array(
             'module' => 'DCEInstances',
             'bean_name' => 'DCEInstance',
             'vname' => 'LBL_DCEINSTANCES',
-            'importable' => 'false',            
+            'importable' => 'false',
         ) ,
         //END SUGARCRM flav=dce ONLY
-        
+
     ) ,
     'indices' => array(
         array(
@@ -709,8 +709,8 @@ $dictionary['User'] = array(
         ) ,
      //BEGIN SUGARCRM flav=pro ONLY
 		array(
-			'name' => 'idx_users_tmst_id', 
-			'type' => 'index', 
+			'name' => 'idx_users_tmst_id',
+			'type' => 'index',
 			'fields' => array('team_set_id')
 		),
 	//END SUGARCRM flav=pro ONLY
@@ -720,38 +720,38 @@ $dictionary['User'] = array(
   		'users_users_signatures' =>
   		   array(
   		       'lhs_module'=> 'Users',
-  		       'lhs_table'=> 'users', 
+  		       'lhs_table'=> 'users',
   		       'lhs_key' => 'id',
-  		       'rhs_module'=> 'UserSignature', 
-  		       'rhs_table'=> 'users_signatures', 
+  		       'rhs_module'=> 'UserSignature',
+  		       'rhs_table'=> 'users_signatures',
   		       'rhs_key' => 'user_id',
   		       'relationship_type'=>'one-to-many'
   		       ),
-    	'users_email_addresses' => 
+    	'users_email_addresses' =>
 		    array(
 		        'lhs_module'=> "Users", 'lhs_table'=> 'users', 'lhs_key' => 'id',
 		        'rhs_module'=> 'EmailAddresses', 'rhs_table'=> 'email_addresses', 'rhs_key' => 'id',
 		        'relationship_type'=>'many-to-many',
-		        'join_table'=> 'email_addr_bean_rel', 'join_key_lhs'=>'bean_id', 'join_key_rhs'=>'email_address_id', 
+		        'join_table'=> 'email_addr_bean_rel', 'join_key_lhs'=>'bean_id', 'join_key_rhs'=>'email_address_id',
 		        'relationship_role_column'=>'bean_module',
 		        'relationship_role_column_value'=>"Users"
 		    ),
-		'users_email_addresses_primary' => 
+		'users_email_addresses_primary' =>
 		    array('lhs_module'=> "Users", 'lhs_table'=> 'users', 'lhs_key' => 'id',
 		        'rhs_module'=> 'EmailAddresses', 'rhs_table'=> 'email_addresses', 'rhs_key' => 'id',
 		        'relationship_type'=>'many-to-many',
-		        'join_table'=> 'email_addr_bean_rel', 'join_key_lhs'=>'bean_id', 'join_key_rhs'=>'email_address_id', 
-		        'relationship_role_column'=>'primary_address', 
+		        'join_table'=> 'email_addr_bean_rel', 'join_key_lhs'=>'bean_id', 'join_key_rhs'=>'email_address_id',
+		        'relationship_role_column'=>'primary_address',
 		        'relationship_role_column_value'=>'1'
 		    ),
 		//BEGIN SUGARCRM flav=pro ONLY
 		'users_team_count_relationship' =>
 			 array(
 			 	'lhs_module'=> 'Teams',
-			 	'lhs_table'=> 'team_sets', 
+			 	'lhs_table'=> 'team_sets',
 			 	'lhs_key' => 'id',
-	    		'rhs_module'=> 'users', 
-	    		'rhs_table'=> 'users', 
+	    		'rhs_module'=> 'users',
+	    		'rhs_table'=> 'users',
 	    		'rhs_key' => 'team_set_id',
 	   			'relationship_type'=>'one-to-many'
 			 ),
@@ -771,10 +771,10 @@ $dictionary['User'] = array(
 	   'users_team' =>
 	   array('lhs_module'=> 'Teams', 'lhs_table'=> 'teams', 'lhs_key' => 'id',
 	    'rhs_module'=> 'users', 'rhs_table'=> 'users', 'rhs_key' => 'default_team',
-	   'relationship_type'=>'one-to-many'),    
+	   'relationship_type'=>'one-to-many'),
 	   //END SUGARCRM flav=pro ONLY
     ),
 
-      
-    
+
+
 );

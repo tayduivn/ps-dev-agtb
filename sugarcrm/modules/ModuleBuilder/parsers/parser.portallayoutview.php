@@ -301,5 +301,10 @@ class ParserPortalLayoutView extends ParserModifyLayoutView
 		return $this->_history ;
 	}
 
+    function getFieldDefs()
+    {
+        return $this->_fieldDefs;
+    }
+
 }
 ?>

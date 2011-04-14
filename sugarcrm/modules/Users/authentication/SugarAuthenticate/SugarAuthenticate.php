@@ -78,17 +78,17 @@ class SugarAuthenticate{
 		    if ($res['lockoutexpiration'] == '2'){
 		    	// lockout date is now if not set
 		    	if (($logout_time=$usr->getPreference('logout_time'))==''){
-			        $usr->setPreference('logout_time',date("Y-m-d H:i:s"));
+			        $usr->setPreference('logout_time',Timedate2::getInstance()->nowDb());
 			        $logout_time=$usr->getPreference('logout_time');
 			        }
 				$stim = strtotime($logout_time);
-				$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+($res['lockoutexpirationtime']*$res['lockoutexpirationtype']), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));
-			    // Test if the user is still locked out and return a error message
-			    if (date("Y-m-d H:i:s") < $expiretime){
+			    $expiretime = TimeDate::getInstance()->fromTimestamp($stim)->get("+"+$res['lockoutexpirationtime']*$res['lockoutexpirationtype']+" minutes")->asDb();
+				// Test if the user is still locked out and return a error message
+			    if (TimeDate::getInstance()->nowDb() < $expiretime){
 			    	$usr->setPreference('lockout','1');
 			        $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
 			        $_SESSION['waiting_error']=$mod_strings['LBL_LOGIN_LOGIN_TIME_ALLOWED'].' ';
-			        $lol= strtotime($expiretime)-strtotime(date("Y-m-d H:i:s"));
+			        $lol= strtotime($expiretime)-strtotime(TimeDate::getInstance()->nowDb());
 					        switch (true) {
 				    case (floor($lol/86400) !=0):
 				        $_SESSION['waiting_error'].=floor($lol/86400).$mod_strings['LBL_LOGIN_LOGIN_TIME_DAYS'];

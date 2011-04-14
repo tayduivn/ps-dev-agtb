@@ -21,8 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $dictionary['KBDocument'] = array('table' => 'kbdocuments',
-                'comment' => 'Knowledge Document management and FTS'
-                               ,'fields' => array (
+								  'unified_search' => true,
+               					  'comment' => 'Knowledge Document management and FTS',
+               					  'fields' => array (
   'id' =>
   array (
     'name' => 'id',
@@ -40,21 +41,23 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'type' => 'varchar',
     'required'=>true,
     'importable' => 'required',
+  	'unified_search' => true,
   ),
 
-  'name' =>
-		array (
-			'name' => 'name',
-			'rname' => 'name',
-			'vname' => 'LBL_NAME',
-			'type' => 'varchar',
-			'fields' => array('kbdocument_name'),
-			'sort_on' => 'kbdocument_name',
-			'source' => 'non-db',
-			'group'=>'kbdocument_name',
-			'db_concat_fields'=> array(0=>'kbdocument_name'),
-            'importable' => 'false',
-		),
+'name' =>
+	array (
+	'name' => 'name',
+	'rname' => 'name',
+	'vname' => 'LBL_NAME',
+	'type' => 'varchar',
+	'fields' => array('kbdocument_name'),
+	'sort_on' => 'kbdocument_name',
+	'source' => 'non-db',
+	'group'=>'kbdocument_name',
+	'db_concat_fields'=> array(0=>'kbdocument_name'),
+    'importable' => 'false',
+	),
+	
 'active_date' =>
   array (
     'name' => 'active_date',

@@ -45,7 +45,9 @@ class SugarTestTrackerUtility
             $monitor->setValue('module_name', $bean->module_dir);
             $monitor->setValue('date_modified', $timeStamp);
             $monitor->setValue('visible', (($action == 'detailview') || ($action == 'editview')
+            //BEGIN SUGARCRM flav=pro ONLY
                                             || ($action == 'wirelessdetail') || ($action == 'wirelessedit')
+            //END SUGARCRM flav=pro ONLY
                                             ) ? 1 : 0);
 
             if (!empty($bean->id))

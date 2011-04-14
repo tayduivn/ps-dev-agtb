@@ -77,7 +77,7 @@ if(isset($_REQUEST['account_id']) && is_null($focus->parent_id)) {
 }
 
 $params = array();
-$params[] = "<span class='pointer'>&raquo;</span>".$focus->name;
+$params[] = $focus->name;
 
 echo getClassicModuleTitle($focus->module_dir, $params, true);
 

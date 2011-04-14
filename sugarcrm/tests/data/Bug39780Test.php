@@ -6,12 +6,15 @@ class Bug39780Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
 	}
 	
 	public function tearDown()
 	{
-	    SugarTestContactUtilities::removeAllCreatedContacts();
+	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        SugarTestContactUtilities::removeAllCreatedContacts();
 	}
 	
 	// Test unPopulateDefaultValues to make sure it doesn't generate any notices

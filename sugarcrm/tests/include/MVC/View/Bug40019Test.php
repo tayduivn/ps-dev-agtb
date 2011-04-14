@@ -6,7 +6,7 @@ class Bug40019Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp() 
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
 	    global $sugar_config;
 	    $max = $sugar_config['history_max_viewed'];
 	    
@@ -26,10 +26,12 @@ class Bug40019Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function tearDown() 
 	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    SugarTestContactUtilities::removeAllCreatedContacts();
-	    SugarTestAccountUtilities::removeAllCreatedAccounts();
-	    SugarTestTrackerUtility::removeAllTrackerEntries();
+
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestTrackerUtility::removeAllTrackerEntries();
+
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
 	}
