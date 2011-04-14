@@ -3682,18 +3682,19 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 		+ 'module=' + module_name
 		+ '&action=Popup';
 
-	if(initial_filter != '')
-	{
+	if (initial_filter != '') {
 		URL += '&query=true' + initial_filter;
+		// Bug 41891 - Popup Window Name
+		popupName = initial_filter.replace(/[^a-z_\-0-9]+/ig, '_');
+		windowName = module_name + '_popup_window' + popupName;
+	} else {
+		windowName = module_name + '_popup_window' + popupCount;
 	}
+	popupCount++;
 
-	if(hide_clear_button)
-	{
+	if (hide_clear_button) {
 		URL += '&hide_clear_button=true';
 	}
-
-	windowName = module_name + '_popup_window' + popupCount;
-	popupCount++;
 
 	windowFeatures = 'width=' + width
 		+ ',height=' + height

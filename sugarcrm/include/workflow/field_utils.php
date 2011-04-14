@@ -564,12 +564,26 @@ include_once('include/workflow/expression_utils.php');
 
 
 
-function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, $ext1=null, $for_action_display=false){
+function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, $ext1=null, $for_action_display=false) {
+	
 	global $app_list_strings, $current_user;
-
+	
 	if($temp_module->field_defs[$field]['type']=="relate"){
-		//echo $field;
-        //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
+		
+		// Bug 35116 - Display Text for Advanced types
+		if (!empty($adv_type) && !empty($field_value) && $for_action_display) {
+			// Check for one of the advanced types
+			if (in_array($field_value, array_keys($app_list_strings['wflow_adv_user_type_dom']))) {
+				// Check for Self(User) or Manager
+				if (in_array($ext1, array_keys($app_list_strings['wflow_relate_type_dom'])) && !empty($ext1)) {
+					return $app_list_strings['wflow_adv_user_type_dom'][$field_value].' '.$app_list_strings['wflow_relate_type_dom'][$ext1];
+				} else {
+					return $app_list_strings['wflow_adv_user_type_dom'][$field_value];
+				}
+			}
+		}
+		
+        //bug 23502, assigned user should be displayed as username here.
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && $for_action_display) {
             if($adv_type != 'exist_user') {
                 $assigned_user = loadBean('Users');
@@ -651,6 +665,8 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 
 	}
 
+	
+	
 //Used primarily for alert templates
 
 /*
