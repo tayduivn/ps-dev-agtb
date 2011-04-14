@@ -450,10 +450,6 @@ class CalendarActivity
 		global $timedate;
 		$this->sugar_bean = $sugar_bean;
 
-		// Convert start date to database time so we can properly manage it 
-        $dbDate = $timedate->to_db($this->sugar_bean->date_start);
-        $this->start_time =DateTimeUtil::get_time_start($dbDate);
-		
 
 		if ($sugar_bean->object_name == 'Task')
 		{
@@ -468,7 +464,10 @@ class CalendarActivity
 			if($newdate != $temptime){
 				$this->sugar_bean->time_due = $temptime;
 			}
-
+			$this->start_time =DateTimeUtil::get_time_start(
+				$this->sugar_bean->date_due,
+				$this->sugar_bean->time_due
+			);
 			if ( empty($this->start_time))
 			{
 				return null;
@@ -478,7 +477,9 @@ class CalendarActivity
 		}
 		else
 		{
-            // get the end date
+            // Convert it back to database time so we can properly manage it for getting the proper start and end dates
+            $dbDate = $timedate->to_db($this->sugar_bean->date_start);
+            $this->start_time =DateTimeUtil::get_time_start($dbDate);
 		    $this->end_time =DateTimeUtil::get_time_end(
 			    $this->start_time,
          		$this->sugar_bean->duration_hours,
